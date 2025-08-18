@@ -321,6 +321,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         { autoClose: false },
       ),
       smartNest: renderSmartNestButton(),
+      stampMakerPanel: renderButtons(
+        'stampMakerPanel',
+        'Stamp Maker',
+        () => Dialog.showStampMakerPanel(),
+        <ActionPanelIcons.EditImage />,
+        <ActionPanelIcons.EditImage />,
+        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short },
+      ),
       trace: renderButtons(
         'trace',
         lang.trace,
@@ -338,7 +346,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         { isFullLine: true },
       ),
     };
-    const contentOrder = isMobile()
+    const contentOrder: Array<keyof typeof content> = isMobile()
       ? [
           'autoFit',
           'replace_with',
@@ -361,6 +369,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'bg-removal',
           'smartNest',
           'imageEditPanel',
+          'stampMakerPanel',
           'trace',
           'grading',
           'sharpen',

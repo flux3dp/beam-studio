@@ -56,6 +56,8 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 import type { GlobalPreferenceKey } from '@core/interfaces/Preference';
 
+import StampMakerPanel from '../components/StampMakerPanel';
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -668,6 +670,33 @@ export default {
     }
 
     addDialogComponent(id, <SocialMediaModal autoPopup={autoPopup} onClose={() => popDialogById(id)} />);
+  },
+  showStampMakerPanel: (onClose: () => void = () => {}): void => {
+    if (isIdExist('stamp-maker-panel')) {
+      return;
+    }
+
+    const selectedElements = svgCanvas.getSelectedElems();
+
+    if (selectedElements.length !== 1) {
+      return;
+    }
+
+    const element = selectedElements[0];
+    const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
+
+    addDialogComponent(
+      'stamp-maker-panel',
+      <StampMakerPanel
+        image={element as SVGImageElement}
+        onClose={() => {
+          onClose();
+          ObjectPanelController.updateActiveKey(null);
+          popDialogById('stamp-maker-panel');
+        }}
+        src={src!}
+      />,
+    );
   },
   showSvgNestButtons: (): void => {
     if (isIdExist('svg-nest')) {
