@@ -6,6 +6,7 @@ import { match } from 'ts-pattern';
 import Constant from '@core/app/actions/beambox/constant';
 import type { ToolPanelType } from '@core/app/actions/beambox/toolPanelsController';
 import Dialog from '@core/app/actions/dialog-caller';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import { generateSelectedElementArray } from '@core/app/svgedit/operations/clipboard';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -18,10 +19,9 @@ import OffsetModal from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import RowColumnPanel from '@core/app/views/beambox/ToolPanels/RowColumn';
 import offsetElements from '@core/helpers/clipper/offset';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
-import storage from '@core/implementations/storage';
+import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import type { OffsetProp } from './OffsetPanel';
@@ -34,8 +34,6 @@ getSVGAsync((globalSVG) => {
 });
 
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
-
-const LANG = i18n.lang.beambox.tool_panels;
 
 const _mm2pixel = (pixel_input: number) => {
   const { dpmm } = Constant;
@@ -57,6 +55,9 @@ interface Props {
 }
 
 const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
+  const lang = useI18n().beambox.tool_panels;
+  const activeLang = useStorageStore((state) => state['active-lang']);
+
   const [rowColumn, setRowColumn] = useState(data.rowcolumn);
   const [distance, setDistance] = useState(data.distance);
   const [offset, setOffset] = useState<OffsetProp>({ cornerType: 'sharp', distance: 5, mode: 'outward' });
@@ -223,7 +224,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
   };
 
   const renderTitle = () => {
-    const titleMap = { gridArray: LANG.grid_array, offset: LANG.offset };
+    const titleMap = { gridArray: lang.grid_array, offset: lang.offset };
     const title = titleMap[type as 'gridArray' | 'offset'];
 
     return (
@@ -243,22 +244,20 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
       <div className="tool-block">
         <div className="btn-h-group">
           <button className="btn btn-default primary" onClick={generateOnOk()} type="button">
-            {LANG.confirm}
+            {lang.confirm}
           </button>
           <button className="btn btn-default" onClick={onCancel} type="button">
-            {LANG.cancel}
+            {lang.cancel}
           </button>
         </div>
       </div>
     );
   };
 
-  const lang = storage.get('active-lang') || 'en';
   const positionStyle = findPositionStyle();
-  const classes = classNames('tool-panels', lang);
 
   return (
-    <div className={classes} id="beamboxToolPanel" style={positionStyle}>
+    <div className={classNames('tool-panels', activeLang)} id="beamboxToolPanel" style={positionStyle}>
       {renderTitle()}
       {renderPanels()}
       {renderButtons()}

@@ -13,7 +13,7 @@ export enum TopRef {
 export enum RightRef {
   PATH_PREVIEW_BTN = 3,
   RIGHT_PANEL = 2,
-  RIGHT_SROLL_BAR = 1,
+  RIGHT_SCROLL_BAR = 1,
   WINDOW = 0,
 }
 
@@ -35,7 +35,7 @@ export const calculateTop = (top: number, ref: TopRef = TopRef.WINDOW): number =
 
 export const calculateRight = (right: number, ref: RightRef = RightRef.WINDOW): number => {
   switch (ref) {
-    case RightRef.RIGHT_SROLL_BAR:
+    case RightRef.RIGHT_SCROLL_BAR:
       return right + layoutConstants.rightPanelScrollBarWidth;
     case RightRef.RIGHT_PANEL:
       return right + layoutConstants.rightPanelWidth;

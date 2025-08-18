@@ -1,7 +1,7 @@
 import i18n from '@core/helpers/i18n';
 import type { IMediaTutorial } from '@core/interfaces/ITutorial';
 
-export const gestureIntroduction: IMediaTutorial[] = [
+export const getGestureIntroduction: () => IMediaTutorial[] = () => [
   {
     description: i18n.lang.tutorial.gesture.pan,
     mediaSources: [{ src: 'img/touch-drag.svg', type: 'image/svg+xml' }],
@@ -35,7 +35,3 @@ export const gestureIntroduction: IMediaTutorial[] = [
     ],
   },
 ];
-
-export default {
-  gestureIntroduction,
-};

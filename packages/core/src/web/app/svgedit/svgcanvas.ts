@@ -103,8 +103,6 @@ getSVGAsync(({ Canvas, Editor }) => {
   svgEditor = Editor;
 });
 
-const LANG = i18n.lang.beambox;
-
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -2620,7 +2618,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     randomColor.reset();
 
     // create empty first layer
-    const defaultLayerName = LANG.right_panel.layer_panel.layer1;
+    const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
 
     canvas.createLayer(defaultLayerName);
 

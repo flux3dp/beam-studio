@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 
 import { Button, Modal } from 'antd';
 
-import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 import type { IMediaTutorial } from '@core/interfaces/ITutorial';
 
 interface Props {
@@ -11,7 +11,7 @@ interface Props {
 }
 
 function MediaTutorial({ data, onClose }: Props): React.JSX.Element {
-  const LANG = i18n.lang.buttons;
+  const lang = useI18n().buttons;
   const [step, setStep] = useState(0);
   const videoRef = useRef<HTMLVideoElement>();
 
@@ -42,7 +42,7 @@ function MediaTutorial({ data, onClose }: Props): React.JSX.Element {
   if (step !== 0) {
     footer.push(
       <Button key="back" onClick={() => setStep(step - 1)}>
-        {LANG.back}
+        {lang.back}
       </Button>,
     );
   }
@@ -50,13 +50,13 @@ function MediaTutorial({ data, onClose }: Props): React.JSX.Element {
   if (step === data.length - 1) {
     footer.push(
       <Button key="done" onClick={onClose} type="primary">
-        {LANG.done}
+        {lang.done}
       </Button>,
     );
   } else {
     footer.push(
       <Button key="next" onClick={() => setStep(step + 1)} type="primary">
-        {LANG.next}
+        {lang.next}
       </Button>,
     );
   }

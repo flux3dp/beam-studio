@@ -6,12 +6,11 @@ import classNames from 'classnames';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import i18n from '@core/helpers/i18n';
 import units from '@core/helpers/units';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ArrayModal.module.scss';
 
-const LANG = i18n.lang.beambox.tool_panels;
 const unitSettings: {
   [key: string]: {
     distance: { default: number; max: number; min: number; step?: number };
@@ -40,6 +39,7 @@ interface Props {
 }
 
 const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
+  const lang = useI18n().beambox.tool_panels;
   const unit = useStorageStore((state) => (state['default-units'] === 'inches' ? 'inch' : 'mm'));
   const setting = unitSettings[unit];
   const [data, setData] = React.useState<Value>({
@@ -64,11 +64,11 @@ const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
       }}
     >
       <Modal
-        cancelText={LANG.cancel}
+        cancelText={lang.cancel}
         centered
         className={styles.modal}
         closeIcon={<Icon className={styles['close-icon']} component={ActionPanelIcons.Delete} />}
-        okText={LANG.confirm}
+        okText={lang.confirm}
         onCancel={onCancel}
         onOk={() => {
           const dxInMM = +units.convertUnit(data.dx, 'mm', unit).toFixed(2);
@@ -78,11 +78,11 @@ const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
         }}
         open
       >
-        <div className={styles.title}>{LANG.grid_array}</div>
+        <div className={styles.title}>{lang.grid_array}</div>
         {/* TODO: add preview */}
-        <div className={styles.subtitle}>{LANG.array_dimension}</div>
+        <div className={styles.subtitle}>{lang.array_dimension}</div>
         <div className={styles.field}>
-          <span className={styles.label}>{LANG.columns}</span>
+          <span className={styles.label}>{lang.columns}</span>
           <Slider className={styles.slider} max={10} min={1} onChange={setColumn} value={column} />
           <InputNumber
             className={styles.input}
@@ -96,7 +96,7 @@ const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
           />
         </div>
         <div className={styles.field}>
-          <span className={styles.label}>{LANG.rows}</span>
+          <span className={styles.label}>{lang.rows}</span>
           <Slider className={styles.slider} max={10} min={1} onChange={setRow} value={row} />
           <InputNumber
             className={styles.input}
@@ -109,9 +109,9 @@ const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
             value={row}
           />
         </div>
-        <div className={styles.subtitle}>{LANG.array_interval}</div>
+        <div className={styles.subtitle}>{lang.array_interval}</div>
         <div className={styles.field}>
-          <span className={styles.label}>{LANG.dx}</span>
+          <span className={styles.label}>{lang.dx}</span>
           <Slider
             className={styles.slider}
             max={setting.distance.max}
@@ -133,7 +133,7 @@ const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
           />
         </div>
         <div className={styles.field}>
-          <span className={styles.label}>{LANG.dy}</span>
+          <span className={styles.label}>{lang.dy}</span>
           <Slider
             className={styles.slider}
             max={setting.distance.max}

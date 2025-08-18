@@ -7,9 +7,9 @@ import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/context
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './RectOptions.module.scss';
@@ -20,13 +20,12 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
-
 interface Props {
   elem: Element;
 }
 
 function RectOptions({ elem }: Props): React.JSX.Element {
+  const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const { dimensionValues, updateDimensionValues } = useContext(ObjectPanelContext);
   const { rx } = dimensionValues;
@@ -42,7 +41,7 @@ function RectOptions({ elem }: Props): React.JSX.Element {
     return isMobile ? (
       <ObjectPanelItem.Number
         id="rounded-corner"
-        label={LANG.rounded_corner}
+        label={lang.rounded_corner}
         min={0}
         updateValue={(val) => {
           handleRoundedCornerChange(val);
@@ -52,7 +51,7 @@ function RectOptions({ elem }: Props): React.JSX.Element {
       />
     ) : (
       <div className={styles['rounded-corner']} key="rounded-corner">
-        <div className={styles.label} title={LANG.rounded_corner}>
+        <div className={styles.label} title={lang.rounded_corner}>
           <OptionPanelIcons.RoundedCorner />
         </div>
         <UnitInput

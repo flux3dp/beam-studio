@@ -1,4 +1,4 @@
-import type { Storage } from '@core/interfaces/IStorage';
+import type { Storage, StorageKey } from '@core/interfaces/IStorage';
 
 const state: Storage = {
   'active-lang': 'en',
@@ -75,7 +75,7 @@ const state: Storage = {
   'sentry-send-devices': {},
 };
 
-const set = <K extends keyof Storage>(key: K, value: Storage[K]) => {
+const set = <K extends StorageKey>(key: K, value: Storage[K]) => {
   state[key] = value;
 };
 
@@ -88,6 +88,9 @@ export const useStorageStore = (selector?: (state: Storage) => Partial<Storage>)
 
   return selector ? selector(allStates) : allStates;
 };
+
+export const getStorage = <K extends StorageKey>(key: K) => state[key];
+export const setStorage = set;
 
 useStorageStore.getState = () => ({ ...state, set, update });
 useStorageStore.subscribe = (_listener: (state: Storage) => void) => {

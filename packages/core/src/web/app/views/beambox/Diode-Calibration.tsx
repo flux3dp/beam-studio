@@ -20,8 +20,8 @@ import VersionChecker from '@core/helpers/version-checker';
 import browser from '@core/implementations/browser';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-const LANG = i18n.lang.calibration;
-const LANG_ALERT = i18n.lang.alert;
+let LANG = i18n.lang.calibration;
+let LANG_ALERT = i18n.lang.alert;
 
 // View render the following steps
 const STEP_ASK_READJUST = Symbol('STEP_ASK_READJUST');
@@ -51,6 +51,7 @@ interface State {
   showHint: boolean;
 }
 
+// TODO: refactor to functional component
 class DiodeCalibration extends React.Component<Props, State> {
   private imageScale: number;
 
@@ -68,6 +69,8 @@ class DiodeCalibration extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
+    LANG = i18n.lang.calibration;
+    LANG_ALERT = i18n.lang.alert;
 
     const { device } = props;
     const didCalibrate = calibratedMachineUUIDs.includes(device.uuid);

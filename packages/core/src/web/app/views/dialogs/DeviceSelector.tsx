@@ -11,6 +11,7 @@ import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarCont
 import discover, { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import os from '@core/implementations/os';
 import type { AlertButton } from '@core/interfaces/IAlert';
@@ -24,6 +25,7 @@ interface Props {
 }
 
 const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
+  const lang = useI18n();
   const [deviceList, setDeviceList] = useState(Array.of<IDeviceInfo>());
   const selectedDevice = TopBarController.getSelectedDevice();
   const selectedKey = selectedDevice?.serial;
@@ -55,16 +57,18 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
     [discoverer],
   );
 
-  const status = i18n.lang.machine_status;
+  const status = lang.machine_status;
   const timeout = useRef<NodeJS.Timeout | undefined>(undefined);
 
   useEffect(() => {
     if (deviceList.length === 0) {
+      const { lang } = i18n;
+
       timeout.current = setTimeout(() => {
-        let message = i18n.lang.device_selection.no_device;
+        let message = lang.device_selection.no_device;
         const buttons: AlertButton[] = [
           {
-            label: i18n.lang.topbar.menu.add_new_machine,
+            label: lang.topbar.menu.add_new_machine,
             onClick: async () => {
               onSelect(null);
               onClose();
@@ -78,23 +82,23 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
             type: 'primary',
           },
           {
-            label: i18n.lang.global.cancel,
+            label: lang.global.cancel,
           },
         ];
 
         if (os.isMacOS15OrLater) {
-          message = `${message}<br><br>${i18n.lang.device_selection.macos_15_local_network_permission}`;
+          message = `${message}<br><br>${lang.device_selection.macos_15_local_network_permission}`;
           buttons.push({
             isLeft: true,
-            label: i18n.lang.device_selection.go_to_settings,
+            label: lang.device_selection.go_to_settings,
             onClick: () => browser.open('x-apple.systempreferences:com.apple.preference.security?Privacy_LocalNetwork'),
           });
         }
 
         alertCaller.popUp({
-          buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
+          buttonLabels: [lang.topbar.menu.add_new_machine],
           buttons,
-          caption: i18n.lang.alert.oops,
+          caption: lang.alert.oops,
           message,
           onCancel: () => {
             onSelect(null);
@@ -158,7 +162,7 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
         onClose();
       }}
       open
-      title={i18n.lang.topbar.select_machine}
+      title={lang.topbar.select_machine}
       width={415}
     >
       <div className={styles['device-list']}>

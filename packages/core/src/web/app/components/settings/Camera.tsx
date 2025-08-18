@@ -4,7 +4,7 @@ import type { DefaultOptionType } from 'antd/es/select';
 
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 
 import SettingSelect from './components/SettingSelect';
 import styles from './Settings.module.scss';
@@ -14,7 +14,7 @@ interface Props {
 }
 
 function Camera({ options }: Props): React.JSX.Element {
-  const { lang } = i18n;
+  const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
   const previewMovementSpeedOptions = [
     { label: lang.settings.low, value: PreviewSpeedLevel.SLOW },

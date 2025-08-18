@@ -5,6 +5,7 @@ import type { DefaultOptionType } from 'antd/es/select';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import useI18n from '@core/helpers/useI18n';
 
 import SettingSelect from './components/SettingSelect';
 import styles from './Settings.module.scss';
@@ -16,7 +17,7 @@ interface Props {
 }
 
 function General({ changeActiveLang, options, supportedLangs }: Props): React.JSX.Element {
-  const { lang } = i18n;
+  const lang = useI18n();
   const { getConfig, setConfig } = useSettingStore();
   const langOptions = Object.keys(supportedLangs).map((value) => ({ label: supportedLangs[value], value }));
 

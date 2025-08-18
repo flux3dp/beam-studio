@@ -10,7 +10,9 @@ function Home(): React.JSX.Element {
   const [lang, changeLang] = React.useState(i18n.lang);
   const getLanguageOptions = () => {
     const options = [];
-    const langCodes = Object.keys(appSettings.i18n.supported_langs);
+    const langCodes = Object.keys(appSettings.i18n.supported_langs) as Array<
+      keyof typeof appSettings.i18n.supported_langs
+    >;
 
     for (let i = 0; i < langCodes.length; i += 1) {
       const langCode = langCodes[i];

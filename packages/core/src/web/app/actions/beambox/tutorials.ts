@@ -1,7 +1,7 @@
 import Alert from '@core/app/actions/alert-caller';
 import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { generateInterfaceTutorial, generateNewUserTutorial } from '@core/app/constants/tutorial-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import Discover from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
@@ -39,11 +39,12 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
 
   if (isAnyMachineAvailable) {
     const autoSwitch = useGlobalPreferenceStore.getState()['auto-switch-tab'];
+    const newUserTutorial = generateNewUserTutorial();
     const tutorial = {
-      ...TutorialConstants.NEW_USER_TUTORIAL,
+      ...newUserTutorial,
       dialogStylesAndContents: autoSwitch
-        ? TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents.filter(({ id }) => id !== 'switch-tab')
-        : TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents,
+        ? newUserTutorial.dialogStylesAndContents.filter(({ id }) => id !== 'switch-tab')
+        : newUserTutorial.dialogStylesAndContents,
     };
 
     Dialog.showTutorial(tutorial, callback);
@@ -80,7 +81,7 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
 };
 
 const startInterfaceTutorial = (callback: () => void) => {
-  Dialog.showTutorial(TutorialConstants.INTERFACE_TUTORIAL, callback);
+  Dialog.showTutorial(generateInterfaceTutorial(), callback);
 };
 
 export default {

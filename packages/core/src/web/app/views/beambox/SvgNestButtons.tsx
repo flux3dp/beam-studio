@@ -25,7 +25,7 @@ getSVGAsync((globalSVG) => {
   svgedit = globalSVG.Edit;
 });
 
-const LANG = i18n.lang.beambox.tool_panels;
+let LANG = i18n.lang.beambox.tool_panels;
 
 async function setUpSvgNest() {
   if (isWeb()) {
@@ -43,11 +43,13 @@ interface State {
   isWorking: boolean;
 }
 
+// TODO: refactor to functional component
 class SvgNestButtons extends React.Component<Props, State> {
   private undoNestChanges: any[] = [];
   private nestedElements: any[] = [];
 
   constructor(props: any) {
+    LANG = i18n.lang.beambox.tool_panels;
     super(props);
     this.state = {
       isWorking: false,

@@ -7,7 +7,7 @@ import SettingUnitInput from '@core/app/components/settings/components/SettingUn
 import XYItem from '@core/app/components/settings/components/XYItem';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
@@ -19,7 +19,7 @@ type Props = {
 };
 
 const Path = ({ options, unitInputProps }: Props): React.JSX.Element => {
-  const { lang } = i18n;
+  const lang = useI18n();
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');

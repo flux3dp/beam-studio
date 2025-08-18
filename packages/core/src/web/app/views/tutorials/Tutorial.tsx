@@ -12,12 +12,11 @@ import type { ITutorialDialog } from '@core/interfaces/ITutorial';
 // TODO: move all styles from web to modules.scss
 import styles from './Tutorial.module.scss';
 
-const LANG = i18n.lang.tutorial;
-
 class TutorialComponent extends React.Component<{
   endTutorial: () => void;
 }> {
   renderTutorialDialog() {
+    const lang = i18n.lang.tutorial;
     const { endTutorial } = this.props;
     const { currentStep, dialogStylesAndContents, handleNextStep, hasNextButton } = this.context;
     const { dialogBoxStyles, subElement, text } = dialogStylesAndContents[currentStep];
@@ -36,7 +35,7 @@ class TutorialComponent extends React.Component<{
             {subElement}
             {hasNextButton ? (
               <div className="next-button" onClick={handleNextStep}>
-                {LANG.next}
+                {lang.next}
               </div>
             ) : null}
           </div>

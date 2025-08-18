@@ -14,9 +14,9 @@ import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
 
 export const calibrateWithDevicePictures = async (): Promise<FisheyeCameraParametersV2Cali | null> => {
-  const { lang } = i18n;
-  const tCali = lang.calibration;
-  const tCameraData = lang.camera_data_backup;
+  const {
+    lang: { calibration: tCali, camera_data_backup: tCameraData },
+  } = i18n;
   const progressId = 'calibrate-with-device-pictures';
   let canceled = false;
 

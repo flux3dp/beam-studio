@@ -7,7 +7,7 @@ import type { DefaultOptionType } from 'antd/es/select';
 import alert from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import SettingFormItem from './components/SettingFormItem';
@@ -19,7 +19,7 @@ interface Props {
 }
 
 function Connection({ options }: Props): React.JSX.Element {
-  const lang = i18n.lang;
+  const lang = useI18n();
   const { getConfig, setConfig } = useSettingStore();
   const originalIP = getConfig('poke-ip-addr');
   const checkIPFormat = (e: React.FocusEvent): void => {

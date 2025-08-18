@@ -7,13 +7,11 @@ import classNames from 'classnames';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import Select from '@core/app/widgets/AntdSelect';
-import i18n from '@core/helpers/i18n';
 import units from '@core/helpers/units';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './OffsetModal.module.scss';
 import type { OffsetProp } from './OffsetPanel';
-
-const LANG = i18n.lang.beambox.tool_panels;
 
 type Distance = { default: number; max: number; min: number; step?: number };
 
@@ -36,6 +34,7 @@ interface Props {
 }
 
 const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
+  const lang = useI18n().beambox.tool_panels;
   const unit = useStorageStore((state) => (state['default-units'] === 'inches' ? 'inch' : 'mm'));
   const setting = unitSettings[unit];
   const [offset, setOffset] = useState<OffsetProp>({
@@ -65,11 +64,11 @@ const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
       }}
     >
       <Modal
-        cancelText={LANG.cancel}
+        cancelText={lang.cancel}
         centered
         className={styles.modal}
         closeIcon={<Icon className={styles['close-icon']} component={ActionPanelIcons.Delete} />}
-        okText={LANG.confirm}
+        okText={lang.confirm}
         onCancel={onCancel}
         onOk={() => {
           const distanceInMM = +units.convertUnit(offset.distance, 'mm', unit).toFixed(2);
@@ -78,17 +77,17 @@ const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
         }}
         open
       >
-        <div className={styles.title}>{LANG.offset}</div>
+        <div className={styles.title}>{lang.offset}</div>
         <div className={styles.field}>
-          <span className={styles.label}>{LANG._offset.direction}</span>
+          <span className={styles.label}>{lang._offset.direction}</span>
           <Select
             className={styles.select}
             onChange={(mode) => {
               setOffset({ ...offset, distance: getDistance(mode).default, mode });
             }}
             options={[
-              { label: LANG._offset.outward, value: 'outward' },
-              { label: LANG._offset.inward, value: 'inward' },
+              { label: lang._offset.outward, value: 'outward' },
+              { label: lang._offset.inward, value: 'inward' },
               // { label: LANG._offset.expand, value: 'expand' },
               // { label: LANG._offset.shrink, value: 'shrink' },
             ]}
@@ -97,20 +96,20 @@ const OffsetModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
           />
         </div>
         <div className={styles.field}>
-          <span className={styles.label}>{LANG._offset.corner_type}</span>
+          <span className={styles.label}>{lang._offset.corner_type}</span>
           <Select
             className={styles.select}
             onChange={(val) => setOffset({ ...offset, cornerType: val })}
             options={[
-              { label: LANG._offset.sharp, value: 'sharp' },
-              { label: LANG._offset.round, value: 'round' },
+              { label: lang._offset.sharp, value: 'sharp' },
+              { label: lang._offset.round, value: 'round' },
             ]}
             popupMatchSelectWidth={false}
             value={offset.cornerType}
           />
         </div>
         <div className={styles.field}>
-          <span className={styles.label}>{LANG._offset.dist}</span>
+          <span className={styles.label}>{lang._offset.dist}</span>
           <InputNumber
             className={classNames(styles.input, styles['with-unit'])}
             controls={false}

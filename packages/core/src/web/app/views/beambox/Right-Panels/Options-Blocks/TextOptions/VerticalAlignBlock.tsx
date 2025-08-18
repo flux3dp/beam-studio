@@ -6,8 +6,8 @@ import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import styles from '@core/app/views/beambox/Right-Panels/OptionsPanel.module.scss';
 import Select from '@core/app/widgets/AntdSelect';
-import i18n from '@core/helpers/i18n';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   hasMultiValue?: boolean;
@@ -16,13 +16,13 @@ interface Props {
 }
 
 export default function VerticalAlignBlock({ hasMultiValue, onValueChange, value }: Props): React.JSX.Element {
-  const LANG = i18n.lang.beambox.right_panel.object_panel;
-  const label = LANG.option_panel.vertical_align;
+  const lang = useI18n().beambox.right_panel.object_panel;
+  const label = lang.option_panel.vertical_align;
   const isMobile = useIsMobile();
   const options = [
-    { label: LANG.bottom_align, value: VerticalAlign.BOTTOM },
-    { label: LANG.middle_align, value: VerticalAlign.MIDDLE },
-    { label: LANG.top_align, value: VerticalAlign.TOP },
+    { label: lang.bottom_align, value: VerticalAlign.BOTTOM },
+    { label: lang.middle_align, value: VerticalAlign.MIDDLE },
+    { label: lang.top_align, value: VerticalAlign.TOP },
   ];
 
   if (isMobile) {

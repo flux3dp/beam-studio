@@ -2,9 +2,7 @@ import React from 'react';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import i18n from '@core/helpers/i18n';
-
-const LANG = i18n.lang.beambox.tool_panels;
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   onValueChange: (val: number) => void;
@@ -12,6 +10,7 @@ interface Props {
 }
 
 function NestSpacingPanel({ onValueChange, spacing: spacingProps }: Props): React.JSX.Element {
+  const lang = useI18n().beambox.tool_panels;
   const [spacing, updateSpacing] = React.useState(spacingProps);
   const isInch = useStorageStore((state) => state['default-units'] === 'inches');
 
@@ -25,7 +24,7 @@ function NestSpacingPanel({ onValueChange, spacing: spacingProps }: Props): Reac
       <label className="controls accordion">
         <input className="accordion-switcher" defaultChecked type="checkbox" />
         <p className="caption">
-          {LANG._nest.spacing}
+          {lang._nest.spacing}
           <span className="value">{isInch ? `${Number(spacing / 25.4).toFixed(3)}"` : `${spacing} mm`}</span>
         </p>
         <label className="accordion-body">

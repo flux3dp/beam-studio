@@ -11,7 +11,7 @@ import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calib
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
-import { gestureIntroduction } from '@core/app/constants/media-tutorials';
+import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import NS from '@core/app/constants/namespaces';
 import BeamboxStore from '@core/app/stores/beambox-store';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -88,10 +88,10 @@ class BeamboxInit {
 
       if (res && !res.error) {
         if (res.status === 'ok' && !res.value) {
-          await Dialog.showMediaTutorial(gestureIntroduction);
+          await Dialog.showMediaTutorial(getGestureIntroduction());
           await fluxId.setPreference({ did_gesture_tutorial: true });
         } else if (res.status === 'error' && res.info === 'NOT_LOGGED_IN' && !storage.get('did-gesture-tutorial')) {
-          await Dialog.showMediaTutorial(gestureIntroduction);
+          await Dialog.showMediaTutorial(getGestureIntroduction());
           storage.set('did-gesture-tutorial', 1);
         }
       }

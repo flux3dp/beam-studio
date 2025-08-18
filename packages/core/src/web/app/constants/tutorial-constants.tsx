@@ -13,9 +13,6 @@ export enum TutorialCallbacks {
   SELECT_DEFAULT_RECT = 'SELECT_DEFAULT_RECT',
 }
 
-const LANG = i18n.lang.tutorial;
-const langLeftPanel = i18n.lang.beambox.left_panel.label;
-
 const nextStepRequirements = {
   ADD_NEW_LAYER: 'ADD_NEW_LAYER',
   DRAW_A_CIRCLE: 'DRAW_A_CIRCLE',
@@ -37,618 +34,595 @@ const rightPanelInnerWidth = layoutConstants.rightPanelWidth - layoutConstants.r
 
 const adjustFocusLinkClick = () => {
   // TODO: Add adjust focus link for Beambox2
-  browser.open(LANG.links.adjust_focus);
+  browser.open(i18n.lang.tutorial.links.adjust_focus);
 };
 
-const NEW_USER_TUTORIAL: ITutorial = {
-  dialogStylesAndContents: [
-    {
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(26, TopRef.TOPBAR) },
+export const generateNewUserTutorial = (): ITutorial => {
+  const { tutorial: t } = i18n.lang;
+
+  return {
+    dialogStylesAndContents: [
+      {
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(26, TopRef.TOPBAR) },
+        },
+        hintCircle: {
+          height: 40,
+          left: 5,
+          top: calculateTop(9, TopRef.TOPBAR),
+          width: 40,
+        },
+        holePosition: { left: 7, top: calculateTop(10, TopRef.TOPBAR) },
+        holeSize: { height: 36, width: 36 },
+        nextStepRequirement: nextStepRequirements.TO_PREVIEW_MODE,
+        text: t.newUser.switch_to_preview_mode,
       },
-      hintCircle: {
-        height: 40,
-        left: 5,
-        top: calculateTop(9, TopRef.TOPBAR),
-        width: 40,
-      },
-      holePosition: { left: 7, top: calculateTop(10, TopRef.TOPBAR) },
-      holeSize: { height: 36, width: 36 },
-      nextStepRequirement: nextStepRequirements.TO_PREVIEW_MODE,
-      text: LANG.newUser.switch_to_preview_mode,
-    },
-    {
-      dialogBoxStyles: {
-        position: {
-          get left(): number {
-            return window.innerWidth - layoutConstants.rightPanelWidth;
+      {
+        dialogBoxStyles: {
+          position: {
+            left: window.innerWidth - layoutConstants.rightPanelWidth,
+            top: calculateTop(260, TopRef.TOPBAR),
           },
-          top: calculateTop(260, TopRef.TOPBAR),
         },
-      },
-      hintCircle: {
-        get height(): number {
-          return window.innerHeight - layoutConstants.topBarHeight - 10;
+        hintCircle: {
+          height: window.innerHeight - layoutConstants.topBarHeight - 10,
+          left: 55,
+          top: calculateTop(5, TopRef.TOPBAR),
+          width: window.innerWidth - layoutConstants.sidePanelsWidth - 10,
         },
-        left: 55,
-        top: calculateTop(5, TopRef.TOPBAR),
-        get width(): number {
-          return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
-        },
-      },
-      holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(0) },
-      holeSize: {},
-      nextStepRequirement: nextStepRequirements.PREVIEW_PLATFORM,
-      subElement: (
-        <div className="sub-content">
-          <div className="sub-line">{LANG.newUser.put_wood}</div>
-          <div className="sub-line">
-            {LANG.newUser.adjust_focus}
-            <div className="hint-mark" onClick={adjustFocusLinkClick}>
-              ?
+        holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(0) },
+        holeSize: {},
+        nextStepRequirement: nextStepRequirements.PREVIEW_PLATFORM,
+        subElement: (
+          <div className="sub-content">
+            <div className="sub-line">{t.newUser.put_wood}</div>
+            <div className="sub-line">
+              {t.newUser.adjust_focus}
+              <div className="hint-mark" onClick={adjustFocusLinkClick}>
+                ?
+              </div>
             </div>
+            <div className="sub-line">{t.newUser.close_cover}</div>
           </div>
-          <div className="sub-line">{LANG.newUser.close_cover}</div>
-        </div>
-      ),
-      text: LANG.newUser.preview_the_platform,
-    },
-    {
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(26, TopRef.TOPBAR) },
+        ),
+        text: t.newUser.preview_the_platform,
       },
-      hintCircle: {
-        height: 40,
-        left: 5,
-        top: calculateTop(9, TopRef.TOPBAR),
-        width: 40,
+      {
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(26, TopRef.TOPBAR) },
+        },
+        hintCircle: {
+          height: 40,
+          left: 5,
+          top: calculateTop(9, TopRef.TOPBAR),
+          width: 40,
+        },
+        holePosition: { left: 7, top: calculateTop(10, TopRef.TOPBAR) },
+        holeSize: { height: 36, width: 36 },
+        nextStepRequirement: nextStepRequirements.TO_EDIT_MODE,
+        text: t.newUser.end_preview_mode,
       },
-      holePosition: { left: 7, top: calculateTop(10, TopRef.TOPBAR) },
-      holeSize: { height: 36, width: 36 },
-      nextStepRequirement: nextStepRequirements.TO_EDIT_MODE,
-      text: LANG.newUser.end_preview_mode,
-    },
-    {
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(287, TopRef.TOPBAR) },
+      {
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(287, TopRef.TOPBAR) },
+        },
+        hintCircle: {
+          height: 40,
+          left: 5,
+          top: calculateTop(267, TopRef.TOPBAR),
+          width: 40,
+        },
+        holePosition: { left: 7, top: calculateTop(269, TopRef.TOPBAR) },
+        holeSize: { height: 36, width: 36 },
+        nextStepRequirement: nextStepRequirements.SELECT_RECT,
+        text: t.newUser.draw_a_rect,
       },
-      hintCircle: {
-        height: 40,
-        left: 5,
-        top: calculateTop(267, TopRef.TOPBAR),
-        width: 40,
-      },
-      holePosition: { left: 7, top: calculateTop(269, TopRef.TOPBAR) },
-      holeSize: { height: 36, width: 36 },
-      nextStepRequirement: nextStepRequirements.SELECT_RECT,
-      text: LANG.newUser.draw_a_rect,
-    },
-    {
-      callback: TutorialCallbacks.SCROLL_TO_PARAMETER,
-      dialogBoxStyles: {
-        position: {
-          get left(): number {
-            return window.innerWidth - layoutConstants.rightPanelWidth;
+      {
+        callback: TutorialCallbacks.SCROLL_TO_PARAMETER,
+        dialogBoxStyles: {
+          position: {
+            left: window.innerWidth - layoutConstants.rightPanelWidth,
+            top: calculateTop(260, TopRef.TOPBAR),
           },
-          top: calculateTop(260, TopRef.TOPBAR),
         },
+        hintCircle: {
+          height: window.innerHeight - layoutConstants.topBarHeight - 10,
+          left: 55,
+          top: calculateTop(5, TopRef.TOPBAR),
+          width: window.innerWidth - layoutConstants.sidePanelsWidth - 10,
+        },
+        holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(40) },
+        holeSize: {},
+        nextStepRequirement: nextStepRequirements.DRAW_A_RECT,
+        text: t.newUser.drag_to_draw,
       },
-      hintCircle: {
-        get height(): number {
-          return window.innerHeight - layoutConstants.topBarHeight - 10;
+      {
+        callback: TutorialCallbacks.SCROLL_TO_ADD_LAYER,
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(4, RightRef.RIGHT_PANEL),
+            top: calculateTop(56, TopRef.LAYER_PARAMS),
+          },
         },
-        left: 55,
-        top: calculateTop(5, TopRef.TOPBAR),
-        get width(): number {
-          return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
+        hintCircle: {
+          height: 40,
+          right: calculateRight(45, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(36, TopRef.LAYER_PARAMS),
+          width: rightPanelInnerWidth - 55,
         },
+        holePosition: {
+          right: calculateRight(45, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(44, TopRef.LAYER_PARAMS),
+        },
+        holeSize: { height: 30, width: rightPanelInnerWidth - 60 },
+        nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_CUTTING,
+        text: t.newUser.set_preset_wood_cut,
       },
-      holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(40) },
-      holeSize: {},
-      nextStepRequirement: nextStepRequirements.DRAW_A_RECT,
-      text: LANG.newUser.drag_to_draw,
-    },
-    {
-      callback: TutorialCallbacks.SCROLL_TO_ADD_LAYER,
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(4, RightRef.RIGHT_PANEL),
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(40, RightRef.RIGHT_SCROLL_BAR),
+            top: calculateTop(11, TopRef.LAYER_LIST),
+          },
+        },
+        hintCircle: {
+          height: 30,
+          right: calculateRight(2, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(-4, TopRef.LAYER_LIST),
+          width: 30,
+        },
+        holePosition: {
+          right: calculateRight(0, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(-8, TopRef.LAYER_LIST),
+        },
+        holeSize: { height: 35, width: 35 },
+        nextStepRequirement: nextStepRequirements.ADD_NEW_LAYER,
+        text: t.newUser.add_new_layer,
+      },
+      {
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(329, TopRef.TOPBAR) },
+        },
+        hintCircle: {
+          height: 40,
+          left: 5,
+          top: calculateTop(310, TopRef.TOPBAR),
+          width: 40,
+        },
+        holePosition: { left: 7, top: calculateTop(312, TopRef.TOPBAR) },
+        holeSize: { height: 36, width: 36 },
+        nextStepRequirement: nextStepRequirements.SELECT_CIRCLE,
+        text: t.newUser.draw_a_circle,
+      },
+      {
+        dialogBoxStyles: {
+          position: {
+            left: window.innerWidth - layoutConstants.rightPanelWidth,
+            top: calculateTop(260, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: window.innerHeight - layoutConstants.topBarHeight - 10,
+          left: 55,
+          top: calculateTop(5, TopRef.TOPBAR),
+          width: window.innerWidth - layoutConstants.sidePanelsWidth - 10,
+        },
+        holePosition: {
+          left: 50,
+          right: layoutConstants.rightPanelWidth,
+          top: calculateTop(0, TopRef.TOPBAR),
+        },
+        holeSize: {},
+        nextStepRequirement: nextStepRequirements.DRAW_A_CIRCLE,
+        text: t.newUser.drag_to_draw,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: 44,
+            top: calculateTop(20, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 40,
+          right: 0,
+          top: calculateTop(0, TopRef.TOPBAR),
+          width: 40,
+        },
+        holePosition: {
+          right: 0,
+          top: calculateTop(0, TopRef.TOPBAR),
+        },
+        holeSize: { height: 40, width: 32 },
+        id: 'switch-tab',
+        nextStepRequirement: nextStepRequirements.TO_OBJECT_PANEL,
+        text: t.newUser.switch_to_object_panel,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(4, RightRef.RIGHT_PANEL),
+            top: calculateTop(272, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 30,
+          right: calculateRight(-35, RightRef.RIGHT_PANEL),
+          top: calculateTop(255, TopRef.TOPBAR),
+          width: 30,
+        },
+        holePosition: {
+          right: calculateRight(-40, RightRef.RIGHT_PANEL),
+          top: calculateTop(250, TopRef.TOPBAR),
+        },
+        holeSize: { height: 40, width: 40 },
+        nextStepRequirement: nextStepRequirements.INFILL,
+        text: t.newUser.infill,
+      },
+      {
+        callback: TutorialCallbacks.SCROLL_TO_PARAMETER,
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(4, RightRef.RIGHT_PANEL),
+            top: calculateTop(20, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 40,
+          right: calculateRight(-36, RightRef.RIGHT_PANEL),
+          top: calculateTop(0, TopRef.TOPBAR),
+          width: 40,
+        },
+        holePosition: {
+          right: calculateRight(-31, RightRef.RIGHT_PANEL),
+          top: calculateTop(0, TopRef.TOPBAR),
+        },
+        holeSize: { height: 40, width: 32 },
+        nextStepRequirement: nextStepRequirements.TO_LAYER_PANEL,
+        text: t.newUser.switch_to_layer_panel,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(4, RightRef.RIGHT_PANEL),
+            top: calculateTop(56, TopRef.LAYER_PARAMS),
+          },
+        },
+        hintCircle: {
+          height: 40,
+          right: calculateRight(45, RightRef.RIGHT_SCROLL_BAR),
           get top(): number {
-            return calculateTop(56, TopRef.LAYER_PARAMS);
+            return calculateTop(36, TopRef.LAYER_PARAMS);
           },
+          width: rightPanelInnerWidth - 55,
         },
-      },
-      hintCircle: {
-        height: 40,
-        right: calculateRight(45, RightRef.RIGHT_SROLL_BAR),
-        get top(): number {
-          return calculateTop(36, TopRef.LAYER_PARAMS);
-        },
-        width: rightPanelInnerWidth - 55,
-      },
-      holePosition: {
-        right: calculateRight(45, RightRef.RIGHT_SROLL_BAR),
-        get top(): number {
-          return calculateTop(44, TopRef.LAYER_PARAMS);
-        },
-      },
-      holeSize: { height: 30, width: rightPanelInnerWidth - 60 },
-      nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_CUTTING,
-      text: LANG.newUser.set_preset_wood_cut,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(40, RightRef.RIGHT_SROLL_BAR),
-          top: calculateTop(11, TopRef.LAYER_LIST),
-        },
-      },
-      hintCircle: {
-        height: 30,
-        right: calculateRight(2, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(-4, TopRef.LAYER_LIST),
-        width: 30,
-      },
-      holePosition: {
-        right: calculateRight(0, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(-8, TopRef.LAYER_LIST),
-      },
-      holeSize: { height: 35, width: 35 },
-      nextStepRequirement: nextStepRequirements.ADD_NEW_LAYER,
-      text: LANG.newUser.add_new_layer,
-    },
-    {
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(329, TopRef.TOPBAR) },
-      },
-      hintCircle: {
-        height: 40,
-        left: 5,
-        top: calculateTop(310, TopRef.TOPBAR),
-        width: 40,
-      },
-      holePosition: { left: 7, top: calculateTop(312, TopRef.TOPBAR) },
-      holeSize: { height: 36, width: 36 },
-      nextStepRequirement: nextStepRequirements.SELECT_CIRCLE,
-      text: LANG.newUser.draw_a_circle,
-    },
-    {
-      dialogBoxStyles: {
-        position: {
-          get left(): number {
-            return window.innerWidth - layoutConstants.rightPanelWidth;
-          },
-          top: calculateTop(260, TopRef.TOPBAR),
-        },
-      },
-      hintCircle: {
-        get height(): number {
-          return window.innerHeight - layoutConstants.topBarHeight - 10;
-        },
-        left: 55,
-        top: calculateTop(5, TopRef.TOPBAR),
-        get width(): number {
-          return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
-        },
-      },
-      holePosition: {
-        left: 50,
-        right: layoutConstants.rightPanelWidth,
-        top: calculateTop(0, TopRef.TOPBAR),
-      },
-      holeSize: {},
-      nextStepRequirement: nextStepRequirements.DRAW_A_CIRCLE,
-      text: LANG.newUser.drag_to_draw,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: 44,
-          top: calculateTop(20, TopRef.TOPBAR),
-        },
-      },
-      hintCircle: {
-        height: 40,
-        right: 0,
-        top: calculateTop(0, TopRef.TOPBAR),
-        width: 40,
-      },
-      holePosition: {
-        right: 0,
-        top: calculateTop(0, TopRef.TOPBAR),
-      },
-      holeSize: { height: 40, width: 32 },
-      id: 'switch-tab',
-      nextStepRequirement: nextStepRequirements.TO_OBJECT_PANEL,
-      text: LANG.newUser.switch_to_object_panel,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(4, RightRef.RIGHT_PANEL),
-          top: calculateTop(272, TopRef.TOPBAR),
-        },
-      },
-      hintCircle: {
-        height: 30,
-        right: calculateRight(-35, RightRef.RIGHT_PANEL),
-        top: calculateTop(255, TopRef.TOPBAR),
-        width: 30,
-      },
-      holePosition: {
-        right: calculateRight(-40, RightRef.RIGHT_PANEL),
-        top: calculateTop(250, TopRef.TOPBAR),
-      },
-      holeSize: { height: 40, width: 40 },
-      nextStepRequirement: nextStepRequirements.INFILL,
-      text: LANG.newUser.infill,
-    },
-    {
-      callback: TutorialCallbacks.SCROLL_TO_PARAMETER,
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(4, RightRef.RIGHT_PANEL),
-          top: calculateTop(20, TopRef.TOPBAR),
-        },
-      },
-      hintCircle: {
-        height: 40,
-        right: calculateRight(-36, RightRef.RIGHT_PANEL),
-        top: calculateTop(0, TopRef.TOPBAR),
-        width: 40,
-      },
-      holePosition: {
-        right: calculateRight(-31, RightRef.RIGHT_PANEL),
-        top: calculateTop(0, TopRef.TOPBAR),
-      },
-      holeSize: { height: 40, width: 32 },
-      nextStepRequirement: nextStepRequirements.TO_LAYER_PANEL,
-      text: LANG.newUser.switch_to_layer_panel,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(4, RightRef.RIGHT_PANEL),
+        holePosition: {
+          right: calculateRight(45, RightRef.RIGHT_SCROLL_BAR),
           get top(): number {
-            return calculateTop(56, TopRef.LAYER_PARAMS);
+            return calculateTop(44, TopRef.LAYER_PARAMS);
           },
         },
+        holeSize: { height: 30, width: rightPanelInnerWidth - 60 },
+        nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_ENGRAVING,
+        text: t.newUser.set_preset_wood_engraving,
       },
-      hintCircle: {
-        height: 40,
-        right: calculateRight(45, RightRef.RIGHT_SROLL_BAR),
-        get top(): number {
-          return calculateTop(36, TopRef.LAYER_PARAMS);
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'top',
+          arrowPadding: 7,
+          position: { right: 21, top: calculateTop(0, TopRef.TOPBAR) },
         },
-        width: rightPanelInnerWidth - 55,
-      },
-      holePosition: {
-        right: calculateRight(45, RightRef.RIGHT_SROLL_BAR),
-        get top(): number {
-          return calculateTop(44, TopRef.LAYER_PARAMS);
+        hintCircle: {
+          height: 36,
+          right: 6,
+          top: calculateTop(2),
+          width: 36,
         },
+        holePosition: { left: 0, top: calculateTop(0) },
+        holeSize: {},
+        nextStepRequirement: nextStepRequirements.SEND_FILE,
+        text: t.newUser.send_the_file,
       },
-      holeSize: { height: 30, width: rightPanelInnerWidth - 60 },
-      nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_ENGRAVING,
-      text: LANG.newUser.set_preset_wood_engraving,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'top',
-        arrowPadding: 7,
-        position: { right: 21, top: calculateTop(0, TopRef.TOPBAR) },
-      },
-      hintCircle: {
-        height: 36,
-        right: 6,
-        top: calculateTop(2),
-        width: 36,
-      },
-      holePosition: { left: 0, top: calculateTop(0) },
-      holeSize: {},
-      nextStepRequirement: nextStepRequirements.SEND_FILE,
-      text: LANG.newUser.send_the_file,
-    },
-  ],
-  end_alert: LANG.newUser.end_alert,
-  id: 'NEW_USER_TUTORIAL',
+    ],
+    end_alert: t.newUser.end_alert,
+    id: 'NEW_USER_TUTORIAL',
+  };
 };
 
-const INTERFACE_TUTORIAL: ITutorial = {
-  dialogStylesAndContents: [
-    {
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(26, TopRef.TOPBAR) },
-      },
-      hintCircle: {
-        height: 40,
-        left: 5,
-        top: calculateTop(9, TopRef.TOPBAR),
-        width: 40,
-      },
-      text: LANG.newInterface.camera_preview,
+export const generateInterfaceTutorial = (): ITutorial => {
+  const {
+    beambox: {
+      left_panel: { label: langLeftPanel },
     },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'top',
-        position: {
-          get right(): number {
-            return calculateRight(212, RightRef.PATH_PREVIEW_BTN);
+    tutorial: t,
+  } = i18n.lang;
+
+  return {
+    dialogStylesAndContents: [
+      {
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(26, TopRef.TOPBAR) },
+        },
+        hintCircle: {
+          height: 40,
+          left: 5,
+          top: calculateTop(9, TopRef.TOPBAR),
+          width: 40,
+        },
+        text: t.newInterface.camera_preview,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'top',
+          position: {
+            right: calculateRight(212, RightRef.PATH_PREVIEW_BTN),
+            top: calculateTop(10, TopRef.TOPBAR),
           },
-          top: calculateTop(10, TopRef.TOPBAR),
         },
-      },
-      hintCircle: {
-        height: 36,
-        get right(): number {
-          return calculateRight(192, RightRef.PATH_PREVIEW_BTN);
+        hintCircle: {
+          height: 36,
+          right: calculateRight(192, RightRef.PATH_PREVIEW_BTN),
+          top: calculateTop(2),
+          width: 150,
         },
-        top: calculateTop(2),
-        width: 150,
+        text: t.newInterface.select_machine,
       },
-      text: LANG.newInterface.select_machine,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'top',
-        position: {
-          get right(): number {
-            return calculateRight(58, RightRef.PATH_PREVIEW_BTN);
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'top',
+          position: {
+            right: calculateRight(58, RightRef.PATH_PREVIEW_BTN),
+            top: calculateTop(10, TopRef.TOPBAR),
           },
-          top: calculateTop(10, TopRef.TOPBAR),
         },
-      },
-      hintCircle: {
-        height: 36,
-        get right(): number {
-          return calculateRight(42, RightRef.PATH_PREVIEW_BTN);
+        hintCircle: {
+          height: 36,
+          right: calculateRight(42, RightRef.PATH_PREVIEW_BTN),
+          top: calculateTop(2),
+          width: 36,
         },
-        top: calculateTop(2),
-        width: 36,
+        text: i18n.lang.topbar.frame_task,
       },
-      text: i18n.lang.topbar.frame_task,
-    },
-    // Will be invisible with Ador
-    // Rocover when path preview is ready for Ador
-    // {
-    //   dialogBoxStyles: {
-    //     position: { right: 66, top: calculateTop(10, TopRef.TOPBAR) },
-    //     arrowDirection: 'top',
-    //   },
-    //   hintCircle: {
-    //     right: 49,
-    //     top: calculateTop(2),
-    //     width: 36,
-    //     height: 36,
-    //   },
-    //   text: i18n.lang.topbar.task_preview,
-    // },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'top',
-        arrowPadding: 8,
-        position: { right: 24, top: calculateTop(10, TopRef.TOPBAR) },
-      },
-      hintCircle: {
-        height: 36,
-        right: 6,
-        top: calculateTop(2),
-        width: 36,
-      },
-      text: LANG.newInterface.start_work,
-    },
-    {
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(130, TopRef.TOPBAR) },
-      },
-      hintCircle: {
-        height: 176,
-        left: 5,
-        top: calculateTop(48, TopRef.TOPBAR),
-        width: 40,
-      },
-      text: `${langLeftPanel.cursor} / ${langLeftPanel.photo} / ${langLeftPanel.my_cloud} / ${langLeftPanel.text}`,
-    },
-    {
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(264, TopRef.TOPBAR) },
-      },
-      hintCircle: {
-        height: 220,
-        left: 5,
-        top: calculateTop(224, TopRef.TOPBAR),
-        width: 40,
-      },
-      text: LANG.newInterface.basic_shapes,
-    },
-    {
-      callback: TutorialCallbacks.SCROLL_TO_ADD_LAYER,
-      dialogBoxStyles: {
-        position: { left: 56, top: calculateTop(460, TopRef.TOPBAR) },
-      },
-      hintCircle: {
-        height: 40,
-        left: 5,
-        top: calculateTop(438, TopRef.TOPBAR),
-        width: 40,
-      },
-      text: LANG.newInterface.pen_tool,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(45, RightRef.RIGHT_SROLL_BAR),
-          top: calculateTop(11, TopRef.LAYER_LIST),
+      // Will be invisible with Ador
+      // Rocover when path preview is ready for Ador
+      // {
+      //   dialogBoxStyles: {
+      //     position: { right: 66, top: calculateTop(10, TopRef.TOPBAR) },
+      //     arrowDirection: 'top',
+      //   },
+      //   hintCircle: {
+      //     right: 49,
+      //     top: calculateTop(2),
+      //     width: 36,
+      //     height: 36,
+      //   },
+      //   text: i18n.lang.topbar.task_preview,
+      // },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'top',
+          arrowPadding: 8,
+          position: { right: 24, top: calculateTop(10, TopRef.TOPBAR) },
         },
-      },
-      hintCircle: {
-        height: 30,
-        right: calculateRight(2, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(-4, TopRef.LAYER_LIST),
-        width: 30,
-      },
-      text: LANG.newInterface.add_new_layer,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(-30, RightRef.RIGHT_PANEL),
-          top: calculateTop(60, TopRef.TOPBAR),
+        hintCircle: {
+          height: 36,
+          right: 6,
+          top: calculateTop(2),
+          width: 36,
         },
+        text: t.newInterface.start_work,
       },
-      hintCircle: {
-        height: 36,
-        right: calculateRight(60, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(42, TopRef.TOPBAR),
-        width: 145,
-      },
-      text: LANG.newInterface.rename_by_double_click,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(0, RightRef.RIGHT_PANEL),
-          top: calculateTop(60, TopRef.TOPBAR),
+      {
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(130, TopRef.TOPBAR) },
         },
-      },
-      hintCircle: {
-        height: 36,
-        right: calculateRight(4, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(42, TopRef.TOPBAR),
-        width: rightPanelInnerWidth - 15,
-      },
-      text: LANG.newInterface.drag_to_sort,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(0, RightRef.RIGHT_PANEL),
-          top: calculateTop(60, TopRef.TOPBAR),
+        hintCircle: {
+          height: 176,
+          left: 5,
+          top: calculateTop(48, TopRef.TOPBAR),
+          width: 40,
         },
+        text: `${langLeftPanel.cursor} / ${langLeftPanel.photo} / ${langLeftPanel.my_cloud} / ${langLeftPanel.text}`,
       },
-      hintCircle: {
-        height: layoutConstants.layerListHeight - 4,
-        right: calculateRight(4, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(42, TopRef.TOPBAR),
-        width: rightPanelInnerWidth - 15,
-      },
-      text: LANG.newInterface.layer_controls,
-    },
-    {
-      callback: TutorialCallbacks.SELECT_DEFAULT_RECT,
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(0, RightRef.RIGHT_PANEL),
-          top: calculateTop(20, TopRef.TOPBAR),
+      {
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(264, TopRef.TOPBAR) },
         },
-      },
-      hintCircle: {
-        height: 36,
-        right: 2,
-        top: calculateTop(2, TopRef.TOPBAR),
-        width: layoutConstants.rightPanelWidth - 4,
-      },
-      text: LANG.newInterface.switch_between_layer_panel_and_object_panel,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(0, RightRef.RIGHT_PANEL),
-          top: calculateTop(60, TopRef.TOPBAR),
+        hintCircle: {
+          height: 220,
+          left: 5,
+          top: calculateTop(224, TopRef.TOPBAR),
+          width: 40,
         },
+        text: t.newInterface.basic_shapes,
       },
-      hintCircle: {
-        height: 36,
-        right: calculateRight(2, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(42, TopRef.TOPBAR),
-        width: rightPanelInnerWidth - 5,
-      },
-      text: LANG.newInterface.align_controls,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(0, RightRef.RIGHT_PANEL),
-          top: calculateTop(100, TopRef.TOPBAR),
+      {
+        callback: TutorialCallbacks.SCROLL_TO_ADD_LAYER,
+        dialogBoxStyles: {
+          position: { left: 56, top: calculateTop(460, TopRef.TOPBAR) },
         },
-      },
-      hintCircle: {
-        height: 36,
-        right: calculateRight(-65, RightRef.RIGHT_PANEL),
-        top: calculateTop(83, TopRef.TOPBAR),
-        width: 60,
-      },
-      text: LANG.newInterface.group_controls,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(0, RightRef.RIGHT_PANEL),
-          top: calculateTop(100, TopRef.TOPBAR),
+        hintCircle: {
+          height: 40,
+          left: 5,
+          top: calculateTop(438, TopRef.TOPBAR),
+          width: 40,
         },
+        text: t.newInterface.pen_tool,
       },
-      hintCircle: {
-        height: 36,
-        right: calculateRight(5, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(83, TopRef.TOPBAR),
-        width: 115,
-      },
-      text: LANG.newInterface.shape_operation,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(85, RightRef.RIGHT_SROLL_BAR),
-          top: calculateTop(200, TopRef.TOPBAR),
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(45, RightRef.RIGHT_SCROLL_BAR),
+            top: calculateTop(11, TopRef.LAYER_LIST),
+          },
         },
-      },
-      hintCircle: {
-        height: 34,
-        right: calculateRight(2, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(185, TopRef.TOPBAR),
-        width: 67,
-      },
-      text: LANG.newInterface.flip,
-    },
-    {
-      dialogBoxStyles: {
-        arrowDirection: 'right',
-        position: {
-          right: calculateRight(0, RightRef.RIGHT_PANEL),
-          top: calculateTop(260, TopRef.TOPBAR),
+        hintCircle: {
+          height: 30,
+          right: calculateRight(2, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(-4, TopRef.LAYER_LIST),
+          width: 30,
         },
+        text: t.newInterface.add_new_layer,
       },
-      hintCircle: {
-        height: 328,
-        right: calculateRight(5, RightRef.RIGHT_SROLL_BAR),
-        top: calculateTop(225, TopRef.TOPBAR),
-        width: rightPanelInnerWidth - 10,
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(-30, RightRef.RIGHT_PANEL),
+            top: calculateTop(60, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 36,
+          right: calculateRight(60, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(42, TopRef.TOPBAR),
+          width: 145,
+        },
+        text: t.newInterface.rename_by_double_click,
       },
-      text: LANG.newInterface.object_actions,
-    },
-  ],
-  end_alert: LANG.newInterface.end_alert,
-  hasNextButton: true,
-  id: 'INTERFACE_TUTORIAL',
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(0, RightRef.RIGHT_PANEL),
+            top: calculateTop(60, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 36,
+          right: calculateRight(4, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(42, TopRef.TOPBAR),
+          width: rightPanelInnerWidth - 15,
+        },
+        text: t.newInterface.drag_to_sort,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(0, RightRef.RIGHT_PANEL),
+            top: calculateTop(60, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: layoutConstants.layerListHeight - 4,
+          right: calculateRight(4, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(42, TopRef.TOPBAR),
+          width: rightPanelInnerWidth - 15,
+        },
+        text: t.newInterface.layer_controls,
+      },
+      {
+        callback: TutorialCallbacks.SELECT_DEFAULT_RECT,
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(0, RightRef.RIGHT_PANEL),
+            top: calculateTop(20, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 36,
+          right: 2,
+          top: calculateTop(2, TopRef.TOPBAR),
+          width: layoutConstants.rightPanelWidth - 4,
+        },
+        text: t.newInterface.switch_between_layer_panel_and_object_panel,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(0, RightRef.RIGHT_PANEL),
+            top: calculateTop(60, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 36,
+          right: calculateRight(2, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(42, TopRef.TOPBAR),
+          width: rightPanelInnerWidth - 5,
+        },
+        text: t.newInterface.align_controls,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(0, RightRef.RIGHT_PANEL),
+            top: calculateTop(100, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 36,
+          right: calculateRight(-65, RightRef.RIGHT_PANEL),
+          top: calculateTop(83, TopRef.TOPBAR),
+          width: 60,
+        },
+        text: t.newInterface.group_controls,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(0, RightRef.RIGHT_PANEL),
+            top: calculateTop(100, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 36,
+          right: calculateRight(5, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(83, TopRef.TOPBAR),
+          width: 115,
+        },
+        text: t.newInterface.shape_operation,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(85, RightRef.RIGHT_SCROLL_BAR),
+            top: calculateTop(200, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 34,
+          right: calculateRight(2, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(185, TopRef.TOPBAR),
+          width: 67,
+        },
+        text: t.newInterface.flip,
+      },
+      {
+        dialogBoxStyles: {
+          arrowDirection: 'right',
+          position: {
+            right: calculateRight(0, RightRef.RIGHT_PANEL),
+            top: calculateTop(260, TopRef.TOPBAR),
+          },
+        },
+        hintCircle: {
+          height: 328,
+          right: calculateRight(5, RightRef.RIGHT_SCROLL_BAR),
+          top: calculateTop(225, TopRef.TOPBAR),
+          width: rightPanelInnerWidth - 10,
+        },
+        text: t.newInterface.object_actions,
+      },
+    ],
+    end_alert: t.newInterface.end_alert,
+    hasNextButton: true,
+    id: 'INTERFACE_TUTORIAL',
+  };
 };
 
 export default {
   ...nextStepRequirements,
-  INTERFACE_TUTORIAL,
-  NEW_USER_TUTORIAL,
 };

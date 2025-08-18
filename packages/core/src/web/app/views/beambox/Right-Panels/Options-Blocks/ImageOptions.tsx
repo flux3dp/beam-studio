@@ -15,10 +15,10 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { IImageDataResult } from '@core/interfaces/IImage';
@@ -31,13 +31,12 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
-
 interface Props {
   elem: Element;
 }
 
 const ImageOptions = ({ elem }: Props): React.JSX.Element => {
+  const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const { updateObjectPanel } = useContext(ObjectPanelContext);
   const thresholdCache = useRef(Array.from({ length: 256 }).fill(null));
   const curCallID = useRef(0);
@@ -168,14 +167,14 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
       <ObjectPanelItem.Item
         content={<Switch checked={isGradient} />}
         id="gradient"
-        label={LANG.shading}
+        label={lang.shading}
         onClick={handleGradientClick}
       />
       {shouldShowPwm && (
         <ObjectPanelItem.Item
           content={<Switch checked={isPwm} />}
           id="pwm"
-          label={LANG.pwm_engraving}
+          label={lang.pwm_engraving}
           onClick={handlePwmClick}
         />
       )}
@@ -183,14 +182,14 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
   ) : (
     <>
       <div className={styles['option-block']} key="gradient">
-        <div className={styles.label}>{LANG.shading}</div>
+        <div className={styles.label}>{lang.shading}</div>
         <Switch checked={isGradient} onChange={handleGradientClick} size="small" />
       </div>
       {shouldShowPwm && (
         <div className={styles['option-block']} key="pwm">
           <div className={styles.label}>
-            {LANG.pwm_engraving}
-            <QuestionCircleOutlined className={styles.icon} onClick={() => browser.open(LANG.pwm_engraving_link)} />
+            {lang.pwm_engraving}
+            <QuestionCircleOutlined className={styles.icon} onClick={() => browser.open(lang.pwm_engraving_link)} />
           </div>
           <Switch checked={isPwm} onChange={handlePwmClick} size="small" />
         </div>
@@ -207,7 +206,7 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
       <Popover
         content={
           <div className={styles.field}>
-            <span className={styles.label}>{LANG.threshold_short}</span>
+            <span className={styles.label}>{lang.threshold_short}</span>
             <ConfigProvider theme={{ token: { borderRadius: 100 } }}>
               <InputNumber
                 className={styles.input}
@@ -237,13 +236,13 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
           autoClose={false}
           content={<OptionPanelIcons.Threshold />}
           id="threshold"
-          label={LANG.threshold_short}
+          label={lang.threshold_short}
         />
       </Popover>
     ) : (
       <Fragment key="threshold">
         <div className={classNames(styles['option-block'], styles['with-slider'])}>
-          <div className={styles.label}>{LANG.threshold}</div>
+          <div className={styles.label}>{lang.threshold}</div>
           <UnitInput
             className={{ [styles['option-input']]: true }}
             decimal={0}

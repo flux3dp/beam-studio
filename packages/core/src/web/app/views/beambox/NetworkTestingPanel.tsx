@@ -14,7 +14,7 @@ import network from '@core/implementations/network';
 import os from '@core/implementations/os';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-const LANG = i18n.lang.beambox.network_testing_panel;
+let LANG = i18n.lang.beambox.network_testing_panel;
 const TEST_TIME = 30000;
 
 interface Props {
@@ -22,6 +22,7 @@ interface Props {
   onClose: () => void;
 }
 
+// TODO: refactor to functional component
 class NetworkTestingPanel extends React.Component<Props> {
   private discoveredDevices: IDeviceInfo[];
 
@@ -33,6 +34,7 @@ class NetworkTestingPanel extends React.Component<Props> {
 
   constructor(props: Props) {
     super(props);
+    LANG = i18n.lang.beambox.network_testing_panel;
 
     const localIps = [];
     const ifaces = os.networkInterfaces();

@@ -3,8 +3,8 @@ import React from 'react';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import styles from '@core/app/views/beambox/Right-Panels/OptionsPanel.module.scss';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import i18n from '@core/helpers/i18n';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   hasMultiValue?: boolean;
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export default function StartOffsetBlock({ hasMultiValue, onValueChange, value }: Props): React.JSX.Element {
-  const LANG = i18n.lang.beambox.right_panel.object_panel.option_panel;
+  const LANG = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
 
   return isMobile ? (
