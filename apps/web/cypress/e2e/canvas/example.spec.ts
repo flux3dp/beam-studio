@@ -28,8 +28,8 @@ const exampleList = [
   {
     label: 'Example of Beambox',
     type: 'Example Files',
-    ador: ['9c1a31175c421a17392cd3cc05c092b2', 'b2d80ef5c364fe9530a9a4f92df94ab8'],
-    beam: 'ec80c5dd6f6262085fa8be94e7e29782',
+    ador: ['9c1a31175c421a17392cd3cc05c092b2', '8562f2ecfe6805305e9dfe2aac95c9be'],
+    beam: 'f90cc5da6a7a137d7abb0e6f6d5a458c',
   },
   {
     label: 'Material Engraving Test',
