@@ -43,6 +43,18 @@ type PrintingConfig = {
   kRatio: number;
   mRatio: number;
   multipass: number;
+  /**
+   * 1 for left, 2 for right, 3 for both
+   */
+  nozzleMode: number;
+  /**
+   * nozzle offset x of right relative to left, the real print x will be x - nozzleOffsetX
+   */
+  nozzleOffsetX: number;
+  /**
+   * nozzle offset y of left relative to right, the real print y will be y - nozzleOffsetY
+   */
+  nozzleOffsetY: number;
   printingSpeed: number;
   printingStrength: number;
   refreshInterval: number;
