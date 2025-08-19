@@ -124,7 +124,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
   const [hasLogin, setHasLogin] = useState(!!getCurrentUser());
   const [searchKey, setSearchKey] = useState<string | undefined>(undefined);
   const [contents, setContents] = useState<Content[]>([]);
-  const historyIcons = useStorageStore((state) => state['elements-history']).slice(0, previewCount);
+  const historyIcons = (useStorageStore((state) => state['elements-history']) || []).slice(0, previewCount);
   const cacheRef = useRef<ICache>({ [ContentType.MainType]: {}, [ContentType.Search]: {}, [ContentType.SubType]: {} });
   const searchRef = useRef({ term: '', timer: null as NodeJS.Timeout | null });
   const contentRef = useRef(0);
