@@ -28,7 +28,7 @@ export const useStorageStore = create(
   ),
 );
 
-// syntax sugar
+// Syntactic sugar
 export const getStorage = <K extends StorageKey>(key: K) => useStorageStore.getState()[key];
 export const setStorage = (key: StorageKey, value: StorageStore[StorageKey], shouldNotifyChanges = true) =>
   useStorageStore.getState().set(key, value, shouldNotifyChanges);
