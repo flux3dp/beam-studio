@@ -66,7 +66,7 @@ const Welcome = (): ReactNode => {
     topbar: { menu: tMenu },
     welcome_page: t,
   } = useI18n();
-  const activeLang = useStorageStore((state) => state['active-lang']);
+  const activeLang = useStorageStore((state) => state['active-lang']) ?? 'en';
   const isMobile = useIsMobile();
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
   const [banners, setBanners] = useState<IBanner[]>([]);

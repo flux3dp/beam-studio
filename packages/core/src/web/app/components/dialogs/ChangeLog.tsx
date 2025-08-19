@@ -21,7 +21,7 @@ function ChangeLog({ onClose }: Props): ReactNode {
   const { change_logs: t, global: tGlobal } = useI18n();
   const activeLang = useStorageStore((state) => state['active-lang']);
   const changeLogs = useMemo(() => {
-    const CHANGES = activeLang.startsWith('zh') ? changelog.CHANGES_TW : changelog.CHANGES_EN;
+    const CHANGES = activeLang?.startsWith('zh') ? changelog.CHANGES_TW : changelog.CHANGES_EN;
     const logs = [];
 
     for (const key of Object.keys(CHANGES) as Array<keyof IChangeLogContent>) {

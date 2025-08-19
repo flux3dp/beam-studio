@@ -47,7 +47,7 @@ const Beambox = (): React.JSX.Element => {
     };
   });
 
-  const activeLang = useStorageStore((state) => state['active-lang']);
+  const activeLang = useStorageStore((state) => state['active-lang']) ?? 'en';
 
   return (
     <CanvasProvider>

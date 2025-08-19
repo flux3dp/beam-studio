@@ -56,7 +56,7 @@ interface Props {
 
 const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
   const lang = useI18n().beambox.tool_panels;
-  const activeLang = useStorageStore((state) => state['active-lang']);
+  const activeLang = useStorageStore((state) => state['active-lang']) ?? 'en';
 
   const [rowColumn, setRowColumn] = useState(data.rowcolumn);
   const [distance, setDistance] = useState(data.distance);

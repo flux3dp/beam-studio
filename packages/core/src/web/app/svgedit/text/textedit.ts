@@ -34,6 +34,7 @@ export const initCurText = () => {
   const defaultFont: IDefaultFont = storage.get('default-font');
 
   curText = {
+    fill_opacity: 0,
     font_family: defaultFont ? defaultFont.family : 'Arial',
     font_postscriptName: defaultFont ? defaultFont.postscriptName : 'ArialMT',
     font_size: isWeb() ? 200 : 100,
