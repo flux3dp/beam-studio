@@ -9,13 +9,12 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
+import { getStorage, removeFromStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import useForceUpdate from '@core/helpers/use-force-update';
 import dialog from '@core/implementations/dialog';
-import storage from '@core/implementations/storage';
 import type { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('presets');
@@ -274,7 +273,7 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
               }
               setStorage('customizedLaserConfigs', customizedLaserConfigs);
               setStorage('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
-              storage.removeAt('presets');
+              removeFromStorage('presets');
             }
 
             reloadPresets(true);

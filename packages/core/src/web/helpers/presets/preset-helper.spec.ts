@@ -40,18 +40,14 @@ jest.mock('@core/helpers/i18n', () => ({
   },
 }));
 
-const mockRemoveAt = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  removeAt: (...args) => mockRemoveAt(...args),
-}));
-
 const mockGetStorage = jest.fn();
 const mockSetStorage = jest.fn();
+const mockRemoveFromStorage = jest.fn();
 const mockSubscribe = jest.fn();
 
 jest.mock('@core/app/stores/storageStore', () => ({
   getStorage: (...args) => mockGetStorage(...args),
+  removeFromStorage: (...args) => mockRemoveFromStorage(...args),
   setStorage: (...args) => mockSetStorage(...args),
   useStorageStore: {
     subscribe: (...args) => mockSubscribe(...args),
@@ -71,7 +67,7 @@ describe('test preset-helper', () => {
     mockSetStorage.mockImplementation((key, value) => {
       mockStorage[key] = JSON.parse(JSON.stringify(value));
     });
-    mockRemoveAt.mockImplementation((key) => {
+    mockRemoveFromStorage.mockImplementation((key) => {
       delete mockStorage[key];
     });
   });
@@ -211,8 +207,8 @@ describe('test preset-helper', () => {
     expect(mockSetStorage).toHaveBeenNthCalledWith(2, 'defaultLaserConfigsInUse', {
       pre4: false,
     });
-    expect(mockRemoveAt).toHaveBeenCalledTimes(1);
-    expect(mockRemoveAt).toHaveBeenLastCalledWith('presets');
+    expect(mockRemoveFromStorage).toHaveBeenCalledTimes(1);
+    expect(mockRemoveFromStorage).toHaveBeenLastCalledWith('presets');
     expect(mockGetStorage('presets')).toEqual([
       { hide: false, isDefault: true, key: 'pre1' },
       { hide: false, isDefault: true, key: 'pre2' },

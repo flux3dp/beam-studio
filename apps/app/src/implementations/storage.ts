@@ -43,9 +43,11 @@ class ElectronStorage implements StorageManager {
     return this;
   };
 
-  removeAt = (name: string): StorageManager => {
+  removeAt = (name: string, shouldNotifyChanges = true): StorageManager => {
     this.store.delete(name);
     delete this.storeCache[name];
+
+    if (shouldNotifyChanges) communicator.send(TabEvents.StorageValueChanged, name, undefined);
 
     return this;
   };

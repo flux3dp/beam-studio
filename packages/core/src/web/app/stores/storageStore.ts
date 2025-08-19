@@ -30,9 +30,10 @@ export const useStorageStore = create(
 
 // syntax sugar
 export const getStorage = <K extends StorageKey>(key: K) => useStorageStore.getState()[key];
-export const setStorage = (key: StorageKey, value: StorageStore[StorageKey], shouldNotifyChanges = true) => {
+export const setStorage = (key: StorageKey, value: StorageStore[StorageKey], shouldNotifyChanges = true) =>
   useStorageStore.getState().set(key, value, shouldNotifyChanges);
-};
+export const removeFromStorage = (key: StorageKey, shouldNotifyChanges = true) =>
+  useStorageStore.getState().set(key, undefined, shouldNotifyChanges);
 
 communicator.on(TabEvents.StorageValueChanged, <K extends StorageKey>(_: unknown, key: K, value: StorageStore[K]) => {
   // use setState to avoid writing to storage multiple times
