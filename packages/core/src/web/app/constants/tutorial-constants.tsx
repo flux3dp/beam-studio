@@ -60,15 +60,21 @@ export const generateNewUserTutorial = (): ITutorial => {
       {
         dialogBoxStyles: {
           position: {
-            left: window.innerWidth - layoutConstants.rightPanelWidth,
+            get left(): number {
+              return window.innerWidth - layoutConstants.rightPanelWidth;
+            },
             top: calculateTop(260, TopRef.TOPBAR),
           },
         },
         hintCircle: {
-          height: window.innerHeight - layoutConstants.topBarHeight - 10,
+          get height(): number {
+            return window.innerHeight - layoutConstants.topBarHeight - 10;
+          },
           left: 55,
           top: calculateTop(5, TopRef.TOPBAR),
-          width: window.innerWidth - layoutConstants.sidePanelsWidth - 10,
+          get width(): number {
+            return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
+          },
         },
         holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(0) },
         holeSize: {},
@@ -121,15 +127,21 @@ export const generateNewUserTutorial = (): ITutorial => {
         callback: TutorialCallbacks.SCROLL_TO_PARAMETER,
         dialogBoxStyles: {
           position: {
-            left: window.innerWidth - layoutConstants.rightPanelWidth,
+            get left(): number {
+              return window.innerWidth - layoutConstants.rightPanelWidth;
+            },
             top: calculateTop(260, TopRef.TOPBAR),
           },
         },
         hintCircle: {
-          height: window.innerHeight - layoutConstants.topBarHeight - 10,
+          get height(): number {
+            return window.innerHeight - layoutConstants.topBarHeight - 10;
+          },
           left: 55,
           top: calculateTop(5, TopRef.TOPBAR),
-          width: window.innerWidth - layoutConstants.sidePanelsWidth - 10,
+          get width(): number {
+            return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
+          },
         },
         holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(40) },
         holeSize: {},
@@ -142,18 +154,24 @@ export const generateNewUserTutorial = (): ITutorial => {
           arrowDirection: 'right',
           position: {
             right: calculateRight(4, RightRef.RIGHT_PANEL),
-            top: calculateTop(56, TopRef.LAYER_PARAMS),
+            get top(): number {
+              return calculateTop(56, TopRef.LAYER_PARAMS);
+            },
           },
         },
         hintCircle: {
           height: 40,
           right: calculateRight(45, RightRef.RIGHT_SCROLL_BAR),
-          top: calculateTop(36, TopRef.LAYER_PARAMS),
+          get top(): number {
+            return calculateTop(36, TopRef.LAYER_PARAMS);
+          },
           width: rightPanelInnerWidth - 55,
         },
         holePosition: {
           right: calculateRight(45, RightRef.RIGHT_SCROLL_BAR),
-          top: calculateTop(44, TopRef.LAYER_PARAMS),
+          get top(): number {
+            return calculateTop(44, TopRef.LAYER_PARAMS);
+          },
         },
         holeSize: { height: 30, width: rightPanelInnerWidth - 60 },
         nextStepRequirement: nextStepRequirements.SET_PRESET_WOOD_CUTTING,
@@ -199,15 +217,21 @@ export const generateNewUserTutorial = (): ITutorial => {
       {
         dialogBoxStyles: {
           position: {
-            left: window.innerWidth - layoutConstants.rightPanelWidth,
+            get left(): number {
+              return window.innerWidth - layoutConstants.rightPanelWidth;
+            },
             top: calculateTop(260, TopRef.TOPBAR),
           },
         },
         hintCircle: {
-          height: window.innerHeight - layoutConstants.topBarHeight - 10,
+          get height(): number {
+            return window.innerHeight - layoutConstants.topBarHeight - 10;
+          },
           left: 55,
           top: calculateTop(5, TopRef.TOPBAR),
-          width: window.innerWidth - layoutConstants.sidePanelsWidth - 10,
+          get width(): number {
+            return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
+          },
         },
         holePosition: {
           left: 50,
@@ -291,7 +315,9 @@ export const generateNewUserTutorial = (): ITutorial => {
           arrowDirection: 'right',
           position: {
             right: calculateRight(4, RightRef.RIGHT_PANEL),
-            top: calculateTop(56, TopRef.LAYER_PARAMS),
+            get top(): number {
+              return calculateTop(56, TopRef.LAYER_PARAMS);
+            },
           },
         },
         hintCircle: {
@@ -361,13 +387,17 @@ export const generateInterfaceTutorial = (): ITutorial => {
         dialogBoxStyles: {
           arrowDirection: 'top',
           position: {
-            right: calculateRight(212, RightRef.PATH_PREVIEW_BTN),
+            get right(): number {
+              return calculateRight(212, RightRef.PATH_PREVIEW_BTN);
+            },
             top: calculateTop(10, TopRef.TOPBAR),
           },
         },
         hintCircle: {
           height: 36,
-          right: calculateRight(192, RightRef.PATH_PREVIEW_BTN),
+          get right(): number {
+            return calculateRight(192, RightRef.PATH_PREVIEW_BTN);
+          },
           top: calculateTop(2),
           width: 150,
         },
@@ -377,13 +407,17 @@ export const generateInterfaceTutorial = (): ITutorial => {
         dialogBoxStyles: {
           arrowDirection: 'top',
           position: {
-            right: calculateRight(58, RightRef.PATH_PREVIEW_BTN),
+            get right(): number {
+              return calculateRight(58, RightRef.PATH_PREVIEW_BTN);
+            },
             top: calculateTop(10, TopRef.TOPBAR),
           },
         },
         hintCircle: {
           height: 36,
-          right: calculateRight(42, RightRef.PATH_PREVIEW_BTN),
+          get right(): number {
+            return calculateRight(42, RightRef.PATH_PREVIEW_BTN);
+          },
           top: calculateTop(2),
           width: 36,
         },
