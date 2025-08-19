@@ -65,7 +65,9 @@ const UnmemorizedLeftPanel = () => {
         <LeftPanelButton
           icon={<LeftPanelIcons.Back />}
           id="Exit-Preview"
-          onClick={toggleAutoFocus}
+          onClick={async () => {
+            await toggleAutoFocus(false);
+          }}
           title={left_panel.label.end_preview}
         />
       </div>

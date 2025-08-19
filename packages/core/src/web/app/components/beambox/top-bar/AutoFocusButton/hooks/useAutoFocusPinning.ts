@@ -8,7 +8,7 @@ import shortcuts from '@core/helpers/shortcuts';
  * Manages the UI and event listeners for the auto focus pinning mode.
  */
 export const useAutoFocusPinning = (
-  onPin: (coords: { x: number; y: number }) => void,
+  onPin: (coords: { x: number; y: number }) => Promise<void>,
   toggleAutoFocus: (forceState?: boolean) => void,
 ) => {
   const [isPinning, setIsPinning] = useState(false);
@@ -39,7 +39,9 @@ export const useAutoFocusPinning = (
       return;
     }
 
-    workarea.style.cursor = 'url(img/measure-depth-cursor.svg) 11.5 11.5, cell';
+    workarea.style.cursor = 'url(img/auto-focus-cursor.svg) 16 12, cell';
+
+    console.log(workarea.style.cursor);
 
     // Create the coordinate display tooltip
     if (!coordsDisplayRef.current) {
@@ -75,13 +77,13 @@ export const useAutoFocusPinning = (
       displayEl.textContent = `X: ${(pt.x / 10).toFixed(1)}, Y: ${(pt.y / 10).toFixed(1)}`;
     };
 
-    const handleMouseClick = (e: MouseEvent) => {
+    const handleMouseClick = async (e: MouseEvent) => {
       e.preventDefault();
       e.stopPropagation();
 
       const pt = getEventPoint(e);
 
-      onPin(pt); // Execute the callback with the pinned coordinates
+      await onPin(pt); // Execute the callback with the pinned coordinates
 
       console.log('pinned', pt);
       stopPinning();
@@ -91,7 +93,14 @@ export const useAutoFocusPinning = (
     workarea.addEventListener('mousemove', handleMouseMove);
     workarea.addEventListener('click', handleMouseClick, { capture: true });
 
-    const unregister = shortcuts.on(['Escape'], stopPinning, { isBlocking: true });
+    const unregister = shortcuts.on(
+      ['Escape'],
+      () => {
+        stopPinning();
+        toggleAutoFocus(false);
+      },
+      { isBlocking: true },
+    );
 
     // Return a cleanup function to remove listeners
     return () => {
@@ -99,7 +108,7 @@ export const useAutoFocusPinning = (
       workarea.removeEventListener('click', handleMouseClick, { capture: true });
       unregister();
       stopPinning(); // Ensure state is cleaned up
-      toggleAutoFocus(false);
+      // toggleAutoFocus(false);
     };
   }, [isPinning, onPin, stopPinning, toggleAutoFocus]);
 

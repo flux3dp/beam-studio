@@ -1,4 +1,4 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
@@ -39,6 +39,7 @@ type Props = {
 const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
   const {
     alert,
+    global,
     message,
     topbar: {
       menu: { autofocus: lang },
@@ -51,7 +52,6 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
     [selectedDevice],
   );
   const { autoFocusOffset: [offsetX, offsetY] = [0, 0, 0], height, width } = getWorkarea(selectedDevice?.model!);
-
   const executeAutofocus = async (coords?: { x: number; y: number }) => {
     if (isProcessing) return;
 
@@ -73,11 +73,12 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
 
       await deviceMaster.rawAutoFocus();
       await deviceMaster.rawLooseMotor();
-      await deviceMaster.endSubTask();
     } finally {
+      await deviceMaster.endSubTask();
+      await deviceMaster.kick();
       progressCaller.popById('auto-focus');
       setIsProcessing(false);
-      toggleAutoFocus();
+      toggleAutoFocus(false);
     }
   };
 
@@ -99,7 +100,7 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
     if (!alertConfig.read('skip_auto_focus_warning')) {
       const shouldContinue = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
-          buttonLabels: [message.camera.abort_preview, message.camera.continue_preview],
+          buttonLabels: [global.cancel, message.camera.continue_preview],
           callbacks: [() => resolve(false), () => resolve(true)],
           checkbox: {
             callbacks: () => alertConfig.write('skip_auto_focus_warning', true),
@@ -172,11 +173,15 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
 
     if (prerequisite) {
       svgCanvas.clearSelection();
-      toggleAutoFocus();
+      toggleAutoFocus(true);
       await setupDevice();
       startPinning(); // If all checks pass, enter pinning mode.
     }
   };
+
+  useEffect(() => {
+    console.log(isProcessing, isPinning);
+  }, [isProcessing, isPinning]);
 
   return (
     <div

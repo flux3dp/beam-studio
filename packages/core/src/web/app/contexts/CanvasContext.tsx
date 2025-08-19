@@ -15,6 +15,7 @@ import { getPassThrough } from '@core/helpers/addOn';
 import { getLatestDeviceInfo } from '@core/helpers/api/discover';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
+import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -52,7 +53,7 @@ interface CanvasContextType {
   setMode: (mode: CanvasMode) => void;
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
   setupPreviewMode: (opts?: { callback?: () => void; showModal?: boolean }) => void;
-  toggleAutoFocus: (forceState?: boolean) => void;
+  toggleAutoFocus: (forceState?: boolean) => Promise<void>;
   togglePathPreview: () => void;
   updateCanvasContext: () => void;
 }
@@ -72,7 +73,7 @@ const CanvasContext = createContext<CanvasContextType>({
   setMode: () => {},
   setSelectedDevice: () => {},
   setupPreviewMode: () => {},
-  toggleAutoFocus: () => {},
+  toggleAutoFocus: async () => {},
   togglePathPreview: () => {},
   updateCanvasContext: () => {},
 });
@@ -325,10 +326,15 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     setMode(mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview);
   };
 
-  const toggleAutoFocus = (forceState?: boolean) => {
-    match(forceState)
+  const toggleAutoFocus = async (forceState?: boolean) => {
+    console.trace('toggleAutoFocus', forceState);
+    await match(forceState)
       .with(true, () => setMode(CanvasMode.AutoFocus))
-      .with(false, () => setMode(CanvasMode.Draw))
+      .with(false, async () => {
+        await deviceMaster.endSubTask();
+        await deviceMaster.kick();
+        setMode(CanvasMode.Draw);
+      })
       .otherwise(() => setMode(mode === CanvasMode.AutoFocus ? CanvasMode.Draw : CanvasMode.AutoFocus));
   };
 
