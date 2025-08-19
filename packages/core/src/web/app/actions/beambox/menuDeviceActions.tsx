@@ -464,7 +464,7 @@ export default {
 
         console.log(headSubmoduleInfo);
 
-        const moduleName = getDetectedModulesTranslations()[headType] || i18n.lang.layer_module.unknown;
+        const moduleName = getDetectedModulesTranslations()[headType] || lang.layer_module.unknown;
         const {
           color,
           ink_level: inkLevel,
@@ -521,26 +521,26 @@ export default {
     const info = (
       <div>
         <div>
-          {i18n.lang.device.model_name}: {device.model.toUpperCase()}
+          {lang.device.model_name}: {device.model.toUpperCase()}
         </div>
         <div>
-          {i18n.lang.device.IP}: {device.ipaddr}
+          {lang.device.IP}: {device.ipaddr}
         </div>
         <div>
-          {i18n.lang.device.serial_number}: {device.serial}
+          {lang.device.serial_number}: {device.serial}
         </div>
         <div>
-          {i18n.lang.device.firmware_version}: {device.version}
+          {lang.device.firmware_version}: {device.version}
         </div>
         <div>
-          {i18n.lang.device.UUID}: {device.uuid}
+          {lang.device.UUID}: {device.uuid}
         </div>
         {subModuleInfo}
       </div>
     );
 
     Alert.popUp({
-      buttonLabels: [i18n.lang.topmenu.device.network_test, i18n.lang.global.ok],
+      buttonLabels: [lang.topmenu.device.network_test, lang.global.ok],
       callbacks: [() => Dialog.showNetworkTestingPanel(device.ipaddr), () => {}],
       caption: device.name,
       id: 'machine-info',

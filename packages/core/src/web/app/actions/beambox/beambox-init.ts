@@ -297,10 +297,12 @@ class BeamboxInit {
   private async doFirstTimeCameraCalibration(): Promise<boolean> {
     const askForRetry = () =>
       new Promise<boolean>((resolve) => {
+        const t = i18n.lang.tutorial;
+
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: i18n.lang.tutorial.camera_calibration_failed,
-          message: i18n.lang.tutorial.ask_retry_calibration,
+          caption: t.camera_calibration_failed,
+          message: t.ask_retry_calibration,
           onNo: async () => resolve(false),
           onYes: async () => resolve(await this.doFirstTimeCameraCalibration()),
         });
@@ -346,12 +348,14 @@ class BeamboxInit {
 
   private showTutorial(isNewUser: boolean): Promise<boolean> {
     if (!AlertConfig.read('skip-interface-tutorial')) {
+      const t = i18n.lang.tutorial;
+
       return new Promise<boolean>((resolve) => {
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: i18n.lang.tutorial.welcome,
+          caption: t.welcome,
           id: 'ask-tutorial',
-          message: isNewUser ? i18n.lang.tutorial.needNewUserTutorial : i18n.lang.tutorial.needNewInterfaceTutorial,
+          message: isNewUser ? t.needNewUserTutorial : t.needNewInterfaceTutorial,
           onNo: () => {
             AlertConfig.write('skip-interface-tutorial', true);
             resolve(false);
@@ -360,7 +364,7 @@ class BeamboxInit {
             const tutorialCallback = () => {
               AlertConfig.write('skip-interface-tutorial', true);
               MessageCaller.openMessage({
-                content: i18n.lang.tutorial.tutorial_complete,
+                content: t.tutorial_complete,
                 level: MessageLevel.SUCCESS,
               });
               resolve(true);
