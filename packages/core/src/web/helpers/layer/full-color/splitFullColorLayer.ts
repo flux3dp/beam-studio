@@ -67,6 +67,7 @@ const splitFullColorLayer = async (
   uses.forEach((use) => symbolMaker.switchImageSymbol(use as SVGUseElement, false));
 
   const { bbox, cmykBlob, rgbBlob } = await layerToImage(layer as SVGGElement, {
+    dpmm: is4c ? 600 / 25.4 : 300 / 25.4,
     isFullColor: true,
   });
 
