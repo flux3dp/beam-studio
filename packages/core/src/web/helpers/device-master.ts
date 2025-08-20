@@ -1672,6 +1672,4 @@ class DeviceMaster {
 
 const deviceMaster = new DeviceMaster();
 
-window.deviceMaster = deviceMaster;
-
 export default deviceMaster;
