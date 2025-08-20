@@ -1263,6 +1263,17 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.rawGetStatePos);
   }
 
+  async rawGetDoorOpen(): Promise<{
+    backCover: number;
+    bottomCover: number;
+    interlock: number;
+    remoteInterlock: number;
+  }> {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.rawGetDoorOpen);
+  }
+
   async rawMeasureHeight({
     baseZ,
     relZ,
