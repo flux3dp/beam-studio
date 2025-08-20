@@ -29,7 +29,7 @@ interface Props {
 export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model } = device;
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const [zAxis, setZAxis] = useState(1);
   const [isPreviewing, setIsPreviewing] = useState(false);
   const [isMoving, setIsMoving] = useState(false);

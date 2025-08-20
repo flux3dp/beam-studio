@@ -84,7 +84,7 @@ const NumberBlock = ({
     }),
     [key],
   );
-  const isDefaultInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isDefaultInch = useStorageStore((state) => state.isInch);
   const { isInch, unit: displayUnit } = useMemo(() => {
     if (forceUsePropsUnit || !unit?.includes('mm') || !isDefaultInch) {
       return { isInch: false, unit };

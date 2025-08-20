@@ -27,7 +27,7 @@ interface Props {
 const Controls = ({ contour, dimension, imageRef, initDimension, setDimension }: Props): React.JSX.Element => {
   const { auto_fit: t } = useI18n();
   const { dpmm } = constant;
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const initialCenter = useMemo(() => calculateDimensionCenter(initDimension), [initDimension]);
 
   const handleResetPosition = useCallback(() => {

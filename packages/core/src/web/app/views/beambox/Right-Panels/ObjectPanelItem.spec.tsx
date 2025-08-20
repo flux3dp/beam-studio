@@ -34,7 +34,7 @@ const mockActions = [
 ];
 
 const mockUseStorageStore = jest.fn();
-const mockStorage = { 'default-units': 'mm' };
+const mockStorage = { isInch: false };
 
 jest.mock('@core/app/stores/storageStore', () => ({
   useStorageStore: mockUseStorageStore,
@@ -97,7 +97,7 @@ describe('should render correctly', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockUseStorageStore.mockImplementation((selector?) => (selector ? selector(mockStorage) : mockStorage));
-    mockStorage['default-units'] = 'mm';
+    mockStorage.isInch = false;
   });
 
   test('divider', () => {
@@ -245,7 +245,7 @@ describe('should render correctly', () => {
     });
 
     test('when unit is inch', async () => {
-      mockStorage['default-units'] = 'inches';
+      mockStorage.isInch = true;
 
       const { baseElement, container, getByText } = render(<MockNumberItem id="mock-number-item-inch" />);
 
@@ -291,7 +291,7 @@ describe('should render correctly', () => {
     });
 
     test('when unit is degree', async () => {
-      mockStorage['default-units'] = 'inches';
+      mockStorage.isInch = true;
 
       const { baseElement, container } = render(<MockNumberItem id="mock-number-item-angle" unit="degree" />);
 
@@ -394,7 +394,7 @@ describe('should render correctly', () => {
     });
 
     test('with multiple options', async () => {
-      mockStorage['default-units'] = 'inches';
+      mockStorage.isInch = true;
 
       const { baseElement, container, getByText } = render(
         <MockSelect

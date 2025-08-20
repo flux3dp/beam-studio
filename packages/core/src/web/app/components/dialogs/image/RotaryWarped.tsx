@@ -69,7 +69,7 @@ const RotaryWarped = ({ elem, onClose }: Props): React.JSX.Element => {
     beambox: { photo_edit_panel: t },
     global: tGlobal,
   } = lang;
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const [inputType, setInputType] = useState<number>(0);
   const [previewImgUrl, setPreviewImgUrl] = useState<string>('');
   const [originalImgUrl, setOriginalImgUrl] = useState<string>('');

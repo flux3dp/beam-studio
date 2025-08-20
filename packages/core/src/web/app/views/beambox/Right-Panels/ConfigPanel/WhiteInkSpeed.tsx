@@ -25,7 +25,7 @@ const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Ele
 
   const sliderOptions = useMemo(() => (simpleMode ? getSpeedOptions(lang) : undefined), [simpleMode, lang]);
 
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const { decimal, display: displayUnit } = useMemo(() => {
     return isInch ? { decimal: 2, display: 'in/s' } : { decimal: 1, display: 'mm/s' };
   }, [isInch]);

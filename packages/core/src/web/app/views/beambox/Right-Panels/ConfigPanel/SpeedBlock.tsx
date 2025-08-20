@@ -59,7 +59,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const layerModule = module.value;
   const isPrinting = useMemo(() => printingModules.has(layerModule), [layerModule]);
 
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const {
     calculateUnit: fakeUnit,
     decimal,

@@ -60,7 +60,7 @@ const PreviewHeight = ({ initValue, onClose, onOk }: Props): React.JSX.Element =
   const [adjustChecked, setAdjustChecked] = useState(!hasInitValue);
   const [step, setStep] = useState(hasInitValue ? Step.ADJUST : Step.ASK_FOCUS);
   const [value, setValue] = useState(initValue);
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
 
   useEffect(() => {
     let effectEnded = false;

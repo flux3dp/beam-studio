@@ -37,7 +37,7 @@ interface Props {
 const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model, serial } = device;
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const [field, setField] = useState<Field>(initData.field || defaultField);
   const [redDot, setRedDot] = useState<RedDot>(initData.redDot || defaultRedLight);
   const [galvoParameters, setGalvoCorrection] = useState<GalvoParameters>(

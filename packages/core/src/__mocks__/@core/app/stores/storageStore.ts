@@ -1,6 +1,6 @@
-import type { Storage, StorageKey } from '@core/interfaces/IStorage';
+import type { StorageKey, StorageStoreState } from '@core/interfaces/IStorage';
 
-const state: Storage = {
+const state: StorageStoreState = {
   'active-lang': 'en',
   'ador-backup-path': '~/Downloads',
   'alert-config': {
@@ -44,6 +44,7 @@ const state: Storage = {
   /** font name to display name */
   'font-name-map': {},
   guessing_poke: false,
+  isInch: false,
   'keep-flux-id-login': false,
   'last-installed-version': '0.0.0',
   'last-promark-serial': 'lastPromarkSerial',
@@ -75,15 +76,17 @@ const state: Storage = {
   'sentry-send-devices': {},
 };
 
-const set = <K extends StorageKey>(key: K, value: Storage[K]) => {
+const set = <K extends StorageKey>(key: K, value: StorageStoreState[K]) => {
   state[key] = value;
+
+  if (key === 'default-units') state.isInch = value === 'inches';
 };
 
-const update = (payload: Partial<Storage>) => {
+const update = (payload: Partial<StorageStoreState>) => {
   Object.assign(state, payload);
 };
 
-export const useStorageStore = (selector?: (state: Storage) => Partial<Storage>) => {
+export const useStorageStore = (selector?: (state: StorageStoreState) => Partial<StorageStoreState>) => {
   const allStates = { ...state, set, update };
 
   return selector ? selector(allStates) : allStates;

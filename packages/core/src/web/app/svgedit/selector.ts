@@ -407,7 +407,7 @@ export class Selector {
 
       newContent = `${elemAngle}&deg;`;
     } else {
-      const useInch = getStorage('default-units') === 'inches';
+      const useInch = getStorage('isInch');
       const unit = useInch ? 'in' : 'mm';
       const displayUnit = useInch ? 'inch' : 'mm';
       const elemW =

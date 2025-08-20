@@ -90,7 +90,7 @@ const Controls = (): React.JSX.Element => {
     [widthMax, setGuideMark],
   );
 
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const objectSize = useMemo(() => {
     const svgcontent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
 

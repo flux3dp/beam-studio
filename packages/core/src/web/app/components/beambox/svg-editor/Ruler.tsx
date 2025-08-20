@@ -13,7 +13,7 @@ const Ruler = (): React.JSX.Element => {
   const rulersRef = useRef<HTMLDivElement>(null);
   const xContainerRef = useRef<HTMLDivElement>(null);
   const yContainerRef = useRef<HTMLDivElement>(null);
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
 
   const updateRulers = useCallback(() => {
     const { canvasExpansion, height, width, zoomRatio } = workareaManager;

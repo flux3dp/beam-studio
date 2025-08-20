@@ -1580,7 +1580,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     Actions = (function () {
       return {
         setAll: function () {
-          const moveUnit = getStorage('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
+          const moveUnit = getStorage('isInch') ? 25.4 : 10; // 0.1 in : 1 mm
 
           Shortcuts.on(['Delete', 'Backspace'], () => deleteSelected());
           Shortcuts.on(['Fnkey+a'], (e) => {

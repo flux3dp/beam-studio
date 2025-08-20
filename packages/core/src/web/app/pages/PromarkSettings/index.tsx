@@ -24,7 +24,7 @@ export default function PromarkSettings(): React.JSX.Element {
   const [redDot, setRedDot] = useState(defaultRedLight);
   const [galvoParameters, setGalvoParameters] = useState(defaultGalvoParameters);
 
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const serial = useMemo(getSerial, []);
   const { width } = useMemo(() => getWorkarea('fpm1'), []);
 

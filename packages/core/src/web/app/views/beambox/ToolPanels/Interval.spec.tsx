@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
 
 const mockUseWorkarea = jest.fn();
 
@@ -24,7 +25,6 @@ jest.mock('@core/app/widgets/Unit-Input-v2', () => ({ defaultValue, getValue, id
 ));
 
 import Interval from './Interval';
-import { setStorage } from '@mocks/@core/app/stores/storageStore';
 
 describe('should render correctly', () => {
   beforeEach(() => {

@@ -40,7 +40,7 @@ interface Props {
 
 const ArrayModal = ({ onCancel, onOk }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.tool_panels;
-  const unit = useStorageStore((state) => (state['default-units'] === 'inches' ? 'inch' : 'mm'));
+  const unit = useStorageStore((state) => (state.isInch ? 'inch' : 'mm'));
   const setting = unitSettings[unit];
   const [data, setData] = React.useState<Value>({
     column: 3,

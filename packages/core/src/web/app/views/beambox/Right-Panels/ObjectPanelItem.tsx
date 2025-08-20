@@ -76,7 +76,7 @@ const ObjectPanelNumber = ({
   const context = useContext(ObjectPanelContext);
   const { activeKey } = context;
   const isActive = activeKey === id;
-  const isDefaultInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isDefaultInch = useStorageStore((state) => state.isInch);
   const shouldConvert2Inch = useMemo(() => unit === 'mm' && isDefaultInch, [unit, isDefaultInch]);
   // for unit conversion
   const fakeUnit = shouldConvert2Inch ? 'inch' : 'mm';

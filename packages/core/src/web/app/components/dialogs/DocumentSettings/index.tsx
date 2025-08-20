@@ -104,7 +104,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [checkSafetyDoor, setCheckSafetyDoor] = useState(useDocumentStore.getState()['promark-safety-door']);
   const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
 
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const [passThroughHeight, setPassThroughHeight] = useState<number>(
     useDocumentStore.getState()['pass-through-height'] || workareaObj.displayHeight || workareaObj.height,

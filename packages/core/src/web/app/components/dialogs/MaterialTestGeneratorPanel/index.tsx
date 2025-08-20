@@ -69,7 +69,7 @@ const getEnd = (start: number, block: BlockInfo) =>
 
 const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const t = useI18n();
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const { laserType } = getPromarkInfo();
   const workarea = useDocumentStore((state) => state.workarea);
   const { isMopa, isPromark } = useMemo(

@@ -69,3 +69,9 @@ export interface StorageManager {
   removeAt(name: StorageKey): StorageManager;
   set<K extends StorageKey>(name: K, val: Storage[K], shouldNotifyOthers?: boolean): StorageManager;
 }
+
+export interface DerivedStates {
+  isInch: boolean;
+}
+
+export type StorageStoreState = DerivedStates & Storage;

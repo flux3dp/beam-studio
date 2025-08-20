@@ -21,7 +21,7 @@ const PositionInput = ({ onChange, type, value }: Props): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
   const isMobile = useIsMobile();
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const { precision, unit } = useMemo<{ precision: number; unit: 'in' | 'mm' }>(
     () => (isInch ? { precision: 4, unit: 'in' } : { precision: 2, unit: 'mm' }),
     [isInch],

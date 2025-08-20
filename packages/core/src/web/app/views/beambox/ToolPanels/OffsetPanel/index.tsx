@@ -32,7 +32,7 @@ function OffsetPanel({
   setDistance,
   setMode,
 }: Props): React.JSX.Element {
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const handleModeChange = (newMode: OffsetMode) => {
     setMode(newMode);
 

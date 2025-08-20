@@ -137,7 +137,7 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
     svgCanvas.changeSelectedAttribute('stroke-width', val, [elem]);
     setState({ ...state, strokeWidth: val });
   };
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
 
   const { decimal, max, ratio, step, unit } = useMemo(
     () =>

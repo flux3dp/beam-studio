@@ -21,7 +21,7 @@ const Interval = ({ dx: propsDx, dy: propsDy, onValueChange }: Props) => {
   const [isCollapsed, setIsCollapsed] = useState(false);
   const workarea = useWorkarea();
   const { displayHeight, height, width } = useMemo(() => getWorkarea(workarea), [workarea]);
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
 
   useEffect(() => setDx(propsDx), [propsDx]);
   useEffect(() => setDy(propsDy), [propsDy]);

@@ -3,15 +3,17 @@ import { combine, subscribeWithSelector } from 'zustand/middleware';
 
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
-import type { Storage, StorageKey } from '@core/interfaces/IStorage';
+import type { Storage, StorageKey, StorageStoreState } from '@core/interfaces/IStorage';
 
 import { TabEvents } from '../constants/tabConstants';
 
-const initStore = (): Storage => {
-  return storage.getStore();
+const initStore = (): StorageStoreState => {
+  const store = storage.getStore();
+
+  return { ...store, isInch: store['default-units'] === 'inches' };
 };
 
-export type StorageStore = Storage & {
+export type StorageStore = StorageStoreState & {
   reload: () => void;
   set: <K extends keyof Storage>(key: K, value: Storage[K], shouldNotifyChanges?: boolean) => void;
 };
@@ -22,20 +24,29 @@ export const useStorageStore = create(
       reload: () => set(initStore()),
       set: (key, value, shouldNotifyChanges = true) => {
         storage.set(key, value, shouldNotifyChanges);
-        set((state) => ({ ...state, [key]: value }));
+
+        const newState: Partial<StorageStoreState> = { [key]: value };
+
+        if (key === 'default-units') newState.isInch = value === 'inches';
+
+        set((state) => ({ ...state, ...newState }));
       },
     })),
   ),
 );
 
 // Syntactic sugar
-export const getStorage = <K extends StorageKey>(key: K) => useStorageStore.getState()[key];
-export const setStorage = (key: StorageKey, value: StorageStore[StorageKey], shouldNotifyChanges = true) =>
+export const getStorage = <K extends keyof StorageStoreState>(key: K) => useStorageStore.getState()[key];
+export const setStorage = (key: StorageKey, value: StorageStoreState[StorageKey], shouldNotifyChanges = true) =>
   useStorageStore.getState().set(key, value, shouldNotifyChanges);
 export const removeFromStorage = (key: StorageKey, shouldNotifyChanges = true) =>
   useStorageStore.getState().set(key, undefined, shouldNotifyChanges);
 
 communicator.on(TabEvents.StorageValueChanged, <K extends StorageKey>(_: unknown, key: K, value: StorageStore[K]) => {
+  const newState: Partial<StorageStoreState> = { [key]: value };
+
+  if (key === 'default-units') newState.isInch = value === 'inches';
+
   // use setState to avoid writing to storage multiple times
-  useStorageStore.setState({ [key]: value });
+  useStorageStore.setState({ ...newState });
 });

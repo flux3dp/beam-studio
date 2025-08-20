@@ -29,7 +29,7 @@ function RectOptions({ elem }: Props): React.JSX.Element {
   const isMobile = useIsMobile();
   const { dimensionValues, updateDimensionValues } = useContext(ObjectPanelContext);
   const { rx } = dimensionValues;
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
 
   const handleRoundedCornerChange = (val: number) => {
     val *= Constant.dpmm;

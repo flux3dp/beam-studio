@@ -51,7 +51,7 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   const [overlap, setOverlap] = useState(useDocumentStore.getState()['rotary-overlap']);
   const [extend, setExtend] = useState<boolean>(Boolean(useDocumentStore.getState()['extend-rotary-workarea']));
   const [mirror, setMirror] = useState<boolean>(Boolean(useDocumentStore.getState()['rotary-mirror']));
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
 
   useEffect(() => {
     if (overlap > split) setOverlap(split);

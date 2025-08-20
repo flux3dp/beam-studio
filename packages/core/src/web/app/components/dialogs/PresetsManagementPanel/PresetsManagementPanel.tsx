@@ -66,7 +66,7 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [filter, setFilter] = useState<(typeof Filter)[keyof typeof Filter]>(hasModule ? Filter.ALL : Filter.LASER);
   const listRef = useRef<HTMLDivElement>(null);
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
   const lengthUnit = useMemo(() => (isInch ? 'in' : 'mm'), [isInch]);
   const moduleTranslations = useMemo(() => getModulesTranslations(), []);
   const [editingPresets, setEditingPresets] = useState(getAllPresets());

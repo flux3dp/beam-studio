@@ -12,7 +12,7 @@ interface Props {
 function NestSpacingPanel({ onValueChange, spacing: spacingProps }: Props): React.JSX.Element {
   const lang = useI18n().beambox.tool_panels;
   const [spacing, updateSpacing] = React.useState(spacingProps);
-  const isInch = useStorageStore((state) => state['default-units'] === 'inches');
+  const isInch = useStorageStore((state) => state.isInch);
 
   const updateVal = (val: number) => {
     onValueChange(val);

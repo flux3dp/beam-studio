@@ -204,10 +204,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
     if (isTooFast) {
       await new Promise<void>((resolve) => {
-        const limit =
-          getStorage('default-units') === 'inches'
-            ? `${round(curveSpeedLimit / 25.4, 2)} in/s`
-            : `${curveSpeedLimit} mm/s`;
+        const limit = getStorage('isInch') ? `${round(curveSpeedLimit / 25.4, 2)} in/s` : `${curveSpeedLimit} mm/s`;
 
         if (!globalPreference['curve_engraving_speed_limit']) {
           if (!alertConfig.read('skip_curve_speed_warning')) {
@@ -338,10 +335,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
     if (isTooFast) {
       await new Promise<void>((resolve) => {
-        const limit =
-          getStorage('default-units') === 'inches'
-            ? `${round(vectorSpeedLimit / 25.4, 2)} in/s`
-            : `${vectorSpeedLimit} mm/s`;
+        const limit = getStorage('isInch') ? `${round(vectorSpeedLimit / 25.4, 2)} in/s` : `${vectorSpeedLimit} mm/s`;
 
         if (!globalPreference['vector_speed_constraint']) {
           if (!alertConfig.read('skip_path_speed_warning')) {

@@ -65,7 +65,7 @@ export function BoxgenProvider({ children, onClose }: BoxgenProviderProps): Reac
     };
   }, [workareaValue]);
 
-  const isMM = useStorageStore((state) => (state['default-units'] || 'mm') === 'mm');
+  const isMM = useStorageStore((state) => !state.isInch);
   const lengthUnit = isMM
     ? { decimal: 0, unit: 'mm' as const, unitRatio: 1 }
     : { decimal: 3, unit: 'inch' as const, unitRatio: 25.4 };
