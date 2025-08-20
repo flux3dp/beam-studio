@@ -37,8 +37,6 @@ describe('test i18n', () => {
     expect(mockSetStorage).toHaveBeenCalledTimes(1);
     expect(mockSetStorage).toHaveBeenNthCalledWith(1, 'active-lang', 'zh-tw');
 
-    console.log(i18n);
-
     // Test a translation
     expect(i18n.lang.topbar.untitled).toBe('未命名');
   });
