@@ -40,7 +40,7 @@ const Interval = ({ dx: propsDx, dy: propsDy, onValueChange }: Props) => {
         <p className="caption" onClick={() => setIsCollapsed(!isCollapsed)}>
           {lang.array_interval}
           <span className="value">
-            {isInch ? `${Number(dx / 25.4).toFixed(3)}", ${Number(dy / 25.4).toFixed(3)}"` : `${dx}, ${dy} mm`}
+            {isInch ? `${Number(dx / 25.4).toFixed(3)}", ${Number(dy / 25.4).toFixed(3)}"` : `${dx} mm, ${dy} mm`}
           </span>
         </p>
         <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
