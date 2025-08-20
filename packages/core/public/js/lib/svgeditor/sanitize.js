@@ -122,6 +122,9 @@
       'data-amAngleMap',
       'data-colorCurvesMap',
       'data-refreshInterval',
+      'data-nozzleMode',
+      'data-nozzleOffsetX',
+      'data-nozzleOffsetY'
     ],
     "image": ['data-ratiofixed', "data-shading", "data-threshold", "data-original-layer", "data-fullcolor", 'display-fullcolor', "class", "clip-path", "clip-rule", "filter", "height", "id", "mask", "opacity", "requiredFeatures", "style", "systemLanguage", "transform", "width", "x", "xlink:href", "xlink:title", "y", "preserveAspectRatio", "data-pwm", "data-color"],
     "line": ["data-original-layer", "vector-effect", 'data-np', "class", "clip-path", "clip-rule", "fill", "fill-opacity", "fill-rule", "filter", "id", "marker-end", "marker-mid", "marker-start", "mask", "opacity", "requiredFeatures", "stroke", "stroke-dasharray", "stroke-dashoffset", "stroke-linecap", "stroke-linejoin", "stroke-miterlimit", "stroke-opacity", "stroke-width", "style", "systemLanguage", "transform", "x1", "x2", "y1", "y2"],

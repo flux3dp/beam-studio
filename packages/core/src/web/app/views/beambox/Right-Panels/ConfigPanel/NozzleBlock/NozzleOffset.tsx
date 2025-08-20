@@ -9,8 +9,8 @@ const NozzleOffset = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
         configKey="nozzleOffsetX"
         id="nozzle-offset-x"
         max={5}
-        min={0}
-        precision={4}
+        min={-5}
+        precision={5}
         title="Nozzle Offset X"
         type={type}
         unit="mm"
@@ -19,8 +19,8 @@ const NozzleOffset = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pane
         configKey="nozzleOffsetY"
         id="nozzle-offset-y"
         max={5}
-        min={0}
-        precision={4}
+        min={-5}
+        precision={5}
         title="Nozzle Offset Y"
         type={type}
         unit="mm"
