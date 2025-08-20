@@ -2234,7 +2234,6 @@ const lang: ILang = {
       scene_files: 'Beam Studio 场景',
       svg_files: 'SVG',
     },
-    ok: '确定',
     version: '版本',
   },
   tutorial: {

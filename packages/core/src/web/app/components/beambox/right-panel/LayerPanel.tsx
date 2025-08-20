@@ -37,7 +37,6 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const LANG = i18n.lang.beambox.right_panel.layer_panel;
 const minLayerHeight = 100;
 const defaultLayerHeight = layoutConstants.layerListHeight;
 const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
@@ -53,15 +52,15 @@ interface State {
   draggingLayer?: string;
 }
 
-const Handle = React.forwardRef((props: any, ref: React.RefObject<any>) => {
-  const { handleAxis: _, ...eventHandlers } = props;
-
-  return (
-    <div className={styles.handle} ref={ref} {...eventHandlers}>
-      <LayerPanelIcons.Handle />
-    </div>
-  );
-});
+const Handle = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement> & { handleAxis?: string }>(
+  ({ handleAxis: _, ...eventHandlers }, ref) => {
+    return (
+      <div className={styles.handle} ref={ref} {...eventHandlers}>
+        <LayerPanelIcons.Handle />
+      </div>
+    );
+  },
+);
 
 class LayerPanel extends React.PureComponent<Props, State> {
   declare context: React.ContextType<typeof LayerPanelContext>;
@@ -152,12 +151,13 @@ class LayerPanel extends React.PureComponent<Props, State> {
   renameLayer = (): void => {
     const { setSelectedLayers } = this.context;
     const drawing = svgCanvas.getCurrentDrawing();
-    const oldName = drawing.getCurrentLayerName();
+    const oldName = drawing.getCurrentLayerName()!;
+    const lang = i18n.lang.beambox.right_panel.layer_panel;
 
     Dialog.promptDialog({
-      caption: LANG.notification.newName,
+      caption: lang.notification.newName,
       defaultValue: oldName,
-      onYes: (newName: string) => {
+      onYes: (newName?: string) => {
         if (!newName || oldName === newName) {
           return;
         }
@@ -165,7 +165,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
         if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
           Alert.popUp({
             id: 'dupli_layer_name',
-            message: LANG.notification.enterUniqueLayerName,
+            message: lang.notification.enterUniqueLayerName,
           });
 
           return;
@@ -227,7 +227,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
   toggleContiguousSelectedUntil = (layerName: string): void => {
     const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayer: string = drawing.getCurrentLayerName();
+    const currentLayer: string = drawing.getCurrentLayerName()!;
 
     const allLayers: string[] = drawing.all_layers?.map((layer) => layer.name_) ?? [];
     let [startIndex, endIndex] = [-1, -1];
@@ -325,7 +325,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
   onLayerCenterDragEnter = (layerName?: string): void => {
     const { selectedLayers } = this.context;
 
-    if (selectedLayers.includes(layerName)) {
+    if (layerName && selectedLayers.includes(layerName)) {
       this.setState({ draggingDestIndex: undefined });
     }
   };
@@ -342,14 +342,14 @@ class LayerPanel extends React.PureComponent<Props, State> {
     const { draggingDestIndex } = this.state;
     const { selectedLayers } = this.context;
 
-    if (draggingDestIndex !== null) {
+    if (draggingDestIndex !== null && draggingDestIndex !== undefined) {
       moveLayersToPosition(selectedLayers, draggingDestIndex);
       svgCanvas.sortTempGroupByLayer();
     }
 
     this.setState({
       draggingDestIndex: null,
-      draggingLayer: null,
+      draggingLayer: undefined,
     });
   };
 
@@ -392,7 +392,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
       const { draggingLayer } = this.state;
 
       if (draggingLayer) {
-        const layerListContainer = this.layerListContainerRef.current;
+        const layerListContainer = this.layerListContainerRef.current!;
         const { height, top } = layerListContainer.getBoundingClientRect();
 
         if (touch.pageY < top) {
@@ -412,14 +412,14 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
               this.onSensorAreaDragEnter(index);
             } else if (elem.className.includes('row')) {
-              const name = elem.getAttribute('data-layer');
+              const name = elem.getAttribute('data-layer')!;
 
               this.onLayerCenterDragEnter(name);
             }
           }
         }
       } else if (this.startDragTimer) {
-        const { pageX, pageY } = this.firstTouchInfo;
+        const { pageX, pageY } = this.firstTouchInfo!;
 
         if (Math.hypot(touch.pageX - pageX, touch.pageY - pageY) > 10) {
           clearTimeout(this.startDragTimer);
@@ -522,7 +522,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
     );
   }
 
-  render(): React.JSX.Element {
+  render(): React.ReactNode {
     if (!svgCanvas) {
       setTimeout(() => {
         this.forceUpdate();
@@ -533,6 +533,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
     const { setSelectedLayers } = this.context;
     const drawing = svgCanvas.getCurrentDrawing();
+    const lang = i18n.lang.beambox.right_panel.layer_panel;
 
     const layerNames = drawing.all_layers.map((layer) => layer.name_);
     const { hide } = this.props;
@@ -547,7 +548,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
               fixedContent={<AddLayerButton setSelectedLayers={setSelectedLayers} />}
               forceClose={hide}
               onClose={() => RightPanelController.setDisplayLayer(false)}
-              title={LANG.layers.layer}
+              title={lang.layers.layer}
             >
               <ObjectPanelItem.Mask />
               {this.renderLayerPanel()}

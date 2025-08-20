@@ -5,7 +5,7 @@ import storage from '@core/implementations/storage';
 
 import isDev from './is-dev';
 
-interface IRecord {
+export interface IRecord {
   isIgnored: boolean;
   isVoted: boolean;
   score: number;

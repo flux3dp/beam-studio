@@ -4,7 +4,7 @@ import i18n from '@core/helpers/i18n';
 import localeHelper from '@core/helpers/locale-helper';
 import storage from '@core/implementations/storage';
 
-interface IRecord {
+export interface IRecord {
   isIgnored: number[];
   showed?: { [key: number]: number };
   skip?: boolean;

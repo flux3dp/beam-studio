@@ -8,8 +8,8 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
-import storage from '@core/implementations/storage';
 import type { IController } from '@core/interfaces/IBoxgen';
 
 import { modelsWithModules } from '../actions/beambox/constant';
@@ -65,8 +65,7 @@ export function BoxgenProvider({ children, onClose }: BoxgenProviderProps): Reac
     };
   }, [workareaValue]);
 
-  const unit = storage.get('default-units') || 'mm';
-  const isMM = unit === 'mm';
+  const isMM = useStorageStore((state) => !state.isInch);
   const lengthUnit = isMM
     ? { decimal: 0, unit: 'mm' as const, unitRatio: 1 }
     : { decimal: 3, unit: 'inch' as const, unitRatio: 25.4 };

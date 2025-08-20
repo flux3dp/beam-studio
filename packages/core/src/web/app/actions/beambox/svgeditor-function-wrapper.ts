@@ -21,8 +21,6 @@ getSVGAsync((globalSVG) => {
   svgEditor = globalSVG.Editor;
 });
 
-const LANG = i18n.lang.beambox;
-
 const setCrosshairCursor = () => {
   $('#workarea').css('cursor', 'crosshair');
   $('#svg_editor g').css('cursor', 'crosshair');
@@ -145,7 +143,7 @@ const funcs = {
     options: { ratioFixed?: boolean; useCurrentLayer?: boolean } = {},
   ): void {
     const img = new Image();
-    const layerName = LANG.right_panel.layer_panel.layer_bitmap;
+    const layerName = i18n.lang.beambox.right_panel.layer_panel.layer_bitmap;
     const { ratioFixed = false, useCurrentLayer = false } = options;
 
     img.src = insertedImageSrc;

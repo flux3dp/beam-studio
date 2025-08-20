@@ -7,7 +7,8 @@ import SettingUnitInput from '@core/app/components/settings/components/SettingUn
 import XYItem from '@core/app/components/settings/components/XYItem';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import i18n from '@core/helpers/i18n';
+import { useStorageStore } from '@core/app/stores/storageStore';
+import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
@@ -19,7 +20,8 @@ type Props = {
 };
 
 const Path = ({ options, unitInputProps }: Props): React.JSX.Element => {
-  const { lang } = i18n;
+  const activeLang = useStorageStore((state) => state['active-lang']);
+  const lang = useI18n();
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
   const selectedModel = getPreference('model');
@@ -50,7 +52,7 @@ const Path = ({ options, unitInputProps }: Props): React.JSX.Element => {
           value={getConfig('loop_compensation') / 10}
         />
       </SettingFormItem>
-      {i18n.getActiveLang() === 'zh-cn' ? (
+      {activeLang === 'zh-cn' ? (
         <div>
           <SettingFormItem id="set_blade_radius" label={lang.settings.blade_radius}>
             <SettingUnitInput

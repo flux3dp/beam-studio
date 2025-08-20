@@ -1,20 +1,11 @@
 import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
 
-const get = jest.fn();
+const mockUseWorkarea = jest.fn();
 
-jest.mock('@core/implementations/storage', () => ({
-  get,
-}));
-
-const mockGetState = jest.fn();
-
-jest.mock('@core/app/stores/documentStore', () => ({
-  useDocumentStore: {
-    getState: mockGetState,
-  },
-}));
+jest.mock('@core/helpers/hooks/useWorkarea', () => mockUseWorkarea);
 
 const mockGetWorkarea = jest.fn();
 
@@ -38,12 +29,13 @@ import Interval from './Interval';
 describe('should render correctly', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockGetState.mockReturnValue({ workarea: 'fbb1b' });
+    setStorage('default-units', 'mm');
+    mockUseWorkarea.mockReturnValue('fbb1b');
     mockGetWorkarea.mockReturnValue({ height: 375, width: 400 });
   });
 
   test('default unit is inches', () => {
-    get.mockReturnValue('inches');
+    setStorage('default-units', 'inches');
 
     const onValueChange = jest.fn();
     const { container, rerender } = render(<Interval dx={25.4} dy={25.4} onValueChange={onValueChange} />);
@@ -70,8 +62,6 @@ describe('should render correctly', () => {
   });
 
   test('default unit is mm', () => {
-    get.mockReturnValue(undefined);
-
     const { container } = render(<Interval dx={25.4} dy={25.4} onValueChange={jest.fn()} />);
 
     expect(container).toMatchSnapshot();

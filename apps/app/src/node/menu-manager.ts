@@ -2,20 +2,18 @@ import { EventEmitter } from 'events';
 
 import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
-import Store from 'electron-store';
 import { funnel } from 'remeda';
 
 import { adorModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
-import i18n from '@core/helpers/i18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+import i18n from './helpers/i18n';
 import { getFocusedView } from './helpers/tabHelper';
 import type { MenuData } from './interfaces/Menu';
 import events from './ipc-events';
 import { buildFileMenu, updateRecentMenu } from './menu/fileMenu';
 
-const store = new Store();
 let r = i18n.lang.topbar.menu;
 let accountInfo: null | { email: string } = null;
 
@@ -288,9 +286,7 @@ class MenuManager extends EventEmitter {
     this.reconstructMenu = () => reconstructMenuHandler.call();
 
     ipcMain.on(events.NOTIFY_LANGUAGE, () => {
-      const language = (store.get('active-lang') as string) || 'en';
-
-      i18n.setActiveLang(language);
+      i18n.reloadActiveLang();
       r = i18n.lang.topbar.menu;
       this.constructMenu();
     });

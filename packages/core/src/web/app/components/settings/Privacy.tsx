@@ -3,7 +3,7 @@ import * as React from 'react';
 import type { DefaultOptionType } from 'antd/es/select';
 
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 
 import SettingSelect from './components/SettingSelect';
 import styles from './Settings.module.scss';
@@ -13,7 +13,7 @@ interface Props {
 }
 
 function Privacy({ options }: Props): React.JSX.Element {
-  const lang = i18n.lang;
+  const lang = useI18n();
   const { getConfig, setConfig } = useSettingStore();
 
   return (

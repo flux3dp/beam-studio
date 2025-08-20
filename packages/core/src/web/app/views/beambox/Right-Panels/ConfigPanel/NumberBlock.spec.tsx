@@ -1,8 +1,9 @@
 import React from 'react';
+import { fireEvent, render } from '@testing-library/react';
+
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
 
 import ConfigPanelContext from './ConfigPanelContext';
-
-import { fireEvent, render } from '@testing-library/react';
 
 const mockGetData = jest.fn();
 const mockGetMultiSelectData = jest.fn();
@@ -55,12 +56,6 @@ jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', ()
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));
 
-const mockStorageGet = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockStorageGet(...args),
-}));
-
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockInitState = jest.fn();
 
@@ -81,7 +76,7 @@ describe('test NumberBlock', () => {
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });
-    mockStorageGet.mockReturnValue('mm');
+    setStorage('default-units', 'mm');
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       selectedLayer: 'layer1',
@@ -154,7 +149,7 @@ describe('test NumberBlock', () => {
   });
 
   it('should render correctly when unit is in inches', () => {
-    mockStorageGet.mockReturnValue('inches');
+    setStorage('default-units', 'inches');
 
     const { getByText } = render(
       <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
@@ -178,7 +173,7 @@ describe('test NumberBlock', () => {
   });
 
   it('should still use mm when forceUsePropsUnit set', () => {
-    mockStorageGet.mockReturnValue('inches');
+    setStorage('default-units', 'inches');
 
     const { getByText } = render(
       <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>

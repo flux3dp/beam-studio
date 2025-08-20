@@ -1,8 +1,11 @@
 import Store from 'electron-store';
 
-import type { IStorage } from '@core/interfaces/IStorage';
+import { TabEvents } from '@core/app/constants/tabConstants';
+import type { Storage, StorageManager } from '@core/interfaces/IStorage';
 
-class ElectronStorage implements IStorage {
+import communicator from './communicator';
+
+class ElectronStorage implements StorageManager {
   private store: Store;
 
   private storeCache: any;
@@ -31,28 +34,32 @@ class ElectronStorage implements IStorage {
     return item;
   };
 
-  set = (name: string, val: any): IStorage => {
+  set = (name: string, val: any, shouldNotifyChanges = true): StorageManager => {
     this.store.set(name || '', val);
     this.storeCache[name] = val;
 
+    if (shouldNotifyChanges) communicator.send(TabEvents.StorageValueChanged, name, val);
+
     return this;
   };
 
-  removeAt = (name: string): IStorage => {
+  removeAt = (name: string, shouldNotifyChanges = true): StorageManager => {
     this.store.delete(name);
     delete this.storeCache[name];
 
+    if (shouldNotifyChanges) communicator.send(TabEvents.StorageValueChanged, name, undefined);
+
     return this;
   };
 
-  clearAll = (): IStorage => {
+  clearAll = (): StorageManager => {
     this.store.clear();
     this.storeCache = {};
 
     return this;
   };
 
-  clearAllExceptIP = (): IStorage => {
+  clearAllExceptIP = (): StorageManager => {
     const ip = this.get('poke-ip-addr', false);
 
     this.clearAll();
@@ -69,7 +76,7 @@ class ElectronStorage implements IStorage {
     return this.store.get(key) !== undefined;
   };
 
-  getStore = () => this.store.store;
+  getStore = () => this.store.store as unknown as Storage;
 }
 
 const storage = new ElectronStorage();

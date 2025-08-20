@@ -8,10 +8,10 @@ import { TrashIcon } from '@core/app/icons/icons';
 import PathEditIcons from '@core/app/icons/path-edit-panel/PathEditIcons';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
+import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { ISVGPath } from '@core/interfaces/ISVGPath';
 
@@ -28,13 +28,13 @@ getSVGAsync((globalSVG) => {
 });
 
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
-const LANG = i18n.lang.beambox.right_panel.object_panel.path_edit_panel;
 
 const LINKTYPE_CORNER = 0;
 const LINKTYPE_SMOOTH = 1; // same direction, different dist
 const LINKTYPE_SYMMETRIC = 2; // same direction, same dist
 
 const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
+  const lang = useI18n().beambox.right_panel.object_panel.path_edit_panel;
   const forceUpdate = useForceUpdate();
   const onNodeTypeChange = (newType) => {
     svgedit.path.path.setSelectedNodeType(newType);
@@ -80,7 +80,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
 
   return (
     <div className={styles['node-type-panel']}>
-      {!isMobile && <div className={styles.title}>{LANG.node_type}</div>}
+      {!isMobile && <div className={styles.title}>{lang.node_type}</div>}
       <ConfigProvider theme={textButtonTheme}>
         <ConfigProvider theme={{ token: { borderRadius: 4, controlHeight: isMobile ? 30 : 24 } }}>
           <Space.Compact block>
@@ -113,7 +113,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
             onClick={() => svgCanvas.pathActions.setSharp()}
             shape={buttonShape}
           >
-            <span className={styles.label}>{LANG.sharp}</span>
+            <span className={styles.label}>{lang.sharp}</span>
           </Button>
           <Button
             block
@@ -123,7 +123,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
             onClick={() => svgCanvas.pathActions.setRound()}
             shape={buttonShape}
           >
-            <span className={styles.label}>{LANG.round}</span>
+            <span className={styles.label}>{lang.round}</span>
           </Button>
           <Button
             block
@@ -133,7 +133,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
             onClick={svgCanvas.pathActions.connectNodes}
             shape={buttonShape}
           >
-            <span className={styles.label}>{LANG.connect}</span>
+            <span className={styles.label}>{lang.connect}</span>
           </Button>
           <Button
             block
@@ -143,7 +143,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
             onClick={svgCanvas.pathActions.disconnectNode}
             shape={buttonShape}
           >
-            <span className={styles.label}>{LANG.disconnect}</span>
+            <span className={styles.label}>{lang.disconnect}</span>
           </Button>
           {isMobile && (
             <Button
@@ -154,7 +154,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
               onClick={svgEditor.deleteSelected}
               shape={buttonShape}
             >
-              <span className={styles.label}>{LANG.delete}</span>
+              <span className={styles.label}>{lang.delete}</span>
             </Button>
           )}
         </Space>
@@ -165,6 +165,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
 
 function PathEditPanel(): React.JSX.Element {
   const isMobile = useIsMobile();
+  const title = useI18n().beambox.right_panel.tabs.path_edit;
 
   if (!svgCanvas || !svgedit) {
     return null;
@@ -175,7 +176,7 @@ function PathEditPanel(): React.JSX.Element {
       anchors={[0, 280]}
       className={styles.panel}
       onClose={() => svgCanvas.pathActions.toSelectMode(svgedit.path.path.elem)}
-      title={i18n.lang.beambox.right_panel.tabs.path_edit}
+      title={title}
     >
       <PanelContent isMobile />
     </FloatingPanel>

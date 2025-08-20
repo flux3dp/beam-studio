@@ -2,14 +2,10 @@ import * as React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
+
 const onCancel = jest.fn();
 const onOk = jest.fn();
-
-const get = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get,
-}));
 
 import ArrayModal from './ArrayModal';
 
@@ -29,11 +25,9 @@ describe('ArrayModal', () => {
 
   test('default unit is mm', async () => {
     jest.setTimeout(10000); // Increase timeout for this test
-    get.mockReturnValue(undefined); // Mock storage.get to return undefined
 
     const { baseElement, getAllByRole, getByText } = render(<ArrayModal onCancel={onCancel} onOk={onOk} />);
 
-    expect(get).toBeCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
 
     const colSlider = getAllByRole('slider')[0];
@@ -63,11 +57,10 @@ describe('ArrayModal', () => {
 
   test('default unit is inches', async () => {
     jest.setTimeout(10000); // Increase timeout for this test
-    get.mockReturnValue('inches'); // Mock storage.get to return 'inches'
+    setStorage('default-units', 'inches');
 
     const { baseElement, getAllByRole, getByText } = render(<ArrayModal onCancel={onCancel} onOk={onOk} />);
 
-    expect(get).toBeCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
 
     const dxSlider = getAllByRole('slider')[2];

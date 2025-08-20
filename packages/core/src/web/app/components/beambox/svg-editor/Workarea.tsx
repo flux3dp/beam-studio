@@ -1,13 +1,14 @@
-import React from 'react';
+import React, { memo, useContext, useEffect, useMemo } from 'react';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operations/clipboard';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import i18n from '@core/helpers/i18n';
+import { useSetState } from '@core/helpers/hooks/useSetState';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import { ContextMenu, ContextMenuTrigger, MenuItem, SubMenu } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
@@ -52,32 +53,34 @@ interface State {
   ungroup: boolean;
 }
 
-export default class Workarea extends React.PureComponent<{ className: string }, State> {
-  constructor(props: { className: string }) {
-    super(props);
-    this.state = {
-      group: false,
-      menuDisabled: false,
-      paste: false,
-      select: false,
-      ungroup: false,
+const Workarea = memo(({ className }: { className: string }) => {
+  const [{ group, menuDisabled, paste, select, ungroup }, setState] = useSetState<State>({
+    group: false,
+    menuDisabled: false,
+    paste: false,
+    select: false,
+    ungroup: false,
+  });
+  const lang = useI18n().beambox;
+  const t = lang.context_menu;
+  const isTouchable = useMemo(() => navigator.maxTouchPoints >= 1, []);
+
+  // Note: Keep context to update current layer(trigger rerender) when moving a single element
+  useContext(LayerPanelContext);
+
+  useEffect(() => {
+    const updateContextMenu = (newValues: Partial<State>) => {
+      setState(newValues);
     };
-  }
 
-  componentDidMount(): void {
-    eventEmitter.on('update-context-menu', this.updateContextMenu);
-  }
+    eventEmitter.on('update-context-menu', updateContextMenu);
 
-  componentWillUnmount(): void {
-    eventEmitter.removeListener('update-context-menu', this.updateContextMenu);
-  }
+    return () => {
+      eventEmitter.removeListener('update-context-menu', updateContextMenu);
+    };
+  }, [setState]);
 
-  private updateContextMenu = (newValues: any) => {
-    this.setState((prev) => ({ ...prev, ...newValues }));
-  };
-
-  renderLayerSubMenu = (): React.JSX.Element => {
-    const { select } = this.state;
+  const renderLayerSubMenu = () => {
     const drawing = svgCanvas?.getCurrentDrawing();
     const layerNames: string[] = drawing?.all_layers.map((layer: { name_: string }) => layer.name_) || [];
     const selectedElems = svgCanvas?.getSelectedElems();
@@ -85,8 +88,8 @@ export default class Workarea extends React.PureComponent<{ className: string },
 
     return (
       <>
-        <div className="seperator" />
-        <SubMenu disabled={!select} title={i18n.lang.beambox.right_panel.layer_panel.move_elems_to}>
+        <div className="separator" />
+        <SubMenu disabled={!select} title={lang.right_panel.layer_panel.move_elems_to}>
           {layerNames.map((layerName) => (
             <MenuItem
               disabled={layerName === currentLayer}
@@ -101,76 +104,67 @@ export default class Workarea extends React.PureComponent<{ className: string },
     );
   };
 
-  render(): React.JSX.Element {
-    const LANG = i18n.lang.beambox.context_menu;
-    const { className } = this.props;
-    const { group, menuDisabled, paste, select, ungroup } = this.state;
+  return (
+    <>
+      <ContextMenuTrigger
+        disable={menuDisabled}
+        holdToDisplay={isTouchable ? 1000 : -1}
+        holdToDisplayMouse={-1}
+        id="canvas-contextmenu"
+      >
+        <div className={className} id="workarea">
+          <div
+            id="svgcanvas"
+            style={{
+              position: 'relative',
+            }}
+          />
+        </div>
+      </ContextMenuTrigger>
+      <ContextMenu id="canvas-contextmenu">
+        <MenuItem disabled={!select} onClick={() => svgEditor.cutSelected()}>
+          {t.cut}
+        </MenuItem>
+        <MenuItem disabled={!select} onClick={() => svgEditor.copySelected()}>
+          {t.copy}
+        </MenuItem>
+        <MenuItem disabled={!paste} onClick={() => pasteElements({ type: 'mouse' })}>
+          {t.paste}
+        </MenuItem>
+        <MenuItem disabled={!paste} onClick={() => pasteElements({ type: 'inPlace' })}>
+          {t.paste_in_place}
+        </MenuItem>
+        <MenuItem disabled={!select} onClick={async () => cloneSelectedElements(20, 20)}>
+          {t.duplicate}
+        </MenuItem>
+        <div className="separator" />
+        <MenuItem disabled={!select} onClick={() => svgEditor.deleteSelected()}>
+          {t.delete}
+        </MenuItem>
+        <div className="separator" />
+        <MenuItem disabled={!select || !group} onClick={() => svgCanvas.groupSelectedElements()}>
+          {t.group}
+        </MenuItem>
+        <MenuItem disabled={!select || !ungroup} onClick={() => svgCanvas.ungroupSelectedElement()}>
+          {t.ungroup}
+        </MenuItem>
+        <div className="separator" />
+        <MenuItem disabled={!select} onClick={() => svgCanvas.moveTopBottomSelected('top')}>
+          {t.move_front}
+        </MenuItem>
+        <MenuItem disabled={!select} onClick={() => svgCanvas.moveUpSelectedElement()}>
+          {t.move_up}
+        </MenuItem>
+        <MenuItem disabled={!select} onClick={() => svgCanvas.moveDownSelectedElement()}>
+          {t.move_down}
+        </MenuItem>
+        <MenuItem disabled={!select} onClick={() => svgCanvas.moveTopBottomSelected('bottom')}>
+          {t.move_back}
+        </MenuItem>
+        {renderLayerSubMenu()}
+      </ContextMenu>
+    </>
+  );
+});
 
-    const isTouchable = navigator.maxTouchPoints >= 1;
-
-    return (
-      <>
-        <ContextMenuTrigger
-          disable={menuDisabled}
-          holdToDisplay={isTouchable ? 1000 : -1}
-          holdToDisplayMouse={-1}
-          id="canvas-contextmenu"
-        >
-          <div className={className} id="workarea">
-            <div
-              id="svgcanvas"
-              style={{
-                position: 'relative',
-              }}
-            />
-          </div>
-        </ContextMenuTrigger>
-        <ContextMenu id="canvas-contextmenu">
-          <MenuItem disabled={!select} onClick={() => svgEditor.cutSelected()}>
-            {LANG.cut}
-          </MenuItem>
-          <MenuItem disabled={!select} onClick={() => svgEditor.copySelected()}>
-            {LANG.copy}
-          </MenuItem>
-          <MenuItem disabled={!paste} onClick={() => pasteElements({ type: 'mouse' })}>
-            {LANG.paste}
-          </MenuItem>
-          <MenuItem disabled={!paste} onClick={() => pasteElements({ type: 'inPlace' })}>
-            {LANG.paste_in_place}
-          </MenuItem>
-          <MenuItem disabled={!select} onClick={async () => cloneSelectedElements(20, 20)}>
-            {LANG.duplicate}
-          </MenuItem>
-          <div className="seperator" />
-          <MenuItem disabled={!select} onClick={() => svgEditor.deleteSelected()}>
-            {LANG.delete}
-          </MenuItem>
-          <div className="seperator" />
-          <MenuItem disabled={!select || !group} onClick={() => svgCanvas.groupSelectedElements()}>
-            {LANG.group}
-          </MenuItem>
-          <MenuItem disabled={!select || !ungroup} onClick={() => svgCanvas.ungroupSelectedElement()}>
-            {LANG.ungroup}
-          </MenuItem>
-          <div className="seperator" />
-          <MenuItem disabled={!select} onClick={() => svgCanvas.moveTopBottomSelected('top')}>
-            {LANG.move_front}
-          </MenuItem>
-          <MenuItem disabled={!select} onClick={() => svgCanvas.moveUpSelectedElement()}>
-            {LANG.move_up}
-          </MenuItem>
-          <MenuItem disabled={!select} onClick={() => svgCanvas.moveDownSelectedElement()}>
-            {LANG.move_down}
-          </MenuItem>
-          <MenuItem disabled={!select} onClick={() => svgCanvas.moveTopBottomSelected('bottom')}>
-            {LANG.move_back}
-          </MenuItem>
-          {this.renderLayerSubMenu()}
-        </ContextMenu>
-      </>
-    );
-  }
-}
-
-// Note: Keep context to update current layer(trigger rerender) when moving a single element
-Workarea.contextType = LayerPanelContext;
+export default Workarea;

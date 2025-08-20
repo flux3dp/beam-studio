@@ -3,10 +3,11 @@ import React, { forwardRef } from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import presetHelper from '@core/helpers/presets/preset-helper';
+import * as presetHelper from '@core/helpers/presets/preset-helper';
 import type { Preset } from '@core/interfaces/ILayerConfig';
 
 import PresetsManagementPanel from './PresetsManagementPanel';
+import i18n from '@mocks/@core/helpers/i18n';
 
 const mockPopUp = jest.fn();
 const mockPopUpError = jest.fn();
@@ -22,31 +23,6 @@ const mockPromptDialog = jest.fn();
 jest.mock('@core/app/actions/dialog-caller', () => ({
   promptDialog: (...args) => mockPromptDialog(...args),
   showRadioSelectDialog: (...args) => mockShowRadioSelectDialog(...args),
-}));
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    popup: {
-      select_import_module: 'select_import_module',
-    },
-    right_panel: {
-      laser_panel: {
-        existing_name: 'existing_name',
-        preset_management: {
-          add_new: 'add_new',
-          delete: 'delete',
-          export: 'export',
-          import: 'import',
-          laser: 'laser',
-          new_preset_name: 'new_preset_name',
-          print: 'print',
-          show_all: 'show_all',
-          sure_to_reset: 'sure_to_reset',
-          title: 'title',
-        },
-      },
-    },
-  },
 }));
 
 const mockUseWorkarea = jest.fn();
@@ -224,8 +200,8 @@ describe('test PresetsManagementPanel', () => {
       { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
       { key: 'key3', module: LayerModule.LASER_20W_DIODE, name: 'name3' },
     ]);
-    fireEvent.click(baseElement.querySelector('button[title="import"]'));
-    expect(mockImportPresets).toBeCalledTimes(1);
+    fireEvent.click(baseElement.querySelector('button[title="Import"]'));
+    expect(mockImportPresets).toHaveBeenCalledTimes(1);
     await waitFor(async () => {
       expect(baseElement.querySelector('#key3')).toBeTruthy();
     });
@@ -251,8 +227,8 @@ describe('test PresetsManagementPanel', () => {
 
     fireEvent.change(powerInput, { target: { value: '10' } });
     expect(powerInput.value).toBe('10');
-    fireEvent.click(baseElement.querySelector('button[title="export"]'));
-    expect(mockExportPresets).toBeCalledTimes(1);
+    fireEvent.click(baseElement.querySelector('button[title="Export"]'));
+    expect(mockExportPresets).toHaveBeenCalledTimes(1);
     expect(mockExportPresets).toHaveBeenLastCalledWith([
       { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1', power: 10 },
       { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
@@ -270,7 +246,7 @@ describe('test PresetsManagementPanel', () => {
       <PresetsManagementPanel currentModule={LayerModule.LASER_20W_DIODE} onClose={mockOnClose} />,
     );
 
-    fireEvent.click(getByText('delete'));
+    fireEvent.click(getByText('Delete'));
     expect(baseElement.querySelector('#key1')).toBeFalsy();
   });
 
@@ -292,13 +268,13 @@ describe('test PresetsManagementPanel', () => {
     fireEvent.change(powerInput, { target: { value: '10' } });
     expect(powerInput.value).toBe('10');
     fireEvent.click(baseElement.querySelector('#footer-save'));
-    expect(mockSavePresetList).toBeCalledTimes(1);
+    expect(mockSavePresetList).toHaveBeenCalledTimes(1);
     expect(mockSavePresetList).toHaveBeenLastCalledWith([
       { key: 'key1', module: LayerModule.LASER_20W_DIODE, name: 'name1', power: 10 },
       { key: 'key2', module: LayerModule.LASER_20W_DIODE, name: 'name2' },
     ]);
-    expect(mockPostPresetChange).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockPostPresetChange).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('reset', () => {
@@ -317,16 +293,16 @@ describe('test PresetsManagementPanel', () => {
     );
 
     fireEvent.click(baseElement.querySelector('#footer-reset'));
-    expect(mockPopUp).toBeCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
       buttonType: 'CONFIRM_CANCEL',
-      message: 'sure_to_reset',
+      message: i18n.lang.beambox.right_panel.laser_panel.preset_management.sure_to_reset,
       onConfirm: expect.any(Function),
       type: 'WARNING',
     });
-    expect(mockResetPresetList).toBeCalledTimes(1);
-    expect(mockPostPresetChange).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockResetPresetList).toHaveBeenCalledTimes(1);
+    expect(mockPostPresetChange).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('close', () => {
@@ -337,8 +313,8 @@ describe('test PresetsManagementPanel', () => {
     );
 
     fireEvent.click(baseElement.querySelector('#footer-close'));
-    expect(mockPostPresetChange).not.toBeCalled();
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockPostPresetChange).not.toHaveBeenCalled();
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('add preset', async () => {
@@ -354,7 +330,7 @@ describe('test PresetsManagementPanel', () => {
 
     mockShowRadioSelectDialog.mockImplementation(({ options }) => options[0].value);
     mockPromptDialog.mockImplementation(({ onYes }) => onYes('new_preset_name'));
-    fireEvent.click(getByText('add_new'));
+    fireEvent.click(getByText(i18n.lang.beambox.right_panel.laser_panel.preset_management.add_new));
     await waitFor(() => {
       expect(baseElement.querySelector('#new_preset_name')).toBeTruthy();
     });

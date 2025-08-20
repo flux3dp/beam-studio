@@ -1,18 +1,17 @@
 import Alert from '@core/app/actions/alert-caller';
 import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { generateInterfaceTutorial, generateNewUserTutorial } from '@core/app/constants/tutorial-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import Discover from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 
-const LANG = i18n.lang.tutorial;
 const getMachineForTutorial = async () =>
   new Promise((resolve) => {
-    let discover = Discover('tutorial', (machines) => {
+    let discover: null | ReturnType<typeof Discover> = Discover('tutorial', (machines) => {
       if (machines.length > 0) {
         resolve(true);
-        discover.removeListener('tutorial');
+        discover?.removeListener('tutorial');
         discover = null;
       }
     });
@@ -20,13 +19,15 @@ const getMachineForTutorial = async () =>
     setTimeout(() => {
       if (discover) {
         resolve(false);
-        discover.removeListener('tutorial');
+        discover?.removeListener('tutorial');
         discover = null;
       }
     }, 3000);
   });
 
 const startNewUserTutorial = async (callback: () => void): Promise<void> => {
+  const LANG = i18n.lang.tutorial;
+
   Progress.openNonstopProgress({
     id: 'tutorial-find-machine',
     message: LANG.look_for_machine,
@@ -38,11 +39,12 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
 
   if (isAnyMachineAvailable) {
     const autoSwitch = useGlobalPreferenceStore.getState()['auto-switch-tab'];
+    const newUserTutorial = generateNewUserTutorial();
     const tutorial = {
-      ...TutorialConstants.NEW_USER_TUTORIAL,
+      ...newUserTutorial,
       dialogStylesAndContents: autoSwitch
-        ? TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents.filter(({ id }) => id !== 'switch-tab')
-        : TutorialConstants.NEW_USER_TUTORIAL.dialogStylesAndContents,
+        ? newUserTutorial.dialogStylesAndContents.filter(({ id }) => id !== 'switch-tab')
+        : newUserTutorial.dialogStylesAndContents,
     };
 
     Dialog.showTutorial(tutorial, callback);
@@ -78,8 +80,8 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
   }
 };
 
-const startInterfaceTutorial = (callback) => {
-  Dialog.showTutorial(TutorialConstants.INTERFACE_TUTORIAL, callback);
+const startInterfaceTutorial = (callback: () => void) => {
+  Dialog.showTutorial(generateInterfaceTutorial(), callback);
 };
 
 export default {

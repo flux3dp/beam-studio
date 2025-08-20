@@ -4,8 +4,8 @@ import type { DefaultOptionType } from 'antd/es/select';
 
 import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import PathInput, { InputType } from '@core/app/widgets/PathInput';
-import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import useI18n from '@core/helpers/useI18n';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 
 import SettingFormItem from './components/SettingFormItem';
@@ -27,7 +27,7 @@ function AutoSave({
   setWarnings,
   warnings,
 }: Props): null | React.JSX.Element {
-  const { lang } = i18n;
+  const lang = useI18n();
 
   if (isWeb()) return null;
 

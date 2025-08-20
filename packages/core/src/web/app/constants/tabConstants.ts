@@ -10,6 +10,7 @@ export enum TabEvents {
   ReloadSettings = 'reload-settings',
   SetTabMode = 'set-tab-mode',
   SetTabTitle = 'set-tab-title',
+  StorageValueChanged = 'storage-value-changed',
   TabBlurred = 'tab-blurred',
   TabFocused = 'tab-focused',
   TabUpdated = 'tab-updated',

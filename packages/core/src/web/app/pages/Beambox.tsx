@@ -14,16 +14,17 @@ import CanvasTabBar from '@core/app/components/mobile/CanvasTabBar';
 import { CanvasProvider } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContextProvider } from '@core/app/contexts/SelectedElementContext';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import ImageTracePanel from '@core/app/views/beambox/ImageTracePanel/ImageTracePanel';
 import { LayerPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { hashMap } from '@core/helpers/hashHelper';
-import i18n from '@core/helpers/i18n';
 import sentryHelper from '@core/helpers/sentry-helper';
 import BeamboxInit from '@core/implementations/beamboxInit';
 import communicator from '@core/implementations/communicator';
 
 import styles from './Beambox.module.scss';
+
 import 'react-resizable/css/styles.css';
 
 sentryHelper.initSentry();
@@ -46,7 +47,7 @@ const Beambox = (): React.JSX.Element => {
     };
   });
 
-  const activeLang = i18n.getActiveLang();
+  const activeLang = useStorageStore((state) => state['active-lang']) ?? 'en';
 
   return (
     <CanvasProvider>

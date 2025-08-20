@@ -4,6 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
@@ -78,12 +79,6 @@ const mockWriteData = jest.fn();
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   CUSTOM_PRESET_CONSTANT: 'CUSTOM_PRESET_CONSTANT',
   writeData: (...args) => mockWriteData(...args),
-}));
-
-const mockStorageGet = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockStorageGet(...args),
 }));
 
 const mockUseGlobalPreferenceStore = jest.fn();
@@ -168,7 +163,7 @@ describe('test SpeedBlock', () => {
       emit: mockEmit,
     });
     mockUseHasCurveEngraving.mockReturnValue(false);
-    mockStorageGet.mockReturnValue('mm');
+    setStorage('default-units', 'mm');
     mockUseWorkarea.mockReturnValue('fbm1');
     mockGetAutoFeeder.mockReturnValue(false);
     mockUseConfigPanelStore.mockReturnValue({
@@ -190,13 +185,11 @@ describe('test SpeedBlock', () => {
       </ConfigPanelContext.Provider>,
     );
 
-    expect(mockStorageGet).toHaveBeenCalledTimes(1);
-    expect(mockStorageGet).toHaveBeenLastCalledWith('default-units');
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when unit is inches', () => {
-    mockStorageGet.mockReturnValueOnce('inches');
+    setStorage('default-units', 'inches');
 
     const { container } = render(
       <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>

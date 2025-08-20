@@ -4,9 +4,7 @@ import { Modal, Spin } from 'antd';
 import Cropper from 'cropperjs';
 
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import i18n from '@core/helpers/i18n';
-
-const LANG = i18n.lang.beambox.image_trace_panel;
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   onCancel: () => void;
@@ -17,11 +15,12 @@ const MODAL_PADDING_X = 80;
 const MODAL_PADDING_Y = 170;
 
 const StepCrop = ({ onCancel, onCropFinish }: Props): React.JSX.Element => {
+  const lang = useI18n().beambox.image_trace_panel;
   const [croppedCameraCanvasBlobUrl, setCroppedCameraCanvasBlobUrl] = useState('');
 
   useEffect(() => () => URL.revokeObjectURL(croppedCameraCanvasBlobUrl), [croppedCameraCanvasBlobUrl]);
 
-  const cropperRef = useRef<Cropper>(null);
+  const cropperRef = useRef<Cropper | null>(null);
   const previewImageRef = useRef<HTMLImageElement>(null);
 
   const { maxX, maxY, minX, minY } = PreviewModeBackgroundDrawer.getCoordinates();
@@ -92,7 +91,7 @@ const StepCrop = ({ onCancel, onCropFinish }: Props): React.JSX.Element => {
       centered
       closable={false}
       maskClosable={false}
-      okText={LANG.next}
+      okText={lang.next}
       onCancel={onCancel}
       onOk={handleCrop}
       open

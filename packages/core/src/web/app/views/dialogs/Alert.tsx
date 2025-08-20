@@ -11,7 +11,7 @@ import classNames from 'classnames';
 import { HELP_CENTER_URLS } from '@core/app/constants/alert-constants';
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
-import i18n from '@core/helpers/i18n';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { IAlert, MessageIcon } from '@core/interfaces/IAlert';
@@ -81,6 +81,7 @@ const Alert = ({
   },
 }: Props): React.JSX.Element => {
   const lang = useI18n().alert;
+  const activeLang = useStorageStore((state) => state['active-lang']);
   const { popFromStack } = useContext(AlertProgressContext);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
@@ -128,7 +129,7 @@ const Alert = ({
       return null;
     }
 
-    const isZhTw = i18n.getActiveLang() === 'zh-tw';
+    const isZhTw = activeLang === 'zh-tw';
 
     return (
       <div className={styles.links}>

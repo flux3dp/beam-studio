@@ -40,7 +40,6 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const { lang } = i18n;
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
 
 const getAdorPaddingAccel = async (device: IDeviceInfo | null): Promise<null | number> => {
@@ -64,7 +63,7 @@ const getAdorPaddingAccel = async (device: IDeviceInfo | null): Promise<null | n
 const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
-    message: lang.beambox.bottom_right_panel.retreive_image_data,
+    message: i18n.lang.beambox.bottom_right_panel.retreive_image_data,
   });
   Progress.popById('retrieve-image-data');
 
@@ -110,7 +109,7 @@ const fetchTaskCode = async (
   Progress.openNonstopProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
-    message: lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
+    message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
   const { revert, success } = await convertAllTextToPath();
@@ -187,7 +186,7 @@ const fetchTaskCode = async (
     Alert.popUp({
       buttonType: AlertConstants.YES_NO,
       id: 'get-taskcode-error',
-      message: `#806 ${uploadRes.message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+      message: `#806 ${uploadRes.message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
       onYes: () => {
         const svgString = svgCanvas.getSvgString();
 
@@ -201,7 +200,7 @@ const fetchTaskCode = async (
 
   Progress.update('upload-scene', {
     caption: i18n.lang.beambox.popup.progress.calculating,
-    message: lang.message.uploading_fcode,
+    message: i18n.lang.message.uploading_fcode,
     percentage: 100,
   });
 
@@ -256,7 +255,7 @@ const fetchTaskCode = async (
           Alert.popUp({
             buttonType: AlertConstants.YES_NO,
             id: 'get-taskcode-error',
-            message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+            message: `#806 ${message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
             onYes: () => {
               const svgString = svgCanvas.getSvgString();
 
@@ -268,7 +267,7 @@ const fetchTaskCode = async (
           resolve(null);
         },
         onFinished: (taskBlob: Blob, timeCost: number, metadata: TaskMetaData) => {
-          Progress.update('fetch-task', { message: lang.message.uploading_fcode, percentage: 100 });
+          Progress.update('fetch-task', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
         onProgressing: (data: { message: string; percentage: number }) => {
@@ -404,7 +403,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
         resolve(null);
       },
       onFinished: (taskBlob: Blob, timeCost: number, metadata: TaskMetaData) => {
-        Progress.update(modelId, { message: lang.message.uploading_fcode, percentage: 100 });
+        Progress.update(modelId, { message: i18n.lang.message.uploading_fcode, percentage: 100 });
         resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
       },
       onProgressing: (data: { message: string; percentage: number }) => {
@@ -459,7 +458,7 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
           Alert.popUp({
             buttonType: AlertConstants.YES_NO,
             id: 'get-taskcode-error',
-            message: `#806 ${message}\n${lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
+            message: `#806 ${message}\n${i18n.lang.beambox.bottom_right_panel.export_file_error_ask_for_upload}`,
             onYes: () => {
               const svgString = svgCanvas.getSvgString();
 
@@ -474,7 +473,7 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
           });
         },
         onFinished: (taskBlob: Blob, fileName: string, timeCost: number) => {
-          Progress.update('fetch-task', { message: lang.message.uploading_fcode, percentage: 100 });
+          Progress.update('fetch-task', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, taskCodeBlob: taskBlob });
         },
         onProgressing: (data: { message: string; percentage: number }) => {

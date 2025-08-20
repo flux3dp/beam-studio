@@ -16,6 +16,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
@@ -29,7 +30,6 @@ import isDev from '@core/helpers/is-dev';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import storage from '@core/implementations/storage';
 import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
@@ -104,7 +104,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [checkSafetyDoor, setCheckSafetyDoor] = useState(useDocumentStore.getState()['promark-safety-door']);
   const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
 
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state.isInch);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const [passThroughHeight, setPassThroughHeight] = useState<number>(
     useDocumentStore.getState()['pass-through-height'] || workareaObj.displayHeight || workareaObj.height,

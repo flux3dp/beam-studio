@@ -9,7 +9,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { getConfigKeys, writeData } from '@core/helpers/layer/layer-config-helper';
-import presetHelper from '@core/helpers/presets/preset-helper';
+import { getAllPresets, savePreset } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, Preset } from '@core/interfaces/ILayerConfig';
 
@@ -28,7 +28,7 @@ const SaveConfigButton = (): React.JSX.Element => {
       return;
     }
 
-    const allConfigs = presetHelper.getAllPresets();
+    const allConfigs = getAllPresets();
 
     if (allConfigs.find((config) => config.key === name || config.name === name)) {
       alertCaller.popUp({
@@ -48,7 +48,7 @@ const SaveConfigButton = (): React.JSX.Element => {
     keys.forEach((key: ConfigKey) => {
       newConfig[key] = state[key].value as never;
     });
-    presetHelper.savePreset(newConfig);
+    savePreset(newConfig);
     selectedLayers.forEach((layerName) => writeData(layerName, 'configName', name));
     rename(name);
   };

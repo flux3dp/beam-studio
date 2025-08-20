@@ -1,7 +1,7 @@
 import storage from '@core/implementations/storage';
 import type { PromarkStore } from '@core/interfaces/Promark';
 
-const get = <T extends keyof PromarkStore = undefined>(
+const get = <T extends keyof PromarkStore | undefined = undefined>(
   serial: string,
   key?: T,
 ): T extends undefined ? PromarkStore : PromarkStore[NonNullable<T>] => {

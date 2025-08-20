@@ -6,6 +6,7 @@ import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -20,7 +21,6 @@ import {
 } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import units from '@core/helpers/units';
-import storage from '@core/implementations/storage';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
 import styles from './Block.module.scss';
@@ -84,13 +84,14 @@ const NumberBlock = ({
     }),
     [key],
   );
+  const isDefaultInch = useStorageStore((state) => state.isInch);
   const { isInch, unit: displayUnit } = useMemo(() => {
-    if (forceUsePropsUnit || !unit?.includes('mm') || storage.get('default-units') !== 'inches') {
+    if (forceUsePropsUnit || !unit?.includes('mm') || !isDefaultInch) {
       return { isInch: false, unit };
     }
 
     return { isInch: true, unit: unit.replace('mm', 'in') };
-  }, [unit, forceUsePropsUnit]);
+  }, [unit, forceUsePropsUnit, isDefaultInch]);
   const displayPrecision = useMemo(
     () => (isInch ? (precisionInch ?? precision) : precision),
     [isInch, precision, precisionInch],

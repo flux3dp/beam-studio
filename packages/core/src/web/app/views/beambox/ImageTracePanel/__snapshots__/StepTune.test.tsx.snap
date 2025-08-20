@@ -41,13 +41,13 @@ exports[`test StepTune should render correctly 1`] = `
                   <div
                     class="title"
                   >
-                    tuning
+                    Parameters
                   </div>
                   <div>
                     <h5
                       class="subtitle"
                     >
-                      threshold
+                      Threshold
                     </h5>
                     <div
                       class="ant-slider css-dev-only-do-not-override-hash ant-slider-horizontal"
@@ -86,7 +86,7 @@ exports[`test StepTune should render correctly 1`] = `
                   type="button"
                 >
                   <span>
-                    cancel
+                    Cancel
                   </span>
                 </button>
                 <button
@@ -94,7 +94,7 @@ exports[`test StepTune should render correctly 1`] = `
                   type="button"
                 >
                   <span>
-                    back
+                    Back
                   </span>
                 </button>
                 <button
@@ -102,7 +102,7 @@ exports[`test StepTune should render correctly 1`] = `
                   type="button"
                 >
                   <span>
-                    next
+                    Next
                   </span>
                 </button>
               </div>
@@ -160,13 +160,13 @@ exports[`test StepTune should render correctly 2`] = `
                   <div
                     class="title"
                   >
-                    tuning
+                    Parameters
                   </div>
                   <div>
                     <h5
                       class="subtitle"
                     >
-                      threshold
+                      Threshold
                     </h5>
                     <div
                       class="ant-slider css-dev-only-do-not-override-hash ant-slider-horizontal"
@@ -205,7 +205,7 @@ exports[`test StepTune should render correctly 2`] = `
                   type="button"
                 >
                   <span>
-                    cancel
+                    Cancel
                   </span>
                 </button>
                 <button
@@ -213,7 +213,7 @@ exports[`test StepTune should render correctly 2`] = `
                   type="button"
                 >
                   <span>
-                    back
+                    Back
                   </span>
                 </button>
                 <button
@@ -221,7 +221,7 @@ exports[`test StepTune should render correctly 2`] = `
                   type="button"
                 >
                   <span>
-                    next
+                    Next
                   </span>
                 </button>
               </div>

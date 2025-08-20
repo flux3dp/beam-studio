@@ -2,11 +2,11 @@ import React from 'react';
 
 import { match, P } from 'ts-pattern';
 
+import { useStorageStore } from '@core/app/stores/storageStore';
 import SelectView from '@core/app/widgets/Select';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import type { OffsetMode } from '@core/helpers/clipper/offset/constants';
 import i18n from '@core/helpers/i18n';
-import storage from '@core/implementations/storage';
 
 // Assuming AccordionSection is in the same directory
 import AccordionSection from './AccordionSection';
@@ -32,6 +32,7 @@ function OffsetPanel({
   setDistance,
   setMode,
 }: Props): React.JSX.Element {
+  const isInch = useStorageStore((state) => state.isInch);
   const handleModeChange = (newMode: OffsetMode) => {
     setMode(newMode);
 
@@ -46,9 +47,6 @@ function OffsetPanel({
       .with('expand', () => 'Expand')
       .with('shrink', () => 'Shrink')
       .exhaustive();
-
-  const getDistanceUnit = () =>
-    (storage.get('default-units') || 'mm') === 'inches' ? `${(distance / 25.4).toFixed(3)}"` : `${distance} mm`;
 
   const offsetOptions = [
     { label: LANG._offset.outward, value: 'outward' },
@@ -84,7 +82,10 @@ function OffsetPanel({
         </div>
       </AccordionSection>
 
-      <AccordionSection title={LANG._offset.dist} value={getDistanceUnit()}>
+      <AccordionSection
+        title={LANG._offset.dist}
+        value={isInch ? `${(distance / 25.4).toFixed(3)}"` : `${distance} mm`}
+      >
         <div className="control offset-dist">
           <UnitInput
             defaultValue={distance}

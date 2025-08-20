@@ -4,20 +4,6 @@ import { fireEvent, render } from '@testing-library/react';
 
 import ChangeLog from './ChangeLog';
 
-jest.mock('@core/helpers/i18n', () => ({
-  getActiveLang: () => 'en',
-  lang: {
-    change_logs: {
-      added: 'Added:',
-      change_log: 'Change Logs:',
-      changed: 'Changed:',
-      fixed: 'Fixed:',
-      help_center_url: 'https://support.flux3dp.com/hc/en-us/sections/360000421876',
-      see_older_version: 'See Older Versions',
-    },
-  },
-}));
-
 const mockOpen = jest.fn();
 
 jest.mock('@core/implementations/browser', () => ({

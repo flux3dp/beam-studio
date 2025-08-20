@@ -1,118 +1,75 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import i18n from '@core/helpers/i18n';
-import storage from '@core/implementations/storage';
-
-const LANG = i18n.lang.beambox.tool_panels;
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
-  dx?: number;
-  dy?: number;
+  dx: number;
+  dy: number;
   onValueChange?: (rc: { dx: number; dy: number }) => void;
 }
 
-interface State {
-  dx: number;
-  dy: number;
-  isCollapsed: boolean;
-}
+const Interval = ({ dx: propsDx, dy: propsDy, onValueChange }: Props) => {
+  const lang = useI18n().beambox.tool_panels;
+  const [dx, setDx] = useState(propsDx);
+  const [dy, setDy] = useState(propsDy);
+  const [isCollapsed, setIsCollapsed] = useState(false);
+  const workarea = useWorkarea();
+  const { displayHeight, height, width } = useMemo(() => getWorkarea(workarea), [workarea]);
+  const isInch = useStorageStore((state) => state.isInch);
 
-class Interval extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
+  useEffect(() => setDx(propsDx), [propsDx]);
+  useEffect(() => setDy(propsDy), [propsDy]);
 
-    const { dx, dy } = this.props;
+  const handleChange = (key: 'dx' | 'dy', value: number) => {
+    onValueChange?.({ dx, dy, [key]: value });
 
-    this.state = {
-      dx,
-      dy,
-      isCollapsed: false,
-    };
-  }
-
-  UNSAFE_componentWillReceiveProps(nextProps: Props): void {
-    this.setState({
-      dx: nextProps.dx,
-      dy: nextProps.dy,
-    });
-  }
-
-  onDxChanged = (dx: number): void => {
-    const { onValueChange } = this.props;
-    const { dy } = this.state;
-
-    onValueChange({
-      dx,
-      dy,
-    });
-    this.setState({ dx });
+    if (key === 'dx') setDx(value);
+    else setDy(value);
   };
 
-  onDyChanged = (dy: number): void => {
-    const { onValueChange } = this.props;
-    const { dx } = this.state;
-
-    onValueChange({
-      dx,
-      dy,
-    });
-    this.setState({ dy });
-  };
-
-  getValueCaption = (): string => {
-    const { dx, dy } = this.state;
-    const units = storage.get('default-units') || 'mm';
-
-    return units === 'inches'
-      ? `${Number(dx / 25.4).toFixed(3)}", ${Number(dy / 25.4).toFixed(3)}"`
-      : `${dx}, ${dy} mm`;
-  };
-
-  render(): React.JSX.Element {
-    const { dx, dy, isCollapsed } = this.state;
-    const workarea = getWorkarea(useDocumentStore.getState().workarea);
-
-    return (
-      <div className="tool-panel">
-        <label className="controls accordion">
-          <input className="accordion-switcher" defaultChecked type="checkbox" />
-          <p className="caption" onClick={() => this.setState({ isCollapsed: !isCollapsed })}>
-            {LANG.array_interval}
-            <span className="value">{this.getValueCaption()}</span>
-          </p>
-          <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
-            <div className="control">
-              <span className="text-center header">{LANG.dx}</span>
-              <UnitInput
-                defaultValue={dx}
-                getValue={this.onDxChanged}
-                id="array_width"
-                max={workarea.width}
-                min={0}
-                unit="mm"
-              />
-            </div>
-            <div className="control">
-              <span className="text-center header">{LANG.dy}</span>
-              <UnitInput
-                defaultValue={dy}
-                getValue={this.onDyChanged}
-                id="array_height"
-                max={workarea.displayHeight || workarea.height}
-                min={0}
-                unit="mm"
-              />
-            </div>
+  return (
+    <div className="tool-panel">
+      <label className="controls accordion">
+        <input className="accordion-switcher" defaultChecked type="checkbox" />
+        <p className="caption" onClick={() => setIsCollapsed(!isCollapsed)}>
+          {lang.array_interval}
+          <span className="value">
+            {isInch ? `${Number(dx / 25.4).toFixed(3)}", ${Number(dy / 25.4).toFixed(3)}"` : `${dx} mm, ${dy} mm`}
+          </span>
+        </p>
+        <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
+          <div className="control">
+            <span className="text-center header">{lang.dx}</span>
+            <UnitInput
+              defaultValue={dx}
+              getValue={(val) => handleChange('dx', val)}
+              id="array_width"
+              max={width}
+              min={0}
+              unit="mm"
+            />
           </div>
-        </label>
-      </div>
-    );
-  }
-}
+          <div className="control">
+            <span className="text-center header">{lang.dy}</span>
+            <UnitInput
+              defaultValue={dy}
+              getValue={(val) => handleChange('dy', val)}
+              id="array_height"
+              max={displayHeight || height}
+              min={0}
+              unit="mm"
+            />
+          </div>
+        </div>
+      </label>
+    </div>
+  );
+};
 
 export default Interval;

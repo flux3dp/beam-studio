@@ -3,6 +3,7 @@ import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { setStorage } from '@core/app/stores/storageStore';
 import storage from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
 import type { GlobalPreference, GlobalPreferenceKey } from '@core/interfaces/Preference';
@@ -66,7 +67,7 @@ export const useSettingStore = create<Action & State>(
             .with({ key: P.string, value: P.nullish }, ({ key }) => {
               const defaultValue = (DEFAULT_CONFIG as any)[key];
 
-              storage.set(key as StorageKey, defaultValue);
+              setStorage(key as StorageKey, defaultValue);
 
               return defaultValue;
             })
@@ -106,7 +107,7 @@ export const useSettingStore = create<Action & State>(
           useGlobalPreferenceStore.getState().update(beamboxPreferenceChanges);
 
           for (const key in configChanges) {
-            storage.set(key as StorageKey, configChanges[key as StorageKey]);
+            setStorage(key as StorageKey, configChanges[key as StorageKey]);
           }
 
           return { beamboxPreferenceChanges, configChanges };

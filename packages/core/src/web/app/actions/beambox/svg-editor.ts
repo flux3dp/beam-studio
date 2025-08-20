@@ -61,8 +61,6 @@ import { importPresets } from '@core/helpers/presets/preset-helper';
 import Shortcuts from '@core/helpers/shortcuts';
 import { isMobile } from '@core/helpers/system-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-import type { IDefaultFont } from '@core/interfaces/IFont';
-import type { IStorage } from '@core/interfaces/IStorage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
@@ -79,13 +77,12 @@ import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { getStorage } from '@core/app/stores/storageStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
   console.log('svgCanvas loaded successfully');
 }
-
-const LANG = i18n.lang.beambox;
 // TODO: change to require('svgedit')
 const { $, svgedit } = window;
 
@@ -143,7 +140,6 @@ export interface ISVGEditor {
   setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
   showSaveWarning: boolean;
-  storage: IStorage;
   storagePromptClosed: boolean;
   tool_scale: number;
   toolButtonClick: (button: any, noHiding: any) => boolean;
@@ -233,7 +229,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     'zh-cn': 'zh-CN',
     'zh-tw': 'zh-TW',
   };
-  const defaultFont: IDefaultFont = storage.get('default-font');
   let pressedKey: string[] = [];
 
   document.addEventListener('keydown', (e) => {
@@ -301,7 +296,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       baseUnit: 'px',
       // Change the following to preferences and add pref controls to the UI (e.g., initTool, wireframe, showlayers)?
       canvasName: 'default',
-      defaultUnit: storage.get('default-units') || 'mm',
       // DOCUMENT PROPERTIES
       // Change the following to a preference (already in the Document Properties dialog)?
       dimensions: editor.dimensions,
@@ -332,19 +326,8 @@ const svgEditor = (window['svgEditor'] = (function () {
       preventAllURLConfig: true,
       preventURLContentLoading: true,
       // EXTENSION-RELATED (GRID)
-      showGrid: true, // Set by ext-grid.js
       showlayers: true,
       snappingStep: 10,
-      text: {
-        fill: '#fff',
-        fill_opacity: '0',
-        font_family: defaultFont ? defaultFont.family : 'Arial',
-        font_postscriptName: defaultFont ? defaultFont.postscriptName : 'ArialMT',
-        font_size: isWeb() ? 200 : 100,
-        stroke_width: 1,
-        text_anchor: 'start',
-      },
-      wireframe: true,
     },
     /**
      * LOCALE
@@ -505,18 +488,6 @@ const svgEditor = (window['svgEditor'] = (function () {
   };
 
   editor.init = function () {
-    // var host = location.hostname,
-    //	onWeb = host && host.indexOf('.') >= 0;
-    // Some FF versions throw security errors here when directly accessing
-    try {
-      if ('localStorage' in window) {
-        // && onWeb removed so Webkit works locally
-        editor.storage = storage;
-      }
-    } catch (err) {
-      console.log(err);
-    }
-
     // Todo: Avoid var-defined functions and group functions together, etc. where possible
     var good_langs = [];
 
@@ -1345,11 +1316,13 @@ const svgEditor = (window['svgEditor'] = (function () {
         ToolPanelsController.setType('gridArray');
         ToolPanelsController.render();
       } else {
+        const lang = i18n.lang.beambox;
+
         Alert.popUp({
           callbacks: () => ObjectPanelController.updateActiveKey(null),
-          caption: LANG.left_panel.label.array,
+          caption: lang.left_panel.label.array,
           id: 'select first',
-          message: LANG.popup.select_first,
+          message: lang.popup.select_first,
         });
       }
     };
@@ -1362,11 +1335,13 @@ const svgEditor = (window['svgEditor'] = (function () {
         ToolPanelsController.setType('offset');
         ToolPanelsController.render();
       } else {
+        const lang = i18n.lang.beambox;
+
         Alert.popUp({
           callbacks: () => ObjectPanelController.updateActiveKey(null),
-          caption: LANG.tool_panels.offset,
+          caption: lang.tool_panels.offset,
           id: 'select first',
-          message: LANG.popup.select_first,
+          message: lang.popup.select_first,
         });
       }
     };
@@ -1379,10 +1354,12 @@ const svgEditor = (window['svgEditor'] = (function () {
         ToolPanelsController.setType('nest');
         ToolPanelsController.render();
       } else {
+        const lang = i18n.lang.beambox;
+
         Alert.popUp({
-          caption: LANG.tool_panels.nest,
+          caption: lang.tool_panels.nest,
           id: 'select first',
-          message: LANG.popup.select_first,
+          message: lang.popup.select_first,
         });
       }
     };
@@ -1526,7 +1503,7 @@ const svgEditor = (window['svgEditor'] = (function () {
                   });
                 } else {
                   Alert.popUp({
-                    message: LANG.svg_editor.unable_to_fetch_clipboard_img,
+                    message: i18n.lang.beambox.svg_editor.unable_to_fetch_clipboard_img,
                     type: AlertConstants.SHOW_POPUP_WARNING,
                   });
                 }
@@ -1603,7 +1580,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     Actions = (function () {
       return {
         setAll: function () {
-          const moveUnit = storage.get('default-units') === 'inches' ? 25.4 : 10; // 0.1 in : 1 mm
+          const moveUnit = getStorage('isInch') ? 25.4 : 10; // 0.1 in : 1 mm
 
           Shortcuts.on(['Delete', 'Backspace'], () => deleteSelected());
           Shortcuts.on(['Fnkey+a'], (e) => {
@@ -1749,7 +1726,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     // get the text contents of the file and send it to the canvas
     if (window.FileReader) {
       const replaceBitmap = async (file, imageElem) => {
-        Progress.openNonstopProgress({ caption: LANG.popup.loading_image, id: 'loading_image' });
+        Progress.openNonstopProgress({ caption: i18n.lang.beambox.popup.loading_image, id: 'loading_image' });
 
         return new Promise<void>((resolve, reject) => {
           const reader = new FileReader();
@@ -1847,9 +1824,10 @@ const svgEditor = (window['svgEditor'] = (function () {
       };
 
       const handleFile = async (file) => {
+        const lang = i18n.lang.beambox;
         const path = fileSystem.getPathForFile(file as File);
         await Progress.openNonstopProgress({
-          caption: LANG.popup.loading_image,
+          caption: lang.popup.loading_image,
           id: 'loading_image',
         });
         svgCanvas.clearSelection();
@@ -1946,7 +1924,7 @@ const svgEditor = (window['svgEditor'] = (function () {
             Progress.popById('loading_image');
             Alert.popUp({
               id: 'import_unknown',
-              message: LANG.svg_editor.unnsupported_file_type,
+              message: lang.svg_editor.unnsupported_file_type,
               type: AlertConstants.SHOW_POPUP_WARNING,
             });
             break;

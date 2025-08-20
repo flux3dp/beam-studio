@@ -8,6 +8,7 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanel from './LeftPanel';
 
 const on = jest.fn();
+const mockUnsubscribe = jest.fn();
 
 jest.mock('@core/helpers/shortcuts', () => ({
   on: (...args) => on(...args),
@@ -57,19 +58,12 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext(null),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      left_panel: {
-        label: {
-          end_preview: 'End Preview',
-        },
-      },
-    },
-  },
-}));
-
 describe('test LeftPanel', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+    on.mockReturnValue(mockUnsubscribe);
+  });
+
   test('neither in previewing nor in path previewing', () => {
     Object.defineProperty(window, 'os', {
       value: 'MacOS',

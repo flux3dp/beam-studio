@@ -8,9 +8,9 @@ import i18n from '@core/helpers/i18n';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
-const LANG = i18n.lang.update.software;
-
 const checkForUpdate = (isAutoCheck: boolean) => {
+  const LANG = i18n.lang.update.software;
+
   if (!isAutoCheck) {
     Progress.openNonstopProgress({ id: 'electron-check-update', message: LANG.checking });
   }
@@ -107,6 +107,7 @@ const checkForUpdate = (isAutoCheck: boolean) => {
 };
 
 const switchVersion = (): void => {
+  const LANG = i18n.lang.update.software;
   const { FLUX } = window;
   const currentChannel = FLUX.version.split('-')[1];
 

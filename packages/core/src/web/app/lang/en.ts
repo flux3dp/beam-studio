@@ -2234,7 +2234,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
       scene_files: 'Beam Studio Scene',
       svg_files: 'SVG',
     },
-    ok: 'OK',
     version: 'Version',
   },
   tutorial: {

@@ -90,7 +90,7 @@ exports[`should MediaTutorial cancel button should work 1`] = `
                   type="button"
                 >
                   <span>
-                    NEXT
+                    Next
                   </span>
                 </button>
               </div>
@@ -197,7 +197,7 @@ exports[`should MediaTutorial next step should work 1`] = `
                   type="button"
                 >
                   <span>
-                    NEXT
+                    Next
                   </span>
                 </button>
               </div>
@@ -304,7 +304,7 @@ exports[`should MediaTutorial next step should work 2`] = `
                   type="button"
                 >
                   <span>
-                    BACK
+                    Back
                   </span>
                 </button>
                 <button
@@ -312,7 +312,7 @@ exports[`should MediaTutorial next step should work 2`] = `
                   type="button"
                 >
                   <span>
-                    NEXT
+                    Next
                   </span>
                 </button>
               </div>
@@ -419,7 +419,7 @@ exports[`should MediaTutorial next step should work 3`] = `
                   type="button"
                 >
                   <span>
-                    NEXT
+                    Next
                   </span>
                 </button>
               </div>
@@ -526,7 +526,7 @@ exports[`should MediaTutorial next step should work 4`] = `
                   type="button"
                 >
                   <span>
-                    BACK
+                    Back
                   </span>
                 </button>
                 <button
@@ -534,7 +534,7 @@ exports[`should MediaTutorial next step should work 4`] = `
                   type="button"
                 >
                   <span>
-                    NEXT
+                    Next
                   </span>
                 </button>
               </div>
@@ -652,7 +652,7 @@ exports[`should MediaTutorial next step should work 5`] = `
                   type="button"
                 >
                   <span>
-                    BACK
+                    Back
                   </span>
                 </button>
                 <button
@@ -660,7 +660,7 @@ exports[`should MediaTutorial next step should work 5`] = `
                   type="button"
                 >
                   <span>
-                    DONE
+                    Done
                   </span>
                 </button>
               </div>
@@ -778,7 +778,7 @@ exports[`should MediaTutorial next step should work 6`] = `
                   type="button"
                 >
                   <span>
-                    BACK
+                    Back
                   </span>
                 </button>
                 <button
@@ -786,7 +786,7 @@ exports[`should MediaTutorial next step should work 6`] = `
                   type="button"
                 >
                   <span>
-                    DONE
+                    Done
                   </span>
                 </button>
               </div>

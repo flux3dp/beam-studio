@@ -2,9 +2,9 @@ import React, { createContext, useState } from 'react';
 
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { DEFAULT_CAMERA_OFFSET, STEP_ASK_READJUST, STEP_PUT_PAPER } from '@core/app/constants/cameraConstants';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import DeviceMaster from '@core/helpers/device-master';
 import versionChecker from '@core/helpers/version-checker';
-import storage from '@core/implementations/storage';
 import type { CameraConfig } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -78,7 +78,7 @@ export function CalibrationProvider({
   const [imgBlobUrl, setImgBlobUrl] = useState('');
   const [cameraPosition, setCameraPosition] = useState({ x: 0, y: 0 });
   const [originFanSpeed, setOriginFanSpeed] = useState(1000);
-  const unit = (storage.get('default-units') as string) || 'mm';
+  const unit = useStorageStore((state) => state['default-units'] || 'mm');
 
   const wrappedOnClose = async (completed: boolean) => {
     onClose(completed);

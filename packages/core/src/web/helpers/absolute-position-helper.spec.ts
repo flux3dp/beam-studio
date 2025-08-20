@@ -58,7 +58,7 @@ describe('test calculateRight', () => {
   });
 
   test('RightRef.RIGHT_SROLL_BAR', () => {
-    const result = calculateRight(10, RightRef.RIGHT_SROLL_BAR);
+    const result = calculateRight(10, RightRef.RIGHT_SCROLL_BAR);
 
     expect(result).toEqual(50);
   });

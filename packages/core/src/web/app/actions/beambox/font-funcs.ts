@@ -31,7 +31,6 @@ getSVGAsync(({ Canvas, Edit }) => {
 });
 
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
-const LANG = i18n.lang.beambox.object_panels;
 const fontObjCache = new Map<string, fontkit.Font>();
 
 const SubstituteResult = {
@@ -528,6 +527,7 @@ const substitutedFont = async (font: GeneralFont, textElement: Element) => {
 
 const showSubstitutedFamilyPopup = (newFont: string) =>
   new Promise<SubstituteResultType>((resolve) => {
+    const LANG = i18n.lang.beambox.object_panels;
     const message = sprintf(LANG.text_to_path.font_substitute_pop, fontNameMap.get(newFont));
     const buttonLabels = [i18n.lang.alert.confirm, LANG.text_to_path.use_current_font, i18n.lang.alert.cancel];
     const callbacks = [
@@ -580,6 +580,8 @@ const convertTextToPath = async (
   textElement: Element,
   opts?: { isSubCommand?: boolean; weldingTexts?: boolean },
 ): Promise<ConvertToTextPathResult> => {
+  const LANG = i18n.lang.beambox.object_panels;
+
   if (!textElement.textContent) {
     console.warn('Text element has no content, skipping conversion.');
 

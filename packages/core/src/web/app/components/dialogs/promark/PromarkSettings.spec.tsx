@@ -33,12 +33,6 @@ jest.mock('@core/helpers/device-master', () => ({
   stopFraming: (...args) => mockStopFraming(...args),
 }));
 
-const mockStorageGet = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockStorageGet(...args),
-}));
-
 const mockPromarkUpdate = jest.fn();
 
 jest.mock('@core/helpers/device/promark/promark-data-store', () => ({
@@ -90,7 +84,6 @@ const mockDevice = {
 describe('test PromarkSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockStorageGet.mockReturnValue('mm');
     mockGetWorkarea.mockReturnValue({ width: 150 });
   });
 

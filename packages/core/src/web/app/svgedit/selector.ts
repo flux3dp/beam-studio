@@ -11,8 +11,9 @@ import { getValue } from '@core/app/views/beambox/Right-Panels/DimensionPanel/ut
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
-import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import { getStorage } from '../stores/storageStore';
 
 import { getRotationAngle } from './transform/rotation';
 import workareaManager from './workarea';
@@ -406,7 +407,7 @@ export class Selector {
 
       newContent = `${elemAngle}&deg;`;
     } else {
-      const useInch = storage.get('default-units') === 'inches';
+      const useInch = getStorage('isInch');
       const unit = useInch ? 'in' : 'mm';
       const displayUnit = useInch ? 'inch' : 'mm';
       const elemW =

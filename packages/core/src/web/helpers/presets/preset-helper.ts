@@ -1,3 +1,7 @@
+import { useEffect } from 'react';
+
+import { shallow } from 'zustand/shallow';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
@@ -5,15 +9,19 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getStorage, removeFromStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
+import useForceUpdate from '@core/helpers/use-force-update';
 import dialog from '@core/implementations/dialog';
-import storage from '@core/implementations/storage';
 import type { Preset, PresetModel } from '@core/interfaces/ILayerConfig';
+
+const eventEmitter = eventEmitterFactory.createEventEmitter('presets');
 
 const migrateStorage = () => {
   const defaultKeys = Object.keys(defaultPresets);
-  let presets: Preset[] = storage.get('presets');
+  let presets: Preset[] = getStorage('presets');
 
   if (presets) {
     const existingKeys = new Set<string>();
@@ -43,13 +51,13 @@ const migrateStorage = () => {
       }
     });
   } else {
-    const customizedLaserConfigs = storage.get('customizedLaserConfigs');
+    const customizedLaserConfigs = getStorage('customizedLaserConfigs');
 
     // For version <= 2.3.9, maybe we can remove this in the future
     if (customizedLaserConfigs) {
       presets = [...customizedLaserConfigs];
 
-      const defaultLaserConfigsInUse = storage.get('defaultLaserConfigsInUse') || {};
+      const defaultLaserConfigsInUse = getStorage('defaultLaserConfigsInUse') || {};
 
       defaultKeys.forEach((key, idx) => {
         if (!defaultLaserConfigsInUse[key]) {
@@ -80,14 +88,15 @@ const migrateStorage = () => {
     }
   }
 
-  storage.set('presets', presets);
+  setStorage('presets', presets);
 
   return presets;
 };
 
 // default + customized
 let allPresets: Preset[] | undefined;
-const getAllPresets = (): Preset[] => allPresets!;
+
+export const getAllPresets = (): Preset[] => allPresets!;
 
 let presetsCache: {
   [model in PresetModel]?: {
@@ -99,11 +108,11 @@ const initPresets = (migrate = false) => {
     if (migrate) {
       allPresets = migrateStorage();
     } else {
-      allPresets = storage.get('presets') || migrateStorage();
+      allPresets = getStorage('presets') || migrateStorage();
     }
 
     // translate name
-    const unit = (storage.get('default-units') || 'mm') as 'inches' | 'mm';
+    const unit = getStorage('default-units') || 'mm';
     const LANG = i18n.lang.beambox.right_panel.laser_panel;
 
     allPresets!.forEach((preset) => {
@@ -125,9 +134,19 @@ const reloadPresets = (migrate = false): void => {
   allPresets = undefined; // clear the array
   clearPresetsCache();
   initPresets(migrate);
+  eventEmitter.emit('reload');
 };
 
-const getPresetModel = (model: PresetModel): PresetModel => {
+export const initStorageListeners = () => {
+  useStorageStore.subscribe(
+    (state) => [state.presets, state['default-units'], state['active-lang']],
+    () => reloadPresets(),
+    { equalityFn: shallow },
+  );
+};
+initStorageListeners();
+
+export const getPresetModel = (model: PresetModel): PresetModel => {
   if (!promarkModels.has(model)) {
     return model;
   }
@@ -137,7 +156,7 @@ const getPresetModel = (model: PresetModel): PresetModel => {
   return `fpm1_${info.laserType}_${info.watt}` as PresetModel;
 };
 
-const getDefaultPreset = (
+export const getDefaultPreset = (
   key: string,
   model: PresetModel,
   layerModule: LayerModuleType = LayerModule.LASER_UNIVERSAL,
@@ -147,10 +166,13 @@ const getDefaultPreset = (
   return defaultPresets[key]?.[presetModel]?.[layerModule] || null;
 };
 
-const modelHasPreset = (model: WorkAreaModel, key: string): boolean =>
+export const modelHasPreset = (model: WorkAreaModel, key: string): boolean =>
   Boolean(defaultPresets[key]?.[getPresetModel(model)]);
 
-const getPresetsList = (model: WorkAreaModel, layerModule: LayerModuleType = LayerModule.LASER_UNIVERSAL): Preset[] => {
+export const getPresetsList = (
+  model: WorkAreaModel,
+  layerModule: LayerModuleType = LayerModule.LASER_UNIVERSAL,
+): Preset[] => {
   const presetModel = getPresetModel(model);
 
   if (presetsCache[presetModel]?.[layerModule]) {
@@ -189,23 +211,23 @@ const getPresetsList = (model: WorkAreaModel, layerModule: LayerModuleType = Lay
   return res;
 };
 
-const savePreset = (preset: Preset): void => {
+export const savePreset = (preset: Preset): void => {
   allPresets!.push(preset);
-  storage.set('presets', allPresets);
+  setStorage('presets', allPresets!);
   clearPresetsCache();
 };
 
-const savePresetList = (presets: Preset[]): void => {
+export const savePresetList = (presets: Preset[]): void => {
   allPresets = presets;
-  storage.set('presets', allPresets);
+  setStorage('presets', allPresets);
   clearPresetsCache();
 };
 
-const resetPresetList = (): void => {
+export const resetPresetList = (): void => {
   const defaultKeys = Object.keys(defaultPresets);
   const newPresets = [...defaultKeys.map((key) => ({ hide: false, isDefault: true, key }))];
 
-  storage.set('presets', newPresets);
+  setStorage('presets', newPresets);
   reloadPresets();
 };
 
@@ -230,13 +252,13 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
             const { customizedLaserConfigs, defaultLaserConfigsInUse, presets } = newConfigs as any;
 
             if (presets) {
-              storage.set('presets', presets);
+              setStorage('presets', presets);
             } else if (customizedLaserConfigs && defaultLaserConfigsInUse) {
               // For version <= 2.3.9
               const configNames = new Set(
                 customizedLaserConfigs.filter((config: any) => !config.isDefault).map((config: any) => config.name),
               );
-              let currentConfig = storage.get('customizedLaserConfigs') || [];
+              let currentConfig = getStorage('customizedLaserConfigs') || [];
 
               if (typeof currentConfig === 'string') {
                 currentConfig = JSON.parse(currentConfig);
@@ -249,9 +271,9 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
                   customizedLaserConfigs.push(config);
                 }
               }
-              storage.set('customizedLaserConfigs', customizedLaserConfigs);
-              storage.set('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
-              storage.removeAt('presets');
+              setStorage('customizedLaserConfigs', customizedLaserConfigs);
+              setStorage('defaultLaserConfigsInUse', defaultLaserConfigsInUse);
+              removeFromStorage('presets');
             }
 
             reloadPresets(true);
@@ -268,11 +290,11 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
   return false;
 };
 
-const exportPresets = async (presets?: Preset[]): Promise<void> => {
+export const exportPresets = async (presets?: Preset[]): Promise<void> => {
   const isLinux = window.os === 'Linux';
   const getContent = () => {
     const laserConfig = {
-      presets: presets ?? (storage.get('presets') as Preset[]),
+      presets: presets ?? (getStorage('presets') as Preset[]),
     };
 
     return JSON.stringify(laserConfig);
@@ -297,8 +319,21 @@ const exportPresets = async (presets?: Preset[]): Promise<void> => {
 
 initPresets(true);
 
+export const usePresetList = (model: WorkAreaModel, layerModule: LayerModuleType = LayerModule.LASER_UNIVERSAL) => {
+  const forceUpdate = useForceUpdate();
+
+  useEffect(() => {
+    eventEmitter.on('reload', forceUpdate);
+
+    return () => {
+      eventEmitter.off('reload', forceUpdate);
+    };
+  }, [forceUpdate]);
+
+  return getPresetsList(model, layerModule);
+};
+
 export default {
-  exportPresets,
   getAllPresets,
   getDefaultPreset,
   getPresetModel,

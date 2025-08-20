@@ -5,7 +5,7 @@ import classNames from 'classnames';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import i18n from '@core/helpers/i18n';
 
-const LANG = i18n.lang.beambox.tool_panels;
+let lang = i18n.lang.beambox.tool_panels;
 
 interface Props {
   column?: number;
@@ -19,8 +19,10 @@ interface State {
   row: number;
 }
 
+// TODO: refactor to functional component
 class RowColumn extends React.Component<Props, State> {
-  constructor(props) {
+  constructor(props: Props) {
+    lang = i18n.lang.beambox.tool_panels;
     super(props);
 
     const { column, row } = this.props;
@@ -69,12 +71,12 @@ class RowColumn extends React.Component<Props, State> {
         <label className="controls accordion">
           <input className="accordion-switcher" defaultChecked type="checkbox" />
           <p className="caption" onClick={() => this.setState({ isCollapsed: !isCollapsed })}>
-            {LANG.array_dimension}
+            {lang.array_dimension}
             <span className="value">{`${row} X ${column}`}</span>
           </p>
           <div className={classNames('tool-panel-body', { collapsed: isCollapsed })}>
             <div className="control">
-              <div className="text-center header">{LANG.columns}</div>
+              <div className="text-center header">{lang.columns}</div>
               <UnitInput
                 decimal={0}
                 defaultValue={column || 1}
@@ -85,7 +87,7 @@ class RowColumn extends React.Component<Props, State> {
               />
             </div>
             <div className="control">
-              <div className="text-center header">{LANG.rows}</div>
+              <div className="text-center header">{lang.rows}</div>
               <UnitInput decimal={0} defaultValue={row || 1} getValue={this.onRawChanged} id="rows" min={1} unit="" />
             </div>
           </div>

@@ -420,7 +420,7 @@ exports[`should render correctly default unit is mm 1`] = `
         <span
           class="value"
         >
-          25.4, 25.4 mm
+          25.4 mm, 25.4 mm
         </span>
       </p>
       <div

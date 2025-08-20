@@ -40,17 +40,21 @@ jest.mock('@core/helpers/i18n', () => ({
   },
 }));
 
-const mockGet = jest.fn();
-const mockSet = jest.fn();
-const mockRemoveAt = jest.fn();
+const mockGetStorage = jest.fn();
+const mockSetStorage = jest.fn();
+const mockRemoveFromStorage = jest.fn();
+const mockSubscribe = jest.fn();
 
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => mockGet(...args),
-  removeAt: (...args) => mockRemoveAt(...args),
-  set: (...args) => mockSet(...args),
+jest.mock('@core/app/stores/storageStore', () => ({
+  getStorage: (...args) => mockGetStorage(...args),
+  removeFromStorage: (...args) => mockRemoveFromStorage(...args),
+  setStorage: (...args) => mockSetStorage(...args),
+  useStorageStore: {
+    subscribe: (...args) => mockSubscribe(...args),
+  },
 }));
 
-import presetHelper, { importPresets } from './preset-helper';
+import presetHelper, { exportPresets, importPresets } from './preset-helper';
 
 let mockStorage = {};
 
@@ -59,11 +63,11 @@ describe('test preset-helper', () => {
     presetHelper.resetPresetList();
     jest.resetAllMocks();
     mockStorage = {};
-    mockGet.mockImplementation((key) => mockStorage[key]);
-    mockSet.mockImplementation((key, value) => {
+    mockGetStorage.mockImplementation((key) => mockStorage[key]);
+    mockSetStorage.mockImplementation((key, value) => {
       mockStorage[key] = JSON.parse(JSON.stringify(value));
     });
-    mockRemoveAt.mockImplementation((key) => {
+    mockRemoveFromStorage.mockImplementation((key) => {
       delete mockStorage[key];
     });
   });
@@ -123,8 +127,8 @@ describe('test preset-helper', () => {
       { key: 'pre4', name: 'pre4_name', power: 88, speed: 88 },
     ];
 
-    await presetHelper.exportPresets(mockPresets);
-    expect(mockWriteFileDialog).toBeCalledTimes(1);
+    await exportPresets(mockPresets);
+    expect(mockWriteFileDialog).toHaveBeenCalledTimes(1);
 
     const getContet = mockWriteFileDialog.mock.calls[0][0];
 
@@ -143,22 +147,22 @@ describe('test preset-helper', () => {
     mockGetFileFromDialog.mockResolvedValue(mockFile);
     mockPopUp.mockImplementation(({ onConfirm }) => onConfirm());
     await importPresets();
-    expect(mockGetFileFromDialog).toBeCalledTimes(1);
+    expect(mockGetFileFromDialog).toHaveBeenCalledTimes(1);
     expect(mockGetFileFromDialog).toHaveBeenLastCalledWith({
       filters: [{ extensions: ['json', 'JSON'], name: 'JSON' }],
     });
-    expect(mockPopUp).toBeCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
       buttonType: 'CONFIRM_CANCEL',
       message: 'sure_to_import_presets',
       onConfirm: expect.any(Function),
     });
-    expect(mockSet).toBeCalledTimes(2);
-    expect(mockSet).toHaveBeenNthCalledWith(1, 'presets', [
+    expect(mockSetStorage).toHaveBeenCalledTimes(2);
+    expect(mockSetStorage).toHaveBeenNthCalledWith(1, 'presets', [
       { key: 'pre3', name: 'pre3_name', power: 70, speed: 70 },
       { hide: false, isDefault: true, key: 'pre1' },
     ]);
-    expect(mockGet('presets')).toEqual([
+    expect(mockGetStorage('presets')).toEqual([
       { key: 'pre3', name: 'pre3_name', power: 70, speed: 70 },
       { hide: false, isDefault: true, key: 'pre1' },
       { hide: false, isDefault: true, key: 'pre2' },
@@ -185,27 +189,27 @@ describe('test preset-helper', () => {
     mockGetFileFromDialog.mockResolvedValue(mockFile);
     mockPopUp.mockImplementation(({ onConfirm }) => onConfirm());
     await importPresets();
-    expect(mockGetFileFromDialog).toBeCalledTimes(1);
+    expect(mockGetFileFromDialog).toHaveBeenCalledTimes(1);
     expect(mockGetFileFromDialog).toHaveBeenLastCalledWith({
       filters: [{ extensions: ['json', 'JSON'], name: 'JSON' }],
     });
-    expect(mockPopUp).toBeCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
       buttonType: 'CONFIRM_CANCEL',
       message: 'sure_to_import_presets',
       onConfirm: expect.any(Function),
     });
-    expect(mockSet).toBeCalledTimes(3);
-    expect(mockSet).toHaveBeenNthCalledWith(1, 'customizedLaserConfigs', [
+    expect(mockSetStorage).toHaveBeenCalledTimes(3);
+    expect(mockSetStorage).toHaveBeenNthCalledWith(1, 'customizedLaserConfigs', [
       { name: 'pre3', power: 77, speed: 77 },
       { isDefault: true, key: 'pre4', power: 88, speed: 88 },
     ]);
-    expect(mockSet).toHaveBeenNthCalledWith(2, 'defaultLaserConfigsInUse', {
+    expect(mockSetStorage).toHaveBeenNthCalledWith(2, 'defaultLaserConfigsInUse', {
       pre4: false,
     });
-    expect(mockRemoveAt).toBeCalledTimes(1);
-    expect(mockRemoveAt).toHaveBeenLastCalledWith('presets');
-    expect(mockGet('presets')).toEqual([
+    expect(mockRemoveFromStorage).toHaveBeenCalledTimes(1);
+    expect(mockRemoveFromStorage).toHaveBeenLastCalledWith('presets');
+    expect(mockGetStorage('presets')).toEqual([
       { hide: false, isDefault: true, key: 'pre1' },
       { hide: false, isDefault: true, key: 'pre2' },
       { name: 'pre3', power: 77, speed: 77 },
@@ -224,8 +228,8 @@ describe('test preset-helper', () => {
       power: 70,
       speed: 70,
     });
-    expect(mockSet).toBeCalledTimes(1);
-    expect(mockSet).toHaveBeenLastCalledWith('presets', [
+    expect(mockSetStorage).toHaveBeenCalledTimes(1);
+    expect(mockSetStorage).toHaveBeenLastCalledWith('presets', [
       { hide: false, isDefault: true, key: 'pre1', name: 'pre1_name' },
       { hide: false, isDefault: true, key: 'pre2', name: 'pre2_name' },
       { key: 'pre3', name: 'pre3_name', power: 70, speed: 70 },
@@ -241,8 +245,8 @@ describe('test preset-helper', () => {
     ];
 
     presetHelper.savePresetList(mockPresets);
-    expect(mockSet).toBeCalledTimes(1);
-    expect(mockSet).toHaveBeenLastCalledWith('presets', mockPresets);
+    expect(mockSetStorage).toHaveBeenCalledTimes(1);
+    expect(mockSetStorage).toHaveBeenLastCalledWith('presets', mockPresets);
     expect(presetHelper.getAllPresets()).toEqual(mockPresets);
   });
 
@@ -253,10 +257,10 @@ describe('test preset-helper', () => {
       power: 70,
       speed: 70,
     });
-    expect(mockSet).toBeCalledTimes(1);
+    expect(mockSetStorage).toHaveBeenCalledTimes(1);
     presetHelper.resetPresetList();
-    expect(mockSet).toBeCalledTimes(2);
-    expect(mockSet).toHaveBeenLastCalledWith('presets', [
+    expect(mockSetStorage).toHaveBeenCalledTimes(2);
+    expect(mockSetStorage).toHaveBeenLastCalledWith('presets', [
       { hide: false, isDefault: true, key: 'pre1' },
       { hide: false, isDefault: true, key: 'pre2' },
     ]);
@@ -277,8 +281,8 @@ describe('test preset-helper', () => {
       },
     };
     presetHelper.reloadPresets(true);
-    expect(mockSet).toBeCalledTimes(1);
-    expect(mockGet('presets')).toEqual([
+    expect(mockSetStorage).toHaveBeenCalledTimes(1);
+    expect(mockGetStorage('presets')).toEqual([
       { hide: false, isDefault: true, key: 'pre1' },
       { hide: false, isDefault: true, key: 'pre2' },
       { name: 'pre3', power: 77, speed: 77 },

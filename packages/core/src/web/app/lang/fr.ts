@@ -2234,7 +2234,6 @@ const lang: ILang = {
       scene_files: 'Scènes Beam Studio',
       svg_files: 'SVG',
     },
-    ok: 'OK',
     version: 'Version',
   },
   tutorial: {

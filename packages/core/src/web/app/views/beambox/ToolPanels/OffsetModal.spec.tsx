@@ -2,14 +2,10 @@ import * as React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
+
 const onCancel = jest.fn();
 const onOk = jest.fn();
-
-const get = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get,
-}));
 
 import OffsetModal from './OffsetModal';
 
@@ -25,11 +21,8 @@ describe('should render correctly', () => {
   });
 
   test('default unit is mm', async () => {
-    get.mockReturnValue(undefined);
-
     const { baseElement, getByRole, getByText } = render(<OffsetModal onCancel={onCancel} onOk={onOk} />);
 
-    expect(get).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
 
     const directionSelect = baseElement.querySelectorAll('.ant-select-selector')[0];
@@ -63,11 +56,10 @@ describe('should render correctly', () => {
   }, 30000);
 
   test('default unit is inches', async () => {
-    get.mockReturnValue('inches');
+    setStorage('default-units', 'inches');
 
     const { baseElement, getByRole, getByText } = render(<OffsetModal onCancel={onCancel} onOk={onOk} />);
 
-    expect(get).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
 
     const offsetSlider = getByRole('slider');

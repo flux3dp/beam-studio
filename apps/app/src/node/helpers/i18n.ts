@@ -1,6 +1,10 @@
+/**
+ * I18n implementation for nodejs usage
+ */
+import ElectronStore from 'electron-store';
 import { match } from 'ts-pattern';
 
-import AppSettings from '@core/app/app-settings';
+import appSettings from '@core/app/app-settings';
 import LangCs from '@core/app/lang/cs';
 import LangDa from '@core/app/lang/da';
 import LangDe from '@core/app/lang/de';
@@ -23,9 +27,10 @@ import LangTh from '@core/app/lang/th';
 import LangVi from '@core/app/lang/vi';
 import LangZHCN from '@core/app/lang/zh-cn';
 import LangZHTW from '@core/app/lang/zh-tw';
-import { getStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import type { ILang } from '@core/interfaces/ILang';
+import type { StorageManager } from '@core/interfaces/IStorage';
 
+const store = new ElectronStore() as unknown as StorageManager;
 const getLang = (lang: string): ILang => {
   return match(lang)
     .with('cs', () => LangCs)
@@ -52,32 +57,15 @@ const getLang = (lang: string): ILang => {
     .with('zh-tw', () => LangZHTW)
     .otherwise(() => LangEn);
 };
-
-let activeLang = getStorage('active-lang') || AppSettings.i18n.default_lang;
-let lang = getLang(activeLang);
-
-export function getActiveLang(): string {
-  return activeLang;
-}
-
-export function setActiveLang(newVal: string): void {
-  activeLang = newVal;
-  lang = getLang(activeLang);
-  setStorage('active-lang', newVal);
-}
-
-useStorageStore.subscribe(
-  (state) => state['active-lang'],
-  (newValue) => {
-    activeLang = newValue;
-    lang = getLang(activeLang);
-  },
-);
+let activeLang: string = store.get('active-lang') || appSettings.i18n.default_lang;
+let lang: ILang = getLang(activeLang);
 
 export default {
-  getActiveLang,
   get lang(): ILang {
     return lang;
   },
-  setActiveLang,
+  reloadActiveLang(): void {
+    activeLang = store.get('active-lang') || appSettings.i18n.default_lang;
+    lang = getLang(activeLang);
+  },
 };

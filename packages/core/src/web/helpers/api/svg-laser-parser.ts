@@ -355,7 +355,7 @@ export const getExportOpt = async (
 
   const loopCompensation = Number(storage.get('loop_compensation') || '0');
 
-  if (loopCompensation > 0) {
+  if (loopCompensation >= 0) {
     config.loop_compensation = loopCompensation;
   }
 
@@ -593,7 +593,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
       if (!opts.forceArgString) {
         const { curveEngravingData, loopCompensation } = await getExportOpt(opts, args);
 
-        if (loopCompensation) {
+        if (loopCompensation !== undefined && loopCompensation >= 0) {
           await setParameter('loop_compensation', loopCompensation);
         }
 

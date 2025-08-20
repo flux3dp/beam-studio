@@ -2,25 +2,24 @@ import * as React from 'react';
 
 import { Col, Modal, Row } from 'antd';
 
-import i18n from '@core/helpers/i18n';
-
-const LANG = i18n.lang.topmenu;
-const { FLUX } = window;
-const VISIBLE = true;
+import useI18n from '@core/helpers/useI18n';
 
 interface Props {
   onClose: () => void;
 }
 
 function AboutBeamStudio({ onClose }: Props): React.JSX.Element {
+  const { global: tGlobal, topmenu: t } = useI18n();
+  const { FLUX } = window;
+
   return (
     <Modal
       cancelButtonProps={{ style: { display: 'none' } }}
       centered
-      okText={LANG.ok}
+      okText={tGlobal.ok}
       onCancel={onClose}
       onOk={onClose}
-      open={VISIBLE}
+      open
     >
       <Row gutter={10}>
         <Col span={7}>
@@ -28,9 +27,9 @@ function AboutBeamStudio({ onClose }: Props): React.JSX.Element {
         </Col>
         <Col span={12}>
           <strong>Beam Studio</strong>
-          <div className="version">{`${LANG.version} ${FLUX.version}`}</div>
-          <div className="copyright">{`Copyright ⓒ ${new Date().getFullYear()} FLUX Inc.`}</div>
-          <div className="credit" dangerouslySetInnerHTML={{ __html: LANG.credit }} />
+          <div>{`${t.version} ${FLUX.version}`}</div>
+          <div>{`Copyright ⓒ ${new Date().getFullYear()} FLUX Inc.`}</div>
+          <div dangerouslySetInnerHTML={{ __html: t.credit }} />
         </Col>
       </Row>
     </Modal>

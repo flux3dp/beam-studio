@@ -9,6 +9,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { defaultField, defaultGalvoParameters, defaultRedLight } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import icons from '@core/app/icons/icons';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import applyRedDot from '@core/helpers/device/promark/apply-red-dot';
@@ -16,7 +17,6 @@ import { generateCalibrationTaskString, loadTaskToSwiftray } from '@core/helpers
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters, PromarkStore, RedDot } from '@core/interfaces/Promark';
 
@@ -37,7 +37,7 @@ interface Props {
 const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Element => {
   const { global: tGlobal, monitor: tMonitor, promark_settings: t } = useI18n();
   const { model, serial } = device;
-  const isInch = useMemo(() => storage.get('default-units') === 'inches', []);
+  const isInch = useStorageStore((state) => state.isInch);
   const [field, setField] = useState<Field>(initData.field || defaultField);
   const [redDot, setRedDot] = useState<RedDot>(initData.redDot || defaultRedLight);
   const [galvoParameters, setGalvoCorrection] = useState<GalvoParameters>(

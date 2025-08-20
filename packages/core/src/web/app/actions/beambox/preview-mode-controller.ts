@@ -22,7 +22,6 @@ import Beamo2PreviewManager from '../camera/preview-helper/Beamo2PreviewManager'
 import BeamPreviewManager from '../camera/preview-helper/BeamPreviewManager';
 import PromarkPreviewManager from '../camera/preview-helper/PromarkPreviewManager';
 
-const LANG = i18n.lang;
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 class PreviewModeController {
@@ -83,10 +82,11 @@ class PreviewModeController {
     }
 
     const vc = VersionChecker(device.version);
+    const { lang } = i18n;
 
     if (!vc.meetRequirement('USABLE_VERSION')) {
       Alert.popUp({
-        message: LANG.beambox.popup.should_update_firmware_to_continue,
+        message: lang.beambox.popup.should_update_firmware_to_continue,
         type: AlertConstants.SHOW_POPUP_ERROR,
       });
       Progress.popById('start-preview-controller');
@@ -95,8 +95,8 @@ class PreviewModeController {
     }
 
     if (useDocumentStore.getState().borderless && !vc.meetRequirement('BORDERLESS_MODE')) {
-      const message = `#814 ${LANG.calibration.update_firmware_msg1} 2.5.1 ${LANG.calibration.update_firmware_msg2} ${LANG.beambox.popup.or_turn_off_borderless_mode}`;
-      const caption = LANG.beambox.left_panel.borderless_preview;
+      const message = `#814 ${lang.calibration.update_firmware_msg1} 2.5.1 ${lang.calibration.update_firmware_msg2} ${lang.beambox.popup.or_turn_off_borderless_mode}`;
+      const caption = lang.beambox.left_panel.borderless_preview;
 
       Alert.popUp({
         caption,

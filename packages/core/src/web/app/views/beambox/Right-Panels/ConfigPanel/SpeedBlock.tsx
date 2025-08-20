@@ -16,6 +16,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
@@ -32,7 +33,6 @@ import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-con
 import round from '@core/helpers/math/round';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 
 import styles from './Block.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
@@ -59,19 +59,16 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const layerModule = module.value;
   const isPrinting = useMemo(() => printingModules.has(layerModule), [layerModule]);
 
+  const isInch = useStorageStore((state) => state.isInch);
   const {
     calculateUnit: fakeUnit,
     decimal,
     display: displayUnit,
   } = useMemo(() => {
-    const unit: 'inches' | 'mm' = storage.get('default-units') || 'mm';
-    const display = { inches: 'in/s', mm: 'mm/s' }[unit];
-
-    const calculateUnit: 'inch' | 'mm' = { inches: 'inch', mm: 'mm' }[unit] as any;
-    const d = { inches: 2, mm: 1 }[unit];
-
-    return { calculateUnit, decimal: d, display };
-  }, []);
+    return isInch
+      ? { calculateUnit: 'inch', decimal: 2, display: 'in/s' }
+      : { calculateUnit: 'mm', decimal: 1, display: 'mm/s' };
+  }, [isInch]);
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);

@@ -6,7 +6,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
-import { gestureIntroduction } from '@core/app/constants/media-tutorials';
+import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import historyUtils from '@core/app/svgedit/history/utils';
 import { cloneSelectedElements, pasteElements, pasteWithDefaultPosition } from '@core/app/svgedit/operations/clipboard';
@@ -44,8 +44,6 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
-
-const { lang } = i18n;
 
 export default {
   ABOUT_BEAM_STUDIO: (): void => Dialog.showAboutBeamStudio(),
@@ -160,7 +158,7 @@ export default {
   SHOW_RULERS: (): boolean => viewMenu.toggleRulers(),
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),
-  START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(gestureIntroduction),
+  START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(getGestureIntroduction()),
   START_TUTORIAL: (): void => {
     const globalPreference = useGlobalPreferenceStore.getState();
     const continuousDrawing = globalPreference['continuous_drawing'];
@@ -170,7 +168,7 @@ export default {
     Tutorials.startNewUserTutorial(() => {
       globalPreference.set('continuous_drawing', continuousDrawing, false);
       MessageCaller.openMessage({
-        content: lang.tutorial.tutorial_complete,
+        content: i18n.lang.tutorial.tutorial_complete,
         level: MessageLevel.SUCCESS,
       });
     });

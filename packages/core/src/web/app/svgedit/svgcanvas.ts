@@ -103,8 +103,6 @@ getSVGAsync(({ Canvas, Editor }) => {
   svgEditor = Editor;
 });
 
-const LANG = i18n.lang.beambox;
-
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -267,16 +265,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       stroke_width: curConfig.initStroke.width,
     },
   };
-
-  all_properties.text = $.extend(true, {}, all_properties.shape);
-  $.extend(all_properties.text, {
-    fill: curConfig.text.fill,
-    fill_opacity: curConfig.text.fill_opacity,
-    font_family: curConfig.text.font_family,
-    font_postscriptName: curConfig.text.font_postscriptName,
-    font_size: curConfig.text.font_size,
-    stroke_width: curConfig.text.stroke_width,
-  });
 
   // Current shape style properties
   var cur_shape = all_properties.shape;
@@ -746,9 +734,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Object with IDs for imported files, to see if one was already added
   const import_ids = {};
 
-  // Current text style properties
-  const cur_text = all_properties.text;
-
   // Current general properties
   let cur_properties = cur_shape;
 
@@ -767,11 +752,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // Canvas point for the most recent right click
   let lastClickPoint = null;
-
-  const curText = all_properties.text;
-
-  textEdit.updateCurText(curText);
-  textEdit.useDefaultFont();
 
   this.isAutoAlign = useGlobalPreferenceStore.getState().auto_align;
 
@@ -2638,7 +2618,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     randomColor.reset();
 
     // create empty first layer
-    const defaultLayerName = LANG.right_panel.layer_panel.layer1;
+    const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
 
     canvas.createLayer(defaultLayerName);
 
@@ -2849,8 +2829,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // name - String with the new mode to change to
   this.setMode = function (name) {
-    cur_properties = selectedElements[0] && selectedElements[0].nodeName === 'text' ? cur_text : cur_shape;
-
     if (current_mode === 'path') {
       pathActions.finishPath(false);
     }

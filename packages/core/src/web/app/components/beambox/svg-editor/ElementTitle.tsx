@@ -1,8 +1,8 @@
 import React, { useContext } from 'react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
-import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ElementTitle.module.scss';
@@ -13,31 +13,30 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const LANG = i18n.lang.topbar;
-
 function ElementTitle(): React.ReactNode {
+  const { topbar: t } = useI18n();
   const { selectedElement } = useContext(SelectedElementContext);
   let content = '';
 
   if (selectedElement) {
     if (selectedElement.getAttribute('data-tempgroup') === 'true') {
-      content = LANG.tag_names.multi_select;
+      content = t.tag_names.multi_select;
     } else {
       const layer = (svgCanvas as any).getObjectLayer(selectedElement);
       const layerName = layer ? layer.title : '';
 
       if (selectedElement.getAttribute('data-textpath-g')) {
-        content = `${layerName} > ${LANG.tag_names.text_path}`;
+        content = `${layerName} > ${t.tag_names.text_path}`;
       } else if (selectedElement.getAttribute('data-pass-through')) {
-        content = `${layerName} > ${LANG.tag_names.pass_through_object}`;
+        content = `${layerName} > ${t.tag_names.pass_through_object}`;
       } else if (selectedElement.tagName.toLowerCase() !== 'use') {
-        content = `${layerName} > ${(LANG.tag_names as any)[selectedElement.tagName.toLowerCase()]}`;
+        content = `${layerName} > ${(t.tag_names as any)[selectedElement.tagName.toLowerCase()]}`;
       } else if (selectedElement.getAttribute('data-svg') === 'true') {
-        content = `${layerName} > ${LANG.tag_names.svg}`;
+        content = `${layerName} > ${t.tag_names.svg}`;
       } else if (selectedElement.getAttribute('data-dxf') === 'true') {
-        content = `${layerName} > ${LANG.tag_names.dxf}`;
+        content = `${layerName} > ${t.tag_names.dxf}`;
       } else {
-        content = `${layerName} > ${LANG.tag_names.use}`;
+        content = `${layerName} > ${t.tag_names.use}`;
       }
     }
   }

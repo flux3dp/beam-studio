@@ -4,8 +4,8 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import GridGuide from '@core/app/components/welcome/GridGuide';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { checkBM2 } from '@core/helpers/checkFeature';
-import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
@@ -72,11 +72,12 @@ const TabHelpCenter = () => {
     topbar: { menu: tMenu },
     welcome_page: { help_center: t },
   } = useI18n();
+  const activeLang = useStorageStore((state) => state['active-lang']);
   const helpCenterUrl = useMemo(() => {
-    const isZhTw = i18n.getActiveLang() === 'zh-tw';
+    const isZhTw = activeLang === 'zh-tw';
 
     return isZhTw ? 'https://support.flux3dp.com/hc/zh-tw' : 'https://support.flux3dp.com/hc/en-us';
-  }, []);
+  }, [activeLang]);
 
   return (
     <div>

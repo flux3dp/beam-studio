@@ -4,16 +4,6 @@ import { fireEvent, render } from '@testing-library/react';
 
 import MediaTutorial from './MediaTutorial';
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    buttons: {
-      back: 'BACK',
-      done: 'DONE',
-      next: 'NEXT',
-    },
-  },
-}));
-
 const data = [
   {
     description: '1',
@@ -47,19 +37,19 @@ describe('should MediaTutorial', () => {
     const { baseElement, getByText } = render(<MediaTutorial data={data} onClose={mockOnClose} />);
 
     expect(baseElement).toMatchSnapshot();
-    fireEvent.click(getByText('NEXT'));
+    fireEvent.click(getByText('Next'));
     expect(mockMediaLoad).toHaveBeenCalledTimes(0);
     expect(baseElement).toMatchSnapshot();
-    fireEvent.click(getByText('BACK'));
+    fireEvent.click(getByText('Back'));
     expect(mockMediaLoad).toHaveBeenCalledTimes(0);
     expect(baseElement).toMatchSnapshot();
-    fireEvent.click(getByText('NEXT'));
+    fireEvent.click(getByText('Next'));
     expect(mockMediaLoad).toHaveBeenCalledTimes(0);
     expect(baseElement).toMatchSnapshot();
-    fireEvent.click(getByText('NEXT'));
+    fireEvent.click(getByText('Next'));
     expect(mockMediaLoad).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
-    fireEvent.click(getByText('DONE'));
+    fireEvent.click(getByText('Done'));
     expect(mockOnClose).toBeCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
   });

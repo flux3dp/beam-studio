@@ -11,10 +11,12 @@ import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calib
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
-import { gestureIntroduction } from '@core/app/constants/media-tutorials';
+import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import NS from '@core/app/constants/namespaces';
 import BeamboxStore from '@core/app/stores/beambox-store';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { getStorage, setStorage } from '@core/app/stores/storageStore';
+import { initCurText } from '@core/app/svgedit/text/textedit';
 import workareaManager from '@core/app/svgedit/workarea';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import alertHelper from '@core/helpers/alert-helper';
@@ -43,16 +45,16 @@ class BeamboxInit {
   constructor() {
     migrate();
 
-    if (!storage.get('default-units')) {
+    if (!getStorage('default-units')) {
       const { timeZone } = Intl.DateTimeFormat().resolvedOptions();
       const isEn = navigator.language.slice(0, 2).toLocaleLowerCase() === 'en';
 
       if (timeZone.startsWith('America') && isEn) {
-        storage.set('default-units', 'inches');
+        setStorage('default-units', 'inches');
       }
     }
 
-    if (!storage.get('default-font')) {
+    if (!getStorage('default-font')) {
       this.initDefaultFont();
     }
 
@@ -64,6 +66,7 @@ class BeamboxInit {
     alertHelper.registerAlertEvents();
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
+    initCurText();
 
     // WebSocket for Adobe Illustrator Plug-In
     aiExtension.init();
@@ -85,10 +88,10 @@ class BeamboxInit {
 
       if (res && !res.error) {
         if (res.status === 'ok' && !res.value) {
-          await Dialog.showMediaTutorial(gestureIntroduction);
+          await Dialog.showMediaTutorial(getGestureIntroduction());
           await fluxId.setPreference({ did_gesture_tutorial: true });
         } else if (res.status === 'error' && res.info === 'NOT_LOGGED_IN' && !storage.get('did-gesture-tutorial')) {
-          await Dialog.showMediaTutorial(gestureIntroduction);
+          await Dialog.showMediaTutorial(getGestureIntroduction());
           storage.set('did-gesture-tutorial', 1);
         }
       }
@@ -218,7 +221,7 @@ class BeamboxInit {
       defaultFont = fontHelper.getAvailableFonts()[0];
     }
 
-    storage.set('default-font', {
+    setStorage('default-font', {
       family: defaultFont.family,
       postscriptName: defaultFont.postscriptName,
       style: defaultFont.style,
@@ -230,14 +233,12 @@ class BeamboxInit {
 
     if (enableSentry === null) {
       await new Promise<void>((resolve) => {
-        const LANG = i18n.lang;
-
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: LANG.beambox.popup.sentry.title,
+          caption: i18n.lang.beambox.popup.sentry.title,
           iconUrl: 'img/beambox/icon-analyze.svg',
           id: 'ask-sentry',
-          message: LANG.beambox.popup.sentry.message,
+          message: i18n.lang.beambox.popup.sentry.message,
           onNo: () => {
             storage.set('enable-sentry', false);
             resolve();
@@ -294,13 +295,14 @@ class BeamboxInit {
     });
 
   private async doFirstTimeCameraCalibration(): Promise<boolean> {
-    const LANG = i18n.lang.tutorial;
     const askForRetry = () =>
       new Promise<boolean>((resolve) => {
+        const t = i18n.lang.tutorial;
+
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: LANG.camera_calibration_failed,
-          message: LANG.ask_retry_calibration,
+          caption: t.camera_calibration_failed,
+          message: t.ask_retry_calibration,
           onNo: async () => resolve(false),
           onYes: async () => resolve(await this.doFirstTimeCameraCalibration()),
         });
@@ -346,14 +348,14 @@ class BeamboxInit {
 
   private showTutorial(isNewUser: boolean): Promise<boolean> {
     if (!AlertConfig.read('skip-interface-tutorial')) {
-      const LANG = i18n.lang.tutorial;
+      const t = i18n.lang.tutorial;
 
       return new Promise<boolean>((resolve) => {
         Alert.popUp({
           buttonType: AlertConstants.YES_NO,
-          caption: LANG.welcome,
+          caption: t.welcome,
           id: 'ask-tutorial',
-          message: isNewUser ? LANG.needNewUserTutorial : LANG.needNewInterfaceTutorial,
+          message: isNewUser ? t.needNewUserTutorial : t.needNewInterfaceTutorial,
           onNo: () => {
             AlertConfig.write('skip-interface-tutorial', true);
             resolve(false);
@@ -362,7 +364,7 @@ class BeamboxInit {
             const tutorialCallback = () => {
               AlertConfig.write('skip-interface-tutorial', true);
               MessageCaller.openMessage({
-                content: LANG.tutorial_complete,
+                content: t.tutorial_complete,
                 level: MessageLevel.SUCCESS,
               });
               resolve(true);

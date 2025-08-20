@@ -14,7 +14,7 @@ import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getAllLayerNames, getLayerByName } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
-import presetHelper from '@core/helpers/presets/preset-helper';
+import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
@@ -666,7 +666,7 @@ export const postPresetChange = (): void => {
   const isPromark = promarkModels.has(workarea);
   const promarkLimit = isPromark ? getPromarkLimit() : null;
   const layerNames = getAllLayerNames();
-  const allPresets = presetHelper.getAllPresets();
+  const allPresets = getAllPresets();
 
   for (const layerName of layerNames) {
     const layer = getLayerByName(layerName);
@@ -680,7 +680,7 @@ export const postPresetChange = (): void => {
 
     if (preset?.isDefault) {
       const layerModule = getData(layer, 'module') as LayerModuleType;
-      const defaultPreset = presetHelper.getDefaultPreset(preset.key!, workarea, layerModule);
+      const defaultPreset = getDefaultPreset(preset.key!, workarea, layerModule);
 
       if (!defaultPreset) {
         // Config exists but preset not found: no preset for module

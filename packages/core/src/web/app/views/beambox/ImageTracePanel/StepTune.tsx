@@ -5,13 +5,11 @@ import type Cropper from 'cropperjs';
 
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import i18n from '@core/helpers/i18n';
 import ImageData from '@core/helpers/image-data';
 import traceAndImportPath from '@core/helpers/image-trace-panel/trace-and-import-path';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './StepTune.module.scss';
-
-const LANG = i18n.lang.beambox.image_trace_panel;
 
 interface Props {
   cropData: Cropper.Data;
@@ -24,6 +22,7 @@ const MODAL_PADDING_X = 80;
 const MODAL_PADDING_Y = 210;
 
 function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.Element {
+  const lang = useI18n().beambox.image_trace_panel;
   const [threshold, setThreshold] = useState(128);
   const [previewImgBase64, setPreviewImgBase64] = useState('');
 
@@ -65,10 +64,10 @@ function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.E
 
   const renderFooter = () => (
     <>
-      <Button onClick={onClose}>{LANG.cancel}</Button>
-      <Button onClick={onGoBack}>{LANG.back}</Button>
+      <Button onClick={onClose}>{lang.cancel}</Button>
+      <Button onClick={onGoBack}>{lang.back}</Button>
       <Button onClick={handleOk} type="primary">
-        {LANG.next}
+        {lang.next}
       </Button>
     </>
   );
@@ -90,9 +89,9 @@ function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.E
         />
       </div>
       <div>
-        <div className={styles.title}>{LANG.tuning}</div>
+        <div className={styles.title}>{lang.tuning}</div>
         <div>
-          <h5 className={styles.subtitle}>{LANG.threshold}</h5>
+          <h5 className={styles.subtitle}>{lang.threshold}</h5>
           <Slider
             id="threshold"
             max={255}
