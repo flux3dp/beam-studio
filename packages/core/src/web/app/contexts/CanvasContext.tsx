@@ -310,7 +310,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       if (workarea) workarea.style.cursor = cursor;
     };
 
-    $('#workarea').contextmenu(() => {
+    $('#workarea').on('contextmenu', () => {
       endPreviewMode();
 
       return false;
@@ -334,7 +334,14 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     };
 
     await match({ forceState, mode })
-      .with(P.union({ forceState: true }, { forceState: P.not(true), mode: P.not(CanvasMode.AutoFocus) }), () => {
+      .with(P.union({ forceState: true }, { forceState: undefined, mode: P.not(CanvasMode.AutoFocus) }), () => {
+        workareaEvents.emit('update-context-menu', { menuDisabled: true });
+        $('#workarea').on('contextmenu', () => {
+          toggleAutoFocus(false);
+
+          return false;
+        });
+
         setMode(CanvasMode.AutoFocus);
         svgCanvas.setMode('auto-focus');
         setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
@@ -342,6 +349,10 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       .otherwise(async () => {
         await deviceMaster.endSubTask();
         await deviceMaster.kick();
+
+        $('#workarea').off('contextmenu');
+        workareaEvents.emit('update-context-menu', { menuDisabled: false });
+
         setMode(CanvasMode.Draw);
         svgCanvas.setMode('select');
         setCursor('auto');

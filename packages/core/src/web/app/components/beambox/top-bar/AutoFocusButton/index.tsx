@@ -106,6 +106,14 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       return;
     }
 
+    const res = await deviceMaster.select(selectedDevice!);
+
+    if (!res.success) {
+      console.log(res);
+
+      return;
+    }
+
     setIsProcessing(true);
     progressCaller.openNonstopProgress({ id: 'auto-focus', message: message.connecting });
 
@@ -148,8 +156,6 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       return;
     }
 
-    await deviceMaster.select(selectedDevice!);
-
     const prerequisite = await match(selectedDevice)
       .with(null, () => false)
       .with({ model: P.union(...needToShowProbeBeforeAutoFocusModelsArray) }, async () => {
@@ -169,7 +175,13 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
     const setupDevice = async () => {
       try {
         progressCaller.update('auto-focus', { message: message.enteringRawMode });
-        await deviceMaster.enterRawMode();
+
+        const control = await deviceMaster.getControl();
+
+        if (control.getMode() !== 'raw') {
+          await deviceMaster.enterRawMode();
+        }
+
         progressCaller.update('auto-focus', { message: message.exitingRotaryMode });
         await deviceMaster.rawSetRotary(false);
         progressCaller.update('auto-focus', { message: message.homing });

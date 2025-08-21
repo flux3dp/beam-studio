@@ -217,7 +217,8 @@ const mouseDown = async (evt: MouseEvent) => {
   switch (currentMode) {
     case 'auto-focus':
       autoFocusEventEmitter.emit('pin', pt);
-      break;
+
+      return;
     case 'select':
     case 'multiselect':
       svgCanvas.unsafeAccess.setStarted(true);
