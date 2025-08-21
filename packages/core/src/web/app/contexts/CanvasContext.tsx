@@ -1,7 +1,7 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
-import { match } from 'ts-pattern';
+import { match, P } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
@@ -193,16 +193,17 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       curveEngravingModeController.end();
     }
 
-    const allLayers = document.querySelectorAll('g.layer');
+    const allLayers = document.querySelectorAll('g.layer') as unknown as SVGGElement[];
 
-    for (let i = 0; i < allLayers.length; i += 1) {
-      const g = allLayers[i] as SVGGElement;
-
-      if (mode === CanvasMode.Preview) {
+    // To prevent cursor changed to 'move' when 'mouseover'
+    if ([CanvasMode.AutoFocus, CanvasMode.Preview].includes(mode)) {
+      allLayers.forEach((g) => {
         g.style.pointerEvents = 'none';
-      } else {
+      });
+    } else {
+      allLayers.forEach((g) => {
         g.style.pointerEvents = '';
-      }
+      });
     }
   }, [mode]);
 
@@ -305,6 +306,9 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     workareaEvents.emit('update-context-menu', { menuDisabled: true });
 
     const workarea = document.getElementById('workarea');
+    const setCursor = (cursor: string) => {
+      if (workarea) workarea.style.cursor = cursor;
+    };
 
     $('#workarea').contextmenu(() => {
       endPreviewMode();
@@ -312,10 +316,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       return false;
     });
     setMode(CanvasMode.Preview);
-
-    if (workarea) {
-      workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
-    }
+    setCursor('url(img/camera-cursor.svg) 9 12, cell');
 
     if (tutorialController.getNextStepRequirement() === tutorialConstants.TO_PREVIEW_MODE) {
       tutorialController.handleNextStep();
@@ -327,15 +328,24 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   };
 
   const toggleAutoFocus = async (forceState?: boolean) => {
-    console.trace('toggleAutoFocus', forceState);
-    await match(forceState)
-      .with(true, () => setMode(CanvasMode.AutoFocus))
-      .with(false, async () => {
+    const workarea = document.getElementById('workarea');
+    const setCursor = (cursor: string) => {
+      if (workarea) workarea.style.cursor = cursor;
+    };
+
+    await match({ forceState, mode })
+      .with(P.union({ forceState: true }, { forceState: P.not(true), mode: P.not(CanvasMode.AutoFocus) }), () => {
+        setMode(CanvasMode.AutoFocus);
+        svgCanvas.setMode('auto-focus');
+        setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
+      })
+      .otherwise(async () => {
         await deviceMaster.endSubTask();
         await deviceMaster.kick();
         setMode(CanvasMode.Draw);
-      })
-      .otherwise(() => setMode(mode === CanvasMode.AutoFocus ? CanvasMode.Draw : CanvasMode.AutoFocus));
+        svgCanvas.setMode('select');
+        setCursor('auto');
+      });
   };
 
   const { children } = props;

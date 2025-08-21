@@ -45,6 +45,7 @@ let svgCanvas: ISVGCanvas;
 
 const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
+const autoFocusEventEmitter = eventEmitterFactory.createEventEmitter('auto-focus');
 
 getSVGAsync(({ Canvas, Editor }) => {
   svgCanvas = Canvas;
@@ -64,6 +65,8 @@ let selectedBBox: IRect | null = null;
 let justSelected: null | SVGElement = null;
 let angleOffset = 90;
 let currentBoundingBox = Array.of<IPoint>();
+// exclusive for 'auto-focus' mode, to display current cursor coordinates
+let coordsDisplay: HTMLDivElement | null = null;
 
 const checkShouldIgnore = () => ObjectPanelController.getActiveKey() && navigator.maxTouchPoints > 1;
 const findAndDrawAlignPoints = (x: number, y: number) => {
@@ -214,6 +217,9 @@ const mouseDown = async (evt: MouseEvent) => {
   currentMode = svgCanvas.getCurrentMode();
 
   switch (currentMode) {
+    case 'auto-focus':
+      autoFocusEventEmitter.emit('pin', pt);
+      break;
     case 'select':
     case 'multiselect':
       svgCanvas.unsafeAccess.setStarted(true);
@@ -718,6 +724,34 @@ const mouseMove = (evt: MouseEvent) => {
 
   svgCanvas.clearAlignLines();
 
+  if (currentMode === 'auto-focus') {
+    if (!coordsDisplay) {
+      const el = document.createElement('div');
+
+      el.style.cssText = `
+        position: fixed;
+        background-color: rgba(0,0,0,0.75);
+        color: white;
+        font-size: 12px;
+        padding: 4px 8px;
+        border-radius: 4px;
+        pointer-events: none;
+        font-family: sans-serif;
+        z-index: 10001;
+      `;
+      document.body.appendChild(el);
+      coordsDisplay = el;
+    }
+
+    // Position the tooltip near the cursor
+    coordsDisplay.style.left = `${evt.clientX + 20}px`;
+    coordsDisplay.style.top = `${evt.clientY + 20}px`;
+    coordsDisplay.textContent = `X: ${(pt.x / 10).toFixed(1)}, Y: ${(pt.y / 10).toFixed(1)}`;
+  } else if (coordsDisplay) {
+    coordsDisplay.remove();
+    coordsDisplay = null;
+  }
+
   if (!started) {
     if (svgCanvas.isAutoAlign && currentMode === 'path') {
       findAndDrawAlignPoints(realX, realY);
@@ -1055,7 +1089,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
   justSelected = null;
 
-  if (!started) return;
+  if (!started && currentMode !== 'auto-focus') return;
 
   const pt = getEventPoint(evt);
   const { x, y } = pt;
@@ -1101,6 +1135,15 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
   };
 
   switch (currentMode) {
+    case 'auto-focus':
+      if (coordsDisplay) {
+        coordsDisplay.remove();
+        coordsDisplay = null;
+      }
+
+      svgCanvas.setMode('select');
+
+      return;
     case 'curve-engraving':
       cleanUpRubberBox();
 

@@ -18,15 +18,18 @@ import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import alertConfig from '@core/helpers/api/alert-config';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import type { IPoint } from '@core/interfaces/ISVGCanvas';
 
-import { useAutoFocusPinning } from './hooks/useAutoFocusPinning';
 import styles from './index.module.scss';
 import { getMovementSpeed } from './utils/getMovementSpeed';
 
 let svgCanvas: ISVGCanvas;
+const autoFocusEventEmitter = eventEmitterFactory.createEventEmitter('auto-focus');
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -52,48 +55,54 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
     [selectedDevice],
   );
   const { autoFocusOffset: [offsetX, offsetY] = [0, 0, 0], height, width } = getWorkarea(selectedDevice?.model!);
-  const executeAutofocus = async (coords?: { x: number; y: number }) => {
-    if (isProcessing) return;
+  const executeAutofocus = React.useCallback(
+    async (coords?: { x: number; y: number }) => {
+      if (isProcessing) return;
 
-    const model = selectedDevice?.model!;
+      const model = selectedDevice?.model!;
 
-    try {
-      setIsProcessing(true);
-      progressCaller.openNonstopProgress({ id: 'auto-focus', message: lang.operating });
+      try {
+        setIsProcessing(true);
+        progressCaller.openNonstopProgress({ id: 'auto-focus', message: lang.operating });
 
-      const _f = getMovementSpeed(model);
+        const _f = getMovementSpeed(model);
 
-      // If coordinates were provided by the pin, move the device head first.
-      if (coords) {
-        const x = Math.max(offsetX, Math.min(coords.x / dpmm - offsetX, width - offsetX));
-        const y = Math.max(offsetY, Math.min(coords.y / dpmm - offsetY, height - offsetY));
+        // If coordinates were provided by the pin, move the device head first.
+        if (coords) {
+          const x = Math.max(offsetX, Math.min(coords.x / dpmm - offsetX, width - offsetX));
+          const y = Math.max(offsetY, Math.min(coords.y / dpmm - offsetY, height - offsetY));
 
-        await deviceMaster.rawMove({ x, y });
+          await deviceMaster.rawMove({ x, y });
+        }
+
+        await deviceMaster.rawAutoFocus();
+        await deviceMaster.rawLooseMotor();
+      } finally {
+        progressCaller.popById('auto-focus');
+        setIsProcessing(false);
+        toggleAutoFocus(false);
       }
+    },
+    [isProcessing, selectedDevice, offsetX, offsetY, width, height, toggleAutoFocus, lang.operating],
+  );
 
-      await deviceMaster.rawAutoFocus();
-      await deviceMaster.rawLooseMotor();
-    } finally {
-      await deviceMaster.endSubTask();
-      await deviceMaster.kick();
-      progressCaller.popById('auto-focus');
-      setIsProcessing(false);
-      toggleAutoFocus(false);
-    }
-  };
+  useEffect(() => {
+    const onPin = (pt: IPoint) => {
+      executeAutofocus(pt);
+    };
 
-  const { isPinning, startPinning, stopPinning } = useAutoFocusPinning(executeAutofocus, toggleAutoFocus);
+    autoFocusEventEmitter.on('pin', onPin);
+
+    return () => {
+      autoFocusEventEmitter.removeListener('pin', onPin);
+    };
+  }, [executeAutofocus]);
 
   /**
    * Handles clicks on the auto focus button.
    */
   const handleClickButton = async () => {
-    if (isProcessing) return;
-
-    // If already in pinning mode, clicking the button cancels it.
-    if (isPinning) {
-      stopPinning();
-
+    if (isProcessing || mode === CanvasMode.AutoFocus) {
       return;
     }
 
@@ -175,18 +184,29 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       svgCanvas.clearSelection();
       toggleAutoFocus(true);
       await setupDevice();
-      startPinning(); // If all checks pass, enter pinning mode.
     }
   };
 
   useEffect(() => {
-    console.log(isProcessing, isPinning);
-  }, [isProcessing, isPinning]);
+    if (mode !== CanvasMode.AutoFocus) return;
+
+    const unregister = shortcuts.on(
+      ['Escape'],
+      () => {
+        if (!isProcessing) {
+          toggleAutoFocus(false);
+        }
+      },
+      { isBlocking: true },
+    );
+
+    return unregister;
+  }, [isProcessing, mode, toggleAutoFocus]);
 
   return (
     <div
       className={classNames(styles.button, {
-        [styles.disabled]: isProcessing || !isDeviceSupportAutoFocus || isPinning || mode === CanvasMode.Preview,
+        [styles.disabled]: isProcessing || !isDeviceSupportAutoFocus || mode !== CanvasMode.Draw,
       })}
       onClick={handleClickButton}
       title={lang.title}
