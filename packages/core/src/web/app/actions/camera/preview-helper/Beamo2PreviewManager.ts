@@ -29,7 +29,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
   private grid = bm2PerspectiveGrid;
   private doorChecker = new DoorChecker();
-  protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
+  protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
 
   constructor(device: IDeviceInfo) {
     super(device);
@@ -44,10 +44,10 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     const previewMovementSpeedLevel = useGlobalPreferenceStore.getState()['preview_movement_speed_level'];
 
     return match(previewMovementSpeedLevel)
-      .with(PreviewSpeedLevel.FAST, () => 42000)
-      .with(PreviewSpeedLevel.MEDIUM, () => 36000)
-      .with(PreviewSpeedLevel.SLOW, () => 30000)
-      .otherwise(() => 30000);
+      .with(PreviewSpeedLevel.FAST, () => 21000)
+      .with(PreviewSpeedLevel.MEDIUM, () => 18000)
+      .with(PreviewSpeedLevel.SLOW, () => 15000)
+      .otherwise(() => 15000);
   };
 
   private handleSetupError = async (error: unknown): Promise<void> => {
@@ -93,6 +93,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         this.fisheyePreviewManager!.setupFisheyePreview({
           cameraPosition: cameraCenter,
           height: 0,
+          movementFeedrate: this.getMovementSpeed(),
           progressId: this.progressId,
           progressRange: [40, 100],
         }),

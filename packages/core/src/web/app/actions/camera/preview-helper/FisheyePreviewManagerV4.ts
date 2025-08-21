@@ -27,12 +27,19 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     args: {
       cameraPosition?: number[];
       height?: number;
+      movementFeedrate?: number;
       progressId?: string;
       progressRange?: [number, number];
     } = {},
   ): Promise<boolean> {
     const { lang } = i18n;
-    const { cameraPosition, height, progressId, progressRange: [progressStart, progressEnd] = [0, 100] } = args;
+    const {
+      cameraPosition,
+      height,
+      movementFeedrate = 7500,
+      progressId,
+      progressRange: [progressStart, progressEnd] = [0, 100],
+    } = args;
 
     if (!progressId) progressCaller.openNonstopProgress({ id: this.progressId });
 
@@ -49,10 +56,10 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     });
 
     if (cameraPosition) {
-      await deviceMaster.rawMove({ f: 7500, x: cameraPosition[0], y: cameraPosition[1] });
+      await deviceMaster.rawMove({ f: movementFeedrate, x: cameraPosition[0], y: cameraPosition[1] });
 
       const dist = (cameraPosition[0] ** 2 + cameraPosition[1] ** 2) ** 0.5;
-      const time = (dist / (7500 / 60)) * 2; // safety factor 2
+      const time = (dist / (movementFeedrate / 60)) * 2; // safety factor 2
 
       await new Promise((resolve) => setTimeout(resolve, time * 1000));
     }
