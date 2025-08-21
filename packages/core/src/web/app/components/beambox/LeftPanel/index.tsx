@@ -45,6 +45,10 @@ const UnmemorizedLeftPanel = () => {
     });
 
     return () => unsubscribes.forEach((unsubscribe) => unsubscribe());
+  }, []);
+
+  useEffect(() => {
+    modeRef.current = mode;
   }, [mode]);
 
   return match(mode)

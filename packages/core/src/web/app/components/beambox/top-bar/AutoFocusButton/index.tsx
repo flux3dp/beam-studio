@@ -106,6 +106,9 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       return;
     }
 
+    setIsProcessing(true);
+    progressCaller.openNonstopProgress({ id: 'auto-focus', message: message.connecting });
+
     if (!alertConfig.read('skip_auto_focus_warning')) {
       const shouldContinue = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
@@ -123,10 +126,13 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
         });
       });
 
-      if (!shouldContinue) return;
-    }
+      if (!shouldContinue) {
+        setIsProcessing(false);
+        progressCaller.popById('auto-focus');
 
-    setIsProcessing(true);
+        return;
+      }
+    }
 
     const deviceStatus = await checkDeviceStatus(selectedDevice!);
 
@@ -137,6 +143,7 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
         type: alertConstants.SHOW_POPUP_ERROR,
       });
       setIsProcessing(false);
+      progressCaller.popById('auto-focus');
 
       return;
     }
@@ -161,8 +168,6 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       .otherwise(() => true);
     const setupDevice = async () => {
       try {
-        progressCaller.openNonstopProgress({ id: 'auto-focus', message: message.homing });
-
         progressCaller.update('auto-focus', { message: message.enteringRawMode });
         await deviceMaster.enterRawMode();
         progressCaller.update('auto-focus', { message: message.exitingRotaryMode });
