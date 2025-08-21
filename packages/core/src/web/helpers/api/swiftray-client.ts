@@ -188,7 +188,7 @@ class SwiftrayClient extends EventEmitter {
   }
 
   private handleError(error: Error) {
-    console.error('Error connecting to Swiftray server:', error, this.retryCount);
+    if (!isWeb()) console.error('Error connecting to Swiftray server:', error, this.retryCount);
   }
 
   private retry() {
