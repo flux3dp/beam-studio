@@ -68,10 +68,10 @@ describe('ador layer', () => {
 
     const moveElement = (layer: string, expectedText: string) => {
       cy.get('#svg_1').click({ force: true });
-      cy.get('#svg_1').click({ force: true });
       cy.get('select[title="Move selected elements to a different layer"]').select(layer);
       cy.get('.ant-modal-title').should('have.text', expectedText);
       cy.contains('button.ant-btn', 'Confirm').click({ force: true });
+      cy.get('#svg_1').parent().find('title').should('have.text', layer);
     };
 
     moveElement('Layer 1', 'Move selected element to Layer 1 and convert it into laser element?');
