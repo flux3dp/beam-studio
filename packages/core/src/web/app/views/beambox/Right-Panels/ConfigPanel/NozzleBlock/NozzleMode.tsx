@@ -1,4 +1,4 @@
-import { memo, useContext, useMemo } from 'react';
+import { memo, useContext } from 'react';
 
 import classNames from 'classnames';
 import { useShallow } from 'zustand/react/shallow';
@@ -41,16 +41,11 @@ const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   const { hasMultiValue, value } = nozzleMode;
 
-  const options = useMemo(
-    () =>
-      [
-        hasMultiValue ? { label: '-', value: 0 } : null,
-        { label: 'Left', value: 1 },
-        { label: 'Right', value: 2 },
-        { label: 'Both', value: 3 },
-      ].filter(Boolean),
-    [hasMultiValue],
-  );
+  const options = [
+    { label: 'Left', value: 1 },
+    { label: 'Right', value: 2 },
+    { label: 'Both', value: 3 },
+  ];
 
   return type === 'panel-item' ? (
     <ObjectPanelItem.Select
@@ -58,18 +53,21 @@ const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       label="Nozzle Mode"
       onChange={handleChange}
       options={options}
-      selected={hasMultiValue ? options[0] : options[value - 1]}
+      selected={hasMultiValue ? { label: '-', value: 0 } : options[value - 1]}
     />
   ) : (
     <div className={classNames(styles.panel)}>
       <span className={styles.title}>Nozzle Mode</span>
-      <Select className={styles['inline-select']} onChange={handleChange} value={hasMultiValue ? 0 : value}>
-        {options.map((option) => (
-          <Select.Option key={option.value} value={option.value}>
-            {option.label}
-          </Select.Option>
-        ))}
-      </Select>
+      <Select
+        className={styles['inline-select']}
+        onChange={handleChange}
+        options={[
+          { label: 'Left', value: 1 },
+          { label: 'Right', value: 2 },
+          { label: 'Both', value: 3 },
+        ]}
+        value={hasMultiValue ? '-' : value}
+      />
     </div>
   );
 };
