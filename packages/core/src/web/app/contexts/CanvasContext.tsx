@@ -347,6 +347,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
       })
       .otherwise(async () => {
+        await deviceMaster.rawLooseMotor();
         await deviceMaster.endSubTask();
         await deviceMaster.kick();
 

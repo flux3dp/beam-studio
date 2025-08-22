@@ -9,6 +9,7 @@ import {
   needToShowProbeBeforeAutoFocusModelsArray,
   supportAutoFocusModels,
 } from '@core/app/actions/beambox/constant';
+import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -22,11 +23,11 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
+import { MessageLevel } from '@core/interfaces/IMessage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 
 import styles from './index.module.scss';
-import { getMovementSpeed } from './utils/getMovementSpeed';
 
 let svgCanvas: ISVGCanvas;
 const autoFocusEventEmitter = eventEmitterFactory.createEventEmitter('auto-focus');
@@ -59,13 +60,9 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
     async (coords?: { x: number; y: number }) => {
       if (isProcessing) return;
 
-      const model = selectedDevice?.model!;
-
       try {
         setIsProcessing(true);
         progressCaller.openNonstopProgress({ id: 'auto-focus', message: lang.operating });
-
-        const _f = getMovementSpeed(model);
 
         // If coordinates were provided by the pin, move the device head first.
         if (coords) {
@@ -73,17 +70,27 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
           const y = Math.max(offsetY, Math.min(coords.y / dpmm - offsetY, height - offsetY));
 
           await deviceMaster.rawMove({ x, y });
+
+          // Wait for the device to finish moving for HEXA
+          if (deviceMaster.currentDevice?.info?.model === 'fhexa1') {
+            await deviceMaster.rawWaitOkResponse('M9');
+          }
         }
 
         await deviceMaster.rawAutoFocus();
-        await deviceMaster.rawLooseMotor();
+        await MessageCaller.openMessage({
+          content: message.auto_focus.succeeded,
+          duration: 3,
+          key: 'auto-focus',
+          level: MessageLevel.SUCCESS,
+        });
       } finally {
         progressCaller.popById('auto-focus');
         setIsProcessing(false);
         toggleAutoFocus(false);
       }
     },
-    [isProcessing, selectedDevice, offsetX, offsetY, width, height, toggleAutoFocus, lang.operating],
+    [isProcessing, lang.operating, message.auto_focus.succeeded, offsetX, width, offsetY, height, toggleAutoFocus],
   );
 
   useEffect(() => {
@@ -106,16 +113,37 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       return;
     }
 
-    const res = await deviceMaster.select(selectedDevice!);
+    setIsProcessing(true);
+    progressCaller.openNonstopProgress({ id: 'auto-focus', message: message.connecting });
 
-    if (!res.success) {
-      console.log(res);
+    const res = await deviceMaster.select(selectedDevice!);
+    const deviceStatus = await checkDeviceStatus(selectedDevice!);
+
+    if (!res.success || !deviceStatus) {
+      alertCaller.popUp({
+        caption: lang.title,
+        message: lang.select_device_error,
+        type: alertConstants.SHOW_POPUP_ERROR,
+      });
+      setIsProcessing(false);
+      progressCaller.popById('auto-focus');
 
       return;
     }
 
-    setIsProcessing(true);
-    progressCaller.openNonstopProgress({ id: 'auto-focus', message: message.connecting });
+    const control = await deviceMaster.getControl();
+
+    if (!control) {
+      alertCaller.popUp({
+        caption: lang.title,
+        message: lang.select_device_error,
+        type: alertConstants.SHOW_POPUP_ERROR,
+      });
+      setIsProcessing(false);
+      progressCaller.popById('auto-focus');
+
+      return;
+    }
 
     if (!alertConfig.read('skip_auto_focus_warning')) {
       const shouldContinue = await new Promise<boolean>((resolve) => {
@@ -126,9 +154,8 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
             callbacks: () => alertConfig.write('skip_auto_focus_warning', true),
             text: alert.dont_show_again,
           },
-          id: 'camera_cable_alert',
-          message:
-            'After entering auto focus mode, the laser head will be reset and moved to the specified position for focusing. \nPlease ensure that the target position is on the material and that there are no obstacles in the movement path.',
+          id: 'auto_focus_warning',
+          message: message.auto_focus.warning_at_coordinates,
           primaryButtonIndex: 1,
           type: alertConstants.SHOW_POPUP_WARNING,
         });
@@ -140,20 +167,6 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
 
         return;
       }
-    }
-
-    const deviceStatus = await checkDeviceStatus(selectedDevice!);
-
-    if (!deviceStatus) {
-      alertCaller.popUp({
-        caption: lang.title,
-        message: lang.select_device_error,
-        type: alertConstants.SHOW_POPUP_ERROR,
-      });
-      setIsProcessing(false);
-      progressCaller.popById('auto-focus');
-
-      return;
     }
 
     const prerequisite = await match(selectedDevice)
@@ -175,8 +188,6 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
     const setupDevice = async () => {
       try {
         progressCaller.update('auto-focus', { message: message.enteringRawMode });
-
-        const control = await deviceMaster.getControl();
 
         if (control.getMode() !== 'raw') {
           await deviceMaster.enterRawMode();
