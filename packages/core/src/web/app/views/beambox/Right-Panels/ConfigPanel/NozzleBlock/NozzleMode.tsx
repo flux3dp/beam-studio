@@ -23,23 +23,22 @@ const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     })),
   );
 
-  const handleChange = (value: number) => {
-    if (value === nozzleMode.value) {
+  const { hasMultiValue, value } = nozzleMode;
+  const handleChange = (newValue: number) => {
+    if (newValue === value && !hasMultiValue) {
       return;
     }
 
-    change({ nozzleMode: value });
+    change({ nozzleMode: newValue });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change Nozzle Mode');
 
-      selectedLayers.forEach((layerName) => writeData(layerName, 'nozzleMode', value, { batchCmd }));
+      selectedLayers.forEach((layerName) => writeData(layerName, 'nozzleMode', newValue, { batchCmd }));
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     }
   };
-
-  const { hasMultiValue, value } = nozzleMode;
 
   const options = [
     { label: 'Left', value: 1 },

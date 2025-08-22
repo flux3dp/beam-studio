@@ -22,24 +22,23 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const { change, halftone } = useConfigPanelStore();
 
   const { selectedLayers } = useContext(ConfigPanelContext);
+  const { hasMultiValue, value } = halftone;
 
-  const handleChange = (value: number) => {
-    if (value === halftone.value) {
+  const handleChange = (newValue: number) => {
+    if (newValue === value && !hasMultiValue) {
       return;
     }
 
-    change({ halftone: value });
+    change({ halftone: newValue });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change Halftone');
 
-      selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', value, { batchCmd }));
+      selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', newValue, { batchCmd }));
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     }
   };
-
-  const { hasMultiValue, value } = halftone;
 
   const options = [
     { label: 'FM', value: 1 },
