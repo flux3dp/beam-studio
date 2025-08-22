@@ -1,6 +1,5 @@
 import React, { memo } from 'react';
 
-import type { TabPaneProps } from 'antd';
 import { Button, ConfigProvider, Flex } from 'antd';
 
 import ImageEditPanelIcons from '@core/app/icons/image-edit-panel/ImageEditPanelIcons';
@@ -10,19 +9,12 @@ import Header from '@core/app/widgets/FullWindowPanel/Header';
 import FullWindowPanelSider from '@core/app/widgets/FullWindowPanel/Sider';
 import useI18n from '@core/helpers/useI18n';
 
-import Content from './Eraser';
+import Content from './Content';
 import styles from './index.module.scss';
-
-export type Mode = 'cornerRadius' | 'eraser' | 'magicWand';
 
 interface Props {
   handleComplete: () => void;
   onClose: () => void;
-}
-
-interface Tab extends Omit<TabPaneProps, 'tab'> {
-  key: string;
-  label: React.ReactNode;
 }
 
 function Sider({ handleComplete, onClose }: Props): React.JSX.Element {

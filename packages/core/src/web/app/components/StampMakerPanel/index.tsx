@@ -19,7 +19,7 @@ import KonvaImage from './components/KonvaImage';
 import Sider from './components/Sider';
 import TopBar from './components/TopBar';
 import styles from './index.module.scss';
-import { useImageEditPanelStore } from './store';
+import { useStampMakerPanelStore } from './store';
 
 interface Props {
   image: SVGImageElement;
@@ -29,7 +29,6 @@ interface Props {
 
 const EDITING = 0;
 const EXPORTING = 1;
-
 const IMAGE_PADDING = 30;
 
 function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.Element {
@@ -37,13 +36,12 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
     beambox: { photo_edit_panel: langPhoto },
     image_edit_panel: lang,
   } = useI18n();
-
-  const { redo, resetState, undo } = useImageEditPanelStore();
+  const { filters, horizontalFlip, redo, resetState, undo } = useStampMakerPanelStore();
   const { isFullColor, isShading, threshold } = useMemo(
     () => ({
-      isFullColor: image.getAttribute('data-fullcolor') === '1',
+      isFullColor: true,
       isShading: image.getAttribute('data-shading') === 'true',
-      threshold: Number.parseInt(image.getAttribute('data-threshold')!, 10),
+      threshold: Number.parseInt(image.getAttribute('data-threshold')! || '128', 10),
     }),
     [image],
   );
@@ -135,13 +133,12 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
         originalHeight: height,
         originalWidth: width,
       } = await preprocessByUrl(src, { isFullResolution: true });
-      const fullColorImage = await calculateBase64(blobUrl, true, 255, true);
+      const fullColorImage = await calculateBase64(blobUrl, true, 255, false);
       const initScale = Math.min(
         1,
         (clientWidth - IMAGE_PADDING * 2) / width,
         (clientHeight - IMAGE_PADDING * 2) / height,
       );
-
       const imageX = Math.max(IMAGE_PADDING, (clientWidth - width * initScale) / 2);
       const imageY = Math.max(IMAGE_PADDING, (clientHeight - height * initScale) / 2);
 
@@ -208,10 +205,10 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
           <Flex className={styles['w-100']} vertical>
             <TopBar handleReset={handleResetZoom} handleZoomByScale={handleZoomByScale} zoomScale={zoomScale} />
             <div className={styles['outer-container']}>
-              <div className={styles.container} ref={divRef} style={{ cursor: 'default' }}>
+              <div className={styles.container} ref={divRef}>
                 <Stage draggable={isDragging} onWheel={handleWheel} pixelRatio={1} ref={stageRef}>
                   <Layer pixelRatio={1} ref={layerRef}>
-                    <KonvaImage ref={imageRef} src={displayImage} />
+                    <KonvaImage filters={filters} horizontalFlip={horizontalFlip} ref={imageRef} src={displayImage} />
                   </Layer>
                 </Stage>
               </div>
