@@ -1,36 +1,60 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Flex, Form, InputNumber, Slider } from 'antd';
+import { Flex, Form, Switch } from 'antd';
+import Konva from 'konva';
+import { match } from 'ts-pattern';
 
-import useI18n from '@core/helpers/useI18n';
+import UnitInput from '@core/app/widgets/UnitInput';
 
-import styles from './PanelContent.module.scss';
+import { useStampMakerPanelStore } from '../../store';
+import { getEDTFilter } from '../../utils/getEDTFilter';
 
-const MAX_BRUSH_SIZE = 128;
+import styles from './Content.module.scss';
 
-export default function Eraser(): React.JSX.Element {
-  const { image_edit_panel: lang } = useI18n();
+export default function Content(): React.JSX.Element {
+  const { addFilter, bevelRadius, filters, horizontalFlip, removeFilter, setBevelRadius, setHorizontalFlip } =
+    useStampMakerPanelStore();
+  const isInverted = useMemo(() => filters.includes(Konva.Filters.Invert), [filters]);
+
+  const handleToggleFlip = () => setHorizontalFlip(!horizontalFlip);
+  const handleToggleInvert = () =>
+    match(isInverted)
+      .with(true, () => removeFilter(Konva.Filters.Invert))
+      .otherwise(() => addFilter(Konva.Filters.Invert));
+  const handleBevelRadiusChange = (bevelRadius: number) => {
+    setBevelRadius(bevelRadius, getEDTFilter({ rampWidth: bevelRadius }));
+  };
 
   return (
     <div className={styles.wrapper}>
-      <div className={styles.title}>{lang.eraser.title}</div>
-      <div className={styles['hint-text']}>
-        <QuestionCircleOutlined className={styles.icon} />
-        <span>{lang.eraser.description}</span>
-      </div>
-      <Form layout="vertical">
-        <Form.Item label={`${lang.eraser.brush_size}:`}>
-          <Flex align="center" gap={8} justify="between">
-            <Slider className={styles.slider} max={MAX_BRUSH_SIZE} min={1} onChange={() => {}} step={1} value={20} />
-            <InputNumber
-              max={MAX_BRUSH_SIZE}
-              min={1}
-              onChange={(val) => {
-                if (val !== null) return;
+      <Form layout="horizontal">
+        <Form.Item
+          label="Invert"
+          tooltip={{ icon: <QuestionCircleOutlined />, title: 'Invert the colors of the image.' }}
+        >
+          <Switch checked={isInverted} onChange={handleToggleInvert} />
+        </Form.Item>
+        <Form.Item
+          label="Flip Horizontally: "
+          tooltip={{ icon: <QuestionCircleOutlined />, title: 'Flip the image horizontally (mirror effect).' }}
+        >
+          <Switch checked={horizontalFlip} onChange={handleToggleFlip} />
+        </Form.Item>
+        <Form.Item label={`Bevel Radius:`} layout="vertical">
+          <Flex justify="space-between">
+            <UnitInput
+              //
+              addonAfter="mm"
+              max={10}
+              min={0}
+              onChange={(value) => {
+                if (value !== null) {
+                  handleBevelRadiusChange(value);
+                }
               }}
-              step={1}
-              value={20}
+              step={0.1}
+              value={bevelRadius}
             />
           </Flex>
         </Form.Item>
