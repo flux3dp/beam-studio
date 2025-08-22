@@ -4,6 +4,8 @@ import { match } from 'ts-pattern';
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
+import { getUniformEmbossFilter } from './utils/getUniformEmbossFilter';
+
 type HorizontalFlipOperation = {
   mode: 'horizontalFlip';
   value: boolean;
@@ -44,11 +46,11 @@ const getDefaultState = (): State => ({
 });
 
 interface ImageEditPanelStore extends State {
-  addFilter: (filter: Filter) => void;
+  addFilter: (filter: Filter, isFront?: boolean) => void;
   redo: () => void;
   removeFilter: (filter: Filter) => void;
   resetState: () => void;
-  setBevelRadius: (value: number, filter: Filter) => void;
+  setBevelRadius: (value: number) => void;
   setHorizontalFlip: (value: boolean) => void;
   undo: () => void;
 }
@@ -60,14 +62,15 @@ const addItemToHistory = ({ index, operations }: HistoryState, item: HistoryOper
   return { index: index + 1, operations };
 };
 
-const _addFilter = ({ filters, history }: State, filter: Filter): { filters: Filter[]; history: HistoryState } => {
+const _addFilter = (
+  { filters, history }: State,
+  filter: Filter,
+  isFront = false,
+): { filters: Filter[]; history: HistoryState } => {
   const operation: HistoryOperation = { filter, mode: 'filter' };
   const newHistory = addItemToHistory(history, operation);
 
-  console.log('before addFilter', { filters, history });
-  console.log('after addFilter', { filters: [...filters, filter], history: newHistory });
-
-  return { filters: [...filters, filter], history: newHistory };
+  return { filters: isFront ? [filter, ...filters] : [...filters, filter], history: newHistory };
 };
 
 const _removeFilter = (state: State, filter: Filter): { filters: Filter[]; history: HistoryState } => {
@@ -78,18 +81,12 @@ const _removeFilter = (state: State, filter: Filter): { filters: Filter[]; histo
   const operation: HistoryOperation = { filter, mode: 'filter' };
   const newHistory = addItemToHistory(history, operation);
 
-  console.log('before removeFilter', { filters, history });
-  console.log('after removeFilter', {
-    filters: filters.filter(isNot(isShallowEqual(filter))),
-    history: newHistory,
-  });
-
   return { filters: filters.filter(isNot(isShallowEqual(filter))), history: newHistory };
 };
 
 export const useStampMakerPanelStore = create<ImageEditPanelStore>(
   combine(getDefaultState(), (set) => ({
-    addFilter: (filter: Filter) => set((state) => _addFilter(state, filter)),
+    addFilter: (filter: Filter, isFront?: boolean) => set((state) => _addFilter(state, filter, isFront)),
     redo: () =>
       set((state) => {
         const { filters, history } = state;
@@ -130,24 +127,25 @@ export const useStampMakerPanelStore = create<ImageEditPanelStore>(
       }),
     removeFilter: (filter: Filter) => set((state) => _removeFilter(state, filter)),
     resetState: () => set(getDefaultState()),
-    setBevelRadius: (value: number, filter: Filter) => {
+    setBevelRadius: (bevelRadius: number) => {
       set((state) => {
-        let newFilters = state.filters;
+        const filter = getUniformEmbossFilter({ rampWidth: bevelRadius * 10 });
+        let filters = state.filters;
 
         // Remove the last bevel radius filter if it exists
         if (state.lastBevelRadiusFilter) {
-          newFilters = newFilters.filter(isNot(isShallowEqual(state.lastBevelRadiusFilter)));
+          filters = filters.filter(isNot(isShallowEqual(state.lastBevelRadiusFilter)));
         }
 
         // Add the new filter if it exists and value is not equal to 0
-        if (value !== 0 && filter) {
-          newFilters = [...newFilters, filter];
+        if (bevelRadius !== 0 && filter) {
+          filters = [...filters, filter];
         }
 
         return {
-          bevelRadius: value,
-          filters: newFilters,
-          history: addItemToHistory(state.history, { filter, mode: 'bevelRadius', value }),
+          bevelRadius,
+          filters,
+          history: addItemToHistory(state.history, { filter, mode: 'bevelRadius', value: bevelRadius }),
           lastBevelRadiusFilter: filter,
         };
       });

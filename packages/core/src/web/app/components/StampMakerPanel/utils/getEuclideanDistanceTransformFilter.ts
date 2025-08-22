@@ -9,7 +9,7 @@
  * @param {number} options.steps - The number of discrete shading steps in the ramp.
  * @param {number} [options.lightAngle=315] - The angle of the light source in degrees.
  */
-export const getEDTFilter =
+export const getEuclideanDistanceTransformFilter =
   ({ lightAngle = 315, rampWidth = 1, steps = 1 }) =>
   (imageData: ImageData): void => {
     if (rampWidth <= 0 || steps <= 0) {
