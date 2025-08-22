@@ -77,14 +77,7 @@ const generateBase64Image = (
 ): Promise<string> =>
   new Promise<string>((resolve) => {
     imageData(imgSrc, {
-      grayscale: isFullColor
-        ? undefined
-        : {
-            is_rgba: true,
-            is_shading: shading,
-            is_svg: false,
-            threshold,
-          },
+      grayscale: isFullColor ? undefined : { is_rgba: true, is_shading: shading, is_svg: false, threshold },
       isFullResolution: true,
       onComplete(result: any) {
         resolve(result.pngBase64);
@@ -113,13 +106,10 @@ const addBatchCommand = (
       batchCommand.addSubCommand(cmd);
     }
   };
-  const keys = Object.keys(changes);
 
-  for (let i = 0; i < keys.length; i += 1) {
-    const key = keys[i];
-
+  Object.keys(changes).forEach((key) => {
     setAttribute(key, changes[key]);
-  }
+  });
 
   if (!changes['data-trapezoid']) {
     setAttribute('data-trapezoid', undefined);
