@@ -8,6 +8,8 @@ module.exports = async function customSign(configuration, packager) {
   const { exec } = require('child_process');
   const { statSync } = require('fs');
 
+  return;
+
   return new Promise((resolve, reject) => {
     let retryTime = 0;
 
