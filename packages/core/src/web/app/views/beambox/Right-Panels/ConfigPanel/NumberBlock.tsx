@@ -99,7 +99,7 @@ const NumberBlock = ({
 
   const handleChange = useCallback(
     (newVal: number) => {
-      if (newVal === value || typeof value !== 'number') return;
+      if ((newVal === value && !hasMultiValue) || typeof value !== 'number') return;
 
       const noHistory = value > max || value < min;
       const payload: Record<string, number | string> = { [key]: newVal };

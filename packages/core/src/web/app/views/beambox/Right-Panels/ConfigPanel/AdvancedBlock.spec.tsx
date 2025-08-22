@@ -62,6 +62,7 @@ jest.mock('./ColorAdvancedSetting/ColorAdvancedSettingButton', () => () => <div>
 jest.mock('./Diode', () => () => <div>Mock Diode</div>);
 jest.mock('./FocusBlock', () => ({ type }: { type: string }) => <div>Mock FocusBlock: {type}</div>);
 jest.mock('./FrequencyBlock', () => () => <div>Mock FrequencyBlock</div>);
+jest.mock('./NozzleBlock', () => () => <div>Mock NozzleBlock</div>);
 jest.mock('./PulseWidthBlock', () => () => <div>Mock PulseWidthBlock</div>);
 jest.mock('./SingleColorBlock', () => () => <div>Mock SingleColorBlock</div>);
 jest.mock('./WobbleBlock', () => () => <div>Mock WobbleBlock</div>);

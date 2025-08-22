@@ -26,6 +26,7 @@ import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
 import Diode from './Diode';
 import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
+import NozzleBlock from './NozzleBlock';
 import PulseWidthBlock from './PulseWidthBlock';
 import RefreshIntervalBlock from './RefreshIntervalBlock';
 import SingleColorBlock from './SingleColorBlock';
@@ -108,6 +109,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       if (isDev()) {
         contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" />);
         contents.push(<RefreshIntervalBlock key="refresh-interval-block" type={type} />);
+        contents.push(<NozzleBlock key="nozzle-block" type={type} />);
       }
     }
 
@@ -124,10 +126,6 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
             contentPadding: 0,
             headerPadding: '0 20px',
           },
-        },
-        token: {
-          padding: 0,
-          paddingSM: 0,
         },
       }}
     >

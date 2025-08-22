@@ -38,10 +38,14 @@ exports[`test HalftoneBlock should render correctly 1`] = `
     >
       <option
         value="1"
-      />
+      >
+        FM
+      </option>
       <option
         value="2"
-      />
+      >
+        AM
+      </option>
     </select>
   </div>
 </div>
@@ -85,10 +89,14 @@ exports[`test HalftoneBlock should render correctly when type is modal 1`] = `
     >
       <option
         value="1"
-      />
+      >
+        FM
+      </option>
       <option
         value="2"
-      />
+      >
+        AM
+      </option>
     </select>
   </div>
 </div>

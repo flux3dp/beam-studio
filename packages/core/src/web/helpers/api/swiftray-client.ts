@@ -12,6 +12,7 @@ import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { booleanConfig, getDefaultConfig } from '@core/helpers/layer/layer-config-helper';
 import Logger from '@core/helpers/logger';
@@ -65,7 +66,7 @@ interface PreferenceSettingsObject {
 type TStatus = 'connected' | 'disconnected' | 'init';
 
 class SwiftrayClient extends EventEmitter {
-  private socket: WebSocket; // The websocket here is the browser websocket, not wrapped FLUX websocket
+  private socket?: WebSocket; // The websocket here is the browser websocket, not wrapped FLUX websocket
 
   private logger = Logger('swiftray', 100);
 
@@ -116,6 +117,12 @@ class SwiftrayClient extends EventEmitter {
   }
 
   private connect() {
+    if (isWeb() && !isDev()) {
+      console.warn('Bypassing Swiftray connection in web mode');
+
+      return;
+    }
+
     this.socket = new WebSocket(this.url);
     this.socket.onopen = this.handleOpen.bind(this);
     this.socket.onclose = this.handleClose.bind(this);
@@ -251,7 +258,7 @@ class SwiftrayClient extends EventEmitter {
 
       this.logger.append(payload);
 
-      if (this.socket.readyState === WebSocket.OPEN) {
+      if (this.socket?.readyState === WebSocket.OPEN) {
         if (dataString.length < 4096 || !vc.meetRequirement('SWIFTRAY_SUPPORT_BINARY')) {
           this.socket.send(dataString);
         } else {
@@ -530,7 +537,7 @@ class SwiftrayClient extends EventEmitter {
   public async close(): Promise<void> {
     console.error('Someone trying to close the Swiftray client');
     console.trace();
-    this.socket.close();
+    this.socket?.close();
   }
 
   public async deviceInfo(): Promise<IDeviceDetailInfo> {

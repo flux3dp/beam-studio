@@ -1,4 +1,4 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, useContext } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
@@ -22,32 +22,28 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const { change, halftone } = useConfigPanelStore();
 
   const { selectedLayers } = useContext(ConfigPanelContext);
+  const { hasMultiValue, value } = halftone;
 
-  const handleChange = (value: number) => {
-    if (value === halftone.value) {
+  const handleChange = (newValue: number) => {
+    if (newValue === value && !hasMultiValue) {
       return;
     }
 
-    change({ halftone: value });
+    change({ halftone: newValue });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change Halftone');
 
-      selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', value, { batchCmd }));
+      selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', newValue, { batchCmd }));
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     }
   };
 
-  const { hasMultiValue, value } = halftone;
-
-  const options = useMemo(
-    () =>
-      [hasMultiValue ? { label: '-', value: 0 } : null, { label: 'FM', value: 1 }, { label: 'AM', value: 2 }].filter(
-        Boolean,
-      ),
-    [hasMultiValue],
-  );
+  const options = [
+    { label: 'FM', value: 1 },
+    { label: 'AM', value: 2 },
+  ];
 
   return type === 'panel-item' ? (
     <ObjectPanelItem.Select
@@ -55,7 +51,7 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       label={lang.halftone}
       onChange={handleChange}
       options={options}
-      selected={hasMultiValue ? options[0] : options[value - 1]}
+      selected={hasMultiValue ? { label: '-', value: 0 } : options[value - 1]}
     />
   ) : (
     <div className={classNames(styles.panel)}>
@@ -63,13 +59,12 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
         {lang.halftone}
         <QuestionCircleOutlined className={styles.icon} onClick={() => browser.open(lang.halftone_link)} />
       </span>
-      <Select className={styles['inline-select']} onChange={handleChange} value={hasMultiValue ? 0 : value}>
-        {options.map((option) => (
-          <Select.Option key={option.value} value={option.value}>
-            {option.label}
-          </Select.Option>
-        ))}
-      </Select>
+      <Select
+        className={styles['inline-select']}
+        onChange={handleChange}
+        options={options}
+        value={hasMultiValue ? '-' : value}
+      />
     </div>
   );
 };

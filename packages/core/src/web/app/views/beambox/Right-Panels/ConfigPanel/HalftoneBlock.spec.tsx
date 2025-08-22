@@ -44,14 +44,15 @@ jest.mock('@core/implementations/browser', () => ({
 const mockSelectedLayers = ['layer1', 'layer2'];
 
 jest.mock('@core/app/widgets/AntdSelect', () => {
-  const Select = ({ children, className, onChange, value }: any) => (
+  const Select = ({ className, onChange, options, value }: any) => (
     <select className={className} onChange={(e) => onChange(Number(e.target.value))} value={value}>
-      {children}
+      {options.map((option: any) => (
+        <option key={option.value} value={option.value}>
+          {option.label}
+        </option>
+      ))}
     </select>
   );
-  const Option = ({ label, value }: any) => <option value={value}>{label}</option>;
-
-  Select.Option = Option;
 
   return Select;
 });

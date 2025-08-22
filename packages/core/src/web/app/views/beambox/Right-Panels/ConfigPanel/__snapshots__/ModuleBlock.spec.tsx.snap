@@ -91,43 +91,25 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
     >
       <div>
         <div
-          id="rc_select_TEST_OR_SSR_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="10W Diode Laser"
-            aria-selected="true"
-            id="rc_select_TEST_OR_SSR_list_0"
-            role="option"
-          >
-            1
-          </div>
-          <div
-            aria-label="20W Diode Laser"
-            aria-selected="false"
-            id="rc_select_TEST_OR_SSR_list_1"
-            role="option"
-          >
-            2
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
             <div>
               <div
                 class="rc-virtual-list-holder-inner"
+                id="rc_select_TEST_OR_SSR_list"
+                role="listbox"
                 style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active ant-select-item-option-selected"
+                  id="rc_select_TEST_OR_SSR_list_0"
+                  role="option"
                   title="10W Diode Laser"
                 >
                   <div
@@ -145,6 +127,8 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="rc_select_TEST_OR_SSR_list_1"
+                  role="option"
                   title="20W Diode Laser"
                 >
                   <div
@@ -162,6 +146,8 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="rc_select_TEST_OR_SSR_list_2"
+                  role="option"
                   title="Printing"
                 >
                   <div
@@ -179,6 +165,8 @@ exports[`test ModuleBlock change to 20w should work with preset change 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="rc_select_TEST_OR_SSR_list_3"
+                  role="option"
                   title="2W Infrared Laser"
                 >
                   <div
@@ -294,43 +282,25 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
     >
       <div>
         <div
-          id="rc_select_TEST_OR_SSR_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="10W Diode Laser"
-            aria-selected="true"
-            id="rc_select_TEST_OR_SSR_list_0"
-            role="option"
-          >
-            1
-          </div>
-          <div
-            aria-label="20W Diode Laser"
-            aria-selected="false"
-            id="rc_select_TEST_OR_SSR_list_1"
-            role="option"
-          >
-            2
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
             <div>
               <div
                 class="rc-virtual-list-holder-inner"
+                id="rc_select_TEST_OR_SSR_list"
+                role="listbox"
                 style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active ant-select-item-option-selected"
+                  id="rc_select_TEST_OR_SSR_list_0"
+                  role="option"
                   title="10W Diode Laser"
                 >
                   <div
@@ -348,6 +318,8 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="rc_select_TEST_OR_SSR_list_1"
+                  role="option"
                   title="20W Diode Laser"
                 >
                   <div
@@ -365,6 +337,8 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="rc_select_TEST_OR_SSR_list_2"
+                  role="option"
                   title="Printing"
                 >
                   <div
@@ -382,6 +356,8 @@ exports[`test ModuleBlock change to printer should work when selecting 2 layer 1
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="rc_select_TEST_OR_SSR_list_3"
+                  role="option"
                   title="2W Infrared Laser"
                 >
                   <div
