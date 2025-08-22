@@ -6,13 +6,14 @@ import Konva from 'konva';
 import { match } from 'ts-pattern';
 
 import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
 
 import { useStampMakerPanelStore } from '../../store';
-import { getEDTFilter } from '../../utils/getEDTFilter';
 
 import styles from './Content.module.scss';
 
 export default function Content(): React.JSX.Element {
+  const { stamp_maker_panel } = useI18n();
   const { addFilter, bevelRadius, filters, horizontalFlip, removeFilter, setBevelRadius, setHorizontalFlip } =
     useStampMakerPanelStore();
   const isInverted = useMemo(() => filters.includes(Konva.Filters.Invert), [filters]);
@@ -21,27 +22,24 @@ export default function Content(): React.JSX.Element {
   const handleToggleInvert = () =>
     match(isInverted)
       .with(true, () => removeFilter(Konva.Filters.Invert))
-      .otherwise(() => addFilter(Konva.Filters.Invert));
-  const handleBevelRadiusChange = (bevelRadius: number) => {
-    setBevelRadius(bevelRadius, getEDTFilter({ rampWidth: bevelRadius }));
-  };
+      .otherwise(() => addFilter(Konva.Filters.Invert, true));
 
   return (
     <div className={styles.wrapper}>
       <Form layout="horizontal">
         <Form.Item
-          label="Invert"
-          tooltip={{ icon: <QuestionCircleOutlined />, title: 'Invert the colors of the image.' }}
+          label={stamp_maker_panel.invert}
+          tooltip={{ icon: <QuestionCircleOutlined />, title: stamp_maker_panel.tool_tip.invert }}
         >
           <Switch checked={isInverted} onChange={handleToggleInvert} />
         </Form.Item>
         <Form.Item
-          label="Flip Horizontally: "
-          tooltip={{ icon: <QuestionCircleOutlined />, title: 'Flip the image horizontally (mirror effect).' }}
+          label={stamp_maker_panel.horizontal_flip}
+          tooltip={{ icon: <QuestionCircleOutlined />, title: stamp_maker_panel.tool_tip.horizontal_flip }}
         >
           <Switch checked={horizontalFlip} onChange={handleToggleFlip} />
         </Form.Item>
-        <Form.Item label={`Bevel Radius:`} layout="vertical">
+        <Form.Item label={stamp_maker_panel.bevel_radius} layout="vertical">
           <Flex justify="space-between">
             <UnitInput
               //
@@ -50,7 +48,7 @@ export default function Content(): React.JSX.Element {
               min={0}
               onChange={(value) => {
                 if (value !== null) {
-                  handleBevelRadiusChange(value);
+                  setBevelRadius(value);
                 }
               }}
               step={0.1}
