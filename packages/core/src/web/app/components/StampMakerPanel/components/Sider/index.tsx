@@ -18,7 +18,7 @@ interface Props {
 }
 
 function Sider({ handleComplete, onClose }: Props): React.JSX.Element {
-  const { buttons: langButtons, global: langGlobal, image_edit_panel: lang } = useI18n();
+  const { buttons: langButtons, global: langGlobal, stamp_maker_panel: lang } = useI18n();
 
   return (
     <ConfigProvider theme={{ components: { InputNumber: { controlWidth: 80 } } }}>

@@ -323,7 +323,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       smartNest: renderSmartNestButton(),
       stampMakerPanel: renderButtons(
         'stampMakerPanel',
-        'Stamp Maker',
+        i18n.stamp_maker_panel.title,
         () => Dialog.showStampMakerPanel(),
         <ActionPanelIcons.EditImage />,
         <ActionPanelIcons.EditImage />,

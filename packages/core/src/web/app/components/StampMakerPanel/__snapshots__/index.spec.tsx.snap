@@ -1,0 +1,74 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test StampMakerPanel should render correctly 1`] = `
+<div>
+  <div
+    data-testid="full-window-panel"
+  >
+    <div
+      data-testid="sider"
+    >
+      <button>
+        Complete
+      </button>
+      <button>
+        Close
+      </button>
+    </div>
+    <div
+      class="w-100 ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-vertical"
+    >
+      <div
+        data-testid="topbar"
+      >
+        <button>
+          Reset
+        </button>
+        <button>
+          Zoom In
+        </button>
+        <span>
+          Zoom: 
+          1
+        </span>
+      </div>
+      <div
+        class="outer-container"
+      >
+        <div
+          class="container"
+        >
+          <div
+            data-testid="stage"
+            draggable="false"
+            pixelratio="1"
+          >
+            <div
+              data-testid="layer"
+            >
+              <div
+                data-testid="konva-image"
+              >
+                <span>
+                  Filters: 
+                  0
+                </span>
+                <span>
+                  Flip: 
+                  false
+                </span>
+                <span>
+                  Src: 
+                </span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <button>
+      Close
+    </button>
+  </div>
+</div>
+`;

@@ -1974,6 +1974,17 @@ Machines > ‘Promark Name’ > Promark Settings`,
     instagram: 'Get the latest inspirations, deals, and freebies!',
     youtube: 'View Beam Studio tutorials and craft ideas.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Bevel Radius',
+    horizontal_flip: 'Horizontal Flip',
+    invert: 'Invert',
+    title: 'Stamp Maker',
+    tool_tip: {
+      bevel_radius: 'Adjust the bevel radius of the stamp',
+      horizontal_flip: 'Flip the stamp horizontally',
+      invert: 'Invert the colors of the stamp',
+    },
+  },
   support: {
     no_vcredist: 'Please install Visual C++ Redistributable 2015<br/>That can be downloaded on flux3dp.com',
     no_webgl: 'WebGL is not supported. Please use other devices.',
