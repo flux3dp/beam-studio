@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Todennusvirhe: Päivitä Beam Studio ja koneen laiteohjelmisto uusimpaan versioon.',
     authenticating: 'Todentaudutaan...',
+    auto_focus: {
+      instruction: 'Siirrä laserinmoduulin pää kohteen yläpuolelle ja seuraa animaatio-ohjeita painaaksesi AF tarkentaaksesi.',
+      succeeded: 'Tarkennus onnistui',
+      title: 'Automaattitarkennus',
+      warning_at_coordinates: 'Automaattitarkennustilaan siirtymisen jälkeen laserpää nollataan ja siirretään määriteltyyn asentoon tarkentamista varten.\nVarmista, että kohdeasento on materiaalilla ja ettei liikereitässä ole esteitä.',
+    },
     camera: {
       abort_preview: 'Keskeytä',
       camera_cable_unstable: 'Kameran kuvan siirrossa havaittiin epävakautta. Esikatselu toimii edelleen normaalisti, mutta esikatselussa voi ilmetä hitautta tai aikakatkaisuja.',
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: 'Säädä',
       adjust_height_tooltip: 'Valitse valintaruutu muokataksesi.',
       already_performed_auto_focus: 'Olet jo suorittanut automaattitarkennuksen, käytetäänkö olemassa olevia arvoja?',
-      auto_focus: 'Automaattitarkennus',
-      auto_focus_instruction: 'Siirrä lasermoduulin pää kohteen yläpuolelle ja seuraa animaatio-ohjeita painaaksesi AF tarkentaaksesi.',
       camera_preview: 'Kameran esikatselu',
       enter_manually: 'Anna manuaalisesti',
       getting_focal_distance: 'Haetaan polttoväliä...',
       moving_to_preview_position: 'Siirrytään esikatseluasentoon...',
       please_enter_height: 'Anna kohteen korkeus. Jotta kameran kuva olisi tarkka.',
+      succeeded: 'Esikatselu onnistui',
     },
     promark_disconnected: '#850 Yhteys laitteeseen katkaistu, tarkista laitteen yhteystila.',
     redLaserTakingReference: 'Otetaan viite...',

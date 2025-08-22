@@ -113,7 +113,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
       });
       URL.revokeObjectURL(imgUrl);
       MessageCaller.openMessage({
-        content: 'Successfully previewed',
+        content: i18n.lang.message.preview.succeeded,
         duration: 3,
         key: 'full-area-preview',
         level: MessageLevel.SUCCESS,

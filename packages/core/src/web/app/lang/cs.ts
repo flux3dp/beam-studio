@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Autorizační chyba: Aktualizujte prosím Beam Studio a firmware přístroje na nejnovější verzi.',
     authenticating: 'Ověřuji...',
+    auto_focus: {
+      instruction: 'Přesuňte prosím hlavici laserového modulu nad objekt a následujte instrukce k stisknutí AF pro fokus.',
+      succeeded: 'Úspěšně zaostřeno',
+      title: 'Autofokus',
+      warning_at_coordinates: 'Po aktivaci režimu automatického zaostřování se laserová hlava resetuje a přesune na určenou pozici pro zaostření.\nUjistěte se, že cílová pozice je na materiálu a že v cestě pohybu nejsou žádné překážky.',
+    },
     camera: {
       abort_preview: 'Zrušit',
       camera_cable_unstable: 'Bylo zjištěno, že kamera nestabilně přenáší fotografie. Stále můžete spustit náhled, ale může nastat problém s pomalým náhledem či vypršením časového limitu.',
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: 'Přizpůsobit',
       adjust_height_tooltip: 'Použijte zaškrtávací políčko k povolení úprav.',
       already_performed_auto_focus: 'Již jste použili autofokus. Použít existující hodnoty?',
-      auto_focus: 'Autofokus',
-      auto_focus_instruction: 'Přesuňte prosím hlavici laserového modulu nad objekt a následujte instrukce k stisknutí AF pro fokus.',
       camera_preview: 'Náhled kamery',
       enter_manually: 'Vložit manuálně',
       getting_focal_distance: 'Získávání ohniskové vzdálenosti...',
       moving_to_preview_position: 'Přesouvání do náhledové pozice...',
       please_enter_height: 'Zadejte prosím výšku objektu, aby kamera zachytila přesný záběr.',
+      succeeded: 'Úspěšně zobrazeno',
     },
     promark_disconnected: '#850 Připojení zařízení bylo přerušeno, zkontrolujte stav připojení zařízení.',
     redLaserTakingReference: 'Přijímání reference...',

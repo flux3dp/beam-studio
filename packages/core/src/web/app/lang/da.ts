@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Godkendelsesfejl: Opdater Beam Studio og maskinfirmware til den nyeste version.',
     authenticating: 'Godkender...',
+    auto_focus: {
+      instruction: 'Flyt venligst lasermodulet over objektet og følg anvisningerne for at trykke på AF for at fokusere.',
+      succeeded: 'Fokusering lykkedes',
+      title: 'Auto fokus',
+      warning_at_coordinates: 'Efter at have aktiveret autofokus-tilstand vil laserhovedet blive nulstillet og flyttet til den angivne position for at fokusere.\nSørg for, at målpositionen er på materialet, og at der ikke er forhindringer i bevægelsesbanen.',
+    },
     camera: {
       abort_preview: 'Afbryd',
       camera_cable_unstable: 'Det er registreret, at kameraet overfører billeder ustabilt. Forhåndsvisning kan stadig udføres normalt, men der kan være problemer med langsom forhåndsvisning eller timeout.',
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: 'Juster',
       adjust_height_tooltip: 'Aktiver redigering ved at afkrydse.',
       already_performed_auto_focus: 'Du har allerede udført autofokus, vil du bruge eksisterende værdier?',
-      auto_focus: 'Auto fokus',
-      auto_focus_instruction: 'Flyt venligst lasermodulet over objektet og følg anvisningerne for at trykke på AF for at fokusere.',
       camera_preview: 'Kamera forhåndsvisning',
       enter_manually: 'Indtast manuelt',
       getting_focal_distance: 'Henter brændvidde...',
       moving_to_preview_position: 'Flytter til forhåndsvisningsposition...',
       please_enter_height: 'Angiv venligst objektets højde. For at optage et præcist kamerabillede.',
+      succeeded: 'Forhåndsvisning lykkedes',
     },
     promark_disconnected: '#850 Forbindelsen til enheden blev afbrudt, kontroller enhedens forbindelsesstatus.',
     redLaserTakingReference: 'Tager reference...',

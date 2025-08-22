@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: "#820 Errore di autenticazione: aggiornare Beam Studio e il firmware della macchina all'ultima versione.",
     authenticating: 'Autenticazione in corso...',
+    auto_focus: {
+      instruction: "Spostare il modulo laser sopra l'oggetto e seguire le istruzioni animate per premere AF per mettere a fuoco.",
+      succeeded: 'Messo a fuoco con successo',
+      title: 'Messa a fuoco automatica',
+      warning_at_coordinates: 'Dopo essere entrati nella modalità di messa a fuoco automatica, la testa laser verrà ripristinata e spostata nella posizione specificata per la messa a fuoco.\nAssicurarsi che la posizione target sia sul materiale e che non ci siano ostacoli nel percorso di movimento.',
+    },
     camera: {
       abort_preview: 'Interrompi',
       camera_cable_unstable: "È stato rilevato che la fotocamera sta trasferendo le foto in modo instabile. L'anteprima può essere eseguita normalmente, ma potrebbero esserci problemi di lentezza o timeout.",
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: 'Regola',
       adjust_height_tooltip: 'Selezionare la casella di controllo per abilitare la modifica.',
       already_performed_auto_focus: 'Hai già eseguito la messa a fuoco automatica, vuoi utilizzare i valori esistenti?',
-      auto_focus: 'Messa a fuoco automatica',
-      auto_focus_instruction: "Spostare il modulo laser sopra l'oggetto e seguire le istruzioni animate per premere AF per mettere a fuoco.",
       camera_preview: 'Anteprima fotocamera',
       enter_manually: 'Inserisci manualmente',
       getting_focal_distance: 'Ottenimento della distanza focale...',
       moving_to_preview_position: 'Spostamento nella posizione di anteprima...',
       please_enter_height: "Inserire l'altezza dell'oggetto. Per catturare uno scatto di fotocamera preciso.",
+      succeeded: 'Anteprima riuscita',
     },
     promark_disconnected: '#850 Connessione al dispositivo interrotta, controlla lo stato della connessione del dispositivo.',
     redLaserTakingReference: 'Acquisizione della referenza...',
