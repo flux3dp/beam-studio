@@ -34,7 +34,7 @@ const IMAGE_PADDING = 30;
 function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.Element {
   const {
     beambox: { photo_edit_panel: langPhoto },
-    image_edit_panel: lang,
+    stamp_maker_panel: lang,
   } = useI18n();
   const { filters, horizontalFlip, redo, resetState, undo } = useStampMakerPanelStore();
   const { isFullColor, isShading, threshold } = useMemo(

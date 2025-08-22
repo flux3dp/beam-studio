@@ -1,6 +1,10 @@
 import { useStampMakerPanelStore } from './store';
 
-describe('test ImageEditPanelStore', () => {
+jest.mock('./utils/getUniformEmbossFilter', () => ({
+  getUniformEmbossFilter: jest.fn(() => ({ name: 'emboss-filter' })),
+}));
+
+describe('test StampMakerPanelStore', () => {
   beforeEach(() => {
     useStampMakerPanelStore.getState().resetState();
   });
@@ -9,10 +13,11 @@ describe('test ImageEditPanelStore', () => {
     const state = useStampMakerPanelStore.getState();
 
     expect(state).toMatchObject({
+      bevelRadius: 0,
+      filters: [],
       history: { index: 0, operations: [] },
       horizontalFlip: false,
-      invert: false,
-      rampLength: 0,
+      lastBevelRadiusFilter: null,
     });
   });
 
@@ -20,36 +25,46 @@ describe('test ImageEditPanelStore', () => {
     useStampMakerPanelStore.getState().setHorizontalFlip(true);
     expect(useStampMakerPanelStore.getState().horizontalFlip).toBe(true);
     expect(useStampMakerPanelStore.getState().history.operations).toHaveLength(1);
-    expect(useStampMakerPanelStore.getState().history.operations[0]).toEqual({
-      mode: 'horizontalFlip',
-      oldValue: false,
-      newValue: true,
-    });
+    expect(useStampMakerPanelStore.getState().history.operations[0]).toEqual({ mode: 'horizontalFlip', value: true });
   });
 
-  test('setInvert', () => {
-    useStampMakerPanelStore.getState().setInvert(true);
-    expect(useStampMakerPanelStore.getState().invert).toBe(true);
+  test('setBevelRadius', () => {
+    useStampMakerPanelStore.getState().setBevelRadius(5.5);
+    expect(useStampMakerPanelStore.getState().bevelRadius).toBe(5.5);
     expect(useStampMakerPanelStore.getState().history.operations).toHaveLength(1);
-    expect(useStampMakerPanelStore.getState().history.operations[0]).toEqual({
-      mode: 'invert',
-      oldValue: false,
-      newValue: true,
-    });
+    expect(useStampMakerPanelStore.getState().history.operations[0]).toMatchObject({ mode: 'bevelRadius', value: 5.5 });
   });
 
-  test('setRampLength', () => {
-    useStampMakerPanelStore.getState().setRampLength(5.5);
-    expect(useStampMakerPanelStore.getState().rampLength).toBe(5.5);
-    expect(useStampMakerPanelStore.getState().history.operations).toHaveLength(1);
-    expect(useStampMakerPanelStore.getState().history.operations[0]).toEqual({
-      mode: 'rampLength',
-      oldValue: 0,
-      newValue: 5.5,
-    });
+  test('addFilter', () => {
+    const mockFilter = { name: 'test-filter' } as any;
+
+    useStampMakerPanelStore.getState().addFilter(mockFilter);
+
+    const state = useStampMakerPanelStore.getState();
+
+    expect(state.filters).toHaveLength(1);
+    expect(state.filters[0]).toBe(mockFilter);
+    expect(state.history.operations).toHaveLength(1);
+    expect(state.history.operations[0]).toEqual({ filter: mockFilter, mode: 'filter' });
   });
 
-  test('transformation undo / redo', () => {
+  test('removeFilter', () => {
+    const mockFilter = { name: 'test-filter' } as any;
+
+    // Add filter first
+    useStampMakerPanelStore.getState().addFilter(mockFilter);
+    expect(useStampMakerPanelStore.getState().filters).toHaveLength(1);
+
+    // Remove filter
+    useStampMakerPanelStore.getState().removeFilter(mockFilter);
+
+    const state = useStampMakerPanelStore.getState();
+
+    expect(state.filters).toHaveLength(0);
+    expect(state.history.operations).toHaveLength(2); // add + remove operations
+  });
+
+  test('undo and redo horizontal flip', () => {
     let state = useStampMakerPanelStore.getState();
 
     // Test horizontal flip
@@ -71,29 +86,30 @@ describe('test ImageEditPanelStore', () => {
     expect(state.history.index).toBe(1);
   });
 
-  test('multiple transformations', () => {
+  test('multiple operations with undo', () => {
     let state = useStampMakerPanelStore.getState();
+    const mockFilter = { name: 'test-filter' } as any;
 
     state.setHorizontalFlip(true);
-    state.setInvert(true);
-    state.setRampLength(3.5);
+    state.addFilter(mockFilter);
+    state.setBevelRadius(3.5);
 
     state = useStampMakerPanelStore.getState();
     expect(state.horizontalFlip).toBe(true);
-    expect(state.invert).toBe(true);
-    expect(state.rampLength).toBe(3.5);
+    expect(state.filters).toHaveLength(2); // mockFilter + bevelRadius filter
+    expect(state.bevelRadius).toBe(3.5);
     expect(state.history.operations).toHaveLength(3);
     expect(state.history.index).toBe(3);
 
     // Undo all operations
-    state.undo();
-    state.undo();
-    state.undo();
+    state.undo(); // undo bevel radius
+    state.undo(); // undo add filter
+    state.undo(); // undo horizontal flip
 
     state = useStampMakerPanelStore.getState();
     expect(state.horizontalFlip).toBe(false);
-    expect(state.invert).toBe(false);
-    expect(state.rampLength).toBe(0);
+    expect(state.filters).toHaveLength(0);
+    expect(state.bevelRadius).toBe(0);
     expect(state.history.index).toBe(0);
   });
 });
