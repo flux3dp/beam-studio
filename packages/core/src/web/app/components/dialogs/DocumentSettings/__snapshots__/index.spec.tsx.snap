@@ -1180,43 +1180,25 @@ exports[`test DocumentSettings should render correctly 2`] = `
     >
       <div>
         <div
-          id="dpi_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="Low (125 DPI)"
-            aria-selected="false"
-            id="dpi_list_0"
-            role="option"
-          >
-            low
-          </div>
-          <div
-            aria-label="Medium (250 DPI)"
-            aria-selected="false"
-            id="dpi_list_1"
-            role="option"
-          >
-            medium
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
             <div>
               <div
                 class="rc-virtual-list-holder-inner"
+                id="dpi_list"
+                role="listbox"
                 style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  id="dpi_list_0"
+                  role="option"
                   title="Low (125 DPI)"
                 >
                   <div
@@ -1234,6 +1216,8 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="dpi_list_1"
+                  role="option"
                   title="Medium (250 DPI)"
                 >
                   <div
@@ -1251,6 +1235,8 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  id="dpi_list_2"
+                  role="option"
                   title="High (500 DPI)"
                 >
                   <div
@@ -1268,6 +1254,8 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="dpi_list_3"
+                  role="option"
                   title="Ultra High (1000 DPI)"
                 >
                   <div
@@ -2117,43 +2105,25 @@ exports[`test DocumentSettings should render correctly 3`] = `
     >
       <div>
         <div
-          id="dpi_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="Low (125 DPI)"
-            aria-selected="false"
-            id="dpi_list_0"
-            role="option"
-          >
-            low
-          </div>
-          <div
-            aria-label="Medium (250 DPI)"
-            aria-selected="false"
-            id="dpi_list_1"
-            role="option"
-          >
-            medium
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
             <div>
               <div
                 class="rc-virtual-list-holder-inner"
+                id="dpi_list"
+                role="listbox"
                 style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  id="dpi_list_0"
+                  role="option"
                   title="Low (125 DPI)"
                 >
                   <div
@@ -2171,6 +2141,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="dpi_list_1"
+                  role="option"
                   title="Medium (250 DPI)"
                 >
                   <div
@@ -2188,6 +2160,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  id="dpi_list_2"
+                  role="option"
                   title="High (500 DPI)"
                 >
                   <div
@@ -2205,6 +2179,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="dpi_list_3"
+                  role="option"
                   title="Ultra High (1000 DPI)"
                 >
                   <div
@@ -2233,45 +2209,25 @@ exports[`test DocumentSettings should render correctly 3`] = `
     >
       <div>
         <div
-          id="workareaSelect_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="beamo"
-            aria-selected="true"
-            id="workareaSelect_list_0"
-            role="option"
-          >
-            fbm1
-          </div>
-          <div
-            aria-label="Beambox"
-            aria-selected="false"
-            id="workareaSelect_list_1"
-            role="option"
-          >
-            fbb1b
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
-            <div
-              style="height: 320px; position: relative; overflow: hidden;"
-            >
+            <div>
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
+                id="workareaSelect_list"
+                role="listbox"
+                style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active ant-select-item-option-selected"
+                  id="workareaSelect_list_0"
+                  role="option"
                   title="beamo"
                 >
                   <div
@@ -2289,6 +2245,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_1"
+                  role="option"
                   title="Beambox"
                 >
                   <div
@@ -2306,6 +2264,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_2"
+                  role="option"
                   title="Beambox Pro"
                 >
                   <div
@@ -2323,6 +2283,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_3"
+                  role="option"
                   title="HEXA"
                 >
                   <div
@@ -2340,6 +2302,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_4"
+                  role="option"
                   title="HEXA RF"
                 >
                   <div
@@ -2357,6 +2321,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_5"
+                  role="option"
                   title="Ador"
                 >
                   <div
@@ -2374,6 +2340,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_6"
+                  role="option"
                   title="Promark"
                 >
                   <div
@@ -2391,6 +2359,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_7"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -2408,6 +2378,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="beamo II"
                 >
                   <div
@@ -2425,6 +2397,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_9"
+                  role="option"
                   title="Lazervida"
                 >
                   <div
@@ -2442,15 +2416,6 @@ exports[`test DocumentSettings should render correctly 3`] = `
               </div>
             </div>
           </div>
-          <div
-            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
-            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
-          >
-            <div
-              class="rc-virtual-list-scrollbar-thumb"
-              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 204px; top: 0px;"
-            />
-          </div>
         </div>
       </div>
     </div>
@@ -2462,39 +2427,25 @@ exports[`test DocumentSettings should render correctly 3`] = `
     >
       <div>
         <div
-          id="startFrom_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="Origin"
-            aria-selected="false"
-            id="startFrom_list_0"
-            role="option"
-          />
-          <div
-            aria-label="Current Position"
-            aria-selected="true"
-            id="startFrom_list_1"
-            role="option"
-          />
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
             <div>
               <div
                 class="rc-virtual-list-holder-inner"
+                id="startFrom_list"
+                role="listbox"
                 style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  id="startFrom_list_0"
+                  role="option"
                   title="Origin"
                 >
                   <div
@@ -2512,6 +2463,8 @@ exports[`test DocumentSettings should render correctly 3`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  id="startFrom_list_1"
+                  role="option"
                   title="Current Position"
                 >
                   <div
@@ -3128,45 +3081,25 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
     >
       <div>
         <div
-          id="workareaSelect_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="beamo"
-            aria-selected="false"
-            id="workareaSelect_list_0"
-            role="option"
-          >
-            fbm1
-          </div>
-          <div
-            aria-label="Beambox"
-            aria-selected="false"
-            id="workareaSelect_list_1"
-            role="option"
-          >
-            fbb1b
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
-            <div
-              style="height: 320px; position: relative; overflow: hidden;"
-            >
+            <div>
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
+                id="workareaSelect_list"
+                role="listbox"
+                style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  id="workareaSelect_list_0"
+                  role="option"
                   title="beamo"
                 >
                   <div
@@ -3184,6 +3117,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_1"
+                  role="option"
                   title="Beambox"
                 >
                   <div
@@ -3201,6 +3136,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_2"
+                  role="option"
                   title="Beambox Pro"
                 >
                   <div
@@ -3218,6 +3155,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_3"
+                  role="option"
                   title="HEXA"
                 >
                   <div
@@ -3235,6 +3174,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_4"
+                  role="option"
                   title="HEXA RF"
                 >
                   <div
@@ -3252,6 +3193,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  id="workareaSelect_list_5"
+                  role="option"
                   title="Ador"
                 >
                   <div
@@ -3269,6 +3212,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_6"
+                  role="option"
                   title="Promark"
                 >
                   <div
@@ -3286,6 +3231,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_7"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -3303,6 +3250,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="beamo II"
                 >
                   <div
@@ -3320,6 +3269,8 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_9"
+                  role="option"
                   title="Lazervida"
                 >
                   <div
@@ -3336,15 +3287,6 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
-            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
-          >
-            <div
-              class="rc-virtual-list-scrollbar-thumb"
-              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 204px; top: 0px;"
-            />
           </div>
         </div>
       </div>
@@ -3945,45 +3887,25 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
     >
       <div>
         <div
-          id="workareaSelect_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="beamo"
-            aria-selected="false"
-            id="workareaSelect_list_0"
-            role="option"
-          >
-            fbm1
-          </div>
-          <div
-            aria-label="Beambox"
-            aria-selected="false"
-            id="workareaSelect_list_1"
-            role="option"
-          >
-            fbb1b
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
-            <div
-              style="height: 320px; position: relative; overflow: hidden;"
-            >
+            <div>
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
+                id="workareaSelect_list"
+                role="listbox"
+                style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  id="workareaSelect_list_0"
+                  role="option"
                   title="beamo"
                 >
                   <div
@@ -4001,6 +3923,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_1"
+                  role="option"
                   title="Beambox"
                 >
                   <div
@@ -4018,6 +3942,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_2"
+                  role="option"
                   title="Beambox Pro"
                 >
                   <div
@@ -4035,6 +3961,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_3"
+                  role="option"
                   title="HEXA"
                 >
                   <div
@@ -4052,6 +3980,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_4"
+                  role="option"
                   title="HEXA RF"
                 >
                   <div
@@ -4069,6 +3999,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  id="workareaSelect_list_5"
+                  role="option"
                   title="Ador"
                 >
                   <div
@@ -4086,6 +4018,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_6"
+                  role="option"
                   title="Promark"
                 >
                   <div
@@ -4103,6 +4037,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_7"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -4120,6 +4056,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="beamo II"
                 >
                   <div
@@ -4137,6 +4075,8 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_9"
+                  role="option"
                   title="Lazervida"
                 >
                   <div
@@ -4153,15 +4093,6 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 </div>
               </div>
             </div>
-          </div>
-          <div
-            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
-            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
-          >
-            <div
-              class="rc-virtual-list-scrollbar-thumb"
-              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 204px; top: 0px;"
-            />
           </div>
         </div>
       </div>
@@ -4814,45 +4745,25 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
     >
       <div>
         <div
-          id="workareaSelect_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="beamo"
-            aria-selected="false"
-            id="workareaSelect_list_0"
-            role="option"
-          >
-            fbm1
-          </div>
-          <div
-            aria-label="Beambox"
-            aria-selected="false"
-            id="workareaSelect_list_1"
-            role="option"
-          >
-            fbb1b
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
-            <div
-              style="height: 320px; position: relative; overflow: hidden;"
-            >
+            <div>
               <div
                 class="rc-virtual-list-holder-inner"
-                style="display: flex; flex-direction: column; transform: translateY(0px); margin-left: 0px; position: absolute; left: 0px; right: 0px; top: 0px;"
+                id="workareaSelect_list"
+                role="listbox"
+                style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  id="workareaSelect_list_0"
+                  role="option"
                   title="beamo"
                 >
                   <div
@@ -4870,6 +4781,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_1"
+                  role="option"
                   title="Beambox"
                 >
                   <div
@@ -4887,6 +4800,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_2"
+                  role="option"
                   title="Beambox Pro"
                 >
                   <div
@@ -4904,6 +4819,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_3"
+                  role="option"
                   title="HEXA"
                 >
                   <div
@@ -4921,6 +4838,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_4"
+                  role="option"
                   title="HEXA RF"
                 >
                   <div
@@ -4938,6 +4857,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_5"
+                  role="option"
                   title="Ador"
                 >
                   <div
@@ -4955,6 +4876,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  id="workareaSelect_list_6"
+                  role="option"
                   title="Promark"
                 >
                   <div
@@ -4972,6 +4895,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_7"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -4989,6 +4914,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="beamo II"
                 >
                   <div
@@ -5006,6 +4933,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_9"
+                  role="option"
                   title="Lazervida"
                 >
                   <div
@@ -5023,15 +4952,6 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
               </div>
             </div>
           </div>
-          <div
-            class="rc-virtual-list-scrollbar rc-virtual-list-scrollbar-vertical rc-virtual-list-scrollbar-visible"
-            style="position: absolute; width: 8px; top: 0px; bottom: 0px; right: 0px;"
-          >
-            <div
-              class="rc-virtual-list-scrollbar-thumb"
-              style="position: absolute; background: rgba(0, 0, 0, 0.5); border-radius: 99px; cursor: pointer; user-select: none; width: 100%; height: 204px; top: 0px;"
-            />
-          </div>
         </div>
       </div>
     </div>
@@ -5043,43 +4963,25 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
     >
       <div>
         <div
-          id="customDimension_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="110 x 110 mm"
-            aria-selected="true"
-            id="customDimension_list_0"
-            role="option"
-          >
-            110
-          </div>
-          <div
-            aria-label="150 x 150 mm"
-            aria-selected="false"
-            id="customDimension_list_1"
-            role="option"
-          >
-            150
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
             <div>
               <div
                 class="rc-virtual-list-holder-inner"
+                id="customDimension_list"
+                role="listbox"
                 style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active ant-select-item-option-selected"
+                  id="customDimension_list_0"
+                  role="option"
                   title="110 x 110 mm"
                 >
                   <div
@@ -5097,6 +4999,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="customDimension_list_1"
+                  role="option"
                   title="150 x 150 mm"
                 >
                   <div
@@ -5114,6 +5018,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="customDimension_list_2"
+                  role="option"
                   title="220 x 220 mm"
                 >
                   <div
@@ -5142,43 +5048,25 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
     >
       <div>
         <div
-          id="pm-laser-source_list"
-          role="listbox"
-          style="height: 0px; width: 0px; overflow: hidden;"
-        >
-          <div
-            aria-label="Desktop - 20W"
-            aria-selected="false"
-            id="pm-laser-source_list_0"
-            role="option"
-          >
-            0-20
-          </div>
-          <div
-            aria-label="Desktop - 30W"
-            aria-selected="false"
-            id="pm-laser-source_list_1"
-            role="option"
-          >
-            0-30
-          </div>
-        </div>
-        <div
           class="rc-virtual-list"
           style="position: relative;"
         >
           <div
             class="rc-virtual-list-holder"
-            style="max-height: 256px; overflow-y: hidden;"
+            style="max-height: 256px; overflow-y: auto;"
           >
             <div>
               <div
                 class="rc-virtual-list-holder-inner"
+                id="pm-laser-source_list"
+                role="listbox"
                 style="display: flex; flex-direction: column;"
               >
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option ant-select-item-option-active"
+                  id="pm-laser-source_list_0"
+                  role="option"
                   title="Desktop - 20W"
                 >
                   <div
@@ -5196,6 +5084,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="pm-laser-source_list_1"
+                  role="option"
                   title="Desktop - 30W"
                 >
                   <div
@@ -5213,6 +5103,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="pm-laser-source_list_2"
+                  role="option"
                   title="Desktop - 50W"
                 >
                   <div
@@ -5230,6 +5122,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="pm-laser-source_list_3"
+                  role="option"
                   title="MOPA - 20W"
                 >
                   <div
@@ -5247,6 +5141,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
+                  id="pm-laser-source_list_4"
+                  role="option"
                   title="MOPA - 60W"
                 >
                   <div
@@ -5264,6 +5160,8 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
+                  id="pm-laser-source_list_5"
+                  role="option"
                   title="MOPA - 100W"
                 >
                   <div
