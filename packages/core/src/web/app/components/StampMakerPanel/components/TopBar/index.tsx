@@ -8,7 +8,7 @@ import { useShallow } from 'zustand/react/shallow';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { useImageEditPanelStore } from '../../store';
+import { useStampMakerPanelStore } from '../../store';
 
 import styles from './index.module.scss';
 
@@ -26,7 +26,7 @@ function UnmemorizedTopBar({ handleReset, handleZoomByScale, zoomScale }: Props)
     history: { index, operations },
     redo,
     undo,
-  } = useImageEditPanelStore(useShallow(pick(['history', 'redo', 'undo'])));
+  } = useStampMakerPanelStore(useShallow(pick(['history', 'redo', 'undo'])));
   const { redoable, undoable } = useMemo(
     () => ({ redoable: index < operations.length, undoable: index > 0 }),
     [index, operations.length],
