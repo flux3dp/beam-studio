@@ -16,14 +16,16 @@ const mockGetDeviceSetting = jest.fn().mockResolvedValue({
 });
 const mockGetCurrentDevice = jest.fn();
 const mockEndSubTask = jest.fn();
-const mockGetMode = jest.fn();
+const mockGetCurrentControlMode = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
+  get currentControlMode() {
+    return mockGetCurrentControlMode();
+  },
   get currentDevice() {
     return mockGetCurrentDevice();
   },
   endSubTask: (...args: any) => mockEndSubTask(...args),
-  getControl: async () => ({ getMode: mockGetMode }),
   getDeviceSetting: (...args: any) => mockGetDeviceSetting(...args),
   setDeviceSetting: (...args: any) => mockSetDeviceSetting(...args),
 }));
@@ -89,7 +91,7 @@ jest.mock('antd', () => ({
 describe('test PreviewSlider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetMode.mockReturnValue('');
+    mockGetCurrentControlMode.mockReturnValue('');
     mockIsFullScreen.mockReturnValue(true);
     mockMeetRequirement.mockReturnValue(true);
     document.body.innerHTML =
@@ -149,7 +151,7 @@ describe('test PreviewSlider', () => {
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
-      expect(mockGetMode).toHaveBeenCalledTimes(1);
+      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(1);
       expect(mockEndSubTask).not.toHaveBeenCalled();
       expect(mockGetDeviceSetting).toHaveBeenCalledTimes(1);
     });
@@ -164,7 +166,7 @@ describe('test PreviewSlider', () => {
 
     fireEvent.click(getByText('onChangeComplete'));
     await waitFor(() => {
-      expect(mockGetMode).toHaveBeenCalledTimes(2);
+      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(2);
       expect(mockEndSubTask).not.toHaveBeenCalled();
       expect(mockSetDeviceSetting).toHaveBeenCalledTimes(1);
       expect(mockSetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute', '20');
@@ -173,7 +175,7 @@ describe('test PreviewSlider', () => {
   });
 
   it('should render correctly when is previewing BB2', async () => {
-    mockGetMode.mockReturnValue('raw');
+    mockGetCurrentControlMode.mockReturnValue('raw');
     mockIsFullScreen.mockReturnValue(false);
 
     const imageContainer = document.getElementById('previewSvg');
@@ -189,7 +191,7 @@ describe('test PreviewSlider', () => {
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
-      expect(mockGetMode).toHaveBeenCalledTimes(1);
+      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(1);
       expect(mockEndSubTask).toHaveBeenCalledTimes(1);
       expect(mockGetDeviceSetting).toHaveBeenCalledTimes(1);
     });
@@ -204,7 +206,7 @@ describe('test PreviewSlider', () => {
 
     fireEvent.click(getByText('onChangeComplete'));
     await waitFor(() => {
-      expect(mockGetMode).toHaveBeenCalledTimes(2);
+      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(2);
       expect(mockEndSubTask).toHaveBeenCalledTimes(2);
       expect(mockSetDeviceSetting).toHaveBeenCalledTimes(1);
       expect(mockSetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute', '20');

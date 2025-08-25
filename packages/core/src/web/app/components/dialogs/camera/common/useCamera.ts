@@ -122,7 +122,7 @@ const useCamera = <T>(
           }
 
           try {
-            if (deviceMaster.currentControlMode === 'raw') {
+            if (deviceMaster.currentDevice?.info.model === 'fbm2' && deviceMaster.currentControlMode === 'raw') {
               const res = await deviceMaster.getCameraExposure();
 
               if (res?.success) {
