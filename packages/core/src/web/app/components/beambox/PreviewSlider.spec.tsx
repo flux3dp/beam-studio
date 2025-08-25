@@ -17,6 +17,8 @@ const mockGetDeviceSetting = jest.fn().mockResolvedValue({
 const mockGetCurrentDevice = jest.fn();
 const mockEndSubTask = jest.fn();
 const mockGetCurrentControlMode = jest.fn();
+const mockGetCameraExposure = jest.fn();
+const mockSetCameraExposure = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
   get currentControlMode() {
@@ -26,7 +28,9 @@ jest.mock('@core/helpers/device-master', () => ({
     return mockGetCurrentDevice();
   },
   endSubTask: (...args: any) => mockEndSubTask(...args),
+  getCameraExposure: (...args: any) => mockGetCameraExposure(...args),
   getDeviceSetting: (...args: any) => mockGetDeviceSetting(...args),
+  setCameraExposure: (...args: any) => mockSetCameraExposure(...args),
   setDeviceSetting: (...args: any) => mockSetDeviceSetting(...args),
 }));
 
@@ -134,7 +138,7 @@ describe('test PreviewSlider', () => {
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
-    expect(mockGetDeviceSetting).not.toBeCalled();
+    expect(mockGetDeviceSetting).not.toHaveBeenCalled();
   });
 
   it('should render correctly when is previewing Ador', async () => {
@@ -160,8 +164,8 @@ describe('test PreviewSlider', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));
-    expect(mockSetDeviceSetting).not.toBeCalled();
-    expect(mockPreviewFullWorkarea).not.toBeCalled();
+    expect(mockSetDeviceSetting).not.toHaveBeenCalled();
+    expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChangeComplete'));
@@ -200,8 +204,8 @@ describe('test PreviewSlider', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));
-    expect(mockSetDeviceSetting).not.toBeCalled();
-    expect(mockPreviewFullWorkarea).not.toBeCalled();
+    expect(mockSetDeviceSetting).not.toHaveBeenCalled();
+    expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChangeComplete'));
@@ -222,5 +226,48 @@ describe('test PreviewSlider', () => {
     );
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should render correctly when is previewing fbm2 with raw mode', async () => {
+    mockGetCurrentControlMode.mockReturnValue('raw');
+    mockGetCameraExposure.mockResolvedValue({
+      data: 500,
+      success: true,
+    });
+
+    const imageContainer = document.getElementById('previewSvg');
+
+    imageContainer.style.opacity = '0.5';
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbm2', version: '1.0.0' } });
+
+    const { container, getByText } = render(
+      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
+        <PreviewSlider />
+      </CanvasContext.Provider>,
+    );
+
+    expect(imageContainer).toHaveStyle({ opacity: 1 });
+    await waitFor(() => {
+      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(1);
+      expect(mockGetCameraExposure).toHaveBeenCalledTimes(1);
+      expect(mockEndSubTask).not.toHaveBeenCalled();
+      expect(mockGetDeviceSetting).not.toHaveBeenCalled();
+    });
+    expect(container).toMatchSnapshot();
+
+    fireEvent.click(getByText('onChange'));
+    expect(mockSetCameraExposure).not.toHaveBeenCalled();
+    expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
+    expect(container).toMatchSnapshot();
+
+    fireEvent.click(getByText('onChangeComplete'));
+    await waitFor(() => {
+      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(2);
+      expect(mockSetCameraExposure).toHaveBeenCalledTimes(1);
+      expect(mockSetCameraExposure).toHaveBeenNthCalledWith(1, 20);
+      expect(mockEndSubTask).not.toHaveBeenCalled();
+      expect(mockSetDeviceSetting).not.toHaveBeenCalled();
+      expect(mockPreviewFullWorkarea).toHaveBeenCalledTimes(1);
+    });
   });
 });
