@@ -43,7 +43,7 @@ const PreviewSlider = (): React.ReactNode => {
         const res = await deviceMaster.getCameraExposure();
 
         if (res?.success) {
-          setExposureSetting({ max: 10000, min: 50, step: 1, value: res.data });
+          setExposureSetting({ max: 1000, min: 50, step: 1, value: res.data });
         }
       } else {
         if (currentMode !== '') {
@@ -56,6 +56,7 @@ const PreviewSlider = (): React.ReactNode => {
       }
     } catch (e) {
       console.error('Failed to get exposure setting', e);
+      setExposureSetting(null);
     }
   };
 

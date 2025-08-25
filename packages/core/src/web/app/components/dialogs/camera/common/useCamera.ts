@@ -126,7 +126,7 @@ const useCamera = <T>(
               const res = await deviceMaster.getCameraExposure();
 
               if (res?.success) {
-                setExposureSetting({ max: 10000, min: 50, step: 1, value: res.data });
+                setExposureSetting({ max: 1000, min: 50, step: 1, value: res.data });
               }
             } else {
               const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
