@@ -7,7 +7,10 @@ import i18n from '@core/helpers/i18n';
 
 const moveLaserHead = async (
   position?: [number, number],
-  { zMove }: { zMove?: { ref?: 'cur' | 'home'; val: number } } = {},
+  {
+    shouldKeepPosition = false,
+    zMove,
+  }: { shouldKeepPosition?: boolean; zMove?: { ref?: 'cur' | 'home'; val: number } } = {},
 ): Promise<boolean> => {
   let isLineCheckMode = false;
   const lang = i18n.lang.calibration;
@@ -26,7 +29,7 @@ const moveLaserHead = async (
     isLineCheckMode = true;
 
     if (!position) {
-      const { cameraCenter, height, width } = getWorkarea(device.info.model as WorkAreaModel, 'fbb2');
+      const { cameraCenter, height, width } = getWorkarea(device?.info.model as WorkAreaModel, 'fbb2');
 
       position = (cameraCenter as [number, number]) ?? [width / 2, height / 2];
     }
@@ -47,8 +50,11 @@ const moveLaserHead = async (
 
     await deviceMaster.rawEndLineCheckMode();
     isLineCheckMode = false;
-    await deviceMaster.rawLooseMotor();
-    await deviceMaster.endSubTask();
+
+    if (!shouldKeepPosition) {
+      await deviceMaster.rawLooseMotor();
+      await deviceMaster.endSubTask();
+    }
 
     return true;
   } catch (error) {
@@ -63,8 +69,10 @@ const moveLaserHead = async (
           await deviceMaster.rawEndLineCheckMode();
         }
 
-        await deviceMaster.rawLooseMotor();
-        await deviceMaster.endSubTask();
+        if (!shouldKeepPosition) {
+          await deviceMaster.rawLooseMotor();
+          await deviceMaster.endSubTask();
+        }
       }
     } finally {
       progressCaller.popById('move-laser-head');

@@ -1074,7 +1074,12 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     });
   };
 
-  rawGetProbePos = (): Promise<{ a: number; didAf: boolean; x: number; y: number; z: number }> => {
+  rawRegexCommand = <T>(
+    command: string,
+    regex: RegExp,
+    handler: (match: RegExpMatchArray) => T,
+    { silent = true }: { silent?: boolean } = {},
+  ): Promise<T> => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
@@ -1082,7 +1087,6 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return new Promise((resolve, reject) => {
       let isCmdResent = false;
       let responseString = '';
-      const command = 'M136P254';
       let retryTimes = 0;
       let timeoutTimer: NodeJS.Timeout | undefined;
 
@@ -1090,7 +1094,8 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
         clearTimeout(timeoutTimer);
 
         if (response && response.status === 'raw') {
-          console.log('raw get probe position:\t', response.text);
+          if (silent) console.log(`raw ${command}:\t`, response.text);
+
           responseString += response.text;
         }
 
@@ -1098,21 +1103,15 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
         const i = responses.findIndex((r) => r === 'ok');
 
         if (i >= 0) {
-          const resIdx = responses.findIndex((r) => r.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/));
+          const resIdx = responses.findIndex((r) => r.match(regex));
 
           if (resIdx >= 0) {
             const resStr = responses[resIdx];
-            const match = resStr.match(/\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/);
-            const [, x, y, z, a, didAf] = match!;
+            const match = resStr.match(regex);
 
             this.removeCommandListeners();
-            resolve({
-              a: Number(a),
-              didAf: didAf === '1',
-              x: Number(x),
-              y: Number(y),
-              z: Number(z),
-            });
+
+            resolve(handler(match!));
           } else {
             this.removeCommandListeners();
             reject(response);
@@ -1151,6 +1150,18 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       timeoutTimer = this.setTimeoutTimer(reject, 10000);
 
       this.sc.sendGCode(command);
+    });
+  };
+
+  rawGetProbePos = (): Promise<{ a: number; didAf: boolean; x: number; y: number; z: number }> => {
+    if (this.mode !== 'raw') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return this.rawRegexCommand('M136P254', /\[PRB:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+):(\d)\]/, (match) => {
+      const [, x, y, z, a, didAf] = match!;
+
+      return { a: Number(a), didAf: didAf === '1', x: Number(x), y: Number(y), z: Number(z) };
     });
   };
 
@@ -1159,76 +1170,10 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    return new Promise((resolve, reject) => {
-      let responseString = '';
-      const command = 'M136P255';
-      let retryTimes = 0;
-      let isCmdResent = false;
-      let timeoutTimer: NodeJS.Timeout | undefined;
+    return this.rawRegexCommand('M136P255', /\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/, (match) => {
+      const [, x, y, z, a] = match;
 
-      this.on(EVENT_COMMAND_MESSAGE, (response) => {
-        clearTimeout(timeoutTimer);
-
-        if (response && response.status === 'raw') {
-          console.log('raw get last position:\t', response.text);
-          responseString += response.text;
-        }
-
-        const responses = responseString.split(/\r?\n/);
-        const i = responses.findIndex((r) => r === 'ok');
-
-        if (i < 0) {
-          responseString = responses[responses.length - 1] || '';
-        }
-
-        if (i >= 0) {
-          const resIdx = responses.findIndex((r) => r.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/));
-
-          if (resIdx >= 0) {
-            const resStr = responses[resIdx];
-            const match = resStr.match(/\[LAST_POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)/);
-            const [, x, y, z, a] = match!;
-
-            this.removeCommandListeners();
-            resolve({ a: Number(a), x: Number(x), y: Number(y), z: Number(z) });
-          } else {
-            this.removeCommandListeners();
-            reject(response);
-          }
-
-          return;
-        }
-
-        if (
-          response.text.includes('ER:RESET') ||
-          responses.some((resp) => resp.includes('ER:RESET')) ||
-          response.text.includes('error:')
-        ) {
-          if (retryTimes >= 5) {
-            this.removeCommandListeners();
-            reject(response);
-
-            return;
-          }
-
-          if (!isCmdResent) {
-            isCmdResent = true;
-            setTimeout(() => {
-              isCmdResent = false;
-              responseString = '';
-              this.sc.sendGCode(command);
-              retryTimes += 1;
-            }, 200);
-          }
-        } else {
-          timeoutTimer = this.setTimeoutTimer(reject, 10000);
-        }
-      });
-      this.setDefaultErrorResponse(reject, timeoutTimer);
-      this.setDefaultFatalResponse(reject, timeoutTimer);
-      timeoutTimer = this.setTimeoutTimer(reject, 10000);
-
-      this.sc.sendGCode(command);
+      return { a: Number(a), x: Number(x), y: Number(y), z: Number(z) };
     });
   };
 
@@ -1237,77 +1182,37 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
 
-    return new Promise((resolve, reject) => {
-      let responseString = '';
-      const command = 'M136P255';
-      let retryTimes = 0;
-      let isCmdResent = false;
-      let timeoutTimer: NodeJS.Timeout | undefined;
+    return this.rawRegexCommand('?', /[MW]POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)\|/, (match) => {
+      const [, x, y, z, a] = match;
 
-      this.on(EVENT_COMMAND_MESSAGE, (response) => {
-        clearTimeout(timeoutTimer);
-
-        if (response && response.status === 'raw') {
-          console.log('raw get state position:\t', response.text);
-          responseString += response.text;
-        }
-
-        const responses = responseString.split(/\r?\n/);
-        const i = responses.findIndex((r) => r === 'ok');
-
-        if (i < 0) {
-          responseString = responses[responses.length - 1] || '';
-        }
-
-        if (i >= 0) {
-          const resIdx = responses.findIndex((r) => r.match(/[MW]POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)\|/));
-
-          if (resIdx >= 0) {
-            const resStr = responses[resIdx];
-            const match = resStr.match(/[MW]POS:([-\d.]+),([-\d.]+),([-\d.]+),([-\d.]+)\|/);
-            const [, x, y, z, a] = match!;
-
-            this.removeCommandListeners();
-            resolve({ a: Number(a), x: Number(x), y: Number(y), z: Number(z) });
-          } else {
-            this.removeCommandListeners();
-            reject(response);
-          }
-
-          return;
-        }
-
-        if (
-          response.text.includes('ER:RESET') ||
-          responses.some((resp) => resp.includes('ER:RESET')) ||
-          response.text.includes('error:')
-        ) {
-          if (retryTimes >= 5) {
-            this.removeCommandListeners();
-            reject(response);
-
-            return;
-          }
-
-          if (!isCmdResent) {
-            isCmdResent = true;
-            setTimeout(() => {
-              isCmdResent = false;
-              responseString = '';
-              this.sc.sendGCode(command);
-              retryTimes += 1;
-            }, 200);
-          }
-        } else {
-          timeoutTimer = this.setTimeoutTimer(reject, 10000);
-        }
-      });
-      this.setDefaultErrorResponse(reject, timeoutTimer);
-      this.setDefaultFatalResponse(reject, timeoutTimer);
-      timeoutTimer = this.setTimeoutTimer(reject, 10000);
-
-      this.sc.sendGCode(command);
+      return { a: Number(a), x: Number(x), y: Number(y), z: Number(z) };
     });
+  };
+
+  rawGetDoorOpen = (): Promise<{
+    backCover: number;
+    bottomCover: number;
+    interlock: number;
+    remoteInterlock: number;
+  }> => {
+    if (this.mode !== 'raw') {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    return this.rawRegexCommand(
+      'M136P179',
+      /Interlock: (\d+), Bottom cover: (\d+), Back cover: (\d+), Remote interlock: (\d+)/i,
+      (match) => {
+        const [, interlock, bottomCover, backCover, remoteInterlock] = match!;
+
+        return {
+          backCover: Number(backCover),
+          bottomCover: Number(bottomCover),
+          interlock: Number(interlock),
+          remoteInterlock: Number(remoteInterlock),
+        };
+      },
+    );
   };
 
   // Hexa

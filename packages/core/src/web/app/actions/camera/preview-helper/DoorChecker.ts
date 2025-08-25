@@ -7,8 +7,17 @@ class DoorChecker {
   private timer: NodeJS.Timeout | null = null;
 
   checkDoorClosed = async (showError = false): Promise<boolean> => {
-    const res = await deviceMaster.getDoorOpen();
-    const isDoorClosed = res.value === '0';
+    let isDoorClosed: boolean;
+
+    if (deviceMaster.currentControlMode === 'raw') {
+      const { interlock } = await deviceMaster.rawGetDoorOpen();
+
+      isDoorClosed = interlock === 0;
+    } else {
+      const res = await deviceMaster.getDoorOpen();
+
+      isDoorClosed = res.value === '0';
+    }
 
     if (!isDoorClosed) {
       this.keepClosed = false;

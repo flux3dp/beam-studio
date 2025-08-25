@@ -12,8 +12,11 @@ const rawAndHome = async (progressId?: string): Promise<void> => {
     progressCaller.openNonstopProgress({ id: PROGRESS_ID });
   }
 
-  progressCaller.update(progressId || PROGRESS_ID, { message: lang.message.enteringRawMode });
-  await deviceMaster.enterRawMode();
+  if (deviceMaster.currentControlMode !== 'raw') {
+    progressCaller.update(progressId || PROGRESS_ID, { message: lang.message.enteringRawMode });
+    await deviceMaster.enterRawMode();
+  }
+
   progressCaller.update('preview-mode-controller', { message: lang.message.exitingRotaryMode });
   await deviceMaster.rawSetRotary(false);
 

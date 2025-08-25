@@ -163,7 +163,7 @@ const SolvePnP = ({
   const handleTakePicture = useCallback(
     async ({ handleImgOpts, relocate = false }: { handleImgOpts?: HandleImgOpts; relocate?: boolean } = {}) => {
       if (doorChecker && (!doorChecker.keepClosed || relocate)) {
-        const res = await doorChecker.doorClosedWrapper(moveLaserHead);
+        const res = await doorChecker.doorClosedWrapper(() => moveLaserHead(undefined, { shouldKeepPosition: true }));
 
         if (!res) return;
       }

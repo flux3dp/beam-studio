@@ -23,10 +23,10 @@ export interface IDeviceInfo {
 }
 
 export interface IDeviceConnection {
-  camera: Camera;
-  cameraNeedsFlip: boolean;
-  control: IControlSocket;
-  errors: string[];
+  camera: Camera | null;
+  cameraNeedsFlip: boolean | null;
+  control: IControlSocket | null;
+  errors: null | string[];
   info: IDeviceInfo;
 }
 

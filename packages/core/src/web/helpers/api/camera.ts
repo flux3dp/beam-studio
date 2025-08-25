@@ -74,7 +74,7 @@ class Camera {
 
   private requireFrameRetry: number;
 
-  private fishEyeSetting: {
+  private fishEyeSetting: null | {
     levelingData?: Record<string, number>;
     matrix?: FisheyeMatrix;
     objectHeight?: number;
@@ -82,9 +82,9 @@ class Camera {
     shouldCrop?: boolean;
   } = null;
 
-  private rotationAngles: RotationParameters3DGhostApi = null;
+  private rotationAngles: null | RotationParameters3DGhostApi = null;
 
-  constructor(shouldCrop = true, cameraNeedFlip: boolean = null) {
+  constructor(shouldCrop = true, cameraNeedFlip: boolean | null = null) {
     this.shouldCrop = shouldCrop;
     this.device = {
       model: null,
@@ -229,6 +229,33 @@ class Camera {
 
   setCamera = async (index: number): Promise<boolean> => {
     this.ws.send(`set_camera ${index}`);
+
+    const { data, success }: { data?: string; error?: string; status: string; success?: boolean } = await lastValueFrom(
+      this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)),
+    );
+
+    if (!success) return false;
+
+    const res = data?.split(':').at(-1);
+
+    return res?.toLowerCase().endsWith('ok') || false;
+  };
+
+  getExposure = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
+    this.ws.send('send_text get_exposure');
+
+    const { data, error, success }: { data?: string; error?: string; status: string; success?: boolean } =
+      await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+
+    if (!success) return { data: data ?? error ?? 'Unknown Error', success: false };
+
+    const value = Number(data!.split(':').at(-1));
+
+    return { data: value, success };
+  };
+
+  setExposure = async (value: number): Promise<boolean> => {
+    this.ws.send(`send_text set_exposure:${value}`);
 
     const { data, success }: { data?: string; error?: string; status: string; success?: boolean } = await lastValueFrom(
       this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)),
