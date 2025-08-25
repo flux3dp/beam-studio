@@ -37,15 +37,23 @@ const PreviewSlider = (): React.ReactNode => {
     if (model === 'fbb2' && !vc.meetRequirement('BB2_SEPARATE_EXPOSURE')) return;
 
     try {
-      const control = await deviceMaster.getControl();
+      const currentMode = deviceMaster.currentControlMode;
 
-      if (control.getMode() !== '') {
-        await deviceMaster.endSubTask();
+      if (currentMode === 'raw') {
+        const res = await deviceMaster.getCameraExposure();
+
+        if (res?.success) {
+          setExposureSetting({ max: 10000, min: 50, step: 1, value: res.data });
+        }
+      } else {
+        if (currentMode !== '') {
+          await deviceMaster.endSubTask();
+        }
+
+        const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
+
+        setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
       }
-
-      const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
-
-      setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
     } catch (e) {
       console.error('Failed to get exposure setting', e);
     }
@@ -110,13 +118,21 @@ const PreviewSlider = (): React.ReactNode => {
             onChangeComplete={async (value: number) => {
               setExposureSetting({ ...exposureSetting, value });
 
-              const control = await deviceMaster.getControl();
+              const currentMode = deviceMaster.currentControlMode;
 
-              if (control.getMode() !== '') {
-                await deviceMaster.endSubTask();
+              if (currentMode === 'raw') {
+                try {
+                  await deviceMaster.setCameraExposure(value);
+                } catch (e) {
+                  console.error('Failed to set exposure setting in raw mode', e);
+                }
+              } else {
+                if (currentMode !== '') {
+                  await deviceMaster.endSubTask();
+                }
+
+                await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
               }
-
-              await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
 
               if (PreviewModeController.isFullScreen) {
                 await PreviewModeController.previewFullWorkarea();

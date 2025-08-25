@@ -30,6 +30,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       movementFeedrate?: number;
       progressId?: string;
       progressRange?: [number, number];
+      shouldKeepInRawMode?: boolean;
     } = {},
   ): Promise<boolean> {
     const { lang } = i18n;
@@ -39,6 +40,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       movementFeedrate = 7500,
       progressId,
       progressRange: [progressStart, progressEnd] = [0, 100],
+      shouldKeepInRawMode = false,
     } = args;
 
     if (!progressId) progressCaller.openNonstopProgress({ id: this.progressId });
@@ -77,8 +79,11 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       this.objectHeight = height;
     }
 
-    progressCaller.update(progressId || this.progressId, { message: lang.message.endingRawMode });
-    await deviceMaster.endSubTask();
+    if (!shouldKeepInRawMode) {
+      progressCaller.update(progressId || this.progressId, { message: lang.message.endingRawMode });
+      await deviceMaster.endSubTask();
+    }
+
     params.grids = this.grids;
     progressCaller.update(progressId || this.progressId, { message: lang.message.connectingCamera });
     await deviceMaster.setFisheyeParam(params);

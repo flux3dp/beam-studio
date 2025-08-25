@@ -20,8 +20,8 @@ import type {
   RotationParameters3D,
   RotationParameters3DGhostApi,
 } from '@core/interfaces/FisheyePreview';
-import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
+import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
@@ -47,7 +47,7 @@ class DeviceMaster {
 
   private unnotifiedDeviceUUIDs: string[] = [];
 
-  public currentDevice: IDeviceConnection;
+  public currentDevice?: IDeviceConnection;
 
   constructor() {
     updateLang();
@@ -127,14 +127,14 @@ class DeviceMaster {
   }
 
   get currentControlMode() {
-    if (this.currentDevice && this.currentDevice.control) {
+    if (this.currentDevice?.control) {
       return this.currentDevice.control.getMode();
     }
 
     return null;
   }
 
-  private getDeviceByUUID(uuid: string): IDeviceConnection | null {
+  private getDeviceByUUID(uuid: string): IDeviceConnection {
     if (!this.deviceConnections.get(uuid)) {
       this.deviceConnections.set(uuid, {
         camera: null,
@@ -150,10 +150,10 @@ class DeviceMaster {
     const matchedInfo = this.discoveredDevices.filter((d) => d.uuid === uuid);
 
     if (matchedInfo[0]) {
-      Object.assign(this.deviceConnections.get(uuid).info, matchedInfo[0]);
+      Object.assign(this.deviceConnections.get(uuid)!.info, matchedInfo[0]);
     }
 
-    return this.deviceConnections.get(uuid);
+    return this.deviceConnections.get(uuid)!;
   }
 
   private async createDeviceControlSocket(uuid: string) {
@@ -281,7 +281,7 @@ class DeviceMaster {
       timeout: 30000,
     });
 
-    const res = await new Promise<{ data: any; password: string; success: boolean }>((resolve) => {
+    const res = await new Promise<{ data: any; password?: string; success: boolean }>((resolve) => {
       Touch({
         onError: (data) => {
           Progress.popById('device-master-auth');

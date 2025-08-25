@@ -35,17 +35,23 @@ const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSett
         className={styles.slider}
         max={Math.min(exposureSetting.max, 1000)}
         min={Math.max(exposureSetting.min, 50)}
-        onAfterChange={async (value: number) => {
+        onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+        onChangeComplete={async (value: number) => {
           try {
             progressCaller.openNonstopProgress({ id: 'exposure-slider' });
             setExposureSetting({ ...exposureSetting, value });
-            await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
+
+            if (deviceMaster.currentControlMode === 'raw') {
+              await deviceMaster.setCameraExposure(value);
+            } else {
+              await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
+            }
+
             onChanged?.();
           } finally {
             progressCaller.popById('exposure-slider');
           }
         }}
-        onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
         step={exposureSetting.step}
         tooltip={{ open: false }}
         value={exposureSetting.value}

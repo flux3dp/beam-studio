@@ -122,12 +122,21 @@ const useCamera = <T>(
           }
 
           try {
-            const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
+            if (deviceMaster.currentControlMode === 'raw') {
+              const res = await deviceMaster.getCameraExposure();
 
-            setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
+              if (res?.success) {
+                setExposureSetting({ max: 10000, min: 50, step: 1, value: res.data });
+              }
+            } else {
+              const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
+
+              setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
+            }
           } catch (e) {
             console.log('Failed to get exposure setting', e);
           }
+
           handleTakePicture();
         } else if (source === 'usb') {
           await connectWebCam();
