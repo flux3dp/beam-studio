@@ -36,7 +36,7 @@ exports[`test ExposureSlider should render correctly 1`] = `
       <button
         type="button"
       >
-        Mock After Change
+        Mock Change Complete
       </button>
     </div>
   </div>

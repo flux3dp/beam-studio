@@ -5,15 +5,15 @@ import { fireEvent, render } from '@testing-library/react';
 import ExposureSlider from './ExposureSlider';
 
 jest.mock('antd', () => ({
-  Slider: ({ className, max, min, onAfterChange, onChange, step, value }: any) => (
+  Slider: ({ className, max, min, onChange, onChangeComplete, step, value }: any) => (
     <div className={className}>
       <h1>Mock Slider</h1>
       <p>min: {min}</p>
       <p>max: {max}</p>
       <p>step: {step}</p>
       <input onChange={(e) => onChange(Number(e.target.value))} value={value} />
-      <button onClick={() => onAfterChange(87)} type="button">
-        Mock After Change
+      <button onClick={() => onChangeComplete(87)} type="button">
+        Mock Change Complete
       </button>
     </div>
   ),
@@ -81,7 +81,7 @@ describe('test ExposureSlider', () => {
     expect(mockOpenNonstopProgress).not.toBeCalled();
     expect(mockSetDeviceSetting).not.toBeCalled();
     expect(mockOnChanged).not.toBeCalled();
-    await act(() => fireEvent.click(getByText('Mock After Change')));
+    await act(() => fireEvent.click(getByText('Mock Change Complete')));
     expect(mockOpenNonstopProgress).toBeCalledTimes(1);
     expect(mockSetDeviceSetting).toBeCalledTimes(1);
     expect(mockSetDeviceSetting).toBeCalledWith('camera_exposure_absolute', '87');
