@@ -270,6 +270,134 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 2`] =
 </div>
 `;
 
+exports[`test PreviewSlider should render correctly when is previewing fbm2 with raw mode 1`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+    <div
+      class="container"
+    >
+      <div>
+        Mock Antd Tooltip
+        <p>
+          title: 
+          Preview Exposure
+        </p>
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          1000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          500
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        500
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test PreviewSlider should render correctly when is previewing fbm2 with raw mode 2`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+    <div
+      class="container"
+    >
+      <div>
+        Mock Antd Tooltip
+        <p>
+          title: 
+          Preview Exposure
+        </p>
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          1000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          0.25
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        0.25
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`test PreviewSlider should render correctly with preview image 1`] = `
 <div>
   <div
