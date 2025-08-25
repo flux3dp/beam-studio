@@ -1074,7 +1074,12 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     });
   };
 
-  rawRegexCommand = <T>(command: string, regex: RegExp, handler: (match: RegExpMatchArray) => T): Promise<T> => {
+  rawRegexCommand = <T>(
+    command: string,
+    regex: RegExp,
+    handler: (match: RegExpMatchArray) => T,
+    { silent = true }: { silent?: boolean } = {},
+  ): Promise<T> => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
@@ -1089,7 +1094,8 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
         clearTimeout(timeoutTimer);
 
         if (response && response.status === 'raw') {
-          console.log(`raw ${command}:\t`, response.text);
+          if (silent) console.log(`raw ${command}:\t`, response.text);
+
           responseString += response.text;
         }
 
