@@ -232,7 +232,7 @@ class DeviceMaster {
   async showAuthDialog(uuid: string): Promise<boolean> {
     // return authed or not
     const device = this.getDeviceByUUID(uuid);
-    const authResult = await new Promise<{ data: any; password: string; success: boolean }>((resolve) => {
+    const authResult = await new Promise<{ data: any; password?: string; success: boolean }>((resolve) => {
       Dialog.showInputLightbox('auth', {
         caption: sprintf(lang.input_machine_password.require_password, device.info.name),
         confirmText: lang.input_machine_password.connect,
@@ -247,7 +247,7 @@ class DeviceMaster {
       });
     });
 
-    if (authResult.success) {
+    if (authResult.success && authResult.password) {
       device.info.plaintext_password = authResult.password;
 
       return true;
@@ -283,15 +283,15 @@ class DeviceMaster {
 
     const res = await new Promise<{ data: any; password?: string; success: boolean }>((resolve) => {
       Touch({
-        onError: (data) => {
+        onError: (data: any) => {
           Progress.popById('device-master-auth');
           resolve({ data, password, success: false });
         },
-        onFail: (data) => {
+        onFail: (data: any) => {
           Progress.popById('device-master-auth');
           resolve({ data, password, success: false });
         },
-        onSuccess: (data) => {
+        onSuccess: (data: any) => {
           Progress.popById('device-master-auth');
           resolve({ data, password, success: true });
         },
@@ -365,13 +365,13 @@ class DeviceMaster {
         success: true,
       };
     } catch (e) {
-      let error = e;
+      let error = e as any;
 
       Progress.popById('select-device');
       console.error(error);
 
-      if (e.error) {
-        error = e.error;
+      if ('error' in error) {
+        error = error.error;
       }
 
       let errorCode = '';
@@ -436,7 +436,7 @@ class DeviceMaster {
           console.log('newInfo serial', newInfo?.serial);
 
           // Valid serial should be at least 8 characters
-          if (newInfo?.serial?.length >= 8) {
+          if (newInfo?.serial && newInfo.serial.length >= 8) {
             device.info = newInfo;
             Object.assign(deviceInfo, newInfo);
 
@@ -483,13 +483,13 @@ class DeviceMaster {
 
       return { success: true };
     } catch (e) {
-      let error = e;
+      let error = e as any;
 
       Progress.popById('select-device');
       console.error(error);
 
-      if (e.error) {
-        error = e.error;
+      if ('error' in error) {
+        error = error.error;
       }
 
       let errorCode = '';
@@ -586,7 +586,7 @@ class DeviceMaster {
   }
 
   async getControl(): Promise<IControlSocket> {
-    if (!this.currentDevice) return null;
+    if (!this.currentDevice) throw new Error('No device selected');
 
     const controlSocket = this.currentDevice.control;
 
@@ -594,22 +594,20 @@ class DeviceMaster {
 
     const res = await this.reconnect();
 
-    if (res.success) {
-      return this.currentDevice.control;
-    }
+    if (!res.success) throw new Error('Failed to connect to device');
 
-    return null;
+    return this.currentDevice.control!;
   }
 
   async reconnect() {
-    this.deviceConnections.delete(this.currentDevice.info.uuid);
+    this.deviceConnections.delete(this.currentDevice!.info.uuid);
     try {
-      await this.currentDevice.control.killSelf();
+      await this.currentDevice!.control?.killSelf();
     } catch (e) {
       console.error(`currentDevice.control.killSelf error ${e}`);
     }
 
-    const res = await this.select(this.currentDevice.info);
+    const res = await this.select(this.currentDevice!.info);
 
     return res;
   }
@@ -620,7 +618,7 @@ class DeviceMaster {
     if (device.control) {
       try {
         // Warning: access to private property
-        device.control.connection.close();
+        device.control.connection?.close();
       } catch (e) {
         console.error('Error when close control connection', e);
       }
@@ -773,7 +771,7 @@ class DeviceMaster {
   async runBeamboxCameraTest() {
     const res = await fetch('fcode/beam-series-camera.fc');
     const blob = await res.blob();
-    const vc = VersionChecker(this.currentDevice.info.version);
+    const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (vc.meetRequirement('RELOCATE_ORIGIN')) {
       await this.setOriginX(0);
@@ -806,7 +804,7 @@ class DeviceMaster {
   }
 
   async doDiodeCalibrationCut() {
-    const vc = VersionChecker(this.currentDevice.info.version);
+    const vc = VersionChecker(this.currentDevice!.info.version);
     const fcode = vc.meetRequirement('CALIBRATION_MODE')
       ? 'fcode/beam-series-diode-c-mode.fc'
       : 'fcode/beam-series-diode.fc';
@@ -845,7 +843,7 @@ class DeviceMaster {
   }
 
   doCalibration = async ({ blob, fcodeSource }: { blob?: Blob; fcodeSource?: string } = {}) => {
-    const vc = VersionChecker(this.currentDevice.info.version);
+    const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (fcodeSource) {
       const resp = await fetch(fcodeSource);
@@ -967,7 +965,7 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.deleteFile, `${path}/${fileName}`);
   }
 
-  async uploadToDirectory(data, path: string, fileName: string, onProgress?: (...args: any[]) => void) {
+  async uploadToDirectory(data: Blob, path: string, fileName: string, onProgress?: (...args: any[]) => void) {
     const controlSocket = await this.getControl();
 
     if (onProgress) {
@@ -1006,29 +1004,29 @@ class DeviceMaster {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.fetchCameraCalibrateImage(fileName);
+    return controlSocket.fetchCameraCalibrateImage!(fileName);
   }
 
   async fetchFisheyeParams(): Promise<FisheyeCameraParameters> {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchFisheyeParams() as Promise<FisheyeCameraParameters>;
+    return controlSocket.fetchFisheyeParams!() as Promise<FisheyeCameraParameters>;
   }
 
   async fetchFisheye3DRotation(): Promise<RotationParameters3D> {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchFisheye3DRotation();
+    return controlSocket.fetchFisheye3DRotation!();
   }
 
   async fetchAutoLevelingData(dataType: 'bottom_cover' | 'hexa_platform' | 'offset') {
     const controlSocket = await this.getControl();
 
-    return controlSocket.fetchAutoLevelingData(dataType);
+    return controlSocket.fetchAutoLevelingData!(dataType);
   }
 
   async getLogsTexts(logs: string[], onProgress: (...args: any[]) => void = () => {}) {
-    const res = {};
+    const res: Record<string, Array<Blob | string>> = {};
 
     for (let i = 0; i < logs.length; i += 1) {
       const log = logs[i];
@@ -1174,42 +1172,42 @@ class DeviceMaster {
 
   async rawSetRotary(on: boolean) {
     const controlSocket = await this.getControl();
-    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice.info.model) ? 2 : 1;
+    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice!.info.model) ? 2 : 1;
 
     return controlSocket.addTask(controlSocket.rawSetRotary, on, fcodeVersion);
   }
 
   async rawSetWaterPump(on: boolean) {
     const controlSocket = await this.getControl();
-    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice.info.model) ? 2 : 1;
+    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice!.info.model) ? 2 : 1;
 
     return controlSocket.addTask(controlSocket.rawSetWaterPump, on, fcodeVersion);
   }
 
   async rawSetFan(on: boolean) {
     const controlSocket = await this.getControl();
-    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice.info.model) ? 2 : 1;
+    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice!.info.model) ? 2 : 1;
 
     return controlSocket.addTask(controlSocket.rawSetFan, on, fcodeVersion);
   }
 
   async rawSetAirPump(on: boolean) {
     const controlSocket = await this.getControl();
-    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice.info.model) ? 2 : 1;
+    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice!.info.model) ? 2 : 1;
 
     return controlSocket.addTask(controlSocket.rawSetAirPump, on, fcodeVersion);
   }
 
   async rawLooseMotor() {
     const controlSocket = await this.getControl();
-    const vc = VersionChecker(this.currentDevice.info.version);
+    const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (!vc.meetRequirement('B34_LOOSE_MOTOR')) {
       // TODO: 3.3.0 is pretty old, hope we can remove this check in the future
       return controlSocket.addTask(controlSocket.rawLooseMotorOld);
     }
 
-    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice.info.model) ? 2 : 1;
+    const fcodeVersion = constant.fcodeV2Models.has(this.currentDevice!.info.model) ? 2 : 1;
 
     return controlSocket.addTask(controlSocket.rawLooseMotor, fcodeVersion);
   }
@@ -1221,7 +1219,7 @@ class DeviceMaster {
   }
 
   async rawSetRedLight(on: boolean) {
-    if (constant.fcodeV2Models.has(this.currentDevice.info.model)) {
+    if (constant.fcodeV2Models.has(this.currentDevice!.info.model)) {
       const controlSocket = await this.getControl();
 
       return controlSocket.addTask(controlSocket.rawSetRedLight, on);
@@ -1241,7 +1239,7 @@ class DeviceMaster {
 
     return controlSocket.addTask(
       controlSocket.rawAutoFocus,
-      constant.fcodeV2Models.has(this.currentDevice.info.model) ? 2 : 1,
+      constant.fcodeV2Models.has(this.currentDevice!.info.model) ? 2 : 1,
     );
   }
 
@@ -1283,7 +1281,7 @@ class DeviceMaster {
     relZ?: number;
     timeout?: number;
   }): Promise<null | number> {
-    const { model } = this.currentDevice.info;
+    const { model } = this.currentDevice!.info;
 
     if (model === 'ado1') {
       await this.rawAutoFocus();
@@ -1313,8 +1311,8 @@ class DeviceMaster {
 
   async rawSetOrigin(): Promise<null | string> {
     const controlSocket = await this.getControl();
-    const vc = VersionChecker(this.currentDevice.info.version);
-    const isV2 = constant.fcodeV2Models.has(this.currentDevice.info.model);
+    const vc = VersionChecker(this.currentDevice!.info.version);
+    const isV2 = constant.fcodeV2Models.has(this.currentDevice!.info.model);
 
     if (!vc.meetRequirement(isV2 ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')) {
       return null;
@@ -1382,7 +1380,7 @@ class DeviceMaster {
 
   async setOriginX(x = 0) {
     const controlSocket = await this.getControl();
-    const vc = VersionChecker(this.currentDevice.info.version);
+    const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (vc.meetRequirement('RELOCATE_ORIGIN')) {
       return controlSocket.addTask(controlSocket.setOriginX, x);
@@ -1395,7 +1393,7 @@ class DeviceMaster {
 
   async setOriginY(y = 0) {
     const controlSocket = await this.getControl();
-    const vc = VersionChecker(this.currentDevice.info.version);
+    const vc = VersionChecker(this.currentDevice!.info.version);
 
     if (vc.meetRequirement('RELOCATE_ORIGIN')) {
       return controlSocket.addTask(controlSocket.setOriginY, y);
@@ -1417,8 +1415,8 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
     const res = await controlSocket.addTask(controlSocket.getDeviceSetting, name);
 
-    if (currentDevice.cameraNeedsFlip === null && ['camera_offset', 'camera_offset_borderless'].includes(name)) {
-      if (res.status === 'ok' && !currentDevice.info.model.includes('delta-')) {
+    if (currentDevice!.cameraNeedsFlip === null && ['camera_offset', 'camera_offset_borderless'].includes(name)) {
+      if (res.status === 'ok' && !currentDevice!.info.model.includes('delta-')) {
         this.checkCameraNeedFlip(res.value);
       }
     }
@@ -1491,7 +1489,7 @@ class DeviceMaster {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.addTask(controlSocket.uploadFisheyeParams, data);
+    return controlSocket.addTask(controlSocket.uploadFisheyeParams!, data);
   };
 
   /**
@@ -1500,31 +1498,31 @@ class DeviceMaster {
   updateFisheye3DRotation = async (data: RotationParameters3D) => {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.updateFisheye3DRotation, data);
+    return controlSocket.addTask(controlSocket.updateFisheye3DRotation!, data);
   };
 
   // Camera functions
   checkCameraNeedFlip(cameraOffset: string) {
     const { currentDevice } = this;
 
-    currentDevice.cameraNeedsFlip = !!Number((/F:\s?(-?\d+\.?\d+)/.exec(cameraOffset) || ['', ''])[1]);
+    currentDevice!.cameraNeedsFlip = !!Number((/F:\s?(-?\d+\.?\d+)/.exec(cameraOffset) || ['', ''])[1]);
 
-    return currentDevice.cameraNeedsFlip;
+    return currentDevice!.cameraNeedsFlip;
   }
 
   async connectCamera(shouldCrop = true) {
     const { currentDevice } = this;
 
-    if (currentDevice.cameraNeedsFlip === null) {
-      if (constant.fcodeV2Models.has(currentDevice.info.model)) {
-        currentDevice.cameraNeedsFlip = false;
-      } else if (currentDevice.control && currentDevice.control.getMode() === '') {
+    if (currentDevice!.cameraNeedsFlip === null) {
+      if (constant.fcodeV2Models.has(currentDevice!.info.model)) {
+        currentDevice!.cameraNeedsFlip = false;
+      } else if (currentDevice!.control && currentDevice!.control.getMode() === '') {
         await this.getDeviceSetting('camera_offset');
       }
     }
 
-    currentDevice.camera = new Camera(shouldCrop, currentDevice.cameraNeedsFlip);
-    await currentDevice.camera.createWs(currentDevice.info);
+    currentDevice!.camera = new Camera(shouldCrop, currentDevice!.cameraNeedsFlip);
+    await currentDevice!.camera.createWs(currentDevice!.info);
   }
 
   /**
@@ -1532,51 +1530,53 @@ class DeviceMaster {
    * @param setCrop defines whether to crop the photo using cx, cy
    */
   async setFisheyeMatrix(matrix: FisheyeMatrix, setCrop?: boolean) {
-    const res = await this.currentDevice.camera.setFisheyeMatrix(matrix, setCrop);
+    const res = await this.currentDevice!.camera!.setFisheyeMatrix(matrix, setCrop);
 
     return res;
   }
 
   async setFisheyeParam(data: FisheyeCameraParameters) {
-    const res = await this.currentDevice.camera.setFisheyeParam(data);
+    const res = await this.currentDevice!.camera!.setFisheyeParam(data);
 
     return res;
   }
 
   async setFisheyeObjectHeight(height: number) {
-    const res = await this.currentDevice.camera.setFisheyeObjectHeight(height);
+    const res = await this.currentDevice!.camera!.setFisheyeObjectHeight(height);
 
     return res;
   }
 
   async setFisheyePerspectiveGrid(data: PerspectiveGrid) {
-    const res = await this.currentDevice.camera.setFisheyePerspectiveGrid(data);
+    const res = await this.currentDevice!.camera!.setFisheyePerspectiveGrid(data);
 
     return res;
   }
 
   async setFisheyeLevelingData(data: Record<string, number>) {
-    const res = await this.currentDevice.camera.setFisheyeLevelingData(data);
+    const res = await this.currentDevice!.camera!.setFisheyeLevelingData(data);
 
     return res;
   }
 
   async set3dRotation(data: RotationParameters3DGhostApi) {
-    const res = await this.currentDevice.camera.set3dRotation(data);
+    const res = await this.currentDevice!.camera!.set3dRotation(data);
 
     return res;
   }
 
-  async takeOnePicture(opts: { timeout?: number } = {}): Promise<{ imgBlob?: Blob; needCameraCableAlert?: boolean }> {
+  async takeOnePicture(
+    opts: { timeout?: number } = {},
+  ): Promise<null | { imgBlob?: Blob; needCameraCableAlert?: boolean }> {
     const { timeout = 30 } = opts;
     const startTime = Date.now();
-    const cameraFishEyeSetting = this.currentDevice.camera?.getFisheyeSetting();
-    const fisheyeRotation = this.currentDevice.camera?.getRotationAngles();
+    const cameraFishEyeSetting = this.currentDevice!.camera?.getFisheyeSetting();
+    const fisheyeRotation = this.currentDevice!.camera?.getRotationAngles();
     let lastErr = null;
 
     while (Date.now() - startTime < timeout * 1000) {
       try {
-        const res = await this.currentDevice.camera.oneShot();
+        const res = await this.currentDevice!.camera!.oneShot();
 
         if (res) {
           return res;
@@ -1587,7 +1587,7 @@ class DeviceMaster {
       }
 
       // return null result if camera is disconnected by other operation
-      if (!this.currentDevice.camera) {
+      if (!this.currentDevice?.camera) {
         return {};
       }
 
@@ -1627,7 +1627,7 @@ class DeviceMaster {
     await this.connectCamera(shouldCrop);
 
     // return an instance of RxJS Observable.
-    return this.currentDevice.camera.getLiveStreamSource();
+    return this.currentDevice!.camera!.getLiveStreamSource();
   }
 
   disconnectCamera() {
@@ -1645,7 +1645,19 @@ class DeviceMaster {
     return this.currentDevice?.camera?.setCamera(index) ?? false;
   }
 
-  getDiscoveredDevice<T extends keyof IDeviceInfo>(key: T, value: IDeviceInfo[T], callback) {
+  getCameraExposure() {
+    return this.currentDevice?.camera?.getExposure() ?? null;
+  }
+
+  setCameraExposure(value: number) {
+    return this.currentDevice?.camera?.setExposure(value) ?? false;
+  }
+
+  getDiscoveredDevice<T extends keyof IDeviceInfo>(
+    key: T,
+    value: IDeviceInfo[T],
+    callback: { onSuccess: (device: IDeviceInfo) => void; onTimeout: () => void; timeout: number },
+  ) {
     console.log(key, value, this.discoveredDevices);
 
     const matchedDevice = this.discoveredDevices.filter((d) => d[key] === value);

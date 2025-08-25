@@ -74,7 +74,7 @@ class Camera {
 
   private requireFrameRetry: number;
 
-  private fishEyeSetting: {
+  private fishEyeSetting: null | {
     levelingData?: Record<string, number>;
     matrix?: FisheyeMatrix;
     objectHeight?: number;
@@ -82,9 +82,9 @@ class Camera {
     shouldCrop?: boolean;
   } = null;
 
-  private rotationAngles: RotationParameters3DGhostApi = null;
+  private rotationAngles: null | RotationParameters3DGhostApi = null;
 
-  constructor(shouldCrop = true, cameraNeedFlip: boolean = null) {
+  constructor(shouldCrop = true, cameraNeedFlip: boolean | null = null) {
     this.shouldCrop = shouldCrop;
     this.device = {
       model: null,
