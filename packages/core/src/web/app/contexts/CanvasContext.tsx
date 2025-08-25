@@ -1,6 +1,8 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
+import { match, P } from 'ts-pattern';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
@@ -13,6 +15,7 @@ import { getPassThrough } from '@core/helpers/addOn';
 import { getLatestDeviceInfo } from '@core/helpers/api/discover';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
+import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -50,6 +53,7 @@ interface CanvasContextType {
   setMode: (mode: CanvasMode) => void;
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
   setupPreviewMode: (opts?: { callback?: () => void; showModal?: boolean }) => void;
+  toggleAutoFocus: (forceState?: boolean) => Promise<void>;
   togglePathPreview: () => void;
   updateCanvasContext: () => void;
 }
@@ -69,6 +73,7 @@ const CanvasContext = createContext<CanvasContextType>({
   setMode: () => {},
   setSelectedDevice: () => {},
   setupPreviewMode: () => {},
+  toggleAutoFocus: async () => {},
   togglePathPreview: () => {},
   updateCanvasContext: () => {},
 });
@@ -188,16 +193,17 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       curveEngravingModeController.end();
     }
 
-    const allLayers = document.querySelectorAll('g.layer');
+    const allLayers = document.querySelectorAll('g.layer') as unknown as SVGGElement[];
 
-    for (let i = 0; i < allLayers.length; i += 1) {
-      const g = allLayers[i] as SVGGElement;
-
-      if (mode === CanvasMode.Preview) {
+    // To prevent cursor changed to 'move' when 'mouseover'
+    if ([CanvasMode.AutoFocus, CanvasMode.Preview].includes(mode)) {
+      allLayers.forEach((g) => {
         g.style.pointerEvents = 'none';
-      } else {
+      });
+    } else {
+      allLayers.forEach((g) => {
         g.style.pointerEvents = '';
-      }
+      });
     }
   }, [mode]);
 
@@ -249,9 +255,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
           endPreviewMode();
         };
 
-        unregisterEndPreviewShortcut.current = shortcuts.on(['Escape'], triggerEndPreview, {
-          isBlocking: true,
-        });
+        unregisterEndPreviewShortcut.current = shortcuts.on(['Escape'], triggerEndPreview, { isBlocking: true });
 
         setCursor('url(img/camera-cursor.svg) 9 12, cell');
 
@@ -268,14 +272,16 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       } catch (error) {
         console.error(error);
 
-        if (error.message && error.message.startsWith('Camera WS')) {
-          alertCaller.popUpError({
-            message: `${t.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
-          });
-        } else {
-          alertCaller.popUpError({
-            message: `${t.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
-          });
+        if (error instanceof Error) {
+          if (error.message && error.message.startsWith('Camera WS')) {
+            alertCaller.popUpError({
+              message: `${t.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+            });
+          } else {
+            alertCaller.popUpError({
+              message: `${t.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
+            });
+          }
         }
 
         // eslint-disable-next-line hooks/rules-of-hooks
@@ -284,7 +290,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         settingUpPreview.current = false;
       }
     },
-    [lang, updateCanvasContext],
+    [lang],
   );
 
   useEffect(() => {
@@ -300,17 +306,17 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     workareaEvents.emit('update-context-menu', { menuDisabled: true });
 
     const workarea = document.getElementById('workarea');
+    const setCursor = (cursor: string) => {
+      if (workarea) workarea.style.cursor = cursor;
+    };
 
-    $('#workarea').contextmenu(() => {
+    $('#workarea').on('contextmenu', () => {
       endPreviewMode();
 
       return false;
     });
     setMode(CanvasMode.Preview);
-
-    if (workarea) {
-      workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
-    }
+    setCursor('url(img/camera-cursor.svg) 9 12, cell');
 
     if (tutorialController.getNextStepRequirement() === tutorialConstants.TO_PREVIEW_MODE) {
       tutorialController.handleNextStep();
@@ -319,6 +325,39 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
 
   const togglePathPreview = () => {
     setMode(mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview);
+  };
+
+  const toggleAutoFocus = async (forceState?: boolean) => {
+    const workarea = document.getElementById('workarea');
+    const setCursor = (cursor: string) => {
+      if (workarea) workarea.style.cursor = cursor;
+    };
+
+    await match({ forceState, mode })
+      .with(P.union({ forceState: true }, { forceState: undefined, mode: P.not(CanvasMode.AutoFocus) }), () => {
+        workareaEvents.emit('update-context-menu', { menuDisabled: true });
+        $('#workarea').on('contextmenu', () => {
+          toggleAutoFocus(false);
+
+          return false;
+        });
+
+        setMode(CanvasMode.AutoFocus);
+        svgCanvas.setMode('auto-focus');
+        setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
+      })
+      .otherwise(async () => {
+        await deviceMaster.rawLooseMotor();
+        await deviceMaster.endSubTask();
+        await deviceMaster.kick();
+
+        $('#workarea').off('contextmenu');
+        workareaEvents.emit('update-context-menu', { menuDisabled: false });
+
+        setMode(CanvasMode.Draw);
+        svgCanvas.setMode('select');
+        setCursor('auto');
+      });
   };
 
   const { children } = props;
@@ -340,6 +379,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         setMode,
         setSelectedDevice,
         setupPreviewMode,
+        toggleAutoFocus,
         togglePathPreview,
         updateCanvasContext,
       }}

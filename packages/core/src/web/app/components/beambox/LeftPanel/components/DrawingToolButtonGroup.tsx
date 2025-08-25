@@ -5,7 +5,7 @@ import { InstagramOutlined } from '@ant-design/icons';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import dialogCaller from '@core/app/actions/dialog-caller';
-import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import { showPassThrough } from '@core/app/components/pass-through';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSocialMedia } from '@core/app/constants/social-media-constants';
@@ -20,9 +20,8 @@ import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { useChatStore } from '../svg-editor/Chat/useChatStore';
-
-import styles from './LeftPanel.module.scss';
+import { useChatStore } from '../../svg-editor/Chat/useChatStore';
+import styles from '../index.module.scss';
 
 let svgCanvas: ISVGCanvas;
 

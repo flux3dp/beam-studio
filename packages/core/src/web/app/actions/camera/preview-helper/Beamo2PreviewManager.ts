@@ -229,7 +229,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
       }
 
       MessageCaller.openMessage({
-        content: 'Successfully previewed',
+        content: i18n.lang.message.preview.succeeded,
         duration: 3,
         key: this.progressId,
         level: MessageLevel.SUCCESS,

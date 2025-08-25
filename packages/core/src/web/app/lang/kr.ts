@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 인증 오류: Beam Studio와 기계 펌웨어를 최신 버전으로 업데이트해주세요.',
     authenticating: '인증 중...',
+    auto_focus: {
+      instruction: '레이저 모듈 헤드를 물체 위로 이동하고 포커스를 맞추려면 애니메이션 지침을 따라 주십시오.',
+      succeeded: '성공적으로 포커스됨',
+      title: '오토포커스',
+      warning_at_coordinates: '자동 초점 모드에 들어가면 레이저 헤드가 재설정되고 지정된 위치로 이동하여 초점을 맞춐니다.\n대상 위치가 재료 위에 있고 이동 경로에 장애물이 없는지 확인하십시오.',
+    },
     camera: {
       abort_preview: '중지',
       camera_cable_unstable: '카메라 전송이 불안정하게 이루어지는 것이 감지되었습니다. 미리보기는 정상적으로 수행될 수 있지만, 느린 미리보기 또는 시간 초과의 문제가 발생할 수 있습니다.',
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: '조절',
       adjust_height_tooltip: '편집을 활성화하려면 확인란을 클릭하세요.',
       already_performed_auto_focus: '이미 오토포커스를 수행했습니다. 기존 값 사용하시겠습니까?',
-      auto_focus: '오토포커스',
-      auto_focus_instruction: '레이저 모듈 헤드를 물체 위로 이동하고 포커스를 맞추려면 애니메이션 지침을 따라 주십시오.',
       camera_preview: '카메라 미리보기',
       enter_manually: '수동 입력',
       getting_focal_distance: '초점 거리 측정 중...',
       moving_to_preview_position: '미리보기 위치로 이동 중...',
       please_enter_height: '물체의 높이를 입력하여 정확한 카메라 촬영을 위해.',
+      succeeded: '미리보기 성공',
     },
     promark_disconnected: '#850 장치 연결이 중단되었습니다. 장치의 연결 상태를 확인하세요.',
     redLaserTakingReference: '기준값을 측정 중...',

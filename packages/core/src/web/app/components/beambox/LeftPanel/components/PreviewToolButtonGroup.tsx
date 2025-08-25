@@ -4,7 +4,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';

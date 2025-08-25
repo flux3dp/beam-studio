@@ -9,7 +9,7 @@ function checkActive(activeItem: string) {
 it('check the existence of the left toolbar and default active tool', () => {
   cy.landingEditor();
 
-  cy.get('div[class*="src-web-app-components-beambox-left-panel-LeftPanel-module__container"]').should('exist');
+  cy.get('div[class*="src-web-app-components-beambox-LeftPanel-index-module__container"]').should('exist');
   checkActive('Cursor');
 
   drawingTools.forEach((tool) => {

@@ -33,6 +33,14 @@ export type PreviewSpeedLevelType = (typeof PreviewSpeedLevel)[keyof typeof Prev
 export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2'] as const;
 export type NeedToShowProbeBeforeAutoFocusModelsType = (typeof needToShowProbeBeforeAutoFocusModelsArray)[number];
 
+export const fcodeV2ModelsArray = [...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray, 'fbm2'] as const;
+export const fcodeV2Models = new Set(fcodeV2ModelsArray);
+
+export const supportAutoFocusModelsArray = (['fhexa1', ...fcodeV2ModelsArray] as const).filter(
+  (model) => model !== 'fbm2',
+);
+export const supportAutoFocusModels = new Set(supportAutoFocusModelsArray);
+
 export const dpmm = 10;
 
 export default {
@@ -93,6 +101,6 @@ export default {
     ultra: 1000,
   },
   dpmm,
-  fcodeV2Models: new Set([...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray, 'fbm2']),
+  fcodeV2Models,
   highPowerModels: ['fhx2rf4', 'fhx2rf7', 'fhexa1', 'ado1', 'flv1', 'fpm1'],
 };

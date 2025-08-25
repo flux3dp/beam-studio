@@ -38,7 +38,7 @@ const { dpmm } = constant;
 
 export interface WorkArea {
   accOverride?: TAccelerationOverride;
-  autoFocusOffset?: number[]; // [mm, mm]
+  autoFocusOffset?: [number, number, number]; // [offsetX, offsetY, offsetZ] in mm
   autoShrink?: number;
   calibrationCenter?: number[]; // [mm, mm]
   cameraCenter?: number[]; // [mm, mm]

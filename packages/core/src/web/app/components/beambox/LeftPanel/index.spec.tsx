@@ -5,12 +5,13 @@ import { fireEvent, render } from '@testing-library/react';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
-import LeftPanel from './LeftPanel';
+import LeftPanel from '.';
 
 const on = jest.fn();
-const mockUnsubscribe = jest.fn();
+const off = jest.fn();
 
 jest.mock('@core/helpers/shortcuts', () => ({
+  off: (...args) => off(...args),
   on: (...args) => on(...args),
 }));
 
@@ -23,6 +24,7 @@ const insertEllipse = jest.fn();
 const insertLine = jest.fn();
 const insertPath = jest.fn();
 const insertPolygon = jest.fn();
+const mockUnsubscribe = jest.fn();
 
 jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   clearSelection: () => clearSelection(),
@@ -37,19 +39,19 @@ jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
 }));
 
 jest.mock(
-  '@core/app/components/beambox/left-panel/DrawingToolButtonGroup',
+  '@core/app/components/beambox/LeftPanel/components/DrawingToolButtonGroup',
   () =>
     function DrawingToolButtonGroup() {
       return <div>This is dummy DrawingToolButtonGroup</div>;
     },
 );
 
-jest.mock('@core/app/components/beambox/left-panel/PreviewToolButtonGroup', () => () => (
+jest.mock('@core/app/components/beambox/LeftPanel/components/PreviewToolButtonGroup', () => () => (
   <div>This is dummy PreviewToolButtonGroup</div>
 ));
 
 jest.mock(
-  '@core/app/components/beambox/left-panel/CurveEngravingTool',
+  '@core/app/components/beambox/LeftPanel/components/CurveEngravingTool',
   () =>
     ({ className }: { className: string }) => <div className={className}>MockCurveEngravingTool</div>,
 );

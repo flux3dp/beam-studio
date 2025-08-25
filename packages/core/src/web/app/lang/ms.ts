@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Ralat Pengesahan: Sila kemas kini Beam Studio dan firmware mesin ke versi terkini.',
     authenticating: 'Mengesahkan...',
+    auto_focus: {
+      instruction: 'Sila alihkan kepala modul laser ke atas objek, dan ikuti arahan animasi untuk menekan AF untuk fokus.',
+      succeeded: 'Berjaya difokuskan',
+      title: 'Fokus Automatik',
+      warning_at_coordinates: 'Selepas memasuki mod fokus automatik, kepala laser akan diset semula dan dipindahkan ke kedudukan yang ditetapkan untuk memfokus.\nPastikan kedudukan sasaran berada di atas bahan dan tiada halangan di laluan pergerakan.',
+    },
     camera: {
       abort_preview: 'Batalkan',
       camera_cable_unstable: 'Kamera menghantar gambar secara tidak stabil dikesan. Pratonton masih boleh dilakukan dengan normal, tetapi mungkin ada masalah pratonton perlahan atau masa tamat.',
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: 'Laras',
       adjust_height_tooltip: 'Klik kotak semak untuk membenarkan penyuntingan.',
       already_performed_auto_focus: 'Anda telah melakukan fokus automatik, guna nilai sedia ada?',
-      auto_focus: 'Fokus Automatik',
-      auto_focus_instruction: 'Sila gerakkan kepala modul laser di atas objek, dan ikut arahan animasi untuk menekan AF bagi memfokus.',
       camera_preview: 'Pratonton Kamera',
       enter_manually: 'Masukkan Secara Manual',
       getting_focal_distance: 'Mendapatkan jarak fokus...',
       moving_to_preview_position: 'Bergerak ke posisi pratonton...',
       please_enter_height: 'Sila masukkan ketinggian objek. Bagi menangkap gambar kamera yang tepat.',
+      succeeded: 'Berjaya dipratonton',
     },
     promark_disconnected: '#850 Sambungan peranti terganggu, sila periksa status sambungan peranti.',
     redLaserTakingReference: 'Mengambil rujukan...',

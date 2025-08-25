@@ -1,4 +1,4 @@
-import CanvasMode from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 

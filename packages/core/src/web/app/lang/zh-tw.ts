@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 認證失敗：請將 Beam Studio 以及機器韌體更新至最新版。',
     authenticating: '密碼驗證中...',
+    auto_focus: {
+      instruction: '請將雷射模組頭移至物體上方，並依照動畫指示按下AF進行對焦。',
+      succeeded: '對焦成功',
+      title: '自動對焦',
+      warning_at_coordinates: '進入自動對焦模式後，雷射頭將重置並移動到指定位置進行對焦。\n請確保目標位置在材料上，且移動路徑中沒有障礙物。',
+    },
     camera: {
       abort_preview: '中斷預覽',
       camera_cable_unstable: '偵測到相機傳輸照片時不穩定，仍能正常進行相機預覽，但可能會有預覽速度較慢或超時的問題。<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001791895">了解更多</a>',
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: '調整',
       adjust_height_tooltip: '點選方塊以啟用編輯。',
       already_performed_auto_focus: '您已經執行了自動對焦，要使用現有數值嗎？',
-      auto_focus: '自動對焦',
-      auto_focus_instruction: '請將雷射模組頭移至物體上方，並依照動畫指示按下AF進行對焦。',
       camera_preview: '相機預覽',
       enter_manually: '手動輸入',
       getting_focal_distance: '正在取得焦距...',
       moving_to_preview_position: '正在移動至相機預覽位置...',
       please_enter_height: '請輸入物體的高度，以拍攝精確的相機照片。',
+      succeeded: '預覽成功',
     },
     promark_disconnected: '#850 設備連線中斷，請確認設備的連線狀態。',
     redLaserTakingReference: '正在取得參考點...',
@@ -1722,7 +1727,6 @@ const lang: ILang = {
     title: '我的雲端',
     upgrade: '升級',
   },
-  // TODO: Update i18n
   noun_project_panel: {
     clear: '清除',
     elements: '元素',

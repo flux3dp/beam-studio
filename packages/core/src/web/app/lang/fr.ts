@@ -1545,6 +1545,12 @@ const lang: ILang = {
   message: {
     auth_error: "#820 Erreur d'authentification : veuillez mettre à jour Beam Studio et le firmware de la machine vers la dernière version.",
     authenticating: 'Authentification en cours...',
+    auto_focus: {
+      instruction: "Veuillez déplacer la tête du module laser au-dessus de l'objet et suivre les instructions d'animation pour appuyer sur AF pour effectuer la mise au point.",
+      succeeded: 'Focusé avec succès',
+      title: 'Mise au point automatique',
+      warning_at_coordinates: "Après avoir activé le mode de mise au point automatique, la tête laser sera réinitialisée et déplacée vers la position spécifiée pour faire la mise au point.\nAssurez-vous que la position cible est sur le matériau et qu'il n'y a pas d'obstacles dans le chemin de déplacement.",
+    },
     camera: {
       abort_preview: 'Abandonner',
       camera_cable_unstable: "Il est détecté que la caméra transfère des photos de manière instable. L'aperçu peut encore être effectué normalement, mais il peut y avoir un problème d'aperçu lent ou de dépassement de délai.",
@@ -1591,13 +1597,12 @@ const lang: ILang = {
       adjust: 'Ajuster',
       adjust_height_tooltip: "Cliquez sur la case à cocher pour activer l'édition.",
       already_performed_auto_focus: 'Vous avez déjà effectué la mise au point automatique, utiliser les valeurs existantes ?',
-      auto_focus: 'Mise au point automatique',
-      auto_focus_instruction: "Veuillez déplacer la tête du module laser au-dessus de l'objet et suivre les instructions d'animation pour appuyer sur AF pour effectuer la mise au point.",
       camera_preview: 'Aperçu de la caméra',
       enter_manually: 'Entrer manuellement',
       getting_focal_distance: 'Obtention de la distance focale...',
       moving_to_preview_position: 'Déplacement vers la position d’aperçu...',
       please_enter_height: "Veuillez entrer la hauteur de l'objet. Afin de capturer un cliché de caméra précis.",
+      succeeded: 'Aperçu réussi',
     },
     promark_disconnected: "#850 Connexion de l'appareil interrompue, veuillez vérifier l'état de connexion de l'appareil.",
     redLaserTakingReference: 'Prise de référence...',

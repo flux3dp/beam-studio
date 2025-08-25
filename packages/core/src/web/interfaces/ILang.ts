@@ -1536,6 +1536,12 @@ export interface ILang {
   message: {
     auth_error: string;
     authenticating: string;
+    auto_focus: {
+      instruction: string;
+      succeeded: string;
+      title: string;
+      warning_at_coordinates: string;
+    };
     camera: {
       abort_preview: string;
       camera_cable_unstable: string;
@@ -1582,13 +1588,12 @@ export interface ILang {
       adjust: string;
       adjust_height_tooltip: string;
       already_performed_auto_focus: string;
-      auto_focus: string;
-      auto_focus_instruction: string;
       camera_preview: string;
       enter_manually: string;
       getting_focal_distance: string;
       moving_to_preview_position: string;
       please_enter_height: string;
+      succeeded: string;
     };
     promark_disconnected: string;
     redLaserTakingReference: string;

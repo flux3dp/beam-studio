@@ -498,7 +498,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
         PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
       });
       MessageCaller.openMessage({
-        content: 'Successfully previewed',
+        content: i18n.lang.message.preview.succeeded,
         duration: 3,
         key: 'wide-angle-preview',
         level: MessageLevel.SUCCESS,

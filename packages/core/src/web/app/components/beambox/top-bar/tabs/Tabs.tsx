@@ -7,7 +7,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
-import CanvasMode from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import tabConstants from '@core/app/constants/tabConstants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
