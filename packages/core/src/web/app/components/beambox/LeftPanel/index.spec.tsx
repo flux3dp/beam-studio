@@ -24,6 +24,7 @@ const insertEllipse = jest.fn();
 const insertLine = jest.fn();
 const insertPath = jest.fn();
 const insertPolygon = jest.fn();
+const mockUnsubscribe = jest.fn();
 
 jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   clearSelection: () => clearSelection(),
