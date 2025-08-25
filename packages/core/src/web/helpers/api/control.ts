@@ -219,12 +219,10 @@ class Control extends EventEmitter implements IControlSocket {
   }
 
   setTimeoutTimer(reject: Function, timeout = 30000) {
-    const timeoutTimer = setTimeout(() => {
+    return setTimeout(() => {
       this.removeCommandListeners();
       reject({ error: 'TIMEOUT', status: 'error', text: 'TIMEOUT' });
     }, timeout);
-
-    return timeoutTimer;
   }
 
   setDefaultErrorResponse(reject: Function, timeoutTimer?: NodeJS.Timeout) {
@@ -268,7 +266,7 @@ class Control extends EventEmitter implements IControlSocket {
   useRawWaitOKResponse(command: string, timeout = 30000) {
     // Resolve after get ok from raw response
     return new Promise<string>((resolve, reject) => {
-      const timeoutTimer = this.setTimeoutTimer(reject, timeout);
+      const timeoutTimer = this?.setTimeoutTimer(reject, timeout);
       let responseString = '';
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
@@ -279,10 +277,17 @@ class Control extends EventEmitter implements IControlSocket {
         const resps = responseString.split(/\r?\n/);
 
         if (resps.includes('ok')) {
-          clearTimeout(timeoutTimer);
+          if (timeoutTimer) {
+            clearTimeout(timeoutTimer);
+          }
+
           this.removeCommandListeners();
           resolve(responseString);
         } else if (resps.some((r) => r.startsWith('error:'))) {
+          if (timeoutTimer) {
+            clearTimeout(timeoutTimer);
+          }
+
           this.removeCommandListeners();
           reject(responseString);
         }

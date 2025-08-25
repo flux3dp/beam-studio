@@ -43,6 +43,7 @@ type Props = {
 const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
   const {
     alert,
+    beambox,
     global,
     message,
     topbar: {
@@ -78,7 +79,7 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
         }
 
         await deviceMaster.rawAutoFocus();
-        await MessageCaller.openMessage({
+        MessageCaller.openMessage({
           content: message.auto_focus.succeeded,
           duration: 3,
           key: 'auto-focus',
@@ -131,24 +132,10 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       return;
     }
 
-    const control = await deviceMaster.getControl();
-
-    if (!control) {
-      alertCaller.popUp({
-        caption: lang.title,
-        message: lang.select_device_error,
-        type: alertConstants.SHOW_POPUP_ERROR,
-      });
-      setIsProcessing(false);
-      progressCaller.popById('auto-focus');
-
-      return;
-    }
-
     if (!alertConfig.read('skip_auto_focus_warning')) {
       const shouldContinue = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({
-          buttonLabels: [global.cancel, message.camera.continue_preview],
+          buttonLabels: [global.cancel, beambox.popup.still_continue],
           callbacks: [() => resolve(false), () => resolve(true)],
           checkbox: {
             callbacks: () => alertConfig.write('skip_auto_focus_warning', true),
@@ -181,6 +168,7 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
           message: lang.show_probe_error,
           type: alertConstants.SHOW_POPUP_ERROR,
         });
+        progressCaller.popById('auto-focus');
 
         return false;
       })
@@ -189,6 +177,8 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       try {
         progressCaller.update('auto-focus', { message: message.enteringRawMode });
 
+        const control = await deviceMaster.getControl();
+
         if (control.getMode() !== 'raw') {
           await deviceMaster.enterRawMode();
         }
@@ -196,11 +186,12 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
         progressCaller.update('auto-focus', { message: message.exitingRotaryMode });
         await deviceMaster.rawSetRotary(false);
         progressCaller.update('auto-focus', { message: message.homing });
-        await deviceMaster.rawHome();
 
         if (selectedDevice?.model === 'fhexa1') {
           await deviceMaster.rawUnlock();
         }
+
+        await deviceMaster.rawHome();
       } finally {
         progressCaller.popById('auto-focus');
       }

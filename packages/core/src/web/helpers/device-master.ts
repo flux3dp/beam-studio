@@ -1166,10 +1166,10 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.rawMove, args);
   }
 
-  async rawWaitOkResponse(command: string) {
+  async rawWaitOkResponse(command: string, timeout?: number) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.useRawWaitOKResponse, command);
+    return controlSocket.addTask(() => controlSocket.useRawWaitOKResponse(command, timeout));
   }
 
   async rawSetRotary(on: boolean) {

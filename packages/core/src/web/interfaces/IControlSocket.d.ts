@@ -102,7 +102,7 @@ interface IControlSocket extends EventEmitter {
   updateFisheye3DRotation?: (data: RotationParameters3D) => Promise<{ status: string }>;
   upload(data: any, path?: string, fileName?: string): Promise<void>;
   uploadFisheyeParams?: (data: string) => Promise<{ status: string }>;
-  useRawWaitOKResponse(command: string, timeout: number): Promise<unknown>;
+  useRawWaitOKResponse(command: string, timeout?: number): Promise<unknown>;
   zSpeedLimitTestSetSpeed(speed: number): Promise<boolean>;
   zSpeedLimitTestStart(): Promise<boolean>;
 }
