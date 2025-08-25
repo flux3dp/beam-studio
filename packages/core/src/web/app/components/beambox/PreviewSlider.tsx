@@ -39,7 +39,7 @@ const PreviewSlider = (): React.ReactNode => {
     try {
       const currentMode = deviceMaster.currentControlMode;
 
-      if (currentMode === 'raw') {
+      if (model === 'fbm2' && currentMode === 'raw') {
         const res = await deviceMaster.getCameraExposure();
 
         if (res?.success) {
@@ -121,7 +121,7 @@ const PreviewSlider = (): React.ReactNode => {
 
               const currentMode = deviceMaster.currentControlMode;
 
-              if (currentMode === 'raw') {
+              if (deviceMaster.currentDevice?.info.model === 'fbm2' && currentMode === 'raw') {
                 try {
                   await deviceMaster.setCameraExposure(value);
                 } catch (e) {
