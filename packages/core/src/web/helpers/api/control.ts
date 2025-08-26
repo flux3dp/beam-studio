@@ -263,10 +263,10 @@ class Control extends EventEmitter implements IControlSocket {
     });
   }
 
-  useRawWaitOKResponse(command: string, timeout = 30000) {
+  useRawWaitOKResponse = (command: string, timeout = 30000) => {
     // Resolve after get ok from raw response
     return new Promise<string>((resolve, reject) => {
-      const timeoutTimer = this?.setTimeoutTimer(reject, timeout);
+      const timeoutTimer = this.setTimeoutTimer(reject, timeout);
       let responseString = '';
 
       this.on(EVENT_COMMAND_MESSAGE, (response) => {
@@ -296,7 +296,7 @@ class Control extends EventEmitter implements IControlSocket {
       this.setDefaultFatalResponse(reject, timeoutTimer);
       this.ws.send(command);
     });
-  }
+  };
 
   useWaitOKResponse(command: string, timeout = 30000) {
     // Resolve after get response whose status is ok
