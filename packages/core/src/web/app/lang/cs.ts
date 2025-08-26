@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Režim Automatického Podavače',
+      autofocus1: 'Režim automatického zaostřování',
+      autofocus2: 'Klikněte kamkoli pro automatické zaostření.',
       camera_preview: 'Náhled',
       camera_preview_borderless_mode: '(Otevřené Dno)',
       curve_engraving: 'Režim Gravírování na Křivkách',

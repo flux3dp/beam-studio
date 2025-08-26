@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Automaattinen Syöttötila',
+      autofocus1: 'Automaattitarkennus-tila',
+      autofocus2: 'Napsauta mitä tahansa kohtaa suorittaaksesi automaattitarkennuksen.',
       camera_preview: 'Esikatselu',
       camera_preview_borderless_mode: '(Avoin Pohja)',
       curve_engraving: 'Kaiverruksen Käyrätila',

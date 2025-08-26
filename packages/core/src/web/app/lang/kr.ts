@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: '자동 공급 모드',
+      autofocus1: '자동 초점 모드',
+      autofocus2: '자동 초점을 수행하려면 아무 곳이나 클릭하십시오.',
       camera_preview: '미리보기',
       camera_preview_borderless_mode: '(하단 개방)',
       curve_engraving: '곡선 조각 모드',

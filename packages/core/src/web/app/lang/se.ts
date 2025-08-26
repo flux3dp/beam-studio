@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Auto Matningsläge',
+      autofocus1: 'Autofokusläge',
+      autofocus2: 'Klicka var som helst för att utföra autofokus.',
       camera_preview: 'Förhandsgranskning',
       camera_preview_borderless_mode: '(Öppen Botten)',
       curve_engraving: 'Kurvgravyrläge',

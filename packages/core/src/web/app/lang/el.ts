@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Λειτουργία Αυτόματης Τροφοδοσίας',
+      autofocus1: 'Λειτουργία Αυτόματης Εστίασης',
+      autofocus2: 'Κάντε κλικ οπουδήποτε για να εκτελέσετε αυτόματη εστίαση.',
       camera_preview: 'Προεπισκόπηση',
       camera_preview_borderless_mode: '(Ανοιχτός Πάτος)',
       curve_engraving: 'Λειτουργία Χάραξης Καμπύλης',

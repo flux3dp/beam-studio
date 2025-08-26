@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Modo Alimentador Automático',
+      autofocus1: 'Modo Enfoque Automático',
+      autofocus2: 'Haz clic en cualquier lugar para realizar el enfoque automático.',
       camera_preview: 'Vista Previa',
       camera_preview_borderless_mode: '(Fondo Abierto)',
       curve_engraving: 'Modo de Grabado en Curva',

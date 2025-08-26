@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Chế Độ Nạp Liệu Tự Động',
+      autofocus1: 'Chế độ Tự động Lấy Nét',
+      autofocus2: 'Nhấp vào bất kỳ đâu để thực hiện lấy nét tự động.',
       camera_preview: 'Xem Trước',
       camera_preview_borderless_mode: '(Mở Dưới)',
       curve_engraving: 'Chế Độ Khắc Đường Cong',

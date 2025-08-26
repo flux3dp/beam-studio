@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Mode Pengumpan Otomatis',
+      autofocus1: 'Mode Autofokus',
+      autofocus2: 'Klik di mana saja untuk melakukan autofokus.',
       camera_preview: 'Pratinjau',
       camera_preview_borderless_mode: '(Bawah Terbuka)',
       curve_engraving: 'Mode Ukiran Lengkung',

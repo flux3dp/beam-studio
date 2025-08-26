@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Auto Feeder Mode',
+      autofocus1: 'Autofocus Mode',
+      autofocus2: 'Click anywhere to perform autofocus.',
       camera_preview: 'Preview',
       camera_preview_borderless_mode: '(Open Bottom)',
       curve_engraving: 'Curve Engraving Mode',

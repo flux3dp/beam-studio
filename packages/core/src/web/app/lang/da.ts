@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Auto Feeder Tilstand',
+      autofocus1: 'Autofokus-tilstand',
+      autofocus2: 'Klik hvor som helst for at udføre autofokus.',
       camera_preview: 'Forhåndsvisning',
       camera_preview_borderless_mode: '(Åben Bund)',
       curve_engraving: 'Kurvegraveringstilstand',

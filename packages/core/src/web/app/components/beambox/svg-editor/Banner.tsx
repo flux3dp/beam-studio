@@ -51,8 +51,8 @@ const Banner = (): React.ReactNode => {
     isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary || isAutoFocus;
   const messageMap = {
     autoFeeder: lang.beambox.banner.auto_feeder,
-    autofocus1: 'Auto Focus Mode',
-    autofocus2: 'Click anywhere to perform autofocus.',
+    autofocus1: lang.beambox.banner.autofocus1,
+    autofocus2: lang.beambox.banner.autofocus2,
     curveEngraving: lang.beambox.banner.curve_engraving,
     openBottomPreview: `${lang.beambox.banner.camera_preview} ${lang.beambox.banner.camera_preview_borderless_mode}`,
     passThrough: lang.beambox.banner.pass_through,

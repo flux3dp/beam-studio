@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'オートフィーダーモード',
+      autofocus1: 'オートフォーカスモード',
+      autofocus2: 'どこでもクリックして自動フォーカスを実行してください。',
       camera_preview: 'プレビュー',
       camera_preview_borderless_mode: '(オープンボトム)',
       curve_engraving: 'カーブ彫刻モード',

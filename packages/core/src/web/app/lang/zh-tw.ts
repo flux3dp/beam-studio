@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: '自動送料模式',
+      autofocus1: '自動對焦模式',
+      autofocus2: '點擊任意位置執行自動對焦。',
       camera_preview: '預覽',
       camera_preview_borderless_mode: '(開放底部)',
       curve_engraving: '曲面雕刻模式',

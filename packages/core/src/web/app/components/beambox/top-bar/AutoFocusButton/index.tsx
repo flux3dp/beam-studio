@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
@@ -57,7 +57,7 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
     [selectedDevice],
   );
   const { autoFocusOffset: [offsetX, offsetY] = [0, 0, 0], height, width } = getWorkarea(selectedDevice?.model!);
-  const executeAutofocus = React.useCallback(
+  const executeAutofocus = useCallback(
     async (coords?: { x: number; y: number }) => {
       if (isProcessing) return;
 
@@ -114,67 +114,71 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       return;
     }
 
+    const cleanup = () => {
+      setIsProcessing(false);
+      progressCaller.popById('auto-focus');
+    };
+
     setIsProcessing(true);
     progressCaller.openNonstopProgress({ id: 'auto-focus', message: message.connecting });
 
-    const res = await deviceMaster.select(selectedDevice!);
-    const deviceStatus = await checkDeviceStatus(selectedDevice!);
+    try {
+      const res = await deviceMaster.select(selectedDevice!);
+      const deviceStatus = await checkDeviceStatus(selectedDevice!);
 
-    if (!res.success || !deviceStatus) {
-      alertCaller.popUp({
-        caption: lang.title,
-        message: lang.select_device_error,
-        type: alertConstants.SHOW_POPUP_ERROR,
-      });
-      setIsProcessing(false);
-      progressCaller.popById('auto-focus');
-
-      return;
-    }
-
-    if (!alertConfig.read('skip_auto_focus_warning')) {
-      const shouldContinue = await new Promise<boolean>((resolve) => {
+      if (!res.success || !deviceStatus) {
         alertCaller.popUp({
-          buttonLabels: [global.cancel, beambox.popup.still_continue],
-          callbacks: [() => resolve(false), () => resolve(true)],
-          checkbox: {
-            callbacks: () => alertConfig.write('skip_auto_focus_warning', true),
-            text: alert.dont_show_again,
-          },
-          id: 'auto_focus_warning',
-          message: message.auto_focus.warning_at_coordinates,
-          primaryButtonIndex: 1,
-          type: alertConstants.SHOW_POPUP_WARNING,
+          caption: lang.title,
+          message: lang.select_device_error,
+          type: alertConstants.SHOW_POPUP_ERROR,
         });
-      });
-
-      if (!shouldContinue) {
-        setIsProcessing(false);
-        progressCaller.popById('auto-focus');
 
         return;
       }
-    }
 
-    const prerequisite = await match(selectedDevice)
-      .with(null, () => false)
-      .with({ model: P.union(...needToShowProbeBeforeAutoFocusModelsArray) }, async () => {
-        const { probe_showed } = await deviceMaster.getDeviceDetailInfo();
-
-        if (probe_showed === '1') return true;
-
-        alertCaller.popUp({
-          caption: lang.title,
-          message: lang.show_probe_error,
-          type: alertConstants.SHOW_POPUP_ERROR,
+      if (!alertConfig.read('skip_auto_focus_warning')) {
+        const shouldContinue = await new Promise<boolean>((resolve) => {
+          alertCaller.popUp({
+            buttonLabels: [global.cancel, beambox.popup.still_continue],
+            callbacks: [() => resolve(false), () => resolve(true)],
+            checkbox: {
+              callbacks: () => alertConfig.write('skip_auto_focus_warning', true),
+              text: alert.dont_show_again,
+            },
+            id: 'auto_focus_warning',
+            message: message.auto_focus.warning_at_coordinates,
+            primaryButtonIndex: 1,
+            type: alertConstants.SHOW_POPUP_WARNING,
+          });
         });
-        progressCaller.popById('auto-focus');
 
-        return false;
-      })
-      .otherwise(() => true);
-    const setupDevice = async () => {
-      try {
+        if (!shouldContinue) {
+          return;
+        }
+      }
+
+      const prerequisite = await match(selectedDevice)
+        .with(null, () => false)
+        .with({ model: P.union(...needToShowProbeBeforeAutoFocusModelsArray) }, async () => {
+          const { probe_showed } = await deviceMaster.getDeviceDetailInfo();
+
+          if (probe_showed === '1') return true;
+
+          alertCaller.popUp({
+            caption: lang.title,
+            message: lang.show_probe_error,
+            type: alertConstants.SHOW_POPUP_ERROR,
+          });
+
+          return false;
+        })
+        .otherwise(() => true);
+
+      if (!prerequisite) {
+        return;
+      }
+
+      const setupDevice = async () => {
         progressCaller.update('auto-focus', { message: message.enteringRawMode });
 
         const control = await deviceMaster.getControl();
@@ -192,17 +196,13 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
         }
 
         await deviceMaster.rawHome();
-      } finally {
-        progressCaller.popById('auto-focus');
-      }
-    };
+      };
 
-    setIsProcessing(false); // End of pre-flight checks
-
-    if (prerequisite) {
       svgCanvas.clearSelection();
       toggleAutoFocus(true);
       await setupDevice();
+    } finally {
+      cleanup();
     }
   };
 

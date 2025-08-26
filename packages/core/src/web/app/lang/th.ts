@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'โหมดป้อนอัตโนมัติ',
+      autofocus1: 'โหมดออโต้โฟกัส',
+      autofocus2: 'คลิกที่ใดก็ได้เพื่อดำเนินการออโต้โฟกัส',
       camera_preview: 'แสดงตัวอย่าง',
       camera_preview_borderless_mode: '(เปิดด้านล่าง)',
       curve_engraving: 'โหมดแกะสลักเส้นโค้ง',

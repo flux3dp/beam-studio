@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Automatischer Zuführmodus',
+      autofocus1: 'Autofokus-Modus',
+      autofocus2: 'Klicken Sie auf eine beliebige Stelle, um den Autofokus durchzuführen.',
       camera_preview: 'Vorschau',
       camera_preview_borderless_mode: '(Offener Boden)',
       curve_engraving: 'Kurven-Graviermodus',

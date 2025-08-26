@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Automatische Voedermodus',
+      autofocus1: 'Autofocus Modus',
+      autofocus2: 'Klik ergens om autofocus uit te voeren.',
       camera_preview: 'Voorbeeld',
       camera_preview_borderless_mode: '(Open Onderkant)',
       curve_engraving: 'Kromme Graveermodus',

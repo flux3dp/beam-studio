@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Tryb Automatycznego Podajnika',
+      autofocus1: 'Tryb Autofocus',
+      autofocus2: 'Kliknij gdziekolwiek, aby wykonać autofocus.',
       camera_preview: 'Podgląd',
       camera_preview_borderless_mode: '(Otwarty Spód)',
       curve_engraving: 'Tryb Grawerowania Krzywizn',

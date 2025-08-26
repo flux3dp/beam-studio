@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Modalità Alimentazione Automatica',
+      autofocus1: 'Modalità Autofocus',
+      autofocus2: 'Fai clic ovunque per eseguire la messa a fuoco automatica.',
       camera_preview: 'Anteprima',
       camera_preview_borderless_mode: '(Parte Inferiore Aperta)',
       curve_engraving: 'Modalità Incisione Curva',

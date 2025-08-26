@@ -63,6 +63,8 @@ export interface ILang {
     };
     banner: {
       auto_feeder: string;
+      autofocus1: string;
+      autofocus2: string;
       camera_preview: string;
       camera_preview_borderless_mode: string;
       curve_engraving: string;
