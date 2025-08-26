@@ -1,5 +1,5 @@
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
-import CanvasMode from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 

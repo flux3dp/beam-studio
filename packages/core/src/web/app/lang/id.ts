@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Mode Pengumpan Otomatis',
+      autofocus1: 'Mode Autofokus',
+      autofocus2: 'Klik di mana saja untuk melakukan autofokus.',
       camera_preview: 'Pratinjau',
       camera_preview_borderless_mode: '(Bawah Terbuka)',
       curve_engraving: 'Mode Ukiran Lengkung',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Kesalahan Otentikasi: Harap perbarui Beam Studio dan firmware mesin ke versi terbaru.',
     authenticating: 'Mengotentikasi...',
+    auto_focus: {
+      instruction: 'Silakan pindahkan kepala modul laser di atas objek, dan ikuti instruksi animasi untuk menekan AF untuk fokus.',
+      succeeded: 'Berhasil difokuskan',
+      title: 'Fokus Otomatis',
+      warning_at_coordinates: 'Setelah memasuki mode fokus otomatis, kepala laser akan direset dan dipindahkan ke posisi yang ditentukan untuk memfokuskan.\nPastikan posisi target berada di atas material dan tidak ada rintangan di jalur pergerakan.',
+    },
     camera: {
       abort_preview: 'Batalkan',
       camera_cable_unstable: 'Terdeteksi kamera mentransfer foto secara tidak stabil. Pratinjau masih dapat dilakukan, tetapi mungkin ada masalah lambat atau waktu habis.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Sesuaikan',
       adjust_height_tooltip: 'Centang kotak untuk mengaktifkan penyuntingan.',
       already_performed_auto_focus: 'Anda sudah melakukan fokus otomatis, gunakan nilai yang ada?',
-      auto_focus: 'Fokus Otomatis',
-      auto_focus_instruction: 'Harap pindahkan kepala modul laser di atas objek, dan ikuti petunjuk animasi untuk menekan AF untuk memfokuskan.',
       camera_preview: 'Pratinjau Kamera',
       enter_manually: 'Masukkan Secara Manual',
       getting_focal_distance: 'Mengambil jarak fokus...',
       moving_to_preview_position: 'Memindahkan ke posisi pratinjau...',
       please_enter_height: 'Silakan masukkan tinggi objek agar dapat mengambil gambar kamera yang akurat.',
+      succeeded: 'Berhasil dipratinjau',
     },
     promark_disconnected: '#850 Koneksi perangkat terputus, periksa status koneksi perangkat.',
     redLaserTakingReference: 'Mengambil referensi...',

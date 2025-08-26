@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: '自动送料模式',
+      autofocus1: '自动对焦模式',
+      autofocus2: '点击任意位置执行自动对焦。',
       camera_preview: '预览',
       camera_preview_borderless_mode: '(打开底部)',
       curve_engraving: '曲面雕刻模式',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 认证失败：请将 Beam Studio 以及机器韧体更新至最新版。',
     authenticating: '密码验证中...',
+    auto_focus: {
+      instruction: '请将激光模块头移至物体上方，并按照动画指示按下AF进行对焦。',
+      succeeded: '对焦成功',
+      title: '自动对焦',
+      warning_at_coordinates: '进入自动对焦模式后，激光头将重置并移动到指定位置进行对焦。\n请确保目标位置在材料上，且移动路径中没有障碍物。',
+    },
     camera: {
       abort_preview: '中断预览',
       camera_cable_unstable: '侦测到相机传输照片时不稳定，仍能正常进行相机预览，但可能会有预览速度较慢或超时的问题。<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001791895">了解更多</a>',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: '调整',
       adjust_height_tooltip: '单击复选框以启用编辑。',
       already_performed_auto_focus: '您已经执行了自动对焦，要使用现有数值吗？',
-      auto_focus: '自动对焦',
-      auto_focus_instruction: '请将激光模块头移至物体上方，并按照动画指示按下AF进行对焦。',
       camera_preview: '相机预览',
       enter_manually: '手动输入',
       getting_focal_distance: '正在获取焦距...',
       moving_to_preview_position: '正在移动到预览位置...',
       please_enter_height: '请输入物体的高度，以拍摄精确的相机照片。',
+      succeeded: '预览成功',
     },
     promark_disconnected: '#850 设备连接中断，请检查设备的连接状态。',
     redLaserTakingReference: '正在获取参考点...',

@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Modo Alimentador Automático',
+      autofocus1: 'Modo Enfoque Automático',
+      autofocus2: 'Haz clic en cualquier lugar para realizar el enfoque automático.',
       camera_preview: 'Vista Previa',
       camera_preview_borderless_mode: '(Fondo Abierto)',
       curve_engraving: 'Modo de Grabado en Curva',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Error de Autenticación: Por favor, actualiza Beam Studio y el firmware de la máquina a la última versión.',
     authenticating: 'Autentificando...',
+    auto_focus: {
+      instruction: 'Por favor, mueva la cabeza del módulo láser sobre el objeto y siga las instrucciones de la animación para presionar AF y enfocar.',
+      succeeded: 'Enfocado con éxito',
+      title: 'Enfoque automático',
+      warning_at_coordinates: 'Después de ingresar al modo de enfoque automático, el cabezal láser se reiniciará y se moverá a la posición especificada para enfocar.\nAsegúrese de que la posición objetivo esté en el material y que no haya obstáculos en la ruta de movimiento.',
+    },
     camera: {
       abort_preview: 'Abortar',
       camera_cable_unstable: 'Se detecta que la cámara está transfiriendo fotos de manera inestable. La vista previa aún se puede realizar normalmente, pero puede existir el problema de que la vista previa sea lenta o se agote el tiempo de espera.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Ajustar',
       adjust_height_tooltip: 'Haga clic en la casilla para habilitar la edición.',
       already_performed_auto_focus: 'Ya ha realizado el enfoque automático, ¿utilizar los valores existentes?',
-      auto_focus: 'Enfoque automático',
-      auto_focus_instruction: 'Por favor, mueva la cabeza del módulo láser sobre el objeto y siga las instrucciones de la animación para presionar AF y enfocar.',
       camera_preview: 'Vista de la cámara',
       enter_manually: 'Introducir manualmente',
       getting_focal_distance: 'Obteniendo distancia focal...',
       moving_to_preview_position: 'Moviéndose a la posición de vista previa...',
       please_enter_height: 'Por favor, ingrese la altura del objeto para capturar una toma precisa de la cámara.',
+      succeeded: 'Vista previa exitosa',
     },
     promark_disconnected: '#850 La conexión del dispositivo se ha interrumpido, por favor revise el estado de la conexión.',
     redLaserTakingReference: 'Tomando referencia...',

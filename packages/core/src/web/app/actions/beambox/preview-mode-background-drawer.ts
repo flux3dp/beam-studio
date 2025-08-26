@@ -226,27 +226,27 @@ class PreviewModeBackgroundDrawer {
     const d = getAbsRect(0, minY, width, 0) + getAbsRect(0, modelHeight, width, maxY);
 
     if (d) {
-      const rotaryPreveiwBoundary = document.createElementNS(NS.SVG, 'path');
+      const rotaryPreviewBoundary = document.createElementNS(NS.SVG, 'path');
 
-      rotaryPreveiwBoundary.setAttribute('d', d);
-      rotaryPreveiwBoundary.setAttribute('fill', '#CCC');
-      rotaryPreveiwBoundary.setAttribute('fill-opacity', '0.4');
-      boundaryGroup.appendChild(rotaryPreveiwBoundary);
+      rotaryPreviewBoundary.setAttribute('d', d);
+      rotaryPreviewBoundary.setAttribute('fill', '#CCC');
+      rotaryPreviewBoundary.setAttribute('fill-opacity', '0.4');
+      boundaryGroup.appendChild(rotaryPreviewBoundary);
 
-      const rotaryPreveiwBoundaryText = document.createElementNS(NS.SVG, 'text') as SVGTextElement;
+      const rotaryPreviewBoundaryText = document.createElementNS(NS.SVG, 'text') as SVGTextElement;
       const textNode = document.createTextNode(LANG.unpreviewable_area);
 
-      rotaryPreveiwBoundaryText.setAttribute('font-size', expansion[1] ? '400' : '100');
-      rotaryPreveiwBoundaryText.appendChild(textNode);
-      this.setTextStyle(rotaryPreveiwBoundaryText);
-      boundaryGroup.appendChild(rotaryPreveiwBoundaryText);
+      rotaryPreviewBoundaryText.setAttribute('font-size', expansion[1] ? '400' : '100');
+      rotaryPreviewBoundaryText.appendChild(textNode);
+      this.setTextStyle(rotaryPreviewBoundaryText);
+      boundaryGroup.appendChild(rotaryPreviewBoundaryText);
 
-      const { height: textH, width: textW } = rotaryPreveiwBoundaryText.getBBox();
+      const { height: textH, width: textW } = rotaryPreviewBoundaryText.getBBox();
       const x = (width - textW) / 2;
       const y = expansion[1] ? height - (expansion[1] - textH) / 2 : (textH - expansion[0]) / 2;
 
-      rotaryPreveiwBoundaryText.setAttribute('x', x.toString());
-      rotaryPreveiwBoundaryText.setAttribute('y', y.toString());
+      rotaryPreviewBoundaryText.setAttribute('x', x.toString());
+      rotaryPreviewBoundaryText.setAttribute('y', y.toString());
     }
 
     if (this.cameraOffset) {

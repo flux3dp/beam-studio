@@ -1,5 +1,5 @@
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
-import LeftPanelButton from '@core/app/components/beambox/left-panel/LeftPanelButton';
+import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';

@@ -1,6 +1,6 @@
 import '@testing-library/jest-dom';
 
-import { TextEncoder } from 'util';
+import { TextDecoder, TextEncoder } from 'util';
 
 import { enableFetchMocks } from 'jest-fetch-mock';
 import $ from 'jquery';
@@ -84,6 +84,10 @@ if (!window.matchMedia) {
 
 if (typeof global.TextEncoder === 'undefined') {
   global.TextEncoder = TextEncoder;
+}
+
+if (typeof global.TextDecoder === 'undefined') {
+  global.TextDecoder = TextDecoder as any;
 }
 
 const antdCssDevOnlyRegex = /css-dev-only-do-not-override-([A-Za-z0-9]*)/g;

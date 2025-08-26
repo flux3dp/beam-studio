@@ -63,8 +63,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
 
     onProgressText?.(t.starting_measurement);
 
-    const workarea = getWorkarea(this.device.model);
-    const [offsetX, offsetY, offsetZ] = workarea.autoFocusOffset || [0, 0, 0];
+    const { autoFocusOffset: [offsetX, offsetY, offsetZ] = [0, 0, 0] } = getWorkarea(this.device.model);
     const feedrate = 6000;
     const { errors, objectHeight, points } = curData;
     let { highest = null, lowest = null } = curData;

@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Automatische Voedermodus',
+      autofocus1: 'Autofocus Modus',
+      autofocus2: 'Klik ergens om autofocus uit te voeren.',
       camera_preview: 'Voorbeeld',
       camera_preview_borderless_mode: '(Open Onderkant)',
       curve_engraving: 'Kromme Graveermodus',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Auth-fout: Werk Beam Studio en apparaatfirmware bij naar de nieuwste versie.',
     authenticating: 'Authenticeren...',
+    auto_focus: {
+      instruction: 'Verplaats de lasermodulekop boven het object en volg de animatie-instructies om op AF te drukken om scherp te stellen.',
+      succeeded: 'Succesvol scherpgesteld',
+      title: 'Auto scherpstellen',
+      warning_at_coordinates: 'Na het activeren van de automatische focusmodus wordt de laserkop gereset en naar de opgegeven positie bewogen om scherp te stellen.\nZorg ervoor dat de doelpositie op het materiaal ligt en dat er geen obstakels in het bewegingspad zijn.',
+    },
     camera: {
       abort_preview: 'Afbreken',
       camera_cable_unstable: "Er is gedetecteerd dat de camera foto's instabiel overdraagt. Voorbeeldweergave kan nog steeds normaal worden uitgevoerd, maar er kan sprake zijn van trage voorbeeldweergave of time-out.",
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Aanpassen',
       adjust_height_tooltip: 'Schakel het selectievakje in om bewerken mogelijk te maken.',
       already_performed_auto_focus: 'U heeft al automatisch scherpgesteld, bestaande waarden gebruiken?',
-      auto_focus: 'Auto scherpstellen',
-      auto_focus_instruction: 'Verplaats de lasermodulekop boven het object en volg de animatie-instructies om op AF te drukken om scherp te stellen.',
       camera_preview: 'Camera voorbeeldweergave',
       enter_manually: 'Handmatig invoeren',
       getting_focal_distance: 'Bezig met ophalen van brandpuntsafstand...',
       moving_to_preview_position: 'Bezig met verplaatsen naar voorbeeldpositie...',
       please_enter_height: 'Voer de hoogte van het object in om een nauwkeurige camerafoto te maken.',
+      succeeded: 'Succesvol voorvertoond',
     },
     promark_disconnected: '#850 Apparaatverbinding onderbroken, controleer de verbindingsstatus van het apparaat.',
     redLaserTakingReference: 'Referentie wordt genomen...',

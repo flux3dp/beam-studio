@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Modo Alimentador Automático',
+      autofocus1: 'Modo Autofoco',
+      autofocus2: 'Clique em qualquer lugar para executar o foco automático.',
       camera_preview: 'Pré-visualização',
       camera_preview_borderless_mode: '(Fundo Aberto)',
       curve_engraving: 'Modo de Gravação Curva',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Erro de autenticação: atualize o Beam Studio e o firmware da máquina para a versão mais recente.',
     authenticating: 'Autenticando...',
+    auto_focus: {
+      instruction: 'Por favor, mova o módulo laser acima do objeto e siga as instruções de animação para pressionar AF para focar.',
+      succeeded: 'Focado com sucesso',
+      title: 'Foco Automático',
+      warning_at_coordinates: 'Após entrar no modo de foco automático, a cabeça do laser será reiniciada e movida para a posição especificada para focar.\nCertifique-se de que a posição alvo esteja no material e que não haja obstáculos no caminho de movimento.',
+    },
     camera: {
       abort_preview: 'Cancelar',
       camera_cable_unstable: 'Foi detectado que a câmera está transferindo fotos de forma instável. A visualização ainda pode ser realizada normalmente, mas pode haver problema de visualização lenta ou tempo limite.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Ajustar',
       adjust_height_tooltip: 'Clique na caixa de seleção para habilitar a edição.',
       already_performed_auto_focus: 'Você já realizou o foco automático, deseja usar os valores existentes?',
-      auto_focus: 'Foco Automático',
-      auto_focus_instruction: 'Por favor, mova o módulo laser acima do objeto e siga as instruções de animação para pressionar AF para focar.',
       camera_preview: 'Visualização da Câmera',
       enter_manually: 'Inserir Manualmente',
       getting_focal_distance: 'Obtendo distância focal...',
       moving_to_preview_position: 'Movendo para a posição de visualização...',
       please_enter_height: 'Por favor, insira a altura do objeto para capturar a imagem da câmera com precisão.',
+      succeeded: 'Visualização bem-sucedida',
     },
     promark_disconnected: '#850 Conexão do dispositivo interrompida, por favor verifique o estado da conexão.',
     redLaserTakingReference: 'Pegando referência...',

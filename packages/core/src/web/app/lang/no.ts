@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Automatisk Matermodus',
+      autofocus1: 'Autofokus-modus',
+      autofocus2: 'Klikk hvor som helst for å utføre autofokus.',
       camera_preview: 'Forhåndsvisning',
       camera_preview_borderless_mode: '(Åpen Bunn)',
       curve_engraving: 'Kurvegravering Modus',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Autentiseringsfeil: Oppdater Beam Studio og maskinens fastvare til nyeste versjon.',
     authenticating: 'Autentiserer...',
+    auto_focus: {
+      instruction: 'Vennligst flytt lasermodulhodet over objektet, og følg animasjonsinstruksjonene for å trykke AF for å fokusere.',
+      succeeded: 'Fokusering vellykket',
+      title: 'Autofokus',
+      warning_at_coordinates: 'Etter å ha gått inn i autofokusmodus vil laserhodet bli tilbakestilt og flyttet til den angitte posisjonen for fokusering.\nSørg for at målposisjonen er på materialet og at det ikke er hindringer i bevegelsebanen.',
+    },
     camera: {
       abort_preview: 'Avbryt',
       camera_cable_unstable: 'Det er oppdaget at kameraet overfører bilder ustabilt. Forhåndsvisning kan fortsatt utføres normalt, men det kan være problemer med treg forhåndsvisning eller tidsavbrudd.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Juster',
       adjust_height_tooltip: 'Klikk avkrysningsboksen for å aktivere redigering.',
       already_performed_auto_focus: 'Du har allerede utført autofokus, bruke eksisterende verdier?',
-      auto_focus: 'Autofokus',
-      auto_focus_instruction: 'Flytt laserhodet over objektet og følg animasjonsinstruksjonene for å trykke AF for å fokusere.',
       camera_preview: 'Kameravisning',
       enter_manually: 'Oppgi manuelt',
       getting_focal_distance: 'Henter fokalavstand...',
       moving_to_preview_position: 'Flytter til forhåndsvisningsposisjon...',
       please_enter_height: 'Oppgi høyden på objektet for å ta presis kamerabilde.',
+      succeeded: 'Forhåndsvisning vellykket',
     },
     promark_disconnected: '#850 Enhetens tilkobling er brutt, vennligst sjekk enhetens tilkoblingsstatus.',
     redLaserTakingReference: 'Tar referanse...',

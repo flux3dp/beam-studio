@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'オートフィーダーモード',
+      autofocus1: 'オートフォーカスモード',
+      autofocus2: 'どこでもクリックして自動フォーカスを実行してください。',
       camera_preview: 'プレビュー',
       camera_preview_borderless_mode: '(オープンボトム)',
       curve_engraving: 'カーブ彫刻モード',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 認証エラー：Beam Studioとマシンのファームウェアを最新バージョンに更新してください。',
     authenticating: '認証中…',
+    auto_focus: {
+      instruction: 'モジュールヘッドをオブジェクトの上に移動し、アニメーションの指示に従ってAFを押してフォーカスしてください。',
+      succeeded: 'フォーカスに成功しました',
+      title: 'オートフォーカス',
+      warning_at_coordinates: 'オートフォーカスモードに入ると、レーザーヘッドがリセットされ、指定位置に移動してフォーカスを行います。\n対象位置が材料上にあり、移動経路に障害物がないことを確認してください。',
+    },
     camera: {
       abort_preview: '中止する',
       camera_cable_unstable: 'カメラが写真を不安定に転送していることが検出されました。プレビューは引き続き正常に実行できますが、プレビューが遅い、またはタイムアウトになる問題がある可能性があります。',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: '調整',
       adjust_height_tooltip: '編集を有効にするにはチェックボックスをクリックしてください。',
       already_performed_auto_focus: 'すでにオートフォーカスを行っています。既存の値を使用しますか？',
-      auto_focus: 'オートフォーカス',
-      auto_focus_instruction: 'モジュールヘッドをオブジェクトの上に移動し、アニメーションの指示に従ってAFを押してフォーカスしてください。',
       camera_preview: 'カメラプレビュー',
       enter_manually: '手動で入力',
       getting_focal_distance: '焦点距離を取得中...',
       moving_to_preview_position: 'プレビュー位置に移動中...',
       please_enter_height: '正確なカメラショットを撮影するために、物体の高さを入力してください。',
+      succeeded: 'プレビューに成功しました',
     },
     promark_disconnected: '#850 デバイスの接続が中断されました。デバイスの接続状態を確認してください。',
     redLaserTakingReference: '参照を取得しています...',

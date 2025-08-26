@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Tryb Automatycznego Podajnika',
+      autofocus1: 'Tryb Autofocus',
+      autofocus2: 'Kliknij gdziekolwiek, aby wykonać autofocus.',
       camera_preview: 'Podgląd',
       camera_preview_borderless_mode: '(Otwarty Spód)',
       curve_engraving: 'Tryb Grawerowania Krzywizn',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Błąd autoryzacji: Zaktualizuj oprogramowanie Beam Studio i urządzenia do najnowszej wersji.',
     authenticating: 'Uwierzytelnianie...',
+    auto_focus: {
+      instruction: 'Przesuń głowicę modułu laserowego nad obiekt i postępuj zgodnie z instrukcjami animacji, aby nacisnąć przycisk AF w celu ustawienia ostrości.',
+      succeeded: 'Pomyślnie ufokusowany',
+      title: 'Fokus Auto',
+      warning_at_coordinates: 'Po włączeniu trybu automatycznego ogniskowania głowica laserowa zostanie zresetowana i przesunięta do określonej pozycji w celu ogniskowania.\nUpewnij się, że pozycja docelowa znajduje się na materiale i że nie ma przeszkód na ścieżce ruchu.',
+    },
     camera: {
       abort_preview: 'Przerwij',
       camera_cable_unstable: 'Wykryto, że kamera niestabilnie przesyła zdjęcia. Podgląd można nadal wykonać, ale może wystąpić problem z powolnym podglądem lub przekroczeniem limitu czasu.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Regulować',
       adjust_height_tooltip: 'Kliknij pole wyboru, aby włączyć edycję.',
       already_performed_auto_focus: 'Wykonałeś już autofokus, używasz istniejących wartości?',
-      auto_focus: 'Fokus Auto',
-      auto_focus_instruction: 'Przesuń głowicę modułu laserowego nad obiekt i postępuj zgodnie z instrukcjami animacji, aby nacisnąć przycisk AF w celu ustawienia ostrości.',
       camera_preview: 'Kamera Zapowiedź',
       enter_manually: 'Wprowadzić ręcznie',
       getting_focal_distance: 'Pobieranie odległości ogniskowej...',
       moving_to_preview_position: 'Przenoszenie do pozycji podglądu...',
       please_enter_height: 'Proszę podać wysokość obiektu. Aby uchwycić precyzyjne ujęcie kamery.',
+      succeeded: 'Pomyślnie wyświetlono podgląd',
     },
     promark_disconnected: '#850 Połączenie z urządzeniem zostało przerwane, sprawdź status połączenia.',
     redLaserTakingReference: 'Pobieranie odniesienia...',

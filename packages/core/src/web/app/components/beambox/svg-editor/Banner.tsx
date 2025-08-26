@@ -4,7 +4,7 @@ import { Flex } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 
 import { getAddOnInfo } from '@core/app/constants/addOn';
-import CanvasMode from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -15,7 +15,6 @@ import styles from './Banner.module.scss';
 
 // only beamo openBottom with rotary mode would provide 2 lines of banner
 // beamo add-on openBottom, document setting borderless
-
 const Banner = (): React.ReactNode => {
   const lang = useI18n();
   const { mode, selectedDevice } = useContext(CanvasContext);
@@ -47,9 +46,13 @@ const Banner = (): React.ReactNode => {
     () => hasCurveEngravingData || mode === CanvasMode.CurveEngraving,
     [hasCurveEngravingData, mode],
   );
-  const isNeedBanner = isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary;
+  const isAutoFocus = useMemo(() => mode === CanvasMode.AutoFocus, [mode]);
+  const isNeedBanner =
+    isAutoFeeder || isBorderlessPreview || isCurveEngraving || isPassThrough || isRotary || isAutoFocus;
   const messageMap = {
     autoFeeder: lang.beambox.banner.auto_feeder,
+    autofocus1: lang.beambox.banner.autofocus1,
+    autofocus2: lang.beambox.banner.autofocus2,
     curveEngraving: lang.beambox.banner.curve_engraving,
     openBottomPreview: `${lang.beambox.banner.camera_preview} ${lang.beambox.banner.camera_preview_borderless_mode}`,
     passThrough: lang.beambox.banner.pass_through,
@@ -66,6 +69,11 @@ const Banner = (): React.ReactNode => {
     else if (isPassThrough) list.push(messageMap.passThrough);
     else if (isCurveEngraving) list.push(messageMap.curveEngraving);
     else if (isRotary) list.push(messageMap.rotary);
+
+    if (isAutoFocus) {
+      list.push(messageMap.autofocus1);
+      list.push(messageMap.autofocus2);
+    }
 
     if (!list.length) return '';
 

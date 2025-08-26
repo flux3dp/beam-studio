@@ -1,7 +1,8 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { GlobalPreference } from '@core/interfaces/Preference';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
-import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
+
+const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
 
 const state: GlobalPreference = {
   'af-offset': 0,

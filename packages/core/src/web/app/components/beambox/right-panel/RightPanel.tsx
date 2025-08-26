@@ -6,7 +6,7 @@ import { match, P } from 'ts-pattern';
 
 import LayerPanel from '@core/app/components/beambox/right-panel/LayerPanel';
 import Tab from '@core/app/components/beambox/right-panel/Tab';
-import CanvasMode from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';

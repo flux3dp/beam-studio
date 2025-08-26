@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Automatischer Zuführmodus',
+      autofocus1: 'Autofokus-Modus',
+      autofocus2: 'Klicken Sie auf eine beliebige Stelle, um den Autofokus durchzuführen.',
       camera_preview: 'Vorschau',
       camera_preview_borderless_mode: '(Offener Boden)',
       curve_engraving: 'Kurven-Graviermodus',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Auth-Fehler: Bitte aktualisieren Sie Beam Studio und die Firmware des Computers auf die neueste Version.',
     authenticating: 'Authentifizierung...',
+    auto_focus: {
+      instruction: 'Bewegen Sie bitte den Lasermodulkopf über das Objekt und befolgen Sie die Animationsanweisungen, um auf AF zu drücken, um den Fokus einzustellen.',
+      succeeded: 'Erfolgreich fokussiert',
+      title: 'Autofokus',
+      warning_at_coordinates: 'Nach dem Aktivieren des Autofokus-Modus wird der Laserkopf zurückgesetzt und zur angegebenen Position bewegt, um zu fokussieren.\nStellen Sie sicher, dass sich die Zielposition auf dem Material befindet und keine Hindernisse im Bewegungsweg sind.',
+    },
     camera: {
       abort_preview: 'Abbrechen',
       camera_cable_unstable: 'Es wird festgestellt, dass die Kamera Fotos instabil überträgt. Die Vorschau kann weiterhin normal ausgeführt werden, es kann jedoch das Problem einer langsamen Vorschau oder eines Zeitlimits auftreten.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Anpassen',
       adjust_height_tooltip: 'Die ausgewählte Beispieldatei wird von der aktuellen Arbeitsfläche nicht unterstützt.',
       already_performed_auto_focus: 'Sie haben bereits den Autofokus durchgeführt. Möchten Sie die vorhandenen Werte verwenden?',
-      auto_focus: 'Autofokus',
-      auto_focus_instruction: 'Bewegen Sie bitte den Lasermodulkopf über das Objekt und befolgen Sie die Animationsanweisungen, um auf AF zu drücken, um den Fokus einzustellen.',
       camera_preview: 'Kameravorschau',
       enter_manually: 'Manuell eingeben',
       getting_focal_distance: 'Ermittle Brennweite...',
       moving_to_preview_position: 'Bewege zur Vorschauposition...',
       please_enter_height: 'Bitte geben Sie die Höhe des Objekts ein, um eine präzise Kameraaufnahme zu erfassen.',
+      succeeded: 'Erfolgreich vorgeschaut',
     },
     promark_disconnected: '#850 Die Verbindung zum Gerät wurde unterbrochen, bitte überprüfen Sie den Verbindungsstatus des Geräts.',
     redLaserTakingReference: 'Referenz wird aufgenommen...',

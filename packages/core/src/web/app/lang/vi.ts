@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Chế Độ Nạp Liệu Tự Động',
+      autofocus1: 'Chế độ Tự động Lấy Nét',
+      autofocus2: 'Nhấp vào bất kỳ đâu để thực hiện lấy nét tự động.',
       camera_preview: 'Xem Trước',
       camera_preview_borderless_mode: '(Mở Dưới)',
       curve_engraving: 'Chế Độ Khắc Đường Cong',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Lỗi xác thực: Vui lòng cập nhật Beam Studio và firmware máy lên phiên bản mới nhất.',
     authenticating: 'Đang xác thực...',
+    auto_focus: {
+      instruction: 'Vui lòng di chuyển đầu mô-đun laser lên trên vật thể và làm theo hướng dẫn hoạt ảnh để nhấn AF để lấy nét.',
+      succeeded: 'Lấy nét thành công',
+      title: 'Lấy nét tự động',
+      warning_at_coordinates: 'Sau khi vào chế độ lấy nét tự động, đầu laser sẽ được đặt lại và di chuyển đến vị trí được chỉ định để lấy nét.\nHãy đảm bảo rằng vị trí mục tiêu nằm trên vật liệu và không có chướng ngại vật trong đường di chuyển.',
+    },
     camera: {
       abort_preview: 'Hủy bỏ',
       camera_cable_unstable: 'Phát hiện camera đang truyền ảnh không ổn định. Xem trước vẫn có thể thực hiện bình thường, nhưng có thể gặp vấn đề xem trước chậm hoặc hết thời gian chờ.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Điều chỉnh',
       adjust_height_tooltip: 'Nhấp vào hộp kiểm để bật chỉnh sửa.',
       already_performed_auto_focus: 'Bạn đã thực hiện lấy nét tự động, có sử dụng giá trị hiện tại không?',
-      auto_focus: 'Lấy nét tự động',
-      auto_focus_instruction: 'Vui lòng di chuyển đầu mô-đun laser phía trên vật thể, và làm theo hướng dẫn hoạt ảnh để nhấn AF để lấy nét.',
       camera_preview: 'Xem trước Camera',
       enter_manually: 'Nhập thủ công',
       getting_focal_distance: 'Đang lấy khoảng cách tiêu cự...',
       moving_to_preview_position: 'Đang di chuyển đến vị trí xem trước...',
       please_enter_height: 'Vui lòng nhập chiều cao của vật thể. Để chụp ảnh camera chính xác.',
+      succeeded: 'Xem trước thành công',
     },
     promark_disconnected: '#850 Kết nối thiết bị bị gián đoạn, vui lòng kiểm tra trạng thái kết nối của thiết bị.',
     redLaserTakingReference: 'Đang lấy tham chiếu...',

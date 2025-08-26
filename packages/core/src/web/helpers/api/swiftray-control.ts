@@ -220,9 +220,9 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     });
   }
 
-  useRawWaitOKResponse(command: string, timeout = 30000) {
+  useRawWaitOKResponse = (command: string, timeout = 30000) => {
     // Resolve after get ok from raw response
-    return new Promise<any>((resolve, reject) => {
+    return new Promise<string>((resolve, reject) => {
       const timeoutTimer = this.setTimeoutTimer(reject, timeout);
       let responseString = '';
 
@@ -243,7 +243,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
       this.setDefaultFatalResponse(reject, timeoutTimer);
       this.sc.sendGCode(command);
     });
-  }
+  };
 
   useRawLineCheckCommand(command: string, timeout = 30000) {
     return new Promise<string>((resolve, reject) => {

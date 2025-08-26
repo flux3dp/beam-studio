@@ -65,6 +65,8 @@ const lang: ILang = {
     },
     banner: {
       auto_feeder: 'Auto Matningsläge',
+      autofocus1: 'Autofokusläge',
+      autofocus2: 'Klicka var som helst för att utföra autofokus.',
       camera_preview: 'Förhandsgranskning',
       camera_preview_borderless_mode: '(Öppen Botten)',
       curve_engraving: 'Kurvgravyrläge',
@@ -1545,6 +1547,12 @@ const lang: ILang = {
   message: {
     auth_error: '#820 Autentiseringsfel: Uppdatera Beam Studio och maskinens firmware till senaste versionen.',
     authenticating: 'Autentiserar...',
+    auto_focus: {
+      instruction: 'Flytta lasermodulhuvudet över objektet och följ animationsinstruktionerna för att trycka på AF för att fokusera.',
+      succeeded: 'Fokusering lyckades',
+      title: 'Autofokus',
+      warning_at_coordinates: 'Efter att ha aktiverat autofokusläget kommer laserhuvudet att återställas och flyttas till den angivna positionen för fokusering.\nSe till att målpositionen är på materialet och att det inte finns hinder i rörelsevägen.',
+    },
     camera: {
       abort_preview: 'Avbryt',
       camera_cable_unstable: 'Det upptäcktes att kameran överför bilder ostabilt. Förhandsgranskning kan fortfarande utföras normalt, men det kan finnas problem med långsam förhandsgranskning eller timeout.',
@@ -1591,13 +1599,12 @@ const lang: ILang = {
       adjust: 'Justera',
       adjust_height_tooltip: 'Markera för att aktivera redigering.',
       already_performed_auto_focus: 'Du har redan utfört autofokus, använd befintliga värden?',
-      auto_focus: 'Autofokus',
-      auto_focus_instruction: 'Flytta laserhuvudet över objektet och följ anvisningarna för att trycka på AF för att fokusera.',
       camera_preview: 'Kameraförhandsgranskning',
       enter_manually: 'Ange manuellt',
       getting_focal_distance: 'Hämtar brännvidd...',
       moving_to_preview_position: 'Flyttar till förhandsvisningsposition...',
       please_enter_height: 'Ange objektets höjd. För att ta en exakt kamerabild.',
+      succeeded: 'Förhandsgranskning lyckades',
     },
     promark_disconnected: '#850 Enhetens anslutning har avbrutits, kontrollera enhetens anslutningsstatus.',
     redLaserTakingReference: 'Tar referens...',

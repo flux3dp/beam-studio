@@ -124,9 +124,9 @@ const PreviewHeight = ({ initValue, onClose, onOk }: Props): React.JSX.Element =
         ]}
         maskClosable={false}
         open
-        title={lang.message.preview.auto_focus}
+        title={lang.message.auto_focus.title}
       >
-        <div className={styles.text}>{lang.message.preview.auto_focus_instruction}</div>
+        <div className={styles.text}>{lang.message.auto_focus.instruction}</div>
         <video autoPlay className={styles.video} loop muted>
           <source src="video/ador-preview-af.webm" type="video/webm" />
           <source src="video/ador-preview-af.mp4" type="video/mp4" />
