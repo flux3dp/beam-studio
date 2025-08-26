@@ -68,6 +68,7 @@ interface Props {
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
 const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
+  const isDevMode = useMemo(() => isDev(), []);
   const {
     beambox: { document_panel: tDocument },
     global: tGlobal,
@@ -103,6 +104,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [autoFeederScale, setAutoFeederScale] = useState(useDocumentStore.getState()['auto-feeder-scale']);
   const [checkSafetyDoor, setCheckSafetyDoor] = useState(useDocumentStore.getState()['promark-safety-door']);
   const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
+  const [skipPrespray, setSkipPrespray] = useState(useDocumentStore.getState().skip_prespray);
 
   const isInch = useStorageStore((state) => state.isInch);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -229,6 +231,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       newState['promark-start-button'] = enableStartButton;
       newState['frame-before-start'] = shouldFrame;
       newState['promark-safety-door'] = checkSafetyDoor;
+    }
+
+    if (workarea === 'fbm2') {
+      newState['skip_prespray'] = skipPrespray;
     }
 
     update(newState);
@@ -378,6 +384,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     onClick={() => browser.open(tDocument.auto_shrink_url)}
                   />
                 </Tooltip>
+              </div>
+            </div>
+          )}
+          {isDevMode && workarea === 'fbm2' && (
+            <div className={styles.row}>
+              <label className={styles.title} htmlFor="skipPrespray">
+                {tDocument.skip_prespray}
+              </label>
+              <div className={classNames(styles.control, styles['justify-start'])}>
+                <Switch checked={skipPrespray} id="skipPrespray" onChange={setSkipPrespray} />
               </div>
             </div>
           )}

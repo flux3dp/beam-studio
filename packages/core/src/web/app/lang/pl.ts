@@ -125,6 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'Wprowadź długość obiektu, aby rozszerzyć obszar roboczy.',
       rotary_mode: 'Moduł obrotowy',
       scale: 'Skala',
+      skip_prespray: 'Pomiń wstępne spryskiwanie',
       start_from: 'Rozpocznij Od',
       start_position: 'Pozycja Startowa',
       start_work_button: 'Przycisk Wykonaj',

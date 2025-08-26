@@ -125,6 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: '输入物体长度以扩展工作区域。',
       rotary_mode: '旋转轴',
       scale: '倍率',
+      skip_prespray: '跳过预喷',
       start_from: '开始位置',
       start_position: '开始位置',
       start_work_button: '开始工作按钮',
