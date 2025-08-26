@@ -19,7 +19,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import Discover from '@core/helpers/api/discover';
+import { discoverRegister } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import getIsWeb from '@core/helpers/is-web';
 import communicator from '@core/implementations/communicator';
@@ -60,7 +60,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   }, []);
 
   useEffect(() => {
-    const discover = Discover('top-bar', (deviceList) => {
+    const unregister = discoverRegister('top-bar', (deviceList) => {
       setHasDiscoveredMachine(deviceList.some(({ serial }) => serial !== 'XXXXXXXXXX'));
       setSelectedDevice((previous) => {
         if (previous || !defaultDeviceUUID.current) return previous;
@@ -74,9 +74,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
       });
     });
 
-    return () => {
-      discover.removeListener('top-bar');
-    };
+    return unregister;
   }, [setSelectedDevice]);
 
   return (

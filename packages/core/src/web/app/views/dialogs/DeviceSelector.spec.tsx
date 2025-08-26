@@ -22,65 +22,21 @@ jest.mock('@core/helpers/file/export', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  getActiveLang: () => 'en',
-  lang: {
-    alert: {
-      cancel: 'Cancel',
-    },
-    machine_status: {
-      '-17': 'Cartridge IO Mode',
-      '-10': 'Maintain mode',
-      '-2': 'Scanning',
-      '-1': 'Maintaining',
-      0: 'Idle',
-      1: 'Initiating',
-      2: 'ST_TRANSFORM',
-      4: 'Starting',
-      6: 'Resuming',
-      16: 'Working',
-      18: 'Resuming',
-      32: 'Paused',
-      36: 'Paused',
-      38: 'Pausing',
-      48: 'Paused',
-      50: 'Pausing',
-      64: 'Completed',
-      66: 'Completing',
-      68: 'Preparing',
-      128: 'Aborted',
-      UNKNOWN: 'Unknown',
-    },
-    select_device: {
-      select_device: 'Select Device',
-    },
-    topbar: {
-      select_machine: 'Select a machine',
-    },
-  },
+const mockDiscoverRegister = jest.fn();
+const mockUnregister = jest.fn();
+
+jest.mock('@core/helpers/api/discover', () => ({
+  discoverRegister: (...args) => mockDiscoverRegister(...args),
+  SEND_DEVICES_INTERVAL: 5000,
 }));
 
-const mockDiscover = jest.fn();
-
-jest.mock(
-  '@core/helpers/api/discover',
-  () =>
-    (...args) =>
-      mockDiscover(...args),
-);
-
 describe('should render correctly', () => {
-  afterEach(() => {
+  beforeEach(() => {
     jest.resetAllMocks();
+    mockDiscoverRegister.mockReturnValue(mockUnregister);
   });
 
   test('no devices', () => {
-    const mockRemoveListener = jest.fn();
-
-    mockDiscover.mockReturnValue({
-      removeListener: mockRemoveListener,
-    });
-
     const mockOnSelect = jest.fn();
     const mockOnClose = jest.fn();
     const { baseElement, getByTestId, unmount } = render(
@@ -88,10 +44,10 @@ describe('should render correctly', () => {
     );
 
     expect(baseElement).toMatchSnapshot();
-    expect(mockDiscover).toHaveBeenCalledTimes(1);
-    expect(mockDiscover).toHaveBeenLastCalledWith('device-selector', expect.anything());
+    expect(mockDiscoverRegister).toHaveBeenCalledTimes(1);
+    expect(mockDiscoverRegister).toHaveBeenLastCalledWith('device-selector', expect.anything());
 
-    const [, discoverListener] = mockDiscover.mock.calls[0];
+    const [, discoverListener] = mockDiscoverRegister.mock.calls[0];
     const mockDevice = {
       name: 'name',
       serial: 'serial',
@@ -104,15 +60,14 @@ describe('should render correctly', () => {
     });
     expect(baseElement).toMatchSnapshot();
 
-    expect(mockOnSelect).not.toBeCalled();
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnSelect).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
     fireEvent.click(getByTestId('serial'));
-    expect(mockOnSelect).toBeCalledTimes(1);
+    expect(mockOnSelect).toHaveBeenCalledTimes(1);
     expect(mockOnSelect).toHaveBeenLastCalledWith(mockDevice);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
 
     unmount();
-    expect(mockRemoveListener).toHaveBeenCalledTimes(1);
-    expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'device-selector');
+    expect(mockUnregister).toHaveBeenCalledTimes(1);
   });
 });

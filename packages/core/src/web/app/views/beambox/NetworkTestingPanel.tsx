@@ -6,7 +6,7 @@ import { Button, Form, Input, Modal } from 'antd';
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import Discover from '@core/helpers/api/discover';
+import { discoverManager, discoverRegister } from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import browser from '@core/implementations/browser';
@@ -26,7 +26,7 @@ interface Props {
 class NetworkTestingPanel extends React.Component<Props> {
   private discoveredDevices: IDeviceInfo[];
 
-  private discover: any;
+  private unregister: (() => void) | null = null;
 
   private localIps: string[];
 
@@ -36,7 +36,7 @@ class NetworkTestingPanel extends React.Component<Props> {
     super(props);
     LANG = i18n.lang.beambox.network_testing_panel;
 
-    const localIps = [];
+    const localIps: string[] = [];
     const ifaces = os.networkInterfaces();
 
     Object.keys(ifaces).forEach((ifname) => {
@@ -61,7 +61,7 @@ class NetworkTestingPanel extends React.Component<Props> {
       });
     });
     this.discoveredDevices = [];
-    this.discover = Discover('network-testing-panel', (devices) => {
+    this.unregister = discoverRegister('network-testing-panel', (devices) => {
       this.discoveredDevices = devices;
     });
     this.localIps = localIps;
@@ -69,7 +69,7 @@ class NetworkTestingPanel extends React.Component<Props> {
   }
 
   componentWillUnmount(): void {
-    this.discover.removeListener('network-testing-panel');
+    this.unregister?.();
   }
 
   onStart = async (): Promise<void> => {
@@ -91,13 +91,12 @@ class NetworkTestingPanel extends React.Component<Props> {
       });
     }
 
-    this.discover.poke(ip);
-    this.discover.pokeTcp(ip);
-    this.discover.testTcp(ip);
+    console.log(discoverManager);
+    discoverManager.poke(ip);
     Progress.openSteppingProgress({
-      caption: `${LANG.network_testing}`,
+      caption: LANG.network_testing,
       id: 'network-testing',
-      message: `${LANG.testing}`,
+      message: LANG.testing,
     });
 
     const { avgRRT, err, quality, reason, successRate } = await network.networkTest(ip, TEST_TIME, (percentage) => {

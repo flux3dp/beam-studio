@@ -46,20 +46,16 @@ jest.mock('@core/implementations/network', () => ({
 }));
 
 const mockPoke = jest.fn();
-const mockPokeTcp = jest.fn();
-const mockTestTcp = jest.fn();
-const mockRemoveDiscover = jest.fn();
+const mockRegister = jest.fn();
+const mockUnregister = jest.fn();
 
-jest.mock('@core/helpers/api/discover', () => {
-  const ins = {
-    poke: (ip: string) => mockPoke(ip),
-    pokeTcp: (ip: string) => mockPokeTcp(ip),
-    removeListener: (id: string) => mockRemoveDiscover(id),
-    testTcp: (ip: string) => mockTestTcp(ip),
-  };
-
-  return () => ins;
-});
+jest.mock('@core/helpers/api/discover', () => ({
+  discoverManager: {
+    poke: (...args) => mockPoke(...args),
+    register: (...args) => mockRegister(...args),
+  },
+  discoverRegister: (...args) => mockRegister(...args),
+}));
 
 jest.mock('@core/implementations/os', () => ({
   networkInterfaces: () => ({
@@ -74,6 +70,8 @@ jest.mock('@core/implementations/os', () => ({
 }));
 
 const mockOnClose = jest.fn();
+
+mockRegister.mockReturnValue(mockUnregister);
 
 describe('test NetworkTestingPanel', () => {
   it('should render correctly', async () => {
@@ -90,10 +88,6 @@ describe('test NetworkTestingPanel', () => {
     expect(mockNetworkTest).toHaveBeenLastCalledWith('192.168.68.163', 30000, expect.any(Function));
     expect(mockPoke).toHaveBeenCalledTimes(1);
     expect(mockPoke).toHaveBeenLastCalledWith('192.168.68.163');
-    expect(mockPokeTcp).toHaveBeenCalledTimes(1);
-    expect(mockPokeTcp).toHaveBeenLastCalledWith('192.168.68.163');
-    expect(mockTestTcp).toHaveBeenCalledTimes(1);
-    expect(mockTestTcp).toHaveBeenLastCalledWith('192.168.68.163');
 
     baseElement.querySelector('input').value = '192.168.68.3';
     await act(async () => {
@@ -103,13 +97,9 @@ describe('test NetworkTestingPanel', () => {
     expect(mockNetworkTest).toHaveBeenLastCalledWith('192.168.68.3', 30000, expect.any(Function));
     expect(mockPoke).toHaveBeenCalledTimes(2);
     expect(mockPoke).toHaveBeenLastCalledWith('192.168.68.3');
-    expect(mockPokeTcp).toHaveBeenCalledTimes(2);
-    expect(mockPokeTcp).toHaveBeenLastCalledWith('192.168.68.3');
-    expect(mockTestTcp).toHaveBeenCalledTimes(2);
-    expect(mockTestTcp).toHaveBeenLastCalledWith('192.168.68.3');
 
-    expect(mockRemoveDiscover).not.toBeCalled();
+    expect(mockUnregister).not.toHaveBeenCalled();
     unmount();
-    expect(mockRemoveDiscover).toHaveBeenCalledTimes(1);
+    expect(mockUnregister).toHaveBeenCalledTimes(1);
   });
 });

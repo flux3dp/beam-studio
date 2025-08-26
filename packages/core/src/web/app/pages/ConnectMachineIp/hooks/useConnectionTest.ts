@@ -7,7 +7,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { isTesting, TestState } from '@core/app/constants/connection-test';
-import Discover from '@core/helpers/api/discover';
+import { discoverManager, discoverRegister } from '@core/helpers/api/discover';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import checkRpiIp from '@core/helpers/check-rpi-ip';
@@ -35,15 +35,13 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
   const isPromark = useMemo(() => promarkModels.has(model), [model]);
   const testingIps = isUsb ? ['10.55.0.1', '10.55.0.17'] : [ipValue];
 
-  const discoverer = useMemo(
-    () =>
-      Discover('connect-machine-ip', (devices) => {
-        discoveredDevicesRef.current = devices;
-      }),
-    [],
-  );
+  useEffect(() => {
+    const unregister = discoverRegister('connect-machine-ip', (devices) => {
+      discoveredDevicesRef.current = devices;
+    });
 
-  useEffect(() => () => discoverer.removeListener('connect-machine-ip'), [discoverer]);
+    return unregister;
+  }, []);
 
   const updateTestState = (newState: Partial<State>) => setState((prev) => ({ ...prev, ...newState }));
 
@@ -221,11 +219,7 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
 
     setUpLocalStorageIp(ip);
 
-    testingIps.forEach((testingIp) => {
-      discoverer.poke(testingIp);
-      discoverer.pokeTcp(testingIp);
-      discoverer.testTcp(testingIp);
-    });
+    testingIps.forEach((testingIp) => discoverManager.poke(testingIp));
 
     const device = await testConnection();
 

@@ -27,7 +27,7 @@ import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
 import Camera from './api/camera';
 import Control from './api/control';
-import Discover from './api/discover';
+import { discoverRegister } from './api/discover';
 import { swiftrayClient } from './api/swiftray-client';
 import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';
@@ -55,7 +55,7 @@ class DeviceMaster {
     updateLang();
     this.deviceConnections = new Map<string, IDeviceConnection>();
     this.discoveredDevices = [];
-    Discover('device-master', (devices) => {
+    discoverRegister('device-master', (devices) => {
       this.discoveredDevices = devices;
       this.scanDeviceError(devices);
     });
