@@ -32,6 +32,7 @@ export type DocumentState = {
   'rotary-type': RotaryType;
   'rotary-y': null | number;
   rotary_mode: boolean;
+  skip_prespray: boolean;
   workarea: WorkAreaModel;
 };
 export type DocumentStateKey = keyof DocumentState;

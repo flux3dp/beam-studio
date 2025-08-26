@@ -125,16 +125,20 @@ export const getExportOpt = async (
     const workareaWidth = workareaObj.width;
     const minY = workareaManager.minY / dpmm;
 
-    if (model === 'fbm2' && device?.model === 'fbm2') {
-      try {
-        await deviceMaster.select(device);
+    if (documentState['skip_prespray']) {
+      config.skip_prespray = true;
+    } else {
+      if (model === 'fbm2' && device?.model === 'fbm2') {
+        try {
+          await deviceMaster.select(device);
 
-        const res = await deviceMaster.getDeviceSetting('machine_limit_position');
+          const res = await deviceMaster.getDeviceSetting('machine_limit_position');
 
-        // removing spaces by JSON.parse and stringify
-        if (res.value) config.machine_limit_position = JSON.stringify(JSON.parse(res.value));
-      } catch (error) {
-        console.error('Failed to get machine_limit_position', error);
+          // removing spaces by JSON.parse and stringify
+          if (res.value) config.machine_limit_position = JSON.stringify(JSON.parse(res.value));
+        } catch (error) {
+          console.error('Failed to get machine_limit_position', error);
+        }
       }
     }
 

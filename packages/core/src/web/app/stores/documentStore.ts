@@ -60,6 +60,7 @@ const getInitDocumentStore = (): DocumentState => {
     'rotary-type': preference['rotary-type'],
     'rotary-y': preference['rotary-y'],
     rotary_mode: isRotaryEnabled,
+    skip_prespray: Boolean(preference['skip_prespray']),
     workarea: defaultWorkarea,
   };
 };

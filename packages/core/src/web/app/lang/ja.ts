@@ -125,6 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: '作業エリアを拡張するためにオブジェクトの長さを入力してください。',
       rotary_mode: 'ロータリー',
       scale: 'スケール',
+      skip_prespray: '予備スプレーをスキップ',
       start_from: '開始位置',
       start_position: '開始位置',
       start_work_button: '実行ボタン',

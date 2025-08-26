@@ -151,6 +151,10 @@ export type TFcodeOptionalConfig = Partial<{
    */
   segment?: boolean;
   /**
+   * whether to skip prespray scripts, for fbm2 only now
+   */
+  skip_prespray: boolean;
+  /**
    * rotary position, px
    */
   spin: number;

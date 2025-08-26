@@ -123,6 +123,7 @@ export interface ILang {
       pass_through_height_desc: string;
       rotary_mode: string;
       scale: string;
+      skip_prespray: string;
       start_from: string;
       start_position: string;
       start_work_button: string;

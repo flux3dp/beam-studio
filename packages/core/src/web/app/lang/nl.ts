@@ -125,6 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'Voer de lengte van het object in om het werkgebied uit te breiden.',
       rotary_mode: 'Roterend',
       scale: 'Schaal',
+      skip_prespray: 'Voorverneveling overslaan',
       start_from: 'Start Vanaf',
       start_position: 'Startpositie',
       start_work_button: 'Uitvoeren Knop',
