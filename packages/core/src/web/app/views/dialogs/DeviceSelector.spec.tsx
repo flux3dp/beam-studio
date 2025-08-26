@@ -22,18 +22,18 @@ jest.mock('@core/helpers/file/export', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
-const mockDiscoverRegister = jest.fn();
+const mockRegister = jest.fn();
 const mockUnregister = jest.fn();
 
 jest.mock('@core/helpers/api/discover', () => ({
-  discoverRegister: (...args) => mockDiscoverRegister(...args),
+  register: (...args) => mockRegister(...args),
   SEND_DEVICES_INTERVAL: 5000,
 }));
 
 describe('should render correctly', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockDiscoverRegister.mockReturnValue(mockUnregister);
+    mockRegister.mockReturnValue(mockUnregister);
   });
 
   test('no devices', () => {
@@ -44,10 +44,10 @@ describe('should render correctly', () => {
     );
 
     expect(baseElement).toMatchSnapshot();
-    expect(mockDiscoverRegister).toHaveBeenCalledTimes(1);
-    expect(mockDiscoverRegister).toHaveBeenLastCalledWith('device-selector', expect.anything());
+    expect(mockRegister).toHaveBeenCalledTimes(1);
+    expect(mockRegister).toHaveBeenLastCalledWith('device-selector', expect.anything());
 
-    const [, discoverListener] = mockDiscoverRegister.mock.calls[0];
+    const [, discoverListener] = mockRegister.mock.calls[0];
     const mockDevice = {
       name: 'name',
       serial: 'serial',

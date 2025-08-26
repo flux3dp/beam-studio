@@ -112,6 +112,8 @@ export class BaseDiscoverManager {
     delete this.listeners[id];
   }
 
+  public getListeners = (): Record<string, (devices: IDeviceInfo[]) => void> => this.listeners;
+
   public poke = (_targetIp: string, _options?: PokeOptions): void => {};
 
   public countDevices(): number {
@@ -314,7 +316,7 @@ export class SlaveDiscoverManager extends BaseDiscoverManager {
   };
 }
 
-export let discoverManager = isWebClient ? MasterDiscoverManager.getInstance() : SlaveDiscoverManager.getInstance();
+let discoverManager = isWebClient ? MasterDiscoverManager.getInstance() : SlaveDiscoverManager.getInstance();
 
 discoverManager.init();
 
@@ -323,11 +325,18 @@ export const setDiscoverMaster = () => {
 
   if (discoverManager instanceof MasterDiscoverManager) return;
 
+  const listeners = discoverManager.getListeners();
+
   discoverManager = MasterDiscoverManager.getInstance();
   discoverManager.init();
+  Object.entries(listeners).forEach(([id, listener]) => {
+    discoverManager.register(id, listener);
+  });
 };
 
 export const checkConnection = (): boolean => discoverManager.checkConnection();
-export const discoverRegister = (id: string, getDevices: (devices: IDeviceInfo[]) => void): (() => void) =>
+export const register = (id: string, getDevices: (devices: IDeviceInfo[]) => void): (() => void) =>
   discoverManager.register(id, getDevices);
+export const unregister = (id: string): void => discoverManager.unregister(id);
+export const poke = (targetIp: string, options?: PokeOptions): void => discoverManager.poke(targetIp, options);
 export const getLatestDeviceInfo = (uuid = ''): IDeviceInfo | null => discoverManager.getLatestDeviceInfo(uuid);

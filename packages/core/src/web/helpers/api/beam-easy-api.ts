@@ -3,7 +3,7 @@ import { EventEmitter } from 'eventemitter3';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
-import { discoverRegister } from '@core/helpers/api/discover';
+import { register as discoverRegister } from '@core/helpers/api/discover';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import DeviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';

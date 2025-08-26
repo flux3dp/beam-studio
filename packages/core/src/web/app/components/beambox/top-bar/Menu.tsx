@@ -7,7 +7,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { discoverRegister } from '@core/helpers/api/discover';
+import { register as discoverRegister } from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';

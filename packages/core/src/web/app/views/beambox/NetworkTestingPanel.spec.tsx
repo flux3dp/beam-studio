@@ -50,11 +50,8 @@ const mockRegister = jest.fn();
 const mockUnregister = jest.fn();
 
 jest.mock('@core/helpers/api/discover', () => ({
-  discoverManager: {
-    poke: (...args) => mockPoke(...args),
-    register: (...args) => mockRegister(...args),
-  },
-  discoverRegister: (...args) => mockRegister(...args),
+  poke: (...args) => mockPoke(...args),
+  register: (...args) => mockRegister(...args),
 }));
 
 jest.mock('@core/implementations/os', () => ({

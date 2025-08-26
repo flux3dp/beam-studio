@@ -27,7 +27,7 @@ import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
 import Camera from './api/camera';
 import Control from './api/control';
-import { discoverRegister } from './api/discover';
+import { register as discoverRegister } from './api/discover';
 import { swiftrayClient } from './api/swiftray-client';
 import SwiftrayControl from './api/swiftray-control';
 import Touch from './api/touch';

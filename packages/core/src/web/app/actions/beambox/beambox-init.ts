@@ -24,7 +24,7 @@ import announcementHelper from '@core/helpers/announcement-helper';
 import aiExtension from '@core/helpers/api/ai-extension';
 import AlertConfig from '@core/helpers/api/alert-config';
 import cloud from '@core/helpers/api/cloud';
-import { checkConnection } from '@core/helpers/api/discover';
+import { checkConnection, setDiscoverMaster } from '@core/helpers/api/discover';
 import fluxId, { recordMachines } from '@core/helpers/api/flux-id';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -72,6 +72,7 @@ class BeamboxInit {
     aiExtension.init();
 
     if (isWeb() || tabController.getIsWelcomeTab()) {
+      setDiscoverMaster();
       setTimeout(recordMachines, 10000);
     }
   }

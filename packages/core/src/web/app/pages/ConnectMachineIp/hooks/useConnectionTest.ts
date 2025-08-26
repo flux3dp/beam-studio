@@ -7,7 +7,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { isTesting, TestState } from '@core/app/constants/connection-test';
-import { discoverManager, discoverRegister } from '@core/helpers/api/discover';
+import { register as discoverRegister, poke } from '@core/helpers/api/discover';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import checkRpiIp from '@core/helpers/check-rpi-ip';
@@ -219,7 +219,7 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
 
     setUpLocalStorageIp(ip);
 
-    testingIps.forEach((testingIp) => discoverManager.poke(testingIp));
+    testingIps.forEach((testingIp) => poke(testingIp));
 
     const device = await testConnection();
 

@@ -6,7 +6,7 @@ import { Button, Form, Input, Modal } from 'antd';
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { discoverManager, discoverRegister } from '@core/helpers/api/discover';
+import { register as discoverRegister, poke } from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import browser from '@core/implementations/browser';
@@ -91,8 +91,7 @@ class NetworkTestingPanel extends React.Component<Props> {
       });
     }
 
-    console.log(discoverManager);
-    discoverManager.poke(ip);
+    poke(ip);
     Progress.openSteppingProgress({
       caption: LANG.network_testing,
       id: 'network-testing',

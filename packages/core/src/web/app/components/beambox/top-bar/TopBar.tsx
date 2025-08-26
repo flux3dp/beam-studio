@@ -19,7 +19,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import { discoverRegister } from '@core/helpers/api/discover';
+import { register as discoverRegister } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import getIsWeb from '@core/helpers/is-web';
 import communicator from '@core/implementations/communicator';

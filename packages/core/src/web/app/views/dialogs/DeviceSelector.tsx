@@ -8,7 +8,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import { discoverRegister, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
+import { register as discoverRegister, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
