@@ -1169,7 +1169,7 @@ class DeviceMaster {
   async rawWaitOkResponse(command: string, timeout?: number) {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(() => controlSocket.useRawWaitOKResponse(command, timeout));
+    return controlSocket.addTask(controlSocket.useRawWaitOKResponse, command, timeout);
   }
 
   async rawSetRotary(on: boolean) {

@@ -277,9 +277,7 @@ class Control extends EventEmitter implements IControlSocket {
         const resps = responseString.split(/\r?\n/);
 
         if (resps.includes('ok')) {
-          if (timeoutTimer) {
-            clearTimeout(timeoutTimer);
-          }
+          clearTimeout(timeoutTimer);
 
           this.removeCommandListeners();
           resolve(responseString);
