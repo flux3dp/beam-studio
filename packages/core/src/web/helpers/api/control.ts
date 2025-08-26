@@ -282,9 +282,7 @@ class Control extends EventEmitter implements IControlSocket {
           this.removeCommandListeners();
           resolve(responseString);
         } else if (resps.some((r) => r.startsWith('error:'))) {
-          if (timeoutTimer) {
-            clearTimeout(timeoutTimer);
-          }
+          clearTimeout(timeoutTimer);
 
           this.removeCommandListeners();
           reject(responseString);
