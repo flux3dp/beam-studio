@@ -122,7 +122,7 @@ test('test beambox-preference', () => {
     'rotary-mirror': false,
     'rotary-overlap': 0,
     'rotary-scale': 1,
-    'rotary-split': 0.5,
+    'rotary-split': 0.05,
     'rotary-type': 1,
     'rotary-y': null,
     rotary_mode: false,
