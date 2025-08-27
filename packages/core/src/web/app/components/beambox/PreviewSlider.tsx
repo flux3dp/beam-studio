@@ -21,8 +21,9 @@ const PreviewSlider = (): React.ReactNode => {
   const [showOpacity, setShowOpacity] = useState(false);
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
   const { mode } = useContext(CanvasContext);
+  const [isRawMode, setIsRawMode] = useState(false);
   const isPreviewing = mode === CanvasMode.Preview;
-  const { isPreviewMode } = useCameraPreviewStore();
+  const { isDrawing, isPreviewMode } = useCameraPreviewStore();
   const lang = useI18n();
 
   const getSetting = async () => {
@@ -43,6 +44,7 @@ const PreviewSlider = (): React.ReactNode => {
       console.error('Failed to get exposure setting', e);
       setExposureSetting(null);
     }
+    setIsRawMode(deviceMaster.currentControlMode === 'raw');
   };
 
   const updateBgOpacity = useCallback((val: string) => {
@@ -72,6 +74,8 @@ const PreviewSlider = (): React.ReactNode => {
     return null;
   }
 
+  console.log(isPreviewing, exposureSetting);
+
   return (
     <Space className={styles.space} direction="vertical">
       {!isPreviewing && showOpacity && (
@@ -98,10 +102,13 @@ const PreviewSlider = (): React.ReactNode => {
           </Tooltip>
           <Slider
             className={styles.slider}
+            disabled={isRawMode && isDrawing}
             max={Math.min(exposureSetting.max, 1000)}
             min={Math.max(exposureSetting.min, 50)}
             onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
             onChangeComplete={async (value: number) => {
+              if (isRawMode && isDrawing) return;
+
               setExposureSetting({ ...exposureSetting, value });
 
               try {

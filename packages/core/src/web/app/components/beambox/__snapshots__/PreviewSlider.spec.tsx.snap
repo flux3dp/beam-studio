@@ -1,5 +1,71 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
+exports[`test PreviewSlider should be disabled when in raw mode and drawing 1`] = `
+<div>
+  <div
+    class="space"
+  >
+    Mock Antd Space
+    <p>
+      direction: 
+      vertical
+    </p>
+    <div
+      class="container"
+    >
+      <div>
+        Mock Antd Tooltip
+        <p>
+          title: 
+          Preview Exposure
+        </p>
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          1000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          450
+        </p>
+        <button
+          disabled=""
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          disabled=""
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        450
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`test PreviewSlider should render correctly when is previewing 1`] = `
 <div>
   <div

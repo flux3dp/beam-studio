@@ -63,17 +63,11 @@ class Camera {
     uuid: null | string;
     version: null | string;
   };
-
   private ws: any;
-
   private wsSubject: Subject<Blob | { status: string }>;
-
   private source: Observable<{ imgBlob: Blob; needCameraCableAlert: boolean }>;
-
   private nonBinarySource: Observable<{ status: string }>;
-
   private requireFrameRetry: number;
-
   private fishEyeSetting: null | {
     levelingData?: Record<string, number>;
     matrix?: FisheyeMatrix;
@@ -81,8 +75,8 @@ class Camera {
     param?: FisheyeCameraParameters;
     shouldCrop?: boolean;
   } = null;
-
   private rotationAngles: null | RotationParameters3DGhostApi = null;
+  private lastRequireCommand = '';
 
   constructor(shouldCrop = true, cameraNeedFlip: boolean | null = null) {
     this.shouldCrop = shouldCrop;
@@ -118,7 +112,7 @@ class Camera {
             }
 
             if (this.requireFrameRetry < IMAGE_TRANSMISSION_FAIL_THRESHOLD) {
-              setTimeout(() => this.ws.send('require_frame'), 500);
+              setTimeout(() => this.ws.send(this.lastRequireCommand || 'require_frame'), 500);
               this.requireFrameRetry += 1;
 
               return null;
@@ -388,9 +382,10 @@ class Camera {
     return res.status === 'ok';
   };
 
-  async oneShot(): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
+  async oneShot(useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
     try {
-      this.ws.send('require_frame');
+      this.lastRequireCommand = useLowResolution ? 'require_frame l' : 'require_frame';
+      this.ws.send(this.lastRequireCommand);
 
       const data = await lastValueFrom(this.source.pipe(take(1)).pipe(timeout(TIMEOUT)));
 

@@ -12,6 +12,7 @@ import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { setMaskImage } from '@core/app/svgedit/canvasBackground';
+import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
@@ -29,6 +30,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
   private grid = bm2PerspectiveGrid;
   private doorChecker = new DoorChecker();
+  private originalExposure: null | number = null;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
 
   constructor(device: IDeviceInfo) {
@@ -143,6 +145,8 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
       if (disconnectCamera) deviceMaster.disconnectCamera();
 
+      if (this.originalExposure !== null) await setExposure(this.originalExposure);
+
       deviceMaster.kick();
     }
   };
@@ -171,48 +175,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     }
 
     try {
-      MessageCaller.openMessage({
-        content: i18n.lang.topbar.preview,
-        duration: 20,
-        key: this.progressId,
-        level: MessageLevel.LOADING,
-      });
-
-      let originalExposure: null | number = null;
-
-      try {
-        const getExposureRes = await deviceMaster.getCameraExposure();
-
-        if (getExposureRes?.success) originalExposure = getExposureRes.data;
-      } catch (error) {
-        console.error('Failed to get camera exposure', error);
-      }
-
-      if (originalExposure !== null) {
-        try {
-          await deviceMaster.setCameraExposure(originalExposure + 500);
-
-          MessageCaller.openMessage({
-            content: i18n.lang.topbar.preview,
-            duration: 20,
-            key: this.progressId,
-            level: MessageLevel.LOADING,
-          });
-        } catch (error) {
-          console.error('Failed to set exposure setting', error);
-        }
-      }
-
-      const lightImageUrl = await this.getPhotoFromMachine();
-      let darkImageUrl;
-
-      if (originalExposure !== null) {
-        try {
-          await deviceMaster.setCameraExposure(originalExposure);
-        } catch (error) {
-          console.error('Failed to set exposure setting', error);
-        }
-
+      const renewMessage = () =>
         MessageCaller.openMessage({
           content: i18n.lang.topbar.preview,
           duration: 20,
@@ -220,12 +183,47 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
           level: MessageLevel.LOADING,
         });
 
-        darkImageUrl = await this.getPhotoFromMachine();
+      renewMessage();
+
+      try {
+        const getExposureRes = await deviceMaster.getCameraExposure();
+
+        if (getExposureRes?.success) this.originalExposure = getExposureRes.data;
+      } catch (error) {
+        console.error('Failed to get camera exposure', error);
       }
 
-      await new Promise<void>((resolve) => PreviewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
+      const takePictures = async (useLowResolution = false) => {
+        if (this.originalExposure !== null) {
+          try {
+            await deviceMaster.setCameraExposure(this.originalExposure + 500);
+          } catch (error) {
+            console.error('Failed to set exposure setting', error);
+          }
+        }
 
-      if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
+        const lightImageUrl = await this.getPhotoFromMachine({ useLowResolution });
+        let darkImageUrl;
+
+        if (this.originalExposure !== null) {
+          try {
+            await deviceMaster.setCameraExposure(this.originalExposure);
+          } catch (error) {
+            console.error('Failed to set exposure setting', error);
+          }
+
+          darkImageUrl = await this.getPhotoFromMachine({ useLowResolution });
+        }
+
+        await new Promise<void>((resolve) => PreviewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
+
+        if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
+      };
+
+      await takePictures(true);
+      renewMessage();
+      await takePictures(false);
+      this.originalExposure = null;
 
       MessageCaller.openMessage({
         content: i18n.lang.message.preview.succeeded,
