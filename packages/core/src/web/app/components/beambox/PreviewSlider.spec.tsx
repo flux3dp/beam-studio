@@ -8,19 +8,19 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import PreviewSlider from './PreviewSlider';
 
 const mockGetCurrentDevice = jest.fn();
-const mockGetExposureSettings = jest.fn().mockResolvedValue({
-  max: 10000,
-  min: 50,
-  step: 1,
-  value: 450,
-});
-const mockSetExposure = jest.fn();
+const mockGetCurrentControlMode = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
+  get currentControlMode() {
+    return mockGetCurrentControlMode();
+  },
   get currentDevice() {
     return mockGetCurrentDevice();
   },
 }));
+
+const mockGetExposureSettings = jest.fn();
+const mockSetExposure = jest.fn();
 
 jest.mock('@core/helpers/device/camera/cameraExposure', () => ({
   getExposureSettings: () => mockGetExposureSettings(),
@@ -54,17 +54,17 @@ jest.mock('@core/helpers/version-checker', () => () => ({
 }));
 
 jest.mock('antd', () => ({
-  Slider: ({ className, max, min, onChange, onChangeComplete, step, value }: any) => (
+  Slider: ({ className, disabled, max, min, onChange, onChangeComplete, step, value }: any) => (
     <div className={className}>
       Mock Antd Slider
       <p>min: {min}</p>
       <p>max: {max}</p>
       <p>step: {step}</p>
       <p>value: {value}</p>
-      <button onClick={() => onChange(0.25)} type="button">
+      <button disabled={disabled} onClick={() => onChange(0.25)} type="button">
         onChange
       </button>
-      <button onClick={() => onChangeComplete(20)} type="button">
+      <button disabled={disabled} onClick={() => onChangeComplete(20)} type="button">
         onChangeComplete
       </button>
     </div>
@@ -95,6 +95,12 @@ describe('test PreviewSlider', () => {
     mockUseCameraPreviewStore.mockReturnValue({
       isPreviewMode: true,
     });
+    mockGetExposureSettings.mockReturnValue({
+      max: 10000,
+      min: 50,
+      step: 1,
+      value: 450,
+    });
   });
 
   it('should render correctly with preview image', async () => {
@@ -120,7 +126,7 @@ describe('test PreviewSlider', () => {
     const imageContainer = document.getElementById('previewSvg');
 
     imageContainer.style.opacity = '0.5';
-    mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1', version: '1.0.0' } });
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
 
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
@@ -137,7 +143,7 @@ describe('test PreviewSlider', () => {
     const imageContainer = document.getElementById('previewSvg');
 
     imageContainer.style.opacity = '0.5';
-    mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1', version: '1.0.0' } });
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
 
     const { container, getByText } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
@@ -206,5 +212,28 @@ describe('test PreviewSlider', () => {
     );
 
     expect(container).toBeEmptyDOMElement();
+  });
+
+  it('should be disabled when in raw mode and drawing', async () => {
+    mockGetCurrentControlMode.mockReturnValue('raw');
+    mockUseCameraPreviewStore.mockReturnValue({ isDrawing: true, isPreviewMode: true });
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbm2' } });
+
+    const { container, getByText } = render(
+      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
+        <PreviewSlider />
+      </CanvasContext.Provider>,
+    );
+
+    await waitFor(() => {
+      expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);
+    });
+
+    expect(container).toMatchSnapshot();
+
+    fireEvent.click(getByText('onChangeComplete'));
+    await waitFor(() => {
+      expect(mockSetExposure).not.toHaveBeenCalled();
+    });
   });
 });

@@ -15,6 +15,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
+import type { TakePictureOptions } from '@core/helpers/device-master';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import shortcuts from '@core/helpers/shortcuts';
@@ -250,9 +251,9 @@ class BasePreviewManager implements PreviewManager {
     return true;
   }
 
-  async getPhotoFromMachine(): Promise<string> {
+  async getPhotoFromMachine(opts: TakePictureOptions = {}): Promise<string> {
     const { lang } = i18n;
-    const { imgBlob, needCameraCableAlert } = (await deviceMaster.takeOnePicture()) ?? {};
+    const { imgBlob, needCameraCableAlert } = (await deviceMaster.takeOnePicture(opts)) ?? {};
 
     if (!imgBlob) {
       throw new Error(lang.message.camera.ws_closed_unexpectly);

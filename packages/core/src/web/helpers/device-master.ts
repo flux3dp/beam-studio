@@ -40,6 +40,8 @@ const updateLang = () => {
   lang = i18n.lang;
 };
 
+export type TakePictureOptions = { timeout?: number; useLowResolution?: boolean };
+
 class DeviceMaster {
   private deviceConnections: Map<string, IDeviceConnection>;
 
@@ -1565,10 +1567,13 @@ class DeviceMaster {
     return res;
   }
 
-  async takeOnePicture(
-    opts: { timeout?: number } = {},
-  ): Promise<null | { imgBlob?: Blob; needCameraCableAlert?: boolean }> {
-    const { timeout = 30 } = opts;
+  async takeOnePicture({
+    timeout = 30,
+    useLowResolution = false,
+  }: { timeout?: number; useLowResolution?: boolean } = {}): Promise<null | {
+    imgBlob?: Blob;
+    needCameraCableAlert?: boolean;
+  }> {
     const startTime = Date.now();
     const cameraFishEyeSetting = this.currentDevice!.camera?.getFisheyeSetting();
     const fisheyeRotation = this.currentDevice!.camera?.getRotationAngles();
@@ -1576,7 +1581,7 @@ class DeviceMaster {
 
     while (Date.now() - startTime < timeout * 1000) {
       try {
-        const res = await this.currentDevice!.camera!.oneShot();
+        const res = await this.currentDevice!.camera!.oneShot(useLowResolution);
 
         if (res) {
           return res;
