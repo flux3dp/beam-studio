@@ -10,7 +10,7 @@ jest.mock('antd', () => ({
   ),
 }));
 
-const mockUseI18n = jest.fn();
+const _mockUseI18n = jest.fn();
 
 jest.mock('@core/app/icons/image-edit-panel/ImageEditPanelIcons', () => ({
   __esModule: true,

@@ -20,6 +20,7 @@ import Sider from './components/Sider';
 import TopBar from './components/TopBar';
 import styles from './index.module.scss';
 import { useStampMakerPanelStore } from './store';
+import { detectBackgroundType } from './utils/detectBackgroundType';
 
 interface Props {
   image: SVGImageElement;
@@ -36,7 +37,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
     beambox: { photo_edit_panel: langPhoto },
     stamp_maker_panel: lang,
   } = useI18n();
-  const { filters, horizontalFlip, redo, resetState, undo } = useStampMakerPanelStore();
+  const { filters, horizontalFlip, redo, resetState, setBackgroundType, undo } = useStampMakerPanelStore();
   const { isFullColor, isShading, threshold } = useMemo(
     () => ({
       isFullColor: true,
@@ -56,10 +57,6 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
   const imageData = useRef<ImageData | null>(null);
-
-  // eslint-disable-next-line hooks/exhaustive-deps
-  useEffect(() => () => resetState(), []);
-
   const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef as any, {
     onScaleChanged: setZoomScale,
   });
@@ -81,9 +78,17 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
     return getImageData();
   }, [imageSize]);
 
-  useEffect(() => {
-    imageData.current = null;
-  }, [imageSize, displayImage]);
+  const detectAndSetBackgroundType = useCallback(async () => {
+    if (imageRef.current?.isCached() && imageSize.width && imageSize.height) {
+      const currentImageData = imageRef.current
+        ._getCachedSceneCanvas()
+        .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
+
+      const backgroundType = detectBackgroundType(currentImageData);
+
+      setBackgroundType(backgroundType);
+    }
+  }, [imageSize, setBackgroundType]);
 
   const handleResetZoom = useCallback(() => {
     const stage = stageRef.current!;
@@ -108,6 +113,10 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   }, [langPhoto]);
 
   const updateUrl = useCallback(() => stageRef.current!.toDataURL(imageSize), [imageSize]);
+
+  useEffect(() => {
+    imageData.current = null;
+  }, [imageSize, displayImage]);
 
   useEffect(() => {
     const updateImages = async () => {
@@ -152,6 +161,9 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
       setDisplayImage(fullColorImage);
 
       progressCaller.popById('image-editing-init');
+
+      // Detect background type after image is loaded
+      setTimeout(() => detectAndSetBackgroundType(), 100);
     };
 
     progressCaller.openNonstopProgress({ id: 'image-editing-init', message: langPhoto.processing });
@@ -176,6 +188,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
 
     return () => {
       observer.disconnect();
+      resetState();
     };
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
