@@ -39,14 +39,11 @@ export const useStampMakerPanelStore = create<ImageEditPanelStore>(
     redo: () => set((state) => handleRedo(state)),
     removeFilter: (filter: Filter) => set((state) => _removeFilter(state, filter)),
     resetState: () => set(getDefaultState()),
-    setBackgroundType: (backgroundType: BackgroundType) =>
-      set(() => {
-        return { backgroundType };
-      }),
+    setBackgroundType: (backgroundType: BackgroundType) => set(() => ({ backgroundType })),
     setBevelRadius: (bevelRadius: number) => {
       set((state) => {
         const filter =
-          state.backgroundType === 'black'
+          state.backgroundType === 'white'
             ? createExpandFilter({ rampWidth: bevelRadius * 10 })
             : createShrinkFilter({ rampWidth: bevelRadius * 10 });
         let filters = state.filters;
@@ -86,7 +83,7 @@ export const useStampMakerPanelStore = create<ImageEditPanelStore>(
         // If there's an active bevel radius, we need to update the filter type
         if (bevelRadius > 0) {
           newBevelRadiusFilter =
-            newBackground === 'black'
+            newBackground === 'white'
               ? createExpandFilter({ rampWidth: bevelRadius * 10 })
               : createShrinkFilter({ rampWidth: bevelRadius * 10 });
 
