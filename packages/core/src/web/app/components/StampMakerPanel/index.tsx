@@ -20,7 +20,7 @@ import Sider from './components/Sider';
 import TopBar from './components/TopBar';
 import styles from './index.module.scss';
 import { useStampMakerPanelStore } from './store';
-import { detectBackgroundType } from './utils/detectBackgroundType';
+import { detectBackgroundType } from './store/utils/detectBackgroundType';
 
 interface Props {
   image: SVGImageElement;
