@@ -58,11 +58,3 @@ export const detectBackgroundType = (imageData: ImageData): BackgroundType => {
   // Determine dominant background type
   return whiteCount > blackCount ? 'white' : 'black';
 };
-
-/**
- * Gets the appropriate filter function based on background type.
- * Black backgrounds need shrink filter, white backgrounds need expand filter.
- */
-export const getFilterForBackgroundType = (backgroundType: BackgroundType): 'expand' | 'shrink' => {
-  return backgroundType === 'black' ? 'expand' : 'shrink';
-};

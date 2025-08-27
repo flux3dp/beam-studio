@@ -10,8 +10,7 @@ jest.mock('konva', () => ({
 }));
 
 const mockUseStampMakerPanelStore = jest.fn();
-const mockAddFilter = jest.fn();
-const mockRemoveFilter = jest.fn();
+const mockToggleInvert = jest.fn();
 const mockSetBevelRadius = jest.fn();
 const mockSetHorizontalFlip = jest.fn();
 
@@ -39,13 +38,12 @@ describe('test Content', () => {
     jest.clearAllMocks();
 
     mockUseStampMakerPanelStore.mockReturnValue({
-      addFilter: mockAddFilter,
       bevelRadius: 0,
       filters: [],
       horizontalFlip: false,
-      removeFilter: mockRemoveFilter,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
+      toggleInvert: mockToggleInvert,
     });
   });
 
@@ -66,13 +64,12 @@ describe('test Content', () => {
 
   it('should render invert switch checked when filter is applied', () => {
     mockUseStampMakerPanelStore.mockReturnValue({
-      addFilter: mockAddFilter,
       bevelRadius: 0,
       filters: [mockKonvaFilters.Invert],
       horizontalFlip: false,
-      removeFilter: mockRemoveFilter,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
+      toggleInvert: mockToggleInvert,
     });
 
     const { getAllByRole } = render(<Content />);
@@ -83,7 +80,7 @@ describe('test Content', () => {
     expect(invertSwitch.getAttribute('aria-checked')).toBe('true');
   });
 
-  it('should add invert filter when toggled on', () => {
+  it('should call toggleInvert when invert switch is clicked', () => {
     const { getAllByRole } = render(<Content />);
 
     const switches = getAllByRole('switch');
@@ -91,19 +88,17 @@ describe('test Content', () => {
 
     fireEvent.click(invertSwitch);
 
-    expect(mockAddFilter).toHaveBeenCalledWith(mockKonvaFilters.Invert, true);
-    expect(mockRemoveFilter).not.toHaveBeenCalled();
+    expect(mockToggleInvert).toHaveBeenCalled();
   });
 
-  it('should remove invert filter when toggled off', () => {
+  it('should call toggleInvert when invert switch is clicked (when already inverted)', () => {
     mockUseStampMakerPanelStore.mockReturnValue({
-      addFilter: mockAddFilter,
       bevelRadius: 0,
       filters: [mockKonvaFilters.Invert],
       horizontalFlip: false,
-      removeFilter: mockRemoveFilter,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
+      toggleInvert: mockToggleInvert,
     });
 
     const { getAllByRole } = render(<Content />);
@@ -113,8 +108,7 @@ describe('test Content', () => {
 
     fireEvent.click(invertSwitch);
 
-    expect(mockRemoveFilter).toHaveBeenCalledWith(mockKonvaFilters.Invert);
-    expect(mockAddFilter).not.toHaveBeenCalled();
+    expect(mockToggleInvert).toHaveBeenCalled();
   });
 
   it('should render horizontal flip switch with correct state', () => {
@@ -139,13 +133,12 @@ describe('test Content', () => {
 
   it('should toggle horizontal flip off when already on', () => {
     mockUseStampMakerPanelStore.mockReturnValue({
-      addFilter: mockAddFilter,
       bevelRadius: 0,
       filters: [],
       horizontalFlip: true,
-      removeFilter: mockRemoveFilter,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
+      toggleInvert: mockToggleInvert,
     });
 
     const { getAllByRole } = render(<Content />);
@@ -160,13 +153,12 @@ describe('test Content', () => {
 
   it('should render bevel radius input with correct value', () => {
     mockUseStampMakerPanelStore.mockReturnValue({
-      addFilter: mockAddFilter,
       bevelRadius: 2.5,
       filters: [],
       horizontalFlip: false,
-      removeFilter: mockRemoveFilter,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
+      toggleInvert: mockToggleInvert,
     });
 
     const { getByTestId } = render(<Content />);
