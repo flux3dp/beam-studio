@@ -4,7 +4,8 @@ import { match } from 'ts-pattern';
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
-import { getUniformEmbossFilter } from './utils/getUniformEmbossFilter';
+import { createExpandFilter } from './utils/createExpandFilter';
+import { createShrinkFilter } from './utils/createShrinkFilter';
 
 type HorizontalFlipOperation = {
   mode: 'horizontalFlip';
@@ -129,7 +130,9 @@ export const useStampMakerPanelStore = create<ImageEditPanelStore>(
     resetState: () => set(getDefaultState()),
     setBevelRadius: (bevelRadius: number) => {
       set((state) => {
-        const filter = getUniformEmbossFilter({ rampWidth: bevelRadius * 10 });
+        createExpandFilter({ rampWidth: bevelRadius * 10 });
+
+        const filter = createShrinkFilter({ rampWidth: bevelRadius * 10 });
         let filters = state.filters;
 
         // Remove the last bevel radius filter if it exists
