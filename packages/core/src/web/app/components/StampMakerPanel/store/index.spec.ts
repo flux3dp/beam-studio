@@ -1,4 +1,4 @@
-import { useStampMakerPanelStore } from './store';
+import { useStampMakerPanelStore } from '.';
 
 jest.mock('konva', () => ({
   Filters: {
@@ -23,6 +23,7 @@ describe('test StampMakerPanelStore', () => {
     const state = useStampMakerPanelStore.getState();
 
     expect(state).toMatchObject({
+      backgroundType: 'white',
       bevelRadius: 0,
       filters: [],
       history: { index: 0, operations: [] },
@@ -55,7 +56,7 @@ describe('test StampMakerPanelStore', () => {
     expect(state.filters).toHaveLength(1);
     expect(state.filters[0]).toBe(mockFilter);
     expect(state.history.operations).toHaveLength(1);
-    expect(state.history.operations[0]).toEqual({ filter: mockFilter, isFront: false, mode: 'addFilter' });
+    expect(state.history.operations[0]).toEqual({ filter: mockFilter, isFront: undefined, mode: 'addFilter' });
   });
 
   test('removeFilter', () => {
@@ -108,7 +109,7 @@ describe('test StampMakerPanelStore', () => {
     expect(state.filters).toHaveLength(2);
     expect(state.filters[0]).toBe(mockFilter2); // Should be first due to isFront: true
     expect(state.filters[1]).toBe(mockFilter1);
-    expect(state.history.operations[0]).toEqual({ filter: mockFilter1, isFront: false, mode: 'addFilter' });
+    expect(state.history.operations[0]).toEqual({ filter: mockFilter1, isFront: undefined, mode: 'addFilter' });
     expect(state.history.operations[1]).toEqual({ filter: mockFilter2, isFront: true, mode: 'addFilter' });
   });
 
@@ -202,5 +203,171 @@ describe('test StampMakerPanelStore', () => {
     expect(state.filters).toHaveLength(0);
     expect(state.bevelRadius).toBe(0);
     expect(state.history.index).toBe(0);
+  });
+
+  test('setBackgroundType', () => {
+    useStampMakerPanelStore.getState().setBackgroundType('black');
+    expect(useStampMakerPanelStore.getState().backgroundType).toBe('black');
+
+    useStampMakerPanelStore.getState().setBackgroundType('white');
+    expect(useStampMakerPanelStore.getState().backgroundType).toBe('white');
+  });
+
+  test('toggleInvert adds Invert filter when not present', () => {
+    const state = useStampMakerPanelStore.getState();
+    const invertFilter = { name: 'Invert' };
+
+    state.toggleInvert();
+
+    const newState = useStampMakerPanelStore.getState();
+
+    expect(newState.filters).toContainEqual(invertFilter);
+    expect(newState.backgroundType).toBe('black');
+    expect(newState.history.operations).toHaveLength(1);
+    expect(newState.history.operations[0]).toMatchObject({
+      mode: 'invert',
+      value: 'black',
+    });
+  });
+
+  test('toggleInvert removes Invert filter when present', () => {
+    const state = useStampMakerPanelStore.getState();
+    const invertFilter = { name: 'Invert' };
+
+    // Add invert first
+    state.toggleInvert();
+    expect(useStampMakerPanelStore.getState().filters).toContainEqual(invertFilter);
+    expect(useStampMakerPanelStore.getState().backgroundType).toBe('black');
+
+    // Toggle again to remove
+    state.toggleInvert();
+
+    const newState = useStampMakerPanelStore.getState();
+
+    expect(newState.filters).not.toContainEqual(invertFilter);
+    expect(newState.backgroundType).toBe('white');
+    expect(newState.history.operations).toHaveLength(2);
+  });
+
+  test('toggleInvert with bevel radius updates filter type', () => {
+    const state = useStampMakerPanelStore.getState();
+
+    // Set bevel radius first
+    state.setBevelRadius(2.5);
+    expect(useStampMakerPanelStore.getState().filters).toContainEqual({ name: 'shrink-filter' });
+
+    // Toggle invert - should change from shrink to expand filter
+    state.toggleInvert();
+
+    const newState = useStampMakerPanelStore.getState();
+
+    expect(newState.backgroundType).toBe('black');
+    expect(newState.filters).toContainEqual({ name: 'expand-filter' });
+    expect(newState.filters).toContainEqual({ name: 'Invert' });
+    expect(newState.filters).not.toContainEqual({ name: 'shrink-filter' });
+  });
+
+  test('setBevelRadius with different background types', () => {
+    let state = useStampMakerPanelStore.getState();
+
+    // Test with white background (default)
+    state.setBevelRadius(2);
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toContainEqual({ name: 'shrink-filter' });
+    expect(state.bevelRadius).toBe(2);
+
+    // Change to black background
+    state.setBackgroundType('black');
+
+    // Set bevel radius with black background
+    state.setBevelRadius(3);
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toContainEqual({ name: 'expand-filter' });
+    expect(state.filters).not.toContainEqual({ name: 'shrink-filter' });
+    expect(state.bevelRadius).toBe(3);
+  });
+
+  test('setBevelRadius removes previous bevel filter', () => {
+    let state = useStampMakerPanelStore.getState();
+    const otherFilter = { name: 'other-filter' } as any;
+
+    // Add another filter and set bevel radius
+    state.addFilter(otherFilter);
+    state.setBevelRadius(2);
+
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toHaveLength(2);
+    expect(state.filters).toContainEqual(otherFilter);
+    expect(state.filters).toContainEqual({ name: 'shrink-filter' });
+
+    // Change bevel radius
+    state.setBevelRadius(3);
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toHaveLength(2);
+    expect(state.filters).toContainEqual(otherFilter);
+    expect(state.filters).toContainEqual({ name: 'shrink-filter' });
+    expect(state.bevelRadius).toBe(3);
+  });
+
+  test('setBevelRadius to 0 removes bevel filter', () => {
+    let state = useStampMakerPanelStore.getState();
+
+    // Set bevel radius
+    state.setBevelRadius(2);
+    expect(useStampMakerPanelStore.getState().filters).toContainEqual({ name: 'shrink-filter' });
+
+    // Set to 0
+    state.setBevelRadius(0);
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).not.toContainEqual({ name: 'shrink-filter' });
+    expect(state.filters).toHaveLength(0);
+    expect(state.bevelRadius).toBe(0);
+    // Note: lastBevelRadiusFilter is set to the filter object even when bevelRadius is 0
+    // This is because the filter is created but not added to the filters array
+    expect(state.lastBevelRadiusFilter).toEqual({ name: 'shrink-filter' });
+  });
+
+  test('undo and redo toggleInvert', () => {
+    let state = useStampMakerPanelStore.getState();
+
+    // Toggle invert
+    state.toggleInvert();
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toContainEqual({ name: 'Invert' });
+    expect(state.backgroundType).toBe('black');
+
+    // Undo
+    state.undo();
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).not.toContainEqual({ name: 'Invert' });
+    expect(state.backgroundType).toBe('white');
+
+    // Redo
+    state.redo();
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toContainEqual({ name: 'Invert' });
+    expect(state.backgroundType).toBe('black');
+  });
+
+  test('undo and redo setBevelRadius', () => {
+    let state = useStampMakerPanelStore.getState();
+
+    // Set bevel radius
+    state.setBevelRadius(2.5);
+    state = useStampMakerPanelStore.getState();
+    expect(state.bevelRadius).toBe(2.5);
+    expect(state.filters).toContainEqual({ name: 'shrink-filter' });
+
+    // Undo
+    state.undo();
+    state = useStampMakerPanelStore.getState();
+    expect(state.bevelRadius).toBe(0);
+    expect(state.filters).not.toContainEqual({ name: 'shrink-filter' });
+
+    // Redo
+    state.redo();
+    state = useStampMakerPanelStore.getState();
+    expect(state.bevelRadius).toBe(2.5);
+    expect(state.filters).toContainEqual({ name: 'shrink-filter' });
   });
 });
