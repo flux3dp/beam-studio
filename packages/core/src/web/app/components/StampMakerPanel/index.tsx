@@ -79,15 +79,36 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   }, [imageSize]);
 
   const detectAndSetBackgroundType = useCallback(async () => {
-    if (imageRef.current?.isCached() && imageSize.width && imageSize.height) {
-      const currentImageData = imageRef.current
-        ._getCachedSceneCanvas()
-        .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
+    // Wait for image to be loaded and cached
+    let retries = 0;
+    const maxRetries = 20; // 10 seconds max wait
 
-      const backgroundType = detectBackgroundType(currentImageData);
+    while (retries < maxRetries) {
+      if (
+        imageRef.current?.useImageStatus === 'loaded' &&
+        imageRef.current?.isCached() &&
+        imageSize.width &&
+        imageSize.height
+      ) {
+        const currentImageData = imageRef.current
+          ._getCachedSceneCanvas()
+          .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
 
-      setBackgroundType(backgroundType);
+        const backgroundType = detectBackgroundType(currentImageData);
+
+        console.log('Detected background type:', backgroundType);
+
+        setBackgroundType(backgroundType);
+
+        return;
+      }
+
+      console.log(`Waiting for image to be loaded and cached... (attempt ${retries + 1}/${maxRetries})`);
+      await new Promise((resolve) => setTimeout(resolve, 500));
+      retries++;
     }
+
+    console.error('Failed to detect background type: Image not loaded or cached after timeout');
   }, [imageSize, setBackgroundType]);
 
   const handleResetZoom = useCallback(() => {
@@ -117,6 +138,13 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   useEffect(() => {
     imageData.current = null;
   }, [imageSize, displayImage]);
+
+  // Detect background type when display image changes and image is ready
+  useEffect(() => {
+    if (displayImage && imageSize.width && imageSize.height) {
+      detectAndSetBackgroundType();
+    }
+  }, [displayImage, imageSize, detectAndSetBackgroundType]);
 
   useEffect(() => {
     const updateImages = async () => {
@@ -161,9 +189,6 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
       setDisplayImage(fullColorImage);
 
       progressCaller.popById('image-editing-init');
-
-      // Detect background type after image is loaded
-      setTimeout(() => detectAndSetBackgroundType(), 100);
     };
 
     progressCaller.openNonstopProgress({ id: 'image-editing-init', message: langPhoto.processing });
