@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'Tốc độ cắt của các đối tượng đường vector sẽ bị giới hạn ở %(limit)s. Bạn có thể loại bỏ giới hạn này tại Cài đặt Tùy chọn.',
         speed_constrain_warning_auto_feeder: 'Tốc độ cắt của các đối tượng bộ nạp tự động sẽ bị giới hạn ở %(limit)s. Bạn có thể bỏ giới hạn này trong Cài đặt Sở thích.',
         speed_constrain_warning_curve_engraving: 'Tốc độ khắc đường cong sẽ bị giới hạn ở mức %(limit)s. Bạn có thể xóa giới hạn này trong Cài đặt Tùy chọn.',
+        speed_constrain_warning_module_addon: 'Khi sử dụng mô-đun bổ sung, tránh tốc độ trên %(limit)s để duy trì chất lượng khắc.',
         stepwise_focusing: 'Lấy Nét Từng Bước',
         stepwise_focusing_desc: 'Hạ dần khoảng cách tiêu cự dựa trên chiều cao của đối tượng trong mỗi lần cắt.',
         strength: 'Công suất',

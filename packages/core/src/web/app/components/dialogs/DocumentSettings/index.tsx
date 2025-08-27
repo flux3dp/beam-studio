@@ -12,7 +12,7 @@ import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings'
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -27,7 +27,12 @@ import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/pro
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import isDev from '@core/helpers/is-dev';
-import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
+import { changeLayersModule } from '@core/helpers/layer-module/change-module';
+import {
+  getLayersByModule,
+  getModulesTranslations,
+  hasModuleLayer,
+} from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { DocumentState } from '@core/interfaces/Preference';
@@ -105,6 +110,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [checkSafetyDoor, setCheckSafetyDoor] = useState(useDocumentStore.getState()['promark-safety-door']);
   const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
   const [skipPrespray, setSkipPrespray] = useState(useDocumentStore.getState().skip_prespray);
+  const [enable4C, setEnable4C] = useState(!!useDocumentStore.getState()['enable-4c']);
+  const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
 
   const isInch = useStorageStore((state) => state.isInch);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
@@ -174,7 +181,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
   }, [minHeight, addOnInfo.autoFeeder, showAutoFeeder]);
 
-  const handleSave = () => {
+  const handleSave = async () => {
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
     const { update, ...origState } = useDocumentStore.getState();
@@ -183,10 +190,30 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     const newState: Partial<DocumentState> = {
       borderless: Boolean(addOnInfo.openBottom && borderless),
+      'enable-4c': enable4C,
+      'enable-1064': enable1064,
       'enable-autofocus': Boolean(addOnInfo.autoFocus && enableAutofocus),
       'enable-diode': Boolean(addOnInfo.hybridLaser && enableDiode),
       engrave_dpi: engraveDpi,
     };
+
+    if (origState['enable-4c'] && !enable4C) {
+      const layers = getLayersByModule(fullColorHeadModules);
+
+      if (layers.length > 0) {
+        const res = await changeLayersModule(Array.from(layers), LayerModule.PRINTER_4C, LayerModule.LASER_UNIVERSAL);
+
+        if (!res) delete newState['enable-4c'];
+      }
+    }
+
+    if (origState['enable-1064'] && !enable1064) {
+      const layers = getLayersByModule([LayerModule.LASER_1064]);
+
+      if (layers.length > 0) {
+        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, LayerModule.LASER_UNIVERSAL);
+      }
+    }
 
     if (workareaObj.dimensionCustomizable) {
       const origVal = origState['customized-dimension'];
@@ -567,6 +594,30 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 />
               </div>
             </div>
+          )}
+          {addOnInfo.multiModules && (
+            <>
+              {workareaObj.supportedModules?.includes(LayerModule.PRINTER_4C) && (
+                <div className={classNames(styles.row, styles.full)}>
+                  <div className={styles.title}>
+                    <label htmlFor="print_4c_module">{getModulesTranslations()[LayerModule.PRINTER_4C]}</label>
+                  </div>
+                  <div className={styles.control}>
+                    <Switch checked={enable4C} id="print_4c_module" onChange={setEnable4C} />
+                  </div>
+                </div>
+              )}
+              {workareaObj.supportedModules?.includes(LayerModule.LASER_1064) && (
+                <div className={classNames(styles.row, styles.full)}>
+                  <div className={styles.title}>
+                    <label htmlFor="laser_1064_module">{getModulesTranslations()[LayerModule.LASER_1064]}</label>
+                  </div>
+                  <div className={styles.control}>
+                    <Switch checked={enable1064} id="laser_1064_module" onChange={setEnable1064} />
+                  </div>
+                </div>
+              )}
+            </>
           )}
           {showPassThrough && (
             <div className={classNames(styles.row, styles.full)}>

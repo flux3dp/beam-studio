@@ -5,6 +5,7 @@ import { fireEvent, render } from '@testing-library/react';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LaserType } from '@core/app/constants/promark-constants';
 import i18n from '@core/helpers/i18n';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 const mockEventEmitter = { emit: jest.fn(), on: jest.fn() };
 const mockCreateEventEmitter = jest.fn();
@@ -18,7 +19,6 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 }));
 
 jest.mock('@core/helpers/hooks/useHasCurveEngraving', () => () => false);
-jest.mock('@core/helpers/is-dev', () => () => true);
 
 jest.mock('antd', () => ({
   ...jest.requireActual('antd'),
@@ -42,6 +42,8 @@ const mockDocumentState = {
   auto_shrink: false,
   borderless: false,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
+  'enable-4c': true,
+  'enable-1064': true,
   'enable-autofocus': false,
   'enable-diode': false,
   engrave_dpi: 'medium',
@@ -91,9 +93,19 @@ jest.mock('@core/helpers/device/promark/promark-info', () => ({
   setPromarkInfo: (...args) => mockSetPromarkInfo(...args),
 }));
 
+const mockChangeLayersModule = jest.fn();
+
+jest.mock('@core/helpers/layer-module/change-module', () => ({
+  changeLayersModule: mockChangeLayersModule,
+}));
+
+const mockGetLayersByModule = jest.fn();
+const mockGetModulesTranslations = jest.fn();
 const mockHasModuleLayer = jest.fn();
 
 jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
+  getLayersByModule: mockGetLayersByModule,
+  getModulesTranslations: mockGetModulesTranslations,
   hasModuleLayer: mockHasModuleLayer,
 }));
 
@@ -111,6 +123,10 @@ describe('test DocumentSettings', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
+    mockGetModulesTranslations.mockReturnValue({
+      [LayerModule.LASER_1064]: 'Module 1064',
+      [LayerModule.PRINTER_4C]: 'Module 4C',
+    });
     mockHasModuleLayer.mockReturnValue(false);
     mockGetState.mockReturnValue(mockDocumentState);
   });
@@ -184,6 +200,8 @@ describe('test DocumentSettings', () => {
       'auto-feeder-scale': 1,
       auto_shrink: true,
       borderless: true,
+      'enable-4c': true,
+      'enable-1064': true,
       'enable-autofocus': true,
       'enable-diode': true,
       'enable-job-origin': true,
@@ -241,6 +259,49 @@ describe('test DocumentSettings', () => {
     );
     expect(mockSetPromarkInfo).toHaveBeenCalledTimes(1);
     expect(mockSetPromarkInfo).toHaveBeenLastCalledWith({ laserType: LaserType.MOPA, watt: 60 });
+  });
+
+  it('should render correctly for beamo 2', async () => {
+    mockGetLayersByModule.mockReturnValue(['mockLayer']);
+    mockChangeLayersModule.mockResolvedValue(false);
+
+    const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
+
+    act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="beamo II"]'));
+
+    fireEvent.click(getByText('Module 1064'));
+    fireEvent.click(getByText('Module 4C'));
+    expect(baseElement).toMatchSnapshot();
+    fireEvent.click(getByText('Save'));
+    await new Promise((resolve) => setTimeout(resolve, 0));
+
+    expect(mockUpdate).toHaveBeenCalledTimes(1);
+
+    const updatePayload = mockUpdate.mock.calls[0][0];
+
+    expect(updatePayload['enable-1064']).toBe(false);
+    expect(updatePayload['enable-4c']).toBe(undefined);
+    expect(mockGetLayersByModule).toHaveBeenCalledTimes(2);
+    expect(mockGetLayersByModule).toHaveBeenNthCalledWith(1, [
+      LayerModule.PRINTER_4C,
+      LayerModule.UV_WHITE_INK,
+      LayerModule.UV_VARNISH,
+    ]);
+    expect(mockGetLayersByModule).toHaveBeenNthCalledWith(2, [LayerModule.LASER_1064]);
+    expect(mockChangeLayersModule).toHaveBeenCalledTimes(2);
+    expect(mockChangeLayersModule).toHaveBeenNthCalledWith(
+      1,
+      ['mockLayer'],
+      LayerModule.PRINTER_4C,
+      LayerModule.LASER_UNIVERSAL,
+    );
+    expect(mockChangeLayersModule).toHaveBeenNthCalledWith(
+      2,
+      ['mockLayer'],
+      LayerModule.LASER_1064,
+      LayerModule.LASER_UNIVERSAL,
+    );
   });
 
   test('set auto feeder height', async () => {

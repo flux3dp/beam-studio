@@ -684,6 +684,7 @@ export interface ILang {
         speed_constrain_warning: string;
         speed_constrain_warning_auto_feeder: string;
         speed_constrain_warning_curve_engraving: string;
+        speed_constrain_warning_module_addon: string;
         stepwise_focusing: string;
         stepwise_focusing_desc: string;
         strength: string;

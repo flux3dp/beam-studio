@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'Rychlost řezání objektů vektorových cest bude omezeno na %(limit)s. Toto omezení můžete odstranit v Nastavení.',
         speed_constrain_warning_auto_feeder: 'Rychlost řezání objektů Automatické podavače bude omezena na %(limit)s. Tento limit můžete odstranit v Nastavení preferencí.',
         speed_constrain_warning_curve_engraving: 'Rychlost gravírování křivkových objektů bude omezena na %(limit)s. Tento limit můžete odstranit v nastavení předvoleb.',
+        speed_constrain_warning_module_addon: 'Při použití přídavného modulu se vyhněte rychlostem nad %(limit)s, abyste zachovali kvalitu gravírování.',
         stepwise_focusing: 'Postupné ostření',
         stepwise_focusing_desc: 'Postupné snižování zaostřovací vzdálenosti na základě výšky objektu během každého počítání průchodů.',
         strength: 'Intenzita',

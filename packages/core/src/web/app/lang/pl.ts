@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'Szybkość cięcia obiektów wektorowych zostanie ograniczona do %(limit)s. Możesz usunąć to ograniczenie w Ustawieniach preferencji.',
         speed_constrain_warning_auto_feeder: 'Prędkość cięcia obiektów Automatycznego Podajnika będzie ograniczona do %(limit)s. Możesz usunąć to ograniczenie w Ustawieniach preferencji.',
         speed_constrain_warning_curve_engraving: 'Prędkość grawerowania obiektów krzywych zostanie ograniczona do %(limit)s. Możesz usunąć to ograniczenie w ustawieniach preferencji.',
+        speed_constrain_warning_module_addon: 'Podczas korzystania z modułu dodatkowego unikaj prędkości powyżej %(limit)s, aby zachować jakość grawerowania.',
         stepwise_focusing: 'Stopniowe Fokusoanie',
         stepwise_focusing_desc: 'Stopniowe obniżanie odległości ostrości na podstawie wysokości obiektu podczas każdej liczby przejść.',
         strength: 'Moc',

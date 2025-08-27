@@ -67,6 +67,7 @@ export type TFcodeOptionalConfig = Partial<{
    * erode engraving, in mm
    */
   engraving_erode?: number;
+  expected_module?: number;
   fg: boolean;
   gc: boolean; // output gcode
   job_origin: [number, number];

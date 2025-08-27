@@ -1,10 +1,11 @@
 import constant from '@core/app/actions/beambox/constant';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { checkBM2UV } from '@core/helpers/checkFeature';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
-import { LayerModule, type LayerModuleType } from './layer-module/layer-modules';
+import { fullColorHeadModules, LayerModule, type LayerModuleType } from './layer-module/layer-modules';
 
 export type WorkAreaLabel =
   | 'Ador'
@@ -235,11 +236,33 @@ export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel =
 
 export const getSupportedModules = (
   model: WorkAreaModel,
-  isUvPrintEnabled: boolean = useGlobalPreferenceStore.getState()['enable-uv-print-file'],
+  /**
+   * Used to provide a hint about hook dependencies.
+   */
+  storeValues?: {
+    is4CEnabled: boolean;
+    is1064Enabled: boolean;
+    isUvPrintEnabled: boolean;
+  },
 ): LayerModuleType[] => {
-  const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
+  const {
+    is4CEnabled = useDocumentStore.getState()['enable-4c'],
+    is1064Enabled = useDocumentStore.getState()['enable-1064'],
+    isUvPrintEnabled = useGlobalPreferenceStore.getState()['enable-uv-print-file'],
+  } = storeValues || {};
+  let { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
 
   if (!isUvPrintEnabled) return supportedModules.filter((module) => module !== LayerModule.UV_PRINT);
+
+  if (getAddOnInfo(model).multiModules) {
+    const excludedModules: LayerModuleType[] = [];
+
+    if (!is4CEnabled) excludedModules.push(...fullColorHeadModules);
+
+    if (!is1064Enabled) excludedModules.push(LayerModule.LASER_1064);
+
+    supportedModules = supportedModules.filter((module) => !excludedModules.includes(module));
+  }
 
   return supportedModules;
 };

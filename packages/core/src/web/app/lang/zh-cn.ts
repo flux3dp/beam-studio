@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: '矢量路径速度将被限制在 %(limit)s，您可以在偏好设定解除此限制。',
         speed_constrain_warning_auto_feeder: '自动送料物件的切割速度將限制為%(limit)s。您可以在偏好設定中移除此限制。',
         speed_constrain_warning_curve_engraving: '曲面雕刻的速度将被限制为%(limit)s。您可以在偏好设置中移除此限制。',
+        speed_constrain_warning_module_addon: '使用扩展模块时，请避免超过 %(limit)s 的速度以保持雕刻质量。',
         stepwise_focusing: '逐步对焦',
         stepwise_focusing_desc: '根据每次运行次数，在对象高度的基础上逐步降低焦距。',
         strength: '功率',

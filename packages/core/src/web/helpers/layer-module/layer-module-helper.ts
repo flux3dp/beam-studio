@@ -66,6 +66,23 @@ export const getDetectedModulesTranslations = (): Record<DetectedLayerModuleType
   };
 };
 
+export const getLayersByModule = (
+  modules: LayerModuleType[],
+  { checkRepeat = false, checkVisible = false }: { checkRepeat?: boolean; checkVisible?: boolean } = {},
+): NodeListOf<SVGGElement> => {
+  let query = 'g.layer[data-module="{module}"]';
+
+  if (checkVisible) query += ':not([display="none"])';
+
+  if (checkRepeat) query += ':not([data-repeat="0"])';
+
+  return document.querySelectorAll<SVGGElement>(
+    Array.from(modules)
+      .map((module) => query.replace('{module}', module.toString()))
+      .join(', '),
+  );
+};
+
 export const hasModuleLayer = (
   modules: LayerModuleType[],
   { checkRepeat = false, checkVisible = false }: { checkRepeat?: boolean; checkVisible?: boolean } = {},

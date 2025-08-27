@@ -8,6 +8,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
 import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
+import { getLayersByModule } from '@core/helpers/layer-module/layer-module-helper';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -20,16 +21,11 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     return;
   }
 
-  const getLayers = (module: LayerModuleType) =>
-    document.querySelectorAll(
-      `#svgcontent > g.layer[data-module="${module}"]:not([display="none"]):not([data-repeat="0"])`,
-    );
-
   const checkCalibration = async (layerModule: LayerModuleType, alertTitle: string, alertMsg: string) => {
     const alertConfigKey = `skip-cali-${layerModule}-warning`;
 
     if (!getModuleOffsets({ module: layerModule, workarea }) && !alertConfig.read(alertConfigKey as AlertConfigKey)) {
-      const moduleLayers = [...getLayers(layerModule)];
+      const moduleLayers = [...getLayersByModule([layerModule], { checkRepeat: true, checkVisible: true })];
 
       if (moduleLayers.some((g) => Boolean(g.querySelector(':not(title):not(filter):not(g):not(feColorMatrix)')))) {
         const doCali = await new Promise((resolve) => {

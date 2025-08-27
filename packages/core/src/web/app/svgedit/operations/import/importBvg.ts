@@ -209,6 +209,12 @@ export const importBvgString = async (
     applyDefaultLaserModule();
   }
 
+  if (getAddOnInfo(newWorkarea).multiModules) {
+    if (has4CLayer) useDocumentStore.getState().set('enable-4c', true);
+
+    if (hasModuleLayer([LayerModule.LASER_1064])) useDocumentStore.getState().set('enable-1064', true);
+  }
+
   console.log('Change workarea to', newWorkarea);
 
   const changeWorkareaCmd = changeWorkarea(newWorkarea, { toggleModule: false });

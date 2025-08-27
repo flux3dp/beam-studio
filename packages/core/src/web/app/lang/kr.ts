@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: '벡터 경로 객체의 절단 속도는 %(limit)s 로 제한됩니다. 환경설정에서 이 제한을 삭제할 수 있습니다.',
         speed_constrain_warning_auto_feeder: '자동 공급 장치 객체의 절단 속도는 %(limit)s로 제한됩니다. 이 제한은 환경 설정에서 제거할 수 있습니다.',
         speed_constrain_warning_curve_engraving: '곡선 조각 개체의 속도가 %(limit)s로 제한됩니다. 환경 설정에서 이 제한을 제거할 수 있습니다.',
+        speed_constrain_warning_module_addon: '애드온 모듈 사용 시, 조각 품질을 유지하려면 %(limit)s 이상의 속도를 피하세요.',
         stepwise_focusing: '단계별 초점 맞추기',
         stepwise_focusing_desc: '각 통과 횟수 동안 물체의 높이에 따라 초점 거리를 점진적으로 낮춥니다.',
         strength: '파워',

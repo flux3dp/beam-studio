@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'ベクトルパスオブジェクトの切断速度は %(limit)s に制限されます。この制限は「好み」で削除できます。',
         speed_constrain_warning_auto_feeder: 'オートフィーダーオブジェクトの切断速度は%(limit)sに制限されます。この制限は「設定」から削除できます。',
         speed_constrain_warning_curve_engraving: '曲面彫刻オブジェクトの速度は%(limit)sに制限されます。この制限は設定で解除できます。',
+        speed_constrain_warning_module_addon: 'アドオンモジュールを使用する場合、彫刻品質を維持するために %(limit)s を超える速度は避けてください。',
         stepwise_focusing: 'ステップフォーカシング',
         stepwise_focusing_desc: '各パス数の間、オブジェクトの高さに基づいて焦点距離を段階的に下げます。',
         strength: '出力',

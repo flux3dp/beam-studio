@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'Skærehastigheden for vektorstibaner vil være begrænset til %(limit)s. Du kan fjerne denne begrænsning under Indstillinger.',
         speed_constrain_warning_auto_feeder: 'Skærehastigheden for Auto Feeder-objekter vil blive begrænset til %(limit)s. Du kan fjerne denne grænse i Indstillinger for præferencer.',
         speed_constrain_warning_curve_engraving: 'Hastigheden for kurvegravering vil blive begrænset til %(limit)s. Du kan fjerne denne grænse i præferenceindstillingerne.',
+        speed_constrain_warning_module_addon: 'Ved brug af et tilføjelsesmodul bør du undgå hastigheder over %(limit)s for at bevare graveringskvaliteten.',
         stepwise_focusing: 'Trinvist Fokus',
         stepwise_focusing_desc: 'Gradvis sænkning af fokusafstanden baseret på objektets højde under hver gennemgang.',
         strength: 'Effekt',
