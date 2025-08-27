@@ -15,7 +15,7 @@ import { setMaskImage } from '@core/app/svgedit/canvasBackground';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
-import type { IConfigSetting, IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
@@ -29,7 +29,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
   private grid = bm2PerspectiveGrid;
   private doorChecker = new DoorChecker();
-  protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
+  protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
 
   constructor(device: IDeviceInfo) {
     super(device);
@@ -44,10 +44,10 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     const previewMovementSpeedLevel = useGlobalPreferenceStore.getState()['preview_movement_speed_level'];
 
     return match(previewMovementSpeedLevel)
-      .with(PreviewSpeedLevel.FAST, () => 42000)
-      .with(PreviewSpeedLevel.MEDIUM, () => 36000)
-      .with(PreviewSpeedLevel.SLOW, () => 30000)
-      .otherwise(() => 30000);
+      .with(PreviewSpeedLevel.FAST, () => 21000)
+      .with(PreviewSpeedLevel.MEDIUM, () => 18000)
+      .with(PreviewSpeedLevel.SLOW, () => 15000)
+      .otherwise(() => 15000);
   };
 
   private handleSetupError = async (error: unknown): Promise<void> => {
@@ -68,8 +68,6 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   };
 
   private setUpCamera = async (): Promise<boolean> => {
-    const { lang } = i18n;
-
     try {
       progressCaller.update(this.progressId, { percentage: 20 });
 
@@ -93,23 +91,16 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         this.fisheyePreviewManager!.setupFisheyePreview({
           cameraPosition: cameraCenter,
           height: 0,
+          movementFeedrate: this.getMovementSpeed(),
           progressId: this.progressId,
           progressRange: [40, 100],
+          shouldKeepInRawMode: true,
         }),
       );
     } catch (error) {
       await this.handleSetupError(error);
 
       return false;
-    } finally {
-      if (deviceMaster.currentControlMode === 'raw') {
-        await deviceMaster.rawLooseMotor();
-
-        if (this.lineCheckEnabled) await deviceMaster.rawEndLineCheckMode();
-
-        progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
-        await deviceMaster.endSubTask();
-      }
     }
   };
 
@@ -141,6 +132,15 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     const res = await deviceMaster.select(this.device);
 
     if (res.success) {
+      if (deviceMaster.currentControlMode === 'raw') {
+        await deviceMaster.rawLooseMotor();
+
+        if (this.lineCheckEnabled) await deviceMaster.rawEndLineCheckMode();
+
+        progressCaller.update(this.progressId, { message: i18n.lang.message.endingRawMode });
+        await deviceMaster.endSubTask();
+      }
+
       if (disconnectCamera) deviceMaster.disconnectCamera();
 
       deviceMaster.kick();
@@ -178,22 +178,22 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         level: MessageLevel.LOADING,
       });
 
-      let exposureSetting: IConfigSetting | null = null;
+      let originalExposure: null | number = null;
 
       try {
-        const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
+        const getExposureRes = await deviceMaster.getCameraExposure();
 
-        exposureSetting = JSON.parse(exposureRes.value) as IConfigSetting;
+        if (getExposureRes?.success) originalExposure = getExposureRes.data;
       } catch (error) {
-        console.error('Failed to get exposure setting', error);
+        console.error('Failed to get camera exposure', error);
       }
 
-      if (exposureSetting) {
+      if (originalExposure !== null) {
         try {
-          await deviceMaster.setDeviceSetting('camera_exposure_absolute', (exposureSetting.value + 500).toString());
+          await deviceMaster.setCameraExposure(originalExposure + 500);
 
           MessageCaller.openMessage({
-            content: `${i18n.lang.topbar.preview} 1/2`,
+            content: i18n.lang.topbar.preview,
             duration: 20,
             key: this.progressId,
             level: MessageLevel.LOADING,
@@ -203,30 +203,29 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         }
       }
 
-      const imgUrl = await this.getPhotoFromMachine();
+      const lightImageUrl = await this.getPhotoFromMachine();
+      let darkImageUrl;
 
-      await new Promise<void>((resolve) => {
-        PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
-      });
-
-      if (exposureSetting) {
+      if (originalExposure !== null) {
         try {
-          await deviceMaster.setDeviceSetting('camera_exposure_absolute', exposureSetting.value.toString());
+          await deviceMaster.setCameraExposure(originalExposure);
         } catch (error) {
           console.error('Failed to set exposure setting', error);
         }
 
         MessageCaller.openMessage({
-          content: `${i18n.lang.topbar.preview} 2/2`,
+          content: i18n.lang.topbar.preview,
           duration: 20,
           key: this.progressId,
           level: MessageLevel.LOADING,
         });
 
-        const darkImgUrl = await this.getPhotoFromMachine();
-
-        setMaskImage(darkImgUrl, 'fbm2Camera');
+        darkImageUrl = await this.getPhotoFromMachine();
       }
+
+      await new Promise<void>((resolve) => PreviewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
+
+      if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
 
       MessageCaller.openMessage({
         content: i18n.lang.message.preview.succeeded,

@@ -9,6 +9,7 @@ import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import type {
   FisheyeCameraParametersV4,
@@ -67,6 +68,22 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
 
     return () => {
       doorChecker.current?.destroy();
+
+      const releaseMachine = async () => {
+        if (deviceMaster.currentControlMode === 'raw') {
+          progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: i18n.lang.message.endingRawMode });
+          try {
+            await deviceMaster.rawLooseMotor();
+            await deviceMaster.endSubTask();
+          } catch {
+            console.error('Failed to release machine');
+          } finally {
+            progressCaller.popById(PROGRESS_ID);
+          }
+        }
+      };
+
+      releaseMachine();
     };
   }, []);
 
@@ -144,7 +161,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
     })
     .with(Steps.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
-        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
         if (!deviceStatus) return;
 
@@ -204,7 +221,9 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             {
               label: tCalibration.next,
               onClick: async () => {
-                const res = await doorChecker.current?.doorClosedWrapper(moveLaserHead);
+                const res = await doorChecker.current?.doorClosedWrapper(() =>
+                  moveLaserHead(undefined, { shouldKeepPosition: true }),
+                );
 
                 if (!res) return;
 

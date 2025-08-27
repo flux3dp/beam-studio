@@ -8,6 +8,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { getExposureSettings, setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import versionChecker from '@core/helpers/version-checker';
@@ -37,17 +38,10 @@ const PreviewSlider = (): React.ReactNode => {
     if (model === 'fbb2' && !vc.meetRequirement('BB2_SEPARATE_EXPOSURE')) return;
 
     try {
-      const control = await deviceMaster.getControl();
-
-      if (control.getMode() !== '') {
-        await deviceMaster.endSubTask();
-      }
-
-      const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
-
-      setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
+      setExposureSetting(await getExposureSettings());
     } catch (e) {
       console.error('Failed to get exposure setting', e);
+      setExposureSetting(null);
     }
   };
 
@@ -110,13 +104,11 @@ const PreviewSlider = (): React.ReactNode => {
             onChangeComplete={async (value: number) => {
               setExposureSetting({ ...exposureSetting, value });
 
-              const control = await deviceMaster.getControl();
-
-              if (control.getMode() !== '') {
-                await deviceMaster.endSubTask();
+              try {
+                await setExposure(value);
+              } catch (e) {
+                console.error('Failed to set exposure', e);
               }
-
-              await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
 
               if (PreviewModeController.isFullScreen) {
                 await PreviewModeController.previewFullWorkarea();

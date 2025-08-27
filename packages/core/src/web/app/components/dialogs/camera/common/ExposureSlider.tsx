@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import progressCaller from '@core/app/actions/progress-caller';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
-import deviceMaster from '@core/helpers/device-master';
+import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import useI18n from '@core/helpers/useI18n';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
@@ -35,17 +35,18 @@ const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSett
         className={styles.slider}
         max={Math.min(exposureSetting.max, 1000)}
         min={Math.max(exposureSetting.min, 50)}
-        onAfterChange={async (value: number) => {
+        onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+        onChangeComplete={async (value: number) => {
           try {
             progressCaller.openNonstopProgress({ id: 'exposure-slider' });
             setExposureSetting({ ...exposureSetting, value });
-            await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
+            await setExposure(value);
+
             onChanged?.();
           } finally {
             progressCaller.popById('exposure-slider');
           }
         }}
-        onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
         step={exposureSetting.step}
         tooltip={{ open: false }}
         value={exposureSetting.value}

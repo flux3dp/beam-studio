@@ -10,15 +10,19 @@ jest.mock('@core/app/actions/alert-caller', () => ({
   popUpError: (...args) => mockPopUpError(...args),
 }));
 
+const mockGetExposureSettings = jest.fn();
+
+jest.mock('@core/helpers/device/camera/cameraExposure', () => ({
+  getExposureSettings: (...args) => mockGetExposureSettings(...args),
+}));
+
 const mockTakeOnePicture = jest.fn();
 const mockConnectCamera = jest.fn();
 const mockDisconnectCamera = jest.fn();
-const mockGetDeviceSetting = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
   connectCamera: (...args) => mockConnectCamera(...args),
   disconnectCamera: (...args) => mockDisconnectCamera(...args),
-  getDeviceSetting: (...args) => mockGetDeviceSetting(...args),
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
@@ -62,32 +66,31 @@ describe('test useCamera', () => {
   });
 
   test('init setup', async () => {
-    mockGetDeviceSetting.mockResolvedValue({ value: JSON.stringify({ exposure: 100 }) });
+    mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
     mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
     mockHandleImg.mockReturnValue(true);
 
     const { container, unmount } = render(<MockComponent handleImg={mockHandleImg} />);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockConnectCamera).toBeCalledTimes(1);
-    expect(mockGetDeviceSetting).toBeCalledTimes(1);
-    expect(mockGetDeviceSetting).toBeCalledWith('camera_exposure_absolute');
-    expect(mockOpenNonstopProgress).toBeCalledTimes(2);
-    expect(mockOpenNonstopProgress).toBeCalledWith({
+    expect(mockConnectCamera).toHaveBeenCalledTimes(1);
+    expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);
+    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(2);
+    expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
       id: 'use-camera',
       message: 'taking_picture',
     });
-    expect(mockPopById).toBeCalledTimes(2);
-    expect(mockTakeOnePicture).toBeCalledTimes(1);
-    expect(mockHandleImg).toBeCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(2);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockHandleImg).toHaveBeenCalledTimes(1);
     expect(container).toMatchSnapshot();
-    expect(mockDisconnectCamera).toBeCalledTimes(0);
+    expect(mockDisconnectCamera).toHaveBeenCalledTimes(0);
     unmount();
-    expect(mockDisconnectCamera).toBeCalledTimes(1);
+    expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
   });
 
   test('handleTakePicture', async () => {
-    mockGetDeviceSetting.mockResolvedValue({ value: JSON.stringify({ exposure: 100 }) });
+    mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
     mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
     mockHandleImg.mockReturnValue(true);
 
@@ -99,43 +102,43 @@ describe('test useCamera', () => {
     mockHandleImg.mockReturnValue(true);
     fireEvent.click(getByText('Take Picture'));
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockOpenNonstopProgress).toBeCalledTimes(1);
-    expect(mockOpenNonstopProgress).toBeCalledWith({
+    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
+    expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
       id: 'use-camera',
       message: 'taking_picture',
     });
-    expect(mockTakeOnePicture).toBeCalledTimes(1);
-    expect(mockHandleImg).toBeCalledTimes(1);
-    expect(mockPopById).toBeCalledTimes(1);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockHandleImg).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(1);
   });
 
   test('failed to get exposure setting', async () => {
-    mockGetDeviceSetting.mockRejectedValue(new Error('error'));
+    mockGetExposureSettings.mockRejectedValue(new Error('error'));
     mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
     mockHandleImg.mockReturnValue(true);
 
     const { container } = render(<MockComponent handleImg={mockHandleImg} />);
 
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockConsoleLog).toBeCalledTimes(1);
-    expect(mockConsoleLog).toBeCalledWith('Failed to get exposure setting', new Error('error'));
+    expect(mockConsoleLog).toHaveBeenCalledTimes(1);
+    expect(mockConsoleLog).toHaveBeenCalledWith('Failed to get exposure setting', new Error('error'));
     expect(container).toMatchSnapshot();
   });
 
   test('failed to get image', async () => {
-    mockGetDeviceSetting.mockResolvedValue({ value: JSON.stringify({ exposure: 100 }) });
+    mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
     mockTakeOnePicture.mockResolvedValue({});
     mockHandleImg.mockReturnValue(true);
     render(<MockComponent handleImg={mockHandleImg} />);
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockTakeOnePicture).toBeCalledTimes(3);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(3);
     expect(mockHandleImg).not.toBeCalled();
-    expect(mockPopUpError).toBeCalledTimes(1);
-    expect(mockPopUpError).toBeCalledWith({ message: 'Unable to get image' });
+    expect(mockPopUpError).toHaveBeenCalledTimes(1);
+    expect(mockPopUpError).toHaveBeenCalledWith({ message: 'Unable to get image' });
   });
 
   test('unstable get image', async () => {
-    mockGetDeviceSetting.mockResolvedValue({ value: JSON.stringify({ exposure: 100 }) });
+    mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
     mockTakeOnePicture
       .mockResolvedValueOnce({})
       .mockResolvedValueOnce({})
@@ -143,20 +146,20 @@ describe('test useCamera', () => {
     mockHandleImg.mockReturnValue(true);
     render(<MockComponent handleImg={mockHandleImg} />);
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockTakeOnePicture).toBeCalledTimes(3);
-    expect(mockHandleImg).toBeCalledTimes(1);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(3);
+    expect(mockHandleImg).toHaveBeenCalledTimes(1);
     expect(mockPopUpError).not.toBeCalled();
   });
 
   test('unstable handle image', async () => {
-    mockGetDeviceSetting.mockResolvedValue({ value: JSON.stringify({ exposure: 100 }) });
+    mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
     mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
 
     mockHandleImg.mockReturnValueOnce(false).mockReturnValueOnce(false).mockReturnValueOnce(true);
     render(<MockComponent handleImg={mockHandleImg} />);
     await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockTakeOnePicture).toBeCalledTimes(3);
-    expect(mockHandleImg).toBeCalledTimes(3);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(3);
+    expect(mockHandleImg).toHaveBeenCalledTimes(3);
     expect(mockPopUpError).not.toBeCalled();
   });
 });
