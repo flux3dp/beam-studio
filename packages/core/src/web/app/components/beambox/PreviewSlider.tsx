@@ -74,8 +74,6 @@ const PreviewSlider = (): React.ReactNode => {
     return null;
   }
 
-  console.log(isPreviewing, exposureSetting);
-
   return (
     <Space className={styles.space} direction="vertical">
       {!isPreviewing && showOpacity && (
