@@ -3,6 +3,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { getExposureSettings } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { WebCamConnection } from '@core/helpers/webcam-helper';
@@ -122,17 +123,7 @@ const useCamera = <T>(
           }
 
           try {
-            if (deviceMaster.currentDevice?.info.model === 'fbm2' && deviceMaster.currentControlMode === 'raw') {
-              const res = await deviceMaster.getCameraExposure();
-
-              if (res?.success) {
-                setExposureSetting({ max: 1000, min: 50, step: 1, value: res.data });
-              }
-            } else {
-              const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
-
-              setExposureSetting(JSON.parse(exposureRes.value) as IConfigSetting);
-            }
+            setExposureSetting(await getExposureSettings());
           } catch (e) {
             console.log('Failed to get exposure setting', e);
           }

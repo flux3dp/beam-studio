@@ -7,31 +7,24 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import PreviewSlider from './PreviewSlider';
 
-const mockSetDeviceSetting = jest.fn();
-const mockGetDeviceSetting = jest.fn().mockResolvedValue({
-  cmd: 'config get camera_exposure_absolute',
-  key: 'camera_exposure_absolute',
-  status: 'ok',
-  value: '{"data_type": "int", "min": 50, "default": 166, "max": 10000, "value": 450, "step": 1}',
-});
 const mockGetCurrentDevice = jest.fn();
-const mockEndSubTask = jest.fn();
-const mockGetCurrentControlMode = jest.fn();
-const mockGetCameraExposure = jest.fn();
-const mockSetCameraExposure = jest.fn();
+const mockGetExposureSettings = jest.fn().mockResolvedValue({
+  max: 10000,
+  min: 50,
+  step: 1,
+  value: 450,
+});
+const mockSetExposure = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
-  get currentControlMode() {
-    return mockGetCurrentControlMode();
-  },
   get currentDevice() {
     return mockGetCurrentDevice();
   },
-  endSubTask: (...args: any) => mockEndSubTask(...args),
-  getCameraExposure: (...args: any) => mockGetCameraExposure(...args),
-  getDeviceSetting: (...args: any) => mockGetDeviceSetting(...args),
-  setCameraExposure: (...args: any) => mockSetCameraExposure(...args),
-  setDeviceSetting: (...args: any) => mockSetDeviceSetting(...args),
+}));
+
+jest.mock('@core/helpers/device/camera/cameraExposure', () => ({
+  getExposureSettings: () => mockGetExposureSettings(),
+  setExposure: (value: number) => mockSetExposure(value),
 }));
 
 const mockUseCameraPreviewStore = jest.fn();
@@ -95,7 +88,6 @@ jest.mock('antd', () => ({
 describe('test PreviewSlider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetCurrentControlMode.mockReturnValue('');
     mockIsFullScreen.mockReturnValue(true);
     mockMeetRequirement.mockReturnValue(true);
     document.body.innerHTML =
@@ -128,7 +120,7 @@ describe('test PreviewSlider', () => {
     const imageContainer = document.getElementById('previewSvg');
 
     imageContainer.style.opacity = '0.5';
-    mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1', version: '1.0.0' } });
 
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
@@ -138,14 +130,14 @@ describe('test PreviewSlider', () => {
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
-    expect(mockGetDeviceSetting).not.toHaveBeenCalled();
+    expect(mockGetExposureSettings).not.toHaveBeenCalled();
   });
 
   it('should render correctly when is previewing Ador', async () => {
     const imageContainer = document.getElementById('previewSvg');
 
     imageContainer.style.opacity = '0.5';
-    mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1', version: '1.0.0' } });
 
     const { container, getByText } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
@@ -155,31 +147,25 @@ describe('test PreviewSlider', () => {
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
-      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(1);
-      expect(mockEndSubTask).not.toHaveBeenCalled();
-      expect(mockGetDeviceSetting).toHaveBeenCalledTimes(1);
+      expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);
     });
-    expect(mockGetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute');
     expect(mockMeetRequirement).not.toHaveBeenCalled();
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));
-    expect(mockSetDeviceSetting).not.toHaveBeenCalled();
+    expect(mockSetExposure).not.toHaveBeenCalled();
     expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChangeComplete'));
     await waitFor(() => {
-      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(2);
-      expect(mockEndSubTask).not.toHaveBeenCalled();
-      expect(mockSetDeviceSetting).toHaveBeenCalledTimes(1);
-      expect(mockSetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute', '20');
+      expect(mockSetExposure).toHaveBeenCalledTimes(1);
+      expect(mockSetExposure).toHaveBeenNthCalledWith(1, 20);
       expect(mockPreviewFullWorkarea).toHaveBeenCalledTimes(1);
     });
   });
 
   it('should render correctly when is previewing BB2', async () => {
-    mockGetCurrentControlMode.mockReturnValue('raw');
     mockIsFullScreen.mockReturnValue(false);
 
     const imageContainer = document.getElementById('previewSvg');
@@ -195,25 +181,19 @@ describe('test PreviewSlider', () => {
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
-      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(1);
-      expect(mockEndSubTask).toHaveBeenCalledTimes(1);
-      expect(mockGetDeviceSetting).toHaveBeenCalledTimes(1);
+      expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);
     });
-    expect(mockGetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute');
     expect(mockMeetRequirement).toHaveBeenNthCalledWith(1, 'BB2_SEPARATE_EXPOSURE');
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));
-    expect(mockSetDeviceSetting).not.toHaveBeenCalled();
+    expect(mockSetExposure).not.toHaveBeenCalled();
     expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChangeComplete'));
     await waitFor(() => {
-      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(2);
-      expect(mockEndSubTask).toHaveBeenCalledTimes(2);
-      expect(mockSetDeviceSetting).toHaveBeenCalledTimes(1);
-      expect(mockSetDeviceSetting).toHaveBeenNthCalledWith(1, 'camera_exposure_absolute', '20');
+      expect(mockSetExposure).toHaveBeenNthCalledWith(1, 20);
       expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
     });
   });
@@ -226,48 +206,5 @@ describe('test PreviewSlider', () => {
     );
 
     expect(container).toBeEmptyDOMElement();
-  });
-
-  it('should render correctly when is previewing fbm2 with raw mode', async () => {
-    mockGetCurrentControlMode.mockReturnValue('raw');
-    mockGetCameraExposure.mockResolvedValue({
-      data: 500,
-      success: true,
-    });
-
-    const imageContainer = document.getElementById('previewSvg');
-
-    imageContainer.style.opacity = '0.5';
-    mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbm2', version: '1.0.0' } });
-
-    const { container, getByText } = render(
-      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
-        <PreviewSlider />
-      </CanvasContext.Provider>,
-    );
-
-    expect(imageContainer).toHaveStyle({ opacity: 1 });
-    await waitFor(() => {
-      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(1);
-      expect(mockGetCameraExposure).toHaveBeenCalledTimes(1);
-      expect(mockEndSubTask).not.toHaveBeenCalled();
-      expect(mockGetDeviceSetting).not.toHaveBeenCalled();
-    });
-    expect(container).toMatchSnapshot();
-
-    fireEvent.click(getByText('onChange'));
-    expect(mockSetCameraExposure).not.toHaveBeenCalled();
-    expect(mockPreviewFullWorkarea).not.toHaveBeenCalled();
-    expect(container).toMatchSnapshot();
-
-    fireEvent.click(getByText('onChangeComplete'));
-    await waitFor(() => {
-      expect(mockGetCurrentControlMode).toHaveBeenCalledTimes(2);
-      expect(mockSetCameraExposure).toHaveBeenCalledTimes(1);
-      expect(mockSetCameraExposure).toHaveBeenNthCalledWith(1, 20);
-      expect(mockEndSubTask).not.toHaveBeenCalled();
-      expect(mockSetDeviceSetting).not.toHaveBeenCalled();
-      expect(mockPreviewFullWorkarea).toHaveBeenCalledTimes(1);
-    });
   });
 });

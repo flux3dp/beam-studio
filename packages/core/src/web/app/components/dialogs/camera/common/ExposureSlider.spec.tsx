@@ -20,10 +20,10 @@ jest.mock('antd', () => ({
   Tooltip: ({ children, title }: any) => <div title={title}>{children}</div>,
 }));
 
-const mockSetDeviceSetting = jest.fn();
+const mockSetExposure = jest.fn();
 
-jest.mock('@core/helpers/device-master', () => ({
-  setDeviceSetting: (...args) => mockSetDeviceSetting(...args),
+jest.mock('@core/helpers/device/camera/cameraExposure', () => ({
+  setExposure: (...args) => mockSetExposure(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
@@ -68,7 +68,7 @@ describe('test ExposureSlider', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test('onAfterChange', async () => {
+  test('onChangeComplete', async () => {
     const { getByText } = render(
       <ExposureSlider
         className="test-class"
@@ -78,15 +78,15 @@ describe('test ExposureSlider', () => {
       />,
     );
 
-    expect(mockOpenNonstopProgress).not.toBeCalled();
-    expect(mockSetDeviceSetting).not.toBeCalled();
-    expect(mockOnChanged).not.toBeCalled();
+    expect(mockOpenNonstopProgress).not.toHaveBeenCalled();
+    expect(mockSetExposure).not.toHaveBeenCalled();
+    expect(mockOnChanged).not.toHaveBeenCalled();
     await act(() => fireEvent.click(getByText('Mock Change Complete')));
-    expect(mockOpenNonstopProgress).toBeCalledTimes(1);
-    expect(mockSetDeviceSetting).toBeCalledTimes(1);
-    expect(mockSetDeviceSetting).toBeCalledWith('camera_exposure_absolute', '87');
-    expect(mockOnChanged).toBeCalledTimes(1);
-    expect(mockPopById).toBeCalledTimes(1);
+    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
+    expect(mockSetExposure).toHaveBeenCalledTimes(1);
+    expect(mockSetExposure).toHaveBeenCalledWith(87);
+    expect(mockOnChanged).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(1);
   });
 
   test('onChange', async () => {
@@ -103,7 +103,7 @@ describe('test ExposureSlider', () => {
     expect(input).not.toBeNull();
     expect(input).toHaveProperty('value', '300');
     await act(() => fireEvent.change(input as Element, { target: { value: '87' } }));
-    expect(mockSetExposureSetting).toBeCalledTimes(1);
-    expect(mockSetExposureSetting).toBeCalledWith({ ...mockExposureSetting, value: 87 });
+    expect(mockSetExposureSetting).toHaveBeenCalledTimes(1);
+    expect(mockSetExposureSetting).toHaveBeenCalledWith({ ...mockExposureSetting, value: 87 });
   });
 });

@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import progressCaller from '@core/app/actions/progress-caller';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
-import deviceMaster from '@core/helpers/device-master';
+import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import useI18n from '@core/helpers/useI18n';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
@@ -40,12 +40,7 @@ const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSett
           try {
             progressCaller.openNonstopProgress({ id: 'exposure-slider' });
             setExposureSetting({ ...exposureSetting, value });
-
-            if (deviceMaster.currentControlMode === 'raw') {
-              await deviceMaster.setCameraExposure(value);
-            } else {
-              await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
-            }
+            await setExposure(value);
 
             onChanged?.();
           } finally {
