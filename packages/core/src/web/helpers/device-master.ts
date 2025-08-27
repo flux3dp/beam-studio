@@ -1651,8 +1651,6 @@ class DeviceMaster {
   }
 
   getCameraExposure() {
-    console.trace('getCameraExposure');
-
     return this.currentDevice?.camera?.getExposure() ?? null;
   }
 
