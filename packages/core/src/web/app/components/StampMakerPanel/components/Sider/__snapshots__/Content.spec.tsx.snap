@@ -92,9 +92,9 @@ exports[`test Content should render correctly 1`] = `
           >
             <label
               class=""
-              title="Flip Horizontally: "
+              title="Horizontal Flip"
             >
-              Flip Horizontally
+              Horizontal Flip
               <span
                 aria-label="question-circle"
                 class="anticon anticon-question-circle ant-form-item-tooltip"
@@ -165,9 +165,9 @@ exports[`test Content should render correctly 1`] = `
           >
             <label
               class=""
-              title="Bevel Radius:"
+              title="Bevel Radius"
             >
-              Bevel Radius:
+              Bevel Radius
             </label>
           </div>
           <div
