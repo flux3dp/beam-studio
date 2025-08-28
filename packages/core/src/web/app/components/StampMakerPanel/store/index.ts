@@ -5,15 +5,13 @@ import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
 import type { InvertOperation } from './types';
+import { addItemToHistory } from './utils/addItemToHistory';
 import { createExpandFilter } from './utils/createExpandFilter';
 import { createShrinkFilter } from './utils/createShrinkFilter';
-import type { BackgroundType } from './utils/detectBackgroundType';
-import { addItemToHistory } from './utils/historyUtils';
 import { addFilter as _addFilter, removeFilter as _removeFilter, type State } from './utils/operationHandlers';
 import { handleRedo, handleUndo } from './utils/undoRedoHandlers';
 
 const getDefaultState = (): State => ({
-  backgroundType: 'white',
   bevelRadius: 0,
   filters: [],
   history: { index: 0, operations: [] },
@@ -21,31 +19,29 @@ const getDefaultState = (): State => ({
   lastBevelRadiusFilter: null,
 });
 
-interface ImageEditPanelStore extends State {
+interface StampMakerPanelStore extends State {
   addFilter: (filter: Filter, isFront?: boolean) => void;
   redo: () => void;
   removeFilter: (filter: Filter) => void;
   resetState: () => void;
-  setBackgroundType: (backgroundType: BackgroundType) => void;
   setBevelRadius: (value: number) => void;
   setHorizontalFlip: (value: boolean) => void;
   toggleInvert: () => void;
   undo: () => void;
 }
 
-export const useStampMakerPanelStore = create<ImageEditPanelStore>(
+export const useStampMakerPanelStore = create<StampMakerPanelStore>(
   combine(getDefaultState(), (set) => ({
-    addFilter: (filter: Filter, isFront?: boolean) => set((state) => _addFilter(state, filter, { isFront })),
+    addFilter: (filter: Filter, isFront = false) => set((state) => _addFilter(state, filter, { isFront })),
     redo: () => set((state) => handleRedo(state)),
     removeFilter: (filter: Filter) => set((state) => _removeFilter(state, filter)),
     resetState: () => set(getDefaultState()),
-    setBackgroundType: (backgroundType: BackgroundType) => set(() => ({ backgroundType })),
     setBevelRadius: (bevelRadius: number) => {
       set((state) => {
         const filter =
-          state.backgroundType === 'white'
-            ? createExpandFilter({ rampWidth: bevelRadius * 10 })
-            : createShrinkFilter({ rampWidth: bevelRadius * 10 });
+          bevelRadius > 0
+            ? createShrinkFilter({ rampWidth: bevelRadius * 10 })
+            : createExpandFilter({ rampWidth: -bevelRadius * 10 });
         let filters = state.filters;
 
         // Remove the last bevel radius filter if it exists
@@ -62,7 +58,7 @@ export const useStampMakerPanelStore = create<ImageEditPanelStore>(
           bevelRadius,
           filters,
           history: addItemToHistory(state.history, { filter, mode: 'bevelRadius', value: bevelRadius }),
-          lastBevelRadiusFilter: filter,
+          lastBevelRadiusFilter: bevelRadius === 0 ? null : filter,
         };
       });
     },
@@ -73,51 +69,15 @@ export const useStampMakerPanelStore = create<ImageEditPanelStore>(
       })),
     toggleInvert: () =>
       set((state) => {
-        const { backgroundType, bevelRadius, filters, lastBevelRadiusFilter } = state;
+        const { filters } = state;
         const isInverted = filters.includes(Konva.Filters.Invert);
-        const newBackground = backgroundType === 'black' ? 'white' : 'black';
-
-        let newBevelRadiusFilter: Filter | null = null;
-        let newFilters = filters;
-
-        // If there's an active bevel radius, we need to update the filter type
-        if (bevelRadius > 0) {
-          newBevelRadiusFilter =
-            newBackground === 'white'
-              ? createExpandFilter({ rampWidth: bevelRadius * 10 })
-              : createShrinkFilter({ rampWidth: bevelRadius * 10 });
-
-          // Remove the old bevel radius filter
-          if (lastBevelRadiusFilter) {
-            newFilters = newFilters.filter(isNot(isShallowEqual(lastBevelRadiusFilter)));
-          }
-
-          // Add the new bevel radius filter
-          if (newBevelRadiusFilter) {
-            newFilters = [...newFilters, newBevelRadiusFilter];
-          }
-        }
-
-        const operation: InvertOperation = {
-          mode: 'invert',
-          newBevelRadiusFilter,
-          oldBevelRadiusFilter: lastBevelRadiusFilter,
-          value: newBackground,
+        const operation: InvertOperation = { mode: 'invert' };
+        const updatedState: Partial<State> = {
+          filters: isInverted
+            ? filters.filter(isNot(isShallowEqual(Konva.Filters.Invert)))
+            : [Konva.Filters.Invert, ...filters],
+          history: addItemToHistory(state.history, operation),
         };
-
-        const newHistory = addItemToHistory(state.history, operation);
-        let updatedState: Partial<State> = {
-          backgroundType: newBackground,
-          filters: newFilters,
-          history: newHistory,
-          lastBevelRadiusFilter: newBevelRadiusFilter,
-        };
-
-        if (isInverted) {
-          updatedState.filters = newFilters.filter(isNot(isShallowEqual(Konva.Filters.Invert)));
-        } else {
-          updatedState.filters = [Konva.Filters.Invert, ...newFilters];
-        }
 
         return updatedState;
       }),
