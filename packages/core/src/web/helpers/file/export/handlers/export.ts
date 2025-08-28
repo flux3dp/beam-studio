@@ -131,11 +131,14 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
   const defaultFileName = getDefaultFileName();
   const fileTypeName = `${langFile[`${type}_files`]}`;
 
-  Progress.popById('export_image');
-  await dialog.writeFileDialog(getContent, langFile[`save_${type}`], defaultFileName, [
-    { extensions: [type], name: isMac() ? `${fileTypeName} (*.${type})` : fileTypeName },
-    { extensions: ['*'], name: langFile.all_files },
-  ]);
+  try {
+    await dialog.writeFileDialog(getContent, langFile[`save_${type}`], defaultFileName, [
+      { extensions: [type], name: isMac() ? `${fileTypeName} (*.${type})` : fileTypeName },
+      { extensions: ['*'], name: langFile.all_files },
+    ]);
+  } finally {
+    Progress.popById('export_image');
+  }
 };
 
 export const exportUvPrintAsPdf = async (): Promise<void> => {
