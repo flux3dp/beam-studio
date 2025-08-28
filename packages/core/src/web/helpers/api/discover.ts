@@ -134,7 +134,13 @@ export class DiscoverManager {
       Object.values(this.listeners).forEach((listener) => {
         listener(this.devices);
       });
-      communicator.send(TabEvents.UpdateDevices, { deviceMap: this.deviceMap, swiftrayDevices: this.swiftrayDevices });
+
+      if (this.isMaster) {
+        communicator.send(TabEvents.UpdateDevices, {
+          deviceMap: this.deviceMap,
+          swiftrayDevices: this.swiftrayDevices,
+        });
+      }
     },
     { minGapMs: 100, triggerAt: 'both' },
   ).call;
