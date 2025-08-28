@@ -28,7 +28,9 @@ const mockRegister = jest.fn();
 const mockUnregister = jest.fn();
 
 jest.mock('@core/helpers/api/discover', () => ({
-  register: mockRegister,
+  discoverManager: {
+    register: mockRegister,
+  },
 }));
 
 const emit = jest.fn();

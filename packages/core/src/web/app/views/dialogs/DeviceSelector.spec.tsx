@@ -26,7 +26,9 @@ const mockRegister = jest.fn();
 const mockUnregister = jest.fn();
 
 jest.mock('@core/helpers/api/discover', () => ({
-  register: (...args) => mockRegister(...args),
+  discoverManager: {
+    register: (...args) => mockRegister(...args),
+  },
   SEND_DEVICES_INTERVAL: 5000,
 }));
 
