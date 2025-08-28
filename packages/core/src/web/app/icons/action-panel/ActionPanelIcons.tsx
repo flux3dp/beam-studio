@@ -32,6 +32,7 @@ import Sharpen from './sharpen.svg';
 import SimplifyMobile from './simplify-mobile.svg';
 import Simplify from './simplify.svg';
 import SmartNest from './smart-nest.svg';
+import Stamp from './stamp.svg';
 import Tab from './tab.svg';
 import Trace from './trace.svg';
 import WeldText from './weld-text.svg';
@@ -71,6 +72,7 @@ export default {
   Simplify,
   SimplifyMobile,
   SmartNest,
+  Stamp,
   Tab,
   Trace,
   WeldText,
