@@ -35,6 +35,7 @@ export interface AddOnInfo {
   hybridLaser?: boolean;
   jobOrigin?: boolean;
   lowerFocus?: boolean;
+  multiModules?: boolean;
   openBottom?: boolean;
   /**
    * passThrough
@@ -158,6 +159,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     curveEngraving: true,
     jobOrigin: true,
     lowerFocus: true,
+    multiModules: true,
     passThrough: { maxHeight: 200, minY: 200, xRange: [0, 340] },
     redLight: true,
     rotary: {

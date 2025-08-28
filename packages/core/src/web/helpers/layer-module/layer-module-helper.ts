@@ -66,21 +66,25 @@ export const getDetectedModulesTranslations = (): Record<DetectedLayerModuleType
   };
 };
 
-export const hasModuleLayer = (
+type SelectorOpt = { checkRepeat?: boolean; checkVisible?: boolean };
+
+const getSelector = (
   modules: LayerModuleType[],
-  { checkRepeat = false, checkVisible = false }: { checkRepeat?: boolean; checkVisible?: boolean } = {},
-): boolean => {
+  { checkRepeat = false, checkVisible = false }: SelectorOpt = {},
+): string => {
   let query = 'g.layer[data-module="{module}"]';
 
   if (checkVisible) query += ':not([display="none"])';
 
   if (checkRepeat) query += ':not([data-repeat="0"])';
 
-  return Boolean(
-    document.querySelector(
-      Array.from(modules)
-        .map((module) => query.replace('{module}', module.toString()))
-        .join(', '),
-    ),
-  );
+  return Array.from(modules)
+    .map((module) => query.replace('{module}', module.toString()))
+    .join(', ');
 };
+
+export const getLayersByModule = (modules: LayerModuleType[], opt?: SelectorOpt): NodeListOf<SVGGElement> =>
+  document.querySelectorAll<SVGGElement>(getSelector(modules, opt));
+
+export const hasModuleLayer = (modules: LayerModuleType[], opt?: SelectorOpt): boolean =>
+  Boolean(document.querySelector(getSelector(modules, opt)));

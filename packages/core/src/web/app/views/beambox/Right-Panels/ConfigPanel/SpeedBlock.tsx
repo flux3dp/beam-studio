@@ -30,7 +30,6 @@ import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
-import round from '@core/helpers/math/round';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 
@@ -39,6 +38,8 @@ import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
+
+const moduleSpeedLimit = 500; // for bm2
 
 const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): React.JSX.Element => {
   const lang = useI18n();
@@ -58,6 +59,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const { hasMultiValue, value } = speed;
   const layerModule = module.value;
   const isPrinting = useMemo(() => printingModules.has(layerModule), [layerModule]);
+  const isNormalLaser = useMemo(() => layerModule === LayerModule.LASER_UNIVERSAL, [layerModule]);
 
   const isInch = useStorageStore((state) => state.isInch);
   const {
@@ -66,8 +68,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     display: displayUnit,
   } = useMemo(() => {
     return isInch
-      ? { calculateUnit: 'inch', decimal: 2, display: 'in/s' }
-      : { calculateUnit: 'mm', decimal: 1, display: 'mm/s' };
+      ? ({ calculateUnit: 'inch', decimal: 2, display: 'in/s' } as const)
+      : ({ calculateUnit: 'mm', decimal: 1, display: 'mm/s' } as const);
   }, [isInch]);
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
@@ -109,26 +111,29 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, [workareaMaxSpeed, layerModule]);
 
   const curveEngravingSpeedWarning = useMemo(() => {
-    if (!curveSpeedLimit || isPrinting) {
-      return '';
-    }
+    if (!curveSpeedLimit || isPrinting) return '';
 
     return sprintf(t.speed_constrain_warning_curve_engraving, {
-      limit: fakeUnit === 'mm' ? `${curveSpeedLimit} mm/s` : `${round(curveSpeedLimit / 25.4, 2)} in/s`,
+      limit: `${units.convertUnit(curveSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
     });
-  }, [fakeUnit, curveSpeedLimit, t.speed_constrain_warning_curve_engraving, isPrinting]);
+  }, [curveSpeedLimit, isPrinting, t.speed_constrain_warning_curve_engraving, fakeUnit, displayUnit]);
 
   const vectorSpeedWarning = useMemo(() => {
-    if (!vectorSpeedLimit || isPrinting) {
-      return '';
-    }
+    if (!vectorSpeedLimit || isPrinting) return '';
 
     return sprintf(isAutoFeederOn ? t.speed_constrain_warning_auto_feeder : t.speed_constrain_warning, {
-      limit: fakeUnit === 'mm' ? `${vectorSpeedLimit} mm/s` : `${round(vectorSpeedLimit / 25.4, 2)} in/s`,
+      limit: `${units.convertUnit(vectorSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
     });
-  }, [fakeUnit, t, vectorSpeedLimit, isAutoFeederOn, isPrinting]);
+  }, [vectorSpeedLimit, isPrinting, isAutoFeederOn, t, fakeUnit, displayUnit]);
+
+  const moduleSpeedWarning = useMemo(() => {
+    return sprintf(t.speed_constrain_warning_module_addon, {
+      limit: `${units.convertUnit(moduleSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
+    });
+  }, [t.speed_constrain_warning_module_addon, fakeUnit, displayUnit]);
   const hasCurveLimit = useGlobalPreferenceStore((state) => state.curve_engraving_speed_limit);
   const hasVectorLimit = useGlobalPreferenceStore((state) => state.vector_speed_constraint);
+  const hasModuleAddon = useDocumentStore((state) => state['enable-1064'] || state['enable-4c']);
 
   let warningText = '';
 
@@ -139,6 +144,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       warningText = vectorSpeedWarning;
     } else if (minSpeedWarning && value < minSpeedWarning) {
       warningText = t.low_speed_warning;
+    } else if (addOnInfo.multiModules && isNormalLaser && hasModuleAddon && value > moduleSpeedLimit) {
+      warningText = moduleSpeedWarning;
     }
   }
 
@@ -215,7 +222,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       return selectedOption.label;
     }
 
-    return +units.convertUnit(value, fakeUnit, 'mm')?.toFixed(decimal);
+    return units.convertUnit(value, fakeUnit, 'mm', decimal);
   }, [decimal, sliderOptions, value, fakeUnit]);
 
   return type === 'panel-item' ? (

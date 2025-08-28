@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'A velocidade de corte dos objetos de caminho vetorial será limitada a %(limit)s. Você pode remover este limite nas Configurações de Preferências.',
         speed_constrain_warning_auto_feeder: 'A velocidade de corte dos objetos Alimentador Automático será limitada a %(limit)s. Você pode remover este limite nas Configurações de Preferências.',
         speed_constrain_warning_curve_engraving: 'A velocidade de gravação de curvas será limitada a %(limit)s. Você pode remover esse limite nas Configurações de Preferências.',
+        speed_constrain_warning_module_addon: 'Ao usar um módulo adicional, evite velocidades acima de %(limit)s para manter a qualidade da gravação.',
         stepwise_focusing: 'Foco por Etapas',
         stepwise_focusing_desc: 'Abaixar gradualmente a distância do foco com base na altura do objeto durante cada contagem de passes.',
         strength: 'Potência',

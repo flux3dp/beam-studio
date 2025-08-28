@@ -23,7 +23,6 @@ import {
 } from '@core/helpers/boundary-helper';
 import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 
 const printerHeight = 12.7; // mm
 const keys = ['autoFeeder', 'passThrough', 'openBottom', 'diode', 'module', 'uvPrint'] as const;
@@ -67,16 +66,9 @@ export class BoundaryDrawer {
 
   checkMouseTarget = (target: Element): boolean => target.id === 'boundary-path';
 
-  onSkippedLayersChange = () => {
-    if (this.supportMultiModules && this.useUnionBoundary) {
-      this.changedKeys.add('module');
-      this.update();
-    }
-  };
-
   registerEvents = () => {
     const onCanvasChange = () => {
-      this.supportMultiModules = workareaManager.model === 'fbm2';
+      this.supportMultiModules = Boolean(getAddOnInfo(workareaManager.model).multiModules);
       this.changedKeys = new Set(keys);
       this.update();
     };
@@ -85,6 +77,13 @@ export class BoundaryDrawer {
       this.changedKeys.add('module');
       this.changedKeys.add('uvPrint');
       this.update();
+    };
+
+    const onSupportedModulesChange = () => {
+      if (this.supportMultiModules) {
+        this.changedKeys.add('module');
+        this.update();
+      }
     };
 
     const onDiodeChange = () => {
@@ -127,6 +126,9 @@ export class BoundaryDrawer {
     useDocumentStore.subscribe((state) => state['pass-through'], onPassThroughChange);
     useDocumentStore.subscribe((state) => state['borderless'], onBorderlessChange);
     useDocumentStore.subscribe((state) => state['enable-diode'], onEnableDiodeChange);
+    useDocumentStore.subscribe((state) => [state['enable-4c'], state['enable-1064']], onSupportedModulesChange, {
+      equalityFn: shallow,
+    });
     useGlobalPreferenceStore.subscribe((state) => [state['diode_offset_x'], state['diode_offset_y']], onDiodeChange, {
       equalityFn: shallow,
     });
@@ -138,14 +140,6 @@ export class BoundaryDrawer {
     canvasEventEmitter.on('canvas-change', onCanvasChange);
     useConfigPanelStore.subscribe((state) => state.diode.value, onDiodeChange);
     useConfigPanelStore.subscribe((state) => state.module.value, onModuleChange);
-    useConfigPanelStore.subscribe(
-      (state) => state.repeat,
-      (repeat, prev) => {
-        if (prev.hasMultiValue || repeat.value === 0 || prev.value === 0) {
-          this.onSkippedLayersChange();
-        }
-      },
-    );
   };
 
   private appendToCanvasBackground = (): void => {
@@ -272,11 +266,11 @@ export class BoundaryDrawer {
     const { model } = workareaManager;
     const boundary = getModuleBoundary(model, currentModule);
 
-    if (this.supportMultiModules && this.useUnionBoundary) {
+    if (this.supportMultiModules) {
       const supportedModules = getSupportedModules(model);
 
       supportedModules?.forEach((module) => {
-        if (module !== currentModule && hasModuleLayer([module], { checkRepeat: true, checkVisible: true })) {
+        if (module !== currentModule) {
           mergeBoundaries(boundary, getModuleBoundary(model, module));
         }
       });
@@ -312,7 +306,7 @@ export class BoundaryDrawer {
         const supportedModules = getSupportedModules(model);
 
         supportedModules?.forEach((module) => {
-          if (module !== currentModule && hasModuleLayer([module], { checkRepeat: true, checkVisible: true })) {
+          if (module !== currentModule) {
             const offsets = getModuleOffsets({ module, workarea: model });
 
             mergeBoundaries(unionOffsets, {

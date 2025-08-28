@@ -1,3 +1,5 @@
+import round from '@core/helpers/math/round';
+
 export type Units = 'cm' | 'inch' | 'mm' | 'pt' | 'px' | 'text';
 export type TimeUnits = 'h' | 'm' | 'ms' | 's';
 
@@ -19,12 +21,18 @@ const timeUnitMap = {
   s: 1,
 };
 
-const convertUnit = (val: number, to: Units, from: Units = 'pt'): number => {
-  if (to === from || !unitMap[to]) {
-    return val;
+const convertUnit = (val: number, to: Units, from: Units = 'pt', precision?: number): number => {
+  let ret = val;
+
+  if (to !== from && unitMap[to]) {
+    ret = (val * unitMap[from]) / unitMap[to];
   }
 
-  return (val * unitMap[from]) / unitMap[to];
+  if (precision !== undefined) {
+    ret = round(ret, precision);
+  }
+
+  return ret;
 };
 
 const convertTimeUnit = (val: number, to: TimeUnits, from: TimeUnits = 's'): number => {

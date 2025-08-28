@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'La vitesse de découpe des objets de trajet vectoriel sera limitée à %(limit)s. Vous pouvez supprimer cette limite dans les paramètres de préférences.',
         speed_constrain_warning_auto_feeder: 'La vitesse de coupe des objets Alimentateur Automatique sera limitée à %(limit)s. Vous pouvez supprimer cette limite dans les paramètres de préférence.',
         speed_constrain_warning_curve_engraving: 'La vitesse de gravure des objets courbes sera limitée à %(limit)s. Vous pouvez supprimer cette limite dans les paramètres de préférences.',
+        speed_constrain_warning_module_addon: "Lors de l'utilisation d'un module complémentaire, évitez les vitesses supérieures à %(limit)s afin de maintenir la qualité de gravure.",
         stepwise_focusing: 'Mise au Point Progressive',
         stepwise_focusing_desc: "Abaissement progressif de la distance de mise au point en fonction de la hauteur de l'objet à chaque nombre de passes.",
         strength: 'Puissance',

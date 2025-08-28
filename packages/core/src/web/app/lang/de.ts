@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'Die Schnittgeschwindigkeit von Vektorpfadobjekten wird auf %(limit)s begrenzt. Sie können diese Grenze in den Einstellungen für Einstellungen entfernen.',
         speed_constrain_warning_auto_feeder: 'Die Schneidgeschwindigkeit der Auto Feeder-Objekte wird auf %(limit)s begrenzt. Sie können dieses Limit in den Einstellungen für Präferenzen entfernen.',
         speed_constrain_warning_curve_engraving: 'Die Geschwindigkeit der Kurvengravurobjekte wird auf %(limit)s begrenzt. Sie können dieses Limit in den Einstellungen entfernen.',
+        speed_constrain_warning_module_addon: 'Verwenden Sie bei einem Zusatzmodul keine Geschwindigkeiten über %(limit)s, um die Gravurqualität zu erhalten.',
         stepwise_focusing: 'Schrittweises Fokussieren',
         stepwise_focusing_desc: 'Allmähliches Senken der Fokusdistanz basierend auf der Höhe des Objekts während jeder Durchgangszahl.',
         strength: 'Leistung',

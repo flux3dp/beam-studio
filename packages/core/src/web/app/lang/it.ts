@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'La velocità di taglio degli oggetti vettoriali sarà limitata a %(limit)s. È possibile rimuovere questo limite nelle impostazioni delle preferenze.',
         speed_constrain_warning_auto_feeder: 'La velocità di taglio degli oggetti Alimentatore Automatico sarà limitata a %(limit)s. Puoi rimuovere questo limite nelle Impostazioni Preferenze.',
         speed_constrain_warning_curve_engraving: 'La velocità di incisione degli oggetti curvi sarà limitata a %(limit)s. Puoi rimuovere questo limite nelle Impostazioni delle Preferenze.',
+        speed_constrain_warning_module_addon: "Quando si utilizza un modulo aggiuntivo, evitare velocità superiori a %(limit)s per mantenere la qualità dell'incisione.",
         stepwise_focusing: 'Messa a Fuoco Graduale',
         stepwise_focusing_desc: "Abbassare gradualmente la distanza di messa a fuoco in base all'altezza dell'oggetto durante ogni conteggio dei passaggi.",
         strength: 'Potenza',

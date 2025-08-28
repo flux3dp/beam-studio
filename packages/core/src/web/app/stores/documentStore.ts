@@ -41,6 +41,8 @@ const getInitDocumentStore = (): DocumentState => {
     auto_shrink: preference.auto_shrink,
     borderless: isBorderlessEnabled,
     'customized-dimension': preference['customized-dimension'],
+    'enable-4c': preference['enable-4c'],
+    'enable-1064': preference['enable-1064'],
     'enable-autofocus': isAutofocusEnabled,
     'enable-diode': isDiodeEnabled,
     'enable-job-origin': preference['enable-job-origin'],

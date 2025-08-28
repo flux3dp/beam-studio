@@ -9,7 +9,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
-import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { DetectedLayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -152,6 +152,24 @@ export const getExportOpt = async (
 
     if (!isDevMode || globalPreference['one-way-printing']) {
       config.owp = true;
+    }
+
+    if (addOnInfo.multiModules) {
+      if (documentState['enable-4c'] && documentState['enable-1064']) {
+        config.expected_module = DetectedLayerModule.PRINTER_4C_WITH_1064;
+        config.mep = config.mpp = 25;
+        config.acc = 2000;
+      } else if (documentState['enable-4c']) {
+        config.expected_module = DetectedLayerModule.PRINTER_4C;
+        config.mep = config.mpp = 20;
+        config.acc = 2000;
+      } else if (documentState['enable-1064']) {
+        config.expected_module = DetectedLayerModule.LASER_1064;
+        config.mep = config.mpp = 25;
+        config.acc = 2000;
+      } else {
+        config.expected_module = DetectedLayerModule.NONE;
+      }
     }
   }
 

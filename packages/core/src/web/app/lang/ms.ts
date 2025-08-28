@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'Kelajuan pemotongan objek laluan vektor akan dihadkan kepada %(limit)s. Anda boleh mengalih had ini di Tetapan Keutamaan.',
         speed_constrain_warning_auto_feeder: 'Kelajuan pemotongan objek Pengumpan Automatik akan dihadkan kepada %(limit)s. Anda boleh membuang had ini dalam Tetapan Keutamaan.',
         speed_constrain_warning_curve_engraving: 'Kelajuan ukiran lengkung akan dihadkan kepada %(limit)s. Anda boleh menghapuskan had ini dalam Tetapan Keutamaan.',
+        speed_constrain_warning_module_addon: 'Apabila menggunakan modul tambahan, elakkan kelajuan melebihi %(limit)s untuk mengekalkan kualiti ukiran.',
         stepwise_focusing: 'Pemfokusan Berperingkat',
         stepwise_focusing_desc: 'Menurunkan jarak fokus secara beransur-ansur berdasarkan ketinggian objek semasa setiap kiraan lalu.',
         strength: 'Kuasa',

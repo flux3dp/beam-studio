@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'Vektoripolkuobjektien leikkausnopeus rajoitetaan %(limit)s. Voit poistaa tämän rajoituksen asetuksista.',
         speed_constrain_warning_auto_feeder: 'Auto Feeder -objektien leikkuunopeus rajoitetaan %(limit)s:ään. Voit poistaa tämän rajoituksen asetuksista.',
         speed_constrain_warning_curve_engraving: 'Kaiverruskäyrän nopeus rajoitetaan arvoon %(limit)s. Voit poistaa tämän rajoituksen asetuksista.',
+        speed_constrain_warning_module_addon: 'Kun käytät lisämoduulia, vältä yli %(limit)s nopeuksia kaiverruslaadun säilyttämiseksi.',
         stepwise_focusing: 'Askeltarkennus',
         stepwise_focusing_desc: 'Fokusetäisyyden asteittainen laskeminen objektin korkeuden perusteella jokaisen ohitusmäärän aikana.',
         strength: 'Teho',

@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'De snijsnelheid van vectorpadobjecten wordt beperkt tot %(limit)s. U kunt deze beperking opheffen bij de voorkeursinstellingen.',
         speed_constrain_warning_auto_feeder: 'De snijsnelheid van Auto Feeder-objecten wordt beperkt tot %(limit)s. U kunt deze limiet verwijderen in de Voorkeureninstellingen.',
         speed_constrain_warning_curve_engraving: 'De snelheid van gebogen graveerobjecten wordt beperkt tot %(limit)s. Je kunt deze limiet verwijderen in de voorkeureninstellingen.',
+        speed_constrain_warning_module_addon: 'Vermijd bij gebruik van een extra module snelheden boven %(limit)s om de graveerkwaliteit te behouden.',
         stepwise_focusing: 'Stapsgewijs Focussen',
         stepwise_focusing_desc: 'Het geleidelijk verlagen van de focusafstand op basis van de hoogte van het object tijdens elk aantal passes.',
         strength: 'Vermogen',

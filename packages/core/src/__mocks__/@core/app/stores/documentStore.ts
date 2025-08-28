@@ -7,6 +7,8 @@ const state: DocumentState = {
   auto_shrink: false,
   borderless: false,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
+  'enable-4c': false,
+  'enable-1064': false,
   'enable-job-origin': false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': false,
@@ -19,10 +21,11 @@ const state: DocumentState = {
   'rotary-mirror': false,
   'rotary-overlap': 0,
   'rotary-scale': 1,
-  'rotary-split': 0.5,
+  'rotary-split': 0.05,
   'rotary-type': RotaryType.Roller,
   'rotary-y': null,
   rotary_mode: false,
+  skip_prespray: false,
   workarea: 'fbb1b',
 };
 

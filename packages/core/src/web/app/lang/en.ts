@@ -686,6 +686,7 @@ const lang: ILang = {
         speed_constrain_warning: 'The cutting speed of vector path objects will be constrained to %(limit)s. You can remove this limit at Preferences Settings.',
         speed_constrain_warning_auto_feeder: 'The cutting speed of Auto Feeder objects will be constrained to %(limit)s. You can remove this limit at Preferences Settings.',
         speed_constrain_warning_curve_engraving: 'The speed of curve engraving objects will be constrained to %(limit)s. You can remove this limit at Preferences Settings.',
+        speed_constrain_warning_module_addon: 'When using an add-on module, avoid speeds above %(limit)s to maintain engraving quality.',
         stepwise_focusing: 'Stepwise Focusing',
         stepwise_focusing_desc: "Gradually lowering the focus distance based on the object's height during each pass count.",
         strength: 'Power',

@@ -4,17 +4,9 @@ jest.useFakeTimers();
 
 const registeredEvents: any = { document: {}, globalPreference: {}, store: {} };
 
-const defaultBeamboxPreference = {
-  diode_offset_x: 70,
-  diode_offset_y: 7,
-  'enable-uv-print-file': false,
-  'use-real-boundary': false,
-  'use-union-boundary': true,
-};
 const defaultGlobalPreference = {
   diode_offset_x: 70,
   diode_offset_y: 7,
-  'enable-uv-print-file': false,
   'use-real-boundary': false,
   'use-union-boundary': true,
 };
@@ -28,7 +20,6 @@ jest.mock('@core/app/stores/globalPreferenceStore', () => ({
       const key = selector({
         diode_offset_x: 'diode_offset_x',
         diode_offset_y: 'diode_offset_y',
-        'enable-uv-print-file': 'enable-uv-print-file',
         'use-real-boundary': 'use-real-boundary',
         'use-union-boundary': 'use-union-boundary',
       });
@@ -162,10 +153,10 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
   },
 }));
 
-const mockHasModuleLayer = jest.fn();
+const mockGetSupportedModules = jest.fn();
 
-jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
-  hasModuleLayer: mockHasModuleLayer,
+jest.mock('@core/app/constants/workarea-constants', () => ({
+  getSupportedModules: mockGetSupportedModules,
 }));
 
 import type { BoundaryDrawer } from './boundaryDrawer';
@@ -190,7 +181,7 @@ const expectBoundaryResult = (d: string) => {
 describe('test boundaryDrawer', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    Object.assign(mockGlobalPreference, defaultBeamboxPreference);
+    Object.assign(mockGlobalPreference, defaultGlobalPreference);
     Object.assign(mockDocumentStore, defaultDocumentStore);
     Object.assign(mockWorkarea, defaultWorkarea.bb2);
     Object.assign(mockState, { diode: { value: 0 }, module: { value: 15 } });
@@ -198,7 +189,7 @@ describe('test boundaryDrawer', () => {
     mockGetAutoFeeder.mockReturnValue(false);
     mockGetPassThrough.mockReturnValue(false);
     mockGetModuleOffsets.mockReturnValue([0, 0]);
-    mockHasModuleLayer.mockReturnValue(false);
+    mockGetSupportedModules.mockReturnValue([LayerModule.LASER_UNIVERSAL]);
     document.body.innerHTML = '<svg id="canvasBackground"><svg id="fixedSizeSvg"></svg>';
   });
 
@@ -263,7 +254,7 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with uv print layer', async () => {
     await resetBoundaryDrawer();
-    mockGlobalPreference['enable-uv-print-file'] = true;
+    mockGetSupportedModules.mockReturnValue([LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT]);
     mockState.module.value = LayerModule.UV_PRINT;
     registeredEvents.store['module']();
     jest.advanceTimersByTime(100);
@@ -313,9 +304,12 @@ describe('test boundaryDrawer', () => {
         ? { bottom: 11.1, left: 22.2, right: 33.3, top: 44.4 }
         : { bottom: 21.1, left: 20.2, right: 43.3, top: 40.4 },
     );
-    mockHasModuleLayer.mockImplementation(([module]) =>
-      [LayerModule.LASER_1064, LayerModule.LASER_UNIVERSAL].includes(module),
-    );
+    mockGetSupportedModules.mockReturnValue([
+      LayerModule.LASER_UNIVERSAL,
+      LayerModule.LASER_1064,
+      LayerModule.UV_WHITE_INK,
+    ]);
+
     mockGetModuleOffsets.mockImplementation(({ module }) =>
       module === LayerModule.UV_WHITE_INK ? [-12.5, -12.5] : [7.5, 7.5],
     );
@@ -327,23 +321,6 @@ describe('test boundaryDrawer', () => {
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(1, 'fbm2', LayerModule.UV_WHITE_INK);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(2, 'fbm2', LayerModule.LASER_UNIVERSAL);
     expect(mockGetModuleBoundary).toHaveBeenNthCalledWith(3, 'fbm2', LayerModule.LASER_1064);
-    expect(mockHasModuleLayer).toHaveBeenCalledTimes(8);
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(1, [LayerModule.LASER_UNIVERSAL], {
-      checkRepeat: true,
-      checkVisible: true,
-    });
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(2, [LayerModule.PRINTER_4C], {
-      checkRepeat: true,
-      checkVisible: true,
-    });
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(3, [LayerModule.UV_VARNISH], {
-      checkRepeat: true,
-      checkVisible: true,
-    });
-    expect(mockHasModuleLayer).toHaveBeenNthCalledWith(4, [LayerModule.LASER_1064], {
-      checkRepeat: true,
-      checkVisible: true,
-    });
     expect(boundaryDrawer.boundaries.module).toEqual({ bottom: 211, left: 222, right: 433, top: 444 });
     expect(mockGetModuleOffsets).toHaveBeenCalledTimes(3);
     expect(mockGetModuleOffsets).toHaveBeenNthCalledWith(1, { module: LayerModule.UV_WHITE_INK, workarea: 'fbm2' });
