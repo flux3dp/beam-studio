@@ -62,6 +62,19 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
   const next = useCallback(() => setStep((step) => (step + 1) as StepsType), []);
   const prev = useCallback(() => setStep((step) => (step - 1) as StepsType), []);
   const doorChecker = useRef<DoorChecker | null>(null);
+  const releaseMachine = useCallback(async () => {
+    if (deviceMaster.currentControlMode === 'raw') {
+      progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: i18n.lang.message.endingRawMode });
+      try {
+        await deviceMaster.rawLooseMotor();
+        await deviceMaster.endSubTask();
+      } catch {
+        console.error('Failed to release machine');
+      } finally {
+        progressCaller.popById(PROGRESS_ID);
+      }
+    }
+  }, []);
 
   useEffect(() => {
     doorChecker.current = new DoorChecker();
@@ -69,23 +82,9 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
     return () => {
       doorChecker.current?.destroy();
 
-      const releaseMachine = async () => {
-        if (deviceMaster.currentControlMode === 'raw') {
-          progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: i18n.lang.message.endingRawMode });
-          try {
-            await deviceMaster.rawLooseMotor();
-            await deviceMaster.endSubTask();
-          } catch {
-            console.error('Failed to release machine');
-          } finally {
-            progressCaller.popById(PROGRESS_ID);
-          }
-        }
-      };
-
       releaseMachine();
     };
-  }, []);
+  }, [releaseMachine]);
 
   return match(step)
     .with(Steps.CHECK_DATA, () => {
@@ -369,6 +368,9 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
               tvec_polyfits: tvecPolyfits,
               v: 4,
             };
+
+            await releaseMachine();
+
             const res = await setFisheyeConfig(param);
 
             if (res.status === 'ok') {

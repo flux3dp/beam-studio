@@ -58,12 +58,6 @@ jest.mock(
       mockGetPerspectiveForAlign(...args),
 );
 
-const mockSetFisheyeConfig = jest.fn();
-
-jest.mock('@core/helpers/camera-calibration-helper', () => ({
-  setFisheyeConfig: (...args) => mockSetFisheyeConfig(...args),
-}));
-
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
 
