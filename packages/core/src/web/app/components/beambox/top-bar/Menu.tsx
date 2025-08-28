@@ -7,7 +7,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { register as discoverRegister } from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -72,7 +72,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   });
 
   useEffect(() => {
-    const unregister = discoverRegister('top-bar-menu', (newDevices: IDeviceInfo[]) => {
+    const unregister = discoverManager.register('top-bar-menu', (newDevices: IDeviceInfo[]) => {
       newDevices.sort((a, b) => (a.name >= b.name ? 1 : -1));
 
       if (newDevices.map((d) => d.name).join('') !== devices.map((d) => d.name).join('')) {

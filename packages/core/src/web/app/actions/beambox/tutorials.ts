@@ -3,16 +3,16 @@ import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import { generateInterfaceTutorial, generateNewUserTutorial } from '@core/app/constants/tutorial-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { register as discoverRegister } from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 
 const getMachineForTutorial = async () =>
   new Promise((resolve) => {
     let resolved = false;
-    const unregister = discoverRegister('tutorial', (machines) => {
+    const unregister = discoverManager.register('tutorial', (machines) => {
       if (machines.length > 0) {
         resolve(true);
-        unregister?.();
+        unregister();
         resolved = true;
       }
     });

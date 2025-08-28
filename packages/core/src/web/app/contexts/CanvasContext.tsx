@@ -12,7 +12,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
 import { getPassThrough } from '@core/helpers/addOn';
-import { getLatestDeviceInfo } from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
 import deviceMaster from '@core/helpers/device-master';
@@ -148,7 +148,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   }, [mode]);
   useEffect(() => {
     const handler = (response: { selectedDevice: IDeviceInfo | null }): void => {
-      response.selectedDevice = getLatestDeviceInfo(selectedDevice?.uuid);
+      response.selectedDevice = discoverManager.getLatestDeviceInfo(selectedDevice?.uuid);
     };
 
     topBarEventEmitter.on('GET_SELECTED_DEVICE', handler);

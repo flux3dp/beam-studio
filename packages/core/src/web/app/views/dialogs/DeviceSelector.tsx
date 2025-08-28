@@ -8,7 +8,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import { register as discoverRegister, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
+import { discoverManager, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
@@ -31,7 +31,7 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
   const selectedKey = selectedDevice?.serial;
 
   useEffect(() => {
-    const unregister = discoverRegister('device-selector', (discoverdDevices) => {
+    const unregister = discoverManager.register('device-selector', (discoverdDevices) => {
       const filteredDevices = discoverdDevices.filter((device) => device.serial !== 'XXXXXXXXXX');
 
       filteredDevices.sort((deviceA, deviceB) => {

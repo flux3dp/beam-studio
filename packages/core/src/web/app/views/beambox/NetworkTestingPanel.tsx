@@ -6,7 +6,7 @@ import { Button, Form, Input, Modal } from 'antd';
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { register as discoverRegister, poke } from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import browser from '@core/implementations/browser';
@@ -61,7 +61,7 @@ class NetworkTestingPanel extends React.Component<Props> {
       });
     });
     this.discoveredDevices = [];
-    this.unregister = discoverRegister('network-testing-panel', (devices) => {
+    this.unregister = discoverManager.register('network-testing-panel', (devices) => {
       this.discoveredDevices = devices;
     });
     this.localIps = localIps;
@@ -91,7 +91,7 @@ class NetworkTestingPanel extends React.Component<Props> {
       });
     }
 
-    poke(ip);
+    discoverManager.poke(ip);
     Progress.openSteppingProgress({
       caption: LANG.network_testing,
       id: 'network-testing',

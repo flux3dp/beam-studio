@@ -30,8 +30,8 @@ type PokeOptions = {
   withTcp?: boolean;
 };
 
-export class BaseDiscoverManager {
-  private static instance: BaseDiscoverManager;
+export class DiscoverManager {
+  private static instance: DiscoverManager;
 
   protected discoverLogger = Logger('discover');
   protected isWebClient = isWebClient;
@@ -40,40 +40,12 @@ export class BaseDiscoverManager {
   protected deviceMap: Record<string, IDeviceInfo> = {};
   protected swiftrayDevices: Record<string, IDeviceInfo> = {};
   protected initialized = false;
+  private isMaster = false;
+  private ws: any;
+  private pokeIPs: string[] = [];
+  private intervals: NodeJS.Timeout[] = [];
 
-  public init(): void {
-    if (this.initialized) return;
-
-    this.startIntervals();
-    this.initialized = true;
-  }
-
-  protected startIntervals(): void {
-    setInterval(() => {
-      const now = Date.now();
-
-      Object.keys(this.deviceMap).forEach((uuid) => {
-        if (this.deviceMap[uuid]?.lastAlive && now - this.deviceMap[uuid].lastAlive > CLEAR_DEVICES_INTERVAL) {
-          delete this.deviceMap[uuid];
-        }
-      });
-      Object.keys(this.swiftrayDevices).forEach((uuid) => {
-        if (
-          this.swiftrayDevices[uuid]?.lastAlive &&
-          now - this.swiftrayDevices[uuid].lastAlive > CLEAR_DEVICES_INTERVAL
-        ) {
-          delete this.swiftrayDevices[uuid];
-        }
-      });
-      this.devices = DeviceList({ ...this.deviceMap, ...this.swiftrayDevices });
-    }, CLEAR_DEVICES_INTERVAL);
-
-    setInterval(() => {
-      this.sendFoundDevices();
-    }, SEND_DEVICES_INTERVAL);
-  }
-
-  static getInstance<T extends typeof BaseDiscoverManager>(this: T): InstanceType<T> {
+  static getInstance<T extends typeof DiscoverManager>(this: T): InstanceType<T> {
     if (!this.instance) {
       this.instance = new this();
     }
@@ -81,7 +53,80 @@ export class BaseDiscoverManager {
     return this.instance as InstanceType<T>;
   }
 
-  protected sendFoundDevices = funnel(
+  constructor() {
+    this.isMaster = isWebClient;
+  }
+
+  public init(): void {
+    if (this.initialized) return;
+
+    if (this.isMaster) {
+      this.setupMaster();
+      this.initialized = true;
+    } else {
+      this.setupSlave();
+      this.initialized = true;
+    }
+  }
+
+  // ---------- Master & Slave part ----------
+  private setupMaster(): void {
+    this.ws = Websocket({ method: 'discover' });
+    this.ws.setOnMessage(this.onMessage);
+    this.pokeIPs = this.initPokeIps();
+
+    this.startIntervals();
+    this.setupPokeTcpInterval();
+    this.initSmartUpnp();
+    communicator.on(TabEvents.PokeIP, this.masterOnPokeIP);
+  }
+
+  private clearMaster(): void {
+    this.ws?.close();
+    this.ws = null;
+
+    SmartUpnp.clear();
+    this.intervals.forEach((interval) => clearInterval(interval));
+    this.intervals = [];
+    communicator.off(TabEvents.PokeIP, this.masterOnPokeIP);
+  }
+
+  private setupSlave(): void {
+    communicator.on(TabEvents.UpdateDevices, this.slaveOnDevicesUpdated);
+  }
+
+  private clearSlave(): void {
+    communicator.off(TabEvents.UpdateDevices, this.slaveOnDevicesUpdated);
+  }
+
+  private slaveOnDevicesUpdated = (
+    _: any,
+    data: { deviceMap: Record<string, IDeviceInfo>; swiftrayDevices: Record<string, IDeviceInfo> },
+  ): void => {
+    if (this.isMaster) return;
+
+    this.deviceMap = data.deviceMap;
+    this.swiftrayDevices = data.swiftrayDevices;
+    this.devices = DeviceList({ ...this.deviceMap, ...this.swiftrayDevices });
+    this.sendFoundDevices();
+  };
+
+  private masterOnPokeIP = (_: any, targetIp: string, options: PokeOptions = {}): void => {
+    if (!this.isMaster) return;
+
+    this.poke(targetIp, options);
+  };
+
+  public setMaster(isMaster: boolean): void {
+    if (this.isMaster === isMaster) return;
+
+    this.isMaster ? this.clearMaster() : this.clearSlave();
+    this.isMaster = isMaster;
+    this.isMaster ? this.setupMaster() : this.setupSlave();
+  }
+
+  // ---------- Master discover part ----------
+  private sendFoundDevices = funnel(
     () => {
       this.discoverLogger.clear();
       this.discoverLogger.append(this.deviceMap);
@@ -93,62 +138,6 @@ export class BaseDiscoverManager {
     },
     { minGapMs: 100, triggerAt: 'both' },
   ).call;
-
-  public register(id: string, getDevices: (devices: IDeviceInfo[]) => void): () => void {
-    console.log('register discover listener', id);
-    this.listeners[id] = getDevices;
-
-    setTimeout(() => {
-      if (this.devices.length > 0) {
-        getDevices(this.devices);
-      }
-    }, 0);
-
-    // Return simple unregister function
-    return () => this.unregister(id);
-  }
-
-  public unregister(id: string): void {
-    delete this.listeners[id];
-  }
-
-  public getListeners = (): Record<string, (devices: IDeviceInfo[]) => void> => this.listeners;
-
-  public poke = (_targetIp: string, _options?: PokeOptions): void => {};
-
-  public countDevices(): number {
-    return Object.keys(this.deviceMap).length;
-  }
-
-  public getLatestDeviceInfo(uuid = ''): IDeviceInfo | null {
-    return this.deviceMap[uuid] ?? this.swiftrayDevices[uuid] ?? null;
-  }
-
-  public checkConnection = (): boolean => this.devices.length > 0;
-}
-
-export class MasterDiscoverManager extends BaseDiscoverManager {
-  private ws: any;
-  private pokeIPs: string[] = [];
-
-  constructor() {
-    super();
-    this.ws = Websocket({ method: 'discover' });
-    this.ws.setOnMessage(this.onMessage);
-    this.pokeIPs = this.initPokeIps();
-  }
-
-  public init(): void {
-    if (this.initialized) return;
-
-    this.startIntervals();
-    this.setupPokeTcpInterval();
-    this.initSmartUpnp();
-    this.initialized = true;
-    communicator.on(TabEvents.PokeIP, (_: any, targetIp: string, options: PokeOptions = {}) =>
-      this.poke(targetIp, options),
-    );
-  }
 
   private updatePokeIPAddr(device: IDeviceInfo): void {
     const maxLen = 20;
@@ -191,8 +180,6 @@ export class MasterDiscoverManager extends BaseDiscoverManager {
   };
 
   protected startIntervals(): void {
-    super.startIntervals();
-
     const updateDeviceFromSwiftray = async () => {
       const res = await swiftrayClient.listDevices();
 
@@ -220,7 +207,33 @@ export class MasterDiscoverManager extends BaseDiscoverManager {
       this.sendFoundDevices();
     };
 
-    setInterval(updateDeviceFromSwiftray, 5000);
+    this.intervals.push(
+      // clear old devices
+      setInterval(() => {
+        const now = Date.now();
+
+        Object.keys(this.deviceMap).forEach((uuid) => {
+          if (this.deviceMap[uuid]?.lastAlive && now - this.deviceMap[uuid].lastAlive > CLEAR_DEVICES_INTERVAL) {
+            delete this.deviceMap[uuid];
+          }
+        });
+        Object.keys(this.swiftrayDevices).forEach((uuid) => {
+          if (
+            this.swiftrayDevices[uuid]?.lastAlive &&
+            now - this.swiftrayDevices[uuid].lastAlive > CLEAR_DEVICES_INTERVAL
+          ) {
+            delete this.swiftrayDevices[uuid];
+          }
+        });
+        this.devices = DeviceList({ ...this.deviceMap, ...this.swiftrayDevices });
+      }, CLEAR_DEVICES_INTERVAL),
+      // send found devices
+      setInterval(() => {
+        this.sendFoundDevices();
+      }, SEND_DEVICES_INTERVAL),
+      // update swiftray devices
+      setInterval(updateDeviceFromSwiftray, 5000),
+    );
   }
 
   private initPokeIps(): string[] {
@@ -241,10 +254,12 @@ export class MasterDiscoverManager extends BaseDiscoverManager {
   private setupPokeTcpInterval(): void {
     let i = 0;
 
-    setInterval(() => {
-      this.poke(this.pokeIPs[i]);
-      i = i + 1 < this.pokeIPs.length ? i + 1 : 0;
-    }, 1000);
+    this.intervals.push(
+      setInterval(() => {
+        this.poke(this.pokeIPs[i]);
+        i = i + 1 < this.pokeIPs.length ? i + 1 : 0;
+      }, 1000),
+    );
   }
 
   private async initSmartUpnp(): Promise<void> {
@@ -268,75 +283,60 @@ export class MasterDiscoverManager extends BaseDiscoverManager {
     this.pokeIPs.forEach((ip) => SmartUpnp.startPoke(ip));
   }
 
-  public poke = (targetIP: string, { isTesting = false, withTcp = true }: PokeOptions = {}): void => {
+  // ---------- Public API part ----------
+  public register(id: string, getDevices: (devices: IDeviceInfo[]) => void): () => void {
+    console.log('register discover listener', id);
+    this.listeners[id] = getDevices;
+
+    setTimeout(() => {
+      if (this.devices.length > 0) {
+        getDevices(this.devices);
+      }
+    }, 0);
+
+    // Return simple unregister function
+    return () => this.unregister(id);
+  }
+
+  public unregister(id: string): void {
+    delete this.listeners[id];
+  }
+
+  public poke = (targetIP: string, options: PokeOptions = {}): void => {
     if (!targetIP) return;
 
-    this.ws?.send(JSON.stringify({ cmd: 'poke', ipaddr: targetIP }));
+    if (this.isMaster) {
+      const { isTesting = false, withTcp = true } = options;
 
-    if (withTcp) {
-      this.ws?.send(JSON.stringify({ cmd: 'testtcp', ipaddr: targetIP }));
+      this.ws?.send(JSON.stringify({ cmd: 'poke', ipaddr: targetIP }));
 
-      if (!isTesting) this.ws?.send(JSON.stringify({ cmd: 'poketcp', ipaddr: targetIP }));
+      if (withTcp) {
+        this.ws?.send(JSON.stringify({ cmd: 'testtcp', ipaddr: targetIP }));
+
+        if (!isTesting) this.ws?.send(JSON.stringify({ cmd: 'poketcp', ipaddr: targetIP }));
+      }
+    } else {
+      communicator.send(TabEvents.PokeIP, targetIP, options);
     }
   };
 
   public checkConnection = (): boolean => {
-    return this.ws?.currentState === WebSocket.OPEN;
-  };
-}
+    if (this.isMaster) {
+      return this.ws?.currentState === WebSocket.OPEN;
+    }
 
-export class SlaveDiscoverManager extends BaseDiscoverManager {
-  constructor() {
-    super();
+    return this.devices.length > 0;
+  };
+
+  public countDevices(): number {
+    return Object.keys(this.deviceMap).length;
   }
 
-  public init(): void {
-    if (this.initialized) return;
-
-    this.initialized = true;
-    communicator.on(
-      TabEvents.UpdateDevices,
-      (
-        _: any,
-        {
-          deviceMap,
-          swiftrayDevices,
-        }: { deviceMap: Record<string, IDeviceInfo>; swiftrayDevices: Record<string, IDeviceInfo> },
-      ) => {
-        this.deviceMap = deviceMap;
-        this.swiftrayDevices = swiftrayDevices;
-        this.devices = DeviceList({ ...this.deviceMap, ...this.swiftrayDevices });
-        this.sendFoundDevices();
-      },
-    );
+  public getLatestDeviceInfo(uuid = ''): IDeviceInfo | null {
+    return this.deviceMap[uuid] ?? this.swiftrayDevices[uuid] ?? null;
   }
-
-  public poke = (targetIp: string, options: PokeOptions = {}): void => {
-    communicator.send(TabEvents.PokeIP, targetIp, options);
-  };
 }
 
-let discoverManager = isWebClient ? MasterDiscoverManager.getInstance() : SlaveDiscoverManager.getInstance();
+export const discoverManager = DiscoverManager.getInstance();
 
 discoverManager.init();
-
-export const setDiscoverMaster = () => {
-  console.log('Set discover manager to Master');
-
-  if (discoverManager instanceof MasterDiscoverManager) return;
-
-  const listeners = discoverManager.getListeners();
-
-  discoverManager = MasterDiscoverManager.getInstance();
-  discoverManager.init();
-  Object.entries(listeners).forEach(([id, listener]) => {
-    discoverManager.register(id, listener);
-  });
-};
-
-export const checkConnection = (): boolean => discoverManager.checkConnection();
-export const register = (id: string, getDevices: (devices: IDeviceInfo[]) => void): (() => void) =>
-  discoverManager.register(id, getDevices);
-export const unregister = (id: string): void => discoverManager.unregister(id);
-export const poke = (targetIp: string, options?: PokeOptions): void => discoverManager.poke(targetIp, options);
-export const getLatestDeviceInfo = (uuid = ''): IDeviceInfo | null => discoverManager.getLatestDeviceInfo(uuid);

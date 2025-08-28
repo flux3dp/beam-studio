@@ -1,7 +1,7 @@
 import os from '@core/implementations/os';
 import storage from '@core/implementations/storage';
 
-import type { BaseDiscoverManager } from './api/discover';
+import type { DiscoverManager } from './api/discover';
 
 const AUTO_POKE_INTERVAL = 3000;
 const AUTO_DISCOVER = 1000;
@@ -11,7 +11,7 @@ type AutoPoke = {
   ip: string;
 };
 
-let discoverManager: BaseDiscoverManager;
+let discoverManager: DiscoverManager;
 let autoPokes: AutoPoke[] = [];
 let guessIPs: string[] = [];
 let solidIPs: string[] = [];
@@ -29,6 +29,13 @@ const self = {
       }
     }
     self.startPoke(ip);
+  },
+
+  clear: () => {
+    autoPokes.forEach((x) => self.stopPoke(x));
+    autoPokes = [];
+    guessIPs = [];
+    solidIPs = [];
   },
 
   getLocalAddresses: function () {
@@ -97,7 +104,7 @@ const self = {
     }
   },
 
-  init: (discover: BaseDiscoverManager) => {
+  init: (discover: DiscoverManager) => {
     discoverManager = discover;
 
     if (storage.get('guessing_poke')) {
