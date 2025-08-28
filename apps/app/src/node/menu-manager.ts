@@ -515,7 +515,7 @@ class MenuManager extends EventEmitter {
             { click: callback, id: 'IMAGE_SHARPEN', label: r.image_sharpen },
             { click: callback, id: 'IMAGE_CROP', label: r.image_crop },
             { click: callback, id: 'IMAGE_INVERT', label: r.image_invert },
-            { click: callback, id: 'IMAGE_STAMP', label: r.image_stamp },
+            { click: callback, id: 'IMAGE_STAMP', label: i18n.lang.stamp_maker_panel.title },
             { click: callback, id: 'IMAGE_VECTORIZE', label: r.image_vectorize },
             { click: callback, id: 'IMAGE_CURVE', label: r.image_curve },
           ],

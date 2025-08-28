@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
-import { Flex, Form, Switch } from 'antd';
+import { Flex, Form, Switch, Tooltip } from 'antd';
 import Konva from 'konva';
 
 import UnitInput from '@core/app/widgets/UnitInput';
@@ -22,17 +22,21 @@ export default function Content(): React.JSX.Element {
   return (
     <div className={styles.wrapper}>
       <Form layout="horizontal">
-        <Form.Item
-          label={stamp_maker_panel.invert}
-          tooltip={{ icon: <QuestionCircleOutlined />, title: stamp_maker_panel.tool_tip.invert }}
-        >
-          <Switch checked={isInverted} onChange={toggleInvert} />
+        <Form.Item label={stamp_maker_panel.invert}>
+          <Flex align="center" gap={8}>
+            <Switch checked={isInverted} onChange={toggleInvert} />
+            <Tooltip title={stamp_maker_panel.tool_tip.invert}>
+              <QuestionCircleOutlined className={styles['tool-tip']} />
+            </Tooltip>
+          </Flex>
         </Form.Item>
-        <Form.Item
-          label={stamp_maker_panel.horizontal_flip}
-          tooltip={{ icon: <QuestionCircleOutlined />, title: stamp_maker_panel.tool_tip.horizontal_flip }}
-        >
-          <Switch checked={horizontalFlip} onChange={handleToggleFlip} />
+        <Form.Item label={stamp_maker_panel.horizontal_flip}>
+          <Flex align="center" gap={8}>
+            <Switch checked={horizontalFlip} onChange={handleToggleFlip} />
+            <Tooltip title={stamp_maker_panel.tool_tip.horizontal_flip}>
+              <QuestionCircleOutlined className={styles['tool-tip']} />
+            </Tooltip>
+          </Flex>
         </Form.Item>
         <Form.Item label={stamp_maker_panel.bevel_radius} layout="vertical">
           <Flex justify="space-between">
