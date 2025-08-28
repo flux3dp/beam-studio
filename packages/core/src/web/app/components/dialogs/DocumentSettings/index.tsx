@@ -29,6 +29,7 @@ import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import isDev from '@core/helpers/is-dev';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
+  getDefaultLaserModule,
   getLayersByModule,
   getModulesTranslations,
   hasModuleLayer,
@@ -197,11 +198,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       engrave_dpi: engraveDpi,
     };
 
+    const defaultLaser = getDefaultLaserModule(workarea);
+
     if (origState['enable-4c'] && !enable4C) {
       const layers = getLayersByModule(fullColorHeadModules);
 
       if (layers.length > 0) {
-        const res = await changeLayersModule(Array.from(layers), LayerModule.PRINTER_4C, LayerModule.LASER_UNIVERSAL);
+        const res = await changeLayersModule(Array.from(layers), LayerModule.PRINTER_4C, defaultLaser);
 
         if (!res) delete newState['enable-4c'];
       }
@@ -211,7 +214,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       const layers = getLayersByModule([LayerModule.LASER_1064]);
 
       if (layers.length > 0) {
-        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, LayerModule.LASER_UNIVERSAL);
+        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, defaultLaser);
       }
     }
 
