@@ -152,36 +152,6 @@ const colorInvert = async (elem?: SVGImageElement): Promise<void> => {
   progress.popById('photo-edit-processing');
 };
 
-const generateStampBevel = async (elem?: SVGImageElement): Promise<void> => {
-  const element = elem || getSelectedElem();
-
-  if (!element) {
-    return;
-  }
-
-  progress.openNonstopProgress({
-    id: 'photo-edit-processing',
-    message: i18n.lang.beambox.photo_edit_panel.processing,
-  });
-
-  const { imgUrl, isFullColor, shading, threshold } = getImageAttributes(element);
-  const newImgUrl = await jimpHelper.generateStampBevel(imgUrl, shading ? 128 : threshold);
-
-  if (newImgUrl) {
-    const base64Img = await generateBase64Image(newImgUrl, shading, threshold, isFullColor);
-
-    addBatchCommand('Image Edit: bevel', element, {
-      'data-shading': true,
-      'data-threshold': 255,
-      origImage: newImgUrl,
-      'xlink:href': base64Img,
-    });
-    svgCanvas.selectOnly([element], true);
-  }
-
-  progress.popById('photo-edit-processing');
-};
-
 const traceImage = async (img = getSelectedElem()): Promise<void> => {
   const element = img;
 
@@ -402,8 +372,8 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
           const reader = new FileReader();
 
           reader.onloadend = (e) => {
-            const str = e.target.result as string;
-            const d = JSON.parse(str);
+            const str = e.target!.result as string;
+            const d = JSON.parse(str) as any;
 
             resolve(d.detail);
           };
@@ -439,8 +409,8 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
         const reader = new FileReader();
 
         reader.onloadend = (e) => {
-          const str = e.target.result as string;
-          const d = JSON.parse(str);
+          const str = e.target!.result as string;
+          const d = JSON.parse(str) as any;
 
           resolve(d);
         };
@@ -508,7 +478,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
     },
   });
 
-  const isTransparentBackground = elem.getAttribute('data-no-bg');
+  const isTransparentBackground = elem!.getAttribute('data-no-bg');
   const imgBBox = element.getBBox();
   const imgRotation = svgedit.utilities.getRotationAngle(element);
   let { imgUrl } = getImageAttributes(element);
@@ -582,7 +552,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
       'vector-effect': 'non-scaling-stroke',
     },
     element: 'path',
-  });
+  }) as SVGPathElement;
 
   svgCanvas.selectOnly([g]);
 
@@ -649,7 +619,7 @@ const trapezoid = (
   canvas.width = Math.round(alongX ? img.width : img.width / imageRatio);
   canvas.height = Math.round(alongX ? img.height / imageRatio : img.height);
 
-  const ctx = canvas.getContext('2d');
+  const ctx = canvas.getContext('2d')!;
   const end = alongX ? canvas.width : canvas.height;
 
   for (let i = 0; i < end; i += 1) {
@@ -717,7 +687,6 @@ export default {
   calculateTrapezoidPoints,
   colorInvert,
   generateBase64Image,
-  generateStampBevel,
   getImageAttributes,
   potrace,
   removeBackground,
