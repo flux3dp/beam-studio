@@ -74,14 +74,11 @@ export const convertSvgToImage: MainConverterFunc = async ({
         return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: group });
       },
     )
-    .with(
-      { tagName: 'g' },
-      async (el) => await convertGroupToImage({ isToSelect, parentCmd, svgElement: el }, convertSvgToImage),
-    )
+    .with({ tagName: 'g' }, async (el) => await convertGroupToImage({ parentCmd, svgElement: el }, convertSvgToImage))
     .with({ tagName: 'text' }, async (el) => {
       const { path } = await convertTextToPath({ element: el, isToSelect: false, parentCommand: parentCmd });
 
-      return await convertSvgToImage({ isToSelect, parentCmd, svgElement: path! });
+      return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: path! });
     })
     .with(
       { tagName: P.union(...convertibleSvgTags) },
