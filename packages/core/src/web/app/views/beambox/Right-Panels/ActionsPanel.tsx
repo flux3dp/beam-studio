@@ -296,7 +296,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         <ActionPanelIcons.Invert />,
         <ActionPanelIcons.Invert />,
       ),
-      offset: renderOffsetButton({ isFullLine: true }),
+      offset: renderOffsetButton(),
       potrace: renderButtons(
         'potrace',
         lang.outline,
@@ -325,8 +325,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         'stampMakerPanel',
         i18n.stamp_maker_panel.title,
         () => Dialog.showStampMakerPanel(),
-        <ActionPanelIcons.EditImage />,
-        <ActionPanelIcons.EditImage />,
+        <ActionPanelIcons.Stamp />,
+        <ActionPanelIcons.Stamp />,
         { isFullLine: true, mobileLabel: lang.ai_bg_removal_short },
       ),
       trace: renderButtons(
@@ -354,14 +354,13 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'grading',
           'sharpen',
           'crop',
-          'bevel',
+          'offset',
           'invert',
           'array',
           'trace',
           'bg-removal',
           'smartNest',
           'trapezoid',
-          'offset',
         ]
       : [
           'autoFit',
@@ -374,15 +373,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'grading',
           'sharpen',
           'crop',
-          'bevel',
+          'offset',
           'invert',
           'array',
           'potrace',
           'trapezoid',
-          'offset',
         ];
 
-    return contentOrder.map((key) => (content as any)[key]);
+    return contentOrder.map((key) => content[key]);
   };
 
   const renderTextActions = (): React.JSX.Element[] => {

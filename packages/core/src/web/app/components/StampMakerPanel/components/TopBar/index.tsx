@@ -1,6 +1,6 @@
 import React, { memo, useCallback, useMemo } from 'react';
 
-import { ArrowLeftOutlined, ArrowRightOutlined, MinusOutlined, PlusOutlined, ReloadOutlined } from '@ant-design/icons';
+import { MinusOutlined, PlusOutlined, RedoOutlined, ReloadOutlined, UndoOutlined } from '@ant-design/icons';
 import { Button, Flex } from 'antd';
 import classNames from 'classnames';
 import { pick } from 'remeda';
@@ -63,12 +63,12 @@ function UnmemorizedTopBar({ handleReset, handleZoomByScale, zoomScale }: Props)
         <Button
           className={styles['mr-8px']}
           disabled={!undoable}
-          icon={<ArrowLeftOutlined />}
+          icon={<UndoOutlined />}
           onClick={undo}
           shape="round"
           title={lang.undo}
         />
-        <Button disabled={!redoable} icon={<ArrowRightOutlined />} onClick={redo} shape="round" title={lang.redo} />
+        <Button disabled={!redoable} icon={<RedoOutlined />} onClick={redo} shape="round" title={lang.redo} />
       </div>
       {renderZoomButton()}
     </Flex>
