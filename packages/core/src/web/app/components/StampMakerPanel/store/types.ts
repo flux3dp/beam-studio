@@ -14,9 +14,6 @@ export type RemoveFilterOperation = {
 
 export type InvertOperation = {
   mode: 'invert';
-  newBevelRadiusFilter: Filter | null;
-  oldBevelRadiusFilter: Filter | null;
-  value: 'black' | 'white';
 };
 
 export type HorizontalFlipOperation = {

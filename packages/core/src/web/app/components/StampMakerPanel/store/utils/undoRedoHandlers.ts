@@ -5,7 +5,6 @@ import { match } from 'ts-pattern';
 
 import type { BevelRadiusOperation } from '../types';
 
-import type { BackgroundType } from './detectBackgroundType';
 import type { State } from './operationHandlers';
 
 export const handleRedo = (state: State): Partial<State> => {
@@ -25,37 +24,13 @@ export const handleRedo = (state: State): Partial<State> => {
       filters: filters.filter(isNot(isShallowEqual(filter))),
       history: newHistory,
     }))
-    .with({ mode: 'horizontalFlip' }, ({ value }) => ({
+    .with({ mode: 'horizontalFlip' }, ({ value: horizontalFlip }) => ({ history: newHistory, horizontalFlip }))
+    .with({ mode: 'invert' }, () => ({
+      filters: filters.includes(Konva.Filters.Invert)
+        ? filters.filter(isNot(isShallowEqual(Konva.Filters.Invert)))
+        : [Konva.Filters.Invert, ...filters],
       history: newHistory,
-      horizontalFlip: value,
     }))
-    .with({ mode: 'invert' }, ({ newBevelRadiusFilter, oldBevelRadiusFilter, value }) => {
-      let newFilters = filters;
-      const isCurrentlyInverted = filters.includes(Konva.Filters.Invert);
-
-      // Handle bevel radius filter changes
-      if (oldBevelRadiusFilter) {
-        newFilters = newFilters.filter(isNot(isShallowEqual(oldBevelRadiusFilter)));
-      }
-
-      if (newBevelRadiusFilter) {
-        newFilters = [...newFilters, newBevelRadiusFilter];
-      }
-
-      // Handle invert filter
-      if (isCurrentlyInverted) {
-        newFilters = newFilters.filter(isNot(isShallowEqual(Konva.Filters.Invert)));
-      } else {
-        newFilters = [Konva.Filters.Invert, ...newFilters];
-      }
-
-      return {
-        backgroundType: value,
-        filters: newFilters,
-        history: newHistory,
-        lastBevelRadiusFilter: newBevelRadiusFilter,
-      };
-    })
     .with({ mode: 'bevelRadius' }, ({ filter, value }) => {
       let newFilters = filters;
 
@@ -92,47 +67,17 @@ export const handleUndo = (state: State): Partial<State> => {
       filters: filters.filter(isNot(isShallowEqual(filter))),
       history: newHistory,
     }))
-    .with({ mode: 'removeFilter' }, ({ filter, index }) => {
-      const newFilters = [...filters];
-
-      newFilters.splice(index, 0, filter);
-
-      return { filters: newFilters, history: newHistory };
-    })
-    .with({ mode: 'invert' }, ({ newBevelRadiusFilter, oldBevelRadiusFilter, value }) => {
-      let newFilters = filters;
-      const isCurrentlyInverted = filters.includes(Konva.Filters.Invert);
-
-      // Restore bevel radius filter changes (reverse the operation)
-      if (newBevelRadiusFilter) {
-        newFilters = newFilters.filter(isNot(isShallowEqual(newBevelRadiusFilter)));
-      }
-
-      if (oldBevelRadiusFilter) {
-        newFilters = [...newFilters, oldBevelRadiusFilter];
-      }
-
-      // Restore invert filter state
-      if (isCurrentlyInverted) {
-        newFilters = newFilters.filter(isNot(isShallowEqual(Konva.Filters.Invert)));
-      } else {
-        newFilters = [Konva.Filters.Invert, ...newFilters];
-      }
-
-      // Find the previous background type
-      let previousBackgroundType: BackgroundType = value === 'black' ? 'white' : 'black';
-
-      return {
-        backgroundType: previousBackgroundType,
-        filters: newFilters,
-        history: newHistory,
-        lastBevelRadiusFilter: oldBevelRadiusFilter,
-      };
-    })
-    .with({ mode: 'horizontalFlip' }, ({ value }) => ({
+    .with({ mode: 'removeFilter' }, ({ filter, index }) => ({
+      filters: [...filters.slice(0, index), filter, ...filters.slice(index)],
       history: newHistory,
-      horizontalFlip: !value,
     }))
+    .with({ mode: 'invert' }, () => ({
+      filters: filters.includes(Konva.Filters.Invert)
+        ? filters.filter(isNot(isShallowEqual(Konva.Filters.Invert)))
+        : [Konva.Filters.Invert, ...filters],
+      history: newHistory,
+    }))
+    .with({ mode: 'horizontalFlip' }, ({ value }) => ({ history: newHistory, horizontalFlip: !value }))
     .with({ mode: 'bevelRadius' }, () => {
       // Find the previous bevelRadius operation to restore the previous state
       let previousBevelRadius = 0;

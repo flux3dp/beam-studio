@@ -3,11 +3,9 @@ import { isNot, isShallowEqual } from 'remeda';
 
 import type { AddFilterOperation, HistoryState, RemoveFilterOperation } from '../types';
 
-import type { BackgroundType } from './detectBackgroundType';
-import { addItemToHistory } from './historyUtils';
+import { addItemToHistory } from './addItemToHistory';
 
 export interface State {
-  backgroundType: BackgroundType;
   bevelRadius: number;
   filters: Filter[];
   history: HistoryState;
@@ -21,11 +19,8 @@ export const addFilter = (
   options: { history?: HistoryState; isFront?: boolean } = { isFront: false },
 ): { filters: Filter[]; history: HistoryState } => {
   const { filters, history } = state;
-  const operation: AddFilterOperation = {
-    filter,
-    isFront: options.isFront!,
-    mode: 'addFilter',
-  };
+  const operation: AddFilterOperation = { filter, isFront: options.isFront!, mode: 'addFilter' };
+  // options.history is used to allow for custom history states
   const newHistory = options.history ?? addItemToHistory(history, operation);
 
   return {
@@ -45,11 +40,8 @@ export const removeFilter = (
 
   if (filterIndex === -1) return state;
 
-  const operation: RemoveFilterOperation = {
-    filter,
-    index: filterIndex,
-    mode: 'removeFilter',
-  };
+  const operation: RemoveFilterOperation = { filter, index: filterIndex, mode: 'removeFilter' };
+  // options.history is used to allow for custom history states
   const newHistory = options.history ?? addItemToHistory(history, operation);
 
   return {
