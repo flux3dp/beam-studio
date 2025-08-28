@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 
 import { Button, ConfigProvider, Flex } from 'antd';
 
-import ImageEditPanelIcons from '@core/app/icons/image-edit-panel/ImageEditPanelIcons';
+import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import Footer from '@core/app/widgets/FullWindowPanel/Footer';
 import Header from '@core/app/widgets/FullWindowPanel/Header';
@@ -26,7 +26,7 @@ function Sider({ handleComplete, onClose }: Props): React.JSX.Element {
         <Flex className={styles['h-100']} justify="space-between" vertical>
           <div>
             <BackButton onClose={onClose}>{langButtons.back_to_beam_studio}</BackButton>
-            <Header icon={<ImageEditPanelIcons.EditImage />} title={lang.title} />
+            <Header icon={<ActionPanelIcons.Stamp />} title={lang.title} />
             <Content />
           </div>
           <Footer>

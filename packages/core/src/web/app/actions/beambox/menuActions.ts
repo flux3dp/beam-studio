@@ -92,7 +92,7 @@ export default {
   IMAGE_CURVE: (): void => showCurvePanel(),
   IMAGE_INVERT: (): Promise<void> => imageEdit.colorInvert(),
   IMAGE_SHARPEN: (): Promise<void> | void => showSharpenPanel(),
-  IMAGE_STAMP: (): Promise<void> => imageEdit.generateStampBevel(),
+  IMAGE_STAMP: (): void => Dialog.showStampMakerPanel(),
   IMAGE_VECTORIZE: (): Promise<void> => imageEdit.traceImage(),
   LAYER_COLOR_CONFIG: (): void => Dialog.showLayerColorConfig(),
   MANAGE_ACCOUNT: (): Promise<void> => externalLinkMemberDashboard(),
