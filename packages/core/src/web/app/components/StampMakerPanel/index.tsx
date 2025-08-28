@@ -20,7 +20,6 @@ import Sider from './components/Sider';
 import TopBar from './components/TopBar';
 import styles from './index.module.scss';
 import { useStampMakerPanelStore } from './store';
-import { detectBackgroundType } from './store/utils/detectBackgroundType';
 
 interface Props {
   image: SVGImageElement;
@@ -37,7 +36,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
     beambox: { photo_edit_panel: langPhoto },
     stamp_maker_panel: lang,
   } = useI18n();
-  const { filters, horizontalFlip, redo, resetState, setBackgroundType, undo } = useStampMakerPanelStore();
+  const { filters, horizontalFlip, redo, resetState, undo } = useStampMakerPanelStore();
   const { isFullColor, isShading, threshold } = useMemo(
     () => ({
       isFullColor: true,
@@ -78,39 +77,6 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
     return getImageData();
   }, [imageSize]);
 
-  const detectAndSetBackgroundType = useCallback(async () => {
-    // Wait for image to be loaded and cached
-    let retries = 0;
-    const maxRetries = 20; // 10 seconds max wait
-
-    while (retries < maxRetries) {
-      if (
-        imageRef.current?.useImageStatus === 'loaded' &&
-        imageRef.current?.isCached() &&
-        imageSize.width &&
-        imageSize.height
-      ) {
-        const currentImageData = imageRef.current
-          ._getCachedSceneCanvas()
-          .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
-
-        const backgroundType = detectBackgroundType(currentImageData);
-
-        console.log('Detected background type:', backgroundType);
-
-        setBackgroundType(backgroundType);
-
-        return;
-      }
-
-      console.log(`Waiting for image to be loaded and cached... (attempt ${retries + 1}/${maxRetries})`);
-      await new Promise((resolve) => setTimeout(resolve, 500));
-      retries++;
-    }
-
-    console.error('Failed to detect background type: Image not loaded or cached after timeout');
-  }, [imageSize, setBackgroundType]);
-
   const handleResetZoom = useCallback(() => {
     const stage = stageRef.current!;
 
@@ -138,13 +104,6 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   useEffect(() => {
     imageData.current = null;
   }, [imageSize, displayImage]);
-
-  // Detect background type when display image changes and image is ready
-  useEffect(() => {
-    if (displayImage && imageSize.width && imageSize.height) {
-      detectAndSetBackgroundType();
-    }
-  }, [displayImage, imageSize, detectAndSetBackgroundType]);
 
   useEffect(() => {
     const updateImages = async () => {

@@ -6,8 +6,3 @@ export const addItemToHistory = ({ index, operations }: HistoryState, item: Hist
 
   return { index: index + 1, operations };
 };
-
-export const getDefaultHistoryState = (): HistoryState => ({
-  index: 0,
-  operations: [],
-});
