@@ -250,21 +250,20 @@ export const getSupportedModules = (
     is1064Enabled = useDocumentStore.getState()['enable-1064'],
     isUvPrintEnabled = useGlobalPreferenceStore.getState()['enable-uv-print-file'],
   } = storeValues || {};
-  let { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
+  const { supportedModules = [LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT] } = workareaConstants[model] ?? {};
+  const excludedModules: LayerModuleType[] = [];
 
-  if (!isUvPrintEnabled) return supportedModules.filter((module) => module !== LayerModule.UV_PRINT);
+  if (!isUvPrintEnabled) excludedModules.push(LayerModule.UV_PRINT);
 
   if (getAddOnInfo(model).multiModules) {
-    const excludedModules: LayerModuleType[] = [];
-
     if (!is4CEnabled) excludedModules.push(...fullColorHeadModules);
 
     if (!is1064Enabled) excludedModules.push(LayerModule.LASER_1064);
-
-    supportedModules = supportedModules.filter((module) => !excludedModules.includes(module));
   }
 
-  return supportedModules;
+  return excludedModules.length
+    ? supportedModules.filter((module) => !excludedModules.includes(module))
+    : supportedModules;
 };
 
 export default workareaConstants;
