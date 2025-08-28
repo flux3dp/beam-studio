@@ -1974,6 +1974,17 @@ const lang: ILang = {
     instagram: '獲取最新靈感、優惠與贈品！',
     youtube: '查看 Beam Studio 教學與手作靈感。',
   },
+  stamp_maker_panel: {
+    bevel_radius: '斜角半徑',
+    horizontal_flip: '水平翻轉',
+    invert: '反轉顏色',
+    title: '印章製作',
+    tool_tip: {
+      bevel_radius: '調整印章的斜角半徑',
+      horizontal_flip: '水平翻轉印章',
+      invert: '反轉印章的顏色',
+    },
+  },
   support: {
     no_vcredist: '請安裝 Visual C++ Redistributable 2015<br/>可以在flux3dp.com找到',
     no_webgl: '您的系統不支援 WebGL，建議您使用其他電腦開啟 Beam Studio',

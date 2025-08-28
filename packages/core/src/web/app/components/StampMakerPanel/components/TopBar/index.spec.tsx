@@ -1,12 +1,10 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-const mockUseI18n = jest.fn();
 const mockUseStampMakerPanelStore = jest.fn();
 const mockRedo = jest.fn();
 const mockUndo = jest.fn();
 
-jest.mock('@core/helpers/useI18n', () => mockUseI18n);
 jest.mock('../../store', () => ({
   useStampMakerPanelStore: mockUseStampMakerPanelStore,
 }));
@@ -20,24 +18,9 @@ describe('test TopBar', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
-    mockUseI18n.mockReturnValue({
-      global: {
-        editing: {
-          redo: 'Redo',
-          reset: 'Reset',
-          undo: 'Undo',
-          zoom_in: 'Zoom In',
-          zoom_out: 'Zoom Out',
-        },
-      },
-    });
-
     mockUseStampMakerPanelStore.mockImplementation((selector) => {
       const state = {
-        history: {
-          index: 1,
-          operations: [{ mode: 'filter' }, { mode: 'filter' }],
-        },
+        history: { index: 1, operations: [{ mode: 'filter' }, { mode: 'filter' }] },
         redo: mockRedo,
         undo: mockUndo,
       };
@@ -113,14 +96,7 @@ describe('test TopBar', () => {
 
   it('should disable undo when index is 0', () => {
     mockUseStampMakerPanelStore.mockImplementation((selector) => {
-      const state = {
-        history: {
-          index: 0,
-          operations: [],
-        },
-        redo: mockRedo,
-        undo: mockUndo,
-      };
+      const state = { history: { index: 0, operations: [] }, redo: mockRedo, undo: mockUndo };
 
       return selector ? selector(state) : state;
     });
@@ -150,10 +126,7 @@ describe('test TopBar', () => {
   it('should disable redo when index equals operations length', () => {
     mockUseStampMakerPanelStore.mockImplementation((selector) => {
       const state = {
-        history: {
-          index: 2,
-          operations: [{ mode: 'filter' }, { mode: 'filter' }],
-        },
+        history: { index: 2, operations: [{ mode: 'filter' }, { mode: 'filter' }] },
         redo: mockRedo,
         undo: mockUndo,
       };
