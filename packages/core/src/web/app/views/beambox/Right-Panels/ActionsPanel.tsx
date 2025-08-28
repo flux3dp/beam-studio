@@ -250,13 +250,6 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const content = {
       array: renderArrayButton(),
       autoFit: renderAutoFitButton(),
-      bevel: renderButtons(
-        'bevel',
-        lang.bevel,
-        () => imageEdit.generateStampBevel(elem as SVGImageElement),
-        <ActionPanelIcons.Bevel />,
-        <ActionPanelIcons.BevelMobile />,
-      ),
       'bg-removal': renderButtons(
         'bg-removal',
         lang.ai_bg_removal,
