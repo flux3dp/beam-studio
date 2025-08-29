@@ -129,6 +129,7 @@ jobs:
           PUBLISH_SUFFIX: ${{ github.event.inputs.publish_suffix || '' }}
           CERT_THUMBPRINT: ${{ secrets.CERT_THUMBPRINT }}
           CERT_SUBJECT: ${{ secrets.CERT_SUBJECT }}
+          WIN_CODESIGN_CREDENTIAL: ${{ secrets.WIN_CODESIGN_CREDENTIAL }}
           WIN_CODESIGN_SERVER: ${{ secrets.WIN_CODESIGN_SERVER }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SWIFTRAY_DAEMON_VERSION: 1.3.12

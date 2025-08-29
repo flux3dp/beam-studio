@@ -20,7 +20,7 @@ module.exports = async function customSign(configuration, packager) {
       console.log('Signing file:', filePath, 'with size:', fileSize);
 
       exec(
-        `curl -X POST -H "Content-Length: ${fileSize}" -H "Content-Type: ${contentType}" -H "File-Name: ${fileName}" --data-binary "@${filePath}" -o "${filePath}" ${process.env.WIN_CODESIGN_SERVER}`,
+        `curl -X POST -H "Content-Length: ${fileSize}" -H "Content-Type: ${contentType}" -H "Credential: ${process.env.WIN_CODESIGN_CREDENTIAL}" -H "File-Name: ${fileName}" --data-binary "@${filePath}" -o "${filePath}" ${process.env.WIN_CODESIGN_SERVER}`,
         { timeout, env: process.env },
         (err, stdout, stderr) => {
           console.log(stdout);
