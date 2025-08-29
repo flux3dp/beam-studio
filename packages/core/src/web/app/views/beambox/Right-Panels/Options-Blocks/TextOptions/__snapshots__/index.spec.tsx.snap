@@ -5,46 +5,44 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
   <div
     class="panel"
   >
-    <div
-      class="font-family"
-    >
-      mock-select title:
-      Font
-       value:
+    <div>
+      mock-font-family-selector value:
       Arial
+       hasMultiValue:
+      false
       <select>
-        <option>
-          Recently Used
+        <option
+          value="Arial"
+        >
+          Arial
         </option>
-        <option />
+        <option
+          value="Times New Roman"
+        >
+          Times New Roman
+        </option>
+        <option
+          value="Helvetica"
+        >
+          Helvetica
+        </option>
       </select>
     </div>
     <div
       class="row"
     >
-      <div
-        class="font-size"
-        title="Size"
-      >
-        <div
-          class="option-input"
-        >
-          mock-unit-input id:
-          font_size
-           defaultValue:
-          200
-           displayMultiValue:
-          false
-          <input />
-        </div>
+      <div>
+        mock-font-size-control value:
+        200
+         hasMultiValue:
+        false
+        <input />
       </div>
-      <div
-        class="font-style"
-      >
-        mock-select title:
-        Style
-         value:
+      <div>
+        mock-font-style-selector value:
         Regular
+         hasMultiValue:
+        false
         <select>
           <option
             value="Regular"
@@ -62,55 +60,29 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
     <div
       class="row"
     >
-      <div
-        class="spacing"
-      >
-        <div
-          class="label"
-          title="Line spacing"
-        >
-          <svgr-url />
-        </div>
-        <div
-          class="option-input"
-        >
-          mock-unit-input id:
-          line_spacing
-           defaultValue:
-          1
-           displayMultiValue:
-          false
-          <input />
-        </div>
+      <div>
+        mock-line-spacing-control value:
+        1
+         hasMultiValue:
+        false
+        <input />
       </div>
-      <div
-        class="spacing"
-      >
-        <div
-          class="label"
-          title="Letter spacing"
-        >
-          <svgr-url />
-        </div>
-        <div
-          class="option-input"
-        >
-          mock-unit-input id:
-          letter_spacing
-           defaultValue:
-          0
-           displayMultiValue:
-          false
-          <input />
-        </div>
+      <div>
+        mock-letter-spacing-control value:
+        0
+         hasMultiValue:
+        false
+        <input />
       </div>
-      <button
-        class="vertical-text"
-        icon="[object Object]"
-        id="vertical-text"
-        title="Vertical text"
-        type="text"
-      />
+      <div>
+        mock-vertical-text-toggle value:
+        false
+        <button
+          id="vertical-text"
+        >
+          Toggle
+        </button>
+      </div>
       <div>
         mock-infill-block elems:
         1
@@ -127,46 +99,44 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
   <div
     class="panel"
   >
-    <div
-      class="font-family"
-    >
-      mock-select title:
-      Font
-       value:
+    <div>
+      mock-font-family-selector value:
       Arial
+       hasMultiValue:
+      false
       <select>
-        <option>
-          Recently Used
+        <option
+          value="Arial"
+        >
+          Arial
         </option>
-        <option />
+        <option
+          value="Times New Roman"
+        >
+          Times New Roman
+        </option>
+        <option
+          value="Helvetica"
+        >
+          Helvetica
+        </option>
       </select>
     </div>
     <div
       class="row"
     >
-      <div
-        class="font-size"
-        title="Size"
-      >
-        <div
-          class="option-input"
-        >
-          mock-unit-input id:
-          font_size
-           defaultValue:
-          200
-           displayMultiValue:
-          false
-          <input />
-        </div>
+      <div>
+        mock-font-size-control value:
+        200
+         hasMultiValue:
+        false
+        <input />
       </div>
-      <div
-        class="font-style"
-      >
-        mock-select title:
-        Style
-         value:
+      <div>
+        mock-font-style-selector value:
         Regular
+         hasMultiValue:
+        false
         <select>
           <option
             value="Regular"
@@ -184,55 +154,29 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
     <div
       class="row"
     >
-      <div
-        class="spacing"
-      >
-        <div
-          class="label"
-          title="Line spacing"
-        >
-          <svgr-url />
-        </div>
-        <div
-          class="option-input"
-        >
-          mock-unit-input id:
-          line_spacing
-           defaultValue:
-          1
-           displayMultiValue:
-          false
-          <input />
-        </div>
+      <div>
+        mock-line-spacing-control value:
+        1
+         hasMultiValue:
+        false
+        <input />
       </div>
-      <div
-        class="spacing"
-      >
-        <div
-          class="label"
-          title="Letter spacing"
-        >
-          <svgr-url />
-        </div>
-        <div
-          class="option-input"
-        >
-          mock-unit-input id:
-          letter_spacing
-           defaultValue:
-          0
-           displayMultiValue:
-          false
-          <input />
-        </div>
+      <div>
+        mock-letter-spacing-control value:
+        0
+         hasMultiValue:
+        false
+        <input />
       </div>
-      <button
-        class="vertical-text"
-        icon="[object Object]"
-        id="vertical-text"
-        title="Vertical text"
-        type="text"
-      />
+      <div>
+        mock-vertical-text-toggle value:
+        false
+        <button
+          id="vertical-text"
+        >
+          Toggle
+        </button>
+      </div>
       <div>
         mock-infill-block elems:
         1
@@ -249,46 +193,44 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
   <div
     class="panel"
   >
-    <div
-      class="font-family"
-    >
-      mock-select title:
-      Font
-       value:
+    <div>
+      mock-font-family-selector value:
       Arial
+       hasMultiValue:
+      false
       <select>
-        <option>
-          Recently Used
+        <option
+          value="Arial"
+        >
+          Arial
         </option>
-        <option />
+        <option
+          value="Times New Roman"
+        >
+          Times New Roman
+        </option>
+        <option
+          value="Helvetica"
+        >
+          Helvetica
+        </option>
       </select>
     </div>
     <div
       class="row"
     >
-      <div
-        class="font-size"
-        title="Size"
-      >
-        <div
-          class="option-input"
-        >
-          mock-unit-input id:
-          font_size
-           defaultValue:
-          200
-           displayMultiValue:
-          false
-          <input />
-        </div>
+      <div>
+        mock-font-size-control value:
+        200
+         hasMultiValue:
+        false
+        <input />
       </div>
-      <div
-        class="font-style"
-      >
-        mock-select title:
-        Style
-         value:
+      <div>
+        mock-font-style-selector value:
         Regular
+         hasMultiValue:
+        false
         <select>
           <option
             value="Regular"
@@ -303,30 +245,16 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
         </select>
       </div>
     </div>
-    <div
-      class="spacing"
-    >
-      <div
-        class="label"
-        title="Letter spacing"
-      >
-        <svgr-url />
-      </div>
-      <div
-        class="option-input"
-      >
-        mock-unit-input id:
-        letter_spacing
-         defaultValue:
-        0
-         displayMultiValue:
-        false
-        <input />
-      </div>
+    <div>
+      mock-letter-spacing-control value:
+      0
+       hasMultiValue:
+      false
+      <input />
     </div>
     <div>
       mock-start-offset-block value:
-      10
+      0
        hasMultiValue:
       false
       <input />
@@ -362,45 +290,30 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
 exports[`TextOptions Mobile view should render correctly for multi-line text in mobile 1`] = `
 <div>
   <div>
-    mock-object-panel-select id:
-    font_family
-     label:
-    Font
+    mock-object-panel-select id:font_family label:Font Family
     <select>
       <option
         value="Arial"
       >
-        <div
-          style="font-family: 'Arial'; max-height: 24px;"
-        >
-          Arial
-        </div>
+        Arial
       </option>
       <option
         value="Times New Roman"
       >
-        <div
-          style="font-family: 'Times New Roman'; max-height: 24px;"
-        >
-          Times New Roman
-        </div>
+        Times New Roman
       </option>
       <option
         value="Helvetica"
       >
-        <div
-          style="font-family: 'Helvetica'; max-height: 24px;"
-        >
-          Helvetica
-        </div>
+        Helvetica
       </option>
     </select>
   </div>
   <div>
-    mock-object-panel-select id:
-    font_style
-     label:
-    Style
+    mock-font-style-selector value:
+    Regular
+     hasMultiValue:
+    false
     <select>
       <option
         value="Regular"
@@ -415,44 +328,34 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
     </select>
   </div>
   <div>
-    mock-object-panel-number id:
-    font_size
-     label:
-    Size
-     value:
+    mock-font-size-control value:
     200
      hasMultiValue:
     false
     <input />
   </div>
   <div>
-    mock-object-panel-number id:
-    line_spacing
-     label:
-    Line spacing
-     value:
+    mock-line-spacing-control value:
     1
      hasMultiValue:
     false
     <input />
   </div>
   <div>
-    mock-object-panel-number id:
-    letter_spacing
-     label:
-    Letter spacing
-     value:
+    mock-letter-spacing-control value:
     0
      hasMultiValue:
     false
     <input />
   </div>
   <div>
-    mock-object-panel-item id:
-    vertical-text
-     label:
-    Vertical text
-    <div />
+    mock-vertical-text-toggle value:
+    false
+    <button
+      id="vertical-text"
+    >
+      Toggle
+    </button>
   </div>
 </div>
 `;
@@ -460,45 +363,30 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
 exports[`TextOptions Mobile view should render correctly for text path in mobile 1`] = `
 <div>
   <div>
-    mock-object-panel-select id:
-    font_family
-     label:
-    Font
+    mock-object-panel-select id:font_family label:Font Family
     <select>
       <option
         value="Arial"
       >
-        <div
-          style="font-family: 'Arial'; max-height: 24px;"
-        >
-          Arial
-        </div>
+        Arial
       </option>
       <option
         value="Times New Roman"
       >
-        <div
-          style="font-family: 'Times New Roman'; max-height: 24px;"
-        >
-          Times New Roman
-        </div>
+        Times New Roman
       </option>
       <option
         value="Helvetica"
       >
-        <div
-          style="font-family: 'Helvetica'; max-height: 24px;"
-        >
-          Helvetica
-        </div>
+        Helvetica
       </option>
     </select>
   </div>
   <div>
-    mock-object-panel-select id:
-    font_style
-     label:
-    Style
+    mock-font-style-selector value:
+    Regular
+     hasMultiValue:
+    false
     <select>
       <option
         value="Regular"
@@ -513,22 +401,14 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
     </select>
   </div>
   <div>
-    mock-object-panel-number id:
-    font_size
-     label:
-    Size
-     value:
+    mock-font-size-control value:
     200
      hasMultiValue:
     false
     <input />
   </div>
   <div>
-    mock-object-panel-number id:
-    letter_spacing
-     label:
-    Letter spacing
-     value:
+    mock-letter-spacing-control value:
     0
      hasMultiValue:
     false
@@ -536,7 +416,7 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
   </div>
   <div>
     mock-start-offset-block value:
-    10
+    0
      hasMultiValue:
     false
     <input />
@@ -571,45 +451,30 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
 exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
 <div>
   <div>
-    mock-object-panel-select id:
-    font_family
-     label:
-    Font
+    mock-object-panel-select id:font_family label:Font Family
     <select>
       <option
         value="Arial"
       >
-        <div
-          style="font-family: 'Arial'; max-height: 24px;"
-        >
-          Arial
-        </div>
+        Arial
       </option>
       <option
         value="Times New Roman"
       >
-        <div
-          style="font-family: 'Times New Roman'; max-height: 24px;"
-        >
-          Times New Roman
-        </div>
+        Times New Roman
       </option>
       <option
         value="Helvetica"
       >
-        <div
-          style="font-family: 'Helvetica'; max-height: 24px;"
-        >
-          Helvetica
-        </div>
+        Helvetica
       </option>
     </select>
   </div>
   <div>
-    mock-object-panel-select id:
-    font_style
-     label:
-    Style
+    mock-font-style-selector value:
+    Regular
+     hasMultiValue:
+    false
     <select>
       <option
         value="Regular"
@@ -624,44 +489,34 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
     </select>
   </div>
   <div>
-    mock-object-panel-number id:
-    font_size
-     label:
-    Size
-     value:
+    mock-font-size-control value:
     200
      hasMultiValue:
     false
     <input />
   </div>
   <div>
-    mock-object-panel-number id:
-    line_spacing
-     label:
-    Line spacing
-     value:
+    mock-line-spacing-control value:
     1
      hasMultiValue:
     false
     <input />
   </div>
   <div>
-    mock-object-panel-number id:
-    letter_spacing
-     label:
-    Letter spacing
-     value:
+    mock-letter-spacing-control value:
     0
      hasMultiValue:
     false
     <input />
   </div>
   <div>
-    mock-object-panel-item id:
-    vertical-text
-     label:
-    Vertical text
-    <div />
+    mock-vertical-text-toggle value:
+    false
+    <button
+      id="vertical-text"
+    >
+      Toggle
+    </button>
   </div>
 </div>
 `;

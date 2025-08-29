@@ -1,4 +1,3 @@
-<<<<<<< Updated upstream
 import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
@@ -20,8 +19,8 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
-import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock';
-import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/VerticalAlignBlock';
+import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/StartOffsetBlock';
+import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VerticalAlignBlock';
 import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
@@ -51,6 +50,7 @@ const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 const isLocalFont = (font: GeneralFont) => 'path' in font;
 const maxHistory = 5;
 
+// TODO: add tests
 interface Props {
   elem: Element;
   isTextPath?: boolean;
@@ -630,7 +630,3 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 };
 
 export default TextOptions;
-=======
-// Re-export the refactored TextOptions component
-export { default } from './TextOptions';
->>>>>>> Stashed changes

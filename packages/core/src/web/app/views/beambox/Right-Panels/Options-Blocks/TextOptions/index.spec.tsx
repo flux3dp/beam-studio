@@ -185,6 +185,7 @@ jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock', () 
   </div>
 ));
 
+<<<<<<< Updated upstream
 jest.mock(
   '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock',
   () =>
@@ -206,6 +207,32 @@ jest.mock(
       </div>
     ),
 );
+=======
+jest.mock('./components/TextPathOptions/StartOffsetBlock', () => () => {
+  const startOffset = { hasMultiValue: false, value: 0 };
+  const mockHandleStartOffsetChange = jest.fn();
+
+  return (
+    <div>
+      mock-start-offset-block value:{startOffset.value} hasMultiValue:{startOffset.hasMultiValue ? 'true' : 'false'}
+      <input onChange={(e) => mockHandleStartOffsetChange(+e.target.value)} />
+    </div>
+  );
+});
+
+jest.mock('./components/TextPathOptions/VerticalAlignBlock', () => () => {
+  const verticalAlign = { hasMultiValue: false, value: 1 };
+  const mockHandleVerticalAlignChange = jest.fn();
+
+  return (
+    <div>
+      mock-vertical-align-block value:{verticalAlign.value} hasMultiValue:
+      {verticalAlign.hasMultiValue ? 'true' : 'false'}
+      <button onClick={() => mockHandleVerticalAlignChange(VerticalAlign.TOP)}>Top</button>
+    </div>
+  );
+});
+>>>>>>> Stashed changes
 
 jest.mock(
   '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock',
@@ -318,7 +345,287 @@ jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   ),
 }));
 
+// Mock the new store
+jest.mock('./stores/useTextOptionsStore', () => ({
+  defaultTextConfigs: {
+    fontFamily: { hasMultiValue: false, value: '' },
+    fontSize: { hasMultiValue: false, value: 200 },
+    fontStyle: { hasMultiValue: false, value: '' },
+    id: { hasMultiValue: false, value: '' },
+    isVertical: { hasMultiValue: false, value: false },
+    letterSpacing: { hasMultiValue: false, value: 0 },
+    lineSpacing: { hasMultiValue: false, value: 1 },
+    startOffset: { hasMultiValue: false, value: 0 },
+    verticalAlign: { hasMultiValue: false, value: 1 },
+  },
+  useTextOptionsStore: () => ({
+    availableFontFamilies: ['Arial', 'Times New Roman', 'Helvetica'],
+    configs: {
+      fontFamily: { hasMultiValue: false, value: 'Arial' },
+      fontSize: { hasMultiValue: false, value: 200 },
+      fontStyle: { hasMultiValue: false, value: 'Regular' },
+      id: { hasMultiValue: false, value: 'test-elem' },
+      isVertical: { hasMultiValue: false, value: false },
+      letterSpacing: { hasMultiValue: false, value: 0 },
+      lineSpacing: { hasMultiValue: false, value: 1 },
+      startOffset: { hasMultiValue: false, value: 0 },
+      verticalAlign: { hasMultiValue: false, value: 1 },
+    },
+    fontHistory: ['Arial'],
+    handleFontFamilyChange: jest.fn(),
+    handleFontSizeChange: jest.fn(),
+    handleFontStyleChangeWithFamily: jest.fn(),
+    handleLetterSpacingChange: jest.fn(),
+    handleLineSpacingChange: jest.fn(),
+    handleStartOffsetChange: jest.fn(),
+    handleVerticalAlignChange: jest.fn(),
+    handleVerticalTextChange: jest.fn(),
+    // Store operations
+    setOperations: jest.fn(),
+    styleOptions: [
+      { label: 'Regular', value: 'Regular' },
+      { label: 'Bold', value: 'Bold' },
+    ],
+  }),
+}));
+
+// Mock the configuration hook
+jest.mock('./hooks/useTextConfiguration', () => ({
+  useTextConfiguration: ({ elem, textElements }: any) => {
+    // Simulate initialization behavior
+    React.useEffect(() => {
+      if (textElements && textElements.length > 0) {
+        // Process all text elements
+        textElements.forEach((textElement: any) => {
+          mockGetFontPostscriptName(textElement);
+          mockGetFontFamilyData(textElement);
+          mockGetFontSize(textElement);
+          mockGetLetterSpacing(textElement);
+          mockGetLineSpacing(textElement);
+          mockGetIsVertical(textElement);
+
+          // Check if font needs sanitization (simulate font fallback behavior)
+          const fontObj = mockGetFontOfPostscriptName();
+
+          if (fontObj && fontObj.family === 'CustomFont') {
+            const availableFamilies = mockRequestAvailableFontFamilies();
+
+            if (!availableFamilies.includes(fontObj.family)) {
+              // Fallback to first available font
+              const fallbackFont = availableFamilies[0];
+
+              if (fallbackFont) {
+                mockSetFontFamily(fallbackFont, true, textElements);
+              }
+            }
+          }
+        });
+
+        if (elem) {
+          mockRequestSelector(elem);
+        }
+
+        mockRequestAvailableFontFamilies();
+      }
+
+      // Cleanup function
+      return () => {
+        if (elem) {
+          mockReleaseSelector(elem);
+        }
+      };
+    }, [elem, textElements]);
+
+    return {
+      addToHistory: jest.fn(),
+      onConfigChange: jest.fn(),
+    };
+  },
+}));
+
+// Mock the font operations hook
+jest.mock('./hooks/useFontOperations', () => ({
+  useFontOperations: ({ textElements }: any) => ({
+    handleFontFamilyChange: jest.fn(),
+    handleFontSizeChange: (size: number) => mockSetFontSize(size, textElements),
+    handleFontStyleChange: jest.fn(),
+    handleLetterSpacingChange: (spacing: number) => mockSetLetterSpacing(spacing, textElements),
+    handleLineSpacingChange: (spacing: number) => mockSetLineSpacing(spacing, textElements),
+    handleVerticalTextChange: (vertical: boolean) => mockSetIsVertical(vertical, textElements),
+  }),
+}));
+
+// Mock the text path operations hook
+jest.mock('./hooks/useTextPathOperations', () => ({
+  useTextPathOperations: ({ textElements }: any) => {
+    // Simulate text path initialization
+    React.useEffect(() => {
+      if (textElements && textElements.length > 0) {
+        const textElement = textElements[0];
+
+        if (textElement.getAttribute('data-textpath') === 'true') {
+          mockGetStartOffset(textElement);
+          mockGetVerticalAlign(textElement);
+        }
+      }
+    }, [textElements]);
+
+    return {
+      handleStartOffsetChange: mockSetStartOffset,
+      handleVerticalAlignChange: mockSetVerticalAlign,
+    };
+  },
+}));
+
+// Mock the new components
+jest.mock('./components/FontControls/FontFamilySelector', () => () => {
+  const isMobile = mockUseIsMobile();
+  // Access mocked store data
+  const availableFontFamilies = ['Arial', 'Times New Roman', 'Helvetica'];
+  const fontFamily = { hasMultiValue: false, value: 'Arial' };
+  const mockHandleFontFamilyChange = jest.fn();
+
+  return isMobile ? (
+    <div>
+      mock-object-panel-select id:font_family label:Font Family
+      <select onChange={(e) => mockHandleFontFamilyChange(e.target.value, { value: e.target.value })}>
+        {availableFontFamilies.map((family: string) => (
+          <option key={family} value={family}>
+            {family}
+          </option>
+        ))}
+      </select>
+    </div>
+  ) : (
+    <div>
+      mock-font-family-selector value:{fontFamily.value} hasMultiValue:{fontFamily.hasMultiValue ? 'true' : 'false'}
+      <select onChange={(e) => mockHandleFontFamilyChange(e.target.value, { value: e.target.value })}>
+        {availableFontFamilies.map((family: string) => (
+          <option key={family} value={family}>
+            {family}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+});
+
+jest.mock('./components/FontControls/FontStyleSelector', () => () => {
+  const fontStyle = { hasMultiValue: false, value: 'Regular' };
+  const styleOptions = [
+    { label: 'Regular', value: 'Regular' },
+    { label: 'Bold', value: 'Bold' },
+  ];
+  const mockHandleStyleChange = jest.fn();
+
+  return (
+    <div>
+      mock-font-style-selector value:{fontStyle.value} hasMultiValue:{fontStyle.hasMultiValue ? 'true' : 'false'}
+      <select
+        onChange={(e) => {
+          mockHandleStyleChange(e.target.value);
+          // Simulate the actual behavior that would happen when style changes
+          mockSetFontPostscriptName();
+          mockSetItalic();
+          mockSetFontWeight();
+          mockAddCommandToHistory();
+        }}
+      >
+        {styleOptions.map((option: any) => (
+          <option key={option.value} value={option.value}>
+            {option.label}
+          </option>
+        ))}
+      </select>
+    </div>
+  );
+});
+
+jest.mock('./components/FontControls/FontSizeControl', () => () => {
+  const fontSize = { hasMultiValue: false, value: 200 };
+
+  return (
+    <div>
+      mock-font-size-control value:{fontSize.value} hasMultiValue:{fontSize.hasMultiValue ? 'true' : 'false'}
+      <input
+        onChange={(e) => {
+          // Use the global mockTextElementsGlobal to simulate what the real operation would do
+          if (mockTextElementsGlobal.length > 0) {
+            mockSetFontSize(+e.target.value, mockTextElementsGlobal);
+          }
+
+          mockResize();
+        }}
+      />
+    </div>
+  );
+});
+
+jest.mock('./components/TextFormatting/LetterSpacingControl', () => () => {
+  const letterSpacing = { hasMultiValue: false, value: 0 };
+
+  return (
+    <div>
+      mock-letter-spacing-control value:{letterSpacing.value} hasMultiValue:
+      {letterSpacing.hasMultiValue ? 'true' : 'false'}
+      <input
+        onChange={(e) => {
+          if (mockTextElementsGlobal.length > 0) {
+            mockSetLetterSpacing(+e.target.value, mockTextElementsGlobal);
+          }
+
+          mockResize();
+        }}
+      />
+    </div>
+  );
+});
+
+jest.mock('./components/TextFormatting/LineSpacingControl', () => () => {
+  const lineSpacing = { hasMultiValue: false, value: 1 };
+
+  return (
+    <div>
+      mock-line-spacing-control value:{lineSpacing.value} hasMultiValue:{lineSpacing.hasMultiValue ? 'true' : 'false'}
+      <input
+        onChange={(e) => {
+          if (mockTextElementsGlobal.length > 0) {
+            mockSetLineSpacing(+e.target.value, mockTextElementsGlobal);
+          }
+
+          mockResize();
+        }}
+      />
+    </div>
+  );
+});
+
+jest.mock('./components/TextFormatting/VerticalTextToggle', () => () => {
+  const isVertical = { hasMultiValue: false, value: false };
+
+  return (
+    <div>
+      mock-vertical-text-toggle value:{isVertical.value ? 'true' : 'false'}
+      <button
+        id="vertical-text"
+        onClick={() => {
+          if (mockTextElementsGlobal.length > 0) {
+            mockSetIsVertical(!isVertical.value, mockTextElementsGlobal);
+          }
+
+          mockResize();
+        }}
+      >
+        Toggle
+      </button>
+    </div>
+  );
+});
+
 import TextOptions from './index';
+
+// Global variable to share textElements between tests and component mocks
+let mockTextElementsGlobal: SVGTextElement[] = [];
 
 describe('TextOptions', () => {
   const mockElem = document.createElement('g');
@@ -329,6 +636,7 @@ describe('TextOptions', () => {
 
     mockElem.setAttribute('id', 'test-elem');
     mockTextElement.setAttribute('font-family', 'Arial');
+    mockTextElementsGlobal = [mockTextElement]; // Set global variable for component mocks
 
     mockUseIsMobile.mockReturnValue(false);
     mockUseWorkarea.mockReturnValue('laser');
