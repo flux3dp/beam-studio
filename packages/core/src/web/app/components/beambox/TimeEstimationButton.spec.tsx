@@ -17,7 +17,9 @@ jest.mock('@core/app/actions/alert-caller', () => ({
 const mockCheckConnection = jest.fn();
 
 jest.mock('@core/helpers/api/discover', () => ({
-  checkConnection: (...args) => mockCheckConnection(...args),
+  discoverManager: {
+    checkConnection: (...args) => mockCheckConnection(...args),
+  },
 }));
 
 const mockEstimateTime = jest.fn();

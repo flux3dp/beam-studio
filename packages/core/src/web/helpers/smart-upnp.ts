@@ -1,18 +1,23 @@
-/* eslint-disable no-redeclare */
-
 import os from '@core/implementations/os';
 import storage from '@core/implementations/storage';
+
+import type { DiscoverManager } from './api/discover';
 
 const AUTO_POKE_INTERVAL = 3000;
 const AUTO_DISCOVER = 1000;
 
-var Discover = null,
-  autoPokes = [],
-  guessIPs = [],
-  solidIPs = [];
+type AutoPoke = {
+  clock: NodeJS.Timeout;
+  ip: string;
+};
+
+let discoverManager: DiscoverManager;
+let autoPokes: AutoPoke[] = [];
+let guessIPs: string[] = [];
+let solidIPs: string[] = [];
 
 const self = {
-  addSolidIP: function (ip) {
+  addSolidIP: function (ip: string) {
     if (solidIPs.includes(ip)) {
       return;
     }
@@ -26,9 +31,16 @@ const self = {
     self.startPoke(ip);
   },
 
+  clear: () => {
+    autoPokes.forEach((x) => self.stopPoke(x));
+    autoPokes = [];
+    guessIPs = [];
+    solidIPs = [];
+  },
+
   getLocalAddresses: function () {
     var ifaces = os.networkInterfaces();
-    var addresses = [];
+    const addresses: string[] = [];
 
     Object.keys(ifaces).forEach(function (ifname) {
       // eslint-disable-next-line ts/no-unused-vars
@@ -54,19 +66,17 @@ const self = {
   /**
    * Generates smart guess ip lists
    */
-  guessFromIP: (targetIP) => {
+  guessFromIP: (targetIP: string) => {
     const ipv4Pattern = /^(\d{1,3}\.\d{1,3}\.\d{1,3})\.(\d{1,3})$/g;
     // if(ipv4Pattern.test(targetIP) === false) return false;
-    var match = ipv4Pattern.exec(targetIP),
-      i = 0,
-      localIndex = Number.parseInt(match[2]);
+    const match = ipv4Pattern.exec(targetIP);
 
-    if (match == null) {
-      return;
-    }
+    if (!match) return;
 
-    for (i = localIndex + 1; i < Math.min(localIndex + 20, 255); i++) {
-      var gip = match[1] + '.' + i;
+    const localIndex = Number.parseInt(match[2]);
+
+    for (let i = localIndex + 1; i < Math.min(localIndex + 20, 255); i++) {
+      const gip = match[1] + '.' + i;
 
       if (guessIPs.includes(gip)) {
         continue;
@@ -74,8 +84,8 @@ const self = {
 
       guessIPs.push(gip);
     }
-    for (i = localIndex - 1; i > Math.max(0, localIndex - 20); i--) {
-      var gip = match[1] + '.' + i;
+    for (let i = localIndex - 1; i > Math.max(0, localIndex - 20); i--) {
+      const gip = match[1] + '.' + i;
 
       if (guessIPs.includes(gip)) {
         continue;
@@ -83,8 +93,8 @@ const self = {
 
       guessIPs.push(gip);
     }
-    for (i = 1; i < 255; i++) {
-      var gip = match[1] + '.' + i;
+    for (let i = 1; i < 255; i++) {
+      const gip = match[1] + '.' + i;
 
       if (guessIPs.includes(gip)) {
         continue;
@@ -94,16 +104,12 @@ const self = {
     }
   },
 
-  /**
-   * Init
-   * @param {Websocket} Discover ws object
-   */
-  init: (discoverObj) => {
-    Discover = discoverObj;
+  init: (discover: DiscoverManager) => {
+    discoverManager = discover;
 
     if (storage.get('guessing_poke')) {
       setInterval(function () {
-        if (Discover.countDevices() === 0) {
+        if (discoverManager.countDevices() === 0) {
           self.pokeNext();
         }
       }, AUTO_DISCOVER);
@@ -113,15 +119,13 @@ const self = {
     var myIPAddresses = self.getLocalAddresses();
 
     myIPAddresses.forEach((x) => self.guessFromIP(x));
-    // console.log(guessIPs);
   },
 
   /**
-   * Return if smart unpn has been initiated
-   * @returns {Bool} if smart unpn has been initiated
+   * Return if smart upnp has been initiated
    */
-  isInitiated: () => {
-    return Discover ? true : false;
+  isInitiated: (): boolean => {
+    return Boolean(discoverManager);
   },
 
   pokeNext: function () {
@@ -129,10 +133,11 @@ const self = {
       return;
     }
 
-    var ip = guessIPs.shift();
+    const ip = guessIPs.shift();
 
-    Discover.poke(ip);
-    Discover.testTcp(ip);
+    if (ip) {
+      discoverManager.poke(ip, { isTesting: true });
+    }
   },
 
   /**
@@ -140,7 +145,7 @@ const self = {
    * @param {String} targetIP
    * @returns {Object} An auto-upnp-poke object
    */
-  startPoke: (targetIP) => {
+  startPoke: (targetIP: string) => {
     var pokeIP = targetIP;
 
     if (!self.isInitiated()) {
@@ -151,23 +156,19 @@ const self = {
       return;
     }
 
-    var autopoke = {
+    const autoPoke = {
       clock: setInterval(function () {
-        Discover.poke(pokeIP);
+        discoverManager.poke(pokeIP, { withTcp: false });
       }, AUTO_POKE_INTERVAL),
       ip: pokeIP,
     };
 
-    autoPokes.push(autopoke);
+    autoPokes.push(autoPoke);
 
-    return autopoke;
+    return autoPoke;
   },
 
-  /**
-   * Stop auto poke object
-   * @param {Number} obj.clock
-   */
-  stopPoke: (obj) => {
+  stopPoke: (obj: AutoPoke) => {
     clearInterval(obj.clock);
   },
 };

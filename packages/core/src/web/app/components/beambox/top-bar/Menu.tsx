@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
 
@@ -7,7 +7,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import Discover from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -21,7 +21,7 @@ interface Props {
 }
 
 export default function Menu({ email }: Props): React.JSX.Element {
-  const eventEmitter = React.useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
+  const eventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const [devices, setDevices] = useState(Array<IDeviceInfo>());
   const shouldShowRulers = useGlobalPreferenceStore((state) => state.show_rulers);
   const shouldShowGrids = useGlobalPreferenceStore((state) => state.show_grids);
@@ -48,7 +48,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   };
   const isMobile = useIsMobile();
 
-  React.useEffect(() => {
+  useEffect(() => {
     eventEmitter.on('ENABLE_MENU_ITEM', (items: string[]) => {
       for (let i = 0; i < items.length; i += 1) {
         const item = items[i] as keyof typeof menuItemUpdater;
@@ -71,8 +71,8 @@ export default function Menu({ email }: Props): React.JSX.Element {
     };
   });
 
-  React.useEffect(() => {
-    const discover = Discover('top-bar-menu', (newDevices: IDeviceInfo[]) => {
+  useEffect(() => {
+    const unregister = discoverManager.register('top-bar-menu', (newDevices: IDeviceInfo[]) => {
       newDevices.sort((a, b) => (a.name >= b.name ? 1 : -1));
 
       if (newDevices.map((d) => d.name).join('') !== devices.map((d) => d.name).join('')) {
@@ -80,9 +80,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
       }
     });
 
-    return () => {
-      discover.removeListener('top-bar-menu');
-    };
+    return unregister;
   }, [devices]);
 
   const {

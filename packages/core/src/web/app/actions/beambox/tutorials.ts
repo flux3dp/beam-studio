@@ -3,24 +3,24 @@ import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import { generateInterfaceTutorial, generateNewUserTutorial } from '@core/app/constants/tutorial-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import Discover from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import i18n from '@core/helpers/i18n';
 
 const getMachineForTutorial = async () =>
   new Promise((resolve) => {
-    let discover: null | ReturnType<typeof Discover> = Discover('tutorial', (machines) => {
+    let resolved = false;
+    const unregister = discoverManager.register('tutorial', (machines) => {
       if (machines.length > 0) {
         resolve(true);
-        discover?.removeListener('tutorial');
-        discover = null;
+        unregister();
+        resolved = true;
       }
     });
 
     setTimeout(() => {
-      if (discover) {
+      if (!resolved) {
         resolve(false);
-        discover?.removeListener('tutorial');
-        discover = null;
+        unregister();
       }
     }, 3000);
   });

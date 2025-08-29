@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Modal, Spin } from 'antd';
@@ -8,7 +8,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import discover, { SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
+import { discoverManager, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
@@ -29,33 +29,27 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
   const [deviceList, setDeviceList] = useState(Array.of<IDeviceInfo>());
   const selectedDevice = TopBarController.getSelectedDevice();
   const selectedKey = selectedDevice?.serial;
-  const discoverer = useMemo(
-    () =>
-      discover('device-selector', (discoverdDevices) => {
-        const filteredDevices = discoverdDevices.filter((device) => device.serial !== 'XXXXXXXXXX');
 
-        filteredDevices.sort((deviceA, deviceB) => {
-          if (deviceA.serial === selectedKey && deviceB.serial !== selectedKey) {
-            return -1;
-          }
+  useEffect(() => {
+    const unregister = discoverManager.register('device-selector', (discoverdDevices) => {
+      const filteredDevices = discoverdDevices.filter((device) => device.serial !== 'XXXXXXXXXX');
 
-          if (deviceA.serial !== selectedKey && deviceB.serial === selectedKey) {
-            return 1;
-          }
+      filteredDevices.sort((deviceA, deviceB) => {
+        if (deviceA.serial === selectedKey && deviceB.serial !== selectedKey) {
+          return -1;
+        }
 
-          return deviceA.name.localeCompare(deviceB.name);
-        });
-        setDeviceList(filteredDevices);
-      }),
-    [selectedKey],
-  );
+        if (deviceA.serial !== selectedKey && deviceB.serial === selectedKey) {
+          return 1;
+        }
 
-  useEffect(
-    () => () => {
-      discoverer.removeListener('device-selector');
-    },
-    [discoverer],
-  );
+        return deviceA.name.localeCompare(deviceB.name);
+      });
+      setDeviceList(filteredDevices);
+    });
+
+    return unregister;
+  }, [selectedKey]);
 
   const status = lang.machine_status;
   const timeout = useRef<NodeJS.Timeout | undefined>(undefined);

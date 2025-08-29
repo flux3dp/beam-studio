@@ -8,7 +8,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
-import { checkConnection } from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
@@ -358,7 +358,7 @@ const convertTextToPathByGhost = async (
       throw new Error('Web font');
     }
 
-    if (web && !checkConnection()) {
+    if (web && !discoverManager.checkConnection()) {
       throw new Error('No connection');
     }
 
@@ -661,7 +661,7 @@ const convertTextToPath = async (
     }
 
     if (preferGhost) {
-      if (isWeb() && !checkConnection()) {
+      if (isWeb() && !discoverManager.checkConnection()) {
         Alert.popUp({
           buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
           buttonType: AlertConstants.CUSTOM_CANCEL,

@@ -24,7 +24,7 @@ import announcementHelper from '@core/helpers/announcement-helper';
 import aiExtension from '@core/helpers/api/ai-extension';
 import AlertConfig from '@core/helpers/api/alert-config';
 import cloud from '@core/helpers/api/cloud';
-import { checkConnection } from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import fluxId, { recordMachines } from '@core/helpers/api/flux-id';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -72,6 +72,7 @@ class BeamboxInit {
     aiExtension.init();
 
     if (isWeb() || tabController.getIsWelcomeTab()) {
+      discoverManager.setMaster(true);
       setTimeout(recordMachines, 10000);
     }
   }
@@ -81,7 +82,7 @@ class BeamboxInit {
 
     const globalPreference = useGlobalPreferenceStore.getState();
     const isNewUser = Boolean(storage.get('new-user'));
-    const hasMachineConnection = checkConnection();
+    const hasMachineConnection = discoverManager.checkConnection();
 
     if (isWeb() && navigator.maxTouchPoints >= 1) {
       const res = await fluxId.getPreference('did_gesture_tutorial', true);
@@ -256,13 +257,13 @@ class BeamboxInit {
   private showFirstCalibrationDialog = async (): Promise<boolean> => {
     const isNewUser = storage.get('new-user');
     const hasDoneFirstCali = AlertConfig.read('done-first-cali');
-    let hasMachineConnection = checkConnection();
+    let hasMachineConnection = discoverManager.checkConnection();
     // in web, wait for websocket connection
     const web = isWeb();
 
     if (web && !hasDoneFirstCali && !hasMachineConnection) {
       await new Promise((r) => setTimeout(r, 1000));
-      hasMachineConnection = checkConnection();
+      hasMachineConnection = discoverManager.checkConnection();
     }
 
     const shouldShow = web ? hasMachineConnection && !hasDoneFirstCali : isNewUser || !hasDoneFirstCali;

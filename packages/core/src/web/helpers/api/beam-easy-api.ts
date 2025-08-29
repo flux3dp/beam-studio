@@ -3,7 +3,7 @@ import { EventEmitter } from 'eventemitter3';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
-import Discover from '@core/helpers/api/discover';
+import { discoverManager } from '@core/helpers/api/discover';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import DeviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -49,7 +49,7 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     super();
     this.machines = [];
     this.isWorking = false;
-    Discover('easy-manipulator', (machines) => {
+    discoverManager.register('easy-manipulator', (machines) => {
       this.machines = Object.values(machines).filter((m) => m.model.startsWith('fb'));
 
       if (this.device) {

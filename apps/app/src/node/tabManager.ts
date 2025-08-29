@@ -107,6 +107,14 @@ class TabManager {
       this.sendToOtherViews(e.sender.id, TabEvents.StorageValueChanged, key, value);
     });
 
+    ipcMain.on(TabEvents.UpdateDevices, (e, data) => {
+      this.sendToOtherViews(e.sender.id, TabEvents.UpdateDevices, data);
+    });
+
+    ipcMain.on(TabEvents.PokeIP, (e, targetIP: string, options = {}) => {
+      this.sendToView(this.welcomeTabId, TabEvents.PokeIP, targetIP, options);
+    });
+
     const handleWindowSizeChanged = () => {
       const tabs = Object.values(this.tabsMap);
 
@@ -481,9 +489,9 @@ class TabManager {
     }
   };
 
-  sendToView = (id: number, event: string, data?: unknown): void => {
+  sendToView = (id: number, event: string, ...data: unknown[]): void => {
     if (this.tabsMap[id]) {
-      this.tabsMap[id].view.webContents.send(event, data);
+      this.tabsMap[id].view.webContents.send(event, ...data);
     }
   };
 
@@ -497,17 +505,17 @@ class TabManager {
     });
   };
 
-  sendToAllViews = (event: string, data?: unknown): void => {
+  sendToAllViews = (event: string, ...data: unknown[]): void => {
     const views = this.getAllViews();
 
-    views.forEach((view) => view.webContents?.send(event, data));
+    views.forEach((view) => view.webContents?.send(event, ...data));
   };
 
-  sendToFocusedView = (event: string, data?: unknown): void => {
+  sendToFocusedView = (event: string, ...data: unknown[]): void => {
     const { focusedId, tabsMap } = this;
 
     if (tabsMap[focusedId]) {
-      tabsMap[focusedId].view.webContents?.send(event, data);
+      tabsMap[focusedId].view.webContents?.send(event, ...data);
     }
   };
 }

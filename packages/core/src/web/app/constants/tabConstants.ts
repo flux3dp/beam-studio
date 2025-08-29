@@ -7,6 +7,7 @@ export enum TabEvents {
   GlobalPreferenceChanged = 'global-preference-changed',
   ImportFileInTab = 'import-file-in-tab',
   MoveTab = 'move-tab',
+  PokeIP = 'poke-ip',
   ReloadSettings = 'reload-settings',
   SetTabMode = 'set-tab-mode',
   SetTabTitle = 'set-tab-title',
@@ -14,6 +15,7 @@ export enum TabEvents {
   TabBlurred = 'tab-blurred',
   TabFocused = 'tab-focused',
   TabUpdated = 'tab-updated',
+  UpdateDevices = 'tab-update-devices',
   UpdateRecentFiles = 'update-recent-files',
   UpdateUser = 'update-user',
 }

@@ -21,7 +21,9 @@ jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController',
 const mockCheckConnection = jest.fn();
 
 jest.mock('@core/helpers/api/discover', () => ({
-  checkConnection: (...args) => mockCheckConnection(...args),
+  discoverManager: {
+    checkConnection: (...args) => mockCheckConnection(...args),
+  },
 }));
 
 jest.mock('@core/helpers/i18n', () => ({

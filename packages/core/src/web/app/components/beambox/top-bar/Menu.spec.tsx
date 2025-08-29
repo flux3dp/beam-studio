@@ -24,10 +24,13 @@ jest.mock('@core/implementations/browser', () => ({
   open,
 }));
 
-const mockDiscoverRemoveListener = jest.fn();
+const mockRegister = jest.fn();
+const mockUnregister = jest.fn();
 
-jest.mock('@core/helpers/api/discover', () => () => ({
-  removeListener: mockDiscoverRemoveListener,
+jest.mock('@core/helpers/api/discover', () => ({
+  discoverManager: {
+    register: mockRegister,
+  },
 }));
 
 const emit = jest.fn();
@@ -50,6 +53,7 @@ describe('should render correctly', () => {
   beforeEach(() => {
     Object.assign(mockGlobalPreference, defaultGlobalPreference);
     mockUseGlobalPreferenceStore.mockImplementation((selector) => selector(mockGlobalPreference));
+    mockRegister.mockReturnValue(mockUnregister);
   });
 
   test('open the browser and reach the correct page', () => {
