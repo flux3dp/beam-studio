@@ -19,6 +19,7 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
+import GoogleFontsPanel from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/GoogleFontsPanel';
 import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock';
 import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/VerticalAlignBlock';
 import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
@@ -103,6 +104,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
   const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
+  const [showGoogleFontsPanel, setShowGoogleFontsPanel] = useState(false);
   const selectorRef = useRef<null | Selector>(null);
   const workarea = useWorkarea();
   const showVariableText = useMemo(isVariableTextSupported, [workarea]);
@@ -259,6 +261,13 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   };
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
+    // Check if this is the "More Google Fonts" option
+    if (newFamily === 'more-google-fonts') {
+      setShowGoogleFontsPanel(true);
+
+      return;
+    }
+
     const family = option.family ?? newFamily;
     const newFont = FontFuncs.requestFontsOfTheFontFamily(family)[0];
 
@@ -292,8 +301,73 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     onConfigChange('fontStyle', newStyle);
   };
 
+  const handleGoogleFontSelect = useCallback(
+    async (googleFontFamily: string) => {
+      // Create a synthetic font object for Google Fonts
+      const googleFont: GeneralFont = {
+        family: googleFontFamily,
+        italic: false,
+        postscriptName: googleFontFamily.replace(/\s+/g, '') + '-Regular',
+        style: 'Regular',
+        weight: 400,
+      };
+
+      // Add to history first
+      addToHistory(googleFont);
+
+      // Apply the font directly without monotype style check since it's Google Fonts
+      const batchCmd = new history.BatchCommand('Change Font family');
+
+      [
+        textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
+        textEdit.setItalic(googleFont.italic, true, textElements),
+        textEdit.setFontWeight(googleFont.weight, true, textElements),
+        textEdit.setFontFamily(googleFontFamily, true, textElements),
+      ].forEach((cmd) => {
+        if (cmd) batchCmd.addSubCommand(cmd);
+      });
+      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+
+      // Wait for the web font to load
+      await waitForWebFont();
+
+      onConfigChange('fontFamily', googleFontFamily);
+      onConfigChange('fontStyle', 'Regular');
+    },
+    [addToHistory, textElements, waitForWebFont, onConfigChange],
+  );
+
   const renderFontFamilyBlock = (): React.JSX.Element => {
     const options: FontOption[] = availableFontFamilies.map((option) => getFontFamilyOption(option));
+
+    // Add "More Google Fonts" option at the end
+    const moreGoogleFontsOption: FontOption = {
+      label: (
+        <div
+          style={{
+            alignItems: 'center',
+            color: '#1a73e8',
+            display: 'flex',
+            fontWeight: '500',
+            gap: '8px',
+          }}
+        >
+          <span
+            style={{
+              background: 'linear-gradient(45deg, #4285f4, #34a853, #fbbc05, #ea4335)',
+              backgroundClip: 'text',
+              fontWeight: 'bold',
+              WebkitBackgroundClip: 'text',
+              WebkitTextFillColor: 'transparent',
+            }}
+          >
+            G
+          </span>
+          More Google Fonts...
+        </div>
+      ),
+      value: 'more-google-fonts',
+    };
 
     if (isMobile) {
       return (
@@ -303,8 +377,15 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           onChange={handleFontFamilyChange}
           options={
             historyFontFamilies.length > 0
-              ? [{ label: lang.recently_used, type: 'group' }, ...historyFontFamilies, { type: 'divider' }, ...options]
-              : options
+              ? [
+                  { label: lang.recently_used, type: 'group' },
+                  ...historyFontFamilies,
+                  { type: 'divider' },
+                  ...options,
+                  { type: 'divider' },
+                  moreGoogleFontsOption,
+                ]
+              : [...options, { type: 'divider' }, moreGoogleFontsOption]
           }
           selected={
             fontFamily.hasMultiValue ? { label: '-', value: '' } : { label: fontFamily.value, value: fontFamily.value }
@@ -346,7 +427,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           // Note: title is used as css selector
           [
             { label: lang.recently_used, options: historyFontFamilies, title: 'history' },
-            { label: null, options, title: 'normal' },
+            { label: null, options: [...options, moreGoogleFontsOption], title: 'normal' },
           ]
         }
         placement="bottomRight"
@@ -604,27 +685,37 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  return isMobile ? (
+  return (
     <>
-      {renderFontFamilyBlock()}
-      {renderFontStyleBlock()}
-      {renderFontSizeBlock()}
-      {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
-    </>
-  ) : (
-    <ConfigProvider theme={selectTheme}>
-      <div className={styles.panel}>
-        {renderFontFamilyBlock()}
-        <div className={styles.row}>
-          {renderFontSizeBlock()}
+      {isMobile ? (
+        <>
+          {renderFontFamilyBlock()}
           {renderFontStyleBlock()}
-        </div>
-        {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
-        {!isTextPath && showVariableText && (
-          <VariableTextBlock elems={textElements} id={configs.id.value} withDivider />
-        )}
-      </div>
-    </ConfigProvider>
+          {renderFontSizeBlock()}
+          {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
+        </>
+      ) : (
+        <ConfigProvider theme={selectTheme}>
+          <div className={styles.panel}>
+            {renderFontFamilyBlock()}
+            <div className={styles.row}>
+              {renderFontSizeBlock()}
+              {renderFontStyleBlock()}
+            </div>
+            {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
+            {!isTextPath && showVariableText && (
+              <VariableTextBlock elems={textElements} id={configs.id.value} withDivider />
+            )}
+          </div>
+        </ConfigProvider>
+      )}
+
+      <GoogleFontsPanel
+        onClose={() => setShowGoogleFontsPanel(false)}
+        onFontSelect={handleGoogleFontSelect}
+        visible={showGoogleFontsPanel}
+      />
+    </>
   );
 };
 
