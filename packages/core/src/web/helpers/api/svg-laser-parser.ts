@@ -120,6 +120,18 @@ export const getExportOpt = async (
     }
   }
 
+  const updateAccOverride = (value: TAccelerationOverride) => {
+    if (!config.acc_override) config.acc_override = value;
+
+    const keys = Object.keys(value) as Array<keyof typeof value>;
+
+    for (let i = 0; i < keys.length; i += 1) {
+      config.acc_override[keys[i]] = { ...config.acc_override[keys[i]], ...value[keys[i]] };
+    }
+  };
+
+  if (workareaObj.accOverride) updateAccOverride(workareaObj.accOverride);
+
   if (modelsWithModules.has(model)) {
     const { h, w, x, y } = presprayArea.getPosition(true);
     const workareaWidth = workareaObj.width;
@@ -159,14 +171,17 @@ export const getExportOpt = async (
         config.expected_module = DetectedLayerModule.PRINTER_4C_WITH_1064;
         config.mep = config.mpp = 25;
         config.acc = 2000;
+        updateAccOverride({ fill: { x: 2000, y: 2000 } });
       } else if (documentState['enable-4c']) {
         config.expected_module = DetectedLayerModule.PRINTER_4C;
         config.mep = config.mpp = 20;
         config.acc = 2000;
+        updateAccOverride({ fill: { x: 2000, y: 2000 } });
       } else if (documentState['enable-1064']) {
         config.expected_module = DetectedLayerModule.LASER_1064;
         config.mep = config.mpp = 25;
         config.acc = 2000;
+        updateAccOverride({ fill: { x: 2000, y: 2000 } });
       } else {
         config.expected_module = DetectedLayerModule.NONE;
       }
@@ -270,18 +285,6 @@ export const getExportOpt = async (
   const isPassThroughTask =
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     getPassThrough(addOnInfo);
-
-  const updateAccOverride = (value: TAccelerationOverride) => {
-    if (!config.acc_override) config.acc_override = value;
-
-    const keys = Object.keys(value) as Array<keyof typeof value>;
-
-    for (let i = 0; i < keys.length; i += 1) {
-      config.acc_override[keys[i]] = { ...config.acc_override[keys[i]], ...value[keys[i]] };
-    }
-  };
-
-  if (workareaObj.accOverride) updateAccOverride(workareaObj.accOverride);
 
   if (model === 'fbb2' && (isPassThroughTask || autoFeeder)) {
     config.mep = 30;
@@ -660,7 +663,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
     },
     resetWebsocket,
 
-    uploadPlainSVG(file) {
+    uploadPlainSVG(file: Blob) {
       const $deferred = $.Deferred();
       const warningCollection = [];
 
@@ -697,7 +700,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
         let hasPath = false;
 
         if (matchImages) {
-          const path = fileSystem.getPathForFile(file);
+          const path = fileSystem.getPathForFile(file as File);
           const basename = getBasename(path);
 
           for (let i = 0; i < matchImages.length; i += 1) {
