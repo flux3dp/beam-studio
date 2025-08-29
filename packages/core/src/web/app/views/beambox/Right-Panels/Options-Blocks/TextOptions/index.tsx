@@ -19,8 +19,8 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
-import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/StartOffsetBlock';
-import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/VerticalAlignBlock';
+import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock';
+import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/VerticalAlignBlock';
 import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
@@ -38,7 +38,7 @@ import type { GeneralFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
-import styles from './TextOptions.module.scss';
+import styles from './index.module.scss';
 
 let svgCanvas: ISVGCanvas;
 
@@ -50,7 +50,6 @@ const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 const isLocalFont = (font: GeneralFont) => 'path' in font;
 const maxHistory = 5;
 
-// TODO: add tests
 interface Props {
   elem: Element;
   isTextPath?: boolean;
@@ -63,7 +62,7 @@ const defaultTextConfigs: TextConfig = {
   fontSize: { hasMultiValue: false, value: 200 },
   fontStyle: { hasMultiValue: false, value: '' },
   id: { hasMultiValue: false, value: '' },
-  isVerti: { hasMultiValue: false, value: false },
+  isVertical: { hasMultiValue: false, value: false },
   letterSpacing: { hasMultiValue: false, value: 0 },
   lineSpacing: { hasMultiValue: false, value: 1 },
   startOffset: { hasMultiValue: false, value: 0 },
@@ -126,7 +125,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const addToHistory = (font: GeneralFont) => {
     if (!font.family) return;
 
-    const newHistory: string[] = (fontHistory ?? []).filter((name: string) => name !== font.family);
+    const newHistory = fontHistory.filter((name: string) => name !== font.family);
 
     newHistory.unshift(font.family);
 
@@ -138,7 +137,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const historyFontFamilies = useMemo(() => {
     const families = FontFuncs.requestAvailableFontFamilies();
 
-    return (fontHistory ?? [])
+    return fontHistory
       .map((family) => (families.includes(family) ? getFontFamilyOption(family, true) : null))
       .filter(Boolean);
   }, [fontHistory]);
@@ -209,7 +208,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         updateConfigs(newConfigs, 'fontSize', () => textEdit.getFontSize(textElement));
         updateConfigs(newConfigs, 'letterSpacing', () => textEdit.getLetterSpacing(textElement));
         updateConfigs(newConfigs, 'lineSpacing', () => textEdit.getLineSpacing(textElement));
-        updateConfigs(newConfigs, 'isVerti', () => textEdit.getIsVertical(textElement));
+        updateConfigs(newConfigs, 'isVertical', () => textEdit.getIsVertical(textElement));
 
         if (textElement.getAttribute('data-textpath')) {
           const textPath = textElement.querySelector('textPath');
@@ -534,12 +533,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   };
 
   const renderVerticalTextSwitch = (): React.JSX.Element => {
-    const { isVerti } = configs;
-    const checked = !isVerti.hasMultiValue && isVerti.value;
+    const { isVertical } = configs;
+    const checked = !isVertical.hasMultiValue && isVertical.value;
 
     const handleVerticalTextClick = (): void => {
       textEdit.setIsVertical(!checked, textElements);
-      onConfigChange('isVerti', !checked);
+      onConfigChange('isVertical', !checked);
     };
 
     return isMobile ? (
