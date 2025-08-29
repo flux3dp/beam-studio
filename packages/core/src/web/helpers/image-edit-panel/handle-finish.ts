@@ -14,11 +14,7 @@ const handleFinish = (
   base64: string,
   attrs: Record<string, number | string> = {},
 ): void => {
-  const changes: Record<string, number | string> = {
-    origImage: src,
-    'xlink:href': base64,
-    ...attrs,
-  };
+  const changes: Record<string, number | string> = { origImage: src, 'xlink:href': base64, ...attrs };
 
   imageEdit.addBatchCommand('Image Edit', element, changes);
   svgCanvas.selectOnly([element], true);
