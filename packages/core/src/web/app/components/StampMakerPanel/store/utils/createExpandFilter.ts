@@ -62,22 +62,22 @@ export const createExpandFilter =
     for (let y = 1; y < height; y++) {
       for (let x = 1; x < width; x++) {
         const i = y * width + x;
-        const dist_top = grid[(y - 1) * width + x] + 1;
-        const dist_left = grid[y * width + x - 1] + 1;
-        const dist_top_left = grid[(y - 1) * width + x - 1] + Math.SQRT2;
+        const distTop = grid[(y - 1) * width + x] + 1;
+        const distLeft = grid[y * width + x - 1] + 1;
+        const distTopLeft = grid[(y - 1) * width + x - 1] + Math.SQRT2;
 
-        grid[i] = Math.min(grid[i], dist_top, dist_left, dist_top_left);
+        grid[i] = Math.min(grid[i], distTop, distLeft, distTopLeft);
       }
     }
     // Second Pass
     for (let y = height - 2; y >= 0; y--) {
       for (let x = width - 2; x >= 0; x--) {
         const i = y * width + x;
-        const dist_bottom = grid[(y + 1) * width + x] + 1;
-        const dist_right = grid[y * width + x + 1] + 1;
-        const dist_bottom_right = grid[(y + 1) * width + x + 1] + Math.SQRT2;
+        const distBottom = grid[(y + 1) * width + x] + 1;
+        const distRight = grid[y * width + x + 1] + 1;
+        const distBottomRight = grid[(y + 1) * width + x + 1] + Math.SQRT2;
 
-        grid[i] = Math.min(grid[i], dist_bottom, dist_right, dist_bottom_right);
+        grid[i] = Math.min(grid[i], distBottom, distRight, distBottomRight);
       }
     }
 

@@ -1,3 +1,4 @@
+import type { MutableRefObject } from 'react';
 import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Flex } from 'antd';
@@ -36,10 +37,9 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
     beambox: { photo_edit_panel: langPhoto },
     stamp_maker_panel: lang,
   } = useI18n();
-  const { filters, horizontalFlip, redo, resetState, undo } = useStampMakerPanelStore();
-  const { isFullColor, isShading, threshold } = useMemo(
+  const { filters, horizontalFlip, lastBevelRadiusFilter, redo, resetState, undo } = useStampMakerPanelStore();
+  const { isShading, threshold } = useMemo(
     () => ({
-      isFullColor: true,
       isShading: image.getAttribute('data-shading') === 'true',
       threshold: Number.parseInt(image.getAttribute('data-threshold')! || '128', 10),
     }),
@@ -56,9 +56,10 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
   const imageData = useRef<ImageData | null>(null);
-  const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(stageRef as any, {
-    onScaleChanged: setZoomScale,
-  });
+  const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(
+    stageRef as MutableRefObject<Konva.Stage>,
+    { onScaleChanged: setZoomScale },
+  );
 
   const getImageData = useCallback(async () => {
     if (imageData.current) return imageData.current;
@@ -108,9 +109,13 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   useEffect(() => {
     const updateImages = async () => {
       const url = updateUrl();
-      const display = await calculateBase64(url, isShading, threshold, isFullColor);
+      const display = await calculateBase64(url, true, threshold, true);
+      // change to shading with pwm when image has bevels
+      const changes: Record<string, number | string> | {} = lastBevelRadiusFilter
+        ? { 'data-pwm': 1, 'data-shading': 'true' }
+        : {};
 
-      handleFinish(image, url, display);
+      handleFinish(image, url, display, changes);
 
       progressCaller.popById('image-editing');
       onClose();
@@ -119,7 +124,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
     if (progress === EXPORTING && imageRef.current?.isCached()) {
       updateImages();
     }
-  }, [image, isFullColor, isShading, onClose, progress, threshold, updateUrl]);
+  }, [image, isShading, lastBevelRadiusFilter, onClose, progress, threshold, updateUrl]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -129,7 +134,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
         originalHeight: height,
         originalWidth: width,
       } = await preprocessByUrl(src, { isFullResolution: true });
-      const fullColorImage = await calculateBase64(blobUrl, true, 255, false);
+      const originalImage = await calculateBase64(blobUrl, isShading, threshold, false);
       const initScale = Math.min(
         1,
         (clientWidth - IMAGE_PADDING * 2) / width,
@@ -145,7 +150,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
       stageRef.current!.scale({ x: initScale, y: initScale });
 
       setImageSize({ height, width });
-      setDisplayImage(fullColorImage);
+      setDisplayImage(originalImage);
 
       progressCaller.popById('image-editing-init');
     };
