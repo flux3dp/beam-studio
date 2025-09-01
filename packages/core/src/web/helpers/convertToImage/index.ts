@@ -59,6 +59,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
       id: 'convert-svg-to-image',
       message: i18n.lang.beambox.photo_edit_panel.processing,
     });
+    requestAnimationFrame(() => {});
   }
 
   const layer = pipe(svgElement, getLayerTitles, sortLayerNamesByPosition, (titles) => titles.at(-1));
@@ -74,14 +75,11 @@ export const convertSvgToImage: MainConverterFunc = async ({
         return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: group });
       },
     )
-    .with(
-      { tagName: 'g' },
-      async (el) => await convertGroupToImage({ isToSelect, parentCmd, svgElement: el }, convertSvgToImage),
-    )
+    .with({ tagName: 'g' }, async (el) => await convertGroupToImage({ parentCmd, svgElement: el }, convertSvgToImage))
     .with({ tagName: 'text' }, async (el) => {
       const { path } = await convertTextToPath({ element: el, isToSelect: false, parentCommand: parentCmd });
 
-      return await convertSvgToImage({ isToSelect, parentCmd, svgElement: path! });
+      return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: path! });
     })
     .with(
       { tagName: P.union(...convertibleSvgTags) },
@@ -119,7 +117,10 @@ export const convertSvgToImage: MainConverterFunc = async ({
       await waitForHrefTransformation(result.imageElements);
     } catch (error) {
       console.error('Error waiting for image loads:', error);
-      progressCaller.popById('convert-svg-to-image');
+
+      if (isToSelect) {
+        progressCaller.popById('convert-svg-to-image');
+      }
 
       return undefined;
     }
@@ -140,7 +141,9 @@ export const convertSvgToImage: MainConverterFunc = async ({
     undoManager.addCommandToHistory(parentCmd);
   }
 
-  progressCaller.popById('convert-svg-to-image');
+  if (isToSelect) {
+    progressCaller.popById('convert-svg-to-image');
+  }
 
   return result;
 };
