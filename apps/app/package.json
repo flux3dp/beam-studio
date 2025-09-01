@@ -1,6 +1,6 @@
 {
   "name": "@beam-studio/app",
-  "version": "2.5.6-beta",
+  "version": "2.5.6",
   "license": "AGPL-3.0-only",
   "homepage": "https://github.com/flux3dp/beam-studio",
   "description": "Beam Studio Electron App",
@@ -106,8 +106,7 @@
         "NSLocalNetworkUsageDescription": "Beam Studio need to use local network to connect to certain devices."
       },
       "target": [
-        "dmg",
-        "zip"
+        "dmg"
       ],
       "icon": "public/logo.icns",
       "asarUnpack": "**/*.node"
