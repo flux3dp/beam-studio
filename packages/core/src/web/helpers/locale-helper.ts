@@ -74,6 +74,14 @@ const detectMy = detectLocale(
 );
 const isMy = detectMy();
 
+// Australia
+const detectAu = detectLocale(
+  (schema) => schema.region === 'AU' || schema.language === 'en',
+  // UTC+8 to UTC+11 timezone
+  (timezoneOffset) => timezoneOffset <= -480 && timezoneOffset >= -660,
+);
+const isAu = detectAu();
+
 const getRegion = () => {
   if (isNorthAmerica) {
     return { checkTimezone: true, region: 'na' };
@@ -104,6 +112,7 @@ const getRegion = () => {
 };
 
 export default {
+  detectAu,
   detectJp,
   detectKr,
   detectMy,
@@ -112,6 +121,7 @@ export default {
   detectTw,
   detectTwOrHk,
   getRegion,
+  isAu,
   isJp,
   isKr,
   isMy,
