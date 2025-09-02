@@ -31,6 +31,7 @@ import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 
 import { adorModels, promarkModels } from './constant';
 import { getAdorPaddingAccel } from './export/ador-utils';
+import { annotateLayerBBox } from './export/annotateLayerBBox';
 import generateThumbnail from './export/generate-thumbnail';
 
 let svgCanvas: ISVGCanvas;
@@ -212,8 +213,11 @@ const fetchTaskCodeSwiftray = async (
     message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
+  const revertFunctions: Array<() => void> = [];
   // Convert text to path
   const { revert, success } = await convertAllTextToPath();
+
+  revertFunctions.push(revert);
 
   if (!success) {
     Progress.popById('fetch-task-code');
@@ -236,18 +240,17 @@ const fetchTaskCodeSwiftray = async (
   });
 
   // Prepare for Printing task & clean up temp modification
-  const revertUpdateImagesResolution = await updateImagesResolution();
-  const revertShapesToImage = await convertShapeToBitmap();
-  const revertAnnotatePrintingColor = annotatePrintingColor();
-  const revertTempSplitFullColorLayers = await tempSplitFullColorLayers();
-  const revertClipPath = await convertClipPath();
+  revertFunctions.push(
+    await updateImagesResolution(),
+    await convertShapeToBitmap(),
+    annotatePrintingColor(),
+    await tempSplitFullColorLayers(),
+    await convertClipPath(),
+    annotateLayerBBox(),
+  );
+
   const cleanUpTempModification = async () => {
-    revertClipPath();
-    revertTempSplitFullColorLayers();
-    revertAnnotatePrintingColor();
-    revertShapesToImage();
-    revertUpdateImagesResolution();
-    revert();
+    revertFunctions.toReversed().forEach((revert) => revert());
     SymbolMaker.switchImageSymbolForAll(true);
   };
 

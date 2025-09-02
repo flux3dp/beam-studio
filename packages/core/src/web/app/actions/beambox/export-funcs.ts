@@ -1,6 +1,5 @@
 import Alert from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
-import generateThumbnail from '@core/app/actions/beambox/export/generate-thumbnail';
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MonitorController from '@core/app/actions/monitor-controller';
 import Progress from '@core/app/actions/progress-caller';
@@ -34,6 +33,10 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
+import { getAdorPaddingAccel } from './export/ador-utils';
+import { annotateLayerBBox } from './export/annotateLayerBBox';
+import generateThumbnail from './export/generate-thumbnail';
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -41,24 +44,6 @@ getSVGAsync((globalSVG) => {
 });
 
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
-
-const getAdorPaddingAccel = async (device: IDeviceInfo | null): Promise<null | number> => {
-  if (!device || !constant.adorModels.includes(device?.model)) return null;
-
-  try {
-    await deviceMaster.select(device);
-
-    const deviceDetailInfo = await deviceMaster.getDeviceDetailInfo();
-    const xAcc = Number.parseInt(deviceDetailInfo.x_acc, 10);
-
-    // handle nan and 0
-    return Number.isNaN(xAcc) || !xAcc ? null : xAcc;
-  } catch (error) {
-    console.error(error);
-
-    return null;
-  }
-};
 
 const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   Progress.openNonstopProgress({
@@ -112,7 +97,10 @@ const fetchTaskCode = async (
     message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
   });
 
-  const { revert, success } = await convertAllTextToPath();
+  const revertFunctions: Array<() => void> = [];
+  const { revert: revertConvertTextToPath, success } = await convertAllTextToPath();
+
+  revertFunctions.push(revertConvertTextToPath);
 
   if (!success) {
     Progress.popById('fetch-task-code');
@@ -133,16 +121,16 @@ const fetchTaskCode = async (
     message: 'Splitting Full color layer',
   });
 
-  const revertUpdateImagesResolution = await updateImagesResolution();
-  const revertShapesToImage = await convertShapeToBitmap();
-  const revertAnnotatePrintingColor = annotatePrintingColor();
-  const revertTempSplitFullColorLayers = await tempSplitFullColorLayers();
-  const cleanUp = async () => {
-    revertTempSplitFullColorLayers();
-    revertAnnotatePrintingColor();
-    revertShapesToImage();
-    revertUpdateImagesResolution();
-    revert();
+  revertFunctions.push(
+    await updateImagesResolution(),
+    await convertShapeToBitmap(),
+    annotatePrintingColor(),
+    await tempSplitFullColorLayers(),
+    annotateLayerBBox(),
+  );
+
+  const cleanUp = () => {
+    revertFunctions.toReversed().forEach((revert) => revert());
     SymbolMaker.switchImageSymbolForAll(true);
   };
 
@@ -153,7 +141,7 @@ const fetchTaskCode = async (
 
   const uploadFile = await generateUploadFile(thumbnail, thumbnailBlobURL);
 
-  await cleanUp();
+  cleanUp();
   Progress.popById('fetch-task-code');
   Progress.openSteppingProgress({
     caption: i18n.lang.beambox.popup.progress.calculating,
@@ -271,7 +259,6 @@ const fetchTaskCode = async (
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
         onProgressing: (data: { message: string; percentage: number }) => {
-          // message: Calculating Toolpath 28.6%
           Progress.update('fetch-task', {
             message: data.message,
             percentage: data.percentage * 100,
