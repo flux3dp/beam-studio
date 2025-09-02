@@ -640,9 +640,11 @@ const convertTextToPath = async (
     textElement.removeAttribute('stroke-width');
 
     const isFilled = calculateFilled(textElement);
-    let color = textElement.getAttribute('stroke') || 'none';
 
-    color = color !== 'none' ? color : textElement.getAttribute('fill')!;
+    let strokeColor = textElement.getAttribute('stroke') || 'none';
+    const fillColor = textElement.getAttribute('fill')!;
+
+    strokeColor = strokeColor !== 'none' ? strokeColor : fillColor!;
 
     let res: IConvertInfo = null;
     let preferGhost = globalPreference['font-convert'] === '1.0';
@@ -708,9 +710,9 @@ const convertTextToPath = async (
         path.setAttribute('transform', transform);
       }
 
-      path.setAttribute('fill', isFilled ? color : 'none');
+      path.setAttribute('fill', isFilled ? fillColor : 'none');
       path.setAttribute('fill-opacity', isFilled ? '1' : '0');
-      path.setAttribute('stroke', color);
+      path.setAttribute('stroke', strokeColor);
       path.setAttribute('stroke-opacity', '1');
       path.setAttribute('stroke-dasharray', 'none');
       path.setAttribute('vector-effect', 'non-scaling-stroke');
