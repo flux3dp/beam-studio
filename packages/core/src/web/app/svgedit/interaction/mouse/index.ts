@@ -669,7 +669,6 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
         ObjectPanelController.updateDimensionValues({ height: newHeight, width: newWidth, x: newLeft, y: newTop });
       }
     })
-    .with('text', () => selected.setAttribute('stroke-width', '2'))
     .otherwise(() => {});
 
   if (['path, ellipse', 'rect'].includes(selected.tagName)) {

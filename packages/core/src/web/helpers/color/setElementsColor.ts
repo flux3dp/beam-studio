@@ -26,7 +26,8 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
       if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect', 'text'].includes(elem.tagName)) {
         if (!isFullColor) {
           // remove stroke for self drawn elements, set stroke color for imported elements
-          if (elem.tagName !== 'text') elem.removeAttribute('stroke-width');
+          if (elem.tagName === 'text') elem.setAttribute('stroke-width', '2');
+          else elem.removeAttribute('stroke-width');
 
           elem.setAttribute('vector-effect', 'non-scaling-stroke');
 
