@@ -28,8 +28,8 @@ const exampleList = [
   {
     label: 'Example of Beambox',
     type: 'Example Files',
-    ador: ['9c1a31175c421a17392cd3cc05c092b2', '8562f2ecfe6805305e9dfe2aac95c9be'],
-    beam: 'f90cc5da6a7a137d7abb0e6f6d5a458c',
+    ador: ['9c1a31175c421a17392cd3cc05c092b2', 'b3f2167dab58160d01b1503377762e6a'],
+    beam: '3b7f1a51c29eb96e3f755b17ed8c6f51',
   },
   {
     label: 'Material Engraving Test',
@@ -46,7 +46,7 @@ const exampleList = [
   {
     label: 'Material Cutting Test',
     type: 'Material Test',
-    ador: ['e3282d392ba4b4117d826bc968ce228a', '7eeef206425514a784595d4f92338cc5'],
+    ador: ['e3282d392ba4b4117d826bc968ce228a', '59c3e27ace273d91260e68a4ab90b08a'],
     beam: '244a7c00f6bb81b186cb87205fdaf205',
   },
   {
