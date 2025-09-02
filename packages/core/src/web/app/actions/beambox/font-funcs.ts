@@ -10,6 +10,7 @@ import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
 import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
+import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
@@ -635,16 +636,10 @@ const convertTextToPath = async (
       }
     }
 
-    const strokeWidth = textElement.getAttribute('stroke-width');
+    const textAttr = getAttributes(textElement, ['data-ratiofixed', 'fill', 'fill-opacity', 'stroke', 'stroke-width']);
+    const isFilled = calculateFilled(textElement); // for ghost
 
     textElement.removeAttribute('stroke-width');
-
-    const isFilled = calculateFilled(textElement);
-
-    let strokeColor = textElement.getAttribute('stroke') || 'none';
-    const fillColor = textElement.getAttribute('fill')!;
-
-    strokeColor = strokeColor !== 'none' ? strokeColor : fillColor!;
 
     let res: IConvertInfo = null;
     let preferGhost = globalPreference['font-convert'] === '1.0';
@@ -698,27 +693,22 @@ const convertTextToPath = async (
         d = weldPath(d);
       }
 
-      const newPathId = svgCanvas.getNextId();
       const path = document.createElementNS(svgedit.NS.SVG, 'path') as unknown as SVGPathElement;
 
       newPathElement = path;
 
-      path.setAttribute('id', newPathId);
-      path.setAttribute('d', d);
+      setAttributes(path, {
+        ...textAttr,
+        d,
+        id: svgCanvas.getNextId(),
+        'stroke-dasharray': 'none',
+        'stroke-opacity': '1',
+        transform,
+        'vector-effect': 'non-scaling-stroke',
+      });
 
-      if (transform) {
-        path.setAttribute('transform', transform);
-      }
-
-      path.setAttribute('fill', isFilled ? fillColor : 'none');
-      path.setAttribute('fill-opacity', isFilled ? '1' : '0');
-      path.setAttribute('stroke', strokeColor);
-      path.setAttribute('stroke-opacity', '1');
-      path.setAttribute('stroke-dasharray', 'none');
-      path.setAttribute('vector-effect', 'non-scaling-stroke');
-
-      if (strokeWidth) {
-        path.setAttribute('stroke-width', (+strokeWidth / 2).toString());
+      if (textAttr['stroke-width']) {
+        path.setAttribute('stroke-width', (+textAttr['stroke-width'] / 2).toString());
       }
 
       textElement.parentNode!.insertBefore(path, textElement.nextSibling);
