@@ -590,8 +590,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               textEdit.renderText(textElem as SVGTextElement);
 
               if (angle !== 0) canvas.setRotationAngle(angle, true, textElem);
-
-              textElem.setAttribute('stroke-width', '2');
             }
           }
         } finally {

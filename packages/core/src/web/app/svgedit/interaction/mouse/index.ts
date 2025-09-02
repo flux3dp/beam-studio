@@ -310,16 +310,12 @@ const mouseDown = async (evt: MouseEvent) => {
               if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
                 svgCanvas.setCurrentLayer(targetLayer.title);
                 LayerPanelController.setSelectedLayers([targetLayer.title]);
-              } else {
-                LayerPanelController.setSelectedLayers([]);
               }
             }
           }
         } else if (mouseTarget === svgRoot && !rightClick) {
           // Mouse down on svg root
           svgCanvas.clearSelection();
-          // clear layer selection
-          LayerPanelController.setSelectedLayers([]);
           svgCanvas.unsafeAccess.setCurrentMode('multiselect');
           setRubberBoxStart(startMouseX, startMouseY);
         }
@@ -669,7 +665,6 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
         ObjectPanelController.updateDimensionValues({ height: newHeight, width: newWidth, x: newLeft, y: newTop });
       }
     })
-    .with('text', () => selected.setAttribute('stroke-width', '2'))
     .otherwise(() => {});
 
   if (['path, ellipse', 'rect'].includes(selected.tagName)) {
