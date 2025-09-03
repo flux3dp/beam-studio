@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: '¡Consigue las últimas inspiraciones, ofertas y regalos!',
     youtube: 'Mira tutoriales de Beam Studio e ideas para manualidades.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Radio de bisel',
+    horizontal_flip: 'Volteo horizontal',
+    how_to: {
+      text: '¿Cómo hacer un sello?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Invertir',
+    title: 'Creador de sellos',
+  },
   support: {
     no_vcredist: 'Por favor, instala Vitual C++ Redistribuible 2015<br/> que puede ser descargado en flux3dp.com',
     no_webgl: 'WebGL no está disponible. Por favor, utiliza otros dispositivos.',

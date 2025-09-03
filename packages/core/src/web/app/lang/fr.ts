@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Obtenez les dernières inspirations, offres et cadeaux gratuits !',
     youtube: 'Consultez les tutoriels de Beam Studio et des idées créatives.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Rayon de chanfrein',
+    horizontal_flip: 'Retournement horizontal',
+    how_to: {
+      text: 'Comment fabriquer un tampon ?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Inverser',
+    title: 'Créateur de tampons',
+  },
   support: {
     no_vcredist: 'Veuillez installer Visual C++ Redistributable 2015<br/>Cela peut être téléchargé sur flux3dp.com',
     no_webgl: "WebGL n'est pas pris en charge. Veuillez utiliser d'autres appareils.",

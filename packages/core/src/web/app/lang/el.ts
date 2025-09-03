@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Λάβετε τις τελευταίες εμπνεύσεις, προσφορές και δώρα!',
     youtube: 'Δείτε τα μαθήματα Beam Studio και ιδέες χειροτεχνίας.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Ακτίνα λοξοτομής',
+    horizontal_flip: 'Οριζόντια αναστροφή',
+    how_to: {
+      text: 'Πώς να φτιάξετε σφραγίδα;',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Αντιστροφή',
+    title: 'Δημιουργία Σφραγίδας',
+  },
   support: {
     no_vcredist: 'Παρακαλώ εγκαταστήστε το Visual C++ Redistributable 2015<br/>Μπορείτε να το κατεβάσετε από flux3dp.com',
     no_webgl: 'Το WebGL δεν υποστηρίζεται. Παρακαλώ χρησιμοποιήστε άλλη συσκευή.',
