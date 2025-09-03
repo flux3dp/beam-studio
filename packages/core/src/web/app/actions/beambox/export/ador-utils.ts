@@ -3,9 +3,7 @@ import deviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const getAdorPaddingAccel = async (device: IDeviceInfo | null): Promise<null | number> => {
-  if (!constant.adorModels.includes(device?.model)) {
-    return null;
-  }
+  if (!device || !constant.adorModels.includes(device.model)) return null;
 
   try {
     await deviceMaster.select(device);
