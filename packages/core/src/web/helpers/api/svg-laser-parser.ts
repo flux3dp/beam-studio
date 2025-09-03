@@ -724,7 +724,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
               .replace(/&lt;/g, '<')
               .replace(/&amp;/g, '&');
 
-            // Test Abosulte Path
+            // Test Absolute Path
             hasPath = true;
 
             if (fs.exists(newPath)) {
