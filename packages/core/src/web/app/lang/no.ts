@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Få de nyeste inspirasjonene, tilbudene og gratisvarene!',
     youtube: 'Se Beam Studio-veiledninger og håndverksideer.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Avrundingsradius',
+    horizontal_flip: 'Horisontal speiling',
+    how_to: {
+      text: 'Hvordan lage et stempel?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Inverter',
+    title: 'Stempelverktøy',
+  },
   support: {
     no_vcredist: 'Installer Visual C++ Redistributable 2015<br/>Den kan lastes ned på flux3dp.com',
     no_webgl: 'WebGL støttes ikke. Bruk en annen enhet.',
