@@ -41,9 +41,6 @@ const KonvaImage = forwardRef<KonvaImageRef, Props>(({ filters, horizontalFlip =
     // force redraw when image or transformations change
   }, [image, horizontalFlip]);
 
-  // <Text align=''></Text>
-  // <Image f />;
-
   return <Image fill={'white'} filters={filters} image={image} ref={imageRef} />;
 });
 

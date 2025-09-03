@@ -1977,13 +1977,12 @@ Machines > ‘Promark Name’ > Promark Settings`,
   stamp_maker_panel: {
     bevel_radius: 'Bevel Radius',
     horizontal_flip: 'Horizontal Flip',
+    how_to: {
+      text: 'How to make a stamp?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
     invert: 'Invert',
     title: 'Stamp Maker',
-    tool_tip: {
-      bevel_radius: 'Adjust the bevel radius of the stamp',
-      horizontal_flip: 'Flip the stamp horizontally',
-      invert: 'Invert the colors of the stamp',
-    },
   },
   support: {
     no_vcredist: 'Please install Visual C++ Redistributable 2015<br/>That can be downloaded on flux3dp.com',
