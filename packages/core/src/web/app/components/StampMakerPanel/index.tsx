@@ -52,7 +52,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   const [zoomScale, setZoomScale] = useState(1);
   const [fitScreenDimension, setFitScreenDimension] = useState({ scale: 1, x: 0, y: 0 });
   const divRef = useRef<HTMLDivElement>(null);
-  const stageRef = useRef<Konva.Stage | null>(null);
+  const stageRef = useRef<Konva.Stage>(null);
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
   const imageData = useRef<ImageData | null>(null);
@@ -86,7 +86,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   }, [fitScreenDimension, handleZoom]);
 
   const handleComplete = useCallback(() => {
-    progressCaller.openNonstopProgress({ id: 'image-editing', message: langPhoto.processing });
+    progressCaller.openNonstopProgress({ id: 'stamp-maker', message: langPhoto.processing });
 
     const stage = stageRef.current!;
 
@@ -117,7 +117,7 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
 
       handleFinish(image, url, display, changes);
 
-      progressCaller.popById('image-editing');
+      progressCaller.popById('stamp-maker');
       onClose();
     };
 
@@ -152,10 +152,10 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
       setImageSize({ height, width });
       setDisplayImage(originalImage);
 
-      progressCaller.popById('image-editing-init');
+      progressCaller.popById('stamp-maker-init');
     };
 
-    progressCaller.openNonstopProgress({ id: 'image-editing-init', message: langPhoto.processing });
+    progressCaller.openNonstopProgress({ id: 'stamp-maker-init', message: langPhoto.processing });
 
     setTimeout(initialize, 1000);
 
