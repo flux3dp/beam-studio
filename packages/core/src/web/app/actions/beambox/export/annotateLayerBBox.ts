@@ -16,12 +16,12 @@ export const annotateLayerBBox = (): (() => void) => {
     if (ref || repeat === 0 || (layerModule && layerModule < 0)) return;
 
     const bbox = layer.getBBox();
+    const x = Math.max(bbox.x, 0);
+    const y = Math.max(bbox.y - minY, 0);
+    const w = Math.min(bbox.width, workareaManager.width);
+    const h = Math.min(bbox.height, workareaManager.height);
 
-    layer.setAttribute(
-      'data-bbox',
-      `${round(bbox.x, 2)},${round(bbox.y - minY, 2)},${round(bbox.width, 2)},${round(bbox.height, 2)}`,
-    );
-    console.log(layer, layer.getAttribute('data-bbox'));
+    layer.setAttribute('data-bbox', `${round(x, 2)},${round(y, 2)},${round(w, 2)},${round(h, 2)}`);
   });
 
   const revert = () => allLayers.forEach((layer) => layer.removeAttribute('data-bbox'));
