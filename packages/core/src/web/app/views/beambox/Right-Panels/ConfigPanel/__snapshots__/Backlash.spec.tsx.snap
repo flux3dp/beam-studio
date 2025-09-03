@@ -21,7 +21,7 @@ exports[`test Backlash should render correctly 1`] = `
     </p>
     <p>
       min: 
-      0
+      -10
     </p>
     <p>
       precision: 

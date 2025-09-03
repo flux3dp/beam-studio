@@ -15,7 +15,7 @@ const Backlash = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
       hasSlider
       id="backlash"
       max={10}
-      min={0}
+      min={-10}
       precision={2}
       step={0.1}
       title={t.backlash}
