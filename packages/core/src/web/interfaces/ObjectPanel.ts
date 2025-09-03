@@ -34,7 +34,7 @@ export interface TextOption {
   fontSize: number;
   fontStyle: any;
   id: string;
-  isVerti: boolean;
+  isVertical: boolean;
   letterSpacing: number;
   lineSpacing: number;
   startOffset: number;
