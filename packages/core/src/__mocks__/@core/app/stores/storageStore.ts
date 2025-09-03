@@ -98,4 +98,6 @@ export const setStorage = set;
 useStorageStore.getState = () => ({ ...state, set, update });
 useStorageStore.subscribe = (_listener: (state: Storage) => void) => {
   // Implementation of subscription logic
+  // Return unsubscribe function
+  return () => {};
 };
