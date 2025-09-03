@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'รับแรงบันดาลใจ ข้อเสนอ และของแจกฟรีล่าสุด!',
     youtube: 'ดูบทเรียน Beam Studio และไอเดียงานฝีมือ',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'รัศมีขอบเอียง',
+    horizontal_flip: 'กลับในแนวนอน',
+    how_to: {
+      text: 'ทำตรายางได้อย่างไร?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'กลับสี',
+    title: 'ตัวสร้างตรายาง',
+  },
   support: {
     no_vcredist: 'โปรดติดตั้ง Visual C++ Redistributable 2015<br/>สามารถดาวน์โหลดได้ที่ flux3dp.com',
     no_webgl: 'WebGL ไม่รองรับ โปรดใช้อุปกรณ์อื่น',

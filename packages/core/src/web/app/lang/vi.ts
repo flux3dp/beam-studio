@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Nhận những cảm hứng, ưu đãi và quà tặng mới nhất!',
     youtube: 'Xem hướng dẫn Beam Studio và ý tưởng thủ công.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Bán kính vát',
+    horizontal_flip: 'Lật ngang',
+    how_to: {
+      text: 'Làm con dấu như thế nào?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Đảo ngược',
+    title: 'Trình tạo con dấu',
+  },
   support: {
     no_vcredist: 'Vui lòng cài đặt Visual C++ Redistributable 2015\nCó thể tải về tại flux3dp.com',
     no_webgl: 'WebGL không được hỗ trợ. Vui lòng sử dụng thiết bị khác.',

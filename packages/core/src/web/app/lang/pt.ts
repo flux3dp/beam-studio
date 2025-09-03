@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Receba as últimas inspirações, ofertas e brindes!',
     youtube: 'Veja tutoriais do Beam Studio e ideias de artesanato.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Raio de chanfro',
+    horizontal_flip: 'Inverter horizontalmente',
+    how_to: {
+      text: 'Como fazer um carimbo?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Inverter',
+    title: 'Criador de carimbos',
+  },
   support: {
     no_vcredist: 'Instale o Visual C++ Redistributable 2015<br/>Que pode ser baixado em flux3dp.com',
     no_webgl: 'WebGL não é suportado. Por favor, use outros dispositivos.',
