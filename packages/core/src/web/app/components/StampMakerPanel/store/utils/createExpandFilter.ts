@@ -2,10 +2,10 @@
  * Configuration for the multi-stage ramp effect.
  */
 const RAMP_CONFIG = {
-  DARK_GRAY: 0,
-  LIGHT_GRAY: 192,
-  MID_POINT: 0.3, // The point where the ramp changes slope
-  MIDDLE_GRAY: 128,
+  DARK_GRAY: 0, // The color at the deepest part of the ramp
+  LIGHT_GRAY: 192, // The highlight color at the very edge
+  MID_POINT: 0.3, // The point where the ramp changes speed (30%)
+  MIDDLE_GRAY: 128, // The color at the transition point
 };
 
 /**
@@ -17,21 +17,17 @@ const RAMP_CONFIG = {
  */
 const getColorOnMultiStageRamp = (distance: number, rampWidth: number, steps: number): number => {
   const { DARK_GRAY, LIGHT_GRAY, MID_POINT, MIDDLE_GRAY } = RAMP_CONFIG;
-
   const stepWidth = rampWidth / steps;
   const currentStep = Math.floor(distance / stepWidth);
   const linearProgress = (currentStep + 1) / (steps + 1);
-
   const darkToMidRange = MIDDLE_GRAY - DARK_GRAY;
   const midToLightRange = LIGHT_GRAY - MIDDLE_GRAY;
 
   if (linearProgress < MID_POINT) {
-    // First, faster part of the ramp
     const progressInFirstHalf = linearProgress / MID_POINT;
 
     return DARK_GRAY + progressInFirstHalf * darkToMidRange;
   } else {
-    // Second, slower part of the ramp
     const progressInSecondHalf = (linearProgress - MID_POINT) / (1 - MID_POINT);
 
     return MIDDLE_GRAY + progressInSecondHalf * midToLightRange;
@@ -43,20 +39,22 @@ const getColorOnMultiStageRamp = (distance: number, rampWidth: number, steps: nu
  * with a non-linear, multi-stage ramp.
  *
  * @param {object} options
- * @param {number} options.rampWidth - The total width of the edge in pixels.
- * @param {number} options.steps - The number of discrete shading steps.
+ * @param {number} [options.rampWidth=10] - The width of the edge ramp in pixels.
+ * @param {number} [options.steps=128] - The number of discrete shading steps.
+ * @param {number} [options.threshold=128] - The brightness level (0-255) to distinguish background from foreground.
  */
 export const createExpandFilter =
-  ({ rampWidth = 10, steps = 128 }: { rampWidth?: number; steps?: number }) =>
+  ({ rampWidth = 10, steps = 128, threshold = 128 }: { rampWidth?: number; steps?: number; threshold?: number }) =>
   (imageData: ImageData): void => {
     if (rampWidth <= 0 || steps <= 0) return;
 
     const { data, height, width } = imageData;
     const grid = new Float32Array(width * height);
+    const originalData = new Uint8ClampedArray(data); // Keep a copy of the original pixels
 
     // --- Steps 1, 2, & 3: Calculate Euclidean Distance Transform ---
     for (let i = 0; i < width * height; i++) {
-      grid[i] = data[i * 4] === 0 ? 0 : Infinity;
+      grid[i] = originalData[i * 4] < threshold ? 0 : Infinity;
     }
     // First Pass
     for (let y = 1; y < height; y++) {
@@ -85,14 +83,15 @@ export const createExpandFilter =
     for (let i = 0; i < width * height; i++) {
       const i4 = i * 4;
       const distance = grid[i];
-      let color = 0;
+      const originalColor = originalData[i4];
+      let color = originalColor;
 
-      if (distance > 0 && distance < rampWidth) {
+      if (originalColor >= threshold && distance > 0 && distance < rampWidth) {
         color = getColorOnMultiStageRamp(distance, rampWidth, steps);
-      } else if (distance >= rampWidth) {
-        color = 255; // White background
+      } else if (distance === 0) {
+        color = 0;
       } else {
-        color = 0; // Original black shape
+        color = 255;
       }
 
       data[i4] = data[i4 + 1] = data[i4 + 2] = color;
