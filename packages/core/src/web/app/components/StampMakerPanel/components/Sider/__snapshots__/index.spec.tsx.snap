@@ -23,7 +23,7 @@ exports[`test Sider should render correctly 1`] = `
             data-testid="header"
           >
             <svg
-              data-testid="edit-image-icon"
+              data-testid="stamp-icon"
             />
             <span>
               Stamp Maker
