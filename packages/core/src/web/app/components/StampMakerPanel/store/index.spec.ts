@@ -1,4 +1,4 @@
-import { useStampMakerPanelStore } from '.';
+import { useStampMakerPanelStore } from './index';
 
 jest.mock('konva', () => ({
   Filters: {
