@@ -612,7 +612,7 @@ exports[`should render correctly image 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
-          id="bevel"
+          id="offset"
           type="button"
         >
           <span
@@ -623,7 +623,7 @@ exports[`should render correctly image 1`] = `
           <span
             class="label"
           >
-            Bevel
+            Offset
           </span>
         </button>
       </div>
@@ -704,26 +704,6 @@ exports[`should render correctly image 1`] = `
             class="label"
           >
             Rotary Warped
-          </span>
-        </button>
-      </div>
-      <div
-        class="btn-container"
-      >
-        <button
-          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-block btn"
-          id="offset"
-          type="button"
-        >
-          <span
-            class="ant-btn-icon"
-          >
-            <svgr-url />
-          </span>
-          <span
-            class="label"
-          >
-            Offset
           </span>
         </button>
       </div>
@@ -1123,7 +1103,7 @@ exports[`should render correctly in mobile image 1`] = `
     </div>
     <div
       class="object-panel-item"
-      id="bevel"
+      id="offset"
     >
       <div
         class="main"
@@ -1133,7 +1113,7 @@ exports[`should render correctly in mobile image 1`] = `
       <div
         class="label"
       >
-        Bevel
+        Offset
       </div>
     </div>
     <div
@@ -1224,21 +1204,6 @@ exports[`should render correctly in mobile image 1`] = `
         class="label"
       >
         Rotary Warped
-      </div>
-    </div>
-    <div
-      class="object-panel-item"
-      id="offset"
-    >
-      <div
-        class="main"
-      >
-        <svgr-url />
-      </div>
-      <div
-        class="label"
-      >
-        Offset
       </div>
     </div>
   </div>

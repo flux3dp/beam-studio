@@ -10,12 +10,11 @@ jest.mock('antd', () => ({
   ),
 }));
 
-const _mockUseI18n = jest.fn();
 
-jest.mock('@core/app/icons/image-edit-panel/ImageEditPanelIcons', () => ({
+jest.mock('@core/app/icons/action-panel/ActionPanelIcons', () => ({
   __esModule: true,
   default: {
-    EditImage: () => <svg data-testid="edit-image-icon" />,
+    Stamp: () => <svg data-testid="stamp-icon" />,
   },
 }));
 
@@ -64,7 +63,7 @@ describe('test Sider', () => {
     const { getByTestId, getByText } = render(<Sider handleComplete={mockHandleComplete} onClose={mockOnClose} />);
 
     expect(getByTestId('header')).toBeInTheDocument();
-    expect(getByTestId('edit-image-icon')).toBeInTheDocument();
+    expect(getByTestId('stamp-icon')).toBeInTheDocument();
     expect(getByText('Stamp Maker')).toBeInTheDocument();
   });
 

@@ -195,11 +195,12 @@ describe('test Content', () => {
     expect(mockSetBevelRadius).not.toHaveBeenCalledWith(null);
   });
 
-  it('should render tooltips for form items', () => {
+  it('should render how to link', () => {
     const { container } = render(<Content />);
 
-    const tooltipIcons = container.querySelectorAll('.anticon-question-circle');
+    const link = container.querySelector('.link');
 
-    expect(tooltipIcons).toHaveLength(2);
+    expect(link).toBeInTheDocument();
+    expect(link).toHaveTextContent('How to make a stamp?');
   });
 });

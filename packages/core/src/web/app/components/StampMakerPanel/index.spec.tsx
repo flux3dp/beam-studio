@@ -152,6 +152,7 @@ describe('test StampMakerPanel', () => {
     mockUseStampMakerPanelStore.mockReturnValue({
       filters: [],
       horizontalFlip: false,
+      lastBevelRadiusFilter: null,
       redo: mockRedo,
       resetState: mockResetState,
       undo: mockUndo,
@@ -212,7 +213,7 @@ describe('test StampMakerPanel', () => {
     const { container } = render(<StampMakerPanel image={mockImage} onClose={mockOnClose} src="test.png" />);
 
     expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
-      id: 'image-editing-init',
+      id: 'stamp-maker-init',
       message: 'Processing',
     });
 
@@ -277,5 +278,37 @@ describe('test StampMakerPanel', () => {
     expect(getByTestId('stage')).toBeInTheDocument();
     expect(getByTestId('layer')).toBeInTheDocument();
     expect(getByTestId('konva-image')).toBeInTheDocument();
+  });
+
+  it('should handle image with bevel filter correctly', () => {
+    const mockBevelFilter = { name: 'BevelFilter' };
+
+    mockUseStampMakerPanelStore.mockReturnValue({
+      filters: [mockBevelFilter],
+      horizontalFlip: false,
+      lastBevelRadiusFilter: mockBevelFilter,
+      redo: mockRedo,
+      resetState: mockResetState,
+      undo: mockUndo,
+    });
+
+    render(<StampMakerPanel image={mockImage} onClose={mockOnClose} src="test.png" />);
+
+    expect(mockUseStampMakerPanelStore).toHaveBeenCalled();
+  });
+
+  it('should handle image without bevel filter', () => {
+    mockUseStampMakerPanelStore.mockReturnValue({
+      filters: [],
+      horizontalFlip: false,
+      lastBevelRadiusFilter: null,
+      redo: mockRedo,
+      resetState: mockResetState,
+      undo: mockUndo,
+    });
+
+    render(<StampMakerPanel image={mockImage} onClose={mockOnClose} src="test.png" />);
+
+    expect(mockUseStampMakerPanelStore).toHaveBeenCalled();
   });
 });
