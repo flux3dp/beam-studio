@@ -139,7 +139,6 @@ export interface ISVGEditor {
   setImageURL: (url: any) => void;
   setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
-  showSaveWarning: boolean;
   storagePromptClosed: boolean;
   tool_scale: number;
   toolButtonClick: (button: any, noHiding: any) => boolean;
@@ -193,7 +192,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     setImageURL: (url: any) => {},
     setLang: (lang: any, allStrings: any) => {},
     setPanning: (active: any) => {},
-    showSaveWarning: false,
     storage: storage,
     tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
     toolButtonClick: (button: any, noHiding: any) => {
@@ -621,42 +619,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     };
 
-    var saveHandler = function (wind, svg) {
-      editor.showSaveWarning = false;
-
-      // by default, we add the XML prolog back, systems integrating SVG-edit (wikis, CMSs)
-      // can just provide their own custom save handler and might not want the XML prolog
-      svg = '<?xml version="1.0"?>\n' + svg;
-
-      // Opens the SVG in new window
-      var win = wind.open('data:image/svg+xml;base64,' + Utils.encode64(svg));
-
-      // Alert will only appear the first time saved OR the first time the bug is encountered
-      var done = $.pref('save_notice_done');
-
-      if (done !== 'all') {
-        var note = uiStrings.notification.saveFromBrowser.replace('%s', 'SVG');
-
-        // Check if FF and has <defs/>
-        if (svgedit.browser.isGecko()) {
-          if (svg.includes('<defs')) {
-            // warning about Mozilla bug #308590 when applicable (seems to be fixed now in Feb 2013)
-            note += '\n\n' + uiStrings.notification.defsFailOnSave;
-            $.pref('save_notice_done', 'all');
-            done = 'all';
-          } else {
-            $.pref('save_notice_done', 'part');
-          }
-        } else {
-          $.pref('save_notice_done', 'all');
-        }
-
-        if (done !== 'part') {
-          win.alert(note);
-        }
-      }
-    };
-
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) return;
 
@@ -996,44 +958,8 @@ const svgEditor = (window['svgEditor'] = (function () {
     }
 
     // called when any element has changed
-    var elementChanged = function (win, elems) {
-      var i,
-        mode = svgCanvas.getMode();
-
-      if (mode === 'select') {
-        setSelectMode();
-      }
-
-      for (i = 0; i < elems.length; ++i) {
-        var elem = elems[i];
-
-        var isSvgElem = elem && elem.tagName === 'svg';
-
-        if (isSvgElem || isLayer(elem)) {
-          LayerPanelController.updateLayerPanel();
-        }
-        // Update selectedElement if element is no longer part of the image.
-        // This occurs for the text elements in Firefox
-        else if (elem && selectedElement && selectedElement.parentNode == null) {
-          //						|| elem && elem.tagName == "path" && !multiselected) { // This was added in r1430, but not sure why
-          selectedElement = elem;
-        }
-      }
-
-      editor.showSaveWarning = true;
-
-      // we update the contextual panel with potentially new
-      // positional/sizing information (we DON'T want to update the
-      // toolbar here as that creates an infinite loop)
-      // also this updates the history buttons
-
-      // we tell it to skip focusing the text control if the
-      // text element was previously in focus
+    const elementChanged = function () {
       updateContextPanel();
-
-      svgCanvas.runExtensions('elementChanged', {
-        elems: elems,
-      });
     };
 
     $('#cur_context_panel').delegate('a', 'click', function () {
@@ -1108,7 +1034,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     svgCanvas.bind('selected', selectedChanged);
     svgCanvas.bind('transition', elementTransition);
     svgCanvas.bind('changed', elementChanged);
-    svgCanvas.bind('saved', saveHandler);
     svgCanvas.bind('contextset', contextChanged);
     textActions.setInputElem($('#text')[0]);
 
