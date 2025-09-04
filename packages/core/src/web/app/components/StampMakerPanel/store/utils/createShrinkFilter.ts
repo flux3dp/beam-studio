@@ -1,6 +1,5 @@
 /**
  * Configuration for the multi-stage shrink/emboss effect.
- * The ramp transitions from a highlight to a mid-tone, then to black.
  */
 const RAMP_CONFIG = {
   DARK_GRAY: 0, // The color at the deepest part of the ramp
@@ -18,21 +17,17 @@ const RAMP_CONFIG = {
  */
 const getColorOnShrinkRamp = (distance: number, rampWidth: number, steps: number): number => {
   const { DARK_GRAY, LIGHT_GRAY, MID_POINT, MIDDLE_GRAY } = RAMP_CONFIG;
-
   const stepWidth = rampWidth / steps;
   const currentStep = Math.floor(distance / stepWidth);
   const linearProgress = (currentStep + 1) / (steps + 1);
-
   const lightToMidRange = LIGHT_GRAY - MIDDLE_GRAY;
   const midToDarkRange = MIDDLE_GRAY - DARK_GRAY;
 
   if (linearProgress < MID_POINT) {
-    // First, faster part of the ramp (Light Gray -> Mid Gray)
     const progressInFirstHalf = linearProgress / MID_POINT;
 
     return LIGHT_GRAY - progressInFirstHalf * lightToMidRange;
   } else {
-    // Second, slower part of the ramp (Mid Gray -> Dark Gray/Black)
     const progressInSecondHalf = (linearProgress - MID_POINT) / (1 - MID_POINT);
 
     return MIDDLE_GRAY - progressInSecondHalf * midToDarkRange;
@@ -40,27 +35,30 @@ const getColorOnShrinkRamp = (distance: number, rampWidth: number, steps: number
 };
 
 /**
- * Creates a Konva filter for a uniform, non-directional shrink (emboss) effect
- * with a non-linear, multi-stage ramp.
+ * Creates a Konva filter for a uniform shrink (emboss) effect on grayscale images.
  *
  * @param {object} options
- * @param {number} options.rampWidth - The total width of the edge in pixels.
- * @param {number} options.steps - The number of discrete shading steps.
+ * @param {number} [options.rampWidth=10] - The width of the edge ramp in pixels.
+ * @param {number} [options.steps=128] - The number of discrete shading steps.
+ * @param {number} [options.threshold=128] - The brightness level (0-255) to distinguish background from foreground.
  */
 export const createShrinkFilter =
-  ({ rampWidth = 10, steps = 128 }: { rampWidth?: number; steps?: number }) =>
+  ({ rampWidth = 10, steps = 128, threshold = 128 }: { rampWidth?: number; steps?: number; threshold?: number }) =>
   (imageData: ImageData): void => {
     if (rampWidth <= 0) return;
 
     const { data, height, width } = imageData;
     const grid = new Float32Array(width * height);
+    const originalData = new Uint8ClampedArray(data); // Keep a copy of the original pixels
 
-    // --- Steps 1, 2, & 3: Calculate Euclidean Distance Transform ---
-    // (This measures from the WHITE background to create the shrink/emboss effect)
+    // --- Step 1: Initialize Grid using a Threshold ---
+    // Pixels brighter than the threshold are considered the background (distance 0).
     for (let i = 0; i < width * height; i++) {
-      grid[i] = data[i * 4] === 255 ? 0 : Infinity;
+      // To match the behavior of threshold on object panel
+      grid[i] = originalData[i * 4] + threshold > 255 ? 0 : Infinity;
     }
-    // First Pass
+
+    // --- Steps 2 & 3: Calculate Euclidean Distance Transform ---
     for (let y = 1; y < height; y++) {
       for (let x = 1; x < width; x++) {
         const i = y * width + x;
@@ -71,7 +69,7 @@ export const createShrinkFilter =
         grid[i] = Math.min(grid[i], distTop, distLeft, distTopLeft);
       }
     }
-    // Second Pass
+
     for (let y = height - 2; y >= 0; y--) {
       for (let x = width - 2; x >= 0; x--) {
         const i = y * width + x;
@@ -83,19 +81,21 @@ export const createShrinkFilter =
       }
     }
 
-    // --- Step 4: Render the Final Image using the Helper Function ---
+    // --- Step 4: Render the Final Image, Preserving Original Grays ---
     for (let i = 0; i < width * height; i++) {
       const i4 = i * 4;
-      const originalIsBlack = data[i4] === 0;
       const distance = grid[i];
-      let color = originalIsBlack ? 0 : 255;
+      const originalColor = originalData[i4];
+      let color = originalColor;
 
-      if (originalIsBlack && distance > 0 && distance < rampWidth) {
+      // Apply the ramp effect only to pixels that are part of the shape (darker than threshold)
+      // and within the ramp's distance from an edge.
+      if (originalColor <= threshold && distance > 0 && distance < rampWidth) {
         color = getColorOnShrinkRamp(distance, rampWidth, steps);
-      } else if (!originalIsBlack) {
-        color = 255; // White background
+      } else if (distance === 0) {
+        color = 255;
       } else {
-        color = 0; // Flat top of the stamp
+        color = 0;
       }
 
       data[i4] = data[i4 + 1] = data[i4 + 2] = color;
