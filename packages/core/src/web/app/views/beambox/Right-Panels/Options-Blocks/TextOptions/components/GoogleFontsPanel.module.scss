@@ -67,7 +67,8 @@
     }
   }
 
-  .categoryFilter {
+  .categoryFilter,
+  .languageFilter {
     display: flex;
     align-items: center;
     gap: 8px;
@@ -80,6 +81,14 @@
 
     .categorySelect {
       min-width: 120px;
+
+      .ant-select-selector {
+        border-radius: 4px;
+      }
+    }
+
+    .languageSelect {
+      min-width: 160px;
 
       .ant-select-selector {
         border-radius: 4px;
@@ -130,9 +139,23 @@
   border-radius: 8px;
   margin-bottom: 1px;
   transition: all 0.2s ease;
+  cursor: pointer;
+  border: 2px solid transparent;
 
   &:hover {
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    background: #f8f9fa;
+  }
+
+  &:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: 2px;
+  }
+
+  &.selected {
+    border-color: #1a73e8;
+    background: #e8f0fe;
+    box-shadow: 0 2px 8px rgba(26, 115, 232, 0.2);
   }
 
   .fontInfo {
@@ -153,6 +176,30 @@
         text-transform: capitalize;
       }
     }
+
+    .fontSubsets {
+      margin-top: 8px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 4px;
+
+      .subsetTag {
+        background-color: #e8f0fe;
+        color: #1a73e8;
+        font-size: 10px;
+        font-weight: 500;
+        padding: 2px 6px;
+        border-radius: 12px;
+        text-transform: capitalize;
+      }
+
+      .subsetMore {
+        font-size: 10px;
+        color: #5f6368;
+        font-weight: 500;
+        padding: 2px 6px;
+      }
+    }
   }
 
   .fontSample {
@@ -166,30 +213,6 @@
       min-height: 48px;
       display: flex;
       align-items: center;
-    }
-  }
-
-  .actions {
-    display: flex;
-    justify-content: flex-end;
-    gap: 8px;
-
-    .ant-btn {
-      height: 32px;
-      padding: 0 16px;
-      font-size: 13px;
-      font-weight: 500;
-      border-radius: 4px;
-    }
-
-    .ant-btn-primary {
-      background: #1a73e8;
-      border-color: #1a73e8;
-
-      &:hover {
-        background: #1557b0;
-        border-color: #1557b0;
-      }
     }
   }
 }
@@ -209,6 +232,22 @@
     font-weight: 500;
     border-radius: 4px;
   }
+
+  .ant-btn-primary {
+    background: #1a73e8;
+    border-color: #1a73e8;
+
+    &:hover:not(:disabled) {
+      background: #1557b0;
+      border-color: #1557b0;
+    }
+
+    &:disabled {
+      background: #f0f0f0;
+      border-color: #d9d9d9;
+      color: rgba(0, 0, 0, 0.25);
+    }
+  }
 }
 
 // Responsive design
@@ -227,7 +266,8 @@
       max-width: none;
     }
 
-    .categoryFilter {
+    .categoryFilter,
+    .languageFilter {
       justify-content: space-between;
     }
   }
