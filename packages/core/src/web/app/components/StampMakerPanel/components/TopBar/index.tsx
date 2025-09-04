@@ -1,16 +1,11 @@
-import React, { memo, useCallback, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
-import { MinusOutlined, PlusOutlined, RedoOutlined, ReloadOutlined, UndoOutlined } from '@ant-design/icons';
-import { Button, Flex } from 'antd';
-import classNames from 'classnames';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
-import useI18n from '@core/helpers/useI18n';
+import ZoomableTopBar, { type UndoRedoConfig } from '@core/app/components/common/ZoomableTopBar';
 
 import { useStampMakerPanelStore } from '../../store';
-
-import styles from './index.module.scss';
 
 interface Props {
   handleReset: () => void;
@@ -20,58 +15,23 @@ interface Props {
 
 function UnmemorizedTopBar({ handleReset, handleZoomByScale, zoomScale }: Props): React.JSX.Element {
   const {
-    global: { editing: lang },
-  } = useI18n();
-  const {
     history: { index, operations },
     redo,
     undo,
   } = useStampMakerPanelStore(useShallow(pick(['history', 'redo', 'undo'])));
-  const { redoable, undoable } = useMemo(
-    () => ({ redoable: index < operations.length, undoable: index > 0 }),
-    [index, operations.length],
-  );
 
-  // to realtime update zoom scale display
-  const renderZoomButton = useCallback(
-    () => (
-      <div className={styles['dp-flex']}>
-        <Button
-          className={styles['mr-8px']}
-          icon={<MinusOutlined />}
-          onClick={() => handleZoomByScale(0.8)}
-          shape="round"
-          title={lang.zoom_out}
-        />
-        <div className={classNames(styles['mr-8px'], styles['lh-32px'])}>{Math.round(zoomScale * 100)}%</div>
-        <Button
-          className={styles['mr-8px']}
-          icon={<PlusOutlined />}
-          onClick={() => handleZoomByScale(1.2)}
-          shape="round"
-          title={lang.zoom_in}
-        />
-        <Button icon={<ReloadOutlined />} onClick={handleReset} shape="circle" title={lang.reset} />
-      </div>
-    ),
-    [handleReset, handleZoomByScale, zoomScale, lang],
+  const undoRedoConfig: UndoRedoConfig = useMemo(
+    () => ({ onRedo: redo, onUndo: undo, redoable: index < operations.length, undoable: index > 0 }),
+    [index, operations.length, redo, undo],
   );
 
   return (
-    <Flex className={classNames(styles['w-100'], styles['top-bar'], styles.bdb)} justify="space-between">
-      <div>
-        <Button
-          className={styles['mr-8px']}
-          disabled={!undoable}
-          icon={<UndoOutlined />}
-          onClick={undo}
-          shape="round"
-          title={lang.undo}
-        />
-        <Button disabled={!redoable} icon={<RedoOutlined />} onClick={redo} shape="round" title={lang.redo} />
-      </div>
-      {renderZoomButton()}
-    </Flex>
+    <ZoomableTopBar
+      handleReset={handleReset}
+      handleZoomByScale={handleZoomByScale}
+      undoRedo={undoRedoConfig}
+      zoomScale={zoomScale}
+    />
   );
 }
 

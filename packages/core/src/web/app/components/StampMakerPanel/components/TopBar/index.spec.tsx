@@ -1,5 +1,6 @@
 import React from 'react';
-import { fireEvent, render } from '@testing-library/react';
+
+import { render } from '@testing-library/react';
 
 const mockUseStampMakerPanelStore = jest.fn();
 const mockRedo = jest.fn();
@@ -9,9 +10,31 @@ jest.mock('../../store', () => ({
   useStampMakerPanelStore: mockUseStampMakerPanelStore,
 }));
 
+jest.mock('@core/app/components/common/ZoomableTopBar', () => ({
+  __esModule: true,
+  default: jest.fn(({ handleReset, handleZoomByScale, undoRedo, zoomScale, ...props }) => (
+    <div data-testid="zoomable-topbar">
+      <div data-testid="undo-redo-config">
+        {JSON.stringify({
+          redoable: undoRedo.redoable,
+          undoable: undoRedo.undoable,
+        })}
+      </div>
+      <div data-testid="props">
+        {JSON.stringify({
+          hasHandleReset: typeof handleReset === 'function',
+          hasHandleZoomByScale: typeof handleZoomByScale === 'function',
+          zoomScale,
+          ...props,
+        })}
+      </div>
+    </div>
+  )),
+}));
+
 import TopBar from './index';
 
-describe('test TopBar', () => {
+describe('test StampMakerPanel TopBar wrapper', () => {
   const mockHandleReset = jest.fn();
   const mockHandleZoomByScale = jest.fn();
 
@@ -29,98 +52,51 @@ describe('test TopBar', () => {
     });
   });
 
-  it('should render correctly', () => {
-    const { container } = render(
-      <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
-    );
-
-    expect(container).toMatchSnapshot();
-  });
-
-  it('should display zoom scale percentage', () => {
-    const { getByText } = render(
+  it('should render ZoomableTopBar with correct props', () => {
+    const { getByTestId } = render(
       <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1.5} />,
     );
 
-    expect(getByText('150%')).toBeInTheDocument();
+    const propsElement = getByTestId('props');
+    const props = JSON.parse(propsElement.textContent!);
+
+    expect(props.hasHandleReset).toBe(true);
+    expect(props.hasHandleZoomByScale).toBe(true);
+    expect(props.zoomScale).toBe(1.5);
   });
 
-  it('should handle zoom out', () => {
-    const { getByTitle } = render(
+  it('should pass correct undo/redo config when both are enabled', () => {
+    const { getByTestId } = render(
       <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
     );
 
-    const zoomOutButton = getByTitle('Zoom Out');
+    const configElement = getByTestId('undo-redo-config');
+    const config = JSON.parse(configElement.textContent!);
 
-    fireEvent.click(zoomOutButton);
-
-    expect(mockHandleZoomByScale).toHaveBeenCalledWith(0.8);
-  });
-
-  it('should handle zoom in', () => {
-    const { getByTitle } = render(
-      <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
-    );
-
-    const zoomInButton = getByTitle('Zoom In');
-
-    fireEvent.click(zoomInButton);
-
-    expect(mockHandleZoomByScale).toHaveBeenCalledWith(1.2);
-  });
-
-  it('should handle reset', () => {
-    const { getByTitle } = render(
-      <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
-    );
-
-    const resetButton = getByTitle('Reset');
-
-    fireEvent.click(resetButton);
-
-    expect(mockHandleReset).toHaveBeenCalled();
-  });
-
-  it('should handle undo when enabled', () => {
-    const { getByTitle } = render(
-      <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
-    );
-
-    const undoButton = getByTitle('Undo');
-
-    expect(undoButton).not.toBeDisabled();
-
-    fireEvent.click(undoButton);
-    expect(mockUndo).toHaveBeenCalled();
+    expect(config.undoable).toBe(true); // index (1) > 0
+    expect(config.redoable).toBe(true); // index (1) < operations.length (2)
   });
 
   it('should disable undo when index is 0', () => {
     mockUseStampMakerPanelStore.mockImplementation((selector) => {
-      const state = { history: { index: 0, operations: [] }, redo: mockRedo, undo: mockUndo };
+      const state = {
+        history: { index: 0, operations: [{ mode: 'filter' }] },
+        redo: mockRedo,
+        undo: mockUndo,
+      };
 
       return selector ? selector(state) : state;
     });
 
-    const { getByTitle } = render(
+    const { getByTestId } = render(
       <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
     );
 
-    const undoButton = getByTitle('Undo');
+    const configElement = getByTestId('undo-redo-config');
+    const config = JSON.parse(configElement.textContent!);
 
-    expect(undoButton).toBeDisabled();
-  });
-
-  it('should handle redo when enabled', () => {
-    const { getByTitle } = render(
-      <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
-    );
-
-    const redoButton = getByTitle('Redo');
-
-    expect(redoButton).not.toBeDisabled();
-
-    fireEvent.click(redoButton);
-    expect(mockRedo).toHaveBeenCalled();
+    expect(config.undoable).toBe(false);
+    expect(config.redoable).toBe(true);
   });
 
   it('should disable redo when index equals operations length', () => {
@@ -134,20 +110,36 @@ describe('test TopBar', () => {
       return selector ? selector(state) : state;
     });
 
-    const { getByTitle } = render(
+    const { getByTestId } = render(
       <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
     );
 
-    const redoButton = getByTitle('Redo');
+    const configElement = getByTestId('undo-redo-config');
+    const config = JSON.parse(configElement.textContent!);
 
-    expect(redoButton).toBeDisabled();
+    expect(config.undoable).toBe(true);
+    expect(config.redoable).toBe(false);
   });
 
-  it('should round zoom scale to nearest integer', () => {
-    const { getByText } = render(
-      <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={0.754} />,
+  it('should disable both undo and redo when appropriate', () => {
+    mockUseStampMakerPanelStore.mockImplementation((selector) => {
+      const state = {
+        history: { index: 0, operations: [] },
+        redo: mockRedo,
+        undo: mockUndo,
+      };
+
+      return selector ? selector(state) : state;
+    });
+
+    const { getByTestId } = render(
+      <TopBar handleReset={mockHandleReset} handleZoomByScale={mockHandleZoomByScale} zoomScale={1} />,
     );
 
-    expect(getByText('75%')).toBeInTheDocument();
+    const configElement = getByTestId('undo-redo-config');
+    const config = JSON.parse(configElement.textContent!);
+
+    expect(config.undoable).toBe(false);
+    expect(config.redoable).toBe(false);
   });
 });
