@@ -32,7 +32,9 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
+  const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
+  const [selectedFont, setSelectedFont] = useState<GoogleFontItem | null>(null);
 
   const fetchGoogleFonts = useCallback(async () => {
     setLoading(true);
@@ -80,8 +82,12 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
       filtered = filtered.filter((font) => font.category === selectedCategory);
     }
 
+    if (selectedLanguage) {
+      filtered = filtered.filter((font) => font.subsets.includes(selectedLanguage));
+    }
+
     return filtered.slice(0, 100); // Limit to first 100 results for performance
-  }, [fonts, searchText, selectedCategory]);
+  }, [fonts, searchText, selectedCategory, selectedLanguage]);
 
   const loadFont = useCallback(
     (font: GoogleFontItem) => {
@@ -101,35 +107,78 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
     [loadedFonts],
   );
 
-  const handleFontSelect = useCallback(
-    async (font: GoogleFontItem) => {
-      try {
-        // Load the font first
-        loadFont(font);
-
-        // Wait a bit for font to load
-        await new Promise((resolve) => setTimeout(resolve, 500));
-
-        onFontSelect(font.family);
-        onClose();
-      } catch (error) {
-        console.error('Error selecting font:', error);
-      }
-    },
-    [loadFont, onFontSelect, onClose],
-  );
-
-  const handleSave = useCallback(
+  const handleFontClick = useCallback(
     (font: GoogleFontItem) => {
-      handleFontSelect(font);
+      setSelectedFont(font);
+      loadFont(font);
     },
-    [handleFontSelect],
+    [loadFont],
   );
+
+  const handleSave = useCallback(async () => {
+    if (!selectedFont) return;
+
+    try {
+      // Load the font first
+      loadFont(selectedFont);
+
+      // Wait a bit for font to load
+      await new Promise((resolve) => setTimeout(resolve, 500));
+
+      // Pass the font family to the parent component
+      // Note: The parent component (TextOptions) will handle adding to fontHistory
+      onFontSelect(selectedFont.family);
+      onClose();
+    } catch (error) {
+      console.error('Error selecting font:', error);
+    }
+  }, [selectedFont, loadFont, onFontSelect, onClose]);
 
   const categoryOptions = CATEGORIES.map((cat) => ({
     label: cat.charAt(0).toUpperCase() + cat.slice(1),
     value: cat,
   }));
+
+  const languageOptions = useMemo(() => {
+    const allSubsets = new Set<string>();
+
+    fonts.forEach((font) => {
+      font.subsets.forEach((subset) => allSubsets.add(subset));
+    });
+
+    const languageMapping: Record<string, string> = {
+      'chinese-hongkong': 'Chinese (Hong Kong)',
+      'chinese-simplified': 'Chinese Simplified',
+      'chinese-traditional': 'Chinese Traditional',
+    };
+
+    const parseSubsetLabel = (subset: string): string => {
+      // First check if we have a custom mapping
+      if (languageMapping[subset]) {
+        return languageMapping[subset];
+      }
+
+      // Handle '-ext' suffix
+      if (subset.endsWith('-ext')) {
+        const baseName = subset.slice(0, -4); // Remove '-ext'
+
+        return `${baseName.charAt(0).toUpperCase() + baseName.slice(1)} Extended`;
+      }
+
+      // Replace hyphens with spaces and capitalize each word
+      return subset
+        .split('-')
+        .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
+        .join(' ');
+    };
+
+    return Array.from(allSubsets)
+      .sort()
+      .map((subset) => ({
+        label: parseSubsetLabel(subset),
+        value: subset,
+      }));
+  }, [fonts]);
 
   return (
     <Modal className={styles.modal} closable={false} footer={null} onCancel={onClose} open={visible} width={800}>
@@ -155,10 +204,26 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
           <Typography.Text className={styles.filterLabel}>Category</Typography.Text>
           <Select
             className={styles.categorySelect}
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
             onChange={setSelectedCategory}
             options={[{ label: 'All', value: '' }, ...categoryOptions]}
-            placeholder="All"
+            placeholder="Category"
+            showSearch
             value={selectedCategory || undefined}
+          />
+        </div>
+        <div className={styles.languageFilter}>
+          <Typography.Text className={styles.filterLabel}>Language</Typography.Text>
+          <Select
+            className={styles.languageSelect}
+            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+            onChange={setSelectedLanguage}
+            options={[{ label: 'All', value: '' }, ...languageOptions]}
+            placeholder="Language"
+            placement="bottomRight"
+            popupMatchSelectWidth={false}
+            showSearch
+            value={selectedLanguage || undefined}
           />
         </div>
       </div>
@@ -173,9 +238,10 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
             {filteredFonts.map((font) => (
               <FontPreview
                 font={font}
+                isSelected={selectedFont?.family === font.family}
                 key={font.family}
+                onClick={() => handleFontClick(font)}
                 onLoad={() => loadFont(font)}
-                onSave={() => handleSave(font)}
               />
             ))}
           </div>
@@ -196,6 +262,9 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
         <Button onClick={onClose} type="default">
           Cancel
         </Button>
+        <Button disabled={!selectedFont} onClick={handleSave} type="primary">
+          Save
+        </Button>
       </div>
     </Modal>
   );
@@ -203,11 +272,12 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
 
 interface FontPreviewProps {
   font: GoogleFontItem;
+  isSelected: boolean;
+  onClick: () => void;
   onLoad: () => void;
-  onSave: () => void;
 }
 
-const FontPreview: React.FC<FontPreviewProps> = ({ font, onLoad, onSave }) => {
+const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, onLoad }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -237,13 +307,33 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, onLoad, onSave }) => {
   const previewText = getSampleText(font.family);
 
   return (
-    <div className={styles.fontPreview} data-font={font.family}>
+    <div
+      className={`${styles.fontPreview} ${isSelected ? styles.selected : ''}`}
+      data-font={font.family}
+      onClick={onClick}
+      onKeyDown={(e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+          e.preventDefault();
+          onClick();
+        }
+      }}
+      role="button"
+      tabIndex={0}
+    >
       <div className={styles.fontInfo}>
         <div className={styles.fontHeader}>
           <Typography.Text className={styles.fontName}>{font.family}</Typography.Text>
           <Typography.Text className={styles.fontMeta}>
             {font.variants?.length || 0} styles | {font.category}
           </Typography.Text>
+          <div className={styles.fontSubsets}>
+            {font.subsets.slice(0, 3).map((subset) => (
+              <span className={styles.subsetTag} key={subset}>
+                {subset}
+              </span>
+            ))}
+            {font.subsets.length > 3 && <span className={styles.subsetMore}>+{font.subsets.length - 3} more</span>}
+          </div>
         </div>
       </div>
 
@@ -256,12 +346,6 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, onLoad, onSave }) => {
         >
           {previewText}
         </div>
-      </div>
-
-      <div className={styles.actions}>
-        <Button onClick={onSave} size="small" type="primary">
-          Save
-        </Button>
       </div>
     </div>
   );
