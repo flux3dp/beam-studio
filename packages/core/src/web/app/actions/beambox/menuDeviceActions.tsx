@@ -149,11 +149,7 @@ export const executeFirmwareUpdate = async (device: IDeviceInfo): Promise<void> 
   const vc = VersionChecker(device.version);
 
   if (!vc.meetRequirement('UPDATE_BY_SOFTWARE')) {
-    Alert.popUp({
-      id: 'update-firmware',
-      message: lang.update.firmware.firmware_too_old_update_by_sdcard,
-      type: AlertConstants.SHOW_INFO,
-    });
+    Alert.popUp({ id: 'update-firmware', message: lang.update.firmware.firmware_too_old_update_by_sdcard });
 
     return;
   }

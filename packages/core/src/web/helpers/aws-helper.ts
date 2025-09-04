@@ -4,15 +4,15 @@ import Alert from '../app/actions/alert-caller';
 import Progress from '../app/actions/progress-caller';
 import AlertConstants from '../app/constants/alert-constants';
 
-const LANG = i18n.lang.beambox;
-
 export default {
-  uploadToS3: async (fileName, body) => {
+  uploadToS3: async (fileName: string, body: string) => {
+    const t = i18n.lang.beambox.popup;
+
     if (body.length > 10000000) {
       // 10M
       setTimeout(() => {
         Alert.popUp({
-          message: LANG.popup.upload_file_too_large,
+          message: t.upload_file_too_large,
           type: AlertConstants.SHOW_POPUP_ERROR,
         });
       }, 100);
@@ -20,7 +20,7 @@ export default {
       return;
     }
 
-    Progress.openNonstopProgress({ id: 'upload-to-aws', message: LANG.popup.progress.uploading });
+    Progress.openNonstopProgress({ id: 'upload-to-aws', message: t.progress.uploading });
 
     try {
       const reportFile = new Blob([body], { type: 'application/octet-stream' });
@@ -50,20 +50,20 @@ export default {
       if (r.status === 200) {
         console.log('Success', r);
         Alert.popUp({
-          message: LANG.popup.successfully_uploaded,
+          message: t.successfully_uploaded,
           type: AlertConstants.SHOW_POPUP_INFO,
         });
       } else {
         console.log('Failed', r);
         Alert.popUp({
-          message: `${LANG.popup.upload_failed}\n${r.status}`,
+          message: `${t.upload_failed}\n${r.status}`,
           type: AlertConstants.SHOW_POPUP_ERROR,
         });
       }
     } catch (e) {
       console.log(e);
       Alert.popUp({
-        message: `${LANG.popup.upload_failed}\n${e}`,
+        message: `${t.upload_failed}\n${e}`,
         type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } finally {
