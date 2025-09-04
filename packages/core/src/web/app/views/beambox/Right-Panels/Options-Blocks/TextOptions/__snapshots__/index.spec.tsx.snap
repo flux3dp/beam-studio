@@ -394,20 +394,6 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
           Helvetica
         </div>
       </option>
-      <option
-        value="more-google-fonts"
-      >
-        <div
-          style="align-items: center; color: rgb(26, 115, 232); display: flex; font-weight: 500; gap: 8px;"
-        >
-          <span
-            style="background-clip: text; font-weight: bold;"
-          >
-            G
-          </span>
-          More Google Fonts...
-        </div>
-      </option>
     </select>
   </div>
   <div>
@@ -504,20 +490,6 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
           style="font-family: 'Helvetica'; max-height: 24px;"
         >
           Helvetica
-        </div>
-      </option>
-      <option
-        value="more-google-fonts"
-      >
-        <div
-          style="align-items: center; color: rgb(26, 115, 232); display: flex; font-weight: 500; gap: 8px;"
-        >
-          <span
-            style="background-clip: text; font-weight: bold;"
-          >
-            G
-          </span>
-          More Google Fonts...
         </div>
       </option>
     </select>
@@ -629,20 +601,6 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
           style="font-family: 'Helvetica'; max-height: 24px;"
         >
           Helvetica
-        </div>
-      </option>
-      <option
-        value="more-google-fonts"
-      >
-        <div
-          style="align-items: center; color: rgb(26, 115, 232); display: flex; font-weight: 500; gap: 8px;"
-        >
-          <span
-            style="background-clip: text; font-weight: bold;"
-          >
-            G
-          </span>
-          More Google Fonts...
         </div>
       </option>
     </select>

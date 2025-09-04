@@ -331,7 +331,7 @@ jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
   ),
 }));
 
-import TextOptions from './TextOptions';
+import TextOptions from './index';
 
 describe('TextOptions', () => {
   const mockElem = document.createElement('g');
