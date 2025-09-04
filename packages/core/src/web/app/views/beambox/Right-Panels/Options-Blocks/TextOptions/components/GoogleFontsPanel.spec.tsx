@@ -167,6 +167,7 @@ describe('GoogleFontsPanel API Integration Tests', () => {
 
       // Click on the font preview to select it
       const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+
       fireEvent.click(fontPreview!);
 
       expect(document.createElement).toHaveBeenCalledWith('link');
@@ -184,6 +185,7 @@ describe('GoogleFontsPanel API Integration Tests', () => {
 
       // Click on the font preview to select it
       const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+
       fireEvent.click(fontPreview!);
 
       // Check that the font preview has the selected class
@@ -200,10 +202,12 @@ describe('GoogleFontsPanel API Integration Tests', () => {
 
       // First click on the font preview to select it
       const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+
       fireEvent.click(fontPreview!);
 
       // Then click the save button in the footer
       const saveButton = screen.getByRole('button', { name: 'Save' });
+
       fireEvent.click(saveButton);
 
       // Fast-forward the 500ms delay
@@ -225,10 +229,12 @@ describe('GoogleFontsPanel API Integration Tests', () => {
 
       // Save button should be disabled initially
       const saveButton = screen.getByRole('button', { name: 'Save' });
+
       expect(saveButton).toBeDisabled();
 
       // Click on the font preview to select it
       const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+
       fireEvent.click(fontPreview!);
 
       // Save button should now be enabled
@@ -245,11 +251,13 @@ describe('GoogleFontsPanel API Integration Tests', () => {
 
       // Select first font
       const robotoPreview = screen.getByText('Roboto').closest('[role="button"]');
+
       fireEvent.click(robotoPreview!);
       expect(robotoPreview).toHaveClass('selected');
 
       // Select second font - first should be deselected
       const openSansPreview = screen.getByText('Open Sans').closest('[role="button"]');
+
       fireEvent.click(openSansPreview!);
       expect(openSansPreview).toHaveClass('selected');
       expect(robotoPreview).not.toHaveClass('selected');
@@ -303,17 +311,18 @@ describe('GoogleFontsPanel API Integration Tests', () => {
       });
 
       const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
-      
+
       // Test Enter key
-      fireEvent.keyDown(fontPreview!, { key: 'Enter', code: 'Enter' });
+      fireEvent.keyDown(fontPreview!, { code: 'Enter', key: 'Enter' });
       expect(fontPreview).toHaveClass('selected');
 
       // Reset selection
       const anotherFont = screen.getByText('Open Sans').closest('[role="button"]');
+
       fireEvent.click(anotherFont!);
-      
+
       // Test Space key
-      fireEvent.keyDown(fontPreview!, { key: ' ', code: 'Space' });
+      fireEvent.keyDown(fontPreview!, { code: 'Space', key: ' ' });
       expect(fontPreview).toHaveClass('selected');
     });
 
@@ -325,6 +334,7 @@ describe('GoogleFontsPanel API Integration Tests', () => {
       });
 
       const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+
       expect(fontPreview).toHaveAttribute('role', 'button');
       expect(fontPreview).toHaveAttribute('tabIndex', '0');
     });
@@ -340,9 +350,11 @@ describe('GoogleFontsPanel API Integration Tests', () => {
 
       // Click on font preview first to select it
       const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+
       fireEvent.click(fontPreview!);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
+
       fireEvent.click(saveButton);
 
       expect(mockLinkElement.href).toMatch(
@@ -376,9 +388,11 @@ describe('GoogleFontsPanel API Integration Tests', () => {
 
       // Click on font preview first to select it
       const fontPreview = screen.getByText('Open Sans').closest('[role="button"]');
+
       fireEvent.click(fontPreview!);
 
       const saveButton = screen.getByRole('button', { name: 'Save' });
+
       fireEvent.click(saveButton);
 
       expect(mockLinkElement.href).toContain('Open+Sans');
@@ -408,8 +422,9 @@ describe('GoogleFontsPanel API Integration Tests', () => {
       await waitFor(() => {
         expect(screen.getByText('Font 0')).toBeInTheDocument();
       });
-      
+
       const fontItems = screen.getAllByText(/Font \d+/);
+
       expect(fontItems.length).toBeLessThanOrEqual(100);
     });
 
