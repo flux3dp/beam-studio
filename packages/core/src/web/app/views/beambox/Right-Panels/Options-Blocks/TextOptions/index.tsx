@@ -146,12 +146,15 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     () =>
       fontHistory
         .map((family) => {
-          // Always show fonts in history, even if they're not system fonts (like Google Fonts)
-          // This allows dynamically loaded Google Fonts to appear in the recently used section
-          return getFontFamilyOption(family, true);
+          // Only add history prefix for system fonts to avoid duplicate keys
+          // Google fonts don't exist in main options, so no prefix needed
+          const isSystemFont = availableFontFamilies.includes(family);
+          const useHistoryPrefix = FontFuncs.requestAvailableFontFamilies() && isSystemFont;
+
+          return getFontFamilyOption(family, useHistoryPrefix);
         })
         .filter(Boolean),
-    [fontHistory],
+    [fontHistory, availableFontFamilies],
   );
 
   const getFontFamilies = useCallback(async () => {
@@ -176,26 +179,44 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       }
 
       for (const textElement of textElements) {
-        // Sanitize font family
-        const postscriptName = textEdit.getFontPostscriptName(textElement);
+        // Check for Google Font first (before PostScript lookup)
+        const elementFontFamily = textEdit.getFontFamilyData(textElement);
+        // Remove quotes from font family name (SVG stores as 'FontName' but history stores as FontName)
+        const cleanFontFamily = elementFontFamily.replace(/^['"]|['"]$/g, '');
+        const isGoogleFontFromHistory =
+          fontHistory.includes(cleanFontFamily) && !availableFontFamilies.includes(cleanFontFamily);
         let font: GeneralFont;
 
-        if (postscriptName) {
-          font = FontFuncs.getFontOfPostscriptName(postscriptName);
-
-          if (!textElement.getAttribute('font-style')) {
-            textElement.setAttribute('font-style', font.italic ? 'italic' : 'normal');
-          }
-
-          if (!textElement.getAttribute('font-weight')) {
-            textElement.setAttribute('font-weight', font.weight ? font.weight.toString() : 'normal');
-          }
+        if (isGoogleFontFromHistory) {
+          // Create synthetic Google Font object to bypass PostScript lookup
+          font = {
+            family: cleanFontFamily,
+            italic: textEdit.getItalic(textElement),
+            postscriptName: cleanFontFamily.replace(/\s+/g, '') + '-Regular',
+            style: 'Regular',
+            weight: textEdit.getFontWeight(textElement) || 400,
+          };
         } else {
-          const family = textEdit.getFontFamilyData(textElement);
-          const weight = textEdit.getFontWeight(textElement);
-          const italic = textEdit.getItalic(textElement);
+          // Original logic for system fonts
+          const postscriptName = textEdit.getFontPostscriptName(textElement);
 
-          font = FontFuncs.requestFontByFamilyAndStyle({ family, italic, weight });
+          if (postscriptName) {
+            font = FontFuncs.getFontOfPostscriptName(postscriptName);
+
+            if (!textElement.getAttribute('font-style')) {
+              textElement.setAttribute('font-style', font.italic ? 'italic' : 'normal');
+            }
+
+            if (!textElement.getAttribute('font-weight')) {
+              textElement.setAttribute('font-weight', font.weight ? font.weight.toString() : 'normal');
+            }
+          } else {
+            const family = textEdit.getFontFamilyData(textElement);
+            const weight = textEdit.getFontWeight(textElement);
+            const italic = textEdit.getItalic(textElement);
+
+            font = FontFuncs.requestFontByFamilyAndStyle({ family, italic, weight });
+          }
         }
 
         console.log(font);
@@ -282,6 +303,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   );
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
+    console.log('handleFontFamilyChange', newFamily, option);
+
     // Check if this is the "More Google Fonts" option
     if (newFamily === 'more-google-fonts') {
       setShowGoogleFontsPanel(true);
