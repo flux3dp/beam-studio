@@ -1,0 +1,23 @@
+@use '@core/styles/variables' as variables;
+
+.wrapper {
+  height: 100%;
+  flex: 1;
+  padding: 20px 40px 0;
+  overflow: hidden;
+
+  @media screen and (max-width: 600px) {
+    padding: 12px 12px 0;
+  }
+
+  .tool-tip {
+    color: #7c7c7c;
+    cursor: help;
+  }
+
+  .link {
+    color: variables.$primary-blue;
+    cursor: pointer;
+    margin-bottom: 16px;
+  }
+}

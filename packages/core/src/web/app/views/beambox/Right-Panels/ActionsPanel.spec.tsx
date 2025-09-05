@@ -10,6 +10,7 @@ const mockSvgNestButtons = jest.fn();
 
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showCropPanel: (...args) => mockShowCropPanel(...args),
+  showStampMakerPanel: (...args) => mockShowStampMakerPanel(...args),
   showSvgNestButtons: (...args) => mockSvgNestButtons(...args),
 }));
 
@@ -26,14 +27,13 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
 }));
 
 const mockTraceImage = jest.fn();
-const generateStampBevel = jest.fn();
+const mockShowStampMakerPanel = jest.fn();
 const colorInvert = jest.fn();
 const mockRemoveBackground = jest.fn();
 const mockPotrace = jest.fn();
 
 jest.mock('@core/helpers/image-edit', () => ({
   colorInvert,
-  generateStampBevel,
   potrace: (...args) => mockPotrace(...args),
   removeBackground: (...args) => mockRemoveBackground(...args),
   traceImage: (...args) => mockTraceImage(...args),
@@ -233,9 +233,8 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.crop));
     expect(mockShowCropPanel).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(getByText(tActionPanel.bevel));
-    expect(generateStampBevel).toHaveBeenCalledTimes(1);
-    expect(generateStampBevel).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+    fireEvent.click(getByText('Stamp Maker'));
+    expect(mockShowStampMakerPanel).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText(tActionPanel.invert));
     expect(colorInvert).toHaveBeenCalledTimes(1);
@@ -505,9 +504,7 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getByText(tActionPanel.crop));
     expect(mockShowCropPanel).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(getByText(tActionPanel.bevel));
-    expect(generateStampBevel).toHaveBeenCalledTimes(1);
-    expect(generateStampBevel).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+    // Note: Stamp Maker button is not available in mobile view
 
     fireEvent.click(getByText(tActionPanel.invert));
     expect(colorInvert).toHaveBeenCalledTimes(1);

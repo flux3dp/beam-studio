@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: '最新のインスピレーション、セール情報、無料アイテムを手に入れよう！',
     youtube: 'Beam Studio のチュートリアルとクラフトアイデアを確認しよう。',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'ベベル半径',
+    horizontal_flip: '水平反転',
+    how_to: {
+      text: 'スタンプの作り方は？',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: '反転',
+    title: 'スタンプ作成',
+  },
   support: {
     no_vcredist: '「Visual C++ Redistributable 2015」をインストールしてください。<br/>それはflux3dp.comでダウンロードできます',
     no_webgl: 'WebGLはサポートされていません。他のデバイスを使用してください。',

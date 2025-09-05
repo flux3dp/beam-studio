@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Erhalte die neuesten Inspirationen, Angebote und Gratisartikel!',
     youtube: 'Schau dir Beam Studio Tutorials und Bastelideen an.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Fasenradius',
+    horizontal_flip: 'Horizontal spiegeln',
+    how_to: {
+      text: 'Wie macht man einen Stempel?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Invertieren',
+    title: 'Stempel-Ersteller',
+  },
   support: {
     no_vcredist: 'Bitte installieren Sie Visual C ++ Redistributable 2015 <br/> Das kann auf flux3dp.com heruntergeladen werden',
     no_webgl: 'WebGL wird nicht unterstützt. Bitte verwenden Sie andere Geräte.',

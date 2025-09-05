@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: '获取最新灵感、优惠和赠品！',
     youtube: '查看 Beam Studio 教程与手工创意。',
   },
+  stamp_maker_panel: {
+    bevel_radius: '斜角半径',
+    horizontal_flip: '水平翻转',
+    how_to: {
+      text: '如何制作印章？',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: '反转',
+    title: '印章制作',
+  },
   support: {
     no_vcredist: '请安装 Visual C++ Redistributable 2015<br/>可以在flux3dp.com找到',
     no_webgl: '您的系统不支持 WebGL，建议您使用其他电脑开启 Mozu Studio',

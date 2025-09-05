@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Dapatkan inspirasi terbaru, penawaran, dan hadiah gratis!',
     youtube: 'Lihat tutorial Beam Studio dan ide kerajinan.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Radius Bevel',
+    horizontal_flip: 'Balik Horizontal',
+    how_to: {
+      text: 'Bagaimana cara membuat stempel?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Balikkan',
+    title: 'Pembuat Stempel',
+  },
   support: {
     no_vcredist: 'Mohon instal Visual C++ Redistributable 2015<br/>Dapat diunduh di flux3dp.com',
     no_webgl: 'WebGL tidak didukung. Harap gunakan perangkat lain.',

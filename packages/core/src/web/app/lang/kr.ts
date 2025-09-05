@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: '최신 영감, 거래 및 무료 아이템을 받아보세요!',
     youtube: 'Beam Studio 튜토리얼과 공예 아이디어를 확인하세요.',
   },
+  stamp_maker_panel: {
+    bevel_radius: '베벨 반경',
+    horizontal_flip: '수평 뒤집기',
+    how_to: {
+      text: '도장을 어떻게 만드나요?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: '반전',
+    title: '도장 제작기',
+  },
   support: {
     no_vcredist: 'Visual C++ Redistributable 2015를 설치해 주세요. flux3dp.com에서 다운로드 가능합니다.',
     no_webgl: 'WebGL이 지원되지 않습니다. 다른 기기를 사용해 주세요.',

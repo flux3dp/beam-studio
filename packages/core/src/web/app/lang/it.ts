@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Ottieni le ultime ispirazioni, offerte e omaggi!',
     youtube: 'Guarda i tutorial di Beam Studio e le idee creative.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Raggio smusso',
+    horizontal_flip: 'Ribalta orizzontale',
+    how_to: {
+      text: 'Come fare un timbro?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Inverti',
+    title: 'Creatore di timbri',
+  },
   support: {
     no_vcredist: 'Installare Visual C++ Redistributable 2015<br/>Scaricabile da flux3dp.com',
     no_webgl: 'WebGL non è supportato. Utilizzare altri dispositivi.',

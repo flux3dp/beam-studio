@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Zdobądź najnowsze inspiracje, oferty i darmowe prezenty!',
     youtube: 'Zobacz samouczki Beam Studio i pomysły na rękodzieło.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Promień fazy',
+    horizontal_flip: 'Odbicie poziome',
+    how_to: {
+      text: 'Jak zrobić pieczątkę?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Odwróć',
+    title: 'Kreator pieczątek',
+  },
   support: {
     no_vcredist: 'Zainstaluj pakiet redystrybucyjny Visual C++ 2015<br/>, który można pobrać ze strony flux3dp.com',
     no_webgl: 'WebGL nie jest obsługiwany. Użyj innych urządzeń.',

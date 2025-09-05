@@ -53,7 +53,7 @@ const paramWidth = {
   repeat: 42.63,
   speed: 81.61,
   strength: 60.66,
-};
+} as const;
 const paramString = {
   fillInterval: 'Fill Interval (mm)',
   frequency: 'Frequency (kHz)',
@@ -61,7 +61,7 @@ const paramString = {
   repeat: 'Passes',
   speed: 'Speed (mm/s)',
   strength: 'Power (%)',
-};
+} as const;
 
 const getTextAdjustment = (rawText: number | string) => (rawText.toString().length * 2.7) / 2;
 const getEnd = (start: number, block: BlockInfo) =>
@@ -97,7 +97,9 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
       (right + row.size.value + endPadding * 2) * dpmm,
       (bottom + column.size.value + endPadding * 2) * dpmm,
     ];
-    const [colParam, rowParam] = Object.entries(tableSetting).sort(([, { selected: a }], [, { selected: b }]) => a - b);
+    const [colParam, rowParam] = Object.entries(tableSetting).sort(
+      ([, { selected: a }], [, { selected: b }]) => a - b,
+    ) as unknown as [[keyof typeof paramWidth, { selected: number }], [keyof typeof paramWidth, { selected: number }]];
 
     createLayer('Material Test - Frame', {
       hexCode: '#000',
@@ -161,7 +163,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
         (startPadding +
           (row.size.value + row.spacing.value) * index +
           row.size.value / 2 -
-          getTextAdjustment(svgInfos[index][rowParam[0]]) +
+          getTextAdjustment(svgInfos[index][rowParam[0]]!) +
           10) *
           dpmm,
         startPadding * dpmm,
@@ -169,7 +171,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
           fill: '#000',
           fontSize: 48,
           isDefaultFont: true,
-          text: svgInfos[index][rowParam[0]].toString(),
+          text: svgInfos[index][rowParam[0]]!.toString(),
         },
       );
 
@@ -184,7 +186,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
           fill: '#000',
           fontSize: 48,
           isDefaultFont: true,
-          text: svgInfos[index * row.count.value][colParam[0]].toString(),
+          text: svgInfos[index * row.count.value][colParam[0]]!.toString(),
         },
       );
     });

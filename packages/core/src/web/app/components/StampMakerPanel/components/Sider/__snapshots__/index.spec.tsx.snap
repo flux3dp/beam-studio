@@ -1,0 +1,54 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Sider should render correctly 1`] = `
+<div>
+  <div
+    class="ant-config-provider"
+    data-theme="{"components":{"InputNumber":{"controlWidth":80}}}"
+  >
+    <div
+      class="sider"
+      data-testid="sider"
+    >
+      <div
+        class="h-100 ant-flex css-dev-only-do-not-override-hash ant-flex-align-stretch ant-flex-justify-space-between ant-flex-vertical"
+      >
+        <div>
+          <button
+            data-testid="back-button"
+          >
+            Back to Beam Studio
+          </button>
+          <div
+            data-testid="header"
+          >
+            <svg
+              data-testid="stamp-icon"
+            />
+            <span>
+              Stamp Maker
+            </span>
+          </div>
+          <div
+            data-testid="sider-content"
+          >
+            Content
+          </div>
+        </div>
+        <div
+          data-testid="footer"
+        >
+          <button
+            class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+            type="button"
+          >
+            <span>
+              OK
+            </span>
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

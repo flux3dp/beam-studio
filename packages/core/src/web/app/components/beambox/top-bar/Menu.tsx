@@ -83,11 +83,12 @@ export default function Menu({ email }: Props): React.JSX.Element {
     return unregister;
   }, [devices]);
 
+  const lang = useI18n();
   const {
     promark_connection_test: tPromarkConnectionTest,
     promark_settings: tPromarkSettings,
     topbar: { menu: menuCms },
-  } = useI18n();
+  } = lang;
   const callback = (id: string, device?: IDeviceInfo) => {
     eventEmitter.emit('MENU_CLICK', null, {
       id,
@@ -340,7 +341,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
           <MenuItem onClick={() => callback('IMAGE_SHARPEN')}>{menuCms.image_sharpen}</MenuItem>
           <MenuItem onClick={() => callback('IMAGE_CROP')}>{menuCms.image_crop}</MenuItem>
           <MenuItem onClick={() => callback('IMAGE_INVERT')}>{menuCms.image_invert}</MenuItem>
-          <MenuItem onClick={() => callback('IMAGE_STAMP')}>{menuCms.image_stamp}</MenuItem>
+          <MenuItem onClick={() => callback('IMAGE_STAMP')}>{lang.stamp_maker_panel.title}</MenuItem>
           <MenuItem onClick={() => callback('IMAGE_VECTORIZE')}>{menuCms.image_vectorize}</MenuItem>
           <MenuItem onClick={() => callback('IMAGE_CURVE')}>{menuCms.image_curve}</MenuItem>
         </SubMenu>

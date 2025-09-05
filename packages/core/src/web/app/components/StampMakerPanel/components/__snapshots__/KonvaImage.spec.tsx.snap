@@ -1,0 +1,22 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test KonvaImage should render correctly 1`] = `
+<div>
+  <div
+    data-testid="konva-image"
+  >
+    <span>
+      Filters: 
+      0
+    </span>
+    <span>
+      Image: 
+      loaded
+    </span>
+    <span>
+      Fill: 
+      white
+    </span>
+  </div>
+</div>
+`;
