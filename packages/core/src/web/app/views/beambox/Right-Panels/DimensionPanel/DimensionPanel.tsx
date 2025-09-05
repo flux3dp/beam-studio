@@ -148,10 +148,6 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
           break;
       }
 
-      if (elem?.tagName === 'text') {
-        elem?.setAttribute('stroke-width', elem.getAttribute('stroke-width') === '2' ? '2.01' : '2');
-      }
-
       return cmd;
     },
     [elem],
