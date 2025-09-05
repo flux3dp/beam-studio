@@ -24,9 +24,7 @@ class GuideLineDrawer {
     useGlobalPreferenceStore.subscribe((state) => state.show_guides, this.updateVisible);
     useGlobalPreferenceStore.subscribe(
       (state) => [state.guide_x0, state.guide_y0],
-      ([x, y]) => {
-        this.updatePosition(x, y);
-      },
+      ([x, y]) => this.updatePosition(x, y),
       { equalityFn: shallow },
     );
   }
