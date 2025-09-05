@@ -619,8 +619,12 @@ export const getPromarkLimit = (): {
 } =>
   // pulseWidth for M100 V1: 10~500, M20 V1: 2~350
   match(getPromarkInfo())
+    .with({ laserType: LaserType.MOPA, watt: 60 }, () => ({
+      frequency: { max: 3000, min: 1 },
+      pulseWidth: { max: 500, min: 2 },
+    }))
     .with({ laserType: LaserType.MOPA }, () => ({
-      frequency: { max: 1000, min: 1 },
+      frequency: { max: 4000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
     }))
     .with({ watt: 50 }, () => ({ frequency: { max: 170, min: 45 } }))
