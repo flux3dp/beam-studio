@@ -2096,30 +2096,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // Nothing by default, handled by optional widget/extension
   };
 
-  // Function: save
-  // Serializes the current drawing into SVG XML text and returns it to the 'saved' handler.
-  // This function also includes the XML prolog. Clients of the SvgCanvas bind their save
-  // function to the 'saved' event.
-  //
-  // Returns:
-  // Nothing
-  this.save = function (opts) {
-    // remove the selected outline before serializing
-    clearSelection();
-
-    // Update save options if provided
-    if (opts) {
-      $.extend(save_options, opts);
-    }
-
-    save_options.apply = true;
-
-    // no need for doctype, see http://jwatt.org/svg/authoring/#doctype-declaration
-    var str = this.svgCanvasToString();
-
-    call('saved', str);
-  };
-
   this.removeUnusedDefs = () => {
     while (removeUnusedDefElems() > 0) {
       null;
@@ -2400,31 +2376,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     call('changed', [newLayer]);
 
     return newLayer;
-  };
-
-  // Function: deleteCurrentLayer
-  // Deletes the current layer from the drawing and then clears the selection. This function
-  // then calls the 'changed' handler. This is an undoable action.
-  this.deleteCurrentLayer = function () {
-    var current_layer = getCurrentDrawing().getCurrentLayer();
-    var nextSibling = current_layer.nextSibling;
-    var parent = current_layer.parentNode;
-
-    current_layer = getCurrentDrawing().deleteCurrentLayer();
-
-    if (current_layer) {
-      var batchCmd = new history.BatchCommand('Delete Layer');
-
-      // store in our Undo History
-      batchCmd.addSubCommand(new history.RemoveElementCommand(current_layer, nextSibling, parent));
-      addCommandToHistory(batchCmd);
-      clearSelection();
-      call('changed', [parent]);
-
-      return true;
-    }
-
-    return false;
   };
 
   // Function: setCurrentLayer
