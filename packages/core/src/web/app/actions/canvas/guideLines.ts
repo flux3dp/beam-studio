@@ -35,15 +35,13 @@ class GuideLineDrawer {
     const { height, width } = workareaManager;
     const canvasBG = document.getElementById('canvasBackground')!;
     const container = document.createElementNS(NS.SVG, 'svg');
-    // const lineVertical = document.createElementNS(NS.SVG, 'path');
-    // const lineHorizontal = document.createElementNS(NS.SVG, 'path');
     const lineVertical = document.createElementNS(NS.SVG, 'line');
     const lineHorizontal = document.createElementNS(NS.SVG, 'line');
 
     setAttributes(container, {
       height: '100%',
       id: 'guidesLines',
-      style: 'pointer-events: none',
+      style: 'pointer-events: none; overflow: hidden',
       viewBox: `0 0 ${width} ${height}`,
       width: '100%',
       x: '0',
