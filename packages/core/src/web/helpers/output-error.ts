@@ -5,7 +5,6 @@ import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
-import i18n from '@core/helpers/i18n';
 import Logger from '@core/helpers/logger';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
@@ -13,7 +12,7 @@ import os from '@core/implementations/os';
 import store from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
-const LANG = i18n.lang.beambox;
+import i18n from './i18n';
 
 const getOutput = (): string[] => {
   const output = [];
@@ -86,13 +85,13 @@ export default {
     const fileName = `bug_report_${Math.floor(Date.now() / 1000)}.txt`;
     const getContent = () => output.join('');
 
-    await dialog.writeFileDialog(getContent, LANG.popup.bug_report, fileName, [
+    await dialog.writeFileDialog(getContent, i18n.lang.beambox.popup.bug_report, fileName, [
       { extensions: ['txt'], name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt' },
     ]);
   },
   getOutput,
   uploadBackendErrorLog: async (): Promise<void> => {
-    Progress.openNonstopProgress({ id: 'output-error-log', message: LANG.popup.progress.uploading });
+    Progress.openNonstopProgress({ id: 'output-error-log', message: i18n.lang.beambox.popup.progress.uploading });
 
     const output = getOutput();
     const reportFile = new Blob(output, { type: 'application/octet-stream' });
@@ -111,6 +110,7 @@ export default {
       headers: new Headers({ Accept: 'application/xml', 'Content-Type': 'multipart/form-data' }),
       method: 'PUT',
     };
+    const t = i18n.lang.beambox.popup;
 
     try {
       const r = await fetch(url, config);
@@ -118,20 +118,20 @@ export default {
       if (r.status === 200) {
         console.log('Success', r);
         Alert.popUp({
-          message: LANG.popup.successfully_uploaded,
+          message: t.successfully_uploaded,
           type: AlertConstants.SHOW_POPUP_INFO,
         });
       } else {
         console.log('Failed', r);
         Alert.popUp({
-          message: `${LANG.popup.upload_failed}\n${r.status}`,
+          message: `${t.upload_failed}\n${r.status}`,
           type: AlertConstants.SHOW_POPUP_ERROR,
         });
       }
     } catch (e) {
       console.log(e);
       Alert.popUp({
-        message: `${LANG.popup.upload_failed}\n${e}`,
+        message: `${t.upload_failed}\n${e}`,
         type: AlertConstants.SHOW_POPUP_ERROR,
       });
     } finally {

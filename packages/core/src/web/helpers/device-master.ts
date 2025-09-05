@@ -35,11 +35,6 @@ import promarkDataStore from './device/promark/promark-data-store';
 import i18n from './i18n';
 import VersionChecker from './version-checker';
 
-let { lang } = i18n;
-const updateLang = () => {
-  lang = i18n.lang;
-};
-
 export type TakePictureOptions = { timeout?: number; useLowResolution?: boolean };
 
 class DeviceMaster {
@@ -52,7 +47,6 @@ class DeviceMaster {
   public currentDevice?: IDeviceConnection;
 
   constructor() {
-    updateLang();
     this.deviceConnections = new Map<string, IDeviceConnection>();
     this.discoveredDevices = [];
     discoverManager.register('device-master', (devices) => {
@@ -84,6 +78,7 @@ class DeviceMaster {
       if ([ABORTED, COMPLETED, PAUSED_FROM_RUNNING].includes(info.st_id)) {
         if (this.unnotifiedDeviceUUIDs.find((uuid) => uuid === info.uuid)) {
           let message = '';
+          const { lang } = i18n;
 
           if (deviceConn.info.st_id === DeviceConstants.status.COMPLETED) {
             message = `${lang.device.completed}`;
@@ -234,6 +229,7 @@ class DeviceMaster {
   async showAuthDialog(uuid: string): Promise<boolean> {
     // return authed or not
     const device = this.getDeviceByUUID(uuid);
+    const { lang } = i18n;
     const authResult = await new Promise<{ data: any; password?: string; success: boolean }>((resolve) => {
       Dialog.showInputLightbox('auth', {
         caption: sprintf(lang.input_machine_password.require_password, device.info.name),
@@ -277,6 +273,8 @@ class DeviceMaster {
   }
 
   async auth(uuid: string, password?: string) {
+    const { lang } = i18n;
+
     Progress.openNonstopProgress({
       id: 'device-master-auth',
       message: lang.message.authenticating,
@@ -331,7 +329,7 @@ class DeviceMaster {
     console.log('Selecting', deviceInfo, device);
     Progress.openNonstopProgress({
       id: 'select-device',
-      message: sprintf(lang.message.connectingMachine, device.info.name || deviceInfo.name),
+      message: sprintf(i18n.lang.message.connectingMachine, device.info.name || deviceInfo.name),
       timeout: 30000,
     });
 
@@ -416,7 +414,7 @@ class DeviceMaster {
     console.log('Selecting', deviceInfo, device);
     Progress.openNonstopProgress({
       id: 'select-device',
-      message: sprintf(lang.message.connectingMachine, device.info.name || deviceInfo.name),
+      message: sprintf(i18n.lang.message.connectingMachine, device.info.name || deviceInfo.name),
       timeout: 30000,
     });
 
@@ -529,6 +527,8 @@ class DeviceMaster {
       return { success: false };
     }
 
+    const { lang } = i18n;
+
     Progress.openNonstopProgress({
       id: 'select-device',
       message: sprintf(lang.message.connectingMachine, device.info.name),
@@ -555,28 +555,29 @@ class DeviceMaster {
 
   popConnectionError(uuid: string, errorCode: ConnectionError): void {
     const errCaption = '';
-    let errMessage = lang.message.unknown_error;
+    const t = i18n.lang.message;
+    let errMessage = t.unknown_error;
 
     switch (errorCode) {
       case ConnectionError.TIMEOUT:
-        errMessage = lang.message.connectionTimeout;
+        errMessage = t.connectionTimeout;
         break;
       case ConnectionError.NOT_FOUND:
-        errMessage = lang.message.unable_to_find_machine;
+        errMessage = t.unable_to_find_machine;
         break;
       case ConnectionError.DISCONNECTED:
-        errMessage = `#891 ${lang.message.disconnected}`;
+        errMessage = `#891 ${t.disconnected}`;
 
         if (this.discoveredDevices.some((d) => d.uuid === uuid)) {
-          errMessage = `#892 ${lang.message.disconnected}`;
+          errMessage = `#892 ${t.disconnected}`;
         }
 
         break;
       case ConnectionError.UNKNOWN_DEVICE:
-        errMessage = lang.message.unknown_device;
+        errMessage = t.unknown_device;
         break;
       default:
-        errMessage = `${lang.message.unknown_error} ${errorCode}`;
+        errMessage = `${t.unknown_error} ${errorCode}`;
     }
     Alert.popById('connection-error');
     Alert.popUp({
@@ -788,7 +789,7 @@ class DeviceMaster {
 
     Progress.openSteppingProgress({
       id: 'camera-cali-task',
-      message: lang.calibration.drawing_calibration_image,
+      message: i18n.lang.calibration.drawing_calibration_image,
     });
 
     const onProgress = (progress: number) =>
@@ -826,7 +827,7 @@ class DeviceMaster {
 
     Progress.openSteppingProgress({
       id: 'diode-cali-task',
-      message: lang.calibration.drawing_calibration_image,
+      message: i18n.lang.calibration.drawing_calibration_image,
     });
 
     const onProgress = (progress: number) =>
@@ -875,7 +876,7 @@ class DeviceMaster {
 
     Progress.openSteppingProgress({
       id: 'cali-task',
-      message: lang.calibration.drawing_calibration_image,
+      message: i18n.lang.calibration.drawing_calibration_image,
       onCancel: async () => {
         await this.stop();
         await this.quit();
@@ -1643,7 +1644,7 @@ class DeviceMaster {
   }
 
   getCameraCount() {
-    return this.currentDevice?.camera?.getCameraCount() || 0;
+    return this.currentDevice?.camera?.getCameraCount() || { data: 'Failed to get camera count', success: false };
   }
 
   setCamera(index: number) {

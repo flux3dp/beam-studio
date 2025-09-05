@@ -5,7 +5,7 @@ import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 import BaseCurveMeasurer from './base';
 
 export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements CurveMeasurer {
-  private currentPosition: { x: number; y: number };
+  private currentPosition: null | { x: number; y: number } = null;
 
   setup = async (onProgressText?: (text: string) => void): Promise<boolean> => {
     const res = await this.setupDevice();
@@ -21,7 +21,7 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
       await deviceMaster.enterRawMode();
     }
 
-    onProgressText(lang.message.homing);
+    onProgressText?.(lang.message.homing);
     await deviceMaster.rawHome();
 
     return true;
@@ -48,7 +48,7 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
     feedrate: number,
     offset?: [number, number, number],
     objectHeight?: number,
-    lowest?: number,
+    lowest: null | number = null,
   ): Promise<null | number> => {
     const target = offset ? [Math.max(x - offset[0], 0), Math.max(y - offset[1], 0)] : [x, y];
     const [targetX, targetY] = target;
@@ -64,7 +64,7 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
     }
 
     const z = await deviceMaster.rawMeasureHeight(
-      lowest === null ? { relZ: objectHeight } : { baseZ: Math.max(lowest - objectHeight, 0) },
+      lowest === null ? { relZ: objectHeight } : { baseZ: Math.max(lowest - objectHeight!, 0) },
     );
 
     return z;
