@@ -48,6 +48,7 @@ class PreviewModeBackgroundDrawer {
     this.backgroundDrawerSubject = new Subject();
     this.cameraOffset = null;
 
+    this.updateCanvasSize();
     canvasEventEmitter.on('model-changed', this.updateCanvasSize);
   }
 
