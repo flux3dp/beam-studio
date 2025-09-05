@@ -639,8 +639,6 @@ const convertTextToPath = async (
     const textAttr = getAttributes(textElement, ['data-ratiofixed', 'fill', 'fill-opacity', 'stroke', 'stroke-width']);
     const isFilled = calculateFilled(textElement); // for ghost
 
-    textElement.removeAttribute('stroke-width');
-
     let res: IConvertInfo = null;
     let preferGhost = globalPreference['font-convert'] === '1.0';
 

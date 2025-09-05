@@ -296,7 +296,12 @@ describe('test layer-config-helper', () => {
     });
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.MOPA, watt: 60 });
     expect(getPromarkLimit()).toEqual({
-      frequency: { max: 1000, min: 1 },
+      frequency: { max: 3000, min: 1 },
+      pulseWidth: { max: 500, min: 2 },
+    });
+    mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.MOPA, watt: 100 });
+    expect(getPromarkLimit()).toEqual({
+      frequency: { max: 4000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
     });
   });
