@@ -6,8 +6,6 @@ import communicator from '@core/implementations/communicator';
 
 import { saveFile } from '../handlers/save';
 
-const LANG = i18n.lang;
-
 export const getDefaultFileName = () => (currentFileManager.getName() || 'untitled').replace('/', ':');
 
 export const switchSymbolWrapper = <T>(fn: () => T): T => {
@@ -27,9 +25,11 @@ export const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
     if (!currentFileManager.getHasUnsavedChanges() || window.location.hash !== '#/studio/beambox') {
       resolve(true);
     } else {
+      const { lang } = i18n;
+
       Alert.popById('unsaved_change_dialog');
       Alert.popUp({
-        buttonLabels: [LANG.alert.save, LANG.alert.dont_save, LANG.alert.cancel],
+        buttonLabels: [lang.alert.save, lang.alert.dont_save, lang.alert.cancel],
         callbacks: [
           async () => {
             if (await saveFile()) resolve(true);
@@ -38,7 +38,7 @@ export const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
           () => resolve(false),
         ],
         id: 'unsaved_change_dialog',
-        message: LANG.beambox.popup.save_unsave_changed,
+        message: lang.beambox.popup.save_unsave_changed,
         primaryButtonIndex: 0,
       });
     }
