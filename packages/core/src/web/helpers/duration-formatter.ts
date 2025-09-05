@@ -1,6 +1,5 @@
 import i18n from '@core/helpers/i18n';
 
-const { lang } = i18n;
 const minute = 60;
 const hour = minute * 60;
 
@@ -8,6 +7,8 @@ export default function formatDuration(lengthInSecond = 0): string {
   if (!lengthInSecond) {
     return '';
   }
+
+  const { lang } = i18n;
 
   if (lengthInSecond >= hour) {
     const hours = Number.parseInt(String(lengthInSecond / hour), 10);
