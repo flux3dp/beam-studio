@@ -105,6 +105,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const { fontFamily } = configs;
   const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
   const [showGoogleFontsPanel, setShowGoogleFontsPanel] = useState(false);
+  const [sessionLoadedFonts, setSessionLoadedFonts] = useState<Set<string>>(new Set());
   const selectorRef = useRef<null | Selector>(null);
   const workarea = useWorkarea();
   const showVariableText = useMemo(isVariableTextSupported, [workarea]);
@@ -140,6 +141,40 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       setStorage('font-history', newHistory);
     },
     [fontHistory],
+  );
+
+  const loadGoogleFontCSS = useCallback(
+    (fontFamily: string) => {
+      // Check if already loaded in this session
+      if (sessionLoadedFonts.has(fontFamily)) {
+        return;
+      }
+
+      // Create Google Fonts URL - exact same pattern as GoogleFontsPanel
+      // Note: 'wght' is Google Fonts parameter for font-weight (not a typo)
+      const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400&display=swap`;
+
+      // Check if CSS link already exists in DOM
+      if (document.querySelector(`link[href="${fontUrl}"]`)) {
+        // Mark as loaded but don't create duplicate
+        setSessionLoadedFonts((prev) => new Set(prev).add(fontFamily));
+
+        return;
+      }
+
+      // Create and append link element - exactly like GoogleFontsPanel
+      const link = document.createElement('link');
+
+      link.href = fontUrl;
+      link.rel = 'stylesheet';
+      document.head.appendChild(link);
+
+      // Track that this font has been loaded in this session
+      setSessionLoadedFonts((prev) => new Set(prev).add(fontFamily));
+
+      console.log(`Loaded Google Font CSS: ${fontFamily}`);
+    },
+    [sessionLoadedFonts],
   );
 
   const historyFontFamilies = useMemo(
@@ -178,6 +213,16 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       if (elemId === configs.id.value) {
         return;
       }
+
+      // Proactively load Google Font CSS for fonts in history (once per session)
+      // This ensures fonts are ready before user even opens the dropdown
+      fontHistory.forEach((family) => {
+        const isLocalFont = availableFontFamilies.some((f) => f.toLowerCase() === family.toLowerCase());
+
+        if (!isLocalFont && !sessionLoadedFonts.has(family)) {
+          loadGoogleFontCSS(family);
+        }
+      });
 
       for (const textElement of textElements) {
         // Check for Google Font first (before PostScript lookup)
@@ -284,7 +329,16 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     } else {
       getFontFamilies();
     }
-  }, [elem, textElements, availableFontFamilies, configs.id.value, getFontFamilies, fontHistory]);
+  }, [
+    elem,
+    textElements,
+    availableFontFamilies,
+    configs.id.value,
+    getFontFamilies,
+    fontHistory,
+    sessionLoadedFonts,
+    loadGoogleFontCSS,
+  ]);
 
   useEffect(() => {
     const getStyleOptions = (family: string) => {
@@ -334,7 +388,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     const localFontMatch = systemFonts.find((f) => f.toLowerCase() === familyLower);
 
     if (!localFontMatch) {
-      // Handle Google Font from history - delegate to handleGoogleFontSelect
+      // Handle Google Font from history - CSS already loaded proactively
       await handleGoogleFontSelect(family);
 
       return;
@@ -418,6 +472,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onConfigChange('fontStyle', localFont.style);
       } else {
         // Font is not available locally, treat as Google Font
+        // CSS already loaded proactively when text was selected
+
         const googleFont: GeneralFont = {
           family: googleFontFamily,
           italic: false,
