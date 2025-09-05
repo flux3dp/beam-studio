@@ -10,7 +10,6 @@ jest.mock('antd', () => ({
   ),
 }));
 
-
 jest.mock('@core/app/icons/action-panel/ActionPanelIcons', () => ({
   __esModule: true,
   default: {
