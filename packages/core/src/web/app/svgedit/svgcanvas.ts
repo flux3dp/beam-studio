@@ -34,6 +34,7 @@ import Alert from '@core/app/actions/alert-caller';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
 import grid from '@core/app/actions/canvas/grid';
+import { guideLineDrawer } from '@core/app/actions/canvas/guideLines';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -619,6 +620,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   workareaManager.init(useDocumentStore.getState()['workarea']);
   grid.init(workareaManager.zoomRatio);
+  guideLineDrawer.init();
   updateWorkAreaAlignPoints();
   presprayArea.generatePresprayArea();
   rotaryAxis.init();
