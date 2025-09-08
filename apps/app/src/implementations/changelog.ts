@@ -1,6 +1,6 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.5.8 beta
+// 2.5.9 beta
 const CHANGES_TW = {
   added: ['新增 印章功能。'],
   changed: [
