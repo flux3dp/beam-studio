@@ -1,14 +1,12 @@
 import Konva from 'konva';
-import type { Filter } from 'konva/lib/Node';
 import { isNot, isShallowEqual } from 'remeda';
 import { create } from 'zustand';
 import { combine } from 'zustand/middleware';
 
-import type { InvertOperation } from './types';
+import type { InvertOperation, State } from './types';
 import { addItemToHistory } from './utils/addItemToHistory';
 import { createExpandFilter } from './utils/createExpandFilter';
 import { createShrinkFilter } from './utils/createShrinkFilter';
-import { addFilter as _addFilter, removeFilter as _removeFilter, type State } from './utils/operationHandlers';
 import { handleRedo, handleUndo } from './utils/undoRedoHandlers';
 
 const getDefaultState = (): State => ({
@@ -20,9 +18,8 @@ const getDefaultState = (): State => ({
 });
 
 interface StampMakerPanelStore extends State {
-  addFilter: (filter: Filter, isFront?: boolean) => void;
+  isInverted: () => boolean;
   redo: () => void;
-  removeFilter: (filter: Filter) => void;
   resetState: () => void;
   setBevelRadius: (value: number) => void;
   setHorizontalFlip: (value: boolean) => void;
@@ -31,10 +28,9 @@ interface StampMakerPanelStore extends State {
 }
 
 export const useStampMakerPanelStore = create<StampMakerPanelStore>(
-  combine(getDefaultState(), (set) => ({
-    addFilter: (filter: Filter, isFront = false) => set((state) => _addFilter(state, filter, { isFront })),
+  combine(getDefaultState(), (set, get) => ({
+    isInverted: () => get().filters.includes(Konva.Filters.Invert),
     redo: () => set((state) => handleRedo(state)),
-    removeFilter: (filter: Filter) => set((state) => _removeFilter(state, filter)),
     resetState: () => set(getDefaultState()),
     setBevelRadius: (bevelRadius: number) => {
       set((state) => {

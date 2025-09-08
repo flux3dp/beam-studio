@@ -55,28 +55,10 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   const stageRef = useRef<Konva.Stage>(null);
   const layerRef = useRef<Konva.Layer>(null);
   const imageRef = useRef<KonvaImageRef>(null);
-  const imageData = useRef<ImageData | null>(null);
   const { handleWheel, handleZoom, handleZoomByScale, isDragging } = useKonvaCanvas(
     stageRef as MutableRefObject<Konva.Stage>,
     { onScaleChanged: setZoomScale },
   );
-
-  const getImageData = useCallback(async () => {
-    if (imageData.current) return imageData.current;
-
-    if (imageRef.current?.isCached()) {
-      imageData.current = imageRef.current
-        ._getCachedSceneCanvas()
-        .context._context.getImageData(0, 0, imageSize.width, imageSize.height);
-
-      return imageData.current!;
-    }
-
-    // wait for the image to be loaded, seldom happens but can occur if the image is not cached
-    await new Promise((resolve) => setTimeout(resolve, 500));
-
-    return getImageData();
-  }, [imageSize]);
 
   const handleResetZoom = useCallback(() => {
     const stage = stageRef.current!;
@@ -101,10 +83,6 @@ function UnmemorizedStampMakerPanel({ image, onClose, src }: Props): React.JSX.E
   }, [langPhoto]);
 
   const updateUrl = useCallback(() => stageRef.current!.toDataURL(imageSize), [imageSize]);
-
-  useEffect(() => {
-    imageData.current = null;
-  }, [imageSize, displayImage]);
 
   useEffect(() => {
     const updateImages = async () => {

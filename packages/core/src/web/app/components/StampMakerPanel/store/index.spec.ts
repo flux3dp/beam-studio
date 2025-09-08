@@ -45,33 +45,21 @@ describe('test StampMakerPanelStore', () => {
     expect(useStampMakerPanelStore.getState().history.operations[0]).toMatchObject({ mode: 'bevelRadius', value: 5.5 });
   });
 
-  test('addFilter', () => {
-    const mockFilter = { name: 'test-filter' } as any;
+  test('isInverted', () => {
+    let state = useStampMakerPanelStore.getState();
 
-    useStampMakerPanelStore.getState().addFilter(mockFilter);
+    // Initially should not be inverted
+    expect(state.isInverted()).toBe(false);
 
-    const state = useStampMakerPanelStore.getState();
+    // Toggle invert
+    state.toggleInvert();
+    state = useStampMakerPanelStore.getState();
+    expect(state.isInverted()).toBe(true);
 
-    expect(state.filters).toHaveLength(1);
-    expect(state.filters[0]).toBe(mockFilter);
-    expect(state.history.operations).toHaveLength(1);
-    expect(state.history.operations[0]).toEqual({ filter: mockFilter, isFront: false, mode: 'addFilter' });
-  });
-
-  test('removeFilter', () => {
-    const mockFilter = { name: 'test-filter' } as any;
-
-    // Add filter first
-    useStampMakerPanelStore.getState().addFilter(mockFilter);
-    expect(useStampMakerPanelStore.getState().filters).toHaveLength(1);
-
-    // Remove filter
-    useStampMakerPanelStore.getState().removeFilter(mockFilter);
-
-    const state = useStampMakerPanelStore.getState();
-
-    expect(state.filters).toHaveLength(0);
-    expect(state.history.operations).toHaveLength(2); // add + remove operations
+    // Toggle back
+    state.toggleInvert();
+    state = useStampMakerPanelStore.getState();
+    expect(state.isInverted()).toBe(false);
   });
 
   test('undo and redo horizontal flip', () => {
@@ -96,111 +84,29 @@ describe('test StampMakerPanelStore', () => {
     expect(state.history.index).toBe(1);
   });
 
-  test('addFilter with isFront parameter', () => {
-    const mockFilter1 = { name: 'filter-1' } as any;
-    const mockFilter2 = { name: 'filter-2' } as any;
-
-    useStampMakerPanelStore.getState().addFilter(mockFilter1);
-    useStampMakerPanelStore.getState().addFilter(mockFilter2, true); // Add to front
-
-    const state = useStampMakerPanelStore.getState();
-
-    expect(state.filters).toHaveLength(2);
-    expect(state.filters[0]).toBe(mockFilter2); // Should be first due to isFront: true
-    expect(state.filters[1]).toBe(mockFilter1);
-    expect(state.history.operations[0]).toEqual({ filter: mockFilter1, isFront: false, mode: 'addFilter' });
-    expect(state.history.operations[1]).toEqual({ filter: mockFilter2, isFront: true, mode: 'addFilter' });
-  });
-
-  test('undo and redo filter operations', () => {
-    const mockFilter1 = { name: 'filter-1' } as any;
-    const mockFilter2 = { name: 'filter-2' } as any;
-    let state = useStampMakerPanelStore.getState();
-
-    // Add filters
-    state.addFilter(mockFilter1);
-    state.addFilter(mockFilter2, true);
-
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toEqual([mockFilter2, mockFilter1]);
-    expect(state.history.index).toBe(2);
-
-    // Undo last operation (add mockFilter2 to front)
-    state.undo();
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toEqual([mockFilter1]);
-    expect(state.history.index).toBe(1);
-
-    // Undo first operation (add mockFilter1)
-    state.undo();
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toEqual([]);
-    expect(state.history.index).toBe(0);
-
-    // Redo first operation
-    state.redo();
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toEqual([mockFilter1]);
-    expect(state.history.index).toBe(1);
-
-    // Redo second operation
-    state.redo();
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toEqual([mockFilter2, mockFilter1]);
-    expect(state.history.index).toBe(2);
-  });
-
-  test('undo and redo remove filter operations', () => {
-    const mockFilter = { name: 'test-filter' } as any;
-    let state = useStampMakerPanelStore.getState();
-
-    // Add and then remove filter
-    state.addFilter(mockFilter);
-    state.removeFilter(mockFilter);
-
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toHaveLength(0);
-    expect(state.history.operations).toHaveLength(2);
-    expect(state.history.index).toBe(2);
-
-    // Undo remove operation
-    state.undo();
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toHaveLength(1);
-    expect(state.filters[0]).toBe(mockFilter);
-    expect(state.history.index).toBe(1);
-
-    // Redo remove operation
-    state.redo();
-    state = useStampMakerPanelStore.getState();
-    expect(state.filters).toHaveLength(0);
-    expect(state.history.index).toBe(2);
-  });
-
   test('multiple operations with undo', () => {
     let state = useStampMakerPanelStore.getState();
-    const mockFilter = { name: 'test-filter' } as any;
 
     state.setHorizontalFlip(true);
-    state.addFilter(mockFilter);
+    state.toggleInvert();
     state.setBevelRadius(3.5);
 
     state = useStampMakerPanelStore.getState();
     expect(state.horizontalFlip).toBe(true);
-    expect(state.filters).toHaveLength(2); // mockFilter + bevelRadius filter
+    expect(state.filters).toHaveLength(2); // invert + bevelRadius filter
     expect(state.bevelRadius).toBe(3.5);
     expect(state.history.operations).toHaveLength(3);
     expect(state.history.index).toBe(3);
 
     // Undo all operations
     state.undo(); // undo bevel radius
-    state.undo(); // undo add filter
+    state.undo(); // undo toggle invert
     state.undo(); // undo horizontal flip
 
     state = useStampMakerPanelStore.getState();
     expect(state.horizontalFlip).toBe(false);
     expect(state.filters).toHaveLength(0);
-    expect(state.bevelRadius).toBe(0);
+    expect(state.bevelRadius).toBe(0); // undo handler defaults to 0 when no previous bevelRadius operation exists
     expect(state.history.index).toBe(0);
   });
 
@@ -269,22 +175,21 @@ describe('test StampMakerPanelStore', () => {
 
   test('setBevelRadius removes previous bevel filter', () => {
     let state = useStampMakerPanelStore.getState();
-    const otherFilter = { name: 'other-filter' } as any;
 
-    // Add another filter and set bevel radius
-    state.addFilter(otherFilter);
+    // Toggle invert and set bevel radius
+    state.toggleInvert();
     state.setBevelRadius(2);
 
     state = useStampMakerPanelStore.getState();
     expect(state.filters).toHaveLength(2);
-    expect(state.filters).toContainEqual(otherFilter);
+    expect(state.filters).toContainEqual({ name: 'Invert' });
     expect(state.filters).toContainEqual({ name: 'shrink-filter' });
 
     // Change bevel radius
     state.setBevelRadius(3);
     state = useStampMakerPanelStore.getState();
     expect(state.filters).toHaveLength(2);
-    expect(state.filters).toContainEqual(otherFilter);
+    expect(state.filters).toContainEqual({ name: 'Invert' });
     expect(state.filters).toContainEqual({ name: 'shrink-filter' });
     expect(state.bevelRadius).toBe(3);
   });
@@ -303,6 +208,31 @@ describe('test StampMakerPanelStore', () => {
     expect(state.filters).toHaveLength(0);
     expect(state.bevelRadius).toBe(0);
     expect(state.lastBevelRadiusFilter).toEqual(null);
+  });
+
+  test('setBevelRadius with negative values creates expand filter', () => {
+    let state = useStampMakerPanelStore.getState();
+
+    // Test with negative value (should create expand filter)
+    state.setBevelRadius(-2);
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toContainEqual({ name: 'expand-filter' });
+    expect(state.bevelRadius).toBe(-2);
+
+    // Test with another negative value (should replace previous expand filter)
+    state.setBevelRadius(-3);
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).toContainEqual({ name: 'expand-filter' });
+    expect(state.filters).toHaveLength(1); // Should only have one expand filter
+    expect(state.bevelRadius).toBe(-3);
+
+    // Switch from negative to positive (should replace expand with shrink)
+    state.setBevelRadius(2);
+    state = useStampMakerPanelStore.getState();
+    expect(state.filters).not.toContainEqual({ name: 'expand-filter' });
+    expect(state.filters).toContainEqual({ name: 'shrink-filter' });
+    expect(state.filters).toHaveLength(1);
+    expect(state.bevelRadius).toBe(2);
   });
 
   test('undo and redo toggleInvert', () => {
@@ -336,7 +266,7 @@ describe('test StampMakerPanelStore', () => {
     // Undo
     state.undo();
     state = useStampMakerPanelStore.getState();
-    expect(state.bevelRadius).toBe(0);
+    expect(state.bevelRadius).toBe(0); // undo handler defaults to 0 when no previous bevelRadius operation exists
     expect(state.filters).not.toContainEqual({ name: 'shrink-filter' });
 
     // Redo

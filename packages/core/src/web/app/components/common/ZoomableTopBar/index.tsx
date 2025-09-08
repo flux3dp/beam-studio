@@ -53,7 +53,7 @@ function UnmemorizedZoomableTopBar({
 
   const zoomMenuItems = useMemo(
     () => [
-      { key: 'fit_to_window', label: langZoom.fit_to_window || 'Fit to Window' },
+      { key: 'fit_to_window', label: langZoom.fit_to_window },
       { type: 'divider' as const },
       ...zoomPresets.map((ratio) => ({ key: ratio.toString(), label: `${ratio}%` })),
     ],
@@ -103,7 +103,7 @@ function UnmemorizedZoomableTopBar({
     );
   }, [undoRedo, lang]);
 
-  const renderZoomControls = useCallback(
+  const renderZoomControls = useMemo(
     () => (
       <div className={styles['zoom-controls']}>
         <Button
@@ -133,7 +133,7 @@ function UnmemorizedZoomableTopBar({
   return (
     <Flex className={classNames(styles['top-bar'], className)} justify="space-between">
       <div>{leftContent || undoRedoButtons}</div>
-      {renderZoomControls()}
+      {renderZoomControls}
     </Flex>
   );
 }

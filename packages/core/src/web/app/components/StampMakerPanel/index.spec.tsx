@@ -15,11 +15,8 @@ const mockUndo = jest.fn();
 const mockRedo = jest.fn();
 
 jest.mock('@core/app/actions/progress-caller', () => ({
-  __esModule: true,
-  default: {
-    openNonstopProgress: mockOpenNonstopProgress,
-    popById: mockPopById,
-  },
+  openNonstopProgress: mockOpenNonstopProgress,
+  popById: mockPopById,
 }));
 
 jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => {

@@ -4,13 +4,9 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import ZoomableTopBar, { type UndoRedoConfig } from './index';
 
-// Mock the icons
 jest.mock('@core/app/icons/top-bar/TopBarIcons', () => ({
-  __esModule: true,
-  default: {
-    Redo: () => <span>RedoIcon</span>,
-    Undo: () => <span>UndoIcon</span>,
-  },
+  Redo: () => <span>RedoIcon</span>,
+  Undo: () => <span>UndoIcon</span>,
 }));
 
 describe('ZoomableTopBar', () => {

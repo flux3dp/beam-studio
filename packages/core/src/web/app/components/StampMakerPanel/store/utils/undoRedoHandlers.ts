@@ -3,9 +3,7 @@ import type { Filter } from 'konva/lib/Node';
 import { isNot, isShallowEqual } from 'remeda';
 import { match } from 'ts-pattern';
 
-import type { BevelRadiusOperation } from '../types';
-
-import type { State } from './operationHandlers';
+import type { BevelRadiusOperation, State } from '../types';
 
 export const handleRedo = (state: State): Partial<State> => {
   const { filters, history } = state;

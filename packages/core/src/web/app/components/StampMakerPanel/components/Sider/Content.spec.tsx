@@ -13,6 +13,7 @@ const mockUseStampMakerPanelStore = jest.fn();
 const mockToggleInvert = jest.fn();
 const mockSetBevelRadius = jest.fn();
 const mockSetHorizontalFlip = jest.fn();
+const mockIsInverted = jest.fn();
 
 jest.mock('../../store', () => ({
   useStampMakerPanelStore: mockUseStampMakerPanelStore,
@@ -37,10 +38,11 @@ describe('test Content', () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
+    mockIsInverted.mockReturnValue(false);
     mockUseStampMakerPanelStore.mockReturnValue({
       bevelRadius: 0,
-      filters: [],
       horizontalFlip: false,
+      isInverted: mockIsInverted,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
       toggleInvert: mockToggleInvert,
@@ -63,10 +65,11 @@ describe('test Content', () => {
   });
 
   it('should render invert switch checked when filter is applied', () => {
+    mockIsInverted.mockReturnValue(true);
     mockUseStampMakerPanelStore.mockReturnValue({
       bevelRadius: 0,
-      filters: [mockKonvaFilters.Invert],
       horizontalFlip: false,
+      isInverted: mockIsInverted,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
       toggleInvert: mockToggleInvert,
@@ -92,10 +95,11 @@ describe('test Content', () => {
   });
 
   it('should call toggleInvert when invert switch is clicked (when already inverted)', () => {
+    mockIsInverted.mockReturnValue(true);
     mockUseStampMakerPanelStore.mockReturnValue({
       bevelRadius: 0,
-      filters: [mockKonvaFilters.Invert],
       horizontalFlip: false,
+      isInverted: mockIsInverted,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
       toggleInvert: mockToggleInvert,
@@ -132,10 +136,11 @@ describe('test Content', () => {
   });
 
   it('should toggle horizontal flip off when already on', () => {
+    mockIsInverted.mockReturnValue(false);
     mockUseStampMakerPanelStore.mockReturnValue({
       bevelRadius: 0,
-      filters: [],
       horizontalFlip: true,
+      isInverted: mockIsInverted,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
       toggleInvert: mockToggleInvert,
@@ -152,10 +157,11 @@ describe('test Content', () => {
   });
 
   it('should render bevel radius input with correct value', () => {
+    mockIsInverted.mockReturnValue(false);
     mockUseStampMakerPanelStore.mockReturnValue({
       bevelRadius: 2.5,
-      filters: [],
       horizontalFlip: false,
+      isInverted: mockIsInverted,
       setBevelRadius: mockSetBevelRadius,
       setHorizontalFlip: mockSetHorizontalFlip,
       toggleInvert: mockToggleInvert,

@@ -38,3 +38,11 @@ export interface HistoryState {
   index: number;
   operations: HistoryOperation[];
 }
+
+export interface State {
+  bevelRadius: number;
+  filters: Filter[];
+  history: HistoryState;
+  horizontalFlip: boolean;
+  lastBevelRadiusFilter: Filter | null;
+}

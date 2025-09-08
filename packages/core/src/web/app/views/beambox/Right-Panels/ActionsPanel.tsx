@@ -320,7 +320,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         () => Dialog.showStampMakerPanel(),
         <ActionPanelIcons.Stamp />,
         <ActionPanelIcons.Stamp />,
-        { isFullLine: true, mobileLabel: lang.ai_bg_removal_short },
+        { isFullLine: true },
       ),
       trace: renderButtons(
         'trace',

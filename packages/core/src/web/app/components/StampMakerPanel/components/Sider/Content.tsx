@@ -1,7 +1,6 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import { Flex, Form, Switch } from 'antd';
-import Konva from 'konva';
 
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
@@ -13,10 +12,8 @@ import styles from './Content.module.scss';
 
 export default function Content(): React.JSX.Element {
   const { stamp_maker_panel } = useI18n();
-  const { bevelRadius, filters, horizontalFlip, setBevelRadius, setHorizontalFlip, toggleInvert } =
+  const { bevelRadius, horizontalFlip, isInverted, setBevelRadius, setHorizontalFlip, toggleInvert } =
     useStampMakerPanelStore();
-  const isInverted = useMemo(() => filters.includes(Konva.Filters.Invert), [filters]);
-
   const handleToggleFlip = () => setHorizontalFlip(!horizontalFlip);
 
   return (
@@ -27,7 +24,7 @@ export default function Content(): React.JSX.Element {
         </div>
         <Form.Item label={stamp_maker_panel.invert}>
           <Flex align="center" gap={8}>
-            <Switch checked={isInverted} onChange={toggleInvert} />
+            <Switch checked={isInverted()} onChange={toggleInvert} />
           </Flex>
         </Form.Item>
         <Form.Item label={stamp_maker_panel.horizontal_flip}>
@@ -46,7 +43,7 @@ export default function Content(): React.JSX.Element {
                   setBevelRadius(value);
                 }
               }}
-              precision={1}
+              precision={2}
               step={0.1}
               value={bevelRadius}
             />
