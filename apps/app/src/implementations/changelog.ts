@@ -2,42 +2,40 @@ import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
 // 2.5.8 beta
 const CHANGES_TW = {
-  added: ['新增 向量圖的向量轉點陣圖功能。'],
+  added: ['新增 印章功能。'],
   changed: [
-    '變更 部分文件設定應套用於新分頁。',
-    '變更 文字可直接跟路徑執行合併功能。',
-    '變更 對齊相關功能需考慮非工作區域。',
-    '變更 旋轉軸軸心初始顯示的座標。',
-    '變更 使用當前位置時不設旋轉軸心。',
-    '變更 連線至機器 IP 時的錯誤訊息。',
-    '變更 點陣圖的銳化功能視窗。',
-    '變更 複製貼上行為。',
+    '調整 Promark MOPA 頻率上限。',
+    '調整 匯出檔案時需將文字轉路徑。',
+    '調整 自動對焦流程為先移至指定位置再執行對焦。',
   ],
   fixed: [
-    '修正 旋轉物件經過廣域雕刻後，部分內容無法正常顯示的問題。',
-    '修正 部分偏好設定在新開分頁沒有正確套用的問題。',
-    '修正 v2.5.7 雙擊 beam 檔時沒有正確開啟檔案的問題。',
-    '修正 上傳大型檔案至雲端時的錯誤。',
+    '修正 v2.5.8 工作剩餘時間顯示錯誤。',
+    '修正 v2.5.8 文字轉點陣圖後產生重複點陣圖的問題。',
+    '修正 點陣圖預估工作時間比實際時間偏長的問題。',
+    '修正 「保留相機預覽結果」開啟時的問題部分機器無法預覽的問題。',
+    '修正 部分偏好設定在新分頁無法同步的問題。',
+    '修正 列印圖層物件邊框的相關問題。',
+    '修正 Promark 工作過程中可能中途停止的問題。',
+    '修正 Promark 旋轉軸角度誤差。',
   ],
 };
 
 const CHANGES_EN = {
-  added: ['Added Convert to Image function for vector objects.'],
+  added: ['Added stamp-making feature.'],
   changed: [
-    'Changed some document settings to now apply to new tabs.',
-    'Changed text can now be directly united with paths.',
-    'Changed alignment functions to take non-work areas into account.',
-    'Changed the initial coordinates for rotation axis center display.',
-    'Cancelled setting the rotation axis center when using the current position.',
-    'Changed error messages shown when unable to connect to machine by IP.',
-    'Changed the Sharpen tool window for images.',
-    'Changed the behavior for copy and paste.',
+    'Adjusted Promark MOPA frequency upper limit.',
+    'Adjusted file export to convert text to paths.',
+    'Adjusted Auto Focus process to move to the specified position before focusing.',
   ],
   fixed: [
-    'Fixed an issue where rotated objects were not fully displayed after using the Passthrough function.',
-    'Fixed an issue where some preferences were not correctly applied in new tabs.',
-    'Fixed an issue in v2.5.7 where double-clicking a .beam file did not open it correctly.',
-    'Fixed an error when uploading large files to the My Cloud.',
+    'Fixed issue where remaining work time was displayed incorrectly in v2.5.8.',
+    'Fixed issue where converting text to image in v2.5.8 generated duplicate images.',
+    'Fixed issue where estimated processing time for bitmaps was significantly longer than the actual time.',
+    'Fixed issue where enabling “Keep Preview Result” caused preview to fail on some machines.',
+    'Fixed issue where some preferences could not sync across new tabs.',
+    'Fixed stroke issues on print layers.',
+    'Fixed issue where Promark jobs could stop unexpectedly during processing.',
+    'Fixed Promark rotary axis angle deviation.',
   ],
 };
 
