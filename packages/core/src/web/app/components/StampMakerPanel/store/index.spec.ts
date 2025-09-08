@@ -23,7 +23,7 @@ describe('test StampMakerPanelStore', () => {
     const state = useStampMakerPanelStore.getState();
 
     expect(state).toMatchObject({
-      bevelRadius: 0,
+      bevelRadius: 0.35,
       filters: [],
       history: { index: 0, operations: [] },
       horizontalFlip: false,
