@@ -51,6 +51,29 @@ const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 const isLocalFont = (font: GeneralFont) => 'path' in font;
 const maxHistory = 5;
 
+// Maximum number of Google Font CSS links to keep in DOM
+// This includes: history (5) + fonts in document (3-5) + preview buffer (2) = ~10
+const MAX_GOOGLE_FONT_LINKS = 10;
+
+// Helper function to extract font family from Google Fonts URL
+const extractFontFamilyFromGoogleUrl = (url: string): null | string => {
+  try {
+    const urlObj = new URL(url);
+    const familyParam = urlObj.searchParams.get('family');
+
+    if (familyParam) {
+      // Extract font name from format like "Open+Sans:wght@400"
+      const fontName = familyParam.split(':')[0].replace(/\+/g, ' ');
+
+      return fontName;
+    }
+  } catch (error) {
+    console.error('Failed to parse Google Fonts URL:', url, error);
+  }
+
+  return null;
+};
+
 interface Props {
   elem: Element;
   isTextPath?: boolean;
@@ -162,6 +185,66 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         return;
       }
 
+      // Before adding new font, check if we need to clean up old ones
+      const googleFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
+
+      if (googleFontLinks.length >= MAX_GOOGLE_FONT_LINKS) {
+        console.log(
+          `Cleaning up Google Font CSS links (current: ${googleFontLinks.length}, max: ${MAX_GOOGLE_FONT_LINKS})`,
+        );
+
+        // Build a set of fonts we want to keep:
+        // 1. Fonts in recent history
+        // 2. Fonts currently used by text elements
+        const fontsToKeep = new Set<string>(fontHistory);
+
+        // Add currently used fonts from text elements
+        const allTextElements = document.querySelectorAll('text');
+
+        allTextElements.forEach((textElem) => {
+          const textFontFamily = textEdit.getFontFamilyData(textElem as SVGTextElement);
+
+          if (textFontFamily) {
+            const cleanFamily = textFontFamily.replace(/^['"]|['"]$/g, '');
+
+            fontsToKeep.add(cleanFamily);
+          }
+        });
+
+        // Remove oldest fonts that are not in the keep list
+        const linksToRemove: HTMLLinkElement[] = [];
+
+        googleFontLinks.forEach((link) => {
+          const linkElement = link as HTMLLinkElement;
+          const extractedFamily = extractFontFamilyFromGoogleUrl(linkElement.href);
+
+          if (extractedFamily && !fontsToKeep.has(extractedFamily)) {
+            linksToRemove.push(linkElement);
+          }
+        });
+
+        // Sort by order in DOM (oldest first) and remove excess
+        const removeCount = Math.max(1, googleFontLinks.length - MAX_GOOGLE_FONT_LINKS + 1);
+
+        linksToRemove.slice(0, removeCount).forEach((link) => {
+          const removedFamily = extractFontFamilyFromGoogleUrl(link.href);
+
+          if (removedFamily) {
+            // Remove from session cache
+            setSessionLoadedFonts((prev) => {
+              const next = new Set(prev);
+
+              next.delete(removedFamily);
+
+              return next;
+            });
+            console.log(`Removed Google Font CSS: ${removedFamily}`);
+          }
+
+          link.remove();
+        });
+      }
+
       // Create and append link element - exactly like GoogleFontsPanel
       const link = document.createElement('link');
 
@@ -174,8 +257,72 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
       console.log(`Loaded Google Font CSS: ${fontFamily}`);
     },
-    [sessionLoadedFonts],
+    [sessionLoadedFonts, fontHistory],
   );
+
+  // Manual cleanup function for removing all unused Google Font CSS
+  const cleanupUnusedGoogleFonts = useCallback(() => {
+    const googleFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
+
+    if (googleFontLinks.length === 0) return;
+
+    console.log(`Running manual Google Font cleanup (found ${googleFontLinks.length} links)`);
+
+    // Build set of fonts to keep
+    const fontsToKeep = new Set<string>(fontHistory);
+
+    // Add fonts currently used by text elements
+    textElements.forEach((textElem) => {
+      const textFontFamily = textEdit.getFontFamilyData(textElem);
+
+      if (textFontFamily) {
+        const cleanFamily = textFontFamily.replace(/^['"]|['"]$/g, '');
+
+        fontsToKeep.add(cleanFamily);
+      }
+    });
+
+    let removedCount = 0;
+
+    googleFontLinks.forEach((link) => {
+      const linkElement = link as HTMLLinkElement;
+      const extractedFamily = extractFontFamilyFromGoogleUrl(linkElement.href);
+
+      if (extractedFamily && !fontsToKeep.has(extractedFamily)) {
+        // Remove from session cache
+        setSessionLoadedFonts((prev) => {
+          const next = new Set(prev);
+
+          next.delete(extractedFamily);
+
+          return next;
+        });
+        link.remove();
+        removedCount++;
+        console.log(`Cleaned up unused Google Font: ${extractedFamily}`);
+      }
+    });
+
+    console.log(`Cleanup complete: removed ${removedCount} unused font links`);
+  }, [fontHistory, textElements]);
+
+  // Cleanup on component unmount or when element changes
+  useEffect(() => {
+    // Trigger cleanup when switching between different text elements
+    // This ensures we don't accumulate fonts from previous editing sessions
+    const googleFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
+
+    if (googleFontLinks.length > MAX_GOOGLE_FONT_LINKS + 2) {
+      // Only cleanup if we're over the limit by 20% to avoid frequent cleanups
+      cleanupUnusedGoogleFonts();
+    }
+
+    return () => {
+      // Optional: Clean up when component unmounts
+      // Uncomment if you want aggressive cleanup on unmount
+      // cleanupUnusedGoogleFonts();
+    };
+  }, [elem, cleanupUnusedGoogleFonts]);
 
   const historyFontFamilies = useMemo(
     () =>
