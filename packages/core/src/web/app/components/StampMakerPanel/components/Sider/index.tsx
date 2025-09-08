@@ -26,7 +26,7 @@ function Sider({ handleComplete, onClose }: Props): React.JSX.Element {
         <Flex className={styles['h-100']} justify="space-between" vertical>
           <div>
             <BackButton onClose={onClose}>{langButtons.back_to_beam_studio}</BackButton>
-            <Header icon={<ActionPanelIcons.Stamp />} title={lang.title} />
+            <Header icon={<ActionPanelIcons.Stamp className={styles.icon} />} title={lang.title} />
             <Content />
           </div>
           <Footer>
