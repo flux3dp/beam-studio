@@ -12,7 +12,7 @@ import { addFilter as _addFilter, removeFilter as _removeFilter, type State } fr
 import { handleRedo, handleUndo } from './utils/undoRedoHandlers';
 
 const getDefaultState = (): State => ({
-  bevelRadius: 0,
+  bevelRadius: 0.35,
   filters: [],
   history: { index: 0, operations: [] },
   horizontalFlip: false,
