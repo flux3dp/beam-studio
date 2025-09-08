@@ -1974,10 +1974,21 @@ const lang: ILang = {
     instagram: 'Získejte nejnovější inspirace, nabídky a dárky zdarma!',
     youtube: 'Podívejte se na návody Beam Studio a nápady na tvoření.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Poloměr zkosení',
+    horizontal_flip: 'Vodorovné převrácení',
+    how_to: {
+      text: 'Jak vyrobit razítko?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Invertovat',
+    title: 'Výrobce razítek',
+  },
   support: {
     no_vcredist: 'Nainstalujte prosím Visual C++ Redistributable 2015<br/> Ke stažení na flux3dp.com',
     no_webgl: 'WebGL není podporován. Použijte prosím jiná zařízení.',
   },
+
   tab_panel: {
     apply: 'Použít záložky',
     gap: 'Mezera',

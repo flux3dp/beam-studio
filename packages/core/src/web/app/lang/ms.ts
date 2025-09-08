@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Dapatkan inspirasi terbaru, tawaran, dan hadiah percuma!',
     youtube: 'Lihat tutorial Beam Studio dan idea kraf.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Jejari serong',
+    horizontal_flip: 'Balik mendatar',
+    how_to: {
+      text: 'Bagaimana cara membuat cop?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Songsangkan',
+    title: 'Pembuat Cop',
+  },
   support: {
     no_vcredist: 'Sila pasang Visual C++ Redistributable 2015<br/>Ia boleh dimuat turun di flux3dp.com',
     no_webgl: 'WebGL tidak disokong. Sila gunakan peranti lain.',

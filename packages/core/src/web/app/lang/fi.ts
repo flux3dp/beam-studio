@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Hanki uusimmat inspiraatiot, tarjoukset ja ilmaistuotteet!',
     youtube: 'Katso Beam Studion opetusohjelmat ja askarteluideat.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Viisteen säde',
+    horizontal_flip: 'Vaakasuuntainen peilaus',
+    how_to: {
+      text: 'Kuinka tehdä leimasin?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Käännä värit',
+    title: 'Leimasimen teko',
+  },
   support: {
     no_vcredist: 'Asenna Visual C++ Redistributable 2015<br/>Sen voi ladata osoitteesta flux3dp.com',
     no_webgl: 'WebGL ei ole tuettu. Käytä muita laitteita.',

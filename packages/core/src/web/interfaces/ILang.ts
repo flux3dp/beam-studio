@@ -1967,6 +1967,16 @@ export interface ILang {
     instagram: string;
     youtube: string;
   };
+  stamp_maker_panel: {
+    bevel_radius: string;
+    horizontal_flip: string;
+    how_to: {
+      text: string;
+      url: string;
+    };
+    invert: string;
+    title: string;
+  };
   support: {
     no_vcredist: string;
     no_webgl: string;

@@ -2,126 +2,200 @@ import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
 
-describe('mobile image tools', () => {
+// Organized test data by feature and environment
+const EXPECTED_HASHES = {
+  gradient: {
+    tracePath: {
+      github: 'de99510ff9f5ecf06d6743c5a802b835',
+      local: '9325b37ca33aec740b5f87c18abcccde',
+    },
+    disabled: {
+      github: '7a59512b45de002b41b3c4ebdcc3760a',
+      local: '8b750c751e18b00bc72dea8377826d9b',
+    },
+    enabled: {
+      github: '43975d85f0192f4a42c8b54a38645320',
+      local: '1a1046ebad74514f0a1d94bc0482b83b',
+    },
+  },
+  replaceImage: {
+    github: '518b33620586dcc009c974956b3de591',
+    local: '71a7455be1cef9715b53ee88ccd65016',
+  },
+  brightness: {
+    github: 'be91b1388e6ad406bd6c250024a30be3',
+    local: 'd19294402d68750bf658ac486a8ecf48',
+  },
+  crop: {
+    github: '67cfcde3bcb99826faebee4b42526eed',
+    local: '0eb78129890a453816fa574e5af92564',
+  },
+  invert: {
+    github: 'de1073c40f0c095297d9d87af6b74dc3',
+    local: '58f46e5736c0b4d8244aa15f9a9dece3',
+  },
+};
+
+// Helper functions for common operations
+const helpers = {
+  uploadTestImage: () => {
+    cy.uploadFile('flux.png', 'image/png');
+  },
+
+  selectImage: () => {
+    cy.get('#svg_1').click({ force: true });
+  },
+
+  waitForProgress: (timeout = 5000) => {
+    cy.get('.progress', { timeout }).should('not.exist');
+  },
+
+  clickModalOk: () => {
+    cy.get('button.ant-btn').contains('OK').click({ force: true });
+  },
+
+  getExpectedHash: (path: string) => {
+    const keys = path.split('.');
+    let value: any = EXPECTED_HASHES;
+    for (const key of keys) {
+      value = value[key];
+    }
+    return isRunningAtGithub ? value.github : value.local;
+  },
+
+  assertImageHash: (selector: string, expectedHashPath: string) => {
+    cy.get(selector)
+      .invoke('attr', 'xlink:href')
+      .then((href) => {
+        const expected = helpers.getExpectedHash(expectedHashPath);
+        expect(md5(href)).equal(expected);
+      });
+  },
+
+  assertPathHash: (selector: string, expectedHashPath: string) => {
+    cy.get(selector)
+      .invoke('attr', 'd')
+      .then((d) => {
+        const expected = helpers.getExpectedHash(expectedHashPath);
+        expect(md5(d)).equal(expected);
+      });
+  },
+
+  assertElementAttribute: (selector: string, attribute: string, expectedValue: string) => {
+    cy.get(selector).should('have.attr', attribute, expectedValue);
+  },
+};
+
+describe('Mobile Image Tools', () => {
   beforeEach(() => {
     cy.viewport('iphone-xr');
     cy.landingEditor();
   });
 
-  it('remove gradient see if trace function gets changed', () => {
-    cy.uploadFile('flux.png', 'image/png');
-    cy.get('#gradient').should('exist').click({ force: true });
-    cy.get('#threshold').should('exist');
-    cy.get('#trace').should('exist').click({ force: true });
-    cy.get('#svg_3', { timeout: 30000 }).click({ force: true });
-    cy.getElementTitle().contains('Layer 1 > Path');
-    cy.get('#svg_3')
-      .invoke('attr', 'd')
-      .then((d) => {
-        if (isRunningAtGithub) expect(md5(d)).equal('de99510ff9f5ecf06d6743c5a802b835');
-        else expect(md5(d)).equal('9325b37ca33aec740b5f87c18abcccde');
-      });
+  describe('Gradient Operations', () => {
+    it('should enable trace function when gradient is removed', () => {
+      helpers.uploadTestImage();
+
+      // Remove gradient to enable trace
+      cy.get('#gradient').should('exist').click({ force: true });
+      cy.get('#threshold').should('exist');
+
+      // Trace the image
+      cy.get('#trace').should('exist').click({ force: true });
+      cy.get('#svg_3', { timeout: 30000 }).click({ force: true });
+      cy.getElementTitle().contains('Layer 1 > Path');
+
+      // Verify traced path
+      helpers.assertPathHash('#svg_3', 'gradient.tracePath');
+    });
+
+    it('should toggle gradient settings on image', () => {
+      helpers.uploadTestImage();
+
+      // Disable gradient
+      cy.get('#gradient').click({ force: true });
+      helpers.assertElementAttribute('#svg_1', 'data-threshold', '128');
+      helpers.assertElementAttribute('#svg_1', 'data-shading', 'false');
+      helpers.assertImageHash('#svg_1', 'gradient.disabled');
+
+      // Re-enable gradient
+      cy.get('#gradient').click({ force: true });
+      helpers.assertElementAttribute('#svg_1', 'data-threshold', '254');
+      helpers.assertElementAttribute('#svg_1', 'data-shading', 'true');
+      helpers.assertImageHash('#svg_1', 'gradient.enabled');
+    });
   });
 
-  it('change image gradient', () => {
-    cy.uploadFile('flux.png', 'image/png');
-    cy.get('#gradient').click({ force: true });
-    cy.get('#svg_1').should('have.attr', 'data-threshold', '128').should('have.attr', 'data-shading', 'false');
-    cy.get('#svg_1')
-      .invoke('attr', 'xlink:href')
-      .then((href) => {
-        if (isRunningAtGithub) expect(md5(href)).equal('7a59512b45de002b41b3c4ebdcc3760a');
-        else expect(md5(href)).equal('599a88f5b1b4ccb5adff20fb6d16a132');
-      });
-    cy.get('#gradient').click({ force: true });
-    cy.get('#svg_1').should('have.attr', 'data-threshold', '254').should('have.attr', 'data-shading', 'true');
-    cy.get('#svg_1')
-      .invoke('attr', 'xlink:href')
-      .then((href) => {
-        if (isRunningAtGithub) expect(md5(href)).equal('43975d85f0192f4a42c8b54a38645320');
-        else expect(md5(href)).equal('52e72107b978bef0e2b0a71fb0bd5038');
-      });
-  });
+  describe('Image Editing Operations', () => {
+    it('should replace image with another file', () => {
+      helpers.uploadTestImage();
 
-  it('check replace with image', () => {
-    cy.uploadFile('flux.png', 'image/png');
-    cy.get('#replace_with').click({ force: true });
-    cy.get('#file-input').attachFile('map.jpg');
-    cy.get('.progress').should('not.exist');
-    cy.wait(8000);
-    cy.get('#svg_1').click({ force: true });
-    cy.get('#svg_1')
-      .click()
-      .invoke('attr', 'xlink:href')
-      .then((href) => {
-        if (isRunningAtGithub) expect(md5(href)).equal('518b33620586dcc009c974956b3de591');
-        else expect(md5(href)).equal('8e8786f5f2a58a1877c0c07ca0c95db9');
-      });
-  });
+      // Replace with new image
+      cy.get('#replace_with').click({ force: true });
+      cy.get('#file-input').attachFile('map.jpg');
+      helpers.waitForProgress();
+      cy.wait(8000);
 
-  it('test change brightness', () => {
-    cy.disableImageDownSampling();
-    cy.uploadFile('flux.png', 'image/png');
-    cy.get('#grading').click();
-    cy.get('.ant-modal-content').should('exist');
-    cy.wait(1000);
-    cy.get('[class*="_-_-packages-core-src-web-app-components-dialogs-image-index-module__field--"]').should('exist');
-    cy.get('.ant-modal-content .ant-input-number-input').eq(0).type('25{enter}');
-    cy.get('button.ant-btn').contains('OK').click();
-    cy.get('.progress').should('not.exist');
-    cy.wait(5000);
-    cy.get('#svg_1')
-      .invoke('attr', 'xlink:href')
-      .then((href) => {
-        if (isRunningAtGithub) expect(md5(href)).equal('be91b1388e6ad406bd6c250024a30be3');
-        else expect(md5(href)).equal('0b18e568940b9ace458aae11a4ac84b0');
-      });
-  });
+      // Verify replacement
+      helpers.selectImage();
+      helpers.assertImageHash('#svg_1', 'replaceImage');
+    });
 
-  it('check crop image', () => {
-    cy.disableImageDownSampling();
-    cy.uploadFile('flux.png', 'image/png');
-    cy.get('#crop').click();
-    cy.wait(3000);
-    cy.get('.point-se').move({ deltaX: 0, deltaY: -100 });
-    cy.get('button.ant-btn').contains('OK').click();
-    cy.get('.progress', { timeout: 10000 }).should('not.exist');
-    cy.get('div.ant-modal-body').should('not.exist');
-    cy.wait(3000);
-    cy.get('#svg_1')
-      .invoke('attr', 'xlink:href')
-      .then((href) => {
-        if (isRunningAtGithub) expect(md5(href)).equal('67cfcde3bcb99826faebee4b42526eed');
-        else expect(md5(href)).equal('f136501fcd70553484b2a7e3414164d9');
-      });
-  });
+    it('should adjust image brightness', () => {
+      cy.disableImageDownSampling();
+      helpers.uploadTestImage();
 
-  it('check bevel image', () => {
-    cy.disableImageDownSampling();
-    cy.uploadFile('preview.png', 'image/png');
-    cy.get('#bevel').click();
-    cy.get('.progress', { timeout: 12000 }).should('not.exist');
-    cy.wait(3000);
-    cy.get('#svg_1').click({ force: true });
-    cy.get('#svg_1')
-      .invoke('attr', 'xlink:href')
-      .then((href) => {
-        expect(md5(href)).equal('d0a40f28082679713deda90d73e0e86b');
-      });
-  });
+      // Open grading modal
+      cy.get('#grading').click({ force: true });
+      cy.get('.ant-modal-content').should('exist');
+      cy.wait(1000);
 
-  it('check invert image', () => {
-    cy.disableImageDownSampling();
-    cy.uploadFile('flux.png', 'image/png');
-    cy.get('#invert').click();
-    cy.get('.progress', { timeout: 3000 }).should('not.exist');
-    cy.wait(3000);
-    cy.get('#svg_1').click({ force: true });
-    cy.get('#svg_1')
-      .invoke('attr', 'xlink:href')
-      .then((href) => {
-        if (isRunningAtGithub) expect(md5(href)).equal('de1073c40f0c095297d9d87af6b74dc3');
-        else expect(md5(href)).equal('fb300cdf807ff1d603cfda97957820af');
-      });
+      // Adjust brightness value
+      cy.get('[class*="_-_-packages-core-src-web-app-components-dialogs-image-index-module__field--"]').should('exist');
+      cy.get('.ant-modal-content .ant-input-number-input').eq(0).type('25{enter}');
+
+      // Apply changes
+      helpers.clickModalOk();
+      helpers.waitForProgress();
+      cy.wait(5000);
+
+      // Verify result
+      helpers.assertImageHash('#svg_1', 'brightness');
+    });
+
+    it('should crop image area', () => {
+      cy.disableImageDownSampling();
+      helpers.uploadTestImage();
+
+      // Start crop operation
+      cy.get('#crop').click({ force: true });
+      cy.wait(3000);
+
+      // Adjust crop area
+      cy.get('.point-se').move({ deltaX: 0, deltaY: -100 });
+
+      // Apply crop
+      helpers.clickModalOk();
+      helpers.waitForProgress(10000);
+      cy.get('div.ant-modal-body').should('not.exist');
+      cy.wait(3000);
+
+      // Verify result
+      helpers.assertImageHash('#svg_1', 'crop');
+    });
+
+    it('should invert image colors', () => {
+      cy.disableImageDownSampling();
+      helpers.uploadTestImage();
+
+      // Apply invert
+      cy.get('#invert').click({ force: true });
+      helpers.waitForProgress(3000);
+      cy.wait(3000);
+
+      // Verify result
+      helpers.selectImage();
+      helpers.assertImageHash('#svg_1', 'invert');
+    });
   });
 });

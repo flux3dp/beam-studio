@@ -1974,6 +1974,16 @@ const lang: ILang = {
     instagram: 'Ontvang de nieuwste inspiratie, aanbiedingen en gratis items!',
     youtube: 'Bekijk Beam Studio-tutorials en knutselideeën.',
   },
+  stamp_maker_panel: {
+    bevel_radius: 'Afschuining radius',
+    horizontal_flip: 'Horizontaal spiegelen',
+    how_to: {
+      text: 'Hoe maak je een stempel?',
+      url: 'https://support.flux3dp.com/hc/en-us/articles/13658787903247',
+    },
+    invert: 'Omkeren',
+    title: 'Stempelmaker',
+  },
   support: {
     no_vcredist: 'Installeer Visual C++ Redistributable 2015<br/>Downloadbaar op flux3dp.com',
     no_webgl: 'WebGL wordt niet ondersteund. Gebruik een ander apparaat.',

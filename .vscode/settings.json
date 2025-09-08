@@ -30,6 +30,8 @@
     "bbox",
     "Beambox",
     "beamo",
+    "Binarize",
+    "binarized",
     "borderless",
     "cardstock",
     "Dify",
@@ -63,6 +65,7 @@
     "Prespray",
     "Promark",
     "raspberrypi",
+    "redoable",
     "resps",
     "Showable",
     "Sider",
@@ -93,6 +96,7 @@
     "workarea",
     "workareas",
     "xform",
-    "XLINK"
+    "XLINK",
+    "Zoomable"
   ]
 }

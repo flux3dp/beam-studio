@@ -250,13 +250,6 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const content = {
       array: renderArrayButton(),
       autoFit: renderAutoFitButton(),
-      bevel: renderButtons(
-        'bevel',
-        lang.bevel,
-        () => imageEdit.generateStampBevel(elem as SVGImageElement),
-        <ActionPanelIcons.Bevel />,
-        <ActionPanelIcons.BevelMobile />,
-      ),
       'bg-removal': renderButtons(
         'bg-removal',
         lang.ai_bg_removal,
@@ -296,7 +289,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         <ActionPanelIcons.Invert />,
         <ActionPanelIcons.Invert />,
       ),
-      offset: renderOffsetButton({ isFullLine: true }),
+      offset: renderOffsetButton(),
       potrace: renderButtons(
         'potrace',
         lang.outline,
@@ -321,6 +314,14 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         { autoClose: false },
       ),
       smartNest: renderSmartNestButton(),
+      stampMakerPanel: renderButtons(
+        'stampMakerPanel',
+        i18n.stamp_maker_panel.title,
+        () => Dialog.showStampMakerPanel(),
+        <ActionPanelIcons.Stamp />,
+        <ActionPanelIcons.Stamp />,
+        { isFullLine: true },
+      ),
       trace: renderButtons(
         'trace',
         lang.trace,
@@ -338,7 +339,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         { isFullLine: true },
       ),
     };
-    const contentOrder = isMobile()
+    const contentOrder: Array<keyof typeof content> = isMobile()
       ? [
           'autoFit',
           'replace_with',
@@ -346,14 +347,13 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'grading',
           'sharpen',
           'crop',
-          'bevel',
+          'offset',
           'invert',
           'array',
           'trace',
           'bg-removal',
           'smartNest',
           'trapezoid',
-          'offset',
         ]
       : [
           'autoFit',
@@ -361,19 +361,19 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'bg-removal',
           'smartNest',
           'imageEditPanel',
+          'stampMakerPanel',
           'trace',
           'grading',
           'sharpen',
           'crop',
-          'bevel',
+          'offset',
           'invert',
           'array',
           'potrace',
           'trapezoid',
-          'offset',
         ];
 
-    return contentOrder.map((key) => (content as any)[key]);
+    return contentOrder.map((key) => content[key]);
   };
 
   const renderTextActions = (): React.JSX.Element[] => {

@@ -1,0 +1,172 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test Content should render correctly 1`] = `
+<div>
+  <div
+    class="wrapper"
+  >
+    <form
+      class="ant-form ant-form-horizontal css-dev-only-do-not-override-hash"
+    >
+      <div
+        class="link"
+      >
+        How to make a stamp?
+      </div>
+      <div
+        class="ant-form-item css-dev-only-do-not-override-hash"
+      >
+        <div
+          class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
+        >
+          <div
+            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+          >
+            <label
+              class=""
+              title="Invert"
+            >
+              Invert
+            </label>
+          </div>
+          <div
+            class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
+          >
+            <div
+              class="ant-form-item-control-input"
+            >
+              <div
+                class="ant-form-item-control-input-content"
+              >
+                <div
+                  class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
+                  style="gap: 8px;"
+                >
+                  <button
+                    aria-checked="false"
+                    class="ant-switch css-dev-only-do-not-override-hash"
+                    role="switch"
+                    type="button"
+                  >
+                    <div
+                      class="ant-switch-handle"
+                    />
+                    <span
+                      class="ant-switch-inner"
+                    >
+                      <span
+                        class="ant-switch-inner-checked"
+                      />
+                      <span
+                        class="ant-switch-inner-unchecked"
+                      />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="ant-form-item css-dev-only-do-not-override-hash"
+      >
+        <div
+          class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
+        >
+          <div
+            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+          >
+            <label
+              class=""
+              title="Horizontal Flip"
+            >
+              Horizontal Flip
+            </label>
+          </div>
+          <div
+            class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
+          >
+            <div
+              class="ant-form-item-control-input"
+            >
+              <div
+                class="ant-form-item-control-input-content"
+              >
+                <div
+                  class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
+                  style="gap: 8px;"
+                >
+                  <button
+                    aria-checked="false"
+                    class="ant-switch css-dev-only-do-not-override-hash"
+                    role="switch"
+                    type="button"
+                  >
+                    <div
+                      class="ant-switch-handle"
+                    />
+                    <span
+                      class="ant-switch-inner"
+                    >
+                      <span
+                        class="ant-switch-inner-checked"
+                      />
+                      <span
+                        class="ant-switch-inner-unchecked"
+                      />
+                    </span>
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        class="ant-form-item css-dev-only-do-not-override-hash ant-form-item-vertical"
+      >
+        <div
+          class="ant-row ant-form-item-row css-dev-only-do-not-override-hash"
+        >
+          <div
+            class="ant-col ant-form-item-label css-dev-only-do-not-override-hash"
+          >
+            <label
+              class=""
+              title="Bevel Radius"
+            >
+              Bevel Radius
+            </label>
+          </div>
+          <div
+            class="ant-col ant-form-item-control css-dev-only-do-not-override-hash"
+          >
+            <div
+              class="ant-form-item-control-input"
+            >
+              <div
+                class="ant-form-item-control-input-content"
+              >
+                <div
+                  class="ant-flex css-dev-only-do-not-override-hash ant-flex-justify-space-between"
+                >
+                  <input
+                    data-addon="mm"
+                    data-testid="unit-input"
+                    max="10"
+                    min="0"
+                    step="0.1"
+                    type="number"
+                    value="0"
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</div>
+`;
