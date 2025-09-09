@@ -10,7 +10,7 @@ import { createShrinkFilter } from './utils/createShrinkFilter';
 import { handleRedo, handleUndo } from './utils/undoRedoHandlers';
 
 const getDefaultState = (): State => ({
-  bevelRadius: 0.35,
+  bevelRadius: 0,
   filters: [],
   history: { index: 0, operations: [] },
   horizontalFlip: false,

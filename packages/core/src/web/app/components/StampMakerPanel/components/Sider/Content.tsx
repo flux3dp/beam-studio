@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Flex, Form, Switch } from 'antd';
 
@@ -15,6 +15,12 @@ export default function Content(): React.JSX.Element {
   const { bevelRadius, horizontalFlip, isInverted, setBevelRadius, setHorizontalFlip, toggleInvert } =
     useStampMakerPanelStore();
   const handleToggleFlip = () => setHorizontalFlip(!horizontalFlip);
+
+  // Initialize bevel radius to 0.35 on mount as default value
+  useEffect(() => {
+    setBevelRadius(0.35);
+    // eslint-disable-next-line hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className={styles.wrapper}>
