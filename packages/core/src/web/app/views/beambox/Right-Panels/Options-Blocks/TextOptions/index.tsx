@@ -7,11 +7,10 @@ import classNames from 'classnames';
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
-import progressCaller from '@core/app/actions/progress-caller';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
-import { setStorage, useStorageStore } from '@core/app/stores/storageStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import type { Selector } from '@core/app/svgedit/selector';
 import selector from '@core/app/svgedit/selector';
@@ -22,6 +21,8 @@ import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InF
 import GoogleFontsPanel from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/GoogleFontsPanel';
 import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock';
 import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/VerticalAlignBlock';
+import { useFontHandlers } from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/hooks/useFontHandlers';
+import { useGoogleFonts } from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/hooks/useGoogleFonts';
 import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
@@ -29,7 +30,6 @@ import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
@@ -49,30 +49,6 @@ getSVGAsync((globalSVG) => {
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 const isLocalFont = (font: GeneralFont) => 'path' in font;
-const maxHistory = 5;
-
-// Maximum number of Google Font CSS links to keep in DOM
-// This includes: history (5) + fonts in document (3-5) + preview buffer (2) = ~10
-const MAX_GOOGLE_FONT_LINKS = 10;
-
-// Helper function to extract font family from Google Fonts URL
-const extractFontFamilyFromGoogleUrl = (url: string): null | string => {
-  try {
-    const urlObj = new URL(url);
-    const familyParam = urlObj.searchParams.get('family');
-
-    if (familyParam) {
-      // Extract font name from format like "Open+Sans:wght@400"
-      const fontName = familyParam.split(':')[0].replace(/\+/g, ' ');
-
-      return fontName;
-    }
-  } catch (error) {
-    console.error('Failed to parse Google Fonts URL:', url, error);
-  }
-
-  return null;
-};
 
 interface Props {
   elem: Element;
@@ -126,9 +102,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
-  const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
   const [showGoogleFontsPanel, setShowGoogleFontsPanel] = useState(false);
-  const [sessionLoadedFonts, setSessionLoadedFonts] = useState<Set<string>>(new Set());
   const selectorRef = useRef<null | Selector>(null);
   const workarea = useWorkarea();
   const showVariableText = useMemo(isVariableTextSupported, [workarea]);
@@ -151,178 +125,26 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     [updateObjectPanel],
   );
 
-  const addToHistory = useCallback(
-    (font: GeneralFont) => {
-      if (!font.family) return;
+  // Font handlers hook
+  const {
+    handleFontSizeChange,
+    handleFontStyleChange,
+    handleLetterSpacingChange,
+    handleLineSpacingChange,
+    handleStartOffsetChange,
+    handleVerticalAlignChange,
+    handleVerticalTextClick,
+    styleOptions,
+    waitForWebFont,
+  } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
 
-      const newHistory = fontHistory.filter((name: string) => name !== font.family);
-
-      newHistory.unshift(font.family);
-
-      if (newHistory.length > maxHistory) newHistory.pop();
-
-      setStorage('font-history', newHistory);
-    },
-    [fontHistory],
-  );
-
-  const loadGoogleFontCSS = useCallback(
-    (fontFamily: string) => {
-      // Check if already loaded in this session
-      if (sessionLoadedFonts.has(fontFamily)) {
-        return;
-      }
-
-      // Create Google Fonts URL - exact same pattern as GoogleFontsPanel
-      // Note: 'wght' is Google Fonts parameter for font-weight (not a typo)
-      const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400&display=swap`;
-
-      // Check if CSS link already exists in DOM
-      if (document.querySelector(`link[href="${fontUrl}"]`)) {
-        // Mark as loaded but don't create duplicate
-        setSessionLoadedFonts((prev) => new Set(prev).add(fontFamily));
-
-        return;
-      }
-
-      // Before adding new font, check if we need to clean up old ones
-      const googleFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
-
-      if (googleFontLinks.length >= MAX_GOOGLE_FONT_LINKS) {
-        console.log(
-          `Cleaning up Google Font CSS links (current: ${googleFontLinks.length}, max: ${MAX_GOOGLE_FONT_LINKS})`,
-        );
-
-        // Build a set of fonts we want to keep:
-        // 1. Fonts in recent history
-        // 2. Fonts currently used by text elements
-        const fontsToKeep = new Set<string>(fontHistory);
-
-        // Add currently used fonts from text elements
-        const allTextElements = document.querySelectorAll('text');
-
-        allTextElements.forEach((textElem) => {
-          const textFontFamily = textEdit.getFontFamilyData(textElem as SVGTextElement);
-
-          if (textFontFamily) {
-            const cleanFamily = textFontFamily.replace(/^['"]|['"]$/g, '');
-
-            fontsToKeep.add(cleanFamily);
-          }
-        });
-
-        // Remove oldest fonts that are not in the keep list
-        const linksToRemove: HTMLLinkElement[] = [];
-
-        googleFontLinks.forEach((link) => {
-          const linkElement = link as HTMLLinkElement;
-          const extractedFamily = extractFontFamilyFromGoogleUrl(linkElement.href);
-
-          if (extractedFamily && !fontsToKeep.has(extractedFamily)) {
-            linksToRemove.push(linkElement);
-          }
-        });
-
-        // Sort by order in DOM (oldest first) and remove excess
-        const removeCount = Math.max(1, googleFontLinks.length - MAX_GOOGLE_FONT_LINKS + 1);
-
-        linksToRemove.slice(0, removeCount).forEach((link) => {
-          const removedFamily = extractFontFamilyFromGoogleUrl(link.href);
-
-          if (removedFamily) {
-            // Remove from session cache
-            setSessionLoadedFonts((prev) => {
-              const next = new Set(prev);
-
-              next.delete(removedFamily);
-
-              return next;
-            });
-            console.log(`Removed Google Font CSS: ${removedFamily}`);
-          }
-
-          link.remove();
-        });
-      }
-
-      // Create and append link element - exactly like GoogleFontsPanel
-      const link = document.createElement('link');
-
-      link.href = fontUrl;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-
-      // Track that this font has been loaded in this session
-      setSessionLoadedFonts((prev) => new Set(prev).add(fontFamily));
-
-      console.log(`Loaded Google Font CSS: ${fontFamily}`);
-    },
-    [sessionLoadedFonts, fontHistory],
-  );
-
-  // Manual cleanup function for removing all unused Google Font CSS
-  const cleanupUnusedGoogleFonts = useCallback(() => {
-    const googleFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
-
-    if (googleFontLinks.length === 0) return;
-
-    console.log(`Running manual Google Font cleanup (found ${googleFontLinks.length} links)`);
-
-    // Build set of fonts to keep
-    const fontsToKeep = new Set<string>(fontHistory);
-
-    // Add fonts currently used by text elements
-    textElements.forEach((textElem) => {
-      const textFontFamily = textEdit.getFontFamilyData(textElem);
-
-      if (textFontFamily) {
-        const cleanFamily = textFontFamily.replace(/^['"]|['"]$/g, '');
-
-        fontsToKeep.add(cleanFamily);
-      }
-    });
-
-    let removedCount = 0;
-
-    googleFontLinks.forEach((link) => {
-      const linkElement = link as HTMLLinkElement;
-      const extractedFamily = extractFontFamilyFromGoogleUrl(linkElement.href);
-
-      if (extractedFamily && !fontsToKeep.has(extractedFamily)) {
-        // Remove from session cache
-        setSessionLoadedFonts((prev) => {
-          const next = new Set(prev);
-
-          next.delete(extractedFamily);
-
-          return next;
-        });
-        link.remove();
-        removedCount++;
-        console.log(`Cleaned up unused Google Font: ${extractedFamily}`);
-      }
-    });
-
-    console.log(`Cleanup complete: removed ${removedCount} unused font links`);
-  }, [fontHistory, textElements]);
-
-  // Cleanup on component unmount or when element changes
-  useEffect(() => {
-    // Trigger cleanup when switching between different text elements
-    // This ensures we don't accumulate fonts from previous editing sessions
-    const googleFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
-
-    if (googleFontLinks.length > MAX_GOOGLE_FONT_LINKS + 2) {
-      // Only cleanup if we're over the limit by 20% to avoid frequent cleanups
-      cleanupUnusedGoogleFonts();
-    }
-
-    return () => {
-      // Optional: Clean up when component unmounts
-      // Uncomment if you want aggressive cleanup on unmount
-      // cleanupUnusedGoogleFonts();
-    };
-  }, [elem, cleanupUnusedGoogleFonts]);
+  // Google Fonts hook
+  const {
+    addToHistory,
+    loadGoogleFontCSS,
+    proactivelyLoadHistoryFonts,
+    sessionLoadedFonts: hookSessionLoadedFonts,
+  } = useGoogleFonts({ availableFontFamilies, elem, fontHistory, textElements });
 
   const historyFontFamilies = useMemo(
     () =>
@@ -361,15 +183,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         return;
       }
 
-      // Proactively load Google Font CSS for fonts in history (once per session)
-      // This ensures fonts are ready before user even opens the dropdown
-      fontHistory.forEach((family) => {
-        const isLocalFont = availableFontFamilies.some((f) => f.toLowerCase() === family.toLowerCase());
-
-        if (!isLocalFont && !sessionLoadedFonts.has(family)) {
-          loadGoogleFontCSS(family);
-        }
-      });
+      // Proactively load Google Font CSS for fonts in history (now handled by hook)
+      proactivelyLoadHistoryFonts();
 
       for (const textElement of textElements) {
         // Check for Google Font first (before PostScript lookup)
@@ -483,39 +298,10 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     configs.id.value,
     getFontFamilies,
     fontHistory,
-    sessionLoadedFonts,
+    hookSessionLoadedFonts,
     loadGoogleFontCSS,
+    proactivelyLoadHistoryFonts,
   ]);
-
-  useEffect(() => {
-    const getStyleOptions = (family: string) => {
-      const fontStyles = FontFuncs.requestFontsOfTheFontFamily(family).map((f) => f.style);
-      const options = fontStyles.map((option: string) => ({ label: option, value: option }));
-
-      setStyleOptions(options);
-    };
-
-    if (fontFamily.hasMultiValue) setStyleOptions([]);
-    else getStyleOptions(fontFamily.value);
-  }, [fontFamily]);
-
-  const waitForWebFont = useCallback(
-    async (fontLoadedPromise?: Promise<void>) => {
-      await progressCaller.openNonstopProgress({
-        caption: i18n.lang.beambox.right_panel.object_panel.actions_panel.fetching_web_font,
-        id: 'load-font',
-      });
-      await document.fonts.ready;
-
-      if (fontLoadedPromise) {
-        await fontLoadedPromise;
-      }
-
-      selector.getSelectorManager().resizeSelectors([elem]);
-      progressCaller.popById('load-font');
-    },
-    [elem],
-  );
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
     console.log('handleFontFamilyChange', newFamily, option);
@@ -760,35 +546,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const handleFontStyleChange = async (val: string) => {
-    const font = FontFuncs.requestFontByFamilyAndStyle({
-      family: fontFamily.value,
-      style: val,
-    });
-    const { fontLoadedPromise, success } = await fontHelper.applyMonotypeStyle(font, getCurrentUser());
-
-    if (!success) {
-      return;
-    }
-
-    const batchCmd = new history.BatchCommand('Change Font Style');
-
-    [
-      textEdit.setFontPostscriptName(font.postscriptName, true, textElements),
-      textEdit.setItalic(font.italic, true, textElements),
-      textEdit.setFontWeight(font.weight, true, textElements),
-    ].forEach((cmd) => {
-      if (cmd) batchCmd.addSubCommand(cmd);
-    });
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-
-    if (!isLocalFont(font)) {
-      await waitForWebFont(fontLoadedPromise);
-    }
-
-    onConfigChange('fontStyle', val);
-  };
-
   const renderFontStyleBlock = (): React.JSX.Element => {
     const { fontStyle } = configs;
 
@@ -824,11 +581,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const handleFontSizeChange = (val: number): void => {
-    textEdit.setFontSize(val, textElements);
-    onConfigChange('fontSize', val);
-  };
-
   const renderFontSizeBlock = (): React.JSX.Element => {
     const { fontSize } = configs;
 
@@ -859,11 +611,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const handleLetterSpacingChange = (val: number): void => {
-    textEdit.setLetterSpacing(val, textElements);
-    onConfigChange('letterSpacing', val);
-  };
-
   const renderLetterSpacingBlock = (): React.JSX.Element => {
     const { letterSpacing } = configs;
 
@@ -892,11 +639,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         />
       </div>
     );
-  };
-
-  const handleLineSpacingChange = (val: number): void => {
-    textEdit.setLineSpacing(val, textElements);
-    onConfigChange('lineSpacing', val);
   };
 
   const renderLineSpacingBlock = (): React.JSX.Element => {
@@ -937,17 +679,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     const { isVertical } = configs;
     const checked = !isVertical.hasMultiValue && isVertical.value;
 
-    const handleVerticalTextClick = (): void => {
-      textEdit.setIsVertical(!checked, textElements);
-      onConfigChange('isVertical', !checked);
-    };
-
     return isMobile ? (
       <ObjectPanelItem.Item
         content={<Switch checked={checked} />}
         id="vertical-text"
         label={lang.vertical_text}
-        onClick={handleVerticalTextClick}
+        onClick={() => handleVerticalTextClick(checked)}
       />
     ) : (
       <ConfigProvider theme={iconButtonTheme}>
@@ -955,22 +692,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           className={classNames(styles['vertical-text'], { [styles.active]: checked })}
           icon={<OptionPanelIcons.VerticalText />}
           id="vertical-text"
-          onClick={handleVerticalTextClick}
+          onClick={() => handleVerticalTextClick(checked)}
           title={lang.vertical_text}
           type="text"
         />
       </ConfigProvider>
     );
-  };
-
-  const handleStartOffsetChange = (val: number): void => {
-    textPathEdit.setStartOffset(val, elem as SVGGElement);
-    onConfigChange('startOffset', val);
-  };
-
-  const handleVerticalAlignChange = (val: VerticalAlign): void => {
-    textPathEdit.setVerticalAlign(val, elem as SVGGElement);
-    onConfigChange('verticalAlign', val);
   };
 
   const renderMultiLineTextOptions = (): React.JSX.Element => (
