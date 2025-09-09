@@ -16,6 +16,7 @@ import {
   printingModules,
   UVModules,
 } from '@core/app/constants/layer-module/layer-modules';
+import type { OffsetTuple } from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
@@ -75,9 +76,13 @@ const Align = ({
 
       if ('v' in fisheyeParam) {
         if (fisheyeParam.v === 4) {
-          const manger = new FisheyePreviewManagerV4(deviceMaster.currentDevice.info, fisheyeParam, bm2PerspectiveGrid);
+          const manger = new FisheyePreviewManagerV4(
+            deviceMaster.currentDevice!.info,
+            fisheyeParam,
+            bm2PerspectiveGrid,
+          );
 
-          const workarea = getWorkarea(deviceMaster.currentDevice.info.model, 'fbm2');
+          const workarea = getWorkarea(deviceMaster.currentDevice!.info.model, 'fbm2');
           const { cameraCenter } = workarea;
 
           if (isBM2) {
@@ -92,13 +97,13 @@ const Align = ({
             await manger.setupFisheyePreview({ cameraPosition: cameraCenter, height: 0 });
           }
         } else if (fisheyeParam.v === 2) {
-          const manager = new FisheyePreviewManagerV2(deviceMaster.currentDevice.info, fisheyeParam);
+          const manager = new FisheyePreviewManagerV2(deviceMaster.currentDevice!.info, fisheyeParam);
 
           await manager.setupFisheyePreview({ defaultHeight: 0, focusPosition: 'E' });
         }
       } else {
         const perspectivePoints = await getPerspectiveForAlign(
-          deviceMaster.currentDevice.info,
+          deviceMaster.currentDevice!.info,
           fisheyeParam,
           fisheyeParam.center || [INIT_GUESS_X, INIT_GUESS_Y],
         );
@@ -174,7 +179,7 @@ const Align = ({
   const fisheyeCenter = useMemo(() => {
     if ('v' in fisheyeParam) {
       const { calibrationCenter, cameraCenter } = getWorkarea(
-        deviceMaster.currentDevice.info.model as WorkAreaModel,
+        deviceMaster.currentDevice!.info.model as WorkAreaModel,
         'ado1',
       );
 
@@ -185,13 +190,18 @@ const Align = ({
 
     return fisheyeParam.center;
   }, [fisheyeParam]);
-  const lastResult = useMemo(() => {
-    return getModuleOffsets({
+  const [lastResult, setLastResult] = useState<null | OffsetTuple>(null);
+
+  useEffect(() => {
+    getModuleOffsets({
       isRelative: true,
       module,
-      workarea: deviceMaster.currentDevice.info.model,
+      workarea: deviceMaster.currentDevice!.info.model,
+    }).then((offset) => {
+      setLastResult(offset);
     });
   }, [module]);
+
   const getOffsetValueFromScroll = useCallback(
     (left: number, top: number) => {
       const x = (left - fisheyeCenter[0] + (imgContainerRef.current?.clientWidth ?? 0) / 2) / PX_PER_MM;
@@ -287,11 +297,13 @@ const Align = ({
       isRelative: true,
       module,
       shouldWrite: true,
-      workarea: deviceMaster.currentDevice.info.model,
+      workarea: deviceMaster.currentDevice!.info.model,
     });
     onClose(true);
   }, [form, onClose, module]);
   const lastValueDisplay = useMemo(() => {
+    if (!lastResult) return [0, 0];
+
     const { left, top } = getPxFromOffsetValue(lastResult[0], lastResult[1]);
 
     return [left, top];

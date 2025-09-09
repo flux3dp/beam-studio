@@ -12,9 +12,11 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
  *        A positive value means the module is positioned below the laser head.
  * - [2] Optional flag indicating whether this offset was calibrated or from default.
  */
-export type OffsetTuple = [number, number, boolean?];
+export type OffsetTuple = [number, number, number?];
 
-export type ModuleOffsets = Partial<Record<WorkAreaModel, Partial<Record<LayerModuleType, OffsetTuple>>>>;
+export type DeviceModuleOffsets = Partial<Record<LayerModuleType, OffsetTuple>>;
+
+export type ModuleOffsets = Partial<Record<WorkAreaModel, DeviceModuleOffsets>>;
 
 // Default Module Boundary
 const moduleOffsets: ModuleOffsets = {
