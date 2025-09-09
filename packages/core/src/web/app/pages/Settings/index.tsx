@@ -8,7 +8,6 @@ import settings from '@core/app/app-settings';
 import AdorModule from '@core/app/components/settings/AdorModule';
 import AutoSave from '@core/app/components/settings/AutoSave';
 import BB2Settings from '@core/app/components/settings/BB2Settings';
-import Beamo2Module from '@core/app/components/settings/Beamo2Module';
 import Camera from '@core/app/components/settings/Camera';
 import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
 import Connection from '@core/app/components/settings/Connection';
@@ -23,7 +22,6 @@ import Privacy from '@core/app/components/settings/Privacy';
 import TextToPath from '@core/app/components/settings/TextToPath';
 import Update from '@core/app/components/settings/Update';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
-import { checkBM2 } from '@core/helpers/checkFeature';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import storage from '@core/implementations/storage';
@@ -114,7 +112,6 @@ function Settings(): React.JSX.Element {
             <TextToPath options={commonBooleanOptions} />
             <Module options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
             <AdorModule unitInputProps={commonUnitInputProps} />
-            {checkBM2() && <Beamo2Module options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />}
             <BB2Settings options={commonBooleanOptions} />
             <Privacy options={commonBooleanOptions} />
             <Experimental options={commonBooleanOptions} />
