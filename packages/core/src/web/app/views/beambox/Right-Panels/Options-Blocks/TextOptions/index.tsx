@@ -4,7 +4,7 @@ import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 
-import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import FontFuncs, { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
@@ -35,7 +35,7 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
 import { isVariableTextSupported } from '@core/helpers/variableText';
-import type { GeneralFont } from '@core/interfaces/IFont';
+import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
@@ -141,6 +141,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   // Google Fonts hook
   const {
     addToHistory,
+    loadGoogleFontBinary,
     loadGoogleFontCSS,
     proactivelyLoadHistoryFonts,
     sessionLoadedFonts: hookSessionLoadedFonts,
@@ -407,10 +408,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         // Font is not available locally, treat as Google Font
         // CSS already loaded proactively when text was selected
 
-        const googleFont: GeneralFont = {
+        const googleFont: GoogleFont = {
+          binaryLoader: loadGoogleFontBinary,
           family: googleFontFamily,
           italic: false,
           postscriptName: googleFontFamily.replace(/\s+/g, '') + '-Regular',
+          source: 'google',
           style: 'Regular',
           weight: 400,
         };
@@ -419,6 +422,9 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
         // Add to history first
         addToHistory(googleFont);
+
+        // Register the GoogleFont object for text-to-path conversion
+        registerGoogleFont(googleFont);
 
         // Apply the font directly without monotype style check since it's Google Fonts
         const batchCmd = new history.BatchCommand('Change Font family');
@@ -440,7 +446,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onConfigChange('fontStyle', 'Regular');
       }
     },
-    [addToHistory, textElements, waitForWebFont, onConfigChange],
+    [addToHistory, textElements, waitForWebFont, onConfigChange, loadGoogleFontBinary],
   );
 
   const renderFontFamilyBlock = (): React.JSX.Element => {
