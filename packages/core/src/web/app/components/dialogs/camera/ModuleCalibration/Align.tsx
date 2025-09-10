@@ -198,9 +198,11 @@ const Align = ({
       module,
       useCache: false,
       workarea: deviceMaster.currentDevice!.info.model,
-    }).then((offset) => {
-      setLastResult(offset);
-    });
+    })
+      .then((offset) => {
+        setLastResult(offset);
+      })
+      .catch(() => {});
   }, [module]);
 
   const getOffsetValueFromScroll = useCallback(

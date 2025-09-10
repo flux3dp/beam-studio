@@ -41,7 +41,7 @@ jest.mock('@core/helpers/device-master', () => ({
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
-const mockGetModuleOffsets = jest.fn().mockReturnValue([0, 0]);
+const mockGetModuleOffsets = jest.fn().mockResolvedValue([0, 0]);
 const mockUpdateModuleOffsets = jest.fn();
 
 jest.mock('@core/helpers/device/moduleOffsets', () => ({
