@@ -1,5 +1,6 @@
-import * as fontkit from 'fontkit';
+import type * as fontkit from 'fontkit';
 import { sprintf } from 'sprintf-js';
+import { match, P } from 'ts-pattern';
 
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
@@ -19,9 +20,11 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import weldPath from '@core/helpers/weldPath';
 import localFontHelper from '@core/implementations/localFontHelper';
 import storage from '@core/implementations/storage';
-import type { FontDescriptor, GeneralFont, IFontQuery, WebFont } from '@core/interfaces/IFont';
+import type { FontDescriptor, GeneralFont, GoogleFont, IFontQuery } from '@core/interfaces/IFont';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import { loadGoogleFont, loadWebFont } from './font-funcs.util';
 
 let svgCanvas: ISVGCanvas;
 let svgedit: any;
@@ -33,6 +36,7 @@ getSVGAsync(({ Canvas, Edit }) => {
 
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const fontObjCache = new Map<string, fontkit.Font>();
+const googleFontCache = new Map<string, GoogleFont>();
 
 const SubstituteResult = {
   CANCEL_OPERATION: 0,
@@ -125,6 +129,15 @@ const requestAvailableFontFamilies = (withoutMonotype = false) => {
 };
 
 const getFontOfPostscriptName = memoize((postscriptName: string) => {
+  // Check Google Font cache first
+  const googleFont = googleFontCache.get(postscriptName);
+
+  if (googleFont) {
+    console.log(`Found Google Font in cache: ${postscriptName}`, googleFont);
+
+    return googleFont;
+  }
+
   if (window.os === 'MacOS') {
     return fontHelper.findFont({ postscriptName });
   }
@@ -143,64 +156,66 @@ const init = () => {
 
 init();
 
+/**
+ * Registers a Google Font object for text-to-path conversion
+ * This allows getFontOfPostscriptName to find Google Fonts when convertTextToPath is called
+ */
+export const registerGoogleFont = (googleFont: GoogleFont): void => {
+  googleFontCache.set(googleFont.postscriptName, googleFont);
+  console.log(`Registered Google Font: ${googleFont.postscriptName}`, googleFont);
+};
+
+/**
+ * Unregisters a Google Font object (useful for cleanup)
+ */
+export const unregisterGoogleFont = (postscriptName: string): void => {
+  const removed = googleFontCache.delete(postscriptName);
+
+  if (removed) {
+    console.log(`Unregistered Google Font: ${postscriptName}`);
+  }
+};
+
 const requestFontsOfTheFontFamily = memoize((family: string) => Array.from(fontHelper.findFonts({ family })));
 
 const requestFontByFamilyAndStyle = ({ family, italic, style, weight }: IFontQuery): GeneralFont =>
   fontHelper.findFont({ family, italic, style, weight });
 
 export const getFontObj = async (font: GeneralFont): Promise<fontkit.Font | undefined> => {
+  const { postscriptName } = font;
+
+  if (!postscriptName) {
+    console.error('Font object is missing a postscriptName.', font);
+
+    return undefined;
+  }
+
   try {
-    const { postscriptName } = font;
-    let fontObj = fontObjCache.get(postscriptName!);
+    // 1. Check the cache first for performance
+    const cachedFont = fontObjCache.get(postscriptName);
 
-    if (!fontObj) {
-      if ('path' in font) {
-        fontObj = localFontHelper.getLocalFont(font);
-      } else {
-        const { collectionIdx = 0, fileName = `${postscriptName}.ttf` } = font as WebFont;
-        const protocol = isWeb() ? window.location.protocol : 'https:';
-        let url = `${protocol}//beam-studio-web.s3.ap-northeast-1.amazonaws.com/fonts/${fileName}`;
+    if (cachedFont) {
+      console.log(`Returning cached fontObj for ${postscriptName}`);
 
-        if ('hasLoaded' in font) {
-          const monotypeUrl = await fontHelper.getMonotypeUrl(postscriptName!);
-
-          if (monotypeUrl) {
-            url = monotypeUrl;
-          } else {
-            return undefined;
-          }
-        }
-
-        const data = await fetch(url, { mode: 'cors' });
-        const buffer = Buffer.from(await data.arrayBuffer());
-
-        try {
-          // Font Collection
-          fontObj = fontkit.create(buffer, font.postscriptName) as fontkit.Font;
-
-          if (!fontObj) {
-            const res = fontkit.create(buffer) as fontkit.FontCollection;
-
-            if (!res) {
-              throw new Error('Failed to create font collection');
-            }
-
-            fontObj = res.fonts[collectionIdx];
-          }
-        } catch {
-          // Single Font
-          fontObj = fontkit.create(buffer) as fontkit.Font;
-        }
-      }
-
-      if (fontObj) {
-        fontObjCache.set(postscriptName!, fontObj);
-      }
+      return cachedFont;
     }
 
-    return fontObj;
+    // 2. If not cached, determine the font type and load it
+    const fontObject = await match(font)
+      .with({ path: P.string }, (font) => localFontHelper.getLocalFont(font))
+      .with({ source: 'google' }, async (font) => await loadGoogleFont(font as GoogleFont))
+      .otherwise(async (font) => await loadWebFont(font));
+
+    console.log(`Loaded new fontObj for ${postscriptName}`, fontObject);
+
+    // 3. If loaded successfully, add it to the cache
+    if (fontObject) {
+      fontObjCache.set(postscriptName, fontObject);
+    }
+
+    return fontObject;
   } catch (err) {
-    console.log(`Unable to get fontObj of ${font.postscriptName}, ${err}`);
+    console.error(`Unable to get fontObj for ${postscriptName}:`, err);
 
     return undefined;
   }
@@ -211,6 +226,28 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
     if (!fontObj) {
       throw new Error('Unable to get fontObj');
     }
+
+    // Debug: Check if font has glyphs for the text
+    const allText = textElem.textContent || '';
+    const uniqueChars = [...new Set(allText)];
+    const missingGlyphs = uniqueChars.filter((char) => {
+      const codePoint = char.codePointAt(0);
+
+      return codePoint !== undefined && !fontObj.hasGlyphForCodePoint(codePoint);
+    });
+
+    if (missingGlyphs.length > 0) {
+      console.warn(`Font ${fontObj.postscriptName} missing glyphs for characters:`, missingGlyphs);
+      console.warn(
+        `Character codes:`,
+        missingGlyphs.map((c) => `${c} (U+${c.codePointAt(0)?.toString(16).toUpperCase()})`),
+      );
+    }
+
+    console.log(
+      `Converting text to path: "${allText.substring(0, 50)}${allText.length > 50 ? '...' : ''}" with font ${fontObj.postscriptName}`,
+    );
+    console.log(`Font details: numGlyphs=${fontObj.numGlyphs}, unitsPerEm=${fontObj.unitsPerEm}`);
 
     const maxChar = 0xffff;
     const fontSize = textedit.getFontSize(textElem as SVGTextElement);
@@ -244,6 +281,11 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
       const run = fontObj.layout(text!);
       const { direction, glyphs, positions } = run;
       const isRtl = direction === 'rtl';
+
+      // Debug: Check if layout produced glyphs
+      if (glyphs.length === 0 && text && text.length > 0) {
+        console.error(`No glyphs produced for textPath: "${text}" with font ${fontObj.postscriptName}`);
+      }
 
       if (isRtl) {
         glyphs.reverse();
@@ -290,6 +332,11 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
       const run = fontObj.layout(text!);
       const { direction, glyphs, positions } = run;
       const isRtl = direction === 'rtl';
+
+      // Debug: Check if layout produced glyphs
+      if (glyphs.length === 0 && text && text.length > 0) {
+        console.error(`No glyphs produced for textPath: "${text}" with font ${fontObj.postscriptName}`);
+      }
 
       if (isRtl) {
         glyphs.reverse();
@@ -761,7 +808,9 @@ export default {
   convertTextToPath,
   fontNameMap,
   getFontOfPostscriptName,
+  registerGoogleFont,
   requestAvailableFontFamilies,
   requestFontByFamilyAndStyle,
   requestFontsOfTheFontFamily,
+  unregisterGoogleFont,
 };
