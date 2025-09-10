@@ -8,7 +8,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
-import { getModuleOffsetsFromStore, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';
+import { getModuleOffsetsFromStore, updateModuleOffsetsInStore } from '@core/helpers/device/moduleOffsets';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
@@ -45,7 +45,7 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
   const editModuleOffsets = useCallback(
     (module: LayerModuleType, axis: 'x' | 'y', value: number) => {
       const curVal = getModuleOffset(module);
-      const newOffsets = updateModuleOffsets(axis === 'x' ? [value, curVal[1]] : [curVal[0], value], {
+      const newOffsets = updateModuleOffsetsInStore(axis === 'x' ? [value, curVal[1]] : [curVal[0], value], {
         isRelative: true,
         module,
         offsets: currentModuleOffsets,

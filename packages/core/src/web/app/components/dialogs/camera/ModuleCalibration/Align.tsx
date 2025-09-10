@@ -64,7 +64,7 @@ const Align = ({
   const doorChecker = useRef<DoorChecker | null>(null);
   const hasInit = useRef(false);
   const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
-  const isBM2 = useMemo(() => deviceMaster.currentDevice.info.model === 'fbm2', []);
+  const isBM2 = useMemo(() => deviceMaster.currentDevice!.info.model === 'fbm2', []);
 
   const initSetup = useCallback(async () => {
     progressCaller.openNonstopProgress({
@@ -196,6 +196,7 @@ const Align = ({
     getModuleOffsets({
       isRelative: true,
       module,
+      useCache: false,
       workarea: deviceMaster.currentDevice!.info.model,
     }).then((offset) => {
       setLastResult(offset);

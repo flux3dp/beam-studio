@@ -355,7 +355,7 @@ export const getExportOpt = async (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = structuredClone(await getAllOffsets(model));
+    const offsets = structuredClone(await getAllOffsets(model, { useCache: false }));
     const keys = Object.keys(offsets) as unknown as LayerModuleType[];
     const { minY } = workareaManager;
     let offsetX = 0;

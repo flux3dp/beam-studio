@@ -1,5 +1,7 @@
+import { round } from 'remeda';
+
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
-import { LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { getLayerModuleName, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { DeviceModuleOffsets, ModuleOffsets, OffsetTuple } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -99,7 +101,49 @@ export const getModuleOffsets = async ({
   return isRelative ? [customOffset[0] - defaultOffset[0], customOffset[1] - defaultOffset[1]] : customOffset;
 };
 
-export const updateModuleOffsets = (
+type UpdateModuleOffsetsArgs = Partial<{
+  isRelative: boolean;
+  module: LayerModuleType;
+  offsets: ModuleOffsets;
+  shouldWrite: boolean;
+  workarea: WorkAreaModel;
+}>;
+
+export const updateModuleOffsetsInDevice = async (
+  newOffsets: [number, number],
+  { isRelative, module, workarea }: UpdateModuleOffsetsArgs = {},
+): Promise<boolean> => {
+  if (!deviceMaster.currentDevice || !modelsWithStores.includes(deviceMaster.currentDevice.info.model) || !module) {
+    return false;
+  }
+
+  if (!workarea) workarea = deviceMaster.currentDevice.info.model;
+
+  const { uuid } = deviceMaster.currentDevice.info;
+  const defaultOffset = moduleOffsets[workarea]?.[module];
+
+  if (defaultOffset && isRelative) {
+    newOffsets = [newOffsets[0] + defaultOffset[0], newOffsets[1] + defaultOffset[1]];
+  }
+
+  const data = JSON.stringify({ [getLayerModuleName(module)]: newOffsets }, (_, val) => {
+    if (typeof val === 'number') return round(val, 2);
+
+    return val;
+  });
+
+  const res = await deviceMaster.setDeviceSetting('toolhead_shift', data.replaceAll('"', '\\\\\\"'));
+
+  console.log(res);
+
+  if (!devicesModuleOffsetsCache[uuid]) devicesModuleOffsetsCache[uuid] = {};
+
+  devicesModuleOffsetsCache[uuid][module] = [...newOffsets, 1]; // Mark as calibrated
+
+  return true;
+};
+
+export const updateModuleOffsetsInStore = (
   newOffsets: [number, number],
   {
     isRelative = false,
@@ -107,13 +151,7 @@ export const updateModuleOffsets = (
     offsets = useGlobalPreferenceStore.getState()['module-offsets'],
     shouldWrite = false,
     workarea = useDocumentStore.getState().workarea,
-  }: Partial<{
-    isRelative: boolean;
-    module: LayerModuleType;
-    offsets: ModuleOffsets;
-    shouldWrite: boolean;
-    workarea: WorkAreaModel;
-  }> = {},
+  }: UpdateModuleOffsetsArgs = {},
 ): ModuleOffsets => {
   const defaultOffset = moduleOffsets[workarea]?.[module];
 
@@ -135,4 +173,19 @@ export const updateModuleOffsets = (
   }
 
   return offsets;
+};
+
+export const updateModuleOffsets = async (
+  newOffsets: [number, number],
+  args?: UpdateModuleOffsetsArgs,
+): Promise<boolean> => {
+  const workarea = args?.workarea;
+
+  if (workarea && modelsWithStores.includes(workarea)) {
+    return await updateModuleOffsetsInDevice(newOffsets, args);
+  }
+
+  updateModuleOffsetsInStore(newOffsets, { ...args, shouldWrite: true });
+
+  return true;
 };

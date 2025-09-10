@@ -74,7 +74,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
   const lang = useI18n().calibration;
   const param = useRef<FisheyeCameraParameters>({} as any);
   const [step, setStep] = useState<Step>(Step.WAITING);
-  const { model, uuid: currentDeviceId } = useMemo(() => deviceMaster.currentDevice.info, []);
+  const { model, uuid: currentDeviceId } = useMemo(() => deviceMaster.currentDevice!.info, []);
   const checkFirstStep = async () => {
     let fisheyeParameters: FisheyeCameraParameters | null = null;
 

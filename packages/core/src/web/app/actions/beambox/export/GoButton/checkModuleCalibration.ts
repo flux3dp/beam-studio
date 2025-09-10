@@ -7,7 +7,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import workareaManager from '@core/app/svgedit/workarea';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
-import { getAllOffsetsFromDevices } from '@core/helpers/device/moduleOffsets';
+import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import { getLayersByModule } from '@core/helpers/layer-module/layer-module-helper';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
@@ -22,7 +22,7 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     return;
   }
 
-  const deviceModuleOffsets = await getAllOffsetsFromDevices(false);
+  const deviceModuleOffsets = await getAllOffsets(workarea, { useCache: false });
 
   if (!deviceModuleOffsets) return;
 
