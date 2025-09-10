@@ -90,4 +90,14 @@ export interface WebFont {
   weight: number;
 }
 
-export type GeneralFont = FontDescriptor | WebFont;
+export type GoogleFont = {
+  binaryLoader?: (family: string, weight?: number, style?: 'italic' | 'normal') => Promise<ArrayBuffer | null>;
+  family: string;
+  italic: boolean;
+  postscriptName: string;
+  source: 'google';
+  style: string;
+  weight: number;
+};
+
+export type GeneralFont = FontDescriptor | GoogleFont | WebFont;
