@@ -32,9 +32,12 @@ jest.mock('../device-master', () => ({
 }));
 
 import {
+  getAllOffsets,
   getAllOffsetsFromDevices,
+  getModuleOffsets,
   getModuleOffsetsFromDevices,
   getModuleOffsetsFromStore,
+  updateModuleOffsets,
   updateModuleOffsetsInDevice,
   updateModuleOffsetsInStore,
 } from './moduleOffsets';
@@ -373,6 +376,166 @@ describe('test moduleOffsets helpers', () => {
         'toolhead_shift',
         '{\\\\\\"LASER_10W_DIODE\\\\\\":[1.12,2.68]}',
       );
+    });
+  });
+
+  describe('getAllOffsets', () => {
+    test('should return device offsets for fbm2 model when device is available', async () => {
+      mockGetCurrentDevice.mockReturnValue({
+        info: { model: 'fbm2', uuid: 'test-uuid' },
+      });
+
+      mockGetDeviceSetting.mockResolvedValue({
+        value: JSON.stringify({
+          LASER_10W_DIODE: [7, 8, 1],
+          UV_WHITE_INK: [9, 10, 0],
+        }),
+      });
+
+      const result = await getAllOffsets('fbm2', { useCache: false });
+
+      expect(result).toEqual({
+        [LayerModule.LASER_10W_DIODE]: [7, 8, 1],
+        [LayerModule.UV_WHITE_INK]: [9, 10, 0],
+      });
+      expect(mockGetDeviceSetting).toHaveBeenCalledTimes(1);
+    });
+
+    test('should return default offsets for fbm2 model when device fails', async () => {
+      mockGetCurrentDevice.mockReturnValue({
+        info: { model: 'fbm2', uuid: 'test-uuid' },
+      });
+
+      mockGetDeviceSetting.mockRejectedValue(new Error('Device error'));
+
+      const result = await getAllOffsets('fbm2', { useCache: false });
+
+      expect(result).toEqual({
+        [LayerModule.LASER_1064]: [81.4, 7.9],
+        [LayerModule.LASER_UNIVERSAL]: [0, 0],
+        [LayerModule.PRINTER_4C]: [15.5, -37.1],
+        [LayerModule.UV_VARNISH]: [30.2, -1.1],
+        [LayerModule.UV_WHITE_INK]: [19.7, -1.1],
+      });
+    });
+
+    test('should return store offsets for non-fbm2 models', async () => {
+      const result = await getAllOffsets('ado1');
+
+      expect(result).toEqual({
+        [LayerModule.LASER_10W_DIODE]: [1, 2],
+        [LayerModule.LASER_1064]: [5, 6],
+      });
+      expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
+    });
+  });
+
+  describe('getModuleOffsets', () => {
+    test('should return device offsets for fbm2 model', async () => {
+      mockGetCurrentDevice.mockReturnValue({
+        info: { model: 'fbm2', uuid: 'test-uuid' },
+      });
+
+      mockGetDeviceSetting.mockResolvedValue({
+        value: JSON.stringify({
+          LASER_10W_DIODE: [15, 25, 1],
+        }),
+      });
+
+      const result = await getModuleOffsets({
+        module: LayerModule.LASER_10W_DIODE,
+        useCache: false,
+        workarea: 'fbm2',
+      });
+
+      expect(result).toEqual([15, 25, 1]);
+    });
+
+    test('should return default offsets for fbm2 when device returns null', async () => {
+      mockGetCurrentDevice.mockReturnValue(null);
+
+      const result = await getModuleOffsets({
+        module: LayerModule.LASER_10W_DIODE,
+        useCache: false,
+        workarea: 'fbm2',
+      });
+
+      expect(result).toEqual([0, 0]);
+    });
+
+    test('should return store offsets for non-fbm2 models', async () => {
+      const result = await getModuleOffsets({
+        module: LayerModule.LASER_10W_DIODE,
+        workarea: 'ado1',
+      });
+
+      expect(result).toEqual([1, 2]);
+    });
+
+    test('should return relative offsets when isRelative is true', async () => {
+      const result = await getModuleOffsets({
+        isRelative: true,
+        module: LayerModule.LASER_1064,
+        workarea: 'ado1',
+      });
+
+      expect(result).toEqual([5, -20.95]);
+    });
+
+    test('should use default parameters when none provided', async () => {
+      const result = await getModuleOffsets();
+
+      expect(result).toEqual([1, 2]);
+    });
+  });
+
+  describe('updateModuleOffsets', () => {
+    test('should update device offsets for fbm2 model', async () => {
+      mockGetCurrentDevice.mockReturnValue({
+        info: { model: 'fbm2', uuid: 'test-uuid' },
+      });
+
+      mockSetDeviceSetting.mockResolvedValue('success');
+
+      const result = await updateModuleOffsets([3, 4], {
+        module: LayerModule.LASER_10W_DIODE,
+        workarea: 'fbm2',
+      });
+
+      expect(result).toBe(true);
+      expect(mockSetDeviceSetting).toHaveBeenCalledWith('toolhead_shift', '{\\\\\\"LASER_10W_DIODE\\\\\\":[3,4]}');
+    });
+
+    test('should update store offsets for non-fbm2 models', async () => {
+      const result = await updateModuleOffsets([5, 6], {
+        module: LayerModule.LASER_10W_DIODE,
+        workarea: 'ado1',
+      });
+
+      expect(result).toBe(true);
+      expect(mockGetGlobalPreference).toHaveBeenCalledTimes(2);
+      expect(mockSet).toHaveBeenCalledTimes(1);
+      expect(mockUpdate).toHaveBeenCalledTimes(1);
+    });
+
+    test('should handle undefined workarea by using current document workarea', async () => {
+      const result = await updateModuleOffsets([7, 8], {
+        module: LayerModule.LASER_10W_DIODE,
+      });
+
+      expect(result).toBe(true);
+      expect(mockGetState).toHaveBeenCalledTimes(1);
+    });
+
+    test('should return false when device update fails', async () => {
+      mockGetCurrentDevice.mockReturnValue(null);
+
+      const result = await updateModuleOffsets([1, 2], {
+        module: LayerModule.LASER_10W_DIODE,
+        workarea: 'fbm2',
+      });
+
+      expect(result).toBe(false);
     });
   });
 });
