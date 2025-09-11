@@ -29,6 +29,7 @@ import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import { getLoadedGoogleFonts } from '@core/helpers/fonts/unifiedGoogleFonts';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -195,11 +196,16 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         // Case-insensitive check for local font availability
         const cleanFontLower = cleanFontFamily.toLowerCase();
         const localFontMatch = availableFontFamilies.find((f) => f.toLowerCase() === cleanFontLower);
-        // A font is considered a Google Font only if it's in history but NOT in local system fonts (case-insensitive)
+        // A font is considered a Google Font if it's either:
+        // 1. In history but NOT in local system fonts (case-insensitive), OR
+        // 2. In the unified Google fonts loaded set (context-loaded fonts), OR
+        // 3. In the session loaded fonts from the hook
         const isGoogleFontFromHistory = fontHistory.some((h) => h.toLowerCase() === cleanFontLower) && !localFontMatch;
+        const isGoogleFontFromContext = getLoadedGoogleFonts().has(cleanFontFamily) && !localFontMatch;
+        const isGoogleFontFromSession = hookSessionLoadedFonts.has(cleanFontFamily) && !localFontMatch;
         let font: GeneralFont;
 
-        if (isGoogleFontFromHistory) {
+        if (isGoogleFontFromHistory || isGoogleFontFromContext || isGoogleFontFromSession) {
           // Create synthetic Google Font object to bypass PostScript lookup
           // This is only for web fonts that are not available locally
           font = {
@@ -235,12 +241,17 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         console.log(font);
 
         // Check if this font should use fallback
-        // Skip fallback for Google Fonts that are in recently used history and loaded in the document
+        // Skip fallback for Google Fonts that are loaded via any source and available in the document
         // Also skip fallback if the font is available locally (case-insensitive)
         const fontFamilyLower = font.family.toLowerCase();
         const isLocalFont = availableFontFamilies.some((f) => f.toLowerCase() === fontFamilyLower);
         const isGoogleFontInHistory = fontHistory.some((h) => h.toLowerCase() === fontFamilyLower) && !isLocalFont;
-        const isGoogleFontLoaded = isGoogleFontInHistory && document.fonts.check(`1em "${font.family}"`);
+        const isGoogleFontLoadedViaContext = getLoadedGoogleFonts().has(font.family) && !isLocalFont;
+        const isGoogleFontLoadedViaSession = hookSessionLoadedFonts.has(font.family) && !isLocalFont;
+        // A Google Font is considered "loaded" if it's from any source AND the browser confirms it's available
+        const isGoogleFontLoaded =
+          (isGoogleFontInHistory || isGoogleFontLoadedViaContext || isGoogleFontLoadedViaSession) &&
+          document.fonts.check(`1em "${font.family}"`);
 
         if (!isGoogleFontLoaded && !isLocalFont) {
           // use these font if postscriptName cannot find in user PC
