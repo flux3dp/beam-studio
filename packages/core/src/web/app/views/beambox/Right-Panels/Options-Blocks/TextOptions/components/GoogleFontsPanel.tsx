@@ -3,20 +3,12 @@ import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
 import { Button, Input, Modal, Select, Spin, Typography } from 'antd';
 
+import {
+  type GoogleFontItem as CachedGoogleFontItem,
+  getGoogleFontsCatalogSorted,
+} from '@core/helpers/fonts/googleFontsApiCache';
+
 import styles from './GoogleFontsPanel.module.scss';
-
-interface GoogleFontItem {
-  category: string;
-  colorCapabilities?: string[]; // Color font capabilities (e.g., 'COLR', 'SVG')
-  family: string;
-  files: Record<string, string>;
-  subsets: string[];
-  variants: string[];
-}
-
-interface GoogleFontsApiResponse {
-  items: GoogleFontItem[];
-}
 
 interface Props {
   onClose: () => void;
@@ -24,8 +16,6 @@ interface Props {
   visible: boolean;
 }
 
-// TODO: Move this to environment configuration or user settings
-const GOOGLE_FONTS_API_KEY = 'YOUR_GOOGLE_API_KEY';
 const CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'];
 
 // Icon font detection - these contain symbols/icons, not text
@@ -43,34 +33,20 @@ const isIconFont = (fontFamily: string): boolean => {
 };
 
 const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) => {
-  const [fonts, setFonts] = useState<GoogleFontItem[]>([]);
+  const [fonts, setFonts] = useState<CachedGoogleFontItem[]>([]);
   const [loading, setLoading] = useState(false);
   const [searchText, setSearchText] = useState('');
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
-  const [selectedFont, setSelectedFont] = useState<GoogleFontItem | null>(null);
+  const [selectedFont, setSelectedFont] = useState<CachedGoogleFontItem | null>(null);
   const [showColorFonts] = useState(false); // Hide color fonts by default - always filter them out
 
   const fetchGoogleFonts = useCallback(async () => {
     setLoading(true);
     try {
-      const response = await fetch(
-        `https://www.googleapis.com/webfonts/v1/webfonts?key=${GOOGLE_FONTS_API_KEY}&sort=popularity`,
-      );
-
-      if (!response.ok) {
-        if (response.status === 400) {
-          console.warn('Google Fonts API key is invalid or expired. Please configure a valid API key.');
-          setFonts([]); // Show empty list
-
-          return;
-        }
-
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const data = (await response.json()) as GoogleFontsApiResponse;
+      // Use cached Google Fonts API data instead of direct API call
+      const data = await getGoogleFontsCatalogSorted();
 
       // Log problematic fonts for debugging
       const colorFonts =
@@ -133,7 +109,7 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   }, [fonts, searchText, selectedCategory, selectedLanguage, showColorFonts]);
 
   const loadFont = useCallback(
-    (font: GoogleFontItem) => {
+    (font: CachedGoogleFontItem) => {
       if (loadedFonts.has(font.family)) return;
 
       // Create font face for preview
@@ -151,7 +127,7 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   );
 
   const handleFontClick = useCallback(
-    (font: GoogleFontItem) => {
+    (font: CachedGoogleFontItem) => {
       setSelectedFont(font);
       loadFont(font);
     },
@@ -338,7 +314,7 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
 };
 
 interface FontPreviewProps {
-  font: GoogleFontItem;
+  font: CachedGoogleFontItem;
   isSelected: boolean;
   onClick: () => void;
   onLoad: () => void;
@@ -402,7 +378,7 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
             )}
           </Typography.Text>
           <div className={styles.fontSubsets}>
-            {font.subsets.slice(0, 3).map((subset) => (
+            {font.subsets.slice(0, 3).map((subset: string) => (
               <span className={styles.subsetTag} key={subset}>
                 {subset}
               </span>

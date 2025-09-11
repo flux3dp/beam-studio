@@ -14,6 +14,8 @@ import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import { extractFamilyFromPostScriptName, isGoogleFontPostScriptName } from '@core/helpers/fonts/googleFontDetector';
+import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -38,6 +40,17 @@ const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const fontObjCache = new Map<string, fontkit.Font>();
 const googleFontCache = new Map<string, GoogleFont>();
 
+// Initialize the dependency injection for Google Font registry
+const initializeGoogleFontIntegration = () => {
+  // Inject our registration function into the registry to break circular dependency
+  googleFontRegistry.setRegistrationCallback((googleFont: GoogleFont) => {
+    googleFontCache.set(googleFont.postscriptName, googleFont);
+  });
+};
+
+// Initialize during module load
+initializeGoogleFontIntegration();
+
 const SubstituteResult = {
   CANCEL_OPERATION: 0,
   DO_NOT_SUB: 1,
@@ -55,16 +68,8 @@ export const ConvertResult = {
 export type ConvertResultType = (typeof ConvertResult)[keyof typeof ConvertResult];
 
 export type ConvertToTextPathResult =
-  | {
-      command: IBatchCommand;
-      path: SVGPathElement;
-      status: ConvertResultType;
-    }
-  | {
-      command: null;
-      path: null;
-      status: ConvertResultType;
-    };
+  | { command: IBatchCommand; path: SVGPathElement; status: ConvertResultType }
+  | { command: null; path: null; status: ConvertResultType };
 
 type IConvertInfo = null | {
   d: string;
@@ -138,6 +143,40 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
     return googleFont;
   }
 
+  // Check if font is already registered in the registry
+  const registeredFont = googleFontRegistry.getRegisteredFont(postscriptName);
+
+  if (registeredFont) {
+    console.log(`Found Google Font in registry: ${postscriptName}`);
+
+    return registeredFont;
+  }
+
+  // Lazy registration: If not in cache but looks like a Google Font, try lazy loading
+  if (isGoogleFontPostScriptName(postscriptName)) {
+    const fontFamily = extractFamilyFromPostScriptName(postscriptName);
+
+    if (fontFamily) {
+      console.log(`Attempting lazy registration for Google Font: ${postscriptName}`);
+
+      try {
+        // Import the lazy loading function - no circular dependency since unifiedGoogleFonts
+        // no longer imports from font-funcs
+        const { lazyRegisterGoogleFontIfLoaded } = require('@core/helpers/fonts/unifiedGoogleFonts');
+        const lazyRegisteredFont = lazyRegisterGoogleFontIfLoaded(postscriptName);
+
+        if (lazyRegisteredFont) {
+          console.log(`Successfully lazy registered Google Font: ${postscriptName}`);
+
+          return lazyRegisteredFont;
+        }
+      } catch (error) {
+        console.warn(`Failed to lazy register Google Font ${postscriptName}:`, error);
+        // Continue to fallback logic
+      }
+    }
+  }
+
   if (window.os === 'MacOS') {
     return fontHelper.findFont({ postscriptName });
   }
@@ -158,11 +197,11 @@ init();
 
 /**
  * Registers a Google Font object for text-to-path conversion
- * This allows getFontOfPostscriptName to find Google Fonts when convertTextToPath is called
+ * Now uses the registry service for consistent management
  */
 export const registerGoogleFont = (googleFont: GoogleFont): void => {
-  googleFontCache.set(googleFont.postscriptName, googleFont);
-  console.log(`Registered Google Font: ${googleFont.postscriptName}`, googleFont);
+  googleFontRegistry.registerGoogleFont(googleFont);
+  console.log(`Registered Google Font via font-funcs: ${googleFont.postscriptName}`, googleFont);
 };
 
 /**
