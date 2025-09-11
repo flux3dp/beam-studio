@@ -4,15 +4,13 @@
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import Alert from '../app/actions/alert-caller';
+import alertCaller from '../app/actions/alert-caller';
 import PreviewModeController from '../app/actions/beambox/preview-mode-controller';
 import Progress from '../app/actions/progress-caller';
-import AlertConstants from '../app/constants/alert-constants';
+import alertConstants from '../app/constants/alert-constants';
 import DeviceConstants from '../app/constants/device-constants';
 
 import DeviceMaster from './device-master';
-
-const lang = i18n.lang;
 
 export default async function (device: IDeviceInfo, allowPause?: boolean, forceAbort?: boolean) {
   if (!device) return;
@@ -63,6 +61,8 @@ export default async function (device: IDeviceInfo, allowPause?: boolean, forceA
       }
     };
 
+    const t = i18n.lang.message;
+
     switch (device.st_id) {
       case null:
       case undefined:
@@ -75,16 +75,12 @@ export default async function (device: IDeviceInfo, allowPause?: boolean, forceA
       case DeviceConstants.status.TASK_MAINTAIN:
       case DeviceConstants.status.TASK_REDLIGHT:
         // ask kick?
-        Alert.popUp({
-          buttonType: AlertConstants.YES_NO,
+        alertCaller.popUp({
+          buttonType: alertConstants.YES_NO,
           id: 'kick',
-          message: lang.message.device_is_used,
-          onNo: () => {
-            resolve(false);
-          },
-          onYes: () => {
-            onYes('kick');
-          },
+          message: t.device_is_used,
+          onNo: () => resolve(false),
+          onYes: () => onYes('kick'),
         });
         break;
       case DeviceConstants.status.COMPLETED:
@@ -114,16 +110,12 @@ export default async function (device: IDeviceInfo, allowPause?: boolean, forceA
           if (forceAbort) {
             onYes('abort');
           } else {
-            Alert.popUp({
-              buttonType: AlertConstants.YES_NO,
+            alertCaller.popUp({
+              buttonType: alertConstants.YES_NO,
               id: 'abort',
-              message: lang.message.device_is_used,
-              onNo: () => {
-                resolve(false);
-              },
-              onYes: () => {
-                onYes('abort');
-              },
+              message: t.device_is_used,
+              onNo: () => resolve(false),
+              onYes: () => onYes('abort'),
             });
           }
         }
@@ -132,11 +124,7 @@ export default async function (device: IDeviceInfo, allowPause?: boolean, forceA
       default:
         // device busy
         console.log('Device Busy ', device.st_id);
-        Alert.popUp({
-          caption: lang.message.device_busy.caption,
-          id: 'on-select-printer',
-          message: lang.message.device_busy.message,
-        });
+        alertCaller.popUp({ caption: t.device_busy.caption, message: t.device_busy.message });
         break;
     }
   });

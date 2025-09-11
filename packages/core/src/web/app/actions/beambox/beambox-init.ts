@@ -12,12 +12,9 @@ import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
-import NS from '@core/app/constants/namespaces';
-import BeamboxStore from '@core/app/stores/beambox-store';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
-import workareaManager from '@core/app/svgedit/workarea';
 import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import alertHelper from '@core/helpers/alert-helper';
 import announcementHelper from '@core/helpers/announcement-helper';
@@ -62,7 +59,6 @@ class BeamboxInit {
     autoSaveHelper.init();
     fluxId.init();
     cloud.recordActivity();
-    BeamboxStore.onDrawGuideLines(this.displayGuides);
     alertHelper.registerAlertEvents();
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
@@ -122,75 +118,6 @@ class BeamboxInit {
     announcementHelper.init(isNewUser);
     storage.removeAt('new-user');
     storage.set('last-installed-version', window.FLUX.version);
-  }
-
-  private displayGuides(): void {
-    // TODO: update guide lines dynamically
-    const { guide_x0: x, guide_y0: y, show_guides: showGuides } = useGlobalPreferenceStore.getState();
-
-    if (!showGuides) return;
-
-    document.getElementById('guidesLines')?.remove();
-    document.getElementById('horizontal_guide')?.remove();
-    document.getElementById('vertical_guide')?.remove();
-
-    const { utilities } = window.svgedit;
-    const guidesLines = (() => {
-      const linesGroup = document.createElementNS(NS.SVG, 'svg');
-      const lineVertical = document.createElementNS(NS.SVG, 'line');
-      const lineHorizontal = document.createElementNS(NS.SVG, 'line');
-      const { height, maxY, minY, width } = workareaManager;
-
-      utilities.assignAttributes(linesGroup, {
-        height: '100%',
-        id: 'guidesLines',
-        style: 'pointer-events: none',
-        viewBox: `0 0 ${width} ${height}`,
-        width: '100%',
-        x: 0,
-        y: 0,
-      });
-
-      utilities.assignAttributes(lineHorizontal, {
-        fill: 'none',
-        id: 'horizontal_guide',
-        stroke: '#000',
-        'stroke-dasharray': '5, 5',
-        'stroke-opacity': 0.8,
-        'stroke-width': '2',
-        style: 'pointer-events:none',
-        'vector-effect': 'non-scaling-stroke',
-        x1: 0,
-        x2: width,
-        y1: y * 10,
-        y2: y * 10,
-      });
-
-      utilities.assignAttributes(lineVertical, {
-        fill: 'none',
-        id: 'vertical_guide',
-        stroke: '#000',
-        'stroke-dasharray': '5, 5',
-        'stroke-opacity': 0.8,
-        'stroke-width': '2',
-        style: 'pointer-events:none',
-        'vector-effect': 'non-scaling-stroke',
-        x1: x * 10,
-        x2: x * 10,
-        y1: minY,
-        y2: maxY,
-      });
-
-      linesGroup.appendChild(lineHorizontal);
-      linesGroup.appendChild(lineVertical);
-
-      return linesGroup;
-    })();
-    const canvasBG = document.getElementById('canvasBackground');
-
-    if (canvasBG) {
-      canvasBG.appendChild(guidesLines);
-    }
   }
 
   private initDefaultFont(): void {

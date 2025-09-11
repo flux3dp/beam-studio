@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import type { IButton } from './IButton';
 
 export type MessageIcon = 'error' | 'info' | 'notice' | 'success' | 'warning';
@@ -18,7 +20,7 @@ export interface IAlert {
     callbacks: Function | Function[];
     text: string;
   };
-  children?: Element;
+  children?: ReactNode;
   iconUrl?: string;
   id?: string;
   isProgress?: false;

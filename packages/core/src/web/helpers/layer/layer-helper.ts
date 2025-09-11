@@ -20,8 +20,6 @@ import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
-const LANG = i18n.lang.beambox.right_panel.layer_panel;
-
 let svgCanvas: ISVGCanvas;
 let svgedit: ISVGDrawing;
 
@@ -93,7 +91,7 @@ export const getLayerPosition = (layerName: string): number => {
 };
 
 export const sortLayerNamesByPosition = (layerNames: string[]): string[] => {
-  const layerNamePositionMap = {};
+  const layerNamePositionMap: Record<string, number> = {};
   const allLayers = document.querySelectorAll('g.layer');
 
   for (let i = 0; i < allLayers.length; i += 1) {
@@ -183,12 +181,12 @@ export const createLayer = (
   return { layer: newLayer, name: finalName };
 };
 
-export const deleteLayerByName = (layerName: string): ICommand => {
+export const deleteLayerByName = (layerName: string): ICommand | null => {
   const layer = getLayerElementByName(layerName);
 
   if (layer) {
     const { nextSibling } = layer;
-    const parent = layer.parentNode;
+    const parent = layer.parentNode!;
 
     layer.remove();
 
@@ -215,8 +213,13 @@ export const deleteLayers = (layerNames: string[]): void => {
   const layerCounts = document.querySelectorAll('g.layer').length;
 
   if (!layerCounts) {
-    const svgcontent = document.getElementById('svgcontent');
-    const newLayer = new svgedit.draw.Layer(LANG.layer1, null, svgcontent, '#333333').getGroup() as Element;
+    const svgcontent = document.getElementById('svgcontent')!;
+    const newLayer = new svgedit.draw.Layer(
+      i18n.lang.beambox.right_panel.layer_panel.layer1,
+      null,
+      svgcontent,
+      '#333333',
+    ).getGroup() as Element;
 
     batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
     initLayerConfig(newLayer);
@@ -247,7 +250,7 @@ export const cloneLayer = (
 
   const drawing = svgCanvas.getCurrentDrawing();
   const color = layer.getAttribute('data-color') || '#333';
-  const svgcontent = document.getElementById('svgcontent');
+  const svgcontent = document.getElementById('svgcontent')!;
   const baseName = clonedLayerName || `${layerName} copy`;
   let newName = baseName;
   let j = 0;
@@ -364,22 +367,20 @@ export const showMergeAlert = async (baseLayerName: string, layerNames: string[]
   const targetModule = getData(getLayerElementByName(baseLayerName), 'module') as LayerModuleType;
   const isPrinting = printingModules.has(targetModule);
   const shouldShowAlert = layerNames.some((layerName) => {
-    const module = getData(getLayerElementByName(layerName), 'module');
+    const module = getData(getLayerElementByName(layerName), 'module')!;
 
     return printingModules.has(module) !== isPrinting;
   });
 
   if (shouldShowAlert) {
+    const t = i18n.lang.beambox.right_panel.layer_panel.notification;
+
     return new Promise<boolean>((resolve) => {
       alertCaller.popUp({
         buttonType: alertConstants.CONFIRM_CANCEL,
-        caption: isPrinting
-          ? LANG.notification.mergeLaserLayerToPrintingLayerTitle
-          : LANG.notification.mergePrintingLayerToLaserLayerTitle,
+        caption: isPrinting ? t.mergeLaserLayerToPrintingLayerTitle : t.mergePrintingLayerToLaserLayerTitle,
         id: 'merge-layers',
-        message: isPrinting
-          ? LANG.notification.mergeLaserLayerToPrintingLayerMsg
-          : LANG.notification.mergePrintingLayerToLaserLayerMsg,
+        message: isPrinting ? t.mergeLaserLayerToPrintingLayerMsg : t.mergePrintingLayerToLaserLayerMsg,
         messageIcon: 'notice',
         onCancel: () => resolve(false),
         onConfirm: () => resolve(true),
@@ -402,7 +403,7 @@ const mergeLayer = (
   }
 
   const firstChildOfBase = Array.from(baseLayer.childNodes).find(
-    (node: Element) => !['filter', 'title'].includes(node.tagName),
+    (node) => !['filter', 'title'].includes((node as Element).tagName),
   );
   const batchCmd: IBatchCommand = new history.BatchCommand(`Merge into ${baseLayer}`);
 
@@ -418,7 +419,7 @@ const mergeLayer = (
         if (!['filter', 'title'].includes(child.nodeName)) {
           const { nextSibling } = child;
 
-          if (shouldInsertBefore) {
+          if (shouldInsertBefore && firstChildOfBase) {
             baseLayer.insertBefore(child, firstChildOfBase);
           } else {
             baseLayer.appendChild(child);
@@ -485,8 +486,8 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
 // use insertBefore node[pos], so moving from i to pos i or i+1 means nothing.
 export const moveLayerToPosition = (layerName: string, newPosition: number): { cmd?: ICommand; success: boolean } => {
   const allLayers = document.querySelectorAll('g.layer');
-  let layer = null as Element;
-  let currentPosition = null;
+  let layer: Element | null = null;
+  let currentPosition = -1;
 
   for (let i = 0; i < allLayers.length; i += 1) {
     const title = allLayers[i].querySelector('title');
@@ -509,12 +510,12 @@ export const moveLayerToPosition = (layerName: string, newPosition: number): { c
   }
 
   if (newPosition === currentPosition || newPosition === currentPosition + 1) {
-    return { cmd: null, success: true };
+    return { cmd: undefined, success: true };
   }
 
   const anchorLayer = allLayers[newPosition]; // undefined if newPosition === allLayers.length
   const { nextSibling } = layer;
-  const parent = layer.parentNode;
+  const parent = layer.parentNode!;
 
   if (anchorLayer) {
     parent.insertBefore(layer, anchorLayer);
@@ -531,7 +532,7 @@ const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
 
   if (layer && anchorLayer) {
     const { nextSibling } = layer;
-    const parent = layer.parentNode;
+    const parent = layer.parentNode!;
 
     parent.insertBefore(layer, anchorLayer);
 
@@ -546,7 +547,7 @@ const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
 export const moveLayersToPosition = (layerNames: string[], newPosition: number): void => {
   const batchCmd = new history.BatchCommand('Move Layer(s)');
   const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName();
+  const currentLayerName = drawing.getCurrentLayerName()!;
 
   sortLayerNamesByPosition(layerNames);
 
@@ -589,12 +590,12 @@ export const highlightLayer = (layerName?: string): void => {
   if (layerName) {
     for (i = 0; i < numLayers; i += 1) {
       if (curNames[i] !== layerName) {
-        svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i], 0.5);
+        svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i]!, 0.5);
       }
     }
   } else {
     for (i = 0; i < numLayers; i += 1) {
-      svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i], 1.0);
+      svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i]!, 1.0);
     }
   }
 };
@@ -602,7 +603,7 @@ export const highlightLayer = (layerName?: string): void => {
 export const getCurrentLayerName = (): string => {
   const drawing = svgCanvas.getCurrentDrawing();
 
-  return drawing.getCurrentLayerName();
+  return drawing.getCurrentLayerName()!;
 };
 
 export const getLayerByName = (layerName: string): SVGGElement => {
@@ -628,17 +629,18 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer), 'module')!);
   const moveOutFromFullColorLayer = isPrintingLayer && !isDestPrintingLayer;
   const moveInToFullColorLayer = !isPrintingLayer && isDestPrintingLayer;
+  const t = i18n.lang.beambox.right_panel.layer_panel.notification;
 
   if (origLayer && (moveOutFromFullColorLayer || moveInToFullColorLayer)) {
     alertCaller.popUp({
       buttonType: alertConstants.CONFIRM_CANCEL,
       caption: moveOutFromFullColorLayer
-        ? sprintf(LANG.notification.moveElemFromPrintingLayerTitle, destLayer)
-        : sprintf(LANG.notification.moveElemToPrintingLayerTitle, destLayer),
+        ? sprintf(t.moveElemFromPrintingLayerTitle, destLayer)
+        : sprintf(t.moveElemToPrintingLayerTitle, destLayer),
       id: 'move layer',
       message: moveOutFromFullColorLayer
-        ? sprintf(LANG.notification.moveElemFromPrintingLayerMsg, destLayer)
-        : sprintf(LANG.notification.moveElemToPrintingLayerMsg, destLayer),
+        ? sprintf(t.moveElemFromPrintingLayerMsg, destLayer)
+        : sprintf(t.moveElemToPrintingLayerMsg, destLayer),
       messageIcon: 'notice',
       onConfirm: () => moveToLayer(true),
     });
@@ -646,7 +648,7 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
     alertCaller.popUp({
       buttonType: alertConstants.YES_NO,
       id: 'move layer',
-      message: sprintf(LANG.notification.QmoveElemsToLayer, destLayer),
+      message: sprintf(t.QmoveElemsToLayer, destLayer),
       messageIcon: 'notice',
       onYes: moveToLayer,
     });
@@ -657,7 +659,7 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
 
 // TODO: add unittest
 export const removeDefaultLayerIfEmpty = (): ICommand | null => {
-  const defaultLayerName = LANG.layer1;
+  const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
   const drawing = svgCanvas.getCurrentDrawing();
   const layer = drawing.getLayerByName(defaultLayerName);
   const layerCount = drawing.getNumLayers();
