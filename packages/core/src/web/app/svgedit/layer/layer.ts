@@ -6,6 +6,7 @@
  */
 
 import NS from '@core/app/constants/namespaces';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { ChangeElementCommand } from '../history/history';
 import undoManager from '../history/undoManager';
@@ -133,15 +134,25 @@ export class Layer {
   /**
    * Set this layer visible or hidden
    */
-  public setVisible(visible?: boolean): void {
-    if (!this.group_) return;
+  public setVisible(
+    visible?: boolean,
+    { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
+  ): boolean {
+    if (!this.group_) return false;
 
     const expected = visible === undefined || visible ? 'inline' : 'none';
     const oldDisplay = this.group_.getAttribute('display');
 
-    if (oldDisplay !== expected) {
-      this.group_.setAttribute('display', expected);
-    }
+    if (oldDisplay === expected) return false;
+
+    this.group_.setAttribute('display', expected);
+
+    const command = new ChangeElementCommand(this.group_, { display: oldDisplay });
+
+    if (parentCmd) parentCmd.addSubCommand(command);
+    else if (addToHistory) undoManager.addCommandToHistory(command);
+
+    return true;
   }
 
   /**
