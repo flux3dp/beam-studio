@@ -7,13 +7,14 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import workareaManager from '@core/app/svgedit/workarea';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import alertConfig from '@core/helpers/api/alert-config';
-import { getModuleOffsets } from '@core/helpers/device/moduleOffsets';
+import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import { getLayersByModule } from '@core/helpers/layer-module/layer-module-helper';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
 
-// Fixme: checkCalibration won't show any alert since the return value of getModuleOffsets is always truthy
-// Update the logic to check if the module is calibrated or not
+/**
+ * checkModuleCalibration - Check if the module has been calibrated, currently only check the offset value from device
+ */
 export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): Promise<void> => {
   const workarea = workareaManager.model;
 
@@ -21,10 +22,14 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     return;
   }
 
+  const deviceModuleOffsets = await getAllOffsets(workarea, { useCache: false });
+
+  if (!deviceModuleOffsets) return;
+
   const checkCalibration = async (layerModule: LayerModuleType, alertTitle: string, alertMsg: string) => {
     const alertConfigKey = `skip-cali-${layerModule}-warning`;
 
-    if (!getModuleOffsets({ module: layerModule, workarea }) && !alertConfig.read(alertConfigKey as AlertConfigKey)) {
+    if (!deviceModuleOffsets[layerModule]?.[2] && !alertConfig.read(alertConfigKey as AlertConfigKey)) {
       const moduleLayers = [...getLayersByModule([layerModule], { checkRepeat: true, checkVisible: true })];
 
       if (moduleLayers.some((g) => Boolean(g.querySelector(':not(title):not(filter):not(g):not(feColorMatrix)')))) {

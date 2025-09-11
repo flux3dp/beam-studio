@@ -8,6 +8,7 @@ import NS from '@core/app/constants/namespaces';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { clearBackgroundImage, getBackgroundUrl, setBackgroundImage } from '@core/app/svgedit/canvasBackground';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAbsRect } from '@core/helpers/boundary-helper';
@@ -23,21 +24,20 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-const LANG = i18n.lang.beambox.left_panel;
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 const IOS_CANVAS_LIMIT = 16777216;
 
 class PreviewModeBackgroundDrawer {
+  private hybridDescText?: SVGTextElement;
+  private rotaryPreviewBoundaryText?: SVGTextElement;
+  private previewDescText?: SVGTextElement;
+  private openBottomDescText?: SVGTextElement;
+
   protected canvas: HTMLCanvasElement;
-
   protected canvasRatio = 1;
-
   protected cameraCanvasUrl: string;
-
   protected coordinates: { maxX: number; maxY: number; minX: number; minY: number };
-
   protected cameraOffset: CameraParameters | null;
-
   protected backgroundDrawerSubject: Subject<ObservableInput<Blob>>;
 
   constructor() {
@@ -50,6 +50,10 @@ class PreviewModeBackgroundDrawer {
 
     this.updateCanvasSize();
     canvasEventEmitter.on('model-changed', this.updateCanvasSize);
+    useStorageStore.subscribe(
+      (state) => state['active-lang'],
+      () => this.updateLang(),
+    );
   }
 
   private updateRatio() {
@@ -62,6 +66,26 @@ class PreviewModeBackgroundDrawer {
       }
     }
   }
+
+  private updateLang = () => {
+    const lang = i18n.lang.beambox.left_panel;
+
+    if (this.rotaryPreviewBoundaryText) {
+      this.rotaryPreviewBoundaryText.textContent = lang.unpreviewable_area;
+    }
+
+    if (this.previewDescText) {
+      this.previewDescText.textContent = lang.unpreviewable_area;
+    }
+
+    if (this.hybridDescText) {
+      this.hybridDescText.textContent = lang.diode_blind_area;
+    }
+
+    if (this.openBottomDescText) {
+      this.openBottomDescText.textContent = lang.borderless_blind_area;
+    }
+  };
 
   start(cameraOffset?: CameraParameters) {
     if (cameraOffset) {
@@ -235,10 +259,9 @@ class PreviewModeBackgroundDrawer {
       boundaryGroup.appendChild(rotaryPreviewBoundary);
 
       const rotaryPreviewBoundaryText = document.createElementNS(NS.SVG, 'text') as SVGTextElement;
-      const textNode = document.createTextNode(LANG.unpreviewable_area);
 
       rotaryPreviewBoundaryText.setAttribute('font-size', expansion[1] ? '400' : '100');
-      rotaryPreviewBoundaryText.appendChild(textNode);
+      rotaryPreviewBoundaryText.textContent = i18n.lang.beambox.left_panel.unpreviewable_area;
       this.setTextStyle(rotaryPreviewBoundaryText);
       boundaryGroup.appendChild(rotaryPreviewBoundaryText);
 
@@ -248,6 +271,7 @@ class PreviewModeBackgroundDrawer {
 
       rotaryPreviewBoundaryText.setAttribute('x', x.toString());
       rotaryPreviewBoundaryText.setAttribute('y', y.toString());
+      this.rotaryPreviewBoundaryText = rotaryPreviewBoundaryText;
     }
 
     if (this.cameraOffset) {
@@ -292,10 +316,7 @@ class PreviewModeBackgroundDrawer {
       descText.setAttribute('x', ((uncapturabledHeight - 60) / 2).toString());
       descText.setAttribute('y', ((uncapturabledHeight + 60) / 2 - 10).toString());
       this.setTextStyle(descText as SVGTextElement);
-
-      const textNode = document.createTextNode(LANG.unpreviewable_area);
-
-      descText.appendChild(textNode);
+      descText.textContent = i18n.lang.beambox.left_panel.unpreviewable_area;
       borderPattern.appendChild(patternRect);
       borderPattern.appendChild(patternLine);
       boundaryGroup.appendChild(borderTop);
@@ -316,6 +337,7 @@ class PreviewModeBackgroundDrawer {
 
       boundaryGroup.appendChild(borderPattern);
       boundaryGroup.appendChild(descText);
+      this.previewDescText = descText;
     }
   }
 
@@ -419,10 +441,8 @@ class PreviewModeBackgroundDrawer {
       x: width - (uncapturabledHeight - 60) / 2,
       y: (uncapturabledHeight + 60) / 2 - 10,
     });
-
-    const textNode = document.createTextNode(LANG.borderless_blind_area);
-
-    openBottomDescText.appendChild(textNode);
+    openBottomDescText.textContent = i18n.lang.beambox.left_panel.borderless_blind_area;
+    this.openBottomDescText = openBottomDescText;
 
     return { openBottomBoundary, openBottomDescText };
   }
@@ -430,7 +450,7 @@ class PreviewModeBackgroundDrawer {
   getHybridModulePreviewBoundary(uncapturabledHeight: number) {
     const svgdoc = document.getElementById('svgcanvas')!.ownerDocument;
     const hybridBorder = svgdoc.createElementNS(NS.SVG, 'rect');
-    const hybridDescText = svgdoc.createElementNS(NS.SVG, 'text');
+    const hybridDescText = svgdoc.createElementNS(NS.SVG, 'text') as SVGTextElement;
     const { height, width } = workareaManager;
 
     svgCanvas.assignAttributes(hybridBorder, {
@@ -448,11 +468,9 @@ class PreviewModeBackgroundDrawer {
       x: width - (uncapturabledHeight - 60) / 2,
       y: (uncapturabledHeight + 60) / 2 - 10,
     });
-    this.setTextStyle(hybridDescText as SVGTextElement);
-
-    const textNode = document.createTextNode(LANG.diode_blind_area);
-
-    hybridDescText.appendChild(textNode);
+    this.setTextStyle(hybridDescText);
+    hybridDescText.textContent = i18n.lang.beambox.left_panel.diode_blind_area;
+    this.hybridDescText = hybridDescText;
 
     return { hybridBorder, hybridDescText };
   }

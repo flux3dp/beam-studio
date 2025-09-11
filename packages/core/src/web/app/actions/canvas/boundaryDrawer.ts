@@ -284,14 +284,14 @@ export class BoundaryDrawer {
     };
   };
 
-  updateFinalBoundary = (currentModule: LayerModuleType): void => {
+  updateFinalBoundary = async (currentModule: LayerModuleType): Promise<void> => {
     const { maxY: workareaBottom, minY: workareaTop, model, width: w } = workareaManager;
     const addOnInfo = getAddOnInfo(model);
     const isRotary = Boolean(useDocumentStore.getState()['rotary_mode'] && addOnInfo.rotary);
     const isAutoFeeder = getAutoFeeder(addOnInfo);
     const finalBoundary: TBoundary = { bottom: 0, left: 0, right: 0, top: 0 };
     let { bottom, left, right, top } = finalBoundary;
-    const [offsetX, offsetY] = getModuleOffsets({ module: currentModule, workarea: model });
+    const [offsetX, offsetY] = await getModuleOffsets({ module: currentModule, workarea: model });
     const unionOffsets = {
       bottom: -offsetY - (printingModules.has(currentModule) ? printerHeight : 0),
       left: offsetX,
@@ -305,18 +305,20 @@ export class BoundaryDrawer {
       if (this.supportMultiModules && this.useUnionBoundary) {
         const supportedModules = getSupportedModules(model);
 
-        supportedModules?.forEach((module) => {
-          if (module !== currentModule) {
-            const offsets = getModuleOffsets({ module, workarea: model });
+        await Promise.allSettled(
+          supportedModules?.map(async (module) => {
+            if (module !== currentModule) {
+              const offsets = await getModuleOffsets({ module, workarea: model });
 
-            mergeBoundaries(unionOffsets, {
-              bottom: -offsets[1] - (printingModules.has(module) ? printerHeight : 0),
-              left: offsets[0],
-              right: -offsets[0],
-              top: offsets[1],
-            });
-          }
-        });
+              mergeBoundaries(unionOffsets, {
+                bottom: -offsets[1] - (printingModules.has(module) ? printerHeight : 0),
+                left: offsets[0],
+                right: -offsets[0],
+                top: offsets[1],
+              });
+            }
+          }),
+        );
       }
 
       keys.forEach((key) => {

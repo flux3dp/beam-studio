@@ -23,6 +23,14 @@ jest.mock('@core/app/actions/canvas/boundaryDrawer', () => {});
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
 
+const mockGetModuleOffsetsFromStore = jest.fn();
+const mockUpdateModuleOffsetsInStore = jest.fn();
+
+jest.mock('@core/helpers/device/moduleOffsets', () => ({
+  getModuleOffsetsFromStore: mockGetModuleOffsetsFromStore,
+  updateModuleOffsetsInStore: mockUpdateModuleOffsetsInStore,
+}));
+
 const mockOffsets: ModuleOffsets = { ado1: { [LayerModule.LASER_10W_DIODE]: [10, 10] } };
 const props = {
   unitInputProps: {
@@ -47,6 +55,25 @@ describe('test AdorModule', () => {
           'print-advanced-mode': true,
         })[key],
     );
+    mockGetModuleOffsetsFromStore.mockImplementation(({ module, offsets }) => {
+      const defaultOffsets = moduleOffsets.ado1?.[module] || [0, 0];
+      const customOffsets = offsets?.ado1?.[module] ?? defaultOffsets;
+
+      return [customOffsets[0] - defaultOffsets[0], customOffsets[1] - defaultOffsets[1]];
+    });
+    mockUpdateModuleOffsetsInStore.mockImplementation((newOffsets, options) => {
+      const { module, offsets } = options || {};
+      const updatedOffsets = { ...(offsets || mockOffsets) };
+      let finalOffsets = [...newOffsets];
+      const defaultOffsets = moduleOffsets.ado1?.[module] || [0, 0];
+
+      if (!updatedOffsets.ado1) updatedOffsets.ado1 = {};
+
+      finalOffsets = [newOffsets[0] + defaultOffsets[0], newOffsets[1] + defaultOffsets[1]];
+      updatedOffsets.ado1[module] = [...finalOffsets, 1];
+
+      return updatedOffsets;
+    });
   });
 
   it('should render correctly', () => {
@@ -63,7 +90,7 @@ describe('test AdorModule', () => {
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
     expect(mockSetPreference).toHaveBeenLastCalledWith('module-offsets', {
       ado1: {
-        [LayerModule.LASER_10W_DIODE]: [10, 20, true],
+        [LayerModule.LASER_10W_DIODE]: [10, 20, 1],
       },
     });
     mockOffsets.ado1[LayerModule.LASER_10W_DIODE] = [10, 20];
@@ -74,7 +101,7 @@ describe('test AdorModule', () => {
     expect(mockSetPreference).toHaveBeenLastCalledWith('module-offsets', {
       ado1: {
         [LayerModule.LASER_10W_DIODE]: [10, 20],
-        [LayerModule.PRINTER]: [30, moduleOffsets.ado1[LayerModule.PRINTER][1], true],
+        [LayerModule.PRINTER]: [30, moduleOffsets.ado1[LayerModule.PRINTER][1], 1],
       },
     });
   });

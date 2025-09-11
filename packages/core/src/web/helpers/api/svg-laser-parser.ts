@@ -18,6 +18,7 @@ import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { getRotaryInfo } from '@core/helpers/addOn/rotary';
 import AlertConfig from '@core/helpers/api/alert-config';
+import { getAllOffsets } from '@core/helpers/device/moduleOffsets';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
@@ -354,7 +355,7 @@ export const getExportOpt = async (
   if (printingBotPadding !== undefined) config.pbp = printingBotPadding;
 
   if (modelsWithModules.has(model)) {
-    const offsets = structuredClone(globalPreference['module-offsets'][model]!);
+    const offsets = structuredClone(await getAllOffsets(model, { useCache: false }));
     const keys = Object.keys(offsets) as unknown as LayerModuleType[];
     const { minY } = workareaManager;
     let offsetX = 0;

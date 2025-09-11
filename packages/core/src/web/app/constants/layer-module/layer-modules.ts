@@ -1,3 +1,4 @@
+import { invert } from 'remeda';
 // ref: https://www.notion.so/flux3dp/030619b6721849498cadc57e660107d3?pvs=4
 
 /* eslint-disable perfectionist/sort-objects */
@@ -43,3 +44,9 @@ export const fullColorModules = new Set<LayerModuleType>(fullColorModulesArray);
 export const fullColorHeadModules = [LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH];
 // uv for fbm2, not for uv printing export
 export const UVModules = new Set<LayerModuleType>([LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH]);
+
+const ModuleNameToValue = invert(LayerModule);
+
+export const getLayerModuleName = (module: LayerModuleType): string => {
+  return ModuleNameToValue[module] ?? '';
+};
