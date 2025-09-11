@@ -16,17 +16,9 @@ import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { deleteLayerByName, getAllLayerNames, setLayerLock } from '@core/helpers/layer/layer-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './LayerList.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface Props {
   draggingDestIndex: null | number;
@@ -65,8 +57,7 @@ const LayerList = ({
 }: Props): React.JSX.Element => {
   const { forceUpdate, selectedLayers, setSelectedLayers } = useContext(LayerPanelContext);
   const items: React.ReactNode[] = [];
-  const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName();
+  const currentLayerName = layerManager.getCurrentLayerName();
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);
@@ -78,10 +69,10 @@ const LayerList = ({
     }
   }, [ref, draggingDestIndex, selectedLayers]);
 
-  const isAnyLayerMissing = drawing.all_layers.some((layer: any) => !layer.group_.parentNode);
+  const isAnyLayerMissing = layerManager.getAllLayers().some((layer) => !layer.getGroup().parentNode);
 
   if (isAnyLayerMissing) {
-    drawing.identifyLayers();
+    layerManager.identifyLayers();
   }
 
   const allLayerNames = getAllLayerNames();
@@ -99,7 +90,8 @@ const LayerList = ({
     if (layerObject) {
       const layer = layerObject.getGroup();
       const isLocked = layer.getAttribute('data-lock') === 'true';
-      const isFullColor = layer.getAttribute('data-fullcolor') === '1';
+      const isFullColor = getData(layer, 'fullcolor');
+      const color = getData(layer, 'color') ?? '#333333';
       const isSelected = selectedLayers.includes(layerName);
       const layerModule = getData(layer, 'module');
       const isPrinting = printingModules.has(layerModule!);
@@ -157,7 +149,7 @@ const LayerList = ({
               ) : (
                 <ColorPicker
                   colorPresets={colorPresets}
-                  initColor={drawing.getLayerColor(layerName)}
+                  initColor={color}
                   onChange={(color) => onLayerColorChange(layerName, color)}
                   triggerSize="small"
                 />

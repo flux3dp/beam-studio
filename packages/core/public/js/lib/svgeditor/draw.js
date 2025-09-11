@@ -546,34 +546,6 @@
     };
 
     /**
-     * Returns whether the layer color.  If the layer name is not valid,
-     * then this function returns false.
-     * @param {string} layername - The name of the layer which you want to query.
-     * @returns {boolean} The visibility state of the layer, or false if the layer name was invalid.
-    */
-    svgedit.draw.Drawing.prototype.getLayerColor = function (layerName) {
-        var layer = this.layer_map[layerName];
-        if (layer) {
-            layer.color_ = layer.getColor();
-        }
-        if (layer && !layer.color_) {
-            layer.setColor((layerName === 'Traced Path') ? '#ff00ff' : layerName);
-        }
-        return layer ? layer.color_ : false;
-    };
-
-    /**
-     * Returns whether the layer is visible.  If the layer name is not valid,
-     * then this function returns false.
-     * @param {string} layername - The name of the layer which you want to query.
-     * @returns {boolean} The visibility state of the layer, or false if the layer name was invalid.
-    */
-    svgedit.draw.Drawing.prototype.getLayerVisibility = function (layername) {
-        var layer = this.layer_map[layername];
-        return layer ? layer.isVisible() : false;
-    };
-
-    /**
      * Returns the opacity of the given layer.  If the input name is not a layer, null is returned.
      * @param {string} layername - name of the layer on which to get the opacity
      * @returns {?number} The opacity value of the given layer.  This will be a value between 0.0 and 1.0, or null
