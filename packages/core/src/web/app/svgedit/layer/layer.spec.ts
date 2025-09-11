@@ -6,7 +6,12 @@ jest.mock('../history/undoManager', () => ({
 
 // Mock history functionality
 jest.mock('../history/history', () => ({
+  BatchCommand: jest.fn().mockImplementation((text: string) => ({
+    addSubCommand: jest.fn(),
+    text,
+  })),
   ChangeElementCommand: jest.fn(),
+  RemoveElementCommand: jest.fn(),
 }));
 
 import { Layer } from './layer';
@@ -229,40 +234,72 @@ describe('Layer', () => {
     let layer: Layer;
 
     beforeEach(() => {
+      jest.clearAllMocks();
       layer = new Layer('test-layer', null, mockSvgElem as any);
     });
 
-    it('should set layer visible', () => {
-      layer.setVisible(true);
+    it('should set layer visible and return true when changed', () => {
+      const result = layer.setVisible(true);
 
+      expect(result).toBe(true);
       expect(layer.isVisible()).toBe(true);
       expect((layer.getGroup() as any).getAttribute('display')).toBe('inline');
+      expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     });
 
-    it('should set layer hidden', () => {
-      layer.setVisible(false);
+    it('should set layer hidden and return true when changed', () => {
+      const result = layer.setVisible(false);
 
+      expect(result).toBe(true);
       expect(layer.isVisible()).toBe(false);
       expect((layer.getGroup() as any).getAttribute('display')).toBe('none');
+      expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     });
 
     it('should default to visible when setVisible called with undefined', () => {
-      layer.setVisible(undefined);
+      const result = layer.setVisible(undefined);
 
+      expect(result).toBe(true);
       expect(layer.isVisible()).toBe(true);
       expect((layer.getGroup() as any).getAttribute('display')).toBe('inline');
+      expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     });
 
-    it('should not update display if already set to expected value', () => {
+    it('should return false and not update display if already set to expected value', () => {
       const group = layer.getGroup() as any;
 
       group.setAttribute('display', 'inline');
 
       const setAttributeSpy = jest.spyOn(group, 'setAttribute');
 
-      layer.setVisible(true);
+      const result = layer.setVisible(true);
 
+      expect(result).toBe(false);
       expect(setAttributeSpy).not.toHaveBeenCalled();
+      expect(mockAddCommandToHistory).not.toHaveBeenCalled();
+    });
+
+    it('should not add to history when addToHistory is false', () => {
+      const result = layer.setVisible(false, { addToHistory: false });
+
+      expect(result).toBe(true);
+      expect(layer.isVisible()).toBe(false);
+      expect(mockAddCommandToHistory).not.toHaveBeenCalled();
+    });
+
+    it('should add command to parent command when provided', () => {
+      const { BatchCommand } = require('../history/history');
+      const parentCmd = new BatchCommand('Test');
+      const mockAddSubCommand = jest.fn();
+
+      parentCmd.addSubCommand = mockAddSubCommand;
+
+      const result = layer.setVisible(false, { parentCmd });
+
+      expect(result).toBe(true);
+      expect(layer.isVisible()).toBe(false);
+      expect(mockAddSubCommand).toHaveBeenCalledTimes(1);
+      expect(mockAddCommandToHistory).not.toHaveBeenCalled();
     });
   });
 
@@ -454,17 +491,41 @@ describe('Layer', () => {
     let layer: Layer;
 
     beforeEach(() => {
+      jest.clearAllMocks();
       layer = new Layer('test-layer', null, mockSvgElem as any);
     });
 
-    it('should remove group from DOM and return it', () => {
+    it('should remove group from DOM and return command', () => {
       const group = layer.getGroup() as any;
 
       expect(mockSvgElem.childNodes).toContain(group);
 
-      layer.removeGroup();
+      const command = layer.removeGroup();
 
+      expect(command).toBeDefined();
       expect(mockSvgElem.childNodes).not.toContain(group);
+      expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    });
+
+    it('should not add to history when addToHistory is false', () => {
+      const command = layer.removeGroup({ addToHistory: false });
+
+      expect(command).toBeDefined();
+      expect(mockAddCommandToHistory).not.toHaveBeenCalled();
+    });
+
+    it('should add command to parent command when provided', () => {
+      const { BatchCommand } = require('../history/history');
+      const parentCmd = new BatchCommand('Test');
+      const mockAddSubCommand = jest.fn();
+
+      parentCmd.addSubCommand = mockAddSubCommand;
+
+      const command = layer.removeGroup({ parentCmd });
+
+      expect(command).toBeDefined();
+      expect(mockAddSubCommand).toHaveBeenCalledWith(command);
+      expect(mockAddCommandToHistory).not.toHaveBeenCalled();
     });
   });
 
