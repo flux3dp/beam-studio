@@ -8,13 +8,9 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import isDev from '@core/helpers/is-dev';
+import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import {
-  cloneLayer,
-  deleteLayerByName,
-  getAllLayerNames,
-  getLayerElementByName,
-} from '@core/helpers/layer/layer-helper';
+import { cloneLayer, getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -222,11 +218,7 @@ const splitFullColorLayer = async (
 
   await Promise.all(promises);
 
-  const cmd = deleteLayerByName(layerName);
-
-  if (cmd) {
-    batchCmd.addSubCommand(cmd);
-  }
+  deleteLayerByName(layerName, { parentCmd: batchCmd });
 
   if (addToHistory && !batchCmd.isEmpty()) {
     undoManager.addCommandToHistory(batchCmd);
