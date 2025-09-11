@@ -12,6 +12,20 @@ export const MAX_FONT_HISTORIES = 5;
 // Google Fonts API key (same as in GoogleFontsPanel)
 const GOOGLE_FONTS_API_KEY = 'YOUR_GOOGLE_API_KEY';
 
+// Icon font detection - these contain symbols/icons, not text
+const ICON_FONT_KEYWORDS = ['icons'];
+
+/**
+ * Checks if a font is likely an icon/symbol font unsuitable for text
+ * @param fontFamily Font family name
+ * @returns true if font appears to be an icon font
+ */
+const isIconFont = (fontFamily: string): boolean => {
+  const lowerName = fontFamily.toLowerCase();
+
+  return ICON_FONT_KEYWORDS.some((keyword) => lowerName.includes(keyword));
+};
+
 /**
  * Interface for cached Google Font binary data
  */
@@ -198,8 +212,25 @@ export const useGoogleFonts = ({
         const data: any = await response.json();
         const fontData = data.items?.find((item: any) => item.family === fontFamily);
 
+        console.log(`fontData: ${fontFamily}`, fontData);
+
         if (!fontData) {
           throw new Error(`Font ${fontFamily} not found in Google Fonts API`);
+        }
+
+        // Warn about problematic fonts
+        if (fontData.colorCapabilities && fontData.colorCapabilities.length > 0) {
+          console.warn(
+            `⚠️ Font "${fontFamily}" has color capabilities: ${fontData.colorCapabilities.join(', ')}. ` +
+              `This may cause issues with text-to-path conversion.`,
+          );
+        }
+
+        if (isIconFont(fontFamily)) {
+          console.warn(
+            `⚠️ Font "${fontFamily}" appears to be an icon font. ` +
+              `This font contains symbols/icons and may not work well for text content.`,
+          );
         }
 
         // Step 2: Find the correct variant

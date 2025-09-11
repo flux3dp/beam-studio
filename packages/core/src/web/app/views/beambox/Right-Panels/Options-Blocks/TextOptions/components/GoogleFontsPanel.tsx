@@ -7,6 +7,7 @@ import styles from './GoogleFontsPanel.module.scss';
 
 interface GoogleFontItem {
   category: string;
+  colorCapabilities?: string[]; // Color font capabilities (e.g., 'COLR', 'SVG')
   family: string;
   files: Record<string, string>;
   subsets: string[];
@@ -27,6 +28,20 @@ interface Props {
 const GOOGLE_FONTS_API_KEY = 'YOUR_GOOGLE_API_KEY';
 const CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'];
 
+// Icon font detection - these contain symbols/icons, not text
+const ICON_FONT_KEYWORDS = ['icons'];
+
+/**
+ * Checks if a font is likely an icon/symbol font unsuitable for text
+ * @param fontFamily Font family name
+ * @returns true if font appears to be an icon font
+ */
+const isIconFont = (fontFamily: string): boolean => {
+  const lowerName = fontFamily.toLowerCase();
+
+  return ICON_FONT_KEYWORDS.some((keyword) => lowerName.includes(keyword));
+};
+
 const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) => {
   const [fonts, setFonts] = useState<GoogleFontItem[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,6 +50,7 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
   const [selectedFont, setSelectedFont] = useState<GoogleFontItem | null>(null);
+  const [showColorFonts] = useState(false); // Hide color fonts by default - always filter them out
 
   const fetchGoogleFonts = useCallback(async () => {
     setLoading(true);
@@ -56,6 +72,25 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
 
       const data = (await response.json()) as GoogleFontsApiResponse;
 
+      // Log problematic fonts for debugging
+      const colorFonts =
+        data.items?.filter((font) => font.colorCapabilities && font.colorCapabilities.length > 0) || [];
+      const iconFonts = data.items?.filter((font) => isIconFont(font.family)) || [];
+
+      if (colorFonts.length > 0) {
+        console.log(`Found ${colorFonts.length} color fonts that may not convert to path properly:`);
+        colorFonts.forEach((font) => {
+          console.log(`  - ${font.family}: ${font.colorCapabilities?.join(', ')}`);
+        });
+      }
+
+      if (iconFonts.length > 0) {
+        console.log(`Found ${iconFonts.length} icon fonts that are not suitable for text:`);
+        iconFonts.forEach((font) => {
+          console.log(`  - ${font.family}`);
+        });
+      }
+
       setFonts(data.items || []);
     } catch (error) {
       console.error('Failed to fetch Google Fonts:', error);
@@ -74,6 +109,14 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   const filteredFonts = useMemo(() => {
     let filtered = fonts;
 
+    // Filter out color fonts unless explicitly showing them
+    if (!showColorFonts) {
+      filtered = filtered.filter((font) => !font.colorCapabilities || font.colorCapabilities.length === 0);
+    }
+
+    // Always filter out icon fonts as they're not suitable for text
+    filtered = filtered.filter((font) => !isIconFont(font.family));
+
     if (searchText) {
       filtered = filtered.filter((font) => font.family.toLowerCase().includes(searchText.toLowerCase()));
     }
@@ -87,7 +130,7 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
     }
 
     return filtered.slice(0, 100); // Limit to first 100 results for performance
-  }, [fonts, searchText, selectedCategory, selectedLanguage]);
+  }, [fonts, searchText, selectedCategory, selectedLanguage, showColorFonts]);
 
   const loadFont = useCallback(
     (font: GoogleFontItem) => {
@@ -117,6 +160,21 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
 
   const handleSave = useCallback(async () => {
     if (!selectedFont) return;
+
+    // Warn if selecting a problematic font (this shouldn't happen due to filtering, but just in case)
+    if (selectedFont.colorCapabilities && selectedFont.colorCapabilities.length > 0) {
+      console.warn(
+        `Warning: "${selectedFont.family}" is a color font with capabilities: ${selectedFont.colorCapabilities.join(', ')}. ` +
+          `Text-to-path conversion may not work properly for this font.`,
+      );
+    }
+
+    if (isIconFont(selectedFont.family)) {
+      console.warn(
+        `Warning: "${selectedFont.family}" appears to be an icon font. ` +
+          `This font contains symbols/icons and may not work well for text content.`,
+      );
+    }
 
     try {
       // Load the font first
@@ -226,6 +284,15 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
             value={selectedLanguage || undefined}
           />
         </div>
+        {/* Optional: Add toggle to show/hide color fonts */}
+        {/* <div className={styles.colorFontToggle}>
+          <Checkbox
+            checked={showColorFonts}
+            onChange={(e) => setShowColorFonts(e.target.checked)}
+          >
+            Show color fonts (may not convert to path)
+          </Checkbox>
+        </div> */}
       </div>
 
       <div className={styles.content}>
@@ -322,9 +389,17 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
     >
       <div className={styles.fontInfo}>
         <div className={styles.fontHeader}>
-          <Typography.Text className={styles.fontName}>{font.family}</Typography.Text>
+          <Typography.Text className={styles.fontName}>
+            {font.family}
+            {font.colorCapabilities && font.colorCapabilities.length > 0 && (
+              <span style={{ color: '#ff7875', fontSize: '0.9em', marginLeft: 8 }}>⚠️ Color</span>
+            )}
+          </Typography.Text>
           <Typography.Text className={styles.fontMeta}>
             {font.variants?.length || 0} styles | {font.category}
+            {font.colorCapabilities && font.colorCapabilities.length > 0 && (
+              <span style={{ fontSize: '0.9em', marginLeft: 8 }}>({font.colorCapabilities.join(', ')})</span>
+            )}
           </Typography.Text>
           <div className={styles.fontSubsets}>
             {font.subsets.slice(0, 3).map((subset) => (
