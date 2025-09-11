@@ -1647,8 +1647,10 @@ class DeviceMaster {
     }
   }
 
-  getCameraCount() {
-    return this.currentDevice?.camera?.getCameraCount() || { data: 'Failed to get camera count', success: false };
+  async getCameraCount() {
+    const res = await this.currentDevice?.camera?.getCameraCount();
+
+    return res ?? { data: 'Failed to get camera count', success: false };
   }
 
   setCamera(index: number) {
