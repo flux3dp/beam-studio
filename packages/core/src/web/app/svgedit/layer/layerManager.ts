@@ -203,16 +203,6 @@ export class LayerManager {
   }
 
   /**
-   * Deletes the current layer from the drawing
-   */
-  public deleteCurrentLayer(): void {
-    if (this.currentLayer && this.getNumLayers() > 1) {
-      this.currentLayer.removeGroup();
-      this.identifyLayers();
-    }
-  }
-
-  /**
    * Find the layer name in a group element
    */
   private findLayerNameInGroup(group: SVGGElement): string {

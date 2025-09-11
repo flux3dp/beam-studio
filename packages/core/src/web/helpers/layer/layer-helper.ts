@@ -182,57 +182,6 @@ export const createLayer = (
   return { layer: newLayer, name: finalName };
 };
 
-export const deleteLayerByName = (layerName: string): ICommand | null => {
-  const layer = getLayerElementByName(layerName);
-
-  if (layer) {
-    const { nextSibling } = layer;
-    const parent = layer.parentNode!;
-
-    layer.remove();
-
-    return new history.RemoveElementCommand(layer, nextSibling, parent);
-  }
-
-  return null;
-};
-
-export const deleteLayers = (layerNames: string[]): void => {
-  const drawing = svgCanvas.getCurrentDrawing();
-  const batchCmd: IBatchCommand = new history.BatchCommand('Delete Layer(s)');
-
-  svgCanvas.clearSelection();
-
-  for (let i = 0; i < layerNames.length; i += 1) {
-    const cmd = deleteLayerByName(layerNames[i]);
-
-    if (cmd) {
-      batchCmd.addSubCommand(cmd);
-    }
-  }
-
-  const layerCounts = document.querySelectorAll('g.layer').length;
-
-  if (!layerCounts) {
-    const svgcontent = document.getElementById('svgcontent')!;
-    const newLayer = new svgedit.draw.Layer(
-      i18n.lang.beambox.right_panel.layer_panel.layer1,
-      null,
-      svgcontent,
-      '#333333',
-    ).getGroup() as Element;
-
-    batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
-    initLayerConfig(newLayer);
-  }
-
-  if (!batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-  }
-
-  drawing.identifyLayers();
-};
-
 export const cloneLayer = (
   layerName: string,
   opts: {
@@ -434,11 +383,7 @@ const mergeLayer = (
       }
     }
 
-    const cmd = deleteLayerByName(layersToBeMerged[i]);
-
-    if (cmd) {
-      batchCmd.addSubCommand(cmd);
-    }
+    deleteLayerByName(layersToBeMerged[i], { parentCmd: batchCmd });
   }
   updateLayerColor(baseLayer as SVGGElement);
 
@@ -642,31 +587,4 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   } else {
     moveToLayer(true);
   }
-};
-
-// TODO: add unittest
-export const removeDefaultLayerIfEmpty = (): ICommand | null => {
-  const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
-  const drawing = svgCanvas.getCurrentDrawing();
-  const layer = drawing.getLayerByName(defaultLayerName);
-  const layerCount = drawing.getNumLayers();
-
-  if (layer && layerCount > 1) {
-    const childNodes = Array.from(layer.childNodes);
-    const isEmpty = childNodes.every((node) => ['filter', 'title'].includes((node as Element).tagName));
-
-    if (isEmpty) {
-      console.log('default layer is empty. delete it!');
-
-      const cmd = deleteLayerByName(defaultLayerName);
-
-      drawing.identifyLayers();
-      LayerPanelController.setSelectedLayers([]);
-      LayerPanelController.updateLayerPanel();
-
-      return cmd;
-    }
-  }
-
-  return null;
 };

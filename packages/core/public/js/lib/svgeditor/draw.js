@@ -358,20 +358,6 @@
     };
 
     /**
-     * Deletes the current layer from the drawing and then clears the selection.
-     * This function then calls the 'changed' handler.  This is an undoable action.
-     * @returns {SVGGElement} The SVGGElement of the layer removed or null.
-     */
-    svgedit.draw.Drawing.prototype.deleteCurrentLayer = function () {
-        if (this.current_layer && this.getNumLayers() > 1) {
-            var oldLayerGroup = this.current_layer.removeGroup();
-            this.identifyLayers();
-            return oldLayerGroup;
-        }
-        return null;
-    };
-
-    /**
      * Find the layer name in a group element.
      * @param group The group element to search in.
      * @returns {string} The layer name or empty string.

@@ -10,7 +10,8 @@ import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
-import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
+import { removeDefaultLayerIfEmpty } from '@core/helpers/layer/deleteLayer';
+import { createLayer } from '@core/helpers/layer/layer-helper';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -185,9 +186,7 @@ const importDxf = async (file: Blob): Promise<void> => {
   }
   await Promise.all(promises);
 
-  const cmd = removeDefaultLayerIfEmpty();
-
-  if (cmd) batchCmd.addSubCommand(cmd);
+  removeDefaultLayerIfEmpty({ parentCmd: batchCmd });
 };
 
 export default importDxf;

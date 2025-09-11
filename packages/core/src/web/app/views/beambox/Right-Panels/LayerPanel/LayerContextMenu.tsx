@@ -19,12 +19,12 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { deleteLayers } from '@core/helpers/layer/deleteLayer';
 import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLayer';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import {
   cloneLayers,
-  deleteLayers,
   getAllLayerNames,
   getLayerElementByName,
   getLayerPosition,

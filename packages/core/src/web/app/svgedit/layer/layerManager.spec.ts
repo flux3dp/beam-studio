@@ -323,32 +323,6 @@ describe('LayerManager', () => {
     });
   });
 
-  describe('layer deletion', () => {
-    beforeEach(() => {
-      layerManager.createLayer('Layer 1', false);
-      layerManager.createLayer('Layer 2', false);
-    });
-
-    it('should delete current layer when multiple layers exist', () => {
-      expect(layerManager.getNumLayers()).toBe(2);
-
-      layerManager.deleteCurrentLayer();
-
-      expect(layerManager.getNumLayers()).toBe(1);
-    });
-
-    it('should not delete layer when only one exists', () => {
-      // Delete one layer first
-      layerManager.deleteCurrentLayer();
-      expect(layerManager.getNumLayers()).toBe(1);
-
-      // Try to delete the last layer
-      layerManager.deleteCurrentLayer();
-
-      expect(layerManager.getNumLayers()).toBe(1);
-    });
-  });
-
   describe('layer ordering', () => {
     beforeEach(() => {
       layerManager.createLayer('Layer 1', false);

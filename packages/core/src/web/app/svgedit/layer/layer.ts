@@ -6,9 +6,9 @@
  */
 
 import NS from '@core/app/constants/namespaces';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
-import { ChangeElementCommand } from '../history/history';
+import { ChangeElementCommand, RemoveElementCommand } from '../history/history';
 import undoManager from '../history/undoManager';
 
 /**
@@ -285,10 +285,22 @@ export class Layer {
    * Remove this layer's group from the DOM
    * @returns The layer SVG group that was just removed
    */
-  public removeGroup(): void {
-    if (!this.group_) return undefined;
+  public removeGroup({
+    addToHistory = true,
+    parentCmd,
+  }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {}): ICommand | null {
+    if (!this.group_) return null;
+
+    const { nextSibling, parentNode } = this.group_;
 
     this.group_.remove();
+
+    const cmd = new RemoveElementCommand(this.group_, nextSibling, parentNode!);
+
+    if (parentCmd) parentCmd.addSubCommand(cmd);
+    else if (addToHistory) undoManager.addCommandToHistory(cmd);
+
+    return cmd;
   }
 }
 
