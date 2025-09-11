@@ -9,9 +9,10 @@ import type { FontDescriptor, FontDescriptorKeys, FontHelper, GeneralFont, WebFo
 
 import fontNameMap from './fontNameMap';
 import previewSrcMap from './fontPreviewSrc';
-import googleFonts from './googleFonts';
 import monotypeFonts from './monotypeFonts';
+import unifiedGoogleFonts from './unifiedGoogleFonts';
 import webFonts from './webFonts';
+import googleFonts from './webFonts.google';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 
@@ -23,7 +24,10 @@ const getFonts = () => {
   const activeLang = i18n.getActiveLang();
   const googleLangFonts = googleFonts.getAvailableFonts(activeLang);
 
-  googleFonts.applyStyle(googleLangFonts);
+  // Use unified Google Fonts loading to load both static and history fonts early
+  const localFontFamilies = localFonts.map((font) => font.family);
+
+  unifiedGoogleFonts.loadAllInitialGoogleFonts(activeLang, localFontFamilies);
 
   const webLangFonts = webFonts.getAvailableFonts(activeLang);
 
