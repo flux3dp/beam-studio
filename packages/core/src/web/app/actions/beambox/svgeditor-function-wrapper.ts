@@ -1,5 +1,6 @@
 import tabController from '@core/app/actions/tabController';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, hashMap, isAtPage } from '@core/helpers/hashHelper';
@@ -149,7 +150,7 @@ const funcs = {
     img.src = insertedImageSrc;
     img.style.opacity = '0';
     img.onload = () => {
-      if (!useCurrentLayer && !svgCanvas.setCurrentLayer(layerName)) {
+      if (!useCurrentLayer && !layerManager.setCurrentLayer(layerName)) {
         createLayer(layerName);
       }
 

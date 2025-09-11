@@ -3,6 +3,8 @@ import { colorMap, PrintingColors } from '@core/app/constants/color-constants';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import isDev from '@core/helpers/is-dev';
@@ -227,12 +229,10 @@ const splitFullColorLayer = async (
   }
 
   if (addToHistory && !batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
-  const drawing = svgCanvas.getCurrentDrawing();
-
-  drawing.identifyLayers();
+  layerManager.identifyLayers();
 
   for (const newLayer of newLayers) {
     if (newLayer) {
@@ -250,8 +250,7 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
   const allLayerNames = getAllLayerNames();
   const addedLayers: Element[] = [];
   const removedLayers: Array<{ layer: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
-  const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName();
+  const currentLayerName = layerManager.getCurrentLayerName();
 
   for (const layerName of allLayerNames) {
     const layer = getLayerElementByName(layerName);
@@ -288,8 +287,8 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
       layer.remove();
     });
 
-    drawing.identifyLayers();
-    drawing.setCurrentLayer(currentLayerName!);
+    layerManager.identifyLayers();
+    layerManager.setCurrentLayer(currentLayerName!);
   };
 
   return revert;

@@ -200,28 +200,24 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
     svgCanvas.clearSelection();
 
-    const drawing = svgCanvas.getCurrentDrawing();
-    const res = drawing.setCurrentLayer(layerName);
+    const res = layerManager.setCurrentLayer(layerName);
 
-    if (res) {
-      setSelectedLayers([layerName]);
-    }
+    if (res) setSelectedLayers([layerName]);
   };
 
   toggleLayerSelected = (layerName: string): void => {
     const { selectedLayers, setSelectedLayers } = this.context;
     const newSelectedLayers = [...selectedLayers];
-    const drawing = svgCanvas.getCurrentDrawing();
     const index = newSelectedLayers.findIndex((name: string) => name === layerName);
 
     if (index >= 0) {
       if (newSelectedLayers.length > 1) {
         newSelectedLayers.splice(index, 1);
-        drawing.setCurrentLayer(newSelectedLayers[0]);
+        layerManager.setCurrentLayer(newSelectedLayers[0]);
       }
     } else {
       newSelectedLayers.push(layerName);
-      drawing.setCurrentLayer(layerName);
+      layerManager.setCurrentLayer(layerName);
     }
 
     setSelectedLayers(newSelectedLayers);
@@ -270,7 +266,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
       newSelectedLayers.push(layerName);
     }
 
-    drawing.setCurrentLayer(layerName);
+    layerManager.setCurrentLayer(layerName);
     setSelectedLayers(newSelectedLayers);
   };
 

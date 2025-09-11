@@ -2382,25 +2382,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return newLayer;
   };
 
-  // Function: setCurrentLayer
-  // Sets the current layer. If the name is not a valid layer name, then this function returns
-  // false. Otherwise it returns true. This is not an undo-able action.
-  //
-  // Parameters:
-  // name - the name of the layer you want to switch to.
-  //
-  // Returns:
-  // true if the current layer was switched, otherwise false
-  this.setCurrentLayer = function (name) {
-    var result = getCurrentDrawing().setCurrentLayer(svgedit.utilities.toXml(name));
-
-    if (result) {
-      // clearSelection();
-    }
-
-    return result;
-  };
-
   // Function: renameCurrentLayer
   // Renames the current layer. If the layer name is not valid (i.e. unique), then this function
   // does nothing and returns false, otherwise it returns true. This is an undo-able action.
@@ -4309,7 +4290,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const sortedLayerNames = LayerHelper.sortLayerNamesByPosition([...new Set(layerNames)]);
       const topLayer = sortedLayerNames[sortedLayerNames.length - 1];
 
-      svgCanvas.setCurrentLayer(topLayer);
+      layerManager.setCurrentLayer(topLayer);
     }
 
     // create and insert the group element
@@ -4712,7 +4693,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     );
 
     // set the newst added layer as currentLayer
-    this.setCurrentLayer(layers[0]);
+    layerManager.setCurrentLayer(layers[0]);
     // the uniq process is performed `here` to avoid duplicate layer in layer panel,
     // and remain the selected layers contains information if there are multiple elements in same layer
     LayerPanelController.setSelectedLayers([...new Set(layers)]);
@@ -4748,7 +4729,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     // set the current layer from the remaining layers
-    this.setCurrentLayer(selectedLayers[0]);
+    layerManager.setCurrentLayer(selectedLayers[0]);
     LayerPanelController.setSelectedLayers([...new Set(selectedLayers)]);
 
     if (elem.nextSibling && (elem.nextSibling as Element).getAttribute('data-imageborder') === 'true') {

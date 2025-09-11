@@ -122,7 +122,6 @@ export default interface ISVGCanvas {
   isAutoAlign: boolean;
   isElemFillable: (elem: Element) => boolean;
   leaveContext: () => void;
-  mergeAllLayers: () => void;
   mergeLayer: () => void;
   moveDownSelectedElement(): void;
   moveTopBottomSelected(direction: 'bottom' | 'top'): void;
@@ -155,7 +154,6 @@ export default interface ISVGCanvas {
   setConfig(curConfig: ISVGConfig): void;
   setContentElem: (content: Element) => void;
   setContext(element: Element): void;
-  setCurrentLayer: (layerName: string) => boolean;
   setCurrentResizeMode: (mode: string) => void;
   setCurrentStyleProperties: (key: string, val: number | string) => void;
   setElemsFill: (elems: Element[]) => void;

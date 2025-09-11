@@ -5,6 +5,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import alertConfig from '@core/helpers/api/alert-config';
@@ -119,7 +120,7 @@ const importDxf = async (file: Blob): Promise<void> => {
   for (let i = 0; i < layerNames.length; i += 1) {
     const layerName = layerNames[i];
     const layer = outputLayers[layerName];
-    const isLayerExist = svgCanvas.setCurrentLayer(layerName);
+    const isLayerExist = layerManager.setCurrentLayer(layerName);
 
     if (!isLayerExist) {
       createLayer(layerName, {
@@ -151,7 +152,7 @@ const importDxf = async (file: Blob): Promise<void> => {
 
     useElem.id = svgCanvas.getNextId();
     svgedit.utilities.setHref(useElem, `#${symbol.id}`);
-    svgCanvas.getCurrentDrawing().getCurrentLayer().appendChild(useElem);
+    layerManager.getCurrentLayer()!.appendChildren([useElem]);
     batchCmd.addSubCommand(new history.InsertElementCommand(useElem));
 
     const bb = svgedit.utilities.getBBox(useElem);

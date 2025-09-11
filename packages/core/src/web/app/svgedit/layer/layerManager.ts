@@ -188,22 +188,6 @@ export class LayerManager {
   }
 
   /**
-   * Merge all layers into one
-   */
-  public mergeAllLayers({ addToHistory = true }: { addToHistory?: boolean }): void {
-    // Set the current layer to the last layer
-    this.currentLayer = this.allLayers[this.allLayers.length - 1];
-
-    const batchCmd = new BatchCommand('Merge all Layers');
-
-    while (this.allLayers.length > 1) {
-      this.mergeLayer({ addToHistory: false, parentCmd: batchCmd });
-    }
-
-    if (addToHistory) undoManager.addCommandToHistory(batchCmd);
-  }
-
-  /**
    * Sets the current layer. Returns true if successful, false otherwise.
    */
   public setCurrentLayer(name: string): boolean {

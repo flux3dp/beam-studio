@@ -13,6 +13,7 @@ import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, hasClipboardData } from '@core/app/svgedit/operations/clipboard';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import textEdit from '@core/app/svgedit/text/textedit';
@@ -305,10 +306,10 @@ const mouseDown = async (evt: MouseEvent) => {
           if (layerSelectable && !rightClick && !evt.shiftKey) {
             if (selectedElements.length && currentMode === 'select') {
               const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
-              const currentLayer = svgCanvas.getCurrentDrawing().getCurrentLayer();
+              const currentLayer = layerManager.getCurrentLayer()?.getGroup();
 
               if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
-                svgCanvas.setCurrentLayer(targetLayer.title);
+                layerManager.setCurrentLayer(targetLayer.title);
                 LayerPanelController.setSelectedLayers([targetLayer.title]);
               }
             }
@@ -1160,7 +1161,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
         if (selectedElements.length) {
           // if there are intersected elements, select one of them as current layer
           tempLayer = selectedElements.map((elem) => LayerHelper.getObjectLayer(elem).title).find(Boolean);
-          svgCanvas.setCurrentLayer(tempLayer!);
+          layerManager.setCurrentLayer(tempLayer!);
         }
 
         svgCanvas.selectOnly(selectedElements);
@@ -1178,10 +1179,10 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
       if (selectedElements.length) {
         const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
-        const currentLayer = svgCanvas.getCurrentDrawing().getCurrentLayer();
+        const currentLayer = layerManager.getCurrentLayer()?.getGroup();
 
         if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
-          svgCanvas.setCurrentLayer(targetLayer.title);
+          layerManager.setCurrentLayer(targetLayer.title);
           LayerPanelController.setSelectedLayers([targetLayer.title]);
         }
       }

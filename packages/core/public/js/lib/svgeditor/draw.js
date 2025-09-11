@@ -302,25 +302,6 @@
     };
 
     /**
-     * Set the current layer's name.
-     * @param {string} name - The new name.
-     * @param {svgedit.history.HistoryRecordingService} hrService - History recording service
-     * @returns {string|null} The new name if changed; otherwise, null.
-     */
-    svgedit.draw.Drawing.prototype.setCurrentLayerName = function (name, hrService) {
-        var finalName = null;
-        if (this.current_layer) {
-            var oldName = this.current_layer.getName();
-            finalName = this.current_layer.setName(name, hrService);
-            if (finalName) {
-                delete this.layer_map[oldName];
-                this.layer_map[finalName] = this.current_layer;
-            }
-        }
-        return finalName;
-    };
-
-    /**
      * Get the current layer's position.
      * @returns {number}  The zero-based index of current layer position.
      */
@@ -373,17 +354,6 @@
             delete this.layer_map[name];
         }
 
-        hrService.endBatchCommand();
-    };
-
-    svgedit.draw.Drawing.prototype.mergeAllLayers = function (hrService) {
-        // Set the current layer to the last layer.
-        this.current_layer = this.all_layers[this.all_layers.length - 1];
-
-        hrService.startBatchCommand('Merge all Layers');
-        while (this.all_layers.length > 1) {
-            this.mergeLayer(hrService);
-        }
         hrService.endBatchCommand();
     };
 
