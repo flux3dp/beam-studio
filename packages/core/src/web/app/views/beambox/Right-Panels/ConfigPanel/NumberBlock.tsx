@@ -115,7 +115,7 @@ const NumberBlock = ({
         const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
 
         selectedLayers.forEach((layerName) => {
-          const layer = getLayerByName(layerName);
+          const layer = getLayerByName(layerName)!;
 
           writeDataLayer(layer, key, newVal, { batchCmd });
 

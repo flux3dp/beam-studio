@@ -546,35 +546,6 @@
     };
 
     /**
-     * Returns the opacity of the given layer.  If the input name is not a layer, null is returned.
-     * @param {string} layername - name of the layer on which to get the opacity
-     * @returns {?number} The opacity value of the given layer.  This will be a value between 0.0 and 1.0, or null
-     * if layername is not a valid layer
-    */
-    svgedit.draw.Drawing.prototype.getLayerOpacity = function (layername) {
-        var layer = this.layer_map[layername];
-        if (!layer) { return null; }
-        return layer.getOpacity();
-    };
-
-    /**
-     * Sets the opacity of the given layer.  If the input name is not a layer,
-     * nothing happens. If opacity is not a value between 0.0 and 1.0, then
-     * nothing happens.
-     * @param {string} layername - Name of the layer on which to set the opacity
-     * @param {number} opacity - A float value in the range 0.0-1.0
-    */
-    svgedit.draw.Drawing.prototype.setLayerOpacity = function (layername, opacity) {
-        if (typeof opacity !== 'number' || opacity < 0.0 || opacity > 1.0) {
-            return;
-        }
-        var layer = this.layer_map[layername];
-        if (layer) {
-            layer.setOpacity(opacity);
-        }
-    };
-
-    /**
      * Create a clone of an element, updating its ID and its children's IDs when needed
      * @param {Element} el - DOM element to clone
      * @returns {Element}

@@ -7,6 +7,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -579,37 +580,23 @@ export const moveLayersToPosition = (layerNames: string[], newPosition: number):
 };
 
 export const highlightLayer = (layerName?: string): void => {
-  let i: number;
-  const curNames = [];
-  const numLayers = svgCanvas.getCurrentDrawing().getNumLayers();
-
-  for (i = 0; i < numLayers; i += 1) {
-    curNames[i] = svgCanvas.getCurrentDrawing().getLayerName(i);
-  }
+  const allLayerNames = layerManager.getAllLayerNames();
 
   if (layerName) {
-    for (i = 0; i < numLayers; i += 1) {
-      if (curNames[i] !== layerName) {
-        svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i]!, 0.5);
-      }
-    }
+    allLayerNames.forEach((name) => {
+      if (name !== layerName) layerManager.setLayerOpacity(name, 0.5);
+    });
   } else {
-    for (i = 0; i < numLayers; i += 1) {
-      svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i]!, 1.0);
-    }
+    allLayerNames.forEach((name) => {
+      layerManager.setLayerOpacity(name, 1.0);
+    });
   }
 };
 
-export const getCurrentLayerName = (): string => {
-  const drawing = svgCanvas.getCurrentDrawing();
+export const getLayerByName = (layerName: string): null | SVGGElement => {
+  const layerObject = layerManager.getLayerByName(layerName);
 
-  return drawing.getCurrentLayerName()!;
-};
-
-export const getLayerByName = (layerName: string): SVGGElement => {
-  const drawing = svgCanvas?.getCurrentDrawing();
-
-  return drawing?.getLayerByName(layerName);
+  return layerObject?.getGroup() ?? null;
 };
 
 export const moveToOtherLayer = (destLayer: string, callback: () => void, showAlert = true): void => {
@@ -626,7 +613,7 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   const selectedElements = svgCanvas.getSelectedElems();
   const origLayer = getObjectLayer(selectedElements[0])?.elem;
   const isPrintingLayer = origLayer && printingModules.has(getData(origLayer, 'module')!);
-  const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer), 'module')!);
+  const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer)!, 'module')!);
   const moveOutFromFullColorLayer = isPrintingLayer && !isDestPrintingLayer;
   const moveInToFullColorLayer = !isPrintingLayer && isDestPrintingLayer;
   const t = i18n.lang.beambox.right_panel.layer_panel.notification;

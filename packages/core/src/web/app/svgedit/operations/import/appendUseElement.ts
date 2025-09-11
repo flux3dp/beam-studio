@@ -73,7 +73,7 @@ const appendUseElement = (
 
     const targetLayer = getLayerByName(targetLayerName);
 
-    if (!checkLayerModule(targetLayer, targetModule)) {
+    if (!targetLayer || !checkLayerModule(targetLayer, targetModule)) {
       const { layer: newLayer } = createLayer(targetLayerName, { initConfig: true, parentCmd: batchCmd });
 
       if (type === 'layer' && targetLayerName) {

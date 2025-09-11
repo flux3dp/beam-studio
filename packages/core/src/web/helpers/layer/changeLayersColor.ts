@@ -16,14 +16,14 @@ getSVGAsync((globalSVG) => {
 });
 
 const changeLayersColor = (layerNames: string[], color: string): IBatchCommand => {
-  const layers = layerNames.map((layerName) => getLayerByName(layerName)).filter((layer) => layer);
+  const layers = layerNames.map((layerName) => getLayerByName(layerName)).filter(Boolean);
   const batchCmd = new history.BatchCommand('Change Layers Color');
   const toWhite = color === PrintingColors.WHITE;
 
   layers.forEach((layer) => {
     writeDataLayer(layer, 'color', color, { batchCmd });
 
-    if (toWhite && printingModules.has(getData(layer, 'module'))) {
+    if (toWhite && printingModules.has(getData(layer, 'module')!)) {
       writeDataLayer(layer, 'ink', 4, { batchCmd });
     }
   });

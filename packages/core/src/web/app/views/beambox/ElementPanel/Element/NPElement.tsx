@@ -39,7 +39,7 @@ const importNPSvg = async (id: string) => {
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import NP SVG');
     const drawing = svgCanvas.getCurrentDrawing();
     const layerName = drawing.getCurrentLayerName();
-    const layerModule = layerName ? getData(getLayerByName(layerName), 'module') : null;
+    const layerModule = layerName ? getData(getLayerByName(layerName)!, 'module') : null;
     const elems = await importSvg(blob, {
       importType: 'layer',
       isFromNounProject: true,
