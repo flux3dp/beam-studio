@@ -63,7 +63,6 @@ import units from '@core/helpers/units';
 import imageProcessor from '@core/implementations/imageProcessor';
 import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
 import storage from '@core/implementations/storage';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
@@ -76,6 +75,7 @@ import history from './history/history';
 import historyRecording from './history/historyrecording';
 import undoManager from './history/undoManager';
 import { MouseInteraction } from './interaction/mouse';
+import layerManager from './layer/layerManager';
 import { deleteSelectedElements } from './operations/delete';
 import disassembleUse from './operations/disassembleUse';
 import importSvgString from './operations/import/importSvgString';
@@ -237,6 +237,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     canvas.currentDrawing = new svgedit.draw.Drawing(content, idprefix);
   });
 
+  layerManager.reset(svgcontent as unknown as SVGSVGElement);
   resetCurrentDrawing();
 
   // Function: getCurrentDrawing
@@ -533,7 +534,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             }
           } else if (cmdType === ChangeElementCommand.type()) {
             // if we are changing layer names, re-identify all layers
-            if (cmd.elem.tagName === 'title' && cmd.elem.parentNode.parentNode === svgcontent) {
+            if (cmd.elem.tagName === 'title' && cmd.elem.parentNode?.parentNode === svgcontent) {
               canvas.identifyLayers();
             }
 
@@ -2346,6 +2347,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   canvas.identifyLayers = function () {
     leaveContext();
     getCurrentDrawing().identifyLayers();
+    layerManager.identifyLayers();
   };
 
   // Function: createLayer
@@ -2441,49 +2443,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  // Function: setLayerVisibility
-  // Sets the visibility of the layer. If the layer name is not valid, this function return
-  // false, otherwise it returns true. This is an undo-able action.
-  //
-  // Parameters:
-  // layername - the name of the layer to change the visibility
-  // bVisible - true/false, whether the layer should be visible
-  //
-  // Returns:
-  // true if the layer's visibility was set, false otherwise
-  this.setLayerVisibility = function (
-    layername: string,
-    value: boolean,
-    opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
-  ) {
-    const drawing = getCurrentDrawing();
-    const prevVisibility = drawing.getLayerVisibility(layername);
-    const layer = drawing.setLayerVisibility(layername, value);
-
-    if (!layer) return false;
-
-    presprayArea.togglePresprayArea();
-
-    const oldDisplay = prevVisibility ? 'inline' : 'none';
-    const cmd = new history.ChangeElementCommand(layer, { display: oldDisplay }, 'Layer Visibility');
-
-    cmd.onAfter = () => {
-      presprayArea.togglePresprayArea();
-    };
-
-    const { addToHistory = true, parentCmd } = opts || {};
-
-    if (parentCmd) parentCmd.addSubCommand(cmd);
-    else if (addToHistory) addCommandToHistory(cmd);
-
-    if (layer === drawing.getCurrentLayer()) {
-      clearSelection();
-      pathActions.clear();
-    }
-
-    return true;
-  };
-
   this.updateElementColor = updateElementColor;
 
   // Function: leaveContext
@@ -2561,6 +2520,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // create new document
     canvas.resetCurrentDrawing();
+    layerManager.reset(svgcontent as unknown as SVGSVGElement);
 
     // Reset Used Layer colors
     randomColor.reset();

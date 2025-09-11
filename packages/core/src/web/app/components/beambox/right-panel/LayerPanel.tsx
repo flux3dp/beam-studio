@@ -11,6 +11,7 @@ import SelLayerBlock from '@core/app/components/beambox/right-panel/SelLayerBloc
 import layoutConstants from '@core/app/constants/layout-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
@@ -23,6 +24,7 @@ import i18n from '@core/helpers/i18n';
 import changeLayersColor from '@core/helpers/layer/changeLayersColor';
 import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import { highlightLayer, moveLayersToPosition, setLayersLock } from '@core/helpers/layer/layer-helper';
+import { setLayerVisibility } from '@core/helpers/layer/setLayerVisibility';
 import { ContextMenuTrigger } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
@@ -285,17 +287,20 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   setLayerVisibility = (layerName: string): void => {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const isVis = drawing.getLayerVisibility(layerName);
+    const layerObject = layerManager.getLayerByName(layerName);
+
+    if (!layerObject) return;
+
+    const isVis = layerObject.isVisible();
     const { selectedLayers } = this.context;
     const batchCmd = HistoryCommandFactory.createBatchCommand('Set Layers Visibility');
 
     if (selectedLayers.includes(layerName)) {
       for (let i = 0; i < selectedLayers.length; i += 1) {
-        svgCanvas.setLayerVisibility(selectedLayers[i], !isVis, { parentCmd: batchCmd });
+        setLayerVisibility(selectedLayers[i], !isVis, { parentCmd: batchCmd });
       }
     } else {
-      svgCanvas.setLayerVisibility(layerName, !isVis, { parentCmd: batchCmd });
+      setLayerVisibility(layerName, !isVis, { parentCmd: batchCmd });
     }
 
     if (!batchCmd.isEmpty()) {

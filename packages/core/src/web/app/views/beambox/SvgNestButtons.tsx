@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import Alert from '@core/app/actions/alert-caller';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import Modal from '@core/app/widgets/Modal';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
@@ -260,12 +261,11 @@ class SvgNestButtons extends React.Component<Props, State> {
 
       if (elems.length === 0) {
         // Empty use all elements
-        const drawing = svgCanvas.getCurrentDrawing();
-        const layerNumber = drawing.getNumLayers();
+        const allLayers = layerManager.getAllLayers();
 
-        for (let i = 0; i < layerNumber; i += 1) {
-          const name = drawing.getLayerName(i)!;
-          const layer = drawing.getLayerByName(name)!;
+        for (let i = 0; i < allLayers.length; i += 1) {
+          const layerObject = allLayers[i];
+          const layer = layerObject.getGroup();
 
           if (layer.getAttribute('display') === 'none' || layer.getAttribute('data-lock') === 'true') {
             continue;

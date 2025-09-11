@@ -574,26 +574,6 @@
     };
 
     /**
-     * Sets the visibility of the layer. If the layer name is not valid, this
-     * function returns false, otherwise it returns true. This is an
-     * undo-able action.
-     * @param {string} layername - The name of the layer to change the visibility
-     * @param {boolean} bVisible - Whether the layer should be visible
-     * @returns {?SVGGElement} The SVGGElement representing the layer if the
-     *   layername was valid, otherwise null.
-    */
-    svgedit.draw.Drawing.prototype.setLayerVisibility = function (layername, bVisible) {
-        if (typeof bVisible !== 'boolean') {
-            return null;
-        }
-        var layer = this.layer_map[layername];
-        if (!layer) { return null; }
-        layer.setVisible(bVisible);
-        return layer.getGroup();
-    };
-
-
-    /**
      * Returns the opacity of the given layer.  If the input name is not a layer, null is returned.
      * @param {string} layername - name of the layer on which to get the opacity
      * @returns {?number} The opacity value of the given layer.  This will be a value between 0.0 and 1.0, or null

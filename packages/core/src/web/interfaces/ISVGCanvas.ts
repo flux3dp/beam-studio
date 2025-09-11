@@ -163,11 +163,6 @@ export default interface ISVGCanvas {
   setHref: (elem: SVGElement | SVGImageElement, href: string) => void;
   setImageURL: (url: string) => void;
   setLastClickPoint: (point: { x: number; y: number }) => void;
-  setLayerVisibility(
-    layerName: string,
-    visible: boolean,
-    opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
-  ): void;
   setMode: (mode: string) => void;
   setOpacity: (opacity: number) => void;
   setPaintOpacity: (pickerType: string, opacity: number, preventUndo?: boolean) => void;

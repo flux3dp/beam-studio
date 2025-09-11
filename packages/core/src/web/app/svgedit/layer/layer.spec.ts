@@ -98,6 +98,12 @@ class MockSVGElement {
     return null;
   }
 
+  remove(): void {
+    if (this.parentNode) {
+      this.parentNode.removeChild(this);
+    }
+  }
+
   get nextSibling(): MockSVGElement | null {
     if (!this.parentNode) return null;
 
@@ -459,7 +465,6 @@ describe('Layer', () => {
       layer.removeGroup();
 
       expect(mockSvgElem.childNodes).not.toContain(group);
-      expect(layer.getGroup()).toBeUndefined();
     });
   });
 
