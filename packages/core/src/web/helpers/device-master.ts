@@ -921,6 +921,10 @@ class DeviceMaster {
     await this.doCalibration({ fcodeSource: fileName });
   }
 
+  async doHexa2Calibration() {
+    await this.doCalibration({ fcodeSource: 'hx2-calibration.fc' });
+  }
+
   async doBeamo2Calibration() {
     await this.doCalibration({ fcodeSource: 'fcode/bm2-calibration.fc' });
   }

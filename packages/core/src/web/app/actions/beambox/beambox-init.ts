@@ -7,7 +7,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import tabController from '@core/app/actions/tabController';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
-import { showBB2Calibration } from '@core/app/components/dialogs/camera/BB2Calibration';
+import { showLaserHeadFisheyeCalibration } from '@core/app/components/dialogs/camera/BB2Calibration';
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
@@ -258,7 +258,7 @@ class BeamboxInit {
       }
 
       if (device.model === 'fbb2') {
-        const caliRes = await showBB2Calibration();
+        const caliRes = await showLaserHeadFisheyeCalibration();
 
         return caliRes;
       }

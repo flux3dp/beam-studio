@@ -9,8 +9,8 @@ import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
 import { showAdorCalibrationV2 } from '@core/app/components/dialogs/camera/AdorCalibrationV2';
 import {
-  showBB2Calibration,
   showBB2WideAngleCameraCalibration,
+  showLaserHeadFisheyeCalibration,
 } from '@core/app/components/dialogs/camera/BB2Calibration';
 import { showBeamo2Calibration } from '@core/app/components/dialogs/camera/beamo2Calibration';
 import { showModuleCalibration } from '@core/app/components/dialogs/camera/ModuleCalibration';
@@ -62,7 +62,9 @@ const calibrateCamera = async (
         showAdorCalibrationV2(factoryMode);
       } else if (device.model === 'fbb2') {
         if (isWideAngle) showBB2WideAngleCameraCalibration(device);
-        else showBB2Calibration(isAdvanced);
+        else showLaserHeadFisheyeCalibration(isAdvanced);
+      } else if (device.model.startsWith('fhx2')) {
+        showLaserHeadFisheyeCalibration(isAdvanced);
       } else if (promarkModels.has(device.model)) {
         showPromarkCalibration(device);
       } else if (device.model === 'fbm2') {

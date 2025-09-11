@@ -8,8 +8,8 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import LaserHead from './LaserHead';
 import WideAngleCamera from './WideAngle';
 
-export const showBB2Calibration = (isAdvanced = false): Promise<boolean> => {
-  const id = 'bb2-calibration';
+export const showLaserHeadFisheyeCalibration = (isAdvanced = false): Promise<boolean> => {
+  const id = 'laser-head-fisheye-calibration';
   const onClose = () => popDialogById(id);
 
   if (isIdExist(id)) {
@@ -68,6 +68,6 @@ export const showBB2WideAngleCameraCalibration = async (device: IDeviceInfo): Pr
 };
 
 export default {
-  showBB2Calibration,
   showBB2WideAngleCameraCalibration,
+  showLaserHeadFisheyeCalibration,
 };

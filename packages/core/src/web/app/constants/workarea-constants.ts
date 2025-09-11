@@ -67,6 +67,7 @@ const hexaRfWorkAreaInfo: WorkArea = {
   accOverride: { path: { x: 1000, y: 1000 } },
   autoFocusOffset: [31.13, 1.2, 6.5],
   autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
+  cameraCenter: [370, 180],
   height: 410,
   label: 'HEXA RF',
   maxSpeed: 2000,

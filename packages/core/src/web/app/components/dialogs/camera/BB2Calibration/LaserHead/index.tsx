@@ -35,10 +35,10 @@ interface Props {
   onClose: (completed?: boolean) => void;
 }
 
-const PROGRESS_ID = 'bb2-calibration';
+const PROGRESS_ID = 'laser-head-fisheye-calibration';
 /**
  * LaserHead
- * calibration the camera on the laser head of BB2
+ * calibration the fisheye camera on the laser head (bb2, hexa rf)
  */
 const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
@@ -120,7 +120,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
 
   if (step === Steps.PUT_PAPER) {
     const handleNext = async (doEngraving = true) => {
-      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
       if (!deviceStatus) {
         return;
@@ -133,7 +133,8 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
         });
 
         if (doEngraving) {
-          await deviceMaster.doBB2Calibration();
+          if (deviceMaster.currentDevice!.info.model.startsWith('fhx2')) await deviceMaster.doHexa2Calibration();
+          else await deviceMaster.doBB2Calibration();
         }
 
         progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
