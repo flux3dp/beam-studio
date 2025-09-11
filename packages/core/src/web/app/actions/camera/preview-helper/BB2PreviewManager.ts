@@ -30,7 +30,6 @@ import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   private cameraType: CameraType = CameraType.LASER_HEAD;
   private lineCheckEnabled: boolean = false;
-  private originalSpeed?: number;
   private wideAngleFisheyeManager?: FisheyePreviewManagerV4;
   private wideAngleFisheyeParams?: FisheyeCameraParametersV4;
   private fisheyeParams?: FisheyeCameraParameters;
@@ -192,18 +191,6 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
           console.log('Fail to fetchFisheyeParams', err);
           throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
         }
-      }
-
-      progressCaller.update(this.progressId, { message: lang.message.gettingLaserSpeed });
-
-      const laserSpeed = await deviceMaster.getLaserSpeed();
-
-      if (Number(laserSpeed.value) !== 1) {
-        this.originalSpeed = Number(laserSpeed.value);
-        progressCaller.update(this.progressId, {
-          message: lang.message.settingLaserSpeed,
-        });
-        await deviceMaster.setLaserSpeed(1);
       }
 
       progressCaller.update(this.progressId, { message: lang.message.enteringRawMode });
@@ -471,11 +458,6 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
       await deviceMaster.rawLooseMotor();
       await deviceMaster.endSubTask();
-
-      if (this.originalSpeed && this.originalSpeed !== 1) {
-        await deviceMaster.setLaserSpeed(this.originalSpeed);
-        this.originalSpeed = 1;
-      }
 
       deviceMaster.kick();
     }
