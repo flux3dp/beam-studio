@@ -9,6 +9,7 @@ export const checkFpm1 = (): boolean =>
     localeHelper.isJp ||
     localeHelper.isKr ||
     localeHelper.isAu ||
+    localeHelper.isAr ||
     isDev()) &&
   !isWeb();
 export const checkHxRf = (): boolean => isDev();
