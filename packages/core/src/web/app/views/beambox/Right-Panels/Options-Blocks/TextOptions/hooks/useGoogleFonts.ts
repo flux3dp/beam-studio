@@ -4,13 +4,12 @@ import { match, P } from 'ts-pattern';
 
 import { setStorage } from '@core/app/stores/storageStore';
 import textEdit from '@core/app/svgedit/text/textedit';
+import { getGoogleFont } from '@core/helpers/fonts/googleFontsApiCache';
+import unifiedGoogleFonts from '@core/helpers/fonts/unifiedGoogleFonts';
 import type { GeneralFont } from '@core/interfaces/IFont';
 
 export const MAX_GOOGLE_FONT_LINKS = 10;
 export const MAX_FONT_HISTORIES = 5;
-
-// Google Fonts API key (same as in GoogleFontsPanel)
-const GOOGLE_FONTS_API_KEY = 'YOUR_GOOGLE_API_KEY';
 
 // Icon font detection - these contain symbols/icons, not text
 const ICON_FONT_KEYWORDS = ['icons'];
@@ -77,6 +76,7 @@ interface UseGoogleFontsReturn {
     style?: 'italic' | 'normal',
   ) => Promise<ArrayBuffer | null>;
   loadGoogleFontCSS: (fontFamily: string) => void;
+  loadGoogleFontUnified: (fontFamily: string) => void;
   // Lifecycle functions
   proactivelyLoadHistoryFonts: () => void;
   // State
@@ -101,6 +101,13 @@ export const useGoogleFonts = ({
   // Google Font loading with memory management
   const loadGoogleFontCSS = useCallback(
     (fontFamily: string) => {
+      // Check if already loaded by unified system during app initialization
+      if (unifiedGoogleFonts.isGoogleFontLoaded(fontFamily)) {
+        console.log(`Font "${fontFamily}" already loaded by unified system, skipping`);
+
+        return;
+      }
+
       // Check if already loaded in this session
       if (sessionLoadedFonts.has(fontFamily)) {
         return;
@@ -189,6 +196,18 @@ export const useGoogleFonts = ({
   );
 
   /**
+   * Load a Google Font using the unified system (for new font selections)
+   */
+  const loadGoogleFontUnified = useCallback((fontFamily: string) => {
+    if (!unifiedGoogleFonts.isGoogleFontLoaded(fontFamily) || !unifiedGoogleFonts.isGoogleFontRegistered(fontFamily)) {
+      unifiedGoogleFonts.loadGoogleFont(fontFamily);
+      console.log(`Loaded new Google Font via unified system: ${fontFamily}`);
+    } else {
+      console.log(`Google Font "${fontFamily}" already loaded and registered, skipping`);
+    }
+  }, []);
+
+  /**
    * Fetches complete font file URL from Google Fonts API
    * This gets the FULL font file, not a subset like the CSS API
    * @param fontFamily Font family name
@@ -201,21 +220,13 @@ export const useGoogleFonts = ({
       try {
         console.log(`Fetching complete font URL for ${fontFamily} ${weight} ${style}`);
 
-        // Step 1: Get font metadata from Google Fonts API
-        const apiUrl = `https://www.googleapis.com/webfonts/v1/webfonts?key=${GOOGLE_FONTS_API_KEY}`;
-        const response = await fetch(apiUrl);
-
-        if (!response.ok) {
-          throw new Error(`Failed to fetch Google Fonts API: ${response.status}`);
-        }
-
-        const data: any = await response.json();
-        const fontData = data.items?.find((item: any) => item.family === fontFamily);
+        // Step 1: Get font metadata from cached Google Fonts API data
+        const fontData = await getGoogleFont(fontFamily);
 
         console.log(`fontData: ${fontFamily}`, fontData);
 
         if (!fontData) {
-          throw new Error(`Font ${fontFamily} not found in Google Fonts API`);
+          throw new Error(`Font ${fontFamily} not found in Google Fonts API cache`);
         }
 
         // Warn about problematic fonts
@@ -450,12 +461,19 @@ export const useGoogleFonts = ({
 
   // Proactive loading for Google Fonts in history
   const proactivelyLoadHistoryFonts = useCallback(() => {
-    // Proactively load Google Font CSS for fonts in history (once per session)
-    // This ensures fonts are ready before user opens the dropdown
+    // Note: With unified loading system, most history fonts are already loaded during app initialization
+    // This function now serves as a backup for any fonts missed by the early loading
     fontHistory.forEach((family) => {
       const isLocalFont = availableFontFamilies.some((f) => f.toLowerCase() === family.toLowerCase());
 
-      if (!isLocalFont && !sessionLoadedFonts.has(family)) {
+      // Skip if font is already loaded and registered by unified system, or loaded in this session
+      if (
+        !isLocalFont &&
+        !unifiedGoogleFonts.isGoogleFontLoaded(family) &&
+        !unifiedGoogleFonts.isGoogleFontRegistered(family) &&
+        !sessionLoadedFonts.has(family)
+      ) {
+        console.log(`Loading history font missed by early loading: ${family}`);
         loadGoogleFontCSS(family);
       }
     });
@@ -486,6 +504,7 @@ export const useGoogleFonts = ({
     cleanupUnusedGoogleFonts,
     loadGoogleFontBinary,
     loadGoogleFontCSS,
+    loadGoogleFontUnified,
     proactivelyLoadHistoryFonts,
     sessionLoadedFonts,
   };
