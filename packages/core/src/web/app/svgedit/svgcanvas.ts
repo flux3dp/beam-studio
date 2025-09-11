@@ -2392,18 +2392,17 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Returns:
   // true if the rename succeeded, false otherwise.
-  this.renameCurrentLayer = function (newname) {
-    var drawing = getCurrentDrawing();
-    var layer = drawing.getCurrentLayer();
+  this.renameCurrentLayer = function (name) {
+    const layer = layerManager.getCurrentLayer();
 
-    if (layer) {
-      var result = drawing.setCurrentLayerName(newname, historyRecordingService());
+    if (!layer) return;
 
-      if (result) {
-        call('changed', [layer]);
+    const result = layerManager.setCurrentLayerName(name);
 
-        return true;
-      }
+    if (result) {
+      call('changed', [layer]);
+
+      return true;
     }
 
     return false;

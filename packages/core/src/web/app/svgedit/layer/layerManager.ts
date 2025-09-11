@@ -106,7 +106,7 @@ export class LayerManager {
    * Set the current layer's name
    */
   public setCurrentLayerName(name: string): null | string {
-    let finalName = null;
+    let finalName: null | string = null;
 
     if (this.currentLayer) {
       const oldName = this.currentLayer.getName();
