@@ -358,27 +358,6 @@
     };
 
     /**
-     * Sets the current layer. If the name is not a valid layer name, then this
-     * function returns false. Otherwise it returns true. This is not an
-     * undo-able action.
-     * @param {string} name - The name of the layer you want to switch to.
-     * @returns {boolean} true if the current layer was switched, otherwise false
-     */
-    svgedit.draw.Drawing.prototype.setCurrentLayer = function (name) {
-        var layer = this.layer_map[name];
-        if (layer) {
-            if (this.current_layer) {
-                this.current_layer.deactivate();
-            }
-            this.current_layer = layer;
-            this.current_layer.activate();
-            return true;
-        }
-        return false;
-    };
-
-
-    /**
      * Deletes the current layer from the drawing and then clears the selection.
      * This function then calls the 'changed' handler.  This is an undoable action.
      * @returns {SVGGElement} The SVGGElement of the layer removed or null.
