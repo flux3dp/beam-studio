@@ -10,8 +10,6 @@ import NS from '@core/app/constants/namespaces';
 import { ChangeElementCommand } from '../history/history';
 import undoManager from '../history/undoManager';
 
-console.log(undoManager);
-
 /**
  * Layer construction options
  */
@@ -60,8 +58,7 @@ export class Layer {
   public static readonly CLASS_NAME = 'layer';
 
   private name_: string;
-  private group_: SVGGElement | undefined;
-  private color_: string;
+  private group_: SVGGElement;
 
   /**
    * Create a new Layer instance
@@ -71,64 +68,36 @@ export class Layer {
    * @param svgElem - The SVG DOM element for adding new layers
    * @param color - Layer color (defaults to name if not provided)
    */
-  constructor(name: string, group?: null | SVGGElement, svgElem?: null | SVGElement, color?: string);
-  constructor(options: LayerOptions);
-  constructor(
-    nameOrOptions: LayerOptions | string,
-    group?: null | SVGGElement,
-    svgElem?: null | SVGElement,
-    color?: string,
-  ) {
-    // Handle both constructor signatures
-    let name: string;
-    let resolvedGroup: null | SVGGElement = null;
-    let resolvedSvgElem: null | SVGElement = null;
-    let resolvedColor: string | undefined;
-
-    if (typeof nameOrOptions === 'string') {
-      name = nameOrOptions;
-      resolvedGroup = group || null;
-      resolvedSvgElem = svgElem || null;
-      resolvedColor = color;
-    } else {
-      const options = nameOrOptions;
-
-      name = options.name;
-      resolvedGroup = options.group || null;
-      resolvedSvgElem = options.svgElem || null;
-      resolvedColor = options.color;
-    }
-
+  constructor(name: string, group?: null | SVGGElement, svgElem?: null | SVGElement, color?: string) {
     this.name_ = name;
-    this.group_ = resolvedSvgElem ? undefined : resolvedGroup || undefined;
-    this.color_ = name; // Default color to name
 
-    if (resolvedSvgElem) {
+    if (name.startsWith('#')) color = name; // If name is a color, use it
+
+    if (svgElem) {
       // Create a group element with title and add it to the DOM
-      const svgDoc = resolvedSvgElem.ownerDocument;
-
-      this.group_ = svgDoc.createElementNS(NS.SVG, 'g') as SVGGElement;
-
-      // Create and add title element
+      const svgDoc = svgElem.ownerDocument;
       const layerTitle = svgDoc.createElementNS(NS.SVG, 'title');
 
       layerTitle.textContent = name;
+      this.group_ = svgDoc.createElementNS(NS.SVG, 'g') as SVGGElement;
       this.group_.appendChild(layerTitle);
 
       // Insert the group in the correct position
-      if (resolvedGroup) {
+      if (group) {
         // Insert after the existing group
-        const nextSibling = resolvedGroup.nextSibling;
+        const nextSibling = group.nextSibling;
 
         if (nextSibling) {
-          resolvedSvgElem.insertBefore(this.group_, nextSibling);
+          svgElem.insertBefore(this.group_, nextSibling);
         } else {
-          resolvedSvgElem.appendChild(this.group_);
+          svgElem.appendChild(this.group_);
         }
       } else {
         // Append as last child
-        resolvedSvgElem.appendChild(this.group_);
+        svgElem.appendChild(this.group_);
       }
+    } else {
+      this.group_ = group!;
     }
 
     if (!this.group_) {
@@ -138,14 +107,13 @@ export class Layer {
     // Check for existing color in data attribute
     const groupColor = this.group_.getAttribute('data-color');
 
-    if (groupColor) {
-      resolvedColor = groupColor;
-    }
+    if (groupColor) color = groupColor;
 
     // Set up the layer group
     addLayerClass(this.group_);
     setPointerEventsInheritance(this.group_);
-    this.setColor(resolvedColor || name);
+
+    if (color) this.setColor(color);
   }
 
   /**
@@ -158,7 +126,7 @@ export class Layer {
   /**
    * Get the group element for this layer
    */
-  public getGroup(): SVGGElement | undefined {
+  public getGroup(): SVGGElement {
     return this.group_;
   }
 
@@ -227,7 +195,6 @@ export class Layer {
   public setColor(color: string): void {
     if (!this.group_) return;
 
-    this.color_ = color;
     this.group_.setAttribute('data-color', color);
   }
 
@@ -307,24 +274,10 @@ export class Layer {
    * Remove this layer's group from the DOM
    * @returns The layer SVG group that was just removed
    */
-  public removeGroup(): SVGGElement | undefined {
+  public removeGroup(): void {
     if (!this.group_) return undefined;
 
-    const parent = this.group_.parentNode;
-
-    if (parent) {
-      const group = parent.removeChild(this.group_) as SVGGElement;
-
-      this.group_ = undefined;
-
-      return group;
-    }
-
-    const group = this.group_;
-
-    this.group_ = undefined;
-
-    return group;
+    this.group_.remove();
   }
 }
 

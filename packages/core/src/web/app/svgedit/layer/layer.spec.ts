@@ -195,9 +195,9 @@ describe('Layer', () => {
     });
 
     it('should use layer name as default color if no data-color attribute', () => {
-      const layer = new Layer('test-layer', null, mockSvgElem as any);
+      const layer = new Layer('#00ff00', null, mockSvgElem as any);
 
-      expect(layer.getColor()).toBe('test-layer');
+      expect(layer.getColor()).toBe('#00ff00');
     });
   });
 
@@ -456,9 +456,8 @@ describe('Layer', () => {
 
       expect(mockSvgElem.childNodes).toContain(group);
 
-      const removedGroup = layer.removeGroup();
+      layer.removeGroup();
 
-      expect(removedGroup).toBe(group);
       expect(mockSvgElem.childNodes).not.toContain(group);
       expect(layer.getGroup()).toBeUndefined();
     });
