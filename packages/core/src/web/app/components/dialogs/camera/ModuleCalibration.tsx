@@ -1,4 +1,3 @@
-/* eslint-disable reactRefresh/only-export-components */
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { match } from 'ts-pattern';
@@ -6,7 +5,6 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import { adorModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -20,7 +18,6 @@ import Instruction from './common/Instruction';
 import Align from './ModuleCalibration/Align';
 
 const PROGRESS_ID = 'module-calibration';
-const DIALOG_ID = 'module-calibration';
 
 /* eslint-disable perfectionist/sort-enums */
 const enum Step {
@@ -257,25 +254,6 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
     default:
       return null;
   }
-};
-
-export const showModuleCalibration = async (module?: LayerModuleType): Promise<boolean> => {
-  if (dialogCaller.isIdExist(DIALOG_ID)) {
-    return false;
-  }
-
-  return new Promise((resolve) => {
-    dialogCaller.addDialogComponent(
-      DIALOG_ID,
-      <ModuleCalibration
-        module={module}
-        onClose={(completed = false) => {
-          dialogCaller.popDialogById(DIALOG_ID);
-          resolve(completed);
-        }}
-      />,
-    );
-  });
 };
 
 export default ModuleCalibration;

@@ -5,30 +5,7 @@ import isDev from '@core/helpers/is-dev';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import LaserHead from './LaserHead';
 import WideAngleCamera from './WideAngle';
-
-export const showLaserHeadFisheyeCalibration = (isAdvanced = false): Promise<boolean> => {
-  const id = 'laser-head-fisheye-calibration';
-  const onClose = () => popDialogById(id);
-
-  if (isIdExist(id)) {
-    onClose();
-  }
-
-  return new Promise<boolean>((resolve) => {
-    addDialogComponent(
-      id,
-      <LaserHead
-        isAdvanced={isAdvanced}
-        onClose={(completed = false) => {
-          onClose();
-          resolve(completed);
-        }}
-      />,
-    );
-  });
-};
 
 export const showBB2WideAngleCameraCalibration = async (device: IDeviceInfo): Promise<boolean> => {
   const id = 'bb2-wide-angle-camera-calibration';
@@ -69,5 +46,4 @@ export const showBB2WideAngleCameraCalibration = async (device: IDeviceInfo): Pr
 
 export default {
   showBB2WideAngleCameraCalibration,
-  showLaserHeadFisheyeCalibration,
 };

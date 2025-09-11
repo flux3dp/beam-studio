@@ -3,7 +3,6 @@ import React, { useCallback, useRef, useState } from 'react';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
@@ -36,7 +35,6 @@ const enum Step {
 /* eslint-enable perfectionist/sort-enums */
 
 const PROGRESS_ID = 'fisheye-calibration-v2';
-const DIALOG_ID = 'fisheye-calibration-v2';
 
 interface Props {
   factoryMode?: boolean;
@@ -97,7 +95,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
     ))
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doCutting = true) => {
-        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
         if (!deviceStatus) {
           return;
@@ -183,7 +181,7 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
     ))
     .with(Step.ELEVATED_CUT, () => {
       const handleNext = async () => {
-        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
         if (!deviceStatus) {
           return;
@@ -267,25 +265,6 @@ const AdorCalibrationV2 = ({ factoryMode = false, onClose }: Props): React.JSX.E
         refPoints={adorPnPPoints}
       />
     ));
-};
-
-export const showAdorCalibrationV2 = async (factoryMode = false): Promise<boolean> => {
-  if (dialogCaller.isIdExist(DIALOG_ID)) {
-    return false;
-  }
-
-  return new Promise((resolve) => {
-    dialogCaller.addDialogComponent(
-      DIALOG_ID,
-      <AdorCalibrationV2
-        factoryMode={factoryMode}
-        onClose={(completed = false) => {
-          dialogCaller.popDialogById(DIALOG_ID);
-          resolve(completed);
-        }}
-      />,
-    );
-  });
 };
 
 export default AdorCalibrationV2;

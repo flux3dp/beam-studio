@@ -8,15 +8,15 @@ import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
-import styles from '../../Calibration.module.scss';
-import Calibration from '../../common/Calibration';
-import CheckPnP from '../../common/CheckPnP';
-import CheckpointData from '../../common/CheckpointData';
-import downloadCalibrationFile from '../../common/downloadCalibrationFile';
-import Instruction from '../../common/Instruction';
-import moveLaserHead from '../../common/moveLaserHead';
-import SolvePnP from '../../common/SolvePnP';
-import { bb2PerspectiveGrid, bb2PnPPoints } from '../../common/solvePnPConstants';
+import styles from './Calibration.module.scss';
+import Calibration from './common/Calibration';
+import CheckPnP from './common/CheckPnP';
+import CheckpointData from './common/CheckpointData';
+import downloadCalibrationFile from './common/downloadCalibrationFile';
+import Instruction from './common/Instruction';
+import moveLaserHead from './common/moveLaserHead';
+import SolvePnP from './common/SolvePnP';
+import { bb2PerspectiveGrid, bb2PnPPoints } from './common/solvePnPConstants';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
@@ -37,10 +37,10 @@ interface Props {
 
 const PROGRESS_ID = 'laser-head-fisheye-calibration';
 /**
- * LaserHead
+ * LaserHeadFisheye
  * calibration the fisheye camera on the laser head (bb2, hexa rf)
  */
-const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
+const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
@@ -260,4 +260,4 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   return <></>;
 };
 
-export default LaserHead;
+export default LaserHeadFisheyeCalibration;
