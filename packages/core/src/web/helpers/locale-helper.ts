@@ -82,6 +82,14 @@ const detectAu = detectLocale(
 );
 const isAu = detectAu();
 
+// Argentina
+const detectAr = detectLocale(
+  (schema) => schema.region === 'AR' || schema.language === 'es',
+  // UTC-3 timezone
+  (timezoneOffset) => timezoneOffset === 180,
+);
+const isAr = detectAr();
+
 const getRegion = () => {
   if (isNorthAmerica) {
     return { checkTimezone: true, region: 'na' };
@@ -95,6 +103,10 @@ const getRegion = () => {
     return { checkTimezone: true, region: 'PS' };
   } else if (isMy) {
     return { checkTimezone: true, region: 'MY' };
+  } else if (isAu) {
+    return { checkTimezone: true, region: 'AU' };
+  } else if (isAr) {
+    return { checkTimezone: true, region: 'AR' };
   }
 
   // @ts-expect-error: Support for older browsers with userLanguage
@@ -112,6 +124,7 @@ const getRegion = () => {
 };
 
 export default {
+  detectAr,
   detectAu,
   detectJp,
   detectKr,
@@ -121,6 +134,7 @@ export default {
   detectTw,
   detectTwOrHk,
   getRegion,
+  isAr,
   isAu,
   isJp,
   isKr,
