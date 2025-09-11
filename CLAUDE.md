@@ -104,7 +104,7 @@ The application relies on these external tools (must be running):
 3. Electron app requires external services (FLUXGhost, etc.) to be running for full functionality
 4. When modifying shared code in packages/core, both apps will be affected
 5. Use path aliases (@core/*) instead of relative imports for core packages
-6. DO NOT tsc and lint, don't care about any linting problems and cspell problems.
+6. DO NOT tsc and lint and core:build, don't care about any linting problems and cspell problems.
 
 ## Electron App Multi Tab
 
