@@ -11,6 +11,9 @@ import googleFonts from './webFonts.google';
 // Maximum number of Google Font CSS links to prevent memory issues
 export const MAX_GOOGLE_FONT_LINKS = 10;
 
+// Module-level cache for available font families, updated during app initialization
+let cachedAvailableFontFamilies: string[] = [];
+
 /**
  * Create a shared binary loading function for Google Fonts using cached API data
  */
@@ -397,6 +400,79 @@ export const loadHistoryGoogleFonts = (availableFontFamilies: string[]): void =>
 };
 
 /**
+ * Scan current document context for Google Fonts being used by text elements
+ * This ensures that Google Fonts in loaded files get their CSS loaded even if not in history
+ * @param availableFontFamilies - Optional array of local font families. If not provided, uses cached list from app initialization
+ */
+export const loadContextGoogleFonts = (availableFontFamilies: string[] = cachedAvailableFontFamilies): void => {
+  try {
+    // Use the same pattern as convertToPath.ts to get all visible text elements
+    const textElements = [
+      ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
+      ...document.querySelectorAll('#svg_defs text'),
+    ] as SVGTextElement[];
+
+    if (textElements.length === 0) {
+      console.log('No text elements found in document context');
+
+      return;
+    }
+
+    console.log(`Scanning ${textElements.length} text elements for Google Fonts...`);
+
+    // Extract font families from text elements
+    const fontFamiliesInContext = new Set<string>();
+
+    textElements.forEach((textElem) => {
+      const fontFamily = textElem.getAttribute('font-family');
+
+      if (fontFamily) {
+        // Clean up font family (remove quotes, normalize)
+        const cleanFontFamily = fontFamily.replace(/^['"]|['"]$/g, '').trim();
+
+        if (cleanFontFamily) {
+          fontFamiliesInContext.add(cleanFontFamily);
+        }
+      }
+    });
+
+    // Filter for Google Fonts that are NOT available locally and NOT already loaded
+    const googleFontsFromContext = Array.from(fontFamiliesInContext).filter((family) => {
+      const familyLower = family.toLowerCase();
+
+      // Skip if it's a local font
+      if (availableFontFamilies.some((f) => f.toLowerCase() === familyLower)) {
+        return false;
+      }
+
+      // Skip if already loaded in this session
+      if (googleFontsLoader.isFontLoaded(family)) {
+        return false;
+      }
+
+      // For now, include all non-local fonts as potential Google Fonts
+      // The actual validation will happen when CSS is loaded
+      return true;
+    });
+
+    if (googleFontsFromContext.length === 0) {
+      console.log('No new Google Fonts found in document context');
+
+      return;
+    }
+
+    console.log(`Loading ${googleFontsFromContext.length} Google Fonts from document context:`, googleFontsFromContext);
+
+    // Load CSS for fonts found in document context
+    googleFontsFromContext.forEach((family) => {
+      googleFontsLoader.loadGoogleFontCSS(family);
+    });
+  } catch (error) {
+    console.warn('Failed to scan document context for Google Fonts:', error);
+  }
+};
+
+/**
  * Load a specific Google Font (CSS + registration for runtime loading)
  */
 export const loadGoogleFont = (fontFamily: string): void => {
@@ -492,11 +568,17 @@ export const lazyRegisterGoogleFontIfLoaded = (postscriptName: string): GoogleFo
 export const loadAllInitialGoogleFonts = (lang: string, availableFontFamilies: string[]): void => {
   console.log('🚀 Loading all initial Google Fonts CSS...');
 
+  // Cache the available font families for use by other functions
+  cachedAvailableFontFamilies = availableFontFamilies;
+
   // Load static Google Fonts CSS only
   loadStaticGoogleFonts(lang);
 
   // Load Google Fonts from history CSS only
   loadHistoryGoogleFonts(availableFontFamilies);
+
+  // Load Google Fonts from current document context CSS only
+  loadContextGoogleFonts(availableFontFamilies);
 
   console.log('✅ Initial Google Fonts CSS loading complete (registration will happen in TextOptions)');
 };
@@ -522,6 +604,7 @@ export default {
   isGoogleFontRegistered,
   lazyRegisterGoogleFontIfLoaded,
   loadAllInitialGoogleFonts,
+  loadContextGoogleFonts,
   loadGoogleFont,
   loadHistoryGoogleFonts,
   loadStaticGoogleFonts,
