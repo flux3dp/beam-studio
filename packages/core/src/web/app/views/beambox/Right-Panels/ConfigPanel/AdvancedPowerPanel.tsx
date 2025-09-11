@@ -45,7 +45,7 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
     const batchCmd = new history.BatchCommand('Change power advanced setting');
 
     selectedLayers.forEach((layerName) => {
-      const layer = getLayerByName(layerName);
+      const layer = getLayerByName(layerName)!;
 
       if (
         state.minPower.value !== draftValue.minPower.value ||

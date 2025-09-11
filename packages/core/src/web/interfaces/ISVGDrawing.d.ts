@@ -24,5 +24,4 @@ export default interface ISVGDrawing {
   layer_map: { [key: string]: ISVGLayer };
   releaseId: (id: string) => void;
   setCurrentLayer: (layerName: string) => boolean;
-  setLayerOpacity: (name: string, opacity: number) => void;
 }

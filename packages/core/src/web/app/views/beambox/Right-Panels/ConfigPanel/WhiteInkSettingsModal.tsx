@@ -39,7 +39,7 @@ const WhiteInkSettingsModal = ({ onClose }: Props): React.JSX.Element => {
     const newState = { ...state };
 
     selectedLayers.forEach((layerName) => {
-      const layer = getLayerByName(layerName);
+      const layer = getLayerByName(layerName)!;
 
       if (wInk.value !== ink.value || wInk.hasMultiValue !== ink.hasMultiValue) {
         writeDataLayer(layer, 'wInk', ink.value);
