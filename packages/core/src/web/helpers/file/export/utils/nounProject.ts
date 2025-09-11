@@ -2,20 +2,20 @@ import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import i18n from '@core/helpers/i18n';
 
-const LANG = i18n.lang;
-
 export const checkNounProjectElements = (): Promise<boolean> => {
   const svgContent = document.getElementById('svgcontent')!;
   const npElements = svgContent.querySelectorAll('[data-np="1"]');
 
   if (npElements.length === 0) return Promise.resolve(true);
 
+  const t = i18n.lang.noun_project_panel;
+
   return new Promise<boolean>((resolve) => {
     Alert.popUp({
       buttonType: AlertConstants.YES_NO,
-      caption: LANG.noun_project_panel.export_svg_title,
+      caption: t.export_svg_title,
       id: 'export-noun-project-svg',
-      message: LANG.noun_project_panel.export_svg_warning,
+      message: t.export_svg_warning,
       onNo: () => resolve(false),
       onYes: () => resolve(true),
     });

@@ -14,7 +14,6 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { generateBeamBuffer } from '../utils/beam';
 
-const LANG = i18n.lang;
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -22,6 +21,7 @@ getSVGAsync((globalSVG) => {
 });
 
 export const saveToCloud = async (uuid?: string): Promise<boolean> => {
+  const { lang } = i18n;
   const id = 'upload-cloud-file';
   const user = getCurrentUser();
 
@@ -75,7 +75,7 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
 
     if (error) {
       if (!error.response) {
-        Alert.popUpError({ message: LANG.flux_id_login.connection_fail });
+        Alert.popUpError({ message: lang.flux_id_login.connection_fail });
 
         return false;
       }
@@ -86,7 +86,7 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
       if (status === 403 && detail && detail.startsWith('CSRF Failed: CSRF')) {
         Alert.popUp({
           buttonType: AlertConstants.CONFIRM_CANCEL,
-          message: i18n.lang.beambox.popup.ai_credit.relogin_to_use,
+          message: lang.beambox.popup.ai_credit.relogin_to_use,
           onConfirm: dialogCaller.showLoginDialog,
         });
 
@@ -94,7 +94,7 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
       }
 
       if (info === 'STORAGE_LIMIT_EXCEEDED') {
-        Alert.popUpError({ message: LANG.my_cloud.save_file.storage_limit_exceeded });
+        Alert.popUpError({ message: lang.my_cloud.save_file.storage_limit_exceeded });
 
         return false;
       }
@@ -121,7 +121,7 @@ export const saveToCloud = async (uuid?: string): Promise<boolean> => {
     return false;
   } catch (error) {
     console.error(error);
-    Alert.popUpError({ message: `Error: ${LANG.topbar.menu.save_to_cloud}` });
+    Alert.popUpError({ message: `Error: ${lang.topbar.menu.save_to_cloud}` });
 
     return false;
   } finally {

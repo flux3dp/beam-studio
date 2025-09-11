@@ -6,7 +6,6 @@ import layoutConstants from '@core/app/constants/layout-constants';
 import rotaryConstants from '@core/app/constants/rotary-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import beamboxStore from '@core/app/stores/beambox-store';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -56,11 +55,8 @@ class WorkareaManager {
   expansion: number[] = [0, 0]; // [top, bottom] in pixel
   expansionType?: ExpansionType;
   lastZoomIn = 0;
-  shouldShowGuide = false;
 
   init(model: WorkAreaModel): void {
-    // TODO: move guides to independent handler
-    this.shouldShowGuide = useGlobalPreferenceStore.getState().show_guides;
     this.setWorkarea(model);
     useDocumentStore.subscribe(
       (state) => [
@@ -158,8 +154,6 @@ class WorkareaManager {
     previewSvg?.setAttribute('viewBox', `0 0 ${this.width} ${this.modelHeight}`);
     this.zoom(this.zoomRatio);
     canvasEvents.emit('canvas-change');
-
-    if (this.shouldShowGuide) beamboxStore.emitDrawGuideLines();
 
     if (modelChanged) canvasEvents.emit('model-changed', model);
   }

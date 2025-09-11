@@ -27,14 +27,6 @@ describe('test beambox-store', () => {
     expect(mockOn).toHaveBeenNthCalledWith(1, 'SHOW_CROPPER', callback);
   });
 
-  test('test onDrawGuideLines', () => {
-    const callback = jest.fn();
-
-    beamboxStore.onDrawGuideLines(callback);
-    expect(mockOn).toHaveBeenCalledTimes(1);
-    expect(mockOn).toHaveBeenNthCalledWith(1, 'DRAW_GUIDE_LINES', callback);
-  });
-
   test('test removeCropperShownListener', () => {
     const callback = jest.fn();
 
@@ -47,11 +39,5 @@ describe('test beambox-store', () => {
     beamboxStore.emitShowCropper();
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(1, 'SHOW_CROPPER');
-  });
-
-  test('test emitDrawGuideLines', () => {
-    beamboxStore.emitDrawGuideLines();
-    expect(mockEmit).toHaveBeenCalledTimes(1);
-    expect(mockEmit).toHaveBeenNthCalledWith(1, 'DRAW_GUIDE_LINES');
   });
 });
