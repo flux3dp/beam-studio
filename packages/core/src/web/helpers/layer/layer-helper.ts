@@ -573,9 +573,9 @@ export const moveLayersToPosition = (layerNames: string[], newPosition: number):
   }
 
   if (!batchCmd.isEmpty()) {
-    drawing.identifyLayers();
-    drawing.setCurrentLayer(currentLayerName);
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    layerManager.identifyLayers();
+    layerManager.setCurrentLayer(currentLayerName);
+    undoManager.addCommandToHistory(batchCmd);
   }
 };
 
@@ -606,7 +606,7 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
     }
 
     moveSelectedToLayer(destLayer);
-    svgCanvas.getCurrentDrawing().setCurrentLayer(destLayer);
+    layerManager.setCurrentLayer(destLayer);
     LayerPanelController.setSelectedLayers([destLayer]);
     callback?.();
   };

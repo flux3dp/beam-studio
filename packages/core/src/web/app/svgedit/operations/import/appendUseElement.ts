@@ -2,6 +2,7 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import rgbToHex from '@core/helpers/color/rgbToHex';
 import i18n from '@core/helpers/i18n';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
@@ -56,7 +57,6 @@ const appendUseElement = (
 
   // switch currentLayer, and create layer if necessary
   let targetLayerName = layerName!;
-  const currentDrawing = svgCanvas.getCurrentDrawing();
 
   if (
     (type === 'layer' && layerName) ||
@@ -126,13 +126,13 @@ const appendUseElement = (
         writeDataLayer(newLayer, 'module', targetModule);
         writeDataLayer(newLayer, 'fullcolor', true);
       }
-    } else if (currentDrawing.getCurrentLayer() !== targetLayer) {
-      svgCanvas.setCurrentLayer(targetLayerName);
+    } else if (layerManager.getCurrentLayer()?.getGroup() !== targetLayer) {
+      layerManager.setCurrentLayer(targetLayerName);
     }
   } else {
-    let targetLayer = currentDrawing.getCurrentLayer();
+    let targetLayer = layerManager.getCurrentLayer()?.getGroup();
 
-    if (!checkLayerModule(targetLayer!, targetModule)) {
+    if (!targetLayer || !checkLayerModule(targetLayer, targetModule)) {
       const { layer, name: newLayerName } = createLayer(
         printingModules.has(targetModule) ? i18n.lang.layer_module.printing : i18n.lang.layer_module.general_laser,
         { initConfig: true, parentCmd: batchCmd },
@@ -140,7 +140,7 @@ const appendUseElement = (
 
       targetLayer = layer;
 
-      svgCanvas.setCurrentLayer(newLayerName);
+      layerManager.setCurrentLayer(newLayerName);
     }
 
     if (printingModules.has(targetModule)) {
@@ -150,7 +150,7 @@ const appendUseElement = (
     }
   }
 
-  currentDrawing.getCurrentLayer()!.appendChild(useEl);
+  layerManager.getCurrentLayer()!.appendChildren([useEl]);
 
   useEl.setAttribute('data-svg', 'true');
   useEl.setAttribute('data-ratiofixed', 'true');

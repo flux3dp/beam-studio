@@ -23,5 +23,4 @@ export default interface ISVGDrawing {
   identifyLayers: () => void;
   layer_map: { [key: string]: ISVGLayer };
   releaseId: (id: string) => void;
-  setCurrentLayer: (layerName: string) => boolean;
 }
