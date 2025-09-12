@@ -266,16 +266,6 @@
         return this.layer_map[name] !== undefined;
     };
 
-
-    /**
-     * Returns the name of the ith layer. If the index is out of range, an empty string is returned.
-     * @param {integer} i - The zero-based index of the layer you are querying.
-     * @returns {string} The name of the ith layer (or the empty string if none found)
-    */
-    svgedit.draw.Drawing.prototype.getLayerName = function (i) {
-        return i >= 0 && i < this.getNumLayers() ? this.all_layers[i].getName() : '';
-    };
-
     /**
      * Create a clone of an element, updating its ID and its children's IDs when needed
      * @param {Element} el - DOM element to clone

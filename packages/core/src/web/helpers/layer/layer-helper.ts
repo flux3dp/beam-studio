@@ -56,24 +56,11 @@ export function getObjectLayer(elem: SVGElement): { elem: SVGGElement; title: st
 }
 
 export const getAllLayers = (): SVGGElement[] => {
-  const allLayers = document.querySelectorAll('g.layer');
-
-  return Array.from(allLayers) as SVGGElement[];
+  return layerManager.getAllLayers().map((layer) => layer.getGroup());
 };
 
 export const getAllLayerNames = (): string[] => {
-  const allLayers = document.querySelectorAll('#svgcontent g.layer');
-  const layerNames = [];
-
-  for (let i = 0; i < allLayers.length; i += 1) {
-    const title = allLayers[i].querySelector('title');
-
-    if (title) {
-      layerNames.push(title.textContent);
-    }
-  }
-
-  return layerNames;
+  return layerManager.getAllLayerNames();
 };
 
 export const getLayerPosition = (layerName: string): number => {

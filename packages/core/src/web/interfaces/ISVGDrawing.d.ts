@@ -14,7 +14,6 @@ export default interface ISVGDrawing {
     Layer: ISVGLayerConscrtuctor;
   };
   getCurrentLayer: () => null | SVGGElement;
-  getLayerName: (index: number) => null | string;
   getNumLayers: () => number;
   hasLayer: (layerName: string) => boolean;
   layer_map: { [key: string]: ISVGLayer };

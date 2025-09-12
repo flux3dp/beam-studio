@@ -15,20 +15,13 @@ import { getStorage } from '@core/app/stores/storageStore';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { getLayerName } from '@core/helpers/layer/layer-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import VersionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { ILang } from '@core/interfaces/ILang';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Promise<boolean> => {
   const workarea = device.model;
@@ -194,7 +187,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
       ) {
         isTooFast = true;
 
-        const layerName = svgCanvas.getCurrentDrawing().getLayerName(i);
+        const layerName = getLayerName(layer);
 
         if (layerName) {
           tooFastLayers.push(layerName);
@@ -300,7 +293,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
             isTooFast = true;
             hasWireframe = true;
 
-            const layerName = svgCanvas.getCurrentDrawing().getLayerName(i);
+            const layerName = getLayerName(layer);
 
             if (layerName) {
               tooFastLayers.push(layerName);
@@ -320,7 +313,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
           if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fillOpacity === 0) {
             isTooFast = true;
 
-            const layerName = svgCanvas.getCurrentDrawing().getLayerName(i);
+            const layerName = getLayerName(layer);
 
             if (layerName) {
               tooFastLayers.push(layerName);
