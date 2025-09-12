@@ -175,7 +175,7 @@ export const cloneLayer = (
   let newName = baseName;
   let j = 0;
 
-  while (drawing.hasLayer(newName)) {
+  while (layerManager.hasLayer(newName)) {
     j += 1;
     newName = `${baseName} ${j}`;
   }

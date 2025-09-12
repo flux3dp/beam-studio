@@ -89,30 +89,6 @@
         this.releasedNums = [];
 
         /**
-         * The z-ordered array of Layer objects. Each layer has a name
-         * and group element.
-         * The first layer is the one at the bottom of the rendering.
-         * @type {Array.<Layer>}
-         */
-        this.all_layers = [];
-
-        /**
-         * Map of all_layers by name.
-         *
-         * Note: Layers are ordered, but referenced externally by name; so, we need both container
-         * types depending on which function is called (i.e. all_layers and layer_map).
-         *
-         * @type {Object.<string, Layer>}
-         */
-        this.layer_map = {};
-
-        /**
-         * The current layer being used.
-         * @type {Layer}
-         */
-        this.current_layer = null;
-
-        /**
          * The nonce to use to uniquely identify elements across drawings.
          * @type {!String}
          */
@@ -248,22 +224,6 @@
         this.releasedNums.push(num);
 
         return true;
-    };
-
-    /**
-     * Returns the number of layers in the current drawing.
-     * @returns {integer} The number of layers in the current drawing.
-    */
-    svgedit.draw.Drawing.prototype.getNumLayers = function () {
-        return this.all_layers.length;
-    };
-
-    /**
-     * Check if layer with given name already exists
-     * @param {string} name - The layer name to check
-    */
-    svgedit.draw.Drawing.prototype.hasLayer = function (name) {
-        return this.layer_map[name] !== undefined;
     };
 
     /**

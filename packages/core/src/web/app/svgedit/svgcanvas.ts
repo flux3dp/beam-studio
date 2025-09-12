@@ -1392,12 +1392,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     clearSelection();
     this.setMode('select');
 
-    const drawing = getCurrentDrawing();
-    const allLayers = drawing.all_layers;
+    const allLayers = layerManager.getAllLayers();
     const elemsToSelect = [];
 
     for (let i = allLayers.length - 1; i >= 0; i--) {
-      const layerElement = allLayers[i].group_;
+      const layerElement = allLayers[i].getGroup();
 
       if (
         layerElement &&
@@ -1405,7 +1404,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         layerElement.getAttribute('data-lock') !== 'true' &&
         layerElement.getAttribute('display') !== 'none'
       ) {
-        const elemsToAdd = Array.from(layerElement.childNodes).filter(
+        const elemsToAdd = (Array.from(layerElement.childNodes) as Element[]).filter(
           (node: Element) => !['filter', 'title'].includes(node.tagName),
         );
 
@@ -1554,9 +1553,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // Get the desired mouseTarget with jQuery selector-fu
     // If it's root-like, select the root
-    var current_layer = layerManager.getCurrentLayerElement();
+    const currentLayer = layerManager.getCurrentLayerElement();
 
-    if ([container, current_layer, svgcontent, svgroot].includes(mouseTarget)) {
+    if ([container, currentLayer, svgcontent, svgroot].includes(mouseTarget)) {
       return svgroot;
     }
 
