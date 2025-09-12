@@ -4,30 +4,25 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 
-const mockDrawing = {
-  all_layers: [],
-  getCurrentLayerName: jest.fn(),
-  getLayerColor: jest.fn(),
-  getLayerVisibility: jest.fn(),
-  identifyLayers: jest.fn(),
-};
-
 const mockGetSupportedModules = jest.fn();
 
 jest.mock('@core/app/constants/workarea-constants', () => ({
   getSupportedModules: mockGetSupportedModules,
 }));
 
-import LayerList from './LayerList';
+const mockGetCurrentLayerName = jest.fn();
+const mockGetAllLayers = jest.fn();
+const mockIdentifyLayers = jest.fn();
+const mockGetLayerByName = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (cb) =>
-    cb({
-      Canvas: {
-        getCurrentDrawing: () => mockDrawing,
-      },
-    }),
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayers: (...args) => mockGetAllLayers(...args),
+  getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
+  getLayerByName: (...args) => mockGetLayerByName(...args),
+  identifyLayers: (...args) => mockIdentifyLayers(...args),
 }));
+
+import LayerList from './LayerList';
 
 const mockUseWorkarea = jest.fn();
 
@@ -50,6 +45,13 @@ const mockGetLayerElementByName = jest.fn();
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getAllLayerNames: () => mockGetAllLayerNames(),
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
+  setLayerLock: jest.fn(),
+}));
+
+const mockDeleteLayerByName = jest.fn();
+
+jest.mock('@core/helpers/layer/deleteLayer', () => ({
+  deleteLayerByName: (...args) => mockDeleteLayerByName(...args),
 }));
 
 jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
@@ -103,28 +105,34 @@ describe('test LayerList', () => {
   it('should render correctly', () => {
     mockUseWorkarea.mockReturnValue('fbm1');
     mockGetData.mockImplementation((layer, key) => {
-      if (key === 'module') {
-        return 2;
-      }
+      if (key === 'module') return 2;
+
+      if (key === 'color') return layer === mockLayer1 ? '#ffffff' : '#000000';
 
       return false;
     });
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
 
-    const mockLayer = {
-      getAttribute: jest.fn(),
+    const mockLayer1 = { getAttribute: jest.fn() };
+    const mockLayer2 = { getAttribute: jest.fn() };
+
+    const mockLayerObject1 = {
+      getGroup: () => mockLayer1,
+      isVisible: jest.fn().mockReturnValue(false),
+    };
+    const mockLayerObject2 = {
+      getGroup: () => mockLayer2,
+      isVisible: jest.fn().mockReturnValue(true),
     };
 
-    mockLayer.getAttribute
-      .mockReturnValueOnce('true')
-      .mockReturnValueOnce('1')
-      .mockReturnValueOnce(null)
-      .mockReturnValueOnce('false')
-      .mockReturnValueOnce(null)
-      .mockReturnValueOnce('1');
-    mockGetLayerElementByName.mockReturnValue(mockLayer);
-    mockDrawing.getLayerVisibility.mockReturnValueOnce(true).mockReturnValueOnce(false);
-    mockDrawing.getLayerColor.mockReturnValueOnce('#000000').mockReturnValueOnce('#ffffff');
+    mockLayer1.getAttribute.mockReturnValueOnce('false').mockReturnValueOnce(null);
+    mockLayer2.getAttribute.mockReturnValueOnce('true').mockReturnValueOnce('1');
+
+    mockGetLayerElementByName.mockImplementation((layerName) => (layerName === 'layer1' ? mockLayer1 : mockLayer2));
+    mockGetLayerByName.mockImplementation((layerName) =>
+      layerName === 'layer1' ? mockLayerObject1 : mockLayerObject2,
+    );
+    mockGetAllLayers.mockReturnValue([mockLayerObject1, mockLayerObject2]);
 
     const { container } = render(
       <LayerPanelContext.Provider value={{ selectedLayers: ['layer1'] } as any}>
@@ -149,34 +157,47 @@ describe('test LayerList', () => {
 
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toHaveBeenCalledTimes(1);
-    expect(mockGetData).toHaveBeenCalledTimes(4);
-    expect(mockGetData).toHaveBeenNthCalledWith(1, mockLayer, 'module');
-    expect(mockGetData).toHaveBeenNthCalledWith(2, mockLayer, 'ref');
-    expect(mockGetData).toHaveBeenNthCalledWith(3, mockLayer, 'module');
-    expect(mockGetData).toHaveBeenNthCalledWith(4, mockLayer, 'ref');
-    expect(mockLayer.getAttribute).toHaveBeenCalledTimes(4);
-    expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(1, 'data-lock');
-    expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(2, 'data-fullcolor');
-    expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(3, 'data-lock');
-    expect(mockLayer.getAttribute).toHaveBeenNthCalledWith(4, 'data-fullcolor');
-    expect(mockDrawing.getLayerVisibility).toHaveBeenCalledTimes(2);
-    expect(mockDrawing.getLayerVisibility).toHaveBeenNthCalledWith(1, 'layer2');
-    expect(mockDrawing.getLayerVisibility).toHaveBeenNthCalledWith(2, 'layer1');
-    expect(mockDrawing.getLayerColor).toHaveBeenCalledTimes(1);
-    expect(mockDrawing.getLayerColor).toHaveBeenNthCalledWith(1, 'layer1');
+    expect(mockGetData).toHaveBeenCalledTimes(8);
+    expect(mockLayer1.getAttribute).toHaveBeenCalledTimes(1);
+    expect(mockLayer1.getAttribute).toHaveBeenNthCalledWith(1, 'data-lock');
+    expect(mockLayer2.getAttribute).toHaveBeenCalledTimes(1);
+    expect(mockLayer2.getAttribute).toHaveBeenNthCalledWith(1, 'data-lock');
+    expect(mockLayerObject1.isVisible).toHaveBeenCalledTimes(1);
+    expect(mockLayerObject2.isVisible).toHaveBeenCalledTimes(1);
   });
 
   it('should render correctly on mobile', () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
 
-    const mockLayer = {
-      getAttribute: jest.fn(),
+    const mockLayer1 = { getAttribute: jest.fn() };
+    const mockLayer2 = { getAttribute: jest.fn() };
+
+    const mockLayerObject1 = {
+      getGroup: () => mockLayer1,
+      isVisible: jest.fn().mockReturnValue(false),
+    };
+    const mockLayerObject2 = {
+      getGroup: () => mockLayer2,
+      isVisible: jest.fn().mockReturnValue(true),
     };
 
-    mockLayer.getAttribute.mockReturnValueOnce('true').mockReturnValueOnce('false');
-    mockGetLayerElementByName.mockReturnValue(mockLayer);
-    mockDrawing.getLayerVisibility.mockReturnValueOnce(true).mockReturnValueOnce(false);
-    mockDrawing.getLayerColor.mockReturnValueOnce('#000000').mockReturnValueOnce('#ffffff');
+    mockLayer1.getAttribute.mockReturnValue('false');
+    mockLayer2.getAttribute.mockReturnValue('true');
+
+    mockGetLayerElementByName.mockImplementation((layerName) => (layerName === 'layer1' ? mockLayer1 : mockLayer2));
+
+    mockGetLayerByName.mockImplementation((layerName) =>
+      layerName === 'layer1' ? mockLayerObject1 : mockLayerObject2,
+    );
+
+    mockGetAllLayers.mockReturnValue([mockLayerObject1, mockLayerObject2]);
+    mockGetData.mockImplementation((layer, key) => {
+      if (key === 'color') {
+        return layer === mockLayer1 ? '#ffffff' : '#000000';
+      }
+
+      return false;
+    });
     mockUseIsMobile.mockReturnValue(true);
 
     const { container } = render(
@@ -206,14 +227,39 @@ describe('test LayerList', () => {
   test('event should be handled correctly', () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
 
-    const mockLayer = {
+    const mockLayer1 = {
+      getAttribute: jest.fn(),
+    };
+    const mockLayer2 = {
       getAttribute: jest.fn(),
     };
 
-    mockLayer.getAttribute.mockReturnValueOnce('true').mockReturnValueOnce('false');
-    mockGetLayerElementByName.mockReturnValue(mockLayer);
-    mockDrawing.getLayerVisibility.mockReturnValueOnce(true).mockReturnValueOnce(false);
-    mockDrawing.getLayerColor.mockReturnValueOnce('#000000').mockReturnValueOnce('#ffffff');
+    const mockLayerObject1 = {
+      getGroup: () => mockLayer1,
+      isVisible: jest.fn().mockReturnValue(false),
+    };
+    const mockLayerObject2 = {
+      getGroup: () => mockLayer2,
+      isVisible: jest.fn().mockReturnValue(true),
+    };
+
+    mockLayer1.getAttribute.mockReturnValue('false');
+    mockLayer2.getAttribute.mockReturnValue('true');
+
+    mockGetLayerElementByName.mockImplementation((layerName) => (layerName === 'layer1' ? mockLayer1 : mockLayer2));
+
+    mockGetLayerByName.mockImplementation((layerName) =>
+      layerName === 'layer1' ? mockLayerObject1 : mockLayerObject2,
+    );
+
+    mockGetAllLayers.mockReturnValue([mockLayerObject1, mockLayerObject2]);
+    mockGetData.mockImplementation((layer, key) => {
+      if (key === 'color') {
+        return layer === mockLayer1 ? '#ffffff' : '#000000';
+      }
+
+      return false;
+    });
 
     const { container, getAllByText, getByTestId } = render(
       <LayerPanelContext.Provider value={{ selectedLayers: ['layer1'] } as any}>

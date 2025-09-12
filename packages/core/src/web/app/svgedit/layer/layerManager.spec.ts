@@ -205,12 +205,12 @@ describe('LayerManager', () => {
 
   describe('layer creation', () => {
     it('should create a new layer with default name', () => {
-      const group = layerManager.createLayer();
+      const layer = layerManager.createLayer();
 
-      expect(group).toBeDefined();
+      expect(layer).toBeDefined();
       expect(layerManager.getNumLayers()).toBe(1);
       expect(layerManager.getCurrentLayerName()).toBe('Layer 1');
-      expect(layerManager.getCurrentLayer().getGroup()).toBe(group);
+      expect(layerManager.getCurrentLayer()).toBe(layer);
     });
 
     it('should create a layer with custom name', () => {
@@ -236,7 +236,7 @@ describe('LayerManager', () => {
     });
 
     it('should not add to history when addToHistory is false', () => {
-      layerManager.createLayer('Test Layer');
+      layerManager.createLayer('Test Layer', { addToHistory: false });
 
       expect(mockAddCommandToHistory).not.toHaveBeenCalled();
     });

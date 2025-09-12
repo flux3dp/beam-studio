@@ -65,16 +65,20 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerByName: mockGetLayerByName,
 }));
 
+const mockGetCurrentLayerName = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
+}));
+
 const mockAddSvgElementFromJson = jest.fn().mockReturnValue(mockElement);
 const mockSelectOnly = jest.fn();
-const mockGetCurrentLayerName = jest.fn().mockReturnValue('mock-layer-name');
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
         addSvgElementFromJson: mockAddSvgElementFromJson,
-        getCurrentDrawing: () => ({ getCurrentLayerName: mockGetCurrentLayerName }),
         getNextId: jest.fn(),
         selectOnly: mockSelectOnly,
       },
@@ -98,6 +102,8 @@ import BuiltinElement from './BuiltinElement';
 describe('test BuiltinElement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+
+    mockGetCurrentLayerName.mockReturnValue('mock-layer-name');
   });
 
   it('should render correctly', async () => {
