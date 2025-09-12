@@ -12,6 +12,12 @@ jest.mock('@core/app/actions/beambox/svg-editor', () => ({
   deleteSelected: jest.fn(),
 }));
 
+const mockGetAllLayerNames = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayerNames: mockGetAllLayerNames,
+}));
+
 const getSVGAsync = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -30,9 +36,6 @@ getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
       cloneSelectedElements,
-      getCurrentDrawing: () => ({
-        all_layers: [{ name_: 'Layer 1' }, { name_: 'Layer 2' }],
-      }),
       getSelectedElems,
       groupSelectedElements,
       moveDownSelectedElement,
@@ -63,6 +66,12 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import Workarea from './Workarea';
 
 describe('test workarea', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    mockGetAllLayerNames.mockReturnValue(['Layer 1', 'Layer 2']);
+  });
+
   test('should render correctly', async () => {
     const eventEmitter = eventEmitterFactory.createEventEmitter('workarea');
     const { container, getByText, unmount } = render(<Workarea className="mac" />);

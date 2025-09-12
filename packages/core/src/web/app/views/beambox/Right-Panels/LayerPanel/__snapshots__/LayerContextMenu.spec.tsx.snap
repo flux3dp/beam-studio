@@ -20,7 +20,7 @@ exports[`test LayerContextMenu should render correctly in mobile 1`] = `
       <div
         class="label"
       >
-        del
+        Delete Layer
       </div>
     </div>
     <div
@@ -35,7 +35,7 @@ exports[`test LayerContextMenu should render correctly in mobile 1`] = `
       <div
         class="label"
       >
-        merge_down
+        Merge Down
       </div>
     </div>
     <div
@@ -50,7 +50,7 @@ exports[`test LayerContextMenu should render correctly in mobile 1`] = `
       <div
         class="label"
       >
-        lock
+        Lock Layer
       </div>
     </div>
     <div
@@ -65,7 +65,7 @@ exports[`test LayerContextMenu should render correctly in mobile 1`] = `
       <div
         class="label"
       >
-        dupe
+        Duplicate Layer
       </div>
     </div>
     <div
@@ -80,7 +80,7 @@ exports[`test LayerContextMenu should render correctly in mobile 1`] = `
       <div
         class="label"
       >
-        rename
+        Rename Layer
       </div>
     </div>
   </div>
@@ -102,7 +102,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      rename
+      Rename Layer
     </div>
     <div
       aria-disabled="false"
@@ -111,7 +111,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      dupe
+      Duplicate Layer
     </div>
     <div
       aria-disabled="false"
@@ -120,7 +120,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      lock
+      Lock Layer
     </div>
     <div
       aria-disabled="false"
@@ -129,7 +129,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      del
+      Delete Layer
     </div>
     <div
       aria-disabled="true"
@@ -138,7 +138,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      merge_down
+      Merge Down
     </div>
     <div
       aria-disabled="true"
@@ -147,7 +147,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      merge_all
+      Merge All
     </div>
     <div
       aria-disabled="false"
@@ -156,7 +156,7 @@ exports[`test LayerContextMenu should render correctly when multiselecting 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      merge_selected
+      Merge Selected Layers
     </div>
   </nav>
 </div>
@@ -177,7 +177,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      rename
+      Rename Layer
     </div>
     <div
       aria-disabled="false"
@@ -186,7 +186,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      dupe
+      Duplicate Layer
     </div>
     <div
       aria-disabled="false"
@@ -195,7 +195,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      lock
+      Lock Layer
     </div>
     <div
       aria-disabled="false"
@@ -204,7 +204,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      del
+      Delete Layer
     </div>
     <div
       aria-disabled="true"
@@ -213,7 +213,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      merge_down
+      Merge Down
     </div>
     <div
       aria-disabled="false"
@@ -222,7 +222,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      merge_all
+      Merge All
     </div>
     <div
       aria-disabled="true"
@@ -231,7 +231,7 @@ exports[`test LayerContextMenu should render correctly when selecting last 1`] =
       role="menuitem"
       tabindex="-1"
     >
-      merge_selected
+      Merge Selected Layers
     </div>
   </nav>
 </div>
@@ -252,7 +252,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      rename
+      Rename Layer
     </div>
     <div
       aria-disabled="false"
@@ -261,7 +261,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      dupe
+      Duplicate Layer
     </div>
     <div
       aria-disabled="false"
@@ -270,7 +270,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      lock
+      Lock Layer
     </div>
     <div
       aria-disabled="false"
@@ -279,7 +279,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      del
+      Delete Layer
     </div>
     <div
       aria-disabled="true"
@@ -288,7 +288,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      merge_down
+      Merge Down
     </div>
     <div
       aria-disabled="false"
@@ -297,7 +297,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      merge_all
+      Merge All
     </div>
     <div
       aria-disabled="true"
@@ -306,7 +306,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      merge_selected
+      Merge Selected Layers
     </div>
     <div
       aria-disabled="false"
@@ -315,7 +315,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      switchToFullColor
+      Switch to full color layer
     </div>
     <div
       aria-disabled="true"
@@ -324,7 +324,7 @@ exports[`test LayerContextMenu should render correctly when selecting printing l
       role="menuitem"
       tabindex="-1"
     >
-      splitFullColor
+      Expand Layer
     </div>
   </nav>
 </div>
@@ -350,7 +350,7 @@ exports[`test LayerContextMenu unlock layers should work 1`] = `
       <div
         class="label"
       >
-        del
+        Delete Layer
       </div>
     </div>
     <div
@@ -365,7 +365,7 @@ exports[`test LayerContextMenu unlock layers should work 1`] = `
       <div
         class="label"
       >
-        merge_down
+        Merge Down
       </div>
     </div>
     <div
@@ -380,7 +380,7 @@ exports[`test LayerContextMenu unlock layers should work 1`] = `
       <div
         class="label"
       >
-        unlock
+        Unlock
       </div>
     </div>
     <div
@@ -395,7 +395,7 @@ exports[`test LayerContextMenu unlock layers should work 1`] = `
       <div
         class="label"
       >
-        dupe
+        Duplicate Layer
       </div>
     </div>
     <div
@@ -410,7 +410,7 @@ exports[`test LayerContextMenu unlock layers should work 1`] = `
       <div
         class="label"
       >
-        rename
+        Rename Layer
       </div>
     </div>
   </div>
