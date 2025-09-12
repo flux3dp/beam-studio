@@ -27,6 +27,7 @@ const postContentChange = () => {
   const svgContent = document.getElementById('svgcontent')!;
 
   svgCanvas.resetCurrentDrawing(svgContent);
+  layerManager.reset(svgContent as unknown as SVGSVGElement);
 
   // Used for embeded image for ext-imagelib, can be removed if ext-imagelib is removed
   svgContent.querySelectorAll('image').forEach((image) => {
