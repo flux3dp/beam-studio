@@ -5,7 +5,7 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import durationFormatter from '@core/helpers/duration-formatter';
 import i18n from '@core/helpers/i18n';
-import type { CurveMeasurer, InteractiveOptions } from '@core/interfaces/CurveMeasurer';
+import type { CurveMeasurer, InteractiveOptions, MeasurePointData } from '@core/interfaces/CurveMeasurer';
 import type { Errors, MeasureData, Points } from '@core/interfaces/ICurveEngraving';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -47,7 +47,7 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
     offset?: [number, number, number],
     objectHeight?: number,
     lowest?: null | number,
-  ): Promise<null | number> => {
+  ): Promise<MeasurePointData> => {
     throw new Error('Not implemented');
   };
 
@@ -83,7 +83,11 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
       const [x, y] = point;
 
       try {
-        const z = await this.measurePoint(x, y, feedrate, [offsetX, offsetY, offsetZ], objectHeight, lowest);
+        const {
+          height: z,
+          xOffset,
+          yOffset,
+        } = await this.measurePoint(x, y, feedrate, [offsetX, offsetY, offsetZ], objectHeight, lowest);
 
         if (typeof z === 'number') {
           const pointZ = Math.max(0, z - offsetZ);
@@ -96,6 +100,10 @@ export default class BaseCurveMeasurer implements CurveMeasurer {
 
           newPoints[row][column][2] = pointZ;
           newErrors[row][column] = null;
+
+          if (typeof xOffset === 'number') newPoints[row][column][3] = xOffset;
+
+          if (typeof yOffset === 'number') newPoints[row][column][4] = yOffset;
         } else {
           newPoints[row][column][2] = null;
         }

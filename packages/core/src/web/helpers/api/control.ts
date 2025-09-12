@@ -1002,7 +1002,9 @@ class Control extends EventEmitter implements IControlSocket {
     throw new Error(JSON.stringify(resp));
   };
 
-  measureZ = async (args: { F?: number; X?: number; Y?: number } = {}): Promise<number> => {
+  measureZ = async (
+    args: { F?: number; X?: number; Y?: number } = {},
+  ): Promise<{ height: number; xOffset?: number; yOffset?: number }> => {
     if (this.mode !== 'red_laser_measure') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
@@ -1016,9 +1018,21 @@ class Control extends EventEmitter implements IControlSocket {
 
     if (data) {
       if (data.startsWith('ok')) {
-        const height = /measure_z(\([XYF:.,\d]*\))?: ([\d.]+)\b/.exec(data)?.[2];
+        const match = /measure_z\([^)]*\): (-?[\d.]+)(?:,(-?[\d.]+))?(?:,(-?[\d.]+))?/.exec(data);
 
-        return Number(height);
+        if (match) {
+          const height = match[1];
+          const xOffset = match[2];
+          const yOffset = match[3];
+
+          return {
+            height: Number(height),
+            xOffset: xOffset ? Number(xOffset) : undefined,
+            yOffset: yOffset ? Number(yOffset) : undefined,
+          };
+        }
+
+        throw new Error(`Invalid measure_z response: ${data}`);
       }
 
       if (data.startsWith('fail') || data.startsWith('error')) {

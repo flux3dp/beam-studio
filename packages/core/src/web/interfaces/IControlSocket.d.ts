@@ -54,7 +54,11 @@ interface IControlSocket extends EventEmitter {
   lineNumber: number;
   ls(path: string): Promise<{ directories: string[]; error?: string; files: string[] }>;
   lsusb(): Promise<{ usbs: string[] }>;
-  measureZ?: (args?: { F?: number; X?: number; Y?: number }) => Promise<number>;
+  measureZ?: (args?: {
+    F?: number;
+    X?: number;
+    Y?: number;
+  }) => Promise<{ height: number; xOffset?: number; yOffset?: number }>;
   pause(): Promise<unknown>;
   quit(): Promise<unknown>;
   quitTask(): Promise<unknown>;

@@ -6,6 +6,8 @@ export interface InteractiveOptions {
   onProgressText?: (text: string) => void;
 }
 
+export type MeasurePointData = { height: null | number; xOffset?: number; yOffset?: number };
+
 export interface CurveMeasurer {
   end: () => Promise<void>;
   measureArea: (
@@ -21,7 +23,7 @@ export interface CurveMeasurer {
     offset?: [number, number, number],
     objectHeight?: number,
     lowest?: number,
-  ) => Promise<null | number>;
+  ) => Promise<MeasurePointData>;
   measurePoints: (
     curData: MeasureData,
     targetIndices: number[],

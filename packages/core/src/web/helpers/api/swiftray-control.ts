@@ -66,7 +66,13 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
   fetchFisheye3DRotation?: (() => Promise<RotationParameters3D>) | undefined;
   fetchFisheyeParams?: (() => Promise<FisheyeCameraParameters>) | undefined;
   getCartridgeChipData?: (() => Promise<{ data: { result: RawChipSettings }; status: string }>) | undefined;
-  measureZ?: ((args?: { F?: number; X?: number; Y?: number }) => Promise<number>) | undefined;
+  measureZ?:
+    | ((args?: {
+        F?: number;
+        X?: number;
+        Y?: number;
+      }) => Promise<{ height: number; xOffset?: number; yOffset?: number }>)
+    | undefined;
   takeReferenceZ?: ((args?: { F?: number; H?: number; X?: number; Y?: number }) => Promise<number>) | undefined;
   updateFisheye3DRotation?: ((data: RotationParameters3D) => Promise<{ status: string }>) | undefined;
   uploadFisheyeParams?: ((data: string) => Promise<{ status: string }>) | undefined;

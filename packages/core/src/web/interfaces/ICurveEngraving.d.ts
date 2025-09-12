@@ -1,5 +1,8 @@
 export type BBox = { height: number; width: number; x: number; y: number };
-export type Point = [number, number, null | number];
+/**
+ * [x, y, z, xOffset?, yOffset?]
+ */
+export type Point = [number, number, null | number, number?, number?];
 export type Points = Point[][];
 
 // same dimensions as Points, but with string error messages
