@@ -151,7 +151,7 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
   const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
   const layers = pipe(
     getAllLayerNames(),
-    filter((layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT),
+    filter((layerName) => getData(getLayerElementByName(layerName)!, 'module') === LayerModule.UV_PRINT),
     map(getLayerElementByName),
   ) as SVGGElement[];
   const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));

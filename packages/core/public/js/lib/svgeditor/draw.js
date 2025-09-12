@@ -283,42 +283,6 @@
         return this.current_layer ? this.current_layer.getGroup() : null;
     };
 
-    svgedit.draw.Drawing.prototype.mergeLayer = function (hrService) {
-        var current_group = this.current_layer.getGroup();
-        var prevGroup = $(current_group).prev()[0];
-        if (!prevGroup) { return; }
-
-        hrService.startBatchCommand('Merge Layer');
-
-        var layerNextSibling = current_group.nextSibling;
-
-        const children = current_group.childNodes;
-        for (let i = 0; i < children.length; i++) {
-            let child = children[i];
-            if (child.localName == 'title' || child.tagName === 'filter') {
-                continue;
-            }
-            var oldNextSibling = child.nextSibling;
-            prevGroup.appendChild(child);
-            hrService.moveElement(child, oldNextSibling, current_group);
-            i -= 1;
-        }
-        hrService.removeElement(current_group, layerNextSibling, this.svgElem_);
-
-        // Remove current layer's group
-        this.current_layer.removeGroup();
-        // Remove the current layer and set the previous layer as the new current layer
-        var index = this.all_layers.indexOf(this.current_layer);
-        if (index > 0) {
-            var name = this.current_layer.getName();
-            this.current_layer = this.all_layers[index - 1];
-            this.all_layers.splice(index, 1);
-            delete this.layer_map[name];
-        }
-
-        hrService.endBatchCommand();
-    };
-
     /**
      * Create a clone of an element, updating its ID and its children's IDs when needed
      * @param {Element} el - DOM element to clone
@@ -335,6 +299,4 @@
       var getNextIdClosure = function () { return self.getNextId(); };
       return svgedit.utilities.copyElemData(elData, getNextIdClosure);
     };
-
-
 })();
