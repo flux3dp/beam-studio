@@ -479,7 +479,6 @@ class LayerPanel extends React.PureComponent<Props, State> {
   renderLayerPanel(): React.JSX.Element {
     const { draggingDestIndex, draggingLayer } = this.state;
     const { selectedLayers, setSelectedLayers } = this.context;
-    const drawing = svgCanvas.getCurrentDrawing();
     const isTouchable = navigator.maxTouchPoints >= 1;
 
     return (
@@ -512,7 +511,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
         {!isMobile() && (
           <>
             <DragImage draggingLayer={draggingLayer!} selectedLayers={selectedLayers} />
-            <LayerContextMenu drawing={drawing} renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
+            <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
             <AddLayerButton setSelectedLayers={setSelectedLayers} />
           </>
         )}
@@ -553,11 +552,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
             </FloatingPanel>
             <div className={styles['layer-bottom-bar']}>
               <ConfigPanel UIType="panel-item" />
-              <LayerContextMenu
-                drawing={drawing}
-                renameLayer={this.renameLayer}
-                selectOnlyLayer={this.selectOnlyLayer}
-              />
+              <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
             </div>
           </>
         ) : (

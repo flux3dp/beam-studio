@@ -37,7 +37,6 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
 import styles from './LayerContextMenu.module.scss';
 
@@ -48,12 +47,11 @@ getSVGAsync((globalSVG) => {
 });
 
 interface Props {
-  drawing: ISVGDrawing;
   renameLayer: () => void;
   selectOnlyLayer: (name: string) => void;
 }
 
-const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): React.JSX.Element => {
+const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.Element => {
   const lang = useI18n();
   const LANG = lang.beambox.right_panel.layer_panel;
   const LANG2 = lang.alert;
@@ -62,7 +60,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   const isMobile = useIsMobile();
   const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
-  const layerElem = getLayerElementByName(selectedLayers[0]!);
+  const layerElem = getLayerElementByName(selectedLayers[0])!;
   const isLocked = layerElem?.getAttribute('data-lock') === 'true';
   const onContextMenuShow = (e: CustomEvent) => {
     const trigger = e.detail.data?.target as Element;
@@ -105,7 +103,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
       return;
     }
 
-    const baseLayerName = drawing.getLayerName(layerPosition - 1)!;
+    const baseLayerName = layerManager.getLayerName(layerPosition - 1)!;
     const merged = await mergeLayers([layer], baseLayerName);
 
     if (merged) {
@@ -200,7 +198,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   };
 
   const isMultiSelecting = selectedLayers.length > 1;
-  const isSelectingLast = selectedLayers.length === 1 && drawing.getLayerName(0) === selectedLayers[0];
+  const isSelectingLast = selectedLayers.length === 1 && layerManager.getLayerName(0) === selectedLayers[0];
 
   return isMobile ? (
     <div className={styles['item-group']}>
