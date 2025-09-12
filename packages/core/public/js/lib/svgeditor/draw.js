@@ -277,13 +277,6 @@
     };
 
     /**
-     * @returns {SVGGElement} The SVGGElement representing the current layer.
-     */
-    svgedit.draw.Drawing.prototype.getCurrentLayer = function () {
-        return this.current_layer ? this.current_layer.getGroup() : null;
-    };
-
-    /**
      * Create a clone of an element, updating its ID and its children's IDs when needed
      * @param {Element} el - DOM element to clone
      * @returns {Element}
