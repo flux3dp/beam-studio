@@ -123,19 +123,6 @@ export class LayerManager {
   }
 
   /**
-   * Get the current layer's position (zero-based index)
-   */
-  public getCurrentLayerPosition(): null | number {
-    if (!this.currentLayer) {
-      return null;
-    }
-
-    const pos = this.allLayers.indexOf(this.currentLayer);
-
-    return pos !== -1 ? pos : null;
-  }
-
-  /**
    * Merge current layer with the previous layer
    */
   public mergeLayer({ addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand }): void {

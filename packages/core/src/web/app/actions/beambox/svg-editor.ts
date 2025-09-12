@@ -78,6 +78,7 @@ import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage } from '@core/app/stores/storageStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -982,7 +983,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (context) {
         var str = '';
 
-        link_str = '<a href="#" data-root="y">' + svgCanvas.getCurrentDrawing().getCurrentLayerName() + '</a>';
+        link_str = '<a href="#" data-root="y">' + layerManager.getCurrentLayerName() + '</a>';
 
         $(context)
           .parentsUntil('#svgcontent > g')
