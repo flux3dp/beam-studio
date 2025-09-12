@@ -7,13 +7,13 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
-import { calibrateCamera } from '@core/app/components/dialogs/camera';
+import { calibrateCamera, showModuleCalibration } from '@core/app/components/dialogs/camera';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartridge';
-import type { DetectedLayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { showDiodeCalibration } from '@core/app/views/beambox/Diode-Calibration';
@@ -30,6 +30,26 @@ import { extractVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+const calibrateModule = async (device: IDeviceInfo, module?: LayerModuleType) => {
+  if (!checkIsAtEditor()) return;
+
+  try {
+    const deviceStatus = await checkDeviceStatus(device);
+
+    if (!deviceStatus) {
+      return;
+    }
+
+    const res = await DeviceMaster.select(device);
+
+    if (res.success) {
+      showModuleCalibration(module);
+    }
+  } catch (error) {
+    console.error(error);
+  }
+};
 
 export const executeFirmwareUpdate = async (device: IDeviceInfo): Promise<void> => {
   const { lang } = i18n;
