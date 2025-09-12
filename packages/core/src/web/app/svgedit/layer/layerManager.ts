@@ -95,11 +95,21 @@ export class LayerManager {
     return layer ?? null;
   }
 
+  public getLayerElementByName(name: string): null | SVGGElement {
+    const layer = this.layerMap.get(name);
+
+    return layer ? layer.getGroup() : null;
+  }
+
   /**
    * Returns the name of the currently selected layer
    */
   public getCurrentLayerName(): string {
     return this.currentLayer ? this.currentLayer.getName() : '';
+  }
+
+  public getCurrentLayerElement(): null | SVGGElement {
+    return this.currentLayer ? this.currentLayer.getGroup() : null;
   }
 
   /**

@@ -306,7 +306,7 @@ const mouseDown = async (evt: MouseEvent) => {
           if (layerSelectable && !rightClick && !evt.shiftKey) {
             if (selectedElements.length && currentMode === 'select') {
               const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
-              const currentLayer = layerManager.getCurrentLayer()?.getGroup();
+              const currentLayer = layerManager.getCurrentLayerElement();
 
               if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
                 layerManager.setCurrentLayer(targetLayer.title);
@@ -1179,7 +1179,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
       if (selectedElements.length) {
         const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
-        const currentLayer = layerManager.getCurrentLayer()?.getGroup();
+        const currentLayer = layerManager.getCurrentLayerElement();
 
         if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
           layerManager.setCurrentLayer(targetLayer.title);

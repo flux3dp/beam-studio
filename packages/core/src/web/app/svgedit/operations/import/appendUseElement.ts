@@ -6,7 +6,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import rgbToHex from '@core/helpers/color/rgbToHex';
 import i18n from '@core/helpers/i18n';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import { createLayer, getLayerByName } from '@core/helpers/layer/layer-helper';
+import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import storage from '@core/implementations/storage';
@@ -71,7 +71,7 @@ const appendUseElement = (
       targetLayerName = rgbToHex(color);
     }
 
-    const targetLayer = getLayerByName(targetLayerName);
+    const targetLayer = layerManager.getLayerElementByName(targetLayerName);
 
     if (!targetLayer || !checkLayerModule(targetLayer, targetModule)) {
       const { layer: newLayer } = createLayer(targetLayerName, { initConfig: true, parentCmd: batchCmd });
@@ -126,11 +126,11 @@ const appendUseElement = (
         writeDataLayer(newLayer, 'module', targetModule);
         writeDataLayer(newLayer, 'fullcolor', true);
       }
-    } else if (layerManager.getCurrentLayer()?.getGroup() !== targetLayer) {
+    } else if (layerManager.getCurrentLayerElement() !== targetLayer) {
       layerManager.setCurrentLayer(targetLayerName);
     }
   } else {
-    let targetLayer = layerManager.getCurrentLayer()?.getGroup();
+    let targetLayer = layerManager.getCurrentLayerElement();
 
     if (!targetLayer || !checkLayerModule(targetLayer, targetModule)) {
       const { layer, name: newLayerName } = createLayer(

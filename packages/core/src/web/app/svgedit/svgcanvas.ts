@@ -294,18 +294,18 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     var shape = svgedit.utilities.getElem(data.attr.id);
     // if shape is a path but we need to create a rect/ellipse, then remove the path
-    var current_layer = getCurrentDrawing().getCurrentLayer();
+    const currentLayer = layerManager.getCurrentLayerElement()!;
 
     if (shape && data.element !== shape.tagName) {
-      current_layer.removeChild(shape);
+      currentLayer.removeChild(shape);
       shape = null;
     }
 
     if (!shape) {
       shape = svgdoc.createElementNS(NS.SVG, data.element);
 
-      if (current_layer) {
-        (current_group || current_layer).appendChild(shape);
+      if (currentLayer) {
+        (current_group || currentLayer).appendChild(shape);
       }
     }
 
@@ -863,8 +863,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return null;
     }
 
-    var parent = current_group || getCurrentDrawing().getCurrentLayer();
-
     var rubberBBox;
 
     if (!rect) {
@@ -1362,13 +1360,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Function: selectAllInCurrentLayer
   // Clears the selection, then adds all elements in the current layer to the selection.
   this.selectAllInCurrentLayer = function () {
-    var current_layer = getCurrentDrawing().getCurrentLayer();
+    const currentLayer = layerManager.getCurrentLayerElement();
 
-    if (current_layer && current_layer.getAttribute('data-lock') !== 'true') {
+    if (currentLayer && currentLayer.getAttribute('data-lock') !== 'true') {
       current_mode = 'select';
       drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
 
-      const elemsToAdd = Array.from($(current_group || current_layer).children()).filter(
+      const elemsToAdd = (Array.from((current_group || currentLayer).childNodes) as Element[]).filter(
         (c: Element) => !['filter', 'title'].includes(c.tagName),
       );
 
@@ -1556,7 +1554,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // Get the desired mouseTarget with jQuery selector-fu
     // If it's root-like, select the root
-    var current_layer = getCurrentDrawing().getCurrentLayer();
+    var current_layer = layerManager.getCurrentLayerElement();
 
     if ([container, current_layer, svgcontent, svgroot].includes(mouseTarget)) {
       return svgroot;
@@ -2359,7 +2357,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const result = layerManager.setCurrentLayerName(name);
 
     if (result) {
-      call('changed', [layer]);
+      call('changed', [layer.getGroup()]);
 
       return true;
     }
@@ -2370,8 +2368,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.sortTempGroupByLayer = () => {
     if (!tempGroup) return;
 
-    const drawing = getCurrentDrawing();
-    const allLayerNames = drawing.all_layers.map((layer) => layer.name_);
+    const allLayerNames = layerManager.getAllLayerNames();
 
     for (let i = 0; i < allLayerNames.length; i++) {
       const elems = tempGroup.querySelectorAll(`[data-original-layer="${allLayerNames[i]}"]`);
@@ -4676,9 +4673,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     const originalLayerName = elem.getAttribute('data-original-layer')!;
-    const originalLayer = layerManager.getLayerByName(originalLayerName);
-    const currentLayer = layerManager.getCurrentLayer()!;
-    const targetLayer = (originalLayer || currentLayer).getGroup();
+    const originalLayer = layerManager.getLayerElementByName(originalLayerName);
+    const currentLayer = layerManager.getCurrentLayerElement()!;
+    const targetLayer = originalLayer || currentLayer;
 
     // explicitly remove one element from the temp group layers
     const idx = selectedLayers.indexOf(originalLayerName);
@@ -4776,9 +4773,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           continue;
         }
 
-        const originalLayer = layerManager.getLayerByName(elem.getAttribute('data-original-layer')!);
-        const currentLayer = layerManager.getCurrentLayer()!;
-        const targetLayer = (originalLayer || currentLayer).getGroup();
+        const originalLayer = layerManager.getLayerElementByName(elem.getAttribute('data-original-layer')!);
+        const currentLayer = layerManager.getCurrentLayerElement()!;
+        const targetLayer = originalLayer || currentLayer;
         let nextSiblingId = elem.getAttribute('data-next-sibling');
 
         if (nextSiblingId) {
@@ -5534,7 +5531,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     var cur_elem = selectedElements[0];
     var elem = false;
-    var all_elems = getVisibleElements(current_group || getCurrentDrawing().getCurrentLayer());
+    var all_elems = getVisibleElements(current_group || layerManager.getCurrentLayerElement());
 
     if (!all_elems.length) {
       return;
