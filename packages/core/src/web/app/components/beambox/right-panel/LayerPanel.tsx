@@ -163,7 +163,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
           return;
         }
 
-        if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
+        if (layerManager.hasLayer(newName)) {
           Alert.popUp({
             id: 'dupli_layer_name',
             message: lang.notification.enterUniqueLayerName,
@@ -529,10 +529,9 @@ class LayerPanel extends React.PureComponent<Props, State> {
     }
 
     const { setSelectedLayers } = this.context;
-    const drawing = svgCanvas.getCurrentDrawing();
     const lang = i18n.lang.beambox.right_panel.layer_panel;
 
-    const layerNames = drawing.all_layers.map((layer) => layer.name_);
+    const layerNames = layerManager.getAllLayerNames();
     const { hide } = this.props;
 
     return (

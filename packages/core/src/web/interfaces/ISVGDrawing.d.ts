@@ -1,10 +1,8 @@
 import type { ISVGLayerConscrtuctor } from '@core/interfaces/ISVGLayer';
-import type ISVGLayer from '@core/interfaces/ISVGLayer';
 
 import type { ClipboardElement } from './Clipboard';
 
 export default interface ISVGDrawing {
-  all_layers: ISVGLayer[];
   browser: {
     isTouch: () => boolean;
   };
@@ -13,9 +11,5 @@ export default interface ISVGDrawing {
   draw: {
     Layer: ISVGLayerConscrtuctor;
   };
-  getCurrentLayer: () => null | SVGGElement;
-  getNumLayers: () => number;
-  hasLayer: (layerName: string) => boolean;
-  layer_map: { [key: string]: ISVGLayer };
   releaseId: (id: string) => void;
 }
