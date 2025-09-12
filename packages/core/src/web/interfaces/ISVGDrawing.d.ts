@@ -10,7 +10,6 @@ export default interface ISVGDrawing {
   };
   copyElem: (elem: Element) => Element;
   copyElemData: (elem: ClipboardElement) => Element;
-  createLayer: (name: string) => SVGGElement;
   draw: {
     Layer: ISVGLayerConscrtuctor;
   };

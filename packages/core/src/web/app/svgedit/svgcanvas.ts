@@ -47,7 +47,6 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
@@ -2342,38 +2341,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // Group: Layers
 
-  // Function: createLayer
-  // Creates a new top-level layer in the drawing with the given name, sets the current layer
-  // to it, and then clears the selection. This function then calls the 'changed' handler.
-  // This is an undoable action.
-  //
-  // Parameters:
-  // name - The given name
-  this.createLayer = function (name, hexCode: string, isFullColor = false) {
-    const drawing = getCurrentDrawing();
-    const newLayer = drawing.createLayer(name, historyRecordingService());
-
-    if (drawing.layer_map[name]) {
-      if (name && name.indexOf('#') === 0) {
-        drawing.layer_map[name].setColor(name);
-      } else if (hexCode) {
-        drawing.layer_map[name].setColor(hexCode);
-      } else {
-        drawing.layer_map[name].setColor(randomColor.getColor());
-      }
-
-      if (isFullColor) {
-        drawing.layer_map[name].setFullColor(true);
-      }
-    }
-
-    updateLayerColorFilter(newLayer);
-    clearSelection();
-    call('changed', [newLayer]);
-
-    return newLayer;
-  };
-
   // Function: renameCurrentLayer
   // Renames the current layer. If the layer name is not valid (i.e. unique), then this function
   // does nothing and returns false, otherwise it returns true. This is an undo-able action.
@@ -2500,7 +2467,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // create empty first layer
     const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
 
-    canvas.createLayer(defaultLayerName);
+    LayerHelper.createLayer(defaultLayerName);
 
     const defaultLayer = LayerHelper.getLayerElementByName(defaultLayerName);
 
