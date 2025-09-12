@@ -506,7 +506,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             var parent = isApply ? cmd.newParent : cmd.oldParent;
 
             if (parent === svgcontent) {
-              canvas.identifyLayers();
+              layerManager.identifyLayers();
             }
 
             elems.forEach((elem) => {
@@ -535,7 +535,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           } else if (cmdType === ChangeElementCommand.type()) {
             // if we are changing layer names, re-identify all layers
             if (cmd.elem.tagName === 'title' && cmd.elem.parentNode?.parentNode === svgcontent) {
-              canvas.identifyLayers();
+              layerManager.identifyLayers();
             }
 
             var values = isApply ? cmd.newValues : cmd.oldValues;
@@ -576,7 +576,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
                 'Split Full Color Layer',
               ].includes(cmd.text)
             ) {
-              canvas.identifyLayers();
+              layerManager.identifyLayers();
               LayerPanelController.setSelectedLayers([]);
               presprayArea.togglePresprayArea();
             }
@@ -2341,14 +2341,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Layer API Functions
 
   // Group: Layers
-
-  // Function: identifyLayers
-  // Updates layer system
-  canvas.identifyLayers = function () {
-    leaveContext();
-    getCurrentDrawing().identifyLayers();
-    layerManager.identifyLayers();
-  };
 
   // Function: createLayer
   // Creates a new top-level layer in the drawing with the given name, sets the current layer

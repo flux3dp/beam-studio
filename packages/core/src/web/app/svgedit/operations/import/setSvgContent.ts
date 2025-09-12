@@ -2,6 +2,7 @@ import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import selector from '@core/app/svgedit/selector';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -99,9 +100,7 @@ const postContentChange = () => {
   svgContent.setAttribute('height', (pxDisplayHeight ?? pxHeight)?.toString());
   svgContent.setAttribute('viewBox', `0 0 ${pxWidth} ${pxDisplayHeight ?? pxHeight}`);
 
-  const drawing = svgCanvas.getCurrentDrawing();
-
-  drawing.identifyLayers();
+  layerManager.identifyLayers();
 
   const visElemQuery = 'a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use';
 

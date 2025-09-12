@@ -20,7 +20,6 @@ export default interface ISVGDrawing {
   getLayerName: (index: number) => null | string;
   getNumLayers: () => number;
   hasLayer: (layerName: string) => boolean;
-  identifyLayers: () => void;
   layer_map: { [key: string]: ISVGLayer };
   releaseId: (id: string) => void;
 }

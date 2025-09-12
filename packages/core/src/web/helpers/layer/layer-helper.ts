@@ -21,6 +21,8 @@ import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
+import { deleteLayerByName } from './deleteLayer';
+
 let svgCanvas: ISVGCanvas;
 let svgedit: ISVGDrawing;
 
@@ -232,8 +234,8 @@ export const cloneLayer = (
   batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
 
   if (!isSub) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-    drawing.identifyLayers();
+    undoManager.addCommandToHistory(batchCmd);
+    layerManager.identifyLayers();
     svgCanvas.clearSelection();
   }
 
@@ -244,7 +246,6 @@ export const cloneLayers = (layerNames: string[]): string[] => {
   sortLayerNamesByPosition(layerNames);
 
   const clonedLayerNames: string[] = [];
-  const drawing = svgCanvas.getCurrentDrawing();
   const batchCmd = new history.BatchCommand('Clone Layer(s)');
 
   svgCanvas.clearSelection();
@@ -261,10 +262,10 @@ export const cloneLayers = (layerNames: string[]): string[] => {
   }
 
   if (!batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
-  drawing.identifyLayers();
+  layerManager.identifyLayers();
 
   return clonedLayerNames;
 };
@@ -292,7 +293,7 @@ export const setLayerLock = (
     parentCmd.addSubCommand(cmd);
   } else {
     cmd.onAfter = () => LayerPanelController.updateLayerPanel();
-    svgCanvas.undoMgr.addCommandToHistory(cmd);
+    undoManager.addCommandToHistory(cmd);
   }
 
   return cmd;
@@ -307,7 +308,7 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
 
   if (!batchCmd.isEmpty()) {
     batchCmd.onAfter = () => LayerPanelController.updateLayerPanel();
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
   return batchCmd;
@@ -394,7 +395,6 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
   svgCanvas.clearSelection();
 
   const batchCmd = new history.BatchCommand('Merge Layer(s)');
-  const drawing = svgCanvas.getCurrentDrawing();
 
   sortLayerNamesByPosition(layerNames);
 
@@ -419,10 +419,10 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
   }
 
   if (!batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
-  drawing.identifyLayers();
+  layerManager.identifyLayers();
 
   return mergeBase;
 };
