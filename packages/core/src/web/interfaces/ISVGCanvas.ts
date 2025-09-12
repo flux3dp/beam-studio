@@ -109,7 +109,6 @@ export default interface ISVGCanvas {
   groupSelectedElements: (isSubCmd?: boolean) => void | { command: BaseHistoryCommand; group: SVGGElement };
   groupSvgElem: (elem: SVGElement) => void;
   handleGenerateSensorArea: (evt: MouseEvent) => void;
-  identifyLayers: () => void;
   importSvgString(
     xmlString: string,
     args: {

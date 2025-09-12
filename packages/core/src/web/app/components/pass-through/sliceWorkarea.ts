@@ -5,6 +5,7 @@ import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { changeDocumentStoreValue, useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import { deleteUseRef } from '@core/app/svgedit/operations/delete';
 import findDefs from '@core/app/svgedit/utils/findDef';
@@ -256,7 +257,7 @@ const sliceWorkarea = async (
   changeDocumentStoreValue('pass-through', false, { parentCmd: batchCmd });
 
   const onAfter = () => {
-    currentDrawing.identifyLayers();
+    layerManager.identifyLayers();
     LayerPanelController.setSelectedLayers([]);
   };
 

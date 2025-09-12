@@ -9,6 +9,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
@@ -247,7 +248,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
 
     batchCmd.current.unapply();
     // to prevent layer id conflict
-    svgCanvas.identifyLayers();
+    layerManager.identifyLayers();
 
     batchCmd.current = new history.BatchCommand('Material Test Generator');
 
@@ -267,7 +268,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
   const handleCancel = () => {
     batchCmd.current.unapply();
     // to prevent layer id conflict
-    svgCanvas.identifyLayers();
+    layerManager.identifyLayers();
 
     onClose();
   };
