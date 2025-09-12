@@ -1,5 +1,6 @@
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -12,8 +13,7 @@ getSVGAsync((globalSVG) => {
 });
 
 const moveElementsToLayer = (layerName: string, elements: SVGElement[]): IBatchCommand | null => {
-  const drawing = svgCanvas.getCurrentDrawing();
-  const layer = drawing.getLayerByName(layerName);
+  const layer = layerManager.getLayerByName(layerName);
 
   if (!layer) {
     return null;
@@ -35,7 +35,7 @@ const moveElementsToLayer = (layerName: string, elements: SVGElement[]): IBatchC
     const oldNextSibling = element.nextSibling;
     const oldParent = element.parentNode;
 
-    layer.appendChild(element);
+    layer.appendChildren([element]);
     updateElementColor(element);
     batchCmd.addSubCommand(new history.MoveElementCommand(element, oldNextSibling, oldParent));
   });

@@ -4675,12 +4675,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return;
     }
 
-    const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
-    const currentLayer = getCurrentDrawing().getCurrentLayer();
-    const targetLayer = originalLayer || currentLayer;
+    const originalLayerName = elem.getAttribute('data-original-layer')!;
+    const originalLayer = layerManager.getLayerByName(originalLayerName);
+    const currentLayer = layerManager.getCurrentLayer()!;
+    const targetLayer = (originalLayer || currentLayer).getGroup();
 
     // explicitly remove one element from the temp group layers
-    const idx = selectedLayers.indexOf(elem.getAttribute('data-original-layer'));
+    const idx = selectedLayers.indexOf(originalLayerName);
 
     if (idx >= 0) {
       selectedLayers.splice(idx, 1);
@@ -4761,7 +4762,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       var i = 0;
 
       while (g.lastChild) {
-        const elem = g.lastChild;
+        const elem = g.lastChild as Element;
         var oldParent = elem.parentNode;
 
         if (elem.getAttribute('data-imageborder') === 'true') {
@@ -4771,13 +4772,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
         // Remove child title elements
         if (elem.tagName === 'title') {
-          oldParent.removeChild(elem);
+          oldParent!.removeChild(elem);
           continue;
         }
 
-        const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
-        const currentLayer = getCurrentDrawing().getCurrentLayer();
-        const targetLayer = originalLayer || currentLayer;
+        const originalLayer = layerManager.getLayerByName(elem.getAttribute('data-original-layer')!);
+        const currentLayer = layerManager.getCurrentLayer()!;
+        const targetLayer = (originalLayer || currentLayer).getGroup();
         let nextSiblingId = elem.getAttribute('data-next-sibling');
 
         if (nextSiblingId) {

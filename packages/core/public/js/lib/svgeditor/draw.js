@@ -283,15 +283,6 @@
         return this.current_layer ? this.current_layer.getGroup() : null;
     };
 
-    /**
-     * Get a layer by name.
-     * @returns {SVGGElement} The SVGGElement representing the named layer or null.
-     */
-    svgedit.draw.Drawing.prototype.getLayerByName = function (name) {
-        var layer = this.layer_map[name];
-        return layer ? layer.getGroup() : null;
-    };
-
     svgedit.draw.Drawing.prototype.mergeLayer = function (hrService) {
         var current_group = this.current_layer.getGroup();
         var prevGroup = $(current_group).prev()[0];

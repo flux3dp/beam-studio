@@ -47,12 +47,9 @@ export function getObjectLayer(elem: SVGElement): { elem: SVGGElement; title: st
   const origLayerName = elem.getAttribute('data-original-layer');
 
   if (origLayerName) {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const origLayer = drawing.getLayerByName(origLayerName);
+    const origLayer = layerManager.getLayerByName(origLayerName);
 
-    if (origLayer) {
-      return { elem: origLayer, title: origLayerName };
-    }
+    if (origLayer) return { elem: origLayer.getGroup(), title: origLayerName };
   }
 
   return null;

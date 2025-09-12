@@ -66,9 +66,8 @@ export const deleteLayers = (layerNames: string[]): void => {
 
 export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
   const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
-  const drawing = svgCanvas.getCurrentDrawing();
-  const layer = drawing.getLayerByName(defaultLayerName);
-  const layerCount = drawing.getNumLayers();
+  const layer = layerManager.getLayerByName(defaultLayerName)?.getGroup();
+  const layerCount = layerManager.getNumLayers();
 
   if (layer && layerCount > 1) {
     const childNodes = Array.from(layer.childNodes);

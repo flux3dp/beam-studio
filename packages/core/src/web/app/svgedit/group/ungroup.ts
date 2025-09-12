@@ -4,6 +4,7 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import history from '../history/history';
+import layerManager from '../layer/layerManager';
 
 let svgCanvas: ISVGCanvas;
 
@@ -12,7 +13,7 @@ getSVGAsync((globalSVG) => {
 });
 
 // TODO add unit tests
-export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand; children: Element[] } => {
+export const ungroupElement = (elem: Element): null | { batchCmd: IBatchCommand; children: Element[] } => {
   if (elem?.getAttribute('data-pass-through') || elem?.getAttribute('data-textpath-g')) return null;
 
   if (elem.tagName === 'g' || elem.tagName === 'a') {
@@ -49,10 +50,10 @@ export const ungroupElement = (elem: Element): { batchCmd: IBatchCommand; childr
         continue;
       }
 
-      const originalLayer = svgCanvas.getCurrentDrawing().getLayerByName(child.getAttribute('data-original-layer'));
+      const originalLayer = layerManager.getLayerByName(child.getAttribute('data-original-layer')!);
 
       if (originalLayer) {
-        originalLayer.appendChild(child);
+        originalLayer.appendChildren([child as SVGElement]);
         updateElementColor(child);
       } else {
         child = parent.insertBefore(child, anchor);
