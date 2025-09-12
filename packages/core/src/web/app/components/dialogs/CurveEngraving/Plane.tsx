@@ -34,7 +34,7 @@ const Plane = ({
     () =>
       points
         .flat()
-        .map((p) => [p[0] - (p[3] ?? 0), p[1] - (p[4] ?? 0), p[2]] as Point)
+        .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]] as Point)
         .map((p) => [p[0] - bboxX - 0.5 * width, 0.5 * height - (p[1] - bboxY), p[2] ? -p[2] : p[2]]),
     [points, bboxX, bboxY, width, height],
   ) as Array<[number, number, null | number]>;

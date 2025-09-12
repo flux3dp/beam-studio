@@ -245,7 +245,7 @@ export const getExportOpt = async (
         gap,
         points: points
           .flat()
-          .map((p) => [p[0] - (p[3] ?? 0), p[1] - (p[4] ?? 0), p[2]] as [number, number, null | number])
+          .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]] as [number, number, null | number])
           .filter((p) => p[2] !== null),
         safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
       };
