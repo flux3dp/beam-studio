@@ -15,5 +15,4 @@ import 'sanitize';
 import 'coords';
 import 'recalculate';
 import 'draw';
-import 'layer';
 import 'path';

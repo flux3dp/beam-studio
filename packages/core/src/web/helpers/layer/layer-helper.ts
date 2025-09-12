@@ -64,44 +64,25 @@ export const getAllLayerNames = (): string[] => {
 };
 
 export const getLayerPosition = (layerName: string): number => {
-  const allLayers = document.querySelectorAll('g.layer');
+  const allLayers = layerManager.getAllLayerNames();
 
-  for (let i = 0; i < allLayers.length; i += 1) {
-    const title = allLayers[i].querySelector('title');
-
-    if (title && title.textContent === layerName) {
-      return i;
-    }
-  }
-
-  return -1;
+  return allLayers.indexOf(layerName);
 };
 
 export const sortLayerNamesByPosition = (layerNames: string[]): string[] => {
   const layerNamePositionMap: Record<string, number> = {};
-  const allLayers = document.querySelectorAll('g.layer');
 
-  for (let i = 0; i < allLayers.length; i += 1) {
-    const title = allLayers[i].querySelector('title');
+  layerManager.getAllLayerNames().forEach((name, index) => {
+    layerNamePositionMap[name] = index;
+  });
 
-    if (title) {
-      layerNamePositionMap[title.textContent] = i;
-    }
-  }
-  for (let i = layerNames.length - 1; i >= 0; i -= 1) {
-    if (!(layerNamePositionMap[layerNames[i]] > -1)) {
-      layerNames.splice(i, 1);
-    }
-  }
-  layerNames.sort((a, b) => layerNamePositionMap[a] - layerNamePositionMap[b]);
-
-  return layerNames;
+  return layerNames
+    .filter((name) => layerNamePositionMap[name] > -1)
+    .sort((a, b) => layerNamePositionMap[a] - layerNamePositionMap[b]);
 };
 
 export const getLayerElementByName = (layerName: string): Element | null => {
-  const layer = layerManager.getLayerByName(layerName)?.getGroup();
-
-  return layer ?? null;
+  return layerManager.getLayerElementByName(layerName);
 };
 
 export const getLayerName = (layer: Element): string => {
@@ -154,23 +135,24 @@ export const createLayer = (
 
 export const cloneLayer = (
   layerName: string,
-  opts: {
+  {
+    configOnly = false,
+    isSub = false,
+    name: clonedLayerName,
+    parentCmd,
+  }: {
     configOnly?: boolean; // if true, only clone layer config
     isSub?: boolean; // if true, do not add command to history
     name?: string; // if provided, use this name instead of auto generated name
+    parentCmd?: IBatchCommand;
   },
 ): null | { cmd: ICommand; elem: SVGGElement; name: string } => {
   const layer = getLayerElementByName(layerName);
 
-  if (!layer) {
-    return null;
-  }
-
-  const { configOnly = false, isSub = false, name: clonedLayerName } = opts;
+  if (!layer) return null;
 
   const drawing = svgCanvas.getCurrentDrawing();
   const color = layer.getAttribute('data-color') || '#333';
-  const svgcontent = document.getElementById('svgcontent')!;
   const baseName = clonedLayerName || `${layerName} copy`;
   let newName = baseName;
   let j = 0;
@@ -180,8 +162,11 @@ export const cloneLayer = (
     newName = `${baseName} ${j}`;
   }
 
-  const newLayer = new svgedit.draw.Layer(newName, null, svgcontent, color).getGroup();
   const batchCmd = HistoryCommandFactory.createBatchCommand('Clone Layer');
+  const newLayer = layerManager.createLayer(newName, { parentCmd: batchCmd })!;
+  const newLayerElem = newLayer.getGroup();
+
+  newLayer.setColor(color);
 
   if (!configOnly) {
     const children = layer.childNodes;
@@ -192,26 +177,27 @@ export const cloneLayer = (
       if (child.tagName !== 'title') {
         const copiedElem = drawing.copyElem(child);
 
-        newLayer.appendChild(copiedElem);
+        newLayerElem.appendChild(copiedElem);
       }
     }
-    handlePastedRef(newLayer, { parentCmd: batchCmd });
+    handlePastedRef(newLayerElem, { parentCmd: batchCmd });
   }
 
   cloneLayerConfig(newName, layerName);
-  batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
 
-  if (!isSub) {
+  if (parentCmd) {
+    parentCmd.addSubCommand(batchCmd);
+  } else if (!isSub) {
     undoManager.addCommandToHistory(batchCmd);
     layerManager.identifyLayers();
     svgCanvas.clearSelection();
   }
 
-  return { cmd: batchCmd, elem: newLayer, name: newName };
+  return { cmd: batchCmd, elem: newLayerElem, name: newName };
 };
 
 export const cloneLayers = (layerNames: string[]): string[] => {
-  sortLayerNamesByPosition(layerNames);
+  layerNames = sortLayerNamesByPosition(layerNames);
 
   const clonedLayerNames: string[] = [];
   const batchCmd = new history.BatchCommand('Clone Layer(s)');
@@ -219,12 +205,11 @@ export const cloneLayers = (layerNames: string[]): string[] => {
   svgCanvas.clearSelection();
 
   for (let i = 0; i < layerNames.length; i += 1) {
-    const res = cloneLayer(layerNames[i], { isSub: true });
+    const res = cloneLayer(layerNames[i], { isSub: true, parentCmd: batchCmd });
 
     if (res) {
-      const { cmd, name } = res;
+      const { name } = res;
 
-      batchCmd.addSubCommand(cmd);
       clonedLayerNames.push(name);
     }
   }
@@ -367,7 +352,7 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
 
   const batchCmd = new history.BatchCommand('Merge Layer(s)');
 
-  sortLayerNamesByPosition(layerNames);
+  layerNames = sortLayerNamesByPosition(layerNames);
 
   const mergeBase = baseLayerName || layerNames[0];
   const baseLayerIndex = layerNames.findIndex((layerName) => layerName === mergeBase);
@@ -465,7 +450,7 @@ export const moveLayersToPosition = (layerNames: string[], newPosition: number):
   const batchCmd = new history.BatchCommand('Move Layer(s)');
   const currentLayerName = layerManager.getCurrentLayerName()!;
 
-  sortLayerNamesByPosition(layerNames);
+  layerNames = sortLayerNamesByPosition(layerNames);
 
   let lastLayerName = null;
 

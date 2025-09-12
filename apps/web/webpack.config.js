@@ -174,7 +174,6 @@ module.exports = {
       dxf2svg: path.resolve(__dirname, 'public/js/lib/dxf2svg'),
       jquery: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery'),
       jquerySvg: path.resolve(__dirname, 'public/js/lib/svgeditor/jquery-svg'),
-      layer: path.resolve(__dirname, 'public/js/lib/svgeditor/layer'),
       math: path.resolve(__dirname, 'public/js/lib/svgeditor/math'),
       path: path.resolve(__dirname, 'public/js/lib/svgeditor/path'),
       pathseg: path.resolve(__dirname, 'public/js/lib/svgeditor/pathseg'),

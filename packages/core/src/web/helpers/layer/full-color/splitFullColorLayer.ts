@@ -110,12 +110,12 @@ const splitFullColorLayer = async (
       configOnly: true,
       isSub: true,
       name: `${layerName} (4C)`,
+      parentCmd: batchCmd,
     });
 
     if (cloneRes) {
-      const { cmd, elem: newLayer } = cloneRes;
+      const { elem: newLayer } = cloneRes;
 
-      batchCmd.addSubCommand(cmd);
       writeDataLayer(newLayer, 'split', true);
 
       const CMYK_FIXED_RATIO = 0.9; // compensation for 4C printing, to avoid over saturation
@@ -175,13 +175,13 @@ const splitFullColorLayer = async (
         configOnly: true,
         isSub: true,
         name: `${layerName} (${nameSuffix})`,
+        parentCmd: batchCmd,
       });
 
       if (!res) continue;
 
-      const { cmd, elem: newLayer } = res;
+      const { elem: newLayer } = res;
 
-      batchCmd.addSubCommand(cmd);
       writeDataLayer(newLayer, 'color', color);
       writeDataLayer(newLayer, 'fullcolor', false);
       writeDataLayer(newLayer, 'split', true);

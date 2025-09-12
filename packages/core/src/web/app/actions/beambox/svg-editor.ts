@@ -949,15 +949,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       });
     };
 
-    /**
-     * Test whether an element is a layer or not.
-     * @param {SVGGElement} elem - The SVGGElement to test.
-     * @returns {boolean} True if the element is a layer
-     */
-    function isLayer(elem) {
-      return elem && elem.tagName === 'g' && svgedit.draw.Layer.CLASS_REGEX.test(elem.getAttribute('class'));
-    }
-
     // called when any element has changed
     const elementChanged = function () {
       updateContextPanel();
