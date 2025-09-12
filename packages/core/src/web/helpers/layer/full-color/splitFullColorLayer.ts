@@ -34,7 +34,7 @@ const splitFullColorLayer = async (
   opts: { addToHistory?: boolean } = {},
 ): Promise<null | { cmd: IBatchCommand; newLayers: Element[] }> => {
   const { addToHistory = true } = opts;
-  const layer = getLayerElementByName(layerName);
+  const layer = getLayerElementByName(layerName)!;
   const fullColor = getData(layer, 'fullcolor');
   const ref = getData(layer, 'ref');
   const layerModule = getData(layer, 'module');
@@ -245,7 +245,7 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
   const currentLayerName = layerManager.getCurrentLayerName();
 
   for (const layerName of allLayerNames) {
-    const layer = getLayerElementByName(layerName);
+    const layer = getLayerElementByName(layerName)!;
     const fullColor = getData(layer, 'fullcolor');
     const ref = getData(layer, 'ref');
 

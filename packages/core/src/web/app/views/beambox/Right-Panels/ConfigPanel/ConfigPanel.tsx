@@ -222,7 +222,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       const batchCmd = new history.BatchCommand('Change layer preset');
 
       selectedLayers.forEach((layerName: string) => {
-        const layer = getLayerElementByName(layerName);
+        const layer = getLayerElementByName(layerName)!;
 
         applyPreset(layer, preset, { batchCmd });
       });

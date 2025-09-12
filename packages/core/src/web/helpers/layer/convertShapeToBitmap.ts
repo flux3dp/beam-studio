@@ -28,7 +28,7 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
 
   for (let i = 0; i < allLayerNames.length; i += 1) {
     const layerName = allLayerNames[i];
-    const layer = getLayerElementByName(layerName);
+    const layer = getLayerElementByName(layerName)!;
     const module = getData(layer, 'module')!;
 
     if (!getData(layer, 'fullcolor') && (printingModules.has(module) || UVModules.has(module))) {

@@ -62,7 +62,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   const isMobile = useIsMobile();
   const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
-  const layerElem = getLayerElementByName(selectedLayers[0]);
+  const layerElem = getLayerElementByName(selectedLayers[0]!);
   const isLocked = layerElem?.getAttribute('data-lock') === 'true';
   const onContextMenuShow = (e: CustomEvent) => {
     const trigger = e.detail.data?.target as Element;
@@ -121,7 +121,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
       return;
     }
 
-    const elem = getLayerElementByName(baseLayerName);
+    const elem = getLayerElementByName(baseLayerName!);
 
     updateLayerColor(elem as SVGGElement);
     selectOnlyLayer(baseLayerName);
@@ -135,7 +135,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
       return;
     }
 
-    const elem = getLayerElementByName(baseLayer);
+    const elem = getLayerElementByName(baseLayer!);
 
     updateLayerColor(elem as SVGGElement);
     setSelectedLayers([baseLayer]);

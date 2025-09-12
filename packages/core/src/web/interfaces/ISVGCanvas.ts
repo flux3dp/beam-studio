@@ -121,7 +121,6 @@ export default interface ISVGCanvas {
   isAutoAlign: boolean;
   isElemFillable: (elem: Element) => boolean;
   leaveContext: () => void;
-  mergeLayer: () => void;
   moveDownSelectedElement(): void;
   moveTopBottomSelected(direction: 'bottom' | 'top'): void;
   moveUpSelectedElement(): void;

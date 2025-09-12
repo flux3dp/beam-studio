@@ -111,19 +111,10 @@ export const sortLayerNamesByPosition = (layerNames: string[]): string[] => {
   return layerNames;
 };
 
-export const getLayerElementByName = (layerName: string): Element => {
-  const allLayers = Array.from(document.querySelectorAll('g.layer'));
-  const layer = allLayers.find((l) => {
-    const title = l.querySelector('title');
+export const getLayerElementByName = (layerName: string): Element | null => {
+  const layer = layerManager.getLayerByName(layerName)?.getGroup();
 
-    if (title) {
-      return title.textContent === layerName;
-    }
-
-    return false;
-  });
-
-  return layer;
+  return layer ?? null;
 };
 
 export const getLayerName = (layer: Element): string => {
@@ -264,9 +255,12 @@ export const setLayerLock = (
   layerName: string,
   isLocked: boolean,
   opts: { parentCmd?: IBatchCommand } = {},
-): ICommand => {
+): ICommand | null => {
   const { parentCmd } = opts;
   const layer = getLayerElementByName(layerName);
+
+  if (!layer) return null;
+
   const origValue = layer.getAttribute('data-lock') === 'true';
 
   if (isLocked) {
@@ -305,10 +299,10 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
 };
 
 export const showMergeAlert = async (baseLayerName: string, layerNames: string[]): Promise<boolean> => {
-  const targetModule = getData(getLayerElementByName(baseLayerName), 'module') as LayerModuleType;
+  const targetModule = getData(getLayerElementByName(baseLayerName)!, 'module') as LayerModuleType;
   const isPrinting = printingModules.has(targetModule);
   const shouldShowAlert = layerNames.some((layerName) => {
-    const module = getData(getLayerElementByName(layerName), 'module')!;
+    const module = getData(getLayerElementByName(layerName)!, 'module')!;
 
     return printingModules.has(module) !== isPrinting;
   });

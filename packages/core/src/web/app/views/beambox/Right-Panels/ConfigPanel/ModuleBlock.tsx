@@ -31,7 +31,7 @@ const ModuleBlock = (): React.ReactNode => {
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);
   const layers = useMemo(
-    () => (supportedModules.length <= 1 ? null : selectedLayers.map((layerName) => getLayerElementByName(layerName))),
+    () => (supportedModules.length <= 1 ? null : selectedLayers.map((layerName) => getLayerElementByName(layerName)!)),
     [selectedLayers, supportedModules],
   );
 
