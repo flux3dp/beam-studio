@@ -150,38 +150,31 @@ export const createLayer = (
     parentCmd?: IBatchCommand;
   } = {},
 ): { layer: SVGGElement; name: string } => {
-  const drawing = svgCanvas.getCurrentDrawing();
   const { addToHistory = true, hexCode, initConfig, isFullColor = false, parentCmd } = opts || {};
-  const newLayer = drawing.createLayer(name);
-  const finalName = getLayerName(newLayer);
+  const batchCmd = new history.BatchCommand('Create Layer');
+  const newLayer = layerManager.createLayer(name, { parentCmd: batchCmd })!;
+  const layerElement = newLayer.getGroup();
+  const finalName = newLayer.getName();
 
-  if (initConfig) initLayerConfig(newLayer);
+  if (initConfig) initLayerConfig(layerElement);
 
-  if (drawing.layer_map[finalName]) {
-    if (name && /^#([0-9a-f]{3}){1,2}$/i.test(name)) {
-      drawing.layer_map[finalName].setColor(name);
-    } else if (hexCode) {
-      drawing.layer_map[finalName].setColor(hexCode);
-    } else {
-      drawing.layer_map[finalName].setColor(randomColor.getColor());
-    }
-
-    if (isFullColor) {
-      drawing.layer_map[finalName].setFullColor(true);
-    }
+  if (name && /^#([0-9a-f]{3}){1,2}$/i.test(name)) {
+    newLayer.setColor(name);
+  } else if (hexCode) {
+    newLayer.setColor(hexCode);
+  } else {
+    newLayer.setColor(randomColor.getColor());
   }
 
-  const batchCmd = new history.BatchCommand('Create Layer');
-
-  batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
+  if (isFullColor) newLayer.setFullColor(true);
 
   if (parentCmd) parentCmd.addSubCommand(batchCmd);
   else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
 
-  updateLayerColorFilter(newLayer);
-  svgCanvas.clearSelection();
+  updateLayerColorFilter(layerElement);
+  svgCanvas?.clearSelection();
 
-  return { layer: newLayer, name: finalName };
+  return { layer: layerElement, name: finalName };
 };
 
 export const cloneLayer = (

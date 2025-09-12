@@ -291,7 +291,10 @@ export class LayerManager {
   /**
    * Creates a new top-level layer in the drawing with the given name
    */
-  public createLayer(name?: string, addToHistory = true): null | SVGGElement {
+  public createLayer(
+    name?: string,
+    { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
+  ): Layer | null {
     // Check for duplicate name or generate new one
     if (!name || name === '' || this.layerMap.has(name)) {
       name = this.getNewLayerName(Array.from(this.layerMap.keys()), name || 'Layer');
@@ -303,16 +306,17 @@ export class LayerManager {
 
     if (!group) return null;
 
+    const cmd = new InsertElementCommand(group, `Create Layer: ${name}`);
+
     // Add to history
-    if (addToHistory) {
-      undoManager.addCommandToHistory(new InsertElementCommand(group, `Create Layer: ${name}`));
-    }
+    if (parentCmd) parentCmd.addSubCommand(cmd);
+    else if (addToHistory) undoManager.addCommandToHistory(cmd);
 
     this.allLayers.push(layer);
     this.layerMap.set(name, layer);
     this.currentLayer = layer;
 
-    return group;
+    return layer;
   }
 
   /**
