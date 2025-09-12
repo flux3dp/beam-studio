@@ -47,9 +47,9 @@ export function getObjectLayer(elem: SVGElement): { elem: SVGGElement; title: st
   const origLayerName = elem.getAttribute('data-original-layer');
 
   if (origLayerName) {
-    const origLayer = layerManager.getLayerByName(origLayerName);
+    const origLayer = layerManager.getLayerElementByName(origLayerName);
 
-    if (origLayer) return { elem: origLayer.getGroup(), title: origLayerName };
+    if (origLayer) return { elem: origLayer, title: origLayerName };
   }
 
   return null;
@@ -522,9 +522,7 @@ export const highlightLayer = (layerName?: string): void => {
 };
 
 export const getLayerByName = (layerName: string): null | SVGGElement => {
-  const layerObject = layerManager.getLayerByName(layerName);
-
-  return layerObject?.getGroup() ?? null;
+  return layerManager.getLayerElementByName(layerName);
 };
 
 export const moveToOtherLayer = (destLayer: string, callback: () => void, showAlert = true): void => {

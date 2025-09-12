@@ -66,7 +66,7 @@ export const deleteLayers = (layerNames: string[]): void => {
 
 export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCommand } = {}): ICommand | null => {
   const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
-  const layer = layerManager.getLayerByName(defaultLayerName)?.getGroup();
+  const layer = layerManager.getLayerElementByName(defaultLayerName);
   const layerCount = layerManager.getNumLayers();
 
   if (layer && layerCount > 1) {
