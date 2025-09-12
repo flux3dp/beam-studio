@@ -13,6 +13,7 @@ import type { PrintingColors } from '@core/app/constants/color-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -127,7 +128,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   };
 
   const handleMergeSelected = async () => {
-    const currentLayerName = drawing.getCurrentLayerName()!;
+    const currentLayerName = layerManager.getCurrentLayerName()!;
     const baseLayer = await mergeLayers(selectedLayers, currentLayerName);
 
     if (!baseLayer) {

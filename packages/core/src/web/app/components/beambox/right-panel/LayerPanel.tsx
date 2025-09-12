@@ -152,8 +152,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
   renameLayer = (): void => {
     const { setSelectedLayers } = this.context;
-    const drawing = svgCanvas.getCurrentDrawing();
-    const oldName = drawing.getCurrentLayerName()!;
+    const oldName = layerManager.getCurrentLayerName()!;
     const lang = i18n.lang.beambox.right_panel.layer_panel;
 
     Dialog.promptDialog({
@@ -185,8 +184,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
       return;
     }
 
-    const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayerName = drawing.getCurrentLayerName();
+    const currentLayerName = layerManager.getCurrentLayerName();
 
     if (currentLayerName) {
       const { setSelectedLayers } = this.context;
@@ -224,10 +222,9 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   toggleContiguousSelectedUntil = (layerName: string): void => {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayer: string = drawing.getCurrentLayerName()!;
+    const currentLayer = layerManager.getCurrentLayerName()!;
 
-    const allLayers: string[] = drawing.all_layers?.map((layer) => layer.name_) ?? [];
+    const allLayers = layerManager.getAllLayerNames();
     let [startIndex, endIndex] = [-1, -1];
 
     for (let i = 0; i < allLayers.length; i += 1) {

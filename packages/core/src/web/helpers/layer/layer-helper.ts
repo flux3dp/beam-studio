@@ -485,8 +485,7 @@ const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
 
 export const moveLayersToPosition = (layerNames: string[], newPosition: number): void => {
   const batchCmd = new history.BatchCommand('Move Layer(s)');
-  const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName()!;
+  const currentLayerName = layerManager.getCurrentLayerName()!;
 
   sortLayerNamesByPosition(layerNames);
 

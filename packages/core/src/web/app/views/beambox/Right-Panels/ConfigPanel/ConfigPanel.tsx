@@ -109,8 +109,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   useEffect(() => {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayerName = drawing.getCurrentLayerName()!;
+    const currentLayerName = layerManager.getCurrentLayerName();
 
     if (UIType === 'modal') setSelectedLayers([currentLayerName]);
     else setSelectedLayers(initLayers);

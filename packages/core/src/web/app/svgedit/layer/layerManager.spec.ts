@@ -236,7 +236,7 @@ describe('LayerManager', () => {
     });
 
     it('should not add to history when addToHistory is false', () => {
-      layerManager.createLayer('Test Layer', false);
+      layerManager.createLayer('Test Layer');
 
       expect(mockAddCommandToHistory).not.toHaveBeenCalled();
     });
@@ -244,9 +244,9 @@ describe('LayerManager', () => {
 
   describe('layer management', () => {
     beforeEach(() => {
-      layerManager.createLayer('Layer 1', false);
-      layerManager.createLayer('Layer 2', false);
-      layerManager.createLayer('Layer 3', false);
+      layerManager.createLayer('Layer 1');
+      layerManager.createLayer('Layer 2');
+      layerManager.createLayer('Layer 3');
     });
 
     it('should switch current layer', () => {
@@ -276,16 +276,11 @@ describe('LayerManager', () => {
       expect(layerManager.getLayerName(2)).toBe('Layer 3');
       expect(layerManager.getLayerName(10)).toBe('');
     });
-
-    it('should get current layer position', () => {
-      layerManager.setCurrentLayer('Layer 2');
-      expect(layerManager.getCurrentLayerPosition()).toBe(1);
-    });
   });
 
   describe('layer properties', () => {
     beforeEach(() => {
-      layerManager.createLayer('Test Layer', false);
+      layerManager.createLayer('Test Layer');
     });
 
     it('should set and get layer opacity', () => {
@@ -310,7 +305,7 @@ describe('LayerManager', () => {
 
   describe('layer renaming', () => {
     beforeEach(() => {
-      layerManager.createLayer('Original Name', false);
+      layerManager.createLayer('Original Name');
     });
 
     it('should rename current layer', () => {
@@ -325,9 +320,9 @@ describe('LayerManager', () => {
 
   describe('layer ordering', () => {
     beforeEach(() => {
-      layerManager.createLayer('Layer 1', false);
-      layerManager.createLayer('Layer 2', false);
-      layerManager.createLayer('Layer 3', false);
+      layerManager.createLayer('Layer 1');
+      layerManager.createLayer('Layer 2');
+      layerManager.createLayer('Layer 3');
     });
 
     it('should move layer to new position', () => {
@@ -408,8 +403,8 @@ describe('LayerManager', () => {
 
   describe('utility methods', () => {
     beforeEach(() => {
-      layerManager.createLayer('Layer 1', false);
-      layerManager.createLayer('Layer 2', false);
+      layerManager.createLayer('Layer 1');
+      layerManager.createLayer('Layer 2');
     });
 
     it('should get all layers', () => {

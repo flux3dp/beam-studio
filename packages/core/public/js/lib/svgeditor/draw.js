@@ -292,35 +292,6 @@
         return layer ? layer.getGroup() : null;
     };
 
-    /**
-     * Returns the name of the currently selected layer. If an error occurs, an empty string
-     * is returned.
-     * @returns {string} The name of the currently active layer (or the empty string if none found).
-    */
-    svgedit.draw.Drawing.prototype.getCurrentLayerName = function () {
-        return this.current_layer ? this.current_layer.getName() : '';
-    };
-
-    /**
-     * Get the current layer's position.
-     * @returns {number}  The zero-based index of current layer position.
-     */
-    svgedit.draw.Drawing.prototype.getCurrentLayerPosition = function () {
-        var layer_count = this.getNumLayers();
-        if (!this.current_layer) {
-            return null;
-        }
-
-        let pos;
-        for (pos = 0; pos < layer_count; ++pos) {
-            if (this.all_layers[pos] === this.current_layer) { break; }
-        }
-        // some unknown error condition (current_layer not in all_layers)
-        if (pos == layer_count) { return null; }
-
-        return pos;
-    };
-
     svgedit.draw.Drawing.prototype.mergeLayer = function (hrService) {
         var current_group = this.current_layer.getGroup();
         var prevGroup = $(current_group).prev()[0];
@@ -355,38 +326,6 @@
         }
 
         hrService.endBatchCommand();
-    };
-
-    /**
-     * Creates a new top-level layer in the drawing with the given name and
-     * makes it the current layer.
-     * @param {string} name - The given name. If the layer name exists, a new name will be generated.
-     * @param {svgedit.history.HistoryRecordingService} hrService - History recording service
-     * @returns {SVGGElement} The SVGGElement of the new layer, which is
-     * 		also the current layer of this drawing.
-    */
-    svgedit.draw.Drawing.prototype.createLayer = function (name, hrService) {
-        if (this.current_layer) {
-            this.current_layer.deactivate();
-        }
-        // Check for duplicate name.
-        if (name === undefined || name === null || name === '' || this.layer_map[name]) {
-            name = getNewLayerName(Object.keys(this.layer_map), name || 'Layer');
-        }
-
-        // Crate new layer and add to DOM as last layer
-        var layer = new svgedit.draw.Layer(name, null, this.svgElem_);
-        // Like to assume hrService exists, but this is backwards compatible with old version of createLayer.
-        if (hrService) {
-            hrService.startBatchCommand('Create Layer');
-            hrService.insertElement(layer.getGroup());
-            hrService.endBatchCommand();
-        }
-
-        this.all_layers.push(layer);
-        this.layer_map[name] = layer;
-        this.current_layer = layer;
-        return layer.getGroup();
     };
 
     /**
