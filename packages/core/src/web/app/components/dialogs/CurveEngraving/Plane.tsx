@@ -4,7 +4,7 @@ import { useLoader, useThree } from '@react-three/fiber';
 import Delaunator from 'delaunator';
 import * as THREE from 'three';
 
-import type { CurveEngraving as ICurveEngraving } from '@core/interfaces/ICurveEngraving';
+import type { CurveEngraving as ICurveEngraving, Point } from '@core/interfaces/ICurveEngraving';
 
 interface PlaneProps {
   data: ICurveEngraving;
@@ -31,7 +31,11 @@ const Plane = ({
   const { camera, gl, scene } = useThree();
   const flattened = useMemo(
     // reverse y axis and z axis due to different coordinate system, swift half width and height to keep in the center
-    () => points.flat().map((p) => [p[0] - bboxX - 0.5 * width, 0.5 * height - (p[1] - bboxY), p[2] ? -p[2] : p[2]]),
+    () =>
+      points
+        .flat()
+        .map((p) => [p[0] - (p[3] ?? 0), p[1] - (p[4] ?? 0), p[2]] as Point)
+        .map((p) => [p[0] - bboxX - 0.5 * width, 0.5 * height - (p[1] - bboxY), p[2] ? -p[2] : p[2]]),
     [points, bboxX, bboxY, width, height],
   ) as Array<[number, number, null | number]>;
   const filteredPoints = useMemo(() => flattened.filter((p) => p[2] !== null), [flattened]) as Array<
@@ -122,7 +126,7 @@ const Plane = ({
       }
 
       return (
-        <mesh key={i} position={[x, y, z ?? -highest]} userData={{ index: i, isSphere: true }}>
+        <mesh key={i} position={[x, y, z ?? -(highest ?? 0)]} userData={{ index: i, isSphere: true }}>
           <sphereGeometry args={[size, 16, 16]} />
           <meshBasicMaterial color={color} opacity={0.7} transparent />
         </mesh>

@@ -3,7 +3,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import type { CurveMeasurer, InteractiveOptions } from '@core/interfaces/CurveMeasurer';
+import type { CurveMeasurer, InteractiveOptions, MeasurePointData } from '@core/interfaces/CurveMeasurer';
 import type { MeasureData } from '@core/interfaces/ICurveEngraving';
 
 import BaseCurveMeasurer from './base';
@@ -108,10 +108,10 @@ export default class RedLightCurveMeasurer extends BaseCurveMeasurer implements 
     }
   };
 
-  measurePoint = async (x: number, y: number, feedrate: number): Promise<null | number> => {
-    const z = await deviceMaster.measureZ({ F: feedrate, X: x, Y: y });
+  measurePoint = async (x: number, y: number, feedrate: number): Promise<MeasurePointData> => {
+    const data = await deviceMaster.measureZ({ F: feedrate, X: x, Y: y });
 
-    return z;
+    return data;
   };
 
   override async measurePoints(

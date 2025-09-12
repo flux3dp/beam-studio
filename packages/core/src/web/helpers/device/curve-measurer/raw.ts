@@ -1,6 +1,6 @@
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
+import type { CurveMeasurer, MeasurePointData } from '@core/interfaces/CurveMeasurer';
 
 import BaseCurveMeasurer from './base';
 
@@ -49,7 +49,7 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
     offset?: [number, number, number],
     objectHeight?: number,
     lowest: null | number = null,
-  ): Promise<null | number> => {
+  ): Promise<MeasurePointData> => {
     const target = offset ? [Math.max(x - offset[0], 0), Math.max(y - offset[1], 0)] : [x, y];
     const [targetX, targetY] = target;
 
@@ -67,6 +67,6 @@ export default class RawModeCurveMeasurer extends BaseCurveMeasurer implements C
       lowest === null ? { relZ: objectHeight } : { baseZ: Math.max(lowest - objectHeight!, 0) },
     );
 
-    return z;
+    return { height: z };
   };
 }
