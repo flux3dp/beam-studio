@@ -44,7 +44,6 @@ const sliceWorkarea = async (
   const workarea = useDocumentStore.getState().workarea;
   const workareaObj = getWorkarea(workarea);
   const batchCmd = new history.BatchCommand('Slice Workarea');
-  const currentDrawing = svgCanvas.getCurrentDrawing();
   const sliceHeightPx = sliceHeight * dpmm;
   const defs = findDefs();
   const { height: workareaHeight, width } = workareaManager;
