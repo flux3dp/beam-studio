@@ -118,6 +118,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
       const isBeamo = model === 'fbm1';
       const isBb2 = model === 'fbb2';
       const isBeamo2 = model === 'fbm2';
+      const isHexa2 = model.startsWith('fhx2');
 
       // Note: SubMenu doesn't support a React.Fragment wrapper (<>...</>) as a child.
       submenus.push(
@@ -140,7 +141,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_BEAMBOX_CAMERA', device)}>
               {menuCms.calibrate_beambox_camera} {isMobile && '(PC Only)'}
             </MenuItem>
-            {(isBb2 || isBeamo2) && (
+            {(isBb2 || isBeamo2 || isHexa2) && (
               <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_CAMERA_ADVANCED', device)}>
                 {menuCms.calibrate_camera_advanced} {isMobile && '(PC Only)'}
               </MenuItem>

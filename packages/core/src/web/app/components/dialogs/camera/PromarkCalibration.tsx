@@ -3,16 +3,13 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import { Segmented } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
-import checkCamera from '@core/helpers/device/check-camera';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
 import promarkDataStore from '@core/helpers/device/promark/promark-data-store';
 import deviceMaster from '@core/helpers/device-master';
-import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -264,40 +261,6 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
   onClose();
 
   return <></>;
-};
-
-export const showPromarkCalibration = async (device: IDeviceInfo): Promise<boolean> => {
-  const id = 'promark-calibration';
-  const onClose = () => popDialogById(id);
-
-  if (isIdExist(id)) {
-    onClose();
-  }
-
-  const cameraStatus = await checkCamera(device);
-
-  if (!cameraStatus) {
-    alertCaller.popUp({
-      caption: i18n.lang.alert.oops,
-      message: i18n.lang.web_cam.no_device,
-      messageIcon: 'warning',
-    });
-
-    return false;
-  }
-
-  return new Promise<boolean>((resolve) => {
-    addDialogComponent(
-      id,
-      <PromarkCalibration
-        device={device}
-        onClose={(completed = false) => {
-          onClose();
-          resolve(completed);
-        }}
-      />,
-    );
-  });
 };
 
 export default PromarkCalibration;

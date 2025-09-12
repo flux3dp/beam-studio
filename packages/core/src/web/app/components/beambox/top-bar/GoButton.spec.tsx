@@ -108,12 +108,6 @@ jest.mock(
       mockGetDevice(...args),
 );
 
-const mockShowModuleCalibration = jest.fn();
-
-jest.mock('@core/app/components/dialogs/camera/ModuleCalibration', () => ({
-  showAdorCalibration: (...args) => mockShowModuleCalibration(...args),
-}));
-
 const mockSetStatus = jest.fn();
 const mockHandleFinish = jest.fn();
 const mockSetExportFn = jest.fn();

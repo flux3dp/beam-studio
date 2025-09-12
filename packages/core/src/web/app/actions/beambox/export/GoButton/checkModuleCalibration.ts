@@ -1,6 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
-import { showModuleCalibration } from '@core/app/components/dialogs/camera/ModuleCalibration';
+import { showModuleCalibration } from '@core/app/components/dialogs/camera';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';

@@ -76,6 +76,14 @@ const hexaRfAddOnInfo: AddOnInfo = {
         rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
       }
     : undefined,
+  rotary: {
+    chuck: true,
+    chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,
+    defaultMirror: true,
+    extendWorkarea: true,
+    mirror: true,
+    roller: true,
+  },
 };
 
 const addOnData: Record<WorkAreaModel, AddOnInfo> = {

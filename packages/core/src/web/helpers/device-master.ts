@@ -921,6 +921,10 @@ class DeviceMaster {
     await this.doCalibration({ fcodeSource: fileName });
   }
 
+  async doHexa2Calibration() {
+    await this.doCalibration({ fcodeSource: 'fcode/hx2-calibration.fc' });
+  }
+
   async doBeamo2Calibration() {
     await this.doCalibration({ fcodeSource: 'fcode/bm2-calibration.fc' });
   }
@@ -1643,8 +1647,10 @@ class DeviceMaster {
     }
   }
 
-  getCameraCount() {
-    return this.currentDevice?.camera?.getCameraCount() || { data: 'Failed to get camera count', success: false };
+  async getCameraCount() {
+    const res = await this.currentDevice?.camera?.getCameraCount();
+
+    return res ?? { data: 'Failed to get camera count', success: false };
   }
 
   setCamera(index: number) {

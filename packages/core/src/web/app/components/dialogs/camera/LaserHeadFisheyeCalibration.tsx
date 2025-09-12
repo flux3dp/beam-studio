@@ -8,15 +8,15 @@ import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
-import styles from '../../Calibration.module.scss';
-import Calibration from '../../common/Calibration';
-import CheckPnP from '../../common/CheckPnP';
-import CheckpointData from '../../common/CheckpointData';
-import downloadCalibrationFile from '../../common/downloadCalibrationFile';
-import Instruction from '../../common/Instruction';
-import moveLaserHead from '../../common/moveLaserHead';
-import SolvePnP from '../../common/SolvePnP';
-import { bb2PerspectiveGrid, bb2PnPPoints } from '../../common/solvePnPConstants';
+import styles from './Calibration.module.scss';
+import Calibration from './common/Calibration';
+import CheckPnP from './common/CheckPnP';
+import CheckpointData from './common/CheckpointData';
+import downloadCalibrationFile from './common/downloadCalibrationFile';
+import Instruction from './common/Instruction';
+import moveLaserHead from './common/moveLaserHead';
+import SolvePnP from './common/SolvePnP';
+import { bb2PerspectiveGrid, bb2PnPPoints } from './common/solvePnPConstants';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
@@ -35,12 +35,12 @@ interface Props {
   onClose: (completed?: boolean) => void;
 }
 
-const PROGRESS_ID = 'bb2-calibration';
+const PROGRESS_ID = 'laser-head-fisheye-calibration';
 /**
- * LaserHead
- * calibration the camera on the laser head of BB2
+ * LaserHeadFisheye
+ * calibration the fisheye camera on the laser head (bb2, hexa rf)
  */
-const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
+const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
   const tCali = lang.calibration;
   const calibratingParam = useRef<FisheyeCameraParametersV3Cali>({});
@@ -120,7 +120,7 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
 
   if (step === Steps.PUT_PAPER) {
     const handleNext = async (doEngraving = true) => {
-      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
       if (!deviceStatus) {
         return;
@@ -133,7 +133,8 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
         });
 
         if (doEngraving) {
-          await deviceMaster.doBB2Calibration();
+          if (deviceMaster.currentDevice!.info.model.startsWith('fhx2')) await deviceMaster.doHexa2Calibration();
+          else await deviceMaster.doBB2Calibration();
         }
 
         progressCaller.update(PROGRESS_ID, { message: tCali.preparing_to_take_picture });
@@ -259,4 +260,4 @@ const LaserHead = ({ isAdvanced, onClose }: Props): React.JSX.Element => {
   return <></>;
 };
 
-export default LaserHead;
+export default LaserHeadFisheyeCalibration;
