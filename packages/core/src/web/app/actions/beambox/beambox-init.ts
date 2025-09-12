@@ -1,12 +1,11 @@
 import Alert from '@core/app/actions/alert-caller';
 import { migrate } from '@core/app/actions/beambox/beambox-preference';
-import Constant from '@core/app/actions/beambox/constant';
 import Tutorials from '@core/app/actions/beambox/tutorials';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import tabController from '@core/app/actions/tabController';
-import { showAdorCalibrationV2, showLaserHeadFisheyeCalibration } from '@core/app/components/dialogs/camera';
+import { calibrateCamera } from '@core/app/components/dialogs/camera';
 import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
@@ -14,7 +13,6 @@ import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
-import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import alertHelper from '@core/helpers/alert-helper';
 import announcementHelper from '@core/helpers/announcement-helper';
 import aiExtension from '@core/helpers/api/ai-extension';
@@ -23,7 +21,6 @@ import cloud from '@core/helpers/api/cloud';
 import { discoverManager } from '@core/helpers/api/discover';
 import fluxId, { recordMachines } from '@core/helpers/api/flux-id';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
-import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
 import getDevice from '@core/helpers/device/get-device';
 import fontHelper from '@core/helpers/fonts/fontHelper';
@@ -237,40 +234,15 @@ class BeamboxInit {
 
     const { device } = await getDevice();
 
-    if (!device) {
-      return false;
-    }
-
-    let res: boolean;
+    if (!device) return false;
 
     try {
-      const deviceStatus = await checkDeviceStatus(device);
-
-      if (!deviceStatus) {
-        return false;
-      }
-
-      if (Constant.adorModels.includes(device.model)) {
-        const caliRes = await showAdorCalibrationV2();
-
-        return caliRes;
-      }
-
-      if (device.model === 'fbb2') {
-        const caliRes = await showLaserHeadFisheyeCalibration();
-
-        return caliRes;
-      }
-
-      const caliRes = await showCameraCalibration(device, false);
-
-      return caliRes;
+      return await calibrateCamera(device);
     } catch (e) {
       console.error(e);
-      res = await askForRetry();
-    }
 
-    return res;
+      return await askForRetry();
+    }
   }
 
   private showTutorial(isNewUser: boolean): Promise<boolean> {

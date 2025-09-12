@@ -1,11 +1,17 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
+import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkCamera from '@core/helpers/device/check-camera';
+import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import AdorCalibrationV2 from './AdorCalibrationV2';
+import { showBB2WideAngleCameraCalibration } from './BB2Calibration';
+import { showBeamo2Calibration } from './beamo2Calibration';
 import LaserHeadFisheyeCalibration from './LaserHeadFisheyeCalibration';
 import ModuleCalibration from './ModuleCalibration';
 import PromarkCalibration from './PromarkCalibration';
@@ -106,4 +112,46 @@ export const showAdorCalibrationV2 = async (factoryMode = false): Promise<boolea
       />,
     );
   });
+};
+
+export const calibrateCamera = async (
+  device: IDeviceInfo,
+  {
+    factoryMode = false,
+    isAdvanced = false,
+    isBorderless = false,
+    isWideAngle = false,
+  }: { factoryMode?: boolean; isAdvanced?: boolean; isBorderless?: boolean; isWideAngle?: boolean } = {},
+): Promise<boolean> => {
+  try {
+    const deviceStatus = await checkDeviceStatus(device);
+
+    if (!deviceStatus) {
+      return false;
+    }
+
+    const res = await deviceMaster.select(device);
+
+    if (res.success) {
+      if (constant.adorModels.includes(device.model)) {
+        return showAdorCalibrationV2(factoryMode);
+      } else if (device.model === 'fbb2') {
+        if (isWideAngle) return showBB2WideAngleCameraCalibration(device);
+        else return showLaserHeadFisheyeCalibration(isAdvanced);
+      } else if (device.model.startsWith('fhx2')) {
+        return showLaserHeadFisheyeCalibration(isAdvanced);
+      } else if (promarkModels.has(device.model)) {
+        return showPromarkCalibration(device);
+      } else if (device.model === 'fbm2') {
+        return showBeamo2Calibration(isAdvanced);
+      }
+
+      return showCameraCalibration(device, isBorderless);
+    }
+
+    return false;
+  } catch (error) {
+    console.error(error);
+    throw error;
+  }
 };

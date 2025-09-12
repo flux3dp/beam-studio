@@ -7,23 +7,15 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
-import {
-  showAdorCalibrationV2,
-  showLaserHeadFisheyeCalibration,
-  showModuleCalibration,
-  showPromarkCalibration,
-} from '@core/app/components/dialogs/camera';
-import { showBB2WideAngleCameraCalibration } from '@core/app/components/dialogs/camera/BB2Calibration';
-import { showBeamo2Calibration } from '@core/app/components/dialogs/camera/beamo2Calibration';
+import { calibrateCamera } from '@core/app/components/dialogs/camera';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartridge';
-import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import type { DetectedLayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
-import { showCameraCalibration } from '@core/app/views/beambox/Camera-Calibration';
 import { showDiodeCalibration } from '@core/app/views/beambox/Diode-Calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkFirmware from '@core/helpers/checkFirmware';
@@ -38,65 +30,6 @@ import { extractVariableText } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-
-const calibrateCamera = async (
-  device: IDeviceInfo,
-  {
-    factoryMode = false,
-    isAdvanced = false,
-    isBorderless = false,
-    isWideAngle = false,
-  }: { factoryMode?: boolean; isAdvanced?: boolean; isBorderless?: boolean; isWideAngle?: boolean } = {},
-) => {
-  try {
-    const deviceStatus = await checkDeviceStatus(device);
-
-    if (!deviceStatus) {
-      return;
-    }
-
-    const res = await DeviceMaster.select(device);
-
-    if (res.success) {
-      if (constant.adorModels.includes(device.model)) {
-        showAdorCalibrationV2(factoryMode);
-      } else if (device.model === 'fbb2') {
-        if (isWideAngle) showBB2WideAngleCameraCalibration(device);
-        else showLaserHeadFisheyeCalibration(isAdvanced);
-      } else if (device.model.startsWith('fhx2')) {
-        showLaserHeadFisheyeCalibration(isAdvanced);
-      } else if (promarkModels.has(device.model)) {
-        showPromarkCalibration(device);
-      } else if (device.model === 'fbm2') {
-        showBeamo2Calibration(isAdvanced);
-      } else {
-        showCameraCalibration(device, isBorderless);
-      }
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
-
-const calibrateModule = async (device: IDeviceInfo, module?: LayerModuleType) => {
-  if (!checkIsAtEditor()) return;
-
-  try {
-    const deviceStatus = await checkDeviceStatus(device);
-
-    if (!deviceStatus) {
-      return;
-    }
-
-    const res = await DeviceMaster.select(device);
-
-    if (res.success) {
-      showModuleCalibration(module);
-    }
-  } catch (error) {
-    console.error(error);
-  }
-};
 
 export const executeFirmwareUpdate = async (device: IDeviceInfo): Promise<void> => {
   const { lang } = i18n;
