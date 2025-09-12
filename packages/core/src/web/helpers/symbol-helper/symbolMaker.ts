@@ -5,6 +5,7 @@
 import Progress from '@core/app/actions/progress-caller';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -130,8 +131,7 @@ const makeSymbol = (
   }
 
   // If import by layer but no valid layer available, use current layer
-  const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName()!;
+  const currentLayerName = layerManager.getCurrentLayerName()!;
 
   if (type === 'layer' && !symbol.getAttribute('data-id')) {
     symbol.setAttribute('data-id', currentLayerName);

@@ -6,20 +6,6 @@ import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 import ExportButton from './ExportButton';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  boxgen: {
-    beam_radius: 'Kerf compensation',
-    beam_radius_warning:
-      'Remove Kerf compensation when the edges or joints of the box are short to ensure box assembly',
-    cancel: 'Cancel',
-    continue_import: 'Continue to Import',
-    customize: 'Customize',
-    import: 'Import',
-    merge: 'Merge',
-    text_label: 'Label',
-  },
-}));
-
 jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext(null),
 }));
@@ -48,18 +34,12 @@ jest.mock(
       mockImportSvgString(...args),
 );
 
-const mockSetLayerVisibility = jest.fn();
+const mockGetAllLayers = jest.fn();
+const mockGetLayerByName = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        getCurrentDrawing: () => ({
-          all_layers: [{ name_: 'Box 1' }, { name_: 'Box 2-1' }],
-          setLayerVisibility: (...args) => mockSetLayerVisibility(...args),
-        }),
-      },
-    }),
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayers: (...args) => mockGetAllLayers(...args),
+  getLayerByName: (...args) => mockGetLayerByName(...args),
 }));
 
 const mockDisassembleUse = jest.fn();
@@ -87,7 +67,32 @@ jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
 const mockOnClose = jest.fn();
 const mockData = {};
 
+// Mock layer objects that will be returned by getLayerByName
+const mockNewLayer1 = { setVisible: jest.fn() };
+const mockNewLayer2 = { setVisible: jest.fn() };
+
 describe('test ExportButton', () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    // Mock the existing layers
+    const mockLayer1 = {
+      getName: jest.fn().mockReturnValue('Box 1'),
+      setVisible: jest.fn(),
+    };
+    const mockLayer2 = {
+      getName: jest.fn().mockReturnValue('Box 2-1'),
+      setVisible: jest.fn(),
+    };
+
+    // Reset mock return values that were cleared
+    mockWrapSVG.mockReturnValue('mock-svg');
+    mockImportSvgString.mockResolvedValue('mock-svg-object');
+    mockCreateBatchCommand.mockImplementation(() => mockBatchCommand);
+    mockGetAllLayers.mockReturnValue([mockLayer1, mockLayer2]);
+    mockGetLayerByName.mockReturnValueOnce(mockNewLayer1).mockReturnValueOnce(mockNewLayer2);
+  });
+
   test('should behave correctly', async () => {
     const { baseElement, container } = render(
       <BoxgenContext.Provider
@@ -203,9 +208,12 @@ describe('test ExportButton', () => {
         skipConfirm: true,
       },
     );
-    expect(mockSetLayerVisibility).toHaveBeenCalledTimes(2);
-    expect(mockSetLayerVisibility).toHaveBeenNthCalledWith(1, 'Box 3-2', false);
-    expect(mockSetLayerVisibility).toHaveBeenNthCalledWith(2, 'Box 3-2 Label', false);
+    expect(mockGetLayerByName).toHaveBeenCalledWith('Box 3-2');
+    expect(mockGetLayerByName).toHaveBeenCalledWith('Box 3-2 Label');
+    expect(mockNewLayer1.setVisible).toHaveBeenCalledTimes(1);
+    expect(mockNewLayer1.setVisible).toHaveBeenCalledWith(false, { addToHistory: false });
+    expect(mockNewLayer2.setVisible).toHaveBeenCalledTimes(1);
+    expect(mockNewLayer2.setVisible).toHaveBeenCalledWith(false, { addToHistory: false });
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 });

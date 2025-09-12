@@ -101,7 +101,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
         const element = elements.pop() as SVGImageElement;
 
         if (element.tagName === 'g' && element.getAttribute('data-textpath-g') !== '1') {
-          const { batchCmd, children } = ungroupElement(element);
+          const { batchCmd, children } = ungroupElement(element)!;
 
           parentCmd.addSubCommand(batchCmd);
 

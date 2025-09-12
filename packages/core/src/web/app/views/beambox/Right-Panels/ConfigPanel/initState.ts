@@ -1,20 +1,13 @@
 import { pipe } from 'remeda';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { getLayerConfig, getLayersConfig } from '@core/helpers/layer/layer-config-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import LayerPanelController from '../contexts/LayerPanelController';
 
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
-
 export const initState = (layers: string[] = LayerPanelController.getSelectedLayers()) => {
-  if (layers.length === 0) layers = [svgCanvas.getCurrentDrawing().getCurrentLayerName()!];
+  if (layers.length === 0) layers = [layerManager.getCurrentLayerName()!];
 
   const { update } = useConfigPanelStore.getState();
 
@@ -25,8 +18,7 @@ export const initState = (layers: string[] = LayerPanelController.getSelectedLay
   }
 
   pipe(
-    svgCanvas.getCurrentDrawing(),
-    (drawing) => drawing.getCurrentLayerName(),
+    layerManager.getCurrentLayerName(),
     (currentLayerName) => getLayersConfig(layers, currentLayerName!),
     (payload) => update(payload),
   );

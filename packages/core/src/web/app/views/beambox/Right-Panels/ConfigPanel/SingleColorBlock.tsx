@@ -31,7 +31,7 @@ const SingleColorBlock = (): React.JSX.Element => {
     change({ fullcolor: newVal });
 
     let colorChanged = false;
-    const layers = selectedLayers.map((layerName) => getLayerByName(layerName));
+    const layers = selectedLayers.map((layerName) => getLayerByName(layerName)!);
 
     layers.forEach((layer) => {
       if (getData(layer, 'fullcolor') === newVal) {

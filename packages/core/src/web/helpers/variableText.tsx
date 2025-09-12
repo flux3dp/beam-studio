@@ -21,6 +21,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
 import i18n from '@core/helpers/i18n';
@@ -173,10 +174,9 @@ const updateContent = async (
       if (svg) {
         let newElem: SVGElement;
         const isInvert = elem.getAttribute('data-invert') === 'true';
-        const drawing = svgCanvas.getCurrentDrawing();
         const layer = getObjectLayer(elem);
 
-        drawing.setCurrentLayer(layer.title);
+        layerManager.setCurrentLayer(layer.title);
 
         if (isQrCode) {
           newElem = await importQrCodeSvgElement(svg, isInvert, { batchCmd, hidden: true });

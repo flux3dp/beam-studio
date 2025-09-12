@@ -65,7 +65,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change power');
-      const layers = selectedLayers.map((layerName) => getLayerByName(layerName));
+      const layers = selectedLayers.map((layerName) => getLayerByName(layerName)!);
       let minPowerChanged = false;
 
       layers.forEach((layer) => {

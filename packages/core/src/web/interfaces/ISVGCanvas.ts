@@ -109,7 +109,6 @@ export default interface ISVGCanvas {
   groupSelectedElements: (isSubCmd?: boolean) => void | { command: BaseHistoryCommand; group: SVGGElement };
   groupSvgElem: (elem: SVGElement) => void;
   handleGenerateSensorArea: (evt: MouseEvent) => void;
-  identifyLayers: () => void;
   importSvgString(
     xmlString: string,
     args: {
@@ -122,8 +121,6 @@ export default interface ISVGCanvas {
   isAutoAlign: boolean;
   isElemFillable: (elem: Element) => boolean;
   leaveContext: () => void;
-  mergeAllLayers: () => void;
-  mergeLayer: () => void;
   moveDownSelectedElement(): void;
   moveTopBottomSelected(direction: 'bottom' | 'top'): void;
   moveUpSelectedElement(): void;
@@ -155,7 +152,6 @@ export default interface ISVGCanvas {
   setConfig(curConfig: ISVGConfig): void;
   setContentElem: (content: Element) => void;
   setContext(element: Element): void;
-  setCurrentLayer: (layerName: string) => boolean;
   setCurrentResizeMode: (mode: string) => void;
   setCurrentStyleProperties: (key: string, val: number | string) => void;
   setElemsFill: (elems: Element[]) => void;
@@ -163,11 +159,6 @@ export default interface ISVGCanvas {
   setHref: (elem: SVGElement | SVGImageElement, href: string) => void;
   setImageURL: (url: string) => void;
   setLastClickPoint: (point: { x: number; y: number }) => void;
-  setLayerVisibility(
-    layerName: string,
-    visible: boolean,
-    opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
-  ): void;
   setMode: (mode: string) => void;
   setOpacity: (opacity: number) => void;
   setPaintOpacity: (pickerType: string, opacity: number, preventUndo?: boolean) => void;

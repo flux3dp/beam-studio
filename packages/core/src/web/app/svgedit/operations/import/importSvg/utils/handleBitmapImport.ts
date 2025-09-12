@@ -1,7 +1,8 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { removeDefaultLayerIfEmpty } from '@core/helpers/layer/deleteLayer';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import { createLayer, removeDefaultLayerIfEmpty } from '@core/helpers/layer/layer-helper';
+import { createLayer } from '@core/helpers/layer/layer-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ILang } from '@core/interfaces/ILang';
 
@@ -32,9 +33,8 @@ export async function handleBitmapImport(
       offset: outputData.bitmapOffset,
       parentCmd: batchCmd,
     });
-    const cmd = removeDefaultLayerIfEmpty();
 
-    if (cmd) batchCmd.addSubCommand(cmd);
+    removeDefaultLayerIfEmpty({ parentCmd: batchCmd });
 
     return imageElement;
   }

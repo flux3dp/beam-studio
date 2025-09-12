@@ -7,22 +7,15 @@ import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
 import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import { getLayouts } from '@core/helpers/boxgen/Layout';
 import wrapSVG from '@core/helpers/boxgen/wrapSVG';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IExportOptions } from '@core/interfaces/IBoxgen';
-import type ISVGLayer from '@core/interfaces/ISVGLayer';
 
 import styles from './ExportButton.module.scss';
-
-let svgCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const ExportDialog = ({
   setVisible,
@@ -55,11 +48,12 @@ const ExportDialog = ({
 
     const boxLayers: string[] = [];
     const newLayers: string[] = [];
-    const drawing = svgCanvas.getCurrentDrawing();
 
-    (drawing.all_layers as ISVGLayer[]).forEach((layer) => {
-      if (layer.name_.startsWith('Box ')) {
-        boxLayers.push(layer.name_.split('-')[0]);
+    layerManager.getAllLayers().forEach((layer) => {
+      const name = layer.getName();
+
+      if (name.startsWith('Box ')) {
+        boxLayers.push(name.split('-')[0]);
       }
     });
 
@@ -104,7 +98,11 @@ const ExportDialog = ({
       .filter(Boolean);
 
     await disassembleUse(elems, { parentCmd: batchCmd, showProgress: false, skipConfirm: true });
-    newLayers.slice(options.textLabel ? 2 : 1).forEach((layerName) => drawing.setLayerVisibility(layerName, false));
+    newLayers.slice(options.textLabel ? 2 : 1).forEach((layerName) => {
+      const layerObject = layerManager.getLayerByName(layerName);
+
+      layerObject?.setVisible(false, { addToHistory: false });
+    });
     undoManager.addCommandToHistory(batchCmd);
     setConfirmLoading(false);
     setVisible(false);

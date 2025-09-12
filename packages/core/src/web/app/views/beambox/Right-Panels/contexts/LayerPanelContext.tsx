@@ -65,7 +65,7 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
 
   useEffect(() => {
     const isUvPrintable = getAllLayerNames().some(
-      (layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT,
+      (layerName) => getData(getLayerElementByName(layerName)!, 'module') === LayerModule.UV_PRINT,
     );
 
     layerPanelEventEmitter.emit('updateUvPrintStatus', isUvPrintable);

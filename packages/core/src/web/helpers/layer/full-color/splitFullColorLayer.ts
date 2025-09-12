@@ -3,16 +3,14 @@ import { colorMap, PrintingColors } from '@core/app/constants/color-constants';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import isDev from '@core/helpers/is-dev';
+import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import {
-  cloneLayer,
-  deleteLayerByName,
-  getAllLayerNames,
-  getLayerElementByName,
-} from '@core/helpers/layer/layer-helper';
+import { cloneLayer, getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -36,7 +34,7 @@ const splitFullColorLayer = async (
   opts: { addToHistory?: boolean } = {},
 ): Promise<null | { cmd: IBatchCommand; newLayers: Element[] }> => {
   const { addToHistory = true } = opts;
-  const layer = getLayerElementByName(layerName);
+  const layer = getLayerElementByName(layerName)!;
   const fullColor = getData(layer, 'fullcolor');
   const ref = getData(layer, 'ref');
   const layerModule = getData(layer, 'module');
@@ -112,12 +110,12 @@ const splitFullColorLayer = async (
       configOnly: true,
       isSub: true,
       name: `${layerName} (4C)`,
+      parentCmd: batchCmd,
     });
 
     if (cloneRes) {
-      const { cmd, elem: newLayer } = cloneRes;
+      const { elem: newLayer } = cloneRes;
 
-      batchCmd.addSubCommand(cmd);
       writeDataLayer(newLayer, 'split', true);
 
       const CMYK_FIXED_RATIO = 0.9; // compensation for 4C printing, to avoid over saturation
@@ -177,13 +175,13 @@ const splitFullColorLayer = async (
         configOnly: true,
         isSub: true,
         name: `${layerName} (${nameSuffix})`,
+        parentCmd: batchCmd,
       });
 
       if (!res) continue;
 
-      const { cmd, elem: newLayer } = res;
+      const { elem: newLayer } = res;
 
-      batchCmd.addSubCommand(cmd);
       writeDataLayer(newLayer, 'color', color);
       writeDataLayer(newLayer, 'fullcolor', false);
       writeDataLayer(newLayer, 'split', true);
@@ -220,19 +218,13 @@ const splitFullColorLayer = async (
 
   await Promise.all(promises);
 
-  const cmd = deleteLayerByName(layerName);
-
-  if (cmd) {
-    batchCmd.addSubCommand(cmd);
-  }
+  deleteLayerByName(layerName, { parentCmd: batchCmd });
 
   if (addToHistory && !batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
-  const drawing = svgCanvas.getCurrentDrawing();
-
-  drawing.identifyLayers();
+  layerManager.identifyLayers();
 
   for (const newLayer of newLayers) {
     if (newLayer) {
@@ -250,11 +242,10 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
   const allLayerNames = getAllLayerNames();
   const addedLayers: Element[] = [];
   const removedLayers: Array<{ layer: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
-  const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName();
+  const currentLayerName = layerManager.getCurrentLayerName();
 
   for (const layerName of allLayerNames) {
-    const layer = getLayerElementByName(layerName);
+    const layer = getLayerElementByName(layerName)!;
     const fullColor = getData(layer, 'fullcolor');
     const ref = getData(layer, 'ref');
 
@@ -288,8 +279,8 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
       layer.remove();
     });
 
-    drawing.identifyLayers();
-    drawing.setCurrentLayer(currentLayerName!);
+    layerManager.identifyLayers();
+    layerManager.setCurrentLayer(currentLayerName!);
   };
 
   return revert;

@@ -3,19 +3,14 @@ import React from 'react';
 import classNames from 'classnames';
 
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import ColorPicker from '@core/app/widgets/ColorPicker';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 
 import styles from './DragImage.module.scss';
 
-let svgCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
-
 interface Props {
-  draggingLayer: string;
+  draggingLayer: null | string;
   selectedLayers: string[];
 }
 
@@ -24,16 +19,16 @@ function DragImage({ draggingLayer = null, selectedLayers }: Props): React.JSX.E
     return <div id="drag-image" />;
   }
 
-  const drawing = svgCanvas.getCurrentDrawing();
-  const layer = drawing.getLayerByName(draggingLayer);
+  const layerObject = layerManager.getLayerByName(draggingLayer);
 
-  if (!layer) {
-    return <div id="drag-image" />;
-  }
+  if (!layerObject) return <div id="drag-image" />;
+
+  const layer = layerObject.getGroup();
 
   const isLocked = layer.getAttribute('data-lock') === 'true';
-  const isFullColor = layer.getAttribute('data-fullcolor') === '1';
-  const isVis = drawing.getLayerVisibility(draggingLayer);
+  const isFullColor = getData(layer, 'fullcolor')!;
+  const color = getData(layer, 'color') ?? '#333333';
+  const isVisible = layerObject.isVisible();
   const backLayers = [];
 
   for (let i = selectedLayers.length - 1; i >= 1; i -= 1) {
@@ -50,23 +45,14 @@ function DragImage({ draggingLayer = null, selectedLayers }: Props): React.JSX.E
             {isFullColor ? (
               <LayerPanelIcons.FullColor />
             ) : (
-              <ColorPicker
-                disabled
-                initColor={drawing.getLayerColor(draggingLayer)}
-                onChange={(color) => console.log(color)}
-                triggerSize="small"
-              />
+              <ColorPicker disabled initColor={color} onChange={(color) => console.log(color)} triggerSize="small" />
             )}
           </div>
           <div className={styles.name}>{draggingLayer}</div>
-          <div
-            className={classNames(styles.vis, {
-              [styles.invis]: !drawing.getLayerVisibility(draggingLayer),
-            })}
-          >
+          <div className={classNames(styles.vis, { [styles.invis]: !isVisible })}>
             <img
               alt="vis-icon"
-              src={isVis ? 'img/right-panel/icon-eyeopen.svg' : 'img/right-panel/icon-eyeclose.svg'}
+              src={isVisible ? 'img/right-panel/icon-eyeopen.svg' : 'img/right-panel/icon-eyeclose.svg'}
             />
           </div>
           <div className={styles.lock}>

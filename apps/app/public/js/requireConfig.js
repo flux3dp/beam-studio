@@ -24,7 +24,6 @@ requirejs.config({
     coords: '../lib/svgeditor/coords',
     recalculate: '../lib/svgeditor/recalculate',
     draw: '../lib/svgeditor/draw',
-    layer: '../lib/svgeditor/layer',
     path: '../lib/svgeditor/path',
     svgcanvas: '../lib/svgeditor/svgcanvas',
     svgnest: '../lib/svg-nest/svgnest',
@@ -89,11 +88,8 @@ requirejs.config({
     draw: {
       deps: ['recalculate'],
     },
-    layer: {
-      deps: ['draw'],
-    },
     path: {
-      deps: ['layer'],
+      deps: ['draw'],
     },
     svgnest: {
       deps: ['path'],
