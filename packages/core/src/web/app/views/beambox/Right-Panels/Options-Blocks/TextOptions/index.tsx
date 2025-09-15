@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import FontFuncs, { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
+import dialogCaller from '@core/app/actions/dialog-caller';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
@@ -18,7 +19,6 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock';
-import GoogleFontsPanel from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/GoogleFontsPanel';
 import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock';
 import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/VerticalAlignBlock';
 import { useFontHandlers } from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/hooks/useFontHandlers';
@@ -103,7 +103,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
-  const [showGoogleFontsPanel, setShowGoogleFontsPanel] = useState(false);
   const selectorRef = useRef<null | Selector>(null);
   const workarea = useWorkarea();
   const showVariableText = useMemo(isVariableTextSupported, [workarea]);
@@ -320,7 +319,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
     // Check if this is the "More Google Fonts" option
     if (newFamily === 'more-google-fonts') {
-      setShowGoogleFontsPanel(true);
+      dialogCaller.showGoogleFontsPanel(handleGoogleFontSelect);
 
       return;
     }
@@ -463,12 +462,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const renderFontFamilyBlock = (): React.JSX.Element => {
     const options: FontOption[] = availableFontFamilies.map((option) => getFontFamilyOption(option));
 
-    // Add "More Google Fonts" option at the end
-    const moreGoogleFontsOption: FontOption = {
-      label: 'More Google Fonts...',
-      value: 'more-google-fonts',
-    };
-
     if (isMobile) {
       return (
         <ObjectPanelItem.Select
@@ -503,7 +496,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
               }}
             >
               <div
-                onClick={() => handleFontFamilyChange('more-google-fonts', moreGoogleFontsOption)}
+                onClick={() => dialogCaller.showGoogleFontsPanel(handleGoogleFontSelect)}
                 onMouseEnter={(e) => {
                   e.currentTarget.style.backgroundColor = '#f5f5f5';
                 }}
@@ -773,12 +766,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           </div>
         </ConfigProvider>
       )}
-
-      <GoogleFontsPanel
-        onClose={() => setShowGoogleFontsPanel(false)}
-        onFontSelect={handleGoogleFontSelect}
-        visible={showGoogleFontsPanel}
-      />
     </>
   );
 };
