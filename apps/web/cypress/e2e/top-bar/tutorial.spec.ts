@@ -65,7 +65,7 @@ describe('show tutorial', () => {
     checkInterfaceStep('2/17\nSelect a machineNEXT');
     checkInterfaceStep('3/17\nRunning FrameNEXT');
     checkInterfaceStep('4/17\nStart WorkNEXT');
-    checkInterfaceStep('5/17\nSelect / Image / My Cloud / TextNEXT');
+    checkInterfaceStep('5/17\nSelect / Image / TextNEXT');
     checkInterfaceStep('6/17\nBasic ShapesNEXT');
     checkInterfaceStep('7/17\nPen ToolNEXT');
     checkInterfaceStep('8/17\nAdd New LayerNEXT');

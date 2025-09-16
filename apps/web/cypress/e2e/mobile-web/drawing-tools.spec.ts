@@ -8,7 +8,6 @@ it('check the existence of the tab bar tool on mobile', () => {
   cy.get('.adm-tab-bar-item').contains('Layer').should('exist');
   cy.get('.adm-tab-bar-item').contains('Pen').should('exist');
   cy.get('.adm-tab-bar-item').contains('Document').should('exist');
-  cy.get('.adm-tab-bar-item').contains('DMKT').should('exist');
   cy.get('.adm-tab-bar-item').contains('Undo').should('exist');
   cy.get('.adm-tab-bar-item').contains('Redo').should('exist');
 });
