@@ -8,9 +8,6 @@ import { googleFontRegistry } from './googleFontRegistry';
 import { getGoogleFont } from './googleFontsApiCache';
 import googleFonts from './webFonts.google';
 
-// Maximum number of Google Font CSS links to prevent memory issues
-export const MAX_GOOGLE_FONT_LINKS = 10;
-
 // Module-level cache for available font families, updated during app initialization
 let cachedAvailableFontFamilies: string[] = [];
 
@@ -95,46 +92,6 @@ class GoogleFontsLoader {
     }
 
     return null;
-  }
-
-  /**
-   * Clean up excess Google Font CSS links to prevent memory issues
-   */
-  private cleanupExcessGoogleFonts(fontsToKeep: Set<string>): void {
-    const googleFontLinks = document.querySelectorAll('link[href*="fonts.googleapis.com"]');
-
-    if (googleFontLinks.length <= MAX_GOOGLE_FONT_LINKS) {
-      return;
-    }
-
-    console.log(
-      `Cleaning up Google Font CSS links (current: ${googleFontLinks.length}, max: ${MAX_GOOGLE_FONT_LINKS})`,
-    );
-
-    const linksToRemove: HTMLLinkElement[] = [];
-
-    googleFontLinks.forEach((link) => {
-      const linkElement = link as HTMLLinkElement;
-      const family = this.getFontFamilyFromGoogleUrl(linkElement.href);
-
-      if (family && !fontsToKeep.has(family)) {
-        linksToRemove.push(linkElement);
-      }
-    });
-
-    // Remove oldest fonts that are not in the keep list
-    const removeCount = Math.max(1, googleFontLinks.length - MAX_GOOGLE_FONT_LINKS + 1);
-
-    linksToRemove.slice(0, removeCount).forEach((link) => {
-      const removedFamily = this.getFontFamilyFromGoogleUrl(link.href);
-
-      if (removedFamily) {
-        this.sessionLoadedFonts.delete(removedFamily);
-        console.log(`Removed Google Font CSS: ${removedFamily}`);
-      }
-
-      link.remove();
-    });
   }
 
   /**
@@ -294,9 +251,6 @@ class GoogleFontsLoader {
     const keepSet = new Set(fontsToKeep || []);
 
     fontFamilies.forEach((family) => keepSet.add(family));
-
-    // Clean up excess fonts before adding new ones
-    this.cleanupExcessGoogleFonts(keepSet);
 
     // Load each font (CSS + registration)
     fontFamilies.forEach((family) => {

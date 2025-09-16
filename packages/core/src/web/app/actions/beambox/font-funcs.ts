@@ -199,9 +199,11 @@ init();
  * Registers a Google Font object for text-to-path conversion
  * Now uses the registry service for consistent management
  */
-export const registerGoogleFont = (googleFont: GoogleFont): void => {
+export const registerGoogleFont = (googleFont: GoogleFont): boolean => {
   googleFontRegistry.registerGoogleFont(googleFont);
   console.log(`Registered Google Font via font-funcs: ${googleFont.postscriptName}`, googleFont);
+
+  return true;
 };
 
 /**

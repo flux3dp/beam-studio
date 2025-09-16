@@ -1,14 +1,12 @@
-/**
- * Centralized Google Fonts API cache service
- * Eliminates duplicate API calls by caching the complete font catalog once per session
- */
+import { match } from 'ts-pattern';
 
-const GOOGLE_FONTS_API_KEY = 'YOUR_GOOGLE_FONTS_API_KEY';
-const GOOGLE_FONTS_API_URL = `https://www.googleapis.com/webfonts/v1/webfonts?key=${GOOGLE_FONTS_API_KEY}`;
+import { FLUXID_HOST } from '../api/flux-id';
 
-// TypeScript interfaces for Google Fonts API response
+const BACKEND_GOOGLE_FONTS_URL = '/api/google-fonts';
+const url = new URL(BACKEND_GOOGLE_FONTS_URL, FLUXID_HOST);
+
 export interface GoogleFontFile {
-  [weight: string]: string; // weight -> URL mapping
+  [weight: string]: string;
 }
 
 export interface GoogleFontFiles extends Record<string, string | undefined> {
@@ -105,7 +103,7 @@ class GoogleFontsApiCache {
   async findFont(fontFamily: string): Promise<GoogleFontItem | null> {
     const cache = await this.getCompleteCache();
 
-    return cache.items.find((item) => item.family === fontFamily) || null;
+    return cache.items.find(({ family }) => family === fontFamily) || null;
   }
 
   /**
@@ -123,36 +121,35 @@ class GoogleFontsApiCache {
    */
   getCacheStatus(): { cached: boolean; itemCount: number; sortedCached: boolean } {
     return {
-      cached: !!this.cache,
+      cached: Boolean(this.cache),
       itemCount: this.cache?.items?.length || 0,
-      sortedCached: !!this.sortedCache,
+      sortedCached: Boolean(this.sortedCache),
     };
   }
 
   /**
-   * Fetch from Google Fonts API with error handling and retry logic
+   * Fetch from backend proxy with error handling and retry logic
    */
   private async fetchGoogleFontsApi(): Promise<GoogleFontsApiResponse> {
     try {
-      console.log('🌐 Fetching Google Fonts API (with caching)...');
-
-      const response = await fetch(`${GOOGLE_FONTS_API_URL}&sort=popularity`);
+      const response = await fetch(url, { headers: { 'Content-Type': 'application/json' }, method: 'GET' });
 
       if (!response.ok) {
-        if (response.status === 400) {
-          throw new Error('Google Fonts API key is invalid or expired. Please configure a valid API key.');
-        }
-
-        throw new Error(`Failed to fetch Google Fonts API: ${response.status} ${response.statusText}`);
+        throw match(response.status)
+          .with(401, () => new Error('Authentication required. Please log in to access Google Fonts.'))
+          .with(403, () => new Error('Access denied. You do not have permission to access Google Fonts.'))
+          .with(500, () => new Error('Backend server error. Please try again later.'))
+          .otherwise(() => new Error(`${response.status} ${response.statusText}`));
       }
 
       const data = (await response.json()) as GoogleFontsApiResponse;
 
-      console.log(`✅ Google Fonts API cached successfully (${data.items?.length || 0} fonts)`);
+      console.log(`Google Fonts API cached successfully (${data.items?.length || 0} fonts)`);
 
       return data;
     } catch (error) {
-      console.error('❌ Failed to fetch Google Fonts API:', error);
+      console.error('Failed to fetch Google Fonts:', error);
+
       throw error;
     }
   }
@@ -166,22 +163,17 @@ export const googleFontsApiCache = new GoogleFontsApiCache();
  * @param fontFamily - The font family name to search for
  * @returns Promise<GoogleFontItem | null>
  */
-export const getGoogleFont = (fontFamily: string): Promise<GoogleFontItem | null> => {
-  return googleFontsApiCache.findFont(fontFamily);
-};
+export const getGoogleFont = (fontFamily: string): Promise<GoogleFontItem | null> =>
+  googleFontsApiCache.findFont(fontFamily);
 
 /**
  * Convenience function to get the complete font catalog
  * @returns Promise<GoogleFontsApiResponse>
  */
-export const getGoogleFontsCatalog = (): Promise<GoogleFontsApiResponse> => {
-  return googleFontsApiCache.getCompleteCache();
-};
+export const getGoogleFontsCatalog = (): Promise<GoogleFontsApiResponse> => googleFontsApiCache.getCompleteCache();
 
 /**
  * Convenience function to get the sorted font catalog (by popularity)
  * @returns Promise<GoogleFontsApiResponse>
  */
-export const getGoogleFontsCatalogSorted = (): Promise<GoogleFontsApiResponse> => {
-  return googleFontsApiCache.getSortedCache();
-};
+export const getGoogleFontsCatalogSorted = (): Promise<GoogleFontsApiResponse> => googleFontsApiCache.getSortedCache();
