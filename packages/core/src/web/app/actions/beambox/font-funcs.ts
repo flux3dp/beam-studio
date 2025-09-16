@@ -40,12 +40,30 @@ const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const fontObjCache = new Map<string, fontkit.Font>();
 const googleFontCache = new Map<string, GoogleFont>();
 
-// Initialize the dependency injection for Google Font registry
+// Callback injection to avoid circular dependency with googleFontService
+let lazyRegisterCallback: ((postscriptName: string) => GeneralFont | null) | null = null;
+
+export const setLazyRegisterCallback = (callback: (postscriptName: string) => GeneralFont | null) => {
+  lazyRegisterCallback = callback;
+};
+
+// Initialize the dependency injection for Google Font registry and lazy registration
 const initializeGoogleFontIntegration = () => {
   // Inject our registration function into the registry to break circular dependency
   googleFontRegistry.setRegistrationCallback((googleFont: GoogleFont) => {
     googleFontCache.set(googleFont.postscriptName, googleFont);
   });
+
+  // Set up lazy registration callback after a brief delay to allow module loading
+  setTimeout(() => {
+    try {
+      const { lazyRegisterGoogleFontIfLoaded } = require('@core/helpers/fonts/googleFontService');
+
+      lazyRegisterCallback = lazyRegisterGoogleFontIfLoaded;
+    } catch (error) {
+      console.warn('Failed to set up lazy register callback:', error);
+    }
+  }, 0);
 };
 
 // Initialize during module load
@@ -138,8 +156,6 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
   const googleFont = googleFontCache.get(postscriptName);
 
   if (googleFont) {
-    console.log(`Found Google Font in cache: ${postscriptName}`, googleFont);
-
     return googleFont;
   }
 
@@ -147,8 +163,6 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
   const registeredFont = googleFontRegistry.getRegisteredFont(postscriptName);
 
   if (registeredFont) {
-    console.log(`Found Google Font in registry: ${postscriptName}`);
-
     return registeredFont;
   }
 
@@ -156,23 +170,15 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
   if (isGoogleFontPostScriptName(postscriptName)) {
     const fontFamily = extractFamilyFromPostScriptName(postscriptName);
 
-    if (fontFamily) {
-      console.log(`Attempting lazy registration for Google Font: ${postscriptName}`);
-
+    if (fontFamily && lazyRegisterCallback) {
       try {
-        // Import the lazy loading function - no circular dependency since unifiedGoogleFonts
-        // no longer imports from font-funcs
-        const { lazyRegisterGoogleFontIfLoaded } = require('@core/helpers/fonts/unifiedGoogleFonts');
-        const lazyRegisteredFont = lazyRegisterGoogleFontIfLoaded(postscriptName);
+        const lazyRegisteredFont = lazyRegisterCallback(postscriptName);
 
         if (lazyRegisteredFont) {
-          console.log(`Successfully lazy registered Google Font: ${postscriptName}`);
-
           return lazyRegisteredFont;
         }
       } catch (error) {
         console.warn(`Failed to lazy register Google Font ${postscriptName}:`, error);
-        // Continue to fallback logic
       }
     }
   }
@@ -183,8 +189,6 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
 
   const allFonts = fontHelper.getAvailableFonts();
   const fit = allFonts.filter((f) => f.postscriptName === postscriptName);
-
-  console.log(fit);
 
   return (fit.length > 0 ? fit : allFonts)[0];
 });
@@ -201,20 +205,8 @@ init();
  */
 export const registerGoogleFont = (googleFont: GoogleFont): boolean => {
   googleFontRegistry.registerGoogleFont(googleFont);
-  console.log(`Registered Google Font via font-funcs: ${googleFont.postscriptName}`, googleFont);
 
   return true;
-};
-
-/**
- * Unregisters a Google Font object (useful for cleanup)
- */
-export const unregisterGoogleFont = (postscriptName: string): void => {
-  const removed = googleFontCache.delete(postscriptName);
-
-  if (removed) {
-    console.log(`Unregistered Google Font: ${postscriptName}`);
-  }
 };
 
 const requestFontsOfTheFontFamily = memoize((family: string) => Array.from(fontHelper.findFonts({ family })));
@@ -236,8 +228,6 @@ export const getFontObj = async (font: GeneralFont): Promise<fontkit.Font | unde
     const cachedFont = fontObjCache.get(postscriptName);
 
     if (cachedFont) {
-      console.log(`Returning cached fontObj for ${postscriptName}`);
-
       return cachedFont;
     }
 
@@ -246,8 +236,6 @@ export const getFontObj = async (font: GeneralFont): Promise<fontkit.Font | unde
       .with({ path: P.string }, (font) => localFontHelper.getLocalFont(font))
       .with({ source: 'google' }, async (font) => await loadGoogleFont(font as GoogleFont))
       .otherwise(async (font) => await loadWebFont(font));
-
-    console.log(`Loaded new fontObj for ${postscriptName}`, fontObject);
 
     // 3. If loaded successfully, add it to the cache
     if (fontObject) {
@@ -284,11 +272,6 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
         missingGlyphs.map((c) => `${c} (U+${c.codePointAt(0)?.toString(16).toUpperCase()})`),
       );
     }
-
-    console.log(
-      `Converting text to path: "${allText.substring(0, 50)}${allText.length > 50 ? '...' : ''}" with font ${fontObj.postscriptName}`,
-    );
-    console.log(`Font details: numGlyphs=${fontObj.numGlyphs}, unitsPerEm=${fontObj.unitsPerEm}`);
 
     const maxChar = 0xffff;
     const fontSize = textedit.getFontSize(textElem as SVGTextElement);
@@ -406,7 +389,7 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
 
     return { d, transform: textElem.getAttribute('transform') };
   } catch (err) {
-    console.log(`Unable to handle font ${textElem.getAttribute('font-postscript')} by fontkit, ${err}`);
+    console.error(`Unable to handle font ${textElem.getAttribute('font-postscript')} by fontkit, ${err}`);
 
     return null;
   }
@@ -475,7 +458,7 @@ const convertTextToPathByGhost = async (
 
     return { ...convertRes, moveElement: bbox };
   } catch (err) {
-    console.log(`Unable to handle font ${textElem.getAttribute('font-postscript')} by ghost, ${err}`);
+    console.error(`Unable to handle font ${textElem.getAttribute('font-postscript')} by ghost, ${err}`);
 
     return null;
   } finally {
@@ -531,8 +514,6 @@ const substitutedFont = async (font: GeneralFont, textElement: Element) => {
   let unsupportedChar = (await getUnsupportedChar(originFont, textContent)) ?? [];
 
   if (unsupportedChar && unsupportedChar.length === 0) {
-    console.log(`Original font ${originFont.postscriptName} fits for all char`);
-
     return { font: originFont };
   }
 
@@ -569,12 +550,10 @@ const substitutedFont = async (font: GeneralFont, textElement: Element) => {
       }
 
       if (allFit) {
-        console.log(`Find ${font.postscriptName} fit for all char`);
-
         return { font, unsupportedChar };
       }
     }
-    console.log('Cannot find a font fit for all');
+    console.error('Cannot find a font fit for all');
   }
 
   // Test all found fonts and Noto fonts with fontkit and select the best one
@@ -599,8 +578,6 @@ const substitutedFont = async (font: GeneralFont, textElement: Element) => {
       }
 
       if (unsupported.length === 0) {
-        console.log(`Find ${currentFont.postscriptName} fit for all char with fontkit`);
-
         return { font: currentFont, unsupportedChar };
       }
 
@@ -739,7 +716,7 @@ const convertTextToPath = async (
           preferGhost = false;
         }
       } catch (e) {
-        console.log('Test font direction failed', e);
+        console.error('Test font direction failed', e);
       }
     }
 
@@ -853,5 +830,4 @@ export default {
   requestAvailableFontFamilies,
   requestFontByFamilyAndStyle,
   requestFontsOfTheFontFamily,
-  unregisterGoogleFont,
 };

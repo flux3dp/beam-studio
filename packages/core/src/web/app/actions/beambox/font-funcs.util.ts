@@ -9,8 +9,6 @@ export const loadGoogleFont = async (font: GoogleFont): Promise<Font | undefined
     throw new Error('Google Font binary loader is not available.');
   }
 
-  console.log(`Loading Google Font binary for: ${font.family}`);
-
   const weight = font.weight || 400;
   const style = font.italic ? 'italic' : 'normal';
 
@@ -61,8 +59,6 @@ export const loadGoogleFont = async (font: GoogleFont): Promise<Font | undefined
     throw new Error(`Fontkit parse error: ${error}`);
   }
 
-  console.log(`Loaded Google Font binary for: ${font.family}`);
-
   // Handle both single fonts and font collections (.ttc)
   if ('fonts' in fontCollection) {
     const matchedFont = fontCollection.fonts.find((f) => f.postscriptName === font.postscriptName);
@@ -83,8 +79,6 @@ export const loadGoogleFont = async (font: GoogleFont): Promise<Font | undefined
 export const loadWebFont = async (font: WebFont): Promise<Font | undefined> => {
   const { collectionIdx = 0, postscriptName } = font;
   let url: null | string | undefined;
-
-  console.log(`Loading Web Font: ${postscriptName}`, font);
 
   if ('hasLoaded' in font) {
     // Indicates a Monotype font
