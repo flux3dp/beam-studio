@@ -13,7 +13,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
-import { loadContextGoogleFonts } from '@core/helpers/fonts/unifiedGoogleFonts';
+import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';

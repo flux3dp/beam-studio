@@ -41,32 +41,11 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
   const [selectedFont, setSelectedFont] = useState<CachedGoogleFontItem | null>(null);
-  const [showColorFonts] = useState(false); // Hide color fonts by default - always filter them out
 
   const fetchGoogleFonts = useCallback(async () => {
     setLoading(true);
     try {
-      // Use cached Google Fonts API data instead of direct API call
       const data = await getGoogleFontsCatalogSorted();
-
-      // Log problematic fonts for debugging
-      const colorFonts =
-        data.items?.filter((font) => font.colorCapabilities && font.colorCapabilities.length > 0) || [];
-      const iconFonts = data.items?.filter((font) => isIconFont(font.family)) || [];
-
-      if (colorFonts.length > 0) {
-        console.log(`Found ${colorFonts.length} color fonts that may not convert to path properly:`);
-        colorFonts.forEach((font) => {
-          console.log(`  - ${font.family}: ${font.colorCapabilities?.join(', ')}`);
-        });
-      }
-
-      if (iconFonts.length > 0) {
-        console.log(`Found ${iconFonts.length} icon fonts that are not suitable for text:`);
-        iconFonts.forEach((font) => {
-          console.log(`  - ${font.family}`);
-        });
-      }
 
       setFonts(data.items || []);
     } catch (error) {
@@ -86,12 +65,10 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   const filteredFonts = useMemo(() => {
     let filtered = fonts;
 
-    // Filter out color fonts unless explicitly showing them
-    if (!showColorFonts) {
-      filtered = filtered.filter((font) => !font.colorCapabilities || font.colorCapabilities.length === 0);
-    }
+    // Filter out color fonts
+    filtered = filtered.filter((font) => !font.colorCapabilities || font.colorCapabilities.length === 0);
 
-    // Always filter out icon fonts as they're not suitable for text
+    // Filter out icon fonts as they're not suitable for text
     filtered = filtered.filter((font) => !isIconFont(font.family));
 
     if (searchText) {
@@ -107,7 +84,7 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
     }
 
     return filtered.slice(0, 100); // Limit to first 100 results for performance
-  }, [fonts, searchText, selectedCategory, selectedLanguage, showColorFonts]);
+  }, [fonts, searchText, selectedCategory, selectedLanguage]);
 
   const loadFont = useCallback(
     (font: CachedGoogleFontItem) => {

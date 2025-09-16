@@ -14,7 +14,6 @@ class GoogleFontRegistry {
    */
   setRegistrationCallback(callback: (googleFont: GoogleFont) => void): void {
     this.registrationCallback = callback;
-    console.log('Google Font registration callback set');
   }
 
   /**
@@ -28,8 +27,6 @@ class GoogleFontRegistry {
     }
 
     if (this.registeredFonts.has(googleFont.postscriptName)) {
-      console.log(`Google Font already registered: ${googleFont.postscriptName}`);
-
       return true; // Already registered
     }
 
@@ -37,7 +34,6 @@ class GoogleFontRegistry {
       // Use the injected callback to perform the actual registration
       this.registrationCallback(googleFont);
       this.registeredFonts.set(googleFont.postscriptName, googleFont);
-      console.log(`Registered Google Font via registry: ${googleFont.postscriptName}`);
 
       return true;
     } catch (error) {

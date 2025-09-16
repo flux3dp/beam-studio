@@ -22,20 +22,20 @@ import InFillBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/InF
 import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock';
 import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/VerticalAlignBlock';
 import { useFontHandlers } from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/hooks/useFontHandlers';
-import { useGoogleFonts } from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/hooks/useGoogleFonts';
 import VariableTextBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/VariableTextBlock';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
-import { getLoadedGoogleFonts } from '@core/helpers/fonts/unifiedGoogleFonts';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
 import { isVariableTextSupported } from '@core/helpers/variableText';
+import { useLoadedGoogleFonts } from '@core/hooks/useGoogleFonts';
+import { useGoogleFonts } from '@core/hooks/useGoogleFonts';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
@@ -138,14 +138,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     waitForWebFont,
   } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
 
-  // Google Fonts hook
-  const {
-    addToHistory,
-    loadGoogleFontBinary,
-    loadGoogleFontCSS,
-    proactivelyLoadHistoryFonts,
-    sessionLoadedFonts: hookSessionLoadedFonts,
-  } = useGoogleFonts({ availableFontFamilies, elem, fontHistory, textElements });
+  // Google Fonts hooks (new Zustand-based system)
+  const { addToHistory, loadGoogleFontBinary, proactivelyLoadHistoryFonts, sessionLoadedFonts } = useGoogleFonts();
+
+  // Get loaded Google Fonts from store
+  const loadedGoogleFonts = useLoadedGoogleFonts();
 
   const historyFontFamilies = useMemo(
     () =>
@@ -197,11 +194,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         const localFontMatch = availableFontFamilies.find((f) => f.toLowerCase() === cleanFontLower);
         // A font is considered a Google Font if it's either:
         // 1. In history but NOT in local system fonts (case-insensitive), OR
-        // 2. In the unified Google fonts loaded set (context-loaded fonts), OR
+        // 2. In the loaded Google fonts from store (context-loaded fonts), OR
         // 3. In the session loaded fonts from the hook
         const isGoogleFontFromHistory = fontHistory.some((h) => h.toLowerCase() === cleanFontLower) && !localFontMatch;
-        const isGoogleFontFromContext = getLoadedGoogleFonts().has(cleanFontFamily) && !localFontMatch;
-        const isGoogleFontFromSession = hookSessionLoadedFonts.has(cleanFontFamily) && !localFontMatch;
+        const isGoogleFontFromContext = loadedGoogleFonts.has(cleanFontFamily) && !localFontMatch;
+        const isGoogleFontFromSession = sessionLoadedFonts.has(cleanFontFamily) && !localFontMatch;
         let font: GeneralFont;
 
         if (isGoogleFontFromHistory || isGoogleFontFromContext || isGoogleFontFromSession) {
@@ -237,16 +234,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           }
         }
 
-        console.log(font);
-
         // Check if this font should use fallback
         // Skip fallback for Google Fonts that are loaded via any source and available in the document
         // Also skip fallback if the font is available locally (case-insensitive)
         const fontFamilyLower = font.family.toLowerCase();
         const isLocalFont = availableFontFamilies.some((f) => f.toLowerCase() === fontFamilyLower);
         const isGoogleFontInHistory = fontHistory.some((h) => h.toLowerCase() === fontFamilyLower) && !isLocalFont;
-        const isGoogleFontLoadedViaContext = getLoadedGoogleFonts().has(font.family) && !isLocalFont;
-        const isGoogleFontLoadedViaSession = hookSessionLoadedFonts.has(font.family) && !isLocalFont;
+        const isGoogleFontLoadedViaContext = loadedGoogleFonts.has(font.family) && !isLocalFont;
+        const isGoogleFontLoadedViaSession = sessionLoadedFonts.has(font.family) && !isLocalFont;
         // A Google Font is considered "loaded" if it's from any source AND the browser confirms it's available
         const isGoogleFontLoaded =
           (isGoogleFontInHistory || isGoogleFontLoadedViaContext || isGoogleFontLoadedViaSession) &&
@@ -309,14 +304,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     configs.id.value,
     getFontFamilies,
     fontHistory,
-    hookSessionLoadedFonts,
-    loadGoogleFontCSS,
+    sessionLoadedFonts,
+    loadedGoogleFonts,
     proactivelyLoadHistoryFonts,
   ]);
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
-    console.log('handleFontFamilyChange', newFamily, option);
-
     // Check if this is the "More Google Fonts" option
     if (newFamily === 'more-google-fonts') {
       dialogCaller.showGoogleFontsPanel(handleGoogleFontSelect);
@@ -380,9 +373,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
       if (localFontMatch) {
         // Use the local font instead of treating it as a Google Font
-        // Use the actual local font name for FontFuncs operations
-        console.log(`Google Font "${googleFontFamily}" found locally as "${localFontMatch}", using system font`);
-
         // Get the local font with proper PostScript name and properties
         const localFont = FontFuncs.requestFontsOfTheFontFamily(localFontMatch)[0];
 
@@ -416,8 +406,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onConfigChange('fontStyle', localFont.style);
       } else {
         // Font is not available locally, treat as Google Font
-        // CSS already loaded proactively when text was selected
-
         const googleFont: GoogleFont = {
           binaryLoader: loadGoogleFontBinary,
           family: googleFontFamily,
@@ -428,11 +416,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           weight: 400,
         };
 
-        console.log(`Selected Google Font (web):`, googleFont);
-
         // Add to history first
         addToHistory(googleFont);
-
         // Register the GoogleFont object for text-to-path conversion
         registerGoogleFont(googleFont);
 
@@ -449,7 +434,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         });
         svgCanvas.undoMgr.addCommandToHistory(batchCmd);
 
-        // Wait for the web font to load
         await waitForWebFont();
 
         onConfigChange('fontFamily', googleFontFamily);
