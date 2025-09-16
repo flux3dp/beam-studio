@@ -9,7 +9,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { DetectedLayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -379,6 +379,12 @@ export const getExportOpt = async (
       // Always reassign offsets to remove optional boolean values
       offsets[key] = [round(offsets[key]![0] - offsetX, 2), round(offsets[key]![1] - offsetY, 2)];
     });
+
+    // Set base module if not included in getAllOffsets
+    if (!offsets[LayerModule.LASER_UNIVERSAL]) {
+      offsets[LayerModule.LASER_UNIVERSAL] = [round(0 - offsetX, 2), round(0 - offsetY, 2)];
+    }
+
     config.mof = offsets as Record<LayerModuleType, [number, number]>;
   }
 
