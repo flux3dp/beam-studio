@@ -1,8 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { CloseOutlined, SearchOutlined } from '@ant-design/icons';
-import { Button, Input, Modal, Select, Spin, Typography } from 'antd';
+import { AppstoreOutlined, CloseOutlined, GlobalOutlined, GoogleOutlined, SearchOutlined } from '@ant-design/icons';
+import { Button, Input, Select, Spin, Typography } from 'antd';
 
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import {
   type GoogleFontItem as CachedGoogleFontItem,
   getGoogleFontsCatalogSorted,
@@ -215,101 +216,145 @@ const GoogleFontsPanel: React.FC<Props> = ({ onClose, onFontSelect, visible }) =
   }, [fonts]);
 
   return (
-    <Modal className={styles.modal} closable={false} footer={null} onCancel={onClose} open={visible} width={800}>
+    <DraggableModal
+      className={styles.modal}
+      closable={false}
+      footer={null}
+      onCancel={onClose}
+      open={visible}
+      width={1000}
+    >
+      {/* Header */}
       <div className={styles.header}>
         <div className={styles.title}>
-          <Typography.Text className={styles.logo}>G</Typography.Text>
-          <Typography.Title className={styles.titleText} level={4}>
-            GoogleFonts
-          </Typography.Title>
+          <GoogleOutlined className={styles.googleLogo} />
+          <span className={styles.titleText}>GoogleFonts</span>
         </div>
         <Button className={styles.closeButton} icon={<CloseOutlined />} onClick={onClose} type="text" />
       </div>
 
-      <div className={styles.filters}>
-        <Input
-          className={styles.searchInput}
-          onChange={(e) => setSearchText(e.target.value)}
-          placeholder="Search Fonts"
-          prefix={<SearchOutlined />}
-          value={searchText}
-        />
-        <div className={styles.categoryFilter}>
-          <Typography.Text className={styles.filterLabel}>Category</Typography.Text>
-          <Select
-            className={styles.categorySelect}
-            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
-            onChange={setSelectedCategory}
-            options={[{ label: 'All', value: '' }, ...categoryOptions]}
-            placeholder="Category"
-            showSearch
-            value={selectedCategory || undefined}
-          />
+      {/* Main Content */}
+      <div className={styles.mainContent}>
+        {/* Sidebar */}
+        <div className={styles.sidebar}>
+          {/* Search */}
+          <div className={styles.searchSection}>
+            <Input
+              className={styles.searchInput}
+              onChange={(e) => setSearchText(e.target.value)}
+              placeholder="Search Fonts"
+              prefix={<SearchOutlined />}
+              value={searchText}
+            />
+          </div>
+
+          {/* Language Filter */}
+          <div className={styles.filterSection}>
+            <div className={styles.filterHeader}>
+              <GlobalOutlined className={styles.filterIcon} />
+              <span className={styles.filterLabel}>Language</span>
+            </div>
+            <Select
+              className={styles.languageSelect}
+              filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
+              onChange={setSelectedLanguage}
+              options={[{ label: 'All languages', value: '' }, ...languageOptions]}
+              placeholder="Language"
+              showSearch
+              value={selectedLanguage || 'All languages'}
+            />
+          </div>
+
+          {/* Category Filter */}
+          <div className={styles.filterSection}>
+            <div className={styles.filterHeader}>
+              <AppstoreOutlined className={styles.filterIcon} />
+              <span className={styles.filterLabel}>Category</span>
+            </div>
+            <div className={styles.categoryChips}>
+              {categoryOptions.map((category) => {
+                const isSelected = selectedCategory === category.value;
+                const handleCategoryClick = () => {
+                  if (isSelected) {
+                    // Deselect current category (show all)
+                    setSelectedCategory('');
+                  } else {
+                    // Select this category
+                    setSelectedCategory(category.value);
+                  }
+                };
+
+                return (
+                  <button
+                    className={`${styles.categoryChip} ${isSelected ? styles.active : ''}`}
+                    key={category.value}
+                    onClick={handleCategoryClick}
+                  >
+                    {category.label}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
         </div>
-        <div className={styles.languageFilter}>
-          <Typography.Text className={styles.filterLabel}>Language</Typography.Text>
-          <Select
-            className={styles.languageSelect}
-            filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
-            onChange={setSelectedLanguage}
-            options={[{ label: 'All', value: '' }, ...languageOptions]}
-            placeholder="Language"
-            placement="bottomRight"
-            popupMatchSelectWidth={false}
-            showSearch
-            value={selectedLanguage || undefined}
-          />
+
+        {/* Font Preview Area */}
+        <div className={styles.fontPreviewArea}>
+          {loading ? (
+            <div className={styles.loading}>
+              <Spin size="large" />
+            </div>
+          ) : filteredFonts.length > 0 ? (
+            <div className={styles.fontList}>
+              {filteredFonts.map((font) => (
+                <FontPreview
+                  font={font}
+                  isSelected={selectedFont?.family === font.family}
+                  key={font.family}
+                  onClick={() => handleFontClick(font)}
+                  onLoad={() => loadFont(font)}
+                />
+              ))}
+            </div>
+          ) : (
+            <div className={styles.emptyState}>
+              <Typography.Text type="secondary">
+                {fonts.length === 0
+                  ? 'Google Fonts are currently unavailable. Please check your internet connection or contact your administrator.'
+                  : searchText || selectedCategory
+                    ? 'No fonts found matching your search criteria.'
+                    : 'No fonts available.'}
+              </Typography.Text>
+            </div>
+          )}
         </div>
-        {/* Optional: Add toggle to show/hide color fonts */}
-        {/* <div className={styles.colorFontToggle}>
-          <Checkbox
-            checked={showColorFonts}
-            onChange={(e) => setShowColorFonts(e.target.checked)}
-          >
-            Show color fonts (may not convert to path)
-          </Checkbox>
-        </div> */}
       </div>
 
-      <div className={styles.content}>
-        {loading ? (
-          <div className={styles.loading}>
-            <Spin size="large" />
-          </div>
-        ) : filteredFonts.length > 0 ? (
-          <div className={styles.fontList}>
-            {filteredFonts.map((font) => (
-              <FontPreview
-                font={font}
-                isSelected={selectedFont?.family === font.family}
-                key={font.family}
-                onClick={() => handleFontClick(font)}
-                onLoad={() => loadFont(font)}
-              />
-            ))}
-          </div>
-        ) : (
-          <div className={styles.emptyState}>
-            <Typography.Text type="secondary">
-              {fonts.length === 0
-                ? 'Google Fonts are currently unavailable. Please check your internet connection or contact your administrator.'
-                : searchText || selectedCategory
-                  ? 'No fonts found matching your search criteria.'
-                  : 'No fonts available.'}
-            </Typography.Text>
-          </div>
-        )}
-      </div>
-
+      {/* Footer */}
       <div className={styles.footer}>
-        <Button onClick={onClose} type="default">
-          Cancel
-        </Button>
-        <Button disabled={!selectedFont} onClick={handleSave} type="primary">
-          Save
-        </Button>
+        <div className={styles.selectedFontInfo}>
+          {selectedFont ? (
+            <div className={styles.selectedFontDisplay}>
+              <span className={styles.selectedText}>
+                Selected: <span className={styles.selectedFontName}>{selectedFont.family}</span>
+              </span>
+            </div>
+          ) : (
+            <div className={styles.noSelectionDisplay}>
+              <span className={styles.noSelectionText}>No font selected</span>
+            </div>
+          )}
+        </div>
+        <div className={styles.footerButtons}>
+          <Button onClick={onClose} type="default">
+            Cancel
+          </Button>
+          <Button disabled={!selectedFont} onClick={handleSave} type="primary">
+            Save
+          </Button>
+        </div>
       </div>
-    </Modal>
+    </DraggableModal>
   );
 };
 
@@ -349,9 +394,16 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
 
   const previewText = getSampleText(font.family);
 
+  // Get foundry/designer information
+  const getFoundryInfo = (font: CachedGoogleFontItem): string => {
+    // Extract designer info from font.files or other metadata if available
+    // For now, showing category as placeholder
+    return font.category || 'Google';
+  };
+
   return (
     <div
-      className={`${styles.fontPreview} ${isSelected ? styles.selected : ''}`}
+      className={`${styles.fontCard} ${isSelected ? styles.selected : ''}`}
       data-font={font.family}
       onClick={onClick}
       onKeyDown={(e) => {
@@ -363,36 +415,25 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
       role="button"
       tabIndex={0}
     >
-      <div className={styles.fontInfo}>
-        <div className={styles.fontHeader}>
-          <Typography.Text className={styles.fontName}>
-            {font.family}
-            {font.colorCapabilities && font.colorCapabilities.length > 0 && (
-              <span style={{ color: '#ff7875', fontSize: '0.9em', marginLeft: 8 }}>⚠️ Color</span>
-            )}
-          </Typography.Text>
-          <Typography.Text className={styles.fontMeta}>
-            {font.variants?.length || 0} styles | {font.category}
-            {font.colorCapabilities && font.colorCapabilities.length > 0 && (
-              <span style={{ fontSize: '0.9em', marginLeft: 8 }}>({font.colorCapabilities.join(', ')})</span>
-            )}
-          </Typography.Text>
-          <div className={styles.fontSubsets}>
-            {font.subsets.slice(0, 3).map((subset: string) => (
-              <span className={styles.subsetTag} key={subset}>
-                {subset}
-              </span>
-            ))}
-            {font.subsets.length > 3 && <span className={styles.subsetMore}>+{font.subsets.length - 3} more</span>}
-          </div>
+      {/* Font Header */}
+      <div className={styles.fontHeader}>
+        <div className={styles.fontTitle}>
+          <span className={styles.fontName}>{font.family}</span>
+          <span className={styles.fontMeta}>
+            {font.variants?.length || 0} style{(font.variants?.length || 0) !== 1 ? 's' : ''} | {getFoundryInfo(font)}
+          </span>
         </div>
       </div>
 
+      {/* Font Sample */}
       <div className={styles.fontSample}>
         <div
           className={styles.sampleText}
           style={{
             fontFamily: isVisible ? `'${font.family}', sans-serif` : 'inherit',
+            fontSize: '32px',
+            fontWeight: 400,
+            lineHeight: '1.2',
           }}
         >
           {previewText}
@@ -402,23 +443,23 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
   );
 };
 
-// Sample text based on font type/category
+// Sample text based on font type/category - matching Google Fonts samples
 const getSampleText = (fontFamily: string): string => {
   const family = fontFamily.toLowerCase();
 
-  if (family.includes('serif')) {
-    return 'Everyone has the right to freedom of thought,';
-  }
-
   if (family.includes('code') || family.includes('mono')) {
     return 'public static int fib(int n) { a =';
+  }
+
+  if (family.includes('serif')) {
+    return 'Everyone has the right to freedom of thought,';
   }
 
   if (family.includes('display') || family.includes('gothic')) {
     return 'Everyone has the right to freedom of though';
   }
 
-  // Default text similar to the image
+  // Default text matching Google Fonts preview
   return 'Everyone has the right to freedom of thought,';
 };
 
