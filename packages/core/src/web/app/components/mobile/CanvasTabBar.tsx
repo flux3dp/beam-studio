@@ -1,6 +1,5 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { InstagramOutlined } from '@ant-design/icons';
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
 
@@ -9,10 +8,8 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
@@ -23,12 +20,10 @@ import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './CanvasTabBar.module.scss';
@@ -52,7 +47,6 @@ interface TabItem {
 const CanvasTabBar = (): React.ReactNode => {
   const isMobile = useIsMobile();
   const lang = useI18n();
-  const isSubscribed = getCurrentUser()?.info?.subscription?.is_valid;
 
   const { changeToPreviewMode, endPreviewMode, mode, setupPreviewMode } = useContext(CanvasContext);
   const isPreviewing = mode === CanvasMode.Preview;
@@ -105,12 +99,6 @@ const CanvasTabBar = (): React.ReactNode => {
       title: lang.beambox.left_panel.label.photo,
     },
     {
-      badge: isSubscribed,
-      icon: <LeftPanelIcons.Cloud />,
-      key: 'cloud',
-      title: lang.beambox.left_panel.label.my_cloud,
-    },
-    {
       icon: <TabBarIcons.Shape />,
       key: 'shape',
       title: lang.beambox.left_panel.label.elements,
@@ -159,16 +147,6 @@ const CanvasTabBar = (): React.ReactNode => {
       icon: <LeftPanelIcons.PassThrough />,
       key: 'passthrough',
       title: lang.beambox.left_panel.label.pass_through,
-    },
-    {
-      icon: <DmktIcon style={{ fontSize: 40 }} />,
-      key: 'dmkt',
-      title: 'DMKT',
-    },
-    {
-      icon: <InstagramOutlined style={{ fontSize: 24 }} />,
-      key: 'ig',
-      title: 'Instagram',
     },
     {
       icon: <div className={styles.sep} />,
@@ -227,16 +205,8 @@ const CanvasTabBar = (): React.ReactNode => {
     } else if (key === 'document') {
       dialogCaller.showDocumentSettings();
       setTimeout(resetActiveKey, 300);
-    } else if (key === 'dmkt') {
-      browser.open(lang.topbar.menu.link.design_market);
-      setTimeout(resetActiveKey, 300);
-    } else if (key === 'cloud') {
-      dialogCaller.showMyCloud(resetActiveKey);
     } else if (key === 'passthrough') {
       showPassThrough(resetActiveKey);
-    } else if (key === 'ig') {
-      browser.open(getSocialMedia().instagram.link);
-      setTimeout(resetActiveKey, 300);
     }
   };
 

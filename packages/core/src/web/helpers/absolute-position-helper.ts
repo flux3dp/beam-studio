@@ -6,6 +6,7 @@ import isDev from '@core/helpers/is-dev';
 export enum TopRef {
   LAYER_LIST = 2,
   LAYER_PARAMS = 3,
+  ToolButton = 4,
   TOPBAR = 1,
   WINDOW = 0,
 }
@@ -28,6 +29,8 @@ export const calculateTop = (top: number, ref: TopRef = TopRef.WINDOW): number =
 
       return top + offset;
     }
+    case TopRef.ToolButton:
+      return calculateTop(7 + top * layoutConstants.toolButtonHeight, TopRef.TOPBAR);
     default:
       return top + layoutConstants.titlebarHeight;
   }
