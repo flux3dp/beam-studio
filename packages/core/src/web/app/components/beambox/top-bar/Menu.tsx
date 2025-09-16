@@ -85,6 +85,11 @@ export default function Menu({ email }: Props): React.JSX.Element {
 
   const lang = useI18n();
   const {
+    beambox: {
+      left_panel: {
+        label: { curve_engraving: tCurveEngraving },
+      },
+    },
     promark_connection_test: tPromarkConnectionTest,
     promark_settings: tPromarkSettings,
     topbar: { menu: menuCms },
@@ -431,6 +436,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
         <MenuItem onClick={() => callback('MATERIAL_TEST_GENERATOR')}>{menuCms.tools.material_test_generator}</MenuItem>
         <MenuItem onClick={() => callback('CODE_GENERATOR')}>{menuCms.tools.code_generator}</MenuItem>
         <MenuItem onClick={() => callback('BOX_GEN')}>{menuCms.tools.box_generator}</MenuItem>
+        <MenuItem onClick={() => callback('START_CURVE_ENGRAVING_MODE')}>{tCurveEngraving.title}</MenuItem>
       </SubMenu>
       <SubMenu label={menuCms.account}>
         {email ? (

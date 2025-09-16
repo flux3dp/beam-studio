@@ -1,3 +1,4 @@
+import { checkBM2CurveEngraving } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 
 import type { WorkAreaModel } from './workarea-constants';
@@ -164,7 +165,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       vectorSpeedLimit: 30,
       xRange: [0, 340],
     },
-    curveEngraving: true,
+    curveEngraving: checkBM2CurveEngraving(),
     jobOrigin: true,
     lowerFocus: true,
     multiModules: true,

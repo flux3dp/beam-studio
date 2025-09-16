@@ -23,6 +23,7 @@ class BeamboxGlobalInteraction {
     } else if (isAtPage('editor')) {
       // enable all
       menu.attach();
+      menu.checkCurveEngraving();
       this.onObjectBlur();
       this.onObjectFocus();
     } else {

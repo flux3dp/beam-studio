@@ -40,17 +40,6 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -127,63 +116,12 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -235,17 +173,6 @@ exports[`test DrawingToolButtonGroup should render correctly 2`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -322,63 +249,12 @@ exports[`test DrawingToolButtonGroup should render correctly 2`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -421,17 +297,6 @@ exports[`test DrawingToolButtonGroup should render correctly 3`] = `
       class="container"
       id="left-Photo"
       title="Image (I)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-MyCloud"
-      title="My Cloud"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -517,63 +382,12 @@ exports[`test DrawingToolButtonGroup should render correctly 3`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -625,17 +439,6 @@ exports[`test DrawingToolButtonGroup should render correctly 4`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -712,63 +515,12 @@ exports[`test DrawingToolButtonGroup should render correctly 4`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -820,17 +572,6 @@ exports[`test DrawingToolButtonGroup should render correctly 5`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -907,63 +648,12 @@ exports[`test DrawingToolButtonGroup should render correctly 5`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1015,17 +705,6 @@ exports[`test DrawingToolButtonGroup should render correctly 6`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -1102,63 +781,12 @@ exports[`test DrawingToolButtonGroup should render correctly 6`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1210,17 +838,6 @@ exports[`test DrawingToolButtonGroup should render correctly 7`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -1297,63 +914,12 @@ exports[`test DrawingToolButtonGroup should render correctly 7`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1405,17 +971,6 @@ exports[`test DrawingToolButtonGroup should render correctly 8`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -1492,63 +1047,12 @@ exports[`test DrawingToolButtonGroup should render correctly 8`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1600,17 +1104,6 @@ exports[`test DrawingToolButtonGroup should render correctly 9`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -1687,63 +1180,12 @@ exports[`test DrawingToolButtonGroup should render correctly 9`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -1795,17 +1237,6 @@ exports[`test DrawingToolButtonGroup should render correctly 10`] = `
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -1882,648 +1313,12 @@ exports[`test DrawingToolButtonGroup should render correctly 10`] = `
       </span>
     </div>
     <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
       class="separator"
     />
     <div
       class="container beamy"
       id="left-Beamy"
       title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`test DrawingToolButtonGroup should render correctly 11`] = `
-<div>
-  <div
-    class="flux"
-  >
-    <div
-      class="container"
-      id="left-Preview"
-      title="PREVIEW"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container active"
-      id="left-Cursor"
-      title="Select (V)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Photo"
-      title="Image (I)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Text"
-      title="Text (T)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Element"
-      title="Elements (E)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Rectangle"
-      title="Rectangle (M)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Ellipse"
-      title="Oval (C)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Polygon"
-      title="Polygon"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Line"
-      title="Line (\\)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Pen"
-      title="Pen (P)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="separator"
-    />
-    <div
-      class="container beamy"
-      id="left-Beamy"
-      title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`test DrawingToolButtonGroup should render correctly 12`] = `
-<div>
-  <div
-    class="flux"
-  >
-    <div
-      class="container"
-      id="left-Preview"
-      title="PREVIEW"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Cursor"
-      title="Select (V)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Photo"
-      title="Image (I)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container active"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Text"
-      title="Text (T)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Element"
-      title="Elements (E)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Rectangle"
-      title="Rectangle (M)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Ellipse"
-      title="Oval (C)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Polygon"
-      title="Polygon"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Line"
-      title="Line (\\)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Pen"
-      title="Pen (P)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="separator"
-    />
-    <div
-      class="container beamy"
-      id="left-Beamy"
-      title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`test DrawingToolButtonGroup should render correctly 13`] = `
-<div>
-  <div
-    class="flux"
-  >
-    <div
-      class="container"
-      id="left-Preview"
-      title="PREVIEW"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Cursor"
-      title="Select (V)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Photo"
-      title="Image (I)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container active"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Text"
-      title="Text (T)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Element"
-      title="Elements (E)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Rectangle"
-      title="Rectangle (M)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Ellipse"
-      title="Oval (C)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Polygon"
-      title="Polygon"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Line"
-      title="Line (\\)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Pen"
-      title="Pen (P)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="separator"
-    />
-    <div
-      class="container beamy"
-      id="left-Beamy"
-      title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2575,21 +1370,6 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     </div>
     <div
       class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-        <svgr-url
-          classname="ant-scroll-number-custom-component flux-plus"
-          style="margin-top: 6px; right: 4px;"
-        />
-      </span>
-    </div>
-    <div
-      class="container"
       id="left-Text"
       title="Text (T)"
     >
@@ -2658,17 +1438,6 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       class="container"
       id="left-Pen"
       title="Pen (P)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -2701,281 +1470,6 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
         <svgr-url />
       </span>
     </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
   </div>
-</div>
-`;
-
-exports[`test DrawingToolButtonGroup should render correctly when model is bb2 1`] = `
-<div>
-  <div
-    class="flux"
-  >
-    <div
-      class="container"
-      id="left-Preview"
-      title="PREVIEW"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container active"
-      id="left-Cursor"
-      title="Select (V)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Photo"
-      title="Image (I)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-MyCloud"
-      title="My Cloud"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-        <svgr-url
-          classname="ant-scroll-number-custom-component flux-plus"
-          style="margin-top: 6px; right: 4px;"
-        />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Text"
-      title="Text (T)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Element"
-      title="Elements (E)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Rectangle"
-      title="Rectangle (M)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Ellipse"
-      title="Oval (C)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Polygon"
-      title="Polygon"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Line"
-      title="Line (\\)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Pen"
-      title="Pen (P)"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-curve-engrave"
-      title="Curve Engraving"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="separator"
-    />
-    <div
-      class="container beamy"
-      id="left-Beamy"
-      title="Beamy"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-Instagram"
-      title="Instagram"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <span
-          aria-label="instagram"
-          class="anticon anticon-instagram"
-          role="img"
-        >
-          <svg
-            aria-hidden="true"
-            data-icon="instagram"
-            fill="currentColor"
-            focusable="false"
-            height="1em"
-            viewBox="64 64 896 896"
-            width="1em"
-          >
-            <path
-              d="M512 306.9c-113.5 0-205.1 91.6-205.1 205.1S398.5 717.1 512 717.1 717.1 625.5 717.1 512 625.5 306.9 512 306.9zm0 338.4c-73.4 0-133.3-59.9-133.3-133.3S438.6 378.7 512 378.7 645.3 438.6 645.3 512 585.4 645.3 512 645.3zm213.5-394.6c-26.5 0-47.9 21.4-47.9 47.9s21.4 47.9 47.9 47.9 47.9-21.3 47.9-47.9a47.84 47.84 0 00-47.9-47.9zM911.8 512c0-55.2.5-109.9-2.6-165-3.1-64-17.7-120.8-64.5-167.6-46.9-46.9-103.6-61.4-167.6-64.5-55.2-3.1-109.9-2.6-165-2.6-55.2 0-109.9-.5-165 2.6-64 3.1-120.8 17.7-167.6 64.5C132.6 226.3 118.1 283 115 347c-3.1 55.2-2.6 109.9-2.6 165s-.5 109.9 2.6 165c3.1 64 17.7 120.8 64.5 167.6 46.9 46.9 103.6 61.4 167.6 64.5 55.2 3.1 109.9 2.6 165 2.6 55.2 0 109.9.5 165-2.6 64-3.1 120.8-17.7 167.6-64.5 46.9-46.9 61.4-103.6 64.5-167.6 3.2-55.1 2.6-109.8 2.6-165zm-88 235.8c-7.3 18.2-16.1 31.8-30.2 45.8-14.1 14.1-27.6 22.9-45.8 30.2C695.2 844.7 570.3 840 512 840c-58.3 0-183.3 4.7-235.9-16.1-18.2-7.3-31.8-16.1-45.8-30.2-14.1-14.1-22.9-27.6-30.2-45.8C179.3 695.2 184 570.3 184 512c0-58.3-4.7-183.3 16.1-235.9 7.3-18.2 16.1-31.8 30.2-45.8s27.6-22.9 45.8-30.2C328.7 179.3 453.7 184 512 184s183.3-4.7 235.9 16.1c18.2 7.3 31.8 16.1 45.8 30.2 14.1 14.1 22.9 27.6 30.2 45.8C844.7 328.7 840 453.7 840 512c0 58.3 4.7 183.2-16.2 235.8z"
-            />
-          </svg>
-        </span>
-      </span>
-    </div>
-    <div
-      class="container"
-      id="left-DesignMarket"
-      title="DesignMarket"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`test DrawingToolButtonGroup should render flux plus icon correctly 1`] = `
-<div
-  class="container"
-  id="left-MyCloud"
-  title="My Cloud"
->
-  <span
-    class="ant-badge badge css-dev-only-do-not-override-hash"
-  >
-    <svgr-url />
-    <svgr-url
-      classname="ant-scroll-number-custom-component flux-plus"
-      style="margin-top: 6px; right: 4px;"
-    />
-  </span>
-</div>
-`;
-
-exports[`test DrawingToolButtonGroup should render flux plus icon correctly 2`] = `
-<div
-  class="container active"
-  id="left-MyCloud"
-  title="My Cloud"
->
-  <span
-    class="ant-badge badge css-dev-only-do-not-override-hash"
-  >
-    <svgr-url />
-    <svgr-url
-      classname="ant-scroll-number-custom-component flux-plus"
-      style="margin-top: 6px; right: 4px;"
-    />
-  </span>
 </div>
 `;

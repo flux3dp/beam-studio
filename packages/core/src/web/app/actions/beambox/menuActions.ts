@@ -2,6 +2,7 @@ import Alert from '@core/app/actions/alert-caller';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import Tutorials from '@core/app/actions/beambox/tutorials';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
@@ -158,6 +159,7 @@ export default {
   SHOW_RULERS: (): boolean => viewMenu.toggleRulers(),
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),
+  START_CURVE_ENGRAVING_MODE: () => curveEngravingModeController.start(),
   START_GESTURE_INTRO: (): Promise<void> => Dialog.showMediaTutorial(getGestureIntroduction()),
   START_TUTORIAL: (): void => {
     const globalPreference = useGlobalPreferenceStore.getState();

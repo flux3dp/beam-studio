@@ -644,6 +644,12 @@ class MenuManager extends EventEmitter {
         { click: callback, enabled: false, id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator },
         { click: callback, enabled: false, id: 'CODE_GENERATOR', label: r.tools.code_generator },
         { click: callback, enabled: false, id: 'BOX_GEN', label: r.tools.box_generator },
+        {
+          click: callback,
+          enabled: false,
+          id: 'START_CURVE_ENGRAVING_MODE',
+          label: i18n.lang.beambox.left_panel.label.curve_engraving.title,
+        },
       ],
     });
 

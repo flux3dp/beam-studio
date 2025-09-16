@@ -25,24 +25,10 @@ jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   useSelectTool: mockUseSelectTool,
 }));
 
-const mockOpen = jest.fn();
-
-jest.mock('@core/implementations/browser', () => ({
-  open: mockOpen,
-}));
-
-const showElementPanel = jest.fn();
-const showMyCloud = jest.fn();
+const mockShowElementPanel = jest.fn();
 
 jest.mock('@core/app/actions/dialog-caller', () => ({
-  showElementPanel: (...args) => showElementPanel(...args),
-  showMyCloud: (...args) => showMyCloud(...args),
-}));
-
-const getCurrentUser = jest.fn();
-
-jest.mock('@core/helpers/api/flux-id', () => ({
-  getCurrentUser: () => getCurrentUser(),
+  showElementPanel: mockShowElementPanel,
 }));
 
 jest.mock('@core/app/contexts/CanvasContext', () => ({
@@ -55,17 +41,7 @@ jest.mock('@core/app/components/pass-through', () => ({
   showPassThrough: mockShowPassThrough,
 }));
 
-jest.mock('@core/app/constants/social-media-constants', () => ({
-  getSocialMedia: () => ({ instagram: { link: 'instagram_link' } }),
-}));
-
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
-
-const mockCurveEngravingModeControllerStart = jest.fn();
-
-jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
-  start: () => mockCurveEngravingModeControllerStart(),
-}));
 
 describe('test DrawingToolButtonGroup', () => {
   beforeEach(() => {
@@ -103,7 +79,7 @@ describe('test DrawingToolButtonGroup', () => {
 
     fireEvent.click(container.querySelector('#left-Element'));
     expect(container).toMatchSnapshot();
-    expect(showElementPanel).toHaveBeenCalledTimes(1);
+    expect(mockShowElementPanel).toHaveBeenCalledTimes(1);
 
     fireEvent.click(container.querySelector('#left-Pen'));
     expect(container).toMatchSnapshot();
@@ -112,21 +88,6 @@ describe('test DrawingToolButtonGroup', () => {
     fireEvent.click(container.querySelector('#left-Cursor'));
     expect(container).toMatchSnapshot();
     expect(mockUseSelectTool).toHaveBeenCalledTimes(1);
-
-    fireEvent.click(container.querySelector('#left-DesignMarket'));
-    expect(container).toMatchSnapshot();
-    expect(mockOpen).toHaveBeenCalledTimes(1);
-    expect(mockOpen).toHaveBeenLastCalledWith('https://dmkt.io');
-
-    fireEvent.click(container.querySelector('#left-MyCloud'));
-    expect(container).toMatchSnapshot();
-    expect(showMyCloud).toHaveBeenCalledTimes(1);
-    expect(showMyCloud).toHaveBeenCalledWith(mockUseSelectTool);
-
-    fireEvent.click(container.querySelector('#left-Instagram'));
-    expect(container).toMatchSnapshot();
-    expect(mockOpen).toHaveBeenCalledTimes(2);
-    expect(mockOpen).toHaveBeenLastCalledWith('instagram_link');
   });
 
   test('preview button should render correctly', () => {
@@ -142,21 +103,6 @@ describe('test DrawingToolButtonGroup', () => {
     expect(contextValue.setupPreviewMode).toHaveBeenCalledTimes(1);
   });
 
-  test('should render flux plus icon correctly', () => {
-    getCurrentUser.mockReturnValue({ info: { subscription: { is_valid: true } } });
-
-    const { container } = render(<DrawingToolButtonGroup className="flux" />);
-
-    const myCloudButton = container.querySelector('#left-MyCloud');
-
-    expect(myCloudButton).toMatchSnapshot();
-
-    fireEvent.click(myCloudButton);
-    expect(myCloudButton).toMatchSnapshot();
-    expect(showMyCloud).toHaveBeenCalledTimes(1);
-    expect(showMyCloud).toHaveBeenCalledWith(mockUseSelectTool);
-  });
-
   test('should render correctly when in pass through mode', () => {
     const contextValue = { hasPassthroughExtension: true };
     const { container } = render(
@@ -170,21 +116,6 @@ describe('test DrawingToolButtonGroup', () => {
     fireEvent.click(container.querySelector('#left-PassThrough'));
     expect(mockShowPassThrough).toHaveBeenCalledTimes(1);
     expect(mockShowPassThrough).toHaveBeenCalledWith(mockUseSelectTool);
-  });
-
-  test('should render correctly when model is bb2', () => {
-    const contextValue = { selectedDevice: { model: 'fbb2' } };
-    const { container } = render(
-      <CanvasContext.Provider value={contextValue as any}>
-        <DrawingToolButtonGroup className="flux" />
-      </CanvasContext.Provider>,
-    );
-
-    expect(container).toMatchSnapshot();
-    expect(mockCurveEngravingModeControllerStart).not.toHaveBeenCalled();
-    fireEvent.click(container.querySelector('#left-curve-engrave'));
-    expect(mockCurveEngravingModeControllerStart).toHaveBeenCalledTimes(1);
-    expect(mockCurveEngravingModeControllerStart).toHaveBeenCalledWith();
   });
 
   test('event emitter', async () => {

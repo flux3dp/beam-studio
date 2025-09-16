@@ -1,9 +1,13 @@
 import { sprintf } from 'sprintf-js';
+import { shallow } from 'zustand/shallow';
 
 import menuActions from '@core/app/actions/beambox/menuActions';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { getAddOnInfo } from '@core/app/constants/addOn';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import DeviceMaster from '@core/helpers/device-master';
+import { isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import type { ExampleFileKey } from '@core/helpers/menubar/exampleFiles';
 import { loadExampleFile } from '@core/helpers/menubar/exampleFiles';
@@ -52,7 +56,7 @@ const VIEW_MENU_ITEMS = [
   'AUTO_ALIGN',
   'ANTI_ALIASING',
 ];
-const TOOLS_MENU_ITEMS = ['MATERIAL_TEST_GENERATOR', 'CODE_GENERATOR', 'BOX_GEN'];
+const TOOLS_MENU_ITEMS = ['MATERIAL_TEST_GENERATOR', 'CODE_GENERATOR', 'BOX_GEN', 'START_CURVE_ENGRAVING_MODE'];
 
 /**
  * Special menu items that should be disabled in certain pages
@@ -147,6 +151,12 @@ export default abstract class AbstractMenu {
 
     if (!this.menuEventRegistered) {
       registerMenuClickEvents();
+
+      useDocumentStore.subscribe(
+        (state) => [state.workarea, state.rotary_mode, state['auto-feeder'], state['pass-through']],
+        this.checkCurveEngraving,
+        { equalityFn: shallow },
+      );
     }
   }
 
@@ -173,4 +183,25 @@ export default abstract class AbstractMenu {
   detach(): void {
     this.disable(MENU_ITEMS);
   }
+
+  checkCurveEngraving = () => {
+    const documentStore = useDocumentStore.getState();
+    const workarea = documentStore.workarea;
+    const addOnInfo = getAddOnInfo(workarea);
+    let supportCurveEngraving = Boolean(addOnInfo.curveEngraving) && isAtPage('editor');
+
+    if (supportCurveEngraving) {
+      const isRotary = documentStore.rotary_mode && Boolean(addOnInfo.rotary);
+      const isAutoFeeder = documentStore['auto-feeder'] && Boolean(addOnInfo.autoFeeder);
+      const isPassThrough = documentStore['pass-through'] && Boolean(addOnInfo.passThrough);
+
+      supportCurveEngraving = !(isAutoFeeder || isRotary || isPassThrough);
+    }
+
+    if (supportCurveEngraving) {
+      this.enable(['START_CURVE_ENGRAVING_MODE']);
+    } else {
+      this.disable(['START_CURVE_ENGRAVING_MODE']);
+    }
+  };
 }

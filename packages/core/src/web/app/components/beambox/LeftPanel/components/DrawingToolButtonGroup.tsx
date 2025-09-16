@@ -1,23 +1,14 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
-
-import { InstagramOutlined } from '@ant-design/icons';
+import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import { showPassThrough } from '@core/app/components/pass-through';
-import { getAddOnInfo } from '@core/app/constants/addOn';
-import { getSocialMedia } from '@core/app/constants/social-media-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import { useDocumentStore } from '@core/app/stores/documentStore';
-import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isDev from '@core/helpers/is-dev';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import browser from '@core/implementations/browser';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { useChatStore } from '../../svg-editor/Chat/useChatStore';
@@ -46,19 +37,9 @@ const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
   const tLeftPanel = lang.beambox.left_panel;
-  const { changeToPreviewMode, hasPassthroughExtension, selectedDevice, setupPreviewMode } = useContext(CanvasContext);
+  const { changeToPreviewMode, hasPassthroughExtension, setupPreviewMode } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
-  const workarea = useDocumentStore((state) => state.workarea);
-  const addOnInfo = getAddOnInfo(workarea);
-  const isRotary = useDocumentStore((state) => state.rotary_mode) && Boolean(addOnInfo.rotary);
-  const isAutoFeeder = useDocumentStore((state) => state['auto-feeder']) && Boolean(addOnInfo.autoFeeder);
-  const isPassThrough = useDocumentStore((state) => state['pass-through']) && Boolean(addOnInfo.passThrough);
-  const isCurveEngravingDisabled = useMemo(
-    () => isAutoFeeder || isRotary || isPassThrough,
-    [isAutoFeeder, isRotary, isPassThrough],
-  );
   const [activeButton, setActiveButton] = useState('Cursor');
-  const isSubscribed = getCurrentUser()?.info?.subscription?.is_valid;
   const renderToolButton = ({
     className = undefined,
     disabled = false,
@@ -126,13 +107,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         onClick: FnWrapper.importImage,
       })}
       {renderToolButton({
-        icon: <LeftPanelIcons.Cloud />,
-        id: 'MyCloud',
-        label: tLeftPanel.label.my_cloud,
-        onClick: () => dialogCaller.showMyCloud(FnWrapper.useSelectTool),
-        showBadge: isSubscribed,
-      })}
-      {renderToolButton({
         icon: <LeftPanelIcons.Text />,
         id: 'Text',
         label: `${tLeftPanel.label.text} (T)`,
@@ -174,14 +148,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: `${tLeftPanel.label.pen} (P)`,
         onClick: FnWrapper.insertPath,
       })}
-      {([selectedDevice?.model, workarea].includes('fbb2') || isDev()) &&
-        renderToolButton({
-          disabled: isCurveEngravingDisabled,
-          icon: <LeftPanelIcons.CurveEngrave />,
-          id: 'curve-engrave',
-          label: isCurveEngravingDisabled ? lang.global.mode_conflict : tLeftPanel.label.curve_engraving.title,
-          onClick: () => curveEngravingModeController.start(),
-        })}
       {hasPassthroughExtension &&
         renderToolButton({
           icon: <LeftPanelIcons.PassThrough />,
@@ -199,18 +165,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         onClick: toggleBeamy,
         shouldSetActive: false,
         style: { color: isChatShown ? '#1890ff' : undefined },
-      })}
-      {renderToolButton({
-        icon: <InstagramOutlined />,
-        id: 'Instagram',
-        onClick: () => browser.open(getSocialMedia().instagram.link),
-        shouldSetActive: false,
-      })}
-      {renderToolButton({
-        icon: <LeftPanelIcons.DesignMarket />,
-        id: 'DesignMarket',
-        onClick: () => browser.open(lang.topbar.menu.link.design_market),
-        shouldSetActive: false,
       })}
     </div>
   );
