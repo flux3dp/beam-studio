@@ -1,1 +1,1 @@
-go -f -fbm2 -model fbm2 -acc 5000 -mpc -owp -fg -vsc -vsl 1800 -min-speed 0.5 -acc-override {"path":{"x":500,"y":500}} -mof {"7":[15.5,2.9]}	
+go -f -fbm2 -model fbm2 -acc 5000 -mpc -owp -fg -vsc -vsl 1800 -min-speed 0.5 -acc-override {"path":{"x":500,"y":500}} -mof {"7":[15.5,2.9]} -expected-module 7
