@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { forwardRef } from 'react';
 
 import type { GoogleFontItem as CachedGoogleFontItem } from '@core/helpers/fonts/googleFontsApiCache';
 
@@ -28,36 +28,9 @@ interface FontPreviewProps {
   font: CachedGoogleFontItem;
   isSelected: boolean;
   onClick: () => void;
-  onLoad: () => void;
 }
 
-const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, onLoad }) => {
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-          onLoad();
-        }
-      },
-      { threshold: 0.1 },
-    );
-
-    const element = document.querySelector(`[data-font="${font.family}"]`);
-
-    if (element) {
-      observer.observe(element);
-    }
-
-    return () => {
-      if (element) {
-        observer.unobserve(element);
-      }
-    };
-  }, [font.family, onLoad]);
-
+const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSelected, onClick }, ref) => {
   const previewText = getSampleText(font.family);
 
   // Get foundry/designer information
@@ -78,6 +51,7 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
           onClick();
         }
       }}
+      ref={ref}
       role="button"
       tabIndex={0}
     >
@@ -96,7 +70,7 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
         <div
           className={styles.sampleText}
           style={{
-            fontFamily: isVisible ? `'${font.family}', sans-serif` : 'inherit',
+            fontFamily: `'${font.family}', sans-serif`,
             fontSize: '32px',
             fontWeight: 400,
             lineHeight: '1.2',
@@ -107,6 +81,6 @@ const FontPreview: React.FC<FontPreviewProps> = ({ font, isSelected, onClick, on
       </div>
     </div>
   );
-};
+});
 
 export default FontPreview;
