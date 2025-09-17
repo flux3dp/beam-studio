@@ -264,7 +264,7 @@ export class BoundaryDrawer {
 
   updateModuleBoundary = (currentModule: LayerModuleType): void => {
     const { model } = workareaManager;
-    const boundary = getModuleBoundary(model, currentModule);
+    const boundary = structuredClone(getModuleBoundary(model, currentModule));
 
     if (this.supportMultiModules) {
       const supportedModules = getSupportedModules(model);
