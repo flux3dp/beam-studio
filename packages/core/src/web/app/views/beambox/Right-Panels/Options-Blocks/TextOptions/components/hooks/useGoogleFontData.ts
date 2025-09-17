@@ -4,6 +4,7 @@ import {
   type GoogleFontItem as CachedGoogleFontItem,
   getGoogleFontsCatalogSorted,
 } from '@core/helpers/fonts/googleFontsApiCache';
+import { useGoogleFontStore } from '@core/stores/googleFontStore';
 
 interface UseGoogleFontDataReturn {
   // Computed data
@@ -16,7 +17,7 @@ interface UseGoogleFontDataReturn {
   languageOptions: Array<{ label: string; value: string }>;
   loadedFonts: Set<string>;
 
-  loadFont: (font: CachedGoogleFontItem) => void;
+  loadFont: (font: CachedGoogleFontItem) => Promise<void>;
   loading: boolean;
 }
 
@@ -29,7 +30,9 @@ const CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'
 export const useGoogleFontData = (): UseGoogleFontDataReturn => {
   const [fonts, setFonts] = useState<CachedGoogleFontItem[]>([]);
   const [loading, setLoading] = useState(false);
-  const [loadedFonts, setLoadedFonts] = useState<Set<string>>(new Set());
+  // Use store state for loaded fonts
+  const sessionLoadedFonts = useGoogleFontStore((state) => state.sessionLoadedFonts);
+  const loadGoogleFont = useGoogleFontStore((state) => state.loadGoogleFont);
 
   // Fetch Google Fonts from API
   const fetchGoogleFonts = useCallback(async () => {
@@ -48,21 +51,13 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
 
   // Load font CSS for preview
   const loadFont = useCallback(
-    (font: CachedGoogleFontItem) => {
-      if (loadedFonts.has(font.family)) return;
+    async (font: CachedGoogleFontItem) => {
+      // Check if already loaded in store
+      if (sessionLoadedFonts.has(font.family)) return;
 
-      // Create font face for preview
-      // Note: 'wght' is Google Fonts parameter for font-weight (not a typo)
-      const fontUrl = `https://fonts.googleapis.com/css2?family=${font.family.replace(/ /g, '+')}:wght@400&display=swap`;
-      const link = document.createElement('link');
-
-      link.href = fontUrl;
-      link.rel = 'stylesheet';
-      document.head.appendChild(link);
-
-      setLoadedFonts((prev) => new Set(prev).add(font.family));
+      await loadGoogleFont(font.family);
     },
-    [loadedFonts],
+    [sessionLoadedFonts, loadGoogleFont],
   );
 
   // Generate category options
@@ -116,16 +111,11 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
   }, [fonts]);
 
   return {
-    // Computed
     categoryOptions,
-    // Actions
     fetchGoogleFonts,
-    // State
     fonts,
-
     languageOptions,
-    loadedFonts,
-
+    loadedFonts: sessionLoadedFonts,
     loadFont,
     loading,
   };
