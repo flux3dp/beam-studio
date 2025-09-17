@@ -48,12 +48,12 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const prevFilterState = useRef(filterState);
 
   const handleFontSelectFromSearch = useCallback(
-    (fontFamily: string) => {
+    async (fontFamily: string) => {
       const font = fonts.find((f) => f.family === fontFamily);
 
       if (font) {
         setSelectedFont(font);
-        loadFont(font);
+        loadFont(font); // No await needed - fire and forget for preview
         setSearchText(fontFamily);
       }
     },
@@ -111,6 +111,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
       const endIndex = startIndex + FONTS_PER_PAGE;
       const newFonts = allFilteredFonts.slice(startIndex, endIndex);
 
+      // Load fonts for preview (fire and forget - store handles the loading)
       newFonts.forEach((font) => loadFont(font));
 
       setDisplayedFonts((prev) => {
@@ -171,6 +172,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
       if (allFilteredFonts.length > 0) {
         const firstBatch = allFilteredFonts.slice(0, FONTS_PER_PAGE);
 
+        // Load first batch of fonts for preview (fire and forget)
         firstBatch.forEach((font) => loadFont(font));
         setDisplayedFonts(firstBatch);
         setCurrentPage(2);
@@ -182,6 +184,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const handleFontClick = useCallback(
     (font: CachedGoogleFontItem) => {
       setSelectedFont(font);
+      // Load font for preview (fire and forget)
       loadFont(font);
     },
     [loadFont],
@@ -191,7 +194,8 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
     if (!selectedFont) return;
 
     try {
-      loadFont(selectedFont);
+      // Ensure font is loaded before proceeding
+      await loadFont(selectedFont);
       onFontSelect(selectedFont.family);
       onClose();
     } catch (error) {
