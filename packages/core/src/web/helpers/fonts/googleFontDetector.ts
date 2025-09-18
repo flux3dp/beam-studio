@@ -1,9 +1,4 @@
 /**
- * Pure utility functions for Google Font detection
- * No dependencies - can be imported anywhere without circular dependency issues
- */
-
-/**
  * Detect if a PostScript name matches Google Font pattern
  * Google Fonts use pattern: fontFamily.replace(/\s+/g, '') + '-Regular'
  * Examples: "OpenSans-Regular", "RobotoMono-Regular", "NotoSans-Regular"
@@ -26,7 +21,7 @@ export const extractFamilyFromPostScriptName = (postscriptName: string): null | 
     postscriptName
       // Remove "-Regular" suffix
       .split('-')[0]
-      // Add spaces before capital letters (except first)
+      // Add spaces before capital letters
       .replace(/([A-Z])/g, ' $1')
       .trim()
   );

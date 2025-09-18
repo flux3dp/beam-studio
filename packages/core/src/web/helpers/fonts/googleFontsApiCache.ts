@@ -132,7 +132,6 @@ class GoogleFontsApiCache {
   }
 }
 
-// Export singleton instance
 export const googleFontsApiCache = new GoogleFontsApiCache();
 
 /**

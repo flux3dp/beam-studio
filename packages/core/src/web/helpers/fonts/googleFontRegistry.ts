@@ -27,11 +27,10 @@ class GoogleFontRegistry {
     }
 
     if (this.registeredFonts.has(googleFont.postscriptName)) {
-      return true; // Already registered
+      return true;
     }
 
     try {
-      // Use the injected callback to perform the actual registration
       this.registrationCallback(googleFont);
       this.registeredFonts.set(googleFont.postscriptName, googleFont);
 
@@ -87,5 +86,4 @@ class GoogleFontRegistry {
   }
 }
 
-// Global singleton instance
 export const googleFontRegistry = new GoogleFontRegistry();
