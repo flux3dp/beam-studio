@@ -1,0 +1,310 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`GoogleFontsPanel Basic Rendering should render correctly when visible 1`] = `
+<div>
+  <div
+    class="modal"
+    data-testid="draggable-modal"
+    width="1000"
+  >
+    <button
+      data-testid="modal-close"
+    >
+      Close
+    </button>
+    <div
+      class="header"
+    >
+      <div
+        class="title"
+      >
+        <span
+          aria-label="google"
+          class="anticon anticon-google googleLogo"
+          role="img"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="google"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M881 442.4H519.7v148.5h206.4c-8.9 48-35.9 88.6-76.6 115.8-34.4 23-78.3 36.6-129.9 36.6-99.9 0-184.4-67.5-214.6-158.2-7.6-23-12-47.6-12-72.9s4.4-49.9 12-72.9c30.3-90.6 114.8-158.1 214.7-158.1 56.3 0 106.8 19.4 146.6 57.4l110-110.1c-66.5-62-153.2-100-256.6-100-149.9 0-279.6 86-342.7 211.4-26 51.8-40.8 110.4-40.8 172.4S151 632.8 177 684.6C240.1 810 369.8 896 519.7 896c103.6 0 190.4-34.4 253.8-93 72.5-66.8 114.4-165.2 114.4-282.1 0-27.2-2.4-53.3-6.9-78.5z"
+            />
+          </svg>
+        </span>
+        <span
+          class="titleText"
+        >
+          GoogleFonts
+        </span>
+      </div>
+      <button
+        class="closeButton"
+        icon="[object Object]"
+        type="text"
+      />
+    </div>
+    <div
+      class="mainContent"
+    >
+      <div
+        class="sidebar"
+      >
+        <div
+          class="searchSection"
+        >
+          <div
+            class="searchInput"
+            data-testid="select"
+            style="width: 100%;"
+            suffixicon="[object Object]"
+          >
+            <input
+              data-testid="search-input"
+              placeholder="Search fonts..."
+              value=""
+            />
+            <div
+              data-testid="select-options"
+            >
+              <div
+                data-testid="select-option-Open Sans"
+              >
+                Open Sans
+              </div>
+              <div
+                data-testid="select-option-Roboto"
+              >
+                Roboto
+              </div>
+              <div
+                data-testid="select-option-Playfair Display"
+              >
+                Playfair Display
+              </div>
+            </div>
+            <button
+              data-testid="select-clear"
+            >
+              Clear
+            </button>
+          </div>
+        </div>
+        <div
+          class="filterSection"
+        >
+          <div
+            class="filterHeader"
+          >
+            <span
+              aria-label="global"
+              class="anticon anticon-global filterIcon"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="global"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M854.4 800.9c.2-.3.5-.6.7-.9C920.6 722.1 960 621.7 960 512s-39.4-210.1-104.8-288c-.2-.3-.5-.5-.7-.8-1.1-1.3-2.1-2.5-3.2-3.7-.4-.5-.8-.9-1.2-1.4l-4.1-4.7-.1-.1c-1.5-1.7-3.1-3.4-4.6-5.1l-.1-.1c-3.2-3.4-6.4-6.8-9.7-10.1l-.1-.1-4.8-4.8-.3-.3c-1.5-1.5-3-2.9-4.5-4.3-.5-.5-1-1-1.6-1.5-1-1-2-1.9-3-2.8-.3-.3-.7-.6-1-1C736.4 109.2 629.5 64 512 64s-224.4 45.2-304.3 119.2c-.3.3-.7.6-1 1-1 .9-2 1.9-3 2.9-.5.5-1 1-1.6 1.5-1.5 1.4-3 2.9-4.5 4.3l-.3.3-4.8 4.8-.1.1c-3.3 3.3-6.5 6.7-9.7 10.1l-.1.1c-1.6 1.7-3.1 3.4-4.6 5.1l-.1.1c-1.4 1.5-2.8 3.1-4.1 4.7-.4.5-.8.9-1.2 1.4-1.1 1.2-2.1 2.5-3.2 3.7-.2.3-.5.5-.7.8C103.4 301.9 64 402.3 64 512s39.4 210.1 104.8 288c.2.3.5.6.7.9l3.1 3.7c.4.5.8.9 1.2 1.4l4.1 4.7c0 .1.1.1.1.2 1.5 1.7 3 3.4 4.6 5l.1.1c3.2 3.4 6.4 6.8 9.6 10.1l.1.1c1.6 1.6 3.1 3.2 4.7 4.7l.3.3c3.3 3.3 6.7 6.5 10.1 9.6 80.1 74 187 119.2 304.5 119.2s224.4-45.2 304.3-119.2a300 300 0 0010-9.6l.3-.3c1.6-1.6 3.2-3.1 4.7-4.7l.1-.1c3.3-3.3 6.5-6.7 9.6-10.1l.1-.1c1.5-1.7 3.1-3.3 4.6-5 0-.1.1-.1.1-.2 1.4-1.5 2.8-3.1 4.1-4.7.4-.5.8-.9 1.2-1.4a99 99 0 003.3-3.7zm4.1-142.6c-13.8 32.6-32 62.8-54.2 90.2a444.07 444.07 0 00-81.5-55.9c11.6-46.9 18.8-98.4 20.7-152.6H887c-3 40.9-12.6 80.6-28.5 118.3zM887 484H743.5c-1.9-54.2-9.1-105.7-20.7-152.6 29.3-15.6 56.6-34.4 81.5-55.9A373.86 373.86 0 01887 484zM658.3 165.5c39.7 16.8 75.8 40 107.6 69.2a394.72 394.72 0 01-59.4 41.8c-15.7-45-35.8-84.1-59.2-115.4 3.7 1.4 7.4 2.9 11 4.4zm-90.6 700.6c-9.2 7.2-18.4 12.7-27.7 16.4V697a389.1 389.1 0 01115.7 26.2c-8.3 24.6-17.9 47.3-29 67.8-17.4 32.4-37.8 58.3-59 75.1zm59-633.1c11 20.6 20.7 43.3 29 67.8A389.1 389.1 0 01540 327V141.6c9.2 3.7 18.5 9.1 27.7 16.4 21.2 16.7 41.6 42.6 59 75zM540 640.9V540h147.5c-1.6 44.2-7.1 87.1-16.3 127.8l-.3 1.2A445.02 445.02 0 00540 640.9zm0-156.9V383.1c45.8-2.8 89.8-12.5 130.9-28.1l.3 1.2c9.2 40.7 14.7 83.5 16.3 127.8H540zm-56 56v100.9c-45.8 2.8-89.8 12.5-130.9 28.1l-.3-1.2c-9.2-40.7-14.7-83.5-16.3-127.8H484zm-147.5-56c1.6-44.2 7.1-87.1 16.3-127.8l.3-1.2c41.1 15.6 85 25.3 130.9 28.1V484H336.5zM484 697v185.4c-9.2-3.7-18.5-9.1-27.7-16.4-21.2-16.7-41.7-42.7-59.1-75.1-11-20.6-20.7-43.3-29-67.8 37.2-14.6 75.9-23.3 115.8-26.1zm0-370a389.1 389.1 0 01-115.7-26.2c8.3-24.6 17.9-47.3 29-67.8 17.4-32.4 37.8-58.4 59.1-75.1 9.2-7.2 18.4-12.7 27.7-16.4V327zM365.7 165.5c3.7-1.5 7.3-3 11-4.4-23.4 31.3-43.5 70.4-59.2 115.4-21-12-40.9-26-59.4-41.8 31.8-29.2 67.9-52.4 107.6-69.2zM165.5 365.7c13.8-32.6 32-62.8 54.2-90.2 24.9 21.5 52.2 40.3 81.5 55.9-11.6 46.9-18.8 98.4-20.7 152.6H137c3-40.9 12.6-80.6 28.5-118.3zM137 540h143.5c1.9 54.2 9.1 105.7 20.7 152.6a444.07 444.07 0 00-81.5 55.9A373.86 373.86 0 01137 540zm228.7 318.5c-39.7-16.8-75.8-40-107.6-69.2 18.5-15.8 38.4-29.7 59.4-41.8 15.7 45 35.8 84.1 59.2 115.4-3.7-1.4-7.4-2.9-11-4.4zm292.6 0c-3.7 1.5-7.3 3-11 4.4 23.4-31.3 43.5-70.4 59.2-115.4 21 12 40.9 26 59.4 41.8a373.81 373.81 0 01-107.6 69.2z"
+                />
+              </svg>
+            </span>
+            <span
+              class="filterLabel"
+            >
+              Language
+            </span>
+          </div>
+          <div
+            class="languageSelect"
+            data-testid="select"
+          >
+            <input
+              data-testid="language-input"
+              placeholder="Language"
+              value="All languages"
+            />
+            <div
+              data-testid="select-options"
+            >
+              <div
+                data-testid="select-option-"
+              >
+                All languages
+              </div>
+              <div
+                data-testid="select-option-latin"
+              >
+                Latin
+              </div>
+              <div
+                data-testid="select-option-latin-ext"
+              >
+                Latin Extended
+              </div>
+              <div
+                data-testid="select-option-cyrillic"
+              >
+                Cyrillic
+              </div>
+              <div
+                data-testid="select-option-korean"
+              >
+                Korean
+              </div>
+              <div
+                data-testid="select-option-emoji"
+              >
+                Emoji
+              </div>
+            </div>
+          </div>
+        </div>
+        <div
+          class="filterSection"
+        >
+          <div
+            class="filterHeader"
+          >
+            <span
+              aria-label="appstore"
+              class="anticon anticon-appstore filterIcon"
+              role="img"
+            >
+              <svg
+                aria-hidden="true"
+                data-icon="appstore"
+                fill="currentColor"
+                focusable="false"
+                height="1em"
+                viewBox="64 64 896 896"
+                width="1em"
+              >
+                <path
+                  d="M464 144H160c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V160c0-8.8-7.2-16-16-16zm-52 268H212V212h200v200zm452-268H560c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V160c0-8.8-7.2-16-16-16zm-52 268H612V212h200v200zM464 544H160c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V560c0-8.8-7.2-16-16-16zm-52 268H212V612h200v200zm452-268H560c-8.8 0-16 7.2-16 16v304c0 8.8 7.2 16 16 16h304c8.8 0 16-7.2 16-16V560c0-8.8-7.2-16-16-16zm-52 268H612V612h200v200z"
+                />
+              </svg>
+            </span>
+            <span
+              class="filterLabel"
+            >
+              Category
+            </span>
+          </div>
+          <div
+            class="categoryChips"
+          >
+            <button
+              class="categoryChip "
+            >
+              Serif
+            </button>
+            <button
+              class="categoryChip "
+            >
+              Sans-serif
+            </button>
+            <button
+              class="categoryChip "
+            >
+              Display
+            </button>
+            <button
+              class="categoryChip "
+            >
+              Handwriting
+            </button>
+            <button
+              class="categoryChip "
+            >
+              Monospace
+            </button>
+          </div>
+        </div>
+      </div>
+      <div
+        class="fontPreviewArea"
+      >
+        <div
+          style="position: relative;"
+        >
+          <div
+            data-testid="virtual-list"
+          >
+            <div>
+              <div
+                data-selected="false"
+                data-testid="font-preview-Open Sans"
+                role="button"
+              >
+                Open Sans
+              </div>
+            </div>
+            <div>
+              <div
+                data-selected="false"
+                data-testid="font-preview-Roboto"
+                role="button"
+              >
+                Roboto
+              </div>
+            </div>
+            <div>
+              <div
+                data-selected="false"
+                data-testid="font-preview-Playfair Display"
+                role="button"
+              >
+                Playfair Display
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div
+      class="footer"
+    >
+      <div
+        class="selectedFontInfo"
+      >
+        <div
+          class="noSelectionDisplay"
+        >
+          <span
+            class="noSelectionText"
+          >
+            No font selected
+          </span>
+        </div>
+      </div>
+      <div
+        class="footerButtons"
+      >
+        <button
+          type="default"
+        >
+          Cancel
+        </button>
+        <button
+          disabled=""
+          type="primary"
+        >
+          Save
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;

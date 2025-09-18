@@ -56,12 +56,11 @@ export interface GoogleFontsApiResponse {
 class GoogleFontsApiCache {
   private cache: GoogleFontsApiResponse | null = null;
   private loading: null | Promise<GoogleFontsApiResponse> = null;
-  private sortedCache: GoogleFontsApiResponse | null = null;
 
   /**
    * Get the complete Google Fonts catalog (cached)
    */
-  async getCompleteCache(): Promise<GoogleFontsApiResponse> {
+  async getCache(): Promise<GoogleFontsApiResponse> {
     if (this.cache) {
       return this.cache;
     }
@@ -78,30 +77,10 @@ class GoogleFontsApiCache {
   }
 
   /**
-   * Get the complete Google Fonts catalog sorted by popularity (cached)
-   */
-  async getSortedCache(): Promise<GoogleFontsApiResponse> {
-    if (this.sortedCache) {
-      return this.sortedCache;
-    }
-
-    // Get base cache first
-    const baseCache = await this.getCompleteCache();
-
-    // Create sorted version
-    this.sortedCache = {
-      ...baseCache,
-      items: [...baseCache.items], // Items are already sorted by popularity from API
-    };
-
-    return this.sortedCache;
-  }
-
-  /**
    * Find a specific font by family name (optimized lookup)
    */
   async findFont(fontFamily: string): Promise<GoogleFontItem | null> {
-    const cache = await this.getCompleteCache();
+    const cache = await this.getCache();
 
     return cache.items.find(({ family }) => family === fontFamily) || null;
   }
@@ -111,7 +90,6 @@ class GoogleFontsApiCache {
    */
   clearCache(): void {
     this.cache = null;
-    this.sortedCache = null;
     this.loading = null;
     console.log('🗑️ Google Fonts API cache cleared');
   }
@@ -119,11 +97,10 @@ class GoogleFontsApiCache {
   /**
    * Get cache status for debugging
    */
-  getCacheStatus(): { cached: boolean; itemCount: number; sortedCached: boolean } {
+  getCacheStatus(): { cached: boolean; itemCount: number } {
     return {
       cached: Boolean(this.cache),
       itemCount: this.cache?.items?.length || 0,
-      sortedCached: Boolean(this.sortedCache),
     };
   }
 
@@ -170,10 +147,4 @@ export const getGoogleFont = (fontFamily: string): Promise<GoogleFontItem | null
  * Convenience function to get the complete font catalog
  * @returns Promise<GoogleFontsApiResponse>
  */
-export const getGoogleFontsCatalog = (): Promise<GoogleFontsApiResponse> => googleFontsApiCache.getCompleteCache();
-
-/**
- * Convenience function to get the sorted font catalog (by popularity)
- * @returns Promise<GoogleFontsApiResponse>
- */
-export const getGoogleFontsCatalogSorted = (): Promise<GoogleFontsApiResponse> => googleFontsApiCache.getSortedCache();
+export const getGoogleFontsCatalog = (): Promise<GoogleFontsApiResponse> => googleFontsApiCache.getCache();

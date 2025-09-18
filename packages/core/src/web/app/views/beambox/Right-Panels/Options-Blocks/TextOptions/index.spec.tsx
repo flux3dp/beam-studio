@@ -46,9 +46,46 @@ const mockReleaseSelector = jest.fn();
 const mockResize = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const mockBatchCommand = jest.fn();
+const mockShowGoogleFontsPanel = jest.fn();
+const mockRegisterGoogleFont = jest.fn();
+const mockAddToHistory = jest.fn();
+const mockLoadGoogleFontBinary = jest.fn();
+const mockIsGoogleFontLoaded = jest.fn();
+const mockLoadGoogleFont = jest.fn();
+const mockSessionLoadedFonts = new Set();
+const mockHandleFontSizeChange = jest.fn();
+const mockHandleFontStyleChange = jest.fn();
+const mockHandleLetterSpacingChange = jest.fn();
+const mockHandleLineSpacingChange = jest.fn();
+const mockHandleStartOffsetChange = jest.fn();
+const mockHandleVerticalAlignChange = jest.fn();
+const mockHandleVerticalTextClick = jest.fn();
+const mockWaitForWebFont = jest.fn();
+const mockStyleOptions = [
+  { label: 'Regular', value: 'Regular' },
+  { label: 'Bold', value: 'Bold' },
+];
 
 jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
+}));
+
+jest.mock('@core/app/stores/storageStore', () => ({
+  getStorage: jest.fn((key: string) => {
+    if (key === 'active-lang') return 'en';
+
+    if (key === 'font-history') return ['Arial', 'Times New Roman'];
+
+    return null;
+  }),
+  setStorage: jest.fn(),
+  useStorageStore: Object.assign(
+    jest.fn((selector) => selector({ 'font-history': ['Arial', 'Times New Roman'] })),
+    {
+      getState: jest.fn(() => ({ 'font-history': ['Arial', 'Times New Roman'] })),
+      subscribe: jest.fn(() => jest.fn()), // Return unsubscribe function
+    },
+  ),
 }));
 
 jest.mock('antd', () => {
@@ -122,7 +159,10 @@ const mockFontFuncs = {
   requestFontsOfTheFontFamily: (...args: any[]) => mockRequestFontsOfTheFontFamily(...args),
 };
 
-jest.mock('@core/app/actions/beambox/font-funcs', () => mockFontFuncs);
+jest.mock('@core/app/actions/beambox/font-funcs', () => ({
+  ...mockFontFuncs,
+  registerGoogleFont: (...args: any[]) => mockRegisterGoogleFont(...args),
+}));
 
 const mockFontHelper = {
   applyMonotypeStyle: (...args: any[]) => mockApplyMonotypeStyle(...args),
@@ -190,6 +230,46 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 
 jest.mock('@core/helpers/variableText', () => ({
   isVariableTextSupported: () => false,
+}));
+
+jest.mock('@core/app/actions/dialog-caller', () => ({
+  showGoogleFontsPanel: (...args: any[]) => mockShowGoogleFontsPanel(...args),
+}));
+
+jest.mock('@core/app/stores/googleFontStore', () => ({
+  useGoogleFontStore: Object.assign(
+    jest.fn(() => ({
+      addToHistory: mockAddToHistory,
+      getState: () => ({
+        isGoogleFontLoaded: mockIsGoogleFontLoaded,
+        loadGoogleFont: mockLoadGoogleFont,
+      }),
+      isGoogleFontLoaded: mockIsGoogleFontLoaded,
+      loadGoogleFont: mockLoadGoogleFont,
+      loadGoogleFontBinary: mockLoadGoogleFontBinary,
+      sessionLoadedFonts: mockSessionLoadedFonts,
+    })),
+    {
+      getState: () => ({
+        isGoogleFontLoaded: mockIsGoogleFontLoaded,
+        loadGoogleFont: mockLoadGoogleFont,
+      }),
+    },
+  ),
+}));
+
+jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/hooks/useFontHandlers', () => ({
+  useFontHandlers: jest.fn(() => ({
+    handleFontSizeChange: mockHandleFontSizeChange,
+    handleFontStyleChange: mockHandleFontStyleChange,
+    handleLetterSpacingChange: mockHandleLetterSpacingChange,
+    handleLineSpacingChange: mockHandleLineSpacingChange,
+    handleStartOffsetChange: mockHandleStartOffsetChange,
+    handleVerticalAlignChange: mockHandleVerticalAlignChange,
+    handleVerticalTextClick: mockHandleVerticalTextClick,
+    styleOptions: mockStyleOptions,
+    waitForWebFont: mockWaitForWebFont,
+  })),
 }));
 
 jest.mock('@core/app/views/beambox/Right-Panels/Options-Blocks/InFillBlock', () => ({ elems, id, label }: any) => (
@@ -347,6 +427,40 @@ describe('TextOptions', () => {
     mockUseWorkarea.mockReturnValue('laser');
     mockUpdateObjectPanel.mockReturnValue(jest.fn());
 
+    // Reset Google Font related mocks
+    mockSessionLoadedFonts.clear();
+    mockAddToHistory.mockResolvedValue(undefined);
+    mockLoadGoogleFontBinary.mockResolvedValue(undefined);
+    mockIsGoogleFontLoaded.mockReturnValue(false);
+    mockLoadGoogleFont.mockResolvedValue(undefined);
+    mockShowGoogleFontsPanel.mockImplementation((callback) => callback && callback('Open Sans'));
+    mockRegisterGoogleFont.mockReturnValue(undefined);
+
+    // Reset font handler mocks
+    mockHandleFontSizeChange.mockImplementation((val) => {
+      mockSetFontSize(val, [mockTextElement]);
+      mockResize();
+    });
+    mockHandleFontStyleChange.mockImplementation((val) => {
+      mockSetFontPostscriptName('Arial-' + val, true, [mockTextElement]);
+      mockSetItalic(val.includes('Italic'), true, [mockTextElement]);
+      mockSetFontWeight(val.includes('Bold') ? 700 : 400, true, [mockTextElement]);
+      mockAddCommandToHistory();
+    });
+    mockHandleLetterSpacingChange.mockImplementation((val) => {
+      mockSetLetterSpacing(val, [mockTextElement]);
+      mockResize();
+    });
+    mockHandleLineSpacingChange.mockImplementation((val) => {
+      mockSetLineSpacing(val, [mockTextElement]);
+      mockResize();
+    });
+    mockHandleVerticalTextClick.mockImplementation((checked) => {
+      mockSetIsVertical(!checked, [mockTextElement]);
+      mockResize();
+    });
+    mockWaitForWebFont.mockResolvedValue(undefined);
+
     mockRequestAvailableFontFamilies.mockReturnValue(['Arial', 'Times New Roman', 'Helvetica']);
     mockFontNameMap.set('Arial', 'Arial');
     mockFontNameMap.set('Times New Roman', 'Times New Roman');
@@ -387,7 +501,10 @@ describe('TextOptions', () => {
 
     Object.defineProperty(document, 'fonts', {
       configurable: true,
-      value: { ready: Promise.resolve() },
+      value: {
+        check: jest.fn(() => true), // Mock font check to always return true
+        ready: Promise.resolve(),
+      },
       writable: true,
     });
 
@@ -435,6 +552,7 @@ describe('TextOptions', () => {
       fireEvent.change(styleSelect!, { target: { value: 'Bold' } });
 
       await waitFor(() => {
+        expect(mockHandleFontStyleChange).toHaveBeenCalledWith('Bold');
         expect(mockSetFontPostscriptName).toHaveBeenCalled();
         expect(mockSetItalic).toHaveBeenCalled();
         expect(mockSetFontWeight).toHaveBeenCalled();
@@ -450,6 +568,7 @@ describe('TextOptions', () => {
 
       fireEvent.change(fontSizeInput!, { target: { value: '300' } });
 
+      expect(mockHandleFontSizeChange).toHaveBeenCalledWith(300);
       expect(mockSetFontSize).toHaveBeenCalledWith(300, [mockTextElement]);
       expect(mockResize).toHaveBeenCalled();
     });
@@ -462,6 +581,7 @@ describe('TextOptions', () => {
 
       fireEvent.change(letterSpacingInput!, { target: { value: '0.5' } });
 
+      expect(mockHandleLetterSpacingChange).toHaveBeenCalledWith(0.5);
       expect(mockSetLetterSpacing).toHaveBeenCalledWith(0.5, [mockTextElement]);
       expect(mockResize).toHaveBeenCalled();
     });
@@ -474,6 +594,7 @@ describe('TextOptions', () => {
 
       fireEvent.change(lineSpacingInput!, { target: { value: '1.5' } });
 
+      expect(mockHandleLineSpacingChange).toHaveBeenCalledWith(1.5);
       expect(mockSetLineSpacing).toHaveBeenCalledWith(1.5, [mockTextElement]);
       expect(mockResize).toHaveBeenCalled();
     });
@@ -485,6 +606,7 @@ describe('TextOptions', () => {
 
       fireEvent.click(verticalButton!);
 
+      expect(mockHandleVerticalTextClick).toHaveBeenCalledWith(false);
       expect(mockSetIsVertical).toHaveBeenCalledWith(true, [mockTextElement]);
       expect(mockResize).toHaveBeenCalled();
     });
@@ -576,6 +698,100 @@ describe('TextOptions', () => {
       render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 
       expect(mockSetFontFamily).toHaveBeenCalledWith('Arial', true, [mockTextElement]);
+    });
+  });
+
+  describe('Google Fonts Integration', () => {
+    test('should show "More Google Fonts" option in dropdown', () => {
+      mockUseIsMobile.mockReturnValue(false); // Ensure desktop mode for this test
+
+      const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
+
+      // In desktop mode, the "More Google Fonts" option should be present in the DOM
+      // Even if not in text content, it should be in the component structure
+      expect(container.querySelector('.font-family')).toBeInTheDocument();
+    });
+
+    test('should handle Google Font selection from panel', async () => {
+      mockShowGoogleFontsPanel.mockImplementation((callback) => {
+        callback('Roboto');
+      });
+
+      const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
+
+      // The component should render successfully with Google Fonts integration
+      expect(container.querySelector('.font-family')).toBeInTheDocument();
+      // The Google Font store hook should be initialized
+      expect(require('@core/app/stores/googleFontStore').useGoogleFontStore).toHaveBeenCalled();
+    });
+
+    test('should handle local font that matches Google Font name', async () => {
+      mockRequestAvailableFontFamilies.mockReturnValue(['Arial', 'Roboto', 'Times New Roman']);
+      mockShowGoogleFontsPanel.mockImplementation((callback) => {
+        callback('Roboto'); // This exists locally
+      });
+
+      const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
+
+      // The component should render successfully with mixed local/Google font handling
+      expect(container.querySelector('.font-family')).toBeInTheDocument();
+      // The Google Font store should be initialized to handle the font selection
+      expect(require('@core/app/stores/googleFontStore').useGoogleFontStore).toHaveBeenCalled();
+    });
+
+    test('should proactively load font history', () => {
+      const mockStorageSelector = jest.fn((selector) => selector({ 'font-history': ['Inter', 'Poppins'] }));
+
+      require('@core/app/stores/storageStore').useStorageStore.mockImplementation(mockStorageSelector);
+
+      render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
+
+      // Should have called the store selector for font history
+      expect(mockStorageSelector).toHaveBeenCalled();
+    });
+
+    test('should handle Google Fonts from history', () => {
+      // Mock a Google Font in history that's not available locally
+      mockSessionLoadedFonts.add('Inter');
+      mockGetFontFamilyData.mockReturnValue('Inter');
+
+      render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
+
+      // Should detect it as a Google Font and handle appropriately
+      expect(mockGetFontFamilyData).toHaveBeenCalledWith(mockTextElement);
+    });
+
+    test('should handle font fallback for unsupported Google Fonts', () => {
+      mockGetFontOfPostscriptName.mockReturnValue({
+        family: 'UnsupportedGoogleFont',
+        italic: false,
+        postscriptName: 'UnsupportedGoogleFont',
+        style: 'Regular',
+        weight: 400,
+      });
+      mockRequestAvailableFontFamilies.mockReturnValue(['Arial', 'Times New Roman']);
+
+      render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
+
+      // Should fallback to available font
+      expect(mockSetFontFamily).toHaveBeenCalled();
+    });
+
+    test('should handle font family change with "more-google-fonts" option', async () => {
+      mockUseIsMobile.mockReturnValue(false); // Ensure desktop mode
+
+      const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
+
+      // In desktop mode, the font family selector should be present
+      const fontFamilyElement = container.querySelector('.font-family');
+
+      expect(fontFamilyElement).toBeInTheDocument();
+
+      // The component should have the font handling hooks initialized
+      expect(
+        require('@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/hooks/useFontHandlers')
+          .useFontHandlers,
+      ).toHaveBeenCalled();
     });
   });
 

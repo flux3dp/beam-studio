@@ -1,576 +1,561 @@
 import React from 'react';
+
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import GoogleFontsPanel from './GoogleFontsPanel';
 
-// Mock the Google Fonts API cache module
-jest.mock('@core/helpers/fonts/googleFontsApiCache');
+// Mock DraggableModal
+jest.mock('@core/app/widgets/DraggableModal', () => {
+  return function MockDraggableModal({ children, onCancel, open, ...props }: any) {
+    return open ? (
+      <div data-testid="draggable-modal" {...props}>
+        <button data-testid="modal-close" onClick={onCancel}>
+          Close
+        </button>
+        {children}
+      </div>
+    ) : null;
+  };
+});
 
-import * as googleFontsApiCache from '@core/helpers/fonts/googleFontsApiCache';
+// Mock FontPreview
+jest.mock('./FontPreview', () => {
+  return function MockFontPreview({ font, isSelected, onClick }: any) {
+    return (
+      <div data-selected={isSelected} data-testid={`font-preview-${font.family}`} onClick={onClick} role="button">
+        {font.family}
+      </div>
+    );
+  };
+});
 
-// Mock Google Fonts API response structure
-const mockGoogleFontsResponse = {
-  items: [
+// Mock VirtualList
+jest.mock('rc-virtual-list', () => {
+  return function MockVirtualList({ children, data, onScroll }: any) {
+    return (
+      <div data-testid="virtual-list" onScroll={onScroll}>
+        {data.map((item: any) => (
+          <div key={item.family}>{children(item)}</div>
+        ))}
+      </div>
+    );
+  };
+});
+
+// Mock useGoogleFontData hook
+const mockUseGoogleFontData = {
+  categoryOptions: [
+    { label: 'Serif', value: 'serif' },
+    { label: 'Sans-serif', value: 'sans-serif' },
+    { label: 'Display', value: 'display' },
+    { label: 'Handwriting', value: 'handwriting' },
+    { label: 'Monospace', value: 'monospace' },
+  ],
+  fetchGoogleFonts: jest.fn(),
+  fonts: [
+    {
+      category: 'sans-serif',
+      family: 'Open Sans',
+      subsets: ['latin', 'latin-ext'],
+      variants: ['300', '400', '600', '700'],
+    },
     {
       category: 'sans-serif',
       family: 'Roboto',
-      files: {
-        '400': 'http://fonts.gstatic.com/s/roboto/v30/KFOmCnqEu92Fr1Mu4mxK.woff2',
-        '700': 'http://fonts.gstatic.com/s/roboto/v30/KFOlCnqEu92Fr1MmWUlfBBc4.woff2',
-      },
-      kind: 'webfonts#webfont',
-      lastModified: '2022-09-22',
-      subsets: ['latin', 'latin-ext'],
+      subsets: ['latin', 'cyrillic'],
       variants: ['300', '400', '500', '700'],
-      version: 'v30',
     },
     {
       category: 'serif',
-      family: 'Open Sans',
-      files: {
-        '400':
-          'http://fonts.gstatic.com/s/opensans/v34/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsg-1x4gaVc.woff2',
-        '600': 'http://fonts.gstatic.com/s/opensans/v34/memSYaGs126MiZpBA-UvWbX2vVnXBbObj2OVZyOOSr4dVJWUgsgAx44.woff2',
-      },
-      kind: 'webfonts#webfont',
-      lastModified: '2023-01-15',
-      subsets: ['latin', 'latin-ext', 'cyrillic'],
-      variants: ['300', '400', '600', '700', '800'],
-      version: 'v34',
+      family: 'Playfair Display',
+      subsets: ['latin', 'cyrillic'],
+      variants: ['400', '700', '900'],
     },
     {
       category: 'display',
-      family: 'Icons Font',
-      files: {
-        '400': 'http://fonts.gstatic.com/s/icons/v1/icons.woff2',
-      },
-      kind: 'webfonts#webfont',
-      lastModified: '2023-01-01',
+      colorCapabilities: ['COLOR'],
+      family: 'Noto Color Emoji',
+      subsets: ['emoji'],
+      variants: ['400'],
+    },
+    {
+      category: 'display',
+      family: 'Material Icons',
       subsets: ['latin'],
       variants: ['400'],
-      version: 'v1',
+    },
+    {
+      category: 'sans-serif',
+      family: 'Sunflower',
+      subsets: ['korean', 'latin'],
+      variants: ['300', '500', '700'],
     },
   ],
-  kind: 'webfonts#webfontList',
+  languageOptions: [
+    { label: 'Latin', value: 'latin' },
+    { label: 'Latin Extended', value: 'latin-ext' },
+    { label: 'Cyrillic', value: 'cyrillic' },
+    { label: 'Korean', value: 'korean' },
+    { label: 'Emoji', value: 'emoji' },
+  ],
+  loadedFonts: new Set(['Open Sans']),
+  loadFont: jest.fn(),
+  loadFontForTextEditing: jest.fn(),
+  loading: false,
 };
 
-// Mock intersection observer
-const mockIntersectionObserver = jest.fn();
+jest.mock('./hooks/useGoogleFontData', () => ({
+  useGoogleFontData: () => mockUseGoogleFontData,
+}));
 
-mockIntersectionObserver.mockReturnValue({
-  disconnect: jest.fn(),
-  observe: jest.fn(),
-  unobserve: jest.fn(),
-});
-window.IntersectionObserver = mockIntersectionObserver;
+// Mock Ant Design components
+jest.mock('antd', () => ({
+  Button: ({ disabled, onClick, ...props }: any) => (
+    <button disabled={disabled} onClick={onClick} {...props}>
+      {props.children}
+    </button>
+  ),
+  Select: ({ className, onChange, onClear, onSearch, options, placeholder, value, ...props }: any) => (
+    <div className={className} data-testid="select" {...props}>
+      <input
+        data-testid={
+          className === 'searchInput'
+            ? 'search-input'
+            : className === 'languageSelect'
+              ? 'language-input'
+              : 'select-input'
+        }
+        onChange={(e) => onSearch && onSearch(e.target.value)}
+        placeholder={placeholder}
+        value={value || ''}
+      />
+      {options && (
+        <div data-testid="select-options">
+          {options.map((option: any) => (
+            <div
+              data-testid={`select-option-${option.value}`}
+              key={option.value}
+              onClick={() => onChange && onChange(option.value)}
+            >
+              {option.label}
+            </div>
+          ))}
+        </div>
+      )}
+      {onClear && (
+        <button data-testid="select-clear" onClick={onClear}>
+          Clear
+        </button>
+      )}
+    </div>
+  ),
+  Spin: ({ size }: any) => (
+    <div data-size={size} data-testid="spin">
+      Loading...
+    </div>
+  ),
+  Typography: {
+    Text: ({ children, type }: any) => <span data-type={type}>{children}</span>,
+  },
+}));
 
-// Mock document.createElement for link elements
-const mockLinkElement = {
-  href: '',
-  onerror: null as (() => void) | null,
-  onload: null as (() => void) | null,
-  rel: '',
+const defaultProps = {
+  onClose: jest.fn(),
+  onFontSelect: jest.fn(),
+  visible: true,
 };
 
-// Store original createElement
-const originalCreateElement = document.createElement;
-
-beforeAll(() => {
-  document.createElement = jest.fn().mockImplementation((tagName) => {
-    if (tagName === 'link') {
-      return mockLinkElement;
-    }
-
-    return originalCreateElement.call(document, tagName);
-  });
-
-  // Mock document.head.appendChild
-  const mockAppendChild = jest.fn();
-
-  Object.defineProperty(document, 'head', {
-    configurable: true,
-    value: { appendChild: mockAppendChild },
-  });
-});
-
-afterAll(() => {
-  document.createElement = originalCreateElement;
-});
-
-describe('GoogleFontsPanel Integration Tests', () => {
-  const mockOnClose = jest.fn();
-  const mockOnFontSelect = jest.fn();
-
+describe('GoogleFontsPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-
-    // Mock the cached API response
-    (googleFontsApiCache.getGoogleFontsCatalogSorted as jest.Mock).mockResolvedValue(mockGoogleFontsResponse);
+    mockUseGoogleFontData.loading = false;
+    mockUseGoogleFontData.fonts = [
+      {
+        category: 'sans-serif',
+        family: 'Open Sans',
+        subsets: ['latin', 'latin-ext'],
+        variants: ['300', '400', '600', '700'],
+      },
+      {
+        category: 'sans-serif',
+        family: 'Roboto',
+        subsets: ['latin', 'cyrillic'],
+        variants: ['300', '400', '500', '700'],
+      },
+      {
+        category: 'serif',
+        family: 'Playfair Display',
+        subsets: ['latin', 'cyrillic'],
+        variants: ['400', '700', '900'],
+      },
+    ];
   });
 
-  const defaultProps = {
-    onClose: mockOnClose,
-    onFontSelect: mockOnFontSelect,
-    visible: true,
-  };
-
   describe('Basic Rendering', () => {
-    it('should render the modal when visible', () => {
-      render(<GoogleFontsPanel {...defaultProps} />);
+    it('should render correctly when visible', () => {
+      const { container } = render(<GoogleFontsPanel {...defaultProps} />);
 
+      expect(screen.getByTestId('draggable-modal')).toBeInTheDocument();
       expect(screen.getByText('GoogleFonts')).toBeInTheDocument();
-      expect(screen.getByPlaceholderText('Search Fonts')).toBeInTheDocument();
-      expect(screen.getAllByText('Category')).toHaveLength(2); // Label and placeholder
+      expect(container).toMatchSnapshot();
     });
 
     it('should not render when not visible', () => {
       render(<GoogleFontsPanel {...defaultProps} visible={false} />);
 
-      expect(screen.queryByText('GoogleFonts')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('draggable-modal')).not.toBeInTheDocument();
+    });
+
+    it('should render header with Google logo and close button', () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.getByText('GoogleFonts')).toBeInTheDocument();
+      expect(screen.getByTestId('modal-close')).toBeInTheDocument();
+    });
+
+    it('should render filters section', () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.getByText('Language')).toBeInTheDocument();
+      expect(screen.getByText('Category')).toBeInTheDocument();
+      expect(screen.getByPlaceholderText('Search fonts...')).toBeInTheDocument();
+    });
+
+    it('should render footer with Cancel and Save buttons', () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.getByText('Cancel')).toBeInTheDocument();
+      expect(screen.getByText('Save')).toBeInTheDocument();
     });
   });
 
-  describe('Google Fonts API Cache Integration', () => {
-    it('should use cached Google Fonts API data when modal opens', async () => {
+  describe('Loading States', () => {
+    it('should show loading spinner when fonts are loading', () => {
+      mockUseGoogleFontData.loading = true;
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(googleFontsApiCache.getGoogleFontsCatalogSorted).toHaveBeenCalledTimes(1);
-      });
-
-      // Should not call the old fetch API directly
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(screen.getByTestId('spin')).toBeInTheDocument();
+      expect(screen.getByText('Loading...')).toBeInTheDocument();
     });
 
-    it('should display fonts from cached API data', async () => {
+    it('should fetch fonts when visible and no fonts are loaded', async () => {
+      mockUseGoogleFontData.fonts = [];
       render(<GoogleFontsPanel {...defaultProps} />);
 
       await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-        expect(screen.getByText('Open Sans')).toBeInTheDocument();
+        expect(mockUseGoogleFontData.fetchGoogleFonts).toHaveBeenCalled();
       });
     });
 
-    it('should handle cache API errors gracefully', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      (googleFontsApiCache.getGoogleFontsCatalogSorted as jest.Mock).mockRejectedValue(new Error('Cache error'));
-
+    it('should not fetch fonts when already loaded', () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch Google Fonts:', expect.any(Error));
-      });
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    it('should validate cached API response structure', async () => {
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(googleFontsApiCache.getGoogleFontsCatalogSorted).toHaveBeenCalled();
-      });
-
-      // Verify no direct API calls were made
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(mockUseGoogleFontData.fetchGoogleFonts).not.toHaveBeenCalled();
     });
   });
 
-  describe('Font Selection and Loading', () => {
-    it('should load fonts on demand when font preview is clicked', async () => {
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
-
-      // Click on the font preview to select it
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
-
-      fireEvent.click(fontPreview!);
-
-      expect(document.createElement).toHaveBeenCalledWith('link');
-      expect(mockLinkElement.href).toContain('fonts.googleapis.com');
-      expect(mockLinkElement.href).toContain('Roboto');
-      expect(mockLinkElement.rel).toBe('stylesheet');
-    });
-
-    it('should show selected state when font preview is clicked', async () => {
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
-
-      // Click on the font preview to select it
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
-
-      fireEvent.click(fontPreview!);
-
-      // Check that the font preview has the selected class
-      expect(fontPreview).toHaveClass('selected');
-    });
-
-    it('should call onFontSelect when save button is clicked after font selection', async () => {
-      jest.useFakeTimers();
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
-
-      // First click on the font preview to select it
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
-
-      fireEvent.click(fontPreview!);
-
-      // Then click the save button in the footer
-      const saveButton = screen.getByRole('button', { name: 'Save' });
-
-      fireEvent.click(saveButton);
-
-      // Fast-forward the 500ms delay
-      jest.advanceTimersByTime(500);
-
-      await waitFor(() => {
-        expect(mockOnFontSelect).toHaveBeenCalledWith('Roboto');
-      });
-
-      jest.useRealTimers();
-    });
-
-    it('should enable save button only when a font is selected', async () => {
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
-
-      // Save button should be disabled initially
-      const saveButton = screen.getByRole('button', { name: 'Save' });
-
-      expect(saveButton).toBeDisabled();
-
-      // Click on the font preview to select it
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
-
-      fireEvent.click(fontPreview!);
-
-      // Save button should now be enabled
-      expect(saveButton).toBeEnabled();
-    });
-
-    it('should allow switching between different font selections', async () => {
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-        expect(screen.getByText('Open Sans')).toBeInTheDocument();
-      });
-
-      // Select first font
-      const robotoPreview = screen.getByText('Roboto').closest('[role="button"]');
-
-      fireEvent.click(robotoPreview!);
-      expect(robotoPreview).toHaveClass('selected');
-
-      // Select second font - first should be deselected
-      const openSansPreview = screen.getByText('Open Sans').closest('[role="button"]');
-
-      fireEvent.click(openSansPreview!);
-      expect(openSansPreview).toHaveClass('selected');
-      expect(robotoPreview).not.toHaveClass('selected');
-    });
-  });
-
-  describe('Search and Filtering Functionality', () => {
+  describe('Font Filtering', () => {
     it('should filter fonts by search text', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-        expect(screen.getByText('Open Sans')).toBeInTheDocument();
-      });
+      const searchInput = screen.getByTestId('search-input');
 
-      const searchInput = screen.getByPlaceholderText('Search Fonts');
+      fireEvent.change(searchInput, { target: { value: 'Open' } });
 
-      fireEvent.change(searchInput, { target: { value: 'Roboto' } });
-
-      // After filtering, only Roboto should be visible
-      expect(screen.getByText('Roboto')).toBeInTheDocument();
-      expect(screen.queryByText('Open Sans')).not.toBeInTheDocument();
+      expect(screen.getByTestId('font-preview-Open Sans')).toBeInTheDocument();
+      expect(screen.queryByTestId('font-preview-Roboto')).not.toBeInTheDocument();
     });
 
-    it('should have category filter available', async () => {
+    it('should filter fonts by category', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-        expect(screen.getByText('Open Sans')).toBeInTheDocument();
-      });
+      const serifButton = screen.getByText('Serif');
 
-      // Should show category filter label and placeholder
-      expect(screen.getAllByText('Category')).toHaveLength(2);
+      fireEvent.click(serifButton);
 
-      // Should show language filter label and placeholder
-      expect(screen.getAllByText('Language')).toHaveLength(2);
+      expect(screen.getByTestId('font-preview-Playfair Display')).toBeInTheDocument();
+      expect(screen.queryByTestId('font-preview-Open Sans')).not.toBeInTheDocument();
     });
 
-    it('should clear search results when search is cleared', async () => {
+    it('should toggle category selection', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
+      const serifButton = screen.getByText('Serif');
 
-      const searchInput = screen.getByPlaceholderText('Search Fonts');
+      // Select category
+      fireEvent.click(serifButton);
+      expect(screen.queryByTestId('font-preview-Open Sans')).not.toBeInTheDocument();
 
-      // First filter
-      fireEvent.change(searchInput, { target: { value: 'Roboto' } });
-      expect(screen.queryByText('Open Sans')).not.toBeInTheDocument();
-
-      // Then clear
-      fireEvent.change(searchInput, { target: { value: '' } });
-      expect(screen.getByText('Roboto')).toBeInTheDocument();
-      expect(screen.getByText('Open Sans')).toBeInTheDocument();
+      // Deselect category
+      fireEvent.click(serifButton);
+      expect(screen.getByTestId('font-preview-Open Sans')).toBeInTheDocument();
     });
 
-    it('should filter out icon fonts by default', async () => {
+    it('should filter fonts by language', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-        expect(screen.getByText('Open Sans')).toBeInTheDocument();
-      });
+      const languageOption = screen.getByTestId('select-option-cyrillic');
 
-      // Icon fonts should be filtered out
-      expect(screen.queryByText('Icons Font')).not.toBeInTheDocument();
+      fireEvent.click(languageOption);
+
+      expect(screen.getByTestId('font-preview-Roboto')).toBeInTheDocument();
+      expect(screen.getByTestId('font-preview-Playfair Display')).toBeInTheDocument();
+      expect(screen.queryByTestId('font-preview-Open Sans')).not.toBeInTheDocument();
+    });
+
+    it('should filter out color fonts', () => {
+      mockUseGoogleFontData.fonts = [
+        ...mockUseGoogleFontData.fonts,
+        {
+          category: 'display',
+          colorCapabilities: ['COLOR'],
+          family: 'Noto Color Emoji',
+          subsets: ['emoji'],
+          variants: ['400'],
+        },
+      ];
+
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.queryByTestId('font-preview-Noto Color Emoji')).not.toBeInTheDocument();
+    });
+
+    it('should filter out icon fonts', () => {
+      mockUseGoogleFontData.fonts = [
+        ...mockUseGoogleFontData.fonts,
+        {
+          category: 'display',
+          family: 'Material Icons',
+          subsets: ['latin'],
+          variants: ['400'],
+        },
+      ];
+
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.queryByTestId('font-preview-Material Icons')).not.toBeInTheDocument();
+    });
+
+    it('should filter out problematic fonts', () => {
+      mockUseGoogleFontData.fonts = [
+        ...mockUseGoogleFontData.fonts,
+        {
+          category: 'sans-serif',
+          family: 'Sunflower',
+          subsets: ['korean', 'latin'],
+          variants: ['300', '500', '700'],
+        },
+      ];
+
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.queryByTestId('font-preview-Sunflower')).not.toBeInTheDocument();
     });
   });
 
-  describe('Keyboard Accessibility', () => {
-    it('should support keyboard navigation for font selection', async () => {
+  describe('Font Selection', () => {
+    it('should select font when clicked', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
+      const fontPreview = screen.getByTestId('font-preview-Open Sans');
 
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+      fireEvent.click(fontPreview);
 
-      // Test Enter key
-      fireEvent.keyDown(fontPreview!, { code: 'Enter', key: 'Enter' });
-      expect(fontPreview).toHaveClass('selected');
-
-      // Reset selection
-      const anotherFont = screen.getByText('Open Sans').closest('[role="button"]');
-
-      fireEvent.click(anotherFont!);
-
-      // Test Space key
-      fireEvent.keyDown(fontPreview!, { code: 'Space', key: ' ' });
-      expect(fontPreview).toHaveClass('selected');
+      expect(mockUseGoogleFontData.loadFont).toHaveBeenCalledWith(expect.objectContaining({ family: 'Open Sans' }));
+      expect(screen.getByText('Selected:')).toBeInTheDocument();
     });
 
-    it('should have proper ARIA attributes for accessibility', async () => {
+    it('should select font from search dropdown', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
+      const robotoOption = screen.getByTestId('select-option-Roboto');
+
+      fireEvent.click(robotoOption);
+
+      expect(mockUseGoogleFontData.loadFont).toHaveBeenCalledWith(expect.objectContaining({ family: 'Roboto' }));
+    });
+
+    it('should enable Save button when font is selected', async () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      const saveButton = screen.getByText('Save');
+
+      expect(saveButton).toBeDisabled();
+
+      const fontPreview = screen.getByTestId('font-preview-Open Sans');
+
+      fireEvent.click(fontPreview);
+
+      expect(saveButton).not.toBeDisabled();
+    });
+
+    it('should call onFontSelect and onClose when Save is clicked', async () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      // Select a font
+      const fontPreview = screen.getByTestId('font-preview-Open Sans');
+
+      fireEvent.click(fontPreview);
+
+      // Click Save
+      const saveButton = screen.getByText('Save');
+
+      fireEvent.click(saveButton);
+
       await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
+        expect(mockUseGoogleFontData.loadFontForTextEditing).toHaveBeenCalledWith('Open Sans');
+        expect(defaultProps.onFontSelect).toHaveBeenCalledWith('Open Sans');
+        expect(defaultProps.onClose).toHaveBeenCalled();
       });
-
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
-
-      expect(fontPreview).toHaveAttribute('role', 'button');
-      expect(fontPreview).toHaveAttribute('tabIndex', '0');
     });
   });
 
-  describe('Web Font Loading Integration', () => {
-    it('should create valid Google Fonts URL for font loading', async () => {
+  describe('Modal Controls', () => {
+    it('should call onClose when Cancel button is clicked', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
+      const cancelButton = screen.getByText('Cancel');
 
-      // Click on font preview first to select it
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
+      fireEvent.click(cancelButton);
 
-      fireEvent.click(fontPreview!);
-
-      const saveButton = screen.getByRole('button', { name: 'Save' });
-
-      fireEvent.click(saveButton);
-
-      expect(mockLinkElement.href).toMatch(
-        /^https:\/\/fonts\.googleapis\.com\/css2\?family=Roboto:wght@400&display=swap$/,
-      );
+      expect(defaultProps.onClose).toHaveBeenCalled();
     });
 
-    it('should handle fonts with spaces in name', async () => {
+    it('should call onClose when modal close button is clicked', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.getByText('Open Sans')).toBeInTheDocument();
-      });
+      const closeButton = screen.getByTestId('modal-close');
 
-      // Click on font preview first to select it
-      const fontPreview = screen.getByText('Open Sans').closest('[role="button"]');
+      fireEvent.click(closeButton);
 
-      fireEvent.click(fontPreview!);
-
-      const saveButton = screen.getByRole('button', { name: 'Save' });
-
-      fireEvent.click(saveButton);
-
-      expect(mockLinkElement.href).toContain('Open+Sans');
-    });
-
-    it('should handle multiple font weights correctly', async () => {
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-      });
-
-      const fontPreview = screen.getByText('Roboto').closest('[role="button"]');
-
-      fireEvent.click(fontPreview!);
-
-      const saveButton = screen.getByRole('button', { name: 'Save' });
-
-      fireEvent.click(saveButton);
-
-      // Should load with available weights
-      expect(mockLinkElement.href).toMatch(/wght@\d+/);
+      expect(defaultProps.onClose).toHaveBeenCalled();
     });
   });
 
-  describe('Performance Optimization', () => {
-    it('should limit results to 100 fonts for performance', async () => {
-      // Mock response with more than 100 fonts
-      const largeFontList = Array.from({ length: 150 }, (_, i) => ({
+  describe('Infinite Scrolling', () => {
+    beforeEach(() => {
+      // Create a large list of fonts to test pagination
+      const manyFonts = Array.from({ length: 100 }, (_, i) => ({
         category: 'sans-serif',
         family: `Font ${i}`,
-        files: { '400': 'test.woff2' },
-        kind: 'webfonts#webfont',
-        lastModified: '2023-01-01',
         subsets: ['latin'],
         variants: ['400'],
-        version: 'v1',
       }));
 
-      (googleFontsApiCache.getGoogleFontsCatalogSorted as jest.Mock).mockResolvedValue({
-        items: largeFontList,
-        kind: 'webfonts#webfontList',
-      });
-
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      // Wait for fonts to load and count font previews by looking for font names
-      await waitFor(() => {
-        expect(screen.getByText('Font 0')).toBeInTheDocument();
-      });
-
-      const fontItems = screen.getAllByText(/Font \d+/);
-
-      expect(fontItems.length).toBeLessThanOrEqual(100);
+      mockUseGoogleFontData.fonts = manyFonts;
     });
 
-    it('should use cached data and not refetch on re-render', async () => {
-      const { rerender } = render(<GoogleFontsPanel {...defaultProps} visible={false} />);
-
-      // First render with visible=true should trigger cache fetch
-      rerender(<GoogleFontsPanel {...defaultProps} visible={true} />);
-      await waitFor(() => expect(googleFontsApiCache.getGoogleFontsCatalogSorted).toHaveBeenCalledTimes(1));
-
-      // Hide and show again - should not trigger another cache fetch due to internal caching
-      rerender(<GoogleFontsPanel {...defaultProps} visible={false} />);
-      rerender(<GoogleFontsPanel {...defaultProps} visible={true} />);
-
-      // Should still only be called once due to component-level caching
-      expect(googleFontsApiCache.getGoogleFontsCatalogSorted).toHaveBeenCalledTimes(1);
-    });
-  });
-
-  describe('Error Scenarios', () => {
-    it('should handle malformed cache response', async () => {
-      (googleFontsApiCache.getGoogleFontsCatalogSorted as jest.Mock).mockResolvedValue({
-        invalid: 'response',
-      });
-
+    it('should load more fonts on scroll', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        // Should not crash and should not show any fonts
-        expect(screen.queryByText('Roboto')).not.toBeInTheDocument();
-      });
+      const virtualList = screen.getByTestId('virtual-list');
 
-      // Should still show the modal structure
-      expect(screen.getByText('GoogleFonts')).toBeInTheDocument();
+      // Mock scroll properties
+      Object.defineProperty(virtualList, 'scrollTop', { value: 500, writable: true });
+      Object.defineProperty(virtualList, 'clientHeight', { value: 600, writable: true });
+      Object.defineProperty(virtualList, 'scrollHeight', { value: 700, writable: true });
+
+      // Simulate scroll event
+      fireEvent.scroll(virtualList);
+
+      // Should load fonts for preview
+      expect(mockUseGoogleFontData.loadFont).toHaveBeenCalled();
     });
 
-    it('should handle empty cache response', async () => {
-      (googleFontsApiCache.getGoogleFontsCatalogSorted as jest.Mock).mockResolvedValue({
-        items: [],
-        kind: 'webfonts#webfontList',
-      });
-
+    it('should handle scroll events on virtual list', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(screen.queryByText('Roboto')).not.toBeInTheDocument();
-      });
+      const virtualList = screen.getByTestId('virtual-list');
 
-      expect(screen.getByText('GoogleFonts')).toBeInTheDocument();
-    });
+      // Mock scroll properties
+      Object.defineProperty(virtualList, 'scrollTop', { value: 500, writable: true });
+      Object.defineProperty(virtualList, 'clientHeight', { value: 600, writable: true });
+      Object.defineProperty(virtualList, 'scrollHeight', { value: 700, writable: true });
 
-    it('should handle cache service unavailable', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+      // Simulate scroll event
+      fireEvent.scroll(virtualList);
 
-      (googleFontsApiCache.getGoogleFontsCatalogSorted as jest.Mock).mockRejectedValue(
-        new Error('Service unavailable'),
-      );
-
-      render(<GoogleFontsPanel {...defaultProps} />);
-
-      await waitFor(() => {
-        expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch Google Fonts:', expect.any(Error));
-      });
-
-      consoleErrorSpy.mockRestore();
+      // Component should handle scroll without errors
+      expect(virtualList).toBeInTheDocument();
     });
   });
 
-  describe('Cache Integration Benefits', () => {
-    it('should benefit from centralized caching', async () => {
+  describe('Empty States', () => {
+    it('should show no fonts message when no fonts are available', () => {
+      mockUseGoogleFontData.fonts = [];
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      await waitFor(() => {
-        expect(googleFontsApiCache.getGoogleFontsCatalogSorted).toHaveBeenCalledTimes(1);
-      });
-
-      // Verify it uses the cached API system
-      expect(googleFontsApiCache.getGoogleFontsCatalogSorted).toHaveBeenCalled();
-
-      // Verify it doesn't make direct API calls
-      expect(global.fetch).not.toHaveBeenCalled();
+      expect(
+        screen.getByText(
+          'Google Fonts are currently unavailable. Please check your internet connection or contact your administrator.',
+        ),
+      ).toBeInTheDocument();
     });
 
-    it('should handle sorted font catalog', async () => {
+    it('should show no search results message when search returns empty', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
+      const searchInput = screen.getByTestId('search-input');
+
+      fireEvent.change(searchInput, { target: { value: 'NonexistentFont' } });
+
+      expect(screen.getByText('No fonts found matching your search criteria.')).toBeInTheDocument();
+    });
+
+    it('should show no selection message when no font is selected', () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.getByText('No font selected')).toBeInTheDocument();
+    });
+  });
+
+  describe('Search Functionality', () => {
+    it('should clear search when clear button is clicked', async () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      const searchInput = screen.getByTestId('search-input');
+
+      fireEvent.change(searchInput, { target: { value: 'Open' } });
+
+      const clearButton = screen.getByTestId('select-clear');
+
+      fireEvent.click(clearButton);
+
+      expect(searchInput).toHaveValue('');
+    });
+
+    it('should show search options based on available fonts', () => {
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      expect(screen.getByTestId('select-option-Open Sans')).toBeInTheDocument();
+      expect(screen.getByTestId('select-option-Roboto')).toBeInTheDocument();
+      expect(screen.getByTestId('select-option-Playfair Display')).toBeInTheDocument();
+    });
+  });
+
+  describe('Error Handling', () => {
+    it('should handle save errors gracefully', async () => {
+      const consoleSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
+
+      mockUseGoogleFontData.loadFontForTextEditing.mockRejectedValue(new Error('Network error'));
+
+      render(<GoogleFontsPanel {...defaultProps} />);
+
+      // Select a font
+      const fontPreview = screen.getByTestId('font-preview-Open Sans');
+
+      fireEvent.click(fontPreview);
+
+      // Click Save
+      const saveButton = screen.getByText('Save');
+
+      fireEvent.click(saveButton);
+
       await waitFor(() => {
-        expect(screen.getByText('Roboto')).toBeInTheDocument();
-        expect(screen.getByText('Open Sans')).toBeInTheDocument();
+        expect(consoleSpy).toHaveBeenCalledWith('Error selecting font:', expect.any(Error));
       });
 
-      // Fonts should be rendered in the order returned by the sorted cache
-      const fontElements = screen.getAllByText(/^(Roboto|Open Sans)$/);
-
-      expect(fontElements.length).toBe(2);
+      consoleSpy.mockRestore();
     });
   });
 });
