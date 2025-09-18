@@ -18,7 +18,8 @@ interface Props {
 }
 
 const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible }) => {
-  const { categoryOptions, fetchGoogleFonts, fonts, languageOptions, loadFont, loading } = useGoogleFontData();
+  const { categoryOptions, fetchGoogleFonts, fonts, languageOptions, loadFont, loadFontForTextEditing, loading } =
+    useGoogleFontData();
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [selectedFont, setSelectedFont] = useState<CachedGoogleFontItem | null>(null);
@@ -194,14 +195,14 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
     if (!selectedFont) return;
 
     try {
-      // Ensure font is loaded before proceeding
-      await loadFont(selectedFont);
+      // Load font for text editing (permanent, will upgrade from preview if needed)
+      await loadFontForTextEditing(selectedFont.family);
       onFontSelect(selectedFont.family);
       onClose();
     } catch (error) {
       console.error('Error selecting font:', error);
     }
-  }, [selectedFont, loadFont, onFontSelect, onClose]);
+  }, [selectedFont, loadFontForTextEditing, onFontSelect, onClose]);
 
   return (
     <DraggableModal

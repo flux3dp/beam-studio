@@ -18,6 +18,7 @@ interface UseGoogleFontDataReturn {
   loadedFonts: Set<string>;
 
   loadFont: (font: CachedGoogleFontItem) => Promise<void>;
+  loadFontForTextEditing: (fontFamily: string) => Promise<void>;
   loading: boolean;
 }
 
@@ -32,6 +33,7 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
   const [loading, setLoading] = useState(false);
   // Use store state for loaded fonts
   const sessionLoadedFonts = useGoogleFontStore((state) => state.sessionLoadedFonts);
+  const loadGoogleFontForPreview = useGoogleFontStore((state) => state.loadGoogleFontForPreview);
   const loadGoogleFont = useGoogleFontStore((state) => state.loadGoogleFont);
 
   // Fetch Google Fonts from API
@@ -49,15 +51,24 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
     }
   }, []);
 
-  // Load font CSS for preview
+  // Load font CSS for preview using optimized preview method
   const loadFont = useCallback(
     async (font: CachedGoogleFontItem) => {
       // Check if already loaded in store
       if (sessionLoadedFonts.has(font.family)) return;
 
-      await loadGoogleFont(font.family);
+      // Use optimized preview loading (low priority, preview purpose)
+      await loadGoogleFontForPreview(font.family);
     },
-    [sessionLoadedFonts, loadGoogleFont],
+    [sessionLoadedFonts, loadGoogleFontForPreview],
+  );
+
+  // Load font for text editing (permanent, upgrades from preview if needed)
+  const loadFontForTextEditing = useCallback(
+    async (fontFamily: string) => {
+      await loadGoogleFont(fontFamily);
+    },
+    [loadGoogleFont],
   );
 
   // Generate category options
@@ -117,6 +128,7 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
     languageOptions,
     loadedFonts: sessionLoadedFonts,
     loadFont,
+    loadFontForTextEditing,
     loading,
   };
 };
