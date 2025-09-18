@@ -1,10 +1,10 @@
 import { useCallback, useMemo, useState } from 'react';
 
+import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import {
   type GoogleFontItem as CachedGoogleFontItem,
   getGoogleFontsCatalogSorted,
 } from '@core/helpers/fonts/googleFontsApiCache';
-import { useGoogleFontStore } from '@core/stores/googleFontStore';
 
 interface UseGoogleFontDataReturn {
   // Computed data

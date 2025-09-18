@@ -1,7 +1,7 @@
 import { useStorageStore } from '@core/app/stores/storageStore';
 import type { GeneralFont } from '@core/interfaces/IFont';
 
-import { useGoogleFontStore } from '../../stores/googleFontStore';
+import { useGoogleFontStore } from '../../app/stores/googleFontStore';
 
 import { extractFamilyFromPostScriptName } from './googleFontDetector';
 import { googleFontRegistry } from './googleFontRegistry';
