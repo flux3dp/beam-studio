@@ -6,28 +6,34 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import { getGoogleFont } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
-// Performance configuration constants
-const FONT_LOAD_TIMEOUT = 10000; // 10 seconds timeout
-const MAX_RETRY_ATTEMPTS = 3; // Maximum retry attempts
-const RETRY_DELAY_BASE = 1000; // Base delay for exponential backoff (1 second)
-const MAX_CONCURRENT_LOADS = 5; // Maximum concurrent font loads
-const CACHE_EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+// Network and timing constants
+const FONT_LOAD_TIMEOUT = 10000;
+const MAX_RETRY_ATTEMPTS = 3;
+const RETRY_DELAY_BASE = 1000;
+const RETRY_JITTER_MAX = 1000;
+const MAX_CONCURRENT_LOADS = 5;
+const CACHE_EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24 hours
+const NETWORK_STATE_CHECK_INTERVAL = 30000; // 30 seconds
+const CSS_CLEANUP_INTERVAL = 300000; // 5 minutes
 
-// Icon font detection - these contain symbols/icons, not text
+// Font processing constants
+const DEFAULT_FONT_WEIGHT = 400;
+const FONT_HISTORY_MAX_SIZE = 5;
+const INITIAL_USAGE_COUNT = 1;
+const QUEUE_PROCESS_DELAY = 100;
+
+// Priority ordering for font loading queue
+const PRIORITY_ORDER = { critical: 0, high: 1, low: 3, normal: 2 };
+
+// Font filtering
 const ICON_FONT_KEYWORDS = ['icons'];
 
-/**
- * Checks if a font is likely an icon/symbol font unsuitable for text
- */
 const isIconFont = (fontFamily: string): boolean => {
   const lowerName = fontFamily.toLowerCase();
 
   return ICON_FONT_KEYWORDS.some((keyword) => lowerName.includes(keyword));
 };
 
-/**
- * Creates a network state detector
- */
 const createNetworkDetector = (): NetworkState => {
   const connection =
     (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
@@ -39,25 +45,16 @@ const createNetworkDetector = (): NetworkState => {
   };
 };
 
-/**
- * Exponential backoff delay calculation
- */
 const calculateRetryDelay = (attempt: number): number => {
-  return RETRY_DELAY_BASE * Math.pow(2, attempt - 1) + Math.random() * 1000; // Add jitter
+  return RETRY_DELAY_BASE * Math.pow(2, attempt - 1) + Math.random() * RETRY_JITTER_MAX;
 };
 
-/**
- * Creates a timeout promise that rejects after specified milliseconds
- */
 const createTimeoutPromise = (ms: number): Promise<never> => {
   return new Promise((_, reject) => {
     setTimeout(() => reject(new Error(`Operation timed out after ${ms}ms`)), ms);
   });
 };
 
-/**
- * Fetch with timeout and retry logic
- */
 const fetchWithRetry = async (url: string, attempts = 1): Promise<Response> => {
   let lastError: Error;
 
@@ -75,12 +72,10 @@ const fetchWithRetry = async (url: string, attempts = 1): Promise<Response> => {
       throw new Error(`HTTP ${response.status}: ${response.statusText}`);
     } catch (error) {
       lastError = error as Error;
-      console.warn(`Font fetch attempt ${attempt}/${attempts} failed:`, error);
 
       if (attempt < attempts) {
         const delay = calculateRetryDelay(attempt);
 
-        console.log(`Retrying in ${delay}ms...`);
         await new Promise((resolve) => setTimeout(resolve, delay));
       }
     }
@@ -89,30 +84,12 @@ const fetchWithRetry = async (url: string, attempts = 1): Promise<Response> => {
   throw lastError!;
 };
 
-/**
- * Interface for font loading analytics
- */
-export interface FontLoadingMetrics {
-  errorMessage?: string;
-  fontFamily: string;
-  loadTime: number;
-  retryCount: number;
-  success: boolean;
-  timestamp: number;
-}
-
-/**
- * Interface for network state
- */
 export interface NetworkState {
-  effectiveType?: string; // 'slow-2g' | '2g' | '3g' | '4g'
+  effectiveType?: string;
   isOnline: boolean;
   lastChecked: number;
 }
 
-/**
- * Interface for cached Google Font binary data
- */
 export interface GoogleFontBinary {
   buffer: ArrayBuffer;
   family: string;
@@ -121,53 +98,60 @@ export interface GoogleFontBinary {
   weight: number;
 }
 
-/**
- * Google Font Store State Interface
- */
+export type FontLoadPurpose = 'context' | 'preview' | 'static' | 'text-editing';
+export type FontLoadPriority = 'critical' | 'high' | 'low' | 'normal';
+
+export interface FontLoadOptions {
+  fontFamily: string;
+  forceReload?: boolean;
+  priority?: FontLoadPriority;
+  purpose: FontLoadPurpose;
+  style?: 'italic' | 'normal';
+  weight?: number;
+}
+
+interface CSSLinkTracker {
+  element: HTMLLinkElement;
+  fontFamily: string;
+  lastUsed: number;
+  purpose: FontLoadPurpose;
+  url: string;
+  usageCount: number;
+}
+
 interface GoogleFontState {
-  // Concurrency control
   activeFontLoads: Set<string>;
   addToHistory: (font: GeneralFont) => void;
-  // Binary cache for text-to-path conversion
   cachedBinaries: Map<string, GoogleFontBinary>;
-
+  cleanupUnusedCSSLinks: (maxAge?: number) => void;
   clearBinaryCache: () => void;
-
-  // Error handling
+  cssLinks: Map<string, CSSLinkTracker>;
   failedLoads: Map<string, { count: number; error?: string; lastAttempt: number }>;
   getBinaryFromCache: (fontFamily: string, weight?: number, style?: 'italic' | 'normal') => GoogleFontBinary | null;
   getLoadedFonts: () => string[];
   getRegisteredFonts: () => string[];
-
-  // Getters
   isGoogleFontLoaded: (fontFamily: string) => boolean;
   isGoogleFontLoading: (fontFamily: string) => boolean;
   isGoogleFontRegistered: (fontFamily: string) => boolean;
-  // Actions
   loadGoogleFont: (fontFamily: string) => Promise<void>;
   loadGoogleFontBinary: (
     fontFamily: string,
     weight?: number,
     style?: 'italic' | 'normal',
   ) => Promise<ArrayBuffer | null>;
+  loadGoogleFontForPreview: (fontFamily: string) => Promise<void>;
+  loadGoogleFontWithOptions: (options: FontLoadOptions) => Promise<void>;
   loadingFonts: Set<string>;
-
   networkState: NetworkState;
   processQueue: () => void;
-  queuedFontLoads: string[];
-
+  queuedFontLoads: Array<{ fontFamily: string; priority: FontLoadPriority; purpose: FontLoadPurpose }>;
   registeredFonts: Set<string>;
   registerGoogleFont: (fontFamily: string) => void;
-
   retryFailedFont: (fontFamily: string) => Promise<void>;
-  // Loading state
   sessionLoadedFonts: Set<string>;
   updateNetworkState: () => void;
 }
 
-/**
- * Create binary loader function for Google Fonts with performance tracking
- */
 const createBinaryLoader = (
   getCachedBinary: (fontFamily: string, weight?: number, style?: 'italic' | 'normal') => GoogleFontBinary | null,
   setCachedBinary: (
@@ -181,28 +165,24 @@ const createBinaryLoader = (
 ) => {
   return async (
     fontFamily: string,
-    weight = 400,
+    weight = DEFAULT_FONT_WEIGHT,
     style: 'italic' | 'normal' = 'normal',
   ): Promise<ArrayBuffer | null> => {
     const startTime = Date.now();
 
-    // Check cache first
     const cached = getCachedBinary(fontFamily, weight, style);
 
     if (cached) {
-      // Check if cache is expired
       if (Date.now() - cached.timestamp < CACHE_EXPIRY_TIME) {
         return cached.buffer;
       }
     }
 
-    // Check network state
     if (!networkState.isOnline) {
       return null;
     }
 
     try {
-      // Get font data from cache
       const fontData = await getGoogleFont(fontFamily);
 
       if (!fontData) {
@@ -210,14 +190,13 @@ const createBinaryLoader = (
       }
 
       if (isIconFont(fontFamily)) {
-        return null; // Filter out icon fonts
+        return null;
       }
 
-      // Find the correct variant
       const variantKey =
-        style === 'normal' && weight === 400
+        style === 'normal' && weight === DEFAULT_FONT_WEIGHT
           ? 'regular'
-          : style === 'italic' && weight === 400
+          : style === 'italic' && weight === DEFAULT_FONT_WEIGHT
             ? 'italic'
             : style === 'italic'
               ? `${weight}italic`
@@ -229,12 +208,10 @@ const createBinaryLoader = (
         return null;
       }
 
-      // Fetch font binary data with retry logic
       const fontResponse = await fetchWithRetry(fontUrl as string, MAX_RETRY_ATTEMPTS);
       const ttfBuffer = await fontResponse.arrayBuffer();
       const loadTime = Date.now() - startTime;
 
-      // Cache the binary with load time
       setCachedBinary(fontFamily, weight, style, ttfBuffer, loadTime);
 
       return ttfBuffer;
@@ -246,12 +223,9 @@ const createBinaryLoader = (
   };
 };
 
-/**
- * Create Google Font object for registration
- */
 const createGoogleFontObject = (
   fontFamily: string,
-  weight = 400,
+  weight = DEFAULT_FONT_WEIGHT,
   style: 'italic' | 'normal' = 'normal',
   binaryLoader: (fontFamily: string, weight?: number, style?: 'italic' | 'normal') => Promise<ArrayBuffer | null>,
 ): GoogleFont => {
@@ -266,40 +240,85 @@ const createGoogleFontObject = (
   };
 };
 
-/**
- * Zustand Google Font Store
- */
 export const useGoogleFontStore = create<GoogleFontState>()(
   devtools(
     (set, get) => ({
-      // Concurrency control
       activeFontLoads: new Set(),
-      // Add font to history
       addToHistory: (font: GeneralFont) => {
         if (!font.family) return;
 
         const fontHistory = useStorageStore.getState()['font-history'];
-
-        // Remove if already exists and add to front
         const newHistory = fontHistory.filter((name) => name !== font.family);
 
         newHistory.unshift(font.family);
 
-        // Keep only latest 5
-        if (newHistory.length > 5) newHistory.pop();
+        if (newHistory.length > FONT_HISTORY_MAX_SIZE) newHistory.pop();
 
         useStorageStore.getState().set('font-history', newHistory);
       },
       cachedBinaries: new Map<string, GoogleFontBinary>(),
-      // Clear binary cache
+
+      cleanupUnusedCSSLinks: (maxAge = CSS_CLEANUP_INTERVAL) => {
+        const now = Date.now();
+        const state = get();
+        const updatedLinks = new Map(state.cssLinks);
+        let cleanedCount = 0;
+
+        const fontsInUse = new Set<string>();
+
+        try {
+          const textElements = [
+            ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
+            ...document.querySelectorAll('#svg_defs text'),
+          ] as SVGTextElement[];
+
+          textElements.forEach((textElem) => {
+            const fontFamily = textElem.getAttribute('font-family');
+
+            if (fontFamily) {
+              const cleanFontFamily = fontFamily.replace(/^['"]+|['"]+$/g, '').trim();
+
+              if (cleanFontFamily) {
+                fontsInUse.add(cleanFontFamily);
+              }
+            }
+          });
+        } catch (error) {
+          console.warn('Failed to scan document for font usage during cleanup:', error);
+        }
+
+        for (const [fontFamily, tracker] of updatedLinks.entries()) {
+          const isActivelyUsed = fontsInUse.has(fontFamily);
+          const isOld = now - tracker.lastUsed > maxAge;
+          const isTextEditingFont = tracker.purpose === 'text-editing';
+
+          if (isOld && !isActivelyUsed && !isTextEditingFont) {
+            if (tracker.element && tracker.element.parentNode) {
+              tracker.element.parentNode.removeChild(tracker.element);
+            }
+
+            updatedLinks.delete(fontFamily);
+            cleanedCount++;
+          } else if (isActivelyUsed) {
+            tracker.lastUsed = now;
+            updatedLinks.set(fontFamily, tracker);
+          }
+        }
+
+        if (cleanedCount > 0 || fontsInUse.size > 0) {
+          set({ cssLinks: updatedLinks });
+
+          if (cleanedCount > 0) {
+            console.log(`🗑️ Cleaned up ${cleanedCount} unused Google Font CSS links.`);
+          }
+        }
+      },
       clearBinaryCache: () => {
         set({ cachedBinaries: new Map() });
       },
-
-      // Error handling and retry logic
+      cssLinks: new Map<string, CSSLinkTracker>(),
       failedLoads: new Map(),
-
-      getBinaryFromCache: (fontFamily: string, weight = 400, style: 'italic' | 'normal' = 'normal') => {
+      getBinaryFromCache: (fontFamily: string, weight = DEFAULT_FONT_WEIGHT, style: 'italic' | 'normal' = 'normal') => {
         const cacheKey = `${fontFamily}-${weight}-${style}`;
 
         return get().cachedBinaries.get(cacheKey) || null;
@@ -313,50 +332,60 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         return Array.from(get().registeredFonts);
       },
 
-      // Getters
       isGoogleFontLoaded: (fontFamily: string) => {
         return get().sessionLoadedFonts.has(fontFamily);
       },
       isGoogleFontLoading: (fontFamily: string) => {
         return get().loadingFonts.has(fontFamily);
       },
-
       isGoogleFontRegistered: (fontFamily: string) => {
         return get().registeredFonts.has(fontFamily);
       },
-      // Load Google Font CSS with performance enhancements
       loadGoogleFont: async (fontFamily: string) => {
         const state = get();
 
-        // Skip if already loaded or loading
+        const existingTracker = state.cssLinks.get(fontFamily);
+
+        if (state.sessionLoadedFonts.has(fontFamily) && existingTracker?.purpose === 'preview') {
+          set((state) => {
+            const updatedLinks = new Map(state.cssLinks);
+            const tracker = updatedLinks.get(fontFamily)!;
+
+            tracker.purpose = 'text-editing';
+            tracker.lastUsed = Date.now();
+            tracker.usageCount += INITIAL_USAGE_COUNT;
+            updatedLinks.set(fontFamily, tracker);
+
+            return { cssLinks: updatedLinks };
+          });
+
+          return;
+        }
+
         if (state.sessionLoadedFonts.has(fontFamily) || state.loadingFonts.has(fontFamily)) {
           return;
         }
 
-        // Filter out icon fonts
         if (isIconFont(fontFamily)) {
           return;
         }
 
-        // Check network state
         if (!state.networkState.isOnline) {
           set((state) => ({
-            queuedFontLoads: [...state.queuedFontLoads, fontFamily],
+            queuedFontLoads: [...state.queuedFontLoads, { fontFamily, priority: 'normal', purpose: 'text-editing' }],
           }));
 
           return;
         }
 
-        // Check concurrency limit
         if (state.activeFontLoads.size >= MAX_CONCURRENT_LOADS) {
           set((state) => ({
-            queuedFontLoads: [...state.queuedFontLoads, fontFamily],
+            queuedFontLoads: [...state.queuedFontLoads, { fontFamily, priority: 'normal', purpose: 'text-editing' }],
           }));
 
           return;
         }
 
-        // Mark as loading and active
         set((state) => ({
           activeFontLoads: new Set(state.activeFontLoads).add(fontFamily),
           loadingFonts: new Set(state.loadingFonts).add(fontFamily),
@@ -366,18 +395,27 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
         const attemptLoad = async (): Promise<void> => {
           try {
-            // Create Google Fonts URL
-            const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@400&display=swap`;
+            const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@${DEFAULT_FONT_WEIGHT}&display=swap`;
+            const state = get();
+            const existingTracker = state.cssLinks.get(fontFamily);
 
-            // Check if CSS link already exists in DOM
-            if (!document.querySelector(`link[href="${fontUrl}"]`)) {
-              // Create and append link element with timeout
+            if (existingTracker) {
+              set((state) => {
+                const updatedLinks = new Map(state.cssLinks);
+                const tracker = updatedLinks.get(fontFamily)!;
+
+                tracker.lastUsed = Date.now();
+                tracker.usageCount += INITIAL_USAGE_COUNT;
+                updatedLinks.set(fontFamily, tracker);
+
+                return { cssLinks: updatedLinks };
+              });
+            } else if (!document.querySelector(`link[href="${fontUrl}"]`)) {
               const link = document.createElement('link');
 
               link.href = fontUrl;
               link.rel = 'stylesheet';
 
-              // Promise that resolves when font loads or times out
               await new Promise<void>((resolve, reject) => {
                 const timeout = setTimeout(() => {
                   reject(new Error(`Font CSS load timeout after ${FONT_LOAD_TIMEOUT}ms`));
@@ -394,10 +432,22 @@ export const useGoogleFontStore = create<GoogleFontState>()(
                 };
 
                 document.head.appendChild(link);
+
+                const tracker: CSSLinkTracker = {
+                  element: link,
+                  fontFamily,
+                  lastUsed: Date.now(),
+                  purpose: 'text-editing',
+                  url: fontUrl,
+                  usageCount: INITIAL_USAGE_COUNT,
+                };
+
+                set((state) => ({
+                  cssLinks: new Map(state.cssLinks).set(fontFamily, tracker),
+                }));
               });
             }
 
-            // Mark as loaded and remove from active
             set((state) => ({
               activeFontLoads: new Set([...state.activeFontLoads].filter((f) => f !== fontFamily)),
               failedLoads: new Map([...state.failedLoads].filter(([key]) => key !== fontFamily)),
@@ -405,25 +455,19 @@ export const useGoogleFontStore = create<GoogleFontState>()(
               sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(fontFamily),
             }));
 
-            // Process queue
-            setTimeout(() => get().processQueue(), 100);
+            setTimeout(() => get().processQueue(), QUEUE_PROCESS_DELAY);
           } catch (error) {
             const errorMessage = error instanceof Error ? error.message : String(error);
 
             retryCount++;
 
-            console.warn(`Font load attempt ${retryCount}/${MAX_RETRY_ATTEMPTS} failed for ${fontFamily}:`, error);
-
             if (retryCount < MAX_RETRY_ATTEMPTS) {
               const delay = calculateRetryDelay(retryCount);
-
-              console.log(`Retrying ${fontFamily} in ${delay}ms...`);
 
               await new Promise((resolve) => setTimeout(resolve, delay));
 
               return attemptLoad();
             } else {
-              // All retries failed
               set((state) => ({
                 activeFontLoads: new Set([...state.activeFontLoads].filter((f) => f !== fontFamily)),
                 failedLoads: new Map(state.failedLoads).set(fontFamily, {
@@ -435,9 +479,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
               }));
 
               console.error(`Failed to load Google Font CSS after ${retryCount} attempts: ${fontFamily}`);
-
-              // Process queue anyway
-              setTimeout(() => get().processQueue(), 100);
+              setTimeout(() => get().processQueue(), QUEUE_PROCESS_DELAY);
             }
           }
         };
@@ -445,8 +487,11 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         await attemptLoad();
       },
 
-      // Load Google Font binary data
-      loadGoogleFontBinary: async (fontFamily: string, weight = 400, style: 'italic' | 'normal' = 'normal') => {
+      loadGoogleFontBinary: async (
+        fontFamily: string,
+        weight = DEFAULT_FONT_WEIGHT,
+        style: 'italic' | 'normal' = 'normal',
+      ) => {
         const state = get();
         const binaryLoader = createBinaryLoader(
           (family, w, s) => state.getBinaryFromCache(family, w, s),
@@ -471,21 +516,108 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
         return binaryLoader(fontFamily, weight, style);
       },
+      loadGoogleFontForPreview: async (fontFamily: string) => {
+        const state = get();
+
+        if (state.sessionLoadedFonts.has(fontFamily)) return;
+
+        if (isIconFont(fontFamily)) return;
+
+        const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@${DEFAULT_FONT_WEIGHT}&display=swap`;
+        const existingTracker = state.cssLinks.get(fontFamily);
+
+        if (existingTracker) {
+          set((state) => {
+            const updatedLinks = new Map(state.cssLinks);
+            const tracker = updatedLinks.get(fontFamily)!;
+
+            tracker.lastUsed = Date.now();
+            tracker.usageCount += INITIAL_USAGE_COUNT;
+            updatedLinks.set(fontFamily, tracker);
+
+            return { cssLinks: updatedLinks };
+          });
+
+          return;
+        }
+
+        const link = document.createElement('link');
+
+        link.href = fontUrl;
+        link.rel = 'stylesheet';
+        document.head.appendChild(link);
+
+        const tracker: CSSLinkTracker = {
+          element: link,
+          fontFamily,
+          lastUsed: Date.now(),
+          purpose: 'preview',
+          url: fontUrl,
+          usageCount: INITIAL_USAGE_COUNT,
+        };
+
+        set((state) => ({
+          cssLinks: new Map(state.cssLinks).set(fontFamily, tracker),
+          sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(fontFamily),
+        }));
+      },
+
+      loadGoogleFontWithOptions: async (options: FontLoadOptions) => {
+        const { fontFamily, forceReload = false, priority = 'normal', purpose } = options;
+        const state = get();
+
+        if (!forceReload && state.sessionLoadedFonts.has(fontFamily)) {
+          return;
+        }
+
+        if (state.activeFontLoads.size >= MAX_CONCURRENT_LOADS) {
+          const queueItem = { fontFamily, priority, purpose };
+          const existingIndex = state.queuedFontLoads.findIndex((item) => item.fontFamily === fontFamily);
+
+          if (existingIndex === -1) {
+            const priorityOrder = PRIORITY_ORDER;
+            const insertIndex = state.queuedFontLoads.findIndex(
+              (item) => priorityOrder[item.priority] > priorityOrder[priority],
+            );
+
+            set((state) => {
+              const newQueue = [...state.queuedFontLoads];
+
+              if (insertIndex === -1) {
+                newQueue.push(queueItem);
+              } else {
+                newQueue.splice(insertIndex, 0, queueItem);
+              }
+
+              return { queuedFontLoads: newQueue };
+            });
+          }
+
+          return;
+        }
+
+        await get().loadGoogleFont(fontFamily);
+      },
 
       loadingFonts: new Set<string>(),
-
-      // Network state management
       networkState: createNetworkDetector(),
+
       processQueue: () => {
         const state = get();
 
         while (state.activeFontLoads.size < MAX_CONCURRENT_LOADS && state.queuedFontLoads.length > 0) {
-          const fontFamily = state.queuedFontLoads.shift()!;
+          const queueItem = state.queuedFontLoads.shift()!;
+          const { fontFamily } = queueItem;
 
           if (!state.sessionLoadedFonts.has(fontFamily) && !state.activeFontLoads.has(fontFamily)) {
+            set((state) => {
+              const newQueue = [...state.queuedFontLoads];
+
+              return { queuedFontLoads: newQueue };
+            });
+
             state.activeFontLoads.add(fontFamily);
 
-            // Process asynchronously
             get()
               .loadGoogleFont(fontFamily)
               .finally(() => {
@@ -497,17 +629,15 @@ export const useGoogleFontStore = create<GoogleFontState>()(
                   return { activeFontLoads: newActive };
                 });
 
-                // Process next in queue
-                setTimeout(() => get().processQueue(), 100);
+                setTimeout(() => get().processQueue(), QUEUE_PROCESS_DELAY);
               });
           }
         }
       },
-      queuedFontLoads: [],
 
+      queuedFontLoads: [],
       registeredFonts: new Set<string>(),
 
-      // Register Google Font for text-to-path conversion
       registerGoogleFont: (fontFamily: string) => {
         const state = get();
 
@@ -515,12 +645,10 @@ export const useGoogleFontStore = create<GoogleFontState>()(
           return;
         }
 
-        // Create GoogleFont object
-        const googleFont = createGoogleFontObject(fontFamily, 400, 'normal', (family, weight, style) =>
+        const googleFont = createGoogleFontObject(fontFamily, DEFAULT_FONT_WEIGHT, 'normal', (family, weight, style) =>
           state.loadGoogleFontBinary(family, weight, style),
         );
 
-        // Register with FontFuncs
         const registered = registerGoogleFont(googleFont);
 
         if (registered) {
@@ -545,7 +673,6 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         await get().loadGoogleFont(fontFamily);
       },
 
-      // Initial state
       sessionLoadedFonts: new Set<string>(),
 
       updateNetworkState: () => {
@@ -562,20 +689,19 @@ export const useGoogleFontStore = create<GoogleFontState>()(
   ),
 );
 
-// Convenience hooks for specific state slices
 export const useLoadedGoogleFonts = () => useGoogleFontStore((state) => state.sessionLoadedFonts);
-
 export const useRegisteredGoogleFonts = () => useGoogleFontStore((state) => state.registeredFonts);
-
 export const useGoogleFontActions = () =>
   useGoogleFontStore((state) => ({
     addToHistory: state.addToHistory,
+    cleanupUnusedCSSLinks: state.cleanupUnusedCSSLinks,
     clearBinaryCache: state.clearBinaryCache,
     loadGoogleFont: state.loadGoogleFont,
     loadGoogleFontBinary: state.loadGoogleFontBinary,
+    loadGoogleFontForPreview: state.loadGoogleFontForPreview,
+    loadGoogleFontWithOptions: state.loadGoogleFontWithOptions,
     registerGoogleFont: state.registerGoogleFont,
   }));
-
 export const useGoogleFontGetters = () =>
   useGoogleFontStore((state) => ({
     getBinaryFromCache: state.getBinaryFromCache,
@@ -586,39 +712,30 @@ export const useGoogleFontGetters = () =>
     isGoogleFontRegistered: state.isGoogleFontRegistered,
   }));
 
-// Network state management - Set up event listeners
 if (typeof window !== 'undefined') {
   const store = useGoogleFontStore.getState();
 
-  // Listen for online/offline events
-  window.addEventListener('online', () => {
-    store.updateNetworkState();
-  });
+  window.addEventListener('online', () => store.updateNetworkState());
+  window.addEventListener('offline', () => store.updateNetworkState());
 
-  window.addEventListener('offline', () => {
-    store.updateNetworkState();
-  });
-
-  // Listen for connection changes (if supported)
   if ('connection' in navigator) {
     const connection =
       (navigator as any).connection || (navigator as any).mozConnection || (navigator as any).webkitConnection;
 
     if (connection && 'addEventListener' in connection) {
-      connection.addEventListener('change', () => {
-        store.updateNetworkState();
-      });
+      connection.addEventListener('change', () => store.updateNetworkState());
     }
   }
 
-  // Periodic network state check (every 30 seconds)
   setInterval(() => {
     const currentState = useGoogleFontStore.getState().networkState;
-    const now = Date.now();
 
-    // Only update if it's been more than 30 seconds since last check
-    if (now - currentState.lastChecked > 30000) {
+    if (Date.now() - currentState.lastChecked > NETWORK_STATE_CHECK_INTERVAL) {
       store.updateNetworkState();
     }
-  }, 30000);
+  }, NETWORK_STATE_CHECK_INTERVAL);
+
+  setInterval(() => {
+    useGoogleFontStore.getState().cleanupUnusedCSSLinks();
+  }, CSS_CLEANUP_INTERVAL);
 }
