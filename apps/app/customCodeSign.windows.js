@@ -4,6 +4,7 @@ const fs = require('fs');
 const path = require('path');
 
 module.exports = async function customSign(configuration, packager) {
+  return;
   const timeout = parseInt(process.env.SIGNTOOL_TIMEOUT, 10) || 10 * 60 * 60 * 1000; // 10 hours
   const { exec } = require('child_process');
   const { statSync } = require('fs');
