@@ -1,38 +1,35 @@
 import { match } from 'ts-pattern';
 
-import { FLUXID_HOST } from '../api/flux-id';
+import { FLUXID_HOST } from '@core/helpers/api/flux-id';
 
 const BACKEND_GOOGLE_FONTS_URL = '/api/google-fonts';
 const url = new URL(BACKEND_GOOGLE_FONTS_URL, FLUXID_HOST);
 
-export interface GoogleFontFile {
-  [weight: string]: string;
-}
+type GoogleFontFiles = Record<
+  | '100'
+  | '100italic'
+  | '200'
+  | '200italic'
+  | '300'
+  | '300italic'
+  | '400'
+  | '400italic'
+  | '500'
+  | '500italic'
+  | '600'
+  | '600italic'
+  | '700'
+  | '700italic'
+  | '800'
+  | '800italic'
+  | '900'
+  | '900italic'
+  | 'italic'
+  | 'regular',
+  string | undefined
+>;
 
-export interface GoogleFontFiles extends Record<string, string | undefined> {
-  '100'?: string;
-  '100italic'?: string;
-  '200'?: string;
-  '200italic'?: string;
-  '300'?: string;
-  '300italic'?: string;
-  '400'?: string;
-  '400italic'?: string;
-  '500'?: string;
-  '500italic'?: string;
-  '600'?: string;
-  '600italic'?: string;
-  '700'?: string;
-  '700italic'?: string;
-  '800'?: string;
-  '800italic'?: string;
-  '900'?: string;
-  '900italic'?: string;
-  italic?: string;
-  regular?: string;
-}
-
-export interface GoogleFontItem {
+export type GoogleFontItem = {
   category: string;
   colorCapabilities?: string[];
   family: string;
@@ -43,12 +40,12 @@ export interface GoogleFontItem {
   subsets: string[];
   variants: string[];
   version: string;
-}
+};
 
-export interface GoogleFontsApiResponse {
+export type GoogleFontsApiResponse = {
   items: GoogleFontItem[];
   kind: string;
-}
+};
 
 /**
  * Singleton cache manager for Google Fonts API responses
@@ -86,7 +83,7 @@ class GoogleFontsApiCache {
   }
 
   /**
-   * Clear the cache (useful for testing or manual refresh)
+   * Clear the cache
    */
   clearCache(): void {
     this.cache = null;

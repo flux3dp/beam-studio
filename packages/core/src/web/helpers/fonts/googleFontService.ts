@@ -10,28 +10,22 @@ import googleFonts from './webFonts.google';
 // Module-level cache for available font families, updated during app initialization
 let cachedAvailableFontFamilies: string[] = [];
 
-// Direct access to the store for non-React usage
-const getGoogleFontStore = () => useGoogleFontStore.getState();
-
 /**
  * Load static Google Fonts (predefined web fonts) with CSS only
- * Maintains backward compatibility with existing static font loading
  */
-export const loadStaticGoogleFonts = (lang: string): void => {
+const loadStaticGoogleFonts = (lang: string): void => {
   const googleLangFonts = googleFonts.getAvailableFonts(lang);
 
   // Apply CSS styles (existing static font loading)
   googleFonts.applyStyle(googleLangFonts);
 
   // Track static fonts as loaded in the store
-  googleLangFonts.forEach((font) => {
-    if (font.family) {
+  googleLangFonts.forEach(({ family }) => {
+    if (family) {
       // Directly update store state for static fonts (bypass filtering)
       const state = useGoogleFontStore.getState();
 
-      useGoogleFontStore.setState({
-        sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(font.family),
-      });
+      useGoogleFontStore.setState({ sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(family) });
     }
   });
 };
@@ -40,7 +34,7 @@ export const loadStaticGoogleFonts = (lang: string): void => {
  * Load Google Fonts from font history with CSS only
  * Uses the new store system while maintaining existing behavior
  */
-export const loadHistoryGoogleFonts = (availableFontFamilies: string[]): void => {
+const loadHistoryGoogleFonts = (availableFontFamilies: string[]): void => {
   const fontHistory = useStorageStore.getState()['font-history'];
 
   if (fontHistory.length === 0) {
@@ -59,7 +53,7 @@ export const loadHistoryGoogleFonts = (availableFontFamilies: string[]): void =>
   }
 
   // Load CSS using the store
-  const store = getGoogleFontStore();
+  const store = useGoogleFontStore.getState();
 
   googleFontsFromHistory.forEach((family) => {
     store.loadGoogleFont(family);
@@ -72,7 +66,7 @@ export const loadHistoryGoogleFonts = (availableFontFamilies: string[]): void =>
  */
 export const loadContextGoogleFonts = (availableFontFamilies: string[] = cachedAvailableFontFamilies): void => {
   try {
-    const store = getGoogleFontStore();
+    const store = useGoogleFontStore.getState();
     // Use the same pattern as convertToPath.ts to get all visible text elements
     const textElements = [
       ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
@@ -90,11 +84,7 @@ export const loadContextGoogleFonts = (availableFontFamilies: string[] = cachedA
 
       if (fontFamily) {
         // Clean up font family (remove quotes, normalize)
-        const cleanFontFamily = fontFamily.replace(/^['"]+|['"]+$/g, '').trim();
-
-        if (cleanFontFamily) {
-          fontFamiliesInContext.add(cleanFontFamily);
-        }
+        fontFamiliesInContext.add(fontFamily.replace(/^['"]+|['"]+$/g, '').trim());
       }
     });
 
@@ -140,7 +130,7 @@ export const lazyRegisterGoogleFontIfLoaded = (postscriptName: string): GeneralF
     return null;
   }
 
-  const store = getGoogleFontStore();
+  const store = useGoogleFontStore.getState();
 
   // Check if already registered in the store
   if (store.isGoogleFontRegistered(fontFamily)) {
@@ -155,9 +145,7 @@ export const lazyRegisterGoogleFontIfLoaded = (postscriptName: string): GeneralF
   // Check if already registered in the registry
   if (googleFontRegistry.isRegistered(postscriptName)) {
     // Sync with store state
-    useGoogleFontStore.setState({
-      registeredFonts: new Set(store.registeredFonts).add(fontFamily),
-    });
+    useGoogleFontStore.setState({ registeredFonts: new Set(store.registeredFonts).add(fontFamily) });
 
     // Return the registered font from the registry
     const registeredFont = googleFontRegistry.getRegisteredFont(postscriptName);
@@ -200,9 +188,3 @@ export const loadAllInitialGoogleFonts = (lang: string, availableFontFamilies: s
   // Load Google Fonts from current document context CSS only
   loadContextGoogleFonts(availableFontFamilies);
 };
-
-// Re-export from detector module for backward compatibility
-export { extractFamilyFromPostScriptName } from './googleFontDetector';
-
-// Export direct store access for non-React usage
-export { getGoogleFontStore };
