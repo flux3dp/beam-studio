@@ -103,3 +103,27 @@
     }
   }
 }
+
+// Font family display for system fonts without preview images
+.font-family-display {
+  max-height: 24px;
+}
+
+// Google Fonts dropdown styles
+.google-fonts-separator {
+  border: 0.5px solid #000000;
+  border-radius: 4px;
+}
+
+.google-fonts-button {
+  color: #000000;
+  cursor: pointer;
+  font-size: 14px;
+  padding: 5px 8px;
+  border-radius: 4px;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background-color: #f5f5f5;
+  }
+}

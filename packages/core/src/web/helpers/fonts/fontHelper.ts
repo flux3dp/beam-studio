@@ -1,3 +1,5 @@
+import { prop } from 'remeda';
+
 import progressCaller from '@core/app/actions/progress-caller';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -23,7 +25,7 @@ const getFonts = () => {
   const localFonts = localFontHelper.getAvailableFonts();
   const activeLang = i18n.getActiveLang();
   const googleLangFonts = googleFonts.getAvailableFonts(activeLang);
-  const localFontFamilies = localFonts.map((font) => font.family);
+  const localFontFamilies = localFonts.map(prop('family'));
 
   loadAllInitialGoogleFonts(activeLang, localFontFamilies);
 

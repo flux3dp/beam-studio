@@ -17,6 +17,10 @@ interface Props {
   visible: boolean;
 }
 
+const FONTS_PER_PAGE = 40;
+const CONTAINER_HEIGHT = 600;
+const SCROLL_THRESHOLD = 100;
+
 const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible }) => {
   const { categoryOptions, fetchGoogleFonts, fonts, languageOptions, loadFont, loadFontForTextEditing, loading } =
     useGoogleFontData();
@@ -24,37 +28,26 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [selectedFont, setSelectedFont] = useState<CachedGoogleFontItem | null>(null);
   const [searchText, setSearchText] = useState<string>('');
-
   const [displayedFonts, setDisplayedFonts] = useState<CachedGoogleFontItem[]>([]);
   const [currentPage, setCurrentPage] = useState(1);
   const [loadingMore, setLoadingMore] = useState(false);
   const [hasMore, setHasMore] = useState(true);
-
-  const FONTS_PER_PAGE = 40;
-  const CONTAINER_HEIGHT = 600;
-  const SCROLL_THRESHOLD = 100;
-
   const virtualListRef = useRef<any>(null);
   const lastScrollTop = useRef<number>(0);
 
   const filterState = useMemo(
-    () => ({
-      category: selectedCategory,
-      language: selectedLanguage,
-      search: searchText,
-    }),
+    () => ({ category: selectedCategory, language: selectedLanguage, search: searchText }),
     [selectedCategory, selectedLanguage, searchText],
   );
-
   const prevFilterState = useRef(filterState);
 
   const handleFontSelectFromSearch = useCallback(
     async (fontFamily: string) => {
-      const font = fonts.find((f) => f.family === fontFamily);
+      const font = fonts.find(({ family }) => family === fontFamily);
 
       if (font) {
         setSelectedFont(font);
-        loadFont(font); // No await needed - fire and forget for preview
+        loadFont(font);
         setSearchText(fontFamily);
       }
     },
@@ -78,7 +71,6 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
 
       if (problematicFonts.includes(font.family)) return false;
 
-      // Apply user filters
       if (selectedCategory && font.category !== selectedCategory) return false;
 
       if (selectedLanguage && !font.subsets.includes(selectedLanguage)) return false;
@@ -102,46 +94,41 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
     }
   }, []);
 
-  const appendFonts = useCallback(
-    (_showMessage = false) => {
-      if (loadingMore || !hasMore) return;
+  const appendFonts = useCallback(() => {
+    if (loadingMore || !hasMore) return;
 
-      setLoadingMore(true);
+    setLoadingMore(true);
 
-      const startIndex = (currentPage - 1) * FONTS_PER_PAGE;
-      const endIndex = startIndex + FONTS_PER_PAGE;
-      const newFonts = allFilteredFonts.slice(startIndex, endIndex);
+    const startIndex = (currentPage - 1) * FONTS_PER_PAGE;
+    const endIndex = startIndex + FONTS_PER_PAGE;
+    const newFonts = allFilteredFonts.slice(startIndex, endIndex);
 
-      // Load fonts for preview (fire and forget - store handles the loading)
-      newFonts.forEach((font) => loadFont(font));
+    newFonts.forEach((font) => loadFont(font));
 
-      setDisplayedFonts((prev) => {
-        const updated = [...prev, ...newFonts];
+    setDisplayedFonts((prev) => {
+      const updated = [...prev, ...newFonts];
 
-        requestAnimationFrame(() => preserveScrollPosition());
+      requestAnimationFrame(() => preserveScrollPosition());
 
-        return updated;
-      });
+      return updated;
+    });
 
-      setCurrentPage((prev) => prev + 1);
+    setCurrentPage((prev) => prev + 1);
 
-      if (endIndex >= allFilteredFonts.length) setHasMore(false);
+    if (endIndex >= allFilteredFonts.length) setHasMore(false);
 
-      setLoadingMore(false);
-    },
-    [allFilteredFonts, currentPage, loadingMore, hasMore, FONTS_PER_PAGE, loadFont, preserveScrollPosition],
-  );
+    setLoadingMore(false);
+  }, [allFilteredFonts, currentPage, loadingMore, hasMore, loadFont, preserveScrollPosition]);
 
   const onScroll = useCallback(
     (e: React.UIEvent<HTMLElement, UIEvent>) => {
       const { clientHeight, scrollHeight, scrollTop } = e.currentTarget;
+      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
 
       lastScrollTop.current = scrollTop;
 
-      const distanceFromBottom = scrollHeight - scrollTop - clientHeight;
-
       if (distanceFromBottom <= SCROLL_THRESHOLD && hasMore && !loadingMore) {
-        appendFonts(true);
+        appendFonts();
       }
     },
     [appendFonts, hasMore, loadingMore],
@@ -173,19 +160,17 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
       if (allFilteredFonts.length > 0) {
         const firstBatch = allFilteredFonts.slice(0, FONTS_PER_PAGE);
 
-        // Load first batch of fonts for preview (fire and forget)
         firstBatch.forEach((font) => loadFont(font));
         setDisplayedFonts(firstBatch);
         setCurrentPage(2);
         setHasMore(allFilteredFonts.length > FONTS_PER_PAGE);
       }
     }
-  }, [allFilteredFonts, FONTS_PER_PAGE, loadFont, filterState, displayedFonts.length]);
+  }, [allFilteredFonts, loadFont, filterState, displayedFonts.length]);
 
   const handleFontClick = useCallback(
     (font: CachedGoogleFontItem) => {
       setSelectedFont(font);
-      // Load font for preview (fire and forget)
       loadFont(font);
     },
     [loadFont],
@@ -234,7 +219,6 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
               options={searchOptions}
               placeholder="Search fonts..."
               showSearch
-              style={{ width: '100%' }}
               suffixIcon={<SearchOutlined />}
               value={searchText || undefined}
               virtual
@@ -289,7 +273,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
               <Spin size="large" />
             </div>
           ) : displayedFonts.length > 0 || loadingMore ? (
-            <div style={{ position: 'relative' }}>
+            <div className={styles.virtualListContainer}>
               <VirtualList
                 className={styles.fontList}
                 data={displayedFonts}
@@ -317,20 +301,9 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
                 )}
               </VirtualList>
               {loadingMore && (
-                <div
-                  style={{
-                    background: 'rgba(255, 255, 255, 0.9)',
-                    borderRadius: '4px',
-                    bottom: '10px',
-                    left: '50%',
-                    padding: '16px',
-                    position: 'absolute',
-                    textAlign: 'center',
-                    transform: 'translateX(-50%)',
-                  }}
-                >
+                <div className={styles.loadingOverlay}>
                   <Spin size="small" />
-                  <span style={{ marginLeft: '8px' }}>Loading more fonts...</span>
+                  <span className={styles.loadingText}>Loading more fonts...</span>
                 </div>
               )}
             </div>

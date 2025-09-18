@@ -88,7 +88,9 @@ const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
       {src.includes('monotype') && <FluxIcons.FluxPlus />}
     </div>
   ) : (
-    <div style={{ fontFamily: `'${family}'`, maxHeight: 24 }}>{displayName}</div>
+    <div className={styles['font-family-display']} style={{ fontFamily: `'${family}'` }}>
+      {displayName}
+    </div>
   );
 
   return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };
@@ -124,7 +126,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     [updateObjectPanel],
   );
 
-  // Font handlers hook
   const {
     handleFontSizeChange,
     handleFontStyleChange,
@@ -138,11 +139,9 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
   const { addToHistory, loadGoogleFontBinary, sessionLoadedFonts } = useGoogleFontStore();
 
-  // Convenience method: proactively load history fonts
   const proactivelyLoadHistoryFonts = useCallback(() => {
     if (fontHistory && fontHistory.length > 0) {
       fontHistory.forEach((family) => {
-        // Only load if not already loaded
         if (!useGoogleFontStore.getState().isGoogleFontLoaded(family)) {
           useGoogleFontStore.getState().loadGoogleFont(family);
         }
@@ -154,9 +153,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     () =>
       fontHistory
         .map((family) => {
-          // Only add history prefix for system fonts to avoid duplicate keys
-          // Google fonts don't exist in main options, so no prefix needed
-          // Use case-insensitive matching
           const isSystemFont = availableFontFamilies.some((f) => f.toLowerCase() === family.toLowerCase());
           const useHistoryPrefix = FontFuncs.requestAvailableFontFamilies() && isSystemFont;
 
@@ -187,15 +183,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         return;
       }
 
-      // Proactively load Google Font CSS for fonts in history (now handled by hook)
       proactivelyLoadHistoryFonts();
 
       for (const textElement of textElements) {
-        // Check for Google Font first (before PostScript lookup)
         const elementFontFamily = textEdit.getFontFamilyData(textElement);
-        // Remove quotes from font family name (SVG stores as 'FontName' but history stores as FontName)
         const cleanFontFamily = elementFontFamily.replace(/^['"]|['"]$/g, '');
-        // Case-insensitive check for local font availability
         const cleanFontLower = cleanFontFamily.toLowerCase();
         const localFontMatch = availableFontFamilies.find((f) => f.toLowerCase() === cleanFontLower);
         // A font is considered a Google Font if it's either:
@@ -218,7 +210,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
             weight: textEdit.getFontWeight(textElement) || 400,
           };
         } else {
-          // Original logic for system fonts
           const postscriptName = textEdit.getFontPostscriptName(textElement);
 
           if (postscriptName) {
@@ -271,12 +262,10 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
             textEdit.setFontFamily(sanitizedFamily, true, [textElement]);
             textEdit.setFontPostscriptName(newFont.postscriptName, true, [textElement]);
 
-            // Update the font variable to reflect the fallback
             font = newFont;
           }
         }
 
-        // Update configs
         updateConfigs(newConfigs, 'fontFamily', () => font.family);
         updateConfigs(newConfigs, 'fontStyle', () => font.style);
         updateConfigs(newConfigs, 'fontSize', () => textEdit.getFontSize(textElement));
@@ -315,7 +304,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   ]);
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
-    // Check if this is the "More Google Fonts" option
     if (newFamily === 'more-google-fonts') {
       dialogCaller.showGoogleFontsPanel(handleGoogleFontSelect);
 
@@ -324,19 +312,16 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
     const family = option.family ?? newFamily;
 
-    // Check if this is a Google Font from history (not in system fonts) - case-insensitive
     const systemFonts = FontFuncs.requestAvailableFontFamilies();
     const familyLower = family.toLowerCase();
     const localFontMatch = systemFonts.find((f) => f.toLowerCase() === familyLower);
 
     if (!localFontMatch) {
-      // Handle Google Font from history - CSS already loaded proactively
       await handleGoogleFontSelect(family);
 
       return;
     }
 
-    // Use the actual local font name for FontFuncs operations
     const newFont = FontFuncs.requestFontsOfTheFontFamily(localFontMatch)[0];
 
     addToHistory(newFont);
@@ -371,20 +356,15 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
   const handleGoogleFontSelect = useCallback(
     async (googleFontFamily: string) => {
-      // Check if this Google Font is actually available locally (case-insensitive)
       const localFonts = FontFuncs.requestAvailableFontFamilies();
       const googleFontLower = googleFontFamily.toLowerCase();
       const localFontMatch = localFonts.find((f) => f.toLowerCase() === googleFontLower);
 
       if (localFontMatch) {
-        // Use the local font instead of treating it as a Google Font
-        // Get the local font with proper PostScript name and properties
         const localFont = FontFuncs.requestFontsOfTheFontFamily(localFontMatch)[0];
 
-        // Add to history
         addToHistory(localFont);
 
-        // Apply using the standard font application method
         const { fontLoadedPromise, success } = await fontHelper.applyMonotypeStyle(localFont, getCurrentUser());
 
         if (!success) {
@@ -410,7 +390,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onConfigChange('fontFamily', localFontMatch);
         onConfigChange('fontStyle', localFont.style);
       } else {
-        // Font is not available locally, treat as Google Font
         const googleFont: GoogleFont = {
           binaryLoader: loadGoogleFontBinary,
           family: googleFontFamily,
@@ -421,12 +400,9 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           weight: 400,
         };
 
-        // Add to history first
         addToHistory(googleFont);
-        // Register the GoogleFont object for text-to-path conversion
         registerGoogleFont(googleFont);
 
-        // Apply the font directly without monotype style check since it's Google Fonts
         const batchCmd = new history.BatchCommand('Change Font family');
 
         [
@@ -478,27 +454,10 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         dropdownRender={(menu) => (
           <>
             {menu}
-            <div
-              style={{
-                border: '0.5px solid #000000',
-                borderRadius: '4px',
-              }}
-            >
+            <div className={styles['google-fonts-separator']}>
               <div
+                className={styles['google-fonts-button']}
                 onClick={() => dialogCaller.showGoogleFontsPanel(handleGoogleFontSelect)}
-                onMouseEnter={(e) => {
-                  e.currentTarget.style.backgroundColor = '#f5f5f5';
-                }}
-                onMouseLeave={(e) => {
-                  e.currentTarget.style.backgroundColor = 'transparent';
-                }}
-                style={{
-                  color: '#000000',
-                  cursor: 'pointer',
-                  fontSize: '14px',
-                  padding: '5px 8px',
-                  transition: 'background-color 0.2s',
-                }}
               >
                 More Google Fonts...
               </div>
@@ -506,7 +465,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           </>
         )}
         filterOption={(input: string, option?: DefaultOptionType) => {
-          // Hide history options
           if (option?.family) return false;
 
           if (option?.value) {
@@ -528,13 +486,10 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         }}
         onChange={(value, option) => handleFontFamilyChange(value, option as FontOption)}
         onKeyDown={(e) => e.stopPropagation()}
-        options={
-          // Note: title is used as css selector
-          [
-            { label: lang.recently_used, options: historyFontFamilies, title: 'history' },
-            { label: null, options, title: 'normal' },
-          ]
-        }
+        options={[
+          { label: lang.recently_used, options: historyFontFamilies, title: 'history' },
+          { label: null, options, title: 'normal' },
+        ]}
         placement="bottomRight"
         popupClassName={styles['font-family-dropdown']}
         popupMatchSelectWidth={false}
