@@ -11,6 +11,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import type { Selector } from '@core/app/svgedit/selector';
@@ -34,8 +35,6 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
 import { isVariableTextSupported } from '@core/helpers/variableText';
-import { useLoadedGoogleFonts } from '@core/hooks/useGoogleFonts';
-import { useGoogleFonts } from '@core/hooks/useGoogleFonts';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
@@ -137,12 +136,19 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     styleOptions,
     waitForWebFont,
   } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
+  const { addToHistory, loadGoogleFontBinary, sessionLoadedFonts } = useGoogleFontStore();
 
-  // Google Fonts hooks (new Zustand-based system)
-  const { addToHistory, loadGoogleFontBinary, proactivelyLoadHistoryFonts, sessionLoadedFonts } = useGoogleFonts();
-
-  // Get loaded Google Fonts from store
-  const loadedGoogleFonts = useLoadedGoogleFonts();
+  // Convenience method: proactively load history fonts
+  const proactivelyLoadHistoryFonts = useCallback(() => {
+    if (fontHistory && fontHistory.length > 0) {
+      fontHistory.forEach((family) => {
+        // Only load if not already loaded
+        if (!useGoogleFontStore.getState().isGoogleFontLoaded(family)) {
+          useGoogleFontStore.getState().loadGoogleFont(family);
+        }
+      });
+    }
+  }, [fontHistory]);
 
   const historyFontFamilies = useMemo(
     () =>
@@ -197,7 +203,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         // 2. In the loaded Google fonts from store (context-loaded fonts), OR
         // 3. In the session loaded fonts from the hook
         const isGoogleFontFromHistory = fontHistory.some((h) => h.toLowerCase() === cleanFontLower) && !localFontMatch;
-        const isGoogleFontFromContext = loadedGoogleFonts.has(cleanFontFamily) && !localFontMatch;
+        const isGoogleFontFromContext = sessionLoadedFonts.has(cleanFontFamily) && !localFontMatch;
         const isGoogleFontFromSession = sessionLoadedFonts.has(cleanFontFamily) && !localFontMatch;
         let font: GeneralFont;
 
@@ -240,7 +246,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         const fontFamilyLower = font.family.toLowerCase();
         const isLocalFont = availableFontFamilies.some((f) => f.toLowerCase() === fontFamilyLower);
         const isGoogleFontInHistory = fontHistory.some((h) => h.toLowerCase() === fontFamilyLower) && !isLocalFont;
-        const isGoogleFontLoadedViaContext = loadedGoogleFonts.has(font.family) && !isLocalFont;
+        const isGoogleFontLoadedViaContext = sessionLoadedFonts.has(font.family) && !isLocalFont;
         const isGoogleFontLoadedViaSession = sessionLoadedFonts.has(font.family) && !isLocalFont;
         // A Google Font is considered "loaded" if it's from any source AND the browser confirms it's available
         const isGoogleFontLoaded =
@@ -305,7 +311,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     getFontFamilies,
     fontHistory,
     sessionLoadedFonts,
-    loadedGoogleFonts,
     proactivelyLoadHistoryFonts,
   ]);
 

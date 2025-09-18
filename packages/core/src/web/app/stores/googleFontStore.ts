@@ -689,29 +689,6 @@ export const useGoogleFontStore = create<GoogleFontState>()(
   ),
 );
 
-export const useLoadedGoogleFonts = () => useGoogleFontStore((state) => state.sessionLoadedFonts);
-export const useRegisteredGoogleFonts = () => useGoogleFontStore((state) => state.registeredFonts);
-export const useGoogleFontActions = () =>
-  useGoogleFontStore((state) => ({
-    addToHistory: state.addToHistory,
-    cleanupUnusedCSSLinks: state.cleanupUnusedCSSLinks,
-    clearBinaryCache: state.clearBinaryCache,
-    loadGoogleFont: state.loadGoogleFont,
-    loadGoogleFontBinary: state.loadGoogleFontBinary,
-    loadGoogleFontForPreview: state.loadGoogleFontForPreview,
-    loadGoogleFontWithOptions: state.loadGoogleFontWithOptions,
-    registerGoogleFont: state.registerGoogleFont,
-  }));
-export const useGoogleFontGetters = () =>
-  useGoogleFontStore((state) => ({
-    getBinaryFromCache: state.getBinaryFromCache,
-    getLoadedFonts: state.getLoadedFonts,
-    getRegisteredFonts: state.getRegisteredFonts,
-    isGoogleFontLoaded: state.isGoogleFontLoaded,
-    isGoogleFontLoading: state.isGoogleFontLoading,
-    isGoogleFontRegistered: state.isGoogleFontRegistered,
-  }));
-
 if (typeof window !== 'undefined') {
   const store = useGoogleFontStore.getState();
 
