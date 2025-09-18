@@ -368,6 +368,24 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
     Font
     <select>
       <option
+        value="history-Arial"
+      >
+        <div
+          style="font-family: 'Arial'; max-height: 24px;"
+        >
+          Arial
+        </div>
+      </option>
+      <option
+        value="history-Times New Roman"
+      >
+        <div
+          style="font-family: 'Times New Roman'; max-height: 24px;"
+        >
+          Times New Roman
+        </div>
+      </option>
+      <option
         value="Arial"
       >
         <div
@@ -465,6 +483,24 @@ exports[`TextOptions Mobile view should render correctly for text path in mobile
      label:
     Font
     <select>
+      <option
+        value="history-Arial"
+      >
+        <div
+          style="font-family: 'Arial'; max-height: 24px;"
+        >
+          Arial
+        </div>
+      </option>
+      <option
+        value="history-Times New Roman"
+      >
+        <div
+          style="font-family: 'Times New Roman'; max-height: 24px;"
+        >
+          Times New Roman
+        </div>
+      </option>
       <option
         value="Arial"
       >
@@ -576,6 +612,24 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
      label:
     Font
     <select>
+      <option
+        value="history-Arial"
+      >
+        <div
+          style="font-family: 'Arial'; max-height: 24px;"
+        >
+          Arial
+        </div>
+      </option>
+      <option
+        value="history-Times New Roman"
+      >
+        <div
+          style="font-family: 'Times New Roman'; max-height: 24px;"
+        >
+          Times New Roman
+        </div>
+      </option>
       <option
         value="Arial"
       >

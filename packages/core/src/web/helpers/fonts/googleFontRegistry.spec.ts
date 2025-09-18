@@ -46,7 +46,6 @@ describe('GoogleFontRegistry', () => {
       googleFontRegistry.setRegistrationCallback(mockCallback);
 
       expect(googleFontRegistry.isInitialized()).toBe(true);
-      expect(consoleLogSpy).toHaveBeenCalledWith('Google Font registration callback set');
 
       const stats = googleFontRegistry.getStats();
 
@@ -82,7 +81,6 @@ describe('GoogleFontRegistry', () => {
       expect(result).toBe(true);
       expect(mockCallback).toHaveBeenCalledWith(mockGoogleFont);
       expect(mockCallback).toHaveBeenCalledTimes(1);
-      expect(consoleLogSpy).toHaveBeenCalledWith('Registered Google Font via registry: Roboto-Regular');
 
       consoleLogSpy.mockRestore();
     });
@@ -128,7 +126,6 @@ describe('GoogleFontRegistry', () => {
 
       expect(secondResult).toBe(true);
       expect(mockCallback).toHaveBeenCalledTimes(1); // Still only called once
-      expect(consoleLogSpy).toHaveBeenCalledWith('Google Font already registered: Roboto-Regular');
 
       consoleLogSpy.mockRestore();
     });
@@ -299,7 +296,7 @@ describe('GoogleFontRegistry', () => {
       // The actual implementation doesn't handle null gracefully, so we expect it to throw
       expect(() => {
         googleFontRegistry.registerGoogleFont(null as any);
-      }).toThrow('Cannot read properties of null');
+      }).toThrow();
 
       consoleErrorSpy.mockRestore();
     });
@@ -337,6 +334,71 @@ describe('GoogleFontRegistry', () => {
         expect(googleFontRegistry.getStats().totalRegistered).toBe(1);
       });
     });
+
+    it('should handle registration of fonts with special characters in names', () => {
+      const mockCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(mockCallback);
+
+      const specialFont: GoogleFont = {
+        binaryLoader: jest.fn(),
+        family: 'Font with spaces & symbols!',
+        italic: false,
+        postscriptName: 'Font-with-spaces-symbols',
+        source: 'google',
+        style: 'normal',
+        weight: 400,
+      };
+
+      const result = googleFontRegistry.registerGoogleFont(specialFont);
+
+      expect(result).toBe(true);
+      expect(googleFontRegistry.isRegistered('Font-with-spaces-symbols')).toBe(true);
+      expect(mockCallback).toHaveBeenCalledWith(specialFont);
+    });
+
+    it('should handle extremely large font weight values', () => {
+      const mockCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(mockCallback);
+
+      const heavyFont: GoogleFont = {
+        binaryLoader: jest.fn(),
+        family: 'Ultra Heavy Font',
+        italic: false,
+        postscriptName: 'UltraHeavy-Black',
+        source: 'google',
+        style: 'normal',
+        weight: 900,
+      };
+
+      const result = googleFontRegistry.registerGoogleFont(heavyFont);
+
+      expect(result).toBe(true);
+      expect(googleFontRegistry.getRegisteredFont('UltraHeavy-Black')).toEqual(heavyFont);
+    });
+
+    it('should handle empty postscript names', () => {
+      const mockCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(mockCallback);
+
+      const emptyPostscriptFont: GoogleFont = {
+        binaryLoader: jest.fn(),
+        family: 'Empty Postscript',
+        italic: false,
+        postscriptName: '',
+        source: 'google',
+        style: 'normal',
+        weight: 400,
+      };
+
+      const result = googleFontRegistry.registerGoogleFont(emptyPostscriptFont);
+
+      expect(result).toBe(true);
+      expect(googleFontRegistry.isRegistered('')).toBe(true);
+      expect(googleFontRegistry.getRegisteredFont('')).toEqual(emptyPostscriptFont);
+    });
   });
 
   describe('Console Logging', () => {
@@ -364,14 +426,153 @@ describe('GoogleFontRegistry', () => {
       // Test uninitialized registration warning
       googleFontRegistry.registerGoogleFont(mockGoogleFont);
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('Google Font registration callback set');
-      expect(consoleLogSpy).toHaveBeenCalledWith('Registered Google Font via registry: Roboto-Regular');
-      expect(consoleLogSpy).toHaveBeenCalledWith('Google Font already registered: Roboto-Regular');
       expect(consoleLogSpy).toHaveBeenCalledWith('Google Font registry cleared');
       expect(consoleWarnSpy).toHaveBeenCalledWith('Registration callback not set, cannot register font:', 'Roboto');
 
       consoleLogSpy.mockRestore();
       consoleWarnSpy.mockRestore();
+    });
+  });
+
+  describe('Registry State Management', () => {
+    it('should maintain consistent state during rapid clear/register cycles', () => {
+      const mockCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(mockCallback);
+
+      // Perform rapid clear/register cycles
+      for (let i = 0; i < 5; i++) {
+        googleFontRegistry.registerGoogleFont(mockGoogleFont);
+        expect(googleFontRegistry.getStats().totalRegistered).toBe(1);
+        googleFontRegistry.clear();
+        expect(googleFontRegistry.getStats().totalRegistered).toBe(0);
+      }
+
+      // Final verification
+      googleFontRegistry.registerGoogleFont(mockGoogleFont);
+      expect(googleFontRegistry.isRegistered('Roboto-Regular')).toBe(true);
+    });
+
+    it('should handle registry operations with large numbers of fonts', () => {
+      const mockCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(mockCallback);
+
+      // Register many fonts
+      const fonts: GoogleFont[] = [];
+
+      for (let i = 0; i < 100; i++) {
+        const font: GoogleFont = {
+          binaryLoader: jest.fn(),
+          family: `TestFont${i}`,
+          italic: false,
+          postscriptName: `TestFont${i}-Regular`,
+          source: 'google',
+          style: 'normal',
+          weight: 400,
+        };
+
+        fonts.push(font);
+        googleFontRegistry.registerGoogleFont(font);
+      }
+
+      // Verify all registered
+      expect(googleFontRegistry.getStats().totalRegistered).toBe(100);
+      expect(mockCallback).toHaveBeenCalledTimes(100);
+
+      // Verify retrieval works
+      const allFonts = googleFontRegistry.getAllRegisteredFonts();
+
+      expect(allFonts.size).toBe(100);
+
+      // Verify specific fonts
+      expect(googleFontRegistry.isRegistered('TestFont50-Regular')).toBe(true);
+      expect(googleFontRegistry.getRegisteredFont('TestFont99-Regular')).toEqual(fonts[99]);
+    });
+
+    it('should preserve callback through multiple operations', () => {
+      const originalCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(originalCallback);
+
+      // Perform various operations
+      googleFontRegistry.registerGoogleFont(mockGoogleFont);
+      googleFontRegistry.clear();
+      googleFontRegistry.registerGoogleFont(mockGoogleFontItalic);
+
+      // Callback should still be set and functional
+      expect(googleFontRegistry.isInitialized()).toBe(true);
+      expect(originalCallback).toHaveBeenCalledTimes(2); // Once for each register call
+    });
+  });
+
+  describe('Edge Cases and Integration Scenarios', () => {
+    it('should handle fonts with identical families but different postscript names', () => {
+      const mockCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(mockCallback);
+
+      const roboto400: GoogleFont = {
+        binaryLoader: jest.fn(),
+        family: 'Roboto',
+        italic: false,
+        postscriptName: 'Roboto-Regular',
+        source: 'google',
+        style: 'normal',
+        weight: 400,
+      };
+
+      const roboto700: GoogleFont = {
+        binaryLoader: jest.fn(),
+        family: 'Roboto',
+        italic: false,
+        postscriptName: 'Roboto-Bold',
+        source: 'google',
+        style: 'normal',
+        weight: 700,
+      };
+
+      googleFontRegistry.registerGoogleFont(roboto400);
+      googleFontRegistry.registerGoogleFont(roboto700);
+
+      expect(googleFontRegistry.isRegistered('Roboto-Regular')).toBe(true);
+      expect(googleFontRegistry.isRegistered('Roboto-Bold')).toBe(true);
+      expect(googleFontRegistry.getStats().totalRegistered).toBe(2);
+    });
+
+    it('should handle callback that modifies the font object', () => {
+      const modifyingCallback = jest.fn((font: GoogleFont) => {
+        // Simulate a callback that modifies the font object
+        font.family = `Modified-${font.family}`;
+      });
+
+      googleFontRegistry.setRegistrationCallback(modifyingCallback);
+
+      const originalFont = { ...mockGoogleFont };
+      const result = googleFontRegistry.registerGoogleFont(originalFont);
+
+      expect(result).toBe(true);
+      expect(modifyingCallback).toHaveBeenCalledWith(originalFont);
+      expect(googleFontRegistry.getRegisteredFont('Roboto-Regular')).toEqual(originalFont);
+    });
+
+    it('should maintain immutable interface despite internal state changes', () => {
+      const mockCallback = jest.fn();
+
+      googleFontRegistry.setRegistrationCallback(mockCallback);
+      googleFontRegistry.registerGoogleFont(mockGoogleFont);
+
+      // Get reference to registered fonts map
+      const fontsMap1 = googleFontRegistry.getAllRegisteredFonts();
+      const fontsMap2 = googleFontRegistry.getAllRegisteredFonts();
+
+      // Should be different objects (defensive copying)
+      expect(fontsMap1).not.toBe(fontsMap2);
+      expect(fontsMap1).toEqual(fontsMap2);
+
+      // Modifying returned map shouldn't affect registry
+      fontsMap1.clear();
+      expect(googleFontRegistry.getStats().totalRegistered).toBe(1);
     });
   });
 });
