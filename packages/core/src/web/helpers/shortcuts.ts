@@ -111,14 +111,20 @@ const isFocusingOnInputs = () => {
 };
 
 const keydownEvent = (event: KeyboardEvent) => {
+  console.log('Keydown event:', event); // Debug log
+
   // ignore autocomplete input
   if (event.key === undefined || isFocusingOnInputs()) {
+    console.log('Keydown event stop 1', document.activeElement);
+
     return;
   }
 
   const currentKey = getKeyFromEvent(event);
 
   if (!currentKey) {
+    console.log('Keydown event stop 2');
+
     return;
   }
 
@@ -141,6 +147,8 @@ const keydownEvent = (event: KeyboardEvent) => {
   const currentKeySet = [...currentPressedKeys].sort().join('+');
   const { matches } = matchedEventsByKeySet(currentKeySet);
 
+  console.log('Keydown event matches', matches);
+
   matches.forEach((matchedEvent) => {
     if (matchedEvent.isPreventDefault) {
       event.preventDefault();
@@ -153,7 +161,7 @@ const keydownEvent = (event: KeyboardEvent) => {
 const initialize = (): void => {
   if (hasBind === false) {
     window.addEventListener('keyup', keyupEvent);
-    window.addEventListener('keydown', keydownEvent);
+    window.addEventListener('keydown', keydownEvent, true);
 
     hasBind = true;
   }
@@ -170,11 +178,15 @@ const unsubscribe = (eventToUnsubscribe: ShortcutEvent) => {
 
 export default {
   enterScope(): () => void {
+    console.warn('Entering new shortcut scope');
+
     const newEvents: ShortcutEvent[] = [];
 
     eventScopes.push(newEvents);
 
     const exitScope = () => {
+      console.warn('Exiting shortcut scope');
+
       // use splice instead of pop to in case another scope is entered before exitted
       const idx = eventScopes.indexOf(newEvents);
 
