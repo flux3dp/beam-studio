@@ -103,7 +103,7 @@ describe('GuideLineDrawer', () => {
       expect(mockSetAttributes).toHaveBeenCalledWith(expect.any(Object), {
         height: '100%',
         id: 'guidesLines',
-        style: 'pointer-events: none; overflow: hidden',
+        style: 'pointer-events: none;',
         viewBox: `0 0 ${mockWorkareaManager.width} ${mockWorkareaManager.height}`,
         width: '100%',
         x: '0',
