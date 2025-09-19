@@ -39,7 +39,7 @@ class GuideLineDrawer {
     setAttributes(container, {
       height: '100%',
       id: 'guidesLines',
-      style: 'pointer-events: none; overflow: hidden',
+      style: 'pointer-events: none;',
       viewBox: `0 0 ${width} ${height}`,
       width: '100%',
       x: '0',
