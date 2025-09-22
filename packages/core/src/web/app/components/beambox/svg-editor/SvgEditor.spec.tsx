@@ -13,9 +13,10 @@ jest.mock('@core/helpers/fileImportHelper', () => ({
   importFileInCurrentTab: (...args) => mockImportFileInCurrentTab(...args),
 }));
 
-jest.mock('./Workarea', () => () => <div>This is dummy Workarea</div>);
-jest.mock('./Ruler', () => () => <div>This is dummy Ruler</div>);
-jest.mock('./Banner', () => () => <div>This is dummy Banner</div>);
+jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
+jest.mock('./Ruler', () => () => <div>MockRuler</div>);
+jest.mock('./Banner', () => () => <div>MockBanner</div>);
+jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
 
 jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);
