@@ -7,16 +7,9 @@ import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import TutorialController from '@core/app/views/tutorials/tutorialController';
 import { createLayer } from '@core/helpers/layer/layer-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './AddLayerButton.module.scss';
-
-let svgEditor;
-
-getSVGAsync((globalSVG) => {
-  svgEditor = globalSVG.Editor;
-});
 
 interface Props {
   setSelectedLayers: (selectedLayers: string[]) => void;
@@ -40,7 +33,6 @@ function AddLayerButton({ setSelectedLayers }: Props): React.JSX.Element {
       TutorialController.handleNextStep();
     }
 
-    svgEditor.updateContextPanel();
     setSelectedLayers([uniqName]);
   };
 

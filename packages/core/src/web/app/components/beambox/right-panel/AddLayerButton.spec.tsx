@@ -4,32 +4,10 @@ import { fireEvent, render } from '@testing-library/react';
 
 import AddLayerButton from './AddLayerButton';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      layer_panel: {
-        layers: {
-          layer: 'Layer',
-        },
-      },
-    },
-  },
-}));
-
 const mockHasLayer = jest.fn();
-const mockUpdateContextPanel = jest.fn();
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   hasLayer: (...args) => mockHasLayer(...args),
-}));
-
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (cb) =>
-    cb({
-      Editor: {
-        updateContextPanel: () => mockUpdateContextPanel(),
-      },
-    }),
 }));
 
 const mockCreateLayer = jest.fn();
@@ -72,7 +50,6 @@ describe('test AddLayerButton', () => {
     expect(mockHasLayer).toHaveBeenCalledTimes(1);
     expect(mockCreateLayer).toHaveBeenCalledTimes(1);
     expect(mockCreateLayer).toHaveBeenLastCalledWith('Layer 1', { initConfig: true });
-    expect(mockUpdateContextPanel).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedLayers).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedLayers).toHaveBeenLastCalledWith(['Layer 1']);
   });
@@ -88,7 +65,6 @@ describe('test AddLayerButton', () => {
     expect(mockHasLayer).toHaveBeenNthCalledWith(2, 'Layer 2');
     expect(mockCreateLayer).toHaveBeenCalledTimes(1);
     expect(mockCreateLayer).toHaveBeenLastCalledWith('Layer 2', { initConfig: true });
-    expect(mockUpdateContextPanel).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedLayers).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedLayers).toHaveBeenLastCalledWith(['Layer 2']);
   });
