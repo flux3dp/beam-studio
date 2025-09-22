@@ -4,11 +4,11 @@ import { pipe } from 'remeda';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -31,7 +31,10 @@ const ModuleBlock = (): React.ReactNode => {
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);
   const layers = useMemo(
-    () => (supportedModules.length <= 1 ? null : selectedLayers.map((layerName) => getLayerElementByName(layerName)!)),
+    () =>
+      supportedModules.length <= 1
+        ? null
+        : selectedLayers.map((layerName) => layerManager.getLayerElementByName(layerName)!),
     [selectedLayers, supportedModules],
   );
 

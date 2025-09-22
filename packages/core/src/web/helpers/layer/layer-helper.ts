@@ -56,10 +56,6 @@ export const getAllLayers = (): SVGGElement[] => {
   return layerManager.getAllLayers().map((layer) => layer.getGroup());
 };
 
-export const getAllLayerNames = (): string[] => {
-  return layerManager.getAllLayerNames();
-};
-
 export const getLayerPosition = (layerName: string): number => {
   const allLayers = layerManager.getAllLayerNames();
 
@@ -76,10 +72,6 @@ export const sortLayerNamesByPosition = (layerNames: string[]): string[] => {
   return layerNames
     .filter((name) => layerNamePositionMap[name] > -1)
     .sort((a, b) => layerNamePositionMap[a] - layerNamePositionMap[b]);
-};
-
-export const getLayerElementByName = (layerName: string): Element | null => {
-  return layerManager.getLayerElementByName(layerName);
 };
 
 export const getLayerName = (layer: Element): string => {
@@ -144,7 +136,7 @@ export const cloneLayer = (
     parentCmd?: IBatchCommand;
   },
 ): null | { cmd: ICommand; elem: SVGGElement; name: string } => {
-  const layer = getLayerElementByName(layerName);
+  const layer = layerManager.getLayerElementByName(layerName);
 
   if (!layer) return null;
 
@@ -226,7 +218,7 @@ export const setLayerLock = (
   opts: { parentCmd?: IBatchCommand } = {},
 ): ICommand | null => {
   const { parentCmd } = opts;
-  const layer = getLayerElementByName(layerName);
+  const layer = layerManager.getLayerElementByName(layerName);
 
   if (!layer) return null;
 
@@ -268,10 +260,10 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
 };
 
 export const showMergeAlert = async (baseLayerName: string, layerNames: string[]): Promise<boolean> => {
-  const targetModule = getData(getLayerElementByName(baseLayerName)!, 'module') as LayerModuleType;
+  const targetModule = getData(layerManager.getLayerElementByName(baseLayerName)!, 'module') as LayerModuleType;
   const isPrinting = printingModules.has(targetModule);
   const shouldShowAlert = layerNames.some((layerName) => {
-    const module = getData(getLayerElementByName(layerName)!, 'module')!;
+    const module = getData(layerManager.getLayerElementByName(layerName)!, 'module')!;
 
     return printingModules.has(module) !== isPrinting;
   });
@@ -300,7 +292,7 @@ const mergeLayer = (
   layersToBeMerged: string[],
   shouldInsertBefore: boolean,
 ): IBatchCommand | null => {
-  const baseLayer = getLayerElementByName(baseLayerName);
+  const baseLayer = layerManager.getLayerElementByName(baseLayerName);
 
   if (!baseLayer) {
     return null;
@@ -312,7 +304,7 @@ const mergeLayer = (
   const batchCmd: IBatchCommand = new history.BatchCommand(`Merge into ${baseLayer}`);
 
   for (let i = 0; i < layersToBeMerged.length; i += 1) {
-    const layer = getLayerElementByName(layersToBeMerged[i]);
+    const layer = layerManager.getLayerElementByName(layersToBeMerged[i]);
 
     if (layer) {
       const { childNodes } = layer;
@@ -426,8 +418,8 @@ export const moveLayerToPosition = (layerName: string, newPosition: number): { c
 };
 
 const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
-  const layer = getLayerElementByName(layerName);
-  const anchorLayer = getLayerElementByName(anchorLayerName);
+  const layer = layerManager.getLayerElementByName(layerName);
+  const anchorLayer = layerManager.getLayerElementByName(anchorLayerName);
 
   if (layer && anchorLayer) {
     const { nextSibling } = layer;

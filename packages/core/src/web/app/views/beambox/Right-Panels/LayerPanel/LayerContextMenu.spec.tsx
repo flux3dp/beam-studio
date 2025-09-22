@@ -9,18 +9,20 @@ import LayerContextMenu from './LayerContextMenu';
 import i18n from '@core/helpers/i18n';
 
 const mockClearSelection = jest.fn();
-const mockAddCommandToHistory = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (cb) =>
     cb({
       Canvas: {
         clearSelection: () => mockClearSelection(),
-        undoMgr: {
-          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
-        },
       },
     }),
+}));
+
+const mockAddCommandToHistory = jest.fn();
+
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
 const mockCloneLayers = jest.fn();
@@ -33,8 +35,6 @@ const mockSetLayersLock = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   cloneLayers: (...args) => mockCloneLayers(...args),
-  getAllLayerNames: () => mockGetAllLayerNames(),
-  getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
   getLayerPosition: (...args) => mockGetLayerPosition(...args),
   mergeLayers: (...args) => mockMergeLayers(...args),
   setLayersLock: (...args) => mockSetLayersLock(...args),
@@ -69,7 +69,9 @@ jest.mock(
 );
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayerNames: () => mockGetAllLayerNames(),
   getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
+  getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
   getLayerName: (...args) => mockGetLayerName(...args),
 }));
 

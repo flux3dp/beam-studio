@@ -2463,7 +2463,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     LayerHelper.createLayer(defaultLayerName);
 
-    const defaultLayer = LayerHelper.getLayerElementByName(defaultLayerName)!;
+    const defaultLayer = layerManager.getLayerElementByName(defaultLayerName)!;
 
     initLayerConfig(defaultLayer);
 

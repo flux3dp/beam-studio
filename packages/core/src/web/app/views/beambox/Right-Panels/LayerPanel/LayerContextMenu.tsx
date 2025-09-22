@@ -13,6 +13,7 @@ import type { PrintingColors } from '@core/app/constants/color-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -24,14 +25,7 @@ import { deleteLayers } from '@core/helpers/layer/deleteLayer';
 import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLayer';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import {
-  cloneLayers,
-  getAllLayerNames,
-  getLayerElementByName,
-  getLayerPosition,
-  mergeLayers,
-  setLayersLock,
-} from '@core/helpers/layer/layer-helper';
+import { cloneLayers, getLayerPosition, mergeLayers, setLayersLock } from '@core/helpers/layer/layer-helper';
 import { ContextMenu, MenuItem } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -60,7 +54,7 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
   const isMobile = useIsMobile();
   const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
-  const layerElem = getLayerElementByName(selectedLayers[0])!;
+  const layerElem = layerManager.getLayerElementByName(selectedLayers[0])!;
   const isLocked = layerElem?.getAttribute('data-lock') === 'true';
   const onContextMenuShow = (e: CustomEvent) => {
     const trigger = e.detail.data?.target as Element;
@@ -112,14 +106,14 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
   };
 
   const handleMergeAll = async () => {
-    const allLayerNames = getAllLayerNames();
+    const allLayerNames = layerManager.getAllLayerNames();
     const baseLayerName = await mergeLayers(allLayerNames);
 
     if (!baseLayerName) {
       return;
     }
 
-    const elem = getLayerElementByName(baseLayerName!);
+    const elem = layerManager.getLayerElementByName(baseLayerName!);
 
     updateLayerColor(elem as SVGGElement);
     selectOnlyLayer(baseLayerName);
@@ -133,7 +127,7 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
       return;
     }
 
-    const elem = getLayerElementByName(baseLayer!);
+    const elem = layerManager.getLayerElementByName(baseLayer!);
 
     updateLayerColor(elem as SVGGElement);
     setSelectedLayers([baseLayer]);
@@ -191,7 +185,7 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
     const cmd = toggleFullColorLayer(layerElem);
 
     if (cmd && !cmd.isEmpty()) {
-      svgCanvas.undoMgr.addCommandToHistory(cmd);
+      undoManager.addCommandToHistory(cmd);
     }
 
     setSelectedLayers([]);

@@ -16,7 +16,7 @@ import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getAllLayerNames, setLayerLock } from '@core/helpers/layer/layer-helper';
+import { setLayerLock } from '@core/helpers/layer/layer-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './LayerList.module.scss';
@@ -76,7 +76,7 @@ const LayerList = ({
     layerManager.identifyLayers();
   }
 
-  const allLayerNames = getAllLayerNames();
+  const allLayerNames = layerManager.getAllLayerNames();
 
   if (draggingDestIndex === allLayerNames.length) {
     items.push(renderDragBar());

@@ -4,11 +4,11 @@ import { pipe } from 'remeda';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 
 interface ILayerPanelContext {
@@ -64,9 +64,9 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
   }, []);
 
   useEffect(() => {
-    const isUvPrintable = getAllLayerNames().some(
-      (layerName) => getData(getLayerElementByName(layerName)!, 'module') === LayerModule.UV_PRINT,
-    );
+    const isUvPrintable = layerManager
+      .getAllLayers()
+      .some((layer) => getData(layer.getGroup(), 'module') === LayerModule.UV_PRINT);
 
     layerPanelEventEmitter.emit('updateUvPrintStatus', isUvPrintable);
   });
@@ -106,7 +106,7 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
         const newVal = selectedLayers.some((layerName: string) =>
           pipe(
             layerName,
-            getLayerElementByName,
+            layerManager.getLayerElementByName,
             (layer) => layer?.querySelector('image[data-shading="true"]'),
             Boolean,
           ),
@@ -138,7 +138,7 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
         pipe(
           //
           layerName,
-          getLayerElementByName,
+          layerManager.getLayerElementByName,
           (layer) => layer?.querySelector('image[data-shading="true"]'),
           Boolean,
         ),

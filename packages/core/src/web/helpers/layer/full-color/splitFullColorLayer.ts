@@ -10,7 +10,7 @@ import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import isDev from '@core/helpers/is-dev';
 import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
-import { cloneLayer, getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import { cloneLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -34,7 +34,7 @@ const splitFullColorLayer = async (
   opts: { addToHistory?: boolean } = {},
 ): Promise<null | { cmd: IBatchCommand; newLayers: Element[] }> => {
   const { addToHistory = true } = opts;
-  const layer = getLayerElementByName(layerName)!;
+  const layer = layerManager.getLayerElementByName(layerName)!;
   const fullColor = getData(layer, 'fullcolor');
   const ref = getData(layer, 'ref');
   const layerModule = getData(layer, 'module');
@@ -239,31 +239,30 @@ const splitFullColorLayer = async (
 };
 
 export const tempSplitFullColorLayers = async (): Promise<() => void> => {
-  const allLayerNames = getAllLayerNames();
   const addedLayers: Element[] = [];
   const removedLayers: Array<{ layer: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
   const currentLayerName = layerManager.getCurrentLayerName();
 
-  for (const layerName of allLayerNames) {
-    const layer = getLayerElementByName(layerName)!;
-    const fullColor = getData(layer, 'fullcolor');
-    const ref = getData(layer, 'ref');
+  for (const layer of layerManager.getAllLayers()) {
+    const layerElement = layer.getGroup();
+    const fullColor = getData(layerElement, 'fullcolor');
+    const ref = getData(layerElement, 'ref');
 
-    if (fullColor && layer.getAttribute('display') !== 'none' && !ref) {
-      const { nextSibling, parentNode } = layer;
-      const children = [...layer.childNodes] as Element[];
+    if (fullColor && layerElement.getAttribute('display') !== 'none' && !ref) {
+      const { nextSibling, parentNode } = layerElement;
+      const children = [...layerElement.childNodes] as Element[];
 
       if (children.filter((c) => !['filter', 'title'].includes(c.tagName)).length === 0) {
         continue;
       }
 
-      const res = await splitFullColorLayer(layerName, { addToHistory: false });
+      const res = await splitFullColorLayer(layer.getName(), { addToHistory: false });
 
       if (res) {
         const { newLayers } = res;
 
         addedLayers.push(...newLayers);
-        removedLayers.push({ layer, nextSibling, parentNode });
+        removedLayers.push({ layer: layerElement, nextSibling, parentNode });
       }
     }
   }

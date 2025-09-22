@@ -52,12 +52,10 @@ jest.mock('@core/helpers/presets/preset-helper', () => ({
   getDefaultPreset: (name) => mockGetDefaultPreset(name),
 }));
 
-const mockGetAllLayerNames = jest.fn();
-const mockGetLayerByName = jest.fn();
+const mockGetAllLayers = jest.fn();
 
-jest.mock('@core/helpers/layer/layer-helper', () => ({
-  getAllLayerNames: () => mockGetAllLayerNames(),
-  getLayerByName: (name) => mockGetLayerByName(name),
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayers: () => mockGetAllLayers(),
 }));
 
 const mockToggleFullColorLayer = jest.fn();
@@ -119,7 +117,11 @@ describe('test layer-config-helper', () => {
     jest.resetAllMocks();
     mockGetState.mockReturnValue({ workarea: 'fbm1' });
     mockGetGlobalPreference.mockReturnValue({ 'multipass-compensation': false });
-    mockGetLayerByName.mockReturnValue(mockLayer);
+    mockGetAllLayers.mockReturnValue([
+      { getGroup: () => mockLayer },
+      { getGroup: () => mockLayer },
+      { getGroup: () => mockLayer },
+    ]);
   });
 
   it('should return null layer when layer does not exist', () => {
@@ -215,9 +217,12 @@ describe('test layer-config-helper', () => {
 
   test('toggleFullColorAfterWorkareaChange to workarea without module', () => {
     mockGetState.mockReturnValue({ workarea: 'fbm1' });
-    mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
+    mockGetAllLayers.mockReturnValue([
+      { getGroup: () => mockLayer },
+      { getGroup: () => mockLayer },
+      { getGroup: () => mockLayer },
+    ]);
 
-    mockGetLayerByName.mockReturnValue(mockLayer);
     mockLayer.getAttribute.mockReturnValue('5');
     mockGetDefaultLaserModule.mockReturnValue(15);
     toggleFullColorAfterWorkareaChange();
@@ -230,7 +235,11 @@ describe('test layer-config-helper', () => {
 
   test('toggleFullColorAfterWorkareaChange to workarea with module', () => {
     mockGetState.mockReturnValue({ workarea: 'ado1' });
-    mockGetAllLayerNames.mockReturnValue(['layer 1', 'layer 2', 'layer 3']);
+    mockGetAllLayers.mockReturnValue([
+      { getGroup: () => mockLayer },
+      { getGroup: () => mockLayer },
+      { getGroup: () => mockLayer },
+    ]);
 
     mockLayer.getAttribute.mockReturnValue('15');
     mockGetDefaultLaserModule.mockReturnValue(1);

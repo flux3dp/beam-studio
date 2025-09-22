@@ -42,7 +42,7 @@ import {
   postPresetChange,
   writeData,
 } from '@core/helpers/layer/layer-config-helper';
-import { getLayerElementByName, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
+import { moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import { usePresetList } from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
@@ -222,7 +222,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       const batchCmd = new history.BatchCommand('Change layer preset');
 
       selectedLayers.forEach((layerName: string) => {
-        const layer = getLayerElementByName(layerName)!;
+        const layer = layerManager.getLayerElementByName(layerName)!;
 
         applyPreset(layer, preset, { batchCmd });
       });

@@ -4,10 +4,10 @@
  */
 import { printingModules, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 
 import { getData } from './layer-config-helper';
-import { getAllLayerNames, getLayerElementByName } from './layer-helper';
 import layerToImage from './layerToImage';
 
 /**
@@ -17,7 +17,7 @@ import layerToImage from './layerToImage';
  * @returns
  */
 const convertShapeToBitmap = async (): Promise<() => void> => {
-  const allLayerNames = getAllLayerNames();
+  const allLayers = layerManager.getAllLayers().map((layer) => layer.getGroup());
   const promises = [];
   const newImages: SVGImageElement[] = [];
   const elementsToKeep: Array<{ elem: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
@@ -26,9 +26,8 @@ const convertShapeToBitmap = async (): Promise<() => void> => {
     .map((tagName) => `:not(${tagName})`)
     .join('');
 
-  for (let i = 0; i < allLayerNames.length; i += 1) {
-    const layerName = allLayerNames[i];
-    const layer = getLayerElementByName(layerName)!;
+  for (let i = 0; i < allLayers.length; i += 1) {
+    const layer = allLayers[i];
     const module = getData(layer, 'module')!;
 
     if (!getData(layer, 'fullcolor') && (printingModules.has(module) || UVModules.has(module))) {

@@ -12,10 +12,12 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
 
 const mockGetCurrentLayerName = jest.fn();
 const mockGetAllLayers = jest.fn();
+const mockGetAllLayerNames = jest.fn();
 const mockIdentifyLayers = jest.fn();
 const mockGetLayerByName = jest.fn();
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayerNames: () => mockGetAllLayerNames(),
   getAllLayers: (...args) => mockGetAllLayers(...args),
   getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
   getLayerByName: (...args) => mockGetLayerByName(...args),
@@ -39,12 +41,7 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
 }));
 
-const mockGetAllLayerNames = jest.fn();
-const mockGetLayerElementByName = jest.fn();
-
 jest.mock('@core/helpers/layer/layer-helper', () => ({
-  getAllLayerNames: () => mockGetAllLayerNames(),
-  getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
   setLayerLock: jest.fn(),
 }));
 
@@ -128,7 +125,6 @@ describe('test LayerList', () => {
     mockLayer1.getAttribute.mockReturnValueOnce('false').mockReturnValueOnce(null);
     mockLayer2.getAttribute.mockReturnValueOnce('true').mockReturnValueOnce('1');
 
-    mockGetLayerElementByName.mockImplementation((layerName) => (layerName === 'layer1' ? mockLayer1 : mockLayer2));
     mockGetLayerByName.mockImplementation((layerName) =>
       layerName === 'layer1' ? mockLayerObject1 : mockLayerObject2,
     );
@@ -183,8 +179,6 @@ describe('test LayerList', () => {
 
     mockLayer1.getAttribute.mockReturnValue('false');
     mockLayer2.getAttribute.mockReturnValue('true');
-
-    mockGetLayerElementByName.mockImplementation((layerName) => (layerName === 'layer1' ? mockLayer1 : mockLayer2));
 
     mockGetLayerByName.mockImplementation((layerName) =>
       layerName === 'layer1' ? mockLayerObject1 : mockLayerObject2,
@@ -245,8 +239,6 @@ describe('test LayerList', () => {
 
     mockLayer1.getAttribute.mockReturnValue('false');
     mockLayer2.getAttribute.mockReturnValue('true');
-
-    mockGetLayerElementByName.mockImplementation((layerName) => (layerName === 'layer1' ? mockLayer1 : mockLayer2));
 
     mockGetLayerByName.mockImplementation((layerName) =>
       layerName === 'layer1' ? mockLayerObject1 : mockLayerObject2,

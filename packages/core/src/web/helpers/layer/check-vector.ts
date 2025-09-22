@@ -1,4 +1,4 @@
-import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 
 const doElementContainVector = (elem: Element) => {
   const vectors = elem.querySelectorAll('path, rect, ellipse, polygon, line, text');
@@ -20,7 +20,7 @@ const doElementContainVector = (elem: Element) => {
 
 // TODO: add unit test
 const doLayersContainsVector = (layerNames: string[]): boolean => {
-  const layers = layerNames.map((layerName: string) => getLayerElementByName(layerName));
+  const layers = layerNames.map((layerName: string) => layerManager.getLayerElementByName(layerName));
   let res = false;
 
   for (let i = 0; i < layers.length; i += 1) {
@@ -37,7 +37,7 @@ const doLayersContainsVector = (layerNames: string[]): boolean => {
       for (let j = 0; j < uses.length; j += 1) {
         const use = uses[j];
         const href = use.getAttribute('xlink:href');
-        let symbol = document.querySelector(href);
+        let symbol = href ? document.querySelector(href) : null;
 
         if (symbol) {
           const originalSymbolID = symbol.getAttribute('data-origin-symbol');

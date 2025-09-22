@@ -21,8 +21,12 @@ jest.mock(
 
 const mockGetLayerElementByName = jest.fn();
 
-jest.mock('@core/helpers/layer/layer-helper', () => ({
-  getAllLayerNames: () => ['layer1', 'layer2', 'layer3'],
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayers: () => [
+    { getGroup: () => ({ id: 'layer1' }) },
+    { getGroup: () => ({ id: 'layer2' }) },
+    { getGroup: () => ({ id: 'layer3' }) },
+  ],
   getLayerElementByName: (...args) => mockGetLayerElementByName(...args),
 }));
 
