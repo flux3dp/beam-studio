@@ -97,7 +97,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   module: LayerModule.LASER_UNIVERSAL,
   mRatio: 100,
   multipass: 3,
-  nozzleMode: 1,
+  /** 1 for left, 2 for right, 3 for both */
+  nozzleMode: 3,
   nozzleOffsetX: 0,
   nozzleOffsetY: 0,
   power: 15,
