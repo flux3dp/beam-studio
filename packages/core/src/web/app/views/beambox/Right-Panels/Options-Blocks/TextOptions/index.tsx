@@ -3,6 +3,7 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
+import { match } from 'ts-pattern';
 
 import FontFuncs, { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
@@ -29,6 +30,13 @@ import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import {
+  FONT_FALLBACK_FAMILIES,
+  type FontWeight,
+  generateGoogleFontPostScriptName,
+  generateStyleFromWeightAndItalic,
+  WEIGHT_TO_STYLE_MAP,
+} from '@core/helpers/fonts/fontUtils';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -48,7 +56,81 @@ getSVGAsync((globalSVG) => {
 });
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('font');
+
 const isLocalFont = (font: GeneralFont) => 'path' in font;
+
+// generateGoogleFontPostScriptName and generateStyleFromWeightAndItalic are now imported from constants
+
+const parseGoogleFontVariant = (variant: string) =>
+  match(variant)
+    .with('regular', () => ({ italic: false, style: 'Regular', weight: 400 }))
+    .with('italic', () => ({ italic: true, style: 'Italic', weight: 400 }))
+    .when(
+      (v) => v.endsWith('italic'),
+      (v) => {
+        const parsedWeight = Number.parseInt(v.replace('italic', ''));
+        const styleName = WEIGHT_TO_STYLE_MAP[parsedWeight as FontWeight] || 'Regular';
+
+        return { italic: true, style: `${styleName} Italic`, weight: parsedWeight };
+      },
+    )
+    .when(
+      (v) => /^\d+$/.test(v),
+      (v) => {
+        const parsedWeight = Number.parseInt(v);
+        const styleName = WEIGHT_TO_STYLE_MAP[parsedWeight as FontWeight] || 'Regular';
+
+        return { italic: false, style: styleName, weight: parsedWeight };
+      },
+    )
+    .otherwise(() => ({ italic: false, style: 'Regular', weight: 400 }));
+
+const findFallbackFont = (targetFont: GeneralFont, availableFamilies: string[]): string | undefined => {
+  const candidateFonts = [targetFont.family, ...FONT_FALLBACK_FAMILIES];
+
+  return (
+    candidateFonts.find((candidate) =>
+      availableFamilies.some((local) => local.toLowerCase() === candidate.toLowerCase()),
+    ) ||
+    availableFamilies.find((local) =>
+      candidateFonts.some((candidate) => candidate.toLowerCase() === local.toLowerCase()),
+    )
+  );
+};
+
+const createGoogleFontObject = (
+  family: string,
+  weight: number,
+  italic: boolean,
+  style: string,
+  binaryLoader: (family: string) => Promise<ArrayBuffer | null>,
+): GoogleFont => ({
+  binaryLoader,
+  family,
+  italic,
+  postscriptName: generateGoogleFontPostScriptName(family, weight, italic),
+  source: 'google' as const,
+  style,
+  weight,
+});
+
+const isGoogleFontLoaded = (
+  fontFamily: string,
+  availableFamilies: string[],
+  fontHistory: string[],
+  sessionLoadedFonts: Set<string>,
+): boolean => {
+  const fontFamilyLower = fontFamily.toLowerCase();
+  const isLocalFont = availableFamilies.some((f) => f.toLowerCase() === fontFamilyLower);
+
+  if (isLocalFont) return false; // Local fonts are not considered "Google fonts"
+
+  const isInHistory = fontHistory.some((h) => h.toLowerCase() === fontFamilyLower);
+  const isInSession = sessionLoadedFonts.has(fontFamily);
+  const isFontAvailable = document.fonts.check(`1em "${fontFamily}"`);
+
+  return (isInHistory || isInSession) && isFontAvailable;
+};
 
 interface Props {
   elem: Element;
@@ -188,26 +270,34 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       for (const textElement of textElements) {
         const elementFontFamily = textEdit.getFontFamilyData(textElement);
         const cleanFontFamily = elementFontFamily.replace(/^['"]|['"]$/g, '');
-        const cleanFontLower = cleanFontFamily.toLowerCase();
-        const localFontMatch = availableFontFamilies.find((f) => f.toLowerCase() === cleanFontLower);
-        // A font is considered a Google Font if it's either:
-        // 1. In history but NOT in local system fonts (case-insensitive), OR
-        // 2. In the loaded Google fonts from store (context-loaded fonts), OR
-        // 3. In the session loaded fonts from the hook
-        const isGoogleFontFromHistory = fontHistory.some((h) => h.toLowerCase() === cleanFontLower) && !localFontMatch;
-        const isGoogleFontFromContext = sessionLoadedFonts.has(cleanFontFamily) && !localFontMatch;
-        const isGoogleFontFromSession = sessionLoadedFonts.has(cleanFontFamily) && !localFontMatch;
+        const localFontMatch = availableFontFamilies.find((f) => f.toLowerCase() === cleanFontFamily.toLowerCase());
+
         let font: GeneralFont;
 
-        if (isGoogleFontFromHistory || isGoogleFontFromContext || isGoogleFontFromSession) {
+        const isGoogleFontFromAnySource =
+          !localFontMatch &&
+          (fontHistory.some((h) => h.toLowerCase() === cleanFontFamily.toLowerCase()) ||
+            sessionLoadedFonts.has(cleanFontFamily));
+
+        if (isGoogleFontFromAnySource) {
           // Create synthetic Google Font object to bypass PostScript lookup
           // This is only for web fonts that are not available locally
+          const actualWeight = textEdit.getFontWeight(textElement) || 400;
+          const actualItalic = textEdit.getItalic(textElement);
+          const actualPostscriptName = textEdit.getFontPostscriptName(textElement);
+          // Use actual PostScript name if available, otherwise generate proper name based on weight/style
+          const postscriptName =
+            actualPostscriptName || generateGoogleFontPostScriptName(cleanFontFamily, actualWeight, actualItalic);
+
+          // Determine style based on weight and italic
+          const style = generateStyleFromWeightAndItalic(actualWeight, actualItalic);
+
           font = {
             family: cleanFontFamily,
-            italic: textEdit.getItalic(textElement),
-            postscriptName: cleanFontFamily.replace(/\s+/g, '') + '-Regular',
-            style: 'Regular',
-            weight: textEdit.getFontWeight(textElement) || 400,
+            italic: actualItalic,
+            postscriptName,
+            style,
+            weight: actualWeight,
           };
         } else {
           const postscriptName = textEdit.getFontPostscriptName(textElement);
@@ -232,30 +322,19 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         }
 
         // Check if this font should use fallback
-        // Skip fallback for Google Fonts that are loaded via any source and available in the document
-        // Also skip fallback if the font is available locally (case-insensitive)
-        const fontFamilyLower = font.family.toLowerCase();
-        const isLocalFont = availableFontFamilies.some((f) => f.toLowerCase() === fontFamilyLower);
-        const isGoogleFontInHistory = fontHistory.some((h) => h.toLowerCase() === fontFamilyLower) && !isLocalFont;
-        const isGoogleFontLoadedViaContext = sessionLoadedFonts.has(font.family) && !isLocalFont;
-        const isGoogleFontLoadedViaSession = sessionLoadedFonts.has(font.family) && !isLocalFont;
-        // A Google Font is considered "loaded" if it's from any source AND the browser confirms it's available
-        const isGoogleFontLoaded =
-          (isGoogleFontInHistory || isGoogleFontLoadedViaContext || isGoogleFontLoadedViaSession) &&
-          document.fonts.check(`1em "${font.family}"`);
+        const fontIsLocallyAvailable = availableFontFamilies.find((f) => f.toLowerCase() === font.family.toLowerCase());
+        const googleFontIsLoaded = isGoogleFontLoaded(
+          font.family,
+          availableFontFamilies,
+          fontHistory,
+          sessionLoadedFonts,
+        );
 
-        if (!isGoogleFontLoaded && !isLocalFont) {
-          // use these font if postscriptName cannot find in user PC
-          const fontFamilyFallback = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', 'Noto Sans'];
-          const sanitizedFamily =
-            [font.family, ...fontFamilyFallback].find((f) =>
-              availableFontFamilies.some((local) => local.toLowerCase() === f.toLowerCase()),
-            ) ||
-            availableFontFamilies.find((local) =>
-              [font.family, ...fontFamilyFallback].some((f) => f.toLowerCase() === local.toLowerCase()),
-            )!;
+        if (!googleFontIsLoaded && !fontIsLocallyAvailable) {
+          // Use fallback fonts if postscriptName cannot find in user PC
+          const sanitizedFamily = findFallbackFont(font, availableFontFamilies);
 
-          if (sanitizedFamily !== font.family) {
+          if (sanitizedFamily && sanitizedFamily !== font.family) {
             const newFont = FontFuncs.requestFontsOfTheFontFamily(sanitizedFamily)[0];
 
             console.warn(`unsupported font ${font.family}, fallback to ${sanitizedFamily}`);
@@ -390,42 +469,69 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onConfigChange('fontFamily', localFontMatch);
         onConfigChange('fontStyle', localFont.style);
       } else {
-        const googleFont: GoogleFont = {
-          binaryLoader: loadGoogleFontBinary,
-          family: googleFontFamily,
-          italic: false,
-          postscriptName: googleFontFamily.replace(/\s+/g, '') + '-Regular',
-          source: 'google',
-          style: 'Regular',
-          weight: 400,
-        };
+        // Load the font properly through the store system
+        await useGoogleFontStore.getState().loadGoogleFontForTextEditing(googleFontFamily);
 
-        addToHistory(googleFont);
-        registerGoogleFont(googleFont);
+        // Get the first available variant for this font family
+        const fontData = await import('@core/helpers/fonts/googleFontsApiCache').then((module) =>
+          module.getGoogleFont(googleFontFamily),
+        );
 
-        const batchCmd = new history.BatchCommand('Change Font family');
+        if (fontData && fontData.variants && fontData.variants.length > 0) {
+          const firstVariant = fontData.variants[0];
+          const { italic = false, style = 'Regular', weight = 400 } = parseGoogleFontVariant(firstVariant);
+          const googleFont = createGoogleFontObject(googleFontFamily, weight, italic, style, loadGoogleFontBinary);
 
-        [
-          textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
-          textEdit.setItalic(googleFont.italic, true, textElements),
-          textEdit.setFontWeight(googleFont.weight, true, textElements),
-          textEdit.setFontFamily(googleFontFamily, true, textElements),
-        ].forEach((cmd) => {
-          if (cmd) batchCmd.addSubCommand(cmd);
-        });
-        svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+          addToHistory(googleFont);
+          registerGoogleFont(googleFont);
 
-        await waitForWebFont();
+          const batchCmd = new history.BatchCommand('Change Font family');
 
-        onConfigChange('fontFamily', googleFontFamily);
-        onConfigChange('fontStyle', 'Regular');
+          [
+            textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
+            textEdit.setItalic(googleFont.italic, true, textElements),
+            textEdit.setFontWeight(googleFont.weight, true, textElements),
+            textEdit.setFontFamily(googleFontFamily, true, textElements),
+          ].forEach((cmd) => {
+            if (cmd) batchCmd.addSubCommand(cmd);
+          });
+          svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+
+          await waitForWebFont();
+
+          onConfigChange('fontFamily', googleFontFamily);
+          onConfigChange('fontStyle', style);
+        } else {
+          // Fallback to Regular if font data not available
+          const googleFont = createGoogleFontObject(googleFontFamily, 400, false, 'Regular', loadGoogleFontBinary);
+
+          addToHistory(googleFont);
+          registerGoogleFont(googleFont);
+
+          const batchCmd = new history.BatchCommand('Change Font family');
+
+          [
+            textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
+            textEdit.setItalic(googleFont.italic, true, textElements),
+            textEdit.setFontWeight(googleFont.weight, true, textElements),
+            textEdit.setFontFamily(googleFontFamily, true, textElements),
+          ].forEach((cmd) => {
+            if (cmd) batchCmd.addSubCommand(cmd);
+          });
+          svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+
+          await waitForWebFont();
+
+          onConfigChange('fontFamily', googleFontFamily);
+          onConfigChange('fontStyle', 'Regular');
+        }
       }
     },
     [addToHistory, textElements, waitForWebFont, onConfigChange, loadGoogleFontBinary],
   );
 
   const renderFontFamilyBlock = (): React.JSX.Element => {
-    const options: FontOption[] = availableFontFamilies.map((option) => getFontFamilyOption(option));
+    const options: FontOption[] = availableFontFamilies.map((family) => getFontFamilyOption(family));
 
     if (isMobile) {
       return (

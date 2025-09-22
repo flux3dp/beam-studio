@@ -189,6 +189,16 @@
     position: relative;
   }
 
+  .virtualList {
+    :global(.rc-virtual-list-scrollbar-vertical) {
+      width: 8px;
+    }
+
+    :global(.rc-virtual-list-scrollbar-thumb-vertical) {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
+
   .loadingOverlay {
     background: rgba(255, 255, 255, 0.9);
     border-radius: 4px;
@@ -252,7 +262,9 @@
 
   .fontSample {
     .sampleText {
+      font-family: var(--preview-font-family, sans-serif);
       font-size: 32px;
+      font-weight: 400;
       line-height: 1.2;
       color: #3c4043;
       word-break: break-word;

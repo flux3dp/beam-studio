@@ -12,15 +12,6 @@ const getSampleText = (fontFamily: string): string => {
     return 'public static int fib(int n) { a =';
   }
 
-  if (family.includes('serif')) {
-    return 'Everyone has the right to freedom of thought,';
-  }
-
-  if (family.includes('display') || family.includes('gothic')) {
-    return 'Everyone has the right to freedom of though';
-  }
-
-  // Default text matching Google Fonts preview
   return 'Everyone has the right to freedom of thought,';
 };
 
@@ -33,11 +24,8 @@ interface FontPreviewProps {
 const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSelected, onClick }, ref) => {
   const previewText = getSampleText(font.family);
 
-  // Get foundry/designer information
-  const getFoundryInfo = (font: CachedGoogleFontItem): string => {
-    // Extract designer info from font.files or other metadata if available
-    // For now, showing category as placeholder
-    return font.category || 'Google';
+  const getCategory = (font: CachedGoogleFontItem): string => {
+    return font.category || '';
   };
 
   return (
@@ -60,21 +48,15 @@ const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSele
         <div className={styles.fontTitle}>
           <span className={styles.fontName}>{font.family}</span>
           <span className={styles.fontMeta}>
-            {font.variants?.length || 0} style{(font.variants?.length || 0) !== 1 ? 's' : ''} | {getFoundryInfo(font)}
+            {font.variants?.length || 0} style{(font.variants?.length || 0) !== 1 ? 's' : ''} | {getCategory(font)}
           </span>
         </div>
       </div>
 
-      {/* Font Sample */}
       <div className={styles.fontSample}>
         <div
           className={styles.sampleText}
-          style={{
-            fontFamily: `'${font.family}', sans-serif`,
-            fontSize: '32px',
-            fontWeight: 400,
-            lineHeight: '1.2',
-          }}
+          style={{ '--preview-font-family': `'${font.family}', sans-serif` } as React.CSSProperties}
         >
           {previewText}
         </div>

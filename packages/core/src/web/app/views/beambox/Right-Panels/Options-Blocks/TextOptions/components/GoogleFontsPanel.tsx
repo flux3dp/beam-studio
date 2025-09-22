@@ -35,6 +35,18 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const virtualListRef = useRef<any>(null);
   const lastScrollTop = useRef<number>(0);
 
+  const getEmptyStateMessage = useCallback((): string => {
+    if (fonts.length === 0) {
+      return 'Google Fonts are currently unavailable. Please check your internet connection or contact your administrator.';
+    }
+
+    if (searchText || selectedCategory || selectedLanguage) {
+      return 'No fonts found matching your search criteria.';
+    }
+
+    return 'No fonts available.';
+  }, [fonts.length, searchText, selectedCategory, selectedLanguage]);
+
   const filterState = useMemo(
     () => ({ category: selectedCategory, language: selectedLanguage, search: searchText }),
     [selectedCategory, selectedLanguage, searchText],
@@ -63,13 +75,6 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
 
       // Filter out icon fonts (not suitable for text content)
       if (font.family.toLowerCase().includes('icons')) return false;
-
-      // Filter out fonts with known broken Google Fonts CSS API endpoints
-      // These fonts return HTML error pages instead of CSS, causing MIME type errors
-      // Note: Font files may still be accessible, but CSS loading fails
-      const problematicFonts = ['Sunflower', 'UnifrakturCook', 'Buda', 'Molle'];
-
-      if (problematicFonts.includes(font.family)) return false;
 
       if (selectedCategory && font.category !== selectedCategory) return false;
 
@@ -275,21 +280,13 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
           ) : displayedFonts.length > 0 || loadingMore ? (
             <div className={styles.virtualListContainer}>
               <VirtualList
-                className={styles.fontList}
+                className={`${styles.fontList} ${styles.virtualList}`}
                 data={displayedFonts}
                 height={CONTAINER_HEIGHT}
                 itemHeight={145}
                 itemKey="family"
                 onScroll={onScroll}
                 ref={virtualListRef}
-                styles={{
-                  verticalScrollBar: {
-                    width: '8px',
-                  },
-                  verticalScrollBarThumb: {
-                    background: 'rgba(0, 0, 0, 0.2)',
-                  },
-                }}
               >
                 {(font) => (
                   <FontPreview
@@ -309,13 +306,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
             </div>
           ) : (
             <div className={styles.emptyState}>
-              <Typography.Text type="secondary">
-                {fonts.length === 0
-                  ? 'Google Fonts are currently unavailable. Please check your internet connection or contact your administrator.'
-                  : searchText || selectedCategory || selectedLanguage
-                    ? 'No fonts found matching your search criteria.'
-                    : 'No fonts available.'}
-              </Typography.Text>
+              <Typography.Text type="secondary">{getEmptyStateMessage()}</Typography.Text>
             </div>
           )}
         </div>

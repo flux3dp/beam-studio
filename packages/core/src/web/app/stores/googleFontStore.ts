@@ -1,9 +1,11 @@
+// Removed unused ts-pattern imports since we're using helper functions now
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { getGoogleFont } from '@core/helpers/fonts/googleFontsApiCache';
+import type { GoogleFontFiles } from '@core/helpers/fonts/googleFontsApiCache';
+import { getGoogleFont, getGoogleFontsCatalog } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
 // Network and timing constants
@@ -22,8 +24,120 @@ const FONT_HISTORY_MAX_SIZE = 5;
 const INITIAL_USAGE_COUNT = 1;
 const QUEUE_PROCESS_DELAY = 100;
 
+// Weight preference order for fallback (closest to 400 first)
+const WEIGHT_FALLBACK_ORDER = [400, 500, 300, 600, 200, 700, 100, 800, 900];
+
 // Priority ordering for font loading queue
 const PRIORITY_ORDER = { critical: 0, high: 1, low: 3, normal: 2 };
+
+/**
+ * Discovers all available variants for a font from its variants array
+ */
+const discoverAvailableVariants = (variants: string[]) => {
+  const available = new Set<keyof GoogleFontFiles>();
+
+  for (const variant of variants) {
+    if (variant === 'regular') {
+      available.add('regular');
+      available.add('400');
+    } else if (variant === 'italic') {
+      available.add('italic');
+      available.add('400italic');
+    } else if (variant.endsWith('italic')) {
+      const weight = variant.replace('italic', '');
+
+      available.add(`${weight}italic` as keyof GoogleFontFiles);
+    } else if (/^\d+$/.test(variant)) {
+      available.add(variant as keyof GoogleFontFiles);
+    }
+  }
+
+  return available;
+};
+
+/**
+ * Finds the best available variant with fallback strategy
+ */
+const findBestVariant = (
+  availableVariants: Set<keyof GoogleFontFiles>,
+  requestedWeight: number,
+  requestedStyle: 'italic' | 'normal',
+): keyof GoogleFontFiles | null => {
+  // Helper to create variant keys safely
+  const createVariantKey = (style: 'italic' | 'normal', weight: number): keyof GoogleFontFiles => {
+    if (style === 'normal' && weight === 400) return 'regular';
+
+    if (style === 'italic' && weight === 400) return 'italic';
+
+    if (style === 'italic') return `${weight}italic` as keyof GoogleFontFiles;
+
+    return `${weight}` as keyof GoogleFontFiles;
+  };
+
+  // Try exact match first
+  const exactKey = createVariantKey(requestedStyle, requestedWeight);
+
+  if (availableVariants.has(exactKey)) {
+    return exactKey;
+  }
+
+  // Fallback strategy: try same style with different weights
+  for (const weight of WEIGHT_FALLBACK_ORDER) {
+    const key = createVariantKey(requestedStyle, weight);
+
+    if (availableVariants.has(key)) {
+      return key;
+    }
+  }
+
+  // Last resort: try different style
+  const alternateStyle = requestedStyle === 'normal' ? 'italic' : 'normal';
+
+  for (const weight of WEIGHT_FALLBACK_ORDER) {
+    const key = createVariantKey(alternateStyle, weight);
+
+    if (availableVariants.has(key)) {
+      console.warn(`Font variant fallback: ${requestedStyle} ${requestedWeight} → ${alternateStyle} ${weight}`);
+
+      return key;
+    }
+  }
+
+  return null;
+};
+
+/**
+ * Gets all variants needed for text editing (CSS + TTF for all available weights/styles)
+ */
+const getAllVariantsForTextEditing = (availableVariants: Set<keyof GoogleFontFiles>) => {
+  return Array.from(availableVariants);
+};
+
+/**
+ * Generates proper PostScript names for Google Font variants
+ * Maps weight and style to standard PostScript naming conventions
+ */
+const generateGoogleFontPostScriptName = (family: string, weight: number, italic: boolean): string => {
+  const cleanFamily = family.replace(/\s+/g, '');
+
+  // Standard Google Fonts weight to PostScript style mapping
+  const weightStyles: Record<number, string> = {
+    100: 'Thin',
+    200: 'ExtraLight',
+    300: 'Light',
+    400: 'Regular',
+    500: 'Medium',
+    600: 'SemiBold',
+    700: 'Bold',
+    800: 'ExtraBold',
+    900: 'Black',
+  };
+
+  const weightStyle = weightStyles[weight] || 'Regular';
+  const suffix = italic ? `${weightStyle}Italic` : weightStyle;
+
+  return `${cleanFamily}-${suffix}`;
+};
 
 // Font filtering
 const ICON_FONT_KEYWORDS = ['icons'];
@@ -140,6 +254,7 @@ interface GoogleFontState {
     style?: 'italic' | 'normal',
   ) => Promise<ArrayBuffer | null>;
   loadGoogleFontForPreview: (fontFamily: string) => Promise<void>;
+  loadGoogleFontForTextEditing: (fontFamily: string) => Promise<void>;
   loadGoogleFontWithOptions: (options: FontLoadOptions) => Promise<void>;
   loadingFonts: Set<string>;
   networkState: NetworkState;
@@ -183,7 +298,7 @@ const createBinaryLoader = (
     }
 
     try {
-      const fontData = await getGoogleFont(fontFamily);
+      const fontData = (await getGoogleFont(fontFamily)) as any;
 
       if (!fontData) {
         throw new Error(`Font ${fontFamily} not found in Google Fonts API cache`);
@@ -193,16 +308,17 @@ const createBinaryLoader = (
         return null;
       }
 
-      const variantKey =
-        style === 'normal' && weight === DEFAULT_FONT_WEIGHT
-          ? 'regular'
-          : style === 'italic' && weight === DEFAULT_FONT_WEIGHT
-            ? 'italic'
-            : style === 'italic'
-              ? `${weight}italic`
-              : `${weight}`;
+      // Discover available variants and find best match
+      const availableVariants = discoverAvailableVariants(fontData.variants);
+      const variantKey = findBestVariant(availableVariants, weight, style);
 
-      const fontUrl = fontData.files?.[variantKey] || fontData.files?.regular || Object.values(fontData.files || {})[0];
+      if (!variantKey) {
+        console.warn(`No suitable variant found for ${fontFamily} (${weight}, ${style})`);
+
+        return null;
+      }
+
+      const fontUrl = fontData.files?.[variantKey];
 
       if (!fontUrl) {
         return null;
@@ -229,13 +345,31 @@ const createGoogleFontObject = (
   style: 'italic' | 'normal' = 'normal',
   binaryLoader: (fontFamily: string, weight?: number, style?: 'italic' | 'normal') => Promise<ArrayBuffer | null>,
 ): GoogleFont => {
+  const italic = style === 'italic';
+
+  // Standard Google Fonts weight to PostScript style mapping
+  const weightStyles: Record<number, string> = {
+    100: 'Thin',
+    200: 'ExtraLight',
+    300: 'Light',
+    400: 'Regular',
+    500: 'Medium',
+    600: 'SemiBold',
+    700: 'Bold',
+    800: 'ExtraBold',
+    900: 'Black',
+  };
+
+  const styleWeight = weightStyles[weight] || 'Regular';
+  const displayStyle = italic ? `${styleWeight} Italic` : styleWeight;
+
   return {
     binaryLoader,
     family: fontFamily,
-    italic: style === 'italic',
-    postscriptName: fontFamily.replace(/\s+/g, '') + (style === 'italic' ? '-Italic' : '-Regular'),
+    italic,
+    postscriptName: generateGoogleFontPostScriptName(fontFamily, weight, italic),
     source: 'google',
-    style: style === 'italic' ? 'Italic' : 'Regular',
+    style: displayStyle,
     weight,
   };
 };
@@ -347,17 +481,8 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         const existingTracker = state.cssLinks.get(fontFamily);
 
         if (state.sessionLoadedFonts.has(fontFamily) && existingTracker?.purpose === 'preview') {
-          set((state) => {
-            const updatedLinks = new Map(state.cssLinks);
-            const tracker = updatedLinks.get(fontFamily)!;
-
-            tracker.purpose = 'text-editing';
-            tracker.lastUsed = Date.now();
-            tracker.usageCount += INITIAL_USAGE_COUNT;
-            updatedLinks.set(fontFamily, tracker);
-
-            return { cssLinks: updatedLinks };
-          });
+          // Upgrade from preview to text editing - need to load all variants
+          await get().loadGoogleFontForTextEditing(fontFamily);
 
           return;
         }
@@ -395,7 +520,110 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
         const attemptLoad = async (): Promise<void> => {
           try {
-            const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@${DEFAULT_FONT_WEIGHT}&display=swap`;
+            // Discover available variants instead of assuming 400 weight exists
+            const fontData = await getGoogleFont(fontFamily);
+
+            if (!fontData) {
+              throw new Error(`Font ${fontFamily} not found in Google Fonts API cache`);
+            }
+
+            const availableVariants = discoverAvailableVariants(fontData.variants);
+            const bestVariant = findBestVariant(availableVariants, DEFAULT_FONT_WEIGHT, 'normal');
+
+            if (!bestVariant) {
+              throw new Error(`No suitable variant found for ${fontFamily}`);
+            }
+
+            // Enhanced variant key to weight conversion
+            let weight = DEFAULT_FONT_WEIGHT;
+
+            if (bestVariant === 'regular') {
+              weight = 400;
+            } else if (bestVariant === 'italic') {
+              // 'italic' means fallback to italic style, but need to find actual available italic weight
+              const availableItalicVariants = Array.from(availableVariants).filter(
+                (v) => v.includes('italic') || v === 'italic',
+              );
+
+              if (availableItalicVariants.length > 0) {
+                // Find the first available italic weight
+                const firstItalic = availableItalicVariants[0];
+
+                if (firstItalic === 'italic') {
+                  weight = 400; // 'italic' = 400italic
+                } else {
+                  // Extract weight from variants like '300italic', '500italic'
+                  const italicWeight = Number.parseInt(firstItalic.replace('italic', ''));
+
+                  weight = !Number.isNaN(italicWeight) ? italicWeight : 400;
+                }
+              } else {
+                // No italic variants found, use first available weight regardless of style
+                const firstNumericVariant = Array.from(availableVariants).find(
+                  (v) => /^\d+$/.test(v) || v === 'regular',
+                );
+
+                weight =
+                  firstNumericVariant === 'regular'
+                    ? 400
+                    : firstNumericVariant
+                      ? Number.parseInt(firstNumericVariant)
+                      : 400;
+              }
+            } else if (bestVariant.includes('italic')) {
+              // Extract weight from variants like '700italic', '300italic'
+              const weightPart = bestVariant.replace('italic', '');
+              const parsed = Number.parseInt(weightPart);
+
+              if (!Number.isNaN(parsed)) {
+                weight = parsed;
+              } else {
+                // Fallback: if we can't parse weight from italic variant, use first available weight
+                const firstNumericVariant = Array.from(availableVariants).find((v) => /^\d+$/.test(v));
+
+                if (firstNumericVariant) {
+                  weight = Number.parseInt(firstNumericVariant);
+                }
+              }
+            } else if (/^\d+$/.test(bestVariant)) {
+              // Pure numeric variants like '300', '700'
+              const parsed = Number.parseInt(bestVariant);
+
+              if (!Number.isNaN(parsed)) {
+                weight = parsed;
+              }
+            } else {
+              // Unknown variant format - use first available numeric weight
+              console.warn(`Unknown variant format '${bestVariant}' for ${fontFamily}, using first available weight`);
+
+              const firstNumericVariant = Array.from(availableVariants).find((v) => /^\d+$/.test(v) || v === 'regular');
+
+              if (firstNumericVariant) {
+                weight = firstNumericVariant === 'regular' ? 400 : Number.parseInt(firstNumericVariant);
+              }
+            }
+
+            console.log(`🔧 Font ${fontFamily}: Available variants: [${Array.from(availableVariants).join(', ')}]`);
+            console.log(`🔧 Font ${fontFamily}: Best variant '${bestVariant}' → weight ${weight}`);
+
+            // Detect italic-only fonts (fonts that only have italic variants, no normal variants)
+            const hasNormalVariants = Array.from(availableVariants).some((v) => v === 'regular' || /^\d+$/.test(v));
+            const hasOnlyItalicVariants =
+              !hasNormalVariants && Array.from(availableVariants).some((v) => v === 'italic' || /^\d+italic$/.test(v));
+
+            let fontUrl: string;
+
+            if (hasOnlyItalicVariants) {
+              // Use italic format for italic-only fonts like Molle
+              fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:ital,wght@1,${weight}&display=swap`;
+              console.log(`🔧 Font ${fontFamily}: Using italic-only format (ital,wght@1,${weight})`);
+            } else {
+              // Use standard weight-based format for fonts with normal variants
+              fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@${weight}&display=swap`;
+            }
+
+            console.log(fontUrl);
+
             const state = get();
             const existingTracker = state.cssLinks.get(fontFamily);
 
@@ -523,43 +751,281 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
         if (isIconFont(fontFamily)) return;
 
-        const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@${DEFAULT_FONT_WEIGHT}&display=swap`;
-        const existingTracker = state.cssLinks.get(fontFamily);
+        try {
+          const fontData = await getGoogleFont(fontFamily);
 
-        if (existingTracker) {
-          set((state) => {
-            const updatedLinks = new Map(state.cssLinks);
-            const tracker = updatedLinks.get(fontFamily)!;
+          if (!fontData) {
+            console.warn(`Font data not found for preview: ${fontFamily}`);
 
-            tracker.lastUsed = Date.now();
-            tracker.usageCount += INITIAL_USAGE_COUNT;
-            updatedLinks.set(fontFamily, tracker);
+            return;
+          }
 
-            return { cssLinks: updatedLinks };
+          // Discover available variants and find best match for preview
+          const availableVariants = discoverAvailableVariants(fontData.variants);
+          const bestVariant = findBestVariant(availableVariants, DEFAULT_FONT_WEIGHT, 'normal');
+
+          if (!bestVariant) {
+            console.warn(`No suitable variant found for preview: ${fontFamily}`);
+
+            return;
+          }
+
+          // Convert variant key to Google Fonts CSS API format
+          let cssWeight = '';
+
+          if (bestVariant === 'regular') {
+            cssWeight = '400';
+          } else if (bestVariant === 'italic') {
+            cssWeight = '400:ital';
+          } else if (bestVariant.includes('italic')) {
+            const weight = bestVariant.replace('italic', '');
+
+            cssWeight = `${weight}:ital`;
+          } else {
+            cssWeight = bestVariant;
+          }
+
+          const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:${cssWeight.includes(':ital') ? 'ital,wght@1,' + cssWeight.replace(':ital', '') : 'wght@' + cssWeight}&display=swap`;
+
+          // Check for existing tracker
+          const existingTracker = state.cssLinks.get(fontFamily);
+
+          if (existingTracker && existingTracker.purpose === 'preview') {
+            set((state) => {
+              const updatedLinks = new Map(state.cssLinks);
+              const tracker = updatedLinks.get(fontFamily)!;
+
+              tracker.lastUsed = Date.now();
+              tracker.usageCount += INITIAL_USAGE_COUNT;
+              updatedLinks.set(fontFamily, tracker);
+
+              return { cssLinks: updatedLinks };
+            });
+
+            return;
+          }
+
+          // Load the CSS
+          const link = document.createElement('link');
+
+          link.href = fontUrl;
+          link.rel = 'stylesheet';
+
+          await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject(new Error(`Font CSS load timeout for preview: ${fontFamily}`));
+            }, FONT_LOAD_TIMEOUT);
+
+            link.onload = () => {
+              clearTimeout(timeout);
+              resolve();
+            };
+
+            link.onerror = () => {
+              clearTimeout(timeout);
+              reject(new Error(`Font CSS failed to load for preview: ${fontFamily}`));
+            };
+
+            document.head.appendChild(link);
           });
 
-          return;
+          const tracker: CSSLinkTracker = {
+            element: link,
+            fontFamily,
+            lastUsed: Date.now(),
+            purpose: 'preview',
+            url: fontUrl,
+            usageCount: INITIAL_USAGE_COUNT,
+          };
+
+          set((state) => ({
+            cssLinks: new Map(state.cssLinks).set(fontFamily, tracker),
+            sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(fontFamily),
+          }));
+        } catch (error) {
+          console.error(`Failed to load font for preview: ${fontFamily}`, error);
         }
+      },
 
-        const link = document.createElement('link');
+      loadGoogleFontForTextEditing: async (fontFamily: string) => {
+        const state = get();
 
-        link.href = fontUrl;
-        link.rel = 'stylesheet';
-        document.head.appendChild(link);
+        if (isIconFont(fontFamily)) return;
 
-        const tracker: CSSLinkTracker = {
-          element: link,
-          fontFamily,
-          lastUsed: Date.now(),
-          purpose: 'preview',
-          url: fontUrl,
-          usageCount: INITIAL_USAGE_COUNT,
-        };
+        try {
+          const fontData = await getGoogleFont(fontFamily);
 
-        set((state) => ({
-          cssLinks: new Map(state.cssLinks).set(fontFamily, tracker),
-          sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(fontFamily),
-        }));
+          if (!fontData) {
+            console.warn(`Font data not found for text editing: ${fontFamily}`);
+
+            return;
+          }
+
+          // Discover all available variants for comprehensive text editing support
+          const availableVariants = discoverAvailableVariants(fontData.variants);
+          const allVariants = getAllVariantsForTextEditing(availableVariants);
+
+          // Build CSS URL with all available variants
+          const weights = allVariants
+            .map((variant) => {
+              if (variant === 'regular') return '400';
+
+              if (variant === 'italic') return '400:ital';
+
+              return variant.includes('italic') ? `${variant.replace('italic', '')}:ital` : variant;
+            })
+            .filter((w, i, arr) => arr.indexOf(w) === i) // Remove duplicates
+            .sort((a, b) => {
+              const numA = Number.parseInt(a.split(':')[0]);
+              const numB = Number.parseInt(b.split(':')[0]);
+
+              return numA - numB;
+            });
+
+          const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:ital,wght@${weights.map((w) => (w.includes(':ital') ? `1,${w.replace(':ital', '')}` : `0,${w}`)).join(';')}&display=swap`;
+
+          // Check if already loaded
+          const existingTracker = state.cssLinks.get(fontFamily);
+
+          if (
+            existingTracker &&
+            (existingTracker.purpose === 'text-editing' || existingTracker.purpose === 'preview')
+          ) {
+            // Update/upgrade the tracker for text editing
+            set((state) => {
+              const updatedLinks = new Map(state.cssLinks);
+              const tracker = updatedLinks.get(fontFamily)!;
+
+              tracker.purpose = 'text-editing'; // Upgrade if needed
+              tracker.lastUsed = Date.now();
+              tracker.usageCount += INITIAL_USAGE_COUNT;
+              updatedLinks.set(fontFamily, tracker);
+
+              return { cssLinks: updatedLinks };
+            });
+
+            // Load all TTF variants for text editing AND register all variants
+            const loadPromises = allVariants.map(async (variant) => {
+              const weight =
+                variant === 'regular'
+                  ? 400
+                  : variant === 'italic'
+                    ? 400
+                    : Number.parseInt(variant.replace('italic', ''));
+              const style = variant.includes('italic') ? 'italic' : 'normal';
+
+              try {
+                // Load TTF binary
+                await state.loadGoogleFontBinary(fontFamily, weight, style);
+
+                // Register this specific variant with proper PostScript name
+                const variantFont = createGoogleFontObject(fontFamily, weight, style, state.loadGoogleFontBinary);
+
+                registerGoogleFont(variantFont);
+              } catch (error) {
+                console.warn(`Failed to load TTF for ${fontFamily} ${weight} ${style}:`, error);
+              }
+            });
+
+            await Promise.allSettled(loadPromises);
+
+            return;
+          }
+
+          // Load CSS for all variants
+          const link = document.createElement('link');
+
+          link.href = fontUrl;
+          link.rel = 'stylesheet';
+
+          await new Promise<void>((resolve, reject) => {
+            const timeout = setTimeout(() => {
+              reject(new Error(`Font CSS load timeout: ${fontFamily}`));
+            }, FONT_LOAD_TIMEOUT);
+
+            link.onload = () => {
+              clearTimeout(timeout);
+              resolve();
+            };
+
+            link.onerror = () => {
+              clearTimeout(timeout);
+              reject(new Error(`Font CSS failed to load: ${fontFamily}`));
+            };
+
+            document.head.appendChild(link);
+          });
+
+          // Track the CSS link
+          const tracker: CSSLinkTracker = {
+            element: link,
+            fontFamily,
+            lastUsed: Date.now(),
+            purpose: 'text-editing',
+            url: fontUrl,
+            usageCount: INITIAL_USAGE_COUNT,
+          };
+
+          set((state) => ({
+            cssLinks: new Map(state.cssLinks).set(fontFamily, tracker),
+            sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(fontFamily),
+          }));
+
+          // Load all TTF variants for text editing AND register all variants
+          const loadPromises = allVariants.map(async (variant) => {
+            const weight =
+              variant === 'regular' ? 400 : variant === 'italic' ? 400 : Number.parseInt(variant.replace('italic', ''));
+            const style = variant.includes('italic') ? 'italic' : 'normal';
+
+            try {
+              // Load TTF binary
+              await state.loadGoogleFontBinary(fontFamily, weight, style);
+
+              // Register this specific variant with proper PostScript name
+              const variantFont = createGoogleFontObject(fontFamily, weight, style, state.loadGoogleFontBinary);
+
+              registerGoogleFont(variantFont);
+            } catch (error) {
+              console.warn(`Failed to load TTF for ${fontFamily} ${weight} ${style}:`, error);
+            }
+          });
+
+          await Promise.allSettled(loadPromises);
+
+          // Register the primary font family using the actual first variant
+          if (!state.registeredFonts.has(fontFamily)) {
+            // Use the first available variant from the original font data
+            const firstVariant = fontData.variants[0];
+            let primaryWeight = 400;
+            let primaryStyle: 'italic' | 'normal' = 'normal';
+
+            if (firstVariant === 'regular') {
+              primaryWeight = 400;
+              primaryStyle = 'normal';
+            } else if (firstVariant === 'italic') {
+              primaryWeight = 400;
+              primaryStyle = 'italic';
+            } else if (firstVariant.endsWith('italic')) {
+              primaryWeight = Number.parseInt(firstVariant.replace('italic', ''));
+              primaryStyle = 'italic';
+            } else if (/^\d+$/.test(firstVariant)) {
+              primaryWeight = Number.parseInt(firstVariant);
+              primaryStyle = 'normal';
+            }
+
+            const primaryFont = createGoogleFontObject(
+              fontFamily,
+              primaryWeight,
+              primaryStyle,
+              state.loadGoogleFontBinary,
+            );
+
+            registerGoogleFont(primaryFont);
+            set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));
+          }
+        } catch (error) {
+          console.error(`Failed to load font for text editing: ${fontFamily}`, error);
+        }
       },
 
       loadGoogleFontWithOptions: async (options: FontLoadOptions) => {
@@ -638,23 +1104,54 @@ export const useGoogleFontStore = create<GoogleFontState>()(
       queuedFontLoads: [],
       registeredFonts: new Set<string>(),
 
-      registerGoogleFont: (fontFamily: string) => {
+      registerGoogleFont: async (fontFamily: string) => {
         const state = get();
 
         if (state.registeredFonts.has(fontFamily)) {
           return;
         }
 
-        const googleFont = createGoogleFontObject(fontFamily, DEFAULT_FONT_WEIGHT, 'normal', (family, weight, style) =>
-          state.loadGoogleFontBinary(family, weight, style),
-        );
+        try {
+          const fontData = await getGoogleFont(fontFamily);
 
-        const registered = registerGoogleFont(googleFont);
+          if (!fontData) {
+            console.warn(`Font data not found for registration: ${fontFamily}`);
 
-        if (registered) {
-          set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));
-        } else {
-          console.warn(`Failed to register Google Font: ${fontFamily}`);
+            return;
+          }
+
+          // Use the actual first variant from the font data
+          const firstVariant = fontData.variants[0];
+          let primaryWeight = DEFAULT_FONT_WEIGHT;
+          let primaryStyle: 'italic' | 'normal' = 'normal';
+
+          if (firstVariant === 'regular') {
+            primaryWeight = 400;
+            primaryStyle = 'normal';
+          } else if (firstVariant === 'italic') {
+            primaryWeight = 400;
+            primaryStyle = 'italic';
+          } else if (firstVariant.endsWith('italic')) {
+            primaryWeight = Number.parseInt(firstVariant.replace('italic', ''));
+            primaryStyle = 'italic';
+          } else if (/^\d+$/.test(firstVariant)) {
+            primaryWeight = Number.parseInt(firstVariant);
+            primaryStyle = 'normal';
+          }
+
+          const googleFont = createGoogleFontObject(fontFamily, primaryWeight, primaryStyle, (family, weight, style) =>
+            state.loadGoogleFontBinary(family, weight, style),
+          );
+
+          const registered = registerGoogleFont(googleFont);
+
+          if (registered) {
+            set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));
+          } else {
+            console.warn(`Failed to register Google Font: ${fontFamily}`);
+          }
+        } catch (error) {
+          console.error(`Failed to register Google Font ${fontFamily}:`, error);
         }
       },
 
@@ -691,6 +1188,16 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
 if (typeof window !== 'undefined') {
   const store = useGoogleFontStore.getState();
+
+  // 🔥 PHASE 1: Pre-populate Google Fonts cache during store initialization
+  // This ensures cache is ready before any font loading operations (app startup, BVG import, etc.)
+  getGoogleFontsCatalog()
+    .then(() => {
+      console.log('✅ Google Fonts cache pre-populated successfully during store initialization');
+    })
+    .catch((error) => {
+      console.warn('⚠️ Google Fonts cache pre-population failed, font loading will use fallbacks:', error);
+    });
 
   window.addEventListener('online', () => store.updateNetworkState());
   window.addEventListener('offline', () => store.updateNetworkState());

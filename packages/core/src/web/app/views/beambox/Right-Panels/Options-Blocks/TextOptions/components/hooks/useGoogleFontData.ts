@@ -7,16 +7,11 @@ import {
 } from '@core/helpers/fonts/googleFontsApiCache';
 
 interface UseGoogleFontDataReturn {
-  // Computed data
   categoryOptions: Array<{ label: string; value: string }>;
-  // Actions
   fetchGoogleFonts: () => Promise<void>;
-  // Data state
   fonts: CachedGoogleFontItem[];
-
   languageOptions: Array<{ label: string; value: string }>;
   loadedFonts: Set<string>;
-
   loadFont: (font: CachedGoogleFontItem) => Promise<void>;
   loadFontForTextEditing: (fontFamily: string) => Promise<void>;
   loading: boolean;
@@ -29,9 +24,8 @@ const CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'
  * Handles API fetching, font CSS loading, and option generation
  */
 export const useGoogleFontData = (): UseGoogleFontDataReturn => {
-  const [fonts, setFonts] = useState<CachedGoogleFontItem[]>([]);
+  const [fonts, setFonts] = useState(Array.of<CachedGoogleFontItem>());
   const [loading, setLoading] = useState(false);
-  // Use store state for loaded fonts
   const sessionLoadedFonts = useGoogleFontStore((state) => state.sessionLoadedFonts);
   const loadGoogleFontForPreview = useGoogleFontStore((state) => state.loadGoogleFontForPreview);
   const loadGoogleFont = useGoogleFontStore((state) => state.loadGoogleFont);
@@ -39,6 +33,7 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
   // Fetch Google Fonts from API
   const fetchGoogleFonts = useCallback(async () => {
     setLoading(true);
+
     try {
       const data = await getGoogleFontsCatalog();
 
@@ -51,16 +46,16 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
     }
   }, []);
 
-  // Load font CSS for preview using optimized preview method
   const loadFont = useCallback(
     async (font: CachedGoogleFontItem) => {
-      // Check if already loaded in store
-      if (sessionLoadedFonts.has(font.family)) return;
+      const currentState = useGoogleFontStore.getState();
+
+      if (currentState.sessionLoadedFonts.has(font.family)) return;
 
       // Use optimized preview loading (low priority, preview purpose)
       await loadGoogleFontForPreview(font.family);
     },
-    [sessionLoadedFonts, loadGoogleFontForPreview],
+    [loadGoogleFontForPreview],
   );
 
   // Load font for text editing (permanent, upgrades from preview if needed)
@@ -71,20 +66,16 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
     [loadGoogleFont],
   );
 
-  // Generate category options
-  const categoryOptions = useMemo(() => {
-    return CATEGORIES.map((cat) => ({
-      label: cat.charAt(0).toUpperCase() + cat.slice(1),
-      value: cat,
-    }));
-  }, []);
+  const categoryOptions = useMemo(
+    () => CATEGORIES.map((cat) => ({ label: cat.charAt(0).toUpperCase() + cat.slice(1), value: cat })),
+    [],
+  );
 
-  // Generate language options from available fonts
   const languageOptions = useMemo(() => {
     const allSubsets = new Set<string>();
 
-    fonts.forEach((font) => {
-      font.subsets.forEach((subset) => allSubsets.add(subset));
+    fonts.forEach(({ subsets }) => {
+      subsets.forEach((subset) => allSubsets.add(subset));
     });
 
     const languageMapping: Record<string, string> = {
@@ -115,10 +106,7 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
 
     return Array.from(allSubsets)
       .sort()
-      .map((subset) => ({
-        label: parseSubsetLabel(subset),
-        value: subset,
-      }));
+      .map((subset) => ({ label: parseSubsetLabel(subset), value: subset }));
   }, [fonts]);
 
   return {

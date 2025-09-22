@@ -14,7 +14,7 @@ import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
-import { extractFamilyFromPostScriptName, isGoogleFontPostScriptName } from '@core/helpers/fonts/googleFontDetector';
+import { extractFamilyFromPostScriptName, isGoogleFontPostScriptName } from '@core/helpers/fonts/fontUtils';
 import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';

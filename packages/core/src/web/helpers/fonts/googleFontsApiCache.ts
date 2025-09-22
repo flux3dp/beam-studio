@@ -5,7 +5,7 @@ import { FLUXID_HOST } from '@core/helpers/api/flux-id';
 const BACKEND_GOOGLE_FONTS_URL = '/api/google-fonts';
 const url = new URL(BACKEND_GOOGLE_FONTS_URL, FLUXID_HOST);
 
-type GoogleFontFiles = Record<
+export type GoogleFontFiles = Record<
   | '100'
   | '100italic'
   | '200'
