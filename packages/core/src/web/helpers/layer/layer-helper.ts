@@ -19,16 +19,13 @@ import randomColor from '@core/helpers/randomColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
 import { deleteLayerByName } from './deleteLayer';
 
 let svgCanvas: ISVGCanvas;
-let svgedit: ISVGDrawing;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
-  svgedit = globalSVG.Edit;
 });
 
 export function getObjectLayer(elem: SVGElement): { elem: SVGGElement; title: string } {
