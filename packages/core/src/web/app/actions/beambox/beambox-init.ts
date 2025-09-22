@@ -1,5 +1,6 @@
 import Alert from '@core/app/actions/alert-caller';
 import { migrate } from '@core/app/actions/beambox/beambox-preference';
+import menuActions from '@core/app/actions/beambox/menuActions';
 import Tutorials from '@core/app/actions/beambox/tutorials';
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import Dialog from '@core/app/actions/dialog-caller';
@@ -10,6 +11,7 @@ import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
+import { menuItems } from '@core/app/constants/menuItems';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
@@ -27,6 +29,7 @@ import fontHelper from '@core/helpers/fonts/fontHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import sentryHelper from '@core/helpers/sentry-helper';
+import shortcuts from '@core/helpers/shortcuts';
 import registerImageSymbolEvents from '@core/helpers/symbol-helper/registerImageSymbolEvents';
 import { isMobile } from '@core/helpers/system-helper';
 import browser from '@core/implementations/browser';
@@ -66,6 +69,29 @@ class BeamboxInit {
     if (isWeb() || tabController.getIsWelcomeTab()) {
       discoverManager.setMaster(true);
       setTimeout(recordMachines, 10000);
+    }
+
+    if (!isWeb()) {
+      // Overwrite undo/redo handlers to avoid undo/redo events on blurred inputs in Windows blocking menu events
+      // Keep menu role for display purpose
+      const { redo, undo } = menuItems;
+
+      shortcuts.on(
+        undo.shortcut,
+        () => {
+          console.log('Emit undo from beambox-init.ts');
+          menuActions.UNDO();
+        },
+        { isBlocking: true, isPreventDefault: true, splitKey: undo.splitKey },
+      );
+      shortcuts.on(
+        redo.shortcut,
+        () => {
+          console.log('Emit redo from beambox-init.ts');
+          menuActions.REDO();
+        },
+        { isBlocking: true, isPreventDefault: true, splitKey: redo.splitKey },
+      );
     }
   }
 

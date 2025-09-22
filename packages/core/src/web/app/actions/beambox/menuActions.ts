@@ -30,7 +30,7 @@ import imageEdit from '@core/helpers/image-edit';
 import isWeb from '@core/helpers/is-web';
 import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
-import shortcuts from '@core/helpers/shortcuts';
+import shortcuts, { isFocusingOnInputs } from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -146,7 +146,7 @@ export default {
     browser.open(url);
   },
   REDO: (): void => {
-    if (shortcuts.isInBaseScope()) {
+    if (shortcuts.isInBaseScope() && !isFocusingOnInputs()) {
       historyUtils.redo();
     }
   },
@@ -177,7 +177,14 @@ export default {
   },
   START_UI_INTRO: (): void => Tutorials.startInterfaceTutorial(() => {}),
   UNDO: (): void => {
-    if (shortcuts.isInBaseScope()) {
+    console.log(
+      'Shortcut undo triggered, inBaseScope:',
+      shortcuts.isInBaseScope(),
+      'isFocusingOnInputs:',
+      isFocusingOnInputs(),
+    );
+
+    if (shortcuts.isInBaseScope() && !isFocusingOnInputs()) {
       historyUtils.undo();
     }
   },

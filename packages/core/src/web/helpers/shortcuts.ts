@@ -98,7 +98,7 @@ const keyupEvent = (event: KeyboardEvent) => {
   }
 };
 
-const isFocusingOnInputs = () => {
+export const isFocusingOnInputs = () => {
   if (!document.activeElement) {
     return false;
   }
@@ -147,6 +147,7 @@ const keydownEvent = (event: KeyboardEvent) => {
   const currentKeySet = [...currentPressedKeys].sort().join('+');
   const { matches } = matchedEventsByKeySet(currentKeySet);
 
+  console.log('currentKeySet', currentKeySet);
   console.log('Keydown event matches', matches);
 
   matches.forEach((matchedEvent) => {
@@ -227,6 +228,8 @@ export default {
       priority: isBlocking ? matchedEventsByKeySet(keySet).maxPriority + 1 : 0,
     }));
     const currentEvents = getCurrentEvents();
+
+    console.log('Listening to shortcut keys:', keySets);
 
     newEvents.forEach((newEvent) => {
       currentEvents.push(newEvent);

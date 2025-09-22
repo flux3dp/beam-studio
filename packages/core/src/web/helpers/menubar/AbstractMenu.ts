@@ -28,8 +28,8 @@ const FILE_MENU_ITEMS = [
   'EXPORT_TO',
 ];
 const EDIT_MENU_ITEMS = [
-  'UNDO',
-  'REDO',
+  // 'UNDO',
+  // 'REDO',
   // 'CUT',
   // 'COPY',
   // 'PASTE',
