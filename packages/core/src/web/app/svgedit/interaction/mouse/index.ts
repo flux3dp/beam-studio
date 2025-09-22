@@ -1160,7 +1160,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
         if (selectedElements.length) {
           // if there are intersected elements, select one of them as current layer
-          tempLayer = selectedElements.map((elem) => LayerHelper.getObjectLayer(elem).title).find(Boolean);
+          tempLayer = selectedElements.map((elem) => LayerHelper.getObjectLayer(elem)?.title).find(Boolean);
           layerManager.setCurrentLayer(tempLayer!);
         }
 

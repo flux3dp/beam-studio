@@ -3,17 +3,11 @@ import React from 'react';
 import { render } from '@testing-library/react';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
-const getSVGAsync = jest.fn();
+const mockGetObjectLayer = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync,
+jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getObjectLayer: mockGetObjectLayer,
 }));
-
-const getObjectLayer = jest.fn();
-
-getSVGAsync.mockImplementation((callback) => {
-  callback({ Canvas: { getObjectLayer } });
-});
 
 import ElementTitle from './ElementTitle';
 
@@ -26,7 +20,7 @@ describe('should render correctly', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(getObjectLayer).not.toHaveBeenCalled();
+    expect(mockGetObjectLayer).not.toHaveBeenCalled();
   });
 
   test('multiple selections', () => {
@@ -39,7 +33,7 @@ describe('should render correctly', () => {
     );
 
     expect(container).toMatchSnapshot();
-    expect(getObjectLayer).not.toHaveBeenCalled();
+    expect(mockGetObjectLayer).not.toHaveBeenCalled();
   });
 
   describe('single selection', () => {
@@ -48,7 +42,7 @@ describe('should render correctly', () => {
     });
 
     test('not use', () => {
-      getObjectLayer.mockReturnValue({
+      mockGetObjectLayer.mockReturnValue({
         title: 'Layer 1',
       });
       document.body.innerHTML = '<rect id="svg_1" />';
@@ -60,12 +54,12 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(getObjectLayer).toHaveBeenCalledTimes(1);
-      expect(getObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
+      expect(mockGetObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
 
     test('svg', () => {
-      getObjectLayer.mockReturnValue({
+      mockGetObjectLayer.mockReturnValue({
         title: 'Layer 1',
       });
       document.body.innerHTML = '<use id="svg_1" data-svg="true" />';
@@ -77,12 +71,12 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(getObjectLayer).toHaveBeenCalledTimes(1);
-      expect(getObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
+      expect(mockGetObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
 
     test('dxf', () => {
-      getObjectLayer.mockReturnValue({
+      mockGetObjectLayer.mockReturnValue({
         title: 'Layer 1',
       });
       document.body.innerHTML = '<use id="svg_1" data-dxf="true" />';
@@ -94,12 +88,12 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(getObjectLayer).toHaveBeenCalledTimes(1);
-      expect(getObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
+      expect(mockGetObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
 
     test('imported object', () => {
-      getObjectLayer.mockReturnValue({
+      mockGetObjectLayer.mockReturnValue({
         title: 'Layer 1',
       });
       document.body.innerHTML = '<use id="svg_1" />';
@@ -111,12 +105,12 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(getObjectLayer).toHaveBeenCalledTimes(1);
-      expect(getObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
+      expect(mockGetObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
 
     test('no layer title given', () => {
-      getObjectLayer.mockReturnValue(document.getElementById('svg_1'));
+      mockGetObjectLayer.mockReturnValue(document.getElementById('svg_1'));
       document.body.innerHTML = '<use id="svg_1" />';
 
       const { container } = render(
@@ -126,12 +120,12 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(getObjectLayer).toHaveBeenCalledTimes(1);
-      expect(getObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
+      expect(mockGetObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
 
     test('data-textpath-g', () => {
-      getObjectLayer.mockReturnValue({ title: 'Layer 1' });
+      mockGetObjectLayer.mockReturnValue({ title: 'Layer 1' });
       document.body.innerHTML = '<g id="svg_1" data-textpath-g="true" />';
 
       const { container } = render(
@@ -141,8 +135,8 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(getObjectLayer).toHaveBeenCalledTimes(1);
-      expect(getObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
+      expect(mockGetObjectLayer).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
   });
 });

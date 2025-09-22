@@ -174,7 +174,7 @@ const updateContent = async (
       if (svg) {
         let newElem: SVGElement;
         const isInvert = elem.getAttribute('data-invert') === 'true';
-        const layer = getObjectLayer(elem);
+        const layer = getObjectLayer(elem)!;
 
         layerManager.setCurrentLayer(layer.title);
 

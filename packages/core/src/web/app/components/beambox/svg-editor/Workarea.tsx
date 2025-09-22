@@ -40,7 +40,7 @@ const getCurrentLayer = (selectedElement?: Element): null | string => {
   } else {
     const currentLayer = getObjectLayer(selectedElement as SVGElement);
 
-    return currentLayer?.title;
+    return currentLayer?.title ?? null;
   }
 
   return null;

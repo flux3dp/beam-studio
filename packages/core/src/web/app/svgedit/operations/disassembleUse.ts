@@ -123,7 +123,7 @@ export const disassembleUse = async (
 
     if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
-    const { elem: layer, title: layerTitle } = getObjectLayer(elem);
+    const { elem: layer, title: layerTitle } = getObjectLayer(elem)!;
 
     layerManager.setCurrentLayer(layerTitle);
     LayerPanelController.updateLayerPanel();

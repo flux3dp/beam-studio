@@ -277,7 +277,7 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
  * @returns data value in type T
  */
 export const getData = <T extends ConfigKey>(
-  layer: Element,
+  layer: Element | null | undefined,
   key: T,
   applyPrinting = false,
 ): ConfigKeyTypeMap[T] | undefined => {

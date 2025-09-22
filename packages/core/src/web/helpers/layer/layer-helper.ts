@@ -28,7 +28,7 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-export function getObjectLayer(elem: SVGElement): { elem: SVGGElement; title: string } {
+export function getObjectLayer(elem: SVGElement): null | { elem: SVGGElement; title: string } {
   const layer = elem.closest('g.layer');
 
   if (layer) {

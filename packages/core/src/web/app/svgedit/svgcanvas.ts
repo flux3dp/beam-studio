@@ -1127,8 +1127,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return clone;
   };
 
-  this.getObjectLayer = LayerHelper.getObjectLayer;
-
   // this.each is deprecated, if any extension used this it can be recreated by doing this:
   // $(canvas.getRootElem()).children().each(...)
 
@@ -3935,8 +3933,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       if (subPaths.length === 1) return;
 
-      const newPaths = [];
-      const layer = LayerHelper.getObjectLayer(elem).elem;
+      const newPaths: SVGPathElement[] = [];
+      const layer = LayerHelper.getObjectLayer(elem)!.elem;
       const attrs = {
         fill: $(elem).attr('fill') || 'none',
         'fill-opacity': $(elem).attr('fill-opacity') || '0',

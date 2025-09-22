@@ -1,7 +1,7 @@
 import { getObjectLayer } from '../layer/layer-helper';
 
 export const getLayerTitles = (svgElement: SVGElement): string[] => {
-  const titles: string[] = [];
+  const titles: Array<string | undefined> = [];
   const elements: SVGElement[] = [svgElement];
   const getLayerTitle = (element: SVGElement) => {
     if (element.getAttribute('data-tempgroup') === 'true') {
