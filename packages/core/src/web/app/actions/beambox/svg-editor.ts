@@ -1077,6 +1077,16 @@ const svgEditor = (window['svgEditor'] = (function () {
       return (window.os === 'MacOS' && evt.metaKey) || (window.os !== 'MacOS' && evt.ctrlKey);
     };
 
+    window.addEventListener('input', (e) => {
+      const evt = e as InputEvent;
+      if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
+        evt.preventDefault();
+        evt.stopPropagation();
+        if (evt.inputType === 'historyRedo') historyUtils.redo();
+        else if (evt.inputType === 'historyUndo') historyUtils.undo();
+      }
+    }, { capture: true });
+
     $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
       evt.stopPropagation();
 
