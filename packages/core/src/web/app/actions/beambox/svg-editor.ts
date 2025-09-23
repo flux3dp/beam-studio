@@ -1079,7 +1079,9 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     window.addEventListener('input', (e) => {
       const evt = e as InputEvent;
-      if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
+      if ((evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo')) {
+        const activeElement = document.activeElement;
+        if (activeElement?.tagName === 'INPUT' || activeElement?.tagName === 'TEXTAREA') return;
         evt.preventDefault();
         evt.stopPropagation();
         if (evt.inputType === 'historyRedo') historyUtils.redo();
