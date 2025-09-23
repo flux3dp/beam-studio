@@ -25,7 +25,6 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import historyUtils from '@core/app/svgedit/history/utils';
@@ -39,7 +38,6 @@ import importBitmap from '@core/app/svgedit/operations/import/importBitmap';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import importDxf from '@core/app/svgedit/operations/import/importDxf';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
-import readBitmapFile from '@core/app/svgedit/operations/import/readBitmapFile';
 import { moveSelectedElements } from '@core/app/svgedit/operations/move';
 import svgCanvasClass from '@core/app/svgedit/svgcanvas';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -70,13 +68,11 @@ import storage from '@core/implementations/storage';
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
 
-import BeamboxPreference from './beambox-preference';
 import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage } from '@core/app/stores/storageStore';
 
 // @ts-expect-error this line is required to load svgedit
@@ -1078,12 +1074,15 @@ const svgEditor = (window['svgEditor'] = (function () {
     };
 
     window.addEventListener('input', (e) => {
-      const evt = e as InputEvent;
-      if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
-        evt.preventDefault();
-        evt.stopPropagation();
-        if (evt.inputType === 'historyRedo') historyUtils.redo();
-        else if (evt.inputType === 'historyUndo') historyUtils.undo();
+    if (Shortcuts.isInBaseScope()) {
+        const evt = e as InputEvent;
+
+        if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
+          evt.preventDefault();
+          evt.stopPropagation();
+          if (evt.inputType === 'historyRedo') historyUtils.redo();
+          else if (evt.inputType === 'historyUndo') historyUtils.undo();
+        }
       }
     }, { capture: true });
 
