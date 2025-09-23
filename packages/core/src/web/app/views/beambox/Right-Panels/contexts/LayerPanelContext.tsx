@@ -136,7 +136,6 @@ export const LayerPanelContextProvider = ({ children }: Props): React.JSX.Elemen
     if (isPromark) {
       const newGradientVal = selectedLayers.some((layerName: string) =>
         pipe(
-          //
           layerName,
           layerManager.getLayerElementByName,
           (layer) => layer?.querySelector('image[data-shading="true"]'),

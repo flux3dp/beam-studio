@@ -72,7 +72,7 @@ export class Layer {
   constructor(name: string, group?: null | SVGGElement, svgElem?: null | SVGElement, color?: string) {
     this.name_ = name;
 
-    if (name.startsWith('#')) color = name; // If name is a color, use it
+    if (name.match(/#[0-9A-F]{6}\b/)) color = name; // If name is a color, use it
 
     if (svgElem) {
       // Create a group element with title and add it to the DOM

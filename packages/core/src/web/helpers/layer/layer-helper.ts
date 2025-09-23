@@ -63,15 +63,7 @@ export const getLayerPosition = (layerName: string): number => {
 };
 
 export const sortLayerNamesByPosition = (layerNames: string[]): string[] => {
-  const layerNamePositionMap: Record<string, number> = {};
-
-  layerManager.getAllLayerNames().forEach((name, index) => {
-    layerNamePositionMap[name] = index;
-  });
-
-  return layerNames
-    .filter((name) => layerNamePositionMap[name] > -1)
-    .sort((a, b) => layerNamePositionMap[a] - layerNamePositionMap[b]);
+  return layerManager.getAllLayerNames().filter((name) => layerNames.includes(name));
 };
 
 export const getLayerName = (layer: Element): string => {
