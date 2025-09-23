@@ -15,7 +15,7 @@ import { getCurrentUser } from '@core/helpers/api/flux-id';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import type { FontWeight } from '@core/helpers/fonts/fontUtils';
 import { generateGoogleFontPostScriptName, WEIGHT_TO_STYLE_MAP } from '@core/helpers/fonts/fontUtils';
-import { getGoogleFont } from '@core/helpers/fonts/googleFontsApiCache';
+import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { GeneralFont } from '@core/interfaces/IFont';
@@ -92,7 +92,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
 
       // If no local fonts found, check if it's a Google Font
       try {
-        const googleFontData = await getGoogleFont(family);
+        const googleFontData = await googleFontsApiCache.findFont(family);
 
         if (googleFontData?.variants?.length) {
           const googleFontOptions = pipe(
@@ -145,7 +145,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   const createGoogleFontFromStyle = useCallback(
     async (family: string, targetStyle: string): Promise<GeneralFont | null> => {
       try {
-        const googleFontData = await getGoogleFont(family);
+        const googleFontData = await googleFontsApiCache.findFont(family);
 
         if (!googleFontData?.variants) return null;
 

@@ -5,7 +5,7 @@ import { devtools } from 'zustand/middleware';
 import { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import type { GoogleFontFiles } from '@core/helpers/fonts/googleFontsApiCache';
-import { getGoogleFont, getGoogleFontsCatalog } from '@core/helpers/fonts/googleFontsApiCache';
+import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
 // Network and timing constants
@@ -298,7 +298,7 @@ const createBinaryLoader = (
     }
 
     try {
-      const fontData = (await getGoogleFont(fontFamily)) as any;
+      const fontData = (await googleFontsApiCache.findFont(fontFamily)) as any;
 
       if (!fontData) {
         throw new Error(`Font ${fontFamily} not found in Google Fonts API cache`);
@@ -521,7 +521,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         const attemptLoad = async (): Promise<void> => {
           try {
             // Discover available variants instead of assuming 400 weight exists
-            const fontData = await getGoogleFont(fontFamily);
+            const fontData = await googleFontsApiCache.findFont(fontFamily);
 
             if (!fontData) {
               throw new Error(`Font ${fontFamily} not found in Google Fonts API cache`);
@@ -752,7 +752,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         if (isIconFont(fontFamily)) return;
 
         try {
-          const fontData = await getGoogleFont(fontFamily);
+          const fontData = await googleFontsApiCache.findFont(fontFamily);
 
           if (!fontData) {
             console.warn(`Font data not found for preview: ${fontFamily}`);
@@ -853,7 +853,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         if (isIconFont(fontFamily)) return;
 
         try {
-          const fontData = await getGoogleFont(fontFamily);
+          const fontData = await googleFontsApiCache.findFont(fontFamily);
 
           if (!fontData) {
             console.warn(`Font data not found for text editing: ${fontFamily}`);
@@ -1112,7 +1112,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         }
 
         try {
-          const fontData = await getGoogleFont(fontFamily);
+          const fontData = await googleFontsApiCache.findFont(fontFamily);
 
           if (!fontData) {
             console.warn(`Font data not found for registration: ${fontFamily}`);
@@ -1191,7 +1191,8 @@ if (typeof window !== 'undefined') {
 
   // 🔥 PHASE 1: Pre-populate Google Fonts cache during store initialization
   // This ensures cache is ready before any font loading operations (app startup, BVG import, etc.)
-  getGoogleFontsCatalog()
+  googleFontsApiCache
+    .getCache()
     .then(() => {
       console.log('✅ Google Fonts cache pre-populated successfully during store initialization');
     })

@@ -3,7 +3,7 @@ import { useCallback, useMemo, useState } from 'react';
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import {
   type GoogleFontItem as CachedGoogleFontItem,
-  getGoogleFontsCatalog,
+  googleFontsApiCache,
 } from '@core/helpers/fonts/googleFontsApiCache';
 
 interface UseGoogleFontDataReturn {
@@ -35,7 +35,7 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
     setLoading(true);
 
     try {
-      const data = await getGoogleFontsCatalog();
+      const data = await googleFontsApiCache.getCache();
 
       setFonts(data.items || []);
     } catch (error) {

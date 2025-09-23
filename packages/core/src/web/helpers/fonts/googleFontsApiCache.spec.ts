@@ -24,7 +24,7 @@ describe('GoogleFontsApiCache', () => {
             'https://fonts.gstatic.com/s/roboto/v49/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWuYjammTggvWl0Qn.ttf',
           regular:
             'https://fonts.gstatic.com/s/roboto/v49/KFOMCnqEu92Fr1ME7kSn66aGLdTylUAMQXC89YmC2DPNWubEbWmTggvWl0Qn.ttf',
-        },
+        } as any,
         kind: 'webfonts#webfont',
         lastModified: '2025-09-08',
         subsets: [
@@ -207,17 +207,20 @@ describe('GoogleFontsApiCache', () => {
       const result = await loadPromise;
 
       expect(result).toEqual(mockApiResponse);
-      expect(consoleLogSpy).toHaveBeenCalledWith('🗑️ Google Fonts API cache cleared');
+      // Check that cache clearing was logged (the cache had data to clear)
+      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Google Fonts API cache cleared (session:'));
 
       consoleLogSpy.mockRestore();
     });
 
     it('should provide accurate cache status after operations', async () => {
       // Initial state
-      expect(googleFontsApiCache.getCacheStatus()).toEqual({
-        cached: false,
-        itemCount: 0,
-      });
+      expect(googleFontsApiCache.getCacheStatus()).toEqual(
+        expect.objectContaining({
+          cached: false,
+          itemCount: 0,
+        }),
+      );
 
       (fetch as jest.Mock).mockResolvedValueOnce({
         json: async () => mockApiResponse,
@@ -227,25 +230,31 @@ describe('GoogleFontsApiCache', () => {
 
       // After getting complete cache
       await googleFontsApiCache.getCache();
-      expect(googleFontsApiCache.getCacheStatus()).toEqual({
-        cached: true,
-        itemCount: 2,
-      });
+      expect(googleFontsApiCache.getCacheStatus()).toEqual(
+        expect.objectContaining({
+          cached: true,
+          itemCount: 2,
+        }),
+      );
 
       // After getting cache
       await googleFontsApiCache.getCache();
-      expect(googleFontsApiCache.getCacheStatus()).toEqual({
-        cached: true,
-        itemCount: 2,
-      });
+      expect(googleFontsApiCache.getCacheStatus()).toEqual(
+        expect.objectContaining({
+          cached: true,
+          itemCount: 2,
+        }),
+      );
     });
 
     // After clearing
     googleFontsApiCache.clearCache();
-    expect(googleFontsApiCache.getCacheStatus()).toEqual({
-      cached: false,
-      itemCount: 0,
-    });
+    expect(googleFontsApiCache.getCacheStatus()).toEqual(
+      expect.objectContaining({
+        cached: false,
+        itemCount: 0,
+      }),
+    );
   });
 
   describe('Font Finding', () => {
@@ -331,7 +340,11 @@ describe('GoogleFontsApiCache', () => {
     });
 
     it('should handle font search with API error', async () => {
-      googleFontsApiCache.clearCache();
+      // Force reset to ensure completely fresh state for error testing
+      (googleFontsApiCache as any).forceReset();
+
+      // Mock the fetch to reject for this test
+      (fetch as jest.Mock).mockClear();
       (fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
 
       await expect(googleFontsApiCache.findFont('Roboto')).rejects.toThrow('API Error');
@@ -378,15 +391,24 @@ describe('GoogleFontsApiCache', () => {
     it('should handle network errors', async () => {
       const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
 
+      // Force reset to ensure completely fresh state for error testing
+      (googleFontsApiCache as any).forceReset();
+      (fetch as jest.Mock).mockClear();
       (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
 
       await expect(googleFontsApiCache.getCache()).rejects.toThrow('Network error');
-      expect(consoleErrorSpy).toHaveBeenCalledWith('Failed to fetch Google Fonts:', expect.any(Error));
+      expect(consoleErrorSpy).toHaveBeenCalledWith(
+        '❌ All 3 attempts failed (session:',
+        expect.stringContaining('session-'),
+      );
 
       consoleErrorSpy.mockRestore();
     });
 
     it('should handle HTTP errors', async () => {
+      // Force reset to ensure completely fresh state for error testing
+      (googleFontsApiCache as any).forceReset();
+      (fetch as jest.Mock).mockClear();
       (fetch as jest.Mock).mockResolvedValueOnce({
         json: async () => ({}),
         ok: false,
@@ -398,6 +420,9 @@ describe('GoogleFontsApiCache', () => {
     });
 
     it('should handle authentication error (401)', async () => {
+      // Force reset to ensure completely fresh state for error testing
+      (googleFontsApiCache as any).forceReset();
+      (fetch as jest.Mock).mockClear();
       (fetch as jest.Mock).mockResolvedValueOnce({
         json: async () => ({}),
         ok: false,
@@ -411,6 +436,9 @@ describe('GoogleFontsApiCache', () => {
     });
 
     it('should handle authorization error (403)', async () => {
+      // Force reset to ensure completely fresh state for error testing
+      (googleFontsApiCache as any).forceReset();
+      (fetch as jest.Mock).mockClear();
       (fetch as jest.Mock).mockResolvedValueOnce({
         json: async () => ({}),
         ok: false,
@@ -424,6 +452,9 @@ describe('GoogleFontsApiCache', () => {
     });
 
     it('should handle other HTTP errors with status code', async () => {
+      // Force reset to ensure completely fresh state for error testing
+      (googleFontsApiCache as any).forceReset();
+      (fetch as jest.Mock).mockClear();
       (fetch as jest.Mock).mockResolvedValueOnce({
         json: async () => ({}),
         ok: false,
@@ -435,6 +466,9 @@ describe('GoogleFontsApiCache', () => {
     });
 
     it('should handle malformed JSON response', async () => {
+      // Force reset to ensure completely fresh state for error testing
+      (googleFontsApiCache as any).forceReset();
+      (fetch as jest.Mock).mockClear();
       (fetch as jest.Mock).mockResolvedValueOnce({
         json: async () => {
           throw new Error('Invalid JSON');
@@ -495,7 +529,7 @@ describe('Convenience Functions', () => {
       {
         category: 'sans-serif',
         family: 'Roboto',
-        files: { '400': 'roboto.woff2' },
+        files: { '400': 'roboto.woff2' } as any,
         kind: 'webfonts#webfont',
         lastModified: '2022-09-22',
         subsets: ['latin'],

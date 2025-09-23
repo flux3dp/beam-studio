@@ -474,7 +474,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
         // Get the first available variant for this font family
         const fontData = await import('@core/helpers/fonts/googleFontsApiCache').then((module) =>
-          module.getGoogleFont(googleFontFamily),
+          module.googleFontsApiCache.findFont(googleFontFamily),
         );
 
         if (fontData && fontData.variants && fontData.variants.length > 0) {

@@ -13,7 +13,6 @@ import {
   type PostScriptStyleName,
 } from './fontUtils';
 import { googleFontRegistry } from './googleFontRegistry';
-import { getGoogleFontsCatalog } from './googleFontsApiCache';
 import googleFonts from './webFonts.google';
 
 const createGoogleFontObject = (
@@ -117,7 +116,7 @@ const isLocalFont = (fontFamily: string): boolean => {
 const loadHistoryGoogleFonts = (): void => {
   const fontHistory = useStorageStore.getState()['font-history'];
 
-  if (fontHistory.length === 0) {
+  if (!fontHistory || !Array.isArray(fontHistory) || fontHistory.length === 0) {
     return;
   }
 
@@ -305,23 +304,6 @@ export const lazyRegisterGoogleFontIfLoaded = (postscriptName: string): GeneralF
  * Includes cache warming to handle force refresh scenarios
  */
 export const loadAllInitialGoogleFonts = (lang: string, _availableFontFamilies: string[]): void => {
-  // Note: _availableFontFamilies parameter is kept for backward compatibility
-  // but is no longer used since functions now use localFontHelper directly
-
-  // 🔥 CACHE WARMING: Ensure Google Fonts API cache is populated
-  // This handles force refresh scenarios where store initialization cache warming might miss
-  console.log('🚀 Starting Google Fonts cache warming during app initialization...');
-  getGoogleFontsCatalog()
-    .then(() => {
-      console.log('✅ Google Fonts cache warmed successfully during app initialization');
-    })
-    .catch((error) => {
-      console.warn(
-        '⚠️ Google Fonts cache warming failed during app initialization, font loading will use fallbacks:',
-        error,
-      );
-    });
-
   // Load static Google Fonts CSS only
   loadStaticGoogleFonts(lang);
   // Load Google Fonts from history CSS only
