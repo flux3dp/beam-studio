@@ -9,28 +9,17 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import ColorPicker from '@core/app/widgets/ColorPicker';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import {
-  deleteLayerByName,
-  getAllLayerNames,
-  getLayerElementByName,
-  setLayerLock,
-} from '@core/helpers/layer/layer-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { setLayerLock } from '@core/helpers/layer/layer-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './LayerList.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface Props {
   draggingDestIndex: null | number;
@@ -69,8 +58,7 @@ const LayerList = ({
 }: Props): React.JSX.Element => {
   const { forceUpdate, selectedLayers, setSelectedLayers } = useContext(LayerPanelContext);
   const items: React.ReactNode[] = [];
-  const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName();
+  const currentLayerName = layerManager.getCurrentLayerName();
   const isMobile = useIsMobile();
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);
@@ -82,13 +70,13 @@ const LayerList = ({
     }
   }, [ref, draggingDestIndex, selectedLayers]);
 
-  const isAnyLayerMissing = drawing.all_layers.some((layer: any) => !layer.group_.parentNode);
+  const isAnyLayerMissing = layerManager.getAllLayers().some((layer) => !layer.getGroup().parentNode);
 
   if (isAnyLayerMissing) {
-    drawing.identifyLayers();
+    layerManager.identifyLayers();
   }
 
-  const allLayerNames = getAllLayerNames();
+  const allLayerNames = layerManager.getAllLayerNames();
 
   if (draggingDestIndex === allLayerNames.length) {
     items.push(renderDragBar());
@@ -98,13 +86,14 @@ const LayerList = ({
 
   for (let i = allLayerNames.length - 1; i >= 0; i -= 1) {
     const layerName = allLayerNames[i];
-    const layer = getLayerElementByName(layerName);
+    const layerObject = layerManager.getLayerByName(layerName);
 
-    if (layer) {
+    if (layerObject) {
+      const layer = layerObject.getGroup();
       const isLocked = layer.getAttribute('data-lock') === 'true';
-      const isFullColor = layer.getAttribute('data-fullcolor') === '1';
+      const isFullColor = getData(layer, 'fullcolor');
+      const color = getData(layer, 'color') ?? '#333333';
       const isSelected = selectedLayers.includes(layerName);
-      const isVis = drawing.getLayerVisibility(layerName);
       const layerModule = getData(layer, 'module');
       const isPrinting = printingModules.has(layerModule!);
       const colorPresets = match<LayerModuleType | undefined, 'cmyk' | 'cmykw' | undefined>(layerModule)
@@ -161,7 +150,7 @@ const LayerList = ({
               ) : (
                 <ColorPicker
                   colorPresets={colorPresets}
-                  initColor={drawing.getLayerColor(layerName)}
+                  initColor={color}
                   onChange={(color) => onLayerColorChange(layerName, color)}
                   triggerSize="small"
                 />
@@ -203,7 +192,7 @@ const LayerList = ({
                 setLayerVisibility(layerName);
               }}
             >
-              {isVis ? <LayerPanelIcons.Visible /> : <LayerPanelIcons.Invisible />}
+              {layerObject?.isVisible() ? <LayerPanelIcons.Visible /> : <LayerPanelIcons.Invisible />}
             </div>
             {isMobile && (
               <div>

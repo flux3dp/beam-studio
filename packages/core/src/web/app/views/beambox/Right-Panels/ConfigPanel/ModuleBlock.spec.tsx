@@ -24,7 +24,7 @@ jest.mock('@core/helpers/hooks/useWorkarea', () => mockUseWorkarea);
 
 const mockGetLayerElementByName = jest.fn();
 
-jest.mock('@core/helpers/layer/layer-helper', () => ({
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getLayerElementByName: mockGetLayerElementByName,
 }));
 

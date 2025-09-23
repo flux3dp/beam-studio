@@ -1,16 +1,16 @@
 import jsPDF from 'jspdf';
-import { filter, map, pipe } from 'remeda';
+import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
 import Progress from '@core/app/actions/progress-caller';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import i18n from '@core/helpers/i18n';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getAllLayerNames, getLayerElementByName } from '@core/helpers/layer/layer-helper';
 import { layersToA4Base64 } from '@core/helpers/layer/layersToA4Base64';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMac } from '@core/helpers/system-helper';
@@ -149,11 +149,10 @@ export const exportUvPrintAsPdf = async (): Promise<void> => {
     topmenu: { file: lang },
   } = i18n.lang;
   const reverts = [await convertVariableText(), (await convertAllTextToPath()).revert];
-  const layers = pipe(
-    getAllLayerNames(),
-    filter((layerName) => getData(getLayerElementByName(layerName), 'module') === LayerModule.UV_PRINT),
-    map(getLayerElementByName),
-  ) as SVGGElement[];
+  const layers = layerManager
+    .getAllLayers()
+    .map((layer) => layer.getGroup())
+    .filter((layerG) => getData(layerG, 'module') === LayerModule.UV_PRINT);
   const base64 = await switchSymbolWrapper(() => layersToA4Base64(layers));
   const defaultFileName = getDefaultFileName();
 

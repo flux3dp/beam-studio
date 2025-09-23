@@ -1,4 +1,5 @@
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selector from '@core/app/svgedit/selector';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -53,13 +54,15 @@ export const pasteElements = async ({
 
     pasted.push(copy);
 
-    if (copy.getAttribute('data-origin-layer') && clipboard.length > 1) {
-      const layer = drawing.getLayerByName(copy.getAttribute('data-origin-layer')!) || drawing.getCurrentLayer();
+    let targetLayer = layerManager.getCurrentLayer()!;
 
-      layer!.appendChild(copy);
-    } else {
-      drawing.getCurrentLayer()!.appendChild(copy);
+    if (copy.getAttribute('data-origin-layer') && clipboard.length > 1) {
+      const layer = layerManager.getLayerByName(copy.getAttribute('data-origin-layer')!);
+
+      if (layer) targetLayer = layer;
     }
+
+    targetLayer.appendChildren([copy]);
 
     const promise = handlePastedRef(copy);
 

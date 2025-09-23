@@ -21,8 +21,7 @@ const prepareElementForRaster = (svgElement: SVGGraphicsElement) => {
   setRotationAngle(cloned, 0, { addToHistory: false });
 
   const isFilled = !['none', null].includes(svgElement.getAttribute('fill'));
-  const { elem: layerElement } = getObjectLayer(svgElement);
-  const isFullColor = layerElement.getAttribute('data-fullcolor') === '1';
+  const isFullColor = getObjectLayer(svgElement)?.elem.getAttribute('data-fullcolor') === '1';
   const strokeOffset = isFilled ? 0 : getStrokeWidth();
 
   if (!isFullColor) {

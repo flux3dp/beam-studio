@@ -7,6 +7,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -18,17 +19,16 @@ import randomColor from '@core/helpers/randomColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
+
+import { deleteLayerByName } from './deleteLayer';
 
 let svgCanvas: ISVGCanvas;
-let svgedit: ISVGDrawing;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
-  svgedit = globalSVG.Edit;
 });
 
-export function getObjectLayer(elem: SVGElement): { elem: SVGGElement; title: string } {
+export function getObjectLayer(elem: SVGElement): null | { elem: SVGGElement; title: string } {
   const layer = elem.closest('g.layer');
 
   if (layer) {
@@ -44,86 +44,26 @@ export function getObjectLayer(elem: SVGElement): { elem: SVGGElement; title: st
   const origLayerName = elem.getAttribute('data-original-layer');
 
   if (origLayerName) {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const origLayer = drawing.getLayerByName(origLayerName);
+    const origLayer = layerManager.getLayerElementByName(origLayerName);
 
-    if (origLayer) {
-      return { elem: origLayer, title: origLayerName };
-    }
+    if (origLayer) return { elem: origLayer, title: origLayerName };
   }
 
   return null;
 }
 
 export const getAllLayers = (): SVGGElement[] => {
-  const allLayers = document.querySelectorAll('g.layer');
-
-  return Array.from(allLayers) as SVGGElement[];
-};
-
-export const getAllLayerNames = (): string[] => {
-  const allLayers = document.querySelectorAll('#svgcontent g.layer');
-  const layerNames = [];
-
-  for (let i = 0; i < allLayers.length; i += 1) {
-    const title = allLayers[i].querySelector('title');
-
-    if (title) {
-      layerNames.push(title.textContent);
-    }
-  }
-
-  return layerNames;
+  return layerManager.getAllLayers().map((layer) => layer.getGroup());
 };
 
 export const getLayerPosition = (layerName: string): number => {
-  const allLayers = document.querySelectorAll('g.layer');
+  const allLayers = layerManager.getAllLayerNames();
 
-  for (let i = 0; i < allLayers.length; i += 1) {
-    const title = allLayers[i].querySelector('title');
-
-    if (title && title.textContent === layerName) {
-      return i;
-    }
-  }
-
-  return -1;
+  return allLayers.indexOf(layerName);
 };
 
 export const sortLayerNamesByPosition = (layerNames: string[]): string[] => {
-  const layerNamePositionMap: Record<string, number> = {};
-  const allLayers = document.querySelectorAll('g.layer');
-
-  for (let i = 0; i < allLayers.length; i += 1) {
-    const title = allLayers[i].querySelector('title');
-
-    if (title) {
-      layerNamePositionMap[title.textContent] = i;
-    }
-  }
-  for (let i = layerNames.length - 1; i >= 0; i -= 1) {
-    if (!(layerNamePositionMap[layerNames[i]] > -1)) {
-      layerNames.splice(i, 1);
-    }
-  }
-  layerNames.sort((a, b) => layerNamePositionMap[a] - layerNamePositionMap[b]);
-
-  return layerNames;
-};
-
-export const getLayerElementByName = (layerName: string): Element => {
-  const allLayers = Array.from(document.querySelectorAll('g.layer'));
-  const layer = allLayers.find((l) => {
-    const title = l.querySelector('title');
-
-    if (title) {
-      return title.textContent === layerName;
-    }
-
-    return false;
-  });
-
-  return layer;
+  return layerManager.getAllLayerNames().filter((name) => layerNames.includes(name));
 };
 
 export const getLayerName = (layer: Element): string => {
@@ -147,121 +87,67 @@ export const createLayer = (
     parentCmd?: IBatchCommand;
   } = {},
 ): { layer: SVGGElement; name: string } => {
-  const drawing = svgCanvas.getCurrentDrawing();
   const { addToHistory = true, hexCode, initConfig, isFullColor = false, parentCmd } = opts || {};
-  const newLayer = drawing.createLayer(name);
-  const finalName = getLayerName(newLayer);
+  const batchCmd = new history.BatchCommand('Create Layer');
+  const newLayer = layerManager.createLayer(name, { parentCmd: batchCmd })!;
+  const layerElement = newLayer.getGroup();
+  const finalName = newLayer.getName();
 
-  if (initConfig) initLayerConfig(newLayer);
+  if (initConfig) initLayerConfig(layerElement);
 
-  if (drawing.layer_map[finalName]) {
-    if (name && /^#([0-9a-f]{3}){1,2}$/i.test(name)) {
-      drawing.layer_map[finalName].setColor(name);
-    } else if (hexCode) {
-      drawing.layer_map[finalName].setColor(hexCode);
-    } else {
-      drawing.layer_map[finalName].setColor(randomColor.getColor());
-    }
-
-    if (isFullColor) {
-      drawing.layer_map[finalName].setFullColor(true);
-    }
+  if (name && /^#([0-9a-f]{3}){1,2}$/i.test(name)) {
+    newLayer.setColor(name);
+  } else if (hexCode) {
+    newLayer.setColor(hexCode);
+  } else {
+    newLayer.setColor(randomColor.getColor());
   }
 
-  const batchCmd = new history.BatchCommand('Create Layer');
-
-  batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
+  if (isFullColor) newLayer.setFullColor(true);
 
   if (parentCmd) parentCmd.addSubCommand(batchCmd);
   else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
 
-  updateLayerColorFilter(newLayer);
-  svgCanvas.clearSelection();
+  updateLayerColorFilter(layerElement);
+  svgCanvas?.clearSelection();
 
-  return { layer: newLayer, name: finalName };
-};
-
-export const deleteLayerByName = (layerName: string): ICommand | null => {
-  const layer = getLayerElementByName(layerName);
-
-  if (layer) {
-    const { nextSibling } = layer;
-    const parent = layer.parentNode!;
-
-    layer.remove();
-
-    return new history.RemoveElementCommand(layer, nextSibling, parent);
-  }
-
-  return null;
-};
-
-export const deleteLayers = (layerNames: string[]): void => {
-  const drawing = svgCanvas.getCurrentDrawing();
-  const batchCmd: IBatchCommand = new history.BatchCommand('Delete Layer(s)');
-
-  svgCanvas.clearSelection();
-
-  for (let i = 0; i < layerNames.length; i += 1) {
-    const cmd = deleteLayerByName(layerNames[i]);
-
-    if (cmd) {
-      batchCmd.addSubCommand(cmd);
-    }
-  }
-
-  const layerCounts = document.querySelectorAll('g.layer').length;
-
-  if (!layerCounts) {
-    const svgcontent = document.getElementById('svgcontent')!;
-    const newLayer = new svgedit.draw.Layer(
-      i18n.lang.beambox.right_panel.layer_panel.layer1,
-      null,
-      svgcontent,
-      '#333333',
-    ).getGroup() as Element;
-
-    batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
-    initLayerConfig(newLayer);
-  }
-
-  if (!batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-  }
-
-  drawing.identifyLayers();
+  return { layer: layerElement, name: finalName };
 };
 
 export const cloneLayer = (
   layerName: string,
-  opts: {
+  {
+    configOnly = false,
+    isSub = false,
+    name: clonedLayerName,
+    parentCmd,
+  }: {
     configOnly?: boolean; // if true, only clone layer config
     isSub?: boolean; // if true, do not add command to history
     name?: string; // if provided, use this name instead of auto generated name
+    parentCmd?: IBatchCommand;
   },
 ): null | { cmd: ICommand; elem: SVGGElement; name: string } => {
-  const layer = getLayerElementByName(layerName);
+  const layer = layerManager.getLayerElementByName(layerName);
 
-  if (!layer) {
-    return null;
-  }
-
-  const { configOnly = false, isSub = false, name: clonedLayerName } = opts;
+  if (!layer) return null;
 
   const drawing = svgCanvas.getCurrentDrawing();
   const color = layer.getAttribute('data-color') || '#333';
-  const svgcontent = document.getElementById('svgcontent')!;
   const baseName = clonedLayerName || `${layerName} copy`;
   let newName = baseName;
   let j = 0;
 
-  while (drawing.hasLayer(newName)) {
+  while (layerManager.hasLayer(newName)) {
     j += 1;
     newName = `${baseName} ${j}`;
   }
 
-  const newLayer = new svgedit.draw.Layer(newName, null, svgcontent, color).getGroup();
   const batchCmd = HistoryCommandFactory.createBatchCommand('Clone Layer');
+  const newLayer = layerManager.createLayer(newName, { parentCmd: batchCmd })!;
+  const newLayerElem = newLayer.getGroup();
+
+  newLayer.setColor(color);
 
   if (!configOnly) {
     const children = layer.childNodes;
@@ -272,49 +158,48 @@ export const cloneLayer = (
       if (child.tagName !== 'title') {
         const copiedElem = drawing.copyElem(child);
 
-        newLayer.appendChild(copiedElem);
+        newLayerElem.appendChild(copiedElem);
       }
     }
-    handlePastedRef(newLayer, { parentCmd: batchCmd });
+    handlePastedRef(newLayerElem, { parentCmd: batchCmd });
   }
 
   cloneLayerConfig(newName, layerName);
-  batchCmd.addSubCommand(new history.InsertElementCommand(newLayer));
 
-  if (!isSub) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-    drawing.identifyLayers();
+  if (parentCmd) {
+    parentCmd.addSubCommand(batchCmd);
+  } else if (!isSub) {
+    undoManager.addCommandToHistory(batchCmd);
+    layerManager.identifyLayers();
     svgCanvas.clearSelection();
   }
 
-  return { cmd: batchCmd, elem: newLayer, name: newName };
+  return { cmd: batchCmd, elem: newLayerElem, name: newName };
 };
 
 export const cloneLayers = (layerNames: string[]): string[] => {
-  sortLayerNamesByPosition(layerNames);
+  layerNames = sortLayerNamesByPosition(layerNames);
 
   const clonedLayerNames: string[] = [];
-  const drawing = svgCanvas.getCurrentDrawing();
   const batchCmd = new history.BatchCommand('Clone Layer(s)');
 
   svgCanvas.clearSelection();
 
   for (let i = 0; i < layerNames.length; i += 1) {
-    const res = cloneLayer(layerNames[i], { isSub: true });
+    const res = cloneLayer(layerNames[i], { isSub: true, parentCmd: batchCmd });
 
     if (res) {
-      const { cmd, name } = res;
+      const { name } = res;
 
-      batchCmd.addSubCommand(cmd);
       clonedLayerNames.push(name);
     }
   }
 
   if (!batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
-  drawing.identifyLayers();
+  layerManager.identifyLayers();
 
   return clonedLayerNames;
 };
@@ -323,9 +208,12 @@ export const setLayerLock = (
   layerName: string,
   isLocked: boolean,
   opts: { parentCmd?: IBatchCommand } = {},
-): ICommand => {
+): ICommand | null => {
   const { parentCmd } = opts;
-  const layer = getLayerElementByName(layerName);
+  const layer = layerManager.getLayerElementByName(layerName);
+
+  if (!layer) return null;
+
   const origValue = layer.getAttribute('data-lock') === 'true';
 
   if (isLocked) {
@@ -342,7 +230,7 @@ export const setLayerLock = (
     parentCmd.addSubCommand(cmd);
   } else {
     cmd.onAfter = () => LayerPanelController.updateLayerPanel();
-    svgCanvas.undoMgr.addCommandToHistory(cmd);
+    undoManager.addCommandToHistory(cmd);
   }
 
   return cmd;
@@ -357,17 +245,17 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
 
   if (!batchCmd.isEmpty()) {
     batchCmd.onAfter = () => LayerPanelController.updateLayerPanel();
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
   return batchCmd;
 };
 
 export const showMergeAlert = async (baseLayerName: string, layerNames: string[]): Promise<boolean> => {
-  const targetModule = getData(getLayerElementByName(baseLayerName), 'module') as LayerModuleType;
+  const targetModule = getData(layerManager.getLayerElementByName(baseLayerName)!, 'module') as LayerModuleType;
   const isPrinting = printingModules.has(targetModule);
   const shouldShowAlert = layerNames.some((layerName) => {
-    const module = getData(getLayerElementByName(layerName), 'module')!;
+    const module = getData(layerManager.getLayerElementByName(layerName)!, 'module')!;
 
     return printingModules.has(module) !== isPrinting;
   });
@@ -396,7 +284,7 @@ const mergeLayer = (
   layersToBeMerged: string[],
   shouldInsertBefore: boolean,
 ): IBatchCommand | null => {
-  const baseLayer = getLayerElementByName(baseLayerName);
+  const baseLayer = layerManager.getLayerElementByName(baseLayerName);
 
   if (!baseLayer) {
     return null;
@@ -408,7 +296,7 @@ const mergeLayer = (
   const batchCmd: IBatchCommand = new history.BatchCommand(`Merge into ${baseLayer}`);
 
   for (let i = 0; i < layersToBeMerged.length; i += 1) {
-    const layer = getLayerElementByName(layersToBeMerged[i]);
+    const layer = layerManager.getLayerElementByName(layersToBeMerged[i]);
 
     if (layer) {
       const { childNodes } = layer;
@@ -433,11 +321,7 @@ const mergeLayer = (
       }
     }
 
-    const cmd = deleteLayerByName(layersToBeMerged[i]);
-
-    if (cmd) {
-      batchCmd.addSubCommand(cmd);
-    }
+    deleteLayerByName(layersToBeMerged[i], { parentCmd: batchCmd });
   }
   updateLayerColor(baseLayer as SVGGElement);
 
@@ -448,9 +332,8 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
   svgCanvas.clearSelection();
 
   const batchCmd = new history.BatchCommand('Merge Layer(s)');
-  const drawing = svgCanvas.getCurrentDrawing();
 
-  sortLayerNamesByPosition(layerNames);
+  layerNames = sortLayerNamesByPosition(layerNames);
 
   const mergeBase = baseLayerName || layerNames[0];
   const baseLayerIndex = layerNames.findIndex((layerName) => layerName === mergeBase);
@@ -473,10 +356,10 @@ export const mergeLayers = async (layerNames: string[], baseLayerName?: string):
   }
 
   if (!batchCmd.isEmpty()) {
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
-  drawing.identifyLayers();
+  layerManager.identifyLayers();
 
   return mergeBase;
 };
@@ -527,8 +410,8 @@ export const moveLayerToPosition = (layerName: string, newPosition: number): { c
 };
 
 const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
-  const layer = getLayerElementByName(layerName);
-  const anchorLayer = getLayerElementByName(anchorLayerName);
+  const layer = layerManager.getLayerElementByName(layerName);
+  const anchorLayer = layerManager.getLayerElementByName(anchorLayerName);
 
   if (layer && anchorLayer) {
     const { nextSibling } = layer;
@@ -546,10 +429,9 @@ const insertLayerBefore = (layerName: string, anchorLayerName: string) => {
 
 export const moveLayersToPosition = (layerNames: string[], newPosition: number): void => {
   const batchCmd = new history.BatchCommand('Move Layer(s)');
-  const drawing = svgCanvas.getCurrentDrawing();
-  const currentLayerName = drawing.getCurrentLayerName()!;
+  const currentLayerName = layerManager.getCurrentLayerName()!;
 
-  sortLayerNamesByPosition(layerNames);
+  layerNames = sortLayerNamesByPosition(layerNames);
 
   let lastLayerName = null;
 
@@ -572,44 +454,28 @@ export const moveLayersToPosition = (layerNames: string[], newPosition: number):
   }
 
   if (!batchCmd.isEmpty()) {
-    drawing.identifyLayers();
-    drawing.setCurrentLayer(currentLayerName);
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    layerManager.identifyLayers();
+    layerManager.setCurrentLayer(currentLayerName);
+    undoManager.addCommandToHistory(batchCmd);
   }
 };
 
 export const highlightLayer = (layerName?: string): void => {
-  let i: number;
-  const curNames = [];
-  const numLayers = svgCanvas.getCurrentDrawing().getNumLayers();
-
-  for (i = 0; i < numLayers; i += 1) {
-    curNames[i] = svgCanvas.getCurrentDrawing().getLayerName(i);
-  }
+  const allLayerNames = layerManager.getAllLayerNames();
 
   if (layerName) {
-    for (i = 0; i < numLayers; i += 1) {
-      if (curNames[i] !== layerName) {
-        svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i]!, 0.5);
-      }
-    }
+    allLayerNames.forEach((name) => {
+      if (name !== layerName) layerManager.setLayerOpacity(name, 0.5);
+    });
   } else {
-    for (i = 0; i < numLayers; i += 1) {
-      svgCanvas.getCurrentDrawing().setLayerOpacity(curNames[i]!, 1.0);
-    }
+    allLayerNames.forEach((name) => {
+      layerManager.setLayerOpacity(name, 1.0);
+    });
   }
 };
 
-export const getCurrentLayerName = (): string => {
-  const drawing = svgCanvas.getCurrentDrawing();
-
-  return drawing.getCurrentLayerName()!;
-};
-
-export const getLayerByName = (layerName: string): SVGGElement => {
-  const drawing = svgCanvas?.getCurrentDrawing();
-
-  return drawing?.getLayerByName(layerName);
+export const getLayerByName = (layerName: string): null | SVGGElement => {
+  return layerManager.getLayerElementByName(layerName);
 };
 
 export const moveToOtherLayer = (destLayer: string, callback: () => void, showAlert = true): void => {
@@ -619,14 +485,14 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
     }
 
     moveSelectedToLayer(destLayer);
-    svgCanvas.getCurrentDrawing().setCurrentLayer(destLayer);
+    layerManager.setCurrentLayer(destLayer);
     LayerPanelController.setSelectedLayers([destLayer]);
     callback?.();
   };
   const selectedElements = svgCanvas.getSelectedElems();
   const origLayer = getObjectLayer(selectedElements[0])?.elem;
   const isPrintingLayer = origLayer && printingModules.has(getData(origLayer, 'module')!);
-  const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer), 'module')!);
+  const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer)!, 'module')!);
   const moveOutFromFullColorLayer = isPrintingLayer && !isDestPrintingLayer;
   const moveInToFullColorLayer = !isPrintingLayer && isDestPrintingLayer;
   const t = i18n.lang.beambox.right_panel.layer_panel.notification;
@@ -655,31 +521,4 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   } else {
     moveToLayer(true);
   }
-};
-
-// TODO: add unittest
-export const removeDefaultLayerIfEmpty = (): ICommand | null => {
-  const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
-  const drawing = svgCanvas.getCurrentDrawing();
-  const layer = drawing.getLayerByName(defaultLayerName);
-  const layerCount = drawing.getNumLayers();
-
-  if (layer && layerCount > 1) {
-    const childNodes = Array.from(layer.childNodes);
-    const isEmpty = childNodes.every((node) => ['filter', 'title'].includes((node as Element).tagName));
-
-    if (isEmpty) {
-      console.log('default layer is empty. delete it!');
-
-      const cmd = deleteLayerByName(defaultLayerName);
-
-      drawing.identifyLayers();
-      LayerPanelController.setSelectedLayers([]);
-      LayerPanelController.updateLayerPanel();
-
-      return cmd;
-    }
-  }
-
-  return null;
 };

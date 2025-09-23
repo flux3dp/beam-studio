@@ -15,21 +15,10 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getLayersConfig: (...args) => mockGetLayersConfig(...args),
 }));
 
-const mockGetCurrentDrawing = jest.fn();
 const mockGetCurrentLayerName = jest.fn();
-const mockCanvas = {
-  getCurrentDrawing: mockGetCurrentDrawing,
-};
-const mockDrawing = {
-  getCurrentLayerName: mockGetCurrentLayerName,
-};
 
-mockGetCurrentDrawing.mockImplementation(() => mockDrawing);
-
-const mockGetSVGAsync = jest.fn().mockImplementation((callback) => callback({ Canvas: mockCanvas }));
-
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (...args) => mockGetSVGAsync(...args),
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
 }));
 
 const mockLayerPanelController = {

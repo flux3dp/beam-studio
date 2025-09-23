@@ -10,6 +10,7 @@ import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import postImportElement from '@core/app/svgedit/operations/import/postImportElement';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -45,12 +46,11 @@ const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
       /fill= ?"#(fff(fff)?|FFF(FFF))"/g,
       'fill="none"',
     );
-    const drawing = svgCanvas.getCurrentDrawing();
-    const layerName = drawing.getCurrentLayerName();
+    const layerName = layerManager.getCurrentLayerName();
 
     if (!layerName) return;
 
-    const layerModule = getData(getLayerByName(layerName), 'module') as LayerModuleType;
+    const layerModule = getData(getLayerByName(layerName)!, 'module') as LayerModuleType;
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import Element SVG');
     const newElementnewElement = await importSvgString(iconString, {
       layerName,

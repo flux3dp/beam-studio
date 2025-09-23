@@ -1,20 +1,19 @@
 import type { PrintingColors } from '@core/app/constants/color-constants';
 import { colorMap } from '@core/app/constants/color-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 
 import { getData } from './layer-config-helper';
-import { getAllLayerNames, getLayerElementByName } from './layer-helper';
 
 /**
  * Annotates the printing color of a layer for 4c printing single color layers.
  * @returns A function to revert the annotation.
  */
 export const annotatePrintingColor = (): (() => void) => {
-  const allLayerNames = getAllLayerNames();
   const annotatedElments: Element[] = [];
 
-  allLayerNames.forEach((layerName) => {
-    const layer = getLayerElementByName(layerName);
+  layerManager.getAllLayers().forEach((layerObject) => {
+    const layer = layerObject.getGroup();
 
     if (!layer || layer.getAttribute('display') === 'none') return;
 

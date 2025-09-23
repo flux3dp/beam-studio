@@ -11,6 +11,7 @@ import SelLayerBlock from '@core/app/components/beambox/right-panel/SelLayerBloc
 import layoutConstants from '@core/app/constants/layout-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
@@ -23,6 +24,7 @@ import i18n from '@core/helpers/i18n';
 import changeLayersColor from '@core/helpers/layer/changeLayersColor';
 import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import { highlightLayer, moveLayersToPosition, setLayersLock } from '@core/helpers/layer/layer-helper';
+import { setLayerVisibility } from '@core/helpers/layer/setLayerVisibility';
 import { ContextMenuTrigger } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
@@ -150,8 +152,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
   renameLayer = (): void => {
     const { setSelectedLayers } = this.context;
-    const drawing = svgCanvas.getCurrentDrawing();
-    const oldName = drawing.getCurrentLayerName()!;
+    const oldName = layerManager.getCurrentLayerName()!;
     const lang = i18n.lang.beambox.right_panel.layer_panel;
 
     Dialog.promptDialog({
@@ -162,7 +163,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
           return;
         }
 
-        if (svgCanvas.getCurrentDrawing().hasLayer(newName)) {
+        if (layerManager.hasLayer(newName)) {
           Alert.popUp({
             id: 'dupli_layer_name',
             message: lang.notification.enterUniqueLayerName,
@@ -183,8 +184,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
       return;
     }
 
-    const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayerName = drawing.getCurrentLayerName();
+    const currentLayerName = layerManager.getCurrentLayerName();
 
     if (currentLayerName) {
       const { setSelectedLayers } = this.context;
@@ -198,38 +198,33 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
     svgCanvas.clearSelection();
 
-    const drawing = svgCanvas.getCurrentDrawing();
-    const res = drawing.setCurrentLayer(layerName);
+    const res = layerManager.setCurrentLayer(layerName);
 
-    if (res) {
-      setSelectedLayers([layerName]);
-    }
+    if (res) setSelectedLayers([layerName]);
   };
 
   toggleLayerSelected = (layerName: string): void => {
     const { selectedLayers, setSelectedLayers } = this.context;
     const newSelectedLayers = [...selectedLayers];
-    const drawing = svgCanvas.getCurrentDrawing();
     const index = newSelectedLayers.findIndex((name: string) => name === layerName);
 
     if (index >= 0) {
       if (newSelectedLayers.length > 1) {
         newSelectedLayers.splice(index, 1);
-        drawing.setCurrentLayer(newSelectedLayers[0]);
+        layerManager.setCurrentLayer(newSelectedLayers[0]);
       }
     } else {
       newSelectedLayers.push(layerName);
-      drawing.setCurrentLayer(layerName);
+      layerManager.setCurrentLayer(layerName);
     }
 
     setSelectedLayers(newSelectedLayers);
   };
 
   toggleContiguousSelectedUntil = (layerName: string): void => {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayer: string = drawing.getCurrentLayerName()!;
+    const currentLayer = layerManager.getCurrentLayerName()!;
 
-    const allLayers: string[] = drawing.all_layers?.map((layer) => layer.name_) ?? [];
+    const allLayers = layerManager.getAllLayerNames();
     let [startIndex, endIndex] = [-1, -1];
 
     for (let i = 0; i < allLayers.length; i += 1) {
@@ -268,7 +263,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
       newSelectedLayers.push(layerName);
     }
 
-    drawing.setCurrentLayer(layerName);
+    layerManager.setCurrentLayer(layerName);
     setSelectedLayers(newSelectedLayers);
   };
 
@@ -285,17 +280,20 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   setLayerVisibility = (layerName: string): void => {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const isVis = drawing.getLayerVisibility(layerName);
+    const layerObject = layerManager.getLayerByName(layerName);
+
+    if (!layerObject) return;
+
+    const isVis = layerObject.isVisible();
     const { selectedLayers } = this.context;
     const batchCmd = HistoryCommandFactory.createBatchCommand('Set Layers Visibility');
 
     if (selectedLayers.includes(layerName)) {
       for (let i = 0; i < selectedLayers.length; i += 1) {
-        svgCanvas.setLayerVisibility(selectedLayers[i], !isVis, { parentCmd: batchCmd });
+        setLayerVisibility(selectedLayers[i], !isVis, { parentCmd: batchCmd });
       }
     } else {
-      svgCanvas.setLayerVisibility(layerName, !isVis, { parentCmd: batchCmd });
+      setLayerVisibility(layerName, !isVis, { parentCmd: batchCmd });
     }
 
     if (!batchCmd.isEmpty()) {
@@ -481,7 +479,6 @@ class LayerPanel extends React.PureComponent<Props, State> {
   renderLayerPanel(): React.JSX.Element {
     const { draggingDestIndex, draggingLayer } = this.state;
     const { selectedLayers, setSelectedLayers } = this.context;
-    const drawing = svgCanvas.getCurrentDrawing();
     const isTouchable = navigator.maxTouchPoints >= 1;
 
     return (
@@ -514,7 +511,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
         {!isMobile() && (
           <>
             <DragImage draggingLayer={draggingLayer!} selectedLayers={selectedLayers} />
-            <LayerContextMenu drawing={drawing} renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
+            <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
             <AddLayerButton setSelectedLayers={setSelectedLayers} />
           </>
         )}
@@ -532,10 +529,9 @@ class LayerPanel extends React.PureComponent<Props, State> {
     }
 
     const { setSelectedLayers } = this.context;
-    const drawing = svgCanvas.getCurrentDrawing();
     const lang = i18n.lang.beambox.right_panel.layer_panel;
 
-    const layerNames = drawing.all_layers.map((layer) => layer.name_);
+    const layerNames = layerManager.getAllLayerNames();
     const { hide } = this.props;
 
     return (
@@ -555,11 +551,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
             </FloatingPanel>
             <div className={styles['layer-bottom-bar']}>
               <ConfigPanel UIType="panel-item" />
-              <LayerContextMenu
-                drawing={drawing}
-                renameLayer={this.renameLayer}
-                selectOnlyLayer={this.selectOnlyLayer}
-              />
+              <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
             </div>
           </>
         ) : (

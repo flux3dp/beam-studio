@@ -23,7 +23,30 @@ exports[`test LayerList should render correctly 1`] = `
         <div
           class="color"
         >
-          <svgr-url />
+          <div>
+            MockColorPicker
+            <p>
+              disabled: 
+              n
+            </p>
+            <p>
+              initColor: 
+              #000000
+            </p>
+            <p>
+              triggerSize: 
+              small
+            </p>
+            <p>
+              printerColor: 
+              n
+            </p>
+            <button
+              type="button"
+            >
+              changeColor
+            </button>
+          </div>
         </div>
         <div
           class="module"
@@ -82,7 +105,7 @@ exports[`test LayerList should render correctly 1`] = `
             </p>
             <p>
               initColor: 
-              #000000
+              #ffffff
             </p>
             <p>
               triggerSize: 

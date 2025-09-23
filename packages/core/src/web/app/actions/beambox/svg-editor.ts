@@ -74,6 +74,7 @@ import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage } from '@core/app/stores/storageStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -944,15 +945,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       });
     };
 
-    /**
-     * Test whether an element is a layer or not.
-     * @param {SVGGElement} elem - The SVGGElement to test.
-     * @returns {boolean} True if the element is a layer
-     */
-    function isLayer(elem) {
-      return elem && elem.tagName === 'g' && svgedit.draw.Layer.CLASS_REGEX.test(elem.getAttribute('class'));
-    }
-
     // called when any element has changed
     const elementChanged = function () {
       updateContextPanel();
@@ -978,7 +970,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (context) {
         var str = '';
 
-        link_str = '<a href="#" data-root="y">' + svgCanvas.getCurrentDrawing().getCurrentLayerName() + '</a>';
+        link_str = '<a href="#" data-root="y">' + layerManager.getCurrentLayerName() + '</a>';
 
         $(context)
           .parentsUntil('#svgcontent > g')

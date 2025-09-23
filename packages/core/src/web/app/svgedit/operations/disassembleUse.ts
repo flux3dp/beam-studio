@@ -19,6 +19,7 @@ import ungroupElement from '../group/ungroup';
 import type { BatchCommand } from '../history/history';
 import history from '../history/history';
 import undoManager from '../history/undoManager';
+import layerManager from '../layer/layerManager';
 import { getRotationAngle, setRotationAngle } from '../transform/rotation';
 import { getHref } from '../utils/href';
 
@@ -122,9 +123,9 @@ export const disassembleUse = async (
 
     if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
-    const { elem: layer, title: layerTitle } = getObjectLayer(elem);
+    const { elem: layer, title: layerTitle } = getObjectLayer(elem)!;
 
-    svgCanvas.setCurrentLayer(layerTitle);
+    layerManager.setCurrentLayer(layerTitle);
     LayerPanelController.updateLayerPanel();
 
     const color = (useGlobalPreferenceStore.getState().use_layer_color ? getData(layer, 'color') : '#000') ?? '#000';

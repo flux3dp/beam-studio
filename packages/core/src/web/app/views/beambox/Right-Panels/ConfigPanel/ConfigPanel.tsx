@@ -20,6 +20,7 @@ import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import DottingTimeBlock from '@core/app/views/beambox/Right-Panels/ConfigPanel/DottingTimeBlock';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -41,7 +42,7 @@ import {
   postPresetChange,
   writeData,
 } from '@core/helpers/layer/layer-config-helper';
-import { getLayerElementByName, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
+import { moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import { usePresetList } from '@core/helpers/presets/preset-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
@@ -108,8 +109,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   useEffect(() => {
-    const drawing = svgCanvas.getCurrentDrawing();
-    const currentLayerName = drawing.getCurrentLayerName()!;
+    const currentLayerName = layerManager.getCurrentLayerName();
 
     if (UIType === 'modal') setSelectedLayers([currentLayerName]);
     else setSelectedLayers(initLayers);
@@ -222,7 +222,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       const batchCmd = new history.BatchCommand('Change layer preset');
 
       selectedLayers.forEach((layerName: string) => {
-        const layer = getLayerElementByName(layerName);
+        const layer = layerManager.getLayerElementByName(layerName)!;
 
         applyPreset(layer, preset, { batchCmd });
       });
@@ -346,8 +346,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       );
     }
 
-    const drawing = svgCanvas.getCurrentDrawing();
-    const layerCount = drawing.getNumLayers();
     const onClose = () => {
       dialogCaller.popDialogById('config-panel');
       ObjectPanelController.updateActiveKey(null);
@@ -379,17 +377,20 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       }
     };
     const layerOptions = [];
+    const allLayers = layerManager.getAllLayers();
 
-    for (let i = layerCount - 1; i >= 0; i -= 1) {
-      const layerName = drawing.getLayerName(i)!;
-      const layer = getLayerElementByName(layerName);
-      const layerModule = getData(layer, 'module') as LayerModuleType;
-      const isFullColor = layer.getAttribute('data-fullcolor') === '1';
+    for (let i = allLayers.length; i >= 0; i -= 1) {
+      const layer = allLayers[i];
+      const layerElement = layer.getGroup();
+      const layerName = layer.getName();
+      const layerModule = getData(layerElement, 'module') as LayerModuleType;
+      const isFullColor = getData(layerElement, 'fullcolor')!;
+      const color = getData(layerElement, 'color') ?? '#333333';
 
       layerOptions.push(
         <Select.Option key={layerName} label={layerName} value={layerName}>
           <div className={styles.option}>
-            <ColorBlock color={isFullColor ? 'fullcolor' : drawing.getLayerColor(layerName)} size="mini" />
+            <ColorBlock color={isFullColor ? 'fullcolor' : color} size="mini" />
             {printingModules.has(layerModule) ? <LayerPanelIcons.Print /> : <LayerPanelIcons.Laser />}
             <span>{layerName}</span>
           </div>
@@ -417,7 +418,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               </Select>
             </div>
           )}
-          {layerCount > 1 && (
+          {allLayers.length > 1 && (
             <div className={styles['change-layer']}>
               <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.move_elems_to}</span>
               <Select

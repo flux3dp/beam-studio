@@ -38,7 +38,7 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
     const keys = ['fillInterval', 'fillAngle', 'biDirectional', 'crossHatch'] as const;
 
     selectedLayers.forEach((layerName) => {
-      const layer = getLayerByName(layerName);
+      const layer = getLayerByName(layerName)!;
 
       keys.forEach((key) => {
         if (state[key].value !== draftValue[key].value || state[key].hasMultiValue !== draftValue[key].hasMultiValue) {

@@ -9,10 +9,10 @@ import { getSupportedModules, getWorkarea } from '@core/app/constants/workarea-c
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
-import { getAllLayerNames, getLayerByName } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -277,7 +277,7 @@ export const getDefaultConfig = (): Partial<ConfigKeyTypeMap> => {
  * @returns data value in type T
  */
 export const getData = <T extends ConfigKey>(
-  layer: Element,
+  layer: Element | null | undefined,
   key: T,
   applyPrinting = false,
 ): ConfigKeyTypeMap[T] | undefined => {
@@ -543,42 +543,40 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
 export const toggleFullColorAfterWorkareaChange = (): void => {
   const workarea = useDocumentStore.getState().workarea;
   const supportedModules = getSupportedModules(workarea);
-  const layerNames = getAllLayerNames();
   const defaultLaserModule = getDefaultLaserModule();
 
-  for (const layerName of layerNames) {
-    const layer = getLayerByName(layerName);
+  layerManager.getAllLayers().forEach((layer) => {
+    const layerElement = layer.getGroup();
 
-    if (!layer) continue;
+    if (!layerElement) return;
 
-    const module = getData(layer, 'module') as LayerModuleType;
+    const module = getData(layerElement, 'module') as LayerModuleType;
 
     if (!supportedModules.includes(module)) {
-      writeDataLayer(layer, 'module', defaultLaserModule);
+      writeDataLayer(layerElement, 'module', defaultLaserModule);
 
-      if (printingModules.has(module)) toggleFullColorLayer(layer, { val: false });
+      if (printingModules.has(module)) toggleFullColorLayer(layerElement, { val: false });
     }
-  }
+  });
 };
 
 export const applyDefaultLaserModule = (): void => {
   const workarea = useDocumentStore.getState().workarea;
 
   if (modelsWithModules.has(workarea)) {
-    const layerNames = getAllLayerNames();
     const defaultLaserModule = getDefaultLaserModule();
 
     if (defaultLaserModule === LayerModule.LASER_UNIVERSAL) return;
 
-    for (const layerName of layerNames) {
-      const layer = getLayerByName(layerName);
+    layerManager.getAllLayers().forEach((layer) => {
+      const layerElement = layer.getGroup();
 
-      if (!layer) continue;
+      if (!layerElement) return;
 
-      if (getData(layer, 'module') === LayerModule.LASER_UNIVERSAL) {
-        writeDataLayer(layer, 'module', defaultLaserModule);
+      if (getData(layerElement, 'module') === LayerModule.LASER_UNIVERSAL) {
+        writeDataLayer(layerElement, 'module', defaultLaserModule);
       }
-    }
+    });
   }
 };
 
@@ -676,75 +674,72 @@ export const postPresetChange = (): void => {
   const { maxSpeed, minSpeed } = getWorkarea(workarea);
   const isPromark = promarkModels.has(workarea);
   const promarkLimit = isPromark ? getPromarkLimit() : null;
-  const layerNames = getAllLayerNames();
   const allPresets = getAllPresets();
 
-  for (const layerName of layerNames) {
-    const layer = getLayerByName(layerName);
+  layerManager.getAllLayers().forEach((layer) => {
+    const layerElement = layer.getGroup();
 
-    if (!layer) {
-      continue;
-    }
+    if (!layerElement) return;
 
-    const configName = getData(layer, 'configName');
+    const configName = getData(layerElement, 'configName');
     const preset = allPresets.find((c) => !c.hide && (configName === c.key || configName === c.name));
 
     if (preset?.isDefault) {
-      const layerModule = getData(layer, 'module') as LayerModuleType;
+      const layerModule = getData(layerElement, 'module') as LayerModuleType;
       const defaultPreset = getDefaultPreset(preset.key!, workarea, layerModule);
 
       if (!defaultPreset) {
         // Config exists but preset not found: no preset for module
-        writeDataLayer(layer, 'configName', undefined);
+        writeDataLayer(layerElement, 'configName', undefined);
       } else {
-        applyPreset(layer, defaultPreset, { applyName: false });
+        applyPreset(layerElement, defaultPreset, { applyName: false });
       }
     } else if (preset) {
-      applyPreset(layer, preset, { applyName: false });
+      applyPreset(layerElement, preset, { applyName: false });
     } else {
-      writeDataLayer(layer, 'configName', undefined);
+      writeDataLayer(layerElement, 'configName', undefined);
     }
 
-    const speed = getData(layer, 'speed') as number;
+    const speed = getData(layerElement, 'speed') as number;
 
     if (speed > maxSpeed) {
-      writeDataLayer(layer, 'speed', maxSpeed);
+      writeDataLayer(layerElement, 'speed', maxSpeed);
     }
 
     if (speed < minSpeed) {
-      writeDataLayer(layer, 'speed', minSpeed);
+      writeDataLayer(layerElement, 'speed', minSpeed);
     }
 
-    const printingSpeed = getData(layer, 'printingSpeed') as number;
+    const printingSpeed = getData(layerElement, 'printingSpeed') as number;
 
     if (printingSpeed > maxSpeed) {
-      writeDataLayer(layer, 'printingSpeed', maxSpeed);
+      writeDataLayer(layerElement, 'printingSpeed', maxSpeed);
     }
 
     if (printingSpeed < minSpeed) {
-      writeDataLayer(layer, 'printingSpeed', minSpeed);
+      writeDataLayer(layerElement, 'printingSpeed', minSpeed);
     }
 
     if (isPromark) {
       if (promarkLimit?.frequency) {
-        const frequency = getData(layer, 'frequency') as number;
+        const frequency = getData(layerElement, 'frequency') as number;
 
         if (frequency < promarkLimit.frequency.min) {
-          writeDataLayer(layer, 'frequency', promarkLimit.frequency.min);
+          writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.min);
         } else if (frequency > promarkLimit.frequency.max) {
-          writeDataLayer(layer, 'frequency', promarkLimit.frequency.max);
+          writeDataLayer(layerElement, 'frequency', promarkLimit.frequency.max);
         }
       }
 
       if (promarkLimit?.pulseWidth) {
-        const pulseWidth = getData(layer, 'pulseWidth') as number;
+        const pulseWidth = getData(layerElement, 'pulseWidth') as number;
 
         if (pulseWidth < promarkLimit.pulseWidth.min) {
-          writeDataLayer(layer, 'pulseWidth', promarkLimit.pulseWidth.min);
+          writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.min);
         } else if (pulseWidth > promarkLimit.pulseWidth.max) {
-          writeDataLayer(layer, 'pulseWidth', promarkLimit.pulseWidth.max);
+          writeDataLayer(layerElement, 'pulseWidth', promarkLimit.pulseWidth.max);
         }
       }
     }
-  }
+  });
 };

@@ -7,17 +7,20 @@ exports[`test svg-editor should render correctly in mac 1`] = `
     id="svg_editor"
   >
     <div>
-      This is dummy Banner
+      MockBanner
     </div>
     <div
       class="workarea-container"
       id="workarea-container"
     >
       <div>
-        This is dummy Ruler
+        MockElementTitle
       </div>
       <div>
-        This is dummy Workarea
+        MockRuler
+      </div>
+      <div>
+        MockWorkarea
       </div>
     </div>
     <div
@@ -57,17 +60,20 @@ exports[`test svg-editor should render correctly in win 1`] = `
     id="svg_editor"
   >
     <div>
-      This is dummy Banner
+      MockBanner
     </div>
     <div
       class="workarea-container"
       id="workarea-container"
     >
       <div>
-        This is dummy Ruler
+        MockElementTitle
       </div>
       <div>
-        This is dummy Workarea
+        MockRuler
+      </div>
+      <div>
+        MockWorkarea
       </div>
     </div>
     <div

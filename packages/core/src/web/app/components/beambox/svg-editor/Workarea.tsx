@@ -1,6 +1,7 @@
 import React, { memo, useContext, useEffect, useMemo } from 'react';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operations/clipboard';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -39,7 +40,7 @@ const getCurrentLayer = (selectedElement?: Element): null | string => {
   } else {
     const currentLayer = getObjectLayer(selectedElement as SVGElement);
 
-    return currentLayer?.title;
+    return currentLayer?.title ?? null;
   }
 
   return null;
@@ -81,8 +82,7 @@ const Workarea = memo(({ className }: { className: string }) => {
   }, [setState]);
 
   const renderLayerSubMenu = () => {
-    const drawing = svgCanvas?.getCurrentDrawing();
-    const layerNames: string[] = drawing?.all_layers.map((layer: { name_: string }) => layer.name_) || [];
+    const layerNames = layerManager.getAllLayerNames();
     const selectedElems = svgCanvas?.getSelectedElems();
     const currentLayer = getCurrentLayer(selectedElems?.[0]);
 

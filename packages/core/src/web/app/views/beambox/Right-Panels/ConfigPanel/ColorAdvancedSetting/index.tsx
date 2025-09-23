@@ -61,7 +61,7 @@ export const ColorAdvancedSetting = ({ onClose, selectedLayers }: Props) => {
     }
 
     selectedLayers.forEach((layerName) => {
-      const layer = getLayerByName(layerName);
+      const layer = getLayerByName(layerName)!;
 
       writeDataLayer(layer, 'amAngleMap', { ...amAngleMapValue, ...draftAngleMap });
 

@@ -1,17 +1,10 @@
 import React, { useContext } from 'react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './ElementTitle.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 function ElementTitle(): React.ReactNode {
   const { topbar: t } = useI18n();
@@ -22,7 +15,7 @@ function ElementTitle(): React.ReactNode {
     if (selectedElement.getAttribute('data-tempgroup') === 'true') {
       content = t.tag_names.multi_select;
     } else {
-      const layer = (svgCanvas as any).getObjectLayer(selectedElement);
+      const layer = getObjectLayer(selectedElement as SVGElement);
       const layerName = layer ? layer.title : '';
 
       if (selectedElement.getAttribute('data-textpath-g')) {

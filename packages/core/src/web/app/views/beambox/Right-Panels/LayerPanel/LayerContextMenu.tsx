@@ -13,30 +13,24 @@ import type { PrintingColors } from '@core/app/constants/color-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
+import { deleteLayers } from '@core/helpers/layer/deleteLayer';
 import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLayer';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
-import {
-  cloneLayers,
-  deleteLayers,
-  getAllLayerNames,
-  getLayerElementByName,
-  getLayerPosition,
-  mergeLayers,
-  setLayersLock,
-} from '@core/helpers/layer/layer-helper';
+import { cloneLayers, getLayerPosition, mergeLayers, setLayersLock } from '@core/helpers/layer/layer-helper';
 import { ContextMenu, MenuItem } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
 
 import styles from './LayerContextMenu.module.scss';
 
@@ -47,12 +41,11 @@ getSVGAsync((globalSVG) => {
 });
 
 interface Props {
-  drawing: ISVGDrawing;
   renameLayer: () => void;
   selectOnlyLayer: (name: string) => void;
 }
 
-const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): React.JSX.Element => {
+const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.Element => {
   const lang = useI18n();
   const LANG = lang.beambox.right_panel.layer_panel;
   const LANG2 = lang.alert;
@@ -61,7 +54,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   const isMobile = useIsMobile();
   const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
-  const layerElem = getLayerElementByName(selectedLayers[0]);
+  const layerElem = layerManager.getLayerElementByName(selectedLayers[0])!;
   const isLocked = layerElem?.getAttribute('data-lock') === 'true';
   const onContextMenuShow = (e: CustomEvent) => {
     const trigger = e.detail.data?.target as Element;
@@ -104,7 +97,7 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
       return;
     }
 
-    const baseLayerName = drawing.getLayerName(layerPosition - 1)!;
+    const baseLayerName = layerManager.getLayerName(layerPosition - 1)!;
     const merged = await mergeLayers([layer], baseLayerName);
 
     if (merged) {
@@ -113,28 +106,28 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
   };
 
   const handleMergeAll = async () => {
-    const allLayerNames = getAllLayerNames();
+    const allLayerNames = layerManager.getAllLayerNames();
     const baseLayerName = await mergeLayers(allLayerNames);
 
     if (!baseLayerName) {
       return;
     }
 
-    const elem = getLayerElementByName(baseLayerName);
+    const elem = layerManager.getLayerElementByName(baseLayerName!);
 
     updateLayerColor(elem as SVGGElement);
     selectOnlyLayer(baseLayerName);
   };
 
   const handleMergeSelected = async () => {
-    const currentLayerName = drawing.getCurrentLayerName()!;
+    const currentLayerName = layerManager.getCurrentLayerName()!;
     const baseLayer = await mergeLayers(selectedLayers, currentLayerName);
 
     if (!baseLayer) {
       return;
     }
 
-    const elem = getLayerElementByName(baseLayer);
+    const elem = layerManager.getLayerElementByName(baseLayer!);
 
     updateLayerColor(elem as SVGGElement);
     setSelectedLayers([baseLayer]);
@@ -192,14 +185,14 @@ const LayerContextMenu = ({ drawing, renameLayer, selectOnlyLayer }: Props): Rea
     const cmd = toggleFullColorLayer(layerElem);
 
     if (cmd && !cmd.isEmpty()) {
-      svgCanvas.undoMgr.addCommandToHistory(cmd);
+      undoManager.addCommandToHistory(cmd);
     }
 
     setSelectedLayers([]);
   };
 
   const isMultiSelecting = selectedLayers.length > 1;
-  const isSelectingLast = selectedLayers.length === 1 && drawing.getLayerName(0) === selectedLayers[0];
+  const isSelectingLast = selectedLayers.length === 1 && layerManager.getLayerName(0) === selectedLayers[0];
 
   return isMobile ? (
     <div className={styles['item-group']}>

@@ -47,7 +47,6 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
@@ -63,7 +62,6 @@ import units from '@core/helpers/units';
 import imageProcessor from '@core/implementations/imageProcessor';
 import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
 import storage from '@core/implementations/storage';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
@@ -76,6 +74,7 @@ import history from './history/history';
 import historyRecording from './history/historyrecording';
 import undoManager from './history/undoManager';
 import { MouseInteraction } from './interaction/mouse';
+import layerManager from './layer/layerManager';
 import { deleteSelectedElements } from './operations/delete';
 import disassembleUse from './operations/disassembleUse';
 import importSvgString from './operations/import/importSvgString';
@@ -237,6 +236,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     canvas.currentDrawing = new svgedit.draw.Drawing(content, idprefix);
   });
 
+  layerManager.reset(svgcontent as unknown as SVGSVGElement);
   resetCurrentDrawing();
 
   // Function: getCurrentDrawing
@@ -294,18 +294,18 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     var shape = svgedit.utilities.getElem(data.attr.id);
     // if shape is a path but we need to create a rect/ellipse, then remove the path
-    var current_layer = getCurrentDrawing().getCurrentLayer();
+    const currentLayer = layerManager.getCurrentLayerElement()!;
 
     if (shape && data.element !== shape.tagName) {
-      current_layer.removeChild(shape);
+      currentLayer.removeChild(shape);
       shape = null;
     }
 
     if (!shape) {
       shape = svgdoc.createElementNS(NS.SVG, data.element);
 
-      if (current_layer) {
-        (current_group || current_layer).appendChild(shape);
+      if (currentLayer) {
+        (current_group || currentLayer).appendChild(shape);
       }
     }
 
@@ -505,7 +505,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             var parent = isApply ? cmd.newParent : cmd.oldParent;
 
             if (parent === svgcontent) {
-              canvas.identifyLayers();
+              layerManager.identifyLayers();
             }
 
             elems.forEach((elem) => {
@@ -533,8 +533,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             }
           } else if (cmdType === ChangeElementCommand.type()) {
             // if we are changing layer names, re-identify all layers
-            if (cmd.elem.tagName === 'title' && cmd.elem.parentNode.parentNode === svgcontent) {
-              canvas.identifyLayers();
+            if (cmd.elem.tagName === 'title' && cmd.elem.parentNode?.parentNode === svgcontent) {
+              layerManager.identifyLayers();
             }
 
             var values = isApply ? cmd.newValues : cmd.oldValues;
@@ -575,7 +575,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
                 'Split Full Color Layer',
               ].includes(cmd.text)
             ) {
-              canvas.identifyLayers();
+              layerManager.identifyLayers();
               LayerPanelController.setSelectedLayers([]);
               presprayArea.togglePresprayArea();
             }
@@ -863,8 +863,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return null;
     }
 
-    var parent = current_group || getCurrentDrawing().getCurrentLayer();
-
     var rubberBBox;
 
     if (!rect) {
@@ -1129,8 +1127,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return clone;
   };
 
-  this.getObjectLayer = LayerHelper.getObjectLayer;
-
   // this.each is deprecated, if any extension used this it can be recreated by doing this:
   // $(canvas.getRootElem()).children().each(...)
 
@@ -1362,13 +1358,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Function: selectAllInCurrentLayer
   // Clears the selection, then adds all elements in the current layer to the selection.
   this.selectAllInCurrentLayer = function () {
-    var current_layer = getCurrentDrawing().getCurrentLayer();
+    const currentLayer = layerManager.getCurrentLayerElement();
 
-    if (current_layer && current_layer.getAttribute('data-lock') !== 'true') {
+    if (currentLayer && currentLayer.getAttribute('data-lock') !== 'true') {
       current_mode = 'select';
       drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
 
-      const elemsToAdd = Array.from($(current_group || current_layer).children()).filter(
+      const elemsToAdd = (Array.from((current_group || currentLayer).childNodes) as Element[]).filter(
         (c: Element) => !['filter', 'title'].includes(c.tagName),
       );
 
@@ -1394,12 +1390,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     clearSelection();
     this.setMode('select');
 
-    const drawing = getCurrentDrawing();
-    const allLayers = drawing.all_layers;
+    const allLayers = layerManager.getAllLayers();
     const elemsToSelect = [];
 
     for (let i = allLayers.length - 1; i >= 0; i--) {
-      const layerElement = allLayers[i].group_;
+      const layerElement = allLayers[i].getGroup();
 
       if (
         layerElement &&
@@ -1407,7 +1402,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         layerElement.getAttribute('data-lock') !== 'true' &&
         layerElement.getAttribute('display') !== 'none'
       ) {
-        const elemsToAdd = Array.from(layerElement.childNodes).filter(
+        const elemsToAdd = (Array.from(layerElement.childNodes) as Element[]).filter(
           (node: Element) => !['filter', 'title'].includes(node.tagName),
         );
 
@@ -1556,9 +1551,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // Get the desired mouseTarget with jQuery selector-fu
     // If it's root-like, select the root
-    var current_layer = getCurrentDrawing().getCurrentLayer();
+    const currentLayer = layerManager.getCurrentLayerElement();
 
-    if ([container, current_layer, svgcontent, svgroot].includes(mouseTarget)) {
+    if ([container, currentLayer, svgcontent, svgroot].includes(mouseTarget)) {
       return svgroot;
     }
 
@@ -2341,64 +2336,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // Group: Layers
 
-  // Function: identifyLayers
-  // Updates layer system
-  canvas.identifyLayers = function () {
-    leaveContext();
-    getCurrentDrawing().identifyLayers();
-  };
-
-  // Function: createLayer
-  // Creates a new top-level layer in the drawing with the given name, sets the current layer
-  // to it, and then clears the selection. This function then calls the 'changed' handler.
-  // This is an undoable action.
-  //
-  // Parameters:
-  // name - The given name
-  this.createLayer = function (name, hexCode: string, isFullColor = false) {
-    const drawing = getCurrentDrawing();
-    const newLayer = drawing.createLayer(name, historyRecordingService());
-
-    if (drawing.layer_map[name]) {
-      if (name && name.indexOf('#') === 0) {
-        drawing.layer_map[name].setColor(name);
-      } else if (hexCode) {
-        drawing.layer_map[name].setColor(hexCode);
-      } else {
-        drawing.layer_map[name].setColor(randomColor.getColor());
-      }
-
-      if (isFullColor) {
-        drawing.layer_map[name].setFullColor(true);
-      }
-    }
-
-    updateLayerColorFilter(newLayer);
-    clearSelection();
-    call('changed', [newLayer]);
-
-    return newLayer;
-  };
-
-  // Function: setCurrentLayer
-  // Sets the current layer. If the name is not a valid layer name, then this function returns
-  // false. Otherwise it returns true. This is not an undo-able action.
-  //
-  // Parameters:
-  // name - the name of the layer you want to switch to.
-  //
-  // Returns:
-  // true if the current layer was switched, otherwise false
-  this.setCurrentLayer = function (name) {
-    var result = getCurrentDrawing().setCurrentLayer(svgedit.utilities.toXml(name));
-
-    if (result) {
-      // clearSelection();
-    }
-
-    return result;
-  };
-
   // Function: renameCurrentLayer
   // Renames the current layer. If the layer name is not valid (i.e. unique), then this function
   // does nothing and returns false, otherwise it returns true. This is an undo-able action.
@@ -2409,18 +2346,17 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Returns:
   // true if the rename succeeded, false otherwise.
-  this.renameCurrentLayer = function (newname) {
-    var drawing = getCurrentDrawing();
-    var layer = drawing.getCurrentLayer();
+  this.renameCurrentLayer = function (name) {
+    const layer = layerManager.getCurrentLayer();
 
-    if (layer) {
-      var result = drawing.setCurrentLayerName(newname, historyRecordingService());
+    if (!layer) return;
 
-      if (result) {
-        call('changed', [layer]);
+    const result = layerManager.setCurrentLayerName(name);
 
-        return true;
-      }
+    if (result) {
+      call('changed', [layer.getGroup()]);
+
+      return true;
     }
 
     return false;
@@ -2429,8 +2365,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.sortTempGroupByLayer = () => {
     if (!tempGroup) return;
 
-    const drawing = getCurrentDrawing();
-    const allLayerNames = drawing.all_layers.map((layer) => layer.name_);
+    const allLayerNames = layerManager.getAllLayerNames();
 
     for (let i = 0; i < allLayerNames.length; i++) {
       const elems = tempGroup.querySelectorAll(`[data-original-layer="${allLayerNames[i]}"]`);
@@ -2439,49 +2374,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         tempGroup.appendChild(elems[j]);
       }
     }
-  };
-
-  // Function: setLayerVisibility
-  // Sets the visibility of the layer. If the layer name is not valid, this function return
-  // false, otherwise it returns true. This is an undo-able action.
-  //
-  // Parameters:
-  // layername - the name of the layer to change the visibility
-  // bVisible - true/false, whether the layer should be visible
-  //
-  // Returns:
-  // true if the layer's visibility was set, false otherwise
-  this.setLayerVisibility = function (
-    layername: string,
-    value: boolean,
-    opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
-  ) {
-    const drawing = getCurrentDrawing();
-    const prevVisibility = drawing.getLayerVisibility(layername);
-    const layer = drawing.setLayerVisibility(layername, value);
-
-    if (!layer) return false;
-
-    presprayArea.togglePresprayArea();
-
-    const oldDisplay = prevVisibility ? 'inline' : 'none';
-    const cmd = new history.ChangeElementCommand(layer, { display: oldDisplay }, 'Layer Visibility');
-
-    cmd.onAfter = () => {
-      presprayArea.togglePresprayArea();
-    };
-
-    const { addToHistory = true, parentCmd } = opts || {};
-
-    if (parentCmd) parentCmd.addSubCommand(cmd);
-    else if (addToHistory) addCommandToHistory(cmd);
-
-    if (layer === drawing.getCurrentLayer()) {
-      clearSelection();
-      pathActions.clear();
-    }
-
-    return true;
   };
 
   this.updateElementColor = updateElementColor;
@@ -2561,6 +2453,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // create new document
     canvas.resetCurrentDrawing();
+    layerManager.reset(svgcontent as unknown as SVGSVGElement);
 
     // Reset Used Layer colors
     randomColor.reset();
@@ -2568,9 +2461,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // create empty first layer
     const defaultLayerName = i18n.lang.beambox.right_panel.layer_panel.layer1;
 
-    canvas.createLayer(defaultLayerName);
+    LayerHelper.createLayer(defaultLayerName);
 
-    const defaultLayer = LayerHelper.getLayerElementByName(defaultLayerName);
+    const defaultLayer = layerManager.getLayerElementByName(defaultLayerName)!;
 
     initLayerConfig(defaultLayer);
 
@@ -4040,8 +3933,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       if (subPaths.length === 1) return;
 
-      const newPaths = [];
-      const layer = LayerHelper.getObjectLayer(elem).elem;
+      const newPaths: SVGPathElement[] = [];
+      const layer = LayerHelper.getObjectLayer(elem)!.elem;
       const attrs = {
         fill: $(elem).attr('fill') || 'none',
         'fill-opacity': $(elem).attr('fill-opacity') || '0',
@@ -4349,7 +4242,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const sortedLayerNames = LayerHelper.sortLayerNamesByPosition([...new Set(layerNames)]);
       const topLayer = sortedLayerNames[sortedLayerNames.length - 1];
 
-      svgCanvas.setCurrentLayer(topLayer);
+      layerManager.setCurrentLayer(topLayer);
     }
 
     // create and insert the group element
@@ -4752,7 +4645,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     );
 
     // set the newst added layer as currentLayer
-    this.setCurrentLayer(layers[0]);
+    layerManager.setCurrentLayer(layers[0]);
     // the uniq process is performed `here` to avoid duplicate layer in layer panel,
     // and remain the selected layers contains information if there are multiple elements in same layer
     LayerPanelController.setSelectedLayers([...new Set(layers)]);
@@ -4776,19 +4669,20 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return;
     }
 
-    const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
-    const currentLayer = getCurrentDrawing().getCurrentLayer();
+    const originalLayerName = elem.getAttribute('data-original-layer')!;
+    const originalLayer = layerManager.getLayerElementByName(originalLayerName);
+    const currentLayer = layerManager.getCurrentLayerElement()!;
     const targetLayer = originalLayer || currentLayer;
 
     // explicitly remove one element from the temp group layers
-    const idx = selectedLayers.indexOf(elem.getAttribute('data-original-layer'));
+    const idx = selectedLayers.indexOf(originalLayerName);
 
     if (idx >= 0) {
       selectedLayers.splice(idx, 1);
     }
 
     // set the current layer from the remaining layers
-    this.setCurrentLayer(selectedLayers[0]);
+    layerManager.setCurrentLayer(selectedLayers[0]);
     LayerPanelController.setSelectedLayers([...new Set(selectedLayers)]);
 
     if (elem.nextSibling && (elem.nextSibling as Element).getAttribute('data-imageborder') === 'true') {
@@ -4862,7 +4756,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       var i = 0;
 
       while (g.lastChild) {
-        const elem = g.lastChild;
+        const elem = g.lastChild as Element;
         var oldParent = elem.parentNode;
 
         if (elem.getAttribute('data-imageborder') === 'true') {
@@ -4872,12 +4766,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
         // Remove child title elements
         if (elem.tagName === 'title') {
-          oldParent.removeChild(elem);
+          oldParent!.removeChild(elem);
           continue;
         }
 
-        const originalLayer = getCurrentDrawing().getLayerByName(elem.getAttribute('data-original-layer'));
-        const currentLayer = getCurrentDrawing().getCurrentLayer();
+        const originalLayer = layerManager.getLayerElementByName(elem.getAttribute('data-original-layer')!);
+        const currentLayer = layerManager.getCurrentLayerElement()!;
         const targetLayer = originalLayer || currentLayer;
         let nextSiblingId = elem.getAttribute('data-next-sibling');
 
@@ -5634,7 +5528,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     var cur_elem = selectedElements[0];
     var elem = false;
-    var all_elems = getVisibleElements(current_group || getCurrentDrawing().getCurrentLayer());
+    var all_elems = getVisibleElements(current_group || layerManager.getCurrentLayerElement());
 
     if (!all_elems.length) {
       return;

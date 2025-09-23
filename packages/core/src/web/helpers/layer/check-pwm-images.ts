@@ -1,8 +1,8 @@
-import { getLayerElementByName } from '@core/helpers/layer/layer-helper';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 
 const checkPwmImages = (layerNames: string[]): boolean =>
   layerNames.some((layerName: string) => {
-    const layer = getLayerElementByName(layerName);
+    const layer = layerManager.getLayerElementByName(layerName);
 
     if (!layer) {
       return false;

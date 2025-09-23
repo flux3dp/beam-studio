@@ -43,7 +43,7 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
       : ['printingStrength'];
 
     selectedLayers.forEach((layerName) => {
-      const layer = getLayerByName(layerName);
+      const layer = getLayerByName(layerName)!;
 
       keys.forEach((key) => {
         if (state[key].value !== draftValue[key].value || state[key].hasMultiValue !== draftValue[key].hasMultiValue) {
