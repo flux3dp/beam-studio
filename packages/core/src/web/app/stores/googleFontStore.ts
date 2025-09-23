@@ -142,6 +142,25 @@ const generateGoogleFontPostScriptName = (family: string, weight: number, italic
 // Font filtering
 const ICON_FONT_KEYWORDS = ['icons'];
 
+// Default fallback font constants for offline scenarios
+const DEFAULT_FALLBACK_FONT = 'Arial, sans-serif';
+const WEB_SAFE_FONTS = [
+  'Arial',
+  'Arial Black',
+  'Comic Sans MS',
+  'Courier New',
+  'Georgia',
+  'Helvetica',
+  'Impact',
+  'Lucida Console',
+  'Lucida Sans Unicode',
+  'Palatino Linotype',
+  'Tahoma',
+  'Times New Roman',
+  'Trebuchet MS',
+  'Verdana',
+];
+
 const isIconFont = (fontFamily: string): boolean => {
   const lowerName = fontFamily.toLowerCase();
 
@@ -157,6 +176,101 @@ const createNetworkDetector = (): NetworkState => {
     isOnline: navigator.onLine,
     lastChecked: Date.now(),
   };
+};
+
+/**
+ * Enhanced network connectivity check with multiple validation methods
+ */
+const isNetworkAvailableForGoogleFonts = (networkState: NetworkState): boolean => {
+  // Primary check: navigator.onLine
+  if (!networkState.isOnline) {
+    return false;
+  }
+
+  // Secondary check: connection quality for Google Fonts (if available)
+  const connection = (navigator as any).connection;
+
+  if (connection) {
+    // Avoid loading Google Fonts on very slow connections
+    const slowConnections = ['slow-2g', '2g'];
+
+    if (connection.effectiveType && slowConnections.includes(connection.effectiveType)) {
+      console.log(`🐌 Skipping Google Fonts due to slow connection: ${connection.effectiveType}`);
+
+      return false;
+    }
+  }
+
+  return true;
+};
+
+/**
+ * Check if a font family is a web-safe font that doesn't need Google Fonts
+ */
+const isWebSafeFont = (fontFamily: string): boolean => {
+  const normalizedFamily = fontFamily.toLowerCase().trim();
+
+  // Use exact matching to prevent false positives like "Arial Nova" matching "Arial"
+  return WEB_SAFE_FONTS.some((webSafeFont) => normalizedFamily === webSafeFont.toLowerCase());
+};
+
+/**
+ * PostScript name mapping for fallback fonts
+ */
+const FALLBACK_POSTSCRIPT_NAMES: Record<string, string> = {
+  'Arial, sans-serif': 'ArialMT',
+  'Arial Black, Arial, sans-serif': 'Arial-Black',
+  'Courier New, monospace': 'CourierNewPSMT',
+  'Times New Roman, serif': 'TimesNewRomanPSMT',
+};
+
+/**
+ * Get the PostScript name for a fallback font
+ */
+const getFallbackPostScriptName = (fallbackFont: string): string => {
+  return FALLBACK_POSTSCRIPT_NAMES[fallbackFont] || 'ArialMT';
+};
+
+/**
+ * Get the best fallback font for a given Google Font family
+ * Returns a web-safe font that matches the style characteristics
+ */
+const getFallbackFont = (googleFontFamily: string): string => {
+  const lowerFamily = googleFontFamily.toLowerCase();
+
+  // Serif fonts fallback to Times New Roman
+  if (
+    lowerFamily.includes('serif') ||
+    lowerFamily.includes('times') ||
+    lowerFamily.includes('georgia') ||
+    lowerFamily.includes('playfair') ||
+    lowerFamily.includes('baskerville')
+  ) {
+    return 'Times New Roman, serif';
+  }
+
+  // Monospace fonts fallback to Courier New
+  if (
+    lowerFamily.includes('mono') ||
+    lowerFamily.includes('code') ||
+    lowerFamily.includes('courier') ||
+    lowerFamily.includes('console')
+  ) {
+    return 'Courier New, monospace';
+  }
+
+  // Display/decorative fonts fallback to Impact or Arial Black
+  if (
+    lowerFamily.includes('display') ||
+    lowerFamily.includes('bold') ||
+    lowerFamily.includes('black') ||
+    lowerFamily.includes('heavy')
+  ) {
+    return 'Arial Black, Arial, sans-serif';
+  }
+
+  // Default to Arial for sans-serif fonts
+  return DEFAULT_FALLBACK_FONT;
 };
 
 const calculateRetryDelay = (attempt: number): number => {
@@ -242,11 +356,15 @@ interface GoogleFontState {
   cssLinks: Map<string, CSSLinkTracker>;
   failedLoads: Map<string, { count: number; error?: string; lastAttempt: number }>;
   getBinaryFromCache: (fontFamily: string, weight?: number, style?: 'italic' | 'normal') => GoogleFontBinary | null;
+  getFallbackFont: (googleFontFamily: string) => string;
+  getFallbackPostScriptName: (fallbackFont: string) => string;
   getLoadedFonts: () => string[];
   getRegisteredFonts: () => string[];
   isGoogleFontLoaded: (fontFamily: string) => boolean;
   isGoogleFontLoading: (fontFamily: string) => boolean;
   isGoogleFontRegistered: (fontFamily: string) => boolean;
+  isNetworkAvailableForGoogleFonts: () => boolean;
+  isWebSafeFont: (fontFamily: string) => boolean;
   loadGoogleFont: (fontFamily: string) => Promise<void>;
   loadGoogleFontBinary: (
     fontFamily: string,
@@ -458,6 +576,14 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         return get().cachedBinaries.get(cacheKey) || null;
       },
 
+      getFallbackFont: (googleFontFamily: string) => {
+        return getFallbackFont(googleFontFamily);
+      },
+
+      getFallbackPostScriptName: (fallbackFont: string) => {
+        return getFallbackPostScriptName(fallbackFont);
+      },
+
       getLoadedFonts: () => {
         return Array.from(get().sessionLoadedFonts);
       },
@@ -474,6 +600,14 @@ export const useGoogleFontStore = create<GoogleFontState>()(
       },
       isGoogleFontRegistered: (fontFamily: string) => {
         return get().registeredFonts.has(fontFamily);
+      },
+
+      isNetworkAvailableForGoogleFonts: () => {
+        return isNetworkAvailableForGoogleFonts(get().networkState);
+      },
+
+      isWebSafeFont: (fontFamily: string) => {
+        return isWebSafeFont(fontFamily);
       },
       loadGoogleFont: async (fontFamily: string) => {
         const state = get();

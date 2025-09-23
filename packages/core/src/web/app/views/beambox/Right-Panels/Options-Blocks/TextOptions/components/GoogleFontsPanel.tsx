@@ -4,6 +4,7 @@ import { AppstoreOutlined, CloseOutlined, GlobalOutlined, GoogleOutlined, Search
 import { Button, Select, Spin, Typography } from 'antd';
 import VirtualList from 'rc-virtual-list';
 
+import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import type { GoogleFontItem as CachedGoogleFontItem } from '@core/helpers/fonts/googleFontsApiCache';
 
@@ -24,6 +25,7 @@ const SCROLL_THRESHOLD = 100;
 const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible }) => {
   const { categoryOptions, fetchGoogleFonts, fonts, languageOptions, loadFont, loadFontForTextEditing, loading } =
     useGoogleFontData();
+  const isNetworkAvailable = useGoogleFontStore((state) => state.isNetworkAvailableForGoogleFonts());
   const [selectedCategory, setSelectedCategory] = useState<string>('');
   const [selectedLanguage, setSelectedLanguage] = useState<string>('');
   const [selectedFont, setSelectedFont] = useState<CachedGoogleFontItem | null>(null);
@@ -36,6 +38,10 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const lastScrollTop = useRef<number>(0);
 
   const getEmptyStateMessage = useCallback((): string => {
+    if (!isNetworkAvailable) {
+      return 'Google Fonts are not available offline. Please connect to the internet to browse and select Google Fonts.';
+    }
+
     if (fonts.length === 0) {
       return 'Google Fonts are currently unavailable. Please check your internet connection or contact your administrator.';
     }
@@ -45,7 +51,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
     }
 
     return 'No fonts available.';
-  }, [fonts.length, searchText, selectedCategory, selectedLanguage]);
+  }, [isNetworkAvailable, fonts.length, searchText, selectedCategory, selectedLanguage]);
 
   const filterState = useMemo(
     () => ({ category: selectedCategory, language: selectedLanguage, search: searchText }),
@@ -217,12 +223,13 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
             <Select
               allowClear
               className={styles.searchInput}
+              disabled={!isNetworkAvailable}
               filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
               onChange={handleFontSelectFromSearch}
               onClear={() => setSearchText('')}
               onSearch={setSearchText}
               options={searchOptions}
-              placeholder="Search fonts..."
+              placeholder={isNetworkAvailable ? 'Search fonts...' : 'Search unavailable offline'}
               showSearch
               suffixIcon={<SearchOutlined />}
               value={searchText || undefined}
@@ -237,10 +244,11 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
             </div>
             <Select
               className={styles.languageSelect}
+              disabled={!isNetworkAvailable}
               filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
               onChange={setSelectedLanguage}
               options={[{ label: 'All languages', value: '' }, ...languageOptions]}
-              placeholder="Language"
+              placeholder={isNetworkAvailable ? 'Language' : 'Unavailable offline'}
               showSearch
               value={selectedLanguage || 'All languages'}
             />
@@ -255,12 +263,15 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
               {categoryOptions.map((category) => {
                 const isSelected = selectedCategory === category.value;
                 const handleCategoryClick = () => {
-                  setSelectedCategory(isSelected ? '' : category.value);
+                  if (isNetworkAvailable) {
+                    setSelectedCategory(isSelected ? '' : category.value);
+                  }
                 };
 
                 return (
                   <button
-                    className={`${styles.categoryChip} ${isSelected ? styles.active : ''}`}
+                    className={`${styles.categoryChip} ${isSelected ? styles.active : ''} ${!isNetworkAvailable ? styles.disabled : ''}`}
+                    disabled={!isNetworkAvailable}
                     key={category.value}
                     onClick={handleCategoryClick}
                   >
@@ -273,7 +284,20 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
         </div>
 
         <div className={styles.fontPreviewArea}>
-          {loading ? (
+          {!isNetworkAvailable ? (
+            <div className={styles.offlineState}>
+              <div className={styles.offlineIcon}>🔌</div>
+              <Typography.Title level={4} style={{ color: '#8c8c8c', marginBottom: '8px' }}>
+                No Internet Connection
+              </Typography.Title>
+              <Typography.Text style={{ display: 'block', marginBottom: '16px', textAlign: 'center' }} type="secondary">
+                {getEmptyStateMessage()}
+              </Typography.Text>
+              <Button ghost onClick={() => window.location.reload()} type="primary">
+                Retry Connection
+              </Button>
+            </div>
+          ) : loading ? (
             <div className={styles.loading}>
               <Spin size="large" />
             </div>
@@ -330,7 +354,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
           <Button onClick={onClose} type="default">
             Cancel
           </Button>
-          <Button disabled={!selectedFont} onClick={handleSave} type="primary">
+          <Button disabled={!selectedFont || !isNetworkAvailable} onClick={handleSave} type="primary">
             Save
           </Button>
         </div>

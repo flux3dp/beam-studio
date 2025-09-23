@@ -110,8 +110,20 @@ const isLocalFont = (fontFamily: string): boolean => {
 };
 
 /**
- * Load Google Fonts from font history with CSS only
- * Enhanced with robust local font filtering to prevent processing local fonts as Google Fonts
+ * Clean Google Fonts from font history when offline to prevent future loading attempts
+ * Keeps only local and web-safe fonts in the history
+ */
+const cleanGoogleFontsFromHistory = (fontHistory: string[]): void => {
+  const fontStore = useGoogleFontStore.getState();
+  const cleanedHistory = fontHistory.filter((family) => isLocalFont(family) || fontStore.isWebSafeFont(family));
+
+  if (cleanedHistory.length !== fontHistory.length) {
+    useStorageStore.getState().set('font-history', cleanedHistory);
+  }
+};
+
+/**
+ * Load Google Fonts from font history when online, skip and clean history when offline
  */
 const loadHistoryGoogleFonts = (): void => {
   const fontHistory = useStorageStore.getState()['font-history'];
@@ -120,53 +132,105 @@ const loadHistoryGoogleFonts = (): void => {
     return;
   }
 
-  console.log(`🔍 Processing font history: ${fontHistory.length} fonts`);
+  const fontStore = useGoogleFontStore.getState();
+  const networkAvailable = fontStore.isNetworkAvailableForGoogleFonts();
 
-  // Enhanced filtering to exclude local fonts using localFontHelper
-  const googleFontsFromHistory = fontHistory.filter((family) => {
-    const isLocal = isLocalFont(family);
-
-    if (isLocal) {
-      console.log(`🚫 Skipping local font from history: ${family}`);
-
-      return false;
-    }
-
-    console.log(`✅ Including potential Google Font from history: ${family}`);
-
-    return true;
-  });
-
-  if (googleFontsFromHistory.length === 0) {
-    console.log(`🔍 No Google Fonts found in history after filtering`);
+  if (!networkAvailable) {
+    cleanGoogleFontsFromHistory(fontHistory);
 
     return;
   }
 
-  console.log(
-    `🔍 Loading ${googleFontsFromHistory.length} Google Fonts from history: ${googleFontsFromHistory.join(', ')}`,
-  );
+  const googleFontsFromHistory = fontHistory.filter((family) => !isLocalFont(family));
 
-  // Load CSS using the store
-  const store = useGoogleFontStore.getState();
+  if (googleFontsFromHistory.length === 0) {
+    return;
+  }
 
   googleFontsFromHistory.forEach((family) => {
-    store.loadGoogleFont(family);
+    fontStore.loadGoogleFont(family);
   });
 };
 
 /**
- * Scan current document context for Google Fonts being used by text elements
- * Enhanced to handle specific font variants (Bold, Italic) with proper PostScript names
- * This ensures that Google Fonts in loaded files get their CSS loaded and variants registered
+ * Replace Google Fonts with web-safe fallbacks in SVG text elements
+ */
+const applyGoogleFontFallbacks = (textElements: SVGTextElement[], store: any): void => {
+  let replacementCount = 0;
+  const replacements: Array<{ from: string; to: string }> = [];
+
+  textElements.forEach((textElem) => {
+    const fontFamily = textElem.getAttribute('font-family');
+
+    if (fontFamily) {
+      const cleanFamily = fontFamily.replace(/^['"]+|['"]+$/g, '').trim();
+
+      if (store.isWebSafeFont(cleanFamily) || isLocalFont(cleanFamily)) {
+        return;
+      }
+
+      const fallbackFont = store.getFallbackFont(cleanFamily);
+      const fallbackPostScriptName = store.getFallbackPostScriptName(fallbackFont);
+
+      textElem.setAttribute('font-family', fallbackFont);
+
+      const postScriptName = textElem.getAttribute('font-postscript-name');
+
+      if (postScriptName) {
+        textElem.setAttribute('font-postscript-name', fallbackPostScriptName);
+      }
+
+      const dataPostScriptName = textElem.getAttribute('data-postscript-name');
+
+      if (dataPostScriptName) {
+        textElem.setAttribute('data-postscript-name', fallbackPostScriptName);
+      }
+
+      const allAttributes = textElem.attributes;
+
+      for (const attr of allAttributes) {
+        if (
+          attr.name.toLowerCase().includes('postscript') &&
+          attr.name !== 'font-postscript-name' &&
+          attr.name !== 'data-postscript-name'
+        ) {
+          textElem.setAttribute(attr.name, fallbackPostScriptName);
+        }
+      }
+
+      const existingReplacement = replacements.find((r) => r.from === cleanFamily);
+
+      if (!existingReplacement) {
+        replacements.push({ from: cleanFamily, to: fallbackFont });
+      }
+
+      replacementCount++;
+    }
+  });
+
+  if (replacementCount > 0) {
+    console.log(`🔄 Applied ${replacementCount} Google Font fallbacks during offline import`);
+  }
+};
+
+/**
+ * Load Google Fonts from document context or apply fallbacks when offline
  */
 export const loadContextGoogleFonts = (): void => {
   try {
-    const store = useGoogleFontStore.getState();
+    const googleFontStore = useGoogleFontStore.getState();
     const textElements = [
       ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
       ...document.querySelectorAll('#svg_defs text'),
     ] as SVGTextElement[];
+
+    const networkAvailable = googleFontStore.isNetworkAvailableForGoogleFonts();
+
+    if (!networkAvailable) {
+      applyGoogleFontFallbacks(textElements, googleFontStore);
+
+      return;
+    }
 
     if (textElements.length === 0) {
       return;
@@ -224,11 +288,11 @@ export const loadContextGoogleFonts = (): void => {
 
     Array.from(fontVariantsInContext.values()).forEach(({ family, italic, style, weight }) => {
       // Load the font family CSS if not already loaded
-      if (!store.isGoogleFontLoaded(family)) {
-        store.loadGoogleFont(family);
+      if (!googleFontStore.isGoogleFontLoaded(family)) {
+        googleFontStore.loadGoogleFont(family);
       }
 
-      const googleFont = createGoogleFontObject(family, weight, italic, style, store.loadGoogleFontBinary);
+      const googleFont = createGoogleFontObject(family, weight, italic, style, googleFontStore.loadGoogleFontBinary);
 
       registerGoogleFont(googleFont);
       console.log(`Registered Google Font variant: ${googleFont.postscriptName} (${googleFont.style})`);
