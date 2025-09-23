@@ -54,68 +54,68 @@ export class LayerManager {
   /**
    * Returns the number of layers in the current drawing
    */
-  public getNumLayers(): number {
+  public getNumLayers = (): number => {
     return this.allLayers.length;
-  }
+  };
 
   /**
    * Check if layer with given name already exists
    */
-  public hasLayer(name: string): boolean {
+  public hasLayer = (name: string): boolean => {
     return this.layerMap.has(name);
-  }
+  };
 
   /**
    * Returns the name of the ith layer. If the index is out of range, an empty string is returned.
    */
-  public getLayerName(i: number): string {
+  public getLayerName = (i: number): string => {
     return i >= 0 && i < this.getNumLayers() ? this.allLayers[i].getName() : '';
-  }
+  };
 
   /**
    * Get all layer names
    */
-  public getAllLayerNames(): string[] {
+  public getAllLayerNames = (): string[] => {
     return this.allLayers.map((layer) => layer.getName());
-  }
+  };
 
   /**
    * Returns the SVGGElement representing the current layer
    */
-  public getCurrentLayer(): Layer | null {
+  public getCurrentLayer = (): Layer | null => {
     return this.currentLayer ?? null;
-  }
+  };
 
   /**
    * Get a layer by name
    */
-  public getLayerByName(name: string): Layer | null {
+  public getLayerByName = (name: string): Layer | null => {
     const layer = this.layerMap.get(name);
 
     return layer ?? null;
-  }
+  };
 
-  public getLayerElementByName(name: string): null | SVGGElement {
+  public getLayerElementByName = (name: string): null | SVGGElement => {
     const layer = this.layerMap.get(name);
 
     return layer ? layer.getGroup() : null;
-  }
+  };
 
   /**
    * Returns the name of the currently selected layer
    */
-  public getCurrentLayerName(): string {
+  public getCurrentLayerName = (): string => {
     return this.currentLayer ? this.currentLayer.getName() : '';
-  }
+  };
 
-  public getCurrentLayerElement(): null | SVGGElement {
+  public getCurrentLayerElement = (): null | SVGGElement => {
     return this.currentLayer ? this.currentLayer.getGroup() : null;
-  }
+  };
 
   /**
    * Set the current layer's name
    */
-  public setCurrentLayerName(name: string): null | string {
+  public setCurrentLayerName = (name: string): null | string => {
     let finalName: null | string = null;
 
     if (this.currentLayer) {
@@ -130,12 +130,18 @@ export class LayerManager {
     }
 
     return finalName;
-  }
+  };
 
   /**
    * Merge current layer with the previous layer
    */
-  public mergeLayer({ addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand }): void {
+  public mergeLayer = ({
+    addToHistory = true,
+    parentCmd,
+  }: {
+    addToHistory?: boolean;
+    parentCmd?: IBatchCommand;
+  }): void => {
     if (!this.currentLayer) return;
 
     const currentGroup = this.currentLayer.getGroup();
@@ -182,12 +188,12 @@ export class LayerManager {
 
     if (parentCmd) parentCmd.addSubCommand(batchCmd);
     else if (addToHistory !== false) undoManager.addCommandToHistory(batchCmd);
-  }
+  };
 
   /**
    * Sets the current layer. Returns true if successful, false otherwise.
    */
-  public setCurrentLayer(name: string): boolean {
+  public setCurrentLayer = (name: string): boolean => {
     const layer = this.layerMap.get(name);
 
     if (layer) {
@@ -197,7 +203,7 @@ export class LayerManager {
     }
 
     return false;
-  }
+  };
 
   /**
    * Find the layer name in a group element
@@ -231,7 +237,7 @@ export class LayerManager {
   /**
    * Updates layer system and sets the current layer to the top-most layer
    */
-  public identifyLayers(): void {
+  public identifyLayers = (): void => {
     this.allLayers = [];
     this.layerMap.clear();
 
@@ -283,15 +289,15 @@ export class LayerManager {
     }
 
     this.currentLayer = layer;
-  }
+  };
 
   /**
    * Creates a new top-level layer in the drawing with the given name
    */
-  public createLayer(
+  public createLayer = (
     name?: string,
     { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
-  ): Layer | null {
+  ): Layer | null => {
     // Check for duplicate name or generate new one
     if (!name || name === '' || this.layerMap.has(name)) {
       name = this.getNewLayerName(Array.from(this.layerMap.keys()), name || 'Layer');
@@ -314,7 +320,7 @@ export class LayerManager {
     this.currentLayer = layer;
 
     return layer;
-  }
+  };
 
   /**
    * Returns the layer color
@@ -338,43 +344,43 @@ export class LayerManager {
   /**
    * Returns the opacity of the given layer
    */
-  public getLayerOpacity(layerName: string): null | number {
+  public getLayerOpacity = (layerName: string): null | number => {
     const layer = this.layerMap.get(layerName);
 
     if (!layer) return null;
 
     return layer.getOpacity();
-  }
+  };
 
   /**
    * Sets the opacity of the given layer
    */
-  public setLayerOpacity(layerName: string, opacity: number): void {
+  public setLayerOpacity = (layerName: string, opacity: number): void => {
     if (opacity < 0.0 || opacity > 1.0) return;
 
     const layer = this.layerMap.get(layerName);
 
     if (layer) layer.setOpacity(opacity);
-  }
+  };
 
   /**
    * Get all layers
    */
-  public getAllLayers(): Layer[] {
+  public getAllLayers = (): Layer[] => {
     return [...this.allLayers];
-  }
+  };
 
   /**
    * Get layer by index
    */
-  public getLayerByIndex(index: number): Layer | null {
+  public getLayerByIndex = (index: number): Layer | null => {
     return this.allLayers[index] || null;
-  }
+  };
 
   /**
    * Move layer to new position
    */
-  public moveLayer(fromIndex: number, toIndex: number): boolean {
+  public moveLayer = (fromIndex: number, toIndex: number): boolean => {
     if (
       fromIndex < 0 ||
       fromIndex >= this.allLayers.length ||
@@ -407,23 +413,23 @@ export class LayerManager {
     }
 
     return true;
-  }
+  };
 
   /**
    * Clear all layers
    */
-  public clear(): void {
+  public clear = (): void => {
     this.allLayers = [];
     this.layerMap.clear();
     this.currentLayer = null;
-  }
+  };
 
-  public reset(svgContent: SVGSVGElement, identifyLayers = false): void {
+  public reset = (svgContent: SVGSVGElement, identifyLayers = false): void => {
     this.clear();
     this.svgContent = svgContent;
 
     if (identifyLayers) this.identifyLayers();
-  }
+  };
 }
 
 export const layerManager = new LayerManager(document.createElementNS(NS.SVG, 'svg'));
