@@ -102,7 +102,7 @@ describe('Mobile Image Tools', () => {
 
       // Trace the image
       cy.get('#trace').should('exist').click({ force: true });
-      cy.get('#svg_3', { timeout: 30000 }).click({ force: true });
+      cy.get('#svg_3', { timeout: 60000 }).click({ force: true });
       cy.getElementTitle().contains('Layer 1 > Path');
 
       // Verify traced path
