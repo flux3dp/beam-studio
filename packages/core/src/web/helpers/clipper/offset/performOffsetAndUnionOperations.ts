@@ -3,6 +3,7 @@ import { match, P } from 'ts-pattern';
 import ClipperBase from '../clipper';
 import getClipperLib from '../getClipperLib';
 
+import { calculateResultHierarchy } from './calculateResultHierarchy';
 import type { OffsetMode, Path } from './constants';
 import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from './constants';
 import { processElementForOffset } from './processElementForOffset';
@@ -41,25 +42,12 @@ export async function performOffsetAndUnionOperations(
         const individualOffsetResult = (await offsetClipper.execute([], delta)) as Path[];
 
         if (mode === 'inward') {
-          // For inward mode, we find the holes of THIS element and save them.
           if (individualOffsetResult.length > 1) {
-            let maxArea = 0;
-            let outerPathIndex = -1;
+            const paths = calculateResultHierarchy(individualOffsetResult)
+              .filter((item) => item.parent >= 0)
+              .map((item) => item.path);
 
-            individualOffsetResult.forEach((path, index) => {
-              const area = ClipperLib.Clipper.Area(path);
-
-              if (area > maxArea) {
-                maxArea = area;
-                outerPathIndex = index;
-              }
-            });
-
-            if (outerPathIndex !== -1) {
-              const holes = individualOffsetResult.filter((_, index) => index !== outerPathIndex);
-
-              pathsForFinalProcessing.push(holes);
-            }
+            pathsForFinalProcessing.push(paths);
           }
         } else {
           pathsForFinalProcessing.push(individualOffsetResult);

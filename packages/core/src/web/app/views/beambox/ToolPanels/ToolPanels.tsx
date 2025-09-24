@@ -104,7 +104,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
       .with('offset', () => async () => {
         const { cornerType, distance, mode } = newOffset || offset;
 
-        await offsetElements(mode, _mm2pixel(distance), cornerType as 'round' | 'sharp');
+        await offsetElements(mode, _mm2pixel(distance), cornerType);
         unmount();
         svgCanvas.setMode('select');
         drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
