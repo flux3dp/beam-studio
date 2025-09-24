@@ -1,22 +1,25 @@
-// Removed unused ts-pattern imports since we're using helper functions now
+import { match, P } from 'ts-pattern';
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
+import {
+  CACHE_EXPIRY_TIME,
+  calculateRetryDelay,
+  fetchWithRetry,
+  MAX_RETRY_ATTEMPTS,
+  REQUEST_TIMEOUT,
+} from '@core/helpers/fonts/cacheUtils';
 import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GoogleFontFiles } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
-// Network and timing constants
-const FONT_LOAD_TIMEOUT = 10000;
-const MAX_RETRY_ATTEMPTS = 3;
-const RETRY_DELAY_BASE = 1000;
+const FONT_LOAD_TIMEOUT = REQUEST_TIMEOUT;
 const RETRY_JITTER_MAX = 1000;
 const MAX_CONCURRENT_LOADS = 5;
-const CACHE_EXPIRY_TIME = 24 * 60 * 60 * 1000; // 24 hours
-const NETWORK_STATE_CHECK_INTERVAL = 30000; // 30 seconds
-const CSS_CLEANUP_INTERVAL = 300000; // 5 minutes
+const NETWORK_STATE_CHECK_INTERVAL = 30000;
+const CSS_CLEANUP_INTERVAL = 300000;
 
 // Font processing constants
 const DEFAULT_FONT_WEIGHT = 400;
@@ -37,19 +40,23 @@ const discoverAvailableVariants = (variants: string[]) => {
   const available = new Set<keyof GoogleFontFiles>();
 
   for (const variant of variants) {
-    if (variant === 'regular') {
-      available.add('regular');
-      available.add('400');
-    } else if (variant === 'italic') {
-      available.add('italic');
-      available.add('400italic');
-    } else if (variant.endsWith('italic')) {
-      const weight = variant.replace('italic', '');
+    match(variant)
+      .with('regular', () => {
+        available.add('regular');
+        available.add('400');
+      })
+      .with('italic', () => {
+        available.add('italic');
+        available.add('400italic');
+      })
+      .with(P.string.regex(/^\d+italic$/), () => {
+        const weight = variant.replace('italic', '');
 
-      available.add(`${weight}italic` as keyof GoogleFontFiles);
-    } else if (/^\d+$/.test(variant)) {
-      available.add(variant as keyof GoogleFontFiles);
-    }
+        available.add(`${weight}italic` as keyof GoogleFontFiles);
+      })
+      .with(P.string.regex(/^\d+$/), () => {
+        available.add(variant as keyof GoogleFontFiles);
+      });
   }
 
   return available;
@@ -273,43 +280,8 @@ const getFallbackFont = (googleFontFamily: string): string => {
   return DEFAULT_FALLBACK_FONT;
 };
 
-const calculateRetryDelay = (attempt: number): number => {
-  return RETRY_DELAY_BASE * Math.pow(2, attempt - 1) + Math.random() * RETRY_JITTER_MAX;
-};
-
-const createTimeoutPromise = (ms: number): Promise<never> => {
-  return new Promise((_, reject) => {
-    setTimeout(() => reject(new Error(`Operation timed out after ${ms}ms`)), ms);
-  });
-};
-
-const fetchWithRetry = async (url: string, attempts = 1): Promise<Response> => {
-  let lastError: Error;
-
-  for (let attempt = 1; attempt <= attempts; attempt++) {
-    try {
-      const fetchPromise = fetch(url);
-      const timeoutPromise = createTimeoutPromise(FONT_LOAD_TIMEOUT);
-
-      const response = await Promise.race([fetchPromise, timeoutPromise]);
-
-      if (response.ok) {
-        return response;
-      }
-
-      throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-    } catch (error) {
-      lastError = error as Error;
-
-      if (attempt < attempts) {
-        const delay = calculateRetryDelay(attempt);
-
-        await new Promise((resolve) => setTimeout(resolve, delay));
-      }
-    }
-  }
-
-  throw lastError!;
+const calculateRetryDelayWithJitter = (attempt: number): number => {
+  return calculateRetryDelay(attempt, RETRY_JITTER_MAX);
 };
 
 export interface NetworkState {
@@ -442,7 +414,7 @@ const createBinaryLoader = (
         return null;
       }
 
-      const fontResponse = await fetchWithRetry(fontUrl as string, MAX_RETRY_ATTEMPTS);
+      const fontResponse = await fetchWithRetry(() => fetch(fontUrl as string), MAX_RETRY_ATTEMPTS);
       const ttfBuffer = await fontResponse.arrayBuffer();
       const loadTime = Date.now() - startTime;
 
@@ -824,7 +796,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
             retryCount++;
 
             if (retryCount < MAX_RETRY_ATTEMPTS) {
-              const delay = calculateRetryDelay(retryCount);
+              const delay = calculateRetryDelayWithJitter(retryCount);
 
               await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -1295,7 +1267,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         if (!failedLoad) return;
 
         const timeSinceLastAttempt = Date.now() - failedLoad.lastAttempt;
-        const minimumWaitTime = calculateRetryDelay(failedLoad.count);
+        const minimumWaitTime = calculateRetryDelayWithJitter(failedLoad.count);
 
         if (timeSinceLastAttempt < minimumWaitTime) {
           return;
