@@ -13,9 +13,9 @@ import {
 import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GoogleFontFiles } from '@core/helpers/fonts/googleFontsApiCache';
+import localFontHelper from '@core/implementations/localFontHelper';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
-const FONT_LOAD_TIMEOUT = REQUEST_TIMEOUT;
 const RETRY_JITTER_MAX = 1000;
 const MAX_CONCURRENT_LOADS = 5;
 const NETWORK_STATE_CHECK_INTERVAL = 30000;
@@ -49,7 +49,7 @@ const discoverAvailableVariants = (variants: string[]) => {
         available.add('italic');
         available.add('400italic');
       })
-      .with(P.string.regex(/^\d+italic$/), () => {
+      .with(P.string.endsWith('italic'), () => {
         const weight = variant.replace('italic', '');
 
         available.add(`${weight}italic` as keyof GoogleFontFiles);
@@ -70,18 +70,13 @@ const findBestVariant = (
   requestedWeight: number,
   requestedStyle: 'italic' | 'normal',
 ): keyof GoogleFontFiles | null => {
-  // Helper to create variant keys safely
-  const createVariantKey = (style: 'italic' | 'normal', weight: number): keyof GoogleFontFiles => {
-    if (style === 'normal' && weight === 400) return 'regular';
-
-    if (style === 'italic' && weight === 400) return 'italic';
-
-    if (style === 'italic') return `${weight}italic` as keyof GoogleFontFiles;
-
-    return `${weight}` as keyof GoogleFontFiles;
-  };
-
-  // Try exact match first
+  const createVariantKey = (style: 'italic' | 'normal', weight: number): keyof GoogleFontFiles =>
+    match({ style, weight })
+      .with({ style: 'normal', weight: 400 }, () => 'regular')
+      .with({ style: 'italic', weight: 400 }, () => 'italic')
+      .with({ style: 'italic' }, ({ weight }) => `${weight}italic`)
+      .with({ style: 'normal' }, ({ weight }) => `${weight}`)
+      .exhaustive() as keyof GoogleFontFiles;
   const exactKey = createVariantKey(requestedStyle, requestedWeight);
 
   if (availableVariants.has(exactKey)) {
@@ -114,19 +109,11 @@ const findBestVariant = (
 };
 
 /**
- * Gets all variants needed for text editing (CSS + TTF for all available weights/styles)
- */
-const getAllVariantsForTextEditing = (availableVariants: Set<keyof GoogleFontFiles>) => {
-  return Array.from(availableVariants);
-};
-
-/**
  * Generates proper PostScript names for Google Font variants
  * Maps weight and style to standard PostScript naming conventions
  */
 const generateGoogleFontPostScriptName = (family: string, weight: number, italic: boolean): string => {
   const cleanFamily = family.replace(/\s+/g, '');
-
   // Standard Google Fonts weight to PostScript style mapping
   const weightStyles: Record<number, string> = {
     100: 'Thin',
@@ -139,7 +126,6 @@ const generateGoogleFontPostScriptName = (family: string, weight: number, italic
     800: 'ExtraBold',
     900: 'Black',
   };
-
   const weightStyle = weightStyles[weight] || 'Regular';
   const suffix = italic ? `${weightStyle}Italic` : weightStyle;
 
@@ -172,6 +158,20 @@ const isIconFont = (fontFamily: string): boolean => {
   const lowerName = fontFamily.toLowerCase();
 
   return ICON_FONT_KEYWORDS.some((keyword) => lowerName.includes(keyword));
+};
+
+const isLocalFont = (fontFamily: string): boolean => {
+  const foundFont = localFontHelper.findFont({ family: fontFamily });
+
+  if (foundFont && foundFont.family === fontFamily) {
+    return true;
+  }
+
+  if (isWebSafeFont(fontFamily)) {
+    return true;
+  }
+
+  return false;
 };
 
 const createNetworkDetector = (): NetworkState => {
@@ -278,10 +278,6 @@ const getFallbackFont = (googleFontFamily: string): string => {
 
   // Default to Arial for sans-serif fonts
   return DEFAULT_FALLBACK_FONT;
-};
-
-const calculateRetryDelayWithJitter = (attempt: number): number => {
-  return calculateRetryDelay(attempt, RETRY_JITTER_MAX);
 };
 
 export interface NetworkState {
@@ -597,6 +593,10 @@ export const useGoogleFontStore = create<GoogleFontState>()(
           return;
         }
 
+        if (isLocalFont(fontFamily)) {
+          return;
+        }
+
         if (isIconFont(fontFamily)) {
           return;
         }
@@ -709,9 +709,6 @@ export const useGoogleFontStore = create<GoogleFontState>()(
               }
             }
 
-            console.log(`🔧 Font ${fontFamily}: Available variants: [${Array.from(availableVariants).join(', ')}]`);
-            console.log(`🔧 Font ${fontFamily}: Best variant '${bestVariant}' → weight ${weight}`);
-
             // Detect italic-only fonts (fonts that only have italic variants, no normal variants)
             const hasNormalVariants = Array.from(availableVariants).some((v) => v === 'regular' || /^\d+$/.test(v));
             const hasOnlyItalicVariants =
@@ -722,13 +719,10 @@ export const useGoogleFontStore = create<GoogleFontState>()(
             if (hasOnlyItalicVariants) {
               // Use italic format for italic-only fonts like Molle
               fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:ital,wght@1,${weight}&display=swap`;
-              console.log(`🔧 Font ${fontFamily}: Using italic-only format (ital,wght@1,${weight})`);
             } else {
               // Use standard weight-based format for fonts with normal variants
               fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@${weight}&display=swap`;
             }
-
-            console.log(fontUrl);
 
             const state = get();
             const existingTracker = state.cssLinks.get(fontFamily);
@@ -752,8 +746,8 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
               await new Promise<void>((resolve, reject) => {
                 const timeout = setTimeout(() => {
-                  reject(new Error(`Font CSS load timeout after ${FONT_LOAD_TIMEOUT}ms`));
-                }, FONT_LOAD_TIMEOUT);
+                  reject(new Error(`Font CSS load timeout after ${REQUEST_TIMEOUT}ms`));
+                }, REQUEST_TIMEOUT);
 
                 link.onload = () => {
                   clearTimeout(timeout);
@@ -796,7 +790,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
             retryCount++;
 
             if (retryCount < MAX_RETRY_ATTEMPTS) {
-              const delay = calculateRetryDelayWithJitter(retryCount);
+              const delay = calculateRetryDelay(retryCount, RETRY_JITTER_MAX);
 
               await new Promise((resolve) => setTimeout(resolve, delay));
 
@@ -920,7 +914,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
           await new Promise<void>((resolve, reject) => {
             const timeout = setTimeout(() => {
               reject(new Error(`Font CSS load timeout for preview: ${fontFamily}`));
-            }, FONT_LOAD_TIMEOUT);
+            }, REQUEST_TIMEOUT);
 
             link.onload = () => {
               clearTimeout(timeout);
@@ -969,7 +963,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
           // Discover all available variants for comprehensive text editing support
           const availableVariants = discoverAvailableVariants(fontData.variants);
-          const allVariants = getAllVariantsForTextEditing(availableVariants);
+          const allVariants = Array.from(availableVariants);
 
           // Build CSS URL with all available variants
           const weights = allVariants
@@ -1047,7 +1041,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
           await new Promise<void>((resolve, reject) => {
             const timeout = setTimeout(() => {
               reject(new Error(`Font CSS load timeout: ${fontFamily}`));
-            }, FONT_LOAD_TIMEOUT);
+            }, REQUEST_TIMEOUT);
 
             link.onload = () => {
               clearTimeout(timeout);
@@ -1170,10 +1164,8 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
         await get().loadGoogleFont(fontFamily);
       },
-
       loadingFonts: new Set<string>(),
       networkState: createNetworkDetector(),
-
       processQueue: () => {
         const state = get();
 
@@ -1206,10 +1198,8 @@ export const useGoogleFontStore = create<GoogleFontState>()(
           }
         }
       },
-
       queuedFontLoads: [],
       registeredFonts: new Set<string>(),
-
       registerGoogleFont: async (fontFamily: string) => {
         const state = get();
 
@@ -1227,23 +1217,18 @@ export const useGoogleFontStore = create<GoogleFontState>()(
           }
 
           // Use the actual first variant from the font data
-          const firstVariant = fontData.variants[0];
-          let primaryWeight = DEFAULT_FONT_WEIGHT;
-          let primaryStyle: 'italic' | 'normal' = 'normal';
-
-          if (firstVariant === 'regular') {
-            primaryWeight = 400;
-            primaryStyle = 'normal';
-          } else if (firstVariant === 'italic') {
-            primaryWeight = 400;
-            primaryStyle = 'italic';
-          } else if (firstVariant.endsWith('italic')) {
-            primaryWeight = Number.parseInt(firstVariant.replace('italic', ''));
-            primaryStyle = 'italic';
-          } else if (/^\d+$/.test(firstVariant)) {
-            primaryWeight = Number.parseInt(firstVariant);
-            primaryStyle = 'normal';
-          }
+          const { primaryStyle, primaryWeight } = match(fontData.variants[0])
+            .with('regular', () => ({ primaryStyle: 'normal', primaryWeight: 400 }))
+            .with('italic', () => ({ primaryStyle: 'italic', primaryWeight: 400 }))
+            .with(P.string.endsWith('italic'), (v) => ({
+              primaryStyle: 'italic',
+              primaryWeight: Number.parseInt(v.replace('italic', '')),
+            }))
+            .with(P.string.regex(/^\d+$/), (v) => ({ primaryStyle: 'normal', primaryWeight: Number.parseInt(v) }))
+            .otherwise(() => ({ primaryStyle: 'normal', primaryWeight: 400 })) as {
+            primaryStyle: 'italic' | 'normal';
+            primaryWeight: number;
+          };
 
           const googleFont = createGoogleFontObject(fontFamily, primaryWeight, primaryStyle, (family, weight, style) =>
             state.loadGoogleFontBinary(family, weight, style),
@@ -1267,7 +1252,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
         if (!failedLoad) return;
 
         const timeSinceLastAttempt = Date.now() - failedLoad.lastAttempt;
-        const minimumWaitTime = calculateRetryDelayWithJitter(failedLoad.count);
+        const minimumWaitTime = calculateRetryDelay(failedLoad.count, RETRY_JITTER_MAX);
 
         if (timeSinceLastAttempt < minimumWaitTime) {
           return;
@@ -1275,9 +1260,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 
         await get().loadGoogleFont(fontFamily);
       },
-
       sessionLoadedFonts: new Set<string>(),
-
       updateNetworkState: () => {
         const newState = createNetworkDetector();
 
@@ -1295,7 +1278,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
 if (typeof window !== 'undefined') {
   const store = useGoogleFontStore.getState();
 
-  // 🔥 PHASE 1: Pre-populate Google Fonts cache during store initialization
+  // PHASE 1: Pre-populate Google Fonts cache during store initialization
   // This ensures cache is ready before any font loading operations (app startup, BVG import, etc.)
   googleFontsApiCache
     .getCache()

@@ -93,7 +93,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   }, [fonts, selectedCategory, selectedLanguage, searchText]);
 
   const searchOptions = useMemo(
-    () => allFilteredFonts.map((font) => ({ label: font.family, value: font.family })),
+    () => allFilteredFonts.map(({ family }) => ({ label: family, value: family })),
     [allFilteredFonts],
   );
 
@@ -286,16 +286,12 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
         <div className={styles.fontPreviewArea}>
           {!isNetworkAvailable ? (
             <div className={styles.offlineState}>
-              <div className={styles.offlineIcon}>🔌</div>
-              <Typography.Title level={4} style={{ color: '#8c8c8c', marginBottom: '8px' }}>
+              <Typography.Title className={styles.offlineTitle} level={4}>
                 No Internet Connection
               </Typography.Title>
-              <Typography.Text style={{ display: 'block', marginBottom: '16px', textAlign: 'center' }} type="secondary">
+              <Typography.Text className={styles.offlineMessage} type="secondary">
                 {getEmptyStateMessage()}
               </Typography.Text>
-              <Button ghost onClick={() => window.location.reload()} type="primary">
-                Retry Connection
-              </Button>
             </div>
           ) : loading ? (
             <div className={styles.loading}>

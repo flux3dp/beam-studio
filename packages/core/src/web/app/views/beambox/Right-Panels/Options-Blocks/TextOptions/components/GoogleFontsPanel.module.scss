@@ -164,6 +164,21 @@
     height: 100%;
   }
 
+  .offlineState {
+    padding: 40px;
+    text-align: center;
+
+    .offlineTitle {
+      color: #8c8c8c;
+      margin-bottom: 8px;
+    }
+
+    .offlineMessage {
+      display: block;
+      margin-bottom: 16px;
+    }
+  }
+
   .emptyState {
     display: flex;
     justify-content: center;

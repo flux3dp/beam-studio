@@ -1,3 +1,5 @@
+import { match, P } from 'ts-pattern';
+
 import { useStorageStore } from '@core/app/stores/storageStore';
 import localFontHelper from '@core/implementations/localFontHelper';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
@@ -30,8 +32,6 @@ const createGoogleFontObject = (
   weight,
 });
 
-// Note: Previously used module-level cache removed since localFontHelper is now used directly
-
 /**
  * Load static Google Fonts (predefined web fonts) with CSS only
  */
@@ -56,22 +56,20 @@ const loadStaticGoogleFonts = (lang: string): void => {
  * Normalize font family names for robust comparison
  * Handles various font name formats and edge cases
  */
-const normalizeFontName = (fontName: string): string => {
-  return fontName
+const normalizeFontName = (fontName: string): string =>
+  fontName
     .toLowerCase()
     .trim()
     .replace(/^['"]+|['"]+$/g, '') // Remove surrounding quotes
     .replace(/\s+/g, ' ') // Normalize whitespace
     .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
     .trim();
-};
 
 /**
  * Enhanced local font detection using localFontHelper
  * This leverages the same sophisticated font detection logic that fontHelper uses
  */
 const isLocalFont = (fontFamily: string): boolean => {
-  // Use localFontHelper's findFont method to check if the font exists locally
   const foundFont = localFontHelper.findFont({ family: fontFamily });
 
   if (foundFont && foundFont.family === fontFamily) {
@@ -81,27 +79,9 @@ const isLocalFont = (fontFamily: string): boolean => {
   // Additional check: get all available local fonts and do normalized comparison
   const localFonts = localFontHelper.getAvailableFonts();
   const normalizedTarget = normalizeFontName(fontFamily);
-
   const directMatch = localFonts.some((font) => normalizeFontName(font.family) === normalizedTarget);
 
   if (directMatch) {
-    return true;
-  }
-
-  // Check for common local font patterns (keep this as fallback)
-  const localFontPatterns = [
-    /^(arial|times|helvetica|verdana|trebuchet|comic|georgia|impact|tahoma|palatino)/i,
-    /^(system|ui-)/i, // System UI fonts
-    /^(sf|new york|avenir|hiragino|pingfang|noto)/i, // Common system fonts
-    /^(al |arabic|hebrew|thai|chinese|japanese|korean)/i, // Non-Latin fonts
-    /nf$/i, // Nerd Fonts pattern (like AirstreamNF)
-  ];
-
-  const isKnownLocalPattern = localFontPatterns.some((pattern) => pattern.test(fontFamily));
-
-  if (isKnownLocalPattern) {
-    console.log(`🔍 Detected local font pattern: ${fontFamily}`);
-
     return true;
   }
 
@@ -155,7 +135,7 @@ const loadHistoryGoogleFonts = (): void => {
  * Replace Google Fonts with web-safe fallbacks in SVG text elements
  */
 const applyGoogleFontFallbacks = (textElements: SVGTextElement[], store: any): void => {
-  let replacementCount = 0;
+  let fallbackCount = 0;
   const replacements: Array<{ from: string; to: string }> = [];
 
   textElements.forEach((textElem) => {
@@ -203,12 +183,12 @@ const applyGoogleFontFallbacks = (textElements: SVGTextElement[], store: any): v
         replacements.push({ from: cleanFamily, to: fallbackFont });
       }
 
-      replacementCount++;
+      fallbackCount++;
     }
   });
 
-  if (replacementCount > 0) {
-    console.log(`🔄 Applied ${replacementCount} Google Font fallbacks during offline import`);
+  if (fallbackCount > 0) {
+    console.log(`Applied ${fallbackCount} Google Font fallbacks during offline import`);
   }
 };
 
@@ -248,8 +228,6 @@ export const loadContextGoogleFonts = (): void => {
 
         // Skip if it's a local font using enhanced detection
         if (isLocalFont(cleanFamily)) {
-          console.log(`🚫 Skipping local font from document context: ${cleanFamily}`);
-
           return;
         }
 
@@ -257,22 +235,16 @@ export const loadContextGoogleFonts = (): void => {
         const fontWeightAttr = textElem.getAttribute('font-weight');
         const fontStyleAttr = textElem.getAttribute('font-style');
         const postscriptNameAttr = textElem.getAttribute('font-postscript-name');
-
         // Parse weight (default to 400 if not specified)
-        let weight = 400;
+        const weight = match(fontWeightAttr)
+          .with(P.union('normal', P.nullish), () => 400)
+          .with('bold', () => 700)
+          .otherwise((fontWeight) => {
+            const num = Number.parseInt(fontWeight, 10);
 
-        if (fontWeightAttr) {
-          const parsedWeight =
-            fontWeightAttr === 'normal' ? 400 : fontWeightAttr === 'bold' ? 700 : Number.parseInt(fontWeightAttr, 10);
-
-          if (!Number.isNaN(parsedWeight)) {
-            weight = parsedWeight;
-          }
-        }
-
-        // Parse italic (default to false if not specified)
+            return Number.isNaN(num) ? 400 : num;
+          });
         const italic = fontStyleAttr === 'italic' || fontStyleAttr === 'oblique';
-        // Generate proper PostScript name and style
         const postscriptName = postscriptNameAttr || generateGoogleFontPostScriptName(cleanFamily, weight, italic);
         const style = generateStyleFromWeightAndItalic(weight, italic);
 
@@ -294,7 +266,6 @@ export const loadContextGoogleFonts = (): void => {
       const googleFont = createGoogleFontObject(family, weight, italic, style, googleFontStore.loadGoogleFontBinary);
 
       googleFontRegistry.registerGoogleFont(googleFont);
-      console.log(`Registered Google Font variant: ${googleFont.postscriptName} (${googleFont.style})`);
     });
   } catch (error) {
     console.warn('Failed to scan document context for Google Fonts:', error);
@@ -363,7 +334,6 @@ export const lazyRegisterGoogleFontIfLoaded = (postscriptName: string): GeneralF
 
 /**
  * Comprehensive Google Fonts loading for app initialization
- * Uses the Zustand store directly for all operations
  * Includes cache warming to handle force refresh scenarios
  */
 export const loadAllInitialGoogleFonts = (lang: string, _availableFontFamilies: string[]): void => {
