@@ -127,7 +127,10 @@
         "sign": "./customCodeSign.windows.js",
         "certificateSubjectName": "FLUX TECHNOLOGY INC.",
         "publisherName": "FLUX TECHNOLOGY INC."
-      }
+      },
+      "target": [
+        "msi"
+      ]
     },
     "dmg": {
       "artifactName": "Beam Studio ${version}.${ext}",
