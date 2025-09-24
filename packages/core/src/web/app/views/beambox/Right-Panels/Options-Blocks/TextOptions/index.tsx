@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } 
 import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
-import { match } from 'ts-pattern';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
@@ -31,11 +30,11 @@ import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import {
+  createGoogleFontObject,
   FONT_FALLBACK_FAMILIES,
-  type FontWeight,
   generateGoogleFontPostScriptName,
   generateStyleFromWeightAndItalic,
-  WEIGHT_TO_STYLE_MAP,
+  getWeightAndStyleFromVariant,
 } from '@core/helpers/fonts/fontUtils';
 import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
@@ -45,7 +44,7 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
 import { isVariableTextSupported } from '@core/helpers/variableText';
-import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
+import type { GeneralFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
@@ -61,32 +60,6 @@ const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 
 const isLocalFont = (font: GeneralFont) => 'path' in font;
 
-// generateGoogleFontPostScriptName and generateStyleFromWeightAndItalic are now imported from constants
-
-const parseGoogleFontVariant = (variant: string) =>
-  match(variant)
-    .with('regular', () => ({ italic: false, style: 'Regular', weight: 400 }))
-    .with('italic', () => ({ italic: true, style: 'Italic', weight: 400 }))
-    .when(
-      (v) => v.endsWith('italic'),
-      (v) => {
-        const parsedWeight = Number.parseInt(v.replace('italic', ''));
-        const styleName = WEIGHT_TO_STYLE_MAP[parsedWeight as FontWeight] || 'Regular';
-
-        return { italic: true, style: `${styleName} Italic`, weight: parsedWeight };
-      },
-    )
-    .when(
-      (v) => /^\d+$/.test(v),
-      (v) => {
-        const parsedWeight = Number.parseInt(v);
-        const styleName = WEIGHT_TO_STYLE_MAP[parsedWeight as FontWeight] || 'Regular';
-
-        return { italic: false, style: styleName, weight: parsedWeight };
-      },
-    )
-    .otherwise(() => ({ italic: false, style: 'Regular', weight: 400 }));
-
 const findFallbackFont = (targetFont: GeneralFont, availableFamilies: string[]): string | undefined => {
   const candidateFonts = [targetFont.family, ...FONT_FALLBACK_FAMILIES];
 
@@ -99,22 +72,6 @@ const findFallbackFont = (targetFont: GeneralFont, availableFamilies: string[]):
     )
   );
 };
-
-const createGoogleFontObject = (
-  family: string,
-  weight: number,
-  italic: boolean,
-  style: string,
-  binaryLoader: (family: string) => Promise<ArrayBuffer | null>,
-): GoogleFont => ({
-  binaryLoader,
-  family,
-  italic,
-  postscriptName: generateGoogleFontPostScriptName(family, weight, italic),
-  source: 'google' as const,
-  style,
-  weight,
-});
 
 const isGoogleFontLoaded = (
   fontFamily: string,
@@ -221,7 +178,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     styleOptions,
     waitForWebFont,
   } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
-  const { addToHistory, loadGoogleFontBinary, sessionLoadedFonts } = useGoogleFontStore();
+  const { addToHistory, loadGoogleFontBinary: binaryLoader, sessionLoadedFonts } = useGoogleFontStore();
 
   const proactivelyLoadHistoryFonts = useCallback(() => {
     if (fontHistory && fontHistory.length > 0) {
@@ -436,9 +393,9 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   };
 
   const handleGoogleFontSelect = useCallback(
-    async (googleFontFamily: string) => {
+    async (fontFamily: string) => {
       const localFonts = FontFuncs.requestAvailableFontFamilies();
-      const googleFontLower = googleFontFamily.toLowerCase();
+      const googleFontLower = fontFamily.toLowerCase();
       const localFontMatch = localFonts.find((f) => f.toLowerCase() === googleFontLower);
 
       if (localFontMatch) {
@@ -472,15 +429,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onConfigChange('fontStyle', localFont.style);
       } else {
         // Load the font properly through the store system
-        await useGoogleFontStore.getState().loadGoogleFontForTextEditing(googleFontFamily);
+        await useGoogleFontStore.getState().loadGoogleFontForTextEditing(fontFamily);
 
         // Get the first available variant for this font family
-        const fontData = await googleFontsApiCache.findFont(googleFontFamily);
+        const fontData = await googleFontsApiCache.findFont(fontFamily);
 
         if (fontData && fontData.variants && fontData.variants.length > 0) {
-          const firstVariant = fontData.variants[0];
-          const { italic = false, style = 'Regular', weight = 400 } = parseGoogleFontVariant(firstVariant);
-          const googleFont = createGoogleFontObject(googleFontFamily, weight, italic, style, loadGoogleFontBinary);
+          const { style, weight } = getWeightAndStyleFromVariant(fontData.variants[0]);
+          const googleFont = createGoogleFontObject({ binaryLoader, fontFamily, style, weight });
 
           addToHistory(googleFont);
           googleFontRegistry.registerGoogleFont(googleFont);
@@ -491,7 +447,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
             textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
             textEdit.setItalic(googleFont.italic, true, textElements),
             textEdit.setFontWeight(googleFont.weight, true, textElements),
-            textEdit.setFontFamily(googleFontFamily, true, textElements),
+            textEdit.setFontFamily(fontFamily, true, textElements),
           ].forEach((cmd) => {
             if (cmd) batchCmd.addSubCommand(cmd);
           });
@@ -499,11 +455,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
           await waitForWebFont();
 
-          onConfigChange('fontFamily', googleFontFamily);
+          onConfigChange('fontFamily', fontFamily);
           onConfigChange('fontStyle', style);
         } else {
           // Fallback to Regular if font data not available
-          const googleFont = createGoogleFontObject(googleFontFamily, 400, false, 'Regular', loadGoogleFontBinary);
+          const googleFont = createGoogleFontObject({ binaryLoader, fontFamily, style: 'Regular', weight: 400 });
 
           addToHistory(googleFont);
           googleFontRegistry.registerGoogleFont(googleFont);
@@ -514,7 +470,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
             textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
             textEdit.setItalic(googleFont.italic, true, textElements),
             textEdit.setFontWeight(googleFont.weight, true, textElements),
-            textEdit.setFontFamily(googleFontFamily, true, textElements),
+            textEdit.setFontFamily(fontFamily, true, textElements),
           ].forEach((cmd) => {
             if (cmd) batchCmd.addSubCommand(cmd);
           });
@@ -522,12 +478,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
           await waitForWebFont();
 
-          onConfigChange('fontFamily', googleFontFamily);
+          onConfigChange('fontFamily', fontFamily);
           onConfigChange('fontStyle', 'Regular');
         }
       }
     },
-    [addToHistory, textElements, waitForWebFont, onConfigChange, loadGoogleFontBinary],
+    [addToHistory, textElements, waitForWebFont, onConfigChange, binaryLoader],
   );
 
   const renderFontFamilyBlock = (): React.JSX.Element => {

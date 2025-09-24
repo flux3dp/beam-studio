@@ -1,17 +1,8 @@
 /* eslint-disable perfectionist/sort-objects */
-/**
- * Centralized font utilities, constants, and helper functions
- *
- * This module provides:
- * - Font weight and style mapping constants
- * - Google Font PostScript name generation and parsing
- * - Font detection and validation utilities
- * - Type definitions for font-related operations
- *
- * Ensures consistent font handling across the entire application.
- */
+import { match, P } from 'ts-pattern';
 
-// Font weight to human-readable style name mapping
+import type { GoogleFont } from '@core/interfaces/IFont';
+
 export const WEIGHT_TO_STYLE_MAP = {
   100: 'Thin',
   200: 'Extra Light',
@@ -24,7 +15,6 @@ export const WEIGHT_TO_STYLE_MAP = {
   900: 'Black',
 } as const;
 
-// Font weight to PostScript style suffix mapping (no spaces, camelCase)
 export const WEIGHT_TO_POSTSCRIPT_MAP = {
   100: 'Thin',
   200: 'ExtraLight',
@@ -37,7 +27,6 @@ export const WEIGHT_TO_POSTSCRIPT_MAP = {
   900: 'Black',
 } as const;
 
-// Reverse mapping for PostScript style names to weight numbers
 export const POSTSCRIPT_TO_WEIGHT_MAP = {
   Thin: 100,
   ExtraLight: 200,
@@ -50,13 +39,9 @@ export const POSTSCRIPT_TO_WEIGHT_MAP = {
   Black: 900,
 } as const;
 
-// Font fallback families in order of preference
 export const FONT_FALLBACK_FAMILIES = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', 'Noto Sans'] as const;
-
-// Common font categories for Google Fonts
 export const FONT_CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'] as const;
 
-// Type definitions for better type safety
 export type FontWeight = keyof typeof WEIGHT_TO_STYLE_MAP;
 export type FontStyleName = (typeof WEIGHT_TO_STYLE_MAP)[FontWeight];
 export type PostScriptStyleName = (typeof WEIGHT_TO_POSTSCRIPT_MAP)[FontWeight];
@@ -92,28 +77,6 @@ export const generateStyleFromWeightAndItalic = (weight: number, italic: boolean
   const weightName = WEIGHT_TO_STYLE_MAP[weight as FontWeight] || 'Regular';
 
   return italic ? `${weightName} Italic` : weightName;
-};
-
-/**
- * Parse PostScript variant suffix to extract weight and italic information
- * @param variantPart - PostScript suffix (e.g., "Bold", "BoldItalic", "Regular")
- * @returns Object with weight and italic properties
- */
-export const parsePostScriptVariant = (variantPart: string): { italic: boolean; weight: number } => {
-  let weight = 400;
-  let italic = false;
-
-  if (variantPart.endsWith('Italic')) {
-    italic = true;
-
-    const weightPart = variantPart.replace('Italic', '');
-
-    weight = POSTSCRIPT_TO_WEIGHT_MAP[weightPart as PostScriptStyleName] || 400;
-  } else {
-    weight = POSTSCRIPT_TO_WEIGHT_MAP[variantPart as PostScriptStyleName] || 400;
-  }
-
-  return { weight, italic };
 };
 
 /**
@@ -164,4 +127,46 @@ export const extractFamilyFromPostScriptName = (postscriptName: string): null | 
       .replace(/([A-Z])/g, ' $1')
       .trim()
   );
+};
+
+export const getWeightAndStyleFromVariant = (variant: string) =>
+  match(variant)
+    .with('regular', () => ({ style: 'Regular', weight: 400 }))
+    .with('italic', () => ({ style: 'Italic', weight: 400 }))
+    .with(P.string.endsWith('italic'), (v) => {
+      const weight = Number.parseInt(v.replace('italic', ''), 10) as FontWeight;
+      const style = WEIGHT_TO_STYLE_MAP[weight] || 'Italic';
+
+      return { style: `${style} Italic`, weight };
+    })
+    .with(P.string.regex(/^\d+$/), (v) => {
+      const weight = Number.parseInt(v, 10) as FontWeight;
+      const style = WEIGHT_TO_STYLE_MAP[weight] || 'Regular';
+
+      return { style, weight };
+    })
+    .otherwise(() => ({ style: 'Regular', weight: 400 }));
+
+export const createGoogleFontObject = ({
+  fontFamily,
+  weight = 400,
+  style = 'Regular',
+  binaryLoader,
+}: {
+  binaryLoader: (fontFamily: string, weight?: number, style?: 'italic' | 'normal') => Promise<ArrayBuffer | null>;
+  fontFamily: string;
+  style?: string;
+  weight?: number;
+}): GoogleFont => {
+  const italic = /italic/i.test(style);
+
+  return {
+    binaryLoader,
+    family: fontFamily,
+    italic,
+    postscriptName: generateGoogleFontPostScriptName(fontFamily, weight, italic),
+    source: 'google',
+    style,
+    weight,
+  };
 };

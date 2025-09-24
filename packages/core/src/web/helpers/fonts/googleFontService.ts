@@ -2,35 +2,16 @@ import { match, P } from 'ts-pattern';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
 import localFontHelper from '@core/implementations/localFontHelper';
-import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
 import { useGoogleFontStore } from '../../app/stores/googleFontStore';
 
 import {
-  extractFamilyFromPostScriptName,
+  createGoogleFontObject,
   generateGoogleFontPostScriptName,
   generateStyleFromWeightAndItalic,
-  POSTSCRIPT_TO_WEIGHT_MAP,
-  type PostScriptStyleName,
 } from './fontUtils';
 import { googleFontRegistry } from './googleFontRegistry';
 import googleFonts from './webFonts.google';
-
-const createGoogleFontObject = (
-  family: string,
-  weight: number,
-  italic: boolean,
-  style: string,
-  binaryLoader: (family: string) => Promise<ArrayBuffer | null>,
-): GoogleFont => ({
-  binaryLoader,
-  family,
-  italic,
-  postscriptName: generateGoogleFontPostScriptName(family, weight, italic),
-  source: 'google' as const,
-  style,
-  weight,
-});
 
 /**
  * Load static Google Fonts (predefined web fonts) with CSS only
@@ -202,7 +183,6 @@ export const loadContextGoogleFonts = (): void => {
       ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
       ...document.querySelectorAll('#svg_defs text'),
     ] as SVGTextElement[];
-
     const networkAvailable = googleFontStore.isNetworkAvailableForGoogleFonts();
 
     if (!networkAvailable) {
@@ -257,79 +237,24 @@ export const loadContextGoogleFonts = (): void => {
       return;
     }
 
-    Array.from(fontVariantsInContext.values()).forEach(({ family, italic, style, weight }) => {
+    Array.from(fontVariantsInContext.values()).forEach(({ family, style, weight }) => {
       // Load the font family CSS if not already loaded
       if (!googleFontStore.isGoogleFontLoaded(family)) {
         googleFontStore.loadGoogleFont(family);
       }
 
-      const googleFont = createGoogleFontObject(family, weight, italic, style, googleFontStore.loadGoogleFontBinary);
+      const googleFont = createGoogleFontObject({
+        binaryLoader: googleFontStore.loadGoogleFontBinary,
+        fontFamily: family,
+        style,
+        weight,
+      });
 
       googleFontRegistry.registerGoogleFont(googleFont);
     });
   } catch (error) {
     console.warn('Failed to scan document context for Google Fonts:', error);
   }
-};
-
-/**
- * Lazy registration: Create and register GoogleFont if CSS is already loaded
- * Enhanced version that handles specific font variants with proper PostScript names
- * Returns the GoogleFont object if successfully registered, null otherwise
- */
-export const lazyRegisterGoogleFontIfLoaded = (postscriptName: string): GeneralFont | null => {
-  const fontFamily = extractFamilyFromPostScriptName(postscriptName);
-
-  if (!fontFamily) {
-    return null;
-  }
-
-  const store = useGoogleFontStore.getState();
-
-  // Check if already registered in the registry
-  if (googleFontRegistry.isRegistered(postscriptName)) {
-    const registeredFont = googleFontRegistry.getRegisteredFont(postscriptName);
-
-    if (registeredFont) {
-      useGoogleFontStore.setState({ registeredFonts: new Set(store.registeredFonts).add(fontFamily) });
-
-      return registeredFont;
-    }
-  }
-
-  // Check if CSS is already loaded (from early loading or history)
-  if (store.isGoogleFontLoaded(fontFamily)) {
-    const postscriptMatch = postscriptName.match(/^(.+?)-(.+)$/);
-
-    if (postscriptMatch) {
-      const [, , variantPart] = postscriptMatch;
-
-      let weight = 400;
-      let italic = false;
-
-      if (variantPart.endsWith('Italic')) {
-        italic = true;
-
-        const weightPart = variantPart.replace('Italic', '');
-
-        weight = POSTSCRIPT_TO_WEIGHT_MAP[weightPart as PostScriptStyleName] || 400;
-      } else {
-        weight = POSTSCRIPT_TO_WEIGHT_MAP[variantPart as PostScriptStyleName] || 400;
-      }
-
-      const style = generateStyleFromWeightAndItalic(weight, italic);
-      const googleFont = createGoogleFontObject(fontFamily, weight, italic, style, store.loadGoogleFontBinary);
-
-      googleFontRegistry.registerGoogleFont(googleFont);
-
-      // Verify registration succeeded
-      if (googleFontRegistry.isRegistered(postscriptName)) {
-        return googleFontRegistry.getRegisteredFont(postscriptName) || null;
-      }
-    }
-  }
-
-  return null;
 };
 
 /**

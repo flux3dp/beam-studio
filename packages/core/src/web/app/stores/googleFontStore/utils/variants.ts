@@ -4,17 +4,6 @@ import type { GoogleFontFiles } from '@core/helpers/fonts/googleFontsApiCache';
 
 import { WEIGHT_FALLBACK_ORDER } from '../constants';
 
-export const getWeightAndStyle = (variant: string) =>
-  match(variant)
-    .with('regular', () => ({ style: 'normal', weight: 400 }) as const)
-    .with('italic', () => ({ style: 'italic', weight: 400 }) as const)
-    .with(
-      P.string.endsWith('italic'),
-      (v) => ({ style: 'italic', weight: Number.parseInt(v.replace('italic', ''), 10) }) as const,
-    )
-    .with(P.string.regex(/^\d+$/), (v) => ({ style: 'normal', weight: Number.parseInt(v, 10) }) as const)
-    .otherwise(() => ({ style: 'normal', weight: 400 }) as const);
-
 export const getCSSWeight = (variant: string) =>
   match(variant)
     .with('regular', () => '400')
@@ -76,7 +65,6 @@ export const findBestVariant = (
 
   const alternateStyle = requestedStyle === 'normal' ? 'italic' : 'normal';
 
-  // fallback to alternate style with same weight first
   for (const weight of WEIGHT_FALLBACK_ORDER) {
     const key = createVariantKey(alternateStyle, weight);
 
@@ -88,4 +76,35 @@ export const findBestVariant = (
   }
 
   return null;
+};
+
+export const buildGoogleFontURL = (
+  fontFamily: string,
+  options: { italicOnly?: boolean; weight: number } | { variant: string } | { weights: string[] },
+): string => {
+  const encodedFamily = fontFamily.replace(/ /g, '+');
+
+  if ('variant' in options) {
+    const cssWeight = getCSSWeight(options.variant);
+
+    if (cssWeight.includes(':ital')) {
+      return `https://fonts.googleapis.com/css2?family=${encodedFamily}:ital,wght@1,${cssWeight.replace(':ital', '')}&display=swap`;
+    }
+
+    return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@${cssWeight}&display=swap`;
+  }
+
+  if ('weights' in options) {
+    const formattedWeights = options.weights
+      .map((w) => (w.includes(':ital') ? `1,${w.replace(':ital', '')}` : `0,${w}`))
+      .join(';');
+
+    return `https://fonts.googleapis.com/css2?family=${encodedFamily}:ital,wght@${formattedWeights}&display=swap`;
+  }
+
+  if (options.italicOnly) {
+    return `https://fonts.googleapis.com/css2?family=${encodedFamily}:ital,wght@1,${options.weight}&display=swap`;
+  }
+
+  return `https://fonts.googleapis.com/css2?family=${encodedFamily}:wght@${options.weight}&display=swap`;
 };

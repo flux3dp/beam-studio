@@ -14,9 +14,7 @@ import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
-import { extractFamilyFromPostScriptName, isGoogleFontPostScriptName } from '@core/helpers/fonts/fontUtils';
 import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
-import { lazyRegisterGoogleFontIfLoaded } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -139,23 +137,6 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
 
   if (registeredFont) {
     return registeredFont;
-  }
-
-  // Lazy registration: If not in cache but looks like a Google Font, try lazy loading
-  if (isGoogleFontPostScriptName(postscriptName)) {
-    const fontFamily = extractFamilyFromPostScriptName(postscriptName);
-
-    if (fontFamily) {
-      try {
-        const lazyRegisteredFont = lazyRegisterGoogleFontIfLoaded(postscriptName);
-
-        if (lazyRegisteredFont) {
-          return lazyRegisteredFont;
-        }
-      } catch (error) {
-        console.warn(`Failed to lazy register Google Font ${postscriptName}:`, error);
-      }
-    }
   }
 
   if (window.os === 'MacOS') {

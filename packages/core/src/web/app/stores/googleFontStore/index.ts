@@ -2,6 +2,7 @@ import { create } from 'zustand';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { calculateRetryDelay, MAX_RETRY_ATTEMPTS, REQUEST_TIMEOUT } from '@core/helpers/fonts/cacheUtils';
+import { createGoogleFontObject, getWeightAndStyleFromVariant } from '@core/helpers/fonts/fontUtils';
 import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GeneralFont } from '@core/interfaces/IFont';
@@ -18,12 +19,11 @@ import {
   RETRY_JITTER_MAX,
 } from './constants';
 import { createBinaryLoader } from './loaders/binaryLoader';
-import { createGoogleFontObject } from './loaders/fontFactory';
 import type { CSSLinkTracker, GoogleFontState } from './types';
 import { isIconFont, isLocalFont, isWebSafeFont } from './utils/detection';
 import { getFallbackFont, getFallbackPostScriptName } from './utils/fallbacks';
 import { createNetworkDetector, isNetworkAvailableForGoogleFonts } from './utils/network';
-import { discoverAvailableVariants, findBestVariant, getCSSWeight, getWeightAndStyle } from './utils/variants';
+import { buildGoogleFontURL, discoverAvailableVariants, findBestVariant, getCSSWeight } from './utils/variants';
 
 export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
   activeFontLoads: new Set(),
@@ -187,76 +187,11 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
           throw new Error(`No suitable variant found for ${fontFamily}`);
         }
 
-        let weight = DEFAULT_FONT_WEIGHT;
-
-        if (bestVariant === 'regular') {
-          weight = 400;
-        } else if (bestVariant === 'italic') {
-          const availableItalicVariants = Array.from(availableVariants).filter(
-            (v) => v.includes('italic') || v === 'italic',
-          );
-
-          if (availableItalicVariants.length > 0) {
-            const firstItalic = availableItalicVariants[0];
-
-            if (firstItalic === 'italic') {
-              weight = 400;
-            } else {
-              const italicWeight = Number.parseInt(firstItalic.replace('italic', ''));
-
-              weight = !Number.isNaN(italicWeight) ? italicWeight : 400;
-            }
-          } else {
-            const firstNumericVariant = Array.from(availableVariants).find((v) => /^\d+$/.test(v) || v === 'regular');
-
-            weight =
-              firstNumericVariant === 'regular'
-                ? 400
-                : firstNumericVariant
-                  ? Number.parseInt(firstNumericVariant)
-                  : 400;
-          }
-        } else if (bestVariant.includes('italic')) {
-          const weightPart = bestVariant.replace('italic', '');
-          const parsed = Number.parseInt(weightPart);
-
-          if (!Number.isNaN(parsed)) {
-            weight = parsed;
-          } else {
-            const firstNumericVariant = Array.from(availableVariants).find((v) => /^\d+$/.test(v));
-
-            if (firstNumericVariant) {
-              weight = Number.parseInt(firstNumericVariant);
-            }
-          }
-        } else if (/^\d+$/.test(bestVariant)) {
-          const parsed = Number.parseInt(bestVariant);
-
-          if (!Number.isNaN(parsed)) {
-            weight = parsed;
-          }
-        } else {
-          console.warn(`Unknown variant format '${bestVariant}' for ${fontFamily}, using first available weight`);
-
-          const firstNumericVariant = Array.from(availableVariants).find((v) => /^\d+$/.test(v) || v === 'regular');
-
-          if (firstNumericVariant) {
-            weight = firstNumericVariant === 'regular' ? 400 : Number.parseInt(firstNumericVariant);
-          }
-        }
-
+        const { weight } = getWeightAndStyleFromVariant(bestVariant);
         const hasNormalVariants = Array.from(availableVariants).some((v) => v === 'regular' || /^\d+$/.test(v));
         const hasOnlyItalicVariants =
           !hasNormalVariants && Array.from(availableVariants).some((v) => v === 'italic' || /^\d+italic$/.test(v));
-
-        let fontUrl: string;
-
-        if (hasOnlyItalicVariants) {
-          fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:ital,wght@1,${weight}&display=swap`;
-        } else {
-          fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:wght@${weight}&display=swap`;
-        }
-
+        const fontUrl = buildGoogleFontURL(fontFamily, { italicOnly: hasOnlyItalicVariants, weight });
         const state = get();
         const existingTracker = state.cssLinks.get(fontFamily);
 
@@ -396,8 +331,7 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
         return;
       }
 
-      const cssWeight = getCSSWeight(bestVariant);
-      const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:${cssWeight.includes(':ital') ? 'ital,wght@1,' + cssWeight.replace(':ital', '') : 'wght@' + cssWeight}&display=swap`;
+      const fontUrl = buildGoogleFontURL(fontFamily, { variant: bestVariant });
       const existingTracker = state.cssLinks.get(fontFamily);
 
       if (existingTracker && existingTracker.purpose === 'preview') {
@@ -476,7 +410,7 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
         .map((variant) => getCSSWeight(variant))
         .filter((w, i, arr) => arr.indexOf(w) === i)
         .sort((a, b) => Number.parseInt(a.split(':')[0]) - Number.parseInt(b.split(':')[0]));
-      const fontUrl = `https://fonts.googleapis.com/css2?family=${fontFamily.replace(/ /g, '+')}:ital,wght@${weights.map((w) => (w.includes(':ital') ? `1,${w.replace(':ital', '')}` : `0,${w}`)).join(';')}&display=swap`;
+      const fontUrl = buildGoogleFontURL(fontFamily, { weights });
       const existingTracker = state.cssLinks.get(fontFamily);
 
       if (existingTracker && (existingTracker.purpose === 'text-editing' || existingTracker.purpose === 'preview')) {
@@ -493,12 +427,17 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
         });
 
         const loadPromises = allVariants.map(async (variant) => {
-          const { style, weight } = getWeightAndStyle(variant);
+          const { style, weight } = getWeightAndStyleFromVariant(variant);
 
           try {
-            await state.loadGoogleFontBinary(fontFamily, weight, style);
+            await state.loadGoogleFontBinary(fontFamily, weight, /italic/i.test(style) ? 'italic' : 'normal');
 
-            const variantFont = createGoogleFontObject(fontFamily, weight, style, state.loadGoogleFontBinary);
+            const variantFont = createGoogleFontObject({
+              binaryLoader: state.loadGoogleFontBinary,
+              fontFamily,
+              style,
+              weight,
+            });
 
             googleFontRegistry.registerGoogleFont(variantFont);
           } catch (error) {
@@ -549,12 +488,17 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
       }));
 
       const loadPromises = allVariants.map(async (variant) => {
-        const { style, weight } = getWeightAndStyle(variant);
+        const { style, weight } = getWeightAndStyleFromVariant(variant);
 
         try {
-          await state.loadGoogleFontBinary(fontFamily, weight, style);
+          await state.loadGoogleFontBinary(fontFamily, weight, /italic/i.test(style) ? 'italic' : 'normal');
 
-          const variantFont = createGoogleFontObject(fontFamily, weight, style, state.loadGoogleFontBinary);
+          const variantFont = createGoogleFontObject({
+            binaryLoader: state.loadGoogleFontBinary,
+            fontFamily,
+            style,
+            weight,
+          });
 
           googleFontRegistry.registerGoogleFont(variantFont);
         } catch (error) {
@@ -565,8 +509,13 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
       await Promise.allSettled(loadPromises);
 
       if (!state.registeredFonts.has(fontFamily)) {
-        const { style, weight } = getWeightAndStyle(fontData.variants[0]);
-        const primaryFont = createGoogleFontObject(fontFamily, weight, style, state.loadGoogleFontBinary);
+        const { style, weight } = getWeightAndStyleFromVariant(fontData.variants[0]);
+        const primaryFont = createGoogleFontObject({
+          binaryLoader: state.loadGoogleFontBinary,
+          fontFamily,
+          style,
+          weight,
+        });
 
         googleFontRegistry.registerGoogleFont(primaryFont);
         set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));
@@ -664,10 +613,13 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
         return;
       }
 
-      const { style, weight } = getWeightAndStyle(fontData.variants[0]);
-      const googleFont = createGoogleFontObject(fontFamily, weight, style, (family, weight, style) =>
-        state.loadGoogleFontBinary(family, weight, style),
-      );
+      const { style, weight } = getWeightAndStyleFromVariant(fontData.variants[0]);
+      const googleFont = createGoogleFontObject({
+        binaryLoader: state.loadGoogleFontBinary,
+        fontFamily,
+        style,
+        weight,
+      });
 
       const registered = googleFontRegistry.registerGoogleFont(googleFont);
 
