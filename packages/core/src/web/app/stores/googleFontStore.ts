@@ -2,10 +2,10 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 
-import { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import type { GoogleFontFiles } from '@core/helpers/fonts/googleFontsApiCache';
+import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
+import type { GoogleFontFiles } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
 // Network and timing constants
@@ -1055,7 +1055,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
                 // Register this specific variant with proper PostScript name
                 const variantFont = createGoogleFontObject(fontFamily, weight, style, state.loadGoogleFontBinary);
 
-                registerGoogleFont(variantFont);
+                googleFontRegistry.registerGoogleFont(variantFont);
               } catch (error) {
                 console.warn(`Failed to load TTF for ${fontFamily} ${weight} ${style}:`, error);
               }
@@ -1118,7 +1118,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
               // Register this specific variant with proper PostScript name
               const variantFont = createGoogleFontObject(fontFamily, weight, style, state.loadGoogleFontBinary);
 
-              registerGoogleFont(variantFont);
+              googleFontRegistry.registerGoogleFont(variantFont);
             } catch (error) {
               console.warn(`Failed to load TTF for ${fontFamily} ${weight} ${style}:`, error);
             }
@@ -1154,7 +1154,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
               state.loadGoogleFontBinary,
             );
 
-            registerGoogleFont(primaryFont);
+            googleFontRegistry.registerGoogleFont(primaryFont);
             set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));
           }
         } catch (error) {
@@ -1277,7 +1277,7 @@ export const useGoogleFontStore = create<GoogleFontState>()(
             state.loadGoogleFontBinary(family, weight, style),
           );
 
-          const registered = registerGoogleFont(googleFont);
+          const registered = googleFontRegistry.registerGoogleFont(googleFont);
 
           if (registered) {
             set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));

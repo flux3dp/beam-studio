@@ -136,9 +136,13 @@ class GoogleFontsApiCache {
     console.log(`🌐 Starting new API request (session: ${this.sessionId})`);
     this.metrics.totalRequests++;
 
-    // Create the promise immediately and store it to ensure proper deduplication
-    await Promise.resolve(); // To solve forever pending issue in some environments
-    this.loading = this.fetchWithMetrics();
+    // Set this.loading synchronously to prevent race condition
+    // Wrap in async IIFE to maintain Promise.resolve() for "forever pending" fix
+    this.loading = (async () => {
+      await Promise.resolve(); // To solve forever pending issue in some environments
+
+      return this.fetchWithMetrics();
+    })();
 
     try {
       this.cache = await this.loading;

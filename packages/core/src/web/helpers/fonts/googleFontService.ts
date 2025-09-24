@@ -1,4 +1,3 @@
-import { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import localFontHelper from '@core/implementations/localFontHelper';
 import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
@@ -294,7 +293,7 @@ export const loadContextGoogleFonts = (): void => {
 
       const googleFont = createGoogleFontObject(family, weight, italic, style, googleFontStore.loadGoogleFontBinary);
 
-      registerGoogleFont(googleFont);
+      googleFontRegistry.registerGoogleFont(googleFont);
       console.log(`Registered Google Font variant: ${googleFont.postscriptName} (${googleFont.style})`);
     });
   } catch (error) {
@@ -350,7 +349,7 @@ export const lazyRegisterGoogleFontIfLoaded = (postscriptName: string): GeneralF
       const style = generateStyleFromWeightAndItalic(weight, italic);
       const googleFont = createGoogleFontObject(fontFamily, weight, italic, style, store.loadGoogleFontBinary);
 
-      registerGoogleFont(googleFont);
+      googleFontRegistry.registerGoogleFont(googleFont);
 
       // Verify registration succeeded
       if (googleFontRegistry.isRegistered(postscriptName)) {

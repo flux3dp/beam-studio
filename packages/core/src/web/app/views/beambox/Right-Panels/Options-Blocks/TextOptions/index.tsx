@@ -5,7 +5,7 @@ import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
-import FontFuncs, { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
+import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -37,6 +37,8 @@ import {
   generateStyleFromWeightAndItalic,
   WEIGHT_TO_STYLE_MAP,
 } from '@core/helpers/fonts/fontUtils';
+import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
+import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -473,9 +475,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         await useGoogleFontStore.getState().loadGoogleFontForTextEditing(googleFontFamily);
 
         // Get the first available variant for this font family
-        const fontData = await import('@core/helpers/fonts/googleFontsApiCache').then((module) =>
-          module.googleFontsApiCache.findFont(googleFontFamily),
-        );
+        const fontData = await googleFontsApiCache.findFont(googleFontFamily);
 
         if (fontData && fontData.variants && fontData.variants.length > 0) {
           const firstVariant = fontData.variants[0];
@@ -483,7 +483,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           const googleFont = createGoogleFontObject(googleFontFamily, weight, italic, style, loadGoogleFontBinary);
 
           addToHistory(googleFont);
-          registerGoogleFont(googleFont);
+          googleFontRegistry.registerGoogleFont(googleFont);
 
           const batchCmd = new history.BatchCommand('Change Font family');
 
@@ -506,7 +506,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           const googleFont = createGoogleFontObject(googleFontFamily, 400, false, 'Regular', loadGoogleFontBinary);
 
           addToHistory(googleFont);
-          registerGoogleFont(googleFont);
+          googleFontRegistry.registerGoogleFont(googleFont);
 
           const batchCmd = new history.BatchCommand('Change Font family');
 

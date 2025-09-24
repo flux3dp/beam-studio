@@ -16,6 +16,7 @@ import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import { extractFamilyFromPostScriptName, isGoogleFontPostScriptName } from '@core/helpers/fonts/fontUtils';
 import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
+import { lazyRegisterGoogleFontIfLoaded } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -40,49 +41,11 @@ const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const fontObjCache = new Map<string, fontkit.Font>();
 const googleFontCache = new Map<string, GoogleFont>();
 
-// Callback injection to avoid circular dependency with googleFontService
-let lazyRegisterCallback: ((postscriptName: string) => GeneralFont | null) | null = null;
-
-export const setLazyRegisterCallback = (callback: (postscriptName: string) => GeneralFont | null) => {
-  lazyRegisterCallback = callback;
-};
-
-// Initialize the dependency injection for Google Font registry and lazy registration
-const initializeGoogleFontIntegration = () => {
-  // Inject our registration function into the registry to break circular dependency
-  googleFontRegistry.setRegistrationCallback((googleFont: GoogleFont) => {
-    googleFontCache.set(googleFont.postscriptName, googleFont);
-  });
-
-  // Set up lazy registration callback after a brief delay to allow module loading
-  setTimeout(() => {
-    try {
-      const { lazyRegisterGoogleFontIfLoaded } = require('@core/helpers/fonts/googleFontService');
-
-      lazyRegisterCallback = lazyRegisterGoogleFontIfLoaded;
-    } catch (error) {
-      console.warn('Failed to set up lazy register callback:', error);
-    }
-  }, 0);
-};
-
-// Initialize during module load
-initializeGoogleFontIntegration();
-
-const SubstituteResult = {
-  CANCEL_OPERATION: 0,
-  DO_NOT_SUB: 1,
-  DO_SUB: 2,
-} as const;
+const SubstituteResult = { CANCEL_OPERATION: 0, DO_NOT_SUB: 1, DO_SUB: 2 } as const;
 
 type SubstituteResultType = (typeof SubstituteResult)[keyof typeof SubstituteResult];
 
-export const ConvertResult = {
-  CANCEL_OPERATION: 0,
-  CONTINUE: 2,
-  UNSUPPORT: 1,
-} as const;
-
+export const ConvertResult = { CANCEL_OPERATION: 0, CONTINUE: 2, UNSUPPORT: 1 } as const;
 export type ConvertResultType = (typeof ConvertResult)[keyof typeof ConvertResult];
 
 export type ConvertToTextPathResult =
@@ -120,6 +83,18 @@ if (fontNameMapObj.navigatorLang !== navigator.language) {
 }
 
 const fontNameMap = new Map<string, string>();
+
+// Initialize the dependency injection for Google Font registry and lazy registration
+const initializeGoogleFontIntegration = () => {
+  // Inject our registration function into the registry to break circular dependency
+  googleFontRegistry.setRegistrationCallback((googleFont: GoogleFont) => {
+    googleFontCache.set(googleFont.postscriptName, googleFont);
+  });
+};
+
+// Initialize during module load
+initializeGoogleFontIntegration();
+
 const requestAvailableFontFamilies = (withoutMonotype = false) => {
   // get all available fonts in user PC
   const fonts = fontHelper.getAvailableFonts(withoutMonotype);
@@ -170,9 +145,9 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
   if (isGoogleFontPostScriptName(postscriptName)) {
     const fontFamily = extractFamilyFromPostScriptName(postscriptName);
 
-    if (fontFamily && lazyRegisterCallback) {
+    if (fontFamily) {
       try {
-        const lazyRegisteredFont = lazyRegisterCallback(postscriptName);
+        const lazyRegisteredFont = lazyRegisterGoogleFontIfLoaded(postscriptName);
 
         if (lazyRegisteredFont) {
           return lazyRegisteredFont;
@@ -198,16 +173,6 @@ const init = () => {
 };
 
 init();
-
-/**
- * Registers a Google Font object for text-to-path conversion
- * Now uses the registry service for consistent management
- */
-export const registerGoogleFont = (googleFont: GoogleFont): boolean => {
-  googleFontRegistry.registerGoogleFont(googleFont);
-
-  return true;
-};
 
 const requestFontsOfTheFontFamily = memoize((family: string) => Array.from(fontHelper.findFonts({ family })));
 
@@ -826,7 +791,6 @@ export default {
   convertTextToPath,
   fontNameMap,
   getFontOfPostscriptName,
-  registerGoogleFont,
   requestAvailableFontFamilies,
   requestFontByFamilyAndStyle,
   requestFontsOfTheFontFamily,

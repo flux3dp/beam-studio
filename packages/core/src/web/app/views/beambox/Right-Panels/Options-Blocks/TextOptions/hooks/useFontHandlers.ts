@@ -3,7 +3,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { map, pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
-import FontFuncs, { registerGoogleFont } from '@core/app/actions/beambox/font-funcs';
+import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import type { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -15,6 +15,7 @@ import { getCurrentUser } from '@core/helpers/api/flux-id';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import type { FontWeight } from '@core/helpers/fonts/fontUtils';
 import { generateGoogleFontPostScriptName, WEIGHT_TO_STYLE_MAP } from '@core/helpers/fonts/fontUtils';
+import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -173,7 +174,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
           weight,
         };
 
-        registerGoogleFont(googleFont);
+        googleFontRegistry.registerGoogleFont(googleFont);
 
         return googleFont;
       } catch (error) {
