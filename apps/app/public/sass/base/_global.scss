@@ -464,3 +464,7 @@ input[type="text"] {
     color: #bbb;
   }
 }
+
+.ant-modal-content {
+  -webkit-app-region: no-drag;
+}
