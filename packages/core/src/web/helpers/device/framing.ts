@@ -8,6 +8,7 @@ import { fetchContourTaskCode } from '@core/app/actions/beambox/export-funcs-swi
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import deviceConstants from '@core/app/constants/device-constants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -394,21 +395,28 @@ class FramingTaskManager extends EventEmitter {
     if (taskCode) {
       await deviceMaster.startFraming({ taskCode });
     } else {
+      this.showMessage(i18n.lang.framing.calculating_task, 0);
       await deviceMaster.startFraming({
         points: [this.taskPoints[0], this.taskPoints[2]],
         rotaryInfo: noRotation ? null : this.rotaryInfo,
       });
     }
 
-    setTimeout(() => this.closeMessage(), 1000);
-
     if (this.rotaryInfo && !noRotation) {
+      let initializing = true;
       // No loop, need check finish status
       const timer = setInterval(async () => {
         if (this.isWorking) {
           const report = await deviceMaster.getReport();
 
+          // RotateFraming may take more time to start, show calculating message util it is running (max 5s)
+          if (initializing && report.st_id === deviceConstants.status.RUNNING) {
+            initializing = false;
+            this.closeMessage();
+          }
+
           if (monitorStatus.isAbortedOrCompleted(report)) {
+            this.closeMessage();
             this.changeWorkingStatus(false);
             clearInterval(timer);
           }
@@ -416,6 +424,10 @@ class FramingTaskManager extends EventEmitter {
           clearInterval(timer);
         }
       }, 1000);
+
+      setTimeout(() => this.closeMessage(), 5000);
+    } else {
+      setTimeout(() => this.closeMessage(), 1000);
     }
 
     return true;
