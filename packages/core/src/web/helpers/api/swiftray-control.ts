@@ -394,10 +394,10 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     return this.sc.quitTask();
   };
 
-  start = async () => {
+  start = async (taskTime?: number) => {
     console.log('SwiftrayControl.start');
 
-    return this.sc.startTask();
+    return this.sc.startTask(taskTime);
   };
 
   pause = async () => this.sc.pauseTask();

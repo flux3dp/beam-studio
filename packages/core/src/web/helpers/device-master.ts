@@ -631,7 +631,7 @@ class DeviceMaster {
   }
 
   // Player functions
-  async go(data: Blob, onProgress?: (...args: any[]) => void) {
+  async go(data: Blob, onProgress?: (...args: any[]) => void, taskTime?: number) {
     const controlSocket = await this.getControl();
 
     if (!data || !(data instanceof Blob)) {
@@ -643,7 +643,7 @@ class DeviceMaster {
     }
 
     await controlSocket.addTask(controlSocket.upload, data);
-    await controlSocket.addTask(controlSocket.start);
+    await controlSocket.addTask(controlSocket.start, taskTime);
 
     return null;
   }

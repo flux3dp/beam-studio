@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useCallback, useContext, useEffect, useRef } from 'react';
+import React, { useContext, useEffect, useRef } from 'react';
 
 import { CloseCircleFilled, LoadingOutlined, PauseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 import { Button, Space } from 'antd';
@@ -17,10 +17,8 @@ interface Props {
   isFramingTask: boolean;
   isOnPlaying: boolean;
   isPromark: boolean;
-  setEstimateTaskTime: React.Dispatch<React.SetStateAction<number>>;
   setIsFramingTask: React.Dispatch<React.SetStateAction<boolean>>;
   setIsOnPlaying: React.Dispatch<React.SetStateAction<boolean>>;
-  setUseEstTime: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
 const MonitorControl = ({
@@ -29,31 +27,14 @@ const MonitorControl = ({
   isFramingTask,
   isOnPlaying,
   isPromark,
-  setEstimateTaskTime,
   setIsFramingTask,
   setIsOnPlaying,
-  setUseEstTime,
 }: Props): ReactNode => {
   const { monitor: tMonitor } = useI18n();
   const isMobile = useIsMobile();
   const buttonShape = isMobile ? 'round' : 'default';
   const { mode, onPause, onPlay, onStop, report, totalTaskTime } = useContext(MonitorContext);
-  const estimateTaskTimeTimer = useRef<NodeJS.Timeout | null>(null);
   const onPlayingTimer = useRef<NodeJS.Timeout | null>(null);
-
-  const stopCountDown = () => {
-    if (estimateTaskTimeTimer.current) {
-      clearInterval(estimateTaskTimeTimer.current);
-      estimateTaskTimeTimer.current = null;
-    }
-  };
-
-  const startCountDown = useCallback(() => {
-    stopCountDown();
-    estimateTaskTimeTimer.current = setInterval(() => {
-      setEstimateTaskTime((time) => time - 1);
-    }, 1000);
-  }, [setEstimateTaskTime]);
 
   const triggerOnPlay = async () => {
     setIsOnPlaying(true);
@@ -64,16 +45,7 @@ const MonitorControl = ({
       await new Promise((resolve) => setTimeout(resolve, 500));
     }
 
-    const actualTaskTime = await onPlay(isPromark);
-
-    if (isPromark) {
-      if (actualTaskTime) {
-        setUseEstTime(true);
-        setEstimateTaskTime(actualTaskTime);
-      } else {
-        setUseEstTime(false);
-      }
-    }
+    await onPlay(isPromark);
 
     onPlayingTimer.current = setTimeout(
       () => {
@@ -81,11 +53,6 @@ const MonitorControl = ({
       },
       totalTaskTime < 3 ? 2000 : 5000,
     );
-  };
-
-  const triggerResume = async () => {
-    await onPlay();
-    startCountDown();
   };
 
   const mapButtonTypeToElement = (type: ButtonTypes): ReactNode => {
@@ -112,7 +79,7 @@ const MonitorControl = ({
           <Button
             disabled={!enabled || isOnPlaying}
             key={type}
-            onClick={triggerResume}
+            onClick={() => onPlay()}
             shape={buttonShape}
             type="primary"
           >
@@ -123,16 +90,7 @@ const MonitorControl = ({
       case ButtonTypes.PAUSE:
       case ButtonTypes.DISABLED_PAUSE:
         return (
-          <Button
-            disabled={!enabled}
-            key={type}
-            onClick={() => {
-              onPause();
-              stopCountDown();
-            }}
-            shape={buttonShape}
-            type="primary"
-          >
+          <Button disabled={!enabled} key={type} onClick={() => onPause()} shape={buttonShape} type="primary">
             <PauseCircleFilled />
             {tMonitor.pause}
           </Button>
@@ -140,16 +98,7 @@ const MonitorControl = ({
       case ButtonTypes.STOP:
       case ButtonTypes.DISABLED_STOP:
         return (
-          <Button
-            disabled={!enabled}
-            key={type}
-            onClick={() => {
-              onStop();
-              stopCountDown();
-              setEstimateTaskTime(totalTaskTime);
-            }}
-            shape={buttonShape}
-          >
+          <Button disabled={!enabled} key={type} onClick={() => onStop()} shape={buttonShape}>
             <CloseCircleFilled />
             {tMonitor.stop}
           </Button>
@@ -171,30 +120,6 @@ const MonitorControl = ({
       }
     }
   }, [isOnPlaying, report, isFraming, setIsOnPlaying]);
-
-  useEffect(() => {
-    if (!isPromark) return;
-
-    if (report?.st_id === DeviceConstants.status.COMPLETED && !isOnPlaying) {
-      stopCountDown();
-      setEstimateTaskTime(totalTaskTime);
-    } else if (
-      report?.st_id === DeviceConstants.status.PAUSED_FROM_RUNNING ||
-      report?.st_id === DeviceConstants.status.RECONNECTING
-    ) {
-      stopCountDown();
-    } else if (
-      report?.st_id === DeviceConstants.status.RUNNING &&
-      !estimateTaskTimeTimer.current &&
-      !isOnPlaying &&
-      !isFramingTask
-    ) {
-      startCountDown();
-    } else if (report?.st_id === DeviceConstants.status.ABORTED) {
-      stopCountDown();
-      setEstimateTaskTime(totalTaskTime);
-    }
-  }, [report, isOnPlaying, setEstimateTaskTime, totalTaskTime, startCountDown, isPromark, isFramingTask]);
 
   if (mode === Mode.PREVIEW || mode === Mode.FILE_PREVIEW || isFramingTask || isOnPlaying) {
     return (

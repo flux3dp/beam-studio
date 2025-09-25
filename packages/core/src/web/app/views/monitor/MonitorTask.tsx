@@ -30,10 +30,6 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     useContext(MonitorContext);
   const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
   const [isOnPlaying, setIsOnPlaying] = useState(false);
-  /* for Promark task time */
-  const [useEstTime, setUseEstTime] = useState(false);
-  const [estimateTaskTime, setEstimateTaskTime] = useState(totalTaskTime);
-  /* for Promark task time */
   /* for Promark framing */
   const options = useMemo(() => getFramingOptions(device), [device]);
   const manager = useRef<FramingTaskManager | null>(null);
@@ -57,16 +53,16 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
   );
   /* for Promark framing */
 
-  const getJobTime = (time = totalTaskTime, byReport = true): React.ReactNode => {
+  const getJobTime = (): React.ReactNode => {
     const isWorking = mode === Mode.WORKING;
     let jobTimeStr: string | undefined = undefined;
 
     if (isFramingTask) {
       jobTimeStr = `${FormatDuration(Math.max(totalTaskTime, 1))}`;
-    } else if (isWorking && report?.prog && time) {
-      jobTimeStr = `${FormatDuration(Math.max(totalTaskTime * (1 - report.prog), 1, byReport ? 1 : time))} ${tMonitor.left}`;
-    } else if (time) {
-      jobTimeStr = `${FormatDuration(Math.max(time, 1))} ${isWorking ? tMonitor.left : ''}`;
+    } else if (isWorking && report?.prog && totalTaskTime) {
+      jobTimeStr = `${FormatDuration(Math.max(totalTaskTime * (1 - report.prog), 1))} ${tMonitor.left}`;
+    } else if (totalTaskTime) {
+      jobTimeStr = `${FormatDuration(Math.max(totalTaskTime, 1))} ${isWorking ? tMonitor.left : ''}`;
     }
 
     return jobTimeStr ? (
@@ -150,11 +146,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
     } else if (uploadProgress !== null) {
       percent = Number(uploadProgress);
     } else if (report && report.st_id !== DeviceConstants.status.IDLE) {
-      percent = Math.min(
-        useEstTime ? Math.round(((totalTaskTime - estimateTaskTime) / totalTaskTime) * 100) : 99,
-        Number.parseInt((report.prog * 100).toFixed(1), 10),
-        99,
-      );
+      percent = Math.min(Number.parseInt((report.prog * 100).toFixed(1), 10), 99);
 
       if (report.st_id === DeviceConstants.status.COMPLETED) {
         percent = 100;
@@ -219,7 +211,7 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
               {renderFileInfo()}
             </Col>
             <Col md={12} span={24}>
-              {useEstTime ? getJobTime(estimateTaskTime, false) : getJobTime()}
+              {getJobTime()}
             </Col>
           </Row>
         </div>
@@ -239,10 +231,8 @@ const MonitorTask = ({ device }: Props): React.JSX.Element => {
                   isFramingTask={isFramingTask}
                   isOnPlaying={isOnPlaying}
                   isPromark={isPromark}
-                  setEstimateTaskTime={setEstimateTaskTime}
                   setIsFramingTask={setIsFramingTask}
                   setIsOnPlaying={setIsOnPlaying}
-                  setUseEstTime={setUseEstTime}
                 />
               </div>
             </Col>
