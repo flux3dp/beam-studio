@@ -105,10 +105,17 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const maxValue = useMemo(() => {
     if (isDev()) return workareaMaxSpeed;
 
-    return match(layerModule)
-      .with(LayerModule.PRINTER_4C, () => 45)
+    return match({ layerModule, workarea })
+      .when(
+        ({ layerModule }) => layerModule === LayerModule.PRINTER_4C,
+        () => 45,
+      )
+      .when(
+        ({ layerModule, workarea }) => layerModule === LayerModule.LASER_1064 && workarea === 'fbm2',
+        () => 150,
+      )
       .otherwise(() => workareaMaxSpeed);
-  }, [workareaMaxSpeed, layerModule]);
+  }, [workareaMaxSpeed, layerModule, workarea]);
 
   const curveEngravingSpeedWarning = useMemo(() => {
     if (!curveSpeedLimit || isPrinting) return '';

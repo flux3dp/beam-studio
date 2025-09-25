@@ -87,6 +87,7 @@ export const changeLayersModule = async (
   const presetsList = presetHelper.getPresetsList(workarea, oldValue);
   const newPresetsList = presetHelper.getPresetsList(workarea, newValue);
   const batchCmd = new history.BatchCommand('Change layer module');
+  const isBM2IR = workarea === 'fbm2' && newValue === LayerModule.LASER_1064;
 
   layers.forEach((layer) => {
     const configName = getData(layer, 'configName');
@@ -111,6 +112,10 @@ export const changeLayersModule = async (
         });
         writeDataLayer(layer, 'ink', moduleBaseConfig[newValue]?.ink ?? baseConfig.ink, { batchCmd });
         writeDataLayer(layer, 'multipass', moduleBaseConfig[newValue]?.multipass ?? baseConfig.multipass, { batchCmd });
+      } else if (isBM2IR) {
+        const currentSpeed = getData(layer, 'speed');
+
+        if (currentSpeed && currentSpeed > 150) writeDataLayer(layer, 'speed', 150, { batchCmd });
       }
     } else if (newPreset !== oldPreset) {
       applyPreset(layer, newPreset, { batchCmd });
