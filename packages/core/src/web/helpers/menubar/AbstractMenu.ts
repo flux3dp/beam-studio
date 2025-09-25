@@ -21,6 +21,7 @@ const FILE_MENU_ITEMS = [
   'CLEAR_SCENE',
   'OPEN',
   'RECENT',
+  'SHOW_MY_CLOUD',
   'SAVE_AS',
   'SAVE_SCENE',
   'SAVE_TO_CLOUD',
