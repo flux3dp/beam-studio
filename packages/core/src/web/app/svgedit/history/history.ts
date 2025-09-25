@@ -30,7 +30,7 @@ svgedit.history.HistoryEventTypes = HistoryEventTypes;
 export class BaseHistoryCommand implements ICommand {
   public elem: SVGGraphicsElement;
 
-  public text: string;
+  public text: string = '';
 
   type = (): string => 'BaseHistoryCommand';
 
@@ -66,9 +66,9 @@ export class BaseHistoryCommand implements ICommand {
     handler?.handleHistoryEvent(HistoryEventTypes.AFTER_UNAPPLY, this);
   }
 
-  onBefore: () => void = null;
+  onBefore?: () => void;
 
-  onAfter: () => void = null;
+  onAfter?: () => void;
 }
 
 export class MoveElementCommand extends BaseHistoryCommand implements ICommand {
@@ -108,7 +108,7 @@ svgedit.history.MoveElementCommand = MoveElementCommand;
 
 // History command for an element that was added to the DOM
 export class InsertElementCommand extends BaseHistoryCommand implements ICommand {
-  private nextSibling: Element | Node;
+  private nextSibling: Element | Node | null;
 
   private parent: Element | Node;
 
@@ -116,7 +116,7 @@ export class InsertElementCommand extends BaseHistoryCommand implements ICommand
     super();
     this.elem = elem as SVGGraphicsElement;
     this.text = text || `Create ${elem.tagName}`;
-    this.parent = elem.parentNode;
+    this.parent = elem.parentNode!;
     this.nextSibling = this.elem.nextSibling;
   }
 
@@ -131,7 +131,7 @@ export class InsertElementCommand extends BaseHistoryCommand implements ICommand
   };
 
   doUnapply = (): void => {
-    this.parent = this.elem.parentNode;
+    this.parent = this.elem.parentNode!;
     this.parent.removeChild(this.elem);
   };
 }

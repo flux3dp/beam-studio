@@ -9,8 +9,8 @@ export interface ICommand {
   newValues?: { [key: string]: string };
   oldParent?: Element | Node;
   oldValues?: { [key: string]: string };
-  onAfter: () => null | void;
-  onBefore: () => null | void;
+  onAfter?: () => void;
+  onBefore?: () => void;
   text: string;
   type: () => string;
   unapply: (handler) => void;

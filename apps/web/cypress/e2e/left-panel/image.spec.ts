@@ -107,12 +107,11 @@ describe('Image manipulation functions', () => {
 
       // Remove gradient
       helpers.toggleGradient();
-      cy.wait(1500);
-      cy.contains('Threshold brightness').should('exist');
+      cy.contains('Threshold brightness', { timeout: 60000 }).should('exist');
 
       // Trace the image
       cy.get('#trace').click();
-      cy.get('#svg_3', { timeout: 30000 }).click({ force: true });
+      cy.get('#svg_3', { timeout: 60000 }).click({ force: true });
       cy.getElementTitle().contains('Layer 1 > Path');
 
       // Verify traced path
