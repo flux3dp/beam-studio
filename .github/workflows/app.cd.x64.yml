@@ -120,7 +120,7 @@ jobs:
 
           bash ./build/clearup-develop-files.sh
 
-          pnpm dlx nx run app:dist --win --x64 --publish always
+          pnpm dlx nx run app:dist --win msi --x64 --publish always
         env:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
