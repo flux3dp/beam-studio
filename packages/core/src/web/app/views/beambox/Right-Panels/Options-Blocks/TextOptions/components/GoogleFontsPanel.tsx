@@ -7,6 +7,7 @@ import VirtualList from 'rc-virtual-list';
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import type { GoogleFontItem as CachedGoogleFontItem } from '@core/helpers/fonts/googleFontsApiCache';
+import useI18n from '@core/helpers/useI18n';
 
 import FontPreview from './FontPreview';
 import styles from './GoogleFontsPanel.module.scss';
@@ -19,7 +20,8 @@ interface Props {
 }
 
 const FONTS_PER_PAGE = 40;
-const CONTAINER_HEIGHT = 600;
+const CONTAINER_HEIGHT = 500;
+const ITEM_HEIGHT = 145; // Approximate height of each font item
 const SCROLL_THRESHOLD = 100;
 
 const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible }) => {
@@ -36,22 +38,23 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const [hasMore, setHasMore] = useState(true);
   const virtualListRef = useRef<any>(null);
   const lastScrollTop = useRef<number>(0);
+  const lang = useI18n();
 
   const getEmptyStateMessage = useCallback((): string => {
     if (!isNetworkAvailable) {
-      return 'Google Fonts are not available offline. Please connect to the internet to browse and select Google Fonts.';
+      return lang.google_font_panel.offline_message;
     }
 
     if (fonts.length === 0) {
-      return 'Google Fonts are currently unavailable. Please check your internet connection or contact your administrator.';
+      return lang.google_font_panel.unavailable_message;
     }
 
     if (searchText || selectedCategory || selectedLanguage) {
-      return 'No fonts found matching your search criteria.';
+      return lang.google_font_panel.no_results_message;
     }
 
-    return 'No fonts available.';
-  }, [isNetworkAvailable, fonts.length, searchText, selectedCategory, selectedLanguage]);
+    return lang.google_font_panel.no_fonts_available;
+  }, [isNetworkAvailable, fonts.length, searchText, selectedCategory, selectedLanguage, lang]);
 
   const filterState = useMemo(
     () => ({ category: selectedCategory, language: selectedLanguage, search: searchText }),
@@ -187,7 +190,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
     [loadFont],
   );
 
-  const handleSave = useCallback(async () => {
+  const handleSelect = useCallback(async () => {
     if (!selectedFont) return;
 
     try {
@@ -212,7 +215,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
       <div className={styles.header}>
         <div className={styles.title}>
           <GoogleOutlined className={styles.googleLogo} />
-          <span className={styles.titleText}>GoogleFonts</span>
+          <span className={styles.titleText}>{lang.google_font_panel.title}</span>
         </div>
         <Button className={styles.closeButton} icon={<CloseOutlined />} onClick={onClose} type="text" />
       </div>
@@ -229,7 +232,11 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
               onClear={() => setSearchText('')}
               onSearch={setSearchText}
               options={searchOptions}
-              placeholder={isNetworkAvailable ? 'Search fonts...' : 'Search unavailable offline'}
+              placeholder={
+                isNetworkAvailable
+                  ? lang.google_font_panel.search_placeholder
+                  : lang.google_font_panel.search_unavailable_offline
+              }
               showSearch
               suffixIcon={<SearchOutlined />}
               value={searchText || undefined}
@@ -240,24 +247,28 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
           <div className={styles.filterSection}>
             <div className={styles.filterHeader}>
               <GlobalOutlined className={styles.filterIcon} />
-              <span className={styles.filterLabel}>Language</span>
+              <span className={styles.filterLabel}>{lang.google_font_panel.language_label}</span>
             </div>
             <Select
               className={styles.languageSelect}
               disabled={!isNetworkAvailable}
               filterOption={(input, option) => (option?.label ?? '').toLowerCase().includes(input.toLowerCase())}
               onChange={setSelectedLanguage}
-              options={[{ label: 'All languages', value: '' }, ...languageOptions]}
-              placeholder={isNetworkAvailable ? 'Language' : 'Unavailable offline'}
+              options={[{ label: lang.google_font_panel.all_languages, value: '' }, ...languageOptions]}
+              placeholder={
+                isNetworkAvailable
+                  ? lang.google_font_panel.language_placeholder
+                  : lang.google_font_panel.language_unavailable_offline
+              }
               showSearch
-              value={selectedLanguage || 'All languages'}
+              value={selectedLanguage || lang.google_font_panel.all_languages}
             />
           </div>
 
           <div className={styles.filterSection}>
             <div className={styles.filterHeader}>
               <AppstoreOutlined className={styles.filterIcon} />
-              <span className={styles.filterLabel}>Category</span>
+              <span className={styles.filterLabel}>{lang.google_font_panel.category}</span>
             </div>
             <div className={styles.categoryChips}>
               {categoryOptions.map((category) => {
@@ -287,7 +298,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
           {!isNetworkAvailable ? (
             <div className={styles.offlineState}>
               <Typography.Title className={styles.offlineTitle} level={4}>
-                No Internet Connection
+                {lang.google_font_panel.no_internet_connection}
               </Typography.Title>
               <Typography.Text className={styles.offlineMessage} type="secondary">
                 {getEmptyStateMessage()}
@@ -303,7 +314,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
                 className={`${styles.fontList} ${styles.virtualList}`}
                 data={displayedFonts}
                 height={CONTAINER_HEIGHT}
-                itemHeight={145}
+                itemHeight={ITEM_HEIGHT}
                 itemKey="family"
                 onScroll={onScroll}
                 ref={virtualListRef}
@@ -317,12 +328,6 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
                   />
                 )}
               </VirtualList>
-              {loadingMore && (
-                <div className={styles.loadingOverlay}>
-                  <Spin size="small" />
-                  <span className={styles.loadingText}>Loading more fonts...</span>
-                </div>
-              )}
             </div>
           ) : (
             <div className={styles.emptyState}>
@@ -337,21 +342,22 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
           {selectedFont ? (
             <div className={styles.selectedFontDisplay}>
               <span className={styles.selectedText}>
-                Selected: <span className={styles.selectedFontName}>{selectedFont.family}</span>
+                {lang.google_font_panel.selected_prefix}{' '}
+                <span className={styles.selectedFontName}>{selectedFont.family}</span>
               </span>
             </div>
           ) : (
             <div className={styles.noSelectionDisplay}>
-              <span className={styles.noSelectionText}>No font selected</span>
+              <span className={styles.noSelectionText}>{lang.google_font_panel.no_selection}</span>
             </div>
           )}
         </div>
         <div className={styles.footerButtons}>
           <Button onClick={onClose} type="default">
-            Cancel
+            {lang.global.cancel}
           </Button>
-          <Button disabled={!selectedFont || !isNetworkAvailable} onClick={handleSave} type="primary">
-            Save
+          <Button disabled={!selectedFont || !isNetworkAvailable} onClick={handleSelect} type="primary">
+            {lang.global.select}
           </Button>
         </div>
       </div>

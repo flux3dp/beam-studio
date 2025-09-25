@@ -138,7 +138,8 @@ const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
 };
 
 const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
-  const lang = useI18n().beambox.right_panel.object_panel.option_panel;
+  const lang = useI18n();
+  const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const { updateObjectPanel } = useContext(ObjectPanelContext);
   const fontHistory = useStorageStore((state) => state['font-history']);
@@ -493,11 +494,16 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       return (
         <ObjectPanelItem.Select
           id="font_family"
-          label={lang.font_family}
+          label={langOptionPanel.font_family}
           onChange={handleFontFamilyChange}
           options={
             historyFontFamilies.length > 0
-              ? [{ label: lang.recently_used, type: 'group' }, ...historyFontFamilies, { type: 'divider' }, ...options]
+              ? [
+                  { label: langOptionPanel.recently_used, type: 'group' },
+                  ...historyFontFamilies,
+                  { type: 'divider' },
+                  ...options,
+                ]
               : [...options, { type: 'divider' }]
           }
           selected={
@@ -521,7 +527,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
                 className={styles['google-fonts-button']}
                 onClick={() => dialogCaller.showGoogleFontsPanel(handleGoogleFontSelect)}
               >
-                More Google Fonts...
+                {lang.google_font_panel.more_google_fonts}
               </div>
             </div>
           </>
@@ -549,14 +555,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onChange={(value, option) => handleFontFamilyChange(value, option as FontOption)}
         onKeyDown={(e) => e.stopPropagation()}
         options={[
-          { label: lang.recently_used, options: historyFontFamilies, title: 'history' },
+          { label: langOptionPanel.recently_used, options: historyFontFamilies, title: 'history' },
           { label: null, options, title: 'normal' },
         ]}
         placement="bottomRight"
         popupClassName={styles['font-family-dropdown']}
         popupMatchSelectWidth={false}
         showSearch
-        title={lang.font_family}
+        title={langOptionPanel.font_family}
         value={fontFamily.hasMultiValue ? '-' : fontFamily.value}
       />
     );
@@ -569,7 +575,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       return (
         <ObjectPanelItem.Select
           id="font_style"
-          label={lang.font_style}
+          label={langOptionPanel.font_style}
           onChange={handleFontStyleChange}
           options={styleOptions}
           selected={
@@ -591,7 +597,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         onKeyDown={(e) => e.stopPropagation()}
         options={styleOptions}
         popupMatchSelectWidth={false}
-        title={lang.font_style}
+        title={langOptionPanel.font_style}
         value={fontFamily.hasMultiValue || fontStyle.hasMultiValue ? '-' : fontStyle.value}
       />
     );
@@ -605,14 +611,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         decimal={0}
         hasMultiValue={fontSize.hasMultiValue}
         id="font_size"
-        label={lang.font_size}
+        label={langOptionPanel.font_size}
         min={1}
         unit="px"
         updateValue={handleFontSizeChange}
         value={fontSize.value}
       />
     ) : (
-      <div className={styles['font-size']} title={lang.font_size}>
+      <div className={styles['font-size']} title={langOptionPanel.font_size}>
         <UnitInput
           className={{ 'option-input': true }}
           decimal={0}
@@ -634,14 +640,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       <ObjectPanelItem.Number
         hasMultiValue={letterSpacing.hasMultiValue}
         id="letter_spacing"
-        label={lang.letter_spacing}
+        label={langOptionPanel.letter_spacing}
         unit="em"
         updateValue={handleLetterSpacingChange}
         value={letterSpacing.value}
       />
     ) : (
       <div className={styles.spacing}>
-        <div className={styles.label} title={lang.letter_spacing}>
+        <div className={styles.label} title={langOptionPanel.letter_spacing}>
           <OptionPanelIcons.LetterSpacing />
         </div>
         <UnitInput
@@ -665,7 +671,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         decimal={1}
         hasMultiValue={lineSpacing.hasMultiValue}
         id="line_spacing"
-        label={lang.line_spacing}
+        label={langOptionPanel.line_spacing}
         min={0.8}
         unit=""
         updateValue={handleLineSpacingChange}
@@ -673,7 +679,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       />
     ) : (
       <div className={styles.spacing}>
-        <div className={styles.label} title={lang.line_spacing}>
+        <div className={styles.label} title={langOptionPanel.line_spacing}>
           <OptionPanelIcons.LineSpacing />
         </div>
         <UnitInput
@@ -699,7 +705,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       <ObjectPanelItem.Item
         content={<Switch checked={checked} />}
         id="vertical-text"
-        label={lang.vertical_text}
+        label={langOptionPanel.vertical_text}
         onClick={() => handleVerticalTextClick(checked)}
       />
     ) : (
@@ -709,7 +715,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           icon={<OptionPanelIcons.VerticalText />}
           id="vertical-text"
           onClick={() => handleVerticalTextClick(checked)}
-          title={lang.vertical_text}
+          title={langOptionPanel.vertical_text}
           type="text"
         />
       </ConfigProvider>
@@ -742,8 +748,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           onValueChange={handleVerticalAlignChange}
           value={verticalAlign.value}
         />
-        <InFillBlock elems={textElements} label={lang.text_infill} />
-        <InFillBlock elems={path} id="path_infill" label={lang.path_infill} />
+        <InFillBlock elems={textElements} label={langOptionPanel.text_infill} />
+        <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
       </>
     );
   };

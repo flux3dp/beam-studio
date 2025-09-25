@@ -4,15 +4,14 @@ import type { GoogleFontItem as CachedGoogleFontItem } from '@core/helpers/fonts
 
 import styles from './GoogleFontsPanel.module.scss';
 
-// Sample text based on font type/category - matching Google Fonts samples
 const getSampleText = (fontFamily: string): string => {
   const family = fontFamily.toLowerCase();
 
   if (family.includes('code') || family.includes('mono')) {
-    return 'public static int fib(int n) { a =';
+    return 'public static int fib(int n) { a = 0; b = 1; result = 0; for (int i = 2; i <=n; i++) { result = a + b; a = b b = result } return result; }';
   }
 
-  return 'Everyone has the right to freedom of thought,';
+  return 'Everyone has the right to freedom of thought, conscience and religion; this right includes freedom';
 };
 
 interface FontPreviewProps {
@@ -23,10 +22,6 @@ interface FontPreviewProps {
 
 const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSelected, onClick }, ref) => {
   const previewText = getSampleText(font.family);
-
-  const getCategory = (font: CachedGoogleFontItem): string => {
-    return font.category || '';
-  };
 
   return (
     <div
@@ -43,12 +38,11 @@ const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSele
       role="button"
       tabIndex={0}
     >
-      {/* Font Header */}
       <div className={styles.fontHeader}>
         <div className={styles.fontTitle}>
           <span className={styles.fontName}>{font.family}</span>
           <span className={styles.fontMeta}>
-            {font.variants?.length || 0} style{(font.variants?.length || 0) !== 1 ? 's' : ''} | {getCategory(font)}
+            {font.variants?.length || 0} style{(font.variants?.length || 0) !== 1 ? 's' : ''} | {font.category || ''}
           </span>
         </div>
       </div>
