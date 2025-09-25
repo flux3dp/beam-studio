@@ -26,7 +26,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
@@ -614,7 +614,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
@@ -1306,7 +1306,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
@@ -2515,7 +2515,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
@@ -3321,7 +3321,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
@@ -4127,7 +4127,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
@@ -5044,7 +5044,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
             tabindex="0"
           >
             <div
-              class="react-draggable"
+              class="scrollable react-draggable"
               style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
