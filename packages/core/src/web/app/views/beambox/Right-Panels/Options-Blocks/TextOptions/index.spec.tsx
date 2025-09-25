@@ -1,3 +1,13 @@
+// Mock the entire googleFontsApiCache module to avoid URL construction issues
+jest.mock('@core/helpers/fonts/googleFontsApiCache', () => ({
+  googleFontsApiCache: {
+    findFont: jest.fn().mockResolvedValue(null),
+    getCache: jest.fn().mockResolvedValue({ items: [] }),
+    clearCache: jest.fn(),
+    getCacheStatus: jest.fn().mockReturnValue({ cached: false, itemCount: 0, isLoading: false, metrics: {} }),
+  },
+}));
+
 import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
@@ -409,6 +419,12 @@ jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem', () => ({
       </select>
     </div>
   ),
+}));
+
+// Mock symbolMaker to avoid import.meta.url syntax error in Jest
+jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
+  __esModule: true,
+  default: jest.fn(),
 }));
 
 import TextOptions from './index';

@@ -40,7 +40,7 @@ exports[`GoogleFontsPanel Basic Rendering should render correctly when visible 1
         <span
           class="titleText"
         >
-          GoogleFonts
+          Google Fonts
         </span>
       </div>
       <button
@@ -61,7 +61,6 @@ exports[`GoogleFontsPanel Basic Rendering should render correctly when visible 1
           <div
             class="searchInput"
             data-testid="select"
-            style="width: 100%;"
             suffixicon="[object Object]"
           >
             <input
@@ -206,27 +205,27 @@ exports[`GoogleFontsPanel Basic Rendering should render correctly when visible 1
             class="categoryChips"
           >
             <button
-              class="categoryChip "
+              class="categoryChip  "
             >
               Serif
             </button>
             <button
-              class="categoryChip "
+              class="categoryChip  "
             >
               Sans-serif
             </button>
             <button
-              class="categoryChip "
+              class="categoryChip  "
             >
               Display
             </button>
             <button
-              class="categoryChip "
+              class="categoryChip  "
             >
               Handwriting
             </button>
             <button
-              class="categoryChip "
+              class="categoryChip  "
             >
               Monospace
             </button>
@@ -237,7 +236,7 @@ exports[`GoogleFontsPanel Basic Rendering should render correctly when visible 1
         class="fontPreviewArea"
       >
         <div
-          style="position: relative;"
+          class="virtualListContainer"
         >
           <div
             data-testid="virtual-list"
@@ -301,7 +300,7 @@ exports[`GoogleFontsPanel Basic Rendering should render correctly when visible 1
           disabled=""
           type="primary"
         >
-          Save
+          Select
         </button>
       </div>
     </div>

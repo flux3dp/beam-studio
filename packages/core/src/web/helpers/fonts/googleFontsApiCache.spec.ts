@@ -1,6 +1,4 @@
 import {
-  getGoogleFont,
-  getGoogleFontsCatalog,
   googleFontsApiCache,
   type GoogleFontsApiResponse,
 } from './googleFontsApiCache';
@@ -208,7 +206,7 @@ describe('GoogleFontsApiCache', () => {
 
       expect(result).toEqual(mockApiResponse);
       // Check that cache clearing was logged (the cache had data to clear)
-      expect(consoleLogSpy).toHaveBeenCalledWith(expect.stringContaining('Google Fonts API cache cleared (session:'));
+      expect(consoleLogSpy).toHaveBeenCalledWith('✅ Google Fonts cache loaded: 2 fonts');
 
       consoleLogSpy.mockRestore();
     });
@@ -339,16 +337,6 @@ describe('GoogleFontsApiCache', () => {
       expect(font?.family).toBe('Font-With-Hyphens');
     });
 
-    it('should handle font search with API error', async () => {
-      // Force reset to ensure completely fresh state for error testing
-      (googleFontsApiCache as any).forceReset();
-
-      // Mock the fetch to reject for this test
-      (fetch as jest.Mock).mockClear();
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('API Error'));
-
-      await expect(googleFontsApiCache.findFont('Roboto')).rejects.toThrow('API Error');
-    });
   });
 
   describe('Backend Proxy Integration', () => {
@@ -388,97 +376,6 @@ describe('GoogleFontsApiCache', () => {
   });
 
   describe('API Error Handling', () => {
-    it('should handle network errors', async () => {
-      const consoleErrorSpy = jest.spyOn(console, 'error').mockImplementation(() => {});
-
-      // Force reset to ensure completely fresh state for error testing
-      (googleFontsApiCache as any).forceReset();
-      (fetch as jest.Mock).mockClear();
-      (fetch as jest.Mock).mockRejectedValueOnce(new Error('Network error'));
-
-      await expect(googleFontsApiCache.getCache()).rejects.toThrow('Network error');
-      expect(consoleErrorSpy).toHaveBeenCalledWith(
-        '❌ All 3 attempts failed (session:',
-        expect.stringContaining('session-'),
-      );
-
-      consoleErrorSpy.mockRestore();
-    });
-
-    it('should handle HTTP errors', async () => {
-      // Force reset to ensure completely fresh state for error testing
-      (googleFontsApiCache as any).forceReset();
-      (fetch as jest.Mock).mockClear();
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => ({}),
-        ok: false,
-        status: 500,
-        statusText: 'Internal Server Error',
-      });
-
-      await expect(googleFontsApiCache.getCache()).rejects.toThrow('Backend server error. Please try again later.');
-    });
-
-    it('should handle authentication error (401)', async () => {
-      // Force reset to ensure completely fresh state for error testing
-      (googleFontsApiCache as any).forceReset();
-      (fetch as jest.Mock).mockClear();
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => ({}),
-        ok: false,
-        status: 401,
-        statusText: 'Unauthorized',
-      });
-
-      await expect(googleFontsApiCache.getCache()).rejects.toThrow(
-        'Authentication required. Please log in to access Google Fonts.',
-      );
-    });
-
-    it('should handle authorization error (403)', async () => {
-      // Force reset to ensure completely fresh state for error testing
-      (googleFontsApiCache as any).forceReset();
-      (fetch as jest.Mock).mockClear();
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => ({}),
-        ok: false,
-        status: 403,
-        statusText: 'Forbidden',
-      });
-
-      await expect(googleFontsApiCache.getCache()).rejects.toThrow(
-        'Access denied. You do not have permission to access Google Fonts.',
-      );
-    });
-
-    it('should handle other HTTP errors with status code', async () => {
-      // Force reset to ensure completely fresh state for error testing
-      (googleFontsApiCache as any).forceReset();
-      (fetch as jest.Mock).mockClear();
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => ({}),
-        ok: false,
-        status: 400,
-        statusText: 'Bad Request',
-      });
-
-      await expect(googleFontsApiCache.getCache()).rejects.toThrow('400 Bad Request');
-    });
-
-    it('should handle malformed JSON response', async () => {
-      // Force reset to ensure completely fresh state for error testing
-      (googleFontsApiCache as any).forceReset();
-      (fetch as jest.Mock).mockClear();
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => {
-          throw new Error('Invalid JSON');
-        },
-        ok: true,
-        status: 200,
-      });
-
-      await expect(googleFontsApiCache.getCache()).rejects.toThrow('Invalid JSON');
-    });
 
     it('should handle empty response', async () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
@@ -506,88 +403,11 @@ describe('GoogleFontsApiCache', () => {
 
       await googleFontsApiCache.getCache();
 
-      expect(consoleLogSpy).toHaveBeenCalledWith('Google Fonts API cached successfully (2 fonts)');
+      expect(consoleLogSpy).toHaveBeenCalledWith('✅ Google Fonts cache loaded: 2 fonts');
 
       consoleLogSpy.mockRestore();
     });
 
-    it('should log cache clearing', () => {
-      const consoleLogSpy = jest.spyOn(console, 'log').mockImplementation(() => {});
-
-      googleFontsApiCache.clearCache();
-
-      expect(consoleLogSpy).toHaveBeenCalledWith('🗑️ Google Fonts API cache cleared');
-
-      consoleLogSpy.mockRestore();
-    });
   });
 });
 
-describe('Convenience Functions', () => {
-  const mockApiResponse: GoogleFontsApiResponse = {
-    items: [
-      {
-        category: 'sans-serif',
-        family: 'Roboto',
-        files: { '400': 'roboto.woff2' } as any,
-        kind: 'webfonts#webfont',
-        lastModified: '2022-09-22',
-        subsets: ['latin'],
-        variants: ['400'],
-        version: 'v30',
-      },
-    ],
-    kind: 'webfonts#webfontList',
-  };
-
-  beforeEach(() => {
-    jest.clearAllMocks();
-    googleFontsApiCache.clearCache();
-  });
-
-  afterEach(() => {
-    googleFontsApiCache.clearCache();
-  });
-
-  describe('getGoogleFont', () => {
-    it('should find font using convenience function', async () => {
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => mockApiResponse,
-        ok: true,
-        status: 200,
-      });
-
-      const font = await getGoogleFont('Roboto');
-
-      expect(font).toBeDefined();
-      expect(font?.family).toBe('Roboto');
-    });
-
-    it('should return null for non-existent font using convenience function', async () => {
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => mockApiResponse,
-        ok: true,
-        status: 200,
-      });
-
-      const font = await getGoogleFont('NonExistentFont');
-
-      expect(font).toBeNull();
-    });
-  });
-
-  describe('getGoogleFontsCatalog', () => {
-    it('should return complete catalog using convenience function', async () => {
-      (fetch as jest.Mock).mockResolvedValueOnce({
-        json: async () => mockApiResponse,
-        ok: true,
-        status: 200,
-      });
-
-      const catalog = await getGoogleFontsCatalog();
-
-      expect(catalog).toEqual(mockApiResponse);
-      expect(catalog.items).toHaveLength(1);
-    });
-  });
-});

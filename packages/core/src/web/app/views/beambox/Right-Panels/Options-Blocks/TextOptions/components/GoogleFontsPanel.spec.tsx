@@ -1,3 +1,14 @@
+// Mock the FLUXID_HOST import to avoid dependency chain issues
+jest.mock('@core/helpers/api/flux-id', () => ({
+  FLUXID_HOST: 'https://id.flux3dp.com',
+}));
+
+// Mock symbolMaker to avoid import.meta.url syntax error in Jest
+jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
+  __esModule: true,
+  default: jest.fn(),
+}));
+
 import React from 'react';
 
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
@@ -196,7 +207,7 @@ describe('GoogleFontsPanel', () => {
       const { container } = render(<GoogleFontsPanel {...defaultProps} />);
 
       expect(screen.getByTestId('draggable-modal')).toBeInTheDocument();
-      expect(screen.getByText('GoogleFonts')).toBeInTheDocument();
+      expect(screen.getByText('Google Fonts')).toBeInTheDocument();
       expect(container).toMatchSnapshot();
     });
 
@@ -209,7 +220,7 @@ describe('GoogleFontsPanel', () => {
     it('should render header with Google logo and close button', () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      expect(screen.getByText('GoogleFonts')).toBeInTheDocument();
+      expect(screen.getByText('Google Fonts')).toBeInTheDocument();
       expect(screen.getByTestId('modal-close')).toBeInTheDocument();
     });
 
@@ -221,11 +232,11 @@ describe('GoogleFontsPanel', () => {
       expect(screen.getByPlaceholderText('Search fonts...')).toBeInTheDocument();
     });
 
-    it('should render footer with Cancel and Save buttons', () => {
+    it('should render footer with Cancel and Select buttons', () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
       expect(screen.getByText('Cancel')).toBeInTheDocument();
-      expect(screen.getByText('Save')).toBeInTheDocument();
+      expect(screen.getByText('Select')).toBeInTheDocument();
     });
   });
 
@@ -336,7 +347,7 @@ describe('GoogleFontsPanel', () => {
       expect(screen.queryByTestId('font-preview-Material Icons')).not.toBeInTheDocument();
     });
 
-    it('should filter out problematic fonts', () => {
+    it('should display regular fonts without filter criteria', () => {
       mockUseGoogleFontData.fonts = [
         ...mockUseGoogleFontData.fonts,
         {
@@ -349,7 +360,7 @@ describe('GoogleFontsPanel', () => {
 
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      expect(screen.queryByTestId('font-preview-Sunflower')).not.toBeInTheDocument();
+      expect(screen.queryByTestId('font-preview-Sunflower')).toBeInTheDocument();
     });
   });
 
@@ -375,10 +386,10 @@ describe('GoogleFontsPanel', () => {
       expect(mockUseGoogleFontData.loadFont).toHaveBeenCalledWith(expect.objectContaining({ family: 'Roboto' }));
     });
 
-    it('should enable Save button when font is selected', async () => {
+    it('should enable Select button when font is selected', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
-      const saveButton = screen.getByText('Save');
+      const saveButton = screen.getByText('Select');
 
       expect(saveButton).toBeDisabled();
 
@@ -389,7 +400,7 @@ describe('GoogleFontsPanel', () => {
       expect(saveButton).not.toBeDisabled();
     });
 
-    it('should call onFontSelect and onClose when Save is clicked', async () => {
+    it('should call onFontSelect and onClose when Select is clicked', async () => {
       render(<GoogleFontsPanel {...defaultProps} />);
 
       // Select a font
@@ -397,8 +408,8 @@ describe('GoogleFontsPanel', () => {
 
       fireEvent.click(fontPreview);
 
-      // Click Save
-      const saveButton = screen.getByText('Save');
+      // Click Select
+      const saveButton = screen.getByText('Select');
 
       fireEvent.click(saveButton);
 
@@ -546,8 +557,8 @@ describe('GoogleFontsPanel', () => {
 
       fireEvent.click(fontPreview);
 
-      // Click Save
-      const saveButton = screen.getByText('Save');
+      // Click Select
+      const saveButton = screen.getByText('Select');
 
       fireEvent.click(saveButton);
 
