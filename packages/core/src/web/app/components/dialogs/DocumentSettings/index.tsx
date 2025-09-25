@@ -328,6 +328,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         unmount();
       }}
       open
+      scrollableContent
       title={tDocument.document_settings}
       width={440}
     >

@@ -87,7 +87,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const {
     beambox: {
       left_panel: {
-        label: { curve_engraving: tCurveEngraving },
+        label: { curve_engraving: tCurveEngraving, my_cloud: tMyCloud },
       },
     },
     promark_connection_test: tPromarkConnectionTest,
@@ -228,6 +228,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
       <SubMenu label={menuCms.file}>
         <MenuItem onClick={() => callback('CLEAR_SCENE')}>{hotkey('clear_scene')}</MenuItem>
         <MenuItem onClick={() => callback('OPEN')}>{menuCms.open}</MenuItem>
+        <MenuItem onClick={() => callback('SHOW_MY_CLOUD')}>{tMyCloud}</MenuItem>
         <MenuDivider />
         <MenuItem onClick={() => callback('SAVE_SCENE')}>{hotkey('save_scene')}</MenuItem>
         <MenuItem onClick={() => callback('SAVE_AS')}>{hotkey('save_as')}</MenuItem>

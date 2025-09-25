@@ -37,6 +37,12 @@ export function buildFileMenu(
       label: r.open || 'Open',
     },
     { enabled: false, id: 'RECENT', label: r.recent || 'Open Recent', submenu: [] },
+    {
+      click: callback,
+      enabled: false,
+      id: 'SHOW_MY_CLOUD',
+      label: i18n.lang.beambox.left_panel.label.my_cloud,
+    },
     { type: 'separator' },
     {
       accelerator: `${fnKey}+S`,

@@ -156,6 +156,7 @@ export default {
   SAVE_TO_CLOUD: (): Promise<boolean> => saveToCloud(),
   SHOW_GRIDS: (): boolean => viewMenu.toggleGrid(),
   SHOW_LAYER_COLOR: (): boolean => viewMenu.toggleLayerColor(),
+  SHOW_MY_CLOUD: () => Dialog.showMyCloud(),
   SHOW_RULERS: (): boolean => viewMenu.toggleRulers(),
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),

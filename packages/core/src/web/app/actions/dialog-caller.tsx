@@ -590,7 +590,7 @@ export default {
         />,
       );
     }),
-  showMyCloud: (onClose: () => void): void => {
+  showMyCloud: (onClose?: () => void): void => {
     if (isIdExist('my-cloud')) {
       return;
     }
@@ -604,7 +604,7 @@ export default {
         'my-cloud',
         <MyCloud
           onClose={() => {
-            onClose();
+            onClose?.();
             popDialogById('my-cloud');
           }}
         />,
