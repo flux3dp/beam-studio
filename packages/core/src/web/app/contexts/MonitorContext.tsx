@@ -1057,9 +1057,13 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         totalTaskTime = taskTime;
         this.setState({ totalTaskTime });
         try {
-          await DeviceMaster.go(taskBlob, ({ step, total }: IProgress) => {
-            this.setState({ uploadProgress: Math.floor((step / total) * 100) });
-          });
+          await DeviceMaster.go(
+            taskBlob,
+            ({ step, total }: IProgress) => {
+              this.setState({ uploadProgress: Math.floor((step / total) * 100) });
+            },
+            totalTaskTime,
+          );
 
           const { advanceBy, autoAdvance, current } = useVariableTextState.getState();
 

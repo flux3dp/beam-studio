@@ -459,8 +459,8 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${port}`, 'connect');
   }
 
-  public async startTask(): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'start');
+  public async startTask(taskTime?: number): Promise<{ error?: ErrorObject; success: boolean }> {
+    return this.action(`/devices/${this.port}`, 'start', { taskTime });
   }
 
   public async pauseTask(): Promise<{ error?: ErrorObject; success: boolean }> {
