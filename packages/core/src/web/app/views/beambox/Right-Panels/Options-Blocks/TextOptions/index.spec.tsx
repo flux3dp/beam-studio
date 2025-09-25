@@ -1,10 +1,10 @@
 // Mock the entire googleFontsApiCache module to avoid URL construction issues
 jest.mock('@core/helpers/fonts/googleFontsApiCache', () => ({
   googleFontsApiCache: {
+    clearCache: jest.fn(),
     findFont: jest.fn().mockResolvedValue(null),
     getCache: jest.fn().mockResolvedValue({ items: [] }),
-    clearCache: jest.fn(),
-    getCacheStatus: jest.fn().mockReturnValue({ cached: false, itemCount: 0, isLoading: false, metrics: {} }),
+    getCacheStatus: jest.fn().mockReturnValue({ cached: false, isLoading: false, itemCount: 0, metrics: {} }),
   },
 }));
 

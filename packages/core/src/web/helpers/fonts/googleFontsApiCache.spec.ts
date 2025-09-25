@@ -1,7 +1,4 @@
-import {
-  googleFontsApiCache,
-  type GoogleFontsApiResponse,
-} from './googleFontsApiCache';
+import { googleFontsApiCache, type GoogleFontsApiResponse } from './googleFontsApiCache';
 
 // Mock fetch globally
 global.fetch = jest.fn();
@@ -336,7 +333,6 @@ describe('GoogleFontsApiCache', () => {
       expect(font).toBeDefined();
       expect(font?.family).toBe('Font-With-Hyphens');
     });
-
   });
 
   describe('Backend Proxy Integration', () => {
@@ -376,7 +372,6 @@ describe('GoogleFontsApiCache', () => {
   });
 
   describe('API Error Handling', () => {
-
     it('should handle empty response', async () => {
       (fetch as jest.Mock).mockResolvedValueOnce({
         json: async () => ({ items: [], kind: 'webfonts#webfontList' }),
@@ -407,7 +402,5 @@ describe('GoogleFontsApiCache', () => {
 
       consoleLogSpy.mockRestore();
     });
-
   });
 });
-

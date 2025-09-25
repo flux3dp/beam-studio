@@ -10,7 +10,11 @@ import { TabEvents } from '../constants/tabConstants';
 const initStore = (): StorageStoreState => {
   const store = storage.getStore();
 
-  return { ...store, isInch: store['default-units'] === 'inches' };
+  return {
+    ...store,
+    'font-history': store['font-history'] || [],
+    isInch: store['default-units'] === 'inches',
+  };
 };
 
 export type StorageStore = StorageStoreState & {
