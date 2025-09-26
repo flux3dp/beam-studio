@@ -13,6 +13,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
@@ -233,7 +234,7 @@ export const importBvgString = async (
   batchCmd.addSubCommand(new history.InsertElementCommand(newDefs));
 
   const { addToHistory = true, parentCmd } = opts;
-  const postImportBvgString = async () => {
+  const postImportBvgString: any = async () => {
     const { workarea } = useDocumentStore.getState();
 
     // toggle full color setting according workarea supported modules
@@ -251,6 +252,7 @@ export const importBvgString = async (
 
   await postImportBvgString();
   batchCmd.onAfter = postImportBvgString;
+  loadContextGoogleFonts();
 
   if (parentCmd) parentCmd.addSubCommand(batchCmd);
   else if (addToHistory) svgCanvas.addCommandToHistory(batchCmd);

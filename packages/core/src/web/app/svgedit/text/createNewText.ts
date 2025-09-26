@@ -26,7 +26,14 @@ interface Options {
 const createNewText = (
   x: number,
   y: number,
-  { addToHistory = false, fill = 'none', fontSize, isDefaultFont = false, isToSelect = false, text = '' }: Options = {},
+  {
+    addToHistory = false,
+    fill = '#333333',
+    fontSize,
+    isDefaultFont = false,
+    isToSelect = false,
+    text = '',
+  }: Options = {},
 ): SVGElement => {
   const currentShape = svgCanvas.getCurrentShape();
   const modelText = isDefaultFont ? getDefaultFont() : textEdit.getCurText();

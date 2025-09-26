@@ -9,9 +9,9 @@ import type { FontDescriptor, FontDescriptorKeys, FontHelper, GeneralFont, WebFo
 
 import fontNameMap from './fontNameMap';
 import previewSrcMap from './fontPreviewSrc';
-import googleFonts from './googleFonts';
 import monotypeFonts from './monotypeFonts';
 import webFonts from './webFonts';
+import googleFonts from './webFonts.google';
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 
@@ -22,8 +22,6 @@ const getFonts = () => {
   const localFonts = localFontHelper.getAvailableFonts();
   const activeLang = i18n.getActiveLang();
   const googleLangFonts = googleFonts.getAvailableFonts(activeLang);
-
-  googleFonts.applyStyle(googleLangFonts);
 
   const webLangFonts = webFonts.getAvailableFonts(activeLang);
 
@@ -69,8 +67,6 @@ const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
     return localRes;
   }
 
-  fontDescriptor.style = fontDescriptor.style || 'Regular';
-
   let match = availableFonts;
   let font = match[0];
 
@@ -109,9 +105,27 @@ const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
 
     if (filtered.length) {
       match = filtered;
-    }
+      font = filtered[0];
+    } else {
+      // If exact style match not found, try smart fallback based on style patterns
+      const stylePatterns = [
+        fontDescriptor.style, // Try exact match first
+        'Regular', // Common fallback
+        'Normal', // Alternative naming
+        'Book', // Another common naming
+        match[0]?.style, // Use first available style as last resort
+      ];
 
-    font = filtered[0] || font;
+      for (const pattern of stylePatterns) {
+        const styleMatch = match.filter(({ style }) => style === pattern);
+
+        if (styleMatch.length) {
+          match = styleMatch;
+          font = styleMatch[0];
+          break;
+        }
+      }
+    }
   }
 
   if (fontDescriptor.weight) {
@@ -119,9 +133,20 @@ const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
 
     if (filtered.length) {
       match = filtered;
-    }
+      font = filtered[0];
+    } else {
+      // If exact weight match not found, try smart fallback with closest weight
+      const requestedWeight = fontDescriptor.weight;
+      const closestWeight = [...new Set(match.map((f) => f.weight))].sort(
+        (a, b) => Math.abs(requestedWeight - a) - Math.abs(requestedWeight - b),
+      )[0];
+      const matchedWeights = match.filter((f) => f.weight === closestWeight);
 
-    font = filtered[0] || font;
+      if (matchedWeights.length > 0) {
+        match = matchedWeights;
+        font = matchedWeights[0];
+      }
+    }
   }
 
   return font;

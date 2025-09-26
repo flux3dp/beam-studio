@@ -1324,8 +1324,29 @@ export interface ILang {
     UNKNOWN_COMMAND: string;
     UNKNOWN_ERROR: string;
   };
-  global: Record<'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'stop', string> & {
+  global: Record<
+    'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'select' | 'stop',
+    string
+  > & {
     editing: Record<'redo' | 'reset' | 'undo' | 'zoom_in' | 'zoom_out', string>;
+  };
+  google_font_panel: {
+    all_languages: string;
+    category: string;
+    language_label: string;
+    language_placeholder: string;
+    language_unavailable_offline: string;
+    more_google_fonts: string;
+    no_fonts_available: string;
+    no_internet_connection: string;
+    no_results_message: string;
+    no_selection: string;
+    offline_message: string;
+    search_placeholder: string;
+    search_unavailable_offline: string;
+    selected_prefix: string;
+    title: string;
+    unavailable_message: string;
   };
   image_edit_panel: {
     eraser: {

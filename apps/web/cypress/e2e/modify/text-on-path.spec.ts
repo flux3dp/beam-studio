@@ -23,12 +23,12 @@ describe('text on path', () => {
     cy.get('.tab.objects').click();
     cy.get('button#create_textpath').click();
     cy.getElementTitle().contains('Layer 1 > Text on Path');
-    cy.get('#svg_2')
-      .should('exist')
-      .should('have.attr', 'fill', 'none')
-      .should('have.attr', 'fill-opacity', '0')
-      .should('have.attr', 'stroke', '#333333');
     cy.get('#svg_1')
+      .should('exist')
+      .should('have.attr', 'fill', '#333333')
+      .should('have.attr', 'fill-opacity', '1')
+      .should('have.attr', 'stroke', '#333333');
+    cy.get('#svg_2')
       .should('exist')
       .should('have.attr', 'fill', 'none')
       .should('have.attr', 'fill-opacity', '0')
@@ -89,8 +89,8 @@ describe('text on path', () => {
     cy.contains('Text Infill').siblings('button').click();
     cy.get('#svg_1')
       .should('exist')
-      .should('have.attr', 'fill', '#333333')
-      .should('have.attr', 'fill-opacity', '1')
+      .should('have.attr', 'fill', 'none')
+      .should('have.attr', 'fill-opacity', '0')
       .should('have.attr', 'stroke', '#333333');
   });
 

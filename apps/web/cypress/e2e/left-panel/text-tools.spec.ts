@@ -109,8 +109,8 @@ describe('text tools', () => {
 
   it('infill', () => {
     drawText1();
-    cy.get('#svg_1').should('have.attr', 'fill').and('eq', 'none');
-    cy.get('button[title="Infill"]').click();
     cy.get('#svg_1').should('have.attr', 'fill').and('not.eq', 'none');
+    cy.get('button[title="Infill"]').click();
+    cy.get('#svg_1').should('have.attr', 'fill').and('eq', 'none');
   });
 });

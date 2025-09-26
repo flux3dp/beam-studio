@@ -42,11 +42,13 @@ pnpm nx affected:lint    # Lint only affected projects
 ## Architecture
 
 ### Monorepo Structure
+
 - **apps/app/** - Electron desktop application
 - **apps/web/** - Web application (PWA)
 - **packages/core/** - Shared business logic and React components
 
 ### Technology Stack
+
 - **Frontend**: React 18.3.1 with TypeScript
 - **Desktop**: Electron 35.5.1
 - **UI**: Ant Design 5.23.2
@@ -55,6 +57,7 @@ pnpm nx affected:lint    # Lint only affected projects
 - **Testing**: Jest, Cypress, Playwright
 
 ### Path Mappings
+
 ```typescript
 "@core/*": ["packages/core/src/web/*"]
 // For app
@@ -81,6 +84,7 @@ pnpm nx affected:lint    # Lint only affected projects
 ### External Dependencies
 
 The application relies on these external tools (must be running):
+
 - **FLUXGhost**: WebSocket API for machine communication
 - **FLUXClient**: Machine interface library
 - **FluxSVG**: SVG processing library
@@ -96,7 +100,7 @@ The application relies on these external tools (must be running):
 ## Development Tips
 
 1. Use `pnpm nx affected:*` commands to only run tasks on changed projects
-2. The web app runs on http://localhost:8080 during development
+2. The web app runs on <http://localhost:8080> during development
 3. Electron app requires external services (FLUXGhost, etc.) to be running for full functionality
 4. When modifying shared code in packages/core, both apps will be affected
 5. Use path aliases (@core/*) instead of relative imports for core packages

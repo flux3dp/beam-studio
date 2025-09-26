@@ -61,8 +61,8 @@ describe('mobile text tools', () => {
   });
 
   it('infill', () => {
-    cy.get('#svg_1').should('have.attr', 'fill').and('eq', 'none');
-    cy.get('#infill').click();
     cy.get('#svg_1').should('have.attr', 'fill').and('not.eq', 'none');
+    cy.get('#infill').click();
+    cy.get('#svg_1').should('have.attr', 'fill').and('eq', 'none');
   });
 });

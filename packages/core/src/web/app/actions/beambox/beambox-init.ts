@@ -24,6 +24,7 @@ import autoSaveHelper from '@core/helpers/auto-save-helper';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
 import getDevice from '@core/helpers/device/get-device';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import { initializeAllFonts } from '@core/helpers/fonts/fontInitialization';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import sentryHelper from '@core/helpers/sentry-helper';
@@ -46,6 +47,11 @@ class BeamboxInit {
         setStorage('default-units', 'inches');
       }
     }
+
+    // Initialize all fonts (local, Google, web) early in the startup process
+    const activeLang = i18n.getActiveLang();
+
+    initializeAllFonts(activeLang);
 
     if (!getStorage('default-font')) {
       this.initDefaultFont();
