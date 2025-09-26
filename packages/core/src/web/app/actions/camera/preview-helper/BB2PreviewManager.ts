@@ -9,6 +9,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import {
   bb2PerspectiveGrid,
   bb2WideAnglePerspectiveGrid,
+  hx2rfPerspectiveGrid,
 } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -45,6 +46,9 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   constructor(device: IDeviceInfo) {
     super(device);
     this.progressId = 'beam-preview-manager';
+
+    if (device.model.startsWith('fhx2rf')) this.grid = hx2rfPerspectiveGrid;
+
     this.cameraCenterOffset = {
       x: this.grid.x[0] + (this.grid.x[1] - this.grid.x[0]) / 2,
       y: this.grid.y[0] + (this.grid.y[1] - this.grid.y[0]) / 2,
