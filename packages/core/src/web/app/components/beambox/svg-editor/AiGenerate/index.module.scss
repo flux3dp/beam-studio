@@ -1,0 +1,37 @@
+@use '@core/styles/variables' as variables;
+
+$container-bg: #daedff;
+
+.ai-generate-container {
+  position: relative;
+  background: $container-bg;
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  height: 100%;
+  width: 100%;
+
+  @media (prefers-color-scheme: dark) {
+    background: variables.$primary-blue;
+  }
+}
+
+.ai-generate-content {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+  font-size: 16px;
+  color: variables.$primary-blue;
+}
+
+@media screen and (min-width: (variables.$welcomePageSidePanelWidth + 641px)) {
+  .welcome-page.ai-generate-container {
+    background: #f6f9fb;
+
+    @media (prefers-color-scheme: dark) {
+      background: #202023;
+    }
+  }
+}
