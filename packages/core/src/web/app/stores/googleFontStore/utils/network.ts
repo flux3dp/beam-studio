@@ -1,4 +1,14 @@
+/**
+ * Network Utilities
+ *
+ * @deprecated Some utilities are being consolidated. Use consolidatedUtils.ts where possible.
+ * Keeping network-specific functions here due to type dependencies.
+ */
+
 import type { NetworkState } from '../types';
+
+// Re-export from consolidated utilities
+export { getConnectionQuality, isNetworkAvailable } from './consolidatedUtils';
 
 export const createNetworkDetector = (): NetworkState => {
   const connection =

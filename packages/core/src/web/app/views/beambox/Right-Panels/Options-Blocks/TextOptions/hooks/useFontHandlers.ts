@@ -1,21 +1,18 @@
 import { useCallback, useEffect, useState } from 'react';
 
 import { map, pipe } from 'remeda';
-import { match } from 'ts-pattern';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import type { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import progressCaller from '@core/app/actions/progress-caller';
-import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
+import { useFontLoading, useFontRegistry } from '@core/app/stores/googleFontStore';
 import history from '@core/app/svgedit/history/history';
 import selector from '@core/app/svgedit/selector';
 import textEdit from '@core/app/svgedit/text/textedit';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import fontHelper from '@core/helpers/fonts/fontHelper';
-import type { FontWeight } from '@core/helpers/fonts/fontUtils';
-import { generateGoogleFontPostScriptName, WEIGHT_TO_STYLE_MAP } from '@core/helpers/fonts/fontUtils';
-import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
+import { createGoogleFontObject, getWeightAndStyleFromVariant } from '@core/helpers/fonts/fontUtils';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -38,31 +35,6 @@ type FontOption = {
 
 // Utility functions
 const isLocalFont = (font: GeneralFont) => 'path' in font;
-
-const parseGoogleFontVariant = (variant: string) => {
-  return match(variant)
-    .with('regular', () => ({ italic: false, style: 'Regular', weight: 400 }))
-    .with('italic', () => ({ italic: true, style: 'Italic', weight: 400 }))
-    .when(
-      (v) => v.endsWith('italic'),
-      (v) => {
-        const weight = Number.parseInt(v.replace('italic', ''));
-        const styleName = WEIGHT_TO_STYLE_MAP[weight as FontWeight] || 'Regular';
-
-        return { italic: true, style: `${styleName} Italic`, weight };
-      },
-    )
-    .when(
-      (v) => /^\d+$/.test(v),
-      (v) => {
-        const weight = Number.parseInt(v);
-        const style = WEIGHT_TO_STYLE_MAP[weight as keyof typeof WEIGHT_TO_STYLE_MAP] || 'Regular';
-
-        return { italic: false, style, weight };
-      },
-    )
-    .otherwise((v) => ({ italic: false, style: v.charAt(0).toUpperCase() + v.slice(1), weight: 400 }));
-};
 
 interface UseFontHandlersProps {
   elem: Element;
@@ -99,7 +71,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
           const googleFontOptions = pipe(
             googleFontData.variants,
             map((variant) => {
-              const { style } = parseGoogleFontVariant(variant);
+              const { style } = getWeightAndStyleFromVariant(variant);
 
               return { label: style, value: style };
             }),
@@ -143,6 +115,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
     [elem],
   );
 
+  // Simplified Google Font creation using unified stores
   const createGoogleFontFromStyle = useCallback(
     async (family: string, targetStyle: string): Promise<GeneralFont | null> => {
       try {
@@ -150,31 +123,28 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
 
         if (!googleFontData?.variants) return null;
 
-        // Find matching variant using our parser
+        // Find matching variant using unified parser
         const targetVariant = googleFontData.variants.find((variant) => {
-          const { style } = parseGoogleFontVariant(variant);
+          const { style } = getWeightAndStyleFromVariant(variant);
 
           return style === targetStyle;
         });
 
         if (!targetVariant) return null;
 
-        // Parse the target variant
-        const { italic, weight } = parseGoogleFontVariant(targetVariant);
-        const postscriptName = generateGoogleFontPostScriptName(family, weight, italic);
+        // Use the unified font creation utility
+        const { weight } = getWeightAndStyleFromVariant(targetVariant);
+        const loadBinary = useFontLoading.getState().loadBinary;
 
-        const store = useGoogleFontStore.getState();
-        const googleFont: GeneralFont = {
-          binaryLoader: store.loadGoogleFontBinary,
-          family,
-          italic,
-          postscriptName,
-          source: 'google' as const,
+        const googleFont = createGoogleFontObject({
+          binaryLoader: loadBinary,
+          fontFamily: family,
           style: targetStyle,
           weight,
-        };
+        });
 
-        googleFontRegistry.registerGoogleFont(googleFont);
+        // Register using the focused registry store
+        await useFontRegistry.getState().registerGoogleFont(family);
 
         return googleFont;
       } catch (error) {
