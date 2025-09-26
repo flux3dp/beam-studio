@@ -1,4 +1,5 @@
 /* eslint-disable perfectionist/sort-objects */
+import { invert } from 'remeda';
 import { match, P } from 'ts-pattern';
 
 import type { GoogleFont } from '@core/interfaces/IFont';
@@ -27,17 +28,7 @@ export const WEIGHT_TO_POSTSCRIPT_MAP = {
   900: 'Black',
 } as const;
 
-export const POSTSCRIPT_TO_WEIGHT_MAP = {
-  Thin: 100,
-  ExtraLight: 200,
-  Light: 300,
-  Regular: 400,
-  Medium: 500,
-  SemiBold: 600,
-  Bold: 700,
-  ExtraBold: 800,
-  Black: 900,
-} as const;
+export const POSTSCRIPT_TO_WEIGHT_MAP = invert(WEIGHT_TO_POSTSCRIPT_MAP);
 
 export const FONT_FALLBACK_FAMILIES = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', 'Noto Sans'] as const;
 
@@ -72,56 +63,6 @@ export const generateStyleFromWeightAndItalic = (weight: number, italic: boolean
   const weightName = WEIGHT_TO_STYLE_MAP[weight as FontWeight] || 'Regular';
 
   return italic ? `${weightName} Italic` : weightName;
-};
-
-/**
- * Check if a PostScript name follows Google Font naming conventions
- * @param postscriptName - PostScript name to check
- * @returns Boolean indicating if it's a Google Font PostScript name
- */
-export const isGoogleFontPostScriptName = (postscriptName: string): boolean => {
-  if (!postscriptName) return false;
-
-  // Check if it follows the pattern: FamilyName-VariantName
-  const match = postscriptName.match(/^(.+?)-(.+)$/);
-
-  if (!match) return false;
-
-  const [, , variantPart] = match;
-
-  // Check if variant part matches known PostScript style patterns
-  const validVariants = [
-    ...Object.values(WEIGHT_TO_POSTSCRIPT_MAP),
-    ...Object.values(WEIGHT_TO_POSTSCRIPT_MAP).map((style) => `${style}Italic`),
-  ];
-
-  return validVariants.includes(variantPart);
-};
-
-/**
- * Extract font family from Google Font PostScript name
- * Converts compressed names back to display names with proper spacing
- * @param postscriptName - PostScript name (e.g., "OpenSans-Bold", "InterDisplay-SemiBoldItalic")
- * @returns Font family name (e.g., "Open Sans", "Inter Display") or null if invalid
- *
- * @example
- * extractFamilyFromPostScriptName("OpenSans-Regular") // "Open Sans"
- * extractFamilyFromPostScriptName("InterDisplay-SemiBoldItalic") // "Inter Display"
- * extractFamilyFromPostScriptName("RobotoMono-BoldItalic") // "Roboto Mono"
- */
-export const extractFamilyFromPostScriptName = (postscriptName: string): null | string => {
-  if (!isGoogleFontPostScriptName(postscriptName)) return null;
-
-  // Split by hyphen and take all parts except the last one (which is the style)
-  const parts = postscriptName.split('-');
-  const familyPart = parts.slice(0, -1).join('-');
-
-  return (
-    familyPart
-      // Add spaces before capital letters to restore proper family name
-      .replace(/([A-Z])/g, ' $1')
-      .trim()
-  );
 };
 
 export const getWeightAndStyleFromVariant = (variant: string) =>

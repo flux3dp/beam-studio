@@ -114,7 +114,7 @@ const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
         'Normal', // Alternative naming
         'Book', // Another common naming
         match[0]?.style, // Use first available style as last resort
-      ].filter(Boolean);
+      ];
 
       for (const pattern of stylePatterns) {
         const styleMatch = match.filter(({ style }) => style === pattern);
@@ -137,28 +137,14 @@ const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
     } else {
       // If exact weight match not found, try smart fallback with closest weight
       const requestedWeight = fontDescriptor.weight;
-      const availableWeights = [...new Set(match.map((f) => f.weight).filter(Boolean))].sort((a, b) => a - b);
+      const closestWeight = [...new Set(match.map((f) => f.weight))].sort(
+        (a, b) => Math.abs(requestedWeight - a) - Math.abs(requestedWeight - b),
+      )[0];
+      const matchedWeights = match.filter((f) => f.weight === closestWeight);
 
-      if (availableWeights.length > 0) {
-        // Find closest weight
-        let closestWeight = availableWeights[0];
-        let minDifference = Math.abs(requestedWeight - closestWeight);
-
-        for (const weight of availableWeights) {
-          const difference = Math.abs(requestedWeight - weight);
-
-          if (difference < minDifference) {
-            minDifference = difference;
-            closestWeight = weight;
-          }
-        }
-
-        const weightMatch = match.filter((f) => f.weight === closestWeight);
-
-        if (weightMatch.length) {
-          match = weightMatch;
-          font = weightMatch[0];
-        }
+      if (matchedWeights.length > 0) {
+        match = matchedWeights;
+        font = matchedWeights[0];
       }
     }
   }

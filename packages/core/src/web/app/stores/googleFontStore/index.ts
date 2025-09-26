@@ -18,7 +18,7 @@ import {
 } from './constants';
 import { createBinaryLoader } from './loaders/binaryLoader';
 import type { CSSLinkTracker, GoogleFontStore } from './types';
-import { isIconFont, isLocalFont, isWebSafeFont } from './utils/detection';
+import { isIconFont, isLocalFont } from './utils/detection';
 import { getFallbackFont, getFallbackPostScriptName } from './utils/fallbacks';
 import { createNetworkDetector, isNetworkAvailableForGoogleFonts } from './utils/network';
 import { buildGoogleFontURL, discoverAvailableVariants, findBestVariant, getCSSWeight } from './utils/variants';
@@ -122,8 +122,8 @@ export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
   isRegistered: (postscriptName: string) => {
     return get().registeredFonts.has(postscriptName);
   },
-  isWebSafeFont: (fontFamily: string) => {
-    return isWebSafeFont(fontFamily);
+  isLocalFont: (fontFamily: string) => {
+    return isLocalFont(fontFamily);
   },
   loadGoogleFont: async (fontFamily: string) => {
     const state = get();

@@ -1,9 +1,7 @@
 import { match, P } from 'ts-pattern';
 
+import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import localFontHelper from '@core/implementations/localFontHelper';
-
-import { useGoogleFontStore } from '../../app/stores/googleFontStore';
 
 import { generateGoogleFontPostScriptName, generateStyleFromWeightAndItalic } from './fontUtils';
 import googleFonts from './webFonts.google';
@@ -29,48 +27,12 @@ const loadStaticGoogleFonts = (lang: string): void => {
 };
 
 /**
- * Normalize font family names for robust comparison
- * Handles various font name formats and edge cases
- */
-const normalizeFontName = (fontName: string): string =>
-  fontName
-    .toLowerCase()
-    .trim()
-    .replace(/^['"]+|['"]+$/g, '') // Remove surrounding quotes
-    .replace(/\s+/g, ' ') // Normalize whitespace
-    .replace(/[^\w\s-]/g, '') // Remove special characters except spaces and hyphens
-    .trim();
-
-/**
- * Enhanced local font detection using localFontHelper
- * This leverages the same sophisticated font detection logic that fontHelper uses
- */
-const isLocalFont = (fontFamily: string): boolean => {
-  const foundFont = localFontHelper.findFont({ family: fontFamily });
-
-  if (foundFont && foundFont.family === fontFamily) {
-    return true;
-  }
-
-  // Additional check: get all available local fonts and do normalized comparison
-  const localFonts = localFontHelper.getAvailableFonts();
-  const normalizedTarget = normalizeFontName(fontFamily);
-  const directMatch = localFonts.some((font) => normalizeFontName(font.family) === normalizedTarget);
-
-  if (directMatch) {
-    return true;
-  }
-
-  return false;
-};
-
-/**
  * Clean Google Fonts from font history when offline to prevent future loading attempts
  * Keeps only local and web-safe fonts in the history
  */
 const cleanGoogleFontsFromHistory = (fontHistory: string[]): void => {
-  const fontStore = useGoogleFontStore.getState();
-  const cleanedHistory = fontHistory.filter((family) => isLocalFont(family) || fontStore.isWebSafeFont(family));
+  const store = useGoogleFontStore.getState();
+  const cleanedHistory = fontHistory.filter((family) => store.isLocalFont(family));
 
   if (cleanedHistory.length !== fontHistory.length) {
     useStorageStore.getState().set('font-history', cleanedHistory);
@@ -81,6 +43,7 @@ const cleanGoogleFontsFromHistory = (fontHistory: string[]): void => {
  * Load Google Fonts from font history when online, skip and clean history when offline
  */
 const loadHistoryGoogleFonts = (): void => {
+  const store = useGoogleFontStore.getState();
   const fontHistory = useStorageStore.getState()['font-history'];
 
   if (!fontHistory || !Array.isArray(fontHistory) || fontHistory.length === 0) {
@@ -96,7 +59,7 @@ const loadHistoryGoogleFonts = (): void => {
     return;
   }
 
-  const googleFontsFromHistory = fontHistory.filter((family) => !isLocalFont(family));
+  const googleFontsFromHistory = fontHistory.filter((family) => !store.isLocalFont(family));
 
   if (googleFontsFromHistory.length === 0) {
     return;
@@ -110,9 +73,10 @@ const loadHistoryGoogleFonts = (): void => {
 /**
  * Replace Google Fonts with web-safe fallbacks in SVG text elements
  */
-const applyGoogleFontFallbacks = (textElements: SVGTextElement[], store: any): void => {
-  let fallbackCount = 0;
+const applyGoogleFontFallbacks = (textElements: SVGTextElement[]): void => {
+  const store = useGoogleFontStore.getState();
   const replacements: Array<{ from: string; to: string }> = [];
+  let fallbackCount = 0;
 
   textElements.forEach((textElem) => {
     const fontFamily = textElem.getAttribute('font-family');
@@ -120,7 +84,7 @@ const applyGoogleFontFallbacks = (textElements: SVGTextElement[], store: any): v
     if (fontFamily) {
       const cleanFamily = fontFamily.replace(/^['"]+|['"]+$/g, '').trim();
 
-      if (store.isWebSafeFont(cleanFamily) || isLocalFont(cleanFamily)) {
+      if (store.isLocalFont(cleanFamily)) {
         return;
       }
 
@@ -129,26 +93,10 @@ const applyGoogleFontFallbacks = (textElements: SVGTextElement[], store: any): v
 
       textElem.setAttribute('font-family', fallbackFont);
 
-      const postScriptName = textElem.getAttribute('font-postscript-name');
-
-      if (postScriptName) {
-        textElem.setAttribute('font-postscript-name', fallbackPostScriptName);
-      }
-
-      const dataPostScriptName = textElem.getAttribute('data-postscript-name');
-
-      if (dataPostScriptName) {
-        textElem.setAttribute('data-postscript-name', fallbackPostScriptName);
-      }
-
       const allAttributes = textElem.attributes;
 
       for (const attr of allAttributes) {
-        if (
-          attr.name.toLowerCase().includes('postscript') &&
-          attr.name !== 'font-postscript-name' &&
-          attr.name !== 'data-postscript-name'
-        ) {
+        if (attr.name.toLowerCase().includes('postscript')) {
           textElem.setAttribute(attr.name, fallbackPostScriptName);
         }
       }
@@ -175,13 +123,13 @@ export const loadContextGoogleFonts = (): void => {
   try {
     const store = useGoogleFontStore.getState();
     const textElements = [
-      ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
+      ...document.querySelectorAll('#svgcontent g.layer text'),
       ...document.querySelectorAll('#svg_defs text'),
     ] as SVGTextElement[];
     const networkAvailable = store.isNetworkAvailableForGoogleFonts();
 
     if (!networkAvailable) {
-      applyGoogleFontFallbacks(textElements, store);
+      applyGoogleFontFallbacks(textElements);
 
       return;
     }
@@ -201,8 +149,8 @@ export const loadContextGoogleFonts = (): void => {
       if (fontFamily) {
         const cleanFamily = fontFamily.replace(/^['"]+|['"]+$/g, '').trim();
 
-        // Skip if it's a local font using enhanced detection
-        if (isLocalFont(cleanFamily)) {
+        // Skip if it's a local font
+        if (store.isLocalFont(cleanFamily)) {
           return;
         }
 
