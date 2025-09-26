@@ -11,7 +11,6 @@ interface UseGoogleFontDataReturn {
   fetchGoogleFonts: () => Promise<void>;
   fonts: CachedGoogleFontItem[];
   languageOptions: Array<{ label: string; value: string }>;
-  loadedFonts: Set<string>;
   loadFont: (font: CachedGoogleFontItem) => Promise<void>;
   loadFontForTextEditing: (fontFamily: string) => Promise<void>;
   loading: boolean;
@@ -26,7 +25,6 @@ const CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'
 export const useGoogleFontData = (): UseGoogleFontDataReturn => {
   const [fonts, setFonts] = useState(Array.of<CachedGoogleFontItem>());
   const [loading, setLoading] = useState(false);
-  const sessionLoadedFonts = useGoogleFontStore((state) => state.sessionLoadedFonts);
   const loadGoogleFontForPreview = useGoogleFontStore((state) => state.loadGoogleFontForPreview);
   const loadGoogleFont = useGoogleFontStore((state) => state.loadGoogleFont);
 
@@ -114,7 +112,6 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
     fetchGoogleFonts,
     fonts,
     languageOptions,
-    loadedFonts: sessionLoadedFonts,
     loadFont,
     loadFontForTextEditing,
     loading,

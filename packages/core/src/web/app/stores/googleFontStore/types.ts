@@ -1,4 +1,4 @@
-import type { GeneralFont } from '@core/interfaces/IFont';
+import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
 export interface NetworkState {
   effectiveType?: string;
@@ -37,21 +37,25 @@ export interface CSSLinkTracker {
 
 export interface GoogleFontState {
   activeFontLoads: Set<string>;
-  addToHistory: (font: GeneralFont) => void;
   cachedBinaries: Map<string, GoogleFontBinary>;
-  cleanupUnusedCSSLinks: (maxAge?: number) => void;
-  clearBinaryCache: () => void;
   cssLinks: Map<string, CSSLinkTracker>;
   failedLoads: Map<string, { count: number; error?: string; lastAttempt: number }>;
+  networkState: NetworkState;
+  queuedFontLoads: Array<{ fontFamily: string; priority: FontLoadPriority; purpose: FontLoadPurpose }>;
+  registeredFonts: Map<string, GoogleFont>;
+  sessionLoadedFonts: Set<string>;
+}
+
+export interface GoogleFontActions {
+  addToHistory: (font: GeneralFont) => void;
+  cleanupUnusedCSSLinks: (maxAge?: number) => void;
   getBinaryFromCache: (fontFamily: string, weight?: number, style?: 'italic' | 'normal') => GoogleFontBinary | null;
   getFallbackFont: (googleFontFamily: string) => string;
   getFallbackPostScriptName: (fallbackFont: string) => string;
-  getLoadedFonts: () => string[];
-  getRegisteredFonts: () => string[];
+  getRegisteredFont: (postscriptName: string) => GoogleFont | undefined;
   isGoogleFontLoaded: (fontFamily: string) => boolean;
-  isGoogleFontLoading: (fontFamily: string) => boolean;
-  isGoogleFontRegistered: (fontFamily: string) => boolean;
   isNetworkAvailableForGoogleFonts: () => boolean;
+  isRegistered: (postscriptName: string) => boolean;
   isWebSafeFont: (fontFamily: string) => boolean;
   loadGoogleFont: (fontFamily: string) => Promise<void>;
   loadGoogleFontBinary: (
@@ -61,14 +65,9 @@ export interface GoogleFontState {
   ) => Promise<ArrayBuffer | null>;
   loadGoogleFontForPreview: (fontFamily: string) => Promise<void>;
   loadGoogleFontForTextEditing: (fontFamily: string) => Promise<void>;
-  loadGoogleFontWithOptions: (options: FontLoadOptions) => Promise<void>;
-  loadingFonts: Set<string>;
-  networkState: NetworkState;
   processQueue: () => void;
-  queuedFontLoads: Array<{ fontFamily: string; priority: FontLoadPriority; purpose: FontLoadPurpose }>;
-  registeredFonts: Set<string>;
   registerGoogleFont: (fontFamily: string) => Promise<void>;
-  retryFailedFont: (fontFamily: string) => Promise<void>;
-  sessionLoadedFonts: Set<string>;
   updateNetworkState: () => void;
 }
+
+export interface GoogleFontStore extends GoogleFontState, GoogleFontActions {}

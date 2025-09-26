@@ -3,15 +3,6 @@ export const REQUEST_TIMEOUT = 10000; // 10 seconds
 export const MAX_RETRY_ATTEMPTS = 3;
 export const RETRY_DELAY_BASE = 1000; // 1 second
 
-export interface CacheEntry<T> {
-  data: T;
-  timestamp: number;
-}
-
-export function isExpired(timestamp: number, expiryTime = CACHE_EXPIRY_TIME): boolean {
-  return Date.now() - timestamp >= expiryTime;
-}
-
 export function calculateRetryDelay(attempt: number, jitter = 0): number {
   return RETRY_DELAY_BASE * Math.pow(2, attempt - 1) + Math.random() * jitter;
 }

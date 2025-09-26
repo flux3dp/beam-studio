@@ -6,6 +6,7 @@ import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
@@ -14,7 +15,6 @@ import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
-import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -37,7 +37,6 @@ getSVGAsync(({ Canvas, Edit }) => {
 
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const fontObjCache = new Map<string, fontkit.Font>();
-const googleFontCache = new Map<string, GoogleFont>();
 
 const SubstituteResult = { CANCEL_OPERATION: 0, DO_NOT_SUB: 1, DO_SUB: 2 } as const;
 
@@ -82,17 +81,6 @@ if (fontNameMapObj.navigatorLang !== navigator.language) {
 
 const fontNameMap = new Map<string, string>();
 
-// Initialize the dependency injection for Google Font registry and lazy registration
-const initializeGoogleFontIntegration = () => {
-  // Inject our registration function into the registry to break circular dependency
-  googleFontRegistry.setRegistrationCallback((googleFont: GoogleFont) => {
-    googleFontCache.set(googleFont.postscriptName, googleFont);
-  });
-};
-
-// Initialize during module load
-initializeGoogleFontIntegration();
-
 const requestAvailableFontFamilies = (withoutMonotype = false) => {
   // get all available fonts in user PC
   const fonts = fontHelper.getAvailableFonts(withoutMonotype);
@@ -125,15 +113,8 @@ const requestAvailableFontFamilies = (withoutMonotype = false) => {
 };
 
 const getFontOfPostscriptName = memoize((postscriptName: string) => {
-  // Check Google Font cache first
-  const googleFont = googleFontCache.get(postscriptName);
-
-  if (googleFont) {
-    return googleFont;
-  }
-
   // Check if font is already registered in the registry
-  const registeredFont = googleFontRegistry.getRegisteredFont(postscriptName);
+  const registeredFont = useGoogleFontStore.getState().getRegisteredFont(postscriptName);
 
   if (registeredFont) {
     return registeredFont;

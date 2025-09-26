@@ -3,7 +3,6 @@ import { create } from 'zustand';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { calculateRetryDelay, MAX_RETRY_ATTEMPTS, REQUEST_TIMEOUT } from '@core/helpers/fonts/cacheUtils';
 import { createGoogleFontObject, getWeightAndStyleFromVariant } from '@core/helpers/fonts/fontUtils';
-import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import type { GeneralFont } from '@core/interfaces/IFont';
 
@@ -14,19 +13,26 @@ import {
   INITIAL_USAGE_COUNT,
   MAX_CONCURRENT_LOADS,
   NETWORK_STATE_CHECK_INTERVAL,
-  PRIORITY_ORDER,
   QUEUE_PROCESS_DELAY,
   RETRY_JITTER_MAX,
 } from './constants';
 import { createBinaryLoader } from './loaders/binaryLoader';
-import type { CSSLinkTracker, GoogleFontState } from './types';
+import type { CSSLinkTracker, GoogleFontStore } from './types';
 import { isIconFont, isLocalFont, isWebSafeFont } from './utils/detection';
 import { getFallbackFont, getFallbackPostScriptName } from './utils/fallbacks';
 import { createNetworkDetector, isNetworkAvailableForGoogleFonts } from './utils/network';
 import { buildGoogleFontURL, discoverAvailableVariants, findBestVariant, getCSSWeight } from './utils/variants';
 
-export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
+/* eslint-disable perfectionist/sort-objects */
+export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
   activeFontLoads: new Set(),
+  cachedBinaries: new Map(),
+  cssLinks: new Map(),
+  failedLoads: new Map(),
+  networkState: createNetworkDetector(),
+  queuedFontLoads: [],
+  registeredFonts: new Map(),
+  sessionLoadedFonts: new Set(),
   addToHistory: (font: GeneralFont) => {
     if (!font.family) return;
 
@@ -39,7 +45,6 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
 
     useStorageStore.getState().set('font-history', newHistory);
   },
-  cachedBinaries: new Map(),
   cleanupUnusedCSSLinks: (maxAge = CSS_CLEANUP_INTERVAL) => {
     const now = Date.now();
     const state = get();
@@ -94,11 +99,6 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
       }
     }
   },
-  clearBinaryCache: () => {
-    set({ cachedBinaries: new Map() });
-  },
-  cssLinks: new Map<string, CSSLinkTracker>(),
-  failedLoads: new Map(),
   getBinaryFromCache: (fontFamily: string, weight = DEFAULT_FONT_WEIGHT, style: 'italic' | 'normal' = 'normal') => {
     const cacheKey = `${fontFamily}-${weight}-${style}`;
 
@@ -110,23 +110,17 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
   getFallbackPostScriptName: (fallbackFont: string) => {
     return getFallbackPostScriptName(fallbackFont);
   },
-  getLoadedFonts: () => {
-    return Array.from(get().sessionLoadedFonts);
-  },
-  getRegisteredFonts: () => {
-    return Array.from(get().registeredFonts);
+  getRegisteredFont: (postscriptName: string) => {
+    return get().registeredFonts.get(postscriptName);
   },
   isGoogleFontLoaded: (fontFamily: string) => {
     return get().sessionLoadedFonts.has(fontFamily);
   },
-  isGoogleFontLoading: (fontFamily: string) => {
-    return get().loadingFonts.has(fontFamily);
-  },
-  isGoogleFontRegistered: (fontFamily: string) => {
-    return get().registeredFonts.has(fontFamily);
-  },
   isNetworkAvailableForGoogleFonts: () => {
     return isNetworkAvailableForGoogleFonts(get().networkState);
+  },
+  isRegistered: (postscriptName: string) => {
+    return get().registeredFonts.has(postscriptName);
   },
   isWebSafeFont: (fontFamily: string) => {
     return isWebSafeFont(fontFamily);
@@ -141,7 +135,7 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
       return;
     }
 
-    if (state.sessionLoadedFonts.has(fontFamily) || state.loadingFonts.has(fontFamily)) {
+    if (state.sessionLoadedFonts.has(fontFamily)) {
       return;
     }
 
@@ -167,7 +161,6 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
 
     set((state) => ({
       activeFontLoads: new Set(state.activeFontLoads).add(fontFamily),
-      loadingFonts: new Set(state.loadingFonts).add(fontFamily),
     }));
 
     let retryCount = 0;
@@ -247,7 +240,6 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
         set((state) => ({
           activeFontLoads: new Set([...state.activeFontLoads].filter((f) => f !== fontFamily)),
           failedLoads: new Map([...state.failedLoads].filter(([key]) => key !== fontFamily)),
-          loadingFonts: new Set([...state.loadingFonts].filter((f) => f !== fontFamily)),
           sessionLoadedFonts: new Set(state.sessionLoadedFonts).add(fontFamily),
         }));
 
@@ -271,7 +263,6 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
               error: errorMessage,
               lastAttempt: Date.now(),
             }),
-            loadingFonts: new Set([...state.loadingFonts].filter((f) => f !== fontFamily)),
           }));
 
           console.error(`Failed to load Google Font CSS after ${retryCount} attempts: ${fontFamily}`);
@@ -282,7 +273,6 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
 
     await attemptLoad();
   },
-
   loadGoogleFontBinary: async (
     fontFamily: string,
     weight = DEFAULT_FONT_WEIGHT,
@@ -389,7 +379,6 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
       console.error(`Failed to load font for preview: ${fontFamily}`, error);
     }
   },
-
   loadGoogleFontForTextEditing: async (fontFamily: string) => {
     const state = get();
 
@@ -432,14 +421,7 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
           try {
             await state.loadGoogleFontBinary(fontFamily, weight, /italic/i.test(style) ? 'italic' : 'normal');
 
-            const variantFont = createGoogleFontObject({
-              binaryLoader: state.loadGoogleFontBinary,
-              fontFamily,
-              style,
-              weight,
-            });
-
-            googleFontRegistry.registerGoogleFont(variantFont);
+            get().registerGoogleFont(fontFamily);
           } catch (error) {
             console.warn(`Failed to load TTF for ${fontFamily} ${weight} ${style}:`, error);
           }
@@ -493,76 +475,17 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
         try {
           await state.loadGoogleFontBinary(fontFamily, weight, /italic/i.test(style) ? 'italic' : 'normal');
 
-          const variantFont = createGoogleFontObject({
-            binaryLoader: state.loadGoogleFontBinary,
-            fontFamily,
-            style,
-            weight,
-          });
-
-          googleFontRegistry.registerGoogleFont(variantFont);
+          get().registerGoogleFont(fontFamily);
         } catch (error) {
           console.warn(`Failed to load TTF for ${fontFamily} ${weight} ${style}:`, error);
         }
       });
 
       await Promise.allSettled(loadPromises);
-
-      if (!state.registeredFonts.has(fontFamily)) {
-        const { style, weight } = getWeightAndStyleFromVariant(fontData.variants[0]);
-        const primaryFont = createGoogleFontObject({
-          binaryLoader: state.loadGoogleFontBinary,
-          fontFamily,
-          style,
-          weight,
-        });
-
-        googleFontRegistry.registerGoogleFont(primaryFont);
-        set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));
-      }
     } catch (error) {
       console.error(`Failed to load font for text editing: ${fontFamily}`, error);
     }
   },
-
-  loadGoogleFontWithOptions: async (options) => {
-    const { fontFamily, forceReload = false, priority = 'normal', purpose } = options;
-    const state = get();
-
-    if (!forceReload && state.sessionLoadedFonts.has(fontFamily)) {
-      return;
-    }
-
-    if (state.activeFontLoads.size >= MAX_CONCURRENT_LOADS) {
-      const queueItem = { fontFamily, priority, purpose };
-      const existingIndex = state.queuedFontLoads.findIndex((item) => item.fontFamily === fontFamily);
-
-      if (existingIndex === -1) {
-        const priorityOrder = PRIORITY_ORDER;
-        const insertIndex = state.queuedFontLoads.findIndex(
-          (item) => priorityOrder[item.priority] > priorityOrder[priority],
-        );
-
-        set((state) => {
-          const newQueue = [...state.queuedFontLoads];
-
-          if (insertIndex === -1) {
-            newQueue.push(queueItem);
-          } else {
-            newQueue.splice(insertIndex, 0, queueItem);
-          }
-
-          return { queuedFontLoads: newQueue };
-        });
-      }
-
-      return;
-    }
-
-    await get().loadGoogleFont(fontFamily);
-  },
-  loadingFonts: new Set<string>(),
-  networkState: createNetworkDetector(),
   processQueue: () => {
     const state = get();
 
@@ -595,15 +518,7 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
       }
     }
   },
-  queuedFontLoads: [],
-  registeredFonts: new Set<string>(),
   registerGoogleFont: async (fontFamily: string) => {
-    const state = get();
-
-    if (state.registeredFonts.has(fontFamily)) {
-      return;
-    }
-
     try {
       const fontData = await googleFontsApiCache.findFont(fontFamily);
 
@@ -615,39 +530,27 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
 
       const { style, weight } = getWeightAndStyleFromVariant(fontData.variants[0]);
       const googleFont = createGoogleFontObject({
-        binaryLoader: state.loadGoogleFontBinary,
+        binaryLoader: get().loadGoogleFontBinary,
         fontFamily,
         style,
         weight,
       });
 
-      const registered = googleFontRegistry.registerGoogleFont(googleFont);
-
-      if (registered) {
-        set((state) => ({ registeredFonts: new Set(state.registeredFonts).add(fontFamily) }));
-      } else {
-        console.warn(`Failed to register Google Font: ${fontFamily}`);
+      if (get().registeredFonts.has(googleFont.postscriptName)) {
+        return;
       }
+
+      set((state) => {
+        const newRegisteredFonts = new Map(state.registeredFonts);
+
+        newRegisteredFonts.set(googleFont.postscriptName, googleFont);
+
+        return { registeredFonts: newRegisteredFonts };
+      });
     } catch (error) {
       console.error(`Failed to register Google Font ${fontFamily}:`, error);
     }
   },
-
-  retryFailedFont: async (fontFamily: string) => {
-    const failedLoad = get().failedLoads.get(fontFamily);
-
-    if (!failedLoad) return;
-
-    const timeSinceLastAttempt = Date.now() - failedLoad.lastAttempt;
-    const minimumWaitTime = calculateRetryDelay(failedLoad.count, RETRY_JITTER_MAX);
-
-    if (timeSinceLastAttempt < minimumWaitTime) {
-      return;
-    }
-
-    await get().loadGoogleFont(fontFamily);
-  },
-  sessionLoadedFonts: new Set<string>(),
   updateNetworkState: () => {
     const newState = createNetworkDetector();
 
@@ -658,6 +561,7 @@ export const useGoogleFontStore = create<GoogleFontState>()((set, get) => ({
     }
   },
 }));
+/* eslint-enable perfectionist/sort-objects */
 
 if (typeof window !== 'undefined') {
   const store = useGoogleFontStore.getState();

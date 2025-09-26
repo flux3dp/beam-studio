@@ -36,7 +36,6 @@ import {
   generateStyleFromWeightAndItalic,
   getWeightAndStyleFromVariant,
 } from '@core/helpers/fonts/fontUtils';
-import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -179,7 +178,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     styleOptions,
     waitForWebFont,
   } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
-  const { addToHistory, loadGoogleFontBinary: binaryLoader, sessionLoadedFonts } = useGoogleFontStore();
+  const {
+    addToHistory,
+    loadGoogleFontBinary: binaryLoader,
+    registerGoogleFont,
+    sessionLoadedFonts,
+  } = useGoogleFontStore();
 
   const proactivelyLoadHistoryFonts = useCallback(() => {
     if (fontHistory && fontHistory.length > 0) {
@@ -440,7 +444,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           const googleFont = createGoogleFontObject({ binaryLoader, fontFamily, style, weight });
 
           addToHistory(googleFont);
-          googleFontRegistry.registerGoogleFont(googleFont);
+          registerGoogleFont(fontFamily);
 
           const batchCmd = new history.BatchCommand('Change Font family');
 
@@ -463,7 +467,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           const googleFont = createGoogleFontObject({ binaryLoader, fontFamily, style: 'Regular', weight: 400 });
 
           addToHistory(googleFont);
-          googleFontRegistry.registerGoogleFont(googleFont);
+          registerGoogleFont(fontFamily);
 
           const batchCmd = new history.BatchCommand('Change Font family');
 
@@ -484,7 +488,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         }
       }
     },
-    [addToHistory, textElements, waitForWebFont, onConfigChange, binaryLoader],
+    [addToHistory, textElements, onConfigChange, waitForWebFont, binaryLoader, registerGoogleFont],
   );
 
   const renderFontFamilyBlock = (): React.JSX.Element => {

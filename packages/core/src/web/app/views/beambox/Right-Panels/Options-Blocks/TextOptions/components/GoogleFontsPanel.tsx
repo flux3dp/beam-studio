@@ -21,7 +21,7 @@ interface Props {
 
 const FONTS_PER_PAGE = 40;
 const CONTAINER_HEIGHT = 500;
-const ITEM_HEIGHT = 145; // Approximate height of each font item
+const ITEM_HEIGHT = 145;
 const SCROLL_THRESHOLD = 100;
 
 const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible }) => {
@@ -38,6 +38,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const [hasMore, setHasMore] = useState(true);
   const virtualListRef = useRef<any>(null);
   const lastScrollTop = useRef<number>(0);
+  const hasInitiallyLoaded = useRef<boolean>(false);
   const lang = useI18n();
 
   const getEmptyStateMessage = useCallback((): string => {
@@ -156,15 +157,16 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
     }
   }, [visible, fonts.length, fetchGoogleFonts]);
 
+  // Handle filter changes
   useEffect(() => {
     const filtersChanged =
       prevFilterState.current.category !== filterState.category ||
       prevFilterState.current.language !== filterState.language ||
       prevFilterState.current.search !== filterState.search;
 
-    prevFilterState.current = filterState;
-
-    if (filtersChanged || displayedFonts.length === 0) {
+    if (filtersChanged) {
+      prevFilterState.current = filterState;
+      hasInitiallyLoaded.current = false;
       setDisplayedFonts([]);
       setCurrentPage(1);
       setHasMore(true);
@@ -172,6 +174,8 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
       lastScrollTop.current = 0;
 
       if (allFilteredFonts.length > 0) {
+        hasInitiallyLoaded.current = true;
+
         const firstBatch = allFilteredFonts.slice(0, FONTS_PER_PAGE);
 
         firstBatch.forEach((font) => loadFont(font));
@@ -180,7 +184,21 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
         setHasMore(allFilteredFonts.length > FONTS_PER_PAGE);
       }
     }
-  }, [allFilteredFonts, loadFont, filterState, displayedFonts.length]);
+  }, [filterState, allFilteredFonts, loadFont]);
+
+  // Handle initial load when fonts become available
+  useEffect(() => {
+    if (!hasInitiallyLoaded.current && allFilteredFonts.length > 0 && !loading) {
+      hasInitiallyLoaded.current = true;
+
+      const firstBatch = allFilteredFonts.slice(0, FONTS_PER_PAGE);
+
+      firstBatch.forEach((font) => loadFont(font));
+      setDisplayedFonts(firstBatch);
+      setCurrentPage(2);
+      setHasMore(allFilteredFonts.length > FONTS_PER_PAGE);
+    }
+  }, [allFilteredFonts, loadFont, loading]);
 
   const handleFontClick = useCallback(
     (font: CachedGoogleFontItem) => {

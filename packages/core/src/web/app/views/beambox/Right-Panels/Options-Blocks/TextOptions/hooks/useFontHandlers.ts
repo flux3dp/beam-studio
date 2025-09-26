@@ -15,7 +15,6 @@ import { getCurrentUser } from '@core/helpers/api/flux-id';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import type { FontWeight } from '@core/helpers/fonts/fontUtils';
 import { generateGoogleFontPostScriptName, WEIGHT_TO_STYLE_MAP } from '@core/helpers/fonts/fontUtils';
-import { googleFontRegistry } from '@core/helpers/fonts/googleFontRegistry';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -174,7 +173,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
           weight,
         };
 
-        googleFontRegistry.registerGoogleFont(googleFont);
+        store.registerGoogleFont(family);
 
         return googleFont;
       } catch (error) {

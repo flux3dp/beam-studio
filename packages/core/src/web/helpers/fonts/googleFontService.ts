@@ -5,12 +5,7 @@ import localFontHelper from '@core/implementations/localFontHelper';
 
 import { useGoogleFontStore } from '../../app/stores/googleFontStore';
 
-import {
-  createGoogleFontObject,
-  generateGoogleFontPostScriptName,
-  generateStyleFromWeightAndItalic,
-} from './fontUtils';
-import { googleFontRegistry } from './googleFontRegistry';
+import { generateGoogleFontPostScriptName, generateStyleFromWeightAndItalic } from './fontUtils';
 import googleFonts from './webFonts.google';
 
 /**
@@ -178,15 +173,15 @@ const applyGoogleFontFallbacks = (textElements: SVGTextElement[], store: any): v
  */
 export const loadContextGoogleFonts = (): void => {
   try {
-    const googleFontStore = useGoogleFontStore.getState();
+    const store = useGoogleFontStore.getState();
     const textElements = [
       ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
       ...document.querySelectorAll('#svg_defs text'),
     ] as SVGTextElement[];
-    const networkAvailable = googleFontStore.isNetworkAvailableForGoogleFonts();
+    const networkAvailable = store.isNetworkAvailableForGoogleFonts();
 
     if (!networkAvailable) {
-      applyGoogleFontFallbacks(textElements, googleFontStore);
+      applyGoogleFontFallbacks(textElements, store);
 
       return;
     }
@@ -237,20 +232,13 @@ export const loadContextGoogleFonts = (): void => {
       return;
     }
 
-    Array.from(fontVariantsInContext.values()).forEach(({ family, style, weight }) => {
+    Array.from(fontVariantsInContext.values()).forEach(({ family }) => {
       // Load the font family CSS if not already loaded
-      if (!googleFontStore.isGoogleFontLoaded(family)) {
-        googleFontStore.loadGoogleFont(family);
+      if (!store.isGoogleFontLoaded(family)) {
+        store.loadGoogleFont(family);
       }
 
-      const googleFont = createGoogleFontObject({
-        binaryLoader: googleFontStore.loadGoogleFontBinary,
-        fontFamily: family,
-        style,
-        weight,
-      });
-
-      googleFontRegistry.registerGoogleFont(googleFont);
+      store.registerGoogleFont(family);
     });
   } catch (error) {
     console.warn('Failed to scan document context for Google Fonts:', error);

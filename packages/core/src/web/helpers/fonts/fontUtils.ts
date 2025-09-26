@@ -40,13 +40,8 @@ export const POSTSCRIPT_TO_WEIGHT_MAP = {
 } as const;
 
 export const FONT_FALLBACK_FAMILIES = ['PingFang TC', 'Arial', 'Times New Roman', 'Ubuntu', 'Noto Sans'] as const;
-export const FONT_CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'] as const;
 
 export type FontWeight = keyof typeof WEIGHT_TO_STYLE_MAP;
-export type FontStyleName = (typeof WEIGHT_TO_STYLE_MAP)[FontWeight];
-export type PostScriptStyleName = (typeof WEIGHT_TO_POSTSCRIPT_MAP)[FontWeight];
-export type FontCategory = (typeof FONT_CATEGORIES)[number];
-export type FallbackFamily = (typeof FONT_FALLBACK_FAMILIES)[number];
 
 /**
  * Utility functions for font constant operations
