@@ -15,23 +15,23 @@ interface Segment2D {
 
 let output = [] as Segment2D[];
 
-export const fitPath = (points: vector2D[]) => {
+export const fitPath = (points: vector2D[], totalDist?: number) => {
   output = [];
 
   let start = 0;
   let currentVector = v2Sub(points[0], points[points.length - 1]);
   let accumulatedDist = 0;
 
-  for (let i = 1; i < points.length; i += 1) {
-    const point = points[i];
-    const dist = Math.hypot(point.x - points[i - 1].x, point.y - points[i - 1].y);
+  if (!totalDist) {
+    for (let i = 1; i < points.length; i += 1) {
+      const point = points[i];
+      const dist = Math.hypot(point.x - points[i - 1].x, point.y - points[i - 1].y);
 
-    accumulatedDist += dist;
+      accumulatedDist += dist;
+    }
+    totalDist = accumulatedDist;
+    accumulatedDist = 0;
   }
-
-  const totalDist = accumulatedDist;
-
-  accumulatedDist = 0;
 
   const allowedDist = Math.min(totalDist / allowedDistFactor, minAllowedDist);
 
@@ -82,7 +82,7 @@ const fitSegment = (
   const allowedIterationError = allowedError > 1 ? allowedError * allowedError : Math.sqrt(allowedError);
   const numPoints = end - start + 1;
 
-  if (numPoints === 1) {
+  if (numPoints === 1 || allowedError === 0) {
     return;
   }
 
