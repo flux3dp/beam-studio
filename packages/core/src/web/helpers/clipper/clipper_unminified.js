@@ -6564,6 +6564,49 @@
     }
     return resultPaths;
   };
+  ClipperLib.dPathToLineSegments = function (dPath, rotation) {
+    const commands = ClipperLib.dPathSpliter(dPath);
+    let segmentsWithTypes = []; // segments, each contains a cmd with serveral points
+    let currentPath = []; // points of consecutive L commands, including end point of previous cmd
+    let pathStartPoint;
+    const flushLCmds = () => {
+      if (currentPath.length > 1) {
+        segmentsWithTypes.push({ type: 'L', points: currentPath });
+        currentPath = [];
+      }
+    };
+    const addCmd = (type, points) => {
+      flushLCmds();
+      segmentsWithTypes.push({ type, points });
+    };
+    for (let i = 0; i < commands.length; ++i) {
+      const cmd = commands[i].command;
+      let points = commands[i].points;
+      if (cmd === 'Z') {
+        if (currentPath.length > 1) currentPath.push(pathStartPoint);
+        addCmd(cmd, [pathStartPoint]);
+        continue;
+      }
+      if (rotation.angle !== 0) ClipperLib.rotationPoints(rotation, points);
+      points = points.map((p) => ({ x: p.X, y: p.Y }));
+      switch (cmd) {
+        case 'M':
+          pathStartPoint = points[0];
+          addCmd(cmd, points);
+          currentPath.push(points.at(-1));
+          break;
+        case 'L':
+          currentPath.push(...points);
+          break;
+        default:
+          addCmd(cmd, points);
+          currentPath.push(points.at(-1));
+          break;
+      }
+    }
+    flushLCmds();
+    return segmentsWithTypes;
+  };
   ClipperLib.dPathSpliter = function (dPath) {
     let commands = [];
     let lastCommand = dPath.match(/[a-df-z]/i).index;

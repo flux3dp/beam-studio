@@ -75,7 +75,6 @@ import historyRecording from './history/historyrecording';
 import undoManager from './history/undoManager';
 import { MouseInteraction } from './interaction/mouse';
 import layerManager from './layer/layerManager';
-import { deleteSelectedElements } from './operations/delete';
 import disassembleUse from './operations/disassembleUse';
 import importSvgString from './operations/import/importSvgString';
 import setSvgContent from './operations/import/setSvgContent';
@@ -3859,7 +3858,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     recentMenuUpdater.update();
   };
 
-  this.simplifyPath = (elems) => {
+  this.simplifyPath = (elems?: Element[]) => {
     if (tempGroup) {
       const children = this.ungroupTempGroup();
 
@@ -3867,43 +3866,21 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     const batchCmd = new history.BatchCommand('Simplify Path');
-    const newElements = [];
 
-    elems = elems || selectedElements;
-    elems
-      .filter((elem) => elem?.tagName === 'path')
-      .forEach((elem) => {
-        const attrs = {
-          fill: $(elem).attr('fill') || 'none',
-          'fill-opacity': $(elem).attr('fill-opacity') || '0',
-          stroke: $(elem).attr('stroke') || '#333333',
-          'stroke-opacity': $(elem).attr('stroke-opacity') || '1',
-          transform: $(elem).attr('transform') || '',
-        };
-        const originD = elem.getAttribute('d');
-        const d = pathActions.simplifyPath(elem);
-        const newPathElement = addSvgElementFromJson({
-          attr: {
-            d,
-            id: getNextId(),
-            ...attrs,
-            opacity: cur_shape.opacity,
-          },
-          curStyles: false,
-          element: 'path',
-        });
+    elems = elems || [...selectedElements];
+    elems.forEach((elem) => {
+      if (elem?.tagName !== 'path') return;
 
-        newElements.push(newPathElement);
-        batchCmd.addSubCommand(new history.InsertElementCommand(newPathElement));
-        console.log('Path compressed', (d.length / originD.length).toFixed(3));
-      });
+      const originD = elem.getAttribute('d')!;
+      const d = pathActions.simplifyPath(elem);
 
-    const cmd = deleteSelectedElements(true);
+      elem.setAttribute('d', d);
+      batchCmd.addSubCommand(new history.ChangeElementCommand(elem, { d: originD }));
+      console.log('Path compressed', (d.length / originD.length).toFixed(3));
+    });
 
-    if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
-
-    this.selectOnly(newElements, true);
     addCommandToHistory(batchCmd);
+    this.multiSelect(elems);
 
     return batchCmd;
   };
