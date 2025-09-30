@@ -83,8 +83,8 @@ const StepCrop = ({ onCancel, onCropFinish }: Props): React.JSX.Element => {
   };
 
   const maxWidth = window.innerWidth - MODAL_PADDING_X;
-  const maxHieght = window.innerHeight - MODAL_PADDING_Y;
-  const isWideImage = width / maxWidth > height / maxHieght;
+  const maxHeight = window.innerHeight - MODAL_PADDING_Y;
+  const isWideImage = width / maxWidth > height / maxHeight;
 
   return (
     <Modal
@@ -105,7 +105,7 @@ const StepCrop = ({ onCancel, onCropFinish }: Props): React.JSX.Element => {
             onLoad={startCropper}
             ref={previewImageRef}
             src={croppedCameraCanvasBlobUrl}
-            style={isWideImage ? { width: `${maxWidth}px` } : { height: `${maxHieght}px` }}
+            style={isWideImage ? { width: `${maxWidth}px` } : { height: `${maxHeight}px` }}
           />
         </div>
       )}

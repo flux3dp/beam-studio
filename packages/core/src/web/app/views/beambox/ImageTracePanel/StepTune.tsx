@@ -1,10 +1,11 @@
 import React, { useEffect, useState } from 'react';
 
-import { Button, Modal, Slider } from 'antd';
+import { Button, Col, Modal, Row, Slider } from 'antd';
 import type Cropper from 'cropperjs';
 
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import layoutConstants from '@core/app/constants/layout-constants';
 import ImageData from '@core/helpers/image-data';
 import traceAndImportPath from '@core/helpers/image-trace-panel/trace-and-import-path';
 import useI18n from '@core/helpers/useI18n';
@@ -18,8 +19,8 @@ interface Props {
   onGoBack: () => void;
 }
 
-const MODAL_PADDING_X = 80;
-const MODAL_PADDING_Y = 210;
+const MODAL_PADDING_X = 48;
+const MODAL_PADDING_Y = 84;
 
 function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.Element {
   const lang = useI18n().beambox.image_trace_panel;
@@ -35,7 +36,7 @@ function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.E
         threshold: val,
       },
       height: 0,
-      onComplete: (result) => setPreviewImgBase64(result.pngBase64),
+      onComplete: (result: { pngBase64: string }) => setPreviewImgBase64(result.pngBase64),
       width: 0,
     });
   };
@@ -58,9 +59,27 @@ function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.E
     onClose();
   };
   const { height, width } = cropData;
-  const maxWidth = window.innerWidth - MODAL_PADDING_X;
-  const maxHieght = window.innerHeight - MODAL_PADDING_Y;
-  const isWideImage = width / maxWidth > height / maxHieght;
+  const maxModalWidth = Math.min(window.innerWidth - 32, 0.65 * window.innerWidth);
+  const maxModalHeight = window.innerHeight - 2 * layoutConstants.topBarHeight;
+  const maxAllowableWidth = maxModalWidth - MODAL_PADDING_X;
+  const maxAllowableHeight = maxModalHeight - MODAL_PADDING_Y;
+  const contentWidth = 330;
+  const contentHeight = 75;
+
+  const imageRatio = Math.max(
+    // max allowed image ratio when control is aligned horizontally
+    Math.min((maxAllowableWidth - contentWidth) / width, maxAllowableHeight / height),
+    // max allowed image ratio when control is aligned vertically
+    Math.min((maxAllowableHeight - contentHeight) / height, maxAllowableWidth / width),
+  );
+
+  const imgDisplayWidth = width * imageRatio;
+  const imgDisplayHeight = height * imageRatio;
+
+  const imgSizeStyle: React.CSSProperties = {
+    height: imgDisplayHeight,
+    width: imgDisplayWidth,
+  };
 
   const renderFooter = () => (
     <>
@@ -79,30 +98,28 @@ function StepTune({ cropData, imageUrl, onClose, onGoBack }: Props): React.JSX.E
       footer={renderFooter()}
       maskClosable={false}
       open
-      width={isWideImage ? maxWidth : undefined}
+      width={Math.min(imgDisplayWidth + contentWidth + MODAL_PADDING_X, maxModalWidth)}
     >
-      <div>
-        <img
-          id="tunedImage"
-          src={previewImgBase64}
-          style={isWideImage ? { width: `${maxWidth}px` } : { height: `${maxHieght}px` }}
-        />
-      </div>
-      <div>
-        <div className={styles.title}>{lang.tuning}</div>
-        <div>
-          <h5 className={styles.subtitle}>{lang.threshold}</h5>
-          <Slider
-            id="threshold"
-            max={255}
-            min={0}
-            onAfterChange={(val: number) => generatePreviewImgUrl(val)}
-            onChange={(val: number) => setThreshold(val)}
-            step={1}
-            value={threshold}
-          />
-        </div>
-      </div>
+      <Row gutter={10} justify="center">
+        <Col flex={`0 0 ${imgDisplayWidth}px`}>
+          <img id="tunedImage" src={previewImgBase64} style={imgSizeStyle} />
+        </Col>
+        <Col flex={`1 1 ${contentWidth}px`}>
+          <div className={styles.title}>{lang.tuning}</div>
+          <div>
+            <h5 className={styles.subtitle}>{lang.threshold}</h5>
+            <Slider
+              id="threshold"
+              max={255}
+              min={0}
+              onChange={(val: number) => setThreshold(val)}
+              onChangeComplete={(val: number) => generatePreviewImgUrl(val)}
+              step={1}
+              value={threshold}
+            />
+          </div>
+        </Col>
+      </Row>
     </Modal>
   );
 }

@@ -1,6 +1,7 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { hexaRfModels } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -16,7 +17,7 @@ import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import moveLaserHead from './common/moveLaserHead';
 import SolvePnP from './common/SolvePnP';
-import { bb2PerspectiveGrid, bb2PnPPoints } from './common/solvePnPConstants';
+import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from './common/solvePnPConstants';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {
@@ -48,6 +49,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
+  const isHexaRf = useMemo(() => hexaRfModels.has(deviceMaster.currentDevice?.info.model ?? ''), []);
 
   if (step === Steps.CHECKPOINT_DATA) {
     return (
@@ -133,7 +135,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         });
 
         if (doEngraving) {
-          if (deviceMaster.currentDevice!.info.model.startsWith('fhx2')) await deviceMaster.doHexa2Calibration();
+          if (isHexaRf) await deviceMaster.doHexa2Calibration();
           else await deviceMaster.doBB2Calibration();
         }
 
@@ -222,7 +224,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
     return (
       <CheckPnP
         dh={0}
-        grid={bb2PerspectiveGrid}
+        grid={isHexaRf ? hx2rfPerspectiveGrid : bb2PerspectiveGrid}
         onBack={() => setStep(Steps.SOLVE_PNP)}
         onClose={onClose}
         onNext={async () => {
