@@ -43,7 +43,17 @@ export interface WorkArea {
   autoShrink?: number;
   calibrationCenter?: number[]; // [mm, mm]
   cameraCenter?: number[]; // [mm, mm]
-  curveSpeedLimit?: number; // mm/s
+  /**
+   * curveSpeedLimit, undefined means no limit
+   * x: speed limit for curve engraving in X axis, in mm/s
+   * zRegular?: speed limit for regular engraving in Z axis, in mm/min
+   * zHighSpeed?: speed limit for high-speed engraving in Z axis, in mm/min
+   */
+  curveSpeedLimit?: {
+    x?: number; // mm/s
+    zHighSpeed?: number; // mm/s
+    zRegular?: number; // mm/s
+  };
   deep?: number; // mm
   dimensionCustomizable?: boolean;
   // extra displayHeight for modules
@@ -137,7 +147,11 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     autoFocusOffset: [28, 0, 0],
     autoShrink: 0.05,
     cameraCenter: [300, 150],
-    curveSpeedLimit: 50,
+    curveSpeedLimit: {
+      x: 50,
+      zHighSpeed: 300,
+      zRegular: 140,
+    },
     height: 375,
     label: 'Beambox II',
     maxSpeed: 900,

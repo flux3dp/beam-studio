@@ -1,6 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import alertConfig from '@core/helpers/api/alert-config';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -12,6 +13,10 @@ const doZSpeedLimitTest = async (device: IDeviceInfo): Promise<boolean> => {
   const addOnInfo = getAddOnInfo(device.model);
 
   if (!addOnInfo.curveEngraving) return true;
+
+  const workareaObject = getWorkarea(device.model);
+
+  if (!workareaObject.curveSpeedLimit?.zRegular) return true;
 
   const versionCheck = versionChecker(device.version);
 
@@ -39,11 +44,17 @@ const doZSpeedLimitTest = async (device: IDeviceInfo): Promise<boolean> => {
 
   try {
     const layers = [...document.querySelectorAll('#svgcontent > g.layer:not([display="none"])')];
-    let zSpeed = 140;
+    let zSpeed = workareaObject.curveSpeedLimit.zRegular!;
 
-    for (let i = 0; i < layers.length; i++) {
-      zSpeed = Math.max(zSpeed, getData(layers[i], 'ceZSpeedLimit'));
+    if (workareaObject.curveSpeedLimit.zHighSpeed) {
+      for (let i = 0; i < layers.length; i++) {
+        if (getData(layers[i], 'ceZHighSpeed')) {
+          zSpeed = workareaObject.curveSpeedLimit.zHighSpeed;
+          break;
+        }
+      }
     }
+
     progressCaller.openNonstopProgress({
       id: 'z-speed-limit-test',
       message: t.testing,

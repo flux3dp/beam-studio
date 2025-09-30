@@ -255,8 +255,8 @@ export const getExportOpt = async (
   }
 
   if (config.curve_engraving) {
-    if (globalPreference['curve_engraving_speed_limit'] && workareaObj.curveSpeedLimit) {
-      config.csl = workareaObj.curveSpeedLimit * 60; // convert to mm/min
+    if (globalPreference['curve_engraving_speed_limit'] && workareaObj.curveSpeedLimit?.x) {
+      config.csl = workareaObj.curveSpeedLimit.x * 60; // convert to mm/min
     }
   }
 

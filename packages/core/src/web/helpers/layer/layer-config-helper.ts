@@ -24,7 +24,7 @@ const attributeMap: Record<ConfigKey, string> = {
   amDensity: 'data-amDensity',
   backlash: 'data-backlash',
   biDirectional: 'data-biDirectional',
-  ceZSpeedLimit: 'data-ceZSpeedLimit',
+  ceZHighSpeed: 'data-ceZHighSpeed',
   clipRect: 'data-clipRect',
   color: 'data-color',
   colorCurvesMap: 'data-colorCurvesMap',
@@ -79,7 +79,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   amDensity: 2,
   backlash: 0,
   biDirectional: true,
-  ceZSpeedLimit: 140,
+  ceZHighSpeed: false,
   configName: '',
   cRatio: 100,
   diode: 0,
@@ -142,7 +142,14 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
   },
 };
 
-export const booleanConfig: ConfigKey[] = ['fullcolor', 'ref', 'split', 'biDirectional', 'crossHatch'] as const;
+export const booleanConfig: ConfigKey[] = [
+  'fullcolor',
+  'ref',
+  'split',
+  'biDirectional',
+  'crossHatch',
+  'ceZHighSpeed',
+] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'speed',

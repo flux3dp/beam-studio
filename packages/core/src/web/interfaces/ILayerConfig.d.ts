@@ -18,7 +18,6 @@ type CommonConfig = {
 type LaserConfig = {
   /** 0-100, percentage */
   airAssist: number;
-  ceZSpeedLimit: number; // can add CurveEngravingConfig if more ce configs are added
   diode: number;
   focus: number;
   focusStep: number;
@@ -27,6 +26,10 @@ type LaserConfig = {
   power: number;
   speed: number;
   zStep: number;
+};
+
+type CurveEngravingConfig = {
+  ceZHighSpeed: boolean;
 };
 
 type PrintingConfig = {
@@ -87,7 +90,13 @@ type PromarkConfig = {
   wobbleStep: number;
 };
 
-export type ConfigKeyTypeMap = CommonConfig & LaserConfig & MetaConfig & PrintingConfig & PromarkConfig & UVConfig;
+export type ConfigKeyTypeMap = CommonConfig &
+  CurveEngravingConfig &
+  LaserConfig &
+  MetaConfig &
+  PrintingConfig &
+  PromarkConfig &
+  UVConfig;
 
 export type ConfigKey = keyof ConfigKeyTypeMap;
 
