@@ -5,7 +5,7 @@ exports[`GoogleFontsPanel Basic Rendering should render correctly when visible 1
   <div
     class="modal"
     data-testid="draggable-modal"
-    width="1000"
+    width="900"
   >
     <button
       data-testid="modal-close"

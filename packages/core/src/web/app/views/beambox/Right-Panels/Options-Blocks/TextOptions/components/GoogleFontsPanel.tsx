@@ -41,6 +41,23 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
   const hasInitiallyLoaded = useRef<boolean>(false);
   const lang = useI18n();
 
+  // Calculate responsive modal width based on viewport
+  const getModalWidth = useCallback(() => {
+    const viewportWidth = window.innerWidth;
+
+    if (viewportWidth >= 1100) return 1000;
+
+    if (viewportWidth >= 900) return Math.min(900, viewportWidth - 100);
+
+    if (viewportWidth >= 769) return Math.min(800, viewportWidth - 80);
+
+    if (viewportWidth >= 601) return Math.min(700, viewportWidth - 60);
+
+    return Math.min(600, viewportWidth - 40);
+  }, []);
+
+  const [modalWidth, setModalWidth] = useState(getModalWidth());
+
   const getEmptyStateMessage = useCallback((): string => {
     if (!isNetworkAvailable) {
       return lang.google_font_panel.offline_message;
@@ -157,6 +174,19 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
     }
   }, [visible, fonts.length, fetchGoogleFonts]);
 
+  // Update modal width on window resize
+  useEffect(() => {
+    if (!visible) return;
+
+    const handleResize = () => {
+      setModalWidth(getModalWidth());
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [visible, getModalWidth]);
+
   // Handle filter changes
   useEffect(() => {
     const filtersChanged =
@@ -228,7 +258,8 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
       footer={null}
       onCancel={onClose}
       open={visible}
-      width={1000}
+      scrollableContent
+      width={modalWidth}
     >
       <div className={styles.header}>
         <div className={styles.title}>
