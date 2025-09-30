@@ -1,5 +1,7 @@
 import { forwardRef } from 'react';
 
+import classNames from 'classnames';
+
 import type { GoogleFontItem as CachedGoogleFontItem } from '@core/helpers/fonts/googleFontsApiCache';
 
 import styles from './GoogleFontsPanel.module.scss';
@@ -25,7 +27,7 @@ const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSele
 
   return (
     <div
-      className={`${styles.fontCard} ${isSelected ? styles.selected : ''}`}
+      className={classNames(styles.fontCard, { [styles.selected]: isSelected })}
       data-font={font.family}
       onClick={onClick}
       onKeyDown={(e) => {

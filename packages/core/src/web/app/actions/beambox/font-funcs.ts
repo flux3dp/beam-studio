@@ -81,8 +81,11 @@ if (fontNameMapObj.navigatorLang !== navigator.language) {
 
 const fontNameMap = new Map<string, string>();
 
+// Cache for available font families and lowercase mappings for O(1) lookup
+let lowercaseFontFamilyMap: Map<string, string> | null = null;
+
 const requestAvailableFontFamilies = (withoutMonotype = false) => {
-  // get all available fonts in user PC
+  // get all available fonts in local
   const fonts = fontHelper.getAvailableFonts(withoutMonotype);
 
   fonts.forEach((font) => {
@@ -101,15 +104,26 @@ const requestAvailableFontFamilies = (withoutMonotype = false) => {
   fontNameMapObj.navigatorLang = navigator.language;
   storage.set('font-name-map', fontNameMapObj);
 
-  // make it unique
   const fontFamilySet = new Set<string>();
 
   fonts.map((font) => fontFamilySet.add(font.family!));
 
-  // transfer to array and sort!
-  return Array.from(fontFamilySet).sort((a, b) =>
+  const sortedFamilies = Array.from(fontFamilySet).sort((a, b) =>
     String(a ?? '').localeCompare(String(b ?? ''), undefined, { sensitivity: 'base' }),
   );
+
+  lowercaseFontFamilyMap = new Map(sortedFamilies.map((family) => [family.toLowerCase(), family]));
+
+  return sortedFamilies;
+};
+
+// Optimized O(1) case-insensitive font family lookup
+const findFontFamilyCaseInsensitive = (family: string): string | undefined => {
+  if (!lowercaseFontFamilyMap) {
+    requestAvailableFontFamilies();
+  }
+
+  return lowercaseFontFamilyMap!.get(family.toLowerCase());
 };
 
 const getFontOfPostscriptName = memoize((postscriptName: string) => {
@@ -751,6 +765,7 @@ const convertTextToPath = async (
 
 export default {
   convertTextToPath,
+  findFontFamilyCaseInsensitive,
   fontNameMap,
   getFontOfPostscriptName,
   requestAvailableFontFamilies,

@@ -37,7 +37,7 @@ export const createBinaryLoader = (
     }
 
     try {
-      const fontData = (await googleFontsApiCache.findFont(fontFamily)) as any;
+      const fontData = await googleFontsApiCache.findFont(fontFamily);
 
       if (!fontData) {
         throw new Error(`Font ${fontFamily} not found in Google Fonts API cache`);

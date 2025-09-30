@@ -10,10 +10,10 @@ interface UseGoogleFontDataReturn {
   categoryOptions: Array<{ label: string; value: string }>;
   fetchGoogleFonts: () => Promise<void>;
   fonts: CachedGoogleFontItem[];
+  isLoading: boolean;
   languageOptions: Array<{ label: string; value: string }>;
   loadFont: (font: CachedGoogleFontItem) => Promise<void>;
   loadFontForTextEditing: (fontFamily: string) => Promise<void>;
-  loading: boolean;
 }
 
 const CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'];
@@ -24,13 +24,13 @@ const CATEGORIES = ['serif', 'sans-serif', 'display', 'handwriting', 'monospace'
  */
 export const useGoogleFontData = (): UseGoogleFontDataReturn => {
   const [fonts, setFonts] = useState(Array.of<CachedGoogleFontItem>());
-  const [loading, setLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
   const loadGoogleFontForPreview = useGoogleFontStore((state) => state.loadGoogleFontForPreview);
   const loadGoogleFont = useGoogleFontStore((state) => state.loadGoogleFont);
 
   // Fetch Google Fonts from API
   const fetchGoogleFonts = useCallback(async () => {
-    setLoading(true);
+    setIsLoading(true);
 
     try {
       const data = await googleFontsApiCache.getCache();
@@ -40,7 +40,7 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
       console.error('Failed to fetch Google Fonts:', error);
       setFonts([]); // Show empty list on error
     } finally {
-      setLoading(false);
+      setIsLoading(false);
     }
   }, []);
 
@@ -111,9 +111,9 @@ export const useGoogleFontData = (): UseGoogleFontDataReturn => {
     categoryOptions,
     fetchGoogleFonts,
     fonts,
+    isLoading,
     languageOptions,
     loadFont,
     loadFontForTextEditing,
-    loading,
   };
 };

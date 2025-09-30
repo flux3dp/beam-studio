@@ -63,16 +63,13 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
         elem.getAttribute('data-fullcolor') === '1' ? [] : [<ImageOptions elem={elem} key="image" />],
       )
       .with('g', () => {
-        const isTextPathGroup = Boolean(elem.getAttribute('data-textpath-g'));
-        const hasOnlyTextChildren = !elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])');
-
-        if (isTextPathGroup) {
+        if (elem.getAttribute('data-textpath-g')) {
           const textElem = elem.querySelector('text');
 
           return [<TextOptions elem={elem} isTextPath key="textpath" textElements={[textElem!]} />];
         }
 
-        if (hasOnlyTextChildren) {
+        if (!elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])')) {
           const textElems = Array.from(elem.querySelectorAll('text'));
           const includeTextPath = Boolean(elem.querySelector('g[data-textpath-g="1"]'));
 

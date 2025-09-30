@@ -26,7 +26,7 @@ jest.mock(
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem');
 
-import StartOffsetBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/StartOffsetBlock';
+import StartOffsetBlock from './StartOffsetBlock';
 
 describe('test StartOffsetBlock', () => {
   test('should render correctly', () => {

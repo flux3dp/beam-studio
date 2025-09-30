@@ -3,11 +3,6 @@ import { googleFontsApiCache, type GoogleFontsApiResponse } from './googleFontsA
 // Mock fetch globally
 global.fetch = jest.fn();
 
-// Mock the FLUXID_HOST import to avoid dependency chain issues
-jest.mock('../api/flux-id', () => ({
-  FLUXID_HOST: 'https://id.flux3dp.com',
-}));
-
 describe('GoogleFontsApiCache', () => {
   const mockApiResponse: GoogleFontsApiResponse = {
     items: [

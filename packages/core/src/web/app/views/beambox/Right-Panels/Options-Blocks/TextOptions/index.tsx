@@ -59,18 +59,10 @@ const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 
 const isLocalFont = (font: GeneralFont) => 'path' in font;
 
-const findFallbackFont = (targetFont: GeneralFont, availableFamilies: string[]): string | undefined => {
-  const candidateFonts = [targetFont.family, ...FONT_FALLBACK_FAMILIES];
-
-  return (
-    candidateFonts.find((candidate) =>
-      availableFamilies.some((local) => local.toLowerCase() === candidate.toLowerCase()),
-    ) ||
-    availableFamilies.find((local) =>
-      candidateFonts.some((candidate) => candidate.toLowerCase() === local.toLowerCase()),
-    )
+const findFallbackFont = (targetFont: GeneralFont, availableFamilies: string[]): string | undefined =>
+  [targetFont.family, ...FONT_FALLBACK_FAMILIES].find((candidate) =>
+    availableFamilies.some((local) => local.toLowerCase() === candidate.toLowerCase()),
   );
-};
 
 const isGoogleFontLoaded = (
   fontFamily: string,
@@ -184,6 +176,40 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     registerGoogleFont,
     sessionLoadedFonts,
   } = useGoogleFontStore();
+
+  // Helper function to apply font changes to text elements with undo support
+  const applyFontToElements = useCallback(
+    async ({
+      font,
+      fontFamily,
+      fontLoadedPromise,
+    }: {
+      font: GeneralFont;
+      fontFamily: string;
+      fontLoadedPromise?: Promise<void>;
+    }): Promise<void> => {
+      const batchCmd = new history.BatchCommand('Change Font family');
+
+      [
+        textEdit.setFontPostscriptName(font.postscriptName, true, textElements),
+        textEdit.setItalic(font.italic, true, textElements),
+        textEdit.setFontWeight(font.weight, true, textElements),
+        textEdit.setFontFamily(fontFamily, true, textElements),
+      ].forEach((cmd) => {
+        if (cmd) batchCmd.addSubCommand(cmd);
+      });
+
+      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+
+      if (!isLocalFont(font)) {
+        await waitForWebFont(fontLoadedPromise);
+      }
+
+      onConfigChange('fontFamily', fontFamily);
+      onConfigChange('fontStyle', font.style);
+    },
+    [textElements, onConfigChange, waitForWebFont],
+  );
 
   const proactivelyLoadHistoryFonts = useCallback(() => {
     if (fontHistory && fontHistory.length > 0) {
@@ -299,13 +325,19 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           const sanitizedFamily = findFallbackFont(font, availableFontFamilies);
 
           if (sanitizedFamily && sanitizedFamily !== font.family) {
-            const newFont = FontFuncs.requestFontsOfTheFontFamily(sanitizedFamily)[0];
+            const fonts = FontFuncs.requestFontsOfTheFontFamily(sanitizedFamily);
 
-            console.warn(`unsupported font ${font.family}, fallback to ${sanitizedFamily}`);
-            textEdit.setFontFamily(sanitizedFamily, true, [textElement]);
-            textEdit.setFontPostscriptName(newFont.postscriptName, true, [textElement]);
+            if (fonts && fonts.length > 0) {
+              const newFont = fonts[0];
 
-            font = newFont;
+              console.warn(`unsupported font ${font.family}, fallback to ${sanitizedFamily}`);
+              textEdit.setFontFamily(sanitizedFamily, true, [textElement]);
+              textEdit.setFontPostscriptName(newFont.postscriptName, true, [textElement]);
+
+              font = newFont;
+            } else {
+              console.error(`Fallback font family ${sanitizedFamily} has no available fonts`);
+            }
           }
         }
 
@@ -355,9 +387,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
     const family = option.family ?? newFamily;
 
-    const systemFonts = FontFuncs.requestAvailableFontFamilies();
-    const familyLower = family.toLowerCase();
-    const localFontMatch = systemFonts.find((f) => f.toLowerCase() === familyLower);
+    const localFontMatch = FontFuncs.findFontFamilyCaseInsensitive(family);
 
     if (!localFontMatch) {
       await handleGoogleFontSelect(family);
@@ -365,7 +395,16 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       return;
     }
 
-    const newFont = FontFuncs.requestFontsOfTheFontFamily(localFontMatch)[0];
+    const fonts = FontFuncs.requestFontsOfTheFontFamily(localFontMatch);
+
+    if (!fonts || fonts.length === 0) {
+      console.error(`No fonts found for family: ${localFontMatch}`);
+      await handleGoogleFontSelect(family);
+
+      return;
+    }
+
+    const newFont = fonts[0];
 
     addToHistory(newFont);
 
@@ -375,36 +414,27 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       return;
     }
 
-    const batchCmd = new history.BatchCommand('Change Font family');
-
-    [
-      textEdit.setFontPostscriptName(newFont.postscriptName, true, textElements),
-      textEdit.setItalic(newFont.italic, true, textElements),
-      textEdit.setFontWeight(newFont.weight, true, textElements),
-      textEdit.setFontFamily(localFontMatch, true, textElements),
-    ].forEach((cmd) => {
-      if (cmd) batchCmd.addSubCommand(cmd);
+    await applyFontToElements({
+      font: newFont,
+      fontFamily: localFontMatch,
+      fontLoadedPromise,
     });
-    svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-
-    if (!isLocalFont(newFont)) {
-      await waitForWebFont(fontLoadedPromise);
-    }
-
-    const newStyle = newFont.style;
-
-    onConfigChange('fontFamily', localFontMatch);
-    onConfigChange('fontStyle', newStyle);
   };
 
   const handleGoogleFontSelect = useCallback(
     async (fontFamily: string) => {
-      const localFonts = FontFuncs.requestAvailableFontFamilies();
-      const googleFontLower = fontFamily.toLowerCase();
-      const localFontMatch = localFonts.find((f) => f.toLowerCase() === googleFontLower);
+      const localFontMatch = FontFuncs.findFontFamilyCaseInsensitive(fontFamily);
 
       if (localFontMatch) {
-        const localFont = FontFuncs.requestFontsOfTheFontFamily(localFontMatch)[0];
+        const fonts = FontFuncs.requestFontsOfTheFontFamily(localFontMatch);
+
+        if (!fonts || fonts.length === 0) {
+          console.error(`No fonts found for family: ${localFontMatch}`);
+
+          return;
+        }
+
+        const localFont = fonts[0];
 
         addToHistory(localFont);
 
@@ -414,24 +444,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           return;
         }
 
-        const batchCmd = new history.BatchCommand('Change Font family');
-
-        [
-          textEdit.setFontPostscriptName(localFont.postscriptName, true, textElements),
-          textEdit.setItalic(localFont.italic, true, textElements),
-          textEdit.setFontWeight(localFont.weight, true, textElements),
-          textEdit.setFontFamily(localFontMatch, true, textElements),
-        ].forEach((cmd) => {
-          if (cmd) batchCmd.addSubCommand(cmd);
+        await applyFontToElements({
+          font: localFont,
+          fontFamily: localFontMatch,
+          fontLoadedPromise,
         });
-        svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-
-        if (!isLocalFont(localFont)) {
-          await waitForWebFont(fontLoadedPromise);
-        }
-
-        onConfigChange('fontFamily', localFontMatch);
-        onConfigChange('fontStyle', localFont.style);
       } else {
         // Load the font properly through the store system
         await useGoogleFontStore.getState().loadGoogleFontForTextEditing(fontFamily);
@@ -446,22 +463,10 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           addToHistory(googleFont);
           registerGoogleFont(fontFamily);
 
-          const batchCmd = new history.BatchCommand('Change Font family');
-
-          [
-            textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
-            textEdit.setItalic(googleFont.italic, true, textElements),
-            textEdit.setFontWeight(googleFont.weight, true, textElements),
-            textEdit.setFontFamily(fontFamily, true, textElements),
-          ].forEach((cmd) => {
-            if (cmd) batchCmd.addSubCommand(cmd);
+          await applyFontToElements({
+            font: googleFont,
+            fontFamily,
           });
-          svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-
-          await waitForWebFont();
-
-          onConfigChange('fontFamily', fontFamily);
-          onConfigChange('fontStyle', style);
         } else {
           // Fallback to Regular if font data not available
           const googleFont = createGoogleFontObject({ binaryLoader, fontFamily, style: 'Regular', weight: 400 });
@@ -469,26 +474,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           addToHistory(googleFont);
           registerGoogleFont(fontFamily);
 
-          const batchCmd = new history.BatchCommand('Change Font family');
-
-          [
-            textEdit.setFontPostscriptName(googleFont.postscriptName, true, textElements),
-            textEdit.setItalic(googleFont.italic, true, textElements),
-            textEdit.setFontWeight(googleFont.weight, true, textElements),
-            textEdit.setFontFamily(fontFamily, true, textElements),
-          ].forEach((cmd) => {
-            if (cmd) batchCmd.addSubCommand(cmd);
+          await applyFontToElements({
+            font: googleFont,
+            fontFamily,
           });
-          svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-
-          await waitForWebFont();
-
-          onConfigChange('fontFamily', fontFamily);
-          onConfigChange('fontStyle', 'Regular');
         }
       }
     },
-    [addToHistory, textElements, onConfigChange, waitForWebFont, binaryLoader, registerGoogleFont],
+    [addToHistory, applyFontToElements, binaryLoader, registerGoogleFont],
   );
 
   const renderFontFamilyBlock = (): React.JSX.Element => {

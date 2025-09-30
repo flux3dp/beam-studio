@@ -1,8 +1,3 @@
-// Mock the FLUXID_HOST import to avoid dependency chain issues
-jest.mock('@core/helpers/api/flux-id', () => ({
-  FLUXID_HOST: 'https://id.flux3dp.com',
-}));
-
 // Mock symbolMaker to avoid import.meta.url syntax error in Jest
 jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
   __esModule: true,
@@ -102,6 +97,7 @@ const mockUseGoogleFontData = {
       variants: ['300', '500', '700'],
     },
   ],
+  isLoading: false,
   languageOptions: [
     { label: 'Latin', value: 'latin' },
     { label: 'Latin Extended', value: 'latin-ext' },
@@ -112,7 +108,6 @@ const mockUseGoogleFontData = {
   loadedFonts: new Set(['Open Sans']),
   loadFont: jest.fn(),
   loadFontForTextEditing: jest.fn(),
-  loading: false,
 };
 
 jest.mock('./hooks/useGoogleFontData', () => ({
@@ -179,7 +174,7 @@ const defaultProps = {
 describe('GoogleFontsPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseGoogleFontData.loading = false;
+    mockUseGoogleFontData.isLoading = false;
     mockUseGoogleFontData.fonts = [
       {
         category: 'sans-serif',
@@ -242,7 +237,7 @@ describe('GoogleFontsPanel', () => {
 
   describe('Loading States', () => {
     it('should show loading spinner when fonts are loading', () => {
-      mockUseGoogleFontData.loading = true;
+      mockUseGoogleFontData.isLoading = true;
       render(<GoogleFontsPanel {...defaultProps} />);
 
       expect(screen.getByTestId('spin')).toBeInTheDocument();

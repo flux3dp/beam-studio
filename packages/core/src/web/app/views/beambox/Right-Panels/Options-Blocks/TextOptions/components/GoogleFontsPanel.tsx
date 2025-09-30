@@ -25,7 +25,7 @@ const ITEM_HEIGHT = 145;
 const SCROLL_THRESHOLD = 100;
 
 const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible }) => {
-  const { categoryOptions, fetchGoogleFonts, fonts, languageOptions, loadFont, loadFontForTextEditing, loading } =
+  const { categoryOptions, fetchGoogleFonts, fonts, isLoading, languageOptions, loadFont, loadFontForTextEditing } =
     useGoogleFontData();
   const isNetworkAvailable = useGoogleFontStore((state) => state.isNetworkAvailableForGoogleFonts());
   const [selectedCategory, setSelectedCategory] = useState<string>('');
@@ -218,7 +218,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
 
   // Handle initial load when fonts become available
   useEffect(() => {
-    if (!hasInitiallyLoaded.current && allFilteredFonts.length > 0 && !loading) {
+    if (!hasInitiallyLoaded.current && allFilteredFonts.length > 0 && !isLoading) {
       hasInitiallyLoaded.current = true;
 
       const firstBatch = allFilteredFonts.slice(0, FONTS_PER_PAGE);
@@ -228,7 +228,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
       setCurrentPage(2);
       setHasMore(allFilteredFonts.length > FONTS_PER_PAGE);
     }
-  }, [allFilteredFonts, loadFont, loading]);
+  }, [allFilteredFonts, loadFont, isLoading]);
 
   const handleFontClick = useCallback(
     (font: CachedGoogleFontItem) => {
@@ -353,7 +353,7 @@ const GoogleFontsPanel: React.FC<Props> = memo(({ onClose, onFontSelect, visible
                 {getEmptyStateMessage()}
               </Typography.Text>
             </div>
-          ) : loading ? (
+          ) : isLoading ? (
             <div className={styles.loading}>
               <Spin size="large" />
             </div>

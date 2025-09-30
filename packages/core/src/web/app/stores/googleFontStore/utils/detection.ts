@@ -41,11 +41,6 @@ export const isLocalFont = (fontFamily: string): boolean => {
   // Additional check: get all available local fonts and do normalized comparison
   const localFonts = localFontHelper.getAvailableFonts();
   const normalizedTarget = normalizeFontName(fontFamily);
-  const directMatch = localFonts.some((font) => normalizeFontName(font.family) === normalizedTarget);
 
-  if (directMatch) {
-    return true;
-  }
-
-  return false;
+  return localFonts.some((font) => normalizeFontName(font.family) === normalizedTarget);
 };
