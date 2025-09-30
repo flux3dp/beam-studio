@@ -4,7 +4,7 @@ import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import { funnel } from 'remeda';
 
-import { adorModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { adorModels, hexaRfModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -99,7 +99,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
   const isBeamo = model === 'fbm1';
   const isBeamo2 = model === 'fbm2';
   const isBb2 = model === 'fbb2';
-  const isHexa2 = model.startsWith('fhx2');
+  const isHexa2 = hexaRfModels.has(model);
   const vc = versionChecker(version);
   const handleClick = (item: MenuItem) => callback({ ...item, machineName, serial, source, uuid });
   const submenu = [

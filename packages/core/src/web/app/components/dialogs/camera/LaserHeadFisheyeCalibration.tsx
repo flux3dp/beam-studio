@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { hexaRfModels } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -48,7 +49,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
-  const isFhx2 = useMemo(() => deviceMaster.currentDevice?.info.model.startsWith('fhx2'), []);
+  const isHexaRf = useMemo(() => hexaRfModels.has(deviceMaster.currentDevice?.info.model ?? ''), []);
 
   if (step === Steps.CHECKPOINT_DATA) {
     return (
@@ -134,7 +135,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         });
 
         if (doEngraving) {
-          if (isFhx2) await deviceMaster.doHexa2Calibration();
+          if (isHexaRf) await deviceMaster.doHexa2Calibration();
           else await deviceMaster.doBB2Calibration();
         }
 
@@ -223,7 +224,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
     return (
       <CheckPnP
         dh={0}
-        grid={isFhx2 ? hx2rfPerspectiveGrid : bb2PerspectiveGrid}
+        grid={isHexaRf ? hx2rfPerspectiveGrid : bb2PerspectiveGrid}
         onBack={() => setStep(Steps.SOLVE_PNP)}
         onClose={onClose}
         onNext={async () => {

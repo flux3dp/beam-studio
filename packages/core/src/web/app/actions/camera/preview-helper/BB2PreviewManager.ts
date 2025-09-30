@@ -2,7 +2,7 @@ import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import constant, { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
+import constant, { hexaRfModels, PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
@@ -47,7 +47,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     super(device);
     this.progressId = 'beam-preview-manager';
 
-    if (device.model.startsWith('fhx2rf')) this.grid = hx2rfPerspectiveGrid;
+    if (hexaRfModels.has(device.model)) this.grid = hx2rfPerspectiveGrid;
 
     this.cameraCenterOffset = {
       x: this.grid.x[0] + (this.grid.x[1] - this.grid.x[0]) / 2,
