@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: '영역 확인',
     areacheck_desc: '작업 영역이 안전한지 객체의 경계 상자와 레이저 헤드의 가속 영역을 미리 보아 확인합니다.',
     calculating_task: '작업 계산 중...',
+    continuously: '연속',
     contour: '윤곽',
     contour_desc: '실제 도안 외곽을 미리 봅니다.',
     framing: '프레이밍',

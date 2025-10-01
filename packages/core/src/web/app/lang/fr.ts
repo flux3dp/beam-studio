@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: 'Vérification de la zone',
     areacheck_desc: "Assure la sécurité de la zone de travail en prévisualisant la boîte englobante de l'objet et la zone d'accélération de la tête laser.",
     calculating_task: 'Calcul de la tâche...',
+    continuously: 'En continu',
     contour: 'Contour',
     contour_desc: 'Aperçu du contour réel du motif.',
     framing: 'Cadrage',

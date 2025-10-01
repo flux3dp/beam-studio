@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: 'Sprawdzenie obszaru',
     areacheck_desc: 'Zapewnia bezpieczeństwo obszaru roboczego poprzez podgląd ramki ograniczającej obiekt i strefy przyspieszenia głowicy lasera.',
     calculating_task: 'Obliczanie zadania...',
+    continuously: 'Nieprzerwanie',
     contour: 'Kontur',
     contour_desc: 'Podgląd rzeczywistego konturu wzoru.',
     framing: 'Ramowanie',

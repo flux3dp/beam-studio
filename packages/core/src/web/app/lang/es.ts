@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: 'Comprobación de Área',
     areacheck_desc: 'Asegura que el área de trabajo sea segura mostrando la caja delimitadora del objeto y la zona de aceleración del cabezal láser.',
     calculating_task: 'Calculando tarea...',
+    continuously: 'Continuamente',
     contour: 'Contorno',
     contour_desc: 'Previsualiza el contorno real del patrón.',
     framing: 'Enmarcado',
