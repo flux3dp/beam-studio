@@ -1534,9 +1534,18 @@ const reverseDPath = (dPath: string) => {
   return svgPath.pathSegList;
 };
 
+type TSegmentedPath = Array<{ points: Array<{ x: number; y: number }>; type: string }>;
+
+/**
+Change precision to 2
+Merge consecutive L into C where possible
+Remove L with 0 length
+TODO: Merge C, Change straight C into L
+*/
 const smoothByFitPath = (elem: SVGPathElement) => {
-  const scale = 100;
-  const dpath = elem.getAttribute('d');
+  const _round = (val: number) => round(val, 2);
+  const d = elem.getAttribute('d')!;
+  const dPaths = d.split(/(?=M)/);
   const bbox = svgedit.utilities.getBBox(elem);
   const rotation = {
     angle: svgedit.utilities.getRotationAngle(elem),
@@ -1545,35 +1554,59 @@ const smoothByFitPath = (elem: SVGPathElement) => {
   };
   const result = Array.of<string>();
   const ClipperLib = getClipperLib();
-  const paths: any[] = ClipperLib.dPathToPointPathsAndScale(dpath, rotation, scale);
+  let lastPoint: undefined | { x: number; y: number } = undefined;
 
-  paths.forEach((path) => {
-    result.push('M');
+  try {
+    dPaths.forEach((dPath) => {
+      lastPoint = undefined;
+      elem.setAttribute('d', dPath);
 
-    const points = path.map((p) => ({
-      x: Math.floor(100 * (p.X / scale)) / 100,
-      y: Math.floor(100 * (p.Y / scale)) / 100,
-    }));
-    const segs = BezierFitCurve.fitPath(points);
+      const dLength = elem.getTotalLength();
+      const path: TSegmentedPath = ClipperLib.dPathToLineSegments(dPath, rotation);
 
-    for (let j = 0; j < segs.length; j += 1) {
-      const seg = segs[j];
+      path.forEach((subpath) => {
+        const { points, type } = subpath;
 
-      if (j === 0) {
-        result.push(`${seg.points[0].x},${seg.points[0].y}`);
-      }
+        if (type === 'Z') {
+          result.push(type);
+          lastPoint = undefined;
+        } else if (type !== 'L') {
+          result.push(`${type}${points.map((p) => `${_round(p.x)},${_round(p.y)}`).join(' ')}`);
+          lastPoint = points.at(-1);
+        } else {
+          const segs = BezierFitCurve.fitPath(points, dLength);
 
-      const pointsString = seg.points
-        .slice(1)
-        .map((p) => `${p.x},${p.y}`)
-        .join(' ');
+          for (let j = 0; j < segs.length; j += 1) {
+            // Note: points[0] is included in the last segment
+            const { points, type } = segs[j];
 
-      result.push(`${seg.type}${pointsString}`);
-    }
-    result.push('Z');
-  });
+            if (
+              lastPoint &&
+              type === 'L' &&
+              _round(points[1].x - lastPoint.x) === 0 &&
+              _round(points[1].y - lastPoint.y) === 0
+            ) {
+              continue;
+            }
 
-  return result.join('');
+            const pointsString = points
+              .slice(1)
+              .map((p) => `${_round(p.x)},${_round(p.y)}`)
+              .join(' ');
+
+            lastPoint = points.at(-1);
+            result.push(`${type}${pointsString}`);
+          }
+        }
+      });
+    });
+
+    return result.join('');
+  } catch (e) {
+    console.log('Fit path error', e);
+
+    return d;
+  }
 };
 
 const roundPoint = (point: paper.Point, precision = 4) => {

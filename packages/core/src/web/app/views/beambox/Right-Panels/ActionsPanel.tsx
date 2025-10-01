@@ -506,6 +506,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderMultiSelectActions = (): React.JSX.Element[] => {
     const children = Array.from(elem.childNodes) as SVGElement[];
+    const onlyPaths = children.every((child) => child.nodeName === 'path');
     let content: React.JSX.Element[] = [];
 
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {
@@ -548,7 +549,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     appendOptionalButtons(content);
 
-    return [
+    const buttons = [
       renderAutoFitButton(),
       ...content,
       renderSmartNestButton(),
@@ -556,6 +557,21 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       renderOffsetButton(),
       renderArrayButton(),
     ];
+
+    if (onlyPaths) {
+      buttons.push(
+        renderButtons(
+          'simplify',
+          lang.simplify,
+          () => svgCanvas.simplifyPath(),
+          <ActionPanelIcons.Simplify />,
+          <ActionPanelIcons.SimplifyMobile />,
+          { isFullLine: true },
+        ),
+      );
+    }
+
+    return buttons;
   };
 
   const content = match(elem?.tagName.toLowerCase())

@@ -18,7 +18,7 @@ exports[`test StepTune should render correctly 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 665.6px;"
         >
           <div
             style="outline: none;"
@@ -30,50 +30,61 @@ exports[`test StepTune should render correctly 1`] = `
               <div
                 class="ant-modal-body"
               >
-                <div>
-                  <img
-                    id="tunedImage"
-                    src=""
-                    style="height: 558px;"
-                  />
-                </div>
-                <div>
+                <div
+                  class="ant-row ant-row-center css-dev-only-do-not-override-hash"
+                  style="margin-left: -5px; margin-right: -5px;"
+                >
                   <div
-                    class="title"
+                    class="ant-col css-dev-only-do-not-override-hash"
+                    style="padding-left: 5px; padding-right: 5px; flex: 0 0 529px;"
                   >
-                    Parameters
+                    <img
+                      id="tunedImage"
+                      src=""
+                      style="height: 529px; width: 529px;"
+                    />
                   </div>
-                  <div>
-                    <h5
-                      class="subtitle"
-                    >
-                      Threshold
-                    </h5>
+                  <div
+                    class="ant-col css-dev-only-do-not-override-hash"
+                    style="padding-left: 5px; padding-right: 5px; flex: 1 1 330px;"
+                  >
                     <div
-                      class="ant-slider css-dev-only-do-not-override-hash ant-slider-horizontal"
-                      id="threshold"
+                      class="title"
                     >
+                      Parameters
+                    </div>
+                    <div>
+                      <h5
+                        class="subtitle"
+                      >
+                        Threshold
+                      </h5>
                       <div
-                        class="ant-slider-rail"
-                      />
-                      <div
-                        class="ant-slider-track"
-                        style="left: 0%; width: 50.19607843137255%;"
-                      />
-                      <div
-                        class="ant-slider-step"
-                      />
-                      <div
-                        aria-disabled="false"
-                        aria-orientation="horizontal"
-                        aria-valuemax="255"
-                        aria-valuemin="0"
-                        aria-valuenow="128"
-                        class="ant-slider-handle"
-                        role="slider"
-                        style="left: 50.19607843137255%; transform: translateX(-50%);"
-                        tabindex="0"
-                      />
+                        class="ant-slider css-dev-only-do-not-override-hash ant-slider-horizontal"
+                        id="threshold"
+                      >
+                        <div
+                          class="ant-slider-rail"
+                        />
+                        <div
+                          class="ant-slider-track"
+                          style="left: 0%; width: 50.19607843137255%;"
+                        />
+                        <div
+                          class="ant-slider-step"
+                        />
+                        <div
+                          aria-disabled="false"
+                          aria-orientation="horizontal"
+                          aria-valuemax="255"
+                          aria-valuemin="0"
+                          aria-valuenow="128"
+                          class="ant-slider-handle"
+                          role="slider"
+                          style="left: 50.19607843137255%; transform: translateX(-50%);"
+                          tabindex="0"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>
@@ -137,7 +148,7 @@ exports[`test StepTune should render correctly 2`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 665.6px;"
         >
           <div
             style="outline: none;"
@@ -149,50 +160,61 @@ exports[`test StepTune should render correctly 2`] = `
               <div
                 class="ant-modal-body"
               >
-                <div>
-                  <img
-                    id="tunedImage"
-                    src="mock-base64"
-                    style="height: 558px;"
-                  />
-                </div>
-                <div>
+                <div
+                  class="ant-row ant-row-center css-dev-only-do-not-override-hash"
+                  style="margin-left: -5px; margin-right: -5px;"
+                >
                   <div
-                    class="title"
+                    class="ant-col css-dev-only-do-not-override-hash"
+                    style="padding-left: 5px; padding-right: 5px; flex: 0 0 529px;"
                   >
-                    Parameters
+                    <img
+                      id="tunedImage"
+                      src="mock-base64"
+                      style="height: 529px; width: 529px;"
+                    />
                   </div>
-                  <div>
-                    <h5
-                      class="subtitle"
-                    >
-                      Threshold
-                    </h5>
+                  <div
+                    class="ant-col css-dev-only-do-not-override-hash"
+                    style="padding-left: 5px; padding-right: 5px; flex: 1 1 330px;"
+                  >
                     <div
-                      class="ant-slider css-dev-only-do-not-override-hash ant-slider-horizontal"
-                      id="threshold"
+                      class="title"
                     >
+                      Parameters
+                    </div>
+                    <div>
+                      <h5
+                        class="subtitle"
+                      >
+                        Threshold
+                      </h5>
                       <div
-                        class="ant-slider-rail"
-                      />
-                      <div
-                        class="ant-slider-track"
-                        style="left: 0%; width: 50.19607843137255%;"
-                      />
-                      <div
-                        class="ant-slider-step"
-                      />
-                      <div
-                        aria-disabled="false"
-                        aria-orientation="horizontal"
-                        aria-valuemax="255"
-                        aria-valuemin="0"
-                        aria-valuenow="128"
-                        class="ant-slider-handle"
-                        role="slider"
-                        style="left: 50.19607843137255%; transform: translateX(-50%);"
-                        tabindex="0"
-                      />
+                        class="ant-slider css-dev-only-do-not-override-hash ant-slider-horizontal"
+                        id="threshold"
+                      >
+                        <div
+                          class="ant-slider-rail"
+                        />
+                        <div
+                          class="ant-slider-track"
+                          style="left: 0%; width: 50.19607843137255%;"
+                        />
+                        <div
+                          class="ant-slider-step"
+                        />
+                        <div
+                          aria-disabled="false"
+                          aria-orientation="horizontal"
+                          aria-valuemax="255"
+                          aria-valuemin="0"
+                          aria-valuenow="128"
+                          class="ant-slider-handle"
+                          role="slider"
+                          style="left: 50.19607843137255%; transform: translateX(-50%);"
+                          tabindex="0"
+                        />
+                      </div>
                     </div>
                   </div>
                 </div>

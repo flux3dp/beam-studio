@@ -1,5 +1,5 @@
 import Alert from '@core/app/actions/alert-caller';
-import Constant, { promarkModels } from '@core/app/actions/beambox/constant';
+import Constant, { hexaRfModels, promarkModels } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
@@ -136,7 +136,7 @@ class PreviewModeController {
         this.previewManager = new PromarkPreviewManager(device);
       } else if (Constant.adorModels.includes(device.model)) {
         this.previewManager = new AdorPreviewManager(device);
-      } else if (device.model === 'fbb2' || device.model.startsWith('fhx2')) {
+      } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
         this.previewManager = new BB2PreviewManager(device);
       } else if (device.model === 'fbm2') {
         this.previewManager = new Beamo2PreviewManager(device);
