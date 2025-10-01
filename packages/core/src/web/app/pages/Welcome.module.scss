@@ -14,7 +14,10 @@ $header-height: 60px;
     height: variables.$topBarHeight;
 
     ~ .content {
-      height: calc(100% - $header-height - variables.$topBarHeight - variables.$menuBarHeight);
+      height: calc(
+        100% - $header-height - variables.$topBarHeight -
+          variables.$menuBarHeight
+      );
     }
 
     &.mac {
