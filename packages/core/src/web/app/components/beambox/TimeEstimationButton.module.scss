@@ -9,10 +9,18 @@
   border-radius: 20px;
   background-color: rgba(0, 0, 0, 0.6);
   color: #ffffff;
+  position: relative;
 
   @media screen and (max-width: 600px) {
     height: 30px;
     font-size: 18px;
+  }
+
+  svg {
+    // Force align icon to center (only consider circle part)
+    position: relative;
+    bottom: 3.1%;
+    left: 0.6%;
   }
 }
 

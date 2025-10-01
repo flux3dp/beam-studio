@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: '選擇 USB 裝置',
   },
   editor: {
-    exposure: '相機預覽曝光值',
+    exposure: '亮度',
     opacity: '相機預覽不透明度',
     prespray_area: '預噴區',
   },

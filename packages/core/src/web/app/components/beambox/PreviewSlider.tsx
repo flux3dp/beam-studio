@@ -101,7 +101,7 @@ const PreviewSlider = (): React.ReactNode => {
           <Slider
             className={styles.slider}
             disabled={isRawMode && isDrawing}
-            max={Math.min(exposureSetting.max, 1000)}
+            max={Math.min(exposureSetting.max, 2000)}
             min={Math.max(exposureSetting.min, 50)}
             onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
             onChangeComplete={async (value: number) => {

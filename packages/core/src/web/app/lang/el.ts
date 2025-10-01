@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: 'Επιλέξτε συσκευή USB',
   },
   editor: {
-    exposure: 'Προεπισκόπηση έκθεσης',
+    exposure: 'Φωτεινότητα',
     opacity: 'Προεπισκόπηση Αδιαφάνειας',
     prespray_area: 'Περιοχή προετοιμασίας',
   },

@@ -33,7 +33,7 @@ const ExposureSlider = ({ className, exposureSetting, onChanged, setExposureSett
       </Tooltip>
       <Slider
         className={styles.slider}
-        max={Math.min(exposureSetting.max, 1000)}
+        max={Math.min(exposureSetting.max, 2000)}
         min={Math.max(exposureSetting.min, 50)}
         onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
         onChangeComplete={async (value: number) => {

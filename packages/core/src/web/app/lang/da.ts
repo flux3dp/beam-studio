@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: 'Vælg USB-enhed',
   },
   editor: {
-    exposure: 'Forhåndsvisningseksponering',
+    exposure: 'Lysstyrke',
     opacity: 'Forhåndsvisning gennemsigtighed',
     prespray_area: 'Primeområde',
   },
