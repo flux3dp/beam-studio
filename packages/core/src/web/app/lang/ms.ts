@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: 'Pilih Peranti USB',
   },
   editor: {
-    exposure: 'Prapandangan Pendedahan',
+    exposure: 'Kecerahan',
     opacity: 'Ketelusan Pratonton',
     prespray_area: 'Kawasan Persediaan',
   },

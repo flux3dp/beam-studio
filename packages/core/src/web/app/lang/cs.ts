@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: 'Vyberte zařízení USB',
   },
   editor: {
-    exposure: 'Náhled expozice',
+    exposure: 'Jas',
     opacity: 'Náhled průhlednosti',
     prespray_area: 'Primární oblast',
   },

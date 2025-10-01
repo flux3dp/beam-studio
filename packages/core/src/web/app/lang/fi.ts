@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: 'Valitse USB-laite',
   },
   editor: {
-    exposure: 'Esikatselun altistus',
+    exposure: 'Kirkkaus',
     opacity: 'Esikatselun läpinäkyvyys',
     prespray_area: 'Esisuihkutusalue',
   },

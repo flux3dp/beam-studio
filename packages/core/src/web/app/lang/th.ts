@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: 'เลือกอุปกรณ์ USB',
   },
   editor: {
-    exposure: 'ดูตัวอย่างการรับแสง',
+    exposure: 'ความสว่าง',
     opacity: 'ความโปร่งแสงของตัวอย่างภาพ',
     prespray_area: 'พื้นที่พ่นสารเคมี',
   },

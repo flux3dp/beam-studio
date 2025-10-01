@@ -1246,7 +1246,7 @@ const lang: ILang = {
     select_usb_device: 'Seleccionar dispositivo USB',
   },
   editor: {
-    exposure: 'Vista previa de exposición',
+    exposure: 'Brillo',
     opacity: 'Opacidad de vista previa',
     prespray_area: 'Área de Imprimación',
   },
