@@ -17,7 +17,7 @@ exports[`test PreviewSlider should be disabled when in raw mode and drawing 1`] 
         Mock Antd Tooltip
         <p>
           title: 
-          Preview Exposure
+          Brightness
         </p>
         <svgr-url
           classname="icon"
@@ -33,7 +33,7 @@ exports[`test PreviewSlider should be disabled when in raw mode and drawing 1`] 
         </p>
         <p>
           max: 
-          1000
+          2000
         </p>
         <p>
           step: 
@@ -97,7 +97,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 1`] 
         Mock Antd Tooltip
         <p>
           title: 
-          Preview Exposure
+          Brightness
         </p>
         <svgr-url
           classname="icon"
@@ -113,7 +113,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 1`] 
         </p>
         <p>
           max: 
-          1000
+          2000
         </p>
         <p>
           step: 
@@ -161,7 +161,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 2`] 
         Mock Antd Tooltip
         <p>
           title: 
-          Preview Exposure
+          Brightness
         </p>
         <svgr-url
           classname="icon"
@@ -177,7 +177,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 2`] 
         </p>
         <p>
           max: 
-          1000
+          2000
         </p>
         <p>
           step: 
@@ -225,7 +225,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 1`] =
         Mock Antd Tooltip
         <p>
           title: 
-          Preview Exposure
+          Brightness
         </p>
         <svgr-url
           classname="icon"
@@ -241,7 +241,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 1`] =
         </p>
         <p>
           max: 
-          1000
+          2000
         </p>
         <p>
           step: 
@@ -289,7 +289,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 2`] =
         Mock Antd Tooltip
         <p>
           title: 
-          Preview Exposure
+          Brightness
         </p>
         <svgr-url
           classname="icon"
@@ -305,7 +305,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 2`] =
         </p>
         <p>
           max: 
-          1000
+          2000
         </p>
         <p>
           step: 
