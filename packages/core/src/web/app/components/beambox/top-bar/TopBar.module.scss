@@ -1,4 +1,5 @@
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
 
 .top-bar {
   flex: 0 0 auto;
@@ -20,7 +21,9 @@
   }
 
   &.draggable {
-    -webkit-app-region: drag;
+    @include mixins.when-tab-focused {
+      -webkit-app-region: drag;
+    }
   }
 
   .controls {

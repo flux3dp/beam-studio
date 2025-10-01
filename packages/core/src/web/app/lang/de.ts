@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: 'Bereichsprüfung',
     areacheck_desc: 'Stellt die Sicherheit des Arbeitsbereichs sicher, indem der Begrenzungsrahmen des Objekts und die Beschleunigungszone des Laserkopfs angezeigt werden.',
     calculating_task: 'Aufgabe wird berechnet...',
+    continuously: 'Kontinuierlich',
     contour: 'Kontur',
     contour_desc: 'Vorschau des tatsächlichen Musterrands.',
     framing: 'Rahmung',

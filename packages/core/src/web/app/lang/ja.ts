@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: 'エリアチェック',
     areacheck_desc: '作業エリアが安全であることを、オブジェクトのバウンディングボックスとレーザーヘッドの加速ゾーンをプレビューして確認します。',
     calculating_task: 'タスクを計算中...',
+    continuously: '連続',
     contour: '輪郭',
     contour_desc: '実際の図案の外枠をプレビューします。',
     framing: 'フレーミング',

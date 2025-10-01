@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: '区域检查',
     areacheck_desc: '通过预览对象的边界框和激光头的加速区，确保工作区的安全。',
     calculating_task: '正在计算任务...',
+    continuously: '连续',
     contour: '轮廓',
     contour_desc: '预览实际图案外框。',
     framing: '外框',

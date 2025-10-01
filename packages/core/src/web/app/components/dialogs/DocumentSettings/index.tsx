@@ -171,6 +171,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
   }, [addOnInfo, borderless]);
 
+  useEffect(() => {
+    if (enable4C) setEnable1064(false);
+  }, [enable4C]);
+
+  useEffect(() => {
+    if (enable1064) setEnable4C(false);
+  }, [enable1064]);
+
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
 
   useEffect(() => {
@@ -206,11 +214,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       if (layers.length > 0) {
         const res = await changeLayersModule(Array.from(layers), LayerModule.PRINTER_4C, defaultLaser);
 
-        if (!res) delete newState['enable-4c'];
+        if (!res) {
+          delete newState['enable-4c'];
+          newState['enable-1064'] = false;
+        }
       }
     }
 
-    if (origState['enable-1064'] && !enable1064) {
+    if (origState['enable-1064'] && !newState['enable-1064']) {
       const layers = getLayersByModule([LayerModule.LASER_1064]);
 
       if (layers.length > 0) {

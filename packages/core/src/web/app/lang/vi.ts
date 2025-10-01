@@ -1299,6 +1299,7 @@ const lang: ILang = {
     area_check: 'Kiểm tra khu vực',
     areacheck_desc: 'Đảm bảo khu vực làm việc an toàn bằng cách xem trước hộp giới hạn của đối tượng và vùng gia tốc của đầu laser.',
     calculating_task: 'Đang tính toán nhiệm vụ...',
+    continuously: 'Liên tục',
     contour: 'Đường viền',
     contour_desc: 'Xem trước đường viền mẫu thực tế.',
     framing: 'Đóng khung',

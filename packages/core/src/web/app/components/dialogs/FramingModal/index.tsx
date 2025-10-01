@@ -1,8 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Button, InputNumber, Segmented, Spin, Tooltip } from 'antd';
-import classNames from 'classnames';
+import { Button, Checkbox, InputNumber, Segmented, Spin, Tooltip } from 'antd';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
@@ -33,6 +32,7 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
   const { framing: tFraming } = lang;
   const options = useMemo(() => getFramingOptions(device), [device]);
   const [isFraming, setIsFraming] = useState<boolean>(false);
+  const [loop, setLoop] = useState(false);
   const [lowLaser, setLowLaser] = useState<number>(useGlobalPreferenceStore.getState()['low_power'] ?? 10);
   const [type, setType] = useState<TFramingType>(FramingType.Framing);
   const manager = useRef<FramingTaskManager | null>(null);
@@ -41,8 +41,8 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
   const addOnInfo = useMemo(() => getAddOnInfo(device.model), [device]);
 
   const handleStart = useCallback(() => {
-    manager.current?.startFraming(type, { lowPower: addOnInfo.framingLowLaser ? lowLaser : 0 });
-  }, [type, lowLaser, addOnInfo.framingLowLaser]);
+    manager.current?.startFraming(type, { loop, lowPower: addOnInfo.framingLowLaser ? lowLaser : 0 });
+  }, [type, lowLaser, addOnInfo.framingLowLaser, loop]);
 
   const handleStop = useCallback(() => {
     manager.current?.stopFraming();
@@ -74,7 +74,10 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
     <DraggableModal
       footer={
         <div className={styles.footer}>
-          <Button className={classNames(styles.button, styles['mr-8'])} onClick={onClose}>
+          <Checkbox checked={loop} className={styles.checkbox} onChange={(e) => setLoop(e.target.checked)}>
+            {tFraming.continuously}
+          </Checkbox>
+          <Button className={styles.button} onClick={onClose}>
             {lang.alert.cancel}
           </Button>
           <Button className={styles.button} onClick={isFraming ? handleStop : handleStart} type="primary">

@@ -5,3 +5,15 @@
     margin-inline-start: 8px;
   }
 }
+
+// Note: mixins with :global can be used in xxx.module.scss only
+@mixin when-tab-focused {
+  :where(body:global(.focused)) & {
+    @content;
+  }
+}
+@mixin when-tab-not-focused {
+  :where(body:not(:global(.focused))) & {
+    @content;
+  }
+}

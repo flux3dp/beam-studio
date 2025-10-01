@@ -43,7 +43,7 @@ const mockDocumentState = {
   borderless: false,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'enable-4c': true,
-  'enable-1064': true,
+  'enable-1064': false,
   'enable-autofocus': false,
   'enable-diode': false,
   engrave_dpi: 'medium',
@@ -203,7 +203,7 @@ describe('test DocumentSettings', () => {
       auto_shrink: true,
       borderless: true,
       'enable-4c': true,
-      'enable-1064': true,
+      'enable-1064': false,
       'enable-autofocus': true,
       'enable-diode': true,
       'enable-job-origin': true,
@@ -273,8 +273,14 @@ describe('test DocumentSettings', () => {
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="beamo II"]'));
 
+    const checkbox4c = baseElement.querySelector('#print_4c_module');
+    const checkbox1064 = baseElement.querySelector('#laser_1064_module');
+
+    expect(checkbox4c.getAttribute('aria-checked')).toBe('true');
+    expect(checkbox1064.getAttribute('aria-checked')).toBe('false');
     fireEvent.click(getByText('Module 1064'));
-    fireEvent.click(getByText('Module 4C'));
+    expect(checkbox4c.getAttribute('aria-checked')).toBe('false');
+    expect(checkbox1064.getAttribute('aria-checked')).toBe('true');
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Save'));
     await new Promise((resolve) => setTimeout(resolve, 0));
@@ -283,26 +289,20 @@ describe('test DocumentSettings', () => {
 
     const updatePayload = mockUpdate.mock.calls[0][0];
 
+    // Keep 4c layers, switch 1064 off
     expect(updatePayload['enable-1064']).toBe(false);
     expect(updatePayload['enable-4c']).toBe(undefined);
-    expect(mockGetLayersByModule).toHaveBeenCalledTimes(2);
+    expect(mockGetLayersByModule).toHaveBeenCalledTimes(1);
     expect(mockGetLayersByModule).toHaveBeenNthCalledWith(1, [
       LayerModule.PRINTER_4C,
       LayerModule.UV_WHITE_INK,
       LayerModule.UV_VARNISH,
     ]);
-    expect(mockGetLayersByModule).toHaveBeenNthCalledWith(2, [LayerModule.LASER_1064]);
-    expect(mockChangeLayersModule).toHaveBeenCalledTimes(2);
+    expect(mockChangeLayersModule).toHaveBeenCalledTimes(1);
     expect(mockChangeLayersModule).toHaveBeenNthCalledWith(
       1,
       ['mockLayer'],
       LayerModule.PRINTER_4C,
-      LayerModule.LASER_UNIVERSAL,
-    );
-    expect(mockChangeLayersModule).toHaveBeenNthCalledWith(
-      2,
-      ['mockLayer'],
-      LayerModule.LASER_1064,
       LayerModule.LASER_UNIVERSAL,
     );
   });

@@ -825,7 +825,7 @@ class FramingTaskManager extends EventEmitter {
     this.removeAllListeners();
   };
 
-  private performTask = async () => {
+  private performTask = async (loop = false) => {
     const { jobOrigin, rotaryInfo, taskPoints } = this;
 
     if (taskPoints.length === 0) {
@@ -856,10 +856,13 @@ class FramingTaskManager extends EventEmitter {
       return;
     }
 
-    for (let i = 1; i < taskPoints.length; i += 1) {
+    for (let i = 1; i < taskPoints.length; ) {
       if (this.interrupted) return;
 
       await this.moveTo({ x: taskPoints[i][0], [yKey]: taskPoints[i][1] });
+      i++;
+
+      if (loop && i === taskPoints.length) i = 0;
     }
 
     if (this.interrupted) return;
@@ -885,7 +888,10 @@ class FramingTaskManager extends EventEmitter {
     }
   };
 
-  public startFraming = async (type: TFramingType, opts: { lowPower?: number }): Promise<boolean | undefined> => {
+  public startFraming = async (
+    type: TFramingType,
+    opts: { loop?: boolean; lowPower?: number },
+  ): Promise<boolean | undefined> => {
     if (this.isWorking || this.isProcessing) {
       return false;
     }
@@ -942,7 +948,7 @@ class FramingTaskManager extends EventEmitter {
 
       if (this.interrupted) return;
 
-      const { lowPower = 0 } = opts;
+      const { loop = false, lowPower = 0 } = opts;
 
       await this.setLowPowerValue(lowPower);
 
@@ -952,7 +958,7 @@ class FramingTaskManager extends EventEmitter {
 
       if (this.interrupted) return;
 
-      await this.performTask();
+      await this.performTask(loop);
     } catch (error) {
       console.error(error);
       alertCaller.popUp({ message: `Failed to start framing: ${error}` });
