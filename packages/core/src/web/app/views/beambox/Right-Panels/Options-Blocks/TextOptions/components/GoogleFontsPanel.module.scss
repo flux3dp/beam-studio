@@ -1,0 +1,594 @@
+.modal {
+  .ant-modal-content {
+    padding: 0;
+    border-radius: 8px;
+  }
+}
+
+// Header
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 16px 24px;
+  border-bottom: 1px solid #e8eaed;
+  background: #fff;
+
+  .title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .googleLogo {
+      width: 32px;
+      height: 32px;
+      // background: linear-gradient(90deg, #4285f4 0%, #ea4335 25%, #fbbc05 50%, #34a853 75%);
+      // border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 32px;
+      color: black;
+    }
+
+    .titleText {
+      font-size: 22px;
+      font-weight: 400;
+      color: #5f6368;
+      font-family: 'Product Sans', Arial, sans-serif;
+    }
+  }
+
+  .closeButton {
+    border: none;
+    box-shadow: none;
+    color: #5f6368;
+    border-radius: 50%;
+    width: 40px;
+    height: 40px;
+
+    &:hover {
+      background-color: #f1f3f4;
+    }
+  }
+}
+
+// Main Content Layout
+.mainContent {
+  display: flex;
+  min-height: 400px;
+  max-height: calc(
+    100vh - 240px
+  ); // Account for header (68px) + footer (68px) + topbar (40px) + margins (64px)
+  height: 500px; // Preferred height
+}
+
+// Sidebar
+.sidebar {
+  width: 280px;
+  min-width: 200px;
+  max-width: 280px;
+  background: #fff;
+  border-right: 1px solid #e8eaed;
+  padding: 24px;
+  overflow-y: auto;
+  flex-shrink: 1; // Allow sidebar to shrink proportionally
+
+  .searchSection {
+    margin-bottom: 32px;
+
+    .searchInput {
+      width: 100%;
+    }
+  }
+
+  .filterSection {
+    margin-bottom: 32px;
+
+    .filterHeader {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 16px;
+
+      .filterIcon {
+        font-size: 18px;
+      }
+
+      .filterLabel {
+        font-size: 16px;
+        font-weight: 500;
+        color: #3c4043;
+      }
+    }
+
+    .languageSelect {
+      width: 100%;
+
+      .ant-select-selector {
+        border-radius: 4px;
+        border: 1px solid #dadce0;
+        padding: 8px 12px;
+
+        &:hover {
+          border-color: #1a73e8;
+        }
+      }
+
+      &.ant-select-focused .ant-select-selector {
+        border-color: #1a73e8;
+        box-shadow: 0 0 0 1px #1a73e8;
+      }
+    }
+
+    .categoryChips {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 8px;
+    }
+  }
+}
+
+// Category Chip Styles (outside sidebar since they're button elements)
+.categoryChip {
+  background: #fff;
+  border: 1px solid #dadce0;
+  border-radius: 16px;
+  padding: 8px 16px;
+  font-size: 14px;
+  color: #3c4043;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  font-weight: 400;
+  text-align: center;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+
+  &:hover {
+    border-color: #1a73e8;
+    background: #f8f9fa;
+  }
+
+  &.active {
+    background: #1a73e8;
+    border-color: #1a73e8;
+    color: #fff;
+    font-weight: 500;
+  }
+}
+
+// Font Preview Area
+.fontPreviewArea {
+  flex: 1 1 auto;
+  min-width: 300px; // Ensure minimum usable width for font previews
+  background: #fff;
+  overflow-y: auto;
+
+  .loading {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+  }
+
+  .offlineState {
+    padding: 40px;
+    text-align: center;
+
+    .offlineTitle {
+      color: #8c8c8c;
+      margin-bottom: 8px;
+    }
+
+    .offlineMessage {
+      display: block;
+      margin-bottom: 16px;
+    }
+  }
+
+  .emptyState {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100%;
+    padding: 40px 20px;
+    text-align: center;
+
+    .ant-typography {
+      font-size: 16px;
+      line-height: 1.5;
+      color: #5f6368;
+    }
+  }
+
+  .fontList {
+    display: flex;
+    flex-direction: column;
+    gap: 0;
+  }
+
+  .virtualListContainer {
+    position: relative;
+  }
+
+  .virtualList {
+    :global(.rc-virtual-list-scrollbar-vertical) {
+      width: 8px;
+    }
+
+    :global(.rc-virtual-list-scrollbar-thumb-vertical) {
+      background: rgba(0, 0, 0, 0.2);
+    }
+  }
+
+  .loadingOverlay {
+    background: rgba(255, 255, 255, 0.9);
+    border-radius: 4px;
+    bottom: 10px;
+    left: 50%;
+    padding: 16px;
+    position: absolute;
+    text-align: center;
+    transform: translateX(-50%);
+
+    .loadingText {
+      margin-left: 8px;
+    }
+  }
+}
+
+// Font Cards
+.fontCard {
+  background: #fff;
+  padding: 24px;
+  border-bottom: 1px solid #f1f3f4;
+  transition: all 0.2s ease;
+  cursor: pointer;
+  border-left: 4px solid transparent;
+
+  &:hover {
+    background: #f8f9fa;
+    border-left-color: #e8eaed;
+  }
+
+  &:focus {
+    outline: 2px solid #1a73e8;
+    outline-offset: -2px;
+  }
+
+  &.selected {
+    background: #e8f0fe;
+    border-left-color: #1a73e8;
+  }
+
+  .fontHeader {
+    margin-bottom: 16px;
+
+    .fontTitle {
+      .fontName {
+        font-size: 18px;
+        font-weight: 400;
+        color: #3c4043;
+        display: block;
+        margin-bottom: 4px;
+        line-height: 1.2;
+      }
+
+      .fontMeta {
+        font-size: 14px;
+        color: #5f6368;
+        font-weight: 400;
+      }
+    }
+  }
+
+  .fontSample {
+    .sampleText {
+      font-family: var(--preview-font-family, sans-serif);
+      font-size: 24px;
+      font-weight: 400;
+      line-height: 1.2;
+      color: #3c4043;
+      word-break: break-word;
+      white-space: nowrap;
+      min-height: 40px;
+      display: flex;
+      align-items: center;
+      margin: 0;
+    }
+  }
+}
+
+// Footer
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 24px;
+  border-top: 1px solid #e8eaed;
+  background: #fff;
+  min-height: 68px;
+
+  .selectedFontInfo {
+    flex: 1;
+    margin-right: 16px;
+
+    .selectedFontDisplay {
+      display: flex;
+      align-items: center;
+      height: 44px;
+
+      .selectedText {
+        font-size: 14px;
+        color: #5f6368;
+        line-height: 1.2;
+
+        .selectedFontName {
+          color: #3c4043;
+          font-weight: 500;
+        }
+      }
+    }
+
+    .noSelectionDisplay {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      height: 44px;
+      justify-content: center;
+
+      .noSelectionText {
+        font-size: 14px;
+        color: #9aa0a6;
+        font-style: italic;
+      }
+    }
+  }
+
+  .footerButtons {
+    display: flex;
+    gap: 12px;
+    flex-shrink: 0;
+
+    .ant-btn {
+      height: 36px;
+      padding: 0 24px;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: 4px;
+      border: 1px solid #dadce0;
+      color: #3c4043;
+
+      &:hover {
+        border-color: #1a73e8;
+        color: #1a73e8;
+      }
+    }
+
+    .ant-btn-primary {
+      background: #1a73e8;
+      border-color: #1a73e8;
+      color: #fff;
+
+      &:hover:not(:disabled) {
+        background: #1557b0;
+        border-color: #1557b0;
+      }
+
+      &:disabled {
+        background: #f9f9f9;
+        border-color: #f9f9f9;
+        color: #9aa0a6;
+      }
+    }
+  }
+}
+
+// Responsive design
+// Tablet and small desktop (769-1024px)
+@media (max-width: 1024px) and (min-width: 769px) {
+  .mainContent {
+    min-height: 400px;
+    max-height: calc(100vh - 240px);
+    height: 500px;
+  }
+
+  .sidebar {
+    width: 220px;
+    min-width: 180px;
+    max-width: 220px;
+    padding: 16px;
+
+    .searchSection {
+      margin-bottom: 24px;
+    }
+
+    .filterSection {
+      margin-bottom: 24px;
+
+      .categoryChips {
+        gap: 6px;
+      }
+    }
+  }
+
+  .fontPreviewArea {
+    min-width: 250px;
+
+    .fontCard {
+      padding: 20px;
+    }
+  }
+}
+
+// Mobile and very small screens (≤768px)
+@media (max-width: 768px) {
+  .mainContent {
+    flex-direction: column;
+    min-height: 300px;
+    max-height: calc(100vh - 200px);
+    height: auto;
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid #e8eaed;
+    padding: 16px;
+
+    .filterSection {
+      margin-bottom: 16px;
+
+      .categoryChips {
+        gap: 6px;
+        grid-template-columns: 1fr 1fr; // Maintain 2 columns on mobile
+
+        .categoryChip {
+          padding: 6px 12px;
+          font-size: 13px;
+        }
+      }
+    }
+  }
+
+  .fontPreviewArea {
+    min-height: 300px;
+    flex: 1;
+
+    .fontList {
+      padding: 16px;
+    }
+
+    .virtualListContainer {
+      height: 100%;
+    }
+  }
+
+  .fontCard {
+    padding: 16px;
+
+    .fontSample .sampleText {
+      font-size: 28px;
+    }
+  }
+
+  .footer {
+    flex-direction: column;
+    gap: 12px;
+    padding: 12px 16px;
+    min-height: auto;
+
+    .selectedFontInfo {
+      margin-right: 0;
+      width: 100%;
+
+      .selectedFontDisplay {
+        justify-content: center;
+
+        .selectedText {
+          font-size: 13px;
+        }
+      }
+
+      .noSelectionDisplay {
+        justify-content: center;
+        height: auto;
+
+        .noSelectionText {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .footerButtons {
+      width: 100%;
+      justify-content: space-between;
+    }
+  }
+}
+
+// Small horizontal layout (601-768px) - override mobile for slightly larger screens
+@media (max-width: 768px) and (min-width: 601px) {
+  .mainContent {
+    flex-direction: row !important; // Keep horizontal layout
+    min-height: 350px;
+  }
+
+  .sidebar {
+    width: 180px !important;
+    min-width: 160px !important;
+    max-width: 180px !important;
+    padding: 12px !important;
+    border-right: 1px solid #e8eaed !important;
+    border-bottom: none !important;
+
+    .searchSection {
+      margin-bottom: 20px;
+    }
+
+    .filterSection {
+      margin-bottom: 16px;
+
+      .categoryChips {
+        grid-template-columns: 1fr !important; // Single column for categories
+        gap: 4px;
+      }
+
+      .categoryChip {
+        padding: 6px 12px;
+        font-size: 13px;
+      }
+    }
+  }
+
+  .fontPreviewArea {
+    min-width: 240px !important;
+    height: auto !important;
+    flex: 1 !important;
+  }
+
+  // Reset footer to horizontal layout (override mobile vertical layout)
+  .footer {
+    flex-direction: row !important;
+    justify-content: space-between !important;
+    align-items: center !important;
+    padding: 12px 16px !important;
+    min-height: 60px !important;
+
+    .selectedFontInfo {
+      margin-right: 12px !important;
+      width: auto !important;
+      flex: 1 !important;
+
+      .selectedFontDisplay {
+        justify-content: flex-start !important;
+        height: auto !important;
+
+        .selectedText {
+          font-size: 13px;
+        }
+      }
+
+      .noSelectionDisplay {
+        justify-content: flex-start !important;
+        height: auto !important;
+
+        .noSelectionText {
+          font-size: 13px;
+        }
+      }
+    }
+
+    .footerButtons {
+      width: auto !important;
+      flex-shrink: 0 !important;
+      display: flex !important;
+      gap: 8px !important;
+
+      button {
+        min-width: 70px;
+      }
+    }
+  }
+}

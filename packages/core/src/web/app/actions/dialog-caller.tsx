@@ -31,6 +31,7 @@ import ElementPanel from '@core/app/views/beambox/ElementPanel/ElementPanel';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import GoogleFontsPanel from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/GoogleFontsPanel';
 import SvgNestButtons from '@core/app/views/beambox/SvgNestButtons';
 import DeviceSelector from '@core/app/views/dialogs/DeviceSelector';
 import Prompt from '@core/app/views/dialogs/Prompt';
@@ -486,6 +487,25 @@ export default {
 
       addDialogComponent('flux-id-credit', <FluxCredit onClose={() => popDialogById('flux-id-credit')} />);
     }, true);
+  },
+  showGoogleFontsPanel: (onFontSelect: (fontFamily: string) => void): void => {
+    const id = 'google-fonts-panel';
+
+    if (isIdExist(id)) {
+      return;
+    }
+
+    addDialogComponent(
+      id,
+      <GoogleFontsPanel
+        onClose={() => popDialogById(id)}
+        onFontSelect={(fontFamily: string) => {
+          onFontSelect(fontFamily);
+          popDialogById(id);
+        }}
+        visible={true}
+      />,
+    );
   },
   showImageEditPanel: (onClose: () => void = () => {}): void => {
     if (isIdExist('image-edit-panel')) {

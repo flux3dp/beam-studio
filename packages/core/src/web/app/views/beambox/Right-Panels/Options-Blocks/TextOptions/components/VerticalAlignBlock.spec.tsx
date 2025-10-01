@@ -18,7 +18,7 @@ jest.mock('@core/helpers/system-helper', () => ({
 
 jest.mock('@core/app/views/beambox/Right-Panels/ObjectPanelItem');
 
-import VerticalAlignBlock from './VerticalAlignBlock';
+import VerticalAlignBlock from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/VerticalAlignBlock';
 
 describe('test VerticalAlignBlock', () => {
   test('should render correctly', () => {
