@@ -16,7 +16,12 @@ import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
-import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
+import { changeLayersModule } from '@core/helpers/layer-module/change-module';
+import {
+  getDefaultLaserModule,
+  getLayersByModule,
+  hasModuleLayer,
+} from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -211,9 +216,19 @@ export const importBvgString = async (
   }
 
   if (getAddOnInfo(newWorkarea).multiModules) {
-    if (has4CLayer) useDocumentStore.getState().set('enable-4c', true);
+    if (has4CLayer) {
+      useDocumentStore.getState().set('enable-4c', true);
+      useDocumentStore.getState().set('enable-1064', false);
 
-    if (hasModuleLayer([LayerModule.LASER_1064])) useDocumentStore.getState().set('enable-1064', true);
+      const layers = getLayersByModule([LayerModule.LASER_1064]);
+
+      if (layers.length > 0) {
+        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, getDefaultLaserModule(newWorkarea));
+      }
+    } else if (hasModuleLayer([LayerModule.LASER_1064])) {
+      useDocumentStore.getState().set('enable-4c', false);
+      useDocumentStore.getState().set('enable-1064', true);
+    }
   }
 
   console.log('Change workarea to', newWorkarea);
