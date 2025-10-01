@@ -34,7 +34,10 @@ jobs:
       - name: Install Brew Packages
         run: |
           brew install zlib
-          brew install cairo
+          brew install pkg-config
+
+      - name: Set env for pkg-config
+        run: echo "PKG_CONFIG_PATH=$(brew --prefix cairo)/lib/pkgconfig" >> $GITHUB_ENV
 
       - name: Setup Pnpm
         uses: pnpm/action-setup@v4
