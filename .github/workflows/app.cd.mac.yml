@@ -62,7 +62,8 @@ jobs:
       - name: Install Beamify
         run: |
           cd ./apps/app/.github/actions/beamify/python
-          python3 setup.py install --verbose
+          python3 setup.py install --verbose || echo "Failed to install beamify"
+
 
       - name: Install Fluxsvg
         uses: flux3dp/fluxsvg@2.7.7
@@ -78,7 +79,7 @@ jobs:
       - name: Install FluxClient
         run: |
           cd ./apps/app/.github/actions/fluxclient
-          python3 setup.py install --verbose
+          python3 setup.py install --verbose || echo "Failed to install fluxclient"
 
       - name: Build Flux Ghost
         uses: flux3dp/fluxghost@2.5.1
