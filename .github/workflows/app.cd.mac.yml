@@ -19,8 +19,7 @@ jobs:
       matrix:
         node-version: [22]
         python-version: [3.8]
-        os: [macOS-14]
-        target: [x64, arm64]
+        os: [macOS-15, macOS-15-intel]
 
     steps:
       - uses: actions/checkout@v4
@@ -148,7 +147,7 @@ jobs:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          BUILD_ARCH: ${{ matrix.target }}
+          BUILD_ARCH: ${{ matrix.os == 'macOS-15-intel' && 'x64' || 'arm64' }}
           PUBLISH_PATH: ""
           PUBLISH_SUFFIX: ${{ github.event.inputs.publish_suffix || '' }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
