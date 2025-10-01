@@ -23,19 +23,17 @@ const CurveEngravingZHighSpeed = () => {
   } = useI18n();
   const { selectedLayers } = useContext(ConfigPanelContext);
   const {
-    ceZSpeedLimit: { hasMultiValue, value },
+    ceZHighSpeed: { hasMultiValue, value },
     change,
   } = useConfigPanelStore();
-  const checked = useMemo(() => value !== 140 || hasMultiValue, [value, hasMultiValue]);
+  const checked = useMemo(() => value || hasMultiValue, [value, hasMultiValue]);
 
   const handleToggle = () => {
-    const newValue = checked ? 140 : 300;
-
-    change({ ceZSpeedLimit: newValue });
+    change({ ceZHighSpeed: !checked });
 
     const batchCmd = new history.BatchCommand('Change curve engraving z speed limit');
 
-    selectedLayers.forEach((layerName) => writeData(layerName, 'ceZSpeedLimit', newValue, { batchCmd }));
+    selectedLayers.forEach((layerName) => writeData(layerName, 'ceZHighSpeed', !checked, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

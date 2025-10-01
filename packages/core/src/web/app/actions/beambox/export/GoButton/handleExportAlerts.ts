@@ -167,7 +167,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
   SymbolMaker.switchImageSymbolForAll(false);
 
-  const { curveSpeedLimit } = workareaObj;
+  const curveSpeedLimit = workareaObj.curveSpeedLimit?.x;
   const hasCurveSpeedLimit = isCurveEngravingTask && curveSpeedLimit;
   const handleCurveEngravingSpeedAlert = async (): Promise<void> => {
     if (!hasCurveSpeedLimit) {

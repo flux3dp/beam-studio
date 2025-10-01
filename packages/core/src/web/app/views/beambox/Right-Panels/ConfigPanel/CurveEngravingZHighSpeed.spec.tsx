@@ -44,7 +44,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test CurveEngravingZHighSpeed', () => {
   beforeEach(() => {
     mockUseConfigPanelStore.mockReturnValue({
-      ceZSpeedLimit: { hasMultiValue: false, value: 140 },
+      ceZHighSpeed: { hasMultiValue: false, value: false },
       change: mockChange,
     });
   });
@@ -61,7 +61,7 @@ describe('test CurveEngravingZHighSpeed', () => {
 
   it('should render correctly when high speed is enabled', () => {
     mockUseConfigPanelStore.mockReturnValue({
-      ceZSpeedLimit: { hasMultiValue: true, value: 300 },
+      ceZHighSpeed: { hasMultiValue: true, value: true },
       change: mockChange,
     });
 
@@ -88,13 +88,13 @@ describe('test CurveEngravingZHighSpeed', () => {
     expect(batchCmd.count).toBe(0);
     fireEvent.click(btn);
     expect(mockChange).toHaveBeenCalledTimes(1);
-    expect(mockChange).toHaveBeenLastCalledWith({ ceZSpeedLimit: 300 });
+    expect(mockChange).toHaveBeenLastCalledWith({ ceZHighSpeed: true });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockBatchCommand).toHaveBeenLastCalledWith('Change curve engraving z speed limit');
     expect(batchCmd.count).toBe(1);
     expect(mockWriteData).toHaveBeenCalledTimes(2);
-    expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'ceZSpeedLimit', 300, { batchCmd });
-    expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer2', 'ceZSpeedLimit', 300, { batchCmd });
+    expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'ceZHighSpeed', true, { batchCmd });
+    expect(mockWriteData).toHaveBeenNthCalledWith(2, 'layer2', 'ceZHighSpeed', true, { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);

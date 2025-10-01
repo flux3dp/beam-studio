@@ -94,7 +94,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     const workareaObj = getWorkarea(workarea);
 
     return {
-      curveSpeedLimit: workareaObj.curveSpeedLimit,
+      curveSpeedLimit: workareaObj.curveSpeedLimit?.x,
       maxSpeed: workareaObj.maxSpeed,
       minSpeed: workareaObj.minSpeed,
       minSpeedWarning: workareaObj.minSpeedWarning,

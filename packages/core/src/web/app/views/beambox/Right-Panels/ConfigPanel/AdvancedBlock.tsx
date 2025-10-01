@@ -7,6 +7,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -38,7 +39,10 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
   const hasCurveEngraving = useHasCurveEngraving();
-  const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
+  const { addOnInfo, workareaObject } = useMemo(
+    () => ({ addOnInfo: getAddOnInfo(workarea), workareaObject: getWorkarea(workarea) }),
+    [workarea],
+  );
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const promarkInfo = isPromark ? getPromarkInfo() : null;
   const promarkLimit = useMemo(
@@ -90,7 +94,9 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     }
 
     if (hasCurveEngraving) {
-      contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
+      if (workareaObject.curveSpeedLimit?.zRegular) {
+        contents.push(<CurveEngravingZHighSpeed key="curve-engraving-z-high-speed" />);
+      }
     } else {
       if (addOnInfo.lowerFocus) {
         contents.push(<FocusBlock key="focus-block" type={type} />);

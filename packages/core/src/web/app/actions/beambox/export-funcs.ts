@@ -34,6 +34,10 @@ import type { TaskMetaData } from '@core/interfaces/ITask';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 import { getAdorPaddingAccel } from './export/ador-utils';
+import {
+  annotateCurveEngravingZSpeed,
+  removeCurveEngravingZSpeedAnnotation,
+} from './export/annotateCurveEngravingZSpeed';
 import { annotateLayerBBox } from './export/annotateLayerBBox';
 import generateThumbnail from './export/generate-thumbnail';
 
@@ -120,8 +124,10 @@ const fetchTaskCode = async (
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: 'Splitting Full color layer',
   });
+  annotateCurveEngravingZSpeed(device);
 
   revertFunctions.push(
+    removeCurveEngravingZSpeedAnnotation,
     await updateImagesResolution(),
     await convertShapeToBitmap(),
     annotatePrintingColor(),

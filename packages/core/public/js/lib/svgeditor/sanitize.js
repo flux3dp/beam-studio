@@ -115,7 +115,7 @@
       'data-dottingTime',
       'data-wobbleDiameter',
       'data-wobbleStep',
-      'data-ceZSpeedLimit',
+      'data-ceZHighSpeed',
       'data-split',
       'data-amDensity',
       'data-airAssist',
