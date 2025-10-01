@@ -6,13 +6,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
 
 import AdvancedBlock from './AdvancedBlock';
-
-const mockUseDocumentStore = jest.fn();
-let mockState = { 'enable-autofocus': true, 'enable-diode': true };
-
-jest.mock('@core/app/stores/documentStore', () => ({
-  useDocumentStore: (...args) => mockUseDocumentStore(...args),
-}));
+import { useDocumentStore } from '@mocks/@core/app/stores/documentStore';
 
 const mockOn = jest.fn();
 const mockOff = jest.fn();
@@ -35,6 +29,7 @@ jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 const mockGetAddOnInfo = jest.fn();
 
 jest.mock('@core/app/constants/addOn', () => ({
+  ...jest.requireActual<object>('@core/app/constants/addOn'),
   getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
 }));
 
@@ -77,8 +72,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 
 describe('test AdvancedBlock', () => {
   beforeEach(() => {
-    mockState = { 'enable-autofocus': true, 'enable-diode': true };
-    mockUseDocumentStore.mockImplementation((selector) => selector(mockState));
+    useDocumentStore.setState({ 'enable-autofocus': true, 'enable-diode': true, workarea: 'fbm1' });
     mockGetAddOnInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: false });
     mockUseHasCurveEngraving.mockReturnValue(false);
     mockUseWorkarea.mockReturnValue('fbb1');
@@ -87,7 +81,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly for non-printer, no addon', () => {
-    mockState = { 'enable-autofocus': false, 'enable-diode': false };
+    useDocumentStore.setState({ 'enable-autofocus': false, 'enable-diode': false });
 
     const { container } = render(<AdvancedBlock />);
 
@@ -163,6 +157,7 @@ describe('test AdvancedBlock', () => {
   it('should render correctly with curve engraving', () => {
     mockUseHasCurveEngraving.mockReturnValue(true);
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: false, lowerFocus: true });
+    mockUseWorkarea.mockReturnValue('fbb2');
 
     const { container } = render(<AdvancedBlock />);
     const collapseHeader = container.querySelector('.ant-collapse-header');

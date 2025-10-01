@@ -44,3 +44,6 @@ export const useDocumentStore = (selector?: (state: DocumentState) => Partial<Do
 };
 
 useDocumentStore.getState = () => ({ ...state, set, update });
+useDocumentStore.setState = (newState: Partial<DocumentState>) => {
+  Object.assign(state, newState);
+};
