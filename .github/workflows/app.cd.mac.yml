@@ -34,9 +34,7 @@ jobs:
       - name: Install Brew Packages
         run: |
           brew install zlib
-          if [ "${{ matrix.os }}" = "macOS-15" ]; then
-            brew install cairo
-          fi
+          brew install cairo
 
       - name: Setup Pnpm
         uses: pnpm/action-setup@v4
