@@ -34,6 +34,9 @@ jobs:
       - name: Install Brew Packages
         run: |
           brew install zlib
+          if [ "${{ matrix.os }}" = "macOS-15" ]; then
+            brew install cairo
+          fi
 
       - name: Setup Pnpm
         uses: pnpm/action-setup@v4
@@ -134,8 +137,7 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
-          echo "Building for macOS ${BUILD_ARCH}..."
-          if [ "$BUILD_ARCH" = "arm64" ]; then
+          if [ "${{ matrix.os }}" = "macOS-15" ]; then
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always
           else
@@ -147,7 +149,6 @@ jobs:
           PUBLISH_BUCKET: beamstudio
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-          BUILD_ARCH: ${{ matrix.os == 'macOS-15-intel' && 'x64' || 'arm64' }}
           PUBLISH_PATH: ""
           PUBLISH_SUFFIX: ${{ github.event.inputs.publish_suffix || '' }}
           APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
