@@ -1,7 +1,6 @@
 import { Menu as ElectronMenu } from '@electron/remote';
 import { funnel } from 'remeda';
 
-import tabController from '@core/app/actions/tabController';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -15,7 +14,6 @@ import ElectronUpdater from './electron-updater';
 const updateWindowsMenu = () => {
   if (window.os === 'Windows') {
     window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
-    tabController.updateCustomTitleBarDraggable();
   }
 };
 

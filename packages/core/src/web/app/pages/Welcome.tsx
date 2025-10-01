@@ -72,7 +72,6 @@ const Welcome = (): ReactNode => {
   const [banners, setBanners] = useState<IBanner[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const setUser = useCallback((user: IUser | null) => setCurrentUser(user ? { ...user } : user), []);
-  const [isTabFocused, setIsTabFocused] = useState(true);
   const isDesktopMac = useMemo(() => !isWeb() && isMac(), []);
   const [isFullScreen, setIsFullScreen] = useState(false);
   const defaultShopBanner = useMemo(() => {
@@ -126,21 +125,6 @@ const Welcome = (): ReactNode => {
       };
     }
   }, []);
-
-  useEffect(() => {
-    if (isDesktopMac) {
-      const onTabFocused = () => setIsTabFocused(true);
-      const onTabBlurred = () => setIsTabFocused(false);
-
-      tabController.onFocused(onTabFocused);
-      tabController.onBlurred(onTabBlurred);
-
-      return () => {
-        tabController.offFocused(onTabFocused);
-        tabController.offBlurred(onTabBlurred);
-      };
-    }
-  }, [isDesktopMac]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -213,7 +197,7 @@ const Welcome = (): ReactNode => {
       {!isWeb() && (
         <div
           className={classNames(styles['top-bar'], {
-            [styles.draggable]: isDesktopMac && isTabFocused,
+            [styles.draggable]: isDesktopMac,
             [styles.mac]: isDesktopMac,
             [styles.space]: isDesktopMac && !isFullScreen,
           })}

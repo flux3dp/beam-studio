@@ -5,3 +5,8 @@
 .cet-action-item.disabled {
   pointer-events: none;
 }
+
+// used in windows, prevent the title bar blocking mouse events
+body:not(.focused) .cet-drag-region {
+  width: 0 !important;
+}

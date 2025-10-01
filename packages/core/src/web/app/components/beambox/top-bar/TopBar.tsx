@@ -3,7 +3,6 @@ import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'r
 import classNames from 'classnames';
 import { pipe } from 'remeda';
 
-import tabController from '@core/app/actions/tabController';
 import CommonTools from '@core/app/components/beambox/top-bar/CommonTools';
 import DocumentButton from '@core/app/components/beambox/top-bar/DocumentButton';
 import FileName from '@core/app/components/beambox/top-bar/FileName';
@@ -37,24 +36,17 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   const { currentUser, hasUnsavedChange, mode, setSelectedDevice, toggleAutoFocus, togglePathPreview } =
     useContext(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
-  const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device'));
-  const [isTabFocused, setIsTabFocused] = useState(false);
+  const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
 
   useEffect(() => registerWindowUpdateTitle(), []);
 
   useEffect(() => {
-    const onTabFocused = () => setIsTabFocused(true);
-    const onTabBlurred = () => setIsTabFocused(false);
     const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
 
-    tabController.onFocused(onTabFocused);
-    tabController.onBlurred(onTabBlurred);
     communicator.on('window-fullscreen', onFullScreenChange);
 
     return () => {
-      tabController.offFocused(onTabFocused);
-      tabController.offBlurred(onTabBlurred);
       communicator.off('window-fullscreen', onFullScreenChange);
     };
   }, []);
@@ -81,7 +73,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     <>
       <div
         className={classNames(styles['top-bar'], {
-          [styles.draggable]: isDragRegion && isTabFocused,
+          [styles.draggable]: isDragRegion,
           [styles.web]: isWeb,
         })}
         onClick={() => ObjectPanelController.updateActiveKey(null)}
