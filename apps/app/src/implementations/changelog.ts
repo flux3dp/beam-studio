@@ -1,6 +1,6 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.5.9 beta
+// 2.5.10 beta
 const CHANGES_TW = {
   added: [
     '新增 免費 Google Fonts（需連網使用）。',
