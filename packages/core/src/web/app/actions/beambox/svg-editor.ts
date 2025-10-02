@@ -1196,9 +1196,14 @@ const svgEditor = (window['svgEditor'] = (function () {
         panning = false;
       });
 
-      Shortcuts.on([' '], () => {
-        svgCanvas.spaceKey = keypan = true;
-        workarea.css('cursor', 'grab');
+      // FIXME: use document.addEventListener('keydown', (evt) => { ... })
+      // because shortcuts only works with a strict key combinations match
+      document.addEventListener('keydown', (evt) => {
+        if (evt.key === ' ') {
+          svgCanvas.spaceKey = keypan = true;
+          workarea.css('cursor', 'grab');
+          evt.preventDefault(); // prevent page from scrolling
+        }
       });
       // FIXME: use document.addEventListener('keyup', (evt) => { ... })
       // because shortcuts are not providing keyup event now
