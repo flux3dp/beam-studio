@@ -11,6 +11,7 @@ export const checkFpm1 = (): boolean =>
     localeHelper.isJp ||
     localeHelper.isKr ||
     localeHelper.isAu ||
+    localeHelper.isAr ||
     enableAllMachines ||
     isDev()) &&
   !isWeb();
