@@ -81,6 +81,7 @@ export async function processElementForOffset(
         return { isClosed: false, paths: [path] };
       }
 
+      // ref: https://sourceforge.net/p/jsclipper/wiki/Home%206/#h-b4-simplifying-and-cleaning
       const simplifiedPaths = ClipperLib.Clipper.SimplifyPolygon(path, ClipperLib.PolyFillType.pftEvenOdd) as Path[];
       const cleanedPaths = ClipperLib.Clipper.CleanPolygons(simplifiedPaths, 0.05 * SCALE_FACTOR) as Path[];
 
