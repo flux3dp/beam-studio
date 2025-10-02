@@ -1,42 +1,36 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.5.9 beta
+// 2.5.10 beta
 const CHANGES_TW = {
-  added: ['新增 印章功能。'],
+  added: [
+    '新增 免費 Google Fonts（需連網使用）。',
+    '新增 Promark 支援阿根廷地區。',
+    '新增 Promark 旋轉軸功能外框預覽時「處理中」彈窗。',
+  ],
   changed: [
-    '調整 Promark MOPA 頻率上限。',
-    '調整 匯出檔案時需將文字轉路徑。',
-    '調整 自動對焦流程為先移至指定位置再執行對焦。',
+    '調整 工具列上的 My cloud 匯入功能移至 選單 > 檔案。',
+    '隱藏 工具列上的 Design Market 和 Instagram 入口。',
+    '調整 工具列上的曲線雕刻按鈕移至 選單 > 工具。',
+    '調整 文字物件產生時預設為填充。',
+    '更換 相機預覽與校正功能的亮度調整圖示與文字提示。',
   ],
-  fixed: [
-    '修正 v2.5.8 工作剩餘時間顯示錯誤。',
-    '修正 v2.5.8 文字轉點陣圖後產生重複點陣圖的問題。',
-    '修正 點陣圖預估工作時間比實際時間偏長的問題。',
-    '修正 「保留相機預覽結果」開啟時的問題部分機器無法預覽的問題。',
-    '修正 部分偏好設定在新分頁無法同步的問題。',
-    '修正 列印圖層物件邊框的相關問題。',
-    '修正 Promark 工作過程中可能中途停止的問題。',
-    '修正 Promark 旋轉軸角度誤差。',
-  ],
+  fixed: ['修正 文件設定中關閉視窗按鈕無效的問題。', '調整 Promark 工作進度條過快的問題。'],
 };
 
 const CHANGES_EN = {
-  added: ['Added stamp-making feature.'],
+  added: [
+    'Added Free Google Fonts (requires internet connection).',
+    'Added Promark support for Argentina region.',
+    'Added processing popup during frame preview of Promark rotary axis.',
+  ],
   changed: [
-    'Adjusted Promark MOPA frequency upper limit.',
-    'Adjusted file export to convert text to paths.',
-    'Adjusted Auto Focus process to move to the specified position before focusing.',
+    'Moved My cloud import entry from toolbar to Menu > File.',
+    'Removed Design Market and Instagram entries from toolbar.',
+    'Moved Curve Engraving button from toolbar to Menu > Tools.',
+    'Changed Text objects default to infilled when created.',
+    'Changed camera preview & calibration brightness adjustment icon and tooltip.',
   ],
-  fixed: [
-    'Fixed issue where remaining work time was displayed incorrectly in v2.5.8.',
-    'Fixed issue where converting text to image in v2.5.8 generated duplicate images.',
-    'Fixed issue where estimated processing time for bitmaps was significantly longer than the actual time.',
-    'Fixed issue where enabling “Keep Preview Result” caused preview to fail on some machines.',
-    'Fixed issue where some preferences could not sync across new tabs.',
-    'Fixed stroke issues on print layers.',
-    'Fixed issue where Promark jobs could stop unexpectedly during processing.',
-    'Fixed Promark rotary axis angle deviation.',
-  ],
+  fixed: ['Fixed non-functional close button in document settings.', 'Adjusted overly fast Promark job progress bar.'],
 };
 
 export default {
