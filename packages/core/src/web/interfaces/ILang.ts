@@ -2358,7 +2358,8 @@ export interface ILang {
       too_old_for_web: string;
       update_fail: string;
       update_success: string;
-      upload_file: string;
+      upload_firmware_title: string;
+      upload_mainboard_title: string;
     };
     install: string;
     later: string;

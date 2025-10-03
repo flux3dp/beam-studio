@@ -1,11 +1,9 @@
 /**
  * firmware updater
  */
-import Alert from '@core/app/actions/alert-caller';
-import Dialog from '@core/app/actions/dialog-caller';
+import alertCaller from '@core/app/actions/alert-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import { showFirmwareUpdateDialog } from '@core/app/components/dialogs/updateFirmware';
-import AlertConstants from '@core/app/constants/alert-constants';
+import { showFirmwareUpdateDialog, showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -26,23 +24,8 @@ export const firmwareUpdater = (
 ): void => {
   const { lang } = i18n;
 
-  const onSubmit = async (files: FileList) => {
-    const file = files.item(0)!;
-
-    await uploadToDevice(device, file, 'firmware');
-  };
-
-  const uploadManually = () => {
-    Dialog.showInputLightbox('upload-firmware', {
-      caption: lang.update.firmware.upload_file,
-      confirmText: lang.update.firmware.confirm,
-      onSubmit,
-      type: 'file',
-    });
-  };
-
   if (forceUpdate || !('downloadUrl' in response)) {
-    uploadManually();
+    showUploadFirmwareDialog(device, 'firmware');
   } else {
     const onDownload = () => {
       const req = new XMLHttpRequest();
@@ -53,7 +36,7 @@ export const firmwareUpdater = (
       req.responseType = 'blob';
 
       MessageCaller.openMessage({
-        content: i18n.lang.update.software.checking,
+        content: lang.update.software.checking,
         duration: 10,
         key: 'downloading-firmware',
         level: MessageLevel.LOADING,
@@ -65,16 +48,13 @@ export const firmwareUpdater = (
 
           uploadToDevice(device, file, 'firmware');
         } else {
-          Alert.popUp({
-            message: lang.update.cannot_reach_internet,
-            type: AlertConstants.SHOW_POPUP_ERROR,
-          });
+          alertCaller.popUpError({ message: lang.update.cannot_reach_internet });
         }
       };
       req.send();
     };
 
-    showFirmwareUpdateDialog(device, response, onDownload, uploadManually);
+    showFirmwareUpdateDialog(device, response, onDownload, () => showUploadFirmwareDialog(device, 'firmware'));
   }
 };
 
