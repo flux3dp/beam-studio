@@ -7,11 +7,23 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import Progress from '@core/app/actions/progress-caller';
 import { showFirmwareUpdateDialog } from '@core/app/components/dialogs/firmwareUpdate';
 import AlertConstants from '@core/app/constants/alert-constants';
-import DeviceMaster from '@core/helpers/device-master';
+import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
+export default (
+  response:
+    | {
+        changelog_en: string;
+        changelog_zh: string;
+        downloadUrl: string;
+        latestVersion: string;
+        needUpdate: true;
+      }
+    | { needUpdate: false },
+  device: IDeviceInfo,
+  forceUpdate?: boolean,
+): void => {
   const { lang } = i18n;
 
   const onFinishUpdate = (isSuccess: boolean) => {
@@ -28,10 +40,8 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
     }
   };
 
-  const doUpdate = DeviceMaster.updateFirmware;
-
-  const uploadToDevice = async (file) => {
-    const res = await DeviceMaster.select(device);
+  const uploadToDevice = async (file: File) => {
+    const res = await deviceMaster.select(device);
 
     if (res.success) {
       Progress.openSteppingProgress({
@@ -40,7 +50,7 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
         message: lang.update.updating,
       });
       try {
-        await doUpdate(file, (r) => {
+        await deviceMaster.updateFirmware(file, (r) => {
           const percentage = Number(r.percentage || 0).toFixed(2);
 
           Progress.update('update-firmware', {
@@ -57,38 +67,9 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
     }
   };
 
-  const onDownload = () => {
-    const req = new XMLHttpRequest();
-
-    // get firmware from flux3dp website.
-    req.open('GET', response.downloadUrl, true);
-    req.responseType = 'blob';
-
-    MessageCaller.openMessage({
-      content: i18n.lang.update.software.checking,
-      duration: 10,
-      key: 'downloading-firmware',
-      level: MessageLevel.LOADING,
-    });
-
-    req.onload = function onload() {
-      if (this.status === 200) {
-        const file = req.response;
-
-        uploadToDevice(file);
-      } else {
-        Alert.popUp({
-          message: lang.update.cannot_reach_internet,
-          type: AlertConstants.SHOW_POPUP_ERROR,
-        });
-      }
-    };
-    req.send();
-  };
-
   const onSubmit = async (files: FileList) => {
     const file = files.item(0)!;
-    const res = await DeviceMaster.select(device);
+    const res = await deviceMaster.select(device);
 
     if (res.success) {
       Progress.openSteppingProgress({
@@ -96,7 +77,7 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
         message: `${lang.update.updating} (0%)`,
       });
       try {
-        await doUpdate(file, (r) => {
+        await deviceMaster.updateFirmware(file, (r) => {
           const percentage = Number(r.percentage || 0).toFixed(2);
 
           Progress.update('update-firmware', {
@@ -122,9 +103,39 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
     });
   };
 
-  if (forceUpdate) {
+  if (forceUpdate || !('downloadUrl' in response)) {
     onInstall();
   } else {
-    showFirmwareUpdateDialog(device, response || {}, onDownload, onInstall);
+    const onDownload = () => {
+      const req = new XMLHttpRequest();
+
+      // get firmware from flux3dp website.
+      // TODO: change to fetch api
+      req.open('GET', response.downloadUrl!, true);
+      req.responseType = 'blob';
+
+      MessageCaller.openMessage({
+        content: i18n.lang.update.software.checking,
+        duration: 10,
+        key: 'downloading-firmware',
+        level: MessageLevel.LOADING,
+      });
+
+      req.onload = function onload() {
+        if (this.status === 200) {
+          const file = req.response;
+
+          uploadToDevice(file);
+        } else {
+          Alert.popUp({
+            message: lang.update.cannot_reach_internet,
+            type: AlertConstants.SHOW_POPUP_ERROR,
+          });
+        }
+      };
+      req.send();
+    };
+
+    showFirmwareUpdateDialog(device, response, onDownload, onInstall);
   }
 };
