@@ -5,8 +5,8 @@ import Alert from '@core/app/actions/alert-caller';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import Progress from '@core/app/actions/progress-caller';
+import { showFirmwareUpdateDialog } from '@core/app/components/dialogs/firmwareUpdate';
 import AlertConstants from '@core/app/constants/alert-constants';
-import InputLightboxConstants from '@core/app/constants/input-lightbox-constants';
 import DeviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -86,8 +86,8 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
     req.send();
   };
 
-  const onSubmit = async (files) => {
-    const file = files.item(0);
+  const onSubmit = async (files: FileList) => {
+    const file = files.item(0)!;
     const res = await DeviceMaster.select(device);
 
     if (res.success) {
@@ -118,13 +118,13 @@ export default (response, device: IDeviceInfo, forceUpdate?: boolean): void => {
       confirmText: lang.update.firmware.confirm,
       onCancel: () => {},
       onSubmit,
-      type: InputLightboxConstants.TYPE_FILE,
+      type: 'file',
     });
   };
 
   if (forceUpdate) {
     onInstall();
   } else {
-    Dialog.showFirmwareUpdateDialog(device, response || {}, onDownload, onInstall);
+    showFirmwareUpdateDialog(device, response || {}, onDownload, onInstall);
   }
 };

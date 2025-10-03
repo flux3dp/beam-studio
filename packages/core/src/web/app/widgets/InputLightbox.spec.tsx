@@ -2,18 +2,7 @@ import * as React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import Constants from '@core/app/constants/input-lightbox-constants';
-
 import InputLightbox from './InputLightbox';
-
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    alert: {
-      cancel: 'Resolution',
-      confirm: 'Low',
-    },
-  },
-}));
 
 jest.mock(
   '@core/app/widgets/AlertDialog',
@@ -25,6 +14,7 @@ jest.mock(
 
 const mockOnSubmit = jest.fn();
 const mockOnClose = jest.fn();
+const mockOnCancel = jest.fn();
 
 describe('test InputLightbox', () => {
   beforeEach(() => {
@@ -39,9 +29,10 @@ describe('test InputLightbox', () => {
         defaultValue=""
         inputHeader="header"
         maxLength={100}
+        onCancel={mockOnCancel}
         onClose={mockOnClose}
         onSubmit={mockOnSubmit}
-        type={Constants.TYPE_FILE}
+        type="file"
       />,
     );
 
@@ -68,11 +59,9 @@ describe('test InputLightbox', () => {
     fireEvent.click(uploadButton);
 
     // Ensure onSubmit is called
-    expect(mockOnSubmit).toBeCalledTimes(1);
-
-    // Ensure onClose is called with 'submit'
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockOnClose).toHaveBeenLastCalledWith('submit');
+    expect(mockOnSubmit).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnCancel).not.toHaveBeenCalled();
   });
 
   it('should render correctly when type is password', () => {
@@ -85,17 +74,17 @@ describe('test InputLightbox', () => {
         maxLength={100}
         onClose={mockOnClose}
         onSubmit={mockOnSubmit}
-        type={Constants.TYPE_PASSWORD}
+        type="password"
       />,
     );
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.change(baseElement.querySelector('input'), { target: { value: 'pAssw0rd' } });
-    expect(mockOnSubmit).not.toBeCalled();
+    expect(mockOnSubmit).not.toHaveBeenCalled();
     fireEvent.click(getByText('CONNECT'));
-    expect(mockOnSubmit).toBeCalledTimes(1);
+    expect(mockOnSubmit).toHaveBeenCalledTimes(1);
     expect(mockOnSubmit).toHaveBeenLastCalledWith('pAssw0rd');
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockOnClose).toHaveBeenLastCalledWith('submit');
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnCancel).not.toHaveBeenCalled();
   });
 });
