@@ -1856,6 +1856,32 @@ class Control extends EventEmitter implements IControlSocket {
       this.ws.send(`update_fw binary/flux-firmware ${blob.size}`);
     });
 
+  updateMainboard = (file: File) =>
+    new Promise((resolve, reject) => {
+      const blob = new Blob([file], { type: 'binary/flux-firmware' });
+
+      this.on(EVENT_COMMAND_MESSAGE, (response) => {
+        if (response.status === 'ok') {
+          this.removeCommandListeners();
+          resolve(response);
+        } else if (response.status === 'continue') {
+          this.emit(EVENT_COMMAND_PROGRESS, response);
+          this.ws.send(blob);
+        } else if (response.status === 'uploading') {
+          response.percentage = ((response.sent || 0) / blob.size) * 100;
+          this.emit(EVENT_COMMAND_PROGRESS, response);
+        } else {
+          this.removeCommandListeners();
+          reject(response);
+        }
+      });
+
+      this.setDefaultErrorResponse(reject);
+      this.setDefaultFatalResponse(reject);
+
+      this.ws.send(`update_mbfw binary/flux-firmware ${blob.size}`);
+    });
+
   uploadFisheyeParams = (data: string) =>
     new Promise<{ status: string }>((resolve, reject) => {
       const blob = new Blob([data], { type: 'application/json' });
