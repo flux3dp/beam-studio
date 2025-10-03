@@ -1488,6 +1488,16 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.fwUpdate, file);
   };
 
+  updateMainboard = async (file: File, onProgress: (...args: any[]) => void) => {
+    const controlSocket = await this.getControl();
+
+    if (onProgress) {
+      controlSocket.setProgressListener(onProgress);
+    }
+
+    return controlSocket.addTask(controlSocket.updateMainboard, file);
+  };
+
   uploadFisheyeParams = async (data: string, onProgress: (...args: any[]) => void) => {
     const controlSocket = await this.getControl();
 
