@@ -50,7 +50,7 @@ import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type { ChipSettings } from '@core/interfaces/Cartridge';
 import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/IDialog';
+import type { IDialogBoxStyle, IInputLightBox, InputType, IPrompt } from '@core/interfaces/IDialog';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
@@ -502,7 +502,7 @@ export default {
       />,
     );
   },
-  showInputLightbox: (id: string, args: IInputLightBox): void => {
+  showInputLightbox: <T extends InputType>(id: string, args: IInputLightBox<T>): void => {
     addDialogComponent(
       id,
       <InputLightBox
@@ -511,17 +511,10 @@ export default {
         defaultValue={args.defaultValue!}
         inputHeader={args.inputHeader!}
         maxLength={args.maxLength!}
-        onClose={(from: string) => {
-          popDialogById(id);
-
-          if (from !== 'submit') {
-            args.onCancel?.();
-          }
-        }}
-        onSubmit={(value) => {
-          args.onSubmit(value);
-        }}
-        type={args.type || 'TEXT_INPUT'}
+        onCancel={args.onCancel}
+        onClose={() => popDialogById(id)}
+        onSubmit={args.onSubmit}
+        type={args.type || 'text'}
       />,
     );
   },

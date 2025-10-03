@@ -9,7 +9,6 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
-import InputLightBoxConstants from '@core/app/constants/input-lightbox-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import storage from '@core/implementations/storage';
@@ -241,7 +240,7 @@ class DeviceMaster {
         onSubmit: async (password: string) => {
           resolve(await this.auth(device.info.uuid, password));
         },
-        type: InputLightBoxConstants.TYPE_PASSWORD,
+        type: 'password',
       });
     });
 
