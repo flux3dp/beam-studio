@@ -130,4 +130,4 @@ export type TPromarkFramingOpt =
       // Contour
       taskCode: string;
     };
-export type SwiftrayConvertType = 'contour' | 'fcode' | 'gcode' | 'preview';
+export type SwiftrayConvertType = 'contour' | 'fcode' | 'gcode' | 'hull' | 'preview';

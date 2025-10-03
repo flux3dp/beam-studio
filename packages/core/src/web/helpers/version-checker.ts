@@ -27,6 +27,7 @@ const requirement = {
   NEW_PLAYER: '3.3.0',
   OPERATE_DURING_PAUSE: '1.6.20',
   PROMARK_CONTOUR: '1.3.11',
+  PROMARK_HULL: '1.4.2',
   PROMARK_ROTARY: '1.3.8',
   PWM: '4.3.4',
   RELOCATE_ORIGIN: '3.2.2',
