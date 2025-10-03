@@ -110,6 +110,7 @@ interface IControlSocket extends EventEmitter {
   start(): Promise<unknown>;
   takeReferenceZ?: (args?: { F?: number; H?: number; X?: number; Y?: number }) => Promise<number>;
   updateFisheye3DRotation?: (data: RotationParameters3D) => Promise<{ status: string }>;
+  updateMainboard(file: File): Promise<unknown>;
   upload(data: any, path?: string, fileName?: string): Promise<void>;
   uploadFisheyeParams?: (data: string) => Promise<{ status: string }>;
   useRawWaitOKResponse(command: string, timeout?: number): Promise<string>;

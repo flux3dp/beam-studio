@@ -514,6 +514,10 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'updateFirmware', blob);
   }
 
+  public async updateMainboard(blob: Blob): Promise<{ error?: ErrorObject; success: boolean }> {
+    return this.action(`/devices/${this.port}`, 'updateMainboard', blob);
+  }
+
   public async endMode(): Promise<{ error?: ErrorObject; success: boolean }> {
     return this.action(`/devices/${this.port}`, 'endMode');
   }
