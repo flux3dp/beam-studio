@@ -1,4 +1,6 @@
+import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
+import { uploadToDevice } from '@core/helpers/device/updateFirmware/upload';
 import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -34,4 +36,16 @@ export const showFirmwareUpdateDialog = (
       releaseNote={releaseNode}
     />,
   );
+};
+
+export const showUploadFirmwareDialog = (device: IDeviceInfo, type: 'firmware' | 'mainboard') => {
+  const t = i18n.lang.update.firmware;
+  const title = type === 'firmware' ? t.upload_firmware_title : t.upload_mainboard_title;
+
+  dialogCaller.showInputLightbox('upload-firmware', {
+    caption: title,
+    confirmText: t.confirm,
+    onSubmit: (files: FileList) => uploadToDevice(device, files.item(0)!, type),
+    type: 'file',
+  });
 };
