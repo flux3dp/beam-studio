@@ -8,7 +8,6 @@ import CartridgeSettingPanel from '@core/app/components/dialogs/CartridgeSetting
 import ChangeLog from '@core/app/components/dialogs/ChangeLog';
 import CodeGenerator from '@core/app/components/dialogs/CodeGenerator';
 import DocumentSettings from '@core/app/components/dialogs/DocumentSettings';
-import FirmwareUpdate from '@core/app/components/dialogs/FirmwareUpdate';
 import FluxCredit from '@core/app/components/dialogs/FluxCredit';
 import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
 import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
@@ -439,37 +438,6 @@ export default {
           onClose();
           popDialogById(id);
         }}
-      />,
-    );
-  },
-  showFirmwareUpdateDialog: (
-    device: IDeviceInfo,
-    updateInfo: {
-      changelog_en: string;
-      changelog_zh: string;
-      latestVersion: string;
-    },
-    onDownload: () => void,
-    onInstall: () => void,
-  ): void => {
-    if (isIdExist('update-dialog')) {
-      return;
-    }
-
-    const { model, name, version } = device;
-    const releaseNode = i18n.getActiveLang() === 'zh-tw' ? updateInfo.changelog_zh : updateInfo.changelog_en;
-
-    addDialogComponent(
-      'update-dialog',
-      <FirmwareUpdate
-        currentVersion={version}
-        deviceModel={model}
-        deviceName={name}
-        latestVersion={updateInfo.latestVersion}
-        onClose={() => popDialogById('update-dialog')}
-        onDownload={onDownload}
-        onInstall={onInstall}
-        releaseNote={releaseNode}
       />,
     );
   },
