@@ -275,7 +275,7 @@ export default {
   CALIBRATE_UV_WHITE_INK_MODULE: async (device: IDeviceInfo): Promise<void> => {
     calibrateModule(device, LayerModule.UV_WHITE_INK);
   },
-  CATRIDGE_CHIP_SETTING: async (device: IDeviceInfo): Promise<void> => {
+  CARTRIDGE_CHIP_SETTING: async (device: IDeviceInfo): Promise<void> => {
     const res = await DeviceMaster.select(device);
 
     if (!res.success) {
