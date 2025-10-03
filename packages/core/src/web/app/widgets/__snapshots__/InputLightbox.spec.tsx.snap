@@ -113,7 +113,7 @@ exports[`test InputLightbox should render correctly when type is password 1`] = 
                   type="button"
                 >
                   <span>
-                    Resolution
+                    Cancel
                   </span>
                 </button>
                 <button
@@ -252,7 +252,7 @@ exports[`test InputLightbox should trigger onSubmit when file is selected and in
                   type="button"
                 >
                   <span>
-                    Resolution
+                    Cancel
                   </span>
                 </button>
                 <button
