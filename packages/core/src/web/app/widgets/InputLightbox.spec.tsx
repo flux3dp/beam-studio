@@ -4,14 +4,6 @@ import { fireEvent, render } from '@testing-library/react';
 
 import InputLightbox from './InputLightbox';
 
-jest.mock(
-  '@core/app/widgets/AlertDialog',
-  () =>
-    function DummyImageAlertDialog() {
-      return <div>This is dummy AlertDialog</div>;
-    },
-);
-
 const mockOnSubmit = jest.fn();
 const mockOnClose = jest.fn();
 const mockOnCancel = jest.fn();
