@@ -21,7 +21,18 @@ export interface IPrompt {
   onYes?: (value?: string) => void;
 }
 
-export interface IInputLightBox {
+export type InputType = 'file' | 'number' | 'password' | 'text';
+export type InputValue<T> = T extends 'file'
+  ? FileList
+  : T extends 'number'
+    ? number
+    : T extends 'password'
+      ? string
+      : T extends 'text'
+        ? string
+        : string;
+
+export interface IInputLightBox<T extends InputType> {
   caption: string;
   confirmText?: string;
   defaultValue?: string;
@@ -30,8 +41,8 @@ export interface IInputLightBox {
   maxLength?: number;
   onCancel?: () => void;
   onClose?: (from?: string) => void;
-  onSubmit: (value: string, event?: Event) => Promise<void> | void;
-  type: string;
+  onSubmit: (value: InputValue<T>, event?: Event) => Promise<void> | void;
+  type: T;
 }
 
 export interface DialogFilter {
