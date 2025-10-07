@@ -650,7 +650,7 @@ const convertTextToPath = async (
     const isFilled = calculateFilled(textElement); // for ghost
 
     let res: IConvertInfo = null;
-    let preferGhost = globalPreference['font-convert'] === '1.0';
+    let preferGhost = !pathPerChar && globalPreference['font-convert'] === '1.0';
 
     if (preferGhost && fontObj) {
       try {
