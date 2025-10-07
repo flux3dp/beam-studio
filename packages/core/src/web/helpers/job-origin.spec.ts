@@ -32,9 +32,25 @@ jest.mock('@core/app/svgedit/workarea', () => ({
   },
 }));
 
+const mockSwitchSymbolWrapper = jest.fn();
+
+jest.mock('@core/helpers/file/export/utils/common', () => ({
+  switchSymbolWrapper: (...args) => mockSwitchSymbolWrapper(...args),
+}));
+
+const mockSvgStringToCanvas = jest.fn();
+
+jest.mock(
+  '@core/helpers/image/svgStringToCanvas',
+  () =>
+    (...args) =>
+      mockSvgStringToCanvas(...args),
+);
+
 describe('test job-origin', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockSwitchSymbolWrapper.mockImplementation((fn) => fn());
   });
 
   test('getRefModule', () => {
@@ -56,6 +72,7 @@ describe('test job-origin', () => {
 
       const mockElem = {
         getBBox: () => ({ height: 40, width: 30, x: 10, y: 20 }),
+        querySelectorAll: () => [],
       };
 
       document.getElementById = jest.fn().mockReturnValue(mockElem);
@@ -74,9 +91,9 @@ describe('test job-origin', () => {
     ];
 
     testCases.forEach(({ jobOrigin, px, res }) => {
-      test(`getJobOrigin with value ${jobOrigin}`, () => {
+      test(`getJobOrigin with value ${jobOrigin}`, async () => {
         mockGetState.mockReturnValue({ 'job-origin': jobOrigin });
-        expect(getJobOrigin(px)).toEqual(res);
+        expect(await getJobOrigin(px)).toEqual(res);
         expect(document.getElementById).toHaveBeenCalledTimes(1);
         expect(mockWorkareaWidth).toHaveBeenCalledTimes(1);
         expect(mockWorkareaMaxY).toHaveBeenCalledTimes(1);
