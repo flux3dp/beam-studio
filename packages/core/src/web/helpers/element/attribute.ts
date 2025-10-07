@@ -1,4 +1,4 @@
-type AttributeMap = Record<string, string>;
+export type AttributeMap = Record<string, string>;
 
 const defaultAttributes: AttributeMap = {
   'data-ratiofixed': 'false',

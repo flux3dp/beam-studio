@@ -12,6 +12,7 @@ import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
 import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
+import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
@@ -587,6 +588,24 @@ const setTextPostscriptNameIfNeeded = (textElement: Element) => {
   }
 };
 
+const createPathElement = (d: string, textAttr: AttributeMap) => {
+  const path = document.createElementNS(svgedit.NS.SVG, 'path') as unknown as SVGPathElement;
+
+  setAttributes(path, {
+    ...textAttr,
+    d,
+    id: svgCanvas.getNextId(),
+    'stroke-dasharray': 'none',
+    'stroke-opacity': '1',
+    'vector-effect': 'non-scaling-stroke',
+  });
+  path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
+  path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
+  svgCanvas.pathActions.fixEnd(path);
+
+  return path;
+};
+
 const convertTextToPath = async (
   textElement: Element,
   opts?: { isSubCommand?: boolean; pathPerChar?: boolean; weldingTexts?: boolean },
@@ -697,82 +716,39 @@ const convertTextToPath = async (
       const { moveElement, transform } = res;
       let { d } = res;
 
+      if (transform) {
+        textAttr.transform = transform;
+      }
+
+      if (textAttr['stroke-width']) {
+        textAttr['stroke-width'] = (+textAttr['stroke-width'] / 2).toString();
+      }
+
       if (typeof d === 'string') {
         if (weldingTexts) {
           d = weldPath(d);
         }
 
-        const path = document.createElementNS(svgedit.NS.SVG, 'path') as unknown as SVGPathElement;
-
-        newPathElement = path;
-
-        setAttributes(path, {
-          ...textAttr,
-          d,
-          id: svgCanvas.getNextId(),
-          'stroke-dasharray': 'none',
-          'stroke-opacity': '1',
-          transform,
-          'vector-effect': 'non-scaling-stroke',
-        });
-
-        if (textAttr['stroke-width']) {
-          path.setAttribute('stroke-width', (+textAttr['stroke-width'] / 2).toString());
-        }
-
-        textElement.parentNode!.insertBefore(path, textElement.nextSibling);
-        path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
-        path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
-        svgCanvas.pathActions.fixEnd(path);
-        batchCmd.addSubCommand(new history.InsertElementCommand(path));
-
-        if (moveElement) {
-          // output of fluxsvg will locate at (0,0), so move it.
-          moveElements([moveElement.x], [moveElement.y], [path], false);
-        }
-
-        svgedit.recalculate.recalculateDimensions(path);
+        newPathElement = createPathElement(d, textAttr);
       } else {
         const group = document.createElementNS(svgedit.NS.SVG, 'g');
 
-        textElement.parentNode!.insertBefore(group, textElement.nextSibling);
-        group.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
-        group.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
-        batchCmd.addSubCommand(new history.InsertElementCommand(group));
-
         d.forEach((dStr) => {
-          const path = document.createElementNS(svgedit.NS.SVG, 'path') as unknown as SVGPathElement;
-
-          setAttributes(path, {
-            ...textAttr,
-            d: dStr,
-            id: svgCanvas.getNextId(),
-            'stroke-dasharray': 'none',
-            'stroke-opacity': '1',
-            transform,
-            'vector-effect': 'non-scaling-stroke',
-          });
-
-          if (textAttr['stroke-width']) {
-            path.setAttribute('stroke-width', (+textAttr['stroke-width'] / 2).toString());
-          }
-
-          group.appendChild(path);
-          path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
-          path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
-          svgCanvas.pathActions.fixEnd(path);
-          batchCmd.addSubCommand(new history.InsertElementCommand(path));
+          group.appendChild(createPathElement(dStr, textAttr));
         });
-
-        if (moveElement) {
-          // output of fluxsvg will locate at (0,0), so move it.
-          moveElements([moveElement.x], [moveElement.y], [group], false);
-        }
-
-        svgedit.recalculate.recalculateDimensions(group);
         //@ts-ignore newPathElement is not used when pathPerChar is true, ignore type mismatch
         newPathElement = group;
       }
+
+      textElement.parentNode!.insertBefore(newPathElement!, textElement.nextSibling);
+      batchCmd.addSubCommand(new history.InsertElementCommand(newPathElement!));
+
+      if (moveElement) {
+        // output of fluxsvg will locate at (0,0), so move it.
+        moveElements([moveElement.x], [moveElement.y], [newPathElement!], false);
+      }
+
+      svgedit.recalculate.recalculateDimensions(newPathElement!);
     } else {
       Alert.popUp({
         caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,
