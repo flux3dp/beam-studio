@@ -4,7 +4,7 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import constant, { dpmm, promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
-import { fetchContourTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
+import { fetchFramingTaskCode } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import type { AddOnInfo } from '@core/app/constants/addOn';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -100,7 +100,7 @@ export const getFramingOptions = (device: IDeviceInfo): TFramingType[] => {
 
     if (withRotary) return [FramingType.RotateAxis, FramingType.RotateFraming];
 
-    return [FramingType.Framing, FramingType.Contour];
+    return [FramingType.Framing, FramingType.Hull, FramingType.Contour];
   }
 
   return [FramingType.Framing, FramingType.Hull, FramingType.AreaCheck];
@@ -529,7 +529,15 @@ class FramingTaskManager extends EventEmitter {
     svgCanvas.clearSelection();
 
     if (type === FramingType.Contour) {
-      const taskCode = await fetchContourTaskCode();
+      const taskCode = await fetchFramingTaskCode(false);
+
+      if (taskCode) {
+        this.taskCodeCache[type] = taskCode;
+      }
+
+      return taskCode;
+    } else if (type === FramingType.Hull) {
+      const taskCode = await fetchFramingTaskCode(true);
 
       if (taskCode) {
         this.taskCodeCache[type] = taskCode;
@@ -903,7 +911,7 @@ class FramingTaskManager extends EventEmitter {
     let isEmpty = false;
     let taskCode: null | string | undefined;
 
-    if (type === FramingType.Contour) {
+    if (this.isPromark && (type === FramingType.Contour || type === FramingType.Hull)) {
       taskCode = await this.generateTaskCode(type);
       isEmpty = !taskCode;
     } else {

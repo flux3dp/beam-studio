@@ -372,8 +372,8 @@ const fetchTaskCodeSwiftray = async (
 };
 
 // Promark only
-const fetchContourTaskCode = async (): Promise<null | string> => {
-  if (!swiftrayClient.checkVersion('PROMARK_CONTOUR')) {
+const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
+  if (!swiftrayClient.checkVersion(hull ? 'PROMARK_HULL' : 'PROMARK_CONTOUR')) {
     return null;
   }
 
@@ -389,7 +389,7 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   });
 
   // Convert text to path
-  const { revert, success } = await convertAllTextToPath();
+  const { revert, success } = await convertAllTextToPath({ pathPerChar: hull });
 
   if (!success) {
     Progress.popById('fetch-task-code');
@@ -458,7 +458,7 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
     taskConfig.mask = true;
   }
 
-  const { fileTimeCost, taskCodeBlob } = await getTaskCode('contour', taskConfig);
+  const { fileTimeCost, taskCodeBlob } = await getTaskCode(hull ? 'hull' : 'contour', taskConfig);
 
   Progress.popById('fetch-task');
 
@@ -475,4 +475,4 @@ const fetchContourTaskCode = async (): Promise<null | string> => {
   }
 };
 
-export { fetchContourTaskCode, fetchTaskCodeSwiftray };
+export { fetchFramingTaskCode, fetchTaskCodeSwiftray };

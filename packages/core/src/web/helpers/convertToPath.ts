@@ -60,18 +60,24 @@ export const convertTextToPath = async ({
   element,
   isToSelect = false,
   parentCommand,
+  pathPerChar = false,
   weldingTexts = false,
 }: {
   element: SVGElement;
   isToSelect?: boolean;
   parentCommand?: IBatchCommand;
+  pathPerChar?: boolean;
   weldingTexts?: boolean;
 }): Promise<ConvertTextToPathResult> => {
   const isSubCommand = parentCommand !== undefined;
 
   if (textActions.isEditing) textActions.toSelectMode();
 
-  const { command, path, status } = await fontFuncs.convertTextToPath(element, { isSubCommand: true, weldingTexts });
+  const { command, path, status } = await fontFuncs.convertTextToPath(element, {
+    isSubCommand: true,
+    pathPerChar,
+    weldingTexts,
+  });
 
   if (command && isSubCommand) {
     parentCommand.addSubCommand(command);
@@ -204,7 +210,7 @@ export const generateImageRect = (element?: SVGImageElement): { command?: IBatch
  * Converts all <text> and text-on-path elements on the canvas to paths.
  * @returns A promise that resolves to a function that can revert the conversion.
  */
-export const convertAllTextToPath = async (): Promise<{
+export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerChar?: boolean } = {}): Promise<{
   revert: () => void;
   success: boolean;
 }> => {
@@ -217,7 +223,7 @@ export const convertAllTextToPath = async (): Promise<{
   let isAnyFontUnsupported = false;
 
   for (const element of texts) {
-    const { status } = await convertTextToPath({ element, parentCommand });
+    const { status } = await convertTextToPath({ element, parentCommand, pathPerChar });
 
     if (status === ConvertResult.CANCEL_OPERATION) {
       return { revert: () => {}, success: false };

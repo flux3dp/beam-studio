@@ -12,6 +12,7 @@ import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
 import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
+import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
@@ -50,7 +51,7 @@ export type ConvertToTextPathResult =
   | { command: null; path: null; status: ConvertResultType };
 
 type IConvertInfo = null | {
-  d: string;
+  d: string | string[];
   moveElement?: { x: number; y: number };
   transform: null | string;
 };
@@ -191,7 +192,11 @@ export const getFontObj = async (font: GeneralFont): Promise<fontkit.Font | unde
   }
 };
 
-export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.Font | undefined): IConvertInfo => {
+export const convertTextToPathByFontkit = (
+  textElem: Element,
+  fontObj: fontkit.Font | undefined,
+  pathPerChar: boolean,
+): IConvertInfo => {
   try {
     if (!fontObj) {
       throw new Error('Unable to get fontObj');
@@ -217,7 +222,7 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
     const maxChar = 0xffff;
     const fontSize = textedit.getFontSize(textElem as SVGTextElement);
     const sizeRatio = fontSize / fontObj.unitsPerEm;
-    let d = '';
+    let d: string[] = [];
     const textPaths = textElem.querySelectorAll('textPath');
 
     textPaths.forEach((textPath) => {
@@ -259,8 +264,8 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
 
       let i = 0;
 
-      d += glyphs
-        .map((char, idx) => {
+      d.push(
+        ...glyphs.map((char, idx) => {
           if (i >= charCount) return '';
 
           const pos = positions[idx];
@@ -285,8 +290,8 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
             .rotate(rot)
             .translate(x, y)
             .toSVG();
-        })
-        .join('');
+        }),
+      );
     });
 
     const tSpans = textElem.querySelectorAll('tspan');
@@ -310,8 +315,8 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
 
       let i = 0;
 
-      d += glyphs
-        .map((char, idx) => {
+      d.push(
+        ...glyphs.map((char, idx) => {
           if (i >= charCount) return '';
 
           const pos = positions[idx];
@@ -324,11 +329,11 @@ export const convertTextToPathByFontkit = (textElem: Element, fontObj: fontkit.F
           });
 
           return char.path.translate(pos.xOffset, pos.yOffset).scale(sizeRatio, -sizeRatio).translate(x, y).toSVG();
-        })
-        .join('');
+        }),
+      );
     });
 
-    return { d, transform: textElem.getAttribute('transform') };
+    return { d: pathPerChar ? d : d.join(' '), transform: textElem.getAttribute('transform') };
   } catch (err) {
     console.error(`Unable to handle font ${textElem.getAttribute('font-postscript')} by fontkit, ${err}`);
 
@@ -583,9 +588,27 @@ const setTextPostscriptNameIfNeeded = (textElement: Element) => {
   }
 };
 
+const createPathElement = (d: string, textAttr: AttributeMap) => {
+  const path = document.createElementNS(svgedit.NS.SVG, 'path') as unknown as SVGPathElement;
+
+  setAttributes(path, {
+    ...textAttr,
+    d,
+    id: svgCanvas.getNextId(),
+    'stroke-dasharray': 'none',
+    'stroke-opacity': '1',
+    'vector-effect': 'non-scaling-stroke',
+  });
+  path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
+  path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
+  svgCanvas.pathActions.fixEnd(path);
+
+  return path;
+};
+
 const convertTextToPath = async (
   textElement: Element,
-  opts?: { isSubCommand?: boolean; weldingTexts?: boolean },
+  opts?: { isSubCommand?: boolean; pathPerChar?: boolean; weldingTexts?: boolean },
 ): Promise<ConvertToTextPathResult> => {
   const LANG = i18n.lang.beambox.object_panels;
 
@@ -600,7 +623,7 @@ const convertTextToPath = async (
   let newPathElement: null | SVGPathElement = null;
 
   try {
-    const { isSubCommand = false, weldingTexts = false } = opts || {};
+    const { isSubCommand = false, pathPerChar = false, weldingTexts = false } = opts || {};
     const globalPreference = useGlobalPreferenceStore.getState();
 
     setTextPostscriptNameIfNeeded(textElement);
@@ -646,7 +669,7 @@ const convertTextToPath = async (
     const isFilled = calculateFilled(textElement); // for ghost
 
     let res: IConvertInfo = null;
-    let preferGhost = globalPreference['font-convert'] === '1.0';
+    let preferGhost = !pathPerChar && globalPreference['font-convert'] === '1.0';
 
     if (preferGhost && fontObj) {
       try {
@@ -682,10 +705,10 @@ const convertTextToPath = async (
 
       res =
         (await convertTextToPathByGhost(textElement, isFilled, font)) ||
-        convertTextToPathByFontkit(textElement, fontObj);
+        convertTextToPathByFontkit(textElement, fontObj, pathPerChar);
     } else {
       res =
-        convertTextToPathByFontkit(textElement, fontObj) ||
+        convertTextToPathByFontkit(textElement, fontObj, pathPerChar) ||
         (await convertTextToPathByGhost(textElement, isFilled, font));
     }
 
@@ -693,40 +716,39 @@ const convertTextToPath = async (
       const { moveElement, transform } = res;
       let { d } = res;
 
-      if (weldingTexts) {
-        d = weldPath(d);
+      if (transform) {
+        textAttr.transform = transform;
       }
-
-      const path = document.createElementNS(svgedit.NS.SVG, 'path') as unknown as SVGPathElement;
-
-      newPathElement = path;
-
-      setAttributes(path, {
-        ...textAttr,
-        d,
-        id: svgCanvas.getNextId(),
-        'stroke-dasharray': 'none',
-        'stroke-opacity': '1',
-        transform,
-        'vector-effect': 'non-scaling-stroke',
-      });
 
       if (textAttr['stroke-width']) {
-        path.setAttribute('stroke-width', (+textAttr['stroke-width'] / 2).toString());
+        textAttr['stroke-width'] = (+textAttr['stroke-width'] / 2).toString();
       }
 
-      textElement.parentNode!.insertBefore(path, textElement.nextSibling);
-      path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
-      path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
-      svgCanvas.pathActions.fixEnd(path);
-      batchCmd.addSubCommand(new history.InsertElementCommand(path));
+      if (typeof d === 'string') {
+        if (weldingTexts) {
+          d = weldPath(d);
+        }
+
+        newPathElement = createPathElement(d, textAttr);
+      } else {
+        const group = document.createElementNS(svgedit.NS.SVG, 'g');
+
+        d.forEach((dStr) => {
+          group.appendChild(createPathElement(dStr, textAttr));
+        });
+        //@ts-ignore newPathElement is not used when pathPerChar is true, ignore type mismatch
+        newPathElement = group;
+      }
+
+      textElement.parentNode!.insertBefore(newPathElement!, textElement.nextSibling);
+      batchCmd.addSubCommand(new history.InsertElementCommand(newPathElement!));
 
       if (moveElement) {
         // output of fluxsvg will locate at (0,0), so move it.
-        moveElements([moveElement.x], [moveElement.y], [path], false);
+        moveElements([moveElement.x], [moveElement.y], [newPathElement!], false);
       }
 
-      svgedit.recalculate.recalculateDimensions(path);
+      svgedit.recalculate.recalculateDimensions(newPathElement!);
     } else {
       Alert.popUp({
         caption: `#846 ${LANG.text_to_path.error_when_parsing_text}`,
