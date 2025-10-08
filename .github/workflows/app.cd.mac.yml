@@ -19,7 +19,8 @@ jobs:
       matrix:
         node-version: [22]
         python-version: [3.8]
-        os: [macOS-15, macOS-15-intel]
+        os: [macOS-15-intel]
+        target: [x64, arm64]
       fail-fast: false
 
     steps:
@@ -35,10 +36,6 @@ jobs:
       - name: Install Brew Packages
         run: |
           brew install zlib
-
-      - name: Set dyld path for cairo
-        run: |
-          echo "DYLD_LIBRARY_PATH=${DYLD_LIBRARY_PATH:+$DYLD_LIBRARY_PATH:}$(brew --prefix cairo)/lib" >> $GITHUB_ENV
 
       - name: Setup Pnpm
         uses: pnpm/action-setup@v4
@@ -60,14 +57,14 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: flux3dp/beamify
-          ref: 2.0.8
+          ref: 2.1.0
           token: ${{ secrets.REPO_TOKEN }}
           path: ./apps/app/.github/actions/beamify
 
       - name: Install Beamify
         run: |
           cd ./apps/app/.github/actions/beamify/python
-          python3 setup.py install --verbose || echo "Failed to install beamify"
+          pip install . --verbose
 
 
       - name: Install Fluxsvg
@@ -84,7 +81,7 @@ jobs:
       - name: Install FluxClient
         run: |
           cd ./apps/app/.github/actions/fluxclient
-          python3 setup.py install --verbose || echo "Failed to install fluxclient"
+          pip install . --verbose
 
       - name: Build Flux Ghost
         uses: flux3dp/fluxghost@2.5.1
@@ -139,7 +136,7 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
-          if [ "${{ matrix.os }}" = "macOS-15" ]; then
+          if [ "${{ matrix.target }}" = "arm64" ]; then
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always
           else
