@@ -2,8 +2,6 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import workareaManager from '@core/app/svgedit/workarea';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
-const { $ } = window;
-
 let svgedit;
 
 getSVGAsync((globalSVG) => {
@@ -11,26 +9,35 @@ getSVGAsync((globalSVG) => {
 });
 
 const fetchThumbnail = async (): Promise<string[]> => {
-  function cloneAndModifySvg($svg) {
-    const $clonedSvg = $svg.clone(false);
+  const cropTaskThumbnail = useGlobalPreferenceStore.getState()['crop-task-thumbnail'];
 
-    $clonedSvg.find('text').remove();
-    $clonedSvg.find('#selectorParentGroup').remove();
-    $clonedSvg.find('#canvasBackground #previewSvg').remove();
-    $clonedSvg.find('#canvasBackground #previewBoundary').remove();
-    $clonedSvg.find('#canvasBackground #guidesLines').remove();
-    $clonedSvg.find('#canvasBackground #workarea-boundary').remove();
-    $clonedSvg.find('#canvasBackground').css('overflow', 'visible');
-    $clonedSvg.find('#canvasBackground').children().css('overflow', 'visible');
+  function cloneAndModifySvg(svg: SVGSVGElement) {
+    const clonedSvg = svg.cloneNode(true) as unknown as SVGSVGElement;
 
-    return $clonedSvg;
+    clonedSvg.querySelectorAll('text').forEach((text) => text.remove());
+    clonedSvg.querySelector('#selectorParentGroup')?.remove();
+    clonedSvg.querySelector('#canvasBackground #previewSvg')?.remove();
+    clonedSvg.querySelector('#canvasBackground #previewBoundary')?.remove();
+    clonedSvg.querySelector('#canvasBackground #guidesLines')?.remove();
+    clonedSvg.querySelector('#canvasBackground #workarea-boundary')?.remove();
+
+    const canvasBackground = clonedSvg.querySelector('#canvasBackground');
+
+    if (canvasBackground) {
+      canvasBackground.setAttribute('overflow', 'visible');
+      Array.from(canvasBackground.children).forEach((child) => {
+        child.setAttribute('overflow', 'visible');
+      });
+    }
+
+    return clonedSvg;
   }
 
-  async function DOM2Image($svg) {
-    const $modifiedSvg = cloneAndModifySvg($svg);
-    const svgString = new XMLSerializer().serializeToString($modifiedSvg.get(0));
+  async function DOM2Image(svg: SVGSVGElement) {
+    const modifiedSvg = cloneAndModifySvg(svg);
+    const svgString = modifiedSvg.outerHTML;
 
-    const image = await new Promise((resolve) => {
+    const image = await new Promise<HTMLImageElement>((resolve) => {
       const img = new Image();
 
       img.onload = () => resolve(img);
@@ -40,51 +47,69 @@ const fetchThumbnail = async (): Promise<string[]> => {
     return image;
   }
 
-  function cropAndDrawOnCanvas(img) {
+  function cropAndDrawOnCanvas(img: HTMLImageElement) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
 
-    if (useGlobalPreferenceStore.getState()['crop-task-thumbnail']) {
-      const { maxY, minY, width } = workareaManager;
+    if (cropTaskThumbnail) {
       const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
-      let x = Number.parseFloat(svgContent.getAttribute('x') ?? '0');
-      let y = Number.parseFloat(svgContent.getAttribute('y') ?? '0');
-      let w = Number.parseFloat(svgContent.getAttribute('width') ?? '0');
-      const ratio = w / width;
-      const bbox = svgContent.getBBox();
+      const fullResolutionCanvas = document.createElement('canvas');
+      const fullResolutionCtx = fullResolutionCanvas.getContext('2d')!;
+      const { height, width } = workareaManager;
+      const displayW = Number.parseFloat(svgContent.getAttribute('width') ?? '0');
+
+      fullResolutionCanvas.width = width;
+      fullResolutionCanvas.height = height;
+      fullResolutionCtx.drawImage(img, 0, 0, width, height);
+
+      let [left, top, right, bottom] = [-1, -1, -1, -1];
+      const imageData = fullResolutionCtx.getImageData(0, 0, width, height);
+      const data = imageData.data;
+
+      for (let y = 0; y < height; y++) {
+        for (let x = 0; x < width; x++) {
+          const idx = (y * width + x) * 4;
+
+          if (data[idx + 3] > 0) {
+            if (left === -1 || x < left) left = x;
+
+            if (top === -1 || y < top) top = y;
+
+            if (right === -1 || x > right) right = x;
+
+            if (bottom === -1 || y > bottom) bottom = y;
+          }
+        }
+      }
+
       const padding = 100;
-      let right = bbox.x + bbox.width + padding;
-      let bottom = bbox.y + bbox.height + padding;
 
-      bbox.x -= padding;
-      bbox.y -= padding;
+      left = left === -1 ? 0 : Math.max(left - padding, 0);
+      top = top === -1 ? 0 : Math.max(top - padding, 0);
+      right = right === -1 ? width : Math.min(right + padding, width);
+      bottom = bottom === -1 ? height : Math.min(bottom + padding, height);
 
-      if (bbox.x < 0) bbox.x = 0;
+      const canvasW = right - left;
+      const canvasH = bottom - top;
+      const ratio = displayW / width;
 
-      if (right > width) right = width;
-
-      if (bbox.y < minY) bbox.y = minY;
-
-      if (bottom > maxY) bottom = maxY;
-
-      bbox.width = right - bbox.x;
-      bbox.height = bottom - bbox.y;
-      x += bbox.x * ratio;
-      y += bbox.y * ratio;
-      w = bbox.width * ratio;
-
-      const h = bbox.height * ratio;
-
-      canvas.width = Math.min(w, 500);
-      canvas.height = Math.ceil(h * (canvas.width / w));
-      ctx.drawImage(img, x, y, w, h, 0, 0, canvas.width, canvas.height);
+      canvas.width = Math.min(canvasW * ratio, 500);
+      canvas.height = Math.ceil(canvasH * (canvas.width / canvasW));
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.drawImage(fullResolutionCanvas, left, top, canvasW, canvasH, 0, 0, canvas.width, canvas.height);
     } else {
-      const ratio = img.width / $('#svgroot').width();
-      const W = ratio * $('#svgroot').width();
-      const H = ratio * $('#svgroot').height();
-      const w = ratio * Number.parseFloat($('#canvasBackground').attr('width'));
-      const h = ratio * Number.parseFloat($('#canvasBackground').attr('height'));
-      const offsetY = ratio * Number.parseFloat($('#canvasBackgroundRect').attr('y'));
+      const svgRoot = document.getElementById('svgroot')! as unknown as SVGSVGElement;
+      const rootWidth = Number.parseFloat(svgRoot.getAttribute('width') ?? '0');
+      const rootHeight = Number.parseFloat(svgRoot.getAttribute('height') ?? '0');
+      const ratio = img.width / rootWidth;
+      const W = ratio * rootWidth;
+      const H = ratio * rootHeight;
+      const canvasBackground = document.getElementById('canvasBackground')!;
+      const canvasBackgroundRect = document.getElementById('canvasBackgroundRect')!;
+      const w = ratio * Number.parseFloat(canvasBackground.getAttribute('width') ?? '0');
+      const h = ratio * Number.parseFloat(canvasBackground.getAttribute('height') ?? '0');
+      const offsetY = ratio * Number.parseFloat(canvasBackgroundRect.getAttribute('y') ?? '0');
       const x = -(W - w) / 2;
       const y = -(H - h) / 2 - offsetY;
 
@@ -97,13 +122,15 @@ const fetchThumbnail = async (): Promise<string[]> => {
     return canvas;
   }
 
-  const $svg = cloneAndModifySvg($('#svgroot'));
-  const img = await DOM2Image($svg);
+  const svg = cloneAndModifySvg(
+    document.getElementById(cropTaskThumbnail ? 'svgcontent' : 'svgroot') as unknown as SVGSVGElement,
+  );
+  const img = await DOM2Image(svg);
   const canvas = cropAndDrawOnCanvas(img);
 
   const urls = await new Promise<string[]>((resolve) => {
     canvas.toBlob((blob) => {
-      resolve([canvas.toDataURL(), URL.createObjectURL(blob)]);
+      resolve([canvas.toDataURL(), URL.createObjectURL(blob!)]);
     });
   });
 
