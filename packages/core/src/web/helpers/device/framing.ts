@@ -293,7 +293,7 @@ class FramingTaskManager extends EventEmitter {
     lineCheckMode: false,
     rotary: false,
   };
-  private jobOrigin: null | { x: number; y: number } = null; // x, y in mm
+  private jobOrigin?: null | { x: number; y: number } = undefined; // x, y in mm
   private vc: ReturnType<typeof versionChecker>;
   private curPos: { a: number; x: number; y: number } = { a: 0, x: 0, y: 0 };
   private movementFeedrate = 6000; // mm/min
@@ -316,19 +316,23 @@ class FramingTaskManager extends EventEmitter {
     this.isPromark = promarkModels.has(device.model);
     this.isFcodeV2 = constant.fcodeV2Models.has(device.model);
     this.withVT = hasVariableText();
-
-    if (
-      useDocumentStore.getState()['enable-job-origin'] &&
-      this.addOnInfo.jobOrigin &&
-      this.vc.meetRequirement(this.isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')
-    ) {
-      this.jobOrigin = getJobOrigin();
-    } else {
-      this.jobOrigin = null;
-    }
-
-    this.rotaryInfo = getRotaryInfo(this.device.model, { axisInMm: true, forceY: this.jobOrigin?.y });
   }
+
+  private calculateJobOrigin = async (): Promise<void> => {
+    if (this.jobOrigin === undefined) {
+      if (
+        useDocumentStore.getState()['enable-job-origin'] &&
+        this.addOnInfo.jobOrigin &&
+        this.vc.meetRequirement(this.isAdor ? 'ADOR_JOB_ORIGIN' : 'JOB_ORIGIN')
+      ) {
+        this.jobOrigin = await getJobOrigin();
+      } else {
+        this.jobOrigin = null;
+      }
+
+      this.rotaryInfo = getRotaryInfo(this.device.model, { axisInMm: true, forceY: this.jobOrigin?.y });
+    }
+  };
 
   private resetEnabledInfo = () => {
     this.enabledInfo = {
@@ -910,6 +914,8 @@ class FramingTaskManager extends EventEmitter {
 
     let isEmpty = false;
     let taskCode: null | string | undefined;
+
+    await this.calculateJobOrigin();
 
     if (this.isPromark && (type === FramingType.Contour || type === FramingType.Hull)) {
       taskCode = await this.generateTaskCode(type);

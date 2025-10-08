@@ -88,7 +88,7 @@ export const getExportOpt = async (
 
   if (hasJobOrigin) {
     // firmware version / model check
-    const { x, y } = getJobOrigin();
+    const { x, y } = await getJobOrigin();
 
     config.job_origin = [Math.round(x * 10 ** 3) / 10 ** 3, Math.round(y * 10 ** 3) / 10 ** 3];
   }

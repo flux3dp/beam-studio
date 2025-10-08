@@ -621,14 +621,8 @@ class PathPreview extends React.Component<Props, State> {
 
     width /= dpmm;
 
-    if (useDocumentStore.getState()['enable-job-origin'] && getAddOnInfo(model).jobOrigin) {
-      this.jobOrigin = getJobOrigin();
-    }
-
-    const { x: jobOriginX = 0, y: jobOriginY = 0 } = this.jobOrigin || {};
-
-    defaultCamera.eye = [width / 2 - jobOriginX, height / 2 - jobOriginY, 300];
-    defaultCamera.center = [width / 2 - jobOriginX, height / 2 - jobOriginY, 0];
+    defaultCamera.eye = [width / 2, height / 2, 300];
+    defaultCamera.center = [width / 2, height / 2, 0];
     settings.machineWidth = width;
     settings.machineHeight = height;
     this.camera = calcCamera({
@@ -674,6 +668,7 @@ class PathPreview extends React.Component<Props, State> {
     window.addEventListener('keyup', this.windowKeyUp);
     window.addEventListener('resize', this.resizeHandler);
     this.resetView();
+    this.updateJobOrigin();
     this.updateGcode();
 
     canvasEventEmitter.on('canvas-change', this.onDeviceChange);
@@ -756,6 +751,16 @@ class PathPreview extends React.Component<Props, State> {
 
     this.camera = newCamera;
   }
+
+  updateJobOrigin = async () => {
+    if (useDocumentStore.getState()['enable-job-origin'] && getAddOnInfo(workareaManager.model).jobOrigin) {
+      this.jobOrigin = await getJobOrigin();
+    } else {
+      this.jobOrigin = undefined;
+    }
+
+    this.resetView();
+  };
 
   updateGcode = async (): Promise<void> => {
     const { togglePathPreview } = this.context;
