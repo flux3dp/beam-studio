@@ -21,7 +21,7 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 import type { TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
-import type { IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
+import type { FirmwareType, IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
 import Camera from './api/camera';
@@ -1478,24 +1478,14 @@ class DeviceMaster {
   }
 
   // update functions
-  updateFirmware = async (file: File, onProgress: (...args: any[]) => void) => {
+  updateFirmware = async (file: File, type: FirmwareType, onProgress: (...args: any[]) => void) => {
     const controlSocket = await this.getControl();
 
     if (onProgress) {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.addTask(controlSocket.fwUpdate, file);
-  };
-
-  updateMainboard = async (file: File, onProgress: (...args: any[]) => void) => {
-    const controlSocket = await this.getControl();
-
-    if (onProgress) {
-      controlSocket.setProgressListener(onProgress);
-    }
-
-    return controlSocket.addTask(controlSocket.updateMainboard, file);
+    return controlSocket.addTask(controlSocket.updateFirmware, file, type);
   };
 
   uploadFisheyeParams = async (data: string, onProgress: (...args: any[]) => void) => {

@@ -1,4 +1,5 @@
 import { EventEmitter } from 'eventemitter3';
+import { match } from 'ts-pattern';
 
 import ErrorConstants from '@core/app/constants/error-constants';
 import rsaKey from '@core/helpers/rsa-key';
@@ -6,7 +7,7 @@ import Websocket from '@core/helpers/websocket';
 import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interfaces/FisheyePreview';
 import type IControlSocket from '@core/interfaces/IControlSocket';
 import type { Mode } from '@core/interfaces/IControlSocket';
-import type { IDeviceDetailInfo, IReport } from '@core/interfaces/IDevice';
+import type { FirmwareType, IDeviceDetailInfo, IReport } from '@core/interfaces/IDevice';
 import type { WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 const EVENT_COMMAND_MESSAGE = 'command-message';
@@ -1830,7 +1831,7 @@ class Control extends EventEmitter implements IControlSocket {
     });
   };
 
-  fwUpdate = (file: File) =>
+  updateFirmware = (file: File, type: FirmwareType) =>
     new Promise((resolve, reject) => {
       const blob = new Blob([file], { type: 'binary/flux-firmware' });
 
@@ -1853,33 +1854,13 @@ class Control extends EventEmitter implements IControlSocket {
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);
 
-      this.ws.send(`update_fw binary/flux-firmware ${blob.size}`);
-    });
+      const command = match(type)
+        .with('firmware', () => 'update_fw')
+        .with('mainboard', () => 'update_mbfw')
+        .with('headboard', () => 'update_hbfw')
+        .exhaustive();
 
-  updateMainboard = (file: File) =>
-    new Promise((resolve, reject) => {
-      const blob = new Blob([file], { type: 'binary/flux-firmware' });
-
-      this.on(EVENT_COMMAND_MESSAGE, (response) => {
-        if (response.status === 'ok') {
-          this.removeCommandListeners();
-          resolve(response);
-        } else if (response.status === 'continue') {
-          this.emit(EVENT_COMMAND_PROGRESS, response);
-          this.ws.send(blob);
-        } else if (response.status === 'uploading') {
-          response.percentage = ((response.sent || 0) / blob.size) * 100;
-          this.emit(EVENT_COMMAND_PROGRESS, response);
-        } else {
-          this.removeCommandListeners();
-          reject(response);
-        }
-      });
-
-      this.setDefaultErrorResponse(reject);
-      this.setDefaultFatalResponse(reject);
-
-      this.ws.send(`update_mbfw binary/flux-firmware ${blob.size}`);
+      this.ws.send(`${command} binary/flux-firmware ${blob.size}`);
     });
 
   uploadFisheyeParams = (data: string) =>
