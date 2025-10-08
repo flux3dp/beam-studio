@@ -194,8 +194,17 @@ export default function Menu({ email }: Props): React.JSX.Element {
               <MenuItem onClick={() => callback('DOWNLOAD_CALIBRATION_DATA', device)}>{menuCms.download_data}</MenuItem>
             </SubMenu>
           )}
+
           {!isPromark && (
-            <MenuItem onClick={() => callback('UPDATE_FIRMWARE', device)}>{menuCms.update_firmware}</MenuItem>
+            <SubMenu label={menuCms.update_machine}>
+              <MenuItem onClick={() => callback('UPDATE_FIRMWARE', device)}>{menuCms.update_firmware}</MenuItem>
+              <MenuItem onClick={() => callback('UPDATE_MAINBOARD', device)}>{menuCms.update_mainboard}</MenuItem>
+              {isBeamo2 && (
+                <MenuItem onClick={() => callback('UPDATE_PRINTER_BOARD', device)}>
+                  {menuCms.update_printer_board}
+                </MenuItem>
+              )}
+            </SubMenu>
           )}
           {!isPromark && (
             <SubMenu label={menuCms.download_log}>

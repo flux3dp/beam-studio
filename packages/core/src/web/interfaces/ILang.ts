@@ -2204,6 +2204,9 @@ export interface ILang {
       ungroup: string;
       update: string;
       update_firmware: string;
+      update_machine: string;
+      update_mainboard: string;
+      update_printer_board: string;
       upload_data: string;
       using_beam_studio_api: string;
       view: string;
@@ -2355,7 +2358,8 @@ export interface ILang {
       too_old_for_web: string;
       update_fail: string;
       update_success: string;
-      upload_file: string;
+      upload_firmware_title: string;
+      upload_mainboard_title: string;
     };
     install: string;
     later: string;

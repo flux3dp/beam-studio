@@ -8,7 +8,6 @@ import CartridgeSettingPanel from '@core/app/components/dialogs/CartridgeSetting
 import ChangeLog from '@core/app/components/dialogs/ChangeLog';
 import CodeGenerator from '@core/app/components/dialogs/CodeGenerator';
 import DocumentSettings from '@core/app/components/dialogs/DocumentSettings';
-import FirmwareUpdate from '@core/app/components/dialogs/FirmwareUpdate';
 import FluxCredit from '@core/app/components/dialogs/FluxCredit';
 import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
 import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
@@ -51,7 +50,7 @@ import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type { ChipSettings } from '@core/interfaces/Cartridge';
 import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { IDialogBoxStyle, IInputLightBox, IPrompt } from '@core/interfaces/IDialog';
+import type { IDialogBoxStyle, IInputLightBox, InputType, IPrompt } from '@core/interfaces/IDialog';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
@@ -442,37 +441,6 @@ export default {
       />,
     );
   },
-  showFirmwareUpdateDialog: (
-    device: IDeviceInfo,
-    updateInfo: {
-      changelog_en: string;
-      changelog_zh: string;
-      latestVersion: string;
-    },
-    onDownload: () => void,
-    onInstall: () => void,
-  ): void => {
-    if (isIdExist('update-dialog')) {
-      return;
-    }
-
-    const { model, name, version } = device;
-    const releaseNode = i18n.getActiveLang() === 'zh-tw' ? updateInfo.changelog_zh : updateInfo.changelog_en;
-
-    addDialogComponent(
-      'update-dialog',
-      <FirmwareUpdate
-        currentVersion={version}
-        deviceModel={model}
-        deviceName={name}
-        latestVersion={updateInfo.latestVersion}
-        onClose={() => popDialogById('update-dialog')}
-        onDownload={onDownload}
-        onInstall={onInstall}
-        releaseNote={releaseNode}
-      />,
-    );
-  },
   showFluxCreditDialog: (): void => {
     if (isIdExist('flux-id-credit')) {
       return;
@@ -534,7 +502,7 @@ export default {
       />,
     );
   },
-  showInputLightbox: (id: string, args: IInputLightBox): void => {
+  showInputLightbox: <T extends InputType>(id: string, args: IInputLightBox<T>): void => {
     addDialogComponent(
       id,
       <InputLightBox
@@ -543,17 +511,10 @@ export default {
         defaultValue={args.defaultValue!}
         inputHeader={args.inputHeader!}
         maxLength={args.maxLength!}
-        onClose={(from: string) => {
-          popDialogById(id);
-
-          if (from !== 'submit') {
-            args.onCancel?.();
-          }
-        }}
-        onSubmit={(value) => {
-          args.onSubmit(value);
-        }}
-        type={args.type || 'TEXT_INPUT'}
+        onCancel={args.onCancel}
+        onClose={() => popDialogById(id)}
+        onSubmit={args.onSubmit}
+        type={args.type || 'text'}
       />,
     );
   },

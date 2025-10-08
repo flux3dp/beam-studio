@@ -3,7 +3,7 @@ import checkFirmware from './checkFirmware';
 
 const mockGet = jest.fn();
 
-jest.mock('./api/flux-id', () => ({
+jest.mock('@core/helpers/api/flux-id', () => ({
   axiosFluxId: {
     get: (...args) => mockGet(...args),
   },
