@@ -20,7 +20,7 @@ jobs:
         node-version: [22]
         python-version: [3.8]
         os: [macOS-15-intel]
-        target: [x64, arm64]
+        target: [both]
       fail-fast: false
 
     steps:
@@ -136,7 +136,11 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
-          if [ "${{ matrix.target }}" = "arm64" ]; then
+          if ["${{ matrix.target }}" = "both" ]; then
+            pnpm nx run app:dist --x64 --publish always
+            export PUBLISH_PATH="-arm64"
+            pnpm nx run app:dist --arm64 --publish always
+          elif [ "${{ matrix.target }}" = "arm64" ]; then
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always
           else
