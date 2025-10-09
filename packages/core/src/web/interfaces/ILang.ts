@@ -511,6 +511,7 @@ export interface ILang {
             stainless_steel_light: string;
             stainless_steel_printing: string;
             steel_engraving_spray_engraving: string;
+            sticker_kiss_cut: string;
             stone: string;
             ti_engraving: string;
             titanium_dark: string;
@@ -577,6 +578,7 @@ export interface ILang {
             stainless_steel_light: string;
             stainless_steel_printing: string;
             steel_engraving_spray_engraving: string;
+            sticker_kiss_cut: string;
             stone: string;
             ti_engraving: string;
             titanium_dark: string;
