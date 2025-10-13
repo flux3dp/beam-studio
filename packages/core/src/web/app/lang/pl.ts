@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Pomyślnie przesłano aktualizację oprogramowania układowego',
       upload_firmware_title: 'Przesyłanie oprogramowania układowego (*.fxfw)',
       upload_mainboard_title: 'Wgrywanie firmware płyty głównej (*.bin)',
+      upload_printer_board_title: 'Wgrywanie firmware płyty drukarki (*.bin)',
     },
     install: 'ZAINSTALUJ',
     later: 'PÓŹNIEJ',

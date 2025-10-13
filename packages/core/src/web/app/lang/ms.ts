@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Kemaskini perisian peranti berjaya dimuat naik',
       upload_firmware_title: 'Muat naik perisian peranti (*.fxfw)',
       upload_mainboard_title: 'Muat naik firmware papan induk (*.bin)',
+      upload_printer_board_title: 'Muat naik firmware papan pencetak (*.bin)',
     },
     install: 'PASANG',
     later: 'KEMUDIAN',

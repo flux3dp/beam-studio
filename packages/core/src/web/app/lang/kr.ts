@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: '펌웨어 업데이트가 성공적으로 업로드되었습니다',
       upload_firmware_title: '펌웨어 업로드 (*.fxfw)',
       upload_mainboard_title: '메인보드 펌웨어 업로드 (*.bin)',
+      upload_printer_board_title: '프린터 보드 펌웨어 업로드 (*.bin)',
     },
     install: '설치',
     later: '나중에',

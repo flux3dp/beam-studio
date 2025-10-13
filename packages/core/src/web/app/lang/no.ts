@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Fastvareoppdatering lastet opp vellykket',
       upload_firmware_title: 'Fastvareopplasting (*.fxfw)',
       upload_mainboard_title: 'Last opp firmware til hovedkort (*.bin)',
+      upload_printer_board_title: 'Last opp firmware til printerkort (*.bin)',
     },
     install: 'INSTALLER',
     later: 'SENERE',

@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Firmware-Update erfolgreich hochgeladen',
       upload_firmware_title: 'Firmware-Upload (* .bin / * .fxfw)',
       upload_mainboard_title: 'Firmware-Upload für Hauptplatine (*.bin)',
+      upload_printer_board_title: 'Firmware-Upload für Druckerplatine (*.bin)',
     },
     install: 'INSTALLIEREN',
     later: 'SPÄTER',

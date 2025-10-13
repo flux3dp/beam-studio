@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Cập nhật firmware thành công',
       upload_firmware_title: 'Tải lên firmware (*.fxfw)',
       upload_mainboard_title: 'Tải lên firmware bo mạch chủ (*.bin)',
+      upload_printer_board_title: 'Tải lên firmware bo mạch máy in (*.bin)',
     },
     install: 'CÀI ĐẶT',
     later: 'SAU',

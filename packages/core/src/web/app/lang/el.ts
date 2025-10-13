@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Επιτυχής αναβάθμιση υλικολογισμικού',
       upload_firmware_title: 'Φόρτωση υλικολογισμικού (*.fxfw)',
       upload_mainboard_title: 'Ανέβασμα υλικολογισμικού μητρικής πλακέτας (*.bin)',
+      upload_printer_board_title: 'Ανέβασμα υλικολογισμικού πλακέτας εκτυπωτή (*.bin)',
     },
     install: 'ΕΓΚΑΤΑΣΤΑΣΗ',
     later: 'ΑΡΓΟΤΕΡΑ',

@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: '固件更新上传成功',
       upload_firmware_title: '固件上传',
       upload_mainboard_title: '上传主板固件 (*.bin)',
+      upload_printer_board_title: '上传打印板固件 (*.bin)',
     },
     install: '下载',
     later: '稍候',

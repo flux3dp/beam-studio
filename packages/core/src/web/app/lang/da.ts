@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Firmwareopdateringen er uploadet',
       upload_firmware_title: 'Firmware upload (*.fxfw)',
       upload_mainboard_title: 'Upload af firmware til bundkort (*.bin)',
+      upload_printer_board_title: 'Upload af firmware til printerkort (*.bin)',
     },
     install: 'INSTALLER',
     later: 'SENERE',

@@ -514,6 +514,11 @@ export default {
       showUploadFirmwareDialog(device, 'mainboard');
     }
   },
+  UPDATE_PRINTER_BOARD: async (device: IDeviceInfo): Promise<void> => {
+    if (await checkDeviceStatus(device)) {
+      showUploadFirmwareDialog(device, 'headboard');
+    }
+  },
   UPLOAD_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {
     backUpCalibrationData(device, 'upload');
   },

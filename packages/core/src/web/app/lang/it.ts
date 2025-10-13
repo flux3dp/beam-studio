@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Aggiornamento firmware caricato correttamente',
       upload_firmware_title: 'Caricamento firmware (*.fxfw)',
       upload_mainboard_title: 'Carica firmware della scheda madre (*.bin)',
+      upload_printer_board_title: 'Carica firmware della scheda stampante (*.bin)',
     },
     install: 'INSTALLA',
     later: 'PIÙ TARDI',

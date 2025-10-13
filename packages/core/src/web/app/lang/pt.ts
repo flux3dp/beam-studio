@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Firmware atualizado com sucesso',
       upload_firmware_title: 'Carregar firmware (*.fxfw)',
       upload_mainboard_title: 'Carregar firmware da placa-mãe (*.bin)',
+      upload_printer_board_title: 'Carregar firmware da placa da impressora (*.bin)',
     },
     install: 'INSTALAR',
     later: 'MAIS TARDE',

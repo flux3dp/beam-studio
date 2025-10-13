@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'ファームウェアアップデートが正常にアップロードされました',
       upload_firmware_title: 'ファームウェアのアップロード（*.bin / *.fxfw）',
       upload_mainboard_title: 'メインボードファームウェアのアップロード (*.bin)',
+      upload_printer_board_title: 'プリンターボードファームウェアのアップロード (*.bin)',
     },
     install: 'インストール',
     later: '後で',

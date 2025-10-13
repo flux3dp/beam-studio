@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Laiteohjelmistopäivitys ladattu onnistuneesti',
       upload_firmware_title: 'Laiteohjelmiston lataus (*.fxfw)',
       upload_mainboard_title: 'Lataa emolevyn laiteohjelmisto (*.bin)',
+      upload_printer_board_title: 'Lataa tulostinkortin laiteohjelmisto (*.bin)',
     },
     install: 'ASENNA',
     later: 'MYÖHEMMIN',

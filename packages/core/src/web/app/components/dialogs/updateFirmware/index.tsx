@@ -1,8 +1,10 @@
+import { match } from 'ts-pattern';
+
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { uploadToDevice } from '@core/helpers/device/updateFirmware/upload';
 import i18n from '@core/helpers/i18n';
-import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { FirmwareType, IDeviceInfo } from '@core/interfaces/IDevice';
 
 import FirmwareUpdate from './FirmwareUpdate';
 
@@ -38,9 +40,13 @@ export const showFirmwareUpdateDialog = (
   );
 };
 
-export const showUploadFirmwareDialog = (device: IDeviceInfo, type: 'firmware' | 'mainboard') => {
+export const showUploadFirmwareDialog = (device: IDeviceInfo, type: FirmwareType) => {
   const t = i18n.lang.update.firmware;
-  const title = type === 'firmware' ? t.upload_firmware_title : t.upload_mainboard_title;
+  const title = match(type)
+    .with('firmware', () => t.upload_firmware_title)
+    .with('mainboard', () => t.upload_mainboard_title)
+    .with('headboard', () => t.upload_printer_board_title)
+    .exhaustive();
 
   dialogCaller.showInputLightbox('upload-firmware', {
     caption: title,

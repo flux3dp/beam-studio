@@ -2368,6 +2368,7 @@ const lang: ILang = {
       update_success: 'Aktualizace firmwaru úspěšně nahrána',
       upload_firmware_title: 'Upload firmwaru (*.fxfw)',
       upload_mainboard_title: 'Nahrání firmwaru základní desky (*.bin)',
+      upload_printer_board_title: 'Nahrání firmwaru tiskové desky (*.bin)',
     },
     install: 'INSTALOVAT',
     later: 'POZDĚJI',

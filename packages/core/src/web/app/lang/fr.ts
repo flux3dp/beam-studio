@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Micrologiciel mis à jour avec succès',
       upload_firmware_title: 'Téléchargement du micrologiciel (*.fxfw)',
       upload_mainboard_title: 'Téléverser le firmware de la carte mère (*.bin)',
+      upload_printer_board_title: 'Téléverser le firmware de la carte imprimante (*.bin)',
     },
     install: 'INSTALLER',
     later: 'PLUS TARD',

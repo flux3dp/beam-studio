@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Pembaruan firmware berhasil diunggah',
       upload_firmware_title: 'Firmware upload (*.fxfw)',
       upload_mainboard_title: 'Unggah firmware motherboard (*.bin)',
+      upload_printer_board_title: 'Unggah firmware papan printer (*.bin)',
     },
     install: 'PASANG',
     later: 'NANTI',

@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'อัปโหลดเฟิร์มแวร์สําเร็จแล้ว',
       upload_firmware_title: 'อัปโหลดเฟิร์มแวร์ (*.fxfw)',
       upload_mainboard_title: 'อัปโหลดเฟิร์มแวร์เมนบอร์ด (*.bin)',
+      upload_printer_board_title: 'อัปโหลดเฟิร์มแวร์บอร์ดเครื่องพิมพ์ (*.bin)',
     },
     install: 'ติดตั้ง',
     later: 'ภายหลัง',

@@ -2367,6 +2367,7 @@ const lang: ILang = {
       update_success: 'Maskinvarans programvara har uppdaterats',
       upload_firmware_title: 'Ladda upp maskinvara (*.fxfw)',
       upload_mainboard_title: 'Ladda upp firmware till moderkort (*.bin)',
+      upload_printer_board_title: 'Ladda upp firmware till printerkort (*.bin)',
     },
     install: 'INSTALLERA',
     later: 'SENARE',

@@ -2362,6 +2362,7 @@ export interface ILang {
       update_success: string;
       upload_firmware_title: string;
       upload_mainboard_title: string;
+      upload_printer_board_title: string;
     };
     install: string;
     later: string;
