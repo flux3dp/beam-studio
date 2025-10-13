@@ -1,36 +1,38 @@
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-
-const { $ } = window;
-
-let svgedit;
-
-getSVGAsync((globalSVG) => {
-  svgedit = globalSVG.Edit;
-});
+import { getSvgContentActualBBox } from '@core/helpers/file/export/utils/getBBox';
 
 const fetchThumbnail = async (): Promise<string[]> => {
-  function cloneAndModifySvg($svg) {
-    const $clonedSvg = $svg.clone(false);
+  function cloneAndModifySvg(svg: SVGSVGElement) {
+    const defs = findDefs();
+    const clonedSvg = svg.cloneNode(true) as unknown as SVGSVGElement;
 
-    $clonedSvg.find('text').remove();
-    $clonedSvg.find('#selectorParentGroup').remove();
-    $clonedSvg.find('#canvasBackground #previewSvg').remove();
-    $clonedSvg.find('#canvasBackground #previewBoundary').remove();
-    $clonedSvg.find('#canvasBackground #guidesLines').remove();
-    $clonedSvg.find('#canvasBackground #workarea-boundary').remove();
-    $clonedSvg.find('#canvasBackground').css('overflow', 'visible');
-    $clonedSvg.find('#canvasBackground').children().css('overflow', 'visible');
+    clonedSvg.appendChild(defs.cloneNode(true));
+    clonedSvg.querySelectorAll('text').forEach((text) => text.remove());
+    clonedSvg.querySelector('#selectorParentGroup')?.remove();
+    clonedSvg.querySelector('#canvasBackground #previewSvg')?.remove();
+    clonedSvg.querySelector('#canvasBackground #previewBoundary')?.remove();
+    clonedSvg.querySelector('#canvasBackground #guidesLines')?.remove();
+    clonedSvg.querySelector('#canvasBackground #workarea-boundary')?.remove();
 
-    return $clonedSvg;
+    const canvasBackground = clonedSvg.querySelector('#canvasBackground');
+
+    if (canvasBackground) {
+      canvasBackground.setAttribute('overflow', 'visible');
+      Array.from(canvasBackground.children).forEach((child) => {
+        child.setAttribute('overflow', 'visible');
+      });
+    }
+
+    return clonedSvg;
   }
 
-  async function DOM2Image($svg) {
-    const $modifiedSvg = cloneAndModifySvg($svg);
-    const svgString = new XMLSerializer().serializeToString($modifiedSvg.get(0));
+  async function DOM2Image(svg: SVGSVGElement) {
+    const modifiedSvg = cloneAndModifySvg(svg);
+    const svgString = modifiedSvg.outerHTML;
 
-    const image = await new Promise((resolve) => {
+    const image = await new Promise<HTMLImageElement>((resolve) => {
       const img = new Image();
 
       img.onload = () => resolve(img);
@@ -40,7 +42,7 @@ const fetchThumbnail = async (): Promise<string[]> => {
     return image;
   }
 
-  function cropAndDrawOnCanvas(img) {
+  async function cropAndDrawOnCanvas(img: HTMLImageElement) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
 
@@ -51,7 +53,7 @@ const fetchThumbnail = async (): Promise<string[]> => {
       let y = Number.parseFloat(svgContent.getAttribute('y') ?? '0');
       let w = Number.parseFloat(svgContent.getAttribute('width') ?? '0');
       const ratio = w / width;
-      const bbox = svgContent.getBBox();
+      const bbox = await getSvgContentActualBBox(false);
       const padding = 100;
       let right = bbox.x + bbox.width + padding;
       let bottom = bbox.y + bbox.height + padding;
@@ -79,12 +81,17 @@ const fetchThumbnail = async (): Promise<string[]> => {
       canvas.height = Math.ceil(h * (canvas.width / w));
       ctx.drawImage(img, x, y, w, h, 0, 0, canvas.width, canvas.height);
     } else {
-      const ratio = img.width / $('#svgroot').width();
-      const W = ratio * $('#svgroot').width();
-      const H = ratio * $('#svgroot').height();
-      const w = ratio * Number.parseFloat($('#canvasBackground').attr('width'));
-      const h = ratio * Number.parseFloat($('#canvasBackground').attr('height'));
-      const offsetY = ratio * Number.parseFloat($('#canvasBackgroundRect').attr('y'));
+      const svgRoot = document.getElementById('svgroot')! as unknown as SVGSVGElement;
+      const rootWidth = Number.parseFloat(svgRoot.getAttribute('width') ?? '0');
+      const rootHeight = Number.parseFloat(svgRoot.getAttribute('height') ?? '0');
+      const ratio = img.width / rootWidth;
+      const W = ratio * rootWidth;
+      const H = ratio * rootHeight;
+      const canvasBackground = document.getElementById('canvasBackground')!;
+      const canvasBackgroundRect = document.getElementById('canvasBackgroundRect')!;
+      const w = ratio * Number.parseFloat(canvasBackground.getAttribute('width') ?? '0');
+      const h = ratio * Number.parseFloat(canvasBackground.getAttribute('height') ?? '0');
+      const offsetY = ratio * Number.parseFloat(canvasBackgroundRect.getAttribute('y') ?? '0');
       const x = -(W - w) / 2;
       const y = -(H - h) / 2 - offsetY;
 
@@ -97,13 +104,13 @@ const fetchThumbnail = async (): Promise<string[]> => {
     return canvas;
   }
 
-  const $svg = cloneAndModifySvg($('#svgroot'));
-  const img = await DOM2Image($svg);
-  const canvas = cropAndDrawOnCanvas(img);
+  const svg = cloneAndModifySvg(document.getElementById('svgroot') as unknown as SVGSVGElement);
+  const img = await DOM2Image(svg);
+  const canvas = await cropAndDrawOnCanvas(img);
 
   const urls = await new Promise<string[]>((resolve) => {
     canvas.toBlob((blob) => {
-      resolve([canvas.toDataURL(), URL.createObjectURL(blob)]);
+      resolve([canvas.toDataURL(), URL.createObjectURL(blob!)]);
     });
   });
 
@@ -114,11 +121,7 @@ const generateThumbnail = async (): Promise<{
   thumbnail: string;
   thumbnailBlobURL: string;
 }> => {
-  svgedit.utilities.moveDefsIntoSvgContent();
-
   const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
-
-  svgedit.utilities.moveDefsOutfromSvgContent();
 
   return { thumbnail, thumbnailBlobURL };
 };

@@ -8,6 +8,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getSvgContentActualBBox } from './getBBox';
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -17,7 +19,7 @@ getSVGAsync((globalSVG) => {
 const generateBeamThumbnail = async (): Promise<ArrayBuffer | null> => {
   const { maxY, minY, width } = workareaManager;
   const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
-  const bbox = svgContent.getBBox();
+  const bbox = await getSvgContentActualBBox();
   const right = Math.min(bbox.x + bbox.width, width);
   const bottom = Math.min(bbox.y + bbox.height, maxY);
 

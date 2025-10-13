@@ -32,25 +32,15 @@ jest.mock('@core/app/svgedit/workarea', () => ({
   },
 }));
 
-const mockSwitchSymbolWrapper = jest.fn();
+const mockGetSvgContentActualBBox = jest.fn();
 
-jest.mock('@core/helpers/file/export/utils/common', () => ({
-  switchSymbolWrapper: (...args) => mockSwitchSymbolWrapper(...args),
+jest.mock('./file/export/utils/getBBox', () => ({
+  getSvgContentActualBBox: (...args) => mockGetSvgContentActualBBox(...args),
 }));
-
-const mockSvgStringToCanvas = jest.fn();
-
-jest.mock(
-  '@core/helpers/image/svgStringToCanvas',
-  () =>
-    (...args) =>
-      mockSvgStringToCanvas(...args),
-);
 
 describe('test job-origin', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockSwitchSymbolWrapper.mockImplementation((fn) => fn());
   });
 
   test('getRefModule', () => {
@@ -70,12 +60,7 @@ describe('test job-origin', () => {
       mockWorkareaWidth.mockReturnValue(100);
       mockWorkareaMaxY.mockReturnValue(200);
 
-      const mockElem = {
-        getBBox: () => ({ height: 40, width: 30, x: 10, y: 20 }),
-        querySelectorAll: () => [],
-      };
-
-      document.getElementById = jest.fn().mockReturnValue(mockElem);
+      mockGetSvgContentActualBBox.mockResolvedValue({ height: 40, width: 30, x: 10, y: 20 });
     });
 
     const testCases = [
@@ -94,7 +79,6 @@ describe('test job-origin', () => {
       test(`getJobOrigin with value ${jobOrigin}`, async () => {
         mockGetState.mockReturnValue({ 'job-origin': jobOrigin });
         expect(await getJobOrigin(px)).toEqual(res);
-        expect(document.getElementById).toHaveBeenCalledTimes(1);
         expect(mockWorkareaWidth).toHaveBeenCalledTimes(1);
         expect(mockWorkareaMaxY).toHaveBeenCalledTimes(1);
       });
