@@ -1,5 +1,6 @@
 import AddChat from './add-chat.svg';
 import AdjustHeight from './adjust-height.svg';
+import AiGenerate from './ai-generate.svg';
 import Back from './back.svg';
 import Beamy from './beamy.svg';
 import Camera from './camera.svg';
@@ -29,6 +30,7 @@ import Trace from './trace.svg';
 export default {
   AddChat,
   AdjustHeight,
+  AiGenerate,
   Back,
   Beamy,
   Camera,

@@ -1,8 +1,11 @@
 import type { ReactNode } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 import { useEffect } from 'react';
 
+import { LeftOutlined } from '@ant-design/icons';
+import { ConfigProvider, Drawer } from 'antd';
 import classNames from 'classnames';
+import { Resizable } from 're-resizable';
 
 import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
@@ -15,6 +18,8 @@ import workareaManager from '@core/app/svgedit/workarea';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { useIsMobile } from '@core/helpers/system-helper';
 
+import AiGenerate from './AiGenerate';
+import { useAiGenerateStore } from './AiGenerate/useAiGenerateStore';
 import Banner from './Banner';
 import Chat from './Chat';
 import DpiInfo from './DpiInfo';
@@ -29,6 +34,15 @@ import Workarea from './Workarea';
 export const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
   const mode = useCanvasStore((state) => state.mode);
+  const isAiGenerateShown = useAiGenerateStore((state) => state.isAiGenerateShown);
+  const [aiGenerateWidth, setAiGenerateWidth] = useState(400);
+  // default motion duration for the drawer
+  // this is used to disable the animation when resizing the drawer
+  const [motionDurationSlow, setMotionDurationSlow] = useState('0.3s');
+
+  const onAiGenerateClose = () => {
+    useAiGenerateStore.setState({ isAiGenerateShown: false });
+  };
 
   useEffect(() => {
     if (window.$) {
@@ -83,6 +97,41 @@ export const SvgEditor = (): ReactNode => {
             </div>
           </>
         )}
+        <ConfigProvider theme={{ token: { motionDurationSlow } }}>
+          <Drawer
+            closable={false}
+            getContainer={false}
+            mask={false}
+            onClose={onAiGenerateClose}
+            open={isAiGenerateShown}
+            placement="left"
+            style={{ boxShadow: 'none' }}
+            styles={{
+              body: { display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', padding: '0px' },
+            }}
+            width={aiGenerateWidth}
+          >
+            <div className={styles.handle} onClick={onAiGenerateClose} style={{ left: 0, right: 'auto' }}>
+              <LeftOutlined />
+            </div>
+            <Resizable
+              enable={{ left: true }}
+              handleClasses={{ left: styles['resizable-handle'] }}
+              maxWidth={638}
+              minWidth={360}
+              onResize={(_event, _direction, elementRef) => {
+                setAiGenerateWidth(elementRef.offsetWidth);
+              }}
+              onResizeStart={() => setMotionDurationSlow('0s')}
+              onResizeStop={() => setMotionDurationSlow('0.3s')}
+              size={{ height: '100%', width: aiGenerateWidth }}
+            >
+              <div className={styles['resizable-drawer-content']}>
+                <AiGenerate />
+              </div>
+            </Resizable>
+          </Drawer>
+        </ConfigProvider>
         <Chat />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
