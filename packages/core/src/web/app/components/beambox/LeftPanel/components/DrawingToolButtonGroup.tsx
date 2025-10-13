@@ -16,6 +16,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { useAiGenerateStore } from '../../svg-editor/AiGenerate/useAiGenerateStore';
 import { useChatStore } from '../../svg-editor/Chat/useChatStore';
 import styles from '../index.module.scss';
 
@@ -40,6 +41,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const lang = useI18n().beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
+  const isAiGenerateShown = useAiGenerateStore((state) => state.isAiGenerateShown);
   const { isDrawing, isStarting } = useCameraPreviewStore();
   const mouseMode = useCanvasStore((state) => state.mouseMode);
   const activeButton = useMemo(() => {
@@ -79,6 +81,10 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       title={label}
     />
   );
+
+  const toggleAiGenerate = useCallback(() => {
+    useAiGenerateStore.setState({ isAiGenerateShown: !isAiGenerateShown });
+  }, [isAiGenerateShown]);
 
   const toggleBeamy = useCallback(() => {
     setIsChatShown(!isChatShown);
@@ -157,6 +163,13 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
 
       <div className={styles.separator} />
 
+      {renderToolButton({
+        className: styles['ai-generate'],
+        icon: <LeftPanelIcons.AiGenerate />,
+        id: 'AiGenerate',
+        onClick: toggleAiGenerate,
+        style: { color: isAiGenerateShown ? '#1890ff' : undefined },
+      })}
       {renderToolButton({
         className: styles.beamy,
         icon: <LeftPanelIcons.Beamy />,
