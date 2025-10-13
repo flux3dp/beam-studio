@@ -1,19 +1,14 @@
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-
-let svgedit;
-
-getSVGAsync((globalSVG) => {
-  svgedit = globalSVG.Edit;
-});
+import { getSvgContentActualBBox } from '@core/helpers/file/export/utils/getBBox';
 
 const fetchThumbnail = async (): Promise<string[]> => {
-  const cropTaskThumbnail = useGlobalPreferenceStore.getState()['crop-task-thumbnail'];
-
   function cloneAndModifySvg(svg: SVGSVGElement) {
+    const defs = findDefs();
     const clonedSvg = svg.cloneNode(true) as unknown as SVGSVGElement;
 
+    clonedSvg.appendChild(defs.cloneNode(true));
     clonedSvg.querySelectorAll('text').forEach((text) => text.remove());
     clonedSvg.querySelector('#selectorParentGroup')?.remove();
     clonedSvg.querySelector('#canvasBackground #previewSvg')?.remove();
@@ -47,57 +42,44 @@ const fetchThumbnail = async (): Promise<string[]> => {
     return image;
   }
 
-  function cropAndDrawOnCanvas(img: HTMLImageElement) {
+  async function cropAndDrawOnCanvas(img: HTMLImageElement) {
     const canvas = document.createElement('canvas');
     const ctx = canvas.getContext('2d')!;
 
-    if (cropTaskThumbnail) {
+    if (useGlobalPreferenceStore.getState()['crop-task-thumbnail']) {
+      const { maxY, minY, width } = workareaManager;
       const svgContent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
-      const fullResolutionCanvas = document.createElement('canvas');
-      const fullResolutionCtx = fullResolutionCanvas.getContext('2d')!;
-      const { height, width } = workareaManager;
-      const displayW = Number.parseFloat(svgContent.getAttribute('width') ?? '0');
-
-      fullResolutionCanvas.width = width;
-      fullResolutionCanvas.height = height;
-      fullResolutionCtx.drawImage(img, 0, 0, width, height);
-
-      let [left, top, right, bottom] = [-1, -1, -1, -1];
-      const imageData = fullResolutionCtx.getImageData(0, 0, width, height);
-      const data = imageData.data;
-
-      for (let y = 0; y < height; y++) {
-        for (let x = 0; x < width; x++) {
-          const idx = (y * width + x) * 4;
-
-          if (data[idx + 3] > 0) {
-            if (left === -1 || x < left) left = x;
-
-            if (top === -1 || y < top) top = y;
-
-            if (right === -1 || x > right) right = x;
-
-            if (bottom === -1 || y > bottom) bottom = y;
-          }
-        }
-      }
-
+      let x = Number.parseFloat(svgContent.getAttribute('x') ?? '0');
+      let y = Number.parseFloat(svgContent.getAttribute('y') ?? '0');
+      let w = Number.parseFloat(svgContent.getAttribute('width') ?? '0');
+      const ratio = w / width;
+      const bbox = await getSvgContentActualBBox(false);
       const padding = 100;
+      let right = bbox.x + bbox.width + padding;
+      let bottom = bbox.y + bbox.height + padding;
 
-      left = left === -1 ? 0 : Math.max(left - padding, 0);
-      top = top === -1 ? 0 : Math.max(top - padding, 0);
-      right = right === -1 ? width : Math.min(right + padding, width);
-      bottom = bottom === -1 ? height : Math.min(bottom + padding, height);
+      bbox.x -= padding;
+      bbox.y -= padding;
 
-      const canvasW = right - left;
-      const canvasH = bottom - top;
-      const ratio = displayW / width;
+      if (bbox.x < 0) bbox.x = 0;
 
-      canvas.width = Math.min(canvasW * ratio, 500);
-      canvas.height = Math.ceil(canvasH * (canvas.width / canvasW));
-      ctx.fillStyle = 'white';
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(fullResolutionCanvas, left, top, canvasW, canvasH, 0, 0, canvas.width, canvas.height);
+      if (right > width) right = width;
+
+      if (bbox.y < minY) bbox.y = minY;
+
+      if (bottom > maxY) bottom = maxY;
+
+      bbox.width = right - bbox.x;
+      bbox.height = bottom - bbox.y;
+      x += bbox.x * ratio;
+      y += bbox.y * ratio;
+      w = bbox.width * ratio;
+
+      const h = bbox.height * ratio;
+
+      canvas.width = Math.min(w, 500);
+      canvas.height = Math.ceil(h * (canvas.width / w));
+      ctx.drawImage(img, x, y, w, h, 0, 0, canvas.width, canvas.height);
     } else {
       const svgRoot = document.getElementById('svgroot')! as unknown as SVGSVGElement;
       const rootWidth = Number.parseFloat(svgRoot.getAttribute('width') ?? '0');
@@ -122,11 +104,9 @@ const fetchThumbnail = async (): Promise<string[]> => {
     return canvas;
   }
 
-  const svg = cloneAndModifySvg(
-    document.getElementById(cropTaskThumbnail ? 'svgcontent' : 'svgroot') as unknown as SVGSVGElement,
-  );
+  const svg = cloneAndModifySvg(document.getElementById('svgroot') as unknown as SVGSVGElement);
   const img = await DOM2Image(svg);
-  const canvas = cropAndDrawOnCanvas(img);
+  const canvas = await cropAndDrawOnCanvas(img);
 
   const urls = await new Promise<string[]>((resolve) => {
     canvas.toBlob((blob) => {
@@ -141,11 +121,7 @@ const generateThumbnail = async (): Promise<{
   thumbnail: string;
   thumbnailBlobURL: string;
 }> => {
-  svgedit.utilities.moveDefsIntoSvgContent();
-
   const [thumbnail, thumbnailBlobURL] = await fetchThumbnail();
-
-  svgedit.utilities.moveDefsOutfromSvgContent();
 
   return { thumbnail, thumbnailBlobURL };
 };

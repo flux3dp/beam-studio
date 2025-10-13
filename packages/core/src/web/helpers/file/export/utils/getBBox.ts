@@ -1,15 +1,14 @@
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
-
-import { switchSymbolWrapper } from './common';
+import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
 /**
  * Get the actual bounding box of the SVG content,
  * use canvas image raster when content includes elements with `data-pass-through="1"`.
  * @returns The actual bounding box of the SVG content, including elements with `data-pass-through="1"`.
  */
-export async function getSvgContentActualBBox(): Promise<DOMRect> {
+export async function getSvgContentActualBBox(shouldSwitchSymbol = true): Promise<DOMRect> {
   const svgcontent = document.getElementById('svgcontent') as unknown as SVGSVGElement;
   const passThroughElements = Array.from(
     svgcontent.querySelectorAll('g.layer:not([display="none"]) [data-pass-through="1"]'),
@@ -24,8 +23,10 @@ export async function getSvgContentActualBBox(): Promise<DOMRect> {
   if (passThroughElements.length > 0) {
     const { height, minY, width } = workareaManager;
     const svgDefs = findDefs();
-    const svgString = switchSymbolWrapper(
-      () => `
+
+    if (shouldSwitchSymbol) symbolMaker.switchImageSymbolForAll(false);
+
+    const svgString = `
       <svg
         width="${width}"
         height="${height}"
@@ -36,8 +37,9 @@ export async function getSvgContentActualBBox(): Promise<DOMRect> {
       >
         ${svgDefs.outerHTML}
         ${passThroughElements.map((el) => el.outerHTML).join('')}
-      </svg>`,
-    );
+      </svg>`;
+
+    if (shouldSwitchSymbol) symbolMaker.switchImageSymbolForAll(true);
 
     const canvas = await svgStringToCanvas(svgString, width, height);
     const ctx = canvas.getContext('2d');
