@@ -29,7 +29,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 13, speed: 500 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
   },
   acrylic_printing: {
@@ -269,6 +269,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
       [LayerModule.LASER_20W_DIODE]: { module: LayerModule.LASER_20W_DIODE, power: 70, speed: 100 },
     },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 30, speed: 500 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
   },
   metal_bw_engraving: {
     ado1: {
@@ -360,6 +361,9 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 50, speed: 140 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 50, speed: 80 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 150 } },
+  },
+  sticker_kiss_cut: {
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 3, speed: 35 } },
   },
   stone: {
     fpm1_0_20: { [LayerModule.LASER_UNIVERSAL]: { fillInterval: 0.01, frequency: 27, power: 90, speed: 1000 } },
@@ -462,7 +466,7 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
     fbb1p: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 150 } },
     fbb2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 500 } },
     fbm1: { [LayerModule.LASER_UNIVERSAL]: { power: 25, speed: 150 } },
-    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 15, speed: 300 } },
+    fbm2: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     fhexa1: { [LayerModule.LASER_UNIVERSAL]: { power: 20, speed: 300 } },
     flv1: { [LayerModule.LASER_UNIVERSAL]: { power: 100, speed: 150 } },
   },
