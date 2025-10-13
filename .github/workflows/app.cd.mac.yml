@@ -136,14 +136,17 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
-          if ["${{ matrix.target }}" = "both" ]; then
+          if [ "${{ matrix.target }}" = "both" ]; then
+            echo "Building for x64 and arm64..."
             pnpm nx run app:dist --x64 --publish always
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always
           elif [ "${{ matrix.target }}" = "arm64" ]; then
+            echo "Building for arm64..."
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always
           else
+            echo "Building for x64..."
             pnpm nx run app:dist --x64 --publish always
           fi
 
