@@ -75,6 +75,8 @@ import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -593,7 +595,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       if (curveEngravingModeController.started) {
         // do nothing for now
-      } else if (PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode()) {
+      } else if (PreviewModeController.isPreviewMode || useCanvasStore.getState().mode === CanvasMode.Preview) {
         workarea.css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
       }
     };

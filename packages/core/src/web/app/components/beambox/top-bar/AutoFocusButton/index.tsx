@@ -16,6 +16,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import alertConfig from '@core/helpers/api/alert-config';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
@@ -50,7 +51,8 @@ const AutoFocusButton = ({ toggleAutoFocus }: Props): React.JSX.Element => {
       menu: { autofocus: lang },
     },
   } = useI18n();
-  const { mode, selectedDevice } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const { selectedDevice } = useContext(CanvasContext);
   const [isProcessing, setIsProcessing] = useState(false);
   const isDeviceSupportAutoFocus = useMemo(
     () => supportAutoFocusModels.has(selectedDevice?.model || 'none'),

@@ -1,6 +1,6 @@
 import type { ReactNode } from 'react';
 import React, { useState } from 'react';
-import { useContext, useEffect } from 'react';
+import { useEffect } from 'react';
 
 import { LeftOutlined } from '@ant-design/icons';
 import { ConfigProvider, Drawer } from 'antd';
@@ -13,7 +13,7 @@ import DpiInfo from '@core/app/components/beambox/DpiInfo';
 import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
 import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 
@@ -26,7 +26,7 @@ import styles from './SvgEditor.module.scss';
 import Workarea from './Workarea';
 
 export const SvgEditor = (): ReactNode => {
-  const { mode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
   const { isChatShown, setIsChatShown } = useChatStore();
   const [width, setWidth] = useState(400);
   // default motion duration for the drawer

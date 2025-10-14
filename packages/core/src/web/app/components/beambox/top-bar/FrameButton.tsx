@@ -1,11 +1,11 @@
-import React, { useContext, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import classNames from 'classnames';
 
 import { showFramingModal } from '@core/app/components/dialogs/FramingModal';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
 
@@ -13,7 +13,7 @@ import styles from './FrameButton.module.scss';
 
 const FrameButton = (): React.JSX.Element => {
   const lang = useI18n();
-  const { mode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
 
   useEffect(() => {
     const shortcutHandler = async () => {

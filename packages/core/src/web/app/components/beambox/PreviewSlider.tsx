@@ -1,13 +1,13 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ConfigProvider, Slider, Space, Switch, Tooltip } from 'antd';
 
 import constant, { supportCameraAutoExposureModels } from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getExposureSettings, setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
@@ -21,7 +21,7 @@ const PreviewSlider = (): React.ReactNode => {
   const [opacity, setOpacity] = useState(1);
   const [showOpacity, setShowOpacity] = useState(false);
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
-  const { mode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
   const [autoExposure, setAutoExposure] = useState<boolean | null>(null);
   const [isSettingAutoExposure, setIsSettingAutoExposure] = useState(false);
   const [isRawMode, setIsRawMode] = useState(false);

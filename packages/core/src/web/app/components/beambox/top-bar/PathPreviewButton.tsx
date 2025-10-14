@@ -1,12 +1,12 @@
 import type { ReactNode } from 'react';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import classNames from 'classnames';
 
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import checkWebGL from '@core/helpers/check-webgl';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
@@ -33,7 +33,7 @@ interface Props {
 function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): ReactNode {
   const lang = useI18n().topbar;
   const isMobile = useIsMobile();
-  const { mode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
   const workarea = useWorkarea();
 
   if (isMobile || !checkWebGL() || (!isDev() && modelsWithModules.has(workarea))) {

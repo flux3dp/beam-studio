@@ -3,6 +3,7 @@ import React, { useCallback, useContext, useMemo } from 'react';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import getDevice from '@core/helpers/device/get-device';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -12,7 +13,8 @@ import styles from './SelectMachineButton.module.scss';
 function SelectMachineButton(): React.JSX.Element {
   const isMobile = useIsMobile();
   const i18n = useI18n();
-  const { mode, selectedDevice, setupPreviewMode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const { selectedDevice, setupPreviewMode } = useContext(CanvasContext);
   const text = useMemo(() => {
     if (isMobile) {
       return '';
