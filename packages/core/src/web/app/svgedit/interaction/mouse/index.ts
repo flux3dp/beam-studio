@@ -9,8 +9,10 @@ import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -21,7 +23,6 @@ import touchEvents from '@core/app/svgedit/touchEvents';
 import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import TopBarHintsController from '@core/app/views/beambox/TopBar/contexts/TopBarHintsController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -228,14 +229,13 @@ const mouseDown = async (evt: MouseEvent) => {
       if (rightClick) svgCanvas.unsafeAccess.setStarted(false);
 
       if (
-        (PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode()) &&
+        (PreviewModeController.isPreviewMode || useCanvasStore.getState().mode === CanvasMode.Preview) &&
         !curveEngravingModeController.started
       ) {
         // preview mode
         svgCanvas.clearSelection();
 
         if (PreviewModeController.isPreviewMode) svgCanvas.unsafeAccess.setCurrentMode('preview');
-        // i.e. TopBarController.getTopBarPreviewMode()
         else svgCanvas.unsafeAccess.setCurrentMode('pre_preview');
 
         setRubberBoxStart(startMouseX, startMouseY);
@@ -731,7 +731,8 @@ const mouseMove = (evt: MouseEvent) => {
         if (dist < SENSOR_AREA_RADIUS) {
           $('#workarea').css('cursor', 'move');
         } else if ($('#workarea').css('cursor') === 'move') {
-          const isPreview = PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode();
+          const isPreview =
+            PreviewModeController.isPreviewMode || useCanvasStore.getState().mode === CanvasMode.Preview;
 
           if (!curveEngravingModeController.started && isPreview) {
             $('#workarea').css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
