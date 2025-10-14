@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: 'Barva',
           current_time: 'Aktuální čas',
+          depth_engraving: '3D gravírování',
           fill: 'Výplň',
           font_family: 'Font',
           font_size: 'Velikost',
           font_style: 'Styl',
+          layer_count: 'Počet vrstev',
           letter_spacing: 'Mezery mezi písmeny',
           line_spacing: 'Řádkování',
           number: 'Pořadové číslo',

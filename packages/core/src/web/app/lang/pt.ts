@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: 'Cor',
           current_time: 'Hora atual',
+          depth_engraving: 'Gravação 3D',
           fill: 'Preenchimento',
           font_family: 'Fonte',
           font_size: 'Tamanho',
           font_style: 'Estilo',
+          layer_count: 'Número de camadas',
           letter_spacing: 'Espaçamento entre letras',
           line_spacing: 'Espaçamento entre linhas',
           number: 'Número de sequência',
