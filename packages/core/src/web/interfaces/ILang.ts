@@ -804,10 +804,12 @@ export interface ILang {
         option_panel: {
           color: string;
           current_time: string;
+          depth_engraving: string;
           fill: string;
           font_family: string;
           font_size: string;
           font_style: string;
+          layer_count: string;
           letter_spacing: string;
           line_spacing: string;
           number: string;

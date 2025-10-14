@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: 'Màu sắc',
           current_time: 'Thời gian hiện tại',
+          depth_engraving: 'Khắc 3D',
           fill: 'Mức độ đặc',
           font_family: 'Phông chữ',
           font_size: 'Cỡ chữ',
           font_style: 'Kiểu',
+          layer_count: 'Số lớp',
           letter_spacing: 'Khoảng cách chữ',
           line_spacing: 'Khoảng cách dòng',
           number: 'Số thứ tự',

@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: '色',
           current_time: '現在の時刻',
+          depth_engraving: '3D彫刻',
           fill: 'インフィル',
           font_family: 'フォント',
           font_size: 'サイズ',
           font_style: 'スタイル',
+          layer_count: 'レイヤー数',
           letter_spacing: '文字間隔',
           line_spacing: '行間',
           number: 'シーケンス番号',

@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: '색깔',
           current_time: '현재 시간',
+          depth_engraving: '3D 조각',
           fill: '내부 채우기',
           font_family: '글꼴',
           font_size: '크기',
           font_style: '스타일',
+          layer_count: '레이어 수',
           letter_spacing: '자간',
           line_spacing: '줄 간격',
           number: '시퀀스 번호',

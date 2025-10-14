@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: 'Färg',
           current_time: 'Aktuell tid',
+          depth_engraving: '3D-gravyr',
           fill: 'Fyllning',
           font_family: 'Typsnitt',
           font_size: 'Storlek',
           font_style: 'Stil',
+          layer_count: 'Antal lager',
           letter_spacing: 'Bokstavsavstånd',
           line_spacing: 'Radavstånd',
           number: 'Sekvensnummer',
