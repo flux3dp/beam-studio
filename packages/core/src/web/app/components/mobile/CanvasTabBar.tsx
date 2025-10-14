@@ -15,6 +15,7 @@ import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import historyUtils from '@core/app/svgedit/history/utils';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -48,7 +49,8 @@ const CanvasTabBar = (): React.ReactNode => {
   const isMobile = useIsMobile();
   const lang = useI18n();
 
-  const { changeToPreviewMode, endPreviewMode, mode, setupPreviewMode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const { changeToPreviewMode, endPreviewMode, setupPreviewMode } = useContext(CanvasContext);
   const isPreviewing = mode === CanvasMode.Preview;
   const { isClean, isDrawing, isPreviewMode } = useCameraPreviewStore();
   const [activeKey, setActiveKey] = useState('none');

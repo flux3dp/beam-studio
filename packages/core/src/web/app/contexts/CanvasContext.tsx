@@ -1,15 +1,16 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useRef, useState } from 'react';
 
+import { pick } from 'remeda';
 import { match, P } from 'ts-pattern';
+import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
-import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
 import { getPassThrough } from '@core/helpers/addOn';
 import { discoverManager } from '@core/helpers/api/discover';
@@ -46,11 +47,9 @@ interface CanvasContextType {
   hasUnsavedChange: boolean;
   isColorPreviewing: boolean;
   isPathEditing: boolean;
-  mode: CanvasMode;
   selectedDevice: IDeviceInfo | null;
   setIsColorPreviewing: (isColorPreviewing: boolean) => void;
   setIsPathEditing: (isPathEditing: boolean) => void;
-  setMode: (mode: CanvasMode) => void;
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
   setupPreviewMode: (opts?: { callback?: () => void; showModal?: boolean }) => void;
   toggleAutoFocus: (forceState?: boolean) => Promise<void>;
@@ -66,11 +65,9 @@ const CanvasContext = createContext<CanvasContextType>({
   hasUnsavedChange: false,
   isColorPreviewing: false,
   isPathEditing: false,
-  mode: CanvasMode.Draw,
   selectedDevice: null,
   setIsColorPreviewing: () => {},
   setIsPathEditing: () => {},
-  setMode: () => {},
   setSelectedDevice: () => {},
   setupPreviewMode: () => {},
   toggleAutoFocus: async () => {},
@@ -82,7 +79,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   const lang = useI18n();
   const settingUpPreview = useRef(false);
   const forceUpdate = useForceUpdate();
-  const [mode, setMode] = useState<CanvasMode>(CanvasMode.Draw);
+  const { mode, setMode } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'setMode'])));
   const [isColorPreviewing, setIsColorPreviewing] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [hasUnsavedChange, setHasUnsavedChange] = useState<boolean>(false);
@@ -135,18 +132,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     };
   }, []);
   useEffect(() => {
-    const handler = (response: { mode: CanvasMode }): void => {
-      response.mode = mode;
-    };
-
-    topBarEventEmitter.on('GET_CANVAS_MODE', handler);
-    tabController.setMode(mode);
-
-    return () => {
-      topBarEventEmitter.removeListener('GET_CANVAS_MODE', handler);
-    };
-  }, [mode]);
-  useEffect(() => {
     const handler = (response: { selectedDevice: IDeviceInfo | null }): void => {
       response.selectedDevice = discoverManager.getLatestDeviceInfo(selectedDevice?.uuid);
     };
@@ -173,7 +158,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   useEffect(() => {
     canvasEventEmitter.on('SET_COLOR_PREVIEWING', setIsColorPreviewing);
     canvasEventEmitter.on('SET_PATH_EDITING', setIsPathEditing);
-    canvasEventEmitter.on('SET_MODE', setMode);
 
     const canvasChangeHandler = () => setHasPassthroughExtension(getPassThrough());
 
@@ -183,16 +167,11 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     return () => {
       canvasEventEmitter.removeListener('SET_COLOR_PREVIEWING', setIsColorPreviewing);
       canvasEventEmitter.removeListener('SET_PATH_EDITING', setIsPathEditing);
-      canvasEventEmitter.removeListener('SET_MODE', setMode);
       canvasEventEmitter.removeListener('canvas-change', canvasChangeHandler);
     };
   }, []);
 
   useEffect(() => {
-    if (mode !== CanvasMode.CurveEngraving && curveEngravingModeController.started) {
-      curveEngravingModeController.end();
-    }
-
     const allLayers = document.querySelectorAll('g.layer') as unknown as SVGGElement[];
 
     // To prevent cursor changed to 'move' when 'mouseover'
@@ -372,11 +351,9 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         hasUnsavedChange,
         isColorPreviewing,
         isPathEditing,
-        mode,
         selectedDevice,
         setIsColorPreviewing,
         setIsPathEditing,
-        setMode,
         setSelectedDevice,
         setupPreviewMode,
         toggleAutoFocus,
