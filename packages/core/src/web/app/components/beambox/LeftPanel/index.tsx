@@ -10,13 +10,15 @@ import PreviewToolButtonGroup from '@core/app/components/beambox/LeftPanel/compo
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './index.module.scss';
 
 const UnmemorizedLeftPanel = () => {
-  const { mode, toggleAutoFocus, togglePathPreview } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const { toggleAutoFocus, togglePathPreview } = useContext(CanvasContext);
   const modeRef = useRef(mode);
   const {
     beambox: { left_panel },

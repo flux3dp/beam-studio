@@ -1,5 +1,6 @@
 import React, { memo, useMemo } from 'react';
 
+import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
 import type { UndoRedoConfig } from '@core/app/components/common/ZoomableTopBar';
@@ -18,7 +19,7 @@ function TopBar({ handleReset, handleZoomByScale, zoomScale }: Props): React.JSX
     history: { index, operations },
     redo,
     undo,
-  } = useImageEditPanelStore(useShallow((s) => ({ history: s.history, redo: s.redo, undo: s.undo })));
+  } = useImageEditPanelStore(useShallow((s) => pick(s, ['history', 'redo', 'undo'])));
 
   const undoRedoConfig: UndoRedoConfig = useMemo(
     () => ({ onRedo: redo, onUndo: undo, redoable: index < operations.length, undoable: index > 0 }),

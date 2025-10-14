@@ -8,6 +8,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import cursorIconUrl from '@core/app/icons/left-panel/curve-select.svg?url';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
@@ -46,6 +47,14 @@ class CurveEngravingModeController {
     this.data = null;
     this.measurer = null;
     canvasEventEmitter.on('canvas-change', this.updateContainer);
+    useCanvasStore.subscribe(
+      (state) => state.mode,
+      (mode) => {
+        if (mode !== CanvasMode.CurveEngraving && this.started) {
+          this.end();
+        }
+      },
+    );
   }
 
   checkSupport = () => {
@@ -62,7 +71,7 @@ class CurveEngravingModeController {
     this.started = true;
     this.updateBoundaryPath();
     this.toAreaSelectMode();
-    canvasEventEmitter.emit('SET_MODE', CanvasMode.CurveEngraving);
+    useCanvasStore.getState().setMode(CanvasMode.CurveEngraving);
   };
 
   end = () => {
@@ -84,7 +93,7 @@ class CurveEngravingModeController {
       }
     }
 
-    canvasEventEmitter.emit('SET_MODE', mode);
+    useCanvasStore.getState().setMode(mode);
   };
 
   toAreaSelectMode = () => {
