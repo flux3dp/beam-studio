@@ -10,6 +10,7 @@ import type { ImageResolution, ImageSizeOption, TextToImageRequest } from '@core
 import { createTextToImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 
+import ImageResults from './ImageResults';
 import styles from './index.module.scss';
 import type { AspectRatio, ImageSize } from './useAiGenerateStore';
 import { useAiGenerateStore } from './useAiGenerateStore';
@@ -19,8 +20,17 @@ const { TextArea } = Input;
 const UnmemorizedAiGenerate = () => {
   const currentUser = getCurrentUser();
   const { info } = currentUser || { info: null };
-  const { clearGenerationResults, count, dimensions, patternDescription, resetForm, textToDisplay } =
-    useAiGenerateStore();
+  const {
+    clearGenerationResults,
+    count,
+    dimensions,
+    errorMessage,
+    generatedImages,
+    generationStatus,
+    patternDescription,
+    resetForm,
+    textToDisplay,
+  } = useAiGenerateStore();
 
   const getSizePixels = (size: ImageSize): string =>
     match(size)
@@ -266,12 +276,7 @@ const UnmemorizedAiGenerate = () => {
           <Select
             className={styles['count-select']}
             onChange={(value) => useAiGenerateStore.setState({ count: value })}
-            options={[
-              { label: '1', value: 1 },
-              { label: '2', value: 2 },
-              { label: '3', value: 3 },
-              { label: '4', value: 4 },
-            ]}
+            options={[1, 2, 3, 4, 5, 6].map((num) => ({ label: String(num), value: num }))}
             value={count}
           />
         </div>
@@ -289,6 +294,12 @@ const UnmemorizedAiGenerate = () => {
             </div>
           </div>
         </div>
+
+        <ImageResults
+          errorMessage={errorMessage}
+          generatedImages={generatedImages}
+          generationStatus={generationStatus}
+        />
       </div>
     </div>
   );
