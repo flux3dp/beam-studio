@@ -2,8 +2,6 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import { CanvasMode } from '@core/app/constants/canvasMode';
-
 import SvgEditor from './SvgEditor';
 import type { FileData } from '@core/helpers/fileImportHelper';
 
@@ -31,10 +29,6 @@ jest.mock('@core/app/actions/beambox/svg-editor', () => ({
 Object.defineProperty(window, '$', {
   value: jest.fn(),
 });
-
-jest.mock('@core/app/contexts/CanvasContext', () => ({
-  CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
-}));
 
 const mockZoom = jest.fn();
 

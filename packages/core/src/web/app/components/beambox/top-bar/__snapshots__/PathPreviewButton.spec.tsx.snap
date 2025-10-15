@@ -4,7 +4,7 @@ exports[`test PathPreviewButton has WebGL no devices connected in desktop versio
 <div>
   <div
     class="button highlighted"
-    title="task_preview"
+    title="Path preview"
   >
     <svgr-url />
   </div>
@@ -15,7 +15,7 @@ exports[`test PathPreviewButton has WebGL no devices connected in web version 1`
 <div>
   <div
     class="button disabled highlighted"
-    title="task_preview"
+    title="Path preview"
   >
     <svgr-url />
   </div>
