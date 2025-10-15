@@ -5,6 +5,7 @@ export type ImageSize = 'large' | 'medium' | 'small';
 export type StyleType = 'illustration' | 'logo_with_text' | 'pattern';
 export type Orientation = 'landscape' | 'portrait';
 export type GenerationStatus = 'failed' | 'generating' | 'idle' | 'success';
+export type GenerationMode = 'edit' | 'text-to-image';
 
 export interface ImageDimensions {
   aspectRatio: AspectRatio;
@@ -22,14 +23,20 @@ interface State {
   generationStatus: GenerationStatus;
   generationUuid: null | string;
   isAiGenerateShown: boolean;
+  mode: GenerationMode;
   patternDescription: string;
+  selectedImages: File[];
   selectedStyle: StyleType;
   textToDisplay: string;
 }
 
 interface Actions {
+  addSelectedImage: (file: File) => void;
   clearGenerationResults: () => void;
+  clearSelectedImages: () => void;
+  removeSelectedImage: (index: number) => void;
   resetForm: () => void;
+  setMode: (mode: GenerationMode) => void;
 }
 
 const initialState: State = {
@@ -40,15 +47,26 @@ const initialState: State = {
   generationStatus: 'idle',
   generationUuid: null,
   isAiGenerateShown: false,
+  mode: 'text-to-image',
   patternDescription: '',
+  selectedImages: [],
   selectedStyle: 'logo_with_text',
   textToDisplay: '',
 };
 
 export const useAiGenerateStore = create<Actions & State>((set) => ({
   ...initialState,
+  addSelectedImage: (file) => {
+    set((state) => ({ selectedImages: [...state.selectedImages, file] }));
+  },
   clearGenerationResults: () => {
     set({ errorMessage: null, generatedImages: [], generationStatus: 'idle', generationUuid: null });
+  },
+  clearSelectedImages: () => {
+    set({ selectedImages: [] });
+  },
+  removeSelectedImage: (index) => {
+    set((state) => ({ selectedImages: state.selectedImages.filter((_, i) => i !== index) }));
   },
   resetForm: () => {
     set({
@@ -58,9 +76,14 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
       generatedImages: [],
       generationStatus: 'idle',
       generationUuid: null,
+      mode: initialState.mode,
       patternDescription: initialState.patternDescription,
+      selectedImages: [],
       selectedStyle: initialState.selectedStyle,
       textToDisplay: initialState.textToDisplay,
     });
+  },
+  setMode: (mode) => {
+    set({ mode });
   },
 }));

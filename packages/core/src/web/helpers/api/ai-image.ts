@@ -1,6 +1,7 @@
 import { FLUXID_HOST } from './flux-id';
 
 const TEXT_TO_IMAGE_URL = `${FLUXID_HOST}/api/ai-image/text-to-image`;
+const EDIT_IMAGE_URL = `${FLUXID_HOST}/api/ai-image/edit`;
 const AI_IMAGE_STATUS_URL = `${FLUXID_HOST}/api/ai-image`;
 const AI_IMAGE_HISTORY_URL = `${FLUXID_HOST}/api/ai-image/history`;
 const POLL_INTERVAL = 3000; // 3 seconds
@@ -25,6 +26,16 @@ export type ImageResolution = '1K' | '2K' | '4K';
 export interface TextToImageRequest {
   image_resolution?: ImageResolution;
   image_size?: ImageSizeOption;
+  max_images?: number;
+  prompt: string;
+  seed?: number;
+}
+
+// Request payload for creating image edit task
+export interface ImageEditRequest {
+  image_resolution?: ImageResolution;
+  image_size?: ImageSizeOption;
+  images: File[]; // Required: images to edit (1-10 images)
   max_images?: number;
   prompt: string;
   seed?: number;
@@ -151,6 +162,80 @@ export const createTextToImageTask = async ({
     }
 
     return { error: 'Failed to create task' };
+  } catch (error) {
+    if (error instanceof Error) {
+      if (error.name === 'AbortError') {
+        return { error: 'Request timed out. Please try again.' };
+      }
+
+      return { error: error.message || 'Network error occurred' };
+    }
+
+    return { error: 'An unexpected error occurred' };
+  }
+};
+
+/**
+ * Create an image edit task
+ * This sends images as FormData along with other parameters
+ */
+export const createImageEditTask = async ({
+  image_resolution = '1K',
+  image_size = 'square_hd',
+  images,
+  max_images = 1,
+  prompt,
+  seed = Math.floor(Math.random() * 1000000),
+}: ImageEditRequest): Promise<{ error: string } | { uuid: string }> => {
+  try {
+    // Build FormData for multipart/form-data request
+    const formData = new FormData();
+
+    formData.append('prompt', prompt);
+    formData.append('image_resolution', image_resolution);
+    formData.append('image_size', image_size);
+    formData.append('max_images', max_images.toString());
+    formData.append('seed', seed.toString());
+
+    // Append each image file
+    images.forEach((file) => {
+      formData.append('images', file);
+    });
+
+    // Fetch without Content-Type header - browser will set it with boundary
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
+
+    try {
+      const response = await fetch(EDIT_IMAGE_URL, {
+        body: formData,
+        method: 'POST',
+        signal: controller.signal,
+      });
+
+      clearTimeout(timeoutId);
+
+      if (!response.ok) {
+        if (ERROR_MESSAGES[response.status]) {
+          return { error: ERROR_MESSAGES[response.status] };
+        }
+
+        const errorData = (await response.json().catch(() => ({}))) as { message?: string };
+
+        return { error: errorData.message || 'Failed to create edit task' };
+      }
+
+      const data = (await response.json()) as TextToImageResponse;
+
+      if (data.status === 'ok') {
+        return { uuid: data.data.uuid };
+      }
+
+      return { error: 'Failed to create edit task' };
+    } catch (fetchError) {
+      clearTimeout(timeoutId);
+      throw fetchError;
+    }
   } catch (error) {
     if (error instanceof Error) {
       if (error.name === 'AbortError') {
