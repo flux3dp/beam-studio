@@ -60,7 +60,7 @@ describe('test PathPreviewButton', () => {
 
     const { container } = render(
       <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
-        <PathPreviewButton isDeviceConnected togglePathPreview={jest.fn()} />
+        <PathPreviewButton isDeviceConnected />
       </CanvasContext.Provider>,
     );
 
@@ -73,7 +73,7 @@ describe('test PathPreviewButton', () => {
 
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
-          <PathPreviewButton isDeviceConnected togglePathPreview={jest.fn()} />
+          <PathPreviewButton isDeviceConnected />
         </CanvasContext.Provider>,
       );
 
@@ -93,7 +93,7 @@ describe('test PathPreviewButton', () => {
 
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
-          <PathPreviewButton isDeviceConnected={false} togglePathPreview={jest.fn()} />
+          <PathPreviewButton isDeviceConnected={false} />
         </CanvasContext.Provider>,
       );
 
@@ -105,7 +105,7 @@ describe('test PathPreviewButton', () => {
 
       const { container } = render(
         <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
-          <PathPreviewButton isDeviceConnected={false} togglePathPreview={jest.fn()} />
+          <PathPreviewButton isDeviceConnected={false} />
         </CanvasContext.Provider>,
       );
 

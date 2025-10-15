@@ -2,6 +2,8 @@ import type { ReactNode } from 'react';
 import React from 'react';
 
 import classNames from 'classnames';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/shallow';
 
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -27,13 +29,12 @@ getSVGAsync((globalSVG) => {
 
 interface Props {
   isDeviceConnected: boolean;
-  togglePathPreview: () => void;
 }
 
-function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): ReactNode {
+function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
   const lang = useI18n().topbar;
   const isMobile = useIsMobile();
-  const mode = useCanvasStore((state) => state.mode);
+  const { mode, togglePathPreview } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'togglePathPreview'])));
   const workarea = useWorkarea();
 
   if (isMobile || !checkWebGL() || (!isDev() && modelsWithModules.has(workarea))) {

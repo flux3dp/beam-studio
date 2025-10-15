@@ -173,7 +173,6 @@ describe('AutoFocusButton', () => {
     setSelectedDevice: jest.fn(),
     setupPreviewMode: jest.fn(),
     toggleAutoFocus: jest.fn(),
-    togglePathPreview: jest.fn(),
     updateCanvasContext: jest.fn(),
   };
 
