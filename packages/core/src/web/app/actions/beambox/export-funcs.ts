@@ -1,3 +1,5 @@
+import { sprintf } from 'sprintf-js';
+
 import Alert from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
@@ -334,10 +336,10 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
   const sceneArgsResp = await fetch('assets/bm2-4c-scene-args.txt');
   const sceneArgsString = await sceneArgsResp.text();
   const fileResp = await fetch('assets/bm2-4c-scene.txt');
-  const scene = await fileResp.text();
+  const scene = (await fileResp.text()).replaceAll(/\r\n/g, '\n');
   const data = Buffer.from(scene, 'utf8');
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI({ data, size: data.length } as any, {
-    forceArgString: sceneArgsString,
+    forceArgString: sprintf(sceneArgsString, data.length),
     model: 'fbm2',
     onProgressing: (data: { message: string; percentage: number }) => {
       // message: Analyzing SVG - 0.0%

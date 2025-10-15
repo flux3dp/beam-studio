@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: 'Kolor',
           current_time: 'Aktualny czas',
-          depth_engraving: 'Grawerowanie 3D',
+          depth_engraving: 'Tłoczenie',
           fill: 'Wypełnienie',
           font_family: 'Czcionka',
           font_size: 'Rozmiar',

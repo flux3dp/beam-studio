@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: 'Farbe',
           current_time: 'Aktuelle Uhrzeit',
-          depth_engraving: '3D-Gravur',
+          depth_engraving: 'Prägung',
           fill: 'Füllen',
           font_family: 'Schriftart',
           font_size: 'Stil',

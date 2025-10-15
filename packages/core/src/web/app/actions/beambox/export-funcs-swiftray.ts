@@ -453,11 +453,6 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
     travelSpeed: controlConfig.travelSpeed,
   };
 
-  if (useGlobalPreferenceStore.getState().enable_mask) {
-    // Note: Swiftray only checks whether the key exists; the value is not used
-    taskConfig.mask = true;
-  }
-
   const { fileTimeCost, taskCodeBlob } = await getTaskCode(hull ? 'hull' : 'contour', taskConfig);
 
   Progress.popById('fetch-task');

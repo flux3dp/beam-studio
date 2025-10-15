@@ -84,7 +84,7 @@ export const useSettingStore = create<Action & State>(
       getPreference: (key) => {
         const { beamboxPreferenceChanges } = get();
 
-        return key in beamboxPreferenceChanges && beamboxPreferenceChanges[key]
+        return key in beamboxPreferenceChanges
           ? beamboxPreferenceChanges[key]!
           : (useGlobalPreferenceStore.getState() as GlobalPreference)[key];
       },

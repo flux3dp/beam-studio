@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: 'Väri',
           current_time: 'Nykyinen aika',
-          depth_engraving: '3D-kaiverrus',
+          depth_engraving: 'Kohokuviointi',
           fill: 'Täyttö',
           font_family: 'Fontti',
           font_size: 'Koko',

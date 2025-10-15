@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: 'Warna',
           current_time: 'Waktu saat ini',
-          depth_engraving: 'Pengukiran 3D',
+          depth_engraving: 'Emboss',
           fill: 'Isi',
           font_family: 'Font',
           font_size: 'Ukuran',

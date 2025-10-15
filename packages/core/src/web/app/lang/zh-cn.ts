@@ -599,7 +599,7 @@ const lang: ILang = {
         },
         engrave: '雕刻',
         existing_name: '已存在此名称的自订参数。',
-        fill_angle: '填充间隔',
+        fill_angle: '填充角度',
         fill_interval: '填充间隔',
         fill_setting: '填充设置',
         filled_path_only: '仅适用于填充路径',
@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: '颜色',
           current_time: '当前时间',
-          depth_engraving: '3D 雕刻',
+          depth_engraving: '浮雕',
           fill: '填充',
           font_family: '字体',
           font_size: '字级',

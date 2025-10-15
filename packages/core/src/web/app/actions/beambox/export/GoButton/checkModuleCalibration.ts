@@ -51,16 +51,11 @@ export const checkModuleCalibration = async (device: IDeviceInfo, lang: ILang): 
     }
   };
   const langNotification = lang.layer_module.notification;
+  const printModules = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH];
 
-  [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH].forEach(
-    async (module) => {
-      await checkCalibration(
-        module,
-        langNotification.performPrintingCaliTitle,
-        langNotification.performPrintingCaliMsg,
-      );
-    },
-  );
+  for (const module of printModules) {
+    await checkCalibration(module, langNotification.performPrintingCaliTitle, langNotification.performPrintingCaliMsg);
+  }
 
   await checkCalibration(
     LayerModule.LASER_1064,
