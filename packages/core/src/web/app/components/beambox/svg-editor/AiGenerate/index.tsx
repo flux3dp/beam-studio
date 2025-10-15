@@ -6,11 +6,12 @@ import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import type { ImageResolution, ImageSizeOption, TextToImageRequest } from '@core/helpers/api/ai-image';
-import { createTextToImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
+import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-image';
+import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 
 import ImageResults from './ImageResults';
+import ImageUploadArea from './ImageUploadArea';
 import styles from './index.module.scss';
 import type { AspectRatio, ImageSize } from './useAiGenerateStore';
 import { useAiGenerateStore } from './useAiGenerateStore';
@@ -21,14 +22,19 @@ const UnmemorizedAiGenerate = () => {
   const currentUser = getCurrentUser();
   const { info } = currentUser || { info: null };
   const {
+    addSelectedImage,
     clearGenerationResults,
     count,
     dimensions,
     errorMessage,
     generatedImages,
     generationStatus,
+    mode,
     patternDescription,
+    removeSelectedImage,
     resetForm,
+    selectedImages,
+    setMode,
     textToDisplay,
   } = useAiGenerateStore();
 
@@ -65,7 +71,14 @@ const UnmemorizedAiGenerate = () => {
 
   const handleGenerate = async () => {
     if (!patternDescription.trim()) {
-      useAiGenerateStore.setState({ errorMessage: 'Please provide a pattern description' });
+      useAiGenerateStore.setState({ errorMessage: 'Please provide a prompt description' });
+
+      return;
+    }
+
+    // Validate edit mode requirements
+    if (mode === 'edit' && selectedImages.length === 0) {
+      useAiGenerateStore.setState({ errorMessage: 'Please upload at least one image for editing' });
 
       return;
     }
@@ -81,22 +94,33 @@ const UnmemorizedAiGenerate = () => {
     clearGenerationResults();
     useAiGenerateStore.setState({ generationStatus: 'generating' });
 
-    // Combine pattern description and text to display into single prompt
+    // Build prompt
     let prompt = patternDescription.trim();
 
-    if (textToDisplay.trim()) {
+    // Add text overlay only in text-to-image mode
+    if (mode === 'text-to-image' && textToDisplay.trim()) {
       prompt += `\n\nText to display: "${textToDisplay.trim()}"`;
     }
 
-    const request: TextToImageRequest = {
-      image_resolution: getImageResolution(),
-      image_size: getImageSizeOption(),
-      max_images: count,
-      prompt,
-    };
+    // Create task based on mode
+    let createResponse: { error: string } | { uuid: string };
 
-    // Create task
-    const createResponse = await createTextToImageTask(request);
+    if (mode === 'edit') {
+      createResponse = await createImageEditTask({
+        image_resolution: getImageResolution(),
+        image_size: getImageSizeOption(),
+        images: selectedImages,
+        max_images: count,
+        prompt,
+      });
+    } else {
+      createResponse = await createTextToImageTask({
+        image_resolution: getImageResolution(),
+        image_size: getImageSizeOption(),
+        max_images: count,
+        prompt,
+      });
+    }
 
     if ('error' in createResponse) {
       useAiGenerateStore.setState({ errorMessage: createResponse.error, generationStatus: 'failed' });
@@ -150,25 +174,49 @@ const UnmemorizedAiGenerate = () => {
 
       <div className={styles.content}>
         <div className={styles.section}>
-          <h3 className={styles['section-title']}>Choose Style</h3>
-          <div className={styles['style-card']}>
-            <div className={styles['style-preview']}>
-              <img alt="Logo preview" className={styles['style-image']} src="https://picsum.photos/60" />
-            </div>
-            <span className={styles['style-name']}>Logo with Text</span>
-            <span className={styles['style-arrow']}>›</span>
-          </div>
+          <h3 className={styles['section-title']}>Mode</h3>
+          <Space size={8}>
+            <Button
+              className={classNames(styles['mode-button'], {
+                [styles.active]: mode === 'text-to-image',
+              })}
+              onClick={() => setMode('text-to-image')}
+              size="large"
+            >
+              Text to Image
+            </Button>
+            <Button
+              className={classNames(styles['mode-button'], {
+                [styles.active]: mode === 'edit',
+              })}
+              onClick={() => setMode('edit')}
+              size="large"
+            >
+              Edit Image
+            </Button>
+          </Space>
         </div>
 
+        {mode === 'edit' && (
+          <div className={styles.section}>
+            <h3 className={styles['section-title']}>Upload Images</h3>
+            <ImageUploadArea images={selectedImages} onAdd={addSelectedImage} onRemove={removeSelectedImage} />
+          </div>
+        )}
+
         <div className={styles.section}>
-          <h3 className={styles['section-title']}>Pattern description</h3>
+          <h3 className={styles['section-title']}>{mode === 'edit' ? 'Edit prompt' : 'Pattern description'}</h3>
           <div className={styles['input-wrapper']}>
             <TextArea
               className={styles.textarea}
-              maxLength={300}
+              maxLength={mode === 'edit' ? 5000 : 300}
               onChange={(e) => useAiGenerateStore.setState({ patternDescription: e.target.value })}
               onKeyDown={(e) => e.stopPropagation()}
-              placeholder="Please describe the logo pattern you would like to create."
+              placeholder={
+                mode === 'edit'
+                  ? 'Please describe how you would like to edit the images.'
+                  : 'Please describe the logo pattern you would like to create.'
+              }
               rows={5}
               showCount={{
                 formatter: ({ count: currentCount, maxLength }) => (
@@ -185,30 +233,32 @@ const UnmemorizedAiGenerate = () => {
           </div>
         </div>
 
-        <div className={styles.section}>
-          <h3 className={styles['section-title']}>Text to display</h3>
-          <div className={styles['input-wrapper']}>
-            <TextArea
-              className={styles.textarea}
-              maxLength={15}
-              onChange={(e) => useAiGenerateStore.setState({ textToDisplay: e.target.value })}
-              onKeyDown={(e) => e.stopPropagation()}
-              placeholder="Please ether the text you would like to display."
-              rows={3}
-              showCount={{
-                formatter: ({ count: currentCount, maxLength }) => (
-                  <div className={styles['count-wrapper']}>
-                    <span className={styles.count}>
-                      {currentCount} / {maxLength}
-                    </span>
-                    <BulbOutlined className={styles['bulb-icon']} />
-                  </div>
-                ),
-              }}
-              value={textToDisplay}
-            />
+        {mode === 'text-to-image' && (
+          <div className={styles.section}>
+            <h3 className={styles['section-title']}>Text to display</h3>
+            <div className={styles['input-wrapper']}>
+              <TextArea
+                className={styles.textarea}
+                maxLength={15}
+                onChange={(e) => useAiGenerateStore.setState({ textToDisplay: e.target.value })}
+                onKeyDown={(e) => e.stopPropagation()}
+                placeholder="Please ether the text you would like to display."
+                rows={3}
+                showCount={{
+                  formatter: ({ count: currentCount, maxLength }) => (
+                    <div className={styles['count-wrapper']}>
+                      <span className={styles.count}>
+                        {currentCount} / {maxLength}
+                      </span>
+                      <BulbOutlined className={styles['bulb-icon']} />
+                    </div>
+                  ),
+                }}
+                value={textToDisplay}
+              />
+            </div>
           </div>
-        </div>
+        )}
 
         <div className={styles.section}>
           <h3 className={styles['section-title']}>Image Dimensions</h3>
