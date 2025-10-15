@@ -29,6 +29,13 @@
       > input {
         padding: 1px;
       }
+
+      &.long {
+        width: 70px;
+        > input {
+          width: 70px;
+        }
+      }
     }
   }
 }

@@ -9,6 +9,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import { sliderTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -16,7 +17,6 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import ImageData from '@core/helpers/image-data';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -25,20 +25,17 @@ import type { IImageDataResult } from '@core/interfaces/IImage';
 
 import styles from './ImageOptions.module.scss';
 
-let svgCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
-
 interface Props {
   elem: Element;
 }
 
 const ImageOptions = ({ elem }: Props): React.JSX.Element => {
-  const lang = useI18n().beambox.right_panel.object_panel.option_panel;
+  const {
+    laser_panel: tLaserPanel,
+    object_panel: { option_panel: lang },
+  } = useI18n().beambox.right_panel;
   const { updateObjectPanel } = useContext(ObjectPanelContext);
-  const thresholdCache = useRef(Array.from({ length: 256 }).fill(null));
+  const thresholdCache = useRef(Array.from<null | string>({ length: 256 }).fill(null));
   const curCallID = useRef(0);
   const nextCallID = useRef(1);
   // FIXME: Swiftray Gcode converter(Promark) treat transparent pixel as white pixel
@@ -51,10 +48,10 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
     (changes: { [key: string]: boolean | number | string }): void => {
       const batchCommand: IBatchCommand = new history.BatchCommand('Image Option Panel');
       const setAttribute = (key: string, value: boolean | number | string) => {
-        svgCanvas.undoMgr.beginUndoableChange(key, [elem]);
+        undoManager.beginUndoableChange(key, [elem]);
         elem.setAttribute(key, value as string);
 
-        const cmd = svgCanvas.undoMgr.finishUndoableChange();
+        const cmd = undoManager.finishUndoableChange();
 
         if (!cmd.isEmpty()) {
           batchCommand.addSubCommand(cmd);
@@ -76,10 +73,13 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
       }
 
       if (!batchCommand.isEmpty()) {
-        svgCanvas.undoMgr.addCommandToHistory(batchCommand);
+        undoManager.addCommandToHistory(batchCommand);
       }
+
+      // Force update this component
+      updateObjectPanel();
     },
-    [elem],
+    [elem, updateObjectPanel],
   );
 
   const generateImageData = useCallback(
@@ -116,9 +116,8 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
       'data-threshold': isShading ? 254 : 128,
       'xlink:href': pngBase64,
     });
-    updateObjectPanel();
     LayerPanelController.checkGradient();
-  }, [elem, changeAttribute, generateImageData, updateObjectPanel]);
+  }, [elem, changeAttribute, generateImageData]);
 
   const handlePwmClick = useCallback(() => {
     const cur = elem.getAttribute('data-pwm') === '1';
@@ -126,11 +125,12 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
     changeAttribute({
       'data-pwm': cur ? '0' : '1',
     });
-    updateObjectPanel();
-  }, [elem, changeAttribute, updateObjectPanel]);
+  }, [elem, changeAttribute]);
 
   const handleThresholdChange = useCallback(
-    async (val: number) => {
+    async (val: null | number) => {
+      if (val === null) return;
+
       const callID = nextCallID.current;
 
       nextCallID.current += 1;
@@ -151,10 +151,9 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
           'data-threshold': val,
           'xlink:href': result,
         });
-        updateObjectPanel();
       }
     },
-    [elem, changeAttribute, generateImageData, updateObjectPanel],
+    [elem, changeAttribute, generateImageData],
   );
 
   const isGradient = elem.getAttribute('data-shading') === 'true';
@@ -200,7 +199,7 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
   let thresholdBlock = null;
 
   if (!isGradient) {
-    const threshold = Number.parseInt(elem.getAttribute('data-threshold'), 10) || 128;
+    const threshold = Number.parseInt(elem.getAttribute('data-threshold') ?? '128', 10) || 128;
 
     thresholdBlock = isMobile() ? (
       <Popover
@@ -260,6 +259,54 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
     );
   }
 
+  const depthPass = +(elem.getAttribute('data-pass') ?? '0');
+  const depthZStep = +(elem.getAttribute('data-zstep') ?? '0');
+  const promarkDepthBlock = useMemo(() => {
+    if (!isPromark || !isGradient) return null;
+
+    return (
+      <Fragment key="depth-engraving">
+        <div className={styles['option-block']}>
+          <div className={styles.label}>{lang.depth_engraving}</div>
+          <Switch
+            checked={depthPass > 0}
+            onChange={() => changeAttribute({ 'data-pass': depthPass === 0 ? 100 : -depthPass })}
+            size="small"
+          />
+        </div>
+        {depthPass > 0 && (
+          <>
+            <div className={styles['option-block']}>
+              <div className={styles.label}>{lang.layer_count}</div>
+              <UnitInput
+                className={{ [styles['option-input']]: true }}
+                decimal={0}
+                defaultValue={depthPass}
+                getValue={(val) => changeAttribute({ 'data-pass': val })}
+                max={1000}
+                min={1}
+                unit=""
+              />
+            </div>
+            <div className={styles['option-block']}>
+              <div className={styles.label}>{tLaserPanel.z_step}</div>
+              <UnitInput
+                className={{ [styles.long]: true, [styles['option-input']]: true }}
+                decimal={3}
+                defaultValue={depthZStep}
+                getValue={(val) => changeAttribute({ 'data-zstep': val })}
+                max={depthPass > 0 ? 10 / depthPass : 10}
+                min={0}
+                step={0.01}
+                unit="mm"
+              />
+            </div>
+          </>
+        )}
+      </Fragment>
+    );
+  }, [isPromark, isGradient, depthPass, depthZStep, lang, tLaserPanel.z_step, changeAttribute]);
+
   return isMobile() ? (
     <>
       {gradientBlock}
@@ -269,6 +316,7 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
     <div className={styles.options}>
       {gradientBlock}
       {thresholdBlock}
+      {promarkDepthBlock}
     </div>
   );
 };

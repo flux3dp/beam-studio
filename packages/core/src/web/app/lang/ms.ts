@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: 'Warna',
           current_time: 'Masa semasa',
+          depth_engraving: 'Ukiran 3D',
           fill: 'Isi',
           font_family: 'Font',
           font_size: 'Saiz',
           font_style: 'Gaya',
+          layer_count: 'Bilangan lapisan',
           letter_spacing: 'Jarak huruf',
           line_spacing: 'Jarak baris',
           number: 'Nombor jujukan',

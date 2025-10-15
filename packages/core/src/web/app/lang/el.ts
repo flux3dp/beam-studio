@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: 'Χρώμα',
           current_time: 'Τρέχουσα ώρα',
+          depth_engraving: '3D χάραξη',
           fill: 'Εσωτερική πλήρωση',
           font_family: 'Γραμματοσειρά',
           font_size: 'Μέγεθος',
           font_style: 'Στυλ',
+          layer_count: 'Αριθμός επιπέδων',
           letter_spacing: 'Διάστημα γραμμάτων',
           line_spacing: 'Διάστημα γραμμών',
           number: 'Αριθμός ακολουθίας',

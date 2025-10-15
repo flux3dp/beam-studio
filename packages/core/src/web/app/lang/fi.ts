@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: 'Väri',
           current_time: 'Nykyinen aika',
+          depth_engraving: '3D-kaiverrus',
           fill: 'Täyttö',
           font_family: 'Fontti',
           font_size: 'Koko',
           font_style: 'Tyyli',
+          layer_count: 'Kerrosmäärä',
           letter_spacing: 'Kirjainväli',
           line_spacing: 'Riviväli',
           number: 'Järjestysnumero',

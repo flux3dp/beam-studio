@@ -806,10 +806,12 @@ const lang: ILang = {
         option_panel: {
           color: '颜色',
           current_time: '当前时间',
+          depth_engraving: '3D 雕刻',
           fill: '填充',
           font_family: '字体',
           font_size: '字级',
           font_style: '字型',
+          layer_count: '层数',
           letter_spacing: '字距',
           line_spacing: '行距',
           number: '序号',
