@@ -62,6 +62,30 @@ $button-border: #d9d9d9;
   }
 }
 
+// Mode Buttons
+.mode-button {
+  min-width: 140px;
+  border: 1px solid $button-border;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: $primary-blue;
+    color: $primary-blue;
+  }
+
+  &.active {
+    border-color: $primary-blue;
+    background: $primary-blue;
+    color: white;
+
+    &:hover {
+      background: #40a9ff;
+      border-color: #40a9ff;
+      color: white;
+    }
+  }
+}
+
 .section-title {
   margin: 0 0 12px 0;
   font-size: 14px;
