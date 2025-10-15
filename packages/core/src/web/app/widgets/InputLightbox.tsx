@@ -1,60 +1,60 @@
-import * as React from 'react';
+import React from 'react';
 import { useRef, useState } from 'react';
 
 import type { InputRef } from 'antd';
 import { Form, Input, Modal } from 'antd';
 
-import Constants from '@core/app/constants/input-lightbox-constants';
+import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import i18n from '@core/helpers/i18n';
+import type { InputType, InputValue } from '@core/interfaces/IDialog';
 
-interface Props {
+interface Props<T extends InputType> {
   caption: string;
   confirmText: string;
   defaultValue: string;
   inputHeader: string;
   maxLength: number;
-  onClose: (from: string) => void;
-  onSubmit: (value: string) => Promise<void> | void;
-  type: string;
+  onCancel?: () => void;
+  onClose: () => void;
+  onSubmit: (value: InputValue<T>) => Promise<void> | void;
+  type: T;
 }
 
-const INPUT_TYPE_MAP = {
-  [Constants.TYPE_FILE]: 'file',
-  [Constants.TYPE_NUMBER]: 'number',
-  [Constants.TYPE_PASSWORD]: 'password',
-  [Constants.TYPE_TEXT]: 'text',
-};
-
-const InputLightBox = (props: Props): React.JSX.Element => {
-  const inputRef = useRef<InputRef>();
+function InputLightBox<T extends InputType>({
+  caption,
+  confirmText,
+  defaultValue,
+  inputHeader,
+  maxLength,
+  onCancel,
+  onClose,
+  onSubmit,
+  type,
+}: Props<T>): JSX.Element {
+  const inputRef = useRef<InputRef>(null);
   const [allowSubmit, setAllowSubmit] = useState(false);
-  const { caption, confirmText, defaultValue, inputHeader, maxLength, onClose, onSubmit, type } = props;
 
-  const onCancel = (e) => {
-    e.preventDefault();
-    onClose('cancel');
+  useNewShortcutsScope();
+
+  const handleCancel = () => {
+    onClose();
+    onCancel?.();
   };
 
-  const processData = (e) => {
-    e.preventDefault();
+  const handleOk = () => {
+    const inputElement = inputRef.current?.input;
 
-    let returnValue;
-    const inputElement = inputRef.current.input;
+    if (inputElement) {
+      if (type === 'file') {
+        (onSubmit as (value: FileList) => void)(inputElement.files!);
+      } else if (type === 'number') {
+        (onSubmit as (value: number) => void)(Number(inputElement.value));
+      } else {
+        (onSubmit as (value: string) => void)(inputElement.value);
+      }
 
-    if (Constants.TYPE_FILE === type) {
-      returnValue = inputElement.files;
-    } else {
-      returnValue = inputElement.value;
+      onClose();
     }
-
-    const result = onSubmit(returnValue);
-
-    console.info('Submit result', result);
-    onClose('submit');
-  };
-
-  const handleKeyDown = (e: React.KeyboardEvent) => {
-    e.stopPropagation();
   };
 
   const inputKeyUp = (e: React.ChangeEvent<HTMLInputElement> | React.KeyboardEvent) => {
@@ -64,16 +64,14 @@ const InputLightBox = (props: Props): React.JSX.Element => {
     setAllowSubmit(target.value.length > 0 || (targetFiles.length || 0) > 0);
   };
 
-  const inputType = INPUT_TYPE_MAP[type] || 'text';
-
   return (
     <Modal
       cancelText={i18n.lang.alert.cancel}
       centered
       okButtonProps={{ disabled: !allowSubmit }}
       okText={confirmText || i18n.lang.alert.confirm}
-      onCancel={(e) => onCancel(e)}
-      onOk={(e) => processData(e)}
+      onCancel={handleCancel}
+      onOk={handleOk}
       open
       title={caption}
     >
@@ -85,15 +83,14 @@ const InputLightBox = (props: Props): React.JSX.Element => {
             defaultValue={defaultValue}
             maxLength={maxLength}
             onChange={inputKeyUp}
-            onKeyDown={(e) => handleKeyDown(e)}
             onKeyUp={inputKeyUp}
             ref={inputRef}
-            type={inputType}
+            type={type}
           />
         </Form.Item>
       </Form>
     </Modal>
   );
-};
+}
 
 export default InputLightBox;

@@ -9,7 +9,6 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
-import InputLightBoxConstants from '@core/app/constants/input-lightbox-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import storage from '@core/implementations/storage';
@@ -22,7 +21,7 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 import type { TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
-import type { IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
+import type { FirmwareType, IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
 import Camera from './api/camera';
@@ -241,7 +240,7 @@ class DeviceMaster {
         onSubmit: async (password: string) => {
           resolve(await this.auth(device.info.uuid, password));
         },
-        type: InputLightBoxConstants.TYPE_PASSWORD,
+        type: 'password',
       });
     });
 
@@ -1479,14 +1478,14 @@ class DeviceMaster {
   }
 
   // update functions
-  updateFirmware = async (file: File, onProgress: (...args: any[]) => void) => {
+  updateFirmware = async (file: File, type: FirmwareType, onProgress: (...args: any[]) => void) => {
     const controlSocket = await this.getControl();
 
     if (onProgress) {
       controlSocket.setProgressListener(onProgress);
     }
 
-    return controlSocket.addTask(controlSocket.fwUpdate, file);
+    return controlSocket.addTask(controlSocket.updateFirmware, file, type);
   };
 
   uploadFisheyeParams = async (data: string, onProgress: (...args: any[]) => void) => {

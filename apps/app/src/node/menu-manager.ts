@@ -183,8 +183,8 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         hasModules &&
           isDevMode && {
             click: handleClick,
-            id: 'CATRIDGE_CHIP_SETTING',
-            label: 'Catridge Chip Setting',
+            id: 'CARTRIDGE_CHIP_SETTING',
+            label: 'Cartridge Chip Setting',
           },
       ].filter(Boolean),
     },
@@ -206,9 +206,25 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       ],
     },
     !isPromark && {
-      click: handleClick,
-      id: 'UPDATE_FIRMWARE',
-      label: r.update_firmware,
+      id: 'UPDATE_MACHINE',
+      label: r.update_machine,
+      submenu: [
+        {
+          click: handleClick,
+          id: 'UPDATE_FIRMWARE',
+          label: r.update_firmware,
+        },
+        {
+          click: handleClick,
+          id: 'UPDATE_MAINBOARD',
+          label: r.update_mainboard,
+        },
+        isBeamo2 && {
+          click: handleClick,
+          id: 'UPDATE_PRINTER_BOARD',
+          label: r.update_printer_board,
+        },
+      ].filter(Boolean),
     },
     !isPromark && {
       id: 'DOWNLOAD_LOG',

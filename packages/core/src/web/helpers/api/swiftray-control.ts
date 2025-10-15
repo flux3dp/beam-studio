@@ -6,7 +6,7 @@ import type { RawChipSettings } from '@core/interfaces/Cartridge';
 import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interfaces/FisheyePreview';
 import type { Mode, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
-import type { IDeviceDetailInfo } from '@core/interfaces/IDevice';
+import type { FirmwareType, IDeviceDetailInfo } from '@core/interfaces/IDevice';
 import type { Field, LensCorrection } from '@core/interfaces/Promark';
 
 import type { SwiftrayClient } from './swiftray-client';
@@ -1319,7 +1319,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     });
   };
 
-  fwUpdate = (file: File) =>
+  updateFirmware = (file: File, type: FirmwareType) =>
     new Promise((resolve, reject) => {
       const blob = new Blob([file], { type: 'binary/flux-firmware' });
 
@@ -1335,7 +1335,7 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
           reject(response);
         }
       });
-      this.sc.updateFirmware(blob);
+      this.sc.updateFirmware(blob, type);
 
       this.setDefaultErrorResponse(reject);
       this.setDefaultFatalResponse(reject);

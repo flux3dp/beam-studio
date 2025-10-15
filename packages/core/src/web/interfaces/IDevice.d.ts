@@ -4,6 +4,8 @@ import type Camera from '../helpers/api/camera';
 
 import type IControlSocket from './IControlSocket';
 
+export type FirmwareType = 'firmware' | 'headboard' | 'mainboard';
+
 export interface IDeviceInfo {
   addr: string;
   alive: boolean;

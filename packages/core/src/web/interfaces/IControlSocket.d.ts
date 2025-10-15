@@ -5,7 +5,7 @@ import type { SwiftrayClient } from '@core/helpers/api/swiftray-client';
 
 import type { RawChipSettings } from './Cartridge';
 import type { FisheyeCameraParameters, RotationParameters3D } from './FisheyePreview';
-import type { IDeviceDetailInfo, IReport } from './IDevice';
+import type { FirmwareType, IDeviceDetailInfo, IReport } from './IDevice';
 import type { ButtonState, Field, LensCorrection } from './Promark';
 import type { WrappedWebSocket } from './WebSocket';
 
@@ -38,7 +38,6 @@ interface IControlSocket extends EventEmitter {
   fetchFisheye3DRotation?: () => Promise<RotationParameters3D>;
   fetchFisheyeParams?: () => Promise<FisheyeCameraParameters>;
   fileInfo(path: string, fileName: string): Promise<unknown[]>;
-  fwUpdate(file: File): Promise<unknown>;
   getCartridgeChipData?: () => Promise<{ data: { result: RawChipSettings }; status: string }>;
   getDeviceSetting(name: string): Promise<{ status: string; value: string }>;
   getDoorOpen(): Promise<{ value: string }>;
@@ -109,6 +108,7 @@ interface IControlSocket extends EventEmitter {
   setProgressListener(listener: (...args: unknown[]) => void): void;
   start(): Promise<unknown>;
   takeReferenceZ?: (args?: { F?: number; H?: number; X?: number; Y?: number }) => Promise<number>;
+  updateFirmware(file: File, type: FirmwareType): Promise<unknown>;
   updateFisheye3DRotation?: (data: RotationParameters3D) => Promise<{ status: string }>;
   upload(data: any, path?: string, fileName?: string): Promise<void>;
   uploadFisheyeParams?: (data: string) => Promise<{ status: string }>;

@@ -1,5 +1,6 @@
 // Swiftray Client Typescript API Client
 import { EventEmitter } from 'eventemitter3';
+import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
@@ -20,7 +21,7 @@ import type { RequirementKey } from '@core/helpers/version-checker';
 import versionChecker from '@core/helpers/version-checker';
 import communicator from '@core/implementations/communicator';
 import type { SwiftrayConvertType, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
-import type { IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
+import type { FirmwareType, IDeviceDetailInfo, IDeviceInfo, IReport } from '@core/interfaces/IDevice';
 import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 import type { ButtonState } from '@core/interfaces/Promark';
 
@@ -510,8 +511,14 @@ class SwiftrayClient extends EventEmitter {
     return this.action(`/devices/${this.port}`, 'deleteSettings', { name });
   }
 
-  public async updateFirmware(blob: Blob): Promise<{ error?: ErrorObject; success: boolean }> {
-    return this.action(`/devices/${this.port}`, 'updateFirmware', blob);
+  public async updateFirmware(blob: Blob, type: FirmwareType): Promise<{ error?: ErrorObject; success: boolean }> {
+    const command = match(type)
+      .with('firmware', () => 'updateFirmware')
+      .with('headboard', () => 'updateHeadboard')
+      .with('mainboard', () => 'updateMainboard')
+      .exhaustive();
+
+    return this.action(`/devices/${this.port}`, command, blob);
   }
 
   public async endMode(): Promise<{ error?: ErrorObject; success: boolean }> {

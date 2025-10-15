@@ -11,6 +11,7 @@ import { calibrateCamera, showModuleCalibration } from '@core/app/components/dia
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
+import { showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartridge';
 import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -18,11 +19,11 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { showDiodeCalibration } from '@core/app/views/beambox/Diode-Calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
-import checkFirmware from '@core/helpers/checkFirmware';
 import { downloadCameraData, uploadCameraData } from '@core/helpers/device/camera-data-backup';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
+import checkFirmware from '@core/helpers/device/updateFirmware/checkFirmware';
+import firmwareUpdater from '@core/helpers/device/updateFirmware/firmwareUpdater';
 import DeviceMaster from '@core/helpers/device-master';
-import firmwareUpdater from '@core/helpers/firmware-updater';
 import { checkIsAtEditor } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import { getDetectedModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -275,7 +276,7 @@ export default {
   CALIBRATE_UV_WHITE_INK_MODULE: async (device: IDeviceInfo): Promise<void> => {
     calibrateModule(device, LayerModule.UV_WHITE_INK);
   },
-  CATRIDGE_CHIP_SETTING: async (device: IDeviceInfo): Promise<void> => {
+  CARTRIDGE_CHIP_SETTING: async (device: IDeviceInfo): Promise<void> => {
     const res = await DeviceMaster.select(device);
 
     if (!res.success) {
@@ -504,10 +505,18 @@ export default {
     showPromarkSettings(device);
   },
   UPDATE_FIRMWARE: async (device: IDeviceInfo): Promise<void> => {
-    const deviceStatus = await checkDeviceStatus(device);
-
-    if (deviceStatus) {
+    if (await checkDeviceStatus(device)) {
       executeFirmwareUpdate(device);
+    }
+  },
+  UPDATE_MAINBOARD: async (device: IDeviceInfo): Promise<void> => {
+    if (await checkDeviceStatus(device)) {
+      showUploadFirmwareDialog(device, 'mainboard');
+    }
+  },
+  UPDATE_PRINTER_BOARD: async (device: IDeviceInfo): Promise<void> => {
+    if (await checkDeviceStatus(device)) {
+      showUploadFirmwareDialog(device, 'headboard');
     }
   },
   UPLOAD_CALIBRATION_DATA: async (device: IDeviceInfo): Promise<void> => {

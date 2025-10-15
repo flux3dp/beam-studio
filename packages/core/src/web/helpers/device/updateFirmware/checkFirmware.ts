@@ -2,14 +2,20 @@ import { match, P } from 'ts-pattern';
 
 import { nxModelsArray } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { axiosFluxId } from '@core/helpers/api/flux-id';
+import versionCompare from '@core/helpers/version-compare';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import { axiosFluxId } from './api/flux-id';
-import versionCompare from './version-compare';
-
-export default async function checkFirmware(
-  device: IDeviceInfo,
-): Promise<{ [key: string]: boolean | string; needUpdate: boolean }> {
+export default async function checkFirmware(device: IDeviceInfo): Promise<
+  | {
+      changelog_en: string;
+      changelog_zh: string;
+      downloadUrl: string;
+      latestVersion: string;
+      needUpdate: boolean;
+    }
+  | { needUpdate: false }
+> {
   if (!navigator.onLine) {
     throw new Error('Offline');
   }
@@ -40,8 +46,6 @@ export default async function checkFirmware(
   } catch (err) {
     console.error('Error when getting latest firmware version', err);
 
-    return {
-      needUpdate: false,
-    };
+    return { needUpdate: false };
   }
 }
