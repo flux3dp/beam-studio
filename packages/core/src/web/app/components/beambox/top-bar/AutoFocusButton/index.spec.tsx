@@ -165,7 +165,6 @@ describe('AutoFocusButton', () => {
     hasUnsavedChange: false,
     isColorPreviewing: false,
     isPathEditing: false,
-    mode: CanvasMode.Draw,
     selectedDevice: { model: 'fad1', name: 'Test Device' },
     setIsColorPreviewing: jest.fn(),
     setIsPathEditing: jest.fn(),

@@ -135,7 +135,7 @@ describe('test GoButton', () => {
     mockHandleExportClick.mockReturnValue(mockExport);
 
     const { container } = render(
-      <CanvasContext.Provider value={{ endPreviewMode, mode: CanvasMode.Draw, selectedDevice: mockDevice } as any}>
+      <CanvasContext.Provider value={{ endPreviewMode, selectedDevice: mockDevice } as any}>
         <GoButton hasDiscoverdMachine={false} />
       </CanvasContext.Provider>,
     );
