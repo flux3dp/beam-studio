@@ -3,8 +3,8 @@ import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
 import TimeEstimationButton from './TimeEstimationButton';
 
@@ -34,11 +34,12 @@ jest.mock('@core/helpers/file/export', () => ({
   toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
 }));
 
-jest.mock('@core/app/contexts/CanvasContext', () => ({
-  CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
-}));
-
 describe('should render correctly', () => {
+  beforeEach(() => {
+    useCanvasStore.getState().setMode(CanvasMode.Draw);
+    jest.clearAllMocks();
+  });
+
   it('should render correctly with estimatedTime', () => {
     Object.defineProperty(window, 'os', {
       value: 'MacOS',
@@ -59,23 +60,17 @@ describe('should render correctly', () => {
   });
 
   it('should render correctly when isPathPreviewing', () => {
+    useCanvasStore.getState().setMode(CanvasMode.PathPreview);
+
     const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.PathPreview,
-          } as any
-        }
+      <TimeEstimationButtonContext.Provider
+        value={{
+          estimatedTime: 60,
+          setEstimatedTime: () => {},
+        }}
       >
-        <TimeEstimationButtonContext.Provider
-          value={{
-            estimatedTime: 60,
-            setEstimatedTime: () => {},
-          }}
-        >
-          <TimeEstimationButton />
-        </TimeEstimationButtonContext.Provider>
-      </CanvasContext.Provider>,
+        <TimeEstimationButton />
+      </TimeEstimationButtonContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();

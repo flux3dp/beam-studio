@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
 import LeftPanel from '.';
 
@@ -64,6 +64,7 @@ describe('test LeftPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     on.mockReturnValue(mockUnsubscribe);
+    useCanvasStore.getState().setMode(CanvasMode.Draw);
   });
 
   test('neither in previewing nor in path previewing', () => {
@@ -72,18 +73,7 @@ describe('test LeftPanel', () => {
     });
     document.body.innerHTML = '<div id="svg_editor" />';
 
-    const { container, unmount } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.Draw,
-            togglePathPreview: jest.fn(),
-          } as any
-        }
-      >
-        <LeftPanel />
-      </CanvasContext.Provider>,
-    );
+    const { container, unmount } = render(<LeftPanel />);
 
     expect(container).toMatchSnapshot();
     unmount();
@@ -91,64 +81,32 @@ describe('test LeftPanel', () => {
 
   test('not in path previewing', () => {
     Object.defineProperty(window, 'os', { value: 'Windows' });
+    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
-    const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.Preview,
-            togglePathPreview: jest.fn(),
-          } as any
-        }
-      >
-        <LeftPanel />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<LeftPanel />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('in path previewing', () => {
     Object.defineProperty(window, 'os', { value: 'Windows' });
+    useCanvasStore.getState().setMode(CanvasMode.PathPreview);
 
-    const togglePathPreview = jest.fn();
-    const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.PathPreview,
-            togglePathPreview,
-          } as any
-        }
-      >
-        <LeftPanel />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<LeftPanel />);
 
     expect(container).toMatchSnapshot();
-
-    expect(togglePathPreview).not.toBeCalled();
 
     const div = container.querySelector('div#Exit-Preview');
 
     fireEvent.click(div);
-    expect(togglePathPreview).toHaveBeenCalledTimes(1);
+    expect(useCanvasStore.getState().mode).toBe(CanvasMode.Draw);
   });
 
   test('in curve engraving mode', () => {
     Object.defineProperty(window, 'os', { value: 'Windows' });
+    useCanvasStore.getState().setMode(CanvasMode.CurveEngraving);
 
-    const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.CurveEngraving,
-          } as any
-        }
-      >
-        <LeftPanel />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<LeftPanel />);
 
     expect(container).toMatchSnapshot();
   });
