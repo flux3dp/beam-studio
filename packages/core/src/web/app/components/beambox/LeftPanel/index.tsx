@@ -1,6 +1,8 @@
 import React, { memo, useContext, useEffect, useRef } from 'react';
 
+import { pick } from 'remeda';
 import { match } from 'ts-pattern';
+import { useShallow } from 'zustand/shallow';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import CurveEngravingTool from '@core/app/components/beambox/LeftPanel/components/CurveEngravingTool';
@@ -17,8 +19,8 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './index.module.scss';
 
 const UnmemorizedLeftPanel = () => {
-  const mode = useCanvasStore((state) => state.mode);
-  const { toggleAutoFocus, togglePathPreview } = useContext(CanvasContext);
+  const { mode, togglePathPreview } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'togglePathPreview'])));
+  const { toggleAutoFocus } = useContext(CanvasContext);
   const modeRef = useRef(mode);
   const {
     beambox: { left_panel },

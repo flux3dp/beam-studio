@@ -4,6 +4,7 @@ import { Button } from 'antd';
 import classNames from 'classnames';
 
 import { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 
@@ -19,7 +20,6 @@ interface Props {
   rapidDist: string;
   rapidTime: string;
   size: string;
-  togglePathPreview: () => void;
 }
 
 function SidePanel({
@@ -32,8 +32,8 @@ function SidePanel({
   rapidDist,
   rapidTime,
   size,
-  togglePathPreview,
 }: Props): React.JSX.Element {
+  const togglePathPreview = useCanvasStore((state) => state.togglePathPreview);
   const LANG = useI18n().beambox.path_preview;
   const renderDataBlock = (label: string, value: string): React.JSX.Element => (
     <div className={styles['data-block']}>

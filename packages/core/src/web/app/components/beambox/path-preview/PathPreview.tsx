@@ -19,7 +19,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -761,7 +761,7 @@ class PathPreview extends React.Component<Props, State> {
   };
 
   updateGcode = async (): Promise<void> => {
-    const { togglePathPreview } = this.context;
+    const { togglePathPreview } = useCanvasStore.getState();
 
     let fileTimeCost: number;
     let gcodeBlob: Blob | undefined;
@@ -1908,7 +1908,6 @@ class PathPreview extends React.Component<Props, State> {
   }
 
   render(): React.JSX.Element {
-    const { togglePathPreview } = this.context;
     const { height, isInverting, playState, speedLevel, width, workspace } = this.state;
     const LANG = i18n.lang.beambox.path_preview;
 
@@ -2001,13 +2000,10 @@ class PathPreview extends React.Component<Props, State> {
           rapidDist={`${Math.round(this.gcodePreview.g0DistReal)} mm`}
           rapidTime={this.transferTime(this.gcodePreview.g0TimeReal)}
           size={this.renderSize()}
-          togglePathPreview={togglePathPreview}
         />
       </div>
     );
   }
 }
-
-PathPreview.contextType = CanvasContext;
 
 export default PathPreview;
