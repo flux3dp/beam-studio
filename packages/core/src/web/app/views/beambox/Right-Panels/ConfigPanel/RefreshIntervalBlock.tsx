@@ -15,7 +15,7 @@ const RefreshIntervalBlock = ({
       panelType="button"
       title="Refresh per"
       type={type}
-      unit="rows"
+      unit="sec"
     />
   );
 };
