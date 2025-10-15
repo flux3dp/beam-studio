@@ -48,8 +48,6 @@ export type GlobalPreference = {
   'anti-aliasing': boolean;
   'auto-switch-tab': boolean;
   auto_align: boolean;
-  blade_precut: boolean;
-  blade_radius: number;
   continuous_drawing: boolean;
   'crop-task-thumbnail': boolean;
   curve_engraving_speed_limit: boolean;
@@ -63,7 +61,6 @@ export type GlobalPreference = {
   'enable-custom-backlash': boolean;
   'enable-custom-preview-height': boolean;
   'enable-uv-print-file': boolean;
-  enable_mask: boolean;
   fast_gradient: boolean;
   'font-convert': '1.0' | '2.0';
   'font-substitute': boolean;
@@ -82,8 +79,6 @@ export type GlobalPreference = {
   padding_accel: number;
   padding_accel_diode: number;
   'path-engine': 'fluxghost' | 'swiftray';
-  precut_x: number;
-  precut_y: number;
   preview_movement_speed_level: PreviewSpeedLevelType;
   'print-advanced-mode': boolean;
   'reverse-engraving': boolean;

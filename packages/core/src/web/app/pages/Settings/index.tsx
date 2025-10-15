@@ -16,7 +16,6 @@ import Editor from '@core/app/components/settings/Editor';
 import Engraving from '@core/app/components/settings/Engraving';
 import Experimental from '@core/app/components/settings/Experimental';
 import General from '@core/app/components/settings/General';
-import Mask from '@core/app/components/settings/Mask';
 import Module from '@core/app/components/settings/Module';
 import Path from '@core/app/components/settings/Path';
 import Privacy from '@core/app/components/settings/Privacy';
@@ -110,7 +109,6 @@ function Settings(): React.JSX.Element {
             <Editor options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
             <Engraving options={commonBooleanOptions} />
             <Path options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
-            <Mask options={commonBooleanOptions} />
             <TextToPath options={commonBooleanOptions} />
             <Module options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
             <AdorModule unitInputProps={commonUnitInputProps} />

@@ -189,16 +189,6 @@ export const getExportOpt = async (
     }
   }
 
-  const bladeRadius = globalPreference['blade_radius'];
-
-  if (i18n.getActiveLang() === 'zh-cn' && bladeRadius > 0) {
-    config.blade = bladeRadius;
-
-    if (globalPreference['blade_precut']) {
-      config.precut = [globalPreference['precut_x'], globalPreference['precut_y']];
-    }
-  }
-
   if (opt.enableAutoFocus && addOnInfo.autoFocus) {
     config.af = true;
 
@@ -217,14 +207,8 @@ export const getExportOpt = async (
 
   const isBorderLess = documentState.borderless && addOnInfo.openBottom;
 
-  if (globalPreference['enable_mask'] || isBorderLess) {
-    const clipRect: [number, number, number, number] = [0, 0, 0, 0]; // top right bottom left
-
-    if (isBorderLess) {
-      clipRect[1] = constant.borderless.safeDistance.X;
-    }
-
-    config.mask = clipRect;
+  if (isBorderLess) {
+    config.mask = [0, constant.borderless.safeDistance.X, 0, 0]; // top right bottom left
   }
 
   if (opt.shouldUseFastGradient) {

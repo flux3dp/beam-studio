@@ -38,10 +38,6 @@ export type TFcodeOptionalConfig = Partial<{
    */
   ats: number;
   /**
-   * blade radius
-   */
-  blade: number;
-  /**
    * custom backlash
    */
   cbl: boolean;
@@ -112,10 +108,6 @@ export type TFcodeOptionalConfig = Partial<{
    * printing bottom padding
    */
   pbp: number;
-  /**
-   * precut position
-   */
-  precut: [number, number];
   prespray: [number, number, number, number];
   /**
    * printing slice height
