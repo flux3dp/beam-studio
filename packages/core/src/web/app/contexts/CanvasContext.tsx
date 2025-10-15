@@ -53,7 +53,6 @@ interface CanvasContextType {
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
   setupPreviewMode: (opts?: { callback?: () => void; showModal?: boolean }) => void;
   toggleAutoFocus: (forceState?: boolean) => Promise<void>;
-  togglePathPreview: () => void;
   updateCanvasContext: () => void;
 }
 
@@ -71,7 +70,6 @@ const CanvasContext = createContext<CanvasContextType>({
   setSelectedDevice: () => {},
   setupPreviewMode: () => {},
   toggleAutoFocus: async () => {},
-  togglePathPreview: () => {},
   updateCanvasContext: () => {},
 });
 
@@ -302,10 +300,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     }
   };
 
-  const togglePathPreview = () => {
-    setMode(mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview);
-  };
-
   const toggleAutoFocus = async (forceState?: boolean) => {
     const workarea = document.getElementById('workarea');
     const setCursor = (cursor: string) => {
@@ -357,7 +351,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         setSelectedDevice,
         setupPreviewMode,
         toggleAutoFocus,
-        togglePathPreview,
         updateCanvasContext,
       }}
     >
