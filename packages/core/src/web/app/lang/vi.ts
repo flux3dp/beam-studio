@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: 'Màu sắc',
           current_time: 'Thời gian hiện tại',
-          depth_engraving: 'Khắc 3D',
+          depth_engraving: 'Dập nổi',
           fill: 'Mức độ đặc',
           font_family: 'Phông chữ',
           font_size: 'Cỡ chữ',

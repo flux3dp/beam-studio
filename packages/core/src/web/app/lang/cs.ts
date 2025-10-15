@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: 'Barva',
           current_time: 'Aktuální čas',
-          depth_engraving: '3D gravírování',
+          depth_engraving: 'Ražba',
           fill: 'Výplň',
           font_family: 'Font',
           font_size: 'Velikost',

@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: '顏色',
           current_time: '目前時間',
-          depth_engraving: '3D 雕刻',
+          depth_engraving: '浮雕',
           fill: '填充',
           font_family: '字體',
           font_size: '字級',

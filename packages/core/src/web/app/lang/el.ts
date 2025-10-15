@@ -806,7 +806,7 @@ const lang: ILang = {
         option_panel: {
           color: 'Χρώμα',
           current_time: 'Τρέχουσα ώρα',
-          depth_engraving: '3D χάραξη',
+          depth_engraving: 'Ανάγλυφο',
           fill: 'Εσωτερική πλήρωση',
           font_family: 'Γραμματοσειρά',
           font_size: 'Μέγεθος',
