@@ -30,7 +30,6 @@ describe('side panel test', () => {
         rapidDist="30 mm"
         rapidTime="10 s"
         size="100 x 100 mm"
-        togglePathPreview={togglePathPreview}
       />,
     );
 
@@ -59,7 +58,6 @@ describe('side panel test', () => {
         rapidDist="30 mm"
         rapidTime="10 s"
         size="100 x 100 mm"
-        togglePathPreview={togglePathPreview}
       />,
     );
 
@@ -90,7 +88,6 @@ describe('side panel test', () => {
         rapidDist="30 mm"
         rapidTime="10 s"
         size="100 x 100 mm"
-        togglePathPreview={togglePathPreview}
       />,
     );
 
