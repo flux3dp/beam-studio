@@ -125,7 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'Masukkan panjang objek untuk melanjutkan kawasan kerja.',
       rotary_mode: 'Rotari',
       scale: 'Skala',
-      skip_prespray: 'Langkau pra-semburan',
+      skip_prespray: 'Langkau pembersihan awal',
       start_from: 'Mula Dari',
       start_position: 'Kedudukan Mula',
       start_work_button: 'Butang Laksana',
