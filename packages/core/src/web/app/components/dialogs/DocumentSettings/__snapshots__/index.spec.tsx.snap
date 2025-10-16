@@ -4402,7 +4402,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           class="title"
                           for="skipPrespray"
                         >
-                          Skip Prespray
+                          Skip purge
                         </label>
                         <div
                           class="control justify-start"
@@ -4597,7 +4597,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           <label
                             for="print_4c_module"
                           >
-                            Module 4C
+                            Module Printer
                           </label>
                         </div>
                         <div
