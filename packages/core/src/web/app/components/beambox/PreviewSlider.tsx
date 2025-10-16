@@ -1,6 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { Slider, Space, Tooltip } from 'antd';
+import { ConfigProvider, Slider, Space, Tooltip } from 'antd';
 
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
@@ -98,31 +98,33 @@ const PreviewSlider = (): React.ReactNode => {
           <Tooltip title={lang.editor.exposure}>
             <WorkareaIcons.Exposure className={styles.icon} />
           </Tooltip>
-          <Slider
-            className={styles.slider}
-            disabled={isRawMode && isDrawing}
-            max={Math.min(exposureSetting.max, 2000)}
-            min={Math.max(exposureSetting.min, 50)}
-            onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
-            onChangeComplete={async (value: number) => {
-              if (isRawMode && isDrawing) return;
+          <ConfigProvider theme={{ components: { Slider: { trackBgDisabled: '#bfbfbf' } } }}>
+            <Slider
+              className={styles.slider}
+              disabled={isRawMode && isDrawing}
+              max={Math.min(exposureSetting.max, 2000)}
+              min={Math.max(exposureSetting.min, 50)}
+              onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
+              onChangeComplete={async (value: number) => {
+                if (isRawMode && isDrawing) return;
 
-              setExposureSetting({ ...exposureSetting, value });
+                setExposureSetting({ ...exposureSetting, value });
 
-              try {
-                await setExposure(value);
-              } catch (e) {
-                console.error('Failed to set exposure', e);
-              }
+                try {
+                  await setExposure(value);
+                } catch (e) {
+                  console.error('Failed to set exposure', e);
+                }
 
-              if (PreviewModeController.isFullScreen) {
-                await PreviewModeController.previewFullWorkarea();
-              }
-            }}
-            step={exposureSetting.step}
-            tooltip={{ open: false }}
-            value={exposureSetting.value}
-          />
+                if (PreviewModeController.isFullScreen) {
+                  await PreviewModeController.previewFullWorkarea();
+                }
+              }}
+              step={exposureSetting.step}
+              tooltip={{ open: false }}
+              value={exposureSetting.value}
+            />
+          </ConfigProvider>
           <div className={styles.value}>{exposureSetting.value}</div>
         </div>
       )}
