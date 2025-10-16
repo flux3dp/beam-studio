@@ -131,10 +131,10 @@
       }
     }
 
-    &.bb2 {
+    &.nx {
       .image {
         .hint {
-          @include connectionSettingPage.bb2-ip-hint;
+          @include connectionSettingPage.nx-ip-hint;
         }
       }
     }
