@@ -16,16 +16,3 @@ export type CreateImageParams = {
   transform?: string;
 };
 export type MainConverterFunc = (params: ConvertSvgToImageParams) => Promise<ConvertToImageResult>;
-
-export const convertibleSvgTags = [
-  'rect',
-  'circle',
-  'ellipse',
-  'line',
-  'polygon',
-  'polyline',
-  'path',
-  'text',
-  'use',
-  'g',
-] as const;

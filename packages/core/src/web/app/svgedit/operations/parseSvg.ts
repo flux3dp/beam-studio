@@ -1,3 +1,4 @@
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import getMainColorOfElement from '@core/helpers/color/getMainColorOfElement';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { Units } from '@core/helpers/units';
@@ -145,7 +146,7 @@ const parseSvg = (
 
       function traverseToGetAllColor(frontierNode) {
         Array.from(frontierNode.childNodes).forEach((child: Element) => {
-          if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect'].includes(child.tagName)) {
+          if (CanvasElements.basicPaths.includes(child.tagName)) {
             allColorsInNodes.add(getMainColorOfElement(child));
           } else if (child.tagName === 'g') {
             traverseToGetAllColor(child);
@@ -163,7 +164,7 @@ const parseSvg = (
       let color;
 
       children.forEach((grandchild: Element) => {
-        if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect'].includes(grandchild.tagName)) {
+        if (CanvasElements.basicPaths.includes(grandchild.tagName)) {
           color = getMainColorOfElement(grandchild);
 
           if (color !== filter) {
