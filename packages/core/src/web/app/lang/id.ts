@@ -125,7 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'Masukkan panjang objek untuk memperluas area kerja.',
       rotary_mode: 'Putar',
       scale: 'Skala',
-      skip_prespray: 'Lewati pra-semir',
+      skip_prespray: 'Lewati pembersihan awal',
       start_from: 'Mulai Dari',
       start_position: 'Posisi Awal',
       start_work_button: 'Tombol Eksekusi',

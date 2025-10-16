@@ -93,7 +93,7 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-const isElemFillable = jest.fn();
+const calcPathClosed = jest.fn();
 const distHori = jest.fn();
 const distVert = jest.fn();
 const groupSelectedElements = jest.fn();
@@ -104,11 +104,11 @@ const deleteSelected = jest.fn();
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
+      calcPathClosed,
       distHori,
       distVert,
       getCurrentDrawing: () => ({ getLayerName }),
       groupSelectedElements,
-      isElemFillable,
       ungroupSelectedElement,
     },
     Editor: { deleteSelected },
@@ -304,7 +304,7 @@ describe('should render correctly', () => {
     test('contains other types of elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
-      isElemFillable.mockReturnValue(true);
+      calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
         <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
@@ -327,8 +327,8 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(isElemFillable).toHaveBeenCalledTimes(1);
-      expect(isElemFillable).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(calcPathClosed).toHaveBeenCalledTimes(1);
+      expect(calcPathClosed).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
   });
 });
@@ -503,7 +503,7 @@ describe('should render correctly in mobile', () => {
     test('contains other types of elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
-      isElemFillable.mockReturnValue(true);
+      calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
         <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
@@ -526,8 +526,8 @@ describe('should render correctly in mobile', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(isElemFillable).toHaveBeenCalledTimes(1);
-      expect(isElemFillable).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
+      expect(calcPathClosed).toHaveBeenCalledTimes(1);
+      expect(calcPathClosed).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
     });
   });
 });

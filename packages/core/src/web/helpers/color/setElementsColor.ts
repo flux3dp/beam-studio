@@ -1,3 +1,4 @@
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 
@@ -23,7 +24,7 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
       const attrFill = elem.getAttribute('fill');
       const attrFillOpacity = elem.getAttribute('fill-opacity');
 
-      if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect', 'text'].includes(elem.tagName)) {
+      if (CanvasElements.colorfulElems.includes(elem.tagName)) {
         if (!isFullColor) {
           // remove stroke for self drawn elements, set stroke color for imported elements
           if (elem.tagName === 'text') elem.setAttribute('stroke-width', '2');

@@ -125,7 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'Enter the length of the object to extend work area.',
       rotary_mode: 'Rotary',
       scale: 'Scale',
-      skip_prespray: 'Skip Prespray',
+      skip_prespray: 'Skip purge',
       start_from: 'Start From',
       start_position: 'Start Position',
       start_work_button: 'Execute Button',

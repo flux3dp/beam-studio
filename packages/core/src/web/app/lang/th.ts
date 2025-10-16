@@ -125,7 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'ป้อนความยาวของวัตถุเพื่อขยายพื้นที่การทำงาน',
       rotary_mode: 'โหมดหมุน',
       scale: 'มาตราส่วน',
-      skip_prespray: 'ข้ามการพ่นล่วงหน้า',
+      skip_prespray: 'ข้ามการไล่หมึก',
       start_from: 'เริ่มจาก',
       start_position: 'ตำแหน่งเริ่มต้น',
       start_work_button: 'ปุ่มดำเนินการ',

@@ -16,6 +16,7 @@ import {
   importBarcodeSvgElement,
   importQrCodeSvgElement,
 } from '@core/app/components/dialogs/CodeGenerator/svgOperation';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import NS from '@core/app/constants/namespaces';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useVariableTextState } from '@core/app/stores/variableText';
@@ -405,7 +406,7 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
     }
 
     // Keep layer structures
-    const shouldKeep = node.classList.contains('layer') || ['filter', 'title'].includes(node.tagName.toLowerCase());
+    const shouldKeep = node.classList.contains('layer') || CanvasElements.defElems.includes(node.tagName.toLowerCase());
 
     if (!shouldKeep && (childNodes.length === 0 || !hasVariableText({ root: node }))) {
       revertMaps.unshift({ elem: node, nextSibling: node.nextSibling, parentNode: node.parentNode });

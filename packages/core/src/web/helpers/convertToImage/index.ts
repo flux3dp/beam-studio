@@ -2,6 +2,7 @@ import { pipe } from 'remeda';
 import { match, P } from 'ts-pattern';
 
 import progressCaller from '@core/app/actions/progress-caller';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import ungroupElement from '@core/app/svgedit/group/ungroup';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -28,19 +29,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
-
-export const convertibleSvgTags = [
-  'rect',
-  'circle',
-  'ellipse',
-  'line',
-  'polygon',
-  'polyline',
-  'path',
-  'text',
-  'use',
-  'g',
-] as const;
 
 /**
  * Main entry point for converting any supported SVG element to an image.
@@ -82,7 +70,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
       return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: path! });
     })
     .with(
-      { tagName: P.union(...convertibleSvgTags) },
+      { tagName: P.union(...CanvasElements.basicPaths) },
       async (el) => await rasterizeGenericSvgElement({ isToSelect, parentCmd, svgElement: el }),
     )
     .otherwise(async ({ tagName }) => {

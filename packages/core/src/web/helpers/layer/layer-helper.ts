@@ -2,6 +2,7 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import history from '@core/app/svgedit/history/history';
@@ -291,7 +292,7 @@ const mergeLayer = (
   }
 
   const firstChildOfBase = Array.from(baseLayer.childNodes).find(
-    (node) => !['filter', 'title'].includes((node as Element).tagName),
+    (node) => !CanvasElements.defElems.includes((node as Element).tagName),
   );
   const batchCmd: IBatchCommand = new history.BatchCommand(`Merge into ${baseLayer}`);
 
@@ -304,7 +305,7 @@ const mergeLayer = (
       for (let j = 0; j < childNodes.length; j += 1) {
         const child = childNodes[j];
 
-        if (!['filter', 'title'].includes(child.nodeName)) {
+        if (!CanvasElements.defElems.includes(child.nodeName)) {
           const { nextSibling } = child;
 
           if (shouldInsertBefore && firstChildOfBase) {

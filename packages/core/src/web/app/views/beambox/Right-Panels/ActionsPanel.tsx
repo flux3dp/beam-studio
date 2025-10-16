@@ -9,6 +9,7 @@ import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
 import { showCurvePanel, showRotaryWarped, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { textButtonTheme } from '@core/app/constants/antd-config';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import autoFit from '@core/app/svgedit/operations/autoFit';
@@ -511,9 +512,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
     const appendOptionalButtons = (buttons: React.JSX.Element[]) => {
       const text = children.find((child) => child.nodeName === 'text') as SVGElement;
-      const pathLike = children.find((child) =>
-        ['ellipse', 'line', 'path', 'polygon', 'rect'].includes(child.nodeName),
-      ) as SVGElement;
+      const pathLike = children.find((child) => CanvasElements.basicPaths.includes(child.nodeName)) as SVGElement;
 
       if (children.length === 2 && text && pathLike) {
         const isVariableText = getVariableTextType(text) !== VariableTextType.NONE;

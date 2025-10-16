@@ -125,7 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'Ange längden på objektet för att utöka arbetsområdet.',
       rotary_mode: 'Roterande',
       scale: 'Skala',
-      skip_prespray: 'Hoppa över förspray',
+      skip_prespray: 'Hoppa över rengöring',
       start_from: 'Starta Från',
       start_position: 'Startposition',
       start_work_button: 'Kör Knapp',

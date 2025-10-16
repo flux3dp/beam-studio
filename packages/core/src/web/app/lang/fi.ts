@@ -125,7 +125,7 @@ const lang: ILang = {
       pass_through_height_desc: 'Syötä objektin pituus työalueen laajentamiseksi.',
       rotary_mode: 'Pyörivä',
       scale: 'Mittakaava',
-      skip_prespray: 'Ohita esisuihkutus',
+      skip_prespray: 'Ohita puhdistus',
       start_from: 'Aloita Mistä',
       start_position: 'Aloituspaikka',
       start_work_button: 'Suorita Painike',

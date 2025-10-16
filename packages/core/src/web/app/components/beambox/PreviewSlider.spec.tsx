@@ -54,6 +54,7 @@ jest.mock('@core/helpers/version-checker', () => () => ({
 }));
 
 jest.mock('antd', () => ({
+  ConfigProvider: ({ children }: any) => children,
   Slider: ({ className, disabled, max, min, onChange, onChangeComplete, step, value }: any) => (
     <div className={className}>
       Mock Antd Slider

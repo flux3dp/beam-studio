@@ -1,3 +1,4 @@
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import { BatchCommand, InsertElementCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import Layer from '@core/app/svgedit/layer/layer';
@@ -71,7 +72,7 @@ export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCom
 
   if (layer && layerCount > 1) {
     const childNodes = Array.from(layer.childNodes);
-    const isEmpty = childNodes.every((node) => ['filter', 'title'].includes((node as Element).tagName));
+    const isEmpty = childNodes.every((node) => CanvasElements.defElems.includes((node as Element).tagName));
 
     if (isEmpty) {
       console.log('default layer is empty. delete it!');

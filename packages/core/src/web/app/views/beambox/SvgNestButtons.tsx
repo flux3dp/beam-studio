@@ -5,6 +5,7 @@ import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 
 import Alert from '@core/app/actions/alert-caller';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -274,7 +275,7 @@ class SvgNestButtons extends React.Component<Props, State> {
           const { children } = layer;
 
           for (const child of children) {
-            if (!['filter', 'title'].includes(child.nodeName)) {
+            if (!CanvasElements.defElems.includes(child.nodeName)) {
               elems.push(child as unknown as SVGElement);
             }
           }

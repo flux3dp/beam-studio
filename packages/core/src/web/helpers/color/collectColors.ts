@@ -1,3 +1,4 @@
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import rgbToHex from '@core/helpers/color/rgbToHex';
 import getRealSymbol from '@core/helpers/symbol-helper/getRealSymbol';
 
@@ -34,7 +35,7 @@ const colloectColors = (
       continue;
     }
 
-    if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect', 'text'].includes(tagName)) {
+    if (CanvasElements.colorfulElems.includes(tagName)) {
       const fill = parseColorString(node.getAttribute('fill') || '#000000').toUpperCase();
 
       if (fill !== 'none' && isHex(fill)) {

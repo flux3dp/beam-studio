@@ -7,6 +7,7 @@ import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
@@ -50,10 +51,11 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     const allowBooleanOperations = (e: Element) => {
       const lowerCase = e.tagName.toLowerCase();
 
-      return (
-        ['ellipse', 'polygon', 'rect', 'text'].includes(lowerCase) ||
-        (['path'].includes(lowerCase) && svgCanvas.isElemFillable(e))
-      );
+      if (!CanvasElements.fillableElems.includes(lowerCase)) return false;
+
+      if (lowerCase === 'path' && !svgCanvas.calcPathClosed(e)) return false;
+
+      return true;
     };
     const isSingleGroup = elems?.length === 1 && elems[0].tagName.toLowerCase() === 'g';
     const canDoBoolean = elems?.every(allowBooleanOperations);

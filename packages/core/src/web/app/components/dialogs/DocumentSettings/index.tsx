@@ -615,7 +615,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               {workareaObj.supportedModules?.includes(LayerModule.PRINTER_4C) && (
                 <div className={classNames(styles.row, styles.full)}>
                   <div className={styles.title}>
-                    <label htmlFor="print_4c_module">{getModulesTranslations()[LayerModule.PRINTER_4C]}</label>
+                    {/* Use translation for PRINTER for shorter name */}
+                    <label htmlFor="print_4c_module">{getModulesTranslations()[LayerModule.PRINTER]}</label>
                   </div>
                   <div className={styles.control}>
                     <Switch checked={enable4C} id="print_4c_module" onChange={setEnable4C} />
