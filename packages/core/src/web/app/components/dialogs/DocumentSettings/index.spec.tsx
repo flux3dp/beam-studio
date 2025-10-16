@@ -127,7 +127,7 @@ describe('test DocumentSettings', () => {
     mockGetPromarkInfo.mockReturnValue({ laserType: LaserType.Desktop, watt: 20 });
     mockGetModulesTranslations.mockReturnValue({
       [LayerModule.LASER_1064]: 'Module 1064',
-      [LayerModule.PRINTER_4C]: 'Module 4C',
+      [LayerModule.PRINTER]: 'Module Printer',
     });
     mockHasModuleLayer.mockReturnValue(false);
     mockGetState.mockReturnValue(mockDocumentState);

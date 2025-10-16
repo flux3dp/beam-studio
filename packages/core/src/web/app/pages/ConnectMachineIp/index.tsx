@@ -3,7 +3,7 @@ import React, { useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 
-import { adorModels, bb2Models } from '@core/app/actions/beambox/constant';
+import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import TestInfo from '@core/app/components/settings/connection/TestInfo';
 import { ConnectMachineFailedStates, TestState } from '@core/app/constants/connection-test';
 import useI18n from '@core/helpers/useI18n';
@@ -28,7 +28,7 @@ const ConnectMachineIp = (): React.JSX.Element => {
       model: urlParams.get('model')!,
     };
   }, []);
-  const [isAdor, isBb2] = useMemo(() => [adorModels.has(model), bb2Models.has(model)], [model]);
+  const [isAdor, isNx] = useMemo(() => [adorModels.has(model), nxModels.has(model)], [model]);
   const { handleStartTest, isPromark, onFinish, state } = useConnectionTest(model, isUsb, ipValue, setIpValue);
   const { countDownDisplay, device, testState } = state;
 
@@ -45,8 +45,8 @@ const ConnectMachineIp = (): React.JSX.Element => {
         </div>
         <NextButton handleStartTest={handleStartTest} isPromark={isPromark} onFinish={onFinish} testState={testState} />
       </div>
-      <div className={classNames(styles.main, { [styles.ador]: isAdor, [styles.bb2]: isBb2 })}>
-        <ConnectionImage isAdor={isAdor} isBb2={isBb2} isUsb={isUsb} isWired={isWired} />
+      <div className={classNames(styles.main, { [styles.ador]: isAdor, [styles.nx]: isNx })}>
+        <ConnectionImage isAdor={isAdor} isNx={isNx} isUsb={isUsb} isWired={isWired} />
         <div className={styles.text}>
           <div className={styles.title}>
             {isUsb ? lang.initialize.connect_machine_ip.check_usb : lang.initialize.connect_machine_ip.enter_ip}

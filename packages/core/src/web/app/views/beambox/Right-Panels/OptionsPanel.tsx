@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import { match, P } from 'ts-pattern';
 
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import ColorPanel from '@core/app/views/beambox/Right-Panels/ColorPanel';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import ImageOptions from '@core/app/views/beambox/Right-Panels/Options-Blocks/ImageOptions';
@@ -34,7 +35,7 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
   const isFullColor = elem ? getData(getObjectLayer(elem)?.elem, 'fullcolor') : false;
   const elemTagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
   const showColorPanel = useMemo(() => {
-    if (!elem || !['ellipse', 'g', 'path', 'polygon', 'rect', 'text', 'use'].includes(elemTagName!)) {
+    if (!elem || !CanvasElements.fillableWithContainers.includes(elemTagName!)) {
       return false;
     }
 

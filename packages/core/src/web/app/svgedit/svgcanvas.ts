@@ -38,6 +38,7 @@ import { guideLineDrawer } from '@core/app/actions/canvas/guideLines';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -1364,7 +1365,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
 
       const elemsToAdd = (Array.from((current_group || currentLayer).childNodes) as Element[]).filter(
-        (c: Element) => !['filter', 'title'].includes(c.tagName),
+        (c: Element) => !CanvasElements.defElems.includes(c.tagName),
       );
 
       if (elemsToAdd.length < 1) {
@@ -1402,7 +1403,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         layerElement.getAttribute('display') !== 'none'
       ) {
         const elemsToAdd = (Array.from(layerElement.childNodes) as Element[]).filter(
-          (node: Element) => !['filter', 'title'].includes(node.tagName),
+          (node: Element) => !CanvasElements.defElems.includes(node.tagName),
         );
 
         elemsToSelect.push(...elemsToAdd);
@@ -1958,7 +1959,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           switch (child.nodeType) {
             case 1: // element node
               if (!fixed) {
-                if (!['filter', 'title'].includes(child.nodeName.toLowerCase())) {
+                if (!CanvasElements.defElems.includes(child.nodeName.toLowerCase())) {
                   out.push('\n');
                   for (let i = 0; i < indent; i++) {
                     out.push(' ');
@@ -3385,13 +3386,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  this.isElemFillable = (elem) => {
-    const fillableTags = ['rect', 'ellipse', 'path', 'text', 'polygon', 'g'];
-
-    if (!fillableTags.includes(elem.tagName)) {
-      return false;
-    }
-
+  this.isElemFillable = (elem: Element) => {
     if (elem.tagName === 'g') {
       const childNodes = elem.childNodes;
 
@@ -3402,6 +3397,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
 
       return true;
+    }
+
+    if (!CanvasElements.fillableElems.includes(elem.tagName)) {
+      return false;
     }
 
     return elem.tagName === 'path' ? this.calcPathClosed(elem) : true;
@@ -3451,15 +3450,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.calcElemFilledInfo = (elem: Element) => {
-    const fillableTags = ['rect', 'ellipse', 'path', 'text', 'polygon', 'g'];
-
-    if (!fillableTags.includes(elem.tagName)) {
-      return {
-        isAllFilled: false,
-        isAnyFilled: false,
-      };
-    }
-
     if (elem.tagName === 'g') {
       const childNodes = elem.childNodes;
       let isAnyFilled;
@@ -3484,6 +3474,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return { isAllFilled, isAnyFilled };
     }
 
+    if (!CanvasElements.fillableElems.includes(elem.tagName)) {
+      return {
+        isAllFilled: false,
+        isAnyFilled: false,
+      };
+    }
+
     const isFilled = Number.parseFloat(elem.getAttribute('fill-opacity')) !== 0 && $(elem).attr('fill') !== 'none';
 
     return {
@@ -3502,9 +3499,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         break;
       }
 
-      const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
-
-      if (availableType.includes(elem.tagName)) {
+      if (CanvasElements.fillableElems.includes(elem.tagName)) {
         if (this.calcElemFilledInfo(elem).isAllFilled) {
           continue;
         }
@@ -3556,9 +3551,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         break;
       }
 
-      const availableType = ['rect', 'ellipse', 'path', 'text', 'polygon'];
-
-      if (availableType.includes(elem.tagName)) {
+      if (CanvasElements.fillableElems.includes(elem.tagName)) {
         if (!this.calcElemFilledInfo(elem).isAnyFilled) {
           continue;
         }
@@ -4157,10 +4150,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   const getElemAlignPoints = (elem: SVGGraphicsElement): Array<{ x: number; y: number }> => {
     const { tagName } = elem;
-    const validTags = ['ellipse', 'g', 'image', 'line', 'path', 'polygon', 'rect', 'use', 'text'] as const;
     const angle: number = svgedit.utilities.getRotationAngle(elem, true);
 
-    if (!validTags.includes(tagName) || angle) return [];
+    if (!CanvasElements.visibleElems.includes(tagName) || angle) return [];
 
     const bbox = ['text', 'use'].includes(elem.tagName) ? this.getSvgRealLocation(elem) : elem.getBBox();
     const getPoints = (bbox: DOMRect) => {
@@ -4836,7 +4828,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const oldNextSibling = t.nextSibling;
       const prevSibling = t.previousSibling;
 
-      if (prevSibling && !['filter', 'title'].includes(prevSibling.tagName)) {
+      if (prevSibling && !CanvasElements.defElems.includes(prevSibling.tagName)) {
         t = t.parentNode.insertBefore(t, prevSibling);
 
         // If the element actually moved position, add the command and fire the changed
@@ -4874,7 +4866,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (dir === 'bottom') {
       let firstChild = t.parentNode.firstChild;
 
-      while (['filter', 'title'].includes(firstChild.tagName)) {
+      while (CanvasElements.defElems.includes(firstChild.tagName)) {
         firstChild = firstChild.nextSibling;
       }
       t = t.parentNode.insertBefore(t, firstChild);

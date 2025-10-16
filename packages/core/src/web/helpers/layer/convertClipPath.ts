@@ -1,5 +1,6 @@
 import * as paper from 'paper';
 
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 let svgCanvas;
@@ -128,7 +129,7 @@ const convertClipPath = async (): Promise<() => void> => {
         promises.push(p);
       });
       await Promise.all(promises);
-    } else if (['circle', 'ellipse', 'line', 'path', 'polygon', 'rect'].includes(elem.tagName)) {
+    } else if (CanvasElements.basicPaths.includes(elem.tagName)) {
       const { isAllFilled } = svgCanvas.calcElemFilledInfo(elem);
 
       if (matrix) {

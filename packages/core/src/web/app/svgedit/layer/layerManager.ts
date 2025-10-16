@@ -5,6 +5,7 @@
  * draw.js functionality. It handles layer creation, deletion, ordering, and properties.
  */
 
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import NS from '@core/app/constants/namespaces';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
@@ -160,7 +161,7 @@ export class LayerManager {
     const children = Array.from(currentGroup.childNodes);
 
     for (const child of children) {
-      if (child instanceof Element && (child.localName === 'title' || child.tagName === 'filter')) {
+      if (child instanceof Element && CanvasElements.defElems.includes(child.localName)) {
         continue;
       }
 

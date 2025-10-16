@@ -1,4 +1,5 @@
 import progressCaller from '@core/app/actions/progress-caller';
+import { CanvasElements } from '@core/app/constants/canvasElements';
 import { colorMap, PrintingColors } from '@core/app/constants/color-constants';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
@@ -252,7 +253,7 @@ export const tempSplitFullColorLayers = async (): Promise<() => void> => {
       const { nextSibling, parentNode } = layerElement;
       const children = [...layerElement.childNodes] as Element[];
 
-      if (children.filter((c) => !['filter', 'title'].includes(c.tagName)).length === 0) {
+      if (children.filter((c) => !CanvasElements.defElems.includes(c.tagName)).length === 0) {
         continue;
       }
 
