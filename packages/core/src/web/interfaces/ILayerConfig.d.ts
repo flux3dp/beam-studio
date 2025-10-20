@@ -61,6 +61,7 @@ type PrintingConfig = {
   printingSpeed: number;
   printingStrength: number;
   refreshInterval: number;
+  refreshThreshold: number;
   split: boolean;
   uv: number;
   wInk: number;

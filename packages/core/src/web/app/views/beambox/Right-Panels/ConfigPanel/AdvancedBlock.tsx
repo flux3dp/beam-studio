@@ -30,6 +30,7 @@ import FrequencyBlock from './FrequencyBlock';
 import NozzleBlock from './NozzleBlock';
 import PulseWidthBlock from './PulseWidthBlock';
 import RefreshIntervalBlock from './RefreshIntervalBlock';
+import RefreshThresholdBlock from './RefreshThresholdBlock';
 import SingleColorBlock from './SingleColorBlock';
 import WobbleBlock from './WobbleBlock';
 
@@ -115,6 +116,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
       if (isDev()) {
         contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" />);
         contents.push(<RefreshIntervalBlock key="refresh-interval-block" type={type} />);
+        contents.push(<RefreshThresholdBlock key="refresh-threshold-block" type={type} />);
         contents.push(<NozzleBlock key="nozzle-block" type={type} />);
       }
     }

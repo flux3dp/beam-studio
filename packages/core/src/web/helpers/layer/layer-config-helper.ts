@@ -56,6 +56,7 @@ const attributeMap: Record<ConfigKey, string> = {
   pulseWidth: 'data-pulseWidth',
   ref: 'data-ref',
   refreshInterval: 'data-refreshInterval',
+  refreshThreshold: 'data-refreshThreshold',
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
@@ -106,6 +107,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingStrength: 100,
   pulseWidth: 500,
   refreshInterval: 0,
+  refreshThreshold: 0,
   repeat: 1,
   speed: 20,
   uv: 0,
@@ -158,6 +160,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'printingSpeed',
   'multipass',
   'refreshInterval',
+  'refreshThreshold',
   // promark
   'dottingTime',
   'fillInterval',
