@@ -770,7 +770,7 @@ const lang: ILang = {
           brightness: 'Brillo',
           convert_to_image: 'Convertir en imagen',
           convert_to_path: 'Convertir en trayectoria',
-          create_textpath: 'Crear Tecto de Trayectoria',
+          create_textpath: 'Crear Texto de Trayectoria',
           create_textpath_short: 'Texto camino',
           crop: 'Recortar',
           decompose_path: 'Descomponer',
