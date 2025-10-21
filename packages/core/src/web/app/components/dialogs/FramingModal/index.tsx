@@ -76,7 +76,12 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
     <DraggableModal
       footer={
         <div className={styles.footer}>
-          <Checkbox checked={loop} className={styles.checkbox} onChange={(e) => setLoop(e.target.checked)}>
+          <Checkbox
+            checked={loop}
+            className={styles.checkbox}
+            disabled={isFraming}
+            onChange={(e) => setLoop(e.target.checked)}
+          >
             {tFraming.continuously}
           </Checkbox>
           <Button className={styles.button} onClick={onClose}>
