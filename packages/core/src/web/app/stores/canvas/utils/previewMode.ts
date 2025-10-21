@@ -28,6 +28,12 @@ const setCursor = (cursor: string) => {
   if (workarea) workarea.style.cursor = cursor;
 };
 
+const endPreviewContextHandler = (e: Event): void => {
+  e.stopPropagation();
+  e.preventDefault();
+  endPreviewMode();
+};
+
 export const endPreviewMode = (): void => {
   try {
     if (previewModeController.isPreviewMode) {
@@ -42,10 +48,11 @@ export const endPreviewMode = (): void => {
 
     // eslint-disable-next-line hooks/rules-of-hooks
     FnWrapper.useSelectTool();
-    $('#workarea').off('contextmenu');
 
+    const workarea = document.getElementById('workarea');
     const workareaEventEmitter = eventEmitterFactory.createEventEmitter('workarea');
 
+    workarea?.removeEventListener('contextmenu', endPreviewContextHandler);
     workareaEventEmitter.emit('update-context-menu', { menuDisabled: false });
 
     // clear end preview shortcut after preview mode ended
@@ -137,11 +144,9 @@ export const changeToPreviewMode = () => {
   svgCanvas.setMode('select');
   workareaEventEmitter.emit('update-context-menu', { menuDisabled: true });
 
-  $('#workarea').on('contextmenu', () => {
-    endPreviewMode();
+  const workarea = document.getElementById('workarea');
 
-    return false;
-  });
+  workarea?.addEventListener('contextmenu', endPreviewContextHandler);
   useCanvasStore.getState().setMode(CanvasMode.Preview);
   setCursor('url(img/camera-cursor.svg) 9 12, cell');
 
