@@ -22,6 +22,12 @@ getSVGAsync((globalSVG) => {
 
 let unregisterEndPreviewShortcut: (() => void) | null = null;
 
+const setCursor = (cursor: string) => {
+  const workarea = document.getElementById('workarea');
+
+  if (workarea) workarea.style.cursor = cursor;
+};
+
 export const endPreviewMode = (): void => {
   try {
     if (previewModeController.isPreviewMode) {
@@ -73,11 +79,6 @@ export const setupPreviewMode = async (opts: { callback?: () => void; showModal?
   }
 
   const t = i18n.lang.topbar;
-  const setCursor = (cursor: string) => {
-    const workarea = document.getElementById('workarea');
-
-    if (workarea) workarea.style.cursor = cursor;
-  };
 
   // eslint-disable-next-line hooks/rules-of-hooks
   FnWrapper.useSelectTool();
@@ -135,11 +136,6 @@ export const changeToPreviewMode = () => {
 
   svgCanvas.setMode('select');
   workareaEventEmitter.emit('update-context-menu', { menuDisabled: true });
-
-  const workarea = document.getElementById('workarea');
-  const setCursor = (cursor: string) => {
-    if (workarea) workarea.style.cursor = cursor;
-  };
 
   $('#workarea').on('contextmenu', () => {
     endPreviewMode();
