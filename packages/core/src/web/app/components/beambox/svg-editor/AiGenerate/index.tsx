@@ -1,6 +1,6 @@
 import React, { memo, useMemo } from 'react';
 
-import { BulbOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
+import { BulbOutlined, ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Input, Select, Space } from 'antd';
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
@@ -10,6 +10,7 @@ import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-imag
 import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 
+import ImageHistory from './ImageHistory';
 import ImageResults from './ImageResults';
 import ImageUploadArea from './ImageUploadArea';
 import styles from './index.module.scss';
@@ -32,10 +33,14 @@ const UnmemorizedAiGenerate = () => {
     mode,
     patternDescription,
     removeSelectedImage,
+    removeSelectedImageUrl,
     resetForm,
     selectedImages,
+    selectedImageUrls,
     setMode,
+    showHistory,
     textToDisplay,
+    toggleHistory,
   } = useAiGenerateStore();
 
   const getSizePixels = (size: ImageSize): string =>
@@ -77,8 +82,16 @@ const UnmemorizedAiGenerate = () => {
     }
 
     // Validate edit mode requirements
-    if (mode === 'edit' && selectedImages.length === 0) {
+    const totalImages = selectedImages.length + selectedImageUrls.length;
+
+    if (mode === 'edit' && totalImages === 0) {
       useAiGenerateStore.setState({ errorMessage: 'Please upload at least one image for editing' });
+
+      return;
+    }
+
+    if (mode === 'edit' && totalImages > 10) {
+      useAiGenerateStore.setState({ errorMessage: 'Maximum 10 images allowed' });
 
       return;
     }
@@ -109,7 +122,8 @@ const UnmemorizedAiGenerate = () => {
       createResponse = await createImageEditTask({
         image_resolution: getImageResolution(),
         image_size: getImageSizeOption(),
-        images: selectedImages,
+        imageFiles: selectedImages.length > 0 ? selectedImages : undefined,
+        imageUrls: selectedImageUrls.length > 0 ? selectedImageUrls : undefined,
         max_images: count,
         prompt,
       });
@@ -156,6 +170,15 @@ const UnmemorizedAiGenerate = () => {
         <h2 className={styles.title}>AI Create</h2>
         <div className={styles.actions}>
           <Button
+            className={classNames(styles['icon-button'], {
+              [styles.active]: showHistory,
+            })}
+            icon={<ClockCircleOutlined />}
+            onClick={toggleHistory}
+            shape="circle"
+            type="text"
+          />
+          <Button
             className={styles['icon-button']}
             icon={<ReloadOutlined />}
             onClick={handleRefresh}
@@ -173,183 +196,195 @@ const UnmemorizedAiGenerate = () => {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.section}>
-          <h3 className={styles['section-title']}>Mode</h3>
-          <Space size={8}>
-            <Button
-              className={classNames(styles['mode-button'], {
-                [styles.active]: mode === 'text-to-image',
-              })}
-              onClick={() => setMode('text-to-image')}
-              size="large"
-            >
-              Text to Image
-            </Button>
-            <Button
-              className={classNames(styles['mode-button'], {
-                [styles.active]: mode === 'edit',
-              })}
-              onClick={() => setMode('edit')}
-              size="large"
-            >
-              Edit Image
-            </Button>
-          </Space>
-        </div>
+        {showHistory ? (
+          <ImageHistory />
+        ) : (
+          <>
+            <div className={styles.section}>
+              <h3 className={styles['section-title']}>Mode</h3>
+              <Space size={8}>
+                <Button
+                  className={classNames(styles['mode-button'], {
+                    [styles.active]: mode === 'text-to-image',
+                  })}
+                  onClick={() => setMode('text-to-image')}
+                  size="large"
+                >
+                  Text to Image
+                </Button>
+                <Button
+                  className={classNames(styles['mode-button'], {
+                    [styles.active]: mode === 'edit',
+                  })}
+                  onClick={() => setMode('edit')}
+                  size="large"
+                >
+                  Edit Image
+                </Button>
+              </Space>
+            </div>
 
-        {mode === 'edit' && (
-          <div className={styles.section}>
-            <h3 className={styles['section-title']}>Upload Images</h3>
-            <ImageUploadArea images={selectedImages} onAdd={addSelectedImage} onRemove={removeSelectedImage} />
-          </div>
-        )}
+            {mode === 'edit' && (
+              <div className={styles.section}>
+                <h3 className={styles['section-title']}>Upload Images</h3>
+                <ImageUploadArea
+                  images={selectedImages}
+                  imageUrls={selectedImageUrls}
+                  onAdd={addSelectedImage}
+                  onRemove={removeSelectedImage}
+                  onRemoveUrl={removeSelectedImageUrl}
+                />
+              </div>
+            )}
 
-        <div className={styles.section}>
-          <h3 className={styles['section-title']}>{mode === 'edit' ? 'Edit prompt' : 'Pattern description'}</h3>
-          <div className={styles['input-wrapper']}>
-            <TextArea
-              className={styles.textarea}
-              maxLength={mode === 'edit' ? 5000 : 300}
-              onChange={(e) => useAiGenerateStore.setState({ patternDescription: e.target.value })}
-              onKeyDown={(e) => e.stopPropagation()}
-              placeholder={
-                mode === 'edit'
-                  ? 'Please describe how you would like to edit the images.'
-                  : 'Please describe the logo pattern you would like to create.'
-              }
-              rows={5}
-              showCount={{
-                formatter: ({ count: currentCount, maxLength }) => (
-                  <div className={styles['count-wrapper']}>
-                    <span className={styles.count}>
-                      {currentCount} / {maxLength}
-                    </span>
-                    <BulbOutlined className={styles['bulb-icon']} />
-                  </div>
-                ),
-              }}
-              value={patternDescription}
-            />
-          </div>
-        </div>
+            <div className={styles.section}>
+              <h3 className={styles['section-title']}>{mode === 'edit' ? 'Edit prompt' : 'Pattern description'}</h3>
+              <div className={styles['input-wrapper']}>
+                <TextArea
+                  className={styles.textarea}
+                  maxLength={mode === 'edit' ? 5000 : 300}
+                  onChange={(e) => useAiGenerateStore.setState({ patternDescription: e.target.value })}
+                  onKeyDown={(e) => e.stopPropagation()}
+                  placeholder={
+                    mode === 'edit'
+                      ? 'Please describe how you would like to edit the images.'
+                      : 'Please describe the logo pattern you would like to create.'
+                  }
+                  rows={5}
+                  showCount={{
+                    formatter: ({ count: currentCount, maxLength }) => (
+                      <div className={styles['count-wrapper']}>
+                        <span className={styles.count}>
+                          {currentCount} / {maxLength}
+                        </span>
+                        <BulbOutlined className={styles['bulb-icon']} />
+                      </div>
+                    ),
+                  }}
+                  value={patternDescription}
+                />
+              </div>
+            </div>
 
-        {mode === 'text-to-image' && (
-          <div className={styles.section}>
-            <h3 className={styles['section-title']}>Text to display</h3>
-            <div className={styles['input-wrapper']}>
-              <TextArea
-                className={styles.textarea}
-                maxLength={15}
-                onChange={(e) => useAiGenerateStore.setState({ textToDisplay: e.target.value })}
-                onKeyDown={(e) => e.stopPropagation()}
-                placeholder="Please ether the text you would like to display."
-                rows={3}
-                showCount={{
-                  formatter: ({ count: currentCount, maxLength }) => (
-                    <div className={styles['count-wrapper']}>
-                      <span className={styles.count}>
-                        {currentCount} / {maxLength}
-                      </span>
-                      <BulbOutlined className={styles['bulb-icon']} />
+            {mode === 'text-to-image' && (
+              <div className={styles.section}>
+                <h3 className={styles['section-title']}>Text to display</h3>
+                <div className={styles['input-wrapper']}>
+                  <TextArea
+                    className={styles.textarea}
+                    maxLength={15}
+                    onChange={(e) => useAiGenerateStore.setState({ textToDisplay: e.target.value })}
+                    onKeyDown={(e) => e.stopPropagation()}
+                    placeholder="Please ether the text you would like to display."
+                    rows={3}
+                    showCount={{
+                      formatter: ({ count: currentCount, maxLength }) => (
+                        <div className={styles['count-wrapper']}>
+                          <span className={styles.count}>
+                            {currentCount} / {maxLength}
+                          </span>
+                          <BulbOutlined className={styles['bulb-icon']} />
+                        </div>
+                      ),
+                    }}
+                    value={textToDisplay}
+                  />
+                </div>
+              </div>
+            )}
+
+            <div className={styles.section}>
+              <h3 className={styles['section-title']}>Image Dimensions</h3>
+
+              <div className={styles['dimension-group']}>
+                <Space size={8}>
+                  {(['1:1', '4:3', '16:9'] as AspectRatio[]).map((ratio) => (
+                    <Button
+                      className={classNames(styles['dimension-button'], {
+                        [styles.active]: dimensions.aspectRatio === ratio,
+                      })}
+                      key={ratio}
+                      onClick={() =>
+                        useAiGenerateStore.setState((state) => ({
+                          dimensions: { ...state.dimensions, aspectRatio: ratio },
+                        }))
+                      }
+                    >
+                      <div className={styles['ratio-icon']}>
+                        <div className={classNames(styles['ratio-box'], styles[`ratio-${ratio.replace(':', '-')}`])} />
+                      </div>
+                      <span>{ratio}</span>
+                    </Button>
+                  ))}
+                  <Button
+                    className={classNames(styles['dimension-button'], {
+                      [styles.active]: dimensions.aspectRatio === 'custom',
+                    })}
+                    onClick={() =>
+                      useAiGenerateStore.setState((state) => ({
+                        dimensions: { ...state.dimensions, aspectRatio: 'custom' },
+                      }))
+                    }
+                  >
+                    <div className={styles['ratio-icon']}>
+                      <div className={classNames(styles['ratio-box'], styles['ratio-custom'])} />
                     </div>
-                  ),
-                }}
-                value={textToDisplay}
+                    <span>More</span>
+                  </Button>
+                </Space>
+              </div>
+
+              <div className={styles['dimension-group']}>
+                <Space size={8}>
+                  {(['small', 'medium', 'large'] as ImageSize[]).map((size) => (
+                    <Button
+                      className={classNames(styles['size-button'], {
+                        [styles.active]: dimensions.size === size,
+                      })}
+                      key={size}
+                      onClick={() =>
+                        useAiGenerateStore.setState((state) => ({ dimensions: { ...state.dimensions, size } }))
+                      }
+                    >
+                      <span className={styles['size-name']}>{size.charAt(0).toUpperCase() + size.slice(1)}</span>
+                      <span className={styles['size-pixels']}>{getSizePixels(size)}</span>
+                    </Button>
+                  ))}
+                </Space>
+              </div>
+            </div>
+
+            <div className={styles.section}>
+              <h3 className={styles['section-title']}>Count</h3>
+              <Select
+                className={styles['count-select']}
+                onChange={(value) => useAiGenerateStore.setState({ count: value })}
+                options={[1, 2, 3, 4, 5, 6].map((num) => ({ label: String(num), value: num }))}
+                value={count}
               />
             </div>
-          </div>
-        )}
 
-        <div className={styles.section}>
-          <h3 className={styles['section-title']}>Image Dimensions</h3>
-
-          <div className={styles['dimension-group']}>
-            <Space size={8}>
-              {(['1:1', '4:3', '16:9'] as AspectRatio[]).map((ratio) => (
-                <Button
-                  className={classNames(styles['dimension-button'], {
-                    [styles.active]: dimensions.aspectRatio === ratio,
-                  })}
-                  key={ratio}
-                  onClick={() =>
-                    useAiGenerateStore.setState((state) => ({
-                      dimensions: { ...state.dimensions, aspectRatio: ratio },
-                    }))
-                  }
-                >
-                  <div className={styles['ratio-icon']}>
-                    <div className={classNames(styles['ratio-box'], styles[`ratio-${ratio.replace(':', '-')}`])} />
-                  </div>
-                  <span>{ratio}</span>
-                </Button>
-              ))}
-              <Button
-                className={classNames(styles['dimension-button'], {
-                  [styles.active]: dimensions.aspectRatio === 'custom',
-                })}
-                onClick={() =>
-                  useAiGenerateStore.setState((state) => ({
-                    dimensions: { ...state.dimensions, aspectRatio: 'custom' },
-                  }))
-                }
-              >
-                <div className={styles['ratio-icon']}>
-                  <div className={classNames(styles['ratio-box'], styles['ratio-custom'])} />
-                </div>
-                <span>More</span>
+            <div className={styles['button-section']}>
+              <Button block className={styles['generate-button']} onClick={handleGenerate} size="large" type="primary">
+                Generate
               </Button>
-            </Space>
-          </div>
 
-          <div className={styles['dimension-group']}>
-            <Space size={8}>
-              {(['small', 'medium', 'large'] as ImageSize[]).map((size) => (
-                <Button
-                  className={classNames(styles['size-button'], {
-                    [styles.active]: dimensions.size === size,
-                  })}
-                  key={size}
-                  onClick={() =>
-                    useAiGenerateStore.setState((state) => ({ dimensions: { ...state.dimensions, size } }))
-                  }
-                >
-                  <span className={styles['size-name']}>{size.charAt(0).toUpperCase() + size.slice(1)}</span>
-                  <span className={styles['size-pixels']}>{getSizePixels(size)}</span>
-                </Button>
-              ))}
-            </Space>
-          </div>
-        </div>
-
-        <div className={styles.section}>
-          <h3 className={styles['section-title']}>Count</h3>
-          <Select
-            className={styles['count-select']}
-            onChange={(value) => useAiGenerateStore.setState({ count: value })}
-            options={[1, 2, 3, 4, 5, 6].map((num) => ({ label: String(num), value: num }))}
-            value={count}
-          />
-        </div>
-
-        <div className={styles['button-section']}>
-          <Button block className={styles['generate-button']} onClick={handleGenerate} size="large" type="primary">
-            Generate
-          </Button>
-
-          <div className={styles['credits-info']}>
-            <span className={styles['credits-required']}>Credit required {creditsRequired}</span>
-            <div className={styles['credits-balance']}>
-              <FluxIcons.AICredit />
-              <span className={styles['ai-credit']}>{info?.credit || 0}</span>
+              <div className={styles['credits-info']}>
+                <span className={styles['credits-required']}>Credit required {creditsRequired}</span>
+                <div className={styles['credits-balance']}>
+                  <FluxIcons.AICredit />
+                  <span className={styles['ai-credit']}>{info?.credit || 0}</span>
+                </div>
+              </div>
             </div>
-          </div>
-        </div>
 
-        <ImageResults
-          errorMessage={errorMessage}
-          generatedImages={generatedImages}
-          generationStatus={generationStatus}
-        />
+            <ImageResults
+              errorMessage={errorMessage}
+              generatedImages={generatedImages}
+              generationStatus={generationStatus}
+            />
+          </>
+        )}
       </div>
     </div>
   );
