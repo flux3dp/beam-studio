@@ -122,6 +122,7 @@
       'data-amAngleMap',
       'data-colorCurvesMap',
       'data-refreshInterval',
+      'data-refreshThreshold',
       'data-nozzleMode',
       'data-nozzleOffsetX',
       'data-nozzleOffsetY'
