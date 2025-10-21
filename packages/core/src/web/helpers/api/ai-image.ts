@@ -35,7 +35,8 @@ export interface TextToImageRequest {
 export interface ImageEditRequest {
   image_resolution?: ImageResolution;
   image_size?: ImageSizeOption;
-  images: File[]; // Required: images to edit (1-10 images)
+  imageFiles?: File[]; // Optional: new image files to upload
+  imageUrls?: string[]; // Optional: existing S3 URLs from history
   max_images?: number;
   prompt: string;
   seed?: number;
@@ -46,12 +47,13 @@ export type TaskState = 'fail' | 'pending' | 'success' | 'waiting';
 
 // AI Image Generation data from Django API
 export interface AiImageGenerationData {
-  complete_time: null | string;
+  completed_at: null | string;
   cost_time: null | number;
-  create_time: string;
+  created_at: string;
   fail_msg: null | string;
   image_resolution: ImageResolution;
   image_size: ImageSizeOption;
+  image_urls?: string[]; // Input images for edit mode (S3 URLs)
   max_images: number;
   model_type: string;
   prompt: string;
@@ -178,11 +180,13 @@ export const createTextToImageTask = async ({
 /**
  * Create an image edit task
  * This sends images as FormData along with other parameters
+ * Supports both new file uploads (imageFiles) and existing S3 URLs (imageUrls)
  */
 export const createImageEditTask = async ({
   image_resolution = '1K',
   image_size = 'square_hd',
-  images,
+  imageFiles,
+  imageUrls,
   max_images = 1,
   prompt,
   seed = Math.floor(Math.random() * 1000000),
@@ -197,10 +201,19 @@ export const createImageEditTask = async ({
     formData.append('max_images', max_images.toString());
     formData.append('seed', seed.toString());
 
-    // Append each image file
-    images.forEach((file) => {
-      formData.append('images', file);
-    });
+    // Append new image files if provided
+    if (imageFiles) {
+      imageFiles.forEach((file) => {
+        formData.append('image_files', file);
+      });
+    }
+
+    // Append existing S3 URLs if provided
+    if (imageUrls) {
+      imageUrls.forEach((url) => {
+        formData.append('image_urls', url);
+      });
+    }
 
     // Fetch without Content-Type header - browser will set it with boundary
     const controller = new AbortController();
@@ -348,35 +361,9 @@ export const pollTaskUntilComplete = async (
 /**
  * Query user's AI image generation history
  */
-export const getAiImageHistory = async (params?: {
-  limit?: number;
-  model_type?: string;
-  offset?: number;
-  state?: TaskState;
-}): Promise<AiImageHistoryResponse | { error: string }> => {
+export const getAiImageHistory = async (): Promise<AiImageHistoryResponse | { error: string }> => {
   try {
-    const queryParams = new URLSearchParams();
-
-    if (params?.model_type) {
-      queryParams.append('model_type', params.model_type);
-    }
-
-    if (params?.state) {
-      queryParams.append('state', params.state);
-    }
-
-    if (params?.limit !== undefined) {
-      queryParams.append('limit', params.limit.toString());
-    }
-
-    if (params?.offset !== undefined) {
-      queryParams.append('offset', params.offset.toString());
-    }
-
-    const queryString = queryParams.toString();
-    const url = `${AI_IMAGE_HISTORY_URL}${queryString ? `?${queryString}` : ''}`;
-
-    const response = await fetchWithTimeout(url, { method: 'GET' });
+    const response = await fetchWithTimeout(AI_IMAGE_HISTORY_URL, { method: 'GET' });
 
     // Handle HTTP error status codes
     if (!response.ok) {

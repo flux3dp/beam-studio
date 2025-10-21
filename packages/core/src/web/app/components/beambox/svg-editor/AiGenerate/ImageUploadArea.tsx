@@ -1,16 +1,18 @@
 import React, { memo, useRef, useState } from 'react';
 
-import { CloseOutlined, InboxOutlined } from '@ant-design/icons';
-import { Alert, Button } from 'antd';
+import { CloseOutlined, InboxOutlined, LinkOutlined } from '@ant-design/icons';
+import { Alert, Badge, Button } from 'antd';
 
 import styles from './ImageUploadArea.module.scss';
 
 interface ImageUploadAreaProps {
   images: File[];
+  imageUrls?: string[];
   maxImages?: number;
   maxSizeBytes?: number;
   onAdd: (file: File) => void;
   onRemove: (index: number) => void;
+  onRemoveUrl?: (url: string) => void;
 }
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -45,14 +47,19 @@ const validateFile = (
 
 const UnmemorizedImageUploadArea = ({
   images,
+  imageUrls = [],
   maxImages = DEFAULT_MAX_IMAGES,
   maxSizeBytes = DEFAULT_MAX_SIZE,
   onAdd,
   onRemove,
+  onRemoveUrl,
 }: ImageUploadAreaProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<null | string>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // Total count includes both files and URLs
+  const totalCount = images.length + imageUrls.length;
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
@@ -62,7 +69,8 @@ const UnmemorizedImageUploadArea = ({
     const fileArray = Array.from(files);
 
     for (const file of fileArray) {
-      const result = validateFile(file, images.length, maxImages, maxSizeBytes);
+      // Validate against total count (files + URLs)
+      const result = validateFile(file, totalCount, maxImages, maxSizeBytes);
 
       if ('error' in result) {
         setError(result.error);
@@ -105,6 +113,16 @@ const UnmemorizedImageUploadArea = ({
     setError(null);
   };
 
+  const handleRemoveUrl = (url: string, e: React.MouseEvent) => {
+    e.stopPropagation();
+
+    if (onRemoveUrl) {
+      onRemoveUrl(url);
+    }
+
+    setError(null);
+  };
+
   return (
     <div className={styles.container}>
       {error && (
@@ -127,7 +145,7 @@ const UnmemorizedImageUploadArea = ({
           type="file"
         />
 
-        {images.length === 0 ? (
+        {totalCount === 0 ? (
           <div className={styles['empty-state']}>
             <InboxOutlined className={styles.icon} />
             <p className={styles.title}>Click or drag images here</p>
@@ -137,11 +155,30 @@ const UnmemorizedImageUploadArea = ({
           </div>
         ) : (
           <div className={styles['images-grid']}>
+            {/* Display URL images from history */}
+            {imageUrls.map((url, index) => (
+              <div className={styles['image-thumbnail']} key={`url-${index}`}>
+                <Badge.Ribbon className={styles['history-badge']} color="blue" text={<LinkOutlined />}>
+                  <img alt={`History image ${index + 1}`} className={styles.image} src={url} />
+                </Badge.Ribbon>
+                <Button
+                  className={styles['remove-button']}
+                  icon={<CloseOutlined />}
+                  onClick={(e) => handleRemoveUrl(url, e)}
+                  shape="circle"
+                  size="small"
+                  type="text"
+                />
+                <div className={styles['image-name']}>From history</div>
+              </div>
+            ))}
+
+            {/* Display uploaded files */}
             {images.map((file, index) => {
               const imageUrl = URL.createObjectURL(file);
 
               return (
-                <div className={styles['image-thumbnail']} key={`${file.name}-${index}`}>
+                <div className={styles['image-thumbnail']} key={`file-${index}`}>
                   <img
                     alt={file.name}
                     className={styles.image}
@@ -161,7 +198,7 @@ const UnmemorizedImageUploadArea = ({
               );
             })}
 
-            {images.length < maxImages && (
+            {totalCount < maxImages && (
               <div className={styles['add-more']}>
                 <InboxOutlined />
                 <span>Add more</span>
@@ -172,7 +209,8 @@ const UnmemorizedImageUploadArea = ({
       </div>
 
       <div className={styles.info}>
-        {images.length} / {maxImages} images selected
+        {totalCount} / {maxImages} images selected
+        {imageUrls.length > 0 && ` (${imageUrls.length} from history, ${images.length} new)`}
       </div>
     </div>
   );
