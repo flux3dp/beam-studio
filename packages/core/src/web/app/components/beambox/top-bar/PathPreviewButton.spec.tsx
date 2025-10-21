@@ -15,6 +15,12 @@ const checkWebGL = jest.fn();
 
 jest.mock('@core/helpers/check-webgl', () => checkWebGL);
 
+const isCanvasEmpty = jest.fn();
+
+jest.mock('@core/helpers/layer/checkContent', () => ({
+  isCanvasEmpty,
+}));
+
 const getSVGAsync = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -126,19 +132,43 @@ describe('test PathPreviewButton', () => {
         expect(togglePathPreview).not.toHaveBeenCalled();
       });
 
-      test('is not path previewing', () => {
-        checkWebGL.mockReturnValue(true);
+      describe('is not path previewing', () => {
+        beforeEach(() => {
+          jest.resetAllMocks();
+        });
 
-        const togglePathPreview = jest.fn();
-        const { container } = render(
-          <CanvasContext.Provider value={{ mode: CanvasMode.Draw } as any}>
-            <PathPreviewButton isDeviceConnected togglePathPreview={togglePathPreview} />
-          </CanvasContext.Provider>,
-        );
+        test('with empty canvas', () => {
+          checkWebGL.mockReturnValue(true);
+          isCanvasEmpty.mockReturnValue(true);
 
-        fireEvent.click(container.querySelector('div[class*="button"]'));
-        expect(clearSelection).toHaveBeenCalledTimes(1);
-        expect(togglePathPreview).toHaveBeenCalledTimes(1);
+          const togglePathPreview = jest.fn();
+          const { container } = render(
+            <CanvasContext.Provider value={{ mode: CanvasMode.Draw } as any}>
+              <PathPreviewButton isDeviceConnected togglePathPreview={togglePathPreview} />
+            </CanvasContext.Provider>,
+          );
+
+          fireEvent.click(container.querySelector('div[class*="button"]'));
+          expect(isCanvasEmpty).toHaveBeenCalledTimes(1);
+          expect(togglePathPreview).not.toHaveBeenCalled();
+        });
+
+        test('with non-empty canvas', () => {
+          checkWebGL.mockReturnValue(true);
+          isCanvasEmpty.mockReturnValue(false);
+
+          const togglePathPreview = jest.fn();
+          const { container } = render(
+            <CanvasContext.Provider value={{ mode: CanvasMode.Draw } as any}>
+              <PathPreviewButton isDeviceConnected togglePathPreview={togglePathPreview} />
+            </CanvasContext.Provider>,
+          );
+
+          fireEvent.click(container.querySelector('div[class*="button"]'));
+          expect(isCanvasEmpty).toHaveBeenCalledTimes(1);
+          expect(clearSelection).toHaveBeenCalledTimes(1);
+          expect(togglePathPreview).toHaveBeenCalledTimes(1);
+        });
       });
     });
   });

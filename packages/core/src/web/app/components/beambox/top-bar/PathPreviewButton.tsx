@@ -11,6 +11,7 @@ import checkWebGL from '@core/helpers/check-webgl';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
+import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -40,7 +41,7 @@ function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): Rea
   }
 
   const changeToPathPreviewMode = (): void => {
-    if (mode !== CanvasMode.PathPreview) {
+    if (mode !== CanvasMode.PathPreview && !isCanvasEmpty()) {
       svgCanvas.clearSelection();
       togglePathPreview();
     }

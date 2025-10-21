@@ -28,6 +28,7 @@ import {
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
 import isWeb from '@core/helpers/is-web';
+import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
 import shortcuts from '@core/helpers/shortcuts';
@@ -76,6 +77,8 @@ export default {
   }> => cloneSelectedElements(20, 20),
   EXPORT_BVG: (): Promise<boolean> => exportAsBVG(),
   EXPORT_FLUX_TASK: (): void => {
+    if (isCanvasEmpty()) return;
+
     if (isWeb()) {
       Dialog.forceLoginWrapper(() => ExportFuncs.exportFcode());
     } else {

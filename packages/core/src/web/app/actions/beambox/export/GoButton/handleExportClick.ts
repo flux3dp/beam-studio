@@ -9,6 +9,7 @@ import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import isWeb from '@core/helpers/is-web';
+import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ILang } from '@core/interfaces/ILang';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -29,6 +30,8 @@ export const handleExportClick =
     const progressList = ['retrieve-image-data', 'fetch-task-code', 'fetch-task', 'upload-scene'] as const;
 
     if (Dialog.isIdExist('monitor') || progressList.some((id) => progressCaller.checkIdExist(id))) return;
+
+    if (isCanvasEmpty()) return;
 
     promarkButtonHandler.setStatus('preparing');
     // remove all selected elements, to prevent the svg image resource not found
