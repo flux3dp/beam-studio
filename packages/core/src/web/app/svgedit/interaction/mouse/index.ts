@@ -13,6 +13,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -1120,7 +1121,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     case 'pre_preview':
       cleanUpRubberBox();
       svgCanvas.unsafeAccess.setCurrentMode('select');
-      canvasEvents.setupPreviewMode({ callback: () => doPreview() });
+      setupPreviewMode({ callback: () => doPreview() });
 
       return;
     case 'preview':

@@ -41,6 +41,14 @@ jest.mock('@core/app/components/pass-through', () => ({
   showPassThrough: mockShowPassThrough,
 }));
 
+const mockChangeToPreviewMode = jest.fn();
+const mockSetupPreviewMode = jest.fn();
+
+jest.mock('@core/app/stores/canvas/utils/previewMode', () => ({
+  changeToPreviewMode: mockChangeToPreviewMode,
+  setupPreviewMode: mockSetupPreviewMode,
+}));
+
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 describe('test DrawingToolButtonGroup', () => {
@@ -91,16 +99,11 @@ describe('test DrawingToolButtonGroup', () => {
   });
 
   test('preview button should render correctly', () => {
-    const contextValue = { changeToPreviewMode: jest.fn(), setupPreviewMode: jest.fn() };
-    const { container } = render(
-      <CanvasContext.Provider value={contextValue as any}>
-        <DrawingToolButtonGroup className="flux" />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<DrawingToolButtonGroup className="flux" />);
 
     fireEvent.click(container.querySelector('#left-Preview'));
-    expect(contextValue.changeToPreviewMode).toHaveBeenCalledTimes(1);
-    expect(contextValue.setupPreviewMode).toHaveBeenCalledTimes(1);
+    expect(mockChangeToPreviewMode).toHaveBeenCalledTimes(1);
+    expect(mockSetupPreviewMode).toHaveBeenCalledTimes(1);
   });
 
   test('should render correctly when in pass through mode', () => {

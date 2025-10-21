@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
@@ -6,10 +6,10 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import { CameraType } from '@core/app/constants/cameraConstants';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { endPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import localeHelper from '@core/helpers/locale-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -32,7 +32,6 @@ const PreviewToolButtonGroup = ({ className }: Props): React.JSX.Element => {
   const lang = useI18n().beambox.left_panel;
   const workarea = useWorkarea();
   const isAdorSeries = useMemo(() => constant.adorModels.includes(workarea), [workarea]);
-  const { endPreviewMode, setupPreviewMode } = useContext(CanvasContext);
   const { cameraType, hasWideAngleCamera, isClean, isDrawing, isLiveMode, isPreviewMode, isWideAngleCameraCalibrated } =
     useCameraPreviewStore();
 
