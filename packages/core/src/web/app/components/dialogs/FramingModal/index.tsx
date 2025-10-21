@@ -1,3 +1,4 @@
+/* eslint-disable reactRefresh/only-export-components */
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
@@ -13,6 +14,7 @@ import DraggableModal from '@core/app/widgets/DraggableModal';
 import type { TFramingType } from '@core/helpers/device/framing';
 import FramingTaskManager, { framingOptions, FramingType, getFramingOptions } from '@core/helpers/device/framing';
 import getDevice from '@core/helpers/device/get-device';
+import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
@@ -74,7 +76,12 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
     <DraggableModal
       footer={
         <div className={styles.footer}>
-          <Checkbox checked={loop} className={styles.checkbox} onChange={(e) => setLoop(e.target.checked)}>
+          <Checkbox
+            checked={loop}
+            className={styles.checkbox}
+            disabled={isFraming}
+            onChange={(e) => setLoop(e.target.checked)}
+          >
             {tFraming.continuously}
           </Checkbox>
           <Button className={styles.button} onClick={onClose}>
@@ -147,6 +154,8 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
 export default FramingModal;
 
 export const showFramingModal = async (): Promise<void> => {
+  if (isCanvasEmpty()) return;
+
   const { device } = await getDevice();
 
   if (!device || isIdExist('framing-modal')) {

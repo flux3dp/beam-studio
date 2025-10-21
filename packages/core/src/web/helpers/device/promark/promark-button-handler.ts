@@ -54,12 +54,12 @@ class PromarkButtonHandler {
     useDocumentStore.subscribe((state) => state.workarea, this.onModelChanged);
     this.onDocChanged();
     this.onModelChanged();
-    this.updateRequirement('tab', isWeb() || tabController.getCurrentId() < 3);
+    this.updateRequirement('tab', isWeb() || tabController.isFocused);
     tabController.onFocused(this.onTabFocused);
     tabController.onBlurred(this.onTabBlurred);
   }
 
-  setExportFn = (exportFn?: (byManager: boolean) => Promise<void>): void => {
+  setExportFn = (exportFn: (byManager: boolean) => Promise<void>): void => {
     this.exportFn = exportFn;
   };
 
@@ -67,7 +67,11 @@ class PromarkButtonHandler {
     this.device = device;
     this.updateRequirement(
       'context',
-      (mode === CanvasMode.Draw || mode === CanvasMode.PathPreview) && promarkModels.has(this.device?.model),
+      Boolean(
+        (mode === CanvasMode.Draw || mode === CanvasMode.PathPreview) &&
+          this.device &&
+          promarkModels.has(this.device.model),
+      ),
     );
   };
 
@@ -108,8 +112,8 @@ class PromarkButtonHandler {
   startListening = (): void => {
     this.stopListening();
 
-    if (deviceMaster.currentDevice?.info?.serial !== this.device.serial) {
-      deviceMaster.select(this.device);
+    if (deviceMaster.currentDevice?.info?.serial !== this.device!.serial) {
+      deviceMaster.select(this.device!);
     }
 
     this.status = 'listening';
