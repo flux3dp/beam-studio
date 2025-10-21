@@ -30,10 +30,6 @@ const setColorPreviewing = (val: boolean): void => {
   canvasEventEmitter.emit('SET_COLOR_PREVIEWING', val);
 };
 
-const setupPreviewMode = (opts: { callback?: () => void; showModal?: boolean } = {}): void => {
-  canvasEventEmitter.emit('SETUP_PREVIEW_MODE', opts);
-};
-
 const setPathEditing = (val: boolean): void => {
   canvasEventEmitter.emit('SET_PATH_EDITING', val);
 };
@@ -49,6 +45,5 @@ export default {
   setColorPreviewing,
   setPathEditing,
   setSelectedElement,
-  setupPreviewMode,
   updateContext,
 };

@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
@@ -8,7 +8,6 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
@@ -16,6 +15,7 @@ import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { changeToPreviewMode, endPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import historyUtils from '@core/app/svgedit/history/utils';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -50,7 +50,6 @@ const CanvasTabBar = (): React.ReactNode => {
   const lang = useI18n();
 
   const mode = useCanvasStore((state) => state.mode);
-  const { changeToPreviewMode, endPreviewMode, setupPreviewMode } = useContext(CanvasContext);
   const isPreviewing = mode === CanvasMode.Preview;
   const { isClean, isDrawing, isPreviewMode } = useCameraPreviewStore();
   const [activeKey, setActiveKey] = useState('none');

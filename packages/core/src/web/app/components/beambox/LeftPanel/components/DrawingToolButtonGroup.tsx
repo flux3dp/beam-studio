@@ -6,6 +6,7 @@ import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/L
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { changeToPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -37,7 +38,7 @@ const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
   const tLeftPanel = lang.beambox.left_panel;
-  const { changeToPreviewMode, hasPassthroughExtension, setupPreviewMode } = useContext(CanvasContext);
+  const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
   const [activeButton, setActiveButton] = useState('Cursor');
   const renderToolButton = ({

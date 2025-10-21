@@ -158,9 +158,7 @@ describe('AutoFocusButton', () => {
   };
 
   const defaultContextValue = {
-    changeToPreviewMode: jest.fn(),
     currentUser: null,
-    endPreviewMode: jest.fn(),
     hasPassthroughExtension: false,
     hasUnsavedChange: false,
     isColorPreviewing: false,
@@ -170,7 +168,6 @@ describe('AutoFocusButton', () => {
     setIsPathEditing: jest.fn(),
     setMode: jest.fn(),
     setSelectedDevice: jest.fn(),
-    setupPreviewMode: jest.fn(),
     toggleAutoFocus: jest.fn(),
     updateCanvasContext: jest.fn(),
   };
