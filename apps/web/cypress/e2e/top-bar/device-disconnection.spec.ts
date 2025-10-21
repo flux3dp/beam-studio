@@ -16,6 +16,12 @@ describe('verify top bar behaviors under device disconnection', () => {
   });
 
   it('show #801 while clicking on framing button', () => {
+    cy.clickToolBtn('Rectangle');
+    cy.get('svg#svgcontent').trigger('mousedown', 150, 150, { force: true });
+    cy.get('svg#svgcontent').trigger('mousemove', 350, 350, { force: true });
+    cy.get('svg#svgcontent').trigger('mouseup', { force: true });
+    cy.get('#svg_1').should('exist');
+
     cy.getTopBar('[title="Running Frame"]').should('exist');
     cy.getTopBar('[title="Running Frame"]').click();
     cy.get('.ant-modal-content').contains('#801').should('exist');
