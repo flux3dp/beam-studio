@@ -1109,7 +1109,7 @@ const lang: ILang = {
     rotation_angle: '旋轉角度',
     show_last_config: '顯示前次校正結果',
     skip: '跳過',
-    solve_pnp_bm2: '確認紙張上已刻有 16 個標記。（如果沒有，請點擊返回重新雕刻。）',
+    solve_pnp_bm2: '確認紙張上已刻有 16 個標記。（如果沒有，請點擊上一步重新雕刻。）',
     solve_pnp_keep_door_closed: '接下來的流程中請保持門蓋關閉。若門蓋開啟，系統將重新定位相機。',
     solve_pnp_move_platform: '機器會自動升降後再次拍照，過程中請勿移動校正紙張。',
     solve_pnp_open_the_lid: '請開啟門蓋以利拍照。',
