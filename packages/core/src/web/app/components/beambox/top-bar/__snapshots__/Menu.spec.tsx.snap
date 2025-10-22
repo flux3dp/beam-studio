@@ -464,13 +464,6 @@ exports[`should render correctly open the browser and reach the correct page 3`]
             role="menuitem"
             tabindex="-1"
           >
-            Feedback Questionnaire
-          </li>
-          <li
-            class="rc-menu__item"
-            role="menuitem"
-            tabindex="-1"
-          >
             Change Logs
           </li>
           <li

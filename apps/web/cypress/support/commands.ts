@@ -23,7 +23,6 @@ const setStorage = () => {
     }),
   );
   window.localStorage.setItem('last-installed-version', 'web');
-  window.localStorage.setItem('questionnaire-version', '9999');
   window.localStorage.setItem('did-gesture-tutorial', '1');
   window.localStorage.setItem('beambox-preference', '{"font-convert":"2.0", "auto-switch-tab": false}');
   window.localStorage.setItem('announcement-record', '{"times":1,"isIgnored":[], "skip":true}');
