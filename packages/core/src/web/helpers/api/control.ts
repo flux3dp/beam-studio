@@ -1073,7 +1073,7 @@ class Control extends EventEmitter implements IControlSocket {
     return res;
   };
 
-  rawHome = (zAxis = false) => {
+  rawHome = ({ cameraMode = false, zAxis = false }: { cameraMode?: boolean; zAxis?: boolean } = {}) => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
@@ -1141,10 +1141,12 @@ class Control extends EventEmitter implements IControlSocket {
 
       timeoutTimer = this.setTimeoutTimer(reject, 10000);
 
-      if (!zAxis) {
-        this.ws.send('raw home');
-      } else {
+      if (cameraMode) {
+        this.ws.send('$HCAM');
+      } else if (zAxis) {
         this.ws.send('$HZ');
+      } else {
+        this.ws.send('raw home');
       }
     });
   };

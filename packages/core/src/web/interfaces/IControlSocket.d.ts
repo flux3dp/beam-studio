@@ -72,7 +72,7 @@ interface IControlSocket extends EventEmitter {
   rawGetLastPos: () => Promise<{ a: number; x: number; y: number; z: number }>;
   rawGetProbePos: () => Promise<{ a: number; didAf: boolean; x: number; y: number; z: number }>;
   rawGetStatePos: () => Promise<{ a: number; x: number; y: number; z: number }>;
-  rawHome(zAxis?: boolean): Promise<void>;
+  rawHome(args: { cameraMode?: boolean; zAxis?: boolean }): Promise<void>;
   rawLooseMotor(fcodeVersion?: number): Promise<string>;
   rawLooseMotorOld: () => Promise<string>;
   rawMeasureHeight: (baseZ: number | undefined, timeout?: number) => Promise<number>;
