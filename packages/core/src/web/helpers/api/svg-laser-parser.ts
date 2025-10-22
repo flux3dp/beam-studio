@@ -274,6 +274,11 @@ export const getExportOpt = async (
     printingBotPadding = 43;
   }
 
+  if (model === 'fbm2') {
+    printingTopPadding = 10;
+    printingBotPadding = 10;
+  }
+
   const isPassThroughTask =
     document.querySelectorAll('#svgcontent > g.layer:not([display="none"]) [data-pass-through="1"]').length > 0 ||
     getPassThrough(addOnInfo);
