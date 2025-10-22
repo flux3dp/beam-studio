@@ -6,7 +6,7 @@ import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/L
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import { changeToPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
+import { startBackgroundPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -91,8 +91,9 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Preview',
         label: lang.topbar.preview,
         onClick: () => {
-          changeToPreviewMode();
-          setupPreviewMode();
+          startBackgroundPreviewMode();
+          // changeToPreviewMode();
+          // setupPreviewMode();
         },
       })}
       {renderToolButton({
