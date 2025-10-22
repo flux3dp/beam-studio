@@ -1128,10 +1128,16 @@ class DeviceMaster {
     return controlSocket.addTask(controlSocket.rawHome);
   }
 
+  async rawHomeCamera() {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.rawHome, { cameraMode: true });
+  }
+
   async rawHomeZ() {
     const controlSocket = await this.getControl();
 
-    return controlSocket.addTask(controlSocket.rawHome, true);
+    return controlSocket.addTask(controlSocket.rawHome, { zAxis: true });
   }
 
   async rawUnlock() {
