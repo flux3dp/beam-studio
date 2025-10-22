@@ -14,7 +14,7 @@ import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager } from '@core/interfaces/PreviewManager';
+import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
 import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
@@ -29,6 +29,7 @@ class PreviewModeController {
   isPreviewMode: boolean = false;
   isStarting: boolean = false;
   isPreviewBlocked: boolean = false;
+  isBackgroundMode: boolean = false;
   currentDevice: IDeviceInfo | null = null;
   previewManager: null | PreviewManager = null;
   liveModeTimeOut: NodeJS.Timeout | null = null;
@@ -117,7 +118,7 @@ class PreviewModeController {
     return true;
   }
 
-  async start(device: IDeviceInfo) {
+  async start(device: IDeviceInfo, args?: PreviewManagerArguments) {
     this.reset();
     this.isStarting = true;
 
@@ -131,17 +132,18 @@ class PreviewModeController {
 
     try {
       this.currentDevice = device;
+      this.isBackgroundMode = args?.isBackgroundMode || false;
 
       if (promarkModels.has(device.model)) {
-        this.previewManager = new PromarkPreviewManager(device);
+        this.previewManager = new PromarkPreviewManager(device, args);
       } else if (Constant.adorModels.includes(device.model)) {
-        this.previewManager = new AdorPreviewManager(device);
+        this.previewManager = new AdorPreviewManager(device, args);
       } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
-        this.previewManager = new BB2PreviewManager(device);
+        this.previewManager = new BB2PreviewManager(device, args);
       } else if (device.model === 'fbm2') {
-        this.previewManager = new Beamo2PreviewManager(device);
+        this.previewManager = new Beamo2PreviewManager(device, args);
       } else {
-        this.previewManager = new BeamPreviewManager(device);
+        this.previewManager = new BeamPreviewManager(device, args);
       }
 
       const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
@@ -261,9 +263,11 @@ class PreviewModeController {
     this.setIsDrawing(true);
     this.isPreviewBlocked = true;
 
-    const workarea = document.querySelector('#workarea') as HTMLElement;
+    if (!this.isBackgroundMode) {
+      const workarea = document.querySelector('#workarea') as HTMLElement;
 
-    workarea.style.cursor = 'wait';
+      workarea.style.cursor = 'wait';
+    }
 
     return true;
   };
@@ -271,7 +275,7 @@ class PreviewModeController {
   onPreviewSuccess = (): void => {
     const workarea = document.querySelector('#workarea') as HTMLElement;
 
-    workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
+    workarea.style.cursor = this.isBackgroundMode ? 'auto' : 'url(img/camera-cursor.svg) 9 12, cell';
     this.isPreviewBlocked = false;
     this.setIsDrawing(false);
   };

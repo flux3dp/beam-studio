@@ -6,7 +6,7 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager } from '@core/interfaces/PreviewManager';
+import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV1 from './FisheyePreviewManagerV1';
@@ -17,8 +17,8 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
   protected _isFullScreen = true;
   private fisheyeManager?: FisheyePreviewManager;
 
-  constructor(device: IDeviceInfo) {
-    super(device);
+  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
+    super(device, args);
     this.progressId = 'ador-preview-manager';
   }
 
@@ -58,13 +58,13 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     } catch (error) {
       console.error(error);
 
-      if (error.message && error.message.startsWith('Camera WS')) {
+      if ((error as Error).message && (error as Error).message.startsWith('Camera WS')) {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${(error as Error).message || ''}`,
         });
       } else {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${(error as Error).message || ''}`,
         });
       }
 
