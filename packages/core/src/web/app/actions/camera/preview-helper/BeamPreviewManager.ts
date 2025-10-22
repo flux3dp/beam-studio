@@ -4,7 +4,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
-import progressCaller from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import ErrorConstants from '@core/app/constants/error-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -39,28 +38,23 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     }
 
     try {
-      progressCaller.openNonstopProgress({
-        id: this.progressId,
-        message: sprintf(lang.message.connectingMachine, this.device.name),
-      });
+      this.showMessage({ message: sprintf(lang.message.connectingMachine, this.device.name) });
       await this.retrieveCameraOffset();
-      progressCaller.update(this.progressId, { message: lang.message.gettingLaserSpeed });
+      this.updateMessage({ message: lang.message.gettingLaserSpeed });
 
       const laserSpeed = await deviceMaster.getLaserSpeed();
 
       if (Number(laserSpeed.value) !== 1) {
         this.originalSpeed = Number(laserSpeed.value);
-        progressCaller.update(this.progressId, {
-          message: lang.message.settingLaserSpeed,
-        });
+        this.updateMessage({ message: lang.message.settingLaserSpeed });
         await deviceMaster.setLaserSpeed(1);
       }
 
-      progressCaller.update(this.progressId, { message: lang.message.enteringRawMode });
+      this.updateMessage({ message: lang.message.enteringRawMode });
       await deviceMaster.enterRawMode();
-      progressCaller.update(this.progressId, { message: lang.message.exitingRotaryMode });
+      this.updateMessage({ message: lang.message.exitingRotaryMode });
       await deviceMaster.rawSetRotary(false);
-      progressCaller.update(this.progressId, { message: lang.message.homing });
+      this.updateMessage({ message: lang.message.homing });
       await deviceMaster.rawHome();
 
       const vc = versionChecker(this.device.version);
@@ -72,12 +66,12 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
         this.lineCheckEnabled = false;
       }
 
-      progressCaller.update(this.progressId, { message: lang.message.turningOffFan });
+      this.updateMessage({ message: lang.message.turningOffFan });
       await deviceMaster.rawSetFan(false);
-      progressCaller.update(this.progressId, { message: lang.message.turningOffAirPump });
+      this.updateMessage({ message: lang.message.turningOffAirPump });
       await deviceMaster.rawSetAirPump(false);
       await deviceMaster.rawSetWaterPump(false);
-      progressCaller.update(this.progressId, { message: lang.message.connectingCamera });
+      this.updateMessage({ message: lang.message.connectingCamera });
       await deviceMaster.connectCamera();
 
       return true;
@@ -85,19 +79,19 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
       await this.end();
       console.log('Error in setup', error);
 
-      if (error.message && error.message.startsWith('Camera WS')) {
+      if ((error as Error).message && (error as Error).message.startsWith('Camera WS')) {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${(error as Error).message || ''}`,
         });
       } else {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${(error as Error).message || ''}`,
         });
       }
 
       return false;
     } finally {
-      progressCaller.popById(this.progressId);
+      this.closeMessage();
     }
   };
 
@@ -139,9 +133,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     // End linecheck mode if needed
     try {
       if (this.lineCheckEnabled) {
-        progressCaller.update(this.progressId, {
-          message: lang.message.endingLineCheckMode,
-        });
+        this.updateMessage({ message: lang.message.endingLineCheckMode });
         await deviceMaster.rawEndLineCheckMode();
       }
     } catch (error) {
@@ -155,7 +147,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     }
     // cannot getDeviceSetting during RawMode. So we force to end it.
     try {
-      progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
+      this.updateMessage({ message: lang.message.endingRawMode });
       await deviceMaster.endSubTask();
     } catch (error) {
       if (error.status === 'error' && error.error && error.error[0] === 'OPERATION_ERROR') {
@@ -172,7 +164,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     const supportOpenBottom = getAddOnInfo(this.workarea).openBottom;
     const configName = supportOpenBottom && borderless ? 'camera_offset_borderless' : 'camera_offset';
 
-    progressCaller.update(this.progressId, { message: lang.message.retrievingCameraOffset });
+    this.updateMessage({ message: lang.message.retrievingCameraOffset });
 
     const resp = await deviceMaster.getDeviceSetting(configName);
 

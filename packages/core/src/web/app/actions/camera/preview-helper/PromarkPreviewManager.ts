@@ -1,7 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import progressCaller from '@core/app/actions/progress-caller';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
 import CameraTransformAPI from '@core/helpers/api/camera-transform';
@@ -36,10 +35,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
     }
 
     try {
-      progressCaller.openNonstopProgress({
-        id: this.progressId,
-        message: lang.message.connectingCamera,
-      });
+      this.showMessage({ message: lang.message.connectingCamera });
       this.fisheyeParams = promarkDataStore.get(this.device.serial, 'cameraParameters');
 
       if (!this.fisheyeParams) {
@@ -65,7 +61,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
 
       return false;
     } finally {
-      progressCaller.popById(this.progressId);
+      this.closeMessage();
     }
   };
 
