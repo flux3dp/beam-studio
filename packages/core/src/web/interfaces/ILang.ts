@@ -1014,6 +1014,7 @@ export interface ILang {
     check_pnp_desc: string;
     checking_checkpoint: string;
     checking_pictures: string;
+    click_next: string;
     click_next_to_take_picture: string;
     diode_calibration: string;
     do_engraving: string;
@@ -1088,6 +1089,9 @@ export interface ILang {
     put_chessboard_promark_desc_2: string;
     put_paper: string;
     put_paper_bm2_1: string;
+    put_paper_bm2_2: string;
+    put_paper_bm2_3: string;
+    put_paper_bm2_4: string;
     put_paper_promark_1: string;
     put_paper_promark_2: string;
     put_paper_skip: string;
@@ -1105,6 +1109,7 @@ export interface ILang {
     rotation_angle: string;
     show_last_config: string;
     skip: string;
+    solve_pnp_bm2: string;
     solve_pnp_keep_door_closed: string;
     solve_pnp_move_platform: string;
     solve_pnp_open_the_lid: string;
