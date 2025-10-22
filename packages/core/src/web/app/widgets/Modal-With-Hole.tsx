@@ -2,25 +2,15 @@ import * as React from 'react';
 
 import classNames from 'classnames';
 
+import type { ITutorialDialog } from '@core/interfaces/ITutorial';
+
 import Modal from './Modal';
-
-interface HolePosition {
-  bottom: number;
-  left: number;
-  right: number;
-  top: number;
-}
-
-interface HoleSize {
-  height: number;
-  width: number;
-}
 
 interface Props {
   children?: React.JSX.Element;
   className?: string;
-  holePosition: HolePosition;
-  holeSize: HoleSize;
+  holePosition: ITutorialDialog['holePosition'];
+  holeSize: ITutorialDialog['holeSize'];
 }
 
 class ModalWithHole extends React.PureComponent<Props> {
@@ -43,20 +33,21 @@ class ModalWithHole extends React.PureComponent<Props> {
       return <Modal className={{ 'with-hole': true }}>{children}</Modal>;
     }
 
-    let { height, width } = holeSize;
+    const { bottom: holeBottom = 0, left: holeLeft = 0, right: holeRight = 0, top: holeTop = 0 } = holePosition;
+    let { height, width } = holeSize || {};
 
     if (!height) {
-      height = window.innerHeight - (holePosition.top || 0 + holePosition.bottom || 0);
+      height = window.innerHeight - (holeTop + holeBottom);
     }
 
     if (!width) {
-      width = window.innerWidth - (holePosition.left || 0 + holePosition.right || 0);
+      width = window.innerWidth - (holeLeft + holeRight);
     }
 
-    const bottom = holePosition.top !== undefined ? `calc(100% - ${holePosition.top}px)` : holePosition.bottom + height;
-    const top = holePosition.bottom !== undefined ? `calc(100% - ${holePosition.bottom}px)` : holePosition.top + height;
-    const right = holePosition.left !== undefined ? `calc(100% - ${holePosition.left}px)` : holePosition.right + width;
-    const left = holePosition.right !== undefined ? `calc(100% - ${holePosition.right}px)` : holePosition.left + width;
+    const bottom = 'top' in holePosition ? `calc(100% - ${holeTop}px)` : holeBottom + height;
+    const top = 'bottom' in holePosition ? `calc(100% - ${holeBottom}px)` : holeTop + height;
+    const right = 'left' in holePosition ? `calc(100% - ${holeLeft}px)` : holeRight + width;
+    const left = 'right' in holePosition ? `calc(100% - ${holeRight}px)` : holeLeft + width;
 
     return (
       <div className={classNames('modal-window', 'with-hole', className)}>
