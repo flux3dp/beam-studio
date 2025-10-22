@@ -73,6 +73,10 @@ export const getExportOpt = async (
     config.hardware_name = 'fbb2';
 
     if (!useDevPaddingAcc) config.acc = 8000;
+  } else if (model === 'fbm2') {
+    config.hardware_name = 'fbm2';
+
+    if (!useDevPaddingAcc) config.acc = 8000;
   } else {
     config.hardware_name = model;
   }
