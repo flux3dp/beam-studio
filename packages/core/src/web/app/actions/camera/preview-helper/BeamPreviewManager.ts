@@ -13,7 +13,7 @@ import i18n from '@core/helpers/i18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager } from '@core/interfaces/PreviewManager';
+import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 
@@ -25,8 +25,8 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
 
   private originalSpeed: number;
 
-  constructor(device: IDeviceInfo) {
-    super(device);
+  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
+    super(device, args);
     this.progressId = 'beam-preview-manager';
   }
 
@@ -179,11 +179,11 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     console.log(`Reading ${configName}\nResp = ${resp.value}`);
     resp.value = ` ${resp.value}`;
     this.cameraOffset = {
-      angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
-      scaleRatioX: Number((/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]),
-      scaleRatioY: Number((/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))[1]),
-      x: Number(/ X:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
-      y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)[1]),
+      angle: Number(/R:\s?(-?\d+\.?\d+)/.exec(resp.value)![1]),
+      scaleRatioX: Number((/SX:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))![1]),
+      scaleRatioY: Number((/SY:\s?(-?\d+\.?\d+)/.exec(resp.value) || /S:\s?(-?\d+\.?\d+)/.exec(resp.value))![1]),
+      x: Number(/ X:\s?(-?\d+\.?\d+)/.exec(resp.value)![1]),
+      y: Number(/ Y:\s?(-?\d+\.?\d+)/.exec(resp.value)![1]),
     };
 
     if (this.cameraOffset.x === 0 && this.cameraOffset.y === 0) {
@@ -261,7 +261,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     canvas.width = l;
     canvas.height = l;
 
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const ctx = canvas.getContext('2d', { willReadFrequently: true })!;
 
     ctx.translate(l / 2, l / 2);
     ctx.rotate(a);

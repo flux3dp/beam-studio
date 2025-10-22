@@ -1,3 +1,4 @@
+import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import deviceMaster from '@core/helpers/device-master';
@@ -8,6 +9,7 @@ import type {
   PerspectiveGrid,
 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import { MessageLevel } from '@core/interfaces/IMessage';
 
 import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 import rawAndHome from './rawAndHome';
@@ -27,6 +29,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     args: {
       cameraPosition?: number[];
       height?: number;
+      messageType?: 'message' | 'progress';
       movementFeedrate?: number;
       progressId?: string;
       progressRange?: [number, number];
@@ -37,17 +40,29 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     const {
       cameraPosition,
       height,
+      messageType = 'progress',
       movementFeedrate = 7500,
       progressId,
       progressRange: [progressStart, progressEnd] = [0, 100],
       shouldKeepInRawMode = false,
     } = args;
 
-    if (!progressId) progressCaller.openNonstopProgress({ id: this.progressId });
+    if (!progressId && messageType === 'progress') progressCaller.openNonstopProgress({ id: this.progressId });
 
-    progressCaller.update(progressId || this.progressId, {
-      percentage: progressStart,
-    });
+    const updateMessage = ({ message, percentage }: { message?: string; percentage?: number }) => {
+      if (messageType === 'progress') {
+        progressCaller.update(progressId || this.progressId, { message, percentage });
+      } else if (message) {
+        MessageCaller.openMessage({
+          content: message,
+          duration: 20,
+          key: progressId || this.progressId,
+          level: MessageLevel.LOADING,
+        });
+      }
+    };
+
+    updateMessage({ percentage: progressStart });
 
     const { params } = this;
 
@@ -66,13 +81,11 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       await new Promise((resolve) => setTimeout(resolve, time * 1000));
     }
 
-    progressCaller.update(progressId || this.progressId, {
-      percentage: progressStart + (progressEnd - progressStart) * 0.75,
-    });
+    updateMessage({ percentage: progressStart + (progressEnd - progressStart) * 0.75 });
     await new Promise((resolve) => setTimeout(resolve, 100));
 
     if (height === undefined) {
-      progressCaller.update(progressId || this.progressId, { message: 'Getting focal distance...' });
+      updateMessage({ message: lang.message.preview.getting_focal_distance });
 
       this.objectHeight = await getFocalDistance();
     } else {
@@ -80,20 +93,21 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     }
 
     if (!shouldKeepInRawMode) {
-      progressCaller.update(progressId || this.progressId, { message: lang.message.endingRawMode });
+      updateMessage({ message: lang.message.endingRawMode });
       await deviceMaster.endSubTask();
     }
 
     params.grids = this.grids;
-    progressCaller.update(progressId || this.progressId, { message: lang.message.connectingCamera });
+    updateMessage({ message: lang.message.connectingCamera });
     await deviceMaster.setFisheyeParam(params);
     await this.onObjectHeightChanged();
 
-    progressCaller.update(progressId || this.progressId, {
-      percentage: progressEnd,
-    });
+    updateMessage({ percentage: progressEnd });
 
-    if (!progressId) progressCaller.popById(this.progressId);
+    if (!progressId) {
+      if (messageType === 'progress') progressCaller.popById(this.progressId);
+      else MessageCaller.closeMessage(this.progressId);
+    }
 
     return true;
   }

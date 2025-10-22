@@ -11,19 +11,19 @@ import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager } from '@core/interfaces/PreviewManager';
+import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 
 // TODO: Add tests
 class PromarkPreviewManager extends BasePreviewManager implements PreviewManager {
   protected _isFullScreen = true;
-  private fisheyeParams: FisheyeCameraParameters;
-  private cameraTransformAPI: CameraTransformAPI;
-  private webCamConnection: WebCamConnection;
+  private fisheyeParams?: FisheyeCameraParameters;
+  private cameraTransformAPI?: CameraTransformAPI;
+  private webCamConnection: null | WebCamConnection = null;
 
-  constructor(device: IDeviceInfo) {
-    super(device);
+  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
+    super(device, args);
     this.progressId = 'promark-preview-manager';
   }
 
@@ -53,13 +53,13 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
     } catch (error) {
       console.error(error);
 
-      if (error.message && error.message.startsWith('Camera WS')) {
+      if ('message' in (error as Error) && (error as Error).message.startsWith('Camera WS')) {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${(error as Error).message || ''}`,
         });
       } else {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${(error as Error).message || ''}`,
         });
       }
 
@@ -72,7 +72,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
   private setupAPI = async (): Promise<void> => {
     this.cameraTransformAPI = new CameraTransformAPI();
 
-    let res = await this.cameraTransformAPI.setFisheyeParam(this.fisheyeParams);
+    let res = await this.cameraTransformAPI.setFisheyeParam(this.fisheyeParams!);
 
     if (!res) {
       throw new Error('Failed to set fisheye parameters');
@@ -102,9 +102,9 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
         level: MessageLevel.LOADING,
       });
 
-      let imgBlob = await this.webCamConnection.getPicture();
+      let imgBlob = await this.webCamConnection!.getPicture();
 
-      imgBlob = await this.cameraTransformAPI.transformImage(imgBlob);
+      imgBlob = await this.cameraTransformAPI!.transformImage(imgBlob);
 
       const imgUrl = URL.createObjectURL(imgBlob);
 
