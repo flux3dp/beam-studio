@@ -65,12 +65,32 @@ export const endPreviewMode = (): void => {
 
 let isSettingUpPreview = false;
 
-export const setupPreviewMode = async (opts: { callback?: () => void; showModal?: boolean } = {}) => {
+export const startBackgroundPreviewMode = async ({
+  showModal = false,
+}: { showModal?: boolean } = {}): Promise<void> => {
+  const { device } = await getDevice(showModal);
+
+  if (!device) return;
+
+  if (device.model === 'ado1' || device.model === 'fbm2') {
+    await setupPreviewMode({ isBackgroundMode: true });
+
+    return;
+  }
+
+  svgCanvas.setMode('background_preview');
+  setCursor('url(img/camera-cursor.svg) 9 12, cell');
+};
+
+export const setupPreviewMode = async ({
+  callback,
+  isBackgroundMode = false,
+  showModal,
+}: { callback?: () => void; isBackgroundMode?: boolean; showModal?: boolean } = {}) => {
   if (isSettingUpPreview) return;
 
   isSettingUpPreview = true;
 
-  const { callback, showModal } = opts;
   const { device, isWorkareaMatched } = await getDevice(showModal);
 
   if (!(await previewModeController.checkDevice(device))) {
@@ -87,13 +107,15 @@ export const setupPreviewMode = async (opts: { callback?: () => void; showModal?
 
   const t = i18n.lang.topbar;
 
-  // eslint-disable-next-line hooks/rules-of-hooks
-  FnWrapper.useSelectTool();
-  svgCanvas.clearSelection();
-  setCursor('wait');
+  if (!isBackgroundMode) {
+    // eslint-disable-next-line hooks/rules-of-hooks
+    FnWrapper.useSelectTool();
+    svgCanvas.clearSelection();
+    setCursor('wait');
+  }
 
   try {
-    await previewModeController.start(device!);
+    await previewModeController.start(device!, { isBackgroundMode });
 
     if (!previewModeController.isPreviewMode) {
       setCursor('auto');
@@ -102,19 +124,26 @@ export const setupPreviewMode = async (opts: { callback?: () => void; showModal?
       return;
     }
 
-    unregisterEndPreviewShortcut = shortcuts.on(['Escape'], endPreviewMode, { isBlocking: true });
+    if (useCanvasStore.getState().mode !== CanvasMode.Preview && !isBackgroundMode) {
+      // handle exit preview mode during setting up
+      isSettingUpPreview = false;
+      endPreviewMode();
 
-    setCursor('url(img/camera-cursor.svg) 9 12, cell');
+      return;
+    }
+
+    if (!isBackgroundMode) setCursor('url(img/camera-cursor.svg) 9 12, cell');
 
     if (previewModeController.isFullScreen) {
-      previewModeController.previewFullWorkarea(() => {
+      previewModeController.previewFullWorkarea().then(() => {
         if (tutorialController.getNextStepRequirement() === tutorialConstants.PREVIEW_PLATFORM) {
           tutorialController.handleNextStep();
         }
+
+        if (isBackgroundMode) endPreviewMode();
       });
     }
 
-    useCanvasStore.getState().setMode(CanvasMode.Preview);
     callback?.();
   } catch (error) {
     console.error(error);
@@ -147,6 +176,8 @@ export const changeToPreviewMode = () => {
   const workarea = document.getElementById('workarea');
 
   workarea?.addEventListener('contextmenu', endPreviewContextHandler);
+  unregisterEndPreviewShortcut = shortcuts.on(['Escape'], endPreviewMode, { isBlocking: true });
+
   useCanvasStore.getState().setMode(CanvasMode.Preview);
   setCursor('url(img/camera-cursor.svg) 9 12, cell');
 

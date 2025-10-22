@@ -595,7 +595,10 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       if (curveEngravingModeController.started) {
         // do nothing for now
-      } else if (PreviewModeController.isPreviewMode || useCanvasStore.getState().mode === CanvasMode.Preview) {
+      } else if (
+        (PreviewModeController.isPreviewMode && !PreviewModeController.isBackgroundMode)
+        || useCanvasStore.getState().mode === CanvasMode.Preview
+      ) {
         workarea.css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
       }
     };
