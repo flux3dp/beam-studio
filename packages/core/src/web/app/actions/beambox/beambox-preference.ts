@@ -14,7 +14,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'anti-aliasing': true,
   'auto-feeder': false,
   'auto-feeder-scale': 1,
-  'auto-switch-tab': false,
+  'auto-switch-tab': true,
   auto_align: true,
   auto_shrink: false,
   borderless: false,
