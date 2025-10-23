@@ -25,6 +25,7 @@ interface Props {
   doorChecker?: DoorChecker | null;
   hasNext?: boolean;
   imgSource?: 'usb' | 'wifi';
+  initialPoints?: Array<[number, number]>;
   initInterestArea?: { height: number; width: number; x: number; y: number };
   onBack: () => void;
   onClose: (complete: boolean) => void;
@@ -46,6 +47,7 @@ const SolvePnP = ({
   doorChecker,
   hasNext = false,
   imgSource = 'wifi',
+  initialPoints,
   initInterestArea,
   onBack,
   onClose,
@@ -57,9 +59,9 @@ const SolvePnP = ({
   titleLink,
 }: Props): React.JSX.Element => {
   const [img, setImg] = useState<null | { blob: Blob; success: boolean; url: string }>(null);
-  const [points, setPoints] = useState<Array<[number, number]>>([]);
+  const [points, setPoints] = useState<Array<[number, number]>>(initialPoints ?? []);
   const [zoomPoints, setZoomPoints] = useState<Array<[number, number]>>([]);
-  const [selectedPointIdx, setSelectedPointIdx] = useState<number>(-1);
+  const [selectedPointIdx, setSelectedPointIdx] = useState<number>(0);
   const dragStartPos = useRef<null | {
     group: SVGGElement;
     pointIdx: number;
@@ -68,7 +70,7 @@ const SolvePnP = ({
     x: number;
     y: number;
   }>(null);
-  const hasFoundPoints = useRef<boolean>(false);
+  const hasFoundPoints = useRef<boolean>(Boolean(initialPoints));
   const imgContainerRef = useRef<HTMLDivElement>(null);
   const lang = useI18n();
 
@@ -176,7 +178,7 @@ const SolvePnP = ({
   useDidUpdateEffect(() => {
     setPoints([]);
     setImg(null);
-    setSelectedPointIdx(-1);
+    setSelectedPointIdx(0);
     handleTakePicture();
   }, [refPoints, handleTakePicture]);
 
@@ -321,14 +323,7 @@ const SolvePnP = ({
     >
       <ol className={styles.steps}>
         <li>{lang.calibration.solve_pnp_step1}</li>
-        {doorChecker && (
-          <>
-            <li>{lang.calibration.solve_pnp_keep_door_closed}</li>
-            <li>{lang.calibration.solve_pnp_relocate_camera}</li>
-          </>
-        )}
-        <li>{lang.calibration.solve_pnp_step2}</li>
-        <li>{lang.calibration.solve_pnp_step3}</li>
+        {doorChecker && <li>{lang.calibration.solve_pnp_keep_door_closed}</li>}
       </ol>
       {percent !== undefined && <Progress className={styles.progress} percent={percent} status="normal" />}
       <div className={styles.grid}>

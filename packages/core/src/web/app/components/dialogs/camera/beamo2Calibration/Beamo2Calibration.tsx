@@ -271,6 +271,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           dh={0}
           doorChecker={doorChecker.current}
           hasNext
+          initialPoints={calibratingParam.current.imgPoints1?.[region]}
           initInterestArea={interestArea}
           onBack={prev}
           onClose={onClose}
@@ -331,7 +332,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
         <CheckPnP
           dh={0}
           grid={bm2PerspectiveGrid}
-          onBack={() => setStep(Steps.SOLVE_PNP_TL)}
+          onBack={() => setStep(Steps.SOLVE_PNP_BR)}
           onClose={onClose}
           onNext={async () => {
             const rvecPolyfits: Record<WideAngleRegion, number[][]> = {} as any;

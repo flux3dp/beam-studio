@@ -1113,7 +1113,6 @@ export interface ILang {
     solve_pnp_keep_door_closed: string;
     solve_pnp_move_platform: string;
     solve_pnp_open_the_lid: string;
-    solve_pnp_relocate_camera: string;
     solve_pnp_step1: string;
     solve_pnp_step2: string;
     solve_pnp_step3: string;
