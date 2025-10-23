@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Set a minimum power for Depth Mode.',
         pwm_advanced_hint: 'This setting applies specifically to gradient images when using Depth Mode.',
         pwm_advanced_setting: 'Depth Mode Power Settings',
+        refresh_interval: 'Refresh Interval',
+        refresh_printer: 'Printhead refresh',
         repeat: 'Pass Count',
         single_color: 'Single Color',
         single_color_desc: 'Only applicable to full color layer and cannot be used with expanded single color layer.',

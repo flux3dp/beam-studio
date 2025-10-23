@@ -668,6 +668,8 @@ export interface ILang {
         pwm_advanced_desc: string;
         pwm_advanced_hint: string;
         pwm_advanced_setting: string;
+        refresh_interval: string;
+        refresh_printer: string;
         repeat: string;
         single_color: string;
         single_color_desc: string;

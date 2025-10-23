@@ -106,7 +106,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   printingSpeed: 60,
   printingStrength: 100,
   pulseWidth: 500,
-  refreshInterval: 0,
+  refreshInterval: 30,
   refreshThreshold: 0,
   repeat: 1,
   speed: 20,

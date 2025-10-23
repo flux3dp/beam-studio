@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Aseta vähimmäisteho syvyystilaan.',
         pwm_advanced_hint: 'Tämä asetus koskee erityisesti liukuvärikuvia käytettäessä syvyystilaa.',
         pwm_advanced_setting: 'Syvyystilan Tehoasetukset',
+        refresh_interval: 'Päivitysväli',
+        refresh_printer: 'Tulostuspään päivitys',
         repeat: 'Ohitusmäärä',
         single_color: 'Yksivärinen',
         single_color_desc: 'Vain täysvärikerrokselle ja ei sovellu laajennettuun yksivärikerrokseen.',

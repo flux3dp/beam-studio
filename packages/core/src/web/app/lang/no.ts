@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Sett en minimumseffekt for dybdemodus.',
         pwm_advanced_hint: 'Denne innstillingen gjelder spesielt for gradientbilder når du bruker dybdemodus.',
         pwm_advanced_setting: 'Strøminnstillinger for Dybdemodus',
+        refresh_interval: 'Oppdateringsintervall',
+        refresh_printer: 'Skrivehode oppfriskning',
         repeat: 'Pass Antall',
         single_color: 'Enkelt Farge',
         single_color_desc: 'Gjelder kun for full fargelag og kan ikke brukes med utvidet enkelt fargelag.',

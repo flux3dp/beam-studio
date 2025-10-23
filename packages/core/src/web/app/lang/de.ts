@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Stellen Sie eine minimale Leistung für den Tiefenmodus ein.',
         pwm_advanced_hint: 'Diese Einstellung gilt speziell für Gradientenbilder im Tiefenmodus.',
         pwm_advanced_setting: 'Leistungseinstellungen für den Tiefenmodus',
+        refresh_interval: 'Aktualisierungsintervall',
+        refresh_printer: 'Druckkopf-Auffrischung',
         repeat: 'Durchgangszahl',
         single_color: 'Einzelfarbe',
         single_color_desc: 'Nur anwendbar auf Vollfarb-Layer und nicht kompatibel mit erweitertem Einzelfarb-Layer.',

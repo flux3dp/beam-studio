@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Establezca una potencia mínima para el modo de profundidad.',
         pwm_advanced_hint: 'Esta configuración se aplica específicamente a imágenes de gradiente cuando se utiliza el modo de profundidad.',
         pwm_advanced_setting: 'Configuración de Potencia en Modo de Profundidad',
+        refresh_interval: 'Intervalo de actualización',
+        refresh_printer: 'Actualización del cabezal de impresión',
         repeat: 'Número de Pasadas',
         single_color: 'Color Único',
         single_color_desc: 'Solo aplicable a la capa de color completo y no se puede usar con la capa de color único expandido.',

@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Đặt công suất tối thiểu cho chế độ độ sâu.',
         pwm_advanced_hint: 'Cài đặt này áp dụng cụ thể cho hình ảnh gradient khi sử dụng chế độ độ sâu.',
         pwm_advanced_setting: 'Cài Đặt Công Suất Chế Độ Độ Sâu',
+        refresh_interval: 'Khoảng thời gian làm mới',
+        refresh_printer: 'Làm mới đầu in',
         repeat: 'Số Lần Cắt',
         single_color: 'Màu Đơn',
         single_color_desc: 'Chỉ áp dụng cho lớp màu đầy đủ và không thể sử dụng với lớp màu đơn mở rộng.',

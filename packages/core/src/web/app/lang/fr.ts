@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Réglez une puissance minimale pour le mode profondeur.',
         pwm_advanced_hint: "Ce réglage s'applique spécifiquement aux images en dégradé lors de l'utilisation du mode profondeur.",
         pwm_advanced_setting: 'Paramètres de Puissance du Mode Profondeur',
+        refresh_interval: 'Intervalle de rafraîchissement',
+        refresh_printer: "Rafraîchissement de la tête d'impression",
         repeat: 'Nombre de Passes',
         single_color: 'Couleur Unique',
         single_color_desc: 'Uniquement applicable à la couche couleur complète et ne peut pas être utilisé avec la couche couleur unique étendue.',

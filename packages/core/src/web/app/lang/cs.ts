@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Nastavte minimální výkon pro režim hloubky.',
         pwm_advanced_hint: 'Toto nastavení platí konkrétně pro obrázek s barevným přechodem při používání Depth Mode (režimu hloubky).',
         pwm_advanced_setting: 'Nastavení Depth Mode Power (výkonu režimu hloubky)',
+        refresh_interval: 'Interval obnovení',
+        refresh_printer: 'Obnovení tiskové hlavy',
         repeat: 'Přeskočit počítání',
         single_color: 'Jednobarevné',
         single_color_desc: 'Použitelné pouze pro plně barevnou vrstvu a nelze je použít s rozšířenou jednobarevnou vrstvou.',

@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Tetapkan kuasa minimum untuk mod kedalaman.',
         pwm_advanced_hint: 'Tetapan ini berlaku khususnya untuk imej kecerunan apabila menggunakan mod kedalaman.',
         pwm_advanced_setting: 'Tetapan Kuasa Mod Kedalaman',
+        refresh_interval: 'Selang penyegaran',
+        refresh_printer: 'Penyegaran kepala pencetak',
         repeat: 'Kiraan Lalu',
         single_color: 'Warna Tunggal',
         single_color_desc: 'Hanya boleh digunakan untuk lapisan warna penuh dan tidak boleh digunakan dengan lapisan warna tunggal yang diperluas.',
