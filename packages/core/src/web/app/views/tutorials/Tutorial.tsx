@@ -15,6 +15,7 @@ import styles from './Tutorial.module.scss';
 class TutorialComponent extends React.Component<{
   endTutorial: () => void;
 }> {
+  declare context: React.ContextType<typeof TutorialContext>;
   renderTutorialDialog() {
     const lang = i18n.lang.tutorial;
     const { endTutorial } = this.props;
@@ -58,14 +59,7 @@ class TutorialComponent extends React.Component<{
   }
 
   render() {
-    const { currentStep, dialogStylesAndContents, onClose } = this.context;
-
-    if (currentStep >= dialogStylesAndContents.length) {
-      onClose();
-
-      return null;
-    }
-
+    const { currentStep, dialogStylesAndContents } = this.context;
     const { holePosition, holeSize } = dialogStylesAndContents[currentStep];
     const tutorialDialog = this.renderTutorialDialog();
     const hintCircle = this.renderHintCircle();

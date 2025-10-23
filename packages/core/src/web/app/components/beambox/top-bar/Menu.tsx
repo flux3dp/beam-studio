@@ -464,7 +464,6 @@ export default function Menu({ email }: Props): React.JSX.Element {
         {!isMobile && <MenuItem onClick={() => callback('START_TUTORIAL')}>{menuCms.show_start_tutorial}</MenuItem>}
         {!isMobile && <MenuItem onClick={() => callback('START_UI_INTRO')}>{menuCms.show_ui_intro}</MenuItem>}
         <MenuItem onClick={() => callback('START_GESTURE_INTRO')}>{menuCms.show_gesture_tutorial}</MenuItem>
-        <MenuItem onClick={() => callback('QUESTIONNAIRE')}>{menuCms.questionnaire}</MenuItem>
         <MenuItem onClick={() => callback('CHANGE_LOGS')}>{menuCms.change_logs}</MenuItem>
         <MenuItem onClick={() => openPage(menuCms.link.help_center)}>{menuCms.help_center}</MenuItem>
         <MenuItem onClick={() => openPage(menuCms.link.shortcuts)}>{menuCms.keyboard_shortcuts}</MenuItem>

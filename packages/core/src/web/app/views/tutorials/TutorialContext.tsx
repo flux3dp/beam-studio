@@ -5,15 +5,28 @@ import { TutorialCallbacks } from '@core/app/constants/tutorial-constants';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { ITutorialDialog } from '@core/interfaces/ITutorial';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-export const TutorialContext = React.createContext({});
+type TutorialContextType = {
+  currentStep: number;
+  dialogStylesAndContents: ITutorialDialog[];
+  handleNextStep: () => Promise<void>;
+  hasNextButton: boolean;
+};
+
+export const TutorialContext = React.createContext<TutorialContextType>({
+  currentStep: 0,
+  dialogStylesAndContents: [],
+  handleNextStep: async () => {},
+  hasNextButton: false,
+});
 
 export const eventEmitter = eventEmitterFactory.createEventEmitter();
 
@@ -29,9 +42,9 @@ interface States {
 }
 
 export class TutorialContextProvider extends React.Component<Props, States> {
-  private defaultRect: Element;
+  private defaultRect: Element | undefined;
 
-  constructor(props) {
+  constructor(props: Props) {
     super(props);
     this.state = {
       currentStep: 0,
@@ -92,7 +105,10 @@ export class TutorialContextProvider extends React.Component<Props, States> {
 
   scrollToAddLayerButton = (): void => {
     RightPanelController.setPanelType(PanelType.Layer);
-    document.querySelector('#layer-and-laser-panel').scrollTop = 0;
+
+    const panel = document.querySelector('#layer-and-laser-panel');
+
+    if (panel) panel.scrollTop = 0;
   };
 
   clearDefaultRect = () => {
@@ -119,7 +135,7 @@ export class TutorialContextProvider extends React.Component<Props, States> {
     }
   };
 
-  getNextStepRequirement = (response: { nextStepRequirement: string }): void => {
+  getNextStepRequirement = (response: { nextStepRequirement: string | undefined }): void => {
     const { currentStep } = this.state;
     const { dialogStylesAndContents } = this.props;
     const { nextStepRequirement } = dialogStylesAndContents[currentStep];
