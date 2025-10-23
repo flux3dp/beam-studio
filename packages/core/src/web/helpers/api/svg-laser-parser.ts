@@ -73,6 +73,10 @@ export const getExportOpt = async (
     config.hardware_name = 'fbb2';
 
     if (!useDevPaddingAcc) config.acc = 8000;
+  } else if (model === 'fbm2') {
+    config.hardware_name = 'fbm2';
+
+    if (!useDevPaddingAcc) config.acc = 8000;
   } else {
     config.hardware_name = model;
   }
@@ -268,6 +272,11 @@ export const getExportOpt = async (
   if (rotaryMode && constant.adorModels.includes(model)) {
     printingTopPadding = 43;
     printingBotPadding = 43;
+  }
+
+  if (model === 'fbm2') {
+    printingTopPadding = 10;
+    printingBotPadding = 10;
   }
 
   const isPassThroughTask =
