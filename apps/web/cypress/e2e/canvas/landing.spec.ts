@@ -48,10 +48,6 @@ describe('landing', () => {
     cy.get('div.ant-modal-body').should('exist');
     cy.get('button[class^="ant-btn"]').contains('OK').click();
 
-    // Questionnaire
-    cy.get('div.ant-modal-body').should('exist');
-    cy.get('button[class^="ant-btn"]').contains('No').click();
-
     cy.get('div.ant-modal-body').should('not.exist');
     cy.get('#root').find('div').should('have.class', 'studio-container beambox-studio en');
   });

@@ -7,7 +7,7 @@ const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
 const state: GlobalPreference = {
   'af-offset': 0,
   'anti-aliasing': true,
-  'auto-switch-tab': false,
+  'auto-switch-tab': true,
   auto_align: true,
   continuous_drawing: false,
   'crop-task-thumbnail': false,

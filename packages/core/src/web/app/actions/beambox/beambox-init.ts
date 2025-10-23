@@ -21,7 +21,6 @@ import cloud from '@core/helpers/api/cloud';
 import { discoverManager } from '@core/helpers/api/discover';
 import fluxId, { recordMachines } from '@core/helpers/api/flux-id';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
-import checkQuestionnaire from '@core/helpers/check-questionnaire';
 import getDevice from '@core/helpers/device/get-device';
 import fontHelper from '@core/helpers/fonts/fontHelper';
 import { initializeAllFonts } from '@core/helpers/fonts/fontInitialization';
@@ -30,7 +29,6 @@ import isWeb from '@core/helpers/is-web';
 import sentryHelper from '@core/helpers/sentry-helper';
 import registerImageSymbolEvents from '@core/helpers/symbol-helper/registerImageSymbolEvents';
 import { isMobile } from '@core/helpers/system-helper';
-import browser from '@core/implementations/browser';
 import menu from '@core/implementations/menu';
 import storage from '@core/implementations/storage';
 import type { IDefaultFont } from '@core/interfaces/IFont';
@@ -108,8 +106,6 @@ class BeamboxInit {
       if (window.FLUX.version !== lastInstalledVersion) {
         await this.showChangeLog();
       }
-
-      await this.showQuestionnaire();
     }
 
     if (!globalPreference['font-convert'] && !isNewUser) {
@@ -292,49 +288,6 @@ class BeamboxInit {
     new Promise<void>((resolve) => {
       Dialog.showChangLog({ callback: resolve });
     });
-
-  private async showQuestionnaire(): Promise<void> {
-    const res = await checkQuestionnaire();
-
-    if (!res) {
-      return;
-    }
-
-    const lastQuestionnaireVersion = storage.get('questionnaire-version') || 0;
-
-    if (lastQuestionnaireVersion >= res.version) {
-      return;
-    }
-
-    let url: string = '';
-
-    if (res.urls) {
-      url = res.urls[i18n.getActiveLang()] || res.urls.en;
-    }
-
-    if (!url) {
-      return;
-    }
-
-    storage.set('questionnaire-version', res.version);
-
-    return new Promise<void>((resolve) => {
-      Alert.popUp({
-        buttonType: AlertConstants.YES_NO,
-        caption: i18n.lang.beambox.popup.questionnaire.caption,
-        iconUrl: 'img/beambox/icon-questionnaire.svg',
-        id: 'questionnaire',
-        message: i18n.lang.beambox.popup.questionnaire.message,
-        onNo: () => {
-          resolve();
-        },
-        onYes: () => {
-          browser.open(url);
-          resolve();
-        },
-      });
-    });
-  }
 }
 
 export default BeamboxInit;

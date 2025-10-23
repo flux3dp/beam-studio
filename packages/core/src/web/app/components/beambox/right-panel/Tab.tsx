@@ -51,7 +51,7 @@ function Tab({ panelType, switchPanel }: Props): React.JSX.Element {
         className={classNames('tab', 'layers', { selected: panelType === PanelType.Layer })}
         onClick={
           panelType === PanelType.Layer
-            ? null
+            ? undefined
             : () => {
                 switchPanel();
 
@@ -72,7 +72,7 @@ function Tab({ panelType, switchPanel }: Props): React.JSX.Element {
         })}
         onClick={
           isObjectDisabled || panelType === PanelType.Object || panelType === PanelType.PathEdit
-            ? null
+            ? undefined
             : () => {
                 switchPanel();
 
