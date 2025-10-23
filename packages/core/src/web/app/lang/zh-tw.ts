@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: '設定深度模式的最小功率。',
         pwm_advanced_hint: '此設定專門適用於深度模式下的漸層圖像。',
         pwm_advanced_setting: '深度模式功率設定',
+        refresh_interval: '預噴間隔',
+        refresh_printer: '中途預噴',
         repeat: '執行次數',
         single_color: '單色圖層',
         single_color_desc: '僅適用於彩色圖層，不適用於已展開的單色圖層。',

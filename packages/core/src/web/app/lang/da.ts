@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Indstil en minimumseffekt for dybdetilstand.',
         pwm_advanced_hint: 'Denne indstilling gælder specifikt for gradientbilleder, når du bruger dybdetilstand.',
         pwm_advanced_setting: 'Dybdetilstands Strømindstillinger',
+        refresh_interval: 'Opdateringsinterval',
+        refresh_printer: 'Printhoved opdatering',
         repeat: 'Antal Gennemløb',
         single_color: 'Enkel Farve',
         single_color_desc: 'Kun gældende for fuldfarvet lag og kan ikke bruges med udvidet enkeltfarvet lag.',

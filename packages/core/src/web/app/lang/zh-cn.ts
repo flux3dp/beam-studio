@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: '设置深度模式的最小功率。',
         pwm_advanced_hint: '此设置专门用于深度模式下的渐变图像。',
         pwm_advanced_setting: '深度模式功率设置',
+        refresh_interval: '刷新间隔',
+        refresh_printer: '打印头刷新',
         repeat: '运行次数',
         single_color: '单色',
         single_color_desc: '仅适用于全色层，不能用于扩展的单色层。',
