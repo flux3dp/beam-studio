@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: '深度モードの最小電力を設定してください。',
         pwm_advanced_hint: 'この設定は、深度モードを使用する際のグラデーション画像に特に適用されます。',
         pwm_advanced_setting: '深度モードの電力設定',
+        refresh_interval: 'リフレッシュ間隔',
+        refresh_printer: 'プリントヘッドリフレッシュ',
         repeat: 'パス数',
         single_color: '単色',
         single_color_desc: 'フルカラーレイヤーにのみ適用され、拡張された単色レイヤーでは使用できません。',

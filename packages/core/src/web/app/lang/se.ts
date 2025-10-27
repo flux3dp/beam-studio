@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Ställ in en minimieffekt för djupinställningar.',
         pwm_advanced_hint: 'Denna inställning gäller specifikt för gradientbilder när du använder djupinställningar.',
         pwm_advanced_setting: 'Djupinställningar för Strömläge',
+        refresh_interval: 'Uppdateringsintervall',
+        refresh_printer: 'Skrivhuvud uppdatering',
         repeat: 'Passantal',
         single_color: 'Enkelfärg',
         single_color_desc: 'Endast tillämpligt på fullfärgs lager och kan inte användas med expanderad enfärgs lager.',

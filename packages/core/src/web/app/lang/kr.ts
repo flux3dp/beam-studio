@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: '깊이 모드를 위한 최소 전력을 설정하세요.',
         pwm_advanced_hint: '이 설정은 깊이 모드를 사용할 때 그라데이션 이미지에 특히 적용됩니다.',
         pwm_advanced_setting: '깊이 모드 전력 설정',
+        refresh_interval: '새로 고침 간격',
+        refresh_printer: '프린트헤드 새로 고침',
         repeat: '통과 횟수',
         single_color: '단일 색상',
         single_color_desc: '전체 색상 레이어에만 적용되며, 확장된 단일 색상 레이어와는 사용할 수 없습니다.',

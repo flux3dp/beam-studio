@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Tetapkan daya minimum untuk mode kedalaman.',
         pwm_advanced_hint: 'Pengaturan ini berlaku khusus untuk gambar gradasi saat menggunakan mode kedalaman.',
         pwm_advanced_setting: 'Pengaturan Daya Mode Kedalaman',
+        refresh_interval: 'Interval penyegaran',
+        refresh_printer: 'Penyegaran printhead',
         repeat: 'Jumlah Lintasan',
         single_color: 'Warna Tunggal',
         single_color_desc: 'Hanya berlaku untuk lapisan warna penuh dan tidak dapat digunakan dengan lapisan warna tunggal yang diperluas.',

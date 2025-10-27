@@ -112,10 +112,10 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   } else {
     if (module.value === LayerModule.PRINTER_4C) {
       contents.push(<AmDensityBlock key="am-density-block" type={type} />);
+      contents.push(<RefreshIntervalBlock key="refresh-interval-block" type={type} />);
 
       if (isDev()) {
         contents.push(<ColorAdvancedSettingButton key="color-advanced-setting-button" />);
-        contents.push(<RefreshIntervalBlock key="refresh-interval-block" type={type} />);
         contents.push(<RefreshThresholdBlock key="refresh-threshold-block" type={type} />);
         contents.push(<NozzleBlock key="nozzle-block" type={type} />);
       }

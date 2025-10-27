@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Stel een minimaal vermogen in voor dieptemodus.',
         pwm_advanced_hint: 'Deze instelling is specifiek van toepassing op gradiëntafbeeldingen bij gebruik van dieptemodus.',
         pwm_advanced_setting: 'Stroominstellingen voor Dieptemodus',
+        refresh_interval: 'Verversingsinterval',
+        refresh_printer: 'Printkop verversing',
         repeat: 'Aantal Passes',
         single_color: 'Enkele Kleur',
         single_color_desc: 'Alleen van toepassing op volledige kleurenlaag en kan niet worden gebruikt met uitgebreide enkele kleurenlaag.',

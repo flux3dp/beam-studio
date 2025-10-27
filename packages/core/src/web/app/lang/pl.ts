@@ -670,6 +670,8 @@ const lang: ILang = {
         pwm_advanced_desc: 'Ustaw minimalną moc dla trybu głębokości.',
         pwm_advanced_hint: 'To ustawienie dotyczy konkretnie obrazów gradientowych w trybie głębokości.',
         pwm_advanced_setting: 'Ustawienia Mocy w Trybie Głębi',
+        refresh_interval: 'Odstęp odświeżania',
+        refresh_printer: 'Odświeżanie głowicy drukującej',
         repeat: 'Liczba Przejść',
         single_color: 'Jednolity Kolor',
         single_color_desc: 'Dotyczy tylko pełnej warstwy kolorowej i nie może być stosowane z rozszerzoną warstwą jednokolorową.',
