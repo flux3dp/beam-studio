@@ -248,26 +248,31 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
         .with(Steps.SOLVE_PNP_TL, () => ({
           interestArea: { height: 2800, width: 2800, x: 0, y: 0 },
           region: 'topLeft',
-          solvePnPStep: 1,
+          solvePnPStep: 0,
         }))
         .with(Steps.SOLVE_PNP_TR, () => ({
           interestArea: { height: 2800, width: 2800, x: 2800, y: 0 },
           region: 'topRight',
-          solvePnPStep: 2,
+          solvePnPStep: 1,
         }))
         .with(Steps.SOLVE_PNP_BL, () => ({
           interestArea: { height: 1400, width: 2800, x: 0, y: 2100 },
           region: 'bottomLeft',
-          solvePnPStep: 3,
+          solvePnPStep: 2,
         }))
         .otherwise(() => ({
           interestArea: { height: 1400, width: 2800, x: 2800, y: 2100 },
           region: 'bottomRight',
-          solvePnPStep: 4,
+          solvePnPStep: 3,
         }));
 
       return (
         <SolvePnP
+          animationSrcs={[
+            { src: 'video/bm2-calibration/4-drag-red-mark.webm', type: 'video/webm' },
+            { src: 'video/bm2-calibration/4-drag-red-mark.mp4', type: 'video/mp4' },
+          ]}
+          currentStep={solvePnPStep}
           dh={0}
           doorChecker={doorChecker.current}
           hasNext
@@ -288,9 +293,13 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             next();
           }}
           params={calibratingParam.current}
-          percent={solvePnPStep * 25}
           refPoints={bm2PnPPoints[region]}
-          title={`${tCalibration.title_align_marker_points} (${solvePnPStep}/4)`}
+          steps={[
+            tCalibration.align_top_left,
+            tCalibration.align_top_right,
+            tCalibration.align_bottom_left,
+            tCalibration.align_bottom_right,
+          ]}
         />
       );
     })

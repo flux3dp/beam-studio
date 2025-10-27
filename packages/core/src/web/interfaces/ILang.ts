@@ -979,8 +979,12 @@ export interface ILang {
     align_8_6: string;
     align_8_7: string;
     //
+    align_bottom_left: string;
+    align_bottom_right: string;
     align_red_cross_cut: string;
     align_red_cross_print: string;
+    align_top_left: string;
+    align_top_right: string;
     analyze_result_fail: string;
     ask_for_readjust: string;
     at_focus_height: string;
