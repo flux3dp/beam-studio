@@ -111,15 +111,17 @@ const SolvePnP = ({
         const image = svg?.querySelector('image')!;
 
         if (image && hasFoundPoints.current) {
-          const scale = svg!.clientWidth / Number(image.getAttribute('width'))!;
+          const scale = svg!.clientWidth / (initInterestArea?.width ?? Number(image.getAttribute('width')))!;
           const { clientHeight, clientWidth, scrollLeft, scrollTop } = container!;
 
-          interestArea = {
-            height: Math.ceil(clientHeight / scale),
-            width: Math.ceil(clientWidth / scale),
-            x: Math.round(scrollLeft / scale),
-            y: Math.round(scrollTop / scale),
-          };
+          if (svg!.clientWidth > clientWidth || svg!.clientHeight > clientHeight) {
+            interestArea = {
+              height: Math.ceil(clientHeight / scale),
+              width: Math.ceil(clientWidth / scale),
+              x: Math.round(scrollLeft / scale) + (initInterestArea?.x ?? 0),
+              y: Math.round(scrollTop / scale) + (initInterestArea?.y ?? 0),
+            };
+          }
         }
 
         const { shouldFindCorners = true } = opts;
@@ -366,6 +368,7 @@ const SolvePnP = ({
         </div>
         <ImageDisplay
           className={styles.image}
+          displayArea={initInterestArea}
           img={img}
           onDragEnd={handleDragEnd}
           onDragMove={handleDragMove}
