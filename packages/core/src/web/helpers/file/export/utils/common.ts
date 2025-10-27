@@ -6,7 +6,7 @@ import communicator from '@core/implementations/communicator';
 
 import { saveFile } from '../handlers/save';
 
-export const getDefaultFileName = () => (currentFileManager.getName() || 'untitled').replace('/', ':');
+export const getDefaultFileName = () => (currentFileManager.getName() || i18n.lang.topbar.untitled).replace('/', ':');
 
 export const switchSymbolWrapper = <T>(fn: () => T): T => {
   symbolMaker.switchImageSymbolForAll(false);
