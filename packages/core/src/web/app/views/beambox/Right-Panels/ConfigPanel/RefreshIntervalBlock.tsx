@@ -26,11 +26,9 @@ const RefreshIntervalBlock = ({
   const handleToggle = () => {
     const value = -refreshInterval.value;
 
-    console.log(value);
-
     change({ refreshInterval: value });
 
-    const batchCmd = new history.BatchCommand('Change auto focus toggle');
+    const batchCmd = new history.BatchCommand('Change Printer Refresh Toggle');
 
     selectedLayers.forEach((layerName) => writeData(layerName, 'refreshInterval', value, { batchCmd }));
     batchCmd.onAfter = initState;
