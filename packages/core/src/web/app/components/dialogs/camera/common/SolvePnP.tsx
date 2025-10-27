@@ -393,7 +393,7 @@ const SolvePnP = ({
           {selectedPointIdx >= 0 && (
             <Flex className={styles.info} gap={8} justify="space-between" vertical>
               <div>
-                <Row align="middle" gutter={[8, 8]}>
+                <Row align="middle" gutter={[0, 8]}>
                   {positionText && (
                     <Col className={styles.position} span={24}>
                       {positionText}
@@ -402,10 +402,15 @@ const SolvePnP = ({
                   <Col className={styles['point-id']} span={24}>
                     Point {selectedPointIdx}
                   </Col>
-                  <Col span={3}>X</Col>
+                  <Col span={3}>
+                    <label className={styles.label} htmlFor="point-x-input">
+                      X
+                    </label>
+                  </Col>
                   <Col span={9}>
                     <InputNumber<number>
                       className={styles.input}
+                      id="point-x-input"
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
                       }}
@@ -417,10 +422,15 @@ const SolvePnP = ({
                       value={points[selectedPointIdx]?.[0] ?? 0}
                     />
                   </Col>
-                  <Col span={3}>Y</Col>
+                  <Col span={3}>
+                    <label className={styles.label} htmlFor="point-y-input">
+                      Y
+                    </label>
+                  </Col>
                   <Col span={9}>
                     <InputNumber<number>
                       className={styles.input}
+                      id="point-y-input"
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
                       }}
