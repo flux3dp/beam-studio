@@ -3,12 +3,14 @@ import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } 
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+import classNames from 'classnames';
 
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 
 import styles from './ImageDisplay.module.scss';
 
 interface Props {
+  className?: string;
   img: null | { blob: Blob; url: string };
   onDragEnd?: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDragMove?: (e: React.MouseEvent<HTMLDivElement>, scale: number) => boolean;
@@ -19,7 +21,7 @@ interface Props {
 }
 
 const ImageDisplay = forwardRef<HTMLDivElement, Props>(
-  ({ img, onDragEnd, onDragMove, onImgLoad, onScaleChange, renderContents, zoomPoints }, outRef) => {
+  ({ className, img, onDragEnd, onDragMove, onImgLoad, onScaleChange, renderContents, zoomPoints }, outRef) => {
     const [imgLoaded, setImgLoaded] = useState(false);
     const imgContainerRef = useRef<HTMLDivElement | null>(null);
     const scaleRef = useRef<number>(1);
@@ -193,8 +195,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
       (e: WheelEvent) => {
         // @ts-expect-error use wheelDelta if exists
         const { ctrlKey, deltaY, detail, wheelDelta } = e;
-        // eslint-disable-next-line no-constant-binary-expression
-        const delta = wheelDelta ?? -detail ?? 0;
+        const delta = wheelDelta ?? -detail;
 
         if (Math.abs(deltaY) >= 40) {
           // mouse
@@ -231,7 +232,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
     }, [handleWheel]);
 
     return (
-      <div className={styles.container}>
+      <div className={classNames(styles.container, className)}>
         <div
           className={styles['img-container']}
           onMouseDown={handleContainerDragStart}

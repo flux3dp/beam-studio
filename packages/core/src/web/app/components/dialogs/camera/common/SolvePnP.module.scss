@@ -5,7 +5,45 @@
 }
 
 .steps {
+  margin: 8px 0;
   padding: 0 0 0 24px;
+}
+
+.step-indicator {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
+  gap: 12px;
+
+  .step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+
+    .bar {
+      background-color: rgba(0, 0, 0, 0.06);
+      width: 100%;
+      height: 8px;
+      border-radius: 4px;
+    }
+
+    &.active {
+      .bar {
+        background-color: variables.$primary-blue;
+      }
+    }
+  }
+}
+
+.animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  video {
+    max-width: 55%;
+    max-height: 100%;
+  }
 }
 
 .group {
@@ -48,10 +86,6 @@
   }
 }
 
-.point-id {
-  color: #ff4d4f;
-}
-
 .progress {
   width: 66%;
   padding: 0 0 1em;
@@ -60,20 +94,59 @@
 .info {
   height: 100%;
 
+  .position {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .point-id {
+    color: #ff4d4f;
+    font-weight: bold;
+  }
+
+  .input {
+    width: 100%;
+  }
+
   img {
     width: 100%;
-    border: 1px solid #000;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
   }
 }
 
+.exposure {
+  flex: 1 1;
+}
+
 .value {
-  height: 100%;
-  display: flex;
-  align-items: center;
+  width: 32px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 12px 16px;
+}
+
+.retake {
+  color: #7c7c7c;
+  cursor: pointer;
+
+  &.disabled {
+    opacity: 0.5;
+  }
+
+  &:not(.disabled) {
+    cursor: pointer;
+  }
+
+  &:hover:not(.disabled) {
+    color: #000;
+  }
+}
+
+.image {
+  height: 100%;
+  min-height: 40vh;
 }

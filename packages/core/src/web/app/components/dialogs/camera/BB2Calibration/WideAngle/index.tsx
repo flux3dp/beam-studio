@@ -292,32 +292,32 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       Step.SOLVE_PNP_BL_2,
       Step.SOLVE_PNP_BR_2,
       (step) => {
-        const { interestArea, percent, region } = match<
+        const { currentStep, interestArea, region } = match<
           typeof step,
           {
+            currentStep: number;
             interestArea?: { height: number; width: number; x: number; y: number };
-            percent: number;
             region: keyof typeof bb2WideAngleCameraPnpPoints;
           }
         >(step)
           .with(Step.SOLVE_PNP_TL_1, Step.SOLVE_PNP_TL_2, () => ({
+            currentStep: 0,
             interestArea: { height: 1300, width: 2300, x: 500, y: 900 },
-            percent: 25,
             region: 'topLeft',
           }))
           .with(Step.SOLVE_PNP_TR_1, Step.SOLVE_PNP_TR_2, () => ({
+            currentStep: 1,
             interestArea: { height: 1300, width: 2300, x: 2800, y: 900 },
-            percent: 50,
             region: 'topRight',
           }))
           .with(Step.SOLVE_PNP_BL_1, Step.SOLVE_PNP_BL_2, () => ({
+            currentStep: 2,
             interestArea: { height: 800, width: 1600, x: 1200, y: 2200 },
-            percent: 75,
             region: 'bottomLeft',
           }))
           .otherwise(() => ({
+            currentStep: 3,
             interestArea: { height: 800, width: 1600, x: 2800, y: 2200 },
-            percent: 100,
             region: 'bottomRight',
           }));
 
@@ -341,6 +341,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         return (
           <SolvePnP
             cameraIndex={1}
+            currentStep={currentStep}
             dh={calibratingParam.current[keys.dh]!}
             hasNext
             initInterestArea={interestArea}
@@ -368,8 +369,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
               next();
             }}
             params={calibratingParam.current}
-            percent={percent}
             refPoints={bb2WideAngleCameraPnpPoints[region]}
+            steps={[tCali.align_top_left, tCali.align_top_right, tCali.align_bottom_left, tCali.align_bottom_right]}
             title={title}
           />
         );

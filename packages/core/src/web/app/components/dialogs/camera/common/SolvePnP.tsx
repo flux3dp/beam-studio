@@ -1,11 +1,12 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, Col, Flex, InputNumber, Progress, Row } from 'antd';
+import { Button, Col, Flex, InputNumber, Row, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import type DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import moveLaserHead from '@core/app/components/dialogs/camera/common/moveLaserHead';
+import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
@@ -20,7 +21,9 @@ import Title from './Title';
 import useCamera from './useCamera';
 
 interface Props {
+  animationSrcs?: Array<{ src: string; type: string }>;
   cameraIndex?: number;
+  currentStep?: number;
   dh: number;
   doorChecker?: DoorChecker | null;
   hasNext?: boolean;
@@ -31,8 +34,8 @@ interface Props {
   onClose: (complete: boolean) => void;
   onNext: (rvec: number[][], tvec: number[][], imgPoints: Array<[number, number]>) => void;
   params: FisheyeCaliParameters;
-  percent?: number;
   refPoints?: Array<[number, number]>;
+  steps?: string[];
   title?: string;
   titleLink?: string;
 }
@@ -42,7 +45,9 @@ type HandleImgOpts = {
 };
 
 const SolvePnP = ({
+  animationSrcs,
   cameraIndex,
+  currentStep,
   dh,
   doorChecker,
   hasNext = false,
@@ -53,8 +58,8 @@ const SolvePnP = ({
   onClose,
   onNext,
   params,
-  percent,
   refPoints = adorPnPPoints,
+  steps,
   title,
   titleLink,
 }: Props): React.JSX.Element => {
@@ -73,6 +78,11 @@ const SolvePnP = ({
   const hasFoundPoints = useRef<boolean>(Boolean(initialPoints));
   const imgContainerRef = useRef<HTMLDivElement>(null);
   const lang = useI18n();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useDidUpdateEffect(() => {
+    videoRef.current?.load();
+  }, [animationSrcs]);
 
   useEffect(
     () => () => {
@@ -80,6 +90,16 @@ const SolvePnP = ({
     },
     [img],
   );
+
+  const displayTitle = useMemo(() => {
+    const base = title ?? lang.calibration.title_align_marker_points;
+
+    if (steps && currentStep !== undefined) {
+      return `${base} (${currentStep + 1}/${steps.length})`;
+    }
+
+    return base;
+  }, [currentStep, lang.calibration, steps, title]);
 
   const handleImg = useCallback(
     async (imgBlob: Blob, opts: HandleImgOpts = {}) => {
@@ -255,9 +275,9 @@ const SolvePnP = ({
   const positionText = useMemo(
     () =>
       selectedPointIdx >= 0
-        ? (lang.calibration[`align_${points.length}_${selectedPointIdx}` as keyof typeof lang.calibration] as string)
+        ? (lang.calibration[`align_${refPoints.length}_${selectedPointIdx}` as keyof typeof lang.calibration] as string)
         : null,
-    [lang, selectedPointIdx, points.length],
+    [lang, selectedPointIdx, refPoints.length],
   );
 
   const onScaleChange = useCallback((scale: number, svg: SVGSVGElement) => {
@@ -301,9 +321,6 @@ const SolvePnP = ({
             {lang.calibration.relocate_camera}
           </Button>
         ) : null,
-        <Button className={styles['footer-button']} key="retry" onClick={() => handleTakePicture()}>
-          {lang.calibration.retake}
-        </Button>,
         <Button
           className={styles['footer-button']}
           disabled={!img?.success}
@@ -318,16 +335,37 @@ const SolvePnP = ({
       onCancel={() => onClose(false)}
       open
       scrollableContent
-      title={<Title link={titleLink} title={title ?? lang.calibration.camera_calibration} />}
+      title={<Title link={titleLink} title={displayTitle} />}
       width="80vw"
     >
-      <ol className={styles.steps}>
-        <li>{lang.calibration.solve_pnp_step1}</li>
-        {doorChecker && <li>{lang.calibration.solve_pnp_keep_door_closed}</li>}
-      </ol>
-      {percent !== undefined && <Progress className={styles.progress} percent={percent} status="normal" />}
       <div className={styles.grid}>
+        <div>
+          <ol className={styles.steps}>
+            <li>{lang.calibration.solve_pnp_step1}</li>
+            {doorChecker && <li>{lang.calibration.solve_pnp_keep_door_closed}</li>}
+          </ol>
+          {steps && (
+            <div className={styles['step-indicator']}>
+              {steps.map((step, idx) => (
+                <div className={classNames(styles.step, { [styles.active]: idx <= currentStep! })} key={step}>
+                  {step}
+                  <div className={styles.bar} />
+                </div>
+              ))}
+            </div>
+          )}
+        </div>
+        <div className={styles.animation}>
+          {animationSrcs && (
+            <video autoPlay loop muted ref={videoRef}>
+              {animationSrcs.map(({ src, type }) => (
+                <source key={src} src={src} type={type} />
+              ))}
+            </video>
+          )}
+        </div>
         <ImageDisplay
+          className={styles.image}
           img={img}
           onDragEnd={handleDragEnd}
           onDragMove={handleDragMove}
@@ -352,17 +390,22 @@ const SolvePnP = ({
           zoomPoints={zoomPoints}
         />
         <div>
-          {selectedPointIdx >= 0 && points[selectedPointIdx] && (
-            <Flex className={styles.info} justify="space-between" vertical>
+          {selectedPointIdx >= 0 && (
+            <Flex className={styles.info} gap={8} justify="space-between" vertical>
               <div>
-                <Row align="middle" gutter={[0, 12]}>
+                <Row align="middle" gutter={[8, 8]}>
+                  {positionText && (
+                    <Col className={styles.position} span={24}>
+                      {positionText}
+                    </Col>
+                  )}
                   <Col className={styles['point-id']} span={24}>
-                    Point #{selectedPointIdx}
+                    Point {selectedPointIdx}
                   </Col>
-                  {positionText && <Col span={24}>{positionText}</Col>}
-                  <Col span={4}>X</Col>
-                  <Col span={20}>
+                  <Col span={3}>X</Col>
+                  <Col span={9}>
                     <InputNumber<number>
+                      className={styles.input}
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
                       }}
@@ -371,12 +414,13 @@ const SolvePnP = ({
                       precision={0}
                       step={1}
                       type="number"
-                      value={points[selectedPointIdx][0]}
+                      value={points[selectedPointIdx]?.[0] ?? 0}
                     />
                   </Col>
-                  <Col span={4}>Y</Col>
-                  <Col span={20}>
+                  <Col span={3}>Y</Col>
+                  <Col span={9}>
                     <InputNumber<number>
+                      className={styles.input}
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
                       }}
@@ -385,25 +429,31 @@ const SolvePnP = ({
                       precision={0}
                       step={1}
                       type="number"
-                      value={points[selectedPointIdx][1]}
+                      value={points[selectedPointIdx]?.[1] ?? 0}
                     />
                   </Col>
                 </Row>
               </div>
-              <img src={`core-img/calibration/solve-pnp-${points.length}-${selectedPointIdx}.jpg`} />
+              <img src={`core-img/calibration/solve-pnp-${refPoints.length}-${selectedPointIdx}.jpg`} />
             </Flex>
           )}
         </div>
-        {exposureSetting && (
-          <>
-            <ExposureSlider
-              exposureSetting={exposureSetting}
-              onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
-              setExposureSetting={setExposureSetting}
-            />
-            <div className={styles.value}>{exposureSetting.value}</div>
-          </>
-        )}
+        <Flex align="center" gap={8} justify="space-between">
+          {exposureSetting && (
+            <>
+              <ExposureSlider
+                className={styles.exposure}
+                exposureSetting={exposureSetting}
+                onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
+                setExposureSetting={setExposureSetting}
+              />
+              <div className={styles.value}>{exposureSetting.value}</div>
+            </>
+          )}
+          <Tooltip title={lang.calibration.retake}>
+            <LeftPanelIcons.Camera className={styles.retake} onClick={() => handleTakePicture()} />
+          </Tooltip>
+        </Flex>
       </div>
     </DraggableModal>
   );
