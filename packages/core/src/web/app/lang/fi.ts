@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: 'Tee uudelleen',
       reset: 'Palauta',
+      reset_view: 'Nollaa Näkymä',
       undo: 'Kumoa',
       zoom_in: 'Lähennä',
       zoom_out: 'Loitonna',

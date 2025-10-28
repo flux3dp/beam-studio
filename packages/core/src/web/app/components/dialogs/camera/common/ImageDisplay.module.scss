@@ -56,14 +56,22 @@
 
   .zoom-block {
     position: absolute;
-    left: 0;
-    bottom: 0;
-    padding: 0 0 5px;
+    left: 4px;
+    bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
     button {
-      margin-left: 5px;
       background: none;
       border: none;
+      padding: 0;
+      display: inline-flex;
+      text-shadow:
+        -1px -1px 0 #aaaaaa,
+        1px -1px 0 #aaaaaa,
+        -1px 1px 0 #aaaaaa,
+        1px 1px 0 #aaaaaa;
 
       .icon {
         path {

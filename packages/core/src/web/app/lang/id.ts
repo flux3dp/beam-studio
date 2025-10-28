@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: 'Ulangi',
       reset: 'Atur Ulang',
+      reset_view: 'Atur Ulang Tampilan',
       undo: 'Urungkan',
       zoom_in: 'Perbesar',
       zoom_out: 'Perkecil',

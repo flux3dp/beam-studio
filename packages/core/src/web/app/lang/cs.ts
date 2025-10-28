@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: 'Znovu',
       reset: 'Resetovat',
+      reset_view: 'Obnovit Zobrazení',
       undo: 'Zpět',
       zoom_in: 'Přiblížit',
       zoom_out: 'Oddálit',

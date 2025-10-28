@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: 'Rehacer',
       reset: 'Restablecer',
+      reset_view: 'Restablecer Vista',
       undo: 'Deshacer',
       zoom_in: 'Acercar',
       zoom_out: 'Alejar',

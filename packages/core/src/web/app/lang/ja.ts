@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: 'やり直す',
       reset: 'リセット',
+      reset_view: 'ビューをリセット',
       undo: '元に戻す',
       zoom_in: 'ズームイン',
       zoom_out: 'ズームアウト',

@@ -1343,7 +1343,7 @@ export interface ILang {
     'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'select' | 'stop',
     string
   > & {
-    editing: Record<'redo' | 'reset' | 'undo' | 'zoom_in' | 'zoom_out', string>;
+    editing: Record<'redo' | 'reset' | 'reset_view' | 'undo' | 'zoom_in' | 'zoom_out', string>;
   };
   google_font_panel: {
     all_languages: string;

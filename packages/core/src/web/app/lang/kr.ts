@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: '다시 실행',
       reset: '초기화',
+      reset_view: '뷰 초기화',
       undo: '실행 취소',
       zoom_in: '확대',
       zoom_out: '축소',

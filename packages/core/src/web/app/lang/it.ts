@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: 'Ripeti',
       reset: 'Ripristina',
+      reset_view: 'Ripristina Vista',
       undo: 'Annulla',
       zoom_in: 'Ingrandisci',
       zoom_out: 'Riduci',

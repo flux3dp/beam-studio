@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: 'Gör om',
       reset: 'Återställ',
+      reset_view: 'Återställ Vy',
       undo: 'Ångra',
       zoom_in: 'Zooma in',
       zoom_out: 'Zooma ut',

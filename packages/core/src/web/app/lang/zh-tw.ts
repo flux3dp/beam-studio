@@ -1346,6 +1346,7 @@ const lang: ILang = {
     editing: {
       redo: '重做',
       reset: '重置',
+      reset_view: '重置視角',
       undo: '復原',
       zoom_in: '放大',
       zoom_out: '縮小',

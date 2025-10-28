@@ -6,6 +6,7 @@ import { Spin } from 'antd';
 import classNames from 'classnames';
 
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ImageDisplay.module.scss';
 
@@ -26,6 +27,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
     { className, displayArea, img, onDragEnd, onDragMove, onImgLoad, onScaleChange, renderContents, zoomPoints },
     outRef,
   ) => {
+    const lang = useI18n();
     const [imgLoaded, setImgLoaded] = useState(false);
     const imgContainerRef = useRef<HTMLDivElement | null>(null);
     const scaleRef = useRef<number>(1);
@@ -147,6 +149,19 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
       },
       [updateScale, displayArea],
     );
+
+    const handleResetView = useCallback(() => {
+      const container = imgContainerRef.current;
+
+      if (!container) return;
+
+      const size = displayArea ?? imageSizeRef.current;
+      const targetScale = Math.max(container.clientWidth / size.width, container.clientHeight / size.height);
+
+      updateScale(targetScale);
+      container.scrollLeft = (size.width * targetScale - container.clientWidth) / 2;
+      container.scrollTop = (size.height * targetScale - container.clientHeight) / 2;
+    }, [displayArea, updateScale]);
 
     const handleImgLoad = useCallback(
       (e: SyntheticEvent<HTMLImageElement>) => {
@@ -275,10 +290,11 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
             ))}
         </div>
         <div className={styles['zoom-block']}>
-          <button onClick={() => handleZoom(-0.2)} type="button">
+          <button onClick={() => handleZoom(-0.1)} type="button">
             <ObjectPanelIcons.Minus className={styles.icon} height="24" width="24" />
           </button>
-          <button onClick={() => handleZoom(0.2)} type="button">
+          <button onClick={handleResetView}>{lang.global.editing.reset_view}</button>
+          <button onClick={() => handleZoom(0.1)} type="button">
             <ObjectPanelIcons.Plus className={styles.icon} height="24" width="24" />
           </button>
         </div>
