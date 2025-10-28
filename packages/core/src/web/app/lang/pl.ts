@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Wyślij plik',
       set_preset_wood_cut: 'Ustaw ustawienie wstępne: Drewno — cięcie',
       set_preset_wood_engraving: 'Ustaw ustawienie wstępne: Drewno — grawerowanie',
+      start_tutorial: 'Samouczek startowy',
       switch_to_layer_panel: 'Przejdź do panelu warstw',
       switch_to_object_panel: 'Przełącz do panelu obiektów',
       switch_to_preview_mode: 'Przełącz do trybu podglądu',

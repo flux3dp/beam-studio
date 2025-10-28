@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Envía el archivo',
       set_preset_wood_cut: 'Establecer preselección: Madera - Corte',
       set_preset_wood_engraving: 'Establecer preselección: Madera - Grabado',
+      start_tutorial: 'Tutorial de inicio',
       switch_to_layer_panel: 'Cambiar al panel de capas',
       switch_to_object_panel: 'Cambiar al panel de objetos',
       switch_to_preview_mode: 'Cambiar al modo de vista previa',

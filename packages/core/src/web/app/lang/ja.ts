@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'ファイルを送信',
       set_preset_wood_cut: 'プリセットの設定：木材 - 切断',
       set_preset_wood_engraving: 'プリセットの設定：木材 - 彫刻',
+      start_tutorial: '初めてのチュートリアル',
       switch_to_layer_panel: 'レイヤーパネルに切り替え',
       switch_to_object_panel: 'オブジェクトパネルに切り替える',
       switch_to_preview_mode: 'プレビューモードに切り替え',

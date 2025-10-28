@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: '送出工作',
       set_preset_wood_cut: '設定參數：木板 - 切割',
       set_preset_wood_engraving: '設定參數：木板 - 刻印',
+      start_tutorial: '新手教学',
       switch_to_layer_panel: '切换到图层面板',
       switch_to_object_panel: '切换到物件面板',
       switch_to_preview_mode: '切换到相机预览模式',

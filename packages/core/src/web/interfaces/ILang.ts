@@ -2331,6 +2331,7 @@ export interface ILang {
       send_the_file: string;
       set_preset_wood_cut: string;
       set_preset_wood_engraving: string;
+      start_tutorial: string;
       switch_to_layer_panel: string;
       switch_to_object_panel: string;
       switch_to_preview_mode: string;

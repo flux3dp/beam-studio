@@ -11,7 +11,7 @@ export interface IHintCircle {
 
 export interface ITutorialDialog {
   callback?: string;
-  dialogBoxStyles: IDialogBoxStyle;
+  dialogBoxStyles?: IDialogBoxStyle;
   hintCircle?: IHintCircle;
   holePosition?: {
     bottom?: number;

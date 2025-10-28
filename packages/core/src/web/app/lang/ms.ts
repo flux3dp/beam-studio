@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Hantar Fail',
       set_preset_wood_cut: 'Tetapkan Praset: Kayu - Potong',
       set_preset_wood_engraving: 'Tetapkan Praset: Kayu - Ukir',
+      start_tutorial: 'Tutorial Permulaan',
       switch_to_layer_panel: 'Tukar ke Panel Lapisan',
       switch_to_object_panel: 'Tukar ke Panel Objek',
       switch_to_preview_mode: 'Tukar ke Mod Pratonton',

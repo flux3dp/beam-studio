@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Lähetä tiedosto',
       set_preset_wood_cut: 'Aseta esiasetus: Puu - leikkaus',
       set_preset_wood_engraving: 'Aseta esiasetus: Puu - kaivertaminen',
+      start_tutorial: 'Aloitusopastus',
       switch_to_layer_panel: 'Vaihda kerrospaneeliin',
       switch_to_object_panel: 'Vaihda objektipaneeliin',
       switch_to_preview_mode: 'Vaihda esikatselutilaan',

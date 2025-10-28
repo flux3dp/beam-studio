@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Senden Sie die Datei',
       set_preset_wood_cut: 'Set Preset: Holz - Schneiden',
       set_preset_wood_engraving: 'Set Preset: Holz - Gravur',
+      start_tutorial: 'Tutorial für den Start',
       switch_to_layer_panel: 'Wechseln Sie zum Ebenenbedienfeld',
       switch_to_object_panel: 'Wechsel zum Objektpanel',
       switch_to_preview_mode: 'Wechseln Sie in den Vorschaumodus',

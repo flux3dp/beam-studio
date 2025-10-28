@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Gửi tệp',
       set_preset_wood_cut: 'Đặt cài đặt sẵn: Gỗ - Cắt',
       set_preset_wood_engraving: 'Đặt cài đặt sẵn: Gỗ - Khắc',
+      start_tutorial: 'Hướng dẫn bắt đầu',
       switch_to_layer_panel: 'Chuyển sang Bảng lớp',
       switch_to_object_panel: 'Chuyển đổi sang Bảng Đối tượng',
       switch_to_preview_mode: 'Chuyển sang Chế độ xem trước',

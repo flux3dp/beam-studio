@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Αποστολή Αρχείου',
       set_preset_wood_cut: 'Ορισμός προεπιλογής: Ξύλο - Κοπή',
       set_preset_wood_engraving: 'Ορισμός προεπιλογής: Ξύλο - Χάραξη',
+      start_tutorial: 'Εισαγωγικό μάθημα',
       switch_to_layer_panel: 'Μετάβαση στο πάνελ στρωμάτων',
       switch_to_object_panel: 'Μετάβαση στο πίνακα αντικειμένων',
       switch_to_preview_mode: 'Μετάβαση σε λειτουργία προεπισκόπησης',

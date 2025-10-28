@@ -2337,6 +2337,7 @@ const lang: ILang = {
       send_the_file: 'Poslat soubor',
       set_preset_wood_cut: 'Nastavit předvolbu: Dřevo - řez',
       set_preset_wood_engraving: 'Nastavit předvolbu: Dřevo - gravírování',
+      start_tutorial: 'Úvodní výuka',
       switch_to_layer_panel: 'Přepnout na panel vrstev',
       switch_to_object_panel: 'Přepnout na panel objektů',
       switch_to_preview_mode: 'Přepnout na mód náhledu',

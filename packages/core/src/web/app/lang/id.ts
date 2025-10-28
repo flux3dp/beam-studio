@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Kirim Berkas',
       set_preset_wood_cut: 'Atur Preset: Kayu - Potong',
       set_preset_wood_engraving: 'Atur Preset: Kayu - Pengukiran',
+      start_tutorial: 'Tutorial Mulai',
       switch_to_layer_panel: 'Beralih ke Panel Lapisan',
       switch_to_object_panel: 'Beralih ke Panel Objek',
       switch_to_preview_mode: 'Beralih ke Mode Pratinjau',
