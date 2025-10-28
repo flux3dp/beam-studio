@@ -17,6 +17,7 @@ import ExposureSlider from './ExposureSlider';
 import ImageDisplay from './ImageDisplay';
 import styles from './SolvePnP.module.scss';
 import { adorPnPPoints } from './solvePnPConstants';
+import StepProgress from './StepProgress';
 import Title from './Title';
 import useCamera from './useCamera';
 
@@ -381,16 +382,7 @@ const SolvePnP = ({
             <li>{lang.calibration.solve_pnp_step1}</li>
             {doorChecker && <li>{lang.calibration.solve_pnp_keep_door_closed}</li>}
           </ol>
-          {steps && (
-            <div className={styles['step-indicator']}>
-              {steps.map((step, idx) => (
-                <div className={classNames(styles.step, { [styles.active]: idx <= currentStep! })} key={step}>
-                  {step}
-                  <div className={styles.bar} />
-                </div>
-              ))}
-            </div>
-          )}
+          {steps && <StepProgress currentStep={currentStep ?? 0} steps={steps} />}
         </div>
         <div className={styles.animation}>
           {animationSrcs && (

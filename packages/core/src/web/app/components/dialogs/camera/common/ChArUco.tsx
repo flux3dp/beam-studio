@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
-import { Button, Flex, Progress, Spin } from 'antd';
+import { Button, Flex, Spin } from 'antd';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -16,10 +16,12 @@ import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 import styles from './ChArUco.module.scss';
 import ExposureSlider from './ExposureSlider';
 import handleCalibrationResult from './handleCalibrationResult';
+import StepProgress from './StepProgress';
 import useLiveFeed from './useLiveFeed';
 
 interface Props {
   cameraIndex?: number;
+  isVertical?: boolean;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   onPrev: () => void;
@@ -29,7 +31,7 @@ interface Props {
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
-const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, steps, title, updateParam }: Props) => {
+const ChArUco = ({ cameraIndex, isVertical, onClose, onNext, onPrev, steps, title, updateParam }: Props) => {
   const [step, setStep] = useState(0);
   const tCali = useI18n().calibration;
   const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed({
@@ -132,19 +134,25 @@ const ChArUco = ({ cameraIndex, onClose, onNext, onPrev, steps, title, updatePar
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
-      title={title ?? tCali.title_capture_calibration_pattern}
+      title={title ?? `${tCali.title_capture_calibration_pattern} (${description})`}
       width="80vw"
     >
       <div className={styles.container}>
         <ol className={styles.desc}>
-          <li>{tCali.charuco_open_the_machine_lid}</li>
-          <li dangerouslySetInnerHTML={{ __html: sprintf(tCali.charuco_place_charuco, description) }} />
+          <li
+            dangerouslySetInnerHTML={{
+              __html: sprintf(
+                isVertical ? tCali.charuco_place_charuco_vertical : tCali.charuco_place_charuco_horizontal,
+                description,
+              ),
+            }}
+          />
           {step === 0 && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
           <li>{tCali.charuco_capture}</li>
         </ol>
-        <Progress className={styles.progress} percent={(step + 1) * (100 / steps.length)} status="normal" />
         <Flex align="center" className={styles.content} justify="space-between">
           <div className={styles.left}>
+            <StepProgress className={styles.progress} currentStep={step} steps={steps.map((s) => s.description)} />
             <div className={styles.imgContainer}>
               {img ? (
                 <>

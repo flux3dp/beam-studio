@@ -1004,8 +1004,8 @@ export interface ILang {
     cancel: string;
     charuco_auto_focus: string;
     charuco_capture: string;
-    charuco_open_the_machine_lid: string;
-    charuco_place_charuco: string;
+    charuco_place_charuco_horizontal: string;
+    charuco_place_charuco_vertical: string;
     charuco_position_bottom_left: string;
     charuco_position_bottom_right: string;
     charuco_position_center: string;

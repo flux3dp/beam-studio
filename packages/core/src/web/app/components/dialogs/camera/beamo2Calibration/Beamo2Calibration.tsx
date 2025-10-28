@@ -138,6 +138,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
     .with(Steps.CHESSBOARD, () => {
       return (
         <ChArUco
+          isVertical
           onClose={onClose}
           onNext={async () => {
             progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCalibration.moving_laser_head });

@@ -17,31 +17,6 @@
   padding: 0 0 0 24px;
 }
 
-.step-indicator {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(0, 1fr));
-  gap: 12px;
-
-  .step {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-
-    .bar {
-      background-color: rgba(0, 0, 0, 0.06);
-      width: 100%;
-      height: 8px;
-      border-radius: 4px;
-    }
-
-    &.active {
-      .bar {
-        background-color: variables.$primary-blue;
-      }
-    }
-  }
-}
-
 .animation {
   display: flex;
   justify-content: center;
