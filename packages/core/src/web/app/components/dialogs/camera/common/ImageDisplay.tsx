@@ -89,8 +89,11 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
           const w = size.width * newValue;
           const h = size.height * newValue;
 
-          if (imgContainerRef.current?.clientWidth! > w) imgContainerRef.current?.classList.add(styles.flex);
-          else imgContainerRef.current?.classList.remove(styles.flex);
+          if (imgContainerRef.current?.clientWidth! > w || imgContainerRef.current?.clientHeight! > h) {
+            imgContainerRef.current?.classList.add(styles.flex);
+          } else {
+            imgContainerRef.current?.classList.remove(styles.flex);
+          }
 
           if (svgRef.current) {
             svgRef.current.style.width = `${w}px`;

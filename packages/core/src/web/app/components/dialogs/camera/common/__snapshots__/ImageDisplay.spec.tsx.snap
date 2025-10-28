@@ -24,6 +24,9 @@ exports[`test ImageDisplay should render correctly with img 1`] = `
           width="24"
         />
       </button>
+      <button>
+        Reset View
+      </button>
       <button
         type="button"
       >
@@ -72,6 +75,9 @@ exports[`test ImageDisplay should render correctly with img 2`] = `
           height="24"
           width="24"
         />
+      </button>
+      <button>
+        Reset View
       </button>
       <button
         type="button"
@@ -132,6 +138,9 @@ exports[`test ImageDisplay should render correctly without img 1`] = `
           height="24"
           width="24"
         />
+      </button>
+      <button>
+        Reset View
       </button>
       <button
         type="button"

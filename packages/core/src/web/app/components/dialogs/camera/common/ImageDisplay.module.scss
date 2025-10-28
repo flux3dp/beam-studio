@@ -17,6 +17,7 @@
     &.flex {
       display: flex;
       justify-content: center;
+      align-items: center;
     }
 
     &:active {
@@ -49,7 +50,6 @@
 
     > svg {
       max-width: unset;
-      top: 0;
       position: absolute;
     }
   }
@@ -67,11 +67,8 @@
       border: none;
       padding: 0;
       display: inline-flex;
-      text-shadow:
-        -1px -1px 0 #aaaaaa,
-        1px -1px 0 #aaaaaa,
-        -1px 1px 0 #aaaaaa,
-        1px 1px 0 #aaaaaa;
+      -webkit-text-stroke-color: #aaaaaa;
+      -webkit-text-stroke-width: 0.5px;
 
       .icon {
         path {

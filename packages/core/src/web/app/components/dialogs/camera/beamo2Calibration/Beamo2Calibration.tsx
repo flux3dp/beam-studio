@@ -249,25 +249,25 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       >(step)
         .with(Steps.SOLVE_PNP_TL, () => ({
           exposure: 350,
-          interestArea: { height: 2800, width: 2800, x: 0, y: 0 },
+          interestArea: { height: 1300, width: 2900, x: 0, y: 1000 },
           region: 'topLeft',
           solvePnPStep: 0,
         }))
         .with(Steps.SOLVE_PNP_TR, () => ({
           exposure: 350,
-          interestArea: { height: 2800, width: 2800, x: 2800, y: 0 },
+          interestArea: { height: 1300, width: 2800, x: 2700, y: 1000 },
           region: 'topRight',
           solvePnPStep: 1,
         }))
         .with(Steps.SOLVE_PNP_BL, () => ({
           exposure: 100,
-          interestArea: { height: 1400, width: 2800, x: 0, y: 2100 },
+          interestArea: { height: 1000, width: 1400, x: 1400, y: 2100 },
           region: 'bottomLeft',
           solvePnPStep: 2,
         }))
         .otherwise(() => ({
           exposure: 100,
-          interestArea: { height: 1400, width: 2800, x: 2800, y: 2100 },
+          interestArea: { height: 1000, width: 1400, x: 2800, y: 2100 },
           region: 'bottomRight',
           solvePnPStep: 3,
         }));
