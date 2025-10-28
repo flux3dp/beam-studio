@@ -3,14 +3,20 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
-import { getExposureSettings } from '@core/helpers/device/camera/cameraExposure';
+import { getExposureSettings, setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
-export type Options = { index?: number; source?: 'usb' | 'wifi'; videoElement?: HTMLVideoElement };
+export type Options<T = null> = {
+  firstImageArgs?: T;
+  index?: number;
+  initExposure?: number;
+  source?: 'usb' | 'wifi';
+  videoElement?: HTMLVideoElement;
+};
 export type HandleTakePictureArgs<T = null> = {
   callbackArgs?: T;
   retryTimes?: number;
@@ -19,7 +25,7 @@ export type HandleTakePictureArgs<T = null> = {
 
 const useCamera = <T>(
   handleImg?: (blob: Blob, args?: T) => boolean | Promise<boolean>,
-  { index = 0, source = 'wifi', videoElement }: Options = {},
+  { firstImageArgs, index = 0, initExposure, source = 'wifi', videoElement }: Options<T> = {},
 ): {
   connectWebCam: () => Promise<void>;
   exposureSetting: IConfigSetting | null;
@@ -123,12 +129,14 @@ const useCamera = <T>(
           }
 
           try {
+            if (initExposure !== undefined) await setExposure(initExposure);
+
             setExposureSetting(await getExposureSettings());
           } catch (e) {
             console.log('Failed to get exposure setting', e);
           }
 
-          handleTakePicture();
+          handleTakePicture({ callbackArgs: firstImageArgs });
         } else if (source === 'usb') {
           await connectWebCam();
 

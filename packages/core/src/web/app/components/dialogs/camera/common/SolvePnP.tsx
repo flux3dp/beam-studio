@@ -6,9 +6,9 @@ import classNames from 'classnames';
 import alertCaller from '@core/app/actions/alert-caller';
 import type DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import moveLaserHead from '@core/app/components/dialogs/camera/common/moveLaserHead';
-import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
+import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
@@ -28,6 +28,7 @@ interface Props {
   doorChecker?: DoorChecker | null;
   hasNext?: boolean;
   imgSource?: 'usb' | 'wifi';
+  initExposure?: number;
   initialPoints?: Array<[number, number]>;
   initInterestArea?: { height: number; width: number; x: number; y: number };
   onBack: () => void;
@@ -52,6 +53,7 @@ const SolvePnP = ({
   doorChecker,
   hasNext = false,
   imgSource = 'wifi',
+  initExposure,
   initialPoints,
   initInterestArea,
   onBack,
@@ -65,7 +67,7 @@ const SolvePnP = ({
 }: Props): React.JSX.Element => {
   const [img, setImg] = useState<null | { blob: Blob; success: boolean; url: string }>(null);
   const [points, setPoints] = useState<Array<[number, number]>>(initialPoints ?? []);
-  const [zoomPoints, setZoomPoints] = useState<Array<[number, number]>>([]);
+  const [zoomPoints, setZoomPoints] = useState<Array<[number, number]>>(initialPoints ?? []);
   const [selectedPointIdx, setSelectedPointIdx] = useState<number>(0);
   const dragStartPos = useRef<null | {
     group: SVGGElement;
@@ -179,8 +181,10 @@ const SolvePnP = ({
     exposureSetting,
     handleTakePicture: takePicture,
     setExposureSetting,
-  } = useCamera(handleImg, {
+  } = useCamera<HandleImgOpts>(handleImg, {
+    firstImageArgs: { shouldFindCorners: !initialPoints },
     index: cameraIndex,
+    initExposure,
     source: imgSource,
   });
 
@@ -198,11 +202,28 @@ const SolvePnP = ({
   );
 
   useDidUpdateEffect(() => {
-    setPoints([]);
-    setImg(null);
-    setSelectedPointIdx(0);
-    handleTakePicture();
-  }, [refPoints, handleTakePicture]);
+    const handler = async () => {
+      let needRetakeImage = !initialPoints;
+
+      setPoints(initialPoints ?? []);
+      setSelectedPointIdx(0);
+
+      if (initialPoints) setZoomPoints(initialPoints);
+
+      if (exposureSetting && initExposure && exposureSetting.value !== initExposure) {
+        await setExposure(initExposure);
+        setExposureSetting({ ...exposureSetting!, value: initExposure });
+        needRetakeImage = true;
+      }
+
+      if (!needRetakeImage) return;
+
+      setImg(null);
+      handleTakePicture({ handleImgOpts: { shouldFindCorners: !initialPoints } });
+    };
+
+    handler();
+  }, [initExposure, initialPoints, refPoints, handleTakePicture]);
 
   const handlePointDragStart = useCallback(
     (idx: number, e: React.MouseEvent<SVGGElement>) => {
@@ -252,15 +273,20 @@ const SolvePnP = ({
 
       if (group) {
         const circle = group.querySelector('circle')!;
-        const x = Number.parseInt(circle.getAttribute('cx')!, 10);
-        const y = Number.parseInt(circle.getAttribute('cy')!, 10);
+        let x = Number.parseInt(circle.getAttribute('cx')!, 10);
+        let y = Number.parseInt(circle.getAttribute('cy')!, 10);
+
+        if (initInterestArea) {
+          x = Math.min(Math.max(x, initInterestArea.x), initInterestArea.x + initInterestArea.width);
+          y = Math.min(Math.max(y, initInterestArea.y), initInterestArea.y + initInterestArea.height);
+        }
 
         setPoints((prev) => prev.map((p, i) => (i === pointIdx ? [x, y] : p)));
       }
     }
 
     dragStartPos.current = null;
-  }, []);
+  }, [initInterestArea]);
 
   const handleDone = async () => {
     const res = await cameraCalibrationApi.solvePnPCalculate(dh, points, refPoints);
@@ -310,29 +336,38 @@ const SolvePnP = ({
   return (
     <DraggableModal
       closable
-      footer={[
-        <Button className={styles['footer-button']} key="back" onClick={onBack}>
-          {lang.buttons.back}
-        </Button>,
-        doorChecker ? (
-          <Button
-            className={styles['footer-button']}
-            key="relocate"
-            onClick={() => handleTakePicture({ relocate: true })}
-          >
-            {lang.calibration.relocate_camera}
-          </Button>
-        ) : null,
-        <Button
-          className={styles['footer-button']}
-          disabled={!img?.success}
-          key="done"
-          onClick={handleDone}
-          type="primary"
-        >
-          {hasNext ? lang.buttons.next : lang.buttons.done}
-        </Button>,
-      ]}
+      footer={
+        <div className={styles.footer}>
+          <div>
+            {doorChecker && (
+              <Tooltip title={lang.calibration.relocate_camera_desc}>
+                <Button
+                  className={styles['footer-button']}
+                  key="relocate"
+                  onClick={() => handleTakePicture({ relocate: true })}
+                >
+                  {lang.calibration.relocate_camera}
+                </Button>
+              </Tooltip>
+            )}
+          </div>
+          <div>
+            <Button className={styles['footer-button']} key="back" onClick={onBack}>
+              {lang.buttons.back}
+            </Button>
+
+            <Button
+              className={styles['footer-button']}
+              disabled={!img?.success}
+              key="done"
+              onClick={handleDone}
+              type="primary"
+            >
+              {hasNext ? lang.buttons.next : lang.buttons.done}
+            </Button>
+          </div>
+        </div>
+      }
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
@@ -413,6 +448,7 @@ const SolvePnP = ({
                   <Col span={9}>
                     <InputNumber<number>
                       className={styles.input}
+                      disabled={!points[selectedPointIdx]}
                       id="point-x-input"
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
@@ -433,6 +469,7 @@ const SolvePnP = ({
                   <Col span={9}>
                     <InputNumber<number>
                       className={styles.input}
+                      disabled={!points[selectedPointIdx]}
                       id="point-y-input"
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
@@ -451,22 +488,13 @@ const SolvePnP = ({
             </Flex>
           )}
         </div>
-        <Flex align="center" gap={8} justify="space-between">
-          {exposureSetting && (
-            <>
-              <ExposureSlider
-                className={styles.exposure}
-                exposureSetting={exposureSetting}
-                onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
-                setExposureSetting={setExposureSetting}
-              />
-              <div className={styles.value}>{exposureSetting.value}</div>
-            </>
-          )}
-          <Tooltip title={lang.calibration.retake}>
-            <LeftPanelIcons.Camera className={styles.retake} onClick={() => handleTakePicture()} />
-          </Tooltip>
-        </Flex>
+        <ExposureSlider
+          className={styles.exposure}
+          exposureSetting={exposureSetting}
+          onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
+          onRetakePicture={handleTakePicture}
+          setExposureSetting={setExposureSetting}
+        />
       </div>
     </DraggableModal>
   );

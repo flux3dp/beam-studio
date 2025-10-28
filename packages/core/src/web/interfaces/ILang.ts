@@ -1104,8 +1104,8 @@ export interface ILang {
     put_paper_step3: string;
     put_paper_wide_angle_1: string;
     put_paper_wide_angle_2: string;
-    recalibrate: string;
     relocate_camera: string;
+    relocate_camera_desc: string;
     res_average: string;
     res_excellent: string;
     res_poor: string;

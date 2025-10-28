@@ -237,30 +237,35 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       );
     })
     .with(Steps.SOLVE_PNP_BL, Steps.SOLVE_PNP_BR, Steps.SOLVE_PNP_TL, Steps.SOLVE_PNP_TR, (step) => {
-      const { interestArea, region, solvePnPStep } = match<
+      const { exposure, interestArea, region, solvePnPStep } = match<
         typeof step,
         {
+          exposure?: number;
           interestArea?: { height: number; width: number; x: number; y: number };
           region: keyof typeof bm2PnPPoints;
           solvePnPStep: number;
         }
       >(step)
         .with(Steps.SOLVE_PNP_TL, () => ({
+          exposure: 350,
           interestArea: { height: 2800, width: 2800, x: 0, y: 0 },
           region: 'topLeft',
           solvePnPStep: 0,
         }))
         .with(Steps.SOLVE_PNP_TR, () => ({
+          exposure: 350,
           interestArea: { height: 2800, width: 2800, x: 2800, y: 0 },
           region: 'topRight',
           solvePnPStep: 1,
         }))
         .with(Steps.SOLVE_PNP_BL, () => ({
+          exposure: 100,
           interestArea: { height: 1400, width: 2800, x: 0, y: 2100 },
           region: 'bottomLeft',
           solvePnPStep: 2,
         }))
         .otherwise(() => ({
+          exposure: 100,
           interestArea: { height: 1400, width: 2800, x: 2800, y: 2100 },
           region: 'bottomRight',
           solvePnPStep: 3,
@@ -276,6 +281,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           dh={0}
           doorChecker={doorChecker.current}
           hasNext
+          initExposure={exposure}
           initialPoints={calibratingParam.current.imgPoints1?.[region]}
           initInterestArea={interestArea}
           onBack={prev}

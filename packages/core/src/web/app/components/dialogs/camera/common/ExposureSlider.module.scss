@@ -1,15 +1,45 @@
 .container {
+  width: 100%;
   display: flex;
   align-items: center;
+  justify-content: space-between;
+  gap: 8px;
 
-  .icon {
-    font-size: 22px;
-    margin-right: 12px;
+  .main {
+    flex: 1;
+    display: flex;
+    align-items: center;
+
+    .icon {
+      font-size: 22px;
+      margin-right: 12px;
+    }
+
+    .slider {
+      width: 100%;
+      margin-left: 0;
+      margin-right: 0;
+    }
   }
 
-  .slider {
-    width: 100%;
-    margin-left: 0;
-    margin-right: 0;
+  .value {
+    width: 32px;
+  }
+
+  .retake {
+    color: #7c7c7c;
+    cursor: pointer;
+
+    &.disabled {
+      opacity: 0.5;
+    }
+
+    &:not(.disabled) {
+      cursor: pointer;
+    }
+
+    &:hover:not(.disabled) {
+      color: #000;
+    }
   }
 }
