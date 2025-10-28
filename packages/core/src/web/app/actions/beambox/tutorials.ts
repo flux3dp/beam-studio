@@ -2,8 +2,8 @@ import Alert from '@core/app/actions/alert-caller';
 import Dialog from '@core/app/actions/dialog-caller';
 import Progress from '@core/app/actions/progress-caller';
 import { generateInterfaceTutorial, generateNewUserTutorial } from '@core/app/constants/tutorial-constants';
-import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { discoverManager } from '@core/helpers/api/discover';
+import getDevice from '@core/helpers/device/get-device';
 import i18n from '@core/helpers/i18n';
 
 const getMachineForTutorial = async () =>
@@ -38,16 +38,13 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
   Progress.popById('tutorial-find-machine');
 
   if (isAnyMachineAvailable) {
-    const autoSwitch = useGlobalPreferenceStore.getState()['auto-switch-tab'];
-    const newUserTutorial = generateNewUserTutorial();
-    const tutorial = {
-      ...newUserTutorial,
-      dialogStylesAndContents: autoSwitch
-        ? newUserTutorial.dialogStylesAndContents.filter(({ id }) => id !== 'switch-tab')
-        : newUserTutorial.dialogStylesAndContents,
-    };
+    const { device } = await getDevice();
 
-    Dialog.showTutorial(tutorial, callback);
+    if (!device) return;
+
+    const newUserTutorial = generateNewUserTutorial(device.model);
+
+    Dialog.showTutorial(newUserTutorial, callback);
   } else {
     const buttons = [
       {

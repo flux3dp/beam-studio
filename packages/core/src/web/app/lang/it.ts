@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Invia il file',
       set_preset_wood_cut: 'Imposta predefinito: Legno - Taglio',
       set_preset_wood_engraving: 'Imposta predefinito: Legno - Incisione',
+      start_tutorial: 'Tutorial introduttivo',
       switch_to_layer_panel: 'Passa al pannello livelli',
       switch_to_object_panel: 'Passa al pannello degli oggetti',
       switch_to_preview_mode: 'Passa alla modalità anteprima',

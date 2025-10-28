@@ -1,3 +1,14 @@
 div.tutorial {
   z-index: 999;
 }
+
+.modal {
+  :global(.ant-modal-title) {
+    // Fix antd title may overlap with cross button
+    margin-right: 20px;
+  }
+
+  video {
+    width: 400px;
+  }
+}

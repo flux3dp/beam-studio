@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Send filen',
       set_preset_wood_cut: 'Sæt forudindstilling: Træ - Skæring',
       set_preset_wood_engraving: 'Sæt forudindstilling: Træ - Gravering',
+      start_tutorial: 'Startvejledning',
       switch_to_layer_panel: 'Skift til lag panel',
       switch_to_object_panel: 'Skift til objektpanel',
       switch_to_preview_mode: 'Skift til forhåndsvisningstilstand',

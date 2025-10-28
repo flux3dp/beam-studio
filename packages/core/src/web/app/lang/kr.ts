@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: '파일 보내기',
       set_preset_wood_cut: '사전 설정: 목재 - 절단',
       set_preset_wood_engraving: '사전 설정: 목재 - 각인',
+      start_tutorial: '시작 튜토리얼',
       switch_to_layer_panel: '레이어 패널로 전환',
       switch_to_object_panel: '객체 패널로 전환',
       switch_to_preview_mode: '미리보기 모드로 전환',

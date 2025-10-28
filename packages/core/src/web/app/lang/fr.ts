@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Envoyer le fichier',
       set_preset_wood_cut: 'Définir le préréglage : Bois - Découpe',
       set_preset_wood_engraving: 'Définir le préréglage : Bois - Gravure',
+      start_tutorial: 'Didacticiel de démarrage',
       switch_to_layer_panel: 'Passer au panneau des calques',
       switch_to_object_panel: 'Passer au panneau des objets',
       switch_to_preview_mode: 'Passer en mode Aperçu',

@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'ส่งไฟล์',
       set_preset_wood_cut: 'ตั้งค่าที่กําหนดไว้ล่วงหน้า: ไม้ - ตัด',
       set_preset_wood_engraving: 'ตั้งค่าที่กําหนดไว้ล่วงหน้า: ไม้ - กัดขูด',
+      start_tutorial: 'การสอนเริ่มต้น',
       switch_to_layer_panel: 'สลับไปที่แผงชั้น',
       switch_to_object_panel: 'สลับไปยังหน้าต่างการจัดการอ็อบเจกต์',
       switch_to_preview_mode: 'สลับไปที่โหมดดูตัวอย่าง',

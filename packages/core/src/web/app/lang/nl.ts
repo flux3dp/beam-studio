@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Verstuur het bestand',
       set_preset_wood_cut: 'Stel voorinstelling in: Hout - Snijden',
       set_preset_wood_engraving: 'Stel voorinstelling in: Hout - Graveren',
+      start_tutorial: 'Introductietutorial',
       switch_to_layer_panel: 'Schakel over naar laagvenster',
       switch_to_object_panel: 'Schakel over naar Objectenpaneel',
       switch_to_preview_mode: 'Schakel over naar voorbeeldmodus',

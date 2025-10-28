@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Enviar o arquivo',
       set_preset_wood_cut: 'Definir predefinição: Madeira - Corte',
       set_preset_wood_engraving: 'Definir predefinição: Madeira - Gravação',
+      start_tutorial: 'Tutorial inicial',
       switch_to_layer_panel: 'Mudar para o painel de camadas',
       switch_to_object_panel: 'Mudar para o painel de objetos',
       switch_to_preview_mode: 'Mudar para o modo de visualização',

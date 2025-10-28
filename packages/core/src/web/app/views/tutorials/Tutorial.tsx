@@ -1,5 +1,7 @@
 import * as React from 'react';
 
+import { Modal as AntdModal } from 'antd';
+
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { TutorialContext, TutorialContextProvider } from '@core/app/views/tutorials/TutorialContext';
@@ -21,6 +23,25 @@ class TutorialComponent extends React.Component<{
     const { endTutorial } = this.props;
     const { currentStep, dialogStylesAndContents, handleNextStep, hasNextButton } = this.context;
     const { dialogBoxStyles, subElement, text } = dialogStylesAndContents[currentStep];
+
+    if (!dialogBoxStyles) {
+      return (
+        <AntdModal
+          cancelButtonProps={{ hidden: true }}
+          centered
+          className={styles.modal}
+          mask={false}
+          okText={lang.next}
+          onCancel={endTutorial}
+          onOk={handleNextStep}
+          open
+          title={`${text} (${currentStep + 1}/${dialogStylesAndContents.length})`}
+          width="unset"
+        >
+          {subElement}
+        </AntdModal>
+      );
+    }
 
     return (
       <DialogBox

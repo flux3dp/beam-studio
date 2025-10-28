@@ -2336,6 +2336,7 @@ const lang: ILang = {
       send_the_file: 'Skicka filen',
       set_preset_wood_cut: 'Ställ in förval: Trä - skärning',
       set_preset_wood_engraving: 'Ställ in förval: Trä - gravering',
+      start_tutorial: 'Startguide',
       switch_to_layer_panel: 'Byt till lagerpanelen',
       switch_to_object_panel: 'Byt till objektpanel',
       switch_to_preview_mode: 'Byt till förhandsgranskningsläge',
