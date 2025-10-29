@@ -572,6 +572,7 @@ const lang: ILang = {
             leather_3mm_cutting: 'Lær - 3 mm Skjæring',
             leather_5mm_cutting: 'Lær - 5 mm Skjæring',
             leather_engraving: 'Lær - gravering',
+            leather_printing: 'Lær - Utskrift',
             mdf_3mm_cutting: 'New Zealand MDF - 3mm Skjæring',
             mdf_5mm_cutting: 'New Zealand MDF - 5mm Skjæring',
             mdf_engraving: 'New Zealand MDF - Gravering',
