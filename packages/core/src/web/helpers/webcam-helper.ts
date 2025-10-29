@@ -26,9 +26,10 @@ const askForPermission = async (): Promise<boolean> => {
 const listDevices = async (): Promise<MediaDeviceInfo[]> => {
   let devices = await navigator.mediaDevices.enumerateDevices();
 
-  devices = devices.filter((device) => device.kind === 'videoinput' && device.label.startsWith('USB'));
+  const videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
+  const usbVideoInputDevices = videoInputDevices.filter((device) => device.label.includes('USB'));
 
-  return devices;
+  return usbVideoInputDevices ?? videoInputDevices;
 };
 
 const getDevice = async (id?: string): Promise<MediaDeviceInfo | null> => {
