@@ -478,7 +478,9 @@ export interface ILang {
             brass_dark: string;
             brass_engraving: string;
             brass_light: string;
+            canvas_fabric_printing: string;
             canvas_printing: string;
+            cardboard_printing: string;
             cardstock_printing: string;
             copper: string;
             cork_printing: string;
@@ -496,9 +498,11 @@ export interface ILang {
             leather_3mm_cutting: string;
             leather_5mm_cutting: string;
             leather_engraving: string;
+            leather_printing: string;
             mdf_3mm_cutting: string;
             mdf_5mm_cutting: string;
             mdf_engraving: string;
+            mdf_printing: string;
             metal_bw_engraving: string;
             opaque_acrylic: string;
             pc_printing: string;
@@ -512,6 +516,7 @@ export interface ILang {
             stainless_steel_printing: string;
             steel_engraving_spray_engraving: string;
             sticker_kiss_cut: string;
+            sticker_printing: string;
             stone: string;
             ti_engraving: string;
             titanium_dark: string;
@@ -545,7 +550,9 @@ export interface ILang {
             brass_dark: string;
             brass_engraving: string;
             brass_light: string;
+            canvas_fabric_printing: string;
             canvas_printing: string;
+            cardboard_printing: string;
             cardstock_printing: string;
             copper: string;
             cork_printing: string;
@@ -563,9 +570,11 @@ export interface ILang {
             leather_3mm_cutting: string;
             leather_5mm_cutting: string;
             leather_engraving: string;
+            leather_printing: string;
             mdf_3mm_cutting: string;
             mdf_5mm_cutting: string;
             mdf_engraving: string;
+            mdf_printing: string;
             metal_bw_engraving: string;
             opaque_acrylic: string;
             pc_printing: string;
@@ -579,6 +588,7 @@ export interface ILang {
             stainless_steel_printing: string;
             steel_engraving_spray_engraving: string;
             sticker_kiss_cut: string;
+            sticker_printing: string;
             stone: string;
             ti_engraving: string;
             titanium_dark: string;
