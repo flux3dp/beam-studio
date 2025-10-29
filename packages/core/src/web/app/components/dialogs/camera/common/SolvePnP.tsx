@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { Button, Col, Flex, InputNumber, Progress, Row } from 'antd';
+import { Button, Col, Flex, InputNumber, Row, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -8,6 +8,7 @@ import type DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecke
 import moveLaserHead from '@core/app/components/dialogs/camera/common/moveLaserHead';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
+import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
@@ -16,22 +17,27 @@ import ExposureSlider from './ExposureSlider';
 import ImageDisplay from './ImageDisplay';
 import styles from './SolvePnP.module.scss';
 import { adorPnPPoints } from './solvePnPConstants';
+import StepProgress from './StepProgress';
 import Title from './Title';
 import useCamera from './useCamera';
 
 interface Props {
+  animationSrcs?: Array<{ src: string; type: string }>;
   cameraIndex?: number;
+  currentStep?: number;
   dh: number;
   doorChecker?: DoorChecker | null;
   hasNext?: boolean;
   imgSource?: 'usb' | 'wifi';
+  initExposure?: number;
+  initialPoints?: Array<[number, number]>;
   initInterestArea?: { height: number; width: number; x: number; y: number };
   onBack: () => void;
   onClose: (complete: boolean) => void;
   onNext: (rvec: number[][], tvec: number[][], imgPoints: Array<[number, number]>) => void;
   params: FisheyeCaliParameters;
-  percent?: number;
   refPoints?: Array<[number, number]>;
+  steps?: string[];
   title?: string;
   titleLink?: string;
 }
@@ -41,25 +47,29 @@ type HandleImgOpts = {
 };
 
 const SolvePnP = ({
+  animationSrcs,
   cameraIndex,
+  currentStep,
   dh,
   doorChecker,
   hasNext = false,
   imgSource = 'wifi',
+  initExposure,
+  initialPoints,
   initInterestArea,
   onBack,
   onClose,
   onNext,
   params,
-  percent,
   refPoints = adorPnPPoints,
+  steps,
   title,
   titleLink,
 }: Props): React.JSX.Element => {
   const [img, setImg] = useState<null | { blob: Blob; success: boolean; url: string }>(null);
-  const [points, setPoints] = useState<Array<[number, number]>>([]);
-  const [zoomPoints, setZoomPoints] = useState<Array<[number, number]>>([]);
-  const [selectedPointIdx, setSelectedPointIdx] = useState<number>(-1);
+  const [points, setPoints] = useState<Array<[number, number]>>(initialPoints ?? []);
+  const [zoomPoints, setZoomPoints] = useState<Array<[number, number]>>(initialPoints ?? []);
+  const [selectedPointIdx, setSelectedPointIdx] = useState<number>(0);
   const dragStartPos = useRef<null | {
     group: SVGGElement;
     pointIdx: number;
@@ -68,9 +78,14 @@ const SolvePnP = ({
     x: number;
     y: number;
   }>(null);
-  const hasFoundPoints = useRef<boolean>(false);
+  const hasFoundPoints = useRef<boolean>(Boolean(initialPoints));
   const imgContainerRef = useRef<HTMLDivElement>(null);
   const lang = useI18n();
+  const videoRef = useRef<HTMLVideoElement>(null);
+
+  useDidUpdateEffect(() => {
+    videoRef.current?.load();
+  }, [animationSrcs]);
 
   useEffect(
     () => () => {
@@ -78,6 +93,16 @@ const SolvePnP = ({
     },
     [img],
   );
+
+  const displayTitle = useMemo(() => {
+    const base = title ?? lang.calibration.title_align_marker_points;
+
+    if (steps && currentStep !== undefined) {
+      return `${base} (${currentStep + 1}/${steps.length})`;
+    }
+
+    return base;
+  }, [currentStep, lang.calibration, steps, title]);
 
   const handleImg = useCallback(
     async (imgBlob: Blob, opts: HandleImgOpts = {}) => {
@@ -89,15 +114,17 @@ const SolvePnP = ({
         const image = svg?.querySelector('image')!;
 
         if (image && hasFoundPoints.current) {
-          const scale = svg!.clientWidth / Number(image.getAttribute('width'))!;
+          const scale = svg!.clientWidth / (initInterestArea?.width ?? Number(image.getAttribute('width')))!;
           const { clientHeight, clientWidth, scrollLeft, scrollTop } = container!;
 
-          interestArea = {
-            height: Math.ceil(clientHeight / scale),
-            width: Math.ceil(clientWidth / scale),
-            x: Math.round(scrollLeft / scale),
-            y: Math.round(scrollTop / scale),
-          };
+          if (svg!.clientWidth > clientWidth || svg!.clientHeight > clientHeight) {
+            interestArea = {
+              height: Math.ceil(clientHeight / scale),
+              width: Math.ceil(clientWidth / scale),
+              x: Math.round(scrollLeft / scale) + (initInterestArea?.x ?? 0),
+              y: Math.round(scrollTop / scale) + (initInterestArea?.y ?? 0),
+            };
+          }
         }
 
         const { shouldFindCorners = true } = opts;
@@ -155,8 +182,10 @@ const SolvePnP = ({
     exposureSetting,
     handleTakePicture: takePicture,
     setExposureSetting,
-  } = useCamera(handleImg, {
+  } = useCamera<HandleImgOpts>(handleImg, {
+    firstImageArgs: { shouldFindCorners: !initialPoints },
     index: cameraIndex,
+    initExposure,
     source: imgSource,
   });
 
@@ -174,11 +203,28 @@ const SolvePnP = ({
   );
 
   useDidUpdateEffect(() => {
-    setPoints([]);
-    setImg(null);
-    setSelectedPointIdx(-1);
-    handleTakePicture();
-  }, [refPoints, handleTakePicture]);
+    const handler = async () => {
+      let needRetakeImage = !initialPoints;
+
+      setPoints(initialPoints ?? []);
+      setSelectedPointIdx(0);
+
+      if (initialPoints) setZoomPoints(initialPoints);
+
+      if (exposureSetting && initExposure && exposureSetting.value !== initExposure) {
+        await setExposure(initExposure);
+        setExposureSetting({ ...exposureSetting!, value: initExposure });
+        needRetakeImage = true;
+      }
+
+      if (!needRetakeImage) return;
+
+      setImg(null);
+      handleTakePicture({ handleImgOpts: { shouldFindCorners: !initialPoints } });
+    };
+
+    handler();
+  }, [initExposure, initialPoints, refPoints, handleTakePicture]);
 
   const handlePointDragStart = useCallback(
     (idx: number, e: React.MouseEvent<SVGGElement>) => {
@@ -228,15 +274,20 @@ const SolvePnP = ({
 
       if (group) {
         const circle = group.querySelector('circle')!;
-        const x = Number.parseInt(circle.getAttribute('cx')!, 10);
-        const y = Number.parseInt(circle.getAttribute('cy')!, 10);
+        let x = Number.parseInt(circle.getAttribute('cx')!, 10);
+        let y = Number.parseInt(circle.getAttribute('cy')!, 10);
+
+        if (initInterestArea) {
+          x = Math.min(Math.max(x, initInterestArea.x), initInterestArea.x + initInterestArea.width);
+          y = Math.min(Math.max(y, initInterestArea.y), initInterestArea.y + initInterestArea.height);
+        }
 
         setPoints((prev) => prev.map((p, i) => (i === pointIdx ? [x, y] : p)));
       }
     }
 
     dragStartPos.current = null;
-  }, []);
+  }, [initInterestArea]);
 
   const handleDone = async () => {
     const res = await cameraCalibrationApi.solvePnPCalculate(dh, points, refPoints);
@@ -253,9 +304,9 @@ const SolvePnP = ({
   const positionText = useMemo(
     () =>
       selectedPointIdx >= 0
-        ? (lang.calibration[`align_${points.length}_${selectedPointIdx}` as keyof typeof lang.calibration] as string)
+        ? (lang.calibration[`align_${refPoints.length}_${selectedPointIdx}` as keyof typeof lang.calibration] as string)
         : null,
-    [lang, selectedPointIdx, points.length],
+    [lang, selectedPointIdx, refPoints.length],
   );
 
   const onScaleChange = useCallback((scale: number, svg: SVGSVGElement) => {
@@ -286,53 +337,65 @@ const SolvePnP = ({
   return (
     <DraggableModal
       closable
-      footer={[
-        <Button className={styles['footer-button']} key="back" onClick={onBack}>
-          {lang.buttons.back}
-        </Button>,
-        doorChecker ? (
-          <Button
-            className={styles['footer-button']}
-            key="relocate"
-            onClick={() => handleTakePicture({ relocate: true })}
-          >
-            {lang.calibration.relocate_camera}
-          </Button>
-        ) : null,
-        <Button className={styles['footer-button']} key="retry" onClick={() => handleTakePicture()}>
-          {lang.calibration.retake}
-        </Button>,
-        <Button
-          className={styles['footer-button']}
-          disabled={!img?.success}
-          key="done"
-          onClick={handleDone}
-          type="primary"
-        >
-          {hasNext ? lang.buttons.next : lang.buttons.done}
-        </Button>,
-      ]}
+      footer={
+        <div className={styles.footer}>
+          <div>
+            {doorChecker && (
+              <Tooltip title={lang.calibration.relocate_camera_desc}>
+                <Button
+                  className={styles['footer-button']}
+                  key="relocate"
+                  onClick={() => handleTakePicture({ relocate: true })}
+                >
+                  {lang.calibration.relocate_camera}
+                </Button>
+              </Tooltip>
+            )}
+          </div>
+          <div>
+            <Button className={styles['footer-button']} key="back" onClick={onBack}>
+              {lang.buttons.back}
+            </Button>
+
+            <Button
+              className={styles['footer-button']}
+              disabled={!img?.success}
+              key="done"
+              onClick={handleDone}
+              type="primary"
+            >
+              {hasNext ? lang.buttons.next : lang.buttons.done}
+            </Button>
+          </div>
+        </div>
+      }
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
       scrollableContent
-      title={<Title link={titleLink} title={title ?? lang.calibration.camera_calibration} />}
+      title={<Title link={titleLink} title={displayTitle} />}
       width="80vw"
     >
-      <ol className={styles.steps}>
-        <li>{lang.calibration.solve_pnp_step1}</li>
-        {doorChecker && (
-          <>
-            <li>{lang.calibration.solve_pnp_keep_door_closed}</li>
-            <li>{lang.calibration.solve_pnp_relocate_camera}</li>
-          </>
-        )}
-        <li>{lang.calibration.solve_pnp_step2}</li>
-        <li>{lang.calibration.solve_pnp_step3}</li>
-      </ol>
-      {percent !== undefined && <Progress className={styles.progress} percent={percent} status="normal" />}
       <div className={styles.grid}>
+        <div>
+          <ol className={styles.steps}>
+            <li>{lang.calibration.solve_pnp_step1}</li>
+            {doorChecker && <li>{lang.calibration.solve_pnp_keep_door_closed}</li>}
+          </ol>
+          {steps && <StepProgress currentStep={currentStep ?? 0} steps={steps} />}
+        </div>
+        <div className={styles.animation}>
+          {animationSrcs && (
+            <video autoPlay loop muted ref={videoRef}>
+              {animationSrcs.map(({ src, type }) => (
+                <source key={src} src={src} type={type} />
+              ))}
+            </video>
+          )}
+        </div>
         <ImageDisplay
+          className={styles.image}
+          displayArea={initInterestArea}
           img={img}
           onDragEnd={handleDragEnd}
           onDragMove={handleDragMove}
@@ -357,17 +420,28 @@ const SolvePnP = ({
           zoomPoints={zoomPoints}
         />
         <div>
-          {selectedPointIdx >= 0 && points[selectedPointIdx] && (
-            <Flex className={styles.info} justify="space-between" vertical>
+          {selectedPointIdx >= 0 && (
+            <Flex className={styles.info} gap={8} justify="space-between" vertical>
               <div>
-                <Row align="middle" gutter={[0, 12]}>
+                <Row align="middle" gutter={[0, 8]}>
+                  {positionText && (
+                    <Col className={styles.position} span={24}>
+                      {positionText}
+                    </Col>
+                  )}
                   <Col className={styles['point-id']} span={24}>
-                    Point #{selectedPointIdx}
+                    Point {selectedPointIdx}
                   </Col>
-                  {positionText && <Col span={24}>{positionText}</Col>}
-                  <Col span={4}>X</Col>
-                  <Col span={20}>
+                  <Col span={3}>
+                    <label className={styles.label} htmlFor="point-x-input">
+                      X
+                    </label>
+                  </Col>
+                  <Col span={9}>
                     <InputNumber<number>
+                      className={styles.input}
+                      disabled={!points[selectedPointIdx]}
+                      id="point-x-input"
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [val, p[1]] : p)));
                       }}
@@ -376,12 +450,19 @@ const SolvePnP = ({
                       precision={0}
                       step={1}
                       type="number"
-                      value={points[selectedPointIdx][0]}
+                      value={points[selectedPointIdx]?.[0] ?? 0}
                     />
                   </Col>
-                  <Col span={4}>Y</Col>
-                  <Col span={20}>
+                  <Col span={3}>
+                    <label className={styles.label} htmlFor="point-y-input">
+                      Y
+                    </label>
+                  </Col>
+                  <Col span={9}>
                     <InputNumber<number>
+                      className={styles.input}
+                      disabled={!points[selectedPointIdx]}
+                      id="point-y-input"
                       onChange={(val) => {
                         if (val) setPoints((prev) => prev.map((p, i) => (i === selectedPointIdx ? [p[0], val] : p)));
                       }}
@@ -390,25 +471,22 @@ const SolvePnP = ({
                       precision={0}
                       step={1}
                       type="number"
-                      value={points[selectedPointIdx][1]}
+                      value={points[selectedPointIdx]?.[1] ?? 0}
                     />
                   </Col>
                 </Row>
               </div>
-              <img src={`core-img/calibration/solve-pnp-${points.length}-${selectedPointIdx}.jpg`} />
+              <img src={`core-img/calibration/solve-pnp-${refPoints.length}-${selectedPointIdx}.jpg`} />
             </Flex>
           )}
         </div>
-        {exposureSetting && (
-          <>
-            <ExposureSlider
-              exposureSetting={exposureSetting}
-              onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
-              setExposureSetting={setExposureSetting}
-            />
-            <div className={styles.value}>{exposureSetting.value}</div>
-          </>
-        )}
+        <ExposureSlider
+          className={styles.exposure}
+          exposureSetting={exposureSetting}
+          onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
+          onRetakePicture={handleTakePicture}
+          setExposureSetting={setExposureSetting}
+        />
       </div>
     </DraggableModal>
   );

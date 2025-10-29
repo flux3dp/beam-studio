@@ -1,0 +1,102 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`test StepProgress should render correctly with all steps 1`] = `
+<body>
+  <div>
+    <div
+      class="container"
+    >
+      <div
+        class="step active"
+      >
+        Step 1
+        <div
+          class="bar"
+        />
+      </div>
+      <div
+        class="step"
+      >
+        Step 2
+        <div
+          class="bar"
+        />
+      </div>
+      <div
+        class="step"
+      >
+        Step 3
+        <div
+          class="bar"
+        />
+      </div>
+      <div
+        class="step"
+      >
+        Step 4
+        <div
+          class="bar"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test StepProgress should render with custom className 1`] = `
+<div
+  class="container custom-class"
+>
+  <div
+    class="step active"
+  >
+    Step 1
+    <div
+      class="bar"
+    />
+  </div>
+  <div
+    class="step"
+  >
+    Step 2
+    <div
+      class="bar"
+    />
+  </div>
+  <div
+    class="step"
+  >
+    Step 3
+    <div
+      class="bar"
+    />
+  </div>
+  <div
+    class="step"
+  >
+    Step 4
+    <div
+      class="bar"
+    />
+  </div>
+</div>
+`;
+
+exports[`test StepProgress should render with single step 1`] = `
+<body>
+  <div>
+    <div
+      class="container"
+    >
+      <div
+        class="step active"
+      >
+        Single Step
+        <div
+          class="bar"
+        />
+      </div>
+    </div>
+  </div>
+</body>
+`;

@@ -88,10 +88,7 @@ const CheckPnP = ({
       closable
       footer={[
         <Button key="back" onClick={onBack}>
-          {lang.calibration.recalibrate}
-        </Button>,
-        <Button key="retry" onClick={() => handleTakePicture()}>
-          {lang.calibration.retake}
+          {lang.calibration.back}
         </Button>,
         <Button key="done" onClick={onNext} type="primary">
           {hasNext ? lang.buttons.next : lang.buttons.done}
@@ -104,7 +101,7 @@ const CheckPnP = ({
       title={<Title title={title ?? tCali.title_confirm_calibration_result} />}
       width="80vw"
     >
-      <Row gutter={[16, 12]}>
+      <Row gutter={[0, 12]}>
         <Col className={styles.desc} span={24}>
           {lang.calibration.check_pnp_desc}
         </Col>
@@ -139,20 +136,14 @@ const CheckPnP = ({
             zoomPoints={displayPoints}
           />
         </Col>
-        {exposureSetting && (
-          <>
-            <Col span={16}>
-              <ExposureSlider
-                exposureSetting={exposureSetting}
-                onChanged={handleTakePicture}
-                setExposureSetting={setExposureSetting}
-              />
-            </Col>
-            <Col span={8}>
-              <div className={styles.value}>{exposureSetting.value}</div>
-            </Col>
-          </>
-        )}
+        <Col span={24}>
+          <ExposureSlider
+            exposureSetting={exposureSetting}
+            onChanged={handleTakePicture}
+            onRetakePicture={handleTakePicture}
+            setExposureSetting={setExposureSetting}
+          />
+        </Col>
       </Row>
     </DraggableModal>
   );

@@ -138,6 +138,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
     .with(Steps.CHESSBOARD, () => {
       return (
         <ChArUco
+          isVertical
           onClose={onClose}
           onNext={async () => {
             progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCalibration.moving_laser_head });
@@ -199,10 +200,9 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           onClose={onClose}
           steps={[
             tCalibration.put_paper_bm2_1,
-            tCalibration.put_paper_step2,
-            tCalibration.perform_autofocus_bm2,
-            tCalibration.put_paper_step3,
-            tCalibration.put_paper_skip,
+            tCalibration.put_paper_bm2_2,
+            tCalibration.put_paper_bm2_3,
+            tCalibration.put_paper_bm2_4,
           ]}
           title={tCalibration.put_paper}
         />
@@ -232,52 +232,58 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             },
           ]}
           onClose={() => onClose(false)}
-          steps={[
-            tCalibration.click_next_to_take_picture,
-            tCalibration.solve_pnp_keep_door_closed,
-            tCalibration.solve_pnp_relocate_camera,
-            tCalibration.solve_pnp_step1,
-            tCalibration.solve_pnp_step2,
-          ]}
+          steps={[tCalibration.click_next, tCalibration.solve_pnp_bm2]}
           title={tCalibration.solve_pnp_title}
         />
       );
     })
     .with(Steps.SOLVE_PNP_BL, Steps.SOLVE_PNP_BR, Steps.SOLVE_PNP_TL, Steps.SOLVE_PNP_TR, (step) => {
-      const { interestArea, region, solvePnPStep } = match<
+      const { exposure, interestArea, region, solvePnPStep } = match<
         typeof step,
         {
+          exposure?: number;
           interestArea?: { height: number; width: number; x: number; y: number };
           region: keyof typeof bm2PnPPoints;
           solvePnPStep: number;
         }
       >(step)
         .with(Steps.SOLVE_PNP_TL, () => ({
-          interestArea: { height: 2800, width: 2800, x: 0, y: 0 },
+          exposure: 350,
+          interestArea: { height: 1300, width: 2900, x: 0, y: 1000 },
           region: 'topLeft',
-          solvePnPStep: 1,
+          solvePnPStep: 0,
         }))
         .with(Steps.SOLVE_PNP_TR, () => ({
-          interestArea: { height: 2800, width: 2800, x: 2800, y: 0 },
+          exposure: 350,
+          interestArea: { height: 1300, width: 2800, x: 2700, y: 1000 },
           region: 'topRight',
-          solvePnPStep: 2,
+          solvePnPStep: 1,
         }))
         .with(Steps.SOLVE_PNP_BL, () => ({
-          interestArea: { height: 1400, width: 2800, x: 0, y: 2100 },
+          exposure: 100,
+          interestArea: { height: 1000, width: 1400, x: 1400, y: 2100 },
           region: 'bottomLeft',
-          solvePnPStep: 3,
+          solvePnPStep: 2,
         }))
         .otherwise(() => ({
-          interestArea: { height: 1400, width: 2800, x: 2800, y: 2100 },
+          exposure: 100,
+          interestArea: { height: 1000, width: 1400, x: 2800, y: 2100 },
           region: 'bottomRight',
-          solvePnPStep: 4,
+          solvePnPStep: 3,
         }));
 
       return (
         <SolvePnP
+          animationSrcs={[
+            { src: 'video/bm2-calibration/4-drag-red-mark.webm', type: 'video/webm' },
+            { src: 'video/bm2-calibration/4-drag-red-mark.mp4', type: 'video/mp4' },
+          ]}
+          currentStep={solvePnPStep}
           dh={0}
           doorChecker={doorChecker.current}
           hasNext
+          initExposure={exposure}
+          initialPoints={calibratingParam.current.imgPoints1?.[region]}
           initInterestArea={interestArea}
           onBack={prev}
           onClose={onClose}
@@ -294,9 +300,13 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
             next();
           }}
           params={calibratingParam.current}
-          percent={solvePnPStep * 25}
           refPoints={bm2PnPPoints[region]}
-          title={`${tCalibration.title_align_marker_points} (${solvePnPStep}/4)`}
+          steps={[
+            tCalibration.align_top_left,
+            tCalibration.align_top_right,
+            tCalibration.align_bottom_left,
+            tCalibration.align_bottom_right,
+          ]}
         />
       );
     })
@@ -338,7 +348,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
         <CheckPnP
           dh={0}
           grid={bm2PerspectiveGrid}
-          onBack={() => setStep(Steps.SOLVE_PNP_TL)}
+          onBack={() => setStep(Steps.SOLVE_PNP_BR)}
           onClose={onClose}
           onNext={async () => {
             const rvecPolyfits: Record<WideAngleRegion, number[][]> = {} as any;

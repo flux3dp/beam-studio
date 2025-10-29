@@ -1,11 +1,32 @@
+@use '@core/styles/mixins' as mixins;
 @use '@core/styles/variables' as variables;
 
-.footer-button {
-  text-transform: capitalize;
+.footer {
+  @include mixins.footer;
+
+  display: flex;
+  justify-content: space-between;
+
+  .footer-button {
+    text-transform: capitalize;
+  }
 }
 
 .steps {
+  margin: 8px 0;
   padding: 0 0 0 24px;
+}
+
+.animation {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+
+  video {
+    max-width: 55%;
+    max-height: 100%;
+  }
 }
 
 .group {
@@ -48,10 +69,6 @@
   }
 }
 
-.point-id {
-  color: #ff4d4f;
-}
-
 .progress {
   width: 66%;
   padding: 0 0 1em;
@@ -60,20 +77,38 @@
 .info {
   height: 100%;
 
+  .position {
+    font-size: 16px;
+    font-weight: bold;
+  }
+
+  .point-id {
+    color: #ff4d4f;
+    font-weight: bold;
+  }
+
+  .label {
+    padding-left: 4px;
+  }
+
+  .input {
+    width: 100%;
+  }
+
   img {
     width: 100%;
-    border: 1px solid #000;
+    border: 1px solid #d9d9d9;
+    border-radius: 6px;
   }
-}
-
-.value {
-  height: 100%;
-  display: flex;
-  align-items: center;
 }
 
 .grid {
   display: grid;
   grid-template-columns: 2fr 1fr;
   gap: 12px 16px;
+}
+
+.image {
+  height: 100%;
+  min-height: 40vh;
 }

@@ -979,8 +979,12 @@ export interface ILang {
     align_8_6: string;
     align_8_7: string;
     //
+    align_bottom_left: string;
+    align_bottom_right: string;
     align_red_cross_cut: string;
     align_red_cross_print: string;
+    align_top_left: string;
+    align_top_right: string;
     analyze_result_fail: string;
     ask_for_readjust: string;
     at_focus_height: string;
@@ -1000,8 +1004,8 @@ export interface ILang {
     cancel: string;
     charuco_auto_focus: string;
     charuco_capture: string;
-    charuco_open_the_machine_lid: string;
-    charuco_place_charuco: string;
+    charuco_place_charuco_horizontal: string;
+    charuco_place_charuco_vertical: string;
     charuco_position_bottom_left: string;
     charuco_position_bottom_right: string;
     charuco_position_center: string;
@@ -1014,6 +1018,7 @@ export interface ILang {
     check_pnp_desc: string;
     checking_checkpoint: string;
     checking_pictures: string;
+    click_next: string;
     click_next_to_take_picture: string;
     diode_calibration: string;
     do_engraving: string;
@@ -1088,6 +1093,9 @@ export interface ILang {
     put_chessboard_promark_desc_2: string;
     put_paper: string;
     put_paper_bm2_1: string;
+    put_paper_bm2_2: string;
+    put_paper_bm2_3: string;
+    put_paper_bm2_4: string;
     put_paper_promark_1: string;
     put_paper_promark_2: string;
     put_paper_skip: string;
@@ -1096,8 +1104,8 @@ export interface ILang {
     put_paper_step3: string;
     put_paper_wide_angle_1: string;
     put_paper_wide_angle_2: string;
-    recalibrate: string;
     relocate_camera: string;
+    relocate_camera_desc: string;
     res_average: string;
     res_excellent: string;
     res_poor: string;
@@ -1105,10 +1113,10 @@ export interface ILang {
     rotation_angle: string;
     show_last_config: string;
     skip: string;
+    solve_pnp_bm2: string;
     solve_pnp_keep_door_closed: string;
     solve_pnp_move_platform: string;
     solve_pnp_open_the_lid: string;
-    solve_pnp_relocate_camera: string;
     solve_pnp_step1: string;
     solve_pnp_step2: string;
     solve_pnp_step3: string;
@@ -1335,7 +1343,7 @@ export interface ILang {
     'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'select' | 'stop',
     string
   > & {
-    editing: Record<'redo' | 'reset' | 'undo' | 'zoom_in' | 'zoom_out', string>;
+    editing: Record<'redo' | 'reset' | 'reset_view' | 'undo' | 'zoom_in' | 'zoom_out', string>;
   };
   google_font_panel: {
     all_languages: string;

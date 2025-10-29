@@ -17,6 +17,7 @@
     &.flex {
       display: flex;
       justify-content: center;
+      align-items: center;
     }
 
     &:active {
@@ -49,21 +50,25 @@
 
     > svg {
       max-width: unset;
-      top: 0;
       position: absolute;
     }
   }
 
   .zoom-block {
     position: absolute;
-    left: 0;
-    bottom: 0;
-    padding: 0 0 5px;
+    left: 4px;
+    bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
 
     button {
-      margin-left: 5px;
       background: none;
       border: none;
+      padding: 0;
+      display: inline-flex;
+      -webkit-text-stroke-color: #aaaaaa;
+      -webkit-text-stroke-width: 0.5px;
 
       .icon {
         path {

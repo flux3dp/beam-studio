@@ -11,7 +11,7 @@
   }
 
   .progress {
-    padding: 0 1em;
+    width: 100%;
   }
 
   .content {
@@ -25,19 +25,18 @@
   .right {
     width: 30%;
     height: fit-content;
-
-    img {
-      border: 1px solid #000;
-    }
   }
 
   .imgContainer {
     position: relative;
-    height: fit-content;
-    min-height: 200px;
+    height: calc(100vh - 350px);
     display: flex;
     justify-content: center;
     align-items: center;
+
+    img {
+      height: calc(100vh - 350px);
+    }
 
     .spinner {
       font-size: 48px;

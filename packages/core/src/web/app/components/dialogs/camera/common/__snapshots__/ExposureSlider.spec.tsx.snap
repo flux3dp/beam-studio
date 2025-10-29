@@ -6,38 +6,47 @@ exports[`test ExposureSlider should render correctly 1`] = `
     class="container test-class"
   >
     <div
-      title="exposure"
+      class="main"
     >
-      <svgr-url
-        classname="icon"
-      />
+      <div
+        title="exposure"
+      >
+        <svgr-url
+          classname="icon"
+        />
+      </div>
+      <div
+        class="slider"
+      >
+        <h1>
+          Mock Slider
+        </h1>
+        <p>
+          min: 
+          250
+        </p>
+        <p>
+          max: 
+          650
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <input
+          value="300"
+        />
+        <button
+          type="button"
+        >
+          Mock Change Complete
+        </button>
+      </div>
     </div>
     <div
-      class="slider"
+      class="value"
     >
-      <h1>
-        Mock Slider
-      </h1>
-      <p>
-        min: 
-        250
-      </p>
-      <p>
-        max: 
-        650
-      </p>
-      <p>
-        step: 
-        1
-      </p>
-      <input
-        value="300"
-      />
-      <button
-        type="button"
-      >
-        Mock Change Complete
-      </button>
+      300
     </div>
   </div>
 </div>

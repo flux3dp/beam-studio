@@ -81,19 +81,15 @@ exports[`test CheckPnP should render correctly 1`] = `
                 >
                   <div
                     class="ant-row css-dev-only-do-not-override-hash"
-                    style="margin-left: -8px; margin-right: -8px; row-gap: 12px;"
+                    style="row-gap: 12px;"
                   >
                     <div
                       class="ant-col ant-col-24 desc css-dev-only-do-not-override-hash"
-                      style="padding-left: 8px; padding-right: 8px;"
                     >
-                      We've re-taken the images based on the calibration results and marked the engraving reference points.
-Please check if the red markers match the actual engraving spots.
-If you see any obvious mismatch, just click "Recalibrate" to try again.
+                      Make sure the red markers align with the engraving spots; if not, click “Back” to adjust.
                     </div>
                     <div
                       class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
-                      style="padding-left: 8px; padding-right: 8px;"
                     >
                       <div>
                         MockImageDisplay
@@ -128,6 +124,13 @@ If you see any obvious mismatch, just click "Recalibrate" to try again.
                         </g>
                       </div>
                     </div>
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                    >
+                      <div>
+                        MockExposureSlider
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
@@ -138,15 +141,7 @@ If you see any obvious mismatch, just click "Recalibrate" to try again.
                     type="button"
                   >
                     <span>
-                      Recalibrate
-                    </span>
-                  </button>
-                  <button
-                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                    type="button"
-                  >
-                    <span>
-                      Retake Picture
+                      Back
                     </span>
                   </button>
                   <button
@@ -253,19 +248,15 @@ exports[`test CheckPnP should render correctly 2`] = `
                 >
                   <div
                     class="ant-row css-dev-only-do-not-override-hash"
-                    style="margin-left: -8px; margin-right: -8px; row-gap: 12px;"
+                    style="row-gap: 12px;"
                   >
                     <div
                       class="ant-col ant-col-24 desc css-dev-only-do-not-override-hash"
-                      style="padding-left: 8px; padding-right: 8px;"
                     >
-                      We've re-taken the images based on the calibration results and marked the engraving reference points.
-Please check if the red markers match the actual engraving spots.
-If you see any obvious mismatch, just click "Recalibrate" to try again.
+                      Make sure the red markers align with the engraving spots; if not, click “Back” to adjust.
                     </div>
                     <div
                       class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
-                      style="padding-left: 8px; padding-right: 8px;"
                     >
                       <div>
                         MockImageDisplay
@@ -301,6 +292,13 @@ If you see any obvious mismatch, just click "Recalibrate" to try again.
                         </g>
                       </div>
                     </div>
+                    <div
+                      class="ant-col ant-col-24 css-dev-only-do-not-override-hash"
+                    >
+                      <div>
+                        MockExposureSlider
+                      </div>
+                    </div>
                   </div>
                 </div>
                 <div
@@ -311,15 +309,7 @@ If you see any obvious mismatch, just click "Recalibrate" to try again.
                     type="button"
                   >
                     <span>
-                      Recalibrate
-                    </span>
-                  </button>
-                  <button
-                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                    type="button"
-                  >
-                    <span>
-                      Retake Picture
+                      Back
                     </span>
                   </button>
                   <button

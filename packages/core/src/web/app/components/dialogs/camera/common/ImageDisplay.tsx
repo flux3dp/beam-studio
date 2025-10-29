@@ -3,12 +3,16 @@ import React, { forwardRef, useCallback, useEffect, useMemo, useRef, useState } 
 
 import { LoadingOutlined } from '@ant-design/icons';
 import { Spin } from 'antd';
+import classNames from 'classnames';
 
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './ImageDisplay.module.scss';
 
 interface Props {
+  className?: string;
+  displayArea?: { height: number; width: number; x: number; y: number };
   img: null | { blob: Blob; url: string };
   onDragEnd?: (e: React.MouseEvent<HTMLDivElement>) => void;
   onDragMove?: (e: React.MouseEvent<HTMLDivElement>, scale: number) => boolean;
@@ -19,7 +23,11 @@ interface Props {
 }
 
 const ImageDisplay = forwardRef<HTMLDivElement, Props>(
-  ({ img, onDragEnd, onDragMove, onImgLoad, onScaleChange, renderContents, zoomPoints }, outRef) => {
+  (
+    { className, displayArea, img, onDragEnd, onDragMove, onImgLoad, onScaleChange, renderContents, zoomPoints },
+    outRef,
+  ) => {
+    const lang = useI18n();
     const [imgLoaded, setImgLoaded] = useState(false);
     const imgContainerRef = useRef<HTMLDivElement | null>(null);
     const scaleRef = useRef<number>(1);
@@ -42,11 +50,13 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
     const minScale = useMemo(() => {
       if (!imgContainerRef.current || !imgLoaded) return 0.2;
 
+      const size = displayArea ?? imageSizeRef.current;
+
       return Math.min(
-        imgContainerRef.current.clientWidth / imageSizeRef.current.width,
-        imgContainerRef.current.clientHeight / imageSizeRef.current.height,
+        imgContainerRef.current.clientWidth / size.width,
+        imgContainerRef.current.clientHeight / size.height,
       );
-    }, [imgLoaded]);
+    }, [imgLoaded, displayArea]);
 
     const scrollToZoomCenter = useCallback(() => {
       if (zoomCenter.current && imgContainerRef.current) {
@@ -73,12 +83,17 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
 
         scaleRef.current = newValue;
 
-        if (imageSizeRef.current.width !== 0 && imageSizeRef.current.height !== 0) {
-          const w = imageSizeRef.current.width * newValue;
-          const h = imageSizeRef.current.height * newValue;
+        const size = displayArea ?? imageSizeRef.current;
 
-          if (imgContainerRef.current?.clientWidth! > w) imgContainerRef.current?.classList.add(styles.flex);
-          else imgContainerRef.current?.classList.remove(styles.flex);
+        if (size.width !== 0 && size.height !== 0) {
+          const w = size.width * newValue;
+          const h = size.height * newValue;
+
+          if (imgContainerRef.current?.clientWidth! > w || imgContainerRef.current?.clientHeight! > h) {
+            imgContainerRef.current?.classList.add(styles.flex);
+          } else {
+            imgContainerRef.current?.classList.remove(styles.flex);
+          }
 
           if (svgRef.current) {
             svgRef.current.style.width = `${w}px`;
@@ -89,7 +104,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
           if (scrollToCenter) scrollToZoomCenter();
         }
       },
-      [scrollToZoomCenter, onScaleChange],
+      [displayArea, scrollToZoomCenter, onScaleChange],
     );
 
     const handleZoom = useCallback(
@@ -123,7 +138,10 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
         );
         const width = coord.maxX - coord.minX;
         const height = coord.maxY - coord.minY;
-        const center = [(coord.maxX + coord.minX) / 2, (coord.maxY + coord.minY) / 2];
+        const center = [
+          (coord.maxX + coord.minX) / 2 - (displayArea?.x ?? 0),
+          (coord.maxY + coord.minY) / 2 - (displayArea?.y ?? 0),
+        ];
         const scaleW = container.clientWidth / width;
         const scaleH = container.clientHeight / height;
         const targetScale = Math.min(scaleW, scaleH) * 0.8;
@@ -132,8 +150,21 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
         container.scrollLeft = center[0] * targetScale - container.clientWidth / 2;
         container.scrollTop = center[1] * targetScale - container.clientHeight / 2;
       },
-      [updateScale],
+      [updateScale, displayArea],
     );
+
+    const handleResetView = useCallback(() => {
+      const container = imgContainerRef.current;
+
+      if (!container) return;
+
+      const size = displayArea ?? imageSizeRef.current;
+      const targetScale = Math.max(container.clientWidth / size.width, container.clientHeight / size.height);
+
+      updateScale(targetScale);
+      container.scrollLeft = (size.width * targetScale - container.clientWidth) / 2;
+      container.scrollTop = (size.height * targetScale - container.clientHeight) / 2;
+    }, [displayArea, updateScale]);
 
     const handleImgLoad = useCallback(
       (e: SyntheticEvent<HTMLImageElement>) => {
@@ -193,8 +224,7 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
       (e: WheelEvent) => {
         // @ts-expect-error use wheelDelta if exists
         const { ctrlKey, deltaY, detail, wheelDelta } = e;
-        // eslint-disable-next-line no-constant-binary-expression
-        const delta = wheelDelta ?? -detail ?? 0;
+        const delta = wheelDelta ?? -detail;
 
         if (Math.abs(deltaY) >= 40) {
           // mouse
@@ -230,8 +260,10 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
       };
     }, [handleWheel]);
 
+    const size = displayArea ?? imageSizeRef.current;
+
     return (
-      <div className={styles.container}>
+      <div className={classNames(styles.container, className)}>
         <div
           className={styles['img-container']}
           onMouseDown={handleContainerDragStart}
@@ -250,10 +282,10 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
               <img onLoad={handleImgLoad} src={img?.url} />
             ) : (
               <svg
-                height={imageSizeRef.current.height * scaleRef.current}
+                height={size.height * scaleRef.current}
                 ref={svgRef}
-                viewBox={`0 0 ${imageSizeRef.current.width} ${imageSizeRef.current.height}`}
-                width={imageSizeRef.current.width * scaleRef.current}
+                viewBox={`${displayArea?.x ?? 0} ${displayArea?.y ?? 0} ${size.width} ${size.height}`}
+                width={size.width * scaleRef.current}
               >
                 <image height={imageSizeRef.current.height} href={img?.url} width={imageSizeRef.current.width} />
                 {renderContents?.(scaleRef.current)}
@@ -261,10 +293,11 @@ const ImageDisplay = forwardRef<HTMLDivElement, Props>(
             ))}
         </div>
         <div className={styles['zoom-block']}>
-          <button onClick={() => handleZoom(-0.2)} type="button">
+          <button onClick={() => handleZoom(-0.1)} type="button">
             <ObjectPanelIcons.Minus className={styles.icon} height="24" width="24" />
           </button>
-          <button onClick={() => handleZoom(0.2)} type="button">
+          <button onClick={handleResetView}>{lang.global.editing.reset_view}</button>
+          <button onClick={() => handleZoom(0.1)} type="button">
             <ObjectPanelIcons.Plus className={styles.icon} height="24" width="24" />
           </button>
         </div>
