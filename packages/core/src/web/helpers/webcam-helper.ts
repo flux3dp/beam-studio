@@ -29,7 +29,7 @@ const listDevices = async (): Promise<MediaDeviceInfo[]> => {
   const videoInputDevices = devices.filter((device) => device.kind === 'videoinput');
   const usbVideoInputDevices = videoInputDevices.filter((device) => device.label.includes('USB'));
 
-  return usbVideoInputDevices ?? videoInputDevices;
+  return usbVideoInputDevices.length ? usbVideoInputDevices : videoInputDevices;
 };
 
 const getDevice = async (id?: string): Promise<MediaDeviceInfo | null> => {
