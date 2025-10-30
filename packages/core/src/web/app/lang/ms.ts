@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Tetapan teks berubah-ubah',
   },
   web_cam: {
+    image_to_small: 'Saiz imej kamera terlalu kecil. Imej mungkin rosak.',
     no_device: 'Tidak dapat mengesan peranti kamera. Sila sambungkan semula kamera dan cuba lagi.',
     no_permission: 'Beam Studio tidak mempunyai kebenaran untuk mengakses kamera. Pastikan kebenaran diberikan kepada Beam Studio dalam tetapan pelayar atau sistem.',
   },

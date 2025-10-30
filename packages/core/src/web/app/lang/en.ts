@@ -2442,6 +2442,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     title: 'Variable Texts Settings',
   },
   web_cam: {
+    image_to_small: 'The camera image size is too small. Image may be corrupted.',
     no_device: 'Unable to detect camera device. Please reconnect the camera and try again.',
     no_permission: 'Beam Studio does not have permission to access the camera. Please make sure the permission is granted to Beam Studio in system settings or browser settings.',
   },

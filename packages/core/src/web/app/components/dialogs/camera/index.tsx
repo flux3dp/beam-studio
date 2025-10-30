@@ -67,12 +67,12 @@ export const showPromarkCalibration = async (device: IDeviceInfo): Promise<boole
     onClose();
   }
 
-  const cameraStatus = await checkCamera(device);
+  const { error: cameraError, success: cameraStatus } = await checkCamera(device);
 
   if (!cameraStatus) {
     alertCaller.popUp({
       caption: i18n.lang.alert.oops,
-      message: i18n.lang.web_cam.no_device,
+      message: cameraError ?? i18n.lang.web_cam.no_device,
       messageIcon: 'warning',
     });
 

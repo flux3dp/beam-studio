@@ -2443,6 +2443,7 @@ const lang: ILang = {
     title: 'Nastavení proměnných textů',
   },
   web_cam: {
+    image_to_small: 'Velikost obrazu z kamery je příliš malá. Obrázek může být poškozen.',
     no_device: 'Nelze detekovat kamerové zařízení. Znovu připojte kameru a zkuste to znovu.',
     no_permission: 'Beam Studio nemá oprávnění k přístupu k kameře. Ujistěte se, že je v nastavení prohlížeče nebo systému uděleno oprávnění pro Beam Studio.',
   },

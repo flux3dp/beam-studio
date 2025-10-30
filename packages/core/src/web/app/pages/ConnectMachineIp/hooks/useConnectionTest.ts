@@ -132,9 +132,9 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
   const testCamera = async (device: IDeviceInfo) => {
     updateTestState({ testState: TestState.CAMERA_TESTING });
 
-    const res = await checkCamera(device);
+    const { success } = await checkCamera(device);
 
-    if (res) {
+    if (success) {
       updateTestState({ testState: TestState.TEST_COMPLETED });
 
       return;

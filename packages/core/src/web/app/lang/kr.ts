@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: '가변 텍스트 설정',
   },
   web_cam: {
+    image_to_small: '카메라 이미지 크기가 너무 작습니다. 이미지가 손상되었을 수 있습니다.',
     no_device: '카메라 장치를 감지할 수 없습니다. 카메라를 다시 연결하고 다시 시도하십시오.',
     no_permission: 'Beam Studio는 카메라에 액세스할 권한이 없습니다. 브라우저 설정 또는 시스템 설정에서 Beam Studio에 권한이 부여되었는지 확인하십시오.',
   },

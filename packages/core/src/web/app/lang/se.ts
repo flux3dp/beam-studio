@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Inställningar för variabla texter',
   },
   web_cam: {
+    image_to_small: 'Kamerabildens storlek är för liten. Bilden kan vara skadad.',
     no_device: 'Kan inte hitta kameranheten. Anslut kameran igen och försök igen.',
     no_permission: 'Beam Studio har inte behörighet att komma åt kameran. Se till att behörigheten är beviljad till Beam Studio i webbläsarinställningarna eller systeminställningarna.',
   },

@@ -3,10 +3,15 @@ import deviceMaster from '@core/helpers/device-master';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
+interface CheckCameraResult {
+  error?: string;
+  success: boolean;
+}
+
 // according video resolution, 2400 * 1600 from [webcamHelper](src/web/helpers/webcam-helper.ts)
 const PROMARK_GOOD_PICTURE_THRESHOLD = (2400 * 1600) / 4;
 
-const checkCameraCommon = async (device: IDeviceInfo): Promise<boolean> => {
+const checkCameraCommon = async (device: IDeviceInfo): Promise<CheckCameraResult> => {
   try {
     const selectResult = await deviceMaster.select(device);
 
@@ -18,38 +23,40 @@ const checkCameraCommon = async (device: IDeviceInfo): Promise<boolean> => {
     await deviceMaster.takeOnePicture();
     deviceMaster.disconnectCamera();
 
-    return true;
+    return { success: true };
   } catch (e) {
     console.log(e);
   }
 
-  return false;
+  return { success: false };
 };
 
-const checkCameraPromark = async (_device: IDeviceInfo): Promise<boolean> => {
+const checkCameraPromark = async (_device: IDeviceInfo): Promise<CheckCameraResult> => {
   try {
     const isWebCamExist = await webcamHelper.getDevice();
 
     if (!isWebCamExist) {
-      return false;
+      return { success: false };
     }
 
     const webcam = await webcamHelper.connectWebcam();
 
-    if (!webcam) return false;
+    if (!webcam) return { success: false };
 
     const pic = await webcam.getPicture();
 
     // size bigger than PROMARK_GOOD_PICTURE_THRESHOLD is considered as a good picture
-    return pic.size > PROMARK_GOOD_PICTURE_THRESHOLD;
+    if (pic.size <= PROMARK_GOOD_PICTURE_THRESHOLD) return { error: 'Picture too small', success: false };
+
+    return { success: true };
   } catch (e) {
     console.log(e);
   }
 
-  return false;
+  return { success: false };
 };
 
-const checkCamera = async (device: IDeviceInfo): Promise<boolean> => {
+const checkCamera = async (device: IDeviceInfo): Promise<CheckCameraResult> => {
   if (promarkModels.has(device.model)) {
     return checkCameraPromark(device);
   }

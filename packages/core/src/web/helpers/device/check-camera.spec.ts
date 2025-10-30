@@ -29,12 +29,12 @@ describe('test check-camera', () => {
     // @ts-expect-error testing checkCamera with fake data
     const res = await checkCamera('device');
 
-    expect(mockSelect).toBeCalledTimes(1);
+    expect(mockSelect).toHaveBeenCalledTimes(1);
     expect(mockSelect).toHaveBeenLastCalledWith('device');
-    expect(mockConnectCamera).toBeCalledTimes(1);
-    expect(mockTakeOnePicture).toBeCalledTimes(1);
-    expect(mockDisconnectCamera).toBeCalledTimes(1);
-    expect(res).toBeTruthy();
+    expect(mockConnectCamera).toHaveBeenCalledTimes(1);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockDisconnectCamera).toHaveBeenCalledTimes(1);
+    expect(res).toEqual({ success: true });
   });
 
   it('should retrun false when something went wrong', async () => {
@@ -46,12 +46,12 @@ describe('test check-camera', () => {
     // @ts-expect-error testing checkCamera with fake data
     const res = await checkCamera('device');
 
-    expect(mockSelect).toBeCalledTimes(1);
+    expect(mockSelect).toHaveBeenCalledTimes(1);
     expect(mockSelect).toHaveBeenLastCalledWith('device');
-    expect(mockConnectCamera).toBeCalledTimes(1);
-    expect(mockTakeOnePicture).toBeCalledTimes(1);
-    expect(mockDisconnectCamera).not.toBeCalled();
-    expect(mockConsoleLog).toBeCalledTimes(1);
-    expect(res).toBeFalsy();
+    expect(mockConnectCamera).toHaveBeenCalledTimes(1);
+    expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
+    expect(mockDisconnectCamera).not.toHaveBeenCalled();
+    expect(mockConsoleLog).toHaveBeenCalledTimes(1);
+    expect(res).toEqual({ success: false });
   });
 });
