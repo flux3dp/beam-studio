@@ -1271,6 +1271,7 @@ export interface ILang {
   };
   editor: {
     exposure: string;
+    nozzle_refresh_area: string;
     opacity: string;
     prespray_area: string;
   };

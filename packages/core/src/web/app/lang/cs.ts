@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Jas',
+    nozzle_refresh_area: 'Oblast Obnovení Trysky',
     opacity: 'Náhled průhlednosti',
     prespray_area: 'Primární oblast',
   },

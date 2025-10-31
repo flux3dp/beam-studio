@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Helligkeit',
+    nozzle_refresh_area: 'Düsen-Aktualisierungsbereich',
     opacity: 'Vorschau Transparenz',
     prespray_area: 'Grundierbereich',
   },

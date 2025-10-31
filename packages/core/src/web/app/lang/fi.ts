@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Kirkkaus',
+    nozzle_refresh_area: 'Suuttimen Virkistysalue',
     opacity: 'Esikatselun läpinäkyvyys',
     prespray_area: 'Esisuihkutusalue',
   },

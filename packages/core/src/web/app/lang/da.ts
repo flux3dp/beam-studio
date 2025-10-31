@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Lysstyrke',
+    nozzle_refresh_area: 'Dyse Opdateringsområde',
     opacity: 'Forhåndsvisning gennemsigtighed',
     prespray_area: 'Primeområde',
   },

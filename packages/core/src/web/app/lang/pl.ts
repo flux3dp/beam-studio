@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Jasność',
+    nozzle_refresh_area: 'Obszar Odświeżania Dyszy',
     opacity: 'Podgląd przezroczystości',
     prespray_area: 'Obszar gruntowania',
   },

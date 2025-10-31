@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Độ sáng',
+    nozzle_refresh_area: 'Vùng Làm Mới Vòi Phun',
     opacity: 'Độ mờ xem trước',
     prespray_area: 'Vùng làm ẩm ban đầu',
   },

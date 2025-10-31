@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Brightness',
+    nozzle_refresh_area: 'Nozzle Refresh Area',
     opacity: 'Preview Opacity',
     prespray_area: 'Priming Area',
   },

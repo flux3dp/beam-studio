@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: '밝기',
+    nozzle_refresh_area: '노즐 새로고침 영역',
     opacity: '미리보기 투명도',
     prespray_area: '프라이밍 영역',
   },

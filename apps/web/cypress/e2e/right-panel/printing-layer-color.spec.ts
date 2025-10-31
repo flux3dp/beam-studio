@@ -15,7 +15,7 @@ describe('printing layer color', () => {
     cy.get('.ant-select-selection-item').contains('20W Diode Laser').click();
     cy.get('.ant-select-item-option-content').contains('Printing').click();
     cy.get('.ant-btn').contains('Confirm').click();
-    cy.get('#presprayArea').should('be.visible');
+    cy.get('#presprayAreaImage').should('be.visible');
   });
 
   it('change color', () => {
@@ -73,7 +73,7 @@ describe('printing layer color', () => {
       changeAndCheckColor('#E6007E', 'rgb(230, 0, 126)');
       changeAndCheckColor('#009FE3', 'rgb(0, 159, 227)');
 
-      cy.get('#presprayArea').should('be.visible');
+      cy.get('#presprayAreaImage').should('be.visible');
       cy.clickToolBtn('Element');
       cy.get('.anticon[id="basic/icon-circle"]').click();
       cy.get('#svg_6').should('be.visible').should('have.attr', 'fill', '#009FE3');

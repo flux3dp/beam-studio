@@ -42,6 +42,7 @@ const getInitDocumentStore = (): DocumentState => {
     borderless: isBorderlessEnabled,
     'customized-dimension': preference['customized-dimension'],
     'enable-4c': preference['enable-4c'],
+    'enable-4c-prespray-area': preference['enable-4c-prespray-area'],
     'enable-1064': preference['enable-1064'],
     'enable-autofocus': isAutofocusEnabled,
     'enable-diode': isDiodeEnabled,
