@@ -2,9 +2,10 @@ import React, { memo } from 'react';
 
 import { Alert, Empty, Spin } from 'antd';
 
+import { useAiGenerateStore } from '../useAiGenerateStore';
+
 import HistoryCard from './HistoryCard';
 import styles from './ImageHistory.module.scss';
-import { useAiGenerateStore } from './useAiGenerateStore';
 
 const UnmemorizedImageHistory = () => {
   const { historyError, historyItems, historyLoading, importFromHistory } = useAiGenerateStore();

@@ -4,6 +4,8 @@ import { DownloadOutlined, ImportOutlined } from '@ant-design/icons';
 import { Alert, Button, Spin } from 'antd';
 
 import importAiImage from '@core/app/svgedit/operations/import/importAiImage';
+import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 
 import styles from './ImageResults.module.scss';
 
@@ -14,8 +16,14 @@ interface ImageResultsProps {
 }
 
 const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStatus }: ImageResultsProps) => {
+  const lang = useI18n();
   const [importingUrl, setImportingUrl] = useState<null | string>(null);
   const [importError, setImportError] = useState<null | string>(null);
+
+  // Parse error code and message
+  const errorCode = errorMessage?.includes(':') ? errorMessage.split(':')[0] : null;
+  const displayErrorMessage = errorMessage?.includes(':') ? errorMessage.split(':').slice(1).join(':') : errorMessage;
+  const isInsufficientCredits = errorCode === 'INSUFFICIENT_CREDITS';
 
   const handleImport = async (imageUrl: string) => {
     setImportingUrl(imageUrl);
@@ -66,9 +74,30 @@ const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStat
         </div>
       )}
 
-      {generationStatus === 'failed' && errorMessage && (
-        <Alert closable description={errorMessage} message="Generation Failed" showIcon type="error" />
-      )}
+      {generationStatus === 'failed' &&
+        errorMessage &&
+        (isInsufficientCredits ? (
+          <Alert
+            closable
+            description={
+              <div style={{ alignItems: 'center', display: 'flex', gap: 12, justifyContent: 'space-between' }}>
+                <span>{displayErrorMessage}</span>
+                <Button
+                  onClick={() => browser.open(lang.flux_id_login.flux_plus.member_center_url)}
+                  size="small"
+                  type="primary"
+                >
+                  {lang.flux_id_login.flux_plus.goto_member_center}
+                </Button>
+              </div>
+            }
+            message="Insufficient Credits"
+            showIcon
+            type="warning"
+          />
+        ) : (
+          <Alert closable description={displayErrorMessage} message="Generation Failed" showIcon type="error" />
+        ))}
 
       {generationStatus === 'success' && generatedImages.length > 0 && (
         <>

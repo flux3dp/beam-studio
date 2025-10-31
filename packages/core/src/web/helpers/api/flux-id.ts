@@ -159,12 +159,13 @@ const handleOAuthLoginSuccess = (data: IUser) => {
  * - { info: string, status: 'error' } if not logged in or not verified
  */
 export const getInfo = async ({
+  query = 'credits',
   sendToOtherTabs = true,
   silent = false,
-}: { sendToOtherTabs?: boolean; silent?: boolean } = {}): Promise<
+}: { query?: 'credits' | 'guess-country' | 'ip-country'; sendToOtherTabs?: boolean; silent?: boolean } = {}): Promise<
   (IUser & { status: 'ok' }) | null | { info: string; message: null | string; status: 'error' }
 > => {
-  const response = (await axiosFluxId.get('/user/info?query=credits', {
+  const response = (await axiosFluxId.get(`/user/info?query=${query}`, {
     withCredentials: true,
   })) as ResponseWithError;
 
