@@ -1,51 +1,95 @@
+import { round } from 'remeda';
+
 import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
+import { getSupportedModules } from '@core/app/constants/workarea-constants';
 import presprayIconUrl from '@core/app/icons/prespray.svg?url';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import workareaManager from '@core/app/svgedit/workarea';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 
-let presprayAreaBlock: SVGImageElement;
+let presprayAreaImage: SVGImageElement; // For PRINTER mode
+let presprayArea4CContainer: SVGGElement; // For PRINTER_4C mode (group with rect + text)
+let currentMode: LayerModuleType | null = null;
 
 const areaWidth = 300;
 const areaHeight = 300;
+const areaWidth4C = 170;
 
-const round = (num: number, decimal: number): number => {
-  const factor = 10 ** decimal;
+const getPresprayMode = (): LayerModuleType | null => {
+  if (hasModuleLayer([LayerModule.PRINTER_4C], { checkVisible: true })) return LayerModule.PRINTER_4C;
 
-  return Math.round(num * factor) / factor;
+  if (hasModuleLayer([LayerModule.PRINTER], { checkVisible: true })) return LayerModule.PRINTER;
+
+  return null;
 };
+
+const updateDimensions = (): void => {
+  const workarea = workareaManager.model;
+
+  if (getSupportedModules(workarea).includes(LayerModule.PRINTER_4C)) {
+    if (presprayArea4CContainer) {
+      const rect = presprayArea4CContainer.querySelector('rect');
+      const text = presprayArea4CContainer.querySelector('text');
+
+      rect?.setAttribute('y', workareaManager.minY.toString());
+      rect?.setAttribute('height', workareaManager.height.toString());
+      text?.setAttribute('y', (workareaManager.minY + workareaManager.height / 2).toString());
+    }
+  }
+};
+const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
+
+canvasEvents.on('canvas-change', updateDimensions);
 
 const togglePresprayArea = (): void => {
   const { model } = workareaManager;
-  const shouldShow = hasModuleLayer([LayerModule.PRINTER], { checkVisible: true });
+
+  currentMode = getPresprayMode();
+
+  const shouldShow = currentMode !== null;
   const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
   const hasJobOrigin = enableJobOrigin && getAddOnInfo(model).jobOrigin;
+
+  // Hide both elements first
+  presprayAreaImage?.setAttribute('display', 'none');
+  presprayArea4CContainer?.setAttribute('display', 'none');
 
   if (shouldShow && !(rotaryMode && !hasJobOrigin)) {
     // check boundary
     startDrag();
     drag(0, 0);
-    presprayAreaBlock.removeAttribute('display');
-  } else {
-    presprayAreaBlock.setAttribute('display', 'none');
+
+    if (currentMode === LayerModule.PRINTER) presprayAreaImage?.removeAttribute('display');
+    else if (currentMode === LayerModule.PRINTER_4C) presprayArea4CContainer?.removeAttribute('display');
   }
 };
 
 const getPosition = (mm = false): { h: number; w: number; x: number; y: number } => {
-  const pxX = Number.parseInt(presprayAreaBlock?.getAttribute('x')!, 10);
-  const pxY = Number.parseInt(presprayAreaBlock?.getAttribute('y')!, 10);
-  const pxW = areaWidth;
-  const pxH = areaHeight;
+  let [pxX, pxY, pxW, pxH] = [0, 0, 0, 0];
 
-  if (!mm) {
-    return { h: pxH, w: pxW, x: pxX, y: pxY };
+  if (currentMode === LayerModule.PRINTER_4C) {
+    const rect = presprayArea4CContainer?.querySelector('rect');
+
+    if (rect) {
+      pxX = Number.parseInt(rect.getAttribute('x') ?? '0', 10);
+      pxW = areaWidth4C;
+    }
+  } else if (currentMode === LayerModule.PRINTER) {
+    pxX = Number.parseInt(presprayAreaImage?.getAttribute('x') ?? '0', 10);
+    pxY = Number.parseInt(presprayAreaImage?.getAttribute('y') ?? '0', 10);
+    pxW = areaWidth;
+    pxH = areaHeight;
   }
+
+  if (!mm) return { h: pxH, w: pxW, x: pxX, y: pxY };
 
   const { dpmm } = constant;
 
@@ -60,27 +104,75 @@ const getPosition = (mm = false): { h: number; w: number; x: number; y: number }
 const generatePresprayArea = (): void => {
   const fixedSizeSvg = document.getElementById('fixedSizeSvg');
 
-  if (!fixedSizeSvg!.querySelector('#presprayArea')) {
-    presprayAreaBlock = document.createElementNS(NS.SVG, 'image') as unknown as SVGImageElement;
-    presprayAreaBlock.setAttribute('id', 'presprayArea');
-    presprayAreaBlock.setAttribute('x', '4000');
-    presprayAreaBlock.setAttribute('y', '2400');
-    presprayAreaBlock.setAttribute('width', areaWidth.toFixed(0));
-    presprayAreaBlock.setAttribute('height', areaHeight.toFixed(0));
-    presprayAreaBlock.setAttribute('href', presprayIconUrl);
-    presprayAreaBlock.setAttribute('style', 'cursor:move;');
+  // Create PRINTER image element
+  if (!fixedSizeSvg!.querySelector('#presprayAreaImage')) {
+    presprayAreaImage = document.createElementNS(NS.SVG, 'image') as SVGImageElement;
+    presprayAreaImage.setAttribute('id', 'presprayAreaImage');
+    presprayAreaImage.setAttribute('x', '4000');
+    presprayAreaImage.setAttribute('y', '2400');
+    presprayAreaImage.setAttribute('width', areaWidth.toString());
+    presprayAreaImage.setAttribute('height', areaHeight.toString());
+    presprayAreaImage.setAttribute('href', presprayIconUrl);
+    presprayAreaImage.setAttribute('style', 'cursor:move;');
 
-    const presprayAreaTitle = document.createElementNS(NS.SVG, 'title');
+    const imageTitle = document.createElementNS(NS.SVG, 'title');
 
-    presprayAreaTitle.textContent = i18n.lang.editor.prespray_area;
-    presprayAreaBlock.appendChild(presprayAreaTitle);
-    fixedSizeSvg?.appendChild(presprayAreaBlock);
-    togglePresprayArea();
+    imageTitle.textContent = i18n.lang.editor.prespray_area;
+    presprayAreaImage.appendChild(imageTitle);
+    fixedSizeSvg?.appendChild(presprayAreaImage);
   }
+
+  // Create PRINTER_4C rect element
+  if (!fixedSizeSvg!.querySelector('#presprayAreaRect')) {
+    presprayArea4CContainer = document.createElementNS(NS.SVG, 'g') as SVGGElement;
+    presprayArea4CContainer.setAttribute('id', 'presprayAreaRect');
+    presprayArea4CContainer.setAttribute('style', 'cursor:move;');
+
+    // Create rectangle
+    const rect = document.createElementNS(NS.SVG, 'rect');
+    const x = workareaManager.width - areaWidth4C;
+
+    rect.setAttribute('x', x.toString());
+    rect.setAttribute('y', workareaManager.minY.toString());
+    rect.setAttribute('width', areaWidth4C.toString());
+    rect.setAttribute('height', workareaManager.height.toString());
+    rect.setAttribute('fill', '#91afdc');
+    rect.setAttribute('fill-opacity', '0.5');
+    rect.setAttribute('stroke', '#0080c7');
+    rect.setAttribute('stroke-width', '2');
+
+    // Create text
+    const text = document.createElementNS(NS.SVG, 'text');
+
+    text.setAttribute('x', (x + areaWidth4C / 2).toString());
+    text.setAttribute('y', (workareaManager.minY + workareaManager.height / 2).toString());
+    text.setAttribute('text-anchor', 'middle');
+    text.setAttribute('dominant-baseline', 'middle');
+    text.setAttribute('font-size', '72');
+    text.setAttribute('font-weight', 'bold');
+    text.setAttribute('fill', '#0080c7');
+    text.style.transformBox = 'fill-box';
+    text.style.transformOrigin = 'center';
+    text.style.rotate = '90deg';
+    text.textContent = i18n.lang.editor.prespray_area;
+
+    presprayArea4CContainer.appendChild(rect);
+    presprayArea4CContainer.appendChild(text);
+    fixedSizeSvg?.appendChild(presprayArea4CContainer);
+  }
+
+  togglePresprayArea();
 };
 
-const checkMouseTarget = (mouseTarget: Element): boolean => mouseTarget && mouseTarget.id === 'presprayArea';
+const checkMouseTarget = (mouseTarget: Element): boolean => {
+  if (!currentMode) return false;
 
+  return Boolean(
+    mouseTarget === presprayAreaImage ||
+      mouseTarget === presprayArea4CContainer ||
+      presprayArea4CContainer?.contains(mouseTarget),
+  );
+};
 let startX = 0;
 let startY = 0;
 let workareaSize = { h: 0, w: 0 };
@@ -102,19 +194,41 @@ const startDrag = (): void => {
 const drag = (dx: number, dy: number): void => {
   requestAnimationFrame(() => {
     const { h, w } = workareaSize;
-    const newX = Math.min(Math.max(0, startX + dx), w - areaWidth);
-    const newY = Math.min(Math.max(0, startY + dy), h - areaHeight);
 
-    presprayAreaBlock?.setAttribute('x', newX.toFixed(0));
-    presprayAreaBlock?.setAttribute('y', newY.toFixed(0));
+    if (currentMode === LayerModule.PRINTER_4C) {
+      // Horizontal movement only for PRINTER_4C
+      const newX = Math.min(Math.max(0, startX + dx), w - areaWidth4C);
+      const rect = presprayArea4CContainer?.querySelector('rect');
+      const text = presprayArea4CContainer?.querySelector('text');
+
+      rect?.setAttribute('x', newX.toFixed(0));
+      text?.setAttribute('x', (newX + areaWidth4C / 2).toFixed(0));
+    } else {
+      // Free movement for PRINTER
+      const newX = Math.min(Math.max(0, startX + dx), w - areaWidth);
+      const newY = Math.min(Math.max(0, startY + dy), h - areaHeight);
+
+      presprayAreaImage.setAttribute('x', newX.toFixed(0));
+      presprayAreaImage.setAttribute('y', newY.toFixed(0));
+    }
   });
 };
 
 const endDrag = (): void => {
-  if (presprayAreaBlock) {
-    const cmd = new history.ChangeElementCommand(presprayAreaBlock, { x: startX, y: startY }, 'Drag Prespray Area');
+  if (currentMode === LayerModule.PRINTER) {
+    const cmd = new history.ChangeElementCommand(presprayAreaImage, { x: startX, y: startY }, 'Drag Prespray Area');
 
     undoManager.addCommandToHistory(cmd);
+  } else if (currentMode === LayerModule.PRINTER_4C) {
+    const cmd = new history.BatchCommand('Drag Prespray Area');
+    const rect = presprayArea4CContainer?.querySelector('rect');
+    const text = presprayArea4CContainer?.querySelector('text');
+
+    if (rect) cmd.addSubCommand(new history.ChangeElementCommand(rect, { x: startX }));
+
+    if (text) {
+      cmd.addSubCommand(new history.ChangeElementCommand(text, { x: startX + areaWidth4C / 2 }));
+    }
   }
 };
 

@@ -14,6 +14,7 @@ export type DocumentState = {
   borderless: boolean;
   'customized-dimension': Partial<Record<WorkAreaModel, { height: number; width: number }>>;
   'enable-4c': boolean;
+  'enable-4c-prespray-area'?: boolean;
   'enable-1064': boolean;
   'enable-autofocus'?: boolean;
   'enable-diode'?: boolean;
