@@ -33,10 +33,9 @@ export interface TextToImageRequest {
 
 // Request payload for creating image edit task
 export interface ImageEditRequest {
+  image_inputs: Array<File | string>; // Ordered array of mixed files and URLs
   image_resolution?: ImageResolution;
   image_size?: ImageSizeOption;
-  imageFiles?: File[]; // Optional: new image files to upload
-  imageUrls?: string[]; // Optional: existing S3 URLs from history
   max_images?: number;
   prompt: string;
   seed?: number;
@@ -140,7 +139,7 @@ export const createTextToImageTask = async ({
   max_images = 1,
   prompt,
   seed = Math.floor(Math.random() * 1000000),
-}: TextToImageRequest): Promise<{ error: string } | { uuid: string }> => {
+}: TextToImageRequest): Promise<{ code?: string; error: string } | { uuid: string }> => {
   try {
     const response = await fetchWithTimeout(TEXT_TO_IMAGE_URL, {
       body: JSON.stringify({ image_resolution, image_size, max_images, prompt, seed }),
@@ -148,13 +147,11 @@ export const createTextToImageTask = async ({
     });
 
     if (!response.ok) {
-      if (ERROR_MESSAGES[response.status]) {
-        return { error: ERROR_MESSAGES[response.status] };
-      }
+      const errorData = (await response.json().catch(() => ({}))) as { info?: string; message?: string };
+      const errorCode = errorData.info;
+      const errorMessage = errorData.message || ERROR_MESSAGES[response.status] || 'Failed to create task';
 
-      const errorData = (await response.json().catch(() => ({}))) as { message?: string };
-
-      return { error: errorData.message || 'Failed to create task' };
+      return { code: errorCode, error: errorMessage };
     }
 
     const data = (await response.json()) as TextToImageResponse;
@@ -179,18 +176,18 @@ export const createTextToImageTask = async ({
 
 /**
  * Create an image edit task
- * This sends images as FormData along with other parameters
- * Supports both new file uploads (imageFiles) and existing S3 URLs (imageUrls)
+ * This sends ordered mixed array of images (files and URLs) as FormData
+ * Backend auto-detects type: File objects vs URL strings
+ * Order is preserved and semantically meaningful for prompts
  */
 export const createImageEditTask = async ({
+  image_inputs,
   image_resolution = '1K',
   image_size = 'square_hd',
-  imageFiles,
-  imageUrls,
   max_images = 1,
   prompt,
   seed = Math.floor(Math.random() * 1000000),
-}: ImageEditRequest): Promise<{ error: string } | { uuid: string }> => {
+}: ImageEditRequest): Promise<{ code?: string; error: string } | { uuid: string }> => {
   try {
     // Build FormData for multipart/form-data request
     const formData = new FormData();
@@ -201,19 +198,10 @@ export const createImageEditTask = async ({
     formData.append('max_images', max_images.toString());
     formData.append('seed', seed.toString());
 
-    // Append new image files if provided
-    if (imageFiles) {
-      imageFiles.forEach((file) => {
-        formData.append('image_files', file);
-      });
-    }
-
-    // Append existing S3 URLs if provided
-    if (imageUrls) {
-      imageUrls.forEach((url) => {
-        formData.append('image_urls', url);
-      });
-    }
+    // Append ordered image inputs - backend detects File vs URL string
+    image_inputs.forEach((input) => {
+      formData.append('image_inputs', input);
+    });
 
     // Fetch without Content-Type header - browser will set it with boundary
     const controller = new AbortController();
@@ -229,13 +217,11 @@ export const createImageEditTask = async ({
       clearTimeout(timeoutId);
 
       if (!response.ok) {
-        if (ERROR_MESSAGES[response.status]) {
-          return { error: ERROR_MESSAGES[response.status] };
-        }
+        const errorData = (await response.json().catch(() => ({}))) as { info?: string; message?: string };
+        const errorCode = errorData.info;
+        const errorMessage = errorData.message || ERROR_MESSAGES[response.status] || 'Failed to create edit task';
 
-        const errorData = (await response.json().catch(() => ({}))) as { message?: string };
-
-        return { error: errorData.message || 'Failed to create edit task' };
+        return { code: errorCode, error: errorMessage };
       }
 
       const data = (await response.json()) as TextToImageResponse;
