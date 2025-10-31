@@ -1,7 +1,10 @@
 import { create } from 'zustand';
 
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
+import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
+
+import type { ImageInput } from './types';
 
 export type AspectRatio = '1:1' | '4:3' | '16:9' | 'custom';
 export type ImageSize = 'large' | 'medium' | 'small';
@@ -32,25 +35,31 @@ interface State {
   isAiGenerateShown: boolean;
   mode: GenerationMode;
   patternDescription: string;
-  selectedImages: File[];
-  selectedImageUrls: string[];
+  selectedImageInputs: ImageInput[]; // Unified ordered array
   selectedStyle: StyleType;
   showHistory: boolean;
   textToDisplay: string;
 }
 
 interface Actions {
-  addSelectedImage: (file: File) => void;
-  addSelectedImageUrl: (url: string) => void;
+  addImageInput: (input: ImageInput) => void;
+  addPendingHistoryItem: (params: {
+    count: number;
+    dimensions: ImageDimensions;
+    imageInputs?: ImageInput[];
+    mode: GenerationMode;
+    prompt: string;
+    uuid: string;
+  }) => void;
   clearGenerationResults: () => void;
-  clearSelectedImages: () => void;
+  clearImageInputs: () => void;
   importFromHistory: (item: AiImageGenerationData) => void;
   loadHistory: () => Promise<void>;
-  removeSelectedImage: (index: number) => void;
-  removeSelectedImageUrl: (url: string) => void;
+  removeImageInput: (id: string) => void;
   resetForm: () => void;
   setMode: (mode: GenerationMode) => void;
   toggleHistory: () => void;
+  updateHistoryItem: (uuid: string, updates: Partial<AiImageGenerationData>) => void;
 }
 
 const initialState: State = {
@@ -67,8 +76,7 @@ const initialState: State = {
   isAiGenerateShown: false,
   mode: 'text-to-image',
   patternDescription: '',
-  selectedImages: [],
-  selectedImageUrls: [],
+  selectedImageInputs: [],
   selectedStyle: 'logo_with_text',
   showHistory: false,
   textToDisplay: '',
@@ -76,17 +84,64 @@ const initialState: State = {
 
 export const useAiGenerateStore = create<Actions & State>((set) => ({
   ...initialState,
-  addSelectedImage: (file) => {
-    set((state) => ({ selectedImages: [...state.selectedImages, file] }));
+  addImageInput: (input) => {
+    set((state) => ({ selectedImageInputs: [...state.selectedImageInputs, input] }));
   },
-  addSelectedImageUrl: (url) => {
-    set((state) => ({ selectedImageUrls: [...state.selectedImageUrls, url] }));
+  addPendingHistoryItem: (params) => {
+    // Map form dimensions to API format
+    const getImageSizeOption = (): ImageSizeOption => {
+      const { aspectRatio, orientation } = params.dimensions;
+
+      if (aspectRatio === '1:1') return 'square_hd';
+
+      return `${orientation}_${aspectRatio.replace(':', '_')}` as ImageSizeOption;
+    };
+
+    const getImageResolution = (): ImageResolution => {
+      const { size } = params.dimensions;
+
+      if (size === 'large') return '4K';
+
+      if (size === 'medium') return '2K';
+
+      return '1K';
+    };
+
+    // Extract URLs from imageInputs for history storage
+    const imageUrls = params.imageInputs
+      ?.filter((input) => input.type === 'url')
+      .map((input) => (input.type === 'url' ? input.url : ''))
+      .filter(Boolean);
+
+    // Create optimistic history item
+    const newItem: AiImageGenerationData = {
+      completed_at: null,
+      cost_time: null,
+      created_at: new Date().toISOString(),
+      fail_msg: null,
+      image_resolution: getImageResolution(),
+      image_size: getImageSizeOption(),
+      image_urls: imageUrls,
+      max_images: params.count,
+      model_type: params.mode === 'edit' ? 'edit' : 'text-to-image',
+      prompt: params.prompt,
+      result_urls: null,
+      seed: null,
+      state: 'pending',
+      task_id: null,
+      uuid: params.uuid,
+    };
+
+    // Prepend to history (newest first)
+    set((state) => ({
+      historyItems: [newItem, ...state.historyItems],
+    }));
   },
   clearGenerationResults: () => {
     set({ errorMessage: null, generatedImages: [], generationStatus: 'idle', generationUuid: null });
   },
-  clearSelectedImages: () => {
-    set({ selectedImages: [], selectedImageUrls: [] });
+  clearImageInputs: () => {
+    set({ selectedImageInputs: [] });
   },
   importFromHistory: (item) => {
     // Helper to map API image size to dimensions
@@ -124,6 +179,16 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
       size: mapResolutionToSize(item.image_resolution),
     };
 
+    // Convert history URLs to ImageInput format
+    const imageInputs: ImageInput[] =
+      mode === 'edit' && item.image_urls
+        ? item.image_urls.map((url, index) => ({
+            id: `history-${item.uuid}-${index}`,
+            type: 'url' as const,
+            url,
+          }))
+        : [];
+
     // Set state with imported data
     set({
       count: item.max_images,
@@ -132,8 +197,7 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
       generationStatus: item.state === 'success' ? 'success' : 'idle',
       mode,
       patternDescription: item.prompt,
-      selectedImages: [], // Clear uploaded files
-      selectedImageUrls: mode === 'edit' && item.image_urls ? item.image_urls : [], // Restore URLs for edit mode
+      selectedImageInputs: imageInputs, // Restore ordered URLs
       showHistory: false, // Close history panel
     });
   },
@@ -161,11 +225,8 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
       });
     }
   },
-  removeSelectedImage: (index) => {
-    set((state) => ({ selectedImages: state.selectedImages.filter((_, i) => i !== index) }));
-  },
-  removeSelectedImageUrl: (url) => {
-    set((state) => ({ selectedImageUrls: state.selectedImageUrls.filter((u) => u !== url) }));
+  removeImageInput: (id) => {
+    set((state) => ({ selectedImageInputs: state.selectedImageInputs.filter((input) => input.id !== id) }));
   },
   resetForm: () => {
     set({
@@ -177,8 +238,7 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
       generationUuid: null,
       mode: initialState.mode,
       patternDescription: initialState.patternDescription,
-      selectedImages: [],
-      selectedImageUrls: [],
+      selectedImageInputs: [],
       selectedStyle: initialState.selectedStyle,
       textToDisplay: initialState.textToDisplay,
     });
@@ -197,5 +257,10 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
 
       return { showHistory: newShowHistory };
     });
+  },
+  updateHistoryItem: (uuid, updates) => {
+    set((state) => ({
+      historyItems: state.historyItems.map((item) => (item.uuid === uuid ? { ...item, ...updates } : item)),
+    }));
   },
 }));

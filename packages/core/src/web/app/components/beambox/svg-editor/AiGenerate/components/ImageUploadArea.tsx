@@ -3,16 +3,17 @@ import React, { memo, useRef, useState } from 'react';
 import { CloseOutlined, InboxOutlined, LinkOutlined } from '@ant-design/icons';
 import { Alert, Badge, Button } from 'antd';
 
+import type { ImageInput } from '../types';
+import { createFileInput } from '../types';
+
 import styles from './ImageUploadArea.module.scss';
 
 interface ImageUploadAreaProps {
-  images: File[];
-  imageUrls?: string[];
+  imageInputs: ImageInput[];
   maxImages?: number;
   maxSizeBytes?: number;
-  onAdd: (file: File) => void;
-  onRemove: (index: number) => void;
-  onRemoveUrl?: (url: string) => void;
+  onAdd: (input: ImageInput) => void;
+  onRemove: (id: string) => void;
 }
 
 const ACCEPTED_TYPES = ['image/jpeg', 'image/png', 'image/webp'];
@@ -46,20 +47,17 @@ const validateFile = (
 };
 
 const UnmemorizedImageUploadArea = ({
-  images,
-  imageUrls = [],
+  imageInputs,
   maxImages = DEFAULT_MAX_IMAGES,
   maxSizeBytes = DEFAULT_MAX_SIZE,
   onAdd,
   onRemove,
-  onRemoveUrl,
 }: ImageUploadAreaProps) => {
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<null | string>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  // Total count includes both files and URLs
-  const totalCount = images.length + imageUrls.length;
+  const totalCount = imageInputs.length;
 
   const handleFiles = (files: FileList | null) => {
     if (!files) return;
@@ -69,7 +67,6 @@ const UnmemorizedImageUploadArea = ({
     const fileArray = Array.from(files);
 
     for (const file of fileArray) {
-      // Validate against total count (files + URLs)
       const result = validateFile(file, totalCount, maxImages, maxSizeBytes);
 
       if ('error' in result) {
@@ -78,7 +75,7 @@ const UnmemorizedImageUploadArea = ({
         return;
       }
 
-      onAdd(result.file);
+      onAdd(createFileInput(result.file));
     }
   };
 
@@ -107,19 +104,9 @@ const UnmemorizedImageUploadArea = ({
     e.target.value = '';
   };
 
-  const handleRemove = (index: number, e: React.MouseEvent) => {
+  const handleRemove = (id: string, e: React.MouseEvent) => {
     e.stopPropagation();
-    onRemove(index);
-    setError(null);
-  };
-
-  const handleRemoveUrl = (url: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-
-    if (onRemoveUrl) {
-      onRemoveUrl(url);
-    }
-
+    onRemove(id);
     setError(null);
   };
 
@@ -155,49 +142,55 @@ const UnmemorizedImageUploadArea = ({
           </div>
         ) : (
           <div className={styles['images-grid']}>
-            {/* Display URL images from history */}
-            {imageUrls.map((url, index) => (
-              <div className={styles['image-thumbnail']} key={`url-${index}`}>
-                <Badge.Ribbon className={styles['history-badge']} color="blue" text={<LinkOutlined />}>
-                  <img alt={`History image ${index + 1}`} className={styles.image} src={url} />
-                </Badge.Ribbon>
-                <Button
-                  className={styles['remove-button']}
-                  icon={<CloseOutlined />}
-                  onClick={(e) => handleRemoveUrl(url, e)}
-                  shape="circle"
-                  size="small"
-                  type="text"
-                />
-                <div className={styles['image-name']}>From history</div>
-              </div>
-            ))}
-
-            {/* Display uploaded files */}
-            {images.map((file, index) => {
-              const imageUrl = URL.createObjectURL(file);
+            {/* Display all inputs in order with numbered badges */}
+            {imageInputs.map((input, index) => {
+              const displayNumber = index + 1; // 1-based for UI
 
               return (
-                <div className={styles['image-thumbnail']} key={`file-${index}`}>
-                  <img
-                    alt={file.name}
-                    className={styles.image}
-                    onLoad={() => URL.revokeObjectURL(imageUrl)}
-                    src={imageUrl}
-                  />
+                <div className={styles['image-thumbnail']} key={input.id}>
+                  {/* Number badge - always visible */}
+                  <div className={styles['number-badge']}>{displayNumber}</div>
+
+                  {/* Image preview with type indicator */}
+                  {input.type === 'file' ? (
+                    <>
+                      <img
+                        alt={input.file.name}
+                        className={styles.image}
+                        onLoad={(e) => {
+                          const img = e.target as HTMLImageElement;
+
+                          if (img.src.startsWith('blob:')) {
+                            URL.revokeObjectURL(img.src);
+                          }
+                        }}
+                        src={URL.createObjectURL(input.file)}
+                      />
+                      <div className={styles['image-name']}>{input.file.name}</div>
+                    </>
+                  ) : (
+                    <>
+                      <Badge.Ribbon className={styles['history-badge']} color="blue" text={<LinkOutlined />}>
+                        <img alt={`Image ${displayNumber} from history`} className={styles.image} src={input.url} />
+                      </Badge.Ribbon>
+                      <div className={styles['image-name']}>From history</div>
+                    </>
+                  )}
+
+                  {/* Remove button */}
                   <Button
                     className={styles['remove-button']}
                     icon={<CloseOutlined />}
-                    onClick={(e) => handleRemove(index, e)}
+                    onClick={(e) => handleRemove(input.id, e)}
                     shape="circle"
                     size="small"
                     type="text"
                   />
-                  <div className={styles['image-name']}>{file.name}</div>
                 </div>
               );
             })}
 
+            {/* Add more button */}
             {totalCount < maxImages && (
               <div className={styles['add-more']}>
                 <InboxOutlined />
@@ -210,7 +203,6 @@ const UnmemorizedImageUploadArea = ({
 
       <div className={styles.info}>
         {totalCount} / {maxImages} images selected
-        {imageUrls.length > 0 && ` (${imageUrls.length} from history, ${images.length} new)`}
       </div>
     </div>
   );

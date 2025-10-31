@@ -1,4 +1,4 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
 import { BulbOutlined, ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Input, Select, Space } from 'antd';
@@ -8,11 +8,12 @@ import { match } from 'ts-pattern';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-image';
 import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
-import { getCurrentUser } from '@core/helpers/api/flux-id';
+import { fluxIDEvents, getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
+import type { IUser } from '@core/interfaces/IUser';
 
-import ImageHistory from './ImageHistory';
-import ImageResults from './ImageResults';
-import ImageUploadArea from './ImageUploadArea';
+import ImageHistory from './components/ImageHistory';
+import ImageResults from './components/ImageResults';
+import ImageUploadArea from './components/ImageUploadArea';
 import styles from './index.module.scss';
 import type { AspectRatio, ImageSize } from './useAiGenerateStore';
 import { useAiGenerateStore } from './useAiGenerateStore';
@@ -20,10 +21,11 @@ import { useAiGenerateStore } from './useAiGenerateStore';
 const { TextArea } = Input;
 
 const UnmemorizedAiGenerate = () => {
-  const currentUser = getCurrentUser();
+  const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
   const { info } = currentUser || { info: null };
   const {
-    addSelectedImage,
+    addImageInput,
+    addPendingHistoryItem,
     clearGenerationResults,
     count,
     dimensions,
@@ -32,16 +34,28 @@ const UnmemorizedAiGenerate = () => {
     generationStatus,
     mode,
     patternDescription,
-    removeSelectedImage,
-    removeSelectedImageUrl,
+    removeImageInput,
     resetForm,
-    selectedImages,
-    selectedImageUrls,
+    selectedImageInputs,
     setMode,
     showHistory,
     textToDisplay,
     toggleHistory,
+    updateHistoryItem,
   } = useAiGenerateStore();
+
+  // Subscribe to user update events for real-time credit balance updates
+  useEffect(() => {
+    const handleUserUpdate = (user: IUser | null) => {
+      setCurrentUser(user);
+    };
+
+    fluxIDEvents.on('update-user', handleUserUpdate);
+
+    return () => {
+      fluxIDEvents.off('update-user', handleUserUpdate);
+    };
+  }, []);
 
   const getSizePixels = (size: ImageSize): string =>
     match(size)
@@ -49,16 +63,6 @@ const UnmemorizedAiGenerate = () => {
       .with('medium', () => '2048 x 2048')
       .with('large', () => '4096 x 4096')
       .exhaustive();
-
-  const creditsRequired = useMemo(
-    () =>
-      match(dimensions.size)
-        .with('small', () => 10)
-        .with('medium', () => 15)
-        .with('large', () => 20)
-        .exhaustive() * count,
-    [dimensions.size, count],
-  );
 
   const getImageSizeOption = (): ImageSizeOption =>
     match(dimensions)
@@ -82,15 +86,13 @@ const UnmemorizedAiGenerate = () => {
     }
 
     // Validate edit mode requirements
-    const totalImages = selectedImages.length + selectedImageUrls.length;
-
-    if (mode === 'edit' && totalImages === 0) {
+    if (mode === 'edit' && selectedImageInputs.length === 0) {
       useAiGenerateStore.setState({ errorMessage: 'Please upload at least one image for editing' });
 
       return;
     }
 
-    if (mode === 'edit' && totalImages > 10) {
+    if (mode === 'edit' && selectedImageInputs.length > 10) {
       useAiGenerateStore.setState({ errorMessage: 'Maximum 10 images allowed' });
 
       return;
@@ -119,11 +121,13 @@ const UnmemorizedAiGenerate = () => {
     let createResponse: { error: string } | { uuid: string };
 
     if (mode === 'edit') {
+      // Convert ImageInput array to File | string array for API
+      const imageInputsForApi = selectedImageInputs.map((input) => (input.type === 'file' ? input.file : input.url));
+
       createResponse = await createImageEditTask({
+        image_inputs: imageInputsForApi,
         image_resolution: getImageResolution(),
         image_size: getImageSizeOption(),
-        imageFiles: selectedImages.length > 0 ? selectedImages : undefined,
-        imageUrls: selectedImageUrls.length > 0 ? selectedImageUrls : undefined,
         max_images: count,
         prompt,
       });
@@ -137,22 +141,48 @@ const UnmemorizedAiGenerate = () => {
     }
 
     if ('error' in createResponse) {
-      useAiGenerateStore.setState({ errorMessage: createResponse.error, generationStatus: 'failed' });
+      // Pass error code along with message for special handling in UI
+      const errorMessage =
+        'code' in createResponse && createResponse.code
+          ? `${createResponse.code}:${createResponse.error}`
+          : createResponse.error;
+
+      useAiGenerateStore.setState({ errorMessage, generationStatus: 'failed' });
 
       return;
     }
 
-    // Poll for results using UUID
     const { uuid } = createResponse;
 
     useAiGenerateStore.setState({ generationUuid: uuid });
 
-    const result = await pollTaskUntilComplete(uuid);
+    addPendingHistoryItem({
+      count,
+      dimensions,
+      imageInputs: mode === 'edit' ? selectedImageInputs : undefined,
+      mode,
+      prompt,
+      uuid,
+    });
 
+    const result = await pollTaskUntilComplete(uuid, (state) => {
+      updateHistoryItem(uuid, { state });
+    });
+
+    // Update final results
     if (result.success && result.imageUrls) {
+      // Update credits info first, then update store state to trigger re-render
+      await getInfo({ silent: true });
+
       useAiGenerateStore.setState({ generatedImages: result.imageUrls, generationStatus: 'success' });
+      updateHistoryItem(uuid, {
+        completed_at: new Date().toISOString(),
+        result_urls: result.imageUrls,
+        state: 'success',
+      });
     } else {
       useAiGenerateStore.setState({ errorMessage: result.error || 'Generation failed', generationStatus: 'failed' });
+      updateHistoryItem(uuid, { fail_msg: result.error || 'Generation failed', state: 'fail' });
     }
   };
 
@@ -227,13 +257,7 @@ const UnmemorizedAiGenerate = () => {
             {mode === 'edit' && (
               <div className={styles.section}>
                 <h3 className={styles['section-title']}>Upload Images</h3>
-                <ImageUploadArea
-                  images={selectedImages}
-                  imageUrls={selectedImageUrls}
-                  onAdd={addSelectedImage}
-                  onRemove={removeSelectedImage}
-                  onRemoveUrl={removeSelectedImageUrl}
-                />
+                <ImageUploadArea imageInputs={selectedImageInputs} onAdd={addImageInput} onRemove={removeImageInput} />
               </div>
             )}
 
@@ -263,6 +287,12 @@ const UnmemorizedAiGenerate = () => {
                   }}
                   value={patternDescription}
                 />
+                {mode === 'edit' && selectedImageInputs.length > 0 && (
+                  <p className={styles.hint}>
+                    💡 Tip: Reference images by number in your prompt (e.g., "person in image 1 wearing clothes from
+                    image 2")
+                  </p>
+                )}
               </div>
             </div>
 
@@ -359,18 +389,31 @@ const UnmemorizedAiGenerate = () => {
               <Select
                 className={styles['count-select']}
                 onChange={(value) => useAiGenerateStore.setState({ count: value })}
-                options={[1, 2, 3, 4, 5, 6].map((num) => ({ label: String(num), value: num }))}
+                options={[1, 2, 3, 4].map((num) => ({ label: String(num), value: num }))}
                 value={count}
               />
             </div>
 
             <div className={styles['button-section']}>
-              <Button block className={styles['generate-button']} onClick={handleGenerate} size="large" type="primary">
+              <Button
+                block
+                className={styles['generate-button']}
+                disabled={
+                  !patternDescription.trim() ||
+                  !currentUser ||
+                  (mode === 'edit' && selectedImageInputs.length === 0) ||
+                  (mode === 'edit' && selectedImageInputs.length > 10) ||
+                  (info?.credit || 0) < 0.05 * count
+                }
+                onClick={handleGenerate}
+                size="large"
+                type="primary"
+              >
                 Generate
               </Button>
 
               <div className={styles['credits-info']}>
-                <span className={styles['credits-required']}>Credit required {creditsRequired}</span>
+                <span className={styles['credits-required']}>Credit required {(0.05 * count).toFixed(2)}</span>
                 <div className={styles['credits-balance']}>
                   <FluxIcons.AICredit />
                   <span className={styles['ai-credit']}>{info?.credit || 0}</span>
@@ -390,6 +433,6 @@ const UnmemorizedAiGenerate = () => {
   );
 };
 
-const AiGenerate = memo(UnmemorizedAiGenerate, () => true);
+const AiGenerate = memo(UnmemorizedAiGenerate);
 
 export default AiGenerate;
