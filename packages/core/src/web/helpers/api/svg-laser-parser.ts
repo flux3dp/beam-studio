@@ -23,6 +23,7 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
+import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
 import Websocket from '@core/helpers/websocket';
 import fileSystem from '@core/implementations/fileSystem';
@@ -144,8 +145,15 @@ export const getExportOpt = async (
 
     if (documentState['skip_prespray']) {
       config.skip_prespray = true;
-    } else {
-      if (model === 'fbm2' && device?.model === 'fbm2') {
+    }
+
+    if (model === 'fbm2' && hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true })) {
+      if (
+        device?.model === 'fbm2' &&
+        (!documentState['skip_prespray'] ||
+          (hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true }) &&
+            !documentState['enable-4c-prespray-area']))
+      ) {
         try {
           await deviceMaster.select(device);
 
@@ -157,9 +165,11 @@ export const getExportOpt = async (
           console.error('Failed to get machine_limit_position', error);
         }
       }
-    }
 
-    if (model !== 'fbm2') {
+      if (documentState['enable-4c-prespray-area']) {
+        config.prespray = [x, y - minY, w, h];
+      }
+    } else if (model === 'ado1') {
       config.prespray = rotaryMode && !hasJobOrigin ? [workareaWidth - 12, 45, 12, h] : [x, y - minY, w, h];
     }
 
