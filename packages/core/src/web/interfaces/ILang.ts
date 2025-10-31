@@ -2436,6 +2436,7 @@ export interface ILang {
     title: string;
   };
   web_cam: {
+    image_to_small: string;
     no_device: string;
     no_permission: string;
   };

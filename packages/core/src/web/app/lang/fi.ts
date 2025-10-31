@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Muuttuvan tekstin asetukset',
   },
   web_cam: {
+    image_to_small: 'Kameran kuvan koko on liian pieni. Kuva voi olla vioittunut.',
     no_device: 'Kameralaitetta ei havaittu. Kytke kamera uudelleen ja yritä uudelleen.',
     no_permission: 'Beam Studiolla ei ole lupaa käyttää kameraa. Varmista, että lupa on myönnetty Beam Studiolle selainasetuksissa tai järjestelmäasetuksissa.',
   },

@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Impostazioni testi variabili',
   },
   web_cam: {
+    image_to_small: "La dimensione dell'immagine della fotocamera è troppo piccola. L'immagine potrebbe essere danneggiata.",
     no_device: 'Impossibile rilevare il dispositivo della fotocamera. Ricollega la fotocamera e riprova.',
     no_permission: "Beam Studio non ha l'autorizzazione per accedere alla fotocamera. Assicurati che l'autorizzazione sia concessa a Beam Studio nelle impostazioni del browser o del sistema.",
   },

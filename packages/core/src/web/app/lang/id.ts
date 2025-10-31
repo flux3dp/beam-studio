@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Pengaturan teks variabel',
   },
   web_cam: {
+    image_to_small: 'Ukuran gambar kamera terlalu kecil. Gambar mungkin rusak.',
     no_device: 'Tidak dapat mendeteksi perangkat kamera. Silakan sambungkan kembali kamera dan coba lagi.',
     no_permission: 'Beam Studio tidak memiliki izin untuk mengakses kamera. Pastikan izin diberikan ke Beam Studio di pengaturan browser atau pengaturan sistem.',
   },

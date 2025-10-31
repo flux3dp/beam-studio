@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Ustawienia tekstów zmiennych',
   },
   web_cam: {
+    image_to_small: 'Rozmiar obrazu z kamery jest za mały. Obraz może być uszkodzony.',
     no_device: 'Nie można wykryć urządzenia kamery. Proszę podłączyć kamerę ponownie i spróbować ponownie.',
     no_permission: 'Beam Studio nie ma uprawnień do uzyskania dostępu do kamery. Upewnij się, że uprawnienia są przyznane Beam Studio w ustawieniach przeglądarki lub systemu.',
   },

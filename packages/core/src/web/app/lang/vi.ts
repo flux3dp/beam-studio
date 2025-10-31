@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Cài đặt văn bản biến đổi',
   },
   web_cam: {
+    image_to_small: 'Kích thước hình ảnh camera quá nhỏ. Hình ảnh có thể bị hỏng.',
     no_device: 'Không thể phát hiện thiết bị camera. Vui lòng kết nối lại camera và thử lại.',
     no_permission: 'Beam Studio không có quyền truy cập vào camera. Vui lòng đảm bảo rằng quyền đã được cấp cho Beam Studio trong cài đặt trình duyệt hoặc hệ thống.',
   },

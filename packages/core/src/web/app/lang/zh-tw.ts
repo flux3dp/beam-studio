@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: '可變文字設定',
   },
   web_cam: {
+    image_to_small: '相機影像尺寸太小。影像可能已損壞。',
     no_device: '無法檢測到相機設備。請重新連接相機，然後重試。',
     no_permission: 'Beam Studio 沒有權限存取相機。請確保在系統設定或瀏覽器設定中已授予 Beam Studio 權限。',
   },

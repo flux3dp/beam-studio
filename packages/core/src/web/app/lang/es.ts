@@ -2442,6 +2442,7 @@ const lang: ILang = {
     title: 'Configuración de textos variables',
   },
   web_cam: {
+    image_to_small: 'El tamaño de la imagen de la cámara es demasiado pequeño. La imagen puede estar dañada.',
     no_device: 'No se puede detectar el dispositivo de cámara. Vuelva a conectar la cámara e intente de nuevo.',
     no_permission: 'Beam Studio no tiene permiso para acceder a la cámara. Asegúrese de que el permiso esté concedido a Beam Studio en la configuración del navegador o del sistema.',
   },
