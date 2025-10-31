@@ -8,7 +8,6 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
-import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ILang } from '@core/interfaces/ILang';
@@ -24,45 +23,50 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
+const isRelatedModalsExist = (): boolean => {
+  const progressList = [
+    'preparing-export',
+    'retrieve-image-data',
+    'fetch-task-code',
+    'fetch-task',
+    'upload-scene',
+  ] as const;
+
+  return Dialog.isIdExist('monitor') || progressList.some((id) => progressCaller.checkIdExist(id));
+};
+
 export const handleExportClick =
   (lang: ILang) =>
   async (byHandler = false): Promise<void> => {
-    const progressList = ['retrieve-image-data', 'fetch-task-code', 'fetch-task', 'upload-scene'] as const;
+    try {
+      if (isRelatedModalsExist()) return;
 
-    if (Dialog.isIdExist('monitor') || progressList.some((id) => progressCaller.checkIdExist(id))) return;
+      progressCaller.openNonstopProgress({ id: 'preparing-export' });
 
-    if (isCanvasEmpty()) return;
+      if (isCanvasEmpty()) return;
 
-    promarkButtonHandler.setStatus('preparing');
-    // remove all selected elements, to prevent the svg image resource not found
-    textActions.clear();
-    svgCanvas.selectOnly([]);
-    canvasEvents.setSelectedElement(null);
+      promarkButtonHandler.setStatus('preparing');
+      // remove all selected elements, to prevent the svg image resource not found
+      textActions.clear();
+      svgCanvas.selectOnly([]);
+      canvasEvents.setSelectedElement(null);
 
-    if (getNextStepRequirement() === TutorialConstants.SEND_FILE) handleNextStep();
+      if (getNextStepRequirement() === TutorialConstants.SEND_FILE) handleNextStep();
 
-    const handleExport = async () => {
-      try {
-        const { device } = await getDevice();
+      const { device } = await getDevice();
 
-        if (!device) return;
+      if (!device) return;
 
-        if (!(await checkBlockedSerial(device.serial))) return;
+      if (!(await checkBlockedSerial(device.serial))) return;
 
-        if (!(await handleExportAlerts(device, lang))) return;
+      if (!(await handleExportAlerts(device, lang))) return;
 
-        if (!(await checkDeviceStatus(device))) return;
+      if (!(await checkDeviceStatus(device))) return;
 
-        await checkModuleCalibration(device, lang);
-        await exportTask(device, byHandler, lang);
-      } finally {
-        promarkButtonHandler.handleTaskFinish();
-      }
-    };
-
-    if (isWeb() && navigator.language !== 'da') {
-      Dialog.forceLoginWrapper(handleExport, false, promarkButtonHandler.handleTaskFinish);
-    } else {
-      handleExport();
+      await checkModuleCalibration(device, lang);
+      await exportTask(device, byHandler, lang);
+    } finally {
+      progressCaller.popById('preparing-export');
+      promarkButtonHandler.handleTaskFinish();
     }
   };
