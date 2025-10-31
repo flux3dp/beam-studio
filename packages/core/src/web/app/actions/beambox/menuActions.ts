@@ -27,7 +27,6 @@ import {
 } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
-import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
@@ -79,11 +78,7 @@ export default {
   EXPORT_FLUX_TASK: (): void => {
     if (isCanvasEmpty()) return;
 
-    if (isWeb()) {
-      Dialog.forceLoginWrapper(() => ExportFuncs.exportFcode());
-    } else {
-      ExportFuncs.exportFcode();
-    }
+    ExportFuncs.exportFcode();
   },
   EXPORT_JPG: (): Promise<void> => exportAsImage('jpg'),
   EXPORT_PNG: (): Promise<void> => exportAsImage('png'),

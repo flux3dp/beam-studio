@@ -2,6 +2,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { executeFirmwareUpdate } from '@core/app/actions/beambox/menuDeviceActions';
+import progressCaller from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -128,6 +129,6 @@ export const exportTask = async (device: IDeviceInfo, byHandler: boolean, lang: 
   }
 
   promarkButtonHandler.setStatus('uploading');
-
+  progressCaller.popById('preparing-export');
   await ExportFuncs.uploadFcode(device, byHandler);
 };

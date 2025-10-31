@@ -10,7 +10,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import Pointable from '@core/app/components/beambox/path-preview/Pointable';
 import SidePanel from '@core/app/components/beambox/path-preview/SidePanel';
@@ -31,7 +30,6 @@ import getRotaryRatio from '@core/helpers/device/get-rotary-ratio';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import isWeb from '@core/helpers/is-web';
 import getJobOrigin from '@core/helpers/job-origin';
 import { DrawCommands } from '@core/helpers/path-preview/draw-commands';
 import { GcodePreview } from '@core/helpers/path-preview/draw-commands/GcodePreview';
@@ -1997,7 +1995,7 @@ class PathPreview extends React.Component<Props, State> {
           currentPosition={this.renderPosition()}
           cutDist={`${Math.round(this.gcodePreview.g1DistReal)} mm`}
           estTime={this.transferTime(this.simTimeMax)}
-          handleStartHere={isWeb() ? () => dialogCaller.forceLoginWrapper(this.handleStartHere) : this.handleStartHere}
+          handleStartHere={this.handleStartHere}
           isStartHereEnabled={playState !== PlayState.PLAY}
           lightTime={this.transferTime(this.gcodePreview.g1TimeReal)}
           rapidDist={`${Math.round(this.gcodePreview.g0DistReal)} mm`}
