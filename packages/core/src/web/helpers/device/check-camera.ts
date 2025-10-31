@@ -1,5 +1,6 @@
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import deviceMaster from '@core/helpers/device-master';
+import i18n from '@core/helpers/i18n';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -46,7 +47,7 @@ const checkCameraPromark = async (_device: IDeviceInfo): Promise<CheckCameraResu
     const pic = await webcam.getPicture();
 
     // size bigger than PROMARK_GOOD_PICTURE_THRESHOLD is considered as a good picture
-    if (pic.size <= PROMARK_GOOD_PICTURE_THRESHOLD) return { error: 'Picture too small', success: false };
+    if (pic.size <= PROMARK_GOOD_PICTURE_THRESHOLD) return { error: i18n.lang.web_cam.image_to_small, success: false };
 
     return { success: true };
   } catch (e) {
