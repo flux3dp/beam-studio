@@ -164,7 +164,7 @@ const generatePresprayArea = (): void => {
     text.style.transformBox = 'fill-box';
     text.style.transformOrigin = 'center';
     text.style.rotate = '90deg';
-    text.textContent = i18n.lang.editor.prespray_area;
+    text.textContent = i18n.lang.editor.nozzle_refresh_area;
 
     presprayArea4CContainer.appendChild(rect);
     presprayArea4CContainer.appendChild(text);

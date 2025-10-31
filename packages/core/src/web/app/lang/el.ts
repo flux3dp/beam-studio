@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Φωτεινότητα',
+    nozzle_refresh_area: 'Περιοχή Ανανέωσης Ακροφυσίου',
     opacity: 'Προεπισκόπηση Αδιαφάνειας',
     prespray_area: 'Περιοχή προετοιμασίας',
   },
