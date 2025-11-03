@@ -156,6 +156,8 @@ describe('test canvas/prespray-area', () => {
     expect(presprayArea.getPosition()).toEqual({ h: 300, w: 300, x: 1100, y: 100 });
     presprayArea.drag(10000, 10000);
     expect(presprayArea.getPosition()).toEqual({ h: 300, w: 300, x: 4000, y: 3700 });
+    presprayArea.endDrag();
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 
   test('drag prespray area for PRINTER_4C (horizontal only)', () => {
@@ -181,5 +183,7 @@ describe('test canvas/prespray-area', () => {
     expect(presprayArea.getPosition()).toEqual({ h: 0, w: 223, x: 1177, y: 0 });
     presprayArea.drag(10000, 10000);
     expect(presprayArea.getPosition()).toEqual({ h: 0, w: 223, x: 4077, y: 0 });
+    presprayArea.endDrag();
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 });

@@ -148,12 +148,7 @@ export const getExportOpt = async (
     }
 
     if (model === 'fbm2' && hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true })) {
-      if (
-        device?.model === 'fbm2' &&
-        (!documentState['skip_prespray'] ||
-          (hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true }) &&
-            !documentState['enable-4c-prespray-area']))
-      ) {
+      if (device?.model === 'fbm2' && !(documentState['skip_prespray'] && documentState['enable-4c-prespray-area'])) {
         try {
           await deviceMaster.select(device);
 

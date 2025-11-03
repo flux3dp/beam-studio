@@ -234,6 +234,8 @@ const endDrag = (): void => {
     if (text) {
       cmd.addSubCommand(new history.ChangeElementCommand(text, { x: startX + areaWidth4C / 2 }));
     }
+
+    undoManager.addCommandToHistory(cmd);
   }
 };
 
