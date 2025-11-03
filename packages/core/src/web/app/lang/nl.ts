@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Helderheid',
+    nozzle_refresh_area: 'Mondstuk Verversingsgebied',
     opacity: 'Voorbeeld dekking',
     prespray_area: 'Priming gebied',
   },

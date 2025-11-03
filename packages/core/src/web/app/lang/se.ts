@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Ljusstyrka',
+    nozzle_refresh_area: 'Munstycke Uppdateringsområde',
     opacity: 'Förhandsvisningsgenomskinlighet',
     prespray_area: 'Primeringsyta',
   },

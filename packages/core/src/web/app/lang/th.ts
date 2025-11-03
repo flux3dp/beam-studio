@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'ความสว่าง',
+    nozzle_refresh_area: 'พื้นที่รีเฟรชหัวฉีด',
     opacity: 'ความโปร่งแสงของตัวอย่างภาพ',
     prespray_area: 'พื้นที่พ่นสารเคมี',
   },
