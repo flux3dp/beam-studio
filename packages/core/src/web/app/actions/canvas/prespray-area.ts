@@ -59,15 +59,16 @@ const togglePresprayArea = (): void => {
 
   currentMode = getPresprayMode();
 
-  const shouldShow = currentMode !== null;
   const { 'enable-job-origin': enableJobOrigin, rotary_mode: rotaryMode } = useDocumentStore.getState();
   const hasJobOrigin = enableJobOrigin && getAddOnInfo(model).jobOrigin;
+  const shouldShow =
+    currentMode === LayerModule.PRINTER_4C || (currentMode === LayerModule.PRINTER && !(rotaryMode && !hasJobOrigin));
 
   // Hide both elements first
   presprayAreaImage?.setAttribute('display', 'none');
   presprayArea4CContainer?.setAttribute('display', 'none');
 
-  if (shouldShow && !(rotaryMode && !hasJobOrigin)) {
+  if (shouldShow) {
     // check boundary
     startDrag();
     drag(0, 0);
