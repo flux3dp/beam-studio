@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Luminosità',
+    nozzle_refresh_area: 'Area di Aggiornamento Ugello',
     opacity: 'Anteprima opacità',
     prespray_area: 'Area di preparazione',
   },

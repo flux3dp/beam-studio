@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Kecerahan',
+    nozzle_refresh_area: 'Kawasan Penyegaran Muncung',
     opacity: 'Ketelusan Pratonton',
     prespray_area: 'Kawasan Persediaan',
   },

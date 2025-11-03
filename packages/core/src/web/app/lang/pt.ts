@@ -1271,6 +1271,7 @@ const lang: ILang = {
   },
   editor: {
     exposure: 'Brilho',
+    nozzle_refresh_area: 'Área de Renovação de Bico',
     opacity: 'Opacidade da pré-visualização',
     prespray_area: 'Área de preparação',
   },
