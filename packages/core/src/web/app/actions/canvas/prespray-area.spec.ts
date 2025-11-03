@@ -15,8 +15,12 @@ const mockGetHeight = jest.fn();
 const mockGetExpansion = jest.fn();
 const mockGetMinY = jest.fn();
 const mockGetModel = jest.fn();
+const mockGetBoundary = jest.fn();
 
 jest.mock('@core/app/svgedit/workarea', () => ({
+  get boundary() {
+    return mockGetBoundary();
+  },
   get expansion() {
     return mockGetExpansion();
   },
@@ -64,6 +68,7 @@ describe('test canvas/prespray-area', () => {
     mockGetWidth.mockReturnValue(4300);
     mockGetHeight.mockReturnValue(4000);
     mockGetMinY.mockReturnValue(0);
+    mockGetBoundary.mockReturnValue({ maxX: 4300, maxY: 4000, minX: 0, minY: 0 });
     mockGetModel.mockReturnValue('ado1');
     mockGetExpansion.mockReturnValue([0, 0]);
     mockRequestAnimationFrame.mockImplementation((cb) => cb());

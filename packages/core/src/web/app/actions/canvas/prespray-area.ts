@@ -185,29 +185,23 @@ const checkMouseTarget = (mouseTarget: Element): boolean => {
 };
 let startX = 0;
 let startY = 0;
-let workareaSize = { h: 0, w: 0 };
 
 const startDrag = (): void => {
   const { x, y } = getPosition();
 
   startX = x;
   startY = y;
-
-  const { modelHeight, width } = workareaManager;
-
-  workareaSize = {
-    h: modelHeight,
-    w: width,
-  };
 };
 
 const drag = (dx: number, dy: number): void => {
   requestAnimationFrame(() => {
-    const { h, w } = workareaSize;
+    const {
+      boundary: { maxX, maxY, minX, minY },
+    } = workareaManager;
 
     if (currentMode === LayerModule.PRINTER_4C) {
       // Horizontal movement only for PRINTER_4C
-      const newX = Math.min(Math.max(0, startX + dx), w - areaWidth4C);
+      const newX = Math.min(Math.max(minX, startX + dx), maxX - areaWidth4C);
       const rect = presprayArea4CContainer?.querySelector('rect');
       const text = presprayArea4CContainer?.querySelector('text');
 
@@ -215,8 +209,8 @@ const drag = (dx: number, dy: number): void => {
       text?.setAttribute('x', (newX + areaWidth4C / 2).toFixed(0));
     } else {
       // Free movement for PRINTER
-      const newX = Math.min(Math.max(0, startX + dx), w - areaWidth);
-      const newY = Math.min(Math.max(0, startY + dy), h - areaHeight);
+      const newX = Math.min(Math.max(minX, startX + dx), maxX - areaWidth);
+      const newY = Math.min(Math.max(minY, startY + dy), maxY - areaHeight);
 
       presprayAreaImage.setAttribute('x', newX.toFixed(0));
       presprayAreaImage.setAttribute('y', newY.toFixed(0));
