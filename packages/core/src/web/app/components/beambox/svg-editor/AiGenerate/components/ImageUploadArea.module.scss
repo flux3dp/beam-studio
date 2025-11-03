@@ -69,7 +69,6 @@ $text-secondary: #666666;
   position: relative;
   aspect-ratio: 1;
   border-radius: 6px;
-  overflow: hidden;
   background: #fff;
   border: 1px solid $border-color;
 
@@ -80,12 +79,17 @@ $text-secondary: #666666;
   &:hover .image-name {
     opacity: 1;
   }
+
+  :global(.ant-ribbon-wrapper) {
+    width: 100%;
+    height: 100%;
+  }
 }
 
 .image {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
   display: block;
 }
 
