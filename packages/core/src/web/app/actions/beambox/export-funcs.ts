@@ -32,7 +32,7 @@ import VersionChecker from '@core/helpers/version-checker';
 import dialog from '@core/implementations/dialog';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type { TaskMetaData } from '@core/interfaces/ITask';
+import type { BackendProgressData, TaskMetaData } from '@core/interfaces/ITask';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
 import { getAdorPaddingAccel } from './export/ador-utils';
@@ -50,6 +50,24 @@ getSVGAsync((globalSVG) => {
 });
 
 const svgeditorParser = svgLaserParser({ type: 'svgeditor' });
+
+const handleProgress = (id: string, { message, percentage, translation_key }: BackendProgressData) => {
+  if (
+    translation_key &&
+    i18n.lang.message.backend_calculation[translation_key as keyof typeof i18n.lang.message.backend_calculation]
+  ) {
+    message = sprintf(
+      i18n.lang.message.backend_calculation[translation_key as keyof typeof i18n.lang.message.backend_calculation],
+      percentage * 100,
+    );
+  }
+
+  Progress.update(id, {
+    caption: i18n.lang.beambox.popup.progress.calculating,
+    message,
+    percentage: percentage * 100,
+  });
+};
 
 const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   Progress.openNonstopProgress({
@@ -165,14 +183,7 @@ const fetchTaskCode = async (
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
     engraveDpi: documentState['engrave_dpi'],
     model: workareaManager.model,
-    onProgressing: (data: { message: string; percentage: number }) => {
-      // message: Analyzing SVG - 0.0%
-      Progress.update('upload-scene', {
-        caption: i18n.lang.beambox.popup.progress.calculating,
-        message: data.message,
-        percentage: data.percentage * 100,
-      });
-    },
+    onProgressing: (data: BackendProgressData) => handleProgress('upload-scene', data),
   });
 
   if (isCanceled) return null;
@@ -266,12 +277,7 @@ const fetchTaskCode = async (
           Progress.update('fetch-task', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
         },
-        onProgressing: (data: { message: string; percentage: number }) => {
-          Progress.update('fetch-task', {
-            message: data.message,
-            percentage: data.percentage * 100,
-          });
-        },
+        onProgressing: (data: BackendProgressData) => handleProgress('fetch-task', data),
         shouldUseFastGradient,
         ...getTaskCodeOpts,
         paddingAccel,
@@ -341,14 +347,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI({ data, size: data.length } as any, {
     forceArgString: sprintf(sceneArgsString, data.length),
     model: 'fbm2',
-    onProgressing: (data: { message: string; percentage: number }) => {
-      // message: Analyzing SVG - 0.0%
-      Progress.update(modelId, {
-        caption: i18n.lang.beambox.popup.progress.calculating,
-        message: data.message,
-        percentage: data.percentage * 100,
-      });
-    },
+    onProgressing: (data: BackendProgressData) => handleProgress(modelId, data),
   });
 
   if (isCanceled) return null;
@@ -401,13 +400,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
         Progress.update(modelId, { message: i18n.lang.message.uploading_fcode, percentage: 100 });
         resolve({ fileTimeCost: timeCost, metadata, taskCodeBlob: taskBlob });
       },
-      onProgressing: (data: { message: string; percentage: number }) => {
-        // message: Calculating Toolpath 28.6%
-        Progress.update(modelId, {
-          message: data.message,
-          percentage: data.percentage * 100,
-        });
-      },
+      onProgressing: (data: BackendProgressData) => handleProgress(modelId, data),
     } as any);
   });
 
@@ -471,12 +464,7 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
           Progress.update('fetch-task', { message: i18n.lang.message.uploading_fcode, percentage: 100 });
           resolve({ fileTimeCost: timeCost, taskCodeBlob: taskBlob });
         },
-        onProgressing: (data: { message: string; percentage: number }) => {
-          Progress.update('fetch-task', {
-            message: data.message,
-            percentage: data.percentage * 100,
-          });
-        },
+        onProgressing: (data: BackendProgressData) => handleProgress('fetch-task', data),
       },
     );
   });

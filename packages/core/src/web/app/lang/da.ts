@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Auto fokus',
       warning_at_coordinates: 'Efter at have aktiveret autofokus-tilstand vil laserhovedet blive nulstillet og flyttet til den angivne position for at fokusere.\nSørg for, at målpositionen er på materialet, og at der ikke er forhindringer i bevægelsesbanen.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analyserer SVG - %d%% ...',
+      calculating_task_path: 'Beregner opgavesti - %d%% ...',
+      finishing: 'Afslutter...',
+      initializing: 'Initialiserer...',
+    },
     camera: {
       abort_preview: 'Afbryd',
       camera_cable_unstable: 'Det er registreret, at kameraet overfører billeder ustabilt. Forhåndsvisning kan stadig udføres normalt, men der kan være problemer med langsom forhåndsvisning eller timeout.',

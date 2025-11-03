@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: '오토포커스',
       warning_at_coordinates: '자동 초점 모드에 들어가면 레이저 헤드가 재설정되고 지정된 위치로 이동하여 초점을 맞춐니다.\n대상 위치가 재료 위에 있고 이동 경로에 장애물이 없는지 확인하십시오.',
     },
+    backend_calculation: {
+      analyzing_svg: 'SVG 분석 중 - %d%% ...',
+      calculating_task_path: '작업 경로 계산 중 - %d%% ...',
+      finishing: '완료 중...',
+      initializing: '초기화 중...',
+    },
     camera: {
       abort_preview: '중지',
       camera_cable_unstable: '카메라 전송이 불안정하게 이루어지는 것이 감지되었습니다. 미리보기는 정상적으로 수행될 수 있지만, 느린 미리보기 또는 시간 초과의 문제가 발생할 수 있습니다.',

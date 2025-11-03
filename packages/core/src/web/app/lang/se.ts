@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Autofokus',
       warning_at_coordinates: 'Efter att ha aktiverat autofokusläget kommer laserhuvudet att återställas och flyttas till den angivna positionen för fokusering.\nSe till att målpositionen är på materialet och att det inte finns hinder i rörelsevägen.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analyserar SVG - %d%% ...',
+      calculating_task_path: 'Beräknar uppgiftssökväg - %d%% ...',
+      finishing: 'Avslutar...',
+      initializing: 'Initierar...',
+    },
     camera: {
       abort_preview: 'Avbryt',
       camera_cable_unstable: 'Det upptäcktes att kameran överför bilder ostabilt. Förhandsgranskning kan fortfarande utföras normalt, men det kan finnas problem med långsam förhandsgranskning eller timeout.',

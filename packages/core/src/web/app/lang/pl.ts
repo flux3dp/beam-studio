@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Fokus Auto',
       warning_at_coordinates: 'Po włączeniu trybu automatycznego ogniskowania głowica laserowa zostanie zresetowana i przesunięta do określonej pozycji w celu ogniskowania.\nUpewnij się, że pozycja docelowa znajduje się na materiale i że nie ma przeszkód na ścieżce ruchu.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analizowanie SVG - %d%% ...',
+      calculating_task_path: 'Obliczanie ścieżki zadania - %d%% ...',
+      finishing: 'Kończenie...',
+      initializing: 'Inicjalizacja...',
+    },
     camera: {
       abort_preview: 'Przerwij',
       camera_cable_unstable: 'Wykryto, że kamera niestabilnie przesyła zdjęcia. Podgląd można nadal wykonać, ale może wystąpić problem z powolnym podglądem lub przekroczeniem limitu czasu.',

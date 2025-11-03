@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'オートフォーカス',
       warning_at_coordinates: 'オートフォーカスモードに入ると、レーザーヘッドがリセットされ、指定位置に移動してフォーカスを行います。\n対象位置が材料上にあり、移動経路に障害物がないことを確認してください。',
     },
+    backend_calculation: {
+      analyzing_svg: 'SVGを解析中 - %d%% ...',
+      calculating_task_path: 'タスクパスを計算中 - %d%% ...',
+      finishing: '完了中...',
+      initializing: '初期化中...',
+    },
     camera: {
       abort_preview: '中止する',
       camera_cable_unstable: 'カメラが写真を不安定に転送していることが検出されました。プレビューは引き続き正常に実行できますが、プレビューが遅い、またはタイムアウトになる問題がある可能性があります。',

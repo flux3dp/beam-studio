@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Lấy nét tự động',
       warning_at_coordinates: 'Sau khi vào chế độ lấy nét tự động, đầu laser sẽ được đặt lại và di chuyển đến vị trí được chỉ định để lấy nét.\nHãy đảm bảo rằng vị trí mục tiêu nằm trên vật liệu và không có chướng ngại vật trong đường di chuyển.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Đang phân tích SVG - %d%% ...',
+      calculating_task_path: 'Đang tính toán đường dẫn tác vụ - %d%% ...',
+      finishing: 'Đang hoàn tất...',
+      initializing: 'Đang khởi tạo...',
+    },
     camera: {
       abort_preview: 'Hủy bỏ',
       camera_cable_unstable: 'Phát hiện camera đang truyền ảnh không ổn định. Xem trước vẫn có thể thực hiện bình thường, nhưng có thể gặp vấn đề xem trước chậm hoặc hết thời gian chờ.',

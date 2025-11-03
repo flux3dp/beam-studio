@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Enfoque automático',
       warning_at_coordinates: 'Después de ingresar al modo de enfoque automático, el cabezal láser se reiniciará y se moverá a la posición especificada para enfocar.\nAsegúrese de que la posición objetivo esté en el material y que no haya obstáculos en la ruta de movimiento.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analizando SVG - %d%% ...',
+      calculating_task_path: 'Calculando ruta de tarea - %d%% ...',
+      finishing: 'Finalizando...',
+      initializing: 'Inicializando...',
+    },
     camera: {
       abort_preview: 'Abortar',
       camera_cable_unstable: 'Se detecta que la cámara está transfiriendo fotos de manera inestable. La vista previa aún se puede realizar normalmente, pero puede existir el problema de que la vista previa sea lenta o se agote el tiempo de espera.',

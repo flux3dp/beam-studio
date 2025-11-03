@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Autofokus',
       warning_at_coordinates: 'Nach dem Aktivieren des Autofokus-Modus wird der Laserkopf zurückgesetzt und zur angegebenen Position bewegt, um zu fokussieren.\nStellen Sie sicher, dass sich die Zielposition auf dem Material befindet und keine Hindernisse im Bewegungsweg sind.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analysiere SVG - %d%% ...',
+      calculating_task_path: 'Berechne Aufgabenpfad - %d%% ...',
+      finishing: 'Abschließen...',
+      initializing: 'Initialisiere...',
+    },
     camera: {
       abort_preview: 'Abbrechen',
       camera_cable_unstable: 'Es wird festgestellt, dass die Kamera Fotos instabil überträgt. Die Vorschau kann weiterhin normal ausgeführt werden, es kann jedoch das Problem einer langsamen Vorschau oder eines Zeitlimits auftreten.',

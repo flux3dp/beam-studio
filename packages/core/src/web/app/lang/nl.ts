@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Auto scherpstellen',
       warning_at_coordinates: 'Na het activeren van de automatische focusmodus wordt de laserkop gereset en naar de opgegeven positie bewogen om scherp te stellen.\nZorg ervoor dat de doelpositie op het materiaal ligt en dat er geen obstakels in het bewegingspad zijn.',
     },
+    backend_calculation: {
+      analyzing_svg: 'SVG analyseren - %d%% ...',
+      calculating_task_path: 'Taakpad berekenen - %d%% ...',
+      finishing: 'Afronden...',
+      initializing: 'Initialiseren...',
+    },
     camera: {
       abort_preview: 'Afbreken',
       camera_cable_unstable: "Er is gedetecteerd dat de camera foto's instabiel overdraagt. Voorbeeldweergave kan nog steeds normaal worden uitgevoerd, maar er kan sprake zijn van trage voorbeeldweergave of time-out.",

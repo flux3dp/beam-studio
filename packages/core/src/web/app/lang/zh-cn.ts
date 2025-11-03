@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: '自动对焦',
       warning_at_coordinates: '进入自动对焦模式后，激光头将重置并移动到指定位置进行对焦。\n请确保目标位置在材料上，且移动路径中没有障碍物。',
     },
+    backend_calculation: {
+      analyzing_svg: '正在解析 SVG - %d%% ...',
+      calculating_task_path: '正在计算任务路径 - %d%% ...',
+      finishing: '完成中...',
+      initializing: '初始化中...',
+    },
     camera: {
       abort_preview: '中断预览',
       camera_cable_unstable: '侦测到相机传输照片时不稳定，仍能正常进行相机预览，但可能会有预览速度较慢或超时的问题。<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/360001791895">了解更多</a>',

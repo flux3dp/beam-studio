@@ -1601,6 +1601,12 @@ const lang: ILang = {
       title: 'Mise au point automatique',
       warning_at_coordinates: "Après avoir activé le mode de mise au point automatique, la tête laser sera réinitialisée et déplacée vers la position spécifiée pour faire la mise au point.\nAssurez-vous que la position cible est sur le matériau et qu'il n'y a pas d'obstacles dans le chemin de déplacement.",
     },
+    backend_calculation: {
+      analyzing_svg: 'Analyse du SVG - %d%% ...',
+      calculating_task_path: 'Calcul du chemin de tâche - %d%% ...',
+      finishing: 'Finalisation...',
+      initializing: 'Initialisation...',
+    },
     camera: {
       abort_preview: 'Abandonner',
       camera_cable_unstable: "Il est détecté que la caméra transfère des photos de manière instable. L'aperçu peut encore être effectué normalement, mais il peut y avoir un problème d'aperçu lent ou de dépassement de délai.",

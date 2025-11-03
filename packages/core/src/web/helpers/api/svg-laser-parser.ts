@@ -29,7 +29,7 @@ import Websocket from '@core/helpers/websocket';
 import fileSystem from '@core/implementations/fileSystem';
 import fs from '@core/implementations/fileSystem';
 import storage from '@core/implementations/storage';
-import type { TaskMetaData } from '@core/interfaces/ITask';
+import type { BackendProgressData, TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig, TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
@@ -611,7 +611,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
         forceArgString?: string;
         onError?: (message: string) => void;
         onFinished: (blob: Blob, duration: number, metadata: TaskMetaData) => void;
-        onProgressing?: (data: { message: string; percentage: number }) => void;
+        onProgressing?: (data: BackendProgressData) => void;
       },
     ) {
       opts = opts || {};
@@ -852,7 +852,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
         engraveDpi?: string;
         forceArgString?: string;
         model: WorkAreaModel;
-        onProgressing?: (data: { message: string; percentage: number }) => void;
+        onProgressing?: (data: BackendProgressData) => void;
       },
     ) {
       return new Promise<{ message?: string; res: boolean }>((resolve) => {
