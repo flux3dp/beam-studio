@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Aktivieren',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodenlaser',
-      engrave_dpi: 'Auflösung',
+      enable_nozzle_refresh_area: 'Düsen-Aktualisierungsbereich aktivieren',
+      engrave_dpi: 'Gravurauflösung',
+      extend_y_area: 'Y-Bereich erweitern',
       frame_before_start: 'Zuerst Rahmen, dann ausführen',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Hoch',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Laserquelle',
       low: 'Niedrig',
       machine: 'Maschine',
+      manual: 'Manuell',
       medium: 'Mittel',
       notification: {
         changeFromPrintingWorkareaTitle: 'Möchten Sie die Druckschichten in Laserschichten umwandeln?',

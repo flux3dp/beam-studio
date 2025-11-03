@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Habilitar',
       enable_autofocus: 'Autoenfoque',
       enable_diode: 'Láser diodo',
-      engrave_dpi: 'Resolución',
+      enable_nozzle_refresh_area: 'Habilitar área de actualización de la boquilla',
+      engrave_dpi: 'Resolución de grabado',
+      extend_y_area: 'Extender área Y',
       frame_before_start: 'Marco antes de ejecutar',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Alto',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Fuente de láser',
       low: 'Bajo',
       machine: 'Máquina',
+      manual: 'Manual',
       medium: 'Medio',
       notification: {
         changeFromPrintingWorkareaTitle: '¿Desea convertir las capas de impresión en capas láser?',

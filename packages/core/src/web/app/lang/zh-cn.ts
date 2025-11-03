@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: '啟用',
       enable_autofocus: '自动对焦',
       enable_diode: '二极管激光',
+      enable_nozzle_refresh_area: '启用喷嘴刷新区域',
       engrave_dpi: '雕刻分辨率',
+      extend_y_area: '扩展 Y 轴区域',
       frame_before_start: '先预览后执行',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: '高',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: '激光源',
       low: '低',
       machine: '机器',
+      manual: '手动',
       medium: '中',
       notification: {
         changeFromPrintingWorkareaTitle: '您要将打印图层转换至雷射图层吗？',

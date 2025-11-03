@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Bật',
       enable_autofocus: 'Tự động lấy nét',
       enable_diode: 'Laser điốt',
-      engrave_dpi: 'Độ phân giải',
+      enable_nozzle_refresh_area: 'Bật vùng làm mới vòi phun',
+      engrave_dpi: 'Độ phân giải khắc',
+      extend_y_area: 'Mở rộng vùng Y',
       frame_before_start: 'Khung trước khi thực thi',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Cao',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Nguồn laser',
       low: 'Thấp',
       machine: 'Máy',
+      manual: 'Thủ công',
       medium: 'Trung bình',
       notification: {
         changeFromPrintingWorkareaTitle: 'Bạn có muốn chuyển các lớp in sang lớp laser không?',

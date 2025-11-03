@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Aktivera',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodlaser',
-      engrave_dpi: 'Upplösning',
+      enable_nozzle_refresh_area: 'Aktivera munstyckets uppdateringsområde',
+      engrave_dpi: 'Graveringsupplösning',
+      extend_y_area: 'Utöka Y-område',
       frame_before_start: 'Ram innan utförande',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Hög',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Laserkälla',
       low: 'Låg',
       machine: 'Maskin',
+      manual: 'Manuell',
       medium: 'Medium',
       notification: {
         changeFromPrintingWorkareaTitle: 'Vill du konvertera utskriftslagren till laserskikt?',

@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Enable',
       enable_autofocus: 'Autofocus',
       enable_diode: 'Diode Laser',
-      engrave_dpi: 'Resolution',
+      enable_nozzle_refresh_area: 'Enable nozzle refresh area',
+      engrave_dpi: 'Engraving Resolution',
+      extend_y_area: 'Extend Y Area',
       frame_before_start: 'Frame before executing',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'High',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Laser Source',
       low: 'Low',
       machine: 'Machine',
+      manual: 'Manual',
       medium: 'Medium',
       notification: {
         changeFromPrintingWorkareaTitle: 'Do you want to convert the Printing Layers into Laser Layers?',

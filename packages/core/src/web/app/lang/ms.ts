@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Benarkan',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Laser Diod',
-      engrave_dpi: 'Resolusi',
+      enable_nozzle_refresh_area: 'Benarkan kawasan penyegaran muncung',
+      engrave_dpi: 'Resolusi ukiran',
+      extend_y_area: 'Lanjutkan kawasan Y',
       frame_before_start: 'Frame sebelum melaksanakan',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Tinggi',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Sumber Laser',
       low: 'Rendah',
       machine: 'Mesin',
+      manual: 'Manual',
       medium: 'Sederhana',
       notification: {
         changeFromPrintingWorkareaTitle: 'Adakah anda mahu menukar Lapisan Cetakan kepada Lapisan Laser?',

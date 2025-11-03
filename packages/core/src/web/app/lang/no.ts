@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Aktiver',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diode-laser',
-      engrave_dpi: 'Oppløsning',
+      enable_nozzle_refresh_area: 'Aktiver dysefornyelsesområde',
+      engrave_dpi: 'Graveringsoppløsning',
+      extend_y_area: 'Utvid Y-område',
       frame_before_start: 'Ramme før utførelse',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Høy',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Laserkilde',
       low: 'Lav',
       machine: 'Maskin',
+      manual: 'Manuell',
       medium: 'Medium',
       notification: {
         changeFromPrintingWorkareaTitle: 'Vil du konvertere Utskriftslag til Laserlag?',

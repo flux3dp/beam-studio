@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Habilitar',
       enable_autofocus: 'Foco automático',
       enable_diode: 'Laser de diodo',
-      engrave_dpi: 'Resolução',
+      enable_nozzle_refresh_area: 'Ativar área de atualização do bocal',
+      engrave_dpi: 'Resolução de gravação',
+      extend_y_area: 'Estender área Y',
       frame_before_start: 'Quadro antes de executar',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Alto',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Fonte de laser',
       low: 'Baixo',
       machine: 'Máquina',
+      manual: 'Manual',
       medium: 'Médio',
       notification: {
         changeFromPrintingWorkareaTitle: 'Deseja converter as Camadas de Impressão em Camadas de Laser?',

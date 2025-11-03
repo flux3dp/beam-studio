@@ -1,15 +1,16 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
+import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
-import { getAddOnInfo } from '@core/app/constants/addOn';
+import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
@@ -20,7 +21,6 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
-import UnitInput from '@core/app/widgets/UnitInput';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -34,13 +34,14 @@ import {
   getModulesTranslations,
   hasModuleLayer,
 } from '@core/helpers/layer-module/layer-module-helper';
+import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
-import AddOnSelect from './AddOnSelect';
 import styles from './index.module.scss';
+import { showModuleSettings4C, showPassthroughSettings } from './utils';
 
 const workareaOptions = [
   { label: 'beamo', value: 'fbm1' },
@@ -74,9 +75,9 @@ interface Props {
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
 const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
-  const isDevMode = useMemo(() => isDev(), []);
   const {
     beambox: { document_panel: tDocument },
+    device: tDevice,
     global: tGlobal,
   } = useI18n();
   const [engraveDpi, setEngraveDpi] = useState(useDocumentStore.getState().engrave_dpi);
@@ -98,6 +99,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const [rotaryMode, setRotaryMode] = useState(useDocumentStore.getState().rotary_mode);
+  const [rotaryType, setRotaryType] = useState(useDocumentStore.getState()['rotary-type']);
   const [enableStartButton, setEnableStartButton] = useState(useDocumentStore.getState()['promark-start-button']);
   const [shouldFrame, setShouldFrame] = useState(useDocumentStore.getState()['frame-before-start']);
   const [enableJobOrigin, setEnableJobOrigin] = useState(useDocumentStore.getState()['enable-job-origin']);
@@ -107,21 +109,23 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enableAutofocus, setEnableAutofocus] = useState(!!useDocumentStore.getState()['enable-autofocus']);
   const [passThrough, setPassThrough] = useState(useDocumentStore.getState()['pass-through']);
   const [autoFeeder, setAutoFeeder] = useState(useDocumentStore.getState()['auto-feeder']);
-  const [autoFeederScale, setAutoFeederScale] = useState(useDocumentStore.getState()['auto-feeder-scale']);
   const [checkSafetyDoor, setCheckSafetyDoor] = useState(useDocumentStore.getState()['promark-safety-door']);
   const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
-  const [skipPrespray, setSkipPrespray] = useState(useDocumentStore.getState().skip_prespray);
   const [enable4C, setEnable4C] = useState(!!useDocumentStore.getState()['enable-4c']);
   const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
 
   const isInch = useStorageStore((state) => state.isInch);
+  const { autoFeederHeight, autoFeederScale, chunkDiameter, passThroughHeight, rotaryScale } = useDocumentStore(
+    useShallow((state) => ({
+      autoFeederHeight: state['auto-feeder-height'],
+      autoFeederScale: state['auto-feeder-scale'],
+      chunkDiameter: state['rotary-chuck-obj-d'],
+      passThroughHeight: state['pass-through-height'],
+      rotaryScale: state['rotary-scale'],
+    })),
+  );
+
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
-  const [passThroughHeight, setPassThroughHeight] = useState<number>(
-    useDocumentStore.getState()['pass-through-height'] || workareaObj.displayHeight || workareaObj.height,
-  );
-  const [autoFeederHeight, setAutoFeederHeight] = useState<number>(
-    useDocumentStore.getState()['auto-feeder-height'] || workareaObj.displayHeight || workareaObj.height,
-  );
   const hasCurveEngravingData = useHasCurveEngraving();
   const isCurveEngraving = useMemo(() => {
     const response = { mode: CanvasMode.Draw };
@@ -181,15 +185,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const minHeight = useMemo(() => workareaObj.displayHeight ?? workareaObj.height, [workareaObj]);
 
-  useEffect(() => {
-    if (showPassThrough) setPassThroughHeight((cur) => Math.max(cur, minHeight));
-  }, [minHeight, showPassThrough]);
-  useEffect(() => {
-    if (showAutoFeeder) {
-      setAutoFeederHeight((cur) => Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, cur)));
-    }
-  }, [minHeight, addOnInfo.autoFeeder, showAutoFeeder]);
-
   const handleSave = async () => {
     const workareaChanged = workarea !== origWorkarea;
     let customDimensionChanged = false;
@@ -240,27 +235,29 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     newState.rotary_mode = rotaryMode;
+    newState['rotary-type'] = rotaryType;
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== origPassThrough;
-    const passThroughHeightChanged = passThroughHeight !== origState['pass-through-height'];
     const newAutoFeeder = Boolean(showAutoFeeder && autoFeeder);
     const autoFeederChanged = newAutoFeeder !== origAutoFeeder;
-    const autoFeederHeightChanged = autoFeederHeight !== origState['auto-feeder-height'];
 
     newState['pass-through'] = newPassThrough;
 
-    if (showPassThrough) {
-      newState['pass-through-height'] = Math.max(passThroughHeight, minHeight);
+    if (showPassThrough && newPassThrough) {
+      if (!origState['pass-through-height'] || origState['pass-through-height'] < minHeight) {
+        newState['pass-through-height'] = minHeight;
+      }
     }
 
     newState['auto-feeder'] = newAutoFeeder;
 
-    if (showAutoFeeder) {
-      const newVal = Math.min(addOnInfo.autoFeeder!.maxHeight, Math.max(minHeight, autoFeederHeight));
-
-      newState['auto-feeder-height'] = newVal;
-      newState['auto-feeder-scale'] = autoFeederScale;
+    if (showAutoFeeder && newAutoFeeder) {
+      if (!origState['auto-feeder-height'] || origState['auto-feeder-height'] < minHeight) {
+        newState['auto-feeder-height'] = minHeight;
+      } else if (origState['auto-feeder-height'] > addOnInfo.autoFeeder!.maxHeight) {
+        newState['auto-feeder-height'] = addOnInfo.autoFeeder!.maxHeight;
+      }
     }
 
     newState['enable-job-origin'] = enableJobOrigin;
@@ -274,21 +271,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       newState['promark-safety-door'] = checkSafetyDoor;
     }
 
-    if (workarea === 'fbm2') {
-      newState['skip_prespray'] = skipPrespray;
-    }
-
     update(newState);
 
-    if (
-      workareaChanged ||
-      customDimensionChanged ||
-      rotaryChanged ||
-      passThroughChanged ||
-      passThroughHeightChanged ||
-      autoFeederChanged ||
-      autoFeederHeightChanged
-    ) {
+    if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
 
       if (workareaChanged) rotaryAxis.setPosition(workareaObj.pxHeight / 2, { write: true });
@@ -307,6 +292,15 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     <Tooltip title={title}>
       <WarningOutlined className={styles.hint} />
     </Tooltip>
+  );
+
+  const lengthDisplay = useCallback(
+    (value: number) => {
+      if (!isInch) return `${value} mm`;
+
+      return `${units.convertUnit(value, 'inch', 'mm', 2)} in`;
+    },
+    [isInch],
   );
 
   return (
@@ -429,16 +423,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </div>
           )}
-          {isDevMode && workarea === 'fbm2' && (
-            <div className={styles.row}>
-              <label className={styles.title} htmlFor="skipPrespray">
-                {tDocument.skip_prespray}
-              </label>
-              <div className={classNames(styles.control, styles['justify-start'])}>
-                <Switch checked={skipPrespray} id="skipPrespray" onChange={setSkipPrespray} />
-              </div>
-            </div>
-          )}
         </div>
         {addOnInfo.jobOrigin && (
           <>
@@ -500,233 +484,236 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
           </>
         )}
-        <div className={styles.separator}>
-          <div>{tDocument.add_on}</div>
-          <div className={styles.bar} />
-        </div>
-        <div className={styles.modules}>
-          {isPromark && (
-            <>
-              <div className={classNames(styles.row, styles.full)}>
-                <div className={styles.title}>
-                  <label htmlFor="start_button">{tDocument.start_work_button}</label>
-                </div>
-                <div className={styles.control}>
-                  <Switch checked={enableStartButton} id="start_button" onChange={setEnableStartButton} />
-                  {enableStartButton && (
-                    <div className={styles.subCheckbox}>
-                      <div>
-                        <Checkbox
-                          checked={shouldFrame}
-                          id="frame_before_start"
-                          onChange={(e) => setShouldFrame(e.target.checked)}
-                        >
-                          {tDocument.frame_before_start}
-                        </Checkbox>
-                        <QuestionCircleOutlined onClick={() => browser.open(tDocument.frame_before_start_url)} />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-              <div className={styles.row}>
-                <div className={styles.title}>
-                  <label htmlFor="door_protect">{tDocument.door_protect}</label>
-                </div>
-                <div className={styles.control}>
-                  <Switch checked={checkSafetyDoor} id="door_protect" onChange={setCheckSafetyDoor} />
-                  <Tooltip title={tDocument.door_protect_desc}>
-                    <QuestionCircleOutlined />
-                  </Tooltip>
-                </div>
-              </div>
-            </>
-          )}
-          {addOnInfo.rotary && (
-            <div className={classNames(styles.row, styles.full)}>
-              <div className={styles.title}>
-                <label htmlFor="rotary_mode">{tDocument.rotary_mode}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={rotaryMode}
-                  disabled={!addOnInfo.rotary || isCurveEngraving}
-                  id="rotary_mode"
-                  onChange={setRotaryMode}
-                />
-                <SettingFilled
-                  onClick={() =>
-                    showRotarySettings({ rotaryMode, workarea }, () => {
-                      setRotaryMode(useDocumentStore.getState().rotary_mode);
-                    })
-                  }
-                />
-                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-              </div>
+        {addOnInfo.multiModules && (
+          <>
+            <div className={styles.separator}>
+              <div>{tDevice.submodule_type}</div>
+              <div className={styles.bar} />
             </div>
-          )}
-          {addOnInfo.autoFocus && (
-            <div className={styles.row}>
-              <div className={styles.title}>
-                <label htmlFor="autofocus-module">{tDocument.enable_autofocus}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={addOnInfo.autoFocus && enableAutofocus}
-                  disabled={!addOnInfo.autoFocus}
-                  id="autofocus-module"
-                  onChange={setEnableAutofocus}
-                />
-              </div>
-            </div>
-          )}
-          {addOnInfo.openBottom && (
-            <div className={styles.row}>
-              <div className={styles.title}>
-                <label htmlFor="borderless_mode">{tDocument.borderless_mode}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={addOnInfo.openBottom && borderless}
-                  disabled={!addOnInfo.openBottom}
-                  id="borderless_mode"
-                  onChange={setBorderless}
-                />
-              </div>
-            </div>
-          )}
-          {addOnInfo.hybridLaser && (
-            <div className={styles.row}>
-              <div className={styles.title}>
-                <label htmlFor="diode_module">{tDocument.enable_diode}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={addOnInfo.hybridLaser && enableDiode}
-                  disabled={!addOnInfo.hybridLaser}
-                  id="diode_module"
-                  onChange={setEnableDiode}
-                />
-              </div>
-            </div>
-          )}
-          {addOnInfo.multiModules && (
-            <>
+            <div className={styles.modules}>
               {workareaObj.supportedModules?.includes(LayerModule.PRINTER_4C) && (
-                <div className={classNames(styles.row, styles.full)}>
-                  <div className={styles.title}>
-                    {/* Use translation for PRINTER for shorter name */}
-                    <label htmlFor="print_4c_module">{getModulesTranslations()[LayerModule.PRINTER]}</label>
-                  </div>
-                  <div className={styles.control}>
-                    <Switch checked={enable4C} id="print_4c_module" onChange={setEnable4C} />
+                <div className={styles.option}>
+                  <div className={styles.main}>
+                    <div className={styles.title}>
+                      {/* Use translation for PRINTER for shorter name */}
+                      <label htmlFor="print_4c_module">{getModulesTranslations()[LayerModule.PRINTER]}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch checked={enable4C} id="print_4c_module" onChange={setEnable4C} />
+                      <SettingFilled onClick={showModuleSettings4C} />
+                    </div>
                   </div>
                 </div>
               )}
               {workareaObj.supportedModules?.includes(LayerModule.LASER_1064) && (
-                <div className={classNames(styles.row, styles.full)}>
+                <div className={styles.option}>
+                  <div className={styles.main}>
+                    <div className={styles.title}>
+                      <label htmlFor="laser_1064_module">{getModulesTranslations()[LayerModule.LASER_1064]}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch checked={enable1064} id="laser_1064_module" onChange={setEnable1064} />
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
+        {addOnInfo.rotary && (
+          <>
+            <div className={styles.separator}>
+              <div>{tDocument.rotary_mode}</div>
+              <div className={styles.bar} />
+            </div>
+            <div className={styles.modules}>
+              {[RotaryType.Roller, RotaryType.Chuck].map((type) => {
+                const name = type === RotaryType.Roller ? 'Roller' : 'Chuck';
+
+                return (
+                  <div className={styles.option} key={type}>
+                    <div className={styles.main}>
+                      <div className={styles.title}>
+                        <label htmlFor={name}>{name}</label>
+                      </div>
+                      <div className={styles.control}>
+                        <Switch
+                          checked={rotaryMode && rotaryType === type}
+                          disabled={!addOnInfo.rotary || isCurveEngraving}
+                          id={name}
+                          onChange={(value) => {
+                            setRotaryMode(value);
+
+                            if (value) setRotaryType(type);
+                          }}
+                        />
+                        <SettingFilled
+                          onClick={() =>
+                            showRotarySettings({ rotaryMode, rotaryType, workarea }, () => {
+                              setRotaryMode(useDocumentStore.getState().rotary_mode);
+                              setRotaryType(useDocumentStore.getState()['rotary-type']);
+                            })
+                          }
+                        />
+                      </div>
+                    </div>
+                    <div className={styles.desc}>
+                      {type === RotaryType.Chuck
+                        ? `Φ: ${lengthDisplay(chunkDiameter)}, Scale: ${rotaryScale}`
+                        : `Scale: ${rotaryScale}`}
+                    </div>
+                  </div>
+                );
+              })}
+            </div>
+            {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
+          </>
+        )}
+        {(showPassThrough || showAutoFeeder) && (
+          <>
+            <div className={styles.separator}>
+              <div>{tDocument.pass_through}</div>
+              <div className={styles.bar} />
+            </div>
+            <div className={styles.modules}>
+              {showAutoFeeder && (
+                <div className={styles.option}>
+                  <div className={styles.main}>
+                    <div className={styles.title}>
+                      <label htmlFor="auto_feeder">{tDocument.auto_feeder}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch
+                        checked={addOnInfo.autoFeeder && autoFeeder}
+                        disabled={!addOnInfo.autoFeeder || isCurveEngraving}
+                        id="auto_feeder"
+                        onChange={setAutoFeeder}
+                      />
+                      <SettingFilled onClick={() => showPassthroughSettings({ workarea })} />
+                    </div>
+                  </div>
+                  <div className={styles.desc}>
+                    {`Y: ${lengthDisplay(Math.min(Math.max(autoFeederHeight ?? minHeight, minHeight), addOnInfo.autoFeeder!.maxHeight))}, Scale: ${autoFeederScale}`}
+                  </div>
+                </div>
+              )}
+              {showPassThrough && (
+                <div className={styles.option}>
+                  <div className={styles.main}>
+                    <div className={styles.title}>
+                      <label htmlFor="pass_through">{tDocument.manual}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch
+                        checked={addOnInfo.passThrough && passThrough}
+                        disabled={!addOnInfo.passThrough || isCurveEngraving}
+                        id="pass_through"
+                        onChange={setPassThrough}
+                      />
+                      <SettingFilled onClick={() => showPassthroughSettings({ isManualMode: true, workarea })} />
+                    </div>
+                  </div>
+                  <div className={styles.desc}>
+                    {`Y: ${lengthDisplay(Math.max(passThroughHeight ?? minHeight, minHeight))}`}
+                  </div>
+                </div>
+              )}
+            </div>
+            {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
+          </>
+        )}
+        {(isPromark || addOnInfo.autoFocus || addOnInfo.openBottom || addOnInfo.hybridLaser) && (
+          <>
+            <div className={styles.separator}>
+              <div>{tDocument.add_on}</div>
+              <div className={styles.bar} />
+            </div>
+            <div className={styles.modules}>
+              {isPromark && (
+                <>
+                  <div className={classNames(styles.row, styles.full)}>
+                    <div className={styles.title}>
+                      <label htmlFor="start_button">{tDocument.start_work_button}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch checked={enableStartButton} id="start_button" onChange={setEnableStartButton} />
+                      {enableStartButton && (
+                        <div className={styles.subCheckbox}>
+                          <div>
+                            <Checkbox
+                              checked={shouldFrame}
+                              id="frame_before_start"
+                              onChange={(e) => setShouldFrame(e.target.checked)}
+                            >
+                              {tDocument.frame_before_start}
+                            </Checkbox>
+                            <QuestionCircleOutlined onClick={() => browser.open(tDocument.frame_before_start_url)} />
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                  <div className={styles.row}>
+                    <div className={styles.title}>
+                      <label htmlFor="door_protect">{tDocument.door_protect}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch checked={checkSafetyDoor} id="door_protect" onChange={setCheckSafetyDoor} />
+                      <Tooltip title={tDocument.door_protect_desc}>
+                        <QuestionCircleOutlined />
+                      </Tooltip>
+                    </div>
+                  </div>
+                </>
+              )}
+              {addOnInfo.autoFocus && (
+                <div className={styles.row}>
                   <div className={styles.title}>
-                    <label htmlFor="laser_1064_module">{getModulesTranslations()[LayerModule.LASER_1064]}</label>
+                    <label htmlFor="autofocus-module">{tDocument.enable_autofocus}</label>
                   </div>
                   <div className={styles.control}>
-                    <Switch checked={enable1064} id="laser_1064_module" onChange={setEnable1064} />
+                    <Switch
+                      checked={addOnInfo.autoFocus && enableAutofocus}
+                      disabled={!addOnInfo.autoFocus}
+                      id="autofocus-module"
+                      onChange={setEnableAutofocus}
+                    />
                   </div>
                 </div>
               )}
-            </>
-          )}
-          {showPassThrough && (
-            <div className={classNames(styles.row, styles.full)}>
-              <div className={styles.title}>
-                <label htmlFor="pass_through">{tDocument.pass_through}</label>
-              </div>
-              <div className={styles.control}>
-                <Switch
-                  checked={addOnInfo.passThrough && passThrough}
-                  disabled={!addOnInfo.passThrough || isCurveEngraving}
-                  id="pass_through"
-                  onChange={setPassThrough}
-                />
-                {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                {passThrough && (
-                  <>
-                    <UnitInput
-                      addonAfter={isInch ? 'in' : 'mm'}
-                      className={styles.input}
-                      clipValue
-                      id="pass_through_height"
-                      isInch={isInch}
-                      min={minHeight}
-                      onChange={(val) => {
-                        if (val) {
-                          setPassThroughHeight(val);
-                        }
-                      }}
-                      precision={isInch ? 2 : 0}
-                      size="small"
-                      value={passThroughHeight}
+              {addOnInfo.openBottom && (
+                <div className={styles.row}>
+                  <div className={styles.title}>
+                    <label htmlFor="borderless_mode">{tDocument.borderless_mode}</label>
+                  </div>
+                  <div className={styles.control}>
+                    <Switch
+                      checked={addOnInfo.openBottom && borderless}
+                      disabled={!addOnInfo.openBottom}
+                      id="borderless_mode"
+                      onChange={setBorderless}
                     />
-                    <Tooltip title={tDocument.pass_through_height_desc}>
-                      <QuestionCircleOutlined className={styles.hint} />
-                    </Tooltip>
-                  </>
-                )}
-              </div>
-            </div>
-          )}
-          {showAutoFeeder && (
-            <>
-              <div className={classNames(styles.row, styles.full)}>
-                <div className={styles.title}>
-                  <label htmlFor="auto_feeder">{tDocument.auto_feeder}</label>
+                  </div>
                 </div>
-                <div className={styles.control}>
-                  <Switch
-                    checked={addOnInfo.autoFeeder && autoFeeder}
-                    disabled={!addOnInfo.autoFeeder || isCurveEngraving}
-                    id="auto_feeder"
-                    onChange={setAutoFeeder}
-                  />
-                  {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-                  {autoFeeder && (
-                    <UnitInput
-                      addonAfter={isInch ? 'in' : 'mm'}
-                      className={styles.input}
-                      clipValue
-                      id="auto_feeder_height"
-                      isInch={isInch}
-                      max={addOnInfo.autoFeeder!.maxHeight}
-                      min={minHeight}
-                      onChange={(val) => {
-                        if (val) {
-                          setAutoFeederHeight(val);
-                        }
-                      }}
-                      precision={isInch ? 2 : 0}
-                      size="small"
-                      value={autoFeederHeight}
-                    />
-                  )}
-                  <Tooltip title={tDocument.auto_feeder_url}>
-                    <QuestionCircleOutlined
-                      className={styles.hint}
-                      onClick={() => browser.open(tDocument.auto_feeder_url)}
-                    />
-                  </Tooltip>
-                </div>
-              </div>
-              {autoFeeder && (
-                <AddOnSelect
-                  id="auto_feeder_scale"
-                  onChange={setAutoFeederScale}
-                  title={tDocument.scale}
-                  tooltip={tDocument.auto_feeder_scale}
-                  value={autoFeederScale}
-                />
               )}
-            </>
-          )}
-        </div>
+              {addOnInfo.hybridLaser && (
+                <div className={styles.row}>
+                  <div className={styles.title}>
+                    <label htmlFor="diode_module">{tDocument.enable_diode}</label>
+                  </div>
+                  <div className={styles.control}>
+                    <Switch
+                      checked={addOnInfo.hybridLaser && enableDiode}
+                      disabled={!addOnInfo.hybridLaser}
+                      id="diode_module"
+                      onChange={setEnableDiode}
+                    />
+                  </div>
+                </div>
+              )}
+            </div>
+          </>
+        )}
       </div>
     </DraggableModal>
   );

@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Povolit',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodový laser',
-      engrave_dpi: 'Rozlišení',
+      enable_nozzle_refresh_area: 'Povolit oblast obnovení trysky',
+      engrave_dpi: 'Rozlišení rytí',
+      extend_y_area: 'Rozšířit oblast Y',
       frame_before_start: 'Nejprve rámec, pak provést',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Vysoké',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Laserový zdroj',
       low: 'Nízké',
       machine: 'Stroj',
+      manual: 'Manuální',
       medium: 'Střední',
       notification: {
         changeFromPrintingWorkareaTitle: 'Chcete převést Tiskové vrstvy na Laserové vrstvy?',

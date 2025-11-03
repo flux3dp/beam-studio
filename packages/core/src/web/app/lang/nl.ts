@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Inschakelen',
       enable_autofocus: 'Autofocus',
       enable_diode: 'Diode laser',
-      engrave_dpi: 'Resolutie',
+      enable_nozzle_refresh_area: 'Nozzle verversingsgebied inschakelen',
+      engrave_dpi: 'Graveerresolutie',
+      extend_y_area: 'Y-gebied uitbreiden',
       frame_before_start: 'Frame voordat uitgevoerd wordt',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Hoog',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Laserbron',
       low: 'Laag',
       machine: 'Machine',
+      manual: 'Handmatig',
       medium: 'Gemiddeld',
       notification: {
         changeFromPrintingWorkareaTitle: 'Wilt u de printlagen converteren naar laslagen?',

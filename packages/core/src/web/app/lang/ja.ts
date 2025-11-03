@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: '有効',
       enable_autofocus: 'オートフォーカス',
       enable_diode: 'ダイオードレーザー',
-      engrave_dpi: '解像度',
+      enable_nozzle_refresh_area: 'ノズル更新エリアを有効にする',
+      engrave_dpi: '彫刻解像度',
+      extend_y_area: 'Y軸エリアを拡張',
       frame_before_start: '実行前にフレーム',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: '高',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'レーザー源',
       low: '低',
       machine: '機械',
+      manual: 'マニュアル',
       medium: '中',
       notification: {
         changeFromPrintingWorkareaTitle: '印刷レイヤーをレーザーレイヤーに変換しますか？',

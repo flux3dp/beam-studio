@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Włącz',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Laser diodowy',
-      engrave_dpi: 'Jakość',
+      enable_nozzle_refresh_area: 'Włącz obszar odświeżania dyszy',
+      engrave_dpi: 'Jakość grawerowania',
+      extend_y_area: 'Rozszerz obszar Y',
       frame_before_start: 'Ramka przed wykonaniem',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Wysoka',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Źródło lasera',
       low: 'Niska',
       machine: 'Maszyna',
+      manual: 'Ręczny',
       medium: 'Średna',
       notification: {
         changeFromPrintingWorkareaTitle: 'Czy chcesz przekonwertować warstwy druku na warstwy lasera?',

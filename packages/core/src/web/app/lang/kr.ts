@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: '사용',
       enable_autofocus: '오토포커스',
       enable_diode: '다이오드 레이저',
-      engrave_dpi: '해상도',
+      enable_nozzle_refresh_area: '노즐 새로 고침 영역 활성화',
+      engrave_dpi: '조각 해상도',
+      extend_y_area: 'Y축 영역 확장',
       frame_before_start: '실행 전에 프레임',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: '높음',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: '레이저 소스',
       low: '낮음',
       machine: '기계',
+      manual: '수동',
       medium: '보통',
       notification: {
         changeFromPrintingWorkareaTitle: '인쇄 레이어를 레이저 레이어로 변환하시겠습니까?',

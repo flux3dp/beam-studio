@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Ενεργοποίηση',
       enable_autofocus: 'Αυτόματη εστίαση',
       enable_diode: 'Λέιζερ διόδου',
-      engrave_dpi: 'Ανάλυση',
+      enable_nozzle_refresh_area: 'Ενεργοποίηση περιοχής ανανέωσης ακροφυσίου',
+      engrave_dpi: 'Ανάλυση χάραξης',
+      extend_y_area: 'Επέκταση περιοχής Y',
       frame_before_start: 'Πλαίσιο πριν από την εκτέλεση',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Υψηλή',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Πηγή λέιζερ',
       low: 'Χαμηλή',
       machine: 'Μηχανή',
+      manual: 'Χειροκίνητο',
       medium: 'Μέτρια',
       notification: {
         changeFromPrintingWorkareaTitle: 'Θέλετε να μετατρέψετε τα επίπεδα εκτύπωσης σε επίπεδα λέιζερ;',

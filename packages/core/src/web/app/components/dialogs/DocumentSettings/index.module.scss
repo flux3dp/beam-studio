@@ -1,8 +1,6 @@
 @use '@core/styles/variables' as variables;
 
 .container {
-  margin-top: 28px;
-
   .block {
     display: flex;
     flex-direction: column;
@@ -115,6 +113,52 @@
     $row-height: 24px;
     $select-height: 32px;
 
+    .option {
+      width: 50%;
+
+      .main {
+        display: flex;
+        height: $row-height;
+        line-height: $row-height;
+        justify-content: end;
+
+        .title {
+          height: 100%;
+          text-align: end;
+          padding-right: 8px;
+
+          label {
+            &::after {
+              content: ':';
+              margin-left: 4px;
+            }
+          }
+        }
+
+        .control {
+          display: flex;
+          height: 100%;
+          align-items: center;
+          column-gap: 4px;
+
+          .hint {
+            width: 16px;
+            height: 16px;
+            margin: 0 4px;
+            color: #7c7c7c;
+          }
+        }
+      }
+
+      .desc {
+        color: #aaaaaa;
+        font-style: italic;
+        font-size: 12px;
+        text-align: end;
+        margin-right: 18px;
+      }
+    }
+
     .row {
       display: flex;
       flex-wrap: wrap;
@@ -122,11 +166,6 @@
       height: $row-height;
       line-height: $row-height;
       margin-bottom: $row-height;
-
-      &.select {
-        height: 32px;
-        line-height: 32px;
-      }
 
       &.full {
         width: 100%;
@@ -181,10 +220,6 @@
           height: 16px;
           margin: 0 4px;
           color: #7c7c7c;
-        }
-
-        .select {
-          width: 64px;
         }
       }
 

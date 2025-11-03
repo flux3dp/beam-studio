@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Aktifkan',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Laser Diode',
-      engrave_dpi: 'Resolusi',
+      enable_nozzle_refresh_area: 'Aktifkan area penyegaran nozel',
+      engrave_dpi: 'Resolusi ukiran',
+      extend_y_area: 'Perpanjang area Y',
       frame_before_start: 'Frame sebelum menjalankan',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Tinggi',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Sumber Laser',
       low: 'Rendah',
       machine: 'Mesin',
+      manual: 'Manual',
       medium: 'Sedang',
       notification: {
         changeFromPrintingWorkareaTitle: 'Apakah Anda ingin mengubah Lapisan Cetak menjadi Lapisan Laser?',

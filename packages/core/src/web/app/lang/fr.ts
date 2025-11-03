@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Activer',
       enable_autofocus: 'Mise au point automatique',
       enable_diode: 'Laser à diode',
-      engrave_dpi: 'Résolution',
+      enable_nozzle_refresh_area: "Activer la zone d'actualisation de la buse",
+      engrave_dpi: 'Résolution de gravure',
+      extend_y_area: 'Étendre la zone Y',
       frame_before_start: "Cadre avant d'exécuter",
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Élevé',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Source laser',
       low: 'Faible',
       machine: 'Machine',
+      manual: 'Manuel',
       medium: 'Moyen',
       notification: {
         changeFromPrintingWorkareaTitle: "Voulez-vous convertir les calques d'impression en calques laser?",

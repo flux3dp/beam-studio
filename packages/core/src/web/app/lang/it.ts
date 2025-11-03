@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Abilita',
       enable_autofocus: 'Messa a fuoco automatica',
       enable_diode: 'Laser a diodi',
-      engrave_dpi: 'Risoluzione',
+      enable_nozzle_refresh_area: 'Abilita area di aggiornamento ugello',
+      engrave_dpi: 'Risoluzione incisione',
+      extend_y_area: 'Estendi area Y',
       frame_before_start: 'Frame prima di eseguire',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Alto',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Sorgente laser',
       low: 'Basso',
       machine: 'Macchina',
+      manual: 'Manuale',
       medium: 'Medio',
       notification: {
         changeFromPrintingWorkareaTitle: 'Vuoi convertire gli strati di stampa nelle aree di taglio laser?',

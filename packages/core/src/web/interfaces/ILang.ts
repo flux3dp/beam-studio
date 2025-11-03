@@ -106,7 +106,9 @@ export interface ILang {
       enable: string;
       enable_autofocus: string;
       enable_diode: string;
+      enable_nozzle_refresh_area: string;
       engrave_dpi: string;
+      extend_y_area: string;
       frame_before_start: string;
       frame_before_start_url: string;
       high: string;
@@ -114,6 +116,7 @@ export interface ILang {
       laser_source: string;
       low: string;
       machine: string;
+      manual: string;
       medium: string;
       notification: {
         changeFromPrintingWorkareaTitle: string;

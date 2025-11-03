@@ -108,7 +108,9 @@ const lang: ILang = {
       enable: 'Ota käyttöön',
       enable_autofocus: 'Autofokus',
       enable_diode: 'Diodilaser',
-      engrave_dpi: 'Resoluutio',
+      enable_nozzle_refresh_area: 'Ota käyttöön suuttimen päivitysalue',
+      engrave_dpi: 'Kaiverrusresoluutio',
+      extend_y_area: 'Laajenna Y-aluetta',
       frame_before_start: 'Ruutu ennen suoritusta',
       frame_before_start_url: 'https://support.flux3dp.com/hc/en-us/articles/11494925637135',
       high: 'Korkea',
@@ -116,6 +118,7 @@ const lang: ILang = {
       laser_source: 'Laserlähde',
       low: 'Matala',
       machine: 'Kone',
+      manual: 'Manuaalinen',
       medium: 'Keskitaso',
       notification: {
         changeFromPrintingWorkareaTitle: 'Haluatko muuntaa tulostuskerrokset laserkerroksiksi?',
