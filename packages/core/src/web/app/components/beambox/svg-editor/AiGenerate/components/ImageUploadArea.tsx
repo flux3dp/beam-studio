@@ -100,7 +100,7 @@ const UnmemorizedImageUploadArea = ({
 
   const handleFileInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     handleFiles(e.target.files);
-    // Reset input so same file can be selected again
+
     e.target.value = '';
   };
 
@@ -142,16 +142,13 @@ const UnmemorizedImageUploadArea = ({
           </div>
         ) : (
           <div className={styles['images-grid']}>
-            {/* Display all inputs in order with numbered badges */}
             {imageInputs.map((input, index) => {
               const displayNumber = index + 1; // 1-based for UI
 
               return (
                 <div className={styles['image-thumbnail']} key={input.id}>
-                  {/* Number badge - always visible */}
                   <div className={styles['number-badge']}>{displayNumber}</div>
 
-                  {/* Image preview with type indicator */}
                   {input.type === 'file' ? (
                     <>
                       <img
@@ -177,7 +174,6 @@ const UnmemorizedImageUploadArea = ({
                     </>
                   )}
 
-                  {/* Remove button */}
                   <Button
                     className={styles['remove-button']}
                     icon={<CloseOutlined />}
@@ -190,7 +186,6 @@ const UnmemorizedImageUploadArea = ({
               );
             })}
 
-            {/* Add more button */}
             {totalCount < maxImages && (
               <div className={styles['add-more']}>
                 <InboxOutlined />
