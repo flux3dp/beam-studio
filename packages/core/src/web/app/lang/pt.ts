@@ -1600,6 +1600,12 @@ const lang: ILang = {
       title: 'Foco Automático',
       warning_at_coordinates: 'Após entrar no modo de foco automático, a cabeça do laser será reiniciada e movida para a posição especificada para focar.\nCertifique-se de que a posição alvo esteja no material e que não haja obstáculos no caminho de movimento.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analisando SVG - %d%% ...',
+      calculating_task_path: 'Calculando caminho da tarefa - %d%% ...',
+      finishing: 'Finalizando...',
+      initializing: 'Inicializando...',
+    },
     camera: {
       abort_preview: 'Cancelar',
       camera_cable_unstable: 'Foi detectado que a câmera está transferindo fotos de forma instável. A visualização ainda pode ser realizada normalmente, mas pode haver problema de visualização lenta ou tempo limite.',

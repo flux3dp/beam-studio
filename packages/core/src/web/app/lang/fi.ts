@@ -1600,6 +1600,12 @@ const lang: ILang = {
       title: 'Automaattitarkennus',
       warning_at_coordinates: 'Automaattitarkennustilaan siirtymisen jälkeen laserpää nollataan ja siirretään määriteltyyn asentoon tarkentamista varten.\nVarmista, että kohdeasento on materiaalilla ja ettei liikereitässä ole esteitä.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analysoidaan SVG - %d%% ...',
+      calculating_task_path: 'Lasketaan tehtävän reittiä - %d%% ...',
+      finishing: 'Viimeistellään...',
+      initializing: 'Alustetaan...',
+    },
     camera: {
       abort_preview: 'Keskeytä',
       camera_cable_unstable: 'Kameran kuvan siirrossa havaittiin epävakautta. Esikatselu toimii edelleen normaalisti, mutta esikatselussa voi ilmetä hitautta tai aikakatkaisuja.',

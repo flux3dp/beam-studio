@@ -1600,6 +1600,12 @@ const lang: ILang = {
       title: '自動對焦',
       warning_at_coordinates: '進入自動對焦模式後，雷射頭將重置並移動到指定位置進行對焦。\n請確保目標位置在材料上，且移動路徑中沒有障礙物。',
     },
+    backend_calculation: {
+      analyzing_svg: '正在解析 SVG - %d%% ...',
+      calculating_task_path: '正在計算工作路徑 - %d%% ...',
+      finishing: '完成中...',
+      initializing: '初始化中...',
+    },
     camera: {
       abort_preview: '中斷預覽',
       camera_cable_unstable: '偵測到相機傳輸照片時不穩定，仍能正常進行相機預覽，但可能會有預覽速度較慢或超時的問題。<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001791895">了解更多</a>',

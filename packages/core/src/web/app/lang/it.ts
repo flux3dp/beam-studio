@@ -1600,6 +1600,12 @@ const lang: ILang = {
       title: 'Messa a fuoco automatica',
       warning_at_coordinates: 'Dopo essere entrati nella modalità di messa a fuoco automatica, la testa laser verrà ripristinata e spostata nella posizione specificata per la messa a fuoco.\nAssicurarsi che la posizione target sia sul materiale e che non ci siano ostacoli nel percorso di movimento.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analisi SVG - %d%% ...',
+      calculating_task_path: 'Calcolo percorso attività - %d%% ...',
+      finishing: 'Completamento...',
+      initializing: 'Inizializzazione...',
+    },
     camera: {
       abort_preview: 'Interrompi',
       camera_cable_unstable: "È stato rilevato che la fotocamera sta trasferendo le foto in modo instabile. L'anteprima può essere eseguita normalmente, ma potrebbero esserci problemi di lentezza o timeout.",

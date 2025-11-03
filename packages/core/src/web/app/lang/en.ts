@@ -1600,6 +1600,12 @@ Machines > ‘Promark Name’ > Promark Settings`,
       title: 'Auto Focus',
       warning_at_coordinates: 'After entering auto focus mode, the laser head will be reset and moved to the specified position for focusing. \nPlease ensure that the target position is on the material and that there are no obstacles in the movement path.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analyzing SVG - %d%% ...',
+      calculating_task_path: 'Calculating task path - %d%% ...',
+      finishing: 'Finishing...',
+      initializing: 'Initializing...',
+    },
     camera: {
       abort_preview: 'Abort',
       camera_cable_unstable: 'It is detected that the camera is transferring photos unstably. Preview can still be performed normally, but there may be the problem of slow preview or timeout.',

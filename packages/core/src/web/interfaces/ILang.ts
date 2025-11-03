@@ -1592,6 +1592,12 @@ export interface ILang {
       title: string;
       warning_at_coordinates: string;
     };
+    backend_calculation: {
+      analyzing_svg: string;
+      calculating_task_path: string;
+      finishing: string;
+      initializing: string;
+    };
     camera: {
       abort_preview: string;
       camera_cable_unstable: string;

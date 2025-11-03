@@ -1600,6 +1600,12 @@ const lang: ILang = {
       title: 'Autofokus',
       warning_at_coordinates: 'Etter å ha gått inn i autofokusmodus vil laserhodet bli tilbakestilt og flyttet til den angitte posisjonen for fokusering.\nSørg for at målposisjonen er på materialet og at det ikke er hindringer i bevegelsebanen.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analyserer SVG - %d%% ...',
+      calculating_task_path: 'Beregner oppgavesti - %d%% ...',
+      finishing: 'Avslutter...',
+      initializing: 'Initialiserer...',
+    },
     camera: {
       abort_preview: 'Avbryt',
       camera_cable_unstable: 'Det er oppdaget at kameraet overfører bilder ustabilt. Forhåndsvisning kan fortsatt utføres normalt, men det kan være problemer med treg forhåndsvisning eller tidsavbrudd.',

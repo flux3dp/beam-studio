@@ -1600,6 +1600,12 @@ const lang: ILang = {
       title: 'Fokus Otomatis',
       warning_at_coordinates: 'Setelah memasuki mode fokus otomatis, kepala laser akan direset dan dipindahkan ke posisi yang ditentukan untuk memfokuskan.\nPastikan posisi target berada di atas material dan tidak ada rintangan di jalur pergerakan.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Menganalisis SVG - %d%% ...',
+      calculating_task_path: 'Menghitung jalur tugas - %d%% ...',
+      finishing: 'Menyelesaikan...',
+      initializing: 'Menginisialisasi...',
+    },
     camera: {
       abort_preview: 'Batalkan',
       camera_cable_unstable: 'Terdeteksi kamera mentransfer foto secara tidak stabil. Pratinjau masih dapat dilakukan, tetapi mungkin ada masalah lambat atau waktu habis.',

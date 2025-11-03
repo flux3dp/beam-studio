@@ -1600,6 +1600,12 @@ const lang: ILang = {
       title: 'Autofokus',
       warning_at_coordinates: 'Po aktivaci režimu automatického zaostřování se laserová hlava resetuje a přesune na určenou pozici pro zaostření.\nUjistěte se, že cílová pozice je na materiálu a že v cestě pohybu nejsou žádné překážky.',
     },
+    backend_calculation: {
+      analyzing_svg: 'Analýza SVG - %d%% ...',
+      calculating_task_path: 'Výpočet dráhy úlohy - %d%% ...',
+      finishing: 'Dokončování...',
+      initializing: 'Inicializace...',
+    },
     camera: {
       abort_preview: 'Zrušit',
       camera_cable_unstable: 'Bylo zjištěno, že kamera nestabilně přenáší fotografie. Stále můžete spustit náhled, ale může nastat problém s pomalým náhledem či vypršením časového limitu.',

@@ -15,3 +15,9 @@ export interface TaskMetaData {
   traval_dist: string;
   version: string; // fcode version
 }
+
+export interface BackendProgressData {
+  message: string;
+  percentage: number;
+  translation_key?: string;
+}
