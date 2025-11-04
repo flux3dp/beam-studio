@@ -304,7 +304,7 @@ class DiodeCalibration extends React.Component<Props, State> {
           },
         ]}
         caption={LANG.diode_calibration}
-        message={LANG.ask_for_readjust}
+        message={LANG.ask_for_skip_engraving_task}
       />
     );
   }

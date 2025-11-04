@@ -7,7 +7,7 @@ import { adorModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
+import { LayerModule, type LayerModuleType, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import deviceMaster from '@core/helpers/device-master';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -99,7 +99,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
           buttonLabels: [lang.skip],
           buttonType: alertConstants.CUSTOM_CANCEL,
           callbacks: () => resolve(true),
-          message: lang.ask_for_readjust,
+          message: printingModules.has(module) ? lang.ask_for_skip_printing_task : lang.ask_for_skip_engraving_task,
           onCancel: () => resolve(false),
         });
       });
@@ -220,6 +220,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
           animationSrcs={animationSrcs}
           buttons={[
             { label: lang.back, onClick: () => setStep(Step.PUT_PAPER) },
+            { label: lang.skip, onClick: () => setStep(Step.ALIGN) },
             {
               label: cutLabel || lang.start_engrave,
               onClick: async () => {
