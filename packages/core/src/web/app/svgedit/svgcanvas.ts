@@ -329,13 +329,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     svgedit.utilities.assignAttributes(shape, data.attr, 100);
-    svgedit.utilities.assignAttributes(
-      shape,
-      {
-        'vector-effect': 'non-scaling-stroke',
-      },
-      100,
-    );
     svgedit.utilities.cleanupElement(shape);
 
     // Children

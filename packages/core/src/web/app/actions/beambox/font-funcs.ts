@@ -12,6 +12,7 @@ import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
 import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
+import updateElementColor from '@core/helpers/color/updateElementColor';
 import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
@@ -597,7 +598,6 @@ const createPathElement = (d: string, textAttr: AttributeMap) => {
     id: svgCanvas.getNextId(),
     'stroke-dasharray': 'none',
     'stroke-opacity': '1',
-    'vector-effect': 'non-scaling-stroke',
   });
   path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
   path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
@@ -620,7 +620,7 @@ const convertTextToPath = async (
 
   await Progress.openNonstopProgress({ id: 'parsing-font', message: LANG.wait_for_parsing_font });
 
-  let newPathElement: null | SVGPathElement = null;
+  let newPathElement: SVGPathElement;
 
   try {
     const { isSubCommand = false, pathPerChar = false, weldingTexts = false } = opts || {};
@@ -720,10 +720,6 @@ const convertTextToPath = async (
         textAttr.transform = transform;
       }
 
-      if (textAttr['stroke-width']) {
-        textAttr['stroke-width'] = (+textAttr['stroke-width'] / 2).toString();
-      }
-
       if (typeof d === 'string') {
         if (weldingTexts) {
           d = weldPath(d);
@@ -740,12 +736,13 @@ const convertTextToPath = async (
         newPathElement = group;
       }
 
-      textElement.parentNode!.insertBefore(newPathElement!, textElement.nextSibling);
-      batchCmd.addSubCommand(new history.InsertElementCommand(newPathElement!));
+      textElement.parentNode!.insertBefore(newPathElement, textElement.nextSibling);
+      batchCmd.addSubCommand(new history.InsertElementCommand(newPathElement));
+      updateElementColor(newPathElement);
 
       if (moveElement) {
         // output of fluxsvg will locate at (0,0), so move it.
-        moveElements([moveElement.x], [moveElement.y], [newPathElement!], false);
+        moveElements([moveElement.x], [moveElement.y], [newPathElement], false);
       }
 
       svgedit.recalculate.recalculateDimensions(newPathElement!);
