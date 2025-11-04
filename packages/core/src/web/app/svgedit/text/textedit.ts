@@ -8,6 +8,7 @@ import { TabEvents } from '@core/app/constants/tabConstants';
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import updateElementColor from '@core/helpers/color/updateElementColor';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import communicator from '@core/implementations/communicator';
@@ -139,6 +140,7 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
   const lineSpacing = getLineSpacing(text);
   const charHeight = getFontSize(text);
   const letterSpacing = getLetterSpacing(text);
+  let isNewElementCreated = false;
 
   textActions.setIsVertical(isVertical);
 
@@ -151,10 +153,10 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
       } else {
         tspan = document.createElementNS(NS.SVG, 'tspan') as unknown as SVGTextContentElement;
         text.appendChild(tspan);
+        isNewElementCreated = true;
       }
 
       tspan.textContent = lines[i];
-      tspan.setAttribute('vector-effect', 'non-scaling-stroke');
 
       if (isVertical) {
         const xPos = Number(text.getAttribute('x')) - i * lineSpacing * charHeight;
@@ -181,6 +183,8 @@ const renderTspan = (text: SVGTextElement, val?: string) => {
       tspans[i].remove();
     }
   }
+
+  if (isNewElementCreated) updateElementColor(text);
 };
 
 /**

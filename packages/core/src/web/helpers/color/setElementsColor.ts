@@ -27,8 +27,14 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
       if (CanvasElements.colorfulElems.includes(elem.tagName)) {
         if (!isFullColor) {
           // remove stroke for self drawn elements, set stroke color for imported elements
-          if (elem.tagName === 'text') elem.setAttribute('stroke-width', '2');
-          else elem.removeAttribute('stroke-width');
+          if (elem.tagName === 'text') {
+            elem.setAttribute('stroke-width', '2');
+            elem
+              .querySelectorAll('tspan, textpath')
+              .forEach((child) => child.setAttribute('vector-effect', 'non-scaling-stroke'));
+          } else {
+            elem.removeAttribute('stroke-width');
+          }
 
           elem.setAttribute('vector-effect', 'non-scaling-stroke');
 
@@ -37,7 +43,7 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
           }
 
           if (
-            !['#fff', '#ffffff', 'none'].includes(attrFill?.toLowerCase()) &&
+            !['#fff', '#ffffff', 'none'].includes(attrFill?.toLowerCase() ?? '') &&
             attrFillOpacity !== '0' &&
             !isWireFrame
           ) {
@@ -46,6 +52,10 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
           }
         } else {
           elem.removeAttribute('vector-effect');
+
+          if (elem.tagName === 'text') {
+            elem.querySelectorAll('tspan, textpath').forEach((child) => child.removeAttribute('vector-effect'));
+          }
         }
       } else if (elem.tagName === 'image') {
         // eslint-disable-next-line no-async-promise-executor
