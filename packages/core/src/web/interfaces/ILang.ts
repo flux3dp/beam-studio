@@ -618,11 +618,6 @@ export interface ILang {
         halftone_link: string;
         height: string;
         ink_saturation: string;
-        ink_type: {
-          normal: string;
-          text: string;
-          UV: string;
-        };
         laser_speed: {
           fast: string;
           max: number;

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Chiều cao vật thể',
         ink_saturation: 'Độ bão hòa mực',
-        ink_type: {
-          normal: 'Mực',
-          text: 'Loại mực',
-          UV: 'Mực UV',
-        },
         laser_speed: {
           fast: 'Nhanh',
           max: 300,

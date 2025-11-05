@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: '오브젝트 높이',
         ink_saturation: '포화',
-        ink_type: {
-          normal: '일반 잉크',
-          text: '잉크 종류',
-          UV: 'UV 잉크',
-        },
         laser_speed: {
           fast: '빠름',
           max: 300,

@@ -60,7 +60,6 @@ const attributeMap: Record<ConfigKey, string> = {
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
-  uv: 'data-uv',
   uvIntervalX: 'data-uvIntervalX',
   uvIntervalY: 'data-uvIntervalY',
   wInk: 'data-wInk',

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Ketinggian Objek',
         ink_saturation: 'Ketepuan',
-        ink_type: {
-          normal: 'Dakwat',
-          text: 'Jenis Dakwat',
-          UV: 'Dakwat UV',
-        },
         laser_speed: {
           fast: 'Pantas',
           max: 300,

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Objecthoogte',
         ink_saturation: 'Verzadiging',
-        ink_type: {
-          normal: 'Inkt',
-          text: 'Inkttype',
-          UV: 'UV-inkt',
-        },
         laser_speed: {
           fast: 'Snel',
           max: 300,

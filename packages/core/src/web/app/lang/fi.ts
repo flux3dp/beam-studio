@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Kohteen korkeus',
         ink_saturation: 'Kylläisyys',
-        ink_type: {
-          normal: 'Muste',
-          text: 'Mustetyyppi',
-          UV: 'UV-muste',
-        },
         laser_speed: {
           fast: 'Nopea',
           max: 300,

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Ύψος αντικειμένου',
         ink_saturation: 'Κορεσμός',
-        ink_type: {
-          normal: 'Μελάνι',
-          text: 'Τύπος μελανιού',
-          UV: 'UV μελάνι',
-        },
         laser_speed: {
           fast: 'Γρήγορα',
           max: 300,
