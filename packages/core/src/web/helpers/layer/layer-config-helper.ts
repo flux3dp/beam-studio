@@ -209,7 +209,6 @@ export const printerConfigKeys: ConfigKey[] = [
   'wSpeed',
   'wMultipass',
   'wRepeat',
-  'uv',
   'repeat',
 ] as const;
 
