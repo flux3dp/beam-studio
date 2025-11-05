@@ -109,7 +109,6 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   refreshThreshold: 0,
   repeat: 1,
   speed: 20,
-  uv: 0,
   uvIntervalX: 0.8,
   uvIntervalY: 0.6,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
