@@ -22,8 +22,7 @@ export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D>
   error?: AxiosError<T, D>;
 }
 
-export const FLUXID_HOST = 'https://id-test.flux3dp.com';
-// export const FLUXID_HOST = 'http://localhost:8001';
+export const FLUXID_HOST = 'https://id.flux3dp.com';
 
 const OAUTH_REDIRECT_URI = `${FLUXID_HOST}/api/beam-studio/auth`;
 const FB_OAUTH_URI = 'https://www.facebook.com/v10.0/dialog/oauth';
