@@ -996,7 +996,8 @@ export interface ILang {
     align_top_left: string;
     align_top_right: string;
     analyze_result_fail: string;
-    ask_for_readjust: string;
+    ask_for_skip_engraving_task: string;
+    ask_for_skip_printing_task: string;
     at_focus_height: string;
     at_lower_height: string;
     back: string;

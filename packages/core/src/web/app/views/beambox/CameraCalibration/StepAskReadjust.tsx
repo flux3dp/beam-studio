@@ -77,7 +77,7 @@ const StepAskReadjust = (): React.JSX.Element => {
       title={langCalibration.camera_calibration}
       width={400}
     >
-      {langCalibration.ask_for_readjust}
+      {langCalibration.ask_for_skip_engraving_task}
     </DraggableModal>
   );
 };
