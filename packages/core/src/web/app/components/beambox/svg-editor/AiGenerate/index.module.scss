@@ -62,27 +62,24 @@ $button-border: #d9d9d9;
   }
 }
 
-// Mode Buttons
-.mode-button {
-  min-width: 140px;
-  border: 1px solid $button-border;
-  transition: all 0.2s;
+.style-selection-button {
+  height: auto;
+  padding: 16px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
-  &:hover {
-    border-color: $primary-blue;
-    color: $primary-blue;
+  .button-content {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
   }
 
-  &.active {
-    border-color: $primary-blue;
-    background: $primary-blue;
-    color: white;
-
-    &:hover {
-      background: #40a9ff;
-      border-color: #40a9ff;
-      color: white;
-    }
+  .button-label {
+    font-size: 16px;
+    font-weight: 600;
   }
 }
 
@@ -91,6 +88,10 @@ $button-border: #d9d9d9;
   font-size: 14px;
   font-weight: 500;
   color: $text-secondary;
+}
+
+.required {
+  color: #ff4d4f;
 }
 
 // Style Card
@@ -355,6 +356,24 @@ $button-border: #d9d9d9;
   font-size: 14px;
   font-weight: 500;
   color: $text-primary;
+}
+
+// Style Indicator
+.style-indicator {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 12px;
+  padding: 8px 12px;
+  background: #f0f5ff;
+  border: 1px solid #b5d4ff;
+  border-radius: 4px;
+}
+
+.style-name {
+  font-size: 13px;
+  color: $primary-blue;
+  font-weight: 500;
 }
 
 // Welcome Page Styles
