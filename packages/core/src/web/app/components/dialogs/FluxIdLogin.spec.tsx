@@ -94,7 +94,7 @@ describe('should render correctly', () => {
     expect(open).toHaveBeenCalledTimes(2);
     expect(open).toHaveBeenNthCalledWith(2, i18n.lang.flux_id_login.signup_url);
 
-    fireEvent.click(getByText('Work Offline'));
+    fireEvent.click(getByText(i18n.lang.flux_id_login.sign_in_later));
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 

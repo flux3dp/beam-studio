@@ -1313,13 +1313,12 @@ export interface ILang {
     lost_password_url: string;
     new_to_flux: string;
     not_verified: string;
-    offline: string;
     password: string;
     register: string;
     remember_me: string;
+    sign_in_later: string;
     signup_url: string;
     unlock_shape_library: string;
-    work_offline: string;
   };
   framing: {
     area_check: string;
