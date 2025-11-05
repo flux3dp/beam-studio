@@ -56,6 +56,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 import type { GlobalPreferenceKey } from '@core/interfaces/Preference';
 
+import StyleSelectionPanel from '../components/beambox/svg-editor/AiGenerate/components/StyleSelectionPanel';
 import StampMakerPanel from '../components/StampMakerPanel';
 
 let svgCanvas: ISVGCanvas;
@@ -676,6 +677,24 @@ export default {
           popDialogById('stamp-maker-panel');
         }}
         src={src!}
+      />,
+    );
+  },
+  showStyleSelectionPanel: (onSelect: (optionId: string) => void, currentSelection: null | string): void => {
+    const id = 'style-selection-panel';
+
+    if (isIdExist(id)) {
+      return;
+    }
+
+    addDialogComponent(
+      id,
+      <StyleSelectionPanel
+        currentSelection={currentSelection}
+        onClose={() => popDialogById(id)}
+        onSelect={(optionId) => {
+          onSelect(optionId);
+        }}
       />,
     );
   },
