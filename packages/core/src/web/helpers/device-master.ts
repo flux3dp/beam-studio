@@ -726,7 +726,6 @@ class DeviceMaster {
       const otherStatus = [
         DeviceConstants.status.ABORTED,
         DeviceConstants.status.COMPLETED,
-        DeviceConstants.status.PAUSED_FROM_RUNNING,
         DeviceConstants.status.PAUSED_FROM_STARTING,
       ].filter((s) => !predicate(s));
       let statusChanged = false;
@@ -882,10 +881,7 @@ class DeviceMaster {
       },
     });
 
-    const onProgress = (progress: number) =>
-      Progress.update('cali-task', {
-        percentage: Math.round(progress * 100),
-      });
+    const onProgress = (progress: number) => Progress.update('cali-task', { percentage: Math.round(progress * 100) });
 
     try {
       await this.waitTillStatusPredicate({ onProgress });
