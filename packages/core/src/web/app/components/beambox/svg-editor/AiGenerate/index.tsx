@@ -5,16 +5,19 @@ import { Button, Input, Select, Space } from 'antd';
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
+import dialogCaller from '@core/app/actions/dialog-caller';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-image';
 import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
 import { fluxIDEvents, getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
 import type { IUser } from '@core/interfaces/IUser';
 
+import { getSelectedOptionConfig } from './categories';
 import ImageHistory from './components/ImageHistory';
 import ImageResults from './components/ImageResults';
 import ImageUploadArea from './components/ImageUploadArea';
 import styles from './index.module.scss';
+import { buildStyledPrompt, getStylePreset } from './stylePresets';
 import type { AspectRatio, ImageSize } from './useAiGenerateStore';
 import { useAiGenerateStore } from './useAiGenerateStore';
 
@@ -32,17 +35,23 @@ const UnmemorizedAiGenerate = () => {
     errorMessage,
     generatedImages,
     generationStatus,
-    mode,
     patternDescription,
     removeImageInput,
     resetForm,
     selectedImageInputs,
-    setMode,
+    selectedOption,
+    setSelectedOption,
+    setStyleCustomField,
     showHistory,
-    textToDisplay,
+    styleCustomFields,
     toggleHistory,
     updateHistoryItem,
   } = useAiGenerateStore();
+
+  // Compute mode and stylePreset from selectedOption
+  const optionConfig = getSelectedOptionConfig(selectedOption);
+  const mode = optionConfig?.mode || 'text-to-image';
+  const stylePreset = optionConfig?.stylePreset || null;
 
   // Subscribe to user update events for real-time credit balance updates
   useEffect(() => {
@@ -110,11 +119,22 @@ const UnmemorizedAiGenerate = () => {
     useAiGenerateStore.setState({ generationStatus: 'generating' });
 
     // Build prompt
-    let prompt = patternDescription.trim();
+    let prompt: string;
 
-    // Add text overlay only in text-to-image mode
-    if (mode === 'text-to-image' && textToDisplay.trim()) {
-      prompt += `\n\nText to display: "${textToDisplay.trim()}"`;
+    if (stylePreset) {
+      // Style mode: construct weighted JSON prompt
+      const preset = getStylePreset(stylePreset);
+
+      if (!preset) {
+        useAiGenerateStore.setState({ errorMessage: 'Invalid style preset selected' });
+
+        return;
+      }
+
+      prompt = buildStyledPrompt(preset, patternDescription.trim(), styleCustomFields);
+    } else {
+      // Plain mode: use pattern description as-is
+      prompt = patternDescription.trim();
     }
 
     // Create task based on mode
@@ -194,6 +214,12 @@ const UnmemorizedAiGenerate = () => {
     resetForm();
   };
 
+  const handleStyleClick = () => {
+    dialogCaller.showStyleSelectionPanel((optionId) => {
+      setSelectedOption(optionId || null);
+    }, selectedOption);
+  };
+
   return (
     <div className={classNames(styles['ai-generate-container'])}>
       <div className={styles.header}>
@@ -231,27 +257,19 @@ const UnmemorizedAiGenerate = () => {
         ) : (
           <>
             <div className={styles.section}>
-              <h3 className={styles['section-title']}>Mode</h3>
-              <Space size={8}>
-                <Button
-                  className={classNames(styles['mode-button'], {
-                    [styles.active]: mode === 'text-to-image',
-                  })}
-                  onClick={() => setMode('text-to-image')}
-                  size="large"
-                >
-                  Text to Image
-                </Button>
-                <Button
-                  className={classNames(styles['mode-button'], {
-                    [styles.active]: mode === 'edit',
-                  })}
-                  onClick={() => setMode('edit')}
-                  size="large"
-                >
-                  Edit Image
-                </Button>
-              </Space>
+              <h3 className={styles['section-title']}>Style & Mode</h3>
+              <Button
+                block
+                className={styles['style-selection-button']}
+                icon={<BulbOutlined />}
+                onClick={handleStyleClick}
+                size="large"
+              >
+                <div className={styles['button-content']}>
+                  <span className={styles['button-label']}>{optionConfig?.displayName || 'Select Creation Style'}</span>
+                  {/* {optionConfig && <span className={styles['button-description']}>{optionConfig.description}</span>} */}
+                </div>
+              </Button>
             </div>
 
             {mode === 'edit' && (
@@ -270,9 +288,13 @@ const UnmemorizedAiGenerate = () => {
                   onChange={(e) => useAiGenerateStore.setState({ patternDescription: e.target.value })}
                   onKeyDown={(e) => e.stopPropagation()}
                   placeholder={
-                    mode === 'edit'
-                      ? 'Please describe how you would like to edit the images.'
-                      : 'Please describe the logo pattern you would like to create.'
+                    stylePreset
+                      ? mode === 'edit'
+                        ? 'Describe what you want to create (e.g., "A friendly cartoon logo of...")'
+                        : 'Describe the main subject (e.g., "A friendly cartoon logo of a shiba dog and a girl")'
+                      : mode === 'edit'
+                        ? 'Please describe how you would like to edit the images.'
+                        : 'Please describe the logo pattern you would like to create.'
                   }
                   rows={5}
                   showCount={{
@@ -296,36 +318,43 @@ const UnmemorizedAiGenerate = () => {
               </div>
             </div>
 
-            {mode === 'text-to-image' && (
-              <div className={styles.section}>
-                <h3 className={styles['section-title']}>Text to display</h3>
-                <div className={styles['input-wrapper']}>
-                  <TextArea
-                    className={styles.textarea}
-                    maxLength={15}
-                    onChange={(e) => useAiGenerateStore.setState({ textToDisplay: e.target.value })}
-                    onKeyDown={(e) => e.stopPropagation()}
-                    placeholder="Please ether the text you would like to display."
-                    rows={3}
-                    showCount={{
-                      formatter: ({ count: currentCount, maxLength }) => (
-                        <div className={styles['count-wrapper']}>
-                          <span className={styles.count}>
-                            {currentCount} / {maxLength}
-                          </span>
-                          <BulbOutlined className={styles['bulb-icon']} />
-                        </div>
-                      ),
-                    }}
-                    value={textToDisplay}
-                  />
+            {stylePreset &&
+              getStylePreset(stylePreset)?.customFields?.map((field) => (
+                <div className={styles.section} key={field.key}>
+                  <h3 className={styles['section-title']}>
+                    {field.label}
+                    {field.required && <span className={styles.required}> *</span>}
+                  </h3>
+                  <div className={styles['input-wrapper']}>
+                    <TextArea
+                      className={styles.textarea}
+                      maxLength={field.maxLength}
+                      onChange={(e) => setStyleCustomField(field.key, e.target.value)}
+                      onKeyDown={(e) => e.stopPropagation()}
+                      placeholder={field.placeholder}
+                      rows={3}
+                      showCount={
+                        field.maxLength
+                          ? {
+                              formatter: ({ count: currentCount, maxLength }) => (
+                                <div className={styles['count-wrapper']}>
+                                  <span className={styles.count}>
+                                    {currentCount} / {maxLength}
+                                  </span>
+                                  <BulbOutlined className={styles['bulb-icon']} />
+                                </div>
+                              ),
+                            }
+                          : false
+                      }
+                      value={styleCustomFields[field.key] || ''}
+                    />
+                  </div>
                 </div>
-              </div>
-            )}
+              ))}
 
             <div className={styles.section}>
               <h3 className={styles['section-title']}>Image Dimensions</h3>
-
               <div className={styles['dimension-group']}>
                 <Space size={8}>
                   {(['1:1', '4:3', '16:9'] as AspectRatio[]).map((ratio) => (

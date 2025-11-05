@@ -1,0 +1,190 @@
+$border-color: #e8e8e8;
+$primary-blue: #1890ff;
+$text-primary: #333333;
+$text-secondary: #666666;
+$selected-border: #1890ff;
+$selected-bg: #e6f4ff;
+
+.container {
+  display: flex;
+  min-height: 500px;
+}
+
+// LEFT SIDEBAR
+.sidebar {
+  width: 240px;
+  border-right: 1px solid $border-color;
+  padding: 16px;
+  flex-shrink: 0;
+}
+
+.category-item {
+  padding: 16px;
+  margin-bottom: 8px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &.active {
+    background: $selected-bg;
+    border-color: $primary-blue;
+  }
+}
+
+.category-name {
+  font-size: 16px;
+  font-weight: 600;
+  margin: 0 0 4px 0;
+  color: $text-primary;
+}
+
+.category-desc {
+  font-size: 12px;
+  color: $text-secondary;
+  margin: 0;
+  line-height: 1.4;
+}
+
+// RIGHT CONTENT
+.content {
+  flex: 1;
+  padding: 24px;
+  overflow-y: auto;
+}
+
+.content-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin: 0 0 8px 0;
+  color: $text-primary;
+}
+
+.content-description {
+  color: $text-secondary;
+  margin: 0 0 24px 0;
+  font-size: 14px;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 16px;
+}
+
+.option-card {
+  position: relative;
+  border: 2px solid $border-color;
+  border-radius: 8px;
+  padding: 20px;
+  cursor: pointer;
+  transition: all 0.3s;
+  background: #fff;
+
+  &:hover {
+    border-color: $primary-blue;
+    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+  }
+
+  &.selected {
+    border-color: $selected-border;
+    background: $selected-bg;
+  }
+}
+
+.check-badge {
+  position: absolute;
+  top: 12px;
+  right: 12px;
+  width: 24px;
+  height: 24px;
+  background: $primary-blue;
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.option-preview {
+  display: flex;
+  justify-content: center;
+  margin-bottom: 16px;
+}
+
+.preview-icon {
+  width: 80px;
+  height: 80px;
+  border-radius: 12px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 36px;
+  font-weight: bold;
+  color: white;
+
+  // Option-specific gradients
+  &.cute {
+    background: linear-gradient(135deg, #ffd1dc 0%, #b5e7ff 100%);
+  }
+
+  &.crafty {
+    background: linear-gradient(135deg, #dbb5a4 0%, #a8d5ba 100%);
+  }
+
+  &.collage {
+    background: linear-gradient(135deg, #d4a5a5 0%, #c9c9c9 100%);
+  }
+
+  &.plain-text-to-image {
+    background: linear-gradient(135deg, #6a89cc 0%, #4a69bd 100%);
+  }
+
+  &.plain-edit {
+    background: linear-gradient(135deg, #f6b93b 0%, #e58e26 100%);
+  }
+}
+
+.option-info {
+  text-align: center;
+}
+
+.option-name {
+  margin: 0 0 8px 0;
+  font-size: 16px;
+  font-weight: 600;
+  color: $text-primary;
+}
+
+.option-description {
+  margin: 0 0 8px 0;
+  font-size: 13px;
+  color: $text-secondary;
+  line-height: 1.5;
+}
+
+.mode-badge {
+  display: inline-block;
+  padding: 2px 8px;
+  background: #f0f0f0;
+  border-radius: 4px;
+  font-size: 11px;
+  color: #595959;
+  margin-top: 4px;
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-right {
+  display: flex;
+  gap: 8px;
+}
