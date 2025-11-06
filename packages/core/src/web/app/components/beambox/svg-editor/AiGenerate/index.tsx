@@ -180,12 +180,6 @@ const UnmemorizedAiGenerate = () => {
                       }
                       value={field.key === 'description' ? patternDescription : styleCustomFields[field.key] || ''}
                     />
-                    {field.key === 'description' && mode === 'edit' && selectedImageInputs.length > 0 && (
-                      <p className={styles.hint}>
-                        💡 Tip: Reference images by number in your prompt (e.g., "person in image 1 wearing clothes from
-                        image 2")
-                      </p>
-                    )}
                   </div>
                 </div>
               ))}
@@ -207,7 +201,6 @@ const UnmemorizedAiGenerate = () => {
                 block
                 className={styles['generate-button']}
                 disabled={
-                  !patternDescription.trim() ||
                   !currentUser ||
                   (mode === 'edit' && selectedImageInputs.length === 0) ||
                   (mode === 'edit' && selectedImageInputs.length > 10) ||
