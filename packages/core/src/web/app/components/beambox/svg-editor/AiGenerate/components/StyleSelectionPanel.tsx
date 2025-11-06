@@ -5,41 +5,33 @@ import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 
 import { CATEGORIES, getCategoryForOption } from '../utils/categories';
-import type { CategoryOption } from '../utils/categories';
+import type { Style } from '../utils/categories';
+import type { StylePresetKey } from '../utils/stylePresets';
 
 import styles from './StyleSelectionPanel.module.scss';
 
 interface StyleSelectionPanelProps {
-  currentSelection: null | string; // Option ID
+  currentStyle: StylePresetKey; // Option ID
   onClose: () => void;
-  onSelect: (optionId: string) => void; // Returns option ID
+  onSelect: (style: StylePresetKey) => void; // Returns option ID
 }
 
-const UnmemorizedStyleSelectionPanel = ({ currentSelection, onClose, onSelect }: StyleSelectionPanelProps) => {
+const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
   // Auto-select category based on current selection
-  const initialCategory = currentSelection
-    ? getCategoryForOption(currentSelection)?.id || 'text-to-image'
-    : 'text-to-image';
-
+  const initialCategory = currentStyle ? getCategoryForOption(currentStyle)?.id || 'text-to-image' : 'text-to-image';
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
-  const [selectedOption, setSelectedOption] = useState<null | string>(currentSelection);
+  const [selectedStyle, setSelectedStyle] = useState<null | StylePresetKey>(currentStyle);
+  const currentCategory = CATEGORIES.find(({ id }) => id === selectedCategory)!;
 
-  const currentCategory = CATEGORIES.find((c) => c.id === selectedCategory);
-
-  const handleOptionClick = (option: CategoryOption) => {
-    setSelectedOption(option.id);
+  const handleOptionClick = (option: Style) => {
+    setSelectedStyle(option.id);
   };
 
   const handleConfirm = () => {
-    if (selectedOption) {
-      onSelect(selectedOption);
+    if (selectedStyle) {
+      onSelect(selectedStyle);
       onClose();
     }
-  };
-
-  const handleClearAndClose = () => {
-    onSelect('');
-    onClose();
   };
 
   return (
@@ -47,10 +39,9 @@ const UnmemorizedStyleSelectionPanel = ({ currentSelection, onClose, onSelect }:
       centered
       footer={
         <div className={styles.footer}>
-          <Button onClick={handleClearAndClose}>Clear Style</Button>
           <div className={styles['footer-right']}>
             <Button onClick={onClose}>Cancel</Button>
-            <Button disabled={!selectedOption} onClick={handleConfirm} type="primary">
+            <Button disabled={!selectedStyle} onClick={handleConfirm} type="primary">
               Apply Style
             </Button>
           </div>
@@ -62,7 +53,6 @@ const UnmemorizedStyleSelectionPanel = ({ currentSelection, onClose, onSelect }:
       width={900}
     >
       <div className={styles.container}>
-        {/* LEFT SIDEBAR: Categories */}
         <div className={styles.sidebar}>
           {CATEGORIES.map((category) => (
             <div
@@ -73,7 +63,6 @@ const UnmemorizedStyleSelectionPanel = ({ currentSelection, onClose, onSelect }:
               onClick={() => setSelectedCategory(category.id)}
             >
               <h4 className={styles['category-name']}>{category.displayName}</h4>
-              <p className={styles['category-desc']}>{category.description}</p>
             </div>
           ))}
         </div>
@@ -81,11 +70,9 @@ const UnmemorizedStyleSelectionPanel = ({ currentSelection, onClose, onSelect }:
         {/* RIGHT CONTENT: Options */}
         <div className={styles.content}>
           <h3 className={styles['content-title']}>{currentCategory?.displayName}</h3>
-          <p className={styles['content-description']}>{currentCategory?.description}</p>
-
           <div className={styles['options-grid']}>
-            {currentCategory?.options.map((option) => {
-              const isSelected = selectedOption === option.id;
+            {currentCategory.styles.map((option) => {
+              const isSelected = selectedStyle === option.id;
 
               return (
                 <div
@@ -102,16 +89,13 @@ const UnmemorizedStyleSelectionPanel = ({ currentSelection, onClose, onSelect }:
                   )}
 
                   <div className={styles['option-preview']}>
-                    <div className={classNames(styles['preview-icon'], styles[option.id])}>
-                      {option.displayName.charAt(0)}
-                    </div>
+                    <img alt={option.displayName} className={styles['preview-image']} src={option.previewImage} />
                   </div>
 
                   <div className={styles['option-info']}>
                     <h4 className={styles['option-name']}>{option.displayName}</h4>
-                    <p className={styles['option-description']}>{option.description}</p>
                     <span className={styles['mode-badge']}>
-                      {option.mode === 'edit' ? 'Edit Mode' : 'Generate Mode'}
+                      {option.mode === 'edit' ? 'Edit Mode' : 'Text to Image Mode'}
                     </span>
                   </div>
                 </div>
