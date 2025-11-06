@@ -9,6 +9,7 @@ import MonitorController from '@core/app/actions/monitor-controller';
 import ProgressCaller from '@core/app/actions/progress-caller';
 import { calibrateCamera, showModuleCalibration } from '@core/app/components/dialogs/camera';
 import { parsingChipData } from '@core/app/components/dialogs/CartridgeSettingPanel';
+import { showDiodeCalibration } from '@core/app/components/dialogs/DiodeCalibration';
 import { showPromarkSettings } from '@core/app/components/dialogs/promark/PromarkSettings';
 import { showZAxisAdjustment } from '@core/app/components/dialogs/promark/ZAxisAdjustment';
 import { showUploadFirmwareDialog } from '@core/app/components/dialogs/updateFirmware';
@@ -17,7 +18,6 @@ import { InkDetectionStatus } from '@core/app/constants/layer-module/ink-cartrid
 import type { DetectedLayerModuleType, LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { Mode } from '@core/app/constants/monitor-constants';
-import { showDiodeCalibration } from '@core/app/views/beambox/Diode-Calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { downloadCameraData, uploadCameraData } from '@core/helpers/device/camera-data-backup';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
