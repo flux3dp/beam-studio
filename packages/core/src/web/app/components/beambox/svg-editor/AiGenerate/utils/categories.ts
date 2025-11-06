@@ -1,4 +1,4 @@
-import type { GenerationMode } from './useAiGenerateStore';
+import type { GenerationMode } from '../useAiGenerateStore';
 
 /**
  * Represents a single creation option (e.g., "Plain Text-to-Image", "Cute Logo")
