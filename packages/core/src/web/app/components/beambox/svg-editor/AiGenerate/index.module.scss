@@ -248,7 +248,17 @@ $button-border: #d9d9d9;
     height: 16px;
   }
 
-  &.ratio-custom {
+  &.ratio-3-2 {
+    width: 24px;
+    height: 16px;
+  }
+
+  &.ratio-21-9 {
+    width: 28px;
+    height: 12px;
+  }
+
+  &.ratio-more {
     width: 20px;
     height: 20px;
     border-style: dashed;
@@ -274,6 +284,92 @@ $button-border: #d9d9d9;
       bottom: -2px;
       left: -2px;
     }
+  }
+}
+
+// Floating Menu for More Button
+.more-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+// Portal menu with position: fixed to avoid clipping
+.floating-ratio-menu-portal {
+  position: fixed;
+  left: calc(100%);
+  background: white;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999; // High z-index to ensure it appears above other elements
+  min-width: 180px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: #f5f5f5;
+  }
+
+  &.active {
+    background: rgba($primary-blue, 0.05);
+    border-color: $primary-blue;
+    color: $primary-blue;
+  }
+
+  span {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+.menu-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-ratio-box {
+  border: 2px solid currentColor;
+  background: transparent;
+
+  // Landscape ratios
+  &.ratio-landscape-3-2 {
+    width: 24px;
+    height: 16px;
+  }
+
+  &.ratio-landscape-21-9 {
+    width: 28px;
+    height: 12px;
+  }
+
+  // Portrait ratios (rotated dimensions)
+  &.ratio-portrait-4-3 {
+    width: 15px;
+    height: 20px;
+  }
+
+  &.ratio-portrait-3-2 {
+    width: 13px;
+    height: 20px;
+  }
+
+  &.ratio-portrait-16-9 {
+    width: 11px;
+    height: 20px;
   }
 }
 

@@ -4,11 +4,11 @@ import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 
-import { getOptionIdFromModeAndPreset, getSelectedOptionConfig } from './categories';
-import { getStylePreset, parsePromptFromHistory } from './stylePresets';
 import type { ImageInput } from './types';
+import { getOptionIdFromModeAndPreset, getSelectedOptionConfig } from './utils/categories';
+import { getStylePreset, parsePromptFromHistory } from './utils/stylePresets';
 
-export type AspectRatio = '1:1' | '4:3' | '16:9' | 'custom';
+export type AspectRatio = '1:1' | '3:2' | '4:3' | '16:9'; // 21:9 is not supported by API
 export type ImageSize = 'large' | 'medium' | 'small';
 export type StyleType = 'illustration' | 'logo_with_text' | 'pattern';
 export type Orientation = 'landscape' | 'portrait';
