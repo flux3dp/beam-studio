@@ -4,8 +4,8 @@ import { CheckOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 
-import { CATEGORIES, getCategoryForOption } from '../categories';
-import type { CategoryOption } from '../categories';
+import { CATEGORIES, getCategoryForOption } from '../utils/categories';
+import type { CategoryOption } from '../utils/categories';
 
 import styles from './StyleSelectionPanel.module.scss';
 
