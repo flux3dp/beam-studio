@@ -5,20 +5,18 @@ import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-imag
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 
 import type { ImageInput } from './types';
-import { getOptionIdFromModeAndPreset, getSelectedOptionConfig } from './utils/categories';
+import { getStyleConfig } from './utils/categories';
+import type { StylePresetKey } from './utils/stylePresets';
 import { getStylePreset, parsePromptFromHistory } from './utils/stylePresets';
 
 export type AspectRatio = '1:1' | '3:2' | '4:3' | '16:9'; // 21:9 is not supported by API
 export type ImageSize = 'large' | 'medium' | 'small';
-export type StyleType = 'illustration' | 'logo_with_text' | 'pattern';
 export type Orientation = 'landscape' | 'portrait';
 export type GenerationStatus = 'failed' | 'generating' | 'idle' | 'success';
 export type GenerationMode = 'edit' | 'text-to-image';
 
 export interface ImageDimensions {
   aspectRatio: AspectRatio;
-  customHeight?: number;
-  customWidth?: number;
   orientation: Orientation;
   size: ImageSize;
 }
@@ -34,13 +32,12 @@ interface State {
   historyItems: AiImageGenerationData[];
   historyLoading: boolean;
   historyOffset: number;
+  inputFields: Record<string, string>; // Dynamic input field values by style
   isAiGenerateShown: boolean;
   patternDescription: string;
   selectedImageInputs: ImageInput[]; // Unified ordered array
-  selectedOption: null | string; // Selected option ID: 'plain-text-to-image', 'plain-edit', 'cute', 'crafty', 'collage'
-  selectedStyle: StyleType;
   showHistory: boolean;
-  styleCustomFields: Record<string, string>; // Dynamic custom field values by key
+  style: StylePresetKey;
 }
 
 interface Actions {
@@ -59,8 +56,8 @@ interface Actions {
   loadHistory: () => Promise<void>;
   removeImageInput: (id: string) => void;
   resetForm: () => void;
-  setSelectedOption: (optionId: null | string) => void;
   setState: (state: Partial<State>) => void;
+  setStyle: (style: StylePresetKey) => void;
   setStyleCustomField: (key: string, value: string) => void;
   toggleHistory: () => void;
   updateHistoryItem: (uuid: string, updates: Partial<AiImageGenerationData>) => void;
@@ -77,13 +74,12 @@ const initialState: State = {
   historyItems: [],
   historyLoading: false,
   historyOffset: 0,
+  inputFields: {},
   isAiGenerateShown: false,
   patternDescription: '',
   selectedImageInputs: [],
-  selectedOption: null,
-  selectedStyle: 'logo_with_text',
   showHistory: false,
-  styleCustomFields: {},
+  style: 'text-to-image-plain',
 };
 
 export const useAiGenerateStore = create<Actions & State>((set) => ({
@@ -191,10 +187,7 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
         : [];
 
     // Parse prompt to extract description and detect style preset
-    const { customFields, description, stylePresetName } = parsePromptFromHistory(item.prompt);
-
-    // Determine selected option ID from mode and style preset
-    const selectedOption = getOptionIdFromModeAndPreset(mode, stylePresetName);
+    const { customFields, description, stylePresetKey } = parsePromptFromHistory(item);
 
     // Set state with imported data
     set({
@@ -202,11 +195,11 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
       dimensions,
       generatedImages: item.result_urls || [],
       generationStatus: item.state === 'success' ? 'success' : 'idle',
+      inputFields: customFields, // Restore custom field values (including 'text to display' if it was in the prompt)
       patternDescription: description, // Use extracted description, not full prompt
       selectedImageInputs: imageInputs, // Restore ordered URLs
-      selectedOption, // Computed from mode and stylePreset
       showHistory: false, // Close history panel
-      styleCustomFields: customFields, // Restore custom field values (including 'text to display' if it was in the prompt)
+      style: stylePresetKey, // Computed from mode and stylePreset
     });
   },
   loadHistory: async () => {
@@ -244,48 +237,47 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
       generatedImages: [],
       generationStatus: 'idle',
       generationUuid: null,
+      inputFields: {},
       patternDescription: initialState.patternDescription,
       selectedImageInputs: [],
-      selectedOption: null,
-      selectedStyle: initialState.selectedStyle,
-      styleCustomFields: {},
+      style: 'text-to-image-plain',
     });
   },
-  setSelectedOption: (optionId) => {
+  setState: (state) => {
+    set((originalState) => ({ ...originalState, ...state }));
+  },
+  setStyle: (style) => {
     set((state) => {
-      if (!optionId) {
-        return { selectedOption: null, styleCustomFields: {} };
+      if (!style) {
+        return { inputFields: {}, style: 'text-to-image-plain' };
       }
 
       // Get config for new option
-      const newConfig = getSelectedOptionConfig(optionId);
-      const newStylePreset = newConfig?.stylePreset;
+      const newConfig = getStyleConfig(style);
+      const newStylePreset = newConfig?.id;
 
       // Get the new style's custom field keys
       const newStyleFieldKeys = new Set(
-        newStylePreset ? getStylePreset(newStylePreset)?.customFields?.map((f) => f.key) || [] : [],
+        newStylePreset ? getStylePreset(newStylePreset)?.inputFields?.map((f) => f.key) || [] : [],
       );
 
       // Filter existing custom fields: keep only those that exist in new style
       const preservedFields: Record<string, string> = {};
 
-      Object.entries(state.styleCustomFields).forEach(([key, value]) => {
+      Object.entries(state.inputFields).forEach(([key, value]) => {
         if (newStyleFieldKeys.has(key)) {
           preservedFields[key] = value;
         }
       });
 
       return {
-        selectedOption: optionId,
-        styleCustomFields: preservedFields,
+        inputFields: preservedFields,
+        style,
       };
     });
   },
-  setState: (state) => {
-    set((originalState) => ({ ...originalState, ...state }));
-  },
   setStyleCustomField: (key, value) => {
-    set((state) => ({ styleCustomFields: { ...state.styleCustomFields, [key]: value } }));
+    set((state) => ({ inputFields: { ...state.inputFields, [key]: value } }));
   },
   toggleHistory: () => {
     set((state) => {

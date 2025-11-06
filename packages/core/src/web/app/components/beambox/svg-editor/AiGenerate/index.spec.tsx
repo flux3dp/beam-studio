@@ -191,13 +191,12 @@ describe('test AiGenerate', () => {
       historyItems: [],
       historyLoading: false,
       historyOffset: 0,
+      inputFields: {},
       isAiGenerateShown: false,
       patternDescription: '',
       selectedImageInputs: [],
-      selectedOption: null,
-      selectedStyle: 'logo_with_text',
       showHistory: false,
-      styleCustomFields: {},
+      style: 'text-to-image-plain',
     });
 
     // Default mock implementations
@@ -247,7 +246,7 @@ describe('test AiGenerate', () => {
     });
 
     test('text-to-image mode: hides ImageUploadArea', () => {
-      useAiGenerateStore.setState({ selectedOption: 'plain-text-to-image' });
+      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -255,7 +254,7 @@ describe('test AiGenerate', () => {
     });
 
     test('edit mode: shows ImageUploadArea', () => {
-      useAiGenerateStore.setState({ selectedOption: 'plain-edit' });
+      useAiGenerateStore.setState({ style: 'edit-plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -322,7 +321,7 @@ describe('test AiGenerate', () => {
     });
 
     test('should show custom fields when cute style is selected', () => {
-      useAiGenerateStore.setState({ selectedOption: 'cute' });
+      useAiGenerateStore.setState({ style: 'logo-cute' });
 
       const { container } = render(<AiGenerate />);
 
@@ -336,7 +335,7 @@ describe('test AiGenerate', () => {
     });
 
     test('should hide custom fields for plain-text-to-image mode', () => {
-      useAiGenerateStore.setState({ selectedOption: 'plain-text-to-image' });
+      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
 
       const { container } = render(<AiGenerate />);
 
@@ -365,7 +364,7 @@ describe('test AiGenerate', () => {
     test('snapshot: edit mode with images', () => {
       useAiGenerateStore.setState({
         selectedImageInputs: [createMockImageInput('file', 'img-1')],
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -457,7 +456,7 @@ describe('test AiGenerate', () => {
       fireEvent.click(styleButton!);
 
       expect(mockShowStyleSelectionPanel).toHaveBeenCalledTimes(1);
-      expect(mockShowStyleSelectionPanel).toHaveBeenCalledWith(expect.any(Function), null);
+      expect(mockShowStyleSelectionPanel).toHaveBeenCalledWith(expect.any(Function), 'text-to-image-plain');
     });
 
     test('selecting style updates selectedOption', () => {
@@ -471,7 +470,7 @@ describe('test AiGenerate', () => {
 
       fireEvent.click(styleButton!);
 
-      expect(useAiGenerateStore.getState().selectedOption).toBe('cute');
+      expect(useAiGenerateStore.getState().style).toBe('cute');
     });
 
     test('clicking ratio button updates dimensions', () => {
@@ -550,7 +549,7 @@ describe('test AiGenerate', () => {
     });
 
     test('typing in custom field updates styleCustomFields', () => {
-      useAiGenerateStore.setState({ selectedOption: 'cute' });
+      useAiGenerateStore.setState({ style: 'logo-cute' });
 
       const { container } = render(<AiGenerate />);
 
@@ -559,7 +558,7 @@ describe('test AiGenerate', () => {
 
       fireEvent.change(customFieldTextarea!, { target: { value: 'MeowWoof' } });
 
-      expect(useAiGenerateStore.getState().styleCustomFields['text to display']).toBe('MeowWoof');
+      expect(useAiGenerateStore.getState().inputFields['text to display']).toBe('MeowWoof');
     });
 
     test('hovering More button shows floating menu', async () => {
@@ -622,7 +621,7 @@ describe('test AiGenerate', () => {
 
   describe('Mode Switching Tests', () => {
     test('plain-text-to-image derives mode as text-to-image', () => {
-      useAiGenerateStore.setState({ selectedOption: 'plain-text-to-image' });
+      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -631,7 +630,7 @@ describe('test AiGenerate', () => {
     });
 
     test('plain-edit derives mode as edit', () => {
-      useAiGenerateStore.setState({ selectedOption: 'plain-edit' });
+      useAiGenerateStore.setState({ style: 'edit-plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -640,7 +639,7 @@ describe('test AiGenerate', () => {
     });
 
     test('cute logo derives mode as text-to-image', () => {
-      useAiGenerateStore.setState({ selectedOption: 'cute' });
+      useAiGenerateStore.setState({ style: 'logo-cute' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -648,7 +647,7 @@ describe('test AiGenerate', () => {
     });
 
     test('crafty logo derives mode as text-to-image', () => {
-      useAiGenerateStore.setState({ selectedOption: 'crafty' });
+      useAiGenerateStore.setState({ style: 'logo-crafty' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -656,7 +655,7 @@ describe('test AiGenerate', () => {
     });
 
     test('collage logo derives mode as text-to-image', () => {
-      useAiGenerateStore.setState({ selectedOption: 'collage' });
+      useAiGenerateStore.setState({ style: 'logo-collage' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -666,12 +665,12 @@ describe('test AiGenerate', () => {
     test('prompt persists when switching from text-to-image to edit', () => {
       useAiGenerateStore.setState({
         patternDescription: 'Persistent prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       render(<AiGenerate />);
 
-      useAiGenerateStore.setState({ selectedOption: 'plain-edit' });
+      useAiGenerateStore.setState({ style: 'edit-plain' });
 
       expect(useAiGenerateStore.getState().patternDescription).toBe('Persistent prompt');
     });
@@ -679,12 +678,12 @@ describe('test AiGenerate', () => {
     test('dimensions persist when switching modes', () => {
       useAiGenerateStore.setState({
         dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'large' },
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       render(<AiGenerate />);
 
-      useAiGenerateStore.setState({ selectedOption: 'plain-edit' });
+      useAiGenerateStore.setState({ style: 'edit-plain' });
 
       const { dimensions } = useAiGenerateStore.getState();
 
@@ -695,19 +694,19 @@ describe('test AiGenerate', () => {
     test('count persists when switching modes', () => {
       useAiGenerateStore.setState({
         count: 4,
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       render(<AiGenerate />);
 
-      useAiGenerateStore.setState({ selectedOption: 'plain-edit' });
+      useAiGenerateStore.setState({ style: 'edit-plain' });
 
       expect(useAiGenerateStore.getState().count).toBe(4);
     });
 
     test('textarea placeholder changes based on mode', () => {
       // Text-to-image mode
-      useAiGenerateStore.setState({ selectedOption: 'plain-text-to-image' });
+      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
 
       const { container, rerender } = render(<AiGenerate />);
 
@@ -716,7 +715,7 @@ describe('test AiGenerate', () => {
       expect(textarea?.placeholder).toContain('logo pattern');
 
       // Edit mode
-      useAiGenerateStore.setState({ selectedOption: 'plain-edit' });
+      useAiGenerateStore.setState({ style: 'edit-plain' });
 
       rerender(<AiGenerate />);
       textarea = container.querySelector('textarea');
@@ -774,7 +773,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
           selectedImageInputs: [],
-          selectedOption: 'plain-edit',
+          style: 'edit-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -793,7 +792,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
           selectedImageInputs: manyImages,
-          selectedOption: 'plain-edit',
+          style: 'edit-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -813,7 +812,7 @@ describe('test AiGenerate', () => {
           count: 1,
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
           patternDescription: 'A cute dog',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -838,9 +837,9 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           count: 1,
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
+          inputFields: { 'text to display': 'MeowWoof' },
           patternDescription: 'A shiba dog',
-          selectedOption: 'cute',
-          styleCustomFields: { 'text to display': 'MeowWoof' },
+          style: 'logo-cute',
         });
 
         const { container } = render(<AiGenerate />);
@@ -866,7 +865,7 @@ describe('test AiGenerate', () => {
       test('uses plain text prompt for plain-text-to-image', async () => {
         useAiGenerateStore.setState({
           patternDescription: 'Plain text prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -890,7 +889,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'medium' },
           patternDescription: 'Test',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -915,7 +914,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'large' },
           patternDescription: 'Test',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -943,7 +942,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           patternDescription: 'Edit this image',
           selectedImageInputs: [fileInput],
-          selectedOption: 'plain-edit',
+          style: 'edit-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -971,7 +970,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           patternDescription: 'Edit this image',
           selectedImageInputs: [urlInput],
-          selectedOption: 'plain-edit',
+          style: 'edit-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1000,7 +999,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           patternDescription: 'Edit these images',
           selectedImageInputs: [fileInput, urlInput],
-          selectedOption: 'plain-edit',
+          style: 'edit-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1029,7 +1028,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1050,7 +1049,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1073,7 +1072,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1095,7 +1094,7 @@ describe('test AiGenerate', () => {
       test('calls getInfo to refresh credits after success', async () => {
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1118,7 +1117,7 @@ describe('test AiGenerate', () => {
           errorMessage: 'Old error',
           generatedImages: ['https://example.com/old.jpg'],
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1146,7 +1145,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1173,7 +1172,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1199,7 +1198,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'plain-text-to-image',
+          style: 'text-to-image-plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1221,7 +1220,7 @@ describe('test AiGenerate', () => {
       test('handles invalid style preset', async () => {
         useAiGenerateStore.setState({
           patternDescription: 'Test prompt',
-          selectedOption: 'invalid-preset',
+          style: 'invalid-preset' as any,
         });
 
         const { container } = render(<AiGenerate />);
@@ -1277,7 +1276,7 @@ describe('test AiGenerate', () => {
       useAiGenerateStore.setState({
         patternDescription: 'Test',
         selectedImageInputs: [],
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1295,7 +1294,7 @@ describe('test AiGenerate', () => {
       useAiGenerateStore.setState({
         patternDescription: 'Test',
         selectedImageInputs: manyImages,
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1329,7 +1328,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         patternDescription: 'Test prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1353,7 +1352,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         patternDescription: 'Test prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1380,7 +1379,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         patternDescription: 'Test prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1401,9 +1400,9 @@ describe('test AiGenerate', () => {
 
     test('empty custom field does not cause error', async () => {
       useAiGenerateStore.setState({
+        inputFields: { 'text to display': '' }, // Empty field
         patternDescription: 'Test prompt',
-        selectedOption: 'cute',
-        styleCustomFields: { 'text to display': '' }, // Empty field
+        style: 'logo-cute',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1593,7 +1592,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         selectedImageInputs: imageInputs,
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       const { queryByTestId } = render(<AiGenerate />);
@@ -1602,7 +1601,7 @@ describe('test AiGenerate', () => {
     });
 
     test('adding image updates store', () => {
-      useAiGenerateStore.setState({ selectedOption: 'plain-edit' });
+      useAiGenerateStore.setState({ style: 'edit-plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -1618,7 +1617,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         selectedImageInputs: [imageInput],
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       const { queryByTestId } = render(<AiGenerate />);
@@ -1635,7 +1634,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         selectedImageInputs: [fileInput],
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       render(<AiGenerate />);
@@ -1648,7 +1647,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         selectedImageInputs: [urlInput],
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       render(<AiGenerate />);
@@ -1659,7 +1658,7 @@ describe('test AiGenerate', () => {
     test('displays tip when images are present in edit mode', () => {
       useAiGenerateStore.setState({
         selectedImageInputs: [createMockImageInput('file', 'test-1')],
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1672,7 +1671,7 @@ describe('test AiGenerate', () => {
     test('does not display tip when no images in edit mode', () => {
       useAiGenerateStore.setState({
         selectedImageInputs: [],
-        selectedOption: 'plain-edit',
+        style: 'edit-plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1714,7 +1713,7 @@ describe('test AiGenerate', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.patternDescription).toBe('A cute cat');
-      expect(state.selectedOption).toBe('plain-text-to-image');
+      expect(state.style).toBe('text-to-image-plain');
       expect(state.dimensions.aspectRatio).toBe('1:1');
       expect(state.dimensions.size).toBe('medium');
       expect(state.count).toBe(2);
@@ -1752,8 +1751,8 @@ describe('test AiGenerate', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.patternDescription).toBe('A shiba dog');
-      expect(state.selectedOption).toBe('cute');
-      expect(state.styleCustomFields['text to display']).toBe('MeowWoof');
+      expect(state.style).toBe('logo-cute');
+      expect(state.inputFields['text to display']).toBe('MeowWoof');
     });
 
     test('imports edit mode history with image URLs', () => {
@@ -1767,7 +1766,7 @@ describe('test AiGenerate', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.selectedOption).toBe('plain-edit');
+      expect(state.style).toBe('edit-plain');
       expect(state.selectedImageInputs).toHaveLength(2);
       expect(state.selectedImageInputs[0].type).toBe('url');
       expect(state.selectedImageInputs[0]).toHaveProperty('url', 'https://example.com/img1.jpg');
@@ -1822,7 +1821,7 @@ describe('test AiGenerate', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.patternDescription).toBe('{ invalid json');
-      expect(state.selectedOption).toBe('plain-text-to-image');
+      expect(state.style).toBe('text-to-image-plain');
     });
 
     test('handles history item with no image URLs in edit mode', () => {
@@ -1895,7 +1894,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         patternDescription: 'Test prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -1917,7 +1916,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         patternDescription: 'Test prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -1941,7 +1940,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         patternDescription: 'Test prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -1965,7 +1964,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         patternDescription: 'Test prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -1991,7 +1990,7 @@ describe('test AiGenerate', () => {
         generatedImages: ['https://example.com/old.jpg'],
         generationStatus: 'success',
         patternDescription: 'New prompt',
-        selectedOption: 'plain-text-to-image',
+        style: 'text-to-image-plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
