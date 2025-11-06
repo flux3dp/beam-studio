@@ -1,12 +1,8 @@
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 
-export interface StyleTemplate {
-  background: { value: string; weight: number };
-  color: { value: string; weight: number };
-  negativePrompt: { value: string; weight: number };
-  style: { value: string; weight: number };
-  textPosition: { value: string; weight: number };
-}
+export type StyleTemplate = Partial<
+  Record<'background' | 'color' | 'negativePrompt' | 'style' | 'textPosition', { value: string; weight: number }>
+>;
 
 /**
  * Represents a configurable input field for style presets
@@ -29,6 +25,11 @@ export const STYLE_PRESET_KEYS = [
   //
   'text-to-image-plain',
   'edit-plain',
+  'edit-american-2d-cartoon',
+  'edit-japanese-anime',
+  'edit-photo-to-line',
+  'edit-photo-to-line-outline',
+  'edit-pixar-3d',
   'logo-cute',
   'logo-crafty',
   'logo-collage',
@@ -63,7 +64,7 @@ const inputFieldOptions: Record<string, InputField> = {
     label: 'Edit Prompt',
     maxLength: 300,
     placeholder: 'Please describe how you would like to edit the images.',
-    required: true,
+    required: false,
     weight: 0.8,
   },
   textToDisplay: {
@@ -81,7 +82,57 @@ const inputFieldOptions: Record<string, InputField> = {
  * Key is part of the structure, eliminating duplication
  */
 const STYLE_PRESETS: Record<StylePresetKey, StylePreset> = {
-  // Plain modes - no styled template, just use description directly
+  'edit-american-2d-cartoon': {
+    inputFields: [inputFieldOptions.patternDescriptionForEdit],
+    key: 'edit-american-2d-cartoon',
+    template: {
+      style: {
+        value: 'American 2D cartoon style, Cartoon Network inspired, flat color, bold outlines',
+        weight: 0.8,
+      },
+    },
+  },
+  'edit-japanese-anime': {
+    inputFields: [inputFieldOptions.patternDescriptionForEdit],
+    key: 'edit-japanese-anime',
+    template: {
+      style: {
+        value: 'Japanese anime style, clean cel-shading, detailed eyes, delicate facial features, soft pastel tone',
+        weight: 0.8,
+      },
+    },
+  },
+  'edit-photo-to-line': {
+    inputFields: [inputFieldOptions.patternDescriptionForEdit],
+    key: 'edit-photo-to-line',
+    template: {
+      style: {
+        value: 'minimal line, single continuous line, outline, elegant simplicity',
+        weight: 0.8,
+      },
+    },
+  },
+  'edit-photo-to-line-outline': {
+    inputFields: [inputFieldOptions.patternDescriptionForEdit],
+    key: 'edit-photo-to-line-outline',
+    template: {
+      style: {
+        value: 'minimal line, single continuous line, faceless outline, elegant simplicity',
+        weight: 0.8,
+      },
+    },
+  },
+  'edit-pixar-3d': {
+    inputFields: [inputFieldOptions.patternDescriptionForEdit],
+    key: 'edit-pixar-3d',
+    template: {
+      style: {
+        value:
+          'Pixar-style 3D render, rounded proportions, expressive face, cinematic lighting, smooth CGI texture, Pixar color grading',
+        weight: 0.8,
+      },
+    },
+  },
   'edit-plain': {
     inputFields: [inputFieldOptions.patternDescriptionForEdit],
     key: 'edit-plain',
@@ -202,15 +253,8 @@ export const buildStyledPrompt = (
 
   // Styled mode: build weighted JSON prompt
   const promptObject: Record<string, { value: string; weight: number }> = {
-    background: preset.template.background,
-    color: preset.template.color,
-    description: {
-      value: userDescription,
-      weight: 0.9,
-    },
-    'negative prompt': preset.template.negativePrompt,
-    style: preset.template.style,
-    'text position': preset.template.textPosition,
+    ...preset.template,
+    description: { value: userDescription, weight: 0.8 },
   };
 
   // Dynamically add input fields based on preset definition
@@ -276,7 +320,7 @@ export const parsePromptFromHistory = (
     for (const preset of Object.values(STYLE_PRESETS)) {
       // Compare style values (they should match exactly)
       // Skip presets with null templates (plain modes)
-      if (preset.template && preset.template.style.value === styleValue) {
+      if (preset.template?.style?.value === styleValue) {
         detectedPreset = preset;
         break;
       }
