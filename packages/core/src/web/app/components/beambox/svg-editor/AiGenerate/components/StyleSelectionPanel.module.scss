@@ -43,13 +43,6 @@ $selected-bg: #e6f4ff;
   color: $text-primary;
 }
 
-.category-desc {
-  font-size: 12px;
-  color: $text-secondary;
-  margin: 0;
-  line-height: 1.4;
-}
-
 // RIGHT CONTENT
 .content {
   flex: 1;
@@ -62,12 +55,6 @@ $selected-bg: #e6f4ff;
   font-weight: 600;
   margin: 0 0 8px 0;
   color: $text-primary;
-}
-
-.content-description {
-  color: $text-secondary;
-  margin: 0 0 24px 0;
-  font-size: 14px;
 }
 
 .options-grid {
@@ -117,37 +104,12 @@ $selected-bg: #e6f4ff;
   margin-bottom: 16px;
 }
 
-.preview-icon {
+.preview-image {
   width: 80px;
   height: 80px;
   border-radius: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36px;
-  font-weight: bold;
-  color: white;
-
-  // Option-specific gradients
-  &.cute {
-    background: linear-gradient(135deg, #ffd1dc 0%, #b5e7ff 100%);
-  }
-
-  &.crafty {
-    background: linear-gradient(135deg, #dbb5a4 0%, #a8d5ba 100%);
-  }
-
-  &.collage {
-    background: linear-gradient(135deg, #d4a5a5 0%, #c9c9c9 100%);
-  }
-
-  &.plain-text-to-image {
-    background: linear-gradient(135deg, #6a89cc 0%, #4a69bd 100%);
-  }
-
-  &.plain-edit {
-    background: linear-gradient(135deg, #f6b93b 0%, #e58e26 100%);
-  }
+  object-fit: cover;
+  border: 1px solid $border-color;
 }
 
 .option-info {
@@ -159,13 +121,6 @@ $selected-bg: #e6f4ff;
   font-size: 16px;
   font-weight: 600;
   color: $text-primary;
-}
-
-.option-description {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  color: $text-secondary;
-  line-height: 1.5;
 }
 
 .mode-badge {
@@ -180,7 +135,7 @@ $selected-bg: #e6f4ff;
 
 .footer {
   display: flex;
-  justify-content: space-between;
+  justify-content: flex-end;
   align-items: center;
 }
 
