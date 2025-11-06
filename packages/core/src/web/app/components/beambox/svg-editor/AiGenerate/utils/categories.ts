@@ -4,11 +4,11 @@ import type { GenerationMode } from '../useAiGenerateStore';
  * Represents a single creation option (e.g., "Plain Text-to-Image", "Cute Logo")
  */
 export interface CategoryOption {
-  description: string; // Detailed description
-  displayName: string; // Display name for UI
-  id: string; // Unique identifier: 'plain-text-to-image', 'plain-edit', 'cute', 'crafty', 'collage'
-  mode: GenerationMode; // Which API mode to use
-  stylePreset: null | string; // Style preset name or null for plain modes
+  description: string;
+  displayName: string;
+  id: string;
+  mode: GenerationMode;
+  stylePreset: null | string;
 }
 
 /**

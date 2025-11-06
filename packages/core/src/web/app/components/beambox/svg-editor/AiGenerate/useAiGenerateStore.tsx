@@ -55,7 +55,6 @@ interface Actions {
   }) => void;
   clearGenerationResults: () => void;
   clearImageInputs: () => void;
-  clearStyleCustomFields: () => void;
   importFromHistory: (item: AiImageGenerationData) => void;
   loadHistory: () => Promise<void>;
   removeImageInput: (id: string) => void;
@@ -144,9 +143,6 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
   },
   clearImageInputs: () => {
     set({ selectedImageInputs: [] });
-  },
-  clearStyleCustomFields: () => {
-    set({ styleCustomFields: {} });
   },
   importFromHistory: (item) => {
     // Helper to map API image size to dimensions
