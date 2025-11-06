@@ -1,127 +1,106 @@
 import type { GenerationMode } from '../useAiGenerateStore';
 
+import { type StylePresetKey } from './stylePresets';
+
 /**
- * Represents a single creation option (e.g., "Plain Text-to-Image", "Cute Logo")
+ * Represents a single creation style option (e.g., "Plain Text-to-Image", "Cute Logo")
  */
-export interface CategoryOption {
-  description: string;
+export interface Style {
   displayName: string;
-  id: string;
+  id: StylePresetKey;
   mode: GenerationMode;
-  stylePreset: null | string;
+  previewImage: string; // URL or file path to preview image showing style result
 }
 
 /**
- * Represents a category containing multiple options
+ * Represents a category containing multiple style options
  */
 export interface Category {
-  description: string; // Category description
-  displayName: string; // Display name for UI
-  id: string; // Category identifier: 'text-to-image', 'edit', 'logo'
-  options: CategoryOption[]; // Available options in this category
+  displayName: string;
+  id: string;
+  styles: Style[];
 }
 
 /**
- * All available categories and their options
+ * All available categories and their style options
  */
 export const CATEGORIES: Category[] = [
   {
-    description: 'Generate images from text descriptions without style templates',
-    displayName: 'Text-to-Image',
+    displayName: 'Text to Image',
     id: 'text-to-image',
-    options: [
+    styles: [
       {
-        description: 'Generate images from text with full creative control. No style templates applied.',
-        displayName: 'Plain Text-to-Image',
-        id: 'plain-text-to-image',
+        displayName: 'Plain',
+        id: 'text-to-image-plain',
         mode: 'text-to-image',
-        stylePreset: null,
+        previewImage: 'https://picsum.photos/id/1/80/80',
       },
     ],
   },
   {
-    description: 'Modify and edit existing images with AI',
-    displayName: 'Edit',
+    displayName: 'Edit Image',
     id: 'edit',
-    options: [
+    styles: [
       {
-        description: 'Edit images with custom prompts. Upload images and describe your desired changes.',
-        displayName: 'Plain Edit',
-        id: 'plain-edit',
+        displayName: 'Plain',
+        id: 'edit-plain',
         mode: 'edit',
-        stylePreset: null,
+        previewImage: 'https://picsum.photos/id/2/80/80',
       },
     ],
   },
   {
-    description: 'Create stylized logos with professional templates',
     displayName: 'Logo',
     id: 'logo',
-    options: [
+    styles: [
       {
-        description: 'Kawaii hand-drawn style with soft pastel colors and rounded shapes',
         displayName: 'Cute Logo',
-        id: 'cute',
+        id: 'logo-cute',
         mode: 'text-to-image',
-        stylePreset: 'cute',
+        previewImage: 'https://picsum.photos/id/3/80/80',
       },
       {
-        description: 'Organic handcrafted watercolor style with natural brushstrokes',
         displayName: 'Crafty Logo',
-        id: 'crafty',
+        id: 'logo-crafty',
         mode: 'text-to-image',
-        stylePreset: 'crafty',
+        previewImage: 'https://picsum.photos/id/4/80/80',
       },
       {
-        description: 'Mixed media experimental style with fragmented and textured layers',
         displayName: 'Collage Logo',
-        id: 'collage',
+        id: 'logo-collage',
         mode: 'text-to-image',
-        stylePreset: 'collage',
+        previewImage: 'https://picsum.photos/id/5/80/80',
       },
     ],
   },
 ];
 
 /**
- * Get the configuration for a specific option by ID
+ * Get the configuration for a specific style option by ID
  */
-export const getSelectedOptionConfig = (optionId: null | string): CategoryOption | null => {
-  if (!optionId) return null;
+export const getStyleConfig = (style: StylePresetKey): Style => {
+  if (!style) return CATEGORIES[0].styles[0]; // Default to first option
 
   for (const category of CATEGORIES) {
-    const option = category.options.find((opt) => opt.id === optionId);
+    const option = category.styles.find((opt) => opt.id === style);
 
     if (option) return option;
   }
 
-  return null;
+  return CATEGORIES[0].styles[0]; // Fallback to first option
 };
 
 /**
- * Get the category that contains a specific option
+ * Get the category that contains a specific style option
  */
 export const getCategoryForOption = (optionId: null | string): Category | null => {
   if (!optionId) return null;
 
   for (const category of CATEGORIES) {
-    if (category.options.some((opt) => opt.id === optionId)) {
+    if (category.styles.some((opt) => opt.id === optionId)) {
       return category;
     }
   }
 
   return null;
-};
-
-/**
- * Get option ID from mode and stylePreset (for history import)
- */
-export const getOptionIdFromModeAndPreset = (mode: GenerationMode, stylePreset: null | string): string => {
-  // If there's a style preset, it's the option ID
-  if (stylePreset) {
-    return stylePreset; // 'cute', 'crafty', 'collage'
-  }
-
-  // Plain modes
-  return mode === 'edit' ? 'plain-edit' : 'plain-text-to-image';
 };

@@ -16,7 +16,7 @@ import ImageUploadArea from './components/ImageUploadArea';
 import { useImageGeneration } from './hooks/useImageGeneration';
 import styles from './index.module.scss';
 import { useAiGenerateStore } from './useAiGenerateStore';
-import { getSelectedOptionConfig } from './utils/categories';
+import { getStyleConfig } from './utils/categories';
 import { getStylePreset } from './utils/stylePresets';
 
 const { TextArea } = Input;
@@ -31,22 +31,22 @@ const UnmemorizedAiGenerate = () => {
     errorMessage,
     generatedImages,
     generationStatus,
+    inputFields: styleCustomFields,
     patternDescription,
     removeImageInput,
     resetForm,
     selectedImageInputs,
-    selectedOption,
-    setSelectedOption,
+    setStyle: setStyle,
     setStyleCustomField,
     showHistory,
-    styleCustomFields,
+    style,
     toggleHistory,
   } = useAiGenerateStore();
 
   // Compute mode and stylePreset from selectedOption
-  const optionConfig = getSelectedOptionConfig(selectedOption);
+  const optionConfig = getStyleConfig(style);
   const mode = optionConfig?.mode || 'text-to-image';
-  const stylePreset = optionConfig?.stylePreset || null;
+  const stylePreset = optionConfig?.id || null;
 
   // Image generation logic
   const { handleGenerate } = useImageGeneration({
@@ -79,9 +79,9 @@ const UnmemorizedAiGenerate = () => {
   };
 
   const handleStyleClick = () => {
-    dialogCaller.showStyleSelectionPanel((optionId) => {
-      setSelectedOption(optionId || null);
-    }, selectedOption);
+    dialogCaller.showStyleSelectionPanel((style) => {
+      setStyle(style);
+    }, style);
   };
 
   return (
@@ -131,7 +131,6 @@ const UnmemorizedAiGenerate = () => {
               >
                 <div className={styles['button-content']}>
                   <span className={styles['button-label']}>{optionConfig?.displayName || 'Select Creation Style'}</span>
-                  {/* {optionConfig && <span className={styles['button-description']}>{optionConfig.description}</span>} */}
                 </div>
               </Button>
             </div>
@@ -143,47 +142,8 @@ const UnmemorizedAiGenerate = () => {
               </div>
             )}
 
-            <div className={styles.section}>
-              <h3 className={styles['section-title']}>{mode === 'edit' ? 'Edit prompt' : 'Pattern description'}</h3>
-              <div className={styles['input-wrapper']}>
-                <TextArea
-                  className={styles.textarea}
-                  maxLength={mode === 'edit' ? 5000 : 300}
-                  onChange={(e) => useAiGenerateStore.setState({ patternDescription: e.target.value })}
-                  onKeyDown={(e) => e.stopPropagation()}
-                  placeholder={
-                    stylePreset
-                      ? mode === 'edit'
-                        ? 'Describe what you want to create (e.g., "A friendly cartoon logo of...")'
-                        : 'Describe the main subject (e.g., "A friendly cartoon logo of a shiba dog and a girl")'
-                      : mode === 'edit'
-                        ? 'Please describe how you would like to edit the images.'
-                        : 'Please describe the logo pattern you would like to create.'
-                  }
-                  rows={5}
-                  showCount={{
-                    formatter: ({ count: currentCount, maxLength }) => (
-                      <div className={styles['count-wrapper']}>
-                        <span className={styles.count}>
-                          {currentCount} / {maxLength}
-                        </span>
-                        <BulbOutlined className={styles['bulb-icon']} />
-                      </div>
-                    ),
-                  }}
-                  value={patternDescription}
-                />
-                {mode === 'edit' && selectedImageInputs.length > 0 && (
-                  <p className={styles.hint}>
-                    💡 Tip: Reference images by number in your prompt (e.g., "person in image 1 wearing clothes from
-                    image 2")
-                  </p>
-                )}
-              </div>
-            </div>
-
             {stylePreset &&
-              getStylePreset(stylePreset)?.customFields?.map((field) => (
+              getStylePreset(stylePreset)?.inputFields?.map((field) => (
                 <div className={styles.section} key={field.key}>
                   <h3 className={styles['section-title']}>
                     {field.label}
@@ -193,10 +153,17 @@ const UnmemorizedAiGenerate = () => {
                     <TextArea
                       className={styles.textarea}
                       maxLength={field.maxLength}
-                      onChange={(e) => setStyleCustomField(field.key, e.target.value)}
+                      onChange={(e) => {
+                        if (field.key === 'description') {
+                          // Update both patternDescription state and styleCustomFields for consistency
+                          useAiGenerateStore.setState({ patternDescription: e.target.value });
+                        }
+
+                        setStyleCustomField(field.key, e.target.value);
+                      }}
                       onKeyDown={(e) => e.stopPropagation()}
                       placeholder={field.placeholder}
-                      rows={3}
+                      rows={field.key === 'description' ? 5 : 3}
                       showCount={
                         field.maxLength
                           ? {
@@ -211,8 +178,14 @@ const UnmemorizedAiGenerate = () => {
                             }
                           : false
                       }
-                      value={styleCustomFields[field.key] || ''}
+                      value={field.key === 'description' ? patternDescription : styleCustomFields[field.key] || ''}
                     />
+                    {field.key === 'description' && mode === 'edit' && selectedImageInputs.length > 0 && (
+                      <p className={styles.hint}>
+                        💡 Tip: Reference images by number in your prompt (e.g., "person in image 1 wearing clothes from
+                        image 2")
+                      </p>
+                    )}
                   </div>
                 </div>
               ))}
