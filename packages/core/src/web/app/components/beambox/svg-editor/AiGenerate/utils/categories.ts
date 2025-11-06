@@ -47,6 +47,36 @@ export const CATEGORIES: Category[] = [
         mode: 'edit',
         previewImage: 'https://picsum.photos/id/2/80/80',
       },
+      {
+        displayName: 'American 2D Cartoon',
+        id: 'edit-american-2d-cartoon',
+        mode: 'edit',
+        previewImage: 'https://picsum.photos/id/6/80/80',
+      },
+      {
+        displayName: 'Japanese Anime',
+        id: 'edit-japanese-anime',
+        mode: 'edit',
+        previewImage: 'https://picsum.photos/id/7/80/80',
+      },
+      {
+        displayName: 'Photo to Line',
+        id: 'edit-photo-to-line',
+        mode: 'edit',
+        previewImage: 'https://picsum.photos/id/8/80/80',
+      },
+      {
+        displayName: 'Photo to Line Outline',
+        id: 'edit-photo-to-line-outline',
+        mode: 'edit',
+        previewImage: 'https://picsum.photos/id/9/80/80',
+      },
+      {
+        displayName: 'Pixar 3D',
+        id: 'edit-pixar-3d',
+        mode: 'edit',
+        previewImage: 'https://picsum.photos/id/10/80/80',
+      },
     ],
   },
   {
