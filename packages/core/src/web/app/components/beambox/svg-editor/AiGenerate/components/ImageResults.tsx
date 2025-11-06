@@ -3,7 +3,7 @@ import React, { memo, useState } from 'react';
 import { DownloadOutlined, ImportOutlined } from '@ant-design/icons';
 import { Alert, Button, Spin } from 'antd';
 
-import importAiImage from '@core/app/svgedit/operations/import/importAiImage';
+import { importAiImage } from '@core/app/svgedit/operations/import/importAiImage';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 

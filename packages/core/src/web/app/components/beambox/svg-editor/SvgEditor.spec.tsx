@@ -17,6 +17,13 @@ jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
 jest.mock('./Ruler', () => () => <div>MockRuler</div>);
 jest.mock('./Banner', () => () => <div>MockBanner</div>);
 jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
+jest.mock('./AiGenerate', () => () => <div>MockAiGenerate</div>);
+jest.mock('./AiGenerate/useAiGenerateStore', () => ({
+  useAiGenerateStore: () => ({
+    isAiGenerateShown: false,
+    setState: jest.fn(),
+  }),
+}));
 
 jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);

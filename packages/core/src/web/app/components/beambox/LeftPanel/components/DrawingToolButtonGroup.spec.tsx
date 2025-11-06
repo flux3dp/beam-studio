@@ -41,6 +41,13 @@ jest.mock('@core/app/components/pass-through', () => ({
   showPassThrough: mockShowPassThrough,
 }));
 
+jest.mock('../../svg-editor/AiGenerate/useAiGenerateStore', () => ({
+  useAiGenerateStore: () => ({
+    isAiGenerateShown: false,
+    setState: jest.fn(),
+  }),
+}));
+
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 describe('test DrawingToolButtonGroup', () => {

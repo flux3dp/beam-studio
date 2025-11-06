@@ -1,8 +1,9 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import { BulbOutlined, ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Input, Select, Space } from 'antd';
 import classNames from 'classnames';
+import { createPortal } from 'react-dom';
 import { match } from 'ts-pattern';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -12,19 +13,46 @@ import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } fro
 import { fluxIDEvents, getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
 import type { IUser } from '@core/interfaces/IUser';
 
-import { getSelectedOptionConfig } from './categories';
 import ImageHistory from './components/ImageHistory';
 import ImageResults from './components/ImageResults';
 import ImageUploadArea from './components/ImageUploadArea';
 import styles from './index.module.scss';
-import { buildStyledPrompt, getStylePreset } from './stylePresets';
-import type { AspectRatio, ImageSize } from './useAiGenerateStore';
+import type { AspectRatio, ImageDimensions, ImageSize, Orientation } from './useAiGenerateStore';
 import { useAiGenerateStore } from './useAiGenerateStore';
+import { getSelectedOptionConfig } from './utils/categories';
+import { buildStyledPrompt, getStylePreset } from './utils/stylePresets';
 
 const { TextArea } = Input;
 
+interface RatioOption {
+  displayLabel: string;
+  orientation: Orientation;
+  ratio: AspectRatio;
+}
+
+// All available ratio options - first 3 are always displayed, rest are in "More" menu
+const ALL_RATIOS: RatioOption[] = [
+  // Always displayed ratios
+  { displayLabel: '1:1', orientation: 'landscape', ratio: '1:1' },
+  { displayLabel: '4:3', orientation: 'landscape', ratio: '4:3' },
+  { displayLabel: '16:9', orientation: 'landscape', ratio: '16:9' },
+  // Additional ratios (in "More" menu)
+  { displayLabel: '3:2', orientation: 'landscape', ratio: '3:2' },
+  { displayLabel: '3:4', orientation: 'portrait', ratio: '4:3' },
+  { displayLabel: '2:3', orientation: 'portrait', ratio: '3:2' },
+  { displayLabel: '9:16', orientation: 'portrait', ratio: '16:9' },
+];
+
+const ALWAYS_DISPLAYED_COUNT = 3;
+const ALWAYS_DISPLAYED_RATIOS = ALL_RATIOS.slice(0, ALWAYS_DISPLAYED_COUNT);
+const ADDITIONAL_RATIOS = ALL_RATIOS.slice(ALWAYS_DISPLAYED_COUNT);
+
 const UnmemorizedAiGenerate = () => {
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
+  const [showMoreMenu, setShowMoreMenu] = useState(false);
+  const [menuPosition, setMenuPosition] = useState<null | { left: number; top: number }>(null);
+  const moreButtonRef = useRef<HTMLDivElement>(null);
+  const closeTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { info } = currentUser || { info: null };
   const {
     addImageInput,
@@ -66,12 +94,82 @@ const UnmemorizedAiGenerate = () => {
     };
   }, []);
 
-  const getSizePixels = (size: ImageSize): string =>
-    match(size)
-      .with('small', () => '1024 x 1024')
-      .with('medium', () => '2048 x 2048')
-      .with('large', () => '4096 x 4096')
+  // Hover handlers for floating menu with delayed close
+  const handleMoreButtonEnter = () => {
+    // Clear any pending close timeout
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+
+    // Calculate menu position
+    if (moreButtonRef.current) {
+      const rect = moreButtonRef.current.getBoundingClientRect();
+
+      setMenuPosition({ left: rect.left + 86, top: rect.top });
+    }
+
+    setShowMoreMenu(true);
+  };
+
+  const handleMoreButtonLeave = () => {
+    // Delay closing the menu to give user time to reach it
+    closeTimeoutRef.current = setTimeout(() => {
+      setShowMoreMenu(false);
+      setMenuPosition(null);
+    }, 300);
+  };
+
+  const handleMenuEnter = () => {
+    if (closeTimeoutRef.current) {
+      clearTimeout(closeTimeoutRef.current);
+      closeTimeoutRef.current = null;
+    }
+  };
+
+  const handleMenuLeave = () => {
+    setShowMoreMenu(false);
+    setMenuPosition(null);
+  };
+
+  useEffect(
+    () => () => {
+      if (closeTimeoutRef.current) {
+        clearTimeout(closeTimeoutRef.current);
+      }
+    },
+    [],
+  );
+
+  const getSizePixels = ({ aspectRatio, orientation, size }: ImageDimensions): string => {
+    // Get maximum dimension based on size
+    const maxDimension = match(size)
+      .with('small', () => 1024)
+      .with('medium', () => 2048)
+      .with('large', () => 4096)
       .exhaustive();
+
+    // Handle square ratio
+    if (aspectRatio === '1:1') {
+      return `${maxDimension} x ${maxDimension}`;
+    }
+
+    // Parse and calculate based on orientation
+    const [widthRatio, heightRatio] = aspectRatio.split(':').map(Number);
+    const ratio = widthRatio / heightRatio;
+    let width: number;
+    let height: number;
+
+    if (orientation === 'landscape') {
+      width = maxDimension;
+      height = Math.round(width / ratio);
+    } else {
+      height = maxDimension;
+      width = Math.round(height / ratio);
+    }
+
+    return `${width} x ${height}`;
+  };
 
   const getImageSizeOption = (): ImageSizeOption =>
     match(dimensions)
@@ -86,6 +184,12 @@ const UnmemorizedAiGenerate = () => {
       .with('medium', () => '2K' as ImageResolution)
       .with('large', () => '4K' as ImageResolution)
       .exhaustive();
+
+  // Check if current selection matches any of the additional ratios in the "More" menu
+  const isAdditionalRatioSelected = (): boolean =>
+    ADDITIONAL_RATIOS.some(
+      (option) => option.ratio === dimensions.aspectRatio && option.orientation === dimensions.orientation,
+    );
 
   const handleGenerate = async () => {
     if (!patternDescription.trim()) {
@@ -357,39 +461,95 @@ const UnmemorizedAiGenerate = () => {
               <h3 className={styles['section-title']}>Image Dimensions</h3>
               <div className={styles['dimension-group']}>
                 <Space size={8}>
-                  {(['1:1', '4:3', '16:9'] as AspectRatio[]).map((ratio) => (
+                  {ALWAYS_DISPLAYED_RATIOS.map((option) => (
                     <Button
                       className={classNames(styles['dimension-button'], {
-                        [styles.active]: dimensions.aspectRatio === ratio,
+                        [styles.active]:
+                          dimensions.aspectRatio === option.ratio && dimensions.orientation === option.orientation,
                       })}
-                      key={ratio}
+                      key={option.ratio}
                       onClick={() =>
                         useAiGenerateStore.setState((state) => ({
-                          dimensions: { ...state.dimensions, aspectRatio: ratio },
+                          dimensions: {
+                            ...state.dimensions,
+                            aspectRatio: option.ratio,
+                            orientation: option.orientation,
+                          },
                         }))
                       }
                     >
                       <div className={styles['ratio-icon']}>
-                        <div className={classNames(styles['ratio-box'], styles[`ratio-${ratio.replace(':', '-')}`])} />
+                        <div
+                          className={classNames(styles['ratio-box'], styles[`ratio-${option.ratio.replace(':', '-')}`])}
+                        />
                       </div>
-                      <span>{ratio}</span>
+                      <span>{option.displayLabel}</span>
                     </Button>
                   ))}
-                  <Button
-                    className={classNames(styles['dimension-button'], {
-                      [styles.active]: dimensions.aspectRatio === 'custom',
-                    })}
-                    onClick={() =>
-                      useAiGenerateStore.setState((state) => ({
-                        dimensions: { ...state.dimensions, aspectRatio: 'custom' },
-                      }))
-                    }
+                  <div
+                    className={styles['more-button-container']}
+                    onMouseEnter={handleMoreButtonEnter}
+                    onMouseLeave={handleMoreButtonLeave}
+                    ref={moreButtonRef}
                   >
-                    <div className={styles['ratio-icon']}>
-                      <div className={classNames(styles['ratio-box'], styles['ratio-custom'])} />
-                    </div>
-                    <span>More</span>
-                  </Button>
+                    <Button
+                      className={classNames(styles['dimension-button'], {
+                        [styles.active]: isAdditionalRatioSelected(),
+                      })}
+                    >
+                      <div className={styles['ratio-icon']}>
+                        <div className={classNames(styles['ratio-box'], styles['ratio-more'])} />
+                      </div>
+                      <span>More</span>
+                    </Button>
+                  </div>
+                  {/* Portal menu rendered at document.body to avoid clipping */}
+                  {showMoreMenu &&
+                    menuPosition &&
+                    createPortal(
+                      <div
+                        className={styles['floating-ratio-menu-portal']}
+                        onMouseEnter={handleMenuEnter}
+                        onMouseLeave={handleMenuLeave}
+                        style={{
+                          left: `${menuPosition.left}px`,
+                          top: `${menuPosition.top}px`,
+                        }}
+                      >
+                        {ADDITIONAL_RATIOS.map((option) => (
+                          <div
+                            className={classNames(styles['menu-item'], {
+                              [styles.active]:
+                                dimensions.aspectRatio === option.ratio &&
+                                dimensions.orientation === option.orientation,
+                            })}
+                            key={`${option.ratio}-${option.orientation}`}
+                            onClick={() => {
+                              useAiGenerateStore.setState((state) => ({
+                                dimensions: {
+                                  ...state.dimensions,
+                                  aspectRatio: option.ratio,
+                                  orientation: option.orientation,
+                                },
+                              }));
+                              setShowMoreMenu(false);
+                              setMenuPosition(null);
+                            }}
+                          >
+                            <div className={styles['menu-icon']}>
+                              <div
+                                className={classNames(
+                                  styles['menu-ratio-box'],
+                                  styles[`ratio-${option.orientation}-${option.ratio.replace(':', '-')}`],
+                                )}
+                              />
+                            </div>
+                            <span>{option.displayLabel}</span>
+                          </div>
+                        ))}
+                      </div>,
+                      document.body,
+                    )}
                 </Space>
               </div>
 
@@ -406,7 +566,7 @@ const UnmemorizedAiGenerate = () => {
                       }
                     >
                       <span className={styles['size-name']}>{size.charAt(0).toUpperCase() + size.slice(1)}</span>
-                      <span className={styles['size-pixels']}>{getSizePixels(size)}</span>
+                      <span className={styles['size-pixels']}>{getSizePixels({ ...dimensions, size })}</span>
                     </Button>
                   ))}
                 </Space>
