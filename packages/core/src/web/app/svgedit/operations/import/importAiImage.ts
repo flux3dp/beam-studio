@@ -10,7 +10,7 @@ import urlToBlob from './urlToBlob';
  * @returns Promise that resolves when the image is successfully imported
  * @throws Error if the import fails
  */
-const importAiImage = async (imageUrl: string): Promise<void> => {
+export const importAiImage = async (imageUrl: string): Promise<void> => {
   try {
     // Convert the image URL to a Blob
     const blob = await urlToBlob(imageUrl);
@@ -36,5 +36,3 @@ const importAiImage = async (imageUrl: string): Promise<void> => {
     throw new Error('Failed to import AI image: Unknown error');
   }
 };
-
-export default importAiImage;
