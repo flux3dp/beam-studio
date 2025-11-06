@@ -6,7 +6,7 @@ describe('reset', () => {
   });
 
   const resetBeamStudio = () => {
-    ['Reset Beam Studio', 'Next', 'Work Offline', 'Skip', 'New Project'].forEach((text) => cy.contains(text).click());
+    ['Reset Beam Studio', 'Next', 'Sign in later', 'Skip', 'New Project'].forEach((text) => cy.contains(text).click());
 
     const buttonCount = isRunningAtGithub ? 1 : 3;
 

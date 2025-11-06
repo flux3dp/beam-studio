@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Altura do Objeto',
         ink_saturation: 'Saturação',
-        ink_type: {
-          normal: 'Tinta',
-          text: 'Tipo de tinta',
-          UV: 'Tinta UV',
-        },
         laser_speed: {
           fast: 'Rápido',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Novo no FLUX? Crie uma conta.',
     not_verified: 'O endereço de e-mail ainda não foi verificado.',
-    offline: 'Trabalhar offline',
     password: 'Senha',
     register: 'Criar sua conta FLUX',
     remember_me: 'Lembrar de mim',
+    sign_in_later: 'Entrar mais tarde',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Faça login para desbloquear a biblioteca de formas.',
-    work_offline: 'Trabalhar offline',
   },
   framing: {
     area_check: 'Verificação da Área',

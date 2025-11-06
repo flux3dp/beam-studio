@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Ύψος αντικειμένου',
         ink_saturation: 'Κορεσμός',
-        ink_type: {
-          normal: 'Μελάνι',
-          text: 'Τύπος μελανιού',
-          UV: 'UV μελάνι',
-        },
         laser_speed: {
           fast: 'Γρήγορα',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Νέος στο FLUX; Δημιουργήστε έναν λογαριασμό.',
     not_verified: 'Το email δεν έχει επιβεβαιωθεί ακόμα.',
-    offline: 'Εργασία εκτός σύνδεσης',
     password: 'Κωδικός πρόσβασης',
     register: 'Δημιουργήστε τον λογαριασμό σας FLUX',
     remember_me: 'Να με θυμάσαι',
+    sign_in_later: 'Σύνδεση αργότερα',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Συνδεθείτε για να ξεκλειδώσετε τη βάση δεδομένων σχημάτων.',
-    work_offline: 'Εργασία εκτός σύνδεσης',
   },
   framing: {
     area_check: 'Έλεγχος περιοχής',

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/zh-tw/articles/9402670389647',
         height: '物件高度',
         ink_saturation: '飽和度',
-        ink_type: {
-          normal: '一般墨',
-          text: '墨水類型',
-          UV: 'UV 墨',
-        },
         laser_speed: {
           fast: '快',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: '還不是會員？免費註冊新帳號',
     not_verified: '信箱尚未認證。',
-    offline: '離線使用',
     password: '密碼',
     register: '註冊 FLUX 帳號',
     remember_me: '記住我',
+    sign_in_later: '稍後登入',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: '登入使用百萬圖形資源',
-    work_offline: '我要離線使用',
   },
   framing: {
     area_check: '區域檢查',

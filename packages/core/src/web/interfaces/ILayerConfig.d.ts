@@ -63,7 +63,6 @@ type PrintingConfig = {
   refreshInterval: number;
   refreshThreshold: number;
   split: boolean;
-  uv: number;
   wInk: number;
   wMultipass: number;
   wRepeat: number;

@@ -24,7 +24,7 @@ it('check new file after reset', () => {
   cy.go2Preference();
   cy.contains('Reset Beam Studio').click();
   cy.contains('Next').click();
-  cy.contains('Work Offline').click();
+  cy.contains('Sign in later').click();
   cy.contains('Skip').click();
   cy.contains('New Project').click();
   cy.get('button[class^="ant-btn"]').contains('No').click({ timeout: 100000 });

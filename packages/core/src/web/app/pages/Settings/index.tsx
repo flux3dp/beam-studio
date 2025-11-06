@@ -22,7 +22,6 @@ import Privacy from '@core/app/components/settings/Privacy';
 import TextToPath from '@core/app/components/settings/TextToPath';
 import Update from '@core/app/components/settings/Update';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
-import { checkBM2 } from '@core/helpers/checkFeature';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import storage from '@core/implementations/storage';
@@ -112,7 +111,7 @@ function Settings(): React.JSX.Element {
             <TextToPath options={commonBooleanOptions} />
             <Module options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
             <AdorModule unitInputProps={commonUnitInputProps} />
-            {checkBM2() && <Beamo2Module options={commonBooleanOptions} />}
+            <Beamo2Module options={commonBooleanOptions} />
             <BB2Settings options={commonBooleanOptions} />
             <Privacy options={commonBooleanOptions} />
             <Experimental options={commonBooleanOptions} />

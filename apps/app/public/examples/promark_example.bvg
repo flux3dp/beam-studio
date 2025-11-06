@@ -344,7 +344,7 @@
    <image href="blob:file:///01f56d93-4395-422f-8e58-218ca1f51887" x="91.28125" y="140.0625" width="338.00391" height="170.73828" filter="url(#filter#333333)"/>
   </symbol>
  </defs>
- <g class="layer" data-color="#333333" data-speed="1000" data-printingSpeed="60" data-strength="15" data-minPower="0" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="0" data-module="15" data-backlash="0" data-multipass="3" data-uv="0" data-halftone="1" data-wSpeed="100" data-wInk="-12" data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100" data-kRatio="100" data-printingStrength="100" data-focus="-2" data-focusStep="-2" data-fillInterval="0.01" data-fillAngle="0" data-frequency="27" data-pulseWidth="100">
+ <g class="layer" data-color="#333333" data-speed="1000" data-printingSpeed="60" data-strength="15" data-minPower="0" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="0" data-module="15" data-backlash="0" data-multipass="3" data-halftone="1" data-wSpeed="100" data-wInk="-12" data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100" data-kRatio="100" data-printingStrength="100" data-focus="-2" data-focusStep="-2" data-fillInterval="0.01" data-fillAngle="0" data-frequency="27" data-pulseWidth="100">
   <title>Layer 1</title>
   <filter id="filter#333333" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
    <feColorMatrix type="matrix" values="1 0 0 0 0.2, 0 1 0 0 0.2, 0 0 1 0 0.2, 0 0 0 1 0"/>

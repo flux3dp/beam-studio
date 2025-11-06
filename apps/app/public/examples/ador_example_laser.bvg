@@ -232,14 +232,14 @@
    </g>
   </symbol>
  </defs>
- <g data-configName="木板 - 3mm 切割" display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3" data-backlash="0" data-module="2" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="100" data-printingSpeed="60" data-speed="8" clip-path="url(#scene_mask)" data-color="#E72119" class="layer">
+ <g data-configName="木板 - 3mm 切割" display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-multipass="3" data-backlash="0" data-module="2" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="100" data-printingSpeed="60" data-speed="8" clip-path="url(#scene_mask)" data-color="#E72119" class="layer">
   <title>Cutting Layer</title>
   <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#E72119">
    <feColorMatrix values="1 0 0 0 0.9058823529411765, 0 1 0 0 0.12941176470588237, 0 0 1 0 0.09803921568627451, 0 0 0 1 0" type="matrix"/>
   </filter>
   <use data-wireframe="false" data-original-layer="Cutting Layer" data-xform="x=193.88670349121094 y=243.9100341796875 width=1438.4180908203125 height=1438.4180908203125 " data-ratiofixed="true" xlink:href="#svg_9" id="svg_10" transform="matrix(0.34760407689087996,0,0,0.3476041690896371,-48.76679981848845,-53.9325790450044) " y="774.29579" x="809.45829"/>
  </g>
- <g display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3" data-backlash="0" data-module="2" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="70" data-printingSpeed="60" data-speed="150" clip-path="url(#scene_mask)" data-color="#040000" class="layer" data-configName="木板 - 刻印">
+ <g display="inline" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-multipass="3" data-backlash="0" data-module="2" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="70" data-printingSpeed="60" data-speed="150" clip-path="url(#scene_mask)" data-color="#040000" class="layer" data-configName="木板 - 刻印">
   <title>Engrave Layer</title>
   <filter color-interpolation-filters="sRGB" primitiveUnits="userSpaceOnUse" filterUnits="objectBoundingBox" id="filter#040000">
    <feColorMatrix values="1 0 0 0 0.01568627450980392, 0 1 0 0 0, 0 0 1 0 0, 0 0 0 1 0" type="matrix"/>

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/zh-tw/articles/9402670389647',
         height: 'Objekthøjde',
         ink_saturation: 'Mætning',
-        ink_type: {
-          normal: 'Blæk',
-          text: 'Blæktype',
-          UV: 'UV-blæk',
-        },
         laser_speed: {
           fast: 'Hurtig',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Ny til FLUX? Opret en konto.',
     not_verified: 'E-mailadressen er endnu ikke bekræftet.',
-    offline: 'Arbejd offline',
     password: 'Adgangskode',
     register: 'Opret din FLUX-konto',
     remember_me: 'Husk mig',
+    sign_in_later: 'Log ind senere',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Log ind for at låse formdatabasen op.',
-    work_offline: 'Arbejd offline',
   },
   framing: {
     area_check: 'Områdekontrol',

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'ความสูงของวัตถุ',
         ink_saturation: 'ความอิ่มตัวสี',
-        ink_type: {
-          normal: 'หมึก',
-          text: 'ชนิดหมึก',
-          UV: 'หมึก UV',
-        },
         laser_speed: {
           fast: 'เร็ว',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'ใหม่กับ FLUX? สร้างบัญชี',
     not_verified: 'อีเมลยังไม่ได้รับการยืนยัน',
-    offline: 'ทํางานออฟไลน์',
     password: 'รหัสผ่าน',
     register: 'สร้างบัญชี FLUX',
     remember_me: 'จดจําฉันไว้',
+    sign_in_later: 'ลงชื่อเข้าใช้ภายหลัง',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'เข้าสู่ระบบเพื่อปลดล็อกฐานข้อมูลรูปทรง',
-    work_offline: 'ทํางานออฟไลน์',
   },
   framing: {
     area_check: 'ตรวจสอบพื้นที่',

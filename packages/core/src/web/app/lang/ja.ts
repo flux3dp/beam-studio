@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: '高さ',
         ink_saturation: '飽和',
-        ink_type: {
-          normal: '普通のインク',
-          text: 'インクの種類',
-          UV: 'UVインク',
-        },
         laser_speed: {
           fast: '高速',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'FLUXは初めてですか？ アカウントの作成してください。',
     not_verified: 'メールアドレスが未認証です。',
-    offline: 'オフライン作業',
     password: 'パスワード',
     register: 'FLUXアカウントを作成する',
     remember_me: 'ログインしたままにする',
+    sign_in_later: '後でサインインする',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'ログインして形状データベースのロックを解除します。',
-    work_offline: 'オフライン作業',
   },
   framing: {
     area_check: 'エリアチェック',

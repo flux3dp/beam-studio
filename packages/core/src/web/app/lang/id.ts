@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Tinggi Objek',
         ink_saturation: 'Saturasi',
-        ink_type: {
-          normal: 'Tinta',
-          text: 'Jenis Tinta',
-          UV: 'Tinta UV',
-        },
         laser_speed: {
           fast: 'Cepat',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Baru di FLUX? Buat akun.',
     not_verified: 'Alamat email belum diverifikasi.',
-    offline: 'Bekerja Offline',
     password: 'Kata Sandi',
     register: 'Buat Akun FLUX Anda',
     remember_me: 'Ingat saya',
+    sign_in_later: 'Masuk nanti',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Masuk untuk membuka kunci database bentuk.',
-    work_offline: 'Bekerja Offline',
   },
   framing: {
     area_check: 'Pemeriksaan Area',

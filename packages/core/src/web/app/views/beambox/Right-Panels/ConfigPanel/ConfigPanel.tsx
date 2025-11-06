@@ -64,7 +64,6 @@ import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
-import UVBlock from './UVBlock';
 import UVIntervalX from './UVConfigs/UVIntervalX';
 import UVIntervalY from './UVConfigs/UVIntervalY';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
@@ -258,7 +257,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
   const commonContent = (
     <>
-      {isDevMode && isPrintingModule && UIType === 'default' && <UVBlock />}
       {isPrintingModule && <HalftoneBlock type={UIType} />}
       {!isPrintingModule && <PowerBlock type={UIType} />}
       {isPrintingModule && <InkBlock type={UIType} />}
@@ -321,7 +319,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
           {supportedModules.length > 1 && (
             <div className={styles['item-group']}>
               <ModuleBlock />
-              {isDevMode && isPrintingModule && <UVBlock />}
               <ObjectPanelItem.Divider />
             </div>
           )}

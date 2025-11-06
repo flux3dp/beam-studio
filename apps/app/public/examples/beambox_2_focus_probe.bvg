@@ -20,7 +20,7 @@
    <image href="blob:file:///48a97471-225d-44d1-ac11-87c1f00951fb" x="0" y="0" width="300" height="500" filter="url(#filter#F5222D)"/>
   </symbol>
  </defs>
- <g class="layer" data-color="#F5222D" data-speed="10" data-printingSpeed="60" data-strength="55" data-minPower="0" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="acrylic_3mm_cutting" data-module="15" data-backlash="0" data-multipass="3" data-uv="0" data-halftone="1" data-wSpeed="100" data-wInk="-12" data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100" data-kRatio="100" data-printingStrength="100" data-focus="-2" data-focusStep="-2" data-fillInterval="0.01" data-fillAngle="0" data-frequency="27" data-pulseWidth="100">
+ <g class="layer" data-color="#F5222D" data-speed="10" data-printingSpeed="60" data-strength="55" data-minPower="0" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-configName="acrylic_3mm_cutting" data-module="15" data-backlash="0" data-multipass="3" data-halftone="1" data-wSpeed="100" data-wInk="-12" data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100" data-kRatio="100" data-printingStrength="100" data-focus="-2" data-focusStep="-2" data-fillInterval="0.01" data-fillAngle="0" data-frequency="27" data-pulseWidth="100">
   <title>Cut</title>
   <filter id="filter#F5222D" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
    <feColorMatrix type="matrix" values="1 0 0 0 0.9607843137254902, 0 1 0 0 0.13333333333333333, 0 0 1 0 0.17647058823529413, 0 0 0 1 0"/>

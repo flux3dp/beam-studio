@@ -1179,7 +1179,7 @@
    </g>
   </symbol>
  </defs>
- <g data-fullcolor="1" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-uv="0" data-multipass="3" data-backlash="0" data-module="5" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="15" data-printingSpeed="60" data-speed="20" clip-path="url(#scene_mask)" data-color="#3F51B5" class="layer">
+ <g data-fullcolor="1" data-kRatio="100" data-yRatio="100" data-mRatio="100" data-cRatio="100" data-wRepeat="1" data-wMultipass="3" data-wInk="-9" data-wSpeed="100" data-multipass="3" data-backlash="0" data-module="5" data-diode="0" data-zstep="0" data-height="-3" data-repeat="1" data-ink="3" data-strength="15" data-printingSpeed="60" data-speed="20" clip-path="url(#scene_mask)" data-color="#3F51B5" class="layer">
   <title>Printing Layer</title>
   <use data-wireframe="false" x="234.99681" y="198.11667" transform="matrix(0.36278298634822903,0,0,0.36278298634822903,131.89233645809313,137.66897388225527) " data-xform="x=228.38671875 y=249.34375 width=1378.234375 height=1378.234375 " data-ratiofixed="true" xlink:href="#svg_1" id="svg_2"/>
  </g>

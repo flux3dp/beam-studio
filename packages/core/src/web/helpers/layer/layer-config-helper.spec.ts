@@ -276,7 +276,6 @@ describe('test layer-config-helper', () => {
       'wSpeed',
       'wMultipass',
       'wRepeat',
-      'uv',
       'repeat',
     ]);
     mockGetState.mockReturnValue({ workarea: 'fpm1' });

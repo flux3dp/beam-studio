@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Chiều cao vật thể',
         ink_saturation: 'Độ bão hòa mực',
-        ink_type: {
-          normal: 'Mực',
-          text: 'Loại mực',
-          UV: 'Mực UV',
-        },
         laser_speed: {
           fast: 'Nhanh',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Mới dùng FLUX? Đăng ký tài khoản',
     not_verified: 'Email chưa được xác minh',
-    offline: 'Làm việc ngoại tuyến',
     password: 'Mật khẩu',
     register: 'Tạo tài khoản FLUX',
     remember_me: 'Nhớ tôi',
+    sign_in_later: 'Đăng nhập sau',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Đăng nhập để mở khóa cơ sở dữ liệu hình dạng.',
-    work_offline: 'Làm việc ngoại tuyến',
   },
   framing: {
     area_check: 'Kiểm tra khu vực',

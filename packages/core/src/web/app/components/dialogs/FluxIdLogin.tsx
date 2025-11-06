@@ -136,7 +136,7 @@ const FluxIdLogin = ({ onClose, silent }: Props): React.JSX.Element => {
             {lang.register}
           </Button>
           <div className={styles.text}>
-            <div onClick={() => onClose()}>{lang.work_offline}</div>
+            <div onClick={() => onClose()}>{lang.sign_in_later}</div>
             {isFluxPlusActive && isMobile && (
               <div onClick={() => browser.open(lang.flux_plus.website_url)}>{lang.flux_plus.explore_plans}</div>
             )}

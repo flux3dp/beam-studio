@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Ketinggian Objek',
         ink_saturation: 'Ketepuan',
-        ink_type: {
-          normal: 'Dakwat',
-          text: 'Jenis Dakwat',
-          UV: 'Dakwat UV',
-        },
         laser_speed: {
           fast: 'Pantas',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Baru kepada FLUX? Buat akaun.',
     not_verified: 'Alamat e-mel belum disahkan lagi.',
-    offline: 'Bekerja Secara Luar Talian',
     password: 'Kata laluan',
     register: 'Buat Akaun FLUX Anda',
     remember_me: 'Ingatkan saya',
+    sign_in_later: 'Log masuk kemudian',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Log masuk untuk membuka pangkalan data bentuk.',
-    work_offline: 'Bekerja Secara Luar Talian',
   },
   framing: {
     area_check: 'Semakan Kawasan',

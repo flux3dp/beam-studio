@@ -7,17 +7,17 @@ const exampleList = [
     label: 'Example of Ador Laser',
     type: 'Example Files',
     // md5 hash of the SVG content, Linux and Windows by order
-    ador: ['21094e29e4aa055e51f2579e0ddcdcc9', '409ee0da9a9277ff78450f8413c15234'],
+    ador: ['21094e29e4aa055e51f2579e0ddcdcc9', '8db7cbb3f3c7590b650161d553111e0c'],
   },
   {
     label: 'Example of Ador Printing - Single Color',
     type: 'Example Files',
-    ador: ['1f6a7c0a62535d5f7adbbd96f8084f19', '5030263d3b95ab1a969dff315f2d1e99'],
+    ador: ['1f6a7c0a62535d5f7adbbd96f8084f19', '477a0a57f6d76065b88dff51266152e6'],
   },
   {
     label: 'Example of Ador Printing - Full Color',
     type: 'Example Files',
-    ador: ['f5fae608f9a4e41d205bdb77edad7d55', '4d6ee54cd6ac873c4b0ec20bce98ea4b'],
+    ador: ['f5fae608f9a4e41d205bdb77edad7d55', '3bf840d19f456cbb6ce89a824fc9b7b2'],
   },
   {
     label: 'Example of beamo',
@@ -34,13 +34,13 @@ const exampleList = [
   {
     label: 'Material Engraving Test',
     type: 'Material Test',
-    ador: ['22f173149936c6013852f36b4c8c7d2c', '595d3c88d037ea2477f2a67fc700b4d0'],
+    ador: ['22f173149936c6013852f36b4c8c7d2c', '48c8f0b3dda532bdff6321d0ba28b030'],
     beam: '9a17ce3c0bc1edbe2d23f02fd047dd2a',
   },
   {
     label: 'Material Engraving Test - Classic',
     type: 'Material Test',
-    ador: ['c8106ce4d8aa62f980bbfc2f67ed218e', '056d39ce285be6d34ec4ad29d4607bab'],
+    ador: ['c8106ce4d8aa62f980bbfc2f67ed218e', '9efd850999ea9a9eb07d7f4dbd71cd9d'],
     beam: '912135e676d666e9caaaae1647e0fe36',
   },
   {
@@ -64,7 +64,7 @@ const exampleList = [
   {
     label: 'Material Printing Test',
     type: 'Material Test',
-    ador: ['05e3c6a61f49072007e8b9990db6fd86', 'eeec36356b8bb8cbaab036e8719939e0'],
+    ador: ['05e3c6a61f49072007e8b9990db6fd86', '2e94214102a9e4976170014b4477d3b3'],
   },
   {
     label: 'Acrylic Focus Probe - 3mm',

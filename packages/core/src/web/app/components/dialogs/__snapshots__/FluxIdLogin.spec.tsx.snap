@@ -178,7 +178,7 @@ exports[`should render correctly desktop version 1`] = `
             class="text"
           >
             <div>
-              Work Offline
+              Sign in later
             </div>
           </div>
         </div>
@@ -366,7 +366,7 @@ exports[`should render correctly desktop version 2`] = `
             class="text"
           >
             <div>
-              Work Offline
+              Sign in later
             </div>
           </div>
         </div>
@@ -554,7 +554,7 @@ exports[`should render correctly mobile version 1`] = `
             class="text"
           >
             <div>
-              Work Offline
+              Sign in later
             </div>
             <div>
               Explore FLUX+ Plans
@@ -745,7 +745,7 @@ exports[`should render correctly web version 1`] = `
             class="text"
           >
             <div>
-              Work Offline
+              Sign in later
             </div>
           </div>
         </div>

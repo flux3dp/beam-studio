@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Kohteen korkeus',
         ink_saturation: 'Kylläisyys',
-        ink_type: {
-          normal: 'Muste',
-          text: 'Mustetyyppi',
-          UV: 'UV-muste',
-        },
         laser_speed: {
           fast: 'Nopea',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Uusi käyttäjä? Luo tili',
     not_verified: 'Sähköpostiosoitetta ei ole vielä vahvistettu',
-    offline: 'Työskentele offline-tilassa',
     password: 'Salasana',
     register: 'Luo FLUX-tili',
     remember_me: 'Muista minut',
+    sign_in_later: 'Kirjaudu myöhemmin',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Kirjaudu sisään avataksesi muotokirjaston.',
-    work_offline: 'Työskentele offline-tilassa',
   },
   framing: {
     area_check: 'Alueen tarkistus',

@@ -620,11 +620,6 @@ const lang: ILang = {
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Výška objektu',
         ink_saturation: 'Saturace',
-        ink_type: {
-          normal: 'Inkoust',
-          text: 'Typ inkoustu',
-          UV: 'UV inkoust',
-        },
         laser_speed: {
           fast: 'Rychlá',
           max: 300,
@@ -1313,13 +1308,12 @@ const lang: ILang = {
     lost_password_url: 'https://id.flux3dp.com/user/forgot-password',
     new_to_flux: 'Začínáte s FLUX? Vytvořte si účet.',
     not_verified: 'E-mailová adresa zatím nebyla ověřena.',
-    offline: 'Práce off-line',
     password: 'Heslo',
     register: 'Vytvořte si svůj FLUX účet',
     remember_me: 'Pamatuj si mě',
+    sign_in_later: 'Přihlásit se později',
     signup_url: 'https://id.flux3dp.com/user/login#up',
     unlock_shape_library: 'Přihlaste se k odemčení databáze tvarů.',
-    work_offline: 'Práce off-line',
   },
   framing: {
     area_check: 'Kontrola oblasti',

@@ -4896,7 +4896,7 @@
    </g>
   </symbol>
  </defs>
- <g data-halftone="2" data-amDensity="5" class="layer" data-color="#333333" clip-path="url(#scene_mask)" data-speed="20" data-printingSpeed="15" data-strength="15" data-ink="70" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="7" data-backlash="0" data-multipass="3" data-uv="0" data-wSpeed="100" data-wInk="-9" data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100" data-kRatio="100" data-fullcolor="1" display="inline">
+ <g data-halftone="2" data-amDensity="5" class="layer" data-color="#333333" clip-path="url(#scene_mask)" data-speed="20" data-printingSpeed="15" data-strength="15" data-ink="70" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="7" data-backlash="0" data-multipass="3" data-wSpeed="100" data-wInk="-9" data-wMultipass="3" data-wRepeat="1" data-cRatio="100" data-mRatio="100" data-yRatio="100" data-kRatio="100" data-fullcolor="1" display="inline">
   <title>Printing Layer</title>
   <use transform="matrix(0.0533813 0 0 0.0533813 337.649 337.736)" data-wireframe="false" id="svg_91" xlink:href="#svg_1" data-ratiofixed="true" data-xform="x=1139.6099853515625 y=3285.20166015625 width=1195.8338623046875 height=2003.708984375 " data-original-layer="Printing Layer" y="-1403.39449" x="-1353.94875"/>
   <use transform="matrix(0.0533813 0 0 0.0533813 337.649 337.736)" data-wireframe="false" id="svg_92" xlink:href="#svg_2" data-ratiofixed="true" data-xform="x=3262.174560546875 y=1157.0972900390625 width=2009.220947265625 height=1199.2789306640625 " data-original-layer="Printing Layer" y="-1403.39449" x="-1353.94875"/>

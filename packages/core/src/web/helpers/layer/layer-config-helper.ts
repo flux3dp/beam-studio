@@ -60,7 +60,6 @@ const attributeMap: Record<ConfigKey, string> = {
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
-  uv: 'data-uv',
   uvIntervalX: 'data-uvIntervalX',
   uvIntervalY: 'data-uvIntervalY',
   wInk: 'data-wInk',
@@ -110,7 +109,6 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   refreshThreshold: 0,
   repeat: 1,
   speed: 20,
-  uv: 0,
   uvIntervalX: 0.8,
   uvIntervalY: 0.6,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
@@ -211,7 +209,6 @@ export const printerConfigKeys: ConfigKey[] = [
   'wSpeed',
   'wMultipass',
   'wRepeat',
-  'uv',
   'repeat',
 ] as const;
 

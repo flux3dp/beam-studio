@@ -1486,7 +1486,7 @@
    <feColorMatrix values="1 0 0 0 0.6980392156862745, 0 1 0 0 0.0784313725490196, 0 0 1 0 0.10196078431372549, 0 0 0 1 0" type="matrix"/>
   </filter>
  </g>
- <g class="layer" data-color="#7A0505" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="100" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3" data-uv="0">
+ <g class="layer" data-color="#7A0505" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="100" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3">
   <title>#7A0605</title>
   <rect vector-effect="non-scaling-stroke" width="42.7" height="42.7" data-ratiofixed="true" id="svg_377" fill="#7A0505" y="787.40507" x="349.5" stroke="#7A0505" data-original-layer="#7A0605"/>
   <filter id="filter#7A0505" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
@@ -1535,7 +1535,7 @@
    <feColorMatrix values="1 0 0 0 0.3843137254901961, 0 1 0 0 0.5490196078431373, 0 0 1 0 0.17647058823529413, 0 0 0 1 0" type="matrix"/>
   </filter>
  </g>
- <g class="layer" data-color="#3F690F" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="60" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3" data-uv="0">
+ <g class="layer" data-color="#3F690F" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="60" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3">
   <title>#2F6A00</title>
   <filter id="filter#3F690F" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
    <feColorMatrix type="matrix" values="1 0 0 0 0.24705882352941178, 0 1 0 0 0.4117647058823529, 0 0 1 0 0.058823529411764705, 0 0 0 1 0"/>
@@ -1584,7 +1584,7 @@
    <feColorMatrix values="1 0 0 0 0.6470588235294118, 0 1 0 0 0.6470588235294118, 0 0 1 0 0, 0 0 0 1 0" type="matrix"/>
   </filter>
  </g>
- <g class="layer" data-color="#7A7A41" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="80" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3" data-uv="0" display="inline">
+ <g class="layer" data-color="#7A7A41" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="80" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3" display="inline">
   <title>#797A38</title>
   <filter id="filter#7A7A41" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
    <feColorMatrix type="matrix" values="1 0 0 0 0.47843137254901963, 0 1 0 0 0.47843137254901963, 0 0 1 0 0.2549019607843137, 0 0 0 1 0"/>
@@ -1634,7 +1634,7 @@
    <feColorMatrix values="1 0 0 0 0.10588235294117647, 0 1 0 0 0.45098039215686275, 0 0 1 0 0.6, 0 0 0 1 0" type="matrix"/>
   </filter>
  </g>
- <g class="layer" data-color="#13435C" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="40" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3" data-uv="0">
+ <g class="layer" data-color="#13435C" clip-path="url(#scene_mask)" data-speed="100" data-printingSpeed="60" data-strength="40" data-ink="3" data-repeat="1" data-height="-3" data-zstep="0" data-diode="0" data-module="2" data-backlash="0" data-multipass="3">
   <title>#00455E</title>
   <filter id="filter#13435C" filterUnits="objectBoundingBox" primitiveUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
    <feColorMatrix type="matrix" values="1 0 0 0 0.07450980392156863, 0 1 0 0 0.2627450980392157, 0 0 1 0 0.3607843137254902, 0 0 0 1 0"/>
