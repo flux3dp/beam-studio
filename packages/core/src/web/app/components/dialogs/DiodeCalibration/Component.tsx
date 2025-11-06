@@ -1,6 +1,7 @@
 import type { ReactNode } from 'react';
 import React, { useCallback, useRef, useState } from 'react';
 
+import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import classNames from 'classnames';
 
@@ -395,18 +396,24 @@ const DiodeCalibration = ({ device, onClose }: Props): ReactNode => {
             onClick={() => moveAndRetakePicture('right')}
           />
         </div>
-        <div className={styles.hintIcon} onClick={() => setShowHint(true)}>
-          ?
+        <div
+          className={styles.hintIcon}
+          onClick={() => setShowHint(!showHint)}
+          onMouseLeave={() => setShowHint(false)}
+          onMouseOut={() => setShowHint(false)}
+        >
+          <QuestionCircleOutlined />
         </div>
-        <Tooltip
-          onOpenChange={(visible) => {
-            if (!visible) setShowHint(visible);
-          }}
-          open={showHint}
-          placement="rightTop"
-          title={lang.hint_adjust_parameters}
-        />
         <div className={styles.controls}>
+          <Tooltip
+            className={styles.tooltip}
+            onOpenChange={(visible) => {
+              if (!visible) setShowHint(visible);
+            }}
+            open={showHint}
+            placement="topRight"
+            title={lang.hint_adjust_parameters}
+          />
           <label htmlFor="diode-calibration-dx-input">{lang.dx}</label>
           <UnitInput
             className={styles.input}
@@ -479,7 +486,7 @@ const DiodeCalibration = ({ device, onClose }: Props): ReactNode => {
         {manualCalibration}
       </DraggableModal>
     );
-  }, [cameraMovedX, cameraMovedY, dx, dy, handleClose, moveAndRetakePicture, lang, showHint]);
+  }, [cameraMovedX, cameraMovedY, dx, dy, handleClose, moveAndRetakePicture, lang, showHint, isInch]);
 
   const renderStepFinish = useCallback((): React.JSX.Element => {
     return (
