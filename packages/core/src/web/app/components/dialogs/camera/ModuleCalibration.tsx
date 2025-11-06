@@ -43,18 +43,31 @@ const doCalibration = async (model: WorkAreaModel, module: LayerModuleType): Pro
       await deviceMaster.doAdorIRCalibration();
     }
   } else if (module === LayerModule.PRINTER_4C) {
+    let machineLimitPositionData: null | string = null;
+
     try {
       const res = await deviceMaster.getDeviceSetting('machine_limit_position');
 
       if (!res.value) throw new Error('machine_limit_position is not set');
 
-      const blob = await exportFuncs.fetchBeamo24CCalibrationTaskCode(JSON.stringify(JSON.parse(res.value)));
-
-      if (blob) await deviceMaster.doCalibration({ blob });
-      else return false;
+      machineLimitPositionData = res.value;
     } catch (error) {
       console.error('Failed to get machine_limit_position', error);
-      await deviceMaster.doBeamo24CCalibration();
+    }
+
+    try {
+      if (machineLimitPositionData) {
+        const blob = await exportFuncs.fetchBeamo24CCalibrationTaskCode(
+          JSON.stringify(JSON.parse(machineLimitPositionData)),
+        );
+
+        if (blob) await deviceMaster.doCalibration({ blob });
+        else return false;
+      } else {
+        await deviceMaster.doBeamo24CCalibration();
+      }
+    } catch (error) {
+      console.error('Failed perform calibration', error);
     }
   } else if (module === LayerModule.LASER_1064) {
     await deviceMaster.doBeamo2IRCalibration();
