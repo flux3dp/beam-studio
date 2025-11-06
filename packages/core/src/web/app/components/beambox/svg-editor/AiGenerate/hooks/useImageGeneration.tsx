@@ -33,9 +33,9 @@ export const useImageGeneration = ({
   const {
     addPendingHistoryItem,
     clearGenerationResults,
+    inputFields: styleCustomFields,
     patternDescription,
     selectedImageInputs,
-    styleCustomFields,
     updateHistoryItem,
   } = useAiGenerateStore();
 
@@ -76,7 +76,7 @@ export const useImageGeneration = ({
 
     if (stylePreset) {
       // Style mode: construct weighted JSON prompt
-      const preset = getStylePreset(stylePreset);
+      const preset = getStylePreset(stylePreset as any);
 
       if (!preset) {
         useAiGenerateStore.setState({ errorMessage: 'Invalid style preset selected' });

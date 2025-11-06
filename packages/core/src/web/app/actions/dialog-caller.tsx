@@ -57,6 +57,7 @@ import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 import type { GlobalPreferenceKey } from '@core/interfaces/Preference';
 
 import StyleSelectionPanel from '../components/beambox/svg-editor/AiGenerate/components/StyleSelectionPanel';
+import type { StylePresetKey } from '../components/beambox/svg-editor/AiGenerate/utils/stylePresets';
 import StampMakerPanel from '../components/StampMakerPanel';
 
 let svgCanvas: ISVGCanvas;
@@ -680,7 +681,7 @@ export default {
       />,
     );
   },
-  showStyleSelectionPanel: (onSelect: (optionId: string) => void, currentSelection: null | string): void => {
+  showStyleSelectionPanel: (onSelect: (style: StylePresetKey) => void, currentStyle: StylePresetKey): void => {
     const id = 'style-selection-panel';
 
     if (isIdExist(id)) {
@@ -690,10 +691,10 @@ export default {
     addDialogComponent(
       id,
       <StyleSelectionPanel
-        currentSelection={currentSelection}
+        currentStyle={currentStyle}
         onClose={() => popDialogById(id)}
-        onSelect={(optionId) => {
-          onSelect(optionId);
+        onSelect={(style) => {
+          onSelect(style as StylePresetKey);
         }}
       />,
     );
