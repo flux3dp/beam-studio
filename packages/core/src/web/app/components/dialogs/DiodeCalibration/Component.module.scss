@@ -1,0 +1,95 @@
+.wrapper {
+  display: flex;
+  position: relative;
+
+  .imgCenter {
+    background-size: cover !important;
+    background-position: 50% 50% !important;
+    width: 200px;
+    height: 200px;
+    margin-bottom: 20px;
+    position: relative;
+    outline: 1px solid #000000;
+
+    .virtualSquare {
+      position: absolute;
+      border: 1px dashed #ff3300;
+    }
+  }
+
+  .hintIcon {
+    position: absolute;
+    top: -36px;
+    right: 0px;
+    padding-right: 19px;
+    width: 40px;
+    height: 17px;
+    line-height: 17px;
+    color: #626262;
+    font-weight: bold;
+    text-align: center;
+    cursor: pointer;
+  }
+
+  .cameraControl {
+    position: absolute;
+    border-style: solid;
+    width: 0px;
+    height: 0px;
+    opacity: 0.5;
+
+    &:hover {
+      opacity: 0.7;
+    }
+
+    &:active {
+      opacity: 1;
+    }
+
+    &.up {
+      border-color: transparent transparent #333333 transparent;
+      border-width: 0px 10px 16px 10px;
+      top: 5px;
+      left: 90px;
+    }
+
+    &.down {
+      border-color: #333333 transparent transparent transparent;
+      border-width: 16px 10px 0px 10px;
+      bottom: 5px;
+      left: 90px;
+    }
+
+    &.left {
+      border-color: transparent #333333 transparent transparent;
+      border-width: 10px 16px 10px 0px;
+      top: 90px;
+      left: 5px;
+    }
+
+    &.right {
+      border-color: transparent transparent transparent #333333;
+      border-width: 10px 0px 10px 16px;
+      top: 90px;
+      right: 5px;
+    }
+  }
+
+  .controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-left: 20px;
+
+    label {
+      font-weight: bold;
+      display: inline-block;
+      color: #555;
+      width: 70px;
+    }
+
+    .unit {
+      right: 4px;
+    }
+  }
+}
