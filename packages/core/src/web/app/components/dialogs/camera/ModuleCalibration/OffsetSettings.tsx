@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 import { sprintf } from 'sprintf-js';
@@ -45,7 +45,6 @@ export const OffsetSettings = ({ layerModule, onClose }: Props) => {
       useCache: false,
       workarea: deviceMaster.currentDevice!.info.model,
     }).then((offset) => {
-      console.log('Current offset for', layerModule, offset);
       setX(offset[0]);
       setY(offset[1]);
     });
@@ -90,6 +89,9 @@ export const OffsetSettings = ({ layerModule, onClose }: Props) => {
             <label>X</label>
             <UnitInput
               className={styles.input}
+              onChange={(val) => {
+                if (val !== null) setX(val);
+              }}
               precision={precision}
               step={step}
               unit={unit}
@@ -99,6 +101,9 @@ export const OffsetSettings = ({ layerModule, onClose }: Props) => {
             <label>Y</label>
             <UnitInput
               className={styles.input}
+              onChange={(val) => {
+                if (val !== null) setY(val);
+              }}
               precision={precision}
               step={step}
               unit={unit}
