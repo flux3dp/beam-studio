@@ -33,7 +33,7 @@ export const getPrintingModule = (workarea?: WorkAreaModel): LayerModuleType => 
   return LayerModule.PRINTER;
 };
 
-export const getModulesTranslations = (): Record<LayerModuleType, string> => {
+export const getModulesTranslations = (shouldNote4C = true): Record<LayerModuleType, string> => {
   const t = i18n.lang.layer_module;
 
   return {
@@ -42,7 +42,7 @@ export const getModulesTranslations = (): Record<LayerModuleType, string> => {
     [LayerModule.LASER_1064]: t.laser_2w_infrared,
     [LayerModule.LASER_UNIVERSAL]: t.general_laser,
     [LayerModule.PRINTER]: t.printing,
-    [LayerModule.PRINTER_4C]: `${t.printing} (4C)`,
+    [LayerModule.PRINTER_4C]: shouldNote4C ? `${t.printing} (4C)` : t.printing,
     [LayerModule.UV_PRINT]: t.uv_print,
     [LayerModule.UV_VARNISH]: t.uv_varnish,
     [LayerModule.UV_WHITE_INK]: t.uv_white_ink,
