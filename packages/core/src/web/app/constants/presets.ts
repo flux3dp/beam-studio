@@ -449,31 +449,32 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
   },
   // end promark
   // printing
-  leather_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } } },
-  fabric_printing: {
-    ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
+  wood_printing: {
+    ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
+    fbm2: { [LayerModule.PRINTER_4C]: { ink: 60, speed: 15 } },
   },
-  glass_printing: { ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 4, speed: 30 } } },
-  canvas_printing: {
-    ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 4, speed: 60 } },
-    fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } },
-  },
-  canvas_fabric_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } } },
+  mdf_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } } },
+  sticker_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 75, speed: 15 } } },
   cardstock_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
   },
   cardboard_printing: {
     fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } },
   },
-  wood_printing: {
-    ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
-    fbm2: { [LayerModule.PRINTER_4C]: { ink: 60, speed: 15 } },
-  },
-  mdf_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } } },
   bamboo_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
     fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } },
   },
+  canvas_fabric_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } } },
+  canvas_printing: {
+    ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 4, speed: 60 } },
+    fbm2: { [LayerModule.PRINTER_4C]: { ink: 90, speed: 15 } },
+  },
+  leather_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 70, speed: 15 } } },
+  fabric_printing: {
+    ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
+  },
+  glass_printing: { ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 4, speed: 30 } } },
   cork_printing: { ado1: { [LayerModule.PRINTER]: { ink: 2, module: LayerModule.PRINTER, multipass: 3, speed: 60 } } },
   flat_stone_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
@@ -488,7 +489,6 @@ export const presets: Record<string, Partial<Record<PresetModel, Partial<Record<
   gloss_leather_printing: {
     ado1: { [LayerModule.PRINTER]: { ink: 3, module: LayerModule.PRINTER, multipass: 3, speed: 60 } },
   },
-  sticker_printing: { fbm2: { [LayerModule.PRINTER_4C]: { ink: 75, speed: 15 } } },
   // end printing
 };
 /* eslint-enable perfectionist/sort-objects */
