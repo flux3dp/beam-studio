@@ -13,6 +13,7 @@ interface Props {
   animationSrcs?: Array<{ src: string; type: string }>;
   buttons: Array<{ label: string; onClick: () => void; type?: 'default' | 'primary' }>;
   children?: React.ReactNode;
+  contentAfterAnimation?: React.ReactNode;
   contentBeforeSteps?: React.ReactNode;
   onClose?: (done?: boolean) => void;
   steps?: Array<ReactNode | ReactNode[]>;
@@ -23,6 +24,7 @@ const Instruction = ({
   animationSrcs,
   buttons,
   children,
+  contentAfterAnimation,
   contentBeforeSteps,
   onClose,
   steps,
@@ -78,6 +80,7 @@ const Instruction = ({
           ))}
         </video>
       )}
+      {contentAfterAnimation}
     </DraggableModal>
   );
 };
