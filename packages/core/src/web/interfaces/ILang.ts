@@ -1059,6 +1059,9 @@ export interface ILang {
     materials_required: string;
     module_calibration_2w_ir: string;
     module_calibration_printer: string;
+    module_offset_settings: string;
+    module_offset_settings_desc: string;
+    module_offset_settings_save_failed: string;
     moving_laser_head: string;
     moving_platform: string;
     next: string;
@@ -1346,7 +1349,7 @@ export interface ILang {
     UNKNOWN_ERROR: string;
   };
   global: Record<
-    'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'select' | 'stop',
+    'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'saving' | 'select' | 'stop',
     string
   > & {
     editing: Record<'redo' | 'reset' | 'reset_view' | 'undo' | 'zoom_in' | 'zoom_out', string>;

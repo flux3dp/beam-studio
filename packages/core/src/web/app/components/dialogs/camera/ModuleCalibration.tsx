@@ -1,5 +1,6 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 
+import { Button } from 'antd';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -16,6 +17,7 @@ import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 
 import Instruction from './common/Instruction';
 import Align from './ModuleCalibration/Align';
+import { showOffsetSettings } from './ModuleCalibration/util';
 
 const PROGRESS_ID = 'module-calibration';
 
@@ -137,8 +139,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
   const title = useMemo(() => {
     return match(module)
       .with(LayerModule.LASER_1064, () => lang.module_calibration_2w_ir)
-      .with(LayerModule.PRINTER, () => lang.module_calibration_printer)
-      .with(LayerModule.PRINTER_4C, () => `${lang.module_calibration_printer} (4C)`)
+      .with(LayerModule.PRINTER, LayerModule.PRINTER_4C, () => lang.module_calibration_printer)
       .otherwise(() => `${lang.module_calibration_printer} (${getModulesTranslations()[module]})`);
   }, [module, lang]);
 
@@ -222,6 +223,19 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
         <Instruction
           animationSrcs={animationSrcs}
           buttons={[{ label: lang.next, onClick: () => setStep(Step.FOCUS_AND_CUT), type: 'primary' }]}
+          contentAfterAnimation={
+            model === 'fbm2' ? (
+              <Button
+                onClick={() => {
+                  onClose(false);
+                  showOffsetSettings(module);
+                }}
+                type="link"
+              >
+                {getModulesTranslations(false)[module]} {lang.module_offset_settings}
+              </Button>
+            ) : undefined
+          }
           contentBeforeSteps={content}
           onClose={() => onClose(false)}
           title={title}

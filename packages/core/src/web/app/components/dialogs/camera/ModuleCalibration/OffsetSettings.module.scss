@@ -1,0 +1,63 @@
+@use '@core/styles/variables' as variables;
+
+.desc {
+  color: #7f7f7f;
+  margin-bottom: 24px;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+}
+
+.controls {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  width: 160px;
+
+  .inputs {
+    display: grid;
+    grid-template-columns: auto 1fr;
+    align-items: center;
+    gap: 10px 20px;
+
+    .input {
+      width: fit-content;
+    }
+
+    .unit {
+      right: 24px;
+    }
+  }
+
+  .illustration {
+    > div {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .circle {
+      width: 16px;
+      height: 16px;
+      border-radius: 8px;
+      background: #000000;
+      margin-right: 8px;
+
+      &.blue {
+        background: variables.$primary-blue;
+      }
+    }
+  }
+}
+
+.images {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  img {
+    width: 270px;
+  }
+}
