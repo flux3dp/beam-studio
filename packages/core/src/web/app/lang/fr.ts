@@ -1061,7 +1061,7 @@ const lang: ILang = {
     module_calibration_printer: "Étalonnage du module d'impression",
     module_offset_settings: 'Paramètres de décalage',
     module_offset_settings_desc: 'Veuillez ajuster les valeurs de décalage X et Y pour aligner la position réelle du %s avec la sortie du laser CO2.',
-    module_offset_settings_save_failed: 'Échec de l\'enregistrement des paramètres de décalage.',
+    module_offset_settings_save_failed: "Échec de l'enregistrement des paramètres de décalage.",
     moving_laser_head: 'Déplacement de la tête laser...',
     moving_platform: 'Déplacement de la plateforme...',
     next: 'Suivant',

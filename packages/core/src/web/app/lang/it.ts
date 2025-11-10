@@ -1060,7 +1060,7 @@ const lang: ILang = {
     module_calibration_2w_ir: 'Calibrazione modulo a infrarossi',
     module_calibration_printer: 'Calibrazione modulo stampante',
     module_offset_settings: 'Impostazioni di offset',
-    module_offset_settings_desc: 'Si prega di regolare i valori di offset X e Y per allineare la posizione effettiva del %s con l\'uscita del laser CO2.',
+    module_offset_settings_desc: "Si prega di regolare i valori di offset X e Y per allineare la posizione effettiva del %s con l'uscita del laser CO2.",
     module_offset_settings_save_failed: 'Impossibile salvare le impostazioni di offset.',
     moving_laser_head: 'Spostamento della testa laser...',
     moving_platform: 'Spostamento della piattaforma...',
