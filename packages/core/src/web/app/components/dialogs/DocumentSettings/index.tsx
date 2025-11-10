@@ -72,8 +72,6 @@ interface Props {
   unmount: () => void;
 }
 
-const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
-
 const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const isDevMode = useMemo(() => isDev(), []);
   const {
