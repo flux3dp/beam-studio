@@ -680,7 +680,7 @@ class FramingTaskManager extends EventEmitter {
       }
 
       this.rotaryInfo = {
-        useAAxis: this.isFcodeV2,
+        useAAxis: this.addOnInfo.rotary?.useAAxis ?? this.isFcodeV2,
         y,
         yRatio: this.addOnInfo.autoFeeder.rotaryRatio * useDocumentStore.getState()['auto-feeder-scale'],
       };
