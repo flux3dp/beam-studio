@@ -746,7 +746,6 @@ const mouseMove = (evt: MouseEvent) => {
               !curveEngravingModeController.started &&
               (isPreviewing || useCanvasStore.getState().mode === CanvasMode.Preview)
             ) {
-              console.log('hi');
               workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
             } else {
               workarea.style.cursor = 'auto';
