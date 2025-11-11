@@ -6,7 +6,7 @@ import { createPortal } from 'react-dom';
 
 import { useFloatingMenu } from '../hooks/useFloatingMenu';
 import styles from '../index.module.scss';
-import type { ImageDimensions, ImageSize } from '../useAiGenerateStore';
+import type { ImageDimensions, ImageSize } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { getSizePixels } from '../utils/dimensions';
 import { ADDITIONAL_RATIOS, ALWAYS_DISPLAYED_RATIOS } from '../utils/ratioOptions';
