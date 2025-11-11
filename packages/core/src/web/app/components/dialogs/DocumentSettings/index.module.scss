@@ -1,42 +1,84 @@
 @use '@core/styles/variables' as variables;
 
 .container {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
   .block {
     display: flex;
     flex-direction: column;
     align-items: center;
     background-color: white;
     border-radius: 6px;
-    padding-top: 5px;
-    padding-bottom: 5px;
+    padding: 5px 0;
+
     .row {
+      position: relative;
       display: flex;
       width: 100%;
-      justify-content: center;
+      justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      align-items: baseline;
-      .title {
-        width: 40%;
+      padding: 6px 5%;
+
+      &.full {
+        display: block;
+
+        .sub {
+          width: 100%;
+          box-sizing: border-box;
+          padding: 6px 12px;
+          display: grid;
+          grid-template-columns: 1fr 1fr;
+          align-items: center;
+
+          .left {
+            grid-column: 1 / 2;
+            justify-self: start;
+          }
+
+          .right {
+            grid-column: 2 / 3;
+            justify-self: end;
+          }
+
+          .desc {
+            font-style: italic;
+            color: #6a6a6a;
+            font-size: 12px;
+          }
+
+          .icon {
+            cursor: pointer;
+            margin-left: 8px;
+            color: #666;
+          }
+        }
       }
 
-      .bar {
-        background: #e0e0e0;
-        width: 100%;
-        flex-grow: 1;
-        height: 1px;
+      .title {
+        .icon {
+          margin-left: 8px;
+        }
       }
 
       .control {
-        width: 50%;
+        min-width: 50%; // for select control
         display: inline-flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-end;
         gap: 4px;
+      }
 
-        &.justify-start {
-          justify-content: flex-end;
-          padding-top: 4px;
+      .segmented {
+        width: 100%;
+
+        :global(.ant-segmented-item) {
+          flex: 1 1 50%;
+        }
+
+        :global(.ant-segmented-item-selected) {
+          outline: 1px solid variables.$primary-blue;
         }
       }
 
@@ -97,362 +139,24 @@
           }
         }
       }
+
+      &:not(:last-of-type) {
+        &::after {
+          content: '';
+          position: absolute;
+          left: 10px;
+          right: 10px;
+          bottom: -1px;
+          height: 1px;
+          background: #e6e6e6;
+          pointer-events: none;
+        }
+      }
     }
   }
 
   .separator {
-    padding: 10px 0px;
     font-weight: bold;
-    display: flex;
-    align-items: center;
-    gap: 8px;
     white-space: nowrap;
   }
-
-  .modules {
-    flex-wrap: wrap;
-
-    $row-height: 24px;
-    $select-height: 32px;
-    .option {
-      width: 50%;
-      min-width: -webkit-fill-available;
-      .main {
-        display: flex;
-        height: $row-height;
-        line-height: $row-height;
-        justify-content: space-between;
-        background-color: white;
-        border-radius: 6px;
-        .title {
-          height: 100%;
-          text-align: end;
-          padding-right: 8px;
-
-          label {
-            &::after {
-              content: '';
-              margin-left: 4px;
-            }
-          }
-        }
-
-        .control {
-          display: flex;
-          height: 100%;
-          align-items: center;
-          column-gap: 4px;
-          flex-direction: row-reverse;
-          .hint {
-            width: 16px;
-            height: 16px;
-            margin: 0 4px;
-            color: #7c7c7c;
-          }
-        }
-      }
-
-      .desc {
-        color: #aaaaaa;
-        font-style: italic;
-        font-size: 12px;
-        text-align: end;
-        margin-right: 18px;
-      }
-    }
-
-    .row {
-      display: flex;
-      flex-wrap: wrap;
-      width: 50%;
-      height: $row-height;
-      line-height: $row-height;
-      margin-bottom: $row-height;
-
-      &.full {
-        width: 100%;
-
-        .title {
-          width: 33%;
-        }
-
-        .control {
-          width: 67%;
-
-          .subCheckbox {
-            flex-direction: column;
-            align-items: flex-start;
-            width: unset;
-            height: calc($row-height * 2);
-            justify-content: flex-start;
-            margin-top: $row-height;
-            margin-left: 32px;
-          }
-        }
-      }
-
-      .title {
-        width: 66%;
-        height: 100%;
-        text-align: end;
-        padding-right: 8px;
-
-        label {
-          &::after {
-            content: '';
-            margin-left: 4px;
-          }
-        }
-        .bar {
-          background: #e0e0e0;
-          width: 100%;
-          height: 1px;
-        }
-      }
-
-      .control {
-        display: flex;
-        width: 34%;
-        height: 100%;
-        align-items: center;
-        column-gap: 4px;
-
-        .input {
-          width: 120px;
-          margin-left: 20px;
-        }
-
-        .hint {
-          width: 16px;
-          height: 16px;
-          margin: 0 4px;
-          color: #7c7c7c;
-        }
-      }
-
-      .subCheckbox {
-        display: flex;
-        width: 100%;
-        justify-content: center;
-        align-items: center;
-        height: $row-height;
-
-        > label {
-          height: 22px;
-          margin: calc(($row-height - 22px) / 2) 0;
-        }
-      }
-    }
-    background: #fff;
-    border-radius: 6px;
-    padding: 8px 12px;
-    .option {
-      width: 100%;
-      min-width: 100%;
-    }
-    .option .main {
-      justify-content: space-between;
-      background-color: transparent;
-      border-radius: 0;
-    }
-    .option .main .title {
-      flex: 1;
-      text-align: left;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      padding-right: 0;
-    }
-    .option .main .control {
-      justify-content: flex-end;
-      flex-direction: row;
-      column-gap: 8px;
-    }
-  }
-}
-.container .modules {
-  padding: 6px 15px;
-}
-.container .modules .option {
-  padding: 3px 0;
-  position: relative;
-}
-.container .modules .option + .option {
-  border-top: 0;
-}
-.container .modules .option:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 1px;
-  right: 1px;
-  bottom: -1px;
-  height: 1px;
-  background: #e6e6e6;
-  pointer-events: none;
-}
-
-.container .block .row {
-  padding: 6px 0;
-  position: relative;
-}
-.container .block .row + .row {
-  border-top: 0;
-}
-.container .block .row:not(:last-child)::after {
-  content: '';
-  position: absolute;
-  left: 10px;
-  right: 10px;
-  bottom: -1px;
-  height: 1px;
-  background: #e6e6e6;
-  pointer-events: none;
-}
-
-.padBox {
-  background: #fff !important;
-  border-radius: 8px !important;
-  margin-top: 12px !important;
-  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.06) inset !important;
-}
-.padBoxInner {
-  padding: 10.35px 16px !important;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 12px;
-}
-
-.padBoxInner .title {
-  width: auto !important;
-}
-.padBoxInner .control {
-  width: auto !important;
-  margin-left: auto;
-}
-.padBox .row::after {
-  display: none !important;
-}
-
-// .cardHr {
-//   height: 1px;
-//   background: #dcdcdc;
-//   margin: 5px -5px 10px;
-// }
-
-.segWrap {
-  margin: 0 12px;
-}
-
-:global(#rotaryModeSelect.ant-segmented),
-:global(#ptMode.ant-segmented) {
-  display: block;
-  width: 100%;
-  background: #f4f4f4;
-  border-radius: 6px;
-  padding: 4px;
-}
-:global(#rotaryModeSelect .ant-segmented-group),
-:global(#ptMode .ant-segmented-group) {
-  display: flex;
-  width: 100%;
-}
-:global(#rotaryModeSelect .ant-segmented-item),
-:global(#ptMode .ant-segmented-item) {
-  flex: 1 1 50%;
-  min-width: 0;
-  justify-content: center;
-  height: 36px;
-  line-height: 36px;
-  font-size: 20px;
-  border-radius: 6px !important;
-  align-content: space-around;
-  font-family: none;
-}
-:global(#rotaryModeSelect .ant-segmented-thumb),
-:global(#ptMode .ant-segmented-thumb) {
-  border-radius: 6px;
-  box-shadow: 0 0 0 2px #c8c8c8 inset;
-}
-
-.segUnder {
-  width: 100%;
-  box-sizing: border-box;
-  padding: 6px 12px 0;
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  align-items: center;
-}
-.segUnderInner {
-  display: inline-flex;
-  align-items: center;
-  gap: 8px;
-}
-.posLeft .segUnderInner {
-  grid-column: 1 / 2;
-  justify-self: start;
-}
-.posRight .segUnderInner {
-  grid-column: 2 / 3;
-  justify-self: end;
-}
-
-.segmentDesc {
-  font-style: italic;
-  color: #6a6a6a;
-  font-size: 12px;
-}
-
-.segmentGear {
-  cursor: pointer;
-  color: #666;
-}
-
-.noPanelBg :global(.ant-modal-content) {
-  background: transparent;
-  box-shadow: none;
-}
-.noPanelBg :global(.ant-modal-header) {
-  background: transparent;
-  border-bottom: none;
-}
-
-.segUnderBtn {
-  padding-top: 6px;
-}
-.segUnderBtn :global(.ant-btn) {
-  border-radius: 6px;
-}
-
-.container .modules .row {
-  grid-template-columns: 1fr auto;
-  align-items: center;
-  width: 100% !important;
-  margin: 0;
-}
-
-.container .modules .row .title {
-  text-align: left !important;
-  padding-right: 0 !important;
-  position: relative;
-}
-.container .modules .row .control {
-  justify-content: flex-end !important;
-  margin-left: 0 !important;
-}
-.container .modules .row .control :global(.ant-switch) {
-  transform: none !important;
-}
-.container .modules .row + .row {
-  position: relative;
-  border-top: 0 !important;
-}
-.container .modules .row + .row .title::before {
-  content: '';
-  position: absolute;
-  left: -5px;
-  right: -130px;
-  top: 0;
-  height: 1px;
-  background: #e6e6e6;
 }

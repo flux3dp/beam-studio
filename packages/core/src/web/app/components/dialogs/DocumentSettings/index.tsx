@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
-import { Checkbox, Switch, Tooltip, Segmented } from 'antd';
+import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 import { useShallow } from 'zustand/shallow';
 
@@ -42,8 +42,6 @@ import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
-import { Segment } from 'paper/dist/paper-core';
-import { add } from 'remeda';
 
 const workareaOptions = [
   { label: 'beamo', value: 'fbm1' },
@@ -195,14 +193,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     const rotaryChanged = rotaryMode !== origState.rotary_mode;
 
     const newState: Partial<DocumentState> = {
+      borderless: Boolean(addOnInfo.openBottom && borderless),
       'enable-4c': enable4C,
       'enable-1064': enable1064,
       'enable-autofocus': Boolean(addOnInfo.autoFocus && enableAutofocus),
       'enable-diode': Boolean(addOnInfo.hybridLaser && enableDiode),
       engrave_dpi: engraveDpi,
     };
-
-    if (addOnInfo.openBottom) newState.borderless = false;
 
     const defaultLaser = getDefaultLaserModule(workarea);
 
@@ -240,10 +237,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     newState.rotary_mode = rotaryMode;
     newState['rotary-type'] = rotaryType;
 
-    if (rotaryMode && addOnInfo.openBottom) {
-      newState.borderless = borderless;
-    }
-
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== origPassThrough;
     const newAutoFeeder = Boolean(showAutoFeeder && autoFeeder);
@@ -255,7 +248,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       if (!origState['pass-through-height'] || origState['pass-through-height'] < minHeight) {
         newState['pass-through-height'] = minHeight;
       }
-      if (addOnInfo.openBottom) newState['borderless'] = true;
     }
 
     newState['auto-feeder'] = newAutoFeeder;
@@ -303,69 +295,62 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   );
 
   const renderPassThroughBlock = (isBold = false) => {
-    if (!showPassThrough && showAutoFeeder) return null;
-
     return (
       <>
-        <div className={styles.padBox}>
-          <div className={styles.cardHr} />
-          <div className={classNames(styles.padBoxInner, styles.row, styles.full)}>
-            <label className={styles.title} htmlFor="passthroughMaster">
-              {isBold ? <strong>Passthrough</strong> : <div>Passthrough</div>}
-            </label>
-            <div className={classNames(styles.control, styles['justify-start'])}>
-              <Switch
-                id="passthroughMaster"
-                checked={autoFeeder || passThrough}
-                disabled={isCurveEngraving || rotaryMode}
-                onChange={(on: boolean) => {
-                  if (on) {
-                    if (showPassThrough) {
-                      setPassThrough(true);
-                      setAutoFeeder(false);
-                    } else if (showAutoFeeder) {
-                      setAutoFeeder(true);
-                      setPassThrough(false);
-                    }
-                  } else {
+        <div className={styles.row}>
+          <label className={styles.title} htmlFor="passthroughMaster">
+            {isBold ? <strong>{tDocument.pass_through}</strong> : <div>{tDocument.pass_through}</div>}
+          </label>
+          <div className={styles.control}>
+            <Switch
+              checked={autoFeeder || passThrough}
+              disabled={isCurveEngraving}
+              id="passthroughMaster"
+              onChange={(on: boolean) => {
+                if (on) {
+                  if (showPassThrough) {
+                    setPassThrough(true);
+                    setAutoFeeder(false);
+                  } else if (showAutoFeeder) {
+                    setAutoFeeder(true);
                     setPassThrough(false);
+                  }
+                } else {
+                  setPassThrough(false);
+                  setAutoFeeder(false);
+                }
+              }}
+            />
+          </div>
+        </div>
+        {(autoFeeder || passThrough) && (
+          <>
+            <div className={classNames(styles.row, styles.full)}>
+              <Segmented
+                className={styles.segmented}
+                id="ptMode"
+                onChange={(val) => {
+                  if (val === 'auto') {
+                    setAutoFeeder(true);
+                    setPassThrough(false);
+                  } else {
+                    setPassThrough(true);
                     setAutoFeeder(false);
                   }
                 }}
+                options={[
+                  showAutoFeeder && { label: tDocument.auto_feeder, value: 'auto' as const },
+                  showPassThrough && { label: tDocument.manual, value: 'manual' as const },
+                ].filter(Boolean)}
+                value={autoFeeder ? 'auto' : 'manual'}
               />
-            </div>
-          </div>
-          {(autoFeeder || passThrough) && (
-            <>
-              <div className={styles.cardHr} />
-              <div className={styles.segWrap}>
-                <Segmented
-                  id="ptMode"
-                  value={autoFeeder ? 'auto' : 'manual'}
-                  onChange={(val) => {
-                    if (val === 'auto') {
-                      setAutoFeeder(true);
-                      setPassThrough(false);
-                    } else {
-                      setPassThrough(true);
-                      setAutoFeeder(false);
-                    }
-                  }}
-                  options={[
-                    ...(showAutoFeeder ? [{ label: tDocument.auto_feeder, value: 'auto' as const }] : []),
-                    ...(showPassThrough ? [{ label: tDocument.manual, value: 'manual' as const }] : []),
-                  ]}
-                />
-              </div>
-              <div className={classNames(styles.segUnder, autoFeeder ? styles.posLeft : styles.posRight)}>
-                <div className={styles.segUnderInner}>
-                  <div className={styles.segmentDesc}>
-                    {autoFeeder
-                      ? `Y: ${lengthDisplay(Math.min(Math.max(autoFeederHeight ?? minHeight, minHeight), addOnInfo.autoFeeder!.maxHeight))}, Scale: ${autoFeederScale}`
-                      : `Y: ${lengthDisplay(Math.max(passThroughHeight ?? minHeight, minHeight))}`}
-                  </div>
+              <div className={classNames(styles.sub)}>
+                <div className={classNames(styles.desc, autoFeeder ? styles.left : styles.right)}>
+                  {autoFeeder
+                    ? `Y: ${lengthDisplay(Math.min(Math.max(autoFeederHeight ?? minHeight, minHeight), addOnInfo.autoFeeder!.maxHeight))}, Scale: ${autoFeederScale}`
+                    : `Y: ${lengthDisplay(Math.max(passThroughHeight ?? minHeight, minHeight))}`}
                   <SettingFilled
-                    className={styles.segmentGear}
+                    className={styles.icon}
                     onClick={() =>
                       autoFeeder
                         ? showPassthroughSettings({ workarea })
@@ -374,9 +359,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   />
                 </div>
               </div>
-            </>
-          )}
-        </div>
+            </div>
+          </>
+        )}
       </>
     );
   };
@@ -391,197 +376,207 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   );
 
   return (
-    <DraggableModal
-      cancelText={tGlobal.cancel}
-      okText={tGlobal.save}
-      onCancel={unmount}
-      onOk={async () => {
-        if (
-          origWorkarea !== workarea &&
-          modelsWithModules.has(origWorkarea) &&
-          !modelsWithModules.has(workarea) &&
-          hasModuleLayer(Array.from(printingModules))
-        ) {
-          const res = await new Promise((resolve) => {
-            alertCaller.popUp({
-              buttonType: alertConstants.CONFIRM_CANCEL,
-              id: 'save-document-settings',
-              message: tDocument.notification.changeFromPrintingWorkareaTitle,
-              messageIcon: 'notice',
-              onCancel: () => resolve(false),
-              onConfirm: () => resolve(true),
-            });
-          });
-
-          if (!res) return;
-        }
-
-        handleSave();
-        unmount();
+    <ConfigProvider
+      theme={{
+        components: {
+          Modal: {
+            contentBg: 'rgb(240, 240, 240)',
+            headerBg: 'rgb(240, 240, 240)',
+          },
+          Segmented: {
+            itemSelectedColor: '#1890ff',
+          },
+        },
       }}
-      open
-      scrollableContent
-      title={tDocument.document_settings}
-      width={440}
     >
-      <div className={styles.container}>
-        <div className={styles.block}>
-          <div className={styles.row}>
-            <label className={styles.title} htmlFor="workareaSelect">
-              {tDocument.machine}
-            </label>
-            <Select
-              className={styles.control}
-              id="workareaSelect"
-              onChange={setWorkarea}
-              options={workareaOptions}
-              value={workarea}
-              variant="outlined"
-            />
-          </div>
-          {workareaObj.dimensionCustomizable && (
-            <div className={styles.row}>
-              <label className={styles.title} htmlFor="customDimension">
-                {tDocument.workarea}:
-              </label>
-              <Select
-                className={styles.control}
-                id="customDimension"
-                onChange={(val) => {
-                  setCustomDimension((cur) => ({
-                    ...cur,
-                    [workarea]: { height: val, width: val },
-                  }));
-                }}
-                options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
-                value={customDimension[workarea]?.width ?? workareaObj.width}
-                variant="outlined"
-              />
-            </div>
-          )}
-          {isPromark && (
-            <div className={styles.row}>
-              <label className={styles.title} htmlFor="pm-laser-source">
-                {tDocument.laser_source}:
-              </label>
-              <Select
-                className={styles.control}
-                id="pm-laser-source"
-                onChange={(val) => {
-                  const [type, watt] = val.split('-').map(Number);
+      <DraggableModal
+        cancelText={tGlobal.cancel}
+        okText={tGlobal.save}
+        onCancel={unmount}
+        onOk={async () => {
+          if (
+            origWorkarea !== workarea &&
+            modelsWithModules.has(origWorkarea) &&
+            !modelsWithModules.has(workarea) &&
+            hasModuleLayer(Array.from(printingModules))
+          ) {
+            const res = await new Promise((resolve) => {
+              alertCaller.popUp({
+                buttonType: alertConstants.CONFIRM_CANCEL,
+                id: 'save-document-settings',
+                message: tDocument.notification.changeFromPrintingWorkareaTitle,
+                messageIcon: 'notice',
+                onCancel: () => resolve(false),
+                onConfirm: () => resolve(true),
+              });
+            });
 
-                  setPmInfo({ laserType: type, watt } as PromarkInfo);
-                }}
-                options={promarkLaserOptions}
-                value={`${pmInfo.laserType}-${pmInfo.watt}`}
+            if (!res) return;
+          }
+
+          handleSave();
+          unmount();
+        }}
+        open
+        scrollableContent
+        title={tDocument.document_settings}
+        width={440}
+      >
+        <div className={styles.container}>
+          <div className={styles.block}>
+            <div className={styles.row}>
+              <label className={styles.title} htmlFor="workareaSelect">
+                {tDocument.machine}
+              </label>
+              <Select
+                className={styles.control}
+                id="workareaSelect"
+                onChange={setWorkarea}
+                options={workareaOptions}
+                value={workarea}
                 variant="outlined"
               />
             </div>
-          )}
-          <div className={styles.row}>
-            <label className={styles.title} htmlFor="dpi">
-              {tDocument.engrave_dpi}
-            </label>
-            <Select
-              className={styles.control}
-              id="dpi"
-              onChange={setEngraveDpi}
-              options={dpiOptions.map((value) => ({
-                label: `${tDocument[value]} (${constant.dpiValueMap[value]} DPI)`,
-                value,
-              }))}
-              value={engraveDpi}
-              variant="outlined"
-            />
-          </div>
-          {!isPromark && (
-            <div className={styles.row}>
-              <label className={styles.title} htmlFor="autoShrink">
-                {tDocument.auto_shrink}
-              </label>
-              <div className={classNames(styles.control, styles['justify-start'])}>
-                <Switch checked={autoShrink} disabled={engraveDpi === 'low'} id="autoShrink" onChange={setAutoShrink} />
-              </div>
-            </div>
-          )}
-        </div>
-        {addOnInfo.jobOrigin && (
-          <>
-            <div className={styles.separator}>
-              <div>{tDocument.start_position}</div>
-              <div className={styles.bar} />
-            </div>
-            <div className={styles.block}>
+            {workareaObj.dimensionCustomizable && (
               <div className={styles.row}>
-                <label className={styles.title} htmlFor="startFrom">
-                  {tDocument.start_from}
+                <label className={styles.title} htmlFor="customDimension">
+                  {tDocument.workarea}
                 </label>
                 <Select
                   className={styles.control}
-                  id="startFrom"
-                  onChange={setEnableJobOrigin}
-                  options={
-                    [
-                      { label: tDocument.origin, value: false },
-                      { label: tDocument.current_position, value: true },
-                    ] as any
-                  }
-                  value={enableJobOrigin}
+                  id="customDimension"
+                  onChange={(val) => {
+                    setCustomDimension((cur) => ({
+                      ...cur,
+                      [workarea]: { height: val, width: val },
+                    }));
+                  }}
+                  options={pmWorkareaOptions.map((value) => ({ label: `${value} x ${value} mm`, value }))}
+                  value={customDimension[workarea]?.width ?? workareaObj.width}
                   variant="outlined"
                 />
               </div>
-              {enableJobOrigin && (
+            )}
+            {isPromark && (
+              <div className={styles.row}>
+                <label className={styles.title} htmlFor="pm-laser-source">
+                  {tDocument.laser_source}:
+                </label>
+                <Select
+                  className={styles.control}
+                  id="pm-laser-source"
+                  onChange={(val) => {
+                    const [type, watt] = val.split('-').map(Number);
+
+                    setPmInfo({ laserType: type, watt } as PromarkInfo);
+                  }}
+                  options={promarkLaserOptions}
+                  value={`${pmInfo.laserType}-${pmInfo.watt}`}
+                  variant="outlined"
+                />
+              </div>
+            )}
+            <div className={styles.row}>
+              <label className={styles.title} htmlFor="dpi">
+                {tDocument.engrave_dpi}
+              </label>
+              <Select
+                className={styles.control}
+                id="dpi"
+                onChange={setEngraveDpi}
+                options={dpiOptions.map((value) => ({
+                  label: `${tDocument[value]} (${constant.dpiValueMap[value]} DPI)`,
+                  value,
+                }))}
+                value={engraveDpi}
+                variant="outlined"
+              />
+            </div>
+            {!isPromark && (
+              <div className={styles.row}>
+                <label className={styles.title} htmlFor="autoShrink">
+                  {tDocument.auto_shrink}
+                </label>
+                <div className={styles.control}>
+                  <Switch
+                    checked={autoShrink}
+                    disabled={engraveDpi === 'low'}
+                    id="autoShrink"
+                    onChange={setAutoShrink}
+                  />
+                </div>
+              </div>
+            )}
+          </div>
+          {addOnInfo.jobOrigin && (
+            <>
+              <div className={styles.separator}>{tDocument.start_position}</div>
+              <div className={styles.block}>
                 <div className={styles.row}>
-                  <label className={styles.title}>{tDocument.job_origin}:</label>
-                  <div className={styles.control}>
-                    <div className={styles.radioGroup}>
-                      {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((val) => (
-                        <input
-                          checked={jobOrigin === val}
-                          id={`jobOrigin-${val}`}
-                          key={val}
-                          name="jobOrigin"
-                          onChange={() => setJobOrigin(val)}
-                          type="radio"
+                  <label className={styles.title} htmlFor="startFrom">
+                    {tDocument.start_from}
+                  </label>
+                  <Select
+                    className={styles.control}
+                    id="startFrom"
+                    onChange={setEnableJobOrigin}
+                    options={
+                      [
+                        { label: tDocument.origin, value: false },
+                        { label: tDocument.current_position, value: true },
+                      ] as any
+                    }
+                    value={enableJobOrigin}
+                    variant="outlined"
+                  />
+                </div>
+                {enableJobOrigin && (
+                  <div className={styles.row}>
+                    <label className={styles.title}>{tDocument.job_origin}</label>
+                    <div className={styles.control}>
+                      <div className={styles.radioGroup}>
+                        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((val) => (
+                          <input
+                            checked={jobOrigin === val}
+                            id={`jobOrigin-${val}`}
+                            key={val}
+                            name="jobOrigin"
+                            onChange={() => setJobOrigin(val)}
+                            type="radio"
+                          />
+                        ))}
+                      </div>
+                      <div className={styles['job-origin-example']}>
+                        <img alt="Origin" src="core-img/document-panel/job-origin-example.jpg" />
+                        <div
+                          className={classNames(styles.mark, {
+                            [styles.b]: jobOrigin > 6,
+                            [styles.c]: jobOrigin > 3 && jobOrigin <= 6,
+                            [styles.l]: jobOrigin % 3 === 1,
+                            [styles.m]: jobOrigin % 3 === 2,
+                            [styles.r]: jobOrigin % 3 === 0,
+                            [styles.t]: jobOrigin <= 3,
+                          })}
                         />
-                      ))}
-                    </div>
-                    <div className={styles['job-origin-example']}>
-                      <img alt="Origin" src="core-img/document-panel/job-origin-example.jpg" />
-                      <div
-                        className={classNames(styles.mark, {
-                          [styles.b]: jobOrigin > 6,
-                          [styles.c]: jobOrigin > 3 && jobOrigin <= 6,
-                          [styles.l]: jobOrigin % 3 === 1,
-                          [styles.m]: jobOrigin % 3 === 2,
-                          [styles.r]: jobOrigin % 3 === 0,
-                          [styles.t]: jobOrigin <= 3,
-                        })}
-                      />
+                      </div>
                     </div>
                   </div>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-        {(isPromark || addOnInfo.autoFocus || addOnInfo.openBottom || addOnInfo.hybridLaser) && (
-          <>
-            <div className={styles.separator}>
-              <div>{tDocument.add_on}</div>
-              <div className={styles.bar} />
-            </div>
-            <div className={styles.modules}>
-              {isPromark && (
-                <>
-                  <div className={classNames(styles.row, styles.full)}>
-                    <div className={styles.title}>
-                      <label htmlFor="start_button">{tDocument.start_work_button}</label>
-                    </div>
-                    <div className={styles.control}>
-                      <Switch checked={enableStartButton} id="start_button" onChange={setEnableStartButton} />
-                      {enableStartButton && (
-                        <div className={styles.subCheckbox}>
+                )}
+              </div>
+            </>
+          )}
+          {(isPromark || addOnInfo.autoFocus || addOnInfo.hybridLaser) && (
+            <>
+              <div className={styles.separator}>{tDocument.add_on}</div>
+              <div className={styles.block}>
+                {isPromark && (
+                  <>
+                    <div className={styles.row}>
+                      <div className={styles.title}>
+                        <label htmlFor="start_button">{tDocument.start_work_button}</label>
+                      </div>
+                      <div className={styles.control}>
+                        {enableStartButton && (
                           <div>
                             <Checkbox
                               checked={shouldFrame}
@@ -592,81 +587,73 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                             </Checkbox>
                             <QuestionCircleOutlined onClick={() => browser.open(tDocument.frame_before_start_url)} />
                           </div>
-                        </div>
-                      )}
+                        )}
+                        <Switch checked={enableStartButton} id="start_button" onChange={setEnableStartButton} />
+                      </div>
                     </div>
-                  </div>
-
+                    <div className={styles.row}>
+                      <div className={styles.title}>
+                        <label htmlFor="door_protect">{tDocument.door_protect}</label>
+                      </div>
+                      <div className={styles.control}>
+                        <Tooltip title={tDocument.door_protect_desc}>
+                          <QuestionCircleOutlined />
+                        </Tooltip>
+                        <Switch checked={checkSafetyDoor} id="door_protect" onChange={setCheckSafetyDoor} />
+                      </div>
+                    </div>
+                  </>
+                )}
+                {addOnInfo.autoFocus && (
                   <div className={styles.row}>
                     <div className={styles.title}>
-                      <label htmlFor="door_protect">{tDocument.door_protect}</label>
+                      <label htmlFor="autofocus-module">{tDocument.enable_autofocus}</label>
                     </div>
                     <div className={styles.control}>
-                      <Tooltip title={tDocument.door_protect_desc}>
-                        <QuestionCircleOutlined />
-                      </Tooltip>
-                      <Switch checked={checkSafetyDoor} id="door_protect" onChange={setCheckSafetyDoor} />
+                      <Switch
+                        checked={addOnInfo.autoFocus && enableAutofocus}
+                        disabled={!addOnInfo.autoFocus}
+                        id="autofocus-module"
+                        onChange={setEnableAutofocus}
+                      />
                     </div>
                   </div>
-                </>
-              )}
-              {addOnInfo.autoFocus && (
-                <div className={styles.row}>
-                  <div className={styles.title}>
-                    <label htmlFor="autofocus-module">{tDocument.enable_autofocus}</label>
+                )}
+                {addOnInfo.hybridLaser && (
+                  <div className={styles.row}>
+                    <div className={styles.title}>
+                      <label htmlFor="diode_module">{tDocument.enable_diode}</label>
+                    </div>
+                    <div className={styles.control}>
+                      <Switch
+                        checked={addOnInfo.hybridLaser && enableDiode}
+                        disabled={!addOnInfo.hybridLaser}
+                        id="diode_module"
+                        onChange={setEnableDiode}
+                      />
+                    </div>
                   </div>
-                  <div className={styles.control}>
-                    <Switch
-                      checked={addOnInfo.autoFocus && enableAutofocus}
-                      disabled={!addOnInfo.autoFocus}
-                      id="autofocus-module"
-                      onChange={setEnableAutofocus}
-                    />
-                  </div>
-                </div>
-              )}
-              <div className={styles.cardHr} />
-              {addOnInfo.hybridLaser && (
-                <div className={styles.row}>
-                  <div className={styles.title}>
-                    <label htmlFor="diode_module">{tDocument.enable_diode}</label>
-                  </div>
-                  <div className={styles.control}>
-                    <Switch
-                      checked={addOnInfo.hybridLaser && enableDiode}
-                      disabled={!addOnInfo.hybridLaser}
-                      id="diode_module"
-                      onChange={setEnableDiode}
-                    />
-                  </div>
-                </div>
-              )}
-            </div>
-          </>
-        )}
-        {addOnInfo.multiModules && (
-          <>
-            <div className={styles.separator}>
-              <div>{'Add-ons'}</div>
-              <div className={styles.bar} />
-            </div>
-            <div className={styles.modules}>
-              {workareaObj.supportedModules?.includes(LayerModule.PRINTER_4C) && (
-                <div className={styles.option}>
-                  <div className={styles.main}>
+                )}
+              </div>
+            </>
+          )}
+          {addOnInfo.multiModules && (
+            <>
+              <div className={styles.separator}>{tDevice.submodule_type}</div>
+              <div className={styles.block}>
+                {workareaObj.supportedModules?.includes(LayerModule.PRINTER_4C) && (
+                  <div className={styles.row}>
                     <div className={styles.title}>
                       <label htmlFor="print_4c_module">{getModulesTranslations()[LayerModule.PRINTER]}</label>
-                      <SettingFilled onClick={showModuleSettings4C} />
+                      <SettingFilled className={styles.icon} onClick={showModuleSettings4C} />
                     </div>
                     <div className={styles.control}>
                       <Switch checked={enable4C} id="print_4c_module" onChange={setEnable4C} />
                     </div>
                   </div>
-                </div>
-              )}
-              {workareaObj.supportedModules?.includes(LayerModule.LASER_1064) && (
-                <div className={styles.option}>
-                  <div className={styles.main}>
+                )}
+                {workareaObj.supportedModules?.includes(LayerModule.LASER_1064) && (
+                  <div className={styles.row}>
                     <div className={styles.title}>
                       <label htmlFor="laser_1064_module">{getModulesTranslations()[LayerModule.LASER_1064]}</label>
                     </div>
@@ -674,112 +661,107 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                       <Switch checked={enable1064} id="laser_1064_module" onChange={setEnable1064} />
                     </div>
                   </div>
+                )}
+              </div>
+            </>
+          )}
+          {addOnInfo.rotary && (
+            <>
+              <div className={styles.block}>
+                <div className={styles.row}>
+                  <label className={styles.title} htmlFor="rotaryMaster">
+                    <strong>{tDocument.rotary_mode}</strong>
+                  </label>
+                  <div className={styles.control}>
+                    <Switch
+                      checked={rotaryMode}
+                      disabled={!addOnInfo.rotary || isCurveEngraving}
+                      id="rotaryMaster"
+                      onChange={(on: boolean) => {
+                        setRotaryMode(on);
+
+                        if (addOnInfo.openBottom) setBorderless(false);
+                      }}
+                    />
+                  </div>
                 </div>
-              )}
-            </div>
-          </>
-        )}
-        {addOnInfo.rotary && (
-          <>
-            <div className={styles.padBox}>
-              <div className={`${styles.padBoxInner} ${styles.row} ${styles.full}`}>
-                <label className={styles.title} htmlFor="rotaryMaster">
-                  <strong>Rotary</strong>
+                {rotaryMode && (
+                  <>
+                    <div className={classNames(styles.row, styles.full)}>
+                      <Segmented
+                        className={styles.segmented}
+                        id="rotaryModeSelect"
+                        onChange={(val) => setRotaryType(val as RotaryType)}
+                        options={[
+                          { label: 'Roller', value: RotaryType.Roller },
+                          { label: 'Chuck', value: RotaryType.Chuck },
+                        ]}
+                        value={rotaryType}
+                      />
+                      <div className={styles.sub}>
+                        <div
+                          className={classNames(
+                            styles.desc,
+                            rotaryType === RotaryType.Chuck ? styles.right : styles.left,
+                          )}
+                        >
+                          {rotaryType === RotaryType.Chuck
+                            ? `Φ: ${lengthDisplay(chunkDiameter)}, Scale: ${rotaryScale}`
+                            : `Scale: ${rotaryScale}`}
+                          <SettingFilled
+                            className={styles.icon}
+                            onClick={() =>
+                              showRotarySettings({ rotaryMode, rotaryType, workarea }, () => {
+                                setRotaryMode(useDocumentStore.getState().rotary_mode);
+                                setRotaryType(useDocumentStore.getState()['rotary-type']);
+                              })
+                            }
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    {addOnInfo.openBottom && (
+                      <div className={styles.row}>
+                        <label className={styles.title} htmlFor="rotaryOpenBottom">
+                          {tDocument.borderless_mode}
+                        </label>
+                        <div className={styles.control}>
+                          <Switch checked={borderless} id="rotaryOpenBottom" onChange={setBorderless} />
+                        </div>
+                      </div>
+                    )}
+                  </>
+                )}
+              </div>
+              {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
+            </>
+          )}
+          {addOnInfo.openBottom ? (
+            <div className={styles.block}>
+              <div className={styles.row}>
+                <label className={styles.title} htmlFor="openBottomMaster">
+                  <strong>{tDocument.borderless_mode}</strong>
                 </label>
-                <div className={classNames(styles.control, styles['justify-start'])}>
+                <div className={styles.control}>
                   <Switch
-                    id="rotaryMaster"
-                    checked={rotaryMode}
-                    disabled={!addOnInfo.rotary || isCurveEngraving}
-                    onChange={(on: boolean) => {
-                      setRotaryMode(on);
-                      if (!on) setBorderless(false);
+                    checked={borderless && !rotaryMode}
+                    id="openBottomMaster"
+                    onChange={(val) => {
+                      if (val) setRotaryMode(false);
+
+                      setBorderless(val);
                     }}
                   />
                 </div>
               </div>
-
-              {rotaryMode && (
-                <>
-                  <div className={styles.cardHr} />
-
-                  <div className={styles.segWrap}>
-                    <Segmented
-                      id="rotaryModeSelect"
-                      value={rotaryType}
-                      onChange={(val) => setRotaryType(val as RotaryType)}
-                      options={[
-                        { label: 'Roller', value: RotaryType.Roller },
-                        { label: 'Chuck', value: RotaryType.Chuck },
-                      ]}
-                    />
-                  </div>
-
-                  <div
-                    className={classNames(
-                      styles.segUnder,
-                      rotaryType === RotaryType.Chuck ? styles.posRight : styles.posLeft,
-                    )}
-                  >
-                    <div className={styles.segUnderInner}>
-                      <div className={styles.segmentDesc}>
-                        {rotaryType === RotaryType.Chuck
-                          ? `Φ: ${lengthDisplay(chunkDiameter)}, Scale: ${rotaryScale}`
-                          : `Scale: ${rotaryScale}`}
-                      </div>
-                      <SettingFilled
-                        className={styles.segmentGear}
-                        onClick={() =>
-                          showRotarySettings({ rotaryMode, rotaryType, workarea }, () => {
-                            setRotaryMode(useDocumentStore.getState().rotary_mode);
-                            setRotaryType(useDocumentStore.getState()['rotary-type']);
-                          })
-                        }
-                      />
-                    </div>
-                  </div>
-                  <div className={styles.cardHr} />
-                  {addOnInfo.openBottom && (
-                    <div className={`${styles.padBoxInner} ${styles.row} ${styles.full}`}>
-                      <label className={styles.title} htmlFor="rotaryOpenBottom">
-                        {tDocument.borderless_mode}
-                      </label>
-                      <div className={classNames(styles.control, styles['justify-start'])}>
-                        <Switch id="rotaryOpenBottom" checked={borderless} onChange={setBorderless} />
-                      </div>
-                    </div>
-                  )}
-                </>
-              )}
+              {!rotaryMode && borderless && renderPassThroughBlock(false)}
             </div>
-            {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
-          </>
-        )}
-
-        {addOnInfo.openBottom ? (
-          <div className={styles.padBox}>
-            <div className={`${styles.padBoxInner} ${styles.row} ${styles.full}`}>
-              <label className={styles.title} htmlFor="openBottomMaster">
-                <strong>{tDocument.borderless_mode}</strong>
-              </label>
-              <div className={classNames(styles.control, styles['justify-start'])}>
-                <Switch
-                  id="openBottomMaster"
-                  checked={borderless && !rotaryMode}
-                  disabled={rotaryMode}
-                  onChange={(v) => {
-                    if (!rotaryMode) setBorderless(v);
-                  }}
-                />
-              </div>
-            </div>
-            {!rotaryMode && borderless && renderPassThroughBlock(false)}
-          </div>
-        ) : (
-          renderPassThroughBlock(true)
-        )}
-      </div>
-    </DraggableModal>
+          ) : (
+            (showPassThrough || showAutoFeeder) && <div className={styles.block}>{renderPassThroughBlock(true)}</div>
+          )}
+        </div>
+      </DraggableModal>
+    </ConfigProvider>
   );
 };
 
