@@ -40,7 +40,7 @@ export const ModuleSettings4C = ({ onClose }: Props) => {
       open
       scrollableContent
       title={`${tDevice.submodule_type} (${tModule.printing})`}
-      width={440}
+      width={410}
     >
       <div className={styles.container}>
         <div>

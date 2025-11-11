@@ -81,7 +81,7 @@ export const PassthroughSettings = ({ isManualMode, onClose, onSave, workarea }:
       open
       scrollableContent
       title={`${tDocument.pass_through} (${isManualMode ? tDocument.manual : tDocument.auto_feeder})`}
-      width={440}
+      width={410}
     >
       <div className={styles.container}>
         {isManualMode ? (
