@@ -31,13 +31,12 @@ const UnmemorizedAiGenerate = () => {
     errorMessage,
     generatedImages,
     generationStatus,
-    inputFields: styleCustomFields,
-    patternDescription,
+    inputFields,
     removeImageInput,
     resetForm,
     selectedImageInputs,
-    setStyle: setStyle,
-    setStyleCustomField,
+    setInputField,
+    setStyle,
     showHistory,
     style,
     toggleHistory,
@@ -143,7 +142,7 @@ const UnmemorizedAiGenerate = () => {
             )}
 
             {stylePreset &&
-              getStylePreset(stylePreset)?.inputFields?.map((field) => (
+              getStylePreset(stylePreset).map((field) => (
                 <div className={styles.section} key={field.key}>
                   <h3 className={styles['section-title']}>
                     {field.label}
@@ -154,12 +153,7 @@ const UnmemorizedAiGenerate = () => {
                       className={styles.textarea}
                       maxLength={field.maxLength}
                       onChange={(e) => {
-                        if (field.key === 'description') {
-                          // Update both patternDescription state and styleCustomFields for consistency
-                          useAiGenerateStore.setState({ patternDescription: e.target.value });
-                        }
-
-                        setStyleCustomField(field.key, e.target.value);
+                        setInputField(field.key, e.target.value);
                       }}
                       onKeyDown={(e) => e.stopPropagation()}
                       placeholder={field.placeholder}
@@ -178,7 +172,7 @@ const UnmemorizedAiGenerate = () => {
                             }
                           : false
                       }
-                      value={field.key === 'description' ? patternDescription : styleCustomFields[field.key] || ''}
+                      value={inputFields[field.key] || ''}
                     />
                   </div>
                 </div>
