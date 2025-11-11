@@ -81,7 +81,8 @@ describe('manipulate document setting', () => {
   it('check default and adjust setting with working area of beamo', () => {
     cy.changeWorkarea('beamo', false);
     clickAndCheck('rotaryMaster', true);
-    clickAndCheck('passthroughMaster', true);
+    clickAndCheck('openBottomMaster', true);
+    checkNotExists('passthroughMaster');
     clickAndCheck('autofocus-module', true);
     clickAndCheck('diode_module', true);
   });
@@ -89,6 +90,7 @@ describe('manipulate document setting', () => {
   it('check default and adjust setting with working area of beambox', () => {
     cy.changeWorkarea('Beambox', false);
     clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
     checkNotExists('passthroughMaster');
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
@@ -97,6 +99,7 @@ describe('manipulate document setting', () => {
   it('check default and adjust setting with working area of beambox pro', () => {
     cy.changeWorkarea('Beambox Pro', false);
     clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
     checkNotExists('passthroughMaster');
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
@@ -105,6 +108,7 @@ describe('manipulate document setting', () => {
   it('check default and adjust setting with working area of HEXA', () => {
     cy.changeWorkarea('HEXA', false);
     clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
     checkNotExists('passthroughMaster');
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
@@ -113,6 +117,7 @@ describe('manipulate document setting', () => {
   it('check default and adjust setting with working area of Ador', () => {
     cy.changeWorkarea('Ador', false);
     clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
     clickAndCheck('passthroughMaster', true);
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
@@ -140,7 +145,7 @@ describe('manipulate document setting', () => {
 
   it('check open bottom', () => {
     cy.changeWorkarea('beamo', false);
-    clickAndCheck('passthroughMaster', true);
+    clickAndCheck('openBottomMaster', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
     cy.get('#boundary-path').should('exist');
     cy.get('#boundary-path').should('have.attr', 'd', 'M0,0H3000V2100H0ZM0,0H2600V2100H0Z');
