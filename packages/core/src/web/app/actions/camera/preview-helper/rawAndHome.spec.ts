@@ -2,19 +2,26 @@ import i18n from '@mocks/@core/helpers/i18n';
 import rawAndHome from './rawAndHome';
 
 const mockEnterRawMode = jest.fn();
-const mockRawSetRotary = jest.fn();
 const mockRawHome = jest.fn();
 const mockRawLooseMotor = jest.fn();
 const mockRawHomeZ = jest.fn();
+const mockRawHomeCamera = jest.fn();
 const mockRawMoveZRelToLastHome = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
+  get currentDevice() {
+    return {
+      info: {
+        version: '1.0.0',
+      },
+    };
+  },
   enterRawMode: (...args) => mockEnterRawMode(...args),
   rawHome: (...args) => mockRawHome(...args),
+  rawHomeCamera: (...args) => mockRawHomeCamera(...args),
   rawHomeZ: (...args) => mockRawHomeZ(...args),
   rawLooseMotor: (...args) => mockRawLooseMotor(...args),
   rawMoveZRelToLastHome: (...args) => mockRawMoveZRelToLastHome(...args),
-  rawSetRotary: (...args) => mockRawSetRotary(...args),
 }));
 
 const mockOpenNonstopProgress = jest.fn();
@@ -35,10 +42,24 @@ jest.mock('@core/app/stores/documentStore', () => ({
   },
 }));
 
+const mockVersionChecker = jest.fn();
+const mockMeetRequirement = jest.fn();
+
+jest.mock(
+  '@core/helpers/version-checker',
+  () =>
+    (...args) =>
+      mockVersionChecker(...args),
+);
+
 describe('test rawAndHome', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockGetState.mockReturnValue({ rotary_mode: false });
+    mockVersionChecker.mockReturnValue({
+      meetRequirement: mockMeetRequirement,
+    });
+    mockMeetRequirement.mockReturnValue(true);
   });
 
   it('should work without progress id', async () => {

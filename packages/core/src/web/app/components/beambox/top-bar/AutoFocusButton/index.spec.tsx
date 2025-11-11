@@ -49,6 +49,7 @@ jest.mock('@core/helpers/beam-file-helper', () => ({}));
 jest.mock('@core/helpers/fileImportHelper', () => ({}));
 
 import AutoFocusButton from './index';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
 const mockPopUp = jest.fn();
 
@@ -179,6 +180,7 @@ describe('AutoFocusButton', () => {
     mockSelect.mockResolvedValue({ success: true });
     mockGetControl.mockReturnValue({ getMode: () => 'raw' });
     mockGetDeviceDetailInfo.mockResolvedValue({ probe_showed: '1' });
+    useCanvasStore.setState({ mode: CanvasMode.Draw });
   });
 
   const renderComponent = (contextValue = {}) => {
@@ -208,9 +210,9 @@ describe('AutoFocusButton', () => {
     });
 
     it('should render disabled when mode is not Draw', () => {
-      const { container } = renderComponent({
-        mode: CanvasMode.Preview,
-      });
+      useCanvasStore.setState({ mode: CanvasMode.Preview });
+
+      const { container } = renderComponent();
       const button = container.querySelector('.button');
 
       expect(button).toHaveClass('disabled');
@@ -363,7 +365,9 @@ describe('AutoFocusButton', () => {
     });
 
     it('should not proceed when in AutoFocus mode', () => {
-      const { container } = renderComponent({ mode: CanvasMode.AutoFocus });
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
+
+      const { container } = renderComponent();
       const button = container.querySelector('.button');
 
       fireEvent.click(button);
@@ -427,17 +431,16 @@ describe('AutoFocusButton', () => {
 
   describe('Keyboard shortcuts', () => {
     it('should register Escape key handler in AutoFocus mode', () => {
-      renderComponent({
-        mode: CanvasMode.AutoFocus,
-      });
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
+
+      renderComponent({});
 
       expect(mockOn).toHaveBeenCalledWith(['Escape'], expect.any(Function), { isBlocking: true });
     });
 
     it('should toggle auto focus off on Escape key', () => {
-      renderComponent({
-        mode: CanvasMode.AutoFocus,
-      });
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
+      renderComponent({});
 
       const escapeHandler = mockOn.mock.calls[0][1];
 
@@ -449,11 +452,10 @@ describe('AutoFocusButton', () => {
     it('should unregister shortcut handler on unmount', () => {
       const mockUnregister = jest.fn();
 
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
       mockOn.mockReturnValue(mockUnregister);
 
-      const { unmount } = renderComponent({
-        mode: CanvasMode.AutoFocus,
-      });
+      const { unmount } = renderComponent();
 
       unmount();
 
