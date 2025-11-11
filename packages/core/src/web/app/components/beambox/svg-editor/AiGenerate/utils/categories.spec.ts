@@ -41,6 +41,11 @@ describe('categories and stylePresets consistency', () => {
       expect(STYLE_PRESET_KEYS).toEqual([
         'text-to-image-plain',
         'edit-plain',
+        'edit-american-2d-cartoon',
+        'edit-japanese-anime',
+        'edit-photo-to-line',
+        'edit-photo-to-line-outline',
+        'edit-pixar-3d',
         'logo-cute',
         'logo-crafty',
         'logo-collage',
