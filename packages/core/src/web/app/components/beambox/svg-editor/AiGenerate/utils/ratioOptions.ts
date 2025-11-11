@@ -1,4 +1,4 @@
-import type { AspectRatio, Orientation } from '../useAiGenerateStore';
+import type { AspectRatio, Orientation } from '../types';
 
 /**
  * Represents a single aspect ratio option with its display configuration

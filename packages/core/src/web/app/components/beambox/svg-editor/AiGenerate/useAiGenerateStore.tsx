@@ -1,40 +1,37 @@
 import { create } from 'zustand';
 
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
-import type { ImageResolution, ImageSizeOption } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 
-import type { ImageInput } from './types';
+import type { GenerationMode, GenerationStatus, ImageDimensions, ImageInput } from './types';
 import { getStyleConfig } from './utils/categories';
+import {
+  getAspectRatioFromImageSize,
+  getImageResolution,
+  getImageSizeOption,
+  getOrientationFromImageSize,
+  getSizeFromImageResolution,
+} from './utils/dimensions';
 import type { StylePresetKey } from './utils/stylePresets';
-import { getStylePreset, parsePromptFromHistory } from './utils/stylePresets';
-
-export type AspectRatio = '1:1' | '3:2' | '4:3' | '16:9'; // 21:9 is not supported by API
-export type ImageSize = 'large' | 'medium' | 'small';
-export type Orientation = 'landscape' | 'portrait';
-export type GenerationStatus = 'failed' | 'generating' | 'idle' | 'success';
-export type GenerationMode = 'edit' | 'text-to-image';
-
-export interface ImageDimensions {
-  aspectRatio: AspectRatio;
-  orientation: Orientation;
-  size: ImageSize;
-}
+import { getStylePreset } from './utils/stylePresets';
 
 interface State {
+  // Form State
   count: number;
   dimensions: ImageDimensions;
+  // Generation State
   errorMessage: null | string;
   generatedImages: string[];
   generationStatus: GenerationStatus;
   generationUuid: null | string;
+  // History State
   historyError: null | string;
   historyItems: AiImageGenerationData[];
   historyLoading: boolean;
   historyOffset: number;
-  inputFields: Record<string, string>; // Dynamic input field values by style
+  inputFields: Record<string, string>; // Dynamic input field values
+  // UI State
   isAiGenerateShown: boolean;
-  patternDescription: string;
   selectedImageInputs: ImageInput[]; // Unified ordered array
   showHistory: boolean;
   style: StylePresetKey;
@@ -47,7 +44,6 @@ interface Actions {
     dimensions: ImageDimensions;
     imageInputs?: ImageInput[];
     mode: GenerationMode;
-    prompt: string;
     uuid: string;
   }) => void;
   clearGenerationResults: () => void;
@@ -56,83 +52,67 @@ interface Actions {
   loadHistory: () => Promise<void>;
   removeImageInput: (id: string) => void;
   resetForm: () => void;
+  setInputField: (key: string, value: string) => void;
   setState: (state: Partial<State>) => void;
   setStyle: (style: StylePresetKey) => void;
-  setStyleCustomField: (key: string, value: string) => void;
   toggleHistory: () => void;
   updateHistoryItem: (uuid: string, updates: Partial<AiImageGenerationData>) => void;
 }
 
-const initialState: State = {
+const formInitialState = {
   count: 1,
-  dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
+  dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' } as ImageDimensions,
   errorMessage: null,
   generatedImages: [],
-  generationStatus: 'idle',
+  generationStatus: 'idle' as GenerationStatus,
   generationUuid: null,
+  inputFields: {},
+  selectedImageInputs: [],
+};
+
+const initialState: State = {
+  ...formInitialState,
   historyError: null,
   historyItems: [],
   historyLoading: false,
   historyOffset: 0,
-  inputFields: {},
   isAiGenerateShown: false,
-  patternDescription: '',
-  selectedImageInputs: [],
   showHistory: false,
-  style: 'text-to-image-plain',
+  style: 'text-to-image-plain' as StylePresetKey,
 };
 
-export const useAiGenerateStore = create<Actions & State>((set) => ({
+export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   ...initialState,
   addImageInput: (input) => {
     set((state) => ({ selectedImageInputs: [...state.selectedImageInputs, input] }));
   },
   addPendingHistoryItem: (params) => {
-    // Map form dimensions to API format
-    const getImageSizeOption = (): ImageSizeOption => {
-      const { aspectRatio, orientation } = params.dimensions;
+    set((state) => {
+      const imageUrls = params.imageInputs?.map((input) => (input.type === 'url' ? input.url : '')).filter(Boolean);
 
-      if (aspectRatio === '1:1') return 'square_hd';
+      const newItem: AiImageGenerationData = {
+        completed_at: null,
+        cost_time: null,
+        created_at: new Date().toISOString(),
+        fail_msg: null,
+        image_resolution: getImageResolution(params.dimensions),
+        image_size: getImageSizeOption(params.dimensions),
+        image_urls: imageUrls,
+        max_images: params.count,
+        model_type: params.mode === 'edit' ? 'edit' : 'text-to-image',
+        prompt_data: {
+          inputs: state.inputFields, // Get from state
+          style: state.style, // Get from state
+        },
+        result_urls: null,
+        seed: null,
+        state: 'pending',
+        task_id: null,
+        uuid: params.uuid,
+      };
 
-      return `${orientation}_${aspectRatio.replace(':', '_')}` as ImageSizeOption;
-    };
-
-    const getImageResolution = (): ImageResolution => {
-      const { size } = params.dimensions;
-
-      if (size === 'large') return '4K';
-
-      if (size === 'medium') return '2K';
-
-      return '1K';
-    };
-
-    // Extract URLs from imageInputs for history storage
-    const imageUrls = params.imageInputs?.map((input) => (input.type === 'url' ? input.url : '')).filter(Boolean);
-
-    // Create optimistic history item
-    const newItem: AiImageGenerationData = {
-      completed_at: null,
-      cost_time: null,
-      created_at: new Date().toISOString(),
-      fail_msg: null,
-      image_resolution: getImageResolution(),
-      image_size: getImageSizeOption(),
-      image_urls: imageUrls,
-      max_images: params.count,
-      model_type: params.mode === 'edit' ? 'edit' : 'text-to-image',
-      prompt: params.prompt,
-      result_urls: null,
-      seed: null,
-      state: 'pending',
-      task_id: null,
-      uuid: params.uuid,
-    };
-
-    // Prepend to history (newest first)
-    set((state) => ({
-      historyItems: [newItem, ...state.historyItems],
-    }));
+      return { historyItems: [newItem, ...state.historyItems] };
+    });
   },
   clearGenerationResults: () => {
     set({ errorMessage: null, generatedImages: [], generationStatus: 'idle', generationUuid: null });
@@ -141,71 +121,40 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
     set({ selectedImageInputs: [] });
   },
   importFromHistory: (item) => {
-    // Helper to map API image size to dimensions
-    const mapSizeToAspectRatio = (imageSize: string): AspectRatio => {
-      if (imageSize.includes('16_9')) return '16:9';
-
-      if (imageSize.includes('4_3')) return '4:3';
-
-      return '1:1';
-    };
-
-    const mapSizeToOrientation = (imageSize: string): Orientation => {
-      if (imageSize.startsWith('landscape')) return 'landscape';
-
-      if (imageSize.startsWith('portrait')) return 'portrait';
-
-      return 'landscape';
-    };
-
-    const mapResolutionToSize = (resolution: string): ImageSize => {
-      if (resolution === '4K') return 'large';
-
-      if (resolution === '2K') return 'medium';
-
-      return 'small';
-    };
-
-    // Determine mode from model_type
     const mode: GenerationMode = item.model_type === 'text-to-image' ? 'text-to-image' : 'edit';
-
-    // Map dimensions
     const dimensions: ImageDimensions = {
-      aspectRatio: mapSizeToAspectRatio(item.image_size),
-      orientation: mapSizeToOrientation(item.image_size),
-      size: mapResolutionToSize(item.image_resolution),
+      aspectRatio: getAspectRatioFromImageSize(item.image_size),
+      orientation: getOrientationFromImageSize(item.image_size),
+      size: getSizeFromImageResolution(item.image_resolution),
     };
 
-    // Convert history URLs to ImageInput format
     const imageInputs: ImageInput[] =
       mode === 'edit' && item.image_urls
-        ? item.image_urls.map((url, index) => ({
-            id: `history-${item.uuid}-${index}`,
-            type: 'url' as const,
-            url,
-          }))
+        ? item.image_urls.map((url, index) => ({ id: `history-${item.uuid}-${index}`, type: 'url' as const, url }))
         : [];
 
-    // Parse prompt to extract description and detect style preset
-    const { customFields, description, stylePresetKey } = parsePromptFromHistory(item);
+    const convertToCamelCase = (key: string): string => key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+    const inputFields: Record<string, string> = {};
 
-    // Set state with imported data
+    if (item.prompt_data?.inputs) {
+      Object.entries(item.prompt_data.inputs).forEach(([key, value]) => {
+        inputFields[convertToCamelCase(key)] = value;
+      });
+    }
+
     set({
       count: item.max_images,
       dimensions,
       generatedImages: item.result_urls || [],
       generationStatus: item.state === 'success' ? 'success' : 'idle',
-      inputFields: customFields, // Restore custom field values (including 'text to display' if it was in the prompt)
-      patternDescription: description, // Use extracted description, not full prompt
-      selectedImageInputs: imageInputs, // Restore ordered URLs
+      inputFields,
+      selectedImageInputs: imageInputs,
       showHistory: false, // Close history panel
-      style: stylePresetKey, // Computed from mode and stylePreset
+      style: (item.prompt_data?.style as StylePresetKey) || (mode === 'edit' ? 'edit-plain' : 'text-to-image-plain'),
     });
   },
   loadHistory: async () => {
-    const { historyLoading } = useAiGenerateStore.getState();
-
-    if (historyLoading) return;
+    if (get().historyLoading) return; // Use get()
 
     set({ historyError: null, historyLoading: true, historyOffset: 0 });
 
@@ -218,7 +167,7 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
         return;
       }
 
-      set({ historyItems: result.data, historyLoading: false, historyOffset: 20 });
+      set({ historyItems: result.data, historyLoading: false, historyOffset: result.data.length });
     } catch (error) {
       set({
         historyError: error instanceof Error ? error.message : 'Failed to load history',
@@ -230,62 +179,34 @@ export const useAiGenerateStore = create<Actions & State>((set) => ({
     set((state) => ({ selectedImageInputs: state.selectedImageInputs.filter((input) => input.id !== id) }));
   },
   resetForm: () => {
-    set({
-      count: initialState.count,
-      dimensions: initialState.dimensions,
-      errorMessage: null,
-      generatedImages: [],
-      generationStatus: 'idle',
-      generationUuid: null,
-      inputFields: {},
-      patternDescription: initialState.patternDescription,
-      selectedImageInputs: [],
-      style: 'text-to-image-plain',
-    });
+    set({ ...formInitialState });
+  },
+  setInputField: (key, value) => {
+    set((state) => ({ inputFields: { ...state.inputFields, [key]: value } }));
   },
   setState: (state) => {
     set((originalState) => ({ ...originalState, ...state }));
   },
   setStyle: (style) => {
     set((state) => {
-      if (!style) {
-        return { inputFields: {}, style: 'text-to-image-plain' };
-      }
+      const newStyle = style || 'text-to-image-plain';
+      const styleCategoryKey = getStyleConfig(newStyle).id;
+      const newFieldKeys = new Set(styleCategoryKey ? getStylePreset(styleCategoryKey).map((field) => field.key) : []);
 
-      // Get config for new option
-      const newConfig = getStyleConfig(style);
-      const newStylePreset = newConfig?.id;
-
-      // Get the new style's custom field keys
-      const newStyleFieldKeys = new Set(
-        newStylePreset ? getStylePreset(newStylePreset)?.inputFields?.map((f) => f.key) || [] : [],
+      // Filter existing inputs to only keep ones valid for the new style
+      const preservedFields = Object.fromEntries(
+        Object.entries(state.inputFields).filter(([key]) => newFieldKeys.has(key)),
       );
 
-      // Filter existing custom fields: keep only those that exist in new style
-      const preservedFields: Record<string, string> = {};
-
-      Object.entries(state.inputFields).forEach(([key, value]) => {
-        if (newStyleFieldKeys.has(key)) {
-          preservedFields[key] = value;
-        }
-      });
-
-      return {
-        inputFields: preservedFields,
-        style,
-      };
+      return { inputFields: preservedFields, style: newStyle };
     });
-  },
-  setStyleCustomField: (key, value) => {
-    set((state) => ({ inputFields: { ...state.inputFields, [key]: value } }));
   },
   toggleHistory: () => {
     set((state) => {
       const newShowHistory = !state.showHistory;
 
-      // Load history when opening if not loaded yet
-      if (newShowHistory && !state.historyLoading) {
-        useAiGenerateStore.getState().loadHistory();
+      if (newShowHistory && !state.historyLoading && state.historyItems.length === 0) {
+        get().loadHistory();
       }
 
       return { showHistory: newShowHistory };

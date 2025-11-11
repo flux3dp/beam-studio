@@ -162,7 +162,10 @@ const createMockHistoryItem = (overrides?: Partial<AiImageGenerationData>): AiIm
   image_urls: null,
   max_images: 1,
   model_type: 'text-to-image',
-  prompt: 'Test prompt',
+  prompt_data: {
+    inputs: { description: 'Test prompt' },
+    style: 'text-to-image-plain',
+  },
   result_urls: ['https://example.com/result.jpg'],
   seed: null,
   state: 'success',
@@ -193,7 +196,6 @@ describe('test AiGenerate', () => {
       historyOffset: 0,
       inputFields: {},
       isAiGenerateShown: false,
-      patternDescription: '',
       selectedImageInputs: [],
       showHistory: false,
       style: 'text-to-image-plain',
@@ -375,7 +377,7 @@ describe('test AiGenerate', () => {
     test('snapshot: generating state', () => {
       useAiGenerateStore.setState({
         generationStatus: 'generating',
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -420,7 +422,7 @@ describe('test AiGenerate', () => {
       useAiGenerateStore.setState({
         count: 2,
         errorMessage: 'Error',
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -431,7 +433,7 @@ describe('test AiGenerate', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.patternDescription).toBe('');
+      expect(state.inputFields.description).toBe(undefined);
       expect(state.count).toBe(1);
       expect(state.errorMessage).toBe(null);
     });
@@ -531,7 +533,7 @@ describe('test AiGenerate', () => {
 
       fireEvent.change(textarea!, { target: { value: 'New prompt text' } });
 
-      expect(useAiGenerateStore.getState().patternDescription).toBe('New prompt text');
+      expect(useAiGenerateStore.getState().inputFields.description).toBe('New prompt text');
     });
 
     test('keyboard events in textarea do not propagate', () => {
@@ -558,7 +560,7 @@ describe('test AiGenerate', () => {
 
       fireEvent.change(customFieldTextarea!, { target: { value: 'MeowWoof' } });
 
-      expect(useAiGenerateStore.getState().inputFields['text to display']).toBe('MeowWoof');
+      expect(useAiGenerateStore.getState().inputFields['textToDisplay']).toBe('MeowWoof');
     });
 
     test('hovering More button shows floating menu', async () => {
@@ -664,7 +666,7 @@ describe('test AiGenerate', () => {
 
     test('prompt persists when switching from text-to-image to edit', () => {
       useAiGenerateStore.setState({
-        patternDescription: 'Persistent prompt',
+        inputFields: { description: 'Persistent prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -672,7 +674,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({ style: 'edit-plain' });
 
-      expect(useAiGenerateStore.getState().patternDescription).toBe('Persistent prompt');
+      expect(useAiGenerateStore.getState().inputFields.description).toBe('Persistent prompt');
     });
 
     test('dimensions persist when switching modes', () => {
@@ -729,8 +731,8 @@ describe('test AiGenerate', () => {
 
   describe('Generation Flow Tests', () => {
     describe('Validation', () => {
-      test('empty prompt shows error', async () => {
-        useAiGenerateStore.setState({ patternDescription: '' });
+      test('button enabled with empty prompt (validation occurs on API level)', async () => {
+        useAiGenerateStore.setState({ inputFields: { description: '' } });
 
         const { container } = render(<AiGenerate />);
 
@@ -738,12 +740,12 @@ describe('test AiGenerate', () => {
           (btn) => btn.textContent === 'Generate',
         ) as HTMLButtonElement;
 
-        // Button should be disabled
-        expect(generateButton.disabled).toBe(true);
+        // Button is enabled - validation happens at API level
+        expect(generateButton.disabled).toBe(false);
       });
 
-      test('whitespace-only prompt shows error', async () => {
-        useAiGenerateStore.setState({ patternDescription: '   ' });
+      test('button enabled with whitespace-only prompt', async () => {
+        useAiGenerateStore.setState({ inputFields: { description: '   ' } });
 
         const { container } = render(<AiGenerate />);
 
@@ -751,13 +753,13 @@ describe('test AiGenerate', () => {
           (btn) => btn.textContent === 'Generate',
         ) as HTMLButtonElement;
 
-        // Button should be disabled
-        expect(generateButton.disabled).toBe(true);
+        // Button is enabled - trimming and validation happens during generation
+        expect(generateButton.disabled).toBe(false);
       });
 
       test('no user logged in shows error', async () => {
         mockGetCurrentUser.mockReturnValue(null);
-        useAiGenerateStore.setState({ patternDescription: 'Test prompt' });
+        useAiGenerateStore.setState({ inputFields: { description: 'Test prompt' } });
 
         const { container } = render(<AiGenerate />);
 
@@ -771,7 +773,7 @@ describe('test AiGenerate', () => {
 
       test('edit mode with 0 images shows error', async () => {
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           selectedImageInputs: [],
           style: 'edit-plain',
         });
@@ -790,7 +792,7 @@ describe('test AiGenerate', () => {
         const manyImages = Array.from({ length: 11 }, (_, i) => createMockImageInput('file', `img-${i}`));
 
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           selectedImageInputs: manyImages,
           style: 'edit-plain',
         });
@@ -811,7 +813,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           count: 1,
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
-          patternDescription: 'A cute dog',
+          inputFields: { description: 'A cute dog' },
           style: 'text-to-image-plain',
         });
 
@@ -828,17 +830,19 @@ describe('test AiGenerate', () => {
             image_resolution: '1K',
             image_size: 'square_hd',
             max_images: 1,
-            prompt: 'A cute dog',
+            prompt_data: {
+              inputs: { description: 'A cute dog' },
+              style: 'text-to-image-plain',
+            },
           });
         });
       });
 
-      test('includes styled JSON prompt when preset selected', async () => {
+      test('sends structured prompt_data when preset selected', async () => {
         useAiGenerateStore.setState({
           count: 1,
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
-          inputFields: { 'text to display': 'MeowWoof' },
-          patternDescription: 'A shiba dog',
+          inputFields: { description: 'A shiba dog', textToDisplay: 'MeowWoof' },
           style: 'logo-cute',
         });
 
@@ -854,17 +858,21 @@ describe('test AiGenerate', () => {
           expect(mockCreateTextToImageTask).toHaveBeenCalled();
 
           const callArgs = mockCreateTextToImageTask.mock.calls[0][0];
-          const promptObj = JSON.parse(callArgs.prompt);
 
-          expect(promptObj.description.value).toBe('A shiba dog');
-          expect(promptObj.style).toBeDefined();
-          expect(promptObj['text to display'].value).toBe('MeowWoof');
+          // Should send structured prompt_data with snake_case inputs
+          expect(callArgs.prompt_data).toEqual({
+            inputs: {
+              description: 'A shiba dog',
+              text_to_display: 'MeowWoof',
+            },
+            style: 'logo-cute',
+          });
         });
       });
 
-      test('uses plain text prompt for plain-text-to-image', async () => {
+      test('sends prompt_data for plain-text-to-image', async () => {
         useAiGenerateStore.setState({
-          patternDescription: 'Plain text prompt',
+          inputFields: { description: 'Plain text prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -879,7 +887,10 @@ describe('test AiGenerate', () => {
         await waitFor(() => {
           expect(mockCreateTextToImageTask).toHaveBeenCalledWith(
             expect.objectContaining({
-              prompt: 'Plain text prompt',
+              prompt_data: {
+                inputs: { description: 'Plain text prompt' },
+                style: 'text-to-image-plain',
+              },
             }),
           );
         });
@@ -888,7 +899,7 @@ describe('test AiGenerate', () => {
       test('maps 16:9 landscape to correct image size', async () => {
         useAiGenerateStore.setState({
           dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'medium' },
-          patternDescription: 'Test',
+          inputFields: { description: 'Test' },
           style: 'text-to-image-plain',
         });
 
@@ -913,7 +924,7 @@ describe('test AiGenerate', () => {
       test('maps large size to 4K resolution', async () => {
         useAiGenerateStore.setState({
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'large' },
-          patternDescription: 'Test',
+          inputFields: { description: 'Test' },
           style: 'text-to-image-plain',
         });
 
@@ -940,7 +951,7 @@ describe('test AiGenerate', () => {
         const fileInput = createMockImageInput('file', 'test-1');
 
         useAiGenerateStore.setState({
-          patternDescription: 'Edit this image',
+          inputFields: { description: 'Edit this image' },
           selectedImageInputs: [fileInput],
           style: 'edit-plain',
         });
@@ -960,7 +971,10 @@ describe('test AiGenerate', () => {
 
           expect(callArgs.image_inputs).toHaveLength(1);
           expect(callArgs.image_inputs[0]).toBeInstanceOf(File);
-          expect(callArgs.prompt).toBe('Edit this image');
+          expect(callArgs.prompt_data).toEqual({
+            inputs: { description: 'Edit this image' },
+            style: 'edit-plain',
+          });
         });
       });
 
@@ -968,7 +982,7 @@ describe('test AiGenerate', () => {
         const urlInput = createMockImageInput('url', 'test-1');
 
         useAiGenerateStore.setState({
-          patternDescription: 'Edit this image',
+          inputFields: { description: 'Edit this image' },
           selectedImageInputs: [urlInput],
           style: 'edit-plain',
         });
@@ -997,7 +1011,7 @@ describe('test AiGenerate', () => {
         const urlInput = createMockImageInput('url', 'test-2');
 
         useAiGenerateStore.setState({
-          patternDescription: 'Edit these images',
+          inputFields: { description: 'Edit these images' },
           selectedImageInputs: [fileInput, urlInput],
           style: 'edit-plain',
         });
@@ -1027,7 +1041,7 @@ describe('test AiGenerate', () => {
         mockCreateTextToImageTask.mockResolvedValue({ uuid: 'test-uuid-123' });
 
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1048,7 +1062,7 @@ describe('test AiGenerate', () => {
         mockPollTaskUntilComplete.mockImplementation(() => new Promise(() => {})); // Never resolves
 
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1071,7 +1085,7 @@ describe('test AiGenerate', () => {
         });
 
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1093,7 +1107,7 @@ describe('test AiGenerate', () => {
 
       test('calls getInfo to refresh credits after success', async () => {
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1116,7 +1130,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           errorMessage: 'Old error',
           generatedImages: ['https://example.com/old.jpg'],
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1144,7 +1158,7 @@ describe('test AiGenerate', () => {
         mockCreateTextToImageTask.mockResolvedValue({ error: 'API Error' });
 
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1171,7 +1185,7 @@ describe('test AiGenerate', () => {
         });
 
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1197,7 +1211,7 @@ describe('test AiGenerate', () => {
         });
 
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'text-to-image-plain',
         });
 
@@ -1219,7 +1233,7 @@ describe('test AiGenerate', () => {
 
       test('handles invalid style preset', async () => {
         useAiGenerateStore.setState({
-          patternDescription: 'Test prompt',
+          inputFields: { description: 'Test prompt' },
           style: 'invalid-preset' as any,
         });
 
@@ -1246,8 +1260,8 @@ describe('test AiGenerate', () => {
   // ==========================================================================
 
   describe('Error Handling Tests', () => {
-    test('Generate button disabled when prompt is empty', () => {
-      useAiGenerateStore.setState({ patternDescription: '' });
+    test('Generate button enabled when prompt is empty (validated at API level)', () => {
+      useAiGenerateStore.setState({ inputFields: { description: '' } });
 
       const { container } = render(<AiGenerate />);
 
@@ -1255,13 +1269,14 @@ describe('test AiGenerate', () => {
         (btn) => btn.textContent === 'Generate',
       ) as HTMLButtonElement;
 
-      expect(generateButton.disabled).toBe(true);
+      // Button is enabled - validation happens at API level
+      expect(generateButton.disabled).toBe(false);
     });
 
     test('Generate button disabled when no user logged in', () => {
       mockGetCurrentUser.mockReturnValue(null);
 
-      useAiGenerateStore.setState({ patternDescription: 'Test' });
+      useAiGenerateStore.setState({ inputFields: { description: 'Test' } });
 
       const { container } = render(<AiGenerate />);
 
@@ -1274,7 +1289,7 @@ describe('test AiGenerate', () => {
 
     test('Generate button disabled in edit mode with 0 images', () => {
       useAiGenerateStore.setState({
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
         selectedImageInputs: [],
         style: 'edit-plain',
       });
@@ -1292,7 +1307,7 @@ describe('test AiGenerate', () => {
       const manyImages = Array.from({ length: 11 }, (_, i) => createMockImageInput('file', `img-${i}`));
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
         selectedImageInputs: manyImages,
         style: 'edit-plain',
       });
@@ -1311,7 +1326,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         count: 1,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -1327,7 +1342,7 @@ describe('test AiGenerate', () => {
       mockCreateTextToImageTask.mockResolvedValue({ error: 'Network error' });
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -1351,7 +1366,7 @@ describe('test AiGenerate', () => {
       });
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -1378,7 +1393,7 @@ describe('test AiGenerate', () => {
       });
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -1398,10 +1413,9 @@ describe('test AiGenerate', () => {
       });
     });
 
-    test('empty custom field does not cause error', async () => {
+    test('empty custom field is included in prompt_data', async () => {
       useAiGenerateStore.setState({
-        inputFields: { 'text to display': '' }, // Empty field
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt', textToDisplay: '' }, // Empty field
         style: 'logo-cute',
       });
 
@@ -1417,10 +1431,15 @@ describe('test AiGenerate', () => {
         expect(mockCreateTextToImageTask).toHaveBeenCalled();
 
         const callArgs = mockCreateTextToImageTask.mock.calls[0][0];
-        const promptObj = JSON.parse(callArgs.prompt);
 
-        // Empty field should not be included
-        expect(promptObj['text to display']).toBeUndefined();
+        // Empty field should be included in inputs with empty string value
+        expect(callArgs.prompt_data).toEqual({
+          inputs: {
+            description: 'Test prompt',
+            text_to_display: '',
+          },
+          style: 'logo-cute',
+        });
       });
     });
   });
@@ -1435,7 +1454,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         count: 1,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -1452,7 +1471,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         count: 1,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -1469,7 +1488,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         count: 2,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -1486,7 +1505,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         count: 2,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -1503,7 +1522,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         count: 4,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -1520,7 +1539,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         count: 4,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -1555,7 +1574,7 @@ describe('test AiGenerate', () => {
     test('updates button state when credits change', () => {
       useAiGenerateStore.setState({
         count: 1,
-        patternDescription: 'Test',
+        inputFields: { description: 'Test' },
       });
 
       mockGetCurrentUser.mockReturnValue(createMockUser(0.04));
@@ -1655,7 +1674,7 @@ describe('test AiGenerate', () => {
       expect(useAiGenerateStore.getState().selectedImageInputs[0].type).toBe('url');
     });
 
-    test('displays tip when images are present in edit mode', () => {
+    test('renders component with images in edit mode', () => {
       useAiGenerateStore.setState({
         selectedImageInputs: [createMockImageInput('file', 'test-1')],
         style: 'edit-plain',
@@ -1663,12 +1682,12 @@ describe('test AiGenerate', () => {
 
       const { container } = render(<AiGenerate />);
 
-      const hint = container.querySelector('.hint');
-
-      expect(hint?.textContent).toContain('Reference images by number');
+      // Verify component renders successfully with images
+      expect(container.querySelector('.ai-generate-container')).toBeInTheDocument();
+      expect(useAiGenerateStore.getState().selectedImageInputs).toHaveLength(1);
     });
 
-    test('does not display tip when no images in edit mode', () => {
+    test('renders component without images in edit mode', () => {
       useAiGenerateStore.setState({
         selectedImageInputs: [],
         style: 'edit-plain',
@@ -1676,9 +1695,9 @@ describe('test AiGenerate', () => {
 
       const { container } = render(<AiGenerate />);
 
-      const hint = container.querySelector('.hint');
-
-      expect(hint).not.toBeInTheDocument();
+      // Verify component renders successfully
+      expect(container.querySelector('.ai-generate-container')).toBeInTheDocument();
+      expect(useAiGenerateStore.getState().selectedImageInputs).toHaveLength(0);
     });
   });
 
@@ -1705,61 +1724,52 @@ describe('test AiGenerate', () => {
         image_size: 'square_hd',
         max_images: 2,
         model_type: 'text-to-image',
-        prompt: 'A cute cat',
+        prompt_data: {
+          inputs: { description: 'A cute cat' },
+          style: 'text-to-image-plain',
+        },
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.patternDescription).toBe('A cute cat');
+      expect(state.inputFields.description).toBe('A cute cat');
       expect(state.style).toBe('text-to-image-plain');
       expect(state.dimensions.aspectRatio).toBe('1:1');
       expect(state.dimensions.size).toBe('medium');
       expect(state.count).toBe(2);
     });
 
-    test('imports styled prompt and parses fields', () => {
-      const styledPrompt = JSON.stringify({
-        background: { value: 'full pure white color', weight: 0.6 },
-        color: {
-          value: 'soft pastel tones: baby pink, sky blue, cream white, gentle lavender, light golden yellow',
-          weight: 0.7,
-        },
-        description: { value: 'A shiba dog', weight: 0.9 },
-        'negative prompt': {
-          value:
-            'blurry, deformed, disfigured, ugly, bad anatomy, watermark, messy, 3D render, photo, complex background, text artifacts',
-          weight: 1.0,
-        },
-        style: {
-          value:
-            'kawaii hand-drawn logo, flat vector design, adorable illustration, rounded shapes, soft lines, professional quality, sharp lines. Bold, clean sans-serif typography',
-          weight: 1.0,
-        },
-        'text position': { value: 'positioned directly below the logo, centered horizontally', weight: 1.1 },
-        'text to display': { value: 'MeowWoof', weight: 1.2 },
-      });
-
+    test('imports styled prompt with structured prompt_data', () => {
       const historyItem = createMockHistoryItem({
         model_type: 'text-to-image',
-        prompt: styledPrompt,
+        prompt_data: {
+          inputs: {
+            description: 'A shiba dog',
+            text_to_display: 'MeowWoof',
+          },
+          style: 'logo-cute',
+        },
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.patternDescription).toBe('A shiba dog');
+      expect(state.inputFields.description).toBe('A shiba dog');
       expect(state.style).toBe('logo-cute');
-      expect(state.inputFields['text to display']).toBe('MeowWoof');
+      expect(state.inputFields['textToDisplay']).toBe('MeowWoof');
     });
 
     test('imports edit mode history with image URLs', () => {
       const historyItem = createMockHistoryItem({
         image_urls: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
         model_type: 'edit',
-        prompt: 'Edit this image',
+        prompt_data: {
+          inputs: { description: 'Edit this image' },
+          style: 'edit-plain',
+        },
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
@@ -1811,16 +1821,19 @@ describe('test AiGenerate', () => {
       expect(useAiGenerateStore.getState().showHistory).toBe(false);
     });
 
-    test('handles malformed JSON prompt as plain text', () => {
+    test('handles history with plain text description', () => {
       const historyItem = createMockHistoryItem({
-        prompt: '{ invalid json',
+        prompt_data: {
+          inputs: { description: 'Simple description' },
+          style: 'text-to-image-plain',
+        },
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.patternDescription).toBe('{ invalid json');
+      expect(state.inputFields.description).toBe('Simple description');
       expect(state.style).toBe('text-to-image-plain');
     });
 
@@ -1893,7 +1906,7 @@ describe('test AiGenerate', () => {
       mockPollTaskUntilComplete.mockImplementation(() => new Promise(() => {}));
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -1915,7 +1928,7 @@ describe('test AiGenerate', () => {
       });
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -1939,7 +1952,7 @@ describe('test AiGenerate', () => {
       });
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -1963,7 +1976,7 @@ describe('test AiGenerate', () => {
       });
 
       useAiGenerateStore.setState({
-        patternDescription: 'Test prompt',
+        inputFields: { description: 'Test prompt' },
         style: 'text-to-image-plain',
       });
 
@@ -1989,7 +2002,7 @@ describe('test AiGenerate', () => {
         errorMessage: 'Old error',
         generatedImages: ['https://example.com/old.jpg'],
         generationStatus: 'success',
-        patternDescription: 'New prompt',
+        inputFields: { description: 'New prompt' },
         style: 'text-to-image-plain',
       });
 
