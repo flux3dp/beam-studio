@@ -91,7 +91,9 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Preview',
         label: lang.topbar.preview,
         onClick: () => {
+          // TODO: long press for normal mode
           startBackgroundPreviewMode();
+
           // changeToPreviewMode();
           // setupPreviewMode();
         },
