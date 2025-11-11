@@ -13,7 +13,6 @@ export type ImageSizeOption =
   | 'landscape_3_2'
   | 'landscape_4_3'
   | 'landscape_16_9'
-  | 'landscape_21_9'
   | 'portrait_3_2'
   | 'portrait_4_3'
   | 'portrait_16_9'
@@ -22,23 +21,25 @@ export type ImageSizeOption =
 
 export type ImageResolution = '1K' | '2K' | '4K';
 
-// Request payload for creating text-to-image task
-export interface TextToImageRequest {
+export interface PromptData {
+  inputs: Record<string, string>; // User inputs: { description: '...', text_to_display: '...' }
+  style: string; // Style preset key: 'logo-cute', 'edit-plain', etc.
+}
+
+export interface BaseRequest {
   image_resolution?: ImageResolution;
   image_size?: ImageSizeOption;
   max_images?: number;
-  prompt: string;
+  prompt_data: PromptData;
   seed?: number;
 }
 
+// Request payload for creating text-to-image task
+export interface TextToImageRequest extends BaseRequest {}
+
 // Request payload for creating image edit task
-export interface ImageEditRequest {
+export interface ImageEditRequest extends BaseRequest {
   image_inputs: Array<File | string>; // Ordered array of mixed files and URLs
-  image_resolution?: ImageResolution;
-  image_size?: ImageSizeOption;
-  max_images?: number;
-  prompt: string;
-  seed?: number;
 }
 
 // State of AI generation task
@@ -55,7 +56,7 @@ export interface AiImageGenerationData {
   image_urls?: string[]; // Input images for edit mode (S3 URLs)
   max_images: number;
   model_type: string;
-  prompt: string;
+  prompt_data: PromptData; // Structured prompt data from backend
   result_urls: null | string[];
   seed: null | number;
   state: TaskState;
@@ -137,12 +138,12 @@ export const createTextToImageTask = async ({
   image_resolution = '1K',
   image_size = 'square_hd',
   max_images = 1,
-  prompt,
+  prompt_data,
   seed = Math.floor(Math.random() * 1000000),
 }: TextToImageRequest): Promise<{ code?: string; error: string } | { uuid: string }> => {
   try {
     const response = await fetchWithTimeout(TEXT_TO_IMAGE_URL, {
-      body: JSON.stringify({ image_resolution, image_size, max_images, prompt, seed }),
+      body: JSON.stringify({ image_resolution, image_size, max_images, prompt_data, seed }),
       method: 'POST',
     });
 
@@ -185,14 +186,14 @@ export const createImageEditTask = async ({
   image_resolution = '1K',
   image_size = 'square_hd',
   max_images = 1,
-  prompt,
+  prompt_data,
   seed = Math.floor(Math.random() * 1000000),
 }: ImageEditRequest): Promise<{ code?: string; error: string } | { uuid: string }> => {
   try {
     // Build FormData for multipart/form-data request
     const formData = new FormData();
 
-    formData.append('prompt', prompt);
+    formData.append('prompt_data', JSON.stringify(prompt_data));
     formData.append('image_resolution', image_resolution);
     formData.append('image_size', image_size);
     formData.append('max_images', max_images.toString());
@@ -208,11 +209,7 @@ export const createImageEditTask = async ({
     const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
 
     try {
-      const response = await fetch(EDIT_IMAGE_URL, {
-        body: formData,
-        method: 'POST',
-        signal: controller.signal,
-      });
+      const response = await fetch(EDIT_IMAGE_URL, { body: formData, method: 'POST', signal: controller.signal });
 
       clearTimeout(timeoutId);
 

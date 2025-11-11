@@ -1,3 +1,15 @@
+export type AspectRatio = '1:1' | '3:2' | '4:3' | '16:9'; // 21:9 is not supported by API
+export type ImageSize = 'large' | 'medium' | 'small';
+export type Orientation = 'landscape' | 'portrait';
+export type GenerationStatus = 'failed' | 'generating' | 'idle' | 'success';
+export type GenerationMode = 'edit' | 'text-to-image';
+
+export interface ImageDimensions {
+  aspectRatio: AspectRatio;
+  orientation: Orientation;
+  size: ImageSize;
+}
+
 /**
  * Represents a single image input - either a local file upload or url
  */

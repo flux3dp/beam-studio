@@ -2,10 +2,9 @@ import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } fro
 import { getInfo } from '@core/helpers/api/flux-id';
 import type { IUser } from '@core/interfaces/IUser';
 
-import type { GenerationMode, ImageDimensions } from '../useAiGenerateStore';
+import type { GenerationMode, ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { getImageResolution, getImageSizeOption } from '../utils/dimensions';
-import { buildStyledPrompt, getStylePreset } from '../utils/stylePresets';
 
 interface UseImageGenerationParams {
   count: number;
@@ -30,18 +29,14 @@ export const useImageGeneration = ({
   mode,
   stylePreset,
 }: UseImageGenerationParams): UseImageGenerationReturn => {
-  const {
-    addPendingHistoryItem,
-    clearGenerationResults,
-    inputFields: styleCustomFields,
-    patternDescription,
-    selectedImageInputs,
-    updateHistoryItem,
-  } = useAiGenerateStore();
+  const { addPendingHistoryItem, clearGenerationResults, inputFields, selectedImageInputs, updateHistoryItem } =
+    useAiGenerateStore();
 
   const handleGenerate = async () => {
     // Check prompt
-    if (!patternDescription.trim()) {
+    const description = inputFields.description || '';
+
+    if (mode === 'text-to-image' && !description.trim()) {
       useAiGenerateStore.setState({ errorMessage: 'Please provide a prompt description' });
 
       return;
@@ -71,24 +66,19 @@ export const useImageGeneration = ({
     clearGenerationResults();
     useAiGenerateStore.setState({ generationStatus: 'generating' });
 
-    // Build prompt based on style
-    let prompt: string;
+    // Convert inputFields to snake_case for backend
+    const convertToSnakeCase = (key: string): string => {
+      // Convert camelCase to snake_case: textToDisplay -> text_to_display
+      return key.replace(/([A-Z])/g, '_$1').toLowerCase();
+    };
 
-    if (stylePreset) {
-      // Style mode: construct weighted JSON prompt
-      const preset = getStylePreset(stylePreset as any);
+    const inputs: Record<string, string> = {};
 
-      if (!preset) {
-        useAiGenerateStore.setState({ errorMessage: 'Invalid style preset selected' });
+    Object.entries(inputFields).forEach(([key, value]) => {
+      const snakeKey = convertToSnakeCase(key);
 
-        return;
-      }
-
-      prompt = buildStyledPrompt(preset, patternDescription.trim(), styleCustomFields);
-    } else {
-      // Plain mode: use pattern description as-is
-      prompt = patternDescription.trim();
-    }
+      inputs[snakeKey] = value;
+    });
 
     // Create task based on mode
     let createResponse: { error: string } | { uuid: string };
@@ -99,17 +89,23 @@ export const useImageGeneration = ({
 
       createResponse = await createImageEditTask({
         image_inputs: imageInputsForApi,
-        image_resolution: getImageResolution(dimensions.size),
+        image_resolution: getImageResolution(dimensions),
         image_size: getImageSizeOption(dimensions),
         max_images: count,
-        prompt,
+        prompt_data: {
+          inputs,
+          style: stylePreset || 'edit-plain',
+        },
       });
     } else {
       createResponse = await createTextToImageTask({
-        image_resolution: getImageResolution(dimensions.size),
+        image_resolution: getImageResolution(dimensions),
         image_size: getImageSizeOption(dimensions),
         max_images: count,
-        prompt,
+        prompt_data: {
+          inputs,
+          style: stylePreset || 'text-to-image-plain',
+        },
       });
     }
 
@@ -136,7 +132,6 @@ export const useImageGeneration = ({
       dimensions,
       imageInputs: mode === 'edit' ? selectedImageInputs : undefined,
       mode,
-      prompt,
       uuid,
     });
 

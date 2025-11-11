@@ -1,6 +1,6 @@
-import type { GenerationMode } from '../useAiGenerateStore';
+import type { GenerationMode } from '../types';
 
-import { type StylePresetKey } from './stylePresets';
+import type { StylePresetKey } from './stylePresets';
 
 /**
  * Represents a single creation style option (e.g., "Plain Text-to-Image", "Cute Logo")
@@ -112,7 +112,7 @@ export const getStyleConfig = (style: StylePresetKey): Style => {
   if (!style) return CATEGORIES[0].styles[0]; // Default to first option
 
   for (const category of CATEGORIES) {
-    const option = category.styles.find((opt) => opt.id === style);
+    const option = category.styles.find(({ id }) => id === style);
 
     if (option) return option;
   }
@@ -127,7 +127,7 @@ export const getCategoryForOption = (optionId: null | string): Category | null =
   if (!optionId) return null;
 
   for (const category of CATEGORIES) {
-    if (category.styles.some((opt) => opt.id === optionId)) {
+    if (category.styles.some(({ id }) => id === optionId)) {
       return category;
     }
   }

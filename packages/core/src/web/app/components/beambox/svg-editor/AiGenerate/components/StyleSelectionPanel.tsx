@@ -18,13 +18,13 @@ interface StyleSelectionPanelProps {
 
 const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
   // Auto-select category based on current selection
-  const initialCategory = currentStyle ? getCategoryForOption(currentStyle)?.id || 'text-to-image' : 'text-to-image';
+  const initialCategory = getCategoryForOption(currentStyle)?.id || 'text-to-image';
   const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
   const [selectedStyle, setSelectedStyle] = useState<null | StylePresetKey>(currentStyle);
   const currentCategory = CATEGORIES.find(({ id }) => id === selectedCategory)!;
 
-  const handleOptionClick = (option: Style) => {
-    setSelectedStyle(option.id);
+  const handleOptionClick = ({ id }: Style) => {
+    setSelectedStyle(id);
   };
 
   const handleConfirm = () => {

@@ -176,7 +176,7 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="300"
+              maxlength="5000"
               placeholder="Please describe the logo pattern you would like to create."
               rows="5"
             />
@@ -194,7 +194,7 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
                   >
                     0
                      / 
-                    300
+                    5000
                   </span>
                   <span
                     aria-label="bulb"
@@ -463,7 +463,6 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-lg ant-btn-block generate-button"
-          disabled=""
           type="button"
         >
           <span>
@@ -704,11 +703,6 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
           class="section-title"
         >
           Edit Prompt
-          <span
-            class="required"
-          >
-             *
-          </span>
         </h3>
         <div
           class="input-wrapper"
@@ -718,7 +712,7 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="300"
+              maxlength="5000"
               placeholder="Please describe how you would like to edit the images."
               rows="5"
             />
@@ -736,7 +730,7 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
                   >
                     0
                      / 
-                    300
+                    5000
                   </span>
                   <span
                     aria-label="bulb"
@@ -761,11 +755,6 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
               </span>
             </span>
           </span>
-          <p
-            class="hint"
-          >
-            💡 Tip: Reference images by number in your prompt (e.g., "person in image 1 wearing clothes from image 2")
-          </p>
         </div>
       </div>
       <div
@@ -1010,7 +999,6 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-lg ant-btn-block generate-button"
-          disabled=""
           type="button"
         >
           <span>
@@ -1236,7 +1224,7 @@ exports[`test AiGenerate Rendering Tests snapshot: generating state 1`] = `
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="300"
+              maxlength="5000"
               placeholder="Please describe the logo pattern you would like to create."
               rows="5"
             >
@@ -1256,7 +1244,7 @@ exports[`test AiGenerate Rendering Tests snapshot: generating state 1`] = `
                   >
                     11
                      / 
-                    300
+                    5000
                   </span>
                   <span
                     aria-label="bulb"
@@ -1750,7 +1738,7 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="300"
+              maxlength="5000"
               placeholder="Please describe the logo pattern you would like to create."
               rows="5"
             />
@@ -1768,7 +1756,7 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
                   >
                     0
                      / 
-                    300
+                    5000
                   </span>
                   <span
                     aria-label="bulb"
@@ -2037,7 +2025,6 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
       >
         <button
           class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-lg ant-btn-block generate-button"
-          disabled=""
           type="button"
         >
           <span>
