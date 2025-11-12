@@ -238,7 +238,7 @@ describe('test DocumentSettings', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith({
-      'auto-feeder': false,
+      'auto-feeder': true,
       auto_shrink: true,
       borderless: true,
       'enable-4c': true,
@@ -248,7 +248,7 @@ describe('test DocumentSettings', () => {
       'enable-job-origin': true,
       engrave_dpi: 'high',
       'job-origin': 1,
-      'pass-through': true,
+      'pass-through': false,
       'rotary-type': 0,
       rotary_mode: false,
     });
@@ -260,9 +260,8 @@ describe('test DocumentSettings', () => {
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'canvas');
-    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(2);
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'document-settings-saved');
+    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(1);
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'document-settings-saved');
     expect(mockUnmount).toHaveBeenCalledTimes(1);
   });
 
@@ -359,8 +358,8 @@ describe('test DocumentSettings', () => {
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({
-        'auto-feeder': false,
-        'pass-through': true,
+        'auto-feeder': true,
+        'pass-through': false,
       }),
     );
   });
