@@ -111,7 +111,7 @@ describe('test layer-module-helper', () => {
     });
   });
 
-  test('getDetectedModulesTranslations with 4c note', () => {
+  test('getDetectedModulesTranslations', () => {
     expect(getDetectedModulesTranslations()).toEqual({
       [DetectedLayerModule.LASER_10W_DIODE]: lang.layer_module.laser_10w_diode,
       [DetectedLayerModule.LASER_20W_DIODE]: lang.layer_module.laser_20w_diode,
