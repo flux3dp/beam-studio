@@ -20,7 +20,7 @@ export const exampleFileKeys = [
   'IMPORT_EXAMPLE_ADOR_PRINT_SINGLE',
   'IMPORT_EXAMPLE_BEAMBOX_2',
   'IMPORT_EXAMPLE_BEAMO_2_LASER',
-  'IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL',
+  'IMPORT_EXAMPLE_BEAMO_2_PRINT',
   'IMPORT_EXAMPLE_HEXA',
   'IMPORT_EXAMPLE_PROMARK',
   'IMPORT_HELLO_BEAMBOX',
@@ -97,7 +97,7 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
       examples = {
         ...examples,
         IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
-        IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL: 'examples/beamo_2_example_printing_full.bvg',
+        IMPORT_EXAMPLE_BEAMO_2_PRINT: 'examples/beamo_2_example_printing_full.bvg',
         IMPORT_MATERIAL_TESTING_PRINT: 'examples/beamo_2_color_ring.bvg',
       };
     }

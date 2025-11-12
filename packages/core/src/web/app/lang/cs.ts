@@ -2153,7 +2153,7 @@ const lang: ILang = {
       import_beambox_2_example: 'Příklad Beambox II',
       import_beambox_2_focus_probe: 'Beambox II Fokusová sonda - 3 mm',
       import_beamo_2_laser_example: 'Příklad beamo II Laseru',
-      import_beamo_2_printing_example_full: 'Příklad beamo II tisknutí - barevné',
+      import_beamo_2_printing_example: 'Příklad beamo II tisknutí',
       import_hello_beambox: 'Příklady Beambox',
       import_hello_beamo: 'Příklady beamo',
       import_hexa_example: 'Příklad HEXA',

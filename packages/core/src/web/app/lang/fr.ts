@@ -2152,7 +2152,7 @@ const lang: ILang = {
       import_beambox_2_example: 'Exemple de Beambox II',
       import_beambox_2_focus_probe: 'Sonde de Mise au Point Beambox II - 3 mm',
       import_beamo_2_laser_example: 'Exemple de beamo II Laser',
-      import_beamo_2_printing_example_full: "Exemple d'impression beamo II - Couleurs complètes",
+      import_beamo_2_printing_example: "Exemple d'impression beamo II - Couleurs complètes",
       import_hello_beambox: 'Exemple de Beambox',
       import_hello_beamo: 'Exemple de beamo',
       import_hexa_example: 'Exemple de HEXA',

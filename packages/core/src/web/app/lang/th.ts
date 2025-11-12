@@ -2152,7 +2152,7 @@ const lang: ILang = {
       import_beambox_2_example: 'ตัวอย่างของ Beambox II',
       import_beambox_2_focus_probe: 'หัววัดโฟกัส Beambox II - 3 มม.',
       import_beamo_2_laser_example: 'ตัวอย่างของ beamo II Laser',
-      import_beamo_2_printing_example_full: 'ตัวอย่างการพิมพ์ของ beamo II - สีเต็มรูปแบบ',
+      import_beamo_2_printing_example: 'ตัวอย่างการพิมพ์ของ beamo II',
       import_hello_beambox: 'ตัวอย่างของ Beambox',
       import_hello_beamo: 'ตัวอย่างของ beamo',
       import_hexa_example: 'ตัวอย่าง HEXA',
