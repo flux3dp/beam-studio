@@ -541,15 +541,15 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             </div>
             {!isPromark && (
               <div className={styles.row}>
-                <label className={styles.title} htmlFor="autoShrink">
-                  {tDocument.auto_shrink}
+                <div className={styles.title}>
+                  <label htmlFor="autoShrink">{tDocument.auto_shrink}</label>
                   <Tooltip title={tDocument.auto_shrink_url}>
                     <QuestionCircleOutlined
                       className={styles.icon}
                       onClick={() => browser.open(tDocument.auto_shrink_url)}
                     />
                   </Tooltip>
-                </label>
+                </div>
                 <div className={styles.control}>
                   <Switch
                     checked={autoShrink}
@@ -727,11 +727,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             <>
               <div className={styles.block}>
                 <div className={styles.row}>
-                  <label className={styles.title} htmlFor="rotaryMaster">
-                    <strong>{tDocument.rotary_mode}</strong>
+                  <div className={styles.title}>
+                    <label htmlFor="rotaryMaster">
+                      <strong>{tDocument.rotary_mode}</strong>
+                    </label>
                     {!addOnInfo.rotary.chuck && renderRotarySettingsIcon()}
                     {renderWarningIcon(tGlobal.mode_conflict)}
-                  </label>
+                  </div>
                   <div className={styles.control}>
                     <Switch
                       checked={rotaryMode}
