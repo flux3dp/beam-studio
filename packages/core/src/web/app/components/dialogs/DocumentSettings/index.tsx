@@ -116,13 +116,23 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
 
   const isInch = useStorageStore((state) => state.isInch);
-  const { autoFeederHeight, autoFeederScale, chunkDiameter, passThroughHeight, rotaryScale } = useDocumentStore(
+  const {
+    autoFeederHeight,
+    autoFeederScale,
+    chunkDiameter,
+    passThroughHeight,
+    rotaryMode: storeRotaryMode,
+    rotaryScale,
+    rotaryType: storeRotaryType,
+  } = useDocumentStore(
     useShallow((state) => ({
       autoFeederHeight: state['auto-feeder-height'],
       autoFeederScale: state['auto-feeder-scale'],
       chunkDiameter: state['rotary-chuck-obj-d'],
       passThroughHeight: state['pass-through-height'],
+      rotaryMode: state.rotary_mode,
       rotaryScale: state['rotary-scale'],
+      rotaryType: state['rotary-type'],
     })),
   );
 
@@ -160,6 +170,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   useEffect(() => {
     if (engraveDpi === 'low') setAutoShrink(false);
   }, [engraveDpi]);
+
+  useEffect(() => setRotaryMode(storeRotaryMode), [storeRotaryMode]);
+  useEffect(() => setRotaryType(storeRotaryType), [storeRotaryType]);
 
   // for openBottom machine, path-through and autofeed require open-bottom mode
   const { showAutoFeeder, showPassThrough } = useMemo(() => {
