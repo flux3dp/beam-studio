@@ -24,7 +24,7 @@ interface Props {
 export const OffsetSettings = ({ layerModule, onClose }: Props) => {
   const { calibration: lang, global: tGlobal } = useI18n();
   // eslint-disable-next-line hooks/exhaustive-deps
-  const moduleTranslations = useMemo(() => getModulesTranslations(false), [lang]);
+  const moduleTranslations = useMemo(() => getModulesTranslations(), [lang]);
   const moduleName = useMemo(() => moduleTranslations[layerModule], [layerModule, moduleTranslations]);
   const desc = useMemo(() => sprintf(lang.module_offset_settings_desc, moduleName), [moduleName, lang]);
   const [x, setX] = useState(0);

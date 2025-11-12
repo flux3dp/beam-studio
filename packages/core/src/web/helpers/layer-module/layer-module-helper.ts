@@ -33,7 +33,7 @@ export const getPrintingModule = (workarea?: WorkAreaModel): LayerModuleType => 
   return LayerModule.PRINTER;
 };
 
-export const getModulesTranslations = (shouldNote4C = true): Record<LayerModuleType, string> => {
+export const getModulesTranslations = (shouldNote4C = false): Record<LayerModuleType, string> => {
   const t = i18n.lang.layer_module;
 
   return {

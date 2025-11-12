@@ -232,7 +232,7 @@ const ModuleCalibration = ({ module = LayerModule.LASER_UNIVERSAL, onClose }: Pr
                 }}
                 type="link"
               >
-                {getModulesTranslations(false)[module]} {lang.module_offset_settings}
+                {getModulesTranslations()[module]} {lang.module_offset_settings}
               </Button>
             ) : undefined
           }
