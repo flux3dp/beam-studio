@@ -103,7 +103,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           <div
             className={classNames({ [styles.scrollable]: scrollableContent })}
             ref={draggableRef}
-            style={{ minWidth: width }}
+            style={{ minWidth: `min(${typeof width === 'string' ? width : `${width}px`}, 95vw)` }}
           >
             {modalRender(modal)}
           </div>
