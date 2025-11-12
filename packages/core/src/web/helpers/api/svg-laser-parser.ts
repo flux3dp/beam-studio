@@ -143,11 +143,11 @@ export const getExportOpt = async (
     const workareaWidth = workareaObj.width;
     const minY = workareaManager.minY / dpmm;
 
-    if (documentState['skip_prespray']) {
-      config.skip_prespray = true;
-    }
-
     if (model === 'fbm2' && hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true })) {
+      if (documentState['skip_prespray']) {
+        config.skip_prespray = true;
+      }
+
       if (device?.model === 'fbm2' && !(documentState['skip_prespray'] && documentState['enable-4c-prespray-area'])) {
         try {
           await deviceMaster.select(device);
