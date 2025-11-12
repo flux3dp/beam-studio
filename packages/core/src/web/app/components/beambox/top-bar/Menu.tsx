@@ -158,7 +158,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             )}
             {supportedModules?.includes(LayerModule.PRINTER_4C) && (
               <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_PRINTER_4C_MODULE', device)}>
-                {menuCms.calibrate_printer_module} (4C)
+                {menuCms.calibrate_printer_module}
               </MenuItem>
             )}
             {supportedModules?.includes(LayerModule.UV_WHITE_INK) && (

@@ -49,8 +49,9 @@ export const getModulesTranslations = (shouldNote4C = false): Record<LayerModule
   };
 };
 
-export const getDetectedModulesTranslations = (): Record<DetectedLayerModuleType, string> => {
+export const getDetectedModulesTranslations = (shouldNote4C = false): Record<DetectedLayerModuleType, string> => {
   const t = i18n.lang.layer_module;
+  const printer4CText = shouldNote4C ? `${t.printing} (4C)` : t.printing;
 
   return {
     [DetectedLayerModule.LASER_10W_DIODE]: t.laser_10w_diode,
@@ -58,10 +59,10 @@ export const getDetectedModulesTranslations = (): Record<DetectedLayerModuleType
     [DetectedLayerModule.LASER_1064]: t.laser_2w_infrared,
     [DetectedLayerModule.NONE]: t.none,
     [DetectedLayerModule.PRINTER]: t.printing,
-    [DetectedLayerModule.PRINTER_4C]: `${t.printing} (4C)`,
-    [DetectedLayerModule.PRINTER_4C_WITH_1064]: `${t.printing} (4C + 1064)`,
-    [DetectedLayerModule.PRINTER_4C_WITH_UV]: `${t.printing} (4C + UV)`,
-    [DetectedLayerModule.PRINTER_4C_WITH_UV_1064]: `${t.printing} (4C + UV + 1064)`,
+    [DetectedLayerModule.PRINTER_4C]: printer4CText,
+    [DetectedLayerModule.PRINTER_4C_WITH_1064]: `${printer4CText} + 1064`,
+    [DetectedLayerModule.PRINTER_4C_WITH_UV]: `${printer4CText} + UV`,
+    [DetectedLayerModule.PRINTER_4C_WITH_UV_1064]: `${printer4CText} + UV + 1064`,
     [DetectedLayerModule.UNKNOWN]: t.unknown,
   };
 };
