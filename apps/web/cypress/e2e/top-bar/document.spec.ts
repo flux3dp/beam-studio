@@ -82,7 +82,7 @@ describe('manipulate document setting', () => {
     cy.changeWorkarea('beamo', false);
     clickAndCheck('rotaryMaster', true);
     clickAndCheck('openBottomMaster', true);
-    checkNotExists('passthroughMaster');
+    clickAndCheck('passthroughMaster', true);
     clickAndCheck('autofocus-module', true);
     clickAndCheck('diode_module', true);
   });
