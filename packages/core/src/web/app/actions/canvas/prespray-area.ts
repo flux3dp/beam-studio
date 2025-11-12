@@ -21,7 +21,7 @@ let currentMode: LayerModuleType | null = null;
 
 const areaWidth = 300;
 const areaHeight = 300;
-const areaWidth4C = 223;
+const areaWidth4C = 103;
 
 const getPresprayMode = (): LayerModuleType | null => {
   if (
