@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Zusatz-Module',
       auto_feeder: 'Automatischer Einzug',
-      auto_feeder_scale: 'Skala für den automatischen Einzug',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Automatische Verkleinerung',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',

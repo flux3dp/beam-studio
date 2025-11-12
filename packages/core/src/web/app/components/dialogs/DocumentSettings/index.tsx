@@ -237,7 +237,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     newState.rotary_mode = rotaryMode;
-    newState['rotary-type'] = rotaryType;
+
+    if (addOnInfo.rotary?.chuck) newState['rotary-type'] = rotaryType;
 
     const newPassThrough = Boolean(showPassThrough && passThrough);
     const passThroughChanged = newPassThrough !== origPassThrough;
@@ -290,11 +291,29 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     canvasEvents.emit('document-settings-saved');
   };
 
-  const renderWarningIcon = (title: string) => (
-    <Tooltip title={title}>
-      <WarningOutlined className={styles.hint} />
-    </Tooltip>
-  );
+  const renderWarningIcon = (title: string) => {
+    if (!isCurveEngraving) return null;
+
+    return (
+      <Tooltip title={title}>
+        <WarningOutlined className={styles.icon} />
+      </Tooltip>
+    );
+  };
+
+  const renderRotarySettingsIcon = () => {
+    return (
+      <SettingFilled
+        className={styles.icon}
+        onClick={() =>
+          showRotarySettings({ rotaryMode, rotaryType, workarea }, () => {
+            setRotaryMode(useDocumentStore.getState().rotary_mode);
+            setRotaryType(useDocumentStore.getState()['rotary-type']);
+          })
+        }
+      />
+    );
+  };
 
   const renderPassThroughBlock = (isBold = false) => {
     return (
@@ -302,6 +321,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
         <div className={styles.row}>
           <label className={styles.title} htmlFor="passthroughMaster">
             {isBold ? <strong>{tDocument.pass_through}</strong> : <div>{tDocument.pass_through}</div>}
+            {renderWarningIcon(tGlobal.mode_conflict)}
           </label>
           <div className={styles.control}>
             <Switch
@@ -379,13 +399,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     <ConfigProvider
       theme={{
         components: {
-          Modal: {
-            contentBg: 'rgb(240, 240, 240)',
-            headerBg: 'rgb(240, 240, 240)',
-          },
-          Segmented: {
-            itemSelectedColor: '#1890ff',
-          },
+          Modal: { contentBg: '#f8f8f8', headerBg: '#f8f8f8' },
+          Segmented: { itemSelectedColor: '#1890ff' },
         },
       }}
     >
@@ -580,31 +595,36 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     <div className={styles.row}>
                       <div className={styles.title}>
                         <label htmlFor="start_button">{tDocument.start_work_button}</label>
+                        <Tooltip title={tDocument.frame_before_start_url}>
+                          <QuestionCircleOutlined
+                            className={styles.icon}
+                            onClick={() => browser.open(tDocument.frame_before_start_url)}
+                          />
+                        </Tooltip>
                       </div>
                       <div className={styles.control}>
-                        {enableStartButton && (
-                          <div>
-                            <Checkbox
-                              checked={shouldFrame}
-                              id="frame_before_start"
-                              onChange={(e) => setShouldFrame(e.target.checked)}
-                            >
-                              {tDocument.frame_before_start}
-                            </Checkbox>
-                            <QuestionCircleOutlined onClick={() => browser.open(tDocument.frame_before_start_url)} />
-                          </div>
-                        )}
                         <Switch checked={enableStartButton} id="start_button" onChange={setEnableStartButton} />
                       </div>
                     </div>
+                    {enableStartButton && (
+                      <div className={styles.row}>
+                        <Checkbox
+                          checked={shouldFrame}
+                          id="frame_before_start"
+                          onChange={(e) => setShouldFrame(e.target.checked)}
+                        >
+                          {tDocument.frame_before_start}
+                        </Checkbox>
+                      </div>
+                    )}
                     <div className={styles.row}>
                       <div className={styles.title}>
                         <label htmlFor="door_protect">{tDocument.door_protect}</label>
+                        <Tooltip title={tDocument.door_protect_desc}>
+                          <QuestionCircleOutlined className={styles.icon} />
+                        </Tooltip>
                       </div>
                       <div className={styles.control}>
-                        <Tooltip title={tDocument.door_protect_desc}>
-                          <QuestionCircleOutlined />
-                        </Tooltip>
                         <Switch checked={checkSafetyDoor} id="door_protect" onChange={setCheckSafetyDoor} />
                       </div>
                     </div>
@@ -677,6 +697,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 <div className={styles.row}>
                   <label className={styles.title} htmlFor="rotaryMaster">
                     <strong>{tDocument.rotary_mode}</strong>
+                    {!addOnInfo.rotary.chuck && renderRotarySettingsIcon()}
+                    {renderWarningIcon(tGlobal.mode_conflict)}
                   </label>
                   <div className={styles.control}>
                     <Switch
@@ -691,7 +713,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     />
                   </div>
                 </div>
-                {rotaryMode && (
+                {rotaryMode && addOnInfo.rotary.chuck && (
                   <>
                     <div className={classNames(styles.row, styles.full)}>
                       <Segmented
@@ -714,15 +736,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                           {rotaryType === RotaryType.Chuck
                             ? `Φ: ${lengthDisplay(chunkDiameter)}, Scale: ${rotaryScale}`
                             : `Scale: ${rotaryScale}`}
-                          <SettingFilled
-                            className={styles.icon}
-                            onClick={() =>
-                              showRotarySettings({ rotaryMode, rotaryType, workarea }, () => {
-                                setRotaryMode(useDocumentStore.getState().rotary_mode);
-                                setRotaryType(useDocumentStore.getState()['rotary-type']);
-                              })
-                            }
-                          />
+                          {renderRotarySettingsIcon()}
                         </div>
                       </div>
                     </div>
@@ -739,7 +753,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   </>
                 )}
               </div>
-              {isCurveEngraving && renderWarningIcon(tGlobal.mode_conflict)}
             </>
           )}
           {addOnInfo.openBottom ? (

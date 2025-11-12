@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Dodatki',
       auto_feeder: 'Automatyczny podajnik',
-      auto_feeder_scale: 'Skala automatyczny podajnik',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Automatyczne zmniejszenie',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',

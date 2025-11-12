@@ -147,9 +147,6 @@ export const PassthroughSettings = ({ isManualMode, onClose, onSave, workarea }:
                 ]}
                 value={autoFeederScale}
               />
-              <Tooltip title={tDocument.auto_feeder_scale}>
-                <QuestionCircleOutlined className={styles.hint} />
-              </Tooltip>
             </div>
           </>
         )}

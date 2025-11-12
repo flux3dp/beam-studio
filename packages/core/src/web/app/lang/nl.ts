@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Add-ons',
       auto_feeder: 'Automatische voeder',
-      auto_feeder_scale: 'Schaal voor automatische voeder',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Automatisch verkleinen',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',

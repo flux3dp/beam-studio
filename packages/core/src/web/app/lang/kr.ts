@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: '애드온',
       auto_feeder: '자동 공급 장치',
-      auto_feeder_scale: '자동 공급기 스케일',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: '자동 축소',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',

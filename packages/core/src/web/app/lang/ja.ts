@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: 'アドオン',
       auto_feeder: 'オートフィーダー',
-      auto_feeder_scale: 'オートフィーダースケール',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: '自動縮小',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',

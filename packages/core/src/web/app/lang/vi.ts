@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Phụ kiện',
       auto_feeder: 'Bộ nạp tự động',
-      auto_feeder_scale: 'Tỷ lệ Bộ nạp Tự động',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Thu nhỏ tự động',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',

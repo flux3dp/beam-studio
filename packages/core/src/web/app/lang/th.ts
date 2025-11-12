@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: 'เพิ่มเติม',
       auto_feeder: 'ตัวป้อนอัตโนมัติ',
-      auto_feeder_scale: 'มาตราส่วนตัวป้อนอัตโนมัติ',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'ย่ออัตโนมัติ',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',

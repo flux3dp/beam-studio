@@ -95,7 +95,6 @@ const lang: ILang = {
     document_panel: {
       add_on: 'Tilføjelser',
       auto_feeder: 'Automatisk føder',
-      auto_feeder_scale: 'Skala for automatisk føder',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Automatisk formindskelse',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
