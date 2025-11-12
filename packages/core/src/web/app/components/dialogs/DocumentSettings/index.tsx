@@ -128,12 +128,14 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const hasCurveEngravingData = useHasCurveEngraving();
   const isCurveEngraving = useMemo(() => {
+    if (!addOnInfo.curveEngraving) return false;
+
     const response = { mode: CanvasMode.Draw };
 
     topBarEventEmitter.emit('GET_CANVAS_MODE', response);
 
     return hasCurveEngravingData || response.mode === CanvasMode.CurveEngraving;
-  }, [hasCurveEngravingData]);
+  }, [addOnInfo.curveEngraving, hasCurveEngravingData]);
 
   // pass-through, auto-feeder, rotary mode are exclusive, disable others when one is on
   useEffect(() => {
@@ -324,43 +326,41 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
           </div>
         </div>
         {(autoFeeder || passThrough) && (
-          <>
-            <div className={classNames(styles.row, styles.full)}>
-              <Segmented
-                className={styles.segmented}
-                id="ptMode"
-                onChange={(val) => {
-                  if (val === 'auto') {
-                    setAutoFeeder(true);
-                    setPassThrough(false);
-                  } else {
-                    setPassThrough(true);
-                    setAutoFeeder(false);
+          <div className={classNames(styles.row, styles.full)}>
+            <Segmented
+              className={styles.segmented}
+              id="ptMode"
+              onChange={(val) => {
+                if (val === 'auto') {
+                  setAutoFeeder(true);
+                  setPassThrough(false);
+                } else {
+                  setPassThrough(true);
+                  setAutoFeeder(false);
+                }
+              }}
+              options={[
+                showAutoFeeder && { label: tDocument.auto_feeder, value: 'auto' as const },
+                showPassThrough && { label: tDocument.manual, value: 'manual' as const },
+              ].filter(Boolean)}
+              value={autoFeeder ? 'auto' : 'manual'}
+            />
+            <div className={classNames(styles.sub)}>
+              <div className={classNames(styles.desc, autoFeeder ? styles.left : styles.right)}>
+                {autoFeeder
+                  ? `Y: ${lengthDisplay(Math.min(Math.max(autoFeederHeight ?? minHeight, minHeight), addOnInfo.autoFeeder!.maxHeight))}, Scale: ${autoFeederScale}`
+                  : `Y: ${lengthDisplay(Math.max(passThroughHeight ?? minHeight, minHeight))}`}
+                <SettingFilled
+                  className={styles.icon}
+                  onClick={() =>
+                    autoFeeder
+                      ? showPassthroughSettings({ workarea })
+                      : showPassthroughSettings({ isManualMode: true, workarea })
                   }
-                }}
-                options={[
-                  showAutoFeeder && { label: tDocument.auto_feeder, value: 'auto' as const },
-                  showPassThrough && { label: tDocument.manual, value: 'manual' as const },
-                ].filter(Boolean)}
-                value={autoFeeder ? 'auto' : 'manual'}
-              />
-              <div className={classNames(styles.sub)}>
-                <div className={classNames(styles.desc, autoFeeder ? styles.left : styles.right)}>
-                  {autoFeeder
-                    ? `Y: ${lengthDisplay(Math.min(Math.max(autoFeederHeight ?? minHeight, minHeight), addOnInfo.autoFeeder!.maxHeight))}, Scale: ${autoFeederScale}`
-                    : `Y: ${lengthDisplay(Math.max(passThroughHeight ?? minHeight, minHeight))}`}
-                  <SettingFilled
-                    className={styles.icon}
-                    onClick={() =>
-                      autoFeeder
-                        ? showPassthroughSettings({ workarea })
-                        : showPassthroughSettings({ isManualMode: true, workarea })
-                    }
-                  />
-                </div>
+                />
               </div>
             </div>
-          </>
+          </div>
         )}
       </>
     );
@@ -496,6 +496,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="autoShrink">
                   {tDocument.auto_shrink}
+                  <Tooltip title={tDocument.auto_shrink_url}>
+                    <QuestionCircleOutlined
+                      className={styles.icon}
+                      onClick={() => browser.open(tDocument.auto_shrink_url)}
+                    />
+                  </Tooltip>
                 </label>
                 <div className={styles.control}>
                   <Switch
