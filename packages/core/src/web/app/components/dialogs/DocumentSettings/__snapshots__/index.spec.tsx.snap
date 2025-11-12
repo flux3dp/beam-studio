@@ -236,11 +236,14 @@ exports[`test DocumentSettings should render correctly 1`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="autoShrink"
                         >
-                          Auto Shrink
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
                           <span
                             aria-label="question-circle"
                             class="anticon anticon-question-circle icon"
@@ -264,7 +267,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
                               />
                             </svg>
                           </span>
-                        </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -381,14 +384,17 @@ exports[`test DocumentSettings should render correctly 1`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="rotaryMaster"
                         >
-                          <strong>
-                            Rotary
-                          </strong>
-                        </label>
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -729,11 +735,14 @@ exports[`test DocumentSettings should render correctly 2`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="autoShrink"
                         >
-                          Auto Shrink
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
                           <span
                             aria-label="question-circle"
                             class="anticon anticon-question-circle icon"
@@ -757,7 +766,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                               />
                             </svg>
                           </span>
-                        </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -874,14 +883,17 @@ exports[`test DocumentSettings should render correctly 2`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="rotaryMaster"
                         >
-                          <strong>
-                            Rotary
-                          </strong>
-                        </label>
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -1326,11 +1338,14 @@ exports[`test DocumentSettings should render correctly 3`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="autoShrink"
                         >
-                          Auto Shrink
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
                           <span
                             aria-label="question-circle"
                             class="anticon anticon-question-circle icon"
@@ -1354,7 +1369,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
                               />
                             </svg>
                           </span>
-                        </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -1630,14 +1645,17 @@ exports[`test DocumentSettings should render correctly 3`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="rotaryMaster"
                         >
-                          <strong>
-                            Rotary
-                          </strong>
-                        </label>
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -2481,11 +2499,14 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="autoShrink"
                         >
-                          Auto Shrink
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
                           <span
                             aria-label="question-circle"
                             class="anticon anticon-question-circle icon"
@@ -2509,7 +2530,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                               />
                             </svg>
                           </span>
-                        </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -2626,14 +2647,17 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="rotaryMaster"
                         >
-                          <strong>
-                            Rotary
-                          </strong>
-                        </label>
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -3192,11 +3216,14 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="autoShrink"
                         >
-                          Auto Shrink
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
                           <span
                             aria-label="question-circle"
                             class="anticon anticon-question-circle icon"
@@ -3220,7 +3247,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                               />
                             </svg>
                           </span>
-                        </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -3337,14 +3364,17 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="rotaryMaster"
                         >
-                          <strong>
-                            Rotary
-                          </strong>
-                        </label>
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -3980,11 +4010,14 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="autoShrink"
                         >
-                          Auto Shrink
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
                           <span
                             aria-label="question-circle"
                             class="anticon anticon-question-circle icon"
@@ -4008,7 +4041,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                               />
                             </svg>
                           </span>
-                        </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -4230,14 +4263,17 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="rotaryMaster"
                         >
-                          <strong>
-                            Rotary
-                          </strong>
-                        </label>
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
                         <div
                           class="control"
                         >
@@ -5102,14 +5138,17 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                       <div
                         class="row"
                       >
-                        <label
+                        <div
                           class="title"
-                          for="rotaryMaster"
                         >
-                          <strong>
-                            Rotary
-                          </strong>
-                        </label>
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
                         <div
                           class="control"
                         >
