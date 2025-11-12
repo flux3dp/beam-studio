@@ -346,7 +346,7 @@ describe('test DocumentSettings', () => {
     );
   });
 
-  test('set auto feeder', async () => {
+  test('set pass through master', async () => {
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
@@ -113,6 +113,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [autoShrink, setAutoShrink] = useState(useDocumentStore.getState()['auto_shrink']);
   const [enable4C, setEnable4C] = useState(!!useDocumentStore.getState()['enable-4c']);
   const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
+  const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
 
   const isInch = useStorageStore((state) => state.isInch);
   const { autoFeederHeight, autoFeederScale, chunkDiameter, passThroughHeight, rotaryScale } = useDocumentStore(
@@ -330,12 +331,28 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               id="passthroughMaster"
               onChange={(on: boolean) => {
                 if (on) {
-                  if (showPassThrough) {
-                    setPassThrough(true);
-                    setAutoFeeder(false);
-                  } else if (showAutoFeeder) {
+                  if (lastPassthroughMode.current) {
+                    if (lastPassthroughMode.current === 'auto' && showAutoFeeder) {
+                      setAutoFeeder(true);
+                      setPassThrough(false);
+
+                      return;
+                    }
+
+                    if (lastPassthroughMode.current === 'manual' && showPassThrough) {
+                      setPassThrough(true);
+                      setAutoFeeder(false);
+
+                      return;
+                    }
+                  }
+
+                  if (showAutoFeeder) {
                     setAutoFeeder(true);
                     setPassThrough(false);
+                  } else {
+                    setPassThrough(true);
+                    setAutoFeeder(false);
                   }
                 } else {
                   setPassThrough(false);
@@ -358,6 +375,8 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   setPassThrough(true);
                   setAutoFeeder(false);
                 }
+
+                lastPassthroughMode.current = val as 'auto' | 'manual';
               }}
               options={[
                 showAutoFeeder && { label: tDocument.auto_feeder, value: 'auto' as const },
