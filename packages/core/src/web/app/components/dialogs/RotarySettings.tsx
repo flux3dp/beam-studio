@@ -71,6 +71,11 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
       rotary_mode: rotaryMode,
     };
 
+    if (rotaryChanged && rotaryMode) {
+      newState['pass-through'] = false;
+      newState['auto-feeder'] = false;
+    }
+
     if (rotaryType === RotaryType.Chuck) {
       newState['rotary-chuck-obj-d'] = diameter;
     }
