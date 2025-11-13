@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 
 import { BulbOutlined, ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button, Input, Select } from 'antd';
+import { Button, Input, Select, Switch } from 'antd';
 import classNames from 'classnames';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -32,6 +32,7 @@ const UnmemorizedAiGenerate = () => {
     generatedImages,
     generationStatus,
     inputFields,
+    isLaserFriendly,
     removeImageInput,
     resetForm,
     selectedImageInputs,
@@ -40,6 +41,7 @@ const UnmemorizedAiGenerate = () => {
     showHistory,
     style,
     toggleHistory,
+    toggleLaserFriendly,
   } = useAiGenerateStore();
 
   // Compute mode and stylePreset from selectedOption
@@ -190,6 +192,19 @@ const UnmemorizedAiGenerate = () => {
               />
             </div>
 
+            <div className={styles.section}>
+              <div className={styles['toggle']}>
+                <span>Laser-Friendly</span>
+                <Switch checked={isLaserFriendly} onChange={toggleLaserFriendly} />
+              </div>
+            </div>
+
+            <ImageResults
+              errorMessage={errorMessage}
+              generatedImages={generatedImages}
+              generationStatus={generationStatus}
+            />
+
             <div className={styles['button-section']}>
               <Button
                 block
@@ -215,12 +230,6 @@ const UnmemorizedAiGenerate = () => {
                 </div>
               </div>
             </div>
-
-            <ImageResults
-              errorMessage={errorMessage}
-              generatedImages={generatedImages}
-              generationStatus={generationStatus}
-            />
           </>
         )}
       </div>

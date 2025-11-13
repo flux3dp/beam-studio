@@ -5,11 +5,12 @@ import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 
 import { useFloatingMenu } from '../hooks/useFloatingMenu';
-import styles from '../index.module.scss';
 import type { ImageDimensions, ImageSize } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { getSizePixels } from '../utils/dimensions';
 import { ADDITIONAL_RATIOS, ALWAYS_DISPLAYED_RATIOS } from '../utils/ratioOptions';
+
+import styles from './DimensionSelector.module.scss';
 
 interface DimensionSelectorProps {
   dimensions: ImageDimensions;
