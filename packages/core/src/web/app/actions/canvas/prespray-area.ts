@@ -35,6 +35,7 @@ const getPresprayMode = (): LayerModuleType | null => {
 
   return null;
 };
+const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
 const updateDimensions = (): void => {
   const workarea = workareaManager.model;
@@ -50,9 +51,16 @@ const updateDimensions = (): void => {
     }
   }
 };
-const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
 canvasEvents.on('canvas-change', updateDimensions);
+
+const constrainPresprayArea = (): void => {
+  // Use drag(0, 0) with endDrag to trigger position constraint
+  startDrag();
+  drag(0, 0);
+};
+
+canvasEvents.on('boundary-updated', constrainPresprayArea);
 
 const togglePresprayArea = (): void => {
   const { model } = workareaManager;
@@ -69,9 +77,7 @@ const togglePresprayArea = (): void => {
   presprayArea4CContainer?.setAttribute('display', 'none');
 
   if (shouldShow) {
-    // check boundary
-    startDrag();
-    drag(0, 0);
+    constrainPresprayArea();
 
     if (currentMode === LayerModule.PRINTER) presprayAreaImage?.removeAttribute('display');
     else if (currentMode === LayerModule.PRINTER_4C) presprayArea4CContainer?.removeAttribute('display');
