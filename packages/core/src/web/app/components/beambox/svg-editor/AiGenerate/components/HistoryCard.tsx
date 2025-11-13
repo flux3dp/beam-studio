@@ -81,9 +81,9 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
           {getModelTypeBadge()}
         </div>
 
-        <p className={styles.prompt} title={item.prompt}>
+        {/* <p className={styles.prompt} title={item.prompt}>
           {item.prompt}
-        </p>
+        </p> */}
 
         <div className={styles.metadata}>
           <span className={styles['metadata-item']}>

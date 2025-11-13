@@ -1,16 +1,9 @@
 @use '@core/styles/variables' as variables;
-
-$container-bg: #ffffff;
-$border-color: #e8e8e8;
-$text-primary: #333333;
-$text-secondary: #666666;
-$text-placeholder: #999999;
-$primary-blue: #1890ff;
-$button-border: #d9d9d9;
+@use './shared-variables' as vars;
 
 .ai-generate-container {
   position: relative;
-  background: $container-bg;
+  background: vars.$container-bg;
   display: flex;
   flex-direction: column;
   flex-grow: 1;
@@ -18,20 +11,19 @@ $button-border: #d9d9d9;
   width: 100%;
 }
 
-// Header
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid $border-color;
+  border-bottom: 1px solid vars.$border-color;
 }
 
 .title {
   margin: 0;
   font-size: 20px;
   font-weight: 600;
-  color: $text-primary;
+  color: vars.$text-primary;
 }
 
 .actions {
@@ -40,14 +32,17 @@ $button-border: #d9d9d9;
 }
 
 .icon-button {
-  color: $text-secondary;
+  color: vars.$text-secondary;
 
   &:hover {
-    color: $text-primary;
+    color: vars.$text-primary;
+  }
+
+  &.active {
+    color: vars.$primary-blue;
   }
 }
 
-// Content
 .content {
   flex: 1;
   overflow-y: auto;
@@ -60,6 +55,14 @@ $button-border: #d9d9d9;
   &:last-child {
     margin-bottom: 0;
   }
+}
+
+.section-title {
+  @include vars.section-title;
+}
+
+.required {
+  color: vars.$text-error;
 }
 
 .style-selection-button {
@@ -83,61 +86,6 @@ $button-border: #d9d9d9;
   }
 }
 
-.section-title {
-  margin: 0 0 12px 0;
-  font-size: 14px;
-  font-weight: 500;
-  color: $text-secondary;
-}
-
-.required {
-  color: #ff4d4f;
-}
-
-// Style Card
-.style-card {
-  display: flex;
-  align-items: center;
-  padding: 12px 16px;
-  background: #f5f5f5;
-  border-radius: 8px;
-  cursor: pointer;
-  transition: background 0.2s;
-
-  &:hover {
-    background: #ebebeb;
-  }
-}
-
-.style-preview {
-  width: 60px;
-  height: 60px;
-  margin-right: 12px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: #ffffff;
-  border-radius: 4px;
-}
-
-.style-image {
-  max-width: 100%;
-  max-height: 100%;
-  object-fit: contain;
-}
-
-.style-name {
-  flex: 1;
-  font-size: 14px;
-  color: $text-primary;
-}
-
-.style-arrow {
-  font-size: 20px;
-  color: $text-secondary;
-}
-
-// Input Wrapper
 .input-wrapper {
   position: relative;
 }
@@ -146,7 +94,7 @@ $button-border: #d9d9d9;
   font-size: 14px;
 
   &::placeholder {
-    color: $text-placeholder;
+    color: vars.$text-placeholder;
   }
 }
 
@@ -158,263 +106,29 @@ $button-border: #d9d9d9;
 
 .count {
   font-size: 12px;
-  color: $text-secondary;
+  color: vars.$text-secondary;
 }
 
 .bulb-icon {
   font-size: 14px;
-  color: #faad14;
+  color: vars.$icon-warning;
   cursor: pointer;
 
   &:hover {
-    color: #ffc53d;
+    color: vars.$icon-warning-hover;
   }
 }
 
-.hint {
-  margin: 8px 0 0 0;
-  padding: 8px 12px;
-  background: #f0f5ff;
-  border-left: 3px solid $primary-blue;
-  font-size: 12px;
-  color: $text-secondary;
-  line-height: 1.5;
-  border-radius: 2px;
-}
-
-// Dimensions
-.dimension-group {
-  margin-bottom: 12px;
-
-  &:last-child {
-    margin-bottom: 0;
-  }
-}
-
-.dimension-button {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  padding: 12px 16px;
-  min-width: 80px;
-  height: 64px;
-  border: 1px solid $button-border;
-  border-radius: 4px;
-  background: #ffffff;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: $primary-blue;
-  }
-
-  &.active {
-    border-color: $primary-blue;
-    background: rgba($primary-blue, 0.05);
-    color: $primary-blue;
-  }
-
-  span {
-    font-size: 12px;
-    margin-top: 4px;
-  }
-}
-
-.ratio-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.ratio-box {
-  border: 2px solid currentColor;
-  background: transparent;
-
-  &.ratio-1-1 {
-    width: 20px;
-    height: 20px;
-  }
-
-  &.ratio-4-3 {
-    width: 24px;
-    height: 18px;
-  }
-
-  &.ratio-16-9 {
-    width: 28px;
-    height: 16px;
-  }
-
-  &.ratio-3-2 {
-    width: 24px;
-    height: 16px;
-  }
-
-  &.ratio-21-9 {
-    width: 28px;
-    height: 12px;
-  }
-
-  &.ratio-more {
-    width: 20px;
-    height: 20px;
-    border-style: dashed;
-    position: relative;
-
-    &::before,
-    &::after {
-      content: '';
-      position: absolute;
-      background: currentColor;
-    }
-
-    &::before {
-      width: 4px;
-      height: 4px;
-      top: -2px;
-      right: -2px;
-    }
-
-    &::after {
-      width: 4px;
-      height: 4px;
-      bottom: -2px;
-      left: -2px;
-    }
-  }
-}
-
-// Floating Menu for More Button
-.more-button-container {
-  position: relative;
-  display: inline-block;
-}
-
-// Portal menu with position: fixed to avoid clipping
-.floating-ratio-menu-portal {
-  position: fixed;
-  left: calc(100%);
-  background: white;
-  border: 1px solid #d9d9d9;
-  border-radius: 8px;
-  padding: 8px;
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
-  z-index: 9999; // High z-index to ensure it appears above other elements
-  min-width: 180px;
-}
-
-.menu-item {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 10px 12px;
-  cursor: pointer;
-  border-radius: 6px;
-  transition: all 0.2s;
-  border: 1px solid transparent;
-
-  &:hover {
-    background: #f5f5f5;
-  }
-
-  &.active {
-    background: rgba($primary-blue, 0.05);
-    border-color: $primary-blue;
-    color: $primary-blue;
-  }
-
-  span {
-    font-size: 13px;
-    white-space: nowrap;
-  }
-}
-
-.menu-icon {
-  width: 32px;
-  height: 32px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  flex-shrink: 0;
-}
-
-.menu-ratio-box {
-  border: 2px solid currentColor;
-  background: transparent;
-
-  // Landscape ratios
-  &.ratio-landscape-3-2 {
-    width: 24px;
-    height: 16px;
-  }
-
-  &.ratio-landscape-21-9 {
-    width: 28px;
-    height: 12px;
-  }
-
-  // Portrait ratios (rotated dimensions)
-  &.ratio-portrait-4-3 {
-    width: 15px;
-    height: 20px;
-  }
-
-  &.ratio-portrait-3-2 {
-    width: 13px;
-    height: 20px;
-  }
-
-  &.ratio-portrait-16-9 {
-    width: 11px;
-    height: 20px;
-  }
-}
-
-.size-button {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  padding: 12px 16px;
-  min-width: 100px;
-  height: 56px;
-  border: 1px solid $button-border;
-  border-radius: 4px;
-  background: #ffffff;
-  cursor: pointer;
-  transition: all 0.2s;
-
-  &:hover {
-    border-color: $primary-blue;
-  }
-
-  &.active {
-    border-color: $primary-blue;
-    background: rgba($primary-blue, 0.05);
-    color: $primary-blue;
-  }
-}
-
-.size-name {
-  font-size: 13px;
-  font-weight: 500;
-  margin-bottom: 2px;
-}
-
-.size-pixels {
-  font-size: 11px;
-  color: $text-secondary;
-}
-
-// Count Select
 .count-select {
   width: 100%;
 }
 
-// Button Section
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
 .button-section {
   margin-top: 32px;
 }
@@ -435,46 +149,28 @@ $button-border: #d9d9d9;
 
 .credits-required {
   font-size: 13px;
-  color: $text-secondary;
+  color: vars.$text-secondary;
 }
 
 .credits-balance {
   display: flex;
   align-items: center;
   gap: 6px;
+
+  svg {
+    font-size: 16px;
+    color: vars.$ai-credit-icon;
+  }
 }
 
-.coin-icon {
-  font-size: 16px;
-}
-
-.credits-amount {
+.ai-credit {
   font-size: 14px;
   font-weight: 500;
-  color: $text-primary;
+  color: vars.$text-primary;
 }
 
-// Style Indicator
-.style-indicator {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-top: 12px;
-  padding: 8px 12px;
-  background: #f0f5ff;
-  border: 1px solid #b5d4ff;
-  border-radius: 4px;
-}
-
-.style-name {
-  font-size: 13px;
-  color: $primary-blue;
-  font-weight: 500;
-}
-
-// Welcome Page Styles
 @media screen and (min-width: (variables.$welcomePageSidePanelWidth + 641px)) {
   .welcome-page.ai-generate-container {
-    background: #f6f9fb;
+    background: vars.$background-welcome;
   }
 }
