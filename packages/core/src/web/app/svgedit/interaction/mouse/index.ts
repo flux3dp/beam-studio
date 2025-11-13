@@ -9,8 +9,11 @@ import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { endPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -21,7 +24,6 @@ import touchEvents from '@core/app/svgedit/touchEvents';
 import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import TopBarHintsController from '@core/app/views/beambox/TopBar/contexts/TopBarHintsController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -220,6 +222,11 @@ const mouseDown = async (evt: MouseEvent) => {
       autoFocusEventEmitter.emit('pin', pt);
 
       return;
+    case 'background_preview':
+      svgCanvas.unsafeAccess.setStarted(true);
+      setRubberBoxStart(startMouseX, startMouseY);
+
+      return;
     case 'select':
     case 'multiselect':
       svgCanvas.unsafeAccess.setStarted(true);
@@ -228,14 +235,14 @@ const mouseDown = async (evt: MouseEvent) => {
       if (rightClick) svgCanvas.unsafeAccess.setStarted(false);
 
       if (
-        (PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode()) &&
+        ((PreviewModeController.isPreviewMode && !PreviewModeController.isBackgroundMode) ||
+          useCanvasStore.getState().mode === CanvasMode.Preview) &&
         !curveEngravingModeController.started
       ) {
         // preview mode
         svgCanvas.clearSelection();
 
         if (PreviewModeController.isPreviewMode) svgCanvas.unsafeAccess.setCurrentMode('preview');
-        // i.e. TopBarController.getTopBarPreviewMode()
         else svgCanvas.unsafeAccess.setCurrentMode('pre_preview');
 
         setRubberBoxStart(startMouseX, startMouseY);
@@ -725,18 +732,24 @@ const mouseMove = (evt: MouseEvent) => {
     }
 
     if (svgCanvas.sensorAreaInfo) {
-      if (currentMode === 'select' && !PreviewModeController.isPreviewMode) {
+      const isPreviewing = PreviewModeController.isPreviewMode && !PreviewModeController.isBackgroundMode;
+
+      if (currentMode === 'select' && isPreviewing) {
         const dist = Math.hypot(svgCanvas.sensorAreaInfo.x - mouseX, svgCanvas.sensorAreaInfo.y - mouseY);
+        const workarea = document.getElementById('workarea');
 
-        if (dist < SENSOR_AREA_RADIUS) {
-          $('#workarea').css('cursor', 'move');
-        } else if ($('#workarea').css('cursor') === 'move') {
-          const isPreview = PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode();
-
-          if (!curveEngravingModeController.started && isPreview) {
-            $('#workarea').css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
-          } else {
-            $('#workarea').css('cursor', 'auto');
+        if (workarea) {
+          if (dist < SENSOR_AREA_RADIUS) {
+            workarea.style.cursor = 'move';
+          } else if (workarea.style.cursor === 'move') {
+            if (
+              !curveEngravingModeController.started &&
+              (isPreviewing || useCanvasStore.getState().mode === CanvasMode.Preview)
+            ) {
+              workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
+            } else {
+              workarea.style.cursor = 'auto';
+            }
           }
         }
       }
@@ -845,6 +858,7 @@ const mouseMove = (evt: MouseEvent) => {
       break;
     case 'pre_preview':
     case 'preview':
+    case 'background_preview':
     case 'multiselect':
     case 'curve-engraving':
       updateRubberBox();
@@ -1083,6 +1097,8 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
         TutorialController.handleNextStep();
       }
+
+      if (currentMode === 'background_preview') endPreviewMode();
     };
 
     if (PreviewModeController.isPreviewMode) {
@@ -1116,10 +1132,20 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       }
 
       return;
+    case 'background_preview':
     case 'pre_preview':
       cleanUpRubberBox();
       svgCanvas.unsafeAccess.setCurrentMode('select');
-      canvasEvents.setupPreviewMode({ callback: () => doPreview() });
+
+      const isBackgroundMode = currentMode === 'background_preview';
+
+      setupPreviewMode({ callback: () => doPreview(), isBackgroundMode });
+
+      if (isBackgroundMode) {
+        const workarea = document.getElementById('workarea');
+
+        if (workarea) workarea.style.cursor = 'auto';
+      }
 
       return;
     case 'preview':

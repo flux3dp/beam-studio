@@ -4,9 +4,9 @@ import { Tooltip } from 'antd';
 
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import FormatDuration from '@core/helpers/duration-formatter';
 import useI18n from '@core/helpers/useI18n';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
@@ -15,7 +15,7 @@ import styles from './TimeEstimationButton.module.scss';
 
 const TimeEstimationButton = (): React.JSX.Element => {
   const { estimatedTime, setEstimatedTime } = useContext(TimeEstimationButtonContext);
-  const { mode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
   const lang = useI18n().beambox.time_est_button;
 
   if (mode === CanvasMode.PathPreview) {

@@ -221,9 +221,7 @@ describe('test DocumentSettings', () => {
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'canvas');
-    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(2);
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'document-settings-saved');
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'document-settings-saved');
     expect(mockUnmount).toHaveBeenCalledTimes(1);
   });
 
