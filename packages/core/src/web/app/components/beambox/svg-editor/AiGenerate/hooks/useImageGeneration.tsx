@@ -4,6 +4,7 @@ import type { IUser } from '@core/interfaces/IUser';
 
 import type { GenerationMode, ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
+import { objectToSnakeCase } from '../utils/caseConversion';
 import { getImageResolution, getImageSizeOption } from '../utils/dimensions';
 
 interface UseImageGenerationParams {
@@ -67,18 +68,7 @@ export const useImageGeneration = ({
     useAiGenerateStore.setState({ generationStatus: 'generating' });
 
     // Convert inputFields to snake_case for backend
-    const convertToSnakeCase = (key: string): string => {
-      // Convert camelCase to snake_case: textToDisplay -> text_to_display
-      return key.replace(/([A-Z])/g, '_$1').toLowerCase();
-    };
-
-    const inputs: Record<string, string> = {};
-
-    Object.entries(inputFields).forEach(([key, value]) => {
-      const snakeKey = convertToSnakeCase(key);
-
-      inputs[snakeKey] = value;
-    });
+    const inputs = objectToSnakeCase(inputFields) as Record<string, string>;
 
     // Create task based on mode
     let createResponse: { error: string } | { uuid: string };
