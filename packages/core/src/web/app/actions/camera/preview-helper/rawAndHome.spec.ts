@@ -59,25 +59,20 @@ describe('test rawAndHome', () => {
     mockVersionChecker.mockReturnValue({
       meetRequirement: mockMeetRequirement,
     });
-    mockMeetRequirement.mockReturnValue(true);
+    mockMeetRequirement.mockReturnValue(false);
   });
 
   it('should work without progress id', async () => {
     await rawAndHome();
     expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
-    expect(mockRawSetRotary).toHaveBeenCalledTimes(1);
-    expect(mockRawSetRotary).toHaveBeenLastCalledWith(false);
     expect(mockRawHome).toHaveBeenCalledTimes(1);
     expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({ id: 'raw-and-home' });
-    expect(mockUpdate).toHaveBeenCalledTimes(3);
+    expect(mockUpdate).toHaveBeenCalledTimes(2);
     expect(mockUpdate).toHaveBeenNthCalledWith(1, 'raw-and-home', { message: i18n.lang.message.enteringRawMode });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'preview-mode-controller', {
-      message: i18n.lang.message.exitingRotaryMode,
-    });
-    expect(mockUpdate).toHaveBeenNthCalledWith(3, 'preview-mode-controller', { message: i18n.lang.message.homing });
+    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'raw-and-home', { message: i18n.lang.message.homing });
     expect(mockPopById).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenLastCalledWith('raw-and-home');
   });
@@ -85,18 +80,22 @@ describe('test rawAndHome', () => {
   it('should work with progress id', async () => {
     await rawAndHome('progress-id');
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
-    expect(mockRawSetRotary).toHaveBeenCalledTimes(1);
-    expect(mockRawSetRotary).toHaveBeenLastCalledWith(false);
     expect(mockRawHome).toHaveBeenCalledTimes(1);
     expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(0);
-    expect(mockUpdate).toHaveBeenCalledTimes(3);
+    expect(mockUpdate).toHaveBeenCalledTimes(2);
     expect(mockUpdate).toHaveBeenNthCalledWith(1, 'progress-id', { message: i18n.lang.message.enteringRawMode });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'preview-mode-controller', {
-      message: i18n.lang.message.exitingRotaryMode,
-    });
-    expect(mockUpdate).toHaveBeenNthCalledWith(3, 'preview-mode-controller', { message: i18n.lang.message.homing });
+    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'progress-id', { message: i18n.lang.message.homing });
     expect(mockPopById).toHaveBeenCalledTimes(0);
+  });
+
+  it('should work with raw home camera requirement', async () => {
+    mockMeetRequirement.mockReturnValue(true);
+    await rawAndHome();
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
+    expect(mockRawHomeCamera).toHaveBeenCalledTimes(1);
+    expect(mockRawHome).toHaveBeenCalledTimes(0);
   });
 
   it('should work with rotary mode', async () => {
@@ -104,8 +103,6 @@ describe('test rawAndHome', () => {
     await rawAndHome();
     expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
-    expect(mockRawSetRotary).toHaveBeenCalledTimes(1);
-    expect(mockRawSetRotary).toHaveBeenLastCalledWith(false);
     expect(mockRawHomeZ).toHaveBeenCalledTimes(1);
     expect(mockRawHome).toHaveBeenCalledTimes(1);
     expect(mockRawMoveZRelToLastHome).toHaveBeenCalledTimes(1);
@@ -113,12 +110,9 @@ describe('test rawAndHome', () => {
     expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({ id: 'raw-and-home' });
-    expect(mockUpdate).toHaveBeenCalledTimes(3);
+    expect(mockUpdate).toHaveBeenCalledTimes(2);
     expect(mockUpdate).toHaveBeenNthCalledWith(1, 'raw-and-home', { message: i18n.lang.message.enteringRawMode });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'preview-mode-controller', {
-      message: i18n.lang.message.exitingRotaryMode,
-    });
-    expect(mockUpdate).toHaveBeenNthCalledWith(3, 'preview-mode-controller', { message: i18n.lang.message.homing });
+    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'raw-and-home', { message: i18n.lang.message.homing });
     expect(mockPopById).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenLastCalledWith('raw-and-home');
   });
