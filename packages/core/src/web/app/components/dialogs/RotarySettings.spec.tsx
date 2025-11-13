@@ -108,7 +108,9 @@ describe('test RotarySettings', () => {
     fireEvent.click(saveButton);
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenCalledWith({
+      'auto-feeder': false,
       'extend-rotary-workarea': true,
+      'pass-through': false,
       'rotary-chuck-obj-d': 10,
       'rotary-mirror': false,
       'rotary-scale': 2,
@@ -156,7 +158,9 @@ describe('test RotarySettings', () => {
     fireEvent.click(saveButton);
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith({
+      'auto-feeder': false,
       'extend-rotary-workarea': true,
+      'pass-through': false,
       'rotary-chuck-obj-d': 10,
       'rotary-mirror': true,
       'rotary-overlap': 1,

@@ -158,7 +158,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             )}
             {supportedModules?.includes(LayerModule.PRINTER_4C) && (
               <MenuItem disabled={isMobile} onClick={() => callback('CALIBRATE_PRINTER_4C_MODULE', device)}>
-                {menuCms.calibrate_printer_module} (4C)
+                {menuCms.calibrate_printer_module}
               </MenuItem>
             )}
             {supportedModules?.includes(LayerModule.UV_WHITE_INK) && (
@@ -258,8 +258,8 @@ export default function Menu({ email }: Props): React.JSX.Element {
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_LASER')}>
               {menuCms.import_beamo_2_laser_example}
             </MenuItem>
-            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT_FULL')}>
-              {menuCms.import_beamo_2_printing_example_full}
+            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT')}>
+              {menuCms.import_beamo_2_printing_example}
             </MenuItem>
             <MenuItem onClick={() => callback('IMPORT_HELLO_BEAMBOX')}>{menuCms.import_hello_beambox}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMBOX_2')}>{menuCms.import_beambox_2_example}</MenuItem>

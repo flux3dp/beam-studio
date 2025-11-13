@@ -27,7 +27,7 @@ exports[`test ChangeLog should render correctly 1`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 520px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(520px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"

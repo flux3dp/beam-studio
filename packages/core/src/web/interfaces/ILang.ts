@@ -106,7 +106,9 @@ export interface ILang {
       enable: string;
       enable_autofocus: string;
       enable_diode: string;
+      enable_nozzle_refresh_area: string;
       engrave_dpi: string;
+      extend_y_area: string;
       frame_before_start: string;
       frame_before_start_url: string;
       high: string;
@@ -114,6 +116,7 @@ export interface ILang {
       laser_source: string;
       low: string;
       machine: string;
+      manual: string;
       medium: string;
       notification: {
         changeFromPrintingWorkareaTitle: string;
@@ -1973,13 +1976,10 @@ export interface ILang {
     mask: string;
     medium: string;
     module_offset_2w_ir: string;
-    module_offset_4c: string;
     module_offset_10w: string;
     module_offset_20w: string;
     module_offset_laser: string;
     module_offset_printer: string;
-    module_offset_uv_varnish: string;
-    module_offset_uv_white_ink: string;
     none: string;
     normal: string;
     notification_off: string;
@@ -2142,7 +2142,7 @@ export interface ILang {
       import_beambox_2_example: string;
       import_beambox_2_focus_probe: string;
       import_beamo_2_laser_example: string;
-      import_beamo_2_printing_example_full: string;
+      import_beamo_2_printing_example: string;
       import_hello_beambox: string;
       import_hello_beamo: string;
       import_hexa_example: string;

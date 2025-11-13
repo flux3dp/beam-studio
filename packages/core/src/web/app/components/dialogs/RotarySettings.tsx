@@ -22,6 +22,7 @@ import styles from './RotarySettings.module.scss';
 
 interface OverwrittrnData {
   rotaryMode: boolean;
+  rotaryType: RotaryType;
   workarea: WorkAreaModel;
 }
 
@@ -44,7 +45,9 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
   const [rotaryMode, setRotaryMode] = useState<boolean>(
     initData?.rotaryMode ?? useDocumentStore.getState().rotary_mode,
   );
-  const [rotaryType, setRotaryType] = useState<number>(useDocumentStore.getState()['rotary-type']);
+  const [rotaryType, setRotaryType] = useState<number>(
+    initData?.rotaryType ?? useDocumentStore.getState()['rotary-type'],
+  );
   const [diameter, setDiaMeter] = useState(useDocumentStore.getState()['rotary-chuck-obj-d']);
   const [scale, setScale] = useState<number>(useDocumentStore.getState()['rotary-scale']);
   const [split, setSplit] = useState(useDocumentStore.getState()['rotary-split']);
@@ -67,6 +70,11 @@ const RotarySettings = ({ afterSave, initData, onClose }: Props): React.JSX.Elem
       'rotary-type': rotaryType,
       rotary_mode: rotaryMode,
     };
+
+    if (rotaryChanged && rotaryMode) {
+      newState['pass-through'] = false;
+      newState['auto-feeder'] = false;
+    }
 
     if (rotaryType === RotaryType.Chuck) {
       newState['rotary-chuck-obj-d'] = diameter;

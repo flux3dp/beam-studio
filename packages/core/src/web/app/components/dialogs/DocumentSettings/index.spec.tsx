@@ -38,6 +38,7 @@ jest.mock('@core/app/constants/alert-constants', () => ({
 const mockUpdate = jest.fn();
 const mockDocumentState = {
   'auto-feeder': false,
+  'auto-feeder-height': 320,
   'auto-feeder-scale': 1,
   auto_shrink: false,
   borderless: false,
@@ -46,20 +47,62 @@ const mockDocumentState = {
   'enable-1064': false,
   'enable-autofocus': false,
   'enable-diode': false,
+  'enable-job-origin': false,
   engrave_dpi: 'medium',
   'extend-rotary-workarea': undefined,
+  'frame-before-start': false,
   'job-origin': 1,
-  'path-trough': false,
+  'pass-through': false,
+  'pass-through-height': 320,
+  'promark-safety-door': false,
+  'promark-start-button': false,
+  'rotary-chuck-obj-d': 50,
+  'rotary-scale': 1,
+  'rotary-type': 0,
   rotary_mode: false,
   update: mockUpdate,
   workarea: 'fbm1',
 };
 const mockGetState = jest.fn();
+const mockUseDocumentStore = jest.fn();
+
+const mockUseDocumentStoreFunction = (selector?: (state: any) => any) => {
+  if (selector) {
+    return mockUseDocumentStore(selector);
+  }
+
+  return mockGetState();
+};
+
+mockUseDocumentStoreFunction.getState = () => mockGetState();
 
 jest.mock('@core/app/stores/documentStore', () => ({
-  useDocumentStore: {
-    getState: () => mockGetState(),
-  },
+  useDocumentStore: mockUseDocumentStoreFunction,
+}));
+
+const mockStorageState = {
+  isInch: false,
+};
+const mockUseStorageStore = jest.fn();
+const mockGetStorage = jest.fn();
+const mockSetStorage = jest.fn();
+const mockStorageSubscribe = jest.fn();
+
+const mockUseStorageStoreFunction = (selector?: (state: any) => any) => {
+  if (selector) {
+    return mockUseStorageStore(selector);
+  }
+
+  return mockStorageState;
+};
+
+mockUseStorageStoreFunction.subscribe = mockStorageSubscribe;
+mockUseStorageStoreFunction.getState = () => mockStorageState;
+
+jest.mock('@core/app/stores/storageStore', () => ({
+  getStorage: (...args: any[]) => mockGetStorage(...args),
+  setStorage: (...args: any[]) => mockSetStorage(...args),
+  useStorageStore: mockUseStorageStoreFunction,
 }));
 
 const mockToggleDisplay = jest.fn();
@@ -131,6 +174,8 @@ describe('test DocumentSettings', () => {
     });
     mockHasModuleLayer.mockReturnValue(false);
     mockGetState.mockReturnValue(mockDocumentState);
+    mockUseDocumentStore.mockImplementation((selector) => selector(mockDocumentState));
+    mockUseStorageStore.mockImplementation((selector) => selector(mockStorageState));
   });
 
   it('should render correctly for ador', async () => {
@@ -140,7 +185,7 @@ describe('test DocumentSettings', () => {
     fireEvent.mouseDown(workareaToggle);
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="Ador"]'));
     expect(baseElement).toMatchSnapshot();
-    fireEvent.click(baseElement.querySelector('button#rotary_mode'));
+    fireEvent.click(baseElement.querySelector('button#rotaryMaster'));
     expect(baseElement).toMatchSnapshot();
   });
 
@@ -158,15 +203,11 @@ describe('test DocumentSettings', () => {
     expect(baseElement).toMatchSnapshot();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="beamo"]'));
-    fireEvent.click(baseElement.querySelector('button#rotary_mode'));
-    fireEvent.click(baseElement.querySelector('button#borderless_mode'));
+    fireEvent.click(baseElement.querySelector('button#rotaryMaster'));
+    fireEvent.click(baseElement.querySelector('button#openBottomMaster'));
     fireEvent.click(baseElement.querySelector('button#autofocus-module'));
     fireEvent.click(baseElement.querySelector('button#diode_module'));
-    fireEvent.click(baseElement.querySelector('button#pass_through'));
-    fireEvent.change(baseElement.querySelector('#pass_through_height'), {
-      target: { value: 500 },
-    });
-    fireEvent.blur(baseElement.querySelector('#pass_through_height'));
+    fireEvent.click(baseElement.querySelector('button#passthroughMaster'));
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#startFrom')));
     act(() => {
       fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1]);
@@ -197,9 +238,7 @@ describe('test DocumentSettings', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith({
-      'auto-feeder': false,
-      'auto-feeder-height': 320,
-      'auto-feeder-scale': 1,
+      'auto-feeder': true,
       auto_shrink: true,
       borderless: true,
       'enable-4c': true,
@@ -209,8 +248,8 @@ describe('test DocumentSettings', () => {
       'enable-job-origin': true,
       engrave_dpi: 'high',
       'job-origin': 1,
-      'pass-through': true,
-      'pass-through-height': 500,
+      'pass-through': false,
+      'rotary-type': 0,
       rotary_mode: false,
     });
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
@@ -221,9 +260,8 @@ describe('test DocumentSettings', () => {
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenNthCalledWith(1, 'canvas');
-    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(2);
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
-    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(2, 'document-settings-saved');
+    expect(mockEventEmitter.emit).toHaveBeenCalledTimes(1);
+    expect(mockEventEmitter.emit).toHaveBeenNthCalledWith(1, 'document-settings-saved');
     expect(mockUnmount).toHaveBeenCalledTimes(1);
   });
 
@@ -307,21 +345,21 @@ describe('test DocumentSettings', () => {
     );
   });
 
-  test('set auto feeder height', async () => {
+  test('set pass through master', async () => {
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="Beambox II"]'));
 
-    fireEvent.click(baseElement.querySelector('button#auto_feeder'));
-    fireEvent.change(baseElement.querySelector('#auto_feeder_height'), { target: { value: 870 } });
+    // Enable passthrough/auto feeder switch first
+    fireEvent.click(baseElement.querySelector('button#passthroughMaster'));
     fireEvent.click(getByText('Save'));
 
     expect(mockUpdate).toHaveBeenCalledTimes(1);
     expect(mockUpdate).toHaveBeenLastCalledWith(
       expect.objectContaining({
         'auto-feeder': true,
-        'auto-feeder-height': 870,
+        'pass-through': false,
       }),
     );
   });

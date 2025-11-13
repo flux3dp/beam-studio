@@ -80,40 +80,45 @@ describe('manipulate document setting', () => {
 
   it('check default and adjust setting with working area of beamo', () => {
     cy.changeWorkarea('beamo', false);
-    clickAndCheck('rotary_mode', true);
-    clickAndCheck('borderless_mode', true);
+    clickAndCheck('rotaryMaster', true);
+    clickAndCheck('openBottomMaster', true);
+    clickAndCheck('passthroughMaster', true);
     clickAndCheck('autofocus-module', true);
     clickAndCheck('diode_module', true);
   });
 
   it('check default and adjust setting with working area of beambox', () => {
     cy.changeWorkarea('Beambox', false);
-    clickAndCheck('rotary_mode', true);
-    checkNotExists('borderless_mode');
+    clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
+    checkNotExists('passthroughMaster');
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
   });
 
   it('check default and adjust setting with working area of beambox pro', () => {
     cy.changeWorkarea('Beambox Pro', false);
-    clickAndCheck('rotary_mode', true);
-    checkNotExists('borderless_mode');
+    clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
+    checkNotExists('passthroughMaster');
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
   });
 
   it('check default and adjust setting with working area of HEXA', () => {
     cy.changeWorkarea('HEXA', false);
-    clickAndCheck('rotary_mode', true);
-    checkNotExists('borderless_mode');
+    clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
+    checkNotExists('passthroughMaster');
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
   });
 
   it('check default and adjust setting with working area of Ador', () => {
     cy.changeWorkarea('Ador', false);
-    clickAndCheck('rotary_mode', true);
-    checkNotExists('borderless_mode');
+    clickAndCheck('rotaryMaster', true);
+    checkNotExists('openBottomMaster');
+    clickAndCheck('passthroughMaster', true);
     checkNotExists('autofocus-module');
     checkNotExists('diode_module');
   });
@@ -125,7 +130,7 @@ describe('manipulate document setting', () => {
 
   it('check rotary with different working area', () => {
     cy.changeWorkarea('beamo', false);
-    clickAndCheck('rotary_mode', true);
+    clickAndCheck('rotaryMaster', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
     checkRotary();
     cy.changeWorkarea('Beambox');
@@ -140,7 +145,7 @@ describe('manipulate document setting', () => {
 
   it('check open bottom', () => {
     cy.changeWorkarea('beamo', false);
-    clickAndCheck('borderless_mode', true);
+    clickAndCheck('openBottomMaster', true);
     cy.get('button[class^="ant-btn"]').contains('Save').click();
     cy.get('#boundary-path').should('exist');
     cy.get('#boundary-path').should('have.attr', 'd', 'M0,0H3000V2100H0ZM0,0H2600V2100H0Z');

@@ -27,7 +27,7 @@ exports[`test ColorAdvancedSetting should handle color curve initialization 1`] 
           >
             <div
               class="react-draggable"
-              style="min-width: 600px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(600px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -366,7 +366,7 @@ exports[`test ColorAdvancedSetting should render correctly with default values 1
           >
             <div
               class="react-draggable"
-              style="min-width: 600px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(600px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -626,7 +626,7 @@ exports[`test ColorAdvancedSetting should render correctly with set values 1`] =
           >
             <div
               class="react-draggable"
-              style="min-width: 600px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(600px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"

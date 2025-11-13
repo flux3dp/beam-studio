@@ -161,7 +161,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
         isBeamo2 && {
           click: handleClick,
           id: 'CALIBRATE_PRINTER_4C_MODULE',
-          label: `${r.calibrate_printer_module} (4C)`,
+          label: r.calibrate_printer_module,
         },
         isBeamo2 &&
           isDevMode && {

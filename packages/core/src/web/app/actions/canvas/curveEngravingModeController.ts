@@ -330,6 +330,12 @@ class CurveEngravingModeController {
       return;
     }
 
+    if (!this.checkSupport()) {
+      this.clearArea(false);
+
+      return;
+    }
+
     const { height, width } = workareaManager;
 
     this.boundarySvg.setAttribute('viewBox', `0 0 ${width} ${height}`);

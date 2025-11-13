@@ -27,7 +27,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(440px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -93,7 +93,6 @@ exports[`test DocumentSettings should render correctly 1`] = `
                           for="workareaSelect"
                         >
                           Machine
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -167,8 +166,7 @@ exports[`test DocumentSettings should render correctly 1`] = `
                           class="title"
                           for="dpi"
                         >
-                          Resolution
-                          :
+                          Engraving Resolution
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -238,15 +236,40 @@ exports[`test DocumentSettings should render correctly 1`] = `
                       <div
                         class="row"
                       >
-                        <label
-                          class="title"
-                          for="autoShrink"
-                        >
-                          Auto Shrink
-                          :
-                        </label>
                         <div
-                          class="control justify-start"
+                          class="title"
+                        >
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
+                          <span
+                            aria-label="question-circle"
+                            class="anticon anticon-question-circle icon"
+                            role="img"
+                            tabindex="-1"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="question-circle"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              />
+                              <path
+                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <div
+                          class="control"
                         >
                           <button
                             aria-checked="false"
@@ -269,41 +292,13 @@ exports[`test DocumentSettings should render correctly 1`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
                     <div
                       class="separator"
                     >
-                      <div>
-                        Start Position
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Start Position
                     </div>
                     <div
                       class="block"
@@ -316,7 +311,6 @@ exports[`test DocumentSettings should render correctly 1`] = `
                           for="startFrom"
                         >
                           Start From
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -348,8 +342,11 @@ exports[`test DocumentSettings should render correctly 1`] = `
                                 />
                               </span>
                               <span
-                                class="ant-select-selection-placeholder"
-                              />
+                                class="ant-select-selection-item"
+                                title="Origin"
+                              >
+                                Origin
+                              </span>
                             </span>
                           </div>
                           <span
@@ -382,95 +379,70 @@ exports[`test DocumentSettings should render correctly 1`] = `
                       </div>
                     </div>
                     <div
-                      class="separator"
+                      class="block"
                     >
-                      <div>
-                        Add-ons
-                      </div>
                       <div
-                        class="bar"
-                      />
+                        class="row"
+                      >
+                        <div
+                          class="title"
+                        >
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
+                        <div
+                          class="control"
+                        >
+                          <button
+                            aria-checked="false"
+                            class="ant-switch css-dev-only-do-not-override-hash"
+                            id="rotaryMaster"
+                            role="switch"
+                            type="button"
+                          >
+                            <div
+                              class="ant-switch-handle"
+                            />
+                            <span
+                              class="ant-switch-inner"
+                            >
+                              <span
+                                class="ant-switch-inner-checked"
+                              />
+                              <span
+                                class="ant-switch-inner-unchecked"
+                              />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     <div
-                      class="modules"
+                      class="block"
                     >
                       <div
-                        class="row full"
+                        class="row"
                       >
-                        <div
+                        <label
                           class="title"
+                          for="passthroughMaster"
                         >
-                          <label
-                            for="rotary_mode"
-                          >
-                            Rotary
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="rotary_mode"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="setting"
-                            class="anticon anticon-setting"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="setting"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="pass_through"
-                          >
+                          <strong>
                             Passthrough
-                          </label>
-                        </div>
+                          </strong>
+                        </label>
                         <div
                           class="control"
                         >
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="pass_through"
+                            id="passthroughMaster"
                             role="switch"
                             type="button"
                           >
@@ -488,67 +460,6 @@ exports[`test DocumentSettings should render correctly 1`] = `
                               />
                             </span>
                           </button>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="auto_feeder"
-                          >
-                            Auto Feeder
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="auto_feeder"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -615,7 +526,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(440px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -681,7 +592,6 @@ exports[`test DocumentSettings should render correctly 2`] = `
                           for="workareaSelect"
                         >
                           Machine
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -755,8 +665,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                           class="title"
                           for="dpi"
                         >
-                          Resolution
-                          :
+                          Engraving Resolution
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -826,15 +735,40 @@ exports[`test DocumentSettings should render correctly 2`] = `
                       <div
                         class="row"
                       >
-                        <label
-                          class="title"
-                          for="autoShrink"
-                        >
-                          Auto Shrink
-                          :
-                        </label>
                         <div
-                          class="control justify-start"
+                          class="title"
+                        >
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
+                          <span
+                            aria-label="question-circle"
+                            class="anticon anticon-question-circle icon"
+                            role="img"
+                            tabindex="-1"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="question-circle"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              />
+                              <path
+                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <div
+                          class="control"
                         >
                           <button
                             aria-checked="false"
@@ -857,41 +791,13 @@ exports[`test DocumentSettings should render correctly 2`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
                     <div
                       class="separator"
                     >
-                      <div>
-                        Start Position
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Start Position
                     </div>
                     <div
                       class="block"
@@ -904,7 +810,6 @@ exports[`test DocumentSettings should render correctly 2`] = `
                           for="startFrom"
                         >
                           Start From
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -936,8 +841,11 @@ exports[`test DocumentSettings should render correctly 2`] = `
                                 />
                               </span>
                               <span
-                                class="ant-select-selection-placeholder"
-                              />
+                                class="ant-select-selection-item"
+                                title="Origin"
+                              >
+                                Origin
+                              </span>
                             </span>
                           </div>
                           <span
@@ -970,95 +878,70 @@ exports[`test DocumentSettings should render correctly 2`] = `
                       </div>
                     </div>
                     <div
-                      class="separator"
+                      class="block"
                     >
-                      <div>
-                        Add-ons
-                      </div>
                       <div
-                        class="bar"
-                      />
+                        class="row"
+                      >
+                        <div
+                          class="title"
+                        >
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
+                        <div
+                          class="control"
+                        >
+                          <button
+                            aria-checked="false"
+                            class="ant-switch css-dev-only-do-not-override-hash"
+                            id="rotaryMaster"
+                            role="switch"
+                            type="button"
+                          >
+                            <div
+                              class="ant-switch-handle"
+                            />
+                            <span
+                              class="ant-switch-inner"
+                            >
+                              <span
+                                class="ant-switch-inner-checked"
+                              />
+                              <span
+                                class="ant-switch-inner-unchecked"
+                              />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     <div
-                      class="modules"
+                      class="block"
                     >
                       <div
-                        class="row full"
+                        class="row"
                       >
-                        <div
+                        <label
                           class="title"
+                          for="passthroughMaster"
                         >
-                          <label
-                            for="rotary_mode"
-                          >
-                            Rotary
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="rotary_mode"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="setting"
-                            class="anticon anticon-setting"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="setting"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="pass_through"
-                          >
+                          <strong>
                             Passthrough
-                          </label>
-                        </div>
+                          </strong>
+                        </label>
                         <div
                           class="control"
                         >
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="pass_through"
+                            id="passthroughMaster"
                             role="switch"
                             type="button"
                           >
@@ -1076,67 +959,6 @@ exports[`test DocumentSettings should render correctly 2`] = `
                               />
                             </span>
                           </button>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="auto_feeder"
-                          >
-                            Auto Feeder
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="auto_feeder"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -1307,7 +1129,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(440px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -1373,7 +1195,6 @@ exports[`test DocumentSettings should render correctly 3`] = `
                           for="workareaSelect"
                         >
                           Machine
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -1447,8 +1268,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
                           class="title"
                           for="dpi"
                         >
-                          Resolution
-                          :
+                          Engraving Resolution
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -1518,15 +1338,40 @@ exports[`test DocumentSettings should render correctly 3`] = `
                       <div
                         class="row"
                       >
-                        <label
-                          class="title"
-                          for="autoShrink"
-                        >
-                          Auto Shrink
-                          :
-                        </label>
                         <div
-                          class="control justify-start"
+                          class="title"
+                        >
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
+                          <span
+                            aria-label="question-circle"
+                            class="anticon anticon-question-circle icon"
+                            role="img"
+                            tabindex="-1"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="question-circle"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              />
+                              <path
+                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <div
+                          class="control"
                         >
                           <button
                             aria-checked="true"
@@ -1549,41 +1394,13 @@ exports[`test DocumentSettings should render correctly 3`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
                     <div
                       class="separator"
                     >
-                      <div>
-                        Start Position
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Start Position
                     </div>
                     <div
                       class="block"
@@ -1596,7 +1413,6 @@ exports[`test DocumentSettings should render correctly 3`] = `
                           for="startFrom"
                         >
                           Start From
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -1670,7 +1486,6 @@ exports[`test DocumentSettings should render correctly 3`] = `
                           class="title"
                         >
                           Job Origin
-                          :
                         </label>
                         <div
                           class="control"
@@ -1742,74 +1557,11 @@ exports[`test DocumentSettings should render correctly 3`] = `
                     <div
                       class="separator"
                     >
-                      <div>
-                        Add-ons
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Add-ons
                     </div>
                     <div
-                      class="modules"
+                      class="block"
                     >
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="rotary_mode"
-                          >
-                            Rotary
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="rotary_mode"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="setting"
-                            class="anticon anticon-setting"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="setting"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
                       <div
                         class="row"
                       >
@@ -1829,44 +1581,6 @@ exports[`test DocumentSettings should render correctly 3`] = `
                             aria-checked="true"
                             class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
                             id="autofocus-module"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                        </div>
-                      </div>
-                      <div
-                        class="row"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="borderless_mode"
-                          >
-                            Open Bottom
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="true"
-                            class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
-                            id="borderless_mode"
                             role="switch"
                             type="button"
                           >
@@ -1924,95 +1638,22 @@ exports[`test DocumentSettings should render correctly 3`] = `
                           </button>
                         </div>
                       </div>
+                    </div>
+                    <div
+                      class="block"
+                    >
                       <div
-                        class="row full"
+                        class="row"
                       >
                         <div
                           class="title"
                         >
                           <label
-                            for="pass_through"
+                            for="rotaryMaster"
                           >
-                            Passthrough
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="true"
-                            class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
-                            id="pass_through"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <div
-                            class="input"
-                          >
-                            UnitInput: 
-                            pass_through_height
-                            <p>
-                              addonAfter: 
-                              mm
-                            </p>
-                            <p>
-                              precision: 
-                              0
-                            </p>
-                            <input
-                              id="pass_through_height"
-                              min="210"
-                              value="500"
-                            />
-                          </div>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="auto_feeder"
-                          >
-                            Auto Feeder
+                            <strong>
+                              Rotary
+                            </strong>
                           </label>
                         </div>
                         <div
@@ -2021,7 +1662,7 @@ exports[`test DocumentSettings should render correctly 3`] = `
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="auto_feeder"
+                            id="rotaryMaster"
                             role="switch"
                             type="button"
                           >
@@ -2039,29 +1680,162 @@ exports[`test DocumentSettings should render correctly 3`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="block"
+                    >
+                      <div
+                        class="row"
+                      >
+                        <label
+                          class="title"
+                          for="openBottomMaster"
+                        >
+                          <strong>
+                            Open Bottom
+                          </strong>
+                        </label>
+                        <div
+                          class="control"
+                        >
+                          <button
+                            aria-checked="true"
+                            class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
+                            id="openBottomMaster"
+                            role="switch"
+                            type="button"
                           >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
+                            <div
+                              class="ant-switch-handle"
+                            />
+                            <span
+                              class="ant-switch-inner"
                             >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              <span
+                                class="ant-switch-inner-checked"
                               />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              <span
+                                class="ant-switch-inner-unchecked"
                               />
-                            </svg>
-                          </span>
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="row"
+                      >
+                        <label
+                          class="title"
+                          for="passthroughMaster"
+                        >
+                          <div>
+                            Passthrough
+                          </div>
+                        </label>
+                        <div
+                          class="control"
+                        >
+                          <button
+                            aria-checked="true"
+                            class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
+                            id="passthroughMaster"
+                            role="switch"
+                            type="button"
+                          >
+                            <div
+                              class="ant-switch-handle"
+                            />
+                            <span
+                              class="ant-switch-inner"
+                            >
+                              <span
+                                class="ant-switch-inner-checked"
+                              />
+                              <span
+                                class="ant-switch-inner-unchecked"
+                              />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
+                      <div
+                        class="row full"
+                      >
+                        <div
+                          aria-label="segmented control"
+                          class="ant-segmented segmented css-dev-only-do-not-override-hash"
+                          id="ptMode"
+                          role="radiogroup"
+                          tabindex="0"
+                        >
+                          <div
+                            class="ant-segmented-group"
+                          >
+                            <label
+                              class="ant-segmented-item ant-segmented-item-selected"
+                            >
+                              <input
+                                checked=""
+                                class="ant-segmented-item-input"
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="true"
+                                class="ant-segmented-item-label"
+                                title="Auto Feeder"
+                              >
+                                Auto Feeder
+                              </div>
+                            </label>
+                            <label
+                              class="ant-segmented-item"
+                            >
+                              <input
+                                class="ant-segmented-item-input"
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="false"
+                                class="ant-segmented-item-label"
+                                title="Manual"
+                              >
+                                Manual
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="sub"
+                        >
+                          <div
+                            class="desc left"
+                          >
+                            Y: 320 mm, Scale: 1
+                            <span
+                              aria-label="setting"
+                              class="anticon anticon-setting icon"
+                              role="img"
+                              tabindex="-1"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                data-icon="setting"
+                                fill="currentColor"
+                                focusable="false"
+                                height="1em"
+                                viewBox="64 64 896 896"
+                                width="1em"
+                              >
+                                <path
+                                  d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
+                                />
+                              </svg>
+                            </span>
+                          </div>
                         </div>
                       </div>
                     </div>
@@ -2516,7 +2290,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(440px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -2582,7 +2356,6 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                           for="workareaSelect"
                         >
                           Machine
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -2656,8 +2429,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                           class="title"
                           for="dpi"
                         >
-                          Resolution
-                          :
+                          Engraving Resolution
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -2727,15 +2499,40 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                       <div
                         class="row"
                       >
-                        <label
-                          class="title"
-                          for="autoShrink"
-                        >
-                          Auto Shrink
-                          :
-                        </label>
                         <div
-                          class="control justify-start"
+                          class="title"
+                        >
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
+                          <span
+                            aria-label="question-circle"
+                            class="anticon anticon-question-circle icon"
+                            role="img"
+                            tabindex="-1"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="question-circle"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              />
+                              <path
+                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <div
+                          class="control"
                         >
                           <button
                             aria-checked="false"
@@ -2758,41 +2555,13 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
                     <div
                       class="separator"
                     >
-                      <div>
-                        Start Position
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Start Position
                     </div>
                     <div
                       class="block"
@@ -2805,7 +2574,6 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                           for="startFrom"
                         >
                           Start From
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -2837,8 +2605,11 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                                 />
                               </span>
                               <span
-                                class="ant-select-selection-placeholder"
-                              />
+                                class="ant-select-selection-item"
+                                title="Origin"
+                              >
+                                Origin
+                              </span>
                             </span>
                           </div>
                           <span
@@ -2871,95 +2642,70 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                       </div>
                     </div>
                     <div
-                      class="separator"
+                      class="block"
                     >
-                      <div>
-                        Add-ons
-                      </div>
                       <div
-                        class="bar"
-                      />
+                        class="row"
+                      >
+                        <div
+                          class="title"
+                        >
+                          <label
+                            for="rotaryMaster"
+                          >
+                            <strong>
+                              Rotary
+                            </strong>
+                          </label>
+                        </div>
+                        <div
+                          class="control"
+                        >
+                          <button
+                            aria-checked="false"
+                            class="ant-switch css-dev-only-do-not-override-hash"
+                            id="rotaryMaster"
+                            role="switch"
+                            type="button"
+                          >
+                            <div
+                              class="ant-switch-handle"
+                            />
+                            <span
+                              class="ant-switch-inner"
+                            >
+                              <span
+                                class="ant-switch-inner-checked"
+                              />
+                              <span
+                                class="ant-switch-inner-unchecked"
+                              />
+                            </span>
+                          </button>
+                        </div>
+                      </div>
                     </div>
                     <div
-                      class="modules"
+                      class="block"
                     >
                       <div
-                        class="row full"
+                        class="row"
                       >
-                        <div
+                        <label
                           class="title"
+                          for="passthroughMaster"
                         >
-                          <label
-                            for="rotary_mode"
-                          >
-                            Rotary
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="rotary_mode"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="setting"
-                            class="anticon anticon-setting"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="setting"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
-                              />
-                            </svg>
-                          </span>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="pass_through"
-                          >
+                          <strong>
                             Passthrough
-                          </label>
-                        </div>
+                          </strong>
+                        </label>
                         <div
                           class="control"
                         >
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="pass_through"
+                            id="passthroughMaster"
                             role="switch"
                             type="button"
                           >
@@ -2977,67 +2723,6 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                               />
                             </span>
                           </button>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="auto_feeder"
-                          >
-                            Auto Feeder
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="auto_feeder"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -3322,7 +3007,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(440px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -3388,7 +3073,6 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                           for="workareaSelect"
                         >
                           Machine
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -3462,8 +3146,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                           class="title"
                           for="dpi"
                         >
-                          Resolution
-                          :
+                          Engraving Resolution
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -3533,15 +3216,40 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                       <div
                         class="row"
                       >
-                        <label
-                          class="title"
-                          for="autoShrink"
-                        >
-                          Auto Shrink
-                          :
-                        </label>
                         <div
-                          class="control justify-start"
+                          class="title"
+                        >
+                          <label
+                            for="autoShrink"
+                          >
+                            Auto Shrink
+                          </label>
+                          <span
+                            aria-label="question-circle"
+                            class="anticon anticon-question-circle icon"
+                            role="img"
+                            tabindex="-1"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="question-circle"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              />
+                              <path
+                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              />
+                            </svg>
+                          </span>
+                        </div>
+                        <div
+                          class="control"
                         >
                           <button
                             aria-checked="false"
@@ -3564,41 +3272,13 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
                     <div
                       class="separator"
                     >
-                      <div>
-                        Start Position
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Start Position
                     </div>
                     <div
                       class="block"
@@ -3611,7 +3291,6 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                           for="startFrom"
                         >
                           Start From
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -3643,8 +3322,11 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                                 />
                               </span>
                               <span
-                                class="ant-select-selection-placeholder"
-                              />
+                                class="ant-select-selection-item"
+                                title="Origin"
+                              >
+                                Origin
+                              </span>
                             </span>
                           </div>
                           <span
@@ -3677,28 +3359,20 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                       </div>
                     </div>
                     <div
-                      class="separator"
-                    >
-                      <div>
-                        Add-ons
-                      </div>
-                      <div
-                        class="bar"
-                      />
-                    </div>
-                    <div
-                      class="modules"
+                      class="block"
                     >
                       <div
-                        class="row full"
+                        class="row"
                       >
                         <div
                           class="title"
                         >
                           <label
-                            for="rotary_mode"
+                            for="rotaryMaster"
                           >
-                            Rotary
+                            <strong>
+                              Rotary
+                            </strong>
                           </label>
                         </div>
                         <div
@@ -3707,7 +3381,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                           <button
                             aria-checked="true"
                             class="ant-switch css-dev-only-do-not-override-hash ant-switch-checked"
-                            id="rotary_mode"
+                            id="rotaryMaster"
                             role="switch"
                             type="button"
                           >
@@ -3725,47 +3399,107 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="setting"
-                            class="anticon anticon-setting"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="setting"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                       <div
                         class="row full"
                       >
                         <div
-                          class="title"
+                          aria-label="segmented control"
+                          class="ant-segmented segmented css-dev-only-do-not-override-hash"
+                          id="rotaryModeSelect"
+                          role="radiogroup"
+                          tabindex="0"
                         >
-                          <label
-                            for="pass_through"
+                          <div
+                            class="ant-segmented-group"
                           >
+                            <label
+                              class="ant-segmented-item"
+                            >
+                              <input
+                                class="ant-segmented-item-input"
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="false"
+                                class="ant-segmented-item-label"
+                                title="Roller"
+                              >
+                                Roller
+                              </div>
+                            </label>
+                            <label
+                              class="ant-segmented-item"
+                            >
+                              <input
+                                class="ant-segmented-item-input"
+                                name="test-id"
+                                type="radio"
+                              />
+                              <div
+                                aria-selected="false"
+                                class="ant-segmented-item-label"
+                                title="Chuck"
+                              >
+                                Chuck
+                              </div>
+                            </label>
+                          </div>
+                        </div>
+                        <div
+                          class="sub"
+                        >
+                          <div
+                            class="desc left"
+                          >
+                            Scale: 1
+                            <span
+                              aria-label="setting"
+                              class="anticon anticon-setting icon"
+                              role="img"
+                              tabindex="-1"
+                            >
+                              <svg
+                                aria-hidden="true"
+                                data-icon="setting"
+                                fill="currentColor"
+                                focusable="false"
+                                height="1em"
+                                viewBox="64 64 896 896"
+                                width="1em"
+                              >
+                                <path
+                                  d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
+                                />
+                              </svg>
+                            </span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="block"
+                    >
+                      <div
+                        class="row"
+                      >
+                        <label
+                          class="title"
+                          for="passthroughMaster"
+                        >
+                          <strong>
                             Passthrough
-                          </label>
-                        </div>
+                          </strong>
+                        </label>
                         <div
                           class="control"
                         >
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="pass_through"
+                            id="passthroughMaster"
                             role="switch"
                             type="button"
                           >
@@ -3783,67 +3517,6 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                               />
                             </span>
                           </button>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="auto_feeder"
-                          >
-                            Auto Feeder
-                          </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="auto_feeder"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -4128,7 +3801,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(440px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -4194,7 +3867,6 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           for="workareaSelect"
                         >
                           Machine
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -4268,8 +3940,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           class="title"
                           for="dpi"
                         >
-                          Resolution
-                          :
+                          Engraving Resolution
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -4339,40 +4010,17 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                       <div
                         class="row"
                       >
-                        <label
-                          class="title"
-                          for="autoShrink"
-                        >
-                          Auto Shrink
-                          :
-                        </label>
                         <div
-                          class="control justify-start"
+                          class="title"
                         >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="autoShrink"
-                            role="switch"
-                            type="button"
+                          <label
+                            for="autoShrink"
                           >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
+                            Auto Shrink
+                          </label>
                           <span
                             aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
+                            class="anticon anticon-question-circle icon"
                             role="img"
                             tabindex="-1"
                           >
@@ -4394,23 +4042,13 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                             </svg>
                           </span>
                         </div>
-                      </div>
-                      <div
-                        class="row"
-                      >
-                        <label
-                          class="title"
-                          for="skipPrespray"
-                        >
-                          Skip purge
-                        </label>
                         <div
-                          class="control justify-start"
+                          class="control"
                         >
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="skipPrespray"
+                            id="autoShrink"
                             role="switch"
                             type="button"
                           >
@@ -4434,12 +4072,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                     <div
                       class="separator"
                     >
-                      <div>
-                        Start Position
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Start Position
                     </div>
                     <div
                       class="block"
@@ -4452,7 +4085,6 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           for="startFrom"
                         >
                           Start From
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -4484,8 +4116,11 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                                 />
                               </span>
                               <span
-                                class="ant-select-selection-placeholder"
-                              />
+                                class="ant-select-selection-item"
+                                title="Origin"
+                              >
+                                Origin
+                              </span>
                             </span>
                           </div>
                           <span
@@ -4520,55 +4155,25 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                     <div
                       class="separator"
                     >
-                      <div>
-                        Add-ons
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Module
                     </div>
                     <div
-                      class="modules"
+                      class="block"
                     >
                       <div
-                        class="row full"
+                        class="row"
                       >
                         <div
                           class="title"
                         >
                           <label
-                            for="rotary_mode"
+                            for="print_4c_module"
                           >
-                            Rotary
+                            Module Printer
                           </label>
-                        </div>
-                        <div
-                          class="control"
-                        >
-                          <button
-                            aria-checked="false"
-                            class="ant-switch css-dev-only-do-not-override-hash"
-                            id="rotary_mode"
-                            role="switch"
-                            type="button"
-                          >
-                            <div
-                              class="ant-switch-handle"
-                            />
-                            <span
-                              class="ant-switch-inner"
-                            >
-                              <span
-                                class="ant-switch-inner-checked"
-                              />
-                              <span
-                                class="ant-switch-inner-unchecked"
-                              />
-                            </span>
-                          </button>
                           <span
                             aria-label="setting"
-                            class="anticon anticon-setting"
+                            class="anticon anticon-setting icon"
                             role="img"
                             tabindex="-1"
                           >
@@ -4586,19 +4191,6 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                               />
                             </svg>
                           </span>
-                        </div>
-                      </div>
-                      <div
-                        class="row full"
-                      >
-                        <div
-                          class="title"
-                        >
-                          <label
-                            for="print_4c_module"
-                          >
-                            Module Printer
-                          </label>
                         </div>
                         <div
                           class="control"
@@ -4627,7 +4219,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                         </div>
                       </div>
                       <div
-                        class="row full"
+                        class="row"
                       >
                         <div
                           class="title"
@@ -4664,16 +4256,22 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           </button>
                         </div>
                       </div>
+                    </div>
+                    <div
+                      class="block"
+                    >
                       <div
-                        class="row full"
+                        class="row"
                       >
                         <div
                           class="title"
                         >
                           <label
-                            for="pass_through"
+                            for="rotaryMaster"
                           >
-                            Passthrough
+                            <strong>
+                              Rotary
+                            </strong>
                           </label>
                         </div>
                         <div
@@ -4682,7 +4280,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="pass_through"
+                            id="rotaryMaster"
                             role="switch"
                             type="button"
                           >
@@ -4702,25 +4300,28 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                           </button>
                         </div>
                       </div>
+                    </div>
+                    <div
+                      class="block"
+                    >
                       <div
-                        class="row full"
+                        class="row"
                       >
-                        <div
+                        <label
                           class="title"
+                          for="passthroughMaster"
                         >
-                          <label
-                            for="auto_feeder"
-                          >
-                            Auto Feeder
-                          </label>
-                        </div>
+                          <strong>
+                            Passthrough
+                          </strong>
+                        </label>
                         <div
                           class="control"
                         >
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="auto_feeder"
+                            id="passthroughMaster"
                             role="switch"
                             type="button"
                           >
@@ -4738,29 +4339,6 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle hint"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>
@@ -5045,7 +4623,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
           >
             <div
               class="scrollable react-draggable"
-              style="min-width: 440px; transform: translate(0px, 0px)translate(0px,0px);"
+              style="min-width: min(440px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
               <div
                 class="ant-modal-content"
@@ -5111,7 +4689,6 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                           for="workareaSelect"
                         >
                           Machine
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -5186,7 +4763,6 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                           for="customDimension"
                         >
                           Working Area
-                          :
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -5335,8 +4911,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                           class="title"
                           for="dpi"
                         >
-                          Resolution
-                          :
+                          Engraving Resolution
                         </label>
                         <div
                           class="ant-select ant-select-outlined control css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
@@ -5407,18 +4982,13 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                     <div
                       class="separator"
                     >
-                      <div>
-                        Add-ons
-                      </div>
-                      <div
-                        class="bar"
-                      />
+                      Add-ons
                     </div>
                     <div
-                      class="modules"
+                      class="block"
                     >
                       <div
-                        class="row full"
+                        class="row"
                       >
                         <div
                           class="title"
@@ -5428,6 +4998,29 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                           >
                             Execute Button
                           </label>
+                          <span
+                            aria-label="question-circle"
+                            class="anticon anticon-question-circle icon"
+                            role="img"
+                            tabindex="-1"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="question-circle"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              />
+                              <path
+                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              />
+                            </svg>
+                          </span>
                         </div>
                         <div
                           class="control"
@@ -5453,55 +5046,30 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                               />
                             </span>
                           </button>
-                          <div
-                            class="subCheckbox"
-                          >
-                            <div>
-                              <label
-                                class="ant-checkbox-wrapper ant-checkbox-wrapper-checked css-dev-only-do-not-override-hash"
-                              >
-                                <span
-                                  class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-checked"
-                                >
-                                  <input
-                                    class="ant-checkbox-input"
-                                    id="frame_before_start"
-                                    type="checkbox"
-                                  />
-                                  <span
-                                    class="ant-checkbox-inner"
-                                  />
-                                </span>
-                                <span>
-                                  Frame before executing
-                                </span>
-                              </label>
-                              <span
-                                aria-label="question-circle"
-                                class="anticon anticon-question-circle"
-                                role="img"
-                                tabindex="-1"
-                              >
-                                <svg
-                                  aria-hidden="true"
-                                  data-icon="question-circle"
-                                  fill="currentColor"
-                                  focusable="false"
-                                  height="1em"
-                                  viewBox="64 64 896 896"
-                                  width="1em"
-                                >
-                                  <path
-                                    d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                                  />
-                                  <path
-                                    d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                                  />
-                                </svg>
-                              </span>
-                            </div>
-                          </div>
                         </div>
+                      </div>
+                      <div
+                        class="row"
+                      >
+                        <label
+                          class="ant-checkbox-wrapper ant-checkbox-wrapper-checked css-dev-only-do-not-override-hash"
+                        >
+                          <span
+                            class="ant-checkbox ant-wave-target css-dev-only-do-not-override-hash ant-checkbox-checked"
+                          >
+                            <input
+                              class="ant-checkbox-input"
+                              id="frame_before_start"
+                              type="checkbox"
+                            />
+                            <span
+                              class="ant-checkbox-inner"
+                            />
+                          </span>
+                          <span>
+                            Frame before executing
+                          </span>
+                        </label>
                       </div>
                       <div
                         class="row"
@@ -5514,6 +5082,28 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                           >
                             Door Protect
                           </label>
+                          <span
+                            aria-label="question-circle"
+                            class="anticon anticon-question-circle icon"
+                            role="img"
+                          >
+                            <svg
+                              aria-hidden="true"
+                              data-icon="question-circle"
+                              fill="currentColor"
+                              focusable="false"
+                              height="1em"
+                              viewBox="64 64 896 896"
+                              width="1em"
+                            >
+                              <path
+                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
+                              />
+                              <path
+                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
+                              />
+                            </svg>
+                          </span>
                         </div>
                         <div
                           class="control"
@@ -5539,40 +5129,24 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="question-circle"
-                            class="anticon anticon-question-circle"
-                            role="img"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="question-circle"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512 64C264.6 64 64 264.6 64 512s200.6 448 448 448 448-200.6 448-448S759.4 64 512 64zm0 820c-205.4 0-372-166.6-372-372s166.6-372 372-372 372 166.6 372 372-166.6 372-372 372z"
-                              />
-                              <path
-                                d="M623.6 316.7C593.6 290.4 554 276 512 276s-81.6 14.5-111.6 40.7C369.2 344 352 380.7 352 420v7.6c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8V420c0-44.1 43.1-80 96-80s96 35.9 96 80c0 31.1-22 59.6-56.1 72.7-21.2 8.1-39.2 22.3-52.1 40.9-13.1 19-19.9 41.8-19.9 64.9V620c0 4.4 3.6 8 8 8h48c4.4 0 8-3.6 8-8v-22.7a48.3 48.3 0 0130.9-44.8c59-22.7 97.1-74.7 97.1-132.5.1-39.3-17.1-76-48.3-103.3zM472 732a40 40 0 1080 0 40 40 0 10-80 0z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
+                    </div>
+                    <div
+                      class="block"
+                    >
                       <div
-                        class="row full"
+                        class="row"
                       >
                         <div
                           class="title"
                         >
                           <label
-                            for="rotary_mode"
+                            for="rotaryMaster"
                           >
-                            Rotary
+                            <strong>
+                              Rotary
+                            </strong>
                           </label>
                         </div>
                         <div
@@ -5581,7 +5155,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                           <button
                             aria-checked="false"
                             class="ant-switch css-dev-only-do-not-override-hash"
-                            id="rotary_mode"
+                            id="rotaryMaster"
                             role="switch"
                             type="button"
                           >
@@ -5599,26 +5173,6 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                               />
                             </span>
                           </button>
-                          <span
-                            aria-label="setting"
-                            class="anticon anticon-setting"
-                            role="img"
-                            tabindex="-1"
-                          >
-                            <svg
-                              aria-hidden="true"
-                              data-icon="setting"
-                              fill="currentColor"
-                              focusable="false"
-                              height="1em"
-                              viewBox="64 64 896 896"
-                              width="1em"
-                            >
-                              <path
-                                d="M512.5 390.6c-29.9 0-57.9 11.6-79.1 32.8-21.1 21.2-32.8 49.2-32.8 79.1 0 29.9 11.7 57.9 32.8 79.1 21.2 21.1 49.2 32.8 79.1 32.8 29.9 0 57.9-11.7 79.1-32.8 21.1-21.2 32.8-49.2 32.8-79.1 0-29.9-11.7-57.9-32.8-79.1a110.96 110.96 0 00-79.1-32.8zm412.3 235.5l-65.4-55.9c3.1-19 4.7-38.4 4.7-57.7s-1.6-38.8-4.7-57.7l65.4-55.9a32.03 32.03 0 009.3-35.2l-.9-2.6a442.5 442.5 0 00-79.6-137.7l-1.8-2.1a32.12 32.12 0 00-35.1-9.5l-81.2 28.9c-30-24.6-63.4-44-99.6-57.5l-15.7-84.9a32.05 32.05 0 00-25.8-25.7l-2.7-.5c-52-9.4-106.8-9.4-158.8 0l-2.7.5a32.05 32.05 0 00-25.8 25.7l-15.8 85.3a353.44 353.44 0 00-98.9 57.3l-81.8-29.1a32 32 0 00-35.1 9.5l-1.8 2.1a445.93 445.93 0 00-79.6 137.7l-.9 2.6c-4.5 12.5-.8 26.5 9.3 35.2l66.2 56.5c-3.1 18.8-4.6 38-4.6 57 0 19.2 1.5 38.4 4.6 57l-66 56.5a32.03 32.03 0 00-9.3 35.2l.9 2.6c18.1 50.3 44.8 96.8 79.6 137.7l1.8 2.1a32.12 32.12 0 0035.1 9.5l81.8-29.1c29.8 24.5 63 43.9 98.9 57.3l15.8 85.3a32.05 32.05 0 0025.8 25.7l2.7.5a448.27 448.27 0 00158.8 0l2.7-.5a32.05 32.05 0 0025.8-25.7l15.7-84.9c36.2-13.6 69.6-32.9 99.6-57.5l81.2 28.9a32 32 0 0035.1-9.5l1.8-2.1c34.8-41.1 61.5-87.4 79.6-137.7l.9-2.6c4.3-12.4.6-26.3-9.5-35zm-412.3 52.2c-97.1 0-175.8-78.7-175.8-175.8s78.7-175.8 175.8-175.8 175.8 78.7 175.8 175.8-78.7 175.8-175.8 175.8z"
-                              />
-                            </svg>
-                          </span>
                         </div>
                       </div>
                     </div>

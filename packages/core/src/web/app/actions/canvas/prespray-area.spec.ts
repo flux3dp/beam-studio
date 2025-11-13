@@ -170,19 +170,19 @@ describe('test canvas/prespray-area', () => {
     });
     document.body.innerHTML = '<svg id="fixedSizeSvg"></svg>';
     presprayArea.generatePresprayArea();
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 223, x: 4077, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 4197, y: 0 });
     presprayArea.startDrag();
     presprayArea.drag(-1000, -1000);
     // Y should remain at 0 for PRINTER_4C
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 223, x: 3077, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 3197, y: 0 });
     presprayArea.drag(-3000, -3000);
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 223, x: 1077, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 1197, y: 0 });
     presprayArea.startDrag();
     presprayArea.drag(100, 100);
     // Y should still remain at 0
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 223, x: 1177, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 1297, y: 0 });
     presprayArea.drag(10000, 10000);
-    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 223, x: 4077, y: 0 });
+    expect(presprayArea.getPosition()).toEqual({ h: 0, w: 103, x: 4197, y: 0 });
     presprayArea.endDrag();
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
