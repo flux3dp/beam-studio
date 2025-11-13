@@ -1,5 +1,4 @@
-$text-primary: #333333;
-$text-secondary: #666666;
+@use '../shared-variables' as vars;
 
 .container {
   padding: 20px;
@@ -11,7 +10,7 @@ $text-secondary: #666666;
   margin: 0 0 20px 0;
   font-size: 18px;
   font-weight: 600;
-  color: $text-primary;
+  color: vars.$text-primary;
 }
 
 .loading {
@@ -26,7 +25,7 @@ $text-secondary: #666666;
 .loading-text {
   margin: 0;
   font-size: 14px;
-  color: $text-secondary;
+  color: vars.$text-secondary;
 }
 
 .grid {
@@ -36,12 +35,6 @@ $text-secondary: #666666;
   margin-bottom: 20px;
 }
 
-.load-more {
-  display: flex;
-  justify-content: center;
-  padding: 20px 0;
-}
-
 .loading-more {
   display: flex;
   align-items: center;
@@ -49,5 +42,5 @@ $text-secondary: #666666;
   gap: 12px;
   padding: 20px 0;
   font-size: 14px;
-  color: $text-secondary;
+  color: vars.$text-secondary;
 }

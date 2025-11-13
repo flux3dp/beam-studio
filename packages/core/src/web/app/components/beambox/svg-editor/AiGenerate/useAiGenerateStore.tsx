@@ -4,6 +4,7 @@ import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 
 import type { GenerationMode, GenerationStatus, ImageDimensions, ImageInput } from './types';
+import { objectToCamelCase } from './utils/caseConversion';
 import { getStyleConfig } from './utils/categories';
 import {
   getAspectRatioFromImageSize,
@@ -16,7 +17,6 @@ import type { StylePresetKey } from './utils/stylePresets';
 import { getStylePreset } from './utils/stylePresets';
 
 interface State {
-  // Form State
   count: number;
   dimensions: ImageDimensions;
   // Generation State
@@ -30,8 +30,8 @@ interface State {
   historyLoading: boolean;
   historyOffset: number;
   inputFields: Record<string, string>; // Dynamic input field values
-  // UI State
   isAiGenerateShown: boolean;
+  isLaserFriendly: boolean; // Laser-friendly mode toggle
   selectedImageInputs: ImageInput[]; // Unified ordered array
   showHistory: boolean;
   style: StylePresetKey;
@@ -56,6 +56,7 @@ interface Actions {
   setState: (state: Partial<State>) => void;
   setStyle: (style: StylePresetKey) => void;
   toggleHistory: () => void;
+  toggleLaserFriendly: () => void;
   updateHistoryItem: (uuid: string, updates: Partial<AiImageGenerationData>) => void;
 }
 
@@ -67,6 +68,7 @@ const formInitialState = {
   generationStatus: 'idle' as GenerationStatus,
   generationUuid: null,
   inputFields: {},
+  isLaserFriendly: false,
   selectedImageInputs: [],
 };
 
@@ -133,14 +135,9 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
         ? item.image_urls.map((url, index) => ({ id: `history-${item.uuid}-${index}`, type: 'url' as const, url }))
         : [];
 
-    const convertToCamelCase = (key: string): string => key.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
-    const inputFields: Record<string, string> = {};
-
-    if (item.prompt_data?.inputs) {
-      Object.entries(item.prompt_data.inputs).forEach(([key, value]) => {
-        inputFields[convertToCamelCase(key)] = value;
-      });
-    }
+    const inputFields = item.prompt_data?.inputs
+      ? (objectToCamelCase(item.prompt_data.inputs) as Record<string, string>)
+      : {};
 
     set({
       count: item.max_images,
@@ -198,7 +195,8 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
         Object.entries(state.inputFields).filter(([key]) => newFieldKeys.has(key)),
       );
 
-      return { inputFields: preservedFields, style: newStyle };
+      // Reset laser-friendly toggle when changing style
+      return { inputFields: preservedFields, isLaserFriendly: false, style: newStyle };
     });
   },
   toggleHistory: () => {
@@ -210,6 +208,28 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       }
 
       return { showHistory: newShowHistory };
+    });
+  },
+  toggleLaserFriendly: () => {
+    set((state) => {
+      const newIsLaserFriendly = !state.isLaserFriendly;
+      const laserFriendlyText =
+        'pure black and white, monochrome, high contrast, line art, no gradients, no shading, suitable for engraving';
+
+      // If turning ON: add color field with predefined text
+      // If turning OFF: remove color field
+      const updatedFields = { ...state.inputFields };
+
+      if (newIsLaserFriendly) {
+        updatedFields.color = laserFriendlyText;
+      } else {
+        delete updatedFields.color;
+      }
+
+      return {
+        inputFields: updatedFields,
+        isLaserFriendly: newIsLaserFriendly,
+      };
     });
   },
   updateHistoryItem: (uuid, updates) => {

@@ -1,0 +1,200 @@
+@use '../shared-variables' as vars;
+
+.section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-title {
+  @include vars.section-title;
+}
+
+.dimension-group {
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.dimension-button {
+  @include vars.button-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  min-width: 80px;
+  height: 64px;
+
+  span {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+.ratio-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ratio-box {
+  @include vars.ratio-box-base;
+
+  &.ratio-1-1 {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.ratio-4-3 {
+    width: 24px;
+    height: 18px;
+  }
+
+  &.ratio-16-9 {
+    width: 28px;
+    height: 16px;
+  }
+
+  &.ratio-3-2 {
+    width: 24px;
+    height: 16px;
+  }
+
+  &.ratio-21-9 {
+    width: 28px;
+    height: 12px;
+  }
+
+  &.ratio-more {
+    width: 20px;
+    height: 20px;
+    border-style: dashed;
+    position: relative;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+    }
+
+    &::before {
+      width: 4px;
+      height: 4px;
+      top: -2px;
+      right: -2px;
+    }
+
+    &::after {
+      width: 4px;
+      height: 4px;
+      bottom: -2px;
+      left: -2px;
+    }
+  }
+}
+
+.more-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.floating-ratio-menu-portal {
+  position: fixed;
+  left: calc(100%);
+  background: vars.$container-bg;
+  border: 1px solid vars.$button-border;
+  border-radius: 8px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  min-width: 180px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: vars.$background-light-gray;
+  }
+
+  &.active {
+    background: vars.$selected-bg;
+    border-color: vars.$primary-blue;
+    color: vars.$primary-blue;
+  }
+
+  span {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+.menu-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.menu-ratio-box {
+  @include vars.ratio-box-base;
+
+  &.ratio-landscape-3-2 {
+    width: 24px;
+    height: 16px;
+  }
+
+  &.ratio-portrait-4-3 {
+    width: 15px;
+    height: 20px;
+  }
+
+  &.ratio-portrait-3-2 {
+    width: 13px;
+    height: 20px;
+  }
+
+  &.ratio-portrait-16-9 {
+    width: 11px;
+    height: 20px;
+  }
+}
+
+.size-button {
+  @include vars.button-base;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  justify-content: center;
+  padding: 12px 16px;
+  min-width: 100px;
+  height: 56px;
+}
+
+.size-name {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.size-pixels {
+  font-size: 11px;
+  color: vars.$text-secondary;
+}
