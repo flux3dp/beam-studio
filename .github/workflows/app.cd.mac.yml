@@ -20,7 +20,7 @@ jobs:
         node-version: [22]
         python-version: [3.8]
         os: [macOS-15-intel]
-        target: [both]
+        target: [arm64, intel]
       fail-fast: false
 
     steps:
