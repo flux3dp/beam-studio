@@ -57,7 +57,7 @@ jest.mock(
 );
 
 jest.mock('@core/app/contexts/CanvasContext', () => ({
-  CanvasContext: React.createContext(null),
+  CanvasContext: React.createContext({}),
 }));
 
 describe('test LeftPanel', () => {

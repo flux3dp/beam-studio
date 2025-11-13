@@ -22,7 +22,7 @@ const rawAndHome = async (progressId?: string): Promise<void> => {
 
   const rotaryMode = useDocumentStore.getState()['rotary_mode'];
 
-  progressCaller.update('preview-mode-controller', { message: lang.message.homing });
+  progressCaller.update(progressId || PROGRESS_ID, { message: lang.message.homing });
 
   if (rotaryMode) {
     await deviceMaster.rawHomeZ();
