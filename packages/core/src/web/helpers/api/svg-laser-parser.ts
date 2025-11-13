@@ -148,7 +148,7 @@ export const getExportOpt = async (
         config.skip_prespray = true;
       }
 
-      if (device?.model === 'fbm2' && !(documentState['skip_prespray'] && documentState['enable-4c-prespray-area'])) {
+      if (device?.model === 'fbm2') {
         try {
           await deviceMaster.select(device);
 
