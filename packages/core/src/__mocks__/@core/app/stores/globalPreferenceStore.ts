@@ -48,7 +48,7 @@ const state: GlobalPreference = {
   show_rulers: false,
   simplify_clipper_path: false,
   'use-real-boundary': false,
-  'use-union-boundary': false,
+  'use-union-boundary': true,
   use_layer_color: true,
   vector_speed_constraint: true,
   zoom_with_window: false,

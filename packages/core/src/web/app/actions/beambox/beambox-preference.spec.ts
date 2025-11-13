@@ -130,7 +130,7 @@ test('test beambox-preference', () => {
     simplify_clipper_path: false,
     skip_prespray: false,
     'use-real-boundary': false,
-    'use-union-boundary': false,
+    'use-union-boundary': true,
     use_layer_color: true,
     vector_speed_constraint: true,
     workarea: 'fbb1b',
