@@ -1,36 +1,36 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.5.10 beta
+// 2.5.11 beta
 const CHANGES_TW = {
   added: [
-    '新增 免費 Google Fonts（需連網使用）。',
-    '新增 Promark 支援阿根廷地區。',
-    '新增 Promark 旋轉軸功能外框預覽時「處理中」彈窗。',
+    '支援 FLUX beamo II 機型。',
+    '新增 Promark 凸包預覽功能。',
+    '新增 模組校正跳過繪製雷射與列印校正圖形功能。',
+    '新增 進階校正參數設定。',
   ],
-  changed: [
-    '調整 工具列上的 My cloud 匯入功能移至 選單 > 檔案。',
-    '隱藏 工具列上的 Design Market 和 Instagram 入口。',
-    '調整 工具列上的曲線雕刻按鈕移至 選單 > 工具。',
-    '調整 文字物件產生時預設為填充。',
-    '更換 相機預覽與校正功能的亮度調整圖示與文字提示。',
+  changed: ['調整 雕刻與列印預設參數排序 (需重置參數設定)。'],
+  fixed: [
+    '修正 跨分頁偏好設定同步功能。',
+    '修正 快速點擊送出工作可能重複計算工作的問題。',
+    '修正 計算路徑資訊翻譯。',
+    '修正 beamo 二極體校正功能。',
   ],
-  fixed: ['修正 文件設定中關閉視窗按鈕無效的問題。', '調整 Promark 工作進度條過快的問題。'],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added Free Google Fonts (requires internet connection).',
-    'Added Promark support for Argentina region.',
-    'Added processing popup during frame preview of Promark rotary axis.',
+    'Added support for the FLUX beamo II model.',
+    'Added Promark convex hull preview.',
+    'Added option to skip drawing laser and print calibration patterns during module calibration.',
+    'Added advanced calibration parameter settings.',
   ],
-  changed: [
-    'Moved My cloud import entry from toolbar to Menu > File.',
-    'Removed Design Market and Instagram entries from toolbar.',
-    'Moved Curve Engraving button from toolbar to Menu > Tools.',
-    'Changed Text objects default to infilled when created.',
-    'Changed camera preview & calibration brightness adjustment icon and tooltip.',
+  changed: ['Reordered default engraving and printing parameters (reset parameters required).'],
+  fixed: [
+    'Fixed preference syncing issues.',
+    'Fixed issue where rapidly clicking “Start” could trigger duplicate job calculations',
+    'Added missing translations for path calculation information.',
+    'Fixed the beamo diode calibration function.',
   ],
-  fixed: ['Fixed non-functional close button in document settings.', 'Adjusted overly fast Promark job progress bar.'],
 };
 
 export default {
