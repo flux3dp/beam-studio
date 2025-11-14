@@ -7,29 +7,6 @@ import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 import Controller from './Controller';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  boxgen: {
-    add_option: 'Add Option',
-    cover: 'Cover',
-    depth: 'Depth',
-    edge: 'Edge',
-    finger: 'Finger',
-    height: 'Height',
-    inner: 'Inner',
-    joints: 'Joint',
-    max_dimension_tooltip: 'Max width/height/depth setting is %s. ',
-    outer: 'Outer',
-    tCount: 'T Count',
-    tDiameter: 'T Diameter',
-    thickness: 'Thickness',
-    tLength: 'T Length',
-    tSlot: 'T-Slot',
-    volume: 'Volume',
-    width: 'Width',
-    workarea: 'Workarea',
-  },
-}));
-
 jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext(null),
 }));

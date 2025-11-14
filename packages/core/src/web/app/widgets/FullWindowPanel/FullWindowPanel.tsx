@@ -23,7 +23,7 @@ export const FullWindowPanelContext = createContext<Context>({
 
 interface Props {
   mobileTitle: React.JSX.Element | string;
-  onClose: () => void;
+  onClose?: () => void;
   renderContents?: () => React.ReactNode;
   renderMobileContents?: () => React.ReactNode;
   renderMobileFixedContent?: () => React.ReactNode;

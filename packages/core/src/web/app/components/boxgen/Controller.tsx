@@ -2,6 +2,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Divider, Form, InputNumber, Radio, Slider, Space, Switch, Tooltip } from 'antd';
+import type { DefaultOptionType } from 'antd/es/select';
 import { sprintf } from 'sprintf-js';
 
 import {
@@ -68,7 +69,7 @@ const Controller = (): React.JSX.Element => {
   const isMM = unit === 'mm';
 
   const [customThickness, setCustomThickness] = useState(0);
-  const [thicknessOptions, setOptions] = useState([]);
+  const [thicknessOptions, setOptions] = useState<DefaultOptionType[]>([]);
   const [jointWarning, setJointWarning] = useState<string | undefined>(undefined);
 
   const screwSizes = isMM ? SCREW_SIZE_MM : SCREW_SIZE_INCH;
@@ -165,8 +166,8 @@ const Controller = (): React.JSX.Element => {
     setOptions([
       ...thicknessOptions,
       {
-        label: `${+(customThickness / unitRatio).toFixed(decimal)} ${unit}`,
-        value: customThickness,
+        label: `${+customThickness.toFixed(decimal)} ${unit}`,
+        value: customThickness * unitRatio,
       },
     ]);
   };
@@ -228,11 +229,11 @@ const Controller = (): React.JSX.Element => {
                   <InputNumber<number>
                     addonAfter={unit}
                     defaultValue={customThickness}
-                    formatter={(v, { input, userTyping }) => (userTyping ? input : (v / unitRatio).toFixed(decimal))}
                     min={0}
-                    onChange={setCustomThickness}
+                    onChange={(v) => {
+                      if (v !== null) setCustomThickness(v);
+                    }}
                     onPressEnter={addThicknessOptions}
-                    parser={(v) => +v * unitRatio}
                     step={unitRatio}
                     type="number"
                     width={60}
@@ -281,12 +282,11 @@ const Controller = (): React.JSX.Element => {
               min={maxTeethLength === 1 ? 0 : 1}
               step={0.1 * unitRatio}
               tooltip={{
-                formatter: (val: number) => (val / unitRatio).toFixed(decimal + 1),
+                formatter: (val?: number) => (val! / unitRatio).toFixed(decimal + 1),
               }}
             />
           </Form.Item>
           <LengthInputItem
-            additionalDecimal={1}
             className={styles['no-margin']}
             hidden={boxData.joint !== 'finger'}
             label=""
