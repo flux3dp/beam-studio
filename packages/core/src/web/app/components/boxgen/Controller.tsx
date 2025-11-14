@@ -21,7 +21,6 @@ import type { IController } from '@core/interfaces/IBoxgen';
 import styles from './Controller.module.scss';
 
 const LengthInputItem = ({
-  additionalDecimal = 0,
   className,
   hidden,
   label,
@@ -30,7 +29,6 @@ const LengthInputItem = ({
   name,
   step = 1,
 }: {
-  additionalDecimal?: number;
   className?: string;
   hidden?: boolean;
   label: string;
@@ -47,9 +45,7 @@ const LengthInputItem = ({
       <InputNumber
         addonAfter={unit}
         className={styles['number-input']}
-        formatter={(v, { input, userTyping }) =>
-          userTyping ? input : ((v as number) / unitRatio).toFixed(decimal + additionalDecimal)
-        }
+        formatter={(v, { input, userTyping }) => (userTyping ? input : ((v as number) / unitRatio).toFixed(decimal))}
         max={max}
         min={min}
         parser={(v) => Number(v) * unitRatio}
