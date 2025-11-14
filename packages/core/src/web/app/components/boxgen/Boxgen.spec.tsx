@@ -6,15 +6,6 @@ import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 import Boxgen from './Boxgen';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  boxgen: {
-    title: 'BOXGEN',
-  },
-  buttons: {
-    back_to_beam_studio: 'Back to Beam Studio',
-  },
-}));
-
 jest.mock('@core/app/contexts/BoxgenContext', () => ({
   BoxgenContext: React.createContext({ onClose: () => {} }),
   BoxgenProvider: ({ children, onClose }: any) => (

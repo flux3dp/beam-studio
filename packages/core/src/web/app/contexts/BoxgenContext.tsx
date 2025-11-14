@@ -17,14 +17,14 @@ import { modelsWithModules } from '../actions/beambox/constant';
 interface BoxgenContextType {
   boxData: IController;
   lengthUnit: { decimal: number; unit: 'inch' | 'mm'; unitRatio: number };
-  onClose: () => void;
+  onClose?: () => void;
   setBoxData: Dispatch<SetStateAction<IController>>;
   workarea: { canvasHeight: number; canvasWidth: number; label: string; value: string };
 }
 
 export const BoxgenContext = createContext<BoxgenContextType>({
   boxData: DEFAULT_CONTROLLER_MM,
-  lengthUnit: { decimal: 0, unit: 'mm', unitRatio: 1 },
+  lengthUnit: { decimal: 2, unit: 'mm', unitRatio: 1 },
   onClose: () => {},
   setBoxData: () => {},
   workarea: { canvasHeight: 210, canvasWidth: 300, label: 'beamo', value: 'fbm1' },
@@ -32,7 +32,7 @@ export const BoxgenContext = createContext<BoxgenContextType>({
 
 interface BoxgenProviderProps {
   children: React.ReactNode;
-  onClose: () => void;
+  onClose?: () => void;
 }
 
 export function BoxgenProvider({ children, onClose }: BoxgenProviderProps): React.JSX.Element {
@@ -67,7 +67,7 @@ export function BoxgenProvider({ children, onClose }: BoxgenProviderProps): Reac
 
   const isMM = useStorageStore((state) => !state.isInch);
   const lengthUnit = isMM
-    ? { decimal: 0, unit: 'mm' as const, unitRatio: 1 }
+    ? { decimal: 2, unit: 'mm' as const, unitRatio: 1 }
     : { decimal: 3, unit: 'inch' as const, unitRatio: 25.4 };
 
   const [boxData, setBoxData] = useState(isMM ? DEFAULT_CONTROLLER_MM : DEFAULT_CONTROLLER_INCH);
