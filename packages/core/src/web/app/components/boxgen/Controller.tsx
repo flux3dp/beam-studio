@@ -3,6 +3,7 @@ import React, { useContext, useEffect, useMemo, useState } from 'react';
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Divider, Form, InputNumber, Radio, Slider, Space, Switch, Tooltip } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
+import { round } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import {
@@ -70,7 +71,7 @@ const Controller = (): React.JSX.Element => {
   const canAddCustomThickness = useMemo(() => {
     if (customThickness <= 0) return false;
 
-    return !thicknessOptions.some((option) => option.value === customThickness * unitRatio);
+    return !thicknessOptions.some((option) => option.value === round(customThickness * unitRatio, 3));
   }, [customThickness, thicknessOptions, unitRatio]);
 
   const screwSizes = isMM ? SCREW_SIZE_MM : SCREW_SIZE_INCH;
@@ -166,7 +167,7 @@ const Controller = (): React.JSX.Element => {
       ...thicknessOptions,
       {
         label: `${+customThickness.toFixed(decimal)} ${unit}`,
-        value: customThickness * unitRatio,
+        value: round(customThickness * unitRatio, 3),
       },
     ]);
   };
