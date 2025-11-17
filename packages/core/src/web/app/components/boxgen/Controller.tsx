@@ -67,6 +67,11 @@ const Controller = (): React.JSX.Element => {
   const [customThickness, setCustomThickness] = useState(0);
   const [thicknessOptions, setOptions] = useState<DefaultOptionType[]>([]);
   const [jointWarning, setJointWarning] = useState<string | undefined>(undefined);
+  const canAddCustomThickness = useMemo(() => {
+    if (customThickness <= 0) return false;
+
+    return !thicknessOptions.some((option) => option.value === customThickness * unitRatio);
+  }, [customThickness, thicknessOptions, unitRatio]);
 
   const screwSizes = isMM ? SCREW_SIZE_MM : SCREW_SIZE_INCH;
   const screwLens = isMM ? SCREW_LENGTH_MM : SCREW_LENGTH_INCH;
@@ -155,9 +160,7 @@ const Controller = (): React.JSX.Element => {
   }, [maxTeethLength]);
 
   const addThicknessOptions = () => {
-    if (customThickness <= 0 || thicknessOptions.some((option) => option.value === customThickness)) {
-      return;
-    }
+    if (!canAddCustomThickness) return;
 
     setOptions([
       ...thicknessOptions,
@@ -230,14 +233,11 @@ const Controller = (): React.JSX.Element => {
                       if (v !== null) setCustomThickness(v);
                     }}
                     onPressEnter={addThicknessOptions}
-                    step={unitRatio}
                     type="number"
                     width={60}
                   />
                   <Button
-                    disabled={
-                      customThickness <= 0 || thicknessOptions.some((option) => option.value === customThickness)
-                    }
+                    disabled={!canAddCustomThickness}
                     icon={<PlusOutlined />}
                     onClick={addThicknessOptions}
                     type="text"
