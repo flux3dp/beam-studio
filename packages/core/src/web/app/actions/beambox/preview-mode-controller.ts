@@ -132,7 +132,7 @@ class PreviewModeController {
 
     try {
       this.currentDevice = device;
-      this.isBackgroundMode = args?.isBackgroundMode || false;
+      this.isBackgroundMode = args?.isBackgroundMode ?? false;
 
       if (promarkModels.has(device.model)) {
         this.previewManager = new PromarkPreviewManager(device, args);
