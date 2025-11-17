@@ -106,7 +106,7 @@ const ExportDialog = ({
     undoManager.addCommandToHistory(batchCmd);
     setConfirmLoading(false);
     setVisible(false);
-    onClose();
+    onClose?.();
   };
 
   return (
