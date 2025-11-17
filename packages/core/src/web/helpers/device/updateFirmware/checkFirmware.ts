@@ -1,6 +1,6 @@
 import { match, P } from 'ts-pattern';
 
-import { nxModelsArray } from '@core/app/actions/beambox/constant';
+import { hexaRfModelsArray } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { axiosFluxId } from '@core/helpers/api/flux-id';
 import versionCompare from '@core/helpers/version-compare';
@@ -24,7 +24,9 @@ export default async function checkFirmware(device: IDeviceInfo): Promise<
     const key = match<WorkAreaModel, string>(device.model)
       .with('ado1', () => 'ador-latest')
       .with('fhexa1', () => 'hexa-latest')
-      .with(P.union(...nxModelsArray), () => 'nx-latest')
+      .with('fbm2', () => 'beamo-ii-latest')
+      .with(P.union(...hexaRfModelsArray), () => 'hexa-latest')
+      .with('fbb2', () => 'nx-latest')
       .otherwise(() => 'firmware-latest');
     const resp = await axiosFluxId.get(`api/check-update?key=${key}`);
 

@@ -61,9 +61,24 @@ describe('checkFirmware', () => {
   });
 
   test('check fbm2 firmware', async () => {
-    mockGet.mockResolvedValueOnce({ data: { links: [['NXFirmware 1.0.1', 'mock-url']] } });
+    mockGet.mockResolvedValueOnce({ data: { links: [['BM2Firmware 1.0.1', 'mock-url']] } });
 
     const result = await checkFirmware({ model: 'fbm2', version: '1.0.0' } as IDeviceInfo);
+
+    expect(result).toEqual({
+      changelog_en: 'BM2Firmware 1.0.1',
+      changelog_zh: 'BM2Firmware 1.0.1',
+      downloadUrl: 'mock-url',
+      latestVersion: '1.0.1',
+      needUpdate: true,
+    });
+    expect(mockGet).toHaveBeenCalledWith('api/check-update?key=beamo-ii-latest');
+  });
+
+  test('check fbb2 firmware', async () => {
+    mockGet.mockResolvedValueOnce({ data: { links: [['NXFirmware 1.0.1', 'mock-url']] } });
+
+    const result = await checkFirmware({ model: 'fbb2', version: '1.0.0' } as IDeviceInfo);
 
     expect(result).toEqual({
       changelog_en: 'NXFirmware 1.0.1',
