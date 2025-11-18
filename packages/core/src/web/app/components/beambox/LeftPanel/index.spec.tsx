@@ -56,8 +56,10 @@ jest.mock(
     ({ className }: { className: string }) => <div className={className}>MockCurveEngravingTool</div>,
 );
 
-jest.mock('@core/app/contexts/CanvasContext', () => ({
-  CanvasContext: React.createContext({}),
+const mockToggleAutoFocus = jest.fn();
+
+jest.mock('@core/app/stores/canvas/utils/autoFocus', () => ({
+  toggleAutoFocus: (...args) => mockToggleAutoFocus(...args),
 }));
 
 describe('test LeftPanel', () => {
