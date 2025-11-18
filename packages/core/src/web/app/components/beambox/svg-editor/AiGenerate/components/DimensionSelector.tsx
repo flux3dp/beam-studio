@@ -33,10 +33,9 @@ const DimensionSelector: React.FC<DimensionSelectorProps> = ({ dimensions }) => 
     showMenu: showMoreMenu,
   } = useFloatingMenu();
 
-  const isAdditionalRatioSelected = (): boolean =>
-    ADDITIONAL_RATIOS.some(
-      (option) => option.aspectRatio === dimensions.aspectRatio && option.orientation === dimensions.orientation,
-    );
+  const isOptionSelected = ({ aspectRatio, orientation }: { aspectRatio: string; orientation: string }): boolean =>
+    dimensions.aspectRatio === aspectRatio && dimensions.orientation === orientation;
+  const isAdditionalRatioSelected = (): boolean => ADDITIONAL_RATIOS.some(isOptionSelected);
 
   return (
     <div className={styles.section}>
@@ -45,10 +44,7 @@ const DimensionSelector: React.FC<DimensionSelectorProps> = ({ dimensions }) => 
         <Space size={8}>
           {ALWAYS_DISPLAYED_RATIOS.map((option) => (
             <Button
-              className={classNames(styles['dimension-button'], {
-                [styles.active]:
-                  dimensions.aspectRatio === option.aspectRatio && dimensions.orientation === option.orientation,
-              })}
+              className={classNames(styles['dimension-button'], { [styles.active]: isOptionSelected(option) })}
               key={option.aspectRatio}
               onClick={() =>
                 useAiGenerateStore.setState((state) => ({
@@ -92,17 +88,11 @@ const DimensionSelector: React.FC<DimensionSelectorProps> = ({ dimensions }) => 
                 className={styles['floating-ratio-menu-portal']}
                 onMouseEnter={handleMenuEnter}
                 onMouseLeave={handleMenuLeave}
-                style={{
-                  left: `${menuPosition.left}px`,
-                  top: `${menuPosition.top}px`,
-                }}
+                style={{ left: `${menuPosition.left}px`, top: `${menuPosition.top}px` }}
               >
                 {ADDITIONAL_RATIOS.map((option) => (
                   <div
-                    className={classNames(styles['menu-item'], {
-                      [styles.active]:
-                        dimensions.aspectRatio === option.aspectRatio && dimensions.orientation === option.orientation,
-                    })}
+                    className={classNames(styles['menu-item'], { [styles.active]: isOptionSelected(option) })}
                     key={`${option.aspectRatio}-${option.orientation}`}
                     onClick={() => {
                       useAiGenerateStore.setState((state) => ({

@@ -12,6 +12,7 @@ interface UseImageGenerationParams {
   currentUser: IUser | null;
   dimensions: ImageDimensions;
   mode: GenerationMode;
+  seed?: number;
   stylePreset: null | string;
 }
 
@@ -28,6 +29,7 @@ export const useImageGeneration = ({
   currentUser,
   dimensions,
   mode,
+  seed,
   stylePreset,
 }: UseImageGenerationParams): UseImageGenerationReturn => {
   const { addPendingHistoryItem, clearGenerationResults, inputFields, selectedImageInputs, updateHistoryItem } =
@@ -82,20 +84,16 @@ export const useImageGeneration = ({
         image_resolution: getImageResolution(dimensions),
         image_size: getImageSizeOption(dimensions),
         max_images: count,
-        prompt_data: {
-          inputs,
-          style: stylePreset || 'edit-plain',
-        },
+        prompt_data: { inputs, style: stylePreset || 'edit-plain' },
+        seed,
       });
     } else {
       createResponse = await createTextToImageTask({
         image_resolution: getImageResolution(dimensions),
         image_size: getImageSizeOption(dimensions),
         max_images: count,
-        prompt_data: {
-          inputs,
-          style: stylePreset || 'text-to-image-plain',
-        },
+        prompt_data: { inputs, style: stylePreset || 'text-to-image-plain' },
+        seed,
       });
     }
 

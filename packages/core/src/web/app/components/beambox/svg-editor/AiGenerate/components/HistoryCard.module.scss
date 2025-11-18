@@ -58,18 +58,6 @@ $error-color: #ff4d4f;
   border-radius: 4px;
 }
 
-.prompt {
-  margin: 0 0 8px 0;
-  font-size: 13px;
-  color: $text-primary;
-  line-height: 1.4;
-  overflow: hidden;
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  text-overflow: ellipsis;
-}
-
 .metadata {
   display: flex;
   align-items: center;

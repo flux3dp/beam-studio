@@ -292,7 +292,7 @@ describe('useAiGenerateStore', () => {
     });
 
     it('should call loadHistory when showing history for the first time', async () => {
-      mockGetAiImageHistory.mockResolvedValue({ data: [] });
+      mockGetAiImageHistory.mockResolvedValue({ data: [] } as any);
 
       useAiGenerateStore.getState().toggleHistory();
 
@@ -332,7 +332,7 @@ describe('useAiGenerateStore', () => {
         },
       ];
 
-      mockGetAiImageHistory.mockResolvedValue({ data: mockData });
+      mockGetAiImageHistory.mockResolvedValue({ data: mockData } as any);
 
       await useAiGenerateStore.getState().loadHistory();
 
@@ -508,6 +508,66 @@ describe('useAiGenerateStore', () => {
 
       expect(state.historyItems[0].state).toBe('success');
       expect(state.historyItems[0].result_urls).toEqual(['https://example.com/result.jpg']);
+    });
+  });
+
+  describe('toggleFixedSeed', () => {
+    it('should toggle isFixedSeed from false to true', () => {
+      useAiGenerateStore.getState().toggleFixedSeed();
+
+      expect(useAiGenerateStore.getState().isFixedSeed).toBe(true);
+    });
+
+    it('should toggle isFixedSeed from true to false', () => {
+      useAiGenerateStore.setState({ isFixedSeed: true, seed: 12345 });
+
+      useAiGenerateStore.getState().toggleFixedSeed();
+
+      expect(useAiGenerateStore.getState().isFixedSeed).toBe(false);
+    });
+
+    it('should preserve seed value when toggling on', () => {
+      useAiGenerateStore.setState({ seed: 42 });
+
+      useAiGenerateStore.getState().toggleFixedSeed();
+
+      const state = useAiGenerateStore.getState();
+
+      expect(state.isFixedSeed).toBe(true);
+      expect(state.seed).toBe(42);
+    });
+
+    it('should clear seed when toggling off', () => {
+      useAiGenerateStore.setState({ isFixedSeed: true, seed: 12345 });
+
+      useAiGenerateStore.getState().toggleFixedSeed();
+
+      const state = useAiGenerateStore.getState();
+
+      expect(state.isFixedSeed).toBe(false);
+      expect(state.seed).toBeUndefined();
+    });
+  });
+
+  describe('setSeed', () => {
+    it('should set seed to a number', () => {
+      useAiGenerateStore.getState().setState({ seed: 99999 });
+
+      expect(useAiGenerateStore.getState().seed).toBe(99999);
+    });
+
+    it('should set seed to null', () => {
+      useAiGenerateStore.setState({ seed: 12345 });
+
+      useAiGenerateStore.getState().setState({ seed: null });
+
+      expect(useAiGenerateStore.getState().seed).toBeNull();
+    });
+
+    it('should accept zero as valid seed', () => {
+      useAiGenerateStore.getState().setState({ seed: 0 });
+
+      expect(useAiGenerateStore.getState().seed).toBe(0);
     });
   });
 });

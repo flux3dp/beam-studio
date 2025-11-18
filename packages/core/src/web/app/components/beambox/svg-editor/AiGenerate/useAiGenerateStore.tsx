@@ -31,7 +31,9 @@ interface State {
   historyOffset: number;
   inputFields: Record<string, string>; // Dynamic input field values
   isAiGenerateShown: boolean;
+  isFixedSeed: boolean; // Fixed seed mode toggle
   isLaserFriendly: boolean; // Laser-friendly mode toggle
+  seed?: number; // Seed value for generation
   selectedImageInputs: ImageInput[]; // Unified ordered array
   showHistory: boolean;
   style: StylePresetKey;
@@ -55,6 +57,7 @@ interface Actions {
   setInputField: (key: string, value: string) => void;
   setState: (state: Partial<State>) => void;
   setStyle: (style: StylePresetKey) => void;
+  toggleFixedSeed: () => void;
   toggleHistory: () => void;
   toggleLaserFriendly: () => void;
   updateHistoryItem: (uuid: string, updates: Partial<AiImageGenerationData>) => void;
@@ -68,7 +71,9 @@ const formInitialState = {
   generationStatus: 'idle' as GenerationStatus,
   generationUuid: null,
   inputFields: {},
+  isFixedSeed: false,
   isLaserFriendly: false,
+  seed: undefined,
   selectedImageInputs: [],
 };
 
@@ -79,6 +84,8 @@ const initialState: State = {
   historyLoading: false,
   historyOffset: 0,
   isAiGenerateShown: false,
+  isFixedSeed: false,
+  seed: undefined,
   showHistory: false,
   style: 'text-to-image-plain' as StylePresetKey,
 };
@@ -197,6 +204,16 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
 
       // Reset laser-friendly toggle when changing style
       return { inputFields: preservedFields, isLaserFriendly: false, style: newStyle };
+    });
+  },
+  toggleFixedSeed: () => {
+    set((state) => {
+      const newIsFixedSeed = !state.isFixedSeed;
+
+      return {
+        isFixedSeed: newIsFixedSeed,
+        seed: newIsFixedSeed ? state.seed : undefined,
+      };
     });
   },
   toggleHistory: () => {
