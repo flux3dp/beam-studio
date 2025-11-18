@@ -101,6 +101,18 @@ export const CATEGORIES: Category[] = [
         mode: 'text-to-image',
         previewImage: 'https://picsum.photos/id/5/80/80',
       },
+      {
+        displayName: 'Chinese Calligraphy Logo',
+        id: 'logo-chinese-calligraphy',
+        mode: 'text-to-image',
+        previewImage: 'https://picsum.photos/id/6/80/80',
+      },
+      {
+        displayName: 'Neon  Logo',
+        id: 'logo-neon',
+        mode: 'text-to-image',
+        previewImage: 'https://picsum.photos/id/7/80/80',
+      },
     ],
   },
 ];
