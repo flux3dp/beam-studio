@@ -100,9 +100,10 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.Camera />,
         id: 'Preview',
         label: lang.topbar.preview,
-        onClick: () => {
-          startBackgroundPreviewMode();
-          setActiveButton('Cursor');
+        onClick: async () => {
+          const isBackgroundPreviewMode = await startBackgroundPreviewMode();
+
+          if (!isBackgroundPreviewMode) setActiveButton('Cursor');
         },
         onLongPress: () => {
           changeToPreviewMode();

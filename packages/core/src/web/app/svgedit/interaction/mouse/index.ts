@@ -1140,6 +1140,8 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       setupPreviewMode({ callback: () => doPreview(), isBackgroundMode });
 
       if (isBackgroundMode) {
+        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+
         const workarea = document.getElementById('workarea');
 
         if (workarea) workarea.style.cursor = 'auto';

@@ -156,7 +156,9 @@ class PreviewModeController {
       }
 
       PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
-      PreviewModeBackgroundDrawer.drawBoundary();
+
+      if (!this.isBackgroundMode) PreviewModeBackgroundDrawer.drawBoundary();
+
       deviceMaster.setDeviceControlReconnectOnClose(device);
       this.setIsPreviewMode(true);
 

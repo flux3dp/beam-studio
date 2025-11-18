@@ -67,19 +67,23 @@ let isSettingUpPreview = false;
 
 export const startBackgroundPreviewMode = async ({
   showModal = false,
-}: { showModal?: boolean } = {}): Promise<void> => {
+}: { showModal?: boolean } = {}): Promise<boolean> => {
+  if (previewModeController.isStarting || previewModeController.isPreviewMode) return false;
+
   const { device } = await getDevice(showModal);
 
-  if (!device || previewModeController.isStarting || previewModeController.isPreviewMode) return;
+  if (!device) return false;
 
   if (device.model === 'ado1' || device.model === 'fbm2') {
-    await setupPreviewMode({ isBackgroundMode: true });
+    setupPreviewMode({ isBackgroundMode: true });
 
-    return;
+    return false;
   }
 
   svgCanvas.setMode('background_preview');
   setCursor('url(img/camera-cursor.svg) 9 12, cell');
+
+  return true;
 };
 
 export const setupPreviewMode = async ({
