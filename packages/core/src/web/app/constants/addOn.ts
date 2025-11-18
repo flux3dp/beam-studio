@@ -54,11 +54,6 @@ export interface AddOnInfo {
     mirror: boolean;
     roller: boolean;
     split?: boolean;
-    /**
-     * useAAxis indicates whether the rotary uses A axis for rotation.
-     * If not specified, use A axis for fcode v2 models, otherwise use Y axis.
-     */
-    useAAxis?: boolean;
   };
 }
 
@@ -89,7 +84,6 @@ const hexaRfAddOnInfo: AddOnInfo = {
     extendWorkarea: true,
     mirror: true,
     roller: true,
-    useAAxis: false,
   },
 };
 

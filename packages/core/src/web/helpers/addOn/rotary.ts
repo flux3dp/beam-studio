@@ -35,7 +35,7 @@ export const getRotaryInfo = (
   if (!rotaryMode) return null;
 
   const info: RotaryInfo = {
-    useAAxis: addOnInfo.rotary.useAAxis ?? constant.fcodeV2Models.has(workarea),
+    useAAxis: constant.fcodeV2Models.has(workarea),
     y: forceY !== undefined ? forceY : rotaryAxis.getPosition(axisInMm),
     yRatio: getRotaryRatio(addOnInfo),
   };
