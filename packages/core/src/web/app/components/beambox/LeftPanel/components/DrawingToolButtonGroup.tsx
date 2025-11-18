@@ -6,7 +6,12 @@ import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/L
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import { startBackgroundPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import {
+  changeToPreviewMode,
+  setupPreviewMode,
+  startBackgroundPreviewMode,
+} from '@core/app/stores/canvas/utils/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -28,6 +33,7 @@ type ToolButtonProps = {
   id: string;
   label?: string;
   onClick: () => void;
+  onLongPress?: () => void;
   shouldSetActive?: boolean;
   showBadge?: boolean;
   style?: React.CSSProperties;
@@ -40,6 +46,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const tLeftPanel = lang.beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
+  const { isPreviewMode } = useCameraPreviewStore();
   const [activeButton, setActiveButton] = useState('Cursor');
   const renderToolButton = ({
     className = undefined,
@@ -48,6 +55,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     id,
     label = id,
     onClick,
+    onLongPress = undefined,
     shouldSetActive = true,
     showBadge = false,
     style = undefined,
@@ -64,6 +72,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         svgCanvas?.clearSelection();
         onClick();
       }}
+      onLongPress={onLongPress}
       showBadge={showBadge}
       style={style}
       title={label}
@@ -87,15 +96,17 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   return (
     <div className={className}>
       {renderToolButton({
+        disabled: isPreviewMode,
         icon: <LeftPanelIcons.Camera />,
         id: 'Preview',
         label: lang.topbar.preview,
         onClick: () => {
-          // TODO: long press for normal mode
           startBackgroundPreviewMode();
-
-          // changeToPreviewMode();
-          // setupPreviewMode();
+          setActiveButton('Cursor');
+        },
+        onLongPress: () => {
+          changeToPreviewMode();
+          setupPreviewMode();
         },
       })}
       {renderToolButton({

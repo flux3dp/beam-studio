@@ -47,6 +47,7 @@ export interface WorkArea {
   autoShrink?: number;
   calibrationCenter?: number[]; // [mm, mm]
   cameraCenter?: number[]; // [mm, mm]
+  cameraRestPosition?: number[]; // [mm, mm]
   /**
    * curveSpeedLimit, undefined means no limit
    * x: speed limit for curve engraving in X axis, in mm/s
@@ -185,6 +186,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
     calibrationCenter: [180, 50],
     cameraCenter: [180, 7],
+    cameraRestPosition: [180, 20],
     height: 240,
     label: 'beamo II',
     maxSpeed: 750,

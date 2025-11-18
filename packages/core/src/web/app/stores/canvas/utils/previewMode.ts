@@ -70,7 +70,7 @@ export const startBackgroundPreviewMode = async ({
 }: { showModal?: boolean } = {}): Promise<void> => {
   const { device } = await getDevice(showModal);
 
-  if (!device) return;
+  if (!device || previewModeController.isStarting || previewModeController.isPreviewMode) return;
 
   if (device.model === 'ado1' || device.model === 'fbm2') {
     await setupPreviewMode({ isBackgroundMode: true });

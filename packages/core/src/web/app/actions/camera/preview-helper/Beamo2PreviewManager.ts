@@ -135,6 +135,17 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
     if (res.success) {
       if (deviceMaster.currentControlMode === 'raw') {
+        const workarea = getWorkarea(this.device.model, 'fbm2');
+        const { cameraRestPosition } = workarea;
+
+        if (cameraRestPosition) {
+          await deviceMaster.rawMove({
+            f: this.getMovementSpeed(),
+            x: cameraRestPosition[0],
+            y: cameraRestPosition[1],
+          });
+        }
+
         await deviceMaster.rawLooseMotor();
 
         if (this.lineCheckEnabled) await deviceMaster.rawEndLineCheckMode();
