@@ -2,14 +2,12 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 import { pick } from 'remeda';
-import { match, P } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getPassThrough } from '@core/helpers/addOn';
 import { discoverManager } from '@core/helpers/api/discover';
-import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
@@ -39,7 +37,6 @@ interface CanvasContextType {
   setIsColorPreviewing: (isColorPreviewing: boolean) => void;
   setIsPathEditing: (isPathEditing: boolean) => void;
   setSelectedDevice: Dispatch<SetStateAction<IDeviceInfo | null>>;
-  toggleAutoFocus: (forceState?: boolean) => Promise<void>;
   updateCanvasContext: () => void;
 }
 
@@ -53,7 +50,6 @@ const CanvasContext = createContext<CanvasContextType>({
   setIsColorPreviewing: () => {},
   setIsPathEditing: () => {},
   setSelectedDevice: () => {},
-  toggleAutoFocus: async () => {},
   updateCanvasContext: () => {},
 });
 
@@ -140,39 +136,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     }
   }, [mode]);
 
-  const toggleAutoFocus = async (forceState?: boolean) => {
-    const workarea = document.getElementById('workarea');
-    const setCursor = (cursor: string) => {
-      if (workarea) workarea.style.cursor = cursor;
-    };
-
-    await match({ forceState, mode })
-      .with(P.union({ forceState: true }, { forceState: undefined, mode: P.not(CanvasMode.AutoFocus) }), () => {
-        workareaEvents.emit('update-context-menu', { menuDisabled: true });
-        $('#workarea').on('contextmenu', () => {
-          toggleAutoFocus(false);
-
-          return false;
-        });
-
-        setMode(CanvasMode.AutoFocus);
-        svgCanvas.setMode('auto-focus');
-        setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
-      })
-      .otherwise(async () => {
-        await deviceMaster.rawLooseMotor();
-        await deviceMaster.endSubTask();
-        await deviceMaster.kick();
-
-        $('#workarea').off('contextmenu');
-        workareaEvents.emit('update-context-menu', { menuDisabled: false });
-
-        setMode(CanvasMode.Draw);
-        svgCanvas.setMode('select');
-        setCursor('auto');
-      });
-  };
-
   const { children } = props;
 
   return (
@@ -187,7 +150,6 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         setIsColorPreviewing,
         setIsPathEditing,
         setSelectedDevice,
-        toggleAutoFocus,
         updateCanvasContext,
       }}
     >
