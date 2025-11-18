@@ -1,31 +1,18 @@
 import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
-import { pick } from 'remeda';
-import { useShallow } from 'zustand/shallow';
-
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getPassThrough } from '@core/helpers/addOn';
 import { discoverManager } from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IUser } from '@core/interfaces/IUser';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 const fluxIDEventEmitter = eventEmitterFactory.createEventEmitter('flux-id');
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
-
-const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
 
 interface CanvasContextType {
   currentUser: IUser | null;
@@ -55,7 +42,7 @@ const CanvasContext = createContext<CanvasContextType>({
 
 const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const { mode, setMode } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'setMode'])));
+  const mode = useCanvasStore((state) => state.mode);
   const [isColorPreviewing, setIsColorPreviewing] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [hasUnsavedChange, setHasUnsavedChange] = useState<boolean>(false);
