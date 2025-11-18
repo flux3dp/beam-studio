@@ -29,6 +29,8 @@ export const STYLE_PRESET_KEYS = [
   'logo-cute',
   'logo-crafty',
   'logo-collage',
+  'logo-chinese-calligraphy',
+  'logo-neon',
 ] as const;
 
 /**
@@ -80,9 +82,11 @@ const STYLE_PRESETS: Record<StylePresetKey, InputField[]> = {
   'edit-photo-to-line-outline': [inputFieldOptions.patternDescriptionForEdit],
   'edit-pixar-3d': [inputFieldOptions.patternDescriptionForEdit],
   'edit-plain': [inputFieldOptions.patternDescriptionForEdit],
+  'logo-chinese-calligraphy': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'logo-collage': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'logo-crafty': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'logo-cute': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
+  'logo-neon': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'text-to-image-plain': [inputFieldOptions.patternDescription],
 };
 
