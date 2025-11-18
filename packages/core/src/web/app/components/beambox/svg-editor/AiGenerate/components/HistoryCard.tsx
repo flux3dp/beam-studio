@@ -55,7 +55,6 @@ const getAspectRatioLabel = (imageSize: string): string =>
     .with(P.string.includes('16_9'), () => '16:9')
     .with(P.string.includes('4_3'), () => '4:3')
     .with(P.string.includes('3_2'), () => '3:2')
-    .with(P.string.includes('21_9'), () => '21:9')
     .otherwise(() => '1:1');
 
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
@@ -80,10 +79,6 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
           {getStatusBadge(item.state)}
           {getModelTypeBadge()}
         </div>
-
-        {/* <p className={styles.prompt} title={item.prompt}>
-          {item.prompt}
-        </p> */}
 
         <div className={styles.metadata}>
           <span className={styles['metadata-item']}>

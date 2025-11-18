@@ -32,14 +32,18 @@ const UnmemorizedAiGenerate = () => {
     generatedImages,
     generationStatus,
     inputFields,
+    isFixedSeed,
     isLaserFriendly,
     removeImageInput,
     resetForm,
+    seed,
     selectedImageInputs,
     setInputField,
+    setState,
     setStyle,
     showHistory,
     style,
+    toggleFixedSeed,
     toggleHistory,
     toggleLaserFriendly,
   } = useAiGenerateStore();
@@ -55,6 +59,7 @@ const UnmemorizedAiGenerate = () => {
     currentUser,
     dimensions,
     mode,
+    seed,
     stylePreset,
   });
 
@@ -194,6 +199,31 @@ const UnmemorizedAiGenerate = () => {
 
             <div className={styles.section}>
               <div className={styles['toggle']}>
+                <span>Use Fixed Seed</span>
+                <Switch checked={isFixedSeed} onChange={toggleFixedSeed} />
+              </div>
+              {isFixedSeed && (
+                <div className={styles['seed-input-wrapper']}>
+                  <Input
+                    className={styles['seed-input']}
+                    onChange={(e) => {
+                      const value = e.target.value;
+                      const numValue = value === '' ? undefined : Number.parseInt(value, 10);
+
+                      if (value === '' || (!Number.isNaN(numValue) && numValue !== undefined && numValue >= 0)) {
+                        setState({ seed: numValue });
+                      }
+                    }}
+                    placeholder="Enter seed number (e.g., 12345)"
+                    type="number"
+                    value={seed ?? ''}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className={styles.section}>
+              <div className={styles['toggle']}>
                 <span>Laser-Friendly</span>
                 <Switch checked={isLaserFriendly} onChange={toggleLaserFriendly} />
               </div>
@@ -213,7 +243,7 @@ const UnmemorizedAiGenerate = () => {
                   !currentUser ||
                   (mode === 'edit' && selectedImageInputs.length === 0) ||
                   (mode === 'edit' && selectedImageInputs.length > 10) ||
-                  (info?.credit || 0) < 0.05 * count
+                  (info?.credit || 0) < 0.06 * count
                 }
                 onClick={handleGenerate}
                 size="large"
