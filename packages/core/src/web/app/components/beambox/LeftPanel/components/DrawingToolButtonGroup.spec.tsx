@@ -56,6 +56,7 @@ import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 describe('test DrawingToolButtonGroup', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   test('should render correctly', () => {
@@ -101,10 +102,22 @@ describe('test DrawingToolButtonGroup', () => {
   });
 
   test('preview button should render correctly', () => {
-    const { container } = render(<DrawingToolButtonGroup className="flux" />);
+    jest.useFakeTimers();
 
-    fireEvent.click(container.querySelector('#left-Preview'));
+    const { container } = render(<DrawingToolButtonGroup className="flux" />);
+    const button = container.querySelector('#left-Preview');
+
+    fireEvent.mouseDown(button);
+    fireEvent.mouseUp(button);
     expect(mockStartBackgroundPreviewMode).toHaveBeenCalledTimes(1);
+    expect(mockChangeToPreviewMode).not.toHaveBeenCalled();
+    expect(mockSetupPreviewMode).not.toHaveBeenCalled();
+
+    fireEvent.mouseDown(button);
+    jest.advanceTimersByTime(1000);
+    fireEvent.mouseUp(button);
+    expect(mockChangeToPreviewMode).toHaveBeenCalledTimes(1);
+    expect(mockSetupPreviewMode).toHaveBeenCalledTimes(1);
   });
 
   test('should render correctly when in pass through mode', () => {
