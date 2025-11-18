@@ -13,7 +13,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { endPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
+import { setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -1097,8 +1097,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       if (TutorialController.getNextStepRequirement() === TutorialConstants.PREVIEW_PLATFORM) {
         TutorialController.handleNextStep();
       }
-
-      if (currentMode === 'background_preview') endPreviewMode();
     };
 
     if (PreviewModeController.isPreviewMode) {
