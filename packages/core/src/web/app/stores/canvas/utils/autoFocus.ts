@@ -1,0 +1,51 @@
+import { match, P } from 'ts-pattern';
+
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import deviceMaster from '@core/helpers/device-master';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import { useCanvasStore } from '../canvasStore';
+
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync((globalSVG) => {
+  svgCanvas = globalSVG.Canvas;
+});
+
+export const toggleAutoFocus = async (forceState?: boolean) => {
+  const workarea = document.getElementById('workarea');
+  const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
+  const { mode, setMode } = useCanvasStore.getState();
+  const setCursor = (cursor: string) => {
+    if (workarea) workarea.style.cursor = cursor;
+  };
+  const contextMenuHandler = (e: Event): void => {
+    e.stopPropagation();
+    e.preventDefault();
+    toggleAutoFocus(false);
+  };
+
+  await match({ forceState, mode })
+    .with(P.union({ forceState: true }, { forceState: undefined, mode: P.not(CanvasMode.AutoFocus) }), () => {
+      workareaEvents.emit('update-context-menu', { menuDisabled: true });
+      workarea?.addEventListener('contextmenu', contextMenuHandler);
+
+      setMode(CanvasMode.AutoFocus);
+      svgCanvas.setMode('auto-focus');
+      setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
+    })
+    .otherwise(async () => {
+      await deviceMaster.rawLooseMotor();
+      await deviceMaster.endSubTask();
+      await deviceMaster.kick();
+
+      workarea?.removeEventListener('contextmenu', contextMenuHandler);
+      workareaEvents.emit('update-context-menu', { menuDisabled: false });
+
+      setMode(CanvasMode.Draw);
+      svgCanvas.setMode('select');
+      setCursor('auto');
+    });
+};

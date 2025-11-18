@@ -152,12 +152,13 @@ jest.mock('@core/app/actions/beambox/constant', () => ({
   supportAutoFocusModels: new Set(['fhexa1', 'ado1', 'fad1', 'fbb2', 'fhx2rf4', 'fhx2rf7', 'fbm2']),
 }));
 
-describe('AutoFocusButton', () => {
-  const mockToggleAutoFocus = jest.fn();
-  const defaultProps = {
-    toggleAutoFocus: mockToggleAutoFocus,
-  };
+const mockToggleAutoFocus = jest.fn();
 
+jest.mock('@core/app/stores/canvas/utils/autoFocus', () => ({
+  toggleAutoFocus: (...args) => mockToggleAutoFocus(...args),
+}));
+
+describe('AutoFocusButton', () => {
   const defaultContextValue = {
     currentUser: null,
     hasPassthroughExtension: false,
@@ -186,7 +187,7 @@ describe('AutoFocusButton', () => {
   const renderComponent = (contextValue = {}) => {
     return render(
       <CanvasContext.Provider value={{ ...defaultContextValue, ...contextValue } as any}>
-        <AutoFocusButton {...defaultProps} />
+        <AutoFocusButton />
       </CanvasContext.Provider>,
     );
   };

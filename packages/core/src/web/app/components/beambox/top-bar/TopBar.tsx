@@ -35,7 +35,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     [],
   );
   const mode = useCanvasStore((state) => state.mode);
-  const { currentUser, hasUnsavedChange, setSelectedDevice, toggleAutoFocus } = useContext(CanvasContext);
+  const { currentUser, hasUnsavedChange, setSelectedDevice } = useContext(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -96,7 +96,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         <div className={classNames(styles.controls, styles.right)}>
           <SelectMachineButton />
           <DocumentButton />
-          <AutoFocusButton toggleAutoFocus={toggleAutoFocus} />
+          <AutoFocusButton />
           <FrameButton />
           <PathPreviewButton isDeviceConnected={hasDiscoveredMachine} />
           <GoButton hasDiscoverdMachine={hasDiscoveredMachine} />
