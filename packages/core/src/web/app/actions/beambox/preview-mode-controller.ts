@@ -5,6 +5,7 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
+import { endPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
@@ -298,12 +299,18 @@ class PreviewModeController {
     this.end();
   };
 
-  async previewFullWorkarea(callback = () => {}): Promise<boolean> {
+  async previewFullWorkarea(callback?: () => void): Promise<boolean> {
     const res = this.prePreview();
 
     if (!res) {
       return false;
     }
+
+    const previewCallback = () => {
+      callback?.();
+
+      if (this.isBackgroundMode) endPreviewMode();
+    };
 
     try {
       if (!this.previewManager?.previewFullWorkarea) {
@@ -312,12 +319,12 @@ class PreviewModeController {
 
       await this.previewManager?.previewFullWorkarea?.();
       this.onPreviewSuccess();
-      callback();
+      previewCallback();
 
       return true;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      previewCallback();
 
       return false;
     }
@@ -340,6 +347,12 @@ class PreviewModeController {
 
     const { callback } = opts;
 
+    const previewCallback = () => {
+      callback?.();
+
+      if (this.isBackgroundMode) endPreviewMode();
+    };
+
     try {
       const previewRes = await this.previewManager!.preview(x, y);
 
@@ -347,12 +360,12 @@ class PreviewModeController {
         this.onPreviewSuccess();
       }
 
-      callback?.();
+      previewCallback();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback?.();
+      previewCallback();
 
       return false;
     }
@@ -373,6 +386,12 @@ class PreviewModeController {
 
     const { callback } = opts;
 
+    const previewCallback = () => {
+      callback?.();
+
+      if (this.isBackgroundMode) endPreviewMode();
+    };
+
     try {
       const previewRes = await this.previewManager!.previewRegion(x1, y1, x2, y2, opts);
 
@@ -380,12 +399,12 @@ class PreviewModeController {
         this.onPreviewSuccess();
       }
 
-      callback?.();
+      previewCallback();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback?.();
+      previewCallback();
 
       return false;
     }
