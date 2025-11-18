@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
+import shortcuts from '@core/helpers/shortcuts';
 import type { IUser } from '@core/interfaces/IUser';
 
 import DimensionSelector from './components/DimensionSelector';
@@ -32,6 +33,7 @@ const UnmemorizedAiGenerate = () => {
     generatedImages,
     generationStatus,
     inputFields,
+    isAiGenerateShown,
     isFixedSeed,
     isLaserFriendly,
     removeImageInput,
@@ -89,6 +91,42 @@ const UnmemorizedAiGenerate = () => {
       setStyle(style);
     }, style);
   };
+
+  const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    e.stopPropagation();
+
+    // Check for Fnkey+a (Cmd+a on Mac, Ctrl+a on Windows)
+    const isFnkeyA = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a';
+
+    if (isFnkeyA) {
+      e.preventDefault();
+
+      const textarea = e.currentTarget;
+
+      textarea.select();
+    }
+
+    // Check for Escape to blur (unfocus) the textarea
+    if (e.key === 'Escape') {
+      e.preventDefault();
+
+      const textarea = e.currentTarget;
+
+      textarea.blur();
+    }
+  };
+
+  useEffect(() => {
+    if (!isAiGenerateShown) return;
+
+    const exitScope = shortcuts.enterScope();
+    const subscribedShortcuts = [shortcuts.on(['Escape'], handleClose, { isBlocking: true })];
+
+    return () => {
+      subscribedShortcuts.forEach((unregister) => unregister());
+      exitScope();
+    };
+  }, [isAiGenerateShown]);
 
   return (
     <div className={classNames(styles['ai-generate-container'])}>
@@ -162,7 +200,8 @@ const UnmemorizedAiGenerate = () => {
                       onChange={(e) => {
                         setInputField(field.key, e.target.value);
                       }}
-                      onKeyDown={(e) => e.stopPropagation()}
+                      onKeyDown={handleTextAreaKeyDown}
+                      onKeyUp={(e) => e.stopPropagation()}
                       placeholder={field.placeholder}
                       rows={field.key === 'description' ? 5 : 3}
                       showCount={
