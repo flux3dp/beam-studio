@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { ImportOutlined } from '@ant-design/icons';
 import { Badge, Button, Card } from 'antd';
@@ -13,37 +13,27 @@ interface HistoryCardProps {
   onImport: (item: AiImageGenerationData) => void;
 }
 
-/**
- * Format a timestamp to a relative time string (e.g., "2 hours ago")
- * @param timestamp - ISO 8601 timestamp string
- * @returns Formatted relative time string
- */
 const formatRelativeTime = (timestamp: string): string => {
-  const now = Date.now();
-  const date = new Date(timestamp);
-  const diff = now - date.getTime();
-  const seconds = Math.floor(diff / 1000);
-  const minutes = Math.floor(seconds / 60);
-  const hours = Math.floor(minutes / 60);
-  const days = Math.floor(hours / 24);
+  const seconds = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
 
   if (seconds < 60) return 'Just now';
 
-  if (minutes < 60) return `${minutes} minute${minutes !== 1 ? 's' : ''} ago`;
+  const units = [
+    { label: 'day', seconds: 86400 },
+    { label: 'hour', seconds: 3600 },
+    { label: 'minute', seconds: 60 },
+  ];
 
-  if (hours < 24) return `${hours} hour${hours !== 1 ? 's' : ''} ago`;
+  for (const { label, seconds: unitSeconds } of units) {
+    const count = Math.floor(seconds / unitSeconds);
 
-  return `${days} day${days !== 1 ? 's' : ''} ago`;
+    if (count >= 1) return `${count} ${label}${count !== 1 ? 's' : ''} ago`;
+  }
+
+  return 'Recently';
 };
 
-const getStatusBadge = (state: string) =>
-  match(state)
-    .with('success', () => <Badge status="success" text="Success" />)
-    .with('fail', () => <Badge status="error" text="Failed" />)
-    .with('waiting', 'pending', () => <Badge status="processing" text="Generating" />)
-    .otherwise(() => null);
-
-const getImageSizeLabel = (imageSize: string): string =>
+const getImageOrientationLabel = (imageSize: string): string =>
   match(imageSize)
     .with(P.string.includes('square'), () => 'Square')
     .with(P.string.includes('landscape'), () => 'Landscape')
@@ -58,11 +48,14 @@ const getAspectRatioLabel = (imageSize: string): string =>
     .otherwise(() => '1:1');
 
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
-  const getModelTypeBadge = () => (
-    <span className={styles['model-badge']}>{item.model_type === 'edit' ? '🖼️ Edit' : '✨ Text-to-Image'}</span>
-  );
+  const previewImg = item.result_urls?.[0];
+  const relativeTime = useMemo(() => formatRelativeTime(item.created_at), [item.created_at]);
 
-  const previewImg = item.result_urls && item.result_urls.length > 0 ? item.result_urls[0] : null;
+  const renderStatusBadge = () =>
+    match(item.state)
+      .with('success', () => <Badge status="success" text="Success" />)
+      .with('fail', () => <Badge status="error" text="Failed" />)
+      .otherwise(() => <Badge status="processing" text="Generating" />);
 
   return (
     <Card className={styles.card}>
@@ -76,13 +69,13 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
 
       <div className={styles.content}>
         <div className={styles.header}>
-          {getStatusBadge(item.state)}
-          {getModelTypeBadge()}
+          {renderStatusBadge()}
+          <span className={styles['model-badge']}>{item.model_type === 'edit' ? '🖼️ Edit' : '✨ Text-to-Image'}</span>
         </div>
 
         <div className={styles.metadata}>
           <span className={styles['metadata-item']}>
-            {getImageSizeLabel(item.image_size)} {getAspectRatioLabel(item.image_size)}
+            {getImageOrientationLabel(item.image_size)} {getAspectRatioLabel(item.image_size)}
           </span>
           <span className={styles['metadata-separator']}>•</span>
           <span className={styles['metadata-item']}>{item.image_resolution}</span>
@@ -91,7 +84,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
         </div>
 
         <div className={styles.footer}>
-          <span className={styles.time}>{formatRelativeTime(item.created_at)}</span>
+          <span className={styles.time}>{relativeTime}</span>
           <Button
             disabled={item.state !== 'success'}
             icon={<ImportOutlined />}

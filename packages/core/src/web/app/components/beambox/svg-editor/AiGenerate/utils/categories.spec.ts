@@ -49,6 +49,8 @@ describe('categories and stylePresets consistency', () => {
         'logo-cute',
         'logo-crafty',
         'logo-collage',
+        'logo-chinese-calligraphy',
+        'logo-neon',
       ]);
     });
   });

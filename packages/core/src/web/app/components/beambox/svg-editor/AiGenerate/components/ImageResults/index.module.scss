@@ -80,3 +80,10 @@ $text-primary: #333333;
   font-size: 12px;
   height: 36px;
 }
+
+.error-div {
+  align-items: center;
+  display: flex;
+  gap: 12px;
+  justify-content: space-between;
+}
