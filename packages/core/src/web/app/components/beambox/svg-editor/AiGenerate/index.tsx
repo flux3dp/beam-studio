@@ -280,8 +280,7 @@ const UnmemorizedAiGenerate = () => {
                 className={styles['generate-button']}
                 disabled={
                   !currentUser ||
-                  (mode === 'edit' && selectedImageInputs.length === 0) ||
-                  (mode === 'edit' && selectedImageInputs.length > 10) ||
+                  (mode === 'edit' && (selectedImageInputs.length === 0 || selectedImageInputs.length > 10)) ||
                   (info?.credit || 0) < 0.06 * count
                 }
                 onClick={handleGenerate}
@@ -292,7 +291,7 @@ const UnmemorizedAiGenerate = () => {
               </Button>
 
               <div className={styles['credits-info']}>
-                <span className={styles['credits-required']}>Credit required {(0.05 * count).toFixed(2)}</span>
+                <span className={styles['credits-required']}>Credit required {(0.06 * count).toFixed(2)}</span>
                 <div className={styles['credits-balance']}>
                   <FluxIcons.AICredit />
                   <span className={styles['ai-credit']}>{info?.credit || 0}</span>

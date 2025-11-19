@@ -1,0 +1,74 @@
+import React, { memo, useCallback, useMemo, useState } from 'react';
+
+import { importAiImage } from '@core/app/svgedit/operations/import/importAiImage';
+import useI18n from '@core/helpers/useI18n';
+
+import { ErrorState } from './ErrorState';
+import styles from './index.module.scss';
+import { LoadingState } from './LoadingState';
+import { SuccessState } from './SuccessState';
+
+interface ImageResultsProps {
+  errorMessage: null | string;
+  generatedImages: string[];
+  generationStatus: 'failed' | 'generating' | 'idle' | 'success';
+}
+
+const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStatus }: ImageResultsProps) => {
+  const lang = useI18n();
+  const [importingUrl, setImportingUrl] = useState<null | string>(null);
+  const [importError, setImportError] = useState<null | string>(null);
+
+  const { displayErrorMessage, isInsufficientCredits } = useMemo(() => {
+    if (!errorMessage) return { displayErrorMessage: null, isInsufficientCredits: false };
+
+    const parts = errorMessage.split(':');
+
+    return {
+      displayErrorMessage: parts.length > 1 ? parts.slice(1).join(':') : errorMessage,
+      isInsufficientCredits: parts[0] === 'INSUFFICIENT_CREDITS',
+    };
+  }, [errorMessage]);
+
+  const handleImport = useCallback(async (imageUrl: string) => {
+    setImportingUrl(imageUrl);
+    setImportError(null);
+    try {
+      await importAiImage(imageUrl);
+    } catch (error) {
+      setImportError(error instanceof Error ? error.message : 'Failed to import image');
+    } finally {
+      setImportingUrl(null);
+    }
+  }, []);
+
+  if (generationStatus === 'idle') return null;
+
+  return (
+    <div className={styles['results-container']}>
+      <h3 className={styles['section-title']}>Results</h3>
+      {generationStatus === 'generating' && <LoadingState />}
+      {generationStatus === 'failed' && (
+        <ErrorState
+          displayErrorMessage={displayErrorMessage}
+          errorMessage={errorMessage}
+          isInsufficientCredits={isInsufficientCredits}
+          lang={lang}
+        />
+      )}
+      {generationStatus === 'success' && (
+        <SuccessState
+          generatedImages={generatedImages}
+          importError={importError}
+          importingUrl={importingUrl}
+          onImport={handleImport}
+          setImportError={setImportError}
+        />
+      )}
+    </div>
+  );
+};
+
+const ImageResults = memo(UnmemorizedImageResults);
+
+export default ImageResults;
