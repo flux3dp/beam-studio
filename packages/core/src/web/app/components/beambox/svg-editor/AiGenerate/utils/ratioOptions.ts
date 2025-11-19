@@ -20,8 +20,8 @@ export const ALL_RATIOS: RatioOption[] = [
   { aspectRatio: '16:9', displayLabel: '16:9', orientation: 'landscape' },
   // Additional ratios (in "More" menu)
   { aspectRatio: '3:2', displayLabel: '3:2', orientation: 'landscape' },
-  { aspectRatio: '4:3', displayLabel: '3:4', orientation: 'portrait' },
   { aspectRatio: '3:2', displayLabel: '2:3', orientation: 'portrait' },
+  { aspectRatio: '4:3', displayLabel: '3:4', orientation: 'portrait' },
   { aspectRatio: '16:9', displayLabel: '9:16', orientation: 'portrait' },
 ];
 
