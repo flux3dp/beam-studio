@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
-import { CloseOutlined, InboxOutlined, LinkOutlined } from '@ant-design/icons';
+import { CloseOutlined, FolderOutlined, InboxOutlined, LinkOutlined } from '@ant-design/icons';
 import { Alert, Badge, Button } from 'antd';
 
 import type { ImageInput } from '../types';
@@ -136,7 +136,7 @@ const UnmemorizedImageUploadArea = ({
 
         {imageInputs.length === 0 ? (
           <div className={styles['empty-state']}>
-            <InboxOutlined className={styles.icon} />
+            <FolderOutlined className={styles.icon} />
             <p className={styles.title}>Click or drag images here</p>
             <p className={styles.subtitle}>JPEG, PNG, WebP • Max {maxImages}</p>
           </div>

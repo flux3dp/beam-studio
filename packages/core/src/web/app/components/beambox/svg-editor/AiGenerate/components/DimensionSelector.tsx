@@ -20,21 +20,16 @@ const RatioButton = ({
   onClick,
   orientation,
 }: any) => {
-  let iconClass = styles[`ratio-${aspectRatio.replace(':', '-')}`];
-
-  if (isMenu) iconClass = styles[`ratio-${orientation}-${aspectRatio.replace(':', '-')}`];
-
-  if (isMoreTrigger) iconClass = styles['ratio-more'];
-
+  const ratio = orientation === 'landscape' ? aspectRatio : aspectRatio.split(':').reverse().join(':');
+  const iconClass = isMoreTrigger ? styles['ratio-more'] : styles[`ratio-${ratio.replace(':', '-')}`];
   const Container = isMenu ? 'div' : Button;
   const wrapperClass = isMenu ? styles['menu-item'] : styles['dimension-button'];
   const iconWrapperClass = isMenu ? styles['menu-icon'] : styles['ratio-icon'];
-  const boxClass = isMenu ? styles['menu-ratio-box'] : styles['ratio-box'];
 
   return (
     <Container className={classNames(wrapperClass, { [styles.active]: isActive })} onClick={onClick}>
       <div className={iconWrapperClass}>
-        <div className={classNames(boxClass, iconClass)} />
+        <div className={classNames(styles['ratio-box'], iconClass)} />
       </div>
       <span>{label}</span>
     </Container>

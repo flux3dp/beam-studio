@@ -20,6 +20,12 @@
   }
 }
 
+.flex-space {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
 .dimension-button {
   @include vars.button-base;
   display: flex;
@@ -27,7 +33,7 @@
   align-items: center;
   justify-content: center;
   padding: 12px 16px;
-  min-width: 80px;
+  min-width: 84px;
   height: 64px;
 
   span {
@@ -47,6 +53,8 @@
 .ratio-box {
   @include vars.ratio-box-base;
 
+  border-radius: 1.5px;
+
   &.ratio-1-1 {
     width: 20px;
     height: 20px;
@@ -57,9 +65,19 @@
     height: 18px;
   }
 
+  &.ratio-3-4 {
+    width: 18px;
+    height: 24px;
+  }
+
   &.ratio-16-9 {
     width: 28px;
     height: 16px;
+  }
+
+  &.ratio-9-16 {
+    width: 16px;
+    height: 28px;
   }
 
   &.ratio-3-2 {
@@ -67,16 +85,16 @@
     height: 16px;
   }
 
-  &.ratio-21-9 {
-    width: 28px;
-    height: 12px;
+  &.ratio-2-3 {
+    width: 16px;
+    height: 24px;
   }
 
   &.ratio-more {
     width: 20px;
     height: 20px;
-    border-style: dashed;
     position: relative;
+    border: 0;
 
     &::before,
     &::after {
@@ -86,19 +104,50 @@
     }
 
     &::before {
-      width: 4px;
-      height: 4px;
-      top: -2px;
-      right: -2px;
+      width: 100%;
+      height: 2px; /* Adjust thickness */
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
     }
 
     &::after {
-      width: 4px;
-      height: 4px;
-      bottom: -2px;
-      left: -2px;
+      width: 2px; /* Adjust thickness */
+      height: 100%;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
     }
   }
+
+  // old style
+  // &.ratio-more {
+  //   width: 20px;
+  //   height: 20px;
+  //   border-style: dashed;
+  //   position: relative;
+
+  //   &::before,
+  //   &::after {
+  //     content: '';
+  //     position: absolute;
+  //     background: currentColor;
+  //   }
+
+  //   &::before {
+  //     width: 4px;
+  //     height: 4px;
+  //     top: -2px;
+  //     right: -2px;
+  //   }
+
+  //   &::after {
+  //     width: 4px;
+  //     height: 4px;
+  //     bottom: -2px;
+  //     left: -2px;
+  //   }
+  // }
 }
 
 .more-button-container {
@@ -153,30 +202,6 @@
   flex-shrink: 0;
 }
 
-.menu-ratio-box {
-  @include vars.ratio-box-base;
-
-  &.ratio-landscape-3-2 {
-    width: 24px;
-    height: 16px;
-  }
-
-  &.ratio-portrait-4-3 {
-    width: 15px;
-    height: 20px;
-  }
-
-  &.ratio-portrait-3-2 {
-    width: 13px;
-    height: 20px;
-  }
-
-  &.ratio-portrait-16-9 {
-    width: 11px;
-    height: 20px;
-  }
-}
-
 .size-button {
   @include vars.button-base;
   display: flex;
@@ -184,7 +209,7 @@
   align-items: flex-start;
   justify-content: center;
   padding: 12px 16px;
-  min-width: 100px;
+  min-width: 115px;
   height: 56px;
 }
 
