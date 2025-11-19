@@ -1,6 +1,8 @@
 import React, { memo } from 'react';
 
 import { Alert, Empty, Spin } from 'antd';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/react/shallow';
 
 import { useAiGenerateStore } from '../useAiGenerateStore';
 
@@ -8,8 +10,11 @@ import HistoryCard from './HistoryCard';
 import styles from './ImageHistory.module.scss';
 
 const UnmemorizedImageHistory = () => {
-  const { historyError, historyItems, historyLoading, importFromHistory } = useAiGenerateStore();
+  const { historyError, historyItems, historyLoading, importFromHistory } = useAiGenerateStore(
+    useShallow(pick(['historyError', 'historyItems', 'historyLoading', 'importFromHistory'])),
+  );
 
+  // 1. Initial Loading State
   if (historyLoading && historyItems.length === 0) {
     return (
       <div className={styles.container}>
@@ -21,6 +26,7 @@ const UnmemorizedImageHistory = () => {
     );
   }
 
+  // 2. Error State
   if (historyError) {
     return (
       <div className={styles.container}>
@@ -29,6 +35,7 @@ const UnmemorizedImageHistory = () => {
     );
   }
 
+  // 3. Empty State
   if (historyItems.length === 0) {
     return (
       <div className={styles.container}>
@@ -37,6 +44,7 @@ const UnmemorizedImageHistory = () => {
     );
   }
 
+  // 4. List Content
   return (
     <div className={styles.container}>
       <h3 className={styles.title}>Generation History</h3>
@@ -47,7 +55,7 @@ const UnmemorizedImageHistory = () => {
         ))}
       </div>
 
-      {historyLoading && historyItems.length > 0 && (
+      {historyLoading && (
         <div className={styles['loading-more']}>
           <Spin />
           <span>Loading more...</span>

@@ -14,11 +14,13 @@ describe('stylePresets', () => {
         'logo-cute',
         'logo-crafty',
         'logo-collage',
+        'logo-chinese-calligraphy',
+        'logo-neon',
       ]);
     });
 
-    it('should have 10 style presets', () => {
-      expect(STYLE_PRESET_KEYS).toHaveLength(10);
+    it('should have 12 style presets', () => {
+      expect(STYLE_PRESET_KEYS).toHaveLength(12);
     });
   });
 

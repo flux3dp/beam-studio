@@ -11,21 +11,34 @@ import type { StylePresetKey } from '../utils/stylePresets';
 import styles from './StyleSelectionPanel.module.scss';
 
 interface StyleSelectionPanelProps {
-  currentStyle: StylePresetKey; // Option ID
+  currentStyle: StylePresetKey;
   onClose: () => void;
-  onSelect: (style: StylePresetKey) => void; // Returns option ID
+  onSelect: (style: StylePresetKey) => void;
 }
 
-const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
-  // Auto-select category based on current selection
-  const initialCategory = getCategoryForOption(currentStyle)?.id || 'text-to-image';
-  const [selectedCategory, setSelectedCategory] = useState<string>(initialCategory);
-  const [selectedStyle, setSelectedStyle] = useState<null | StylePresetKey>(currentStyle);
-  const currentCategory = CATEGORIES.find(({ id }) => id === selectedCategory)!;
+const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onClick: () => void; option: Style }) => (
+  <div className={classNames(styles['option-card'], { [styles.selected]: isSelected })} onClick={onClick}>
+    {isSelected && (
+      <div className={styles['check-badge']}>
+        <CheckOutlined />
+      </div>
+    )}
+    <div className={styles['option-preview']}>
+      <img alt={option.displayName} className={styles['preview-image']} src={option.previewImage} />
+    </div>
+    <div className={styles['option-info']}>
+      <h4 className={styles['option-name']}>{option.displayName}</h4>
+      <span className={styles['mode-badge']}>{option.mode === 'edit' ? 'Edit Mode' : 'Text to Image Mode'}</span>
+    </div>
+  </div>
+);
 
-  const handleOptionClick = ({ id }: Style) => {
-    setSelectedStyle(id);
-  };
+const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
+  const [selectedCategory, setSelectedCategory] = useState(
+    () => getCategoryForOption(currentStyle)?.id || 'text-to-image',
+  );
+  const [selectedStyle, setSelectedStyle] = useState(currentStyle);
+  const currentCategory = CATEGORIES.find((c) => c.id === selectedCategory);
 
   const handleConfirm = () => {
     if (selectedStyle) {
@@ -53,6 +66,7 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
       width={900}
     >
       <div className={styles.container}>
+        {/* Sidebar: Categories */}
         <div className={styles.sidebar}>
           {CATEGORIES.map((category) => (
             <div
@@ -67,40 +81,18 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
           ))}
         </div>
 
-        {/* RIGHT CONTENT: Options */}
+        {/* Content: Style Options */}
         <div className={styles.content}>
           <h3 className={styles['content-title']}>{currentCategory?.displayName}</h3>
           <div className={styles['options-grid']}>
-            {currentCategory.styles.map((option) => {
-              const isSelected = selectedStyle === option.id;
-
-              return (
-                <div
-                  className={classNames(styles['option-card'], {
-                    [styles.selected]: isSelected,
-                  })}
-                  key={option.id}
-                  onClick={() => handleOptionClick(option)}
-                >
-                  {isSelected && (
-                    <div className={styles['check-badge']}>
-                      <CheckOutlined />
-                    </div>
-                  )}
-
-                  <div className={styles['option-preview']}>
-                    <img alt={option.displayName} className={styles['preview-image']} src={option.previewImage} />
-                  </div>
-
-                  <div className={styles['option-info']}>
-                    <h4 className={styles['option-name']}>{option.displayName}</h4>
-                    <span className={styles['mode-badge']}>
-                      {option.mode === 'edit' ? 'Edit Mode' : 'Text to Image Mode'}
-                    </span>
-                  </div>
-                </div>
-              );
-            })}
+            {currentCategory?.styles.map((option) => (
+              <OptionCard
+                isSelected={selectedStyle === option.id}
+                key={option.id}
+                onClick={() => setSelectedStyle(option.id)}
+                option={option}
+              />
+            ))}
           </div>
         </div>
       </div>

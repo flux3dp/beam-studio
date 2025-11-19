@@ -555,7 +555,7 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
             class="credits-required"
           >
             Credit required 
-            0.05
+            0.06
           </span>
           <div
             class="credits-balance"
@@ -1153,7 +1153,7 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
             class="credits-required"
           >
             Credit required 
-            0.05
+            0.06
           </span>
           <div
             class="credits-balance"
@@ -1729,7 +1729,7 @@ exports[`test AiGenerate Rendering Tests snapshot: generating state 1`] = `
             class="credits-required"
           >
             Credit required 
-            0.05
+            0.06
           </span>
           <div
             class="credits-balance"
@@ -2303,7 +2303,7 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
             class="credits-required"
           >
             Credit required 
-            0.05
+            0.06
           </span>
           <div
             class="credits-balance"

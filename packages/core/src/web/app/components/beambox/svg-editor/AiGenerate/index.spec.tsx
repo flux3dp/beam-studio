@@ -1449,8 +1449,8 @@ describe('test AiGenerate', () => {
   // ==========================================================================
 
   describe('Credit Validation Tests', () => {
-    test('requires 0.05 credits for count=1', () => {
-      mockGetCurrentUser.mockReturnValue(createMockUser(0.05));
+    test('requires 0.06 credits for count=1', () => {
+      mockGetCurrentUser.mockReturnValue(createMockUser(0.06));
 
       useAiGenerateStore.setState({
         count: 1,
@@ -1483,8 +1483,8 @@ describe('test AiGenerate', () => {
       expect(generateButton.disabled).toBe(true);
     });
 
-    test('requires 0.10 credits for count=2', () => {
-      mockGetCurrentUser.mockReturnValue(createMockUser(0.1));
+    test('requires 0.12 credits for count=2', () => {
+      mockGetCurrentUser.mockReturnValue(createMockUser(0.12));
 
       useAiGenerateStore.setState({
         count: 2,
@@ -1517,8 +1517,8 @@ describe('test AiGenerate', () => {
       expect(generateButton.disabled).toBe(true);
     });
 
-    test('requires 0.20 credits for count=4', () => {
-      mockGetCurrentUser.mockReturnValue(createMockUser(0.2));
+    test('requires 0.24 credits for count=4', () => {
+      mockGetCurrentUser.mockReturnValue(createMockUser(0.24));
 
       useAiGenerateStore.setState({
         count: 4,
@@ -1568,7 +1568,7 @@ describe('test AiGenerate', () => {
 
       const creditsRequired = container.querySelector('.credits-required');
 
-      expect(creditsRequired?.textContent).toContain('0.15');
+      expect(creditsRequired?.textContent).toContain('Credit required 0.18');
     });
 
     test('updates button state when credits change', () => {
