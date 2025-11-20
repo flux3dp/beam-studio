@@ -5,6 +5,7 @@ import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
+import { endPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkOldFirmware from '@core/helpers/device/checkOldFirmware';
@@ -14,7 +15,7 @@ import i18n from '@core/helpers/i18n';
 import VersionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager } from '@core/interfaces/PreviewManager';
+import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
 import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
@@ -29,6 +30,7 @@ class PreviewModeController {
   isPreviewMode: boolean = false;
   isStarting: boolean = false;
   isPreviewBlocked: boolean = false;
+  isBackgroundMode: boolean = false;
   currentDevice: IDeviceInfo | null = null;
   previewManager: null | PreviewManager = null;
   liveModeTimeOut: NodeJS.Timeout | null = null;
@@ -117,7 +119,7 @@ class PreviewModeController {
     return true;
   }
 
-  async start(device: IDeviceInfo) {
+  async start(device: IDeviceInfo, args?: PreviewManagerArguments) {
     this.reset();
     this.isStarting = true;
 
@@ -131,17 +133,18 @@ class PreviewModeController {
 
     try {
       this.currentDevice = device;
+      this.isBackgroundMode = args?.isBackgroundMode ?? false;
 
       if (promarkModels.has(device.model)) {
-        this.previewManager = new PromarkPreviewManager(device);
+        this.previewManager = new PromarkPreviewManager(device, args);
       } else if (Constant.adorModels.includes(device.model)) {
-        this.previewManager = new AdorPreviewManager(device);
+        this.previewManager = new AdorPreviewManager(device, args);
       } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
-        this.previewManager = new BB2PreviewManager(device);
+        this.previewManager = new BB2PreviewManager(device, args);
       } else if (device.model === 'fbm2') {
-        this.previewManager = new Beamo2PreviewManager(device);
+        this.previewManager = new Beamo2PreviewManager(device, args);
       } else {
-        this.previewManager = new BeamPreviewManager(device);
+        this.previewManager = new BeamPreviewManager(device, args);
       }
 
       const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
@@ -153,7 +156,9 @@ class PreviewModeController {
       }
 
       PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
-      PreviewModeBackgroundDrawer.drawBoundary();
+
+      if (!this.isBackgroundMode) PreviewModeBackgroundDrawer.drawBoundary();
+
       deviceMaster.setDeviceControlReconnectOnClose(device);
       this.setIsPreviewMode(true);
 
@@ -261,9 +266,11 @@ class PreviewModeController {
     this.setIsDrawing(true);
     this.isPreviewBlocked = true;
 
-    const workarea = document.querySelector('#workarea') as HTMLElement;
+    if (!this.isBackgroundMode) {
+      const workarea = document.querySelector('#workarea') as HTMLElement;
 
-    workarea.style.cursor = 'wait';
+      workarea.style.cursor = 'wait';
+    }
 
     return true;
   };
@@ -271,7 +278,7 @@ class PreviewModeController {
   onPreviewSuccess = (): void => {
     const workarea = document.querySelector('#workarea') as HTMLElement;
 
-    workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
+    workarea.style.cursor = this.isBackgroundMode ? 'auto' : 'url(img/camera-cursor.svg) 9 12, cell';
     this.isPreviewBlocked = false;
     this.setIsDrawing(false);
   };
@@ -294,12 +301,18 @@ class PreviewModeController {
     this.end();
   };
 
-  async previewFullWorkarea(callback = () => {}): Promise<boolean> {
+  async previewFullWorkarea(callback?: () => void): Promise<boolean> {
     const res = this.prePreview();
 
     if (!res) {
       return false;
     }
+
+    const previewCallback = () => {
+      callback?.();
+
+      if (this.isBackgroundMode) endPreviewMode();
+    };
 
     try {
       if (!this.previewManager?.previewFullWorkarea) {
@@ -308,12 +321,12 @@ class PreviewModeController {
 
       await this.previewManager?.previewFullWorkarea?.();
       this.onPreviewSuccess();
-      callback();
+      previewCallback();
 
       return true;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      previewCallback();
 
       return false;
     }
@@ -336,6 +349,12 @@ class PreviewModeController {
 
     const { callback } = opts;
 
+    const previewCallback = () => {
+      callback?.();
+
+      if (this.isBackgroundMode) endPreviewMode();
+    };
+
     try {
       const previewRes = await this.previewManager!.preview(x, y);
 
@@ -343,12 +362,12 @@ class PreviewModeController {
         this.onPreviewSuccess();
       }
 
-      callback?.();
+      previewCallback();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback?.();
+      previewCallback();
 
       return false;
     }
@@ -369,6 +388,12 @@ class PreviewModeController {
 
     const { callback } = opts;
 
+    const previewCallback = () => {
+      callback?.();
+
+      if (this.isBackgroundMode) endPreviewMode();
+    };
+
     try {
       const previewRes = await this.previewManager!.previewRegion(x1, y1, x2, y2, opts);
 
@@ -376,12 +401,12 @@ class PreviewModeController {
         this.onPreviewSuccess();
       }
 
-      callback?.();
+      previewCallback();
 
       return previewRes;
     } catch (error) {
       this.onPreviewFail(error);
-      callback?.();
+      previewCallback();
 
       return false;
     }

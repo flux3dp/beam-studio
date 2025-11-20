@@ -10,6 +10,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanel from '@core/app/views/beambox/Right-Panels/ObjectPanel';
@@ -24,7 +25,8 @@ import styles from './RightPanel.module.scss';
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
 
 const RightPanel = (): ReactNode => {
-  const { isPathEditing, mode } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const { isPathEditing } = useContext(CanvasContext);
   const { selectedElement } = useContext(SelectedElementContext);
   const isMobile = useIsMobile();
   const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);

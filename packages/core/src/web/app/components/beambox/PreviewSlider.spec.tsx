@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
 import PreviewSlider from './PreviewSlider';
 
@@ -41,10 +41,6 @@ jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
     return mockIsFullScreen();
   },
   previewFullWorkarea: () => mockPreviewFullWorkarea(),
-}));
-
-jest.mock('@core/app/contexts/CanvasContext', () => ({
-  CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
 }));
 
 const mockMeetRequirement = jest.fn();
@@ -102,6 +98,7 @@ describe('test PreviewSlider', () => {
       step: 1,
       value: 450,
     });
+    useCanvasStore.getState().setMode(CanvasMode.Draw);
   });
 
   it('should render correctly with preview image', async () => {
@@ -128,12 +125,9 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
+    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
-    const { container } = render(
-      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
-        <PreviewSlider />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<PreviewSlider />);
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
@@ -145,12 +139,9 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
+    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
-    const { container, getByText } = render(
-      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
-        <PreviewSlider />
-      </CanvasContext.Provider>,
-    );
+    const { container, getByText } = render(<PreviewSlider />);
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
@@ -179,12 +170,9 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });
+    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
-    const { container, getByText } = render(
-      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
-        <PreviewSlider />
-      </CanvasContext.Provider>,
-    );
+    const { container, getByText } = render(<PreviewSlider />);
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
@@ -206,11 +194,9 @@ describe('test PreviewSlider', () => {
   });
 
   it('should render correctly when is path previewing', () => {
-    const { container } = render(
-      <CanvasContext.Provider value={{ mode: CanvasMode.PathPreview } as any}>
-        <PreviewSlider />
-      </CanvasContext.Provider>,
-    );
+    useCanvasStore.getState().setMode(CanvasMode.PathPreview);
+
+    const { container } = render(<PreviewSlider />);
 
     expect(container).toBeEmptyDOMElement();
   });
@@ -219,12 +205,9 @@ describe('test PreviewSlider', () => {
     mockGetCurrentControlMode.mockReturnValue('raw');
     mockUseCameraPreviewStore.mockReturnValue({ isDrawing: true, isPreviewMode: true });
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbm2' } });
+    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
-    const { container, getByText } = render(
-      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
-        <PreviewSlider />
-      </CanvasContext.Provider>,
-    );
+    const { container, getByText } = render(<PreviewSlider />);
 
     await waitFor(() => {
       expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);

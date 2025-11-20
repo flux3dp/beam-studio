@@ -2,6 +2,7 @@ import { EventEmitter } from 'eventemitter3';
 
 import type { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -55,6 +56,10 @@ class TabController extends EventEmitter {
     topBarEventEmitter.on('UPDATE_TITLE', updateTitleHandler);
     topBarEventEmitter.on('SET_HAS_UNSAVED_CHANGE', updateTitleHandler);
     useStorageStore.subscribe((state) => state['active-lang'], updateTitleHandler);
+    useCanvasStore.subscribe(
+      (state) => state.mode,
+      (mode) => this.setMode(mode),
+    );
   }
 
   onBlurred(handler: () => void): void {

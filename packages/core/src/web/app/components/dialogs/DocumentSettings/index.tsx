@@ -16,6 +16,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -71,8 +72,6 @@ const dpiOptions = ['low', 'medium', 'high', 'ultra'] as const;
 interface Props {
   unmount: () => void;
 }
-
-const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
 const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const {
@@ -138,15 +137,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const hasCurveEngravingData = useHasCurveEngraving();
+  const mode = useCanvasStore((state) => state.mode);
   const isCurveEngraving = useMemo(() => {
     if (!addOnInfo.curveEngraving) return false;
 
-    const response = { mode: CanvasMode.Draw };
-
-    topBarEventEmitter.emit('GET_CANVAS_MODE', response);
-
-    return hasCurveEngravingData || response.mode === CanvasMode.CurveEngraving;
-  }, [addOnInfo.curveEngraving, hasCurveEngravingData]);
+    return hasCurveEngravingData || mode === CanvasMode.CurveEngraving;
+  }, [addOnInfo.curveEngraving, hasCurveEngravingData, mode]);
 
   // pass-through, auto-feeder, rotary mode are exclusive, disable others when one is on
   useEffect(() => {

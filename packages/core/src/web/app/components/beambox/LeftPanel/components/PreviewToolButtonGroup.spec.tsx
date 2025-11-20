@@ -3,7 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { CameraType } from '@core/app/constants/cameraConstants';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 const emitShowCropper = jest.fn();
 
@@ -67,6 +66,14 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext(null),
 }));
 
+const mockSetupPreviewMode = jest.fn();
+const mockEndPreviewMode = jest.fn();
+
+jest.mock('@core/app/stores/canvas/utils/previewMode', () => ({
+  endPreviewMode: mockEndPreviewMode,
+  setupPreviewMode: mockSetupPreviewMode,
+}));
+
 import PreviewToolButtonGroup from './PreviewToolButtonGroup';
 
 const mockIsNorthAmerica = jest.fn();
@@ -85,54 +92,28 @@ describe('test PreviewToolButtonGroup', () => {
   });
 
   it('should render correctly', () => {
-    const endPreviewMode = jest.fn();
-    const setupPreviewMode = jest.fn();
-    const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            endPreviewMode,
-            setupPreviewMode,
-          } as any
-        }
-      >
-        <PreviewToolButtonGroup className="left-toolbar" />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<PreviewToolButtonGroup className="left-toolbar" />);
 
     expect(container).toMatchSnapshot();
-    expect(endPreviewMode).not.toHaveBeenCalled();
+    expect(mockEndPreviewMode).not.toHaveBeenCalled();
 
     const back = container.querySelector('#preview-back');
 
     fireEvent.click(back);
-    expect(endPreviewMode).toHaveBeenCalledTimes(1);
+    expect(mockEndPreviewMode).toHaveBeenCalledTimes(1);
 
-    expect(setupPreviewMode).not.toHaveBeenCalled();
+    expect(mockSetupPreviewMode).not.toHaveBeenCalled();
 
     const shoot = container.querySelector('#preview-shoot');
 
     fireEvent.click(shoot);
-    expect(setupPreviewMode).toHaveBeenCalledTimes(1);
+    expect(mockSetupPreviewMode).toHaveBeenCalledTimes(1);
   });
 
   it('should render correctly when isNorthAmerica', () => {
     mockIsNorthAmerica.mockReturnValue(true);
 
-    const endPreviewMode = jest.fn();
-    const setupPreviewMode = jest.fn();
-    const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            endPreviewMode,
-            setupPreviewMode,
-          } as any
-        }
-      >
-        <PreviewToolButtonGroup className="left-toolbar" />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<PreviewToolButtonGroup className="left-toolbar" />);
 
     expect(container).toMatchSnapshot();
   });
@@ -144,11 +125,7 @@ describe('test PreviewToolButtonGroup', () => {
       isWideAngleCameraCalibrated: true,
     });
 
-    const { container } = render(
-      <CanvasContext.Provider value={{} as any}>
-        <PreviewToolButtonGroup className="left-toolbar" />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<PreviewToolButtonGroup className="left-toolbar" />);
 
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelectorAll('.option')[1]);

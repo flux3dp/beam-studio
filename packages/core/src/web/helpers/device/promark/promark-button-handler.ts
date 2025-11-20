@@ -3,10 +3,10 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
 import { showFramingModal } from '@core/app/components/dialogs/FramingModal';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import FullWindowPanelStyles from '@core/app/widgets/FullWindowPanel/FullWindowPanel.module.scss';
 import deviceMaster from '@core/helpers/device-master';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -15,8 +15,6 @@ type TStatus =
   | 'listening'
   | 'preparing' // Start exporting task (before uploadFcode)
   | 'uploading'; // uploadFcode
-
-const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 const interval = 200;
 const runningThresholdCount = 8;
@@ -183,7 +181,7 @@ class PromarkButtonHandler {
         // Force framing on first press
         await closeFrame();
         dialogCaller.popDialogById(modalId.monitor);
-        canvasEventEmitter.emit('SET_MODE', CanvasMode.Draw);
+        useCanvasStore.getState().setMode(CanvasMode.Draw);
         showFramingModal();
 
         return;

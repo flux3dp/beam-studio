@@ -4,6 +4,7 @@ import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/i
 import { Tooltip } from 'antd';
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
+import { pick } from 'remeda';
 import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
@@ -74,11 +75,8 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const workarea = useWorkarea();
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
-  const { autoFeeder, borderless } = useDocumentStore(
-    useShallow((state) => ({
-      autoFeeder: state['auto-feeder'],
-      borderless: state.borderless,
-    })),
+  const { 'auto-feeder': autoFeeder, borderless } = useDocumentStore(
+    useShallow((state) => pick(state, ['auto-feeder', 'borderless'])),
   );
   const isAutoFeederOn = useMemo(
     () => getAutoFeeder(addOnInfo, { autoFeeder, borderless }),
