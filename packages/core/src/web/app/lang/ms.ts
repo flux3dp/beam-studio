@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Buka Bawah',
       current_position: 'Kedudukan Semasa',
+      detailed: 'Terperinci',
       disable: 'Lumpuhkan',
       document_settings: 'Tetapan Dokumen',
       door_protect: 'Perlindungan pintu',

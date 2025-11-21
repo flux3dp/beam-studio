@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Fondo abierto',
       current_position: 'Posición Actual',
+      detailed: 'Detallado',
       disable: 'Deshabilitar',
       document_settings: 'Configuración del documento',
       door_protect: 'Protección de puerta',

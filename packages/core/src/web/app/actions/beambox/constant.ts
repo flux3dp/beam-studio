@@ -95,10 +95,11 @@ export default {
     },
   },
   dpiValueMap: {
+    detailed: 1000,
     high: 500,
     low: 125,
     medium: 250,
-    ultra: 1000,
+    ultra: 2000,
   },
   dpmm,
   fcodeV2Models,

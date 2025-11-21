@@ -5,7 +5,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
@@ -110,7 +110,7 @@ export const importBvgString = async (
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
     if (engraveDpi) {
-      newDocumentState['engrave_dpi'] = engraveDpi as 'high' | 'low' | 'medium' | 'ultra';
+      newDocumentState['engrave_dpi'] = engraveDpi as EngraveDpiOption;
     } else {
       newDocumentState['engrave_dpi'] = 'medium';
     }

@@ -38,7 +38,7 @@ exports[`test DpiInfo should render correctly in mobile 1`] = `
     <i>
       Engraving Resolution
       : 
-      1000
+      2000
        DPI
     </i>
   </div>

@@ -93,12 +93,12 @@ export interface ILang {
     document_panel: {
       add_on: string;
       auto_feeder: string;
-      auto_feeder_scale: string;
       auto_feeder_url: string;
       auto_shrink: string;
       auto_shrink_url: string;
       borderless_mode: string;
       current_position: string;
+      detailed: string;
       disable: string;
       document_settings: string;
       door_protect: string;
