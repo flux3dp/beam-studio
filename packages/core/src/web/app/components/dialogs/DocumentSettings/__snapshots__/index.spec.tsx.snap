@@ -1078,12 +1078,12 @@ exports[`test DocumentSettings should render correctly 2`] = `
                   class="ant-select-item ant-select-item-option"
                   id="dpi_list_3"
                   role="option"
-                  title="Ultra High (1000 DPI)"
+                  title="Detailed (1000 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Ultra High (1000 DPI)
+                    Detailed (1000 DPI)
                   </div>
                   <span
                     aria-hidden="true"
@@ -1955,12 +1955,12 @@ exports[`test DocumentSettings should render correctly 3`] = `
                   class="ant-select-item ant-select-item-option"
                   id="dpi_list_3"
                   role="option"
-                  title="Ultra High (1000 DPI)"
+                  title="Detailed (1000 DPI)"
                 >
                   <div
                     class="ant-select-item-option-content"
                   >
-                    Ultra High (1000 DPI)
+                    Detailed (1000 DPI)
                   </div>
                   <span
                     aria-hidden="true"
