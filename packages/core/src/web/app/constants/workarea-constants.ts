@@ -287,15 +287,4 @@ export const getSupportedModules = (
     : supportedModules;
 };
 
-export const regulateEngraveDpiOption = (model: WorkAreaModel, dpiOption: EngraveDpiOption): EngraveDpiOption => {
-  const { engraveDpiOptions = defaultEngraveDpiOptions } = workareaConstants[model] ?? {};
-
-  if (engraveDpiOptions.includes(dpiOption)) {
-    return dpiOption;
-  }
-
-  // Return the highest available dpi option
-  return engraveDpiOptions[engraveDpiOptions.length - 1];
-};
-
 export default workareaConstants;
