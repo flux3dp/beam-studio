@@ -9,6 +9,7 @@ import type { BeamboxPreference, DocumentState, DocumentStateKey } from '@core/i
 import beamboxPreference from '../actions/beambox/beambox-preference';
 import { getAddOnInfo } from '../constants/addOn';
 import { TabEvents } from '../constants/tabConstants';
+import { regulateEngraveDpiOption } from '../constants/workarea-constants';
 import { changeBeamboxPreferenceValue } from '../svgedit/history/beamboxPreferenceCommand';
 import history, { BaseHistoryCommand } from '../svgedit/history/history';
 
@@ -47,7 +48,7 @@ const getInitDocumentStore = (): DocumentState => {
     'enable-autofocus': isAutofocusEnabled,
     'enable-diode': isDiodeEnabled,
     'enable-job-origin': preference['enable-job-origin'],
-    engrave_dpi: preference.engrave_dpi,
+    engrave_dpi: regulateEngraveDpiOption(defaultWorkarea, preference.engrave_dpi),
     'extend-rotary-workarea': preference['extend-rotary-workarea'],
     'frame-before-start': preference['frame-before-start'],
     'job-origin': preference['job-origin'],
@@ -197,3 +198,13 @@ export function changeMultipleDocumentStoreValues(
 
   return cmd;
 }
+
+useDocumentStore.subscribe(
+  (state) => state.workarea,
+  (workarea) => {
+    const { engrave_dpi } = useDocumentStore.getState();
+    const regulatedDpi = regulateEngraveDpiOption(workarea, engrave_dpi);
+
+    if (regulatedDpi !== engrave_dpi) useDocumentStore.getState().set('engrave_dpi', regulatedDpi);
+  },
+);

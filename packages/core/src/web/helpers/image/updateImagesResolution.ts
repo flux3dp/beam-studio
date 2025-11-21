@@ -17,7 +17,7 @@ const updateImagesResolution = async (): Promise<() => void> => {
   const allLayers = getAllLayers();
   const { image_downsampling: isImagesDownSamplingEnabled } = useGlobalPreferenceStore.getState();
   const { engrave_dpi: engraveDpi } = useDocumentStore.getState();
-  const isHighResolution = engraveDpi === 'high' || engraveDpi === 'ultra';
+  const isHighResolution = ['detail', 'high', 'ultra'].includes(engraveDpi);
 
   const promises: Array<Promise<void>> = [];
   const changedImages: SVGImageElement[] = [];

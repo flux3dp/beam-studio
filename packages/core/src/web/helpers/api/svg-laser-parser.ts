@@ -2,6 +2,8 @@
  * API svg laser parser
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-svg-laser-parser
  */
+import { match } from 'ts-pattern';
+
 import Alert from '@core/app/actions/alert-caller';
 import constant, { dpmm, modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
@@ -10,8 +12,8 @@ import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
+import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea, regulateEngraveDpiOption } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
@@ -849,7 +851,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
         model,
         onProgressing,
       }: {
-        engraveDpi?: string;
+        engraveDpi?: EngraveDpiOption;
         forceArgString?: string;
         model: WorkAreaModel;
         onProgressing?: (data: BackendProgressData) => void;
@@ -926,19 +928,23 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
           args.push('-model', model);
 
-          if (typeof engraveDpi === 'number') {
-            args.push(`-dpi ${engraveDpi}`);
-          } else {
-            const dpiArg =
-              {
-                high: '-hdpi',
-                low: '-ldpi',
-                medium: '-mdpi',
-                ultra: '-udpi',
-              }[engraveDpi] || '-mdpi';
+          const regulatedDpi = regulateEngraveDpiOption(model, engraveDpi);
+          const dpmm = {
+            detailed: 40,
+            high: 20,
+            low: 5,
+            medium: 10,
+            ultra: 80,
+          }[regulatedDpi];
 
-            args.push(dpiArg);
-          }
+          args.push(`-dpmm ${dpmm}`);
+
+          match(regulatedDpi)
+            .with('low', () => args.push('-ldpi'))
+            .with('medium', () => args.push('-mdpi'))
+            .with('high', () => args.push('-hdpi'))
+            .with('detailed', () => args.push('-udpi'))
+            .otherwise(() => {});
 
           ws.send(args.join(' '));
         };

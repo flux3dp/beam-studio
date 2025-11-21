@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: '열린 바닥',
       current_position: '현재 위치',
+      detailed: '상세',
       disable: '비활성화',
       document_settings: '문서 설정',
       door_protect: '도어 보호',

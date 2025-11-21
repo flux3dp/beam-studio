@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Ανοιχτό κάτω μέρος',
       current_position: 'Τρέχουσα Θέση',
+      detailed: 'Λεπτομερής',
       disable: 'Απενεργοποίηση',
       document_settings: 'Ρυθμίσεις εγγράφου',
       door_protect: 'Προστασία πόρτας',

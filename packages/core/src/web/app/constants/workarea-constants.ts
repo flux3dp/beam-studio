@@ -7,6 +7,10 @@ import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
 import { fullColorHeadModules, LayerModule, type LayerModuleType } from './layer-module/layer-modules';
 
+export type EngraveDpiOption = 'detailed' | 'high' | 'low' | 'medium' | 'ultra';
+
+export const defaultEngraveDpiOptions: EngraveDpiOption[] = ['low', 'medium', 'high', 'detailed'];
+
 export type WorkAreaLabel =
   | 'Ador'
   | 'Beambox'
@@ -58,6 +62,7 @@ export interface WorkArea {
   dimensionCustomizable?: boolean;
   // extra displayHeight for modules
   displayHeight?: number; // mm
+  engraveDpiOptions?: EngraveDpiOption[];
   height: number; // mm
   label: WorkAreaLabel;
   maxSpeed: number; // mm/s
@@ -78,6 +83,7 @@ const hexaRfWorkAreaInfo: WorkArea = {
   autoFocusOffset: [31.13, 1.2, 6.5],
   autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
   cameraCenter: [370, 180],
+  engraveDpiOptions: ['low', 'medium', 'high', 'detailed', 'ultra'],
   height: 410,
   label: 'HEXA RF',
   maxSpeed: 2000,
@@ -279,6 +285,17 @@ export const getSupportedModules = (
   return excludedModules.length
     ? supportedModules.filter((module) => !excludedModules.includes(module))
     : supportedModules;
+};
+
+export const regulateEngraveDpiOption = (model: WorkAreaModel, dpiOption: EngraveDpiOption): EngraveDpiOption => {
+  const { engraveDpiOptions = defaultEngraveDpiOptions } = workareaConstants[model] ?? {};
+
+  if (engraveDpiOptions.includes(dpiOption)) {
+    return dpiOption;
+  }
+
+  // Return the highest available dpi option
+  return engraveDpiOptions[engraveDpiOptions.length - 1];
 };
 
 export default workareaConstants;
