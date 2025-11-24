@@ -4,7 +4,7 @@ import { CheckOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 
-import { CATEGORIES, getCategoryForOption } from '../utils/categories';
+import { CATEGORIES, getCategoryForOption, getStylesForCategory } from '../utils/categories';
 import type { Style } from '../utils/categories';
 import type { StylePresetKey } from '../utils/stylePresets';
 
@@ -28,17 +28,19 @@ const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onCl
     </div>
     <div className={styles['option-info']}>
       <h4 className={styles['option-name']}>{option.displayName}</h4>
-      <span className={styles['mode-badge']}>{option.mode === 'edit' ? 'Edit Mode' : 'Text to Image Mode'}</span>
     </div>
   </div>
 );
 
 const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
-  const [selectedCategory, setSelectedCategory] = useState(
-    () => getCategoryForOption(currentStyle)?.id || 'text-to-image',
-  );
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    const primaryCategory = getCategoryForOption(currentStyle);
+
+    return primaryCategory?.id || CATEGORIES[0]?.id || 'customize';
+  });
   const [selectedStyle, setSelectedStyle] = useState(currentStyle);
   const currentCategory = CATEGORIES.find((c) => c.id === selectedCategory);
+  const currentCategoryStyles = getStylesForCategory(selectedCategory);
 
   const handleConfirm = () => {
     if (selectedStyle) {
@@ -85,7 +87,7 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
         <div className={styles.content}>
           <h3 className={styles['content-title']}>{currentCategory?.displayName}</h3>
           <div className={styles['options-grid']}>
-            {currentCategory?.styles.map((option) => (
+            {currentCategoryStyles.map((option) => (
               <OptionCard
                 isSelected={selectedStyle === option.id}
                 key={option.id}

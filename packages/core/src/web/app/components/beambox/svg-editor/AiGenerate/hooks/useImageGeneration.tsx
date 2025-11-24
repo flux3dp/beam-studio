@@ -2,7 +2,7 @@ import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } fro
 import { getInfo } from '@core/helpers/api/flux-id';
 import type { IUser } from '@core/interfaces/IUser';
 
-import type { GenerationMode, ImageDimensions } from '../types';
+import type { ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { objectToSnakeCase } from '../utils/caseConversion';
 import { getImageResolution, getImageSizeOption } from '../utils/dimensions';
@@ -11,7 +11,6 @@ interface UseImageGenerationParams {
   count: number;
   currentUser: IUser | null;
   dimensions: ImageDimensions;
-  mode: GenerationMode;
   seed?: number;
   stylePreset: null | string;
 }
@@ -28,31 +27,23 @@ export const useImageGeneration = ({
   count,
   currentUser,
   dimensions,
-  mode,
   seed,
   stylePreset,
 }: UseImageGenerationParams): UseImageGenerationReturn => {
-  const { addPendingHistoryItem, clearGenerationResults, inputFields, selectedImageInputs, updateHistoryItem } =
+  const { addPendingHistoryItem, clearGenerationResults, imageInputs, inputFields, updateHistoryItem } =
     useAiGenerateStore();
 
   const handleGenerate = async () => {
     // Check prompt
     const description = inputFields.description || '';
 
-    if (mode === 'text-to-image' && !description.trim()) {
-      useAiGenerateStore.setState({ errorMessage: 'Please provide a prompt description' });
+    if (!description.trim() && imageInputs.length === 0) {
+      useAiGenerateStore.setState({ errorMessage: 'Please provide a prompt description or upload at least one image' });
 
       return;
     }
 
-    // Edit mode requirements
-    if (mode === 'edit' && selectedImageInputs.length === 0) {
-      useAiGenerateStore.setState({ errorMessage: 'Please upload at least one image for editing' });
-
-      return;
-    }
-
-    if (mode === 'edit' && selectedImageInputs.length > 10) {
+    if (imageInputs.length > 10) {
       useAiGenerateStore.setState({ errorMessage: 'Maximum 10 images allowed' });
 
       return;
@@ -75,16 +66,16 @@ export const useImageGeneration = ({
     // Create task based on mode
     let createResponse: { error: string } | { uuid: string };
 
-    if (mode === 'edit') {
+    if (imageInputs.length > 0) {
       // Convert ImageInput array to File | string array for API
-      const imageInputsForApi = selectedImageInputs.map((input) => (input.type === 'file' ? input.file : input.url));
+      const imageInputsForApi = imageInputs.map((input) => (input.type === 'file' ? input.file : input.url));
 
       createResponse = await createImageEditTask({
         image_inputs: imageInputsForApi,
         image_resolution: getImageResolution(dimensions),
         image_size: getImageSizeOption(dimensions),
         max_images: count,
-        prompt_data: { inputs, style: stylePreset || 'edit-plain' },
+        prompt_data: { inputs, style: stylePreset || 'plain' },
         seed,
       });
     } else {
@@ -92,7 +83,7 @@ export const useImageGeneration = ({
         image_resolution: getImageResolution(dimensions),
         image_size: getImageSizeOption(dimensions),
         max_images: count,
-        prompt_data: { inputs, style: stylePreset || 'text-to-image-plain' },
+        prompt_data: { inputs, style: stylePreset || 'plain' },
         seed,
       });
     }
@@ -118,8 +109,7 @@ export const useImageGeneration = ({
     addPendingHistoryItem({
       count,
       dimensions,
-      imageInputs: mode === 'edit' ? selectedImageInputs : undefined,
-      mode,
+      imageInputs,
       uuid,
     });
 

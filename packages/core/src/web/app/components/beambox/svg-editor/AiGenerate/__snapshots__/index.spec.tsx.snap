@@ -161,12 +161,30 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
         <h3
           class="section-title"
         >
-          Pattern Description
-          <span
-            class="required"
+          Upload Images
+        </h3>
+        <div
+          data-testid="mock-image-upload-area"
+        >
+          <div
+            data-testid="image-inputs-count"
           >
-             *
-          </span>
+            0
+          </div>
+          <button
+            data-testid="mock-add-image"
+          >
+            Add Image
+          </button>
+        </div>
+      </div>
+      <div
+        class="section"
+      >
+        <h3
+          class="section-title"
+        >
+          Pattern Description
         </h3>
         <div
           class="input-wrapper"
@@ -176,7 +194,7 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="5000"
+              maxlength="2000"
               placeholder="Please describe the logo pattern you would like to create."
               rows="5"
             />
@@ -194,7 +212,7 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
                   >
                     0
                      / 
-                    5000
+                    2000
                   </span>
                   <span
                     aria-label="bulb"
@@ -764,7 +782,7 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
         <h3
           class="section-title"
         >
-          Edit Prompt
+          Pattern Description
         </h3>
         <div
           class="input-wrapper"
@@ -774,8 +792,8 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="5000"
-              placeholder="Please describe how you would like to edit the images."
+              maxlength="2000"
+              placeholder="Please describe the logo pattern you would like to create."
               rows="5"
             />
             <span
@@ -792,7 +810,7 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
                   >
                     0
                      / 
-                    5000
+                    2000
                   </span>
                   <span
                     aria-label="bulb"
@@ -1333,12 +1351,30 @@ exports[`test AiGenerate Rendering Tests snapshot: generating state 1`] = `
         <h3
           class="section-title"
         >
-          Pattern Description
-          <span
-            class="required"
+          Upload Images
+        </h3>
+        <div
+          data-testid="mock-image-upload-area"
+        >
+          <div
+            data-testid="image-inputs-count"
           >
-             *
-          </span>
+            0
+          </div>
+          <button
+            data-testid="mock-add-image"
+          >
+            Add Image
+          </button>
+        </div>
+      </div>
+      <div
+        class="section"
+      >
+        <h3
+          class="section-title"
+        >
+          Pattern Description
         </h3>
         <div
           class="input-wrapper"
@@ -1348,7 +1384,7 @@ exports[`test AiGenerate Rendering Tests snapshot: generating state 1`] = `
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="5000"
+              maxlength="2000"
               placeholder="Please describe the logo pattern you would like to create."
               rows="5"
             >
@@ -1368,7 +1404,7 @@ exports[`test AiGenerate Rendering Tests snapshot: generating state 1`] = `
                   >
                     11
                      / 
-                    5000
+                    2000
                   </span>
                   <span
                     aria-label="bulb"
@@ -1909,12 +1945,30 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
         <h3
           class="section-title"
         >
-          Pattern Description
-          <span
-            class="required"
+          Upload Images
+        </h3>
+        <div
+          data-testid="mock-image-upload-area"
+        >
+          <div
+            data-testid="image-inputs-count"
           >
-             *
-          </span>
+            0
+          </div>
+          <button
+            data-testid="mock-add-image"
+          >
+            Add Image
+          </button>
+        </div>
+      </div>
+      <div
+        class="section"
+      >
+        <h3
+          class="section-title"
+        >
+          Pattern Description
         </h3>
         <div
           class="input-wrapper"
@@ -1924,7 +1978,7 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
           >
             <textarea
               class="ant-input css-dev-only-do-not-override-hash"
-              maxlength="5000"
+              maxlength="2000"
               placeholder="Please describe the logo pattern you would like to create."
               rows="5"
             />
@@ -1942,7 +1996,7 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
                   >
                     0
                      / 
-                    5000
+                    2000
                   </span>
                   <span
                     aria-label="bulb"

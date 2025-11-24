@@ -68,10 +68,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
       </div>
 
       <div className={styles.content}>
-        <div className={styles.header}>
-          {renderStatusBadge()}
-          <span className={styles['model-badge']}>{item.model_type === 'edit' ? '🖼️ Edit' : '✨ Text-to-Image'}</span>
-        </div>
+        <div className={styles.header}>{renderStatusBadge()}</div>
 
         <div className={styles.metadata}>
           <span className={styles['metadata-item']}>

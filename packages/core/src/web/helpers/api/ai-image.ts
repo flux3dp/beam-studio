@@ -23,7 +23,7 @@ export type ImageResolution = '1K' | '2K' | '4K';
 
 export interface PromptData {
   inputs: Record<string, string>; // User inputs: { description: '...', text_to_display: '...' }
-  style: string; // Style preset key: 'logo-cute', 'edit-plain', etc.
+  style: string; // Style preset key: 'logo-cute', 'plain', etc.
 }
 
 export interface BaseRequest {
@@ -53,9 +53,8 @@ export interface AiImageGenerationData {
   fail_msg: null | string;
   image_resolution: ImageResolution;
   image_size: ImageSizeOption;
-  image_urls?: string[]; // Input images for edit mode (S3 URLs)
+  image_urls: string[]; // Input images for edit mode (S3 URLs)
   max_images: number;
-  model_type: string;
   prompt_data: PromptData; // Structured prompt data from backend
   result_urls: null | string[];
   seed: null | number;

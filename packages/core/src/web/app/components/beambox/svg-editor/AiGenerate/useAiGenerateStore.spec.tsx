@@ -25,12 +25,12 @@ describe('useAiGenerateStore', () => {
       historyItems: [],
       historyLoading: false,
       historyOffset: 0,
+      imageInputs: [],
       inputFields: {},
       isAiGenerateShown: false,
       isLaserFriendly: false,
-      selectedImageInputs: [],
       showHistory: false,
-      style: 'text-to-image-plain',
+      style: 'plain',
     });
 
     jest.clearAllMocks();
@@ -47,8 +47,8 @@ describe('useAiGenerateStore', () => {
       expect(state.generationStatus).toBe('idle');
       expect(state.inputFields).toEqual({});
       expect(state.isLaserFriendly).toBe(false);
-      expect(state.selectedImageInputs).toEqual([]);
-      expect(state.style).toBe('text-to-image-plain');
+      expect(state.imageInputs).toEqual([]);
+      expect(state.style).toBe('plain');
     });
   });
 
@@ -64,8 +64,8 @@ describe('useAiGenerateStore', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.selectedImageInputs).toHaveLength(1);
-      expect(state.selectedImageInputs[0]).toEqual(input);
+      expect(state.imageInputs).toHaveLength(1);
+      expect(state.imageInputs[0]).toEqual(input);
     });
 
     it('should add a url-type image input', () => {
@@ -79,8 +79,8 @@ describe('useAiGenerateStore', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.selectedImageInputs).toHaveLength(1);
-      expect(state.selectedImageInputs[0]).toEqual(input);
+      expect(state.imageInputs).toHaveLength(1);
+      expect(state.imageInputs[0]).toEqual(input);
     });
 
     it('should add multiple image inputs', () => {
@@ -92,9 +92,9 @@ describe('useAiGenerateStore', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.selectedImageInputs).toHaveLength(2);
-      expect(state.selectedImageInputs[0]).toEqual(input1);
-      expect(state.selectedImageInputs[1]).toEqual(input2);
+      expect(state.imageInputs).toHaveLength(2);
+      expect(state.imageInputs[0]).toEqual(input1);
+      expect(state.imageInputs[1]).toEqual(input2);
     });
   });
 
@@ -103,25 +103,25 @@ describe('useAiGenerateStore', () => {
       const input1: ImageInput = { file: new File([''], 'test1.jpg'), id: 'test-1', type: 'file' };
       const input2: ImageInput = { file: new File([''], 'test2.jpg'), id: 'test-2', type: 'file' };
 
-      useAiGenerateStore.setState({ selectedImageInputs: [input1, input2] });
+      useAiGenerateStore.setState({ imageInputs: [input1, input2] });
       useAiGenerateStore.getState().removeImageInput('test-1');
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.selectedImageInputs).toHaveLength(1);
-      expect(state.selectedImageInputs[0]).toEqual(input2);
+      expect(state.imageInputs).toHaveLength(1);
+      expect(state.imageInputs[0]).toEqual(input2);
     });
 
     it('should handle removing non-existent id', () => {
       const input1: ImageInput = { file: new File([''], 'test1.jpg'), id: 'test-1', type: 'file' };
 
-      useAiGenerateStore.setState({ selectedImageInputs: [input1] });
+      useAiGenerateStore.setState({ imageInputs: [input1] });
       useAiGenerateStore.getState().removeImageInput('non-existent');
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.selectedImageInputs).toHaveLength(1);
-      expect(state.selectedImageInputs[0]).toEqual(input1);
+      expect(state.imageInputs).toHaveLength(1);
+      expect(state.imageInputs[0]).toEqual(input1);
     });
   });
 
@@ -130,10 +130,10 @@ describe('useAiGenerateStore', () => {
       const input1: ImageInput = { file: new File([''], 'test1.jpg'), id: 'test-1', type: 'file' };
       const input2: ImageInput = { file: new File([''], 'test2.jpg'), id: 'test-2', type: 'file' };
 
-      useAiGenerateStore.setState({ selectedImageInputs: [input1, input2] });
+      useAiGenerateStore.setState({ imageInputs: [input1, input2] });
       useAiGenerateStore.getState().clearImageInputs();
 
-      expect(useAiGenerateStore.getState().selectedImageInputs).toEqual([]);
+      expect(useAiGenerateStore.getState().imageInputs).toEqual([]);
     });
   });
 
@@ -172,7 +172,7 @@ describe('useAiGenerateStore', () => {
     it('should preserve valid input fields when changing style', () => {
       useAiGenerateStore.setState({
         inputFields: { description: 'Test description' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       useAiGenerateStore.getState().setStyle('logo-cute');
@@ -189,7 +189,7 @@ describe('useAiGenerateStore', () => {
         style: 'logo-cute',
       });
 
-      useAiGenerateStore.getState().setStyle('text-to-image-plain');
+      useAiGenerateStore.getState().setStyle('plain');
 
       const state = useAiGenerateStore.getState();
 
@@ -198,7 +198,7 @@ describe('useAiGenerateStore', () => {
     });
 
     it('should reset laser-friendly toggle when changing style', () => {
-      useAiGenerateStore.setState({ isLaserFriendly: true, style: 'text-to-image-plain' });
+      useAiGenerateStore.setState({ isLaserFriendly: true, style: 'plain' });
 
       useAiGenerateStore.getState().setStyle('logo-cute');
 
@@ -214,9 +214,9 @@ describe('useAiGenerateStore', () => {
         errorMessage: 'Error',
         generatedImages: ['https://example.com/img.jpg'],
         generationStatus: 'success',
+        imageInputs: [{ file: new File([''], 'test.jpg'), id: 'test-1', type: 'file' }],
         inputFields: { description: 'Test' },
         isLaserFriendly: true,
-        selectedImageInputs: [{ file: new File([''], 'test.jpg'), id: 'test-1', type: 'file' }],
       });
 
       useAiGenerateStore.getState().resetForm();
@@ -230,7 +230,7 @@ describe('useAiGenerateStore', () => {
       expect(state.generationStatus).toBe('idle');
       expect(state.inputFields).toEqual({});
       expect(state.isLaserFriendly).toBe(false);
-      expect(state.selectedImageInputs).toEqual([]);
+      expect(state.imageInputs).toEqual([]);
     });
   });
 
@@ -322,8 +322,7 @@ describe('useAiGenerateStore', () => {
           image_size: 'square_hd',
           image_urls: null,
           max_images: 1,
-          model_type: 'text-to-image',
-          prompt_data: { inputs: { description: 'Test' }, style: 'text-to-image-plain' },
+          prompt_data: { inputs: { description: 'Test' }, style: 'plain' },
           result_urls: ['https://example.com/result.jpg'],
           seed: null,
           state: 'success',
@@ -375,8 +374,7 @@ describe('useAiGenerateStore', () => {
         image_size: 'landscape_16_9',
         image_urls: null,
         max_images: 2,
-        model_type: 'text-to-image',
-        prompt_data: { inputs: { description: 'A cute cat' }, style: 'text-to-image-plain' },
+        prompt_data: { inputs: { description: 'A cute cat' }, style: 'plain' },
         result_urls: ['https://example.com/result.jpg'],
         seed: null,
         state: 'success',
@@ -389,7 +387,7 @@ describe('useAiGenerateStore', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.inputFields.description).toBe('A cute cat');
-      expect(state.style).toBe('text-to-image-plain');
+      expect(state.style).toBe('plain');
       expect(state.dimensions.aspectRatio).toBe('16:9');
       expect(state.dimensions.size).toBe('medium');
       expect(state.count).toBe(2);
@@ -406,8 +404,7 @@ describe('useAiGenerateStore', () => {
         image_size: 'square_hd',
         image_urls: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
         max_images: 1,
-        model_type: 'edit',
-        prompt_data: { inputs: { description: 'Edit this' }, style: 'edit-plain' },
+        prompt_data: { inputs: { description: 'Edit this' }, style: 'plain' },
         result_urls: ['https://example.com/result.jpg'],
         seed: null,
         state: 'success',
@@ -419,9 +416,9 @@ describe('useAiGenerateStore', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.style).toBe('edit-plain');
-      expect(state.selectedImageInputs).toHaveLength(2);
-      expect(state.selectedImageInputs[0].type).toBe('url');
+      expect(state.style).toBe('plain');
+      expect(state.imageInputs).toHaveLength(2);
+      expect(state.imageInputs[0].type).toBe('url');
     });
 
     it('should convert snake_case fields to camelCase', () => {
@@ -434,7 +431,6 @@ describe('useAiGenerateStore', () => {
         image_size: 'square_hd',
         image_urls: null,
         max_images: 1,
-        model_type: 'text-to-image',
         prompt_data: {
           inputs: { description: 'Test', text_to_display: 'MeowWoof' },
           style: 'logo-cute',
@@ -459,13 +455,13 @@ describe('useAiGenerateStore', () => {
     it('should add a pending history item to the beginning', () => {
       useAiGenerateStore.setState({
         inputFields: { description: 'Test' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       useAiGenerateStore.getState().addPendingHistoryItem({
         count: 1,
         dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
-        mode: 'text-to-image',
+        imageInputs: [],
         uuid: 'uuid-new',
       });
 
@@ -488,8 +484,7 @@ describe('useAiGenerateStore', () => {
         image_size: 'square_hd',
         image_urls: null,
         max_images: 1,
-        model_type: 'text-to-image',
-        prompt_data: { inputs: { description: 'Test' }, style: 'text-to-image-plain' },
+        prompt_data: { inputs: { description: 'Test' }, style: 'plain' },
         result_urls: null,
         seed: null,
         state: 'pending',
