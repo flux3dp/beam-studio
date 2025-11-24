@@ -32,6 +32,7 @@ const UnmemorizedAiGenerate = () => {
     errorMessage,
     generatedImages,
     generationStatus,
+    imageInputs: selectedImageInputs,
     inputFields,
     isAiGenerateShown,
     isFixedSeed,
@@ -39,7 +40,6 @@ const UnmemorizedAiGenerate = () => {
     removeImageInput,
     resetForm,
     seed,
-    selectedImageInputs,
     setInputField,
     setState,
     setStyle,
@@ -50,20 +50,11 @@ const UnmemorizedAiGenerate = () => {
     toggleLaserFriendly,
   } = useAiGenerateStore();
 
-  // Compute mode and stylePreset from selectedOption
   const optionConfig = getStyleConfig(style);
-  const mode = optionConfig?.mode || 'text-to-image';
   const stylePreset = optionConfig?.id || null;
 
   // Image generation logic
-  const { handleGenerate } = useImageGeneration({
-    count,
-    currentUser,
-    dimensions,
-    mode,
-    seed,
-    stylePreset,
-  });
+  const { handleGenerate } = useImageGeneration({ count, currentUser, dimensions, seed, stylePreset });
 
   // Subscribe to user update events for real-time credit balance updates
   useEffect(() => {
@@ -179,7 +170,7 @@ const UnmemorizedAiGenerate = () => {
               </Button>
             </div>
 
-            {mode === 'edit' && (
+            {optionConfig.mode.includes('edit') && (
               <div className={styles.section}>
                 <h3 className={styles['section-title']}>Upload Images</h3>
                 <ImageUploadArea imageInputs={selectedImageInputs} onAdd={addImageInput} onRemove={removeImageInput} />
@@ -278,11 +269,7 @@ const UnmemorizedAiGenerate = () => {
               <Button
                 block
                 className={styles['generate-button']}
-                disabled={
-                  !currentUser ||
-                  (mode === 'edit' && (selectedImageInputs.length === 0 || selectedImageInputs.length > 10)) ||
-                  (info?.credit || 0) < 0.06 * count
-                }
+                disabled={!currentUser || (info?.credit || 0) < 0.06 * count || selectedImageInputs.length > 10}
                 onClick={handleGenerate}
                 size="large"
                 type="primary"

@@ -161,10 +161,9 @@ const createMockHistoryItem = (overrides?: Partial<AiImageGenerationData>): AiIm
   image_size: 'square_hd',
   image_urls: null,
   max_images: 1,
-  model_type: 'text-to-image',
   prompt_data: {
     inputs: { description: 'Test prompt' },
-    style: 'text-to-image-plain',
+    style: 'plain',
   },
   result_urls: ['https://example.com/result.jpg'],
   seed: null,
@@ -194,11 +193,11 @@ describe('test AiGenerate', () => {
       historyItems: [],
       historyLoading: false,
       historyOffset: 0,
+      imageInputs: [],
       inputFields: {},
       isAiGenerateShown: false,
-      selectedImageInputs: [],
       showHistory: false,
-      style: 'text-to-image-plain',
+      style: 'plain',
     });
 
     // Default mock implementations
@@ -247,16 +246,8 @@ describe('test AiGenerate', () => {
       expect(queryByTestId('mock-image-history')).toBeInTheDocument();
     });
 
-    test('text-to-image mode: hides ImageUploadArea', () => {
-      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
-
-      const { queryByTestId } = render(<AiGenerate />);
-
-      expect(queryByTestId('mock-image-upload-area')).not.toBeInTheDocument();
-    });
-
     test('edit mode: shows ImageUploadArea', () => {
-      useAiGenerateStore.setState({ style: 'edit-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -337,7 +328,7 @@ describe('test AiGenerate', () => {
     });
 
     test('should hide custom fields for plain-text-to-image mode', () => {
-      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       const { container } = render(<AiGenerate />);
 
@@ -365,8 +356,8 @@ describe('test AiGenerate', () => {
 
     test('snapshot: edit mode with images', () => {
       useAiGenerateStore.setState({
-        selectedImageInputs: [createMockImageInput('file', 'img-1')],
-        style: 'edit-plain',
+        imageInputs: [createMockImageInput('file', 'img-1')],
+        style: 'plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -458,7 +449,7 @@ describe('test AiGenerate', () => {
       fireEvent.click(styleButton!);
 
       expect(mockShowStyleSelectionPanel).toHaveBeenCalledTimes(1);
-      expect(mockShowStyleSelectionPanel).toHaveBeenCalledWith(expect.any(Function), 'text-to-image-plain');
+      expect(mockShowStyleSelectionPanel).toHaveBeenCalledWith(expect.any(Function), 'plain');
     });
 
     test('selecting style updates selectedOption', () => {
@@ -623,16 +614,16 @@ describe('test AiGenerate', () => {
 
   describe('Mode Switching Tests', () => {
     test('plain-text-to-image derives mode as text-to-image', () => {
-      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
       // Mode is text-to-image, so ImageUploadArea should not be visible
-      expect(queryByTestId('mock-image-upload-area')).not.toBeInTheDocument();
+      expect(queryByTestId('mock-image-upload-area')).toBeInTheDocument();
     });
 
     test('plain-edit derives mode as edit', () => {
-      useAiGenerateStore.setState({ style: 'edit-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -645,34 +636,18 @@ describe('test AiGenerate', () => {
 
       const { queryByTestId } = render(<AiGenerate />);
 
-      expect(queryByTestId('mock-image-upload-area')).not.toBeInTheDocument();
-    });
-
-    test('crafty logo derives mode as text-to-image', () => {
-      useAiGenerateStore.setState({ style: 'logo-crafty' });
-
-      const { queryByTestId } = render(<AiGenerate />);
-
-      expect(queryByTestId('mock-image-upload-area')).not.toBeInTheDocument();
-    });
-
-    test('collage logo derives mode as text-to-image', () => {
-      useAiGenerateStore.setState({ style: 'logo-collage' });
-
-      const { queryByTestId } = render(<AiGenerate />);
-
-      expect(queryByTestId('mock-image-upload-area')).not.toBeInTheDocument();
+      expect(queryByTestId('mock-image-upload-area')).toBeInTheDocument();
     });
 
     test('prompt persists when switching from text-to-image to edit', () => {
       useAiGenerateStore.setState({
         inputFields: { description: 'Persistent prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       render(<AiGenerate />);
 
-      useAiGenerateStore.setState({ style: 'edit-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       expect(useAiGenerateStore.getState().inputFields.description).toBe('Persistent prompt');
     });
@@ -680,12 +655,12 @@ describe('test AiGenerate', () => {
     test('dimensions persist when switching modes', () => {
       useAiGenerateStore.setState({
         dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'large' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       render(<AiGenerate />);
 
-      useAiGenerateStore.setState({ style: 'edit-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       const { dimensions } = useAiGenerateStore.getState();
 
@@ -696,32 +671,14 @@ describe('test AiGenerate', () => {
     test('count persists when switching modes', () => {
       useAiGenerateStore.setState({
         count: 4,
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       render(<AiGenerate />);
 
-      useAiGenerateStore.setState({ style: 'edit-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       expect(useAiGenerateStore.getState().count).toBe(4);
-    });
-
-    test('textarea placeholder changes based on mode', () => {
-      // Text-to-image mode
-      useAiGenerateStore.setState({ style: 'text-to-image-plain' });
-
-      const { container, rerender } = render(<AiGenerate />);
-
-      let textarea = container.querySelector('textarea');
-
-      expect(textarea?.placeholder).toContain('logo pattern');
-
-      // Edit mode
-      useAiGenerateStore.setState({ style: 'edit-plain' });
-
-      rerender(<AiGenerate />);
-      textarea = container.querySelector('textarea');
-      expect(textarea?.placeholder).toContain('edit the images');
     });
   });
 
@@ -771,30 +728,13 @@ describe('test AiGenerate', () => {
         expect(generateButton.disabled).toBe(true);
       });
 
-      test('edit mode with 0 images shows error', async () => {
-        useAiGenerateStore.setState({
-          inputFields: { description: 'Test prompt' },
-          selectedImageInputs: [],
-          style: 'edit-plain',
-        });
-
-        const { container } = render(<AiGenerate />);
-
-        const generateButton = Array.from(container.querySelectorAll('button')).find(
-          (btn) => btn.textContent === 'Generate',
-        ) as HTMLButtonElement;
-
-        // Button should be disabled
-        expect(generateButton.disabled).toBe(true);
-      });
-
       test('edit mode with >10 images shows error', async () => {
         const manyImages = Array.from({ length: 11 }, (_, i) => createMockImageInput('file', `img-${i}`));
 
         useAiGenerateStore.setState({
+          imageInputs: manyImages,
           inputFields: { description: 'Test prompt' },
-          selectedImageInputs: manyImages,
-          style: 'edit-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -814,7 +754,7 @@ describe('test AiGenerate', () => {
           count: 1,
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
           inputFields: { description: 'A cute dog' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -832,7 +772,7 @@ describe('test AiGenerate', () => {
             max_images: 1,
             prompt_data: {
               inputs: { description: 'A cute dog' },
-              style: 'text-to-image-plain',
+              style: 'plain',
             },
           });
         });
@@ -873,7 +813,7 @@ describe('test AiGenerate', () => {
       test('sends prompt_data for plain-text-to-image', async () => {
         useAiGenerateStore.setState({
           inputFields: { description: 'Plain text prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -889,7 +829,7 @@ describe('test AiGenerate', () => {
             expect.objectContaining({
               prompt_data: {
                 inputs: { description: 'Plain text prompt' },
-                style: 'text-to-image-plain',
+                style: 'plain',
               },
             }),
           );
@@ -900,7 +840,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'medium' },
           inputFields: { description: 'Test' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -925,7 +865,7 @@ describe('test AiGenerate', () => {
         useAiGenerateStore.setState({
           dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'large' },
           inputFields: { description: 'Test' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -951,9 +891,9 @@ describe('test AiGenerate', () => {
         const fileInput = createMockImageInput('file', 'test-1');
 
         useAiGenerateStore.setState({
+          imageInputs: [fileInput],
           inputFields: { description: 'Edit this image' },
-          selectedImageInputs: [fileInput],
-          style: 'edit-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -973,7 +913,7 @@ describe('test AiGenerate', () => {
           expect(callArgs.image_inputs[0]).toBeInstanceOf(File);
           expect(callArgs.prompt_data).toEqual({
             inputs: { description: 'Edit this image' },
-            style: 'edit-plain',
+            style: 'plain',
           });
         });
       });
@@ -982,9 +922,9 @@ describe('test AiGenerate', () => {
         const urlInput = createMockImageInput('url', 'test-1');
 
         useAiGenerateStore.setState({
+          imageInputs: [urlInput],
           inputFields: { description: 'Edit this image' },
-          selectedImageInputs: [urlInput],
-          style: 'edit-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1011,9 +951,9 @@ describe('test AiGenerate', () => {
         const urlInput = createMockImageInput('url', 'test-2');
 
         useAiGenerateStore.setState({
+          imageInputs: [fileInput, urlInput],
           inputFields: { description: 'Edit these images' },
-          selectedImageInputs: [fileInput, urlInput],
-          style: 'edit-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1042,7 +982,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1063,7 +1003,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1086,7 +1026,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1108,7 +1048,7 @@ describe('test AiGenerate', () => {
       test('calls getInfo to refresh credits after success', async () => {
         useAiGenerateStore.setState({
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1131,7 +1071,7 @@ describe('test AiGenerate', () => {
           errorMessage: 'Old error',
           generatedImages: ['https://example.com/old.jpg'],
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1159,7 +1099,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1186,7 +1126,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1212,7 +1152,7 @@ describe('test AiGenerate', () => {
 
         useAiGenerateStore.setState({
           inputFields: { description: 'Test prompt' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         });
 
         const { container } = render(<AiGenerate />);
@@ -1287,29 +1227,13 @@ describe('test AiGenerate', () => {
       expect(generateButton.disabled).toBe(true);
     });
 
-    test('Generate button disabled in edit mode with 0 images', () => {
-      useAiGenerateStore.setState({
-        inputFields: { description: 'Test' },
-        selectedImageInputs: [],
-        style: 'edit-plain',
-      });
-
-      const { container } = render(<AiGenerate />);
-
-      const generateButton = Array.from(container.querySelectorAll('button')).find(
-        (btn) => btn.textContent === 'Generate',
-      ) as HTMLButtonElement;
-
-      expect(generateButton.disabled).toBe(true);
-    });
-
     test('Generate button disabled in edit mode with >10 images', () => {
       const manyImages = Array.from({ length: 11 }, (_, i) => createMockImageInput('file', `img-${i}`));
 
       useAiGenerateStore.setState({
+        imageInputs: manyImages,
         inputFields: { description: 'Test' },
-        selectedImageInputs: manyImages,
-        style: 'edit-plain',
+        style: 'plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1343,7 +1267,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         inputFields: { description: 'Test prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1367,7 +1291,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         inputFields: { description: 'Test prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1394,7 +1318,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         inputFields: { description: 'Test prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container } = render(<AiGenerate />);
@@ -1610,8 +1534,8 @@ describe('test AiGenerate', () => {
       const imageInputs = [createMockImageInput('file', 'test-1')];
 
       useAiGenerateStore.setState({
-        selectedImageInputs: imageInputs,
-        style: 'edit-plain',
+        imageInputs,
+        style: 'plain',
       });
 
       const { queryByTestId } = render(<AiGenerate />);
@@ -1620,7 +1544,7 @@ describe('test AiGenerate', () => {
     });
 
     test('adding image updates store', () => {
-      useAiGenerateStore.setState({ style: 'edit-plain' });
+      useAiGenerateStore.setState({ style: 'plain' });
 
       const { queryByTestId } = render(<AiGenerate />);
 
@@ -1628,15 +1552,15 @@ describe('test AiGenerate', () => {
 
       fireEvent.click(addButton!);
 
-      expect(useAiGenerateStore.getState().selectedImageInputs).toHaveLength(1);
+      expect(useAiGenerateStore.getState().imageInputs).toHaveLength(1);
     });
 
     test('removing image updates store', () => {
       const imageInput = createMockImageInput('file', 'test-1');
 
       useAiGenerateStore.setState({
-        selectedImageInputs: [imageInput],
-        style: 'edit-plain',
+        imageInputs: [imageInput],
+        style: 'plain',
       });
 
       const { queryByTestId } = render(<AiGenerate />);
@@ -1645,59 +1569,59 @@ describe('test AiGenerate', () => {
 
       fireEvent.click(removeButton!);
 
-      expect(useAiGenerateStore.getState().selectedImageInputs).toHaveLength(0);
+      expect(useAiGenerateStore.getState().imageInputs).toHaveLength(0);
     });
 
     test('supports file-type ImageInput', () => {
       const fileInput = createMockImageInput('file', 'file-1');
 
       useAiGenerateStore.setState({
-        selectedImageInputs: [fileInput],
-        style: 'edit-plain',
+        imageInputs: [fileInput],
+        style: 'plain',
       });
 
       render(<AiGenerate />);
 
-      expect(useAiGenerateStore.getState().selectedImageInputs[0].type).toBe('file');
+      expect(useAiGenerateStore.getState().imageInputs[0].type).toBe('file');
     });
 
     test('supports url-type ImageInput', () => {
       const urlInput = createMockImageInput('url', 'url-1');
 
       useAiGenerateStore.setState({
-        selectedImageInputs: [urlInput],
-        style: 'edit-plain',
+        imageInputs: [urlInput],
+        style: 'plain',
       });
 
       render(<AiGenerate />);
 
-      expect(useAiGenerateStore.getState().selectedImageInputs[0].type).toBe('url');
+      expect(useAiGenerateStore.getState().imageInputs[0].type).toBe('url');
     });
 
     test('renders component with images in edit mode', () => {
       useAiGenerateStore.setState({
-        selectedImageInputs: [createMockImageInput('file', 'test-1')],
-        style: 'edit-plain',
+        imageInputs: [createMockImageInput('file', 'test-1')],
+        style: 'plain',
       });
 
       const { container } = render(<AiGenerate />);
 
       // Verify component renders successfully with images
       expect(container.querySelector('.ai-generate-container')).toBeInTheDocument();
-      expect(useAiGenerateStore.getState().selectedImageInputs).toHaveLength(1);
+      expect(useAiGenerateStore.getState().imageInputs).toHaveLength(1);
     });
 
     test('renders component without images in edit mode', () => {
       useAiGenerateStore.setState({
-        selectedImageInputs: [],
-        style: 'edit-plain',
+        imageInputs: [],
+        style: 'plain',
       });
 
       const { container } = render(<AiGenerate />);
 
       // Verify component renders successfully
       expect(container.querySelector('.ai-generate-container')).toBeInTheDocument();
-      expect(useAiGenerateStore.getState().selectedImageInputs).toHaveLength(0);
+      expect(useAiGenerateStore.getState().imageInputs).toHaveLength(0);
     });
   });
 
@@ -1723,11 +1647,7 @@ describe('test AiGenerate', () => {
         image_resolution: '2K',
         image_size: 'square_hd',
         max_images: 2,
-        model_type: 'text-to-image',
-        prompt_data: {
-          inputs: { description: 'A cute cat' },
-          style: 'text-to-image-plain',
-        },
+        prompt_data: { inputs: { description: 'A cute cat' }, style: 'plain' },
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
@@ -1735,7 +1655,7 @@ describe('test AiGenerate', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.inputFields.description).toBe('A cute cat');
-      expect(state.style).toBe('text-to-image-plain');
+      expect(state.style).toBe('plain');
       expect(state.dimensions.aspectRatio).toBe('1:1');
       expect(state.dimensions.size).toBe('medium');
       expect(state.count).toBe(2);
@@ -1743,7 +1663,6 @@ describe('test AiGenerate', () => {
 
     test('imports styled prompt with structured prompt_data', () => {
       const historyItem = createMockHistoryItem({
-        model_type: 'text-to-image',
         prompt_data: {
           inputs: {
             description: 'A shiba dog',
@@ -1765,10 +1684,9 @@ describe('test AiGenerate', () => {
     test('imports edit mode history with image URLs', () => {
       const historyItem = createMockHistoryItem({
         image_urls: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
-        model_type: 'edit',
         prompt_data: {
           inputs: { description: 'Edit this image' },
-          style: 'edit-plain',
+          style: 'plain',
         },
       });
 
@@ -1776,10 +1694,10 @@ describe('test AiGenerate', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.style).toBe('edit-plain');
-      expect(state.selectedImageInputs).toHaveLength(2);
-      expect(state.selectedImageInputs[0].type).toBe('url');
-      expect(state.selectedImageInputs[0]).toHaveProperty('url', 'https://example.com/img1.jpg');
+      expect(state.style).toBe('plain');
+      expect(state.imageInputs).toHaveLength(2);
+      expect(state.imageInputs[0].type).toBe('url');
+      expect(state.imageInputs[0]).toHaveProperty('url', 'https://example.com/img1.jpg');
     });
 
     test('imports 16:9 landscape dimensions', () => {
@@ -1825,7 +1743,7 @@ describe('test AiGenerate', () => {
       const historyItem = createMockHistoryItem({
         prompt_data: {
           inputs: { description: 'Simple description' },
-          style: 'text-to-image-plain',
+          style: 'plain',
         },
       });
 
@@ -1834,20 +1752,19 @@ describe('test AiGenerate', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.inputFields.description).toBe('Simple description');
-      expect(state.style).toBe('text-to-image-plain');
+      expect(state.style).toBe('plain');
     });
 
     test('handles history item with no image URLs in edit mode', () => {
       const historyItem = createMockHistoryItem({
         image_urls: null,
-        model_type: 'edit',
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.selectedImageInputs).toHaveLength(0);
+      expect(state.imageInputs).toHaveLength(0);
     });
 
     test('restores generated images if available', () => {
@@ -1907,7 +1824,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         inputFields: { description: 'Test prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -1929,7 +1846,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         inputFields: { description: 'Test prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -1953,7 +1870,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         inputFields: { description: 'Test prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -1977,7 +1894,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({
         inputFields: { description: 'Test prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
@@ -2003,7 +1920,7 @@ describe('test AiGenerate', () => {
         generatedImages: ['https://example.com/old.jpg'],
         generationStatus: 'success',
         inputFields: { description: 'New prompt' },
-        style: 'text-to-image-plain',
+        style: 'plain',
       });
 
       const { container, queryByTestId } = render(<AiGenerate />);
