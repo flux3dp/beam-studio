@@ -3,7 +3,7 @@ import { create } from 'zustand';
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 
-import type { GenerationMode, GenerationStatus, ImageDimensions, ImageInput } from './types';
+import type { GenerationStatus, ImageDimensions, ImageInput } from './types';
 import { objectToCamelCase } from './utils/caseConversion';
 import { getStyleConfig } from './utils/categories';
 import {
@@ -29,12 +29,12 @@ interface State {
   historyItems: AiImageGenerationData[];
   historyLoading: boolean;
   historyOffset: number;
+  imageInputs: ImageInput[]; // Unified ordered array
   inputFields: Record<string, string>; // Dynamic input field values
   isAiGenerateShown: boolean;
   isFixedSeed: boolean; // Fixed seed mode toggle
   isLaserFriendly: boolean; // Laser-friendly mode toggle
   seed?: number; // Seed value for generation
-  selectedImageInputs: ImageInput[]; // Unified ordered array
   showHistory: boolean;
   style: StylePresetKey;
 }
@@ -44,8 +44,7 @@ interface Actions {
   addPendingHistoryItem: (params: {
     count: number;
     dimensions: ImageDimensions;
-    imageInputs?: ImageInput[];
-    mode: GenerationMode;
+    imageInputs: ImageInput[];
     uuid: string;
   }) => void;
   clearGenerationResults: () => void;
@@ -70,11 +69,11 @@ const formInitialState = {
   generatedImages: [],
   generationStatus: 'idle' as GenerationStatus,
   generationUuid: null,
+  imageInputs: [],
   inputFields: {},
   isFixedSeed: false,
   isLaserFriendly: false,
   seed: undefined,
-  selectedImageInputs: [],
 };
 
 const initialState: State = {
@@ -87,17 +86,17 @@ const initialState: State = {
   isFixedSeed: false,
   seed: undefined,
   showHistory: false,
-  style: 'text-to-image-plain' as StylePresetKey,
+  style: 'plain' as StylePresetKey,
 };
 
 export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   ...initialState,
   addImageInput: (input) => {
-    set((state) => ({ selectedImageInputs: [...state.selectedImageInputs, input] }));
+    set((state) => ({ imageInputs: [...state.imageInputs, input] }));
   },
   addPendingHistoryItem: (params) => {
     set((state) => {
-      const imageUrls = params.imageInputs?.map((input) => (input.type === 'url' ? input.url : '')).filter(Boolean);
+      const imageUrls = params.imageInputs.map((input) => (input.type === 'url' ? input.url : '')).filter(Boolean);
 
       const newItem: AiImageGenerationData = {
         completed_at: null,
@@ -108,7 +107,6 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
         image_size: getImageSizeOption(params.dimensions),
         image_urls: imageUrls,
         max_images: params.count,
-        model_type: params.mode === 'edit' ? 'edit' : 'text-to-image',
         prompt_data: {
           inputs: state.inputFields, // Get from state
           style: state.style, // Get from state
@@ -127,10 +125,9 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
     set({ errorMessage: null, generatedImages: [], generationStatus: 'idle', generationUuid: null });
   },
   clearImageInputs: () => {
-    set({ selectedImageInputs: [] });
+    set({ imageInputs: [] });
   },
   importFromHistory: (item) => {
-    const mode: GenerationMode = item.model_type === 'text-to-image' ? 'text-to-image' : 'edit';
     const dimensions: ImageDimensions = {
       aspectRatio: getAspectRatioFromImageSize(item.image_size),
       orientation: getOrientationFromImageSize(item.image_size),
@@ -138,9 +135,11 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
     };
 
     const imageInputs: ImageInput[] =
-      mode === 'edit' && item.image_urls
-        ? item.image_urls.map((url, index) => ({ id: `history-${item.uuid}-${index}`, type: 'url' as const, url }))
-        : [];
+      item.image_urls?.map((url, index) => ({
+        id: `history-${item.uuid}-${index}`,
+        type: 'url' as const,
+        url,
+      })) || [];
 
     const inputFields = item.prompt_data?.inputs
       ? (objectToCamelCase(item.prompt_data.inputs) as Record<string, string>)
@@ -151,14 +150,14 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       dimensions,
       generatedImages: item.result_urls || [],
       generationStatus: item.state === 'success' ? 'success' : 'idle',
+      imageInputs,
       inputFields,
-      selectedImageInputs: imageInputs,
       showHistory: false, // Close history panel
-      style: (item.prompt_data?.style as StylePresetKey) || (mode === 'edit' ? 'edit-plain' : 'text-to-image-plain'),
+      style: (item.prompt_data?.style as StylePresetKey) || 'plain',
     });
   },
   loadHistory: async () => {
-    if (get().historyLoading) return; // Use get()
+    if (get().historyLoading) return;
 
     set({ historyError: null, historyLoading: true, historyOffset: 0 });
 
@@ -180,7 +179,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
     }
   },
   removeImageInput: (id) => {
-    set((state) => ({ selectedImageInputs: state.selectedImageInputs.filter((input) => input.id !== id) }));
+    set((state) => ({ imageInputs: state.imageInputs.filter((input) => input.id !== id) }));
   },
   resetForm: () => {
     set({ ...formInitialState });
@@ -193,7 +192,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   },
   setStyle: (style) => {
     set((state) => {
-      const newStyle = style || 'text-to-image-plain';
+      const newStyle = style || 'plain';
       const styleCategoryKey = getStyleConfig(newStyle).id;
       const newFieldKeys = new Set(styleCategoryKey ? getStylePreset(styleCategoryKey).map((field) => field.key) : []);
 

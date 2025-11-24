@@ -19,8 +19,7 @@ export interface InputField {
  * Using const assertion to create a readonly tuple type
  */
 export const STYLE_PRESET_KEYS = [
-  'text-to-image-plain',
-  'edit-plain',
+  'plain',
   'edit-american-2d-cartoon',
   'edit-japanese-anime',
   'edit-photo-to-line',
@@ -53,13 +52,6 @@ const inputFieldOptions: Record<string, InputField> = {
     label: 'Pattern Description',
     maxLength: 2000,
     placeholder: 'Please describe the logo pattern you would like to create.',
-    required: true,
-  },
-  patternDescriptionForEdit: {
-    key: 'description',
-    label: 'Edit Prompt',
-    maxLength: 2000,
-    placeholder: 'Please describe how you would like to edit the images.',
     required: false,
   },
   textToDisplay: {
@@ -76,18 +68,17 @@ const inputFieldOptions: Record<string, InputField> = {
  * Key is part of the structure, eliminating duplication
  */
 const STYLE_PRESETS: Record<StylePresetKey, InputField[]> = {
-  'edit-american-2d-cartoon': [inputFieldOptions.patternDescriptionForEdit],
-  'edit-japanese-anime': [inputFieldOptions.patternDescriptionForEdit],
-  'edit-photo-to-line': [inputFieldOptions.patternDescriptionForEdit],
-  'edit-photo-to-line-outline': [inputFieldOptions.patternDescriptionForEdit],
-  'edit-pixar-3d': [inputFieldOptions.patternDescriptionForEdit],
-  'edit-plain': [inputFieldOptions.patternDescriptionForEdit],
+  'edit-american-2d-cartoon': [inputFieldOptions.patternDescription],
+  'edit-japanese-anime': [inputFieldOptions.patternDescription],
+  'edit-photo-to-line': [inputFieldOptions.patternDescription],
+  'edit-photo-to-line-outline': [inputFieldOptions.patternDescription],
+  'edit-pixar-3d': [inputFieldOptions.patternDescription],
   'logo-chinese-calligraphy': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'logo-collage': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'logo-crafty': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'logo-cute': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
   'logo-neon': [inputFieldOptions.patternDescription, inputFieldOptions.textToDisplay],
-  'text-to-image-plain': [inputFieldOptions.patternDescription],
+  plain: [inputFieldOptions.patternDescription],
 };
 
 /**

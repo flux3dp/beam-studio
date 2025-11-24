@@ -14,8 +14,8 @@ describe('ratioOptions', () => {
 
     it('should have correct additional ratios', () => {
       expect(ALL_RATIOS[3]).toEqual({ aspectRatio: '3:2', displayLabel: '3:2', orientation: 'landscape' });
-      expect(ALL_RATIOS[4]).toEqual({ aspectRatio: '4:3', displayLabel: '3:4', orientation: 'portrait' });
-      expect(ALL_RATIOS[5]).toEqual({ aspectRatio: '3:2', displayLabel: '2:3', orientation: 'portrait' });
+      expect(ALL_RATIOS[4]).toEqual({ aspectRatio: '3:2', displayLabel: '2:3', orientation: 'portrait' });
+      expect(ALL_RATIOS[5]).toEqual({ aspectRatio: '4:3', displayLabel: '3:4', orientation: 'portrait' });
       expect(ALL_RATIOS[6]).toEqual({ aspectRatio: '16:9', displayLabel: '9:16', orientation: 'portrait' });
     });
   });

@@ -4,8 +4,7 @@ describe('stylePresets', () => {
   describe('STYLE_PRESET_KEYS', () => {
     it('should have correct style preset keys', () => {
       expect(STYLE_PRESET_KEYS).toEqual([
-        'text-to-image-plain',
-        'edit-plain',
+        'plain',
         'edit-american-2d-cartoon',
         'edit-japanese-anime',
         'edit-photo-to-line',
@@ -20,13 +19,13 @@ describe('stylePresets', () => {
     });
 
     it('should have 12 style presets', () => {
-      expect(STYLE_PRESET_KEYS).toHaveLength(12);
+      expect(STYLE_PRESET_KEYS).toHaveLength(11);
     });
   });
 
   describe('getStylePreset', () => {
     it('should return input fields for text-to-image-plain', () => {
-      const preset = getStylePreset('text-to-image-plain');
+      const preset = getStylePreset('plain');
 
       expect(preset).toHaveLength(1);
       expect(preset[0].key).toBe('description');
@@ -34,11 +33,11 @@ describe('stylePresets', () => {
     });
 
     it('should return input fields for edit-plain', () => {
-      const preset = getStylePreset('edit-plain');
+      const preset = getStylePreset('plain');
 
       expect(preset).toHaveLength(1);
       expect(preset[0].key).toBe('description');
-      expect(preset[0].label).toBe('Edit Prompt');
+      expect(preset[0].label).toBe('Pattern Description');
     });
 
     it('should return input fields for logo-cute', () => {
@@ -70,7 +69,7 @@ describe('stylePresets', () => {
 
       expect(preset).toHaveLength(1);
       expect(preset[0].key).toBe('description');
-      expect(preset[0].placeholder).toContain('edit the images');
+      expect(preset[0].placeholder).toContain('Please describe the logo pattern you would like to create.');
     });
 
     it('should return empty array for invalid preset key', () => {
@@ -80,23 +79,15 @@ describe('stylePresets', () => {
     });
 
     it('should include required flag in fields', () => {
-      const preset = getStylePreset('text-to-image-plain');
+      const preset = getStylePreset('plain');
 
-      expect(preset[0].required).toBe(true);
+      expect(preset[0].required).toBe(false);
     });
 
     it('should include maxLength in fields', () => {
-      const preset = getStylePreset('text-to-image-plain');
+      const preset = getStylePreset('plain');
 
-      expect(preset[0].maxLength).toBe(5000);
-    });
-
-    it('should have different placeholder for edit vs text-to-image', () => {
-      const textToImagePreset = getStylePreset('text-to-image-plain');
-      const editPreset = getStylePreset('edit-plain');
-
-      expect(textToImagePreset[0].placeholder).toContain('logo pattern');
-      expect(editPreset[0].placeholder).toContain('edit the images');
+      expect(preset[0].maxLength).toBe(2000);
     });
 
     it('should have consistent textToDisplay field across logo styles', () => {
