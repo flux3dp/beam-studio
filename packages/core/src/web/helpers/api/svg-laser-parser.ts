@@ -930,6 +930,16 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
           args.push('-model', model);
 
           const regulatedDpi = regulateEngraveDpiOption(model, engraveDpi);
+
+          // old dpi flags, can be removed after firmware ghost support new -dpmm flag
+          match(regulatedDpi)
+            .with('low', () => args.push('-ldpi'))
+            .with('medium', () => args.push('-mdpi'))
+            .with('high', () => args.push('-hdpi'))
+            // set ultra to old udpi for backward compatibility
+            .with('detailed', 'ultra', () => args.push('-udpi'))
+            .otherwise(() => {});
+
           const dpmm = {
             detailed: hexaRfModelsArray.includes(model) ? 40 : 50,
             high: 20,
@@ -939,13 +949,6 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
           }[regulatedDpi];
 
           args.push(`-dpmm ${dpmm}`);
-
-          match(regulatedDpi)
-            .with('low', () => args.push('-ldpi'))
-            .with('medium', () => args.push('-mdpi'))
-            .with('high', () => args.push('-hdpi'))
-            .with('detailed', () => args.push('-udpi'))
-            .otherwise(() => {});
 
           ws.send(args.join(' '));
         };
