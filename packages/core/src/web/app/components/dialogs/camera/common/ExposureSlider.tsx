@@ -1,34 +1,59 @@
 import type { Dispatch, ReactNode } from 'react';
-import React from 'react';
+import React, { useState } from 'react';
 
-import { Slider, Tooltip } from 'antd';
+import { Slider, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import progressCaller from '@core/app/actions/progress-caller';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { setExposure } from '@core/helpers/device/camera/cameraExposure';
+import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './ExposureSlider.module.scss';
 
 interface Props {
+  autoExposure: boolean | null;
   className?: string;
   exposureSetting: IConfigSetting | null;
   onChanged?: () => void;
   onRetakePicture?: () => void;
+  setAutoExposure: Dispatch<boolean | null>;
   setExposureSetting: Dispatch<IConfigSetting | null>;
 }
 
 const ExposureSlider = ({
+  autoExposure,
   className,
   exposureSetting,
   onChanged,
   onRetakePicture,
+  setAutoExposure,
   setExposureSetting,
 }: Props): ReactNode => {
   const lang = useI18n();
+  const [isSettingAutoExposure, setIsSettingAutoExposure] = useState(false);
+
+  const toggleAutoExposure = async (value: boolean) => {
+    if (isSettingAutoExposure) return;
+
+    try {
+      setIsSettingAutoExposure(true);
+
+      const res = await deviceMaster?.setCameraExposureAuto(value);
+
+      if (res) {
+        setAutoExposure(value);
+        onChanged?.();
+      }
+    } catch (e) {
+      console.error('Failed to set auto exposure', e);
+    } finally {
+      setIsSettingAutoExposure(false);
+    }
+  };
 
   return (
     <div className={classNames(styles.container, className)}>
@@ -40,6 +65,7 @@ const ExposureSlider = ({
             </Tooltip>
             <Slider
               className={styles.slider}
+              disabled={Boolean(autoExposure)}
               max={Math.min(exposureSetting.max, 2000)}
               min={Math.max(exposureSetting.min, 50)}
               onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
@@ -60,6 +86,14 @@ const ExposureSlider = ({
             />
           </div>
           <div className={styles.value}>{exposureSetting.value}</div>
+          {autoExposure !== null && (
+            <div className={styles['switch-container']}>
+              <Switch loading={isSettingAutoExposure} onChange={toggleAutoExposure} value={autoExposure} />
+              <span className={classNames(styles.label, autoExposure ? styles.left : styles.right)}>
+                {autoExposure ? 'A' : 'M'}
+              </span>
+            </div>
+          )}
         </>
       )}
       {onRetakePicture && (

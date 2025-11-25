@@ -1,5 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
+import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
+
 import type { Options } from './useCamera';
 import useCamera from './useCamera';
 
@@ -23,7 +25,8 @@ const useLiveFeed = (opts?: Options) => {
     [img],
   );
 
-  const { exposureSetting, handleTakePicture, setExposureSetting, webCamConnection } = useCamera(handleImg, opts);
+  const { autoExposure, exposureSetting, handleTakePicture, setAutoExposure, setExposureSetting, webCamConnection } =
+    useCamera(handleImg, opts);
 
   const setLiveTimeout = useCallback(() => {
     if (!cameraLive.current || source === 'usb') return;
@@ -39,7 +42,7 @@ const useLiveFeed = (opts?: Options) => {
     }, 1000);
   }, [handleTakePicture, source]);
 
-  useEffect(() => {
+  useDidUpdateEffect(() => {
     if (source !== 'usb') setLiveTimeout();
   }, [img, setLiveTimeout, source]);
 
@@ -67,7 +70,17 @@ const useLiveFeed = (opts?: Options) => {
     setLiveTimeout();
   }, [setLiveTimeout, source, videoElement]);
 
-  return { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting, webCamConnection };
+  return {
+    autoExposure,
+    exposureSetting,
+    handleTakePicture,
+    img,
+    pauseLive,
+    restartLive,
+    setAutoExposure,
+    setExposureSetting,
+    webCamConnection,
+  };
 };
 
 export default useLiveFeed;

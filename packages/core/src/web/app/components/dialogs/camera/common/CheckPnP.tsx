@@ -69,7 +69,10 @@ const CheckPnP = ({
     },
     [dh, grid, params],
   );
-  const { exposureSetting, handleTakePicture, setExposureSetting } = useCamera(handleImg, cameraOptions);
+  const { autoExposure, exposureSetting, handleTakePicture, setAutoExposure, setExposureSetting } = useCamera(
+    handleImg,
+    cameraOptions,
+  );
   const displayPoints = useMemo(() => {
     const dpmm = 5;
     const [x0] = grid.x;
@@ -138,9 +141,11 @@ const CheckPnP = ({
         </Col>
         <Col span={24}>
           <ExposureSlider
+            autoExposure={autoExposure}
             exposureSetting={exposureSetting}
             onChanged={handleTakePicture}
             onRetakePicture={handleTakePicture}
+            setAutoExposure={setAutoExposure}
             setExposureSetting={setExposureSetting}
           />
         </Col>

@@ -23,8 +23,29 @@
   }
 
   .value {
-    width: 32px;
+    width: 36px;
     text-align: center;
+  }
+
+  .switch-container {
+    display: inline-flex;
+    position: relative;
+
+    .label {
+      position: absolute;
+      color: #ffffff;
+      line-height: 22px;
+      font-weight: bold;
+      pointer-events: none;
+
+      &.left {
+        left: 8px;
+      }
+
+      &.right {
+        right: 8px;
+      }
+    }
   }
 
   .retake {

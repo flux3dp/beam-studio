@@ -179,8 +179,10 @@ const SolvePnP = ({
   );
 
   const {
+    autoExposure,
     exposureSetting,
     handleTakePicture: takePicture,
+    setAutoExposure,
     setExposureSetting,
   } = useCamera<HandleImgOpts>(handleImg, {
     firstImageArgs: { shouldFindCorners: !initialPoints },
@@ -481,10 +483,12 @@ const SolvePnP = ({
           )}
         </div>
         <ExposureSlider
+          autoExposure={autoExposure}
           className={styles.exposure}
           exposureSetting={exposureSetting}
           onChanged={() => handleTakePicture({ handleImgOpts: { shouldFindCorners: false } })}
           onRetakePicture={handleTakePicture}
+          setAutoExposure={setAutoExposure}
           setExposureSetting={setExposureSetting}
         />
       </div>
