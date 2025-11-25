@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import useCamera from './useCamera';
 
@@ -19,10 +19,16 @@ jest.mock('@core/helpers/device/camera/cameraExposure', () => ({
 const mockTakeOnePicture = jest.fn();
 const mockConnectCamera = jest.fn();
 const mockDisconnectCamera = jest.fn();
+const mockGetCurrentDevice = jest.fn();
+const mockGetCameraExposureAuto = jest.fn();
 
 jest.mock('@core/helpers/device-master', () => ({
   connectCamera: (...args) => mockConnectCamera(...args),
+  get currentDevice() {
+    return mockGetCurrentDevice();
+  },
   disconnectCamera: (...args) => mockDisconnectCamera(...args),
+  getCameraExposureAuto: (...args) => mockGetCameraExposureAuto(...args),
   takeOnePicture: (...args) => mockTakeOnePicture(...args),
 }));
 
@@ -34,19 +40,22 @@ jest.mock('@core/app/actions/progress-caller', () => ({
   popById: (...args) => mockPopById(...args),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    calibration: {
-      taking_picture: 'taking_picture',
-    },
-  },
+const mockMeetRequirement = jest.fn();
+
+jest.mock('@core/helpers/version-checker', () => () => ({
+  meetRequirement: (...reqArgs) => mockMeetRequirement(...reqArgs),
+}));
+
+jest.mock('@core/app/actions/beambox/constant', () => ({
+  supportCameraAutoExposureModels: ['fbb2', 'fhx2rf4'],
 }));
 
 const MockComponent = ({ handleImg }: { handleImg: (blob: Blob) => boolean }) => {
-  const { exposureSetting, handleTakePicture } = useCamera(handleImg);
+  const { autoExposure, exposureSetting, handleTakePicture } = useCamera(handleImg);
 
   return (
     <div>
+      <p>autoExposure: {JSON.stringify(autoExposure)}</p>
       <p>exposureSetting: {JSON.stringify(exposureSetting)}</p>
       <button onClick={() => handleTakePicture()} type="button">
         Take Picture
@@ -56,6 +65,7 @@ const MockComponent = ({ handleImg }: { handleImg: (blob: Blob) => boolean }) =>
 };
 
 const mockConsoleLog = jest.fn();
+const mockConsoleError = jest.fn();
 
 const mockHandleImg = jest.fn();
 
@@ -63,6 +73,8 @@ describe('test useCamera', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     console.log = mockConsoleLog;
+    console.error = mockConsoleError;
+    mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb1', version: '1.0.0' } });
   });
 
   test('init setup', async () => {
@@ -78,7 +90,7 @@ describe('test useCamera', () => {
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(2);
     expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
       id: 'use-camera',
-      message: 'taking_picture',
+      message: 'Taking Picture...',
     });
     expect(mockPopById).toHaveBeenCalledTimes(2);
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
@@ -105,7 +117,7 @@ describe('test useCamera', () => {
     expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
     expect(mockOpenNonstopProgress).toHaveBeenCalledWith({
       id: 'use-camera',
-      message: 'taking_picture',
+      message: 'Taking Picture...',
     });
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(1);
     expect(mockHandleImg).toHaveBeenCalledTimes(1);
@@ -161,5 +173,80 @@ describe('test useCamera', () => {
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(3);
     expect(mockHandleImg).toHaveBeenCalledTimes(3);
     expect(mockPopUpError).not.toBeCalled();
+  });
+
+  describe('getAutoExposure', () => {
+    it('should get auto exposure as true', async () => {
+      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fhx2rf4', version: '1.0.0' } });
+      mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
+      mockGetCameraExposureAuto.mockResolvedValue({ data: true, success: true });
+      mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
+      mockHandleImg.mockReturnValue(true);
+
+      const { container } = render(<MockComponent handleImg={mockHandleImg} />);
+
+      await new Promise((resolve) => setTimeout(resolve, 0));
+      expect(mockGetCameraExposureAuto).toHaveBeenCalledTimes(1);
+      expect(container.textContent).toContain('autoExposure: true');
+    });
+
+    it('should get auto exposure as false', async () => {
+      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fhx2rf4', version: '1.0.0' } });
+      mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
+      mockGetCameraExposureAuto.mockResolvedValue({ data: false, success: true });
+      mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
+      mockHandleImg.mockReturnValue(true);
+
+      const { container } = render(<MockComponent handleImg={mockHandleImg} />);
+
+      await waitFor(() => {
+        expect(mockGetCameraExposureAuto).toHaveBeenCalledTimes(1);
+      });
+      expect(container.textContent).toContain('autoExposure: false');
+    });
+
+    it('should not get auto exposure for unsupported model', async () => {
+      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb1', version: '1.0.0' } });
+      mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
+      mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
+      mockHandleImg.mockReturnValue(true);
+
+      const { container } = render(<MockComponent handleImg={mockHandleImg} />);
+
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(mockGetCameraExposureAuto).not.toHaveBeenCalled();
+      expect(container.textContent).toContain('autoExposure: null');
+    });
+
+    it('should get auto exposure for fbb2 model with valid version', async () => {
+      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2', version: '2.0.0' } });
+      mockMeetRequirement.mockReturnValue(true);
+      mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
+      mockGetCameraExposureAuto.mockResolvedValue({ data: true, success: true });
+      mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
+      mockHandleImg.mockReturnValue(true);
+
+      const { container } = render(<MockComponent handleImg={mockHandleImg} />);
+
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(mockMeetRequirement).toHaveBeenCalledWith('BB2_AUTO_EXPOSURE');
+      expect(mockGetCameraExposureAuto).toHaveBeenCalledTimes(1);
+      expect(container.textContent).toContain('autoExposure: true');
+    });
+
+    it('should not get auto exposure for fbb2 model with invalid version', async () => {
+      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2', version: '1.0.0' } });
+      mockMeetRequirement.mockReturnValue(false);
+      mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
+      mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
+      mockHandleImg.mockReturnValue(true);
+
+      const { container } = render(<MockComponent handleImg={mockHandleImg} />);
+
+      await new Promise((resolve) => setTimeout(resolve));
+      expect(mockMeetRequirement).toHaveBeenCalledWith('BB2_AUTO_EXPOSURE');
+      expect(mockGetCameraExposureAuto).not.toHaveBeenCalled();
+      expect(container.textContent).toContain('autoExposure: null');
+    });
   });
 });
