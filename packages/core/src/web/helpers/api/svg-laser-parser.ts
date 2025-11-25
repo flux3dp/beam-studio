@@ -5,7 +5,7 @@
 import { match } from 'ts-pattern';
 
 import Alert from '@core/app/actions/alert-caller';
-import constant, { dpmm, modelsWithModules } from '@core/app/actions/beambox/constant';
+import constant, { dpmm, hexaRfModelsArray, modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
@@ -931,7 +931,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
           const regulatedDpi = regulateEngraveDpiOption(model, engraveDpi);
           const dpmm = {
-            detailed: 40,
+            detailed: hexaRfModelsArray.includes(model) ? 40 : 50,
             high: 20,
             low: 5,
             medium: 10,
