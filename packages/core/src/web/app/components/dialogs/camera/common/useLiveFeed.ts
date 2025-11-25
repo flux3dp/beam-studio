@@ -1,13 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 
-import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
-
 import type { Options } from './useCamera';
 import useCamera from './useCamera';
 
 const useLiveFeed = (opts?: Options) => {
   const [img, setImg] = useState<null | { blob: Blob; url: string }>(null);
   const cameraLive = useRef(true);
+  const isTakingPicture = useRef(false);
   const liveTimeout = useRef<NodeJS.Timeout | undefined>(undefined);
   const { source = 'wifi', videoElement } = opts || {};
   const handleImg = useCallback((imgBlob: Blob) => {
@@ -36,13 +35,19 @@ const useLiveFeed = (opts?: Options) => {
     liveTimeout.current = setTimeout(async () => {
       liveTimeout.current = undefined;
 
+      if (isTakingPicture.current) return;
+
+      isTakingPicture.current = true;
+
       const res = await handleTakePicture({ silent: true });
+
+      isTakingPicture.current = false;
 
       if (!res) setLiveTimeout();
     }, 1000);
   }, [handleTakePicture, source]);
 
-  useDidUpdateEffect(() => {
+  useEffect(() => {
     if (source !== 'usb') setLiveTimeout();
   }, [img, setLiveTimeout, source]);
 
