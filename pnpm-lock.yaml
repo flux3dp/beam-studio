@@ -482,6 +482,9 @@ importers:
       '@szhsin/react-menu':
         specifier: ^1.10.1
         version: 1.11.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
+      '@tanstack/react-query':
+        specifier: ^5.90.10
+        version: 5.90.10(react@18.3.1)
       antd:
         specifier: 5.23.2
         version: 5.23.2(luxon@3.6.1)(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
@@ -621,6 +624,9 @@ importers:
         specifier: ^5.0.3
         version: 5.0.5(@types/react@18.3.23)(react@18.3.1)(use-sync-external-store@1.5.0(react@18.3.1))
     devDependencies:
+      '@tanstack/react-query-devtools':
+        specifier: ^5.91.0
+        version: 5.91.0(@tanstack/react-query@5.90.10(react@18.3.1))(react@18.3.1)
       '@testing-library/jest-dom':
         specifier: ^6.1.6
         version: 6.6.3
@@ -3167,6 +3173,23 @@ packages:
   '@szmarczak/http-timer@5.0.1':
     resolution: {integrity: sha512-+PmQX0PiAYPMeVYe237LJAYvOMYW1j2rH5YROyS3b4CTVJum34HfRvKvAzozHAQG0TnHNdUfY9nCeUyRAs//cw==}
     engines: {node: '>=14.16'}
+
+  '@tanstack/query-core@5.90.10':
+    resolution: {integrity: sha512-EhZVFu9rl7GfRNuJLJ3Y7wtbTnENsvzp+YpcAV7kCYiXni1v8qZh++lpw4ch4rrwC0u/EZRnBHIehzCGzwXDSQ==}
+
+  '@tanstack/query-devtools@5.91.0':
+    resolution: {integrity: sha512-uNWkqWTiIKCv8Iaahb7bftmDaZVkBetB+l+OQhQeCEZAedyqxw2eyaRUc8sAQ2LzD843tVdYL6bzOtRWJHJSbQ==}
+
+  '@tanstack/react-query-devtools@5.91.0':
+    resolution: {integrity: sha512-s7g8Zn8HN05HNe22n/KdNm8wXaRbkcsVkqpkdYIQuCfjVmEUoTQqtJsN2iZtgd9CU36xNS38trWIofxzyW5vbQ==}
+    peerDependencies:
+      '@tanstack/react-query': ^5.90.10
+      react: ^18 || ^19
+
+  '@tanstack/react-query@5.90.10':
+    resolution: {integrity: sha512-BKLss9Y8PQ9IUjPYQiv3/Zmlx92uxffUOX8ZZNoQlCIZBJPT5M+GOMQj7xislvVQ6l1BstBjcX0XB/aHfFYVNw==}
+    peerDependencies:
+      react: ^18 || ^19
 
   '@testing-library/cypress@10.0.3':
     resolution: {integrity: sha512-TeZJMCNtiS59cPWalra7LgADuufO5FtbqQBYxuAgdX6ZFAR2D9CtQwAG8VbgvFcchW3K414va/+7P4OkQ80UVg==}
@@ -9666,6 +9689,7 @@ packages:
   source-map@0.8.0-beta.0:
     resolution: {integrity: sha512-2ymg6oRBpebeZi9UUNsgQ89bhx01TcTkmNTGnNO88imTmbSgy4nfujrgVEFKWpMTEGA11EDkTt7mqObTPdigIA==}
     engines: {node: '>= 8'}
+    deprecated: The work that was done in this beta branch won't be included in future versions
 
   sourcemap-codec@1.4.8:
     resolution: {integrity: sha512-9NykojV5Uih4lgo5So5dtw+f0JgJX30KCNI8gwhz2J9A15wD0Ml6tjHKwf6fTSa6fAdVBdZeNOs9eJ71qCk8vA==}
@@ -14649,6 +14673,21 @@ snapshots:
   '@szmarczak/http-timer@5.0.1':
     dependencies:
       defer-to-connect: 2.0.1
+
+  '@tanstack/query-core@5.90.10': {}
+
+  '@tanstack/query-devtools@5.91.0': {}
+
+  '@tanstack/react-query-devtools@5.91.0(@tanstack/react-query@5.90.10(react@18.3.1))(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-devtools': 5.91.0
+      '@tanstack/react-query': 5.90.10(react@18.3.1)
+      react: 18.3.1
+
+  '@tanstack/react-query@5.90.10(react@18.3.1)':
+    dependencies:
+      '@tanstack/query-core': 5.90.10
+      react: 18.3.1
 
   '@testing-library/cypress@10.0.3(cypress@13.6.2)':
     dependencies:
