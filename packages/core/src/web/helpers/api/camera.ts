@@ -324,7 +324,7 @@ class Camera {
       return val;
     });
 
-    const res = await this.sendCommandWithNonBinaryResult(`set_fisheye_param ${data}`);
+    const res = await this.sendCommandWithNonBinaryResult(`set_fisheye_matrix ${data}`);
 
     return res.status === 'ok';
   };
