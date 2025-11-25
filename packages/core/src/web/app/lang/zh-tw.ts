@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/zh-tw/articles/12997377035919',
       borderless_mode: '開蓋模式',
       current_position: '當前位置',
+      detailed: '精細',
       disable: '關閉',
       document_settings: '文件設定',
       door_protect: '安全保護門',
@@ -131,7 +132,7 @@ const lang: ILang = {
       start_from: '開始於',
       start_position: '開始位置',
       start_work_button: '開始工作鈕',
-      ultra: '極高',
+      ultra: '超高精細',
       workarea: '工作範圍',
     },
     elements_panel: {

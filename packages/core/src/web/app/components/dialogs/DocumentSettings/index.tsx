@@ -15,7 +15,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { defaultEngraveDpiOptions, getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -66,8 +66,6 @@ const promarkLaserOptions = [
   { label: 'MOPA - 100W', value: `${LaserType.MOPA}-100` },
 ];
 
-const dpiOptions = ['low', 'medium', 'high', 'ultra'] as const;
-
 interface Props {
   unmount: () => void;
 }
@@ -114,6 +112,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enable4C, setEnable4C] = useState(!!useDocumentStore.getState()['enable-4c']);
   const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
+  const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
+  const dpiOptions = workareaObj.engraveDpiOptions || defaultEngraveDpiOptions;
+
+  useEffect(() => {
+    if (!dpiOptions.includes(engraveDpi)) setEngraveDpi(dpiOptions.at(-1)!);
+  }, [dpiOptions, engraveDpi]);
 
   const isInch = useStorageStore((state) => state.isInch);
   const {
@@ -136,7 +140,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     })),
   );
 
-  const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const hasCurveEngravingData = useHasCurveEngraving();
   const isCurveEngraving = useMemo(() => {
     if (!addOnInfo.curveEngraving) return false;

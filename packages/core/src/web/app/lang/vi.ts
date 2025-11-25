@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Mở đáy',
       current_position: 'Vị Trí Hiện Tại',
+      detailed: 'Chi tiết',
       disable: 'Tắt',
       document_settings: 'Cài đặt tài liệu',
       door_protect: 'Bảo vệ cửa',

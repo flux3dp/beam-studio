@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Avoin pohja',
       current_position: 'Nykyinen Sijainti',
+      detailed: 'Yksityiskohtainen',
       disable: 'Poista käytöstä',
       document_settings: 'Asiakirjan asetukset',
       door_protect: 'Oven suojaus',

@@ -22,8 +22,8 @@ describe('manipulate document setting', () => {
     cy.get('@select').find('.ant-select-selection-item').should('have.text', 'Low (125 DPI)');
     cy.get('@select').find('.ant-select-selection-item').click();
     cy.get('@select').should('have.class', 'ant-select-open');
-    cy.get('.ant-select-item-option-content').contains('Ultra High (1000 DPI)').click({ force: true });
-    cy.get('@select').find('.ant-select-selection-item').should('have.text', 'Ultra High (1000 DPI)');
+    cy.get('.ant-select-item-option-content').contains('Detailed (1000 DPI)').click({ force: true });
+    cy.get('@select').find('.ant-select-selection-item').should('have.text', 'Detailed (1000 DPI)');
   });
 
   it('working area of beamo', () => {

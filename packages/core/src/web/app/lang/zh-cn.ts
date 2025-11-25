@@ -100,6 +100,7 @@ const lang: ILang = {
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: '开盖模式',
       current_position: '当前的位置',
+      detailed: '详细',
       disable: '关闭',
       document_settings: '文件设定',
       door_protect: '安全保护门',

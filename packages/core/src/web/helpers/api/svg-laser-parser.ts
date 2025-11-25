@@ -2,15 +2,17 @@
  * API svg laser parser
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-svg-laser-parser
  */
+import { match } from 'ts-pattern';
+
 import Alert from '@core/app/actions/alert-caller';
-import constant, { dpmm, modelsWithModules } from '@core/app/actions/beambox/constant';
+import constant, { dpmm, hexaRfModelsArray, modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -25,6 +27,7 @@ import isDev from '@core/helpers/is-dev';
 import getJobOrigin, { getRefModule } from '@core/helpers/job-origin';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
+import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import Websocket from '@core/helpers/websocket';
 import fileSystem from '@core/implementations/fileSystem';
 import fs from '@core/implementations/fileSystem';
@@ -849,7 +852,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
         model,
         onProgressing,
       }: {
-        engraveDpi?: string;
+        engraveDpi?: EngraveDpiOption;
         forceArgString?: string;
         model: WorkAreaModel;
         onProgressing?: (data: BackendProgressData) => void;
@@ -926,19 +929,26 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
 
           args.push('-model', model);
 
-          if (typeof engraveDpi === 'number') {
-            args.push(`-dpi ${engraveDpi}`);
-          } else {
-            const dpiArg =
-              {
-                high: '-hdpi',
-                low: '-ldpi',
-                medium: '-mdpi',
-                ultra: '-udpi',
-              }[engraveDpi] || '-mdpi';
+          const regulatedDpi = regulateEngraveDpiOption(model, engraveDpi);
 
-            args.push(dpiArg);
-          }
+          // old dpi flags, can be removed after firmware ghost support new -dpmm flag
+          match(regulatedDpi)
+            .with('low', () => args.push('-ldpi'))
+            .with('medium', () => args.push('-mdpi'))
+            .with('high', () => args.push('-hdpi'))
+            // set ultra to old udpi for backward compatibility
+            .with('detailed', 'ultra', () => args.push('-udpi'))
+            .otherwise(() => {});
+
+          const dpmm = {
+            detailed: hexaRfModelsArray.includes(model) ? 40 : 50,
+            high: 20,
+            low: 5,
+            medium: 10,
+            ultra: 80,
+          }[regulatedDpi];
+
+          args.push(`-dpmm ${dpmm}`);
 
           ws.send(args.join(' '));
         };
