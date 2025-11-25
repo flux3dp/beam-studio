@@ -2,6 +2,7 @@
  * API camera
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-camera(monitoring)
  */
+import PQueue from 'p-queue';
 import type { Observable } from 'rxjs';
 import { EmptyError, from, lastValueFrom, partition, Subject } from 'rxjs';
 import { concatMap, filter, map, take, timeout } from 'rxjs/operators';
@@ -76,8 +77,10 @@ class Camera {
   } = null;
   private rotationAngles?: RotationParameters3DGhostApi;
   private lastRequireCommand = '';
+  private textCommandQueue: PQueue;
 
   constructor(shouldCrop = true, cameraNeedFlip: boolean | null = null) {
+    this.textCommandQueue = new PQueue({ concurrency: 1 });
     this.shouldCrop = shouldCrop;
     this.device = {
       model: null,
@@ -232,7 +235,7 @@ class Camera {
     return res?.toLowerCase().endsWith('ok') || false;
   };
 
-  getExposure = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
+  sendGetExposure = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
     this.ws.send('send_text get_exposure');
 
     const { data, error, success }: { data?: string; error?: string; status: string; success?: boolean } =
@@ -245,7 +248,11 @@ class Camera {
     return { data: value, success };
   };
 
-  setExposure = async (value: number): Promise<boolean> => {
+  getExposure = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
+    return this.textCommandQueue.add(() => this.sendGetExposure());
+  };
+
+  sendSetExposure = async (value: number): Promise<boolean> => {
     this.ws.send(`send_text set_exposure:${value}`);
 
     const { data, success }: { data?: string; error?: string; status: string; success?: boolean } = await lastValueFrom(
@@ -257,6 +264,45 @@ class Camera {
     const res = data?.split(':').at(-1);
 
     return res?.toLowerCase().endsWith('ok') || false;
+  };
+
+  setExposure = async (value: number): Promise<boolean> => {
+    return this.textCommandQueue.add(() => this.sendSetExposure(value));
+  };
+
+  sendGetExposureAuto = async (): Promise<{ data: boolean; success: true } | { data: string; success: false }> => {
+    this.ws.send('send_text get_exposure_auto');
+
+    const { data, error, success }: { data?: string; error?: string; status: string; success?: boolean } =
+      await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+
+    if (!success) return { data: data ?? error ?? 'Unknown Error', success: false };
+
+    const value = Number(data!.split(':').at(-1)) === 3;
+
+    return { data: value, success };
+  };
+
+  getExposureAuto = async (): Promise<{ data: boolean; success: true } | { data: string; success: false }> => {
+    return this.textCommandQueue.add(() => this.sendGetExposureAuto());
+  };
+
+  sendSetExposureAuto = async (value: number): Promise<boolean> => {
+    this.ws.send(`send_text set_exposure_auto:${value}`);
+
+    const { data, success }: { data?: string; error?: string; status: string; success?: boolean } = await lastValueFrom(
+      this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)),
+    );
+
+    if (!success) return false;
+
+    const res = data?.split(':').at(-1);
+
+    return res?.toLowerCase().endsWith('ok') || false;
+  };
+
+  setExposureAuto = async (value: number): Promise<boolean> => {
+    return this.textCommandQueue.add(() => this.sendSetExposureAuto(value));
   };
 
   setFisheyeMatrix = async (mat: FisheyeMatrix, setCrop = false): Promise<boolean> => {

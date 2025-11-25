@@ -1660,6 +1660,14 @@ class DeviceMaster {
     return this.currentDevice?.camera?.setExposure(value) ?? false;
   }
 
+  getCameraExposureAuto() {
+    return this.currentDevice?.camera?.getExposureAuto() ?? null;
+  }
+
+  setCameraExposureAuto(on: boolean) {
+    return this.currentDevice?.camera?.setExposureAuto(on ? 3 : 1) ?? false;
+  }
+
   getDiscoveredDevice<T extends keyof IDeviceInfo>(
     key: T,
     value: IDeviceInfo[T],

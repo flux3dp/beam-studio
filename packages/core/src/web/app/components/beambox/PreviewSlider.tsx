@@ -1,13 +1,15 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
-import { ConfigProvider, Slider, Space, Tooltip } from 'antd';
+import { ConfigProvider, Slider, Space, Switch, Tooltip } from 'antd';
+import classNames from 'classnames';
 
-import constant from '@core/app/actions/beambox/constant';
+import constant, { supportCameraAutoExposureModels } from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getExposureSettings, setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
@@ -21,6 +23,8 @@ const PreviewSlider = (): React.ReactNode => {
   const [showOpacity, setShowOpacity] = useState(false);
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
   const { mode } = useContext(CanvasContext);
+  const [autoExposure, setAutoExposure] = useState<boolean | null>(null);
+  const [isSettingAutoExposure, setIsSettingAutoExposure] = useState(false);
   const [isRawMode, setIsRawMode] = useState(false);
   const isPreviewing = mode === CanvasMode.Preview;
   const { isDrawing, isPreviewMode } = useCameraPreviewStore();
@@ -36,14 +40,38 @@ const PreviewSlider = (): React.ReactNode => {
 
     if (!constant.fcodeV2Models.has(model)) return;
 
-    if (model === 'fbb2' && !vc.meetRequirement('BB2_SEPARATE_EXPOSURE')) return;
+    const getExposure = async () => {
+      if (model === 'fbb2' && !vc.meetRequirement('BB2_SEPARATE_EXPOSURE')) return;
 
-    try {
-      setExposureSetting(await getExposureSettings());
-    } catch (e) {
-      console.error('Failed to get exposure setting', e);
-      setExposureSetting(null);
-    }
+      try {
+        setExposureSetting(await getExposureSettings());
+      } catch (e) {
+        console.error('Failed to get exposure setting', e);
+        setExposureSetting(null);
+      }
+    };
+
+    const getAutoExposure = async () => {
+      if (!supportCameraAutoExposureModels.includes(model)) return;
+
+      if (model === 'fbb2' && !vc.meetRequirement('BB2_AUTO_EXPOSURE')) return;
+
+      try {
+        if (useGlobalPreferenceStore.getState()['use-auto-exposure']) {
+          await deviceMaster.setCameraExposureAuto(true);
+        }
+
+        const res = await deviceMaster.getCameraExposureAuto();
+
+        if (res?.success) setAutoExposure(res.data);
+      } catch (e) {
+        console.error('Failed to get auto exposure', e);
+        setAutoExposure(null);
+      }
+    };
+
+    getExposure();
+    getAutoExposure();
     setIsRawMode(deviceMaster.currentControlMode === 'raw');
   };
 
@@ -66,6 +94,7 @@ const PreviewSlider = (): React.ReactNode => {
   // this is also triggered by UPDATE_CONTEXT event in PreviewModeController.start
   useEffect(() => {
     setExposureSetting(null);
+    setAutoExposure(null);
 
     if (isPreviewing && isPreviewMode) getSetting();
   }, [isPreviewing, isPreviewMode]);
@@ -73,6 +102,23 @@ const PreviewSlider = (): React.ReactNode => {
   if (mode === CanvasMode.PathPreview) {
     return null;
   }
+
+  const toggleAutoExposure = async (value: boolean) => {
+    if (isSettingAutoExposure) return;
+
+    try {
+      useGlobalPreferenceStore.getState().set('use-auto-exposure', undefined);
+      setIsSettingAutoExposure(true);
+
+      const res = await deviceMaster?.setCameraExposureAuto(value);
+
+      if (res) setAutoExposure(value);
+    } catch (e) {
+      console.error('Failed to set auto exposure', e);
+    } finally {
+      setIsSettingAutoExposure(false);
+    }
+  };
 
   return (
     <Space className={styles.space} direction="vertical">
@@ -98,10 +144,15 @@ const PreviewSlider = (): React.ReactNode => {
           <Tooltip title={lang.editor.exposure}>
             <WorkareaIcons.Exposure className={styles.icon} />
           </Tooltip>
-          <ConfigProvider theme={{ components: { Slider: { trackBgDisabled: '#bfbfbf' } } }}>
+          <ConfigProvider
+            theme={{
+              components: { Slider: { trackBgDisabled: '#bfbfbf' } },
+              token: { colorPrimary: '#1890ff', colorTextQuaternary: '#c0c0c0', colorTextTertiary: '#8c8c8c' },
+            }}
+          >
             <Slider
               className={styles.slider}
-              disabled={isRawMode && isDrawing}
+              disabled={(isRawMode && isDrawing) || Boolean(autoExposure)}
               max={Math.min(exposureSetting.max, 2000)}
               min={Math.max(exposureSetting.min, 50)}
               onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
@@ -124,8 +175,21 @@ const PreviewSlider = (): React.ReactNode => {
               tooltip={{ open: false }}
               value={exposureSetting.value}
             />
+            <div className={styles.value}>{exposureSetting.value}</div>
+            {autoExposure !== null && (
+              <div className={styles['switch-container']}>
+                <Switch
+                  disabled={isDrawing}
+                  loading={isSettingAutoExposure}
+                  onChange={toggleAutoExposure}
+                  value={autoExposure}
+                />
+                <span className={classNames(styles.label, autoExposure ? styles.left : styles.right)}>
+                  {autoExposure ? 'A' : 'M'}
+                </span>
+              </div>
+            )}
           </ConfigProvider>
-          <div className={styles.value}>{exposureSetting.value}</div>
         </div>
       )}
     </Space>
