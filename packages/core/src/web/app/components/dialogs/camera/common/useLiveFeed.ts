@@ -73,7 +73,6 @@ const useLiveFeed = (opts?: Options) => {
   return {
     autoExposure,
     exposureSetting,
-    handleTakePicture,
     img,
     pauseLive,
     restartLive,
