@@ -89,6 +89,10 @@ export type GlobalPreference = {
   show_guides: boolean;
   show_rulers: boolean;
   simplify_clipper_path: boolean;
+  /**
+   * Auto turn on auto-exposure if possible when previewing
+   */
+  'use-auto-exposure'?: boolean;
   'use-real-boundary': boolean;
   'use-union-boundary': boolean;
   use_layer_color: boolean;
