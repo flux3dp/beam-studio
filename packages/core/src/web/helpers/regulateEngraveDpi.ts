@@ -13,11 +13,6 @@ export const regulateEngraveDpiOption = (model: WorkAreaModel, dpiOption: Engrav
   return engraveDpiOptions[engraveDpiOptions.length - 1];
 };
 
-// Initial regulation when loading the document store
-useDocumentStore.setState({
-  engrave_dpi: regulateEngraveDpiOption(useDocumentStore.getState().workarea, useDocumentStore.getState().engrave_dpi),
-});
-
 useDocumentStore.subscribe(
   (state) => state.workarea,
   (workarea) => {
