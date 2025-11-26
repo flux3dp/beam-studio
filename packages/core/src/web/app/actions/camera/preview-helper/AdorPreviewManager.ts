@@ -5,7 +5,7 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV1 from './FisheyePreviewManagerV1';
@@ -16,8 +16,8 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
   protected _isFullScreen = true;
   private fisheyeManager?: FisheyePreviewManager;
 
-  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
-    super(device, args);
+  constructor(device: IDeviceInfo) {
+    super(device);
     this.progressId = 'ador-preview-manager';
   }
 

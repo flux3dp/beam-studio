@@ -29,7 +29,6 @@ type ToolButtonProps = {
   id: string;
   label?: string;
   onClick: () => void;
-  onLongPress?: () => void;
   shouldSetActive?: boolean;
   showBadge?: boolean;
   style?: React.CSSProperties;
@@ -51,7 +50,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     id,
     label = id,
     onClick,
-    onLongPress = undefined,
     shouldSetActive = true,
     showBadge = false,
     style = undefined,
@@ -68,7 +66,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         svgCanvas?.clearSelection();
         onClick();
       }}
-      onLongPress={onLongPress}
       showBadge={showBadge}
       style={style}
       title={label}

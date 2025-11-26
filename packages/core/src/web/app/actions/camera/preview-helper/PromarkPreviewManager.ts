@@ -10,7 +10,7 @@ import type { WebCamConnection } from '@core/helpers/webcam-helper';
 import webcamHelper from '@core/helpers/webcam-helper';
 import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 
@@ -21,8 +21,8 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
   private cameraTransformAPI?: CameraTransformAPI;
   private webCamConnection: null | WebCamConnection = null;
 
-  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
-    super(device, args);
+  constructor(device: IDeviceInfo) {
+    super(device);
     this.progressId = 'promark-preview-manager';
   }
 

@@ -21,7 +21,7 @@ import versionChecker from '@core/helpers/version-checker';
 import type { FisheyeCameraParameters, FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
-import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
@@ -42,8 +42,8 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
   public hasWideAngleCamera: boolean = false;
 
-  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
-    super(device, args);
+  constructor(device: IDeviceInfo) {
+    super(device);
     this.progressId = 'beam-preview-manager';
 
     if (hexaRfModels.has(device.model)) this.grid = hx2rfPerspectiveGrid;

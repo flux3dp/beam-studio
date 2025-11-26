@@ -18,7 +18,7 @@ import type { FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview'
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
 import { ProgressTypes } from '@core/interfaces/IProgress';
-import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
@@ -34,8 +34,8 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
   protected progressType = ProgressTypes.STEPPING;
 
-  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
-    super(device, args);
+  constructor(device: IDeviceInfo) {
+    super(device);
     this.progressId = 'beamo2-preview-manager';
   }
 

@@ -14,7 +14,6 @@ interface Props {
   icon: React.ReactNode;
   id: string;
   onClick: () => void;
-  onLongPress?: () => void;
   showBadge?: boolean;
   style?: React.CSSProperties;
   title: string;
@@ -35,7 +34,7 @@ function LeftPanelButton({
     <div
       className={classNames(styles.container, { [styles.active]: active, [styles.disabled]: disabled }, className)}
       id={id}
-      onClick={onClick}
+      onClick={disabled ? undefined : onClick}
       style={style}
       title={title}
     >

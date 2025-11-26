@@ -226,7 +226,7 @@ const AutoFocusButton = (): React.JSX.Element => {
   return (
     <div
       className={classNames(styles.button, {
-        [styles.disabled]: isProcessing || !isDeviceSupportAutoFocus || isPreviewMode,
+        [styles.disabled]: isProcessing || !isDeviceSupportAutoFocus || mode !== CanvasMode.Draw || isPreviewMode,
       })}
       onClick={handleClickButton}
       title={lang.title}

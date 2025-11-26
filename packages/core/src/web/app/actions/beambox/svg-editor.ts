@@ -20,7 +20,6 @@
 
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
@@ -68,15 +67,12 @@ import storage from '@core/implementations/storage';
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
 
-import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { CanvasMode } from '@core/app/constants/canvasMode';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {

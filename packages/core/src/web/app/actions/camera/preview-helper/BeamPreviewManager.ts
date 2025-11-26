@@ -12,7 +12,7 @@ import i18n from '@core/helpers/i18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { CameraConfig, CameraParameters } from '@core/interfaces/Camera';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 
@@ -24,8 +24,8 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
 
   private originalSpeed: number;
 
-  constructor(device: IDeviceInfo, args?: PreviewManagerArguments) {
-    super(device, args);
+  constructor(device: IDeviceInfo) {
+    super(device);
     this.progressId = 'beam-preview-manager';
   }
 
