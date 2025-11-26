@@ -17,6 +17,12 @@ jest.mock('antd', () => ({
       </button>
     </div>
   ),
+  Switch: ({ checkedChildren = null, loading, onChange, unCheckedChildren = null, value }: any) => (
+    <button onClick={() => onChange(!value)} type="button" value={value}>
+      {loading ? 'Loading' : String(value)}
+      <div>{value ? checkedChildren : unCheckedChildren}</div>
+    </button>
+  ),
   Tooltip: ({ children, title }: any) => <div title={title}>{children}</div>,
 }));
 
@@ -34,10 +40,10 @@ jest.mock('@core/app/actions/progress-caller', () => ({
   popById: (...args) => mockPopById(...args),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  editor: {
-    exposure: 'exposure',
-  },
+const mockSetCameraExposureAuto = jest.fn();
+
+jest.mock('@core/helpers/device-master', () => ({
+  setCameraExposureAuto: (...args) => mockSetCameraExposureAuto(...args),
 }));
 
 const mockExposureSetting = {
@@ -49,6 +55,7 @@ const mockExposureSetting = {
 
 const mockOnChanged = jest.fn();
 const mockSetExposureSetting = jest.fn();
+const mockSetAutoExposure = jest.fn();
 
 describe('test ExposureSlider', () => {
   beforeEach(() => {
@@ -58,9 +65,11 @@ describe('test ExposureSlider', () => {
   it('should render correctly', () => {
     const { container } = render(
       <ExposureSlider
+        autoExposure={null}
         className="test-class"
         exposureSetting={mockExposureSetting}
         onChanged={mockOnChanged}
+        setAutoExposure={mockSetAutoExposure}
         setExposureSetting={mockSetExposureSetting}
       />,
     );
@@ -71,9 +80,11 @@ describe('test ExposureSlider', () => {
   test('onChangeComplete', async () => {
     const { getByText } = render(
       <ExposureSlider
+        autoExposure={null}
         className="test-class"
         exposureSetting={mockExposureSetting}
         onChanged={mockOnChanged}
+        setAutoExposure={mockSetAutoExposure}
         setExposureSetting={mockSetExposureSetting}
       />,
     );
@@ -92,9 +103,11 @@ describe('test ExposureSlider', () => {
   test('onChange', async () => {
     const { container } = render(
       <ExposureSlider
+        autoExposure={null}
         className="test-class"
         exposureSetting={mockExposureSetting}
         onChanged={mockOnChanged}
+        setAutoExposure={mockSetAutoExposure}
         setExposureSetting={mockSetExposureSetting}
       />,
     );
@@ -105,5 +118,80 @@ describe('test ExposureSlider', () => {
     await act(() => fireEvent.change(input as Element, { target: { value: '87' } }));
     expect(mockSetExposureSetting).toHaveBeenCalledTimes(1);
     expect(mockSetExposureSetting).toHaveBeenCalledWith({ ...mockExposureSetting, value: 87 });
+  });
+
+  describe('Auto Exposure', () => {
+    it('should not render switch when autoExposure is null', () => {
+      const { container } = render(
+        <ExposureSlider
+          autoExposure={null}
+          className="test-class"
+          exposureSetting={mockExposureSetting}
+          onChanged={mockOnChanged}
+          setAutoExposure={mockSetAutoExposure}
+          setExposureSetting={mockSetExposureSetting}
+        />,
+      );
+
+      const switchButton = container.querySelector('button[value]');
+
+      expect(switchButton).toBeNull();
+    });
+
+    it('should render correctly when autoExposure is True', () => {
+      const { getByText } = render(
+        <ExposureSlider
+          autoExposure
+          className="test-class"
+          exposureSetting={mockExposureSetting}
+          onChanged={mockOnChanged}
+          setAutoExposure={mockSetAutoExposure}
+          setExposureSetting={mockSetExposureSetting}
+        />,
+      );
+
+      expect(getByText('true')).toBeTruthy();
+      expect(getByText('A')).toBeTruthy();
+    });
+
+    it('should render correctly when autoExposure is False', () => {
+      const { getByText } = render(
+        <ExposureSlider
+          autoExposure={false}
+          className="test-class"
+          exposureSetting={mockExposureSetting}
+          onChanged={mockOnChanged}
+          setAutoExposure={mockSetAutoExposure}
+          setExposureSetting={mockSetExposureSetting}
+        />,
+      );
+
+      expect(getByText('false')).toBeTruthy();
+      expect(getByText('M')).toBeTruthy();
+    });
+
+    it('should call setCameraExposureAuto and setAutoExposure when switch is toggled', async () => {
+      mockSetCameraExposureAuto.mockResolvedValue(true);
+
+      const { getByText } = render(
+        <ExposureSlider
+          autoExposure={false}
+          className="test-class"
+          exposureSetting={mockExposureSetting}
+          onChanged={mockOnChanged}
+          setAutoExposure={mockSetAutoExposure}
+          setExposureSetting={mockSetExposureSetting}
+        />,
+      );
+
+      const switchButton = getByText('false');
+
+      await act(async () => {
+        fireEvent.click(switchButton);
+      });
+      expect(mockSetCameraExposureAuto).toHaveBeenCalledWith(true);
+      expect(mockSetAutoExposure).toHaveBeenCalledWith(true);
+      expect(mockOnChanged).toHaveBeenCalledTimes(1);
+    });
   });
 });

@@ -41,6 +41,8 @@ export const supportAutoFocusModelsArray = (['fhexa1', ...fcodeV2ModelsArray] as
 );
 export const supportAutoFocusModels = new Set(supportAutoFocusModelsArray);
 
+export const supportCameraAutoExposureModels = [...hexaRfModelsArray, 'fbb2'] as const;
+
 export const dpmm = 10;
 
 export default {

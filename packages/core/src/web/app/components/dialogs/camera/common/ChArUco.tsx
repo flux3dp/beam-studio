@@ -34,9 +34,10 @@ interface Props {
 const ChArUco = ({ cameraIndex, isVertical, onClose, onNext, onPrev, steps, title, updateParam }: Props) => {
   const [step, setStep] = useState(0);
   const tCali = useI18n().calibration;
-  const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting } = useLiveFeed({
-    index: cameraIndex,
-  });
+  const { autoExposure, exposureSetting, img, pauseLive, restartLive, setAutoExposure, setExposureSetting } =
+    useLiveFeed({
+      index: cameraIndex,
+    });
   const imgRef = useRef<HTMLImageElement>(null);
   const data = useRef<Array<{ imgp: number[][]; objp: number[][] }>>([]);
 
@@ -175,9 +176,10 @@ const ChArUco = ({ cameraIndex, isVertical, onClose, onNext, onPrev, steps, titl
               )}
             </div>
             <ExposureSlider
+              autoExposure={autoExposure}
               className={styles.slider}
               exposureSetting={exposureSetting}
-              onChanged={handleTakePicture}
+              setAutoExposure={setAutoExposure}
               setExposureSetting={setExposureSetting}
             />
           </div>

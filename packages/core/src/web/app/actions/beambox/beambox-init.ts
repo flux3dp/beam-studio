@@ -121,6 +121,10 @@ class BeamboxInit {
       globalPreference.set('font-convert', await updateFontConvert());
     }
 
+    if (isNewUser && globalPreference['use-auto-exposure'] === undefined) {
+      globalPreference.set('use-auto-exposure', true);
+    }
+
     // ratingHelper.init();
     announcementHelper.init(isNewUser);
     storage.removeAt('new-user');

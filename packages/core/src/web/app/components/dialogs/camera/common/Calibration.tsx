@@ -52,8 +52,16 @@ const Calibration = ({
   const imgRef = useRef<HTMLImageElement>(null);
   const videoRef = useRef<HTMLVideoElement>(null);
   const isUsbCamera = useMemo(() => cameraOptions?.source === 'usb', [cameraOptions]);
-  const { exposureSetting, handleTakePicture, img, pauseLive, restartLive, setExposureSetting, webCamConnection } =
-    useLiveFeed({ ...cameraOptions, videoElement: videoRef.current ?? undefined });
+  const {
+    autoExposure,
+    exposureSetting,
+    img,
+    pauseLive,
+    restartLive,
+    setAutoExposure,
+    setExposureSetting,
+    webCamConnection,
+  } = useLiveFeed({ ...cameraOptions, videoElement: videoRef.current ?? undefined });
 
   useEffect(() => {
     if (videoRef.current) {
@@ -176,9 +184,10 @@ const Calibration = ({
           {!img && <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />}
         </div>
         <ExposureSlider
+          autoExposure={autoExposure}
           className={styles.slider}
           exposureSetting={exposureSetting}
-          onChanged={handleTakePicture}
+          setAutoExposure={setAutoExposure}
           setExposureSetting={setExposureSetting}
         />
       </div>

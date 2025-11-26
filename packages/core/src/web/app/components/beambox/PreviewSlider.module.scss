@@ -4,7 +4,6 @@
 
 .container {
   display: flex;
-  width: 240px;
   height: 40px;
   padding: 0px 16px;
   align-items: center;
@@ -22,7 +21,7 @@
   }
 
   .value {
-    flex-grow: 1;
+    width: 32px;
     font-size: 14px;
     font-weight: 700;
     text-align: right;
@@ -34,5 +33,9 @@
     .icon {
       font-size: 18px;
     }
+  }
+
+  .switch {
+    font-weight: bold;
   }
 }

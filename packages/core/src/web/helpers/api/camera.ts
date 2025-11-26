@@ -2,6 +2,7 @@
  * API camera
  * Ref: https://github.com/flux3dp/fluxghost/wiki/websocket-camera(monitoring)
  */
+import PQueue from 'p-queue';
 import type { Observable } from 'rxjs';
 import { EmptyError, from, lastValueFrom, partition, Subject } from 'rxjs';
 import { concatMap, filter, map, take, timeout } from 'rxjs/operators';
@@ -76,8 +77,10 @@ class Camera {
   } = null;
   private rotationAngles?: RotationParameters3DGhostApi;
   private lastRequireCommand = '';
+  private commandQueue: PQueue;
 
   constructor(shouldCrop = true, cameraNeedFlip: boolean | null = null) {
+    this.commandQueue = new PQueue({ concurrency: 1 });
     this.shouldCrop = shouldCrop;
     this.device = {
       model: null,
@@ -205,11 +208,18 @@ class Camera {
 
   getRotationAngles = (): RotationParameters3DGhostApi | undefined => this.rotationAngles;
 
-  getCameraCount = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
-    this.ws.send('get_camera_count');
+  sendCommandWithNonBinaryResult = async <T = { data?: string; error?: string; status: string; success?: boolean }>(
+    command: string,
+  ): Promise<T> => {
+    return this.commandQueue.add(() => {
+      this.ws.send(command);
 
-    const { data, error, success }: { data?: string; error?: string; status: string; success?: boolean } =
-      await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+      return lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT))) as T;
+    });
+  };
+
+  getCameraCount = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
+    const { data, error, success } = await this.sendCommandWithNonBinaryResult('get_camera_count');
 
     if (!success) return { data: data ?? error ?? 'Unknown Error', success: false };
 
@@ -219,11 +229,7 @@ class Camera {
   };
 
   setCamera = async (index: number): Promise<boolean> => {
-    this.ws.send(`set_camera ${index}`);
-
-    const { data, success }: { data?: string; error?: string; status: string; success?: boolean } = await lastValueFrom(
-      this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)),
-    );
+    const { data, success } = await this.sendCommandWithNonBinaryResult(`set_camera ${index}`);
 
     if (!success) return false;
 
@@ -233,10 +239,7 @@ class Camera {
   };
 
   getExposure = async (): Promise<{ data: number; success: true } | { data: string; success: false }> => {
-    this.ws.send('send_text get_exposure');
-
-    const { data, error, success }: { data?: string; error?: string; status: string; success?: boolean } =
-      await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    const { data, error, success } = await this.sendCommandWithNonBinaryResult('send_text get_exposure');
 
     if (!success) return { data: data ?? error ?? 'Unknown Error', success: false };
 
@@ -246,11 +249,27 @@ class Camera {
   };
 
   setExposure = async (value: number): Promise<boolean> => {
-    this.ws.send(`send_text set_exposure:${value}`);
+    const { data, success } = await this.sendCommandWithNonBinaryResult(`send_text set_exposure:${value}`);
 
-    const { data, success }: { data?: string; error?: string; status: string; success?: boolean } = await lastValueFrom(
-      this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)),
-    );
+    if (!success) return false;
+
+    const res = data?.split(':').at(-1);
+
+    return res?.toLowerCase().endsWith('ok') || false;
+  };
+
+  getExposureAuto = async (): Promise<{ data: boolean; success: true } | { data: string; success: false }> => {
+    const { data, error, success } = await this.sendCommandWithNonBinaryResult('send_text get_exposure_auto');
+
+    if (!success) return { data: data ?? error ?? 'Unknown Error', success: false };
+
+    const value = Number(data!.split(':').at(-1)) === 3;
+
+    return { data: value, success };
+  };
+
+  setExposureAuto = async (value: number): Promise<boolean> => {
+    const { data, success } = await this.sendCommandWithNonBinaryResult(`send_text set_exposure_auto:${value}`);
 
     if (!success) return false;
 
@@ -272,9 +291,7 @@ class Camera {
       return val;
     });
 
-    this.ws.send(`set_fisheye_matrix ${matrixString}`);
-
-    let res = await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    let res = await this.sendCommandWithNonBinaryResult(`set_fisheye_matrix ${matrixString}`);
 
     if (!setCrop) {
       return res.status === 'ok';
@@ -291,8 +308,7 @@ class Camera {
 
     const cropParamString = JSON.stringify(cropParam);
 
-    this.ws.send(`set_crop_param ${cropParamString}`);
-    res = await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    res = await this.sendCommandWithNonBinaryResult(`set_crop_param ${cropParamString}`);
 
     return res.status === 'ok';
   };
@@ -308,18 +324,15 @@ class Camera {
       return val;
     });
 
-    this.ws.send(`set_fisheye_matrix ${data}`);
-
-    const res = await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    const res = await this.sendCommandWithNonBinaryResult(`set_fisheye_matrix ${data}`);
 
     return res.status === 'ok';
   };
 
   setFisheyeObjectHeight = async (h: number): Promise<boolean> => {
     this.fishEyeSetting = { ...this.fishEyeSetting, objectHeight: h };
-    this.ws.send(`set_fisheye_height ${h.toFixed(3)}`);
 
-    const res = await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    const res = await this.sendCommandWithNonBinaryResult(`set_fisheye_height ${h.toFixed(3)}`);
 
     return res.status === 'ok';
   };
@@ -327,9 +340,7 @@ class Camera {
   setFisheyePerspectiveGrid = async (data: PerspectiveGrid): Promise<boolean> => {
     const dataStr = JSON.stringify(data);
 
-    this.ws.send(`set_fisheye_grid ${dataStr}`);
-
-    const res = await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    const res = await this.sendCommandWithNonBinaryResult(`set_fisheye_grid ${dataStr}`);
 
     return res.status === 'ok';
   };
@@ -345,9 +356,7 @@ class Camera {
       return val;
     });
 
-    this.ws.send(`set_leveling_data ${strData}`);
-
-    const res = await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    const res = await this.sendCommandWithNonBinaryResult(`set_leveling_data ${strData}`);
 
     return res.status === 'ok';
   };
@@ -372,14 +381,12 @@ class Camera {
       return val;
     });
 
-    this.ws.send(`set_3d_rotation ${dataString}`);
-
-    const res = await lastValueFrom(this.nonBinarySource.pipe(take(1)).pipe(timeout(TIMEOUT)));
+    const res = await this.sendCommandWithNonBinaryResult(`set_3d_rotation ${dataString}`);
 
     return res.status === 'ok';
   };
 
-  async oneShot(useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
+  async sendOneShot(useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> {
     try {
       this.lastRequireCommand = useLowResolution ? 'require_frame l' : 'require_frame';
       this.ws.send(this.lastRequireCommand);
@@ -400,6 +407,10 @@ class Camera {
       }
     }
   }
+
+  oneShot = async (useLowResolution = true): Promise<{ imgBlob: Blob; needCameraCableAlert: boolean }> => {
+    return this.commandQueue.add(() => this.sendOneShot(useLowResolution));
+  };
 
   getLiveStreamSource() {
     this.ws.send('enable_streaming');
