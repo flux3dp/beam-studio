@@ -7,7 +7,6 @@ import { Tooltip } from 'antd';
 import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import progressCaller from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -23,7 +22,7 @@ import shortcuts from '@core/helpers/shortcuts';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { IProgressDialog, ProgressType } from '@core/interfaces/IProgress';
 import { ProgressTypes } from '@core/interfaces/IProgress';
-import type { PreviewManager, PreviewManagerArguments } from '@core/interfaces/PreviewManager';
+import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import styles from './BasePreviewManager.module.scss';
 
@@ -37,58 +36,42 @@ class BasePreviewManager implements PreviewManager {
   protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
   protected _isFullScreen = false;
-  protected isBackgroundMode = false;
   protected progressType: ProgressType = ProgressTypes.NONSTOP;
 
   public get isFullScreen() {
     return this._isFullScreen;
   }
 
-  constructor(device: IDeviceInfo, { isBackgroundMode = false }: PreviewManagerArguments = {}) {
+  constructor(device: IDeviceInfo) {
     this.device = device;
     this.workarea = workareaManager.model;
     this.workareaObj = getWorkarea(this.workarea);
-    this.isBackgroundMode = isBackgroundMode;
   }
 
   protected showMessage = (data: IProgressDialog): void => {
-    if (this.isBackgroundMode) {
-      if (data.message) {
-        MessageCaller.openMessage({
-          content: data.message,
-          duration: 20,
-          key: this.progressId,
-          level: MessageLevel.LOADING,
-        });
-      }
-    } else if (this.progressType === ProgressTypes.STEPPING) {
-      progressCaller.openSteppingProgress({ ...data, id: this.progressId });
-    } else {
-      progressCaller.openNonstopProgress({ ...data, id: this.progressId });
+    if (data.message) {
+      MessageCaller.openMessage({
+        content: data.message,
+        duration: 20,
+        key: this.progressId,
+        level: MessageLevel.LOADING,
+      });
     }
   };
 
   protected updateMessage = (data: IProgressDialog): void => {
-    if (this.isBackgroundMode) {
-      if (data.message) {
-        MessageCaller.openMessage({
-          content: data.message,
-          duration: 20,
-          key: this.progressId,
-          level: MessageLevel.LOADING,
-        });
-      }
-    } else {
-      progressCaller.update(this.progressId, data);
+    if (data.message) {
+      MessageCaller.openMessage({
+        content: data.message,
+        duration: 20,
+        key: this.progressId,
+        level: MessageLevel.LOADING,
+      });
     }
   };
 
   protected closeMessage = (): void => {
-    if (this.isBackgroundMode) {
-      MessageCaller.closeMessage(this.progressId);
-    } else {
-      progressCaller.popById(this.progressId);
-    }
+    MessageCaller.closeMessage(this.progressId);
   };
 
   public setup = async (): Promise<boolean> => {

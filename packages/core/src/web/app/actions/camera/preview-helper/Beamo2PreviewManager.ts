@@ -94,7 +94,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         this.fisheyePreviewManager!.setupFisheyePreview({
           cameraPosition: cameraCenter,
           height: 0,
-          messageType: this.isBackgroundMode ? 'message' : 'progress',
+          messageType: 'message',
           movementFeedrate: this.getMovementSpeed(),
           progressId: this.progressId,
           progressRange: [40, 100],

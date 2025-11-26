@@ -165,7 +165,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
       );
 
       const res = await this.wideAngleFisheyeManager.setupFisheyePreview({
-        messageType: this.isBackgroundMode ? 'message' : 'progress',
+        messageType: 'message',
         progressId: this.progressId,
       });
 

@@ -2,10 +2,6 @@ import type { CameraType } from '@core/app/constants/cameraConstants';
 
 import type { CameraConfig, CameraParameters } from './Camera';
 
-export type PreviewManagerArguments = {
-  isBackgroundMode?: boolean;
-};
-
 export interface PreviewManager {
   end(): Promise<void>;
 
