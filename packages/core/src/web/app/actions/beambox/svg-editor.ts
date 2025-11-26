@@ -592,15 +592,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     var setSelectMode = function () {
       svgCanvas.setMode('select');
       workarea.css('cursor', 'auto');
-
-      if (curveEngravingModeController.started) {
-        // do nothing for now
-      } else if (
-        (PreviewModeController.isPreviewMode && !PreviewModeController.isBackgroundMode)
-        || useCanvasStore.getState().mode === CanvasMode.Preview
-      ) {
-        workarea.css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
-      }
     };
 
     // used to make the flyouts stay on the screen longer the very first time

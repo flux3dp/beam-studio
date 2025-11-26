@@ -85,13 +85,7 @@ class CurveEngravingModeController {
 
     const workarea: HTMLDivElement | null = document.querySelector('#workarea');
 
-    if (workarea) {
-      if (mode === CanvasMode.Preview) {
-        workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
-      } else {
-        workarea.style.cursor = 'auto';
-      }
-    }
+    if (workarea) workarea.style.cursor = 'auto';
 
     useCanvasStore.getState().setMode(mode);
   };

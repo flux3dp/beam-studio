@@ -7,11 +7,7 @@ import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
-import {
-  changeToPreviewMode,
-  setupPreviewMode,
-  startBackgroundPreviewMode,
-} from '@core/app/stores/canvas/utils/previewMode';
+import { handlePreviewClick } from '@core/app/stores/canvas/utils/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -46,7 +42,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const tLeftPanel = lang.beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
-  const { isPreviewMode } = useCameraPreviewStore();
+  const { isDrawing } = useCameraPreviewStore();
   const [activeButton, setActiveButton] = useState('Cursor');
   const renderToolButton = ({
     className = undefined,
@@ -96,18 +92,14 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   return (
     <div className={className}>
       {renderToolButton({
-        disabled: isPreviewMode,
+        disabled: isDrawing,
         icon: <LeftPanelIcons.Camera />,
         id: 'Preview',
         label: lang.topbar.preview,
         onClick: async () => {
-          const isBackgroundPreviewMode = await startBackgroundPreviewMode();
+          const shouldKeepActive = await handlePreviewClick();
 
-          if (!isBackgroundPreviewMode) setActiveButton('Cursor');
-        },
-        onLongPress: () => {
-          changeToPreviewMode();
-          setupPreviewMode();
+          if (!shouldKeepActive) setActiveButton('Cursor');
         },
       })}
       {renderToolButton({

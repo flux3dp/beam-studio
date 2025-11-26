@@ -4,7 +4,6 @@ import { Badge } from 'antd';
 import classNames from 'classnames';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import { useLongPress } from '@core/helpers/hooks/useLongPress';
 
 import styles from './LeftPanelButton.module.scss';
 
@@ -28,18 +27,15 @@ function LeftPanelButton({
   icon,
   id,
   onClick,
-  onLongPress,
   showBadge = false,
   style,
   title,
 }: Props): React.JSX.Element {
-  const { ...handlers } = useLongPress({ onClick, onLongPress, threshold: 1000 });
-
   return (
     <div
       className={classNames(styles.container, { [styles.active]: active, [styles.disabled]: disabled }, className)}
       id={id}
-      {...(disabled ? {} : handlers)}
+      onClick={onClick}
       style={style}
       title={title}
     >
