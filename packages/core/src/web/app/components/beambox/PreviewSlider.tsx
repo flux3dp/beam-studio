@@ -1,7 +1,6 @@
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 
 import { ConfigProvider, Slider, Space, Switch, Tooltip } from 'antd';
-import classNames from 'classnames';
 
 import constant, { supportCameraAutoExposureModels } from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
@@ -107,7 +106,7 @@ const PreviewSlider = (): React.ReactNode => {
     if (isSettingAutoExposure) return;
 
     try {
-      useGlobalPreferenceStore.getState().set('use-auto-exposure', undefined);
+      useGlobalPreferenceStore.getState().set('use-auto-exposure', false);
       setIsSettingAutoExposure(true);
 
       const res = await deviceMaster?.setCameraExposureAuto(value);
@@ -177,17 +176,15 @@ const PreviewSlider = (): React.ReactNode => {
             />
             <div className={styles.value}>{exposureSetting.value}</div>
             {autoExposure !== null && (
-              <div className={styles['switch-container']}>
-                <Switch
-                  disabled={isDrawing}
-                  loading={isSettingAutoExposure}
-                  onChange={toggleAutoExposure}
-                  value={autoExposure}
-                />
-                <span className={classNames(styles.label, autoExposure ? styles.left : styles.right)}>
-                  {autoExposure ? 'A' : 'M'}
-                </span>
-              </div>
+              <Switch
+                checkedChildren="A"
+                className={styles.switch}
+                disabled={isDrawing}
+                loading={isSettingAutoExposure}
+                onChange={toggleAutoExposure}
+                unCheckedChildren="M"
+                value={autoExposure}
+              />
             )}
           </ConfigProvider>
         </div>

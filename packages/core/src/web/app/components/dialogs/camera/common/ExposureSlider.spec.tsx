@@ -17,9 +17,10 @@ jest.mock('antd', () => ({
       </button>
     </div>
   ),
-  Switch: ({ loading, onChange, value }: any) => (
+  Switch: ({ checkedChildren = null, loading, onChange, unCheckedChildren = null, value }: any) => (
     <button onClick={() => onChange(!value)} type="button" value={value}>
       {loading ? 'Loading' : String(value)}
+      <div>{value ? checkedChildren : unCheckedChildren}</div>
     </button>
   ),
   Tooltip: ({ children, title }: any) => <div title={title}>{children}</div>,

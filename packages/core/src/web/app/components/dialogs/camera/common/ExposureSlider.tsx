@@ -87,12 +87,14 @@ const ExposureSlider = ({
           </div>
           <div className={styles.value}>{exposureSetting.value}</div>
           {autoExposure !== null && (
-            <div className={styles['switch-container']}>
-              <Switch loading={isSettingAutoExposure} onChange={toggleAutoExposure} value={autoExposure} />
-              <span className={classNames(styles.label, autoExposure ? styles.left : styles.right)}>
-                {autoExposure ? 'A' : 'M'}
-              </span>
-            </div>
+            <Switch
+              checkedChildren="A"
+              className={styles.switch}
+              loading={isSettingAutoExposure}
+              onChange={toggleAutoExposure}
+              unCheckedChildren="M"
+              value={autoExposure}
+            />
           )}
         </>
       )}
