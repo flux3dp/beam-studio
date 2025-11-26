@@ -125,7 +125,6 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
-    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
     const { container } = render(<PreviewSlider />);
 
@@ -139,7 +138,6 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
-    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
     const { container, getByText } = render(<PreviewSlider />);
 
@@ -170,7 +168,6 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });
-    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
     const { container, getByText } = render(<PreviewSlider />);
 
@@ -205,7 +202,6 @@ describe('test PreviewSlider', () => {
     mockGetCurrentControlMode.mockReturnValue('raw');
     mockUseCameraPreviewStore.mockReturnValue({ isDrawing: true, isPreviewMode: true });
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbm2' } });
-    useCanvasStore.getState().setMode(CanvasMode.Preview);
 
     const { container, getByText } = render(<PreviewSlider />);
 

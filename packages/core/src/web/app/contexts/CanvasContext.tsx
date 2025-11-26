@@ -2,6 +2,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import React, { createContext, useCallback, useEffect, useState } from 'react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getPassThrough } from '@core/helpers/addOn';
 import { discoverManager } from '@core/helpers/api/discover';
@@ -43,6 +44,7 @@ const CanvasContext = createContext<CanvasContextType>({
 const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
   const mode = useCanvasStore((state) => state.mode);
+  const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
   const [isColorPreviewing, setIsColorPreviewing] = useState<boolean>(false);
   const [currentUser, setCurrentUser] = useState<IUser | null>(null);
   const [hasUnsavedChange, setHasUnsavedChange] = useState<boolean>(false);
@@ -112,7 +114,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
     const allLayers = document.querySelectorAll('g.layer') as unknown as SVGGElement[];
 
     // To prevent cursor changed to 'move' when 'mouseover'
-    if ([CanvasMode.AutoFocus, CanvasMode.Preview].includes(mode)) {
+    if ([CanvasMode.AutoFocus].includes(mode) || isPreviewMode) {
       allLayers.forEach((g) => {
         g.style.pointerEvents = 'none';
       });
@@ -121,7 +123,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
         g.style.pointerEvents = '';
       });
     }
-  }, [mode]);
+  }, [mode, isPreviewMode]);
 
   const { children } = props;
 

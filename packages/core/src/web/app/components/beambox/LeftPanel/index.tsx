@@ -8,7 +8,6 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import CurveEngravingTool from '@core/app/components/beambox/LeftPanel/components/CurveEngravingTool';
 import DrawingToolButtonGroup from '@core/app/components/beambox/LeftPanel/components/DrawingToolButtonGroup';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
-import PreviewToolButtonGroup from '@core/app/components/beambox/LeftPanel/components/PreviewToolButtonGroup';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -55,7 +54,6 @@ const UnmemorizedLeftPanel = () => {
   }, [mode]);
 
   return match(mode)
-    .with(CanvasMode.Draw, () => <DrawingToolButtonGroup className={styles.container} />)
     .with(CanvasMode.CurveEngraving, () => <CurveEngravingTool className={styles.container} />)
     .with(CanvasMode.PathPreview, () => (
       <div className={styles.container}>
@@ -79,7 +77,7 @@ const UnmemorizedLeftPanel = () => {
         />
       </div>
     ))
-    .otherwise(() => <PreviewToolButtonGroup className={styles.container} />);
+    .otherwise(() => <DrawingToolButtonGroup className={styles.container} />);
 };
 
 const LeftPanel = memo(UnmemorizedLeftPanel);

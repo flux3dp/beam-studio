@@ -25,7 +25,6 @@ const PreviewSlider = (): React.ReactNode => {
   const [autoExposure, setAutoExposure] = useState<boolean | null>(null);
   const [isSettingAutoExposure, setIsSettingAutoExposure] = useState(false);
   const [isRawMode, setIsRawMode] = useState(false);
-  const isPreviewing = mode === CanvasMode.Preview;
   const { isDrawing, isPreviewMode } = useCameraPreviewStore();
   const lang = useI18n();
 
@@ -87,16 +86,16 @@ const PreviewSlider = (): React.ReactNode => {
   }, []);
 
   useEffect(() => {
-    updateBgOpacity(isPreviewing ? '1' : opacity.toString());
-  }, [isPreviewing, opacity, updateBgOpacity]);
+    updateBgOpacity(isPreviewMode ? '1' : opacity.toString());
+  }, [isPreviewMode, opacity, updateBgOpacity]);
 
   // this is also triggered by UPDATE_CONTEXT event in PreviewModeController.start
   useEffect(() => {
     setExposureSetting(null);
     setAutoExposure(null);
 
-    if (isPreviewing && isPreviewMode) getSetting();
-  }, [isPreviewing, isPreviewMode]);
+    if (isPreviewMode) getSetting();
+  }, [isPreviewMode]);
 
   if (mode === CanvasMode.PathPreview) {
     return null;
@@ -121,7 +120,7 @@ const PreviewSlider = (): React.ReactNode => {
 
   return (
     <Space className={styles.space} direction="vertical">
-      {!isPreviewing && showOpacity && (
+      {!isPreviewMode && showOpacity && (
         <div className={styles.container}>
           <Tooltip title={lang.editor.opacity}>
             <WorkareaIcons.Opacity className={styles.icon} />
@@ -138,7 +137,7 @@ const PreviewSlider = (): React.ReactNode => {
           <div className={styles.value}>{opacity * 100}%</div>
         </div>
       )}
-      {isPreviewing && exposureSetting && (
+      {isPreviewMode && exposureSetting && (
         <div className={styles.container}>
           <Tooltip title={lang.editor.exposure}>
             <WorkareaIcons.Exposure className={styles.icon} />

@@ -39,14 +39,6 @@ describe('test FrameButton', () => {
     expect(mockShowFramingModal).toBeCalledTimes(1);
   });
 
-  test('should render correctly with previewing mode', () => {
-    useCanvasStore.getState().setMode(CanvasMode.Preview);
-
-    const { container } = render(<FrameButton />);
-
-    expect(container).toMatchSnapshot();
-  });
-
   test('shortcut should work', () => {
     render(<FrameButton />);
     expect(mockOn).toBeCalledTimes(1);

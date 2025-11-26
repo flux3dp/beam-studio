@@ -50,6 +50,7 @@ jest.mock('@core/helpers/fileImportHelper', () => ({}));
 
 import AutoFocusButton from './index';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 
 const mockPopUp = jest.fn();
 
@@ -211,7 +212,7 @@ describe('AutoFocusButton', () => {
     });
 
     it('should render disabled when mode is not Draw', () => {
-      useCanvasStore.setState({ mode: CanvasMode.Preview });
+      useCameraPreviewStore.setState({ isPreviewMode: true });
 
       const { container } = renderComponent();
       const button = container.querySelector('.button');

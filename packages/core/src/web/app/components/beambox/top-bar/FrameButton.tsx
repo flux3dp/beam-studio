@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import classNames from 'classnames';
 
@@ -14,22 +14,23 @@ import styles from './FrameButton.module.scss';
 const FrameButton = (): React.JSX.Element => {
   const lang = useI18n();
   const mode = useCanvasStore((state) => state.mode);
+  const isDisabled = useMemo(() => mode !== CanvasMode.Draw, [mode]);
 
   useEffect(() => {
+    if (isDisabled) return;
+
     const shortcutHandler = async () => {
-      if (mode !== CanvasMode.Draw) {
-        return;
-      }
+      if (isDisabled) return;
 
       showFramingModal();
     };
 
     return shortcuts.on(['F1'], shortcutHandler);
-  }, [mode]);
+  }, [isDisabled]);
 
   return (
     <div
-      className={classNames(styles.button, { [styles.disabled]: mode !== CanvasMode.Draw })}
+      className={classNames(styles.button, { [styles.disabled]: isDisabled })}
       onClick={() => showFramingModal()}
       title={lang.topbar.frame_task}
     >

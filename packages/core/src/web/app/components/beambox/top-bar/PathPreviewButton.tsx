@@ -48,7 +48,7 @@ function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
     }
   };
   const className = classNames(styles.button, {
-    [styles.disabled]: mode === CanvasMode.Preview || (!isDeviceConnected && isWeb()),
+    [styles.disabled]: !isDeviceConnected && isWeb(),
     [styles.highlighted]: mode === CanvasMode.PathPreview,
   });
 

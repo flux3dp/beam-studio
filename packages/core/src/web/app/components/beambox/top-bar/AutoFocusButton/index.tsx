@@ -16,6 +16,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { toggleAutoFocus } from '@core/app/stores/canvas/utils/autoFocus';
 import alertConfig from '@core/helpers/api/alert-config';
@@ -49,6 +50,7 @@ const AutoFocusButton = (): React.JSX.Element => {
     },
   } = useI18n();
   const mode = useCanvasStore((state) => state.mode);
+  const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
   const { selectedDevice } = useContext(CanvasContext);
   const [isProcessing, setIsProcessing] = useState(false);
   const isDeviceSupportAutoFocus = useMemo(
@@ -224,7 +226,7 @@ const AutoFocusButton = (): React.JSX.Element => {
   return (
     <div
       className={classNames(styles.button, {
-        [styles.disabled]: isProcessing || !isDeviceSupportAutoFocus || mode !== CanvasMode.Draw,
+        [styles.disabled]: isProcessing || !isDeviceSupportAutoFocus || isPreviewMode,
       })}
       onClick={handleClickButton}
       title={lang.title}

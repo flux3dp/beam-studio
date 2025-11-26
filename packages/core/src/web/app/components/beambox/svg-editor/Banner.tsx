@@ -7,6 +7,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -20,6 +21,7 @@ import styles from './Banner.module.scss';
 const Banner = (): React.ReactNode => {
   const lang = useI18n();
   const mode = useCanvasStore((state) => state.mode);
+  const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
   const { selectedDevice } = useContext(CanvasContext);
   const hasCurveEngravingData = useHasCurveEngraving();
   const {
@@ -42,8 +44,8 @@ const Banner = (): React.ReactNode => {
     [addOnInfo, passThrough, isBorderless],
   );
   const isBorderlessPreview = useMemo(
-    () => isBorderless && mode === CanvasMode.Preview && addOnInfo.openBottom && selectedDevice?.model === 'fbm1',
-    [isBorderless, mode, addOnInfo.openBottom, selectedDevice],
+    () => isBorderless && isPreviewMode && addOnInfo.openBottom && selectedDevice?.model === 'fbm1',
+    [isBorderless, isPreviewMode, addOnInfo.openBottom, selectedDevice],
   );
   const isCurveEngraving = useMemo(
     () => hasCurveEngravingData || mode === CanvasMode.CurveEngraving,

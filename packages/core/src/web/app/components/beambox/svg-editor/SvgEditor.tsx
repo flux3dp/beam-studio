@@ -11,6 +11,7 @@ import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import DpiInfo from '@core/app/components/beambox/DpiInfo';
 import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
+import PreviewFloatingBar from '@core/app/components/beambox/PreviewFloatingBar';
 import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -73,6 +74,7 @@ export const SvgEditor = (): ReactNode => {
         </div>
         {mode !== CanvasMode.PathPreview && (
           <>
+            <PreviewFloatingBar />
             <ZoomBlock
               resetView={workareaManager.resetView}
               setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
