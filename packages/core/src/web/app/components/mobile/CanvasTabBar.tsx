@@ -21,20 +21,13 @@ import workareaManager from '@core/app/svgedit/workarea';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './CanvasTabBar.module.scss';
 
 const events = eventEmitterFactory.createEventEmitter('canvas');
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface TabItem {
   badge?: boolean;
