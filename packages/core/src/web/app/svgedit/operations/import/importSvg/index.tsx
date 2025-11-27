@@ -39,6 +39,8 @@ const callTooLargeAlert = (id: string, message: JSX.Element | string) =>
   new Promise<boolean>((resolve) => {
     if (alertConfig.read('skip-svg-import-warning')) {
       resolve(true); // If the user has opted out of the alert, resolve immediately
+
+      return;
     }
 
     alertCaller.popUp({

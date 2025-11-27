@@ -96,7 +96,7 @@ export async function processOutputData(
 
     if (outputData.colors) newElements.push(await readSVG(outputData.colors, elementOptions));
   } else if (importType === 'layer') {
-    const keys = Object.keys(outputData).filter((key) => !['bitmap', 'bitmap_offset'].includes(key));
+    const keys = Object.keys(outputData).filter((key) => !['bitmap', 'bitmapOffset'].includes(key));
 
     for (const layerName of keys) {
       if (outputData[layerName]) {

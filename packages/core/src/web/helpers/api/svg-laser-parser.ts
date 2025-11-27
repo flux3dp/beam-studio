@@ -525,7 +525,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
             currentLength = data.length;
 
             if (currentName === 'bitmap') {
-              finalBlobs.bitmap_offset = data.offset;
+              finalBlobs.bitmapOffset = data.offset;
             }
           } else if (data instanceof Blob) {
             blobs.push(data);
