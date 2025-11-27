@@ -35,8 +35,6 @@ getSVGAsync((globalSVG) => {
   svgEditor = globalSVG.Editor;
 });
 
-const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
-
 const { svgedit } = window;
 const { NS } = svgedit;
 
@@ -232,7 +230,6 @@ const toSelectMode = (elem?: Element): void => {
 
   if (currentMode === 'select') {
     $(svgedit.path.path.elem).attr('cursor', ''); // Unset path cursor type
-    drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
   }
 
   svgedit.path.path.show(false);

@@ -3,7 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const mockUseSelectTool = jest.fn();
 const mockImportImage = jest.fn();
@@ -133,16 +132,5 @@ describe('test DrawingToolButtonGroup', () => {
     fireEvent.click(container.querySelector('#left-PassThrough'));
     expect(mockShowPassThrough).toHaveBeenCalledTimes(1);
     expect(mockShowPassThrough).toHaveBeenCalledWith(mockUseSelectTool);
-  });
-
-  test('event emitter', async () => {
-    const eventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
-    const { container } = render(<DrawingToolButtonGroup className="flux" />);
-
-    expect(container.querySelector('#left-Cursor')).toHaveClass('active');
-    eventEmitter.emit('SET_ACTIVE_BUTTON', 'Pen');
-    await new Promise((r) => setTimeout(r, 0));
-    expect(container.querySelector('#left-Cursor')).not.toHaveClass('active');
-    expect(container.querySelector('#left-Pen')).toHaveClass('active');
   });
 });

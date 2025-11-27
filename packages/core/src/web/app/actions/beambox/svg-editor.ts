@@ -45,7 +45,6 @@ import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';

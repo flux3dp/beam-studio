@@ -1,8 +1,5 @@
 import tabController from '@core/app/actions/tabController';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
-import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, hashMap, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -125,13 +122,6 @@ const funcs = {
 
     svgEditor.clickSelect();
   },
-  insertEllipse(): void {
-    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_CIRCLE) {
-      TutorialController.handleNextStep();
-    }
-
-    setMouseMode('ellipse');
-  },
   insertImage(
     insertedImageSrc: string,
     dimension: { height: number; width: number; x: number; y: number },
@@ -180,25 +170,6 @@ const funcs = {
 
       (window as any).updateContextPanel();
     };
-  },
-  insertLine(): void {
-    setMouseMode('line');
-  },
-  insertPath(): void {
-    setMouseMode('path');
-  },
-  insertPolygon(): void {
-    setMouseMode('polygon');
-  },
-  insertRectangle(): void {
-    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_RECT) {
-      TutorialController.handleNextStep();
-    }
-
-    setMouseMode('rect');
-  },
-  insertText(): void {
-    setMouseMode('text');
   },
   // left panel
   useSelectTool(): void {

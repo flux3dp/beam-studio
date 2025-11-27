@@ -45,7 +45,6 @@ import { setRubberBoxStart } from './utils/setRubberBoxStart';
 let svgEditor: ISVGEditor;
 let svgCanvas: ISVGCanvas;
 
-const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
 const autoFocusEventEmitter = eventEmitterFactory.createEventEmitter('auto-focus');
 
@@ -1089,8 +1088,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       if (currentMode === 'pre_preview') setupPreviewMode({ callback: () => doPreview() });
       else doPreview();
 
-      drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
-
       return;
     case 'resize':
     case 'multiselect':
@@ -1139,7 +1136,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       }
 
       cleanUpRubberBox();
-      drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
 
       if (selectedElements.length) {
         const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
@@ -1347,7 +1343,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       keep = true;
       element = null;
       setMouseMode('select');
-      drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
 
       const batchCmd = new history.BatchCommand('Rotate Elements');
       const tempGroup = svgCanvas.getTempGroup();

@@ -19,7 +19,6 @@ import NestSpacingPanel from '@core/app/views/beambox/ToolPanels/NestSpacingPane
 import OffsetModal from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import RowColumnPanel from '@core/app/views/beambox/ToolPanels/RowColumn';
 import offsetElements from '@core/helpers/clipper/offset';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -33,8 +32,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
-
-const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 
 const _mm2pixel = (pixel_input: number) => {
   const { dpmm } = Constant;
@@ -83,7 +80,6 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
   const onCancel = () => {
     unmount();
     setMouseMode('select');
-    drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
   };
 
   const generateOnOk = (newOffset?: OffsetProp): (() => Promise<void> | void) =>
@@ -98,7 +94,6 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
           await generateSelectedElementArray(newDistance, data.rowcolumn);
           unmount();
           setMouseMode('select');
-          drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
           currentFileManager.setHasUnsavedChanges(true);
         };
       })
@@ -108,7 +103,6 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
         await offsetElements(mode, _mm2pixel(distance), cornerType);
         unmount();
         setMouseMode('select');
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
         currentFileManager.setHasUnsavedChanges(true);
       })
       .with('nest', () => () => {
@@ -116,7 +110,6 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
         (svgCanvas as any).nestElements(null, null, nestOptions);
         unmount();
         setMouseMode('select');
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
       })
       .otherwise(() => unmount);
 

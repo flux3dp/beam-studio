@@ -12,6 +12,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { toggleAutoFocus } from '@core/app/stores/canvas/utils/autoFocus';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
 
@@ -24,16 +25,17 @@ const UnmemorizedLeftPanel = () => {
     beambox: { left_panel },
   } = useI18n();
 
+  // TODO: move this out
   useEffect(() => {
     const checkMode = (targetMode: CanvasMode = CanvasMode.Draw) => modeRef.current === targetMode;
     const shortcutsMap = {
-      '\\': FnWrapper.insertLine,
-      c: FnWrapper.insertEllipse,
+      '\\': () => setMouseMode('line'),
+      c: () => setMouseMode('ellipse'),
       e: () => $('#left-Element').trigger('click'),
       i: FnWrapper.importImage,
-      m: FnWrapper.insertRectangle,
-      p: FnWrapper.insertPath,
-      t: FnWrapper.insertText,
+      m: () => setMouseMode('rect'),
+      p: () => setMouseMode('path'),
+      t: () => setMouseMode('text'),
       v: FnWrapper.useSelectTool,
     };
     const unsubscribes = Array.of<() => void>();

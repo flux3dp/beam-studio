@@ -103,7 +103,6 @@ getSVGAsync(({ Canvas, Editor }) => {
   svgEditor = Editor;
 });
 
-const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
 // Class: SvgCanvas
@@ -717,7 +716,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // String with an element's initial transform attribute value
 
   // String indicating the current editor mode
-  let current_mode = 'select';
 
   // String with the current direction in which an element is being resized
   let current_resize_mode = 'none';
@@ -1345,8 +1343,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const currentLayer = layerManager.getCurrentLayerElement();
 
     if (currentLayer && currentLayer.getAttribute('data-lock') !== 'true') {
-      current_mode = 'select';
-      drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+      setMouseMode('select');
 
       const elemsToAdd = (Array.from((current_group || currentLayer).childNodes) as Element[]).filter(
         (c: Element) => !CanvasElements.defElems.includes(c.tagName),

@@ -191,7 +191,7 @@ const CanvasTabBar = (): React.ReactNode => {
       createNewText(100, 100, { addToHistory: true, isToSelect: true, text: 'Text' });
     } else if (key === 'pen') {
       events.once('addPath', resetActiveKey);
-      FnWrapper.insertPath();
+      setMouseMode('path');
     } else if (key === 'undo') {
       historyUtils.undo();
       setTimeout(resetActiveKey, 300);
