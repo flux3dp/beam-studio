@@ -4,19 +4,27 @@ import { CheckOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 
-import { CATEGORIES, getCategoryForOption, getStylesForCategory } from '../utils/categories';
-import type { Style } from '../utils/categories';
-import type { StylePresetKey } from '../utils/stylePresets';
+import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
+import { getCategoryForOption, getStylesForCategory } from '../utils/categories';
+import type { StyleLike } from '../utils/categories';
 
 import styles from './StyleSelectionPanel.module.scss';
 
 interface StyleSelectionPanelProps {
-  currentStyle: StylePresetKey;
+  currentStyle: string;
   onClose: () => void;
-  onSelect: (style: StylePresetKey) => void;
+  onSelect: (style: string) => void;
 }
 
-const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onClick: () => void; option: Style }) => (
+const OptionCard = ({
+  isSelected,
+  onClick,
+  option,
+}: {
+  isSelected: boolean;
+  onClick: () => void;
+  option: StyleLike;
+}) => (
   <div className={classNames(styles['option-card'], { [styles.selected]: isSelected })} onClick={onClick}>
     {isSelected && (
       <div className={styles['check-badge']}>
@@ -33,14 +41,19 @@ const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onCl
 );
 
 const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
-  const [selectedCategory, setSelectedCategory] = useState(() => {
-    const primaryCategory = getCategoryForOption(currentStyle);
+  const { data: aiConfig } = useAiConfigQuery();
+  const displayCategories = aiConfig?.categories ?? [];
+  const displayStyles = aiConfig?.styles ?? [];
 
-    return primaryCategory?.id || CATEGORIES[0]?.id || 'customize';
+  const [selectedCategory, setSelectedCategory] = useState(() => {
+    const primaryCategory = getCategoryForOption(currentStyle, displayStyles, displayCategories);
+
+    return primaryCategory?.id || displayCategories[0]?.id || 'customize';
   });
   const [selectedStyle, setSelectedStyle] = useState(currentStyle);
-  const currentCategory = CATEGORIES.find((c) => c.id === selectedCategory);
-  const currentCategoryStyles = getStylesForCategory(selectedCategory);
+
+  const currentCategory = displayCategories.find((c) => c.id === selectedCategory);
+  const currentCategoryStyles = getStylesForCategory(selectedCategory, displayStyles, displayCategories);
 
   const handleConfirm = () => {
     if (selectedStyle) {
@@ -70,7 +83,7 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
       <div className={styles.container}>
         {/* Sidebar: Categories */}
         <div className={styles.sidebar}>
-          {CATEGORIES.map((category) => (
+          {displayCategories.map((category) => (
             <div
               className={classNames(styles['category-item'], {
                 [styles.active]: selectedCategory === category.id,
@@ -78,6 +91,11 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
               key={category.id}
               onClick={() => setSelectedCategory(category.id)}
             >
+              <img
+                alt={category.displayName}
+                className={styles['category-preview-image']}
+                src={category.previewImage}
+              />
               <h4 className={styles['category-name']}>{category.displayName}</h4>
             </div>
           ))}

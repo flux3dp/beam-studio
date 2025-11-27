@@ -1,379 +1,160 @@
 import { FLUXID_HOST } from './flux-id';
 
-const TEXT_TO_IMAGE_URL = `${FLUXID_HOST}/api/ai-image/text-to-image`;
-const EDIT_IMAGE_URL = `${FLUXID_HOST}/api/ai-image/edit`;
-const AI_IMAGE_STATUS_URL = `${FLUXID_HOST}/api/ai-image`;
-const AI_IMAGE_HISTORY_URL = `${FLUXID_HOST}/api/ai-image/history`;
-const POLL_INTERVAL = 3000; // 3 seconds
-const MAX_POLL_ATTEMPTS = 100; // 5 minutes max (100 * 3s = 300s)
-const TIMEOUT_MS = 30000; // 30 seconds
+const BASE_URL = `${FLUXID_HOST}/api/ai-image`;
+const CONFIG = { MAX_ATTEMPTS: 100, POLL_INTERVAL: 3000, TIMEOUT: 30000 };
 
-// Type Definitions
-export type ImageSizeOption =
-  | 'landscape_3_2'
-  | 'landscape_4_3'
-  | 'landscape_16_9'
-  | 'portrait_3_2'
-  | 'portrait_4_3'
-  | 'portrait_16_9'
-  | 'square'
-  | 'square_hd';
+const ERROR_MESSAGES: Record<number, string> = {
+  400: 'Invalid request parameters',
+  401: 'API key is invalid or missing.',
+  402: 'Insufficient credits.',
+  404: 'Resource not found',
+  422: 'Parameter validation failed.',
+  429: 'Too many requests.',
+  500: 'Server error.',
+};
 
-export type ImageResolution = '1K' | '2K' | '4K';
+export type TaskState = 'fail' | 'pending' | 'success' | 'waiting';
 
-export interface PromptData {
-  inputs: Record<string, string>; // User inputs: { description: '...', text_to_display: '...' }
-  style: string; // Style preset key: 'logo-cute', 'plain', etc.
-}
-
-export interface BaseRequest {
-  image_resolution?: ImageResolution;
-  image_size?: ImageSizeOption;
-  max_images?: number;
-  prompt_data: PromptData;
+export interface GenerationRequest {
+  image_inputs?: Array<File | string>; // Optional: If present, implies 'edit' mode
+  image_resolution: '1K' | '2K' | '4K';
+  image_size:
+    | 'landscape_3_2'
+    | 'landscape_4_3'
+    | 'landscape_16_9'
+    | 'portrait_3_2'
+    | 'portrait_4_3'
+    | 'portrait_16_9'
+    | 'square'
+    | 'square_hd';
+  max_images: number;
+  prompt_data: {
+    inputs: Record<string, string>;
+    style: string;
+  };
   seed?: number;
 }
 
-// Request payload for creating text-to-image task
-export interface TextToImageRequest extends BaseRequest {}
-
-// Request payload for creating image edit task
-export interface ImageEditRequest extends BaseRequest {
-  image_inputs: Array<File | string>; // Ordered array of mixed files and URLs
-}
-
-// State of AI generation task
-export type TaskState = 'fail' | 'pending' | 'success' | 'waiting';
-
-// AI Image Generation data from Django API
 export interface AiImageGenerationData {
   completed_at: null | string;
   cost_time: null | number;
   created_at: string;
   fail_msg: null | string;
-  image_resolution: ImageResolution;
-  image_size: ImageSizeOption;
-  image_urls: string[]; // Input images for edit mode (S3 URLs)
+  image_resolution: GenerationRequest['image_resolution'];
+  image_size: GenerationRequest['image_size'];
+  image_urls: string[];
   max_images: number;
-  prompt_data: PromptData; // Structured prompt data from backend
+  prompt_data: GenerationRequest['prompt_data'];
   result_urls: null | string[];
-  seed: null | number;
+  seed?: number;
   state: TaskState;
   task_id: null | string;
   uuid: string;
 }
 
-// Response from creating a text-to-image task
-export interface TextToImageResponse {
-  data: AiImageGenerationData;
+interface ApiResponse<T> {
+  data: T;
   status: string;
 }
 
-// Response from querying task status
-export interface AiImageStatusResponse {
-  data: AiImageGenerationData;
-  status: string;
-}
-
-// Response from querying generation history
-export interface AiImageHistoryResponse {
-  data: AiImageGenerationData[];
-  status: string;
-}
-
-// Result returned by pollTaskUntilComplete
 export interface GenerationResult {
   error?: string;
   imageUrls?: string[];
   success: boolean;
 }
 
-// Error Messages
-const ERROR_MESSAGES: Record<number, string> = {
-  400: 'Invalid request parameters',
-  401: 'API key is invalid or missing. Please check your API key.',
-  402: 'Insufficient credits. Please top up your account.',
-  404: 'Resource not found',
-  422: 'Parameter validation failed. Please check your inputs.',
-  429: 'Too many requests. Please try again later.',
-  500: 'Server error. Please try again later.',
-};
-
-/**
- * Helper to make fetch requests with timeout and error handling
- */
-const fetchWithTimeout = async (
-  url: string,
-  options: {
-    body?: string;
-    headers?: Record<string, string>;
-    method?: string;
-  } = {},
-  timeout = TIMEOUT_MS,
-): Promise<Response> => {
+const apiClient = async <T>(
+  endpoint: string,
+  // eslint-disable-next-line no-undef
+  options: RequestInit = {},
+): Promise<T | { code?: string; error: string }> => {
   const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), timeout);
+  const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
 
   try {
-    const response = await fetch(url, {
-      ...options,
-      headers: { 'Content-Type': 'application/json', ...options.headers },
-      signal: controller.signal,
-    });
+    // Automatically handle Content-Type for JSON vs FormData
+    const headers =
+      options.body instanceof FormData ? options.headers : { 'Content-Type': 'application/json', ...options.headers };
+
+    const response = await fetch(`${BASE_URL}${endpoint}`, { ...options, headers, signal: controller.signal });
 
     clearTimeout(timeoutId);
 
-    return response;
-  } catch (_error) {
+    const data = (await response.json().catch(() => ({}))) as any;
+
+    if (!response.ok) {
+      return {
+        code: data.info,
+        error: data.message || ERROR_MESSAGES[response.status] || 'Request failed',
+      };
+    }
+
+    return data.status === 'ok' ? data : { error: data.message || 'Operation failed' };
+  } catch (error) {
     clearTimeout(timeoutId);
-    throw _error;
+
+    const msg =
+      error instanceof Error ? (error.name === 'AbortError' ? 'Request timed out.' : error.message) : 'Unknown error';
+
+    return { error: msg };
   }
 };
 
 /**
- * Create a text-to-image generation task
+ * Creates a generation task. Automatically detects mode (edit vs text) based on input.
  */
-export const createTextToImageTask = async ({
-  image_resolution = '1K',
-  image_size = 'square_hd',
-  max_images = 1,
-  prompt_data,
-  seed = Math.floor(Math.random() * 1000000),
-}: TextToImageRequest): Promise<{ code?: string; error: string } | { uuid: string }> => {
-  try {
-    const response = await fetchWithTimeout(TEXT_TO_IMAGE_URL, {
-      body: JSON.stringify({ image_resolution, image_size, max_images, prompt_data, seed }),
-      method: 'POST',
-    });
+export const createAiImageTask = async (params: GenerationRequest) => {
+  const { image_inputs = [], ...rest } = params;
+  const mode = image_inputs.length > 0 ? 'edit' : 'text-to-image';
+  const formData = new FormData();
+  const payload = { ...rest, seed: params.seed ?? Math.floor(Math.random() * 1000000) };
 
-    if (!response.ok) {
-      const errorData = (await response.json().catch(() => ({}))) as { info?: string; message?: string };
-      const errorCode = errorData.info;
-      const errorMessage = errorData.message || ERROR_MESSAGES[response.status] || 'Failed to create task';
+  // Add primitive fields
+  Object.entries(payload).forEach(([key, value]) => {
+    formData.append(key, typeof value === 'object' ? JSON.stringify(value) : String(value));
+  });
 
-      return { code: errorCode, error: errorMessage };
-    }
+  // Add images
+  image_inputs.forEach((input) => formData.append('image_inputs', input));
 
-    const data = (await response.json()) as TextToImageResponse;
+  const result = await apiClient<ApiResponse<{ uuid: string }>>(`/${mode}`, {
+    body: formData,
+    method: 'POST',
+  });
 
-    if (data.status === 'ok') {
-      return { uuid: data.data.uuid };
-    }
-
-    return { error: 'Failed to create task' };
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        return { error: 'Request timed out. Please try again.' };
-      }
-
-      return { error: error.message || 'Network error occurred' };
-    }
-
-    return { error: 'An unexpected error occurred' };
-  }
+  return 'error' in result ? result : { uuid: result.data.uuid };
 };
 
-/**
- * Create an image edit task
- * This sends ordered mixed array of images (files and URLs) as FormData
- * Backend auto-detects type: File objects vs URL strings
- * Order is preserved and semantically meaningful for prompts
- */
-export const createImageEditTask = async ({
-  image_inputs,
-  image_resolution = '1K',
-  image_size = 'square_hd',
-  max_images = 1,
-  prompt_data,
-  seed = Math.floor(Math.random() * 1000000),
-}: ImageEditRequest): Promise<{ code?: string; error: string } | { uuid: string }> => {
-  try {
-    // Build FormData for multipart/form-data request
-    const formData = new FormData();
+export const queryAiImageStatus = (uuid: string) =>
+  apiClient<ApiResponse<AiImageGenerationData>>(`/${uuid}`, { method: 'GET' });
 
-    formData.append('prompt_data', JSON.stringify(prompt_data));
-    formData.append('image_resolution', image_resolution);
-    formData.append('image_size', image_size);
-    formData.append('max_images', max_images.toString());
-    formData.append('seed', seed.toString());
+export const getAiImageHistory = () => apiClient<ApiResponse<AiImageGenerationData[]>>('/history', { method: 'GET' });
 
-    // Append ordered image inputs - backend detects File vs URL string
-    image_inputs.forEach((input) => {
-      formData.append('image_inputs', input);
-    });
-
-    // Fetch without Content-Type header - browser will set it with boundary
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUT_MS);
-
-    try {
-      const response = await fetch(EDIT_IMAGE_URL, { body: formData, method: 'POST', signal: controller.signal });
-
-      clearTimeout(timeoutId);
-
-      if (!response.ok) {
-        const errorData = (await response.json().catch(() => ({}))) as { info?: string; message?: string };
-        const errorCode = errorData.info;
-        const errorMessage = errorData.message || ERROR_MESSAGES[response.status] || 'Failed to create edit task';
-
-        return { code: errorCode, error: errorMessage };
-      }
-
-      const data = (await response.json()) as TextToImageResponse;
-
-      if (data.status === 'ok') {
-        return { uuid: data.data.uuid };
-      }
-
-      return { error: 'Failed to create edit task' };
-    } catch (fetchError) {
-      clearTimeout(timeoutId);
-      throw fetchError;
-    }
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        return { error: 'Request timed out. Please try again.' };
-      }
-
-      return { error: error.message || 'Network error occurred' };
-    }
-
-    return { error: 'An unexpected error occurred' };
-  }
-};
-
-/**
- * Query AI image generation status by UUID
- */
-export const queryAiImageStatus = async (uuid: string): Promise<AiImageStatusResponse | { error: string }> => {
-  try {
-    const response = await fetchWithTimeout(`${AI_IMAGE_STATUS_URL}/${uuid}`, { method: 'GET' });
-
-    // Handle HTTP error status codes
-    if (!response.ok) {
-      if (response.status === 404) {
-        return { error: 'Generation not found' };
-      }
-
-      if (ERROR_MESSAGES[response.status]) {
-        return { error: ERROR_MESSAGES[response.status] };
-      }
-
-      const errorData = (await response.json().catch(() => ({}))) as { message?: string };
-
-      return { error: errorData.message || 'Failed to query task status' };
-    }
-
-    const data = (await response.json()) as AiImageStatusResponse;
-
-    if (data.status === 'ok') {
-      return data;
-    }
-
-    return { error: 'Failed to query task status' };
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        return { error: 'Request timed out. Please try again.' };
-      }
-
-      return { error: error.message || 'Network error occurred' };
-    }
-
-    return { error: 'An unexpected error occurred' };
-  }
-};
-
-/**
- * Poll task status until completion
- */
 export const pollTaskUntilComplete = async (
   uuid: string,
   onProgress?: (state: TaskState) => void,
 ): Promise<GenerationResult> => {
-  let attempts = 0;
-
-  while (attempts < MAX_POLL_ATTEMPTS) {
+  for (let i = 0; i < CONFIG.MAX_ATTEMPTS; i++) {
     const result = await queryAiImageStatus(uuid);
 
-    if ('error' in result) {
-      return { error: result.error, success: false };
-    }
+    if ('error' in result) return { error: result.error, success: false };
 
     const { fail_msg, result_urls, state } = result.data;
 
-    // Notify progress
-    if (onProgress) {
-      onProgress(state);
-    }
+    onProgress?.(state);
 
-    // Success state
     if (state === 'success') {
-      if (result_urls && result_urls.length > 0) {
-        return {
-          imageUrls: result_urls,
-          success: true,
-        };
-      }
-
-      return {
-        error: 'No result URLs returned',
-        success: false,
-      };
+      return result_urls?.length
+        ? { imageUrls: result_urls, success: true }
+        : { error: 'No result URLs returned', success: false };
     }
 
-    // Fail state
     if (state === 'fail') {
-      return {
-        error: fail_msg || 'Generation failed',
-        success: false,
-      };
+      return { error: fail_msg || 'Generation failed', success: false };
     }
 
-    // Still waiting - continue polling
-    await new Promise((resolve) => setTimeout(resolve, POLL_INTERVAL));
-    attempts++;
+    await new Promise((r) => setTimeout(r, CONFIG.POLL_INTERVAL));
   }
 
-  return { error: 'Generation timed out. Please try again.', success: false };
-};
-
-/**
- * Query user's AI image generation history
- */
-export const getAiImageHistory = async (): Promise<AiImageHistoryResponse | { error: string }> => {
-  try {
-    const response = await fetchWithTimeout(AI_IMAGE_HISTORY_URL, { method: 'GET' });
-
-    // Handle HTTP error status codes
-    if (!response.ok) {
-      if (ERROR_MESSAGES[response.status]) {
-        return { error: ERROR_MESSAGES[response.status] };
-      }
-
-      const errorData = (await response.json().catch(() => ({}))) as { message?: string };
-
-      return { error: errorData.message || 'Failed to fetch generation history' };
-    }
-
-    const data = (await response.json()) as AiImageHistoryResponse;
-
-    if (data.status === 'ok') {
-      return data;
-    }
-
-    return { error: 'Failed to fetch generation history' };
-  } catch (error) {
-    if (error instanceof Error) {
-      if (error.name === 'AbortError') {
-        return { error: 'Request timed out. Please try again.' };
-      }
-
-      return { error: error.message || 'Network error occurred' };
-    }
-
-    return { error: 'An unexpected error occurred' };
-  }
+  return { error: 'Generation timed out.', success: false };
 };

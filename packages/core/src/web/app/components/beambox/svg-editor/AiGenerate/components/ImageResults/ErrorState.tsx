@@ -1,21 +1,17 @@
 import { Alert, Button } from 'antd';
 
+import useI18n from '@core/helpers/useI18n'; //
 import browser from '@core/implementations/browser';
 
 import styles from './index.module.scss';
 
-export const ErrorState = ({
-  displayErrorMessage,
-  errorMessage,
-  isInsufficientCredits,
-  lang,
-}: {
-  displayErrorMessage: null | string;
-  errorMessage: null | string;
-  isInsufficientCredits: boolean;
-  lang: any;
-}) => {
-  if (!errorMessage) return null;
+export const ErrorState = ({ error }: { error: null | string }) => {
+  const lang = useI18n();
+
+  if (!error) return null;
+
+  const isInsufficientCredits = error.startsWith('INSUFFICIENT_CREDITS');
+  const displayMessage = error.replace('INSUFFICIENT_CREDITS:', '');
 
   if (isInsufficientCredits) {
     return (
@@ -23,7 +19,7 @@ export const ErrorState = ({
         closable
         description={
           <div className={styles['error-div']}>
-            <span>{displayErrorMessage}</span>
+            <span>{displayMessage}</span>
             <Button
               onClick={() => browser.open(lang.flux_id_login.flux_plus.member_center_url)}
               size="small"
@@ -40,5 +36,5 @@ export const ErrorState = ({
     );
   }
 
-  return <Alert closable description={displayErrorMessage} message="Generation Failed" showIcon type="error" />;
+  return <Alert closable description={displayMessage} message="Generation Failed" showIcon type="error" />;
 };

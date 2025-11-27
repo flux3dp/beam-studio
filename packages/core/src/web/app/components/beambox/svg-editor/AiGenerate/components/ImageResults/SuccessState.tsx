@@ -1,9 +1,45 @@
 import { DownloadOutlined, ImportOutlined } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
 
-import { handleDownload } from '../../utils/handleDownload';
+import { handleDownload } from '../../utils/handleDownload'; //
 
 import styles from './index.module.scss';
+
+const ResultImage = ({
+  isImporting,
+  onImport,
+  url,
+}: {
+  isImporting: boolean;
+  onImport: (url: string) => void;
+  url: string;
+}) => (
+  <div className={styles['image-card']}>
+    <div className={styles['image-wrapper']}>
+      <img alt="Generated result" className={styles.image} src={url} />
+      <div className={styles.overlay}>
+        <Button
+          className={styles['action-button']}
+          icon={<ImportOutlined />}
+          loading={isImporting}
+          onClick={() => onImport(url)}
+          size="large"
+          type="primary"
+        >
+          Import
+        </Button>
+        <Button
+          className={styles['action-button']}
+          icon={<DownloadOutlined />}
+          onClick={() => handleDownload(url)}
+          size="large"
+        >
+          Download
+        </Button>
+      </div>
+    </div>
+  </div>
+);
 
 export const SuccessState = ({
   generatedImages,
@@ -34,32 +70,8 @@ export const SuccessState = ({
         />
       )}
       <div className={styles['images-grid']}>
-        {generatedImages.map((imageUrl, index) => (
-          <div className={styles['image-card']} key={imageUrl}>
-            <div className={styles['image-wrapper']}>
-              <img alt={`Generated image ${index + 1}`} className={styles.image} src={imageUrl} />
-              <div className={styles.overlay}>
-                <Button
-                  className={styles['action-button']}
-                  icon={<ImportOutlined />}
-                  loading={importingUrl === imageUrl}
-                  onClick={() => onImport(imageUrl)}
-                  size="large"
-                  type="primary"
-                >
-                  Import
-                </Button>
-                <Button
-                  className={styles['action-button']}
-                  icon={<DownloadOutlined />}
-                  onClick={() => handleDownload(imageUrl)}
-                  size="large"
-                >
-                  Download
-                </Button>
-              </div>
-            </div>
-          </div>
+        {generatedImages.map((url) => (
+          <ResultImage isImporting={importingUrl === url} key={url} onImport={onImport} url={url} />
         ))}
       </div>
     </>
