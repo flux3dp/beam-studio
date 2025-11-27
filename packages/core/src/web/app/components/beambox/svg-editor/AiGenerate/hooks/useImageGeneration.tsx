@@ -1,4 +1,5 @@
-import { createImageEditTask, createTextToImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
+import { createAiImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
+import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
 import { getInfo } from '@core/helpers/api/flux-id';
 import type { IUser } from '@core/interfaces/IUser';
 
@@ -6,123 +7,119 @@ import type { ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { objectToSnakeCase } from '../utils/caseConversion';
 import { getImageResolution, getImageSizeOption } from '../utils/dimensions';
+import { getInputFieldsForStyle } from '../utils/inputFields';
+
+const validateRequest = (params: {
+  currentUser: IUser | null;
+  style: string;
+  stylesWithFields?: StyleWithInputFields[];
+}): null | string => {
+  const { imageInputs, inputFields } = useAiGenerateStore.getState();
+  const { currentUser, style, stylesWithFields } = params;
+
+  // 1. Validate User
+  if (!currentUser) return 'Please log in to use AI generation.';
+
+  // 2. Validate Image Count
+  if (imageInputs.length > 10) return 'Maximum 10 images allowed';
+
+  // 3. Validate Required Fields
+  const fieldDefs = getInputFieldsForStyle(style, stylesWithFields);
+
+  // Fallback: simple description check if no fields defined
+  if (fieldDefs.length === 0) {
+    const description = inputFields.description || '';
+
+    if (!description.trim() && imageInputs.length === 0) {
+      return 'Please provide a prompt description or upload at least one image';
+    }
+  }
+
+  // Check defined fields
+  for (const field of fieldDefs) {
+    const value = inputFields[field.key] || '';
+
+    if (field.required && !value.trim()) return `"${field.label}" is required. Please fill in this field.`;
+
+    if (field.maxLength && value.length > field.maxLength) {
+      return `"${field.label}" exceeds maximum length of ${field.maxLength} characters.`;
+    }
+  }
+
+  return null; // No errors
+};
 
 interface UseImageGenerationParams {
   count: number;
   currentUser: IUser | null;
   dimensions: ImageDimensions;
   seed?: number;
-  stylePreset: null | string;
+  style: string;
+  stylesWithFields?: StyleWithInputFields[];
 }
 
-interface UseImageGenerationReturn {
-  handleGenerate: () => Promise<void>;
-}
-
-/**
- * Custom hook for managing AI image generation flow
- * Handles validation, API calls, polling, and state updates
- */
 export const useImageGeneration = ({
   count,
   currentUser,
   dimensions,
   seed,
-  stylePreset,
-}: UseImageGenerationParams): UseImageGenerationReturn => {
-  const { addPendingHistoryItem, clearGenerationResults, imageInputs, inputFields, updateHistoryItem } =
-    useAiGenerateStore();
+  style = 'plain',
+  stylesWithFields,
+}: UseImageGenerationParams) => {
+  const store = useAiGenerateStore(); // Access store directly
+  const { addPendingHistoryItem, clearGenerationResults, imageInputs, inputFields, updateHistoryItem } = store;
 
   const handleGenerate = async () => {
-    // Check prompt
-    const description = inputFields.description || '';
+    // 1. Validation Phase
+    const validationError = validateRequest({ currentUser, style, stylesWithFields });
 
-    if (!description.trim() && imageInputs.length === 0) {
-      useAiGenerateStore.setState({ errorMessage: 'Please provide a prompt description or upload at least one image' });
-
-      return;
-    }
-
-    if (imageInputs.length > 10) {
-      useAiGenerateStore.setState({ errorMessage: 'Maximum 10 images allowed' });
+    if (validationError) {
+      useAiGenerateStore.setState({ errorMessage: validationError });
 
       return;
     }
 
-    // User authentication
-    if (!currentUser) {
-      useAiGenerateStore.setState({ errorMessage: 'Please log in to use AI generation.' });
-
-      return;
-    }
-
-    // Clear previous results and set generating status
+    // 2. Preparation Phase
     clearGenerationResults();
     useAiGenerateStore.setState({ generationStatus: 'generating' });
 
-    // Convert inputFields to snake_case for backend
     const inputs = objectToSnakeCase(inputFields) as Record<string, string>;
+    const params = {
+      image_inputs: imageInputs.map((input) => (input.type === 'file' ? input.file : input.url)),
+      image_resolution: getImageResolution(dimensions),
+      image_size: getImageSizeOption(dimensions),
+      max_images: count,
+      prompt_data: { inputs, style },
+      seed,
+    };
 
-    // Create task based on mode
-    let createResponse: { error: string } | { uuid: string };
+    // 3. Execution Phase
+    const createResponse = await createAiImageTask(params);
 
-    if (imageInputs.length > 0) {
-      // Convert ImageInput array to File | string array for API
-      const imageInputsForApi = imageInputs.map((input) => (input.type === 'file' ? input.file : input.url));
-
-      createResponse = await createImageEditTask({
-        image_inputs: imageInputsForApi,
-        image_resolution: getImageResolution(dimensions),
-        image_size: getImageSizeOption(dimensions),
-        max_images: count,
-        prompt_data: { inputs, style: stylePreset || 'plain' },
-        seed,
-      });
-    } else {
-      createResponse = await createTextToImageTask({
-        image_resolution: getImageResolution(dimensions),
-        image_size: getImageSizeOption(dimensions),
-        max_images: count,
-        prompt_data: { inputs, style: stylePreset || 'plain' },
-        seed,
-      });
-    }
-
-    // Handle creation errors
+    // 4. Error Handling Phase
     if ('error' in createResponse) {
-      // Pass error code along with message for special handling in UI
-      const errorMessage =
+      const errorMsg =
         'code' in createResponse && createResponse.code
           ? `${createResponse.code}:${createResponse.error}`
           : createResponse.error;
 
-      useAiGenerateStore.setState({ errorMessage, generationStatus: 'failed' });
+      useAiGenerateStore.setState({ errorMessage: errorMsg, generationStatus: 'failed' });
 
       return;
     }
 
+    // 5. Polling Phase
     const { uuid } = createResponse;
 
     useAiGenerateStore.setState({ generationUuid: uuid });
+    addPendingHistoryItem({ count, dimensions, imageInputs, uuid });
 
-    // Add to history
-    addPendingHistoryItem({
-      count,
-      dimensions,
-      imageInputs,
-      uuid,
-    });
+    const result = await pollTaskUntilComplete(uuid, (state) => updateHistoryItem(uuid, { state }));
 
-    // Poll for results
-    const result = await pollTaskUntilComplete(uuid, (state) => {
-      updateHistoryItem(uuid, { state });
-    });
-
-    // Update final results
+    // 6. Completion Phase
     if (result.success && result.imageUrls) {
       // Update credits info first, then update store state to trigger re-render
       await getInfo({ silent: true });
-
       useAiGenerateStore.setState({ generatedImages: result.imageUrls, generationStatus: 'success' });
       updateHistoryItem(uuid, {
         completed_at: new Date().toISOString(),
@@ -130,8 +127,10 @@ export const useImageGeneration = ({
         state: 'success',
       });
     } else {
-      useAiGenerateStore.setState({ errorMessage: result.error || 'Generation failed', generationStatus: 'failed' });
-      updateHistoryItem(uuid, { fail_msg: result.error || 'Generation failed', state: 'fail' });
+      const failMsg = result.error || 'Generation failed';
+
+      useAiGenerateStore.setState({ errorMessage: failMsg, generationStatus: 'failed' });
+      updateHistoryItem(uuid, { fail_msg: failMsg, state: 'fail' });
     }
   };
 

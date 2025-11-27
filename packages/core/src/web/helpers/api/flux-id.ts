@@ -362,6 +362,20 @@ export const init = async (): Promise<void> => {
   // Initialize user info for current tab
   await getInfo({ sendToOtherTabs: false, silent: true });
   updateAccountMenu(currentUser);
+
+  // Prefetch AI config in background using TanStack Query (non-blocking)
+  if (currentUser) {
+    // Dynamic import to prevent FLUXID_HOST dependency cycle
+    import('@core/helpers/query')
+      .then(({ prefetchAiConfig }) => {
+        prefetchAiConfig().catch((err) => {
+          console.warn('[AI Config] Background prefetch failed:', err);
+        });
+      })
+      .catch((err) => {
+        console.warn('[AI Config] Failed to load query module:', err);
+      });
+  }
 };
 
 export const externalLinkFBSignIn = (): void => {
