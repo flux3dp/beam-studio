@@ -7,35 +7,11 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
 import LeftPanel from '.';
 
-const on = jest.fn();
-const off = jest.fn();
-
-jest.mock('@core/helpers/shortcuts', () => ({
-  off: (...args) => off(...args),
-  on: (...args) => on(...args),
-}));
-
-const clearSelection = jest.fn();
-const useSelectTool = jest.fn();
-const importImage = jest.fn();
-const insertText = jest.fn();
-const insertRectangle = jest.fn();
-const insertEllipse = jest.fn();
-const insertLine = jest.fn();
-const insertPath = jest.fn();
-const insertPolygon = jest.fn();
+const mockRegisterCanvasShortcuts = jest.fn();
 const mockUnsubscribe = jest.fn();
 
-jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
-  clearSelection: () => clearSelection(),
-  importImage: () => importImage(),
-  insertEllipse: () => insertEllipse(),
-  insertLine: () => insertLine(),
-  insertPath: () => insertPath(),
-  insertPolygon: () => insertPolygon(),
-  insertRectangle: () => insertRectangle(),
-  insertText: () => insertText(),
-  useSelectTool: () => useSelectTool(),
+jest.mock('@core/app/stores/canvas/utils/registerCanvasEventsAndShortcuts', () => ({
+  registerCanvasShortcuts: (...args) => mockRegisterCanvasShortcuts(...args),
 }));
 
 jest.mock(
@@ -65,16 +41,21 @@ jest.mock('@core/app/stores/canvas/utils/autoFocus', () => ({
 describe('test LeftPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    on.mockReturnValue(mockUnsubscribe);
+    mockRegisterCanvasShortcuts.mockReturnValue(mockUnsubscribe);
     useCanvasStore.getState().setMode(CanvasMode.Draw);
   });
 
-  test('neither in previewing nor in path previewing', () => {
-    Object.defineProperty(window, 'os', {
-      value: 'MacOS',
-    });
-    document.body.innerHTML = '<div id="svg_editor" />';
+  test('shortcuts are registered on mount and unregistered on unmount', () => {
+    const { unmount } = render(<LeftPanel />);
 
+    expect(mockRegisterCanvasShortcuts).toHaveBeenCalledTimes(1);
+
+    unmount();
+
+    expect(mockUnsubscribe).toHaveBeenCalledTimes(1);
+  });
+
+  test('neither in previewing nor in path previewing', () => {
     const { container, unmount } = render(<LeftPanel />);
 
     expect(container).toMatchSnapshot();
@@ -82,8 +63,7 @@ describe('test LeftPanel', () => {
   });
 
   test('not in path previewing', () => {
-    Object.defineProperty(window, 'os', { value: 'Windows' });
-    useCanvasStore.getState().setMode(CanvasMode.Preview);
+    useCanvasStore.getState().setMode(CanvasMode.CurveEngraving);
 
     const { container } = render(<LeftPanel />);
 
@@ -91,7 +71,6 @@ describe('test LeftPanel', () => {
   });
 
   test('in path previewing', () => {
-    Object.defineProperty(window, 'os', { value: 'Windows' });
     useCanvasStore.getState().setMode(CanvasMode.PathPreview);
 
     const { container } = render(<LeftPanel />);
@@ -105,7 +84,6 @@ describe('test LeftPanel', () => {
   });
 
   test('in curve engraving mode', () => {
-    Object.defineProperty(window, 'os', { value: 'Windows' });
     useCanvasStore.getState().setMode(CanvasMode.CurveEngraving);
 
     const { container } = render(<LeftPanel />);
