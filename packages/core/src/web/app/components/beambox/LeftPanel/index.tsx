@@ -11,7 +11,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { toggleAutoFocus } from '@core/app/stores/canvas/utils/autoFocus';
-import { registerCanvasShortcuts } from '@core/app/stores/canvas/utils/registerCanvasEventsAndShortcuts';
+import { registerCanvasShortcuts } from '@core/app/stores/canvas/utils/registerCanvasShortcuts';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './index.module.scss';

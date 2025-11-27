@@ -10,7 +10,7 @@ import LeftPanel from '.';
 const mockRegisterCanvasShortcuts = jest.fn();
 const mockUnsubscribe = jest.fn();
 
-jest.mock('@core/app/stores/canvas/utils/registerCanvasEventsAndShortcuts', () => ({
+jest.mock('@core/app/stores/canvas/utils/registerCanvasShortcuts', () => ({
   registerCanvasShortcuts: (...args) => mockRegisterCanvasShortcuts(...args),
 }));
 
