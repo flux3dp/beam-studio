@@ -132,7 +132,6 @@ export interface ISVGEditor {
   replaceBitmap: any;
   setConfig: (opts: any, cfgCfg: any) => void;
   setIcon: (elem: any, icon_id: any) => void;
-  setImageURL: (url: any) => void;
   setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
   storagePromptClosed: boolean;
@@ -185,7 +184,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     replaceBitmap: null,
     setConfig: (opts: any, cfgCfg: any) => {},
     setIcon: (elem: any, icon_id: any) => {},
-    setImageURL: (url: any) => {},
     setLang: (lang: any, allStrings: any) => {},
     setPanning: (active: any) => {},
     storage: storage,
@@ -299,7 +297,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       gridSnapping: false,
       // PATH CONFIGURATION
       // The following path configuration items are disallowed in the URL (as should any future path configurations)
-      imgPath: 'js/lib/svgeditor/images/',
       initFill: {
         color: 'FFFFFF',
         opacity: 0,
@@ -566,7 +563,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     var resize_timer,
       Actions,
       path = svgCanvas.pathActions,
-      defaultImageURL = curConfig.imgPath + 'logo.png',
       workarea = $('#workarea');
 
     // For external openers
@@ -609,23 +605,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
       if (clearSelection) {
         svgCanvas.clearSelection();
-      }
-    });
-
-    var setImageURL = (editor.setImageURL = function (url) {
-      if (!url) {
-        url = defaultImageURL;
-      }
-
-      svgCanvas.setImageURL(url);
-
-      if (url.indexOf('data:') === 0) {
-        // data URI found
-      } else {
-        // regular URL
-        svgCanvas.embedImage(url, function (dataURI) {
-          defaultImageURL = url;
-        });
       }
     });
 

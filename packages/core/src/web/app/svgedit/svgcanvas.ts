@@ -620,7 +620,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   rotaryAxis.init();
 
   // import from select.js
-  selector.init(curConfig, {
+  selector.init({
     createSVGElement: function (jsonMap) {
       return canvas.addSvgElementFromJson(jsonMap);
     },
@@ -704,8 +704,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Object to contain image data for raster images that were found encodable
   const encodableImages = {};
 
-  let last_good_img_url = curConfig.imgPath + 'logo.png';
-
   // Array with current disabled elements (for in-group editing)
   let disabled_elems = [];
 
@@ -763,7 +761,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getCurrentResizeMode = () => current_resize_mode;
   this.getCurrentShape = () => cur_shape;
   this.getCurrentZoom = () => workareaManager.zoomRatio;
-  this.getGoodImage = () => last_good_img_url;
   this.getLastClickPoint = () => lastClickPoint;
   this.getMode = function () {
     return getMouseMode();
@@ -784,9 +781,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getStarted = () => started;
   this.getStartTransform = () => startTransform;
   this.getTempGroup = () => tempGroup;
-  this.setGoodImage = function (val) {
-    last_good_img_url = val;
-  };
   this.setRootScreenMatrix = (matrix: SVGMatrix) => {
     root_sctm = matrix;
   };
@@ -2070,7 +2064,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         } catch (e) {
           encodableImages[val] = false;
         }
-        last_good_img_url = val;
 
         if (callback) {
           callback(encodableImages[val]);
@@ -3198,78 +3191,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   })();
 
   // Useless for beambox
-  // Function: setFontColor
-  // Set the new font color
-  //
-  // Parameters:
-  // val - String with the new font color
-  // this.setFontColor = function (val) {
-  //   cur_text.fill = val;
-  //   changeSelectedAttribute('fill', val);
-  // };
-
-  // Function: getFontColor
-  // Returns the current font color
-  // this.getFontColor = function () {
-  //   return cur_text.fill;
-  // };
-
-  // Function: setImageURL
-  // Sets the new image URL for the selected image element. Updates its size if
-  // a new URL is given
-  //
-  // Parameters:
-  // val - String with the image URL/path
-  this.setImageURL = function (val) {
-    var elem = selectedElements[0];
-
-    if (!elem) {
-      return;
-    }
-
-    var attrs = $(elem).attr(['width', 'height']);
-    var setsize = !attrs.width || !attrs.height;
-
-    var cur_href = getHref(elem);
-
-    // Do nothing if no URL change or size change
-    if (cur_href !== val) {
-      setsize = true;
-    } else if (!setsize) {
-      return;
-    }
-
-    var batchCmd = new history.BatchCommand('Change Image URL');
-
-    setHref(elem, val);
-    batchCmd.addSubCommand(
-      new history.ChangeElementCommand(elem, {
-        '#href': cur_href,
-      }),
-    );
-
-    if (setsize) {
-      ($(new Image()) as any)
-        .load(function () {
-          var changes = $(elem).attr(['width', 'height']);
-
-          $(elem).attr({
-            height: this.height,
-            width: this.width,
-          });
-
-          selectorManager.requestSelector(elem).resize();
-
-          batchCmd.addSubCommand(new history.ChangeElementCommand(elem, changes));
-          addCommandToHistory(batchCmd);
-          call('changed', [elem]);
-        })
-        .attr('src', val);
-    } else {
-      addCommandToHistory(batchCmd);
-    }
-  };
-
   // Function: setLinkURL
   // Sets the new link URL for the selected anchor element.
   //

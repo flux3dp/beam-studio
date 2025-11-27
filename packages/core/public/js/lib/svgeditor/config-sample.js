@@ -75,7 +75,6 @@ svgEditor.setConfig({
 	// showlayers: false,
 	// no_save_warning: false,
 	// PATH CONFIGURATION
-	// imgPath: 'images/',
 	// langPath: 'locale/',
 	// extPath: 'extensions/',
 	/*

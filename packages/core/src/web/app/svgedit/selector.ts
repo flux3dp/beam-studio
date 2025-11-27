@@ -30,7 +30,6 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 type BBox = { height: number; width: number; x: number; y: number };
 
 let svgFactory: any;
-let config: any;
 const gripRadius = svgedit.browser.isTouch() ? 8 : 4;
 const btnRadius = 12;
 const btnMargin = 6; // for shadow
@@ -39,8 +38,7 @@ const iconWidth = 2 * (btnRadius - btnPadding);
 const rectDist = 25;
 const SELECTOR_MAP_RESERVE_SIZE = 5;
 
-const init = (injectedConfig: any, injectedSvgFactory: any): void => {
-  config = injectedConfig;
+const init = (injectedSvgFactory: any): void => {
   svgFactory = injectedSvgFactory;
 };
 
@@ -158,7 +156,7 @@ export class Selector {
     this.rotateGripTop.setAttribute('fill', '#12B700');
     this.rotateGripTop.setAttribute('stroke', '#0000FF');
     this.rotateGripTop.setAttribute('stroke-width', '2');
-    this.rotateGripTop.setAttribute('style', `cursor:url(${config.imgPath}rotate.png) 12 12, auto;`);
+    this.rotateGripTop.setAttribute('style', `cursor:url(core-img/rotate.png) 12 12, auto;`);
     this.rotateGripTop.setAttribute('class', 'hidden-mobile');
     this.gripsGroup.appendChild(this.rotateGripTop);
     $.data(this.rotateGripTop, 'type', 'rotate');

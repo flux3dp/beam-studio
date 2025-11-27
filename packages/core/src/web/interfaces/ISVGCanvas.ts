@@ -77,7 +77,6 @@ export default interface ISVGCanvas {
   getCurrentShape: () => IShapeStyle;
   getCurrentZoom: () => number; // New getter for current_zoom
   getDocumentTitle: () => string;
-  getGoodImage: () => string;
   getHref: (elem: SVGElement) => string;
   getId: () => string;
   getImageSource: () => Promise<Record<string, ArrayBuffer>>;
@@ -157,7 +156,6 @@ export default interface ISVGCanvas {
   setElemsFill: (elems: Element[]) => void;
   setElemsUnfill: (elems: Element[]) => void;
   setHref: (elem: SVGElement | SVGImageElement, href: string) => void;
-  setImageURL: (url: string) => void;
   setLastClickPoint: (point: { x: number; y: number }) => void;
   setMode: (mode: string) => void;
   setOpacity: (opacity: number) => void;
