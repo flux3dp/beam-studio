@@ -12,9 +12,6 @@ export const toggleAutoFocus = async (forceState?: boolean) => {
   const workarea = document.getElementById('workarea');
   const workareaEvents = eventEmitterFactory.createEventEmitter('workarea');
   const { mode, setMode } = useCanvasStore.getState();
-  const setCursor = (cursor: string) => {
-    if (workarea) workarea.style.cursor = cursor;
-  };
   const contextMenuHandler = (e: Event): void => {
     e.stopPropagation();
     e.preventDefault();
@@ -28,7 +25,6 @@ export const toggleAutoFocus = async (forceState?: boolean) => {
 
       setMode(CanvasMode.AutoFocus);
       setMouseMode('auto-focus');
-      setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
     })
     .otherwise(async () => {
       await deviceMaster.rawLooseMotor();
@@ -40,6 +36,5 @@ export const toggleAutoFocus = async (forceState?: boolean) => {
 
       setMode(CanvasMode.Draw);
       setMouseMode('select');
-      setCursor('auto');
     });
 };

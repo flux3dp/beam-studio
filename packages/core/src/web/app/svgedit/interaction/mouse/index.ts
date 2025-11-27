@@ -11,7 +11,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
-import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
@@ -696,6 +696,7 @@ const mouseMove = (evt: MouseEvent) => {
       findAndDrawAlignPoints(realX, realY);
     }
 
+    //
     if (svgCanvas.sensorAreaInfo) {
       if (currentMode === 'select') {
         const dist = Math.hypot(svgCanvas.sensorAreaInfo.x - mouseX, svgCanvas.sensorAreaInfo.y - mouseY);
@@ -703,9 +704,9 @@ const mouseMove = (evt: MouseEvent) => {
 
         if (workarea) {
           if (dist < SENSOR_AREA_RADIUS) {
-            workarea.style.cursor = 'move';
+            setCursor('move');
           } else if (workarea.style.cursor === 'move') {
-            workarea.style.cursor = 'auto';
+            setCursor('auto', 'move');
           }
         }
       }

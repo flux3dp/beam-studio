@@ -23,11 +23,6 @@ getSVGAsync((globalSVG) => {
   svgEditor = globalSVG.Editor;
 });
 
-const setCrosshairCursor = () => {
-  $('#workarea').css('cursor', 'crosshair');
-  $('#svg_editor g').css('cursor', 'crosshair');
-};
-
 const align = (type: 'b' | 'c' | 'l' | 'm' | 'r' | 't') => {
   if (svgCanvas.getTempGroup()) {
     const children = svgCanvas.ungroupTempGroup();
@@ -136,7 +131,6 @@ const funcs = {
     }
 
     setMouseMode('ellipse');
-    setCrosshairCursor();
   },
   insertImage(
     insertedImageSrc: string,
@@ -189,15 +183,12 @@ const funcs = {
   },
   insertLine(): void {
     setMouseMode('line');
-    setCrosshairCursor();
   },
   insertPath(): void {
     setMouseMode('path');
-    setCrosshairCursor();
   },
   insertPolygon(): void {
     setMouseMode('polygon');
-    setCrosshairCursor();
   },
   insertRectangle(): void {
     if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_RECT) {
@@ -205,11 +196,9 @@ const funcs = {
     }
 
     setMouseMode('rect');
-    setCrosshairCursor();
   },
   insertText(): void {
     setMouseMode('text');
-    $('#workarea').css('cursor', 'text');
   },
   // left panel
   useSelectTool(): void {

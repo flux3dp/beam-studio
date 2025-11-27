@@ -73,7 +73,12 @@ import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import {
+  getMouseMode,
+  setCursor,
+  setCursorAccordingToMouseMode,
+  setMouseMode,
+} from '@core/app/stores/canvas/utils/mouseMode';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -1129,7 +1134,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       document.addEventListener('keydown', (evt) => {
         if (evt.key === ' ') {
           svgCanvas.spaceKey = keypan = true;
-          workarea.css('cursor', 'grab');
+          setCursor('grab');
           evt.preventDefault(); // prevent page from scrolling
         }
       });
@@ -1137,7 +1142,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // because shortcuts are not providing keyup event now
       document.addEventListener('keyup', (evt) => {
         if (evt.key === ' ') {
-          workarea.css('cursor', 'auto');
+          setCursorAccordingToMouseMode();
           svgCanvas.spaceKey = keypan = false;
         }
       });

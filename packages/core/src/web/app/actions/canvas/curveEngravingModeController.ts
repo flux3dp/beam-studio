@@ -7,7 +7,6 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import cursorIconUrl from '@core/app/icons/left-panel/curve-select.svg?url';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
@@ -75,32 +74,15 @@ class CurveEngravingModeController {
   back = (mode: CanvasMode = CanvasMode.Draw) => {
     this.end();
     setMouseMode('select');
-
-    const workarea: HTMLDivElement | null = document.querySelector('#workarea');
-
-    if (workarea) workarea.style.cursor = 'auto';
-
     useCanvasStore.getState().setMode(mode);
   };
 
   toAreaSelectMode = () => {
     setMouseMode('curve-engraving');
-
-    const workarea = document.querySelector('#workarea');
-
-    if (workarea) {
-      (workarea as HTMLDivElement).style.cursor = `url(${cursorIconUrl}) 25 7, cell`;
-    }
   };
 
   toCanvasSelectMode = () => {
     setMouseMode('select');
-
-    const workarea = document.querySelector('#workarea');
-
-    if (workarea) {
-      (workarea as HTMLDivElement).style.cursor = 'auto';
-    }
   };
 
   applyRemeasureData = (data: MeasureData) => {

@@ -266,9 +266,6 @@ class PreviewModeController {
   };
 
   onPreviewSuccess = (): void => {
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'auto';
     this.isPreviewBlocked = false;
     this.setIsDrawing(false);
   };
@@ -279,10 +276,6 @@ class PreviewModeController {
 
       Alert.popUpError({ message: (error as Error).message || (error as any).text });
     }
-
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'auto';
 
     this.end();
   };

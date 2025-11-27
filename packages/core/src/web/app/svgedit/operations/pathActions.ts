@@ -194,7 +194,6 @@ export const finishPath = (toEditMode = true) => {
     if (toEditMode) {
       svgCanvas.pathActions.toEditMode(element);
       svgCanvas.call('changed', [element]);
-      $('#workarea').css('cursor', 'default');
     } else {
       const pathPointGripContainer = document.getElementById('pathpointgrip_container');
 
@@ -234,8 +233,6 @@ const toSelectMode = (elem?: Element): void => {
   if (currentMode === 'select') {
     $(svgedit.path.path.elem).attr('cursor', ''); // Unset path cursor type
     drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
-  } else if (currentMode === 'path') {
-    $('#workarea').css('cursor', 'crosshair');
   }
 
   svgedit.path.path.show(false);
