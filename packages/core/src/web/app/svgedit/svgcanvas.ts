@@ -41,6 +41,7 @@ import { getAddOnInfo } from '@core/app/constants/addOn';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
@@ -759,14 +760,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
   this.getCurrentConfig = () => curConfig;
   this.getCurrentGroup = () => current_group;
-  this.getCurrentMode = () => current_mode;
   this.getCurrentResizeMode = () => current_resize_mode;
   this.getCurrentShape = () => cur_shape;
   this.getCurrentZoom = () => workareaManager.zoomRatio;
   this.getGoodImage = () => last_good_img_url;
   this.getLastClickPoint = () => lastClickPoint;
   this.getMode = function () {
-    return current_mode;
+    return getMouseMode();
   };
   this.getRoot = () => svgroot;
   this.getRootElem = () => svgroot;
@@ -801,9 +801,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.unsafeAccess = {
-    setCurrentMode: (v) => {
-      current_mode = v;
-    },
     setRubberBox: (v) => {
       rubberBox = v;
     },
@@ -1381,7 +1378,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
    */
   this.selectAll = () => {
     clearSelection();
-    this.setMode('select');
+    setMouseMode('select');
 
     const allLayers = layerManager.getAllLayers();
     const elemsToSelect = [];
@@ -1578,7 +1575,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.handleGenerateSensorArea = (evt) => {
     // if dx or dy !== 0, then we are moving elements. Don't update sensor area info.
     if (
-      current_mode === 'select' &&
+      getMouseMode() === 'select' &&
       (!this.sensorAreaInfo || (this.sensorAreaInfo.dx === 0 && this.sensorAreaInfo.dy === 0))
     ) {
       if (evt.target.id.match(/grip/i) || evt.target.id.includes('stretch')) {
@@ -2663,43 +2660,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // name - String with the new mode to change to
   this.setMode = function (name) {
-    if (current_mode === 'path') {
-      pathActions.finishPath(false);
-    }
-
-    pathActions.clear(true);
-    current_mode = name;
-
-    if (name !== 'textedit') {
-      textActions.clear();
-    }
-
-    switch (name) {
-      case 'select':
-        $('#svg_editor g').css('cursor', 'move');
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
-        break;
-      case 'text':
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Text');
-        break;
-      case 'line':
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Line');
-        break;
-      case 'rect':
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Rectangle');
-        break;
-      case 'ellipse':
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Ellipse');
-        break;
-      case 'polygon':
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Polygon');
-        break;
-      case 'path':
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Pen');
-        break;
-      default:
-        break;
-    }
+    setMouseMode(name);
   };
 
   // Group: Element Styling
@@ -2922,7 +2883,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // val - A Float indicating the new stroke width value
   this.setStrokeWidth = function (val) {
-    if (val == 0 && ['line', 'path'].includes(current_mode)) {
+    if (val == 0 && ['line', 'path'].includes(getMouseMode())) {
       canvas.setStrokeWidth(1);
 
       return;
@@ -3657,7 +3618,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // newValue - String or number with the new attribute value
   // elems - The DOM elements to apply the change to
   var changeSelectedAttributeNoUndo = (this.changeSelectedAttributeNoUndo = function (attr, newValue, elems?) {
-    if (current_mode === 'pathedit') {
+    if (getMouseMode() === 'pathedit') {
       // Editing node
       pathActions.moveNode(attr, newValue);
     }
@@ -3728,7 +3689,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         // NOTE: Important that this happens AFTER elem.setAttribute() or else attributes like
         // font-size can get reset to their old value, ultimately by svgEditor.updateContextPanel(),
         // after calling textActions.toSelectMode() below
-        if (current_mode === 'textedit' && attr !== '#text' && elem.textContent.length) {
+        if (getMouseMode() === 'textedit' && attr !== '#text' && elem.textContent.length) {
           textActions.toSelectMode(elem);
         }
 

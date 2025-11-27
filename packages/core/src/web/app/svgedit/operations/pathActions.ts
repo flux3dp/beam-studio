@@ -2,6 +2,8 @@
 import * as paper from 'paper';
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import { type CanvasMouseMode } from '@core/app/stores/canvas/canvasStore';
+import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
@@ -50,7 +52,7 @@ let subpath = false;
 let currentPath = null;
 let newPoint;
 let firstCtrl;
-let previousMode = 'select';
+let previousMode: CanvasMouseMode = 'select';
 let modeOnMouseDown = '';
 let hasMoved = false;
 let hasCreatedPoint = false;
@@ -157,7 +159,7 @@ const getCurveLocationByPaperjs = (x: number, y: number, elem: SVGPathElement) =
   return result;
 };
 
-const finishPath = (toEditMode = true) => {
+export const finishPath = (toEditMode = true) => {
   svgCanvas.clearAlignLines();
 
   if (!drawnPath) {
@@ -201,9 +203,7 @@ const finishPath = (toEditMode = true) => {
   } else {
     if (element) element.remove();
 
-    svgCanvas.setMode(previousMode);
-
-    if (previousMode === 'select') $('#workarea').css('cursor', 'default');
+    setMouseMode(previousMode);
   }
 
   shortcuts.off(['Escape']);
@@ -215,8 +215,8 @@ const toEditMode = (element: Element): void => {
 
   const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];
 
-  previousMode = isContinuousDrawing ? svgCanvas.getCurrentMode() : 'select';
-  svgCanvas.unsafeAccess.setCurrentMode('pathedit');
+  previousMode = isContinuousDrawing ? getMouseMode() : 'select';
+  setMouseMode('pathedit');
   svgCanvas.clearSelection();
   svgedit.path.path.show(true).update();
   svgedit.path.path.oldbbox = svgedit.utilities.getBBox(svgedit.path.path.elem);
@@ -227,9 +227,9 @@ const toEditMode = (element: Element): void => {
 const toSelectMode = (elem?: Element): void => {
   const selPath = elem === svgedit.path.path.elem;
 
-  svgCanvas.unsafeAccess.setCurrentMode(previousMode);
+  setMouseMode(previousMode);
 
-  const currentMode = svgCanvas.getCurrentMode();
+  const currentMode = getMouseMode();
 
   if (currentMode === 'select') {
     $(svgedit.path.path.elem).attr('cursor', ''); // Unset path cursor type
@@ -264,7 +264,7 @@ const toSelectMode = (elem?: Element): void => {
 };
 
 const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, startY: number) => {
-  const currentMode = svgCanvas.getCurrentMode();
+  const currentMode = getMouseMode();
   const currentZoom = workareaManager.zoomRatio;
 
   svgCanvas.clearAlignLines();
@@ -901,7 +901,7 @@ const deletePathNode = () => {
 const select = (target): void => {
   if (currentPath === target) {
     toEditMode(target);
-    svgCanvas.unsafeAccess.setCurrentMode('pathedit');
+    setMouseMode('pathedit');
   } else {
     // going into pathedit mode
     currentPath = target;
@@ -942,7 +942,7 @@ const reorient = (selectedElements): void => {
   svgCanvas.call('changed', selectedElements);
 };
 
-const clear = () => {
+export const clear = () => {
   currentPath = null;
 
   if (drawnPath) {
@@ -954,7 +954,7 @@ const clear = () => {
     drawnPath = null;
     firstCtrl = null;
     svgCanvas.unsafeAccess.setStarted(false);
-  } else if (svgCanvas.getCurrentMode() === 'pathedit') {
+  } else if (getMouseMode() === 'pathedit') {
     toSelectMode(svgedit.path.path.elem);
   }
 
@@ -1007,7 +1007,7 @@ const resetOrientation = (path) => {
 };
 
 const zoomChange = (oldZoom: number, newZoom: number) => {
-  const currentMode = svgCanvas?.getCurrentMode?.();
+  const currentMode = getMouseMode();
 
   if (currentMode === 'pathedit') {
     svgedit.path.path.update();
@@ -1219,7 +1219,7 @@ const addSubPath = (on) => {
   if (on) {
     // Internally we go into "path" mode, but in the UI it will
     // still appear as if in "pathedit" mode.
-    svgCanvas.unsafeAccess.setCurrentMode('path');
+    setMouseMode('path');
     subpath = true;
   } else {
     clear(true);
@@ -1678,7 +1678,7 @@ const handleHistoryEvent = (eventType: string, cmd: ICommand) => {
 
   if (eventType === EventTypes.AFTER_APPLY || eventType === EventTypes.AFTER_UNAPPLY) {
     // Only cares for updating nodes in pathedit mode
-    if (svgedit.path.path && svgCanvas.getCurrentMode() === 'pathedit' && cmd.elem === svgedit.path.path.elem) {
+    if (svgedit.path.path && getMouseMode() === 'pathedit' && cmd.elem === svgedit.path.path.elem) {
       const selectedPath: ISVGPath = svgedit.path.path;
 
       selectedPath.init();

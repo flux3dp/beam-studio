@@ -73,7 +73,6 @@ export default interface ISVGCanvas {
   getCurrentConfig: () => ISVGConfig;
   getCurrentDrawing: () => ISVGDrawing;
   getCurrentGroup: () => SVGGElement;
-  getCurrentMode: () => string;
   getCurrentResizeMode: () => string;
   getCurrentShape: () => IShapeStyle;
   getCurrentZoom: () => number; // New getter for current_zoom

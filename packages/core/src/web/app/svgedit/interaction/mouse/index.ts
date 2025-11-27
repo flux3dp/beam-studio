@@ -9,10 +9,9 @@ import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
-import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
@@ -106,7 +105,7 @@ const mouseDown = async (evt: MouseEvent) => {
   const started = svgCanvas.getStarted();
   const svgRoot = svgCanvas.getRoot();
   const rightClick = evt.button === MouseButtons.Right;
-  let currentMode = svgCanvas.getCurrentMode();
+  let currentMode = getMouseMode();
   let extensionResult = null;
 
   svgCanvas.setRootScreenMatrix(($('#svgcontent')[0] as any).getScreenCTM().inverse());
@@ -136,8 +135,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
     if (currentMode === 'path') {
       svgCanvas.pathActions.finishPath(false);
-      $('#workarea').css('cursor', 'default');
-      svgCanvas.unsafeAccess.setCurrentMode('select');
+      setMouseMode('select');
 
       return;
     }
@@ -165,7 +163,7 @@ const mouseDown = async (evt: MouseEvent) => {
     if (gripType === 'rotate') {
       // rotating
       angleOffset = +grip.getAttribute('data-angleOffset')! || 90;
-      svgCanvas.unsafeAccess.setCurrentMode('rotate');
+      setMouseMode('rotate');
     } else if (gripType === 'resize') {
       // resizing
       let cx = +grip.getAttribute('cx')!;
@@ -182,15 +180,15 @@ const mouseDown = async (evt: MouseEvent) => {
       startX = cx / zoom;
       startY = cy / zoom;
 
-      svgCanvas.unsafeAccess.setCurrentMode('resize');
+      setMouseMode('resize');
       svgCanvas.setCurrentResizeMode($.data(grip, 'dir'));
     }
 
     [mouseTarget] = selectedElements;
 
-    console.log('svgCanvas gripping', svgCanvas.getCurrentMode(), svgCanvas.getCurrentResizeMode());
+    console.log('svgCanvas gripping', getMouseMode(), svgCanvas.getCurrentResizeMode());
   } else if (svgCanvas.textActions.isEditing) {
-    svgCanvas.unsafeAccess.setCurrentMode('textedit');
+    setMouseMode('textedit');
   }
 
   extensionResult = svgCanvas.runExtensions('checkMouseTarget', { mouseTarget }, true);
@@ -210,19 +208,20 @@ const mouseDown = async (evt: MouseEvent) => {
     }
   }
 
-  if (presprayArea.checkMouseTarget(mouseTarget)) svgCanvas.setMode('drag-prespray-area');
+  if (presprayArea.checkMouseTarget(mouseTarget)) setMouseMode('drag-prespray-area');
 
-  if (rotaryAxis.checkMouseTarget(mouseTarget)) svgCanvas.setMode('drag-rotary-axis');
+  if (rotaryAxis.checkMouseTarget(mouseTarget)) setMouseMode('drag-rotary-axis');
 
   svgCanvas.unsafeAccess.setStartTransform(mouseTarget.getAttribute('transform'));
-  currentMode = svgCanvas.getCurrentMode();
+  currentMode = getMouseMode();
 
   switch (currentMode) {
     case 'auto-focus':
       autoFocusEventEmitter.emit('pin', pt);
 
       return;
-    case 'background_preview':
+    case 'preview':
+    case 'pre_preview':
       svgCanvas.unsafeAccess.setStarted(true);
       setRubberBoxStart(startMouseX, startMouseY);
 
@@ -234,99 +233,85 @@ const mouseDown = async (evt: MouseEvent) => {
 
       if (rightClick) svgCanvas.unsafeAccess.setStarted(false);
 
-      if (
-        ((PreviewModeController.isPreviewMode && !PreviewModeController.isBackgroundMode) ||
-          useCanvasStore.getState().mode === CanvasMode.Preview) &&
-        !curveEngravingModeController.started
-      ) {
-        // preview mode
-        svgCanvas.clearSelection();
+      const mouseTargetObjectLayer = LayerHelper.getObjectLayer(mouseTarget);
+      const isElemTempGroup = mouseTarget.getAttribute('data-tempgroup') === 'true';
+      const layerSelectable =
+        mouseTargetObjectLayer?.elem &&
+        mouseTargetObjectLayer?.elem?.getAttribute('display') !== 'none' &&
+        !mouseTargetObjectLayer.elem.getAttribute('data-lock');
 
-        if (PreviewModeController.isPreviewMode) svgCanvas.unsafeAccess.setCurrentMode('preview');
-        else svgCanvas.unsafeAccess.setCurrentMode('pre_preview');
+      if (mouseTarget !== svgRoot && (isElemTempGroup || layerSelectable)) {
+        // Mouse down on element
+        if (!selectedElements.includes(mouseTarget)) {
+          if (!evt.shiftKey) svgCanvas.clearSelection(true);
 
-        setRubberBoxStart(startMouseX, startMouseY);
-      } else {
-        const mouseTargetObjectLayer = LayerHelper.getObjectLayer(mouseTarget);
-        const isElemTempGroup = mouseTarget.getAttribute('data-tempgroup') === 'true';
-        const layerSelectable =
-          mouseTargetObjectLayer?.elem &&
-          mouseTargetObjectLayer?.elem?.getAttribute('display') !== 'none' &&
-          !mouseTargetObjectLayer.elem.getAttribute('data-lock');
+          if (navigator.maxTouchPoints > 1 && ['MacOS', 'others'].includes(window.os)) {
+            // in touchable mobiles, allow multiselect if click on non selected element
+            // if user doesn't multiselect, select [justSelected] in mouseup
+            setMouseMode('multiselect');
+            setRubberBoxStart(startMouseX, startMouseY);
+          } else {
+            svgCanvas.addToSelection([mouseTarget]);
+            selectedElements = svgCanvas.getSelectedElems();
 
-        if (mouseTarget !== svgRoot && (isElemTempGroup || layerSelectable)) {
-          // Mouse down on element
-          if (!selectedElements.includes(mouseTarget)) {
-            if (!evt.shiftKey) svgCanvas.clearSelection(true);
-
-            if (navigator.maxTouchPoints > 1 && ['MacOS', 'others'].includes(window.os)) {
-              // in touchable mobiles, allow multiselect if click on non selected element
-              // if user doesn't multiselect, select [justSelected] in mouseup
-              svgCanvas.unsafeAccess.setCurrentMode('multiselect');
-              setRubberBoxStart(startMouseX, startMouseY);
-            } else {
-              svgCanvas.addToSelection([mouseTarget]);
-              selectedElements = svgCanvas.getSelectedElems();
-
-              if (selectedElements.length > 1) {
-                svgCanvas.tempGroupSelectedElements();
-                selectedElements = svgCanvas.getSelectedElems();
-              }
-            }
-
-            justSelected = mouseTarget;
-            svgCanvas.pathActions.clear();
-          } else if (evt.shiftKey) {
-            if (mouseTarget === svgCanvas.getTempGroup()) {
-              const elemToRemove = svgCanvas.getMouseTarget(evt, false);
-
-              svgCanvas.removeFromTempGroup(elemToRemove);
-              selectedElements = svgCanvas.getSelectedElems();
-            } else {
-              svgCanvas.clearSelection();
+            if (selectedElements.length > 1) {
+              svgCanvas.tempGroupSelectedElements();
               selectedElements = svgCanvas.getSelectedElems();
             }
           }
 
-          if (!rightClick) {
-            if (evt.altKey) {
-              const cmd = (await cloneSelectedElements(0, 0, { addToHistory: false }))?.cmd;
+          justSelected = mouseTarget;
+          svgCanvas.pathActions.clear();
+        } else if (evt.shiftKey) {
+          if (mouseTarget === svgCanvas.getTempGroup()) {
+            const elemToRemove = svgCanvas.getMouseTarget(evt, false);
 
-              selectedElements = svgCanvas.getSelectedElems();
-
-              if (cmd && !cmd.isEmpty()) mouseSelectModeCmds.push(cmd);
-            }
-
-            for (const element of selectedElements) {
-              // insert a dummy transform so if the element(s) are moved it will have
-              // a transform to use for its translate
-              if (!element) continue;
-
-              const transforms = svgedit.transformlist.getTransformList(element);
-
-              if (transforms.numberOfItems) transforms.insertItemBefore(svgRoot.createSVGTransform(), 0);
-              else transforms.appendItem(svgRoot.createSVGTransform());
-            }
+            svgCanvas.removeFromTempGroup(elemToRemove);
+            selectedElements = svgCanvas.getSelectedElems();
+          } else {
+            svgCanvas.clearSelection();
+            selectedElements = svgCanvas.getSelectedElems();
           }
-
-          // clear layer selection
-          if (layerSelectable && !rightClick && !evt.shiftKey) {
-            if (selectedElements.length && currentMode === 'select') {
-              const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
-              const currentLayer = layerManager.getCurrentLayerElement();
-
-              if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
-                layerManager.setCurrentLayer(targetLayer.title);
-                LayerPanelController.setSelectedLayers([targetLayer.title]);
-              }
-            }
-          }
-        } else if (mouseTarget === svgRoot && !rightClick) {
-          // Mouse down on svg root
-          svgCanvas.clearSelection();
-          svgCanvas.unsafeAccess.setCurrentMode('multiselect');
-          setRubberBoxStart(startMouseX, startMouseY);
         }
+
+        if (!rightClick) {
+          if (evt.altKey) {
+            const cmd = (await cloneSelectedElements(0, 0, { addToHistory: false }))?.cmd;
+
+            selectedElements = svgCanvas.getSelectedElems();
+
+            if (cmd && !cmd.isEmpty()) mouseSelectModeCmds.push(cmd);
+          }
+
+          for (const element of selectedElements) {
+            // insert a dummy transform so if the element(s) are moved it will have
+            // a transform to use for its translate
+            if (!element) continue;
+
+            const transforms = svgedit.transformlist.getTransformList(element);
+
+            if (transforms.numberOfItems) transforms.insertItemBefore(svgRoot.createSVGTransform(), 0);
+            else transforms.appendItem(svgRoot.createSVGTransform());
+          }
+        }
+
+        // clear layer selection
+        if (layerSelectable && !rightClick && !evt.shiftKey) {
+          if (selectedElements.length && currentMode === 'select') {
+            const targetLayer = LayerHelper.getObjectLayer(selectedElements[0]);
+            const currentLayer = layerManager.getCurrentLayerElement();
+
+            if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
+              layerManager.setCurrentLayer(targetLayer.title);
+              LayerPanelController.setSelectedLayers([targetLayer.title]);
+            }
+          }
+        }
+      } else if (mouseTarget === svgRoot && !rightClick) {
+        // Mouse down on svg root
+        svgCanvas.clearSelection();
+        setMouseMode('multiselect');
+        setRubberBoxStart(startMouseX, startMouseY);
       }
 
       currentBoundingBox = svgCanvas.getSelectedElementsAlignPoints();
@@ -384,25 +369,6 @@ const mouseDown = async (evt: MouseEvent) => {
         }
       }
 
-      break;
-    case 'image':
-      svgCanvas.unsafeAccess.setStarted(true);
-
-      const newImage = svgCanvas.addSvgElementFromJson<SVGImageElement>({
-        attr: {
-          height: 0,
-          id: svgCanvas.getNextId(),
-          opacity: currentShape.opacity,
-          style: 'pointer-events:inherit',
-          width: 0,
-          x,
-          y,
-        },
-        element: 'image',
-      });
-
-      svgCanvas.setHref(newImage, svgCanvas.getGoodImage());
-      svgedit.utilities.preventClickDefault(newImage);
       break;
     case 'rect':
       svgCanvas.unsafeAccess.setStarted(true);
@@ -688,7 +654,6 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   }
 
   svgCanvas.selectorManager.requestSelector(selected)?.resize();
-  svgCanvas.call('transition', svgCanvas.getSelectedElems());
 
   if (svgedit.utilities.getElem('text_cursor')) svgCanvas.textActions.init();
 };
@@ -699,7 +664,7 @@ const mouseMove = (evt: MouseEvent) => {
   if (evt.button === MouseButtons.Mid || svgCanvas.spaceKey) return;
 
   const started = svgCanvas.getStarted();
-  const currentMode = svgCanvas.getCurrentMode();
+  const currentMode = getMouseMode();
   const zoom = workareaManager.zoomRatio;
   const currentConfig = svgCanvas.getCurrentConfig();
   const selectedElements = svgCanvas.getSelectedElems();
@@ -732,9 +697,7 @@ const mouseMove = (evt: MouseEvent) => {
     }
 
     if (svgCanvas.sensorAreaInfo) {
-      const isPreviewing = PreviewModeController.isPreviewMode && !PreviewModeController.isBackgroundMode;
-
-      if (currentMode === 'select' && isPreviewing) {
+      if (currentMode === 'select') {
         const dist = Math.hypot(svgCanvas.sensorAreaInfo.x - mouseX, svgCanvas.sensorAreaInfo.y - mouseY);
         const workarea = document.getElementById('workarea');
 
@@ -742,14 +705,7 @@ const mouseMove = (evt: MouseEvent) => {
           if (dist < SENSOR_AREA_RADIUS) {
             workarea.style.cursor = 'move';
           } else if (workarea.style.cursor === 'move') {
-            if (
-              !curveEngravingModeController.started &&
-              (isPreviewing || useCanvasStore.getState().mode === CanvasMode.Preview)
-            ) {
-              workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
-            } else {
-              workarea.style.cursor = 'auto';
-            }
+            workarea.style.cursor = 'auto';
           }
         }
       }
@@ -850,15 +806,12 @@ const mouseMove = (evt: MouseEvent) => {
           }
 
           moved = true;
-
-          svgCanvas.call('transition', selectedElements);
         }
       }
 
       break;
     case 'pre_preview':
     case 'preview':
-    case 'background_preview':
     case 'multiselect':
     case 'curve-engraving':
       updateRubberBox();
@@ -897,9 +850,7 @@ const mouseMove = (evt: MouseEvent) => {
       shape.setAttributeNS(null, 'y2', y2);
       ObjectPanelController.updateDimensionValues({ x2, y2 });
       break;
-    case 'foreignObject':
     case 'rect':
-    case 'image':
       const isSquare = evt.shiftKey;
       let w = Math.abs(x - startX);
       let h = Math.abs(y - startY);
@@ -1013,7 +964,6 @@ const mouseMove = (evt: MouseEvent) => {
       }
 
       svgCanvas.setRotationAngle(angle < -180 ? 360 + angle : angle, true);
-      svgCanvas.call('transition', selectedElements);
       ObjectPanelController.updateDimensionValues({
         rotation: angle < -180 ? 360 + angle : angle,
       });
@@ -1058,7 +1008,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
   if (checkShouldIgnore() || rightClick) return;
 
   const started = svgCanvas.getStarted();
-  const currentMode = svgCanvas.getCurrentMode();
+  const currentMode = getMouseMode();
   const currentShape = svgCanvas.getCurrentShape();
   const zoom = workareaManager.zoomRatio;
   let selectedElements = svgCanvas.getSelectedElems();
@@ -1130,30 +1080,17 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       }
 
       return;
-    case 'background_preview':
+    case 'preview':
     case 'pre_preview':
       cleanUpRubberBox();
-      svgCanvas.unsafeAccess.setCurrentMode('select');
+      setMouseMode('select');
 
-      const isBackgroundMode = currentMode === 'background_preview';
+      if (currentMode === 'pre_preview') setupPreviewMode({ callback: () => doPreview() });
+      else doPreview();
 
-      setupPreviewMode({ callback: () => doPreview(), isBackgroundMode });
-
-      if (isBackgroundMode) {
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
-
-        const workarea = document.getElementById('workarea');
-
-        if (workarea) workarea.style.cursor = 'auto';
-      }
+      drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
 
       return;
-    case 'preview':
-      cleanUpRubberBox();
-      doPreview();
-      svgCanvas.unsafeAccess.setCurrentMode('select');
-    // intentionally fall-through to select here
-    // eslint-disable-next-line no-fallthrough
     case 'resize':
     case 'multiselect':
       if (currentMode === 'multiselect') {
@@ -1289,10 +1226,10 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
             }
           }
 
-          svgCanvas.unsafeAccess.setCurrentMode('select');
+          setMouseMode('select');
         } else {
           // no change in position/size, so maybe we should move to pathedit
-          svgCanvas.unsafeAccess.setCurrentMode('select');
+          setMouseMode('select');
           t = evt.target;
 
           if (selectedElements[0].nodeName === 'path' && selectedElements[1] == null) {
@@ -1325,7 +1262,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           svgCanvas.sensorAreaInfo.dy = 0;
         }
       } else {
-        svgCanvas.unsafeAccess.setCurrentMode('select');
+        setMouseMode('select');
       }
 
       if (mouseSelectModeCmds.length > 1) {
@@ -1345,27 +1282,20 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       attrs = $(element).attr(['x1', 'x2', 'y1', 'y2']) as any;
       keep = attrs.x1 !== attrs.x2 || attrs.y1 !== attrs.y2;
 
-      if (!isContinuousDrawing) svgCanvas.setMode('select');
+      if (!isContinuousDrawing) setMouseMode('select');
 
       break;
-    case 'foreignObject':
     case 'rect':
       attrs = $(element).attr(['width', 'height']) as any;
       keep = attrs.width !== 0 && attrs.height !== 0;
 
       if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_RECT && keep) {
         TutorialController.handleNextStep();
-        svgCanvas.setMode('select');
+        setMouseMode('select');
       } else if (!isContinuousDrawing) {
-        svgCanvas.setMode('select');
+        setMouseMode('select');
       }
 
-      break;
-    case 'image':
-      // Image should be kept regardless of size (use inherit dimensions later)
-      keep = true;
-      svgCanvas.unsafeAccess.setCurrentMode('select');
-      drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
       break;
     case 'ellipse':
       attrs = $(element).attr(['rx', 'ry']) as any;
@@ -1373,9 +1303,9 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
       if (TutorialController.getNextStepRequirement() === TutorialConstants.DRAW_A_CIRCLE && keep) {
         TutorialController.handleNextStep();
-        svgCanvas.setMode('select');
+        setMouseMode('select');
       } else if (!isContinuousDrawing) {
-        svgCanvas.setMode('select');
+        setMouseMode('select');
       }
 
       break;
@@ -1415,7 +1345,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     case 'rotate':
       keep = true;
       element = null;
-      svgCanvas.unsafeAccess.setCurrentMode('select');
+      setMouseMode('select');
       drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
 
       const batchCmd = new history.BatchCommand('Rotate Elements');
@@ -1440,14 +1370,14 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     case 'drag-prespray-area':
       keep = true;
       element = null;
-      svgCanvas.setMode('select');
+      setMouseMode('select');
       presprayArea.endDrag();
       break;
     case 'drag-rotary-axis':
       keep = true;
       element = null;
       rotaryAxis.mouseUp();
-      svgCanvas.setMode('select');
+      setMouseMode('select');
       break;
     case 'preview_color':
       keep = true;
@@ -1511,7 +1441,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     // WebKit returns <div> when the canvas is clicked, Firefox/Opera return <svg>
     if (isNeedToSelect) {
       // switch into "select" mode if we've clicked on an element
-      svgCanvas.setMode('select');
+      setMouseMode('select');
       svgCanvas.selectOnly([t], true);
     }
   } else if (element) {
@@ -1535,7 +1465,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     }
   }
 
-  if (isContinuousDrawing && svgCanvas.getCurrentMode() !== 'textedit') svgCanvas.clearSelection();
+  if (isContinuousDrawing && getMouseMode() !== 'textedit') svgCanvas.clearSelection();
 
   svgCanvas.unsafeAccess.setStartTransform(null);
 };
@@ -1545,7 +1475,7 @@ const mouseEnter = (evt: MouseEvent) => {
 };
 
 const dblClick = (evt: MouseEvent) => {
-  const currentMode = svgCanvas.getCurrentMode();
+  const currentMode = getMouseMode();
   const parent = (evt.target as SVGElement).parentNode as SVGElement;
 
   // Do nothing if already in current group

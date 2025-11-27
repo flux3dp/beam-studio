@@ -7,6 +7,7 @@ import constant from '@core/app/actions/beambox/constant';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -149,7 +150,7 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
 
   const startPreviewMode = (type: number, color: string) => {
     setIsColorPreviewing(true);
-    svgCanvas.unsafeAccess.setCurrentMode('preview_color');
+    setMouseMode('preview_color');
     svgCanvas.selectorManager.requestSelector(elem)?.resize();
     workareaEvents.emit('update-context-menu', { menuDisabled: true });
     setPreviewState({ currentStep: EditStep.Previewing, type });
@@ -170,7 +171,7 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
       }
 
       setIsColorPreviewing(false);
-      svgCanvas.unsafeAccess.setCurrentMode('select');
+      setMouseMode('select');
       svgCanvas.selectorManager.requestSelector(elem)?.resize();
       workareaEvents.emit('update-context-menu', { menuDisabled: false });
     }

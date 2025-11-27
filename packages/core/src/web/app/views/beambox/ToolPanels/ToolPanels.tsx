@@ -6,6 +6,7 @@ import { match } from 'ts-pattern';
 import Constant from '@core/app/actions/beambox/constant';
 import type { ToolPanelType } from '@core/app/actions/beambox/toolPanelsController';
 import Dialog from '@core/app/actions/dialog-caller';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import { generateSelectedElementArray } from '@core/app/svgedit/operations/clipboard';
@@ -81,7 +82,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
 
   const onCancel = () => {
     unmount();
-    svgCanvas.setMode('select');
+    setMouseMode('select');
     drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
   };
 
@@ -96,7 +97,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
         return async () => {
           await generateSelectedElementArray(newDistance, data.rowcolumn);
           unmount();
-          svgCanvas.setMode('select');
+          setMouseMode('select');
           drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
           currentFileManager.setHasUnsavedChanges(true);
         };
@@ -106,7 +107,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
 
         await offsetElements(mode, _mm2pixel(distance), cornerType);
         unmount();
-        svgCanvas.setMode('select');
+        setMouseMode('select');
         drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
         currentFileManager.setHasUnsavedChanges(true);
       })
@@ -114,7 +115,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
         nestOptions.spacing *= 10; // pixel to mm
         (svgCanvas as any).nestElements(null, null, nestOptions);
         unmount();
-        svgCanvas.setMode('select');
+        setMouseMode('select');
         drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
       })
       .otherwise(() => unmount);

@@ -1,5 +1,6 @@
 import tabController from '@core/app/actions/tabController';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
@@ -134,7 +135,7 @@ const funcs = {
       TutorialController.handleNextStep();
     }
 
-    svgCanvas.setMode('ellipse');
+    setMouseMode('ellipse');
     setCrosshairCursor();
   },
   insertImage(
@@ -187,15 +188,15 @@ const funcs = {
     };
   },
   insertLine(): void {
-    svgCanvas.setMode('line');
+    setMouseMode('line');
     setCrosshairCursor();
   },
   insertPath(): void {
-    svgCanvas.setMode('path');
+    setMouseMode('path');
     setCrosshairCursor();
   },
   insertPolygon(): void {
-    svgCanvas.setMode('polygon');
+    setMouseMode('polygon');
     setCrosshairCursor();
   },
   insertRectangle(): void {
@@ -203,11 +204,11 @@ const funcs = {
       TutorialController.handleNextStep();
     }
 
-    svgCanvas.setMode('rect');
+    setMouseMode('rect');
     setCrosshairCursor();
   },
   insertText(): void {
-    svgCanvas.setMode('text');
+    setMouseMode('text');
     $('#workarea').css('cursor', 'text');
   },
   // left panel

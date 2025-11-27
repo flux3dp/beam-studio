@@ -73,6 +73,7 @@ import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -585,11 +586,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     })();
 
-    var setSelectMode = function () {
-      svgCanvas.setMode('select');
-      workarea.css('cursor', 'auto');
-    };
-
     // used to make the flyouts stay on the screen longer the very first time
     // var flyoutspeed = 1250; // Currently unused
     var selectedElement: any = null;
@@ -597,8 +593,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     var origTitle = $('title:first').text();
 
     var togglePathEditMode = function (editmode, elems) {
-      $('#path_node_panel').toggle(editmode);
-
       if (editmode) {
         multiselected = false;
 
@@ -611,8 +605,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) return;
 
-      workarea.css('cursor', 'auto');
-      svgCanvas.setMode('select');
+      setMouseMode('select');
 
       if (clearSelection) {
         svgCanvas.clearSelection();
@@ -645,7 +638,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         elem = null;
       }
 
-      var currentMode = svgCanvas.getMode();
+      var currentMode = getMouseMode();
       var unit = curConfig.baseUnit !== 'px' ? curConfig.baseUnit : null;
 
       var is_node = currentMode === 'pathedit'; //elem ? (elem.id && elem.id.indexOf('pathpointgrip') == 0) : false;
@@ -799,10 +792,6 @@ const svgEditor = (window['svgEditor'] = (function () {
               textActions.setIsVertical(textEdit.getIsVertical(elem));
               break;
             case 'image':
-              if (svgCanvas.getMode() === 'image') {
-                setImageURL(svgCanvas.getHref(elem));
-              }
-
               break;
             case 'g':
             case 'use':
@@ -882,11 +871,10 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // called when we've selected a different element
     var selectedChanged = function (win, elems) {
-      var mode = svgCanvas.getMode();
+      var mode = getMouseMode();
 
-      if (mode === 'select') {
-        setSelectMode();
-      }
+      // TODO: is this needed?
+      if (mode === 'select') setMouseMode('select');
 
       var is_node = mode === 'pathedit';
 
@@ -905,36 +893,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (elems.length === 1 && elems[0]?.tagName === 'polygon') {
         ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
       }
-    };
-
-    // Call when part of element is in process of changing, generally
-    // on mousemove actions like rotate, move, etc.
-    var elementTransition = function (win, elems) {
-      var mode = svgCanvas.getMode();
-      var elem = elems[0];
-
-      if (!elem) {
-        return;
-      }
-
-      multiselected = elems.length >= 2 && elems[1] != null;
-      // Only updating fields for single elements for now
-      // if (!multiselected) {
-      //   switch (mode) {
-      //     case 'rotate':
-      //       var ang = svgCanvas.getRotationAngle(elem);
-      //       $('#angle').val(ang);
-      //       break;
-
-      // TODO: Update values that change on move/resize, etc
-      //						case "select":
-      //						case "resize":
-      //							break;
-      //   }
-      // }
-      svgCanvas.runExtensions('elementTransition', {
-        elems: elems,
-      });
     };
 
     // called when any element has changed
@@ -1012,7 +970,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // bind the selected event to our function that handles updates to the UI
     svgCanvas.bind('selected', selectedChanged);
-    svgCanvas.bind('transition', elementTransition);
     svgCanvas.bind('changed', elementChanged);
     svgCanvas.bind('contextset', contextChanged);
     textActions.setInputElem($('#text')[0]);
@@ -1227,7 +1184,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           workarea.unbind('mousedown', unfocus);
 
           // Go back to selecting text if in textedit mode
-          if (svgCanvas.getMode() === 'textedit') {
+          if (getMouseMode() === 'textedit') {
             $('#text').focus();
           }
         });
@@ -1462,7 +1419,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         return;
       }
 
-      setSelectMode();
+      setMouseMode('select');
       svgCanvas.clear();
       workareaManager.resetView();
       RightPanelController.setPanelType(PanelType.None); // will be updated to PanelType.Layer automatically if is not mobile
@@ -1596,7 +1553,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['l'], () => RightPanelController.setPanelType(PanelType.Layer));
           Shortcuts.on(['o'], () => {
-            const isPathEdit = svgCanvas.getMode() === 'pathedit';
+            const isPathEdit = getMouseMode() === 'pathedit';
 
             RightPanelController.setPanelType(isPathEdit ? PanelType.PathEdit : PanelType.Object);
           });

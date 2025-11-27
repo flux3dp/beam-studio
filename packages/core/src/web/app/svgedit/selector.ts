@@ -9,10 +9,9 @@
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { getValue } from '@core/app/views/beambox/Right-Panels/DimensionPanel/utils';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getMouseMode } from '../stores/canvas/utils/mouseMode';
 import { getStorage } from '../stores/storageStore';
 
 import { getRotationAngle } from './transform/rotation';
@@ -25,12 +24,6 @@ if (!svgedit.select) {
 }
 
 const { NS } = svgedit;
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -348,7 +341,7 @@ export class Selector {
 
     this.selectorRect.setAttribute('d', dStr);
 
-    if (svgCanvas.getCurrentMode() === 'preview_color') {
+    if (getMouseMode() === 'preview_color') {
       this.gripsGroup.setAttribute('display', 'none');
 
       return;
@@ -402,7 +395,7 @@ export class Selector {
     const elemDimension = ObjectPanelController.getDimensionValues();
     let newContent = '';
 
-    if (svgCanvas.getCurrentMode() === 'rotate') {
+    if (getMouseMode() === 'rotate') {
       const elemAngle = +angle.toFixed(1);
 
       newContent = `${elemAngle}&deg;`;

@@ -7,14 +7,13 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through';
-import { CanvasMode } from '@core/app/constants/canvasMode';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
-import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { changeToPreviewMode, endPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import historyUtils from '@core/app/svgedit/history/utils';
 import createNewText from '@core/app/svgedit/text/createNewText';
@@ -49,8 +48,6 @@ const CanvasTabBar = (): React.ReactNode => {
   const isMobile = useIsMobile();
   const lang = useI18n();
 
-  const mode = useCanvasStore((state) => state.mode);
-  const isPreviewing = mode === CanvasMode.Preview;
   const { isClean, isDrawing, isPreviewMode } = useCameraPreviewStore();
   const [activeKey, setActiveKey] = useState('none');
 
@@ -167,7 +164,7 @@ const CanvasTabBar = (): React.ReactNode => {
   ];
 
   const handleTabClick = (key: string) => {
-    svgCanvas.setMode('select');
+    setMouseMode('select');
 
     if (key === 'layer') {
       RightPanelController.setDisplayLayer(true);
@@ -263,14 +260,14 @@ const CanvasTabBar = (): React.ReactNode => {
           onChange={(key) => {
             setActiveKey(key);
 
-            if (isPreviewing) {
+            if (isPreviewMode) {
               handlePreviewTabClick(key);
             } else {
               handleTabClick(key);
             }
           }}
         >
-          {(isPreviewing ? previewTabItems : tabs).map((item) => (
+          {(isPreviewMode ? previewTabItems : tabs).map((item) => (
             <TabBar.Item
               aria-disabled={item.disabled || false}
               icon={

@@ -3,16 +3,10 @@ import { match, P } from 'ts-pattern';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { useCanvasStore } from '../canvasStore';
 
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
+import { setMouseMode } from './mouseMode';
 
 export const toggleAutoFocus = async (forceState?: boolean) => {
   const workarea = document.getElementById('workarea');
@@ -33,7 +27,7 @@ export const toggleAutoFocus = async (forceState?: boolean) => {
       workarea?.addEventListener('contextmenu', contextMenuHandler);
 
       setMode(CanvasMode.AutoFocus);
-      svgCanvas.setMode('auto-focus');
+      setMouseMode('auto-focus');
       setCursor('url(img/auto-focus-cursor.svg) 16 12, cell');
     })
     .otherwise(async () => {
@@ -45,7 +39,7 @@ export const toggleAutoFocus = async (forceState?: boolean) => {
       workareaEvents.emit('update-context-menu', { menuDisabled: false });
 
       setMode(CanvasMode.Draw);
-      svgCanvas.setMode('select');
+      setMouseMode('select');
       setCursor('auto');
     });
 };
