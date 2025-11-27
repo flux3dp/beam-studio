@@ -1,6 +1,8 @@
 import * as React from 'react';
 
 import { StyleProvider } from '@ant-design/cssinjs';
+import { QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
 import { ConfigProvider, message, theme } from 'antd';
 import daDK from 'antd/locale/da_DK';
 import deDE from 'antd/locale/de_DE';
@@ -47,6 +49,7 @@ import Settings from '@core/app/pages/Settings';
 import Welcome from '@core/app/pages/Welcome';
 import AlertsAndProgress from '@core/app/views/dialogs/AlertAndProgress';
 import Dialog from '@core/app/views/dialogs/Dialog';
+import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
 import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
@@ -89,56 +92,59 @@ const App = (): React.JSX.Element => {
   });
 
   return (
-    <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
-      <AlertProgressContextProvider messageApi={messageApi}>
-        <DialogContextProvider>
-          <ConfigProvider
-            locale={(localeMap as any)[navigator.language]}
-            theme={{
-              algorithm: defaultAlgorithm,
-              components: {
-                Message: {
-                  // set this value because zIndex of windows custom title bar is 99999
-                  zIndexPopup: 100000,
+    <QueryClientProvider client={queryClient}>
+      <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+        <AlertProgressContextProvider messageApi={messageApi}>
+          <DialogContextProvider>
+            <ConfigProvider
+              locale={(localeMap as any)[navigator.language]}
+              theme={{
+                algorithm: defaultAlgorithm,
+                components: {
+                  Message: {
+                    // set this value because zIndex of windows custom title bar is 99999
+                    zIndexPopup: 100000,
+                  },
                 },
-              },
-              token: { screenMD: 601, screenMDMin: 601, screenSMMax: 600 },
-            }}
-          >
-            <StyleProvider hashPriority="low">
-              <Dialog />
-              <AlertsAndProgress />
-              {contextHolder}
-              <HashRouter>
-                <Switch>
-                  <Route component={GoogleOAuth} exact path="/google-auth" />
-                  <Route component={FacebookOAuth} exact path="/fb-auth" />
-                  <Route component={SelectConnectionType} exact path="/initialize/connect/select-connection-type" />
-                  <Route component={SelectMachineModel} exact path="/initialize/connect/select-machine-model" />
-                  <Route component={ConnectMachineIp} exact path="/initialize/connect/connect-machine-ip" />
-                  <Route component={ConnectUsb} exact path="/initialize/connect/connect-usb" />
-                  <Route component={ConnectWiFi} exact path="/initialize/connect/connect-wi-fi" />
-                  <Route component={ConnectWired} exact path="/initialize/connect/connect-wired" />
-                  <Route component={ConnectEthernet} exact path="/initialize/connect/connect-ethernet" />
-                  <Route component={FluxIdLogin} exact path="/initialize/connect/flux-id-login" />
-                  <Route
-                    component={SelectPromarkLaserSource}
-                    exact
-                    path="/initialize/connect/select-promark-laser-source"
-                  />
-                  <Route component={PromarkSettings} exact path="/initialize/connect/promark-settings" />
-                  <Route component={Settings} exact path="/studio/settings" />
-                  <Route component={Beambox} exact path="/studio/beambox" />
-                  <Route component={Welcome} exact path="/studio/welcome" />
-                  <Route component={Error} path="/error/*" />
-                  <Route component={Home} path="*" />
-                </Switch>
-              </HashRouter>
-            </StyleProvider>
-          </ConfigProvider>
-        </DialogContextProvider>
-      </AlertProgressContextProvider>
-    </ErrorBoundary>
+                token: { screenMD: 601, screenMDMin: 601, screenSMMax: 600 },
+              }}
+            >
+              <StyleProvider hashPriority="low">
+                <Dialog />
+                <AlertsAndProgress />
+                {contextHolder}
+                <HashRouter>
+                  <Switch>
+                    <Route component={GoogleOAuth} exact path="/google-auth" />
+                    <Route component={FacebookOAuth} exact path="/fb-auth" />
+                    <Route component={SelectConnectionType} exact path="/initialize/connect/select-connection-type" />
+                    <Route component={SelectMachineModel} exact path="/initialize/connect/select-machine-model" />
+                    <Route component={ConnectMachineIp} exact path="/initialize/connect/connect-machine-ip" />
+                    <Route component={ConnectUsb} exact path="/initialize/connect/connect-usb" />
+                    <Route component={ConnectWiFi} exact path="/initialize/connect/connect-wi-fi" />
+                    <Route component={ConnectWired} exact path="/initialize/connect/connect-wired" />
+                    <Route component={ConnectEthernet} exact path="/initialize/connect/connect-ethernet" />
+                    <Route component={FluxIdLogin} exact path="/initialize/connect/flux-id-login" />
+                    <Route
+                      component={SelectPromarkLaserSource}
+                      exact
+                      path="/initialize/connect/select-promark-laser-source"
+                    />
+                    <Route component={PromarkSettings} exact path="/initialize/connect/promark-settings" />
+                    <Route component={Settings} exact path="/studio/settings" />
+                    <Route component={Beambox} exact path="/studio/beambox" />
+                    <Route component={Welcome} exact path="/studio/welcome" />
+                    <Route component={Error} path="/error/*" />
+                    <Route component={Home} path="*" />
+                  </Switch>
+                </HashRouter>
+              </StyleProvider>
+            </ConfigProvider>
+          </DialogContextProvider>
+        </AlertProgressContextProvider>
+      </ErrorBoundary>
+      {process.env.NODE_ENV === 'development' && <ReactQueryDevtools initialIsOpen={false} />}
+    </QueryClientProvider>
   );
 };
 

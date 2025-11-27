@@ -72,12 +72,7 @@ export const useFloatingMenu = ({
     closeMenu();
   };
 
-  useEffect(
-    () => () => {
-      clearCloseTimeout();
-    },
-    [],
-  );
+  useEffect(() => clearCloseTimeout, []);
 
   return {
     buttonRef,

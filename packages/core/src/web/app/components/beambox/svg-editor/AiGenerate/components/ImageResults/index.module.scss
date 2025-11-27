@@ -1,6 +1,5 @@
 $text-secondary: #666666;
 $border-color: #e8e8e8;
-$text-primary: #333333;
 
 .results-container {
   margin-top: 24px;
@@ -22,12 +21,8 @@ $text-primary: #333333;
   justify-content: center;
   padding: 48px 20px;
   gap: 16px;
-}
-
-.loading-text {
-  margin: 0;
-  font-size: 14px;
-  color: $text-secondary;
+  // Note: .loading-text style removed here as Antd Spin tip handles it,
+  // but if you keep the <p> tag in LoadingState, keep the class.
 }
 
 .images-grid {

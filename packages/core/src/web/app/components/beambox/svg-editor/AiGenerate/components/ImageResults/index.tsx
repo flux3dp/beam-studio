@@ -1,7 +1,6 @@
-import React, { memo, useCallback, useMemo, useState } from 'react';
+import React, { memo, useCallback, useState } from 'react';
 
 import { importAiImage } from '@core/app/svgedit/operations/import/importAiImage';
-import useI18n from '@core/helpers/useI18n';
 
 import { ErrorState } from './ErrorState';
 import styles from './index.module.scss';
@@ -15,20 +14,8 @@ interface ImageResultsProps {
 }
 
 const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStatus }: ImageResultsProps) => {
-  const lang = useI18n();
   const [importingUrl, setImportingUrl] = useState<null | string>(null);
   const [importError, setImportError] = useState<null | string>(null);
-
-  const { displayErrorMessage, isInsufficientCredits } = useMemo(() => {
-    if (!errorMessage) return { displayErrorMessage: null, isInsufficientCredits: false };
-
-    const parts = errorMessage.split(':');
-
-    return {
-      displayErrorMessage: parts.length > 1 ? parts.slice(1).join(':') : errorMessage,
-      isInsufficientCredits: parts[0] === 'INSUFFICIENT_CREDITS',
-    };
-  }, [errorMessage]);
 
   const handleImport = useCallback(async (imageUrl: string) => {
     setImportingUrl(imageUrl);
@@ -47,15 +34,11 @@ const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStat
   return (
     <div className={styles['results-container']}>
       <h3 className={styles['section-title']}>Results</h3>
+
       {generationStatus === 'generating' && <LoadingState />}
-      {generationStatus === 'failed' && (
-        <ErrorState
-          displayErrorMessage={displayErrorMessage}
-          errorMessage={errorMessage}
-          isInsufficientCredits={isInsufficientCredits}
-          lang={lang}
-        />
-      )}
+
+      {generationStatus === 'failed' && <ErrorState error={errorMessage} />}
+
       {generationStatus === 'success' && (
         <SuccessState
           generatedImages={generatedImages}

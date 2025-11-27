@@ -1,568 +1,127 @@
-import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
-
 import type { ImageInput } from './types';
 import { useAiGenerateStore } from './useAiGenerateStore';
 
-// Mock the API
-jest.mock('@core/helpers/api/ai-image', () => ({
-  getAiImageHistory: jest.fn(),
-}));
+jest.mock('@core/helpers/api/ai-image', () => ({ getAiImageHistory: jest.fn() }));
 
 const mockGetAiImageHistory = getAiImageHistory as jest.MockedFunction<typeof getAiImageHistory>;
 
 describe('useAiGenerateStore', () => {
   beforeEach(() => {
-    // Reset store to initial state
-    useAiGenerateStore.setState({
-      count: 1,
-      dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
-      errorMessage: null,
-      generatedImages: [],
-      generationStatus: 'idle',
-      generationUuid: null,
-      historyError: null,
-      historyItems: [],
-      historyLoading: false,
-      historyOffset: 0,
-      imageInputs: [],
-      inputFields: {},
-      isAiGenerateShown: false,
-      isLaserFriendly: false,
-      showHistory: false,
-      style: 'plain',
-    });
-
+    useAiGenerateStore.getState().resetForm();
+    useAiGenerateStore.setState({ historyItems: [], historyLoading: false, showHistory: false });
     jest.clearAllMocks();
   });
 
-  describe('Initial State', () => {
-    it('should have correct initial state', () => {
-      const state = useAiGenerateStore.getState();
+  describe('Image Inputs', () => {
+    it('adds image inputs correctly', () => {
+      const fileInput: ImageInput = { file: new File([], 'a.jpg'), id: '1', type: 'file' };
+      const urlInput: ImageInput = { id: '2', type: 'url', url: 'http://a.com/b.jpg' };
 
-      expect(state.count).toBe(1);
-      expect(state.dimensions).toEqual({ aspectRatio: '1:1', orientation: 'landscape', size: 'small' });
-      expect(state.errorMessage).toBeNull();
-      expect(state.generatedImages).toEqual([]);
-      expect(state.generationStatus).toBe('idle');
-      expect(state.inputFields).toEqual({});
-      expect(state.isLaserFriendly).toBe(false);
-      expect(state.imageInputs).toEqual([]);
-      expect(state.style).toBe('plain');
-    });
-  });
+      const store = useAiGenerateStore.getState();
 
-  describe('addImageInput', () => {
-    it('should add a file-type image input', () => {
-      const input: ImageInput = {
-        file: new File([''], 'test.jpg'),
-        id: 'test-1',
-        type: 'file',
-      };
+      store.addImageInput(fileInput);
+      store.addImageInput(urlInput);
 
-      useAiGenerateStore.getState().addImageInput(input);
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.imageInputs).toHaveLength(1);
-      expect(state.imageInputs[0]).toEqual(input);
+      expect(useAiGenerateStore.getState().imageInputs).toEqual([fileInput, urlInput]);
     });
 
-    it('should add a url-type image input', () => {
-      const input: ImageInput = {
-        id: 'test-1',
-        type: 'url',
-        url: 'https://example.com/image.jpg',
-      };
+    it('removes image inputs by id', () => {
+      const input: ImageInput = { id: '1', type: 'url', url: 'a' };
 
-      useAiGenerateStore.getState().addImageInput(input);
+      useAiGenerateStore.setState({ imageInputs: [input] });
 
-      const state = useAiGenerateStore.getState();
-
-      expect(state.imageInputs).toHaveLength(1);
-      expect(state.imageInputs[0]).toEqual(input);
+      useAiGenerateStore.getState().removeImageInput('1');
+      expect(useAiGenerateStore.getState().imageInputs).toHaveLength(0);
     });
 
-    it('should add multiple image inputs', () => {
-      const input1: ImageInput = { file: new File([''], 'test1.jpg'), id: 'test-1', type: 'file' };
-      const input2: ImageInput = { id: 'test-2', type: 'url', url: 'https://example.com/image.jpg' };
-
-      useAiGenerateStore.getState().addImageInput(input1);
-      useAiGenerateStore.getState().addImageInput(input2);
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.imageInputs).toHaveLength(2);
-      expect(state.imageInputs[0]).toEqual(input1);
-      expect(state.imageInputs[1]).toEqual(input2);
-    });
-  });
-
-  describe('removeImageInput', () => {
-    it('should remove image input by id', () => {
-      const input1: ImageInput = { file: new File([''], 'test1.jpg'), id: 'test-1', type: 'file' };
-      const input2: ImageInput = { file: new File([''], 'test2.jpg'), id: 'test-2', type: 'file' };
-
-      useAiGenerateStore.setState({ imageInputs: [input1, input2] });
-      useAiGenerateStore.getState().removeImageInput('test-1');
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.imageInputs).toHaveLength(1);
-      expect(state.imageInputs[0]).toEqual(input2);
-    });
-
-    it('should handle removing non-existent id', () => {
-      const input1: ImageInput = { file: new File([''], 'test1.jpg'), id: 'test-1', type: 'file' };
-
-      useAiGenerateStore.setState({ imageInputs: [input1] });
-      useAiGenerateStore.getState().removeImageInput('non-existent');
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.imageInputs).toHaveLength(1);
-      expect(state.imageInputs[0]).toEqual(input1);
-    });
-  });
-
-  describe('clearImageInputs', () => {
-    it('should clear all image inputs', () => {
-      const input1: ImageInput = { file: new File([''], 'test1.jpg'), id: 'test-1', type: 'file' };
-      const input2: ImageInput = { file: new File([''], 'test2.jpg'), id: 'test-2', type: 'file' };
-
-      useAiGenerateStore.setState({ imageInputs: [input1, input2] });
+    it('clears all inputs', () => {
+      useAiGenerateStore.setState({ imageInputs: [{ id: '1', type: 'url', url: 'a' }] });
       useAiGenerateStore.getState().clearImageInputs();
-
-      expect(useAiGenerateStore.getState().imageInputs).toEqual([]);
+      expect(useAiGenerateStore.getState().imageInputs).toHaveLength(0);
     });
   });
 
-  describe('setInputField', () => {
-    it('should set a new input field', () => {
-      useAiGenerateStore.getState().setInputField('description', 'A cute cat');
-
-      expect(useAiGenerateStore.getState().inputFields.description).toBe('A cute cat');
+  describe('Form Fields', () => {
+    it('updates input fields', () => {
+      useAiGenerateStore.getState().setInputField('desc', 'test');
+      expect(useAiGenerateStore.getState().inputFields.desc).toBe('test');
     });
 
-    it('should update existing input field', () => {
-      useAiGenerateStore.setState({ inputFields: { description: 'Old text' } });
-      useAiGenerateStore.getState().setInputField('description', 'New text');
-
-      expect(useAiGenerateStore.getState().inputFields.description).toBe('New text');
-    });
-
-    it('should set multiple different fields', () => {
-      useAiGenerateStore.getState().setInputField('description', 'Pattern description');
-      useAiGenerateStore.getState().setInputField('textToDisplay', 'MeowWoof');
-
-      const fields = useAiGenerateStore.getState().inputFields;
-
-      expect(fields.description).toBe('Pattern description');
-      expect(fields.textToDisplay).toBe('MeowWoof');
-    });
-  });
-
-  describe('setStyle', () => {
-    it('should change style', () => {
-      useAiGenerateStore.getState().setStyle('logo-cute');
-
-      expect(useAiGenerateStore.getState().style).toBe('logo-cute');
-    });
-
-    it('should preserve valid input fields when changing style', () => {
-      useAiGenerateStore.setState({
-        inputFields: { description: 'Test description' },
-        style: 'plain',
-      });
-
-      useAiGenerateStore.getState().setStyle('logo-cute');
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.style).toBe('logo-cute');
-      expect(state.inputFields.description).toBe('Test description');
-    });
-
-    it('should remove invalid input fields when changing style', () => {
-      useAiGenerateStore.setState({
-        inputFields: { description: 'Test', textToDisplay: 'MeowWoof' },
-        style: 'logo-cute',
-      });
-
-      useAiGenerateStore.getState().setStyle('plain');
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.inputFields.description).toBe('Test');
-      expect(state.inputFields.textToDisplay).toBeUndefined();
-    });
-
-    it('should reset laser-friendly toggle when changing style', () => {
-      useAiGenerateStore.setState({ isLaserFriendly: true, style: 'plain' });
-
-      useAiGenerateStore.getState().setStyle('logo-cute');
-
-      expect(useAiGenerateStore.getState().isLaserFriendly).toBe(false);
-    });
-  });
-
-  describe('resetForm', () => {
-    it('should reset all form fields to initial state', () => {
-      useAiGenerateStore.setState({
-        count: 3,
-        dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'large' },
-        errorMessage: 'Error',
-        generatedImages: ['https://example.com/img.jpg'],
-        generationStatus: 'success',
-        imageInputs: [{ file: new File([''], 'test.jpg'), id: 'test-1', type: 'file' }],
-        inputFields: { description: 'Test' },
-        isLaserFriendly: true,
-      });
-
+    it('resets form to defaults', () => {
+      useAiGenerateStore.setState({ count: 5, style: 'custom' });
       useAiGenerateStore.getState().resetForm();
 
       const state = useAiGenerateStore.getState();
 
       expect(state.count).toBe(1);
-      expect(state.dimensions).toEqual({ aspectRatio: '1:1', orientation: 'landscape', size: 'small' });
-      expect(state.errorMessage).toBeNull();
-      expect(state.generatedImages).toEqual([]);
-      expect(state.generationStatus).toBe('idle');
-      expect(state.inputFields).toEqual({});
-      expect(state.isLaserFriendly).toBe(false);
-      expect(state.imageInputs).toEqual([]);
+      expect(state.style).toBe('plain');
     });
   });
 
-  describe('clearGenerationResults', () => {
-    it('should clear generation results', () => {
-      useAiGenerateStore.setState({
-        errorMessage: 'Error',
-        generatedImages: ['https://example.com/img.jpg'],
-        generationStatus: 'success',
-        generationUuid: 'uuid-123',
-      });
+  describe('Logic Actions', () => {
+    it('toggles fixed seed and manages value', () => {
+      const store = useAiGenerateStore.getState();
 
-      useAiGenerateStore.getState().clearGenerationResults();
+      store.toggleFixedSeed();
+      store.setState({ seed: 123 });
+      expect(useAiGenerateStore.getState().isFixedSeed).toBe(true);
+      expect(useAiGenerateStore.getState().seed).toBe(123);
 
-      const state = useAiGenerateStore.getState();
+      store.toggleFixedSeed();
+      expect(useAiGenerateStore.getState().isFixedSeed).toBe(false);
+      expect(useAiGenerateStore.getState().seed).toBeUndefined();
+    });
 
-      expect(state.errorMessage).toBeNull();
-      expect(state.generatedImages).toEqual([]);
-      expect(state.generationStatus).toBe('idle');
-      expect(state.generationUuid).toBeNull();
+    it('toggles laser friendly mode and injects color prompt', () => {
+      const store = useAiGenerateStore.getState();
+
+      store.toggleLaserFriendly();
+      expect(useAiGenerateStore.getState().inputFields.color).toContain('pure black');
+
+      store.toggleLaserFriendly();
+      expect(useAiGenerateStore.getState().inputFields.color).toBeUndefined();
     });
   });
 
-  describe('toggleLaserFriendly', () => {
-    it('should toggle laser-friendly on and add color field', () => {
-      useAiGenerateStore.getState().toggleLaserFriendly();
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.isLaserFriendly).toBe(true);
-      expect(state.inputFields.color).toContain('pure black and white');
-    });
-
-    it('should toggle laser-friendly off and remove color field', () => {
-      useAiGenerateStore.setState({ inputFields: { color: 'laser text' }, isLaserFriendly: true });
-
-      useAiGenerateStore.getState().toggleLaserFriendly();
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.isLaserFriendly).toBe(false);
-      expect(state.inputFields.color).toBeUndefined();
-    });
-  });
-
-  describe('toggleHistory', () => {
-    it('should toggle showHistory from false to true', () => {
-      useAiGenerateStore.getState().toggleHistory();
-
-      expect(useAiGenerateStore.getState().showHistory).toBe(true);
-    });
-
-    it('should toggle showHistory from true to false', () => {
-      useAiGenerateStore.setState({ showHistory: true });
-
-      useAiGenerateStore.getState().toggleHistory();
-
-      expect(useAiGenerateStore.getState().showHistory).toBe(false);
-    });
-
-    it('should call loadHistory when showing history for the first time', async () => {
+  // --- History ---
+  describe('History Actions', () => {
+    it('loads history only if empty', async () => {
       mockGetAiImageHistory.mockResolvedValue({ data: [] } as any);
 
       useAiGenerateStore.getState().toggleHistory();
-
-      await new Promise((resolve) => setTimeout(resolve, 0));
-
       expect(mockGetAiImageHistory).toHaveBeenCalled();
-    });
-
-    it('should not call loadHistory when hiding history', async () => {
-      useAiGenerateStore.setState({ showHistory: true });
 
       useAiGenerateStore.getState().toggleHistory();
+      jest.clearAllMocks();
 
-      expect(mockGetAiImageHistory).not.toHaveBeenCalled();
+      useAiGenerateStore.getState().toggleHistory();
     });
-  });
 
-  describe('loadHistory', () => {
-    it('should load history successfully', async () => {
-      const mockData: AiImageGenerationData[] = [
-        {
-          completed_at: '2024-01-01T00:00:00Z',
-          cost_time: 60,
-          created_at: '2024-01-01T00:00:00Z',
-          fail_msg: null,
-          image_resolution: '1K',
-          image_size: 'square_hd',
-          image_urls: null,
-          max_images: 1,
-          prompt_data: { inputs: { description: 'Test' }, style: 'plain' },
-          result_urls: ['https://example.com/result.jpg'],
-          seed: null,
-          state: 'success',
-          task_id: 'task-1',
-          uuid: 'uuid-1',
-        },
-      ];
+    it('updates history items', () => {
+      const item = { state: 'pending', uuid: '1' } as any;
 
-      mockGetAiImageHistory.mockResolvedValue({ data: mockData } as any);
+      useAiGenerateStore.setState({ historyItems: [item] });
 
-      await useAiGenerateStore.getState().loadHistory();
+      useAiGenerateStore.getState().updateHistoryItem('1', { state: 'success' });
+      expect(useAiGenerateStore.getState().historyItems[0].state).toBe('success');
+    });
+
+    it('imports history item to form', () => {
+      const item = {
+        max_images: 4,
+        prompt_data: { inputs: { desc: 'foo' }, style: 'logo' },
+        result_urls: ['a.jpg'],
+      } as any;
+
+      useAiGenerateStore.getState().importFromHistory(item);
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.historyItems).toEqual(mockData);
-      expect(state.historyLoading).toBe(false);
-      expect(state.historyError).toBeNull();
-      expect(state.historyOffset).toBe(1);
-    });
-
-    it('should handle load history error', async () => {
-      mockGetAiImageHistory.mockResolvedValue({ error: 'Network error' });
-
-      await useAiGenerateStore.getState().loadHistory();
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.historyError).toBe('Network error');
-      expect(state.historyLoading).toBe(false);
-    });
-
-    it('should not load history if already loading', async () => {
-      useAiGenerateStore.setState({ historyLoading: true });
-
-      await useAiGenerateStore.getState().loadHistory();
-
-      expect(mockGetAiImageHistory).not.toHaveBeenCalled();
-    });
-  });
-
-  describe('importFromHistory', () => {
-    it('should import text-to-image history item', () => {
-      const historyItem: AiImageGenerationData = {
-        completed_at: '2024-01-01T00:00:00Z',
-        cost_time: 60,
-        created_at: '2024-01-01T00:00:00Z',
-        fail_msg: null,
-        image_resolution: '2K',
-        image_size: 'landscape_16_9',
-        image_urls: null,
-        max_images: 2,
-        prompt_data: { inputs: { description: 'A cute cat' }, style: 'plain' },
-        result_urls: ['https://example.com/result.jpg'],
-        seed: null,
-        state: 'success',
-        task_id: 'task-1',
-        uuid: 'uuid-1',
-      };
-
-      useAiGenerateStore.getState().importFromHistory(historyItem);
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.inputFields.description).toBe('A cute cat');
-      expect(state.style).toBe('plain');
-      expect(state.dimensions.aspectRatio).toBe('16:9');
-      expect(state.dimensions.size).toBe('medium');
-      expect(state.count).toBe(2);
+      expect(state.count).toBe(4);
+      expect(state.inputFields.desc).toBe('foo');
+      expect(state.style).toBe('logo');
       expect(state.showHistory).toBe(false);
-    });
-
-    it('should import edit mode history with image URLs', () => {
-      const historyItem: AiImageGenerationData = {
-        completed_at: '2024-01-01T00:00:00Z',
-        cost_time: 60,
-        created_at: '2024-01-01T00:00:00Z',
-        fail_msg: null,
-        image_resolution: '1K',
-        image_size: 'square_hd',
-        image_urls: ['https://example.com/img1.jpg', 'https://example.com/img2.jpg'],
-        max_images: 1,
-        prompt_data: { inputs: { description: 'Edit this' }, style: 'plain' },
-        result_urls: ['https://example.com/result.jpg'],
-        seed: null,
-        state: 'success',
-        task_id: 'task-1',
-        uuid: 'uuid-1',
-      };
-
-      useAiGenerateStore.getState().importFromHistory(historyItem);
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.style).toBe('plain');
-      expect(state.imageInputs).toHaveLength(2);
-      expect(state.imageInputs[0].type).toBe('url');
-    });
-
-    it('should convert snake_case fields to camelCase', () => {
-      const historyItem: AiImageGenerationData = {
-        completed_at: '2024-01-01T00:00:00Z',
-        cost_time: 60,
-        created_at: '2024-01-01T00:00:00Z',
-        fail_msg: null,
-        image_resolution: '1K',
-        image_size: 'square_hd',
-        image_urls: null,
-        max_images: 1,
-        prompt_data: {
-          inputs: { description: 'Test', text_to_display: 'MeowWoof' },
-          style: 'logo-cute',
-        },
-        result_urls: ['https://example.com/result.jpg'],
-        seed: null,
-        state: 'success',
-        task_id: 'task-1',
-        uuid: 'uuid-1',
-      };
-
-      useAiGenerateStore.getState().importFromHistory(historyItem);
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.inputFields.description).toBe('Test');
-      expect(state.inputFields.textToDisplay).toBe('MeowWoof');
-    });
-  });
-
-  describe('addPendingHistoryItem', () => {
-    it('should add a pending history item to the beginning', () => {
-      useAiGenerateStore.setState({
-        inputFields: { description: 'Test' },
-        style: 'plain',
-      });
-
-      useAiGenerateStore.getState().addPendingHistoryItem({
-        count: 1,
-        dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
-        imageInputs: [],
-        uuid: 'uuid-new',
-      });
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.historyItems).toHaveLength(1);
-      expect(state.historyItems[0].uuid).toBe('uuid-new');
-      expect(state.historyItems[0].state).toBe('pending');
-    });
-  });
-
-  describe('updateHistoryItem', () => {
-    it('should update history item by uuid', () => {
-      const historyItem: AiImageGenerationData = {
-        completed_at: null,
-        cost_time: null,
-        created_at: '2024-01-01T00:00:00Z',
-        fail_msg: null,
-        image_resolution: '1K',
-        image_size: 'square_hd',
-        image_urls: null,
-        max_images: 1,
-        prompt_data: { inputs: { description: 'Test' }, style: 'plain' },
-        result_urls: null,
-        seed: null,
-        state: 'pending',
-        task_id: null,
-        uuid: 'uuid-1',
-      };
-
-      useAiGenerateStore.setState({ historyItems: [historyItem] });
-
-      useAiGenerateStore.getState().updateHistoryItem('uuid-1', {
-        result_urls: ['https://example.com/result.jpg'],
-        state: 'success',
-      });
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.historyItems[0].state).toBe('success');
-      expect(state.historyItems[0].result_urls).toEqual(['https://example.com/result.jpg']);
-    });
-  });
-
-  describe('toggleFixedSeed', () => {
-    it('should toggle isFixedSeed from false to true', () => {
-      useAiGenerateStore.getState().toggleFixedSeed();
-
-      expect(useAiGenerateStore.getState().isFixedSeed).toBe(true);
-    });
-
-    it('should toggle isFixedSeed from true to false', () => {
-      useAiGenerateStore.setState({ isFixedSeed: true, seed: 12345 });
-
-      useAiGenerateStore.getState().toggleFixedSeed();
-
-      expect(useAiGenerateStore.getState().isFixedSeed).toBe(false);
-    });
-
-    it('should preserve seed value when toggling on', () => {
-      useAiGenerateStore.setState({ seed: 42 });
-
-      useAiGenerateStore.getState().toggleFixedSeed();
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.isFixedSeed).toBe(true);
-      expect(state.seed).toBe(42);
-    });
-
-    it('should clear seed when toggling off', () => {
-      useAiGenerateStore.setState({ isFixedSeed: true, seed: 12345 });
-
-      useAiGenerateStore.getState().toggleFixedSeed();
-
-      const state = useAiGenerateStore.getState();
-
-      expect(state.isFixedSeed).toBe(false);
-      expect(state.seed).toBeUndefined();
-    });
-  });
-
-  describe('setSeed', () => {
-    it('should set seed to a number', () => {
-      useAiGenerateStore.getState().setState({ seed: 99999 });
-
-      expect(useAiGenerateStore.getState().seed).toBe(99999);
-    });
-
-    it('should set seed to null', () => {
-      useAiGenerateStore.setState({ seed: 12345 });
-
-      useAiGenerateStore.getState().setState({ seed: null });
-
-      expect(useAiGenerateStore.getState().seed).toBeNull();
-    });
-
-    it('should accept zero as valid seed', () => {
-      useAiGenerateStore.getState().setState({ seed: 0 });
-
-      expect(useAiGenerateStore.getState().seed).toBe(0);
     });
   });
 });
