@@ -22,10 +22,6 @@ jest.mock(
     },
 );
 
-jest.mock('@core/app/components/beambox/LeftPanel/components/PreviewToolButtonGroup', () => () => (
-  <div>This is dummy PreviewToolButtonGroup</div>
-));
-
 jest.mock(
   '@core/app/components/beambox/LeftPanel/components/CurveEngravingTool',
   () =>

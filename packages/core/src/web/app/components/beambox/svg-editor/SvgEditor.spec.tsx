@@ -11,15 +11,18 @@ jest.mock('@core/helpers/fileImportHelper', () => ({
   importFileInCurrentTab: (...args) => mockImportFileInCurrentTab(...args),
 }));
 
-jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
-jest.mock('./Ruler', () => () => <div>MockRuler</div>);
-jest.mock('./Banner', () => () => <div>MockBanner</div>);
-jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
-
 jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/common/ZoomBlock', () => () => <div>MockZoomBlock</div>);
-jest.mock('@core/app/components/beambox/DpiInfo', () => () => <div>MockDpiInfo</div>);
-jest.mock('@core/app/components/beambox/PreviewFloatingBar', () => () => <div>MockPreviewFloatingBar</div>);
+
+jest.mock('./Banner', () => () => <div>MockBanner</div>);
+jest.mock('./Chat', () => () => <div>MockChat</div>);
+jest.mock('./DpiInfo', () => () => <div>MockDpiInfo</div>);
+jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
+jest.mock('./PreviewFloatingBar', () => () => <div>MockPreviewFloatingBar</div>);
+jest.mock('./PreviewSlider', () => () => <div>MockPreviewSlider</div>);
+jest.mock('./Ruler', () => () => <div>MockRuler</div>);
+jest.mock('./TimeEstimationButton', () => () => <div>MockTimeEstimationButton</div>);
+jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
 
 const mockInit = jest.fn();
 

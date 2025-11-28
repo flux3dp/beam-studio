@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import { adorModels } from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import { CameraType } from '@core/app/constants/cameraConstants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
@@ -64,9 +65,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
     useCameraPreviewStore();
   const isCanvasEmpty = isDrawing || isClean;
 
-  if (!isPreviewMode || mode !== CanvasMode.Draw) {
-    // return null;
-  }
+  if (!isPreviewMode || mode !== CanvasMode.Draw) return null;
 
   const startImageTrace = () => {
     endPreviewMode();
@@ -85,8 +84,32 @@ export const PreviewFloatingBar = memo((): ReactNode => {
     <div className={styles.wrap}>
       <div className={styles.container}>
         <Button disabled={isCanvasEmpty} id="image-trace" onClick={startImageTrace} title={lang.label.trace}>
-          <LeftPanelIcons.Trace className={styles.icon} />
+          <LeftPanelIcons.Trace />
         </Button>
+        {hasWideAngleCamera && (
+          <>
+            <Button
+              active={cameraType === CameraType.LASER_HEAD}
+              id="laser-head-camera"
+              onClick={() => {
+                if (cameraType !== CameraType.LASER_HEAD) previewModeController.switchCamera(CameraType.LASER_HEAD);
+              }}
+              title={lang.label.preview}
+            >
+              <LeftPanelIcons.Shoot />
+            </Button>
+            <Button
+              active={cameraType === CameraType.WIDE_ANGLE}
+              id="wide-angle-camera"
+              onClick={() => {
+                if (cameraType !== CameraType.WIDE_ANGLE) previewModeController.switchCamera(CameraType.WIDE_ANGLE);
+              }}
+              title={lang.label.preview_wide_angle}
+            >
+              <LeftPanelIcons.ShootWideAngle />
+            </Button>
+          </>
+        )}
         {isAdorSeries && !localeHelper.isNorthAmerica && (
           <Button
             active={isLiveMode}
@@ -95,7 +118,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
             onClick={() => previewModeController.toggleFullWorkareaLiveMode()}
             title={lang.label.live_feed}
           >
-            <LeftPanelIcons.Live className={styles.icon} />
+            <LeftPanelIcons.Live />
           </Button>
         )}
         {isAdorSeries && (
@@ -105,11 +128,11 @@ export const PreviewFloatingBar = memo((): ReactNode => {
             onClick={() => previewModeController.resetFishEyeObjectHeight()}
             title={lang.label.adjust_height}
           >
-            <LeftPanelIcons.AdjustHeight className={styles.icon} />
+            <LeftPanelIcons.AdjustHeight />
           </Button>
         )}
         <Button disabled={isCanvasEmpty} id="clear-preview" onClick={clearPreview} title={lang.label.clear_preview}>
-          <LeftPanelIcons.Delete className={styles.icon} />
+          <LeftPanelIcons.Delete />
         </Button>
         <div className={styles.separator} />
         <div

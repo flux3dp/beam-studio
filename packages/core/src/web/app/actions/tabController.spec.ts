@@ -126,9 +126,9 @@ describe('test TabController', () => {
   });
 
   test('setMode', () => {
-    tabController.setMode(CanvasMode.Preview);
+    tabController.setMode(CanvasMode.Draw);
     expect(mockSend).toHaveBeenCalledTimes(1);
-    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabMode, CanvasMode.Preview);
+    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabMode, CanvasMode.Draw);
   });
 
   test('getIsWelcomeTab', () => {

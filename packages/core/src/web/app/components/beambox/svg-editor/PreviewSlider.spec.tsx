@@ -191,14 +191,6 @@ describe('test PreviewSlider', () => {
     });
   });
 
-  it('should render correctly when is path previewing', () => {
-    useCanvasStore.getState().setMode(CanvasMode.PathPreview);
-
-    const { container } = render(<PreviewSlider />);
-
-    expect(container).toBeEmptyDOMElement();
-  });
-
   it('should be disabled when in raw mode and drawing', async () => {
     mockGetCurrentControlMode.mockReturnValue('raw');
     mockUseCameraPreviewStore.mockReturnValue({ isDrawing: true, isPreviewMode: true });
