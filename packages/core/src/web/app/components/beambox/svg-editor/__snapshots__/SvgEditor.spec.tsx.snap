@@ -44,6 +44,9 @@ exports[`test svg-editor should render correctly in mac 1`] = `
       />
     </div>
     <div>
+      MockPreviewFloatingBar
+    </div>
+    <div>
       MockZoomBlock
     </div>
     <div>
@@ -95,6 +98,9 @@ exports[`test svg-editor should render correctly in win 1`] = `
         class="dropdown"
         id="option_lists"
       />
+    </div>
+    <div>
+      MockPreviewFloatingBar
     </div>
     <div>
       MockZoomBlock

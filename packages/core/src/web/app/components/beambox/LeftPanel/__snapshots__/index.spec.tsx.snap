@@ -40,8 +40,10 @@ exports[`test LeftPanel neither in previewing nor in path previewing 1`] = `
 
 exports[`test LeftPanel not in path previewing 1`] = `
 <div>
-  <div>
-    This is dummy PreviewToolButtonGroup
+  <div
+    class="container"
+  >
+    MockCurveEngravingTool
   </div>
 </div>
 `;

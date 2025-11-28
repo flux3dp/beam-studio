@@ -89,9 +89,7 @@ describe('test PreviewSlider', () => {
     mockMeetRequirement.mockReturnValue(true);
     document.body.innerHTML =
       '<svg id="previewSvg"><image id="backgroundImage" style="pointer-events:none; opacity: 1;"/></svg>';
-    mockUseCameraPreviewStore.mockReturnValue({
-      isPreviewMode: true,
-    });
+    mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: false });
     mockGetExposureSettings.mockReturnValue({
       max: 10000,
       min: 50,
@@ -125,6 +123,7 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
+    mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
     const { container } = render(<PreviewSlider />);
 
@@ -138,6 +137,7 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
+    mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
     const { container, getByText } = render(<PreviewSlider />);
 
@@ -168,6 +168,7 @@ describe('test PreviewSlider', () => {
 
     imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });
+    mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
     const { container, getByText } = render(<PreviewSlider />);
 

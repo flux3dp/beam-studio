@@ -19,6 +19,7 @@ jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
 jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);
 jest.mock('@core/app/components/beambox/DpiInfo', () => () => <div>MockDpiInfo</div>);
+jest.mock('@core/app/components/beambox/PreviewFloatingBar', () => () => <div>MockPreviewFloatingBar</div>);
 
 const mockInit = jest.fn();
 
