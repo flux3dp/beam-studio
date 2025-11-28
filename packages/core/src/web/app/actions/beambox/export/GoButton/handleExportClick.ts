@@ -1,5 +1,6 @@
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import Dialog from '@core/app/actions/dialog-caller';
+import previewModeController from '@core/app/actions/preview-mode-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -12,8 +13,6 @@ import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ILang } from '@core/interfaces/ILang';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import previewModeController from '../../preview-mode-controller';
 
 import { checkModuleCalibration } from './checkModuleCalibration';
 import { exportTask } from './exportTask';

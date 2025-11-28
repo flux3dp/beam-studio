@@ -3,6 +3,7 @@ import { memo, type ReactNode, useMemo } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import { adorModels } from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
@@ -102,7 +103,13 @@ export const PreviewFloatingBar = memo((): ReactNode => {
               active={cameraType === CameraType.WIDE_ANGLE}
               id="wide-angle-camera"
               onClick={() => {
-                if (cameraType !== CameraType.WIDE_ANGLE) previewModeController.switchCamera(CameraType.WIDE_ANGLE);
+                if (cameraType !== CameraType.WIDE_ANGLE) {
+                  if (!isWideAngleCameraCalibrated) {
+                    alertCaller.popUpError({ message: 'tPlease calibration wide angle camera first.' });
+                  }
+
+                  previewModeController.switchCamera(CameraType.WIDE_ANGLE);
+                }
               }}
               title={lang.label.preview_wide_angle}
             >
