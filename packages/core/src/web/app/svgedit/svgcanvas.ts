@@ -760,6 +760,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getCurrentShape = () => cur_shape;
   this.getCurrentZoom = () => workareaManager.zoomRatio;
   this.getLastClickPoint = () => lastClickPoint;
+  // TODO: keep for ext-polygon.js, can remove after refactoring it
   this.getMode = function () {
     return getMouseMode();
   };
@@ -2650,6 +2651,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // name - String with the new mode to change to
   this.setMode = function (name) {
+    // TODO: keep for ext-polygon.js, can remove after refactoring it
     setMouseMode(name);
   };
 
