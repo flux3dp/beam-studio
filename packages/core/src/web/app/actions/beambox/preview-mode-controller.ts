@@ -49,6 +49,11 @@ class PreviewModeController {
     setCameraPreviewState({ isDrawing: val });
   };
 
+  setIsStarting = (val: boolean) => {
+    this.isStarting = val;
+    setCameraPreviewState({ isStarting: val });
+  };
+
   reloadHeightOffset = async () => {
     this.previewManager?.reloadLevelingOffset?.();
   };
@@ -119,12 +124,12 @@ class PreviewModeController {
 
   async start(device: IDeviceInfo) {
     this.reset();
-    this.isStarting = true;
+    this.setIsStarting(true);
 
     const res = await deviceMaster.select(device);
 
     if (!res.success) {
-      this.isStarting = false;
+      this.setIsStarting(false);
 
       return;
     }
@@ -147,7 +152,7 @@ class PreviewModeController {
       const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
 
       if (!setupRes) {
-        this.isStarting = false;
+        this.setIsStarting(false);
 
         return;
       }
@@ -177,7 +182,7 @@ class PreviewModeController {
       await this.end();
       throw error;
     } finally {
-      this.isStarting = false;
+      this.setIsStarting(false);
     }
   }
 

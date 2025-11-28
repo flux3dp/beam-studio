@@ -41,7 +41,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const tLeftPanel = lang.beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
-  const { isDrawing } = useCameraPreviewStore();
+  const { isDrawing, isStarting } = useCameraPreviewStore();
   const mouseMode = useCanvasStore((state) => state.mouseMode);
   const activeButton = useMemo(() => {
     return match(mouseMode)
@@ -88,7 +88,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   return (
     <div className={className}>
       {renderToolButton({
-        disabled: isDrawing,
+        disabled: isDrawing || isStarting,
         icon: <LeftPanelIcons.Camera />,
         id: 'Preview',
         label: lang.topbar.preview,

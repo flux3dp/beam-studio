@@ -9,6 +9,7 @@ type CameraPreviewState = {
   isDrawing: boolean;
   isLiveMode: boolean;
   isPreviewMode: boolean;
+  isStarting: boolean;
   isWideAngleCameraCalibrated?: boolean;
 };
 
@@ -19,6 +20,7 @@ export const useCameraPreviewStore = create<CameraPreviewState>(() => ({
   isDrawing: false,
   isLiveMode: false,
   isPreviewMode: false,
+  isStarting: false,
   isWideAngleCameraCalibrated: false,
 }));
 
