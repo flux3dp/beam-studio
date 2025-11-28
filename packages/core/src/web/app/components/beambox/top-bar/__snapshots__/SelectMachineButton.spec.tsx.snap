@@ -26,7 +26,7 @@ exports[`test SelectMachineButton should render correctly 1`] = `
 </div>
 `;
 
-exports[`test SelectMachineButton when previewing 1`] = `
+exports[`test SelectMachineButton when is preview mode 1`] = `
 <div>
   <div
     class="button"

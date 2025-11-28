@@ -3,7 +3,6 @@ import React, { useCallback, useContext, useMemo } from 'react';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import getDevice from '@core/helpers/device/get-device';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -13,7 +12,6 @@ import styles from './SelectMachineButton.module.scss';
 function SelectMachineButton(): React.JSX.Element {
   const isMobile = useIsMobile();
   const i18n = useI18n();
-  const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
   const { selectedDevice } = useContext(CanvasContext);
   const text = useMemo(() => {
     if (isMobile) {
@@ -30,10 +28,10 @@ function SelectMachineButton(): React.JSX.Element {
   const handleClick = useCallback(async () => {
     const { device } = await getDevice(true);
 
-    if (isPreviewMode && device && device.uuid !== selectedDevice?.uuid) {
+    if (previewModeController.isPreviewMode && device && device.uuid !== selectedDevice?.uuid) {
       previewModeController.end();
     }
-  }, [isPreviewMode, selectedDevice]);
+  }, [selectedDevice]);
 
   return (
     <div className={styles.button} onClick={handleClick}>
