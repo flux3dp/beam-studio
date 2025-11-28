@@ -13,6 +13,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ILang } from '@core/interfaces/ILang';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import previewModeController from '../../preview-mode-controller';
+
 import { checkModuleCalibration } from './checkModuleCalibration';
 import { exportTask } from './exportTask';
 import { handleExportAlerts } from './handleExportAlerts';
@@ -39,6 +41,8 @@ export const handleExportClick =
   (lang: ILang) =>
   async (byHandler = false): Promise<void> => {
     try {
+      if (previewModeController.isPreviewMode) await previewModeController.end();
+
       if (isRelatedModalsExist()) return;
 
       progressCaller.openNonstopProgress({ id: 'preparing-export' });
