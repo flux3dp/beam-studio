@@ -65,10 +65,15 @@
   z-index: 1;
   right: 20px;
   bottom: 20px;
+  pointer-events: none;
 
   display: inline-flex;
   align-items: flex-start;
   gap: 8px;
+
+  > * {
+    pointer-events: all;
+  }
 
   @media screen and (max-width: 600px) {
     flex-direction: column;

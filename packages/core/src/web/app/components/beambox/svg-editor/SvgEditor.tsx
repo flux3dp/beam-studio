@@ -70,7 +70,7 @@ export const SvgEditor = (): ReactNode => {
               setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
             />
             <DpiInfo />
-            <div className={classNames(styles['bottom-right'], { [styles.mac]: window.os === 'MacOS' })}>
+            <div className={styles['bottom-right']}>
               <TimeEstimationButtonContextProvider>
                 <TimeEstimationButton />
               </TimeEstimationButtonContextProvider>
@@ -78,7 +78,6 @@ export const SvgEditor = (): ReactNode => {
             </div>
           </>
         )}
-
         <Chat />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
