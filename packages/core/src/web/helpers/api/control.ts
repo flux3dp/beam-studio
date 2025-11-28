@@ -769,30 +769,30 @@ class Control extends EventEmitter implements IControlSocket {
 
   fetchFisheyeParams = () =>
     new Promise<FisheyeCameraParameters>((resolve, reject) => {
-      const file = [];
+      let data: FisheyeCameraParameters;
 
       this.on(EVENT_COMMAND_MESSAGE, async (response) => {
         console.log(response);
 
         if (response.status === 'transfer') {
           this.emit(EVENT_COMMAND_PROGRESS, response);
-        } else if (!Object.keys(response).includes('completed')) {
-          file.push(response);
+        } else if (response.status === 'ok') {
+          this.removeCommandListeners();
+          resolve(data);
         }
 
         if (response instanceof Blob) {
-          this.removeCommandListeners();
-
           const fileReader = new FileReader();
 
           fileReader.onload = (e) => {
             try {
               const jsonString = e.target?.result as string;
-              const data = JSON.parse(jsonString) as FisheyeCameraParameters;
+
+              data = JSON.parse(jsonString) as FisheyeCameraParameters;
 
               console.log(data);
-              resolve(data);
             } catch (err) {
+              this.removeCommandListeners();
               reject(err);
             }
           };
