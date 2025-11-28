@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
+import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -23,7 +24,6 @@ import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
 import TimeEstimationButton from './TimeEstimationButton';
 import Workarea from './Workarea';
-import ZoomBlock from './ZoomBlock';
 
 export const SvgEditor = (): ReactNode => {
   const mode = useCanvasStore((state) => state.mode);

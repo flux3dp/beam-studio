@@ -3,7 +3,7 @@ import React, { memo, useEffect, useRef } from 'react';
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
-import ZoomBlock from '@core/app/components/beambox/svg-editor/ZoomBlock';
+import ZoomBlock from '@core/app/components/common/ZoomBlock';
 
 import styles from './EmbeddedCanvas.module.scss';
 import { EmbeddedCanvasManager } from './EmbeddedCanvasManager';

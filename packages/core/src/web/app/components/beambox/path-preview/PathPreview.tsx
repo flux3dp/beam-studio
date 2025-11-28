@@ -13,7 +13,7 @@ import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
 import progressCaller from '@core/app/actions/progress-caller';
 import Pointable from '@core/app/components/beambox/path-preview/Pointable';
 import SidePanel from '@core/app/components/beambox/path-preview/SidePanel';
-import ZoomBlock from '@core/app/components/beambox/svg-editor/ZoomBlock';
+import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
