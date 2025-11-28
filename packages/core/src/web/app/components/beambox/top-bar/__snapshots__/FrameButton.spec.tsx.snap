@@ -10,14 +10,3 @@ exports[`test FrameButton should render correctly 1`] = `
   </div>
 </div>
 `;
-
-exports[`test FrameButton should render correctly with previewing mode 1`] = `
-<div>
-  <div
-    class="button disabled"
-    title="Running Frame"
-  >
-    <svgr-url />
-  </div>
-</div>
-`;
