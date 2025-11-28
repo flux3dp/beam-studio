@@ -36,7 +36,7 @@ jest.mock('@core/app/components/pass-through', () => ({
 
 const mockHandlePreviewClick = jest.fn();
 
-jest.mock('@core/app/stores/canvas/utils/previewMode', () => ({
+jest.mock('@core/helpers/device/camera/previewMode', () => ({
   handlePreviewClick: mockHandlePreviewClick,
 }));
 

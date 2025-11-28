@@ -12,7 +12,7 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
-import { setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
+import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';

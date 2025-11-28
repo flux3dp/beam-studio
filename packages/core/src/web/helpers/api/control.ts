@@ -770,6 +770,14 @@ class Control extends EventEmitter implements IControlSocket {
   fetchFisheyeParams = () =>
     new Promise<FisheyeCameraParameters>((resolve, reject) => {
       let data: FisheyeCameraParameters;
+      let isOkReceived = false;
+
+      const handleFinish = () => {
+        if (isOkReceived && data) {
+          this.removeCommandListeners();
+          resolve(data);
+        }
+      };
 
       this.on(EVENT_COMMAND_MESSAGE, async (response) => {
         console.log(response);
@@ -777,8 +785,8 @@ class Control extends EventEmitter implements IControlSocket {
         if (response.status === 'transfer') {
           this.emit(EVENT_COMMAND_PROGRESS, response);
         } else if (response.status === 'ok') {
-          this.removeCommandListeners();
-          resolve(data);
+          isOkReceived = true;
+          handleFinish();
         }
 
         if (response instanceof Blob) {
@@ -791,6 +799,7 @@ class Control extends EventEmitter implements IControlSocket {
               data = JSON.parse(jsonString) as FisheyeCameraParameters;
 
               console.log(data);
+              handleFinish();
             } catch (err) {
               this.removeCommandListeners();
               reject(err);

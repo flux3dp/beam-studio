@@ -13,13 +13,14 @@ import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
-import { changeToPreviewMode, endPreviewMode, setupPreviewMode } from '@core/app/stores/canvas/utils/previewMode';
 import historyUtils from '@core/app/svgedit/history/utils';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
+import { endPreviewMode, handlePreviewClick, setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -41,6 +42,7 @@ const CanvasTabBar = (): React.ReactNode => {
   const isMobile = useIsMobile();
   const lang = useI18n();
 
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
   const { isClean, isDrawing, isPreviewMode } = useCameraPreviewStore();
   const [activeKey, setActiveKey] = useState('none');
 
