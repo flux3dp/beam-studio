@@ -2,6 +2,7 @@ import { EventEmitter } from 'eventemitter3';
 
 import type { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
@@ -60,6 +61,10 @@ class TabController extends EventEmitter {
       (state) => state.mode,
       (mode) => this.setMode(mode),
     );
+    useCameraPreviewStore.subscribe(
+      (state) => state.isPreviewMode,
+      (isPreviewMode) => this.setIsPreviewMode(isPreviewMode),
+    );
   }
 
   onBlurred(handler: () => void): void {
@@ -112,6 +117,10 @@ class TabController extends EventEmitter {
     if (id === this.currentId) return;
 
     communicator.send(TabEvents.FocusTab, id);
+  };
+
+  setIsPreviewMode = (isPreviewMode: boolean): void => {
+    communicator.send(TabEvents.SetTabIsPreviewMode, isPreviewMode);
   };
 
   setMode = (mode: CanvasMode): void => {

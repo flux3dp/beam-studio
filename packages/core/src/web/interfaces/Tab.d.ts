@@ -4,6 +4,7 @@ export interface Tab {
   id: number;
   isCloud: boolean;
   isLoading: boolean;
+  isPreviewMode: boolean;
   isWelcomeTab: boolean;
   mode?: CanvasMode;
   title: string;

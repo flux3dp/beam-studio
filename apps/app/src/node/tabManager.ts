@@ -65,6 +65,13 @@ class TabManager {
       this.onTabTitleChanged(e.sender.id, title, isCloud);
     });
 
+    ipcMain.on(TabEvents.SetTabIsPreviewMode, (e, isPreviewMode: boolean) => {
+      if (this.tabsMap[e.sender.id]) {
+        this.tabsMap[e.sender.id].isPreviewMode = isPreviewMode;
+        this.notifyTabUpdated();
+      }
+    });
+
     ipcMain.on(TabEvents.GetAllTabs, (e) => {
       e.returnValue = this.serializeTabs();
     });
@@ -165,9 +172,9 @@ class TabManager {
 
   private serializeTabs = (): FrontendTab[] =>
     this.tabsList.map((id: number) => {
-      const { isCloud, isLoading, isWelcomeTab, mode, title } = this.tabsMap[id];
+      const { isCloud, isLoading, isPreviewMode, isWelcomeTab, mode, title } = this.tabsMap[id];
 
-      return { id, isCloud, isFocused: id === this.focusedId, isLoading, isWelcomeTab, mode, title };
+      return { id, isCloud, isFocused: id === this.focusedId, isLoading, isPreviewMode, isWelcomeTab, mode, title };
     });
 
   private notifyTabUpdated = (): void => {
@@ -223,6 +230,7 @@ class TabManager {
     const tab: Tab = {
       isCloud: false,
       isLoading: !isWelcomeTab,
+      isPreviewMode: false,
       isWelcomeTab,
       title,
       view: tabView,

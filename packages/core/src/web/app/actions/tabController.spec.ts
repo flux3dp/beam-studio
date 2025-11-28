@@ -150,4 +150,10 @@ describe('test TabController', () => {
     expect(mockSendSync).toHaveBeenCalledTimes(2);
     expect(mockSendSync).toHaveBeenNthCalledWith(2, TabEvents.GetAllTabs);
   });
+
+  test('setIsPreviewMode', () => {
+    tabController.setIsPreviewMode(true);
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabIsPreviewMode, true);
+  });
 });
