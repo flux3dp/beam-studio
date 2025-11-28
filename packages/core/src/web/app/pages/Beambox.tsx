@@ -56,11 +56,11 @@ const Beambox = (): React.JSX.Element => {
               <LeftPanel />
               <SvgEditor />
               <RightPanel />
+              <CanvasTabBar />
             </Flex>
             <div id="tool-panels-placeholder" />
           </div>
           <ImageTracePanel />
-          <CanvasTabBar />
         </LayerPanelContextProvider>
       </SelectedElementContextProvider>
     </CanvasProvider>

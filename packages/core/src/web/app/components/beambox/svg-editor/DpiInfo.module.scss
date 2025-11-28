@@ -1,5 +1,6 @@
 .container {
   position: absolute;
+  pointer-events: none;
   bottom: 20px;
   left: 120px;
   height: 20px;
@@ -9,6 +10,6 @@
 
   &.mobile {
     left: 25px;
-    bottom: 110px;
+    bottom: 55px;
   }
 }

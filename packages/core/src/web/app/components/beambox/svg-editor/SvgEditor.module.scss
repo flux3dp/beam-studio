@@ -63,22 +63,31 @@
 .bottom-right {
   position: absolute;
   z-index: 1;
-  right: 20px;
-  bottom: 20px;
+  bottom: 0;
+  right: 0;
   pointer-events: none;
 
-  display: inline-flex;
-  align-items: flex-start;
-  gap: 8px;
+  .controls {
+    margin: 0 20px 20px 0;
+    display: inline-flex;
+    align-items: flex-start;
+    gap: 8px;
+  }
 
   > * {
     pointer-events: all;
   }
 
   @media screen and (max-width: 600px) {
+    width: 100%;
+    display: flex;
     flex-direction: column;
     align-items: flex-end;
-    bottom: 70px;
-    right: 10px;
+
+    .controls {
+      margin: 0 10px 20px 0;
+      flex-direction: column;
+      align-items: flex-end;
+    }
   }
 }

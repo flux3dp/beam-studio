@@ -8,5 +8,9 @@
     flex: 1 1 auto;
     display: flex;
     height: 0; // need to add this 0 to avoid the height of the container to be 100% of the parent
+
+    @media screen and (max-width: 600px) {
+      flex-direction: column;
+    }
   }
 }

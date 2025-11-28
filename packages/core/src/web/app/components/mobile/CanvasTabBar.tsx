@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useState } from 'react';
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
 
-import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through';
@@ -11,7 +10,6 @@ import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
-import beamboxStore from '@core/app/stores/beambox-store';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
@@ -20,7 +18,7 @@ import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import { endPreviewMode, handlePreviewClick, setupPreviewMode } from '@core/helpers/device/camera/previewMode';
+import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -43,8 +41,18 @@ const CanvasTabBar = (): React.ReactNode => {
   const lang = useI18n();
 
   const mouseMode = useCanvasStore((state) => state.mouseMode);
-  const { isClean, isDrawing, isPreviewMode } = useCameraPreviewStore();
+  const { isDrawing, isStarting } = useCameraPreviewStore();
   const [activeKey, setActiveKey] = useState('none');
+
+  useEffect(() => {
+    if (['pre_preview', 'preview'].includes(mouseMode)) {
+      setActiveKey('camera');
+    } else if (['path', 'pathedit'].includes(mouseMode)) {
+      setActiveKey('pen');
+    } else {
+      setActiveKey('none');
+    }
+  }, [mouseMode]);
 
   const resetActiveKey = useCallback(() => {
     setActiveKey('none');
@@ -82,7 +90,14 @@ const CanvasTabBar = (): React.ReactNode => {
 
   const tabs: TabItem[] = [
     {
-      icon: <TopBarIcons.Camera />,
+      disabled: isDrawing || isStarting,
+      icon: (
+        <TopBarIcons.Camera
+          onClick={() => {
+            if (activeKey === 'camera') setMouseMode('select');
+          }}
+        />
+      ),
       key: 'camera',
       title: lang.beambox.left_panel.label.choose_camera,
     },
@@ -103,15 +118,13 @@ const CanvasTabBar = (): React.ReactNode => {
     },
     {
       icon: (
-        <div
+        <TabBarIcons.Layers
           onClick={() => {
             if (activeKey === 'layer') {
               RightPanelController.setDisplayLayer(false);
             }
           }}
-        >
-          <TabBarIcons.Layers />
-        </div>
+        />
       ),
       key: 'layer',
       title: lang.topbar.menu.layer_setting,
@@ -158,7 +171,8 @@ const CanvasTabBar = (): React.ReactNode => {
     },
   ];
 
-  const handleTabClick = (key: string) => {
+  const handleTabClick = async (key: string) => {
+    console.log('tab click', key);
     setMouseMode('select');
 
     if (key === 'layer') {
@@ -168,12 +182,11 @@ const CanvasTabBar = (): React.ReactNode => {
     }
 
     if (key === 'camera') {
-      changeToPreviewMode();
+      if (!['pre_preview', 'preview'].includes(mouseMode)) {
+        const res = await handlePreviewClick();
 
-      if (!isPreviewMode) setupPreviewMode();
-
-      setActiveKey('choose-preview-device');
-      setTimeout(resetActiveKey, 300);
+        if (!res) setActiveKey('none');
+      }
     } else if (key === 'image') {
       FnWrapper.importImage();
       setTimeout(resetActiveKey, 300);
@@ -185,7 +198,6 @@ const CanvasTabBar = (): React.ReactNode => {
       });
       createNewText(100, 100, { addToHistory: true, isToSelect: true, text: 'Text' });
     } else if (key === 'pen') {
-      events.once('addPath', resetActiveKey);
       setMouseMode('path');
     } else if (key === 'undo') {
       historyUtils.undo();
@@ -203,50 +215,6 @@ const CanvasTabBar = (): React.ReactNode => {
     }
   };
 
-  const previewTabItems: TabItem[] = [
-    {
-      icon: <TopBarIcons.Camera />,
-      key: 'end-preview',
-      title: lang.beambox.left_panel.label.end_preview,
-    },
-    {
-      icon: <TabBarIcons.Shoot />,
-      key: 'choose-preview-device',
-      title: lang.beambox.left_panel.label.choose_camera,
-    },
-    {
-      disabled: isDrawing || isClean,
-      icon: <TabBarIcons.Trace />,
-      key: 'image-trace',
-      title: lang.beambox.left_panel.label.trace,
-    },
-    {
-      disabled: isDrawing || isClean,
-      icon: <TabBarIcons.Trash />,
-      key: 'clear-preview',
-      title: lang.beambox.left_panel.label.clear_preview,
-    },
-  ];
-  const handlePreviewTabClick = (key: string) => {
-    if (key === 'end-preview') {
-      endPreviewMode();
-    } else if (key === 'choose-preview-device') {
-      if (!isPreviewMode) {
-        setupPreviewMode();
-      }
-    } else if (key === 'image-trace') {
-      endPreviewMode();
-      beamboxStore.emitShowCropper();
-    } else if (key === 'clear-preview') {
-      if (!isClean) {
-        PreviewModeBackgroundDrawer.resetCoordinates();
-        PreviewModeBackgroundDrawer.clear();
-      }
-    }
-
-    setTimeout(resetActiveKey, 300);
-  };
-
   return (
     <div className={styles.container} id="mobile-tab-bar" onClick={() => ObjectPanelController.updateActiveKey(null)}>
       <div style={{ width: 'fit-content' }}>
@@ -254,15 +222,10 @@ const CanvasTabBar = (): React.ReactNode => {
           activeKey={activeKey}
           onChange={(key) => {
             setActiveKey(key);
-
-            if (isPreviewMode) {
-              handlePreviewTabClick(key);
-            } else {
-              handleTabClick(key);
-            }
+            handleTabClick(key);
           }}
         >
-          {(isPreviewMode ? previewTabItems : tabs).map((item) => (
+          {tabs.map((item) => (
             <TabBar.Item
               aria-disabled={item.disabled || false}
               icon={

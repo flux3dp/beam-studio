@@ -13,6 +13,7 @@ import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEsti
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import Banner from './Banner';
 import Chat from './Chat';
@@ -26,6 +27,7 @@ import TimeEstimationButton from './TimeEstimationButton';
 import Workarea from './Workarea';
 
 export const SvgEditor = (): ReactNode => {
+  const isMobile = useIsMobile();
   const mode = useCanvasStore((state) => state.mode);
 
   useEffect(() => {
@@ -64,17 +66,20 @@ export const SvgEditor = (): ReactNode => {
         </div>
         {mode !== CanvasMode.PathPreview && (
           <>
-            <PreviewFloatingBar />
+            {!isMobile && <PreviewFloatingBar />}
             <ZoomBlock
               resetView={workareaManager.resetView}
               setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
             />
             <DpiInfo />
             <div className={styles['bottom-right']}>
-              <TimeEstimationButtonContextProvider>
-                <TimeEstimationButton />
-              </TimeEstimationButtonContextProvider>
-              <PreviewSlider />
+              <div className={styles.controls}>
+                <TimeEstimationButtonContextProvider>
+                  <TimeEstimationButton />
+                </TimeEstimationButtonContextProvider>
+                <PreviewSlider />
+              </div>
+              {isMobile && <PreviewFloatingBar />}
             </div>
           </>
         )}
