@@ -4,7 +4,6 @@ import { ConfigProvider, Slider, Space, Switch, Tooltip } from 'antd';
 
 import constant, { supportCameraAutoExposureModels } from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import { CanvasMode } from '@core/app/constants/canvasMode';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -96,10 +95,6 @@ const PreviewSlider = (): React.ReactNode => {
 
     if (isPreviewMode) getSetting();
   }, [isPreviewMode]);
-
-  if (mode === CanvasMode.PathPreview) {
-    return null;
-  }
 
   const toggleAutoExposure = async (value: boolean) => {
     if (isSettingAutoExposure) return;
