@@ -1,7 +1,5 @@
 import tabController from '@core/app/actions/tabController';
-import TutorialConstants from '@core/app/constants/tutorial-constants';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, hashMap, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -21,11 +19,6 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
-
-const setCrosshairCursor = () => {
-  $('#workarea').css('cursor', 'crosshair');
-  $('#svg_editor g').css('cursor', 'crosshair');
-};
 
 const align = (type: 'b' | 'c' | 'l' | 'm' | 'r' | 't') => {
   if (svgCanvas.getTempGroup()) {
@@ -129,14 +122,6 @@ const funcs = {
 
     svgEditor.clickSelect();
   },
-  insertEllipse(): void {
-    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_CIRCLE) {
-      TutorialController.handleNextStep();
-    }
-
-    svgCanvas.setMode('ellipse');
-    setCrosshairCursor();
-  },
   insertImage(
     insertedImageSrc: string,
     dimension: { height: number; width: number; x: number; y: number },
@@ -185,30 +170,6 @@ const funcs = {
 
       (window as any).updateContextPanel();
     };
-  },
-  insertLine(): void {
-    svgCanvas.setMode('line');
-    setCrosshairCursor();
-  },
-  insertPath(): void {
-    svgCanvas.setMode('path');
-    setCrosshairCursor();
-  },
-  insertPolygon(): void {
-    svgCanvas.setMode('polygon');
-    setCrosshairCursor();
-  },
-  insertRectangle(): void {
-    if (TutorialController.getNextStepRequirement() === TutorialConstants.SELECT_RECT) {
-      TutorialController.handleNextStep();
-    }
-
-    svgCanvas.setMode('rect');
-    setCrosshairCursor();
-  },
-  insertText(): void {
-    svgCanvas.setMode('text');
-    $('#workarea').css('cursor', 'text');
   },
   // left panel
   useSelectTool(): void {

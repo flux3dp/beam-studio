@@ -1,11 +1,14 @@
 import React, { useContext, useMemo } from 'react';
 
 import { Flex } from 'antd';
+import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
@@ -17,16 +20,18 @@ import styles from './Banner.module.scss';
 // beamo add-on openBottom, document setting borderless
 const Banner = (): React.ReactNode => {
   const lang = useI18n();
-  const { mode, selectedDevice } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
+  const { selectedDevice } = useContext(CanvasContext);
   const hasCurveEngravingData = useHasCurveEngraving();
-  const { autoFeeder, isBorderless, passThrough, rotaryMode, workarea } = useDocumentStore(
-    useShallow((state) => ({
-      autoFeeder: state['auto-feeder'],
-      isBorderless: state.borderless,
-      passThrough: state['pass-through'],
-      rotaryMode: state.rotary_mode,
-      workarea: state.workarea,
-    })),
+  const {
+    'auto-feeder': autoFeeder,
+    borderless: isBorderless,
+    'pass-through': passThrough,
+    rotary_mode: rotaryMode,
+    workarea,
+  } = useDocumentStore(
+    useShallow((state) => pick(state, ['auto-feeder', 'borderless', 'pass-through', 'rotary_mode', 'workarea'])),
   );
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isRotary = rotaryMode && addOnInfo.rotary;
@@ -39,8 +44,8 @@ const Banner = (): React.ReactNode => {
     [addOnInfo, passThrough, isBorderless],
   );
   const isBorderlessPreview = useMemo(
-    () => isBorderless && mode === CanvasMode.Preview && addOnInfo.openBottom && selectedDevice?.model === 'fbm1',
-    [isBorderless, mode, addOnInfo.openBottom, selectedDevice],
+    () => isBorderless && isPreviewMode && addOnInfo.openBottom && selectedDevice?.model === 'fbm1',
+    [isBorderless, isPreviewMode, addOnInfo.openBottom, selectedDevice],
   );
   const isCurveEngraving = useMemo(
     () => hasCurveEngravingData || mode === CanvasMode.CurveEngraving,

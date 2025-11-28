@@ -1,5 +1,6 @@
 /* eslint-disable no-case-declarations */
 import { LINKTYPE_SMOOTH, LINKTYPE_SYMMETRIC } from '@core/app/constants/link-type-constants';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -571,7 +572,7 @@ export default class Path implements ISVGPath {
           svgCanvas.undoMgr.addCommandToHistory(batchCmd);
         }
 
-        svgCanvas.setMode('select');
+        setMouseMode('select');
       }
     }
   }

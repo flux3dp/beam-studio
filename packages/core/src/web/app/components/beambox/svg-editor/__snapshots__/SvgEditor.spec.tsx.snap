@@ -44,10 +44,30 @@ exports[`test svg-editor should render correctly in mac 1`] = `
       />
     </div>
     <div>
+      MockPreviewFloatingBar
+    </div>
+    <div>
       MockZoomBlock
     </div>
     <div>
       MockDpiInfo
+    </div>
+    <div
+      class="bottom-right"
+    >
+      <div
+        class="controls"
+      >
+        <div>
+          MockTimeEstimationButton
+        </div>
+        <div>
+          MockPreviewSlider
+        </div>
+      </div>
+    </div>
+    <div>
+      MockChat
     </div>
   </div>
 </div>
@@ -97,10 +117,30 @@ exports[`test svg-editor should render correctly in win 1`] = `
       />
     </div>
     <div>
+      MockPreviewFloatingBar
+    </div>
+    <div>
       MockZoomBlock
     </div>
     <div>
       MockDpiInfo
+    </div>
+    <div
+      class="bottom-right"
+    >
+      <div
+        class="controls"
+      >
+        <div>
+          MockTimeEstimationButton
+        </div>
+        <div>
+          MockPreviewSlider
+        </div>
+      </div>
+    </div>
+    <div>
+      MockChat
     </div>
   </div>
 </div>

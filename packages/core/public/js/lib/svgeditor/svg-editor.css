@@ -21,14 +21,6 @@ html, body, div{
 	-webkit-transform-origin: 0 0;
 }
 
-#svg_editor g {
-	cursor: move;
-}
-
-#svg_editor g.lock{
-	cursor: default;
-}
-
 
 a {
 	color: #19c;

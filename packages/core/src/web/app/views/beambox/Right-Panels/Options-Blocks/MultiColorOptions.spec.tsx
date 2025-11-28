@@ -83,11 +83,16 @@ jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
   reRenderImageSymbolArray: (...args) => mockReRenderImageSymbolArray(...args),
 }));
 
+const mockSetMouseMode = jest.fn();
+
+jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
+  setMouseMode: (...args) => mockSetMouseMode(...args),
+}));
+
 const mockChangeSelectedAttributeNoUndo = jest.fn();
 const mockBeginUndoableChange = jest.fn();
 const mockFinishUndoableChange = jest.fn();
 const mockAddCommandToHistory = jest.fn();
-const mockSetCurrentMode = jest.fn();
 const mockResize = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -102,9 +107,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
           addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
           beginUndoableChange: (...args) => mockBeginUndoableChange(...args),
           finishUndoableChange: (...args) => mockFinishUndoableChange(...args),
-        },
-        unsafeAccess: {
-          setCurrentMode: (...args) => mockSetCurrentMode(...args),
         },
       },
     });
@@ -178,21 +180,21 @@ describe('test MultiColorOptions', () => {
     await act(async () => {
       fireEvent.click(getAllByText('onChange')[1]);
     });
-    expect(mockCreateBatchCommand).toBeCalledTimes(1);
+    expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenLastCalledWith('Update Color');
-    expect(mockBeginUndoableChange).toBeCalledTimes(2);
+    expect(mockBeginUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'fill', ['2']);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'stroke', ['3']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'fill', '#AAAAFF', ['2']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'stroke', '#AAAAFF', ['3']);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
-    expect(mockAddSubCommand).toBeCalledTimes(2);
+    expect(mockAddSubCommand).toHaveBeenCalledTimes(2);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(1, mockChangeCmd);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(2, mockChangeCmd);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(mockBatchCommand);
-    expect(mockReRenderImageSymbolArray).toBeCalledTimes(1);
+    expect(mockReRenderImageSymbolArray).toHaveBeenCalledTimes(1);
     expect(mockReRenderImageSymbolArray).toHaveBeenLastCalledWith(expect.anything(), {
       force: true,
     });
@@ -249,33 +251,33 @@ describe('test MultiColorOptions mobile', () => {
     act(() => {
       fireEvent.click(container.querySelectorAll('div.color.large>div')[1]);
     });
-    expect(mockSetCurrentMode).toBeCalledTimes(1);
-    expect(mockSetCurrentMode).toHaveBeenNthCalledWith(1, 'preview_color');
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(1, 'preview_color');
     act(() => {
       fireEvent.click(getByText('onPreview'));
     });
-    expect(mockCreateBatchCommand).toBeCalledTimes(1);
+    expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenLastCalledWith('Update Color');
-    expect(mockBeginUndoableChange).toBeCalledTimes(2);
+    expect(mockBeginUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'fill', ['2']);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'stroke', ['3']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'fill', '#FFFFFF', ['2']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'stroke', '#FFFFFF', ['3']);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
-    expect(mockAddSubCommand).toBeCalledTimes(2);
+    expect(mockAddSubCommand).toHaveBeenCalledTimes(2);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(1, mockChangeCmd);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(2, mockChangeCmd);
     expect(mockAddCommandToHistory).not.toBeCalled();
-    expect(mockReRenderImageSymbolArray).toBeCalledTimes(1);
+    expect(mockReRenderImageSymbolArray).toHaveBeenCalledTimes(1);
     expect(mockReRenderImageSymbolArray).toHaveBeenLastCalledWith(expect.anything(), {
       force: true,
     });
     act(() => {
       fireEvent.click(getByText('onChange'));
     });
-    expect(mockCreateBatchCommand).toBeCalledTimes(3);
-    expect(mockBeginUndoableChange).toBeCalledTimes(6);
+    expect(mockCreateBatchCommand).toHaveBeenCalledTimes(3);
+    expect(mockBeginUndoableChange).toHaveBeenCalledTimes(6);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(3, 'fill', ['2']);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(4, 'stroke', ['3']);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(5, 'fill', ['2']);
@@ -286,10 +288,10 @@ describe('test MultiColorOptions mobile', () => {
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(5, 'fill', '#AAAAFF', ['2']);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(6, 'stroke', '#AAAAFF', ['3']);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(6);
-    expect(mockAddSubCommand).toBeCalledTimes(6);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockAddSubCommand).toHaveBeenCalledTimes(6);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(mockBatchCommand);
-    expect(mockReRenderImageSymbolArray).toBeCalledTimes(2);
+    expect(mockReRenderImageSymbolArray).toHaveBeenCalledTimes(2);
     expect(mockReRenderImageSymbolArray).toHaveBeenLastCalledWith(expect.anything(), {
       force: true,
     });

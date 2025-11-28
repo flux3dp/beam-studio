@@ -9,7 +9,7 @@ export const hashMap = {
   welcome: '#/studio/welcome',
 };
 
-type HashMapKey = keyof typeof hashMap;
+export type HashMapKey = keyof typeof hashMap;
 
 export const isAtPage = (page: HashMapKey) => {
   return window.location.hash === hashMap[page];

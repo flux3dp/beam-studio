@@ -6,7 +6,6 @@ import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import MessageCaller from '@core/app/actions/message-caller';
-import progressCaller from '@core/app/actions/progress-caller';
 import { bm2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -18,6 +17,7 @@ import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
+import { ProgressTypes } from '@core/interfaces/IProgress';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
@@ -32,6 +32,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private doorChecker = new DoorChecker();
   private originalExposure: null | number = null;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
+  protected progressType = ProgressTypes.STEPPING;
 
   constructor(device: IDeviceInfo) {
     super(device);
@@ -71,7 +72,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
   private setUpCamera = async (): Promise<boolean> => {
     try {
-      progressCaller.update(this.progressId, { percentage: 20 });
+      this.updateMessage({ percentage: 20 });
 
       if (!this.fisheyeParams) {
         try {
@@ -84,7 +85,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
       this.fisheyePreviewManager =
         this.fisheyePreviewManager ?? new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.grid);
-      progressCaller.update(this.progressId, { percentage: 40 });
+      this.updateMessage({ percentage: 40 });
 
       const workarea = getWorkarea(this.device.model, 'fbm2');
       const { cameraCenter } = workarea;
@@ -93,6 +94,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
         this.fisheyePreviewManager!.setupFisheyePreview({
           cameraPosition: cameraCenter,
           height: 0,
+          messageType: 'message',
           movementFeedrate: this.getMovementSpeed(),
           progressId: this.progressId,
           progressRange: [40, 100],
@@ -112,10 +114,8 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     const { lang } = i18n;
 
     try {
-      progressCaller.openSteppingProgress({
-        id: this.progressId,
-        message: sprintf(lang.message.connectingMachine, this.device.name),
-      });
+      this.showMessage({ message: sprintf(lang.message.connectingMachine, this.device.name) });
+
       await deviceMaster.connectCamera();
 
       const res = await this.setUpCamera();
@@ -126,7 +126,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
       return false;
     } finally {
-      progressCaller.popById(this.progressId);
+      this.closeMessage();
     }
   };
 
@@ -135,12 +135,24 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
     if (res.success) {
       if (deviceMaster.currentControlMode === 'raw') {
+        const workarea = getWorkarea(this.device.model, 'fbm2');
+        const { cameraRestPosition } = workarea;
+
+        if (cameraRestPosition) {
+          await deviceMaster.rawMove({
+            f: this.getMovementSpeed(),
+            x: cameraRestPosition[0],
+            y: cameraRestPosition[1],
+          });
+        }
+
         await deviceMaster.rawLooseMotor();
 
         if (this.lineCheckEnabled) await deviceMaster.rawEndLineCheckMode();
 
-        progressCaller.update(this.progressId, { message: i18n.lang.message.endingRawMode });
+        this.updateMessage({ message: i18n.lang.message.endingRawMode });
         await deviceMaster.endSubTask();
+        this.closeMessage();
       }
 
       if (disconnectCamera) deviceMaster.disconnectCamera();

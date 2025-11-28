@@ -49,6 +49,11 @@ class PreviewModeController {
     setCameraPreviewState({ isDrawing: val });
   };
 
+  setIsStarting = (val: boolean) => {
+    this.isStarting = val;
+    setCameraPreviewState({ isStarting: val });
+  };
+
   reloadHeightOffset = async () => {
     this.previewManager?.reloadLevelingOffset?.();
   };
@@ -119,12 +124,12 @@ class PreviewModeController {
 
   async start(device: IDeviceInfo) {
     this.reset();
-    this.isStarting = true;
+    this.setIsStarting(true);
 
     const res = await deviceMaster.select(device);
 
     if (!res.success) {
-      this.isStarting = false;
+      this.setIsStarting(false);
 
       return;
     }
@@ -147,7 +152,7 @@ class PreviewModeController {
       const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
 
       if (!setupRes) {
-        this.isStarting = false;
+        this.setIsStarting(false);
 
         return;
       }
@@ -177,13 +182,14 @@ class PreviewModeController {
       await this.end();
       throw error;
     } finally {
-      this.isStarting = false;
+      this.setIsStarting(false);
     }
   }
 
   async end({ shouldWaitForEnd = false }: { shouldWaitForEnd?: boolean } = {}) {
     console.log('end of pmc');
     this.setIsPreviewMode(false);
+    this.setIsDrawing(false);
 
     if (this.liveModeTimeOut) {
       clearTimeout(this.liveModeTimeOut);
@@ -261,17 +267,10 @@ class PreviewModeController {
     this.setIsDrawing(true);
     this.isPreviewBlocked = true;
 
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'wait';
-
     return true;
   };
 
   onPreviewSuccess = (): void => {
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
     this.isPreviewBlocked = false;
     this.setIsDrawing(false);
   };
@@ -283,18 +282,10 @@ class PreviewModeController {
       Alert.popUpError({ message: (error as Error).message || (error as any).text });
     }
 
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'auto';
-
-    if (!PreviewModeBackgroundDrawer.isClean()) {
-      this.setIsDrawing(false);
-    }
-
     this.end();
   };
 
-  async previewFullWorkarea(callback = () => {}): Promise<boolean> {
+  async previewFullWorkarea(callback?: () => void): Promise<boolean> {
     const res = this.prePreview();
 
     if (!res) {
@@ -308,12 +299,12 @@ class PreviewModeController {
 
       await this.previewManager?.previewFullWorkarea?.();
       this.onPreviewSuccess();
-      callback();
+      callback?.();
 
       return true;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      callback?.();
 
       return false;
     }

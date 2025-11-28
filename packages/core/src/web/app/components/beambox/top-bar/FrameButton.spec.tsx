@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
 import FrameButton from './FrameButton';
 
@@ -11,21 +11,6 @@ const mockShowFramingModal = jest.fn();
 
 jest.mock('@core/app/components/dialogs/FramingModal', () => ({
   showFramingModal: (...args) => mockShowFramingModal(...args),
-}));
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  topbar: {
-    frame_task: 'frame_task',
-  },
-}));
-
-jest.mock('@core/app/contexts/CanvasContext', () => ({
-  CanvasContext: React.createContext({ mode: 1 }),
-  CanvasMode: {
-    Draw: 1,
-    PathPreview: 3,
-    Preview: 2,
-  },
 }));
 
 const mockGetSelectedDevice = jest.fn();
@@ -43,6 +28,7 @@ jest.mock('@core/helpers/shortcuts', () => ({
 describe('test FrameButton', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useCanvasStore.getState().setMode(CanvasMode.Draw);
   });
 
   test('should render correctly', async () => {
@@ -51,16 +37,6 @@ describe('test FrameButton', () => {
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
     expect(mockShowFramingModal).toBeCalledTimes(1);
-  });
-
-  test('should render correctly with previewing mode', () => {
-    const { container } = render(
-      <CanvasContext.Provider value={{ mode: CanvasMode.Preview } as any}>
-        <FrameButton />
-      </CanvasContext.Provider>,
-    );
-
-    expect(container).toMatchSnapshot();
   });
 
   test('shortcut should work', () => {

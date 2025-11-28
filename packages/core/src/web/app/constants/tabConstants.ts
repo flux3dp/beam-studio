@@ -9,6 +9,7 @@ export enum TabEvents {
   MoveTab = 'move-tab',
   PokeIP = 'poke-ip',
   ReloadSettings = 'reload-settings',
+  SetTabIsPreviewMode = 'set-tab-is-preview-mode',
   SetTabMode = 'set-tab-mode',
   SetTabTitle = 'set-tab-title',
   StorageValueChanged = 'storage-value-changed',

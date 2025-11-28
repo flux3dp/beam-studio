@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { PanelType } from '@core/app/constants/right-panel-types';
-import { TutorialCallbacks } from '@core/app/constants/tutorial-constants';
+import tutorialConstants, { TutorialCallbacks } from '@core/app/constants/tutorial-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -37,43 +38,28 @@ interface Props {
   onClose: () => void;
 }
 
-interface States {
-  currentStep: number;
-}
+export const TutorialContextProvider = ({
+  children,
+  dialogStylesAndContents,
+  hasNextButton,
+  onClose,
+}: Props): JSX.Element => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const defaultRectRef = useRef<Element | undefined>(undefined);
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
 
-export class TutorialContextProvider extends React.Component<Props, States> {
-  private defaultRect: Element | undefined;
-
-  constructor(props: Props) {
-    super(props);
-    this.state = {
-      currentStep: 0,
-    };
-
-    eventEmitter.on('HANDLE_NEXT_STEP', this.handleNextStep.bind(this));
-    eventEmitter.on('GET_NEXT_STEP_REQUIREMENT', this.getNextStepRequirement.bind(this));
-  }
-
-  componentWillUnmount() {
-    eventEmitter.removeAllListeners();
-    this.clearDefaultRect();
-  }
-
-  handleCallback = async (callbackId: TutorialCallbacks): Promise<void> => {
-    if (callbackId === TutorialCallbacks.SELECT_DEFAULT_RECT) {
-      this.selectDefaultRect();
-    } else if (callbackId === TutorialCallbacks.SCROLL_TO_PARAMETER) {
-      await this.scrollToParameterSelect();
-    } else if (callbackId === TutorialCallbacks.SCROLL_TO_ADD_LAYER) {
-      this.scrollToAddLayerButton();
-    } else {
-      console.log('Unknown callback id', callbackId);
+  const clearDefaultRect = useCallback(() => {
+    if (defaultRectRef.current) {
+      defaultRectRef.current.remove();
+      svgCanvas.clearSelection();
+      RightPanelController.setPanelType(PanelType.Layer);
+      defaultRectRef.current = undefined;
     }
-  };
+  }, []);
 
-  selectDefaultRect = () => {
-    if (this.defaultRect) {
-      this.clearDefaultRect();
+  const selectDefaultRect = useCallback(() => {
+    if (defaultRectRef.current) {
+      clearDefaultRect();
     }
 
     const defaultRect = svgCanvas.addSvgElementFromJson({
@@ -91,74 +77,92 @@ export class TutorialContextProvider extends React.Component<Props, States> {
       element: 'rect',
     });
 
-    this.defaultRect = defaultRect;
+    defaultRectRef.current = defaultRect;
     svgCanvas.selectOnly([defaultRect], true);
     RightPanelController.setPanelType(PanelType.Object);
-  };
+  }, [clearDefaultRect]);
 
-  scrollToParameterSelect = async (): Promise<void> => {
+  const scrollToParameterSelect = useCallback(async (): Promise<void> => {
     await new Promise<void>((resolve) => setTimeout(resolve, 100));
     RightPanelController.setPanelType(PanelType.Layer);
     await new Promise<void>((resolve) => setTimeout(resolve, 100));
     document.querySelector('#layer-parameters')?.scrollIntoView();
-  };
+  }, []);
 
-  scrollToAddLayerButton = (): void => {
+  const scrollToAddLayerButton = useCallback((): void => {
     RightPanelController.setPanelType(PanelType.Layer);
 
     const panel = document.querySelector('#layer-and-laser-panel');
 
     if (panel) panel.scrollTop = 0;
-  };
+  }, []);
 
-  clearDefaultRect = () => {
-    if (this.defaultRect) {
-      this.defaultRect.remove();
-      svgCanvas.clearSelection();
-      RightPanelController.setPanelType(PanelType.Layer);
-    }
-  };
+  const handleCallback = useCallback(
+    async (callbackId: TutorialCallbacks): Promise<void> => {
+      if (callbackId === TutorialCallbacks.SELECT_DEFAULT_RECT) {
+        selectDefaultRect();
+      } else if (callbackId === TutorialCallbacks.SCROLL_TO_PARAMETER) {
+        await scrollToParameterSelect();
+      } else if (callbackId === TutorialCallbacks.SCROLL_TO_ADD_LAYER) {
+        scrollToAddLayerButton();
+      } else {
+        console.log('Unknown callback id', callbackId);
+      }
+    },
+    [selectDefaultRect, scrollToParameterSelect, scrollToAddLayerButton],
+  );
 
-  handleNextStep = async (): Promise<void> => {
-    const { currentStep } = this.state;
-    const { dialogStylesAndContents, onClose } = this.props;
-
+  const handleNextStep = useCallback(async (): Promise<void> => {
     if (dialogStylesAndContents[currentStep].callback) {
       console.log(dialogStylesAndContents[currentStep].callback);
-      await this.handleCallback(dialogStylesAndContents[currentStep].callback as TutorialCallbacks);
+      await handleCallback(dialogStylesAndContents[currentStep].callback as TutorialCallbacks);
     }
 
     if (currentStep + 1 < dialogStylesAndContents.length) {
-      this.setState({ currentStep: currentStep + 1 });
+      setCurrentStep(currentStep + 1);
     } else {
       onClose();
     }
-  };
+  }, [currentStep, dialogStylesAndContents, handleCallback, onClose]);
 
-  getNextStepRequirement = (response: { nextStepRequirement: string | undefined }): void => {
-    const { currentStep } = this.state;
-    const { dialogStylesAndContents } = this.props;
-    const { nextStepRequirement } = dialogStylesAndContents[currentStep];
+  const nextStepRequirement = useMemo(() => {
+    return dialogStylesAndContents[currentStep]?.nextStepRequirement ?? '';
+  }, [currentStep, dialogStylesAndContents]);
 
-    response.nextStepRequirement = nextStepRequirement;
-  };
+  const getNextStepRequirement = useCallback(
+    (response: { nextStepRequirement: string | undefined }): void => {
+      response.nextStepRequirement = nextStepRequirement;
+    },
+    [nextStepRequirement],
+  );
 
-  render() {
-    const { children, dialogStylesAndContents, hasNextButton } = this.props;
-    const { currentStep } = this.state;
-    const { handleNextStep } = this;
+  useEffect(() => {
+    if (nextStepRequirement === tutorialConstants.SELECT_RECT && mouseMode === 'rect') {
+      handleNextStep();
+    } else if (nextStepRequirement === tutorialConstants.SELECT_CIRCLE && mouseMode === 'ellipse') {
+      handleNextStep();
+    }
+  }, [mouseMode, nextStepRequirement, handleNextStep]);
 
-    return (
-      <TutorialContext.Provider
-        value={{
-          currentStep,
-          dialogStylesAndContents,
-          handleNextStep,
-          hasNextButton,
-        }}
-      >
-        {children}
-      </TutorialContext.Provider>
-    );
-  }
-}
+  useEffect(() => {
+    eventEmitter.on('HANDLE_NEXT_STEP', handleNextStep);
+    eventEmitter.on('GET_NEXT_STEP_REQUIREMENT', getNextStepRequirement);
+
+    return () => {
+      eventEmitter.removeAllListeners();
+      clearDefaultRect();
+    };
+  }, [handleNextStep, getNextStepRequirement, clearDefaultRect]);
+
+  const contextValue = useMemo(
+    () => ({
+      currentStep,
+      dialogStylesAndContents,
+      handleNextStep,
+      hasNextButton,
+    }),
+    [currentStep, dialogStylesAndContents, handleNextStep, hasNextButton],
+  );
+
+  return <TutorialContext.Provider value={contextValue}>{children}</TutorialContext.Provider>;
+};

@@ -145,10 +145,6 @@ module.exports = {
           to: path.resolve(__dirname, 'dist/js/lib/svgeditor/extensions'),
         },
         {
-          from: path.resolve(__dirname, 'public/js/lib/svgeditor/images'),
-          to: path.resolve(__dirname, 'dist/js/lib/svgeditor/images'),
-        },
-        {
           from: path.resolve(__dirname, 'public/js/lib/svg-nest'),
           to: path.resolve(__dirname, 'dist/js/lib/svg-nest'),
         },

@@ -1,5 +1,6 @@
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import Dialog from '@core/app/actions/dialog-caller';
+import previewModeController from '@core/app/actions/preview-mode-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -39,6 +40,8 @@ export const handleExportClick =
   (lang: ILang) =>
   async (byHandler = false): Promise<void> => {
     try {
+      if (previewModeController.isPreviewMode) await previewModeController.end();
+
       if (isRelatedModalsExist()) return;
 
       progressCaller.openNonstopProgress({ id: 'preparing-export' });

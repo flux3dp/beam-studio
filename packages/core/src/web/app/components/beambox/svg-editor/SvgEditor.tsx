@@ -1,41 +1,34 @@
 import type { ReactNode } from 'react';
-import React, { useState } from 'react';
-import { useContext, useEffect } from 'react';
+import React from 'react';
+import { useEffect } from 'react';
 
-import { LeftOutlined } from '@ant-design/icons';
-import { ConfigProvider, Drawer } from 'antd';
 import classNames from 'classnames';
-import { Resizable } from 're-resizable';
 
 import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
-import DpiInfo from '@core/app/components/beambox/DpiInfo';
 import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
-import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import Banner from './Banner';
 import Chat from './Chat';
-import { useChatStore } from './Chat/useChatStore';
+import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
+import PreviewFloatingBar from './PreviewFloatingBar';
+import PreviewSlider from './PreviewSlider';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
+import TimeEstimationButton from './TimeEstimationButton';
 import Workarea from './Workarea';
 
 export const SvgEditor = (): ReactNode => {
-  const { mode } = useContext(CanvasContext);
-  const { isChatShown, setIsChatShown } = useChatStore();
-  const [width, setWidth] = useState(400);
-  // default motion duration for the drawer
-  // this is used to disable the animation when resizing the drawer
-  const [motionDurationSlow, setMotionDurationSlow] = useState('0.3s');
-
-  const onClose = () => {
-    setIsChatShown(false);
-  };
+  const isMobile = useIsMobile();
+  const mode = useCanvasStore((state) => state.mode);
 
   useEffect(() => {
     if (window.$) {
@@ -73,62 +66,24 @@ export const SvgEditor = (): ReactNode => {
         </div>
         {mode !== CanvasMode.PathPreview && (
           <>
+            {!isMobile && <PreviewFloatingBar />}
             <ZoomBlock
               resetView={workareaManager.resetView}
               setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
             />
             <DpiInfo />
+            <div className={styles['bottom-right']}>
+              <div className={styles.controls}>
+                <TimeEstimationButtonContextProvider>
+                  <TimeEstimationButton />
+                </TimeEstimationButtonContextProvider>
+                <PreviewSlider />
+              </div>
+              {isMobile && <PreviewFloatingBar />}
+            </div>
           </>
         )}
-
-        <ConfigProvider theme={{ token: { motionDurationSlow } }}>
-          <Drawer
-            closable={false}
-            getContainer={false}
-            mask={false}
-            onClose={onClose}
-            open={isChatShown}
-            placement="left"
-            // use style to override :where
-            style={{
-              boxShadow: 'none',
-            }}
-            styles={{
-              body: {
-                display: 'flex',
-                flexDirection: 'column',
-                height: '100%',
-                overflow: 'hidden',
-                padding: '0px',
-              },
-              content: {
-                backgroundColor: 'transparent',
-              },
-              wrapper: { boxShadow: 'none' },
-            }}
-            width={width}
-          >
-            <div className={styles.handle} onClick={onClose}>
-              <LeftOutlined />
-            </div>
-            <Resizable
-              enable={{ right: true }}
-              handleClasses={{ right: styles['resizable-handle'] }}
-              maxWidth={638}
-              minWidth={360}
-              onResize={(_event, _direction, elementRef) => {
-                setWidth(elementRef.offsetWidth);
-              }}
-              onResizeStart={() => setMotionDurationSlow('0s')}
-              onResizeStop={() => setMotionDurationSlow('0.3s')}
-              size={{ height: '100%', width }}
-            >
-              <div className={styles['resizable-drawer-content']}>
-                <Chat />
-              </div>
-            </Resizable>
-          </Drawer>
-        </ConfigProvider>
+        <Chat />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>

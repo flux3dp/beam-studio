@@ -1,7 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import progressCaller from '@core/app/actions/progress-caller';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
@@ -31,10 +30,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     }
 
     try {
-      progressCaller.openNonstopProgress({
-        id: this.progressId,
-        message: lang.message.connectingCamera,
-      });
+      this.showMessage({ message: lang.message.connectingCamera });
       await deviceMaster.connectCamera();
 
       let params: FisheyeCameraParameters;
@@ -58,13 +54,13 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     } catch (error) {
       console.error(error);
 
-      if (error.message && error.message.startsWith('Camera WS')) {
+      if ((error as Error).message && (error as Error).message.startsWith('Camera WS')) {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_connect_with_camera}<br/>${(error as Error).message || ''}`,
         });
       } else {
         alertCaller.popUpError({
-          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${error.message || ''}`,
+          message: `${lang.topbar.alerts.fail_to_start_preview}<br/>${(error as Error).message || ''}`,
         });
       }
 
@@ -72,11 +68,11 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     } finally {
       if (deviceMaster.currentControlMode === 'raw') {
         await deviceMaster.rawLooseMotor();
-        progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
+        this.updateMessage({ message: lang.message.endingRawMode });
         await deviceMaster.endSubTask();
       }
 
-      progressCaller.popById(this.progressId);
+      this.closeMessage();
     }
   };
 

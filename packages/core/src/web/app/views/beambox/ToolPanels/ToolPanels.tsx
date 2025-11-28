@@ -6,6 +6,7 @@ import { match } from 'ts-pattern';
 import Constant from '@core/app/actions/beambox/constant';
 import type { ToolPanelType } from '@core/app/actions/beambox/toolPanelsController';
 import Dialog from '@core/app/actions/dialog-caller';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import { generateSelectedElementArray } from '@core/app/svgedit/operations/clipboard';
@@ -18,7 +19,6 @@ import NestSpacingPanel from '@core/app/views/beambox/ToolPanels/NestSpacingPane
 import OffsetModal from '@core/app/views/beambox/ToolPanels/OffsetModal';
 import RowColumnPanel from '@core/app/views/beambox/ToolPanels/RowColumn';
 import offsetElements from '@core/helpers/clipper/offset';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -32,8 +32,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
-
-const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
 
 const _mm2pixel = (pixel_input: number) => {
   const { dpmm } = Constant;
@@ -81,8 +79,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
 
   const onCancel = () => {
     unmount();
-    svgCanvas.setMode('select');
-    drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+    setMouseMode('select');
   };
 
   const generateOnOk = (newOffset?: OffsetProp): (() => Promise<void> | void) =>
@@ -96,8 +93,7 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
         return async () => {
           await generateSelectedElementArray(newDistance, data.rowcolumn);
           unmount();
-          svgCanvas.setMode('select');
-          drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+          setMouseMode('select');
           currentFileManager.setHasUnsavedChanges(true);
         };
       })
@@ -106,16 +102,14 @@ const ToolPanel: React.FC<Props> = ({ data, type, unmount }) => {
 
         await offsetElements(mode, _mm2pixel(distance), cornerType);
         unmount();
-        svgCanvas.setMode('select');
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+        setMouseMode('select');
         currentFileManager.setHasUnsavedChanges(true);
       })
       .with('nest', () => () => {
         nestOptions.spacing *= 10; // pixel to mm
         (svgCanvas as any).nestElements(null, null, nestOptions);
         unmount();
-        svgCanvas.setMode('select');
-        drawingToolEventEmitter.emit('SET_ACTIVE_BUTTON', 'Cursor');
+        setMouseMode('select');
       })
       .otherwise(() => unmount);
 

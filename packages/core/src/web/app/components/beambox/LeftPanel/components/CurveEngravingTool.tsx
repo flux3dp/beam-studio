@@ -1,17 +1,10 @@
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface Props {
   className: string;
@@ -21,9 +14,9 @@ interface Props {
 const CurveEngravingTool = ({ className }: Props): JSX.Element => {
   const forceUpdate = useForceUpdate();
   const hasCurveEngraving = useHasCurveEngraving();
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
 
   const lang = useI18n().beambox.left_panel.label;
-  const currentCursorMode = svgCanvas.getMode();
 
   return (
     <div className={className}>
@@ -34,7 +27,7 @@ const CurveEngravingTool = ({ className }: Props): JSX.Element => {
         title={lang.curve_engraving.exit}
       />
       <LeftPanelButton
-        active={currentCursorMode === 'select'}
+        active={mouseMode === 'select'}
         icon={<LeftPanelIcons.Cursor />}
         id="cursor"
         onClick={() => {
@@ -44,7 +37,7 @@ const CurveEngravingTool = ({ className }: Props): JSX.Element => {
         title={lang.cursor}
       />
       <LeftPanelButton
-        active={currentCursorMode === 'curve-engraving'}
+        active={mouseMode === 'curve-engraving'}
         icon={<LeftPanelIcons.CurveSelect />}
         id="curve-select"
         onClick={() => {

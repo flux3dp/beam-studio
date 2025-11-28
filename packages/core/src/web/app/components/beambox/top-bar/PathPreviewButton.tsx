@@ -1,12 +1,14 @@
 import type { ReactNode } from 'react';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import classNames from 'classnames';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/shallow';
 
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import checkWebGL from '@core/helpers/check-webgl';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
@@ -27,13 +29,12 @@ getSVGAsync((globalSVG) => {
 
 interface Props {
   isDeviceConnected: boolean;
-  togglePathPreview: () => void;
 }
 
-function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): ReactNode {
+function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
   const lang = useI18n().topbar;
   const isMobile = useIsMobile();
-  const { mode } = useContext(CanvasContext);
+  const { mode, togglePathPreview } = useCanvasStore(useShallow((state) => pick(state, ['mode', 'togglePathPreview'])));
   const workarea = useWorkarea();
 
   if (isMobile || !checkWebGL() || (!isDev() && modelsWithModules.has(workarea))) {
@@ -47,7 +48,7 @@ function PathPreviewButton({ isDeviceConnected, togglePathPreview }: Props): Rea
     }
   };
   const className = classNames(styles.button, {
-    [styles.disabled]: mode === CanvasMode.Preview || (!isDeviceConnected && isWeb()),
+    [styles.disabled]: !isDeviceConnected && isWeb(),
     [styles.highlighted]: mode === CanvasMode.PathPreview,
   });
 

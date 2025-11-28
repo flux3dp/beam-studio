@@ -769,30 +769,39 @@ class Control extends EventEmitter implements IControlSocket {
 
   fetchFisheyeParams = () =>
     new Promise<FisheyeCameraParameters>((resolve, reject) => {
-      const file = [];
+      let data: FisheyeCameraParameters;
+      let isOkReceived = false;
+
+      const handleFinish = () => {
+        if (isOkReceived && data) {
+          this.removeCommandListeners();
+          resolve(data);
+        }
+      };
 
       this.on(EVENT_COMMAND_MESSAGE, async (response) => {
         console.log(response);
 
         if (response.status === 'transfer') {
           this.emit(EVENT_COMMAND_PROGRESS, response);
-        } else if (!Object.keys(response).includes('completed')) {
-          file.push(response);
+        } else if (response.status === 'ok') {
+          isOkReceived = true;
+          handleFinish();
         }
 
         if (response instanceof Blob) {
-          this.removeCommandListeners();
-
           const fileReader = new FileReader();
 
           fileReader.onload = (e) => {
             try {
               const jsonString = e.target?.result as string;
-              const data = JSON.parse(jsonString) as FisheyeCameraParameters;
+
+              data = JSON.parse(jsonString) as FisheyeCameraParameters;
 
               console.log(data);
-              resolve(data);
+              handleFinish();
             } catch (err) {
+              this.removeCommandListeners();
               reject(err);
             }
           };
@@ -1073,7 +1082,7 @@ class Control extends EventEmitter implements IControlSocket {
     return res;
   };
 
-  rawHome = (zAxis = false) => {
+  rawHome = ({ cameraMode = false, zAxis = false }: { cameraMode?: boolean; zAxis?: boolean } = {}) => {
     if (this.mode !== 'raw') {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
     }
@@ -1141,10 +1150,12 @@ class Control extends EventEmitter implements IControlSocket {
 
       timeoutTimer = this.setTimeoutTimer(reject, 10000);
 
-      if (!zAxis) {
-        this.ws.send('raw home');
-      } else {
+      if (cameraMode) {
+        this.ws.send('$HCAM');
+      } else if (zAxis) {
         this.ws.send('$HZ');
+      } else {
+        this.ws.send('raw home');
       }
     });
   };

@@ -5,6 +5,7 @@ import { LoadingOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Checkbox, InputNumber, Segmented, Spin, Tooltip } from 'antd';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { renderFramingIcon } from '@core/app/icons/framing/FramingIcons';
@@ -161,6 +162,8 @@ export const showFramingModal = async (): Promise<void> => {
   if (!device || isIdExist('framing-modal')) {
     return;
   }
+
+  if (previewModeController.isPreviewMode) previewModeController.end();
 
   addDialogComponent(
     'framing-modal',

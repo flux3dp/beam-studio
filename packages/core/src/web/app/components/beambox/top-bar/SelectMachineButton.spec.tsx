@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { act } from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
@@ -6,20 +6,21 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 
 import SelectMachineButton from './SelectMachineButton';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  topbar: {
-    select_machine: 'Select a machine',
+const mockGetIsPreviewMode = jest.fn();
+const mockEndPreviewMode = jest.fn();
+
+jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
+  end: () => mockEndPreviewMode(),
+  get isPreviewMode() {
+    return mockGetIsPreviewMode();
   },
 }));
 
-const mockSetupPreviewMode = jest.fn();
-
 jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({
-    mode: CanvasMode.Draw,
     selectedDevice: null,
-    setupPreviewMode: (...args) => mockSetupPreviewMode(...args),
   }),
 }));
 
@@ -42,91 +43,68 @@ describe('test SelectMachineButton', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useIsMobile.mockReturnValue(false);
+    useCanvasStore.getState().setMode(CanvasMode.Draw);
+    mockGetIsPreviewMode.mockReturnValue(false);
+    mockGetDevice.mockResolvedValue({
+      device: {
+        uuid: '1234',
+      },
+    });
   });
 
   test('should render correctly', () => {
     const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.Draw,
-            selectedDevice: null,
-            setupPreviewMode: mockSetupPreviewMode,
-          } as any
-        }
-      >
+      <CanvasContext.Provider value={{ selectedDevice: null } as any}>
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
-    expect(mockGetDevice).toBeCalledTimes(1);
-    expect(mockSetupPreviewMode).toBeCalledTimes(0);
+    expect(mockGetDevice).toHaveBeenCalledTimes(1);
+    expect(mockEndPreviewMode).toHaveBeenCalledTimes(0);
   });
 
   test('mobile', () => {
     useIsMobile.mockReturnValue(true);
 
     const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.Draw,
-            selectedDevice: null,
-            setupPreviewMode: mockSetupPreviewMode,
-          } as any
-        }
-      >
+      <CanvasContext.Provider value={{ selectedDevice: null } as any}>
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
-    expect(mockGetDevice).toBeCalledTimes(1);
-    expect(mockSetupPreviewMode).toBeCalledTimes(0);
+    expect(mockGetDevice).toHaveBeenCalledTimes(1);
+    expect(mockEndPreviewMode).toHaveBeenCalledTimes(0);
   });
 
   test('with device', () => {
     const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.Draw,
-            selectedDevice: { model: 'fbm1', name: 'device name' },
-            setupPreviewMode: mockSetupPreviewMode,
-          } as any
-        }
-      >
+      <CanvasContext.Provider value={{ selectedDevice: { model: 'fbm1', name: 'device name' } } as any}>
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
     fireEvent.click(container.querySelector('div[class*="button"]'));
-    expect(mockGetDevice).toBeCalledTimes(1);
-    expect(mockSetupPreviewMode).toBeCalledTimes(0);
+    expect(mockGetDevice).toHaveBeenCalledTimes(1);
+    expect(mockEndPreviewMode).toHaveBeenCalledTimes(0);
   });
 
-  test('when previewing', () => {
+  test('when is preview mode', async () => {
+    mockGetIsPreviewMode.mockReturnValue(true);
+
     const { container } = render(
-      <CanvasContext.Provider
-        value={
-          {
-            mode: CanvasMode.Preview,
-            selectedDevice: null,
-            setupPreviewMode: mockSetupPreviewMode,
-          } as any
-        }
-      >
+      <CanvasContext.Provider value={{ selectedDevice: null } as any}>
         <SelectMachineButton />
       </CanvasContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
-    fireEvent.click(container.querySelector('div[class*="button"]'));
-    expect(mockGetDevice).toBeCalledTimes(0);
-    expect(mockSetupPreviewMode).toBeCalledTimes(1);
+    await act(() => fireEvent.click(container.querySelector('div[class*="button"]')));
+    expect(mockGetDevice).toHaveBeenCalledTimes(1);
+    expect(mockEndPreviewMode).toHaveBeenCalledTimes(1);
   });
 });

@@ -4,6 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import type { Tab } from '@core/interfaces/Tab';
 
 import Tabs from './Tabs';
 
@@ -65,11 +66,12 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
   getPromptValue: (...args) => mockGetPromptValue(...args),
 }));
 
-const mockTabs = [
+const mockTabs: Tab[] = [
   {
     id: 0,
     isCloud: false,
     isLoading: false,
+    isPreviewMode: false,
     isWelcomeTab: true,
     mode: CanvasMode.Draw,
     title: 'Untitled',
@@ -78,6 +80,7 @@ const mockTabs = [
     id: 1,
     isCloud: false,
     isLoading: false,
+    isPreviewMode: false,
     isWelcomeTab: false,
     mode: CanvasMode.Draw,
     title: 'Untitled',
@@ -86,22 +89,25 @@ const mockTabs = [
     id: 2,
     isCloud: false,
     isLoading: false,
+    isPreviewMode: true,
     isWelcomeTab: false,
-    mode: CanvasMode.Preview,
+    mode: CanvasMode.Draw,
     title: 'preview',
   },
   {
     id: 3,
     isCloud: false,
     isLoading: true,
+    isPreviewMode: true,
     isWelcomeTab: false,
-    mode: CanvasMode.Preview,
+    mode: CanvasMode.Draw,
     title: 'Loading',
   },
   {
     id: 4,
     isCloud: true,
     isLoading: false,
+    isPreviewMode: false,
     isWelcomeTab: false,
     mode: CanvasMode.Draw,
     title: 'Cloud File',
@@ -110,6 +116,7 @@ const mockTabs = [
     id: 5,
     isCloud: false,
     isLoading: false,
+    isPreviewMode: false,
     isWelcomeTab: false,
     mode: CanvasMode.CurveEngraving,
     title: 'Curve Engraving',

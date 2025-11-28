@@ -17,7 +17,6 @@ export default interface ISVGConfig {
   // PATH CONFIGURATION
   // The following path configuration items are disallowed
   // in the URL (as should any future path configurations)
-  imgPath?: string;
   initFill?: {
     color: string;
     opacity: number;
