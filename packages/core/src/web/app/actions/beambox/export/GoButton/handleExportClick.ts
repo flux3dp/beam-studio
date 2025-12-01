@@ -1,6 +1,6 @@
+import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import Dialog from '@core/app/actions/dialog-caller';
-import previewModeController from '@core/app/actions/preview-mode-controller';
 import progressCaller from '@core/app/actions/progress-caller';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import textActions from '@core/app/svgedit/text/textactions';
