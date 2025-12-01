@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Batalkan',
+      calibration_wide_angle_camera_first: 'Harap kalibrasi kamera sudut lebar terlebih dahulu.',
       camera_cable_unstable: 'Terdeteksi kamera mentransfer foto secara tidak stabil. Pratinjau masih dapat dilakukan, tetapi mungkin ada masalah lambat atau waktu habis.',
       continue_preview: 'Lanjutkan',
       door_opened: 'Pintu Terbuka',

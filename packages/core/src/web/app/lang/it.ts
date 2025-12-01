@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Interrompi',
+      calibration_wide_angle_camera_first: 'Si prega di calibrare prima la fotocamera grandangolare.',
       camera_cable_unstable: "È stato rilevato che la fotocamera sta trasferendo le foto in modo instabile. L'anteprima può essere eseguita normalmente, ma potrebbero esserci problemi di lentezza o timeout.",
       continue_preview: 'Continua',
       door_opened: 'Porta aperta',

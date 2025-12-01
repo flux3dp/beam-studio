@@ -58,7 +58,10 @@ const Button = memo(
 );
 
 export const PreviewFloatingBar = memo((): ReactNode => {
-  const lang = useI18n().beambox.left_panel;
+  const {
+    beambox: { left_panel: lang },
+    message: { camera: tCamera },
+  } = useI18n();
   const workarea = useWorkarea();
   const isAdorSeries = useMemo(() => adorModels.has(workarea), [workarea]);
   const mode = useCanvasStore((state) => state.mode);
@@ -105,7 +108,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
               onClick={() => {
                 if (cameraType !== CameraType.WIDE_ANGLE) {
                   if (!isWideAngleCameraCalibrated) {
-                    alertCaller.popUpError({ message: 'tPlease calibration wide angle camera first.' });
+                    alertCaller.popUpError({ message: tCamera.calibration_wide_angle_camera_first });
                   }
 
                   previewModeController.switchCamera(CameraType.WIDE_ANGLE);

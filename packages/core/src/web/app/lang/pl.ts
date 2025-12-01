@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Przerwij',
+      calibration_wide_angle_camera_first: 'Najpierw skalibruj kamerę szerokokątną.',
       camera_cable_unstable: 'Wykryto, że kamera niestabilnie przesyła zdjęcia. Podgląd można nadal wykonać, ale może wystąpić problem z powolnym podglądem lub przekroczeniem limitu czasu.',
       continue_preview: 'Kontynuuj',
       door_opened: 'Drzwi otwarte',

@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Abbrechen',
+      calibration_wide_angle_camera_first: 'Bitte kalibrieren Sie zuerst die Weitwinkelkamera.',
       camera_cable_unstable: 'Es wird festgestellt, dass die Kamera Fotos instabil überträgt. Die Vorschau kann weiterhin normal ausgeführt werden, es kann jedoch das Problem einer langsamen Vorschau oder eines Zeitlimits auftreten.',
       continue_preview: 'Fortsetzen',
       door_opened: 'Tür geöffnet',

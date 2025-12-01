@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: '中斷預覽',
+      calibration_wide_angle_camera_first: '請先校正廣角相機。',
       camera_cable_unstable: '偵測到相機傳輸照片時不穩定，仍能正常進行相機預覽，但可能會有預覽速度較慢或超時的問題。<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/360001791895">了解更多</a>',
       continue_preview: '繼續預覽',
       door_opened: '門蓋開啟',

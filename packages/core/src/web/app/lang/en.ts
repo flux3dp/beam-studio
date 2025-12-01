@@ -1611,6 +1611,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     },
     camera: {
       abort_preview: 'Abort',
+      calibration_wide_angle_camera_first: 'Please calibration wide angle camera first.',
       camera_cable_unstable: 'It is detected that the camera is transferring photos unstably. Preview can still be performed normally, but there may be the problem of slow preview or timeout.',
       continue_preview: 'Continue',
       door_opened: 'Door Opened',

@@ -1602,6 +1602,7 @@ export interface ILang {
     };
     camera: {
       abort_preview: string;
+      calibration_wide_angle_camera_first: string;
       camera_cable_unstable: string;
       continue_preview: string;
       door_opened: string;

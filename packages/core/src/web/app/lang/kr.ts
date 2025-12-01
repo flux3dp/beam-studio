@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: '중지',
+      calibration_wide_angle_camera_first: '먼저 광각 카메라를 보정해 주세요.',
       camera_cable_unstable: '카메라 전송이 불안정하게 이루어지는 것이 감지되었습니다. 미리보기는 정상적으로 수행될 수 있지만, 느린 미리보기 또는 시간 초과의 문제가 발생할 수 있습니다.',
       continue_preview: '계속하기',
       door_opened: '도어 열림',
