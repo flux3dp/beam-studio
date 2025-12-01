@@ -12,7 +12,6 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
-import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -26,6 +25,7 @@ import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts
 import TopBarHintsController from '@core/app/views/beambox/TopBar/contexts/TopBarHintsController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
