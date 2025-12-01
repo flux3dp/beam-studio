@@ -16,10 +16,6 @@ export interface InputField {
   validation_message: string;
 }
 
-export interface PreviewImage {
-  image_url: string;
-}
-
 export interface Style {
   display_name: string;
   id: string;
@@ -27,7 +23,7 @@ export interface Style {
   is_active: boolean;
   modes: Array<'edit' | 'text-to-image'>;
   order: number;
-  preview_images: PreviewImage[];
+  preview_image: string;
   tags: string[];
 }
 
@@ -36,7 +32,7 @@ export interface Category {
   id: string;
   is_active: boolean;
   order: number;
-  preview_images: PreviewImage[];
+  preview_image: string;
   tags: string[];
 }
 
@@ -85,20 +81,18 @@ export const getLocale = (): string => {
   return map[lang] || lang || 'en-us';
 };
 
-const getPreview = (images: PreviewImage[]) => images[0]?.image_url || FALLBACK_IMAGE;
-
 const mapStyle = (s: Style): MappedStyle => ({
   displayName: s.display_name,
   id: s.id,
   modes: s.modes,
-  previewImage: getPreview(s.preview_images),
+  previewImage: s.preview_image || FALLBACK_IMAGE,
   tags: s.tags,
 });
 
 const mapCategory = (c: Category): MappedCategory => ({
   displayName: c.display_name,
   id: c.id,
-  previewImage: getPreview(c.preview_images),
+  previewImage: c.preview_image || FALLBACK_IMAGE,
   tags: c.tags,
 });
 
