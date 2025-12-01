@@ -2,7 +2,7 @@ import { md5 } from '../../support/utils';
 
 it('decompose', () => {
   cy.landingEditor();
-  cy.clickToolBtn('Element');
+  cy.clickToolBtn('Element', false);
   cy.get('.ant-drawer-header').contains('Element').should('exist');
   cy.get('.anticon[id="basic/icon-tablet"]').click();
   cy.get('.ant-drawer-header').should('not.exist');

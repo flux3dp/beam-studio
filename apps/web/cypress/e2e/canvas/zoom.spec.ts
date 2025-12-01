@@ -1,4 +1,4 @@
-const zoomBlockPrefix = '_-_-packages-core-src-web-app-components-beambox-ZoomBlock-module_';
+const zoomBlockPrefix = '_-_-packages-core-src-web-app-components-common-ZoomBlock-module_';
 const zoomRatioText = () => cy.get(`[class*="${zoomBlockPrefix}_ratio"]`);
 
 it('zoom in/out', () => {

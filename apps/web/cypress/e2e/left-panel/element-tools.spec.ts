@@ -6,7 +6,7 @@ describe('import from element panel', () => {
   });
 
   it('import ellipse element', () => {
-    cy.clickToolBtn('Element');
+    cy.clickToolBtn('Element', false);
     cy.get('.ant-drawer-header').contains('Element').should('exist');
     cy.get('.ant-drawer-body').should('exist');
     cy.get('.ant-drawer-header .ant-select-selection-item').should('exist');
@@ -19,7 +19,7 @@ describe('import from element panel', () => {
   });
 
   it('switch tab and import svg element', () => {
-    cy.clickToolBtn('Element');
+    cy.clickToolBtn('Element', false);
     cy.get('.ant-drawer-header .ant-select-selector').click();
     cy.get('.ant-select-item-option').contains('Decor').click();
     cy.get('.ant-drawer-header .ant-select-selection-item').should('exist');
