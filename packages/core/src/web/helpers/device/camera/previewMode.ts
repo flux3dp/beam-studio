@@ -18,7 +18,7 @@ export const endPreviewMode = (): void => {
   } catch (error) {
     console.log(error);
   } finally {
-    if (tutorialController.getNextStepRequirement() === tutorialConstants.TO_EDIT_MODE) {
+    if (tutorialController.getNextStepRequirement() === tutorialConstants.END_PREVIEW_MODE) {
       tutorialController.handleNextStep();
     }
 

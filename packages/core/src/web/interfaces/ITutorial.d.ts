@@ -25,6 +25,7 @@ export interface ITutorialDialog {
   };
   id?: string;
   nextStepRequirement?: string;
+  refElementId?: string;
   subElement?: React.JSX.Element;
   text: string;
 }

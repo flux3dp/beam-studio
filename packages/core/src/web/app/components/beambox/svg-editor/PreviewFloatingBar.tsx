@@ -144,6 +144,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
         <div className={styles.separator} />
         <div
           className={classNames(styles.button, styles.close)}
+          id="end-preview-mode"
           onClick={endPreviewMode}
           title={lang.label.end_preview}
         >

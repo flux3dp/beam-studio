@@ -1,4 +1,5 @@
-import * as React from 'react';
+import type { ReactNode } from 'react';
+import React, { useContext, useMemo } from 'react';
 
 import { Modal as AntdModal } from 'antd';
 
@@ -8,22 +9,68 @@ import { TutorialContext, TutorialContextProvider } from '@core/app/views/tutori
 import DialogBox from '@core/app/widgets/Dialog-Box';
 import Modal from '@core/app/widgets/Modal';
 import ModalWithHole from '@core/app/widgets/Modal-With-Hole';
-import i18n from '@core/helpers/i18n';
+import useI18n from '@core/helpers/useI18n';
 import type { ITutorialDialog } from '@core/interfaces/ITutorial';
 
 // TODO: move all styles from web to modules.scss
 import styles from './Tutorial.module.scss';
 
-class TutorialComponent extends React.Component<{
+interface ComponentProps {
   endTutorial: () => void;
-}> {
-  declare context: React.ContextType<typeof TutorialContext>;
-  renderTutorialDialog() {
-    const lang = i18n.lang.tutorial;
-    const { endTutorial } = this.props;
-    const { currentStep, dialogStylesAndContents, handleNextStep, hasNextButton } = this.context;
-    const { dialogBoxStyles, subElement, text } = dialogStylesAndContents[currentStep];
+}
 
+const applyPosition = (obj: { bottom?: number; left?: number; right?: number; top?: number }, rect: DOMRect) => {
+  const positionedObj: typeof obj = { ...obj };
+  const keys = ['top', 'bottom', 'left', 'right'] as const;
+
+  keys.forEach((key) => {
+    if (positionedObj[key] !== undefined) positionedObj[key] += rect[key];
+  });
+
+  return positionedObj;
+};
+
+const TutorialComponent = ({ endTutorial }: ComponentProps): ReactNode => {
+  const lang = useI18n().tutorial;
+  const { currentStep, dialogStylesAndContents, handleNextStep, hasNextButton } = useContext(TutorialContext);
+  const { dialogBoxStyles, hintCircle, holePosition, holeSize, refElementId, subElement, text } =
+    dialogStylesAndContents[currentStep];
+  const refElement = useMemo(() => (refElementId ? document.getElementById(refElementId) : null), [refElementId]);
+  const dialogPosition = useMemo(() => {
+    if (!dialogBoxStyles?.position) return undefined;
+
+    const position = dialogBoxStyles.position;
+
+    if (refElement) {
+      const rect = refElement.getBoundingClientRect();
+
+      return applyPosition(position, rect);
+    }
+
+    return position;
+  }, [dialogBoxStyles?.position, refElement]);
+
+  const actualHintCircle = useMemo(() => {
+    if (!hintCircle) return undefined;
+
+    if (!refElement) return hintCircle;
+
+    const rect = refElement.getBoundingClientRect();
+
+    return applyPosition(hintCircle, rect);
+  }, [hintCircle, refElement]);
+
+  const actualHolePosition = useMemo(() => {
+    if (!holePosition) return undefined;
+
+    if (!refElement) return holePosition;
+
+    const rect = refElement.getBoundingClientRect();
+
+    return applyPosition(holePosition, rect);
+  }, [holePosition, refElement]);
+
+  const renderTutorialDialog = (): ReactNode => {
     if (!dialogBoxStyles) {
       return (
         <AntdModal
@@ -63,51 +110,37 @@ class TutorialComponent extends React.Component<{
           </div>
         }
         onClose={endTutorial}
-        position={dialogBoxStyles.position}
+        position={dialogPosition}
       />
     );
-  }
+  };
 
-  renderHintCircle() {
-    const { currentStep, dialogStylesAndContents } = this.context;
-    const { hintCircle } = dialogStylesAndContents[currentStep];
+  const renderHintCircle = () => {
+    if (!hintCircle) return null;
 
-    if (!hintCircle) {
-      return null;
-    }
+    return <div className={styles.hint} style={actualHintCircle} />;
+  };
 
-    return <div className="hint-circle" style={hintCircle} />;
-  }
-
-  render() {
-    const { currentStep, dialogStylesAndContents } = this.context;
-    const { holePosition, holeSize } = dialogStylesAndContents[currentStep];
-    const tutorialDialog = this.renderTutorialDialog();
-    const hintCircle = this.renderHintCircle();
-
-    if (!holePosition) {
-      return (
-        <Modal className={{ 'no-background': true, [styles.tutorial]: true }}>
-          <div className="tutorial-container">
-            {tutorialDialog}
-            {hintCircle}
-          </div>
-        </Modal>
-      );
-    }
-
+  if (!actualHolePosition) {
     return (
-      <ModalWithHole className={styles.tutorial} holePosition={holePosition} holeSize={holeSize}>
-        <div className="tutorial-container">
-          {tutorialDialog}
-          {hintCircle}
+      <Modal className={{ 'no-background': true, [styles.tutorial]: true }}>
+        <div>
+          {renderTutorialDialog()}
+          {renderHintCircle()}
         </div>
-      </ModalWithHole>
+      </Modal>
     );
   }
-}
 
-TutorialComponent.contextType = TutorialContext;
+  return (
+    <ModalWithHole className={styles.tutorial} holePosition={actualHolePosition} holeSize={holeSize}>
+      <div>
+        {renderTutorialDialog()}
+        {renderHintCircle()}
+      </div>
+    </ModalWithHole>
+  );
+};
 
 interface Props {
   dialogStylesAndContents: ITutorialDialog[];

@@ -1,6 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 
-import type { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/tabConstants';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -65,6 +65,9 @@ class TabController extends EventEmitter {
       (state) => state.isPreviewMode,
       (isPreviewMode) => this.setIsPreviewMode(isPreviewMode),
     );
+    // Send init state to main process
+    this.setMode(CanvasMode.Draw);
+    this.setIsPreviewMode(false);
   }
 
   onBlurred(handler: () => void): void {
