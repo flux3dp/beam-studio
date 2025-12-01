@@ -88,6 +88,7 @@ describe('manipulate file', () => {
     cy.get('#h_size').clear().type('100{enter}');
 
     selectMenuOption('File', 'Save As...');
+    cy.wait(1000);
     checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), { default: 2146783619 });
   });
 
