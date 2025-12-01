@@ -13,10 +13,10 @@ describe('mobile pen tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('svg#svgcontent').trigger('mousedown', 400, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 500, -50, { force: true });
+    cy.get('#drawingCtrlPoint_0c2').should('exist');
     cy.get('svg#svgcontent').dblclick({ force: true });
     cy.wait(500);
     cy.get('#svg_1', { timeout: 7000 }).should('exist');
-    cy.get('#drawingCtrlPoint_0c2').should('exist');
     cy.get('.adm-floating-panel').contains('Path Edit').should('exist');
   });
 
