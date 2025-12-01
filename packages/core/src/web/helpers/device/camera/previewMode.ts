@@ -1,7 +1,9 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
@@ -126,3 +128,16 @@ export const setupPreviewMode = async ({
     isSettingUpPreview = false;
   }
 };
+
+useCanvasStore.subscribe(
+  (state) => state.mouseMode,
+  (mouseMode) => {
+    if (mouseMode !== 'preview') {
+      if (previewModeController.isPreviewMode) {
+        previewModeBackgroundDrawer.clearBoundary();
+      }
+    } else if (previewModeController.isPreviewMode) {
+      previewModeBackgroundDrawer.resetBoundary();
+    }
+  },
+);
