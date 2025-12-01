@@ -1,4 +1,4 @@
-const drawingTools = ['Cursor', 'Photo', 'Text', 'Rectangle', 'Ellipse', 'Polygon', 'Line', 'Pen'];
+const drawingTools = ['Cursor', 'Text', 'Rectangle', 'Ellipse', 'Polygon', 'Line', 'Pen'];
 
 function checkActive(activeItem: string) {
   drawingTools.forEach((item) => {
