@@ -36,39 +36,31 @@ const TutorialComponent = ({ endTutorial }: ComponentProps): ReactNode => {
   const { dialogBoxStyles, hintCircle, holePosition, holeSize, refElementId, subElement, text } =
     dialogStylesAndContents[currentStep];
   const refElement = useMemo(() => (refElementId ? document.getElementById(refElementId) : null), [refElementId]);
+  const refRect = useMemo(() => (refElement ? refElement.getBoundingClientRect() : null), [refElement]);
+
   const dialogPosition = useMemo(() => {
     if (!dialogBoxStyles?.position) return undefined;
 
-    const position = dialogBoxStyles.position;
+    if (!refRect) return dialogBoxStyles.position;
 
-    if (refElement) {
-      const rect = refElement.getBoundingClientRect();
-
-      return applyPosition(position, rect);
-    }
-
-    return position;
-  }, [dialogBoxStyles?.position, refElement]);
+    return applyPosition(dialogBoxStyles.position, refRect);
+  }, [dialogBoxStyles?.position, refRect]);
 
   const actualHintCircle = useMemo(() => {
     if (!hintCircle) return undefined;
 
-    if (!refElement) return hintCircle;
+    if (!refRect) return hintCircle;
 
-    const rect = refElement.getBoundingClientRect();
-
-    return applyPosition(hintCircle, rect);
-  }, [hintCircle, refElement]);
+    return applyPosition(hintCircle, refRect);
+  }, [hintCircle, refRect]);
 
   const actualHolePosition = useMemo(() => {
     if (!holePosition) return undefined;
 
-    if (!refElement) return holePosition;
+    if (!refRect) return holePosition;
 
-    const rect = refElement.getBoundingClientRect();
-
-    return applyPosition(holePosition, rect);
-  }, [holePosition, refElement]);
+    return applyPosition(holePosition, refRect);
+  }, [holePosition, refRect]);
 
   const renderTutorialDialog = (): ReactNode => {
     if (!dialogBoxStyles) {
