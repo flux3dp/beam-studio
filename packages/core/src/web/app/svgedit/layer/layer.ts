@@ -43,7 +43,7 @@ function setPointerEventsInheritance(elem: SVGGElement): void {
   let node: Node | null = walker.currentNode;
 
   while (node) {
-    if (node instanceof SVGElement) {
+    if (node instanceof SVGElement && node !== elem) {
       node.setAttribute('style', 'pointer-events:inherit');
     }
 
