@@ -1,6 +1,6 @@
 import React, { memo, useEffect, useState } from 'react';
 
-import { BulbOutlined, ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
+import { BulbOutlined, ClockCircleOutlined, CloseOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
 import { Alert, Button, Input, Select, Spin, Switch } from 'antd';
 import classNames from 'classnames';
 
@@ -21,51 +21,49 @@ import { useAiGenerateStore } from './useAiGenerateStore';
 import { getStyleConfig } from './utils/categories';
 import { getInputFieldsForStyle } from './utils/inputFields';
 
-const { TextArea } = Input;
+const AI_COST_PER_IMAGE = 0.06;
+
+const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  e.stopPropagation();
+
+  const isSelectAll = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a';
+
+  if (isSelectAll) {
+    e.preventDefault();
+    e.currentTarget.select();
+  }
+
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    e.currentTarget.blur();
+  }
+};
 
 const UnmemorizedAiGenerate = () => {
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
-  const { info } = currentUser || { info: null };
-
-  // TanStack Query for AI config (styles & categories)
+  const store = useAiGenerateStore();
   const {
-    data: aiConfig,
-    error: configQueryError,
-    isError: isConfigError,
-    isLoading: isConfigLoading,
-    refetch: refetchConfig,
-  } = useAiConfigQuery();
-
-  // Provide defaults when data is undefined (during loading)
-  const aiStyles = aiConfig?.styles ?? [];
-  const stylesWithFields = aiConfig?.stylesWithFields ?? [];
-
-  const {
-    // Form state
-    addImageInput,
     dimensions,
     errorMessage,
     generatedImages,
     generationStatus,
-    imageInputs: selectedImageInputs,
+    imageInputs,
     inputFields,
     isAiGenerateShown,
     isLaserFriendly,
     maxImages,
-    removeImageInput,
-    resetForm,
-    setInputField,
-    setStyle,
     showHistory,
     style,
-    toggleHistory,
-    toggleLaserFriendly,
-  } = useAiGenerateStore();
+  } = store;
 
+  // 1. Data Fetching
+  const { data: aiConfig, isError, isLoading, refetch } = useAiConfigQuery();
+  const stylesWithFields = aiConfig?.stylesWithFields ?? [];
+  const aiStyles = aiConfig?.styles ?? [];
+
+  // 2. Logic & Configuration
   const optionConfig = getStyleConfig(style, aiStyles);
   const stylePreset = optionConfig?.id || 'plain';
-
-  // Image generation logic
   const { handleGenerate } = useImageGeneration({
     currentUser,
     dimensions,
@@ -74,159 +72,50 @@ const UnmemorizedAiGenerate = () => {
     stylesWithFields,
   });
 
-  // Subscribe to user update events for real-time credit balance updates
+  // 3. Effects
   useEffect(() => {
-    const handleUserUpdate = (user: IUser | null) => {
-      setCurrentUser(user);
-    };
+    const update = (user: IUser | null) => setCurrentUser(user);
 
-    fluxIDEvents.on('update-user', handleUserUpdate);
+    fluxIDEvents.on('update-user', update);
 
     return () => {
-      fluxIDEvents.off('update-user', handleUserUpdate);
+      fluxIDEvents.off('update-user', update);
     };
   }, []);
-
-  const handleClose = () => {
-    useAiGenerateStore.setState({ isAiGenerateShown: false });
-  };
-
-  const handleRefresh = () => {
-    resetForm();
-  };
-
-  const handleStyleClick = () => {
-    dialogCaller.showStyleSelectionPanel((selectedStyle) => {
-      setStyle(selectedStyle, stylesWithFields);
-    }, style);
-  };
-
-  const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    e.stopPropagation();
-
-    // Check for Fnkey+a (Cmd+a on Mac, Ctrl+a on Windows)
-    const isFnkeyA = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a';
-
-    if (isFnkeyA) {
-      e.preventDefault();
-
-      const textarea = e.currentTarget;
-
-      textarea.select();
-    }
-
-    // Check for Escape to blur (unfocus) the textarea
-    if (e.key === 'Escape') {
-      e.preventDefault();
-
-      const textarea = e.currentTarget;
-
-      textarea.blur();
-    }
-  };
-
-  // TanStack Query automatically fetches on mount, no manual loading needed
 
   useEffect(() => {
     if (!isAiGenerateShown) return;
 
     const exitScope = shortcuts.enterScope();
-    const subscribedShortcuts = [shortcuts.on(['Escape'], handleClose, { isBlocking: true })];
+    const unregister = shortcuts.on(['Escape'], () => store.setState({ isAiGenerateShown: false }), {
+      isBlocking: true,
+    });
 
     return () => {
-      subscribedShortcuts.forEach((unregister) => unregister());
+      unregister();
       exitScope();
     };
-  }, [isAiGenerateShown]);
+  }, [isAiGenerateShown, store]);
 
-  // Show loading state while config is being fetched
-  if (isConfigLoading) {
-    return (
-      <div className={classNames(cssStyles['ai-generate-container'])}>
-        <div className={cssStyles.header}>
-          <h2 className={cssStyles.title}>AI Create</h2>
-          <div className={cssStyles.actions}>
-            <Button
-              className={cssStyles['icon-button']}
-              icon={<CloseOutlined />}
-              onClick={handleClose}
-              shape="circle"
-              type="text"
-            />
-          </div>
-        </div>
-        <div className={cssStyles.content}>
-          <div style={{ padding: '40px', textAlign: 'center' }}>
-            <Spin size="large" tip="Loading AI styles..." />
-          </div>
-        </div>
-      </div>
-    );
-  }
+  // 4. Handlers
+  const handleStyleClick = () =>
+    dialogCaller.showStyleSelectionPanel((s) => store.setStyle(s, stylesWithFields), style);
+  const creditCost = AI_COST_PER_IMAGE * maxImages;
+  const canGenerate = currentUser && (currentUser.info?.credit || 0) >= creditCost && imageInputs.length <= 10;
 
-  // Show error state if config failed to load
-  if (isConfigError) {
-    return (
-      <div className={classNames(cssStyles['ai-generate-container'])}>
-        <div className={cssStyles.header}>
-          <h2 className={cssStyles.title}>AI Create</h2>
-          <div className={cssStyles.actions}>
-            <Button
-              className={cssStyles['icon-button']}
-              icon={<CloseOutlined />}
-              onClick={handleClose}
-              shape="circle"
-              type="text"
-            />
-          </div>
-        </div>
-        <div className={cssStyles.content}>
-          <Alert
-            action={
-              <Button onClick={() => refetchConfig()} size="small" type="primary">
-                Retry
-              </Button>
-            }
-            description={configQueryError?.message || 'Failed to load AI configuration'}
-            message="Failed to load AI styles"
-            showIcon
-            type="error"
-          />
-        </div>
-      </div>
-    );
-  }
+  // 5. Render
+  if (isLoading) return <LoadingView onClose={() => store.setState({ isAiGenerateShown: false })} />;
+
+  if (isError) return <ErrorView onClose={() => store.setState({ isAiGenerateShown: false })} onRetry={refetch} />;
 
   return (
     <div className={classNames(cssStyles['ai-generate-container'])}>
-      <div className={cssStyles.header}>
-        <h2 className={cssStyles.title}>AI Create</h2>
-        <div className={cssStyles.actions}>
-          <Button
-            className={classNames(cssStyles['icon-button'], {
-              [cssStyles.active]: showHistory,
-            })}
-            icon={<ClockCircleOutlined />}
-            onClick={toggleHistory}
-            shape="circle"
-            type="text"
-          />
-          <Button
-            className={cssStyles['icon-button']}
-            icon={<ReloadOutlined />}
-            onClick={handleRefresh}
-            shape="circle"
-            type="text"
-          />
-          <Button
-            className={cssStyles['icon-button']}
-            icon={<CloseOutlined />}
-            onClick={handleClose}
-            shape="circle"
-            type="text"
-          />
-        </div>
-      </div>
+      <Header
+        onClose={() => store.setState({ isAiGenerateShown: false })}
+        onHistory={store.toggleHistory}
+        onRefresh={store.resetForm}
+        showHistory={showHistory}
+      />
 
       <div className={cssStyles.content}>
         {showHistory ? (
@@ -238,7 +127,7 @@ const UnmemorizedAiGenerate = () => {
               <Button
                 block
                 className={cssStyles['style-selection-button']}
-                icon={<BulbOutlined />}
+                icon={<img alt={optionConfig.displayName} className={cssStyles.img} src={optionConfig.previewImage} />}
                 onClick={handleStyleClick}
                 size="large"
               >
@@ -246,6 +135,7 @@ const UnmemorizedAiGenerate = () => {
                   <span className={cssStyles['button-label']}>
                     {optionConfig?.displayName || 'Select Creation Style'}
                   </span>
+                  <RightOutlined />
                 </div>
               </Button>
             </div>
@@ -253,7 +143,11 @@ const UnmemorizedAiGenerate = () => {
             {optionConfig?.modes?.includes('edit') && (
               <div className={cssStyles.section}>
                 <h3 className={cssStyles['section-title']}>Upload Images</h3>
-                <ImageUploadArea imageInputs={selectedImageInputs} onAdd={addImageInput} onRemove={removeImageInput} />
+                <ImageUploadArea
+                  imageInputs={imageInputs}
+                  onAdd={store.addImageInput}
+                  onRemove={store.removeImageInput}
+                />
               </div>
             )}
 
@@ -261,16 +155,13 @@ const UnmemorizedAiGenerate = () => {
               getInputFieldsForStyle(stylePreset, stylesWithFields).map((field) => (
                 <div className={cssStyles.section} key={field.key}>
                   <h3 className={cssStyles['section-title']}>
-                    {field.label}
-                    {field.required && <span className={cssStyles.required}> *</span>}
+                    {field.label} {field.required && <span className={cssStyles.required}>*</span>}
                   </h3>
                   <div className={cssStyles['input-wrapper']}>
-                    <TextArea
+                    <Input.TextArea
                       className={cssStyles.textarea}
                       maxLength={field.maxLength}
-                      onChange={(e) => {
-                        setInputField(field.key, e.target.value);
-                      }}
+                      onChange={(e) => store.setInputField(field.key, e.target.value)}
                       onKeyDown={handleTextAreaKeyDown}
                       onKeyUp={(e) => e.stopPropagation()}
                       placeholder={field.placeholder}
@@ -301,8 +192,8 @@ const UnmemorizedAiGenerate = () => {
               <h3 className={cssStyles['section-title']}>Count</h3>
               <Select
                 className={cssStyles['count-select']}
-                onChange={(value) => useAiGenerateStore.setState({ maxImages: value })}
-                options={[1, 2, 3, 4].map((num) => ({ label: String(num), value: num }))}
+                onChange={(val) => store.setState({ maxImages: val })}
+                options={[1, 2, 3, 4].map((n) => ({ label: String(n), value: n }))}
                 value={maxImages}
               />
             </div>
@@ -310,7 +201,7 @@ const UnmemorizedAiGenerate = () => {
             <div className={cssStyles.section}>
               <div className={cssStyles['toggle']}>
                 <span>Laser-Friendly</span>
-                <Switch checked={isLaserFriendly} onChange={toggleLaserFriendly} />
+                <Switch checked={isLaserFriendly} onChange={store.toggleLaserFriendly} />
               </div>
             </div>
 
@@ -324,19 +215,18 @@ const UnmemorizedAiGenerate = () => {
               <Button
                 block
                 className={cssStyles['generate-button']}
-                disabled={!currentUser || (info?.credit || 0) < 0.06 * maxImages || selectedImageInputs.length > 10}
+                disabled={!canGenerate}
                 onClick={handleGenerate}
                 size="large"
                 type="primary"
               >
                 Generate
               </Button>
-
               <div className={cssStyles['credits-info']}>
-                <span className={cssStyles['credits-required']}>Credit required {(0.06 * maxImages).toFixed(2)}</span>
+                <span className={cssStyles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
                 <div className={cssStyles['credits-balance']}>
                   <FluxIcons.AICredit />
-                  <span className={cssStyles['ai-credit']}>{info?.credit || 0}</span>
+                  <span className={cssStyles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
                 </div>
               </div>
             </div>
@@ -347,6 +237,61 @@ const UnmemorizedAiGenerate = () => {
   );
 };
 
-const AiGenerate = memo(UnmemorizedAiGenerate);
+const Header = ({ onClose, onHistory, onRefresh, showHistory }: any) => (
+  <div className={cssStyles.header}>
+    <h2 className={cssStyles.title}>AI Create</h2>
+    <div className={cssStyles.actions}>
+      <Button
+        className={classNames(cssStyles['icon-button'], { [cssStyles.active]: showHistory })}
+        icon={<ClockCircleOutlined />}
+        onClick={onHistory}
+        shape="circle"
+        type="text"
+      />
+      <Button
+        className={cssStyles['icon-button']}
+        icon={<ReloadOutlined />}
+        onClick={onRefresh}
+        shape="circle"
+        type="text"
+      />
+      <Button
+        className={cssStyles['icon-button']}
+        icon={<CloseOutlined />}
+        onClick={onClose}
+        shape="circle"
+        type="text"
+      />
+    </div>
+  </div>
+);
 
-export default AiGenerate;
+const LoadingView = ({ onClose }: { onClose: () => void }) => (
+  <div className={classNames(cssStyles['ai-generate-container'])}>
+    <Header onClose={onClose} />
+    <div className={cssStyles.content} style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
+      <Spin size="large" tip="Loading AI styles..." />
+    </div>
+  </div>
+);
+
+const ErrorView = ({ onClose, onRetry }: { onClose: () => void; onRetry: () => void }) => (
+  <div className={classNames(cssStyles['ai-generate-container'])}>
+    <Header onClose={onClose} />
+    <div className={cssStyles.content}>
+      <Alert
+        action={
+          <Button onClick={onRetry} size="small" type="primary">
+            Retry
+          </Button>
+        }
+        description="Failed to load AI configuration"
+        message="Failed to load AI styles"
+        showIcon
+        type="error"
+      />
+    </div>
+  </div>
+);
+
+export default memo(UnmemorizedAiGenerate);
