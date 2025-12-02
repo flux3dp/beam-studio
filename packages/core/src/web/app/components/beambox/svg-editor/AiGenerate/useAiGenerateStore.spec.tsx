@@ -49,30 +49,17 @@ describe('useAiGenerateStore', () => {
     });
 
     it('resets form to defaults', () => {
-      useAiGenerateStore.setState({ count: 5, style: 'custom' });
+      useAiGenerateStore.setState({ maxImages: 5, style: 'custom' });
       useAiGenerateStore.getState().resetForm();
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.count).toBe(1);
+      expect(state.maxImages).toBe(1);
       expect(state.style).toBe('plain');
     });
   });
 
   describe('Logic Actions', () => {
-    it('toggles fixed seed and manages value', () => {
-      const store = useAiGenerateStore.getState();
-
-      store.toggleFixedSeed();
-      store.setState({ seed: 123 });
-      expect(useAiGenerateStore.getState().isFixedSeed).toBe(true);
-      expect(useAiGenerateStore.getState().seed).toBe(123);
-
-      store.toggleFixedSeed();
-      expect(useAiGenerateStore.getState().isFixedSeed).toBe(false);
-      expect(useAiGenerateStore.getState().seed).toBeUndefined();
-    });
-
     it('toggles laser friendly mode and injects color prompt', () => {
       const store = useAiGenerateStore.getState();
 
@@ -118,7 +105,7 @@ describe('useAiGenerateStore', () => {
 
       const state = useAiGenerateStore.getState();
 
-      expect(state.count).toBe(4);
+      expect(state.maxImages).toBe(4);
       expect(state.inputFields.desc).toBe('foo');
       expect(state.style).toBe('logo');
       expect(state.showHistory).toBe(false);

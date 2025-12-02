@@ -1,3 +1,5 @@
+import type { AspectRatio } from '@core/app/components/beambox/svg-editor/AiGenerate/types';
+
 import { FLUXID_HOST } from './flux-id';
 
 const BASE_URL = `${FLUXID_HOST}/api/ai-image`;
@@ -16,37 +18,29 @@ const ERROR_MESSAGES: Record<number, string> = {
 export type TaskState = 'fail' | 'pending' | 'success' | 'waiting';
 
 export interface GenerationRequest {
+  aspect_ratio: AspectRatio; // e.g., '4:3', '3:4', '16:9', '1:1'
   image_inputs?: Array<File | string>; // Optional: If present, implies 'edit' mode
-  image_resolution: '1K' | '2K' | '4K';
-  image_size:
-    | 'landscape_3_2'
-    | 'landscape_4_3'
-    | 'landscape_16_9'
-    | 'portrait_3_2'
-    | 'portrait_4_3'
-    | 'portrait_16_9'
-    | 'square'
-    | 'square_hd';
   max_images: number;
   prompt_data: {
     inputs: Record<string, string>;
     style: string;
   };
   seed?: number;
+  size: '1K' | '2K' | '4K';
 }
 
 export interface AiImageGenerationData {
+  aspect_ratio: AspectRatio;
   completed_at: null | string;
   cost_time: null | number;
   created_at: string;
   fail_msg: null | string;
-  image_resolution: GenerationRequest['image_resolution'];
-  image_size: GenerationRequest['image_size'];
   image_urls: string[];
   max_images: number;
   prompt_data: GenerationRequest['prompt_data'];
   result_urls: null | string[];
   seed?: number;
+  size: GenerationRequest['size'];
   state: TaskState;
   task_id: null | string;
   uuid: string;

@@ -6,7 +6,7 @@ import type { IUser } from '@core/interfaces/IUser';
 import type { ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { objectToSnakeCase } from '../utils/caseConversion';
-import { getImageResolution, getImageSizeOption } from '../utils/dimensions';
+import { getSizeResolution } from '../utils/dimensions';
 import { getInputFieldsForStyle } from '../utils/inputFields';
 
 const validateRequest = (params: {
@@ -50,19 +50,18 @@ const validateRequest = (params: {
 };
 
 interface UseImageGenerationParams {
-  count: number;
   currentUser: IUser | null;
   dimensions: ImageDimensions;
+  maxImages: number;
   seed?: number;
   style: string;
   stylesWithFields?: StyleWithInputFields[];
 }
 
 export const useImageGeneration = ({
-  count,
   currentUser,
   dimensions,
-  seed,
+  maxImages,
   style = 'plain',
   stylesWithFields,
 }: UseImageGenerationParams) => {
@@ -84,13 +83,16 @@ export const useImageGeneration = ({
     useAiGenerateStore.setState({ generationStatus: 'generating' });
 
     const inputs = objectToSnakeCase(inputFields) as Record<string, string>;
+
+    // Add image counts to inputs due to new api provider doesn't strictly follow max_images param as returned image count
+    inputs['image_counts'] = String(maxImages);
+
     const params = {
+      aspect_ratio: dimensions.aspectRatio,
       image_inputs: imageInputs.map((input) => (input.type === 'file' ? input.file : input.url)),
-      image_resolution: getImageResolution(dimensions),
-      image_size: getImageSizeOption(dimensions),
-      max_images: count,
+      max_images: maxImages,
       prompt_data: { inputs, style },
-      seed,
+      size: getSizeResolution(dimensions.size),
     };
 
     // 3. Execution Phase
@@ -112,7 +114,7 @@ export const useImageGeneration = ({
     const { uuid } = createResponse;
 
     useAiGenerateStore.setState({ generationUuid: uuid });
-    addPendingHistoryItem({ count, dimensions, imageInputs, uuid });
+    addPendingHistoryItem({ dimensions, imageInputs, maxImages, uuid });
 
     const result = await pollTaskUntilComplete(uuid, (state) => updateHistoryItem(uuid, { state }));
 

@@ -2,7 +2,7 @@ import React, { memo, useMemo } from 'react';
 
 import { ImportOutlined } from '@ant-design/icons';
 import { Badge, Button, Card } from 'antd';
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 
@@ -33,20 +33,6 @@ const formatRelativeTime = (timestamp: string): string => {
   return 'Recently';
 };
 
-const getImageOrientationLabel = (imageSize: string): string =>
-  match(imageSize)
-    .with(P.string.includes('square'), () => 'Square')
-    .with(P.string.includes('landscape'), () => 'Landscape')
-    .with(P.string.includes('portrait'), () => 'Portrait')
-    .otherwise((imageSize) => imageSize);
-
-const getAspectRatioLabel = (imageSize: string): string =>
-  match(imageSize)
-    .with(P.string.includes('16_9'), () => '16:9')
-    .with(P.string.includes('4_3'), () => '4:3')
-    .with(P.string.includes('3_2'), () => '3:2')
-    .otherwise(() => '1:1');
-
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
   const previewImg = item.result_urls?.[0];
   const relativeTime = useMemo(() => formatRelativeTime(item.created_at), [item.created_at]);
@@ -71,11 +57,9 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
         <div className={styles.header}>{renderStatusBadge()}</div>
 
         <div className={styles.metadata}>
-          <span className={styles['metadata-item']}>
-            {getImageOrientationLabel(item.image_size)} {getAspectRatioLabel(item.image_size)}
-          </span>
+          <span className={styles['metadata-item']}>{item.aspect_ratio}</span>
           <span className={styles['metadata-separator']}>•</span>
-          <span className={styles['metadata-item']}>{item.image_resolution}</span>
+          <span className={styles['metadata-item']}>{item.size}</span>
           <span className={styles['metadata-separator']}>•</span>
           <span className={styles['metadata-item']}>Count: {item.max_images}</span>
         </div>

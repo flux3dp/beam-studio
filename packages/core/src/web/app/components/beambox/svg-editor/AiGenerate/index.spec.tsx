@@ -204,20 +204,20 @@ const createMockImageInput = (type: 'file' | 'url', id = 'test-id'): ImageInput 
 };
 
 const createMockHistoryItem = (overrides?: Partial<AiImageGenerationData>): AiImageGenerationData => ({
+  aspect_ratio: '1:1',
   completed_at: '2024-01-01T00:01:00Z',
   cost_time: 60,
   created_at: '2024-01-01T00:00:00Z',
   fail_msg: null,
-  image_resolution: '1K',
-  image_size: 'square_hd',
-  image_urls: null,
+  image_urls: [],
   max_images: 1,
   prompt_data: {
     inputs: { description: 'Test prompt' },
     style: 'plain',
   },
   result_urls: ['https://example.com/result.jpg'],
-  seed: null,
+  seed: undefined,
+  size: '1K',
   state: 'success',
   task_id: 'task-1',
   uuid: 'history-uuid-1',
@@ -234,8 +234,7 @@ describe('test AiGenerate', () => {
 
     // Reset store to initial state
     useAiGenerateStore.setState({
-      count: 1,
-      dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
+      dimensions: { aspectRatio: '1:1', size: 'small' },
       errorMessage: null,
       generatedImages: [],
       generationStatus: 'idle',
@@ -247,6 +246,7 @@ describe('test AiGenerate', () => {
       imageInputs: [],
       inputFields: {},
       isAiGenerateShown: false,
+      maxImages: 1,
       showHistory: false,
       style: 'plain',
     });
@@ -522,9 +522,9 @@ describe('test AiGenerate', () => {
 
     test('clicking refresh button calls resetForm', () => {
       useAiGenerateStore.setState({
-        count: 2,
         errorMessage: 'Error',
         inputFields: { description: 'Test' },
+        maxImages: 2,
       });
 
       const { container } = render(<AiGenerate />);
@@ -536,7 +536,7 @@ describe('test AiGenerate', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.inputFields.description).toBe(undefined);
-      expect(state.count).toBe(1);
+      expect(state.maxImages).toBe(1);
       expect(state.errorMessage).toBe(null);
     });
 
@@ -588,12 +588,11 @@ describe('test AiGenerate', () => {
       const { dimensions } = useAiGenerateStore.getState();
 
       expect(dimensions.aspectRatio).toBe('4:3');
-      expect(dimensions.orientation).toBe('landscape');
     });
 
     test('selected ratio button has active class', () => {
       useAiGenerateStore.setState({
-        dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'small' },
+        dimensions: { aspectRatio: '16:9', size: 'small' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -617,7 +616,7 @@ describe('test AiGenerate', () => {
 
     test('selected size button has active class', () => {
       useAiGenerateStore.setState({
-        dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'medium' },
+        dimensions: { aspectRatio: '1:1', size: 'medium' },
       });
 
       const { container } = render(<AiGenerate />);
@@ -715,7 +714,7 @@ describe('test AiGenerate', () => {
 
       fireEvent.click(option3!);
 
-      expect(useAiGenerateStore.getState().count).toBe(3);
+      expect(useAiGenerateStore.getState().maxImages).toBe(3);
     });
   });
 
@@ -785,7 +784,7 @@ describe('test AiGenerate', () => {
 
     test('dimensions persist when switching modes', () => {
       useAiGenerateStore.setState({
-        dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'large' },
+        dimensions: { aspectRatio: '16:9', size: 'large' },
         style: 'plain',
       });
 
@@ -801,7 +800,7 @@ describe('test AiGenerate', () => {
 
     test('count persists when switching modes', () => {
       useAiGenerateStore.setState({
-        count: 4,
+        maxImages: 4,
         style: 'plain',
       });
 
@@ -809,7 +808,7 @@ describe('test AiGenerate', () => {
 
       useAiGenerateStore.setState({ style: 'plain' });
 
-      expect(useAiGenerateStore.getState().count).toBe(4);
+      expect(useAiGenerateStore.getState().maxImages).toBe(4);
     });
   });
 
@@ -882,9 +881,9 @@ describe('test AiGenerate', () => {
     describe('Text-to-Image API Calls', () => {
       test('calls createAiImageTask with correct params', async () => {
         useAiGenerateStore.setState({
-          count: 1,
-          dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
+          dimensions: { aspectRatio: '1:1', size: 'small' },
           inputFields: { description: 'A cute dog' },
+          maxImages: 1,
           style: 'plain',
         });
 
@@ -898,24 +897,23 @@ describe('test AiGenerate', () => {
 
         await waitFor(() => {
           expect(mockCreateAiImageTask).toHaveBeenCalledWith({
+            aspect_ratio: '1:1',
             image_inputs: [],
-            image_resolution: '1K',
-            image_size: 'square_hd',
             max_images: 1,
             prompt_data: {
-              inputs: { description: 'A cute dog' },
+              inputs: { description: 'A cute dog', image_counts: '1' },
               style: 'plain',
             },
-            seed: undefined,
+            size: '1K',
           });
         });
       });
 
       test('sends structured prompt_data when preset selected', async () => {
         useAiGenerateStore.setState({
-          count: 1,
-          dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' },
+          dimensions: { aspectRatio: '1:1', size: 'small' },
           inputFields: { description: 'A shiba dog', textToDisplay: 'MeowWoof' },
+          maxImages: 1,
           style: 'logo-cute',
         });
 
@@ -936,6 +934,7 @@ describe('test AiGenerate', () => {
           expect(callArgs.prompt_data).toEqual({
             inputs: {
               description: 'A shiba dog',
+              image_counts: '1',
               text_to_display: 'MeowWoof',
             },
             style: 'logo-cute',
@@ -961,7 +960,7 @@ describe('test AiGenerate', () => {
           expect(mockCreateAiImageTask).toHaveBeenCalledWith(
             expect.objectContaining({
               prompt_data: {
-                inputs: { description: 'Plain text prompt' },
+                inputs: { description: 'Plain text prompt', image_counts: '1' },
                 style: 'plain',
               },
             }),
@@ -969,9 +968,9 @@ describe('test AiGenerate', () => {
         });
       });
 
-      test('maps 16:9 landscape to correct image size', async () => {
+      test('maps 16:9 to correct aspect_ratio and size', async () => {
         useAiGenerateStore.setState({
-          dimensions: { aspectRatio: '16:9', orientation: 'landscape', size: 'medium' },
+          dimensions: { aspectRatio: '16:9', size: 'medium' },
           inputFields: { description: 'Test' },
           style: 'plain',
         });
@@ -987,8 +986,8 @@ describe('test AiGenerate', () => {
         await waitFor(() => {
           expect(mockCreateAiImageTask).toHaveBeenCalledWith(
             expect.objectContaining({
-              image_resolution: '2K',
-              image_size: 'landscape_16_9',
+              aspect_ratio: '16:9',
+              size: '2K',
             }),
           );
         });
@@ -996,7 +995,7 @@ describe('test AiGenerate', () => {
 
       test('maps large size to 4K resolution', async () => {
         useAiGenerateStore.setState({
-          dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'large' },
+          dimensions: { aspectRatio: '1:1', size: 'large' },
           inputFields: { description: 'Test' },
           style: 'plain',
         });
@@ -1012,7 +1011,7 @@ describe('test AiGenerate', () => {
         await waitFor(() => {
           expect(mockCreateAiImageTask).toHaveBeenCalledWith(
             expect.objectContaining({
-              image_resolution: '4K',
+              size: '4K',
             }),
           );
         });
@@ -1045,7 +1044,7 @@ describe('test AiGenerate', () => {
           expect(callArgs.image_inputs).toHaveLength(1);
           expect(callArgs.image_inputs[0]).toBeInstanceOf(File);
           expect(callArgs.prompt_data).toEqual({
-            inputs: { description: 'Edit this image' },
+            inputs: { description: 'Edit this image', image_counts: '1' },
             style: 'plain',
           });
         });
@@ -1385,8 +1384,8 @@ describe('test AiGenerate', () => {
       mockGetCurrentUser.mockReturnValue(createMockUser(0.04));
 
       useAiGenerateStore.setState({
-        count: 1,
         inputFields: { description: 'Test' },
+        maxImages: 1,
       });
 
       const { container } = render(<AiGenerate />);
@@ -1519,9 +1518,9 @@ describe('test AiGenerate', () => {
 
         const callArgs = mockCreateAiImageTask.mock.calls[0][0];
 
-        // Empty optional field should be included in inputs
+        // Empty optional field should be included in inputs (along with image_counts)
         expect(callArgs.prompt_data).toEqual({
-          inputs: { description: '' },
+          inputs: { description: '', image_counts: '1' },
           style: 'plain',
         });
       });
@@ -1537,8 +1536,8 @@ describe('test AiGenerate', () => {
       mockGetCurrentUser.mockReturnValue(createMockUser(0.06));
 
       useAiGenerateStore.setState({
-        count: 1,
         inputFields: { description: 'Test' },
+        maxImages: 1,
       });
 
       const { container } = render(<AiGenerate />);
@@ -1554,8 +1553,8 @@ describe('test AiGenerate', () => {
       mockGetCurrentUser.mockReturnValue(createMockUser(0.04));
 
       useAiGenerateStore.setState({
-        count: 1,
         inputFields: { description: 'Test' },
+        maxImages: 1,
       });
 
       const { container } = render(<AiGenerate />);
@@ -1571,8 +1570,8 @@ describe('test AiGenerate', () => {
       mockGetCurrentUser.mockReturnValue(createMockUser(0.12));
 
       useAiGenerateStore.setState({
-        count: 2,
         inputFields: { description: 'Test' },
+        maxImages: 2,
       });
 
       const { container } = render(<AiGenerate />);
@@ -1588,8 +1587,8 @@ describe('test AiGenerate', () => {
       mockGetCurrentUser.mockReturnValue(createMockUser(0.09));
 
       useAiGenerateStore.setState({
-        count: 2,
         inputFields: { description: 'Test' },
+        maxImages: 2,
       });
 
       const { container } = render(<AiGenerate />);
@@ -1605,8 +1604,8 @@ describe('test AiGenerate', () => {
       mockGetCurrentUser.mockReturnValue(createMockUser(0.24));
 
       useAiGenerateStore.setState({
-        count: 4,
         inputFields: { description: 'Test' },
+        maxImages: 4,
       });
 
       const { container } = render(<AiGenerate />);
@@ -1622,8 +1621,8 @@ describe('test AiGenerate', () => {
       mockGetCurrentUser.mockReturnValue(createMockUser(0.19));
 
       useAiGenerateStore.setState({
-        count: 4,
         inputFields: { description: 'Test' },
+        maxImages: 4,
       });
 
       const { container } = render(<AiGenerate />);
@@ -1646,7 +1645,7 @@ describe('test AiGenerate', () => {
     });
 
     test('displays required credits for current count', () => {
-      useAiGenerateStore.setState({ count: 3 });
+      useAiGenerateStore.setState({ maxImages: 3 });
 
       const { container } = render(<AiGenerate />);
 
@@ -1657,8 +1656,8 @@ describe('test AiGenerate', () => {
 
     test('updates button state when credits change', () => {
       useAiGenerateStore.setState({
-        count: 1,
         inputFields: { description: 'Test' },
+        maxImages: 1,
       });
 
       mockGetCurrentUser.mockReturnValue(createMockUser(0.04));
@@ -1846,10 +1845,10 @@ describe('test AiGenerate', () => {
 
     test('imports plain text-to-image history item', () => {
       const historyItem = createMockHistoryItem({
-        image_resolution: '2K',
-        image_size: 'square_hd',
+        aspect_ratio: '1:1',
         max_images: 2,
         prompt_data: { inputs: { description: 'A cute cat' }, style: 'plain' },
+        size: '2K',
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
@@ -1860,7 +1859,7 @@ describe('test AiGenerate', () => {
       expect(state.style).toBe('plain');
       expect(state.dimensions.aspectRatio).toBe('1:1');
       expect(state.dimensions.size).toBe('medium');
-      expect(state.count).toBe(2);
+      expect(state.maxImages).toBe(2);
     });
 
     test('imports styled prompt with structured prompt_data', () => {
@@ -1904,8 +1903,8 @@ describe('test AiGenerate', () => {
 
     test('imports 16:9 landscape dimensions', () => {
       const historyItem = createMockHistoryItem({
-        image_resolution: '4K',
-        image_size: 'landscape_16_9',
+        aspect_ratio: '16:9',
+        size: '4K',
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
@@ -1913,22 +1912,20 @@ describe('test AiGenerate', () => {
       const { dimensions } = useAiGenerateStore.getState();
 
       expect(dimensions.aspectRatio).toBe('16:9');
-      expect(dimensions.orientation).toBe('landscape');
       expect(dimensions.size).toBe('large');
     });
 
-    test('imports 4:3 portrait dimensions', () => {
+    test('imports 3:4 portrait dimensions', () => {
       const historyItem = createMockHistoryItem({
-        image_resolution: '1K',
-        image_size: 'portrait_4_3',
+        aspect_ratio: '3:4',
+        size: '1K',
       });
 
       useAiGenerateStore.getState().importFromHistory(historyItem);
 
       const { dimensions } = useAiGenerateStore.getState();
 
-      expect(dimensions.aspectRatio).toBe('4:3');
-      expect(dimensions.orientation).toBe('portrait');
+      expect(dimensions.aspectRatio).toBe('3:4');
       expect(dimensions.size).toBe('small');
     });
 

@@ -5,11 +5,21 @@ import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 
 import { useFloatingMenu } from '../hooks/useFloatingMenu';
+import type { AspectRatio } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { getSizePixels } from '../utils/dimensions';
 import { ADDITIONAL_RATIOS, ALWAYS_DISPLAYED_RATIOS } from '../utils/ratioOptions';
 
 import styles from './DimensionSelector.module.scss';
+
+interface RatioButtonProps {
+  aspectRatio: string;
+  isActive: boolean;
+  isMenu?: boolean;
+  isMoreTrigger?: boolean;
+  label: string;
+  onClick?: () => void;
+}
 
 const RatioButton = ({
   aspectRatio,
@@ -18,10 +28,9 @@ const RatioButton = ({
   isMoreTrigger = false,
   label,
   onClick,
-  orientation,
-}: any) => {
-  const ratio = orientation === 'landscape' ? aspectRatio : aspectRatio.split(':').reverse().join(':');
-  const iconClass = isMoreTrigger ? styles['ratio-more'] : styles[`ratio-${ratio.replace(':', '-')}`];
+}: RatioButtonProps) => {
+  // aspectRatio is now the direct value (e.g., '3:4' for portrait)
+  const iconClass = isMoreTrigger ? styles['ratio-more'] : styles[`ratio-${aspectRatio.replace(':', '-')}`];
   const Container = isMenu ? 'div' : Button;
   const wrapperClass = isMenu ? styles['menu-item'] : styles['dimension-button'];
   const iconWrapperClass = isMenu ? styles['menu-icon'] : styles['ratio-icon'];
@@ -48,12 +57,12 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
     showMenu,
   } = useFloatingMenu();
 
-  const updateDim = (r: any) =>
+  const updateAspectRatio = (aspectRatio: AspectRatio) =>
     useAiGenerateStore.setState((s) => ({
-      dimensions: { ...s.dimensions, aspectRatio: r.aspectRatio, orientation: r.orientation },
+      dimensions: { ...s.dimensions, aspectRatio },
     }));
 
-  const isSelected = (r: any) => dimensions.aspectRatio === r.aspectRatio && dimensions.orientation === r.orientation;
+  const isSelected = (r: { aspectRatio: string }) => dimensions.aspectRatio === r.aspectRatio;
   const isAnyExtraSelected = ADDITIONAL_RATIOS.some(isSelected);
 
   return (
@@ -69,8 +78,7 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
               isActive={isSelected(option)}
               key={option.aspectRatio}
               label={option.displayLabel}
-              onClick={() => updateDim(option)}
-              orientation={option.orientation}
+              onClick={() => updateAspectRatio(option.aspectRatio)}
             />
           ))}
 
@@ -102,10 +110,9 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
                     key={option.aspectRatio}
                     label={option.displayLabel}
                     onClick={() => {
-                      updateDim(option);
+                      updateAspectRatio(option.aspectRatio);
                       closeMenu();
                     }}
-                    orientation={option.orientation}
                   />
                 ))}
               </div>,

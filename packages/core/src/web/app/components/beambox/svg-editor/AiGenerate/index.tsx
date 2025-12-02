@@ -43,7 +43,6 @@ const UnmemorizedAiGenerate = () => {
   const {
     // Form state
     addImageInput,
-    count,
     dimensions,
     errorMessage,
     generatedImages,
@@ -51,17 +50,14 @@ const UnmemorizedAiGenerate = () => {
     imageInputs: selectedImageInputs,
     inputFields,
     isAiGenerateShown,
-    isFixedSeed,
     isLaserFriendly,
+    maxImages,
     removeImageInput,
     resetForm,
-    seed,
     setInputField,
-    setState,
     setStyle,
     showHistory,
     style,
-    toggleFixedSeed,
     toggleHistory,
     toggleLaserFriendly,
   } = useAiGenerateStore();
@@ -71,10 +67,9 @@ const UnmemorizedAiGenerate = () => {
 
   // Image generation logic
   const { handleGenerate } = useImageGeneration({
-    count,
     currentUser,
     dimensions,
-    seed,
+    maxImages,
     style: stylePreset,
     stylesWithFields,
   });
@@ -283,10 +278,10 @@ const UnmemorizedAiGenerate = () => {
                       showCount={
                         field.maxLength
                           ? {
-                              formatter: ({ count: currentCount, maxLength }) => (
+                              formatter: ({ count, maxLength }) => (
                                 <div className={cssStyles['count-wrapper']}>
                                   <span className={cssStyles.count}>
-                                    {currentCount} / {maxLength}
+                                    {count} / {maxLength}
                                   </span>
                                   <BulbOutlined className={cssStyles['bulb-icon']} />
                                 </div>
@@ -306,35 +301,10 @@ const UnmemorizedAiGenerate = () => {
               <h3 className={cssStyles['section-title']}>Count</h3>
               <Select
                 className={cssStyles['count-select']}
-                onChange={(value) => useAiGenerateStore.setState({ count: value })}
+                onChange={(value) => useAiGenerateStore.setState({ maxImages: value })}
                 options={[1, 2, 3, 4].map((num) => ({ label: String(num), value: num }))}
-                value={count}
+                value={maxImages}
               />
-            </div>
-
-            <div className={cssStyles.section}>
-              <div className={cssStyles['toggle']}>
-                <span>Use Fixed Seed</span>
-                <Switch checked={isFixedSeed} onChange={toggleFixedSeed} />
-              </div>
-              {isFixedSeed && (
-                <div className={cssStyles['seed-input-wrapper']}>
-                  <Input
-                    className={cssStyles['seed-input']}
-                    onChange={(e) => {
-                      const value = e.target.value;
-                      const numValue = value === '' ? undefined : Number.parseInt(value, 10);
-
-                      if (value === '' || (!Number.isNaN(numValue) && numValue !== undefined && numValue >= 0)) {
-                        setState({ seed: numValue });
-                      }
-                    }}
-                    placeholder="Enter seed number (e.g., 12345)"
-                    type="number"
-                    value={seed ?? ''}
-                  />
-                </div>
-              )}
             </div>
 
             <div className={cssStyles.section}>
@@ -354,7 +324,7 @@ const UnmemorizedAiGenerate = () => {
               <Button
                 block
                 className={cssStyles['generate-button']}
-                disabled={!currentUser || (info?.credit || 0) < 0.06 * count || selectedImageInputs.length > 10}
+                disabled={!currentUser || (info?.credit || 0) < 0.06 * maxImages || selectedImageInputs.length > 10}
                 onClick={handleGenerate}
                 size="large"
                 type="primary"
@@ -363,7 +333,7 @@ const UnmemorizedAiGenerate = () => {
               </Button>
 
               <div className={cssStyles['credits-info']}>
-                <span className={cssStyles['credits-required']}>Credit required {(0.06 * count).toFixed(2)}</span>
+                <span className={cssStyles['credits-required']}>Credit required {(0.06 * maxImages).toFixed(2)}</span>
                 <div className={cssStyles['credits-balance']}>
                   <FluxIcons.AICredit />
                   <span className={cssStyles['ai-credit']}>{info?.credit || 0}</span>
