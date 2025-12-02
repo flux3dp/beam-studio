@@ -2,11 +2,9 @@
 @use './shared-variables' as vars;
 
 .ai-generate-container {
-  position: relative;
   background: vars.$container-bg;
   display: flex;
   flex-direction: column;
-  flex-grow: 1;
   height: 100%;
   width: 100%;
 }
@@ -33,11 +31,9 @@
 
 .icon-button {
   color: vars.$text-secondary;
-
   &:hover {
     color: vars.$text-primary;
   }
-
   &.active {
     color: vars.$primary-blue;
   }
@@ -51,7 +47,6 @@
 
 .section {
   margin-bottom: 24px;
-
   &:last-child {
     margin-bottom: 0;
   }
@@ -72,27 +67,26 @@
   display: flex;
   align-items: center;
   gap: 12px;
+  .img {
+    width: 72px;
+    height: 72px;
+    object-fit: contain;
+  }
 
   .button-content {
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     gap: 4px;
     flex: 1;
   }
-
   .button-label {
     font-size: 16px;
     font-weight: 600;
   }
 }
 
-.input-wrapper {
-  position: relative;
-}
-
 .textarea {
   font-size: 14px;
-
   &::placeholder {
     color: vars.$text-placeholder;
   }
@@ -102,20 +96,18 @@
   display: flex;
   align-items: center;
   gap: 8px;
-}
 
-.count {
-  font-size: 12px;
-  color: vars.$text-secondary;
-}
-
-.bulb-icon {
-  font-size: 14px;
-  color: vars.$icon-warning;
-  cursor: pointer;
-
-  &:hover {
-    color: vars.$icon-warning-hover;
+  .count {
+    font-size: 12px;
+    color: vars.$text-secondary;
+  }
+  .bulb-icon {
+    font-size: 14px;
+    color: vars.$icon-warning;
+    cursor: pointer;
+    &:hover {
+      color: vars.$icon-warning-hover;
+    }
   }
 }
 
@@ -161,12 +153,11 @@
     font-size: 16px;
     color: vars.$ai-credit-icon;
   }
-}
-
-.ai-credit {
-  font-size: 14px;
-  font-weight: 500;
-  color: vars.$text-primary;
+  .ai-credit {
+    font-size: 14px;
+    font-weight: 500;
+    color: vars.$text-primary;
+  }
 }
 
 @media screen and (min-width: (variables.$welcomePageSidePanelWidth + 641px)) {

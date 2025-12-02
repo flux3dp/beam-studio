@@ -121,7 +121,7 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -268,7 +268,7 @@ exports[`test DrawingToolButtonGroup should render correctly 2`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -413,7 +413,7 @@ exports[`test DrawingToolButtonGroup should render correctly 3`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -558,7 +558,7 @@ exports[`test DrawingToolButtonGroup should render correctly 4`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -703,7 +703,7 @@ exports[`test DrawingToolButtonGroup should render correctly 5`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -848,7 +848,7 @@ exports[`test DrawingToolButtonGroup should render correctly 6`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -993,7 +993,7 @@ exports[`test DrawingToolButtonGroup should render correctly 7`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -1138,7 +1138,7 @@ exports[`test DrawingToolButtonGroup should render correctly 8`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -1283,7 +1283,7 @@ exports[`test DrawingToolButtonGroup should render correctly 9`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -1428,7 +1428,7 @@ exports[`test DrawingToolButtonGroup should render correctly 10`] = `
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
@@ -1585,7 +1585,7 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     <div
       class="container ai-generate"
       id="left-AiGenerate"
-      style="color: rgb(24, 144, 255);"
+      style="color: rgb(0, 0, 0);"
       title="AiGenerate"
     >
       <span
