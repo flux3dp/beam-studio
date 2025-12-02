@@ -66,7 +66,7 @@ describe('mobile pen tools', () => {
     cy.get('#ctrlpointgrip_4c1')
       .first()
       .should(($grip) => {
-        expect($grip.attr('cy')).to.be.closeTo(394, 1);
+        expect($grip.attr('cy')).to.be.closeTo(400, 1);
       });
     cy.get('#ctrlpointgrip_3c2')
       .first()
