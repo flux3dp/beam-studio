@@ -7,28 +7,28 @@ const exampleList = [
     label: 'Example of Ador Laser',
     type: 'Example Files',
     // md5 hash of the SVG content, Linux and Windows by order
-    ador: ['21094e29e4aa055e51f2579e0ddcdcc9', '8db7cbb3f3c7590b650161d553111e0c'],
+    ador: ['21094e29e4aa055e51f2579e0ddcdcc9', '15d666bd132d14ed8523d30fcd9a23db'],
   },
   {
     label: 'Example of Ador Printing - Single Color',
     type: 'Example Files',
-    ador: ['1f6a7c0a62535d5f7adbbd96f8084f19', '477a0a57f6d76065b88dff51266152e6'],
+    ador: ['1f6a7c0a62535d5f7adbbd96f8084f19', '563eef5be9cb01775c20c0d063ab7a55'],
   },
   {
     label: 'Example of Ador Printing - Full Color',
     type: 'Example Files',
-    ador: ['f5fae608f9a4e41d205bdb77edad7d55', '3bf840d19f456cbb6ce89a824fc9b7b2'],
+    ador: ['f5fae608f9a4e41d205bdb77edad7d55', '748ed74784e3a3f563a29e144966ef57'],
   },
   {
     label: 'Example of beamo',
     type: 'Example Files',
-    ador: ['7c07caadd8e494ad3586a7f773cbac8a', '86cabcae6bf8c83c3f06b4c4db3ddb8b'],
-    beam: '5b225d5d2a2eda45820cec849c0f9f4f',
+    ador: ['7c07caadd8e494ad3586a7f773cbac8a', '12051f21f4d243e9ac12e71fe1c6ddd5'],
+    beam: '85f6e6c628d3d9c0c0ba6d31b047ef34',
   },
   {
     label: 'Example of Beambox',
     type: 'Example Files',
-    ador: ['9c1a31175c421a17392cd3cc05c092b2', 'b3f2167dab58160d01b1503377762e6a'],
+    ador: ['9c1a31175c421a17392cd3cc05c092b2', 'a9729db6420b9d0897e5b4858162ef7a'],
     beam: '3b7f1a51c29eb96e3f755b17ed8c6f51',
   },
   {
