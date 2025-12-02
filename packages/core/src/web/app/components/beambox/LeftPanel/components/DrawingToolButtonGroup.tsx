@@ -168,7 +168,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.AiGenerate />,
         id: 'AiGenerate',
         onClick: toggleAiGenerate,
-        style: { color: isAiGenerateShown ? '#1890ff' : undefined },
+        style: { color: isAiGenerateShown ? '#000000' : undefined },
       })}
       {renderToolButton({
         className: styles.beamy,
