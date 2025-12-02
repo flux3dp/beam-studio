@@ -460,37 +460,6 @@ exports[`test AiGenerate Rendering Tests snapshot: default state 1`] = `
           class="toggle"
         >
           <span>
-            Use Fixed Seed
-          </span>
-          <button
-            aria-checked="false"
-            class="ant-switch css-dev-only-do-not-override-hash"
-            role="switch"
-            type="button"
-          >
-            <div
-              class="ant-switch-handle"
-            />
-            <span
-              class="ant-switch-inner"
-            >
-              <span
-                class="ant-switch-inner-checked"
-              />
-              <span
-                class="ant-switch-inner-unchecked"
-              />
-            </span>
-          </button>
-        </div>
-      </div>
-      <div
-        class="section"
-      >
-        <div
-          class="toggle"
-        >
-          <span>
             Laser-Friendly
           </span>
           <button
@@ -1020,37 +989,6 @@ exports[`test AiGenerate Rendering Tests snapshot: edit mode with images 1`] = `
               </svg>
             </span>
           </span>
-        </div>
-      </div>
-      <div
-        class="section"
-      >
-        <div
-          class="toggle"
-        >
-          <span>
-            Use Fixed Seed
-          </span>
-          <button
-            aria-checked="false"
-            class="ant-switch css-dev-only-do-not-override-hash"
-            role="switch"
-            type="button"
-          >
-            <div
-              class="ant-switch-handle"
-            />
-            <span
-              class="ant-switch-inner"
-            >
-              <span
-                class="ant-switch-inner-checked"
-              />
-              <span
-                class="ant-switch-inner-unchecked"
-              />
-            </span>
-          </button>
         </div>
       </div>
       <div
@@ -1600,37 +1538,6 @@ exports[`test AiGenerate Rendering Tests snapshot: generating state 1`] = `
           class="toggle"
         >
           <span>
-            Use Fixed Seed
-          </span>
-          <button
-            aria-checked="false"
-            class="ant-switch css-dev-only-do-not-override-hash"
-            role="switch"
-            type="button"
-          >
-            <div
-              class="ant-switch-handle"
-            />
-            <span
-              class="ant-switch-inner"
-            >
-              <span
-                class="ant-switch-inner-checked"
-              />
-              <span
-                class="ant-switch-inner-unchecked"
-              />
-            </span>
-          </button>
-        </div>
-      </div>
-      <div
-        class="section"
-      >
-        <div
-          class="toggle"
-        >
-          <span>
             Laser-Friendly
           </span>
           <button
@@ -2160,37 +2067,6 @@ exports[`test AiGenerate Rendering Tests snapshot: success with generated images
               </svg>
             </span>
           </span>
-        </div>
-      </div>
-      <div
-        class="section"
-      >
-        <div
-          class="toggle"
-        >
-          <span>
-            Use Fixed Seed
-          </span>
-          <button
-            aria-checked="false"
-            class="ant-switch css-dev-only-do-not-override-hash"
-            role="switch"
-            type="button"
-          >
-            <div
-              class="ant-switch-handle"
-            />
-            <span
-              class="ant-switch-inner"
-            >
-              <span
-                class="ant-switch-inner-checked"
-              />
-              <span
-                class="ant-switch-inner-unchecked"
-              />
-            </span>
-          </button>
         </div>
       </div>
       <div

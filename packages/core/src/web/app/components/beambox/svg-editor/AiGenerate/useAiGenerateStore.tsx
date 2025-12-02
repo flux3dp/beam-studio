@@ -4,21 +4,13 @@ import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
 
-import type { GenerationStatus, ImageDimensions, ImageInput } from './types';
+import type { AspectRatio, GenerationStatus, ImageDimensions, ImageInput } from './types';
 import { objectToCamelCase } from './utils/caseConversion';
 import { getStyleConfig } from './utils/categories';
-import {
-  getAspectRatioFromImageSize,
-  getImageResolution,
-  getImageSizeOption,
-  getOrientationFromImageSize,
-  getSizeFromImageResolution,
-} from './utils/dimensions';
+import { getSizeFromResolution, getSizeResolution } from './utils/dimensions';
 import { getInputFieldsForStyle } from './utils/inputFields';
 
 interface State {
-  // Form
-  count: number;
   dimensions: ImageDimensions;
   // UI & Status
   errorMessage: null | string;
@@ -33,9 +25,9 @@ interface State {
   imageInputs: ImageInput[];
   inputFields: Record<string, string>;
   isAiGenerateShown: boolean;
-  isFixedSeed: boolean;
   isLaserFriendly: boolean;
-  seed?: number;
+  // Form
+  maxImages: number;
   showHistory: boolean;
   style: string;
 }
@@ -43,9 +35,9 @@ interface State {
 interface Actions {
   addImageInput: (input: ImageInput) => void;
   addPendingHistoryItem: (params: {
-    count: number;
     dimensions: ImageDimensions;
     imageInputs: ImageInput[];
+    maxImages: number;
     uuid: string;
   }) => void;
   clearGenerationResults: () => void;
@@ -60,24 +52,21 @@ interface Actions {
   setState: (state: Partial<State>) => void;
   setStyle: (style: string, stylesWithFields?: StyleWithInputFields[]) => void;
 
-  toggleFixedSeed: () => void;
   toggleHistory: () => void;
   toggleLaserFriendly: () => void;
   updateHistoryItem: (uuid: string, updates: Partial<AiImageGenerationData>) => void;
 }
 
 const FORM_DEFAULTS = {
-  count: 1,
-  dimensions: { aspectRatio: '1:1', orientation: 'landscape', size: 'small' } as ImageDimensions,
+  dimensions: { aspectRatio: '1:1', size: 'small' } as ImageDimensions,
   errorMessage: null,
   generatedImages: [],
   generationStatus: 'idle' as GenerationStatus,
   generationUuid: null,
   imageInputs: [],
   inputFields: {},
-  isFixedSeed: false,
   isLaserFriendly: false,
-  seed: undefined,
+  maxImages: 1,
   style: 'plain',
 };
 
@@ -94,19 +83,19 @@ const INITIAL_STATE: State = {
 export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   ...INITIAL_STATE,
   addImageInput: (input) => set((state) => ({ imageInputs: [...state.imageInputs, input] })),
-  addPendingHistoryItem: ({ count, dimensions, imageInputs, uuid }) =>
+  addPendingHistoryItem: ({ dimensions, imageInputs, maxImages, uuid }) =>
     set((state) => {
       const newItem: AiImageGenerationData = {
+        aspect_ratio: dimensions.aspectRatio,
         completed_at: null,
         cost_time: null,
         created_at: new Date().toISOString(),
         fail_msg: null,
-        image_resolution: getImageResolution(dimensions),
-        image_size: getImageSizeOption(dimensions),
         image_urls: imageInputs.map((i) => (i.type === 'url' ? i.url : '')).filter(Boolean),
-        max_images: count,
+        max_images: maxImages,
         prompt_data: { inputs: state.inputFields, style: state.style },
         result_urls: null,
+        size: getSizeResolution(dimensions.size),
         state: 'pending',
         task_id: null,
         uuid,
@@ -119,21 +108,20 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   clearImageInputs: () => set({ imageInputs: [] }),
   importFromHistory: (item) => {
     const dimensions: ImageDimensions = {
-      aspectRatio: getAspectRatioFromImageSize(item.image_size),
-      orientation: getOrientationFromImageSize(item.image_size),
-      size: getSizeFromImageResolution(item.image_resolution),
+      aspectRatio: item.aspect_ratio as AspectRatio,
+      size: getSizeFromResolution(item.size),
     };
     const inputs = item.prompt_data?.inputs
       ? (objectToCamelCase(item.prompt_data.inputs) as Record<string, string>)
       : {};
 
     set({
-      count: item.max_images,
       dimensions,
       generatedImages: item.result_urls || [],
       generationStatus: item.state === 'success' ? 'success' : 'idle',
       imageInputs: item.image_urls?.map((url, i) => ({ id: `hist-${item.uuid}-${i}`, type: 'url', url })) || [],
       inputFields: inputs,
+      maxImages: item.max_images,
       showHistory: false,
       style: (item.prompt_data?.style as string) || 'plain',
     });
@@ -168,7 +156,6 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
 
       return { inputFields, isLaserFriendly: false, style: newStyle };
     }),
-  toggleFixedSeed: () => set((s) => ({ isFixedSeed: !s.isFixedSeed, seed: !s.isFixedSeed ? s.seed : undefined })),
   toggleHistory: () => {
     const { historyItems, historyLoading, showHistory } = get();
 
