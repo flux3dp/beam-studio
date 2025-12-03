@@ -957,10 +957,6 @@ class TextActions {
 
     if (x !== undefined) {
       this.setCursor();
-    } else {
-      const pt = this.screenToPt(x, y);
-
-      this.setCursorFromPoint(pt.x, pt.y);
     }
 
     setTimeout(() => {
