@@ -13,7 +13,7 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { endPreviewMode } from '@core/helpers/device/camera/previewMode';
+import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import localeHelper from '@core/helpers/locale-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -31,6 +31,7 @@ getSVGAsync((globalSVG) => {
 const Button = memo(
   ({
     active,
+    blue,
     children,
     disabled,
     id,
@@ -38,6 +39,7 @@ const Button = memo(
     title,
   }: {
     active?: boolean;
+    blue?: boolean;
     children: ReactNode;
     disabled?: boolean;
     id: string;
@@ -45,7 +47,11 @@ const Button = memo(
     title: string;
   }): React.JSX.Element => (
     <div
-      className={classNames(styles.button, { [styles.active]: active, [styles.disabled]: disabled })}
+      className={classNames(styles.button, {
+        [styles.active]: active,
+        [styles.blue]: blue,
+        [styles.disabled]: disabled,
+      })}
       id={id}
       onClick={() => {
         if (!disabled) onClick?.();
@@ -65,11 +71,23 @@ export const PreviewFloatingBar = memo((): ReactNode => {
   const workarea = useWorkarea();
   const isAdorSeries = useMemo(() => adorModels.has(workarea), [workarea]);
   const mode = useCanvasStore((state) => state.mode);
-  const { cameraType, hasWideAngleCamera, isClean, isDrawing, isLiveMode, isPreviewMode, isWideAngleCameraCalibrated } =
-    useCameraPreviewStore();
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
+  const {
+    cameraType,
+    hasWideAngleCamera,
+    isClean,
+    isDrawing,
+    isLiveMode,
+    isPreviewMode,
+    isStarting,
+    isWideAngleCameraCalibrated,
+  } = useCameraPreviewStore();
   const isCanvasEmpty = isDrawing || isClean;
+  const isMouseInPreviewMode = useMemo(() => ['pre_preview', 'preview'].includes(mouseMode), [mouseMode]);
 
-  if (!isPreviewMode || mode !== CanvasMode.Draw) return null;
+  if (mode !== CanvasMode.Draw) return null;
+
+  if (!isPreviewMode && !isStarting && !isMouseInPreviewMode) return null;
 
   const startImageTrace = () => {
     endPreviewMode();
@@ -87,39 +105,44 @@ export const PreviewFloatingBar = memo((): ReactNode => {
   return (
     <div className={styles.wrap}>
       <div className={styles.container}>
+        {hasWideAngleCamera && (
+          <Button
+            disabled={!isPreviewMode || isDrawing || isStarting}
+            id="wide-angle-camera"
+            onClick={async () => {
+              if (cameraType !== CameraType.WIDE_ANGLE) {
+                if (!isWideAngleCameraCalibrated) {
+                  alertCaller.popUpError({ message: tCamera.calibration_wide_angle_camera_first });
+
+                  return;
+                }
+
+                await previewModeController.switchCamera(CameraType.WIDE_ANGLE);
+              }
+
+              handlePreviewClick();
+            }}
+            title={lang.label.preview_wide_angle}
+          >
+            <LeftPanelIcons.ShootWideAngle />
+          </Button>
+        )}
+        <Button
+          blue={isMouseInPreviewMode && cameraType === CameraType.LASER_HEAD}
+          disabled={!isPreviewMode || isDrawing || isStarting}
+          id="laser-head-camera"
+          onClick={async () => {
+            if (cameraType !== CameraType.LASER_HEAD) await previewModeController.switchCamera(CameraType.LASER_HEAD);
+
+            handlePreviewClick();
+          }}
+          title={lang.label.preview}
+        >
+          <LeftPanelIcons.Shoot />
+        </Button>
         <Button disabled={isCanvasEmpty} id="image-trace" onClick={startImageTrace} title={lang.label.trace}>
           <LeftPanelIcons.Trace />
         </Button>
-        {hasWideAngleCamera && (
-          <>
-            <Button
-              active={cameraType === CameraType.LASER_HEAD}
-              id="laser-head-camera"
-              onClick={() => {
-                if (cameraType !== CameraType.LASER_HEAD) previewModeController.switchCamera(CameraType.LASER_HEAD);
-              }}
-              title={lang.label.preview}
-            >
-              <LeftPanelIcons.Shoot />
-            </Button>
-            <Button
-              active={cameraType === CameraType.WIDE_ANGLE}
-              id="wide-angle-camera"
-              onClick={() => {
-                if (cameraType !== CameraType.WIDE_ANGLE) {
-                  if (!isWideAngleCameraCalibrated) {
-                    alertCaller.popUpError({ message: tCamera.calibration_wide_angle_camera_first });
-                  }
-
-                  previewModeController.switchCamera(CameraType.WIDE_ANGLE);
-                }
-              }}
-              title={lang.label.preview_wide_angle}
-            >
-              <LeftPanelIcons.ShootWideAngle />
-            </Button>
-          </>
-        )}
         {isAdorSeries && !localeHelper.isNorthAmerica && (
           <Button
             active={isLiveMode}

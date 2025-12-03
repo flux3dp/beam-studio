@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .wrap {
   position: absolute;
   top: 40px;
@@ -16,7 +18,7 @@
   pointer-events: all;
   height: 36px;
   padding: 0 10px;
-  border: 1px solid #e0e0e0;
+  border: 1px solid #525252;
   border-radius: 20px;
   background: #f8f8f8;
   display: flex;
@@ -53,8 +55,12 @@
       cursor: pointer;
     }
 
-    &:hover:not(.disabled) {
+    &:hover:not(.disabled):not(.blue) {
       color: #000;
+    }
+
+    &.blue {
+      color: variables.$primary-blue;
     }
 
     @media screen and (max-width: 600px) {
