@@ -5,7 +5,7 @@ import i18n from '@core/helpers/i18n';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import alertCaller from '../app/actions/alert-caller';
-import PreviewModeController from '../app/actions/beambox/preview-mode-controller';
+import previewModeController from '../app/actions/beambox/preview-mode-controller';
 import Progress from '../app/actions/progress-caller';
 import alertConstants from '../app/constants/alert-constants';
 import DeviceConstants from '../app/constants/device-constants';
@@ -15,14 +15,29 @@ import DeviceMaster from './device-master';
 export default async function (device: IDeviceInfo, allowPause?: boolean, forceAbort?: boolean) {
   if (!device) return;
 
+  if (previewModeController.isPreviewMode || previewModeController.isStarting) {
+    if (previewModeController.currentDevice?.uuid !== device.uuid) {
+      await previewModeController.end();
+    } else {
+      return new Promise<boolean>((resolve) => {
+        alertCaller.popUp({
+          buttonType: alertConstants.YES_NO,
+          message: i18n.lang.message.device_is_used,
+          onNo: () => resolve(false),
+          onYes: async () => {
+            console.log('?');
+            await previewModeController.end({ shouldWaitForEnd: true });
+            resolve(true);
+          },
+        });
+      });
+    }
+  }
+
   // eslint-disable-next-line no-async-promise-executor
   return new Promise<boolean>(async (resolve) => {
     const onYes = async (type: 'abort' | 'kick') => {
       let timer: NodeJS.Timeout;
-
-      if (PreviewModeController.isPreviewMode) {
-        await PreviewModeController.end();
-      }
 
       const res = await DeviceMaster.select(device);
 

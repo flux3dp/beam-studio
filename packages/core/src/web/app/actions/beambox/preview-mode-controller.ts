@@ -27,6 +27,7 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 class PreviewModeController {
   isDrawing: boolean = false;
   isPreviewMode: boolean = false;
+  startPromise: null | Promise<void> = null;
   isStarting: boolean = false;
   isPreviewBlocked: boolean = false;
   currentDevice: IDeviceInfo | null = null;
@@ -123,72 +124,79 @@ class PreviewModeController {
   }
 
   async start(device: IDeviceInfo) {
-    this.reset();
-    this.setIsStarting(true);
+    this.startPromise = (async () => {
+      this.reset();
+      this.setIsStarting(true);
 
-    const res = await deviceMaster.select(device);
+      const res = await deviceMaster.select(device);
 
-    if (!res.success) {
-      this.setIsStarting(false);
-
-      return;
-    }
-
-    try {
-      this.currentDevice = device;
-
-      if (promarkModels.has(device.model)) {
-        this.previewManager = new PromarkPreviewManager(device);
-      } else if (Constant.adorModels.includes(device.model)) {
-        this.previewManager = new AdorPreviewManager(device);
-      } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
-        this.previewManager = new BB2PreviewManager(device);
-      } else if (device.model === 'fbm2') {
-        this.previewManager = new Beamo2PreviewManager(device);
-      } else {
-        this.previewManager = new BeamPreviewManager(device);
-      }
-
-      const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
-
-      if (!setupRes) {
+      if (!res.success) {
         this.setIsStarting(false);
 
         return;
       }
 
-      PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
-      deviceMaster.setDeviceControlReconnectOnClose(device);
-      this.setIsPreviewMode(true);
+      try {
+        this.currentDevice = device;
 
-      if (this.previewManager instanceof BB2PreviewManager) {
-        setCameraPreviewState({
-          cameraType: this.previewManager.getCameraType(),
-          hasWideAngleCamera: this.previewManager.hasWideAngleCamera,
-          isWideAngleCameraCalibrated: this.previewManager.isWideAngleCameraCalibrated,
-        });
-      } else {
-        setCameraPreviewState({
-          cameraType: this.previewManager.isFullScreen ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD,
-          hasWideAngleCamera: false,
-          isWideAngleCameraCalibrated: false,
-        });
+        if (promarkModels.has(device.model)) {
+          this.previewManager = new PromarkPreviewManager(device);
+        } else if (Constant.adorModels.includes(device.model)) {
+          this.previewManager = new AdorPreviewManager(device);
+        } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
+          this.previewManager = new BB2PreviewManager(device);
+        } else if (device.model === 'fbm2') {
+          this.previewManager = new Beamo2PreviewManager(device);
+        } else {
+          this.previewManager = new BeamPreviewManager(device);
+        }
+
+        const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
+
+        if (!setupRes) {
+          this.setIsStarting(false);
+
+          return;
+        }
+
+        PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
+        deviceMaster.setDeviceControlReconnectOnClose(device);
+        this.setIsPreviewMode(true);
+
+        if (this.previewManager instanceof BB2PreviewManager) {
+          setCameraPreviewState({
+            cameraType: this.previewManager.getCameraType(),
+            hasWideAngleCamera: this.previewManager.hasWideAngleCamera,
+            isWideAngleCameraCalibrated: this.previewManager.isWideAngleCameraCalibrated,
+          });
+        } else {
+          setCameraPreviewState({
+            cameraType: this.previewManager.isFullScreen ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD,
+            hasWideAngleCamera: false,
+            isWideAngleCameraCalibrated: false,
+          });
+        }
+
+        canvasEventEmitter.emit('UPDATE_CONTEXT');
+      } catch (error) {
+        console.error(error);
+        await this.end();
+        throw error;
+      } finally {
+        this.setIsStarting(false);
       }
-
-      canvasEventEmitter.emit('UPDATE_CONTEXT');
-    } catch (error) {
-      console.error(error);
-      await this.end();
-      throw error;
-    } finally {
-      this.setIsStarting(false);
-    }
+    })();
+    await this.startPromise;
+    this.startPromise = null;
   }
 
   async end({ shouldWaitForEnd = false }: { shouldWaitForEnd?: boolean } = {}) {
-    console.log('end of pmc');
+    console.log('end of pmc', this.isStarting, this.isPreviewMode);
+
+    this.setIsStarting(false);
     this.setIsPreviewMode(false);
     this.setIsDrawing(false);
+    await this.startPromise;
 
     if (this.liveModeTimeOut) {
       clearTimeout(this.liveModeTimeOut);

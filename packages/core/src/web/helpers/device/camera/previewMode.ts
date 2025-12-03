@@ -12,7 +12,7 @@ import i18n from '@core/helpers/i18n';
 
 export const endPreviewMode = (): void => {
   try {
-    if (previewModeController.isPreviewMode) {
+    if (previewModeController.isPreviewMode || previewModeController.isStarting) {
       previewModeController.end();
     }
   } catch (error) {
