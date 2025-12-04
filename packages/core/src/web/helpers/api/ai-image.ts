@@ -21,10 +21,7 @@ export interface GenerationRequest {
   aspect_ratio: AspectRatio; // e.g., '4:3', '3:4', '16:9', '1:1'
   image_inputs?: Array<File | string>; // Optional: If present, implies 'edit' mode
   max_images: number;
-  prompt_data: {
-    inputs: Record<string, string>;
-    style: string;
-  };
+  prompt_data: { inputs: Record<string, string>; style: string };
   seed?: number;
   size: '1K' | '2K' | '4K';
 }

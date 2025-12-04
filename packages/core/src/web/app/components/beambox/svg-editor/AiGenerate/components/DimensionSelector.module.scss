@@ -90,6 +90,11 @@
     height: 24px;
   }
 
+  &.ratio-21-9 {
+    width: 36px;
+    height: 16px;
+  }
+
   &.ratio-more {
     width: 20px;
     height: 20px;
@@ -119,35 +124,6 @@
       transform: translateX(-50%);
     }
   }
-
-  // old style
-  // &.ratio-more {
-  //   width: 20px;
-  //   height: 20px;
-  //   border-style: dashed;
-  //   position: relative;
-
-  //   &::before,
-  //   &::after {
-  //     content: '';
-  //     position: absolute;
-  //     background: currentColor;
-  //   }
-
-  //   &::before {
-  //     width: 4px;
-  //     height: 4px;
-  //     top: -2px;
-  //     right: -2px;
-  //   }
-
-  //   &::after {
-  //     width: 4px;
-  //     height: 4px;
-  //     bottom: -2px;
-  //     left: -2px;
-  //   }
-  // }
 }
 
 .more-button-container {
