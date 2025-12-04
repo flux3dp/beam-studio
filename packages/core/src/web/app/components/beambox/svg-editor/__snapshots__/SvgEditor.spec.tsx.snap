@@ -53,7 +53,6 @@ exports[`test svg-editor should render correctly in mac 1`] = `
       MockDpiInfo
     </div>
     <div
-<<<<<<< HEAD
       class="bottom-right"
     >
       <div
@@ -68,82 +67,14 @@ exports[`test svg-editor should render correctly in mac 1`] = `
       </div>
     </div>
     <div>
-      MockChat
-=======
-      class="ant-drawer ant-drawer-left no-mask css-dev-only-do-not-override-hash ant-drawer-open ant-drawer-inline"
-      tabindex="-1"
-    >
-      <div
-        aria-hidden="true"
-        data-sentinel="start"
-        style="width: 0px; height: 0px; overflow: hidden; outline: none; position: absolute;"
-        tabindex="0"
-      />
-      <div
-        class="ant-drawer-content-wrapper"
-        style="width: 400px;"
-      >
-        <div
-          aria-modal="true"
-          class="ant-drawer-content"
-          role="dialog"
-          style="box-shadow: none;"
-        >
-          <div
-            class="ant-drawer-body"
-            style="display: flex; flex-direction: column; height: 100%; overflow: hidden; padding: 0px;"
-          >
-            <div
-              class="handle"
-              style="left: 0px;"
-            >
-              <span
-                aria-label="left"
-                class="anticon anticon-left"
-                role="img"
-              >
-                <svg
-                  aria-hidden="true"
-                  data-icon="left"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="64 64 896 896"
-                  width="1em"
-                >
-                  <path
-                    d="M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.86 31.86 0 000 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z"
-                  />
-                </svg>
-              </span>
-            </div>
-            <div
-              style="position: relative; user-select: auto; width: 400px; height: 100%; max-width: 638px; min-width: 360px; box-sizing: border-box; flex-shrink: 0;"
-            >
-              <div
-                class="resizable-drawer-content"
-              >
-                <div>
-                  MockAiGenerate
-                </div>
-              </div>
-              <div>
-                <div
-                  class="resizable-handle"
-                  style="position: absolute; user-select: none; width: 10px; height: 100%; top: 0px; left: -5px; cursor: col-resize;"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div>
+        MockAiGenerate
       </div>
-      <div
-        aria-hidden="true"
-        data-sentinel="end"
-        style="width: 0px; height: 0px; overflow: hidden; outline: none; position: absolute;"
-        tabindex="0"
-      />
->>>>>>> c028510f4 (feat: add category)
+    </div>
+    <div>
+      <div>
+        MockChat
+      </div>
     </div>
   </div>
 </div>
@@ -202,7 +133,6 @@ exports[`test svg-editor should render correctly in win 1`] = `
       MockDpiInfo
     </div>
     <div
-<<<<<<< HEAD
       class="bottom-right"
     >
       <div
@@ -217,82 +147,14 @@ exports[`test svg-editor should render correctly in win 1`] = `
       </div>
     </div>
     <div>
-      MockChat
-=======
-      class="ant-drawer ant-drawer-left no-mask css-dev-only-do-not-override-hash ant-drawer-open ant-drawer-inline"
-      tabindex="-1"
-    >
-      <div
-        aria-hidden="true"
-        data-sentinel="start"
-        style="width: 0px; height: 0px; overflow: hidden; outline: none; position: absolute;"
-        tabindex="0"
-      />
-      <div
-        class="ant-drawer-content-wrapper"
-        style="width: 400px;"
-      >
-        <div
-          aria-modal="true"
-          class="ant-drawer-content"
-          role="dialog"
-          style="box-shadow: none;"
-        >
-          <div
-            class="ant-drawer-body"
-            style="display: flex; flex-direction: column; height: 100%; overflow: hidden; padding: 0px;"
-          >
-            <div
-              class="handle"
-              style="left: 0px;"
-            >
-              <span
-                aria-label="left"
-                class="anticon anticon-left"
-                role="img"
-              >
-                <svg
-                  aria-hidden="true"
-                  data-icon="left"
-                  fill="currentColor"
-                  focusable="false"
-                  height="1em"
-                  viewBox="64 64 896 896"
-                  width="1em"
-                >
-                  <path
-                    d="M724 218.3V141c0-6.7-7.7-10.4-12.9-6.3L260.3 486.8a31.86 31.86 0 000 50.3l450.8 352.1c5.3 4.1 12.9.4 12.9-6.3v-77.3c0-4.9-2.3-9.6-6.1-12.6l-360-281 360-281.1c3.8-3 6.1-7.7 6.1-12.6z"
-                  />
-                </svg>
-              </span>
-            </div>
-            <div
-              style="position: relative; user-select: auto; width: 400px; height: 100%; max-width: 638px; min-width: 360px; box-sizing: border-box; flex-shrink: 0;"
-            >
-              <div
-                class="resizable-drawer-content"
-              >
-                <div>
-                  MockAiGenerate
-                </div>
-              </div>
-              <div>
-                <div
-                  class="resizable-handle"
-                  style="position: absolute; user-select: none; width: 10px; height: 100%; top: 0px; left: -5px; cursor: col-resize;"
-                />
-              </div>
-            </div>
-          </div>
-        </div>
+      <div>
+        MockAiGenerate
       </div>
-      <div
-        aria-hidden="true"
-        data-sentinel="end"
-        style="width: 0px; height: 0px; overflow: hidden; outline: none; position: absolute;"
-        tabindex="0"
-      />
->>>>>>> c028510f4 (feat: add category)
+    </div>
+    <div>
+      <div>
+        MockChat
+      </div>
     </div>
   </div>
 </div>

@@ -13,6 +13,7 @@ jest.mock('@core/helpers/fileImportHelper', () => ({
 
 jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/common/ZoomBlock', () => () => <div>MockZoomBlock</div>);
+jest.mock('@core/app/widgets/Drawer', () => ({ children }) => <div>{children}</div>);
 
 jest.mock('./Banner', () => () => <div>MockBanner</div>);
 jest.mock('./Chat', () => () => <div>MockChat</div>);
@@ -20,10 +21,7 @@ jest.mock('./DpiInfo', () => () => <div>MockDpiInfo</div>);
 jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
 jest.mock('./AiGenerate', () => () => <div>MockAiGenerate</div>);
 jest.mock('./AiGenerate/useAiGenerateStore', () => ({
-  useAiGenerateStore: () => ({
-    isAiGenerateShown: false,
-    setState: jest.fn(),
-  }),
+  useAiGenerateStore: () => ({ isAiGenerateShown: false, setState: jest.fn() }),
 }));
 jest.mock('./PreviewFloatingBar', () => () => <div>MockPreviewFloatingBar</div>);
 jest.mock('./PreviewSlider', () => () => <div>MockPreviewSlider</div>);
@@ -33,25 +31,17 @@ jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
 
 const mockInit = jest.fn();
 
-jest.mock('@core/app/actions/beambox/svg-editor', () => ({
-  init: () => mockInit(),
-}));
+jest.mock('@core/app/actions/beambox/svg-editor', () => ({ init: () => mockInit() }));
 
-Object.defineProperty(window, '$', {
-  value: jest.fn(),
-});
+Object.defineProperty(window, '$', { value: jest.fn() });
 
 const mockZoom = jest.fn();
 
-jest.mock('@core/app/svgedit/workarea', () => ({
-  zoom: (...args) => mockZoom(...args),
-}));
+jest.mock('@core/app/svgedit/workarea', () => ({ zoom: (...args) => mockZoom(...args) }));
 
 describe('test svg-editor', () => {
   test('should render correctly in mac', () => {
-    Object.defineProperty(window, 'os', {
-      value: 'MacOS',
-    });
+    Object.defineProperty(window, 'os', { value: 'MacOS' });
 
     const { container } = render(<SvgEditor />);
 
@@ -59,9 +49,7 @@ describe('test svg-editor', () => {
   });
 
   test('should render correctly in win', () => {
-    Object.defineProperty(window, 'os', {
-      value: 'Windows',
-    });
+    Object.defineProperty(window, 'os', { value: 'Windows' });
 
     const { container } = render(<SvgEditor />);
 

@@ -118,7 +118,6 @@ const UnmemorizedAiGenerate = () => {
         onRefresh={store.resetForm}
         showHistory={showHistory}
       />
-
       <div className={styles.content}>
         {showHistory ? (
           <ImageHistory />

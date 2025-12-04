@@ -1,11 +1,8 @@
 import type { ReactNode } from 'react';
-import React, { useState } from 'react';
+import React from 'react';
 import { useEffect } from 'react';
 
-import { LeftOutlined } from '@ant-design/icons';
-import { ConfigProvider, Drawer } from 'antd';
 import classNames from 'classnames';
-import { Resizable } from 're-resizable';
 
 import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
@@ -15,6 +12,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
+import Drawer from '@core/app/widgets/Drawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { useIsMobile } from '@core/helpers/system-helper';
 
@@ -22,6 +20,7 @@ import AiGenerate from './AiGenerate';
 import { useAiGenerateStore } from './AiGenerate/useAiGenerateStore';
 import Banner from './Banner';
 import Chat from './Chat';
+import { useChatStore } from './Chat/useChatStore';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
 import PreviewFloatingBar from './PreviewFloatingBar';
@@ -34,15 +33,8 @@ import Workarea from './Workarea';
 export const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
   const mode = useCanvasStore((state) => state.mode);
-  const isAiGenerateShown = useAiGenerateStore((state) => state.isAiGenerateShown);
-  const [aiGenerateWidth, setAiGenerateWidth] = useState(400);
-  // default motion duration for the drawer
-  // this is used to disable the animation when resizing the drawer
-  const [motionDurationSlow, setMotionDurationSlow] = useState('0.3s');
-
-  const onAiGenerateClose = () => {
-    useAiGenerateStore.setState({ isAiGenerateShown: false });
-  };
+  const { isAiGenerateShown, setState } = useAiGenerateStore();
+  const { isChatShown, setIsChatShown } = useChatStore();
 
   useEffect(() => {
     if (window.$) {
@@ -78,6 +70,7 @@ export const SvgEditor = (): ReactNode => {
           <div id="cur_context_panel" />
           <div className="dropdown" id="option_lists" />
         </div>
+
         {mode !== CanvasMode.PathPreview && (
           <>
             {!isMobile && <PreviewFloatingBar />}
@@ -97,42 +90,19 @@ export const SvgEditor = (): ReactNode => {
             </div>
           </>
         )}
-        <ConfigProvider theme={{ token: { motionDurationSlow } }}>
-          <Drawer
-            closable={false}
-            getContainer={false}
-            mask={false}
-            onClose={onAiGenerateClose}
-            open={isAiGenerateShown}
-            placement="left"
-            style={{ boxShadow: 'none' }}
-            styles={{
-              body: { display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', padding: '0px' },
-            }}
-            width={aiGenerateWidth}
-          >
-            <div className={styles.handle} onClick={onAiGenerateClose} style={{ left: 0, right: 'auto' }}>
-              <LeftOutlined />
-            </div>
-            <Resizable
-              enable={{ left: true }}
-              handleClasses={{ left: styles['resizable-handle'] }}
-              maxWidth={638}
-              minWidth={360}
-              onResize={(_event, _direction, elementRef) => {
-                setAiGenerateWidth(elementRef.offsetWidth);
-              }}
-              onResizeStart={() => setMotionDurationSlow('0s')}
-              onResizeStop={() => setMotionDurationSlow('0.3s')}
-              size={{ height: '100%', width: aiGenerateWidth }}
-            >
-              <div className={styles['resizable-drawer-content']}>
-                <AiGenerate />
-              </div>
-            </Resizable>
-          </Drawer>
-        </ConfigProvider>
-        <Chat />
+
+        <Drawer
+          enable={false}
+          isOpen={isAiGenerateShown}
+          setIsOpen={(isOpen) => setState({ isAiGenerateShown: isOpen })}
+          showHandle={false}
+        >
+          <AiGenerate />
+        </Drawer>
+
+        <Drawer enable={{ right: true }} isOpen={isChatShown} setIsOpen={setIsChatShown}>
+          <Chat />
+        </Drawer>
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>
