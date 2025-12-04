@@ -14,8 +14,8 @@ const STYLES: StyleWithInputFields[] = [
     tags: ['logo'],
   },
   {
-    displayName: 'Plain',
-    id: 'plain',
+    displayName: 'Customize',
+    id: 'customize',
     inputFields: [{ key: 'description', label: 'Desc', placeholder: '...', required: false }],
     modes: ['text-to-image'],
     previewImage: '',
@@ -35,7 +35,7 @@ describe('getInputFieldsForStyle', () => {
   // Table-driven tests for standard cases
   const testCases = [
     { desc: 'returns fields for existing style', expectedKeys: ['description', 'textToDisplay'], styleId: 'logo-cute' },
-    { desc: 'returns fields for plain style', expectedKeys: ['description'], styleId: 'plain' },
+    { desc: 'returns fields for plain style', expectedKeys: ['description'], styleId: 'customize' },
     { desc: 'returns empty array for style with no fields', expectedKeys: [], styleId: 'empty-style' },
     { desc: 'returns empty array for unknown style', expectedKeys: [], styleId: 'unknown-style' },
     { desc: 'returns empty array for null styleId', expectedKeys: [], styleId: null },

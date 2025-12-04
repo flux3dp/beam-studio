@@ -22,7 +22,7 @@ const PLACEHOLDER_DATA: AiConfigData = {
   styles: [
     {
       displayName: 'Customize',
-      id: 'plain',
+      id: 'customize',
       inputFields: [
         {
           key: 'description',

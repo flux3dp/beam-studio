@@ -30,7 +30,12 @@ import { useAiConfigQuery } from './hooks/useAiConfigQuery';
 // --- Constants & Helpers ---
 const MOCK_USER = { email: 'test@e.com', info: { credit: 1.0, email: 'test@e.com' } };
 const MOCK_STYLES = [
-  { displayName: 'Plain', id: 'plain', inputFields: [{ key: 'desc', label: 'Desc' }], modes: ['text-to-image'] },
+  {
+    displayName: 'Customize',
+    id: 'customize',
+    inputFields: [{ key: 'desc', label: 'Desc' }],
+    modes: ['text-to-image'],
+  },
 ];
 
 const setupEditMode = () => {
@@ -64,7 +69,7 @@ describe('AiGenerate', () => {
   describe('Rendering', () => {
     test.each([
       ['AI Create', '.title'],
-      ['Plain', '.style-selection-button'],
+      ['Customize', '.style-selection-button'],
       ['Style & Mode', '.section-title'],
       ['Laser-Friendly', '.toggle span'],
     ])('renders text "%s"', (text, selector) => {
