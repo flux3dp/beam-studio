@@ -62,7 +62,7 @@ export const prefetchAiConfig = async (): Promise<void> => {
       return {
         categories: result.categories,
         styles: result.styles,
-        stylesWithFields: result.stylesWithFields,
+        stylesWithFields: result.styles,
       };
     },
     queryKey: queryKeys.aiConfig.byLocale(locale),

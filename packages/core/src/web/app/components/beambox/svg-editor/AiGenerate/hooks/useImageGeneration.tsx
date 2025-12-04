@@ -9,13 +9,16 @@ import { objectToSnakeCase } from '../utils/caseConversion';
 import { getSizeResolution } from '../utils/dimensions';
 import { getInputFieldsForStyle } from '../utils/inputFields';
 
-const validateRequest = (params: {
+const validateRequest = ({
+  currentUser,
+  style,
+  styles,
+}: {
   currentUser: IUser | null;
   style: string;
-  stylesWithFields?: StyleWithInputFields[];
+  styles?: StyleWithInputFields[];
 }): null | string => {
   const { imageInputs, inputFields } = useAiGenerateStore.getState();
-  const { currentUser, style, stylesWithFields } = params;
 
   // 1. Validate User
   if (!currentUser) return 'Please log in to use AI generation.';
@@ -24,7 +27,7 @@ const validateRequest = (params: {
   if (imageInputs.length > 10) return 'Maximum 10 images allowed';
 
   // 3. Validate Required Fields
-  const fieldDefs = getInputFieldsForStyle(style, stylesWithFields);
+  const fieldDefs = getInputFieldsForStyle(style, styles);
 
   // Fallback: simple description check if no fields defined
   if (fieldDefs.length === 0) {
@@ -55,7 +58,7 @@ interface UseImageGenerationParams {
   maxImages: number;
   seed?: number;
   style: string;
-  stylesWithFields?: StyleWithInputFields[];
+  styles?: StyleWithInputFields[];
 }
 
 export const useImageGeneration = ({
@@ -63,14 +66,14 @@ export const useImageGeneration = ({
   dimensions,
   maxImages,
   style = 'plain',
-  stylesWithFields,
+  styles,
 }: UseImageGenerationParams) => {
   const store = useAiGenerateStore(); // Access store directly
   const { addPendingHistoryItem, clearGenerationResults, imageInputs, inputFields, updateHistoryItem } = store;
 
   const handleGenerate = async () => {
     // 1. Validation Phase
-    const validationError = validateRequest({ currentUser, style, stylesWithFields });
+    const validationError = validateRequest({ currentUser, style, styles });
 
     if (validationError) {
       useAiGenerateStore.setState({ errorMessage: validationError });

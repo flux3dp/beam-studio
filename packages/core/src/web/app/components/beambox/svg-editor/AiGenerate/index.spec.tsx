@@ -19,7 +19,7 @@ jest.mock('@core/app/svgedit/operations/import/importAiImage', () => ({ importAi
 jest.mock('@core/implementations/browser', () => ({ open: jest.fn() }));
 jest.mock('./components/ImageHistory', () => () => <div data-testid="mock-history" />);
 jest.mock('./components/ImageResults', () => () => <div data-testid="mock-results" />);
-jest.mock('./components/ImageUploadArea', () => () => <div data-testid="mock-upload" />);
+jest.mock('./components/DescriptionInputWithUpload', () => () => <div data-testid="mock-description-upload" />);
 jest.mock('./hooks/useAiConfigQuery', () => ({ useAiConfigQuery: jest.fn() }));
 
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -36,8 +36,13 @@ const MOCK_STYLES = [
 const setupEditMode = () => {
   (useAiConfigQuery as jest.Mock).mockReturnValue({
     data: {
-      styles: [{ ...MOCK_STYLES[0], modes: ['text-to-image', 'edit'] }],
-      stylesWithFields: [{ ...MOCK_STYLES[0], modes: ['text-to-image', 'edit'] }],
+      styles: [
+        {
+          ...MOCK_STYLES[0],
+          inputFields: [{ key: 'description', label: 'Description' }],
+          modes: ['text-to-image', 'edit'],
+        },
+      ],
     },
     isLoading: false,
   });
@@ -51,7 +56,7 @@ describe('AiGenerate', () => {
     (createAiImageTask as jest.Mock).mockResolvedValue({ uuid: '123' });
     (pollTaskUntilComplete as jest.Mock).mockResolvedValue({ imageUrls: ['url'], success: true });
     (useAiConfigQuery as jest.Mock).mockReturnValue({
-      data: { styles: MOCK_STYLES, stylesWithFields: MOCK_STYLES },
+      data: { styles: MOCK_STYLES },
       isLoading: false,
     });
   });
@@ -80,18 +85,18 @@ describe('AiGenerate', () => {
       expect(queryByTestId('mock-history')).toBeInTheDocument();
     });
 
-    test('conditionally renders upload area based on mode: text-to-image', () => {
+    test('conditionally renders description with upload based on mode: text-to-image', () => {
       const { queryByTestId } = render(<AiGenerate />);
 
-      expect(queryByTestId('mock-upload')).not.toBeInTheDocument();
+      expect(queryByTestId('mock-description-upload')).not.toBeInTheDocument();
     });
 
-    test('conditionally renders upload area based on mode: edit', () => {
+    test('conditionally renders description with upload based on mode: edit', () => {
       setupEditMode();
 
       const { queryByTestId } = render(<AiGenerate />);
 
-      expect(queryByTestId('mock-upload')).toBeInTheDocument();
+      expect(queryByTestId('mock-description-upload')).toBeInTheDocument();
     });
   });
 

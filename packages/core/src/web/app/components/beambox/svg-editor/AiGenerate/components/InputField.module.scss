@@ -1,0 +1,158 @@
+@use '@core/styles/variables' as vars-global;
+@use '../shared-variables' as vars;
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding: 4px;
+  border-radius: 8px;
+  transition: all 0.2s;
+
+  &.dragging {
+    background: rgba(24, 144, 255, 0.05);
+    border: 2px dashed vars.$primary-blue;
+    padding: 2px;
+  }
+}
+
+.error {
+  margin-bottom: 4px;
+}
+
+.input-container {
+  position: relative;
+}
+
+.textarea {
+  font-size: 14px;
+
+  &::placeholder {
+    color: vars.$text-placeholder;
+  }
+}
+
+.bottom-bar {
+  position: absolute;
+  bottom: 0;
+  left: 8px;
+  right: 8px;
+  display: flex;
+  align-items: flex-end;
+  z-index: 10;
+  pointer-events: none; // Click-through to textarea
+
+  > * {
+    pointer-events: auto;
+  } // Enable children
+}
+
+.upload-btn {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: none;
+  background: vars-global.$backgroundColor;
+  color: black;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  flex-shrink: 0;
+  margin-bottom: 4px;
+
+  &:hover:not(.disabled) {
+    color: vars-global.$primary-blue;
+    transform: scale(1.05);
+  }
+  &.disabled {
+    background: vars.$border-color;
+    color: vars.$text-secondary;
+    cursor: not-allowed;
+  }
+  svg {
+    font-size: 14px;
+  }
+}
+
+.image-count,
+.char-count {
+  font-size: 12px;
+  padding-bottom: 8px;
+  color: vars.$text-secondary;
+}
+.image-count {
+  margin-left: 8px;
+}
+.char-count {
+  margin-left: auto;
+}
+
+.thumbnail-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.thumbnail {
+  position: relative;
+  aspect-ratio: 1;
+  border-radius: 8px;
+  overflow: hidden;
+
+  &:hover .remove-btn {
+    opacity: 1;
+  }
+}
+
+.thumbnail-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.remove-btn {
+  position: absolute !important;
+  top: 6px;
+  right: 6px;
+  width: 24px !important;
+  height: 24px !important;
+  min-width: 24px !important;
+  padding: 0 !important;
+  opacity: 0;
+  transition: opacity 0.2s;
+  background: rgba(0, 0, 0, 0.6) !important;
+  color: white !important;
+  border: none !important;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.8) !important;
+    color: white !important;
+  }
+  :global(.anticon) {
+    font-size: 12px;
+  }
+}
+
+.add-placeholder {
+  aspect-ratio: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px dashed vars.$border-color;
+  border-radius: 8px;
+  background: transparent;
+  color: vars.$text-secondary;
+  cursor: pointer;
+  transition: all 0.2s;
+
+  &:hover {
+    border-color: vars.$primary-blue;
+    color: vars.$primary-blue;
+  }
+  svg {
+    font-size: 24px;
+  }
+}

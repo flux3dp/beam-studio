@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 
-import { BulbOutlined, ClockCircleOutlined, CloseOutlined, ReloadOutlined, RightOutlined } from '@ant-design/icons';
-import { Alert, Button, Input, Select, Spin, Switch } from 'antd';
+import { RightOutlined } from '@ant-design/icons';
+import { Button, Select, Switch } from 'antd';
 import classNames from 'classnames';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -11,12 +11,16 @@ import shortcuts from '@core/helpers/shortcuts';
 import type { IUser } from '@core/interfaces/IUser';
 
 import DimensionSelector from './components/DimensionSelector';
+import ErrorView from './components/ErrorView';
+import Header from './components/Header';
 import ImageHistory from './components/ImageHistory';
 import ImageResults from './components/ImageResults';
-import ImageUploadArea from './components/ImageUploadArea';
+import InputField from './components/InputField';
+import InputWithUpload from './components/InputField.upload';
+import LoadingView from './components/LoadingView';
 import { useAiConfigQuery } from './hooks/useAiConfigQuery';
 import { useImageGeneration } from './hooks/useImageGeneration';
-import cssStyles from './index.module.scss';
+import styles from './index.module.scss';
 import { useAiGenerateStore } from './useAiGenerateStore';
 import { getStyleConfig } from './utils/categories';
 import { getInputFieldsForStyle } from './utils/inputFields';
@@ -58,18 +62,17 @@ const UnmemorizedAiGenerate = () => {
 
   // 1. Data Fetching
   const { data: aiConfig, isError, isLoading, refetch } = useAiConfigQuery();
-  const stylesWithFields = aiConfig?.stylesWithFields ?? [];
-  const aiStyles = aiConfig?.styles ?? [];
+  const aiConfigStyles = aiConfig?.styles || [];
 
   // 2. Logic & Configuration
-  const optionConfig = getStyleConfig(style, aiStyles);
-  const stylePreset = optionConfig?.id || 'plain';
+  const styleConfig = getStyleConfig(style, aiConfigStyles);
+  const stylePreset = styleConfig?.id || 'plain';
   const { handleGenerate } = useImageGeneration({
     currentUser,
     dimensions,
     maxImages,
     style: stylePreset,
-    stylesWithFields,
+    styles: aiConfigStyles,
   });
 
   // 3. Effects
@@ -98,8 +101,7 @@ const UnmemorizedAiGenerate = () => {
   }, [isAiGenerateShown, store]);
 
   // 4. Handlers
-  const handleStyleClick = () =>
-    dialogCaller.showStyleSelectionPanel((s) => store.setStyle(s, stylesWithFields), style);
+  const handleStyleClick = () => dialogCaller.showStyleSelectionPanel((s) => store.setStyle(s, aiConfigStyles), style);
   const creditCost = AI_COST_PER_IMAGE * maxImages;
   const canGenerate = currentUser && (currentUser.info?.credit || 0) >= creditCost && imageInputs.length <= 10;
 
@@ -109,7 +111,7 @@ const UnmemorizedAiGenerate = () => {
   if (isError) return <ErrorView onClose={() => store.setState({ isAiGenerateShown: false })} onRetry={refetch} />;
 
   return (
-    <div className={classNames(cssStyles['ai-generate-container'])}>
+    <div className={classNames(styles['ai-generate-container'])}>
       <Header
         onClose={() => store.setState({ isAiGenerateShown: false })}
         onHistory={store.toggleHistory}
@@ -117,89 +119,78 @@ const UnmemorizedAiGenerate = () => {
         showHistory={showHistory}
       />
 
-      <div className={cssStyles.content}>
+      <div className={styles.content}>
         {showHistory ? (
           <ImageHistory />
         ) : (
           <>
-            <div className={cssStyles.section}>
-              <h3 className={cssStyles['section-title']}>Style & Mode</h3>
+            <div className={styles.section}>
+              <h3 className={styles['section-title']}>Style & Mode</h3>
               <Button
                 block
-                className={cssStyles['style-selection-button']}
-                icon={<img alt={optionConfig.displayName} className={cssStyles.img} src={optionConfig.previewImage} />}
+                className={styles['style-selection-button']}
+                icon={
+                  styleConfig.previewImage && (
+                    <img alt={styleConfig.displayName} className={styles.img} src={styleConfig.previewImage} />
+                  )
+                }
                 onClick={handleStyleClick}
                 size="large"
               >
-                <div className={cssStyles['button-content']}>
-                  <span className={cssStyles['button-label']}>
-                    {optionConfig?.displayName || 'Select Creation Style'}
-                  </span>
+                <div className={styles['button-content']}>
+                  <span className={styles['button-label']}>{styleConfig?.displayName || 'Select Creation Style'}</span>
                   <RightOutlined />
                 </div>
               </Button>
             </div>
 
-            {optionConfig?.modes?.includes('edit') && (
-              <div className={cssStyles.section}>
-                <h3 className={cssStyles['section-title']}>Upload Images</h3>
-                <ImageUploadArea
-                  imageInputs={imageInputs}
-                  onAdd={store.addImageInput}
-                  onRemove={store.removeImageInput}
-                />
-              </div>
-            )}
+            {getInputFieldsForStyle(stylePreset, aiConfigStyles).map((field) => {
+              // Determine if this specific field needs upload capabilities
+              const isDescriptionWithUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
 
-            {stylePreset &&
-              getInputFieldsForStyle(stylePreset, stylesWithFields).map((field) => (
-                <div className={cssStyles.section} key={field.key}>
-                  <h3 className={cssStyles['section-title']}>
-                    {field.label} {field.required && <span className={cssStyles.required}>*</span>}
+              return (
+                <div className={styles.section} key={field.key}>
+                  <h3 className={styles['section-title']}>
+                    {field.label} {field.required && <span className={styles.required}>*</span>}
                   </h3>
-                  <div className={cssStyles['input-wrapper']}>
-                    <Input.TextArea
-                      className={cssStyles.textarea}
-                      maxLength={field.maxLength}
-                      onChange={(e) => store.setInputField(field.key, e.target.value)}
+
+                  {isDescriptionWithUpload ? (
+                    <InputWithUpload
+                      field={field}
+                      imageInputs={imageInputs}
+                      onAddImage={store.addImageInput}
+                      onChange={(value) => store.setInputField(field.key, value)}
                       onKeyDown={handleTextAreaKeyDown}
-                      onKeyUp={(e) => e.stopPropagation()}
-                      placeholder={field.placeholder}
-                      rows={field.key === 'description' ? 5 : 3}
-                      showCount={
-                        field.maxLength
-                          ? {
-                              formatter: ({ count, maxLength }) => (
-                                <div className={cssStyles['count-wrapper']}>
-                                  <span className={cssStyles.count}>
-                                    {count} / {maxLength}
-                                  </span>
-                                  <BulbOutlined className={cssStyles['bulb-icon']} />
-                                </div>
-                              ),
-                            }
-                          : false
-                      }
+                      onRemoveImage={store.removeImageInput}
                       value={inputFields[field.key] || ''}
                     />
-                  </div>
+                  ) : (
+                    <InputField
+                      field={field}
+                      onChange={(value) => store.setInputField(field.key, value)}
+                      onKeyDown={handleTextAreaKeyDown}
+                      rows={field.key === 'description' ? 5 : 3}
+                      value={inputFields[field.key] || ''}
+                    />
+                  )}
                 </div>
-              ))}
+              );
+            })}
 
             <DimensionSelector dimensions={dimensions} />
 
-            <div className={cssStyles.section}>
-              <h3 className={cssStyles['section-title']}>Count</h3>
+            <div className={styles.section}>
+              <h3 className={styles['section-title']}>Count</h3>
               <Select
-                className={cssStyles['count-select']}
+                className={styles['count-select']}
                 onChange={(val) => store.setState({ maxImages: val })}
                 options={[1, 2, 3, 4].map((n) => ({ label: String(n), value: n }))}
                 value={maxImages}
               />
             </div>
 
-            <div className={cssStyles.section}>
-              <div className={cssStyles['toggle']}>
+            <div className={styles.section}>
+              <div className={styles['toggle']}>
                 <span>Laser-Friendly</span>
                 <Switch checked={isLaserFriendly} onChange={store.toggleLaserFriendly} />
               </div>
@@ -211,10 +202,10 @@ const UnmemorizedAiGenerate = () => {
               generationStatus={generationStatus}
             />
 
-            <div className={cssStyles['button-section']}>
+            <div className={styles['button-section']}>
               <Button
                 block
-                className={cssStyles['generate-button']}
+                className={styles['generate-button']}
                 disabled={!canGenerate}
                 onClick={handleGenerate}
                 size="large"
@@ -222,11 +213,11 @@ const UnmemorizedAiGenerate = () => {
               >
                 Generate
               </Button>
-              <div className={cssStyles['credits-info']}>
-                <span className={cssStyles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
-                <div className={cssStyles['credits-balance']}>
+              <div className={styles['credits-info']}>
+                <span className={styles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
+                <div className={styles['credits-balance']}>
                   <FluxIcons.AICredit />
-                  <span className={cssStyles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
+                  <span className={styles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
                 </div>
               </div>
             </div>
@@ -236,62 +227,5 @@ const UnmemorizedAiGenerate = () => {
     </div>
   );
 };
-
-const Header = ({ onClose, onHistory, onRefresh, showHistory }: any) => (
-  <div className={cssStyles.header}>
-    <h2 className={cssStyles.title}>AI Create</h2>
-    <div className={cssStyles.actions}>
-      <Button
-        className={classNames(cssStyles['icon-button'], { [cssStyles.active]: showHistory })}
-        icon={<ClockCircleOutlined />}
-        onClick={onHistory}
-        shape="circle"
-        type="text"
-      />
-      <Button
-        className={cssStyles['icon-button']}
-        icon={<ReloadOutlined />}
-        onClick={onRefresh}
-        shape="circle"
-        type="text"
-      />
-      <Button
-        className={cssStyles['icon-button']}
-        icon={<CloseOutlined />}
-        onClick={onClose}
-        shape="circle"
-        type="text"
-      />
-    </div>
-  </div>
-);
-
-const LoadingView = ({ onClose }: { onClose: () => void }) => (
-  <div className={classNames(cssStyles['ai-generate-container'])}>
-    <Header onClose={onClose} />
-    <div className={cssStyles.content} style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-      <Spin size="large" tip="Loading AI styles..." />
-    </div>
-  </div>
-);
-
-const ErrorView = ({ onClose, onRetry }: { onClose: () => void; onRetry: () => void }) => (
-  <div className={classNames(cssStyles['ai-generate-container'])}>
-    <Header onClose={onClose} />
-    <div className={cssStyles.content}>
-      <Alert
-        action={
-          <Button onClick={onRetry} size="small" type="primary">
-            Retry
-          </Button>
-        }
-        description="Failed to load AI configuration"
-        message="Failed to load AI styles"
-        showIcon
-        type="error"
-      />
-    </div>
-  </div>
-);
 
 export default memo(UnmemorizedAiGenerate);

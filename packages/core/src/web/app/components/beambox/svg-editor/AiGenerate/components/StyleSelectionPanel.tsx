@@ -1,6 +1,6 @@
-import React, { memo, useState } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 
-import { CheckOutlined } from '@ant-design/icons';
+import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 
@@ -16,6 +16,7 @@ interface StyleSelectionPanelProps {
   onSelect: (style: string) => void;
 }
 
+// Revised OptionCard: Image background with text overlay
 const OptionCard = ({
   isSelected,
   onClick,
@@ -26,15 +27,10 @@ const OptionCard = ({
   option: StyleLike;
 }) => (
   <div className={classNames(styles['option-card'], { [styles.selected]: isSelected })} onClick={onClick}>
-    {isSelected && (
-      <div className={styles['check-badge']}>
-        <CheckOutlined />
-      </div>
-    )}
     <div className={styles['option-preview']}>
       <img alt={option.displayName} className={styles['preview-image']} src={option.previewImage} />
     </div>
-    <div className={styles['option-info']}>
+    <div className={styles['option-overlay']}>
       <h4 className={styles['option-name']}>{option.displayName}</h4>
     </div>
   </div>
@@ -42,18 +38,26 @@ const OptionCard = ({
 
 const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
   const { data: aiConfig } = useAiConfigQuery();
-  const displayCategories = aiConfig?.categories ?? [];
-  const displayStyles = aiConfig?.styles ?? [];
+  const categories = useMemo(
+    () => aiConfig?.categories.filter((c) => c.id !== 'customize') ?? [],
+    [aiConfig?.categories],
+  );
+  const displayStyles = useMemo(() => aiConfig?.styles ?? [], [aiConfig?.styles]);
 
+  // Initialize selected category based on current style
   const [selectedCategory, setSelectedCategory] = useState(() => {
-    const primaryCategory = getCategoryForOption(currentStyle, displayStyles, displayCategories);
+    const primaryCategory = getCategoryForOption(currentStyle, displayStyles, categories);
 
-    return primaryCategory?.id || displayCategories[0]?.id || 'customize';
+    return primaryCategory?.id || categories[0]?.id || 'customize';
   });
+
   const [selectedStyle, setSelectedStyle] = useState(currentStyle);
 
-  const currentCategory = displayCategories.find((c) => c.id === selectedCategory);
-  const currentCategoryStyles = getStylesForCategory(selectedCategory, displayStyles, displayCategories);
+  // Get styles for the currently active category
+  const currentCategoryStyles = useMemo(
+    () => getStylesForCategory(selectedCategory, displayStyles, categories),
+    [selectedCategory, displayStyles, categories],
+  );
 
   const handleConfirm = () => {
     if (selectedStyle) {
@@ -65,12 +69,29 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
   return (
     <Modal
       centered
+      className={styles['style-modal']}
       footer={
         <div className={styles.footer}>
+          <div>
+            <Button
+              className={classNames(styles['custom-creation-btn'], {
+                [styles.active]: selectedStyle === 'plain',
+              })}
+              onClick={() => {
+                setSelectedStyle('plain');
+              }}
+            >
+              <UserOutlined />
+              <span>{'Custom Creation'}</span>
+              <PlusOutlined />
+            </Button>
+          </div>
           <div className={styles['footer-right']}>
-            <Button onClick={onClose}>Cancel</Button>
-            <Button disabled={!selectedStyle} onClick={handleConfirm} type="primary">
-              Apply Style
+            <Button onClick={onClose} size="large">
+              {'Cancel'}
+            </Button>
+            <Button disabled={!selectedStyle} onClick={handleConfirm} size="large" type="primary">
+              {'Apply Style'}
             </Button>
           </div>
         </div>
@@ -78,32 +99,29 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
       onCancel={onClose}
       open
       title="Select Creation Style"
-      width={900}
+      width={1000} // Wider modal for the grid
     >
       <div className={styles.container}>
-        {/* Sidebar: Categories */}
+        {/* SIDEBAR */}
         <div className={styles.sidebar}>
-          {displayCategories.map((category) => (
-            <div
-              className={classNames(styles['category-item'], {
-                [styles.active]: selectedCategory === category.id,
-              })}
-              key={category.id}
-              onClick={() => setSelectedCategory(category.id)}
-            >
-              <img
-                alt={category.displayName}
-                className={styles['category-preview-image']}
-                src={category.previewImage}
-              />
-              <h4 className={styles['category-name']}>{category.displayName}</h4>
-            </div>
-          ))}
+          <div className={styles['categories-list']}>
+            {categories.map((category) => (
+              <div
+                className={classNames(styles['category-item'], {
+                  [styles.active]: selectedCategory === category.id,
+                })}
+                key={category.id}
+                onClick={() => setSelectedCategory(category.id)}
+              >
+                <img alt={category.displayName} className={styles['category-icon']} src={category.previewImage} />
+                <span className={styles['category-name']}>{category.displayName}</span>
+              </div>
+            ))}
+          </div>
         </div>
 
-        {/* Content: Style Options */}
+        {/* CONTENT */}
         <div className={styles.content}>
-          <h3 className={styles['content-title']}>{currentCategory?.displayName}</h3>
           <div className={styles['options-grid']}>
             {currentCategoryStyles.map((option) => (
               <OptionCard

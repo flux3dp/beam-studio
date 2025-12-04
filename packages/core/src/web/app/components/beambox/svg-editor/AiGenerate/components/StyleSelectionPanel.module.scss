@@ -3,55 +3,92 @@ $primary-blue: #1890ff;
 $text-primary: #333333;
 $text-secondary: #666666;
 $selected-border: #1890ff;
-$selected-bg: #e6f4ff;
+$hover-bg: #f5f5f5;
 
 .container {
   display: flex;
-  min-height: 500px;
+  height: 600px; // Fixed height for scrolling content
+  overflow: hidden;
+  border: 1px solid $border-color;
 }
 
 // LEFT SIDEBAR
 .sidebar {
-  width: 240px;
+  width: 260px;
   border-right: 1px solid $border-color;
-  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  background: #ffffff;
   flex-shrink: 0;
 }
 
-.category-item {
+.categories-list {
+  flex: 1;
   padding: 16px;
-  margin-bottom: 8px;
+  overflow-y: auto;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 16px;
+  margin-bottom: 4px;
   border-radius: 8px;
   cursor: pointer;
   transition: all 0.2s;
-  border: 1px solid transparent;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+  color: $text-secondary;
+  font-weight: 500;
 
   &:hover {
-    background: #f5f5f5;
+    background: $hover-bg;
+    color: $text-primary;
   }
 
   &.active {
-    background: $selected-bg;
-    border-color: $primary-blue;
+    background: #e6f7ff;
+    color: $primary-blue;
+
+    // Optional: Add a left border indicator if desired
+    // border-left: 3px solid $primary-blue;
+  }
+}
+
+.category-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  opacity: 0.7;
+
+  // Enhance icon visibility if active
+  .active & {
+    opacity: 1;
   }
 }
 
 .category-name {
-  font-size: 16px;
-  font-weight: 600;
-  margin: 0 0 4px 0;
-  color: $text-primary;
+  font-size: 14px;
+  margin: 0;
 }
 
-.category-preview-image {
-  width: 40px;
-  height: 40px;
-  border-radius: 4px;
-  object-fit: cover;
-  border: 1px solid $border-color;
+.custom-creation-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  height: 48px;
+  border-radius: 8px;
+  font-weight: 600;
+  background: #d6d6d6;
+
+  &:hover {
+    background: #c0c0c0;
+  }
+  &.active {
+    color: $primary-blue;
+    border-color: $primary-blue;
+  }
 }
 
 // RIGHT CONTENT
@@ -59,88 +96,75 @@ $selected-bg: #e6f4ff;
   flex: 1;
   padding: 24px;
   overflow-y: auto;
-}
-
-.content-title {
-  font-size: 20px;
-  font-weight: 600;
-  margin: 0 0 8px 0;
-  color: $text-primary;
+  background: #fff;
 }
 
 .options-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-  gap: 16px;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 20px;
 }
 
 .option-card {
   position: relative;
-  border: 2px solid $border-color;
-  border-radius: 8px;
-  padding: 20px;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  overflow: hidden;
   cursor: pointer;
-  transition: all 0.3s;
-  background: #fff;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid transparent;
 
   &:hover {
-    border-color: $primary-blue;
-    box-shadow: 0 2px 8px rgba(24, 144, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
   }
 
   &.selected {
     border-color: $selected-border;
-    background: $selected-bg;
+    box-shadow: 0 0 0 2px $selected-border;
   }
 }
 
-.check-badge {
-  position: absolute;
-  top: 12px;
-  right: 12px;
-  width: 24px;
-  height: 24px;
-  background: $primary-blue;
-  color: white;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 14px;
-}
-
 .option-preview {
-  display: flex;
-  justify-content: center;
-  margin-bottom: 16px;
+  width: 100%;
+  height: 100%;
 }
 
 .preview-image {
-  width: 80px;
-  height: 80px;
-  border-radius: 12px;
+  width: 100%;
+  height: 100%;
   object-fit: cover;
-  border: 1px solid $border-color;
+  display: block;
 }
 
-.option-info {
-  text-align: center;
+.option-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 16px 16px; // Top padding for gradient start
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 100%);
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
 }
 
 .option-name {
-  margin: 0 0 8px 0;
+  color: white;
   font-size: 16px;
   font-weight: 600;
-  color: $text-primary;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
 .footer {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-between;
   align-items: center;
+  padding-top: 10px;
 }
 
 .footer-right {
   display: flex;
-  gap: 8px;
+  gap: 12px;
 }

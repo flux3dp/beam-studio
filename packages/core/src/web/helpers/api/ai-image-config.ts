@@ -147,8 +147,7 @@ export const fetchAllAiConfig = async () => {
   return {
     categories: categories.map(mapCategory),
     rawData: { categories, styles },
-    styles: styles.map(mapStyle),
-    stylesWithFields: styles.map(mapStyleWithFields),
+    styles: styles.map(mapStyleWithFields),
   };
 };
 
