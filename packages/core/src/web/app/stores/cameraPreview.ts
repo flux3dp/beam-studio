@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { subscribeWithSelector } from 'zustand/middleware';
 
 import { CameraType } from '@core/app/constants/cameraConstants';
 
@@ -9,18 +10,22 @@ type CameraPreviewState = {
   isDrawing: boolean;
   isLiveMode: boolean;
   isPreviewMode: boolean;
+  isStarting: boolean;
   isWideAngleCameraCalibrated?: boolean;
 };
 
-export const useCameraPreviewStore = create<CameraPreviewState>(() => ({
-  cameraType: CameraType.LASER_HEAD,
-  hasWideAngleCamera: false,
-  isClean: true,
-  isDrawing: false,
-  isLiveMode: false,
-  isPreviewMode: false,
-  isWideAngleCameraCalibrated: false,
-}));
+export const useCameraPreviewStore = create(
+  subscribeWithSelector<CameraPreviewState>(() => ({
+    cameraType: CameraType.LASER_HEAD,
+    hasWideAngleCamera: false,
+    isClean: true,
+    isDrawing: false,
+    isLiveMode: false,
+    isPreviewMode: false,
+    isStarting: false,
+    isWideAngleCameraCalibrated: false,
+  })),
+);
 
 /**
  * for updating the camera preview state outside React components

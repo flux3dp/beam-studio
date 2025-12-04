@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Keskeytä',
+      calibration_wide_angle_camera_first: 'Kalibroi ensin laajakulmakamera.',
       camera_cable_unstable: 'Kameran kuvan siirrossa havaittiin epävakautta. Esikatselu toimii edelleen normaalisti, mutta esikatselussa voi ilmetä hitautta tai aikakatkaisuja.',
       continue_preview: 'Jatka',
       door_opened: 'Ovi auki',

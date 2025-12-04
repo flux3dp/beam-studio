@@ -19,7 +19,7 @@ describe('printing layer color', () => {
   });
 
   it('change color', () => {
-    cy.clickToolBtn('Element');
+    cy.clickToolBtn('Element', false);
     cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('.ant-drawer-header').should('not.exist');
     cy.get('#svg_1').should('be.visible').click();
@@ -36,7 +36,7 @@ describe('printing layer color', () => {
   const isRunningAtGithub = Cypress.env('envType') === 'github';
   if (!isRunningAtGithub) {
     it('expand layer and change color', () => {
-      cy.clickToolBtn('Element');
+      cy.clickToolBtn('Element', false);
       cy.get('.anticon[id="basic/icon-circle"]').click();
       cy.get('.ant-drawer-header').should('not.exist');
       cy.get('#svg_1').should('be.visible').click();
@@ -74,7 +74,7 @@ describe('printing layer color', () => {
       changeAndCheckColor('#009FE3', 'rgb(0, 159, 227)');
 
       cy.get('#presprayAreaImage').should('be.visible');
-      cy.clickToolBtn('Element');
+      cy.clickToolBtn('Element', false);
       cy.get('.anticon[id="basic/icon-circle"]').click();
       cy.get('#svg_6').should('be.visible').should('have.attr', 'fill', '#009FE3');
     });

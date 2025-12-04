@@ -88,7 +88,7 @@ describe('manipulate file', () => {
     cy.get('#h_size').clear().type('100{enter}');
 
     selectMenuOption('File', 'Save As...');
-    checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), { default: 2146783619 });
+    checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), { default: 712143090 });
   });
 
   it('export bvg file', () => {

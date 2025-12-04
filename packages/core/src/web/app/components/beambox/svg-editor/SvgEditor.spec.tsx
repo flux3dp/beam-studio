@@ -2,8 +2,6 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import { CanvasMode } from '@core/app/constants/canvasMode';
-
 import SvgEditor from './SvgEditor';
 import type { FileData } from '@core/helpers/fileImportHelper';
 
@@ -13,14 +11,18 @@ jest.mock('@core/helpers/fileImportHelper', () => ({
   importFileInCurrentTab: (...args) => mockImportFileInCurrentTab(...args),
 }));
 
-jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
-jest.mock('./Ruler', () => () => <div>MockRuler</div>);
-jest.mock('./Banner', () => () => <div>MockBanner</div>);
-jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
-
 jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
-jest.mock('@core/app/components/beambox/ZoomBlock', () => () => <div>MockZoomBlock</div>);
-jest.mock('@core/app/components/beambox/DpiInfo', () => () => <div>MockDpiInfo</div>);
+jest.mock('@core/app/components/common/ZoomBlock', () => () => <div>MockZoomBlock</div>);
+
+jest.mock('./Banner', () => () => <div>MockBanner</div>);
+jest.mock('./Chat', () => () => <div>MockChat</div>);
+jest.mock('./DpiInfo', () => () => <div>MockDpiInfo</div>);
+jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
+jest.mock('./PreviewFloatingBar', () => () => <div>MockPreviewFloatingBar</div>);
+jest.mock('./PreviewSlider', () => () => <div>MockPreviewSlider</div>);
+jest.mock('./Ruler', () => () => <div>MockRuler</div>);
+jest.mock('./TimeEstimationButton', () => () => <div>MockTimeEstimationButton</div>);
+jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
 
 const mockInit = jest.fn();
 
@@ -31,10 +33,6 @@ jest.mock('@core/app/actions/beambox/svg-editor', () => ({
 Object.defineProperty(window, '$', {
   value: jest.fn(),
 });
-
-jest.mock('@core/app/contexts/CanvasContext', () => ({
-  CanvasContext: React.createContext({ mode: CanvasMode.Draw }),
-}));
 
 const mockZoom = jest.fn();
 

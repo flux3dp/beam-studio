@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'ยกเลิก',
+      calibration_wide_angle_camera_first: 'กรุณาปรับเทียบกล้องมุมกว้างก่อน',
       camera_cable_unstable: 'ตรวจพบว่ากล้องกําลังส่งรูปภาพไม่มั่นคง การแสดงตัวอย่างยังคงทํางานได้ตามปกติ แต่อาจมีปัญหาการแสดงตัวอย่างช้าหรือหมดเวลา',
       continue_preview: 'ดําเนินการต่อ',
       door_opened: 'ประตูเปิดอยู่',

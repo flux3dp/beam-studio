@@ -1,4 +1,6 @@
-import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
+import React, { memo, useCallback, useContext, useMemo } from 'react';
+
+import { match } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -6,7 +8,10 @@ import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/L
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -27,19 +32,29 @@ type ToolButtonProps = {
   id: string;
   label?: string;
   onClick: () => void;
-  shouldSetActive?: boolean;
   showBadge?: boolean;
   style?: React.CSSProperties;
 };
 
-const drawingToolEventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
-
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
   const tLeftPanel = lang.beambox.left_panel;
-  const { changeToPreviewMode, hasPassthroughExtension, setupPreviewMode } = useContext(CanvasContext);
+  const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
-  const [activeButton, setActiveButton] = useState('Cursor');
+  const { isDrawing, isStarting } = useCameraPreviewStore();
+  const mouseMode = useCanvasStore((state) => state.mouseMode);
+  const activeButton = useMemo(() => {
+    return match(mouseMode)
+      .with('pre_preview', 'preview', () => 'Preview')
+      .with('text', 'textedit', () => 'Text')
+      .with('rect', () => 'Rectangle')
+      .with('ellipse', () => 'Ellipse')
+      .with('polygon', () => 'Polygon')
+      .with('line', () => 'Line')
+      .with('path', 'pathedit', () => 'Pen')
+      .otherwise(() => 'Cursor');
+  }, [mouseMode]);
+
   const renderToolButton = ({
     className = undefined,
     disabled = false,
@@ -47,7 +62,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     id,
     label = id,
     onClick,
-    shouldSetActive = true,
     showBadge = false,
     style = undefined,
   }: ToolButtonProps) => (
@@ -58,8 +72,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       icon={icon}
       id={`left-${id}`}
       onClick={() => {
-        if (shouldSetActive) setActiveButton(id);
-
         svgCanvas?.clearSelection();
         onClick();
       }}
@@ -71,28 +83,16 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
 
   const toggleBeamy = useCallback(() => {
     setIsChatShown(!isChatShown);
-
-    if (isChatShown) setActiveButton('Cursor');
   }, [isChatShown, setIsChatShown]);
-
-  useEffect(() => {
-    drawingToolEventEmitter.on('SET_ACTIVE_BUTTON', setActiveButton);
-
-    return () => {
-      drawingToolEventEmitter.removeListener('SET_ACTIVE_BUTTON');
-    };
-  }, []);
 
   return (
     <div className={className}>
       {renderToolButton({
+        disabled: isDrawing || isStarting,
         icon: <LeftPanelIcons.Camera />,
         id: 'Preview',
         label: lang.topbar.preview,
-        onClick: () => {
-          changeToPreviewMode();
-          setupPreviewMode();
-        },
+        onClick: async () => handlePreviewClick(),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Cursor />,
@@ -110,7 +110,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.Text />,
         id: 'Text',
         label: `${tLeftPanel.label.text} (T)`,
-        onClick: FnWrapper.insertText,
+        onClick: () => setMouseMode('text'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,
@@ -122,31 +122,31 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.Rect />,
         id: 'Rectangle',
         label: `${tLeftPanel.label.rect} (M)`,
-        onClick: FnWrapper.insertRectangle,
+        onClick: () => setMouseMode('rect'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Oval />,
         id: 'Ellipse',
         label: `${tLeftPanel.label.oval} (C)`,
-        onClick: FnWrapper.insertEllipse,
+        onClick: () => setMouseMode('ellipse'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Polygon />,
         id: 'Polygon',
         label: tLeftPanel.label.polygon,
-        onClick: FnWrapper.insertPolygon,
+        onClick: () => setMouseMode('polygon'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Line />,
         id: 'Line',
         label: `${tLeftPanel.label.line} (\\)`,
-        onClick: FnWrapper.insertLine,
+        onClick: () => setMouseMode('line'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Draw />,
         id: 'Pen',
         label: `${tLeftPanel.label.pen} (P)`,
-        onClick: FnWrapper.insertPath,
+        onClick: () => setMouseMode('path'),
       })}
       {hasPassthroughExtension &&
         renderToolButton({
@@ -163,7 +163,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.Beamy />,
         id: 'Beamy',
         onClick: toggleBeamy,
-        shouldSetActive: false,
         style: { color: isChatShown ? '#1890ff' : undefined },
       })}
     </div>

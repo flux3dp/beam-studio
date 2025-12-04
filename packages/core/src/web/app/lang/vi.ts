@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Hủy bỏ',
+      calibration_wide_angle_camera_first: 'Vui lòng hiệu chuẩn camera góc rộng trước.',
       camera_cable_unstable: 'Phát hiện camera đang truyền ảnh không ổn định. Xem trước vẫn có thể thực hiện bình thường, nhưng có thể gặp vấn đề xem trước chậm hoặc hết thời gian chờ.',
       continue_preview: 'Tiếp tục',
       door_opened: 'Cửa đang mở',

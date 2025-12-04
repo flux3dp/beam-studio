@@ -7,7 +7,7 @@ import { Layer, Path, Stage } from 'react-konva';
 
 import constant from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import ZoomBlock from '@core/app/components/beambox/ZoomBlock';
+import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';

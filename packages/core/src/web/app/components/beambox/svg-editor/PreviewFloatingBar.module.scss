@@ -1,0 +1,83 @@
+@use '@core/styles/variables' as variables;
+
+.wrap {
+  position: absolute;
+  top: 40px;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  pointer-events: none;
+
+  @media screen and (max-width: 600px) {
+    position: relative;
+    top: unset;
+  }
+}
+
+.container {
+  pointer-events: all;
+  height: 36px;
+  padding: 0 10px;
+  border: 1px solid #525252;
+  border-radius: 20px;
+  background: #f8f8f8;
+  display: flex;
+  align-items: center;
+
+  @media screen and (max-width: 600px) {
+    border-radius: 0;
+    border: none;
+    height: 62px;
+    box-shadow: 0 0 5px rgba(0, 0, 0, 0.3);
+    overflow: scroll;
+    width: 100%;
+    padding: 0 4px;
+    gap: 0;
+  }
+
+  .button {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    color: #7c7c7c;
+    font-size: 32px;
+    height: 100%;
+
+    &.active {
+      color: #000;
+    }
+
+    &.disabled {
+      opacity: 0.5;
+    }
+
+    &:not(.disabled) {
+      cursor: pointer;
+    }
+
+    &:hover:not(.disabled):not(.blue) {
+      color: #000;
+    }
+
+    &.blue {
+      color: variables.$primary-blue;
+    }
+
+    @media screen and (max-width: 600px) {
+      width: unset;
+      padding: 0 8px;
+    }
+  }
+
+  .separator {
+    width: 1px;
+    height: 20px;
+    margin: 0 6px;
+    background-color: #e0e0e0;
+  }
+
+  .close {
+    font-size: 16px;
+    padding: 0 4px;
+  }
+}

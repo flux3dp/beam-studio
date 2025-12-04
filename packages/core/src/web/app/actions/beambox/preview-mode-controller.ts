@@ -27,6 +27,7 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 class PreviewModeController {
   isDrawing: boolean = false;
   isPreviewMode: boolean = false;
+  startPromise: null | Promise<void> = null;
   isStarting: boolean = false;
   isPreviewBlocked: boolean = false;
   currentDevice: IDeviceInfo | null = null;
@@ -47,6 +48,11 @@ class PreviewModeController {
   setIsDrawing = (val: boolean) => {
     this.isDrawing = val;
     setCameraPreviewState({ isDrawing: val });
+  };
+
+  setIsStarting = (val: boolean) => {
+    this.isStarting = val;
+    setCameraPreviewState({ isStarting: val });
   };
 
   reloadHeightOffset = async () => {
@@ -118,72 +124,79 @@ class PreviewModeController {
   }
 
   async start(device: IDeviceInfo) {
-    this.reset();
-    this.isStarting = true;
+    this.startPromise = (async () => {
+      this.reset();
+      this.setIsStarting(true);
 
-    const res = await deviceMaster.select(device);
+      const res = await deviceMaster.select(device);
 
-    if (!res.success) {
-      this.isStarting = false;
-
-      return;
-    }
-
-    try {
-      this.currentDevice = device;
-
-      if (promarkModels.has(device.model)) {
-        this.previewManager = new PromarkPreviewManager(device);
-      } else if (Constant.adorModels.includes(device.model)) {
-        this.previewManager = new AdorPreviewManager(device);
-      } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
-        this.previewManager = new BB2PreviewManager(device);
-      } else if (device.model === 'fbm2') {
-        this.previewManager = new Beamo2PreviewManager(device);
-      } else {
-        this.previewManager = new BeamPreviewManager(device);
-      }
-
-      const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
-
-      if (!setupRes) {
-        this.isStarting = false;
+      if (!res.success) {
+        this.setIsStarting(false);
 
         return;
       }
 
-      PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
-      PreviewModeBackgroundDrawer.drawBoundary();
-      deviceMaster.setDeviceControlReconnectOnClose(device);
-      this.setIsPreviewMode(true);
+      try {
+        this.currentDevice = device;
 
-      if (this.previewManager instanceof BB2PreviewManager) {
-        setCameraPreviewState({
-          cameraType: this.previewManager.getCameraType(),
-          hasWideAngleCamera: this.previewManager.hasWideAngleCamera,
-          isWideAngleCameraCalibrated: this.previewManager.isWideAngleCameraCalibrated,
-        });
-      } else {
-        setCameraPreviewState({
-          cameraType: this.previewManager.isFullScreen ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD,
-          hasWideAngleCamera: false,
-          isWideAngleCameraCalibrated: false,
-        });
+        if (promarkModels.has(device.model)) {
+          this.previewManager = new PromarkPreviewManager(device);
+        } else if (Constant.adorModels.includes(device.model)) {
+          this.previewManager = new AdorPreviewManager(device);
+        } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
+          this.previewManager = new BB2PreviewManager(device);
+        } else if (device.model === 'fbm2') {
+          this.previewManager = new Beamo2PreviewManager(device);
+        } else {
+          this.previewManager = new BeamPreviewManager(device);
+        }
+
+        const setupRes = await this.previewManager.setup({ progressId: 'preview-mode-controller' });
+
+        if (!setupRes) {
+          this.setIsStarting(false);
+
+          return;
+        }
+
+        PreviewModeBackgroundDrawer.start(this.previewManager.getCameraOffset?.());
+        deviceMaster.setDeviceControlReconnectOnClose(device);
+        this.setIsPreviewMode(true);
+
+        if (this.previewManager instanceof BB2PreviewManager) {
+          setCameraPreviewState({
+            cameraType: this.previewManager.getCameraType(),
+            hasWideAngleCamera: this.previewManager.hasWideAngleCamera,
+            isWideAngleCameraCalibrated: this.previewManager.isWideAngleCameraCalibrated,
+          });
+        } else {
+          setCameraPreviewState({
+            cameraType: this.previewManager.isFullScreen ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD,
+            hasWideAngleCamera: false,
+            isWideAngleCameraCalibrated: false,
+          });
+        }
+
+        canvasEventEmitter.emit('UPDATE_CONTEXT');
+      } catch (error) {
+        console.error(error);
+        await this.end();
+        throw error;
+      } finally {
+        this.setIsStarting(false);
       }
-
-      canvasEventEmitter.emit('UPDATE_CONTEXT');
-    } catch (error) {
-      console.error(error);
-      await this.end();
-      throw error;
-    } finally {
-      this.isStarting = false;
-    }
+    })();
+    await this.startPromise;
+    this.startPromise = null;
   }
 
   async end({ shouldWaitForEnd = false }: { shouldWaitForEnd?: boolean } = {}) {
-    console.log('end of pmc');
+    console.log('end of pmc', this.isStarting, this.isPreviewMode);
+
+    this.setIsStarting(false);
     this.setIsPreviewMode(false);
+    this.setIsDrawing(false);
+    await this.startPromise;
 
     if (this.liveModeTimeOut) {
       clearTimeout(this.liveModeTimeOut);
@@ -261,17 +274,10 @@ class PreviewModeController {
     this.setIsDrawing(true);
     this.isPreviewBlocked = true;
 
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'wait';
-
     return true;
   };
 
   onPreviewSuccess = (): void => {
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
     this.isPreviewBlocked = false;
     this.setIsDrawing(false);
   };
@@ -283,18 +289,10 @@ class PreviewModeController {
       Alert.popUpError({ message: (error as Error).message || (error as any).text });
     }
 
-    const workarea = document.querySelector('#workarea') as HTMLElement;
-
-    workarea.style.cursor = 'auto';
-
-    if (!PreviewModeBackgroundDrawer.isClean()) {
-      this.setIsDrawing(false);
-    }
-
     this.end();
   };
 
-  async previewFullWorkarea(callback = () => {}): Promise<boolean> {
+  async previewFullWorkarea(callback?: () => void): Promise<boolean> {
     const res = this.prePreview();
 
     if (!res) {
@@ -308,12 +306,12 @@ class PreviewModeController {
 
       await this.previewManager?.previewFullWorkarea?.();
       this.onPreviewSuccess();
-      callback();
+      callback?.();
 
       return true;
     } catch (error) {
       this.onPreviewFail(error);
-      callback();
+      callback?.();
 
       return false;
     }

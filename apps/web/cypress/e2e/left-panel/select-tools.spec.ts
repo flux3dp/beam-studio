@@ -58,7 +58,7 @@ describe('select tools', () => {
   });
 
   it('select rotate', () => {
-    cy.clickToolBtn('Element');
+    cy.clickToolBtn('Element', false);
     cy.get('.anticon[id="basic/icon-triangle"]').click();
     cy.get('#svg_1').click();
 

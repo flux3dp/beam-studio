@@ -17,6 +17,7 @@ import WelcomePageButton from '@core/app/components/beambox/top-bar/WelcomePageB
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
@@ -33,8 +34,8 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: window.os === 'MacOS' && !isWeb, isWeb })),
     [],
   );
-  const { currentUser, hasUnsavedChange, mode, setSelectedDevice, toggleAutoFocus, togglePathPreview } =
-    useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const { currentUser, hasUnsavedChange, setSelectedDevice } = useContext(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -95,9 +96,9 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         <div className={classNames(styles.controls, styles.right)}>
           <SelectMachineButton />
           <DocumentButton />
-          <AutoFocusButton toggleAutoFocus={toggleAutoFocus} />
+          <AutoFocusButton />
           <FrameButton />
-          <PathPreviewButton isDeviceConnected={hasDiscoveredMachine} togglePathPreview={togglePathPreview} />
+          <PathPreviewButton isDeviceConnected={hasDiscoveredMachine} />
           <GoButton hasDiscoverdMachine={hasDiscoveredMachine} />
         </div>
         {isWeb && <FileName hasUnsavedChange={hasUnsavedChange} />}

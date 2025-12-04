@@ -5,15 +5,12 @@ import classNames from 'classnames';
 
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import LeftPanel from '@core/app/components/beambox/LeftPanel';
-import PreviewSlider from '@core/app/components/beambox/PreviewSlider';
 import RightPanel from '@core/app/components/beambox/right-panel/RightPanel';
 import SvgEditor from '@core/app/components/beambox/svg-editor/SvgEditor';
-import TimeEstimationButton from '@core/app/components/beambox/TimeEstimationButton';
 import TopBar from '@core/app/components/beambox/top-bar/TopBar';
 import CanvasTabBar from '@core/app/components/mobile/CanvasTabBar';
 import { CanvasProvider } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContextProvider } from '@core/app/contexts/SelectedElementContext';
-import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import ImageTracePanel from '@core/app/views/beambox/ImageTracePanel/ImageTracePanel';
@@ -59,17 +56,11 @@ const Beambox = (): React.JSX.Element => {
               <LeftPanel />
               <SvgEditor />
               <RightPanel />
+              <CanvasTabBar />
             </Flex>
             <div id="tool-panels-placeholder" />
           </div>
-          <div className={classNames(styles.buttons, { [styles.mac]: window.os === 'MacOS' })}>
-            <TimeEstimationButtonContextProvider>
-              <TimeEstimationButton />
-            </TimeEstimationButtonContextProvider>
-            <PreviewSlider />
-          </div>
           <ImageTracePanel />
-          <CanvasTabBar />
         </LayerPanelContextProvider>
       </SelectedElementContextProvider>
     </CanvasProvider>

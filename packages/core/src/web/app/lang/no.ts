@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Avbryt',
+      calibration_wide_angle_camera_first: 'Vennligst kalibrer vidvinkelkameraet først.',
       camera_cable_unstable: 'Det er oppdaget at kameraet overfører bilder ustabilt. Forhåndsvisning kan fortsatt utføres normalt, men det kan være problemer med treg forhåndsvisning eller tidsavbrudd.',
       continue_preview: 'Fortsett',
       door_opened: 'Døren er åpen',

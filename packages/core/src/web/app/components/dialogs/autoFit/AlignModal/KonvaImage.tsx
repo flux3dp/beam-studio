@@ -173,7 +173,7 @@ const KonvaImage = forwardRef<Konva.Image, Props>(
           borderStroke="#0000ff"
           flipEnabled={false}
           ref={transformerRef}
-          rotateAnchorCursor="url(js/lib/svgeditor/images/rotate.png) 12 12, auto"
+          rotateAnchorCursor="url(core-img/rotate.png) 12 12, auto"
           rotateAnchorOffset={20}
         />
       </>

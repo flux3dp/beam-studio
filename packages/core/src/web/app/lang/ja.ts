@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: '中止する',
+      calibration_wide_angle_camera_first: '先に広角カメラのキャリブレーションを行ってください。',
       camera_cable_unstable: 'カメラが写真を不安定に転送していることが検出されました。プレビューは引き続き正常に実行できますが、プレビューが遅い、またはタイムアウトになる問題がある可能性があります。',
       continue_preview: '継続する',
       door_opened: 'ドアが開いています',

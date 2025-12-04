@@ -42,7 +42,7 @@ describe('move element to another layer', () => {
   }
 
   it('move one element', () => {
-    cy.clickToolBtn('Element');
+    cy.clickToolBtn('Element', false);
     cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('#svg_1').should('exist').should('have.attr', 'fill', '#333333');
     cy.get('.ant-drawer', { timeout: 10000 }).should('not.exist');
@@ -61,7 +61,7 @@ describe('move element to another layer', () => {
     ];
 
     elements.forEach(({ category, icon }) => {
-      cy.clickToolBtn('Element');
+      cy.clickToolBtn('Element', false);
       cy.get('.ant-drawer-header .ant-select-selector').click();
       cy.get('.ant-select-item-option').contains(category).click();
       cy.get(`.anticon[id="${icon}"]`).click();

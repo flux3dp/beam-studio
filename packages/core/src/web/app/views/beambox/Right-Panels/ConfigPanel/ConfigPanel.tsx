@@ -376,7 +376,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     const layerOptions = [];
     const allLayers = layerManager.getAllLayers();
 
-    for (let i = allLayers.length; i >= 0; i -= 1) {
+    for (let i = allLayers.length - 1; i >= 0; i -= 1) {
       const layer = allLayers[i];
       const layerElement = layer.getGroup();
       const layerName = layer.getName();

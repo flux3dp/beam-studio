@@ -1,6 +1,6 @@
 .container {
   display: block;
-  position: fixed;
+  position: relative !important;
   width: 100%;
   border-top: solid 1px #ccc;
   background: #ffffff;

@@ -14,12 +14,17 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
-const setMode = jest.fn();
 const nestElements = jest.fn();
 
 getSVGAsync.mockImplementation((callback) => {
-  callback({ Canvas: { nestElements, setMode } });
+  callback({ Canvas: { nestElements } });
 });
+
+const mockSetMouseMode = jest.fn();
+
+jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
+  setMouseMode: (...args) => mockSetMouseMode(...args),
+}));
 
 const mockSetHasUnsavedChanges = jest.fn();
 

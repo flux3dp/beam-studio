@@ -3,6 +3,8 @@
  */
 
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
+import type { CanvasMouseMode } from '@core/app/stores/canvas/canvasStore';
+import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
@@ -65,7 +67,7 @@ class TextActions {
 
   private fontSize = 100;
 
-  private previousMode = 'select';
+  private previousMode: CanvasMouseMode = 'select';
 
   private valueBeforeEdit = '';
 
@@ -932,7 +934,7 @@ class TextActions {
   };
 
   toEditMode = (x?: number, y?: number) => {
-    const currentMode = svgCanvas.getMode();
+    const currentMode = getMouseMode();
     const { curtext } = this;
 
     this.isEditing = true;
@@ -941,7 +943,7 @@ class TextActions {
     const isContinuousDrawing = useGlobalPreferenceStore.getState()['continuous_drawing'];
 
     this.previousMode = isContinuousDrawing ? currentMode : 'select';
-    svgCanvas.setMode('textedit');
+    setMouseMode('textedit');
 
     const selectorManager = selector.getSelectorManager();
 
@@ -970,7 +972,7 @@ class TextActions {
     const { curtext } = this;
 
     this.isEditing = false;
-    svgCanvas.setMode(this.previousMode);
+    setMouseMode(this.previousMode);
     this.hideCursor();
     $(curtext).css('cursor', 'move');
 
@@ -1039,7 +1041,7 @@ class TextActions {
 
   clear() {
     const { curtext, isEditing } = this;
-    const currentMode = svgCanvas ? svgCanvas.getMode() : 'select';
+    const currentMode = getMouseMode();
 
     if (currentMode === 'textedit') {
       this.toSelectMode();

@@ -5,7 +5,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant, { hexaRfModels, PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import MessageCaller from '@core/app/actions/message-caller';
-import progressCaller from '@core/app/actions/progress-caller';
 import {
   bb2PerspectiveGrid,
   bb2WideAnglePerspectiveGrid,
@@ -94,10 +93,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     if (this.cameraType === cameraType) return this.cameraType;
 
     try {
-      progressCaller.openNonstopProgress({
-        id: this.progressId,
-        message: 'tSwitching camera',
-      });
+      this.showMessage({ message: 'tSwitching camera' });
 
       if (this.cameraType === CameraType.LASER_HEAD) {
         await this.endLaserHeadCameraPreview(false);
@@ -114,7 +110,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
       return this.cameraType;
     } finally {
-      progressCaller.popById(this.progressId);
+      this.closeMessage();
     }
   };
 
@@ -168,7 +164,10 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
         this.wideAngleGrid,
       );
 
-      const res = await this.wideAngleFisheyeManager.setupFisheyePreview({ progressId: this.progressId });
+      const res = await this.wideAngleFisheyeManager.setupFisheyePreview({
+        messageType: 'message',
+        progressId: this.progressId,
+      });
 
       return res;
     } catch (error) {
@@ -178,7 +177,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     } finally {
       if (deviceMaster.currentControlMode === 'raw') {
         await deviceMaster.rawLooseMotor();
-        progressCaller.update(this.progressId, { message: lang.message.endingRawMode });
+        this.updateMessage({ message: lang.message.endingRawMode });
         await deviceMaster.endSubTask();
       }
     }
@@ -197,20 +196,20 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
         }
       }
 
-      progressCaller.update(this.progressId, { message: lang.message.enteringRawMode });
+      this.updateMessage({ message: lang.message.enteringRawMode });
       await deviceMaster.enterRawMode();
-      progressCaller.update(this.progressId, { message: lang.message.exitingRotaryMode });
+      this.updateMessage({ message: lang.message.exitingRotaryMode });
       await deviceMaster.rawSetRotary(false);
-      progressCaller.update(this.progressId, { message: lang.message.homing });
+      this.updateMessage({ message: lang.message.homing });
       await deviceMaster.rawHome();
       await deviceMaster.rawStartLineCheckMode();
       this.lineCheckEnabled = true;
-      progressCaller.update(this.progressId, { message: lang.message.turningOffFan });
+      this.updateMessage({ message: lang.message.turningOffFan });
       await deviceMaster.rawSetFan(false);
-      progressCaller.update(this.progressId, { message: lang.message.turningOffAirPump });
+      this.updateMessage({ message: lang.message.turningOffAirPump });
       await deviceMaster.rawSetAirPump(false);
       await deviceMaster.rawSetWaterPump(false);
-      progressCaller.update(this.progressId, { message: lang.message.connectingCamera });
+      this.updateMessage({ message: lang.message.connectingCamera });
 
       if (!(await deviceMaster.setFisheyeParam(this.fisheyeParams!))) {
         throw new Error('Failed to set fisheye parameters');
@@ -234,10 +233,8 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     const { lang } = i18n;
 
     try {
-      progressCaller.openNonstopProgress({
-        id: this.progressId,
-        message: sprintf(lang.message.connectingMachine, this.device.name),
-      });
+      this.showMessage({ message: sprintf(lang.message.connectingMachine, this.device.name) });
+
       await deviceMaster.connectCamera();
       await this.checkWideAngleCamera();
       this.cameraType =
@@ -253,7 +250,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
       return false;
     } finally {
-      progressCaller.popById(this.progressId);
+      this.closeMessage();
     }
   };
 

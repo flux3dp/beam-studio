@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Cancelar',
+      calibration_wide_angle_camera_first: 'Por favor, calibre primeiro a câmera grande angular.',
       camera_cable_unstable: 'Foi detectado que a câmera está transferindo fotos de forma instável. A visualização ainda pode ser realizada normalmente, mas pode haver problema de visualização lenta ou tempo limite.',
       continue_preview: 'Continuar',
       door_opened: 'Porta aberta',

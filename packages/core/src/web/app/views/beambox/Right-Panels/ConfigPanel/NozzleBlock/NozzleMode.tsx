@@ -1,6 +1,7 @@
 import { memo, useContext } from 'react';
 
 import classNames from 'classnames';
+import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -16,12 +17,7 @@ import initState from '../initState';
 
 const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
   const { selectedLayers } = useContext(ConfigPanelContext);
-  const { change, nozzleMode } = useConfigPanelStore(
-    useShallow((state) => ({
-      change: state.change,
-      nozzleMode: state.nozzleMode,
-    })),
-  );
+  const { change, nozzleMode } = useConfigPanelStore(useShallow((state) => pick(state, ['change', 'nozzleMode'])));
 
   const { hasMultiValue, value } = nozzleMode;
   const handleChange = (newValue: number) => {

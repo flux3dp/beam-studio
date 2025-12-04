@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Zrušit',
+      calibration_wide_angle_camera_first: 'Nejprve prosím zkalibrujte širokoúhlou kameru.',
       camera_cable_unstable: 'Bylo zjištěno, že kamera nestabilně přenáší fotografie. Stále můžete spustit náhled, ale může nastat problém s pomalým náhledem či vypršením časového limitu.',
       continue_preview: 'Pokračovat',
       door_opened: 'Dveře otevřené',

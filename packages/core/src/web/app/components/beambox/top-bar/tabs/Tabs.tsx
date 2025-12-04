@@ -72,7 +72,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
     tabController.moveTab(srcIdx, dstIdx);
   };
 
-  const renderIcon = useCallback(({ isCloud, isLoading, isWelcomeTab, mode }: Tab) => {
+  const renderIcon = useCallback(({ isCloud, isLoading, isPreviewMode, isWelcomeTab, mode }: Tab) => {
     if (isWelcomeTab) {
       return <TopBarIcons.Home className={styles.icon} />;
     }
@@ -81,7 +81,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
       return <LoadingOutlined className={classNames(styles.icon, styles.loading)} />;
     }
 
-    if (mode === CanvasMode.Preview) {
+    if (isPreviewMode) {
       return <TopBarIcons.Camera className={styles.icon} />;
     }
 

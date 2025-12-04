@@ -55,12 +55,6 @@ describe('test TopBarController', () => {
     expect(mockEmit).toHaveBeenNthCalledWith(1, 'SET_HAS_UNSAVED_CHANGE', true);
   });
 
-  test('test getTopBarPreviewMode', () => {
-    expect(TopBarController.getTopBarPreviewMode()).toBeFalsy();
-    expect(mockEmit).toHaveBeenCalledTimes(1);
-    expect(mockEmit).toHaveBeenNthCalledWith(1, 'GET_CANVAS_MODE', { mode: 1 });
-  });
-
   test('test getSelectedDevice', () => {
     TopBarController.getSelectedDevice();
     expect(mockEmit).toHaveBeenCalledTimes(1);

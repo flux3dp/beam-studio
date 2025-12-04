@@ -7,6 +7,7 @@ import { handleExportClick } from '@core/app/actions/beambox/export/GoButton/han
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
@@ -19,7 +20,8 @@ interface Props {
 
 const GoButton = ({ hasDiscoverdMachine }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const { mode, selectedDevice } = useContext(CanvasContext);
+  const mode = useCanvasStore((state) => state.mode);
+  const { selectedDevice } = useContext(CanvasContext);
   const shortcutHandler = useRef<() => void>(() => {});
   const throttledHandleExportClick = funnel(handleExportClick(lang), { minGapMs: 2000, triggerAt: 'start' });
 

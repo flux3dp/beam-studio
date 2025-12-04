@@ -60,7 +60,7 @@ describe('ador layer', () => {
     cy.changeWorkarea('Ador');
     cy.get(`button[class*="${addLayerBtnPrefix}btn"]`).click({ force: true });
     change2PrintingModule();
-    cy.clickToolBtn('Element');
+    cy.clickToolBtn('Element', false);
     cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('#svg_1').click({ force: true });
     cy.get('.tab.layers').click();

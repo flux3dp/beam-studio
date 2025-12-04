@@ -7,7 +7,8 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import cursorIconUrl from '@core/app/icons/left-panel/curve-select.svg?url';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
@@ -18,17 +19,9 @@ import RedLightCurveMeasurer from '@core/helpers/device/curve-measurer/red-light
 import getDevice from '@core/helpers/device/get-device';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
 import type { CurveEngraving, MeasureData } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -46,6 +39,14 @@ class CurveEngravingModeController {
     this.data = null;
     this.measurer = null;
     canvasEventEmitter.on('canvas-change', this.updateContainer);
+    useCanvasStore.subscribe(
+      (state) => state.mode,
+      (mode) => {
+        if (mode !== CanvasMode.CurveEngraving && this.started) {
+          this.end();
+        }
+      },
+    );
   }
 
   checkSupport = () => {
@@ -62,7 +63,7 @@ class CurveEngravingModeController {
     this.started = true;
     this.updateBoundaryPath();
     this.toAreaSelectMode();
-    canvasEventEmitter.emit('SET_MODE', CanvasMode.CurveEngraving);
+    useCanvasStore.getState().setMode(CanvasMode.CurveEngraving);
   };
 
   end = () => {
@@ -72,39 +73,16 @@ class CurveEngravingModeController {
 
   back = (mode: CanvasMode = CanvasMode.Draw) => {
     this.end();
-    svgCanvas.setMode('select');
-
-    const workarea: HTMLDivElement | null = document.querySelector('#workarea');
-
-    if (workarea) {
-      if (mode === CanvasMode.Preview) {
-        workarea.style.cursor = 'url(img/camera-cursor.svg) 9 12, cell';
-      } else {
-        workarea.style.cursor = 'auto';
-      }
-    }
-
-    canvasEventEmitter.emit('SET_MODE', mode);
+    setMouseMode('select');
+    useCanvasStore.getState().setMode(mode);
   };
 
   toAreaSelectMode = () => {
-    svgCanvas.setMode('curve-engraving');
-
-    const workarea = document.querySelector('#workarea');
-
-    if (workarea) {
-      (workarea as HTMLDivElement).style.cursor = `url(${cursorIconUrl}) 25 7, cell`;
-    }
+    setMouseMode('curve-engraving');
   };
 
   toCanvasSelectMode = () => {
-    svgCanvas.setMode('select');
-
-    const workarea = document.querySelector('#workarea');
-
-    if (workarea) {
-      (workarea as HTMLDivElement).style.cursor = 'auto';
-    }
+    setMouseMode('select');
   };
 
   applyRemeasureData = (data: MeasureData) => {

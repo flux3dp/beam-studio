@@ -770,7 +770,7 @@ const lang: ILang = {
           brightness: 'Brillo',
           convert_to_image: 'Convertir en imagen',
           convert_to_path: 'Convertir en trayectoria',
-          create_textpath: 'Crear Tecto de Trayectoria',
+          create_textpath: 'Crear Texto de Trayectoria',
           create_textpath_short: 'Texto camino',
           crop: 'Recortar',
           decompose_path: 'Descomponer',
@@ -1611,6 +1611,7 @@ const lang: ILang = {
     },
     camera: {
       abort_preview: 'Abortar',
+      calibration_wide_angle_camera_first: 'Por favor, calibre primero la cámara gran angular.',
       camera_cable_unstable: 'Se detecta que la cámara está transfiriendo fotos de manera inestable. La vista previa aún se puede realizar normalmente, pero puede existir el problema de que la vista previa sea lenta o se agote el tiempo de espera.',
       continue_preview: 'Continuar',
       door_opened: 'Puerta abierta',

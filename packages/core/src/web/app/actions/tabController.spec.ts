@@ -126,9 +126,9 @@ describe('test TabController', () => {
   });
 
   test('setMode', () => {
-    tabController.setMode(CanvasMode.Preview);
+    tabController.setMode(CanvasMode.Draw);
     expect(mockSend).toHaveBeenCalledTimes(1);
-    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabMode, CanvasMode.Preview);
+    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabMode, CanvasMode.Draw);
   });
 
   test('getIsWelcomeTab', () => {
@@ -149,5 +149,11 @@ describe('test TabController', () => {
     expect(tabController.isWelcomeTab).toBe(false);
     expect(mockSendSync).toHaveBeenCalledTimes(2);
     expect(mockSendSync).toHaveBeenNthCalledWith(2, TabEvents.GetAllTabs);
+  });
+
+  test('setIsPreviewMode', () => {
+    tabController.setIsPreviewMode(true);
+    expect(mockSend).toHaveBeenCalledTimes(1);
+    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabIsPreviewMode, true);
   });
 });

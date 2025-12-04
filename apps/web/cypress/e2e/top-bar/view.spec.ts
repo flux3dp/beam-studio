@@ -1,7 +1,7 @@
 describe('manipulate view', () => {
   const isRunningAtGithub = Cypress.env('envType') === 'github';
   const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
-  const zoomBlockPrefix = '_-_-packages-core-src-web-app-components-beambox-ZoomBlock-module_';
+  const zoomBlockPrefix = '_-_-packages-core-src-web-app-components-common-ZoomBlock-module_';
   const zoomRatio = () => cy.get(`[class*="${zoomBlockPrefix}_ratio"]`);
 
   beforeEach(() => {

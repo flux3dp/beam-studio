@@ -20,6 +20,8 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import shortcuts from '@core/helpers/shortcuts';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+import type { IProgressDialog, ProgressType } from '@core/interfaces/IProgress';
+import { ProgressTypes } from '@core/interfaces/IProgress';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import styles from './BasePreviewManager.module.scss';
@@ -34,6 +36,7 @@ class BasePreviewManager implements PreviewManager {
   protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
   protected _isFullScreen = false;
+  protected progressType: ProgressType = ProgressTypes.NONSTOP;
 
   public get isFullScreen() {
     return this._isFullScreen;
@@ -44,6 +47,32 @@ class BasePreviewManager implements PreviewManager {
     this.workarea = workareaManager.model;
     this.workareaObj = getWorkarea(this.workarea);
   }
+
+  protected showMessage = (data: IProgressDialog): void => {
+    if (data.message) {
+      MessageCaller.openMessage({
+        content: data.message,
+        duration: 20,
+        key: this.progressId,
+        level: MessageLevel.LOADING,
+      });
+    }
+  };
+
+  protected updateMessage = (data: IProgressDialog): void => {
+    if (data.message) {
+      MessageCaller.openMessage({
+        content: data.message,
+        duration: 20,
+        key: this.progressId,
+        level: MessageLevel.LOADING,
+      });
+    }
+  };
+
+  protected closeMessage = (): void => {
+    MessageCaller.closeMessage(this.progressId);
+  };
 
   public setup = async (): Promise<boolean> => {
     throw new Error('Method not implemented.');

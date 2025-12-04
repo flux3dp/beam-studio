@@ -128,14 +128,13 @@ jest.mock('@core/app/actions/beambox/export/GoButton/handleExportClick', () => (
 
 describe('test GoButton', () => {
   test('should render correctly', () => {
-    const endPreviewMode = jest.fn();
     const mockExport = jest.fn();
     const mockDevice = { uuid: 'mock-device' };
 
     mockHandleExportClick.mockReturnValue(mockExport);
 
     const { container } = render(
-      <CanvasContext.Provider value={{ endPreviewMode, mode: CanvasMode.Draw, selectedDevice: mockDevice } as any}>
+      <CanvasContext.Provider value={{ selectedDevice: mockDevice } as any}>
         <GoButton hasDiscoverdMachine={false} />
       </CanvasContext.Provider>,
     );

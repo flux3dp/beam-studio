@@ -20,7 +20,6 @@
 
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
@@ -46,7 +45,6 @@ import workareaManager from '@core/app/svgedit/workarea';
 import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -68,13 +66,18 @@ import storage from '@core/implementations/storage';
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
 
-import PreviewModeController from './preview-mode-controller';
 import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import {
+  getMouseMode,
+  setCursor,
+  setCursorAccordingToMouseMode,
+  setMouseMode,
+} from '@core/app/stores/canvas/utils/mouseMode';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -133,7 +136,6 @@ export interface ISVGEditor {
   replaceBitmap: any;
   setConfig: (opts: any, cfgCfg: any) => void;
   setIcon: (elem: any, icon_id: any) => void;
-  setImageURL: (url: any) => void;
   setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
   storagePromptClosed: boolean;
@@ -186,7 +188,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     replaceBitmap: null,
     setConfig: (opts: any, cfgCfg: any) => {},
     setIcon: (elem: any, icon_id: any) => {},
-    setImageURL: (url: any) => {},
     setLang: (lang: any, allStrings: any) => {},
     setPanning: (active: any) => {},
     storage: storage,
@@ -300,7 +301,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       gridSnapping: false,
       // PATH CONFIGURATION
       // The following path configuration items are disallowed in the URL (as should any future path configurations)
-      imgPath: 'js/lib/svgeditor/images/',
       initFill: {
         color: 'FFFFFF',
         opacity: 0,
@@ -567,7 +567,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     var resize_timer,
       Actions,
       path = svgCanvas.pathActions,
-      defaultImageURL = curConfig.imgPath + 'logo.png',
       workarea = $('#workarea');
 
     // For external openers
@@ -587,17 +586,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     })();
 
-    var setSelectMode = function () {
-      svgCanvas.setMode('select');
-      workarea.css('cursor', 'auto');
-
-      if (curveEngravingModeController.started) {
-        // do nothing for now
-      } else if (PreviewModeController.isPreviewMode || TopBarController.getTopBarPreviewMode()) {
-        workarea.css('cursor', 'url(img/camera-cursor.svg) 9 12, cell');
-      }
-    };
-
     // used to make the flyouts stay on the screen longer the very first time
     // var flyoutspeed = 1250; // Currently unused
     var selectedElement: any = null;
@@ -605,8 +593,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     var origTitle = $('title:first').text();
 
     var togglePathEditMode = function (editmode, elems) {
-      $('#path_node_panel').toggle(editmode);
-
       if (editmode) {
         multiselected = false;
 
@@ -619,28 +605,10 @@ const svgEditor = (window['svgEditor'] = (function () {
     var clickSelect = (editor.clickSelect = function (clearSelection: boolean = true) {
       if ([TutorialConstants.DRAW_A_CIRCLE, TutorialConstants.DRAW_A_RECT].includes(getNextStepRequirement())) return;
 
-      workarea.css('cursor', 'auto');
-      svgCanvas.setMode('select');
+      setMouseMode('select');
 
       if (clearSelection) {
         svgCanvas.clearSelection();
-      }
-    });
-
-    var setImageURL = (editor.setImageURL = function (url) {
-      if (!url) {
-        url = defaultImageURL;
-      }
-
-      svgCanvas.setImageURL(url);
-
-      if (url.indexOf('data:') === 0) {
-        // data URI found
-      } else {
-        // regular URL
-        svgCanvas.embedImage(url, function (dataURI) {
-          defaultImageURL = url;
-        });
       }
     });
 
@@ -653,7 +621,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         elem = null;
       }
 
-      var currentMode = svgCanvas.getMode();
+      var currentMode = getMouseMode();
       var unit = curConfig.baseUnit !== 'px' ? curConfig.baseUnit : null;
 
       var is_node = currentMode === 'pathedit'; //elem ? (elem.id && elem.id.indexOf('pathpointgrip') == 0) : false;
@@ -807,10 +775,6 @@ const svgEditor = (window['svgEditor'] = (function () {
               textActions.setIsVertical(textEdit.getIsVertical(elem));
               break;
             case 'image':
-              if (svgCanvas.getMode() === 'image') {
-                setImageURL(svgCanvas.getHref(elem));
-              }
-
               break;
             case 'g':
             case 'use':
@@ -890,11 +854,10 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // called when we've selected a different element
     var selectedChanged = function (win, elems) {
-      var mode = svgCanvas.getMode();
+      var mode = getMouseMode();
 
-      if (mode === 'select') {
-        setSelectMode();
-      }
+      // TODO: is this needed?
+      if (mode === 'select') setMouseMode('select');
 
       var is_node = mode === 'pathedit';
 
@@ -913,36 +876,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       if (elems.length === 1 && elems[0]?.tagName === 'polygon') {
         ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
       }
-    };
-
-    // Call when part of element is in process of changing, generally
-    // on mousemove actions like rotate, move, etc.
-    var elementTransition = function (win, elems) {
-      var mode = svgCanvas.getMode();
-      var elem = elems[0];
-
-      if (!elem) {
-        return;
-      }
-
-      multiselected = elems.length >= 2 && elems[1] != null;
-      // Only updating fields for single elements for now
-      // if (!multiselected) {
-      //   switch (mode) {
-      //     case 'rotate':
-      //       var ang = svgCanvas.getRotationAngle(elem);
-      //       $('#angle').val(ang);
-      //       break;
-
-      // TODO: Update values that change on move/resize, etc
-      //						case "select":
-      //						case "resize":
-      //							break;
-      //   }
-      // }
-      svgCanvas.runExtensions('elementTransition', {
-        elems: elems,
-      });
     };
 
     // called when any element has changed
@@ -1020,7 +953,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     // bind the selected event to our function that handles updates to the UI
     svgCanvas.bind('selected', selectedChanged);
-    svgCanvas.bind('transition', elementTransition);
     svgCanvas.bind('changed', elementChanged);
     svgCanvas.bind('contextset', contextChanged);
     textActions.setInputElem($('#text')[0]);
@@ -1201,7 +1133,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       document.addEventListener('keydown', (evt) => {
         if (evt.key === ' ') {
           svgCanvas.spaceKey = keypan = true;
-          workarea.css('cursor', 'grab');
+          setCursor('grab');
           evt.preventDefault(); // prevent page from scrolling
         }
       });
@@ -1209,7 +1141,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // because shortcuts are not providing keyup event now
       document.addEventListener('keyup', (evt) => {
         if (evt.key === ' ') {
-          workarea.css('cursor', 'auto');
+          setCursorAccordingToMouseMode();
           svgCanvas.spaceKey = keypan = false;
         }
       });
@@ -1235,7 +1167,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           workarea.unbind('mousedown', unfocus);
 
           // Go back to selecting text if in textedit mode
-          if (svgCanvas.getMode() === 'textedit') {
+          if (getMouseMode() === 'textedit') {
             $('#text').focus();
           }
         });
@@ -1470,7 +1402,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         return;
       }
 
-      setSelectMode();
+      setMouseMode('select');
       svgCanvas.clear();
       workareaManager.resetView();
       RightPanelController.setPanelType(PanelType.None); // will be updated to PanelType.Layer automatically if is not mobile
@@ -1604,7 +1536,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['l'], () => RightPanelController.setPanelType(PanelType.Layer));
           Shortcuts.on(['o'], () => {
-            const isPathEdit = svgCanvas.getMode() === 'pathedit';
+            const isPathEdit = getMouseMode() === 'pathedit';
 
             RightPanelController.setPanelType(isPathEdit ? PanelType.PathEdit : PanelType.Object);
           });

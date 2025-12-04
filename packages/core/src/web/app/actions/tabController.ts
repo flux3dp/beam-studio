@@ -1,7 +1,9 @@
 import { EventEmitter } from 'eventemitter3';
 
-import type { CanvasMode } from '@core/app/constants/canvasMode';
+import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -55,6 +57,17 @@ class TabController extends EventEmitter {
     topBarEventEmitter.on('UPDATE_TITLE', updateTitleHandler);
     topBarEventEmitter.on('SET_HAS_UNSAVED_CHANGE', updateTitleHandler);
     useStorageStore.subscribe((state) => state['active-lang'], updateTitleHandler);
+    useCanvasStore.subscribe(
+      (state) => state.mode,
+      (mode) => this.setMode(mode),
+    );
+    useCameraPreviewStore.subscribe(
+      (state) => state.isPreviewMode,
+      (isPreviewMode) => this.setIsPreviewMode(isPreviewMode),
+    );
+    // Send init state to main process
+    this.setMode(CanvasMode.Draw);
+    this.setIsPreviewMode(false);
   }
 
   onBlurred(handler: () => void): void {
@@ -107,6 +120,10 @@ class TabController extends EventEmitter {
     if (id === this.currentId) return;
 
     communicator.send(TabEvents.FocusTab, id);
+  };
+
+  setIsPreviewMode = (isPreviewMode: boolean): void => {
+    communicator.send(TabEvents.SetTabIsPreviewMode, isPreviewMode);
   };
 
   setMode = (mode: CanvasMode): void => {

@@ -3,25 +3,18 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+
+const mockSetMouseMode = jest.fn();
+
+jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
+  setMouseMode: (...args) => mockSetMouseMode(...args),
+}));
 
 const mockUseSelectTool = jest.fn();
 const mockImportImage = jest.fn();
-const mockInsertText = jest.fn();
-const mockInsertRectangle = jest.fn();
-const mockInsertEllipse = jest.fn();
-const mockInsertLine = jest.fn();
-const mockInsertPath = jest.fn();
-const mockInsertPolygon = jest.fn();
 
 jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   importImage: mockImportImage,
-  insertEllipse: mockInsertEllipse,
-  insertLine: mockInsertLine,
-  insertPath: mockInsertPath,
-  insertPolygon: mockInsertPolygon,
-  insertRectangle: mockInsertRectangle,
-  insertText: mockInsertText,
   useSelectTool: mockUseSelectTool,
 }));
 
@@ -41,11 +34,18 @@ jest.mock('@core/app/components/pass-through', () => ({
   showPassThrough: mockShowPassThrough,
 }));
 
+const mockHandlePreviewClick = jest.fn();
+
+jest.mock('@core/helpers/device/camera/previewMode', () => ({
+  handlePreviewClick: mockHandlePreviewClick,
+}));
+
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 describe('test DrawingToolButtonGroup', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    jest.useRealTimers();
   });
 
   test('should render correctly', () => {
@@ -54,53 +54,46 @@ describe('test DrawingToolButtonGroup', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('#left-Photo'));
-    expect(container).toMatchSnapshot();
     expect(mockImportImage).toHaveBeenCalledTimes(1);
 
     fireEvent.click(container.querySelector('#left-Text'));
-    expect(container).toMatchSnapshot();
-    expect(mockInsertText).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(1, 'text');
 
     fireEvent.click(container.querySelector('#left-Rectangle'));
-    expect(container).toMatchSnapshot();
-    expect(mockInsertRectangle).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(2);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(2, 'rect');
 
     fireEvent.click(container.querySelector('#left-Ellipse'));
-    expect(container).toMatchSnapshot();
-    expect(mockInsertEllipse).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(3);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(3, 'ellipse');
 
     fireEvent.click(container.querySelector('#left-Polygon'));
-    expect(container).toMatchSnapshot();
-    expect(mockInsertPolygon).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(4);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(4, 'polygon');
 
     fireEvent.click(container.querySelector('#left-Line'));
-    expect(container).toMatchSnapshot();
-    expect(mockInsertLine).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(5);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(5, 'line');
 
     fireEvent.click(container.querySelector('#left-Element'));
-    expect(container).toMatchSnapshot();
     expect(mockShowElementPanel).toHaveBeenCalledTimes(1);
 
     fireEvent.click(container.querySelector('#left-Pen'));
-    expect(container).toMatchSnapshot();
-    expect(mockInsertPath).toHaveBeenCalledTimes(1);
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(6);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(6, 'path');
 
     fireEvent.click(container.querySelector('#left-Cursor'));
-    expect(container).toMatchSnapshot();
     expect(mockUseSelectTool).toHaveBeenCalledTimes(1);
   });
 
   test('preview button should render correctly', () => {
-    const contextValue = { changeToPreviewMode: jest.fn(), setupPreviewMode: jest.fn() };
-    const { container } = render(
-      <CanvasContext.Provider value={contextValue as any}>
-        <DrawingToolButtonGroup className="flux" />
-      </CanvasContext.Provider>,
-    );
+    jest.useFakeTimers();
+
+    const { container } = render(<DrawingToolButtonGroup className="flux" />);
 
     fireEvent.click(container.querySelector('#left-Preview'));
-    expect(contextValue.changeToPreviewMode).toHaveBeenCalledTimes(1);
-    expect(contextValue.setupPreviewMode).toHaveBeenCalledTimes(1);
+    expect(mockHandlePreviewClick).toHaveBeenCalledTimes(1);
   });
 
   test('should render correctly when in pass through mode', () => {
@@ -116,16 +109,5 @@ describe('test DrawingToolButtonGroup', () => {
     fireEvent.click(container.querySelector('#left-PassThrough'));
     expect(mockShowPassThrough).toHaveBeenCalledTimes(1);
     expect(mockShowPassThrough).toHaveBeenCalledWith(mockUseSelectTool);
-  });
-
-  test('event emitter', async () => {
-    const eventEmitter = eventEmitterFactory.createEventEmitter('drawing-tool');
-    const { container } = render(<DrawingToolButtonGroup className="flux" />);
-
-    expect(container.querySelector('#left-Cursor')).toHaveClass('active');
-    eventEmitter.emit('SET_ACTIVE_BUTTON', 'Pen');
-    await new Promise((r) => setTimeout(r, 0));
-    expect(container.querySelector('#left-Cursor')).not.toHaveClass('active');
-    expect(container.querySelector('#left-Pen')).toHaveClass('active');
   });
 });

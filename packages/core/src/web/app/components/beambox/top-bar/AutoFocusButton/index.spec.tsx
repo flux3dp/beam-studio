@@ -49,6 +49,8 @@ jest.mock('@core/helpers/beam-file-helper', () => ({}));
 jest.mock('@core/helpers/fileImportHelper', () => ({}));
 
 import AutoFocusButton from './index';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 
 const mockPopUp = jest.fn();
 
@@ -151,29 +153,25 @@ jest.mock('@core/app/actions/beambox/constant', () => ({
   supportAutoFocusModels: new Set(['fhexa1', 'ado1', 'fad1', 'fbb2', 'fhx2rf4', 'fhx2rf7', 'fbm2']),
 }));
 
-describe('AutoFocusButton', () => {
-  const mockToggleAutoFocus = jest.fn();
-  const defaultProps = {
-    toggleAutoFocus: mockToggleAutoFocus,
-  };
+const mockToggleAutoFocus = jest.fn();
 
+jest.mock('@core/app/stores/canvas/utils/autoFocus', () => ({
+  toggleAutoFocus: (...args) => mockToggleAutoFocus(...args),
+}));
+
+describe('AutoFocusButton', () => {
   const defaultContextValue = {
-    changeToPreviewMode: jest.fn(),
     currentUser: null,
-    endPreviewMode: jest.fn(),
     hasPassthroughExtension: false,
     hasUnsavedChange: false,
     isColorPreviewing: false,
     isPathEditing: false,
-    mode: CanvasMode.Draw,
     selectedDevice: { model: 'fad1', name: 'Test Device' },
     setIsColorPreviewing: jest.fn(),
     setIsPathEditing: jest.fn(),
     setMode: jest.fn(),
     setSelectedDevice: jest.fn(),
-    setupPreviewMode: jest.fn(),
     toggleAutoFocus: jest.fn(),
-    togglePathPreview: jest.fn(),
     updateCanvasContext: jest.fn(),
   };
 
@@ -184,12 +182,13 @@ describe('AutoFocusButton', () => {
     mockSelect.mockResolvedValue({ success: true });
     mockGetControl.mockReturnValue({ getMode: () => 'raw' });
     mockGetDeviceDetailInfo.mockResolvedValue({ probe_showed: '1' });
+    useCanvasStore.setState({ mode: CanvasMode.Draw });
   });
 
   const renderComponent = (contextValue = {}) => {
     return render(
       <CanvasContext.Provider value={{ ...defaultContextValue, ...contextValue } as any}>
-        <AutoFocusButton {...defaultProps} />
+        <AutoFocusButton />
       </CanvasContext.Provider>,
     );
   };
@@ -213,9 +212,9 @@ describe('AutoFocusButton', () => {
     });
 
     it('should render disabled when mode is not Draw', () => {
-      const { container } = renderComponent({
-        mode: CanvasMode.Preview,
-      });
+      useCameraPreviewStore.setState({ isPreviewMode: true });
+
+      const { container } = renderComponent();
       const button = container.querySelector('.button');
 
       expect(button).toHaveClass('disabled');
@@ -368,7 +367,9 @@ describe('AutoFocusButton', () => {
     });
 
     it('should not proceed when in AutoFocus mode', () => {
-      const { container } = renderComponent({ mode: CanvasMode.AutoFocus });
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
+
+      const { container } = renderComponent();
       const button = container.querySelector('.button');
 
       fireEvent.click(button);
@@ -432,17 +433,16 @@ describe('AutoFocusButton', () => {
 
   describe('Keyboard shortcuts', () => {
     it('should register Escape key handler in AutoFocus mode', () => {
-      renderComponent({
-        mode: CanvasMode.AutoFocus,
-      });
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
+
+      renderComponent({});
 
       expect(mockOn).toHaveBeenCalledWith(['Escape'], expect.any(Function), { isBlocking: true });
     });
 
     it('should toggle auto focus off on Escape key', () => {
-      renderComponent({
-        mode: CanvasMode.AutoFocus,
-      });
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
+      renderComponent({});
 
       const escapeHandler = mockOn.mock.calls[0][1];
 
@@ -454,11 +454,10 @@ describe('AutoFocusButton', () => {
     it('should unregister shortcut handler on unmount', () => {
       const mockUnregister = jest.fn();
 
+      useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
       mockOn.mockReturnValue(mockUnregister);
 
-      const { unmount } = renderComponent({
-        mode: CanvasMode.AutoFocus,
-      });
+      const { unmount } = renderComponent();
 
       unmount();
 
