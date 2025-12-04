@@ -75,10 +75,10 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
           <div>
             <Button
               className={classNames(styles['custom-creation-btn'], {
-                [styles.active]: selectedStyle === 'plain',
+                [styles.active]: selectedStyle === 'customize',
               })}
               onClick={() => {
-                setSelectedStyle('plain');
+                setSelectedStyle('customize');
               }}
             >
               <UserOutlined />
@@ -102,7 +102,6 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
       width={1000} // Wider modal for the grid
     >
       <div className={styles.container}>
-        {/* SIDEBAR */}
         <div className={styles.sidebar}>
           <div className={styles['categories-list']}>
             {categories.map((category) => (
@@ -120,7 +119,6 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
           </div>
         </div>
 
-        {/* CONTENT */}
         <div className={styles.content}>
           <div className={styles['options-grid']}>
             {currentCategoryStyles.map((option) => (

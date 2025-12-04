@@ -48,7 +48,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
     <Card bordered={false} className={styles.card} styles={{ body: { padding: 0 } }}>
       <div className={styles.cardContent}>
         <div className={styles.title} title={item.prompt_data['style']}>
-          {getStyleConfig(item.prompt_data['style'], aiConfig?.styles).displayName || 'Plain'}
+          {getStyleConfig(item.prompt_data['style'], aiConfig?.styles).displayName || 'Customize'}
         </div>
 
         <div className={styles.imageGrid}>
