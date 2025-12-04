@@ -19,7 +19,7 @@ jest.mock('@core/app/svgedit/operations/import/importAiImage', () => ({ importAi
 jest.mock('@core/implementations/browser', () => ({ open: jest.fn() }));
 jest.mock('./components/ImageHistory', () => () => <div data-testid="mock-history" />);
 jest.mock('./components/ImageResults', () => () => <div data-testid="mock-results" />);
-jest.mock('./components/DescriptionInputWithUpload', () => () => <div data-testid="mock-description-upload" />);
+jest.mock('./components/InputField.upload', () => () => <div data-testid="mock-description-upload" />);
 jest.mock('./hooks/useAiConfigQuery', () => ({ useAiConfigQuery: jest.fn() }));
 
 import dialogCaller from '@core/app/actions/dialog-caller';

@@ -4,15 +4,12 @@ import { Flex } from 'antd';
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
 
-import Drawer from '@core/app/widgets/Drawer';
 import { isAtPage } from '@core/helpers/hashHelper';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 
 import styles from './index.module.scss';
-import { useChatStore } from './useChatStore';
 
 const UnmemorizedChat = () => {
-  const { isChatShown, setIsChatShown } = useChatStore();
   const floatingAreaRef = useRef<HTMLDivElement>(null);
   const workarea = useWorkarea();
   const url = match(workarea)
@@ -26,14 +23,12 @@ const UnmemorizedChat = () => {
   const inWelcomePage = useMemo(() => isAtPage('welcome'), []);
 
   return (
-    <Drawer isOpen={isChatShown} setIsOpen={setIsChatShown}>
-      <div className={classNames(styles['chat-container'], { [styles['welcome-page']]: inWelcomePage })}>
-        <iframe className={styles['chat-iframe']} id="beamy-chat" src={`https://udify.app/chatbot/${url}`} />
-        <Flex align="center" className={styles['floating-area']} ref={floatingAreaRef} vertical>
-          <div className={styles['chat-disclaimer']}>Beamy can make mistakes. Check important info.</div>
-        </Flex>
-      </div>
-    </Drawer>
+    <div className={classNames(styles['chat-container'], { [styles['welcome-page']]: inWelcomePage })}>
+      <iframe className={styles['chat-iframe']} id="beamy-chat" src={`https://udify.app/chatbot/${url}`} />
+      <Flex align="center" className={styles['floating-area']} ref={floatingAreaRef} vertical>
+        <div className={styles['chat-disclaimer']}>Beamy can make mistakes. Check important info.</div>
+      </Flex>
+    </div>
   );
 };
 

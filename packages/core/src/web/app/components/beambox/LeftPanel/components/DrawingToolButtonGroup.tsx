@@ -41,20 +41,22 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const lang = useI18n().beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
-  const isAiGenerateShown = useAiGenerateStore((state) => state.isAiGenerateShown);
+  const { isAiGenerateShown, setState } = useAiGenerateStore();
   const { isDrawing, isStarting } = useCameraPreviewStore();
   const mouseMode = useCanvasStore((state) => state.mouseMode);
-  const activeButton = useMemo(() => {
-    return match(mouseMode)
-      .with('pre_preview', 'preview', () => 'Preview')
-      .with('text', 'textedit', () => 'Text')
-      .with('rect', () => 'Rectangle')
-      .with('ellipse', () => 'Ellipse')
-      .with('polygon', () => 'Polygon')
-      .with('line', () => 'Line')
-      .with('path', 'pathedit', () => 'Pen')
-      .otherwise(() => 'Cursor');
-  }, [mouseMode]);
+  const activeButton = useMemo(
+    () =>
+      match(mouseMode)
+        .with('pre_preview', 'preview', () => 'Preview')
+        .with('text', 'textedit', () => 'Text')
+        .with('rect', () => 'Rectangle')
+        .with('ellipse', () => 'Ellipse')
+        .with('polygon', () => 'Polygon')
+        .with('line', () => 'Line')
+        .with('path', 'pathedit', () => 'Pen')
+        .otherwise(() => 'Cursor'),
+    [mouseMode],
+  );
 
   const renderToolButton = ({
     className = undefined,
@@ -83,12 +85,14 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   );
 
   const toggleAiGenerate = useCallback(() => {
-    useAiGenerateStore.setState({ isAiGenerateShown: !isAiGenerateShown });
-  }, [isAiGenerateShown]);
+    setState({ isAiGenerateShown: !isAiGenerateShown });
+    setIsChatShown(false);
+  }, [isAiGenerateShown, setIsChatShown, setState]);
 
   const toggleBeamy = useCallback(() => {
     setIsChatShown(!isChatShown);
-  }, [isChatShown, setIsChatShown]);
+    setState({ isAiGenerateShown: false });
+  }, [isChatShown, setIsChatShown, setState]);
 
   return (
     <div className={className}>

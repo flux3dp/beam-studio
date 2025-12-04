@@ -2,17 +2,20 @@ import { memo, type ReactNode, useState } from 'react';
 
 import { LeftOutlined } from '@ant-design/icons';
 import { Drawer as AntdDrawer, ConfigProvider } from 'antd';
+import type { Enable } from 're-resizable';
 import { Resizable } from 're-resizable';
 
 import styles from './Drawer.module.scss';
 
 interface Props {
   children: ReactNode;
+  enable?: Enable | false;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
+  showHandle?: boolean;
 }
 
-const Drawer = memo(({ children, isOpen, setIsOpen }: Props) => {
+const Drawer = memo(({ children, enable, isOpen, setIsOpen, showHandle = true }: Props) => {
   const [width, setWidth] = useState(400);
   // default motion duration for the drawer
   // this is used to disable the animation when resizing the drawer
@@ -29,29 +32,21 @@ const Drawer = memo(({ children, isOpen, setIsOpen }: Props) => {
         open={isOpen}
         placement="left"
         // use style to override :where
-        style={{
-          boxShadow: 'none',
-        }}
+        style={{ boxShadow: 'none' }}
         styles={{
-          body: {
-            display: 'flex',
-            flexDirection: 'column',
-            height: '100%',
-            overflow: 'hidden',
-            padding: '0px',
-          },
-          content: {
-            backgroundColor: 'transparent',
-          },
+          body: { display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', padding: '0px' },
+          content: { backgroundColor: 'transparent' },
           wrapper: { boxShadow: 'none' },
         }}
         width={width}
       >
-        <div className={styles.handle} onClick={onClose}>
-          <LeftOutlined />
-        </div>
+        {showHandle && (
+          <div className={styles.handle} onClick={onClose}>
+            <LeftOutlined />
+          </div>
+        )}
         <Resizable
-          enable={{ right: true }}
+          enable={enable}
           handleClasses={{ right: styles['resizable-handle'] }}
           maxWidth={638}
           minWidth={360}
