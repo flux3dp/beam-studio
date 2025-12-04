@@ -46,7 +46,7 @@ const UnmemorizedImageHistory = () => {
 
   // 4. List Content
   return (
-    <div className={styles.container}>
+    <>
       <h3 className={styles.title}>Generation History</h3>
 
       <div className={styles.grid}>
@@ -61,7 +61,7 @@ const UnmemorizedImageHistory = () => {
           <span>Loading more...</span>
         </div>
       )}
-    </div>
+    </>
   );
 };
 

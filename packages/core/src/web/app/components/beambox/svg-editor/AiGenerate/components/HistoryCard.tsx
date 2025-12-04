@@ -1,10 +1,14 @@
 import React, { memo, useMemo } from 'react';
 
-import { ImportOutlined } from '@ant-design/icons';
+import { DownOutlined } from '@ant-design/icons';
 import { Badge, Button, Card } from 'antd';
+import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
+
+import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
+import { getStyleConfig } from '../utils/categories';
 
 import styles from './HistoryCard.module.scss';
 
@@ -13,68 +17,63 @@ interface HistoryCardProps {
   onImport: (item: AiImageGenerationData) => void;
 }
 
-const formatRelativeTime = (timestamp: string): string => {
-  const seconds = Math.floor((Date.now() - new Date(timestamp).getTime()) / 1000);
+// New date formatter to match the image design (e.g., 2025/11/4 11:35)
+const formatDate = (timestamp: string): string => {
+  const date = new Date(timestamp);
+  const year = date.getFullYear();
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
+  const hours = date.getHours().toString().padStart(2, '0');
+  const minutes = date.getMinutes().toString().padStart(2, '0');
 
-  if (seconds < 60) return 'Just now';
-
-  const units = [
-    { label: 'day', seconds: 86400 },
-    { label: 'hour', seconds: 3600 },
-    { label: 'minute', seconds: 60 },
-  ];
-
-  for (const { label, seconds: unitSeconds } of units) {
-    const count = Math.floor(seconds / unitSeconds);
-
-    if (count >= 1) return `${count} ${label}${count !== 1 ? 's' : ''} ago`;
-  }
-
-  return 'Recently';
+  return `${year}/${month}/${day} ${hours}:${minutes}`;
 };
 
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
-  const previewImg = item.result_urls?.[0];
-  const relativeTime = useMemo(() => formatRelativeTime(item.created_at), [item.created_at]);
+  const previewImages = item.result_urls;
+  const formattedDate = useMemo(() => formatDate(item.created_at), [item.created_at]);
+  const { data: aiConfig } = useAiConfigQuery();
 
   const renderStatusBadge = () =>
     match(item.state)
-      .with('success', () => <Badge status="success" text="Success" />)
-      .with('fail', () => <Badge status="error" text="Failed" />)
-      .otherwise(() => <Badge status="processing" text="Generating" />);
+      .with('success', () => (
+        <Badge className={classNames(styles.statusBadge, styles.success)} status="success" text="Success" />
+      ))
+      .with('fail', () => (
+        <Badge className={classNames(styles.statusBadge, styles.fail)} status="error" text="Failed" />
+      ))
+      .otherwise(() => <Badge className={styles.statusBadge} status="processing" text="Generating" />);
 
   return (
-    <Card className={styles.card}>
-      <div className={styles.preview}>
-        {previewImg ? (
-          <img alt="Generated" className={styles.image} src={previewImg} />
-        ) : (
-          <div className={styles['no-preview']}>{item.state === 'fail' ? '❌ Failed' : '⏳ Generating...'}</div>
-        )}
-      </div>
+    <Card bordered={false} className={styles.card} styles={{ body: { padding: 0 } }}>
+      <div className={styles.cardContent}>
+        <div className={styles.title} title={item.prompt_data['style']}>
+          {getStyleConfig(item.prompt_data['style'], aiConfig?.styles).displayName || 'Plain'}
+        </div>
 
-      <div className={styles.content}>
-        <div className={styles.header}>{renderStatusBadge()}</div>
-
-        <div className={styles.metadata}>
-          <span className={styles['metadata-item']}>{item.aspect_ratio}</span>
-          <span className={styles['metadata-separator']}>•</span>
-          <span className={styles['metadata-item']}>{item.size}</span>
-          <span className={styles['metadata-separator']}>•</span>
-          <span className={styles['metadata-item']}>Count: {item.max_images}</span>
+        <div className={styles.imageGrid}>
+          {previewImages?.length ? (
+            previewImages.map((url, index) => (
+              <div className={styles.imageWrapper} key={index}>
+                <img alt={`Generated ${index + 1}`} className={styles.image} src={url} />
+              </div>
+            ))
+          ) : (
+            <div className={styles.noPreview}>{item.state === 'fail' ? '❌ Not generated' : '⏳ Generating...'}</div>
+          )}
         </div>
 
         <div className={styles.footer}>
-          <span className={styles.time}>{relativeTime}</span>
-          <Button
-            disabled={item.state !== 'success'}
-            icon={<ImportOutlined />}
-            onClick={() => onImport(item)}
-            size="small"
-            type="primary"
-          >
-            Import
-          </Button>
+          <div className={styles.footerLeft}>
+            {renderStatusBadge()}
+            <span className={styles.date}>{formattedDate}</span>
+          </div>
+          <div className={styles.footerRight}>
+            <Button className={styles.recreateButton} onClick={() => onImport(item)}>
+              Recreate
+            </Button>
+            <Button className={styles.dropdownButton} icon={<DownOutlined />} size="small" type="text" />
+          </div>
         </div>
 
         {item.state === 'fail' && item.fail_msg && (
