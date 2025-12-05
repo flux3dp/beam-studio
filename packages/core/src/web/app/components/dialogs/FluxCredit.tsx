@@ -21,7 +21,7 @@ const FluxCredit = ({ onClose }: Props): React.JSX.Element => {
   const LANG = useI18n();
   const lang = LANG.flux_id_login;
   const isMobile = useIsMobile();
-  const { email, info } = getCurrentUser();
+  const { email, info } = getCurrentUser()!;
 
   return (
     <FluxPlusModal onClose={onClose}>
@@ -50,7 +50,7 @@ const FluxCredit = ({ onClose }: Props): React.JSX.Element => {
               <QuestionCircleOutlined />
             </Tooltip>
             AI Credit:
-            <FluxIcons.AICredit />
+            <FluxIcons.FluxCredit />
             <span className={styles['ai-credit']}>{info?.credit || 0}</span>
           </div>
         </div>
