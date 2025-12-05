@@ -215,7 +215,7 @@ const UnmemorizedAiGenerate = () => {
               <div className={styles['credits-info']}>
                 <span className={styles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
                 <div className={styles['credits-balance']}>
-                  <FluxIcons.AICredit />
+                  <FluxIcons.FluxCredit />
                   <span className={styles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
                 </div>
               </div>
