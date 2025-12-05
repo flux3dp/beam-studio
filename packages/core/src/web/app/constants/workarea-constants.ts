@@ -187,6 +187,9 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     calibrationCenter: [180, 50],
     cameraCenter: [180, 7],
     cameraRestPosition: [180, 20],
+    curveSpeedLimit: {
+      zRegular: 1800,
+    },
     height: 240,
     label: 'beamo II',
     maxSpeed: 750,
