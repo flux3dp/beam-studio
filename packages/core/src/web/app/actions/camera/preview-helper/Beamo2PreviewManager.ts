@@ -5,7 +5,6 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
-import MessageCaller from '@core/app/actions/message-caller';
 import { bm2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -72,8 +71,6 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
   private setUpCamera = async (): Promise<boolean> => {
     try {
-      this.updateMessage({ percentage: 20 });
-
       if (!this.fisheyeParams) {
         try {
           this.fisheyeParams = (await deviceMaster.fetchFisheyeParams()) as FisheyeCameraParametersV4;
@@ -85,7 +82,6 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
       this.fisheyePreviewManager =
         this.fisheyePreviewManager ?? new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.grid);
-      this.updateMessage({ percentage: 40 });
 
       const workarea = getWorkarea(this.device.model, 'fbm2');
       const { cameraCenter } = workarea;
@@ -114,7 +110,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     const { lang } = i18n;
 
     try {
-      this.showMessage({ message: sprintf(lang.message.connectingMachine, this.device.name) });
+      this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
       await deviceMaster.connectCamera();
 
@@ -150,7 +146,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
 
         if (this.lineCheckEnabled) await deviceMaster.rawEndLineCheckMode();
 
-        this.updateMessage({ message: i18n.lang.message.endingRawMode });
+        this.showMessage({ content: i18n.lang.message.endingRawMode });
         await deviceMaster.endSubTask();
         this.closeMessage();
       }
@@ -166,7 +162,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   end = async (): Promise<void> => {
     this.ended = true;
     this.doorChecker.destroy();
-    MessageCaller.closeMessage(this.progressId);
+    this.closeMessage();
 
     try {
       if (this.cameraType === CameraType.LASER_HEAD) {
@@ -187,15 +183,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     }
 
     try {
-      const renewMessage = () =>
-        MessageCaller.openMessage({
-          content: i18n.lang.topbar.preview,
-          duration: 20,
-          key: this.progressId,
-          level: MessageLevel.LOADING,
-        });
-
-      renewMessage();
+      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
       try {
         const getExposureRes = await deviceMaster.getCameraExposure();
@@ -233,20 +221,15 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
       };
 
       await takePictures(true);
-      renewMessage();
+      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
       await takePictures(false);
       this.originalExposure = null;
 
-      MessageCaller.openMessage({
-        content: i18n.lang.message.preview.succeeded,
-        duration: 3,
-        key: this.progressId,
-        level: MessageLevel.SUCCESS,
-      });
+      this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
 
       return true;
     } catch (error) {
-      MessageCaller.closeMessage(this.progressId);
+      this.closeMessage();
       throw error;
     }
   };

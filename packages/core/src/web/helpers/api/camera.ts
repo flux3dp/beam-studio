@@ -403,7 +403,7 @@ class Camera {
         error.message = `${t.camera.fail_to_transmit_image} ${error.message}`;
         throw error;
       } else {
-        throw new TypeError(`${t.camera.ws_closed_unexpectly} ${(error as any).message}`);
+        throw new TypeError(`${t.camera.ws_closed_unexpectedly} ${(error as any).message}`);
       }
     }
   }

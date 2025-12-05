@@ -37,8 +37,7 @@ type ToolButtonProps = {
 };
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
-  const lang = useI18n();
-  const tLeftPanel = lang.beambox.left_panel;
+  const lang = useI18n().beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
   const { isChatShown, setIsChatShown } = useChatStore();
   const { isDrawing, isStarting } = useCameraPreviewStore();
@@ -91,68 +90,68 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         disabled: isDrawing || isStarting,
         icon: <LeftPanelIcons.Camera />,
         id: 'Preview',
-        label: lang.topbar.preview,
+        label: lang.label.preview,
         onClick: async () => handlePreviewClick(),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Cursor />,
         id: 'Cursor',
-        label: `${tLeftPanel.label.cursor} (V)`,
+        label: `${lang.label.cursor} (V)`,
         onClick: FnWrapper.useSelectTool,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Photo />,
         id: 'Photo',
-        label: `${tLeftPanel.label.photo} (I)`,
+        label: `${lang.label.photo} (I)`,
         onClick: FnWrapper.importImage,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Text />,
         id: 'Text',
-        label: `${tLeftPanel.label.text} (T)`,
+        label: `${lang.label.text} (T)`,
         onClick: () => setMouseMode('text'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,
         id: 'Element',
-        label: `${tLeftPanel.label.elements} (E)`,
+        label: `${lang.label.elements} (E)`,
         onClick: () => dialogCaller.showElementPanel(FnWrapper.useSelectTool),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Rect />,
         id: 'Rectangle',
-        label: `${tLeftPanel.label.rect} (M)`,
+        label: `${lang.label.rect} (M)`,
         onClick: () => setMouseMode('rect'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Oval />,
         id: 'Ellipse',
-        label: `${tLeftPanel.label.oval} (C)`,
+        label: `${lang.label.oval} (C)`,
         onClick: () => setMouseMode('ellipse'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Polygon />,
         id: 'Polygon',
-        label: tLeftPanel.label.polygon,
+        label: lang.label.polygon,
         onClick: () => setMouseMode('polygon'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Line />,
         id: 'Line',
-        label: `${tLeftPanel.label.line} (\\)`,
+        label: `${lang.label.line} (\\)`,
         onClick: () => setMouseMode('line'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Draw />,
         id: 'Pen',
-        label: `${tLeftPanel.label.pen} (P)`,
+        label: `${lang.label.pen} (P)`,
         onClick: () => setMouseMode('path'),
       })}
       {hasPassthroughExtension &&
         renderToolButton({
           icon: <LeftPanelIcons.PassThrough />,
           id: 'PassThrough',
-          label: tLeftPanel.label.pass_through,
+          label: lang.label.pass_through,
           onClick: () => showPassThrough(FnWrapper.useSelectTool),
         })}
 

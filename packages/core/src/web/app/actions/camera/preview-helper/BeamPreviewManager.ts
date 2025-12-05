@@ -3,7 +3,6 @@ import { sprintf } from 'sprintf-js';
 import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import MessageCaller from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import ErrorConstants from '@core/app/constants/error-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -38,23 +37,23 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     }
 
     try {
-      this.showMessage({ message: sprintf(lang.message.connectingMachine, this.device.name) });
+      this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
       await this.retrieveCameraOffset();
-      this.updateMessage({ message: lang.message.gettingLaserSpeed });
+      this.showMessage({ content: lang.message.gettingLaserSpeed });
 
       const laserSpeed = await deviceMaster.getLaserSpeed();
 
       if (Number(laserSpeed.value) !== 1) {
         this.originalSpeed = Number(laserSpeed.value);
-        this.updateMessage({ message: lang.message.settingLaserSpeed });
+        this.showMessage({ content: lang.message.settingLaserSpeed });
         await deviceMaster.setLaserSpeed(1);
       }
 
-      this.updateMessage({ message: lang.message.enteringRawMode });
+      this.showMessage({ content: lang.message.enteringRawMode });
       await deviceMaster.enterRawMode();
-      this.updateMessage({ message: lang.message.exitingRotaryMode });
+      this.showMessage({ content: lang.message.exitingRotaryMode });
       await deviceMaster.rawSetRotary(false);
-      this.updateMessage({ message: lang.message.homing });
+      this.showMessage({ content: lang.message.homing });
       await deviceMaster.rawHome();
 
       const vc = versionChecker(this.device.version);
@@ -66,12 +65,12 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
         this.lineCheckEnabled = false;
       }
 
-      this.updateMessage({ message: lang.message.turningOffFan });
+      this.showMessage({ content: lang.message.turningOffFan });
       await deviceMaster.rawSetFan(false);
-      this.updateMessage({ message: lang.message.turningOffAirPump });
+      this.showMessage({ content: lang.message.turningOffAirPump });
       await deviceMaster.rawSetAirPump(false);
       await deviceMaster.rawSetWaterPump(false);
-      this.updateMessage({ message: lang.message.connectingCamera });
+      this.showMessage({ content: lang.message.connectingCamera });
       await deviceMaster.connectCamera();
 
       return true;
@@ -97,7 +96,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
 
   end = async (): Promise<void> => {
     this.ended = true;
-    MessageCaller.closeMessage('camera-preview');
+    this.closeMessage();
     try {
       const res = await deviceMaster.select(this.device);
 
@@ -133,13 +132,15 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     // End linecheck mode if needed
     try {
       if (this.lineCheckEnabled) {
-        this.updateMessage({ message: lang.message.endingLineCheckMode });
+        this.showMessage({ content: lang.message.endingLineCheckMode });
         await deviceMaster.rawEndLineCheckMode();
       }
     } catch (error) {
-      if (error.message === ErrorConstants.CONTROL_SOCKET_MODE_ERROR) {
+      const err = error as any;
+
+      if (err.message === ErrorConstants.CONTROL_SOCKET_MODE_ERROR) {
         // Device control is not in raw mode
-      } else if (error.status === 'error' && error.error && error.error[0] === 'L_UNKNOWN_COMMAND') {
+      } else if (err.status === 'error' && err.error && err.error[0] === 'L_UNKNOWN_COMMAND') {
         // Ghost control socket is not in raw mode, unknown command M172
       } else {
         console.log('Unable to end line check mode', error);
@@ -147,12 +148,14 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     }
     // cannot getDeviceSetting during RawMode. So we force to end it.
     try {
-      this.updateMessage({ message: lang.message.endingRawMode });
+      this.showMessage({ content: lang.message.endingRawMode });
       await deviceMaster.endSubTask();
     } catch (error) {
-      if (error.status === 'error' && error.error && error.error[0] === 'OPERATION_ERROR') {
+      const err = error as any;
+
+      if (err.status === 'error' && err.error && err.error[0] === 'OPERATION_ERROR') {
         console.log('Not in raw mode right now');
-      } else if (error.status === 'error' && error.error === 'TIMEOUT') {
+      } else if (err.status === 'error' && err.error === 'TIMEOUT') {
         console.log('Timeout has occur when end raw mode, reconnecting');
         await deviceMaster.reconnect();
       } else {
@@ -164,7 +167,7 @@ class BeamPreviewManager extends BasePreviewManager implements PreviewManager {
     const supportOpenBottom = getAddOnInfo(this.workarea).openBottom;
     const configName = supportOpenBottom && borderless ? 'camera_offset_borderless' : 'camera_offset';
 
-    this.updateMessage({ message: lang.message.retrievingCameraOffset });
+    this.showMessage({ content: lang.message.retrievingCameraOffset });
 
     const resp = await deviceMaster.getDeviceSetting(configName);
 

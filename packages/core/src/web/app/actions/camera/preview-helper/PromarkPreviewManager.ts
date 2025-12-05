@@ -1,6 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { MessageLevel } from '@core/app/actions/message-caller';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
 import CameraTransformAPI from '@core/helpers/api/camera-transform';
@@ -35,7 +35,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
     }
 
     try {
-      this.showMessage({ message: lang.message.connectingCamera });
+      this.showMessage({ content: lang.message.connectingCamera });
       this.fisheyeParams = promarkDataStore.get(this.device.serial, 'cameraParameters');
 
       if (!this.fisheyeParams) {
@@ -91,12 +91,7 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
 
   public preview = async (): Promise<boolean> => {
     try {
-      MessageCaller.openMessage({
-        content: i18n.lang.topbar.preview,
-        duration: 20,
-        key: 'full-area-preview',
-        level: MessageLevel.LOADING,
-      });
+      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
       let imgBlob = await this.webCamConnection!.getPicture();
 
@@ -108,16 +103,11 @@ class PromarkPreviewManager extends BasePreviewManager implements PreviewManager
         PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
       });
       URL.revokeObjectURL(imgUrl);
-      MessageCaller.openMessage({
-        content: i18n.lang.message.preview.succeeded,
-        duration: 3,
-        key: 'full-area-preview',
-        level: MessageLevel.SUCCESS,
-      });
+      this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
 
       return true;
     } catch (error) {
-      MessageCaller.closeMessage('full-area-preview');
+      this.closeMessage();
       throw error;
     }
   };
