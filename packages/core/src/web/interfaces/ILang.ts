@@ -215,8 +215,6 @@ export interface ILang {
       borderless_blind_area: string;
       borderless_preview: string;
       diode_blind_area: string;
-      ellipse: string;
-      image: string;
       label: {
         adjust_height: string;
         array: string;
@@ -248,9 +246,6 @@ export interface ILang {
         text: string;
         trace: string;
       };
-      line: string;
-      rectangle: string;
-      text: string;
       unpreviewable_area: string;
     };
     network_testing_panel: {
@@ -1653,6 +1648,7 @@ export interface ILang {
       getting_focal_distance: string;
       moving_to_preview_position: string;
       please_enter_height: string;
+      press_esc_to_stop: string;
       succeeded: string;
     };
     promark_disconnected: string;
@@ -2246,8 +2242,6 @@ export interface ILang {
       zoom_out: string;
       zoom_with_window: string;
     };
-    preview: string;
-    preview_press_esc_to_stop: string;
     rename_tab: string;
     select_machine: string;
     tag_names: {

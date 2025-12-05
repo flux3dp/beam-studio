@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Ne-gravírovací oblast',
       borderless_preview: 'Náhled kamery s otevřenou spodní částí',
       diode_blind_area: 'Doplněk hybridního laseru - slepá oblast',
-      ellipse: 'Elipsa',
-      image: 'Obrázek',
       label: {
         adjust_height: 'Přizpůsobit výšku',
         array: 'Pole',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Text',
         trace: 'Obkreslit obrázek',
       },
-      line: 'Čára',
-      rectangle: 'Obdélník',
-      text: 'Text',
       unpreviewable_area: 'Slepá oblast',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Získávání ohniskové vzdálenosti...',
       moving_to_preview_position: 'Přesouvání do náhledové pozice...',
       please_enter_height: 'Zadejte prosím výšku objektu, aby kamera zachytila přesný záběr.',
+      press_esc_to_stop: 'Stisknutím ESC zastavíte náhled kamery.',
       succeeded: 'Úspěšně zobrazeno',
     },
     promark_disconnected: '#850 Připojení zařízení bylo přerušeno, zkontrolujte stav připojení zařízení.',
@@ -2254,8 +2250,6 @@ const lang: ILang = {
       zoom_out: 'Oddálit',
       zoom_with_window: 'Automaticky přizpůsobit na velikost okna',
     },
-    preview: 'Náhled kamery',
-    preview_press_esc_to_stop: 'Stisknutím ESC zastavíte náhled kamery.',
     rename_tab: 'Přejmenovat kartu',
     select_machine: 'Vybrat přístroj',
     tag_names: {

@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Area Non-ukir',
       borderless_preview: 'Pratinjau Kamera Mode Bawah Terbuka',
       diode_blind_area: 'Area Buta Tambahan Laser Hibrid',
-      ellipse: 'Elips',
-      image: 'Gambar',
       label: {
         adjust_height: 'Sesuaikan Tinggi',
         array: 'Larik',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Teks',
         trace: 'Jejak Gambar',
       },
-      line: 'Garis',
-      rectangle: 'Persegi Panjang',
-      text: 'Teks',
       unpreviewable_area: 'Area Buta',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Mengambil jarak fokus...',
       moving_to_preview_position: 'Memindahkan ke posisi pratinjau...',
       please_enter_height: 'Silakan masukkan tinggi objek agar dapat mengambil gambar kamera yang akurat.',
+      press_esc_to_stop: 'Tekan ESC untuk menghentikan pratinjau kamera.',
       succeeded: 'Berhasil dipratinjau',
     },
     promark_disconnected: '#850 Koneksi perangkat terputus, periksa status koneksi perangkat.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Perkecil',
       zoom_with_window: 'Otomatis Sesuaikan Ukuran Jendela',
     },
-    preview: 'Pratinjau Kamera',
-    preview_press_esc_to_stop: 'Tekan ESC untuk menghentikan pratinjau kamera.',
     rename_tab: 'Ganti nama tab',
     select_machine: 'Pilih mesin',
     tag_names: {

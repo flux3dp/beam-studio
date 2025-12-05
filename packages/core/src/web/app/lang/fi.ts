@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Ei-kaiverrusalue',
       borderless_preview: 'Avaa alareunan kameran esikatselu',
       diode_blind_area: 'Hybridilaser-lisävarusteen sokkoalue',
-      ellipse: 'Ellipsi',
-      image: 'Kuva',
       label: {
         adjust_height: 'Säädä korkeutta',
         array: 'Taulukko',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Teksti',
         trace: 'Jäljitä kuva',
       },
-      line: 'Viiva',
-      rectangle: 'Suorakaide',
-      text: 'Teksti',
       unpreviewable_area: 'Sokkoalue',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Haetaan polttoväliä...',
       moving_to_preview_position: 'Siirrytään esikatseluasentoon...',
       please_enter_height: 'Anna kohteen korkeus. Jotta kameran kuva olisi tarkka.',
+      press_esc_to_stop: 'Paina ESC lopettaaksesi kameran esikatselun.',
       succeeded: 'Esikatselu onnistui',
     },
     promark_disconnected: '#850 Yhteys laitteeseen katkaistu, tarkista laitteen yhteystila.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Loitonna',
       zoom_with_window: 'Sovita ikkunaan automaattisesti',
     },
-    preview: 'Kameran esikatselu',
-    preview_press_esc_to_stop: 'Paina ESC lopettaaksesi kameran esikatselun.',
     rename_tab: 'Nimeä välilehti uudelleen',
     select_machine: 'Valitse kone',
     tag_names: {

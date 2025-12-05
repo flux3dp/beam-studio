@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Zone non gravable',
       borderless_preview: 'Aperçu caméra en mode fond ouvert',
       diode_blind_area: 'Zone non visible du module laser hybride',
-      ellipse: 'Ellipse',
-      image: 'Image',
       label: {
         adjust_height: 'Ajuster la hauteur',
         array: 'Tableau',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Texte',
         trace: 'Tracer image',
       },
-      line: 'Ligne',
-      rectangle: 'Rectangle',
-      text: 'Texte',
       unpreviewable_area: 'Zone non visible',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Obtention de la distance focale...',
       moving_to_preview_position: 'Déplacement vers la position d’aperçu...',
       please_enter_height: "Veuillez entrer la hauteur de l'objet. Afin de capturer un cliché de caméra précis.",
+      press_esc_to_stop: 'Appuyez sur ESC pour arrêter l’aperçu de la caméra.',
       succeeded: 'Aperçu réussi',
     },
     promark_disconnected: "#850 Connexion de l'appareil interrompue, veuillez vérifier l'état de connexion de l'appareil.",
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Zoom arrière',
       zoom_with_window: 'Ajuster automatiquement à la taille de la fenêtre',
     },
-    preview: 'Aperçu caméra',
-    preview_press_esc_to_stop: 'Appuyez sur ESC pour arrêter l’aperçu de la caméra.',
     rename_tab: "Renommer l'onglet",
     select_machine: 'Sélectionner une machine',
     tag_names: {

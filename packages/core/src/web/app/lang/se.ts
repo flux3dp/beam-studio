@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Icke-graveringsområde',
       borderless_preview: 'Öppna bottenläge kameraförhandsgranskning',
       diode_blind_area: 'Hybridlaser tilläggs blint område',
-      ellipse: 'Ellips',
-      image: 'Bild',
       label: {
         adjust_height: 'Justera höjd',
         array: 'Matris',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Text',
         trace: 'Spåra bild',
       },
-      line: 'Linje',
-      rectangle: 'Rektangel',
-      text: 'Text',
       unpreviewable_area: 'Blint område',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Hämtar brännvidd...',
       moving_to_preview_position: 'Flyttar till förhandsvisningsposition...',
       please_enter_height: 'Ange objektets höjd. För att ta en exakt kamerabild.',
+      press_esc_to_stop: 'Tryck på ESC för att stoppa kameraförhandsvisningen.',
       succeeded: 'Förhandsgranskning lyckades',
     },
     promark_disconnected: '#850 Enhetens anslutning har avbrutits, kontrollera enhetens anslutningsstatus.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Zooma ut',
       zoom_with_window: 'Autoanpassa till fönster',
     },
-    preview: 'Kameraförhandsgranskning',
-    preview_press_esc_to_stop: 'Tryck på ESC för att stoppa kameraförhandsvisningen.',
     rename_tab: 'Byt namn på flik',
     select_machine: 'Välj en maskin',
     tag_names: {

@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Área no grabada',
       borderless_preview: 'Vista previa de la cámara en modo sin bordes',
       diode_blind_area: 'Área ciega de adición de láser híbrido',
-      ellipse: 'Elipse',
-      image: 'Imagen',
       label: {
         adjust_height: 'Ajustar altura',
         array: 'Gama',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Texto',
         trace: 'Imagen de rastro',
       },
-      line: 'Línea',
-      rectangle: 'Rectángulo',
-      text: 'Texto',
       unpreviewable_area: 'Área ciega',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Obteniendo distancia focal...',
       moving_to_preview_position: 'Moviéndose a la posición de vista previa...',
       please_enter_height: 'Por favor, ingrese la altura del objeto para capturar una toma precisa de la cámara.',
+      press_esc_to_stop: 'Presiona ESC para detener la vista previa de la cámara.',
       succeeded: 'Vista previa exitosa',
     },
     promark_disconnected: '#850 La conexión del dispositivo se ha interrumpido, por favor revise el estado de la conexión.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Alejar',
       zoom_with_window: 'Ajuste automático del tamaño de la ventana',
     },
-    preview: 'Vista previa de cámara',
-    preview_press_esc_to_stop: 'Presiona ESC para detener la vista previa de la cámara.',
     rename_tab: 'Renombrar pestaña',
     select_machine: 'Seleccione una máquina',
     tag_names: {

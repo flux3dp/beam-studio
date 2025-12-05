@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Área não gravável',
       borderless_preview: 'Visualização da câmera no modo de fundo aberto',
       diode_blind_area: 'Área cega do complemento híbrido a laser',
-      ellipse: 'Elipse',
-      image: 'Imagem',
       label: {
         adjust_height: 'Ajustar Altura',
         array: 'Matriz',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Texto',
         trace: 'Traçar Imagem',
       },
-      line: 'Linha',
-      rectangle: 'Retângulo',
-      text: 'Texto',
       unpreviewable_area: 'Área cega',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Obtendo distância focal...',
       moving_to_preview_position: 'Movendo para a posição de visualização...',
       please_enter_height: 'Por favor, insira a altura do objeto para capturar a imagem da câmera com precisão.',
+      press_esc_to_stop: 'Pressione ESC para parar a pré-visualização da câmera.',
       succeeded: 'Visualização bem-sucedida',
     },
     promark_disconnected: '#850 Conexão do dispositivo interrompida, por favor verifique o estado da conexão.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Reduzir',
       zoom_with_window: 'Ajuste Automático à Janela',
     },
-    preview: 'Pré-visualização da Câmera',
-    preview_press_esc_to_stop: 'Pressione ESC para parar a pré-visualização da câmera.',
     rename_tab: 'Renomear aba',
     select_machine: 'Selecionar uma máquina',
     tag_names: {

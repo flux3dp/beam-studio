@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Ikke-graveringsområde',
       borderless_preview: 'Åbn bundkameraforhåndsvisning i bundløs tilstand',
       diode_blind_area: 'Hybrid laser blindt område',
-      ellipse: 'Ellipse',
-      image: 'Billede',
       label: {
         adjust_height: 'Juster højde',
         array: 'Array',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Tekst',
         trace: 'Spor billede',
       },
-      line: 'Linje',
-      rectangle: 'Rektangel',
-      text: 'Tekst',
       unpreviewable_area: 'Blindt område',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Henter brændvidde...',
       moving_to_preview_position: 'Flytter til forhåndsvisningsposition...',
       please_enter_height: 'Angiv venligst objektets højde. For at optage et præcist kamerabillede.',
+      press_esc_to_stop: 'Tryk på ESC for at stoppe kameraforhåndsvisningen.',
       succeeded: 'Forhåndsvisning lykkedes',
     },
     promark_disconnected: '#850 Forbindelsen til enheden blev afbrudt, kontroller enhedens forbindelsesstatus.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Zoom ud',
       zoom_with_window: 'Auto tilpas til vinduestørrelse',
     },
-    preview: 'Kamera forhåndsvisning',
-    preview_press_esc_to_stop: 'Tryk på ESC for at stoppe kameraforhåndsvisningen.',
     rename_tab: 'Omdøb fane',
     select_machine: 'Vælg en maskine',
     tag_names: {

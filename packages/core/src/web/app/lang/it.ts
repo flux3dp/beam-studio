@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Area non incisa',
       borderless_preview: 'Anteprima fotocamera modalità fondo aperto',
       diode_blind_area: 'Area cieca aggiuntiva laser ibrido',
-      ellipse: 'Ellisse',
-      image: 'Immagine',
       label: {
         adjust_height: 'Regola altezza',
         array: 'Matrice',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Testo',
         trace: 'Traccia immagine',
       },
-      line: 'Linea',
-      rectangle: 'Rettangolo',
-      text: 'Testo',
       unpreviewable_area: 'Area cieca',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Ottenimento della distanza focale...',
       moving_to_preview_position: 'Spostamento nella posizione di anteprima...',
       please_enter_height: "Inserire l'altezza dell'oggetto. Per catturare uno scatto di fotocamera preciso.",
+      press_esc_to_stop: 'Premi ESC per interrompere l’anteprima della fotocamera.',
       succeeded: 'Anteprima riuscita',
     },
     promark_disconnected: '#850 Connessione al dispositivo interrotta, controlla lo stato della connessione del dispositivo.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Rimpicciolisci',
       zoom_with_window: 'Adatta automaticamente alla finestra',
     },
-    preview: 'Anteprima fotocamera',
-    preview_press_esc_to_stop: 'Premi ESC per interrompere l’anteprima della fotocamera.',
     rename_tab: 'Rinomina scheda',
     select_machine: 'Seleziona una macchina',
     tag_names: {

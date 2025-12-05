@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: '비조각 영역',
       borderless_preview: '열린 바닥 모드 카메라 미리보기',
       diode_blind_area: 'Hybrid Laser 추가 기능 블라인드 영역',
-      ellipse: '타원',
-      image: '이미지',
       label: {
         adjust_height: '높이 조절',
         array: '어레이',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: '텍스트',
         trace: '이미지 추적',
       },
-      line: '선',
-      rectangle: '사각형',
-      text: '텍스트',
       unpreviewable_area: '블라인드 영역',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: '초점 거리 측정 중...',
       moving_to_preview_position: '미리보기 위치로 이동 중...',
       please_enter_height: '물체의 높이를 입력하여 정확한 카메라 촬영을 위해.',
+      press_esc_to_stop: 'ESC를 눌러 카메라 미리보기를 중지하세요.',
       succeeded: '미리보기 성공',
     },
     promark_disconnected: '#850 장치 연결이 중단되었습니다. 장치의 연결 상태를 확인하세요.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: '축소',
       zoom_with_window: '자동 창 크기 맞춤',
     },
-    preview: '카메라 미리보기',
-    preview_press_esc_to_stop: 'ESC를 눌러 카메라 미리보기를 중지하세요.',
     rename_tab: '탭 이름 변경',
     select_machine: '기계를 선택하세요',
     tag_names: {

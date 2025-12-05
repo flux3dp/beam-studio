@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Obszar bez możliwości grawerowania',
       borderless_preview: 'Podgląd kamery w trybie Otwartego dna',
       diode_blind_area: 'Dodatkowy obszar bez podglądu dla lasera diodowego',
-      ellipse: 'Elipsa',
-      image: 'Obraz',
       label: {
         adjust_height: 'Dostosuj wysokość',
         array: 'Ułóż',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Tekst',
         trace: 'Obrysuj obraz',
       },
-      line: 'Linia',
-      rectangle: 'Prostokąt',
-      text: 'Tekst',
       unpreviewable_area: 'Obszar bez podglądu',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Pobieranie odległości ogniskowej...',
       moving_to_preview_position: 'Przenoszenie do pozycji podglądu...',
       please_enter_height: 'Proszę podać wysokość obiektu. Aby uchwycić precyzyjne ujęcie kamery.',
+      press_esc_to_stop: 'Naciśnij ESC, aby zatrzymać podgląd kamery.',
       succeeded: 'Pomyślnie wyświetlono podgląd',
     },
     promark_disconnected: '#850 Połączenie z urządzeniem zostało przerwane, sprawdź status połączenia.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Zmniejsz',
       zoom_with_window: 'Automatyczne dopasowywuj obszar roboczy do okna',
     },
-    preview: 'Podgląd kamery',
-    preview_press_esc_to_stop: 'Naciśnij ESC, aby zatrzymać podgląd kamery.',
     rename_tab: 'Zmień nazwę karty',
     select_machine: 'Wybierz maszynę',
     tag_names: {

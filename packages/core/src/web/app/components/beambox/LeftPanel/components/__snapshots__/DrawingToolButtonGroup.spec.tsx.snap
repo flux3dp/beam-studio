@@ -8,7 +8,7 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
     <div
       class="container"
       id="left-Preview"
-      title="PREVIEW"
+      title="Camera Preview"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -141,7 +141,7 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     <div
       class="container"
       id="left-Preview"
-      title="PREVIEW"
+      title="Camera Preview"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"

@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: '非彫刻エリア',
       borderless_preview: 'ボーダーレスモードのカメラプレビュー',
       diode_blind_area: 'ハイブリッドアドオンのブラインドエリア',
-      ellipse: '楕円',
-      image: '画像',
       label: {
         adjust_height: '高さ調整',
         array: '配列',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'テキスト',
         trace: 'トレース画像',
       },
-      line: 'ライン',
-      rectangle: '長方形',
-      text: 'テキスト',
       unpreviewable_area: 'ブラインドエリア',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: '焦点距離を取得中...',
       moving_to_preview_position: 'プレビュー位置に移動中...',
       please_enter_height: '正確なカメラショットを撮影するために、物体の高さを入力してください。',
+      press_esc_to_stop: 'ESCを押してカメラプレビューを停止します。',
       succeeded: 'プレビューに成功しました',
     },
     promark_disconnected: '#850 デバイスの接続が中断されました。デバイスの接続状態を確認してください。',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'ズームアウト',
       zoom_with_window: '自動的にウィンドウサイズに合わせる',
     },
-    preview: 'カメラプレビュー',
-    preview_press_esc_to_stop: 'ESCを押してカメラプレビューを停止します。',
     rename_tab: 'タブの名前を変更',
     select_machine: 'マシンの選択',
     tag_names: {

@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'พื้นที่ที่ไม่สามารถกัดได้',
       borderless_preview: 'เปิดกล้องด้านล่างเพื่อดูตัวอย่าง',
       diode_blind_area: 'พื้นที่มืดของเลเซอร์แอดออน',
-      ellipse: 'วงรี',
-      image: 'รูปภาพ',
       label: {
         adjust_height: 'ปรับระดับความสูง',
         array: 'แถวลําดับ',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'ข้อความ',
         trace: 'ตามเส้นทาง',
       },
-      line: 'เส้น',
-      rectangle: 'สี่เหลี่ยมผืนผ้า',
-      text: 'ข้อความ',
       unpreviewable_area: 'พื้นที่มืด',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'กำลังรับค่าระยะโฟกัส...',
       moving_to_preview_position: 'กำลังย้ายไปยังตำแหน่งแสดงตัวอย่าง...',
       please_enter_height: 'โปรดป้อนความสูงของวัตถุ เพื่อจับภาพกล้องอย่างแม่นยํา',
+      press_esc_to_stop: 'กด ESC เพื่อหยุดการแสดงตัวอย่างกล้อง.',
       succeeded: 'ดูตัวอย่างสำเร็จ',
     },
     promark_disconnected: '#850 การเชื่อมต่ออุปกรณ์ถูกตัด กรุณาตรวจสอบสถานะการเชื่อมต่อของอุปกรณ์',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'ซูมออก',
       zoom_with_window: 'ปรับพอดีกับขนาดหน้าต่างอัตโนมัติ',
     },
-    preview: 'ดูตัวอย่างกล้อง',
-    preview_press_esc_to_stop: 'กด ESC เพื่อหยุดการแสดงตัวอย่างกล้อง.',
     rename_tab: 'เปลี่ยนชื่อแท็บ',
     select_machine: 'เลือกเครื่อง',
     tag_names: {

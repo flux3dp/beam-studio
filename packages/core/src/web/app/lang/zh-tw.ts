@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: '非雕刻範圍',
       borderless_preview: '開蓋模式相機預覽',
       diode_blind_area: '非雕刻範圍',
-      ellipse: '橢圓形',
-      image: '圖片',
       label: {
         adjust_height: '調整高度',
         array: '陣列',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: '文字',
         trace: '影像描圖',
       },
-      line: '線段',
-      rectangle: '長方形',
-      text: '文字',
       unpreviewable_area: '非相機預覽範圍',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: '正在取得焦距...',
       moving_to_preview_position: '正在移動至相機預覽位置...',
       please_enter_height: '請輸入物體的高度，以拍攝精確的相機照片。',
+      press_esc_to_stop: '按下 ESC 鍵以停止相機預覽。',
       succeeded: '預覽成功',
     },
     promark_disconnected: '#850 設備連線中斷，請確認設備的連線狀態。',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: '縮小',
       zoom_with_window: '自動配合視窗尺寸',
     },
-    preview: '相機預覽',
-    preview_press_esc_to_stop: '按下 ESC 鍵以停止相機預覽。',
     rename_tab: '重新命名分頁',
     select_machine: '選擇機器',
     tag_names: {

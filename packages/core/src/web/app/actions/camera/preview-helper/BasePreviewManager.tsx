@@ -127,7 +127,7 @@ class BasePreviewManager implements PreviewManager {
           content: (
             <>
               {`${i18n.lang.message.preview.capturing_image} ${i}/${points.length} `}
-              <Tooltip title={i18n.lang.topbar.preview_press_esc_to_stop}>
+              <Tooltip title={i18n.lang.message.preview.press_esc_to_stop}>
                 <QuestionCircleOutlined />
               </Tooltip>
             </>

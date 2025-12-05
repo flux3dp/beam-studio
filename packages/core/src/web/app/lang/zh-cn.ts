@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: '非雕刻范围',
       borderless_preview: '开盖模式相机预览',
       diode_blind_area: '非雕刻范围',
-      ellipse: '椭圆形',
-      image: '图片',
       label: {
         adjust_height: '调整高度',
         array: '阵列',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: '文字',
         trace: '影像描图',
       },
-      line: '线段',
-      rectangle: '长方形',
-      text: '文本',
       unpreviewable_area: '非相机预览范围',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: '正在获取焦距...',
       moving_to_preview_position: '正在移动到预览位置...',
       please_enter_height: '请输入物体的高度，以拍摄精确的相机照片。',
+      press_esc_to_stop: '按下 ESC 以停止相机预览。',
       succeeded: '预览成功',
     },
     promark_disconnected: '#850 设备连接中断，请检查设备的连接状态。',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: '缩小',
       zoom_with_window: '自动配合视窗尺寸',
     },
-    preview: '相机预览',
-    preview_press_esc_to_stop: '按下 ESC 以停止相机预览。',
     rename_tab: '重命名标签页',
     select_machine: '选择机器',
     tag_names: {

@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Μη χαρακτική περιοχή',
       borderless_preview: 'Προεπισκόπηση κάμερας ανοιχτής λειτουργίας κάτω μέρους',
       diode_blind_area: 'Τυφλή περιοχή υβριδικού laser προσθήκης',
-      ellipse: 'Έλλειψη',
-      image: 'Εικόνα',
       label: {
         adjust_height: 'Ρύθμιση ύψους',
         array: 'Πίνακας',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Κείμενο',
         trace: 'Ιχνηλάτηση εικόνας',
       },
-      line: 'Γραμμή',
-      rectangle: 'Ορθογώνιο',
-      text: 'Κείμενο',
       unpreviewable_area: 'Τυφλή περιοχή',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Λήψη εστιακής απόστασης...',
       moving_to_preview_position: 'Μετακίνηση στη θέση προεπισκόπησης...',
       please_enter_height: 'Παρακαλώ εισάγετε το ύψος του αντικειμένου για ακριβή λήψη κάμερας.',
+      press_esc_to_stop: 'Πατήστε ESC για να σταματήσετε την προεπισκόπηση της κάμερας.',
       succeeded: 'Επιτυχής προεπισκόπηση',
     },
     promark_disconnected: '#850 Η σύνδεση με τη συσκευή διακόπηκε, ελέγξτε την κατάσταση σύνδεσης της συσκευής.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Σμίκρυνση',
       zoom_with_window: 'Αυτόματη προσαρμογή στο μέγεθος παραθύρου',
     },
-    preview: 'Προεπισκόπηση κάμερας',
-    preview_press_esc_to_stop: 'Πατήστε ESC για να σταματήσετε την προεπισκόπηση της κάμερας.',
     rename_tab: 'Μετονομασία καρτέλας',
     select_machine: 'Επιλέξτε μηχανή',
     tag_names: {

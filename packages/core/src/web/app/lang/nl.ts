@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Niet-graverend gebied',
       borderless_preview: 'Open onderkant modus camerabeeld',
       diode_blind_area: 'Blind gebied hybride laseradd-on',
-      ellipse: 'Ellips',
-      image: 'Afbeelding',
       label: {
         adjust_height: 'Hoogte aanpassen',
         array: 'Array',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Tekst',
         trace: 'Afbeelding traceren',
       },
-      line: 'Lijn',
-      rectangle: 'Rechthoek',
-      text: 'Tekst',
       unpreviewable_area: 'Blind gebied',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Bezig met ophalen van brandpuntsafstand...',
       moving_to_preview_position: 'Bezig met verplaatsen naar voorbeeldpositie...',
       please_enter_height: 'Voer de hoogte van het object in om een nauwkeurige camerafoto te maken.',
+      press_esc_to_stop: 'Druk op ESC om de cameravoorvertoning te stoppen.',
       succeeded: 'Succesvol voorvertoond',
     },
     promark_disconnected: '#850 Apparaatverbinding onderbroken, controleer de verbindingsstatus van het apparaat.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Uitzoomen',
       zoom_with_window: 'Automatisch aanpassen aan venster',
     },
-    preview: 'Liveweergave',
-    preview_press_esc_to_stop: 'Druk op ESC om de cameravoorvertoning te stoppen.',
     rename_tab: 'Tab hernoemen',
     select_machine: 'Selecteer een machine',
     tag_names: {

@@ -217,8 +217,6 @@ const lang: ILang = {
       borderless_blind_area: 'Vùng không khắc',
       borderless_preview: 'Xem trước Chế độ Mở đáy Máy ảnh',
       diode_blind_area: 'Vùng mù Phụ kiện Laser',
-      ellipse: 'Hình elip',
-      image: 'Hình ảnh',
       label: {
         adjust_height: 'Điều chỉnh chiều cao',
         array: 'Mảng',
@@ -250,9 +248,6 @@ const lang: ILang = {
         text: 'Văn bản',
         trace: 'Truy tìm Hình ảnh',
       },
-      line: 'Đường thẳng',
-      rectangle: 'Hình chữ nhật',
-      text: 'Văn bản',
       unpreviewable_area: 'Vùng mù',
     },
     network_testing_panel: {
@@ -1662,6 +1657,7 @@ const lang: ILang = {
       getting_focal_distance: 'Đang lấy khoảng cách tiêu cự...',
       moving_to_preview_position: 'Đang di chuyển đến vị trí xem trước...',
       please_enter_height: 'Vui lòng nhập chiều cao của vật thể. Để chụp ảnh camera chính xác.',
+      press_esc_to_stop: 'Nhấn ESC để dừng xem trước camera.',
       succeeded: 'Xem trước thành công',
     },
     promark_disconnected: '#850 Kết nối thiết bị bị gián đoạn, vui lòng kiểm tra trạng thái kết nối của thiết bị.',
@@ -2253,8 +2249,6 @@ const lang: ILang = {
       zoom_out: 'Thu nhỏ',
       zoom_with_window: 'Tự động vừa với kích thước cửa sổ',
     },
-    preview: 'Xem trước Máy ảnh',
-    preview_press_esc_to_stop: 'Nhấn ESC để dừng xem trước camera.',
     rename_tab: 'Đổi tên tab',
     select_machine: 'Chọn máy',
     tag_names: {
