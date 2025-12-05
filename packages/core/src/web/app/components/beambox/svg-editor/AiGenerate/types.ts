@@ -1,11 +1,9 @@
 // Aspect ratios now include both landscape and portrait variants directly
 export type AspectRatio = '1:1' | '2:3' | '3:2' | '3:4' | '4:3' | '9:16' | '16:9' | '21:9';
-export type ImageSize = 'large' | 'medium' | 'small';
-export type ImageResolution = '1K' | '2K' | '4K';
+export type ImageSize = '1K' | '2K' | '4K';
 export type GenerationStatus = 'failed' | 'generating' | 'idle' | 'success';
 export type GenerationMode = 'edit' | 'text-to-image';
 
-// Simplified: orientation is now implicit in the aspect ratio (e.g., '3:4' is portrait)
 export interface ImageDimensions {
   aspectRatio: AspectRatio;
   size: ImageSize;
@@ -33,3 +31,6 @@ export const createUrlInput = (url: string): ImageInput => ({
   type: 'url',
   url,
 });
+
+export const laserFriendlyValue =
+  'pure black and white, monochrome, high contrast, line art, no gradients, no shading, suitable for engraving';

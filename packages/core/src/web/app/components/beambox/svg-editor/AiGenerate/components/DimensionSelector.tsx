@@ -124,7 +124,7 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
       {/* Size Selection */}
       <div className={styles['dimension-group']}>
         <Space size={8}>
-          {['small', 'medium', 'large'].map((size: any) => (
+          {['1K', '2K', '4K'].map((size: any) => (
             <Button
               className={classNames(styles['size-button'], { [styles.active]: dimensions.size === size })}
               key={size}

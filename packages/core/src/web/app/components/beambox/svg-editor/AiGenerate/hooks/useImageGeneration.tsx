@@ -6,7 +6,6 @@ import type { IUser } from '@core/interfaces/IUser';
 import type { ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { objectToSnakeCase } from '../utils/caseConversion';
-import { getSizeResolution } from '../utils/dimensions';
 import { getInputFieldsForStyle } from '../utils/inputFields';
 
 const validateRequest = ({
@@ -95,7 +94,7 @@ export const useImageGeneration = ({
       image_inputs: imageInputs.map((input) => (input.type === 'file' ? input.file : input.url)),
       max_images: maxImages,
       prompt_data: { inputs, style },
-      size: getSizeResolution(dimensions.size),
+      size: dimensions.size,
     };
 
     // 3. Execution Phase

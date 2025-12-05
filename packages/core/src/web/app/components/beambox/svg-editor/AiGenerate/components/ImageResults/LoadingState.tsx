@@ -1,10 +1,10 @@
 import { Spin } from 'antd';
 
-import styles from './index.module.scss';
+import style from './index.module.scss';
 
 export const LoadingState = () => (
-  <div className={styles['loading-container']}>
-    <Spin size="large" />
-    <p className={styles['loading-text']}>Generating your images...</p>
+  <div className={style['loading-container']}>
+    <Spin className={style['loading-spinner']} size="large" />
+    <p className={style['loading-text']}>Generating your images...</p>
   </div>
 );

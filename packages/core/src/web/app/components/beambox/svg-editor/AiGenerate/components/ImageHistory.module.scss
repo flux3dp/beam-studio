@@ -29,12 +29,12 @@
   margin-bottom: 20px;
 }
 
-.loading-more {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
-  padding: 20px 0;
-  font-size: 14px;
-  color: vars.$text-secondary;
+.loading-spinner {
+  // use important to override @packages/core/public/js/lib/svgeditor/svg-editor.css
+  :global(.ant-spin-dot) {
+    transform-origin: center center !important;
+    -webkit-transform-origin: center center !important;
+    -moz-transform-origin: center center !important;
+    -o-transform-origin: center center !important;
+  }
 }
