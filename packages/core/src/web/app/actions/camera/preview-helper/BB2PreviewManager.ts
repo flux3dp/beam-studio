@@ -4,7 +4,6 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import constant, { hexaRfModels, PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import MessageCaller from '@core/app/actions/message-caller';
 import {
   bb2PerspectiveGrid,
   bb2WideAnglePerspectiveGrid,
@@ -93,7 +92,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     if (this.cameraType === cameraType) return this.cameraType;
 
     try {
-      this.showMessage({ message: 'tSwitching camera' });
+      this.showMessage({ content: 'tSwitching camera' });
 
       if (this.cameraType === CameraType.LASER_HEAD) {
         await this.endLaserHeadCameraPreview(false);
@@ -177,7 +176,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     } finally {
       if (deviceMaster.currentControlMode === 'raw') {
         await deviceMaster.rawLooseMotor();
-        this.updateMessage({ message: lang.message.endingRawMode });
+        this.showMessage({ content: lang.message.endingRawMode });
         await deviceMaster.endSubTask();
       }
     }
@@ -196,20 +195,20 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
         }
       }
 
-      this.updateMessage({ message: lang.message.enteringRawMode });
+      this.showMessage({ content: lang.message.enteringRawMode });
       await deviceMaster.enterRawMode();
-      this.updateMessage({ message: lang.message.exitingRotaryMode });
+      this.showMessage({ content: lang.message.exitingRotaryMode });
       await deviceMaster.rawSetRotary(false);
-      this.updateMessage({ message: lang.message.homing });
+      this.showMessage({ content: lang.message.homing });
       await deviceMaster.rawHome();
       await deviceMaster.rawStartLineCheckMode();
       this.lineCheckEnabled = true;
-      this.updateMessage({ message: lang.message.turningOffFan });
+      this.showMessage({ content: lang.message.turningOffFan });
       await deviceMaster.rawSetFan(false);
-      this.updateMessage({ message: lang.message.turningOffAirPump });
+      this.showMessage({ content: lang.message.turningOffAirPump });
       await deviceMaster.rawSetAirPump(false);
       await deviceMaster.rawSetWaterPump(false);
-      this.updateMessage({ message: lang.message.connectingCamera });
+      this.showMessage({ content: lang.message.connectingCamera });
 
       if (!(await deviceMaster.setFisheyeParam(this.fisheyeParams!))) {
         throw new Error('Failed to set fisheye parameters');
@@ -233,7 +232,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     const { lang } = i18n;
 
     try {
-      this.showMessage({ message: sprintf(lang.message.connectingMachine, this.device.name) });
+      this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
       await deviceMaster.connectCamera();
       await this.checkWideAngleCamera();
@@ -256,7 +255,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
 
   end = async (): Promise<void> => {
     this.ended = true;
-    MessageCaller.closeMessage('camera-preview');
+    this.closeMessage();
 
     try {
       if (this.cameraType === CameraType.LASER_HEAD) {
@@ -468,28 +467,18 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   // Methods of Wide Angle Camera Preview
   previewWithWideAngleCamera = async (): Promise<boolean> => {
     try {
-      MessageCaller.openMessage({
-        content: i18n.lang.topbar.preview,
-        duration: 20,
-        key: 'wide-angle-preview',
-        level: MessageLevel.LOADING,
-      });
+      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
       const imgUrl = await this.getPhotoFromMachine();
 
       await new Promise<void>((resolve) => {
         PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
       });
-      MessageCaller.openMessage({
-        content: i18n.lang.message.preview.succeeded,
-        duration: 3,
-        key: 'wide-angle-preview',
-        level: MessageLevel.SUCCESS,
-      });
+      this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
 
       return true;
     } catch (error) {
-      MessageCaller.closeMessage('wide-angle-preview');
+      this.closeMessage();
       throw error;
     }
   };

@@ -20,11 +20,14 @@ import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import shortcuts from '@core/helpers/shortcuts';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import type { IProgressDialog, ProgressType } from '@core/interfaces/IProgress';
-import { ProgressTypes } from '@core/interfaces/IProgress';
+import type { IMessage } from '@core/interfaces/IMessage';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import styles from './BasePreviewManager.module.scss';
+
+interface Message extends Omit<IMessage, 'level'> {
+  level?: MessageLevel;
+}
 
 class BasePreviewManager implements PreviewManager {
   protected device: IDeviceInfo;
@@ -36,7 +39,6 @@ class BasePreviewManager implements PreviewManager {
   protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
   protected _isFullScreen = false;
-  protected progressType: ProgressType = ProgressTypes.NONSTOP;
 
   public get isFullScreen() {
     return this._isFullScreen;
@@ -48,26 +50,14 @@ class BasePreviewManager implements PreviewManager {
     this.workareaObj = getWorkarea(this.workarea);
   }
 
-  protected showMessage = (data: IProgressDialog): void => {
-    if (data.message) {
-      MessageCaller.openMessage({
-        content: data.message,
-        duration: 20,
-        key: this.progressId,
-        level: MessageLevel.LOADING,
-      });
-    }
-  };
+  protected showMessage = (data: Message): void => {
+    // add margin to prevent message display at the draggable area
+    const defaultData = { className: styles['mt-24'], duration: 20, key: this.progressId, level: MessageLevel.LOADING };
 
-  protected updateMessage = (data: IProgressDialog): void => {
-    if (data.message) {
-      MessageCaller.openMessage({
-        content: data.message,
-        duration: 20,
-        key: this.progressId,
-        level: MessageLevel.LOADING,
-      });
-    }
+    MessageCaller.openMessage({
+      ...defaultData,
+      ...data,
+    });
   };
 
   protected closeMessage = (): void => {
@@ -133,20 +123,15 @@ class BasePreviewManager implements PreviewManager {
           return false;
         }
 
-        MessageCaller.openMessage({
-          // add margin to prevent message display at the draggable area
-          className: styles['mt-24'],
+        this.showMessage({
           content: (
             <>
-              {`${i18n.lang.topbar.preview} ${i}/${points.length} `}
+              {`${i18n.lang.message.preview.capturing_image} ${i}/${points.length} `}
               <Tooltip title={i18n.lang.topbar.preview_press_esc_to_stop}>
                 <QuestionCircleOutlined />
               </Tooltip>
             </>
           ),
-          duration: 20,
-          key: 'camera-preview',
-          level: MessageLevel.LOADING,
         });
 
         const { overlapFlag, point } = points[i];
@@ -163,20 +148,14 @@ class BasePreviewManager implements PreviewManager {
       }
 
       if (isStopped) {
-        MessageCaller.closeMessage('camera-preview');
+        this.closeMessage();
       } else {
-        MessageCaller.openMessage({
-          className: styles['mt-24'],
-          content: i18n.lang.device.completed,
-          duration: 3,
-          key: 'camera-preview',
-          level: MessageLevel.SUCCESS,
-        });
+        this.showMessage({ content: i18n.lang.device.completed, duration: 3, level: MessageLevel.SUCCESS });
       }
 
       return true;
     } catch (error) {
-      MessageCaller.closeMessage('camera-preview');
+      this.closeMessage();
 
       throw error;
     } finally {
@@ -285,7 +264,7 @@ class BasePreviewManager implements PreviewManager {
     const { imgBlob, needCameraCableAlert } = (await deviceMaster.takeOnePicture(opts)) ?? {};
 
     if (!imgBlob) {
-      throw new Error(lang.message.camera.ws_closed_unexpectly);
+      throw new Error(lang.message.camera.ws_closed_unexpectedly);
     } else if (needCameraCableAlert && !alertConfig.read('skip_camera_cable_alert')) {
       const shouldContinue = await new Promise<boolean>((resolve) => {
         alertCaller.popUp({

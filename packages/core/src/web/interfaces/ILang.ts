@@ -1608,7 +1608,7 @@ export interface ILang {
       door_opened: string;
       door_opened_text: string;
       fail_to_transmit_image: string;
-      ws_closed_unexpectly: string;
+      ws_closed_unexpectedly: string;
     };
     cancelling: string;
     cant_connect_to_device: string;
@@ -1648,6 +1648,7 @@ export interface ILang {
       adjust_height_tooltip: string;
       already_performed_auto_focus: string;
       camera_preview: string;
+      capturing_image: string;
       enter_manually: string;
       getting_focal_distance: string;
       moving_to_preview_position: string;

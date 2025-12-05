@@ -1,6 +1,5 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
@@ -30,7 +29,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     }
 
     try {
-      this.showMessage({ message: lang.message.connectingCamera });
+      this.showMessage({ content: lang.message.connectingCamera });
       await deviceMaster.connectCamera();
 
       let params: FisheyeCameraParameters;
@@ -68,7 +67,7 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
     } finally {
       if (deviceMaster.currentControlMode === 'raw') {
         await deviceMaster.rawLooseMotor();
-        this.updateMessage({ message: lang.message.endingRawMode });
+        this.showMessage({ content: lang.message.endingRawMode });
         await deviceMaster.endSubTask();
       }
 
@@ -86,28 +85,18 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
 
   public preview = async (): Promise<boolean> => {
     try {
-      MessageCaller.openMessage({
-        content: i18n.lang.topbar.preview,
-        duration: 20,
-        key: 'full-area-preview',
-        level: MessageLevel.LOADING,
-      });
+      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
       const imgUrl = await this.getPhotoFromMachine();
 
       await new Promise<void>((resolve) => {
         PreviewModeBackgroundDrawer.drawFullWorkarea(imgUrl, resolve);
       });
-      MessageCaller.openMessage({
-        content: i18n.lang.message.preview.succeeded,
-        duration: 3,
-        key: 'full-area-preview',
-        level: MessageLevel.SUCCESS,
-      });
+      this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3 });
 
       return true;
     } catch (error) {
-      MessageCaller.closeMessage('full-area-preview');
+      this.closeMessage();
       throw error;
     }
   };
