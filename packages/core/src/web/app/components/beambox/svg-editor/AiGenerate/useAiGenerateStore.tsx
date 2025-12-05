@@ -4,10 +4,10 @@ import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
 
-import type { AspectRatio, GenerationStatus, ImageDimensions, ImageInput } from './types';
+import type { GenerationStatus, ImageDimensions, ImageInput } from './types';
+import { laserFriendlyValue } from './types';
 import { objectToCamelCase } from './utils/caseConversion';
 import { getStyleConfig } from './utils/categories';
-import { getSizeFromResolution, getSizeResolution } from './utils/dimensions';
 import { getInputFieldsForStyle } from './utils/inputFields';
 
 interface State {
@@ -58,7 +58,7 @@ interface Actions {
 }
 
 const FORM_DEFAULTS = {
-  dimensions: { aspectRatio: '1:1', size: 'small' } as ImageDimensions,
+  dimensions: { aspectRatio: '1:1', size: '1K' } as ImageDimensions,
   errorMessage: null,
   generatedImages: [],
   generationStatus: 'idle' as GenerationStatus,
@@ -95,7 +95,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
         max_images: maxImages,
         prompt_data: { inputs: state.inputFields, style: state.style },
         result_urls: null,
-        size: getSizeResolution(dimensions.size),
+        size: dimensions.size,
         state: 'pending',
         task_id: null,
         uuid,
@@ -107,10 +107,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
     set({ errorMessage: null, generatedImages: [], generationStatus: 'idle', generationUuid: null }),
   clearImageInputs: () => set({ imageInputs: [] }),
   importFromHistory: (item) => {
-    const dimensions: ImageDimensions = {
-      aspectRatio: item.aspect_ratio as AspectRatio,
-      size: getSizeFromResolution(item.size),
-    };
+    const dimensions: ImageDimensions = { aspectRatio: item.aspect_ratio, size: item.size };
     const inputs = item.prompt_data?.inputs
       ? (objectToCamelCase(item.prompt_data.inputs) as Record<string, string>)
       : {};
@@ -171,8 +168,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       const inputFields = { ...s.inputFields };
 
       if (isLaserFriendly) {
-        inputFields.color =
-          'pure black and white, monochrome, high contrast, line art, no gradients, no shading, suitable for engraving';
+        inputFields.color = laserFriendlyValue;
       } else {
         delete inputFields.color;
       }

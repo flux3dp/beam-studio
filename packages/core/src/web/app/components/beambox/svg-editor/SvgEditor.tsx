@@ -95,7 +95,6 @@ export const SvgEditor = (): ReactNode => {
           enable={false}
           isOpen={isAiGenerateShown}
           setIsOpen={(isOpen) => setState({ isAiGenerateShown: isOpen })}
-          showHandle={false}
         >
           <AiGenerate />
         </Drawer>

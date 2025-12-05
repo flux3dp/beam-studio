@@ -1,24 +1,10 @@
-import type { AspectRatio, ImageDimensions, ImageResolution, ImageSize } from '../types';
+import type { AspectRatio, ImageDimensions, ImageSize } from '../types';
 
 /** Map size names to max pixel dimensions */
 const SIZE_TO_PIXELS: Record<ImageSize, number> = {
-  large: 4096,
-  medium: 2048,
-  small: 1024,
-};
-
-/** Map size names to API resolution strings */
-const SIZE_TO_RESOLUTION: Record<ImageSize, ImageResolution> = {
-  large: '4K',
-  medium: '2K',
-  small: '1K',
-};
-
-/** Map API resolution strings back to size names */
-const RESOLUTION_TO_SIZE: Record<string, ImageSize> = {
-  '1K': 'small',
-  '2K': 'medium',
-  '4K': 'large',
+  '1K': 1024,
+  '2K': 2048,
+  '4K': 4096,
 };
 
 /**
@@ -45,9 +31,3 @@ export const getSizePixels = ({ aspectRatio, size }: ImageDimensions): string =>
 
   return `${width} x ${height}`;
 };
-
-/** Convert size name to API resolution string */
-export const getSizeResolution = (size: ImageSize): ImageResolution => SIZE_TO_RESOLUTION[size];
-
-/** Convert API resolution string back to size name */
-export const getSizeFromResolution = (resolution: string): ImageSize => RESOLUTION_TO_SIZE[resolution] ?? 'small';

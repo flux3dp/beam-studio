@@ -1,6 +1,6 @@
-import React, { memo, useMemo } from 'react';
+import React, { memo, useMemo, useState } from 'react';
 
-import { DownOutlined } from '@ant-design/icons';
+import { DownOutlined, ExpandOutlined, FileTextOutlined } from '@ant-design/icons';
 import { Badge, Button, Card } from 'antd';
 import classNames from 'classnames';
 import { match } from 'ts-pattern';
@@ -8,7 +8,9 @@ import { match } from 'ts-pattern';
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
+import { laserFriendlyValue } from '../types';
 import { getStyleConfig } from '../utils/categories';
+import { getSizePixels } from '../utils/dimensions';
 
 import styles from './HistoryCard.module.scss';
 
@@ -17,7 +19,15 @@ interface HistoryCardProps {
   onImport: (item: AiImageGenerationData) => void;
 }
 
-// New date formatter to match the image design (e.g., 2025/11/4 11:35)
+const filterInputs = (inputs: Record<string, string>) =>
+  Object.entries(inputs).filter(
+    ([key, value]) =>
+      value.trim() !== '' &&
+      //
+      key !== 'image_counts' &&
+      !(key === 'color' && value === laserFriendlyValue),
+  );
+
 const formatDate = (timestamp: string): string => {
   const date = new Date(timestamp);
   const year = date.getFullYear();
@@ -30,6 +40,7 @@ const formatDate = (timestamp: string): string => {
 };
 
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
+  const [isExpanded, setIsExpanded] = useState(false);
   const previewImages = item.result_urls;
   const formattedDate = useMemo(() => formatDate(item.created_at), [item.created_at]);
   const { data: aiConfig } = useAiConfigQuery();
@@ -44,6 +55,13 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
       ))
       .otherwise(() => <Badge className={styles.statusBadge} status="processing" text="Generating" />);
 
+  // Get inputs to display as chips
+  const inputChips = useMemo(() => {
+    const inputs = item.prompt_data.inputs || {};
+
+    return filterInputs(inputs);
+  }, [item.prompt_data.inputs]);
+
   return (
     <Card bordered={false} className={styles.card} styles={{ body: { padding: 0 } }}>
       <div className={styles.cardContent}>
@@ -52,7 +70,13 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
         </div>
 
         <div className={styles.imageGrid}>
-          {previewImages?.length ? (
+          {previewImages?.length &&
+            previewImages.map((url, index) => (
+              <div className={styles.imageWrapper} key={index}>
+                <img alt={`Generated ${index + 1}`} className={styles.image} src={url} />
+              </div>
+            ))}
+          {/* {previewImages?.length ? (
             previewImages.map((url, index) => (
               <div className={styles.imageWrapper} key={index}>
                 <img alt={`Generated ${index + 1}`} className={styles.image} src={url} />
@@ -60,7 +84,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
             ))
           ) : (
             <div className={styles.noPreview}>{item.state === 'fail' ? '❌ Not generated' : '⏳ Generating...'}</div>
-          )}
+          )} */}
         </div>
 
         <div className={styles.footer}>
@@ -72,16 +96,39 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
             <Button className={styles.recreateButton} onClick={() => onImport(item)}>
               Recreate
             </Button>
-            <Button className={styles.dropdownButton} icon={<DownOutlined />} size="small" type="text" />
+            <Button
+              className={classNames(styles.dropdownButton, { [styles.expanded]: isExpanded })}
+              icon={<DownOutlined />}
+              onClick={() => setIsExpanded(!isExpanded)}
+              size="small"
+              type="text"
+            />
           </div>
         </div>
+      </div>
 
-        {item.state === 'fail' && item.fail_msg && (
-          <div className={styles.error} title={item.fail_msg}>
+      {isExpanded &&
+        (item.state === 'fail' ? (
+          <div className={styles.error} title={item.fail_msg || 'Unknown error'}>
             Error: {item.fail_msg}
           </div>
-        )}
-      </div>
+        ) : (
+          <div className={styles.expandedInfo}>
+            <div className={styles.chipList}>
+              <div className={styles.chip}>
+                <ExpandOutlined className={styles.chipIcon} />
+                <span>{getSizePixels({ aspectRatio: item.aspect_ratio, size: item.size })}</span>
+              </div>
+
+              {inputChips.map(([key, value]) => (
+                <div className={styles.chip} key={key} title={`${key}: ${value}`}>
+                  <FileTextOutlined className={styles.chipIcon} />
+                  <span className={styles.chipText}>{value}</span>
+                </div>
+              ))}
+            </div>
+          </div>
+        ))}
     </Card>
   );
 };
