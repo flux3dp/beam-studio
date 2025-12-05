@@ -68,7 +68,7 @@ export const useImageGeneration = ({
   styles,
 }: UseImageGenerationParams) => {
   const store = useAiGenerateStore(); // Access store directly
-  const { addPendingHistoryItem, clearGenerationResults, imageInputs, inputFields, updateHistoryItem } = store;
+  const { clearGenerationResults, imageInputs, inputFields, updateHistoryItem } = store;
 
   const handleGenerate = async () => {
     // 1. Validation Phase
@@ -116,7 +116,6 @@ export const useImageGeneration = ({
     const { uuid } = createResponse;
 
     useAiGenerateStore.setState({ generationUuid: uuid });
-    addPendingHistoryItem({ dimensions, imageInputs, maxImages, uuid });
 
     const result = await pollTaskUntilComplete(uuid, (state) => updateHistoryItem(uuid, { state }));
 

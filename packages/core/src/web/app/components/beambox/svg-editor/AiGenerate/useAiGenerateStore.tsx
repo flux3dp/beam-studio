@@ -34,12 +34,7 @@ interface State {
 
 interface Actions {
   addImageInput: (input: ImageInput) => void;
-  addPendingHistoryItem: (params: {
-    dimensions: ImageDimensions;
-    imageInputs: ImageInput[];
-    maxImages: number;
-    uuid: string;
-  }) => void;
+
   clearGenerationResults: () => void;
   clearImageInputs: () => void;
 
@@ -83,34 +78,22 @@ const INITIAL_STATE: State = {
 export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   ...INITIAL_STATE,
   addImageInput: (input) => set((state) => ({ imageInputs: [...state.imageInputs, input] })),
-  addPendingHistoryItem: ({ dimensions, imageInputs, maxImages, uuid }) =>
-    set((state) => {
-      const newItem: AiImageGenerationData = {
-        aspect_ratio: dimensions.aspectRatio,
-        completed_at: null,
-        cost_time: null,
-        created_at: new Date().toISOString(),
-        fail_msg: null,
-        image_urls: imageInputs.map((i) => (i.type === 'url' ? i.url : '')).filter(Boolean),
-        max_images: maxImages,
-        prompt_data: { inputs: state.inputFields, style: state.style },
-        result_urls: null,
-        size: dimensions.size,
-        state: 'pending',
-        task_id: null,
-        uuid,
-      };
-
-      return { historyItems: [newItem, ...state.historyItems] };
-    }),
   clearGenerationResults: () =>
     set({ errorMessage: null, generatedImages: [], generationStatus: 'idle', generationUuid: null }),
   clearImageInputs: () => set({ imageInputs: [] }),
   importFromHistory: (item) => {
     const dimensions: ImageDimensions = { aspectRatio: item.aspect_ratio, size: item.size };
-    const inputs = item.prompt_data?.inputs
-      ? (objectToCamelCase(item.prompt_data.inputs) as Record<string, string>)
-      : {};
+    const inputs = objectToCamelCase(item.prompt_data.inputs) as Record<string, string>;
+
+    // Remove imageCounts from inputs as it is not needed and automatically handled from maxImages
+    delete inputs['imageCounts'];
+
+    if (inputs.color === laserFriendlyValue) {
+      set({ isLaserFriendly: true });
+      delete inputs['color'];
+    } else {
+      set({ isLaserFriendly: false });
+    }
 
     set({
       dimensions,
@@ -120,7 +103,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       inputFields: inputs,
       maxImages: item.max_images,
       showHistory: false,
-      style: (item.prompt_data?.style as string) || 'plain',
+      style: item.prompt_data?.style || 'plain',
     });
   },
   loadHistory: async () => {
@@ -154,9 +137,9 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       return { inputFields, isLaserFriendly: false, style: newStyle };
     }),
   toggleHistory: () => {
-    const { historyItems, historyLoading, showHistory } = get();
+    const { historyLoading, showHistory } = get();
 
-    if (!showHistory && !historyLoading && historyItems.length === 0) {
+    if (!showHistory && !historyLoading) {
       get().loadHistory();
     }
 

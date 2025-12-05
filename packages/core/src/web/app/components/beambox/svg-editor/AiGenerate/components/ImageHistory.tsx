@@ -18,10 +18,9 @@ const UnmemorizedImageHistory = () => {
   if (historyLoading && historyItems.length === 0) {
     return (
       <div className={style.container}>
-        <div className={style.loading}>
-          <Spin className={style['loading-spinner']} size="large" />
-          <p className={style['loading-text']}>Loading history...</p>
-        </div>
+        <Spin size="large" tip="Loading history...">
+          <div className={style.loading} />
+        </Spin>
       </div>
     );
   }

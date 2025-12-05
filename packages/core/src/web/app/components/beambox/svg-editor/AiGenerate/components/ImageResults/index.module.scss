@@ -23,16 +23,6 @@ $border-color: #e8e8e8;
   gap: 16px;
 }
 
-.loading-spinner {
-  // use important to override @packages/core/public/js/lib/svgeditor/svg-editor.css
-  :global(.ant-spin-dot) {
-    transform-origin: center center !important;
-    -webkit-transform-origin: center center !important;
-    -moz-transform-origin: center center !important;
-    -o-transform-origin: center center !important;
-  }
-}
-
 .images-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
@@ -82,13 +72,6 @@ $border-color: #e8e8e8;
   width: 100%;
   font-size: 12px;
   height: 36px;
-  // use important to override @packages/core/public/js/lib/svgeditor/svg-editor.css
-  :global(.anticon) {
-    transform-origin: center center !important;
-    -webkit-transform-origin: center center !important;
-    -moz-transform-origin: center center !important;
-    -o-transform-origin: center center !important;
-  }
 }
 
 .error-div {

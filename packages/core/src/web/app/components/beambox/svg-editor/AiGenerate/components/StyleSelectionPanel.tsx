@@ -4,9 +4,10 @@ import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, Modal } from 'antd';
 import classNames from 'classnames';
 
+import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
 import { getCategoryForOption, getStylesForCategory } from '../utils/categories';
-import type { StyleLike } from '../utils/categories';
 
 import styles from './StyleSelectionPanel.module.scss';
 
@@ -24,7 +25,7 @@ const OptionCard = ({
 }: {
   isSelected: boolean;
   onClick: () => void;
-  option: StyleLike;
+  option: StyleWithInputFields;
 }) => (
   <div className={classNames(styles['option-card'], { [styles.selected]: isSelected })} onClick={onClick}>
     <div className={styles['option-preview']}>

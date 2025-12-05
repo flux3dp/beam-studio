@@ -11,26 +11,13 @@ export interface AiConfigData {
 }
 
 const PLACEHOLDER_DATA: AiConfigData = {
-  categories: [
-    {
-      displayName: 'Customize',
-      id: 'customize',
-      previewImage: '',
-      tags: ['customize'],
-    },
-  ],
+  categories: [{ displayName: 'Customize', id: 'customize', previewImage: '', tags: ['customize'] }],
   styles: [
     {
       displayName: 'Customize',
       id: 'customize',
       inputFields: [
-        {
-          key: 'description',
-          label: 'Description',
-          maxLength: 2000,
-          placeholder: 'Enter prompts',
-          required: false,
-        },
+        { key: 'description', label: 'Description', maxLength: 2000, placeholder: 'Enter prompts', required: false },
       ],
       modes: ['text-to-image', 'edit'],
       previewImage: '',
