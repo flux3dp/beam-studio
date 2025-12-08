@@ -196,29 +196,30 @@ const UnmemorizedAiGenerate = () => {
                 generatedImages={generatedImages}
                 generationStatus={generationStatus}
               />
-
-              <div className={styles['button-section']}>
-                <Button
-                  block
-                  className={styles['generate-button']}
-                  disabled={!canGenerate}
-                  onClick={handleGenerate}
-                  size="large"
-                  type="primary"
-                >
-                  Generate
-                </Button>
-                <div className={styles['credits-info']}>
-                  <span className={styles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
-                  <div className={styles['credits-balance']}>
-                    <FluxIcons.FluxCredit />
-                    <span className={styles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
-                  </div>
-                </div>
-              </div>
             </>
           )}
         </div>
+        {!showHistory && (
+          <div className={styles['button-section']}>
+            <Button
+              block
+              className={styles['generate-button']}
+              disabled={!canGenerate}
+              onClick={handleGenerate}
+              size="large"
+              type="primary"
+            >
+              Generate
+            </Button>
+            <div className={styles['credits-info']}>
+              <span className={styles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
+              <div className={styles['credits-balance']}>
+                <FluxIcons.FluxCredit />
+                <span className={styles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </ConfigProvider>
   );
