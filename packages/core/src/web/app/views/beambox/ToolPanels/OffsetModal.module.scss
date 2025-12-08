@@ -7,14 +7,19 @@
     font-size: 17px;
     font-weight: 600;
     margin: 12px 0;
+
+    @media (min-width: 770px) {
+      text-align: left;
+      padding: 0 0 10px 0;
+    }
   }
   .field {
     display: flex;
     flex-wrap: wrap;
     justify-content: space-between;
     align-items: center;
-    column-gap: 8px;
-    margin-bottom: 12px;
+    column-gap: 21px;
+    margin-bottom: 24px;
     .label {
       min-width: 60px;
     }
@@ -27,6 +32,7 @@
     }
     .input {
       width: $input-width;
+
       input {
         border-radius: 0;
       }
@@ -38,5 +44,12 @@
         }
       }
     }
+  }
+
+  .divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 16px 0;
+    width: 100%;
   }
 }

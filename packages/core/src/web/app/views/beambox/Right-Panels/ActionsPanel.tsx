@@ -7,7 +7,9 @@ import { match, P } from 'ts-pattern';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
+import { showArrayModal } from '@core/app/components/dialogs/ArrayPanel';
 import { showCurvePanel, showRotaryWarped, showSharpenPanel } from '@core/app/components/dialogs/image';
+import { showOffsetModal } from '@core/app/components/dialogs/OffsetPanel';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
@@ -138,7 +140,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderButtons(
       'array',
       lang.array,
-      () => svgEditor.triggerGridTool(),
+      // () => svgEditor.triggerGridTool(),
+      showArrayModal,
       <ActionPanelIcons.Array />,
       <ActionPanelIcons.ArrayMobile />,
       { autoClose: false, ...opts },
@@ -148,7 +151,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     renderButtons(
       'offset',
       lang.offset,
-      () => svgEditor.triggerOffsetTool(),
+      // () => svgEditor.triggerOffsetTool(),
+      showOffsetModal,
       <ActionPanelIcons.Offset />,
       <ActionPanelIcons.Offset />,
       { autoClose: false, ...opts },

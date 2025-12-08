@@ -36,4 +36,73 @@
       }
     }
   }
+  .section-header {
+    display: flex;
+    align-items: center;
+    margin-bottom: 16px;
+    margin-top: 8px;
+    .section-title {
+      font-size: 14px;
+      font-weight: 600;
+      color: #333;
+      margin-right: 12px;
+      white-space: nowrap;
+    }
+    .line {
+      flex: 1;
+      height: 1px;
+      background-color: #e0e0e0;
+    }
+  }
+
+  &.desktop {
+    .title {
+      margin-top: 0;
+      margin-bottom: 12px;
+      text-align: left;
+      font-size: 17px;
+      font-weight: 600;
+      padding: 0 0 10px 0;
+    }
+
+    .section-header {
+      margin-top: 12px;
+      margin-bottom: 12px;
+    }
+
+    .field {
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      margin-bottom: 6px;
+      column-gap: 50px;
+
+      .label {
+        min-width: 60px;
+        text-align: left;
+        font-size: 14px;
+      }
+
+      .input {
+        flex-grow: 1;
+        width: 100%;
+
+        :global(.ant-input-number),
+        :global(.ant-input-number-group-wrapper) {
+          width: 100%;
+          margin: 0;
+        }
+
+        &.with-unit {
+          flex-direction: row;
+          column-gap: 0;
+        }
+      }
+    }
+    .footer {
+      display: flex;
+      justify-content: flex-end;
+      margin-top: 24px;
+    }
+  }
 }
