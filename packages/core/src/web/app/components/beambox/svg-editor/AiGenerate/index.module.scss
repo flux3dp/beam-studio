@@ -7,6 +7,14 @@
   flex-direction: column;
   height: 100%;
   width: 100%;
+
+  // use important to override @packages/core/public/js/lib/svgeditor/svg-editor.css
+  * {
+    transform-origin: center center !important;
+    -webkit-transform-origin: center center !important;
+    -moz-transform-origin: center center !important;
+    -o-transform-origin: center center !important;
+  }
 }
 
 .header {

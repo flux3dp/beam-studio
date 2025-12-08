@@ -1,28 +1,13 @@
-/**
- * Common interfaces for loose coupling with backend/frontend types
- */
-export interface StyleLike {
-  displayName?: string;
-  id: string;
-  modes?: Array<'edit' | 'text-to-image'>;
-  previewImage?: string;
-  tags: string[];
-}
-
-export interface CategoryLike {
-  displayName?: string;
-  id: string;
-  tags: string[];
-}
+import type { MappedCategory, StyleWithInputFields } from '@core/helpers/api/ai-image-config';
 
 /**
  * Find styles that match ANY of a category's tags.
  */
 export const getStylesForCategory = (
   categoryId: string,
-  styles: StyleLike[] = [],
-  categories: CategoryLike[] = [],
-): StyleLike[] => {
+  styles: StyleWithInputFields[] = [],
+  categories: MappedCategory[] = [],
+): StyleWithInputFields[] => {
   const category = categories.find((c) => c.id === categoryId);
 
   if (!category) return [];
@@ -35,9 +20,9 @@ export const getStylesForCategory = (
  */
 export const getCategoriesForStyle = (
   styleId: string,
-  styles: StyleLike[] = [],
-  categories: CategoryLike[] = [],
-): CategoryLike[] => {
+  styles: StyleWithInputFields[] = [],
+  categories: MappedCategory[] = [],
+): MappedCategory[] => {
   const style = styles.find((s) => s.id === styleId);
 
   if (!style) return [];
@@ -48,7 +33,7 @@ export const getCategoriesForStyle = (
 /**
  * Get config for a style ID, with a safe fallback.
  */
-export const getStyleConfig = (styleId: string, styles: StyleLike[] = []): StyleLike => {
+export const getStyleConfig = (styleId: string, styles: StyleWithInputFields[] = []): StyleWithInputFields => {
   return styles.find((s) => s.id === styleId) || styles[0] || { id: 'plain', tags: ['customize'] };
 };
 
@@ -58,9 +43,9 @@ export const getStyleConfig = (styleId: string, styles: StyleLike[] = []): Style
  */
 export const getCategoryForOption = (
   styleId: null | string,
-  styles: StyleLike[] = [],
-  categories: CategoryLike[] = [],
-): CategoryLike | null => {
+  styles: StyleWithInputFields[] = [],
+  categories: MappedCategory[] = [],
+): MappedCategory | null => {
   if (!styleId) return null;
 
   const style = styles.find((s) => s.id === styleId);

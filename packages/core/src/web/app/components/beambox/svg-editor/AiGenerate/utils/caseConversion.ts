@@ -1,6 +1,4 @@
-export const toSnakeCase = (str: string): string => str.replace(/([A-Z])/g, '_$1').toLowerCase();
-
-export const toCamelCase = (str: string): string => str.replace(/_([a-z])/g, (_, letter) => letter.toUpperCase());
+import { toCamelCase, toSnakeCase } from 'remeda';
 
 export const objectToSnakeCase = (obj: Record<string, unknown>): Record<string, unknown> => {
   const result: Record<string, unknown> = {};

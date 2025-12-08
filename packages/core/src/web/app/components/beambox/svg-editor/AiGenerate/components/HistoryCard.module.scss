@@ -37,14 +37,14 @@ $chip-bg: #f5f5f5; // Light grey for chips
 .imageGrid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
-  gap: 12px;
+  gap: 4px;
   margin-bottom: 16px;
 }
 
 .imageWrapper {
   position: relative;
   width: 100%;
-  aspect-ratio: 1;
+  aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 8px;
   border: 1px solid $image-border-color;
@@ -62,6 +62,7 @@ $chip-bg: #f5f5f5; // Light grey for chips
   grid-column: 1 / -1;
   aspect-ratio: 2 / 1;
   display: flex;
+  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 14px;
@@ -132,10 +133,6 @@ $chip-bg: #f5f5f5; // Light grey for chips
   height: auto;
   line-height: 1;
   transition: transform 0s ease;
-  transform-origin: center center !important;
-  -webkit-transform-origin: center center !important;
-  -moz-transform-origin: center center !important;
-  -o-transform-origin: center center !important;
 
   &:hover {
     background-color: rgba(0, 0, 0, 0.05);
@@ -147,9 +144,17 @@ $chip-bg: #f5f5f5; // Light grey for chips
 }
 
 .expandedInfo {
-  padding: 16px;
+  padding: 12px;
   border-top: 1px solid $card-border-color;
   animation: slideDown 0.2s ease-out;
+}
+
+.inputList {
+  margin-bottom: 8px;
+}
+
+.inputKey {
+  font-weight: bold;
 }
 
 .chipList {
