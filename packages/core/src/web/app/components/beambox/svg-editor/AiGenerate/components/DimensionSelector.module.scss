@@ -13,6 +13,8 @@
 }
 
 .dimension-group {
+  display: flex;
+  justify-content: space-between;
   margin-bottom: 12px;
 
   &:last-child {
@@ -136,7 +138,7 @@
   left: calc(100%);
   background: vars.$container-bg;
   border: 1px solid vars.$button-border;
-  border-radius: 8px;
+  border-radius: 6px;
   padding: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
   z-index: 9999;
@@ -146,7 +148,6 @@
 .menu-item {
   display: flex;
   align-items: center;
-  gap: 12px;
   padding: 10px 12px;
   cursor: pointer;
   border-radius: 6px;
@@ -182,7 +183,7 @@
   @include vars.button-base;
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   justify-content: center;
   padding: 12px 16px;
   min-width: 115px;
@@ -197,5 +198,4 @@
 
 .size-pixels {
   font-size: 11px;
-  color: vars.$text-secondary;
 }

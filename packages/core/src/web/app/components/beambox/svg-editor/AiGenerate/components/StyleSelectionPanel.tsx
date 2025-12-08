@@ -1,7 +1,7 @@
 import React, { memo, useMemo, useState } from 'react';
 
 import { PlusOutlined, UserOutlined } from '@ant-design/icons';
-import { Button, Modal } from 'antd';
+import { Button, ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
 
 import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
@@ -68,72 +68,76 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
   };
 
   return (
-    <Modal
-      centered
-      className={styles['style-modal']}
-      footer={
-        <div className={styles.footer}>
-          <div>
-            <Button
-              className={classNames(styles['custom-creation-btn'], {
-                [styles.active]: selectedStyle === 'customize',
-              })}
-              onClick={() => {
-                setSelectedStyle('customize');
-              }}
-            >
-              <UserOutlined />
-              <span>{'Custom Creation'}</span>
-              <PlusOutlined />
-            </Button>
-          </div>
-          <div className={styles['footer-right']}>
-            <Button onClick={onClose} size="large">
-              {'Cancel'}
-            </Button>
-            <Button disabled={!selectedStyle} onClick={handleConfirm} size="large" type="primary">
-              {'Apply Style'}
-            </Button>
-          </div>
-        </div>
-      }
-      onCancel={onClose}
-      open
-      title="Select Creation Style"
-      width={1000} // Wider modal for the grid
-    >
-      <div className={styles.container}>
-        <div className={styles.sidebar}>
-          <div className={styles['categories-list']}>
-            {categories.map((category) => (
-              <div
-                className={classNames(styles['category-item'], {
-                  [styles.active]: selectedCategory === category.id,
+    <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
+      <Modal
+        centered
+        className={styles['style-modal']}
+        footer={
+          <div className={styles.footer}>
+            <div>
+              <Button
+                className={classNames(styles['custom-creation-btn'], {
+                  [styles.active]: selectedStyle === 'customize',
                 })}
-                key={category.id}
-                onClick={() => setSelectedCategory(category.id)}
+                onClick={() => {
+                  onSelect('customize');
+                  onClose();
+                }}
+                size={'large'}
               >
-                <img alt={category.displayName} className={styles['category-icon']} src={category.previewImage} />
-                <span className={styles['category-name']}>{category.displayName}</span>
-              </div>
-            ))}
+                <UserOutlined />
+                <span>{'Custom Creation'}</span>
+                <PlusOutlined />
+              </Button>
+            </div>
+            <div className={styles['footer-right']}>
+              <Button onClick={onClose} size="large">
+                {'Cancel'}
+              </Button>
+              <Button disabled={!selectedStyle} onClick={handleConfirm} size="large" type="primary">
+                {'Apply Style'}
+              </Button>
+            </div>
           </div>
-        </div>
+        }
+        onCancel={onClose}
+        open
+        title="Select Creation Style"
+        width={1000} // Wider modal for the grid
+      >
+        <div className={styles.container}>
+          <div className={styles.sidebar}>
+            <div className={styles['categories-list']}>
+              {categories.map((category) => (
+                <div
+                  className={classNames(styles['category-item'], {
+                    [styles.active]: selectedCategory === category.id,
+                  })}
+                  key={category.id}
+                  onClick={() => setSelectedCategory(category.id)}
+                >
+                  <img alt={category.displayName} className={styles['category-icon']} src={category.previewImage} />
+                  <span className={styles['category-name']}>{category.displayName}</span>
+                </div>
+              ))}
+            </div>
+          </div>
 
-        <div className={styles.content}>
-          <div className={styles['options-grid']}>
-            {currentCategoryStyles.map((option) => (
-              <OptionCard
-                isSelected={selectedStyle === option.id}
-                key={option.id}
-                onClick={() => setSelectedStyle(option.id)}
-                option={option}
-              />
-            ))}
+          <div className={styles.content}>
+            <div className={styles['options-grid']}>
+              {currentCategoryStyles.map((option) => (
+                <OptionCard
+                  isSelected={selectedStyle === option.id}
+                  key={option.id}
+                  onClick={() => setSelectedStyle(option.id)}
+                  option={option}
+                />
+              ))}
+            </div>
           </div>
         </div>
-      </div>
-    </Modal>
+      </Modal>
+    </ConfigProvider>
   );
 };
 

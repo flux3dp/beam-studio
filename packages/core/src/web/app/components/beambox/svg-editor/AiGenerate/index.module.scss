@@ -27,7 +27,7 @@
 
 .title {
   margin: 0;
-  font-size: 20px;
+  font-size: 16px;
   font-weight: 600;
   color: vars.$text-primary;
 }
@@ -70,15 +70,18 @@
 
 .style-selection-button {
   height: auto;
-  padding: 16px;
+  padding: 12px;
   text-align: left;
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 20px;
+
   .img {
-    width: 72px;
+    justify-content: center;
+    width: 96px;
     height: 72px;
     object-fit: contain;
+    border-radius: 6px;
   }
 
   .button-content {
@@ -127,8 +130,8 @@
 }
 
 .generate-button {
-  height: 48px;
-  font-size: 16px;
+  height: 40px;
+  font-size: 14px;
   font-weight: 500;
   margin-bottom: 16px;
 }

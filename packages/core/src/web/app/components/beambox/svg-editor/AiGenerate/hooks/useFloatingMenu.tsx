@@ -27,7 +27,7 @@ interface UseFloatingMenuReturn {
 
 export const useFloatingMenu = ({
   closeDelay = 300,
-  horizontalOffset = 86,
+  horizontalOffset = 90,
 }: UseFloatingMenuOptions = {}): UseFloatingMenuReturn => {
   const [showMenu, setShowMenu] = useState(false);
   const [menuPosition, setMenuPosition] = useState<MenuPosition | null>(null);

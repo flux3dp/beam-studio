@@ -22,7 +22,6 @@ $ai-credit-icon: #f8b800;
 // Common mixins
 @mixin button-base {
   border: 1px solid $button-border;
-  border-radius: 4px;
   background: $container-bg;
   cursor: pointer;
   transition: all 0.2s;

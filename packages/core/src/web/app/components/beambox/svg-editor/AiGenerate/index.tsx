@@ -1,7 +1,7 @@
 import React, { memo, useEffect, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
-import { Button, Select, Switch } from 'antd';
+import { Button, ConfigProvider, Select, Switch } from 'antd';
 import classNames from 'classnames';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -111,119 +111,116 @@ const UnmemorizedAiGenerate = () => {
   if (isError) return <ErrorView onClose={() => store.setState({ isAiGenerateShown: false })} onRetry={refetch} />;
 
   return (
-    <div className={classNames(styles['ai-generate-container'])}>
-      <Header
-        onClose={() => store.setState({ isAiGenerateShown: false })}
-        onHistory={store.toggleHistory}
-        onRefresh={store.resetForm}
-        showHistory={showHistory}
-      />
-      <div className={styles.content}>
-        {showHistory ? (
-          <ImageHistory />
-        ) : (
-          <>
-            <div className={styles.section}>
-              <h3 className={styles['section-title']}>Style & Mode</h3>
-              <Button
-                block
-                className={styles['style-selection-button']}
-                icon={
-                  styleConfig.previewImage && (
+    <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
+      <div className={classNames(styles['ai-generate-container'])}>
+        <Header
+          onClose={() => store.setState({ isAiGenerateShown: false })}
+          onHistory={store.toggleHistory}
+          onRefresh={store.resetForm}
+          showHistory={showHistory}
+        />
+        <div className={styles.content}>
+          {showHistory ? (
+            <ImageHistory />
+          ) : (
+            <>
+              <div className={styles.section}>
+                <h3 className={styles['section-title']}>Style & Mode</h3>
+                <Button block className={styles['style-selection-button']} onClick={handleStyleClick} size="large">
+                  {styleConfig.previewImage && (
                     <img alt={styleConfig.displayName} className={styles.img} src={styleConfig.previewImage} />
-                  )
-                }
-                onClick={handleStyleClick}
-                size="large"
-              >
-                <div className={styles['button-content']}>
-                  <span className={styles['button-label']}>{styleConfig?.displayName || 'Select Creation Style'}</span>
-                  <RightOutlined />
-                </div>
-              </Button>
-            </div>
-
-            {getInputFieldsForStyle(stylePreset, aiConfigStyles).map((field) => {
-              // Determine if this specific field needs upload capabilities
-              const isDescriptionWithUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
-
-              return (
-                <div className={styles.section} key={field.key}>
-                  <h3 className={styles['section-title']}>
-                    {field.label} {field.required && <span className={styles.required}>*</span>}
-                  </h3>
-
-                  {isDescriptionWithUpload ? (
-                    <InputWithUpload
-                      field={field}
-                      imageInputs={imageInputs}
-                      onAddImage={store.addImageInput}
-                      onChange={(value) => store.setInputField(field.key, value)}
-                      onKeyDown={handleTextAreaKeyDown}
-                      onRemoveImage={store.removeImageInput}
-                      value={inputFields[field.key] || ''}
-                    />
-                  ) : (
-                    <InputField
-                      field={field}
-                      onChange={(value) => store.setInputField(field.key, value)}
-                      onKeyDown={handleTextAreaKeyDown}
-                      rows={field.key === 'description' ? 5 : 3}
-                      value={inputFields[field.key] || ''}
-                    />
                   )}
+                  <div className={styles['button-content']}>
+                    <span className={styles['button-label']}>
+                      {styleConfig?.displayName || 'Select Creation Style'}
+                    </span>
+                    <RightOutlined />
+                  </div>
+                </Button>
+              </div>
+
+              {getInputFieldsForStyle(stylePreset, aiConfigStyles).map((field) => {
+                // Determine if this specific field needs upload capabilities
+                const isDescriptionWithUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
+
+                return (
+                  <div className={styles.section} key={field.key}>
+                    <h3 className={styles['section-title']}>
+                      {field.label} {field.required && <span className={styles.required}>*</span>}
+                    </h3>
+
+                    {isDescriptionWithUpload ? (
+                      <InputWithUpload
+                        field={field}
+                        imageInputs={imageInputs}
+                        onAddImage={store.addImageInput}
+                        onChange={(value) => store.setInputField(field.key, value)}
+                        onKeyDown={handleTextAreaKeyDown}
+                        onRemoveImage={store.removeImageInput}
+                        value={inputFields[field.key] || ''}
+                      />
+                    ) : (
+                      <InputField
+                        field={field}
+                        onChange={(value) => store.setInputField(field.key, value)}
+                        onKeyDown={handleTextAreaKeyDown}
+                        rows={field.key === 'description' ? 5 : 3}
+                        value={inputFields[field.key] || ''}
+                      />
+                    )}
+                  </div>
+                );
+              })}
+
+              <DimensionSelector dimensions={dimensions} />
+
+              <div className={styles.section}>
+                <h3 className={styles['section-title']}>Count</h3>
+                <Select
+                  className={styles['count-select']}
+                  onChange={(val) => store.setState({ maxImages: val })}
+                  options={[1, 2, 3, 4].map((n) => ({ label: String(n), value: n }))}
+                  value={maxImages}
+                />
+              </div>
+
+              <div className={styles.section}>
+                <div className={styles['toggle']}>
+                  <span>Laser-Friendly</span>
+                  <Switch checked={isLaserFriendly} onChange={store.toggleLaserFriendly} />
                 </div>
-              );
-            })}
+              </div>
 
-            <DimensionSelector dimensions={dimensions} />
-
-            <div className={styles.section}>
-              <h3 className={styles['section-title']}>Count</h3>
-              <Select
-                className={styles['count-select']}
-                onChange={(val) => store.setState({ maxImages: val })}
-                options={[1, 2, 3, 4].map((n) => ({ label: String(n), value: n }))}
-                value={maxImages}
+              <ImageResults
+                errorMessage={errorMessage}
+                generatedImages={generatedImages}
+                generationStatus={generationStatus}
               />
-            </div>
 
-            <div className={styles.section}>
-              <div className={styles['toggle']}>
-                <span>Laser-Friendly</span>
-                <Switch checked={isLaserFriendly} onChange={store.toggleLaserFriendly} />
-              </div>
-            </div>
-
-            <ImageResults
-              errorMessage={errorMessage}
-              generatedImages={generatedImages}
-              generationStatus={generationStatus}
-            />
-
-            <div className={styles['button-section']}>
-              <Button
-                block
-                className={styles['generate-button']}
-                disabled={!canGenerate}
-                onClick={handleGenerate}
-                size="large"
-                type="primary"
-              >
-                Generate
-              </Button>
-              <div className={styles['credits-info']}>
-                <span className={styles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
-                <div className={styles['credits-balance']}>
-                  <FluxIcons.FluxCredit />
-                  <span className={styles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
+              <div className={styles['button-section']}>
+                <Button
+                  block
+                  className={styles['generate-button']}
+                  disabled={!canGenerate}
+                  onClick={handleGenerate}
+                  size="large"
+                  type="primary"
+                >
+                  Generate
+                </Button>
+                <div className={styles['credits-info']}>
+                  <span className={styles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
+                  <div className={styles['credits-balance']}>
+                    <FluxIcons.FluxCredit />
+                    <span className={styles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
+                  </div>
                 </div>
               </div>
-            </div>
-          </>
-        )}
+            </>
+          )}
+        </div>
       </div>
-    </div>
+    </ConfigProvider>
   );
 };
 
