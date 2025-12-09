@@ -14,7 +14,7 @@ describe('array tools', () => {
     cy.findByTestId('rows').clear().type('2').blur();
     cy.findByTestId('array_dx').clear().type('100').blur();
     cy.findByTestId('array_dy').clear().type('150').blur();
-    cy.findAllByTitle('Confirm').click();
+    cy.findAllByText('Confirm').click();
   };
 
   it('image', () => {

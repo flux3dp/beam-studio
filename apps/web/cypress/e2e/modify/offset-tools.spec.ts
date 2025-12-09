@@ -22,7 +22,7 @@ it('offset', () => {
   cy.get('.ant-select-item-option-content').contains('Round').click({ force: true });
   cy.get('.control > .ui > input').type('{selectall}{backspace}10{enter}');
   cy.findByTestId('offset-distance').clear().type('10').blur();
-  cy.findAllByTitle('Confirm').click();
+  cy.findAllByText('Confirm').click();
 
   cy.inputValueCloseTo('#w_size', 166.43, 0.1);
   cy.inputValueCloseTo('#h_size', 179.17, 0.1);
