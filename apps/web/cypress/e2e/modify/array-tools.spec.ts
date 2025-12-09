@@ -10,10 +10,10 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('.tab.objects').click();
     cy.get('#array').click();
-    cy.findByTestId('columns').clear().type('2').blur();
-    cy.findByTestId('rows').clear().type('2').blur();
-    cy.findByTestId('array_dx').clear().type('100').blur();
-    cy.findByTestId('array_dy').clear().type('150').blur();
+    cy.findByTestId('columns').type('{selectall}{backspace}2').blur();
+    cy.findByTestId('rows').type('{selectall}{backspace}2').blur();
+    cy.findByTestId('array_dx').type('{selectall}{backspace}100').blur();
+    cy.findByTestId('array_dy').type('{selectall}{backspace}150').blur();
     cy.findAllByText('Confirm').click();
   };
 
