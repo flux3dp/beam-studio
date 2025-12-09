@@ -23,8 +23,8 @@ const ErrorView = ({ onClose, onRetry }: { onClose: () => void; onRetry: () => v
               {t.retry}
             </Button>
           }
-          description={t.config_error_description}
-          message={t.config_error_message}
+          description={t.error.config_description}
+          message={t.error.config_message}
           showIcon
           type="error"
         />

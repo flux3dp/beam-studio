@@ -18,7 +18,7 @@ const validateFiles = (
   currentCount: number,
   maxImages: number,
   maxSize: number,
-  t: ReturnType<typeof useI18n>['beambox']['ai_generate'],
+  t: ReturnType<typeof useI18n>['beambox']['ai_generate']['upload'],
 ) => {
   if (currentCount + files.length > maxImages) return t.max_images_error.replace('%s', String(maxImages));
 
@@ -108,7 +108,7 @@ const UnmemorizedImageUploadArea = ({
 
     const files = Array.from(fileList);
 
-    const validationError = validateFiles(files, imageInputs.length, maxImages, maxSizeBytes, t);
+    const validationError = validateFiles(files, imageInputs.length, maxImages, maxSizeBytes, t.upload);
 
     if (validationError) {
       setError(validationError);
@@ -122,7 +122,7 @@ const UnmemorizedImageUploadArea = ({
   return (
     <div className={styles.container}>
       {error && (
-        <Alert closable description={error} message={t.upload_error} onClose={() => setError(null)} type="error" />
+        <Alert closable description={error} message={t.upload.error} onClose={() => setError(null)} type="error" />
       )}
 
       <div
@@ -154,14 +154,14 @@ const UnmemorizedImageUploadArea = ({
         {imageInputs.length === 0 ? (
           <div className={styles['empty-state']}>
             <FolderOutlined className={styles.icon} />
-            <p className={styles.title}>{t.upload_click_or_drag}</p>
-            <p className={styles.subtitle}>{t.upload_supported_formats.replace('%s', String(maxImages))}</p>
+            <p className={styles.title}>{t.upload.click_or_drag}</p>
+            <p className={styles.subtitle}>{t.upload.supported_formats.replace('%s', String(maxImages))}</p>
           </div>
         ) : (
           <div className={styles['images-grid']}>
             {imageInputs.map((input: ImageInput, index: number) => (
               <ThumbnailItem
-                fromHistoryLabel={t.upload_from_history}
+                fromHistoryLabel={t.upload.from_history}
                 index={index}
                 input={input}
                 key={input.id}
@@ -171,14 +171,14 @@ const UnmemorizedImageUploadArea = ({
             {imageInputs.length < maxImages && (
               <div className={styles['add-more']}>
                 <InboxOutlined />
-                <span>{t.upload_add}</span>
+                <span>{t.upload.add}</span>
               </div>
             )}
           </div>
         )}
       </div>
       <div className={styles.info}>
-        {t.upload_selected.replace('%s', String(imageInputs.length)).replace('%s', String(maxImages))}
+        {t.upload.selected.replace('%s', String(imageInputs.length)).replace('%s', String(maxImages))}
       </div>
     </div>
   );

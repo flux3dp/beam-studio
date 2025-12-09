@@ -17,7 +17,7 @@ const LoadingView = ({ onClose }: { onClose: () => void }) => {
     <div className={classNames(styles['ai-generate-container'])}>
       <Header onClose={onClose} />
       <div className={styles.content} style={{ display: 'flex', justifyContent: 'center', padding: '40px' }}>
-        <Spin size="large" tip={t.loading_styles} />
+        <Spin size="large" tip={t.loading.styles} />
       </div>
     </div>
   );

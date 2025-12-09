@@ -8,14 +8,14 @@ import { handleDownload } from '../../utils/handleDownload';
 import styles from './index.module.scss';
 
 const ResultImage = ({
-  importLabel,
   downloadLabel,
+  importLabel,
   isImporting,
   onImport,
   url,
 }: {
-  importLabel: string;
   downloadLabel: string;
+  importLabel: string;
   isImporting: boolean;
   onImport: (url: string) => void;
   url: string;
@@ -71,7 +71,7 @@ export const SuccessState = ({
         <Alert
           closable
           description={importError}
-          message={t.import_failed}
+          message={t.error.import_failed}
           onClose={() => setImportError(null)}
           showIcon
           style={{ marginBottom: 16 }}
@@ -81,8 +81,8 @@ export const SuccessState = ({
       <div className={styles['images-grid']}>
         {generatedImages.map((url) => (
           <ResultImage
-            downloadLabel={t.download}
-            importLabel={t.import}
+            downloadLabel={t.results.download}
+            importLabel={t.results.import}
             isImporting={importingUrl === url}
             key={url}
             onImport={onImport}

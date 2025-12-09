@@ -72,7 +72,7 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
 
   return (
     <div className={styles.section}>
-      <h3 className={styles['section-title']}>{t.image_dimensions}</h3>
+      <h3 className={styles['section-title']}>{t.dimensions.title}</h3>
 
       {/* Aspect Ratios */}
       <div className={styles['dimension-group']}>
@@ -93,7 +93,7 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
           onMouseLeave={handleButtonLeave}
           ref={buttonRef}
         >
-          <RatioButton aspectRatio="" isActive={isAnyExtraSelected} isMoreTrigger label={t.dimension_more} />
+          <RatioButton aspectRatio="" isActive={isAnyExtraSelected} isMoreTrigger label={t.dimensions.more} />
         </div>
 
         {/* "More" Dropdown Menu */}

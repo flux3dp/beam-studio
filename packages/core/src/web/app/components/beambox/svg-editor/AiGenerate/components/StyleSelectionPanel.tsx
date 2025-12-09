@@ -82,7 +82,7 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
                 size={'large'}
               >
                 <UserOutlined />
-                <span>{t.custom_creation}</span>
+                <span>{t.style.custom_creation}</span>
                 <PlusOutlined />
               </Button>
             </div>
@@ -91,14 +91,14 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
                 {t.cancel}
               </Button>
               <Button disabled={!selectedStyle} onClick={handleConfirm} size="large" type="primary">
-                {t.apply_style}
+                {t.style.apply}
               </Button>
             </div>
           </div>
         }
         onCancel={onClose}
         open
-        title={t.select_creation_style}
+        title={t.style.select}
         width={1000} // Wider modal for the grid
       >
         <div className={styles.container}>

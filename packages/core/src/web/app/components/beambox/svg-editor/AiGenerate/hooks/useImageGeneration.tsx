@@ -1,4 +1,5 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import dialogCaller from '@core/app/actions/dialog-caller';
 import { createAiImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
 import type { Style } from '@core/helpers/api/ai-image-config';
 import { getInfo } from '@core/helpers/api/flux-id';
@@ -76,6 +77,12 @@ export const useImageGeneration = ({
   const { clearGenerationResults, imageInputs, inputFields, updateHistoryItem } = store;
 
   const handleGenerate = async () => {
+    if (!user) {
+      dialogCaller.showLoginDialog();
+
+      return;
+    }
+
     // Validation
     const validationError = validateRequest({ style, styles, user });
 
@@ -145,7 +152,7 @@ export const useImageGeneration = ({
         state: 'success',
       });
     } else {
-      const failMsg = result.error || i18n.lang.beambox.ai_generate.generation_failed;
+      const failMsg = result.error || i18n.lang.beambox.ai_generate.error.generation_failed;
 
       useAiGenerateStore.setState({ errorMessage: failMsg, generationStatus: 'failed' });
       updateHistoryItem(uuid, { fail_msg: failMsg, state: 'fail' });

@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
-import { Button } from 'antd';
+import { Button, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import useI18n from '@core/helpers/useI18n';
@@ -14,25 +14,35 @@ const Header = ({ onClose, onHistory, onRefresh, showHistory }: any) => {
 
   return (
     <div className={styles.header}>
-      <h2 className={styles.title}>{t.title}</h2>
-    <div className={styles.actions}>
-      <Button
-        className={classNames(styles['icon-button'], { [styles.active]: showHistory })}
-        icon={<ClockCircleOutlined />}
-        onClick={onHistory}
-        shape="circle"
-        type="text"
-      />
-      <Button
-        className={styles['icon-button']}
-        icon={<ReloadOutlined />}
-        onClick={onRefresh}
-        shape="circle"
-        type="text"
-      />
-      <Button className={styles['icon-button']} icon={<CloseOutlined />} onClick={onClose} shape="circle" type="text" />
+      <h2 className={styles.title}>{t.header.title}</h2>
+      <div className={styles.actions}>
+        <Tooltip title={t.header.history_tooltip}>
+          <Button
+            className={classNames(styles['icon-button'], { [styles.active]: showHistory })}
+            icon={<ClockCircleOutlined />}
+            onClick={onHistory}
+            shape="circle"
+            type="text"
+          />
+        </Tooltip>
+        <Tooltip title={t.header.reset_tooltip}>
+          <Button
+            className={styles['icon-button']}
+            icon={<ReloadOutlined />}
+            onClick={onRefresh}
+            shape="circle"
+            type="text"
+          />
+        </Tooltip>
+        <Button
+          className={styles['icon-button']}
+          icon={<CloseOutlined />}
+          onClick={onClose}
+          shape="circle"
+          type="text"
+        />
+      </div>
     </div>
-  </div>
   );
 };
 

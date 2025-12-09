@@ -1,6 +1,7 @@
 import React, { memo } from 'react';
 
-import { Alert, Empty, Spin } from 'antd';
+import { LeftOutlined } from '@ant-design/icons';
+import { Alert, Button, Empty, Spin } from 'antd';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
@@ -23,7 +24,7 @@ const UnmemorizedImageHistory = () => {
   if (historyLoading && historyItems.length === 0) {
     return (
       <div className={style.container}>
-        <Spin size="large" tip={t.loading_history}>
+        <Spin size="large" tip={t.loading.history}>
           <div className={style.loading} />
         </Spin>
       </div>
@@ -34,7 +35,7 @@ const UnmemorizedImageHistory = () => {
   if (historyError) {
     return (
       <div className={style.container}>
-        <Alert closable description={historyError} message={t.history_error_message} showIcon type="error" />
+        <Alert closable description={historyError} message={t.history.error_message} showIcon type="error" />
       </div>
     );
   }
@@ -43,7 +44,7 @@ const UnmemorizedImageHistory = () => {
   if (historyItems.length === 0) {
     return (
       <div className={style.container}>
-        <Empty description={t.empty_history_description} image={Empty.PRESENTED_IMAGE_SIMPLE} />
+        <Empty description={t.history.empty_description} image={Empty.PRESENTED_IMAGE_SIMPLE} />
       </div>
     );
   }
@@ -51,7 +52,15 @@ const UnmemorizedImageHistory = () => {
   // List Content
   return (
     <>
-      <h3 className={style.title}>{t.generation_history}</h3>
+      <div className={style.title}>
+        <Button
+          icon={<LeftOutlined />}
+          onClick={() => useAiGenerateStore.setState({ showHistory: false })}
+          shape="circle"
+          type="text"
+        />
+        {t.history.title}
+      </div>
 
       <div className={style.grid}>
         {historyItems.map((item) => (

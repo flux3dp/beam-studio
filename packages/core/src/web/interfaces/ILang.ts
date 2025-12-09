@@ -60,56 +60,73 @@ export interface ILang {
   };
   beambox: {
     ai_generate: {
-      apply_style: string;
       cancel: string;
-      config_error_description: string;
-      config_error_message: string;
-      count: string;
-      credit_required: string;
-      custom_creation: string;
-      customize: string;
-      dimension_more: string;
-      download: string;
-      empty_history_description: string;
-      file_type_error: string;
-      file_size_error: string;
-      generation_failed: string;
-      generation_history: string;
-      generate: string;
-      history_error_message: string;
-      history_failed: string;
-      history_not_generated: string;
-      history_recreate: string;
-      history_status_failed: string;
-      history_status_generating: string;
-      history_status_success: string;
-      image_dimensions: string;
-      import: string;
-      import_failed: string;
-      insufficient_credits: string;
-      laser_friendly: string;
-      loading_history: string;
-      loading_styles: string;
+      dimensions: {
+        more: string;
+        title: string;
+      };
+      error: {
+        config_description: string;
+        config_message: string;
+        generation_failed: string;
+        import_failed: string;
+        insufficient_credits: string;
+      };
+      form: {
+        count: string;
+        credit_required: string;
+        generate: string;
+        laser_friendly: string;
+      };
+      header: {
+        history_tooltip: string;
+        reset_tooltip: string;
+        title: string;
+      };
+      history: {
+        empty_description: string;
+        error_message: string;
+        not_generated: string;
+        recreate: string;
+        status_failed: string;
+        status_generating: string;
+        status_success: string;
+        title: string;
+      };
       loading: {
+        history: string;
+        styles: string;
         tip_0: string;
         tip_1: string;
         tip_2: string;
         tip_3: string;
         tip_4: string;
       };
-      max_images_error: string;
-      results: string;
+      results: {
+        download: string;
+        import: string;
+        title: string;
+      };
       retry: string;
-      select_creation_style: string;
-      style_and_mode: string;
-      title: string;
-      upload_add: string;
-      upload_click_or_drag: string;
-      upload_error: string;
-      upload_from_history: string;
-      upload_images: string;
-      upload_selected: string;
-      upload_supported_formats: string;
+      style: {
+        apply: string;
+        choose: string;
+        custom_creation: string;
+        customize: string;
+        select: string;
+      };
+      upload: {
+        add: string;
+        click_or_drag: string;
+        error: string;
+        file_size_error: string;
+        file_type_error: string;
+        from_history: string;
+        images: string;
+        max_images_error: string;
+        selected: string;
+        supported_formats: string;
+      };
       validation: {
         description_or_image_required: string;
         field_exceeds_max_length: string;

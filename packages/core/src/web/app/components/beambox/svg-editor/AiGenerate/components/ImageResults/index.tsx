@@ -37,7 +37,7 @@ const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStat
 
   return (
     <div className={styles['results-container']}>
-      <h3 className={styles['section-title']}>{t.results}</h3>
+      <h3 className={styles['section-title']}>{t.results.title}</h3>
 
       {generationStatus === 'generating' && <LoadingState />}
 
