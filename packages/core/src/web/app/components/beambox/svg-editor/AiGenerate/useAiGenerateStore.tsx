@@ -6,7 +6,6 @@ import type { Style } from '@core/helpers/api/ai-image-config';
 
 import type { GenerationStatus, ImageDimensions, ImageInput } from './types';
 import { laserFriendlyValue } from './types';
-import { objectToCamelCase } from './utils/caseConversion';
 import { getStyleConfig } from './utils/categories';
 import { getInputFieldsForStyle } from './utils/inputFields';
 
@@ -83,10 +82,10 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   clearImageInputs: () => set({ imageInputs: [] }),
   importFromHistory: (item) => {
     const dimensions: ImageDimensions = { aspectRatio: item.aspect_ratio, size: item.size };
-    const inputs = objectToCamelCase(item.prompt_data.inputs) as Record<string, string>;
+    const inputs = item.prompt_data.inputs as Record<string, string>;
 
     // Remove imageCounts from inputs as it is not needed and automatically handled from maxImages
-    delete inputs['imageCounts'];
+    delete inputs['image_counts'];
 
     if (inputs.color === laserFriendlyValue) {
       set({ isLaserFriendly: true });
