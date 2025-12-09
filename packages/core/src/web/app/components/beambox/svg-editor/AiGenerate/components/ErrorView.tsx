@@ -3,27 +3,34 @@ import React from 'react';
 import { Alert, Button } from 'antd';
 import classNames from 'classnames';
 
+import useI18n from '@core/helpers/useI18n';
+
 import styles from '../index.module.scss';
 
 import Header from './Header';
 
-const ErrorView = ({ onClose, onRetry }: { onClose: () => void; onRetry: () => void }) => (
-  <div className={classNames(styles['ai-generate-container'])}>
-    <Header onClose={onClose} />
-    <div className={styles.content}>
-      <Alert
-        action={
-          <Button onClick={onRetry} size="small" type="primary">
-            Retry
-          </Button>
-        }
-        description="Failed to load AI configuration"
-        message="Failed to load AI styles"
-        showIcon
-        type="error"
-      />
+const ErrorView = ({ onClose, onRetry }: { onClose: () => void; onRetry: () => void }) => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
+  return (
+    <div className={classNames(styles['ai-generate-container'])}>
+      <Header onClose={onClose} />
+      <div className={styles.content}>
+        <Alert
+          action={
+            <Button onClick={onRetry} size="small" type="primary">
+              {t.retry}
+            </Button>
+          }
+          description={t.config_error_description}
+          message={t.config_error_message}
+          showIcon
+          type="error"
+        />
+      </div>
     </div>
-  </div>
-);
+  );
+};
 
 export default ErrorView;

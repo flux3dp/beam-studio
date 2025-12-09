@@ -1,15 +1,21 @@
 import { DownloadOutlined, ImportOutlined } from '@ant-design/icons';
 import { Alert, Button } from 'antd';
 
-import { handleDownload } from '../../utils/handleDownload'; //
+import useI18n from '@core/helpers/useI18n';
+
+import { handleDownload } from '../../utils/handleDownload';
 
 import styles from './index.module.scss';
 
 const ResultImage = ({
+  importLabel,
+  downloadLabel,
   isImporting,
   onImport,
   url,
 }: {
+  importLabel: string;
+  downloadLabel: string;
   isImporting: boolean;
   onImport: (url: string) => void;
   url: string;
@@ -26,7 +32,7 @@ const ResultImage = ({
           size="large"
           type="primary"
         >
-          Import
+          {importLabel}
         </Button>
         <Button
           className={styles['action-button']}
@@ -34,7 +40,7 @@ const ResultImage = ({
           onClick={() => handleDownload(url)}
           size="large"
         >
-          Download
+          {downloadLabel}
         </Button>
       </div>
     </div>
@@ -54,6 +60,9 @@ export const SuccessState = ({
   onImport: (url: string) => void;
   setImportError: (val: null | string) => void;
 }) => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
   if (!generatedImages.length) return null;
 
   return (
@@ -62,7 +71,7 @@ export const SuccessState = ({
         <Alert
           closable
           description={importError}
-          message="Import Failed"
+          message={t.import_failed}
           onClose={() => setImportError(null)}
           showIcon
           style={{ marginBottom: 16 }}
@@ -71,7 +80,14 @@ export const SuccessState = ({
       )}
       <div className={styles['images-grid']}>
         {generatedImages.map((url) => (
-          <ResultImage isImporting={importingUrl === url} key={url} onImport={onImport} url={url} />
+          <ResultImage
+            downloadLabel={t.download}
+            importLabel={t.import}
+            isImporting={importingUrl === url}
+            key={url}
+            onImport={onImport}
+            url={url}
+          />
         ))}
       </div>
     </>

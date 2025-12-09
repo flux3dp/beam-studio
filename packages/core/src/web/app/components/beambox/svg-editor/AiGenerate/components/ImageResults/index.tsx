@@ -1,6 +1,7 @@
 import React, { memo, useCallback, useState } from 'react';
 
 import { importAiImage } from '@core/app/svgedit/operations/import/importAiImage';
+import useI18n from '@core/helpers/useI18n';
 
 import { ErrorState } from './ErrorState';
 import styles from './index.module.scss';
@@ -14,6 +15,9 @@ interface ImageResultsProps {
 }
 
 const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStatus }: ImageResultsProps) => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
   const [importingUrl, setImportingUrl] = useState<null | string>(null);
   const [importError, setImportError] = useState<null | string>(null);
 
@@ -33,7 +37,7 @@ const UnmemorizedImageResults = ({ errorMessage, generatedImages, generationStat
 
   return (
     <div className={styles['results-container']}>
-      <h3 className={styles['section-title']}>Results</h3>
+      <h3 className={styles['section-title']}>{t.results}</h3>
 
       {generationStatus === 'generating' && <LoadingState />}
 

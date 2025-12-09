@@ -1,7 +1,8 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import { createAiImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
-import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+import type { Style } from '@core/helpers/api/ai-image-config';
 import { getInfo } from '@core/helpers/api/flux-id';
+import i18n from '@core/helpers/i18n';
 import type { IUser } from '@core/interfaces/IUser';
 
 import { AI_COST_PER_IMAGE, type ImageDimensions } from '../types';
@@ -15,16 +16,17 @@ const validateRequest = ({
   user,
 }: {
   style: string;
-  styles?: StyleWithInputFields[];
+  styles?: Style[];
   user: IUser | null;
 }): null | string => {
+  const t = i18n.lang.beambox.ai_generate;
   const { imageInputs, inputFields } = useAiGenerateStore.getState();
 
   // 1. Validate User
-  if (!user) return 'Please log in to use AI generation.';
+  if (!user) return t.validation.login_required;
 
   // 2. Validate Image Count
-  if (imageInputs.length > 10) return 'Maximum 10 images allowed';
+  if (imageInputs.length > 10) return t.validation.max_images.replace('%s', '10');
 
   // 3. Validate Required Fields
   const fieldDefs = getInputFieldsForStyle(style, styles);
@@ -34,7 +36,7 @@ const validateRequest = ({
     const description = inputFields.description || '';
 
     if (!description.trim() && imageInputs.length === 0) {
-      return 'Please provide a prompt description or upload at least one image';
+      return t.validation.description_or_image_required;
     }
   }
 
@@ -42,10 +44,12 @@ const validateRequest = ({
   for (const field of fieldDefs) {
     const value = inputFields[field.key] || '';
 
-    if (field.required && !value.trim()) return `"${field.label}" is required. Please fill in this field.`;
+    if (field.required && !value.trim()) {
+      return t.validation.field_required.replace('%s', field.label);
+    }
 
     if (field.maxLength && value.length > field.maxLength) {
-      return `"${field.label}" exceeds maximum length of ${field.maxLength} characters.`;
+      return t.validation.field_exceeds_max_length.replace('%s', field.label).replace('%s', String(field.maxLength));
     }
   }
 
@@ -57,7 +61,7 @@ interface UseImageGenerationParams {
   maxImages: number;
   seed?: number;
   style: string;
-  styles?: StyleWithInputFields[];
+  styles?: Style[];
   user: IUser | null;
 }
 
@@ -141,7 +145,7 @@ export const useImageGeneration = ({
         state: 'success',
       });
     } else {
-      const failMsg = result.error || 'Generation failed';
+      const failMsg = result.error || i18n.lang.beambox.ai_generate.generation_failed;
 
       useAiGenerateStore.setState({ errorMessage: failMsg, generationStatus: 'failed' });
       updateHistoryItem(uuid, { fail_msg: failMsg, state: 'fail' });

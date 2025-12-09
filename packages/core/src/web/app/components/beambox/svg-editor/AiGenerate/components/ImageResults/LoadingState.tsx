@@ -38,7 +38,10 @@ export const LoadingState = () => {
       }
     }, 1000);
 
-    return () => clearInterval(interval);
+    return () => {
+      clearInterval(interval);
+      setTipIndex(0);
+    };
   });
 
   return (

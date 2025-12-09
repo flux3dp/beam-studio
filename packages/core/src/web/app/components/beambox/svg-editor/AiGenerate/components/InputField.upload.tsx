@@ -5,7 +5,8 @@ import { Alert, Button, Input } from 'antd';
 import classNames from 'classnames';
 
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
-import type { MappedInputField } from '@core/helpers/api/ai-image-config';
+import type { InputField } from '@core/helpers/api/ai-image-config';
+import useI18n from '@core/helpers/useI18n';
 
 import type { ImageInput } from '../types';
 import { createFileInput } from '../types';
@@ -47,7 +48,7 @@ const Thumbnail = ({ input, onRemove }: { input: ImageInput; onRemove: (id: stri
 };
 
 interface Props {
-  field: MappedInputField;
+  field: InputField;
   imageInputs: ImageInput[];
   maxImages?: number;
   maxSizeBytes?: number;
@@ -69,6 +70,9 @@ const UnmemorizedInputFieldWithUpload = ({
   onRemoveImage,
   value,
 }: Props) => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<null | string>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -119,7 +123,7 @@ const UnmemorizedInputFieldWithUpload = ({
           className={styles.error}
           closable
           description={error}
-          message="Upload Error"
+          message={t.upload_error}
           onClose={() => setError(null)}
           type="error"
         />
@@ -155,7 +159,7 @@ const UnmemorizedInputFieldWithUpload = ({
             className={classNames(styles['upload-btn'], { [styles.disabled]: !canAddMore })}
             disabled={!canAddMore}
             onClick={() => fileInputRef.current?.click()}
-            title="Upload images"
+            title={t.upload_images}
             type="button"
           >
             <LeftPanelIcons.Image />

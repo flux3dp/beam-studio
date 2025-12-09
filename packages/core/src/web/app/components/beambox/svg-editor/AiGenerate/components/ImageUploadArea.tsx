@@ -3,6 +3,8 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { CloseOutlined, FolderOutlined, InboxOutlined, LinkOutlined } from '@ant-design/icons';
 import { Alert, Badge, Button } from 'antd';
 
+import useI18n from '@core/helpers/useI18n';
+
 import type { ImageInput } from '../types';
 import { createFileInput } from '../types';
 
@@ -11,13 +13,23 @@ import styles from './ImageUploadArea.module.scss';
 const ACCEPTED_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
 const DEFAULT_MAX_SIZE = 10 * 1024 * 1024;
 
-const validateFiles = (files: File[], currentCount: number, maxImages: number, maxSize: number) => {
-  if (currentCount + files.length > maxImages) return `Maximum ${maxImages} images allowed`;
+const validateFiles = (
+  files: File[],
+  currentCount: number,
+  maxImages: number,
+  maxSize: number,
+  t: ReturnType<typeof useI18n>['beambox']['ai_generate'],
+) => {
+  if (currentCount + files.length > maxImages) return t.max_images_error.replace('%s', String(maxImages));
 
   for (const file of files) {
-    if (!ACCEPTED_TYPES.has(file.type)) return `${file.name}: Only JPEG, PNG, and WebP images are supported`;
+    if (!ACCEPTED_TYPES.has(file.type)) {
+      return t.file_type_error.replace('%s', file.name);
+    }
 
-    if (file.size > maxSize) return `${file.name}: File size must be less than ${(maxSize / 1024 / 1024).toFixed(0)}MB`;
+    if (file.size > maxSize) {
+      return t.file_size_error.replace('%s', file.name).replace('%s', String((maxSize / 1024 / 1024).toFixed(0)));
+    }
   }
 
   return null;
@@ -27,10 +39,12 @@ const ThumbnailItem = ({
   index,
   input,
   onRemove,
+  fromHistoryLabel,
 }: {
   index: number;
   input: ImageInput;
   onRemove: (id: string) => void;
+  fromHistoryLabel: string;
 }) => {
   // Memoize object URL to prevent flicker and ensure cleanup
   const objectUrl = useMemo(() => (input.type === 'file' ? URL.createObjectURL(input.file) : input.url), [input]);
@@ -53,9 +67,9 @@ const ThumbnailItem = ({
       ) : (
         <>
           <Badge.Ribbon className={styles['history-badge']} color="blue" text={<LinkOutlined />}>
-            <img alt="From history" className={styles.image} src={objectUrl} />
+            <img alt={fromHistoryLabel} className={styles.image} src={objectUrl} />
           </Badge.Ribbon>
-          <div className={styles['image-name']}>From history</div>
+          <div className={styles['image-name']}>{fromHistoryLabel}</div>
         </>
       )}
       <Button
@@ -80,6 +94,9 @@ const UnmemorizedImageUploadArea = ({
   onAdd,
   onRemove,
 }: any) => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
   const [isDragging, setIsDragging] = useState(false);
   const [error, setError] = useState<null | string>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -91,7 +108,7 @@ const UnmemorizedImageUploadArea = ({
 
     const files = Array.from(fileList);
 
-    const validationError = validateFiles(files, imageInputs.length, maxImages, maxSizeBytes);
+    const validationError = validateFiles(files, imageInputs.length, maxImages, maxSizeBytes, t);
 
     if (validationError) {
       setError(validationError);
@@ -105,7 +122,7 @@ const UnmemorizedImageUploadArea = ({
   return (
     <div className={styles.container}>
       {error && (
-        <Alert closable description={error} message="Upload Error" onClose={() => setError(null)} type="error" />
+        <Alert closable description={error} message={t.upload_error} onClose={() => setError(null)} type="error" />
       )}
 
       <div
@@ -137,25 +154,31 @@ const UnmemorizedImageUploadArea = ({
         {imageInputs.length === 0 ? (
           <div className={styles['empty-state']}>
             <FolderOutlined className={styles.icon} />
-            <p className={styles.title}>Click or drag images here</p>
-            <p className={styles.subtitle}>JPEG, PNG, WebP • Max {maxImages}</p>
+            <p className={styles.title}>{t.upload_click_or_drag}</p>
+            <p className={styles.subtitle}>{t.upload_supported_formats.replace('%s', String(maxImages))}</p>
           </div>
         ) : (
           <div className={styles['images-grid']}>
             {imageInputs.map((input: ImageInput, index: number) => (
-              <ThumbnailItem index={index} input={input} key={input.id} onRemove={onRemove} />
+              <ThumbnailItem
+                fromHistoryLabel={t.upload_from_history}
+                index={index}
+                input={input}
+                key={input.id}
+                onRemove={onRemove}
+              />
             ))}
             {imageInputs.length < maxImages && (
               <div className={styles['add-more']}>
                 <InboxOutlined />
-                <span>Add</span>
+                <span>{t.upload_add}</span>
               </div>
             )}
           </div>
         )}
       </div>
       <div className={styles.info}>
-        {imageInputs.length} / {maxImages} selected
+        {t.upload_selected.replace('%s', String(imageInputs.length)).replace('%s', String(maxImages))}
       </div>
     </div>
   );

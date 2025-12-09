@@ -32,6 +32,7 @@ const filterInputs = (inputs: Record<string, string>) =>
 
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
   const lang = useI18n();
+  const t = lang.beambox.ai_generate;
   const [isExpanded, setIsExpanded] = useState(false);
   const previewImages = item.result_urls;
   const formattedDate = useMemo(() => dayjs(item.created_at).format('YYYY/MM/DD HH:mm'), [item.created_at]);
@@ -47,10 +48,10 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
   const renderStatusBadge = () =>
     match(item.state)
       .with('success', () => (
-        <Badge className={classNames(style.statusBadge, style.success)} status="success" text="Success" />
+        <Badge className={classNames(style.statusBadge, style.success)} status="success" text={t.history_status_success} />
       ))
-      .with('fail', () => <Badge className={classNames(style.statusBadge, style.fail)} status="error" text="Failed" />)
-      .otherwise(() => <Badge className={style.statusBadge} status="processing" text="Generating" />);
+      .with('fail', () => <Badge className={classNames(style.statusBadge, style.fail)} status="error" text={t.history_status_failed} />)
+      .otherwise(() => <Badge className={style.statusBadge} status="processing" text={t.history_status_generating} />);
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -80,7 +81,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
     <Card bordered={false} className={style.card} styles={{ body: { padding: 0 } }}>
       <div className={style.cardContent}>
         <div className={style.title} title={item.prompt_data['style']}>
-          {getStyleConfig(item.prompt_data['style'], aiConfig?.styles).displayName || 'Customize'}
+          {getStyleConfig(item.prompt_data['style'], aiConfig?.styles).displayName || t.customize}
         </div>
 
         <div className={style.imageGrid}>
@@ -92,7 +93,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
             ))
           ) : (
             <div className={style.noPreview}>
-              {item.state === 'fail' ? '❌ Not generated' : lang.beambox.ai_generate.loading[`tip_${tipIndex}`]}
+              {item.state === 'fail' ? t.history_not_generated : t.loading[`tip_${tipIndex}`]}
             </div>
           )}
         </div>
@@ -104,7 +105,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
           </div>
           <div className={style.footerRight}>
             <Button className={style.recreateButton} onClick={() => onImport(item)}>
-              Recreate
+              {t.history_recreate}
             </Button>
             <Button
               className={classNames(style.dropdownButton, { [style.expanded]: isExpanded })}
@@ -141,7 +142,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
               {isLaserFriendly && (
                 <div className={style.chip}>
                   <SafetyCertificateOutlined className={style.chipIcon} />
-                  <span>Laser-Friendly</span>
+                  <span>{t.laser_friendly}</span>
                 </div>
               )}
             </div>

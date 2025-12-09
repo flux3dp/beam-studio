@@ -4,7 +4,8 @@ import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
 
-import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+import type { Style } from '@core/helpers/api/ai-image-config';
+import useI18n from '@core/helpers/useI18n';
 
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
 import { getCategoryForOption, getStylesForCategory } from '../utils/categories';
@@ -18,15 +19,7 @@ interface StyleSelectionPanelProps {
 }
 
 // Revised OptionCard: Image background with text overlay
-const OptionCard = ({
-  isSelected,
-  onClick,
-  option,
-}: {
-  isSelected: boolean;
-  onClick: () => void;
-  option: StyleWithInputFields;
-}) => (
+const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onClick: () => void; option: Style }) => (
   <div className={classNames(styles['option-card'], { [styles.selected]: isSelected })} onClick={onClick}>
     <div className={styles['option-preview']}>
       <img alt={option.displayName} className={styles['preview-image']} src={option.previewImage} />
@@ -38,6 +31,9 @@ const OptionCard = ({
 );
 
 const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
   const { data: aiConfig } = useAiConfigQuery();
   const categories = useMemo(
     () => aiConfig?.categories.filter((c) => c.id !== 'customize') ?? [],
@@ -86,23 +82,23 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
                 size={'large'}
               >
                 <UserOutlined />
-                <span>{'Custom Creation'}</span>
+                <span>{t.custom_creation}</span>
                 <PlusOutlined />
               </Button>
             </div>
             <div className={styles['footer-right']}>
               <Button onClick={onClose} size="large">
-                {'Cancel'}
+                {t.cancel}
               </Button>
               <Button disabled={!selectedStyle} onClick={handleConfirm} size="large" type="primary">
-                {'Apply Style'}
+                {t.apply_style}
               </Button>
             </div>
           </div>
         }
         onCancel={onClose}
         open
-        title="Select Creation Style"
+        title={t.select_creation_style}
         width={1000} // Wider modal for the grid
       >
         <div className={styles.container}>

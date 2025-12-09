@@ -46,6 +46,7 @@ const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 
 const UnmemorizedAiGenerate = () => {
   const lang = useI18n();
+  const t = lang.beambox.ai_generate;
   const [user, setUser] = useState<IUser | null>(getCurrentUser());
   const store = useAiGenerateStore();
   const {
@@ -68,7 +69,7 @@ const UnmemorizedAiGenerate = () => {
 
   // 2. Logic & Configuration
   const styleConfig = getStyleConfig(style, aiConfigStyles);
-  const stylePreset = styleConfig?.id || 'plain';
+  const stylePreset = styleConfig?.id || 'customize';
   const { handleGenerate } = useImageGeneration({
     dimensions,
     maxImages,
@@ -77,7 +78,6 @@ const UnmemorizedAiGenerate = () => {
     user,
   });
 
-  // 3. Effects
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
 
@@ -123,14 +123,14 @@ const UnmemorizedAiGenerate = () => {
           ) : (
             <>
               <div className={styles.section}>
-                <h3 className={styles['section-title']}>Style & Mode</h3>
+                <h3 className={styles['section-title']}>{t.style_and_mode}</h3>
                 <Button block className={styles['style-selection-button']} onClick={handleStyleClick} size="large">
                   {styleConfig.previewImage && (
                     <img alt={styleConfig.displayName} className={styles.img} src={styleConfig.previewImage} />
                   )}
                   <div className={styles['button-content']}>
                     <span className={styles['button-label']}>
-                      {styleConfig?.displayName || 'Select Creation Style'}
+                      {styleConfig?.displayName || t.select_creation_style}
                     </span>
                     <RightOutlined />
                   </div>
@@ -173,7 +173,7 @@ const UnmemorizedAiGenerate = () => {
               <DimensionSelector dimensions={dimensions} />
 
               <div className={styles.section}>
-                <h3 className={styles['section-title']}>Count</h3>
+                <h3 className={styles['section-title']}>{t.count}</h3>
                 <Select
                   className={styles['count-select']}
                   onChange={(val) => store.setState({ maxImages: val })}
@@ -184,7 +184,7 @@ const UnmemorizedAiGenerate = () => {
 
               <div className={styles.section}>
                 <div className={styles['toggle']}>
-                  <span>Laser-Friendly</span>
+                  <span>{t.laser_friendly}</span>
                   <Switch checked={isLaserFriendly} onChange={store.toggleLaserFriendly} />
                 </div>
               </div>
@@ -200,11 +200,11 @@ const UnmemorizedAiGenerate = () => {
         {!showHistory && (
           <div className={styles['button-section']}>
             <Button block className={styles['generate-button']} onClick={handleGenerate} size="large" type="primary">
-              Generate
+              {t.generate}
             </Button>
             <div className={styles['credits-info']}>
               <span className={styles['credits-required']}>
-                Credit required {(AI_COST_PER_IMAGE * maxImages).toFixed(2)}
+                {t.credit_required} {(AI_COST_PER_IMAGE * maxImages).toFixed(2)}
               </span>
               <div
                 className={styles['credits-balance']}

@@ -4,6 +4,8 @@ import { Button } from 'antd';
 import classNames from 'classnames';
 import { createPortal } from 'react-dom';
 
+import useI18n from '@core/helpers/useI18n';
+
 import { useFloatingMenu } from '../hooks/useFloatingMenu';
 import type { AspectRatio } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
@@ -46,6 +48,9 @@ const RatioButton = ({
 };
 
 const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
   const {
     buttonRef,
     closeMenu,
@@ -67,7 +72,7 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
 
   return (
     <div className={styles.section}>
-      <h3 className={styles['section-title']}>Image Dimensions</h3>
+      <h3 className={styles['section-title']}>{t.image_dimensions}</h3>
 
       {/* Aspect Ratios */}
       <div className={styles['dimension-group']}>
@@ -88,7 +93,7 @@ const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
           onMouseLeave={handleButtonLeave}
           ref={buttonRef}
         >
-          <RatioButton aspectRatio="" isActive={isAnyExtraSelected} isMoreTrigger label="More" />
+          <RatioButton aspectRatio="" isActive={isAnyExtraSelected} isMoreTrigger label={t.dimension_more} />
         </div>
 
         {/* "More" Dropdown Menu */}

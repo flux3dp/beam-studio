@@ -1,12 +1,13 @@
 import { Alert, Button } from 'antd';
 
-import useI18n from '@core/helpers/useI18n'; //
+import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import styles from './index.module.scss';
 
 export const ErrorState = ({ error }: { error: null | string }) => {
   const lang = useI18n();
+  const t = lang.beambox.ai_generate;
 
   if (!error) return null;
 
@@ -29,12 +30,12 @@ export const ErrorState = ({ error }: { error: null | string }) => {
             </Button>
           </div>
         }
-        message="Insufficient Credits"
+        message={t.insufficient_credits}
         showIcon
         type="warning"
       />
     );
   }
 
-  return <Alert closable description={displayMessage} message="Generation Failed" showIcon type="error" />;
+  return <Alert closable description={displayMessage} message={t.generation_failed} showIcon type="error" />;
 };
