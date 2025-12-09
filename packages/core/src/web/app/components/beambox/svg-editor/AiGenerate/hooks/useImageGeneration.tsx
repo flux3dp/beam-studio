@@ -1,26 +1,27 @@
+import alertCaller from '@core/app/actions/alert-caller';
 import { createAiImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
 import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
 import { getInfo } from '@core/helpers/api/flux-id';
 import type { IUser } from '@core/interfaces/IUser';
 
-import type { ImageDimensions } from '../types';
+import { AI_COST_PER_IMAGE, type ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { objectToSnakeCase } from '../utils/caseConversion';
 import { getInputFieldsForStyle } from '../utils/inputFields';
 
 const validateRequest = ({
-  currentUser,
   style,
   styles,
+  user,
 }: {
-  currentUser: IUser | null;
   style: string;
   styles?: StyleWithInputFields[];
+  user: IUser | null;
 }): null | string => {
   const { imageInputs, inputFields } = useAiGenerateStore.getState();
 
   // 1. Validate User
-  if (!currentUser) return 'Please log in to use AI generation.';
+  if (!user) return 'Please log in to use AI generation.';
 
   // 2. Validate Image Count
   if (imageInputs.length > 10) return 'Maximum 10 images allowed';
@@ -52,27 +53,27 @@ const validateRequest = ({
 };
 
 interface UseImageGenerationParams {
-  currentUser: IUser | null;
   dimensions: ImageDimensions;
   maxImages: number;
   seed?: number;
   style: string;
   styles?: StyleWithInputFields[];
+  user: IUser | null;
 }
 
 export const useImageGeneration = ({
-  currentUser,
   dimensions,
   maxImages,
   style = 'plain',
   styles,
+  user,
 }: UseImageGenerationParams) => {
   const store = useAiGenerateStore(); // Access store directly
   const { clearGenerationResults, imageInputs, inputFields, updateHistoryItem } = store;
 
   const handleGenerate = async () => {
-    // 1. Validation Phase
-    const validationError = validateRequest({ currentUser, style, styles });
+    // Validation
+    const validationError = validateRequest({ style, styles, user });
 
     if (validationError) {
       useAiGenerateStore.setState({ errorMessage: validationError });
@@ -80,7 +81,17 @@ export const useImageGeneration = ({
       return;
     }
 
-    // 2. Preparation Phase
+    // Credit Check
+    if (!user || user.info.credit < maxImages * AI_COST_PER_IMAGE) {
+      alertCaller.popUpCreditAlert({
+        available: user?.info.credit || 0,
+        required: String(AI_COST_PER_IMAGE * maxImages),
+      });
+
+      return;
+    }
+
+    // Preparation
     clearGenerationResults();
     useAiGenerateStore.setState({ generationStatus: 'generating' });
 
@@ -97,10 +108,10 @@ export const useImageGeneration = ({
       size: dimensions.size,
     };
 
-    // 3. Execution Phase
+    // Execution
     const createResponse = await createAiImageTask(params);
 
-    // 4. Error Handling Phase
+    // Error Handling
     if ('error' in createResponse) {
       const errorMsg =
         'code' in createResponse && createResponse.code
@@ -112,14 +123,14 @@ export const useImageGeneration = ({
       return;
     }
 
-    // 5. Polling Phase
+    // Polling
     const { uuid } = createResponse;
 
     useAiGenerateStore.setState({ generationUuid: uuid });
 
     const result = await pollTaskUntilComplete(uuid, (state) => updateHistoryItem(uuid, { state }));
 
-    // 6. Completion Phase
+    // Completion Phase
     if (result.success && result.imageUrls) {
       // Update credits info first, then update store state to trigger re-render
       await getInfo({ silent: true });

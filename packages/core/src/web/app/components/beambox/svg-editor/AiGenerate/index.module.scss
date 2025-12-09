@@ -165,6 +165,10 @@
     font-weight: 500;
     color: vars.$text-primary;
   }
+
+  &:hover {
+    cursor: pointer;
+  }
 }
 
 @media screen and (min-width: (variables.$welcomePageSidePanelWidth + 641px)) {

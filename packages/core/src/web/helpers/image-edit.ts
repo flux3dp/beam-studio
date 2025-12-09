@@ -1,6 +1,5 @@
 // @ts-expect-error don't has type definition
 import ImageTracer from 'imagetracerjs';
-import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -19,7 +18,6 @@ import i18n from '@core/helpers/i18n';
 import imageData from '@core/helpers/image-data';
 import jimpHelper from '@core/helpers/jimp-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -30,6 +28,8 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
 });
+
+const REMOVE_BACKGROUND_COST = 0.02;
 
 const getSelectedElem = (): null | SVGImageElement => {
   const selectedElements = svgCanvas.getSelectedElems();
@@ -287,18 +287,6 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
     return;
   }
 
-  const showBalanceAlert = () =>
-    alertCaller.popUp({
-      buttonLabels: [i18n.lang.beambox.popup.ai_credit.go],
-      buttonType: alertConstants.CUSTOM_CANCEL,
-      callbacks: () => browser.open(i18n.lang.beambox.popup.ai_credit.buy_link),
-      caption: i18n.lang.beambox.popup.ai_credit.insufficient_credit,
-      message: sprintf(
-        i18n.lang.beambox.popup.ai_credit.insufficient_credit_msg,
-        i18n.lang.beambox.right_panel.object_panel.actions_panel.ai_bg_removal,
-      ),
-    });
-
   const user = getCurrentUser();
 
   if (!user) {
@@ -307,7 +295,10 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
     return;
   }
 
-  if (user.info?.subscription && user.info.subscription.credit + user.info.credit < 0.02) {
+  const showBalanceAlert = () =>
+    alertCaller.popUpCreditAlert({ available: user.info.credit, required: String(REMOVE_BACKGROUND_COST) });
+
+  if ((user.info?.subscription && user.info.subscription.credit) + user.info.credit < 0.02) {
     showBalanceAlert();
 
     return;

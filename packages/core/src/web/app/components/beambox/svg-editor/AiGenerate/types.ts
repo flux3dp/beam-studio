@@ -34,3 +34,4 @@ export const createUrlInput = (url: string): ImageInput => ({
 
 export const laserFriendlyValue =
   'pure black and white, monochrome, high contrast, line art, no gradients, no shading, suitable for engraving';
+export const AI_COST_PER_IMAGE = 0.06;

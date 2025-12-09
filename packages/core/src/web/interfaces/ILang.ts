@@ -1,6 +1,7 @@
 export interface ILang {
   alert: {
     abort: string;
+    buy: string;
     cancel: string;
     caption: string;
     close: string;
@@ -58,6 +59,15 @@ export interface ILang {
     text_margin: string;
   };
   beambox: {
+    ai_generate: {
+      loading: {
+        tip_0: string;
+        tip_1: string;
+        tip_2: string;
+        tip_3: string;
+        tip_4: string;
+      };
+    };
     announcement_panel: {
       title: string;
     };
@@ -332,7 +342,6 @@ export interface ILang {
     popup: {
       ai_credit: {
         buy_link: string;
-        go: string;
         insufficient_credit: string;
         insufficient_credit_msg: string;
         relogin_to_use: string;

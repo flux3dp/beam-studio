@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Abort',
+    buy: 'Buy',
     cancel: 'Cancel',
     caption: 'Error',
     close: 'Close',
@@ -60,6 +61,15 @@ const lang: ILang = {
     text_margin: 'Text Margin',
   },
   beambox: {
+    ai_generate: {
+      loading: {
+        tip_0: 'Warming up the creative engine…',
+        tip_1: 'Polishing pixels… ✨',
+        tip_2: 'We’re nearly there, refining the details',
+        tip_3: 'Still crafting, this part needs a little more time',
+        tip_4: 'Big ideas take time, thank you for staying here',
+      },
+    },
     announcement_panel: {
       title: 'Announcement',
     },
@@ -334,9 +344,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Go',
-        insufficient_credit: 'You are out of Credit',
-        insufficient_credit_msg: 'You can not use the %s. Go to member center and purchase AI Credit.',
+        insufficient_credit: 'Insufficient Credit',
+        insufficient_credit_msg: 'This feature requires %s AI Credits, but you only have %s AI Credits left. \nPlease buy more credits and try again.',
         relogin_to_use: 'Please re-login to use this function.',
       },
       auto_feeder_origin: 'Please use the Framing preview to check the laser head’s path and area, then adjust the material placement or engraving start position based on the results to avoid collisions during the engraving process.',

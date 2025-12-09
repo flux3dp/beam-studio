@@ -125,6 +125,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.Element />,
         id: 'Element',
         label: `${lang.label.elements} (E)`,
+        // TODO: change elementPanel into a Drawer act like AiGenerate and Chat
         onClick: () => dialogCaller.showElementPanel(FnWrapper.useSelectTool),
       })}
       {renderToolButton({

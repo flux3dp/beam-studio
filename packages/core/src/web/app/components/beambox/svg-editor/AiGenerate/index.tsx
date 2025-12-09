@@ -8,6 +8,8 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import shortcuts from '@core/helpers/shortcuts';
+import useI18n from '@core/helpers/useI18n';
+import browser from '@core/implementations/browser';
 import type { IUser } from '@core/interfaces/IUser';
 
 import DimensionSelector from './components/DimensionSelector';
@@ -21,11 +23,10 @@ import LoadingView from './components/LoadingView';
 import { useAiConfigQuery } from './hooks/useAiConfigQuery';
 import { useImageGeneration } from './hooks/useImageGeneration';
 import styles from './index.module.scss';
+import { AI_COST_PER_IMAGE } from './types';
 import { useAiGenerateStore } from './useAiGenerateStore';
 import { getStyleConfig } from './utils/categories';
 import { getInputFieldsForStyle } from './utils/inputFields';
-
-const AI_COST_PER_IMAGE = 0.06;
 
 const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
   e.stopPropagation();
@@ -44,7 +45,8 @@ const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
 };
 
 const UnmemorizedAiGenerate = () => {
-  const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
+  const lang = useI18n();
+  const [user, setUser] = useState<IUser | null>(getCurrentUser());
   const store = useAiGenerateStore();
   const {
     dimensions,
@@ -68,21 +70,19 @@ const UnmemorizedAiGenerate = () => {
   const styleConfig = getStyleConfig(style, aiConfigStyles);
   const stylePreset = styleConfig?.id || 'plain';
   const { handleGenerate } = useImageGeneration({
-    currentUser,
     dimensions,
     maxImages,
     style: stylePreset,
     styles: aiConfigStyles,
+    user,
   });
 
   // 3. Effects
   useEffect(() => {
-    const update = (user: IUser | null) => setCurrentUser(user);
-
-    fluxIDEvents.on('update-user', update);
+    fluxIDEvents.on('update-user', setUser);
 
     return () => {
-      fluxIDEvents.off('update-user', update);
+      fluxIDEvents.off('update-user', setUser);
     };
   }, []);
 
@@ -102,8 +102,6 @@ const UnmemorizedAiGenerate = () => {
 
   // 4. Handlers
   const handleStyleClick = () => dialogCaller.showStyleSelectionPanel((s) => store.setStyle(s, aiConfigStyles), style);
-  const creditCost = AI_COST_PER_IMAGE * maxImages;
-  const canGenerate = currentUser && (currentUser.info?.credit || 0) >= creditCost && imageInputs.length <= 10;
 
   // 5. Render
   if (isLoading) return <LoadingView onClose={() => store.setState({ isAiGenerateShown: false })} />;
@@ -201,21 +199,19 @@ const UnmemorizedAiGenerate = () => {
         </div>
         {!showHistory && (
           <div className={styles['button-section']}>
-            <Button
-              block
-              className={styles['generate-button']}
-              disabled={!canGenerate}
-              onClick={handleGenerate}
-              size="large"
-              type="primary"
-            >
+            <Button block className={styles['generate-button']} onClick={handleGenerate} size="large" type="primary">
               Generate
             </Button>
             <div className={styles['credits-info']}>
-              <span className={styles['credits-required']}>Credit required {creditCost.toFixed(2)}</span>
-              <div className={styles['credits-balance']}>
+              <span className={styles['credits-required']}>
+                Credit required {(AI_COST_PER_IMAGE * maxImages).toFixed(2)}
+              </span>
+              <div
+                className={styles['credits-balance']}
+                onClick={() => browser.open(lang.beambox.popup.ai_credit.buy_link)}
+              >
                 <FluxIcons.FluxCredit />
-                <span className={styles['ai-credit']}>{currentUser?.info?.credit || 0}</span>
+                <span className={styles['ai-credit']}>{user?.info?.credit || 0}</span>
               </div>
             </div>
           </div>

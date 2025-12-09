@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import { DownOutlined, LayoutOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { Badge, Button, Card } from 'antd';
@@ -7,6 +7,7 @@ import dayjs from 'dayjs';
 import { match } from 'ts-pattern';
 
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
+import useI18n from '@core/helpers/useI18n';
 
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
 import { laserFriendlyValue } from '../types';
@@ -30,6 +31,7 @@ const filterInputs = (inputs: Record<string, string>) =>
   );
 
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
+  const lang = useI18n();
   const [isExpanded, setIsExpanded] = useState(false);
   const previewImages = item.result_urls;
   const formattedDate = useMemo(() => dayjs(item.created_at).format('YYYY/MM/DD HH:mm'), [item.created_at]);
@@ -40,6 +42,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
   );
   const displayInputs = useMemo(() => filterInputs(item.prompt_data.inputs), [item.prompt_data.inputs]);
   const { inputFields } = getStyleConfig(item.prompt_data['style'], aiConfig?.styles);
+  const [tipIndex, setTipIndex] = useState<0 | 1 | 2 | 3 | 4>(0);
 
   const renderStatusBadge = () =>
     match(item.state)
@@ -48,6 +51,30 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
       ))
       .with('fail', () => <Badge className={classNames(style.statusBadge, style.fail)} status="error" text="Failed" />)
       .otherwise(() => <Badge className={style.statusBadge} status="processing" text="Generating" />);
+
+  useEffect(() => {
+    const interval = setInterval(() => {
+      const elapsed = Date.now() - dayjs(item.created_at).valueOf();
+
+      // update tip index based on elapsed time
+      // 0-15s: tip_0
+      // 15-30s: tip_1
+      // 30-60s: tip_2
+      // 60-90s: tip_3
+      // >90s: tip_4
+      if (elapsed > 90000) {
+        setTipIndex(4);
+      } else if (elapsed > 60000) {
+        setTipIndex(3);
+      } else if (elapsed > 30000) {
+        setTipIndex(2);
+      } else if (elapsed > 15000) {
+        setTipIndex(1);
+      }
+    }, 1000);
+
+    return () => clearInterval(interval);
+  });
 
   return (
     <Card bordered={false} className={style.card} styles={{ body: { padding: 0 } }}>
@@ -64,7 +91,9 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
               </div>
             ))
           ) : (
-            <div className={style.noPreview}>{item.state === 'fail' ? '❌ Not generated' : '⏳ Generating...'}</div>
+            <div className={style.noPreview}>
+              {item.state === 'fail' ? '❌ Not generated' : lang.beambox.ai_generate.loading[`tip_${tipIndex}`]}
+            </div>
           )}
         </div>
 

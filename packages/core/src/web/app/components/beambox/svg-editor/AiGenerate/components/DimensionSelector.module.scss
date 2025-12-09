@@ -54,7 +54,6 @@
 
 .ratio-box {
   @include vars.ratio-box-base;
-
   border-radius: 1.5px;
 
   &.ratio-1-1 {
@@ -173,6 +172,7 @@
 .menu-icon {
   width: 32px;
   height: 32px;
+  margin-right: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
