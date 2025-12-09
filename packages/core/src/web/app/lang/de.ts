@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Bitte fügen Sie zuerst Objekte hinzu',
+      close_door_before_framing: 'Bitte schließen Sie die Tür, bevor Sie die Rahmenvorschau starten.',
       door_opened: 'Bitte schließen Sie die Tür abdeckung, um Niedriglaser zum Ausführen des Rahmens zu aktivieren.',
       fail_to_connect_with_camera: '#803 Verbindung zur Maschinenkamera konnte nicht hergestellt werden. Bitte starten Sie Ihren Maschinen oder Beam Studio neu. Wenn dieser Fehler weiterhin besteht, befolgen Sie <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">diese Anleitung</a>.',
       fail_to_get_door_status: 'Bitte stellen Sie sicher, dass die Tür abdeckung geschlossen ist, um Niedriglaser zum Ausführen des Rahmens zu aktivieren.',

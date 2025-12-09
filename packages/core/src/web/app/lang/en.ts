@@ -2048,6 +2048,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
   topbar: {
     alerts: {
       add_content_first: 'Please add objects first',
+      close_door_before_framing: 'Please close the door before starting the framing preview.',
       door_opened: 'Please close the door cover to enable low laser for running frame.',
       fail_to_connect_with_camera: '#803 Failed to establish connection with machine camera. Please Restart your machine or Beam Studio. If this error persists, please follow <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">this guide</a>.',
       fail_to_get_door_status: 'Please make sure the door cover is closed to enable low laser for running frame.',

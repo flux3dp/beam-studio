@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: '먼저 개체를 추가해 주세요.',
+      close_door_before_framing: '프레이밍 미리보기를 시작하기 전에 도어를 닫아 주세요.',
       door_opened: '문을 닫아 저전력 레이저를 활성화하고 프레임을 실행하세요.',
       fail_to_connect_with_camera: '#803 기계의 카메라와의 접속을 설정하지 못했습니다. 기계 또는 빔스튜디오를 다시 시작해 주세요. 이 에러가 지속된다면 다음 가이드를 따라 주세요.<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">this guide</a>',
       fail_to_get_door_status: '문이 닫혀 있는지 확인하여 저전력 레이저를 활성화하고 프레임을 실행하세요.',

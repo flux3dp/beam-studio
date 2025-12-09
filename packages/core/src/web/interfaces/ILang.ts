@@ -2041,6 +2041,7 @@ export interface ILang {
   topbar: {
     alerts: {
       add_content_first: string;
+      close_door_before_framing: string;
       door_opened: string;
       fail_to_connect_with_camera: string;
       fail_to_get_door_status: string;

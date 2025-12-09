@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Por favor agregue objetos primero',
+      close_door_before_framing: 'Cierre la puerta antes de iniciar la vista previa de encuadre.',
       door_opened: 'Cierre la cubierta de la puerta para habilitar el láser para ejecutar el marco.',
       fail_to_connect_with_camera: '#803 No se pudo establecer conexión con la cámara de la máquina. Por favor, reinicia tu máquina o Beam Studio. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">esta guía</a>.',
       fail_to_get_door_status: 'Asegúrese de que la cubierta de la puerta esté cerrada para habilitar el láser para ejecutar el marco.',

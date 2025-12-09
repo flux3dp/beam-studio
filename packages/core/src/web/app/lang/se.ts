@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Lägg till objekt först',
+      close_door_before_framing: 'Stäng dörren innan du startar inramningsförhandsvisningen.',
       door_opened: 'Stäng luckan för att aktivera lågeffektslaser för skärning.',
       fail_to_connect_with_camera: '#803 Det gick inte att ansluta till maskinkameran. Starta om din maskin eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denna guide</a>.',
       fail_to_get_door_status: 'Kontrollera att luckan är stängd för att aktivera lågeffektslaser för skärning.',

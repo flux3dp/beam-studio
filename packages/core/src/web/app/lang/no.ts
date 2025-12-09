@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Legg til objekter først',
+      close_door_before_framing: 'Lukk døren før du starter rammeforhåndsvisningen.',
       door_opened: 'Vennligst lukk dørdekselet for å aktivere lav laser for å kjøre ramme.',
       fail_to_connect_with_camera: '#803 Kunne ikke opprette tilkobling til maskinkamera. Start maskinen eller Beam Studio på nytt. Hvis feilen vedvarer, følg denne veiledningen',
       fail_to_get_door_status: 'Vennligst sørg for at dørdekselet er lukket for å aktivere lav laser for å kjøre ramme.',

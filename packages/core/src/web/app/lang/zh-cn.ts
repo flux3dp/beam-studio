@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: '请先新增物件',
+      close_door_before_framing: '请先关上门盖再开始外框预览。',
       door_opened: '请将门盖关闭以进入低激光模式。',
       fail_to_connect_with_camera: '#803 与机器相机建立连线时失败，请重新开启您的机器或是 Beam Studio ，如果此错误持续发生，请参考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">此則引導</a>。',
       fail_to_get_door_status: '请确保门盖关闭以进入低激光模式。',

@@ -242,7 +242,7 @@ const getConvexHull = async (imgBlob: Blob): Promise<Array<[number, number]>> =>
 
 const getAreaCheckTask = async (
   device: IDeviceInfo,
-  jobOrigin: null | { x: number; y: number },
+  jobOrigin: null | undefined | { x: number; y: number },
 ): Promise<Array<[number, number]>> => {
   try {
     const metadata = await exportFuncs.getMetadata(device);
@@ -281,6 +281,7 @@ class FramingTaskManager extends EventEmitter {
   private isFcodeV2 = false;
   private isPromark = false;
   private isProcessing = false;
+  private isBeamo2 = false;
   private isWorking = false;
   private interrupted = false;
   private rotaryInfo: RotaryInfo = null;
@@ -304,6 +305,7 @@ class FramingTaskManager extends EventEmitter {
   private hasAppliedRedLight = false;
   private initialized = false;
   private withVT = false;
+  private shouldCheckDoor = false;
 
   constructor(device: IDeviceInfo, messageKey = 'framing-task') {
     super();
@@ -314,6 +316,7 @@ class FramingTaskManager extends EventEmitter {
     this.vc = versionChecker(device.version);
     this.isAdor = constant.adorModels.includes(device.model);
     this.isPromark = promarkModels.has(device.model);
+    this.isBeamo2 = device.model === 'fbm2';
     this.isFcodeV2 = constant.fcodeV2Models.has(device.model);
     this.withVT = hasVariableText();
   }
@@ -649,6 +652,65 @@ class FramingTaskManager extends EventEmitter {
     throw new Error('Not implemented');
   };
 
+  private isInDangerZone = () => {
+    if (!this.isBeamo2) return false;
+
+    // For beamo2, moving through certain area requires door closed
+    // Condition 1: Y < 20
+    // Condition 2: Y < 60 and X > 320
+    // Only checks the rectangular bounding area of points to simplify the calculation
+    if (this.rotaryInfo) {
+      if (this.rotaryInfo.y < 20) return true;
+
+      if (this.rotaryInfo.y < 60) return this.taskPoints.some(([x]) => x > 320);
+    } else {
+      let yDanger = false;
+      let xDanger = false;
+
+      for (const [x, y] of this.taskPoints) {
+        if (y < 20) return true;
+
+        if (y < 60) yDanger = true;
+
+        if (x > 320) xDanger = true;
+
+        if (yDanger && xDanger) return true;
+      }
+    }
+
+    return false;
+  };
+
+  private checkDoor = async () => {
+    if (!this.shouldCheckDoor) return true;
+
+    let isDoorClosed: boolean;
+
+    if (deviceMaster.currentControlMode === 'raw') {
+      // During raw line check mode, previous command may complete without waiting for ok msg
+      // Manually wait for ok msg of previous command
+      await new Promise((resolve) => setTimeout(resolve, 200));
+
+      const { interlock } = await deviceMaster.rawGetDoorOpen();
+
+      isDoorClosed = interlock === 0;
+    } else {
+      const res = await deviceMaster.getDoorOpen();
+
+      isDoorClosed = res.value === '0';
+    }
+
+    if (!isDoorClosed) {
+      alertCaller.popUpError({
+        caption: i18n.lang.message.camera.door_opened,
+        message: i18n.lang.topbar.alerts.close_door_before_framing,
+      });
+      this.stopFraming();
+    }
+
+    return isDoorClosed;
+  };
+
   private initTask = async () => {
     const selectRes = await deviceMaster.select(this.device);
 
@@ -685,6 +747,8 @@ class FramingTaskManager extends EventEmitter {
         yRatio: this.addOnInfo.autoFeeder.rotaryRatio * useDocumentStore.getState()['auto-feeder-scale'],
       };
     }
+
+    this.shouldCheckDoor = this.isInDangerZone();
   };
 
   private setLowPowerValue = async (settingValue: number) => {
@@ -871,6 +935,8 @@ class FramingTaskManager extends EventEmitter {
     for (let i = 1; i < taskPoints.length; ) {
       if (this.interrupted) return;
 
+      if (!(await this.checkDoor())) return;
+
       await this.moveTo({ x: taskPoints[i][0], [yKey]: taskPoints[i][1] });
       i++;
 
@@ -965,6 +1031,10 @@ class FramingTaskManager extends EventEmitter {
       const { loop = false, lowPower = 0 } = opts;
 
       await this.setLowPowerValue(lowPower);
+
+      if (this.interrupted) return;
+
+      await this.checkDoor();
 
       if (this.interrupted) return;
 

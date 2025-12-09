@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Please add objects first',
+      close_door_before_framing: 'Proszę zamknąć drzwiczki przed rozpoczęciem podglądu kadrowania.',
       door_opened: 'Zamknij pokrywę drzwi, aby włączyć niską moc lasera do uruchomienia ramki.',
       fail_to_connect_with_camera: '#803 Nie udało się nawiązać połączenia z kamerą maszyny. Uruchom ponownie komputer i Beam Studio. Jeśli błąd będzie się powtarzał, postępuj zgodnie z <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">tym przewodnikiem</a>.',
       fail_to_get_door_status: 'Upewnij się, że pokrywa drzwi jest zamknięta, aby włączyć niską moc lasera do uruchomienia ramki.',

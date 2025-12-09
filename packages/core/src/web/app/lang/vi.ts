@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Vui lòng thêm đối tượng trước khi thêm nội dung',
+      close_door_before_framing: 'Vui lòng đóng cửa trước khi bắt đầu xem trước khung.',
       door_opened: 'Vui lòng đóng nắp để bật laser thấp cho khung chạy.',
       fail_to_connect_with_camera: '#803 Không thể kết nối với camera máy. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">hướng dẫn này</a>.',
       fail_to_get_door_status: 'Vui lòng đảm bảo nắp đã đóng để bật laser thấp cho khung chạy.',

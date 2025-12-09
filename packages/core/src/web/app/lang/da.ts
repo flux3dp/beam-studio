@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Tilføj venligst objekter først',
+      close_door_before_framing: 'Luk venligst låget, før du starter rammeforhåndsvisningen.',
       door_opened: 'Luk venligst døren for at aktivere lav laser til kørsel af ramme.',
       fail_to_connect_with_camera: '#803 Kunne ikke oprette forbindelse til maskinkamera. Genstart venligst din maskine eller Beam Studio. Hvis denne fejl fortsætter, skal du følge <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denne vejledning</a>.',
       fail_to_get_door_status: 'Sørg venligst for at døren er lukket for at aktivere lav laser til kørsel af ramme.',

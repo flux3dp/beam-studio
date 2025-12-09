@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Lisää ensin kohteita',
+      close_door_before_framing: 'Sulje ovi ennen kuin aloitat kehysesikatselun.',
       door_opened: 'Sulje ovensuojus, jotta kehys voidaan käynnistää matalalla teholla.',
       fail_to_connect_with_camera: '#803 Yhteyden muodostaminen kameraan epäonnistui. Käynnistä tietokone tai Beam Studio uudelleen. Jos virhe toistuu, noudata <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">näitä ohjeita</a>.',
       fail_to_get_door_status: 'Varmista, että ovensuojus on kiinni, jotta kehys voidaan käynnistää matalalla teholla.',
