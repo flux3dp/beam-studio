@@ -20,7 +20,7 @@ it('offset', () => {
   cy.get('@select').find('.ant-select-selection-item').click();
   cy.get('@select').should('have.class', 'ant-select-open');
   cy.get('.ant-select-item-option-content').contains('Round').click({ force: true });
-  cy.findByTestId('offset-distance').clear().type('{backspace}10').blur();
+  cy.findByTestId('offset-distance').clear().type('10').blur();
   cy.findAllByText('Confirm').click();
 
   cy.inputValueCloseTo('#w_size', 166.43, 0.1);
