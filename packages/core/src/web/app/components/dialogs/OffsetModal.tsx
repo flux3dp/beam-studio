@@ -109,6 +109,7 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
         <span className={styles.label}>{lang._offset.corner_type}</span>
         <Select
           className={styles.select}
+          data-testid="offset-corner"
           onChange={(val) => setOffset({ ...offset, cornerType: val })}
           options={[
             { label: lang._offset.round, value: 'round' },
@@ -124,6 +125,7 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
         <InputNumber
           addonAfter={unit}
           className={styles.input}
+          data-testid="offset-distance"
           min={0}
           onChange={(distance) => setOffset({ ...offset, distance: distance! })}
           precision={precision}

@@ -87,11 +87,27 @@ const ArrayModal = ({ onClose }: Props): React.JSX.Element => {
       </div>
       <div className={styles.field}>
         <span className={styles.label}>{lang.columns}</span>
-        <InputNumber className={styles.input} min={1} onChange={setColumn} precision={0} type="number" value={column} />
+        <InputNumber
+          className={styles.input}
+          data-testid="columns"
+          min={1}
+          onChange={setColumn}
+          precision={0}
+          type="number"
+          value={column}
+        />
       </div>
       <div className={styles.field}>
         <span className={styles.label}>{lang.rows}</span>
-        <InputNumber className={styles.input} min={1} onChange={setRow} precision={0} type="number" value={row} />
+        <InputNumber
+          className={styles.input}
+          data-testid="rows"
+          min={1}
+          onChange={setRow}
+          precision={0}
+          type="number"
+          value={row}
+        />
       </div>
       <div className={styles['section-header']}>
         <span className={styles['section-title']}>{lang.array_interval}</span>
@@ -102,6 +118,7 @@ const ArrayModal = ({ onClose }: Props): React.JSX.Element => {
         <InputNumber
           addonAfter={unit}
           className={styles.input}
+          data-testid="array_dx"
           min={0}
           onChange={setDx}
           precision={precision}
@@ -115,6 +132,7 @@ const ArrayModal = ({ onClose }: Props): React.JSX.Element => {
         <InputNumber
           addonAfter={unit}
           className={styles.input}
+          data-testid="array_dy"
           min={0}
           onChange={setDy}
           precision={precision}

@@ -16,9 +16,13 @@ it('offset', () => {
   cy.wait(500);
   cy.get('.tab.objects').click();
   cy.get('#offset').click();
-  cy.get('#select-offset-corner').select('Round');
+  cy.findByTestId('offset-corner').closest('.ant-select').as('select');
+  cy.get('@select').find('.ant-select-selection-item').click();
+  cy.get('@select').should('have.class', 'ant-select-open');
+  cy.get('.ant-select-item-option-content').contains('Round').click({ force: true });
   cy.get('.control > .ui > input').type('{selectall}{backspace}10{enter}');
-  cy.get('.primary').click();
+  cy.findByTestId('offset-distance').clear().type('10').blur();
+  cy.findAllByTitle('Confirm').click();
 
   cy.inputValueCloseTo('#w_size', 166.43, 0.1);
   cy.inputValueCloseTo('#h_size', 179.17, 0.1);
