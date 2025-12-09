@@ -674,10 +674,10 @@ class TextActions {
     this.setSelection(first, last);
   }
 
-  select(elem, x: number, y: number) {
+  select(elem) {
     this.curtext = elem;
     this.setInputValueFromCurtext();
-    this.toEditMode(x, y);
+    this.toEditMode(true);
   }
 
   start(elem) {
@@ -933,7 +933,7 @@ class TextActions {
     textinput.selectionEnd = textinput.value.length;
   };
 
-  toEditMode = (x?: number, y?: number) => {
+  toEditMode = (setCursor = false) => {
     const currentMode = getMouseMode();
     const { curtext } = this;
 
@@ -955,7 +955,7 @@ class TextActions {
 
     $(curtext).css('cursor', 'text');
 
-    if (x !== undefined) {
+    if (setCursor) {
       this.setCursor();
     }
 
