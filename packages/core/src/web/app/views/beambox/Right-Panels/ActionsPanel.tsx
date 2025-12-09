@@ -7,9 +7,9 @@ import { match, P } from 'ts-pattern';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import Dialog from '@core/app/actions/dialog-caller';
-import { showArrayModal } from '@core/app/components/dialogs/ArrayPanel';
+import { showArrayModal } from '@core/app/components/dialogs/ArrayModal';
 import { showCurvePanel, showRotaryWarped, showSharpenPanel } from '@core/app/components/dialogs/image';
-import { showOffsetModal } from '@core/app/components/dialogs/OffsetPanel';
+import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
@@ -137,26 +137,16 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     );
 
   const renderArrayButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons(
-      'array',
-      lang.array,
-      // () => svgEditor.triggerGridTool(),
-      showArrayModal,
-      <ActionPanelIcons.Array />,
-      <ActionPanelIcons.ArrayMobile />,
-      { autoClose: false, ...opts },
-    );
+    renderButtons('array', lang.array, showArrayModal, <ActionPanelIcons.Array />, <ActionPanelIcons.ArrayMobile />, {
+      autoClose: false,
+      ...opts,
+    });
 
   const renderOffsetButton = (opts: ButtonOpts = {}): React.JSX.Element =>
-    renderButtons(
-      'offset',
-      lang.offset,
-      // () => svgEditor.triggerOffsetTool(),
-      showOffsetModal,
-      <ActionPanelIcons.Offset />,
-      <ActionPanelIcons.Offset />,
-      { autoClose: false, ...opts },
-    );
+    renderButtons('offset', lang.offset, showOffsetModal, <ActionPanelIcons.Offset />, <ActionPanelIcons.Offset />, {
+      autoClose: false,
+      ...opts,
+    });
 
   const renderConvertToPathButton = (
     { converter, isText, ...opts }: ConvertButtonOptions = { converter: undefined, isText: false },

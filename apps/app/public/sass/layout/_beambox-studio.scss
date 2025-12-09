@@ -2,7 +2,6 @@
 .beambox-studio {
   @include meta.load-css('beambox/right-panel/right-panel');
   @include meta.load-css('beambox/svg-editor');
-  @include meta.load-css('beambox/tool-panels');
 
   user-select: none;
   position: absolute;

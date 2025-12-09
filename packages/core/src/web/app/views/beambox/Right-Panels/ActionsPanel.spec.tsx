@@ -114,8 +114,6 @@ jest.mock('@core/app/svgedit/operations/delete', () => ({ deleteElements: jest.f
 const clearSelection = jest.fn();
 const decomposePath = jest.fn();
 const replaceBitmap = jest.fn();
-const triggerGridTool = jest.fn();
-const triggerOffsetTool = jest.fn();
 const pathActions = {
   toEditMode: jest.fn(),
 };
@@ -123,7 +121,7 @@ const pathActions = {
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: { clearSelection, decomposePath, pathActions },
-    Editor: { replaceBitmap, triggerGridTool, triggerOffsetTool },
+    Editor: { replaceBitmap },
   });
 });
 
@@ -171,6 +169,18 @@ jest.mock(
     (...args) =>
       mockAutoFit(...args),
 );
+
+const mockShowArrayModal = jest.fn();
+
+jest.mock('@core/app/components/dialogs/ArrayModal', () => ({
+  showArrayModal: (...args) => mockShowArrayModal(...args),
+}));
+
+const mockShowOffsetModal = jest.fn();
+
+jest.mock('@core/app/components/dialogs/OffsetModal', () => ({
+  showOffsetModal: (...args) => mockShowOffsetModal(...args),
+}));
 
 describe('should render correctly', () => {
   beforeEach(() => {
@@ -241,7 +251,7 @@ describe('should render correctly', () => {
     expect(colorInvert).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
 
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
@@ -277,7 +287,7 @@ describe('should render correctly', () => {
     });
 
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
 
@@ -300,9 +310,9 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.decompose_path));
     expect(decomposePath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -319,9 +329,9 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.convert_to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -338,9 +348,9 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.convert_to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -357,9 +367,9 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.convert_to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -376,9 +386,9 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.convert_to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -395,7 +405,7 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.disassemble_use));
     expect(disassembleUse).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
 
@@ -420,9 +430,9 @@ describe('should render correctly', () => {
       expect(container).toMatchSnapshot();
 
       fireEvent.click(getByText(tActionPanel.offset));
-      expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+      expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText(tActionPanel.array));
-      expect(triggerGridTool).toHaveBeenCalledTimes(1);
+      expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText(tActionPanel.smart_nest));
       expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
     });
@@ -437,7 +447,7 @@ describe('should render correctly', () => {
       expect(container).toMatchSnapshot();
 
       fireEvent.click(getByText(tActionPanel.array));
-      expect(triggerGridTool).toHaveBeenCalledTimes(1);
+      expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText(tActionPanel.smart_nest));
       expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
     });
@@ -511,7 +521,7 @@ describe('should render correctly in mobile', () => {
     expect(colorInvert).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'));
 
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText(tActionPanel.trace));
     expect(mockTraceImage).toHaveBeenCalledTimes(1);
@@ -554,7 +564,7 @@ describe('should render correctly in mobile', () => {
     });
 
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
 
@@ -577,9 +587,9 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getByText(tActionPanel.decompose_path));
     expect(decomposePath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -595,9 +605,9 @@ describe('should render correctly in mobile', () => {
 
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -614,9 +624,9 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -633,9 +643,9 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -652,9 +662,9 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
-    expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+    expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
@@ -671,7 +681,7 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getByText(tActionPanel.disassemble_use));
     expect(disassembleUse).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.array));
-    expect(triggerGridTool).toHaveBeenCalledTimes(1);
+    expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.smart_nest));
     expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
 
@@ -695,9 +705,9 @@ describe('should render correctly in mobile', () => {
 
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.offset));
-      expect(triggerOffsetTool).toHaveBeenCalledTimes(1);
+      expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText(tActionPanel.array));
-      expect(triggerGridTool).toHaveBeenCalledTimes(1);
+      expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText(tActionPanel.smart_nest));
       expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
     });
@@ -711,7 +721,7 @@ describe('should render correctly in mobile', () => {
 
       expect(container).toMatchSnapshot();
       fireEvent.click(getByText(tActionPanel.array));
-      expect(triggerGridTool).toHaveBeenCalledTimes(1);
+      expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
       fireEvent.click(getByText(tActionPanel.smart_nest));
       expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
     });

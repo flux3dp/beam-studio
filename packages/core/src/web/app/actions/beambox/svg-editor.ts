@@ -66,7 +66,6 @@ import storage from '@core/implementations/storage';
 import Alert from '../alert-caller';
 import Progress from '../progress-caller';
 
-import ToolPanelsController from './toolPanelsController';
 import fileSystem from '@core/implementations/fileSystem';
 import { FileData } from '@core/helpers/fileImportHelper';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -141,9 +140,6 @@ export interface ISVGEditor {
   storagePromptClosed: boolean;
   tool_scale: number;
   toolButtonClick: (button: any, noHiding: any) => boolean;
-  triggerGridTool: () => void;
-  triggerNestTool: () => void;
-  triggerOffsetTool: () => void;
   uiStrings: any;
   updateContextPanel: () => void;
 }
@@ -195,9 +191,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     toolButtonClick: (button: any, noHiding: any) => {
       return false;
     },
-    triggerGridTool: () => {},
-    triggerNestTool: () => {},
-    triggerOffsetTool: () => {},
     uiStrings: {},
     updateContextPanel: () => {},
   };
@@ -997,18 +990,22 @@ const svgEditor = (window['svgEditor'] = (function () {
       return (window.os === 'MacOS' && evt.metaKey) || (window.os !== 'MacOS' && evt.ctrlKey);
     };
 
-    window.addEventListener('input', (e) => {
-    if (Shortcuts.isInBaseScope()) {
-        const evt = e as InputEvent;
+    window.addEventListener(
+      'input',
+      (e) => {
+        if (Shortcuts.isInBaseScope()) {
+          const evt = e as InputEvent;
 
-        if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
-          evt.preventDefault();
-          evt.stopPropagation();
-          if (evt.inputType === 'historyRedo') historyUtils.redo();
-          else if (evt.inputType === 'historyUndo') historyUtils.undo();
+          if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
+            evt.preventDefault();
+            evt.stopPropagation();
+            if (evt.inputType === 'historyRedo') historyUtils.redo();
+            else if (evt.inputType === 'historyUndo') historyUtils.undo();
+          }
         }
-      }
-    }, { capture: true });
+      },
+      { capture: true },
+    );
 
     $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
       evt.stopPropagation();
@@ -1172,62 +1169,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           }
         });
     })();
-
-    const triggerGridTool = function () {
-      if (selectedElement != null || multiselected) {
-        ToolPanelsController.setVisibility(ToolPanelsController.type != 'gridArray' || !ToolPanelsController.isVisible);
-        ToolPanelsController.setType('gridArray');
-        ToolPanelsController.render();
-      } else {
-        const lang = i18n.lang.beambox;
-
-        Alert.popUp({
-          callbacks: () => ObjectPanelController.updateActiveKey(null),
-          caption: lang.left_panel.label.array,
-          id: 'select first',
-          message: lang.popup.select_first,
-        });
-      }
-    };
-
-    editor.triggerGridTool = triggerGridTool;
-
-    let triggerOffsetTool = function () {
-      if (selectedElement != null || multiselected) {
-        ToolPanelsController.setVisibility(ToolPanelsController.type != 'offset' || !ToolPanelsController.isVisible);
-        ToolPanelsController.setType('offset');
-        ToolPanelsController.render();
-      } else {
-        const lang = i18n.lang.beambox;
-
-        Alert.popUp({
-          callbacks: () => ObjectPanelController.updateActiveKey(null),
-          caption: lang.tool_panels.offset,
-          id: 'select first',
-          message: lang.popup.select_first,
-        });
-      }
-    };
-
-    editor.triggerOffsetTool = triggerOffsetTool;
-
-    let triggerNestTool = function () {
-      if (selectedElement != null || multiselected) {
-        ToolPanelsController.setVisibility(ToolPanelsController.type != 'nest' || !ToolPanelsController.isVisible);
-        ToolPanelsController.setType('nest');
-        ToolPanelsController.render();
-      } else {
-        const lang = i18n.lang.beambox;
-
-        Alert.popUp({
-          caption: lang.tool_panels.nest,
-          id: 'select first',
-          message: lang.popup.select_first,
-        });
-      }
-    };
-
-    editor.triggerNestTool = triggerNestTool;
 
     // Delete is a contextual tool that only appears in the ribbon if
     // an element has been selected
