@@ -1,15 +1,12 @@
-import type { MappedInputField, StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+import type { InputField, Style } from '@core/helpers/api/ai-image-config';
 
 /**
  * Gets input fields for a style from the backend configuration.
  */
-export const getInputFieldsForStyle = (
-  styleId: null | string,
-  stylesWithFields?: StyleWithInputFields[],
-): MappedInputField[] => {
-  if (!styleId || !stylesWithFields) return [];
+export const getInputFieldsForStyle = (styleId: null | string, styles?: Style[]): InputField[] => {
+  if (!styleId || !styles) return [];
 
-  const style = stylesWithFields.find((s) => s.id === styleId);
+  const style = styles.find((s) => s.id === styleId);
 
   return style?.inputFields || [];
 };

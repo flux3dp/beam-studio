@@ -4,7 +4,7 @@ import { axiosFluxId, FLUXID_HOST } from './flux-id';
 import type { ResponseWithError } from './flux-id';
 
 // Backend Interfaces
-export interface InputField {
+interface RawInputField {
   is_active: boolean;
   key: string;
   label: string;
@@ -16,10 +16,10 @@ export interface InputField {
   validation_message: string;
 }
 
-export interface Style {
+interface RawStyle {
   display_name: string;
   id: string;
-  input_fields: InputField[];
+  input_fields: RawInputField[];
   is_active: boolean;
   modes: Array<'edit' | 'text-to-image'>;
   order: number;
@@ -27,7 +27,7 @@ export interface Style {
   tags: string[];
 }
 
-export interface Category {
+interface RawCategory {
   display_name: string;
   id: string;
   is_active: boolean;
@@ -42,7 +42,7 @@ interface ConfigResponse<T> {
 }
 
 // Frontend Interfaces
-export interface MappedStyle {
+interface StyleWithoutInputFields {
   description?: string;
   displayName: string;
   id: string;
@@ -51,7 +51,7 @@ export interface MappedStyle {
   tags: string[];
 }
 
-export interface MappedCategory {
+export interface Category {
   description?: string;
   displayName: string;
   id: string;
@@ -59,7 +59,7 @@ export interface MappedCategory {
   tags: string[];
 }
 
-export interface MappedInputField {
+export interface InputField {
   key: string;
   label: string;
   maxLength?: number;
@@ -67,8 +67,8 @@ export interface MappedInputField {
   required: boolean;
 }
 
-export interface StyleWithInputFields extends MappedStyle {
-  inputFields: MappedInputField[];
+export interface Style extends StyleWithoutInputFields {
+  inputFields: InputField[];
 }
 
 const API_BASE = `${FLUXID_HOST}/api/ai-image`;
@@ -76,27 +76,20 @@ const FALLBACK_IMAGE = 'https://picsum.photos/id/80/80';
 
 export const getLocale = (): string => {
   const lang = i18n.getActiveLang();
+  // Map to backend locale codes if necessary
   const map: Record<string, string> = { en: 'en-us' };
 
   return map[lang] || lang || 'en-us';
 };
 
-const mapStyle = (s: Style): MappedStyle => ({
-  displayName: s.display_name,
-  id: s.id,
-  modes: s.modes,
-  previewImage: s.preview_image || FALLBACK_IMAGE,
-  tags: s.tags,
-});
-
-const mapCategory = (c: Category): MappedCategory => ({
+const mapCategory = (c: RawCategory): Category => ({
   displayName: c.display_name,
   id: c.id,
   previewImage: c.preview_image || FALLBACK_IMAGE,
   tags: c.tags,
 });
 
-const mapInputField = (f: InputField): MappedInputField => ({
+const mapInputField = (f: RawInputField): InputField => ({
   key: f.key,
   label: f.label,
   maxLength: f.max_length || undefined,
@@ -104,9 +97,13 @@ const mapInputField = (f: InputField): MappedInputField => ({
   required: f.required,
 });
 
-const mapStyleWithFields = (s: Style): StyleWithInputFields => ({
-  ...mapStyle(s),
+const mapStyle = (s: RawStyle): Style => ({
+  displayName: s.display_name,
+  id: s.id,
   inputFields: s.input_fields.map(mapInputField),
+  modes: s.modes,
+  previewImage: s.preview_image || FALLBACK_IMAGE,
+  tags: s.tags,
 });
 
 /**
@@ -131,8 +128,8 @@ async function fetchConfig<T>(endpoint: string, params: Record<string, any> = {}
   }
 }
 
-const fetchStyles = (params = {}) => fetchConfig<Style>('styles', params);
-const fetchCategories = (params = {}) => fetchConfig<Category>('categories', params);
+const fetchStyles = (params = {}) => fetchConfig<RawStyle>('styles', params);
+const fetchCategories = (params = {}) => fetchConfig<RawCategory>('categories', params);
 
 export const fetchAllAiConfig = async () => {
   const [stylesData, categoriesData] = await Promise.all([fetchStyles(), fetchCategories()]);
@@ -141,13 +138,9 @@ export const fetchAllAiConfig = async () => {
 
   if ('error' in categoriesData) return categoriesData;
 
-  const styles = stylesData.toSorted((a, b) => a.order - b.order);
-  const categories = categoriesData.toSorted((a, b) => a.order - b.order);
-
   return {
-    categories: categories.map(mapCategory),
-    rawData: { categories, styles },
-    styles: styles.map(mapStyleWithFields),
+    categories: categoriesData.toSorted((a, b) => a.order - b.order).map(mapCategory),
+    styles: stylesData.toSorted((a, b) => a.order - b.order).map(mapStyle),
   };
 };
 

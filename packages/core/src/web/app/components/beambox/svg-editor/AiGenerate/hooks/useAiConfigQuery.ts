@@ -1,13 +1,12 @@
 import { useQuery } from '@tanstack/react-query';
-import { pick } from 'remeda';
 
-import type { MappedCategory, StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+import type { Category, Style } from '@core/helpers/api/ai-image-config';
 import { fetchAllAiConfig, getLocale } from '@core/helpers/api/ai-image-config';
 import { queryKeys } from '@core/helpers/query';
 
 export interface AiConfigData {
-  categories: MappedCategory[];
-  styles: StyleWithInputFields[];
+  categories: Category[];
+  styles: Style[];
 }
 
 const PLACEHOLDER_DATA: AiConfigData = {
@@ -39,9 +38,7 @@ export const useAiConfigQuery = () => {
         throw new Error(result.error);
       }
 
-      console.log(result);
-
-      return pick(result, ['categories', 'styles']);
+      return result;
     },
     queryKey: queryKeys.aiConfig.byLocale(locale),
     staleTime: 1000 * 60 * 60, // 1 hour

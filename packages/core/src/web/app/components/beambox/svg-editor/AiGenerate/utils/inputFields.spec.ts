@@ -1,7 +1,7 @@
-import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+import type { Style } from '@core/helpers/api/ai-image-config';
 import { getInputFieldsForStyle } from './inputFields';
 
-const STYLES: StyleWithInputFields[] = [
+const STYLES: Style[] = [
   {
     displayName: 'Cute Logo',
     id: 'logo-cute',

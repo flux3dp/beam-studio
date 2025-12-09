@@ -1,13 +1,13 @@
-import type { MappedCategory, StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+import type { Category, Style } from '@core/helpers/api/ai-image-config';
 
 /**
  * Find styles that match ANY of a category's tags.
  */
 export const getStylesForCategory = (
   categoryId: string,
-  styles: StyleWithInputFields[] = [],
-  categories: MappedCategory[] = [],
-): StyleWithInputFields[] => {
+  styles: Style[] = [],
+  categories: Category[] = [],
+): Style[] => {
   const category = categories.find((c) => c.id === categoryId);
 
   if (!category) return [];
@@ -20,9 +20,9 @@ export const getStylesForCategory = (
  */
 export const getCategoriesForStyle = (
   styleId: string,
-  styles: StyleWithInputFields[] = [],
-  categories: MappedCategory[] = [],
-): MappedCategory[] => {
+  styles: Style[] = [],
+  categories: Category[] = [],
+): Category[] => {
   const style = styles.find((s) => s.id === styleId);
 
   if (!style) return [];
@@ -33,7 +33,7 @@ export const getCategoriesForStyle = (
 /**
  * Get config for a style ID, with a safe fallback.
  */
-export const getStyleConfig = (styleId: string, styles: StyleWithInputFields[] = []): StyleWithInputFields => {
+export const getStyleConfig = (styleId: string, styles: Style[] = []): Style => {
   return styles.find((s) => s.id === styleId) || styles[0] || { id: 'plain', tags: ['customize'] };
 };
 
@@ -43,9 +43,9 @@ export const getStyleConfig = (styleId: string, styles: StyleWithInputFields[] =
  */
 export const getCategoryForOption = (
   styleId: null | string,
-  styles: StyleWithInputFields[] = [],
-  categories: MappedCategory[] = [],
-): MappedCategory | null => {
+  styles: Style[] = [],
+  categories: Category[] = [],
+): Category | null => {
   if (!styleId) return null;
 
   const style = styles.find((s) => s.id === styleId);

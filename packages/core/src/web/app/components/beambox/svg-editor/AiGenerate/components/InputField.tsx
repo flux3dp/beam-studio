@@ -2,13 +2,13 @@ import React, { memo } from 'react';
 
 import { Input } from 'antd';
 
-import type { MappedInputField } from '@core/helpers/api/ai-image-config';
+import type { InputField } from '@core/helpers/api/ai-image-config';
 
 // We reuse the same styles to ensure visual consistency (border, spacing, char-count)
 import styles from './InputField.module.scss';
 
 interface Props {
-  field: MappedInputField;
+  field: InputField;
   onChange: (value: string) => void;
   onKeyDown?: (e: React.KeyboardEvent<HTMLTextAreaElement>) => void;
   rows?: number;

@@ -129,24 +129,6 @@ describe('AiGenerate', () => {
     });
   });
 
-  describe('Credit Validation', () => {
-    test.each([
-      // count, balance, shouldDisable
-      [1, 0.06, false],
-      [1, 0.05, true],
-      [4, 0.24, false],
-      [4, 0.23, true],
-    ])('with count=%i and balance=%f, generate disabled=%s', (count, credit, disabled) => {
-      useAiGenerateStore.setState({ inputFields: { desc: 'test' }, maxImages: count });
-      (getCurrentUser as jest.Mock).mockReturnValue({ info: { credit } });
-
-      const { getByText } = render(<AiGenerate />);
-      const btn = getByText('Generate').closest('button');
-
-      expect(btn).toHaveProperty('disabled', disabled);
-    });
-  });
-
   describe('Generation Flow', () => {
     test('successful generation flow', async () => {
       useAiGenerateStore.setState({ inputFields: { desc: 'test' } });

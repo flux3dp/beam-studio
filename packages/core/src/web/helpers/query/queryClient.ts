@@ -59,11 +59,7 @@ export const prefetchAiConfig = async (): Promise<void> => {
         throw new Error(result.error);
       }
 
-      return {
-        categories: result.categories,
-        styles: result.styles,
-        stylesWithFields: result.styles,
-      };
+      return result;
     },
     queryKey: queryKeys.aiConfig.byLocale(locale),
     staleTime: 1000 * 60 * 60, // 1 hour - same as useAiConfigQuery

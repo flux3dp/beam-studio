@@ -1,18 +1,32 @@
+import type { Category, Style } from '@core/helpers/api/ai-image-config';
 import { getCategoriesForStyle, getCategoryForOption, getStyleConfig, getStylesForCategory } from './categories';
-import type { CategoryLike, StyleLike } from './categories';
 
-const STYLES: StyleLike[] = [
-  { id: 'plain', tags: ['customize'] },
-  { id: 'logo-cute', tags: ['logo', 'cartoon'] },
-  { id: 'logo-neon', tags: ['logo', 'contemporary'] },
-  { id: 'edit-line', tags: ['line-art'] },
+const STYLES: Style[] = [
+  { displayName: 'Plain', id: 'plain', inputFields: [], modes: [], previewImage: '', tags: ['customize'] },
+  {
+    displayName: 'Logo Cute',
+    id: 'logo-cute',
+    inputFields: [],
+    modes: [],
+    previewImage: '',
+    tags: ['logo', 'cartoon'],
+  },
+  {
+    displayName: 'Logo Neon',
+    id: 'logo-neon',
+    inputFields: [],
+    modes: [],
+    previewImage: '',
+    tags: ['logo', 'contemporary'],
+  },
+  { displayName: 'Edit Line', id: 'edit-line', inputFields: [], modes: [], previewImage: '', tags: ['line-art'] },
 ];
 
-const CATEGORIES: CategoryLike[] = [
-  { id: 'customize', tags: ['customize'] },
-  { id: 'logo', tags: ['logo'] },
-  { id: 'cartoon', tags: ['cartoon'] },
-  { id: 'line-art', tags: ['line-art'] },
+const CATEGORIES: Category[] = [
+  { displayName: 'Customize', id: 'customize', previewImage: '', tags: ['customize'] },
+  { displayName: 'Logo', id: 'logo', previewImage: '', tags: ['logo'] },
+  { displayName: 'Cartoon', id: 'cartoon', previewImage: '', tags: ['cartoon'] },
+  { displayName: 'Line Art', id: 'line-art', previewImage: '', tags: ['line-art'] },
 ];
 
 describe('Category Logic', () => {

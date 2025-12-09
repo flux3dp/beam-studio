@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
-import type { StyleWithInputFields } from '@core/helpers/api/ai-image-config';
+import type { Style } from '@core/helpers/api/ai-image-config';
 
 import type { GenerationStatus, ImageDimensions, ImageInput } from './types';
 import { laserFriendlyValue } from './types';
@@ -45,7 +45,7 @@ interface Actions {
 
   setInputField: (key: string, value: string) => void;
   setState: (state: Partial<State>) => void;
-  setStyle: (style: string, stylesWithFields?: StyleWithInputFields[]) => void;
+  setStyle: (style: string, styles?: Style[]) => void;
 
   toggleHistory: () => void;
   toggleLaserFriendly: () => void;
@@ -127,11 +127,11 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   resetForm: () => set({ ...FORM_DEFAULTS }),
   setInputField: (key, value) => set((state) => ({ inputFields: { ...state.inputFields, [key]: value } })),
   setState: (updates) => set((state) => ({ ...state, ...updates })),
-  setStyle: (style, stylesWithFields) =>
+  setStyle: (style, styles) =>
     set((state) => {
       const newStyle = style || 'plain';
       const styleId = getStyleConfig(newStyle).id;
-      const validKeys = new Set(getInputFieldsForStyle(styleId, stylesWithFields).map((f) => f.key));
+      const validKeys = new Set(getInputFieldsForStyle(styleId, styles).map((f) => f.key));
       const inputFields = Object.fromEntries(Object.entries(state.inputFields).filter(([key]) => validKeys.has(key)));
 
       return { inputFields, isLaserFriendly: false, style: newStyle };
