@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Por favor, adicione objetos primeiro',
+      close_door_before_framing: 'Feche a porta antes de iniciar a pré-visualização do enquadramento.',
       door_opened: 'Feche a tampa da porta para habilitar o laser baixo para executar o quadro.',
       fail_to_connect_with_camera: '#803 Falha ao conectar com a câmera da máquina. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">este guia</a>.',
       fail_to_get_door_status: 'Certifique-se de que a tampa da porta esteja fechada para habilitar o laser baixo para executar o quadro.',

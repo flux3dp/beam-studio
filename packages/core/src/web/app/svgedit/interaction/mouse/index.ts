@@ -1479,11 +1479,10 @@ const dblClick = (evt: MouseEvent) => {
 
   const mouseTarget: Element = svgCanvas.getMouseTarget(evt);
   const { tagName } = mouseTarget;
-  const pt = getEventPoint(evt);
 
   if (!['preview_color', 'text', 'textedit'].includes(currentMode)) {
     if (tagName === 'text') {
-      svgCanvas.textActions.select(mouseTarget, pt.x, pt.y);
+      svgCanvas.textActions.select(mouseTarget);
     } else if (mouseTarget.getAttribute('data-textpath-g')) {
       const clickOnText = ['text', 'textPath'].includes((evt.target as SVGElement).tagName);
       const text = mouseTarget.querySelector('text');
@@ -1491,7 +1490,7 @@ const dblClick = (evt: MouseEvent) => {
 
       if (text && clickOnText) {
         svgCanvas.selectorManager.releaseSelector(mouseTarget);
-        svgCanvas.textActions.select(text, pt.x, pt.y);
+        svgCanvas.textActions.select(text);
       } else if (path) {
         svgCanvas.pathActions.toEditMode(path);
       }

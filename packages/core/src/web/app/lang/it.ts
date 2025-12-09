@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Si prega di aggiungere prima gli oggetti',
+      close_door_before_framing: 'Chiudi la porta prima di avviare l’anteprima di inquadratura.',
       door_opened: "Chiudere lo sportello per abilitare il laser a bassa potenza per l'esecuzione della cornice.",
       fail_to_connect_with_camera: '#803 Impossibile stabilire la connessione con la videocamera della macchina. Riavviare la macchina o Beam Studio. Se l\'errore persiste, seguire <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">questa guida</a>.',
       fail_to_get_door_status: "Assicurarsi che lo sportello sia chiuso per abilitare il laser a bassa potenza per l'esecuzione della cornice.",

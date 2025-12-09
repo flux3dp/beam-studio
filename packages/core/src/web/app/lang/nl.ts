@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Voeg eerst objecten toe',
+      close_door_before_framing: 'Sluit de deur voordat u de kadering-voorbeeldweergave start.',
       door_opened: 'Sluit het deksel om laag laservermogen voor het uitvoeren van frames in te schakelen.',
       fail_to_connect_with_camera: '#803 Kan geen verbinding maken met machinecamera. Start uw machine of Beam Studio opnieuw op. Als deze fout zich blijft voordoen, volg dan <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">deze handleiding</a>.',
       fail_to_get_door_status: 'Zorg ervoor dat het deksel gesloten is om laag laservermogen voor het uitvoeren van frames in te schakelen.',

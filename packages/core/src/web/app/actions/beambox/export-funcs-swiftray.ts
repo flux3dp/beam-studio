@@ -1,8 +1,13 @@
 import Alert from '@core/app/actions/alert-caller';
+import {
+  annotateCurveEngravingZSpeed,
+  removeCurveEngravingZSpeedAnnotation,
+} from '@core/app/actions/beambox/export/annotateCurveEngravingZSpeed';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { controlConfig } from '@core/app/constants/promark-constants';
+import type { EngraveDpiOption } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -40,7 +45,8 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-export const dpiTextMap = {
+export const dpiTextMap: { [key in EngraveDpiOption]: number } = {
+  detailed: 1016,
   high: 508,
   low: 127,
   medium: 254,
@@ -238,9 +244,11 @@ const fetchTaskCodeSwiftray = async (
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: 'Splitting Full color layer',
   });
+  annotateCurveEngravingZSpeed(device);
 
   // Prepare for Printing task & clean up temp modification
   revertFunctions.push(
+    removeCurveEngravingZSpeedAnnotation,
     await updateImagesResolution(),
     await convertShapeToBitmap(),
     annotatePrintingColor(),

@@ -2049,6 +2049,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Nejprve prosím přidejte objekty.',
+      close_door_before_framing: 'Zavřete prosím dvířka před spuštěním náhledu rámování.',
       door_opened: 'Uzavřete prosím dvířka, aby mohl laser nízké intenzity zahájit rámování.',
       fail_to_connect_with_camera: '#803 Nepodařilo se navázat spojení s kamerou. Restartujte prosím své zařízení nebo Beam Studio. Pokud bude tato chyba přetrvávat, přečtěte si prosím <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">tento návod</a>.',
       fail_to_get_door_status: 'Ujistěte se prosím, že jsou dvířka uzavřená, aby mohl laser nízké intenzity zahájit rámování.',

@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: "Veuillez d'abord ajouter des objets",
+      close_door_before_framing: 'Fermez la porte avant de lancer l’aperçu de cadrage.',
       door_opened: 'Veuillez fermer le couvercle de protection pour activer le laser de découpe.',
       fail_to_connect_with_camera: '#803 Échec de la connexion avec la caméra de la machine. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ce guide</a>.',
       fail_to_get_door_status: 'Veuillez vous assurer que le couvercle de protection est fermé pour activer le laser de découpe.',

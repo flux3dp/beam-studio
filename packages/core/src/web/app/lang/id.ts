@@ -2048,6 +2048,7 @@ const lang: ILang = {
   topbar: {
     alerts: {
       add_content_first: 'Silakan tambahkan objek terlebih dahulu',
+      close_door_before_framing: 'Tutup pintu sebelum memulai pratinjau pembingkaian.',
       door_opened: 'Harap tutup pintu penutup untuk mengaktifkan laser rendah agar bingkai dapat berjalan.',
       fail_to_connect_with_camera: '#803 Gagal membuat koneksi dengan kamera mesin. Harap mulai ulang mesin Anda atau Beam Studio. Jika kesalahan ini berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">panduan ini</a>.',
       fail_to_get_door_status: 'Harap pastikan pintu penutup tertutup untuk mengaktifkan laser rendah agar bingkai dapat berjalan.',
