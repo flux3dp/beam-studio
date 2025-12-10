@@ -1,11 +1,9 @@
 import React, { useMemo, useState } from 'react';
 
-import Icon from '@ant-design/icons';
 import { InputNumber } from 'antd';
 
 import constant from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
@@ -79,7 +77,6 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     <DraggableModal
       cancelText={lang.cancel}
       className={styles.modal}
-      closeIcon={<Icon className={styles['close-icon']} component={ActionPanelIcons.Delete} />}
       defaultPosition={isMobile ? undefined : { x: 60, y: -60 }}
       mask={false}
       maskClosable={false}
