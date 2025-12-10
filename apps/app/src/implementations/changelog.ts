@@ -19,7 +19,6 @@ const CHANGES_TW = {
 
 const CHANGES_EN = {
   added: [
-    'Added support for the FLUX beamo II model.',
     'Added Promark convex hull preview.',
     'Added option to skip drawing laser and print calibration patterns during module calibration.',
     'Added advanced calibration parameter settings.',
