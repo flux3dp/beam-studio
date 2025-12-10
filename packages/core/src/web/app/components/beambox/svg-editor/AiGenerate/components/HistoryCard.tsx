@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import React, { memo, useCallback, useMemo, useState } from 'react';
 
 import {
   DownloadOutlined,
@@ -17,6 +17,7 @@ import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import useI18n from '@core/helpers/useI18n';
 
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
+import { useTipIndex } from '../hooks/useTipIndex';
 import { laserFriendlyValue } from '../types';
 import { getStyleConfig } from '../utils/categories';
 import { getSizePixels } from '../utils/dimensions';
@@ -52,7 +53,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
   );
   const displayInputs = useMemo(() => filterInputs(item.prompt_data.inputs), [item.prompt_data.inputs]);
   const { inputFields } = getStyleConfig(item.prompt_data['style'], aiConfig?.styles);
-  const [tipIndex, setTipIndex] = useState<0 | 1 | 2 | 3 | 4>(0);
+  const tipIndex = useTipIndex(dayjs(item.created_at).valueOf());
 
   const handleImageImport = useCallback(async (url: string) => {
     setImportingUrl(url);
@@ -76,30 +77,6 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
         <Badge className={classNames(styles.statusBadge, styles.fail)} status="error" text={t.history.status_failed} />
       ))
       .otherwise(() => <Badge className={styles.statusBadge} status="processing" text={t.history.status_generating} />);
-
-  useEffect(() => {
-    const interval = setInterval(() => {
-      const elapsed = Date.now() - dayjs(item.created_at).valueOf();
-
-      // update tip index based on elapsed time
-      // 0-15s: tip_0
-      // 15-30s: tip_1
-      // 30-60s: tip_2
-      // 60-90s: tip_3
-      // >90s: tip_4
-      if (elapsed > 90000) {
-        setTipIndex(4);
-      } else if (elapsed > 60000) {
-        setTipIndex(3);
-      } else if (elapsed > 30000) {
-        setTipIndex(2);
-      } else if (elapsed > 15000) {
-        setTipIndex(1);
-      }
-    }, 1000);
-
-    return () => clearInterval(interval);
-  });
 
   return (
     <Card bordered={false} className={styles.card} styles={{ body: { padding: 0 } }}>

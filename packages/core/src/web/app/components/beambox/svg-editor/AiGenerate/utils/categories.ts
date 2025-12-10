@@ -16,21 +16,6 @@ export const getStylesForCategory = (
 };
 
 /**
- * Find categories that match ANY of a style's tags.
- */
-export const getCategoriesForStyle = (
-  styleId: string,
-  styles: Style[] = [],
-  categories: Category[] = [],
-): Category[] => {
-  const style = styles.find((s) => s.id === styleId);
-
-  if (!style) return [];
-
-  return categories.filter((category) => category.tags.some((tag) => style.tags.includes(tag)));
-};
-
-/**
  * Get config for a style ID, with a safe fallback.
  */
 export const getStyleConfig = (styleId: string, styles: Style[] = []): Style => {
@@ -39,7 +24,6 @@ export const getStyleConfig = (styleId: string, styles: Style[] = []): Style => 
 
 /**
  * Get the first category containing a specific style.
- * Optimized to stop searching after the first match.
  */
 export const getCategoryForOption = (
   styleId: null | string,

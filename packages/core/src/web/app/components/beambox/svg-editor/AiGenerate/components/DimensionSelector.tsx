@@ -7,12 +7,16 @@ import { createPortal } from 'react-dom';
 import useI18n from '@core/helpers/useI18n';
 
 import { useFloatingMenu } from '../hooks/useFloatingMenu';
-import type { AspectRatio } from '../types';
+import type { AspectRatio, ImageDimensions } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { getSizePixels } from '../utils/dimensions';
 import { ADDITIONAL_RATIOS, ALWAYS_DISPLAYED_RATIOS } from '../utils/ratioOptions';
 
 import styles from './DimensionSelector.module.scss';
+
+interface DimensionSelectorProps {
+  dimensions: ImageDimensions;
+}
 
 interface RatioButtonProps {
   aspectRatio: string;
@@ -47,7 +51,7 @@ const RatioButton = ({
   );
 };
 
-const DimensionSelector: React.FC<{ dimensions: any }> = ({ dimensions }) => {
+const DimensionSelector = ({ dimensions }: DimensionSelectorProps) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
 

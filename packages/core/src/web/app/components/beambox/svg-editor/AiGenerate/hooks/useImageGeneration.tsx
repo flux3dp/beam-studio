@@ -122,6 +122,8 @@ export const useImageGeneration = ({
     // Execution
     const createResponse = await createAiImageTask(params);
 
+    await store.loadHistory();
+
     // Error Handling
     if ('error' in createResponse) {
       const errorMsg =

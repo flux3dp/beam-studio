@@ -8,7 +8,14 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
 
-const Header = ({ onClose, onHistory, onRefresh, showHistory }: any) => {
+interface HeaderProps {
+  onClose: () => void;
+  onHistory?: () => void;
+  onRefresh?: () => void;
+  showHistory?: boolean;
+}
+
+const Header = ({ onClose, onHistory, onRefresh, showHistory }: HeaderProps) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
 

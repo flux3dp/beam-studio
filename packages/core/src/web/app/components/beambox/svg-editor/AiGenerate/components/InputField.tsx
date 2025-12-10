@@ -43,6 +43,4 @@ const UnmemorizedInputField = ({ field, onChange, onKeyDown, rows = 3, value }: 
   );
 };
 
-const InputField = memo(UnmemorizedInputField);
-
-export default memo(InputField);
+export default memo(UnmemorizedInputField);
