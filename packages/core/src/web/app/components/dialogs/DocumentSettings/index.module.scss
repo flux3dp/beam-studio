@@ -11,7 +11,6 @@
     align-items: center;
     background-color: white;
     border-radius: 6px;
-    padding: 5px 0;
 
     .row {
       position: relative;
@@ -20,6 +19,7 @@
       justify-content: space-between;
       align-items: center;
       padding: 6px 5%;
+      min-height: 48px;
 
       &.full {
         display: block;
@@ -27,7 +27,6 @@
         .sub {
           width: 100%;
           box-sizing: border-box;
-          padding: 0 12px;
           display: grid;
           grid-template-columns: 1fr 1fr;
           align-items: center;
@@ -144,8 +143,8 @@
         &::after {
           content: '';
           position: absolute;
-          left: 10px;
-          right: 10px;
+          left: 5%;
+          right: 5%;
           bottom: -1px;
           height: 1px;
           background: #e6e6e6;

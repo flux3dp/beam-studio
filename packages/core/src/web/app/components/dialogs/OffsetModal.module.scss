@@ -1,0 +1,34 @@
+.modal {
+  .close-icon {
+    font-size: 22px;
+  }
+
+  .field {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 8px;
+
+    .label {
+      min-width: 60px;
+    }
+
+    $input-width: 120px;
+
+    .select {
+      width: $input-width;
+    }
+
+    .input {
+      width: $input-width;
+    }
+  }
+
+  .divider {
+    height: 1px;
+    background-color: #e0e0e0;
+    margin: 12px 0;
+    width: 100%;
+  }
+}

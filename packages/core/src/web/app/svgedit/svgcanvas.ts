@@ -32,7 +32,6 @@
 
 import Alert from '@core/app/actions/alert-caller';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import ToolPanelsController from '@core/app/actions/beambox/toolPanelsController';
 import grid from '@core/app/actions/canvas/grid';
 import { guideLineDrawer } from '@core/app/actions/canvas/guideLines';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
@@ -1194,7 +1193,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         selectorManager.releaseSelector(element);
       }
 
-      ToolPanelsController.unmount();
       selectedElements.length = 0;
 
       this.collectAlignPoints();
@@ -1268,7 +1266,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     selectedElements = selectedElements.filter(Boolean);
 
     LayerPanelController.updateLayerPanel();
-    ToolPanelsController.unmount();
 
     this.collectAlignPoints();
   });

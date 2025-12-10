@@ -10,11 +10,11 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('.tab.objects').click();
     cy.get('#array').click();
-    cy.get('#columns').clear().type('2').blur();
-    cy.get('#rows').clear().type('2').blur();
-    cy.get('#array_width').clear().type('100').blur();
-    cy.get('#array_height').clear().type('150').blur();
-    cy.get('.primary').click();
+    cy.findByTestId('columns').clear().clear().type('2').blur();
+    cy.findByTestId('rows').clear().clear().type('2').blur();
+    cy.findByTestId('array_dx').clear().clear().type('100').blur();
+    cy.findByTestId('array_dy').clear().clear().type('150').blur();
+    cy.findAllByText('Confirm').click();
   };
 
   it('image', () => {

@@ -16,9 +16,8 @@ it('offset', () => {
   cy.wait(500);
   cy.get('.tab.objects').click();
   cy.get('#offset').click();
-  cy.get('#select-offset-corner').select('Round');
-  cy.get('.control > .ui > input').type('{selectall}{backspace}10{enter}');
-  cy.get('.primary').click();
+  cy.findByTestId('offset-distance').clear().type('10').blur();
+  cy.findAllByText('Confirm').click();
 
   cy.inputValueCloseTo('#w_size', 166.43, 0.1);
   cy.inputValueCloseTo('#h_size', 179.17, 0.1);

@@ -58,7 +58,6 @@ const Beambox = (): React.JSX.Element => {
               <RightPanel />
               <CanvasTabBar />
             </Flex>
-            <div id="tool-panels-placeholder" />
           </div>
           <ImageTracePanel />
         </LayerPanelContextProvider>
