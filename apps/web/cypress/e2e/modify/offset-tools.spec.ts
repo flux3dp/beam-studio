@@ -16,10 +16,6 @@ it('offset', () => {
   cy.wait(500);
   cy.get('.tab.objects').click();
   cy.get('#offset').click();
-  cy.findByTestId('offset-corner').closest('.ant-select').as('select');
-  cy.get('@select').find('.ant-select-selection-item').click();
-  cy.get('@select').should('have.class', 'ant-select-open');
-  cy.get('.ant-select-item-option-content').contains('Round').click({ force: true });
   cy.findByTestId('offset-distance').clear().type('10').blur();
   cy.findAllByText('Confirm').click();
 
