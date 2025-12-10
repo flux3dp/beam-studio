@@ -91,6 +91,7 @@ export interface ILang {
         status_failed: string;
         status_generating: string;
         status_success: string;
+        storage_notice: string;
         title: string;
       };
       loading: {

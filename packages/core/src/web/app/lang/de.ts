@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Abbrechen',
+    buy: 'Kaufen',
     cancel: 'Abbrechen',
     caption: 'Fehler',
     close: 'schließen',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Textabstand',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Abbrechen',
+      dimensions: {
+        more: 'Mehr',
+        title: 'Bildabmessungen',
+      },
+      error: {
+        config_description: 'AI-Konfiguration konnte nicht geladen werden',
+        config_message: 'AI-Stile konnten nicht geladen werden',
+        generation_failed: 'Generierung fehlgeschlagen',
+        import_failed: 'Import fehlgeschlagen',
+        insufficient_credits: 'Unzureichende Credits',
+      },
+      form: {
+        count: 'Anzahl',
+        credit_required: 'Erforderliche Credits',
+        generate: 'Generieren',
+        laser_friendly: 'Laserfreundlich',
+      },
+      header: {
+        history_tooltip: 'Verlauf',
+        reset_tooltip: 'Alles zurücksetzen',
+        title: 'AI-Erstellung',
+      },
+      history: {
+        empty_description: 'Noch keine Generierungshistorie. Beginnen Sie mit der Erstellung!',
+        error_message: 'Verlauf konnte nicht geladen werden',
+        not_generated: '❌ Nicht generiert',
+        recreate: 'Neu erstellen',
+        status_failed: 'Fehlgeschlagen',
+        status_generating: 'Wird generiert',
+        status_success: 'Erfolgreich',
+        storage_notice: 'Es werden bis zu 10 aktuelle Einträge gespeichert. Generierte Bilder werden 3 Tage lang aufbewahrt.',
+        title: 'Generierungsverlauf',
+      },
+      loading: {
+        history: 'Verlauf wird geladen...',
+        styles: 'AI-Stile werden geladen...',
+        tip_0: 'Kreativ-Engine wird gestartet…',
+        tip_1: 'Pixel werden poliert… ✨',
+        tip_2: 'Fast fertig, Details werden verfeinert',
+        tip_3: 'Noch in Arbeit, dieser Teil braucht etwas mehr Zeit',
+        tip_4: 'Große Ideen brauchen Zeit, danke für Ihre Geduld',
+      },
+      results: {
+        download: 'Herunterladen',
+        import: 'Importieren',
+        title: 'Ergebnisse',
+      },
+      retry: 'Erneut versuchen',
+      style: {
+        apply: 'Stil anwenden',
+        choose: 'Stil wählen',
+        custom_creation: 'Benutzerdefinierte Erstellung',
+        customize: 'Anpassen',
+        select: 'Erstellungsstil auswählen',
+      },
+      upload: {
+        add: 'Hinzufügen',
+        click_or_drag: 'Klicken oder Bilder hierher ziehen',
+        error: 'Upload-Fehler',
+        file_size_error: '%s: Dateigröße muss kleiner als %sMB sein',
+        file_type_error: '%s: Nur JPEG-, PNG- und WebP-Bilder werden unterstützt',
+        from_history: 'Aus Verlauf',
+        images: 'Bilder hochladen',
+        max_images_error: 'Maximal %s Bilder erlaubt',
+        selected: '%s / %s ausgewählt',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: 'Bitte geben Sie eine Beschreibung ein oder laden Sie mindestens ein Bild hoch',
+        field_exceeds_max_length: '„%s" überschreitet die maximale Länge von %s Zeichen.',
+        field_required: '„%s" ist erforderlich. Bitte füllen Sie dieses Feld aus.',
+        login_required: 'Bitte melden Sie sich an, um AI-Generierung zu nutzen.',
+        max_images: 'Maximal %s Bilder erlaubt',
+      },
+    },
     announcement_panel: {
       title: 'Ankündigung',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Gehen',
-        insufficient_credit: 'Du hast kein Guthaben mehr',
-        insufficient_credit_msg: 'Sie können %s nicht verwenden. Gehen Sie zum Mitgliedercenter und kaufen Sie AI Credit.',
+        insufficient_credit: 'Unzureichendes Guthaben',
+        insufficient_credit_msg: 'Diese Funktion benötigt %s AI-Credits, aber Sie haben nur noch %s AI-Credits.\nBitte kaufen Sie mehr Credits und versuchen Sie es erneut.',
         relogin_to_use: 'Bitte erneut einloggen, um diese Funktion zu verwenden.',
       },
       auto_feeder_origin: 'Bitte verwenden Sie die Rahmenvorschau, um den Pfad und Bereich des Laserkopfs zu überprüfen. Passen Sie dann die Materialplatzierung oder die Startposition der Gravur basierend auf den Ergebnissen an, um Kollisionen während des Gravurprozesses zu vermeiden.',

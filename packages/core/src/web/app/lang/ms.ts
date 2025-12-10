@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Batalkan',
+    buy: 'Beli',
     cancel: 'Batal',
     caption: 'Ralat',
     close: 'Tutup',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Margin Teks',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Batal',
+      dimensions: {
+        more: 'Lagi',
+        title: 'Dimensi Imej',
+      },
+      error: {
+        config_description: 'Gagal memuatkan konfigurasi AI',
+        config_message: 'Gagal memuatkan gaya AI',
+        generation_failed: 'Penjanaan gagal',
+        import_failed: 'Import gagal',
+        insufficient_credits: 'Kredit tidak mencukupi',
+      },
+      form: {
+        count: 'Bilangan',
+        credit_required: 'Kredit diperlukan',
+        generate: 'Jana',
+        laser_friendly: 'Mesra Laser',
+      },
+      header: {
+        history_tooltip: 'Sejarah',
+        reset_tooltip: 'Set Semula Semua',
+        title: 'Penjanaan AI',
+      },
+      history: {
+        empty_description: 'Tiada sejarah penjanaan lagi. Mula mencipta!',
+        error_message: 'Gagal memuatkan sejarah',
+        not_generated: '❌ Tidak dijana',
+        recreate: 'Cipta Semula',
+        status_failed: 'Gagal',
+        status_generating: 'Menjana',
+        status_success: 'Berjaya',
+        storage_notice: 'Sehingga 10 rekod terbaru disimpan. Imej yang dijana disimpan selama 3 hari.',
+        title: 'Sejarah Penjanaan',
+      },
+      loading: {
+        history: 'Memuatkan sejarah...',
+        styles: 'Memuatkan gaya AI...',
+        tip_0: 'Memulakan enjin kreatif…',
+        tip_1: 'Menggilap piksel… ✨',
+        tip_2: 'Hampir siap, memperhalusi butiran',
+        tip_3: 'Masih mencipta, bahagian ini perlukan lebih masa',
+        tip_4: 'Idea besar perlukan masa, terima kasih atas kesabaran anda',
+      },
+      results: {
+        download: 'Muat Turun',
+        import: 'Import',
+        title: 'Keputusan',
+      },
+      retry: 'Cuba Lagi',
+      style: {
+        apply: 'Gunakan Gaya',
+        choose: 'Pilih Gaya',
+        custom_creation: 'Penciptaan Tersuai',
+        customize: 'Sesuaikan',
+        select: 'Pilih Gaya Penciptaan',
+      },
+      upload: {
+        add: 'Tambah',
+        click_or_drag: 'Klik atau seret imej ke sini',
+        error: 'Ralat Muat Naik',
+        file_size_error: '%s: Saiz fail mesti kurang daripada %sMB',
+        file_type_error: '%s: Hanya imej JPEG, PNG dan WebP disokong',
+        from_history: 'Dari sejarah',
+        images: 'Muat naik imej',
+        max_images_error: 'Maksimum %s imej dibenarkan',
+        selected: '%s / %s dipilih',
+        supported_formats: 'JPEG, PNG, WebP • Maks %s',
+      },
+      validation: {
+        description_or_image_required: 'Sila berikan penerangan atau muat naik sekurang-kurangnya satu imej',
+        field_exceeds_max_length: '"%s" melebihi panjang maksimum %s aksara.',
+        field_required: '"%s" diperlukan. Sila isi medan ini.',
+        login_required: 'Sila log masuk untuk menggunakan penjanaan AI.',
+        max_images: 'Maksimum %s imej dibenarkan',
+      },
+    },
     announcement_panel: {
       title: 'Pengumuman',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-us/credit',
-        go: 'Pergi',
-        insufficient_credit: 'Anda kehabisan Kredit',
-        insufficient_credit_msg: 'Anda tidak boleh guna %s. Pergi ke pusat ahli dan beli Kredit AI.',
+        insufficient_credit: 'Kredit Tidak Mencukupi',
+        insufficient_credit_msg: 'Ciri ini memerlukan %s Kredit AI, tetapi anda hanya mempunyai %s Kredit AI yang tinggal.\nSila beli lebih banyak kredit dan cuba lagi.',
         relogin_to_use: 'Sila log masuk semula untuk guna fungsi ini.',
       },
       auto_feeder_origin: 'Gunakan pratonton pembingkaian untuk menyemak laluan dan kawasan kepala laser, kemudian laraskan kedudukan bahan atau kedudukan mula ukiran berdasarkan hasil bagi mengelakkan perlanggaran semasa proses ukiran.',

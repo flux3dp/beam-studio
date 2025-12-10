@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Abandonner',
+    buy: 'Acheter',
     cancel: 'Annuler',
     caption: 'Erreur',
     close: 'Fermer',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Marge de texte',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Annuler',
+      dimensions: {
+        more: 'Plus',
+        title: "Dimensions de l'image",
+      },
+      error: {
+        config_description: 'Échec du chargement de la configuration AI',
+        config_message: 'Échec du chargement des styles AI',
+        generation_failed: 'Échec de la génération',
+        import_failed: "Échec de l'importation",
+        insufficient_credits: 'Crédits insuffisants',
+      },
+      form: {
+        count: 'Nombre',
+        credit_required: 'Crédits requis',
+        generate: 'Générer',
+        laser_friendly: 'Compatible laser',
+      },
+      header: {
+        history_tooltip: 'Historique',
+        reset_tooltip: 'Tout réinitialiser',
+        title: 'Création AI',
+      },
+      history: {
+        empty_description: 'Aucun historique de génération pour le moment. Commencez à créer !',
+        error_message: "Échec du chargement de l'historique",
+        not_generated: '❌ Non généré',
+        recreate: 'Recréer',
+        status_failed: 'Échoué',
+        status_generating: 'En cours de génération',
+        status_success: 'Réussi',
+        storage_notice: "Jusqu'à 10 enregistrements récents sont sauvegardés. Les images générées sont conservées pendant 3 jours.",
+        title: 'Historique des générations',
+      },
+      loading: {
+        history: "Chargement de l'historique...",
+        styles: 'Chargement des styles AI...',
+        tip_0: 'Démarrage du moteur créatif…',
+        tip_1: 'Polissage des pixels… ✨',
+        tip_2: 'Presque fini, affinage des détails',
+        tip_3: 'Encore en création, cette partie prend un peu plus de temps',
+        tip_4: 'Les grandes idées prennent du temps, merci de votre patience',
+      },
+      results: {
+        download: 'Télécharger',
+        import: 'Importer',
+        title: 'Résultats',
+      },
+      retry: 'Réessayer',
+      style: {
+        apply: 'Appliquer le style',
+        choose: 'Choisir le style',
+        custom_creation: 'Création personnalisée',
+        customize: 'Personnaliser',
+        select: 'Sélectionner le style de création',
+      },
+      upload: {
+        add: 'Ajouter',
+        click_or_drag: 'Cliquez ou faites glisser les images ici',
+        error: 'Erreur de téléchargement',
+        file_size_error: '%s : La taille du fichier doit être inférieure à %sMo',
+        file_type_error: '%s : Seules les images JPEG, PNG et WebP sont prises en charge',
+        from_history: "Depuis l'historique",
+        images: 'Télécharger des images',
+        max_images_error: 'Maximum %s images autorisées',
+        selected: '%s / %s sélectionné(s)',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: 'Veuillez fournir une description ou télécharger au moins une image',
+        field_exceeds_max_length: '« %s » dépasse la longueur maximale de %s caractères.',
+        field_required: '« %s » est requis. Veuillez remplir ce champ.',
+        login_required: 'Veuillez vous connecter pour utiliser la génération AI.',
+        max_images: 'Maximum %s images autorisées',
+      },
+    },
     announcement_panel: {
       title: 'Annonce',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-us/credit',
-        go: 'Aller',
-        insufficient_credit: "Vous n'avez plus de crédit",
-        insufficient_credit_msg: 'Vous ne pouvez pas utiliser le %s. Allez au centre des membres et achetez un crédit IA.',
+        insufficient_credit: 'Crédits insuffisants',
+        insufficient_credit_msg: 'Cette fonctionnalité nécessite %s crédits IA, mais il ne vous reste que %s crédits IA.\nVeuillez acheter plus de crédits et réessayer.',
         relogin_to_use: 'Veuillez vous reconnecter pour utiliser cette fonction.',
       },
       auto_feeder_origin: 'Utilisez l’aperçu du cadrage pour vérifier la trajectoire et la zone de la tête laser, puis ajustez le placement du matériau ou la position de départ de la gravure en fonction des résultats afin d’éviter les collisions lors du processus de gravure.',

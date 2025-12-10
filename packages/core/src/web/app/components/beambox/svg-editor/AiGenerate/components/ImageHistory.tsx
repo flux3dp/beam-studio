@@ -67,6 +67,8 @@ const UnmemorizedImageHistory = () => {
           <HistoryCard item={item} key={item.uuid} onImport={importFromHistory} />
         ))}
       </div>
+
+      <div className={style['info-banner']}>{t.history.storage_notice}</div>
     </>
   );
 };

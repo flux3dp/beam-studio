@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Annuleren',
+    buy: 'Kopen',
     cancel: 'Annuleren',
     caption: 'Fout',
     close: 'Sluiten',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Tekstmarge',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Annuleren',
+      dimensions: {
+        more: 'Meer',
+        title: 'Afbeeldingsafmetingen',
+      },
+      error: {
+        config_description: 'Kan AI-configuratie niet laden',
+        config_message: 'Kan AI-stijlen niet laden',
+        generation_failed: 'Generatie mislukt',
+        import_failed: 'Import mislukt',
+        insufficient_credits: 'Onvoldoende credits',
+      },
+      form: {
+        count: 'Aantal',
+        credit_required: 'Benodigde credits',
+        generate: 'Genereren',
+        laser_friendly: 'Laservriendelijk',
+      },
+      header: {
+        history_tooltip: 'Geschiedenis',
+        reset_tooltip: 'Alles resetten',
+        title: 'AI-creatie',
+      },
+      history: {
+        empty_description: 'Nog geen generatiegeschiedenis. Begin met creëren!',
+        error_message: 'Kan geschiedenis niet laden',
+        not_generated: '❌ Niet gegenereerd',
+        recreate: 'Opnieuw maken',
+        status_failed: 'Mislukt',
+        status_generating: 'Bezig met genereren',
+        status_success: 'Geslaagd',
+        storage_notice: 'Er worden maximaal 10 recente items opgeslagen. Gegenereerde afbeeldingen worden 3 dagen bewaard.',
+        title: 'Generatiegeschiedenis',
+      },
+      loading: {
+        history: 'Geschiedenis laden...',
+        styles: 'AI-stijlen laden...',
+        tip_0: 'Creatieve motor wordt gestart…',
+        tip_1: 'Pixels worden gepolijst… ✨',
+        tip_2: 'Bijna klaar, details worden verfijnd',
+        tip_3: 'Nog aan het werken, dit deel heeft wat meer tijd nodig',
+        tip_4: 'Grote ideeën kosten tijd, bedankt voor uw geduld',
+      },
+      results: {
+        download: 'Downloaden',
+        import: 'Importeren',
+        title: 'Resultaten',
+      },
+      retry: 'Opnieuw proberen',
+      style: {
+        apply: 'Stijl toepassen',
+        choose: 'Stijl kiezen',
+        custom_creation: 'Aangepaste creatie',
+        customize: 'Aanpassen',
+        select: 'Selecteer creatiestijl',
+      },
+      upload: {
+        add: 'Toevoegen',
+        click_or_drag: 'Klik of sleep afbeeldingen hierheen',
+        error: 'Uploadfout',
+        file_size_error: '%s: Bestandsgrootte moet kleiner zijn dan %sMB',
+        file_type_error: '%s: Alleen JPEG-, PNG- en WebP-afbeeldingen worden ondersteund',
+        from_history: 'Uit geschiedenis',
+        images: 'Afbeeldingen uploaden',
+        max_images_error: 'Maximaal %s afbeeldingen toegestaan',
+        selected: '%s / %s geselecteerd',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: 'Geef een beschrijving of upload minimaal één afbeelding',
+        field_exceeds_max_length: '"%s" overschrijdt de maximale lengte van %s tekens.',
+        field_required: '"%s" is verplicht. Vul dit veld in.',
+        login_required: 'Log in om AI-generatie te gebruiken.',
+        max_images: 'Maximaal %s afbeeldingen toegestaan',
+      },
+    },
     announcement_panel: {
       title: 'Aankondiging',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Ga',
-        insufficient_credit: 'Je hebt geen tegoed meer',
-        insufficient_credit_msg: 'Je kunt %s niet gebruiken. Ga naar het tegoedcentrum en koop AI-tegoed.',
+        insufficient_credit: 'Onvoldoende tegoed',
+        insufficient_credit_msg: 'Deze functie vereist %s AI-credits, maar je hebt nog maar %s AI-credits over.\nKoop alsjeblieft meer credits en probeer het opnieuw.',
         relogin_to_use: 'Log opnieuw in om deze functie te gebruiken.',
       },
       auto_feeder_origin: 'Gebruik de kaderweergave om het pad en gebied van de laserkop te controleren. Pas vervolgens de materiaalplaatsing of de startpositie van de gravure aan op basis van de resultaten om botsingen tijdens het graveerproces te voorkomen.',

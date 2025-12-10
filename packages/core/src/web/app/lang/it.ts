@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Interrompi',
+    buy: 'Acquista',
     cancel: 'Annulla',
     caption: 'Errore',
     close: 'Chiudi',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Margine del testo',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Annulla',
+      dimensions: {
+        more: 'Altro',
+        title: 'Dimensioni immagine',
+      },
+      error: {
+        config_description: 'Impossibile caricare la configurazione AI',
+        config_message: 'Impossibile caricare gli stili AI',
+        generation_failed: 'Generazione fallita',
+        import_failed: 'Importazione fallita',
+        insufficient_credits: 'Crediti insufficienti',
+      },
+      form: {
+        count: 'Quantità',
+        credit_required: 'Crediti richiesti',
+        generate: 'Genera',
+        laser_friendly: 'Compatibile con laser',
+      },
+      header: {
+        history_tooltip: 'Cronologia',
+        reset_tooltip: 'Ripristina tutto',
+        title: 'Creazione AI',
+      },
+      history: {
+        empty_description: 'Nessuna cronologia di generazione ancora. Inizia a creare!',
+        error_message: 'Impossibile caricare la cronologia',
+        not_generated: '❌ Non generato',
+        recreate: 'Ricrea',
+        status_failed: 'Fallito',
+        status_generating: 'In generazione',
+        status_success: 'Riuscito',
+        storage_notice: 'Vengono salvati fino a 10 record recenti. Le immagini generate vengono conservate per 3 giorni.',
+        title: 'Cronologia generazioni',
+      },
+      loading: {
+        history: 'Caricamento cronologia...',
+        styles: 'Caricamento stili AI...',
+        tip_0: 'Avvio del motore creativo…',
+        tip_1: 'Lucidatura dei pixel… ✨',
+        tip_2: 'Quasi pronto, perfezionamento dei dettagli',
+        tip_3: "Ancora al lavoro, questa parte richiede un po' più di tempo",
+        tip_4: 'Le grandi idee richiedono tempo, grazie per la pazienza',
+      },
+      results: {
+        download: 'Scarica',
+        import: 'Importa',
+        title: 'Risultati',
+      },
+      retry: 'Riprova',
+      style: {
+        apply: 'Applica stile',
+        choose: 'Scegli stile',
+        custom_creation: 'Creazione personalizzata',
+        customize: 'Personalizza',
+        select: 'Seleziona stile di creazione',
+      },
+      upload: {
+        add: 'Aggiungi',
+        click_or_drag: 'Clicca o trascina le immagini qui',
+        error: 'Errore di caricamento',
+        file_size_error: '%s: La dimensione del file deve essere inferiore a %sMB',
+        file_type_error: '%s: Sono supportate solo immagini JPEG, PNG e WebP',
+        from_history: 'Dalla cronologia',
+        images: 'Carica immagini',
+        max_images_error: 'Massimo %s immagini consentite',
+        selected: '%s / %s selezionato/i',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: "Fornisci una descrizione o carica almeno un'immagine",
+        field_exceeds_max_length: '"%s" supera la lunghezza massima di %s caratteri.',
+        field_required: '"%s" è obbligatorio. Compila questo campo.',
+        login_required: 'Accedi per utilizzare la generazione AI.',
+        max_images: 'Massimo %s immagini consentite',
+      },
+    },
     announcement_panel: {
       title: 'Annuncio',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Vai',
-        insufficient_credit: 'Sei a corto di credito',
-        insufficient_credit_msg: 'Non puoi utilizzare %s. Vai al centro membri e acquista crediti AI',
+        insufficient_credit: 'Crediti insufficienti',
+        insufficient_credit_msg: 'Questa funzione richiede %s crediti AI, ma hai solo %s crediti AI rimanenti.\nAcquista altri crediti e riprova.',
         relogin_to_use: "Effettua nuovamente l'accesso per utilizzare questa funzione",
       },
       auto_feeder_origin: 'Utilizza l’anteprima della cornice per verificare il percorso e l’area della testa laser, quindi regola la posizione del materiale o la posizione di inizio incisione in base ai risultati per evitare collisioni durante il processo di incisione.',

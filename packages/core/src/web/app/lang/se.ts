@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Avbryt',
+    buy: 'Köp',
     cancel: 'Avbryt',
     caption: 'Fel',
     close: 'Stäng',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Textmarginal',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Avbryt',
+      dimensions: {
+        more: 'Mer',
+        title: 'Bilddimensioner',
+      },
+      error: {
+        config_description: 'Kunde inte ladda AI-konfiguration',
+        config_message: 'Kunde inte ladda AI-stilar',
+        generation_failed: 'Generering misslyckades',
+        import_failed: 'Import misslyckades',
+        insufficient_credits: 'Otillräckliga krediter',
+      },
+      form: {
+        count: 'Antal',
+        credit_required: 'Krediter krävs',
+        generate: 'Generera',
+        laser_friendly: 'Laservänlig',
+      },
+      header: {
+        history_tooltip: 'Historik',
+        reset_tooltip: 'Återställ allt',
+        title: 'AI-skapande',
+      },
+      history: {
+        empty_description: 'Ingen genereringshistorik ännu. Börja skapa!',
+        error_message: 'Kunde inte ladda historik',
+        not_generated: '❌ Inte genererad',
+        recreate: 'Återskapa',
+        status_failed: 'Misslyckades',
+        status_generating: 'Genererar',
+        status_success: 'Lyckades',
+        storage_notice: 'Upp till 10 senaste poster sparas. Genererade bilder sparas i 3 dagar.',
+        title: 'Genereringshistorik',
+      },
+      loading: {
+        history: 'Laddar historik...',
+        styles: 'Laddar AI-stilar...',
+        tip_0: 'Startar den kreativa motorn…',
+        tip_1: 'Polerar pixlar… ✨',
+        tip_2: 'Nästan klar, förfinar detaljerna',
+        tip_3: 'Arbetar fortfarande, denna del tar lite längre tid',
+        tip_4: 'Stora idéer tar tid, tack för ditt tålamod',
+      },
+      results: {
+        download: 'Ladda ner',
+        import: 'Importera',
+        title: 'Resultat',
+      },
+      retry: 'Försök igen',
+      style: {
+        apply: 'Tillämpa stil',
+        choose: 'Välj stil',
+        custom_creation: 'Anpassat skapande',
+        customize: 'Anpassa',
+        select: 'Välj skapandestil',
+      },
+      upload: {
+        add: 'Lägg till',
+        click_or_drag: 'Klicka eller dra bilder hit',
+        error: 'Uppladdningsfel',
+        file_size_error: '%s: Filstorleken måste vara mindre än %sMB',
+        file_type_error: '%s: Endast JPEG-, PNG- och WebP-bilder stöds',
+        from_history: 'Från historik',
+        images: 'Ladda upp bilder',
+        max_images_error: 'Högst %s bilder tillåtna',
+        selected: '%s / %s vald(a)',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: 'Ange en beskrivning eller ladda upp minst en bild',
+        field_exceeds_max_length: '"%s" överskrider den maximala längden på %s tecken.',
+        field_required: '"%s" krävs. Fyll i detta fält.',
+        login_required: 'Logga in för att använda AI-generering.',
+        max_images: 'Högst %s bilder tillåtna',
+      },
+    },
     announcement_panel: {
       title: 'Meddelande',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Gå',
-        insufficient_credit: 'Du har slut på kredit',
-        insufficient_credit_msg: 'Du kan inte använda %s. Gå till medlemscentret och köp AI-kredit',
+        insufficient_credit: 'Otillräcklig kredit',
+        insufficient_credit_msg: 'Denna funktion kräver %s AI-krediter, men du har bara %s AI-krediter kvar.\nVänligen köp fler krediter och försök igen.',
         relogin_to_use: 'Logga in igen för att använda den här funktionen',
       },
       auto_feeder_origin: 'Använd inramningsförhandsgranskningen för att kontrollera laserhuvudets bana och område, och justera sedan materialets placering eller gravyrens startposition baserat på resultaten för att undvika kollisioner under graveringsprocessen.',

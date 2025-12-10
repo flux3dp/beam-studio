@@ -93,6 +93,7 @@ const lang: ILang = {
         status_failed: 'Failed',
         status_generating: 'Generating',
         status_success: 'Success',
+        storage_notice: 'Up to 10 recent records are saved. Generated images are kept for 3 days.',
         title: 'Generation History',
       },
       loading: {

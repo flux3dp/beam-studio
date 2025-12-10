@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'ยกเลิก',
+    buy: 'ซื้อ',
     cancel: 'ยกเลิก',
     caption: 'ข้อผิดพลาด',
     close: 'ปิด',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'ระยะขอบข้อความ',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'ยกเลิก',
+      dimensions: {
+        more: 'เพิ่มเติม',
+        title: 'ขนาดรูปภาพ',
+      },
+      error: {
+        config_description: 'ไม่สามารถโหลดการกำหนดค่า AI',
+        config_message: 'ไม่สามารถโหลดสไตล์ AI',
+        generation_failed: 'การสร้างล้มเหลว',
+        import_failed: 'การนำเข้าล้มเหลว',
+        insufficient_credits: 'เครดิตไม่เพียงพอ',
+      },
+      form: {
+        count: 'จำนวน',
+        credit_required: 'เครดิตที่ต้องการ',
+        generate: 'สร้าง',
+        laser_friendly: 'เหมาะสำหรับเลเซอร์',
+      },
+      header: {
+        history_tooltip: 'ประวัติ',
+        reset_tooltip: 'รีเซ็ตทั้งหมด',
+        title: 'การสร้าง AI',
+      },
+      history: {
+        empty_description: 'ยังไม่มีประวัติการสร้าง เริ่มสร้างเลย!',
+        error_message: 'ไม่สามารถโหลดประวัติ',
+        not_generated: '❌ ไม่ได้สร้าง',
+        recreate: 'สร้างใหม่',
+        status_failed: 'ล้มเหลว',
+        status_generating: 'กำลังสร้าง',
+        status_success: 'สำเร็จ',
+        storage_notice: 'บันทึกรายการล่าสุดได้สูงสุด 10 รายการ รูปภาพที่สร้างจะถูกเก็บไว้ 3 วัน',
+        title: 'ประวัติการสร้าง',
+      },
+      loading: {
+        history: 'กำลังโหลดประวัติ...',
+        styles: 'กำลังโหลดสไตล์ AI...',
+        tip_0: 'กำลังเริ่มเครื่องยนต์สร้างสรรค์…',
+        tip_1: 'กำลังขัดเงาพิกเซล… ✨',
+        tip_2: 'เกือบเสร็จแล้ว กำลังปรับแต่งรายละเอียด',
+        tip_3: 'ยังทำงานอยู่ ส่วนนี้ต้องใช้เวลาเพิ่มอีกนิด',
+        tip_4: 'ไอเดียใหญ่ต้องใช้เวลา ขอบคุณที่รอคอย',
+      },
+      results: {
+        download: 'ดาวน์โหลด',
+        import: 'นำเข้า',
+        title: 'ผลลัพธ์',
+      },
+      retry: 'ลองใหม่',
+      style: {
+        apply: 'ใช้สไตล์',
+        choose: 'เลือกสไตล์',
+        custom_creation: 'การสร้างแบบกำหนดเอง',
+        customize: 'กำหนดเอง',
+        select: 'เลือกสไตล์การสร้าง',
+      },
+      upload: {
+        add: 'เพิ่ม',
+        click_or_drag: 'คลิกหรือลากรูปภาพมาที่นี่',
+        error: 'ข้อผิดพลาดในการอัปโหลด',
+        file_size_error: '%s: ขนาดไฟล์ต้องน้อยกว่า %sMB',
+        file_type_error: '%s: รองรับเฉพาะรูปภาพ JPEG, PNG และ WebP',
+        from_history: 'จากประวัติ',
+        images: 'อัปโหลดรูปภาพ',
+        max_images_error: 'อนุญาตสูงสุด %s รูปภาพ',
+        selected: 'เลือก %s / %s',
+        supported_formats: 'JPEG, PNG, WebP • สูงสุด %s',
+      },
+      validation: {
+        description_or_image_required: 'กรุณาระบุคำอธิบายหรืออัปโหลดรูปภาพอย่างน้อยหนึ่งรูป',
+        field_exceeds_max_length: '"%s" เกินความยาวสูงสุด %s ตัวอักษร',
+        field_required: '"%s" เป็นข้อมูลจำเป็น กรุณากรอกข้อมูลในช่องนี้',
+        login_required: 'กรุณาเข้าสู่ระบบเพื่อใช้การสร้าง AI',
+        max_images: 'อนุญาตสูงสุด %s รูปภาพ',
+      },
+    },
     announcement_panel: {
       title: 'ประกาศ',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'ไป',
-        insufficient_credit: 'คุณหมดเครดิตแล้ว',
-        insufficient_credit_msg: 'คุณไม่สามารถใช้ %s ได้ ไปที่ศูนย์สมาชิกและซื้อเครดิต AI',
+        insufficient_credit: 'เครดิตไม่เพียงพอ',
+        insufficient_credit_msg: 'ฟีเจอร์นี้ต้องการ %s เครดิต AI แต่คุณมีเครดิต AI เหลือเพียง %s\nกรุณาซื้อเครดิตเพิ่มเติมและลองอีกครั้ง',
         relogin_to_use: 'โปรดเข้าสู่ระบบใหม่เพื่อใช้ฟังก์ชันนี้',
       },
       auto_feeder_origin: 'ใช้การแสดงตัวอย่างกรอบเพื่อตรวจสอบเส้นทางและพื้นที่ของหัวเลเซอร์ จากนั้นปรับตำแหน่งวัสดุหรือจุดเริ่มต้นของการแกะสลักตามผลลัพธ์เพื่อหลีกเลี่ยงการชนกันระหว่างกระบวนการแกะสลัก',

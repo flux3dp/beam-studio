@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Zrušit',
+    buy: 'Koupit',
     cancel: 'Storno',
     caption: 'Chyba',
     close: 'Zavřít',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Okraj textu',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Zrušit',
+      dimensions: {
+        more: 'Více',
+        title: 'Rozměry obrázku',
+      },
+      error: {
+        config_description: 'Nepodařilo se načíst konfiguraci AI',
+        config_message: 'Nepodařilo se načíst styly AI',
+        generation_failed: 'Generování selhalo',
+        import_failed: 'Import selhal',
+        insufficient_credits: 'Nedostatek kreditů',
+      },
+      form: {
+        count: 'Počet',
+        credit_required: 'Požadované kredity',
+        generate: 'Generovat',
+        laser_friendly: 'Vhodné pro laser',
+      },
+      header: {
+        history_tooltip: 'Historie',
+        reset_tooltip: 'Resetovat vše',
+        title: 'AI tvorba',
+      },
+      history: {
+        empty_description: 'Zatím žádná historie generování. Začněte tvořit!',
+        error_message: 'Nepodařilo se načíst historii',
+        not_generated: '❌ Negenerováno',
+        recreate: 'Znovu vytvořit',
+        status_failed: 'Selhalo',
+        status_generating: 'Generování',
+        status_success: 'Úspěch',
+        storage_notice: 'Ukládá se až 10 posledních záznamů. Vygenerované obrázky jsou uchovávány po dobu 3 dnů.',
+        title: 'Historie generování',
+      },
+      loading: {
+        history: 'Načítání historie...',
+        styles: 'Načítání stylů AI...',
+        tip_0: 'Spouštění kreativního enginu…',
+        tip_1: 'Leštění pixelů… ✨',
+        tip_2: 'Téměř hotovo, dolaďujeme detaily',
+        tip_3: 'Stále pracujeme, tato část potřebuje trochu více času',
+        tip_4: 'Velké nápady potřebují čas, děkujeme za trpělivost',
+      },
+      results: {
+        download: 'Stáhnout',
+        import: 'Importovat',
+        title: 'Výsledky',
+      },
+      retry: 'Opakovat',
+      style: {
+        apply: 'Použít styl',
+        choose: 'Vybrat styl',
+        custom_creation: 'Vlastní tvorba',
+        customize: 'Přizpůsobit',
+        select: 'Vybrat styl tvorby',
+      },
+      upload: {
+        add: 'Přidat',
+        click_or_drag: 'Klikněte nebo přetáhněte obrázky sem',
+        error: 'Chyba nahrávání',
+        file_size_error: '%s: Velikost souboru musí být menší než %sMB',
+        file_type_error: '%s: Jsou podporovány pouze obrázky JPEG, PNG a WebP',
+        from_history: 'Z historie',
+        images: 'Nahrát obrázky',
+        max_images_error: 'Maximálně %s obrázků povoleno',
+        selected: '%s / %s vybráno',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: 'Zadejte popis nebo nahrajte alespoň jeden obrázek',
+        field_exceeds_max_length: '„%s" překračuje maximální délku %s znaků.',
+        field_required: '„%s" je povinné. Vyplňte prosím toto pole.',
+        login_required: 'Pro použití AI generování se prosím přihlaste.',
+        max_images: 'Maximálně %s obrázků povoleno',
+      },
+    },
     announcement_panel: {
       title: 'Ohlášení',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Spustit',
-        insufficient_credit: 'Došel vám kredit.',
-        insufficient_credit_msg: 'Nemůžete použít %s. Přihlaste se do klientské zóny a zakupte AI kredit.',
+        insufficient_credit: 'Nedostatek kreditů',
+        insufficient_credit_msg: 'Tato funkce vyžaduje %s AI kreditů, ale máte pouze %s AI kreditů.\nProsím zakupte další kredity a zkuste to znovu.',
         relogin_to_use: 'K použití této funkce se prosím znovu přihlaste.',
       },
       auto_feeder_origin: 'Použijte náhled rámování k ověření dráhy a oblasti laserové hlavy, poté upravte umístění materiálu nebo počáteční pozici gravírování podle výsledků, abyste předešli kolizím během procesu gravírování.',

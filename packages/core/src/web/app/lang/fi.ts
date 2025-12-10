@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Keskeytä',
+    buy: 'Osta',
     cancel: 'Peruuta',
     caption: 'Virhe',
     close: 'Sulje',
@@ -60,6 +61,83 @@ const lang: ILang = {
     text_margin: 'Tekstin marginaali',
   },
   beambox: {
+    ai_generate: {
+      cancel: 'Peruuta',
+      dimensions: {
+        more: 'Lisää',
+        title: 'Kuvan mitat',
+      },
+      error: {
+        config_description: 'AI-asetuksia ei voitu ladata',
+        config_message: 'AI-tyylejä ei voitu ladata',
+        generation_failed: 'Luonti epäonnistui',
+        import_failed: 'Tuonti epäonnistui',
+        insufficient_credits: 'Riittämättömästi krediittejä',
+      },
+      form: {
+        count: 'Määrä',
+        credit_required: 'Tarvittavat krediitit',
+        generate: 'Luo',
+        laser_friendly: 'Laser-ystävällinen',
+      },
+      header: {
+        history_tooltip: 'Historia',
+        reset_tooltip: 'Nollaa kaikki',
+        title: 'AI-luonti',
+      },
+      history: {
+        empty_description: 'Ei vielä luontihistoriaa. Aloita luominen!',
+        error_message: 'Historiaa ei voitu ladata',
+        not_generated: '❌ Ei luotu',
+        recreate: 'Luo uudelleen',
+        status_failed: 'Epäonnistui',
+        status_generating: 'Luodaan',
+        status_success: 'Onnistui',
+        storage_notice: 'Tallennetaan enintään 10 viimeisintä tietuetta. Luodut kuvat säilytetään 3 päivää.',
+        title: 'Luontihistoria',
+      },
+      loading: {
+        history: 'Ladataan historiaa...',
+        styles: 'Ladataan AI-tyylejä...',
+        tip_0: 'Käynnistetään luovaa moottoria…',
+        tip_1: 'Kiillotetaan pikseleitä… ✨',
+        tip_2: 'Melkein valmis, hiotaan yksityiskohtia',
+        tip_3: 'Vielä työn alla, tämä osa vie hieman enemmän aikaa',
+        tip_4: 'Suuret ideat vaativat aikaa, kiitos kärsivällisyydestä',
+      },
+      results: {
+        download: 'Lataa',
+        import: 'Tuo',
+        title: 'Tulokset',
+      },
+      retry: 'Yritä uudelleen',
+      style: {
+        apply: 'Käytä tyyliä',
+        choose: 'Valitse tyyli',
+        custom_creation: 'Mukautettu luonti',
+        customize: 'Mukauta',
+        select: 'Valitse luontityyli',
+      },
+      upload: {
+        add: 'Lisää',
+        click_or_drag: 'Napsauta tai vedä kuvia tähän',
+        error: 'Latausvirhe',
+        file_size_error: '%s: Tiedostokoon tulee olla alle %sMB',
+        file_type_error: '%s: Vain JPEG-, PNG- ja WebP-kuvat tuetaan',
+        from_history: 'Historiasta',
+        images: 'Lataa kuvia',
+        max_images_error: 'Korkeintaan %s kuvaa sallittu',
+        selected: '%s / %s valittu',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: 'Anna kuvaus tai lataa vähintään yksi kuva',
+        field_exceeds_max_length: '"%s" ylittää enimmäispituuden %s merkkiä.',
+        field_required: '"%s" on pakollinen. Täytä tämä kenttä.',
+        login_required: 'Kirjaudu sisään käyttääksesi AI-luontia.',
+        max_images: 'Korkeintaan %s kuvaa sallittu',
+      },
+    },
     announcement_panel: {
       title: 'Tiedote',
     },
@@ -334,9 +412,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Siirry',
-        insufficient_credit: 'Creditit loppu',
-        insufficient_credit_msg: 'Et voi käyttää %s. Mene jäsenkeskukseen ja osta AI-credittejä.',
+        insufficient_credit: 'Riittämätön saldo',
+        insufficient_credit_msg: 'Tämä toiminto vaatii %s AI-krediittiä, mutta sinulla on vain %s AI-krediittiä jäljellä.\nOsta lisää krediittejä ja yritä uudelleen.',
         relogin_to_use: 'Kirjaudu sisään uudelleen käyttääksesi tätä toimintoa',
       },
       auto_feeder_origin: 'Käytä kehystysesikatselua tarkistaaksesi laserpään reitin ja alueen, ja säädä sitten materiaalin sijoittelua tai kaiverruksen aloituspaikkaa tulosten perusteella törmäysten välttämiseksi kaiverrusprosessin aikana.',
