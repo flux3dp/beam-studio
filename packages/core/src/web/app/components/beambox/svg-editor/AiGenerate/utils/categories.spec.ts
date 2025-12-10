@@ -3,7 +3,7 @@ import type { Category, Style } from '@core/helpers/api/ai-image-config';
 import { getCategoryForOption, getStyleConfig, getStylesForCategory } from './categories';
 
 const STYLES: Style[] = [
-  { displayName: 'Plain', id: 'plain', inputFields: [], modes: [], previewImage: '', tags: ['customize'] },
+  { displayName: 'Customize', id: 'customize', inputFields: [], modes: [], previewImage: '', tags: ['customize'] },
   {
     displayName: 'Logo Cute',
     id: 'logo-cute',
@@ -53,8 +53,8 @@ describe('Category Logic', () => {
     });
 
     it('returns fallback when style is missing', () => {
-      expect(getStyleConfig('missing', STYLES).id).toBe('plain');
-      expect(getStyleConfig('missing', []).id).toBe('plain');
+      expect(getStyleConfig('missing', STYLES).id).toBe('customize');
+      expect(getStyleConfig('missing', []).id).toBe('customize');
     });
   });
 

@@ -61,7 +61,7 @@ const FORM_DEFAULTS = {
   inputFields: {},
   isLaserFriendly: false,
   maxImages: 1,
-  style: 'plain',
+  style: 'customize',
 };
 
 const INITIAL_STATE: State = {
@@ -102,7 +102,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       inputFields: inputs,
       maxImages: item.max_images,
       showHistory: false,
-      style: item.prompt_data?.style || 'plain',
+      style: item.prompt_data?.style || 'customize',
     });
   },
   loadHistory: async () => {
@@ -128,7 +128,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   setState: (updates) => set((state) => ({ ...state, ...updates })),
   setStyle: (style, styles) =>
     set((state) => {
-      const newStyle = style || 'plain';
+      const newStyle = style || 'customize';
       const styleId = getStyleConfig(newStyle).id;
       const validKeys = new Set(getInputFieldsForStyle(styleId, styles).map((f) => f.key));
       const inputFields = Object.fromEntries(Object.entries(state.inputFields).filter(([key]) => validKeys.has(key)));

@@ -55,7 +55,7 @@ describe('useAiGenerateStore', () => {
       const state = useAiGenerateStore.getState();
 
       expect(state.maxImages).toBe(1);
-      expect(state.style).toBe('plain');
+      expect(state.style).toBe('customize');
     });
   });
 

@@ -69,7 +69,7 @@ interface UseImageGenerationParams {
 export const useImageGeneration = ({
   dimensions,
   maxImages,
-  style = 'plain',
+  style = 'customize',
   styles,
   user,
 }: UseImageGenerationParams) => {

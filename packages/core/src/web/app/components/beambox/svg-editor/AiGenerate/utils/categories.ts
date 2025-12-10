@@ -19,7 +19,7 @@ export const getStylesForCategory = (
  * Get config for a style ID, with a safe fallback.
  */
 export const getStyleConfig = (styleId: string, styles: Style[] = []): Style => {
-  return styles.find((s) => s.id === styleId) || styles[0] || { id: 'plain', tags: ['customize'] };
+  return styles.find((s) => s.id === styleId) || styles[0] || { id: 'customize', tags: ['customize'] };
 };
 
 /**
