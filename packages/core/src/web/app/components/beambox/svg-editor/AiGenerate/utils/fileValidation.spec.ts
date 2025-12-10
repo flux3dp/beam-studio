@@ -1,6 +1,6 @@
-import { validateImageFiles, ACCEPTED_IMAGE_TYPES, DEFAULT_MAX_SIZE_BYTES, DEFAULT_MAX_IMAGES } from './fileValidation';
+import { ACCEPTED_IMAGE_TYPES, DEFAULT_MAX_IMAGES, DEFAULT_MAX_SIZE_BYTES, validateImageFiles } from './fileValidation';
 
-const createMockFile = (name: string, type: string, size: number): File =>
+const createMockFile = (name: string, type: string, _size: number): File =>
   new File([''], name, { type }) as File & { size: number };
 
 // Override size property since File constructor doesn't support it directly

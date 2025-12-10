@@ -22,16 +22,18 @@ export const validateImageFiles = (
   const t = i18n.lang.beambox.ai_generate;
 
   if (currentCount + files.length > maxImages) {
-    return t.max_images_error.replace('%s', String(maxImages));
+    return t.validation.max_images.replace('%s', String(maxImages));
   }
 
   for (const file of files) {
     if (!ACCEPTED_IMAGE_TYPES.has(file.type)) {
-      return t.file_type_error.replace('%s', file.name);
+      return t.upload.file_type_error.replace('%s', file.name);
     }
 
     if (file.size > maxSizeBytes) {
-      return t.file_size_error.replace('%s', file.name).replace('%s', String((maxSizeBytes / 1024 / 1024).toFixed(0)));
+      return t.upload.file_size_error
+        .replace('%s', file.name)
+        .replace('%s', String((maxSizeBytes / 1024 / 1024).toFixed(0)));
     }
   }
 

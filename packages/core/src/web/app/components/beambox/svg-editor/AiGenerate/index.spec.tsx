@@ -70,7 +70,7 @@ describe('AiGenerate', () => {
     test.each([
       ['AI Create', '.title'],
       ['Customize', '.style-selection-button'],
-      ['Style & Mode', '.section-title'],
+      ['Choose Style', '.section-title'],
       ['Laser-Friendly', '.toggle span'],
     ])('renders text "%s"', (text, selector) => {
       const { container } = render(<AiGenerate />);

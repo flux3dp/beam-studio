@@ -123,7 +123,7 @@ const UnmemorizedInputFieldWithUpload = ({
           className={styles.error}
           closable
           description={error}
-          message={t.upload_error}
+          message={t.upload.error}
           onClose={() => setError(null)}
           type="error"
         />
@@ -159,7 +159,7 @@ const UnmemorizedInputFieldWithUpload = ({
             className={classNames(styles['upload-btn'], { [styles.disabled]: !canAddMore })}
             disabled={!canAddMore}
             onClick={() => fileInputRef.current?.click()}
-            title={t.upload_images}
+            title={t.upload.images}
             type="button"
           >
             <LeftPanelIcons.Image />

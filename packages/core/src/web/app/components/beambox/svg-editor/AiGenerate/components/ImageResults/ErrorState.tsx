@@ -30,12 +30,12 @@ export const ErrorState = ({ error }: { error: null | string }) => {
             </Button>
           </div>
         }
-        message={t.insufficient_credits}
+        message={t.error.insufficient_credits}
         showIcon
         type="warning"
       />
     );
   }
 
-  return <Alert closable description={displayMessage} message={t.generation_failed} showIcon type="error" />;
+  return <Alert closable description={displayMessage} message={t.error.generation_failed} showIcon type="error" />;
 };
