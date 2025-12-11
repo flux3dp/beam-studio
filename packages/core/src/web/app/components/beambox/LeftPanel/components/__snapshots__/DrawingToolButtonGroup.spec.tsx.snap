@@ -116,12 +116,9 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       </span>
     </div>
     <div
-      class="separator"
-    />
-    <div
       class="container ai-generate"
       id="left-AiGenerate"
-      title="AiGenerate"
+      title="AI Create"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"
@@ -129,6 +126,9 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
         <svgr-url />
       </span>
     </div>
+    <div
+      class="separator"
+    />
     <div
       class="container beamy"
       id="left-Beamy"
@@ -260,6 +260,17 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       </span>
     </div>
     <div
+      class="container ai-generate"
+      id="left-AiGenerate"
+      title="AI Create"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="container"
       id="left-PassThrough"
       title="Passthrough"
@@ -273,17 +284,6 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     <div
       class="separator"
     />
-    <div
-      class="container ai-generate"
-      id="left-AiGenerate"
-      title="AiGenerate"
-    >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
-      >
-        <svgr-url />
-      </span>
-    </div>
     <div
       class="container beamy"
       id="left-Beamy"
