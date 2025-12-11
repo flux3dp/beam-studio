@@ -10,7 +10,24 @@ import useI18n from '@core/helpers/useI18n';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 
 import HistoryCard from './HistoryCard';
-import style from './ImageHistory.module.scss';
+import styles from './ImageHistory.module.scss';
+
+const Title = () => {
+  const lang = useI18n();
+  const t = lang.beambox.ai_generate;
+
+  return (
+    <div className={styles.title}>
+      <Button
+        icon={<LeftOutlined />}
+        onClick={() => useAiGenerateStore.setState({ showHistory: false })}
+        shape="circle"
+        type="text"
+      />
+      {t.history.title}
+    </div>
+  );
+};
 
 const UnmemorizedImageHistory = () => {
   const lang = useI18n();
@@ -23,52 +40,47 @@ const UnmemorizedImageHistory = () => {
   // Initial Loading State
   if (historyLoading && historyItems.length === 0) {
     return (
-      <div className={style.container}>
+      <>
+        <Title />
         <Spin size="large" tip={t.loading.history}>
-          <div className={style.loading} />
+          <div className={styles.loading} />
         </Spin>
-      </div>
+      </>
     );
   }
 
   // Error State
   if (historyError) {
     return (
-      <div className={style.container}>
+      <>
+        <Title />
         <Alert closable description={historyError} message={t.history.error_message} showIcon type="error" />
-      </div>
+      </>
     );
   }
 
   // Empty State
   if (historyItems.length === 0) {
     return (
-      <div className={style.container}>
+      <>
+        <Title />
         <Empty description={t.history.empty_description} image={Empty.PRESENTED_IMAGE_SIMPLE} />
-      </div>
+      </>
     );
   }
 
   // List Content
   return (
     <>
-      <div className={style.title}>
-        <Button
-          icon={<LeftOutlined />}
-          onClick={() => useAiGenerateStore.setState({ showHistory: false })}
-          shape="circle"
-          type="text"
-        />
-        {t.history.title}
-      </div>
+      <Title />
 
-      <div className={style.grid}>
+      <div className={styles.grid}>
         {historyItems.map((item) => (
           <HistoryCard item={item} key={item.uuid} onImport={importFromHistory} />
         ))}
       </div>
 
-      <div className={style['info-banner']}>{t.history.storage_notice}</div>
+      <div className={styles['info-banner']}>{t.history.storage_notice}</div>
     </>
   );
 };
