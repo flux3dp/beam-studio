@@ -78,7 +78,7 @@ const lang: ILang = {
         count: '數量',
         credit_required: '所需點數',
         generate: '生成',
-        laser_friendly: '激光友善',
+        laser_friendly: '雷射友善',
       },
       header: {
         history_tooltip: '歷史',
