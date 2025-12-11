@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 100 100">
-  <defs>
-    <clipPath id="clip-Zoom_in_and_zoom_out">
-      <rect width="100" height="100"/>
-    </clipPath>
-  </defs>
-  <g id="Zoom_in_and_zoom_out" data-name="Zoom in and zoom out" clip-path="url(#clip-Zoom_in_and_zoom_out)">
+  <g id="Zoom_in_and_zoom_out" data-name="Zoom in and zoom out">
     <g id="Group_173" data-name="Group 173" transform="translate(-1110.801 -700.599)">
       <g id="Group_167" data-name="Group 167" transform="translate(1173.119 715.032)">
         <path id="Path_624" data-name="Path 624" d="M1322.651,723.107a.519.519,0,0,1-.328-.921l6.9-5.61a.519.519,0,0,1,.654.805l-6.9,5.609A.515.515,0,0,1,1322.651,723.107Z" transform="translate(-1322.132 -716.163)" fill="#efb74d"/>

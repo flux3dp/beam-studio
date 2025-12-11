@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
-  <defs>
-    <clipPath id="clip-icon-lock">
-      <rect width="24" height="24"/>
-    </clipPath>
-  </defs>
-  <g id="icon-lock" clip-path="url(#clip-icon-lock)">
+  <g id="icon-lock">
     <path id="icon-lock-2" data-name="icon-lock" d="M3195.991-448.106a2.805,2.805,0,0,0-2.8,2.8v.8h-.8a.8.8,0,0,0-.8.8v4.8a.8.8,0,0,0,.8.8h7.2a.8.8,0,0,0,.8-.8h0v-4.8a.8.8,0,0,0-.8-.8h-.8v-.8A2.8,2.8,0,0,0,3195.991-448.106Zm0,.8a2,2,0,0,1,2,1.988v.812h-4v-.8a1.993,1.993,0,0,1,1.987-2Z" transform="translate(-3183.99 454.906)" fill="#5b5b5b"/>
   </g>
 </svg>

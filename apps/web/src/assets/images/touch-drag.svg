@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="100" height="100" viewBox="0 0 100 100">
-  <defs>
-    <clipPath id="clip-_2_fingers_press_and_drag_3">
-      <rect width="100" height="100"/>
-    </clipPath>
-  </defs>
-  <g id="_2_fingers_press_and_drag_3" data-name="2 fingers press and drag – 3" clip-path="url(#clip-_2_fingers_press_and_drag_3)">
+  <g id="_2_fingers_press_and_drag_3" data-name="2 fingers press and drag – 3">
     <g id="Group_165" data-name="Group 165" transform="translate(-1068.733 -121.575)">
       <path id="Path_619" data-name="Path 619" d="M1384.281,275.637a1,1,0,0,0-.3-.3l-7.072-4.5a.99.99,0,0,0-1.376.255.979.979,0,0,0-.156.741,1.007,1.007,0,0,0,.456.663l4.038,2.572h-9.241a1.106,1.106,0,0,0-1.062,1.149,1.117,1.117,0,0,0,1.082,1.062h9.222l-4.054,2.581a.987.987,0,0,0,.559,1.8,1.021,1.021,0,0,0,.518-.143l7.085-4.512A.991.991,0,0,0,1384.281,275.637Z" transform="translate(-229.346 -114.392)" fill="#efb74d"/>
       <path id="Path_620" data-name="Path 620" d="M1096.228,274.719h-9.285l4.053-2.581a.99.99,0,0,0-1.077-1.66l-7.085,4.512a.99.99,0,0,0,0,1.669l7.07,4.5a.975.975,0,0,0,.558.175,1.032,1.032,0,0,0,.182-.017.989.989,0,0,0,.793-1.155,1.008,1.008,0,0,0-.456-.663l-4.039-2.572h9.2a1.106,1.106,0,1,0,.083-2.211Zm-.063.491Z" transform="translate(0 -114.134)" fill="#efb74d"/>

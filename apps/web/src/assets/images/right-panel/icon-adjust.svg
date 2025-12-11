@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
-  <defs>
-    <clipPath id="clip-icon-adjust">
-      <rect width="24" height="24"/>
-    </clipPath>
-  </defs>
-  <g id="icon-adjust" clip-path="url(#clip-icon-adjust)">
+  <g id="icon-adjust">
     <g id="Group_47" data-name="Group 47" transform="translate(-704.445 -219.523)">
       <path id="Path_107" data-name="Path 107" d="M722.408,228.395H710.675a.617.617,0,0,1,0-1.231h11.734a.617.617,0,0,1,0,1.231Z" transform="translate(-0.208 -0.364)" fill="#848484"/>
       <path id="Path_99" data-name="Path 99" d="M720.321,235.047" transform="translate(-2.625 -2.241)" fill="#fff" stroke="#494a4a" stroke-miterlimit="10" stroke-width="1.5"/>

@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-  <defs>
-    <clipPath id="clip-icon-minus">
-      <rect width="32" height="32"/>
-    </clipPath>
-  </defs>
-  <g id="icon-minus" clip-path="url(#clip-icon-minus)">
+  <g id="icon-minus">
     <path id="Path_152" data-name="Path 152" d="M4069.9,2414.806h-12.631a1.184,1.184,0,0,1,0-2.368H4069.9a1.184,1.184,0,1,1,0,2.368Z" transform="translate(-4047.584 -2397.622)" fill="#565656"/>
   </g>
 </svg>

@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
-  <defs>
-    <clipPath id="clip-icon-export">
-      <rect width="24" height="24"/>
-    </clipPath>
-  </defs>
-  <g id="icon-export" clip-path="url(#clip-icon-export)">
+  <g id="icon-export">
     <g id="Layer" transform="translate(0.442 3.76)">
       <path id="Layer-2" data-name="Layer" d="M13.1-.01H5.967A2.1,2.1,0,0,0,3.96,2.184l0,12.114A2.106,2.106,0,0,0,5.97,16.49l7.1,0V15.212H5.97a.877.877,0,0,1-.838-.915l0-12.114a.882.882,0,0,1,.838-.915h5.851V4.675a.647.647,0,0,0,.618.675h3.037V8.875h1.169V4.087a1.489,1.489,0,0,0-.339-.953L14.06.451A1.25,1.25,0,0,0,13.1-.01Z" transform="translate(0 0)" fill="#7c7b7c"/>
       <path id="Layer-3" data-name="Layer" d="M264.7,303.827l-2.885-2.353a.378.378,0,0,0-.567.325v1.115h-3.322a.452.452,0,0,0-.451.451v1.6a.452.452,0,0,0,.451.451h3.322v1.115a.377.377,0,0,0,.567.325l2.887-2.354A.389.389,0,0,0,264.7,303.827Z" transform="translate(-245.745 -290.696)" fill="#5b5b5b"/>

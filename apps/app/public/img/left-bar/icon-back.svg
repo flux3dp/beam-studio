@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-  <defs>
-    <clipPath id="clip-icon-back">
-      <rect width="32" height="32"/>
-    </clipPath>
-  </defs>
-  <g id="icon-back" clip-path="url(#clip-icon-back)">
+  <g id="icon-back">
     <path id="Path_93" data-name="Path 93" d="M1236.582,330.055l-.1,0-.059,0-4.2-.023a.334.334,0,0,1-.342-.324l0-1.787a.349.349,0,0,0-.59-.229l-3.774,3.536a.31.31,0,0,0,0,.458l3.771,3.534a.349.349,0,0,0,.59-.229v-2.414a.335.335,0,0,1,.347-.324l4.277.016.078,0a6.565,6.565,0,1,1,.131,13.109h-3.221a.335.335,0,0,0-.345.324v1.573a.335.335,0,0,0,.345.324h3.3l.2,0v-.006c4.955-.2,8.955-4.095,8.955-8.762C1245.944,333.99,1241.744,330.055,1236.582,330.055Z" transform="translate(-1220.681 -321.601)" fill="#5c5c5c" stroke="#5c5c5c" stroke-width="0.3"/>
   </g>
 </svg>
