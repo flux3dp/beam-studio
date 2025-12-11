@@ -83,7 +83,7 @@ const lang: ILang = {
       header: {
         history_tooltip: '历史',
         reset_tooltip: '全部重置',
-        title: 'AI 生成',
+        title: 'AI 创作',
       },
       history: {
         empty_description: '暂无生成记录，开始创作吧！',
