@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
@@ -7,17 +7,22 @@ import classNames from 'classnames';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
+import { useAiGenerateStore } from '../useAiGenerateStore';
 
-interface HeaderProps {
-  onClose: () => void;
-  onHistory?: () => void;
-  onRefresh?: () => void;
-  showHistory?: boolean;
-}
+type Props = {
+  contentRef: React.RefObject<HTMLDivElement>;
+};
 
-const Header = ({ onClose, onHistory, onRefresh, showHistory }: HeaderProps) => {
+const Header = ({ contentRef }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
+  const { resetForm, setState, showHistory, toggleHistory } = useAiGenerateStore();
+
+  useEffect(() => {
+    requestAnimationFrame(() => {
+      contentRef.current?.scrollTo({ behavior: 'smooth', top: 0 });
+    });
+  }, [contentRef, showHistory]);
 
   return (
     <div className={styles.header}>
@@ -27,7 +32,7 @@ const Header = ({ onClose, onHistory, onRefresh, showHistory }: HeaderProps) => 
           <Button
             className={classNames(styles['icon-button'], { [styles.active]: showHistory })}
             icon={<ClockCircleOutlined />}
-            onClick={onHistory}
+            onClick={toggleHistory}
             shape="circle"
             type="text"
           />
@@ -36,7 +41,7 @@ const Header = ({ onClose, onHistory, onRefresh, showHistory }: HeaderProps) => 
           <Button
             className={styles['icon-button']}
             icon={<ReloadOutlined />}
-            onClick={onRefresh}
+            onClick={resetForm}
             shape="circle"
             type="text"
           />
@@ -44,7 +49,7 @@ const Header = ({ onClose, onHistory, onRefresh, showHistory }: HeaderProps) => 
         <Button
           className={styles['icon-button']}
           icon={<CloseOutlined />}
-          onClick={onClose}
+          onClick={() => setState({ isAiGenerateShown: false })}
           shape="circle"
           type="text"
         />

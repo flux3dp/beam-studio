@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
@@ -48,6 +48,7 @@ const UnmemorizedAiGenerate = () => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
   const [user, setUser] = useState<IUser | null>(getCurrentUser());
+  const contentRef = React.useRef<HTMLDivElement>(null);
   const store = useAiGenerateStore();
   const {
     dimensions,
@@ -77,6 +78,13 @@ const UnmemorizedAiGenerate = () => {
     styles: aiStyles,
     user,
   });
+
+  const onGenerate = useCallback(() => {
+    handleGenerate();
+    requestAnimationFrame(() => {
+      contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
+    });
+  }, [handleGenerate]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -111,13 +119,8 @@ const UnmemorizedAiGenerate = () => {
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
       <div className={classNames(styles['ai-generate-container'])}>
-        <Header
-          onClose={() => store.setState({ isAiGenerateShown: false })}
-          onHistory={store.toggleHistory}
-          onRefresh={store.resetForm}
-          showHistory={showHistory}
-        />
-        <div className={styles.content}>
+        <Header contentRef={contentRef} />
+        <div className={styles.content} ref={contentRef}>
           {showHistory ? (
             <ImageHistory />
           ) : (
@@ -197,7 +200,7 @@ const UnmemorizedAiGenerate = () => {
         </div>
         {!showHistory && (
           <div className={styles['button-section']}>
-            <Button block className={styles['generate-button']} onClick={handleGenerate} size="large" type="primary">
+            <Button block className={styles['generate-button']} onClick={onGenerate} size="large" type="primary">
               {t.form.generate}
             </Button>
             <div className={styles['credits-info']}>
