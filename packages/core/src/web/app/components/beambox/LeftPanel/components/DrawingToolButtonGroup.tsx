@@ -11,6 +11,7 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
 import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -44,6 +45,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const { isChatShown, setIsChatShown } = useChatStore();
   const { isAiGenerateShown, setState } = useAiGenerateStore();
   const { isDrawing, isStarting } = useCameraPreviewStore();
+  const user = getCurrentUser();
   const mouseMode = useCanvasStore((state) => state.mouseMode);
   const activeButton = useMemo(
     () =>
@@ -159,13 +161,14 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: `${t.label.pen} (P)`,
         onClick: () => setMouseMode('path'),
       })}
-      {renderToolButton({
-        icon: <LeftPanelIcons.AiGenerate />,
-        id: 'AiGenerate',
-        label: lang.beambox.ai_generate.header.title,
-        onClick: toggleAiGenerate,
-        style: { color: isAiGenerateShown ? '#000000' : undefined },
-      })}
+      {user &&
+        renderToolButton({
+          icon: <LeftPanelIcons.AiGenerate />,
+          id: 'AiGenerate',
+          label: lang.beambox.ai_generate.header.title,
+          onClick: toggleAiGenerate,
+          style: { color: isAiGenerateShown ? '#000000' : undefined },
+        })}
       {hasPassthroughExtension &&
         renderToolButton({
           icon: <LeftPanelIcons.PassThrough />,
