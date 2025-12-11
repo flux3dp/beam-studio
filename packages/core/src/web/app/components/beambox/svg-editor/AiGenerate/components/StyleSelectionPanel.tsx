@@ -88,7 +88,7 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
             </div>
             <div className={styles['footer-right']}>
               <Button onClick={onClose} size="large">
-                {t.cancel}
+                {lang.global.cancel}
               </Button>
               <Button disabled={!selectedStyle} onClick={handleConfirm} size="large" type="primary">
                 {t.style.apply}

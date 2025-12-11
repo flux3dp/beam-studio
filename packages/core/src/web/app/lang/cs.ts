@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Zrušit',
       dimensions: {
         more: 'Více',
         title: 'Rozměry obrázku',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Přihlašujete se k',
       access_plus_feature_2: 'funkci.',
       access_plus_feature_note: 'Musíte být členem FLUX+, abyste měli přístup k této funkci.',
-      ai_credit_tooltip: 'Pro AI odstraňování pozadí',
+      ai_credit_tooltip: 'Pro AI funkce',
       explore_plans: 'Prozkoumat nabídky FLUX+',
       features: {
         ai_bg_removal: 'Odstraňování pozadí',

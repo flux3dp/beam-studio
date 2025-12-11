@@ -9,13 +9,13 @@ import styles from './Drawer.module.scss';
 
 interface Props {
   children: ReactNode;
-  enable?: Enable | false;
+  enableResizable?: Enable | false;
   isOpen: boolean;
   setIsOpen: (isOpen: boolean) => void;
   showHandle?: boolean;
 }
 
-const Drawer = memo(({ children, enable, isOpen, setIsOpen, showHandle = true }: Props) => {
+const Drawer = memo(({ children, enableResizable, isOpen, setIsOpen, showHandle = true }: Props) => {
   const [width, setWidth] = useState(400);
   // default motion duration for the drawer
   // this is used to disable the animation when resizing the drawer
@@ -46,7 +46,7 @@ const Drawer = memo(({ children, enable, isOpen, setIsOpen, showHandle = true }:
           </div>
         )}
         <Resizable
-          enable={enable}
+          enable={enableResizable}
           handleClasses={{ right: styles['resizable-handle'] }}
           maxWidth={638}
           minWidth={360}

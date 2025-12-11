@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Peruuta',
       dimensions: {
         more: 'Lisää',
         title: 'Kuvan mitat',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Käytät',
       access_plus_feature_2: 'ominaisuutta.',
       access_plus_feature_note: 'Sinulla on oltava FLUX+ -jäsenyys käyttääksesi tätä ominaisuutta.',
-      ai_credit_tooltip: 'Taustan poistoon tekoälyllä',
+      ai_credit_tooltip: 'AI-toimintoihin',
       explore_plans: 'Tutustu FLUX+ -suunnitelmiin',
       features: {
         ai_bg_removal: 'AI-taustanpoisto',

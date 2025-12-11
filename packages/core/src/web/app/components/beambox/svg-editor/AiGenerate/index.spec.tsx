@@ -4,6 +4,9 @@ import AiGenerate from './index';
 import { useAiGenerateStore } from './useAiGenerateStore';
 
 // --- Mocks ---
+beforeAll(() => {
+  Element.prototype.scrollTo = jest.fn();
+});
 jest.mock('@core/helpers/api/ai-image', () => ({
   createAiImageTask: jest.fn(),
   getAiImageHistory: jest.fn(),

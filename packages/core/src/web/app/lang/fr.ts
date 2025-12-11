@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Annuler',
       dimensions: {
         more: 'Plus',
         title: "Dimensions de l'image",
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Vous accédez à une',
       access_plus_feature_2: 'fonctionnalité.',
       access_plus_feature_note: 'Vous devez être membre de FLUX+ pour accéder à cette fonctionnalité.',
-      ai_credit_tooltip: "Pour la suppression de l'arrière-plan par IA",
+      ai_credit_tooltip: 'Pour les fonctionnalités IA',
       explore_plans: 'Explorez les forfaits FLUX+',
       features: {
         ai_bg_removal: "Suppression de l'arrière-plan par IA",

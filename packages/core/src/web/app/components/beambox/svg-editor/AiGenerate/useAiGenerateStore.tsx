@@ -82,7 +82,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   clearImageInputs: () => set({ imageInputs: [] }),
   importFromHistory: (item) => {
     const dimensions: ImageDimensions = { aspectRatio: item.aspect_ratio, size: item.size };
-    const inputs = item.prompt_data.inputs as Record<string, string>;
+    const { inputs } = item.prompt_data;
 
     // Remove imageCounts from inputs as it is not needed and automatically handled from maxImages
     delete inputs['image_counts'];

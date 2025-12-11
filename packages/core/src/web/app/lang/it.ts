@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Annulla',
       dimensions: {
         more: 'Altro',
         title: 'Dimensioni immagine',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Stai accedendo a una',
       access_plus_feature_2: 'funzionalità.',
       access_plus_feature_note: "Devi avere l'abbonamento FLUX+ per accedere a questa funzionalità.",
-      ai_credit_tooltip: 'Per la rimozione dello sfondo AI',
+      ai_credit_tooltip: 'Per le funzionalità AI',
       explore_plans: 'Esplora i piani FLUX+',
       features: {
         ai_bg_removal: 'Rimozione sfondo AI',

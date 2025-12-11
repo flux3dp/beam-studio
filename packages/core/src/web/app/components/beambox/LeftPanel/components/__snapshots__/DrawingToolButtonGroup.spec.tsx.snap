@@ -116,7 +116,7 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       </span>
     </div>
     <div
-      class="container ai-generate"
+      class="container"
       id="left-AiGenerate"
       title="AI Create"
     >
@@ -260,7 +260,7 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       </span>
     </div>
     <div
-      class="container ai-generate"
+      class="container"
       id="left-AiGenerate"
       title="AI Create"
     >

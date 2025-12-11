@@ -111,14 +111,14 @@
 
     &::before {
       width: 100%;
-      height: 2px; /* Adjust thickness */
+      height: 2px;
       top: 50%;
       left: 0;
       transform: translateY(-50%);
     }
 
     &::after {
-      width: 2px; /* Adjust thickness */
+      width: 2px;
       height: 100%;
       top: 0;
       left: 50%;

@@ -92,14 +92,14 @@ export const SvgEditor = (): ReactNode => {
         )}
 
         <Drawer
-          enable={false}
+          enableResizable={false}
           isOpen={isAiGenerateShown}
           setIsOpen={(isOpen) => setState({ isAiGenerateShown: isOpen })}
         >
           <AiGenerate />
         </Drawer>
 
-        <Drawer enable={{ right: true }} isOpen={isChatShown} setIsOpen={setIsChatShown}>
+        <Drawer enableResizable={{ right: true }} isOpen={isChatShown} setIsOpen={setIsChatShown}>
           <Chat />
         </Drawer>
       </div>

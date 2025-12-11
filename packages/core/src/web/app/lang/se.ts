@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Avbryt',
       dimensions: {
         more: 'Mer',
         title: 'Bilddimensioner',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Du använder en',
       access_plus_feature_2: 'funktion.',
       access_plus_feature_note: 'Du måste ha FLUX+ medlemskap för att använda den här funktionen.',
-      ai_credit_tooltip: 'För AI-bakgrundsborttagning',
+      ai_credit_tooltip: 'För AI-funktioner',
       explore_plans: 'Utforska FLUX+ planer',
       features: {
         ai_bg_removal: 'AI bakgrundsborttagning',

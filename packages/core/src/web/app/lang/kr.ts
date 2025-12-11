@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: '취소',
       dimensions: {
         more: '더 보기',
         title: '이미지 크기',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: '귀하는',
       access_plus_feature_2: '기능에 접속하고 있습니다.',
       access_plus_feature_note: '이 기능을 사용하려면 FLUX+ 멤버십이 필요합니다.',
-      ai_credit_tooltip: 'AI 배경 제거를 위한',
+      ai_credit_tooltip: 'AI 기능을 위한',
       explore_plans: 'FLUX+ 플랜 살펴보기',
       features: {
         ai_bg_removal: 'AI 배경 제거',

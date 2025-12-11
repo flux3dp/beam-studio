@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'ยกเลิก',
       dimensions: {
         more: 'เพิ่มเติม',
         title: 'ขนาดรูปภาพ',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'คุณกําลังเข้าถึง',
       access_plus_feature_2: 'คุณสมบัติ',
       access_plus_feature_note: 'คุณต้องเป็นสมาชิก FLUX+ เพื่อใช้คุณสมบัตินี้',
-      ai_credit_tooltip: 'สําหรับการลบพื้นหลัง AI',
+      ai_credit_tooltip: 'สำหรับฟีเจอร์ AI',
       explore_plans: 'เรียกดูแผน FLUX+',
       features: {
         ai_bg_removal: 'การลบพื้นหลัง AI',

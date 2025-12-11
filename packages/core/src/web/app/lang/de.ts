@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Abbrechen',
       dimensions: {
         more: 'Mehr',
         title: 'Bildabmessungen',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Sie greifen auf eine',
       access_plus_feature_2: 'Funktion zu.',
       access_plus_feature_note: 'Sie müssen FLUX+ Mitgliedschaft haben, um auf diese Funktion zuzugreifen.',
-      ai_credit_tooltip: 'Für KI-Hintergrundentfernung',
+      ai_credit_tooltip: 'Für KI-Funktionen',
       explore_plans: 'Erkunden Sie FLUX+ Pläne',
       features: {
         ai_bg_removal: 'AI-Hintergrundentfernung',

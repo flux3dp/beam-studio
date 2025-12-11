@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Anuluj',
       dimensions: {
         more: 'Więcej',
         title: 'Wymiary obrazu',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Uzyskujesz dostęp do funkcji',
       access_plus_feature_2: 'funkcja.',
       access_plus_feature_note: 'Musisz mieć członkostwo FLUX+, aby uzyskać dostęp do tej funkcji.',
-      ai_credit_tooltip: 'Dla usuwania tła AI',
+      ai_credit_tooltip: 'Dla funkcji AI',
       explore_plans: 'Zapoznaj się z planami FLUX+',
       features: {
         ai_bg_removal: 'Usuwanie tła AI',

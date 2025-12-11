@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Batal',
       dimensions: {
         more: 'Lainnya',
         title: 'Dimensi Gambar',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Anda mengakses fitur',
       access_plus_feature_2: 'fitur.',
       access_plus_feature_note: 'Anda perlu berlangganan FLUX+ untuk mengakses fitur ini.',
-      ai_credit_tooltip: 'Untuk penghapusan latar belakang AI',
+      ai_credit_tooltip: 'Untuk fitur AI',
       explore_plans: 'Jelajahi Rencana FLUX+',
       features: {
         ai_bg_removal: 'Pembuangan Latar Belakang AI',

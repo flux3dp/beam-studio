@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: '取消',
       dimensions: {
         more: '更多',
         title: '圖片尺寸',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: '您正在使用',
       access_plus_feature_2: '功能。',
       access_plus_feature_note: '您必須擁有 FLUX+ 會員資格才能使用此功能。',
-      ai_credit_tooltip: '用於 AI 去背',
+      ai_credit_tooltip: '用於 AI 功能',
       explore_plans: '探索 FLUX+ 方案',
       features: {
         ai_bg_removal: 'AI 去背',

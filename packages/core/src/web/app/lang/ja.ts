@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'キャンセル',
       dimensions: {
         more: 'その他',
         title: '画像サイズ',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'アクセスしている機能。',
       access_plus_feature_2: 'この機能。',
       access_plus_feature_note: 'この機能をご利用いただくには FLUX+ メンバーシップが必要です。',
-      ai_credit_tooltip: 'AI バックグラウンド除去のため',
+      ai_credit_tooltip: 'AI機能のため',
       explore_plans: 'FLUX+ プランを見る',
       features: {
         ai_bg_removal: 'AI背景除去',

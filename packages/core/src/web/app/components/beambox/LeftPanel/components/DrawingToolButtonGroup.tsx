@@ -160,7 +160,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         onClick: () => setMouseMode('path'),
       })}
       {renderToolButton({
-        className: styles['ai-generate'],
         icon: <LeftPanelIcons.AiGenerate />,
         id: 'AiGenerate',
         label: lang.beambox.ai_generate.header.title,

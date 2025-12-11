@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Annuller',
       dimensions: {
         more: 'Mere',
         title: 'Billeddimensioner',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Du får adgang til en',
       access_plus_feature_2: 'funktion.',
       access_plus_feature_note: 'Du skal have FLUX+ medlemskab for at få adgang til denne funktion.',
-      ai_credit_tooltip: 'Til AI baggrundsfjernelse',
+      ai_credit_tooltip: 'Til AI-funktioner',
       explore_plans: 'Udforsk FLUX+ planer',
       features: {
         ai_bg_removal: 'AI baggrundsfjernelse',

@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Ακύρωση',
       dimensions: {
         more: 'Περισσότερα',
         title: 'Διαστάσεις εικόνας',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Έχετε πρόσβαση σε μια',
       access_plus_feature_2: 'λειτουργία.',
       access_plus_feature_note: 'Πρέπει να έχετε συνδρομή FLUX+ για να έχετε πρόσβαση σε αυτή τη λειτουργία.',
-      ai_credit_tooltip: 'Για αφαίρεση φόντου με τεχνητή νοημοσύνη',
+      ai_credit_tooltip: 'Για λειτουργίες AI',
       explore_plans: 'Εξερευνήστε τα σχέδια FLUX+',
       features: {
         ai_bg_removal: 'Αφαίρεση φόντου με τεχνητή νοημοσύνη',

@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Annuleren',
       dimensions: {
         more: 'Meer',
         title: 'Afbeeldingsafmetingen',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'U heeft toegang tot een',
       access_plus_feature_2: 'functie.',
       access_plus_feature_note: 'U moet FLUX+ lid zijn om toegang te krijgen tot deze functie.',
-      ai_credit_tooltip: 'Voor AI-achtergrondverwijdering',
+      ai_credit_tooltip: 'Voor AI-functies',
       explore_plans: 'Verken FLUX+ abonnementen',
       features: {
         ai_bg_removal: 'AI-achtergrondverwijdering',

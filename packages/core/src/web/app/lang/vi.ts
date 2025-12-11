@@ -62,7 +62,6 @@ const lang: ILang = {
   },
   beambox: {
     ai_generate: {
-      cancel: 'Hủy',
       dimensions: {
         more: 'Thêm',
         title: 'Kích thước hình ảnh',
@@ -1361,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Bạn đang truy cập một',
       access_plus_feature_2: 'tính năng.',
       access_plus_feature_note: 'Bạn cần có tư cách thành viên FLUX+ để truy cập tính năng này.',
-      ai_credit_tooltip: 'Để xóa nền AI',
+      ai_credit_tooltip: 'Cho các tính năng AI',
       explore_plans: 'Khám phá các gói FLUX+',
       features: {
         ai_bg_removal: 'Xóa nền bằng AI',

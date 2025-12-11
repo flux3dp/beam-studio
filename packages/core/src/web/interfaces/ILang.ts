@@ -60,7 +60,6 @@ export interface ILang {
   };
   beambox: {
     ai_generate: {
-      cancel: string;
       dimensions: {
         more: string;
         title: string;
