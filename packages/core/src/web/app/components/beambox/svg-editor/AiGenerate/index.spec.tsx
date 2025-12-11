@@ -7,12 +7,14 @@ import { useAiGenerateStore } from './useAiGenerateStore';
 beforeAll(() => {
   Element.prototype.scrollTo = jest.fn();
 });
+jest.mock('@core/app/actions/dialog-caller', () => ({
+  default: { showLoginDialog: jest.fn() },
+}));
 jest.mock('@core/helpers/api/ai-image', () => ({
   createAiImageTask: jest.fn(),
   getAiImageHistory: jest.fn(),
   pollTaskUntilComplete: jest.fn(),
 }));
-jest.mock('@core/app/actions/dialog-caller', () => ({ showStyleSelectionPanel: jest.fn() }));
 jest.mock('@core/helpers/api/flux-id', () => ({
   fluxIDEvents: { off: jest.fn(), on: jest.fn() },
   getCurrentUser: jest.fn(),
@@ -24,8 +26,9 @@ jest.mock('./components/ImageHistory', () => () => <div data-testid="mock-histor
 jest.mock('./components/ImageResults', () => () => <div data-testid="mock-results" />);
 jest.mock('./components/InputField.upload', () => () => <div data-testid="mock-description-upload" />);
 jest.mock('./hooks/useAiConfigQuery', () => ({ useAiConfigQuery: jest.fn() }));
+jest.mock('./utils/showStyleSelectionPanel', () => ({ showStyleSelectionPanel: jest.fn() }));
 
-import dialogCaller from '@core/app/actions/dialog-caller';
+import { showStyleSelectionPanel } from './utils/showStyleSelectionPanel';
 import { createAiImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import { useAiConfigQuery } from './hooks/useAiConfigQuery';
@@ -113,7 +116,7 @@ describe('AiGenerate', () => {
       const { container } = render(<AiGenerate />);
 
       fireEvent.click(container.querySelector('.style-selection-button')!);
-      expect(dialogCaller.showStyleSelectionPanel).toHaveBeenCalled();
+      expect(showStyleSelectionPanel).toHaveBeenCalled();
     });
 
     test('updates form fields', () => {

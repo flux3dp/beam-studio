@@ -4,7 +4,6 @@ import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
 import classNames from 'classnames';
 
-import dialogCaller from '@core/app/actions/dialog-caller';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import shortcuts from '@core/helpers/shortcuts';
@@ -27,6 +26,7 @@ import { AI_COST_PER_IMAGE } from './types';
 import { useAiGenerateStore } from './useAiGenerateStore';
 import { getStyleConfig } from './utils/categories';
 import { getInputFieldsForStyle } from './utils/inputFields';
+import { showStyleSelectionPanel } from './utils/showStyleSelectionPanel';
 
 const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
   e.stopPropagation();
@@ -109,7 +109,7 @@ const UnmemorizedAiGenerate = () => {
   }, [isAiGenerateShown, store]);
 
   // 4. Handlers
-  const handleStyleClick = () => dialogCaller.showStyleSelectionPanel((s) => store.setStyle(s, aiStyles), style);
+  const handleStyleClick = () => showStyleSelectionPanel((s) => store.setStyle(s, aiStyles), style);
 
   // 5. Render
   if (isLoading) return <LoadingView onClose={() => store.setState({ isAiGenerateShown: false })} />;
