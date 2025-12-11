@@ -24,7 +24,7 @@ export const LoadingState = () => {
   const tipIndex = useTipIndex(startTime);
 
   return (
-    <Spin size="large" tip={lang.beambox.ai_generate.loading[`tip_${tipIndex}`]}>
+    <Spin className={style['loading-spin']} size="large" tip={lang.beambox.ai_generate.loading[`tip_${tipIndex}`]}>
       <div className={style['loading-container']} />
     </Spin>
   );

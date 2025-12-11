@@ -23,6 +23,13 @@ $border-color: #e8e8e8;
   gap: 16px;
 }
 
+.loading-spin {
+  // Override antd spin text padding with important
+  :global(.ant-spin-text) {
+    padding-top: 24px !important;
+  }
+}
+
 .images-grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
