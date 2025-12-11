@@ -129,7 +129,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
   setStyle: (style, styles) =>
     set((state) => {
       const newStyle = style || 'customize';
-      const styleId = getStyleConfig(newStyle).id;
+      const styleId = getStyleConfig(newStyle, styles).id;
       const validKeys = new Set(getInputFieldsForStyle(styleId, styles).map((f) => f.key));
       const inputFields = Object.fromEntries(Object.entries(state.inputFields).filter(([key]) => validKeys.has(key)));
 
