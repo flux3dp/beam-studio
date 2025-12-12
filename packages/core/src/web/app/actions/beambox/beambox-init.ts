@@ -60,15 +60,16 @@ class BeamboxInit {
 
     menu.init();
     autoSaveHelper.init();
-    fluxId.init();
+    fluxId.init().then(() => {
+      prefetchAiConfig().catch((err) => {
+        console.warn('[AI Config] Background prefetch failed:', err);
+      });
+    });
     cloud.recordActivity();
     alertHelper.registerAlertEvents();
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
     initCurText();
-    prefetchAiConfig().catch((err) => {
-      console.warn('[AI Config] Background prefetch failed:', err);
-    });
 
     useDocumentStore
       .getState()
