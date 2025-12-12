@@ -27,6 +27,7 @@ import fontHelper from '@core/helpers/fonts/fontHelper';
 import { initializeAllFonts } from '@core/helpers/fonts/fontInitialization';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
+import { prefetchAiConfig } from '@core/helpers/query';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import sentryHelper from '@core/helpers/sentry-helper';
 import registerImageSymbolEvents from '@core/helpers/symbol-helper/registerImageSymbolEvents';
@@ -65,6 +66,9 @@ class BeamboxInit {
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
     initCurText();
+    prefetchAiConfig().catch((err) => {
+      console.warn('[AI Config] Background prefetch failed:', err);
+    });
 
     useDocumentStore
       .getState()
