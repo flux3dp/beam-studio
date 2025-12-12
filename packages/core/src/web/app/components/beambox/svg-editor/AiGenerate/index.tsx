@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
@@ -21,11 +21,11 @@ import InputField from './components/InputField';
 import InputWithUpload from './components/InputField.upload';
 import LoadingView from './components/LoadingView';
 import { useAiConfigQuery } from './hooks/useAiConfigQuery';
-import { useImageGeneration } from './hooks/useImageGeneration';
 import styles from './index.module.scss';
 import { AI_COST_PER_IMAGE } from './types';
 import { useAiGenerateStore } from './useAiGenerateStore';
 import { getStyleConfig } from './utils/categories';
+import { handleImageGeneration } from './utils/handleImageGeneration';
 import { getInputFieldsForStyle } from './utils/inputFields';
 import { showStyleSelectionPanel } from './utils/showStyleSelectionPanel';
 
@@ -76,17 +76,16 @@ const UnmemorizedAiGenerate = () => {
   const aiStyles = aiConfig?.styles || [];
   const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
-  const { handleGenerate } = useImageGeneration({
-    style: styleId,
-    styles: aiStyles,
-    user,
-  });
+  // Store refs for values needed in throttled callback
+  const paramsRef = useRef({ style: styleId, styles: aiStyles, user });
+
+  paramsRef.current = { style: styleId, styles: aiStyles, user };
 
   const throttledGenerate = useRef(
     funnel(
       () => {
         setIsGenerateDisabled(true);
-        handleGenerate();
+        handleImageGeneration(paramsRef.current);
         requestAnimationFrame(() => {
           contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
         });
@@ -96,7 +95,7 @@ const UnmemorizedAiGenerate = () => {
     ),
   );
 
-  const onGenerate = useCallback(() => throttledGenerate.current.call(), []);
+  const onGenerate = () => throttledGenerate.current.call();
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
