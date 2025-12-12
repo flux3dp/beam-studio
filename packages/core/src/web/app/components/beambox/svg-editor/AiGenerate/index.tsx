@@ -1,7 +1,8 @@
-import React, { memo, useCallback, useEffect, useState } from 'react';
+import React, { memo, useCallback, useEffect, useRef, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
+import { funnel } from 'remeda';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -44,10 +45,13 @@ const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
   }
 };
 
+const GENERATE_BUTTON_COOLDOWN_MS = 2000;
+
 const UnmemorizedAiGenerate = () => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
   const [user, setUser] = useState<IUser | null>(getCurrentUser());
+  const [isGenerateDisabled, setIsGenerateDisabled] = useState(false);
   const contentRef = React.useRef<HTMLDivElement>(null);
   const { drawerMode, setDrawerMode } = useCanvasStore();
   const {
@@ -78,12 +82,21 @@ const UnmemorizedAiGenerate = () => {
     user,
   });
 
-  const onGenerate = useCallback(() => {
-    handleGenerate();
-    requestAnimationFrame(() => {
-      contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
-    });
-  }, [handleGenerate]);
+  const throttledGenerate = useRef(
+    funnel(
+      () => {
+        setIsGenerateDisabled(true);
+        handleGenerate();
+        requestAnimationFrame(() => {
+          contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
+        });
+        setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
+      },
+      { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
+    ),
+  );
+
+  const onGenerate = useCallback(() => throttledGenerate.current.call(), []);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -195,7 +208,14 @@ const UnmemorizedAiGenerate = () => {
         </div>
         {!showHistory && (
           <div className={styles['button-section']}>
-            <Button block className={styles['generate-button']} onClick={onGenerate} size="large" type="primary">
+            <Button
+              block
+              className={styles['generate-button']}
+              disabled={isGenerateDisabled}
+              onClick={onGenerate}
+              size="large"
+              type="primary"
+            >
               {t.form.generate}
             </Button>
             <div className={styles['credits-info']}>
