@@ -17,10 +17,8 @@ import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import AiGenerate from './AiGenerate';
-import { useAiGenerateStore } from './AiGenerate/useAiGenerateStore';
 import Banner from './Banner';
 import Chat from './Chat';
-import { useChatStore } from './Chat/useChatStore';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
 import PreviewFloatingBar from './PreviewFloatingBar';
@@ -32,9 +30,7 @@ import Workarea from './Workarea';
 
 export const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
-  const mode = useCanvasStore((state) => state.mode);
-  const { isAiGenerateShown, setState } = useAiGenerateStore();
-  const { isChatShown, setIsChatShown } = useChatStore();
+  const { drawerMode, mode, setDrawerMode } = useCanvasStore();
 
   useEffect(() => {
     if (window.$) {
@@ -93,13 +89,17 @@ export const SvgEditor = (): ReactNode => {
 
         <Drawer
           enableResizable={false}
-          isOpen={isAiGenerateShown}
-          setIsOpen={(isOpen) => setState({ isAiGenerateShown: isOpen })}
+          isOpen={drawerMode === 'ai-generate'}
+          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-generate' : 'none')}
         >
           <AiGenerate />
         </Drawer>
 
-        <Drawer enableResizable={{ right: true }} isOpen={isChatShown} setIsOpen={setIsChatShown}>
+        <Drawer
+          enableResizable={{ right: true }}
+          isOpen={drawerMode === 'ai-chat'}
+          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-chat' : 'none')}
+        >
           <Chat />
         </Drawer>
       </div>

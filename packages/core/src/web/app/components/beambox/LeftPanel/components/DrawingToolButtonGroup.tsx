@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo } from 'react';
+import React, { memo, useContext, useMemo } from 'react';
 
 import { match } from 'ts-pattern';
 
@@ -17,8 +17,6 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { useAiGenerateStore } from '../../svg-editor/AiGenerate/useAiGenerateStore';
-import { useChatStore } from '../../svg-editor/Chat/useChatStore';
 import styles from '../index.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -42,11 +40,9 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
   const lang = useI18n();
   const t = lang.beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
-  const { isChatShown, setIsChatShown } = useChatStore();
-  const { isAiGenerateShown, setState } = useAiGenerateStore();
   const { isDrawing, isStarting } = useCameraPreviewStore();
+  const { drawerMode, mouseMode, toggleDrawerMode } = useCanvasStore();
   const user = getCurrentUser();
-  const mouseMode = useCanvasStore((state) => state.mouseMode);
   const activeButton = useMemo(
     () =>
       match(mouseMode)
@@ -86,16 +82,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       title={label}
     />
   );
-
-  const toggleAiGenerate = useCallback(() => {
-    setState({ isAiGenerateShown: !isAiGenerateShown });
-    setIsChatShown(false);
-  }, [isAiGenerateShown, setIsChatShown, setState]);
-
-  const toggleBeamy = useCallback(() => {
-    setIsChatShown(!isChatShown);
-    setState({ isAiGenerateShown: false });
-  }, [isChatShown, setIsChatShown, setState]);
 
   return (
     <div className={className}>
@@ -166,8 +152,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
           icon: <LeftPanelIcons.AiGenerate />,
           id: 'AiGenerate',
           label: lang.beambox.ai_generate.header.title,
-          onClick: toggleAiGenerate,
-          style: { color: isAiGenerateShown ? '#000000' : undefined },
+          onClick: () => toggleDrawerMode('ai-generate'),
+          style: { color: drawerMode === 'ai-generate' ? '#000000' : undefined },
         })}
       {hasPassthroughExtension &&
         renderToolButton({
@@ -183,8 +169,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         className: styles.beamy,
         icon: <LeftPanelIcons.Beamy />,
         id: 'Beamy',
-        onClick: toggleBeamy,
-        style: { color: isChatShown ? '#1890ff' : undefined },
+        onClick: () => toggleDrawerMode('ai-chat'),
+        style: { color: drawerMode === 'ai-chat' ? '#1890ff' : undefined },
       })}
     </div>
   );

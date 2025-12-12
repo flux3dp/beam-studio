@@ -31,21 +31,28 @@ export type CanvasMouseIntermediateMode =
   | 'rotate';
 export type CanvasMouseMode = CanvasMouseIntermediateMode | CanvasMouseOperationMode;
 
+export type CanvasDrawerMode = 'ai-chat' | 'ai-generate' | 'none';
+
 interface CanvasStore {
+  drawerMode: CanvasDrawerMode;
   mode: CanvasMode;
   mouseMode: CanvasMouseMode;
+  setDrawerMode: (mode: CanvasDrawerMode) => void;
   setMode: (mode: CanvasMode) => void;
+  toggleDrawerMode: (mode: CanvasDrawerMode) => void;
   togglePathPreview: () => void;
 }
 
 export const useCanvasStore = create(
   subscribeWithSelector<CanvasStore>((set) => ({
+    drawerMode: 'none',
     mode: CanvasMode.Draw,
     mouseMode: 'select',
+    setDrawerMode: (mode: CanvasDrawerMode) => set({ drawerMode: mode }),
     setMode: (mode: CanvasMode) => set({ mode }),
+    toggleDrawerMode: (mode: CanvasDrawerMode) =>
+      set((state) => ({ drawerMode: state.drawerMode === mode ? 'none' : mode })),
     togglePathPreview: () =>
-      set((state) => ({
-        mode: state.mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview,
-      })),
+      set((state) => ({ mode: state.mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview })),
   })),
 );

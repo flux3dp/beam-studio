@@ -5,6 +5,7 @@ import { Button, ConfigProvider, Select, Switch } from 'antd';
 import classNames from 'classnames';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import shortcuts from '@core/helpers/shortcuts';
 import useI18n from '@core/helpers/useI18n';
@@ -49,26 +50,27 @@ const UnmemorizedAiGenerate = () => {
   const t = lang.beambox.ai_generate;
   const [user, setUser] = useState<IUser | null>(getCurrentUser());
   const contentRef = React.useRef<HTMLDivElement>(null);
-  const store = useAiGenerateStore();
+  const { drawerMode, setDrawerMode } = useCanvasStore();
   const {
+    addImageInput,
     dimensions,
     errorMessage,
     generatedImages,
     generationStatus,
     imageInputs,
     inputFields,
-    isAiGenerateShown,
     isLaserFriendly,
     maxImages,
+    removeImageInput,
+    setInputField,
+    setState,
+    setStyle,
     showHistory,
     style,
-  } = store;
-
-  // 1. Data Fetching
+    toggleLaserFriendly,
+  } = useAiGenerateStore();
   const { data: aiConfig, isError, isLoading, refetch } = useAiConfigQuery();
   const aiStyles = aiConfig?.styles || [];
-
-  // 2. Logic & Configuration
   const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
   const { handleGenerate } = useImageGeneration({
@@ -95,26 +97,22 @@ const UnmemorizedAiGenerate = () => {
   }, []);
 
   useEffect(() => {
-    if (!isAiGenerateShown) return;
+    if (drawerMode !== 'ai-generate') return;
 
     const exitScope = shortcuts.enterScope();
-    const unregister = shortcuts.on(['Escape'], () => store.setState({ isAiGenerateShown: false }), {
-      isBlocking: true,
-    });
+    const unregister = shortcuts.on(['Escape'], () => setDrawerMode('none'), { isBlocking: true });
 
     return () => {
       unregister();
       exitScope();
     };
-  }, [isAiGenerateShown, store]);
+  }, [drawerMode, setDrawerMode]);
 
-  // 4. Handlers
-  const handleStyleClick = () => showStyleSelectionPanel((s) => store.setStyle(s, aiStyles), style);
+  const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles), style);
 
-  // 5. Render
-  if (isLoading) return <LoadingView onClose={() => store.setState({ isAiGenerateShown: false })} />;
+  if (isLoading) return <LoadingView onClose={() => setDrawerMode('none')} />;
 
-  if (isError) return <ErrorView onClose={() => store.setState({ isAiGenerateShown: false })} onRetry={refetch} />;
+  if (isError) return <ErrorView onClose={() => setDrawerMode('none')} onRetry={refetch} />;
 
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
@@ -152,16 +150,16 @@ const UnmemorizedAiGenerate = () => {
                       <InputWithUpload
                         field={field}
                         imageInputs={imageInputs}
-                        onAddImage={store.addImageInput}
-                        onChange={(value) => store.setInputField(field.key, value)}
+                        onAddImage={addImageInput}
+                        onChange={(value) => setInputField(field.key, value)}
                         onKeyDown={handleTextAreaKeyDown}
-                        onRemoveImage={store.removeImageInput}
+                        onRemoveImage={removeImageInput}
                         value={inputFields[field.key] || ''}
                       />
                     ) : (
                       <InputField
                         field={field}
-                        onChange={(value) => store.setInputField(field.key, value)}
+                        onChange={(value) => setInputField(field.key, value)}
                         onKeyDown={handleTextAreaKeyDown}
                         rows={field.key === 'description' ? 5 : 3}
                         value={inputFields[field.key] || ''}
@@ -177,7 +175,7 @@ const UnmemorizedAiGenerate = () => {
                 <h3 className={styles['section-title']}>{t.form.count}</h3>
                 <Select
                   className={styles['count-select']}
-                  onChange={(val) => store.setState({ maxImages: val })}
+                  onChange={(val) => setState({ maxImages: val })}
                   options={[1, 2, 3, 4].map((n) => ({ label: String(n), value: n }))}
                   value={maxImages}
                 />
@@ -186,7 +184,7 @@ const UnmemorizedAiGenerate = () => {
               <div className={styles.section}>
                 <div className={styles['toggle']}>
                   <span>{t.form.laser_friendly}</span>
-                  <Switch checked={isLaserFriendly} onChange={store.toggleLaserFriendly} />
+                  <Switch checked={isLaserFriendly} onChange={toggleLaserFriendly} />
                 </div>
               </div>
 

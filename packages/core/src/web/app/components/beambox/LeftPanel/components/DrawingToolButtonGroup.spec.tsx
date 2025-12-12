@@ -40,13 +40,6 @@ jest.mock('@core/helpers/device/camera/previewMode', () => ({
   handlePreviewClick: mockHandlePreviewClick,
 }));
 
-jest.mock('../../svg-editor/AiGenerate/useAiGenerateStore', () => ({
-  useAiGenerateStore: () => ({
-    isAiGenerateShown: false,
-    setState: jest.fn(),
-  }),
-}));
-
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 describe('test DrawingToolButtonGroup', () => {

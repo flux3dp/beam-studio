@@ -4,6 +4,7 @@ import { ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/
 import { Button, Tooltip } from 'antd';
 import classNames from 'classnames';
 
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from '../index.module.scss';
@@ -16,7 +17,8 @@ type Props = {
 const Header = ({ contentRef }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
-  const { resetForm, setState, showHistory, toggleHistory } = useAiGenerateStore();
+  const { resetForm, showHistory, toggleHistory } = useAiGenerateStore();
+  const { setDrawerMode } = useCanvasStore();
 
   useEffect(() => {
     requestAnimationFrame(() => {
@@ -49,7 +51,7 @@ const Header = ({ contentRef }: Props) => {
         <Button
           className={styles['icon-button']}
           icon={<CloseOutlined />}
-          onClick={() => setState({ isAiGenerateShown: false })}
+          onClick={() => setDrawerMode('none')}
           shape="circle"
           type="text"
         />

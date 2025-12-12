@@ -23,7 +23,6 @@ interface State {
   historyOffset: number;
   imageInputs: ImageInput[];
   inputFields: Record<string, string>;
-  isAiGenerateShown: boolean;
   isLaserFriendly: boolean;
   // Form
   maxImages: number;
@@ -70,7 +69,6 @@ const INITIAL_STATE: State = {
   historyItems: [],
   historyLoading: false,
   historyOffset: 0,
-  isAiGenerateShown: false,
   showHistory: false,
 };
 
