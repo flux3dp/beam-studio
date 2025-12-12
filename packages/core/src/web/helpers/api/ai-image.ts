@@ -1,4 +1,4 @@
-import type { AspectRatio } from '@core/app/components/beambox/svg-editor/AiGenerate/types';
+import type { AspectRatio } from '@core/app/components/AiGenerate/types';
 
 import { FLUXID_HOST } from './flux-id';
 
