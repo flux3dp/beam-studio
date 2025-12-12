@@ -6,7 +6,9 @@ import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
+import AiGenerate from '@core/app/components/AiGenerate';
 import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
+import Chat from '@core/app/components/Chat';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
@@ -16,9 +18,7 @@ import Drawer from '@core/app/widgets/Drawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { useIsMobile } from '@core/helpers/system-helper';
 
-import AiGenerate from './AiGenerate';
 import Banner from './Banner';
-import Chat from './Chat';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
 import PreviewFloatingBar from './PreviewFloatingBar';
