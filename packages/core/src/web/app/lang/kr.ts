@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: '중단',
+    buy: '구매',
     cancel: '취소',
     caption: '오류',
     close: '닫기',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: '텍스트 여백',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: '더 보기',
+        title: '이미지 크기',
+      },
+      error: {
+        config_description: 'AI 구성을 로드하지 못했습니다',
+        config_message: 'AI 스타일을 로드하지 못했습니다',
+        generation_failed: '생성 실패',
+        import_failed: '가져오기 실패',
+        insufficient_credits: '크레딧 부족',
+      },
+      form: {
+        count: '수량',
+        credit_required: '필요한 크레딧',
+        generate: '생성',
+        laser_friendly: '레이저 친화적',
+      },
+      header: {
+        history_tooltip: '기록',
+        reset_tooltip: '모두 초기화',
+        title: 'AI 생성',
+      },
+      history: {
+        empty_description: '아직 생성 기록이 없습니다. 생성을 시작하세요!',
+        error_message: '기록을 로드하지 못했습니다',
+        not_generated: '❌ 생성되지 않음',
+        recreate: '다시 만들기',
+        status_failed: '실패',
+        status_generating: '생성 중',
+        status_success: '성공',
+        storage_notice: '최대 10개의 최근 기록이 저장됩니다. 생성된 이미지는 3일간 보관됩니다.',
+        title: '생성 기록',
+      },
+      loading: {
+        history: '기록 로드 중...',
+        styles: 'AI 스타일 로드 중...',
+        tip_0: '창의 엔진을 시작하는 중…',
+        tip_1: '픽셀을 다듬는 중… ✨',
+        tip_2: '거의 다 됐어요, 세부사항을 다듬는 중',
+        tip_3: '아직 작업 중이에요, 이 부분은 조금 더 시간이 필요해요',
+        tip_4: '좋은 아이디어는 시간이 걸려요, 기다려 주셔서 감사합니다',
+      },
+      results: {
+        download: '다운로드',
+        import: '가져오기',
+        title: '결과',
+      },
+      retry: '재시도',
+      style: {
+        apply: '스타일 적용',
+        choose: '스타일 선택',
+        custom_creation: '사용자 정의 생성',
+        customize: '사용자 정의',
+        select: '생성 스타일 선택',
+      },
+      upload: {
+        add: '추가',
+        click_or_drag: '클릭하거나 이미지를 여기로 드래그',
+        error: '업로드 오류',
+        file_size_error: '%s: 파일 크기가 %sMB 미만이어야 합니다',
+        file_type_error: '%s: JPEG, PNG, WebP 이미지만 지원됩니다',
+        from_history: '기록에서',
+        images: '이미지 업로드',
+        max_images_error: '최대 %s개의 이미지가 허용됩니다',
+        selected: '%s / %s 선택됨',
+        supported_formats: 'JPEG, PNG, WebP • 최대 %s',
+      },
+      validation: {
+        description_or_image_required: '프롬프트 설명을 입력하거나 최소 1개의 이미지를 업로드하세요',
+        field_exceeds_max_length: '"%s"이(가) 최대 %s자를 초과했습니다.',
+        field_required: '"%s"은(는) 필수입니다. 이 필드를 입력하세요.',
+        login_required: 'AI 생성을 사용하려면 로그인하세요.',
+        max_images: '최대 %s개의 이미지가 허용됩니다',
+      },
+    },
     announcement_panel: {
       title: '공지사항',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: '가다',
-        insufficient_credit: '크레딧이 부족합니다',
-        insufficient_credit_msg: '%s 사용할 수 없습니다. 회원센터로 이동하여 AI 크레딧을 구매하세요.',
+        insufficient_credit: '크레딧 부족',
+        insufficient_credit_msg: '이 기능에는 %s AI 크레딧이 필요하지만 %s AI 크레딧만 남아 있습니다.\n크레딧을 추가 구매한 후 다시 시도해 주세요.',
         relogin_to_use: '이 기능을 사용하려면 다시 로그인하세요.',
       },
       auto_feeder_origin: '프레이밍 미리보기를 사용하여 레이저 헤드의 경로와 영역을 확인한 후, 결과를 기반으로 재료 배치 또는 조각 시작 위치를 조정하여 조각 과정에서 충돌이 발생하지 않도록 하세요.',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: '귀하는',
       access_plus_feature_2: '기능에 접속하고 있습니다.',
       access_plus_feature_note: '이 기능을 사용하려면 FLUX+ 멤버십이 필요합니다.',
-      ai_credit_tooltip: 'AI 배경 제거를 위한',
+      ai_credit_tooltip: 'AI 기능을 위한',
       explore_plans: 'FLUX+ 플랜 살펴보기',
       features: {
         ai_bg_removal: 'AI 배경 제거',

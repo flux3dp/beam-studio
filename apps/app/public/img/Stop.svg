@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="20" height="20" viewBox="0 0 20 20">
-  <defs>
-    <clipPath id="clip-Stop">
-      <rect width="20" height="20"/>
-    </clipPath>
-  </defs>
-  <g id="Stop" clip-path="url(#clip-Stop)">
+  <g id="Stop">
     <g id="Group_80" data-name="Group 80" transform="translate(-8.182 -17.086)">
       <path id="Path_179" data-name="Path 179" d="M18.055,28.517H14.192a1.558,1.558,0,0,1-1.556-1.558V23.1a1.558,1.558,0,0,1,1.556-1.558h3.863A1.559,1.559,0,0,1,19.611,23.1v3.862A1.559,1.559,0,0,1,18.055,28.517Zm-3.863-5.688a.268.268,0,0,0-.268.268v3.862a.269.269,0,0,0,.268.27h3.863a.27.27,0,0,0,.268-.27V23.1a.269.269,0,0,0-.268-.268Z" transform="translate(2.059 2.058)" fill="#444"/>
       <path id="Path_180" data-name="Path 180" d="M18.185,35.085A8,8,0,1,1,19.75,19.242h0a8,8,0,0,1-1.567,15.844Zm-.017-14.713a6.73,6.73,0,1,0,1.328.132A6.66,6.66,0,0,0,18.168,20.373Z" fill="#444"/>

@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: '放弃',
+    buy: '购买',
     cancel: '取消',
     caption: '错误',
     close: '关闭',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: '文本边距',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: '更多',
+        title: '图片尺寸',
+      },
+      error: {
+        config_description: '无法加载 AI 配置',
+        config_message: '无法加载 AI 风格',
+        generation_failed: '生成失败',
+        import_failed: '导入失败',
+        insufficient_credits: 'AI 点数不足',
+      },
+      form: {
+        count: '数量',
+        credit_required: '所需点数',
+        generate: '生成',
+        laser_friendly: '适合激光',
+      },
+      header: {
+        history_tooltip: '历史',
+        reset_tooltip: '全部重置',
+        title: 'AI 创作',
+      },
+      history: {
+        empty_description: '暂无生成记录，开始创作吧！',
+        error_message: '历史记录加载失败',
+        not_generated: '❌ 未生成',
+        recreate: '重新生成',
+        status_failed: '请求失败',
+        status_generating: '正在生成...',
+        status_success: '成功',
+        storage_notice: '最多保存 10 条近期记录，生成的图片将保留 3 天。',
+        title: '生成记录',
+      },
+      loading: {
+        history: '正在加载历史记录...',
+        styles: '正在加载 AI 风格...',
+        tip_0: '正在启动创意引擎…',
+        tip_1: '打磨像素中… ✨',
+        tip_2: '快完成了，正在精修细节',
+        tip_3: '还在创作中，这部分需要多一点时间',
+        tip_4: '好作品意需要时间，感谢您的耐心等候',
+      },
+      results: {
+        download: '下载',
+        import: '导入',
+        title: '结果',
+      },
+      retry: '重试',
+      style: {
+        apply: '应用风格',
+        choose: '选择风格',
+        custom_creation: '自定义创作',
+        customize: '自定义',
+        select: '选择创作风格',
+      },
+      upload: {
+        add: '添加',
+        click_or_drag: '点击或拖拽图片至此',
+        error: '上传错误',
+        file_size_error: '%s：文件大小必须小于 %sMB',
+        file_type_error: '%s：仅支持 JPEG、PNG 和 WebP 图片',
+        from_history: '来自历史记录',
+        images: '上传图片',
+        max_images_error: '最多允许 %s 张图片',
+        selected: '已选择 %s / %s',
+        supported_formats: 'JPEG、PNG、WebP • 最多 %s',
+      },
+      validation: {
+        description_or_image_required: '请提供提示描述或上传至少一张图片',
+        field_exceeds_max_length: '「%s」超过最大长度 %s 个字符。',
+        field_required: '「%s」为必填字段，请填写此字段。',
+        login_required: '请登录以使用 AI 生成功能。',
+        max_images: '最多允许 %s 张图片',
+      },
+    },
     announcement_panel: {
       title: '公告',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: '前往',
-        insufficient_credit: '您的 Credit 已用完',
-        insufficient_credit_msg: '您无法使用%s，请前往会员中心充值 AI Credit。',
+        insufficient_credit: '点数不足',
+        insufficient_credit_msg: '此功能需要 %s 个 AI 点数，但您目前仅剩 %s 个。\n请购买更多点数后再试一次。',
         relogin_to_use: '请重新登录以使用此功能。',
       },
       auto_feeder_origin: '请使用框架预览检查激光头的路径和区域，然后根据结果调整材料放置或雕刻起始位置，以避免雕刻过程中发生碰撞。',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: '您正在访问一个',
       access_plus_feature_2: '功能。',
       access_plus_feature_note: '您必须是 FLUX+ 会员才能访问此功能。',
-      ai_credit_tooltip: '用于 AI 抠图',
+      ai_credit_tooltip: '用于 AI 功能',
       explore_plans: '探索 FLUX+ 计划',
       features: {
         ai_bg_removal: 'AI 抠图',

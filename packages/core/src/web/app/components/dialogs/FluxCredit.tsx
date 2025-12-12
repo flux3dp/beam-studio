@@ -21,7 +21,7 @@ const FluxCredit = ({ onClose }: Props): React.JSX.Element => {
   const LANG = useI18n();
   const lang = LANG.flux_id_login;
   const isMobile = useIsMobile();
-  const { email, info } = getCurrentUser();
+  const { email, info } = getCurrentUser()!;
 
   return (
     <FluxPlusModal onClose={onClose}>
@@ -36,7 +36,10 @@ const FluxCredit = ({ onClose }: Props): React.JSX.Element => {
             {lang.email}: <span className={styles.email}>{email}</span>
           </div>
           {info?.subscription?.is_valid && (
-            <div>
+            <div
+              className={styles['credit-container']}
+              onClick={() => browser.open(LANG.beambox.popup.ai_credit.buy_link)}
+            >
               <Tooltip title={lang.flux_plus.flux_credit_tooltip}>
                 <QuestionCircleOutlined />
               </Tooltip>
@@ -45,12 +48,15 @@ const FluxCredit = ({ onClose }: Props): React.JSX.Element => {
               <span className={styles['flux-credit']}>{info?.subscription?.credit || 0}</span>
             </div>
           )}
-          <div>
+          <div
+            className={styles['credit-container']}
+            onClick={() => browser.open(LANG.beambox.popup.ai_credit.buy_link)}
+          >
             <Tooltip title={lang.flux_plus.ai_credit_tooltip}>
               <QuestionCircleOutlined />
             </Tooltip>
             AI Credit:
-            <FluxIcons.AICredit />
+            <FluxIcons.FluxCredit />
             <span className={styles['ai-credit']}>{info?.credit || 0}</span>
           </div>
         </div>

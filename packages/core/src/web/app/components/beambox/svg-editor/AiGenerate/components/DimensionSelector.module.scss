@@ -1,0 +1,200 @@
+@use '../shared-variables' as *;
+
+.section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-title {
+  @include section-title;
+}
+
+.dimension-group {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.flex-space {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+}
+
+.dimension-button {
+  @include button-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  min-width: 84px;
+  height: 64px;
+
+  span {
+    font-size: 12px;
+    margin-top: 4px;
+  }
+}
+
+.ratio-icon {
+  width: 32px;
+  height: 32px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.ratio-box {
+  @include ratio-box-base;
+  border-radius: 1.5px;
+
+  &.ratio-1-1 {
+    width: 20px;
+    height: 20px;
+  }
+
+  &.ratio-4-3 {
+    width: 24px;
+    height: 18px;
+  }
+
+  &.ratio-3-4 {
+    width: 18px;
+    height: 24px;
+  }
+
+  &.ratio-16-9 {
+    width: 28px;
+    height: 16px;
+  }
+
+  &.ratio-9-16 {
+    width: 16px;
+    height: 28px;
+  }
+
+  &.ratio-3-2 {
+    width: 24px;
+    height: 16px;
+  }
+
+  &.ratio-2-3 {
+    width: 16px;
+    height: 24px;
+  }
+
+  &.ratio-21-9 {
+    width: 36px;
+    height: 16px;
+  }
+
+  &.ratio-more {
+    width: 20px;
+    height: 20px;
+    position: relative;
+    border: 0;
+
+    &::before,
+    &::after {
+      content: '';
+      position: absolute;
+      background: currentColor;
+    }
+
+    &::before {
+      width: 100%;
+      height: 2px;
+      top: 50%;
+      left: 0;
+      transform: translateY(-50%);
+    }
+
+    &::after {
+      width: 2px;
+      height: 100%;
+      top: 0;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+  }
+}
+
+.more-button-container {
+  position: relative;
+  display: inline-block;
+}
+
+.floating-ratio-menu-portal {
+  position: fixed;
+  background: $container-bg;
+  border: 1px solid $button-border;
+  border-radius: 6px;
+  padding: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  z-index: 9999;
+  min-width: 180px;
+}
+
+.menu-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 12px;
+  cursor: pointer;
+  border-radius: 6px;
+  transition: all 0.2s;
+  border: 1px solid transparent;
+
+  &:hover {
+    background: $background-light-gray;
+  }
+
+  &.active {
+    background: $selected-bg;
+    border-color: $primary-blue;
+    color: $primary-blue;
+  }
+
+  span {
+    font-size: 13px;
+    white-space: nowrap;
+  }
+}
+
+.menu-icon {
+  width: 32px;
+  height: 32px;
+  margin-right: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.size-button {
+  @include button-base;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 12px 16px;
+  min-width: 115px;
+  height: 56px;
+}
+
+.size-name {
+  font-size: 13px;
+  font-weight: 500;
+  margin-bottom: 2px;
+}
+
+.size-pixels {
+  font-size: 11px;
+}

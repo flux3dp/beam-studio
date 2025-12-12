@@ -22,7 +22,9 @@ export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D>
   error?: AxiosError<T, D>;
 }
 
-const OAUTH_REDIRECT_URI = 'https://id.flux3dp.com/api/beam-studio/auth';
+export const FLUXID_HOST = 'https://id.flux3dp.com';
+
+const OAUTH_REDIRECT_URI = `${FLUXID_HOST}/api/beam-studio/auth`;
 const FB_OAUTH_URI = 'https://www.facebook.com/v10.0/dialog/oauth';
 const FB_APP_ID = '1071530792957137';
 const G_OAUTH_URL = 'https://accounts.google.com/o/oauth2/v2/auth';
@@ -44,14 +46,9 @@ export const getRedirectUri = (withState = true) => {
 
 const OAUTH_TOKEN = new Set<string>();
 
-export const FLUXID_HOST = 'https://id.flux3dp.com';
-
 const FLUXID_DOMAIN = '.flux3dp.com';
 
-export const axiosFluxId = axios.create({
-  baseURL: FLUXID_HOST,
-  timeout: 10000,
-});
+export const axiosFluxId = axios.create({ baseURL: FLUXID_HOST, timeout: 10000 });
 
 let currentUser: IUser | null = null;
 
@@ -161,12 +158,13 @@ const handleOAuthLoginSuccess = (data: IUser) => {
  * - { info: string, status: 'error' } if not logged in or not verified
  */
 export const getInfo = async ({
+  query = 'credits',
   sendToOtherTabs = true,
   silent = false,
-}: { sendToOtherTabs?: boolean; silent?: boolean } = {}): Promise<
+}: { query?: 'credits' | 'guess-country' | 'ip-country'; sendToOtherTabs?: boolean; silent?: boolean } = {}): Promise<
   (IUser & { status: 'ok' }) | null | { info: string; message: null | string; status: 'error' }
 > => {
-  const response = (await axiosFluxId.get('/user/info?query=credits', {
+  const response = (await axiosFluxId.get(`/user/info?query=${query}`, {
     withCredentials: true,
   })) as ResponseWithError;
 

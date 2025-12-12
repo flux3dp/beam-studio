@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Abort',
+    buy: 'Buy',
     cancel: 'Cancel',
     caption: 'Error',
     close: 'Close',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: 'Text Margin',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: 'More',
+        title: 'Image Dimensions',
+      },
+      error: {
+        config_description: 'Failed to load AI configuration',
+        config_message: 'Failed to load AI styles',
+        generation_failed: 'Generation Failed',
+        import_failed: 'Import Failed',
+        insufficient_credits: 'Insufficient Credits',
+      },
+      form: {
+        count: 'Count',
+        credit_required: 'Credit required',
+        generate: 'Generate',
+        laser_friendly: 'Laser-Friendly',
+      },
+      header: {
+        history_tooltip: 'History',
+        reset_tooltip: 'Reset All',
+        title: 'AI Create',
+      },
+      history: {
+        empty_description: 'No generation history yet. Start creating!',
+        error_message: 'Failed to load history',
+        not_generated: '❌ Not generated',
+        recreate: 'Recreate',
+        status_failed: 'Failed',
+        status_generating: 'Generating',
+        status_success: 'Success',
+        storage_notice: 'Up to 10 recent records are saved. Generated images are kept for 3 days.',
+        title: 'Generation History',
+      },
+      loading: {
+        history: 'Loading history...',
+        styles: 'Loading AI styles...',
+        tip_0: 'Warming up the creative engine…',
+        tip_1: 'Polishing pixels… ✨',
+        tip_2: "We're nearly there, refining the details",
+        tip_3: 'Still crafting, this part needs a little more time',
+        tip_4: 'Big ideas take time, thank you for staying here',
+      },
+      results: {
+        download: 'Download',
+        import: 'Import',
+        title: 'Results',
+      },
+      retry: 'Retry',
+      style: {
+        apply: 'Apply Style',
+        choose: 'Choose Style',
+        custom_creation: 'Custom Creation',
+        customize: 'Customize',
+        select: 'Select Creation Style',
+      },
+      upload: {
+        add: 'Add',
+        click_or_drag: 'Click or drag images here',
+        error: 'Upload Error',
+        file_size_error: '%s: File size must be less than %sMB',
+        file_type_error: '%s: Only JPEG, PNG, and WebP images are supported',
+        from_history: 'From history',
+        images: 'Upload images',
+        max_images_error: 'Maximum %s images allowed',
+        selected: '%s / %s selected',
+        supported_formats: 'JPEG, PNG, WebP • Max %s',
+      },
+      validation: {
+        description_or_image_required: 'Please provide a prompt description or upload at least one image',
+        field_exceeds_max_length: '"%s" exceeds maximum length of %s characters.',
+        field_required: '"%s" is required. Please fill in this field.',
+        login_required: 'Please log in to use AI generation.',
+        max_images: 'Maximum %s images allowed',
+      },
+    },
     announcement_panel: {
       title: 'Announcement',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Go',
-        insufficient_credit: 'You are out of Credit',
-        insufficient_credit_msg: 'You can not use the %s. Go to member center and purchase AI Credit.',
+        insufficient_credit: 'Insufficient Credit',
+        insufficient_credit_msg: 'This feature requires %s AI Credits, but you only have %s AI Credits left. \nPlease buy more credits and try again.',
         relogin_to_use: 'Please re-login to use this function.',
       },
       auto_feeder_origin: 'Please use the Framing preview to check the laser head’s path and area, then adjust the material placement or engraving start position based on the results to avoid collisions during the engraving process.',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'You are accessing a',
       access_plus_feature_2: 'feature.',
       access_plus_feature_note: 'You must have FLUX+ membership to access this feature.',
-      ai_credit_tooltip: 'For AI background removal',
+      ai_credit_tooltip: 'For AI features',
       explore_plans: 'Explore FLUX+ Plans',
       features: {
         ai_bg_removal: 'AI Background Removal',

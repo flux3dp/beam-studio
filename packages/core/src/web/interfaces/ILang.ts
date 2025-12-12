@@ -1,6 +1,7 @@
 export interface ILang {
   alert: {
     abort: string;
+    buy: string;
     cancel: string;
     caption: string;
     close: string;
@@ -58,6 +59,82 @@ export interface ILang {
     text_margin: string;
   };
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: string;
+        title: string;
+      };
+      error: {
+        config_description: string;
+        config_message: string;
+        generation_failed: string;
+        import_failed: string;
+        insufficient_credits: string;
+      };
+      form: {
+        count: string;
+        credit_required: string;
+        generate: string;
+        laser_friendly: string;
+      };
+      header: {
+        history_tooltip: string;
+        reset_tooltip: string;
+        title: string;
+      };
+      history: {
+        empty_description: string;
+        error_message: string;
+        not_generated: string;
+        recreate: string;
+        status_failed: string;
+        status_generating: string;
+        status_success: string;
+        storage_notice: string;
+        title: string;
+      };
+      loading: {
+        history: string;
+        styles: string;
+        tip_0: string;
+        tip_1: string;
+        tip_2: string;
+        tip_3: string;
+        tip_4: string;
+      };
+      results: {
+        download: string;
+        import: string;
+        title: string;
+      };
+      retry: string;
+      style: {
+        apply: string;
+        choose: string;
+        custom_creation: string;
+        customize: string;
+        select: string;
+      };
+      upload: {
+        add: string;
+        click_or_drag: string;
+        error: string;
+        file_size_error: string;
+        file_type_error: string;
+        from_history: string;
+        images: string;
+        max_images_error: string;
+        selected: string;
+        supported_formats: string;
+      };
+      validation: {
+        description_or_image_required: string;
+        field_exceeds_max_length: string;
+        field_required: string;
+        login_required: string;
+        max_images: string;
+      };
+    };
     announcement_panel: {
       title: string;
     };
@@ -332,7 +409,6 @@ export interface ILang {
     popup: {
       ai_credit: {
         buy_link: string;
-        go: string;
         insufficient_credit: string;
         insufficient_credit_msg: string;
         relogin_to_use: string;

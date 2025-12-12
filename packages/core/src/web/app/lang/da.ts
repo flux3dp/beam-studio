@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Afbryd',
+    buy: 'Køb',
     cancel: 'Annuller',
     caption: 'Fejl',
     close: 'Luk',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: 'Tekstmargen',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: 'Mere',
+        title: 'Billeddimensioner',
+      },
+      error: {
+        config_description: 'Kunne ikke indlæse AI-konfiguration',
+        config_message: 'Kunne ikke indlæse AI-stilarter',
+        generation_failed: 'Generering mislykkedes',
+        import_failed: 'Import mislykkedes',
+        insufficient_credits: 'Utilstrækkelige kreditter',
+      },
+      form: {
+        count: 'Antal',
+        credit_required: 'Krævede kreditter',
+        generate: 'Generer',
+        laser_friendly: 'Laservenlig',
+      },
+      header: {
+        history_tooltip: 'Historik',
+        reset_tooltip: 'Nulstil alt',
+        title: 'AI-skabelse',
+      },
+      history: {
+        empty_description: 'Ingen genereringshistorik endnu. Begynd at skabe!',
+        error_message: 'Kunne ikke indlæse historik',
+        not_generated: '❌ Ikke genereret',
+        recreate: 'Genskab',
+        status_failed: 'Mislykket',
+        status_generating: 'Genererer',
+        status_success: 'Succesfuld',
+        storage_notice: 'Op til 10 seneste poster gemmes. Genererede billeder opbevares i 3 dage.',
+        title: 'Genereringshistorik',
+      },
+      loading: {
+        history: 'Indlæser historik...',
+        styles: 'Indlæser AI-stilarter...',
+        tip_0: 'Starter den kreative motor…',
+        tip_1: 'Polerer pixels… ✨',
+        tip_2: 'Næsten færdig, finpudser detaljerne',
+        tip_3: 'Arbejder stadig, denne del tager lidt længere tid',
+        tip_4: 'Store idéer tager tid, tak for din tålmodighed',
+      },
+      results: {
+        download: 'Download',
+        import: 'Importer',
+        title: 'Resultater',
+      },
+      retry: 'Prøv igen',
+      style: {
+        apply: 'Anvend stil',
+        choose: 'Vælg stil',
+        custom_creation: 'Brugerdefineret skabelse',
+        customize: 'Tilpas',
+        select: 'Vælg skabelsesstil',
+      },
+      upload: {
+        add: 'Tilføj',
+        click_or_drag: 'Klik eller træk billeder hertil',
+        error: 'Upload-fejl',
+        file_size_error: '%s: Filstørrelsen skal være mindre end %sMB',
+        file_type_error: '%s: Kun JPEG-, PNG- og WebP-billeder understøttes',
+        from_history: 'Fra historik',
+        images: 'Upload billeder',
+        max_images_error: 'Maksimalt %s billeder tilladt',
+        selected: '%s / %s valgt',
+        supported_formats: 'JPEG, PNG, WebP • Maks %s',
+      },
+      validation: {
+        description_or_image_required: 'Angiv venligst en beskrivelse eller upload mindst ét billede',
+        field_exceeds_max_length: '"%s" overskrider den maksimale længde på %s tegn.',
+        field_required: '"%s" er påkrævet. Udfyld venligst dette felt.',
+        login_required: 'Log venligst ind for at bruge AI-generering.',
+        max_images: 'Maksimalt %s billeder tilladt',
+      },
+    },
     announcement_panel: {
       title: 'Meddelelse',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Gå til',
-        insufficient_credit: 'Du er løbet tør for kredit',
-        insufficient_credit_msg: 'Du kan ikke bruge %s. Gå til medlemscenteret og køb AI-kredit',
+        insufficient_credit: 'Utilstrækkelig kredit',
+        insufficient_credit_msg: 'Denne funktion kræver %s AI-kreditter, men du har kun %s AI-kreditter tilbage.\nKøb venligst flere kreditter og prøv igen.',
         relogin_to_use: 'Log venligst ind igen for at bruge denne funktion',
       },
       auto_feeder_origin: 'Brug indramningsforhåndsvisningen til at kontrollere laserhovedets bane og område, og justér derefter materialets placering eller graveringens startposition baseret på resultaterne for at undgå kollisioner under graveringsprocessen.',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Du får adgang til en',
       access_plus_feature_2: 'funktion.',
       access_plus_feature_note: 'Du skal have FLUX+ medlemskab for at få adgang til denne funktion.',
-      ai_credit_tooltip: 'Til AI baggrundsfjernelse',
+      ai_credit_tooltip: 'Til AI-funktioner',
       explore_plans: 'Udforsk FLUX+ planer',
       features: {
         ai_bg_removal: 'AI baggrundsfjernelse',

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo } from 'react';
+import React, { memo, useContext, useMemo } from 'react';
 
 import { match } from 'ts-pattern';
 
@@ -11,12 +11,12 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { getCurrentUser } from '@core/helpers/api/flux-id';
 import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { useChatStore } from '../../svg-editor/Chat/useChatStore';
 import styles from '../index.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -37,22 +37,25 @@ type ToolButtonProps = {
 };
 
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
-  const lang = useI18n().beambox.left_panel;
+  const lang = useI18n();
+  const t = lang.beambox.left_panel;
   const { hasPassthroughExtension } = useContext(CanvasContext);
-  const { isChatShown, setIsChatShown } = useChatStore();
   const { isDrawing, isStarting } = useCameraPreviewStore();
-  const mouseMode = useCanvasStore((state) => state.mouseMode);
-  const activeButton = useMemo(() => {
-    return match(mouseMode)
-      .with('pre_preview', 'preview', () => 'Preview')
-      .with('text', 'textedit', () => 'Text')
-      .with('rect', () => 'Rectangle')
-      .with('ellipse', () => 'Ellipse')
-      .with('polygon', () => 'Polygon')
-      .with('line', () => 'Line')
-      .with('path', 'pathedit', () => 'Pen')
-      .otherwise(() => 'Cursor');
-  }, [mouseMode]);
+  const { drawerMode, mouseMode, toggleDrawerMode } = useCanvasStore();
+  const user = getCurrentUser();
+  const activeButton = useMemo(
+    () =>
+      match(mouseMode)
+        .with('pre_preview', 'preview', () => 'Preview')
+        .with('text', 'textedit', () => 'Text')
+        .with('rect', () => 'Rectangle')
+        .with('ellipse', () => 'Ellipse')
+        .with('polygon', () => 'Polygon')
+        .with('line', () => 'Line')
+        .with('path', 'pathedit', () => 'Pen')
+        .otherwise(() => 'Cursor'),
+    [mouseMode],
+  );
 
   const renderToolButton = ({
     className = undefined,
@@ -80,78 +83,83 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     />
   );
 
-  const toggleBeamy = useCallback(() => {
-    setIsChatShown(!isChatShown);
-  }, [isChatShown, setIsChatShown]);
-
   return (
     <div className={className}>
       {renderToolButton({
         disabled: isDrawing || isStarting,
         icon: <LeftPanelIcons.Camera />,
         id: 'Preview',
-        label: lang.label.preview,
+        label: t.label.preview,
         onClick: async () => handlePreviewClick(),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Cursor />,
         id: 'Cursor',
-        label: `${lang.label.cursor} (V)`,
+        label: `${t.label.cursor} (V)`,
         onClick: FnWrapper.useSelectTool,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Photo />,
         id: 'Photo',
-        label: `${lang.label.photo} (I)`,
+        label: `${t.label.photo} (I)`,
         onClick: FnWrapper.importImage,
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Text />,
         id: 'Text',
-        label: `${lang.label.text} (T)`,
+        label: `${t.label.text} (T)`,
         onClick: () => setMouseMode('text'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,
         id: 'Element',
-        label: `${lang.label.elements} (E)`,
+        label: `${t.label.elements} (E)`,
+        // TODO: change elementPanel into a Drawer act like AiGenerate and Chat
         onClick: () => dialogCaller.showElementPanel(FnWrapper.useSelectTool),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Rect />,
         id: 'Rectangle',
-        label: `${lang.label.rect} (M)`,
+        label: `${t.label.rect} (M)`,
         onClick: () => setMouseMode('rect'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Oval />,
         id: 'Ellipse',
-        label: `${lang.label.oval} (C)`,
+        label: `${t.label.oval} (C)`,
         onClick: () => setMouseMode('ellipse'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Polygon />,
         id: 'Polygon',
-        label: lang.label.polygon,
+        label: t.label.polygon,
         onClick: () => setMouseMode('polygon'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Line />,
         id: 'Line',
-        label: `${lang.label.line} (\\)`,
+        label: `${t.label.line} (\\)`,
         onClick: () => setMouseMode('line'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Draw />,
         id: 'Pen',
-        label: `${lang.label.pen} (P)`,
+        label: `${t.label.pen} (P)`,
         onClick: () => setMouseMode('path'),
       })}
+      {user &&
+        renderToolButton({
+          icon: <LeftPanelIcons.AiGenerate />,
+          id: 'AiGenerate',
+          label: lang.beambox.ai_generate.header.title,
+          onClick: () => toggleDrawerMode('ai-generate'),
+          style: { color: drawerMode === 'ai-generate' ? '#000000' : undefined },
+        })}
       {hasPassthroughExtension &&
         renderToolButton({
           icon: <LeftPanelIcons.PassThrough />,
           id: 'PassThrough',
-          label: lang.label.pass_through,
+          label: t.label.pass_through,
           onClick: () => showPassThrough(FnWrapper.useSelectTool),
         })}
 
@@ -161,8 +169,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         className: styles.beamy,
         icon: <LeftPanelIcons.Beamy />,
         id: 'Beamy',
-        onClick: toggleBeamy,
-        style: { color: isChatShown ? '#1890ff' : undefined },
+        onClick: () => toggleDrawerMode('ai-chat'),
+        style: { color: drawerMode === 'ai-chat' ? '#1890ff' : undefined },
       })}
     </div>
   );

@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'アボート',
+    buy: '購入',
     cancel: 'キャンセル',
     caption: 'エラー',
     close: '閉じる',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: 'テキスト余白',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: 'その他',
+        title: '画像サイズ',
+      },
+      error: {
+        config_description: 'AI設定の読み込みに失敗しました',
+        config_message: 'AIスタイルの読み込みに失敗しました',
+        generation_failed: '生成に失敗しました',
+        import_failed: 'インポートに失敗しました',
+        insufficient_credits: 'クレジット不足',
+      },
+      form: {
+        count: '枚数',
+        credit_required: '必要クレジット',
+        generate: '生成',
+        laser_friendly: 'レーザーフレンドリー',
+      },
+      header: {
+        history_tooltip: '履歴',
+        reset_tooltip: 'すべてリセット',
+        title: 'AI作成',
+      },
+      history: {
+        empty_description: '生成履歴がありません。創作を始めましょう！',
+        error_message: '履歴の読み込みに失敗しました',
+        not_generated: '❌ 未生成',
+        recreate: '再作成',
+        status_failed: '失敗',
+        status_generating: '生成中',
+        status_success: '成功',
+        storage_notice: '最新の 10 件の記録が保存されます。生成された画像は 3 日間保持されます。',
+        title: '生成履歴',
+      },
+      loading: {
+        history: '履歴を読み込み中...',
+        styles: 'AIスタイルを読み込み中...',
+        tip_0: 'クリエイティブエンジンを起動中…',
+        tip_1: 'ピクセルを磨き中… ✨',
+        tip_2: 'もうすぐです、細部を調整中',
+        tip_3: 'まだ作成中、この部分は少し時間がかかります',
+        tip_4: '素晴らしいアイデアには時間がかかります、お待ちいただきありがとうございます',
+      },
+      results: {
+        download: 'ダウンロード',
+        import: 'インポート',
+        title: '結果',
+      },
+      retry: '再試行',
+      style: {
+        apply: 'スタイルを適用',
+        choose: 'スタイルを選択',
+        custom_creation: 'カスタム作成',
+        customize: 'カスタマイズ',
+        select: '作成スタイルを選択',
+      },
+      upload: {
+        add: '追加',
+        click_or_drag: 'クリックまたは画像をここにドラッグ',
+        error: 'アップロードエラー',
+        file_size_error: '%s: ファイルサイズは%sMB未満である必要があります',
+        file_type_error: '%s: JPEG、PNG、WebP画像のみ対応しています',
+        from_history: '履歴から',
+        images: '画像をアップロード',
+        max_images_error: '最大%s枚の画像が許可されています',
+        selected: '%s / %s 選択済み',
+        supported_formats: 'JPEG、PNG、WebP • 最大%s',
+      },
+      validation: {
+        description_or_image_required: 'プロンプトの説明を入力するか、少なくとも1枚の画像をアップロードしてください',
+        field_exceeds_max_length: '「%s」は最大%s文字を超えています。',
+        field_required: '「%s」は必須です。このフィールドを入力してください。',
+        login_required: 'AI生成を使用するにはログインしてください。',
+        max_images: '最大%s枚の画像が許可されています',
+      },
+    },
     announcement_panel: {
       title: 'お知らせ',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: '行く',
-        insufficient_credit: 'クレジットが不足しています',
-        insufficient_credit_msg: '%s は使用できません。メンバー センターにアクセスして AI Credit を購入してください。',
+        insufficient_credit: 'クレジット不足',
+        insufficient_credit_msg: 'この機能には %s AI クレジットが必要ですが、残りは %s AI クレジットのみです。\nクレジットを購入してから再度お試しください。',
         relogin_to_use: 'この機能を使用するには再度ログインしてください。',
       },
       auto_feeder_origin: 'フレーミングプレビューを使用してレーザーヘッドの軌道と範囲を確認し、結果に基づいて材料の配置や彫刻の開始位置を調整して、彫刻プロセス中の衝突を回避してください。',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'アクセスしている機能。',
       access_plus_feature_2: 'この機能。',
       access_plus_feature_note: 'この機能をご利用いただくには FLUX+ メンバーシップが必要です。',
-      ai_credit_tooltip: 'AI バックグラウンド除去のため',
+      ai_credit_tooltip: 'AI機能のため',
       explore_plans: 'FLUX+ プランを見る',
       features: {
         ai_bg_removal: 'AI背景除去',

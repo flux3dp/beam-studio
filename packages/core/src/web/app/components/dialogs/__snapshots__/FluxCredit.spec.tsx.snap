@@ -36,7 +36,9 @@ exports[`test FluxCredit should render correctly 1`] = `
             test123@gmail.com
           </span>
         </div>
-        <div>
+        <div
+          class="credit-container"
+        >
           <span
             aria-label="question-circle"
             class="anticon anticon-question-circle"
@@ -67,7 +69,9 @@ exports[`test FluxCredit should render correctly 1`] = `
             4
           </span>
         </div>
-        <div>
+        <div
+          class="credit-container"
+        >
           <span
             aria-label="question-circle"
             class="anticon anticon-question-circle"
@@ -164,7 +168,9 @@ exports[`test FluxCredit should render correctly without user detail 1`] = `
             test123@gmail.com
           </span>
         </div>
-        <div>
+        <div
+          class="credit-container"
+        >
           <span
             aria-label="question-circle"
             class="anticon anticon-question-circle"

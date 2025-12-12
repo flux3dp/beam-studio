@@ -12,9 +12,11 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
+import Drawer from '@core/app/widgets/Drawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { useIsMobile } from '@core/helpers/system-helper';
 
+import AiGenerate from './AiGenerate';
 import Banner from './Banner';
 import Chat from './Chat';
 import DpiInfo from './DpiInfo';
@@ -28,7 +30,7 @@ import Workarea from './Workarea';
 
 export const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
-  const mode = useCanvasStore((state) => state.mode);
+  const { drawerMode, mode, setDrawerMode } = useCanvasStore();
 
   useEffect(() => {
     if (window.$) {
@@ -64,6 +66,7 @@ export const SvgEditor = (): ReactNode => {
           <div id="cur_context_panel" />
           <div className="dropdown" id="option_lists" />
         </div>
+
         {mode !== CanvasMode.PathPreview && (
           <>
             {!isMobile && <PreviewFloatingBar />}
@@ -83,7 +86,22 @@ export const SvgEditor = (): ReactNode => {
             </div>
           </>
         )}
-        <Chat />
+
+        <Drawer
+          enableResizable={false}
+          isOpen={drawerMode === 'ai-generate'}
+          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-generate' : 'none')}
+        >
+          <AiGenerate />
+        </Drawer>
+
+        <Drawer
+          enableResizable={{ right: true }}
+          isOpen={drawerMode === 'ai-chat'}
+          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-chat' : 'none')}
+        >
+          <Chat />
+        </Drawer>
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>

@@ -74,7 +74,7 @@ describe('array tools', () => {
     doAllThing();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('#svg_11').children('image').should('have.length', '1');
-    cy.get('ellipse').should('have.length', '4');
+    cy.get('#svgcontent ellipse').should('have.length', '4');
   });
 
   it('mutilselect', () => {

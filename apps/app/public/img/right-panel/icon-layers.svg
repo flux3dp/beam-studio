@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="24" height="24" viewBox="0 0 24 24">
-  <defs>
-    <clipPath id="clip-icon-layers">
-      <rect width="24" height="24"/>
-    </clipPath>
-  </defs>
-  <g id="icon-layers" clip-path="url(#clip-icon-layers)">
+  <g id="icon-layers">
     <g id="Group_46" data-name="Group 46" transform="translate(-704.945 -219.838)">
       <path id="Path_105" data-name="Path 105" d="M724.486,234.481l-1.027-.525a.836.836,0,0,0-.781.008l-5.733,3.064-5.734-3.064a.837.837,0,0,0-.781-.008l-1.027.525a.842.842,0,0,0-.014,1.492l7.158,3.841a.842.842,0,0,0,.8,0l7.157-3.841a.842.842,0,0,0-.015-1.492Z" transform="translate(0 -1.378)" fill="#3b3a3b"/>
       <path id="Path_106" data-name="Path 106" d="M709.87,230.376l6.736,3.841a.843.843,0,0,0,.834,0l6.737-3.841a.843.843,0,0,0-.014-1.472l-6.737-3.663a.841.841,0,0,0-.8,0l-6.736,3.663a.842.842,0,0,0-.015,1.472Z" transform="translate(-0.079)" fill="#3b3a3b"/>

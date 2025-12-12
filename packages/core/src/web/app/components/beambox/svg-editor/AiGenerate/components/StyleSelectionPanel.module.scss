@@ -1,0 +1,166 @@
+@use '../shared-variables' as *;
+
+.container {
+  display: flex;
+  height: 500px; // Fixed height for scrolling content
+  overflow: hidden;
+  border: 1px solid $border-color;
+  border-radius: 6px;
+}
+
+// LEFT SIDEBAR
+.sidebar {
+  width: 260px;
+  border-right: 1px solid $border-color;
+  display: flex;
+  flex-direction: column;
+  background: $container-bg;
+  flex-shrink: 0;
+}
+
+.categories-list {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+}
+
+.category-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  margin-bottom: 4px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s;
+  color: $text-secondary;
+  font-weight: 500;
+
+  &:hover {
+    background: $background-light-gray;
+    color: $text-primary;
+  }
+
+  &.active {
+    background: $selected-bg;
+    color: $primary-blue;
+
+    // Optional: Add a left border indicator if desired
+    // border-left: 3px solid $primary-blue;
+  }
+}
+
+.category-icon {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  opacity: 0.7;
+
+  // Enhance icon visibility if active
+  .active & {
+    opacity: 1;
+  }
+}
+
+.category-name {
+  font-size: 14px;
+  margin: 0;
+}
+
+.custom-creation-btn {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #d6d6d6;
+
+  &:hover {
+    background: #c0c0c0;
+  }
+  &.active {
+    color: $primary-blue;
+    border-color: $primary-blue;
+  }
+}
+
+// RIGHT CONTENT
+.content {
+  flex: 1;
+  padding: 12px;
+  overflow-y: auto;
+  background: $container-bg;
+}
+
+.options-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 12px;
+}
+
+.option-card {
+  position: relative;
+  aspect-ratio: 16 / 10;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  border: 2px solid transparent;
+
+  &:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+  }
+
+  &.selected {
+    border-color: $selected-border;
+    box-shadow: 0 0 0 2px $selected-border;
+  }
+}
+
+.option-preview {
+  width: 100%;
+  height: 100%;
+}
+
+.preview-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.option-overlay {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 40px 16px 16px; // Top padding for gradient start
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0) 70%
+  );
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.option-name {
+  color: white;
+  font-size: 14px;
+  font-weight: 600;
+  margin: 0;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.footer-right {
+  display: flex;
+  gap: 12px;
+}

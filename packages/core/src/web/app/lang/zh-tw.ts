@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: '放棄',
+    buy: '購買',
     cancel: '取消',
     caption: '錯誤',
     close: '關閉',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: '文字邊距',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: '更多',
+        title: '圖片尺寸',
+      },
+      error: {
+        config_description: '無法載入 AI 設定',
+        config_message: '無法載入 AI 風格',
+        generation_failed: '生成失敗',
+        import_failed: '匯入失敗',
+        insufficient_credits: 'AI 點數不足',
+      },
+      form: {
+        count: '數量',
+        credit_required: '所需點數',
+        generate: '生成',
+        laser_friendly: '雷射友善',
+      },
+      header: {
+        history_tooltip: '歷史',
+        reset_tooltip: '全部重設',
+        title: 'AI 創作',
+      },
+      history: {
+        empty_description: '尚無生成紀錄，開始創作吧！',
+        error_message: '歷史紀錄載入失敗',
+        not_generated: '❌ 未生成',
+        recreate: '重新生成',
+        status_failed: '請求失敗',
+        status_generating: '正在生成...',
+        status_success: '成功',
+        storage_notice: '最多保存 10 筆近期紀錄，生成的圖片將保留 3 天。',
+        title: '生成紀錄',
+      },
+      loading: {
+        history: '載入歷史紀錄中...',
+        styles: '載入 AI 風格中...',
+        tip_0: '正在暖機，讓靈感發動中…',
+        tip_1: '打磨像素中… ✨',
+        tip_2: '快完成了，正在精修細節',
+        tip_3: '還在創作中，這部分需要多一點時間',
+        tip_4: '好作品需要時間，感謝您的耐心等候',
+      },
+      results: {
+        download: '下載',
+        import: '匯入',
+        title: '結果',
+      },
+      retry: '重試',
+      style: {
+        apply: '套用樣式',
+        choose: '選擇樣式',
+        custom_creation: '自訂創作',
+        customize: '自訂',
+        select: '選擇創作樣式',
+      },
+      upload: {
+        add: '新增',
+        click_or_drag: '點擊或拖曳圖片至此',
+        error: '上傳錯誤',
+        file_size_error: '%s：檔案大小必須小於 %sMB',
+        file_type_error: '%s：僅支援 JPEG、PNG 和 WebP 圖片',
+        from_history: '來自歷史紀錄',
+        images: '上傳圖片',
+        max_images_error: '最多允許 %s 張圖片',
+        selected: '已選擇 %s / %s',
+        supported_formats: 'JPEG、PNG、WebP • 最多 %s',
+      },
+      validation: {
+        description_or_image_required: '請提供提示描述或上傳至少一張圖片',
+        field_exceeds_max_length: '「%s」超過最大長度 %s 個字元。',
+        field_required: '「%s」為必填欄位，請填寫此欄位。',
+        login_required: '請登入以使用 AI 生成功能。',
+        max_images: '最多允許 %s 張圖片',
+      },
+    },
     announcement_panel: {
       title: '公告',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/zh-TW/credit',
-        go: '前往',
-        insufficient_credit: '您的 Credit 餘額不足',
-        insufficient_credit_msg: '您無法使用%s，請前往會員中心購買 AI Credit。',
+        insufficient_credit: '點數不足',
+        insufficient_credit_msg: '此功能需要 %s 點 AI 點數，但您目前僅剩 %s 點。\n請購買更多點數後再試一次。',
         relogin_to_use: '請重新登入以使用此功能。',
       },
       auto_feeder_origin: '請先使用外框預覽檢查雷射頭的運行路徑與範圍，然後根據結果調整板材位置或雕刻起點，以防止雕刻過程中的碰撞。',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: '您正在使用',
       access_plus_feature_2: '功能。',
       access_plus_feature_note: '您必須擁有 FLUX+ 會員資格才能使用此功能。',
-      ai_credit_tooltip: '用於 AI 去背',
+      ai_credit_tooltip: '用於 AI 功能',
       explore_plans: '探索 FLUX+ 方案',
       features: {
         ai_bg_removal: 'AI 去背',

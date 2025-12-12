@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Hủy bỏ',
+    buy: 'Mua',
     cancel: 'Hủy bỏ',
     caption: 'Lỗi',
     close: 'Đóng',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: 'Lề văn bản',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: 'Thêm',
+        title: 'Kích thước hình ảnh',
+      },
+      error: {
+        config_description: 'Không thể tải cấu hình AI',
+        config_message: 'Không thể tải các kiểu AI',
+        generation_failed: 'Tạo thất bại',
+        import_failed: 'Nhập thất bại',
+        insufficient_credits: 'Không đủ tín dụng',
+      },
+      form: {
+        count: 'Số lượng',
+        credit_required: 'Tín dụng cần thiết',
+        generate: 'Tạo',
+        laser_friendly: 'Thân thiện với laser',
+      },
+      header: {
+        history_tooltip: 'Lịch sử',
+        reset_tooltip: 'Đặt lại tất cả',
+        title: 'Tạo bằng AI',
+      },
+      history: {
+        empty_description: 'Chưa có lịch sử tạo. Bắt đầu sáng tạo!',
+        error_message: 'Không thể tải lịch sử',
+        not_generated: '❌ Chưa tạo',
+        recreate: 'Tạo lại',
+        status_failed: 'Thất bại',
+        status_generating: 'Đang tạo',
+        status_success: 'Thành công',
+        storage_notice: 'Lưu tối đa 10 bản ghi gần đây. Hình ảnh được tạo sẽ được giữ trong 3 ngày.',
+        title: 'Lịch sử tạo',
+      },
+      loading: {
+        history: 'Đang tải lịch sử...',
+        styles: 'Đang tải các kiểu AI...',
+        tip_0: 'Đang khởi động động cơ sáng tạo…',
+        tip_1: 'Đang đánh bóng pixel… ✨',
+        tip_2: 'Sắp xong rồi, đang tinh chỉnh chi tiết',
+        tip_3: 'Vẫn đang làm việc, phần này cần thêm chút thời gian',
+        tip_4: 'Ý tưởng lớn cần thời gian, cảm ơn bạn đã kiên nhẫn',
+      },
+      results: {
+        download: 'Tải xuống',
+        import: 'Nhập',
+        title: 'Kết quả',
+      },
+      retry: 'Thử lại',
+      style: {
+        apply: 'Áp dụng kiểu',
+        choose: 'Chọn kiểu',
+        custom_creation: 'Tạo tùy chỉnh',
+        customize: 'Tùy chỉnh',
+        select: 'Chọn kiểu tạo',
+      },
+      upload: {
+        add: 'Thêm',
+        click_or_drag: 'Nhấp hoặc kéo hình ảnh vào đây',
+        error: 'Lỗi tải lên',
+        file_size_error: '%s: Kích thước tệp phải nhỏ hơn %sMB',
+        file_type_error: '%s: Chỉ hỗ trợ hình ảnh JPEG, PNG và WebP',
+        from_history: 'Từ lịch sử',
+        images: 'Tải lên hình ảnh',
+        max_images_error: 'Tối đa %s hình ảnh được phép',
+        selected: 'Đã chọn %s / %s',
+        supported_formats: 'JPEG, PNG, WebP • Tối đa %s',
+      },
+      validation: {
+        description_or_image_required: 'Vui lòng cung cấp mô tả hoặc tải lên ít nhất một hình ảnh',
+        field_exceeds_max_length: '"%s" vượt quá độ dài tối đa %s ký tự.',
+        field_required: '"%s" là bắt buộc. Vui lòng điền vào trường này.',
+        login_required: 'Vui lòng đăng nhập để sử dụng tạo AI.',
+        max_images: 'Tối đa %s hình ảnh được phép',
+      },
+    },
     announcement_panel: {
       title: 'Thông báo',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Đi',
-        insufficient_credit: 'Bạn đã hết Tín dụng',
-        insufficient_credit_msg: 'Bạn không thể sử dụng %s. Vào trung tâm thành viên và mua Tín dụng AI.',
+        insufficient_credit: 'Tín dụng không đủ',
+        insufficient_credit_msg: 'Tính năng này yêu cầu %s Tín dụng AI, nhưng bạn chỉ còn %s Tín dụng AI.\nVui lòng mua thêm tín dụng và thử lại.',
         relogin_to_use: 'Vui lòng đăng nhập lại để sử dụng chức năng này.',
       },
       auto_feeder_origin: 'Sử dụng chế độ xem trước khung để kiểm tra đường đi và khu vực của đầu laser, sau đó điều chỉnh vị trí vật liệu hoặc vị trí bắt đầu khắc theo kết quả để tránh va chạm trong quá trình khắc.',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Bạn đang truy cập một',
       access_plus_feature_2: 'tính năng.',
       access_plus_feature_note: 'Bạn cần có tư cách thành viên FLUX+ để truy cập tính năng này.',
-      ai_credit_tooltip: 'Để xóa nền AI',
+      ai_credit_tooltip: 'Cho các tính năng AI',
       explore_plans: 'Khám phá các gói FLUX+',
       features: {
         ai_bg_removal: 'Xóa nền bằng AI',

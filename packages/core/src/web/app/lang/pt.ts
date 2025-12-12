@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Abortar',
+    buy: 'Comprar',
     cancel: 'Cancelar',
     caption: 'Erro',
     close: 'Fechar',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: 'Margem do texto',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: 'Mais',
+        title: 'Dimensões da imagem',
+      },
+      error: {
+        config_description: 'Falha ao carregar configuração de IA',
+        config_message: 'Falha ao carregar estilos de IA',
+        generation_failed: 'Geração falhou',
+        import_failed: 'Importação falhou',
+        insufficient_credits: 'Créditos insuficientes',
+      },
+      form: {
+        count: 'Quantidade',
+        credit_required: 'Créditos necessários',
+        generate: 'Gerar',
+        laser_friendly: 'Amigável para laser',
+      },
+      header: {
+        history_tooltip: 'Histórico',
+        reset_tooltip: 'Redefinir tudo',
+        title: 'Criação com IA',
+      },
+      history: {
+        empty_description: 'Ainda não há histórico de geração. Comece a criar!',
+        error_message: 'Falha ao carregar histórico',
+        not_generated: '❌ Não gerado',
+        recreate: 'Recriar',
+        status_failed: 'Falhou',
+        status_generating: 'Gerando',
+        status_success: 'Sucesso',
+        storage_notice: 'Até 10 registros recentes são salvos. As imagens geradas são mantidas por 3 dias.',
+        title: 'Histórico de geração',
+      },
+      loading: {
+        history: 'Carregando histórico...',
+        styles: 'Carregando estilos de IA...',
+        tip_0: 'Iniciando o motor criativo…',
+        tip_1: 'Polindo pixels… ✨',
+        tip_2: 'Quase pronto, refinando os detalhes',
+        tip_3: 'Ainda trabalhando, esta parte precisa de mais tempo',
+        tip_4: 'Grandes ideias levam tempo, obrigado pela paciência',
+      },
+      results: {
+        download: 'Baixar',
+        import: 'Importar',
+        title: 'Resultados',
+      },
+      retry: 'Tentar novamente',
+      style: {
+        apply: 'Aplicar estilo',
+        choose: 'Escolher estilo',
+        custom_creation: 'Criação personalizada',
+        customize: 'Personalizar',
+        select: 'Selecionar estilo de criação',
+      },
+      upload: {
+        add: 'Adicionar',
+        click_or_drag: 'Clique ou arraste imagens aqui',
+        error: 'Erro de upload',
+        file_size_error: '%s: O tamanho do arquivo deve ser menor que %sMB',
+        file_type_error: '%s: Apenas imagens JPEG, PNG e WebP são suportadas',
+        from_history: 'Do histórico',
+        images: 'Enviar imagens',
+        max_images_error: 'Máximo de %s imagens permitidas',
+        selected: '%s / %s selecionado(s)',
+        supported_formats: 'JPEG, PNG, WebP • Máx %s',
+      },
+      validation: {
+        description_or_image_required: 'Por favor, forneça uma descrição ou envie pelo menos uma imagem',
+        field_exceeds_max_length: '"%s" excede o comprimento máximo de %s caracteres.',
+        field_required: '"%s" é obrigatório. Por favor, preencha este campo.',
+        login_required: 'Por favor, faça login para usar a geração de IA.',
+        max_images: 'Máximo de %s imagens permitidas',
+      },
+    },
     announcement_panel: {
       title: 'Anúncio',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Ir',
-        insufficient_credit: 'Você está sem crédito',
-        insufficient_credit_msg: 'Você não pode usar o %s. Vá para o centro de membros e compre Créditos de IA.',
+        insufficient_credit: 'Crédito Insuficiente',
+        insufficient_credit_msg: 'Este recurso requer %s Créditos de IA, mas você só tem %s Créditos de IA restantes.\nPor favor, compre mais créditos e tente novamente.',
         relogin_to_use: 'Por favor, faça login novamente para usar esta função.',
       },
       auto_feeder_origin: 'Use a visualização do enquadramento para verificar o trajeto e a área da cabeça do laser, depois ajuste o posicionamento do material ou a posição inicial da gravação com base nos resultados para evitar colisões durante o processo de gravação.',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Você está acessando um',
       access_plus_feature_2: 'recurso.',
       access_plus_feature_note: 'Você precisa da assinatura FLUX+ para acessar este recurso.',
-      ai_credit_tooltip: 'Para remoção de fundo por IA',
+      ai_credit_tooltip: 'Para recursos de IA',
       explore_plans: 'Explore planos FLUX+',
       features: {
         ai_bg_removal: 'Remoção de fundo por IA',

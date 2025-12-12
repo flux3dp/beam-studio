@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Batalkan',
+    buy: 'Beli',
     cancel: 'Batal',
     caption: 'Kesalahan',
     close: 'Tutup',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: 'Margin Teks',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: 'Lainnya',
+        title: 'Dimensi Gambar',
+      },
+      error: {
+        config_description: 'Gagal memuat konfigurasi AI',
+        config_message: 'Gagal memuat gaya AI',
+        generation_failed: 'Pembuatan gagal',
+        import_failed: 'Impor gagal',
+        insufficient_credits: 'Kredit tidak mencukupi',
+      },
+      form: {
+        count: 'Jumlah',
+        credit_required: 'Kredit yang diperlukan',
+        generate: 'Buat',
+        laser_friendly: 'Ramah Laser',
+      },
+      header: {
+        history_tooltip: 'Riwayat',
+        reset_tooltip: 'Reset Semua',
+        title: 'Pembuatan AI',
+      },
+      history: {
+        empty_description: 'Belum ada riwayat pembuatan. Mulai membuat!',
+        error_message: 'Gagal memuat riwayat',
+        not_generated: '❌ Tidak dibuat',
+        recreate: 'Buat Ulang',
+        status_failed: 'Gagal',
+        status_generating: 'Membuat',
+        status_success: 'Berhasil',
+        storage_notice: 'Hingga 10 catatan terbaru disimpan. Gambar yang dihasilkan disimpan selama 3 hari.',
+        title: 'Riwayat Pembuatan',
+      },
+      loading: {
+        history: 'Memuat riwayat...',
+        styles: 'Memuat gaya AI...',
+        tip_0: 'Menjalankan mesin kreatif…',
+        tip_1: 'Menghaluskan piksel… ✨',
+        tip_2: 'Hampir selesai, menyempurnakan detail',
+        tip_3: 'Masih membuat, bagian ini butuh waktu lebih',
+        tip_4: 'Ide besar butuh waktu, terima kasih atas kesabaran Anda',
+      },
+      results: {
+        download: 'Unduh',
+        import: 'Impor',
+        title: 'Hasil',
+      },
+      retry: 'Coba Lagi',
+      style: {
+        apply: 'Terapkan Gaya',
+        choose: 'Pilih Gaya',
+        custom_creation: 'Pembuatan Kustom',
+        customize: 'Kustomisasi',
+        select: 'Pilih Gaya Pembuatan',
+      },
+      upload: {
+        add: 'Tambah',
+        click_or_drag: 'Klik atau seret gambar ke sini',
+        error: 'Kesalahan Unggah',
+        file_size_error: '%s: Ukuran file harus kurang dari %sMB',
+        file_type_error: '%s: Hanya gambar JPEG, PNG, dan WebP yang didukung',
+        from_history: 'Dari riwayat',
+        images: 'Unggah gambar',
+        max_images_error: 'Maksimal %s gambar diizinkan',
+        selected: '%s / %s dipilih',
+        supported_formats: 'JPEG, PNG, WebP • Maks %s',
+      },
+      validation: {
+        description_or_image_required: 'Berikan deskripsi atau unggah setidaknya satu gambar',
+        field_exceeds_max_length: '"%s" melebihi panjang maksimal %s karakter.',
+        field_required: '"%s" wajib diisi. Silakan isi bidang ini.',
+        login_required: 'Silakan masuk untuk menggunakan pembuatan AI.',
+        max_images: 'Maksimal %s gambar diizinkan',
+      },
+    },
     announcement_panel: {
       title: 'Pengumuman',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Pergi',
-        insufficient_credit: 'Anda kehabisan Kredit',
-        insufficient_credit_msg: 'Anda tidak dapat menggunakan %s. Pergi ke pusat anggota dan beli Kredit AI.',
+        insufficient_credit: 'Kredit Tidak Cukup',
+        insufficient_credit_msg: 'Fitur ini memerlukan %s Kredit AI, tetapi Anda hanya memiliki %s Kredit AI tersisa.\nSilakan beli lebih banyak kredit dan coba lagi.',
         relogin_to_use: 'Silakan login ulang untuk menggunakan fitur ini.',
       },
       auto_feeder_origin: 'Gunakan pratinjau pembingkaian untuk memeriksa jalur dan area kepala laser, lalu sesuaikan posisi material atau posisi mulai ukiran berdasarkan hasil untuk menghindari tabrakan selama proses pengukiran.',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Anda mengakses fitur',
       access_plus_feature_2: 'fitur.',
       access_plus_feature_note: 'Anda perlu berlangganan FLUX+ untuk mengakses fitur ini.',
-      ai_credit_tooltip: 'Untuk penghapusan latar belakang AI',
+      ai_credit_tooltip: 'Untuk fitur AI',
       explore_plans: 'Jelajahi Rencana FLUX+',
       features: {
         ai_bg_removal: 'Pembuangan Latar Belakang AI',

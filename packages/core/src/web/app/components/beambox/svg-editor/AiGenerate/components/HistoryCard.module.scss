@@ -1,0 +1,228 @@
+@use '../shared-variables' as *;
+
+.card {
+  border: 1px solid $border-color;
+  border-radius: 12px;
+  overflow: hidden;
+  transition: all 0.3s;
+  box-shadow: none;
+
+  &:hover {
+    border-color: $primary-blue;
+  }
+}
+
+.cardContent {
+  padding: 16px;
+}
+
+.title {
+  font-size: 16px;
+  font-weight: 600;
+  color: $text-primary;
+  margin-bottom: 16px;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.imageGrid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 4px;
+  margin-bottom: 16px;
+}
+
+.imageWrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 4 / 3;
+  overflow: hidden;
+  border-radius: 8px;
+  border: 1px solid $background-dark-gray;
+  background-color: $background-light-gray;
+
+  &:hover .overlay {
+    opacity: 1;
+  }
+}
+
+.image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+.overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.7);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  opacity: 0;
+  transition: opacity 0.2s;
+  padding: 8px;
+}
+
+.actionButton {
+  width: 100%;
+  font-size: 11px;
+  height: 28px;
+}
+
+.noPreview {
+  grid-column: 1 / -1;
+  aspect-ratio: 2 / 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+  color: $text-placeholder;
+  background-color: $background-light-gray;
+  border-radius: 8px;
+}
+
+.footer {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+}
+
+.footerLeft {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statusBadge {
+  :global(.ant-badge-status-dot) {
+    width: 8px;
+    height: 8px;
+  }
+  :global(.ant-badge-status-text) {
+    font-size: 14px;
+    font-weight: 500;
+    margin-left: 8px;
+  }
+
+  &.success :global(.ant-badge-status-text) {
+    color: $success-color;
+  }
+  &.fail :global(.ant-badge-status-text) {
+    color: $error-color;
+  }
+}
+
+.date {
+  font-size: 12px;
+  color: $text-placeholder;
+  line-height: 1.2;
+}
+
+.footerRight {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.recreateButton {
+  border-radius: 100px;
+  font-weight: 500;
+  border-color: $border-color;
+  padding-left: 20px;
+  padding-right: 20px;
+
+  &:hover {
+    color: $primary-blue;
+    border-color: $primary-blue;
+  }
+}
+
+.dropdownButton {
+  color: $text-primary;
+  padding: 4px;
+  height: auto;
+  line-height: 1;
+  transition: transform 0s ease;
+
+  &:hover {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+
+  &.expanded {
+    transform: rotate(180deg);
+  }
+}
+
+.expandedInfo {
+  padding: 12px;
+  border-top: 1px solid $border-color;
+  animation: slideDown 0.2s ease-out;
+}
+
+.inputList {
+  margin-bottom: 8px;
+}
+
+.inputKey {
+  font-weight: bold;
+}
+
+.chipList {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background-color: $background-light-gray;
+  padding: 4px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  color: $text-primary;
+  max-width: 100%;
+}
+
+.chipIcon {
+  font-size: 14px;
+  color: $text-primary;
+}
+
+.chipText {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.error {
+  padding: 16px;
+  border-top: 1px solid $border-color;
+  animation: slideDown 0.2s ease-out;
+  background: #fff2f0;
+  border: 1px solid #ffccc7;
+  border-radius: 6px;
+  font-size: 12px;
+  color: $error-color;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+@keyframes slideDown {
+  from {
+    opacity: 0;
+    transform: translateY(-5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

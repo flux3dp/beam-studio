@@ -1,26 +1,8 @@
-html, body, div{
-	/* -webkit-user-select: text;
-	-khtml-user-select: text;
-	-moz-user-select: text;
-	-o-user-select: text;
-	user-select: text; */
-	/* this will work for QtWebKit in future */
-	/* -webkit-user-drag: text; */
-}
-
 #browser-not-supported {
 	font-size: 0.8em;
 	/* font-family: Verdana, Helvetica, Arial; */
 	color: #000000;
 }
-
-#svg_editor * {
-	transform-origin: 0 0;
-	-moz-transform-origin: 0 0;
-	-o-transform-origin: 0 0;
-	-webkit-transform-origin: 0 0;
-}
-
 
 a {
 	color: #19c;

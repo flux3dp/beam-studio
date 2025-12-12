@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-  <defs>
-    <clipPath id="clip-icon-trace">
-      <rect width="32" height="32"/>
-    </clipPath>
-  </defs>
-  <g id="icon-trace" clip-path="url(#clip-icon-trace)">
+  <g id="icon-trace">
     <g id="Group_40" data-name="Group 40" transform="translate(-876.143 -208.95)">
       <path id="Path_1" data-name="Path 1" d="M884.018,273.173v-3.765h-1.875v3.765a2.894,2.894,0,0,0,2.89,2.89h3.785v-1.874h-3.785a1.014,1.014,0,0,1-1.015-1.013Z" transform="translate(0 -41.115)" fill="currentColor"/>
       <path id="Path_2" data-name="Path 2" d="M941.478,273.173a1.013,1.013,0,0,1-1.01,1.016h-3.74v1.875h3.719a2.894,2.894,0,0,0,2.89-2.89v-3.766h-1.874Z" transform="translate(-41.211 -41.115)" fill="currentColor"/>

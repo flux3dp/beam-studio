@@ -1,10 +1,5 @@
 <svg xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" width="32" height="32" viewBox="0 0 32 32">
-  <defs>
-    <clipPath id="clip-Camera_view">
-      <rect width="32" height="32"/>
-    </clipPath>
-  </defs>
-  <g id="Camera_view" data-name="Camera view" clip-path="url(#clip-Camera_view)">
+  <g id="Camera_view" data-name="Camera view">
     <g id="Group_43" data-name="Group 43" transform="translate(-693.944 -215.77)">
       <path id="Path_90" data-name="Path 90" d="M717.119,230.129h-2.137c-.6-.847-1.129-1.263-1.616-1.273-.65-.013-2.363-.007-3.534,0l-.979,0c-.448,0-.925.416-1.455,1.273h-2.331a1.124,1.124,0,0,0-1.122,1.121v7a1.124,1.124,0,0,0,1.122,1.122h12.053a1.124,1.124,0,0,0,1.121-1.122v-7A1.124,1.124,0,0,0,717.119,230.129Zm-3.14,4.349a2.886,2.886,0,1,1-2.886-2.886A2.89,2.89,0,0,1,713.979,234.478Zm2.2-1.787a.643.643,0,1,1,.643-.643A.643.643,0,0,1,716.182,232.691Z" transform="translate(-0.796 -0.938)" fill="#5c5c5c"/>
       <circle id="Ellipse_17" data-name="Ellipse 17" cx="2.091" cy="2.091" r="2.091" transform="translate(708.206 231.449)" fill="#5c5c5c"/>

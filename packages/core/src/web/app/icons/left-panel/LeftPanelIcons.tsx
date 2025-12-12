@@ -1,5 +1,6 @@
 import AddChat from './add-chat.svg';
 import AdjustHeight from './adjust-height.svg';
+import AiGenerate from './ai-generate.svg';
 import Back from './back.svg';
 import Beamy from './beamy.svg';
 import Camera from './camera.svg';
@@ -12,6 +13,7 @@ import Delete from './delete.svg';
 import DesignMarket from './design-market.svg';
 import Draw from './draw.svg';
 import Element from './element.svg';
+import Image from './image.svg';
 import Line from './line.svg';
 import Live from './live.svg';
 import Oval from './oval.svg';
@@ -29,6 +31,7 @@ import Trace from './trace.svg';
 export default {
   AddChat,
   AdjustHeight,
+  AiGenerate,
   Back,
   Beamy,
   Camera,
@@ -41,6 +44,7 @@ export default {
   DesignMarket,
   Draw,
   Element,
+  Image,
   Line,
   Live,
   Oval,

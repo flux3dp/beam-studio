@@ -3,6 +3,7 @@ import type { ILang } from '@core/interfaces/ILang';
 const lang: ILang = {
   alert: {
     abort: 'Przerwij',
+    buy: 'Kup',
     cancel: 'Anuluj',
     caption: 'Błąd',
     close: 'Zamknij',
@@ -60,6 +61,82 @@ const lang: ILang = {
     text_margin: 'Margines tekstu',
   },
   beambox: {
+    ai_generate: {
+      dimensions: {
+        more: 'Więcej',
+        title: 'Wymiary obrazu',
+      },
+      error: {
+        config_description: 'Nie udało się załadować konfiguracji AI',
+        config_message: 'Nie udało się załadować stylów AI',
+        generation_failed: 'Generowanie nie powiodło się',
+        import_failed: 'Import nie powiódł się',
+        insufficient_credits: 'Niewystarczające kredyty',
+      },
+      form: {
+        count: 'Ilość',
+        credit_required: 'Wymagane kredyty',
+        generate: 'Generuj',
+        laser_friendly: 'Przyjazny dla lasera',
+      },
+      header: {
+        history_tooltip: 'Historia',
+        reset_tooltip: 'Resetuj wszystko',
+        title: 'Tworzenie AI',
+      },
+      history: {
+        empty_description: 'Brak historii generowania. Zacznij tworzyć!',
+        error_message: 'Nie udało się załadować historii',
+        not_generated: '❌ Nie wygenerowano',
+        recreate: 'Utwórz ponownie',
+        status_failed: 'Niepowodzenie',
+        status_generating: 'Generowanie',
+        status_success: 'Sukces',
+        storage_notice: 'Zapisywanych jest do 10 ostatnich rekordów. Wygenerowane obrazy są przechowywane przez 3 dni.',
+        title: 'Historia generowania',
+      },
+      loading: {
+        history: 'Ładowanie historii...',
+        styles: 'Ładowanie stylów AI...',
+        tip_0: 'Uruchamianie kreatywnego silnika…',
+        tip_1: 'Polerowanie pikseli… ✨',
+        tip_2: 'Prawie gotowe, dopracowywanie szczegółów',
+        tip_3: 'Wciąż pracujemy, ta część wymaga więcej czasu',
+        tip_4: 'Wielkie pomysły wymagają czasu, dziękujemy za cierpliwość',
+      },
+      results: {
+        download: 'Pobierz',
+        import: 'Importuj',
+        title: 'Wyniki',
+      },
+      retry: 'Ponów',
+      style: {
+        apply: 'Zastosuj styl',
+        choose: 'Wybierz styl',
+        custom_creation: 'Niestandardowe tworzenie',
+        customize: 'Dostosuj',
+        select: 'Wybierz styl tworzenia',
+      },
+      upload: {
+        add: 'Dodaj',
+        click_or_drag: 'Kliknij lub przeciągnij obrazy tutaj',
+        error: 'Błąd przesyłania',
+        file_size_error: '%s: Rozmiar pliku musi być mniejszy niż %sMB',
+        file_type_error: '%s: Obsługiwane są tylko obrazy JPEG, PNG i WebP',
+        from_history: 'Z historii',
+        images: 'Prześlij obrazy',
+        max_images_error: 'Maksymalnie %s obrazów dozwolonych',
+        selected: '%s / %s wybranych',
+        supported_formats: 'JPEG, PNG, WebP • Maks. %s',
+      },
+      validation: {
+        description_or_image_required: 'Podaj opis lub prześlij co najmniej jeden obraz',
+        field_exceeds_max_length: '„%s" przekracza maksymalną długość %s znaków.',
+        field_required: '„%s" jest wymagane. Wypełnij to pole.',
+        login_required: 'Zaloguj się, aby korzystać z generowania AI.',
+        max_images: 'Maksymalnie %s obrazów dozwolonych',
+      },
+    },
     announcement_panel: {
       title: 'Ogłoszenie',
     },
@@ -334,9 +411,8 @@ const lang: ILang = {
     popup: {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/en-US/credit',
-        go: 'Iść',
-        insufficient_credit: 'Skończył Ci się kredyt',
-        insufficient_credit_msg: 'Nie możesz użyć %s. Przejdź do centrum członkowskiego i kup kredyt AI.',
+        insufficient_credit: 'Niewystarczający kredyt',
+        insufficient_credit_msg: 'Ta funkcja wymaga %s kredytów AI, ale masz tylko %s kredytów AI.\nProszę zakupić więcej kredytów i spróbować ponownie.',
         relogin_to_use: 'Aby skorzystać z tej funkcji, zaloguj się ponownie.',
       },
       auto_feeder_origin: 'Użyj podglądu kadrowania, aby sprawdzić ścieżkę i obszar głowicy laserowej, a następnie dostosuj położenie materiału lub pozycję początkową grawerowania na podstawie wyników, aby uniknąć kolizji podczas procesu grawerowania.',
@@ -1284,7 +1360,7 @@ const lang: ILang = {
       access_plus_feature_1: 'Uzyskujesz dostęp do funkcji',
       access_plus_feature_2: 'funkcja.',
       access_plus_feature_note: 'Musisz mieć członkostwo FLUX+, aby uzyskać dostęp do tej funkcji.',
-      ai_credit_tooltip: 'Dla usuwania tła AI',
+      ai_credit_tooltip: 'Dla funkcji AI',
       explore_plans: 'Zapoznaj się z planami FLUX+',
       features: {
         ai_bg_removal: 'Usuwanie tła AI',
