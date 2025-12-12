@@ -1,3 +1,5 @@
+import { sprintf } from 'sprintf-js';
+
 import alertCaller from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { createAiImageTask, pollTaskUntilComplete } from '@core/helpers/api/ai-image';
@@ -6,7 +8,7 @@ import { getInfo } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
 import type { IUser } from '@core/interfaces/IUser';
 
-import { AI_COST_PER_IMAGE, type ImageDimensions } from '../types';
+import { AI_COST_PER_IMAGE } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { objectToSnakeCase } from '../utils/caseConversion';
 import { getInputFieldsForStyle } from '../utils/inputFields';
@@ -27,7 +29,7 @@ const validateRequest = ({
   if (!user) return t.validation.login_required;
 
   // 2. Validate Image Count
-  if (imageInputs.length > 10) return t.validation.max_images.replace('%s', '10');
+  if (imageInputs.length > 10) return sprintf(t.validation.max_images, 10);
 
   // 3. Validate Required Fields
   const fieldDefs = getInputFieldsForStyle(style, styles);
@@ -46,11 +48,11 @@ const validateRequest = ({
     const value = inputFields[field.key] || '';
 
     if (field.required && !value.trim()) {
-      return t.validation.field_required.replace('%s', field.label);
+      return sprintf(t.validation.field_required, field.label);
     }
 
     if (field.maxLength && value.length > field.maxLength) {
-      return t.validation.field_exceeds_max_length.replace('%s', field.label).replace('%s', String(field.maxLength));
+      return sprintf(t.validation.field_exceeds_max_length, field.label, String(field.maxLength));
     }
   }
 
@@ -58,23 +60,22 @@ const validateRequest = ({
 };
 
 interface UseImageGenerationParams {
-  dimensions: ImageDimensions;
-  maxImages: number;
-  seed?: number;
   style: string;
   styles?: Style[];
   user: IUser | null;
 }
 
-export const useImageGeneration = ({
-  dimensions,
-  maxImages,
-  style = 'customize',
-  styles,
-  user,
-}: UseImageGenerationParams) => {
-  const store = useAiGenerateStore(); // Access store directly
-  const { clearGenerationResults, imageInputs, inputFields, updateHistoryItem } = store;
+export const useImageGeneration = ({ style = 'customize', styles, user }: UseImageGenerationParams) => {
+  const {
+    clearGenerationResults,
+    dimensions,
+    imageInputs,
+    inputFields,
+    loadHistory,
+    maxImages,
+    setState,
+    updateHistoryItem,
+  } = useAiGenerateStore();
 
   const handleGenerate = async () => {
     if (!user) {
@@ -87,7 +88,7 @@ export const useImageGeneration = ({
     const validationError = validateRequest({ style, styles, user });
 
     if (validationError) {
-      useAiGenerateStore.setState({ errorMessage: validationError });
+      setState({ errorMessage: validationError });
 
       return;
     }
@@ -104,7 +105,7 @@ export const useImageGeneration = ({
 
     // Preparation
     clearGenerationResults();
-    useAiGenerateStore.setState({ generationStatus: 'generating' });
+    setState({ generationStatus: 'generating' });
 
     const inputs = objectToSnakeCase(inputFields) as Record<string, string>;
 
@@ -122,7 +123,7 @@ export const useImageGeneration = ({
     // Execution
     const createResponse = await createAiImageTask(params);
 
-    await store.loadHistory();
+    await loadHistory();
 
     // Error Handling
     if ('error' in createResponse) {
@@ -131,7 +132,7 @@ export const useImageGeneration = ({
           ? `${createResponse.code}:${createResponse.error}`
           : createResponse.error;
 
-      useAiGenerateStore.setState({ errorMessage: errorMsg, generationStatus: 'failed' });
+      setState({ errorMessage: errorMsg, generationStatus: 'failed' });
 
       return;
     }
@@ -139,7 +140,7 @@ export const useImageGeneration = ({
     // Polling
     const { uuid } = createResponse;
 
-    useAiGenerateStore.setState({ generationUuid: uuid });
+    setState({ generationUuid: uuid });
 
     const result = await pollTaskUntilComplete(uuid, (state) => updateHistoryItem(uuid, { state }));
 
@@ -147,7 +148,7 @@ export const useImageGeneration = ({
     if (result.success && result.imageUrls) {
       // Update credits info first, then update store state to trigger re-render
       await getInfo({ silent: true });
-      useAiGenerateStore.setState({ generatedImages: result.imageUrls, generationStatus: 'success' });
+      setState({ generatedImages: result.imageUrls, generationStatus: 'success' });
       updateHistoryItem(uuid, {
         completed_at: new Date().toISOString(),
         result_urls: result.imageUrls,
@@ -156,7 +157,7 @@ export const useImageGeneration = ({
     } else {
       const failMsg = result.error || i18n.lang.beambox.ai_generate.error.generation_failed;
 
-      useAiGenerateStore.setState({ errorMessage: failMsg, generationStatus: 'failed' });
+      setState({ errorMessage: failMsg, generationStatus: 'failed' });
       updateHistoryItem(uuid, { fail_msg: failMsg, state: 'fail' });
     }
   };

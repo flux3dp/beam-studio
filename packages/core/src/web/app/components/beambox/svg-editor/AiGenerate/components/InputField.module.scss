@@ -1,5 +1,4 @@
-@use '@core/styles/variables' as vars-global;
-@use '../shared-variables' as vars;
+@use '../shared-variables' as *;
 
 .wrapper {
   display: flex;
@@ -10,7 +9,7 @@
 
   &.dragging {
     background: rgba(24, 144, 255, 0.05);
-    border: 2px dashed vars.$primary-blue;
+    border: 2px dashed $primary-blue;
     padding: 2px;
   }
 }
@@ -27,7 +26,7 @@
   font-size: 14px;
 
   &::placeholder {
-    color: vars.$text-placeholder;
+    color: $text-placeholder;
   }
 }
 
@@ -51,7 +50,7 @@
   height: 32px;
   border-radius: 50%;
   border: none;
-  background: vars-global.$backgroundColor;
+  background: $background-dark-gray;
   color: black;
   display: flex;
   align-items: center;
@@ -62,12 +61,12 @@
   margin-bottom: 8px;
 
   &:hover:not(.disabled) {
-    color: vars-global.$primary-blue;
+    color: $primary-blue;
     transform: scale(1.05);
   }
   &.disabled {
-    background: vars.$border-color;
-    color: vars.$text-secondary;
+    background: $border-color;
+    color: $text-secondary;
     cursor: not-allowed;
   }
   svg {
@@ -79,7 +78,7 @@
 .char-count {
   font-size: 12px;
   padding-bottom: 8px;
-  color: vars.$text-secondary;
+  color: $text-secondary;
 }
 .image-count {
   margin-left: 8px;
@@ -140,16 +139,16 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  border: 2px dashed vars.$border-color;
+  border: 2px dashed $border-color;
   border-radius: 8px;
   background: transparent;
-  color: vars.$text-secondary;
+  color: $text-secondary;
   cursor: pointer;
   transition: all 0.2s;
 
   &:hover {
-    border-color: vars.$primary-blue;
-    color: vars.$primary-blue;
+    border-color: $primary-blue;
+    color: $primary-blue;
   }
   svg {
     font-size: 24px;

@@ -2,7 +2,6 @@ import React, { memo, useCallback, useEffect, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
-import classNames from 'classnames';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -69,13 +68,11 @@ const UnmemorizedAiGenerate = () => {
     style,
     toggleLaserFriendly,
   } = useAiGenerateStore();
-  const { data: aiConfig, isError, isLoading, refetch } = useAiConfigQuery();
+  const { data: aiConfig, isError, isFetching, refetch } = useAiConfigQuery();
   const aiStyles = aiConfig?.styles || [];
   const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
   const { handleGenerate } = useImageGeneration({
-    dimensions,
-    maxImages,
     style: styleId,
     styles: aiStyles,
     user,
@@ -110,13 +107,13 @@ const UnmemorizedAiGenerate = () => {
 
   const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles), style);
 
-  if (isLoading) return <LoadingView onClose={() => setDrawerMode('none')} />;
+  if (isFetching) return <LoadingView contentRef={contentRef} />;
 
-  if (isError) return <ErrorView onClose={() => setDrawerMode('none')} onRetry={refetch} />;
+  if (isError) return <ErrorView contentRef={contentRef} onRetry={refetch} />;
 
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
-      <div className={classNames(styles['ai-generate-container'])}>
+      <div className={styles['ai-generate-container']}>
         <Header contentRef={contentRef} />
         <div className={styles.content} ref={contentRef}>
           {showHistory ? (

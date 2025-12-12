@@ -1,8 +1,7 @@
-@use '@core/styles/variables' as variables;
-@use './shared-variables' as vars;
+@use './shared-variables' as *;
 
 .ai-generate-container {
-  background: vars.$container-bg;
+  background: $container-bg;
   display: flex;
   flex-direction: column;
   height: 100%;
@@ -14,14 +13,14 @@
   align-items: center;
   justify-content: space-between;
   padding: 16px 20px;
-  border-bottom: 1px solid vars.$border-color;
+  border-bottom: 1px solid $border-color;
 }
 
 .title {
   margin: 0;
   font-size: 18px;
   font-weight: 600;
-  color: vars.$text-primary;
+  color: $text-primary;
 }
 
 .actions {
@@ -30,12 +29,12 @@
 }
 
 .icon-button {
-  color: vars.$text-secondary;
+  color: $text-secondary;
   &:hover {
-    color: vars.$text-primary;
+    color: $text-primary;
   }
   &.active {
-    color: vars.$primary-blue;
+    color: $primary-blue;
   }
 }
 
@@ -53,11 +52,11 @@
 }
 
 .section-title {
-  @include vars.section-title;
+  @include section-title;
 }
 
 .required {
-  color: vars.$text-error;
+  color: $error-color;
 }
 
 .style-selection-button {
@@ -91,7 +90,7 @@
 .textarea {
   font-size: 14px;
   &::placeholder {
-    color: vars.$text-placeholder;
+    color: $text-placeholder;
   }
 }
 
@@ -103,7 +102,7 @@
 
   .count {
     font-size: 12px;
-    color: vars.$text-secondary;
+    color: $text-secondary;
   }
 }
 
@@ -120,8 +119,8 @@
 .button-section {
   flex-shrink: 0;
   padding: 16px;
-  border-top: 1px solid vars.$border-color;
-  background: vars.$container-bg;
+  border-top: 1px solid $border-color;
+  background: $container-bg;
 }
 
 .generate-button {
@@ -140,7 +139,7 @@
 
 .credits-required {
   font-size: 13px;
-  color: vars.$text-secondary;
+  color: $text-secondary;
 }
 
 .credits-balance {
@@ -150,12 +149,12 @@
 
   svg {
     font-size: 16px;
-    color: vars.$ai-credit-icon;
+    color: $ai-credit-icon;
   }
   .ai-credit {
     font-size: 14px;
     font-weight: 500;
-    color: vars.$text-primary;
+    color: $text-primary;
   }
 
   &:hover {

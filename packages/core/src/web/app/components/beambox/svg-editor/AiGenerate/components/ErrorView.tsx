@@ -9,13 +9,13 @@ import styles from '../index.module.scss';
 
 import Header from './Header';
 
-const ErrorView = ({ onClose, onRetry }: { onClose: () => void; onRetry: () => void }) => {
+const ErrorView = ({ contentRef, onRetry }: { contentRef: React.RefObject<HTMLDivElement>; onRetry: () => void }) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
 
   return (
     <div className={classNames(styles['ai-generate-container'])}>
-      <Header onClose={onClose} />
+      <Header contentRef={contentRef} />
       <div className={styles.content}>
         <Alert
           action={

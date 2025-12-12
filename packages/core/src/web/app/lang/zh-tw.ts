@@ -412,7 +412,7 @@ const lang: ILang = {
       ai_credit: {
         buy_link: 'https://member.flux3dp.com/zh-TW/credit',
         insufficient_credit: '點數不足',
-        insufficient_credit_msg: '此功能需要 %s 個 AI 點數，但您目前僅剩 %s 個。\n請購買更多點數後再試一次。',
+        insufficient_credit_msg: '此功能需要 %s 點 AI 點數，但您目前僅剩 %s 點。\n請購買更多點數後再試一次。',
         relogin_to_use: '請重新登入以使用此功能。',
       },
       auto_feeder_origin: '請先使用外框預覽檢查雷射頭的運行路徑與範圍，然後根據結果調整板材位置或雕刻起點，以防止雕刻過程中的碰撞。',

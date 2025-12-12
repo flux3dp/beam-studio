@@ -1,22 +1,14 @@
-@use '@core/styles/variables' as variables;
-
-$card-border-color: #e8e8e8;
-$image-border-color: #f0f0f0;
-$text-primary: #333333;
-$text-secondary: #999999;
-$success-color: #52c41a;
-$error-color: #ff4d4f;
-$chip-bg: #f5f5f5; // Light grey for chips
+@use '../shared-variables' as *;
 
 .card {
-  border: 1px solid $card-border-color;
+  border: 1px solid $border-color;
   border-radius: 12px;
   overflow: hidden;
   transition: all 0.3s;
   box-shadow: none;
 
   &:hover {
-    border-color: variables.$primary-blue;
+    border-color: $primary-blue;
   }
 }
 
@@ -47,8 +39,8 @@ $chip-bg: #f5f5f5; // Light grey for chips
   aspect-ratio: 4 / 3;
   overflow: hidden;
   border-radius: 8px;
-  border: 1px solid $image-border-color;
-  background-color: #fafafa;
+  border: 1px solid $background-dark-gray;
+  background-color: $background-light-gray;
 
   &:hover .overlay {
     opacity: 1;
@@ -90,8 +82,8 @@ $chip-bg: #f5f5f5; // Light grey for chips
   align-items: center;
   justify-content: center;
   font-size: 14px;
-  color: $text-secondary;
-  background-color: #fafafa;
+  color: $text-placeholder;
+  background-color: $background-light-gray;
   border-radius: 8px;
 }
 
@@ -128,7 +120,7 @@ $chip-bg: #f5f5f5; // Light grey for chips
 
 .date {
   font-size: 12px;
-  color: $text-secondary;
+  color: $text-placeholder;
   line-height: 1.2;
 }
 
@@ -141,13 +133,13 @@ $chip-bg: #f5f5f5; // Light grey for chips
 .recreateButton {
   border-radius: 100px;
   font-weight: 500;
-  border-color: $card-border-color;
+  border-color: $border-color;
   padding-left: 20px;
   padding-right: 20px;
 
   &:hover {
-    color: variables.$primary-blue;
-    border-color: variables.$primary-blue;
+    color: $primary-blue;
+    border-color: $primary-blue;
   }
 }
 
@@ -169,7 +161,7 @@ $chip-bg: #f5f5f5; // Light grey for chips
 
 .expandedInfo {
   padding: 12px;
-  border-top: 1px solid $card-border-color;
+  border-top: 1px solid $border-color;
   animation: slideDown 0.2s ease-out;
 }
 
@@ -191,7 +183,7 @@ $chip-bg: #f5f5f5; // Light grey for chips
   display: inline-flex;
   align-items: center;
   gap: 6px;
-  background-color: $chip-bg;
+  background-color: $background-light-gray;
   padding: 4px 8px;
   border-radius: 6px;
   font-size: 12px;
@@ -201,19 +193,19 @@ $chip-bg: #f5f5f5; // Light grey for chips
 
 .chipIcon {
   font-size: 14px;
-  color: $text-primary; // or a slightly darker grey if preferred
+  color: $text-primary;
 }
 
 .chipText {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
-  max-width: 150px; // Limit width of text chips
+  max-width: 150px;
 }
 
 .error {
   padding: 16px;
-  border-top: 1px solid $card-border-color;
+  border-top: 1px solid $border-color;
   animation: slideDown 0.2s ease-out;
   background: #fff2f0;
   border: 1px solid #ffccc7;

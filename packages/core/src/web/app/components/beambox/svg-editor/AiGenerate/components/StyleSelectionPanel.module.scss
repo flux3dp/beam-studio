@@ -1,9 +1,4 @@
-$border-color: #e8e8e8;
-$primary-blue: #1890ff;
-$text-primary: #333333;
-$text-secondary: #666666;
-$selected-border: #1890ff;
-$hover-bg: #f5f5f5;
+@use '../shared-variables' as *;
 
 .container {
   display: flex;
@@ -19,7 +14,7 @@ $hover-bg: #f5f5f5;
   border-right: 1px solid $border-color;
   display: flex;
   flex-direction: column;
-  background: #ffffff;
+  background: $container-bg;
   flex-shrink: 0;
 }
 
@@ -42,12 +37,12 @@ $hover-bg: #f5f5f5;
   font-weight: 500;
 
   &:hover {
-    background: $hover-bg;
+    background: $background-light-gray;
     color: $text-primary;
   }
 
   &.active {
-    background: #e6f7ff;
+    background: $selected-bg;
     color: $primary-blue;
 
     // Optional: Add a left border indicator if desired
@@ -94,7 +89,7 @@ $hover-bg: #f5f5f5;
   flex: 1;
   padding: 12px;
   overflow-y: auto;
-  background: #fff;
+  background: $container-bg;
 }
 
 .options-grid {

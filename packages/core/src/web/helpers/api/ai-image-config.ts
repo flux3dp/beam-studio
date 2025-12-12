@@ -72,7 +72,7 @@ export interface Style extends StyleWithoutInputFields {
 }
 
 const API_BASE = `${FLUXID_HOST}/api/ai-image`;
-const FALLBACK_IMAGE = 'https://picsum.photos/id/80/80';
+const FALLBACK_IMAGE = 'https://s3.ap-northeast-1.amazonaws.com/flux-id/ai-styles/customize/en-us.png';
 
 export const getLocale = (): string => {
   const lang = i18n.getActiveLang();
@@ -142,16 +142,4 @@ export const fetchAllAiConfig = async () => {
     categories: categoriesData.toSorted((a, b) => a.order - b.order).map(mapCategory),
     styles: stylesData.toSorted((a, b) => a.order - b.order).map(mapStyle),
   };
-};
-
-export const getInputFieldsForStyle = async (styleId: string) => {
-  const styles = await fetchStyles();
-
-  if ('error' in styles) return styles;
-
-  const style = styles.find((s) => s.id === styleId);
-
-  if (!style) return { error: `Style ${styleId} not found` };
-
-  return { fields: style.input_fields.map(mapInputField) };
 };

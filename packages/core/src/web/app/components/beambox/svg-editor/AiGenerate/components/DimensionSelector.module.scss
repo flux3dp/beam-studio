@@ -1,4 +1,4 @@
-@use '../shared-variables' as vars;
+@use '../shared-variables' as *;
 
 .section {
   margin-bottom: 24px;
@@ -9,7 +9,7 @@
 }
 
 .section-title {
-  @include vars.section-title;
+  @include section-title;
 }
 
 .dimension-group {
@@ -29,7 +29,7 @@
 }
 
 .dimension-button {
-  @include vars.button-base;
+  @include button-base;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -53,7 +53,7 @@
 }
 
 .ratio-box {
-  @include vars.ratio-box-base;
+  @include ratio-box-base;
   border-radius: 1.5px;
 
   &.ratio-1-1 {
@@ -134,9 +134,8 @@
 
 .floating-ratio-menu-portal {
   position: fixed;
-  left: calc(100%);
-  background: vars.$container-bg;
-  border: 1px solid vars.$button-border;
+  background: $container-bg;
+  border: 1px solid $button-border;
   border-radius: 6px;
   padding: 8px;
   box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
@@ -154,13 +153,13 @@
   border: 1px solid transparent;
 
   &:hover {
-    background: vars.$background-light-gray;
+    background: $background-light-gray;
   }
 
   &.active {
-    background: vars.$selected-bg;
-    border-color: vars.$primary-blue;
-    color: vars.$primary-blue;
+    background: $selected-bg;
+    border-color: $primary-blue;
+    color: $primary-blue;
   }
 
   span {
@@ -180,7 +179,7 @@
 }
 
 .size-button {
-  @include vars.button-base;
+  @include button-base;
   display: flex;
   flex-direction: column;
   align-items: center;

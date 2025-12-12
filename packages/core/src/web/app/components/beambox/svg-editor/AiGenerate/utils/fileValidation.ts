@@ -2,6 +2,8 @@
  * File validation utilities for image uploads
  */
 
+import { sprintf } from 'sprintf-js';
+
 import i18n from '@core/helpers/i18n';
 
 export const ACCEPTED_IMAGE_TYPES = new Set(['image/jpeg', 'image/png', 'image/webp']);
@@ -22,18 +24,16 @@ export const validateImageFiles = (
   const t = i18n.lang.beambox.ai_generate;
 
   if (currentCount + files.length > maxImages) {
-    return t.validation.max_images.replace('%s', String(maxImages));
+    return sprintf(t.validation.max_images, String(maxImages));
   }
 
   for (const file of files) {
     if (!ACCEPTED_IMAGE_TYPES.has(file.type)) {
-      return t.upload.file_type_error.replace('%s', file.name);
+      return sprintf(t.upload.file_type_error, file.name);
     }
 
     if (file.size > maxSizeBytes) {
-      return t.upload.file_size_error
-        .replace('%s', file.name)
-        .replace('%s', String((maxSizeBytes / 1024 / 1024).toFixed(0)));
+      return sprintf(t.upload.file_size_error, file.name, String((maxSizeBytes / 1024 / 1024).toFixed(0)));
     }
   }
 
