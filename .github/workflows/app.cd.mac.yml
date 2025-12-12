@@ -77,7 +77,7 @@ jobs:
         uses: actions/checkout@v4
         with:
           repository: flux3dp/fluxclient-dev
-          ref: 2.9.10
+          ref: 2.9.11
           token: ${{ secrets.REPO_TOKEN }}
           path: ./apps/app/.github/actions/fluxclient
 
