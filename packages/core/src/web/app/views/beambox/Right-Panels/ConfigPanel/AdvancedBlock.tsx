@@ -3,7 +3,7 @@ import React, { memo, useEffect, useMemo } from 'react';
 import { Collapse, ConfigProvider } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { hexaRfModels, promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
@@ -24,6 +24,7 @@ import AmDensityBlock from './AmDensityBlock';
 import AutoFocus from './AutoFocus';
 import ColorAdvancedSettingButton from './ColorAdvancedSetting/ColorAdvancedSettingButton';
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
+import Delay from './Delay';
 import Diode from './Diode';
 import FocusBlock from './FocusBlock';
 import FrequencyBlock from './FrequencyBlock';
@@ -45,6 +46,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     [workarea],
   );
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
+  const isHexaRf = useMemo(() => hexaRfModels.has(workarea), [workarea]);
   const promarkInfo = isPromark ? getPromarkInfo() : null;
   const promarkLimit = useMemo(
     () => (promarkInfo ? getPromarkLimit() : null),
@@ -108,6 +110,10 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
     if (addOnInfo.hybridLaser && isDiodeEnabled) {
       contents.push(<Diode key="diode" />);
+    }
+
+    if (isDev() && isHexaRf) {
+      contents.push(<Delay key="delay" type={type} />);
     }
   } else {
     if (module.value === LayerModule.PRINTER_4C) {
