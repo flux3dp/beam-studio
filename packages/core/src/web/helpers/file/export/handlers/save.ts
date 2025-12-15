@@ -80,7 +80,7 @@ export const saveFile = async (): Promise<boolean> => {
     const output = svgCanvas.getSvgString();
 
     revert?.();
-    fs.writeFile(path, output);
+    await fs.writeFile(path, output);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;
