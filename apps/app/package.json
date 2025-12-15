@@ -111,7 +111,7 @@
       "target": [
         "dmg"
       ],
-      "icon": "public/icon.icon",
+      "icon": "public/icon.icns",
       "asarUnpack": "**/*.node"
     },
     "linux": {
