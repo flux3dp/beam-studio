@@ -1,6 +1,5 @@
-import fs from 'fs';
-
 import { dialog } from '@electron/remote';
+import writeFileAtomic from 'write-file-atomic';
 
 import type { DialogFilter, IDialog, OpenDialogProperties } from '@core/interfaces/IDialog';
 
@@ -75,12 +74,12 @@ export default {
       const content = await getContent();
 
       if (typeof content === 'string') {
-        fs.writeFileSync(targetPath, content);
+        await writeFileAtomic(targetPath, content);
       } else {
         const arrBuf = await content.arrayBuffer();
         const buf = Buffer.from(arrBuf);
 
-        fs.writeFileSync(targetPath, buf);
+        await writeFileAtomic(targetPath, buf);
       }
 
       return targetPath;

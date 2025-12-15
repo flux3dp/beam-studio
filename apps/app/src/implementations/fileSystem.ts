@@ -3,6 +3,7 @@ import path from 'path';
 
 import { app } from '@electron/remote';
 import electron from 'electron';
+import writeFileAtomic from 'write-file-atomic';
 
 import type { IFileSystem } from '@core/interfaces/IFileSystem';
 
@@ -57,8 +58,8 @@ export default {
       size: res.size,
     };
   },
-  writeFile(filePath: string, data: Buffer | string): void {
-    fs.writeFileSync(filePath, data as any);
+  async writeFile(filePath: string, data: Buffer | string): Promise<void> {
+    await writeFileAtomic(filePath, data);
   },
   writeStream(path: string, flags: string, data?: Buffer[]): void {
     const stream = fs.createWriteStream(path, {

@@ -89,7 +89,7 @@ export const saveFile = async (): Promise<boolean> => {
   if (path.endsWith('.beam')) {
     const buffer = await generateBeamBuffer();
 
-    fs.writeFile(path, buffer);
+    await fs.writeFile(path, buffer);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

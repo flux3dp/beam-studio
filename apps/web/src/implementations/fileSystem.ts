@@ -38,6 +38,8 @@ export default {
   statSync(filePath: string) {
     return { mtime: '', size: 0 };
   },
-  writeFile(filePath: string, data: Buffer | string): void {},
+  writeFile(filePath: string, data: Buffer | string): Promise<void> {
+    return Promise.resolve();
+  },
   writeStream(path: string, flags: string, data?: Buffer[]): void {},
 } as IFileSystem;
