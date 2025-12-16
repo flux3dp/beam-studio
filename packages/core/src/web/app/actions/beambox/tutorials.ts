@@ -4,6 +4,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { generateInterfaceTutorial, generateNewUserTutorial } from '@core/app/constants/tutorial-constants';
 import { discoverManager } from '@core/helpers/api/discover';
 import getDevice from '@core/helpers/device/get-device';
+import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 
 const getMachineForTutorial = async () =>
@@ -51,7 +52,7 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
         className: 'btn-default primary',
         label: LANG.set_connection,
         onClick: () => {
-          window.location.hash = '#/initialize/connect/select-machine-model';
+          window.location.hash = hashMap.machineSetup;
         },
       },
       {

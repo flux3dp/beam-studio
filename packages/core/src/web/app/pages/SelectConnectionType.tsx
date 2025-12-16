@@ -5,6 +5,7 @@ import { useLocation } from 'react-router-dom';
 
 import { supportUsbModels } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { hashMap } from '@core/helpers/hashHelper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './SelectConnectionType.module.scss';
@@ -22,7 +23,7 @@ const SelectConnectionType = (): React.JSX.Element => {
   const model = useMemo(() => new URLSearchParams(search).get('model') as WorkAreaModel, [search]);
 
   const handleBack = () => {
-    window.location.hash = '#/initialize/connect/select-machine-model';
+    window.location.hash = hashMap.machineSetup;
   };
 
   const handleConnectionTypeClick = (type: 'ether2ether' | 'usb' | 'wifi' | 'wired') => {

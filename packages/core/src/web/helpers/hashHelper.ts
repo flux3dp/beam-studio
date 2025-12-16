@@ -6,6 +6,7 @@ export const hashMap = {
   editor: '#/studio/beambox',
   machineSetup: '#/initialize/connect/select-machine-model',
   root: '#',
+  settings: '#/studio/settings',
   welcome: '#/studio/welcome',
 };
 

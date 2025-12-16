@@ -6,6 +6,8 @@ import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 
+import { hashMap } from './hashHelper';
+
 const webNeedConnectionWrapper = <T>(callback: () => Promise<T> | T): Promise<T> | T => {
   if (isWeb() && !discoverManager.checkConnection()) {
     alertCaller.popUp({
@@ -14,10 +16,8 @@ const webNeedConnectionWrapper = <T>(callback: () => Promise<T> | T): Promise<T>
       callbacks: async () => {
         ObjectPanelController.updateActiveKey(null);
 
-        const res = await toggleUnsavedChangedDialog();
-
-        if (res) {
-          window.location.hash = '#/initialize/connect/select-machine-model';
+        if (await toggleUnsavedChangedDialog()) {
+          window.location.hash = hashMap.machineSetup;
         }
       },
       caption: i18n.lang.alert.oops,
