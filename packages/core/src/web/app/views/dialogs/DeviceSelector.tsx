@@ -10,6 +10,7 @@ import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeI
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { discoverManager, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
+import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -67,10 +68,8 @@ const DeviceSelector = ({ onClose, onSelect }: Props): React.JSX.Element => {
               onSelect(null);
               onClose();
 
-              const res = await toggleUnsavedChangedDialog();
-
-              if (res) {
-                window.location.hash = '#/initialize/connect/select-machine-model';
+              if (await toggleUnsavedChangedDialog()) {
+                window.location.hash = hashMap.machineSetup;
               }
             },
             type: 'primary',
