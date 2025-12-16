@@ -80,7 +80,7 @@ export const saveFile = async (): Promise<boolean> => {
     const output = svgCanvas.getSvgString();
 
     revert?.();
-    fs.writeFile(path, output);
+    await fs.writeFile(path, output);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;
@@ -89,7 +89,7 @@ export const saveFile = async (): Promise<boolean> => {
   if (path.endsWith('.beam')) {
     const buffer = await generateBeamBuffer();
 
-    fs.writeFile(path, buffer);
+    await fs.writeFile(path, buffer);
     currentFileManager.setHasUnsavedChanges(false, false);
 
     return true;

@@ -13,6 +13,6 @@ export interface IFileSystem {
   readFile(filePath: string, encoding?: BufferEncoding): string;
   rename(oldPath: string, newPath: string): Promise<void>;
   statSync(filePath: string): { mtime: string; size: number };
-  writeFile(filePath: string, data: Buffer | string): void;
+  writeFile(filePath: string, data: Buffer | string): Promise<void>;
   writeStream(path: string, flags: string, data?: Buffer[]): void;
 }
