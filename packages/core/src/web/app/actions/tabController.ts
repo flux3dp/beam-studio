@@ -14,7 +14,7 @@ import communicator from '@core/implementations/communicator';
 import type { Tab } from '@core/interfaces/Tab';
 
 class TabController extends EventEmitter {
-  private currentInfo: null | { isCloud: boolean; title: string } = null;
+  private currentInfo: null | { hasUnsavedChanges: boolean; isCloud: boolean; title: string } = null;
 
   public currentId: null | number = null;
   public isFocused = false;
@@ -45,12 +45,17 @@ class TabController extends EventEmitter {
       const { isCloudFile } = currentFileManager;
       const name = currentFileManager.getName();
       const hasUnsavedChanges = currentFileManager.getHasUnsavedChanges();
-      const title = `${name || i18n.lang.topbar.untitled}${hasUnsavedChanges ? '*' : ''}`;
+      const title = name || i18n.lang.topbar.untitled;
       const { currentInfo } = this;
 
-      if (!currentInfo || currentInfo.title !== title || currentInfo.isCloud !== isCloudFile) {
-        this.currentInfo = { isCloud: isCloudFile, title };
-        communicator.send(TabEvents.SetTabTitle, title, isCloudFile);
+      if (
+        !currentInfo ||
+        currentInfo.title !== title ||
+        currentInfo.isCloud !== isCloudFile ||
+        currentInfo.hasUnsavedChanges !== hasUnsavedChanges
+      ) {
+        this.currentInfo = { hasUnsavedChanges, isCloud: isCloudFile, title };
+        communicator.send(TabEvents.SetTabTitle, title, isCloudFile, hasUnsavedChanges);
       }
     };
 
