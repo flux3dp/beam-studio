@@ -236,6 +236,7 @@
       'data-nozzleMode',
       'data-nozzleOffsetX',
       'data-nozzleOffsetY',
+      'data-delay',
     ],
     image: [
       'data-ratiofixed',

@@ -18,6 +18,8 @@ type CommonConfig = {
 type LaserConfig = {
   /** 0-100, percentage */
   airAssist: number;
+  /** μs ,delay to emit laser */
+  delay: number;
   diode: number;
   focus: number;
   focusStep: number;
