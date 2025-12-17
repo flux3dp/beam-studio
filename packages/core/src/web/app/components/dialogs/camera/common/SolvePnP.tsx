@@ -33,6 +33,7 @@ interface Props {
   initExposure?: number;
   initialPoints?: Array<[number, number]>;
   initInterestArea?: { height: number; width: number; x: number; y: number };
+  label?: string;
   onBack: () => void;
   onClose: (complete: boolean) => void;
   onNext: (rvec: number[][], tvec: number[][], imgPoints: Array<[number, number]>) => void;
@@ -58,6 +59,7 @@ const SolvePnP = ({
   initExposure,
   initialPoints,
   initInterestArea,
+  label,
   onBack,
   onClose,
   onNext,
@@ -481,6 +483,7 @@ const SolvePnP = ({
               </div>
               <PointIndicator
                 currentIndex={selectedPointIdx}
+                label={label}
                 onSelect={setSelectedPointIdx}
                 points={refPoints.length as 4 | 8}
               />

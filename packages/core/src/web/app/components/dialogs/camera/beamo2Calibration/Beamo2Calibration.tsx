@@ -285,6 +285,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           initExposure={exposure}
           initialPoints={calibratingParam.current.imgPoints1?.[region]}
           initInterestArea={interestArea}
+          label={['A', 'B', 'C', 'D'][solvePnPStep]}
           onBack={prev}
           onClose={onClose}
           onNext={async (rvec, tvec, point) => {
@@ -301,12 +302,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           }}
           params={calibratingParam.current}
           refPoints={bm2PnPPoints[region]}
-          steps={[
-            tCalibration.align_top_left,
-            tCalibration.align_top_right,
-            tCalibration.align_bottom_left,
-            tCalibration.align_bottom_right,
-          ]}
+          steps={['A', 'B', 'C', 'D']}
         />
       );
     })

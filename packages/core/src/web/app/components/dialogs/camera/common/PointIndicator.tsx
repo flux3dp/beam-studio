@@ -4,11 +4,12 @@ import styles from './PointIndicator.module.scss';
 
 interface Props {
   currentIndex: number;
+  label?: string;
   onSelect?: (index: number) => void;
   points: 4 | 8;
 }
 
-const PointIndicator = ({ currentIndex, onSelect, points }: Props) => {
+const PointIndicator = ({ currentIndex, label, onSelect, points }: Props) => {
   return (
     <div className={styles.container}>
       {Array.from({ length: points }).map((_, index) => (
@@ -26,6 +27,7 @@ const PointIndicator = ({ currentIndex, onSelect, points }: Props) => {
           {index}
         </div>
       ))}
+      <div className={styles.label}>{label}</div>
     </div>
   );
 };
