@@ -15,6 +15,7 @@ import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
 
 import ExposureSlider from './ExposureSlider';
 import ImageDisplay from './ImageDisplay';
+import PointIndicator from './PointIndicator';
 import styles from './SolvePnP.module.scss';
 import { adorPnPPoints } from './solvePnPConstants';
 import StepProgress from './StepProgress';
@@ -478,7 +479,11 @@ const SolvePnP = ({
                   </Col>
                 </Row>
               </div>
-              <img src={`core-img/calibration/solve-pnp-${refPoints.length}-${selectedPointIdx}.jpg`} />
+              <PointIndicator
+                currentIndex={selectedPointIdx}
+                onSelect={setSelectedPointIdx}
+                points={refPoints.length as 4 | 8}
+              />
             </Flex>
           )}
         </div>
