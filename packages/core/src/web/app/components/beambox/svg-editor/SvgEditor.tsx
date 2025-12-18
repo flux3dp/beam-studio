@@ -14,6 +14,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
+import ElementPanel from '@core/app/views/beambox/ElementPanel/ElementPanel';
 import Drawer from '@core/app/widgets/Drawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -86,6 +87,14 @@ export const SvgEditor = (): ReactNode => {
             </div>
           </>
         )}
+
+        <Drawer
+          enableResizable={false}
+          isOpen={drawerMode === 'element-panel'}
+          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'element-panel' : 'none')}
+        >
+          <ElementPanel />
+        </Drawer>
 
         <Drawer
           enableResizable={false}

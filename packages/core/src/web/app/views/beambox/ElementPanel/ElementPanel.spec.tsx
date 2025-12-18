@@ -2,7 +2,6 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
 import { ContentType } from '@core/app/constants/element-panel-constants';
 
 window.innerHeight = 667;
@@ -13,17 +12,19 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('@core/app/contexts/ElementPanelContext', () => ({ ElementPanelContext: React.createContext({}) }));
-
 jest.mock('./MainContent', () => 'main-content');
 
 const mockSetActiveMainType = jest.fn();
 const mockSetActiveSubType = jest.fn();
 const mockSetSearchKey = jest.fn();
 const mockUpdateSearchContents = jest.fn();
-const mockContext: any = {
+const mockCloseDrawer = jest.fn();
+const mockSetDrawerMode = jest.fn();
+
+let mockStoreState: any = {
   activeMainType: 'basic',
   activeSubType: undefined,
+  closeDrawer: mockCloseDrawer,
   contentType: ContentType.MainType,
   hasLogin: true,
   open: true,
@@ -34,19 +35,36 @@ const mockContext: any = {
   updateSearchContents: mockUpdateSearchContents,
 };
 
+jest.mock('@core/app/stores/elementPanelStore', () => ({
+  useElementPanelStore: (selector: (state: any) => any) => selector(mockStoreState),
+}));
+
+jest.mock('@core/app/stores/canvas/canvasStore', () => ({
+  useCanvasStore: () => ({ setDrawerMode: mockSetDrawerMode }),
+}));
+
 import { ElementPanelContent } from './ElementPanel';
 
 describe('test ElementPanel Header', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockStoreState = {
+      activeMainType: 'basic',
+      activeSubType: undefined,
+      closeDrawer: mockCloseDrawer,
+      contentType: ContentType.MainType,
+      hasLogin: true,
+      open: true,
+      searchKey: undefined,
+      setActiveMainType: mockSetActiveMainType,
+      setActiveSubType: mockSetActiveSubType,
+      setSearchKey: mockSetSearchKey,
+      updateSearchContents: mockUpdateSearchContents,
+    };
   });
 
   it('should render MainType correctly', () => {
-    const { baseElement, getByText } = render(
-      <ElementPanelContext.Provider value={mockContext}>
-        <ElementPanelContent />
-      </ElementPanelContext.Provider>,
-    );
+    const { baseElement, getByText } = render(<ElementPanelContent />);
 
     expect(baseElement).toMatchSnapshot();
 
@@ -65,13 +83,9 @@ describe('test ElementPanel Header', () => {
   });
 
   it('should render SubType correctly', () => {
-    const { baseElement } = render(
-      <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}
-      >
-        <ElementPanelContent />
-      </ElementPanelContext.Provider>,
-    );
+    mockStoreState = { ...mockStoreState, activeSubType: 'shape', contentType: ContentType.SubType };
+
+    const { baseElement } = render(<ElementPanelContent />);
 
     expect(baseElement).toMatchSnapshot();
 
@@ -89,13 +103,9 @@ describe('test ElementPanel Header', () => {
   });
 
   it('should render Search correctly', () => {
-    const { baseElement } = render(
-      <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' }}
-      >
-        <ElementPanelContent />
-      </ElementPanelContext.Provider>,
-    );
+    mockStoreState = { ...mockStoreState, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' };
+
+    const { baseElement } = render(<ElementPanelContent />);
 
     expect(baseElement).toMatchSnapshot();
 
@@ -132,14 +142,23 @@ describe('test ElementPanel Header in mobile', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useIsMobile.mockReturnValue(true);
+    mockStoreState = {
+      activeMainType: 'basic',
+      activeSubType: undefined,
+      closeDrawer: mockCloseDrawer,
+      contentType: ContentType.MainType,
+      hasLogin: true,
+      open: true,
+      searchKey: undefined,
+      setActiveMainType: mockSetActiveMainType,
+      setActiveSubType: mockSetActiveSubType,
+      setSearchKey: mockSetSearchKey,
+      updateSearchContents: mockUpdateSearchContents,
+    };
   });
 
   it('should render MainType correctly', async () => {
-    const { container, getByText } = render(
-      <ElementPanelContext.Provider value={mockContext}>
-        <ElementPanelContent />
-      </ElementPanelContext.Provider>,
-    );
+    const { container, getByText } = render(<ElementPanelContent />);
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
 
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-627px)))'), {
@@ -161,13 +180,9 @@ describe('test ElementPanel Header in mobile', () => {
   });
 
   it('should render SubType correctly', async () => {
-    const { container } = render(
-      <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}
-      >
-        <ElementPanelContent />
-      </ElementPanelContext.Provider>,
-    );
+    mockStoreState = { ...mockStoreState, activeSubType: 'shape', contentType: ContentType.SubType };
+
+    const { container } = render(<ElementPanelContent />);
 
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
 
@@ -191,13 +206,9 @@ describe('test ElementPanel Header in mobile', () => {
   });
 
   it('should render Search correctly', async () => {
-    const { container } = render(
-      <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' }}
-      >
-        <ElementPanelContent />
-      </ElementPanelContext.Provider>,
-    );
+    mockStoreState = { ...mockStoreState, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' };
+
+    const { container } = render(<ElementPanelContent />);
 
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
 

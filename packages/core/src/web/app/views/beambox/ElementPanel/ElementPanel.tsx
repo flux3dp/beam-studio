@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useMemo, useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
@@ -10,7 +10,8 @@ import classNames from 'classnames';
 import type { MainType } from '@core/app/constants/element-panel-constants';
 import { ContentType, MainTypes, NPTypes } from '@core/app/constants/element-panel-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
-import { ElementPanelContext, ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useElementPanelStore } from '@core/app/stores/elementPanelStore';
 import Select from '@core/app/widgets/AntdSelect';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -20,20 +21,19 @@ import styles from './ElementPanel.module.scss';
 import MainContent from './MainContent';
 
 export const ElementPanelContent = (): ReactNode => {
-  const {
-    activeMainType,
-    activeSubType,
-    closeDrawer,
-    contentType,
-    hasLogin,
-    onClose,
-    open,
-    searchKey,
-    setActiveMainType,
-    setActiveSubType,
-    setSearchKey,
-    updateSearchContents,
-  } = useContext(ElementPanelContext);
+  const activeMainType = useElementPanelStore((s) => s.activeMainType);
+  const activeSubType = useElementPanelStore((s) => s.activeSubType);
+  const closeDrawer = useElementPanelStore((s) => s.closeDrawer);
+  const contentType = useElementPanelStore((s) => s.contentType);
+  const hasLogin = useElementPanelStore((s) => s.hasLogin);
+  const open = useElementPanelStore((s) => s.open);
+  const searchKey = useElementPanelStore((s) => s.searchKey);
+  const setActiveMainType = useElementPanelStore((s) => s.setActiveMainType);
+  const setActiveSubType = useElementPanelStore((s) => s.setActiveSubType);
+  const setSearchKey = useElementPanelStore((s) => s.setSearchKey);
+  const updateSearchContents = useElementPanelStore((s) => s.updateSearchContents);
+  const { setDrawerMode } = useCanvasStore();
+  const onClose = () => setDrawerMode('none');
   const [error, setError] = useState(false);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();
@@ -196,12 +196,8 @@ export const ElementPanelContent = (): ReactNode => {
   );
 };
 
-const ElementPanel = ({ onClose }: { onClose: () => void }) => {
-  return (
-    <ElementPanelProvider onClose={onClose}>
-      <ElementPanelContent />
-    </ElementPanelProvider>
-  );
+const ElementPanel = () => {
+  return <ElementPanelContent />;
 };
 
 export default ElementPanel;

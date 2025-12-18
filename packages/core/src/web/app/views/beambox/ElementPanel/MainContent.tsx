@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import React, { useEffect, useMemo, useRef } from 'react';
 
 import { Button } from 'antd';
 import { sprintf } from 'sprintf-js';
@@ -7,7 +7,8 @@ import { sprintf } from 'sprintf-js';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ThemedButton from '@core/app/components/common/ThemedButton';
 import { ContentType, type MainType } from '@core/app/constants/element-panel-constants';
-import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
+import { useElementPanelStore } from '@core/app/stores/elementPanelStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -20,9 +21,16 @@ interface Props {
   types: MainType[];
 }
 
+const previewCount = 12;
+
 const MainContent = ({ types }: Props): ReactNode => {
-  const { contents, contentType, hasLogin, historyIcons, setActiveMainType, setActiveSubType, setSearchKey } =
-    useContext(ElementPanelContext);
+  const contents = useElementPanelStore((s) => s.contents);
+  const contentType = useElementPanelStore((s) => s.contentType);
+  const hasLogin = useElementPanelStore((s) => s.hasLogin);
+  const setActiveMainType = useElementPanelStore((s) => s.setActiveMainType);
+  const setActiveSubType = useElementPanelStore((s) => s.setActiveSubType);
+  const setSearchKey = useElementPanelStore((s) => s.setSearchKey);
+  const historyIcons = (useStorageStore((s) => s['elements-history']) || []).slice(0, previewCount);
   const lang = useI18n().beambox.elements_panel;
 
   const scrollDivRef = useRef<HTMLDivElement>(null);

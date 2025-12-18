@@ -1,12 +1,12 @@
 import type { ComponentType } from 'react';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import Icon from '@ant-design/icons';
 import ReactDomServer from 'react-dom/server';
 
 import { builtInElements } from '@core/app/constants/element-panel-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
+import { useElementPanelStore } from '@core/app/stores/elementPanelStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -66,7 +66,8 @@ const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
 
 const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string }): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const { addToHistory, closeDrawer } = useContext(ElementPanelContext);
+  const addToHistory = useElementPanelStore((s) => s.addToHistory);
+  const closeDrawer = useElementPanelStore((s) => s.closeDrawer);
   const [key, folder, fileName] = useMemo(() => {
     if (mainType) {
       return [`${mainType}/${path}`, mainType, path];

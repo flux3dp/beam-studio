@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
-import { type Content, ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
+import { type Content, useElementPanelStore } from '@core/app/stores/elementPanelStore';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Content.module.scss';
@@ -17,7 +17,9 @@ interface Props {
 }
 
 const GridContent = ({ content }: Props): ReactNode => {
-  const { getNPIcons, hasLogin, setActiveSubType } = useContext(ElementPanelContext);
+  const getNPIcons = useElementPanelStore((s) => s.getNPIcons);
+  const hasLogin = useElementPanelStore((s) => s.hasLogin);
+  const setActiveSubType = useElementPanelStore((s) => s.setActiveSubType);
   const lang = useI18n().beambox.elements_panel;
 
   return (

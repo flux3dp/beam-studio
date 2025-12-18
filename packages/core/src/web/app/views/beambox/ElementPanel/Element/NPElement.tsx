@@ -1,9 +1,9 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import classNames from 'classnames';
 
 import progressCaller from '@core/app/actions/progress-caller';
-import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
+import { useElementPanelStore } from '@core/app/stores/elementPanelStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -52,7 +52,8 @@ const importNPSvg = async (id: string) => {
 };
 
 const NPElement = ({ icon }: { icon: IIcon }) => {
-  const { addToHistory, closeDrawer } = useContext(ElementPanelContext);
+  const addToHistory = useElementPanelStore((s) => s.addToHistory);
+  const closeDrawer = useElementPanelStore((s) => s.closeDrawer);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(icon.hidden);
 

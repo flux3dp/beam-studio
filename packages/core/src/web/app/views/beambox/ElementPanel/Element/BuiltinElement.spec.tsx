@@ -23,8 +23,12 @@ jest.mock('@core/app/constants/element-panel-constants', () => ({
 const mockCloseDrawer = jest.fn();
 const mockAddToHistory = jest.fn();
 
-jest.mock('@core/app/contexts/ElementPanelContext', () => ({
-  ElementPanelContext: React.createContext({ addToHistory: mockAddToHistory, closeDrawer: mockCloseDrawer }),
+jest.mock('@core/app/stores/elementPanelStore', () => ({
+  useElementPanelStore: (selector: (state: any) => any) =>
+    selector({
+      addToHistory: mockAddToHistory,
+      closeDrawer: mockCloseDrawer,
+    }),
 }));
 
 const mockBatchCommand = { addSubCommand: jest.fn() };
