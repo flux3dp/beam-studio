@@ -76,8 +76,7 @@ type PrintingConfig = {
  * Configs for uv module.
  */
 type UVConfig = {
-  uvIntervalX: number;
-  uvIntervalY: number;
+  uvDpi: number;
 };
 
 type PromarkConfig = {
