@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'More',
+        ratio: 'Ratio',
+        resolution: 'Resolution',
         title: 'Image Dimensions',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Count',
         credit_required: 'Credit required',
+        editor: 'Editor',
         generate: 'Generate',
         laser_friendly: 'Laser-Friendly',
       },

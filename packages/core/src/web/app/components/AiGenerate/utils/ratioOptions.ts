@@ -24,3 +24,5 @@ export const ADDITIONAL_RATIOS = [
   { aspectRatio: '9:16', displayLabel: '9:16' },
   { aspectRatio: '21:9', displayLabel: '21:9' },
 ] as const;
+
+export const ALL_RATIOS: RatioOption[] = [...ALWAYS_DISPLAYED_RATIOS, ...ADDITIONAL_RATIOS];

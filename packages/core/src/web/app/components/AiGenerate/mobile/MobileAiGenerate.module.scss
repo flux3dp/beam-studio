@@ -1,0 +1,278 @@
+@use './shared-variables' as *;
+
+// ============================================
+// Main Panel Styles
+// ============================================
+
+.panel [class*='scroll-content'] {
+  overflow-y: auto;
+  margin-bottom: 54px;
+  padding-bottom: 0;
+}
+
+.header {
+  padding: 0 12px 0;
+
+  .tabs {
+    width: 100%;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 16px;
+  padding-bottom: 140px; // Space for footer
+}
+
+// ============================================
+// Section Styles
+// ============================================
+
+.section {
+  margin-bottom: 24px;
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  .section-title {
+    @include section-title;
+    margin-bottom: 0;
+  }
+
+  .reset-button {
+    color: $text-secondary;
+    padding: 4px 8px;
+    height: auto;
+    font-size: 14px;
+  }
+}
+
+.section-title {
+  @include section-title;
+}
+
+.required {
+  color: $error-color;
+}
+
+// ============================================
+// Style Selection Button
+// ============================================
+
+.style-selection-button {
+  height: auto;
+  padding: 12px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .style-img {
+    width: 48px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .button-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+    gap: 8px;
+  }
+
+  .button-label {
+    font-size: 15px;
+    font-weight: 500;
+  }
+}
+
+// ============================================
+// Ratio Button
+// ============================================
+
+.ratio-button {
+  height: auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .ratio-preview {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+}
+
+// ============================================
+// Size Button
+// ============================================
+
+.size-button {
+  height: auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .size-label {
+    font-weight: 500;
+  }
+}
+
+// ============================================
+// Ratio Box Icons (for dimension button preview)
+// ============================================
+
+@mixin ratio-box-base {
+  border: 2px solid currentColor;
+  background: transparent;
+  border-radius: 2px;
+}
+
+.ratio-1-1 {
+  @include ratio-box-base;
+  width: 24px;
+  height: 24px;
+}
+
+.ratio-4-3 {
+  @include ratio-box-base;
+  width: 28px;
+  height: 21px;
+}
+
+.ratio-3-4 {
+  @include ratio-box-base;
+  width: 21px;
+  height: 28px;
+}
+
+.ratio-16-9 {
+  @include ratio-box-base;
+  width: 32px;
+  height: 18px;
+}
+
+.ratio-9-16 {
+  @include ratio-box-base;
+  width: 18px;
+  height: 32px;
+}
+
+.ratio-3-2 {
+  @include ratio-box-base;
+  width: 30px;
+  height: 20px;
+}
+
+.ratio-2-3 {
+  @include ratio-box-base;
+  width: 20px;
+  height: 30px;
+}
+
+.ratio-21-9 {
+  @include ratio-box-base;
+  width: 35px;
+  height: 15px;
+}
+
+// ============================================
+// Count Select
+// ============================================
+
+.count-select {
+  width: 100%;
+}
+
+// ============================================
+// Toggle
+// ============================================
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+// ============================================
+// Footer
+// ============================================
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: $container-bg;
+  border-top: 1px solid $border-color;
+  margin-bottom: 54px;
+  // higher then antd loading spinner
+  z-index: 1001;
+}
+
+.generate-button {
+  height: 44px;
+  font-size: 16px;
+  font-weight: 500;
+  margin-bottom: 12px;
+}
+
+.credits-info {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 4px;
+}
+
+.credits-required {
+  font-size: 13px;
+  color: $text-secondary;
+}
+
+.credits-balance {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+
+  svg {
+    font-size: 16px;
+    color: $ai-credit-icon;
+  }
+
+  .ai-credit {
+    font-size: 14px;
+    font-weight: 500;
+    color: $text-primary;
+  }
+}
+
+// ============================================
+// Popup Styles
+// ============================================
+
+.popup {
+  z-index: 1002 !important;
+}
+
+.popup-body {
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}

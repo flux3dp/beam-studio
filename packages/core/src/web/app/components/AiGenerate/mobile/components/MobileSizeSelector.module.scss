@@ -1,0 +1,57 @@
+@use '../shared-variables' as *;
+
+// ============================================
+// Size Selector
+// ============================================
+
+.size-selector {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $container-bg;
+}
+
+.selector-header {
+  @include selector-header;
+}
+
+// ============================================
+// Size Grid
+// ============================================
+
+.size-grid {
+  display: grid;
+  grid-template-columns: repeat(1, 1fr);
+  gap: 12px;
+  padding: 16px;
+}
+
+.size-card {
+  @include button-base;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 24px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  .size-name {
+    font-size: 18px;
+    font-weight: 600;
+  }
+
+  .size-pixels {
+    font-size: 12px;
+    color: $text-secondary;
+  }
+
+  &.selected {
+    border-color: $primary-blue;
+    background: $selected-bg;
+
+    .size-name,
+    .size-pixels {
+      color: $primary-blue;
+    }
+  }
+}

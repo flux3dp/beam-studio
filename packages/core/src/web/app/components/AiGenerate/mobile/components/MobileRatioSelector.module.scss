@@ -1,0 +1,121 @@
+@use '../shared-variables' as *;
+
+// ============================================
+// Ratio Selector
+// ============================================
+
+.ratio-selector {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $container-bg;
+}
+
+.selector-header {
+  @include selector-header;
+}
+
+// ============================================
+// Ratio Box Icons
+// ============================================
+
+.ratio-box {
+  @include ratio-box-base;
+}
+
+.ratio-1-1 {
+  @include ratio-box-base;
+  width: 24px;
+  height: 24px;
+}
+
+.ratio-4-3 {
+  @include ratio-box-base;
+  width: 28px;
+  height: 21px;
+}
+
+.ratio-3-4 {
+  @include ratio-box-base;
+  width: 21px;
+  height: 28px;
+}
+
+.ratio-16-9 {
+  @include ratio-box-base;
+  width: 32px;
+  height: 18px;
+}
+
+.ratio-9-16 {
+  @include ratio-box-base;
+  width: 18px;
+  height: 32px;
+}
+
+.ratio-3-2 {
+  @include ratio-box-base;
+  width: 30px;
+  height: 20px;
+}
+
+.ratio-2-3 {
+  @include ratio-box-base;
+  width: 20px;
+  height: 30px;
+}
+
+.ratio-21-9 {
+  @include ratio-box-base;
+  width: 35px;
+  height: 15px;
+}
+
+// ============================================
+// Ratio Grid
+// ============================================
+
+.ratio-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  grid-auto-rows: 64px;
+  gap: 12px;
+  padding: 16px;
+}
+
+.ratio-card {
+  @include button-base;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  .ratio-icon-wrapper {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-secondary;
+  }
+
+  .ratio-label {
+    font-size: 15px;
+    font-weight: 500;
+  }
+
+  &.selected {
+    border-color: $primary-blue;
+    background: $selected-bg;
+
+    .ratio-icon-wrapper {
+      color: $primary-blue;
+    }
+
+    .ratio-label {
+      color: $primary-blue;
+    }
+  }
+}

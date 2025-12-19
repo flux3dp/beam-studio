@@ -62,6 +62,8 @@ export interface ILang {
     ai_generate: {
       dimensions: {
         more: string;
+        ratio: string;
+        resolution: string;
         title: string;
       };
       error: {
@@ -74,6 +76,7 @@ export interface ILang {
       form: {
         count: string;
         credit_required: string;
+        editor: string;
         generate: string;
         laser_friendly: string;
       };

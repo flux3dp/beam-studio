@@ -5,6 +5,7 @@ import { Alert, Button, Empty, Spin } from 'antd';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
+import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import { useAiGenerateStore } from '../useAiGenerateStore';
@@ -15,6 +16,10 @@ import styles from './ImageHistory.module.scss';
 const Title = () => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
+
+  if (isMobile()) {
+    return null;
+  }
 
   return (
     <div className={styles.title}>
