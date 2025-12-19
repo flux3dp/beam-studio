@@ -1724,7 +1724,7 @@ const lang: ILang = {
     mac_os_arch_mismatch: {
       caption: 'Zainstaluj ponownie zgodną wersję',
       download_center: 'Przejdź do Centrum pobierania',
-      message: 'Ten Mac używa Apple Silicon. Pobierz wersję Apple Silicon (ARM64) i zainstaluj ponownie.',
+      message: 'Ten Mac używa Apple Silicon. Pobierz wersję Apple Silicon i zainstaluj ponownie.',
     },
     need_password: 'Potrzebujesz hasła, aby połączyć się z urządzeniem',
     please_enter_dpi: 'Wprowadź jednostkę swojego pliku (in mm)',

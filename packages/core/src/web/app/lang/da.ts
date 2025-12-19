@@ -1724,7 +1724,7 @@ const lang: ILang = {
     mac_os_arch_mismatch: {
       caption: 'Geninstaller kompatibel version',
       download_center: 'Gå til Download Center',
-      message: 'Denne Mac bruger Apple Silicon. Download Apple Silicon (ARM64) versionen og geninstaller.',
+      message: 'Denne Mac bruger Apple Silicon. Download Apple Silicon versionen og geninstaller.',
     },
     need_password: 'Adgangskode kræves for at oprette forbindelse til maskinen',
     please_enter_dpi: 'Angiv venligst enheden for din fil (i mm)',

@@ -1724,7 +1724,7 @@ const lang: ILang = {
     mac_os_arch_mismatch: {
       caption: 'Επανεγκατάσταση συμβατής έκδοσης',
       download_center: 'Μετάβαση στο Κέντρο Λήψεων',
-      message: 'Αυτό το Mac χρησιμοποιεί Apple Silicon. Κατεβάστε την έκδοση Apple Silicon (ARM64) και επανεγκαταστήστε.',
+      message: 'Αυτό το Mac χρησιμοποιεί Apple Silicon. Κατεβάστε την έκδοση Apple Silicon και επανεγκαταστήστε.',
     },
     need_password: 'Απαιτείται κωδικός πρόσβασης για σύνδεση με τη συσκευή',
     please_enter_dpi: 'Παρακαλώ εισάγετε τη μονάδα του αρχείου σας (σε mm)',

@@ -1724,7 +1724,7 @@ const lang: ILang = {
     mac_os_arch_mismatch: {
       caption: 'Cài đặt lại phiên bản tương thích',
       download_center: 'Đi tới Trung tâm Tải xuống',
-      message: 'Máy Mac này sử dụng Apple Silicon. Tải xuống phiên bản Apple Silicon (ARM64) và cài đặt lại.',
+      message: 'Máy Mac này sử dụng Apple Silicon. Tải xuống phiên bản Apple Silicon và cài đặt lại.',
     },
     need_password: 'Cần Mật khẩu để Kết nối với Máy',
     please_enter_dpi: 'Vui lòng nhập Đơn vị của tệp tin (tính bằng mm)',

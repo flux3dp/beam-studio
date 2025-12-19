@@ -1724,7 +1724,7 @@ const lang: ILang = {
     mac_os_arch_mismatch: {
       caption: 'Reinstalla la versione compatibile',
       download_center: 'Vai al Centro Download',
-      message: 'Questo Mac utilizza Apple Silicon. Scarica la versione Apple Silicon (ARM64) e reinstalla.',
+      message: 'Questo Mac utilizza Apple Silicon. Scarica la versione Apple Silicon e reinstalla.',
     },
     need_password: 'Necessaria password per connettersi alla macchina',
     please_enter_dpi: 'Inserire la dimensione del file (in mm)',

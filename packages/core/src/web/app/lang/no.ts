@@ -1724,7 +1724,7 @@ const lang: ILang = {
     mac_os_arch_mismatch: {
       caption: 'Installer kompatibel versjon på nytt',
       download_center: 'Gå til nedlastingssenter',
-      message: 'Denne Mac-en bruker Apple Silicon. Last ned Apple Silicon (ARM64)-versjonen og installer på nytt.',
+      message: 'Denne Mac-en bruker Apple Silicon. Last ned Apple Silicon-versjonen og installer på nytt.',
     },
     need_password: 'Trenger passord for å koble til maskinen',
     please_enter_dpi: 'Angi enheten for filen (i mm)',
