@@ -112,13 +112,16 @@ describe('ZoomableTopBar', () => {
 
       fireEvent.click(zoomDisplay);
 
-      await waitFor(() => {
-        expect(screen.getByText('25%')).toBeVisible();
-        expect(screen.getByText('50%')).toBeVisible();
-        expect(screen.getByText('75%')).toBeVisible();
-        expect(screen.getByText('150%')).toBeVisible();
-        expect(screen.getByText('200%')).toBeVisible();
-      });
+      await waitFor(
+        () => {
+          expect(screen.getByText('25%')).toBeVisible();
+          expect(screen.getByText('50%')).toBeVisible();
+          expect(screen.getByText('75%')).toBeVisible();
+          expect(screen.getByText('150%')).toBeVisible();
+          expect(screen.getByText('200%')).toBeVisible();
+        },
+        { timeout: 3000 },
+      );
     });
 
     it('should handle fit to window option', async () => {

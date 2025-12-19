@@ -1,8 +1,6 @@
 /* eslint-disable import/order */
 import './assets/scss/main.scss';
 
-import '@core/helpers/global-helper';
-
 // need to import all required external modules before reading our own files
 // otherwise, the major global variables will not become accessible
 import './main';

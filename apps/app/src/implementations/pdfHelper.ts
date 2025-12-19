@@ -9,7 +9,7 @@ import os from 'os';
 import path from 'path';
 import util from 'util';
 
-import { getOS } from '@core/helpers/global-helper';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import type { PdfHelper } from '@core/interfaces/IPdfHelper';
 

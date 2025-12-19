@@ -1721,6 +1721,11 @@ Machines > ‘Promark Name’ > Promark Settings`,
     getProbePosition: 'Getting Probe Position...',
     gettingLaserSpeed: 'Reading laser head speed...',
     homing: 'Homing...',
+    mac_os_arch_mismatch: {
+      caption: 'Reinstall compatible version',
+      download_center: 'Go to Download Center',
+      message: 'This Mac uses Apple silicon. Download the Apple silicon (ARM64) version and reinstall.',
+    },
     need_password: 'Need Password to Connect to the Machine',
     please_enter_dpi: 'Please enter the Unit of your file (in mm)',
     preview: {

@@ -2,6 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { __setMockOS } from '@mocks/@core/helpers/getOS';
+
 const defaultGlobalPreference = {
   'anti-aliasing': true,
   auto_align: true,
@@ -45,7 +47,7 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
   }),
 }));
 
-window.os = 'MacOS';
+__setMockOS('MacOS');
 
 import Menu from './Menu';
 

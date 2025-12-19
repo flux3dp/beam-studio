@@ -1,7 +1,11 @@
-type OSName = 'Linux' | 'MacOS' | 'others' | 'Windows';
+export type OSName = 'Linux' | 'MacOS' | 'others' | 'Windows';
 
 let osCache: null | OSName = null;
 
+/**
+ * getOSByProcess
+ * use process.platform to detect OS, works in Electron environment
+ */
 const getOSByProcess = (): null | OSName => {
   if (window?.process) {
     const platform = window.process.platform;
@@ -22,6 +26,10 @@ const getOSByProcess = (): null | OSName => {
   return null;
 };
 
+/**
+ * getOSByNavigator
+ * use navigator.platform to detect OS, works in web environment
+ */
 const getOSByNavigator = (): null | OSName => {
   if (typeof navigator !== 'undefined') {
     const { platform } = navigator;
@@ -57,6 +65,13 @@ export function getOS(): OSName {
 
   return 'others';
 }
+
+/**
+ * Reset OS cache, for testing purposes only
+ */
+export const resetOsCache = (): void => {
+  osCache = null;
+};
 
 export default {
   getOS,

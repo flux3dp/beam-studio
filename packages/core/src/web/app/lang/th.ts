@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: 'กําลังรับค่าตําแหน่งของโปรบ...',
     gettingLaserSpeed: 'อ่านความเร็วหัวเลเซอร์...',
     homing: 'กําลังโฮมมิ่ง...',
+    mac_os_arch_mismatch: {
+      caption: 'ติดตั้งเวอร์ชันที่เข้ากันได้ใหม่',
+      download_center: 'ไปที่ศูนย์ดาวน์โหลด',
+      message: 'Mac เครื่องนี้ใช้ Apple Silicon ดาวน์โหลดเวอร์ชัน Apple Silicon (ARM64) และติดตั้งใหม่',
+    },
     need_password: 'ต้องการรหัสผ่านในการเชื่อมต่อกับเครื่อง',
     please_enter_dpi: 'โปรดป้อนหน่วยของไฟล์ของคุณ (เป็นมิลลิเมตร)',
     preview: {

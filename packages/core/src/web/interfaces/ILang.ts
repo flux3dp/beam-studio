@@ -1712,6 +1712,11 @@ export interface ILang {
     getProbePosition: string;
     gettingLaserSpeed: string;
     homing: string;
+    mac_os_arch_mismatch: {
+      caption: string;
+      download_center: string;
+      message: string;
+    };
     need_password: string;
     please_enter_dpi: string;
     preview: {

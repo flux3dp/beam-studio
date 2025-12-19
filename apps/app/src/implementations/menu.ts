@@ -5,7 +5,7 @@ import { TabEvents } from '@core/app/constants/tabConstants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { getOS } from '@core/helpers/global-helper';
+import { getOS } from '@core/helpers/getOS';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
 import communicator from '@core/implementations/communicator';

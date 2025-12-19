@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: '获取探针位置中...',
     gettingLaserSpeed: '正在取得雷射头移动速度...',
     homing: '归零中...',
+    mac_os_arch_mismatch: {
+      caption: '重新安装兼容版本',
+      download_center: '前往下载中心',
+      message: '此 Mac 使用 Apple 芯片。请下载 Apple 芯片 (ARM64) 版本并重新安装。',
+    },
     need_password: '需要密码与机器创建连接',
     please_enter_dpi: '请输入该文件的 dpi (in mm)',
     preview: {

@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: 'Haetaan anturin sijaintia...',
     gettingLaserSpeed: 'Luetaan laserpään nopeutta...',
     homing: 'Hakeudutaan kotiasentoon...',
+    mac_os_arch_mismatch: {
+      caption: 'Asenna yhteensopiva versio uudelleen',
+      download_center: 'Siirry latauskeskukseen',
+      message: 'Tämä Mac käyttää Apple Siliconia. Lataa Apple Silicon (ARM64) -versio ja asenna uudelleen.',
+    },
     need_password: 'Tarvitaan salasana koneeseen yhdistämiseen',
     please_enter_dpi: 'Anna tiedoston mittayksikkö (mm)',
     preview: {

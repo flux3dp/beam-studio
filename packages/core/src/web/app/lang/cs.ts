@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: 'Získávám pozici sondy...',
     gettingLaserSpeed: 'Zjišťuji rychlost laserové hlavice...',
     homing: 'Navádím...',
+    mac_os_arch_mismatch: {
+      caption: 'Přeinstalovat kompatibilní verzi',
+      download_center: 'Přejít do Centra stahování',
+      message: 'Tento Mac používá Apple Silicon. Stáhněte verzi pro Apple Silicon (ARM64) a přeinstalujte.',
+    },
     need_password: 'K připojení k přístroji je zapotřebí heslo',
     please_enter_dpi: 'Zadejte prosím jednotku svého souboru (v mm)',
     preview: {

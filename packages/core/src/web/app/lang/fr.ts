@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: 'Obtention de la position de la sonde...',
     gettingLaserSpeed: 'Lecture de la vitesse de la tête laser...',
     homing: 'Homing...',
+    mac_os_arch_mismatch: {
+      caption: 'Réinstaller la version compatible',
+      download_center: 'Aller au Centre de téléchargement',
+      message: 'Ce Mac utilise Apple Silicon. Téléchargez la version Apple Silicon (ARM64) et réinstallez.',
+    },
     need_password: 'Mot de passe requis pour se connecter à la machine',
     please_enter_dpi: "Veuillez entrer l'unité de votre fichier (en mm)",
     preview: {
