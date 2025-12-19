@@ -140,6 +140,14 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
     ink: 70,
     printingSpeed: 25,
   },
+  [LayerModule.UV_VARNISH]: {
+    ink: 100,
+    multipass: 1,
+  },
+  [LayerModule.UV_WHITE_INK]: {
+    ink: 100,
+    multipass: 1,
+  },
 };
 
 export const booleanConfig: ConfigKey[] = [

@@ -258,7 +258,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     <>
       {(isPrintingModule || is4cUV) && <HalftoneBlock type={UIType} />}
       {!(isPrintingModule || is4cUV) && <PowerBlock type={UIType} />}
-      {isPrintingModule && <InkBlock type={UIType} />}
+      {(isPrintingModule || is4cUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
       {(isPrintingModule || is4cUV) && <MultipassBlock type={UIType} />}
       {isDevMode && isPrintingModule && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
