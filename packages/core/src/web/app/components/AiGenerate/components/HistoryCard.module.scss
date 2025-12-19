@@ -131,11 +131,9 @@
 }
 
 .recreateButton {
-  border-radius: 100px;
   font-weight: 500;
   border-color: $border-color;
-  padding-left: 20px;
-  padding-right: 20px;
+  padding: 4px 20px;
 
   &:hover {
     color: $primary-blue;
@@ -157,6 +155,52 @@
   &.expanded {
     transform: rotate(180deg);
   }
+}
+
+.mobile-footer {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-footer-top {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.mobile-footer-buttons {
+  display: flex;
+  justify-content: space-between;
+
+  // Override ant-btn-block's width: 100% to use natural width
+  :global(.ant-btn-block) {
+    width: auto;
+  }
+}
+
+.detail-button {
+  font-weight: 500;
+  border-color: $border-color;
+  background-color: $background-light-gray;
+  color: $text-secondary;
+  padding: 4px 20px;
+
+  // Use higher specificity to override Ant Design's variant-outlined hover styles
+  &:global(.ant-btn-variant-outlined):not(:disabled):hover {
+    color: $text-primary;
+    border-color: $text-secondary;
+    background-color: $background-light-gray;
+  }
+
+  &.expanded .detail-icon {
+    transform: rotate(180deg);
+  }
+}
+
+.detail-icon {
+  margin-left: 6px;
+  transition: transform 0.2s ease;
 }
 
 .expandedInfo {

@@ -7,13 +7,14 @@ import {
   LayoutOutlined,
   SafetyCertificateOutlined,
 } from '@ant-design/icons';
-import { Badge, Button, Card } from 'antd';
+import { Badge, Button, Card, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { match } from 'ts-pattern';
 
 import { importAiImage } from '@core/app/svgedit/operations/import/importAiImage';
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
+import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
@@ -33,10 +34,7 @@ interface HistoryCardProps {
 const filterInputs = (inputs: Record<string, string>) =>
   Object.entries(inputs).filter(
     ([key, value]) =>
-      value.trim() !== '' &&
-      //
-      key !== 'image_counts' &&
-      !(key === 'color' && value === laserFriendlyValue),
+      value.trim() !== '' && key !== 'image_counts' && !(key === 'color' && value === laserFriendlyValue),
   );
 
 const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
@@ -57,6 +55,7 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
 
   const handleImageImport = useCallback(async (url: string) => {
     setImportingUrl(url);
+
     try {
       await importAiImage(url);
     } finally {
@@ -119,24 +118,48 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
           )}
         </div>
 
-        <div className={styles.footer}>
-          <div className={styles.footerLeft}>
-            {renderStatusBadge()}
-            <span className={styles.date}>{formattedDate}</span>
+        {isMobile() ? (
+          <ConfigProvider theme={{ components: { Button: { borderRadius: 10, borderRadiusLG: 10 } } }}>
+            <div className={styles['mobile-footer']}>
+              <div className={styles['mobile-footer-top']}>
+                {renderStatusBadge()}
+                <span className={styles.date}>{formattedDate}</span>
+              </div>
+              <div className={styles['mobile-footer-buttons']}>
+                <Button block className={styles.recreateButton} onClick={() => onImport(item)}>
+                  {t.history.recreate}
+                </Button>
+                <Button
+                  block
+                  className={classNames(styles['detail-button'], { [styles.expanded]: isExpanded })}
+                  onClick={() => setIsExpanded(!isExpanded)}
+                >
+                  <DownOutlined className={styles['detail-icon']} />
+                  {t.history.detail}
+                </Button>
+              </div>
+            </div>
+          </ConfigProvider>
+        ) : (
+          <div className={styles.footer}>
+            <div className={styles.footerLeft}>
+              {renderStatusBadge()}
+              <span className={styles.date}>{formattedDate}</span>
+            </div>
+            <div className={styles.footerRight}>
+              <Button className={styles.recreateButton} onClick={() => onImport(item)}>
+                {t.history.recreate}
+              </Button>
+              <Button
+                className={classNames(styles.dropdownButton, { [styles.expanded]: isExpanded })}
+                icon={<DownOutlined />}
+                onClick={() => setIsExpanded(!isExpanded)}
+                size="small"
+                type="text"
+              />
+            </div>
           </div>
-          <div className={styles.footerRight}>
-            <Button className={styles.recreateButton} onClick={() => onImport(item)}>
-              {t.history.recreate}
-            </Button>
-            <Button
-              className={classNames(styles.dropdownButton, { [styles.expanded]: isExpanded })}
-              icon={<DownOutlined />}
-              onClick={() => setIsExpanded(!isExpanded)}
-              size="small"
-              type="text"
-            />
-          </div>
-        </div>
+        )}
       </div>
 
       {isExpanded &&

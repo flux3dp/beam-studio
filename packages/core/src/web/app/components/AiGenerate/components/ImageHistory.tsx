@@ -85,7 +85,9 @@ const UnmemorizedImageHistory = () => {
         ))}
       </div>
 
-      <div className={styles['info-banner']}>{t.history.storage_notice}</div>
+      <div className={styles['info-banner']} style={{ bottom: isMobile() ? 20 : 0 }}>
+        {t.history.storage_notice}
+      </div>
     </>
   );
 };
