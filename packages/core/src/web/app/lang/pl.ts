@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Pozycjonowanie...',
     mac_os_arch_mismatch: {
       caption: 'Zainstaluj ponownie zgodną wersję',
-      download_center: 'Przejdź do Centrum pobierania',
+      download_center: 'Centrum pobierania',
       message: 'Ten Mac używa Apple Silicon. Pobierz wersję Apple Silicon i zainstaluj ponownie.',
     },
     need_password: 'Potrzebujesz hasła, aby połączyć się z urządzeniem',

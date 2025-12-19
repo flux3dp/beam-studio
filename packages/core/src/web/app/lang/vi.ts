@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Đang hoàn vị...',
     mac_os_arch_mismatch: {
       caption: 'Cài đặt lại phiên bản tương thích',
-      download_center: 'Đi tới Trung tâm Tải xuống',
+      download_center: 'Trung tâm Tải xuống',
       message: 'Máy Mac này sử dụng Apple Silicon. Tải xuống phiên bản Apple Silicon và cài đặt lại.',
     },
     need_password: 'Cần Mật khẩu để Kết nối với Máy',

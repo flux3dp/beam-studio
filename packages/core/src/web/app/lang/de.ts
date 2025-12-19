@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Homing...',
     mac_os_arch_mismatch: {
       caption: 'Kompatible Version neu installieren',
-      download_center: 'Zum Download-Center',
+      download_center: 'Download-Center',
       message: 'Dieser Mac verwendet Apple Silicon. Laden Sie die Apple Silicon Version herunter und installieren Sie sie neu.',
     },
     need_password: 'Benötigen Passwort für die Verbindung mit der Maschine',

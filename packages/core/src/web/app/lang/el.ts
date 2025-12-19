@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Ομοιοποίηση...',
     mac_os_arch_mismatch: {
       caption: 'Επανεγκατάσταση συμβατής έκδοσης',
-      download_center: 'Μετάβαση στο Κέντρο Λήψεων',
+      download_center: 'Κέντρο Λήψεων',
       message: 'Αυτό το Mac χρησιμοποιεί Apple Silicon. Κατεβάστε την έκδοση Apple Silicon και επανεγκαταστήστε.',
     },
     need_password: 'Απαιτείται κωδικός πρόσβασης για σύνδεση με τη συσκευή',

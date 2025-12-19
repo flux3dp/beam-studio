@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Melakukan pengaturan awal...',
     mac_os_arch_mismatch: {
       caption: 'Instal ulang versi yang kompatibel',
-      download_center: 'Buka Pusat Unduhan',
+      download_center: 'Pusat Unduhan',
       message: 'Mac ini menggunakan Apple Silicon. Unduh versi Apple Silicon dan instal ulang.',
     },
     need_password: 'Memerlukan Kata Sandi untuk Menghubungkan ke Mesin',

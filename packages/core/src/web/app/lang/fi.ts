@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Hakeudutaan kotiasentoon...',
     mac_os_arch_mismatch: {
       caption: 'Asenna yhteensopiva versio uudelleen',
-      download_center: 'Siirry latauskeskukseen',
+      download_center: 'Latauskeskus',
       message: 'Tämä Mac käyttää Apple Siliconia. Lataa Apple Silicon -versio ja asenna uudelleen.',
     },
     need_password: 'Tarvitaan salasana koneeseen yhdistämiseen',

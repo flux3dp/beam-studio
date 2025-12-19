@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Hemkörning...',
     mac_os_arch_mismatch: {
       caption: 'Installera om kompatibel version',
-      download_center: 'Gå till Nedladdningscenter',
+      download_center: 'Nedladdningscenter',
       message: 'Denna Mac använder Apple Silicon. Ladda ner Apple Silicon-versionen och installera om.',
     },
     need_password: 'Lösenord krävs för att ansluta till maskinen',

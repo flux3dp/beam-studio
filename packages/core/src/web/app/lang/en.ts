@@ -1723,7 +1723,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     homing: 'Homing...',
     mac_os_arch_mismatch: {
       caption: 'Reinstall compatible version',
-      download_center: 'Go to Download Center',
+      download_center: 'Download Center',
       message: 'This Mac uses Apple silicon. Download the Apple silicon version and reinstall.',
     },
     need_password: 'Need Password to Connect to the Machine',

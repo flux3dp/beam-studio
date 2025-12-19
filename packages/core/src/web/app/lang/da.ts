@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'Hjemkører...',
     mac_os_arch_mismatch: {
       caption: 'Geninstaller kompatibel version',
-      download_center: 'Gå til Download Center',
+      download_center: 'Download Center',
       message: 'Denne Mac bruger Apple Silicon. Download Apple Silicon versionen og geninstaller.',
     },
     need_password: 'Adgangskode kræves for at oprette forbindelse til maskinen',

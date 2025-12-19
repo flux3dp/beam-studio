@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: '歸零中...',
     mac_os_arch_mismatch: {
       caption: '重新安裝相容版本',
-      download_center: '前往下載中心',
+      download_center: '下載中心',
       message: '這台 Mac 使用 Apple 晶片。請下載 Apple 晶片（Apple Silicon）版本，並重新安裝。',
     },
     need_password: '需要密碼與機器建立連線',

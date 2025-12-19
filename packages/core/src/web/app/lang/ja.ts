@@ -1723,7 +1723,7 @@ const lang: ILang = {
     homing: 'ホーミング…',
     mac_os_arch_mismatch: {
       caption: '互換バージョンを再インストール',
-      download_center: 'ダウンロードセンターへ',
+      download_center: 'ダウンロードセンター',
       message: 'このMacはApple Siliconを使用しています。Apple Silicon バージョンをダウンロードして再インストールしてください。',
     },
     need_password: 'マシンに接続するには、パスワードが必要です',
