@@ -1,3 +1,5 @@
+import { getOS } from '@core/helpers/getOS';
+
 const wheelEventHandlerGenerator = (
   getCurrentRatio: () => number,
   zoomFunction: (ratio: number, center: { x: number; y: number }) => void,
@@ -17,7 +19,7 @@ const wheelEventHandlerGenerator = (
     const { ctrlKey, deltaX, detail, wheelDelta } = e;
     const { getCenter, maxZoom, minZoom, zoomInterval = 20 } = opts ?? {};
 
-    let isMouse = window.os !== 'MacOS';
+    let isMouse = getOS() !== 'MacOS';
 
     if (Math.abs(deltaX) > 0) isMouse = false;
 

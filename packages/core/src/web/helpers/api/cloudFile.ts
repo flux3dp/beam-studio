@@ -6,6 +6,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import dialog from '@core/implementations/dialog';
 import type { IFile } from '@core/interfaces/IMyCloud';
@@ -177,15 +178,16 @@ export const downloadFile = async (file: IFile): Promise<void> => {
     }
 
     const content = resp.data;
+    const osName = getOS();
 
     await dialog.writeFileDialog(
       () => content,
       langFile.save_scene,
-      window.os === 'Linux' ? `${file.name}.beam` : file.name,
+      osName === 'Linux' ? `${file.name}.beam` : file.name,
       [
         {
           extensions: ['beam'],
-          name: window.os === 'MacOS' ? `${langFile.scene_files} (*.beam)` : langFile.scene_files,
+          name: osName === 'MacOS' ? `${langFile.scene_files} (*.beam)` : langFile.scene_files,
         },
         {
           extensions: ['*'],

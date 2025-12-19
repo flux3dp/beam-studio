@@ -11,6 +11,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import workareaManager from '@core/app/svgedit/workarea';
 import Modal from '@core/app/widgets/Modal';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import requirejsHelper from '@core/helpers/requirejs-helper';
@@ -315,7 +316,7 @@ class SvgNestButtons extends React.Component<Props, State> {
   render(): React.JSX.Element {
     const { isWorking } = this.state;
     const endText = LANG._nest.end;
-    const isWindows = !isWeb() && window.os === 'Windows';
+    const isWindows = !isWeb() && getOS() === 'Windows';
     const className = classNames(styles.container, { [styles.win]: isWindows });
 
     const content = (

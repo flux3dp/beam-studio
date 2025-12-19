@@ -12,6 +12,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import deviceMaster from '@core/helpers/device-master';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
@@ -599,7 +600,7 @@ class SwiftrayClient extends EventEmitter {
 }
 
 const checkSwiftray = (): boolean => {
-  const res = !isWeb() && window.os !== 'Linux';
+  const res = !isWeb() && getOS() !== 'Linux';
 
   if (!res) {
     return false;

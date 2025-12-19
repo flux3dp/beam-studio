@@ -1,3 +1,4 @@
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import dialog from '@core/implementations/dialog';
 
@@ -8,7 +9,7 @@ export const downloadCalibrationFile = async (
 ): Promise<void> => {
   const ext = fileName.split('.').pop();
   const filter = ext
-    ? [{ extensions: [ext], name: window.os === 'MacOS' ? `${ext.toUpperCase()} (*.${ext})` : ext.toUpperCase() }]
+    ? [{ extensions: [ext], name: getOS() === 'MacOS' ? `${ext.toUpperCase()} (*.${ext})` : ext.toUpperCase() }]
     : undefined;
 
   dialog.writeFileDialog(

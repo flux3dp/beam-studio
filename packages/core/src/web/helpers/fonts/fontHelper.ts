@@ -1,6 +1,7 @@
 import progressCaller from '@core/app/actions/progress-caller';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
 import isWeb from '@core/helpers/is-web';
@@ -329,7 +330,7 @@ export default {
   },
   getWebFontPreviewUrl: (fontFamily: string) => previewSourceMap[fontFamily] || null,
   usePostscriptAsFamily: (font?: FontDescriptor | string) => {
-    if (window.os !== 'MacOS' || isWeb() || !font) {
+    if (getOS() !== 'MacOS' || isWeb() || !font) {
       return false;
     }
 

@@ -17,6 +17,7 @@ import ObjectPanel from '@core/app/views/beambox/Right-Panels/ObjectPanel';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import PathEditPanel from '@core/app/views/beambox/Right-Panels/PathEditPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import { useIsMobile } from '@core/helpers/system-helper';
 
@@ -102,9 +103,10 @@ const RightPanel = (): ReactNode => {
 
   if (mode === CanvasMode.PathPreview) return null;
 
+  const osName = getOS();
   const sideClass = classNames(styles.sidepanels, {
-    [styles.short]: window.os === 'Windows' && !isWeb(),
-    [styles.wide]: window.os !== 'MacOS',
+    [styles.short]: osName === 'Windows' && !isWeb(),
+    [styles.wide]: osName !== 'MacOS',
   });
 
   return (

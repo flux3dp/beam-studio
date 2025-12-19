@@ -1,4 +1,4 @@
-import globalHelper from './global-helper';
+import globalHelper from './getOS';
 
 test('test global-helper', () => {
   for (const { os, platform } of [

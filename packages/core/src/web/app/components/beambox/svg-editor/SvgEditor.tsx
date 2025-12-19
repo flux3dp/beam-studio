@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React from 'react';
+import React, { useMemo } from 'react';
 import { useEffect } from 'react';
 
 import classNames from 'classnames';
@@ -16,6 +16,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import Drawer from '@core/app/widgets/Drawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
+import { getOS } from '@core/helpers/getOS';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import Banner from './Banner';
@@ -31,6 +32,7 @@ import Workarea from './Workarea';
 export const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
   const { drawerMode, mode, setDrawerMode } = useCanvasStore();
+  const osName = useMemo(() => getOS(), []);
 
   useEffect(() => {
     if (window.$) {
@@ -57,7 +59,7 @@ export const SvgEditor = (): ReactNode => {
           <ElementTitle />
           <Ruler />
           <Workarea
-            className={classNames(styles.workarea, { mac: window.os === 'MacOS', [styles.mac]: window.os === 'MacOS' })}
+            className={classNames(styles.workarea, { mac: osName === 'MacOS', [styles.mac]: osName === 'MacOS' })}
           />
         </div>
         <div className={styles['invisible-tools']}>

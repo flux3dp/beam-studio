@@ -2,6 +2,7 @@ import React, { useMemo } from 'react';
 
 import classNames from 'classnames';
 
+import { getOS } from '@core/helpers/getOS';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
@@ -18,7 +19,7 @@ const ConnectEthernet = (): React.JSX.Element => {
   }, []);
 
   const guideHref =
-    window.os === 'MacOS' ? lang.connect_ethernet.tutorial2_a_href_mac : lang.connect_ethernet.tutorial2_a_href_win;
+    getOS() === 'MacOS' ? lang.connect_ethernet.tutorial2_a_href_mac : lang.connect_ethernet.tutorial2_a_href_win;
 
   const handleNext = () => {
     const urlParams = new URLSearchParams({ model, wired: '1' });

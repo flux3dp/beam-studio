@@ -20,6 +20,7 @@ import LayerList from '@core/app/views/beambox/Right-Panels/LayerPanel/LayerList
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import changeLayersColor from '@core/helpers/layer/changeLayersColor';
 import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
@@ -457,7 +458,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   handleLayerClick = (e: React.MouseEvent, layerName: string): void => {
-    const isCtrlOrCmd = (window.os === 'MacOS' && e.metaKey) || (window.os !== 'MacOS' && e.ctrlKey);
+    const isCtrlOrCmd = (getOS() === 'MacOS' && e.metaKey) || (getOS() !== 'MacOS' && e.ctrlKey);
 
     if (e.button === 0) {
       if (isCtrlOrCmd) {

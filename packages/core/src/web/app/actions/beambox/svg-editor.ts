@@ -49,6 +49,7 @@ import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialContro
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
@@ -987,7 +988,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     const textInput = document.getElementById('text') as HTMLInputElement;
     let wasNewLineAdded = false;
     const checkFunctionKeyPressed = (evt: KeyboardEvent) => {
-      return (window.os === 'MacOS' && evt.metaKey) || (window.os !== 'MacOS' && evt.ctrlKey);
+      return (getOS() === 'MacOS' && evt.metaKey) || (getOS() !== 'MacOS' && evt.ctrlKey);
     };
 
     window.addEventListener(
@@ -1078,7 +1079,7 @@ const svgEditor = (window['svgEditor'] = (function () {
         textActions.selectAll();
         textEdit.setTextContent(textInput.value);
       } else if (isFunctionKeyPressed && evt.key === 'z') {
-        if (window.os === 'MacOS') {
+        if (getOS() === 'MacOS') {
           evt.preventDefault();
         }
       }

@@ -5,6 +5,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import { getOS } from '@core/helpers/getOS';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { BeamboxPreference, BeamboxPreferenceKey, BeamboxPreferenceValue } from '@core/interfaces/Preference';
@@ -50,7 +51,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   low_power: 10,
   model: 'fbb1b',
   'module-offsets': moduleOffsets,
-  mouse_input_device: window.os === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
+  mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
   'multipass-compensation': true,
   'one-way-printing': true,
   padding_accel: 5000,

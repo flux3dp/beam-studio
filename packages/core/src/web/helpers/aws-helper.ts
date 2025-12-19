@@ -1,3 +1,4 @@
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 
 import Alert from '../app/actions/alert-caller';
@@ -25,7 +26,7 @@ export default {
     try {
       const reportFile = new Blob([body], { type: 'application/octet-stream' });
       // reportFile.lastModifiedDate = new Date();
-      const reportName = `${Math.floor(Date.now() / 1000)}-${fileName}-${window.os}-v${
+      const reportName = `${Math.floor(Date.now() / 1000)}-${fileName}-${getOS()}-v${
         window['FLUX'].version
       }-${fileName}`;
 

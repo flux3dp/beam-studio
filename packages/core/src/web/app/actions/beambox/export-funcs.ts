@@ -19,6 +19,7 @@ import { hasSwiftray } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
 import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import deviceMaster from '@core/helpers/device-master';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import updateImagesResolution from '@core/helpers/image/updateImagesResolution';
 import annotatePrintingColor from '@core/helpers/layer/annotatePrintingColor';
@@ -559,7 +560,7 @@ export default {
       dialog.writeFileDialog(getContent, langFile.save_fcode, defaultFCodeName, [
         {
           extensions: ['fc'],
-          name: window.os === 'MacOS' ? `${langFile.fcode_files} (*.fc)` : langFile.fcode_files,
+          name: getOS() === 'MacOS' ? `${langFile.fcode_files} (*.fc)` : langFile.fcode_files,
         },
         { extensions: ['*'], name: langFile.all_files },
       ]);

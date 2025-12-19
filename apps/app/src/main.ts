@@ -8,6 +8,7 @@ import globalEvents from '@core/app/actions/global';
 import router from '@core/app/router';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
+import { getOS } from '@core/helpers/global-helper';
 import communicator from '@core/implementations/communicator';
 
 import initBackendEvents from './init-backend-events';
@@ -46,7 +47,7 @@ declare global {
 }
 
 function menuBar() {
-  if (window.os !== 'Windows') {
+  if (getOS() !== 'Windows') {
     return;
   }
 

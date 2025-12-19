@@ -5,6 +5,7 @@ import { TabEvents } from '@core/app/constants/tabConstants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/global-helper';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
 import { getExampleVisibility } from '@core/helpers/menubar/exampleFiles';
 import communicator from '@core/implementations/communicator';
@@ -12,7 +13,7 @@ import communicator from '@core/implementations/communicator';
 import ElectronUpdater from './electron-updater';
 
 const updateWindowsMenu = () => {
-  if (window.os === 'Windows') {
+  if (getOS() === 'Windows') {
     window.titlebar?.updateMenu(ElectronMenu.getApplicationMenu());
   }
 };

@@ -5,6 +5,7 @@ import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { getOS } from '@core/helpers/getOS';
 import Logger from '@core/helpers/logger';
 import dialog from '@core/implementations/dialog';
 import fs from '@core/implementations/fileSystem';
@@ -30,7 +31,7 @@ const getOutput = (): string[] => {
 
   if (window.electron) {
     output.push('======::os::======\n');
-    output.push(`OS: ${window.os}\nARCH: ${os.arch()}\nRELEASE: ${os.release()}\n`);
+    output.push(`OS: ${getOS()}\nARCH: ${os.arch()}\nRELEASE: ${os.release()}\n`);
     output.push(`USER-AGENT: ${navigator.userAgent}\n`);
   }
 
@@ -86,7 +87,7 @@ export default {
     const getContent = () => output.join('');
 
     await dialog.writeFileDialog(getContent, i18n.lang.beambox.popup.bug_report, fileName, [
-      { extensions: ['txt'], name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt' },
+      { extensions: ['txt'], name: getOS() === 'MacOS' ? 'txt (*.txt)' : 'txt' },
     ]);
   },
   getOutput,
@@ -96,7 +97,7 @@ export default {
     const output = getOutput();
     const reportFile = new Blob(output, { type: 'application/octet-stream' });
     // reportFile.lastModifiedDate = new Date();
-    const reportName = `bug_report_${Math.floor(Date.now() / 1000)}_${window.os}_${window.FLUX.version}.log`;
+    const reportName = `bug_report_${Math.floor(Date.now() / 1000)}_${getOS()}_${window.FLUX.version}.log`;
     const uploadFormData = new FormData();
 
     uploadFormData.append('file', reportFile);

@@ -24,6 +24,7 @@ import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import checkFirmware from '@core/helpers/device/updateFirmware/checkFirmware';
 import firmwareUpdater from '@core/helpers/device/updateFirmware/firmwareUpdater';
 import DeviceMaster from '@core/helpers/device-master';
+import { getOS } from '@core/helpers/getOS';
 import { checkIsAtEditor } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import { getDetectedModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -148,7 +149,7 @@ const getLog = async (device: IDeviceInfo, log: string) => {
         await dialog.writeFileDialog(getContent, log, log, [
           {
             extensions: ['log'],
-            name: window.os === 'MacOS' ? 'log (*.log)' : 'log',
+            name: getOS() === 'MacOS' ? 'log (*.log)' : 'log',
           },
         ]);
       } catch (errorData) {

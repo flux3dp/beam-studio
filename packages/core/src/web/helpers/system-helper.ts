@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
 
+import { getOS } from '@core/helpers/getOS';
+
 export const isMobile = (): boolean => window.innerWidth < 601;
 
-export const isMac = (): boolean => window.os === 'MacOS';
+export const isMac = (): boolean => getOS() === 'MacOS';
 
 export const useIsMobile = (): boolean => {
   const [val, setVal] = useState<boolean>(isMobile());

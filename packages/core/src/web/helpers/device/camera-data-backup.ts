@@ -4,6 +4,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import deviceMaster from '@core/helpers/device-master';
 import formatDuration from '@core/helpers/duration-formatter';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import dialog from '@core/implementations/dialog';
 import storage from '@core/implementations/storage';
@@ -88,7 +89,7 @@ export const downloadCameraData = async (deviceName: string): Promise<void> => {
     progressCaller.openNonstopProgress({ id: progressId, message: tBackup.downloading_data });
 
     const path = await dialog.writeFileDialog(() => zip.generateAsync({ type: 'blob' }), tBackup.title, deviceName, [
-      { extensions: ['zip'], name: window.os === 'MacOS' ? 'zip (*.zip)' : 'zip' },
+      { extensions: ['zip'], name: getOS() === 'MacOS' ? 'zip (*.zip)' : 'zip' },
     ]);
 
     progressCaller.popById(progressId);
@@ -121,7 +122,7 @@ export const downloadCameraData = async (deviceName: string): Promise<void> => {
 export const uploadCameraData = async (): Promise<void> => {
   const file = await dialog.getFileFromDialog({
     defaultPath: storage.get('ador-backup-path') ?? '',
-    filters: [{ extensions: ['zip'], name: window.os === 'MacOS' ? 'zip (*.zip)' : 'zip' }],
+    filters: [{ extensions: ['zip'], name: getOS() === 'MacOS' ? 'zip (*.zip)' : 'zip' }],
     properties: ['openFile'],
   });
 

@@ -5,6 +5,7 @@ import classNames from 'classnames';
 
 import { getConvertEngine } from '@core/app/actions/beambox/export-funcs';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 
@@ -45,8 +46,8 @@ function SidePanel({
   const sideClass = useMemo(
     () =>
       classNames(styles.container, {
-        short: window.os === 'Windows' && !isWeb(),
-        wide: window.os !== 'MacOS',
+        short: getOS() === 'Windows' && !isWeb(),
+        wide: getOS() !== 'MacOS',
       }),
     [],
   );

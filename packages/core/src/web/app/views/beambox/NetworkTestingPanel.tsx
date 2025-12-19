@@ -8,6 +8,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkIPFormat from '@core/helpers/check-ip-format';
+import { getOS } from '@core/helpers/getOS';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import network from '@core/implementations/network';
@@ -159,7 +160,7 @@ const NetworkTestingPanel = ({ ip, onClose }: Props): ReactNode => {
     if (err === 'CREATE_SESSION_FAILED') {
       let message = `${lang.fail_to_start_network_test}\n${reason}`;
 
-      if (window.os === 'Linux') {
+      if (getOS() === 'Linux') {
         message += `\n${lang.linux_permission_hint}`;
       }
 

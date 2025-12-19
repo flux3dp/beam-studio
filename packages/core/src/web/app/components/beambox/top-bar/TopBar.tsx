@@ -21,6 +21,7 @@ import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
+import { getOS } from '@core/helpers/getOS';
 import getIsWeb from '@core/helpers/is-web';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
@@ -31,7 +32,7 @@ import styles from './TopBar.module.scss';
 
 const UnmemorizedTopBar = (): React.JSX.Element => {
   const { isDragRegion, isWeb } = useMemo(
-    () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: window.os === 'MacOS' && !isWeb, isWeb })),
+    () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: getOS() === 'MacOS' && !isWeb, isWeb })),
     [],
   );
   const mode = useCanvasStore((state) => state.mode);
