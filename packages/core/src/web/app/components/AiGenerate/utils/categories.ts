@@ -38,3 +38,16 @@ export const getCategoryForOption = (
 
   return categories.find((cat) => cat.tags.some((tag) => style.tags.includes(tag))) || null;
 };
+
+/**
+ * Get the first style from the first non-customize category.
+ */
+export const getDefaultStyle = (styles: Style[] = [], categories: Category[] = []): null | Style => {
+  const firstCategory = categories.find((c) => c.id !== 'customize');
+
+  if (!firstCategory) return null;
+
+  const categoryStyles = getStylesForCategory(firstCategory.id, styles, categories);
+
+  return categoryStyles[0] || null;
+};

@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useRef, useState } from 'react';
+import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
@@ -24,7 +24,7 @@ import { useAiConfigQuery } from './hooks/useAiConfigQuery';
 import styles from './index.module.scss';
 import { AI_COST_PER_IMAGE } from './types';
 import { useAiGenerateStore } from './useAiGenerateStore';
-import { getStyleConfig } from './utils/categories';
+import { getDefaultStyle, getStyleConfig } from './utils/categories';
 import { handleImageGeneration } from './utils/handleImageGeneration';
 import { getInputFieldsForStyle } from './utils/inputFields';
 import { showStyleSelectionPanel } from './utils/showStyleSelectionPanel';
@@ -73,11 +73,13 @@ const UnmemorizedAiGenerate = () => {
     toggleLaserFriendly,
   } = useAiGenerateStore();
   const { data: aiConfig, isError, isFetching, refetch } = useAiConfigQuery();
-  const aiStyles = aiConfig?.styles || [];
+  const aiStyles = useMemo(() => aiConfig?.styles || [], [aiConfig?.styles]);
   const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
   // Store refs for values needed in throttled callback
   const paramsRef = useRef({ style: styleId, styles: aiStyles, user });
+  // Auto-select default style on first open
+  const hasInitializedStyle = useRef(false);
 
   paramsRef.current = { style: styleId, styles: aiStyles, user };
 
@@ -116,6 +118,18 @@ const UnmemorizedAiGenerate = () => {
       exitScope();
     };
   }, [drawerMode, setDrawerMode]);
+
+  useEffect(() => {
+    if (hasInitializedStyle.current || aiStyles.length === 0) return;
+
+    const categories = aiConfig?.categories || [];
+    const firstStyle = getDefaultStyle(aiStyles, categories);
+
+    if (firstStyle && firstStyle.id !== 'customize') {
+      setStyle(firstStyle.id, aiStyles);
+      hasInitializedStyle.current = true;
+    }
+  }, [aiConfig, aiStyles, setStyle]);
 
   const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles), style);
 
