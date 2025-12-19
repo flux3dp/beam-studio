@@ -23,7 +23,11 @@
   flex-direction: column;
   gap: 0;
   padding: 16px;
-  padding-bottom: 140px; // Space for footer
+
+  // Extra padding when footer is visible (editor view)
+  &.with-footer {
+    padding-bottom: 140px;
+  }
 }
 
 // ============================================

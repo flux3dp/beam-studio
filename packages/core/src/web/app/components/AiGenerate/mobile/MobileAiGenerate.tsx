@@ -3,6 +3,7 @@ import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
 import { ReloadOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
 import { Popup, Tabs } from 'antd-mobile';
+import classNames from 'classnames';
 import { funnel } from 'remeda';
 
 import layoutConstants from '@core/app/constants/layout-constants';
@@ -232,7 +233,7 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
         onClose={onClose}
         title={t.header.title}
       >
-        <div className={styles.content} ref={contentRef}>
+        <div className={classNames(styles.content, { [styles['with-footer']]: !store.showHistory })} ref={contentRef}>
           {store.showHistory ? (
             <ImageHistory />
           ) : (
