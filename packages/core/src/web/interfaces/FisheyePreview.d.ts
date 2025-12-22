@@ -213,22 +213,6 @@ export interface RotationParameters3DGhostApi {
   ty: number;
 }
 
-interface FisheyePreviewManagerBase {
-  device: IDeviceInfo;
-  levelingOffset: Record<string, number>;
-  objectHeight: number;
-  onObjectHeightChanged(): Promise<void>;
-  params: FisheyeCameraParameters;
-
-  reloadLevelingOffset(): Promise<void>;
-
-  resetObjectHeight(): Promise<boolean>;
-
-  setupFisheyePreview(args?: { progressId?: string }): Promise<boolean>;
-
-  version: number;
-}
-
 export interface FisheyePreviewManager {
   device: IDeviceInfo;
   levelingData: Record<string, number>;
@@ -241,7 +225,10 @@ export interface FisheyePreviewManager {
 
   rotationData?: RotationParameters3DCalibration;
 
-  setupFisheyePreview(args?: { progressId?: string }): Promise<boolean>;
+  setupFisheyePreview(args?: {
+    closeMessage?: () => void;
+    updateMessage?: (message: string) => void;
+  }): Promise<boolean>;
 
   support3dRotation: boolean;
 

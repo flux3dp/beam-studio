@@ -17,6 +17,7 @@ import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -690,10 +691,8 @@ const convertTextToPath = async (
           buttonLabels: [i18n.lang.topbar.menu.add_new_machine],
           buttonType: AlertConstants.CUSTOM_CANCEL,
           callbacks: async () => {
-            const saveRes = await toggleUnsavedChangedDialog();
-
-            if (saveRes) {
-              window.location.hash = '#/initialize/connect/select-machine-model';
+            if (await toggleUnsavedChangedDialog()) {
+              window.location.hash = hashMap.machineSetup;
             }
           },
           caption: i18n.lang.alert.oops,

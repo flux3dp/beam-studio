@@ -24,15 +24,7 @@ jest.mock('@core/helpers/device-master', () => ({
   rawMoveZRelToLastHome: (...args) => mockRawMoveZRelToLastHome(...args),
 }));
 
-const mockOpenNonstopProgress = jest.fn();
-const mockUpdate = jest.fn();
-const mockPopById = jest.fn();
-
-jest.mock('@core/app/actions/progress-caller', () => ({
-  openNonstopProgress: (...args) => mockOpenNonstopProgress(...args),
-  popById: (...args) => mockPopById(...args),
-  update: (...args) => mockUpdate(...args),
-}));
+const mockUpdateMessage = jest.fn();
 
 const mockGetState = jest.fn();
 
@@ -62,31 +54,14 @@ describe('test rawAndHome', () => {
     mockMeetRequirement.mockReturnValue(false);
   });
 
-  it('should work without progress id', async () => {
-    await rawAndHome();
-    expect(mockGetState).toHaveBeenCalledTimes(1);
+  it('should work with updateMessage', async () => {
+    await rawAndHome(mockUpdateMessage);
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
     expect(mockRawHome).toHaveBeenCalledTimes(1);
     expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
-    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
-    expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({ id: 'raw-and-home' });
-    expect(mockUpdate).toHaveBeenCalledTimes(2);
-    expect(mockUpdate).toHaveBeenNthCalledWith(1, 'raw-and-home', { message: i18n.lang.message.enteringRawMode });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'raw-and-home', { message: i18n.lang.message.homing });
-    expect(mockPopById).toHaveBeenCalledTimes(1);
-    expect(mockPopById).toHaveBeenLastCalledWith('raw-and-home');
-  });
-
-  it('should work with progress id', async () => {
-    await rawAndHome('progress-id');
-    expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
-    expect(mockRawHome).toHaveBeenCalledTimes(1);
-    expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
-    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(0);
-    expect(mockUpdate).toHaveBeenCalledTimes(2);
-    expect(mockUpdate).toHaveBeenNthCalledWith(1, 'progress-id', { message: i18n.lang.message.enteringRawMode });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'progress-id', { message: i18n.lang.message.homing });
-    expect(mockPopById).toHaveBeenCalledTimes(0);
+    expect(mockUpdateMessage).toHaveBeenCalledTimes(2);
+    expect(mockUpdateMessage).toHaveBeenNthCalledWith(1, i18n.lang.message.enteringRawMode);
+    expect(mockUpdateMessage).toHaveBeenNthCalledWith(2, i18n.lang.message.homing);
   });
 
   it('should work with raw home camera requirement', async () => {
@@ -100,7 +75,7 @@ describe('test rawAndHome', () => {
 
   it('should work with rotary mode', async () => {
     mockGetState.mockReturnValue({ rotary_mode: true });
-    await rawAndHome();
+    await rawAndHome(mockUpdateMessage);
     expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
     expect(mockRawHomeZ).toHaveBeenCalledTimes(1);
@@ -108,12 +83,8 @@ describe('test rawAndHome', () => {
     expect(mockRawMoveZRelToLastHome).toHaveBeenCalledTimes(1);
     expect(mockRawMoveZRelToLastHome).toHaveBeenLastCalledWith(0);
     expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
-    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(1);
-    expect(mockOpenNonstopProgress).toHaveBeenLastCalledWith({ id: 'raw-and-home' });
-    expect(mockUpdate).toHaveBeenCalledTimes(2);
-    expect(mockUpdate).toHaveBeenNthCalledWith(1, 'raw-and-home', { message: i18n.lang.message.enteringRawMode });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'raw-and-home', { message: i18n.lang.message.homing });
-    expect(mockPopById).toHaveBeenCalledTimes(1);
-    expect(mockPopById).toHaveBeenLastCalledWith('raw-and-home');
+    expect(mockUpdateMessage).toHaveBeenCalledTimes(2);
+    expect(mockUpdateMessage).toHaveBeenNthCalledWith(1, i18n.lang.message.enteringRawMode);
+    expect(mockUpdateMessage).toHaveBeenNthCalledWith(2, i18n.lang.message.homing);
   });
 });

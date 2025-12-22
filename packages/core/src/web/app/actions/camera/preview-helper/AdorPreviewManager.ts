@@ -47,7 +47,10 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
         this.fisheyeManager = new FisheyePreviewManagerV2(this.device, params);
       }
 
-      const res = await this.fisheyeManager!.setupFisheyePreview({ progressId: this.progressId });
+      const res = await this.fisheyeManager!.setupFisheyePreview({
+        closeMessage: () => this.closeMessage(),
+        updateMessage: (message: string) => this.showMessage({ content: message }),
+      });
 
       return res;
     } catch (error) {
@@ -95,9 +98,8 @@ class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
       this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3 });
 
       return true;
-    } catch (error) {
+    } finally {
       this.closeMessage();
-      throw error;
     }
   };
 

@@ -25,6 +25,7 @@ import {
   saveToCloud,
   toggleUnsavedChangedDialog,
 } from '@core/helpers/file/export';
+import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
@@ -49,10 +50,8 @@ getSVGAsync((globalSVG) => {
 export default {
   ABOUT_BEAM_STUDIO: (): void => Dialog.showAboutBeamStudio(),
   ADD_NEW_MACHINE: async () => {
-    const res = await toggleUnsavedChangedDialog();
-
-    if (res) {
-      window.location.hash = '#/initialize/connect/select-machine-model';
+    if (await toggleUnsavedChangedDialog()) {
+      window.location.hash = hashMap.machineSetup;
     }
   },
   ANTI_ALIASING: (): boolean => viewMenu.toggleAntiAliasing(),
@@ -112,10 +111,8 @@ export default {
   PREFERENCE: async (): Promise<void> => {
     Dialog.clearAllDialogComponents();
 
-    const res = await toggleUnsavedChangedDialog();
-
-    if (res) {
-      window.location.hash = '#/studio/settings';
+    if (await toggleUnsavedChangedDialog()) {
+      window.location.hash = hashMap.settings;
     }
   },
   QUESTIONNAIRE: async (): Promise<void> => {

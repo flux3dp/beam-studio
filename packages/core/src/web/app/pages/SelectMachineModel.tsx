@@ -8,7 +8,7 @@ import windowLocationReload from '@core/app/actions/windowLocation';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
 import { checkFpm1 } from '@core/helpers/checkFeature';
-import { getHomePage } from '@core/helpers/hashHelper';
+import { getHomePage, hashMap } from '@core/helpers/hashHelper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -63,7 +63,7 @@ const SelectMachineModel = (): React.JSX.Element => {
     }
 
     if (isSelectBeambox || isSelectBeamo) {
-      window.location.hash = '#/initialize/connect/select-machine-model';
+      window.location.hash = hashMap.machineSetup;
 
       return;
     }
