@@ -1,4 +1,3 @@
-import MessageCaller from '@core/app/actions/message-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import deviceMaster from '@core/helpers/device-master';
@@ -9,7 +8,6 @@ import type {
   PerspectiveGrid,
 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
-import { MessageLevel } from '@core/interfaces/IMessage';
 
 import FisheyePreviewManagerBase from './FisheyePreviewManagerBase';
 import rawAndHome from './rawAndHome';
@@ -28,49 +26,26 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
   async setupFisheyePreview(
     args: {
       cameraPosition?: number[];
+      closeMessage?: () => void;
       height?: number;
-      messageType?: 'message' | 'progress';
       movementFeedrate?: number;
-      progressId?: string;
-      progressRange?: [number, number];
       shouldKeepInRawMode?: boolean;
+      updateMessage?: (message: string) => void;
     } = {},
   ): Promise<boolean> {
     const { lang } = i18n;
-    const {
-      cameraPosition,
-      height,
-      messageType = 'progress',
-      movementFeedrate = 7500,
-      progressId,
-      progressRange: [progressStart, progressEnd] = [0, 100],
-      shouldKeepInRawMode = false,
-    } = args;
+    const { cameraPosition, height, movementFeedrate = 7500, shouldKeepInRawMode = false } = args;
+    const showMessage = args.updateMessage ? null : () => progressCaller.openNonstopProgress({ id: this.progressId });
+    const updateMessage =
+      args.updateMessage || ((message: string) => progressCaller.update(this.progressId, { message }));
+    const closeMessage = args.closeMessage || (() => progressCaller.popById(this.progressId));
 
-    if (!progressId && messageType === 'progress') progressCaller.openNonstopProgress({ id: this.progressId });
-
-    const updateMessage = ({ message, percentage }: { message?: string; percentage?: number }) => {
-      if (messageType === 'progress') {
-        progressCaller.update(progressId || this.progressId, { message, percentage });
-      } else if (message) {
-        MessageCaller.openMessage({
-          content: message,
-          duration: 20,
-          key: progressId || this.progressId,
-          level: MessageLevel.LOADING,
-        });
-      }
-    };
-
-    updateMessage({ percentage: progressStart });
+    showMessage?.();
 
     const { params } = this;
 
-    await rawAndHome(progressId || this.progressId);
-    progressCaller.update(progressId || this.progressId, {
-      message: lang.message.preview.moving_to_preview_position,
-      percentage: progressStart + (progressEnd - progressStart) * 0.5,
-    });
+    await rawAndHome(updateMessage);
+    updateMessage(lang.message.preview.moving_to_preview_position);
 
     if (cameraPosition) {
       await deviceMaster.rawMove({ f: movementFeedrate, x: cameraPosition[0], y: cameraPosition[1] });
@@ -81,11 +56,8 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
       await new Promise((resolve) => setTimeout(resolve, time * 1000));
     }
 
-    updateMessage({ percentage: progressStart + (progressEnd - progressStart) * 0.75 });
-    await new Promise((resolve) => setTimeout(resolve, 100));
-
     if (height === undefined) {
-      updateMessage({ message: lang.message.preview.getting_focal_distance });
+      updateMessage(lang.message.preview.getting_focal_distance);
 
       this.objectHeight = await getFocalDistance();
     } else {
@@ -93,21 +65,15 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     }
 
     if (!shouldKeepInRawMode) {
-      updateMessage({ message: lang.message.endingRawMode });
+      updateMessage(lang.message.endingRawMode);
       await deviceMaster.endSubTask();
     }
 
     params.grids = this.grids;
-    updateMessage({ message: lang.message.connectingCamera });
+    updateMessage(lang.message.connectingCamera);
     await deviceMaster.setFisheyeParam(params);
     await this.onObjectHeightChanged();
-
-    updateMessage({ percentage: progressEnd });
-
-    if (!progressId) {
-      if (messageType === 'progress') progressCaller.popById(this.progressId);
-      else MessageCaller.closeMessage(this.progressId);
-    }
+    closeMessage?.();
 
     return true;
   }

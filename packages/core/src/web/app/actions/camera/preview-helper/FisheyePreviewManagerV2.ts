@@ -25,47 +25,43 @@ class FisheyePreviewManagerV2 extends FisheyePreviewManagerBase implements Fishe
 
   async setupFisheyePreview(
     args: {
+      closeMessage?: () => void;
       defaultHeight?: number;
       focusPosition?: string;
-      progressId?: string;
+      updateMessage?: (message: string) => void;
     } = {},
   ): Promise<boolean> {
     const { lang } = i18n;
-    const { defaultHeight, focusPosition, progressId } = args;
-
-    if (!progressId) {
-      progressCaller.openNonstopProgress({ id: this.progressId });
-    }
-
+    const { defaultHeight, focusPosition } = args;
+    const showMessage = args.updateMessage ? null : () => progressCaller.openNonstopProgress({ id: this.progressId });
+    const updateMessage =
+      args.updateMessage || ((message: string) => progressCaller.update(this.progressId, { message }));
+    const closeMessage = args.closeMessage || (() => progressCaller.popById(this.progressId));
     const { device, params } = this;
 
-    progressCaller.update(progressId || this.progressId, { message: 'Fetching leveling data...' });
+    showMessage?.();
+    updateMessage('Fetching leveling data...');
     this.levelingOffset = await getLevelingData('offset');
-    await rawAndHome(progressId || this.progressId);
+    await rawAndHome(updateMessage);
 
-    const height = await getHeight(device, progressId || this.progressId, defaultHeight);
+    const height = await getHeight(device, { closeMessage, defaultValue: defaultHeight, updateMessage });
 
     if (typeof height !== 'number') {
       return false;
     }
 
     this.objectHeight = height;
-    progressCaller.openNonstopProgress({
-      id: progressId || this.progressId,
-      message: lang.message.getProbePosition,
-    });
+    showMessage?.();
+    updateMessage(lang.message.getProbePosition);
     this.autoFocusRefKey = focusPosition ?? (await getAutoFocusPosition(device));
-    progressCaller.update(progressId || this.progressId, { message: lang.message.endingRawMode });
+    updateMessage(lang.message.endingRawMode);
     await deviceMaster.endSubTask();
     // V2 calibration use point E as reference
     console.log(params);
     await deviceMaster.setFisheyeParam(params);
     await this.updateLevelingData();
     await this.onObjectHeightChanged();
-
-    if (!progressId) {
-      progressCaller.popById(this.progressId);
-    }
+    closeMessage?.();
 
     return true;
   }

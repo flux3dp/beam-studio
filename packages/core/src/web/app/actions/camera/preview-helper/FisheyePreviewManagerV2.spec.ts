@@ -92,25 +92,21 @@ describe('test FisheyePreviewManagerV2', () => {
     mockGetHeight.mockReturnValue(7);
     mockGetAutoFocusPosition.mockReturnValue('autoFocusRefKey');
 
-    const result = await fisheyePreviewManagerV2.setupFisheyePreview();
+    const mockUpdateMessage = jest.fn();
+    const mockCloseMessage = jest.fn();
+    const result = await fisheyePreviewManagerV2.setupFisheyePreview({
+      closeMessage: mockCloseMessage,
+      updateMessage: mockUpdateMessage,
+    });
 
     expect(result).toBe(true);
     expect(fisheyePreviewManagerV2.levelingOffset).toBe('mock-offset');
     expect(fisheyePreviewManagerV2.objectHeight).toBe(7);
-    expect(mockOpenNonstopProgress).toHaveBeenCalledTimes(2);
-    expect(mockOpenNonstopProgress).toHaveBeenNthCalledWith(1, { id: 'fisheye-preview-manager' });
-    expect(mockOpenNonstopProgress).toHaveBeenNthCalledWith(2, {
-      id: 'fisheye-preview-manager',
-      message: 'getProbePosition',
-    });
-    expect(mockUpdate).toHaveBeenCalledTimes(2);
-    expect(mockUpdate).toHaveBeenNthCalledWith(1, 'fisheye-preview-manager', {
-      message: 'Fetching leveling data...',
-    });
-    expect(mockUpdate).toHaveBeenNthCalledWith(2, 'fisheye-preview-manager', {
-      message: 'endingRawMode',
-    });
-    expect(mockGetLevelingData).toBeCalledTimes(1);
+    expect(mockUpdateMessage).toHaveBeenCalledTimes(3);
+    expect(mockUpdateMessage).toHaveBeenNthCalledWith(1, 'Fetching leveling data...');
+    expect(mockUpdateMessage).toHaveBeenNthCalledWith(2, 'getProbePosition');
+    expect(mockUpdateMessage).toHaveBeenNthCalledWith(3, 'endingRawMode');
+    expect(mockGetLevelingData).toHaveBeenCalledTimes(1);
     expect(mockGetLevelingData).toHaveBeenNthCalledWith(1, 'offset');
     expect(mockRawAndHome).toHaveBeenCalledTimes(1);
     expect(mockGetHeight).toHaveBeenCalledTimes(1);
@@ -118,8 +114,7 @@ describe('test FisheyePreviewManagerV2', () => {
     expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(mockSetFisheyeParam).toHaveBeenCalledTimes(1);
     expect(mockSetFisheyeParam).toHaveBeenNthCalledWith(1, 'params');
-    expect(mockPopById).toHaveBeenCalledTimes(1);
-    expect(mockPopById).toHaveBeenNthCalledWith(1, 'fisheye-preview-manager');
+    expect(mockCloseMessage).toHaveBeenCalledTimes(1);
     expect(mockOnObjectHeightChanged).toHaveBeenCalledTimes(1);
   });
 

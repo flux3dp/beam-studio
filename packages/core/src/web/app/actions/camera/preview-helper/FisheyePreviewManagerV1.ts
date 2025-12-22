@@ -34,16 +34,21 @@ class FisheyePreviewManagerV1 extends FisheyePreviewManagerBase implements Fishe
     this.params = params;
   }
 
-  public async setupFisheyePreview(args: { progressId?: string } = {}): Promise<boolean> {
+  public async setupFisheyePreview(
+    args: {
+      closeMessage?: () => void;
+      updateMessage?: (message: string) => void;
+    } = {},
+  ): Promise<boolean> {
     const { device } = this;
     const { lang } = i18n;
-    const { progressId } = args;
+    const showMessage = args.updateMessage ? null : () => progressCaller.openNonstopProgress({ id: this.progressId });
+    const updateMessage =
+      args.updateMessage || ((message: string) => progressCaller.update(this.progressId, { message }));
+    const closeMessage = args.closeMessage || (() => progressCaller.popById(this.progressId));
 
-    if (!progressId) {
-      progressCaller.openNonstopProgress({ id: this.progressId });
-    }
-
-    progressCaller.update(progressId || this.progressId, { message: 'Fetching leveling data...' });
+    showMessage?.();
+    updateMessage('Fetching leveling data...');
 
     const levelingData = await getLevelingData('hexa_platform');
     const bottomCoverLevelingData = await getLevelingData('bottom_cover');
@@ -61,25 +66,17 @@ class FisheyePreviewManagerV1 extends FisheyePreviewManagerBase implements Fishe
     keys.forEach((key) => {
       levelingData[key] -= bottomCoverLevelingData[key];
     });
-    progressCaller.update(progressId || this.progressId, {
-      message: lang.message.getProbePosition,
-    });
-    await rawAndHome(progressId || this.progressId);
+    updateMessage(lang.message.getProbePosition);
+    await rawAndHome(updateMessage);
 
-    const height = await getHeight(device, progressId || this.progressId);
+    const height = await getHeight(device, { closeMessage, updateMessage });
 
     if (typeof height !== 'number') {
-      if (!progressId) {
-        progressCaller.popById(this.progressId);
-      }
-
       return false;
     }
 
-    progressCaller.openNonstopProgress({
-      id: progressId || this.progressId,
-      message: lang.message.getProbePosition,
-    });
+    showMessage?.();
+    updateMessage(lang.message.getProbePosition);
     this.objectHeight = height;
 
     const autoFocusRefKey = await getAutoFocusPosition(device);
@@ -89,7 +86,7 @@ class FisheyePreviewManagerV1 extends FisheyePreviewManagerBase implements Fishe
       levelingData[key] = Math.round((levelingData[key] - refHeight) * 1000) / 1000;
     });
     this.levelingData = levelingData;
-    progressCaller.update(progressId || this.progressId, { message: lang.message.endingRawMode });
+    updateMessage(lang.message.endingRawMode);
     await deviceMaster.endSubTask();
 
     if (deviceRotationData) {
@@ -98,9 +95,7 @@ class FisheyePreviewManagerV1 extends FisheyePreviewManagerBase implements Fishe
 
     await this.onObjectHeightChanged();
 
-    if (!progressId) {
-      progressCaller.popById(this.progressId);
-    }
+    closeMessage?.();
 
     return true;
   }

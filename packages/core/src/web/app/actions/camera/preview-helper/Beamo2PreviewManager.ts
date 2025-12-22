@@ -89,12 +89,11 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
       return await this.doorChecker.doorClosedWrapper(() =>
         this.fisheyePreviewManager!.setupFisheyePreview({
           cameraPosition: cameraCenter,
+          closeMessage: () => this.closeMessage(),
           height: 0,
-          messageType: 'message',
           movementFeedrate: this.getMovementSpeed(),
-          progressId: this.progressId,
-          progressRange: [40, 100],
           shouldKeepInRawMode: true,
+          updateMessage: (message: string) => this.showMessage({ content: message }),
         }),
       );
     } catch (error) {

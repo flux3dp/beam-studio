@@ -1,36 +1,34 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.5.11 beta
+// 2.6.0 beta
 const CHANGES_TW = {
   added: [
-    '支援 FLUX beamo II 機型。',
-    '新增 Promark 凸包預覽功能。',
-    '新增 模組校正跳過繪製雷射與列印校正圖形功能。',
+    '新增 AI 創作功能。',
+    '優化相機預覽使用流程，使用者在相機預覽過程中仍可編輯畫布中物件。',
+    'Beambox II 相機支援自動曝光功能 (需搭配韌體 v6.0.15)。',
     '新增 進階校正參數設定。',
   ],
-  changed: ['調整 雕刻與列印預設參數排序 (需重置參數設定)。'],
-  fixed: [
-    '修正 跨分頁偏好設定同步功能。',
-    '修正 快速點擊送出工作可能重複計算工作的問題。',
-    '修正 計算路徑資訊翻譯。',
-    '修正 beamo 二極體校正功能。',
+  changed: [
+    '更換 Mac 版 Beam Studio icon。',
+    '調整 位移複製功能面板排版。',
+    '調整 陣列功能面板排版。',
+    '優化 beamo II 相機校正流程。',
   ],
+  fixed: [],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added support for the FLUX beamo II model.',
-    'Added Promark convex hull preview.',
-    'Added option to skip drawing laser and print calibration patterns during module calibration.',
-    'Added advanced calibration parameter settings.',
+    'Added the AI Creation feature.',
+    'Improved the Camera Preview workflow—users can now continue editing objects on the canvas while in Camera Preview.',
+    'Beambox II camera now supports Auto Exposure (requires firmware v6.0.15).',
   ],
-  changed: ['Reordered default engraving and printing parameters (reset parameters required).'],
-  fixed: [
-    'Fixed preference syncing issues.',
-    'Fixed issue where rapidly clicking “Start” could trigger duplicate job calculations',
-    'Added missing translations for path calculation information.',
-    'Fixed the beamo diode calibration function.',
+  changed: [
+    'Updated the Beam Studio icon on macOS.',
+    'Adjusted the layout of the Offset panel.',
+    'Adjusted the layout of the Array panel.',
   ],
+  fixed: [],
 };
 
 export default {
