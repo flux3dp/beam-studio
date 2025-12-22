@@ -2,7 +2,9 @@ import alertCaller from '@core/app/actions/alert-caller';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
+import { getWideAngleCameraData } from '@core/app/actions/camera/preview-helper/getWideAngleCameraData';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
+import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
@@ -54,7 +56,14 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
 
   if (!isWorkareaMatched && !(await showResizeAlert(device!))) return false;
 
-  if (device.model === 'ado1' || device.model === 'fbm2') {
+  const { hasWideAngleCamera, parameters } = await getWideAngleCameraData(device);
+
+  setCameraPreviewState({
+    hasWideAngleCamera,
+    isWideAngleCameraCalibrated: Boolean(parameters),
+  });
+
+  if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && parameters)) {
     setupPreviewMode();
 
     return false;
