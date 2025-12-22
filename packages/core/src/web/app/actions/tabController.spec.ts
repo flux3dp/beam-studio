@@ -86,7 +86,7 @@ describe('test TabController', () => {
     mockIsCloudFile.mockReturnValue(true);
     topBarEventEmitter.emit('UPDATE_TITLE');
     expect(mockSend).toHaveBeenCalledTimes(1);
-    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabTitle, 'name*', true);
+    expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabTitle, 'name', true, true);
   });
 
   test('handle import files', () => {

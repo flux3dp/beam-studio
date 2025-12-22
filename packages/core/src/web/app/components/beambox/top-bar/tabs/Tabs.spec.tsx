@@ -3,7 +3,6 @@ import React, { act } from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import type { Tab } from '@core/interfaces/Tab';
 
 import Tabs from './Tabs';
@@ -180,20 +179,27 @@ describe('test Tabs', () => {
     ]);
     mockGetCurrentId.mockReturnValue(1);
 
-    const { container, rerender } = render(
-      <CanvasContext.Provider value={{ hasUnsavedChange: false } as any}>
-        <Tabs />
-      </CanvasContext.Provider>,
-    );
+    const { container } = render(<Tabs />);
 
     expect(mockOnTitleChange).toHaveBeenCalledTimes(1);
     act(() => mockOnTitleChange.mock.calls[0][0]('new title', false));
     expect(container.querySelector('.name').textContent).toBe('new title');
-    rerender(
-      <CanvasContext.Provider value={{ hasUnsavedChange: true } as any}>
-        <Tabs />
-      </CanvasContext.Provider>,
-    );
+
+    mockGetAllTabs.mockReturnValue([
+      {
+        hasUnsavedChanges: true,
+        id: 1,
+        isCloud: false,
+        isLoading: false,
+        mode: CanvasMode.Draw,
+        title: 'new title',
+      },
+    ]);
+
+    act(() => {
+      mockOnTabsUpdated.mock.calls[0][0]();
+    });
+
     expect(container.querySelector('.name').textContent).toBe('new title*');
   });
 
