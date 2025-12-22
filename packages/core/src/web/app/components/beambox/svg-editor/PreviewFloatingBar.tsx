@@ -129,7 +129,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
         )}
         <Button
           blue={isMouseInPreviewMode && cameraType === CameraType.LASER_HEAD}
-          disabled={!isPreviewMode || isDrawing || isStarting}
+          disabled={isDrawing || isStarting}
           id="laser-head-camera"
           onClick={async () => {
             if (cameraType !== CameraType.LASER_HEAD) await previewModeController.switchCamera(CameraType.LASER_HEAD);
