@@ -38,7 +38,7 @@ const state: StorageStoreState = {
   /** 1 for done */
   'did-gesture-tutorial': 1,
   'elements-history': [],
-  'enable-sentry': false,
+  'enable-sentry': null,
   'flux-rsa-key': 'fluxRsaKey',
   'font-history': [],
   /** font name to display name */

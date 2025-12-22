@@ -28,7 +28,7 @@ export interface Storage {
   /** 1 for done */
   'did-gesture-tutorial': number;
   'elements-history': History[];
-  'enable-sentry': boolean;
+  'enable-sentry': boolean | null;
   'flux-rsa-key': string;
   'font-history': string[];
   /** font name to display name */
