@@ -12,11 +12,8 @@ import {
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import isDev from '@core/helpers/is-dev';
-import versionChecker from '@core/helpers/version-checker';
 import type { FisheyeCameraParameters, FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
@@ -24,6 +21,7 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
+import { getWideAngleCameraData } from './getWideAngleCameraData';
 
 // TODO: Add tests
 class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
@@ -110,35 +108,6 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
       return this.cameraType;
     } finally {
       this.closeMessage();
-    }
-  };
-
-  private checkWideAngleCamera = async (): Promise<void> => {
-    const vc = versionChecker(this.device.version);
-
-    if (!vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') && !isDev()) {
-      this.hasWideAngleCamera = false;
-
-      return;
-    }
-
-    const cameraCount = await deviceMaster.getCameraCount();
-
-    try {
-      if (!cameraCount.success || cameraCount.data < 2) {
-        this.hasWideAngleCamera = false;
-
-        return;
-      }
-
-      this.hasWideAngleCamera = true;
-      this.wideAngleFisheyeParams = (await loadJson('fisheye', 'wide-angle.json')) as FisheyeCameraParametersV4;
-
-      return;
-    } catch (error) {
-      console.error('Error when checking wide angle camera', error);
-
-      return;
     }
   };
 
@@ -235,7 +204,11 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
       this.showMessage({ content: sprintf(lang.message.connectingMachine, this.device.name) });
 
       await deviceMaster.connectCamera();
-      await this.checkWideAngleCamera();
+
+      const { hasWideAngleCamera, parameters } = await getWideAngleCameraData(this.device);
+
+      this.hasWideAngleCamera = hasWideAngleCamera;
+      this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;
       this.cameraType =
         this.hasWideAngleCamera && this.wideAngleFisheyeParams ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD;
 
