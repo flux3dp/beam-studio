@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CloseOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
@@ -9,7 +9,6 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import tabConstants from '@core/app/constants/tabConstants';
-import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
@@ -25,7 +24,6 @@ interface Props {
 
 const Tabs = ({ inverse }: Props): React.JSX.Element => {
   const t = useI18n().topbar;
-  const { hasUnsavedChange } = useContext(CanvasContext);
   const currentId = useMemo(() => tabController.getCurrentId(), []);
   const [tabs, setTabs] = useState(tabController.getAllTabs());
   const [currentTabInfo, setCurrentTabInfo] = useState({ isCloud: false, title: '' });
@@ -133,7 +131,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
               ref={(node) => droppableProvided.innerRef(node)}
             >
               {tabs.map((tab, idx) => {
-                const { id, isWelcomeTab } = tab;
+                const { hasUnsavedChanges, id, isWelcomeTab } = tab;
                 const isCurrent = id === currentId;
                 let { title } = isCurrent ? currentTabInfo : tab;
 
@@ -150,7 +148,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
                 }
 
                 if (isCurrent) {
-                  title = `${title || t.untitled}${hasUnsavedChange ? '*' : ''}`;
+                  title = title || t.untitled;
                 }
 
                 return (
@@ -172,7 +170,10 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
                         title={title}
                       >
                         {renderIcon(tab)}
-                        <span className={styles.name}>{title}</span>
+                        <span className={styles.name}>
+                          {title}
+                          {hasUnsavedChanges && <span className={styles.asterisk}>*</span>}
+                        </span>
                         <span
                           className={styles.close}
                           onClick={(e) => {

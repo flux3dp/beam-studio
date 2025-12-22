@@ -61,8 +61,8 @@ class TabManager {
       }
     });
 
-    ipcMain.on(TabEvents.SetTabTitle, (e, title: string, isCloud: boolean) => {
-      this.onTabTitleChanged(e.sender.id, title, isCloud);
+    ipcMain.on(TabEvents.SetTabTitle, (e, title: string, isCloud: boolean, hasUnsavedChanges: boolean) => {
+      this.onTabTitleChanged(e.sender.id, title, isCloud, hasUnsavedChanges);
     });
 
     ipcMain.on(TabEvents.SetTabIsPreviewMode, (e, isPreviewMode: boolean) => {
@@ -162,19 +162,30 @@ class TabManager {
     }
   };
 
-  private onTabTitleChanged = (id: number, title: string, isCloud: boolean): void => {
+  private onTabTitleChanged = (id: number, title: string, isCloud: boolean, hasUnsavedChanges: boolean): void => {
     if (this.tabsMap[id]) {
       this.tabsMap[id].title = title;
       this.tabsMap[id].isCloud = isCloud;
+      this.tabsMap[id].hasUnsavedChanges = hasUnsavedChanges;
       this.notifyTabUpdated();
     }
   };
 
   private serializeTabs = (): FrontendTab[] =>
     this.tabsList.map((id: number) => {
-      const { isCloud, isLoading, isPreviewMode, isWelcomeTab, mode, title } = this.tabsMap[id];
+      const { hasUnsavedChanges, isCloud, isLoading, isPreviewMode, isWelcomeTab, mode, title } = this.tabsMap[id];
 
-      return { id, isCloud, isFocused: id === this.focusedId, isLoading, isPreviewMode, isWelcomeTab, mode, title };
+      return {
+        hasUnsavedChanges,
+        id,
+        isCloud,
+        isFocused: id === this.focusedId,
+        isLoading,
+        isPreviewMode,
+        isWelcomeTab,
+        mode,
+        title,
+      };
     });
 
   private notifyTabUpdated = (): void => {
