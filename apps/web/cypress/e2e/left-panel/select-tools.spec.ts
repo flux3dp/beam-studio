@@ -60,6 +60,7 @@ describe('select tools', () => {
   it('select rotate', () => {
     cy.clickToolBtn('Element', false);
     cy.get('.anticon[id="basic/icon-triangle"]').click();
+    cy.get('.ant-drawer').should('not.exist');
     cy.get('#svg_1').click();
 
     const rotateAndVerify = (pageX: number, pageY: number, angle: number) => {
