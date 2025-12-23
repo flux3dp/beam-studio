@@ -1,6 +1,5 @@
 export interface IOperatingSystem {
   arch: () => string;
-  cpus: () => Array<{ model: string; speed: number; times: any }>;
   isMacOS15OrLater?: boolean;
   networkInterfaces: () => {
     [id: string]: Array<{

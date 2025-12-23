@@ -6,9 +6,7 @@ import { app, dialog, shell } from 'electron';
 import i18n from './i18n';
 
 export const checkMacOsBuild = async (mainWindow: BaseWindow): Promise<void> => {
-  if (process.platform !== 'darwin') {
-    return;
-  }
+  if (process.platform !== 'darwin') return;
 
   const arch = os.arch();
   const cpus = os.cpus();
@@ -30,8 +28,6 @@ export const checkMacOsBuild = async (mainWindow: BaseWindow): Promise<void> => 
       app.exit(0);
     }
   }
-
-  return;
 };
 
 export default checkMacOsBuild;

@@ -75,7 +75,6 @@ const isMacOS15OrLater = (() => {
 
 export default {
   arch: os.arch,
-  cpus: os.cpus,
   isMacOS15OrLater,
   networkInterfaces: os.networkInterfaces,
   process: {
