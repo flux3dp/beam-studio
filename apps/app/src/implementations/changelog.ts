@@ -1,16 +1,16 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.5.11 beta
+// 2.5.13
 const CHANGES_TW = {
   added: [],
   changed: [],
-  fixed: ['修正 beamo II 噴墨刷新行為。'],
+  fixed: ['修正 一些小錯誤。'],
 };
 
 const CHANGES_EN = {
   added: [],
-  changed: ['Removed offline machine serial check.'],
-  fixed: [],
+  changed: [],
+  fixed: ['Fixed minor bugs.'],
 };
 
 export default {
