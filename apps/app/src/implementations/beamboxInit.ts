@@ -6,13 +6,11 @@ import alertConstants from '@core/app/constants/alert-constants';
 import alertConfig from '@core/helpers/api/alert-config';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
-import browser from '@core/implementations/browser';
 import os, { macKernelVersionMap } from '@core/implementations/os';
 
 class ElectronBeamboxInit extends BeamboxInit {
   async showStartUpDialogs(): Promise<void> {
     await super.showStartUpDialogs();
-    this.checkMacOSBuild();
     this.checkOSVersion();
   }
 
@@ -82,26 +80,6 @@ class ElectronBeamboxInit extends BeamboxInit {
           });
         }
       }
-    }
-  }
-
-  private checkMacOSBuild(): void {
-    if (getOS() !== 'MacOS') return;
-
-    const arch = os.arch();
-    const cpus = os.cpus();
-
-    if (arch === 'x64' && cpus.some((cpu) => cpu.model.includes('Apple'))) {
-      const t = i18n.lang.message.mac_os_arch_mismatch;
-
-      alertCaller.popUp({
-        buttonLabels: [t.download_center],
-        buttonType: alertConstants.CUSTOM_CANCEL,
-        callbacks: () => browser.open(i18n.lang.topbar.menu.link.downloads),
-        caption: t.caption,
-        message: t.message,
-        type: alertConstants.SHOW_POPUP_WARNING,
-      });
     }
   }
 }
