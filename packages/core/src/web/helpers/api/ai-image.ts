@@ -1,9 +1,8 @@
 import type { AspectRatio } from '@core/app/components/AiGenerate/types';
 
 import type { ResponseWithError } from './flux-id';
-import { axiosFluxId, FLUXID_HOST } from './flux-id';
+import { axiosFluxId } from './flux-id';
 
-const BASE_URL = `${FLUXID_HOST}/api/ai-image`;
 const CONFIG = { MAX_ATTEMPTS: 100, POLL_INTERVAL: 3000, TIMEOUT: 30000 };
 
 const ERROR_MESSAGES: Record<number, string> = {
@@ -97,17 +96,17 @@ export const createAiImageTask = async (params: GenerationRequest) => {
   image_inputs.forEach((input) => formData.append('image_inputs', input));
 
   const result = await handleResponse<{ uuid: string }>(
-    axiosFluxId.post(`${BASE_URL}/${mode}`, formData, { timeout: CONFIG.TIMEOUT, withCredentials: true }),
+    axiosFluxId.post(`api/ai-image/${mode}`, formData, { timeout: CONFIG.TIMEOUT, withCredentials: true }),
   );
 
   return 'error' in result ? result : { uuid: result.data.uuid };
 };
 
 export const queryAiImageStatus = (uuid: string) =>
-  handleResponse<AiImageGenerationData>(axiosFluxId.get(`${BASE_URL}/${uuid}`, { withCredentials: true }));
+  handleResponse<AiImageGenerationData>(axiosFluxId.get(`api/ai-image/${uuid}`, { withCredentials: true }));
 
 export const getAiImageHistory = () =>
-  handleResponse<AiImageGenerationData[]>(axiosFluxId.get(`${BASE_URL}/history`, { withCredentials: true }));
+  handleResponse<AiImageGenerationData[]>(axiosFluxId.get('api/ai-image/history', { withCredentials: true }));
 
 export const pollTaskUntilComplete = async (
   uuid: string,
