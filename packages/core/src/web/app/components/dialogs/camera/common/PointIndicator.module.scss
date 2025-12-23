@@ -1,0 +1,105 @@
+@use '@core/styles/variables' as variables;
+
+.container {
+  width: 100%;
+  padding-top: 56.25%;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+  position: relative;
+  color: variables.$secondary-gray;
+
+  .point {
+    position: absolute;
+    cursor: pointer;
+    font-weight: 600;
+
+    &::after {
+      content: '';
+      position: absolute;
+      width: 3px;
+      height: 3px;
+      background-color: currentColor;
+      border-radius: 50%;
+    }
+
+    &.active {
+      color: #ff4d4f;
+    }
+
+    &.p0 {
+      left: 18%;
+      top: 15%;
+    }
+
+    &.p1 {
+      right: 18%;
+      top: 15%;
+    }
+
+    &.p2 {
+      left: 18%;
+      bottom: 15%;
+    }
+
+    &.p3 {
+      right: 18%;
+      bottom: 15%;
+    }
+
+    &.p4 {
+      left: 35%;
+      top: 30%;
+    }
+
+    &.p5 {
+      right: 35%;
+      top: 30%;
+    }
+
+    &.p6 {
+      left: 35%;
+      bottom: 30%;
+    }
+
+    &.p7 {
+      right: 35%;
+      bottom: 30%;
+    }
+
+    &.dot_br {
+      &::after {
+        right: -8px;
+        bottom: 8px;
+      }
+    }
+
+    &.dot_bl {
+      &::after {
+        left: -8px;
+        bottom: 8px;
+      }
+    }
+
+    &.dot_tr {
+      &::after {
+        right: -8px;
+        top: 8px;
+      }
+    }
+
+    &.dot_tl {
+      &::after {
+        left: -8px;
+        top: 8px;
+      }
+    }
+  }
+
+  .label {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 16px;
+  }
+}
