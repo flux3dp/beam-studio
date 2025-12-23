@@ -26,6 +26,9 @@ interface State {
   isLaserFriendly: boolean;
   // Form
   maxImages: number;
+  // Scroll control - increment scrollTrigger to trigger a scroll
+  scrollTarget: 'bottom' | 'top';
+  scrollTrigger: number;
   showHistory: boolean;
   style: string;
 }
@@ -47,6 +50,7 @@ interface Actions {
 
   toggleHistory: () => void;
   toggleLaserFriendly: () => void;
+  triggerScroll: (target: 'bottom' | 'top') => void;
   updateHistoryItem: (uuid: string, updates: Partial<AiImageGenerationData>) => void;
 }
 
@@ -69,6 +73,8 @@ const INITIAL_STATE: State = {
   historyItems: [],
   historyLoading: false,
   historyOffset: 0,
+  scrollTarget: 'top',
+  scrollTrigger: 0,
   showHistory: false,
 };
 
@@ -99,9 +105,9 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       imageInputs: item.image_urls?.map((url, i) => ({ id: `hist-${item.uuid}-${i}`, type: 'url', url })) || [],
       inputFields: inputs,
       maxImages: item.max_images,
-      showHistory: false,
       style: item.prompt_data?.style || 'customize',
     });
+    get().toggleHistory();
   },
   loadHistory: async () => {
     if (get().historyLoading) return;
@@ -134,13 +140,14 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       return { inputFields, isLaserFriendly: false, style: newStyle };
     }),
   toggleHistory: () => {
-    const { historyLoading, showHistory } = get();
+    const { historyLoading, scrollTrigger, showHistory } = get();
 
     if (!showHistory && !historyLoading) {
       get().loadHistory();
     }
 
-    set({ showHistory: !showHistory });
+    // Trigger scroll to top when toggling history
+    set({ scrollTarget: 'top', scrollTrigger: scrollTrigger + 1, showHistory: !showHistory });
   },
   toggleLaserFriendly: () =>
     set((s) => {
@@ -155,6 +162,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
 
       return { inputFields, isLaserFriendly };
     }),
+  triggerScroll: (scrollTarget) => set((state) => ({ scrollTarget, scrollTrigger: state.scrollTrigger + 1 })),
   updateHistoryItem: (uuid, updates) =>
     set((state) => ({
       historyItems: state.historyItems.map((item) => (item.uuid === uuid ? { ...item, ...updates } : item)),

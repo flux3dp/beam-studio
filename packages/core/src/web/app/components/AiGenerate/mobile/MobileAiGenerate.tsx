@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ReloadOutlined, RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Switch } from 'antd';
@@ -8,7 +8,7 @@ import { funnel } from 'remeda';
 
 import layoutConstants from '@core/app/constants/layout-constants';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
-import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import FloatingPanel, { type FloatingPanelHandle } from '@core/app/widgets/FloatingPanel';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
@@ -136,7 +136,7 @@ interface Props {
   onClose: () => void;
 }
 
-const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
+const MobileAiGenerate = memo(({ onClose }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
   const [user, setUser] = useState<IUser | null>(getCurrentUser());
@@ -158,19 +158,33 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
     maxImages,
     removeImageInput,
     resetForm,
+    scrollTarget,
+    scrollTrigger,
     setInputField,
     setStyle,
     showHistory,
     style,
     toggleHistory,
     toggleLaserFriendly,
+    triggerScroll,
   } = useAiGenerateStore();
   const { data: aiConfig, isError, isFetching, refetch } = useAiConfigQuery();
   const aiStyles = useMemo(() => aiConfig?.styles || [], [aiConfig?.styles]);
   const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [panelHandle, setPanelHandle] = useState<FloatingPanelHandle | null>(null);
   const hasInitializedStyle = useRef(false);
+
+  // Handle scroll triggers from store
+  useEffect(() => {
+    if (scrollTrigger === 0) return;
+
+    requestAnimationFrame(() => {
+      const top = scrollTarget === 'top' ? 0 : 1000;
+
+      panelHandle?.scrollTo({ behavior: 'smooth', top });
+    });
+  }, [scrollTrigger, scrollTarget, panelHandle]);
 
   const throttledGenerate = useMemo(
     () =>
@@ -178,17 +192,12 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
         () => {
           setIsGenerateDisabled(true);
           handleImageGeneration({ style: styleId, styles: aiStyles, user });
-          requestAnimationFrame(() => {
-            // Find the scroll container (parent of .content) inside FloatingPanel
-            const scrollContainer = contentRef.current?.parentElement;
-
-            scrollContainer?.scrollTo({ behavior: 'smooth', top: 1000 });
-          });
+          triggerScroll('bottom');
           setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
         },
         { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
       ),
-    [styleId, aiStyles, user],
+    [styleId, aiStyles, user, triggerScroll],
   );
 
   const onGenerate = useCallback(() => throttledGenerate.call(), [throttledGenerate]);
@@ -219,90 +228,91 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
     }
   }, [aiConfig, aiStyles, setStyle]);
 
-  if (isFetching) {
-    return (
-      <FloatingPanel anchors={anchors} className={styles.panel} onClose={onClose} title={t.header.title}>
-        <LoadingView contentRef={contentRef} />
-      </FloatingPanel>
-    );
-  }
+  // Render content based on state
+  const renderContent = () => {
+    if (isFetching) {
+      return <LoadingView />;
+    }
 
-  if (isError) {
+    if (isError) {
+      return <ErrorView onRetry={() => refetch()} />;
+    }
+
+    if (showHistory) {
+      return (
+        <div className={styles.content}>
+          <ImageHistory />
+        </div>
+      );
+    }
+
     return (
-      <FloatingPanel anchors={anchors} className={styles.panel} onClose={onClose} title={t.header.title}>
-        <ErrorView contentRef={contentRef} onRetry={refetch} />
-      </FloatingPanel>
+      <div className={classNames(styles.content, styles['with-footer'])}>
+        <StyleSection onClick={() => setShowStyleSelector(true)} onReset={resetForm} styleConfig={styleConfig} t={t} />
+
+        {getInputFieldsForStyle(styleId, aiStyles).map((field) => {
+          const isUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
+
+          return (
+            <div className={styles.section} key={field.key}>
+              <h3 className={styles['section-title']}>
+                {field.label} {field.required && <span className={styles.required}>*</span>}
+              </h3>
+              {isUpload ? (
+                <InputWithUpload
+                  field={field}
+                  imageInputs={imageInputs}
+                  onAddImage={addImageInput}
+                  onChange={(val) => setInputField(field.key, val)}
+                  onKeyDown={handleTextAreaKeyDown}
+                  onRemoveImage={removeImageInput}
+                  value={inputFields[field.key] || ''}
+                />
+              ) : (
+                <InputField
+                  field={field}
+                  onChange={(val) => setInputField(field.key, val)}
+                  onKeyDown={handleTextAreaKeyDown}
+                  rows={field.key === 'description' ? 5 : 3}
+                  value={inputFields[field.key] || ''}
+                />
+              )}
+            </div>
+          );
+        })}
+
+        <div className={styles['section-row']}>
+          <RatioSection dimensions={dimensions} onClick={() => setShowRatioSelector(true)} t={t} />
+          <SizeSection dimensions={dimensions} onClick={() => setShowSizeSelector(true)} t={t} />
+        </div>
+        <CountSection maxImages={maxImages} onClick={() => setShowCountSelector(true)} t={t} />
+        <ToggleSection checked={isLaserFriendly} label={t.form.laser_friendly} onChange={toggleLaserFriendly} />
+        <ImageResults
+          errorMessage={errorMessage}
+          generatedImages={generatedImages}
+          generationStatus={generationStatus}
+        />
+      </div>
     );
-  }
+  };
+
+  const showFooter = !isFetching && !isError && !showHistory;
 
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
       <FloatingPanel
         anchors={anchors}
         className={styles.panel}
-        fixedContent={<Header onTabChange={handleTabChange} showHistory={showHistory} t={t} />}
+        fixedContent={
+          !isFetching && !isError && <Header onTabChange={handleTabChange} showHistory={showHistory} t={t} />
+        }
         onClose={onClose}
+        onReady={setPanelHandle}
         title={t.header.title}
       >
-        <div className={classNames(styles.content, { [styles['with-footer']]: !showHistory })} ref={contentRef}>
-          {showHistory ? (
-            <ImageHistory />
-          ) : (
-            <>
-              <StyleSection
-                onClick={() => setShowStyleSelector(true)}
-                onReset={resetForm}
-                styleConfig={styleConfig}
-                t={t}
-              />
+        {renderContent()}
 
-              {getInputFieldsForStyle(styleId, aiStyles).map((field) => {
-                const isUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
-
-                return (
-                  <div className={styles.section} key={field.key}>
-                    <h3 className={styles['section-title']}>
-                      {field.label} {field.required && <span className={styles.required}>*</span>}
-                    </h3>
-                    {isUpload ? (
-                      <InputWithUpload
-                        field={field}
-                        imageInputs={imageInputs}
-                        onAddImage={addImageInput}
-                        onChange={(val) => setInputField(field.key, val)}
-                        onKeyDown={handleTextAreaKeyDown}
-                        onRemoveImage={removeImageInput}
-                        value={inputFields[field.key] || ''}
-                      />
-                    ) : (
-                      <InputField
-                        field={field}
-                        onChange={(val) => setInputField(field.key, val)}
-                        onKeyDown={handleTextAreaKeyDown}
-                        rows={field.key === 'description' ? 5 : 3}
-                        value={inputFields[field.key] || ''}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-
-              <div className={styles['section-row']}>
-                <RatioSection dimensions={dimensions} onClick={() => setShowRatioSelector(true)} t={t} />
-                <SizeSection dimensions={dimensions} onClick={() => setShowSizeSelector(true)} t={t} />
-              </div>
-              <CountSection maxImages={maxImages} onClick={() => setShowCountSelector(true)} t={t} />
-              <ToggleSection checked={isLaserFriendly} label={t.form.laser_friendly} onChange={toggleLaserFriendly} />
-              <ImageResults
-                errorMessage={errorMessage}
-                generatedImages={generatedImages}
-                generationStatus={generationStatus}
-              />
-            </>
-          )}
-        </div>
-
-        {!showHistory && (
+        {showFooter && (
           <Footer
             buyLink={lang.beambox.popup.ai_credit.buy_link}
             isDisabled={isGenerateDisabled}
@@ -380,6 +390,6 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
       </Popup>
     </ConfigProvider>
   );
-};
+});
 
-export default memo(UnmemorizedMobileAiGenerate);
+export default MobileAiGenerate;

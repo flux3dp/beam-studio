@@ -25,7 +25,7 @@ const Title = () => {
     <div className={styles.title}>
       <Button
         icon={<LeftOutlined />}
-        onClick={() => useAiGenerateStore.setState({ showHistory: false })}
+        onClick={() => useAiGenerateStore.getState().toggleHistory()}
         shape="circle"
         type="text"
       />

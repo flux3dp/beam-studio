@@ -46,12 +46,15 @@ const UnmemorizedAiGenerate = () => {
     isLaserFriendly,
     maxImages,
     removeImageInput,
+    scrollTarget,
+    scrollTrigger,
     setInputField,
     setState,
     setStyle,
     showHistory,
     style,
     toggleLaserFriendly,
+    triggerScroll,
   } = useAiGenerateStore();
   const { data: aiConfig, isError, isFetching, refetch } = useAiConfigQuery();
   const aiStyles = useMemo(() => aiConfig?.styles || [], [aiConfig?.styles]);
@@ -64,20 +67,29 @@ const UnmemorizedAiGenerate = () => {
   // Setup focus scope
   useFocusScope(containerRef);
 
+  // Handle scroll triggers from store
+  useEffect(() => {
+    if (scrollTrigger === 0) return;
+
+    requestAnimationFrame(() => {
+      const top = scrollTarget === 'top' ? 0 : (contentRef.current?.scrollHeight ?? 1000);
+
+      contentRef.current?.scrollTo({ behavior: 'smooth', top });
+    });
+  }, [scrollTrigger, scrollTarget]);
+
   const throttledGenerate = useMemo(
     () =>
       funnel(
         () => {
           setIsGenerateDisabled(true);
           handleImageGeneration({ style: styleId, styles: aiStyles, user });
-          requestAnimationFrame(() => {
-            contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
-          });
+          triggerScroll('bottom');
           setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
         },
         { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
       ),
-    [styleId, aiStyles, user],
+    [styleId, aiStyles, user, triggerScroll],
   );
 
   const onGenerate = useCallback(() => throttledGenerate.call(), [throttledGenerate]);
@@ -120,93 +132,100 @@ const UnmemorizedAiGenerate = () => {
 
   const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles), style);
 
-  if (isFetching) return <LoadingView contentRef={contentRef} />;
+  // Render content based on state
+  const renderContent = () => {
+    if (isFetching) return <LoadingView />;
 
-  if (isError) return <ErrorView contentRef={contentRef} onRetry={refetch} />;
+    if (isError) return <ErrorView onRetry={refetch} />;
+
+    if (showHistory) return <ImageHistory />;
+
+    return (
+      <>
+        <div className={styles.section}>
+          <h3 className={styles['section-title']}>{t.style.choose}</h3>
+          <Button block className={styles['style-selection-button']} onClick={handleStyleClick} size="large">
+            {styleConfig.previewImage && (
+              <img alt={styleConfig.displayName} className={styles.img} src={styleConfig.previewImage} />
+            )}
+            <div className={styles['button-content']}>
+              <span className={styles['button-label']}>{styleConfig?.displayName || t.style.select}</span>
+              <RightOutlined />
+            </div>
+          </Button>
+        </div>
+
+        {getInputFieldsForStyle(styleId, aiStyles).map((field) => {
+          const isDescriptionWithUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
+
+          return (
+            <div className={styles.section} key={field.key}>
+              <h3 className={styles['section-title']}>
+                {field.label} {field.required && <span className={styles.required}>*</span>}
+              </h3>
+              {isDescriptionWithUpload ? (
+                <InputWithUpload
+                  field={field}
+                  imageInputs={imageInputs}
+                  onAddImage={addImageInput}
+                  onChange={(value) => setInputField(field.key, value)}
+                  onKeyDown={handleTextAreaKeyDown}
+                  onRemoveImage={removeImageInput}
+                  value={inputFields[field.key] || ''}
+                />
+              ) : (
+                <InputField
+                  field={field}
+                  onChange={(value) => setInputField(field.key, value)}
+                  onKeyDown={handleTextAreaKeyDown}
+                  rows={field.key === 'description' ? 5 : 3}
+                  value={inputFields[field.key] || ''}
+                />
+              )}
+            </div>
+          );
+        })}
+
+        <DimensionSelector dimensions={dimensions} />
+
+        <div className={styles.section}>
+          <h3 className={styles['section-title']}>{t.form.count}</h3>
+          <Select
+            className={styles['count-select']}
+            onChange={(val) => setState({ maxImages: val })}
+            options={[1, 2, 3, 4].map((n) => ({ label: String(n), value: n }))}
+            value={maxImages}
+          />
+        </div>
+
+        <div className={styles.section}>
+          <div className={styles['toggle']}>
+            <h3 className={styles['section-title']} style={{ margin: 0 }}>
+              {t.form.laser_friendly}
+            </h3>
+            <Switch checked={isLaserFriendly} onChange={toggleLaserFriendly} />
+          </div>
+        </div>
+
+        <ImageResults
+          errorMessage={errorMessage}
+          generatedImages={generatedImages}
+          generationStatus={generationStatus}
+        />
+      </>
+    );
+  };
+
+  const showFooter = !isFetching && !isError && !showHistory;
 
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
       <div className={styles['ai-generate-container']} ref={containerRef}>
-        <Header contentRef={contentRef} />
+        <Header />
         <div className={styles.content} ref={contentRef}>
-          {showHistory ? (
-            <ImageHistory />
-          ) : (
-            <>
-              <div className={styles.section}>
-                <h3 className={styles['section-title']}>{t.style.choose}</h3>
-                <Button block className={styles['style-selection-button']} onClick={handleStyleClick} size="large">
-                  {styleConfig.previewImage && (
-                    <img alt={styleConfig.displayName} className={styles.img} src={styleConfig.previewImage} />
-                  )}
-                  <div className={styles['button-content']}>
-                    <span className={styles['button-label']}>{styleConfig?.displayName || t.style.select}</span>
-                    <RightOutlined />
-                  </div>
-                </Button>
-              </div>
-
-              {getInputFieldsForStyle(styleId, aiStyles).map((field) => {
-                const isDescriptionWithUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
-
-                return (
-                  <div className={styles.section} key={field.key}>
-                    <h3 className={styles['section-title']}>
-                      {field.label} {field.required && <span className={styles.required}>*</span>}
-                    </h3>
-                    {isDescriptionWithUpload ? (
-                      <InputWithUpload
-                        field={field}
-                        imageInputs={imageInputs}
-                        onAddImage={addImageInput}
-                        onChange={(value) => setInputField(field.key, value)}
-                        onKeyDown={handleTextAreaKeyDown}
-                        onRemoveImage={removeImageInput}
-                        value={inputFields[field.key] || ''}
-                      />
-                    ) : (
-                      <InputField
-                        field={field}
-                        onChange={(value) => setInputField(field.key, value)}
-                        onKeyDown={handleTextAreaKeyDown}
-                        rows={field.key === 'description' ? 5 : 3}
-                        value={inputFields[field.key] || ''}
-                      />
-                    )}
-                  </div>
-                );
-              })}
-
-              <DimensionSelector dimensions={dimensions} />
-
-              <div className={styles.section}>
-                <h3 className={styles['section-title']}>{t.form.count}</h3>
-                <Select
-                  className={styles['count-select']}
-                  onChange={(val) => setState({ maxImages: val })}
-                  options={[1, 2, 3, 4].map((n) => ({ label: String(n), value: n }))}
-                  value={maxImages}
-                />
-              </div>
-
-              <div className={styles.section}>
-                <div className={styles['toggle']}>
-                  <h3 className={styles['section-title']} style={{ margin: 0 }}>
-                    {t.form.laser_friendly}
-                  </h3>
-                  <Switch checked={isLaserFriendly} onChange={toggleLaserFriendly} />
-                </div>
-              </div>
-
-              <ImageResults
-                errorMessage={errorMessage}
-                generatedImages={generatedImages}
-                generationStatus={generationStatus}
-              />
-            </>
-          )}
+          {renderContent()}
         </div>
-        {!showHistory && (
+        {showFooter && (
           <div className={styles['button-section']}>
             <Button
               block
