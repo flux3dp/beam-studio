@@ -55,7 +55,9 @@ export interface GenerationResult {
   success: boolean;
 }
 
-const handleResponse = async <T>(requestPromise: Promise<ResponseWithError<ApiResponse<T>>>) => {
+const handleResponse = async <T>(
+  requestPromise: Promise<ResponseWithError<ApiResponse<T>>>,
+): Promise<ApiResponse<T> | { code?: string; error: string }> => {
   try {
     const response = await requestPromise;
 
