@@ -1,8 +1,8 @@
 import type { AspectRatio } from '@core/app/components/AiGenerate/types';
 
-import { FLUXID_HOST } from './flux-id';
+import type { ResponseWithError } from './flux-id';
+import { axiosFluxId } from './flux-id';
 
-const BASE_URL = `${FLUXID_HOST}/api/ai-image`;
 const CONFIG = { MAX_ATTEMPTS: 100, POLL_INTERVAL: 3000, TIMEOUT: 30000 };
 
 const ERROR_MESSAGES: Record<number, string> = {
@@ -54,40 +54,27 @@ export interface GenerationResult {
   success: boolean;
 }
 
-const apiClient = async <T>(
-  endpoint: string,
-  // eslint-disable-next-line no-undef
-  options: RequestInit = {},
-): Promise<T | { code?: string; error: string }> => {
-  const controller = new AbortController();
-  const timeoutId = setTimeout(() => controller.abort(), CONFIG.TIMEOUT);
-
+const handleResponse = async <T>(
+  requestPromise: Promise<ResponseWithError<ApiResponse<T>>>,
+): Promise<ApiResponse<T> | { code?: string; error: string }> => {
   try {
-    // Automatically handle Content-Type for JSON vs FormData
-    const headers =
-      options.body instanceof FormData ? options.headers : { 'Content-Type': 'application/json', ...options.headers };
+    const response = await requestPromise;
 
-    const response = await fetch(`${BASE_URL}${endpoint}`, { ...options, headers, signal: controller.signal });
-
-    clearTimeout(timeoutId);
-
-    const data = (await response.json().catch(() => ({}))) as any;
-
-    if (!response.ok) {
-      return {
-        code: data.info,
-        error: data.message || ERROR_MESSAGES[response.status] || 'Request failed',
-      };
+    if (response.status === 200 && response.data.status === 'ok') {
+      return response.data;
     }
 
-    return data.status === 'ok' ? data : { error: data.message || 'Operation failed' };
+    if (response.error) {
+      return { error: response.error.message || 'Request failed' };
+    }
+
+    return {
+      error: ERROR_MESSAGES[response.status] || 'An unknown error occurred',
+    };
   } catch (error) {
-    clearTimeout(timeoutId);
+    console.error('[AI Config] API error:', error);
 
-    const msg =
-      error instanceof Error ? (error.name === 'AbortError' ? 'Request timed out.' : error.message) : 'Unknown error';
-
-    return { error: msg };
+    return { error: error instanceof Error ? error.message : 'Unknown error' };
   }
 };
 
@@ -108,18 +95,18 @@ export const createAiImageTask = async (params: GenerationRequest) => {
   // Add images
   image_inputs.forEach((input) => formData.append('image_inputs', input));
 
-  const result = await apiClient<ApiResponse<{ uuid: string }>>(`/${mode}`, {
-    body: formData,
-    method: 'POST',
-  });
+  const result = await handleResponse<{ uuid: string }>(
+    axiosFluxId.post(`api/ai-image/${mode}`, formData, { timeout: CONFIG.TIMEOUT, withCredentials: true }),
+  );
 
   return 'error' in result ? result : { uuid: result.data.uuid };
 };
 
 export const queryAiImageStatus = (uuid: string) =>
-  apiClient<ApiResponse<AiImageGenerationData>>(`/${uuid}`, { method: 'GET' });
+  handleResponse<AiImageGenerationData>(axiosFluxId.get(`api/ai-image/${uuid}`, { withCredentials: true }));
 
-export const getAiImageHistory = () => apiClient<ApiResponse<AiImageGenerationData[]>>('/history', { method: 'GET' });
+export const getAiImageHistory = () =>
+  handleResponse<AiImageGenerationData[]>(axiosFluxId.get('api/ai-image/history', { withCredentials: true }));
 
 export const pollTaskUntilComplete = async (
   uuid: string,
