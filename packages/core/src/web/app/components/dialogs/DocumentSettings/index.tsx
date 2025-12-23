@@ -22,7 +22,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
@@ -53,7 +53,7 @@ const workareaOptions = [
   { label: 'Ador', value: 'ado1' },
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   { label: 'Beambox II', value: 'fbb2' },
-  { label: 'beamo II', value: 'fbm2' },
+  checkBM2() && { label: 'beamo II', value: 'fbm2' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
 ].filter(Boolean);
 

@@ -7,7 +7,7 @@ import dialog from '@core/app/actions/dialog-caller';
 import windowLocationReload from '@core/app/actions/windowLocation';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
-import { checkFpm1 } from '@core/helpers/checkFeature';
+import { checkBM2, checkFpm1 } from '@core/helpers/checkFeature';
 import { getHomePage } from '@core/helpers/hashHelper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -76,7 +76,7 @@ const SelectMachineModel = (): React.JSX.Element => {
 
   const handleNextClick = (model?: WorkAreaModel) => {
     // for series, select different model in the next step
-    if ((model === 'fbb1p' && !isSelectBeambox) || (model === 'fbm1' && !isSelectBeamo)) {
+    if ((model === 'fbb1p' && !isSelectBeambox) || (model === 'fbm1' && checkBM2() && !isSelectBeamo)) {
       window.location.hash = `#/initialize/connect/select-machine-model?model=${model}`;
 
       return;
@@ -94,7 +94,7 @@ const SelectMachineModel = (): React.JSX.Element => {
 
   const modelList: ModelItem[] = [
     { Icon: InitializeIcons.Ador, label: 'Ador', model: 'ado1' },
-    { Icon: InitializeIcons.Beamo, label: 'beamo Series', labelClass: styles.bb, model: 'fbm1' },
+    { Icon: InitializeIcons.Beamo, label: checkBM2() ? 'beamo Series' : 'beamo', labelClass: styles.bb, model: 'fbm1' },
     {
       Icon: InitializeIcons.Beambox,
       label: 'Beambox Series',
