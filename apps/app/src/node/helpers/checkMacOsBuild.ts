@@ -17,9 +17,6 @@ export const checkMacOsBuild = async (mainWindow: BaseWindow): Promise<void> => 
     const lang = i18n.getNativeLang();
 
     const t = lang.message.mac_os_arch_mismatch;
-
-    console.log(t);
-
     const { response } = await dialog.showMessageBox(mainWindow, {
       buttons: [t.download_center, lang.global.cancel],
       cancelId: 1,
