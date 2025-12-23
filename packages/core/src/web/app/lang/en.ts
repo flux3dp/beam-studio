@@ -88,6 +88,7 @@ const lang: ILang = {
         title: 'AI Create',
       },
       history: {
+        detail: 'Detail',
         empty_description: 'No generation history yet. Start creating!',
         error_message: 'Failed to load history',
         not_generated: '❌ Not generated',

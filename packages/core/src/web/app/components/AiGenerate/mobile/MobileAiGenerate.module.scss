@@ -1,4 +1,4 @@
-@use './shared-variables' as *;
+@use '../shared-variables' as *;
 
 // ============================================
 // Main Panel Styles
@@ -30,16 +30,23 @@
   }
 }
 
-// ============================================
-// Section Styles
-// ============================================
-
 .section {
   margin-bottom: 24px;
 
   &:last-child {
     margin-bottom: 0;
   }
+}
+
+.section-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.section-half {
+  flex: 1;
+  min-width: 0; // Prevent flex items from overflowing
 }
 
 .section-header {
@@ -69,10 +76,6 @@
   color: $error-color;
 }
 
-// ============================================
-// Style Selection Button
-// ============================================
-
 .style-selection-button {
   height: auto;
   padding: 12px;
@@ -82,7 +85,7 @@
   gap: 12px;
 
   .style-img {
-    width: 48px;
+    width: 64px;
     height: 48px;
     object-fit: cover;
     border-radius: 6px;
@@ -103,43 +106,24 @@
   }
 }
 
-// ============================================
-// Ratio Button
-// ============================================
-
-.ratio-button {
+.section-button {
   height: auto;
-  padding: 12px 16px;
+  padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
+  font-weight: 500;
 
   .ratio-preview {
     display: flex;
     align-items: center;
     gap: 12px;
   }
-}
 
-// ============================================
-// Size Button
-// ============================================
-
-.size-button {
-  height: auto;
-  padding: 12px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-
-  .size-label {
-    font-weight: 500;
+  .label {
+    line-height: 24px;
   }
 }
-
-// ============================================
-// Ratio Box Icons (for dimension button preview)
-// ============================================
 
 @mixin ratio-box-base {
   border: 2px solid currentColor;
@@ -147,76 +131,12 @@
   border-radius: 2px;
 }
 
-.ratio-1-1 {
-  @include ratio-box-base;
-  width: 24px;
-  height: 24px;
-}
-
-.ratio-4-3 {
-  @include ratio-box-base;
-  width: 28px;
-  height: 21px;
-}
-
-.ratio-3-4 {
-  @include ratio-box-base;
-  width: 21px;
-  height: 28px;
-}
-
-.ratio-16-9 {
-  @include ratio-box-base;
-  width: 32px;
-  height: 18px;
-}
-
-.ratio-9-16 {
-  @include ratio-box-base;
-  width: 18px;
-  height: 32px;
-}
-
-.ratio-3-2 {
-  @include ratio-box-base;
-  width: 30px;
-  height: 20px;
-}
-
-.ratio-2-3 {
-  @include ratio-box-base;
-  width: 20px;
-  height: 30px;
-}
-
-.ratio-21-9 {
-  @include ratio-box-base;
-  width: 35px;
-  height: 15px;
-}
-
-// ============================================
-// Count Select
-// ============================================
-
-.count-select {
-  width: 100%;
-}
-
-// ============================================
-// Toggle
-// ============================================
-
 .toggle {
   display: flex;
   align-items: center;
   justify-content: space-between;
   font-size: 15px;
 }
-
-// ============================================
-// Footer
-// ============================================
 
 .footer {
   position: fixed;
@@ -267,10 +187,6 @@
     color: $text-primary;
   }
 }
-
-// ============================================
-// Popup Styles
-// ============================================
 
 .popup {
   z-index: 1002 !important;

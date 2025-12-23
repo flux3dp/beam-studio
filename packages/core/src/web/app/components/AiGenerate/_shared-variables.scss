@@ -38,14 +38,88 @@ $ai-credit-icon: #f8b800;
   }
 }
 
-@mixin ratio-box-base {
-  border: 2px solid currentColor;
-  background: transparent;
-}
-
 @mixin section-title {
   margin: 0 0 12px 0;
   font-size: 14px;
   font-weight: 500;
   color: $text-secondary;
+}
+
+// for mobile selector header
+@mixin selector-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 12px 8px;
+  border-bottom: 1px solid $border-color;
+  flex-shrink: 0;
+  font-size: 16px;
+  font-weight: 600;
+
+  .back-button,
+  .close-button {
+    color: $text-secondary;
+    width: 40px;
+    height: 40px;
+  }
+
+  .selector-title {
+    font-size: 16px;
+    font-weight: 600;
+    color: $text-primary;
+  }
+}
+
+@mixin ratio-box-base {
+  border: 2px solid currentColor;
+  background: transparent;
+  border-radius: 2px;
+}
+
+.ratio-1-1 {
+  @include ratio-box-base;
+  width: 24px;
+  height: 24px;
+}
+
+.ratio-4-3 {
+  @include ratio-box-base;
+  width: 28px;
+  height: 21px;
+}
+
+.ratio-3-4 {
+  @include ratio-box-base;
+  width: 21px;
+  height: 28px;
+}
+
+.ratio-16-9 {
+  @include ratio-box-base;
+  width: 32px;
+  height: 18px;
+}
+
+.ratio-9-16 {
+  @include ratio-box-base;
+  width: 18px;
+  height: 32px;
+}
+
+.ratio-3-2 {
+  @include ratio-box-base;
+  width: 30px;
+  height: 20px;
+}
+
+.ratio-2-3 {
+  @include ratio-box-base;
+  width: 20px;
+  height: 30px;
+}
+
+.ratio-21-9 {
+  @include ratio-box-base;
+  width: 35px;
+  height: 15px;
 }

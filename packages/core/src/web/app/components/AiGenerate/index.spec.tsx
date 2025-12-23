@@ -77,7 +77,7 @@ describe('AiGenerate', () => {
       ['AI Create', '.title'],
       ['Customize', '.style-selection-button'],
       ['Choose Style', '.section-title'],
-      ['Laser-Friendly', '.toggle span'],
+      ['Laser-Friendly', '.toggle h3'],
     ])('renders text "%s"', (text, selector) => {
       const { container } = render(<AiGenerate />);
 

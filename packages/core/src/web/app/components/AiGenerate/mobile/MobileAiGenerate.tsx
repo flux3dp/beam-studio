@@ -1,7 +1,7 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ReloadOutlined, RightOutlined } from '@ant-design/icons';
-import { Button, ConfigProvider, Select, Switch } from 'antd';
+import { Button, ConfigProvider, Switch } from 'antd';
 import { Popup, Tabs } from 'antd-mobile';
 import classNames from 'classnames';
 import { funnel } from 'remeda';
@@ -21,15 +21,22 @@ import InputField from '../components/InputField';
 import InputWithUpload from '../components/InputField.upload';
 import LoadingView from '../components/LoadingView';
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
-import { AI_COST_PER_IMAGE } from '../types';
+import { AI_COST_PER_IMAGE, GENERATE_BUTTON_COOLDOWN_MS, handleTextAreaKeyDown } from '../types';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { getDefaultStyle, getStyleConfig } from '../utils/categories';
 import { handleImageGeneration } from '../utils/handleImageGeneration';
 import { getInputFieldsForStyle } from '../utils/inputFields';
 
-import MobileRatioSelector from './components/MobileRatioSelector';
-import MobileSizeSelector from './components/MobileSizeSelector';
 import MobileStyleSelector from './components/MobileStyleSelector';
+import UniformSelector from './components/UniformSelector';
+import {
+  getCountOptions,
+  getRatioOptions,
+  getSizeOptions,
+  handleCountSelect,
+  handleRatioSelect,
+  handleSizeSelect,
+} from './components/UniformSelector.config';
 import styles from './MobileAiGenerate.module.scss';
 
 const Header = ({ onTabChange, showHistory, t }: any) => (
@@ -60,9 +67,9 @@ const StyleSection = ({ onClick, onReset, styleConfig, t }: any) => (
 );
 
 const RatioSection = ({ dimensions, onClick, t }: any) => (
-  <div className={styles.section}>
+  <div className={styles['section-half']}>
     <h3 className={styles['section-title']}>{t.dimensions.ratio}</h3>
-    <Button block className={styles['ratio-button']} onClick={onClick} size="large">
+    <Button block className={styles['section-button']} onClick={onClick} size="large">
       <div className={styles['ratio-preview']}>
         <div className={styles[`ratio-${dimensions.aspectRatio.replace(':', '-')}`]} />
         <span>{dimensions.aspectRatio}</span>
@@ -73,25 +80,22 @@ const RatioSection = ({ dimensions, onClick, t }: any) => (
 );
 
 const SizeSection = ({ dimensions, onClick, t }: any) => (
-  <div className={styles.section}>
+  <div className={styles['section-half']}>
     <h3 className={styles['section-title']}>{t.dimensions.resolution}</h3>
-    <Button block className={styles['size-button']} onClick={onClick} size="large">
-      <span className={styles['size-label']}>{dimensions.size}</span>
+    <Button block className={styles['section-button']} onClick={onClick} size="large">
+      <span className={styles['label']}>{dimensions.size}</span>
       <RightOutlined />
     </Button>
   </div>
 );
 
-const CountSection = ({ maxImages, onChange, t }: any) => (
+const CountSection = ({ maxImages, onClick, t }: any) => (
   <div className={styles.section}>
     <h3 className={styles['section-title']}>{t.form.count}</h3>
-    <Select
-      className={styles['count-select']}
-      onChange={(val) => onChange({ maxImages: val })}
-      options={[1, 2, 3, 4].map((n) => ({ label: `${n} Image${n > 1 ? 's' : ''}`, value: n }))}
-      size="large"
-      value={maxImages}
-    />
+    <Button block className={styles['section-button']} onClick={onClick} size="large">
+      <span className={styles['label']}>{maxImages}</span>
+      <RightOutlined />
+    </Button>
   </div>
 );
 
@@ -128,22 +132,6 @@ const Footer = ({ buyLink, isDisabled, maxImages, onGenerate, t, user }: any) =>
   </div>
 );
 
-const GENERATE_BUTTON_COOLDOWN_MS = 2000;
-
-const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-  e.stopPropagation();
-
-  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a') {
-    e.preventDefault();
-    e.currentTarget.select();
-  }
-
-  if (e.key === 'Escape') {
-    e.preventDefault();
-    e.currentTarget.blur();
-  }
-};
-
 interface Props {
   onClose: () => void;
 }
@@ -156,31 +144,54 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
   const [showStyleSelector, setShowStyleSelector] = useState(false);
   const [showRatioSelector, setShowRatioSelector] = useState(false);
   const [showSizeSelector, setShowSizeSelector] = useState(false);
-  const contentRef = useRef<HTMLDivElement>(null);
+  const [showCountSelector, setShowCountSelector] = useState(false);
   const anchors = [0, window.innerHeight - layoutConstants.menuberHeight];
-  const store = useAiGenerateStore();
+  const {
+    addImageInput,
+    dimensions,
+    errorMessage,
+    generatedImages,
+    generationStatus,
+    imageInputs,
+    inputFields,
+    isLaserFriendly,
+    maxImages,
+    removeImageInput,
+    resetForm,
+    setInputField,
+    setStyle,
+    showHistory,
+    style,
+    toggleHistory,
+    toggleLaserFriendly,
+  } = useAiGenerateStore();
   const { data: aiConfig, isError, isFetching, refetch } = useAiConfigQuery();
   const aiStyles = useMemo(() => aiConfig?.styles || [], [aiConfig?.styles]);
-  const styleConfig = getStyleConfig(store.style, aiStyles);
+  const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
-  // Throttled Generate
-  const paramsRef = useRef({ style: styleId, styles: aiStyles, user });
-  // Auto-select default style on first open
+  const contentRef = useRef<HTMLDivElement>(null);
   const hasInitializedStyle = useRef(false);
 
-  paramsRef.current = { style: styleId, styles: aiStyles, user };
+  const throttledGenerate = useMemo(
+    () =>
+      funnel(
+        () => {
+          setIsGenerateDisabled(true);
+          handleImageGeneration({ style: styleId, styles: aiStyles, user });
+          requestAnimationFrame(() => {
+            // Find the scroll container (parent of .content) inside FloatingPanel
+            const scrollContainer = contentRef.current?.parentElement;
 
-  const throttledGenerate = useRef(
-    funnel(
-      () => {
-        setIsGenerateDisabled(true);
-        handleImageGeneration(paramsRef.current);
-        requestAnimationFrame(() => contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 }));
-        setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
-      },
-      { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
-    ),
+            scrollContainer?.scrollTo({ behavior: 'smooth', top: 1000 });
+          });
+          setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
+        },
+        { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
+      ),
+    [styleId, aiStyles, user],
   );
+
+  const onGenerate = useCallback(() => throttledGenerate.call(), [throttledGenerate]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -191,8 +202,8 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
   }, []);
 
   const handleTabChange = (key: string) => {
-    if ((key === 'history' && !store.showHistory) || (key === 'editor' && store.showHistory)) {
-      store.toggleHistory();
+    if ((key === 'history' && !showHistory) || (key === 'editor' && showHistory)) {
+      toggleHistory();
     }
   };
 
@@ -203,10 +214,10 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
     const firstStyle = getDefaultStyle(aiStyles, categories);
 
     if (firstStyle && firstStyle.id !== 'customize') {
-      store.setStyle(firstStyle.id, aiStyles);
+      setStyle(firstStyle.id, aiStyles);
       hasInitializedStyle.current = true;
     }
-  }, [aiConfig, aiStyles, store]);
+  }, [aiConfig, aiStyles, setStyle]);
 
   if (isFetching) {
     return (
@@ -229,18 +240,18 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
       <FloatingPanel
         anchors={anchors}
         className={styles.panel}
-        fixedContent={<Header onTabChange={handleTabChange} showHistory={store.showHistory} t={t} />}
+        fixedContent={<Header onTabChange={handleTabChange} showHistory={showHistory} t={t} />}
         onClose={onClose}
         title={t.header.title}
       >
-        <div className={classNames(styles.content, { [styles['with-footer']]: !store.showHistory })} ref={contentRef}>
-          {store.showHistory ? (
+        <div className={classNames(styles.content, { [styles['with-footer']]: !showHistory })} ref={contentRef}>
+          {showHistory ? (
             <ImageHistory />
           ) : (
             <>
               <StyleSection
                 onClick={() => setShowStyleSelector(true)}
-                onReset={store.resetForm}
+                onReset={resetForm}
                 styleConfig={styleConfig}
                 t={t}
               />
@@ -256,49 +267,47 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
                     {isUpload ? (
                       <InputWithUpload
                         field={field}
-                        imageInputs={store.imageInputs}
-                        onAddImage={store.addImageInput}
-                        onChange={(val) => store.setInputField(field.key, val)}
+                        imageInputs={imageInputs}
+                        onAddImage={addImageInput}
+                        onChange={(val) => setInputField(field.key, val)}
                         onKeyDown={handleTextAreaKeyDown}
-                        onRemoveImage={store.removeImageInput}
-                        value={store.inputFields[field.key] || ''}
+                        onRemoveImage={removeImageInput}
+                        value={inputFields[field.key] || ''}
                       />
                     ) : (
                       <InputField
                         field={field}
-                        onChange={(val) => store.setInputField(field.key, val)}
+                        onChange={(val) => setInputField(field.key, val)}
                         onKeyDown={handleTextAreaKeyDown}
                         rows={field.key === 'description' ? 5 : 3}
-                        value={store.inputFields[field.key] || ''}
+                        value={inputFields[field.key] || ''}
                       />
                     )}
                   </div>
                 );
               })}
 
-              <RatioSection dimensions={store.dimensions} onClick={() => setShowRatioSelector(true)} t={t} />
-              <SizeSection dimensions={store.dimensions} onClick={() => setShowSizeSelector(true)} t={t} />
-              <CountSection maxImages={store.maxImages} onChange={store.setState} t={t} />
-              <ToggleSection
-                checked={store.isLaserFriendly}
-                label={t.form.laser_friendly}
-                onChange={store.toggleLaserFriendly}
-              />
+              <div className={styles['section-row']}>
+                <RatioSection dimensions={dimensions} onClick={() => setShowRatioSelector(true)} t={t} />
+                <SizeSection dimensions={dimensions} onClick={() => setShowSizeSelector(true)} t={t} />
+              </div>
+              <CountSection maxImages={maxImages} onClick={() => setShowCountSelector(true)} t={t} />
+              <ToggleSection checked={isLaserFriendly} label={t.form.laser_friendly} onChange={toggleLaserFriendly} />
               <ImageResults
-                errorMessage={store.errorMessage}
-                generatedImages={store.generatedImages}
-                generationStatus={store.generationStatus}
+                errorMessage={errorMessage}
+                generatedImages={generatedImages}
+                generationStatus={generationStatus}
               />
             </>
           )}
         </div>
 
-        {!store.showHistory && (
+        {!showHistory && (
           <Footer
             buyLink={lang.beambox.popup.ai_credit.buy_link}
             isDisabled={isGenerateDisabled}
-            maxImages={store.maxImages}
-            onGenerate={() => throttledGenerate.current.call()}
+            maxImages={maxImages}
+            onGenerate={onGenerate}
             t={t}
             user={user}
           />
@@ -323,7 +332,15 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
         position="bottom"
         visible={showRatioSelector}
       >
-        <MobileRatioSelector onClose={() => setShowRatioSelector(false)} />
+        <UniformSelector
+          columns={2}
+          onClose={() => setShowRatioSelector(false)}
+          onSelect={handleRatioSelect}
+          options={getRatioOptions()}
+          selectedValue={dimensions.aspectRatio}
+          title={t.dimensions.ratio}
+          variant="default"
+        />
       </Popup>
 
       <Popup
@@ -333,7 +350,33 @@ const UnmemorizedMobileAiGenerate = ({ onClose }: Props) => {
         position="bottom"
         visible={showSizeSelector}
       >
-        <MobileSizeSelector onClose={() => setShowSizeSelector(false)} />
+        <UniformSelector
+          columns={1}
+          onClose={() => setShowSizeSelector(false)}
+          onSelect={handleSizeSelect}
+          options={getSizeOptions(dimensions)}
+          selectedValue={dimensions.size}
+          title={t.dimensions.resolution}
+          variant="detailed"
+        />
+      </Popup>
+
+      <Popup
+        bodyClassName={styles['popup-body']}
+        className={styles.popup}
+        onMaskClick={() => setShowCountSelector(false)}
+        position="bottom"
+        visible={showCountSelector}
+      >
+        <UniformSelector
+          columns={2}
+          onClose={() => setShowCountSelector(false)}
+          onSelect={handleCountSelect}
+          options={getCountOptions()}
+          selectedValue={maxImages}
+          title={t.form.count}
+          variant="compact"
+        />
       </Popup>
     </ConfigProvider>
   );

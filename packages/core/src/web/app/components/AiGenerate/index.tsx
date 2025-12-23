@@ -22,29 +22,12 @@ import InputWithUpload from './components/InputField.upload';
 import LoadingView from './components/LoadingView';
 import { useAiConfigQuery } from './hooks/useAiConfigQuery';
 import styles from './index.module.scss';
-import { AI_COST_PER_IMAGE } from './types';
+import { AI_COST_PER_IMAGE, GENERATE_BUTTON_COOLDOWN_MS, handleTextAreaKeyDown } from './types';
 import { useAiGenerateStore } from './useAiGenerateStore';
 import { getDefaultStyle, getStyleConfig } from './utils/categories';
 import { handleImageGeneration } from './utils/handleImageGeneration';
 import { getInputFieldsForStyle } from './utils/inputFields';
 import { showStyleSelectionPanel } from './utils/showStyleSelectionPanel';
-
-const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
-  e.stopPropagation();
-
-  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a') {
-    e.preventDefault();
-    e.currentTarget.select();
-  }
-
-  // to prevent focus issue
-  if (e.key === 'Escape') {
-    e.preventDefault();
-    e.currentTarget.blur();
-  }
-};
-
-const GENERATE_BUTTON_COOLDOWN_MS = 2000;
 
 const UnmemorizedAiGenerate = () => {
   const lang = useI18n();
@@ -208,7 +191,9 @@ const UnmemorizedAiGenerate = () => {
 
               <div className={styles.section}>
                 <div className={styles['toggle']}>
-                  <span>{t.form.laser_friendly}</span>
+                  <h3 className={styles['section-title']} style={{ margin: 0 }}>
+                    {t.form.laser_friendly}
+                  </h3>
                   <Switch checked={isLaserFriendly} onChange={toggleLaserFriendly} />
                 </div>
               </div>

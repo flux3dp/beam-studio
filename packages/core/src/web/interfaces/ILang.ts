@@ -86,6 +86,7 @@ export interface ILang {
         title: string;
       };
       history: {
+        detail: string;
         empty_description: string;
         error_message: string;
         not_generated: string;

@@ -14,10 +14,6 @@ import { getCategoryForOption, getStylesForCategory } from '../../utils/categori
 
 import styles from './MobileStyleSelector.module.scss';
 
-interface Props {
-  onClose: () => void;
-}
-
 interface StyleCardProps {
   isSelected: boolean;
   onClick: () => void;
@@ -25,19 +21,24 @@ interface StyleCardProps {
 }
 
 const StyleCard = ({ isSelected, onClick, style }: StyleCardProps) => (
-  <div className={classNames(styles['style-card'], { [styles.selected]: isSelected })} onClick={onClick}>
-    <div className={styles['style-preview']}>
-      <img alt={style.displayName} className={styles['style-image']} src={style.previewImage} />
+  <div className={classNames(styles.card, { [styles.selected]: isSelected })} onClick={onClick}>
+    <div className={styles.cardPreview}>
+      <img alt={style.displayName} className={styles.cardImage} src={style.previewImage} />
     </div>
-    <span className={styles['style-name']}>{style.displayName}</span>
+    <span className={styles.cardName}>{style.displayName}</span>
   </div>
 );
 
-const UnmemorizedMobileStyleSelector = ({ onClose }: Props) => {
+interface Props {
+  onClose: () => void;
+}
+
+const MobileStyleSelector = memo(({ onClose }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
   const { setStyle, style } = useAiGenerateStore();
   const { data: aiConfig } = useAiConfigQuery();
+
   const categories = useMemo(
     () => aiConfig?.categories.filter((c) => c.id !== 'customize') ?? [],
     [aiConfig?.categories],
@@ -64,27 +65,25 @@ const UnmemorizedMobileStyleSelector = ({ onClose }: Props) => {
   };
 
   return (
-    <div className={styles['style-selector']}>
-      {/* Header */}
-      <div className={styles['selector-header']}>
-        <Button className={styles['back-button']} icon={<LeftOutlined />} onClick={onClose} type="text" />
-        <span className={styles['selector-title']}>{t.style.select}</span>
-        <Button className={styles['close-button']} icon={<CloseOutlined />} onClick={onClose} type="text" />
+    <div className={styles.container}>
+      <div className={styles.header}>
+        <Button className={styles.backButton} icon={<LeftOutlined />} onClick={onClose} type="text" />
+        <span className={styles.selectorTitle}>{t.style.select}</span>
+        <Button className={styles.closeButton} icon={<CloseOutlined />} onClick={onClose} type="text" />
       </div>
 
-      {/* Category Tabs */}
       <CapsuleTabs
         activeKey={selectedCategory}
-        className={styles['category-tabs']}
+        className={styles.categoryTabs}
         onChange={(key) => setSelectedCategory(key)}
       >
         {categories.map((category) => (
           <CapsuleTabs.Tab
             key={category.id}
             title={
-              <div className={styles['category-tab-content']}>
+              <div className={styles.categoryTabContent}>
                 {category.previewImage && (
-                  <img alt={category.displayName} className={styles['category-icon']} src={category.previewImage} />
+                  <img alt={category.displayName} className={styles.categoryIcon} src={category.previewImage} />
                 )}
                 <span>{category.displayName}</span>
               </div>
@@ -93,24 +92,22 @@ const UnmemorizedMobileStyleSelector = ({ onClose }: Props) => {
         ))}
       </CapsuleTabs>
 
-      {/* Style Grid */}
-      <div className={styles['style-grid']}>
-        {currentCategoryStyles.map((styleOption) => (
-          <StyleCard
-            isSelected={style === styleOption.id}
-            key={styleOption.id}
-            onClick={() => handleApply(styleOption.id)}
-            style={styleOption}
-          />
-        ))}
+      <div className={styles.gridWrapper}>
+        <div className={styles.grid}>
+          {currentCategoryStyles.map((styleOption) => (
+            <StyleCard
+              isSelected={style === styleOption.id}
+              key={styleOption.id}
+              onClick={() => handleApply(styleOption.id)}
+              style={styleOption}
+            />
+          ))}
+        </div>
       </div>
 
-      {/* Footer */}
-      <div className={styles['selector-footer']}>
+      <div className={styles.footer}>
         <Button
-          className={classNames(styles['custom-button'], {
-            [styles.active]: style === 'customize',
-          })}
+          className={classNames(styles.customButton, { [styles.active]: style === 'customize' })}
           icon={<UserOutlined />}
           onClick={() => handleApply('customize')}
           size="large"
@@ -121,8 +118,6 @@ const UnmemorizedMobileStyleSelector = ({ onClose }: Props) => {
       </div>
     </div>
   );
-};
-
-const MobileStyleSelector = memo(UnmemorizedMobileStyleSelector);
+});
 
 export default MobileStyleSelector;

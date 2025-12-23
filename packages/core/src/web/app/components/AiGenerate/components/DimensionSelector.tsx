@@ -44,7 +44,7 @@ const RatioButton = ({
   return (
     <Container className={classNames(wrapperClass, { [styles.active]: isActive })} onClick={onClick}>
       <div className={iconWrapperClass}>
-        <div className={classNames(styles['ratio-box'], iconClass)} />
+        <div className={iconClass} />
       </div>
       <span>{label}</span>
     </Container>

@@ -34,6 +34,10 @@ $border-color: #e8e8e8;
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 16px;
+
+  @media (max-width: 600px) {
+    grid-template-columns: repeat(2, 1fr);
+  }
 }
 
 .image-card {
