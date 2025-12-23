@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
@@ -7,7 +7,7 @@ import { funnel } from 'remeda';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
-import shortcuts from '@core/helpers/shortcuts';
+import { useFocusScope } from '@core/helpers/useFocusScope';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { IUser } from '@core/interfaces/IUser';
@@ -32,13 +32,12 @@ import { showStyleSelectionPanel } from './utils/showStyleSelectionPanel';
 const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
   e.stopPropagation();
 
-  const isSelectAll = (e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a';
-
-  if (isSelectAll) {
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a') {
     e.preventDefault();
     e.currentTarget.select();
   }
 
+  // to prevent focus issue
   if (e.key === 'Escape') {
     e.preventDefault();
     e.currentTarget.blur();
@@ -52,7 +51,6 @@ const UnmemorizedAiGenerate = () => {
   const t = lang.beambox.ai_generate;
   const [user, setUser] = useState<IUser | null>(getCurrentUser());
   const [isGenerateDisabled, setIsGenerateDisabled] = useState(false);
-  const contentRef = React.useRef<HTMLDivElement>(null);
   const { drawerMode, setDrawerMode } = useCanvasStore();
   const {
     addImageInput,
@@ -76,28 +74,30 @@ const UnmemorizedAiGenerate = () => {
   const aiStyles = useMemo(() => aiConfig?.styles || [], [aiConfig?.styles]);
   const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
-  // Store refs for values needed in throttled callback
-  const paramsRef = useRef({ style: styleId, styles: aiStyles, user });
-  // Auto-select default style on first open
+  const contentRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const hasInitializedStyle = useRef(false);
 
-  paramsRef.current = { style: styleId, styles: aiStyles, user };
+  // Setup focus scope
+  useFocusScope(containerRef);
 
-  const throttledGenerate = useRef(
-    funnel(
-      () => {
-        setIsGenerateDisabled(true);
-        handleImageGeneration(paramsRef.current);
-        requestAnimationFrame(() => {
-          contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
-        });
-        setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
-      },
-      { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
-    ),
+  const throttledGenerate = useMemo(
+    () =>
+      funnel(
+        () => {
+          setIsGenerateDisabled(true);
+          handleImageGeneration({ style: styleId, styles: aiStyles, user });
+          requestAnimationFrame(() => {
+            contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
+          });
+          setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
+        },
+        { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
+      ),
+    [styleId, aiStyles, user],
   );
 
-  const onGenerate = () => throttledGenerate.current.call();
+  const onGenerate = useCallback(() => throttledGenerate.call(), [throttledGenerate]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
@@ -107,23 +107,27 @@ const UnmemorizedAiGenerate = () => {
     };
   }, []);
 
+  // Escape key to close
   useEffect(() => {
     if (drawerMode !== 'ai-generate') return;
 
-    const exitScope = shortcuts.enterScope();
-    const unregister = shortcuts.on(['Escape'], () => setDrawerMode('none'), { isBlocking: true });
-
-    return () => {
-      unregister();
-      exitScope();
+    const handleEscape = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') {
+        e.preventDefault();
+        setDrawerMode('none');
+      }
     };
+
+    window.addEventListener('keydown', handleEscape, { capture: true });
+
+    return () => window.removeEventListener('keydown', handleEscape, { capture: true });
   }, [drawerMode, setDrawerMode]);
 
+  // Auto-select default style
   useEffect(() => {
     if (hasInitializedStyle.current || aiStyles.length === 0) return;
 
-    const categories = aiConfig?.categories || [];
-    const firstStyle = getDefaultStyle(aiStyles, categories);
+    const firstStyle = getDefaultStyle(aiStyles, aiConfig?.categories || []);
 
     if (firstStyle && firstStyle.id !== 'customize') {
       setStyle(firstStyle.id, aiStyles);
@@ -139,7 +143,7 @@ const UnmemorizedAiGenerate = () => {
 
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
-      <div className={styles['ai-generate-container']}>
+      <div className={styles['ai-generate-container']} ref={containerRef}>
         <Header contentRef={contentRef} />
         <div className={styles.content} ref={contentRef}>
           {showHistory ? (
@@ -160,7 +164,6 @@ const UnmemorizedAiGenerate = () => {
               </div>
 
               {getInputFieldsForStyle(styleId, aiStyles).map((field) => {
-                // Determine if this specific field needs upload capabilities
                 const isDescriptionWithUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
 
                 return (
@@ -168,7 +171,6 @@ const UnmemorizedAiGenerate = () => {
                     <h3 className={styles['section-title']}>
                       {field.label} {field.required && <span className={styles.required}>*</span>}
                     </h3>
-
                     {isDescriptionWithUpload ? (
                       <InputWithUpload
                         field={field}
