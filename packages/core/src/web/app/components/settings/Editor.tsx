@@ -8,7 +8,7 @@ import XYItem from '@core/app/components/settings/components/XYItem';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
-import { checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -77,7 +77,7 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
 
   const modelOptions = [
     { label: 'beamo', value: 'fbm1' },
-    { label: 'beamo II', value: 'fbm2' },
+    checkBM2() && { label: 'beamo II', value: 'fbm2' },
     { label: 'Beambox', value: 'fbb1b' },
     { label: 'Beambox Pro', value: 'fbb1p' },
     { label: 'HEXA', value: 'fhexa1' },
