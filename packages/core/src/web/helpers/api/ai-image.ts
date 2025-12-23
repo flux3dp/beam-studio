@@ -55,9 +55,12 @@ export interface GenerationResult {
   success: boolean;
 }
 
-const apiClient = async <T>(endpoint: string, data?: FormData): Promise<T | { code?: string; error: string }> => {
+const apiClient = async <T>(
+  endpoint: string,
+  data?: FormData,
+): Promise<ApiResponse<T> | { code?: string; error: string }> => {
   try {
-    let response: ResponseWithError;
+    let response: ResponseWithError<ApiResponse<T>>;
 
     if (data) {
       response = (await axiosFluxId.post(`${BASE_URL}${endpoint}`, data, {
@@ -71,7 +74,7 @@ const apiClient = async <T>(endpoint: string, data?: FormData): Promise<T | { co
       })) as ResponseWithError;
     }
 
-    if (response.status === 200 && response.data.status === 'ok') return response.data as T;
+    if (response.status === 200 && response.data.status === 'ok') return response.data;
 
     if (response.error) return { error: response.error.message || `Failed to fetch ${endpoint}` };
 
@@ -103,16 +106,14 @@ export const createAiImageTask = async (params: GenerationRequest) => {
   // Add images
   image_inputs.forEach((input) => formData.append('image_inputs', input));
 
-  const result = await apiClient<ApiResponse<{ uuid: string }>>(`/${mode}`, formData);
-
-  console.log(result);
+  const result = await apiClient<{ uuid: string }>(`/${mode}`, formData);
 
   return 'error' in result ? result : { uuid: result.data.uuid };
 };
 
-export const queryAiImageStatus = (uuid: string) => apiClient<ApiResponse<AiImageGenerationData>>(`/${uuid}`);
+export const queryAiImageStatus = (uuid: string) => apiClient<AiImageGenerationData>(`/${uuid}`);
 
-export const getAiImageHistory = () => apiClient<ApiResponse<AiImageGenerationData[]>>('/history');
+export const getAiImageHistory = () => apiClient<AiImageGenerationData[]>('/history');
 
 export const pollTaskUntilComplete = async (
   uuid: string,
