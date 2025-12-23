@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
@@ -74,8 +74,6 @@ const UnmemorizedAiGenerate = () => {
   const aiStyles = useMemo(() => aiConfig?.styles || [], [aiConfig?.styles]);
   const styleConfig = getStyleConfig(style, aiStyles);
   const styleId = styleConfig?.id || 'customize';
-  // Store refs for values needed in throttled callback
-  const paramsRef = useRef({ style: styleId, styles: aiStyles, user });
   const contentRef = useRef<HTMLDivElement>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const hasInitializedStyle = useRef(false);
@@ -83,23 +81,23 @@ const UnmemorizedAiGenerate = () => {
   // Setup focus scope
   useFocusScope(containerRef);
 
-  paramsRef.current = { style: styleId, styles: aiStyles, user };
-
-  const throttledGenerate = useRef(
-    funnel(
-      () => {
-        setIsGenerateDisabled(true);
-        handleImageGeneration(paramsRef.current);
-        requestAnimationFrame(() => {
-          contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
-        });
-        setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
-      },
-      { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
-    ),
+  const throttledGenerate = useMemo(
+    () =>
+      funnel(
+        () => {
+          setIsGenerateDisabled(true);
+          handleImageGeneration({ style: styleId, styles: aiStyles, user });
+          requestAnimationFrame(() => {
+            contentRef.current?.scrollTo({ behavior: 'smooth', top: 1000 });
+          });
+          setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
+        },
+        { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
+      ),
+    [styleId, aiStyles, user],
   );
 
-  const onGenerate = () => throttledGenerate.current.call();
+  const onGenerate = useCallback(() => throttledGenerate.call(), [throttledGenerate]);
 
   useEffect(() => {
     fluxIDEvents.on('update-user', setUser);
