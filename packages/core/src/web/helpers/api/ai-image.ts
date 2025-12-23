@@ -55,35 +55,23 @@ export interface GenerationResult {
   success: boolean;
 }
 
-const apiClient = async <T>(
-  endpoint: string,
-  data?: FormData,
-): Promise<ApiResponse<T> | { code?: string; error: string }> => {
+const handleResponse = async <T>(requestPromise: Promise<ResponseWithError<ApiResponse<T>>>) => {
   try {
-    let response: ResponseWithError<ApiResponse<T>>;
+    const response = await requestPromise;
 
-    if (data) {
-      response = (await axiosFluxId.post(`${BASE_URL}${endpoint}`, data, {
-        timeout: CONFIG.TIMEOUT,
-        withCredentials: true,
-      })) as ResponseWithError;
-    } else {
-      response = (await axiosFluxId.get(`${BASE_URL}${endpoint}`, {
-        timeout: CONFIG.TIMEOUT,
-        withCredentials: true,
-      })) as ResponseWithError;
+    if (response.status === 200 && response.data.status === 'ok') {
+      return response.data;
     }
 
-    if (response.status === 200 && response.data.status === 'ok') return response.data;
-
-    if (response.error) return { error: response.error.message || `Failed to fetch ${endpoint}` };
+    if (response.error) {
+      return { error: response.error.message || 'Request failed' };
+    }
 
     return {
-      code: String(response.status),
       error: ERROR_MESSAGES[response.status] || 'An unknown error occurred',
     };
   } catch (error) {
-    console.error(`[AI Config] ${endpoint} error:`, error);
+    console.error('[AI Config] API error:', error);
 
     return { error: error instanceof Error ? error.message : 'Unknown error' };
   }
@@ -106,14 +94,18 @@ export const createAiImageTask = async (params: GenerationRequest) => {
   // Add images
   image_inputs.forEach((input) => formData.append('image_inputs', input));
 
-  const result = await apiClient<{ uuid: string }>(`/${mode}`, formData);
+  const result = await handleResponse<{ uuid: string }>(
+    axiosFluxId.post(`${BASE_URL}/${mode}`, formData, { timeout: CONFIG.TIMEOUT, withCredentials: true }),
+  );
 
   return 'error' in result ? result : { uuid: result.data.uuid };
 };
 
-export const queryAiImageStatus = (uuid: string) => apiClient<AiImageGenerationData>(`/${uuid}`);
+export const queryAiImageStatus = (uuid: string) =>
+  handleResponse<AiImageGenerationData>(axiosFluxId.get(`${BASE_URL}/${uuid}`, { withCredentials: true }));
 
-export const getAiImageHistory = () => apiClient<AiImageGenerationData[]>('/history');
+export const getAiImageHistory = () =>
+  handleResponse<AiImageGenerationData[]>(axiosFluxId.get(`${BASE_URL}/history`, { withCredentials: true }));
 
 export const pollTaskUntilComplete = async (
   uuid: string,
