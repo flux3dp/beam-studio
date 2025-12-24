@@ -11,6 +11,11 @@ on:
         required: false
         default: ""
         type: string
+      skip_code_sign:
+        description: "Skip Code Sign"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -138,6 +143,12 @@ jobs:
           codesign --deep --force -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" ./backend/Swiftray.app
 
           chmod -R 777 ./node_modules/font-scanner
+
+          if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
+            echo "Skipping code sign as per input..."
+            export CSC_IDENTITY_AUTO_DISCOVERY=false
+          fi
+          export CSC_IDENTITY_AUTO_DISCOVERY=false
 
           if [ "${{ matrix.target }}" = "both" ]; then
             echo "Building for x64 and arm64..."
