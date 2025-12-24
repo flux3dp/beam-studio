@@ -125,9 +125,7 @@ jobs:
 
           bash ./build/clearup-develop-files.sh
 
-          echo "SKIP_CODE_SIGN is set to $SKIP_CODE_SIGN"
-          echo "${{ github.event.inputs.skip_code_sign }}"
-          if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
+          if [ "$SKIP_CODE_SIGN" = "true" ]; then
             echo "Skipping code sign as per input..."
           fi
 
