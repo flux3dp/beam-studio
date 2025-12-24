@@ -8,6 +8,7 @@ module.exports = async function customSign(configuration, packager) {
   const { exec } = require('child_process');
   const { statSync } = require('fs');
 
+  console.log('process.env.SKIP_CODE_SIGN', process.env.SKIP_CODE_SIGN);
   if (process.env.SKIP_CODE_SIGN === 'true') {
     return Promise.resolve();
   }
