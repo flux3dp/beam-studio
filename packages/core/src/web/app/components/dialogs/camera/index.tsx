@@ -7,14 +7,16 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkCamera from '@core/helpers/device/check-camera';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
+import isDev from '@core/helpers/is-dev';
+import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import AdorCalibrationV2 from './AdorCalibrationV2';
-import { showBB2WideAngleCameraCalibration } from './BB2Calibration';
 import { showBeamo2Calibration } from './beamo2Calibration';
 import LaserHeadFisheyeCalibration from './LaserHeadFisheyeCalibration';
 import ModuleCalibration from './ModuleCalibration';
 import PromarkCalibration from './PromarkCalibration';
+import WideAngleCamera from './WideAngleCamera';
 
 export const showLaserHeadFisheyeCalibration = (isAdvanced = false): Promise<boolean> => {
   const id = 'laser-head-fisheye-calibration';
@@ -29,6 +31,43 @@ export const showLaserHeadFisheyeCalibration = (isAdvanced = false): Promise<boo
       id,
       <LaserHeadFisheyeCalibration
         isAdvanced={isAdvanced}
+        onClose={(completed = false) => {
+          onClose();
+          resolve(completed);
+        }}
+      />,
+    );
+  });
+};
+
+export const showWideAngleCameraCalibration = async (device: IDeviceInfo): Promise<boolean> => {
+  const id = 'wide-angle-camera-calibration';
+  const onClose = () => popDialogById(id);
+
+  if (isIdExist(id)) onClose();
+
+  const vc = versionChecker(device.version);
+
+  if (device.model === 'fbb2' && !vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') && !isDev()) return false;
+
+  await deviceMaster.connectCamera();
+
+  const { data, success } = await deviceMaster.getCameraCount();
+
+  if (!success) {
+    alertCaller.popUpError({ message: 'Failed to get camera count' });
+
+    return false;
+  } else if (data < 2) {
+    alertCaller.popUpError({ message: 'Failed to find camera 2' });
+
+    return false;
+  }
+
+  return new Promise<boolean>((resolve) => {
+    addDialogComponent(
+      id,
+      <WideAngleCamera
         onClose={(completed = false) => {
           onClose();
           resolve(completed);
@@ -135,11 +174,9 @@ export const calibrateCamera = async (
     if (res.success) {
       if (constant.adorModels.includes(device.model)) {
         return showAdorCalibrationV2(factoryMode);
-      } else if (device.model === 'fbb2') {
-        if (isWideAngle) return showBB2WideAngleCameraCalibration(device);
+      } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
+        if (isWideAngle) return showWideAngleCameraCalibration(device);
         else return showLaserHeadFisheyeCalibration(isAdvanced);
-      } else if (hexaRfModels.has(device.model)) {
-        return showLaserHeadFisheyeCalibration(isAdvanced);
       } else if (promarkModels.has(device.model)) {
         return showPromarkCalibration(device);
       } else if (device.model === 'fbm2') {
