@@ -16,20 +16,20 @@ import type {
   WideAngleRegion,
 } from '@core/interfaces/FisheyePreview';
 
-import styles from '../../Calibration.module.scss';
-import ChArUco from '../../common/ChArUco';
-import CheckPnP from '../../common/CheckPnP';
-import CheckpointData from '../../common/CheckpointData';
-import downloadCalibrationFile from '../../common/downloadCalibrationFile';
-import Instruction from '../../common/Instruction';
-import { moveZRel } from '../../common/moveZRel';
-import ProcessingDialog from '../../common/ProcessingDialog';
-import SolvePnP from '../../common/SolvePnP';
+import styles from '../Calibration.module.scss';
+import ChArUco from '../common/ChArUco';
+import CheckPnP from '../common/CheckPnP';
+import CheckpointData from '../common/CheckpointData';
+import downloadCalibrationFile from '../common/downloadCalibrationFile';
+import Instruction from '../common/Instruction';
+import { moveZRel } from '../common/moveZRel';
+import ProcessingDialog from '../common/ProcessingDialog';
+import SolvePnP from '../common/SolvePnP';
 import {
   bb2WideAngleCameraPnpPoints,
   bb2WideAnglePerspectiveGrid,
   getRegionalPoints,
-} from '../../common/solvePnPConstants';
+} from '../common/solvePnPConstants';
 
 const enum Step {
   CHECK_DATA,
@@ -58,7 +58,7 @@ interface Props {
 }
 
 const WideAngleCamera = ({ onClose }: Props): ReactNode => {
-  const PROGRESS_ID = 'bb2-calibration';
+  const PROGRESS_ID = 'wide-angle-camera-calibration';
   const { calibration: tCali, device: tDevice } = useI18n();
   const [step, setStep] = useState(Step.CHECK_DATA);
   const [skipChArUco, setSkipChArUco] = useState(false);
@@ -193,7 +193,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
     })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
-        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
         if (!deviceStatus) return;
 
