@@ -148,7 +148,6 @@ jobs:
             echo "Skipping code sign as per input..."
             export CSC_IDENTITY_AUTO_DISCOVERY=false
           fi
-          export CSC_IDENTITY_AUTO_DISCOVERY=false
 
           if [ "${{ matrix.target }}" = "both" ]; then
             echo "Building for x64 and arm64..."
