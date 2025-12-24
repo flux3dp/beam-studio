@@ -25,7 +25,6 @@ declare global {
       websockets: any;
     };
     jQuery: any;
-    os: 'Linux' | 'MacOS' | 'others' | 'Windows';
     polygonAddSides: (val?: number) => void;
     polygonDecreaseSides: (val?: number) => void;
     requirejs: (deps: string[], callback: (...modules: any[]) => void) => void;

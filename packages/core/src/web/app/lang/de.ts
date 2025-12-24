@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: 'Sondenposition wird abgerufen...',
     gettingLaserSpeed: 'Laserkopfgeschwindigkeit ablesen...',
     homing: 'Homing...',
+    mac_os_arch_mismatch: {
+      caption: 'Kompatible Version neu installieren',
+      download_center: 'Download-Center',
+      message: 'Dieser Mac verwendet Apple Silicon. Laden Sie die Apple Silicon Version herunter und installieren Sie sie neu.',
+    },
     need_password: 'Benötigen Passwort für die Verbindung mit der Maschine',
     please_enter_dpi: 'Bitte geben Sie die Einheit Ihrer Datei ein (in mm)',
     preview: {

@@ -13,6 +13,7 @@ import { clearBackgroundImage, getBackgroundUrl, setBackgroundImage } from '@cor
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAbsRect } from '@core/helpers/boundary-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { CameraParameters } from '@core/interfaces/Camera';
@@ -60,7 +61,7 @@ class PreviewModeBackgroundDrawer {
     const { modelHeight, width } = workareaManager;
 
     // if is IOS system (web version), set ratio for canvas limit
-    if (navigator.maxTouchPoints > 1 && window.os === 'MacOS') {
+    if (navigator.maxTouchPoints > 1 && getOS() === 'MacOS') {
       if (width * modelHeight > IOS_CANVAS_LIMIT) {
         this.canvasRatio = Math.floor(1000 * Math.sqrt(IOS_CANVAS_LIMIT / (width * modelHeight))) / 1000;
       }

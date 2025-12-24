@@ -9,6 +9,7 @@ import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { startFisheyeCalibrate } from '@core/helpers/camera-calibration-helper';
 import deviceMaster from '@core/helpers/device-master';
+import { getOS } from '@core/helpers/getOS';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV2Cali } from '@core/interfaces/FisheyePreview';
@@ -186,7 +187,7 @@ const CalibrateChessBoard = ({ onBack, onClose, onNext, updateParam }: Props): R
     dialog.writeFileDialog(() => res!.imgblob, 'Download Image', 'chessboard.jpg', [
       {
         extensions: ['jpg'],
-        name: window.os === 'MacOS' ? `${tFile.jpg_files} (*.jpg)` : tFile.jpg_files,
+        name: getOS() === 'MacOS' ? `${tFile.jpg_files} (*.jpg)` : tFile.jpg_files,
       },
       { extensions: ['*'], name: tFile.all_files },
     ]);

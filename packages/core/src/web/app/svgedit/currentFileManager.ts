@@ -1,6 +1,7 @@
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import type { IFile } from '@core/interfaces/IMyCloud';
 
 class CurrentFileManager {
@@ -33,7 +34,7 @@ class CurrentFileManager {
   };
 
   extractFileName = (filepath: string) => {
-    const splitPath = filepath.split(window.os === 'Windows' ? '\\' : '/');
+    const splitPath = filepath.split(getOS() === 'Windows' ? '\\' : '/');
     const fileName = splitPath[splitPath.length - 1];
 
     return fileName.slice(0, fileName.lastIndexOf('.')).replace(':', '/');

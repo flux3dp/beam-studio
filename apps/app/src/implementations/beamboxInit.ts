@@ -1,9 +1,10 @@
 import { sprintf } from 'sprintf-js';
 
-import Alert from '@core/app/actions/alert-caller';
+import alertCaller from '@core/app/actions/alert-caller';
 import BeamboxInit from '@core/app/actions/beambox/beambox-init';
-import AlertConstants from '@core/app/constants/alert-constants';
-import AlertConfig from '@core/helpers/api/alert-config';
+import alertConstants from '@core/app/constants/alert-constants';
+import alertConfig from '@core/helpers/api/alert-config';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import os, { macKernelVersionMap } from '@core/implementations/os';
 
@@ -15,9 +16,10 @@ class ElectronBeamboxInit extends BeamboxInit {
 
   private checkOSVersion(): void {
     const { alert: tAlert, message: tMessage } = i18n.lang;
+    const osName = getOS();
 
-    if (!AlertConfig.read('skip_os_version_warning')) {
-      if (window.os === 'MacOS') {
+    if (!alertConfig.read('skip_os_version_warning')) {
+      if (osName === 'MacOS') {
         try {
           const release = os.release() as string;
           const version = release.split('.').map((v) => Number.parseInt(v, 10));
@@ -25,20 +27,19 @@ class ElectronBeamboxInit extends BeamboxInit {
           if (version[0] < 22) {
             const osVersion = macKernelVersionMap[release] || `Kernel Release: ${release}`;
 
-            Alert.popUp({
+            alertCaller.popUp({
               checkbox: {
-                callbacks: () => AlertConfig.write('skip_os_version_warning', true),
+                callbacks: () => alertConfig.write('skip_os_version_warning', true),
                 text: tAlert.dont_show_again,
               },
-              id: 'os_version_warning',
               message: sprintf(tMessage.unsupport_osx_version, osVersion),
-              type: AlertConstants.SHOW_POPUP_WARNING,
+              type: alertConstants.SHOW_POPUP_WARNING,
             });
           }
         } catch {
           console.error('Fail to get MacOS Version');
         }
-      } else if (window.os === 'Windows') {
+      } else if (osName === 'Windows') {
         const windowsVersionStrings = [
           { r: /(Windows 10.0|Windows NT 10.0)/, s: 'Windows 10', shouldAlert: false },
           { r: /(Windows 8.1|Windows NT 6.3)/, s: 'Windows 8.1', shouldAlert: true },
@@ -69,14 +70,13 @@ class ElectronBeamboxInit extends BeamboxInit {
         }
 
         if (shouldAlert) {
-          Alert.popUp({
+          alertCaller.popUp({
             checkbox: {
-              callbacks: () => AlertConfig.write('skip_os_version_warning', true),
+              callbacks: () => alertConfig.write('skip_os_version_warning', true),
               text: tAlert.dont_show_again,
             },
-            id: 'os_version_warning',
             message: sprintf(tMessage.unsupport_win_version, osVersion),
-            type: AlertConstants.SHOW_POPUP_WARNING,
+            type: alertConstants.SHOW_POPUP_WARNING,
           });
         }
       }

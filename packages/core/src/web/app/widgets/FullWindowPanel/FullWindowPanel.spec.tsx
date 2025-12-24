@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import FullWindowPanel from './FullWindowPanel';
+import { __setMockOS } from '@mocks/@core/helpers/getOS';
 
 jest.mock(
   '@core/app/widgets/FloatingPanel',
@@ -35,6 +36,7 @@ const mockOnClose = jest.fn();
 describe('test FullWindowPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    __setMockOS('others');
   });
 
   it('should render correctly in mobile', () => {
@@ -59,7 +61,7 @@ describe('test FullWindowPanel', () => {
   });
 
   it('should render correctly in desktop', () => {
-    window.os = 'Windows';
+    __setMockOS('Windows');
     mockIsWeb.mockReturnValue(true);
     mockUseIsMobile.mockReturnValue(false);
 

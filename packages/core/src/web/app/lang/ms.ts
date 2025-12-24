@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: 'Mendapatkan Kedudukan Probe...',
     gettingLaserSpeed: 'Membaca kelajuan kepala laser...',
     homing: 'Penjajaran semula...',
+    mac_os_arch_mismatch: {
+      caption: 'Pasang semula versi yang serasi',
+      download_center: 'Pusat Muat Turun',
+      message: 'Mac ini menggunakan Apple Silicon. Muat turun versi Apple Silicon dan pasang semula.',
+    },
     need_password: 'Kata laluan diperlukan untuk Menyambung ke Mesin',
     please_enter_dpi: 'Sila masukkan unit fail anda (dalam mm)',
     preview: {

@@ -10,6 +10,7 @@ mockGet.mockReturnValueOnce({
   abc: '123',
 });
 
+import { getOS } from '@core/helpers/getOS';
 import beamboxPreference from './beambox-preference';
 
 jest.mock('@core/app/actions/beambox/constant', () => ({
@@ -102,7 +103,7 @@ test('test beambox-preference', () => {
         '15': [0, 0],
       },
     },
-    mouse_input_device: window.os === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
+    mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
     'multipass-compensation': true,
     'one-way-printing': true,
     padding_accel: 5000,

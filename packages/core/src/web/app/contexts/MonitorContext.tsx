@@ -16,6 +16,7 @@ import promarkButtonHandler from '@core/helpers/device/promark/promark-button-ha
 import DeviceErrorHandler from '@core/helpers/device-error-handler';
 import DeviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import MonitorStatus from '@core/helpers/monitor-status';
 import OutputError from '@core/helpers/output-error';
@@ -604,7 +605,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         await dialog.writeFileDialog(getContent, LANG.beambox.popup.bug_report, 'devicelogs.txt', [
           {
             extensions: ['txt'],
-            name: window.os === 'MacOS' ? 'txt (*.txt)' : 'txt',
+            name: getOS() === 'MacOS' ? 'txt (*.txt)' : 'txt',
           },
         ]);
       };

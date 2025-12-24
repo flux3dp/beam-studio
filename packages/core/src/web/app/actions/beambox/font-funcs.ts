@@ -17,6 +17,7 @@ import type { AttributeMap } from '@core/helpers/element/attribute';
 import { getAttributes, setAttributes } from '@core/helpers/element/attribute';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import fontHelper from '@core/helpers/fonts/fontHelper';
+import { getOS } from '@core/helpers/getOS';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -137,7 +138,7 @@ const getFontOfPostscriptName = memoize((postscriptName: string) => {
     return registeredFont;
   }
 
-  if (window.os === 'MacOS') {
+  if (getOS() === 'MacOS') {
     return fontHelper.findFont({ postscriptName });
   }
 

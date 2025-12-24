@@ -9,6 +9,7 @@ import os from 'os';
 import path from 'path';
 import util from 'util';
 
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import type { PdfHelper } from '@core/interfaces/IPdfHelper';
 
@@ -25,9 +26,11 @@ const init = async () => {
   isInitialized = true;
   tempFilePath = path.join(tempDir, 'temp.pdf');
 
-  if (window.os === 'MacOS') {
+  const osName = getOS();
+
+  if (osName === 'MacOS') {
     pdf2svgPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'pdf2svg');
-  } else if (window.os === 'Windows') {
+  } else if (osName === 'Windows') {
     pdf2svgPath = path.join(resourcesRoot, 'utils', 'pdf2svg', 'pdf2svg.exe');
   }
 };

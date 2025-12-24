@@ -12,6 +12,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getStorage, removeFromStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import useForceUpdate from '@core/helpers/use-force-update';
 import dialog from '@core/implementations/dialog';
@@ -291,7 +292,7 @@ export const importPresets = async (file?: Blob): Promise<boolean> => {
 };
 
 export const exportPresets = async (presets?: Preset[]): Promise<void> => {
-  const isLinux = window.os === 'Linux';
+  const isLinux = getOS() === 'Linux';
   const getContent = () => {
     const laserConfig = {
       presets: presets ?? (getStorage('presets') as Preset[]),
@@ -307,7 +308,7 @@ export const exportPresets = async (presets?: Preset[]): Promise<void> => {
     [
       {
         extensions: ['json'],
-        name: window.os === 'MacOS' ? 'JSON (*.json)' : 'JSON',
+        name: getOS() === 'MacOS' ? 'JSON (*.json)' : 'JSON',
       },
       {
         extensions: ['*'],

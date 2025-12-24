@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: '프로브 위치 가져오는 중...',
     gettingLaserSpeed: '레이저 헤드 속도를 읽고 있습니다...',
     homing: '홈을 찾고 있습니다...',
+    mac_os_arch_mismatch: {
+      caption: '호환 버전 재설치',
+      download_center: '다운로드 센터',
+      message: '이 Mac은 Apple Silicon을 사용합니다. Apple Silicon 버전을 다운로드하여 다시 설치하세요.',
+    },
     need_password: '기계에 연결하려면 비밀번호가 필요합니다',
     please_enter_dpi: '파일의 단위를 입력해주세요 (mm)',
     preview: {

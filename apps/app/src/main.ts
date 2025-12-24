@@ -1,13 +1,11 @@
 import { app, session } from '@electron/remote';
 import { Titlebar, TitlebarColor } from 'custom-electron-titlebar';
 
-// This module setup global window variable when imported, Should be put at top
-import '@core/helpers/global-helper';
-
 import globalEvents from '@core/app/actions/global';
 import router from '@core/app/router';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
+import { getOS } from '@core/helpers/getOS';
 import communicator from '@core/implementations/communicator';
 
 import initBackendEvents from './init-backend-events';
@@ -46,7 +44,7 @@ declare global {
 }
 
 function menuBar() {
-  if (window.os !== 'Windows') {
+  if (getOS() !== 'Windows') {
     return;
   }
 

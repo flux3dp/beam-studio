@@ -1,6 +1,7 @@
 import { pipe, prop } from 'remeda';
 
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -37,9 +38,9 @@ export const saveAsFile = async (): Promise<boolean> => {
   const newFilePath = await dialog.writeFileDialog(
     getContent,
     langFile.save_scene,
-    window.os === 'Linux' ? `${defaultFileName}.beam` : defaultFileName,
+    getOS() === 'Linux' ? `${defaultFileName}.beam` : defaultFileName,
     [
-      { extensions: ['beam'], name: window.os === 'MacOS' ? `${langFile.scene_files} (*.beam)` : langFile.scene_files },
+      { extensions: ['beam'], name: getOS() === 'MacOS' ? `${langFile.scene_files} (*.beam)` : langFile.scene_files },
       { extensions: ['*'], name: i18n.lang.topmenu.file.all_files },
     ],
   );

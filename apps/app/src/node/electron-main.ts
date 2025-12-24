@@ -28,6 +28,7 @@ import BackendManager from './backend-manager';
 import bootstrap from './bootstrap';
 import { getDeepLinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 import fontHelper from './font-helper';
+import checkMacOsBuild from './helpers/checkMacOsBuild';
 import { setTabManager } from './helpers/tabHelper';
 import events from './ipc-events';
 import MenuManager from './menu-manager';
@@ -320,6 +321,8 @@ function createMainWindow() {
       tabManager?.sendToAllViews('window-maximize', false);
     });
   }
+
+  checkMacOsBuild(mainWindow);
 }
 
 app.on('open-file', (event, filePath) => {

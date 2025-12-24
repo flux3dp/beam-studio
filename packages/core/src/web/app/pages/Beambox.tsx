@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 
 import { Flex } from 'antd';
 import classNames from 'classnames';
@@ -29,7 +29,7 @@ sentryHelper.initSentry();
 const beamboxInit = new BeamboxInit();
 
 const Beambox = (): React.JSX.Element => {
-  React.useEffect(() => {
+  useEffect(() => {
     window.homePage = hashMap.editor;
     communicator.send('FRONTEND_READY');
     // Init view
@@ -42,7 +42,7 @@ const Beambox = (): React.JSX.Element => {
       BeamboxGlobalInteraction.detach();
       communicator.off('NEW_APP_MENU', BeamboxGlobalInteraction.attach);
     };
-  });
+  }, []);
 
   const activeLang = useStorageStore((state) => state['active-lang']) ?? 'en';
 

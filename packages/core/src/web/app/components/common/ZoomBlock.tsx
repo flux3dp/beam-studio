@@ -6,6 +6,7 @@ import constant from '@core/app/actions/beambox/constant';
 import macOSWindowSize from '@core/app/constants/macOS-Window-Size';
 import workareaManager from '@core/app/svgedit/workarea';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -22,7 +23,9 @@ const calculateDpmm = async (): Promise<number> => {
   }
 
   try {
-    if (window.os === 'MacOS') {
+    const osName = getOS();
+
+    if (osName === 'MacOS') {
       const res = await os.process.exec('/usr/sbin/system_profiler SPHardwareDataType | grep Identifier');
 
       if (!res.stderr) {
@@ -40,7 +43,7 @@ const calculateDpmm = async (): Promise<number> => {
           }
         }
       }
-    } else if (window.os === 'Windows') {
+    } else if (osName === 'Windows') {
       const res = await os.process.exec(
         'powershell "Get-WmiObject -Namespace root\\wmi -Class WmiMonitorBasicDisplayParams"',
       );
@@ -78,7 +81,7 @@ const calculateDpmm = async (): Promise<number> => {
           }
         }
       }
-    } else if (window.os === 'Linux') {
+    } else if (osName === 'Linux') {
       const res = await os.process.exec("xrandr | grep ' connected'");
 
       if (!res.stderr) {

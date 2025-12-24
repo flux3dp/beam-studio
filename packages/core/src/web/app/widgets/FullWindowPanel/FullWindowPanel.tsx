@@ -4,6 +4,7 @@ import classNames from 'classnames';
 
 import layoutConstants from '@core/app/constants/layout-constants';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import { useIsMobile } from '@core/helpers/system-helper';
 
@@ -37,7 +38,7 @@ const FullWindowPanel = ({
   renderMobileFixedContent,
 }: Props): React.JSX.Element => {
   const isMobile = useIsMobile();
-  const isWindows = useMemo(() => window.os === 'Windows', []);
+  const isWindows = useMemo(() => getOS() === 'Windows', []);
   const web = useMemo(() => isWeb(), []);
 
   if (isMobile) {

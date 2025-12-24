@@ -60,7 +60,7 @@ exports[`test ConnectEthernet should render correctly in mac 1`] = `
             >
               this guide
             </span>
-             to make your comuter as a router.
+             to make your computer as a router.
           </div>
           <div>
             3. Click Next.
@@ -132,7 +132,7 @@ exports[`test ConnectEthernet should render correctly in win 1`] = `
             >
               this guide
             </span>
-             to make your comuter as a router.
+             to make your computer as a router.
           </div>
           <div>
             3. Click Next.

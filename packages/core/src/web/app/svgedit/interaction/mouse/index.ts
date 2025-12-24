@@ -27,6 +27,7 @@ import * as TutorialController from '@core/app/views/tutorials/tutorialControlle
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import * as LayerHelper from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -244,7 +245,7 @@ const mouseDown = async (evt: MouseEvent) => {
         if (!selectedElements.includes(mouseTarget)) {
           if (!evt.shiftKey) svgCanvas.clearSelection(true);
 
-          if (navigator.maxTouchPoints > 1 && ['MacOS', 'others'].includes(window.os)) {
+          if (navigator.maxTouchPoints > 1 && ['MacOS', 'others'].includes(getOS())) {
             // in touchable mobiles, allow multiselect if click on non selected element
             // if user doesn't multiselect, select [justSelected] in mouseup
             setMouseMode('multiselect');
@@ -1098,7 +1099,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
         if (
           navigator.maxTouchPoints > 1 &&
-          ['MacOS', 'others'].includes(window.os) &&
+          ['MacOS', 'others'].includes(getOS()) &&
           Math.hypot(mouseX - startMouseX, mouseY - startMouseY) < 1
         ) {
           // in touchable mobile, if almost not moved, select mousedown element

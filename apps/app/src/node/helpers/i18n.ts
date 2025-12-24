@@ -1,6 +1,7 @@
 /**
  * I18n implementation for nodejs usage
  */
+import { app } from 'electron';
 import ElectronStore from 'electron-store';
 import { match } from 'ts-pattern';
 
@@ -61,6 +62,11 @@ let activeLang: string = store.get('active-lang') || appSettings.i18n.default_la
 let lang: ILang = getLang(activeLang);
 
 export default {
+  getNativeLang(): ILang {
+    const langKey = store.get('active-lang') || app.getLocale().toLowerCase();
+
+    return getLang(langKey);
+  },
   get lang(): ILang {
     return lang;
   },

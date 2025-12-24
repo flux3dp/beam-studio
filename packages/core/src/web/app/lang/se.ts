@@ -1721,6 +1721,11 @@ const lang: ILang = {
     getProbePosition: 'Hämtar sondposition...',
     gettingLaserSpeed: 'Läser laserhuvudhastighet...',
     homing: 'Hemkörning...',
+    mac_os_arch_mismatch: {
+      caption: 'Installera om kompatibel version',
+      download_center: 'Nedladdningscenter',
+      message: 'Denna Mac använder Apple Silicon. Ladda ner Apple Silicon-versionen och installera om.',
+    },
     need_password: 'Lösenord krävs för att ansluta till maskinen',
     please_enter_dpi: 'Ange enheten för din fil (i mm)',
     preview: {
