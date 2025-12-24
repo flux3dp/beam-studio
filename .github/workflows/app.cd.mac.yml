@@ -144,35 +144,22 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
+          if [ "$APPLE_TEAM_ID" = "" ]; then
+            echo "Skip notarization as APPLE_TEAM_ID is empty."
+          fi
+
           if [ "${{ matrix.target }}" = "both" ]; then
             echo "Building for x64 and arm64..."
-            if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
-              echo "Skipping code sign as per input..."
-              pnpm nx run app:dist --x64 --publish always -c.mac.identity=null
-              export PUBLISH_PATH="-arm64"
-              pnpm nx run app:dist --arm64 --publish always -c.mac.identity=-
-            else
-              pnpm nx run app:dist --x64 --publish always
-              export PUBLISH_PATH="-arm64"
-              pnpm nx run app:dist --arm64 --publish always
-            fi
+            pnpm nx run app:dist --x64 --publish always
+            export PUBLISH_PATH="-arm64"
+            pnpm nx run app:dist --arm64 --publish always
           elif [ "${{ matrix.target }}" = "arm64" ]; then
             echo "Building for arm64..."
             export PUBLISH_PATH="-arm64"
-            if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
-              echo "Skipping code sign as per input..."
-              pnpm nx run app:dist --arm64 --publish always -c.mac.identity=-
-            else
-              pnpm nx run app:dist --arm64 --publish always
-            fi
+            pnpm nx run app:dist --arm64 --publish always
           else
             echo "Building for x64..."
-            if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
-              echo "Skipping code sign as per input..."
-              pnpm nx run app:dist --x64 --publish always -c.mac.identity=null
-            else
-              pnpm nx run app:dist --x64 --publish always
-            fi
+            pnpm nx run app:dist --x64 --publish always
           fi
 
 
@@ -182,7 +169,8 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           PUBLISH_PATH: ""
           PUBLISH_SUFFIX: ${{ github.event.inputs.publish_suffix || '' }}
-          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          # Set APPLE_TEAM_ID to empty if skip_code_sign is true to skip notarization
+          APPLE_TEAM_ID: ${{ github.event.inputs.skip_code_sign == 'true' && '' || secrets.APPLE_TEAM_ID }}
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
