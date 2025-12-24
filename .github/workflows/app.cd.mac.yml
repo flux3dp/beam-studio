@@ -144,23 +144,35 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
-          if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
-            echo "Skipping code sign as per input..."
-            export CSC_IDENTITY_AUTO_DISCOVERY=false
-          fi
-
           if [ "${{ matrix.target }}" = "both" ]; then
             echo "Building for x64 and arm64..."
-            pnpm nx run app:dist --x64 --publish always
-            export PUBLISH_PATH="-arm64"
-            pnpm nx run app:dist --arm64 --publish always
+            if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
+              echo "Skipping code sign as per input..."
+              pnpm nx run app:dist --x64 --publish always -c.mac.identity=null
+              export PUBLISH_PATH="-arm64"
+              pnpm nx run app:dist --arm64 --publish always -c.mac.identity=-
+            else
+              pnpm nx run app:dist --x64 --publish always
+              export PUBLISH_PATH="-arm64"
+              pnpm nx run app:dist --arm64 --publish always
+            fi
           elif [ "${{ matrix.target }}" = "arm64" ]; then
             echo "Building for arm64..."
             export PUBLISH_PATH="-arm64"
-            pnpm nx run app:dist --arm64 --publish always
+            if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
+              echo "Skipping code sign as per input..."
+              pnpm nx run app:dist --arm64 --publish always -c.mac.identity=-
+            else
+              pnpm nx run app:dist --arm64 --publish always
+            fi
           else
             echo "Building for x64..."
-            pnpm nx run app:dist --x64 --publish always
+            if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
+              echo "Skipping code sign as per input..."
+              pnpm nx run app:dist --x64 --publish always -c.mac.identity=null
+            else
+              pnpm nx run app:dist --x64 --publish always
+            fi
           fi
 
 
