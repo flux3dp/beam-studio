@@ -11,6 +11,11 @@ on:
         required: false
         default: ""
         type: string
+      skip_code_sign:
+        description: "Skip Code Sign"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -120,6 +125,10 @@ jobs:
 
           bash ./build/clearup-develop-files.sh
 
+          if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
+            echo "Skipping code sign as per input..."
+          fi
+
           pnpm nx run app:dist --win --x64 --publish always
         env:
           PUBLISH_BUCKET: beamstudio
@@ -133,3 +142,4 @@ jobs:
           WIN_CODESIGN_SERVER: ${{ secrets.WIN_CODESIGN_SERVER }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
           SWIFTRAY_DAEMON_VERSION: 1.4.2
+          SKIP_CODE_SIGN: ${{ github.event.inputs.skip_code_sign }}
