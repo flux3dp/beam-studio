@@ -26,7 +26,7 @@ const MyCloudModal = (): React.JSX.Element => {
   const lang = LANG.my_cloud;
   const isMobile = useIsMobile();
   const { files, onClose, setSelectedId } = useContext(MyCloudContext);
-  const anchors = [0, window.innerHeight - layoutConstants.menuberHeight];
+  const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
 
   const content = useMemo(() => {
     if (files === undefined) {
