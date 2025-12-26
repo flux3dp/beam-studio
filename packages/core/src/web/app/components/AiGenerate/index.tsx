@@ -74,7 +74,7 @@ const AiGenerate = memo(() => {
     return () => window.removeEventListener('keydown', handleEscape, { capture: true });
   }, [drawerMode, setDrawerMode]);
 
-  const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles), styleId);
+  const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles));
 
   // Render content based on state
   const renderContent = () => {
