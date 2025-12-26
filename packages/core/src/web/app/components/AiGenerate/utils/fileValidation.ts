@@ -2,6 +2,7 @@
  * File validation utilities for image uploads
  */
 
+import { sum } from 'remeda';
 import { sprintf } from 'sprintf-js';
 
 import i18n from '@core/helpers/i18n';
@@ -23,7 +24,7 @@ export const validateImageFiles = (
 ): null | string => {
   const t = i18n.lang.beambox.ai_generate;
 
-  if (currentCount + files.length > maxImages) {
+  if (sum([currentCount, files.length]) > maxImages) {
     return sprintf(t.validation.max_images, String(maxImages));
   }
 

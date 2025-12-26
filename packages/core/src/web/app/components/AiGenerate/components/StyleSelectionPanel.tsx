@@ -36,13 +36,10 @@ const StyleSelectionPanel = memo(({ currentStyle, onClose, onSelect }: StyleSele
     data: { categories, styles: displayStyles },
   } = useAiConfigQuery();
   const displayCategories = useMemo(() => categories.filter((c) => c.id !== 'customize'), [categories]);
-  // Initialize selected category based on current style
   const [selectedCategory, setSelectedCategory] = useState(() =>
     getCategoryIdFromStyle(currentStyle, displayStyles, displayCategories),
   );
   const [selectedStyle, setSelectedStyle] = useState(currentStyle);
-
-  // Get styles for the currently active category
   const currentCategoryStyles = useMemo(
     () => getStylesForCategory(selectedCategory, displayStyles, displayCategories),
     [selectedCategory, displayStyles, displayCategories],

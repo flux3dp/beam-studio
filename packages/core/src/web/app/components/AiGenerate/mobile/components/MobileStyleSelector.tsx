@@ -46,7 +46,6 @@ const MobileStyleSelector = memo(({ onClose }: Props) => {
   const [selectedCategory, setSelectedCategory] = useState(() =>
     getCategoryIdFromStyle(styleId, displayStyles, displayCategories),
   );
-
   const currentCategoryStyles = useMemo(
     () => getStylesForCategory(selectedCategory, displayStyles, displayCategories),
     [selectedCategory, displayStyles, displayCategories],
