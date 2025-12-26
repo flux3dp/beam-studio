@@ -43,6 +43,7 @@ const attributeMap: Record<ConfigKey, string> = {
   halftone: 'data-halftone',
   height: 'data-height',
   ink: 'data-ink',
+  interpolation: 'data-interpolation',
   kRatio: 'data-kRatio',
   minPower: 'data-minPower',
   module: 'data-module',
@@ -61,8 +62,6 @@ const attributeMap: Record<ConfigKey, string> = {
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
-  uvIntervalX: 'data-uvIntervalX',
-  uvIntervalY: 'data-uvIntervalY',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
   wobbleDiameter: 'data-wobbleDiameter',
@@ -94,6 +93,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
   ink: useGlobalPreferenceStore.getState()['multipass-compensation'] ? 3 : 1,
+  interpolation: 1,
   kRatio: 100,
   minPower: 0,
   module: LayerModule.LASER_UNIVERSAL,
@@ -111,8 +111,6 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   refreshThreshold: 0,
   repeat: 1,
   speed: 20,
-  uvIntervalX: 0.8,
-  uvIntervalY: 0.6,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
@@ -142,6 +140,14 @@ export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<Conf
     ink: 70,
     printingSpeed: 25,
   },
+  [LayerModule.UV_VARNISH]: {
+    ink: 100,
+    multipass: 1,
+  },
+  [LayerModule.UV_WHITE_INK]: {
+    ink: 100,
+    multipass: 1,
+  },
 };
 
 export const booleanConfig: ConfigKey[] = [
@@ -169,9 +175,8 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'crossHatch',
   'wobbleDiameter',
   'wobbleStep',
-  // white ink
-  'uvIntervalX',
-  'uvIntervalY',
+  // UV
+  'interpolation',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',

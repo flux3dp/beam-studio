@@ -64,8 +64,7 @@ import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
-import UVIntervalX from './UVConfigs/UVIntervalX';
-import UVIntervalY from './UVConfigs/UVIntervalY';
+import Interpolation from './UVConfigs/Interpolation';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
 
 const PARAMETERS_CONSTANT = 'parameters';
@@ -257,22 +256,21 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
   const commonContent = (
     <>
-      {isPrintingModule && <HalftoneBlock type={UIType} />}
-      {!isPrintingModule && <PowerBlock type={UIType} />}
-      {isPrintingModule && <InkBlock type={UIType} />}
+      {(isPrintingModule || is4cUV) && <HalftoneBlock type={UIType} />}
+      {!(isPrintingModule || is4cUV) && <PowerBlock type={UIType} />}
+      {(isPrintingModule || is4cUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
-      {isPrintingModule && <MultipassBlock type={UIType} />}
+      {(isPrintingModule || is4cUV) && <MultipassBlock type={UIType} />}
       {isDevMode && isPrintingModule && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
       {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
-      {addOnInfo.airAssist && !isPrintingModule && <AirAssistBlock type={UIType} />}
+      {addOnInfo.airAssist && !(isPrintingModule || is4cUV) && <AirAssistBlock type={UIType} />}
       <RepeatBlock type={UIType} />
       {isDevMode && isPrintingModule && fullcolor.value && UIType === 'panel-item' && (
         <WhiteInkCheckbox type={UIType} />
       )}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {is4cUV && <UVIntervalX type={UIType} />}
-      {is4cUV && <UVIntervalY type={UIType} />}
+      {is4cUV && <Interpolation type={UIType} />}
     </>
   );
 
