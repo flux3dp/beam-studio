@@ -1,36 +1,20 @@
 import { useQuery } from '@tanstack/react-query';
 
-import type { Category, Style } from '@core/helpers/api/ai-image-config';
+import type { AiConfigData } from '@core/helpers/api/ai-image-config';
 import { fetchAllAiConfig, getLocale } from '@core/helpers/api/ai-image-config';
 import { queryKeys } from '@core/helpers/query';
 
-export interface AiConfigData {
-  categories: Category[];
-  styles: Style[];
-}
+import { DEFAULT_CATEGORY, DEFAULT_STYLE } from '../types';
 
-const PLACEHOLDER_DATA: AiConfigData = {
-  categories: [{ displayName: 'Customize', id: 'customize', previewImage: '', tags: ['customize'] }],
-  styles: [
-    {
-      displayName: 'Customize',
-      id: 'customize',
-      inputFields: [
-        { key: 'description', label: 'Description', maxLength: 2000, placeholder: 'Enter prompts', required: false },
-      ],
-      modes: ['text-to-image', 'edit'],
-      previewImage: '',
-      tags: ['customize'],
-    },
-  ],
-};
+const INITIAL_DATA: AiConfigData = { categories: [DEFAULT_CATEGORY], styles: [DEFAULT_STYLE] };
 
 export const useAiConfigQuery = () => {
   const locale = getLocale();
 
   return useQuery<AiConfigData, Error>({
     gcTime: 1000 * 60 * 60 * 24, // 24 hours
-    placeholderData: PLACEHOLDER_DATA,
+    initialData: INITIAL_DATA,
+    initialDataUpdatedAt: 0, // set to 0 to mark initial data as stale
     queryFn: async () => {
       const result = await fetchAllAiConfig();
 

@@ -19,7 +19,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
 import { useTipIndex } from '../hooks/useTipIndex';
-import { laserFriendlyValue } from '../types';
+import { LASER_FRIENDLY_VALUE } from '../types';
 import { getStyleConfig } from '../utils/categories';
 import { getSizePixels } from '../utils/dimensions';
 import { handleDownload } from '../utils/handleDownload';
@@ -31,29 +31,28 @@ interface HistoryCardProps {
   onImport: (item: AiImageGenerationData) => void;
 }
 
-const filterInputs = (inputs: Record<string, string>) =>
-  Object.entries(inputs).filter(
-    ([key, value]) =>
-      value.trim() !== '' && key !== 'image_counts' && !(key === 'color' && value === laserFriendlyValue),
-  );
-
-const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
+const HistoryCard = memo(({ item, onImport }: HistoryCardProps) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
   const [isExpanded, setIsExpanded] = useState(false);
   const [importingUrl, setImportingUrl] = useState<null | string>(null);
-  const previewImages = item.result_urls;
+  const {
+    data: { styles: aiStyles },
+  } = useAiConfigQuery();
+  const tipIndex = useTipIndex(dayjs(item.created_at).valueOf());
   const formattedDate = useMemo(() => dayjs(item.created_at).format('YYYY/MM/DD HH:mm'), [item.created_at]);
-  const { data: aiConfig } = useAiConfigQuery();
-  const isLaserFriendly = useMemo(
-    () => item.prompt_data.inputs?.color === laserFriendlyValue,
+  const style = useMemo(() => getStyleConfig(item.prompt_data['style'], aiStyles), [item.prompt_data, aiStyles]);
+  const isLaserFriendly = item.prompt_data.inputs?.color === LASER_FRIENDLY_VALUE;
+  const displayInputs = useMemo(
+    () =>
+      Object.entries(item.prompt_data.inputs || {}).filter(
+        ([key, value]) =>
+          value.trim() !== '' && key !== 'image_counts' && !(key === 'color' && value === LASER_FRIENDLY_VALUE),
+      ),
     [item.prompt_data.inputs],
   );
-  const displayInputs = useMemo(() => filterInputs(item.prompt_data.inputs), [item.prompt_data.inputs]);
-  const { inputFields } = getStyleConfig(item.prompt_data['style'], aiConfig?.styles);
-  const tipIndex = useTipIndex(dayjs(item.created_at).valueOf());
 
-  const handleImageImport = useCallback(async (url: string) => {
+  const handleImportImage = useCallback(async (url: string) => {
     setImportingUrl(url);
 
     try {
@@ -63,45 +62,43 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
     }
   }, []);
 
-  const renderStatusBadge = () =>
-    match(item.state)
-      .with('success', () => (
-        <Badge
-          className={classNames(styles.statusBadge, styles.success)}
-          status="success"
-          text={t.history.status_success}
-        />
-      ))
-      .with('fail', () => (
-        <Badge className={classNames(styles.statusBadge, styles.fail)} status="error" text={t.history.status_failed} />
-      ))
-      .otherwise(() => <Badge className={styles.statusBadge} status="processing" text={t.history.status_generating} />);
+  const statusBadge = match(item.state)
+    .with('success', () => (
+      <Badge className={classNames(styles.badge, styles.success)} status="success" text={t.history.status_success} />
+    ))
+    .with('fail', () => (
+      <Badge className={classNames(styles.badge, styles.fail)} status="error" text={t.history.status_failed} />
+    ))
+    .otherwise(() => <Badge className={styles.badge} status="processing" text={t.history.status_generating} />);
+
+  const LayoutWrapper = isMobile() ? ConfigProvider : React.Fragment;
+  const layoutProps = isMobile() ? { theme: { components: { Button: { borderRadius: 10, borderRadiusLG: 10 } } } } : {};
 
   return (
     <Card bordered={false} className={styles.card} styles={{ body: { padding: 0 } }}>
-      <div className={styles.cardContent}>
-        <div className={styles.title} title={item.prompt_data['style']}>
-          {getStyleConfig(item.prompt_data['style'], aiConfig?.styles).displayName || t.style.customize}
+      <div className={styles.content}>
+        <div className={styles.header} title={item.prompt_data['style']}>
+          {style.displayName || t.style.customize}
         </div>
 
-        <div className={styles.imageGrid}>
-          {previewImages?.length ? (
-            previewImages.map((url, index) => (
-              <div className={styles.imageWrapper} key={index}>
-                <img alt={`Generated ${index + 1}`} className={styles.image} src={url} />
+        <div className={styles.grid}>
+          {item.result_urls?.length ? (
+            item.result_urls.map((url, i) => (
+              <div className={styles.imgWrap} key={i}>
+                <img alt={`Generated ${i}`} className={styles.img} src={url} />
                 <div className={styles.overlay}>
                   <Button
-                    className={styles.actionButton}
+                    className={styles.btnOverlay}
                     icon={<ImportOutlined />}
                     loading={importingUrl === url}
-                    onClick={() => handleImageImport(url)}
+                    onClick={() => handleImportImage(url)}
                     size="small"
                     type="primary"
                   >
                     {t.results.import}
                   </Button>
                   <Button
-                    className={styles.actionButton}
+                    className={styles.btnOverlay}
                     icon={<DownloadOutlined />}
                     onClick={() => handleDownload(url)}
                     size="small"
@@ -112,90 +109,76 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
               </div>
             ))
           ) : (
-            <div className={styles.noPreview}>
+            <div className={styles.placeholder}>
               {item.state === 'fail' ? t.history.not_generated : t.loading[`tip_${tipIndex}`]}
             </div>
           )}
         </div>
 
-        {isMobile() ? (
-          <ConfigProvider theme={{ components: { Button: { borderRadius: 10, borderRadiusLG: 10 } } }}>
-            <div className={styles['mobile-footer']}>
-              <div className={styles['mobile-footer-top']}>
-                {renderStatusBadge()}
-                <span className={styles.date}>{formattedDate}</span>
-              </div>
-              <div className={styles['mobile-footer-buttons']}>
-                <Button block className={styles.recreateButton} onClick={() => onImport(item)}>
-                  {t.history.recreate}
-                </Button>
-                <Button
-                  block
-                  className={classNames(styles['detail-button'], { [styles.expanded]: isExpanded })}
-                  onClick={() => setIsExpanded(!isExpanded)}
-                >
-                  <DownOutlined className={styles['detail-icon']} />
-                  {t.history.detail}
-                </Button>
-              </div>
-            </div>
-          </ConfigProvider>
-        ) : (
-          <div className={styles.footer}>
-            <div className={styles.footerLeft}>
-              {renderStatusBadge()}
+        <LayoutWrapper {...layoutProps}>
+          <div className={classNames(styles.footer, { [styles.mobile]: isMobile() })}>
+            <div className={styles.info}>
+              {statusBadge}
               <span className={styles.date}>{formattedDate}</span>
             </div>
-            <div className={styles.footerRight}>
-              <Button className={styles.recreateButton} onClick={() => onImport(item)}>
+            <div className={styles.actions}>
+              <Button block={isMobile()} className={styles.btnRecreate} onClick={() => onImport(item)}>
                 {t.history.recreate}
               </Button>
               <Button
-                className={classNames(styles.dropdownButton, { [styles.expanded]: isExpanded })}
-                icon={<DownOutlined />}
+                block={isMobile()}
+                className={classNames(styles.btnDetail, { [styles.expanded]: isExpanded })}
+                icon={!isMobile() && <DownOutlined />}
                 onClick={() => setIsExpanded(!isExpanded)}
-                size="small"
-                type="text"
-              />
+                size={isMobile() ? 'middle' : 'small'}
+                type={isMobile() ? 'default' : 'text'}
+              >
+                {isMobile() ? (
+                  <>
+                    <DownOutlined className={styles.iconMobile} />
+                    {t.history.detail}
+                  </>
+                ) : null}
+              </Button>
             </div>
           </div>
-        )}
+        </LayoutWrapper>
       </div>
 
-      {isExpanded &&
-        (item.state === 'fail' ? (
-          <div className={styles.error} title={item.fail_msg || 'Unknown error'}>
-            Error: {item.fail_msg}
-          </div>
-        ) : (
-          <div className={styles.expandedInfo}>
-            <div className={styles.inputList}>
-              {displayInputs.map(([key, value]) => (
-                <div className={styles.inputRow} key={key}>
-                  <span className={styles.inputKey}>{inputFields.find((field) => field.key === key)?.label}: </span>
-                  <span className={styles.inputValue}>{value}</span>
-                </div>
-              ))}
+      {isExpanded && (
+        <div className={styles.details}>
+          {item.state === 'fail' ? (
+            <div className={styles.error} title={item.fail_msg || ''}>
+              Error: {item.fail_msg}
             </div>
-            <div className={styles.chipList}>
-              <div className={styles.chip}>
-                <LayoutOutlined className={styles.chipIcon} />
-                <span>{getSizePixels({ aspectRatio: item.aspect_ratio, size: item.size })}</span>
+          ) : (
+            <>
+              <div className={styles.inputs}>
+                {displayInputs.map(([key, value]) => (
+                  <div className={styles.row} key={key}>
+                    <strong>{style.inputFields?.find((f) => f.key === key)?.label || key}: </strong>
+                    <span>{value}</span>
+                  </div>
+                ))}
               </div>
-
-              {isLaserFriendly && (
+              <div className={styles.chips}>
                 <div className={styles.chip}>
-                  <SafetyCertificateOutlined className={styles.chipIcon} />
-                  <span>{t.form.laser_friendly}</span>
+                  <LayoutOutlined />
+                  {getSizePixels({ aspectRatio: item.aspect_ratio, size: item.size })}
                 </div>
-              )}
-            </div>
-          </div>
-        ))}
+                {isLaserFriendly && (
+                  <div className={styles.chip}>
+                    <SafetyCertificateOutlined />
+                    {t.form.laser_friendly}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </Card>
   );
-};
-
-const HistoryCard = memo(UnmemorizedHistoryCard);
+});
 
 export default HistoryCard;

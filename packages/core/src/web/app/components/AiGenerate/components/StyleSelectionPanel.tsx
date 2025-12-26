@@ -8,7 +8,7 @@ import type { Style } from '@core/helpers/api/ai-image-config';
 import useI18n from '@core/helpers/useI18n';
 
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
-import { getCategoryForOption, getStylesForCategory } from '../utils/categories';
+import { getCategoryIdFromStyle, getStylesForCategory } from '../utils/categories';
 
 import styles from './StyleSelectionPanel.module.scss';
 
@@ -18,7 +18,6 @@ interface StyleSelectionPanelProps {
   onSelect: (style: string) => void;
 }
 
-// Revised OptionCard: Image background with text overlay
 const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onClick: () => void; option: Style }) => (
   <div className={classNames(styles['option-card'], { [styles.selected]: isSelected })} onClick={onClick}>
     <div className={styles['option-preview']}>
@@ -30,30 +29,23 @@ const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onCl
   </div>
 );
 
-const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
+const StyleSelectionPanel = memo(({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
-
-  const { data: aiConfig } = useAiConfigQuery();
-  const categories = useMemo(
-    () => aiConfig?.categories.filter((c) => c.id !== 'customize') ?? [],
-    [aiConfig?.categories],
-  );
-  const displayStyles = useMemo(() => aiConfig?.styles ?? [], [aiConfig?.styles]);
-
+  const {
+    data: { categories, styles: displayStyles },
+  } = useAiConfigQuery();
+  const displayCategories = useMemo(() => categories.filter((c) => c.id !== 'customize'), [categories]);
   // Initialize selected category based on current style
-  const [selectedCategory, setSelectedCategory] = useState(() => {
-    const primaryCategory = getCategoryForOption(currentStyle, displayStyles, categories);
-
-    return primaryCategory?.id || categories[0]?.id || 'customize';
-  });
-
+  const [selectedCategory, setSelectedCategory] = useState(() =>
+    getCategoryIdFromStyle(currentStyle, displayStyles, displayCategories),
+  );
   const [selectedStyle, setSelectedStyle] = useState(currentStyle);
 
   // Get styles for the currently active category
   const currentCategoryStyles = useMemo(
-    () => getStylesForCategory(selectedCategory, displayStyles, categories),
-    [selectedCategory, displayStyles, categories],
+    () => getStylesForCategory(selectedCategory, displayStyles, displayCategories),
+    [selectedCategory, displayStyles, displayCategories],
   );
 
   const handleConfirm = () => {
@@ -104,7 +96,7 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
         <div className={styles.container}>
           <div className={styles.sidebar}>
             <div className={styles['categories-list']}>
-              {categories.map((category) => (
+              {displayCategories.map((category) => (
                 <div
                   className={classNames(styles['category-item'], {
                     [styles.active]: selectedCategory === category.id,
@@ -135,8 +127,6 @@ const UnmemorizedStyleSelectionPanel = ({ currentStyle, onClose, onSelect }: Sty
       </Modal>
     </ConfigProvider>
   );
-};
-
-const StyleSelectionPanel = memo(UnmemorizedStyleSelectionPanel);
+});
 
 export default StyleSelectionPanel;

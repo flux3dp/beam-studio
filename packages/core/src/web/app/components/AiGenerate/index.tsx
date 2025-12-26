@@ -1,39 +1,32 @@
-import React, { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, useEffect, useRef } from 'react';
 
 import { RightOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Select, Switch } from 'antd';
-import { funnel } from 'remeda';
 
-import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import { useFocusScope } from '@core/helpers/useFocusScope';
 import useI18n from '@core/helpers/useI18n';
-import browser from '@core/implementations/browser';
-import type { IUser } from '@core/interfaces/IUser';
 
 import DimensionSelector from './components/DimensionSelector';
 import ErrorView from './components/ErrorView';
 import Header from './components/Header';
 import ImageHistory from './components/ImageHistory';
 import ImageResults from './components/ImageResults';
-import InputField from './components/InputField';
-import InputWithUpload from './components/InputField.upload';
+import InputFieldsSection from './components/InputFieldsSection';
 import LoadingView from './components/LoadingView';
+import StickyFooter from './components/StickyFooter';
 import { useAiConfigQuery } from './hooks/useAiConfigQuery';
+import { useAiGenerateEffects } from './hooks/useAiGenerateEffects';
 import styles from './index.module.scss';
-import { AI_COST_PER_IMAGE, GENERATE_BUTTON_COOLDOWN_MS, handleTextAreaKeyDown } from './types';
 import { useAiGenerateStore } from './useAiGenerateStore';
-import { getDefaultStyle, getStyleConfig } from './utils/categories';
-import { handleImageGeneration } from './utils/handleImageGeneration';
-import { getInputFieldsForStyle } from './utils/inputFields';
+import { getStyleConfig } from './utils/categories';
 import { showStyleSelectionPanel } from './utils/showStyleSelectionPanel';
 
-const UnmemorizedAiGenerate = () => {
+const AiGenerate = memo(() => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
-  const [user, setUser] = useState<IUser | null>(getCurrentUser());
-  const [isGenerateDisabled, setIsGenerateDisabled] = useState(false);
+  const contentRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
   const { drawerMode, setDrawerMode } = useCanvasStore();
   const {
     addImageInput,
@@ -46,63 +39,26 @@ const UnmemorizedAiGenerate = () => {
     isLaserFriendly,
     maxImages,
     removeImageInput,
-    scrollTarget,
-    scrollTrigger,
     setInputField,
     setState,
     setStyle,
     showHistory,
-    style,
+    styleId,
     toggleLaserFriendly,
-    triggerScroll,
+    user,
   } = useAiGenerateStore();
-  const { data: aiConfig, isError, isFetching, refetch } = useAiConfigQuery();
-  const aiStyles = useMemo(() => aiConfig?.styles || [], [aiConfig?.styles]);
-  const styleConfig = getStyleConfig(style, aiStyles);
-  const styleId = styleConfig?.id || 'customize';
-  const contentRef = useRef<HTMLDivElement>(null);
-  const containerRef = useRef<HTMLDivElement>(null);
-  const hasInitializedStyle = useRef(false);
+  const {
+    data: { styles: aiStyles },
+    isError,
+    isFetching,
+    refetch,
+  } = useAiConfigQuery();
+  const { isGenerateDisabled, onGenerate, showFooter } = useAiGenerateEffects({ scrollTarget: contentRef.current });
+  const style = getStyleConfig(styleId, aiStyles);
 
-  // Setup focus scope
   useFocusScope(containerRef);
 
-  // Handle scroll triggers from store
-  useEffect(() => {
-    if (scrollTrigger === 0) return;
-
-    requestAnimationFrame(() => {
-      const top = scrollTarget === 'top' ? 0 : (contentRef.current?.scrollHeight ?? 1000);
-
-      contentRef.current?.scrollTo({ behavior: 'smooth', top });
-    });
-  }, [scrollTrigger, scrollTarget]);
-
-  const throttledGenerate = useMemo(
-    () =>
-      funnel(
-        () => {
-          setIsGenerateDisabled(true);
-          handleImageGeneration({ style: styleId, styles: aiStyles, user });
-          triggerScroll('bottom');
-          setTimeout(() => setIsGenerateDisabled(false), GENERATE_BUTTON_COOLDOWN_MS);
-        },
-        { minGapMs: GENERATE_BUTTON_COOLDOWN_MS, triggerAt: 'start' },
-      ),
-    [styleId, aiStyles, user, triggerScroll],
-  );
-
-  const onGenerate = useCallback(() => throttledGenerate.call(), [throttledGenerate]);
-
-  useEffect(() => {
-    fluxIDEvents.on('update-user', setUser);
-
-    return () => {
-      fluxIDEvents.off('update-user', setUser);
-    };
-  }, []);
-
-  // Escape key to close
+  // Escape key to close (desktop-specific)
   useEffect(() => {
     if (drawerMode !== 'ai-generate') return;
 
@@ -118,19 +74,7 @@ const UnmemorizedAiGenerate = () => {
     return () => window.removeEventListener('keydown', handleEscape, { capture: true });
   }, [drawerMode, setDrawerMode]);
 
-  // Auto-select default style
-  useEffect(() => {
-    if (hasInitializedStyle.current || aiStyles.length === 0) return;
-
-    const firstStyle = getDefaultStyle(aiStyles, aiConfig?.categories || []);
-
-    if (firstStyle && firstStyle.id !== 'customize') {
-      setStyle(firstStyle.id, aiStyles);
-      hasInitializedStyle.current = true;
-    }
-  }, [aiConfig, aiStyles, setStyle]);
-
-  const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles), style);
+  const handleStyleClick = () => showStyleSelectionPanel((s) => setStyle(s, aiStyles), styleId);
 
   // Render content based on state
   const renderContent = () => {
@@ -145,46 +89,24 @@ const UnmemorizedAiGenerate = () => {
         <div className={styles.section}>
           <h3 className={styles['section-title']}>{t.style.choose}</h3>
           <Button block className={styles['style-selection-button']} onClick={handleStyleClick} size="large">
-            {styleConfig.previewImage && (
-              <img alt={styleConfig.displayName} className={styles.img} src={styleConfig.previewImage} />
-            )}
+            {style.previewImage && <img alt={style.displayName} className={styles.img} src={style.previewImage} />}
             <div className={styles['button-content']}>
-              <span className={styles['button-label']}>{styleConfig?.displayName || t.style.select}</span>
+              <span className={styles['button-label']}>{style?.displayName || t.style.select}</span>
               <RightOutlined />
             </div>
           </Button>
         </div>
 
-        {getInputFieldsForStyle(styleId, aiStyles).map((field) => {
-          const isDescriptionWithUpload = field.key === 'description' && styleConfig?.modes?.includes('edit');
-
-          return (
-            <div className={styles.section} key={field.key}>
-              <h3 className={styles['section-title']}>
-                {field.label} {field.required && <span className={styles.required}>*</span>}
-              </h3>
-              {isDescriptionWithUpload ? (
-                <InputWithUpload
-                  field={field}
-                  imageInputs={imageInputs}
-                  onAddImage={addImageInput}
-                  onChange={(value) => setInputField(field.key, value)}
-                  onKeyDown={handleTextAreaKeyDown}
-                  onRemoveImage={removeImageInput}
-                  value={inputFields[field.key] || ''}
-                />
-              ) : (
-                <InputField
-                  field={field}
-                  onChange={(value) => setInputField(field.key, value)}
-                  onKeyDown={handleTextAreaKeyDown}
-                  rows={field.key === 'description' ? 5 : 3}
-                  value={inputFields[field.key] || ''}
-                />
-              )}
-            </div>
-          );
-        })}
+        <InputFieldsSection
+          aiStyles={aiStyles}
+          imageInputs={imageInputs}
+          inputFields={inputFields}
+          onAddImage={addImageInput}
+          onFieldChange={setInputField}
+          onRemoveImage={removeImageInput}
+          style={style}
+          styleId={styleId}
+        />
 
         <DimensionSelector dimensions={dimensions} />
 
@@ -216,8 +138,6 @@ const UnmemorizedAiGenerate = () => {
     );
   };
 
-  const showFooter = !isFetching && !isError && !showHistory;
-
   return (
     <ConfigProvider theme={{ token: { borderRadius: 6, borderRadiusLG: 6 } }}>
       <div className={styles['ai-generate-container']} ref={containerRef}>
@@ -226,34 +146,17 @@ const UnmemorizedAiGenerate = () => {
           {renderContent()}
         </div>
         {showFooter && (
-          <div className={styles['button-section']}>
-            <Button
-              block
-              className={styles['generate-button']}
-              disabled={isGenerateDisabled}
-              onClick={onGenerate}
-              size="large"
-              type="primary"
-            >
-              {t.form.generate}
-            </Button>
-            <div className={styles['credits-info']}>
-              <span className={styles['credits-required']}>
-                {t.form.credit_required} {(AI_COST_PER_IMAGE * maxImages).toFixed(2)}
-              </span>
-              <div
-                className={styles['credits-balance']}
-                onClick={() => browser.open(lang.beambox.popup.ai_credit.buy_link)}
-              >
-                <FluxIcons.FluxCredit />
-                <span className={styles['ai-credit']}>{user?.info?.credit || 0}</span>
-              </div>
-            </div>
-          </div>
+          <StickyFooter
+            buyLink={lang.beambox.popup.ai_credit.buy_link}
+            isDisabled={isGenerateDisabled}
+            maxImages={maxImages}
+            onGenerate={onGenerate}
+            user={user}
+          />
         )}
       </div>
     </ConfigProvider>
   );
-};
+});
 
-export default memo(UnmemorizedAiGenerate);
+export default AiGenerate;

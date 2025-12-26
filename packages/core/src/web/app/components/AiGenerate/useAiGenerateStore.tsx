@@ -3,9 +3,11 @@ import { create } from 'zustand';
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { getAiImageHistory } from '@core/helpers/api/ai-image';
 import type { Style } from '@core/helpers/api/ai-image-config';
+import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
+import type { IUser } from '@core/interfaces/IUser';
 
 import type { GenerationStatus, ImageDimensions, ImageInput } from './types';
-import { laserFriendlyValue } from './types';
+import { LASER_FRIENDLY_VALUE } from './types';
 import { getStyleConfig } from './utils/categories';
 import { getInputFieldsForStyle } from './utils/inputFields';
 
@@ -16,6 +18,8 @@ interface State {
   generatedImages: string[];
   generationStatus: GenerationStatus;
   generationUuid: null | string;
+  // Global state (shared across desktop/mobile)
+  hasInitializedStyle: boolean;
   // History Data
   historyError: null | string;
   historyItems: AiImageGenerationData[];
@@ -23,6 +27,7 @@ interface State {
   historyOffset: number;
   imageInputs: ImageInput[];
   inputFields: Record<string, string>;
+  isGenerateDisabled: boolean;
   isLaserFriendly: boolean;
   // Form
   maxImages: number;
@@ -30,7 +35,8 @@ interface State {
   scrollTarget: 'bottom' | 'top';
   scrollTrigger: number;
   showHistory: boolean;
-  style: string;
+  styleId: string;
+  user: IUser | null;
 }
 
 interface Actions {
@@ -41,12 +47,15 @@ interface Actions {
 
   importFromHistory: (item: AiImageGenerationData) => void;
   loadHistory: () => Promise<void>;
+  markStyleInitialized: () => void;
   removeImageInput: (id: string) => void;
   resetForm: () => void;
 
+  setGenerateDisabled: (disabled: boolean) => void;
   setInputField: (key: string, value: string) => void;
   setState: (state: Partial<State>) => void;
-  setStyle: (style: string, styles?: Style[]) => void;
+  setStyle: (styleId: string, styles?: Style[]) => void;
+  setUser: (user: IUser | null) => void;
 
   toggleHistory: () => void;
   toggleLaserFriendly: () => void;
@@ -64,18 +73,21 @@ const FORM_DEFAULTS = {
   inputFields: {},
   isLaserFriendly: false,
   maxImages: 1,
-  style: 'customize',
+  styleId: 'customize',
 };
 
 const INITIAL_STATE: State = {
   ...FORM_DEFAULTS,
+  hasInitializedStyle: false,
   historyError: null,
   historyItems: [],
   historyLoading: false,
   historyOffset: 0,
+  isGenerateDisabled: false,
   scrollTarget: 'top',
   scrollTrigger: 0,
   showHistory: false,
+  user: getCurrentUser(),
 };
 
 export const useAiGenerateStore = create<Actions & State>((set, get) => ({
@@ -91,7 +103,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
     // Remove imageCounts from inputs as it is not needed and automatically handled from maxImages
     delete inputs['image_counts'];
 
-    if (inputs.color === laserFriendlyValue) {
+    if (inputs.color === LASER_FRIENDLY_VALUE) {
       set({ isLaserFriendly: true });
       delete inputs['color'];
     } else {
@@ -105,7 +117,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       imageInputs: item.image_urls?.map((url, i) => ({ id: `hist-${item.uuid}-${i}`, type: 'url', url })) || [],
       inputFields: inputs,
       maxImages: item.max_images,
-      style: item.prompt_data?.style || 'customize',
+      styleId: item.prompt_data?.style || 'customize',
     });
     get().toggleHistory();
   },
@@ -126,19 +138,21 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       set({ historyError: err instanceof Error ? err.message : 'History load failed', historyLoading: false });
     }
   },
+  markStyleInitialized: () => set({ hasInitializedStyle: true }),
   removeImageInput: (id) => set((state) => ({ imageInputs: state.imageInputs.filter((i) => i.id !== id) })),
-  resetForm: () => set({ ...FORM_DEFAULTS }),
+  resetForm: () => set({ ...FORM_DEFAULTS, hasInitializedStyle: false }),
+  setGenerateDisabled: (isGenerateDisabled) => set({ isGenerateDisabled }),
   setInputField: (key, value) => set((state) => ({ inputFields: { ...state.inputFields, [key]: value } })),
   setState: (updates) => set((state) => ({ ...state, ...updates })),
-  setStyle: (style, styles) =>
+  setStyle: (styleId = 'customize', styles = []) =>
     set((state) => {
-      const newStyle = style || 'customize';
-      const styleId = getStyleConfig(newStyle, styles).id;
-      const validKeys = new Set(getInputFieldsForStyle(styleId, styles).map((f) => f.key));
+      const styleConfig = getStyleConfig(styleId, styles);
+      const validKeys = new Set(getInputFieldsForStyle(styleConfig.id, styles).map((f) => f.key));
       const inputFields = Object.fromEntries(Object.entries(state.inputFields).filter(([key]) => validKeys.has(key)));
 
-      return { inputFields, isLaserFriendly: false, style: newStyle };
+      return { inputFields, isLaserFriendly: false, styleId };
     }),
+  setUser: (user) => set({ user }),
   toggleHistory: () => {
     const { historyLoading, scrollTrigger, showHistory } = get();
 
@@ -155,7 +169,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       const inputFields = { ...s.inputFields };
 
       if (isLaserFriendly) {
-        inputFields.color = laserFriendlyValue;
+        inputFields.color = LASER_FRIENDLY_VALUE;
       } else {
         delete inputFields.color;
       }
@@ -168,3 +182,8 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
       historyItems: state.historyItems.map((item) => (item.uuid === uuid ? { ...item, ...updates } : item)),
     })),
 }));
+
+// Setup global user event listener (runs once when module loads)
+fluxIDEvents.on('update-user', (user: IUser | null) => {
+  useAiGenerateStore.setState({ user });
+});

@@ -64,6 +64,8 @@ describe('AiGenerate', () => {
     jest.clearAllMocks();
     useAiGenerateStore.getState().resetForm();
     (getCurrentUser as jest.Mock).mockReturnValue(MOCK_USER);
+    // Set user in store since store initializes before mock is ready
+    useAiGenerateStore.setState({ user: MOCK_USER });
     (createAiImageTask as jest.Mock).mockResolvedValue({ uuid: '123' });
     (pollTaskUntilComplete as jest.Mock).mockResolvedValue({ imageUrls: ['url'], success: true });
     (useAiConfigQuery as jest.Mock).mockReturnValue({

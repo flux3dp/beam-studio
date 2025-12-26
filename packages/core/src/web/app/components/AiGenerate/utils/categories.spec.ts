@@ -1,6 +1,6 @@
 import type { Category, Style } from '@core/helpers/api/ai-image-config';
 
-import { getCategoryForOption, getStyleConfig, getStylesForCategory } from './categories';
+import { getCategoryIdFromStyle, getStyleConfig, getStylesForCategory } from './categories';
 
 const STYLES: Style[] = [
   { displayName: 'Customize', id: 'customize', inputFields: [], modes: [], previewImage: '', tags: ['customize'] },
@@ -58,18 +58,19 @@ describe('Category Logic', () => {
     });
   });
 
-  describe('getCategoryForOption', () => {
-    it('returns the first matching category', () => {
-      const cat = getCategoryForOption('logo-cute', STYLES, CATEGORIES);
+  describe('getCategoryIdFromStyle', () => {
+    it('returns the first matching category id', () => {
+      const catId = getCategoryIdFromStyle('logo-cute', STYLES, CATEGORIES);
 
-      expect(cat).toBeDefined();
-      expect(['logo', 'cartoon']).toContain(cat?.id);
+      expect(['logo', 'cartoon']).toContain(catId);
     });
 
-    it('returns null for invalid inputs', () => {
-      expect(getCategoryForOption(null)).toBeNull();
-      expect(getCategoryForOption('missing-style', STYLES, CATEGORIES)).toBeNull();
-      expect(getCategoryForOption('logo-cute', [], [])).toBeNull();
+    it('returns fallback category id for invalid inputs', () => {
+      // Returns first category's id as fallback
+      expect(getCategoryIdFromStyle('', STYLES, CATEGORIES)).toBe('customize');
+      expect(getCategoryIdFromStyle('missing-style', STYLES, CATEGORIES)).toBe('customize');
+      // Returns DEFAULT_CATEGORY.id when no categories provided
+      expect(getCategoryIdFromStyle('logo-cute', [], [])).toBe('customize');
     });
   });
 });

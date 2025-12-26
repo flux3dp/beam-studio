@@ -1,8 +1,6 @@
 @use '../shared-variables' as *;
 
-// ============================================
-// Main Panel Styles
-// ============================================
+// --- Main Panel ---
 
 .panel [class*='scroll-content'] {
   overflow-y: auto;
@@ -11,8 +9,7 @@
 }
 
 .header {
-  padding: 0 12px 0;
-
+  padding: 0 12px;
   .tabs {
     width: 100%;
   }
@@ -21,10 +18,8 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 0;
   padding: 16px;
 
-  // Extra padding when footer is visible (editor view)
   &.with-footer {
     padding-bottom: 140px;
   }
@@ -32,7 +27,6 @@
 
 .section {
   margin-bottom: 24px;
-
   &:last-child {
     margin-bottom: 0;
   }
@@ -64,7 +58,6 @@
     color: $text-secondary;
     padding: 4px 8px;
     height: auto;
-    font-size: 14px;
   }
 }
 
@@ -72,9 +65,7 @@
   @include section-title;
 }
 
-.required {
-  color: $error-color;
-}
+// --- Style Button ---
 
 .style-selection-button {
   height: auto;
@@ -97,7 +88,6 @@
     justify-content: space-between;
     align-items: center;
     flex: 1;
-    gap: 8px;
   }
 
   .button-label {
@@ -106,30 +96,33 @@
   }
 }
 
+// --- Generic Selection Buttons ---
+
 .section-button {
   height: auto;
   padding: 16px 20px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  font-weight: 500;
 
-  .ratio-preview {
+  .button-content {
     display: flex;
     align-items: center;
     gap: 12px;
+    font-weight: 500;
   }
 
   .label {
     line-height: 24px;
   }
+
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+  }
 }
 
-@mixin ratio-box-base {
-  border: 2px solid currentColor;
-  background: transparent;
-  border-radius: 2px;
-}
+// --- Toggles & Footer ---
 
 .toggle {
   display: flex;
@@ -147,46 +140,11 @@
   background: $container-bg;
   border-top: 1px solid $border-color;
   margin-bottom: 54px;
-  // higher then antd loading spinner
+  // higher than antd loading spinner
   z-index: 1001;
 }
 
-.generate-button {
-  height: 44px;
-  font-size: 16px;
-  font-weight: 500;
-  margin-bottom: 12px;
-}
-
-.credits-info {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 4px;
-}
-
-.credits-required {
-  font-size: 13px;
-  color: $text-secondary;
-}
-
-.credits-balance {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  cursor: pointer;
-
-  svg {
-    font-size: 16px;
-    color: $ai-credit-icon;
-  }
-
-  .ai-credit {
-    font-size: 14px;
-    font-weight: 500;
-    color: $text-primary;
-  }
-}
+// --- Popups ---
 
 .popup {
   z-index: 1002 !important;

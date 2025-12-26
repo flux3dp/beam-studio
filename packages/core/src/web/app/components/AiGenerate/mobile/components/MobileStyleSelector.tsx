@@ -10,7 +10,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import { useAiConfigQuery } from '../../hooks/useAiConfigQuery';
 import { useAiGenerateStore } from '../../useAiGenerateStore';
-import { getCategoryForOption, getStylesForCategory } from '../../utils/categories';
+import { getCategoryIdFromStyle, getStylesForCategory } from '../../utils/categories';
 
 import styles from './MobileStyleSelector.module.scss';
 
@@ -36,25 +36,20 @@ interface Props {
 const MobileStyleSelector = memo(({ onClose }: Props) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
-  const { setStyle, style } = useAiGenerateStore();
-  const { data: aiConfig } = useAiConfigQuery();
-
-  const categories = useMemo(
-    () => aiConfig?.categories.filter((c) => c.id !== 'customize') ?? [],
-    [aiConfig?.categories],
-  );
-  const displayStyles = useMemo(() => aiConfig?.styles ?? [], [aiConfig?.styles]);
+  const { setStyle, styleId } = useAiGenerateStore();
+  const {
+    data: { categories, styles: displayStyles },
+  } = useAiConfigQuery();
+  const displayCategories = useMemo(() => categories.filter((c) => c.id !== 'customize'), [categories]);
 
   // Initialize selected category based on current style
-  const [selectedCategory, setSelectedCategory] = useState(() => {
-    const primaryCategory = getCategoryForOption(style, displayStyles, categories);
-
-    return primaryCategory?.id || categories[0]?.id || 'customize';
-  });
+  const [selectedCategory, setSelectedCategory] = useState(() =>
+    getCategoryIdFromStyle(styleId, displayStyles, displayCategories),
+  );
 
   const currentCategoryStyles = useMemo(
-    () => getStylesForCategory(selectedCategory, displayStyles, categories),
-    [selectedCategory, displayStyles, categories],
+    () => getStylesForCategory(selectedCategory, displayStyles, displayCategories),
+    [selectedCategory, displayStyles, displayCategories],
   );
 
   const handleApply = (selectedStyle: string) => {
@@ -77,7 +72,7 @@ const MobileStyleSelector = memo(({ onClose }: Props) => {
         className={styles.categoryTabs}
         onChange={(key) => setSelectedCategory(key)}
       >
-        {categories.map((category) => (
+        {displayCategories.map((category) => (
           <CapsuleTabs.Tab
             key={category.id}
             title={
@@ -96,7 +91,7 @@ const MobileStyleSelector = memo(({ onClose }: Props) => {
         <div className={styles.grid}>
           {currentCategoryStyles.map((styleOption) => (
             <StyleCard
-              isSelected={style === styleOption.id}
+              isSelected={styleOption.id === styleId}
               key={styleOption.id}
               onClick={() => handleApply(styleOption.id)}
               style={styleOption}
@@ -107,7 +102,7 @@ const MobileStyleSelector = memo(({ onClose }: Props) => {
 
       <div className={styles.footer}>
         <Button
-          className={classNames(styles.customButton, { [styles.active]: style === 'customize' })}
+          className={classNames(styles.customButton, { [styles.active]: styleId === 'customize' })}
           icon={<UserOutlined />}
           onClick={() => handleApply('customize')}
           size="large"
