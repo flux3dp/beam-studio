@@ -43,6 +43,7 @@ const attributeMap: Record<ConfigKey, string> = {
   halftone: 'data-halftone',
   height: 'data-height',
   ink: 'data-ink',
+  interpolation: 'data-interpolation',
   kRatio: 'data-kRatio',
   minPower: 'data-minPower',
   module: 'data-module',
@@ -61,7 +62,6 @@ const attributeMap: Record<ConfigKey, string> = {
   repeat: 'data-repeat',
   speed: 'data-speed',
   split: 'data-split',
-  uvDpi: 'data-uvDpi',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
   wobbleDiameter: 'data-wobbleDiameter',
@@ -93,6 +93,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
   ink: useGlobalPreferenceStore.getState()['multipass-compensation'] ? 3 : 1,
+  interpolation: 1,
   kRatio: 100,
   minPower: 0,
   module: LayerModule.LASER_UNIVERSAL,
@@ -110,7 +111,6 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   refreshThreshold: 0,
   repeat: 1,
   speed: 20,
-  uvDpi: 96,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
@@ -176,7 +176,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'wobbleDiameter',
   'wobbleStep',
   // UV
-  'uvDpi',
+  'interpolation',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',

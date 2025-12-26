@@ -64,7 +64,7 @@ import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
-import UVDpi from './UVConfigs/UVDpi';
+import Interpolation from './UVConfigs/Interpolation';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
 
 const PARAMETERS_CONSTANT = 'parameters';
@@ -270,7 +270,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       )}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {is4cUV && <UVDpi type={UIType} />}
+      {is4cUV && <Interpolation type={UIType} />}
     </>
   );
 
