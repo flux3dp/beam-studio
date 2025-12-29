@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo } from 'react';
 
 import { CloseOutlined, LeftOutlined, PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
@@ -8,9 +8,8 @@ import classNames from 'classnames';
 import type { Style } from '@core/helpers/api/ai-image-config';
 import useI18n from '@core/helpers/useI18n';
 
-import { useAiConfigQuery } from '../../hooks/useAiConfigQuery';
+import { useStyleSelector } from '../../hooks/useStyleSelector';
 import { useAiGenerateStore } from '../../useAiGenerateStore';
-import { getCategoryIdFromStyle, getStylesForCategory } from '../../utils/categories';
 
 import styles from './MobileStyleSelector.module.scss';
 
@@ -38,19 +37,12 @@ const MobileStyleSelector = memo(({ onClose }: Props) => {
   const t = lang.beambox.ai_generate;
   const { setStyle, styleId } = useAiGenerateStore();
   const {
-    data: { categories, styles: displayStyles },
-  } = useAiConfigQuery();
-  const displayCategories = useMemo(() => categories.filter((c) => c.id !== 'customize'), [categories]);
-
-  // Initialize selected category based on current style
-  const [selectedCategory, setSelectedCategory] = useState(() =>
-    getCategoryIdFromStyle(styleId, displayStyles, displayCategories),
-  );
-
-  const currentCategoryStyles = useMemo(
-    () => getStylesForCategory(selectedCategory, displayStyles, displayCategories),
-    [selectedCategory, displayStyles, displayCategories],
-  );
+    categoryStyles,
+    displayCategories,
+    selectedCategory,
+    setSelectedCategory,
+    styles: displayStyles,
+  } = useStyleSelector({ styleId });
 
   const handleApply = (selectedStyle: string) => {
     if (selectedStyle) {
@@ -89,7 +81,7 @@ const MobileStyleSelector = memo(({ onClose }: Props) => {
 
       <div className={styles.gridWrapper}>
         <div className={styles.grid}>
-          {currentCategoryStyles.map((styleOption) => (
+          {categoryStyles.map((styleOption) => (
             <StyleCard
               isSelected={styleOption.id === styleId}
               key={styleOption.id}

@@ -1,3 +1,4 @@
+import dayjs from 'dayjs';
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -141,11 +142,7 @@ export const handleImageGeneration = async ({ style = 'customize', styles, user 
     // Update credits info first, then update store state to trigger re-render
     await getInfo({ silent: true });
     setState({ generatedImages: result.imageUrls, generationStatus: 'success' });
-    updateHistoryItem(uuid, {
-      completed_at: new Date().toISOString(),
-      result_urls: result.imageUrls,
-      state: 'success',
-    });
+    updateHistoryItem(uuid, { completed_at: dayjs().toISOString(), result_urls: result.imageUrls, state: 'success' });
   } else {
     const failMsg = result.error || i18n.lang.beambox.ai_generate.error.generation_failed;
 

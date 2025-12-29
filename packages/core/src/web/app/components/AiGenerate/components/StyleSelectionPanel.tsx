@@ -1,4 +1,4 @@
-import React, { memo, useMemo, useState } from 'react';
+import React, { memo, useState } from 'react';
 
 import { PlusOutlined, UserOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider, Modal } from 'antd';
@@ -7,13 +7,12 @@ import classNames from 'classnames';
 import type { Style } from '@core/helpers/api/ai-image-config';
 import useI18n from '@core/helpers/useI18n';
 
-import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
-import { getCategoryIdFromStyle, getStylesForCategory } from '../utils/categories';
+import { useStyleSelector } from '../hooks/useStyleSelector';
+import { useAiGenerateStore } from '../useAiGenerateStore';
 
 import styles from './StyleSelectionPanel.module.scss';
 
 interface StyleSelectionPanelProps {
-  currentStyle: string;
   onClose: () => void;
   onSelect: (style: string) => void;
 }
@@ -29,24 +28,12 @@ const OptionCard = ({ isSelected, onClick, option }: { isSelected: boolean; onCl
   </div>
 );
 
-const StyleSelectionPanel = memo(({ currentStyle, onClose, onSelect }: StyleSelectionPanelProps) => {
+const StyleSelectionPanel = memo(({ onClose, onSelect }: StyleSelectionPanelProps) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
-  const {
-    data: { categories, styles: displayStyles },
-  } = useAiConfigQuery();
-  const displayCategories = useMemo(() => categories.filter((c) => c.id !== 'customize'), [categories]);
-  // Initialize selected category based on current style
-  const [selectedCategory, setSelectedCategory] = useState(() =>
-    getCategoryIdFromStyle(currentStyle, displayStyles, displayCategories),
-  );
-  const [selectedStyle, setSelectedStyle] = useState(currentStyle);
-
-  // Get styles for the currently active category
-  const currentCategoryStyles = useMemo(
-    () => getStylesForCategory(selectedCategory, displayStyles, displayCategories),
-    [selectedCategory, displayStyles, displayCategories],
-  );
+  const { styleId } = useAiGenerateStore();
+  const { categoryStyles, displayCategories, selectedCategory, setSelectedCategory } = useStyleSelector({ styleId });
+  const [selectedStyle, setSelectedStyle] = useState(styleId);
 
   const handleConfirm = () => {
     if (selectedStyle) {
@@ -113,7 +100,7 @@ const StyleSelectionPanel = memo(({ currentStyle, onClose, onSelect }: StyleSele
 
           <div className={styles.content}>
             <div className={styles['options-grid']}>
-              {currentCategoryStyles.map((option) => (
+              {categoryStyles.map((option) => (
                 <OptionCard
                   isSelected={selectedStyle === option.id}
                   key={option.id}

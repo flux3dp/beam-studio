@@ -2,7 +2,7 @@ import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/
 
 import StyleSelectionPanel from '../components/StyleSelectionPanel';
 
-export const showStyleSelectionPanel = (onSelect: (style: string) => void, currentStyle: string): void => {
+export const showStyleSelectionPanel = (onSelect: (style: string) => void): void => {
   const id = 'style-selection-panel';
 
   if (isIdExist(id)) {
@@ -12,7 +12,6 @@ export const showStyleSelectionPanel = (onSelect: (style: string) => void, curre
   addDialogComponent(
     id,
     <StyleSelectionPanel
-      currentStyle={currentStyle}
       onClose={() => popDialogById(id)}
       onSelect={(style) => {
         onSelect(style);
