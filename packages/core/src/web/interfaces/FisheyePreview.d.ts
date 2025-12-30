@@ -28,6 +28,7 @@ export interface FisheyeCameraParametersV2Cali {
   dh1?: number;
   dh2?: number;
   heights?: number[];
+  is_fisheye?: boolean;
   k?: number[][];
   levelingData?: Record<string, number>;
   refHeight?: number;
@@ -46,6 +47,7 @@ export interface FisheyeCameraParametersV2Cali {
  */
 export interface FisheyeCameraParametersV2 {
   d: number[][];
+  is_fisheye?: boolean;
   k: number[][];
   levelingData?: Record<string, number>;
   refHeight: number;
@@ -62,6 +64,7 @@ export interface FisheyeCameraParametersV2 {
  */
 export interface FisheyeCameraParametersV3 {
   d: number[][];
+  is_fisheye?: boolean;
   k: number[][];
   rvec: number[][];
   rvecs?: number[][][];
@@ -72,6 +75,7 @@ export interface FisheyeCameraParametersV3 {
 
 export interface FisheyeCameraParametersV3Cali {
   d?: number[][];
+  is_fisheye?: boolean;
   k?: number[][];
   ret?: number;
   rvec?: number[][];
@@ -99,6 +103,7 @@ export type WideAngleRegion =
 export interface FisheyeCameraParametersV4<Region = WideAngleRegion> {
   d: number[][];
   grids?: PerspectiveGrid;
+  is_fisheye?: boolean;
   k: number[][];
   ret?: number;
   rvec: number[][];
@@ -120,6 +125,7 @@ export interface FisheyeCameraParametersV4Cali<Region = WideAngleRegion> {
    * imgPoints2 saved region image points during solvepnp in 2nd height
    */
   imgPoints2?: Partial<Record<Region, Array<[number, number]>>>;
+  is_fisheye?: boolean;
   k?: number[][];
   ret?: number;
   /**
