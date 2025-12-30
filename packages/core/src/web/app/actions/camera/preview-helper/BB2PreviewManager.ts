@@ -8,6 +8,7 @@ import {
   bb2PerspectiveGrid,
   bb2WideAnglePerspectiveGrid,
   hx2rfPerspectiveGrid,
+  hx2WideAnglePerspectiveGrid,
 } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -43,7 +44,10 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     super(device);
     this.progressId = 'beam-preview-manager';
 
-    if (hexaRfModels.has(device.model)) this.grid = hx2rfPerspectiveGrid;
+    if (hexaRfModels.has(device.model)) {
+      this.grid = hx2rfPerspectiveGrid;
+      this.wideAngleGrid = hx2WideAnglePerspectiveGrid;
+    }
 
     this.cameraCenterOffset = {
       x: this.grid.x[0] + (this.grid.x[1] - this.grid.x[0]) / 2,
