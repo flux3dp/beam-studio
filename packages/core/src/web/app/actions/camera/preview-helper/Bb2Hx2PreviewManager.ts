@@ -77,7 +77,7 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
     const { lang } = i18n;
 
     await this.end();
-    console.log('Error when setting up BB2 Preview Manager', error);
+    console.log('Error when setting up Bb2Hx2 Preview Manager', error);
 
     if (error instanceof Error && error.message.startsWith('Camera WS')) {
       alertCaller.popUpError({
