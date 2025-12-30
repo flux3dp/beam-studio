@@ -1,5 +1,7 @@
 import type { IDeviceInfo } from './IDevice';
 
+// TODO: rename fisheye name prefix to camera name prefix since we have pinhole camera now
+
 export interface FisheyeMatrix {
   center?: [number, number];
   d: number[][];
