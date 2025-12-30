@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Lagi',
+        ratio: 'Nisbah',
+        resolution: 'Resolusi',
         title: 'Dimensi Imej',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Bilangan',
         credit_required: 'Kredit diperlukan',
+        editor: 'Penyunting',
         generate: 'Jana',
         laser_friendly: 'Mesra Laser',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'Penjanaan AI',
       },
       history: {
+        detail: 'Butiran',
         empty_description: 'Tiada sejarah penjanaan lagi. Mula mencipta!',
         error_message: 'Gagal memuatkan sejarah',
         not_generated: '❌ Tidak dijana',

@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Lisää',
+        ratio: 'Suhde',
+        resolution: 'Resoluutio',
         title: 'Kuvan mitat',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Määrä',
         credit_required: 'Tarvittavat krediitit',
+        editor: 'Editori',
         generate: 'Luo',
         laser_friendly: 'Laser-ystävällinen',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI-luonti',
       },
       history: {
+        detail: 'Tiedot',
         empty_description: 'Ei vielä luontihistoriaa. Aloita luominen!',
         error_message: 'Historiaa ei voitu ladata',
         not_generated: '❌ Ei luotu',

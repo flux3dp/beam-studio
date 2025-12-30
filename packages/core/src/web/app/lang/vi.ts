@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Thêm',
+        ratio: 'Tỷ lệ',
+        resolution: 'Độ phân giải',
         title: 'Kích thước hình ảnh',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Số lượng',
         credit_required: 'Tín dụng cần thiết',
+        editor: 'Trình biên tập',
         generate: 'Tạo',
         laser_friendly: 'Thân thiện với laser',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'Tạo bằng AI',
       },
       history: {
+        detail: 'Chi tiết',
         empty_description: 'Chưa có lịch sử tạo. Bắt đầu sáng tạo!',
         error_message: 'Không thể tải lịch sử',
         not_generated: '❌ Chưa tạo',

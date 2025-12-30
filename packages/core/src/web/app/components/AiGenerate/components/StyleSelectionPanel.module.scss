@@ -136,7 +136,11 @@
   left: 0;
   right: 0;
   padding: 40px 16px 16px; // Top padding for gradient start
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0) 70%);
+  background: linear-gradient(
+    to top,
+    rgba(0, 0, 0, 0.8) 0%,
+    rgba(0, 0, 0, 0) 70%
+  );
   display: flex;
   flex-direction: column;
   justify-content: flex-end;

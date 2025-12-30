@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: '더 보기',
+        ratio: '비율',
+        resolution: '해상도',
         title: '이미지 크기',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: '수량',
         credit_required: '필요한 크레딧',
+        editor: '에디터',
         generate: '생성',
         laser_friendly: '레이저 친화적',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI 생성',
       },
       history: {
+        detail: '상세 정보',
         empty_description: '아직 생성 기록이 없습니다. 생성을 시작하세요!',
         error_message: '기록을 로드하지 못했습니다',
         not_generated: '❌ 생성되지 않음',

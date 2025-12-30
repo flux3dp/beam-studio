@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Mer',
+        ratio: 'Forhold',
+        resolution: 'Oppløsning',
         title: 'Bildedimensjoner',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Antall',
         credit_required: 'Kreditter påkrevd',
+        editor: 'Redaktør',
         generate: 'Generer',
         laser_friendly: 'Laservennlig',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI-opprettelse',
       },
       history: {
+        detail: 'Detaljer',
         empty_description: 'Ingen genereringshistorikk ennå. Begynn å skape!',
         error_message: 'Kunne ikke laste historikk',
         not_generated: '❌ Ikke generert',
