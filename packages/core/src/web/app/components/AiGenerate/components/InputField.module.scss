@@ -72,6 +72,23 @@
   svg {
     font-size: 14px;
   }
+
+  &.mobile {
+    width: auto;
+    height: 28px;
+    border-radius: 14px;
+    padding: 0 12px;
+    gap: 6px;
+    font-size: 12px;
+
+    &:hover:not(.disabled) {
+      transform: none;
+    }
+  }
+}
+
+.mobile-count {
+  color: $text-secondary;
 }
 
 .image-count,

@@ -90,7 +90,7 @@ export const SvgEditor = (): ReactNode => {
           </>
         )}
 
-        {isMobile && drawerMode === 'ai-generate' && <MobileAiGenerate onClose={() => setDrawerMode('none')} />}
+        {isMobile && drawerMode === 'ai-generate' && <MobileAiGenerate />}
 
         <Drawer
           enableResizable={false}

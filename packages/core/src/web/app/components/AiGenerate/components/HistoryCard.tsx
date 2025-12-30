@@ -1,12 +1,6 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
-import {
-  DownloadOutlined,
-  DownOutlined,
-  ImportOutlined,
-  LayoutOutlined,
-  SafetyCertificateOutlined,
-} from '@ant-design/icons';
+import { DownOutlined, LayoutOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
 import { Badge, Button, Card, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
@@ -22,9 +16,9 @@ import { useTipIndex } from '../hooks/useTipIndex';
 import { LASER_FRIENDLY_VALUE } from '../types';
 import { getStyleConfig } from '../utils/categories';
 import { getSizePixels } from '../utils/dimensions';
-import { handleDownload } from '../utils/handleDownload';
 
 import styles from './HistoryCard.module.scss';
+import ImageCard from './ImageCard';
 
 interface HistoryCardProps {
   item: AiImageGenerationData;
@@ -83,30 +77,15 @@ const HistoryCard = memo(({ item, onImport }: HistoryCardProps) => {
 
         <div className={styles.grid}>
           {item.result_urls?.length ? (
-            item.result_urls.map((url, i) => (
-              <div className={styles.imgWrap} key={i}>
-                <img alt={`Generated ${i}`} className={styles.img} src={url} />
-                <div className={styles.overlay}>
-                  <Button
-                    className={styles.btnOverlay}
-                    icon={<ImportOutlined />}
-                    loading={importingUrl === url}
-                    onClick={() => handleImportImage(url)}
-                    size="small"
-                    type="primary"
-                  >
-                    {t.results.import}
-                  </Button>
-                  <Button
-                    className={styles.btnOverlay}
-                    icon={<DownloadOutlined />}
-                    onClick={() => handleDownload(url)}
-                    size="small"
-                  >
-                    {t.results.download}
-                  </Button>
-                </div>
-              </div>
+            item.result_urls.map((url) => (
+              <ImageCard
+                aspectRatio="4:3"
+                isImporting={importingUrl === url}
+                key={url}
+                onImport={handleImportImage}
+                size="small"
+                url={url}
+              />
             ))
           ) : (
             <div className={styles.placeholder}>

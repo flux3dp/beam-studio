@@ -6,6 +6,7 @@ import { Popup, Tabs } from 'antd-mobile';
 import classNames from 'classnames';
 
 import layoutConstants from '@core/app/constants/layout-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import FloatingPanel, { type FloatingPanelHandle } from '@core/app/widgets/FloatingPanel';
 import useI18n from '@core/helpers/useI18n';
 
@@ -73,11 +74,7 @@ const SelectorPopup = ({
   </Popup>
 );
 
-interface Props {
-  onClose: () => void;
-}
-
-const MobileAiGenerate = memo(({ onClose }: Props) => {
+const MobileAiGenerate = memo(() => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
   const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
@@ -102,6 +99,7 @@ const MobileAiGenerate = memo(({ onClose }: Props) => {
     toggleLaserFriendly,
     user,
   } = useAiGenerateStore();
+  const { setDrawerMode } = useCanvasStore();
   const {
     data: { styles: aiStyles },
     isError,
@@ -110,7 +108,6 @@ const MobileAiGenerate = memo(({ onClose }: Props) => {
   } = useAiConfigQuery();
   const { isGenerateDisabled, onGenerate, showFooter } = useAiGenerateEffects({ scrollTarget: panelHandle });
   const style = getStyleConfig(styleId, aiStyles);
-
   const closeSelector = () => setActiveSelector('none');
 
   const handleTabChange = (key: string) => {
@@ -214,13 +211,19 @@ const MobileAiGenerate = memo(({ onClose }: Props) => {
         className={styles.panel}
         fixedContent={
           <div className={styles.header}>
-            <Tabs activeKey={showHistory ? 'history' : 'editor'} className={styles.tabs} onChange={handleTabChange}>
+            <Tabs
+              activeKey={showHistory ? 'history' : 'editor'}
+              activeLineMode="full"
+              className={styles.tabs}
+              onChange={handleTabChange}
+              style={{ '--title-font-size': '16px' }}
+            >
               <Tabs.Tab key="editor" title={t.form.editor} />
               <Tabs.Tab key="history" title={t.header.history_tooltip} />
             </Tabs>
           </div>
         }
-        onClose={onClose}
+        onClose={() => setDrawerMode('none')}
         onReady={setPanelHandle}
         title={t.header.title}
       >
