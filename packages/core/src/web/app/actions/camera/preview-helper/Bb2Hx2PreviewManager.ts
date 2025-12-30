@@ -25,7 +25,7 @@ import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 import { getWideAngleCameraData } from './getWideAngleCameraData';
 
 // TODO: Add tests
-class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
+class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager {
   private cameraType: CameraType = CameraType.LASER_HEAD;
   private lineCheckEnabled: boolean = false;
   private wideAngleFisheyeManager?: FisheyePreviewManagerV4;
@@ -474,4 +474,4 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   getCameraType = (): CameraType => this.cameraType;
 }
 
-export default BB2PreviewManager;
+export default Bb2Hx2PreviewManager;
