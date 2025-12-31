@@ -123,6 +123,18 @@ $background-content: #f5f5f5;
   margin-bottom: 20px;
 }
 
+.sub-section-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+  margin-top: 8px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
 .footer {
   display: flex;
   justify-content: space-between;
