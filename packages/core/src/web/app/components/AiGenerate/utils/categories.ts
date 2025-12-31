@@ -1,6 +1,6 @@
 import type { Category, Style } from '@core/helpers/api/ai-image-config';
 
-import { DEFAULT_CATEGORY, DEFAULT_STYLE } from '../types';
+import { DEFAULT_CATEGORY, DEFAULT_STYLE } from '../constants';
 
 /**
  * Find styles that match ANY of a category's tags.

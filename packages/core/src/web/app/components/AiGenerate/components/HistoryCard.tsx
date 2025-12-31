@@ -11,9 +11,9 @@ import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
+import { LASER_FRIENDLY_VALUE } from '../constants';
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
 import { useTipIndex } from '../hooks/useTipIndex';
-import { LASER_FRIENDLY_VALUE } from '../types';
 import { getStyleConfig } from '../utils/categories';
 import { getSizePixels } from '../utils/dimensions';
 
@@ -37,6 +37,7 @@ const HistoryCard = memo(({ item, onImport }: HistoryCardProps) => {
   const formattedDate = useMemo(() => dayjs(item.created_at).format('YYYY/MM/DD HH:mm'), [item.created_at]);
   const style = useMemo(() => getStyleConfig(item.prompt_data['style'], aiStyles), [item.prompt_data, aiStyles]);
   const isLaserFriendly = item.prompt_data.inputs?.color === LASER_FRIENDLY_VALUE;
+  const onMobile = useMemo(() => isMobile(), []);
   const displayInputs = useMemo(
     () =>
       Object.entries(item.prompt_data.inputs || {}).filter(
@@ -65,8 +66,8 @@ const HistoryCard = memo(({ item, onImport }: HistoryCardProps) => {
     ))
     .otherwise(() => <Badge className={styles.badge} status="processing" text={t.history.status_generating} />);
 
-  const LayoutWrapper = isMobile() ? ConfigProvider : React.Fragment;
-  const layoutProps = isMobile() ? { theme: { components: { Button: { borderRadius: 10, borderRadiusLG: 10 } } } } : {};
+  const LayoutWrapper = onMobile ? ConfigProvider : React.Fragment;
+  const layoutProps = onMobile ? { theme: { components: { Button: { borderRadius: 10, borderRadiusLG: 10 } } } } : {};
 
   return (
     <Card bordered={false} className={styles.card} styles={{ body: { padding: 0 } }}>
@@ -95,24 +96,24 @@ const HistoryCard = memo(({ item, onImport }: HistoryCardProps) => {
         </div>
 
         <LayoutWrapper {...layoutProps}>
-          <div className={classNames(styles.footer, { [styles.mobile]: isMobile() })}>
+          <div className={classNames(styles.footer, { [styles.mobile]: onMobile })}>
             <div className={styles.info}>
               {statusBadge}
               <span className={styles.date}>{formattedDate}</span>
             </div>
             <div className={styles.actions}>
-              <Button block={isMobile()} className={styles.btnRecreate} onClick={() => onImport(item)}>
+              <Button block={onMobile} className={styles.btnRecreate} onClick={() => onImport(item)}>
                 {t.history.recreate}
               </Button>
               <Button
-                block={isMobile()}
+                block={onMobile}
                 className={classNames(styles.btnDetail, { [styles.expanded]: isExpanded })}
-                icon={!isMobile() && <DownOutlined />}
+                icon={!onMobile && <DownOutlined />}
                 onClick={() => setIsExpanded(!isExpanded)}
-                size={isMobile() ? 'middle' : 'small'}
-                type={isMobile() ? 'default' : 'text'}
+                size={onMobile ? 'middle' : 'small'}
+                type={onMobile ? 'default' : 'text'}
               >
-                {isMobile() ? (
+                {onMobile ? (
                   <>
                     <DownOutlined className={styles.iconMobile} />
                     {t.history.detail}

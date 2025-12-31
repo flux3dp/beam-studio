@@ -10,7 +10,6 @@ import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import type { ImageInput } from '../types';
-import { createFileInput } from '../types';
 import {
   ACCEPTED_EXTENSIONS,
   DEFAULT_MAX_IMAGES,
@@ -19,6 +18,12 @@ import {
 } from '../utils/fileValidation';
 
 import styles from './InputField.module.scss';
+
+const createFileInput = (file: File): ImageInput => ({
+  file,
+  id: `file-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`,
+  type: 'file',
+});
 
 const Thumbnail = ({ input, onRemove }: { input: ImageInput; onRemove: (id: string) => void }) => {
   const src = useMemo(() => (input.type === 'file' ? URL.createObjectURL(input.file) : input.url), [input]);

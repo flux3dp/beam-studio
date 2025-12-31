@@ -7,8 +7,9 @@ import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { IUser } from '@core/interfaces/IUser';
 
-import styles from '../index.module.scss';
-import { AI_COST_PER_IMAGE } from '../types';
+import { AI_COST_PER_IMAGE } from '../constants';
+
+import styles from './StickyFooter.module.scss';
 
 interface Props {
   buyLink: string;

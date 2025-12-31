@@ -4,7 +4,7 @@ import type { AiConfigData } from '@core/helpers/api/ai-image-config';
 import { fetchAllAiConfig, getLocale } from '@core/helpers/api/ai-image-config';
 import { queryKeys } from '@core/helpers/query';
 
-import { DEFAULT_CATEGORY, DEFAULT_STYLE } from '../types';
+import { DEFAULT_CATEGORY, DEFAULT_STYLE } from '../constants';
 
 const INITIAL_DATA: AiConfigData = { categories: [DEFAULT_CATEGORY], styles: [DEFAULT_STYLE] };
 

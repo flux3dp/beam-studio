@@ -9,7 +9,7 @@ import { getInfo } from '@core/helpers/api/flux-id';
 import i18n from '@core/helpers/i18n';
 import type { IUser } from '@core/interfaces/IUser';
 
-import { AI_COST_PER_IMAGE } from '../types';
+import { AI_COST_PER_IMAGE } from '../constants';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 
 import { objectToSnakeCase } from './caseConversion';

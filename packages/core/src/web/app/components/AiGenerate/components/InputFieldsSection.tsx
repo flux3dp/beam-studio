@@ -4,11 +4,25 @@ import type { Style } from '@core/helpers/api/ai-image-config';
 
 import styles from '../index.module.scss';
 import type { ImageInput } from '../types';
-import { handleTextAreaKeyDown } from '../types';
 import { getInputFieldsForStyle } from '../utils/inputFields';
 
 import InputField from './InputField';
 import InputWithUpload from './InputField.upload';
+
+const handleTextAreaKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+  e.stopPropagation();
+
+  if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'a') {
+    e.preventDefault();
+    e.currentTarget.select();
+  }
+
+  // to prevent focus issue
+  if (e.key === 'Escape') {
+    e.preventDefault();
+    e.currentTarget.blur();
+  }
+};
 
 interface Props {
   aiStyles: Style[];

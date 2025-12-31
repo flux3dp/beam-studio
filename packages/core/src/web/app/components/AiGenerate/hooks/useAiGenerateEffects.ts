@@ -11,7 +11,7 @@ import { useCallback, useEffect, useMemo } from 'react';
 
 import { funnel } from 'remeda';
 
-import { GENERATE_BUTTON_COOLDOWN_MS } from '../types';
+import { GENERATE_BUTTON_COOLDOWN_MS } from '../constants';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 import { getDefaultStyle } from '../utils/categories';
 import { handleImageGeneration } from '../utils/handleImageGeneration';
@@ -31,7 +31,7 @@ export const useAiGenerateEffects = ({ scrollTarget }: UseAiGenerateEffectsOptio
     hasInitializedStyle,
     isGenerateDisabled,
     markStyleInitialized,
-    scrollTarget: storeScrollTarget,
+    scrollDirection,
     scrollTrigger,
     setGenerateDisabled,
     setStyle,
@@ -64,11 +64,11 @@ export const useAiGenerateEffects = ({ scrollTarget }: UseAiGenerateEffectsOptio
     if (scrollTrigger === 0 || !scrollTarget) return;
 
     requestAnimationFrame(() => {
-      const top = storeScrollTarget === 'top' ? 0 : 1000;
+      const top = scrollDirection === 'top' ? 0 : 1000;
 
       scrollTarget.scrollTo({ behavior: 'smooth', top });
     });
-  }, [scrollTrigger, storeScrollTarget, scrollTarget]);
+  }, [scrollTrigger, scrollDirection, scrollTarget]);
 
   // Throttled generate action
   const throttledGenerate = useMemo(

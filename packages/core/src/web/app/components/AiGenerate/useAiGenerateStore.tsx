@@ -6,8 +6,8 @@ import type { Style } from '@core/helpers/api/ai-image-config';
 import { fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import type { IUser } from '@core/interfaces/IUser';
 
+import { LASER_FRIENDLY_VALUE } from './constants';
 import type { GenerationStatus, ImageDimensions, ImageInput } from './types';
-import { LASER_FRIENDLY_VALUE } from './types';
 import { getStyleConfig } from './utils/categories';
 import { getInputFieldsForStyle } from './utils/inputFields';
 
@@ -31,8 +31,8 @@ interface State {
   isLaserFriendly: boolean;
   // Form
   maxImages: number;
+  scrollDirection: 'bottom' | 'top';
   // Scroll control - increment scrollTrigger to trigger a scroll
-  scrollTarget: 'bottom' | 'top';
   scrollTrigger: number;
   showHistory: boolean;
   styleId: string;
@@ -84,7 +84,7 @@ const INITIAL_STATE: State = {
   historyLoading: false,
   historyOffset: 0,
   isGenerateDisabled: false,
-  scrollTarget: 'top',
+  scrollDirection: 'top',
   scrollTrigger: 0,
   showHistory: false,
   user: getCurrentUser(),
@@ -161,7 +161,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
     }
 
     // Trigger scroll to top when toggling history
-    set({ scrollTarget: 'top', scrollTrigger: scrollTrigger + 1, showHistory: !showHistory });
+    set({ scrollDirection: 'top', scrollTrigger: scrollTrigger + 1, showHistory: !showHistory });
   },
   toggleLaserFriendly: () =>
     set((s) => {
@@ -176,7 +176,7 @@ export const useAiGenerateStore = create<Actions & State>((set, get) => ({
 
       return { inputFields, isLaserFriendly };
     }),
-  triggerScroll: (scrollTarget) => set((state) => ({ scrollTarget, scrollTrigger: state.scrollTrigger + 1 })),
+  triggerScroll: (scrollDirection) => set((state) => ({ scrollDirection, scrollTrigger: state.scrollTrigger + 1 })),
   updateHistoryItem: (uuid, updates) =>
     set((state) => ({
       historyItems: state.historyItems.map((item) => (item.uuid === uuid ? { ...item, ...updates } : item)),
