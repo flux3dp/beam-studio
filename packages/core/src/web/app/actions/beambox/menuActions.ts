@@ -7,6 +7,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
+import { showSettingsModal } from '@core/app/components/settings/SettingsModal';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import historyUtils from '@core/app/svgedit/history/utils';
@@ -28,6 +29,7 @@ import {
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
+import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
@@ -96,7 +98,7 @@ export default {
   MANAGE_ACCOUNT: (): Promise<void> => externalLinkMemberDashboard(),
   MATERIAL_TEST_GENERATOR: (): void => Dialog.showMaterialTestGenerator(),
   NETWORK_TESTING: (): void => Dialog.showNetworkTestingPanel(),
-  OFFSET: () => svgEditor.triggerOffsetTool(),
+  OFFSET: () => (svgEditor as any).triggerOffsetTool(),
   OPEN: (): void => {
     FnWrapper.importImage();
   },
@@ -112,7 +114,13 @@ export default {
     Dialog.clearAllDialogComponents();
 
     if (await toggleUnsavedChangedDialog()) {
-      window.location.hash = hashMap.settings;
+      if (isWeb()) {
+        // Web/mobile uses the settings page route
+        window.location.hash = hashMap.settings;
+      } else {
+        // Desktop app uses modal dialog
+        showSettingsModal();
+      }
     }
   },
   QUESTIONNAIRE: async (): Promise<void> => {

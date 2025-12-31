@@ -2,6 +2,7 @@ import React from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import isDev from '@core/helpers/is-dev';
@@ -9,13 +10,8 @@ import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
-interface Props {
-  options: DefaultOptionType[];
-}
-
-function Engraving({ options }: Props): React.JSX.Element {
+function Engraving(): React.JSX.Element {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
   const reverseEngravingOptions = [
@@ -25,13 +21,11 @@ function Engraving({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.engraving}</div>
-      <SettingSelect
-        defaultValue={getPreference('fast_gradient')}
+      <SettingSwitch
+        checked={getPreference('fast_gradient')}
         id="set-fast-gradient"
         label={lang.settings.fast_gradient}
         onChange={(e) => setPreference('fast_gradient', e)}
-        options={options}
         url={lang.settings.help_center_urls.fast_gradient}
       />
       <SettingSelect
@@ -41,12 +35,11 @@ function Engraving({ options }: Props): React.JSX.Element {
         onChange={(e) => setPreference('reverse-engraving', e)}
         options={reverseEngravingOptions}
       />
-      <SettingSelect
-        defaultValue={getPreference('segmented-engraving')}
+      <SettingSwitch
+        checked={getPreference('segmented-engraving')}
         id="set-segmented-engraving"
         label={lang.settings.segmented_engraving}
         onChange={(e) => setPreference('segmented-engraving', e)}
-        options={options}
         url={lang.settings.help_center_urls.segmented_engraving}
       />
       {isDev() && (

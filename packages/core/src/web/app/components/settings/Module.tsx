@@ -1,8 +1,7 @@
 import * as React from 'react';
 
-import type { DefaultOptionType } from 'antd/es/select';
-
 import alert from '@core/app/actions/alert-caller';
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
 import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import XYItem from '@core/app/components/settings/components/XYItem';
@@ -11,15 +10,12 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
-import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
 interface Props {
-  options: DefaultOptionType[];
   unitInputProps: Partial<SettingUnitInputProps>;
 }
 
-const Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
+const Module = ({ unitInputProps }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
   const selectedModel = getPreference('model');
@@ -34,29 +30,25 @@ const Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.modules}</div>
-      <SettingSelect
-        defaultValue={getPreference('default-borderless')}
+      <SettingSwitch
+        checked={getPreference('default-borderless')}
         id="default-open-bottom"
         label={lang.settings.default_borderless_mode}
         onChange={(e) => setPreference('default-borderless', e)}
-        options={options}
         url={lang.settings.help_center_urls.default_borderless_mode}
       />
-      <SettingSelect
-        defaultValue={getPreference('default-autofocus')}
+      <SettingSwitch
+        checked={getPreference('default-autofocus')}
         id="default-autofocus"
         label={lang.settings.default_enable_autofocus_module}
         onChange={(e) => setPreference('default-autofocus', e)}
-        options={options}
         url={lang.settings.help_center_urls.default_enable_autofocus_module}
       />
-      <SettingSelect
-        defaultValue={getPreference('default-diode')}
+      <SettingSwitch
+        checked={getPreference('default-diode')}
         id="default-diode"
         label={lang.settings.default_enable_diode_module}
         onChange={(e) => setPreference('default-diode', e)}
-        options={options}
         url={lang.settings.help_center_urls.default_enable_diode_module}
       />
       <XYItem
@@ -71,12 +63,11 @@ const Module = ({ options, unitInputProps }: Props): React.JSX.Element => {
         unitInputProps={unitInputProps}
         values={[getPreference('diode_offset_x'), getPreference('diode_offset_y')]}
       />
-      <SettingSelect
-        defaultValue={getPreference('diode-one-way-engraving')}
-        id="default-diode"
+      <SettingSwitch
+        checked={getPreference('diode-one-way-engraving')}
+        id="diode-one-way-engraving"
         label={lang.settings.diode_one_way_engraving}
         onChange={onDiodeOneWayEngravingChanged}
-        options={options}
       />
       <SettingFormItem id="set_af-offset" label={lang.settings.autofocus_offset}>
         <SettingUnitInput

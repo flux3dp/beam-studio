@@ -1,24 +1,16 @@
 import * as React from 'react';
 
-import { InfoCircleOutlined } from '@ant-design/icons';
 import { Input } from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
 
 import alert from '@core/app/actions/alert-caller';
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import alertConstants from '@core/app/constants/alert-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
-import browser from '@core/implementations/browser';
 
 import SettingFormItem from './components/SettingFormItem';
-import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
-interface Props {
-  options: DefaultOptionType[];
-}
-
-function Connection({ options }: Props): React.JSX.Element {
+function Connection(): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, setConfig } = useSettingStore();
   const originalIP = getConfig('poke-ip-addr');
@@ -45,35 +37,26 @@ function Connection({ options }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className={styles.subtitle}>
-        {lang.settings.groups.connection}
-        <InfoCircleOutlined
-          className={styles.icon}
-          onClick={() => browser.open(lang.settings.help_center_urls.connection)}
-        />
-      </div>
       <SettingFormItem id="connect-ip-list" label={lang.settings.ip}>
         <Input
           autoComplete="false"
-          className={styles.input}
           defaultValue={getConfig('poke-ip-addr')}
           id="ip-input"
           onBlur={checkIPFormat}
+          style={{ width: 240 }}
         />
       </SettingFormItem>
-      <SettingSelect
-        defaultValue={getConfig('guessing_poke')}
+      <SettingSwitch
+        checked={getConfig('guessing_poke')}
         id="set-guessing-poke"
         label={lang.settings.guess_poke}
         onChange={(e) => setConfig('guessing_poke', e)}
-        options={options}
       />
-      <SettingSelect
-        defaultValue={getConfig('auto_connect')}
+      <SettingSwitch
+        checked={getConfig('auto_connect')}
         id="set-auto-connect"
         label={lang.settings.auto_connect}
         onChange={(e) => setConfig('auto_connect', e)}
-        options={options}
       />
     </>
   );

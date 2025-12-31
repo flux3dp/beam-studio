@@ -36,7 +36,7 @@
 
 .input-number {
   :global(.ant-input-number) {
-    width: 95px;
+    width: 105px;
   }
 
   input {
@@ -45,7 +45,7 @@
 
   .unit {
     right: 4px;
-    top: 0;
+    top: calc(20%);
   }
 }
 

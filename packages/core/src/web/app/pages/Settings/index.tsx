@@ -1,7 +1,7 @@
 import React, { useMemo, useState } from 'react';
 
+import { InfoCircleOutlined } from '@ant-design/icons';
 import { ConfigProvider, Form } from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 
 import settings from '@core/app/app-settings';
@@ -19,11 +19,13 @@ import General from '@core/app/components/settings/General';
 import Module from '@core/app/components/settings/Module';
 import Path from '@core/app/components/settings/Path';
 import Privacy from '@core/app/components/settings/Privacy';
+import styles from '@core/app/components/settings/Settings.module.scss';
 import TextToPath from '@core/app/components/settings/TextToPath';
 import Update from '@core/app/components/settings/Update';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
+import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 import type { ILang } from '@core/interfaces/ILang';
@@ -79,10 +81,6 @@ function Settings(): React.JSX.Element {
     window.location.reload();
   };
 
-  const commonBooleanOptions = [
-    { label: lang.settings.on, value: true },
-    { label: lang.settings.off, value: false },
-  ] as unknown as DefaultOptionType[];
   const isAllValid = Object.keys(warnings).length === 0;
 
   return (
@@ -90,31 +88,50 @@ function Settings(): React.JSX.Element {
       <div className="form general">
         <ConfigProvider theme={{ components: { Form: { itemMarginBottom: 20, labelFontSize: 16 } } }}>
           <Form colon={false} labelAlign="left" labelWrap wrapperCol={{ flex: 1 }}>
-            <General
-              changeActiveLang={changeActiveLang}
-              options={commonBooleanOptions}
-              supportedLangs={supported_langs}
-            />
-            <Update options={commonBooleanOptions} />
-            <Connection options={commonBooleanOptions} />
+            <div className={styles.subtitle}>{lang.settings.groups.general}</div>
+            <General changeActiveLang={changeActiveLang} supportedLangs={supported_langs} />
+
+            <div className={styles.subtitle}>{lang.settings.groups.update}</div>
+            <Update />
+
+            <div className={styles.subtitle}>
+              {lang.settings.groups.connection}
+              <InfoCircleOutlined
+                className={styles.icon}
+                onClick={() => browser.open(lang.settings.help_center_urls.connection)}
+              />
+            </div>
+            <Connection />
+
+            <div className={styles.subtitle}>{lang.settings.groups.autosave}</div>
             <AutoSave
               editingAutosaveConfig={editingAutosaveConfig}
-              options={commonBooleanOptions}
               setEditingAutosaveConfig={setEditingAutosaveConfig}
               setWarnings={setWarnings}
               warnings={warnings}
             />
-            <Camera options={commonBooleanOptions} />
-            <Editor options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
-            <Engraving options={commonBooleanOptions} />
-            <Path options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
-            <TextToPath options={commonBooleanOptions} />
-            <Module options={commonBooleanOptions} unitInputProps={commonUnitInputProps} />
+            <div className={styles.subtitle}>{lang.settings.groups.camera}</div>
+            <Camera />
+            <div className={styles.subtitle}>{lang.settings.groups.editor}</div>
+            <Editor unitInputProps={commonUnitInputProps} />
+            <div className={styles.subtitle}>{lang.settings.groups.engraving}</div>
+            <Engraving />
+            <div className={styles.subtitle}>{lang.settings.groups.path}</div>
+            <Path unitInputProps={commonUnitInputProps} />
+            <div className={styles.subtitle}>{lang.settings.groups.text_to_path}</div>
+            <TextToPath />
+            <div className={styles.subtitle}>{lang.settings.groups.modules}</div>
+            <Module unitInputProps={commonUnitInputProps} />
+            <div className={styles.subtitle}>{lang.settings.groups.ador_modules}</div>
             <AdorModule unitInputProps={commonUnitInputProps} />
-            <Beamo2Module options={commonBooleanOptions} />
-            <BB2Settings options={commonBooleanOptions} />
-            <Privacy options={commonBooleanOptions} />
-            <Experimental options={commonBooleanOptions} />
+            <div className={styles.subtitle}>{lang.settings.groups.beamo2_modules}</div>
+            <Beamo2Module />
+            <div className={styles.subtitle}>Beambox II</div>
+            <BB2Settings />
+            <div className={styles.subtitle}>{lang.settings.groups.privacy}</div>
+            <Privacy />
+            <div className={styles.subtitle}>Experimental Features</div>
+            <Experimental />
           </Form>
         </ConfigProvider>
         <div className="font5" onClick={resetBS}>

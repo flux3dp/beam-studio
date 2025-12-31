@@ -1,7 +1,6 @@
 import * as React from 'react';
 
-import type { DefaultOptionType } from 'antd/es/select';
-
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import SettingUnitInput from '@core/app/components/settings/components/SettingUnitInput';
 import PathInput, { InputType } from '@core/app/widgets/PathInput';
 import isWeb from '@core/helpers/is-web';
@@ -9,12 +8,9 @@ import useI18n from '@core/helpers/useI18n';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 
 import SettingFormItem from './components/SettingFormItem';
-import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
 interface Props {
   editingAutosaveConfig: AutoSaveConfig;
-  options: DefaultOptionType[];
   setEditingAutosaveConfig: (config: AutoSaveConfig) => void;
   setWarnings: (warnings: Record<string, string>) => void;
   warnings: Record<string, string>;
@@ -22,7 +18,6 @@ interface Props {
 
 function AutoSave({
   editingAutosaveConfig,
-  options,
   setEditingAutosaveConfig,
   setWarnings,
   warnings,
@@ -33,13 +28,11 @@ function AutoSave({
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.autosave}</div>
-      <SettingSelect
-        defaultValue={editingAutosaveConfig.enabled}
+      <SettingSwitch
+        checked={editingAutosaveConfig.enabled}
         id="set-auto-save"
         label={lang.settings.autosave_enabled}
         onChange={(enabled) => setEditingAutosaveConfig({ ...editingAutosaveConfig, enabled })}
-        options={options}
       />
       <SettingFormItem
         id="auto-save-directory"

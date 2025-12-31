@@ -1,9 +1,11 @@
+import React from 'react';
+
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
-import { Flex, Form, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 
 import browser from '@core/implementations/browser';
 
-import styles from '../Settings.module.scss';
+import styles from './SettingFormItem.module.scss';
 
 type Props = {
   children: React.ReactNode;
@@ -14,8 +16,8 @@ type Props = {
   warning?: string;
 };
 
-function SettingFormItem({ children, id, label, tooltip, url, warning }: Props) {
-  const renderInfo = () => {
+const SettingFormItem = ({ children, id, label, tooltip, url, warning }: Props): React.JSX.Element => {
+  const renderInfo = (): React.ReactNode => {
     if (url) {
       return (
         <Tooltip title={url}>
@@ -35,32 +37,26 @@ function SettingFormItem({ children, id, label, tooltip, url, warning }: Props) 
     return null;
   };
 
-  const renderWarning = () => {
+  const renderWarning = (): React.ReactNode => {
     if (warning) {
-      return <img src="img/warning.svg" title={warning} />;
+      return <img alt="warning" className={styles.warning} src="img/warning.svg" title={warning} />;
     }
 
     return null;
   };
 
   return (
-    <Form.Item className={styles.row}>
-      <Flex>
-        <Form.Item
-          className={styles['form-item']}
-          id={id}
-          label={
-            <>
-              {label}
-              {renderInfo()}
-            </>
-          }
-        />
+    <div className={styles['setting-row']} id={id}>
+      <div className={styles['label-container']}>
+        <span className={styles.label}>{label}</span>
+        {renderInfo()}
+      </div>
+      <div className={styles['control-container']}>
         {children}
         {renderWarning()}
-      </Flex>
-    </Form.Item>
+      </div>
+    </div>
   );
-}
+};
 
 export default SettingFormItem;
