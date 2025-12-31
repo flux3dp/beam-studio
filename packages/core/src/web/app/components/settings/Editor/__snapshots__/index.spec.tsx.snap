@@ -2,11 +2,6 @@
 
 exports[`settings/Editor initially no warning 1`] = `
 <div>
-  <div
-    class="subtitle"
-  >
-    Editor
-  </div>
   <div>
     mock-select-control id:
     set-default-units
@@ -60,16 +55,20 @@ exports[`settings/Editor initially no warning 1`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-guide
     label:
     Guides
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-guide"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -141,58 +140,74 @@ exports[`settings/Editor initially no warning 1`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-anti-aliasing
     label:
     Anti-Aliasing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-anti-aliasing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-continuous-drawing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-simplify-clipper-path
     label:
     Optimize the Calculated Path
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-simplify-clipper-path"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     auto-switch-tab
     label:
     Auto Switch Layer and Object Panel
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="auto-switch-tab"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -210,71 +225,91 @@ exports[`settings/Editor initially no warning 1`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-custom-backlash
     label:
     Enable Custom Backlash Compensation
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-custom-backlash"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-uv-print-file
     label:
     Enable UV Print File
     url:
     https://support.flux3dp.com/hc/en-us/articles/12320887477135
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-uv-print-file"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     print-advanced-mode
     label:
     Printer Advanced Mode
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="print-advanced-mode"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     use-real-boundary
     label:
     Use Maximum Range
     url:
     tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="use-real-boundary"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     crop-task-thumbnail
     label:
     Content Crop Thumbnail
     url:
     tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="crop-task-thumbnail"
+      readonly=""
+      type="checkbox"
     />
   </div>
 </div>
@@ -282,11 +317,6 @@ exports[`settings/Editor initially no warning 1`] = `
 
 exports[`settings/Editor initially no warning 2`] = `
 <div>
-  <div
-    class="subtitle"
-  >
-    Editor
-  </div>
   <div>
     mock-select-control id:
     set-default-units
@@ -340,16 +370,20 @@ exports[`settings/Editor initially no warning 2`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-guide
     label:
     Guides
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-guide"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -421,58 +455,74 @@ exports[`settings/Editor initially no warning 2`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-anti-aliasing
     label:
     Anti-Aliasing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-anti-aliasing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-continuous-drawing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-simplify-clipper-path
     label:
     Optimize the Calculated Path
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-simplify-clipper-path"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     auto-switch-tab
     label:
     Auto Switch Layer and Object Panel
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="auto-switch-tab"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -490,71 +540,91 @@ exports[`settings/Editor initially no warning 2`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-custom-backlash
     label:
     Enable Custom Backlash Compensation
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-custom-backlash"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-uv-print-file
     label:
     Enable UV Print File
     url:
     https://support.flux3dp.com/hc/en-us/articles/12320887477135
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-uv-print-file"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     print-advanced-mode
     label:
     Printer Advanced Mode
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="print-advanced-mode"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     use-real-boundary
     label:
     Use Maximum Range
     url:
     tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="use-real-boundary"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     crop-task-thumbnail
     label:
     Content Crop Thumbnail
     url:
     tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="crop-task-thumbnail"
+      readonly=""
+      type="checkbox"
     />
   </div>
 </div>
@@ -562,11 +632,6 @@ exports[`settings/Editor initially no warning 2`] = `
 
 exports[`settings/Editor initially no warning 3`] = `
 <div>
-  <div
-    class="subtitle"
-  >
-    Editor
-  </div>
   <div>
     mock-select-control id:
     set-default-units
@@ -620,16 +685,20 @@ exports[`settings/Editor initially no warning 3`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-guide
     label:
     Guides
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-guide"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -701,58 +770,74 @@ exports[`settings/Editor initially no warning 3`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-anti-aliasing
     label:
     Anti-Aliasing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-anti-aliasing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-continuous-drawing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-simplify-clipper-path
     label:
     Optimize the Calculated Path
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-simplify-clipper-path"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     auto-switch-tab
     label:
     Auto Switch Layer and Object Panel
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="auto-switch-tab"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -770,71 +855,91 @@ exports[`settings/Editor initially no warning 3`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-custom-backlash
     label:
     Enable Custom Backlash Compensation
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-custom-backlash"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-uv-print-file
     label:
     Enable UV Print File
     url:
     https://support.flux3dp.com/hc/en-us/articles/12320887477135
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-uv-print-file"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     print-advanced-mode
     label:
     Printer Advanced Mode
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="print-advanced-mode"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     use-real-boundary
     label:
     Use Maximum Range
     url:
     tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="use-real-boundary"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     crop-task-thumbnail
     label:
     Content Crop Thumbnail
     url:
     tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="crop-task-thumbnail"
+      readonly=""
+      type="checkbox"
     />
   </div>
 </div>
@@ -842,11 +947,6 @@ exports[`settings/Editor initially no warning 3`] = `
 
 exports[`settings/Editor initially no warning 4`] = `
 <div>
-  <div
-    class="subtitle"
-  >
-    Editor
-  </div>
   <div>
     mock-select-control id:
     set-default-units
@@ -900,16 +1000,20 @@ exports[`settings/Editor initially no warning 4`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-guide
     label:
     Guides
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-guide"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -981,58 +1085,74 @@ exports[`settings/Editor initially no warning 4`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-anti-aliasing
     label:
     Anti-Aliasing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004408956
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-anti-aliasing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-continuous-drawing
     label:
     Continuous Drawing
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004406496
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-continuous-drawing"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-simplify-clipper-path
     label:
     Optimize the Calculated Path
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-simplify-clipper-path"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     auto-switch-tab
     label:
     Auto Switch Layer and Object Panel
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="auto-switch-tab"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -1050,71 +1170,91 @@ exports[`settings/Editor initially no warning 4`] = `
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-custom-backlash
     label:
     Enable Custom Backlash Compensation
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-custom-backlash"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-enable-uv-print-file
     label:
     Enable UV Print File
     url:
     https://support.flux3dp.com/hc/en-us/articles/12320887477135
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-enable-uv-print-file"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     print-advanced-mode
     label:
     Printer Advanced Mode
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="print-advanced-mode"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     use-real-boundary
     label:
     Use Maximum Range
     url:
     tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="use-real-boundary"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     crop-task-thumbnail
     label:
     Content Crop Thumbnail
     url:
     tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="crop-task-thumbnail"
+      readonly=""
+      type="checkbox"
     />
   </div>
 </div>

@@ -16,6 +16,7 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
 }));
 
 jest.mock('./components/SettingSelect');
+jest.mock('./components/SettingSwitch');
 
 const mockIsWeb = jest.fn();
 
@@ -31,12 +32,6 @@ describe('should render correctly', () => {
     const { container } = render(
       <General
         changeActiveLang={changeActiveLang}
-        options={
-          [
-            { label: 'On', value: true },
-            { label: 'Off', value: false },
-          ] as any
-        }
         supportedLangs={{
           de: 'Deutsche',
           en: 'English',
@@ -50,14 +45,20 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    const controls = container.querySelectorAll('.select-control');
+    const selectControl = container.querySelector('.select-control');
 
-    fireEvent.change(controls[0], { target: { value: 'de' } });
+    fireEvent.change(selectControl, { target: { value: 'de' } });
     expect(changeActiveLang).toHaveBeenCalledTimes(1);
 
-    fireEvent.change(controls[1], { target: { value: false } });
+    const switchControls = container.querySelectorAll('.switch-control');
+
+    fireEvent.click(switchControls[0]);
     expect(mockSetConfig).toHaveBeenCalledTimes(1);
-    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'notification', false);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'auto_check_update', true);
+
+    fireEvent.click(switchControls[1]);
+    expect(mockSetConfig).toHaveBeenCalledTimes(2);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(2, 'notification', true);
   });
 
   test('web version', () => {
@@ -67,12 +68,6 @@ describe('should render correctly', () => {
     const { container } = render(
       <General
         changeActiveLang={changeActiveLang}
-        options={
-          [
-            { label: 'On', value: true },
-            { label: 'Off', value: false },
-          ] as any
-        }
         supportedLangs={{
           de: 'Deutsche',
           en: 'English',

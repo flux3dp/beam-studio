@@ -2,11 +2,6 @@
 
 exports[`test AdorModule should render correctly 1`] = `
 <div>
-  <div
-    class="subtitle"
-  >
-    Ador Modules
-  </div>
   <div>
     mock-select-control id:
     default-laser-module
