@@ -34,9 +34,8 @@ const SettingsModal = ({
   const [warnings, setWarnings] = useState<Record<string, string>>({});
   const previousActiveLang = useMemo(() => i18n.getActiveLang(), []);
 
-  const { getConfig, getPreference, resetChanges, updateToStorage } = useSettingStore();
+  const { getConfig, resetChanges, updateToStorage } = useSettingStore();
   const defaultUnit = getConfig('default-units');
-  const selectedModel = getPreference('model');
 
   const commonUnitInputProps: Partial<SettingUnitInputProps> = useMemo(() => {
     const isInch = defaultUnit === 'inches';
@@ -44,7 +43,7 @@ const SettingsModal = ({
     return { isInch, precision: isInch ? 4 : 2, step: isInch ? 2.54 : 1, unit: isInch ? 'in' : 'mm' };
   }, [defaultUnit]);
 
-  const categoryConfigs = useMemo(() => getCategoryConfigs(lang, selectedModel), [lang, selectedModel]);
+  const categoryConfigs = useMemo(() => getCategoryConfigs(lang), [lang]);
   const currentCategoryConfig = categoryConfigs.find((c) => c.key === selectedCategory);
 
   const changeActiveLang = (value: string): void => {

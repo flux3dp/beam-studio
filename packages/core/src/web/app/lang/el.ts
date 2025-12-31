@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'Χάραξη (σάρωση)',
       general: 'Γενικά',
       mask: 'Περικοπή Περιοχής Εργασίας',
+      module_settings: 'Ρυθμίσεις μονάδας',
+      module_type: 'Μονάδα μηχανής',
       modules: 'Πρόσθετα',
       path: 'Διανύσματα (Περιγράμματα)',
       performance: 'Απόδοση',

@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'Khắc (Quét)',
       general: 'Chung',
       mask: 'Vùng cắt',
+      module_settings: 'Cài đặt mô-đun',
+      module_type: 'Mô-đun máy',
       modules: 'Phụ kiện',
       path: 'Đường vẽ',
       performance: 'Hiệu suất',

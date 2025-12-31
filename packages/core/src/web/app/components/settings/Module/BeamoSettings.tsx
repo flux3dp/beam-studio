@@ -9,13 +9,13 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
-import SettingFormItem from './components/SettingFormItem';
+import SettingFormItem from '../components/SettingFormItem';
 
 interface Props {
   unitInputProps: Partial<SettingUnitInputProps>;
 }
 
-const Module = ({ unitInputProps }: Props): React.JSX.Element => {
+const BeamoSettings = ({ unitInputProps }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
   const selectedModel = getPreference('model');
@@ -83,4 +83,4 @@ const Module = ({ unitInputProps }: Props): React.JSX.Element => {
   );
 };
 
-export default Module;
+export default BeamoSettings;

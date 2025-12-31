@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'การสแกน',
       general: 'ทั่วไป',
       mask: 'การตัดพื้นที่ทํางาน',
+      module_settings: 'การตั้งค่าโมดูล',
+      module_type: 'โมดูลเครื่อง',
       modules: 'โมดูลเสริม',
       path: 'เส้นทาง',
       performance: 'ประสิทธิภาพ',

@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'Pemotongan Raster',
       general: 'Umum',
       mask: 'Pemotongan Kawasan Kerja',
+      module_settings: 'Tetapan Modul',
+      module_type: 'Modul Mesin',
       modules: 'Tambahan',
       path: 'Vektor',
       performance: 'Prestasi',

@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'Rastrování (Skenování)',
       general: 'Obecné',
       mask: 'Výstřižek pracovní oblasti',
+      module_settings: 'Nastavení modulu',
+      module_type: 'Modul stroje',
       modules: 'Doplněk',
       path: 'Vektor (Obrys)',
       performance: 'Výkon',

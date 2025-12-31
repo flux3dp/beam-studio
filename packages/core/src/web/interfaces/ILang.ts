@@ -2015,6 +2015,8 @@ export interface ILang {
       engraving: string;
       general: string;
       mask: string;
+      module_settings: string;
+      module_type: string;
       modules: string;
       path: string;
       performance: string;

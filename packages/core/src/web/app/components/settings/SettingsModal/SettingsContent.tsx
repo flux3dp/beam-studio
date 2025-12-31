@@ -3,10 +3,7 @@ import React from 'react';
 import { ConfigProvider, Form } from 'antd';
 import { match } from 'ts-pattern';
 
-import AdorModule from '../AdorModule';
 import AutoSave from '../AutoSave';
-import BB2Settings from '../BB2Settings';
-import Beamo2Module from '../Beamo2Module';
 import Camera from '../Camera';
 import SettingsCard from '../components/SettingsCard';
 import Connection from '../Connection';
@@ -59,15 +56,15 @@ const SettingsContent = ({ category, categoryConfig, commonProps }: SettingsCont
       ))
       .with(SettingCategory.ENGRAVING, () => <Engraving />)
       .with(SettingCategory.PATH, () => <Path unitInputProps={unitInputProps} />)
-      .with(SettingCategory.MODULE, () => <Module unitInputProps={unitInputProps} />)
-      .with(SettingCategory.ADOR_MODULE, () => <AdorModule unitInputProps={unitInputProps} />)
-      .with(SettingCategory.BEAMO2_MODULE, () => <Beamo2Module />)
-      .with(SettingCategory.BB2_SETTINGS, () => <BB2Settings />)
+      .with(SettingCategory.MODULE, () => (
+        <Module subSectionTitleClass={styles['sub-section-title']} unitInputProps={unitInputProps} wrapped />
+      ))
       .with(SettingCategory.PRIVACY, () => <Privacy />)
       .with(SettingCategory.EXPERIMENTAL, () => <Experimental />)
       .exhaustive();
 
-  const skipOuterCard = category === SettingCategory.GENERAL || category === SettingCategory.EDITOR;
+  const skipOuterCard =
+    category === SettingCategory.GENERAL || category === SettingCategory.EDITOR || category === SettingCategory.MODULE;
 
   return (
     <div className={styles.content}>

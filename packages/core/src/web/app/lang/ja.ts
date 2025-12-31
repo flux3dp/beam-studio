@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: '彫刻（スキャン）',
       general: '一般',
       mask: 'ワークエリアのクリッピング',
+      module_settings: 'モジュール設定',
+      module_type: 'マシンモジュール',
       modules: '拡張機能',
       path: 'パス（線分）',
       performance: 'パフォーマンス',

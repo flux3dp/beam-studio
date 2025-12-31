@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'Rasterointi (skannaus)',
       general: 'Yleiset',
       mask: 'Työalueen rajaus',
+      module_settings: 'Moduulin asetukset',
+      module_type: 'Laitemoduuli',
       modules: 'Lisäosa',
       path: 'Vektori (ääriviivat)',
       performance: 'Suorituskyky',

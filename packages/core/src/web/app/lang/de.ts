@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'Rasterung (Scannen)',
       general: 'Allgemeines',
       mask: 'Arbeitsbereich-Ausschnitt',
+      module_settings: 'Moduleinstellungen',
+      module_type: 'Maschinenmodul',
       modules: 'Zusatz-Module',
       path: 'Vektor (Umrisse)',
       performance: 'Leistung',

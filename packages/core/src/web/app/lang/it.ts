@@ -2022,6 +2022,8 @@ const lang: ILang = {
       engraving: 'Rasterizzazione (Scansione)',
       general: 'Generale',
       mask: 'Ritaglio area di lavoro',
+      module_settings: 'Impostazioni modulo',
+      module_type: 'Modulo macchina',
       modules: 'Componente aggiuntivo',
       path: 'Vettore (Contorni)',
       performance: 'Prestazioni',
