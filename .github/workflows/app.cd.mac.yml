@@ -144,8 +144,9 @@ jobs:
 
           chmod -R 777 ./node_modules/font-scanner
 
-          if [ "$APPLE_TEAM_ID" = "" ]; then
-            echo "Skip notarization as APPLE_TEAM_ID is empty."
+          if ["${{github.event.inputs.skip_code_sign}}" = "true"]; then
+            echo "Set APPLE_TEAM_ID to empty to skip notarization per github input..."
+            export APPLE_TEAM_ID=""
           fi
 
           if [ "${{ matrix.target }}" = "both" ]; then
@@ -169,8 +170,7 @@ jobs:
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           PUBLISH_PATH: ""
           PUBLISH_SUFFIX: ${{ github.event.inputs.publish_suffix || '' }}
-          # Set APPLE_TEAM_ID to empty if skip_code_sign is true to skip notarization
-          APPLE_TEAM_ID: ${{ github.event.inputs.skip_code_sign == 'true' && '' || secrets.APPLE_TEAM_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
