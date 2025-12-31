@@ -38,7 +38,7 @@ function Settings(): React.JSX.Element {
   const [editingAutosaveConfig, setEditingAutosaveConfig] = useState<AutoSaveConfig>(autoSaveHelper.getConfig());
   const [warnings, setWarnings] = useState<Record<string, string>>({});
   const previousActiveLang = useMemo(() => i18n.getActiveLang(), []);
-  const { getConfig, updateToStorage } = useSettingStore();
+  const { getConfig, resetChanges, updateToStorage } = useSettingStore();
   const defaultUnit = getConfig('default-units');
 
   const commonUnitInputProps: Partial<SettingUnitInputProps> = useMemo(() => {
@@ -77,6 +77,7 @@ function Settings(): React.JSX.Element {
 
   const handleCancel = (): void => {
     i18n.setActiveLang(previousActiveLang);
+    resetChanges();
     window.location.hash = getHomePage();
     window.location.reload();
   };

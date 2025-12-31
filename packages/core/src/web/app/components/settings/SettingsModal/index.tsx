@@ -34,7 +34,7 @@ const SettingsModal = ({
   const [warnings, setWarnings] = useState<Record<string, string>>({});
   const previousActiveLang = useMemo(() => i18n.getActiveLang(), []);
 
-  const { getConfig, getPreference, updateToStorage } = useSettingStore();
+  const { getConfig, getPreference, resetChanges, updateToStorage } = useSettingStore();
   const defaultUnit = getConfig('default-units');
   const selectedModel = getPreference('model');
 
@@ -69,6 +69,7 @@ const SettingsModal = ({
 
   const handleCancel = (): void => {
     i18n.setActiveLang(previousActiveLang);
+    resetChanges();
     onClose();
   };
 
