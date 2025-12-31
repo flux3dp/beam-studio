@@ -16,6 +16,7 @@ export type State = {
 export type Action = {
   getConfig: (key: StorageKey) => any;
   getPreference: <Key extends GlobalPreferenceKey>(key: Key) => GlobalPreference[Key];
+  resetChanges: () => void;
   setConfig: (key: StorageKey, value: any) => void;
   setPreference: <Key extends GlobalPreferenceKey>(key: Key, value: GlobalPreference[Key]) => void;
   updateToStorage: () => void;
@@ -88,18 +89,10 @@ export const useSettingStore = create<Action & State>(
           ? beamboxPreferenceChanges[key]!
           : (useGlobalPreferenceStore.getState() as GlobalPreference)[key];
       },
-      setConfig: (key, value) =>
-        set(() => {
-          const { configChanges } = get();
-
-          return { configChanges: { ...configChanges, [key]: value } };
-        }),
+      resetChanges: () => set({ beamboxPreferenceChanges: {}, configChanges: {} }),
+      setConfig: (key, value) => set(() => ({ configChanges: { ...get().configChanges, [key]: value } })),
       setPreference: (key, value) =>
-        set(() => {
-          const { beamboxPreferenceChanges } = get();
-
-          return { beamboxPreferenceChanges: { ...beamboxPreferenceChanges, [key]: value } };
-        }),
+        set(() => ({ beamboxPreferenceChanges: { ...get().beamboxPreferenceChanges, [key]: value } })),
       updateToStorage: () =>
         set(() => {
           const { beamboxPreferenceChanges, configChanges } = get();
