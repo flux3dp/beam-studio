@@ -16,32 +16,28 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
 }));
 
 jest.mock('./components/SettingSelect');
+jest.mock('./components/SettingSwitch');
 
 import TextToPath from './TextToPath';
 
 test('should render correctly', () => {
   mockGetPreference.mockImplementation((key: string) => (key === 'font-substitute' ? true : '2.0'));
 
-  const { container } = render(
-    <TextToPath
-      options={
-        [
-          { label: 'On', value: true },
-          { label: 'Off', value: false },
-        ] as any
-      }
-    />,
-  );
+  const { container } = render(<TextToPath />);
 
   expect(container).toMatchSnapshot();
 
-  const controls = container.querySelectorAll('.select-control');
+  // Test SettingSwitch control
+  const switchControl = container.querySelector('.switch-control');
 
-  fireEvent.change(controls[0], { target: { value: false } });
+  fireEvent.click(switchControl);
   expect(mockSetPreference).toHaveBeenCalledTimes(1);
   expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'font-substitute', false);
 
-  fireEvent.change(controls[1], { target: { value: '2.0' } });
+  // Test SettingSelect control
+  const selectControl = container.querySelector('.select-control');
+
+  fireEvent.change(selectControl, { target: { value: '2.0' } });
   expect(mockSetPreference).toHaveBeenCalledTimes(2);
   expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'font-convert', '2.0');
 });

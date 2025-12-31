@@ -13,14 +13,7 @@ const useSettingStore = create(() => ({
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
 jest.mock('@core/app/actions/canvas/boundaryDrawer', () => {});
 jest.mock('./components/SettingFormItem');
-jest.mock('./components/SettingSelect');
-
-const props: any = {
-  options: [
-    { label: 'On', value: true },
-    { label: 'Off', value: false },
-  ],
-};
+jest.mock('./components/SettingSwitch');
 
 import Beamo2Module from './Beamo2Module';
 
@@ -30,20 +23,20 @@ describe('test Beamo2Module', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(<Beamo2Module {...props} />);
+    const { container } = render(<Beamo2Module />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('edit on/off value', () => {
-    const { container } = render(<Beamo2Module {...props} />);
+    const { container } = render(<Beamo2Module />);
 
     mockGetPreference.mockReturnValue(false);
 
-    const SelectControls = container.querySelectorAll('.select-control');
+    const switchControl = container.querySelector('.switch-control');
 
-    fireEvent.change(SelectControls[0], { target: { value: 'false' } });
+    fireEvent.click(switchControl);
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'use-union-boundary', false);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'use-union-boundary', true);
   });
 });

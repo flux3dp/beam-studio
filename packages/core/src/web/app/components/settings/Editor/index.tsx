@@ -15,7 +15,7 @@ import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 import type { GeneralFont, IDefaultFont } from '@core/interfaces/IFont';
 
-import SettingSelect from './components/SettingSelect';
+import SettingSelect from '../components/SettingSelect';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 
