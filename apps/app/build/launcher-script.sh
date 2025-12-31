@@ -22,4 +22,4 @@ if [[ -f $XDG_CONFIG_HOME/bks-flags.conf ]]; then
 fi
 
 # Lots of users are reporting issues without --no-sandbox now. So it's officially now the default.
-exec "$SCRIPT_DIR/beekeeper-studio-bin" "--no-sandbox" $USER_FLAGS "$@"
+exec "$SCRIPT_DIR/beam-studio-bin" "--no-sandbox" $USER_FLAGS "$@"
