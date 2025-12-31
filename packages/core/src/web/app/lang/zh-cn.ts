@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: '雕刻 (扫描)',
       general: '一般',
       mask: '工作范围剪裁',
+      module_settings: '模组设定',
+      module_type: '机器模组',
       modules: '扩充模组',
       path: '路径 (线段)',
       performance: '性能',

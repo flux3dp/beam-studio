@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: 'Grawerowanie',
       general: 'Ogólne',
       mask: 'Przycinanie obszaru roboczego',
+      module_settings: 'Ustawienia modułu',
+      module_type: 'Moduł maszyny',
       modules: 'Dodatki',
       path: 'Cięcie',
       performance: 'Wydajność',

@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: 'Rasterización (Escaneo)',
       general: 'General',
       mask: 'Recorte del área de trabajo',
+      module_settings: 'Configuración del módulo',
+      module_type: 'Módulo de máquina',
       modules: 'Añadir',
       path: 'Vector (Esquemas)',
       performance: 'Rendimiento',

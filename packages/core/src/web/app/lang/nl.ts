@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: 'Graveren (scannen)',
       general: 'Algemeen',
       mask: 'Werkgebied bijsnijden',
+      module_settings: 'Module-instellingen',
+      module_type: 'Machine module',
       modules: 'Plug-ins',
       path: 'Vector (omtrekken)',
       performance: 'Prestaties',

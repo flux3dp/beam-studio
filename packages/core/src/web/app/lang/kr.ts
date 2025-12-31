@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: '레스터링 (스캔)',
       general: '일반',
       mask: '작업 영역 클리핑',
+      module_settings: '모듈 설정',
+      module_type: '기기 모듈',
       modules: '애드온',
       path: '벡터 (윤곽)',
       performance: '성능',

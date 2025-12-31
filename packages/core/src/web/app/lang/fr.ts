@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: 'Gravure',
       general: 'Général',
       mask: 'Découpage de la zone de travail',
+      module_settings: 'Paramètres du module',
+      module_type: 'Module machine',
       modules: 'Complément',
       path: 'Contour',
       performance: 'Performance',

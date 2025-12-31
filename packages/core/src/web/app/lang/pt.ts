@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: 'Gravação (digitalização)',
       general: 'Geral',
       mask: 'Máscara de área de trabalho',
+      module_settings: 'Configurações do módulo',
+      module_type: 'Módulo da máquina',
       modules: 'Complementos',
       path: 'Vetor (Contornos)',
       performance: 'Desempenho',

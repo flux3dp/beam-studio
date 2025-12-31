@@ -4,10 +4,7 @@ import type { SettingUnitInputProps } from '@core/app/components/settings/compon
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 
 export enum SettingCategory {
-  ADOR_MODULE = 'adorModule',
   AUTOSAVE = 'autosave',
-  BB2_SETTINGS = 'bb2Settings',
-  BEAMO2_MODULE = 'beamo2Module',
   CAMERA = 'camera',
   CONNECTION = 'connection',
   EDITOR = 'editor',

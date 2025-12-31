@@ -2027,6 +2027,8 @@ const lang: ILang = {
       engraving: 'Rastering (Skanning)',
       general: 'Generelt',
       mask: 'Arbeidsområdeklipping',
+      module_settings: 'Modulinnstillinger',
+      module_type: 'Maskinmodul',
       modules: 'Tilleggsmodul',
       path: 'Vektor (Konturer)',
       performance: 'Ytelse',
