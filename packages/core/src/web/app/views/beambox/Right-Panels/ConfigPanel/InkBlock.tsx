@@ -70,7 +70,7 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
   }, [simpleMode, color.value, lang, layerModule.value]);
   const [maxValue, unit] = useMemo(() => {
     return match<LayerModuleType, [number, string | undefined]>(layerModule.value)
-      .with(LayerModule.PRINTER_4C, () => [100, '%'])
+      .with(LayerModule.PRINTER_4C, LayerModule.UV_VARNISH, LayerModule.UV_WHITE_INK, () => [100, '%'])
       .otherwise(() => [15, undefined]);
   }, [layerModule.value]);
   const openModal = useCallback(() => setShowModal(true), []);
