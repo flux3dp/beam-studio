@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Mehr',
+        ratio: 'Verhältnis',
+        resolution: 'Auflösung',
         title: 'Bildabmessungen',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Anzahl',
         credit_required: 'Erforderliche Credits',
+        editor: 'Bearbeiten',
         generate: 'Generieren',
         laser_friendly: 'Laserfreundlich',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI-Erstellung',
       },
       history: {
+        detail: 'Details',
         empty_description: 'Noch keine Generierungshistorie. Beginnen Sie mit der Erstellung!',
         error_message: 'Verlauf konnte nicht geladen werden',
         not_generated: '❌ Nicht generiert',

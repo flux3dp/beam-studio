@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'เพิ่มเติม',
+        ratio: 'อัตราส่วน',
+        resolution: 'ความละเอียด',
         title: 'ขนาดรูปภาพ',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'จำนวน',
         credit_required: 'เครดิตที่ต้องการ',
+        editor: 'ตัวแก้ไข',
         generate: 'สร้าง',
         laser_friendly: 'เหมาะสำหรับเลเซอร์',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'การสร้าง AI',
       },
       history: {
+        detail: 'รายละเอียด',
         empty_description: 'ยังไม่มีประวัติการสร้าง เริ่มสร้างเลย!',
         error_message: 'ไม่สามารถโหลดประวัติ',
         not_generated: '❌ ไม่ได้สร้าง',

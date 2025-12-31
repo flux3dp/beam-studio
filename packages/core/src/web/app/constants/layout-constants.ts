@@ -5,7 +5,7 @@ const osName = getOS();
 
 export default {
   layerListHeight: 400, // px
-  menuberHeight: osName === 'Windows' && !isWeb() ? 30 : 40, // px
+  menubarHeight: osName === 'Windows' && !isWeb() ? 30 : 40, // px
   rightPanelScrollBarWidth: osName !== 'MacOS' ? 16 : 0, // px
   rightPanelWidth: osName !== 'MacOS' ? 258 : 242, // px
   rulerWidth: 15, // px

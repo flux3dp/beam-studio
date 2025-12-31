@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Lainnya',
+        ratio: 'Rasio',
+        resolution: 'Resolusi',
         title: 'Dimensi Gambar',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Jumlah',
         credit_required: 'Kredit yang diperlukan',
+        editor: 'Penyunting',
         generate: 'Buat',
         laser_friendly: 'Ramah Laser',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'Pembuatan AI',
       },
       history: {
+        detail: 'Rincian',
         empty_description: 'Belum ada riwayat pembuatan. Mulai membuat!',
         error_message: 'Gagal memuat riwayat',
         not_generated: '❌ Tidak dibuat',

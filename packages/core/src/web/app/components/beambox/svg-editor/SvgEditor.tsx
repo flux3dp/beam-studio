@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import AiGenerate from '@core/app/components/AiGenerate';
+import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGenerate';
 import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
 import Chat from '@core/app/components/Chat';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
@@ -89,9 +90,11 @@ export const SvgEditor = (): ReactNode => {
           </>
         )}
 
+        {isMobile && drawerMode === 'ai-generate' && <MobileAiGenerate />}
+
         <Drawer
           enableResizable={false}
-          isOpen={drawerMode === 'ai-generate'}
+          isOpen={!isMobile && drawerMode === 'ai-generate'}
           setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-generate' : 'none')}
         >
           <AiGenerate />

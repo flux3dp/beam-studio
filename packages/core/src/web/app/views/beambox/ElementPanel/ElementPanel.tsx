@@ -37,7 +37,7 @@ export const ElementPanelContent = (): ReactNode => {
   const [error, setError] = useState(false);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();
-  const anchors = [0, window.innerHeight - layoutConstants.menuberHeight];
+  const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
   const inputRef = useRef<InputRef>(null);
 
   const allTypes = useMemo(() => (hasLogin ? [...MainTypes, ...NPTypes] : MainTypes), [hasLogin]);

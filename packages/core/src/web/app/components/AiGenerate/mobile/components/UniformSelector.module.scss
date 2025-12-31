@@ -1,0 +1,97 @@
+@use '../../shared-variables' as *;
+
+.selector {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $container-bg;
+}
+
+.header {
+  @include selector-header;
+}
+
+.grid {
+  display: grid;
+  gap: 12px;
+  padding: 16px;
+
+  &[data-columns='1'] {
+    grid-template-columns: 1fr;
+  }
+
+  &[data-columns='2'] {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+.card {
+  @include button-base;
+  display: flex;
+  align-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  cursor: pointer;
+
+  &.selected {
+    border-color: $primary-blue;
+    background: $selected-bg;
+
+    .label,
+    .description {
+      color: $primary-blue;
+    }
+
+    .icon-wrapper {
+      color: $primary-blue;
+    }
+  }
+}
+
+// Default: icon wrapper + label (for ratio selector)
+.card-default {
+  gap: 12px;
+
+  .icon-wrapper {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: $text-secondary;
+    flex-shrink: 0;
+  }
+
+  .label {
+    font-size: 14px;
+    font-weight: 500;
+  }
+}
+
+// Compact: centered large text (for count selector)
+.card-compact {
+  justify-content: center;
+  padding: 24px;
+
+  .label {
+    font-size: 24px;
+    font-weight: 600;
+  }
+}
+
+// Detailed: label + description in row (for size selector)
+.card-detailed {
+  gap: 24px;
+  padding: 24px;
+
+  .label {
+    font-size: 16px;
+    font-weight: 600;
+  }
+
+  .description {
+    font-size: 14px;
+    color: $text-secondary;
+    font-weight: 400;
+  }
+}

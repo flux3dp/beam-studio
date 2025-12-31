@@ -1,51 +1,10 @@
-import { DownloadOutlined, ImportOutlined } from '@ant-design/icons';
-import { Alert, Button } from 'antd';
+import { Alert } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { handleDownload } from '../../utils/handleDownload';
+import ImageCard from '../ImageCard';
 
 import styles from './index.module.scss';
-
-const ResultImage = ({
-  downloadLabel,
-  importLabel,
-  isImporting,
-  onImport,
-  url,
-}: {
-  downloadLabel: string;
-  importLabel: string;
-  isImporting: boolean;
-  onImport: (url: string) => void;
-  url: string;
-}) => (
-  <div className={styles['image-card']}>
-    <div className={styles['image-wrapper']}>
-      <img alt="Generated result" className={styles.image} src={url} />
-      <div className={styles.overlay}>
-        <Button
-          className={styles['action-button']}
-          icon={<ImportOutlined />}
-          loading={isImporting}
-          onClick={() => onImport(url)}
-          size="large"
-          type="primary"
-        >
-          {importLabel}
-        </Button>
-        <Button
-          className={styles['action-button']}
-          icon={<DownloadOutlined />}
-          onClick={() => handleDownload(url)}
-          size="large"
-        >
-          {downloadLabel}
-        </Button>
-      </div>
-    </div>
-  </div>
-);
 
 export const SuccessState = ({
   generatedImages,
@@ -80,12 +39,12 @@ export const SuccessState = ({
       )}
       <div className={styles['images-grid']}>
         {generatedImages.map((url) => (
-          <ResultImage
-            downloadLabel={t.results.download}
-            importLabel={t.results.import}
+          <ImageCard
+            aspectRatio="1:1"
             isImporting={importingUrl === url}
             key={url}
             onImport={onImport}
+            size="large"
             url={url}
           />
         ))}

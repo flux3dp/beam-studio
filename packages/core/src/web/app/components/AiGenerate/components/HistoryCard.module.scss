@@ -12,11 +12,11 @@
   }
 }
 
-.cardContent {
+.content {
   padding: 16px;
 }
 
-.title {
+.header {
   font-size: 16px;
   font-weight: 600;
   color: $text-primary;
@@ -26,59 +26,17 @@
   text-overflow: ellipsis;
 }
 
-.imageGrid {
+.grid {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 4px;
   margin-bottom: 16px;
 }
 
-.imageWrapper {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4 / 3;
-  overflow: hidden;
-  border-radius: 8px;
-  border: 1px solid $background-dark-gray;
-  background-color: $background-light-gray;
-
-  &:hover .overlay {
-    opacity: 1;
-  }
-}
-
-.image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-
-.overlay {
-  position: absolute;
-  inset: 0;
-  background: rgba(0, 0, 0, 0.7);
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  opacity: 0;
-  transition: opacity 0.2s;
-  padding: 8px;
-}
-
-.actionButton {
-  width: 100%;
-  font-size: 11px;
-  height: 28px;
-}
-
-.noPreview {
+.placeholder {
   grid-column: 1 / -1;
   aspect-ratio: 2 / 1;
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
   font-size: 14px;
@@ -89,17 +47,62 @@
 
 .footer {
   display: flex;
-  align-items: flex-end;
   justify-content: space-between;
+  align-items: flex-end;
+
+  // Mobile Variation
+  &.mobile {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 12px;
+
+    .info {
+      align-items: center;
+    }
+
+    .actions {
+      justify-content: space-between;
+      width: 100%;
+
+      :global(.ant-btn-block) {
+        width: auto;
+        flex: 1;
+      }
+    }
+
+    .btnDetail {
+      background-color: $background-light-gray;
+      color: $text-secondary;
+      border-color: $border-color;
+      padding: 4px 20px;
+
+      &:hover {
+        color: $text-primary;
+        border-color: $text-secondary;
+      }
+    }
+  }
 }
 
-.footerLeft {
+.info {
   display: flex;
   flex-direction: column;
   gap: 4px;
+
+  // Mobile horizontal alignment for info
+  .mobile & {
+    flex-direction: row;
+    gap: 8px;
+  }
 }
 
-.statusBadge {
+.actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.badge {
   :global(.ant-badge-status-dot) {
     width: 8px;
     height: 8px;
@@ -109,7 +112,6 @@
     font-weight: 500;
     margin-left: 8px;
   }
-
   &.success :global(.ant-badge-status-text) {
     color: $success-color;
   }
@@ -124,59 +126,76 @@
   line-height: 1.2;
 }
 
-.footerRight {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
-.recreateButton {
-  border-radius: 100px;
+.btnRecreate {
   font-weight: 500;
   border-color: $border-color;
-  padding-left: 20px;
-  padding-right: 20px;
-
+  padding: 4px 20px;
   &:hover {
     color: $primary-blue;
     border-color: $primary-blue;
   }
 }
 
-.dropdownButton {
-  color: $text-primary;
-  padding: 4px;
-  height: auto;
-  line-height: 1;
-  transition: transform 0s ease;
+.btnDetail {
+  transition: transform 0.2s;
 
-  &:hover {
-    background-color: rgba(0, 0, 0, 0.05);
+  // Desktop style
+  &:not(.mobile &) {
+    color: $text-primary;
+    padding: 4px;
+    height: auto;
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.05);
+    }
   }
 
   &.expanded {
+    // Only rotate icon or button depending on context
     transform: rotate(180deg);
+
+    // For mobile button, reset button rotation and rotate icon instead
+    .mobile & {
+      transform: none;
+      .iconMobile {
+        transform: rotate(180deg);
+      }
+    }
+  }
+
+  .iconMobile {
+    margin-right: 6px;
+    transition: transform 0.2s;
   }
 }
 
-.expandedInfo {
-  padding: 12px;
+.details {
+  padding: 12px 16px;
   border-top: 1px solid $border-color;
   animation: slideDown 0.2s ease-out;
+  background: #fafafa;
 }
 
-.inputList {
-  margin-bottom: 8px;
-}
-
-.inputKey {
-  font-weight: bold;
-}
-
-.chipList {
+.inputs {
   display: flex;
-  flex-wrap: wrap;
+  flex-direction: column;
+  gap: 2px;
+  margin-bottom: 8px;
+  font-size: 13px;
+}
+
+.row {
+  display: flex;
+  gap: 4px;
+  strong {
+    font-weight: 600;
+    color: $text-secondary;
+  }
+}
+
+.chips {
+  display: flex;
   gap: 8px;
+  flex-wrap: wrap;
 }
 
 .chip {
@@ -188,32 +207,15 @@
   border-radius: 6px;
   font-size: 12px;
   color: $text-primary;
-  max-width: 100%;
-}
-
-.chipIcon {
-  font-size: 14px;
-  color: $text-primary;
-}
-
-.chipText {
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 150px;
 }
 
 .error {
-  padding: 16px;
-  border-top: 1px solid $border-color;
-  animation: slideDown 0.2s ease-out;
+  padding: 8px;
   background: #fff2f0;
   border: 1px solid #ffccc7;
   border-radius: 6px;
   font-size: 12px;
   color: $error-color;
-  overflow: hidden;
-  text-overflow: ellipsis;
 }
 
 @keyframes slideDown {

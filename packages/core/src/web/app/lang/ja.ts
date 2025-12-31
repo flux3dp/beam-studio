@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'その他',
+        ratio: '比率',
+        resolution: '解像度',
         title: '画像サイズ',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: '枚数',
         credit_required: '必要クレジット',
+        editor: 'エディター',
         generate: '生成',
         laser_friendly: 'レーザーフレンドリー',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI作成',
       },
       history: {
+        detail: '詳細',
         empty_description: '生成履歴がありません。創作を始めましょう！',
         error_message: '履歴の読み込みに失敗しました',
         not_generated: '❌ 未生成',

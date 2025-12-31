@@ -5,7 +5,7 @@ const SIZE_TO_PIXELS: Record<ImageSize, number> = {
   '1K': 1024,
   '2K': 2048,
   '4K': 4096,
-};
+} as const;
 
 /**
  * Calculate actual width and height from aspect ratio and size

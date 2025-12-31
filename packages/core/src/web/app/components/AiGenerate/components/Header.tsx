@@ -1,4 +1,4 @@
-import React, { useEffect } from 'react';
+import React from 'react';
 
 import { ClockCircleOutlined, CloseOutlined, ReloadOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
@@ -10,21 +10,10 @@ import useI18n from '@core/helpers/useI18n';
 import styles from '../index.module.scss';
 import { useAiGenerateStore } from '../useAiGenerateStore';
 
-type Props = {
-  contentRef: React.RefObject<HTMLDivElement>;
-};
-
-const Header = ({ contentRef }: Props) => {
-  const lang = useI18n();
-  const t = lang.beambox.ai_generate;
+const Header = () => {
+  const t = useI18n().beambox.ai_generate;
   const { resetForm, showHistory, toggleHistory } = useAiGenerateStore();
   const { setDrawerMode } = useCanvasStore();
-
-  useEffect(() => {
-    requestAnimationFrame(() => {
-      contentRef.current?.scrollTo({ behavior: 'smooth', top: 0 });
-    });
-  }, [contentRef, showHistory]);
 
   return (
     <div className={styles.header}>

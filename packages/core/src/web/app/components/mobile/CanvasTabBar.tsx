@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
+import { match, P } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
@@ -39,42 +40,27 @@ interface TabItem {
 const CanvasTabBar = (): React.ReactNode => {
   const isMobile = useIsMobile();
   const lang = useI18n();
-
-  const mouseMode = useCanvasStore((state) => state.mouseMode);
+  const { mouseMode, toggleDrawerMode } = useCanvasStore();
   const { isDrawing, isStarting } = useCameraPreviewStore();
   const [activeKey, setActiveKey] = useState('none');
 
   useEffect(() => {
-    if (['pre_preview', 'preview'].includes(mouseMode)) {
-      setActiveKey('camera');
-    } else if (['path', 'pathedit'].includes(mouseMode)) {
-      setActiveKey('pen');
-    } else {
-      setActiveKey('none');
-    }
-  }, [mouseMode]);
+    const key = match(mouseMode)
+      .with(P.union('pre_preview', 'preview'), () => 'camera')
+      .with(P.union('path', 'pathedit'), () => 'pen')
+      .otherwise(() => 'none');
 
-  const resetActiveKey = useCallback(() => {
-    setActiveKey('none');
-  }, []);
+    setActiveKey(key);
+  }, [mouseMode]);
 
   useEffect(() => {
     const handler = (val: boolean) => {
-      setActiveKey((cur) => {
-        if (val) {
-          if (cur !== 'layer') {
-            return 'layer';
-          }
-
-          return cur;
-        }
-
-        if (cur === 'layer') {
-          return 'none';
-        }
-
-        return cur;
-      });
+      setActiveKey((cur) =>
+        match<[boolean, string]>([val, cur])
+          .with([true, P._], () => 'layer')
+          .with([P._, 'layer'], () => 'none')
+          .otherwise(() => cur),
+      );
     };
 
     rightPanelEventEmitter.on('DISPLAY_LAYER', handler);
@@ -84,136 +70,95 @@ const CanvasTabBar = (): React.ReactNode => {
     };
   }, []);
 
-  if (!isMobile) {
-    return null;
-  }
-
-  const tabs: TabItem[] = [
-    {
-      disabled: isDrawing || isStarting,
-      icon: (
-        <TopBarIcons.Camera
-          onClick={() => {
-            if (activeKey === 'camera') setMouseMode('select');
-          }}
-        />
-      ),
-      key: 'camera',
-      title: lang.beambox.left_panel.label.choose_camera,
-    },
-    {
-      icon: <TabBarIcons.Photo />,
-      key: 'image',
-      title: lang.beambox.left_panel.label.photo,
-    },
-    {
-      icon: <TabBarIcons.Shape />,
-      key: 'shape',
-      title: lang.beambox.left_panel.label.elements,
-    },
-    {
-      icon: <TabBarIcons.Text />,
-      key: 'text',
-      title: lang.beambox.left_panel.label.text,
-    },
-    {
-      icon: (
-        <TabBarIcons.Layers
-          onClick={() => {
-            if (activeKey === 'layer') {
-              RightPanelController.setDisplayLayer(false);
-            }
-          }}
-        />
-      ),
-      key: 'layer',
-      title: lang.topbar.menu.layer_setting,
-    },
-    {
-      icon: <TabBarIcons.Draw />,
-      key: 'pen',
-      title: lang.beambox.left_panel.label.pen,
-    },
-    {
-      icon: <TabBarIcons.Boxgen />,
-      key: 'boxgen',
-      title: lang.beambox.left_panel.label.boxgen,
-    },
-    {
-      icon: <TabBarIcons.Document />,
-      key: 'document',
-      title: lang.topbar.menu.document_setting_short,
-    },
-    {
-      icon: <LeftPanelIcons.QRCode />,
-      key: 'qrcode',
-      title: lang.beambox.left_panel.label.qr_code,
-    },
-    {
-      icon: <LeftPanelIcons.PassThrough />,
-      key: 'passthrough',
-      title: lang.beambox.left_panel.label.pass_through,
-    },
-    {
-      icon: <div className={styles.sep} />,
-      key: '',
-      title: '',
-    },
-    {
-      icon: <TopBarIcons.Undo />,
-      key: 'undo',
-      title: lang.topbar.menu.undo,
-    },
-    {
-      icon: <TopBarIcons.Redo />,
-      key: 'redo',
-      title: lang.topbar.menu.redo,
-    },
-  ];
+  const resetActiveKey = useCallback(() => setActiveKey('none'), []);
 
   const handleTabClick = async (key: string) => {
     console.log('tab click', key);
     setMouseMode('select');
+    RightPanelController.setDisplayLayer(key === 'layer');
 
-    if (key === 'layer') {
-      RightPanelController.setDisplayLayer(true);
-    } else {
-      RightPanelController.setDisplayLayer(false);
-    }
+    await match(key)
+      .with('camera', async () => {
+        if (!['pre_preview', 'preview'].includes(mouseMode)) {
+          const res = await handlePreviewClick();
 
-    if (key === 'camera') {
-      if (!['pre_preview', 'preview'].includes(mouseMode)) {
-        const res = await handlePreviewClick();
-
-        if (!res) setActiveKey('none');
-      }
-    } else if (key === 'image') {
-      FnWrapper.importImage();
-      setTimeout(resetActiveKey, 300);
-    } else if (key === 'text') {
-      events.once('addText', (newText: SVGTextElement) => {
-        workareaManager.zoom((window.innerWidth / newText.getBBox().width) * 0.8);
-        newText.scrollIntoView({ block: 'center', inline: 'center' });
+          if (!res) setActiveKey('none');
+        }
+      })
+      .with('document', () => {
+        dialogCaller.showDocumentSettings();
+        setTimeout(resetActiveKey, 300);
+      })
+      .with('image', () => {
+        FnWrapper.importImage();
+        setTimeout(resetActiveKey, 300);
+      })
+      .with('passthrough', () => showPassThrough(resetActiveKey))
+      .with('pen', () => setMouseMode('path'))
+      .with(P.union('redo', 'undo'), (action) => {
+        historyUtils[action]();
+        setTimeout(resetActiveKey, 300);
+      })
+      .with('shape', () => dialogCaller.showElementPanel(resetActiveKey))
+      .with('ai-generate', () => {
+        toggleDrawerMode('ai-generate');
         resetActiveKey();
-      });
-      createNewText(100, 100, { addToHistory: true, isToSelect: true, text: 'Text' });
-    } else if (key === 'pen') {
-      setMouseMode('path');
-    } else if (key === 'undo') {
-      historyUtils.undo();
-      setTimeout(resetActiveKey, 300);
-    } else if (key === 'redo') {
-      historyUtils.redo();
-      setTimeout(resetActiveKey, 300);
-    } else if (key === 'shape') {
-      dialogCaller.showElementPanel(resetActiveKey);
-    } else if (key === 'document') {
-      dialogCaller.showDocumentSettings();
-      setTimeout(resetActiveKey, 300);
-    } else if (key === 'passthrough') {
-      showPassThrough(resetActiveKey);
-    }
+      })
+      .with('text', () => {
+        events.once('addText', (newText: SVGTextElement) => {
+          workareaManager.zoom((window.innerWidth / newText.getBBox().width) * 0.8);
+          newText.scrollIntoView({ block: 'center', inline: 'center' });
+          resetActiveKey();
+        });
+        createNewText(100, 100, { addToHistory: true, isToSelect: true, text: 'Text' });
+      })
+      .otherwise(() => {});
   };
+
+  const tabs: TabItem[] = useMemo(
+    () => [
+      {
+        disabled: isDrawing || isStarting,
+        icon: (
+          <TopBarIcons.Camera
+            onClick={() => {
+              if (activeKey === 'camera') setMouseMode('select');
+            }}
+          />
+        ),
+        key: 'camera',
+        title: lang.beambox.left_panel.label.choose_camera,
+      },
+      { icon: <TabBarIcons.Photo />, key: 'image', title: lang.beambox.left_panel.label.photo },
+      { icon: <TabBarIcons.Shape />, key: 'shape', title: lang.beambox.left_panel.label.elements },
+      { icon: <TabBarIcons.Text />, key: 'text', title: lang.beambox.left_panel.label.text },
+      { icon: <LeftPanelIcons.AiGenerate />, key: 'ai-generate', title: lang.beambox.ai_generate.header.title },
+      {
+        icon: (
+          <TabBarIcons.Layers
+            onClick={() => {
+              if (activeKey === 'layer') {
+                RightPanelController.setDisplayLayer(false);
+              }
+            }}
+          />
+        ),
+        key: 'layer',
+        title: lang.topbar.menu.layer_setting,
+      },
+      { icon: <TabBarIcons.Draw />, key: 'pen', title: lang.beambox.left_panel.label.pen },
+      { icon: <TabBarIcons.Boxgen />, key: 'boxgen', title: lang.beambox.left_panel.label.boxgen },
+      { icon: <TabBarIcons.Document />, key: 'document', title: lang.topbar.menu.document_setting_short },
+      { icon: <LeftPanelIcons.QRCode />, key: 'qrcode', title: lang.beambox.left_panel.label.qr_code },
+      { icon: <LeftPanelIcons.PassThrough />, key: 'passthrough', title: lang.beambox.left_panel.label.pass_through },
+      { icon: <div className={styles.sep} />, key: '', title: '' },
+      { icon: <TopBarIcons.Undo />, key: 'undo', title: lang.topbar.menu.undo },
+      { icon: <TopBarIcons.Redo />, key: 'redo', title: lang.topbar.menu.redo },
+    ],
+    [activeKey, isDrawing, isStarting, lang],
+  );
+
+  if (!isMobile) return null;
 
   return (
     <div className={styles.container} id="mobile-tab-bar" onClick={() => ObjectPanelController.updateActiveKey(null)}>
@@ -232,7 +177,7 @@ const CanvasTabBar = (): React.ReactNode => {
                 item.badge ? (
                   <Badge
                     className={styles.badge}
-                    count={item.badge ? <FluxIcons.FluxPlus className={styles['flux-plus']} /> : 0}
+                    count={<FluxIcons.FluxPlus className={styles['flux-plus']} />}
                     offset={[-4, 6]}
                   >
                     {item.icon}

@@ -15,12 +15,10 @@ import style from './index.module.scss';
 export const LoadingState = () => {
   const lang = useI18n();
   const { historyItems } = useAiGenerateStore(useShallow(pick(['historyItems'])));
-
   const startTime = useMemo(
     () => (historyItems.length > 0 ? dayjs(historyItems[0].created_at).valueOf() : Date.now()),
     [historyItems],
   );
-
   const tipIndex = useTipIndex(startTime);
 
   return (

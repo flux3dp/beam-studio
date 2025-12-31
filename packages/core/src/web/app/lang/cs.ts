@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Více',
+        ratio: 'Poměr',
+        resolution: 'Rozlišení',
         title: 'Rozměry obrázku',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Počet',
         credit_required: 'Požadované kredity',
+        editor: 'Editor',
         generate: 'Generovat',
         laser_friendly: 'Vhodné pro laser',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI tvorba',
       },
       history: {
+        detail: 'Podrobnosti',
         empty_description: 'Zatím žádná historie generování. Začněte tvořit!',
         error_message: 'Nepodařilo se načíst historii',
         not_generated: '❌ Negenerováno',

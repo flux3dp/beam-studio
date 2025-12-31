@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: '更多',
+        ratio: '比例',
+        resolution: '分辨率',
         title: '图片尺寸',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: '数量',
         credit_required: '所需点数',
+        editor: '编辑器',
         generate: '生成',
         laser_friendly: '适合激光',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI 创作',
       },
       history: {
+        detail: '详细信息',
         empty_description: '暂无生成记录，开始创作吧！',
         error_message: '历史记录加载失败',
         not_generated: '❌ 未生成',

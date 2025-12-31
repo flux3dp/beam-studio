@@ -1,62 +1,55 @@
 import React, { memo, useCallback, useMemo, useState } from 'react';
 
-import {
-  DownloadOutlined,
-  DownOutlined,
-  ImportOutlined,
-  LayoutOutlined,
-  SafetyCertificateOutlined,
-} from '@ant-design/icons';
-import { Badge, Button, Card } from 'antd';
+import { DownOutlined, LayoutOutlined, SafetyCertificateOutlined } from '@ant-design/icons';
+import { Badge, Button, Card, ConfigProvider } from 'antd';
 import classNames from 'classnames';
 import dayjs from 'dayjs';
 import { match } from 'ts-pattern';
 
 import { importAiImage } from '@core/app/svgedit/operations/import/importAiImage';
 import type { AiImageGenerationData } from '@core/helpers/api/ai-image';
+import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
+import { LASER_FRIENDLY_VALUE } from '../constants';
 import { useAiConfigQuery } from '../hooks/useAiConfigQuery';
 import { useTipIndex } from '../hooks/useTipIndex';
-import { laserFriendlyValue } from '../types';
 import { getStyleConfig } from '../utils/categories';
 import { getSizePixels } from '../utils/dimensions';
-import { handleDownload } from '../utils/handleDownload';
 
 import styles from './HistoryCard.module.scss';
+import ImageCard from './ImageCard';
 
 interface HistoryCardProps {
   item: AiImageGenerationData;
   onImport: (item: AiImageGenerationData) => void;
 }
 
-const filterInputs = (inputs: Record<string, string>) =>
-  Object.entries(inputs).filter(
-    ([key, value]) =>
-      value.trim() !== '' &&
-      //
-      key !== 'image_counts' &&
-      !(key === 'color' && value === laserFriendlyValue),
-  );
-
-const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
+const HistoryCard = memo(({ item, onImport }: HistoryCardProps) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
   const [isExpanded, setIsExpanded] = useState(false);
   const [importingUrl, setImportingUrl] = useState<null | string>(null);
-  const previewImages = item.result_urls;
+  const {
+    data: { styles: aiStyles },
+  } = useAiConfigQuery();
+  const tipIndex = useTipIndex(dayjs(item.created_at).valueOf());
   const formattedDate = useMemo(() => dayjs(item.created_at).format('YYYY/MM/DD HH:mm'), [item.created_at]);
-  const { data: aiConfig } = useAiConfigQuery();
-  const isLaserFriendly = useMemo(
-    () => item.prompt_data.inputs?.color === laserFriendlyValue,
+  const style = useMemo(() => getStyleConfig(item.prompt_data['style'], aiStyles), [item.prompt_data, aiStyles]);
+  const isLaserFriendly = item.prompt_data.inputs?.color === LASER_FRIENDLY_VALUE;
+  const onMobile = useMemo(() => isMobile(), []);
+  const displayInputs = useMemo(
+    () =>
+      Object.entries(item.prompt_data.inputs || {}).filter(
+        ([key, value]) =>
+          value.trim() !== '' && key !== 'image_counts' && !(key === 'color' && value === LASER_FRIENDLY_VALUE),
+      ),
     [item.prompt_data.inputs],
   );
-  const displayInputs = useMemo(() => filterInputs(item.prompt_data.inputs), [item.prompt_data.inputs]);
-  const { inputFields } = getStyleConfig(item.prompt_data['style'], aiConfig?.styles);
-  const tipIndex = useTipIndex(dayjs(item.created_at).valueOf());
 
-  const handleImageImport = useCallback(async (url: string) => {
+  const handleImportImage = useCallback(async (url: string) => {
     setImportingUrl(url);
+
     try {
       await importAiImage(url);
     } finally {
@@ -64,115 +57,108 @@ const UnmemorizedHistoryCard = ({ item, onImport }: HistoryCardProps) => {
     }
   }, []);
 
-  const renderStatusBadge = () =>
-    match(item.state)
-      .with('success', () => (
-        <Badge
-          className={classNames(styles.statusBadge, styles.success)}
-          status="success"
-          text={t.history.status_success}
-        />
-      ))
-      .with('fail', () => (
-        <Badge className={classNames(styles.statusBadge, styles.fail)} status="error" text={t.history.status_failed} />
-      ))
-      .otherwise(() => <Badge className={styles.statusBadge} status="processing" text={t.history.status_generating} />);
+  const statusBadge = match(item.state)
+    .with('success', () => (
+      <Badge className={classNames(styles.badge, styles.success)} status="success" text={t.history.status_success} />
+    ))
+    .with('fail', () => (
+      <Badge className={classNames(styles.badge, styles.fail)} status="error" text={t.history.status_failed} />
+    ))
+    .otherwise(() => <Badge className={styles.badge} status="processing" text={t.history.status_generating} />);
+
+  const LayoutWrapper = onMobile ? ConfigProvider : React.Fragment;
+  const layoutProps = onMobile ? { theme: { components: { Button: { borderRadius: 10, borderRadiusLG: 10 } } } } : {};
 
   return (
     <Card bordered={false} className={styles.card} styles={{ body: { padding: 0 } }}>
-      <div className={styles.cardContent}>
-        <div className={styles.title} title={item.prompt_data['style']}>
-          {getStyleConfig(item.prompt_data['style'], aiConfig?.styles).displayName || t.style.customize}
+      <div className={styles.content}>
+        <div className={styles.header} title={item.prompt_data['style']}>
+          {style.displayName || t.style.customize}
         </div>
 
-        <div className={styles.imageGrid}>
-          {previewImages?.length ? (
-            previewImages.map((url, index) => (
-              <div className={styles.imageWrapper} key={index}>
-                <img alt={`Generated ${index + 1}`} className={styles.image} src={url} />
-                <div className={styles.overlay}>
-                  <Button
-                    className={styles.actionButton}
-                    icon={<ImportOutlined />}
-                    loading={importingUrl === url}
-                    onClick={() => handleImageImport(url)}
-                    size="small"
-                    type="primary"
-                  >
-                    {t.results.import}
-                  </Button>
-                  <Button
-                    className={styles.actionButton}
-                    icon={<DownloadOutlined />}
-                    onClick={() => handleDownload(url)}
-                    size="small"
-                  >
-                    {t.results.download}
-                  </Button>
-                </div>
-              </div>
+        <div className={styles.grid}>
+          {item.result_urls?.length ? (
+            item.result_urls.map((url) => (
+              <ImageCard
+                aspectRatio="4:3"
+                isImporting={importingUrl === url}
+                key={url}
+                onImport={handleImportImage}
+                size="small"
+                url={url}
+              />
             ))
           ) : (
-            <div className={styles.noPreview}>
+            <div className={styles.placeholder}>
               {item.state === 'fail' ? t.history.not_generated : t.loading[`tip_${tipIndex}`]}
             </div>
           )}
         </div>
 
-        <div className={styles.footer}>
-          <div className={styles.footerLeft}>
-            {renderStatusBadge()}
-            <span className={styles.date}>{formattedDate}</span>
+        <LayoutWrapper {...layoutProps}>
+          <div className={classNames(styles.footer, { [styles.mobile]: onMobile })}>
+            <div className={styles.info}>
+              {statusBadge}
+              <span className={styles.date}>{formattedDate}</span>
+            </div>
+            <div className={styles.actions}>
+              <Button block={onMobile} className={styles.btnRecreate} onClick={() => onImport(item)}>
+                {t.history.recreate}
+              </Button>
+              <Button
+                block={onMobile}
+                className={classNames(styles.btnDetail, { [styles.expanded]: isExpanded })}
+                icon={!onMobile && <DownOutlined />}
+                onClick={() => setIsExpanded(!isExpanded)}
+                size={onMobile ? 'middle' : 'small'}
+                type={onMobile ? 'default' : 'text'}
+              >
+                {onMobile ? (
+                  <>
+                    <DownOutlined className={styles.iconMobile} />
+                    {t.history.detail}
+                  </>
+                ) : null}
+              </Button>
+            </div>
           </div>
-          <div className={styles.footerRight}>
-            <Button className={styles.recreateButton} onClick={() => onImport(item)}>
-              {t.history.recreate}
-            </Button>
-            <Button
-              className={classNames(styles.dropdownButton, { [styles.expanded]: isExpanded })}
-              icon={<DownOutlined />}
-              onClick={() => setIsExpanded(!isExpanded)}
-              size="small"
-              type="text"
-            />
-          </div>
-        </div>
+        </LayoutWrapper>
       </div>
 
-      {isExpanded &&
-        (item.state === 'fail' ? (
-          <div className={styles.error} title={item.fail_msg || 'Unknown error'}>
-            Error: {item.fail_msg}
-          </div>
-        ) : (
-          <div className={styles.expandedInfo}>
-            <div className={styles.inputList}>
-              {displayInputs.map(([key, value]) => (
-                <div className={styles.inputRow} key={key}>
-                  <span className={styles.inputKey}>{inputFields.find((field) => field.key === key)?.label}: </span>
-                  <span className={styles.inputValue}>{value}</span>
-                </div>
-              ))}
+      {isExpanded && (
+        <div className={styles.details}>
+          {item.state === 'fail' ? (
+            <div className={styles.error} title={item.fail_msg || ''}>
+              Error: {item.fail_msg}
             </div>
-            <div className={styles.chipList}>
-              <div className={styles.chip}>
-                <LayoutOutlined className={styles.chipIcon} />
-                <span>{getSizePixels({ aspectRatio: item.aspect_ratio, size: item.size })}</span>
+          ) : (
+            <>
+              <div className={styles.inputs}>
+                {displayInputs.map(([key, value]) => (
+                  <div className={styles.row} key={key}>
+                    <strong>{style.inputFields?.find((f) => f.key === key)?.label || key}: </strong>
+                    <span>{value}</span>
+                  </div>
+                ))}
               </div>
-
-              {isLaserFriendly && (
+              <div className={styles.chips}>
                 <div className={styles.chip}>
-                  <SafetyCertificateOutlined className={styles.chipIcon} />
-                  <span>{t.form.laser_friendly}</span>
+                  <LayoutOutlined />
+                  {getSizePixels({ aspectRatio: item.aspect_ratio, size: item.size })}
                 </div>
-              )}
-            </div>
-          </div>
-        ))}
+                {isLaserFriendly && (
+                  <div className={styles.chip}>
+                    <SafetyCertificateOutlined />
+                    {t.form.laser_friendly}
+                  </div>
+                )}
+              </div>
+            </>
+          )}
+        </div>
+      )}
     </Card>
   );
-};
-
-const HistoryCard = memo(UnmemorizedHistoryCard);
+});
 
 export default HistoryCard;

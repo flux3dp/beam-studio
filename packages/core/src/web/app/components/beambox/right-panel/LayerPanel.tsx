@@ -540,7 +540,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
         {isMobile() ? (
           <>
             <FloatingPanel
-              anchors={[0, 328, window.innerHeight * 0.6, window.innerHeight - layoutConstants.menuberHeight]}
+              anchors={[0, 328, window.innerHeight * 0.6, window.innerHeight - layoutConstants.menubarHeight]}
               className={styles['floating-panel']}
               fixedContent={<AddLayerButton setSelectedLayers={setSelectedLayers} />}
               forceClose={hide}
