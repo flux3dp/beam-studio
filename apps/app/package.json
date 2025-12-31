@@ -84,7 +84,11 @@
     "generateUpdatesFilesForAllChannels": true,
     "extraResources": [
       "backend",
-      "utils"
+      "utils",
+      {
+        "from": "build/launcher-script.sh",
+        "to": "launcher-script.sh"
+      }
     ],
     "files": [
       "!**/*.{jsx,scss}"
@@ -96,6 +100,7 @@
         "path": "/${os}${env.PUBLISH_PATH}${env.PUBLISH_SUFFIX}"
       }
     ],
+    "afterPack": "build/afterPack.js",
     "mac": {
       "category": "com.flux3dp.beam-studio-flux",
       "hardenedRuntime": true,
