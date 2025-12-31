@@ -11,7 +11,6 @@ import {
   ScanOutlined,
   SettingOutlined,
   ShareAltOutlined,
-  SyncOutlined,
   WifiOutlined,
 } from '@ant-design/icons';
 
@@ -112,12 +111,6 @@ export const getCategoryConfigs = (
       key: SettingCategory.PRIVACY,
       label: lang.settings.groups.privacy,
       visible: alwaysVisible,
-    },
-    {
-      icon: <SyncOutlined />,
-      key: SettingCategory.UPDATE,
-      label: lang.settings.groups.update,
-      visible: isNotWeb,
     },
     {
       icon: <ExperimentOutlined />,

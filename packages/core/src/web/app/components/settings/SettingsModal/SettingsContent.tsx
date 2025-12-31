@@ -18,7 +18,6 @@ import Module from '../Module';
 import Path from '../Path';
 import Privacy from '../Privacy';
 import TextToPath from '../TextToPath';
-import Update from '../Update';
 
 import styles from './SettingsModal.module.scss';
 import type { CommonSettingProps, SettingCategoryConfig } from './types';
@@ -44,7 +43,7 @@ const SettingsContent = ({ category, categoryConfig, commonProps }: SettingsCont
   const renderSection = (): React.ReactNode =>
     match(category)
       .with(SettingCategory.GENERAL, () => (
-        <General changeActiveLang={changeActiveLang} supportedLangs={supportedLangs} />
+        <General changeActiveLang={changeActiveLang} supportedLangs={supportedLangs} wrapped />
       ))
       .with(SettingCategory.CONNECTION, () => <Connection />)
       .with(SettingCategory.AUTOSAVE, () => (
@@ -65,16 +64,17 @@ const SettingsContent = ({ category, categoryConfig, commonProps }: SettingsCont
       .with(SettingCategory.BEAMO2_MODULE, () => <Beamo2Module />)
       .with(SettingCategory.BB2_SETTINGS, () => <BB2Settings />)
       .with(SettingCategory.PRIVACY, () => <Privacy />)
-      .with(SettingCategory.UPDATE, () => <Update />)
       .with(SettingCategory.EXPERIMENTAL, () => <Experimental />)
       .exhaustive();
+
+  const isGeneral = category === SettingCategory.GENERAL;
 
   return (
     <div className={styles.content}>
       {categoryConfig && <div className={styles['section-title']}>{categoryConfig.label}</div>}
       <ConfigProvider theme={{ components: { Form: { itemMarginBottom: 0, labelFontSize: 14 } } }}>
         <Form colon={false} labelAlign="left" labelWrap wrapperCol={{ flex: 1 }}>
-          <SettingsCard>{renderSection()}</SettingsCard>
+          {isGeneral ? renderSection() : <SettingsCard>{renderSection()}</SettingsCard>}
         </Form>
       </ConfigProvider>
     </div>

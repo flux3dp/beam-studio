@@ -21,7 +21,6 @@ import Path from '@core/app/components/settings/Path';
 import Privacy from '@core/app/components/settings/Privacy';
 import styles from '@core/app/components/settings/Settings.module.scss';
 import TextToPath from '@core/app/components/settings/TextToPath';
-import Update from '@core/app/components/settings/Update';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -91,9 +90,6 @@ function Settings(): React.JSX.Element {
           <Form colon={false} labelAlign="left" labelWrap wrapperCol={{ flex: 1 }}>
             <div className={styles.subtitle}>{lang.settings.groups.general}</div>
             <General changeActiveLang={changeActiveLang} supportedLangs={supported_langs} />
-
-            <div className={styles.subtitle}>{lang.settings.groups.update}</div>
-            <Update />
 
             <div className={styles.subtitle}>
               {lang.settings.groups.connection}

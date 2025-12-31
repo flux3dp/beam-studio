@@ -18,7 +18,6 @@ export enum SettingCategory {
   PATH = 'path',
   PRIVACY = 'privacy',
   TEXT_TO_PATH = 'textToPath',
-  UPDATE = 'update',
 }
 
 export interface SettingCategoryConfig {

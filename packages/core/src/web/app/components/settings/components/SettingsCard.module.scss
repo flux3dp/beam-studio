@@ -2,8 +2,11 @@
   background: #ffffff;
   border-radius: 12px;
   border: 1px solid #e8e8e8;
-  padding: 20px;
+  padding: 12px 20px;
   margin-bottom: 16px;
+  box-shadow:
+    0 1px 3px 0 rgb(0 0 0 / 0.1),
+    0 1px 2px -1px rgb(0 0 0 / 0.1);
 
   &:last-child {
     margin-bottom: 0;
