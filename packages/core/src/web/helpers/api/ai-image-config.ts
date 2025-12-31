@@ -71,6 +71,8 @@ export interface Style extends StyleWithoutInputFields {
   inputFields: InputField[];
 }
 
+export type AiConfigData = { categories: Category[]; styles: Style[] };
+
 const API_BASE = `${FLUXID_HOST}/api/ai-image`;
 const FALLBACK_IMAGE = 'https://s3.ap-northeast-1.amazonaws.com/flux-id/ai-styles/customize/en-us.png';
 
@@ -131,7 +133,7 @@ async function fetchConfig<T>(endpoint: string, params: Record<string, any> = {}
 const fetchStyles = (params = {}) => fetchConfig<RawStyle>('styles', params);
 const fetchCategories = (params = {}) => fetchConfig<RawCategory>('categories', params);
 
-export const fetchAllAiConfig = async () => {
+export const fetchAllAiConfig = async (): Promise<AiConfigData | { error: string }> => {
   const [stylesData, categoriesData] = await Promise.all([fetchStyles(), fetchCategories()]);
 
   if ('error' in stylesData) return stylesData;

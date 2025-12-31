@@ -1,38 +1,55 @@
 @use '../shared-variables' as *;
 
+.container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  position: relative;
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 20px;
+  flex-shrink: 0;
+}
+
 .title {
-  margin: 0 0 20px 0;
   font-size: 16px;
   font-weight: 600;
   color: $text-primary;
-  display: flex;
-  align-items: center;
 }
 
 .loading {
   display: flex;
-  flex-direction: column;
   align-items: center;
   justify-content: center;
-  min-height: 300px;
-  gap: 16px;
+  min-height: 200px;
 }
 
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
   gap: 16px;
-  margin-bottom: 20px;
+  padding-bottom: 32px;
+
+  // Allow grid to take available space
+  flex: 1;
+
+  @media (max-width: 600px) {
+    grid-template-columns: 1fr;
+  }
 }
 
 .info-banner {
-  position: sticky; // This makes it stick to the bottom
+  position: sticky;
   bottom: 0;
-  z-index: 10; // Ensure it floats above history items
+  z-index: 10;
 
   margin-top: auto;
   padding: 12px 16px;
-  background-color: #8ec8ff; // Matches the light blue in your image
+  background-color: #8ec8ff;
   border-radius: 8px;
 
   color: #ffffff;
@@ -41,6 +58,9 @@
   text-align: center;
   line-height: 1.4;
 
-  // Optional: add a slight shadow to separate it from content behind it
   box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.05);
+
+  @media (max-width: 600px) {
+    bottom: 20px;
+  }
 }

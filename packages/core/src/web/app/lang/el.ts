@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Περισσότερα',
+        ratio: 'Αναλογία',
+        resolution: 'Ανάλυση',
         title: 'Διαστάσεις εικόνας',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Αριθμός',
         credit_required: 'Απαιτούμενα πιστωτικά μόρια',
+        editor: 'Επεξεργαστής',
         generate: 'Δημιουργία',
         laser_friendly: 'Φιλικό προς λέιζερ',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI Δημιουργία',
       },
       history: {
+        detail: 'Λεπτομέρειες',
         empty_description: 'Δεν υπάρχει ακόμα ιστορικό δημιουργίας. Ξεκινήστε να δημιουργείτε!',
         error_message: 'Αποτυχία φόρτωσης ιστορικού',
         not_generated: '❌ Δεν δημιουργήθηκε',

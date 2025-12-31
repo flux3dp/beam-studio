@@ -64,6 +64,8 @@ describe('AiGenerate', () => {
     jest.clearAllMocks();
     useAiGenerateStore.getState().resetForm();
     (getCurrentUser as jest.Mock).mockReturnValue(MOCK_USER);
+    // Set user in store since store initializes before mock is ready
+    useAiGenerateStore.setState({ user: MOCK_USER });
     (createAiImageTask as jest.Mock).mockResolvedValue({ uuid: '123' });
     (pollTaskUntilComplete as jest.Mock).mockResolvedValue({ imageUrls: ['url'], success: true });
     (useAiConfigQuery as jest.Mock).mockReturnValue({
@@ -77,7 +79,7 @@ describe('AiGenerate', () => {
       ['AI Create', '.title'],
       ['Customize', '.style-selection-button'],
       ['Choose Style', '.section-title'],
-      ['Laser-Friendly', '.toggle span'],
+      ['Laser-Friendly', '.toggle h3'],
     ])('renders text "%s"', (text, selector) => {
       const { container } = render(<AiGenerate />);
 

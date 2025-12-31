@@ -35,7 +35,6 @@ const RatioButton = ({
   label,
   onClick,
 }: RatioButtonProps) => {
-  // aspectRatio is now the direct value (e.g., '3:4' for portrait)
   const iconClass = isMoreTrigger ? styles['ratio-more'] : styles[`ratio-${aspectRatio.replace(':', '-')}`];
   const Container = isMenu ? 'div' : Button;
   const wrapperClass = isMenu ? styles['menu-item'] : styles['dimension-button'];
@@ -44,7 +43,7 @@ const RatioButton = ({
   return (
     <Container className={classNames(wrapperClass, { [styles.active]: isActive })} onClick={onClick}>
       <div className={iconWrapperClass}>
-        <div className={classNames(styles['ratio-box'], iconClass)} />
+        <div className={iconClass} />
       </div>
       <span>{label}</span>
     </Container>
@@ -54,7 +53,6 @@ const RatioButton = ({
 const DimensionSelector = ({ dimensions }: DimensionSelectorProps) => {
   const lang = useI18n();
   const t = lang.beambox.ai_generate;
-
   const {
     buttonRef,
     closeMenu,
@@ -65,12 +63,8 @@ const DimensionSelector = ({ dimensions }: DimensionSelectorProps) => {
     menuPosition,
     showMenu,
   } = useFloatingMenu();
-
   const updateAspectRatio = (aspectRatio: AspectRatio) =>
-    useAiGenerateStore.setState((s) => ({
-      dimensions: { ...s.dimensions, aspectRatio },
-    }));
-
+    useAiGenerateStore.setState((s) => ({ dimensions: { ...s.dimensions, aspectRatio } }));
   const isSelected = (r: { aspectRatio: string }) => dimensions.aspectRatio === r.aspectRatio;
   const isAnyExtraSelected = ADDITIONAL_RATIOS.some(isSelected);
 

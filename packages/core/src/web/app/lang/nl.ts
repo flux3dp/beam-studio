@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Meer',
+        ratio: 'Verhouding',
+        resolution: 'Resolutie',
         title: 'Afbeeldingsafmetingen',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Aantal',
         credit_required: 'Benodigde credits',
+        editor: 'Bewerken',
         generate: 'Genereren',
         laser_friendly: 'Laservriendelijk',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'AI-creatie',
       },
       history: {
+        detail: 'Details',
         empty_description: 'Nog geen generatiegeschiedenis. Begin met creëren!',
         error_message: 'Kan geschiedenis niet laden',
         not_generated: '❌ Niet gegenereerd',

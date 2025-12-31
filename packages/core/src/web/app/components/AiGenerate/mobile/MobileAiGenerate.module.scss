@@ -1,0 +1,156 @@
+@use '../shared-variables' as *;
+
+// --- Main Panel ---
+
+.panel [class*='scroll-content'] {
+  overflow-y: auto;
+  margin-bottom: 54px;
+  padding-bottom: 0;
+}
+
+.header {
+  padding: 0 12px;
+  .tabs {
+    width: 100%;
+  }
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+
+  &.with-footer {
+    padding-bottom: 140px;
+  }
+}
+
+.section {
+  margin-bottom: 24px;
+  &:last-child {
+    margin-bottom: 0;
+  }
+}
+
+.section-row {
+  display: flex;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.section-half {
+  flex: 1;
+  min-width: 0; // Prevent flex items from overflowing
+}
+
+.section-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+
+  .section-title {
+    @include section-title;
+    margin-bottom: 0;
+  }
+
+  .reset-button {
+    color: $text-secondary;
+    padding: 4px 8px;
+    height: auto;
+  }
+}
+
+.section-title {
+  @include section-title;
+}
+
+// --- Style Button ---
+
+.style-selection-button {
+  height: auto;
+  padding: 12px;
+  text-align: left;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .style-img {
+    width: 64px;
+    height: 48px;
+    object-fit: cover;
+    border-radius: 6px;
+    flex-shrink: 0;
+  }
+
+  .button-content {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex: 1;
+  }
+
+  .button-label {
+    font-size: 15px;
+    font-weight: 500;
+  }
+}
+
+// --- Generic Selection Buttons ---
+
+.section-button {
+  height: auto;
+  padding: 16px 20px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .button-content {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 500;
+  }
+
+  .label {
+    line-height: 24px;
+  }
+
+  .icon-wrapper {
+    display: flex;
+    align-items: center;
+  }
+}
+
+// --- Toggles & Footer ---
+
+.toggle {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 15px;
+}
+
+.footer {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  padding: 16px;
+  background: $container-bg;
+  border-top: 1px solid $border-color;
+  margin-bottom: 54px;
+  // higher than antd loading spinner
+  z-index: 1001;
+}
+
+// --- Popups ---
+
+.popup {
+  z-index: 1002 !important;
+}
+
+.popup-body {
+  border-radius: 16px 16px 0 0;
+  overflow: hidden;
+}

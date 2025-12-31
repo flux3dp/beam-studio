@@ -49,13 +49,13 @@ describe('useAiGenerateStore', () => {
     });
 
     it('resets form to defaults', () => {
-      useAiGenerateStore.setState({ maxImages: 5, style: 'custom' });
+      useAiGenerateStore.setState({ maxImages: 5, styleId: 'custom' });
       useAiGenerateStore.getState().resetForm();
 
       const state = useAiGenerateStore.getState();
 
       expect(state.maxImages).toBe(1);
-      expect(state.style).toBe('customize');
+      expect(state.styleId).toBe('customize');
     });
   });
 
@@ -101,13 +101,15 @@ describe('useAiGenerateStore', () => {
         result_urls: ['a.jpg'],
       } as any;
 
+      // User is viewing history panel when importing
+      useAiGenerateStore.setState({ showHistory: true });
       useAiGenerateStore.getState().importFromHistory(item);
 
       const state = useAiGenerateStore.getState();
 
       expect(state.maxImages).toBe(4);
       expect(state.inputFields.desc).toBe('foo');
-      expect(state.style).toBe('logo');
+      expect(state.styleId).toBe('logo');
       expect(state.showHistory).toBe(false);
     });
   });

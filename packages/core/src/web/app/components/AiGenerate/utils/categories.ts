@@ -1,5 +1,7 @@
 import type { Category, Style } from '@core/helpers/api/ai-image-config';
 
+import { DEFAULT_CATEGORY, DEFAULT_STYLE } from '../constants';
+
 /**
  * Find styles that match ANY of a category's tags.
  */
@@ -18,25 +20,22 @@ export const getStylesForCategory = (
 /**
  * Get config for a style ID, with a safe fallback.
  */
-export const getStyleConfig = (styleId: string, styles: Style[] = []): Style => {
-  return styles.find((s) => s.id === styleId) || styles[0] || { id: 'customize', tags: ['customize'] };
-};
+export const getStyleConfig = (styleId: string, styles: Style[] = []): Style =>
+  styles.find((s) => s.id === styleId) || styles[0] || DEFAULT_STYLE;
 
 /**
- * Get the first category containing a specific style.
+ * Get the first category's id containing a specific style.
  */
-export const getCategoryForOption = (
-  styleId: null | string,
-  styles: Style[] = [],
-  categories: Category[] = [],
-): Category | null => {
-  if (!styleId) return null;
+export const getCategoryIdFromStyle = (styleId: string, styles: Style[], categories: Category[] = []): string => {
+  const fallback = categories[0]?.id || DEFAULT_CATEGORY.id;
+
+  if (!styleId) return fallback;
 
   const style = styles.find((s) => s.id === styleId);
 
-  if (!style) return null;
+  if (!style) return fallback;
 
-  return categories.find((cat) => cat.tags.some((tag) => style.tags.includes(tag))) || null;
+  return categories.find((cat) => cat.tags.some((tag) => style.tags.includes(tag)))?.id || fallback;
 };
 
 /**

@@ -64,6 +64,8 @@ const lang: ILang = {
     ai_generate: {
       dimensions: {
         more: 'Altro',
+        ratio: 'Rapporto',
+        resolution: 'Risoluzione',
         title: 'Dimensioni immagine',
       },
       error: {
@@ -76,6 +78,7 @@ const lang: ILang = {
       form: {
         count: 'Quantità',
         credit_required: 'Crediti richiesti',
+        editor: 'Modifica',
         generate: 'Genera',
         laser_friendly: 'Compatibile con laser',
       },
@@ -85,6 +88,7 @@ const lang: ILang = {
         title: 'Creazione AI',
       },
       history: {
+        detail: 'Dettaglio',
         empty_description: 'Nessuna cronologia di generazione ancora. Inizia a creare!',
         error_message: 'Impossibile caricare la cronologia',
         not_generated: '❌ Non generato',
