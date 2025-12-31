@@ -79,12 +79,6 @@ const CanvasTabBar = (): React.ReactNode => {
 
     await match(key)
       .with('camera', async () => {
-        if (activeKey === 'camera') {
-          setMouseMode('select');
-
-          return;
-        }
-
         if (!['pre_preview', 'preview'].includes(mouseMode)) {
           const res = await handlePreviewClick();
 
@@ -98,9 +92,6 @@ const CanvasTabBar = (): React.ReactNode => {
       .with('image', () => {
         FnWrapper.importImage();
         setTimeout(resetActiveKey, 300);
-      })
-      .with('layer', () => {
-        if (activeKey === 'layer') RightPanelController.setDisplayLayer(false);
       })
       .with('passthrough', () => showPassThrough(resetActiveKey))
       .with('pen', () => setMouseMode('path'))
@@ -128,7 +119,13 @@ const CanvasTabBar = (): React.ReactNode => {
     () => [
       {
         disabled: isDrawing || isStarting,
-        icon: <TopBarIcons.Camera />,
+        icon: (
+          <TopBarIcons.Camera
+            onClick={() => {
+              if (activeKey === 'camera') setMouseMode('select');
+            }}
+          />
+        ),
         key: 'camera',
         title: lang.beambox.left_panel.label.choose_camera,
       },
@@ -136,7 +133,19 @@ const CanvasTabBar = (): React.ReactNode => {
       { icon: <TabBarIcons.Shape />, key: 'shape', title: lang.beambox.left_panel.label.elements },
       { icon: <TabBarIcons.Text />, key: 'text', title: lang.beambox.left_panel.label.text },
       { icon: <LeftPanelIcons.AiGenerate />, key: 'ai-generate', title: lang.beambox.ai_generate.header.title },
-      { icon: <TabBarIcons.Layers />, key: 'layer', title: lang.topbar.menu.layer_setting },
+      {
+        icon: (
+          <TabBarIcons.Layers
+            onClick={() => {
+              if (activeKey === 'layer') {
+                RightPanelController.setDisplayLayer(false);
+              }
+            }}
+          />
+        ),
+        key: 'layer',
+        title: lang.topbar.menu.layer_setting,
+      },
       { icon: <TabBarIcons.Draw />, key: 'pen', title: lang.beambox.left_panel.label.pen },
       { icon: <TabBarIcons.Boxgen />, key: 'boxgen', title: lang.beambox.left_panel.label.boxgen },
       { icon: <TabBarIcons.Document />, key: 'document', title: lang.topbar.menu.document_setting_short },
@@ -146,7 +155,7 @@ const CanvasTabBar = (): React.ReactNode => {
       { icon: <TopBarIcons.Undo />, key: 'undo', title: lang.topbar.menu.undo },
       { icon: <TopBarIcons.Redo />, key: 'redo', title: lang.topbar.menu.redo },
     ],
-    [isDrawing, isStarting, lang],
+    [activeKey, isDrawing, isStarting, lang],
   );
 
   if (!isMobile) return null;
