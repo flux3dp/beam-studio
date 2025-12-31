@@ -1,30 +1,20 @@
 import React from 'react';
 
-import type { DefaultOptionType } from 'antd/es/select';
-
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
-import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
-
-interface Props {
-  options: DefaultOptionType[];
-}
-
-const BB2Settings = ({ options }: Props): React.ReactNode => {
+const BB2Settings = (): React.ReactNode => {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
 
   return (
     <>
-      <div className={styles.subtitle}>Beambox II</div>
-      <SettingSelect
-        defaultValue={getPreference('curve_engraving_speed_limit')}
+      <SettingSwitch
+        checked={getPreference('curve_engraving_speed_limit')}
         id="set-curve-engraving-speed-contraint"
         label={lang.settings.curve_engraving_speed_limit}
         onChange={(e) => setPreference('curve_engraving_speed_limit', e)}
-        options={options}
       />
     </>
   );

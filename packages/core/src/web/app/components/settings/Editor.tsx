@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import type { DefaultOptionType } from 'antd/es/select';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
 import XYItem from '@core/app/components/settings/components/XYItem';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -15,16 +16,14 @@ import storage from '@core/implementations/storage';
 import type { GeneralFont, IDefaultFont } from '@core/interfaces/IFont';
 
 import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
 
 interface Props {
-  options: DefaultOptionType[];
   unitInputProps: Partial<SettingUnitInputProps>;
 }
 
-function Editor({ options, unitInputProps }: Props): React.JSX.Element {
+function Editor({ unitInputProps }: Props): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
@@ -103,7 +102,6 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.editor}</div>
       <SettingSelect
         defaultValue={getConfig('default-units')}
         id="set-default-units"
@@ -132,12 +130,11 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
         onChange={(e) => setPreference('model', e)}
         options={modelOptions}
       />
-      <SettingSelect
-        defaultValue={getPreference('show_guides')}
+      <SettingSwitch
+        checked={getPreference('show_guides')}
         id="set-guide"
         label={lang.settings.guides}
         onChange={(e) => setPreference('show_guides', e)}
-        options={options}
       />
       <XYItem
         id="set-guide-axis"
@@ -158,36 +155,32 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
         options={imageDownSamplingOptions}
         url={lang.settings.help_center_urls.image_downsampling}
       />
-      <SettingSelect
-        defaultValue={getPreference('anti-aliasing')}
+      <SettingSwitch
+        checked={getPreference('anti-aliasing')}
         id="set-anti-aliasing"
         label={lang.settings.anti_aliasing}
         onChange={(e) => setPreference('anti-aliasing', e)}
-        options={options}
         url={lang.settings.help_center_urls.anti_aliasing}
       />
-      <SettingSelect
-        defaultValue={getPreference('continuous_drawing')}
+      <SettingSwitch
+        checked={getPreference('continuous_drawing')}
         id="set-continuous-drawing"
         label={lang.settings.continuous_drawing}
         onChange={(e) => setPreference('continuous_drawing', e)}
-        options={options}
         url={lang.settings.help_center_urls.continuous_drawing}
       />
-      <SettingSelect
-        defaultValue={getPreference('simplify_clipper_path')}
+      <SettingSwitch
+        checked={getPreference('simplify_clipper_path')}
         id="set-simplify-clipper-path"
         label={lang.settings.simplify_clipper_path}
         onChange={(e) => setPreference('simplify_clipper_path', e)}
-        options={options}
         url={lang.settings.help_center_urls.simplify_clipper_path}
       />
-      <SettingSelect
-        defaultValue={getPreference('auto-switch-tab')}
+      <SettingSwitch
+        checked={getPreference('auto-switch-tab')}
         id="auto-switch-tab"
         label={lang.settings.auto_switch_tab}
         onChange={(e) => setPreference('auto-switch-tab', e)}
-        options={options}
       />
       {hasSwiftray && (
         <SettingSelect
@@ -200,43 +193,38 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
         />
       )}
       {isDev() && (
-        <SettingSelect
-          defaultValue={getPreference('enable-custom-backlash')}
+        <SettingSwitch
+          checked={getPreference('enable-custom-backlash')}
           id="set-enable-custom-backlash"
           label={lang.settings.enable_custom_backlash}
           onChange={(e) => setPreference('enable-custom-backlash', e)}
-          options={options}
         />
       )}
-      <SettingSelect
-        defaultValue={getPreference('enable-uv-print-file')}
+      <SettingSwitch
+        checked={getPreference('enable-uv-print-file')}
         id="set-enable-uv-print-file"
         label={lang.settings.enable_uv_print_file}
         onChange={(e) => setPreference('enable-uv-print-file', e)}
-        options={options}
         url={lang.settings.help_center_urls.uv_print_export}
       />
-      <SettingSelect
-        defaultValue={getPreference('print-advanced-mode')}
+      <SettingSwitch
+        checked={getPreference('print-advanced-mode')}
         id="print-advanced-mode"
         label={lang.settings.printer_advanced_mode}
         onChange={(e) => setPreference('print-advanced-mode', e)}
-        options={options}
       />
-      <SettingSelect
-        defaultValue={getPreference('use-real-boundary')}
+      <SettingSwitch
+        checked={getPreference('use-real-boundary')}
         id="use-real-boundary"
         label={lang.settings.use_real_boundary}
         onChange={(e) => setPreference('use-real-boundary', e)}
-        options={options}
         tooltip={lang.settings.use_real_boundary_tooltip}
       />
-      <SettingSelect
-        defaultValue={getPreference('crop-task-thumbnail')}
+      <SettingSwitch
+        checked={getPreference('crop-task-thumbnail')}
         id="crop-task-thumbnail"
         label={lang.settings.crop_task_thumbnail}
         onChange={(e) => setPreference('crop-task-thumbnail', e)}
-        options={options}
         tooltip={lang.settings.crop_task_thumbnail_tooltip}
       />
     </>

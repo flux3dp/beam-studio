@@ -1,34 +1,26 @@
 import React from 'react';
 
-import type { DefaultOptionType } from 'antd/es/select';
-
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
-interface Props {
-  options: DefaultOptionType[];
-}
-
-function TextToPath({ options }: Props): React.JSX.Element {
+function TextToPath(): React.JSX.Element {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
-  const defaultLaserModuleOptions = [
+  const fontConvertOptions = [
     { label: '1.0', value: '1.0' },
     { label: '2.0', value: '2.0' },
   ];
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.text_to_path}</div>
-      <SettingSelect
-        defaultValue={getPreference('font-substitute')}
+      <SettingSwitch
+        checked={getPreference('font-substitute')}
         id="font-substitue"
         label={lang.settings.font_substitute}
         onChange={(e) => setPreference('font-substitute', e)}
-        options={options}
         url={lang.settings.help_center_urls.font_substitute}
       />
       <SettingSelect
@@ -36,7 +28,7 @@ function TextToPath({ options }: Props): React.JSX.Element {
         id="font-convert"
         label={lang.settings.font_convert}
         onChange={(e) => setPreference('font-convert', e)}
-        options={defaultLaserModuleOptions}
+        options={fontConvertOptions}
         url={lang.settings.help_center_urls.font_convert}
       />
     </>

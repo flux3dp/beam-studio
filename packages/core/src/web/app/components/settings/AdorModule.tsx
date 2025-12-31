@@ -13,7 +13,6 @@ import useI18n from '@core/helpers/useI18n';
 
 import SettingFormItem from './components/SettingFormItem';
 import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
 interface Props {
   unitInputProps: Partial<SettingUnitInputProps>;
@@ -68,7 +67,6 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.ador_modules}</div>
       <SettingSelect
         defaultValue={getPreference('default-laser-module')}
         id="default-laser-module"

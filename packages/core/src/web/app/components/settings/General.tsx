@@ -1,29 +1,25 @@
 import * as React from 'react';
 
-import type { DefaultOptionType } from 'antd/es/select';
-
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
 
 interface Props {
   changeActiveLang: (val: string) => void;
-  options: DefaultOptionType[];
   supportedLangs: Record<string, string>;
 }
 
-function General({ changeActiveLang, options, supportedLangs }: Props): React.JSX.Element {
+function General({ changeActiveLang, supportedLangs }: Props): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, setConfig } = useSettingStore();
   const langOptions = Object.keys(supportedLangs).map((value) => ({ label: supportedLangs[value], value }));
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.general}</div>
       <SettingSelect
         defaultValue={i18n.getActiveLang()}
         id="select-lang"
@@ -31,13 +27,12 @@ function General({ changeActiveLang, options, supportedLangs }: Props): React.JS
         onChange={changeActiveLang}
         options={langOptions}
       />
-      {isWeb() ? null : (
-        <SettingSelect
-          defaultValue={getConfig('notification')}
+      {!isWeb() && (
+        <SettingSwitch
+          checked={getConfig('notification')}
           id="set-notifications"
           label={lang.settings.notifications}
           onChange={(e) => setConfig('notification', e)}
-          options={options}
         />
       )}
     </>
