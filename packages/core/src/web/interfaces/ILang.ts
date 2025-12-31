@@ -2022,9 +2022,12 @@ export interface ILang {
       mask: string;
       modules: string;
       path: string;
+      performance: string;
       privacy: string;
+      text: string;
       text_to_path: string;
       update: string;
+      workarea: string;
     };
     guess_poke: string;
     guides: string;

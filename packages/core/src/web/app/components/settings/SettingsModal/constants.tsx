@@ -5,7 +5,6 @@ import {
   CameraOutlined,
   EditOutlined,
   ExperimentOutlined,
-  FontSizeOutlined,
   LockOutlined,
   SaveOutlined,
   ScanOutlined,
@@ -74,12 +73,6 @@ export const getCategoryConfigs = (
       icon: <ShareAltOutlined />,
       key: SettingCategory.PATH,
       label: lang.settings.groups.path,
-      visible: alwaysVisible,
-    },
-    {
-      icon: <FontSizeOutlined />,
-      key: SettingCategory.TEXT_TO_PATH,
-      label: lang.settings.groups.text_to_path,
       visible: alwaysVisible,
     },
     {

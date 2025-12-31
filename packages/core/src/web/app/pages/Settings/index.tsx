@@ -24,6 +24,7 @@ import TextToPath from '@core/app/components/settings/TextToPath';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
@@ -100,7 +101,7 @@ function Settings(): React.JSX.Element {
             </div>
             <Connection />
 
-            <div className={styles.subtitle}>{lang.settings.groups.autosave}</div>
+            {!isWeb() && <div className={styles.subtitle}>{lang.settings.groups.autosave}</div>}
             <AutoSave
               editingAutosaveConfig={editingAutosaveConfig}
               setEditingAutosaveConfig={setEditingAutosaveConfig}

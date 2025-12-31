@@ -17,7 +17,6 @@ export enum SettingCategory {
   MODULE = 'module',
   PATH = 'path',
   PRIVACY = 'privacy',
-  TEXT_TO_PATH = 'textToPath',
 }
 
 export interface SettingCategoryConfig {

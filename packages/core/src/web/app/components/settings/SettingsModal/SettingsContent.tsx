@@ -17,7 +17,6 @@ import General from '../General';
 import Module from '../Module';
 import Path from '../Path';
 import Privacy from '../Privacy';
-import TextToPath from '../TextToPath';
 
 import styles from './SettingsModal.module.scss';
 import type { CommonSettingProps, SettingCategoryConfig } from './types';
@@ -55,10 +54,11 @@ const SettingsContent = ({ category, categoryConfig, commonProps }: SettingsCont
         />
       ))
       .with(SettingCategory.CAMERA, () => <Camera />)
-      .with(SettingCategory.EDITOR, () => <Editor unitInputProps={unitInputProps} />)
+      .with(SettingCategory.EDITOR, () => (
+        <Editor subSectionTitleClass={styles['sub-section-title']} unitInputProps={unitInputProps} wrapped />
+      ))
       .with(SettingCategory.ENGRAVING, () => <Engraving />)
       .with(SettingCategory.PATH, () => <Path unitInputProps={unitInputProps} />)
-      .with(SettingCategory.TEXT_TO_PATH, () => <TextToPath />)
       .with(SettingCategory.MODULE, () => <Module unitInputProps={unitInputProps} />)
       .with(SettingCategory.ADOR_MODULE, () => <AdorModule unitInputProps={unitInputProps} />)
       .with(SettingCategory.BEAMO2_MODULE, () => <Beamo2Module />)
@@ -67,14 +67,14 @@ const SettingsContent = ({ category, categoryConfig, commonProps }: SettingsCont
       .with(SettingCategory.EXPERIMENTAL, () => <Experimental />)
       .exhaustive();
 
-  const isGeneral = category === SettingCategory.GENERAL;
+  const skipOuterCard = category === SettingCategory.GENERAL || category === SettingCategory.EDITOR;
 
   return (
     <div className={styles.content}>
       {categoryConfig && <div className={styles['section-title']}>{categoryConfig.label}</div>}
       <ConfigProvider theme={{ components: { Form: { itemMarginBottom: 0, labelFontSize: 14 } } }}>
         <Form colon={false} labelAlign="left" labelWrap wrapperCol={{ flex: 1 }}>
-          {isGeneral ? renderSection() : <SettingsCard>{renderSection()}</SettingsCard>}
+          {skipOuterCard ? renderSection() : <SettingsCard>{renderSection()}</SettingsCard>}
         </Form>
       </ConfigProvider>
     </div>
