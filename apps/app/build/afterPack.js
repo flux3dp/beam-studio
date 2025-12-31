@@ -16,7 +16,7 @@ module.exports = async function (context) {
 
   const executableName = context.packager.executableName;
   const sourceExecutable = path.join(context.appOutDir, executableName);
-  const targetExecutable = path.join(context.appOutDir, `${executableName}-bin`);
+  const targetExecutable = path.join(context.appOutDir, 'beam-studio-bin');
   const launcherScript = path.join(context.appOutDir, 'resources', 'launcher-script.sh');
   // rename Beam Studio to Beam Studio-bin
   await renameAsync(sourceExecutable, targetExecutable);
