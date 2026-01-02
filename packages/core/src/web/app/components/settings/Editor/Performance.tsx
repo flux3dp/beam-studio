@@ -17,11 +17,6 @@ function Performance(): React.JSX.Element {
     { label: lang.settings.normal, value: false },
   ] as unknown as DefaultOptionType[];
 
-  const pathEngineOptions = [
-    { label: lang.settings.on, value: 'swiftray' },
-    { label: lang.settings.off, value: 'fluxghost' },
-  ];
-
   return (
     <>
       <SettingSelect
@@ -39,16 +34,6 @@ function Performance(): React.JSX.Element {
         onChange={(e) => setPreference('anti-aliasing', e)}
         url={lang.settings.help_center_urls.anti_aliasing}
       />
-      {hasSwiftray && (
-        <SettingSelect
-          defaultValue={getPreference('path-engine')}
-          id="path-engine"
-          label={`${lang.settings.calculation_optimization} (Beta)`}
-          onChange={(e) => setPreference('path-engine', e)}
-          options={pathEngineOptions}
-          url={lang.settings.help_center_urls.calculation_optimization}
-        />
-      )}
       <SettingSwitch
         checked={getPreference('simplify_clipper_path')}
         id="set-simplify-clipper-path"
@@ -56,6 +41,15 @@ function Performance(): React.JSX.Element {
         onChange={(e) => setPreference('simplify_clipper_path', e)}
         url={lang.settings.help_center_urls.simplify_clipper_path}
       />
+      {hasSwiftray && (
+        <SettingSwitch
+          checked={getPreference('path-engine') === 'swiftray'}
+          id="path-engine"
+          label={`${lang.settings.calculation_optimization} (Beta)`}
+          onChange={(e) => setPreference('path-engine', e ? 'swiftray' : 'fluxghost')}
+          url={lang.settings.help_center_urls.calculation_optimization}
+        />
+      )}
     </>
   );
 }

@@ -114,14 +114,12 @@ export default {
   PREFERENCE: async (): Promise<void> => {
     Dialog.clearAllDialogComponents();
 
-    if (await toggleUnsavedChangedDialog()) {
-      if (isWeb()) {
-        // Web/mobile uses the settings page route
-        window.location.hash = hashMap.settings;
-      } else {
-        // Desktop app uses modal dialog
-        showSettingsModal();
-      }
+    if (isWeb() && (await toggleUnsavedChangedDialog())) {
+      // Web/mobile uses the settings page route
+      window.location.hash = hashMap.settings;
+    } else {
+      // Desktop app uses modal dialog
+      showSettingsModal();
     }
   },
   QUESTIONNAIRE: async (): Promise<void> => {
