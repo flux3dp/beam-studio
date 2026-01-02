@@ -5,10 +5,7 @@ import { ConfigProvider, Form } from 'antd';
 import classNames from 'classnames';
 
 import settings from '@core/app/app-settings';
-import AdorModule from '@core/app/components/settings/AdorModule';
 import AutoSave from '@core/app/components/settings/AutoSave';
-import BB2Settings from '@core/app/components/settings/BB2Settings';
-import Beamo2Module from '@core/app/components/settings/Beamo2Module';
 import Camera from '@core/app/components/settings/Camera';
 import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
 import Connection from '@core/app/components/settings/Connection';
@@ -120,12 +117,6 @@ function Settings(): React.JSX.Element {
             <TextToPath />
             <div className={styles.subtitle}>{lang.settings.groups.modules}</div>
             <Module unitInputProps={commonUnitInputProps} />
-            <div className={styles.subtitle}>{lang.settings.groups.ador_modules}</div>
-            <AdorModule unitInputProps={commonUnitInputProps} />
-            <div className={styles.subtitle}>{lang.settings.groups.beamo2_modules}</div>
-            <Beamo2Module />
-            <div className={styles.subtitle}>Beambox II</div>
-            <BB2Settings />
             <div className={styles.subtitle}>{lang.settings.groups.privacy}</div>
             <Privacy />
             <div className={styles.subtitle}>Experimental Features</div>
