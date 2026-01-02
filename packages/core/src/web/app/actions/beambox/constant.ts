@@ -2,7 +2,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 const removeReadonly = <T extends string>(arr: ReadonlyArray<T[number]> | T[]) => arr as string[];
 
-export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fhx2rf4', 'fhx2rf7', 'fpm1', 'fbb2', 'fbm2'] as const;
+export const supportUsbModelsArray = ['ado1', 'fhexa1', 'fhx2rf', 'fpm1', 'fbb2', 'fbm2'] as const;
 export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
@@ -12,7 +12,7 @@ export type Bb2Models = (typeof bb2ModelsArray)[number];
 export const bb2ModelsStrict = new Set(bb2ModelsArray);
 export const bb2Models = new Set(removeReadonly(bb2ModelsArray));
 
-export const hexaRfModelsArray = ['fhx2rf4', 'fhx2rf7'] as const;
+export const hexaRfModelsArray = ['fhx2rf'] as const;
 export type HexaRfModels = (typeof hexaRfModelsArray)[number];
 export const hexaRfModelsStrict = new Set(hexaRfModelsArray);
 export const hexaRfModels = new Set(removeReadonly(hexaRfModelsArray));
@@ -56,8 +56,7 @@ export default {
     fbm1: ['fbm1'],
     fbm2: ['fbm2'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
-    fhx2rf4: ['fhx2rf4', 'fhx2rf7', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
-    fhx2rf7: ['fhx2rf4', 'fhx2rf7', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
+    fhx2rf: ['fhx2rf', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     flv1: ['flv1'],
     fpm1: ['fpm1'],
     'laser-b1': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
@@ -105,5 +104,5 @@ export default {
   },
   dpmm,
   fcodeV2Models,
-  highPowerModels: ['fhx2rf4', 'fhx2rf7', 'fhexa1', 'ado1', 'flv1', 'fpm1'],
+  highPowerModels: ['fhx2rf', 'fhexa1', 'ado1', 'flv1', 'fpm1'],
 };

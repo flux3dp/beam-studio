@@ -5,6 +5,7 @@ import Tutorials from '@core/app/actions/beambox/tutorials';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Dialog from '@core/app/actions/dialog-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import { showArrayModal } from '@core/app/components/dialogs/ArrayModal';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
@@ -96,7 +97,7 @@ export default {
   MANAGE_ACCOUNT: (): Promise<void> => externalLinkMemberDashboard(),
   MATERIAL_TEST_GENERATOR: (): void => Dialog.showMaterialTestGenerator(),
   NETWORK_TESTING: (): void => Dialog.showNetworkTestingPanel(),
-  OFFSET: () => svgEditor.triggerOffsetTool(),
+  OFFSET: () => showArrayModal(),
   OPEN: (): void => {
     FnWrapper.importImage();
   },

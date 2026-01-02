@@ -26,16 +26,25 @@
     }
 
     .btns {
-      margin-top: 40px;
+      margin: 40px 40px 0px;
       display: flex;
-      gap: 0 20px;
+      flex-wrap: wrap;
+      gap: 20px;
+      justify-content: center;
 
       @media screen and (max-width: 600px) {
         height: calc(100vh - 220px);
-        margin-top: 0px;
+        margin: 0;
         flex-direction: column;
+        flex-wrap: nowrap;
+        justify-content: start;
         gap: 8px 0;
         align-items: center;
+        overflow: scroll;
+
+        &::-webkit-scrollbar {
+          display: none;
+        }
       }
 
       .btn {
@@ -99,6 +108,7 @@
       .image {
         width: 250px;
         height: 100px;
+        object-fit: cover;
 
         margin-bottom: 12px;
 

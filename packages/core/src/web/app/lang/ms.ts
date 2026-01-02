@@ -1572,6 +1572,7 @@ const lang: ILang = {
     select_beambox: 'Pilih Beambox Anda',
     select_beamo: 'Pilih beamo Anda',
     select_connection_type: 'Bagaimana anda mahu sambung?',
+    select_hexa: 'Pilih HEXA Anda',
     select_language: 'Pilih Bahasa',
     select_machine_type: 'Pilih Model Anda',
     setting_completed: {

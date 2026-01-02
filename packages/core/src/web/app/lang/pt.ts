@@ -1572,6 +1572,7 @@ const lang: ILang = {
     select_beambox: 'Selecione o seu Beambox',
     select_beamo: 'Selecione o seu beamo',
     select_connection_type: 'Como deseja se conectar?',
+    select_hexa: 'Selecione o seu HEXA',
     select_language: 'Selecionar Idioma',
     select_machine_type: 'Selecione o Tipo da Sua Máquina',
     setting_completed: {
