@@ -1,6 +1,7 @@
 import { match } from 'ts-pattern';
 
 import AppSettings from '@core/app/app-settings';
+import LangCa from '@core/app/lang/ca';
 import LangCs from '@core/app/lang/cs';
 import LangDa from '@core/app/lang/da';
 import LangDe from '@core/app/lang/de';
@@ -28,6 +29,7 @@ import type { ILang } from '@core/interfaces/ILang';
 
 const getLang = (lang: string): ILang => {
   return match(lang)
+    .with('ca', () => LangCa)
     .with('cs', () => LangCs)
     .with('da', () => LangDa)
     .with('de', () => LangDe)

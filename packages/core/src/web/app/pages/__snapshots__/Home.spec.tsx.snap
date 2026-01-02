@@ -25,6 +25,12 @@ exports[`should render correctly 1`] = `
             id="select-lang"
           >
             <option
+              label="Català"
+              value="ca"
+            >
+              Català
+            </option>
+            <option
               label="Czech"
               value="cs"
             >
