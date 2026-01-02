@@ -184,7 +184,7 @@ const SelectMachineModel = (): React.JSX.Element => {
           {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model, type }) => (
             <div
               className={classNames(styles.btn, btnClass)}
-              key={model}
+              key={type ?? model}
               onClick={() => handleNextClick({ model, type })}
             >
               {Icon && <Icon className={styles.icon} />}
