@@ -70,7 +70,6 @@ const hexaAddOnInfo: AddOnInfo = {
 
 const hexaRfAddOnInfo: AddOnInfo = {
   ...hexaAddOnInfo,
-  airAssist: true,
   autoFeeder: isDev()
     ? {
         maxHeight: 3000,
