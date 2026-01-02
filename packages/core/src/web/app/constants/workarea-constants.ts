@@ -54,6 +54,7 @@ export interface WorkArea {
   engraveDpiOptions?: EngraveDpiOption[];
   height: number; // mm
   label: WorkAreaLabel;
+  maxRepeat?: number;
   maxSpeed: number; // mm/s
   minPower?: number; // %
   minSpeed: number; // mm/s
@@ -225,6 +226,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     dimensionCustomizable: true,
     height: 150,
     label: 'Promark',
+    maxRepeat: 100000,
     maxSpeed: 10000,
     minSpeed: 0.5,
     pxHeight: 150 * dpmm,
