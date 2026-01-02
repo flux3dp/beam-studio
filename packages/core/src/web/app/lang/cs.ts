@@ -1978,7 +1978,7 @@ const lang: ILang = {
     calculation_optimization: 'Zrychlení výpočtu cesty',
     cancel: 'Storno',
     caption: 'Nastavení',
-    check_updates: 'Automatická kontrola',
+    check_updates: 'Automaticky kontrolovat aktualizace',
     close: 'Zavřít',
     confirm_remove_default: 'Výchozí přístroj bude odstraněn.',
     confirm_reset: 'Potvrdit restart Beam Studia?',
