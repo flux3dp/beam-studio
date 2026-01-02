@@ -1,14 +1,14 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { match } from 'ts-pattern';
 
 import dialog from '@core/app/actions/dialog-caller';
 import windowLocationReload from '@core/app/actions/windowLocation';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
-import { checkBM2, checkFpm1 } from '@core/helpers/checkFeature';
-import { getHomePage, hashMap } from '@core/helpers/hashHelper';
+import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { getHomePage } from '@core/helpers/hashHelper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
@@ -21,63 +21,37 @@ type ModelItem = {
   imageSrc?: string;
   label: string;
   labelClass?: string;
-  model: WorkAreaModel;
+  model?: WorkAreaModel;
+  type?: SelectedModelType;
 };
+
+type SelectedModelType = '' | 'beambox' | 'beamo' | 'hexa';
 
 const SelectMachineModel = (): React.JSX.Element => {
   const t = useI18n().initialize;
-  const { search } = useLocation();
   const isNewUser = useMemo(() => !storage.get('printer-is-ready'), []);
-  const [isSelectBeambox, setIsSelectBeambox] = useState(false);
-  const [isSelectBeamo, setIsSelectBeamo] = useState(false);
-
-  useEffect(() => {
-    const handleHashChange = () => {
-      const model = new URLSearchParams(search).get('model') as null | WorkAreaModel;
-
-      if (model === 'fbb1p') {
-        setIsSelectBeambox(true);
-        setIsSelectBeamo(false);
-      } else if (model === 'fbm1') {
-        setIsSelectBeambox(false);
-        setIsSelectBeamo(true);
-      } else {
-        setIsSelectBeambox(false);
-        setIsSelectBeamo(false);
-      }
-    };
-
-    window.addEventListener('hashchange', handleHashChange);
-
-    // Initial check
-    handleHashChange();
-
-    return () => {
-      window.removeEventListener('hashchange', handleHashChange);
-    };
-  }, [search]);
+  const [selectedModelType, setSelectedModelType] = useState<SelectedModelType>('');
 
   const handleBtnClick = useCallback(() => {
-    if (isNewUser) {
-      storage.set('new-user', true);
-    }
-
-    if (isSelectBeambox || isSelectBeamo) {
-      window.location.hash = hashMap.machineSetup;
+    if (selectedModelType !== '') {
+      setSelectedModelType('');
 
       return;
+    }
+
+    if (isNewUser) {
+      storage.set('new-user', true);
     }
 
     storage.set('printer-is-ready', true);
     dialog.showLoadingWindow();
     window.location.hash = getHomePage();
     windowLocationReload();
-  }, [isNewUser, isSelectBeambox, isSelectBeamo]);
+  }, [isNewUser, selectedModelType]);
 
-  const handleNextClick = (model?: WorkAreaModel) => {
-    // for series, select different model in the next step
-    if ((model === 'fbb1p' && !isSelectBeambox) || (model === 'fbm1' && checkBM2() && !isSelectBeamo)) {
-      window.location.hash = `#/initialize/connect/select-machine-model?model=${model}`;
+  const handleNextClick = ({ model, type }: { model?: WorkAreaModel; type?: SelectedModelType }) => {
+    if (type) {
+      setSelectedModelType(type);
 
       return;
     }
@@ -92,18 +66,34 @@ const SelectMachineModel = (): React.JSX.Element => {
     window.location.hash = `#/initialize/connect/select-connection-type?model=${model}`;
   };
 
-  const modelList: ModelItem[] = [
-    { Icon: InitializeIcons.Ador, label: 'Ador', model: 'ado1' },
-    { Icon: InitializeIcons.Beamo, label: checkBM2() ? 'beamo Series' : 'beamo', labelClass: styles.bb, model: 'fbm1' },
-    {
-      Icon: InitializeIcons.Beambox,
-      label: 'Beambox Series',
-      labelClass: styles.bb,
-      model: 'fbb1p',
-    },
-    { Icon: InitializeIcons.Hexa, label: 'HEXA', model: 'fhexa1' },
-    !isMobile() && checkFpm1() && { Icon: InitializeIcons.Promark, label: 'Promark Series', model: 'fpm1' },
-  ].filter(Boolean) as ModelItem[];
+  const modelList = useMemo(() => {
+    const supportBm2 = checkBM2();
+    const supportHxRf = checkHxRf();
+
+    return [
+      { Icon: InitializeIcons.Ador, label: 'Ador', model: 'ado1' },
+      {
+        Icon: InitializeIcons.Beamo,
+        label: supportBm2 ? 'beamo Series' : 'beamo',
+        labelClass: styles.bb,
+        model: supportBm2 ? undefined : 'fbm1',
+        type: supportBm2 ? 'beamo' : undefined,
+      },
+      {
+        Icon: InitializeIcons.Beambox,
+        label: 'Beambox Series',
+        labelClass: styles.bb,
+        type: 'beambox',
+      },
+      {
+        Icon: InitializeIcons.Hexa,
+        label: supportHxRf ? 'HEXA Series' : 'HEXA',
+        model: supportHxRf ? undefined : 'fhexa1',
+        type: supportHxRf ? 'hexa' : undefined,
+      },
+      !isMobile() && checkFpm1() && { Icon: InitializeIcons.Promark, label: 'Promark Series', model: 'fpm1' },
+    ].filter(Boolean) as ModelItem[];
+  }, []);
 
   const beamboxModelList: ModelItem[] = useMemo(
     () => [
@@ -141,16 +131,44 @@ const SelectMachineModel = (): React.JSX.Element => {
     [],
   );
 
-  const selectTitle = useMemo(
-    () => (isSelectBeambox ? t.select_beambox : isSelectBeamo ? t.select_beamo : t.select_machine_type),
-    // eslint-disable-next-line hooks/exhaustive-deps
-    [isSelectBeambox, isSelectBeamo],
+  const hexaModelList: ModelItem[] = useMemo(
+    () => [
+      {
+        btnClass: styles['btn-real'],
+        imageSrc: 'core-img/init-panel/hexa-real.png',
+        label: 'HEXA',
+        model: 'fhexa1',
+      },
+      {
+        btnClass: styles['btn-real'],
+        // TODO: replace with hexa rf image when available
+        imageSrc: 'core-img/init-panel/hexa-real.png',
+        label: 'HEXA RF',
+        model: 'fhx2rf',
+      },
+    ],
+    [],
   );
-  const currentList = useMemo(
-    () => (isSelectBeambox ? beamboxModelList : isSelectBeamo ? beamoModelList : modelList),
-    // eslint-disable-next-line hooks/exhaustive-deps
-    [isSelectBeambox, isSelectBeamo],
-  );
+
+  const { list: currentList, title: selectTitle } = useMemo(() => {
+    return match(selectedModelType)
+      .with('beambox', () => ({
+        list: beamboxModelList,
+        title: t.select_beambox,
+      }))
+      .with('beamo', () => ({
+        list: beamoModelList,
+        title: t.select_beamo,
+      }))
+      .with('hexa', () => ({
+        list: hexaModelList,
+        title: t.select_hexa,
+      }))
+      .otherwise(() => ({
+        list: modelList,
+        title: t.select_machine_type,
+      }));
+  }, [selectedModelType, beamboxModelList, beamoModelList, hexaModelList, modelList, t]);
 
   return (
     <div className={styles.container}>
@@ -163,8 +181,12 @@ const SelectMachineModel = (): React.JSX.Element => {
       <div className={styles.main}>
         <h1 className={styles.title}>{selectTitle}</h1>
         <div className={styles.btns}>
-          {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model }) => (
-            <div className={classNames(styles.btn, btnClass)} key={model} onClick={() => handleNextClick(model)}>
+          {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model, type }) => (
+            <div
+              className={classNames(styles.btn, btnClass)}
+              key={model}
+              onClick={() => handleNextClick({ model, type })}
+            >
               {Icon && <Icon className={styles.icon} />}
               {imageSrc && <img className={styles.image} draggable="false" src={imageSrc} />}
               <div className={classNames(styles.label, labelClass)}>{label}</div>

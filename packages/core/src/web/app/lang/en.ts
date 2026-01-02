@@ -1572,6 +1572,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     select_beambox: 'Select Your Beambox',
     select_beamo: 'Select Your beamo',
     select_connection_type: 'How do you wish to connect?',
+    select_hexa: 'Select Your HEXA',
     select_language: 'Select Language',
     select_machine_type: 'Select Your Machine Type',
     setting_completed: {

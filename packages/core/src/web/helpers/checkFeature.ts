@@ -15,7 +15,7 @@ export const checkFpm1 = (): boolean =>
     enableAllMachines ||
     isDev()) &&
   !isWeb();
-export const checkHxRf = (): boolean => enableAllMachines || isDev();
+export const checkHxRf = (): boolean => enableAllMachines || isDev() || localeHelper.isTwOrHk;
 export const checkBM2 = (): boolean => enableAllMachines || isDev() || localeHelper.isTwOrHk;
 export const checkBM2UV = (): boolean => isDev();
 export const checkBM2CurveEngraving = (): boolean => isDev();
