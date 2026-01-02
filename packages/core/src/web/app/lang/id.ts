@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'Percepatan Perhitungan Jalur',
     cancel: 'Batal',
     caption: 'Pengaturan',
-    check_updates: 'Periksa Pembaruan Otomatis',
+    check_updates: 'Periksa pembaruan secara otomatis',
     close: 'Tutup',
     confirm_remove_default: 'Mesin standar akan dihapus.',
     confirm_reset: 'Konfirmasi atur ulang Beam Studio?',

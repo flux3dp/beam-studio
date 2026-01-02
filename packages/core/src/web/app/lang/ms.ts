@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'Pecutan Pengiraan Laluan',
     cancel: 'Batal',
     caption: 'Tetapan',
-    check_updates: 'Semak Automatik',
+    check_updates: 'Semak kemas kini secara automatik',
     close: 'Tutup',
     confirm_remove_default: 'Mesin lalai akan dibuang.',
     confirm_reset: 'Sahkan tetapkan semula Beam Studio?',

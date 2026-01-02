@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'Stiberegningsacceleration',
     cancel: 'Annuller',
     caption: 'Indstillinger',
-    check_updates: 'Automatisk kontrol',
+    check_updates: 'Kontroller automatisk for opdateringer',
     close: 'Luk',
     confirm_remove_default: 'Standardmaskinen vil blive fjernet.',
     confirm_reset: 'Bekræft nulstilling af Beam Studio?',

@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'Accélération du calcul de trajectoire',
     cancel: 'Annuler',
     caption: 'Paramètres',
-    check_updates: 'Vérification automatique',
+    check_updates: 'Vérifier automatiquement les mises à jour',
     close: 'Fermer',
     confirm_remove_default: 'La machine par défaut va être supprimée.',
     confirm_reset: 'Confirmer la réinitialisation de Beam Studio?',

@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'Επιτάχυνση υπολογισμού διαδρομής',
     cancel: 'Ακύρωση',
     caption: 'Ρυθμίσεις',
-    check_updates: 'Αυτόματος έλεγχος',
+    check_updates: 'Αυτόματος έλεγχος ενημερώσεων',
     close: 'Κλείσιμο',
     confirm_remove_default: 'Το προεπιλεγμένο μηχάνημα θα αφαιρεθεί.',
     confirm_reset: 'Επιβεβαίωση επαναφοράς Beam Studio',

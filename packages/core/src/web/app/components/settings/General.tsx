@@ -6,6 +6,7 @@ import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 
+import AboutInfo from './components/AboutInfo';
 import SettingsCard from './components/SettingsCard';
 import SettingSelect from './components/SettingSelect';
 
@@ -26,6 +27,7 @@ function General({ changeActiveLang, supportedLangs, wrapped = false }: Props): 
     <>
       {!isWeb() && (
         <Wrapper>
+          <AboutInfo />
           <SettingSwitch
             checked={getConfig('auto_check_update')}
             id="set-auto-update"

@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'Reitin laskennan kiihtyvyys',
     cancel: 'Peruuta',
     caption: 'Asetukset',
-    check_updates: 'Automaattinen tarkistus',
+    check_updates: 'Tarkista päivitykset automaattisesti',
     close: 'Sulje',
     confirm_remove_default: 'Oletuslaite poistetaan.',
     confirm_reset: 'Vahvista Beam Studion nollaus',

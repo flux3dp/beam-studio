@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'Versnelling van padberekening',
     cancel: 'Annuleren',
     caption: 'Instellingen',
-    check_updates: 'Automatisch controleren',
+    check_updates: 'Automatisch controleren op updates',
     close: 'Sluiten',
     confirm_remove_default: 'De standaardmachine wordt verwijderd.',
     confirm_reset: 'Beam Studio resetten bevestigen?',

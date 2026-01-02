@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: '路径计算加速',
     cancel: '取消',
     caption: '设置',
-    check_updates: '自动检查',
+    check_updates: '自动检查更新',
     close: '关闭',
     confirm_remove_default: '将会删除默认机器',
     confirm_reset: '确认要重置 Beam Studio?',

@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: 'パス計算の加速',
     cancel: 'キャンセル',
     caption: '設定',
-    check_updates: '自動チェック',
+    check_updates: '自動的に更新を確認する',
     close: '閉じる',
     confirm_remove_default: 'デフォルトマシンが削除されます。',
     confirm_reset: 'Beam Studioのリセットを確認しますか？',

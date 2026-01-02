@@ -1983,7 +1983,7 @@ const lang: ILang = {
     calculation_optimization: '경로 계산 가속',
     cancel: '취소',
     caption: '설정',
-    check_updates: '자동 확인',
+    check_updates: '자동으로 업데이트 확인',
     close: '닫기',
     confirm_remove_default: '기본 기계가 제거됩니다.',
     confirm_reset: 'Beam Studio 재설정을 확인하시겠습니까?',
