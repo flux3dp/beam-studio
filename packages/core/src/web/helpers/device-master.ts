@@ -916,8 +916,13 @@ class DeviceMaster {
     await this.doCalibration({ fcodeSource: fileName });
   }
 
-  async doHexa2Calibration() {
-    await this.doCalibration({ fcodeSource: 'fcode/hx2-calibration.fc' });
+  async doHexa2Calibration(type: '' | 'wide-angle' = '') {
+    const fileName = match(type)
+      .with('', () => 'fcode/hx2-calibration.fc')
+      .with('wide-angle', () => 'fcode/hx2-calibration-wide-angle.fc')
+      .exhaustive();
+
+    await this.doCalibration({ fcodeSource: fileName });
   }
 
   async doBeamo2Calibration() {

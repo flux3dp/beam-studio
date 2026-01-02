@@ -48,12 +48,12 @@ jest.mock('./ExposureSlider', () => ({ exposureSetting, onChange }: any) => (
 
 const mockCalibrateChessboard = jest.fn();
 const mockDetectChAruCo = jest.fn();
-const mockCalibrateFisheye = jest.fn();
+const mockCalibrateCamera = jest.fn();
 
 jest.mock('@core/helpers/api/camera-calibration', () => ({
   cameraCalibrationApi: {
+    calibrateCamera: (...args) => mockCalibrateCamera(...args),
     calibrateChessboard: (...args) => mockCalibrateChessboard(...args),
-    calibrateFisheye: (...args) => mockCalibrateFisheye(...args),
     detectChAruCo: (...args) => mockDetectChAruCo(...args),
   },
 }));
@@ -163,7 +163,7 @@ describe('test Calibration', () => {
 
     mockCalibrateChessboard.mockResolvedValue(mockRes);
     mockDetectChAruCo.mockResolvedValue({ imgp: 'imgp', objp: 'objp', success: true });
-    mockCalibrateFisheye.mockResolvedValue({ d: 'd', k: 'k', ret: 1, rvec: 'rvec', success: true, tvec: 'tvec' });
+    mockCalibrateCamera.mockResolvedValue({ d: 'd', k: 'k', ret: 1, rvec: 'rvec', success: true, tvec: 'tvec' });
     mockHandleCalibrationResult.mockResolvedValue(true);
     await act(() => fireEvent.click(baseElement.querySelector('button.ant-btn-primary')));
     expect(mockOpenNonstopProgress).toHaveBeenCalled();
@@ -173,8 +173,8 @@ describe('test Calibration', () => {
     expect(mockCalibrateChessboard).toHaveBeenCalledWith(mockBlob, 0, [7, 7]);
     expect(mockDetectChAruCo).toHaveBeenCalledTimes(1);
     expect(mockDetectChAruCo).toHaveBeenCalledWith(mockBlob, 15, 10);
-    expect(mockCalibrateFisheye).toHaveBeenCalledTimes(1);
-    expect(mockCalibrateFisheye).toHaveBeenCalledWith(['objp'], ['imgp'], [expect.any(Number), expect.any(Number)]);
+    expect(mockCalibrateCamera).toHaveBeenCalledTimes(1);
+    expect(mockCalibrateCamera).toHaveBeenCalledWith(['objp'], ['imgp'], [expect.any(Number), expect.any(Number)]);
     expect(mockHandleCalibrationResult).toHaveBeenCalledTimes(1);
     expect(mockHandleCalibrationResult).toHaveBeenLastCalledWith(1);
     expect(mockUpdateParam).toHaveBeenCalled();

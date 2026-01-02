@@ -17,7 +17,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import AdorPreviewManager from '../camera/preview-helper/AdorPreviewManager';
-import BB2PreviewManager from '../camera/preview-helper/BB2PreviewManager';
+import Bb2Hx2PreviewManager from '../camera/preview-helper/Bb2Hx2PreviewManager';
 import Beamo2PreviewManager from '../camera/preview-helper/Beamo2PreviewManager';
 import BeamPreviewManager from '../camera/preview-helper/BeamPreviewManager';
 import PromarkPreviewManager from '../camera/preview-helper/PromarkPreviewManager';
@@ -144,7 +144,7 @@ class PreviewModeController {
         } else if (Constant.adorModels.includes(device.model)) {
           this.previewManager = new AdorPreviewManager(device);
         } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
-          this.previewManager = new BB2PreviewManager(device);
+          this.previewManager = new Bb2Hx2PreviewManager(device);
         } else if (device.model === 'fbm2') {
           this.previewManager = new Beamo2PreviewManager(device);
         } else {
@@ -163,7 +163,7 @@ class PreviewModeController {
         deviceMaster.setDeviceControlReconnectOnClose(device);
         this.setIsPreviewMode(true);
 
-        if (this.previewManager instanceof BB2PreviewManager) {
+        if (this.previewManager instanceof Bb2Hx2PreviewManager) {
           setCameraPreviewState({
             cameraType: this.previewManager.getCameraType(),
             hasWideAngleCamera: this.previewManager.hasWideAngleCamera,

@@ -70,6 +70,38 @@ export const bb2WideAnglePerspectiveGrid: PerspectiveGrid = {
   y: [0, 375, 15],
 } as const;
 
+export const hx2WideAngleCameraPnpPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = {
+  bottomLeft: [
+    [100, 270],
+    [240, 270],
+    [100, 370],
+    [240, 370],
+  ] as const,
+  bottomRight: [
+    [500, 270],
+    [640, 270],
+    [500, 370],
+    [640, 370],
+  ] as const,
+  topLeft: [
+    [100, 40],
+    [240, 40],
+    [100, 140],
+    [240, 140],
+  ] as const,
+  topRight: [
+    [500, 40],
+    [640, 40],
+    [500, 140],
+    [640, 140],
+  ] as const,
+} as const;
+
+export const hx2WideAnglePerspectiveGrid: PerspectiveGrid = {
+  x: [0, 740, 20],
+  y: [0, 410, 20],
+} as const;
+
 export const bm2PnPPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = {
   bottomLeft: [
     [30, 150],

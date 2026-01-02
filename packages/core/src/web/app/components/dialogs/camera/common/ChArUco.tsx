@@ -21,6 +21,7 @@ import useLiveFeed from './useLiveFeed';
 
 interface Props {
   cameraIndex?: number;
+  isFisheye?: boolean;
   isVertical?: boolean;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
@@ -31,7 +32,17 @@ interface Props {
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
-const ChArUco = ({ cameraIndex, isVertical, onClose, onNext, onPrev, steps, title, updateParam }: Props) => {
+const ChArUco = ({
+  cameraIndex,
+  isFisheye = true,
+  isVertical,
+  onClose,
+  onNext,
+  onPrev,
+  steps,
+  title,
+  updateParam,
+}: Props) => {
   const [step, setStep] = useState(0);
   const tCali = useI18n().calibration;
   const { autoExposure, exposureSetting, img, pauseLive, restartLive, setAutoExposure, setExposureSetting } =
@@ -46,7 +57,7 @@ const ChArUco = ({ cameraIndex, isVertical, onClose, onNext, onPrev, steps, titl
   }, [steps]);
 
   const handleDownload = useCallback(() => {
-    dialog.writeFileDialog(() => img!.blob, 'Save Picture', 'wide-angle.jpg');
+    dialog.writeFileDialog(() => img!.blob, 'Save Picture', 'charuco.jpg');
   }, [img]);
 
   const { description, imageUrl } = useMemo(() => steps[step], [step, steps]);
@@ -86,7 +97,7 @@ const ChArUco = ({ cameraIndex, isVertical, onClose, onNext, onPrev, steps, titl
         objPoints.push(objp);
       }
 
-      const calibrateRes = await cameraCalibrationApi.calibrateFisheye(objPoints, imgPoints, [w, h]);
+      const calibrateRes = await cameraCalibrationApi.calibrateCamera(objPoints, imgPoints, [w, h], isFisheye);
 
       if (!calibrateRes.success) {
         alertCaller.popUp({ message: `Failed to calibrate image ${calibrateRes.reason}` });
@@ -116,7 +127,7 @@ const ChArUco = ({ cameraIndex, isVertical, onClose, onNext, onPrev, steps, titl
         }
       }
 
-      updateParam({ d, k, ret, rvec, tvec });
+      updateParam({ d, is_fisheye: isFisheye, k, ret, rvec, tvec });
       onNext();
     }
   }, [tCali, steps, step, img, pauseLive, restartLive, onNext, updateParam]);

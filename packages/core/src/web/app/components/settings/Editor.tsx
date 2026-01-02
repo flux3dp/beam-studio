@@ -81,10 +81,7 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
     { label: 'Beambox', value: 'fbb1b' },
     { label: 'Beambox Pro', value: 'fbb1p' },
     { label: 'HEXA', value: 'fhexa1' },
-    checkHxRf() && {
-      label: 'HEXA RF',
-      value: 'fhx2rf',
-    },
+    checkHxRf() && { label: 'HEXA RF', value: 'fhx2rf' },
     { label: 'Ador', value: 'ado1' },
     checkFpm1() && { label: 'Promark', value: 'fpm1' },
     isDev() && { label: 'Lazervida', value: 'flv1' },

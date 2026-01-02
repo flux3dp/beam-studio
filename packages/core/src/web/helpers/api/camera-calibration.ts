@@ -476,10 +476,11 @@ class CameraCalibrationApi {
       // detect_charuco [file_length] [squareX] [squareY]
       this.ws.send(`detect_charuco ${args.filter((arg) => arg !== undefined).join(' ')}`);
     });
-  calibrateFisheye = (
+  calibrateCamera = (
     objPoints: number[][][],
     imgPoints: number[][][],
     imageSize: number[],
+    isFisheye = true,
   ): Promise<
     | {
         d: number[][];
@@ -517,7 +518,12 @@ class CameraCalibrationApi {
       const imgPointsStr = JSON.stringify(imgPoints);
       const imageSizeStr = JSON.stringify(imageSize);
 
-      this.ws.send(`calibrate_fisheye ${objPointsStr} ${imgPointsStr} ${imageSizeStr}`);
+      if (isFisheye) {
+        // TODO: calibrate_fisheye is deprecated, can use calibrate after ghost for firmware updated
+        this.ws.send(`calibrate_fisheye ${objPointsStr} ${imgPointsStr} ${imageSizeStr}`);
+      } else {
+        this.ws.send(`calibrate_camera ${objPointsStr} ${imgPointsStr} ${imageSizeStr} ${isFisheye}`);
+      }
     });
 }
 
