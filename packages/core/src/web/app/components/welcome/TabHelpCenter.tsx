@@ -45,7 +45,7 @@ const guides = [
   {
     category: 4406510807823,
     name: 'HEXA',
-    src: 'core-img/init-panel/hexa-real.png',
+    src: 'core-img/init-panel/hexa-real.webp',
   },
   {
     category: 360000142376,

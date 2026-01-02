@@ -1572,6 +1572,7 @@ const lang: ILang = {
     select_beambox: 'Vælg din Beambox',
     select_beamo: 'Vælg din beamo',
     select_connection_type: 'Hvordan vil du forbinde?',
+    select_hexa: 'Vælg din HEXA',
     select_language: 'Vælg sprog',
     select_machine_type: 'Vælg din model',
     setting_completed: {

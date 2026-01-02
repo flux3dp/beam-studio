@@ -1559,6 +1559,7 @@ export interface ILang {
     select_beambox: string;
     select_beamo: string;
     select_connection_type: string;
+    select_hexa: string;
     // specific caption/content
     select_language: string;
     select_machine_type: string;

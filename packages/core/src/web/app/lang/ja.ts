@@ -1572,6 +1572,7 @@ const lang: ILang = {
     select_beambox: 'Beamboxを選択してください',
     select_beamo: 'beamoを選択してください',
     select_connection_type: 'どのように接続しますか',
+    select_hexa: 'HEXAを選択してください',
     select_language: '言語を選択',
     select_machine_type: 'マシンを選択してください',
     setting_completed: {

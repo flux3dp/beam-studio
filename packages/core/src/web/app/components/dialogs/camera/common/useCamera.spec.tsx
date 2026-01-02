@@ -47,7 +47,7 @@ jest.mock('@core/helpers/version-checker', () => () => ({
 }));
 
 jest.mock('@core/app/actions/beambox/constant', () => ({
-  supportCameraAutoExposureModels: ['fbb2', 'fhx2rf4'],
+  supportCameraAutoExposureModels: ['fbb2', 'fhx2rf'],
 }));
 
 const MockComponent = ({ handleImg }: { handleImg: (blob: Blob) => boolean }) => {
@@ -177,7 +177,7 @@ describe('test useCamera', () => {
 
   describe('getAutoExposure', () => {
     it('should get auto exposure as true', async () => {
-      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fhx2rf4', version: '1.0.0' } });
+      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fhx2rf', version: '1.0.0' } });
       mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
       mockGetCameraExposureAuto.mockResolvedValue({ data: true, success: true });
       mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
@@ -191,7 +191,7 @@ describe('test useCamera', () => {
     });
 
     it('should get auto exposure as false', async () => {
-      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fhx2rf4', version: '1.0.0' } });
+      mockGetCurrentDevice.mockReturnValue({ info: { model: 'fhx2rf', version: '1.0.0' } });
       mockGetExposureSettings.mockResolvedValue({ max: 1000, min: 50, step: 1, value: 100 });
       mockGetCameraExposureAuto.mockResolvedValue({ data: false, success: true });
       mockTakeOnePicture.mockResolvedValue({ imgBlob: new Blob() });
