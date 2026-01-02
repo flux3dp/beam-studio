@@ -181,8 +181,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     },
   },
   fhexa1: hexaAddOnInfo,
-  fhx2rf4: hexaRfAddOnInfo,
-  fhx2rf7: hexaRfAddOnInfo,
+  fhx2rf: hexaRfAddOnInfo,
   flv1: {
     jobOrigin: true,
     rotary: {

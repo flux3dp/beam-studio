@@ -150,7 +150,7 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
 jest.mock('@core/app/actions/beambox/constant', () => ({
   dpmm: 10,
   needToShowProbeBeforeAutoFocusModelsArray: ['fbb2'],
-  supportAutoFocusModels: new Set(['fhexa1', 'ado1', 'fad1', 'fbb2', 'fhx2rf4', 'fhx2rf7', 'fbm2']),
+  supportAutoFocusModels: new Set(['fhexa1', 'ado1', 'fad1', 'fbb2', 'fhx2rf', 'fbm2']),
 }));
 
 const mockToggleAutoFocus = jest.fn();

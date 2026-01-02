@@ -84,7 +84,7 @@ function Editor({ options, unitInputProps }: Props): React.JSX.Element {
     checkHxRf() && {
       label: 'HEXA RF',
       // send to rf3 for now since they don't have different workarea at the moment
-      value: 'fhx2rf4',
+      value: 'fhx2rf',
     },
     { label: 'Ador', value: 'ado1' },
     checkFpm1() && { label: 'Promark', value: 'fpm1' },

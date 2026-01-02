@@ -23,19 +23,7 @@ export type WorkAreaLabel =
   | 'Lazervida'
   | 'Promark';
 
-export const workArea = [
-  'fbm1',
-  'fbm2',
-  'fbb1b',
-  'fbb1p',
-  'fhexa1',
-  'fhx2rf4',
-  'fhx2rf7',
-  'ado1',
-  'fpm1',
-  'flv1',
-  'fbb2',
-] as const;
+export const workArea = ['fbm1', 'fbm2', 'fbb1b', 'fbb1p', 'fhexa1', 'fhx2rf', 'ado1', 'fpm1', 'flv1', 'fbb2'] as const;
 export type WorkAreaModel = (typeof workArea)[number];
 export const workAreaSet = new Set(workArea);
 
@@ -222,8 +210,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     vectorSpeedLimit: 20,
     width: 740,
   },
-  fhx2rf4: hexaRfWorkAreaInfo,
-  fhx2rf7: hexaRfWorkAreaInfo,
+  fhx2rf: hexaRfWorkAreaInfo,
   flv1: {
     height: 400,
     label: 'Lazervida',
