@@ -1572,6 +1572,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     select_beambox: 'Selecciona el teu Beambox',
     select_beamo: 'Selecciona el teu beamo',
     select_connection_type: 'Com vols connectar-te?',
+    select_hexa: 'Selecciona el teu HEXA',
     select_language: 'Selecciona idioma',
     select_machine_type: 'Selecciona el teu tipus de màquina',
     setting_completed: {
