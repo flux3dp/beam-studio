@@ -141,7 +141,6 @@ const SelectMachineModel = (): React.JSX.Element => {
       },
       {
         btnClass: styles['btn-real'],
-        // TODO: replace with hexa rf image when available
         imageSrc: 'core-img/init-panel/hexa-rf-real.webp',
         label: 'HEXA RF',
         model: 'fhx2rf',
