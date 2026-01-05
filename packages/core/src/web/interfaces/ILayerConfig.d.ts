@@ -78,6 +78,8 @@ type PrintingConfig = {
  */
 type UVConfig = {
   interpolation: number;
+  rightPadding: number;
+  uvXStep: number;
 };
 
 type PromarkConfig = {
