@@ -62,8 +62,10 @@ const attributeMap: Record<ConfigKey, string> = {
   refreshInterval: 'data-refreshInterval',
   refreshThreshold: 'data-refreshThreshold',
   repeat: 'data-repeat',
+  rightPadding: 'data-rightPadding',
   speed: 'data-speed',
   split: 'data-split',
+  uvXStep: 'data-uvXStep',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
   wobbleDiameter: 'data-wobbleDiameter',
@@ -116,7 +118,9 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   refreshInterval: 30,
   refreshThreshold: 0,
   repeat: 1,
+  rightPadding: 0,
   speed: 20,
+  uvXStep: 1,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
@@ -193,6 +197,8 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'wobbleStep',
   // UV
   'interpolation',
+  'rightPadding',
+  'uvXStep',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',
