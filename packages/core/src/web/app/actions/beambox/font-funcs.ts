@@ -421,10 +421,14 @@ const getUnsupportedChar = async (font: GeneralFont, textContent: string[]): Pro
   const fontObj = await getFontObj(font);
 
   if (fontObj) {
-    return textContent.filter((c) => !fontObj.hasGlyphForCodePoint(c.codePointAt(0)!));
+    try {
+      return textContent.filter((c) => !fontObj.hasGlyphForCodePoint(c.codePointAt(0)!));
+    } catch (err) {
+      console.error(`Unable to get unsupported characters for font ${font.postscriptName}:`, err);
+    }
   }
 
-  return null;
+  return textContent;
 };
 
 const substitutedFont = async (font: GeneralFont, textElement: Element) => {
