@@ -145,7 +145,9 @@ jobs:
           chmod -R 777 ./node_modules/font-scanner
 
           if [ "${{ github.event.inputs.skip_code_sign }}" = "true" ]; then
-            echo "Set APPLE_TEAM_ID to empty to skip notarization per github input..."
+            echo "Set Apple credentials to empty to skip notarization per github input..."
+            export APPLE_ID=""
+            export APPLE_APP_SPECIFIC_PASSWORD=""
             export APPLE_TEAM_ID=""
           fi
 
