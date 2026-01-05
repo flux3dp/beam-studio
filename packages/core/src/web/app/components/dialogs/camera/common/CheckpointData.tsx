@@ -65,6 +65,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         setCurrentData({
           data: {
             d: res.d,
+            is_fisheye: res.is_fisheye,
             k: res.k,
             rvec: res.rvec,
             tvec: res.tvec,
@@ -81,6 +82,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         setCurrentData({
           data: {
             d: res.d,
+            is_fisheye: res.is_fisheye,
             k: res.k,
             rvec: res.rvec,
             tvec: res.tvec,
@@ -97,6 +99,7 @@ const CheckpointData = <T extends FisheyeCaliParameters>({
         setCurrentData({
           data: {
             d: res.d,
+            is_fisheye: res.is_fisheye,
             k: res.k,
             refHeight: res.refHeight,
             rvec: res.rvec,

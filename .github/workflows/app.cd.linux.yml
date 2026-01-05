@@ -74,7 +74,7 @@ jobs:
         uses: ./apps/app/.github/actions/fluxclient
 
       - name: Build Flux Ghost
-        uses: flux3dp/fluxghost@2.5.3
+        uses: flux3dp/fluxghost@2.5.4
         env:
           LC_ALL: en_US.UTF-8
           LC_CTYPE: en_US.UTF-8

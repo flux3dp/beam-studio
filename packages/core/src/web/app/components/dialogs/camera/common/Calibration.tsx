@@ -104,7 +104,7 @@ const Calibration = ({
             ? { h: videoRef.current.videoHeight, w: videoRef.current.videoWidth }
             : { h: imgRef.current!.naturalHeight, w: imgRef.current!.naturalWidth };
 
-          const calibrateRes = await cameraCalibrationApi.calibrateFisheye([objp], [imgp], [w, h]);
+          const calibrateRes = await cameraCalibrationApi.calibrateCamera([objp], [imgp], [w, h]);
 
           if (calibrateRes.success) {
             const { d, k, ret, rvec, tvec } = calibrateRes;

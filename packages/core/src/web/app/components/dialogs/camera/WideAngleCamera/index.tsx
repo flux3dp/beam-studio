@@ -3,6 +3,7 @@ import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { hexaRfModels } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -16,20 +17,22 @@ import type {
   WideAngleRegion,
 } from '@core/interfaces/FisheyePreview';
 
-import styles from '../../Calibration.module.scss';
-import ChArUco from '../../common/ChArUco';
-import CheckPnP from '../../common/CheckPnP';
-import CheckpointData from '../../common/CheckpointData';
-import downloadCalibrationFile from '../../common/downloadCalibrationFile';
-import Instruction from '../../common/Instruction';
-import { moveZRel } from '../../common/moveZRel';
-import ProcessingDialog from '../../common/ProcessingDialog';
-import SolvePnP from '../../common/SolvePnP';
+import styles from '../Calibration.module.scss';
+import ChArUco from '../common/ChArUco';
+import CheckPnP from '../common/CheckPnP';
+import CheckpointData from '../common/CheckpointData';
+import downloadCalibrationFile from '../common/downloadCalibrationFile';
+import Instruction from '../common/Instruction';
+import { moveZRel } from '../common/moveZRel';
+import ProcessingDialog from '../common/ProcessingDialog';
+import SolvePnP from '../common/SolvePnP';
 import {
   bb2WideAngleCameraPnpPoints,
   bb2WideAnglePerspectiveGrid,
   getRegionalPoints,
-} from '../../common/solvePnPConstants';
+  hx2WideAngleCameraPnpPoints,
+  hx2WideAnglePerspectiveGrid,
+} from '../common/solvePnPConstants';
 
 const enum Step {
   CHECK_DATA,
@@ -58,12 +61,19 @@ interface Props {
 }
 
 const WideAngleCamera = ({ onClose }: Props): ReactNode => {
-  const PROGRESS_ID = 'bb2-calibration';
+  const PROGRESS_ID = 'wide-angle-camera-calibration';
   const { calibration: tCali, device: tDevice } = useI18n();
   const [step, setStep] = useState(Step.CHECK_DATA);
   const [skipChArUco, setSkipChArUco] = useState(false);
   const next = useCallback(() => setStep((cur) => cur + 1), []);
   const prev = useCallback(() => setStep((cur) => cur - 1), []);
+  const deviceModel = useMemo(() => deviceMaster.currentDevice!.info.model, []);
+  const isHexaRf = useMemo(() => hexaRfModels.has(deviceModel), [deviceModel]);
+  const solvePnPPoints = useMemo(() => {
+    if (isHexaRf) return hx2WideAngleCameraPnpPoints;
+
+    return bb2WideAngleCameraPnpPoints;
+  }, [isHexaRf]);
 
   const calibratingParam = useRef<FisheyeCameraParametersV4Cali>({});
   const handleClose = (res?: boolean) => {
@@ -172,6 +182,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       return (
         <ChArUco
           cameraIndex={1}
+          isFisheye={!isHexaRf}
           onClose={handleClose}
           onNext={next}
           onPrev={prev}
@@ -193,7 +204,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
     })
     .with(Step.PUT_PAPER, () => {
       const handleNext = async (doEngraving = true) => {
-        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+        const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
         if (!deviceStatus) return;
 
@@ -209,7 +220,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           progressCaller.update(PROGRESS_ID, { message: tCali.drawing_calibration_image });
 
           if (doEngraving) {
-            await deviceMaster.doBB2Calibration('wide-angle');
+            if (isHexaRf) await deviceMaster.doHexa2Calibration('wide-angle');
+            else await deviceMaster.doBB2Calibration('wide-angle');
           } else {
             await deviceMaster.enterRawMode();
             await deviceMaster.rawHome();
@@ -297,27 +309,35 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           {
             currentStep: number;
             interestArea?: { height: number; width: number; x: number; y: number };
-            region: keyof typeof bb2WideAngleCameraPnpPoints;
+            region: keyof typeof solvePnPPoints;
           }
         >(step)
           .with(Step.SOLVE_PNP_TL_1, Step.SOLVE_PNP_TL_2, () => ({
             currentStep: 0,
-            interestArea: { height: 1300, width: 2300, x: 500, y: 900 },
+            interestArea: isHexaRf
+              ? { height: 1224, width: 1632, x: 0, y: 0 }
+              : { height: 1300, width: 2300, x: 500, y: 900 },
             region: 'topLeft',
           }))
           .with(Step.SOLVE_PNP_TR_1, Step.SOLVE_PNP_TR_2, () => ({
             currentStep: 1,
-            interestArea: { height: 1300, width: 2300, x: 2800, y: 900 },
+            interestArea: isHexaRf
+              ? { height: 1224, width: 1632, x: 1632, y: 0 }
+              : { height: 1300, width: 2300, x: 2800, y: 900 },
             region: 'topRight',
           }))
           .with(Step.SOLVE_PNP_BL_1, Step.SOLVE_PNP_BL_2, () => ({
             currentStep: 2,
-            interestArea: { height: 800, width: 1600, x: 1200, y: 2200 },
+            interestArea: isHexaRf
+              ? { height: 1224, width: 1632, x: 0, y: 1224 }
+              : { height: 800, width: 1600, x: 1200, y: 2200 },
             region: 'bottomLeft',
           }))
           .otherwise(() => ({
             currentStep: 3,
-            interestArea: { height: 800, width: 1600, x: 2800, y: 2200 },
+            interestArea: isHexaRf
+              ? { height: 1224, width: 1632, x: 1632, y: 1224 }
+              : { height: 800, width: 1600, x: 2800, y: 2200 },
             region: 'bottomRight',
           }));
 
@@ -345,6 +365,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             dh={calibratingParam.current[keys.dh]!}
             hasNext
             initInterestArea={interestArea}
+            label={['A', 'B', 'C', 'D'][currentStep]}
             onBack={async () => {
               if (step === Step.SOLVE_PNP_TL_2) {
                 progressCaller.openNonstopProgress({ id: PROGRESS_ID, message: tCali.moving_platform });
@@ -369,8 +390,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
               next();
             }}
             params={calibratingParam.current}
-            refPoints={bb2WideAngleCameraPnpPoints[region]}
-            steps={[tCali.align_top_left, tCali.align_top_right, tCali.align_bottom_left, tCali.align_bottom_right]}
+            refPoints={solvePnPPoints[region]}
+            steps={['A', 'B', 'C', 'D']}
             title={title}
           />
         );
@@ -400,7 +421,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
             for (let i = 0; i < regions.length; i++) {
               const region = regions[i];
               const imgPoint = getRegionalPoints(region, imgPoints as Record<WideAngleRegion, Array<[number, number]>>);
-              const refPoints = getRegionalPoints(region, bb2WideAngleCameraPnpPoints);
+              const refPoints = getRegionalPoints(region, solvePnPPoints);
               const res = await cameraCalibrationApi.solvePnPCalculate(dh!, imgPoint, refPoints);
 
               if (res.success) {
@@ -428,24 +449,26 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         step === Step.CHECK_PNP_1
           ? { dh: 'dh1', rvecs: 'rvecs1', tvecs: 'tvecs1' }
           : { dh: 'dh2', rvecs: 'rvecs2', tvecs: 'tvecs2' };
-      const { d, k, [keys.dh]: dh, [keys.rvecs]: rvecs, [keys.tvecs]: tvecs } = calibratingParam.current;
+      const {
+        d,
+        is_fisheye: isFisheye,
+        k,
+        [keys.dh]: dh,
+        [keys.rvecs]: rvecs,
+        [keys.tvecs]: tvecs,
+      } = calibratingParam.current;
 
       return (
         <CheckPnP
           cameraOptions={{ index: 1 }}
           dh={dh!}
-          grid={bb2WideAnglePerspectiveGrid}
+          grid={isHexaRf ? hx2WideAnglePerspectiveGrid : bb2WideAnglePerspectiveGrid}
           hasNext
           onBack={() => setStep(step === Step.CHECK_PNP_1 ? Step.SOLVE_PNP_TL_1 : Step.SOLVE_PNP_TL_2)}
           onClose={onClose}
           onNext={next}
-          params={{ d: d!, k: k!, rvecs: rvecs!, tvecs: tvecs! }}
-          points={[
-            ...bb2WideAngleCameraPnpPoints.topLeft,
-            ...bb2WideAngleCameraPnpPoints.topRight,
-            ...bb2WideAngleCameraPnpPoints.bottomLeft,
-            ...bb2WideAngleCameraPnpPoints.bottomRight,
-          ]}
+          params={{ d: d!, is_fisheye: isFisheye, k: k!, rvecs: rvecs!, tvecs: tvecs! }}
+          points={Object.values(solvePnPPoints).flat()}
           title={title}
         />
       );
@@ -481,6 +504,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
 
               const res: FisheyeCameraParametersV4 = {
                 d: calibratingParam.current.d!,
+                is_fisheye: calibratingParam.current.is_fisheye,
                 k: calibratingParam.current.k!,
                 ret: calibratingParam.current.ret!,
                 rvec: calibratingParam.current.rvec!,

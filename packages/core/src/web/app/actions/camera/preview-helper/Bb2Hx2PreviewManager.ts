@@ -8,6 +8,7 @@ import {
   bb2PerspectiveGrid,
   bb2WideAnglePerspectiveGrid,
   hx2rfPerspectiveGrid,
+  hx2WideAnglePerspectiveGrid,
 } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -24,7 +25,7 @@ import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 import { getWideAngleCameraData } from './getWideAngleCameraData';
 
 // TODO: Add tests
-class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
+class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager {
   private cameraType: CameraType = CameraType.LASER_HEAD;
   private lineCheckEnabled: boolean = false;
   private wideAngleFisheyeManager?: FisheyePreviewManagerV4;
@@ -43,7 +44,10 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     super(device);
     this.progressId = 'beam-preview-manager';
 
-    if (hexaRfModels.has(device.model)) this.grid = hx2rfPerspectiveGrid;
+    if (hexaRfModels.has(device.model)) {
+      this.grid = hx2rfPerspectiveGrid;
+      this.wideAngleGrid = hx2WideAnglePerspectiveGrid;
+    }
 
     this.cameraCenterOffset = {
       x: this.grid.x[0] + (this.grid.x[1] - this.grid.x[0]) / 2,
@@ -73,7 +77,7 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
     const { lang } = i18n;
 
     await this.end();
-    console.log('Error when setting up BB2 Preview Manager', error);
+    console.log('Error when setting up Bb2Hx2 Preview Manager', error);
 
     if (error instanceof Error && error.message.startsWith('Camera WS')) {
       alertCaller.popUpError({
@@ -470,4 +474,4 @@ class BB2PreviewManager extends BasePreviewManager implements PreviewManager {
   getCameraType = (): CameraType => this.cameraType;
 }
 
-export default BB2PreviewManager;
+export default Bb2Hx2PreviewManager;

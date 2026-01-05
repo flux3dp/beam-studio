@@ -11,6 +11,11 @@ on:
         required: false
         default: ""
         type: string
+      skip_code_sign:
+        description: "Skip Code Sign"
+        required: false
+        default: false
+        type: boolean
 
 jobs:
   build:
@@ -87,7 +92,7 @@ jobs:
           pip install . --verbose
 
       - name: Build Flux Ghost
-        uses: flux3dp/fluxghost@2.5.3
+        uses: flux3dp/fluxghost@2.5.4
         env:
           LC_ALL: en_US.UTF-8
           LC_CTYPE: en_US.UTF-8
@@ -138,6 +143,11 @@ jobs:
           codesign --deep --force -s "Developer ID Application: FLUX TECHNOLOGY CORP. (4Y92JWKV94)" ./backend/Swiftray.app
 
           chmod -R 777 ./node_modules/font-scanner
+
+          if ["${{github.event.inputs.skip_code_sign}}" = "true"]; then
+            echo "Set APPLE_TEAM_ID to empty to skip notarization per github input..."
+            export APPLE_TEAM_ID=""
+          fi
 
           if [ "${{ matrix.target }}" = "both" ]; then
             echo "Building for x64 and arm64..."

@@ -23,7 +23,7 @@ interface Props {
   onBack: () => void;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
-  params: { d: number[][]; k: number[][] } & (
+  params: { d: number[][]; is_fisheye?: boolean; k: number[][] } & (
     | { rvec: number[][]; tvec: number[][] }
     | { rvecs: Record<string, number[][]>; tvecs: Record<string, number[][]> }
   );

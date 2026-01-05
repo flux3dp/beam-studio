@@ -131,12 +131,11 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
           id: 'CALIBRATE_CAMERA_ADVANCED',
           label: r.calibrate_camera_advanced,
         },
-        isBb2 &&
-          (vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') || isDevMode) && {
-            click: handleClick,
-            id: 'CALIBRATE_CAMERA_WIDE_ANGLE',
-            label: r.calibrate_wide_angle_camera,
-          },
+        ((isBb2 && (vc.meetRequirement('BB2_WIDE_ANGLE_CAMERA') || isDevMode)) || isHexa2) && {
+          click: handleClick,
+          id: 'CALIBRATE_CAMERA_WIDE_ANGLE',
+          label: r.calibrate_wide_angle_camera,
+        },
         isBeamo && {
           click: handleClick,
           id: 'CALIBRATE_BEAMBOX_CAMERA_BORDERLESS',
