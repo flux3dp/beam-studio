@@ -141,7 +141,13 @@ export const fetchAllAiConfig = async (): Promise<AiConfigData | { error: string
   if ('error' in categoriesData) return categoriesData;
 
   return {
-    categories: categoriesData.toSorted((a, b) => a.order - b.order).map(mapCategory),
-    styles: stylesData.toSorted((a, b) => a.order - b.order).map(mapStyle),
+    categories: categoriesData
+      .filter(({ is_active }) => is_active)
+      .toSorted((a, b) => a.order - b.order)
+      .map(mapCategory),
+    styles: stylesData
+      .filter(({ is_active }) => is_active)
+      .toSorted((a, b) => a.order - b.order)
+      .map(mapStyle),
   };
 };
