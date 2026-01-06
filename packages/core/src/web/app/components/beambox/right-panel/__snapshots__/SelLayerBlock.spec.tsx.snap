@@ -16,6 +16,7 @@ exports[`SelLayerBlock should render correctly when layer is more than 1 and sel
     </span>
     <div
       class="ant-select ant-select-outlined select css-dev-only-do-not-override-hash ant-select-single ant-select-show-arrow"
+      data-testid="move-layer-select"
     >
       <div
         class="ant-select-selector"
