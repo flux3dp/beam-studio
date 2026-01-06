@@ -1,7 +1,7 @@
 import { sprintf } from 'sprintf-js';
 
 import Alert from '@core/app/actions/alert-caller';
-import constant, { hexaRfModelsArray, promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MonitorController from '@core/app/actions/monitor-controller';
 import Progress from '@core/app/actions/progress-caller';
@@ -518,7 +518,7 @@ export const getConvertEngine = (targetDevice?: IDeviceInfo) => {
 
   const useSwiftray =
     hasSwiftray &&
-    !['fbm2', ...hexaRfModelsArray].includes(currentWorkarea) &&
+    !['fbm2', 'fhx2rf', 'fuv1'].includes(currentWorkarea) &&
     (isPromark ||
       useGlobalPreferenceStore.getState()['path-engine'] === 'swiftray' ||
       targetDevice?.source === 'swiftray');

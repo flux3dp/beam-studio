@@ -1,7 +1,6 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { hexaRfModels } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -49,7 +48,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
-  const isHexaRf = useMemo(() => hexaRfModels.has(deviceMaster.currentDevice?.info.model ?? ''), []);
+  const isHexaRf = useMemo(() => deviceMaster.currentDevice?.info.model === 'fhx2rf', []);
 
   if (step === Steps.CHECKPOINT_DATA) {
     return (
