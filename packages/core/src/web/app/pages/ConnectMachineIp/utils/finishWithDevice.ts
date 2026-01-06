@@ -8,7 +8,7 @@ import deviceMaster from '@core/helpers/device-master';
 import storage from '@core/implementations/storage';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-export const saveDeviceAndSettings = async (device: IDeviceInfo): Promise<void> => {
+export const finishWithDevice = async (device: IDeviceInfo): Promise<void> => {
   const deviceModel = workAreaSet.has(device.model) ? device.model : 'fbb1b';
 
   useGlobalPreferenceStore.getState().set('model', deviceModel);

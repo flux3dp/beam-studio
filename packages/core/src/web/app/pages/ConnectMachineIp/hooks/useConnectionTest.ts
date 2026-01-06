@@ -24,7 +24,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MACHINE_CONNECTION_TIMEOUT } from '../constants';
 import type { State } from '../state';
 import { initialState } from '../state';
-import { saveDeviceAndSettings } from '../utils/deviceStorage';
+import { finishWithDevice } from '../utils/finishWithDevice';
 
 export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string, setIpValue: (ip: string) => void) => {
   const lang = useI18n();
@@ -242,7 +242,7 @@ export const useConnectionTest = (model: string, isUsb: boolean, ipValue: string
 
     if (!device) return;
 
-    await saveDeviceAndSettings(device);
+    await finishWithDevice(device);
 
     if (isPromark) {
       window.location.hash = '#/initialize/connect/select-promark-laser-source';
