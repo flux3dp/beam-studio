@@ -85,6 +85,7 @@ function SelLayerBlock({ layerNames }: Props): ReactNode {
       <span className={styles.label}>{lang.move_elems_to}</span>
       <Select
         className={styles.select}
+        data-testid="move-layer-select"
         disabled={options.length < 2}
         onChange={onChange}
         options={options}

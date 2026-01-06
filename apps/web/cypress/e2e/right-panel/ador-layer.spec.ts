@@ -68,7 +68,7 @@ describe('ador layer', () => {
 
     const moveElement = (layer: string, expectedText: string) => {
       cy.get('#svg_1').click({ force: true });
-      cy.get('select[title="Move selected elements to a different layer"]').select(layer);
+      cy.moveElementToLayer(layer, false);
       cy.get('.ant-modal-title').should('have.text', expectedText);
       cy.contains('button.ant-btn', 'Confirm').click({ force: true });
       cy.get('#svg_1').parent().find('title').should('have.text', layer);

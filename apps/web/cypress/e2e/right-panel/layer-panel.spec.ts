@@ -196,10 +196,7 @@ describe('manipulate layers', () => {
     cy.selectPreset('Fabric - 5mm Cutting');
     cy.get('#svg_1').click({ force: true });
     cy.get('div.tab.layers').click({ force: true });
-    cy.get('select[class*="src-web-app-components-beambox-right-panel-SelLayerBlock-module__select"]').select(
-      'Layer 2',
-    );
-    cy.get('button[class^="ant-btn"]').contains('Yes').click();
+    cy.moveElementToLayer('Layer 2');
     cy.get('#svg_1').should('have.attr', 'stroke', '#3F51B5');
     cy.clickToolBtn('Cursor');
     cy.get('#svg_1').click({ force: true });

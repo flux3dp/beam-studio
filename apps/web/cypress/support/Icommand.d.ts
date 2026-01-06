@@ -17,6 +17,7 @@ declare global {
       inputText: (value: string) => Chainable<void>;
       getElementTitle: (childSelector?: string) => Chainable<JQuery<HTMLElement>>;
       getTopBar: (childSelector?: string) => Chainable<JQuery<HTMLElement>>;
+      moveElementToLayer: (targetLayer: string, needConfirm?: boolean) => Chainable<void>;
     }
   }
 }
