@@ -29,6 +29,7 @@ const SUPPORTED_LOCALES = [
 
 const core = path.resolve(__dirname, '../../packages/core');
 const coreWeb = path.resolve(core, 'src/web');
+const isDev = process.env.NODE_ENV !== 'production';
 
 module.exports = {
   devtool: 'source-map',
@@ -120,7 +121,7 @@ module.exports = {
         exclude: /\.module\.s[ac]ss$/,
         test: /\.scss$/i,
         use: [
-          MiniCssExtractPlugin.loader,
+          isDev ? 'style-loader' : MiniCssExtractPlugin.loader,
           'css-loader',
           {
             loader: 'sass-loader',
@@ -133,7 +134,7 @@ module.exports = {
       {
         exclude: /\.module\.css$/,
         test: /\.css$/i,
-        use: [MiniCssExtractPlugin.loader, 'css-loader'],
+        use: [isDev ? 'style-loader' : MiniCssExtractPlugin.loader, 'css-loader'],
       },
       {
         test: /\.(woff(2)?|ttf|eot|png)$/,
