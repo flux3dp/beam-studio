@@ -11,7 +11,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import deviceMaster from '../device-master';
 
 const devicesModuleOffsetsCache: Record<string, DeviceModuleOffsets> = {};
-const modelsWithStores = ['fbm2'] as const;
+const modelsWithStores = ['fbm2', 'fuv1'] as const;
 
 export const getAllOffsetsFromDevices = async (useCache = true): Promise<DeviceModuleOffsets | null> => {
   if (!deviceMaster.currentDevice || !modelsWithStores.includes(deviceMaster.currentDevice.info.model)) return null;
