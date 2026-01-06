@@ -3,13 +3,15 @@ import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { promarkModels } from '@core/app/actions/beambox/constant';
+import { hexaRfModels, promarkModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getStorage, removeFromStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import { getHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -148,13 +150,20 @@ export const initStorageListeners = () => {
 initStorageListeners();
 
 export const getPresetModel = (model: PresetModel): PresetModel => {
-  if (!promarkModels.has(model)) {
-    return model;
+  if (promarkModels.has(model)) {
+    const info = getPromarkInfo();
+
+    return `fpm1_${info.laserType}_${info.watt}` as PresetModel;
   }
 
-  const info = getPromarkInfo();
+  if (hexaRfModels.has(model)) {
+    const device = TopBarController.getSelectedDevice();
+    const watt = getHexa2RfWatt(device?.uuid || '');
 
-  return `fpm1_${info.laserType}_${info.watt}` as PresetModel;
+    return `fhx2rf_${watt}` as PresetModel;
+  }
+
+  return model;
 };
 
 export const getDefaultPreset = (
