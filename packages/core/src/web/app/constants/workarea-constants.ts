@@ -68,24 +68,6 @@ export interface WorkArea {
   width: number; // mm
 }
 
-const hexaRfWorkAreaInfo: WorkArea = {
-  accOverride: { path: { x: 1000, y: 1000 } },
-  autoFocusOffset: [31.13, 1.2, 6.5],
-  autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
-  cameraCenter: [370, 180],
-  engraveDpiOptions: ['low', 'medium', 'high', 'detailed', 'ultra'],
-  height: 410,
-  label: 'HEXA RF',
-  maxSpeed: 2000,
-  minPower: 10,
-  minSpeed: 0.5,
-  minSpeedWarning: 3,
-  pxHeight: 410 * dpmm,
-  pxWidth: 740 * dpmm,
-  vectorSpeedLimit: 20,
-  width: 740,
-};
-
 export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   ado1: {
     accOverride: { path: { x: 500, y: 500 } },
@@ -211,7 +193,23 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     vectorSpeedLimit: 20,
     width: 740,
   },
-  fhx2rf: hexaRfWorkAreaInfo,
+  fhx2rf: {
+    accOverride: { path: { x: 1000, y: 1000 } },
+    autoFocusOffset: [31.13, 1.2, 6.5],
+    autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
+    cameraCenter: [370, 180],
+    engraveDpiOptions: ['low', 'medium', 'high', 'detailed', 'ultra'],
+    height: 410,
+    label: 'HEXA RF',
+    maxSpeed: 2000,
+    minPower: 10,
+    minSpeed: 0.5,
+    minSpeedWarning: 3,
+    pxHeight: 410 * dpmm,
+    pxWidth: 740 * dpmm,
+    vectorSpeedLimit: 20,
+    width: 740,
+  },
   flv1: {
     height: 400,
     label: 'Lazervida',

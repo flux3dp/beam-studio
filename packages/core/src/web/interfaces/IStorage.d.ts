@@ -1,6 +1,7 @@
 import type { ColorConfig } from '@core/app/constants/color-constants';
 import type { History } from '@core/app/contexts/ElementPanelContext';
 import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-helper';
+import type { DeviceStore } from '@core/helpers/device/deviceStore';
 import type { IRecord as RatingRecord } from '@core/helpers/rating-helper';
 
 import type { IConfig as AutoSaveConfig } from './IAutosave';
@@ -25,6 +26,7 @@ export interface Storage {
   'default-units': 'inches' | 'mm';
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
   defaultLaserConfigsInUse: any;
+  'device-store': Record<string, DeviceStore>;
   /** 1 for done */
   'did-gesture-tutorial': number;
   'elements-history': History[];

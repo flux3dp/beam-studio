@@ -57,35 +57,6 @@ export interface AddOnInfo {
   };
 }
 
-const hexaAddOnInfo: AddOnInfo = {
-  jobOrigin: true,
-  lowerFocus: true,
-  rotary: {
-    chuck: true,
-    extendWorkarea: false,
-    mirror: false,
-    roller: true,
-  },
-};
-
-const hexaRfAddOnInfo: AddOnInfo = {
-  ...hexaAddOnInfo,
-  autoFeeder: isDev()
-    ? {
-        maxHeight: 3000,
-        rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
-      }
-    : undefined,
-  rotary: {
-    chuck: true,
-    chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,
-    defaultMirror: true,
-    extendWorkarea: true,
-    mirror: true,
-    roller: true,
-  },
-};
-
 const addOnData: Record<WorkAreaModel, AddOnInfo> = {
   ado1: {
     autoFeeder: { maxHeight: 2000, rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER },
@@ -179,8 +150,34 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       roller: true,
     },
   },
-  fhexa1: hexaAddOnInfo,
-  fhx2rf: hexaRfAddOnInfo,
+  fhexa1: {
+    jobOrigin: true,
+    lowerFocus: true,
+    rotary: {
+      chuck: true,
+      extendWorkarea: false,
+      mirror: false,
+      roller: true,
+    },
+  },
+  fhx2rf: {
+    autoFeeder: isDev()
+      ? {
+          maxHeight: 3000,
+          rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
+        }
+      : undefined,
+    jobOrigin: true,
+    lowerFocus: true,
+    rotary: {
+      chuck: true,
+      chuckDiameter: CHUCK_ROTARY_DIAMETER / 2,
+      defaultMirror: true,
+      extendWorkarea: true,
+      mirror: true,
+      roller: true,
+    },
+  },
   flv1: {
     jobOrigin: true,
     rotary: {

@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .container {
   background: #f8f8f8;
   padding: 15px;
@@ -15,5 +17,10 @@
 
   .select {
     width: 100%;
+  }
+
+  &:not(:last-of-type) {
+    border: 1px solid variables.$panelBorderColor;
+    border-width: 0 0 1px 0;
   }
 }

@@ -7,7 +7,7 @@ import Select from '@core/app/widgets/AntdSelect';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './SelLayerBlock.module.scss';
+import styles from './Block.module.scss';
 
 const defaultOption = ' ';
 
