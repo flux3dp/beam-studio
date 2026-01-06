@@ -9,9 +9,8 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import defaultPresets from '@core/app/constants/presets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { getStorage, removeFromStorage, setStorage, useStorageStore } from '@core/app/stores/storageStore';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import { getHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -157,10 +156,9 @@ export const getPresetModel = (model: PresetModel): PresetModel => {
   }
 
   if (hexaRfModels.has(model)) {
-    const device = TopBarController.getSelectedDevice();
-    const watt = getHexa2RfWatt(device?.uuid || '');
+    const value = useCanvasStore.getState().watt;
 
-    return `fhx2rf_${watt}` as PresetModel;
+    return `fhx2rf_${value}` as PresetModel;
   }
 
   return model;

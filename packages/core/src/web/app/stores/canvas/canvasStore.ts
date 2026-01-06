@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
 
 export type CanvasMouseOperationMode =
   | 'auto-focus'
@@ -41,6 +42,8 @@ interface CanvasStore {
   setMode: (mode: CanvasMode) => void;
   toggleDrawerMode: (mode: CanvasDrawerMode) => void;
   togglePathPreview: () => void;
+  /** TODO: Laser watt for hexa rf, not sure if we should add another store for this or not? */
+  watt: Hexa2RfWatt;
 }
 
 export const useCanvasStore = create(
@@ -54,5 +57,6 @@ export const useCanvasStore = create(
       set((state) => ({ drawerMode: state.drawerMode === mode ? 'none' : mode })),
     togglePathPreview: () =>
       set((state) => ({ mode: state.mode === CanvasMode.PathPreview ? CanvasMode.Draw : CanvasMode.PathPreview })),
+    watt: 30,
   })),
 );

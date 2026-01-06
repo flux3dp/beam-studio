@@ -1,6 +1,7 @@
-import React, { memo, useContext, useEffect, useState } from 'react';
+import React, { memo, useContext, useEffect } from 'react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import initState from '@core/app/views/beambox/Right-Panels/ConfigPanel/initState';
 import Select from '@core/app/widgets/AntdSelect';
 import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
@@ -11,10 +12,10 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
 
-const WattsBlock = memo(() => {
+const WattBlock = memo(() => {
   const { selectedDevice } = useContext(CanvasContext);
   const workarea = useWorkarea();
-  const [value, setValue] = useState<Hexa2RfWatt>(getHexa2RfWatt(selectedDevice?.uuid || ''));
+  const value = useCanvasStore((state) => state.watt);
   const {
     beambox: { document_panel: t },
   } = useI18n();
@@ -22,7 +23,7 @@ const WattsBlock = memo(() => {
   useEffect(() => {
     if (selectedDevice?.model !== 'fhx2rf') return;
 
-    setValue(getHexa2RfWatt(selectedDevice?.uuid || ''));
+    useCanvasStore.setState({ watt: getHexa2RfWatt(selectedDevice?.uuid || '') });
   }, [selectedDevice]);
 
   useEffect(() => {
@@ -36,7 +37,7 @@ const WattsBlock = memo(() => {
 
   const options = fhx2rfWatts.map((watt) => ({ label: `${watt}W`, value: watt }));
   const handleChange = (newVal: Hexa2RfWatt) => {
-    setValue(newVal);
+    useCanvasStore.setState({ watt: newVal });
 
     if (selectedDevice?.uuid && selectedDevice.model === 'fhx2rf') {
       setHexa2RfWatt(selectedDevice.uuid, newVal);
@@ -51,4 +52,4 @@ const WattsBlock = memo(() => {
   );
 });
 
-export default WattsBlock;
+export default WattBlock;
