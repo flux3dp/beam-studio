@@ -48,7 +48,7 @@ export const printingModules = new Set<LayerModuleType>([LayerModule.PRINTER, La
 export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_PRINT] as const;
 export const fullColorModules = new Set<LayerModuleType>(fullColorModulesArray);
 export const fullColorHeadModules = [LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH];
-// uv for fbm2, not for uv printing export
+// uv for fuv1, not for uv printing export
 export const UVModules = new Set<LayerModuleType>([LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH]);
 
 const ModuleNameToValue = invert(LayerModule);

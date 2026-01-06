@@ -15,12 +15,25 @@ export type WorkAreaLabel =
   | 'Beambox Pro'
   | 'beamo'
   | 'beamo II'
+  | 'FLUX UV'
   | 'HEXA'
   | 'HEXA RF'
   | 'Lazervida'
   | 'Promark';
 
-export const workArea = ['fbm1', 'fbm2', 'fbb1b', 'fbb1p', 'fhexa1', 'fhx2rf', 'ado1', 'fpm1', 'flv1', 'fbb2'] as const;
+export const workArea = [
+  'fbm1',
+  'fbm2',
+  'fbb1b',
+  'fbb1p',
+  'fhexa1',
+  'fhx2rf',
+  'ado1',
+  'fpm1',
+  'flv1',
+  'fbb2',
+  'fuv1',
+] as const;
 export type WorkAreaModel = (typeof workArea)[number];
 export const workAreaSet = new Set(workArea);
 
@@ -230,6 +243,17 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     pxWidth: 150 * dpmm,
     supportedModules: [LayerModule.LASER_UNIVERSAL],
     width: 150,
+  },
+  fuv1: {
+    height: 215,
+    label: 'FLUX UV',
+    maxSpeed: 750,
+    minSpeed: 0.5,
+    pxHeight: 215 * dpmm,
+    pxWidth: 300 * dpmm,
+    supportedModules: [LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH],
+    topExpansion: 400,
+    width: 300,
   },
 };
 

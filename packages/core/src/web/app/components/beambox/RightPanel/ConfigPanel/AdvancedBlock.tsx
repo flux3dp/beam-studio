@@ -3,7 +3,7 @@ import React, { memo, useEffect, useMemo } from 'react';
 import { Collapse, ConfigProvider } from 'antd';
 import { useShallow } from 'zustand/react/shallow';
 
-import { hexaRfModels, promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
@@ -46,7 +46,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     [workarea],
   );
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
-  const isHexaRf = useMemo(() => hexaRfModels.has(workarea), [workarea]);
+  const isHexaRf = useMemo(() => workarea === 'fhx2rf', [workarea]);
   const promarkInfo = isPromark ? getPromarkInfo() : null;
   const promarkLimit = useMemo(
     () => (promarkInfo ? getPromarkLimit() : null),

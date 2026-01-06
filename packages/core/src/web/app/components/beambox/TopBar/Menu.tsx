@@ -4,7 +4,7 @@ import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/reac
 import '@szhsin/react-menu/dist/index.css';
 import '@szhsin/react-menu/dist/transitions/slide.css';
 
-import { fcodeV2Models, hexaRfModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { fcodeV2Models, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
@@ -128,7 +128,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
       const isBeamo = model === 'fbm1';
       const isBb2 = model === 'fbb2';
       const isBeamo2 = model === 'fbm2';
-      const isHexa2 = hexaRfModels.has(model);
+      const isHexa2 = model === 'fhx2rf';
 
       // Note: SubMenu doesn't support a React.Fragment wrapper (<>...</>) as a child.
       submenus.push(
