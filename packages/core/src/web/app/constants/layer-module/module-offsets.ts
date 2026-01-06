@@ -34,6 +34,12 @@ const moduleOffsets: ModuleOffsets = {
     [LayerModule.UV_VARNISH]: [30.2, -1.1],
     [LayerModule.UV_WHITE_INK]: [19.7, -1.1],
   },
+  // TODO: confirm fuv1 default offsets
+  fuv1: {
+    [LayerModule.PRINTER_4C]: [0, 0],
+    [LayerModule.UV_VARNISH]: [0, 0],
+    [LayerModule.UV_WHITE_INK]: [0, 0],
+  },
 };
 
 export default moduleOffsets;

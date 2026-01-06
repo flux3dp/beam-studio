@@ -202,6 +202,18 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       split: true,
     },
   },
+  fuv1: {
+    jobOrigin: true,
+    multiModules: true,
+    rotary: {
+      chuck: true,
+      chuckDiameter: CHUCK_ROTARY_DIAMETER,
+      defaultMirror: true,
+      extendWorkarea: true,
+      mirror: true,
+      roller: true,
+    },
+  },
 };
 
 export const getAddOnInfo = (workarea: WorkAreaModel): AddOnInfo => addOnData[workarea] || {};

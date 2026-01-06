@@ -1,5 +1,5 @@
 import alertCaller from '@core/app/actions/alert-caller';
-import constant, { hexaRfModels, promarkModels } from '@core/app/actions/beambox/constant';
+import constant, { modelsWithWideAngleCamera, promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import { showCameraCalibration } from '@core/app/components/dialogs/camera/CameraCalibration/CameraCalibration';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -174,7 +174,7 @@ export const calibrateCamera = async (
     if (res.success) {
       if (constant.adorModels.includes(device.model)) {
         return showAdorCalibrationV2(factoryMode);
-      } else if (device.model === 'fbb2' || hexaRfModels.has(device.model)) {
+      } else if (modelsWithWideAngleCamera.includes(device.model)) {
         if (isWideAngle) return showWideAngleCameraCalibration(device);
         else return showLaserHeadFisheyeCalibration(isAdvanced);
       } else if (promarkModels.has(device.model)) {
