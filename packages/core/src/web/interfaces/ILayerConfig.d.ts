@@ -81,6 +81,8 @@ type PrintingConfig = {
 type UVConfig = {
   interpolation: number;
   rightPadding: number;
+  uvCuringInterval: number;
+  uvStrength: number;
   uvXStep: number;
 };
 
