@@ -65,6 +65,8 @@ const attributeMap: Record<ConfigKey, string> = {
   rightPadding: 'data-rightPadding',
   speed: 'data-speed',
   split: 'data-split',
+  uvCuringInterval: 'data-uvCuringInterval',
+  uvStrength: 'data-uvStrength',
   uvXStep: 'data-uvXStep',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
@@ -120,6 +122,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   repeat: 1,
   rightPadding: 0,
   speed: 20,
+  uvCuringInterval: 0,
+  uvStrength: 30,
   uvXStep: 1,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
   wMultipass: 3,
@@ -199,6 +203,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'interpolation',
   'rightPadding',
   'uvXStep',
+  'uvCuringInterval',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',
