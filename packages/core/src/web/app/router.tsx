@@ -49,6 +49,8 @@ import Settings from '@core/app/pages/Settings';
 import Welcome from '@core/app/pages/Welcome';
 import AlertsAndProgress from '@core/app/views/dialogs/AlertAndProgress';
 import Dialog from '@core/app/views/dialogs/Dialog';
+import handleAutoConnect from '@core/helpers/handleAutoConnect';
+import isWeb from '@core/helpers/is-web';
 import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
@@ -56,6 +58,35 @@ import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
 import { DEFAULT_CONFIG, useSettingStore } from './pages/Settings/useSettingStore';
 
 const { defaultAlgorithm } = theme;
+
+/**
+ * Component that runs QR code auto-connect on mount.
+ * Must be inside AlertProgressContextProvider for MessageCaller to work.
+ */
+// eslint-disable-next-line reactRefresh/only-export-components
+const QRCodeAutoConnectRunner = (): null => {
+  const hasRunRef = React.useRef(false);
+
+  React.useEffect(() => {
+    // Only run once in web environment
+    if (hasRunRef.current || !isWeb()) return;
+
+    hasRunRef.current = true;
+
+    // Run auto-connect (async, non-blocking)
+    handleAutoConnect()
+      .then((success) => {
+        if (success) {
+          console.log('QR Auto-Connect: Successfully connected');
+        }
+      })
+      .catch(() => {
+        console.log('QR Auto-Connect: Failed to connect');
+      });
+  }, []);
+
+  return null;
+};
 
 const localeMap = {
   da_DK: daDK,
@@ -81,6 +112,7 @@ const localeMap = {
 
 console.log('Loading language', navigator.language);
 
+// eslint-disable-next-line reactRefresh/only-export-components
 const App = (): React.JSX.Element => {
   const [messageApi, contextHolder] = message.useMessage();
   const { getConfig } = useSettingStore();
@@ -112,6 +144,7 @@ const App = (): React.JSX.Element => {
               <StyleProvider hashPriority="low">
                 <Dialog />
                 <AlertsAndProgress />
+                <QRCodeAutoConnectRunner />
                 {contextHolder}
                 <HashRouter>
                   <Switch>
