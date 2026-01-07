@@ -571,8 +571,8 @@ class LayerPanel extends React.PureComponent<Props, State> {
             >
               {this.renderLayerPanel()}
             </ResizableBox>
-            <WattBlock />
             <SelLayerBlock layerNames={layerNames} />
+            <WattBlock />
             <ConfigPanel />
           </>
         )}
