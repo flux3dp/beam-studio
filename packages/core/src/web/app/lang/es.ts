@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: 'Colocar Tablero de Ajedrez',
     put_chessboard_1: 'Por favor, vaya al panel de control de la máquina y presione AF para realizar el enfoque automático.',
     put_chessboard_2: 'Mueva el papel del tablero de ajedrez o la cabeza láser hasta que se confirme que todo el tablero de ajedrez está dentro del marco rojo en la ventana de vista previa en vivo.',
+    put_chessboard_2_no_indicator: 'Mueva el papel del tablero de ajedrez o la cabeza láser hasta que se confirme que todo el tablero de ajedrez está dentro de la ventana de vista previa en vivo.',
     put_chessboard_3: 'Haz clic derecho para descargar la imagen del tablero de ajedrez en la ubicación actual y verificar su claridad.',
     put_chessboard_bb2_desc_1: 'Descargue el siguiente archivo de tablero de ajedrez y imprímalo en papel A4 (el tablero de ajedrez impreso debe tener cuadrados de 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Fije el tablero de ajedrez impreso a una superficie no deformable, como acrílico o vidrio, asegurándose de que el tablero esté liso y sin arrugas o levantamientos.',

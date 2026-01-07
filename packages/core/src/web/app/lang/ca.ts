@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: "Col·locar tauler d'escacs",
     put_chessboard_1: "Si us plau, ves al panell de control de la màquina i prem AF per realitzar l'enfocament automàtic.",
     put_chessboard_2: "Si us plau, mou el paper de tauler d'escacs o el capçal làser fins que tot el tauler d'escacs es confirmi que està dins del marc vermell a la finestra de vista prèvia en directe.",
+    put_chessboard_2_no_indicator: "Si us plau, mou el paper de tauler d'escacs o el capçal làser fins que tot el tauler d'escacs es confirmi que està dins de la finestra de vista prèvia en directe.",
     put_chessboard_3: "Fes clic dret per descarregar la imatge del tauler d'escacs a la ubicació actual i comprova la seva claredat.",
     put_chessboard_bb2_desc_1: "Si us plau, descarrega el següent fitxer de tauler d'escacs i imprimeix-lo en paper A4 o mida letter (el tauler d'escacs imprès ha de tenir quadrats d'1x1 cm).",
     put_chessboard_bb2_desc_2: "Assegura el paper de tauler d'escacs imprès sobre una taula no deformable, com ara acrílic o vidre, assegurant que el tauler d'escacs sigui llis i lliure d'arrugues o aixecaments.",

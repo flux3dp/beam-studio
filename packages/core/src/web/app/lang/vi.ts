@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: 'Đặt Bàn Cờ',
     put_chessboard_1: 'Vui lòng đi tới bảng điều khiển máy và nhấn AF để thực hiện lấy nét tự động.',
     put_chessboard_2: 'Vui lòng di chuyển giấy bàn cờ hoặc đầu laser cho đến khi toàn bộ bàn cờ được xác nhận nằm trong khung đỏ trong cửa sổ xem trước trực tiếp.',
+    put_chessboard_2_no_indicator: 'Vui lòng di chuyển giấy bàn cờ hoặc đầu laser cho đến khi toàn bộ bàn cờ được xác nhận nằm trong cửa sổ xem trước trực tiếp.',
     put_chessboard_3: 'Nhấp chuột phải để tải xuống hình ảnh bàn cờ ở vị trí hiện tại và kiểm tra độ rõ nét.',
     put_chessboard_bb2_desc_1: 'Vui lòng tải xuống tệp bàn cờ sau đây và in nó trên giấy A4 (bàn cờ in ra phải có các ô kích thước 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Gắn giấy bàn cờ đã in lên một tấm bảng không bị biến dạng, chẳng hạn như acrylic hoặc kính, đảm bảo bàn cờ phẳng, không có nếp gấp hoặc mép bị nhô lên.',

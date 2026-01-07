@@ -107,12 +107,18 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   }
 
   if (step === Steps.CHESSBOARD) {
+    const indicator = isHexaRf ? undefined : { height: '65%', left: '10%', top: '30%', width: '80%' };
+
     return (
       <Calibration
         charuco={[15, 10]}
         chessboard={[24, 14]}
-        description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
-        indicator={{ height: '65%', left: '10%', top: '30%', width: '80%' }}
+        description={[
+          tCali.put_chessboard_1,
+          indicator ? tCali.put_chessboard_2 : tCali.put_chessboard_2_no_indicator,
+          tCali.put_chessboard_3,
+        ]}
+        indicator={indicator}
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
         updateParam={updateParam}

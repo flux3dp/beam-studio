@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: 'Schachbrett Platzieren',
     put_chessboard_1: 'Bitte gehen Sie zum Maschinensteuerpult und drücken Sie AF, um den Autofokus auszuführen.',
     put_chessboard_2: 'Bitte bewegen Sie das Schachbrettpapier oder den Laserkopf, bis das gesamte Schachbrett im Vorschaufenster innerhalb des roten Rahmens bestätigt ist.',
+    put_chessboard_2_no_indicator: 'Bitte bewegen Sie das Schachbrettpapier oder den Laserkopf, bis das gesamte Schachbrett im Vorschaufenster bestätigt ist.',
     put_chessboard_3: 'Klicken Sie mit der rechten Maustaste, um das Schachbrettbild am aktuellen Ort herunterzuladen und dessen Klarheit zu überprüfen.',
     put_chessboard_bb2_desc_1: 'Laden Sie die folgende Schachbrettdatei herunter und drucken Sie sie auf A4-Papier aus (das gedruckte Schachbrett sollte Quadrate von 1x1 cm haben).',
     put_chessboard_bb2_desc_2: 'Befestigen Sie das gedruckte Schachbrettpapier auf einer unverformbaren Platte wie Acryl oder Glas und stellen Sie sicher, dass das Schachbrett glatt und frei von Falten oder Hebungen ist.',

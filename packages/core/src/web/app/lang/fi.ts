@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: 'Aseta Shakkilauta',
     put_chessboard_1: 'Mene laitteen ohjauspaneeliin ja paina AF suorittaaksesi automaattitarkennuksen.',
     put_chessboard_2: 'Siirrä shakkilautapaperia tai laserpäätä, kunnes koko shakkilauta vahvistetaan olevan punaisen kehyksen sisällä live-esikatseluikkunassa.',
+    put_chessboard_2_no_indicator: 'Siirrä shakkilautapaperia tai laserpäätä, kunnes koko shakkilauta vahvistetaan olevan live-esikatseluikkunassa.',
     put_chessboard_3: 'Napsauta hiiren oikealla painikkeella ladataksesi shakkilautakuvan nykyisestä sijainnista ja tarkistaaksesi sen selkeyden.',
     put_chessboard_bb2_desc_1: 'Lataa seuraava shakkilautatiedosto ja tulosta se A4-paperille (tulostetun shakkilaudan neliöiden koko tulee olla 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Kiinnitä tulostettu shakkilauta muotonsa pitävälle alustalle, kuten akryylille tai lasille, varmistaen, että lauta on sileä eikä siinä ole ryppyjä tai kohoumia.',

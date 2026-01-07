@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: 'Plasser Sjakkbrett',
     put_chessboard_1: 'Vennligst gå til maskinens kontrollpanel og trykk AF for å utføre autofokus.',
     put_chessboard_2: 'Vennligst flytt sjakkbrettpapiret eller laserhodet til hele sjakkbrettet er bekreftet innenfor den røde rammen i det direkte forhåndsvisningsvinduet.',
+    put_chessboard_2_no_indicator: 'Vennligst flytt sjakkbrettpapiret eller laserhodet til hele sjakkbrettet er bekreftet innenfor det direkte forhåndsvisningsvinduet.',
     put_chessboard_3: 'Høyreklikk for å laste ned sjakkbrettbildet på den nåværende plasseringen og sjekk dets klarhet.',
     put_chessboard_bb2_desc_1: 'Last ned den følgende sjakkbrettfilen og skriv den ut på A4-papir (det utskrevne sjakkbrettet skal ha ruter på 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Fest det utskrevne sjakkbrettet på en ikke-deformerbar plate, for eksempel akryl eller glass, og sørg for at sjakkbrettet er glatt og uten rynker eller løft.',

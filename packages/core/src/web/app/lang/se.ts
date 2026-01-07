@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: 'Placera Schackbrädet',
     put_chessboard_1: 'Gå till maskinens kontrollpanel och tryck på AF för att utföra autofokus.',
     put_chessboard_2: 'Flytta schackbrädepappret eller laserhuvudet tills hela schackbrädet är bekräftat att vara inom den röda ramen i fönstret för liveförhandsgranskning.',
+    put_chessboard_2_no_indicator: 'Flytta schackbrädepappret eller laserhuvudet tills hela schackbrädet är bekräftat att vara inom fönstret för liveförhandsgranskning.',
     put_chessboard_3: 'Högerklicka för att ladda ner schackbrädesbilden på den aktuella platsen och kontrollera dess skärpa.',
     put_chessboard_bb2_desc_1: 'Ladda ner följande schackbrädefil och skriv ut den på A4-papper (det utskrivna schackbrädet ska ha rutor som är 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Fäst det utskrivna schackbrädet på en icke-deformerbar skiva, som akryl eller glas, och se till att schackbrädet är slätt och utan veck eller upphöjda kanter.',

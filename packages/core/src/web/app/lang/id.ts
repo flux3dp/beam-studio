@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: 'Tempatkan Papan Catur',
     put_chessboard_1: 'Silakan pergi ke panel kontrol mesin dan tekan AF untuk melakukan fokus otomatis.',
     put_chessboard_2: 'Silakan pindahkan kertas papan catur atau kepala laser hingga seluruh papan catur dikonfirmasi berada dalam bingkai merah di jendela pratinjau langsung.',
+    put_chessboard_2_no_indicator: 'Silakan pindahkan kertas papan catur atau kepala laser hingga seluruh papan catur dikonfirmasi berada dalam jendela pratinjau langsung.',
     put_chessboard_3: 'Klik kanan untuk mengunduh gambar papan catur di lokasi saat ini dan periksa kejernihannya.',
     put_chessboard_bb2_desc_1: 'Unduh file papan catur berikut dan cetak di kertas A4 (papan catur yang dicetak harus memiliki kotak berukuran 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Pasang kertas papan catur yang sudah dicetak pada papan yang tidak dapat berubah bentuk, seperti akrilik atau kaca, dan pastikan papan catur rata tanpa kerutan atau terangkat.',

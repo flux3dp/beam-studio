@@ -1172,6 +1172,7 @@ const lang: ILang = {
     put_chessboard: '放置棋盘板',
     put_chessboard_1: '请前往机器控制面板，按下AF以执行自动对焦。',
     put_chessboard_2: '请移动棋盘纸或激光头，直到确认整个棋盘在实时预览窗口中的红框内。',
+    put_chessboard_2_no_indicator: '请移动棋盘纸或激光头，直到确认整个棋盘在实时预览窗口中。',
     put_chessboard_3: '单击右键以下载当前位置的棋盘图像并检查其清晰度。',
     put_chessboard_bb2_desc_1: '请下载以下棋盘文件，并将其打印在A4纸上（打印的棋盘应为1x1厘米的方格）。',
     put_chessboard_bb2_desc_2: '将打印好的棋盘纸固定在不可变形的板材上，例如亚克力或玻璃，确保棋盘平整，无皱褶或翘起。',
