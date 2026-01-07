@@ -1,4 +1,5 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import { modelsWithPrinter4C } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
@@ -198,7 +199,7 @@ export const importBvgString = async (
   const hasPrintingLayer = hasModuleLayer([LayerModule.PRINTER]);
   const shouldChangeToAdor = currentWorkarea !== 'ado1' && hasPrintingLayer;
   const has4CLayer = hasModuleLayer(fullColorHeadModules);
-  const shouldChangeToBeamo2 = currentWorkarea !== 'fbm2' && has4CLayer;
+  const shouldChangeToBeamo2 = !modelsWithPrinter4C.includes(currentWorkarea) && has4CLayer;
 
   if (shouldChangeToAdor || shouldChangeToBeamo2) {
     const message = shouldChangeToBeamo2

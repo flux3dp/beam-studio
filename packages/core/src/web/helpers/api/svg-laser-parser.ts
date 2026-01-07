@@ -5,7 +5,7 @@
 import { match } from 'ts-pattern';
 
 import Alert from '@core/app/actions/alert-caller';
-import constant, { dpmm, modelsWithModules } from '@core/app/actions/beambox/constant';
+import constant, { dpmm, modelsWithModules, modelsWithPrinter4C } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
@@ -152,7 +152,10 @@ export const getExportOpt = async (
     const workareaWidth = workareaObj.width;
     const minY = workareaManager.minY / dpmm;
 
-    if (model === 'fbm2' && hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true })) {
+    if (
+      modelsWithPrinter4C.includes(model) &&
+      hasModuleLayer([LayerModule.PRINTER_4C], { checkRepeat: true, checkVisible: true })
+    ) {
       if (documentState['skip_prespray']) {
         config.skip_prespray = true;
       }
