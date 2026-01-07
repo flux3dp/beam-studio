@@ -1,3 +1,4 @@
+import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import storage from '@core/implementations/storage';
 
 export const fhx2rfWatts = [30, 60, 80] as const;
@@ -48,7 +49,15 @@ export const getHexa2RfWatt = (uuid: string): Hexa2RfWatt => {
   return 30; // default watt
 };
 
-export const setHexa2RfWatt = (uuid: string, watt: Hexa2RfWatt): void => {
+export const setHexa2RfWatt = (uuid: string | undefined, watt: Hexa2RfWatt): void => {
+  if (!uuid) {
+    const { model, uuid: selectedDeviceUuid } = TopBarController.getSelectedDevice() ?? {};
+
+    if (model !== 'fhx2rf' || !selectedDeviceUuid) return;
+
+    uuid = selectedDeviceUuid;
+  }
+
   addDevice(uuid, 'fhx2rf');
   set(uuid, { watt });
 };

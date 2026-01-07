@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
+import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -23,6 +24,7 @@ import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
@@ -113,6 +115,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const dpiOptions = workareaObj.engraveDpiOptions || defaultEngraveDpiOptions;
+  const wattsOptions = useMemo(() => {
+    return match(workarea)
+      .with('fhx2rf', () => fhx2rfWatts.map((watt) => ({ label: `${watt}W`, value: watt })))
+      .otherwise(() => null);
+  }, [workarea]);
+  const [watt, setWatt] = useState(useCanvasStore.getState().watt);
 
   useEffect(() => {
     if (!dpiOptions.includes(engraveDpi)) setEngraveDpi(dpiOptions.at(-1)!);
@@ -298,6 +306,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
     canvasEvents.emit('document-settings-saved');
+
+    if (wattsOptions) {
+      useCanvasStore.setState({ watt });
+      setHexa2RfWatt(undefined, watt);
+    }
   };
 
   const renderWarningIcon = (title: string) => {
@@ -500,6 +513,21 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   }}
                   options={promarkLaserOptions}
                   value={`${pmInfo.laserType}-${pmInfo.watt}`}
+                  variant="outlined"
+                />
+              </div>
+            )}
+            {wattsOptions && (
+              <div className={styles.row}>
+                <label className={styles.title} htmlFor="laser-source">
+                  {tDocument.laser_source}:
+                </label>
+                <Select
+                  className={styles.control}
+                  id="laser-source"
+                  onChange={(val) => setWatt(val)}
+                  options={wattsOptions}
+                  value={watt}
                   variant="outlined"
                 />
               </div>
