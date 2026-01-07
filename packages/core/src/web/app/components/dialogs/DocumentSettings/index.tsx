@@ -24,7 +24,7 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
 import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -57,6 +57,7 @@ const workareaOptions = [
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   { label: 'Beambox II', value: 'fbb2' },
   checkBM2() && { label: 'beamo II', value: 'fbm2' },
+  checkFUV1() && { label: 'FLUX UV', value: 'fuv1' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
 ].filter(Boolean);
 
