@@ -160,6 +160,12 @@ jest.mock('@core/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
 
+const mockSetHexa2RfWatt = jest.fn();
+
+jest.mock('@core/helpers/device/deviceStore', () => ({
+  setHexa2RfWatt: (...args) => mockSetHexa2RfWatt(...args),
+}));
+
 const mockUnmount = jest.fn();
 
 import DocumentSettings from './index';
