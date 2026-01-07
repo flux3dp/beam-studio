@@ -9,8 +9,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
-import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
@@ -42,6 +41,7 @@ import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
+import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
 
 const workareaOptions = [
@@ -121,19 +121,15 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const {
     autoFeederHeight,
     autoFeederScale,
-    chunkDiameter,
     passThroughHeight,
     rotaryMode: storeRotaryMode,
-    rotaryScale,
     rotaryType: storeRotaryType,
   } = useDocumentStore(
     useShallow((state) => ({
       autoFeederHeight: state['auto-feeder-height'],
       autoFeederScale: state['auto-feeder-scale'],
-      chunkDiameter: state['rotary-chuck-obj-d'],
       passThroughHeight: state['pass-through-height'],
       rotaryMode: state.rotary_mode,
-      rotaryScale: state['rotary-scale'],
       rotaryType: state['rotary-type'],
     })),
   );
@@ -310,20 +306,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       <Tooltip title={title}>
         <WarningOutlined className={styles.icon} />
       </Tooltip>
-    );
-  };
-
-  const renderRotarySettingsIcon = () => {
-    return (
-      <SettingFilled
-        className={styles.icon}
-        onClick={() =>
-          showRotarySettings({ rotaryMode, rotaryType, workarea }, () => {
-            setRotaryMode(useDocumentStore.getState().rotary_mode);
-            setRotaryType(useDocumentStore.getState()['rotary-type']);
-          })
-        }
-      />
     );
   };
 
@@ -721,72 +703,19 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </>
           )}
-          {addOnInfo.rotary && (
-            <>
-              <div className={styles.block}>
-                <div className={styles.row}>
-                  <div className={styles.title}>
-                    <label htmlFor="rotaryMaster">
-                      <strong>{tDocument.rotary_mode}</strong>
-                    </label>
-                    {!addOnInfo.rotary.chuck && renderRotarySettingsIcon()}
-                    {renderWarningIcon(tGlobal.mode_conflict)}
-                  </div>
-                  <div className={styles.control}>
-                    <Switch
-                      checked={rotaryMode}
-                      disabled={!addOnInfo.rotary || isCurveEngraving}
-                      id="rotaryMaster"
-                      onChange={(on: boolean) => {
-                        setRotaryMode(on);
-
-                        if (addOnInfo.openBottom) setBorderless(false);
-                      }}
-                    />
-                  </div>
-                </div>
-                {rotaryMode && addOnInfo.rotary.chuck && (
-                  <>
-                    <div className={classNames(styles.row, styles.full)}>
-                      <Segmented
-                        className={styles.segmented}
-                        id="rotaryModeSelect"
-                        onChange={(val) => setRotaryType(val as RotaryType)}
-                        options={[
-                          { label: 'Roller', value: RotaryType.Roller },
-                          { label: 'Chuck', value: RotaryType.Chuck },
-                        ]}
-                        value={rotaryType}
-                      />
-                      <div className={styles.sub}>
-                        <div
-                          className={classNames(
-                            styles.desc,
-                            rotaryType === RotaryType.Chuck ? styles.right : styles.left,
-                          )}
-                        >
-                          {rotaryType === RotaryType.Chuck
-                            ? `Φ: ${lengthDisplay(chunkDiameter)}, Scale: ${rotaryScale}`
-                            : `Scale: ${rotaryScale}`}
-                          {renderRotarySettingsIcon()}
-                        </div>
-                      </div>
-                    </div>
-                    {addOnInfo.openBottom && (
-                      <div className={styles.row}>
-                        <label className={styles.title} htmlFor="rotaryOpenBottom">
-                          {tDocument.borderless_mode}
-                        </label>
-                        <div className={styles.control}>
-                          <Switch checked={borderless} id="rotaryOpenBottom" onChange={setBorderless} />
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </>
-          )}
+          <RotaryBlock
+            addOnInfo={addOnInfo}
+            borderless={borderless}
+            isCurveEngraving={isCurveEngraving}
+            lengthDisplay={lengthDisplay}
+            renderWarningIcon={renderWarningIcon}
+            rotaryMode={rotaryMode}
+            rotaryType={rotaryType}
+            setBorderless={setBorderless}
+            setRotaryMode={setRotaryMode}
+            setRotaryType={setRotaryType}
+            workarea={workarea}
+          />
           {addOnInfo.openBottom ? (
             <div className={styles.block}>
               <div className={styles.row}>
