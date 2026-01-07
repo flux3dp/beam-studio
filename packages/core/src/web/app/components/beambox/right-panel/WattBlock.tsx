@@ -3,16 +3,19 @@ import React, { memo, useContext, useEffect } from 'react';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import initState from '@core/app/views/beambox/Right-Panels/ConfigPanel/initState';
+import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
 import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { fhx2rfWatts, getHexa2RfWatt, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { postPresetChange } from '@core/helpers/layer/layer-config-helper';
+import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
 
 const WattBlock = memo(() => {
+  const isMobile = useIsMobile();
   const { selectedDevice } = useContext(CanvasContext);
   const workarea = useWorkarea();
   const value = useCanvasStore((state) => state.watt);
@@ -44,7 +47,15 @@ const WattBlock = memo(() => {
     }
   };
 
-  return (
+  return isMobile ? (
+    <ObjectPanelItem.Select
+      id="watt-select-mobile"
+      label={t.laser_source}
+      onChange={handleChange as any}
+      options={options}
+      selected={options.find((option) => option.value === value)}
+    />
+  ) : (
     <div className={styles.container}>
       <span className={styles.label}>{t.laser_source}</span>
       <Select className={styles.select} onChange={handleChange} options={options} value={value} />
