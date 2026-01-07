@@ -1,5 +1,4 @@
 import { match } from 'ts-pattern';
-import { v4 as uuid } from 'uuid';
 
 import tabController from '@core/app/actions/tabController';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -53,7 +52,7 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
     const serializedData: ClipboardData = {
       elements: [],
-      id: uuid(),
+      id: crypto.randomUUID(),
       imageData: {},
       refs: {},
       source: String(tabController.currentId),
