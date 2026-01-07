@@ -1,5 +1,3 @@
-import { v4 as uuid } from 'uuid';
-
 import type { ClipboardCore, ClipboardData } from '@core/interfaces/Clipboard';
 
 import { Clipboard } from './Clipboard';
@@ -9,7 +7,7 @@ export class MemoryClipboard extends Clipboard implements ClipboardCore {
   private id: string = '';
 
   protected writeDataToClipboard = async (elems: Element[]): Promise<void> => {
-    this.id = uuid();
+    this.id = crypto.randomUUID();
     this.clipboardData = [...elems];
   };
 

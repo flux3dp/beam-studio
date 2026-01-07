@@ -1,7 +1,5 @@
 import * as React from 'react';
 
-import $ from 'jquery';
-
 import keyCodeConstants from '@core/app/constants/keycode-constants';
 
 interface Props {
@@ -51,7 +49,7 @@ class ValidationTextInput extends React.Component<Props, State> {
     switch (e.keyCode) {
       case keyCodeConstants.KEY_RETURN:
         this.validateAndUpdateValue(e.target.value);
-        $(e.target)[0].blur();
+        e.target.blur();
         break;
       case keyCodeConstants.KEY_ESC:
         this.setState((prevState) => ({ displayValue: prevState.value }));
