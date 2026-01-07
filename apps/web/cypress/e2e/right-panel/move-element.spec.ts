@@ -37,8 +37,7 @@ describe('move element to another layer', () => {
 
     verifyInputValues({ strength: '15', speed: '20', repeat: '1' });
 
-    cy.get('[class*="SelLayerBlock-module__select"]').select(targetLayer);
-    cy.get('.ant-btn').contains('Yes').click();
+    cy.moveElementToLayer(targetLayer);
   }
 
   it('move one element', () => {

@@ -1,13 +1,13 @@
+import type { ReactNode } from 'react';
 import React, { memo, useContext, useEffect, useState } from 'react';
-
-import classNames from 'classnames';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import Select from '@core/app/widgets/AntdSelect';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './SelLayerBlock.module.scss';
+import styles from './Block.module.scss';
 
 const defaultOption = ' ';
 
@@ -15,7 +15,7 @@ interface Props {
   layerNames: string[];
 }
 
-function SelLayerBlock({ layerNames }: Props): React.JSX.Element {
+function SelLayerBlock({ layerNames }: Props): ReactNode {
   const lang = useI18n().beambox.right_panel.layer_panel;
   const [promptMoveLayerOnce, setPromptMoveLayerOnce] = useState(false);
   const [displayValue, setDisplayValue] = useState(defaultOption);
@@ -57,52 +57,40 @@ function SelLayerBlock({ layerNames }: Props): React.JSX.Element {
     return null;
   }
 
-  const onChange = (e: React.ChangeEvent) => {
-    const select = e.target as HTMLSelectElement;
-    const destLayer = select.options[select.selectedIndex].value;
-
+  const onChange = (value: string) => {
     moveToOtherLayer(
-      destLayer,
+      value,
       () => {
-        setDisplayValue(destLayer);
+        setDisplayValue(value);
         setPromptMoveLayerOnce(true);
       },
       !promptMoveLayerOnce,
     );
   };
 
-  const options = [];
+  const options: Array<{ label: string; value: string }> = [];
 
   if (displayValue === defaultOption) {
-    options.push(
-      <option key={-1} value={defaultOption}>
-        {lang.move_elems_to}
-      </option>,
-    );
+    options.push({ label: lang.move_elems_to, value: defaultOption });
   }
 
   for (let i = layerNames.length - 1; i >= 0; i -= 1) {
     const layerName = layerNames[i];
 
-    options.push(
-      <option key={i} value={layerName}>
-        {layerName}
-      </option>,
-    );
+    options.push({ label: layerName, value: layerName });
   }
 
   return (
-    <div className={classNames('controls', styles.container)}>
+    <div className={styles.container}>
       <span className={styles.label}>{lang.move_elems_to}</span>
-      <select
+      <Select
         className={styles.select}
+        data-testid="move-layer-select"
         disabled={options.length < 2}
         onChange={onChange}
-        title="Move selected elements to a different layer"
+        options={options}
         value={displayValue}
-      >
-        {options}
-      </select>
+      />
     </div>
   );
 }

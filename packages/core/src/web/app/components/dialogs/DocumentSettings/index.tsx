@@ -3,14 +3,14 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
+import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
-import { getAddOnInfo, RotaryType } from '@core/app/constants/addOn';
+import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
@@ -24,6 +24,7 @@ import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
@@ -42,6 +43,8 @@ import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
+import JobOriginBlock from './JobOriginBlock';
+import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
 
 const workareaOptions = [
@@ -112,6 +115,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
   const dpiOptions = workareaObj.engraveDpiOptions || defaultEngraveDpiOptions;
+  const wattsOptions = useMemo(() => {
+    return match(workarea)
+      .with('fhx2rf', () => fhx2rfWatts.map((watt) => ({ label: `${watt}W`, value: watt })))
+      .otherwise(() => null);
+  }, [workarea]);
+  const [watt, setWatt] = useState(useCanvasStore.getState().watt);
 
   useEffect(() => {
     if (!dpiOptions.includes(engraveDpi)) setEngraveDpi(dpiOptions.at(-1)!);
@@ -121,19 +130,15 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const {
     autoFeederHeight,
     autoFeederScale,
-    chunkDiameter,
     passThroughHeight,
     rotaryMode: storeRotaryMode,
-    rotaryScale,
     rotaryType: storeRotaryType,
   } = useDocumentStore(
     useShallow((state) => ({
       autoFeederHeight: state['auto-feeder-height'],
       autoFeederScale: state['auto-feeder-scale'],
-      chunkDiameter: state['rotary-chuck-obj-d'],
       passThroughHeight: state['pass-through-height'],
       rotaryMode: state.rotary_mode,
-      rotaryScale: state['rotary-scale'],
       rotaryType: state['rotary-type'],
     })),
   );
@@ -301,6 +306,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
 
     canvasEvents.emit('document-settings-saved');
+
+    if (wattsOptions) {
+      useCanvasStore.setState({ watt });
+      setHexa2RfWatt(undefined, watt);
+    }
   };
 
   const renderWarningIcon = (title: string) => {
@@ -310,20 +320,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       <Tooltip title={title}>
         <WarningOutlined className={styles.icon} />
       </Tooltip>
-    );
-  };
-
-  const renderRotarySettingsIcon = () => {
-    return (
-      <SettingFilled
-        className={styles.icon}
-        onClick={() =>
-          showRotarySettings({ rotaryMode, rotaryType, workarea }, () => {
-            setRotaryMode(useDocumentStore.getState().rotary_mode);
-            setRotaryType(useDocumentStore.getState()['rotary-type']);
-          })
-        }
-      />
     );
   };
 
@@ -505,7 +501,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             {isPromark && (
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="pm-laser-source">
-                  {tDocument.laser_source}:
+                  {tDocument.laser_source}
                 </label>
                 <Select
                   className={styles.control}
@@ -517,6 +513,21 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   }}
                   options={promarkLaserOptions}
                   value={`${pmInfo.laserType}-${pmInfo.watt}`}
+                  variant="outlined"
+                />
+              </div>
+            )}
+            {wattsOptions && (
+              <div className={styles.row}>
+                <label className={styles.title} htmlFor="laser-source">
+                  {tDocument.laser_source}
+                </label>
+                <Select
+                  className={styles.control}
+                  id="laser-source"
+                  onChange={(val) => setWatt(val)}
+                  options={wattsOptions}
+                  value={watt}
                   variant="outlined"
                 />
               </div>
@@ -560,61 +571,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             )}
           </div>
           {addOnInfo.jobOrigin && (
-            <>
-              <div className={styles.separator}>{tDocument.start_position}</div>
-              <div className={styles.block}>
-                <div className={styles.row}>
-                  <label className={styles.title} htmlFor="startFrom">
-                    {tDocument.start_from}
-                  </label>
-                  <Select
-                    className={styles.control}
-                    id="startFrom"
-                    onChange={setEnableJobOrigin}
-                    options={
-                      [
-                        { label: tDocument.origin, value: false },
-                        { label: tDocument.current_position, value: true },
-                      ] as any
-                    }
-                    value={enableJobOrigin}
-                    variant="outlined"
-                  />
-                </div>
-                {enableJobOrigin && (
-                  <div className={styles.row}>
-                    <label className={styles.title}>{tDocument.job_origin}</label>
-                    <div className={styles.control}>
-                      <div className={styles.radioGroup}>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((val) => (
-                          <input
-                            checked={jobOrigin === val}
-                            id={`jobOrigin-${val}`}
-                            key={val}
-                            name="jobOrigin"
-                            onChange={() => setJobOrigin(val)}
-                            type="radio"
-                          />
-                        ))}
-                      </div>
-                      <div className={styles['job-origin-example']}>
-                        <img alt="Origin" src="core-img/document-panel/job-origin-example.jpg" />
-                        <div
-                          className={classNames(styles.mark, {
-                            [styles.b]: jobOrigin > 6,
-                            [styles.c]: jobOrigin > 3 && jobOrigin <= 6,
-                            [styles.l]: jobOrigin % 3 === 1,
-                            [styles.m]: jobOrigin % 3 === 2,
-                            [styles.r]: jobOrigin % 3 === 0,
-                            [styles.t]: jobOrigin <= 3,
-                          })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
+            <JobOriginBlock
+              enableJobOrigin={enableJobOrigin}
+              jobOrigin={jobOrigin}
+              setEnableJobOrigin={setEnableJobOrigin}
+              setJobOrigin={setJobOrigin}
+            />
           )}
           {(isPromark || addOnInfo.autoFocus || addOnInfo.hybridLaser) && (
             <>
@@ -721,72 +683,19 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               </div>
             </>
           )}
-          {addOnInfo.rotary && (
-            <>
-              <div className={styles.block}>
-                <div className={styles.row}>
-                  <div className={styles.title}>
-                    <label htmlFor="rotaryMaster">
-                      <strong>{tDocument.rotary_mode}</strong>
-                    </label>
-                    {!addOnInfo.rotary.chuck && renderRotarySettingsIcon()}
-                    {renderWarningIcon(tGlobal.mode_conflict)}
-                  </div>
-                  <div className={styles.control}>
-                    <Switch
-                      checked={rotaryMode}
-                      disabled={!addOnInfo.rotary || isCurveEngraving}
-                      id="rotaryMaster"
-                      onChange={(on: boolean) => {
-                        setRotaryMode(on);
-
-                        if (addOnInfo.openBottom) setBorderless(false);
-                      }}
-                    />
-                  </div>
-                </div>
-                {rotaryMode && addOnInfo.rotary.chuck && (
-                  <>
-                    <div className={classNames(styles.row, styles.full)}>
-                      <Segmented
-                        className={styles.segmented}
-                        id="rotaryModeSelect"
-                        onChange={(val) => setRotaryType(val as RotaryType)}
-                        options={[
-                          { label: 'Roller', value: RotaryType.Roller },
-                          { label: 'Chuck', value: RotaryType.Chuck },
-                        ]}
-                        value={rotaryType}
-                      />
-                      <div className={styles.sub}>
-                        <div
-                          className={classNames(
-                            styles.desc,
-                            rotaryType === RotaryType.Chuck ? styles.right : styles.left,
-                          )}
-                        >
-                          {rotaryType === RotaryType.Chuck
-                            ? `Φ: ${lengthDisplay(chunkDiameter)}, Scale: ${rotaryScale}`
-                            : `Scale: ${rotaryScale}`}
-                          {renderRotarySettingsIcon()}
-                        </div>
-                      </div>
-                    </div>
-                    {addOnInfo.openBottom && (
-                      <div className={styles.row}>
-                        <label className={styles.title} htmlFor="rotaryOpenBottom">
-                          {tDocument.borderless_mode}
-                        </label>
-                        <div className={styles.control}>
-                          <Switch checked={borderless} id="rotaryOpenBottom" onChange={setBorderless} />
-                        </div>
-                      </div>
-                    )}
-                  </>
-                )}
-              </div>
-            </>
-          )}
+          <RotaryBlock
+            addOnInfo={addOnInfo}
+            borderless={borderless}
+            isCurveEngraving={isCurveEngraving}
+            lengthDisplay={lengthDisplay}
+            renderWarningIcon={renderWarningIcon}
+            rotaryMode={rotaryMode}
+            rotaryType={rotaryType}
+            setBorderless={setBorderless}
+            setRotaryMode={setRotaryMode}
+            setRotaryType={setRotaryType}
+            workarea={workarea}
+          />
           {addOnInfo.openBottom ? (
             <div className={styles.block}>
               <div className={styles.row}>

@@ -8,6 +8,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import AddLayerButton from '@core/app/components/beambox/right-panel/AddLayerButton';
 import DragImage from '@core/app/components/beambox/right-panel/DragImage';
 import SelLayerBlock from '@core/app/components/beambox/right-panel/SelLayerBlock';
+import WattBlock from '@core/app/components/beambox/right-panel/WattBlock';
 import layoutConstants from '@core/app/constants/layout-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
@@ -571,6 +572,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
               {this.renderLayerPanel()}
             </ResizableBox>
             <SelLayerBlock layerNames={layerNames} />
+            <WattBlock />
             <ConfigPanel />
           </>
         )}

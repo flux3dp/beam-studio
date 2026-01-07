@@ -10,6 +10,7 @@ import { promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
+import WattBlock from '@core/app/components/beambox/right-panel/WattBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
@@ -316,6 +317,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         <>
           {supportedModules.length > 1 && (
             <div className={styles['item-group']}>
+              <WattBlock />
               <ModuleBlock />
               <ObjectPanelItem.Divider />
             </div>

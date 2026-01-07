@@ -1,6 +1,7 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
 
 type MetaConfig = {
   clipRect: string; // x y w h
@@ -124,4 +125,5 @@ type TPromarkDesktop = `${LaserType.Desktop}_${(typeof promarkWatts)[number]}`;
 type TPromarkMopa = `${LaserType.MOPA}_${(typeof mopaWatts)[number]}`;
 
 export type PromarkModel = `fpm1_${TPromarkDesktop | TPromarkMopa}`;
-export type PresetModel = PromarkModel | WorkAreaModel;
+export type FHX2RFPresetModel = `fhx2rf_${Hexa2RfWatt}`;
+export type PresetModel = FHX2RFPresetModel | PromarkModel | WorkAreaModel;

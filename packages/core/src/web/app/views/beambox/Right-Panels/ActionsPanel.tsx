@@ -110,7 +110,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           content={mobileIcon}
           disabled={isDisabled}
           id={id}
-          key={mobileLabel || label}
+          key={id}
           label={mobileLabel || label}
           onClick={onClick}
         />

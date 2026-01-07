@@ -170,6 +170,11 @@ Cypress.Commands.add('getTopBar', (childSelector = '') => {
   return cy.get(selectors.join(' '));
 });
 
+Cypress.Commands.add('moveElementToLayer', (targetLayer: string, needConfirm = true) => {
+  cy.findByTestId('move-layer-select').find('.ant-select-selector').click();
+  cy.get('.ant-select-item').contains(targetLayer).click();
+  if (needConfirm) cy.get('.ant-btn').contains('Yes').click();
+});
 //
 //
 // -- This is a child command --
