@@ -501,7 +501,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             {isPromark && (
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="pm-laser-source">
-                  {tDocument.laser_source}:
+                  {tDocument.laser_source}
                 </label>
                 <Select
                   className={styles.control}
@@ -520,7 +520,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             {wattsOptions && (
               <div className={styles.row}>
                 <label className={styles.title} htmlFor="laser-source">
-                  {tDocument.laser_source}:
+                  {tDocument.laser_source}
                 </label>
                 <Select
                   className={styles.control}
