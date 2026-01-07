@@ -19,7 +19,6 @@
     "@tanstack/react-query": "^5.90.10",
     "antd": "5.23.2",
     "antd-mobile": "^5.32.2",
-    "antd-mobile-icons": "^0.3.0",
     "axios": "^1.7.7",
     "bcp-47": "^2.1.0",
     "buffer": "^6.0.3",
