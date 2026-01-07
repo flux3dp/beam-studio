@@ -41,6 +41,7 @@ import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
 import styles from './index.module.scss';
+import JobOriginBlock from './JobOriginBlock';
 import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
 
@@ -542,61 +543,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             )}
           </div>
           {addOnInfo.jobOrigin && (
-            <>
-              <div className={styles.separator}>{tDocument.start_position}</div>
-              <div className={styles.block}>
-                <div className={styles.row}>
-                  <label className={styles.title} htmlFor="startFrom">
-                    {tDocument.start_from}
-                  </label>
-                  <Select
-                    className={styles.control}
-                    id="startFrom"
-                    onChange={setEnableJobOrigin}
-                    options={
-                      [
-                        { label: tDocument.origin, value: false },
-                        { label: tDocument.current_position, value: true },
-                      ] as any
-                    }
-                    value={enableJobOrigin}
-                    variant="outlined"
-                  />
-                </div>
-                {enableJobOrigin && (
-                  <div className={styles.row}>
-                    <label className={styles.title}>{tDocument.job_origin}</label>
-                    <div className={styles.control}>
-                      <div className={styles.radioGroup}>
-                        {[1, 2, 3, 4, 5, 6, 7, 8, 9].map((val) => (
-                          <input
-                            checked={jobOrigin === val}
-                            id={`jobOrigin-${val}`}
-                            key={val}
-                            name="jobOrigin"
-                            onChange={() => setJobOrigin(val)}
-                            type="radio"
-                          />
-                        ))}
-                      </div>
-                      <div className={styles['job-origin-example']}>
-                        <img alt="Origin" src="core-img/document-panel/job-origin-example.jpg" />
-                        <div
-                          className={classNames(styles.mark, {
-                            [styles.b]: jobOrigin > 6,
-                            [styles.c]: jobOrigin > 3 && jobOrigin <= 6,
-                            [styles.l]: jobOrigin % 3 === 1,
-                            [styles.m]: jobOrigin % 3 === 2,
-                            [styles.r]: jobOrigin % 3 === 0,
-                            [styles.t]: jobOrigin <= 3,
-                          })}
-                        />
-                      </div>
-                    </div>
-                  </div>
-                )}
-              </div>
-            </>
+            <JobOriginBlock
+              enableJobOrigin={enableJobOrigin}
+              jobOrigin={jobOrigin}
+              setEnableJobOrigin={setEnableJobOrigin}
+              setJobOrigin={setJobOrigin}
+            />
           )}
           {(isPromark || addOnInfo.autoFocus || addOnInfo.hybridLaser) && (
             <>
