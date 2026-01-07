@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render } from '@testing-library/react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 
@@ -27,7 +27,7 @@ describe('SelLayerBlock', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it.only('should render correctly when layer is more than 1 and selected elemented is not in a temp group', () => {
+  it('should render correctly when layer is more than 1 and selected elemented is not in a temp group', () => {
     mockGetObjectLayer.mockReturnValue({ title: 'layer1' });
 
     const mockElem = { getAttribute: () => jest.fn() };
@@ -47,21 +47,14 @@ describe('SelLayerBlock', () => {
     mockGetObjectLayer.mockReturnValue({ title: 'layer1' });
 
     const mockElem = { getAttribute: () => jest.fn() };
-    const { container } = render(
+    const { baseElement } = render(
       <SelectedElementContext.Provider value={{ selectedElement: mockElem } as any}>
         <SelLayerBlock layerNames={['layer1', 'layer2']} />
       </SelectedElementContext.Provider>,
     );
 
-    const input = container.querySelector('input');
-
-    fireEvent.click(input!);
-
-    await waitFor(() => {
-      const option = screen.getByText('layer2');
-
-      fireEvent.click(option);
-    });
+    act(() => fireEvent.mouseDown(baseElement.querySelector('input')));
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="layer2"]'));
 
     expect(mockMoveToOtherLayer).toHaveBeenCalledTimes(1);
     expect(mockMoveToOtherLayer).toHaveBeenLastCalledWith('layer2', expect.any(Function), true);
