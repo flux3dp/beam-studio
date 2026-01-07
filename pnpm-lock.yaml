@@ -497,9 +497,6 @@ importers:
       antd-mobile:
         specifier: ^5.32.2
         version: 5.39.0(react-dom@18.3.1(react@18.3.1))(react@18.3.1)
-      antd-mobile-icons:
-        specifier: ^0.3.0
-        version: 0.3.0
       axios:
         specifier: ^1.7.7
         version: 1.9.0
