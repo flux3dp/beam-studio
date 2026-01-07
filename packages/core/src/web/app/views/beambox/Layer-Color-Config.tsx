@@ -4,12 +4,13 @@ import { useContext, useEffect, useRef, useState } from 'react';
 
 import { DeleteFilled, PlusCircleFilled } from '@ant-design/icons';
 import type { FormInstance } from 'antd';
-import { Button, Form, InputNumber, Modal, Space, Table } from 'antd';
+import { Button, Form, InputNumber, Space, Table } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import type { ColorConfig } from '@core/app/constants/color-constants';
 import { DefaultColorConfigs } from '@core/app/constants/color-constants';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import Input from '@core/app/widgets/Input';
 import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
 import useI18n from '@core/helpers/useI18n';
@@ -374,7 +375,7 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
   };
 
   const render = () => (
-    <Modal centered footer={renderFooter()} onCancel={onClose} open title={t.layer_color_config}>
+    <DraggableModal footer={renderFooter()} onCancel={onClose} open title={t.layer_color_config}>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Button onClick={() => setDisplayAddPanel(true)} type="primary">
           <PlusCircleFilled />
@@ -398,7 +399,7 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
           <AddColorConfigModal handleAddConfig={handleAddConfig} onClose={() => setDisplayAddPanel(false)} />
         )}
       </Space>
-    </Modal>
+    </DraggableModal>
   );
 
   return render();
