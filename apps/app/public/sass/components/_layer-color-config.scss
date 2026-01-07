@@ -129,54 +129,6 @@
     }
   }
 
-  .add-config-panel {
-    padding: 20px 20px 20px 20px;
-    background: #f8f8f8;
-    box-shadow: 0 7px 15px rgba(0, 0, 0, 0.1), 0 10px 20px rgba(0, 0, 0, 0.05);
-    width: 300px;
-    .title {
-      font-size: 15px;
-      color: #626262;
-      margin-bottom: 20px;
-    }
-    .input-column {
-      height: 36px;
-      padding-bottom: 10px;
-      font-size: 14px;
-      display: flex;
-      color: #888888;
-      .color-block {
-        width: 14px;
-        margin: 6px 0px 6px 0px;
-        border: 1px solid #ddd;
-        border-radius: 3px;
-      }
-      .name {
-        line-height: 26px;
-        width: 110px;
-        padding-right: 30px;
-        text-align: right;
-        &.color {
-          width: 96px;
-        }
-      }
-      input {
-        height: 26px;
-        text-align: right;
-        width: 110px;
-        padding: 4px 36px 4px 0px;
-      }
-      .unit {
-        margin-left: -32px;
-        font-size: 10px;
-      }
-    }
-    .footer {
-      padding-top: 10px;
-      border: solid #ccc;
-      border-width: 1px 0px 0px 0px;
-    }
-  }
 }
 
 .config-color-block {
