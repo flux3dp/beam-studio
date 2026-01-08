@@ -50,7 +50,6 @@ const UVCuring = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
           min={1}
           title="UV Curing Repeat"
           type={type}
-          unit="mm"
         />
       )}
     </>
