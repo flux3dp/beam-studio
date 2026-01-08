@@ -45,6 +45,7 @@ export default defineConfig({
     runMode: 3,
   },
   defaultCommandTimeout: 15000,
+  pageLoadTimeout: 120000, // 2 minutes for slow initial page loads
   experimentalMemoryManagement: true,
   numTestsKeptInMemory: 30,
 });

@@ -63,10 +63,10 @@ function checkLang(lang: string) {
       scrollAndFind();
     });
 
-  // Verify the language label
-  cy.get('@select')
-    .closest('.ant-form-item')
-    .find('.ant-form-item-no-colon', { timeout: 10000 })
+  // Verify the language label - SettingFormItem now uses custom layout with CSS modules
+  // The label is in a sibling div with class containing 'label'
+  cy.get('#select-lang-label')
+    .find('[class*="label"]:not([class*="label-container"])', { timeout: 10000 })
     .should('have.text', language);
 
   cy.get('div.btn-done').click();

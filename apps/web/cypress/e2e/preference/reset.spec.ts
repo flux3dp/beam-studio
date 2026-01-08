@@ -41,20 +41,23 @@ describe('reset', () => {
 
   it('resets open-bottom, autofocus, and diode preferences', () => {
     cy.go2Preference();
-    ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
-      selectOption(selector, 'On'),
-    );
+    // Switches - click to toggle on
+    ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) => {
+      cy.get(selector).click();
+    });
     cy.get('.btn.btn-done').click();
     cy.go2Preference();
+    // Verify switches are on
     ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
-      cy.get(selector).closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On'),
+      cy.get(selector).should('have.attr', 'aria-checked', 'true'),
     );
 
     resetBeamStudio();
 
     cy.go2Preference();
+    // Verify switches are reset to off
     ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
-      cy.get(selector).closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off'),
+      cy.get(selector).should('have.attr', 'aria-checked', 'false'),
     );
   });
 });

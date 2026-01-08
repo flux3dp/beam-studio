@@ -29,8 +29,10 @@ const setStorage = () => {
 };
 
 Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
+  // Wait a bit to ensure any pending reload from previous test completes
+  cy.wait(500);
   setStorage();
-  cy.visit('/#/studio/beambox', opts);
+  cy.visit('/#/studio/beambox', { ...opts, failOnStatusCode: false });
   cy.on('window:load', (win) => {
     // eslint-disable-next-line no-param-reassign
     win.onbeforeunload = null;

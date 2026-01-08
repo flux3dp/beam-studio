@@ -32,6 +32,8 @@ describe('ador layer', () => {
 
   it('change default laser module', () => {
     cy.go2Preference();
+    // First select "Ador" in the Module section to show Ador-specific settings
+    selectOption('#module-selector', 'Ador');
     selectOption('#default-laser-module', '10W Diode Laser');
     cy.contains('.btn.btn-done', 'Apply').click();
     cy.changeWorkarea('Ador');
@@ -81,7 +83,8 @@ describe('ador layer', () => {
 
   it('advanced printing parameter off', () => {
     cy.go2Preference();
-    selectOption('#print-advanced-mode', 'Off');
+    // Switch - ensure it's off (default should be false)
+    cy.get('#print-advanced-mode').should('have.attr', 'aria-checked', 'false');
     cy.contains('.btn.btn-done', 'Apply').click();
     cy.changeWorkarea('Ador');
     change2PrintingModule();
@@ -116,7 +119,9 @@ describe('ador layer', () => {
 
   it('advanced printing parameter on', () => {
     cy.go2Preference();
-    selectOption('#print-advanced-mode', 'On');
+    // Switch - click to toggle on
+    cy.get('#print-advanced-mode').click();
+    cy.get('#print-advanced-mode').should('have.attr', 'aria-checked', 'true');
     cy.contains('.btn.btn-done', 'Apply').click();
     cy.changeWorkarea('Ador');
     change2PrintingModule();
