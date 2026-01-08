@@ -3,7 +3,7 @@ import { useEffect } from 'react';
 import { shallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { hexaRfModels, promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
@@ -155,7 +155,7 @@ export const getPresetModel = (model: PresetModel): PresetModel => {
     return `fpm1_${info.laserType}_${info.watt}` as PresetModel;
   }
 
-  if (hexaRfModels.has(model)) {
+  if (model === 'fhx2rf') {
     const value = useCanvasStore.getState().watt;
 
     return `fhx2rf_${value}` as PresetModel;
