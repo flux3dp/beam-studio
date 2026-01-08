@@ -239,6 +239,11 @@
       'data-delay',
       'data-interpolation',
       'data-dpi',
+      'data-rightPadding',
+      'data-uvCuringAfter',
+      'data-uvCuringRepeat',
+      'data-uvStrength',
+      'data-uvXStep',
     ],
     image: [
       'data-ratiofixed',
