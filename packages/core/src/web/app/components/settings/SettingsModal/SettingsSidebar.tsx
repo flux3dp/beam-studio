@@ -27,6 +27,14 @@ const SettingsSidebar = ({
           })}
           key={category.key}
           onClick={() => onCategorySelect(category.key)}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              e.preventDefault();
+              onCategorySelect(category.key);
+            }
+          }}
+          role="button"
+          tabIndex={0}
         >
           <span className={styles.icon}>{category.icon}</span>
           <span className={styles.label}>{category.label}</span>

@@ -4,64 +4,6 @@ exports[`settings/Editor initially no warning 1`] = `
 <div>
   <div>
     mock-select-control id:
-    set-default-font-family
-    label:
-    Default Font
-    url:
-    options:
-    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
-    <input
-      class="select-control"
-      id="set-default-font-family"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    set-default-font-style
-    label:
-    Default Font Style
-    url:
-    options:
-    [{"label":"Regular","value":"ArialMT"},{"label":"Bold","value":"Arial-BoldMT"},{"label":"Bold Italic","value":"Arial-BoldItalicMT"},{"label":"Italic","value":"Arial-ItalicMT"}]
-    <input
-      class="select-control"
-      id="set-default-font-style"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    font-substitue
-    label:
-    Substitute Unsupported Characters
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/360004496575
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="font-substitue"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    font-convert
-    label:
-    Text-to-Path Converter
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/9132766761743
-    options:
-    [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
-    <input
-      class="select-control"
-      id="font-convert"
-    />
-  </div>
-  <div>
-    mock-select-control id:
     set-default-units
     label:
     Default Units
@@ -282,6 +224,64 @@ exports[`settings/Editor initially no warning 1`] = `
   </div>
   <div>
     mock-select-control id:
+    set-default-font-family
+    label:
+    Default Font
+    url:
+    options:
+    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
+    <input
+      class="select-control"
+      id="set-default-font-family"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-style
+    label:
+    Default Font Style
+    url:
+    options:
+    [{"label":"Regular","value":"ArialMT"},{"label":"Bold","value":"Arial-BoldMT"},{"label":"Bold Italic","value":"Arial-BoldItalicMT"},{"label":"Italic","value":"Arial-ItalicMT"}]
+    <input
+      class="select-control"
+      id="set-default-font-style"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    font-substitue
+    label:
+    Substitute Unsupported Characters
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004496575
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="font-substitue"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    font-convert
+    label:
+    Text-to-Path Converter
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/9132766761743
+    options:
+    [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
+    <input
+      class="select-control"
+      id="font-convert"
+    />
+  </div>
+  <div>
+    mock-select-control id:
     set-bitmap-quality
     label:
     Bitmap Preview Quality
@@ -313,20 +313,6 @@ exports[`settings/Editor initially no warning 1`] = `
     />
   </div>
   <div>
-    mock-select-control id:
-    path-engine
-    label:
-    Path Calculation Acceleration (Beta)
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/11146997425039
-    options:
-    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
-    <input
-      class="select-control"
-      id="path-engine"
-    />
-  </div>
-  <div>
     mock-switch-control id:
     set-simplify-clipper-path
     label:
@@ -344,11 +330,249 @@ exports[`settings/Editor initially no warning 1`] = `
       type="checkbox"
     />
   </div>
+  <div>
+    mock-switch-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="path-engine"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
 </div>
 `;
 
 exports[`settings/Editor initially no warning 2`] = `
 <div>
+  <div>
+    mock-select-control id:
+    set-default-units
+    label:
+    Default Units
+    url:
+    options:
+    [{"label":"mm","value":"mm"},{"label":"Inches","value":"inches"}]
+    <input
+      class="select-control"
+      id="set-default-units"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-model
+    label:
+    Default Document Setting
+    url:
+    options:
+    [{"label":"beamo","value":"fbm1"},{"label":"beamo II","value":"fbm2"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
+    <input
+      class="select-control"
+      id="set-default-model"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    set-guide
+    label:
+    Guides
+    url:
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-guide"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-form-item id:
+    set-guide-axis
+    label:
+    Guides Origin
+    url:
+    options:
+    <span
+      class="font2 sub-item"
+    >
+      X
+    </span>
+    <div>
+      UnitInput: 
+      set-guide-axis-x
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="set-guide-axis-x"
+        max="400"
+        min="0"
+        value="0"
+      />
+    </div>
+    <span
+      class="font2 sub-item"
+    >
+      Y
+    </span>
+    <div>
+      UnitInput: 
+      set-guide-axis-y
+      <p>
+        precision: 
+        2
+      </p>
+      <p>
+        unit: 
+        mm
+      </p>
+      <input
+        id="set-guide-axis-y"
+        max="375"
+        min="0"
+        value="0"
+      />
+    </div>
+  </div>
+  <div>
+    mock-switch-control id:
+    auto-switch-tab
+    label:
+    Auto Switch Layer and Object Panel
+    url:
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="auto-switch-tab"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    set-continuous-drawing
+    label:
+    Continuous Drawing
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004406496
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-continuous-drawing"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    set-enable-custom-backlash
+    label:
+    Enable Custom Backlash Compensation
+    url:
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-enable-custom-backlash"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    set-enable-uv-print-file
+    label:
+    Enable UV Print File
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/12320887477135
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-enable-uv-print-file"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    print-advanced-mode
+    label:
+    Printer Advanced Mode
+    url:
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="print-advanced-mode"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    use-real-boundary
+    label:
+    Use Maximum Range
+    url:
+    tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="use-real-boundary"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    crop-task-thumbnail
+    label:
+    Content Crop Thumbnail
+    url:
+    tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="crop-task-thumbnail"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
   <div>
     mock-select-control id:
     set-default-font-family
@@ -409,226 +633,6 @@ exports[`settings/Editor initially no warning 2`] = `
   </div>
   <div>
     mock-select-control id:
-    set-default-units
-    label:
-    Default Units
-    url:
-    options:
-    [{"label":"mm","value":"mm"},{"label":"Inches","value":"inches"}]
-    <input
-      class="select-control"
-      id="set-default-units"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    set-default-model
-    label:
-    Default Document Setting
-    url:
-    options:
-    [{"label":"beamo","value":"fbm1"},{"label":"beamo II","value":"fbm2"},{"label":"Beambox","value":"fbb1b"},{"label":"Beambox Pro","value":"fbb1p"},{"label":"HEXA","value":"fhexa1"},{"label":"HEXA RF","value":"fhx2rf"},{"label":"Ador","value":"ado1"},{"label":"Promark","value":"fpm1"},{"label":"Lazervida","value":"flv1"},{"label":"Beambox II","value":"fbb2"}]
-    <input
-      class="select-control"
-      id="set-default-model"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    set-guide
-    label:
-    Guides
-    url:
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="set-guide"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-form-item id:
-    set-guide-axis
-    label:
-    Guides Origin
-    url:
-    options:
-    <span
-      class="font2 sub-item"
-    >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-x"
-        max="400"
-        min="0"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-y"
-        max="375"
-        min="0"
-        value="0"
-      />
-    </div>
-  </div>
-  <div>
-    mock-switch-control id:
-    auto-switch-tab
-    label:
-    Auto Switch Layer and Object Panel
-    url:
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="auto-switch-tab"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    set-continuous-drawing
-    label:
-    Continuous Drawing
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/360004406496
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="set-continuous-drawing"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    set-enable-custom-backlash
-    label:
-    Enable Custom Backlash Compensation
-    url:
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="set-enable-custom-backlash"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    set-enable-uv-print-file
-    label:
-    Enable UV Print File
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/12320887477135
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="set-enable-uv-print-file"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    print-advanced-mode
-    label:
-    Printer Advanced Mode
-    url:
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="print-advanced-mode"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    use-real-boundary
-    label:
-    Use Maximum Range
-    url:
-    tooltip:Expand to the actual maximum work area, unrestricted by integer grid lines.
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="use-real-boundary"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    crop-task-thumbnail
-    label:
-    Content Crop Thumbnail
-    url:
-    tooltip:Display only the thumbnail of the area containing content, excluding blank canvas areas.
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="crop-task-thumbnail"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-select-control id:
     set-bitmap-quality
     label:
     Bitmap Preview Quality
@@ -660,20 +664,6 @@ exports[`settings/Editor initially no warning 2`] = `
     />
   </div>
   <div>
-    mock-select-control id:
-    path-engine
-    label:
-    Path Calculation Acceleration (Beta)
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/11146997425039
-    options:
-    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
-    <input
-      class="select-control"
-      id="path-engine"
-    />
-  </div>
-  <div>
     mock-switch-control id:
     set-simplify-clipper-path
     label:
@@ -687,6 +677,24 @@ exports[`settings/Editor initially no warning 2`] = `
     <input
       class="switch-control"
       id="set-simplify-clipper-path"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="path-engine"
       readonly=""
       type="checkbox"
     />
@@ -698,64 +706,6 @@ exports[`settings/Editor initially no warning 3`] = `
 <div>
   <div>
     mock-select-control id:
-    set-default-font-family
-    label:
-    Default Font
-    url:
-    options:
-    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
-    <input
-      class="select-control"
-      id="set-default-font-family"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    set-default-font-style
-    label:
-    Default Font Style
-    url:
-    options:
-    [{"label":"Regular","value":"Regular"},{"label":"Bold","value":"Courier-Bold"},{"label":"Bold Oblique","value":"Courier-BoldOblique"},{"label":"Oblique","value":"Courier-Oblique"}]
-    <input
-      class="select-control"
-      id="set-default-font-style"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    font-substitue
-    label:
-    Substitute Unsupported Characters
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/360004496575
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="font-substitue"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    font-convert
-    label:
-    Text-to-Path Converter
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/9132766761743
-    options:
-    [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
-    <input
-      class="select-control"
-      id="font-convert"
-    />
-  </div>
-  <div>
-    mock-select-control id:
     set-default-units
     label:
     Default Units
@@ -976,6 +926,64 @@ exports[`settings/Editor initially no warning 3`] = `
   </div>
   <div>
     mock-select-control id:
+    set-default-font-family
+    label:
+    Default Font
+    url:
+    options:
+    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
+    <input
+      class="select-control"
+      id="set-default-font-family"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-style
+    label:
+    Default Font Style
+    url:
+    options:
+    [{"label":"Regular","value":"Regular"},{"label":"Bold","value":"Courier-Bold"},{"label":"Bold Oblique","value":"Courier-BoldOblique"},{"label":"Oblique","value":"Courier-Oblique"}]
+    <input
+      class="select-control"
+      id="set-default-font-style"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    font-substitue
+    label:
+    Substitute Unsupported Characters
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004496575
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="font-substitue"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    font-convert
+    label:
+    Text-to-Path Converter
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/9132766761743
+    options:
+    [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
+    <input
+      class="select-control"
+      id="font-convert"
+    />
+  </div>
+  <div>
+    mock-select-control id:
     set-bitmap-quality
     label:
     Bitmap Preview Quality
@@ -1007,20 +1015,6 @@ exports[`settings/Editor initially no warning 3`] = `
     />
   </div>
   <div>
-    mock-select-control id:
-    path-engine
-    label:
-    Path Calculation Acceleration (Beta)
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/11146997425039
-    options:
-    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
-    <input
-      class="select-control"
-      id="path-engine"
-    />
-  </div>
-  <div>
     mock-switch-control id:
     set-simplify-clipper-path
     label:
@@ -1034,6 +1028,24 @@ exports[`settings/Editor initially no warning 3`] = `
     <input
       class="switch-control"
       id="set-simplify-clipper-path"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="path-engine"
       readonly=""
       type="checkbox"
     />
@@ -1045,64 +1057,6 @@ exports[`settings/Editor initially no warning 4`] = `
 <div>
   <div>
     mock-select-control id:
-    set-default-font-family
-    label:
-    Default Font
-    url:
-    options:
-    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
-    <input
-      class="select-control"
-      id="set-default-font-family"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    set-default-font-style
-    label:
-    Default Font Style
-    url:
-    options:
-    [{"label":"Regular","value":"Regular"},{"label":"Bold","value":"Courier-Bold"},{"label":"Bold Oblique","value":"Courier-BoldOblique"},{"label":"Oblique","value":"Courier-Oblique"}]
-    <input
-      class="select-control"
-      id="set-default-font-style"
-    />
-  </div>
-  <div>
-    mock-switch-control id:
-    font-substitue
-    label:
-    Substitute Unsupported Characters
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/360004496575
-    checked:
-    false
-    disabled:
-    undefined
-    <input
-      class="switch-control"
-      id="font-substitue"
-      readonly=""
-      type="checkbox"
-    />
-  </div>
-  <div>
-    mock-select-control id:
-    font-convert
-    label:
-    Text-to-Path Converter
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/9132766761743
-    options:
-    [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
-    <input
-      class="select-control"
-      id="font-convert"
-    />
-  </div>
-  <div>
-    mock-select-control id:
     set-default-units
     label:
     Default Units
@@ -1323,6 +1277,64 @@ exports[`settings/Editor initially no warning 4`] = `
   </div>
   <div>
     mock-select-control id:
+    set-default-font-family
+    label:
+    Default Font
+    url:
+    options:
+    [{"label":"Arial","value":"Arial"},{"label":"Courier","value":"Courier"},{"label":"蘋果儷細宋","value":"Apple LiSung"}]
+    <input
+      class="select-control"
+      id="set-default-font-family"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    set-default-font-style
+    label:
+    Default Font Style
+    url:
+    options:
+    [{"label":"Regular","value":"Regular"},{"label":"Bold","value":"Courier-Bold"},{"label":"Bold Oblique","value":"Courier-BoldOblique"},{"label":"Oblique","value":"Courier-Oblique"}]
+    <input
+      class="select-control"
+      id="set-default-font-style"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    font-substitue
+    label:
+    Substitute Unsupported Characters
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/360004496575
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="font-substitue"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    font-convert
+    label:
+    Text-to-Path Converter
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/9132766761743
+    options:
+    [{"label":"1.0","value":"1.0"},{"label":"2.0","value":"2.0"}]
+    <input
+      class="select-control"
+      id="font-convert"
+    />
+  </div>
+  <div>
+    mock-select-control id:
     set-bitmap-quality
     label:
     Bitmap Preview Quality
@@ -1354,20 +1366,6 @@ exports[`settings/Editor initially no warning 4`] = `
     />
   </div>
   <div>
-    mock-select-control id:
-    path-engine
-    label:
-    Path Calculation Acceleration (Beta)
-    url:
-    https://support.flux3dp.com/hc/en-us/articles/11146997425039
-    options:
-    [{"label":"On","value":"swiftray"},{"label":"Off","value":"fluxghost"}]
-    <input
-      class="select-control"
-      id="path-engine"
-    />
-  </div>
-  <div>
     mock-switch-control id:
     set-simplify-clipper-path
     label:
@@ -1381,6 +1379,24 @@ exports[`settings/Editor initially no warning 4`] = `
     <input
       class="switch-control"
       id="set-simplify-clipper-path"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    path-engine
+    label:
+    Path Calculation Acceleration (Beta)
+    url:
+    https://support.flux3dp.com/hc/en-us/articles/11146997425039
+    checked:
+    false
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="path-engine"
       readonly=""
       type="checkbox"
     />

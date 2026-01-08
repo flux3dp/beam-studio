@@ -27,8 +27,11 @@ class ElectronStorage implements StorageManager {
       if (typeof tempItem === 'object') {
         item = tempItem;
       }
-    } catch {
-      // console.error(error);
+    } catch (error) {
+      // Non-JSON string values are expected for some settings, only log unexpected parsing errors
+      if (typeof item === 'string' && item.startsWith('{')) {
+        console.error(`Failed to parse JSON value for key '${name}':`, error);
+      }
     }
 
     return item;

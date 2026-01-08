@@ -141,43 +141,53 @@ describe('settings/Editor', () => {
       />,
     );
 
-    // Editor now renders: Text -> Workarea -> Performance
-    // Text: font-substitute, font-convert
+    // Editor renders: Workarea -> Text -> Performance (when wrapped=false)
     // Workarea: model (x2), show_guides, guide_x0, guide_y0, auto-switch-tab, continuous_drawing,
     //           enable-custom-backlash, enable-uv-print-file, print-advanced-mode, use-real-boundary, crop-task-thumbnail
+    // Text: font-substitute, font-convert
     // Performance: image_downsampling, anti-aliasing, path-engine, simplify_clipper_path
     expect(mockGetPreference).toHaveBeenCalledTimes(18);
-    expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'font-substitute');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'font-convert');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'model');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'model');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(5, 'show_guides');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(6, 'guide_x0');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(7, 'guide_y0');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(8, 'auto-switch-tab');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(9, 'continuous_drawing');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(10, 'enable-custom-backlash');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(11, 'enable-uv-print-file');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'print-advanced-mode');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'use-real-boundary');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(14, 'crop-task-thumbnail');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'guide_x0');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(5, 'guide_y0');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(6, 'auto-switch-tab');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(7, 'continuous_drawing');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(8, 'enable-custom-backlash');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(9, 'enable-uv-print-file');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(10, 'print-advanced-mode');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(11, 'use-real-boundary');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'crop-task-thumbnail');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'font-substitute');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(14, 'font-convert');
     expect(mockGetPreference).toHaveBeenNthCalledWith(15, 'image_downsampling');
     expect(mockGetPreference).toHaveBeenNthCalledWith(16, 'anti-aliasing');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(17, 'path-engine');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(18, 'simplify_clipper_path');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(17, 'simplify_clipper_path');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(18, 'path-engine');
     expect(container).toMatchSnapshot();
 
-    // Test SettingSelect controls - order is now:
-    // Text: [0] font-family, [1] font-style, [2] font-convert
-    // Workarea: [3] default-units, [4] model
-    // Performance: [5] image_downsampling, [6] path-engine
+    // Test SettingSelect controls - order is now (Workarea -> Text -> Performance):
+    // Workarea: [0] default-units, [1] model
+    // Text: [2] font-family, [3] font-style, [4] font-convert
+    // Performance: [5] image_downsampling
     const selectControls = container.querySelectorAll('.select-control');
 
+    // Default units select
+    fireEvent.change(selectControls[0], { target: { value: 'inches' } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'default-units', 'inches');
+
+    // Model select
+    fireEvent.change(selectControls[1], { target: { value: 'fbm1' } });
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fbm1');
+
     // Font family select
-    fireEvent.change(selectControls[0], { target: { value: 'Apple LiSung' } });
+    fireEvent.change(selectControls[2], { target: { value: 'Apple LiSung' } });
     expect(container).toMatchSnapshot();
 
-    fireEvent.change(selectControls[0], { target: { value: 'Courier' } });
+    fireEvent.change(selectControls[2], { target: { value: 'Courier' } });
     expect(container).toMatchSnapshot();
 
     // Font style select
@@ -186,95 +196,85 @@ describe('settings/Editor', () => {
       postscriptName: 'Courier-Bold',
       style: 'Bold',
     });
-    fireEvent.change(selectControls[1], { target: { value: 'Courier-Bold' } });
+    fireEvent.change(selectControls[3], { target: { value: 'Courier-Bold' } });
     expect(container).toMatchSnapshot();
 
     // Font convert select
-    fireEvent.change(selectControls[2], { target: { value: '2.0' } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(1);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'font-convert', '2.0');
-
-    // Default units select
-    fireEvent.change(selectControls[3], { target: { value: 'inches' } });
-    expect(mockSetConfig).toHaveBeenCalledTimes(1);
-    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'default-units', 'inches');
-
-    // Model select
-    fireEvent.change(selectControls[4], { target: { value: 'fbm1' } });
+    fireEvent.change(selectControls[4], { target: { value: '2.0' } });
     expect(mockSetPreference).toHaveBeenCalledTimes(2);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'model', 'fbm1');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'font-convert', '2.0');
 
     // Image downsampling select
     fireEvent.change(selectControls[5], { target: { value: true } });
     expect(mockSetPreference).toHaveBeenCalledTimes(3);
     expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'image_downsampling', true);
 
-    // Path engine select
-    fireEvent.change(selectControls[6], { target: { value: 'swiftray' } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(4);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'path-engine', 'swiftray');
-
-    // Test SettingSwitch controls - order is now:
-    // Text: [0] font-substitute
-    // Workarea: [1] show_guides, [2] auto-switch-tab, [3] continuous_drawing, [4] enable-custom-backlash,
-    //           [5] enable-uv-print-file, [6] print-advanced-mode, [7] use-real-boundary, [8] crop-task-thumbnail
-    // Performance: [9] anti-aliasing, [10] simplify_clipper_path
+    // Test SettingSwitch controls - order is now (Workarea -> Text -> Performance):
+    // Workarea: [0] show_guides, [1] auto-switch-tab, [2] continuous_drawing, [3] enable-custom-backlash,
+    //           [4] enable-uv-print-file, [5] print-advanced-mode, [6] use-real-boundary, [7] crop-task-thumbnail
+    // Text: [8] font-substitute
+    // Performance: [9] anti-aliasing, [10] simplify_clipper_path, [11] path-engine
     const switchControls = container.querySelectorAll('.switch-control');
 
-    // font-substitute (starts as false, toggle to true)
+    // show_guides (starts as false, toggle to true)
     fireEvent.click(switchControls[0]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(5);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(5, 'font-substitute', true);
-
-    // show_guides
-    fireEvent.click(switchControls[1]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(6);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(6, 'show_guides', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(4);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'show_guides', true);
 
     // auto-switch-tab
-    fireEvent.click(switchControls[2]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(7);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(7, 'auto-switch-tab', true);
+    fireEvent.click(switchControls[1]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(5);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(5, 'auto-switch-tab', true);
 
     // continuous_drawing
-    fireEvent.click(switchControls[3]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(8);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(8, 'continuous_drawing', true);
+    fireEvent.click(switchControls[2]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(6);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(6, 'continuous_drawing', true);
 
     // enable-custom-backlash
-    fireEvent.click(switchControls[4]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(9);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(9, 'enable-custom-backlash', true);
+    fireEvent.click(switchControls[3]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(7);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(7, 'enable-custom-backlash', true);
 
     // enable-uv-print-file
-    fireEvent.click(switchControls[5]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(10);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(10, 'enable-uv-print-file', true);
+    fireEvent.click(switchControls[4]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(8);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(8, 'enable-uv-print-file', true);
 
     // print-advanced-mode
-    fireEvent.click(switchControls[6]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(11);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(11, 'print-advanced-mode', true);
+    fireEvent.click(switchControls[5]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(9);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(9, 'print-advanced-mode', true);
 
     // use-real-boundary
-    fireEvent.click(switchControls[7]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(12);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(12, 'use-real-boundary', true);
+    fireEvent.click(switchControls[6]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(10);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(10, 'use-real-boundary', true);
 
     // crop-task-thumbnail
+    fireEvent.click(switchControls[7]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(11);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(11, 'crop-task-thumbnail', true);
+
+    // font-substitute
     fireEvent.click(switchControls[8]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(13);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(13, 'crop-task-thumbnail', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(12);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(12, 'font-substitute', true);
 
     // anti-aliasing
     fireEvent.click(switchControls[9]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(14);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(14, 'anti-aliasing', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(13);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(13, 'anti-aliasing', true);
 
     // simplify_clipper_path
     fireEvent.click(switchControls[10]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(14);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(14, 'simplify_clipper_path', true);
+
+    // path-engine (switch, not select - toggles between 'swiftray' and 'fluxghost')
+    fireEvent.click(switchControls[11]);
     expect(mockSetPreference).toHaveBeenCalledTimes(15);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(15, 'simplify_clipper_path', true);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(15, 'path-engine', 'swiftray');
 
     // Test XYItem controls (guide axis)
     fireEvent.change(container.querySelector('#set-guide-axis-x'), { target: { value: 1 } });

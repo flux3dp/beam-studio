@@ -12,7 +12,8 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './Connection.module.scss';
 
-const IPV4_PATTERN = /^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]\d{1,3}$/;
+// Validates IPv4 addresses with octet ranges (0-255)
+const IPV4_PATTERN = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 
 const parseIpList = (ipString: string): string[] => {
   const ips = ipString.split(/[,;]\s*/).filter(Boolean);
@@ -60,7 +61,11 @@ function Connection(): React.JSX.Element {
       return;
     }
 
-    updateIpConfig(ipList);
+    // Use value directly to avoid stale state from closure
+    const newList = [...ipList];
+
+    newList[index] = value;
+    updateIpConfig(newList);
   };
 
   const handleAddIp = (): void => {
@@ -69,7 +74,6 @@ function Connection(): React.JSX.Element {
 
   const handleRemoveIp = (): void => {
     if (ipList.length > 1) {
-      // Remove selected index if valid, otherwise remove the last one
       const indexToRemove = selectedIndex !== null && selectedIndex < ipList.length ? selectedIndex : ipList.length - 1;
       const newList = ipList.filter((_, i) => i !== indexToRemove);
 
@@ -102,7 +106,7 @@ function Connection(): React.JSX.Element {
             <Input
               autoComplete="off"
               className={styles['ip-input']}
-              key={index}
+              key={`${ip}-${index}`}
               onBlur={(e) => handleIpBlur(index, e.target.value)}
               onChange={(e) => handleIpChange(index, e.target.value)}
               onFocus={() => setSelectedIndex(index)}

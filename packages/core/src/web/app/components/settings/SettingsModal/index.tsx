@@ -51,11 +51,11 @@ const SettingsModal = ({
     setLang(i18n.lang);
   };
 
-  const handleReset = (): void => {
+  const handleReset = async (): Promise<void> => {
     if (window.confirm(lang.settings.confirm_reset)) {
       storage.clearAllExceptIP();
       localStorage.clear();
-      autoSaveHelper.useDefaultConfig();
+      await autoSaveHelper.useDefaultConfig();
       onClose();
     }
   };

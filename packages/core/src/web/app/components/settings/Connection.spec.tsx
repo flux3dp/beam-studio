@@ -38,9 +38,11 @@ describe('should render correctly', () => {
 
     // Find the IP input inside the ip-list section (not the switch controls)
     const ipSection = container.querySelector('#connect-ip-list');
-    const input = ipSection.querySelector('input');
+    let input = ipSection.querySelector('input');
 
     fireEvent.change(input, { target: { value: '192.168.1111.111' } });
+    // Re-query input after change since key={`${ip}-${index}`} causes React to remount
+    input = ipSection.querySelector('input');
     fireEvent.blur(input);
 
     expect(popUp).toHaveBeenCalledTimes(1);
@@ -70,9 +72,11 @@ describe('should render correctly', () => {
 
     // Find the IP input inside the ip-list section (not the switch controls)
     const ipSection = container.querySelector('#connect-ip-list');
-    const input = ipSection.querySelector('input');
+    let input = ipSection.querySelector('input');
 
     fireEvent.change(input, { target: { value: '192.168.3.3' } });
+    // Re-query input after change since key={`${ip}-${index}`} causes React to remount
+    input = ipSection.querySelector('input');
     fireEvent.blur(input);
     expect(popUp).not.toHaveBeenCalled();
     expect(mockSetConfig).toHaveBeenCalledTimes(1);

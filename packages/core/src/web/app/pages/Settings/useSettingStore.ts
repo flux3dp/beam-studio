@@ -97,10 +97,18 @@ export const useSettingStore = create<Action & State>(
         set(() => {
           const { beamboxPreferenceChanges, configChanges } = get();
 
-          useGlobalPreferenceStore.getState().update(beamboxPreferenceChanges);
+          try {
+            useGlobalPreferenceStore.getState().update(beamboxPreferenceChanges);
+          } catch (error) {
+            console.error('Failed to update preferences:', error);
+          }
 
           for (const key in configChanges) {
-            setStorage(key as StorageKey, configChanges[key as StorageKey]);
+            try {
+              setStorage(key as StorageKey, configChanges[key as StorageKey]);
+            } catch (error) {
+              console.error(`Failed to save config key '${key}':`, error);
+            }
           }
 
           return { beamboxPreferenceChanges, configChanges };
