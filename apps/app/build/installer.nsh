@@ -10,3 +10,8 @@
   DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Uninstall\${UNINSTALL_APP_KEY}"
   proceed:
 !macroend
+
+!macro customInstall
+  AccessControl::GrantOnFile "$INSTDIR" "(BU)" "RX"
+  AccessControl::GrantOnFile "$INSTDIR\resources" "(BU)" "RX"
+!macroend
