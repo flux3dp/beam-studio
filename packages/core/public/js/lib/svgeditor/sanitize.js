@@ -238,6 +238,11 @@
       'data-nozzleOffsetY',
       'data-delay',
       'data-interpolation',
+      'data-rightPadding',
+      'data-uvCuringAfter',
+      'data-uvCuringRepeat',
+      'data-uvStrength',
+      'data-uvXStep',
     ],
     image: [
       'data-ratiofixed',
