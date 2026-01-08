@@ -25,7 +25,7 @@ jobs:
         node-version: [22]
         python-version: [3.8]
         os: [macOS-15-intel]
-        target: [arm64, intel]
+        target: [arm64]
       fail-fast: false
 
     steps:
@@ -176,4 +176,4 @@ jobs:
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SWIFTRAY_DAEMON_VERSION: 1.4.2
+          SWIFTRAY_DAEMON_VERSION: arm-test
