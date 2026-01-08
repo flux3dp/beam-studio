@@ -23,11 +23,10 @@ interface Props {
 const Module = ({ subSectionTitleClass, unitInputProps, wrapped = false }: Props): React.JSX.Element => {
   const lang = useI18n();
   const [selectedModule, setSelectedModule] = useState<ModuleType>('beamo');
-
   const moduleOptions = [
-    { label: 'Beamo', value: 'beamo' },
+    { label: 'beamo', value: 'beamo' },
     { label: 'Ador', value: 'ador' },
-    { label: 'Beamo II', value: 'beamo2' },
+    { label: 'beamo II', value: 'beamo2' },
     { label: 'Beambox II', value: 'bb2' },
   ];
 

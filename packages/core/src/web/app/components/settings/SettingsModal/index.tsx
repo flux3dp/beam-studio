@@ -91,6 +91,7 @@ const SettingsModal = ({
   return (
     <DraggableModal
       footer={footer}
+      maskClosable={false}
       onCancel={handleCancel}
       open
       scrollableContent

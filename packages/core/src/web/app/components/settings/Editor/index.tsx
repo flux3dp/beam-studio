@@ -20,8 +20,8 @@ function Editor({ subSectionTitleClass, unitInputProps, wrapped = false }: Props
   if (!wrapped) {
     return (
       <>
-        <Text />
         <Workarea unitInputProps={unitInputProps} />
+        <Text />
         <Performance />
       </>
     );
@@ -29,13 +29,13 @@ function Editor({ subSectionTitleClass, unitInputProps, wrapped = false }: Props
 
   return (
     <>
-      <div className={subSectionTitleClass}>{lang.settings.groups.text}</div>
-      <SettingsCard>
-        <Text />
-      </SettingsCard>
       <div className={subSectionTitleClass}>{lang.settings.groups.workarea}</div>
       <SettingsCard>
         <Workarea unitInputProps={unitInputProps} />
+      </SettingsCard>
+      <div className={subSectionTitleClass}>{lang.settings.groups.text}</div>
+      <SettingsCard>
+        <Text />
       </SettingsCard>
       <div className={subSectionTitleClass}>{lang.settings.groups.performance}</div>
       <SettingsCard>

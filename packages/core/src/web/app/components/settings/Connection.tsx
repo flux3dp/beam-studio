@@ -27,6 +27,7 @@ function Connection(): React.JSX.Element {
   // eslint-disable-next-line hooks/exhaustive-deps -- Only parse once on mount
   const initialIpList = useMemo(() => parseIpList(getConfig('poke-ip-addr')), []);
   const [ipList, setIpList] = useState<string[]>(initialIpList);
+  const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
 
   const updateIpConfig = (newList: string[]): void => {
     setIpList(newList);
@@ -68,9 +69,12 @@ function Connection(): React.JSX.Element {
 
   const handleRemoveIp = (): void => {
     if (ipList.length > 1) {
-      const newList = ipList.slice(0, -1);
+      // Remove selected index if valid, otherwise remove the last one
+      const indexToRemove = selectedIndex !== null && selectedIndex < ipList.length ? selectedIndex : ipList.length - 1;
+      const newList = ipList.filter((_, i) => i !== indexToRemove);
 
       updateIpConfig(newList);
+      setSelectedIndex(null);
     }
   };
 
@@ -101,6 +105,7 @@ function Connection(): React.JSX.Element {
               key={index}
               onBlur={(e) => handleIpBlur(index, e.target.value)}
               onChange={(e) => handleIpChange(index, e.target.value)}
+              onFocus={() => setSelectedIndex(index)}
               placeholder="192.168.1.1"
               value={ip}
             />
