@@ -65,7 +65,8 @@ const attributeMap: Record<ConfigKey, string> = {
   rightPadding: 'data-rightPadding',
   speed: 'data-speed',
   split: 'data-split',
-  uvCuringInterval: 'data-uvCuringInterval',
+  uvCuringAfter: 'data-uvCuringAfter',
+  uvCuringRepeat: 'data-uvCuringRepeat',
   uvStrength: 'data-uvStrength',
   uvXStep: 'data-uvXStep',
   wInk: 'data-wInk',
@@ -122,7 +123,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   repeat: 1,
   rightPadding: 0,
   speed: 20,
-  uvCuringInterval: 0,
+  uvCuringAfter: false,
+  uvCuringRepeat: 1,
   uvStrength: 30,
   uvXStep: 1,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
@@ -181,6 +183,7 @@ export const booleanConfig: ConfigKey[] = [
   'biDirectional',
   'crossHatch',
   'ceZHighSpeed',
+  'uvCuringAfter',
 ] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
@@ -203,7 +206,6 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'interpolation',
   'rightPadding',
   'uvXStep',
-  'uvCuringInterval',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',

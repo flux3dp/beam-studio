@@ -68,7 +68,7 @@ import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
 import Interpolation from './UVConfigs/Interpolation';
 import RightPadding from './UVConfigs/RightPadding';
-import UVCuringInterval from './UVConfigs/UVCuringInterval';
+import UVCuring from './UVConfigs/UVCuring';
 import UVStrength from './UVConfigs/UVStrength';
 import UVXStep from './UVConfigs/UVXStep';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
@@ -286,7 +286,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isUV && isDevMode && <RightPadding type={UIType} />}
       {isUV && isDevMode && <UVXStep type={UIType} />}
       {isUV && isDevMode && <UVStrength type={UIType} />}
-      {isUV && isDevMode && <UVCuringInterval type={UIType} />}
+      {isUV && isDevMode && <UVCuring type={UIType} />}
     </>
   );
 
