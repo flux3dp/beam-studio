@@ -39,7 +39,7 @@ const SettingFormItem = ({ children, id, label, tooltip, url, warning }: Props):
 
   const renderWarning = (): React.ReactNode => {
     if (warning) {
-      return <img alt="warning" className={styles.warning} src="img/warning.svg" title={warning} />;
+      return <img alt="warning" className={styles.warning} src="core-img/warning.svg" title={warning} />;
     }
 
     return null;

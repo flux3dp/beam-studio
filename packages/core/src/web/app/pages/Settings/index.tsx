@@ -21,6 +21,7 @@ import TextToPath from '@core/app/components/settings/TextToPath';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
+import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
@@ -119,7 +120,7 @@ function Settings(): React.JSX.Element {
             <Module unitInputProps={commonUnitInputProps} />
             <div className={styles.subtitle}>{lang.settings.groups.privacy}</div>
             <Privacy />
-            <div className={styles.subtitle}>Experimental Features</div>
+            {isDev() && <div className={styles.subtitle}>Experimental Features</div>}
             <Experimental />
           </Form>
         </ConfigProvider>

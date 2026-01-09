@@ -20,7 +20,7 @@ export interface SettingCategoryConfig {
   icon: ReactNode;
   key: SettingCategory;
   label: string;
-  visible?: () => boolean;
+  visible?: boolean;
 }
 
 export interface CommonSettingProps {

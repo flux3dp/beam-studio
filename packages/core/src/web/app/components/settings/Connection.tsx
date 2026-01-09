@@ -94,7 +94,6 @@ function Connection(): React.JSX.Element {
       />
       <SettingSwitch
         checked={getConfig('auto_connect')}
-        disabled={!guessingPoke}
         id="set-auto-connect"
         label={lang.settings.auto_connect}
         onChange={(e) => setConfig('auto_connect', e)}

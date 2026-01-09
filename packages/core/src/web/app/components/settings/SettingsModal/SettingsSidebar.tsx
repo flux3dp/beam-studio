@@ -16,7 +16,7 @@ const SettingsSidebar = ({
   onCategorySelect,
   selectedCategory,
 }: SettingsSidebarProps): React.JSX.Element => {
-  const visibleCategories = categories.filter((cat) => !cat.visible || cat.visible());
+  const visibleCategories = categories.filter((cat) => cat.visible !== false);
 
   return (
     <div className={styles.sidebar}>

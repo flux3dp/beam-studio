@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { match, P } from 'ts-pattern';
+
 import { getOS } from '@core/helpers/getOS';
 import os from '@core/implementations/os';
 
@@ -37,28 +39,14 @@ export const getArchDisplayName = (): null | string => {
 
   if (!arch) return null;
 
-  if (osType === 'MacOS') {
-    if (arch === 'arm64') return 'Apple Silicon';
-
-    if (arch === 'x64') return 'Intel';
-  }
-
-  if (osType === 'Windows') {
-    if (arch === 'x64') return '64-bit';
-
-    if (arch === 'arm64') return 'ARM64';
-
-    if (arch === 'ia32' || arch === 'x32') return '32-bit';
-  }
-
-  if (osType === 'Linux') {
-    if (arch === 'x64') return 'x86_64';
-
-    if (arch === 'arm64') return 'ARM64';
-
-    if (arch === 'arm') return 'ARM';
-  }
-
-  // Fallback: return the raw arch value
-  return arch;
+  return match([osType, arch])
+    .with(['MacOS', 'arm64'], () => 'Apple Silicon')
+    .with(['MacOS', 'x64'], () => 'Intel')
+    .with(['Windows', 'x64'], () => '64-bit')
+    .with(['Windows', 'arm64'], () => 'ARM64')
+    .with(['Windows', P.union('ia32', 'x32')], () => '32-bit')
+    .with(['Linux', 'x64'], () => 'x86_64')
+    .with(['Linux', 'arm64'], () => 'ARM64')
+    .with(['Linux', 'arm'], () => 'ARM')
+    .otherwise(() => arch);
 };
