@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Placer le Damier',
     put_chessboard_1: 'Veuillez vous rendre au panneau de commande de la machine et appuyez sur AF pour effectuer la mise au point automatique.',
     put_chessboard_2: "Veuillez déplacer le papier à damier ou la tête laser jusqu'à ce que l'ensemble du damier soit confirmé dans le cadre rouge de la fenêtre de prévisualisation en direct.",
-    put_chessboard_2_no_indicator: "Veuillez déplacer le papier à damier ou la tête laser jusqu'à ce que l'ensemble du damier soit confirmé dans la fenêtre de prévisualisation en direct.",
     put_chessboard_3: "Cliquez avec le bouton droit pour télécharger l'image de l’échiquier à l'emplacement actuel et vérifier sa netteté.",
     put_chessboard_bb2_desc_1: "Téléchargez le fichier d'échiquier suivant et imprimez-le sur une feuille A4 (l'échiquier imprimé doit comporter des cases de 1x1 cm).",
     put_chessboard_bb2_desc_2: "Fixez l'échiquier imprimé sur une planche indéformable, comme de l'acrylique ou du verre, en vous assurant que l'échiquier est lisse et sans plis ni soulèvements.",

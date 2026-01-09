@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: '放置棋盤板',
     put_chessboard_1: '請前往機器控制面板並按下 AF 以執行自動對焦。',
     put_chessboard_2: '請移動棋盤紙或雷射頭，直到確認整個棋盤位於即時預覽視窗中的紅框內。',
-    put_chessboard_2_no_indicator: '請移動棋盤紙或雷射頭，直到確認整個棋盤位於即時預覽視窗中。',
     put_chessboard_3: '你可以右鍵點擊下載當前位置的棋盤格照片，檢查其清晰度。',
     put_chessboard_bb2_desc_1: '請下載以下棋盤格檔案，並將其列印於 A4 紙上（列印後的棋盤格需為 1x1 cm）。',
     put_chessboard_bb2_desc_2: '將列印好的棋盤紙平整地貼在壓克力或玻璃等不易變形的板材上，務必確保棋盤格平整且無皺摺或浮起。',

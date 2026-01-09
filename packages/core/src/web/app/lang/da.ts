@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Placer Skakbræt',
     put_chessboard_1: 'Gå venligst til maskinens kontrolpanel og tryk på AF for at udføre autofokus.',
     put_chessboard_2: 'Flyt venligst skakbrætpapiret eller laserhovedet, indtil hele skakbrættet er bekræftet at være inden for den røde ramme i live-forhåndsvisningsvinduet.',
-    put_chessboard_2_no_indicator: 'Flyt venligst skakbrætpapiret eller laserhovedet, indtil hele skakbrættet er bekræftet at være inden for live-forhåndsvisningsvinduet.',
     put_chessboard_3: 'Højreklik for at downloade skakbræt-billedet på den nuværende placering og kontrollér dets klarhed.',
     put_chessboard_bb2_desc_1: 'Download den følgende skakbræt-fil, og print den på A4-papir (det printede skakbræt skal have 1x1 cm felter).',
     put_chessboard_bb2_desc_2: 'Fastgør det printede skakbræt på en ikke-deformerbar plade, såsom akryl eller glas, og sørg for, at skakbrættet er glat og fri for rynker eller løft.',

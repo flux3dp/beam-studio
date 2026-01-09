@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Schaakbord Plaatsen',
     put_chessboard_1: 'Ga naar het bedieningspaneel van de machine en druk op AF om de autofocus uit te voeren.',
     put_chessboard_2: 'Verplaats het schaakbordpapier of de laserhoofdkop totdat het volledige schaakbord binnen het rode kader in het livevoorbeeldvenster is bevestigd.',
-    put_chessboard_2_no_indicator: 'Verplaats het schaakbordpapier of de laserhoofdkop totdat het volledige schaakbord binnen het livevoorbeeldvenster is bevestigd.',
     put_chessboard_3: 'Klik met de rechtermuisknop om de afbeelding van het schaakbord op de huidige locatie te downloaden en controleer de helderheid ervan.',
     put_chessboard_bb2_desc_1: 'Download het volgende schaakbordbestand en print het op A4-papier (het geprinte schaakbord moet vakjes van 1x1 cm hebben).',
     put_chessboard_bb2_desc_2: 'Bevestig het geprinte schaakbordpapier op een niet-vervormbare ondergrond, zoals acryl of glas, en zorg ervoor dat het schaakbord glad is en vrij van kreuken of opstaande randen.',

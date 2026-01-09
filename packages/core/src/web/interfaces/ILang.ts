@@ -1172,7 +1172,6 @@ export interface ILang {
     put_chessboard: string;
     put_chessboard_1: string;
     put_chessboard_2: string;
-    put_chessboard_2_no_indicator: string;
     put_chessboard_3: string;
     put_chessboard_bb2_desc_1: string;
     put_chessboard_bb2_desc_2: string;

@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Place Chessboard',
     put_chessboard_1: 'Please go to the machine control panel and press AF to perform autofocus.',
     put_chessboard_2: 'Please move the chessboard paper or the laser head until the entire chessboard is confirmed to be within the red frame in the live preview window.',
-    put_chessboard_2_no_indicator: 'Please move the chessboard paper or the laser head until the entire chessboard is confirmed to be within the live preview window.',
     put_chessboard_3: 'Right-click to download the checkerboard image at the current location and check its clarity.',
     put_chessboard_bb2_desc_1: 'Please download the following chessboard file and print it on A4 or letter size paper (the printed chessboard should have 1x1 cm squares).',
     put_chessboard_bb2_desc_2: 'Secure the printed chessboard paper onto a non-deformable board, such as acrylic or glass, ensuring that the chessboard is smooth and free of wrinkles or lifting.',

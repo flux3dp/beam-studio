@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Umieść Szachownicę',
     put_chessboard_1: 'Proszę przejść do panelu sterowania maszyny i nacisnąć AF, aby wykonać autofokus.',
     put_chessboard_2: 'Proszę przesunąć papier szachownicy lub głowicę lasera, aż cały szachownica zostanie potwierdzona w czerwonej ramce w oknie podglądu na żywo.',
-    put_chessboard_2_no_indicator: 'Proszę przesunąć papier szachownicy lub głowicę lasera, aż cała szachownica zostanie potwierdzona w oknie podglądu na żywo.',
     put_chessboard_3: 'Kliknij prawym przyciskiem myszy, aby pobrać obraz szachownicy w bieżącej lokalizacji i sprawdzić jego wyrazistość.',
     put_chessboard_bb2_desc_1: 'Proszę pobrać poniższy plik szachownicy i wydrukować go na papierze A4 (wydrukowana szachownica powinna mieć pola o wymiarach 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Zamocuj wydrukowaną szachownicę na nienaruszalnej płycie, takiej jak akryl lub szkło, upewniając się, że szachownica jest gładka i pozbawiona zmarszczek lub uniesionych krawędzi.',

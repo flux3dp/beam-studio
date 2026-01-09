@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Umístěte šachovnici',
     put_chessboard_1: 'Přejděte na ovládací panel zařízení a stiskněte tlačítko AF pro automatické zaostření.',
     put_chessboard_2: 'Pohybujte šachovnicovým papírem nebo laserovou hlavou, dokud nebude potvrzeno, že celá šachovnice je v okně červeného rámečku živého náhledu.',
-    put_chessboard_2_no_indicator: 'Pohybujte šachovnicovým papírem nebo laserovou hlavou, dokud nebude potvrzeno, že celá šachovnice je v okně živého náhledu.',
     put_chessboard_3: 'Klikněte pravým tlačítkem myši pro stažení obrázku šachovnice na aktuální pozici a zkontrolujte jeho jasnost.',
     put_chessboard_bb2_desc_1: 'Stáhněte si následující soubor šachovnice a vytiskněte jej na papír velikosti A4 (vytištěná šachovnice by měla mít čtverce o rozměrech 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Připevněte vytištěnou šachovnici na nedeformovatelnou desku, jako je akryl nebo sklo, a ujistěte se, že šachovnice je hladká a bez záhybů nebo zvedání.',

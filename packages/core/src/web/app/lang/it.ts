@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Posiziona la Scacchiera',
     put_chessboard_1: "Per favore, vai al pannello di controllo della macchina e premi AF per eseguire l'autofocus.",
     put_chessboard_2: "Si prega di spostare il foglio a scacchiera o la testa del laser finché l'intera scacchiera non sia confermata all'interno della cornice rossa nella finestra di anteprima in tempo reale.",
-    put_chessboard_2_no_indicator: "Si prega di spostare il foglio a scacchiera o la testa del laser finché l'intera scacchiera non sia confermata all'interno della finestra di anteprima in tempo reale.",
     put_chessboard_3: "Fai clic con il tasto destro per scaricare l'immagine della scacchiera nella posizione attuale e verificarne la chiarezza.",
     put_chessboard_bb2_desc_1: 'Scarica il seguente file della scacchiera e stampalo su carta A4 (la scacchiera stampata deve avere quadrati di 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Fissa la scacchiera stampata su una tavola non deformabile, come acrilico o vetro, assicurandoti che la scacchiera sia liscia e priva di pieghe o sollevamenti.',

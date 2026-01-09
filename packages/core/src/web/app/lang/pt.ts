@@ -1172,7 +1172,6 @@ const lang: ILang = {
     put_chessboard: 'Colocar Tabuleiro de Xadrez',
     put_chessboard_1: 'Por favor, vá ao painel de controle da máquina e pressione AF para realizar o foco automático.',
     put_chessboard_2: 'Por favor, mova o papel do tabuleiro de xadrez ou a cabeça do laser até que todo o tabuleiro de xadrez esteja confirmado dentro da moldura vermelha na janela de visualização ao vivo.',
-    put_chessboard_2_no_indicator: 'Por favor, mova o papel do tabuleiro de xadrez ou a cabeça do laser até que todo o tabuleiro de xadrez esteja confirmado dentro da janela de visualização ao vivo.',
     put_chessboard_3: 'Clique com o botão direito para baixar a imagem do tabuleiro de xadrez na localização atual e verificar sua nitidez.',
     put_chessboard_bb2_desc_1: 'Por favor, baixe o seguinte arquivo de tabuleiro de xadrez e imprima-o em papel A4 (o tabuleiro de xadrez impresso deve ter quadrados de 1x1 cm).',
     put_chessboard_bb2_desc_2: 'Fixe o tabuleiro de xadrez impresso em uma superfície indeformável, como acrílico ou vidro, garantindo que o tabuleiro esteja liso, sem rugas ou bordas levantadas.',
