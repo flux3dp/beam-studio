@@ -8,6 +8,7 @@ import classNames from 'classnames';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
+import { useIsMobile } from '@core/helpers/system-helper';
 import units from '@core/helpers/units';
 
 import styles from './ObjectPanelItem.module.scss';
@@ -333,15 +334,16 @@ const ObjectPanelSelect = <T extends number | string>({
 
 const ObjectPanelDivider = (): React.JSX.Element => <Divider className={styles.divider} direction="vertical" />;
 
-const ObjectPanelMask = (): React.JSX.Element => {
+const ObjectPanelMask = (): React.ReactNode => {
   const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
+  const isMobile = useIsMobile();
 
-  return (
+  return isMobile ? (
     <div
       className={classNames(styles.mask, { [styles.hide]: activeKey === null })}
       onClick={() => updateActiveKey(null)}
     />
-  );
+  ) : null;
 };
 
 export default {

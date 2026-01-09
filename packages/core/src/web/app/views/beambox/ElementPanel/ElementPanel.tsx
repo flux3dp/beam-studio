@@ -3,7 +3,7 @@ import React, { useContext, useMemo, useRef, useState } from 'react';
 
 import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button, Input, message } from 'antd';
 import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
 
@@ -13,11 +13,14 @@ import layoutConstants from '@core/app/constants/layout-constants';
 import { ElementPanelContext, ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
 import Select from '@core/app/widgets/AntdSelect';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import ToolBarDrawer from '@core/app/widgets/ToolBarDrawer';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ElementPanel.module.scss';
 import MainContent from './MainContent';
+
+const mode = 'element-panel';
 
 export const ElementPanelContent = (): ReactNode => {
   const {
@@ -26,7 +29,6 @@ export const ElementPanelContent = (): ReactNode => {
     closeDrawer,
     contentType,
     hasLogin,
-    onClose,
     open,
     searchKey,
     setActiveMainType,
@@ -161,24 +163,17 @@ export const ElementPanelContent = (): ReactNode => {
         </div>
       }
       forceClose={!open}
-      onClose={onClose}
+      onClose={closeDrawer}
       title={lang.title}
     >
       <MainContent types={allTypes} />
     </FloatingPanel>
   ) : (
-    <Drawer
-      afterOpenChange={(open) => {
-        if (!open) onClose();
-      }}
+    <ToolBarDrawer
       classNames={{ body: styles['drawer-body'], header: styles['drawer-header'] }}
       closeIcon={null}
-      getContainer={() => document.querySelector('#svg_editor') || document.body}
-      mask={false}
-      maskClosable={false}
-      onClose={closeDrawer}
-      open={open}
-      placement="left"
+      enableResizable={false}
+      mode={mode}
       rootClassName={styles.drawer}
       title={
         <div className={classNames(styles.header, { [styles['hide-search']]: contentType !== ContentType.Search })}>
@@ -188,17 +183,14 @@ export const ElementPanelContent = (): ReactNode => {
         </div>
       }
     >
-      <div className={styles.handle} onClick={closeDrawer}>
-        <LeftOutlined />
-      </div>
       <MainContent types={allTypes} />
-    </Drawer>
+    </ToolBarDrawer>
   );
 };
 
-const ElementPanel = ({ onClose }: { onClose: () => void }) => {
+const ElementPanel = () => {
   return (
-    <ElementPanelProvider onClose={onClose}>
+    <ElementPanelProvider>
       <ElementPanelContent />
     </ElementPanelProvider>
   );

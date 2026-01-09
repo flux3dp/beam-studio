@@ -13,10 +13,10 @@
   font-size: 30px;
   overflow: hidden;
 
-  @media screen and (max-width: 600px) {
-    &.web {
-      // Space for file name
-      margin-bottom: 20px;
+  @include mixins.is-mobile {
+    @include mixins.is-web {
+      height: variables.$topBarHeightWebMobile;
+      padding-bottom: variables.$topBarHeightWebMobile - variables.$topBarHeight;
     }
   }
 
@@ -62,4 +62,16 @@
 
 .menu {
   font-size: 10pt;
+}
+
+.tour {
+  :global(.ant-tour-footer) {
+    min-width: 240px; // Need to check other languages for better solution
+  }
+
+  .indicators {
+    display: inline-block;
+    min-width: 50px;
+    text-align: left;
+  }
 }

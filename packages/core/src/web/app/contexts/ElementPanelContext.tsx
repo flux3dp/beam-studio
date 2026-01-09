@@ -11,6 +11,7 @@ import Elements, {
   SearchMap,
   SubTypeSearchKeyMap,
 } from '@core/app/constants/element-panel-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { getCurrentUser, getNPIconsByTerm } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -81,7 +82,6 @@ interface ElementPanelContextType {
   getNPIcons: (contentObj: Content) => Promise<void>;
   hasLogin: boolean;
   historyIcons: History[];
-  onClose: () => void;
   open: boolean;
   searchKey: string | undefined;
   setActiveMainType: React.Dispatch<React.SetStateAction<MainType>>;
@@ -101,7 +101,6 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
   getNPIcons: async () => {},
   hasLogin: false,
   historyIcons: [],
-  onClose: () => {},
   open: false,
   searchKey: undefined,
   setActiveMainType: () => {},
@@ -112,13 +111,12 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
 
 interface ElementPanelProviderProps {
   children: React.ReactNode;
-  onClose: () => void;
 }
 
 const previewCount = 12;
 
-export const ElementPanelProvider = ({ children, onClose }: ElementPanelProviderProps): ReactNode => {
-  const [open, setOpen] = useState(true);
+export const ElementPanelProvider = ({ children }: ElementPanelProviderProps): ReactNode => {
+  const { drawerMode, setDrawerMode } = useCanvasStore();
   const [activeMainType, setActiveMainType] = useState(MainTypes[0]);
   const [activeSubType, setActiveSubType] = useState<SubType | undefined>(undefined);
   const [hasLogin, setHasLogin] = useState(!!getCurrentUser());
@@ -164,7 +162,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
     return ContentType.MainType;
   }, [activeSubType, activeMainType, searchKey]);
 
-  const closeDrawer = () => setOpen(false);
+  const closeDrawer = () => setDrawerMode('none');
 
   const addToHistory = (history: History) => {
     const newHistory = historyIcons.filter(
@@ -368,8 +366,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
         getNPIcons,
         hasLogin,
         historyIcons,
-        onClose,
-        open,
+        open: drawerMode === 'element-panel',
         searchKey,
         setActiveMainType,
         setActiveSubType,

@@ -9,6 +9,9 @@
   overflow-y: hidden;
   bottom: 0;
   padding: 0 4px;
+  &::-webkit-scrollbar {
+    display: none;
+  }
 
   :global(.adm-tab-bar-item-icon) {
     display: flex;

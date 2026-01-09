@@ -26,7 +26,6 @@ import TabPanel from '@core/app/components/TabPanel';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import ElementPanel from '@core/app/views/beambox/ElementPanel/ElementPanel';
 import LayerColorConfigPanel from '@core/app/views/beambox/Layer-Color-Config';
 import NetworkTestingPanel from '@core/app/views/beambox/NetworkTestingPanel';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
@@ -424,23 +423,6 @@ export default {
         />,
       );
     }),
-  showElementPanel: (onClose: () => void): void => {
-    const id = 'element-panel';
-
-    if (isIdExist(id)) {
-      return;
-    }
-
-    addDialogComponent(
-      id,
-      <ElementPanel
-        onClose={() => {
-          onClose();
-          popDialogById(id);
-        }}
-      />,
-    );
-  },
   showFluxCreditDialog: (): void => {
     if (isIdExist('flux-id-credit')) {
       return;

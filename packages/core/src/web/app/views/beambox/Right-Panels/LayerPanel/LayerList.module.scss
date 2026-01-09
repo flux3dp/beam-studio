@@ -54,16 +54,12 @@ $active-color: #0091ff;
     }
 
     .name {
-      width: 135px;
+      flex: 1;
       padding: 3px 0px;
       margin-left: 5px;
       text-align: center;
       cursor: pointer;
       line-break: anywhere;
-
-      &.with-module {
-        width: 95px;
-      }
 
       @media screen and (max-width: 600px) {
         margin-left: 10px;

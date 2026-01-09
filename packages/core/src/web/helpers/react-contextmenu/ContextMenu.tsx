@@ -1,6 +1,7 @@
 import React from 'react';
 
 import cx from 'classnames';
+import { createPortal } from 'react-dom';
 
 import AbstractMenu from './AbstractMenu';
 import { hideMenu } from './actions';
@@ -252,7 +253,7 @@ export default class ContextMenu extends AbstractMenu {
       [cssClasses.menuVisible]: isVisible,
     });
 
-    return (
+    return createPortal(
       <nav
         className={menuClassnames}
         onContextMenu={this.handleContextMenu}
@@ -263,7 +264,8 @@ export default class ContextMenu extends AbstractMenu {
         tabIndex={-1}
       >
         {this.renderChildren(children)}
-      </nav>
+      </nav>,
+      document.body,
     );
   }
 }

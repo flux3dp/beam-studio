@@ -105,7 +105,7 @@ function OptionsPanel({ elem }: Props): React.JSX.Element {
   ) : (
     <>
       {contents.filter(Boolean).length ? (
-        <div className={styles.panel}>
+        <div className={styles.panel} data-tutorial="options-panel">
           <div className={styles.title}>OPTIONS</div>
           {contents}
         </div>

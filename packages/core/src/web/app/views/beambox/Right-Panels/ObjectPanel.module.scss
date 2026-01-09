@@ -1,4 +1,5 @@
-@use './_mixins.scss' as mixins;
+@use './_mixins.scss' as rightPanelMixins;
+@use '@core/styles/mixins' as mixins;
 
 .container {
   &.hide {
@@ -6,21 +7,20 @@
   }
 
   width: 100%;
-  height: calc(100% - 40px);
-  background-color: #f8f8f8;
-  border: 1px solid #e0e0e0;
-  border-width: 0 0 1px 1px;
-  overflow-y: scroll;
 
-  @media screen and (max-width: 600px) {
-    @include mixins.bottom-bar();
+  @include mixins.is-not-mobile {
+    @include rightPanelMixins.panel();
+  }
+
+  @include mixins.is-mobile {
+    @include rightPanelMixins.bottom-bar();
     min-height: 0;
     height: 62px;
   }
 
   .tools {
-    @media screen and (max-width: 600px) {
-      @include mixins.item-group();
+    @include mixins.is-mobile {
+      @include rightPanelMixins.item-group();
     }
   }
 

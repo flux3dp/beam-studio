@@ -6,6 +6,7 @@ import { adorModels, hexaRfModels, modelsWithModules, promarkModels } from '@cor
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { usePanelVisibilityStore } from '@core/app/stores/editorLayoutStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -20,6 +21,13 @@ interface Props {
   email?: string;
 }
 
+const mockT = {
+  RESET_LAYOUT: 'Reset Layout',
+  show_layer_controls_panel: 'Show Layer Controls Panel',
+  show_object_properties_panel: 'Show Object Controls Panel',
+  SHOW_PATH_CONTROLS_PANEL: 'Show Path Controls Panel',
+};
+
 export default function Menu({ email }: Props): React.JSX.Element {
   const eventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const [devices, setDevices] = useState(Array<IDeviceInfo>());
@@ -30,6 +38,9 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const isAutoAlign = useGlobalPreferenceStore((state) => state.auto_align);
   const shouldZoomWithWindow = useGlobalPreferenceStore((state) => state.zoom_with_window);
   const isUvPrintFileEnabled = useGlobalPreferenceStore((state) => state['enable-uv-print-file']);
+  const isPanelLayerControlsShown = usePanelVisibilityStore((state) => state.panelLayerControls);
+  const isPanelObjectControlsShown = usePanelVisibilityStore((state) => state.panelObjectProperties);
+  const isPanelPathControlsShown = usePanelVisibilityStore((state) => state.panelPathEdit);
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
   const [decomposePathDisabled, setDecomposePathDisabled] = useState(true);
@@ -105,7 +116,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const openPage = (url: string) => browser.open(url);
   const hotkey = (action: string): React.JSX.Element => (
     <>
-      <span className="action">{(menuCms as any)[action]}</span>
+      <span className="action">{(menuCms as any)[action] ?? mockT[action]}</span>
       <span className="hotkey">{menuItems[action].representation}</span>
     </>
   );
@@ -436,6 +447,35 @@ export default function Menu({ email }: Props): React.JSX.Element {
         >
           {menuCms.anti_aliasing}
         </MenuItem>
+        {!isMobile && <MenuDivider />}
+        {!isMobile && (
+          <MenuItem
+            checked={isPanelLayerControlsShown}
+            onClick={() => callback('SHOW_LAYER_CONTROLS_PANEL')}
+            type="checkbox"
+          >
+            {hotkey('show_layer_controls_panel')}
+          </MenuItem>
+        )}
+        {!isMobile && (
+          <MenuItem
+            checked={isPanelObjectControlsShown}
+            onClick={() => callback('SHOW_OBJECT_CONTROLS_PANEL')}
+            type="checkbox"
+          >
+            {hotkey('show_object_properties_panel')}
+          </MenuItem>
+        )}
+        {!isMobile && (
+          <MenuItem
+            checked={isPanelPathControlsShown}
+            onClick={() => callback('SHOW_PATH_CONTROLS_PANEL')}
+            type="checkbox"
+          >
+            {mockT.SHOW_PATH_CONTROLS_PANEL}
+          </MenuItem>
+        )}
+        {!isMobile && <MenuItem onClick={() => callback('RESET_LAYOUT')}>{mockT.RESET_LAYOUT}</MenuItem>}
       </SubMenu>
       <SubMenu label={menuCms.machines}>
         <MenuItem onClick={() => callback('ADD_NEW_MACHINE')}>{hotkey('add_new_machine')}</MenuItem>

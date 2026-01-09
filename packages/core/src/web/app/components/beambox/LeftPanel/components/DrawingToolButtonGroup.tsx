@@ -3,7 +3,6 @@ import React, { memo, useContext, useMemo } from 'react';
 import { match } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
@@ -78,6 +77,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       showBadge={showBadge}
       style={style}
       title={label}
+      tutorialKey={`left-${id}`}
     />
   );
 
@@ -112,8 +112,8 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         icon: <LeftPanelIcons.Element />,
         id: 'Element',
         label: `${t.label.elements} (E)`,
-        // TODO: change elementPanel into a Drawer act like AiGenerate and Chat
-        onClick: () => dialogCaller.showElementPanel(FnWrapper.useSelectTool),
+        onClick: () => toggleDrawerMode('element-panel'),
+        style: { color: drawerMode === 'element-panel' ? '#000000' : undefined },
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Rect />,

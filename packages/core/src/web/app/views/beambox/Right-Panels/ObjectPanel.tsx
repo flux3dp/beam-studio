@@ -187,7 +187,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     ) : (
       <div className={styles.tools}>
         <ConfigProvider theme={iconButtonTheme}>
-          <div className={styles.row}>
+          <div className={styles.row} data-tutorial="object-align-buttons">
             <div className={classNames(styles.half, styles.left, styles.sep)}>
               {renderToolBtn(
                 tObjectPanel.hdist,
@@ -250,7 +250,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
             </div>
           </div>
           <div className={styles.row}>
-            <div className={classNames(styles.half, styles.left)}>
+            <div className={classNames(styles.half, styles.left)} data-tutorial="object-group-buttons">
               {renderToolBtn(
                 tObjectPanel.group,
                 <ObjectPanelIcons.Group />,
@@ -266,7 +266,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
                 'ungroup',
               )}
             </div>
-            <div className={classNames(styles.half, styles.right)}>
+            <div className={classNames(styles.half, styles.right)} data-tutorial="object-boolean-buttons">
               {renderToolBtn(
                 tObjectPanel.union,
                 <ObjectPanelIcons.Union />,

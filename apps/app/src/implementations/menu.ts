@@ -3,6 +3,7 @@ import { funnel } from 'remeda';
 
 import { TabEvents } from '@core/app/constants/tabConstants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { usePanelVisibilityStore } from '@core/app/stores/editorLayoutStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -53,6 +54,29 @@ class Menu extends AbstractMenu {
       this.rerenderMenu();
     });
 
+    // dockview layout related
+    usePanelVisibilityStore.subscribe(
+      (state) => state.panelLayerControls,
+      (isVisible) => {
+        this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', isVisible);
+        this.rerenderMenu();
+      },
+    );
+    usePanelVisibilityStore.subscribe(
+      (state) => state.panelObjectProperties,
+      (isVisible) => {
+        this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', isVisible);
+        this.rerenderMenu();
+      },
+    );
+    usePanelVisibilityStore.subscribe(
+      (state) => state.panelPathEdit,
+      (isVisible) => {
+        this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', isVisible);
+        this.rerenderMenu();
+      },
+    );
+
     const isDev = localStorage.getItem('dev') === 'true';
 
     this.setDevMode(isDev);
@@ -80,6 +104,7 @@ class Menu extends AbstractMenu {
 
   initMenuItemStatus = (): void => {
     const globalPreference = useGlobalPreferenceStore.getState();
+    const visibilityStore = usePanelVisibilityStore.getState();
 
     // checkboxes
     this.changeMenuItemStatus(['ZOOM_WITH_WINDOW'], 'checked', globalPreference.zoom_with_window);
@@ -90,6 +115,9 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', globalPreference.auto_align);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', globalPreference['enable-uv-print-file']);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', false);
+    this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', visibilityStore.panelLayerControls);
+    this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', visibilityStore.panelObjectProperties);
+    this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', visibilityStore.panelPathEdit);
 
     this.updateMenuByWorkarea(useDocumentStore.getState().workarea);
   };

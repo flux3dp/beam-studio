@@ -7,10 +7,11 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './FlipButtons.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
@@ -43,7 +44,7 @@ const FlipButtons = (): React.JSX.Element => {
   }
 
   return (
-    <div className={styles.container}>
+    <div className={styles.container} data-tutorial="object-flip-buttons">
       <Button
         icon={<DimensionPanelIcons.HFlip />}
         id="horizontal_flip"

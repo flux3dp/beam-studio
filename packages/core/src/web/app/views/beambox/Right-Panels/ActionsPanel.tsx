@@ -598,7 +598,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       {content}
     </div>
   ) : (
-    <div className={styles.panel}>
+    <div className={styles.panel} data-tutorial="actions-panel">
       <div className={styles.title}>ACTIONS</div>
       <div className={styles['btns-container']}>
         <ConfigProvider theme={textButtonTheme}>{content}</ConfigProvider>

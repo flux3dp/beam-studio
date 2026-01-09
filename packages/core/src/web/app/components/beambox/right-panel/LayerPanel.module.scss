@@ -1,5 +1,6 @@
-@use '@core/app/views/beambox/Right-Panels/_mixins' as mixins;
+@use '@core/app/views/beambox/Right-Panels/_mixins' as rightPanelMixins;
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
 
 $handle-height: 10px;
 $layer-background: white;
@@ -10,13 +11,11 @@ $layer-background: white;
 
 .container {
   width: 100%;
-  // 40px = tab height
-  height: calc(100% - 40px);
-  background-color: #f8f8f8;
-  border: 1px variables.$panelBorderColor solid;
-  border-width: 0 0 1px 1px;
-  @media screen and (min-width: 601px) {
-    overflow-y: scroll;
+  height: 100%;
+  font-size: 10pt;
+
+  @include mixins.is-not-mobile {
+    @include rightPanelMixins.panel();
   }
 }
 
@@ -28,7 +27,7 @@ $layer-background: white;
 }
 
 .layer-bottom-bar {
-  @include mixins.bottom-bar();
+  @include rightPanelMixins.bottom-bar();
   position: relative;
   z-index: 901;
 }
@@ -40,6 +39,11 @@ $layer-background: white;
   height: calc(100% - $handle-height);
   width: 100%;
   position: relative;
+  @include mixins.is-mobile {
+    width: 100vw;
+    height: 100%;
+    border: none;
+  }
 
   :global(.react-contextmenu-wrapper) {
     height: 100%;
@@ -50,6 +54,10 @@ $layer-background: white;
       overflow-x: hidden;
       overflow-y: scroll;
       height: 100%;
+      @include mixins.is-mobile {
+        left: 0;
+        width: 100vw;
+      }
       &::-webkit-scrollbar {
         display: none;
       }

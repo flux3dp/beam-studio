@@ -123,6 +123,7 @@ const LayerList = ({
           })}
           data-layer={layerName}
           data-testid={layerName}
+          data-tutorial="layer-item"
           draggable
           key={layerName}
           onBlur={() => {}}
@@ -161,6 +162,7 @@ const LayerList = ({
               className={classNames(styles.name, {
                 [styles['with-module']]: shouldShowModuleIcon,
               })}
+              data-tutorial="layer-name"
               id={`layerdoubleclick-${i}`}
               onDoubleClick={(e: React.MouseEvent) => {
                 if (!isMobile && !e.ctrlKey && !e.shiftKey && !e.metaKey) {
@@ -269,7 +271,7 @@ const LayerList = ({
   }
 
   return (
-    <div className={styles.list} id="layerlist" onDragOver={(e) => e.preventDefault()}>
+    <div className={styles.list} data-tutorial="layer-list" id="layerlist" onDragOver={(e) => e.preventDefault()}>
       {items}
     </div>
   );

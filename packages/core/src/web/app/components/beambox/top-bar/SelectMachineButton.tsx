@@ -34,7 +34,7 @@ function SelectMachineButton(): React.JSX.Element {
   }, [selectedDevice]);
 
   return (
-    <div className={styles.button} onClick={handleClick}>
+    <div className={styles.button} data-tutorial="select-machine-button" onClick={handleClick}>
       <TopBarIcons.SelectMachine />
       {!isMobile && (
         <span className={styles.text} data-testid="select-machine">

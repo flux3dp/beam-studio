@@ -1,7 +1,4 @@
 @media screen and (min-width: 601px) {
-  #mobile-tab-bar {
-    display: none;
-  }
   .hidden-desktop {
     display: none;
   }
@@ -10,21 +7,6 @@
 @media screen and (max-width: 600px) {
   .hidden-mobile {
     display: none !important;
-  }
-
-  #mobile-tab-bar {
-    display: block;
-    position: fixed;
-    width: 100%;
-    border-top: solid 1px #ccc;
-    background: #ffffff;
-    z-index: 998;
-    overflow-x: scroll;
-    bottom: 0;
-  }
-
-  #right-panel {
-    display: none;
   }
 
   .adm-tab-bar-item[aria-disabled='true'] {
@@ -53,38 +35,5 @@
       margin-left: -50px;
       display: inline-block;
     }
-  }
-
-  .beambox-studio #right-panel {
-    overflow-x: hidden;
-
-    #sidepanels {
-      .right-panel-tabs {
-        display: none;
-      }
-
-      #layerpanel {
-        width: 100vw;
-        height: 100%;
-        border: none;
-        .react-contextmenu-wrapper {
-          height: 100%;
-        }
-      }
-      #layerlist_container {
-        left: 0;
-        width: 100vw;
-        overflow-y: scroll;
-        height: 100%;
-      }
-    }
-  }
-  #laser-panel {
-    .controls {
-      overflow-y: auto;
-    }
-  }
-  #beamboxToolPanel {
-    z-index: 999;
   }
 }

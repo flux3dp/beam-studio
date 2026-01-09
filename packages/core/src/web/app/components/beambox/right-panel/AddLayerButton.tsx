@@ -37,7 +37,7 @@ function AddLayerButton({ setSelectedLayers }: Props): React.JSX.Element {
   };
 
   return (
-    <button className={styles.btn} onClick={addNewLayer} type="button">
+    <button className={styles.btn} data-tutorial="add-layer-button" onClick={addNewLayer} type="button">
       <Icon component={LayerPanelIcons.Add} />
     </button>
   );

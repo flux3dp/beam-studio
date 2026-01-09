@@ -634,6 +634,36 @@ class MenuManager extends EventEmitter {
           label: r.anti_aliasing,
           type: 'checkbox',
         },
+        { type: 'separator' },
+        {
+          accelerator: 'l',
+          click: callback,
+          enabled: false,
+          id: 'SHOW_LAYER_CONTROLS_PANEL',
+          label: 'SHOW_LAYER_CONTROLS_PANEL',
+          type: 'checkbox',
+        },
+        {
+          accelerator: 'o',
+          click: callback,
+          enabled: false,
+          id: 'SHOW_OBJECT_CONTROLS_PANEL',
+          label: 'SHOW_OBJECT_CONTROLS_PANEL',
+          type: 'checkbox',
+        },
+        {
+          click: callback,
+          enabled: false,
+          id: 'SHOW_PATH_CONTROLS_PANEL',
+          label: 'SHOW_PATH_CONTROLS_PANEL',
+          type: 'checkbox',
+        },
+        {
+          click: callback,
+          enabled: false,
+          id: 'RESET_LAYOUT',
+          label: 'RESET_LAYOUT',
+        },
       ],
     });
 

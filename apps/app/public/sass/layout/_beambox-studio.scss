@@ -1,6 +1,5 @@
 @use 'sass:meta';
 .beambox-studio {
-  @include meta.load-css('beambox/right-panel/right-panel');
   @include meta.load-css('beambox/svg-editor');
 
   user-select: none;

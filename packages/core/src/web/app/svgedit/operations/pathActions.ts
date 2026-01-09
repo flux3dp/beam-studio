@@ -10,6 +10,7 @@ import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
 import selector from '@core/app/svgedit/selector';
 import workareaManager from '@core/app/svgedit/workarea';
+import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import * as BezierFitCurve from '@core/helpers/bezier-fit-curve';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -255,6 +256,7 @@ const toSelectMode = (elem?: Element): void => {
 
   svgedit.path.path = null;
   svgEditor.updateContextPanel();
+  RightPanelController.updatePathEditPanel();
 };
 
 const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, startY: number) => {

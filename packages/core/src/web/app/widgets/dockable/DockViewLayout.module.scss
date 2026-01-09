@@ -1,0 +1,40 @@
+@use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
+
+.dockview {
+  :global(.dv-split-view-container.dv-separator-border .dv-view:not(:first-child)::before) {
+    z-index: 4;
+  }
+
+  :global(.dv-tab) {
+    // Move padding inside Tab
+    padding: 0;
+  }
+
+  :global(.dv-view:not(.visible)) {
+    display: none;
+  }
+
+  :global(.react-contextmenu) {
+    transform: translateY(-1 * variables.$topBarHeight);
+
+    @include mixins.is-mobile {
+      @include mixins.is-web {
+        transform: translateY(-1 * variables.$topBarHeightWebMobile);
+      }
+    }
+  }
+
+  .narrow {
+    // For groups that is too narrow (<100px), drop targets take full width by dockview
+    // Override to 50%
+    :global(.dv-drop-target-left) {
+      width: 50% !important;
+    }
+
+    :global(.dv-drop-target-right) {
+      width: 50% !important;
+      left: 50% !important;
+    }
+  }
+}

@@ -14,6 +14,7 @@ import historyUtils from '@core/app/svgedit/history/utils';
 import { cloneSelectedElements, pasteElements, pasteWithDefaultPosition } from '@core/app/svgedit/operations/clipboard';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import workareaManager from '@core/app/svgedit/workarea';
+import { loadLayout, togglePanel } from '@core/app/widgets/dockable/utils';
 import { externalLinkMemberDashboard, signOut } from '@core/helpers/api/flux-id';
 import checkQuestionnaire from '@core/helpers/check-questionnaire';
 import {
@@ -146,13 +147,17 @@ export default {
       historyUtils.redo();
     }
   },
+  RESET_LAYOUT: () => loadLayout('fallback'),
   ROTARY_SETUP: () => showRotarySettings(),
   SAVE_AS: (): Promise<boolean> => saveAsFile(),
   SAVE_SCENE: (): Promise<boolean> => saveFile(),
   SAVE_TO_CLOUD: (): Promise<boolean> => saveToCloud(),
   SHOW_GRIDS: (): boolean => viewMenu.toggleGrid(),
   SHOW_LAYER_COLOR: (): boolean => viewMenu.toggleLayerColor(),
+  SHOW_LAYER_CONTROLS_PANEL: () => togglePanel('panelLayerControls'),
   SHOW_MY_CLOUD: () => Dialog.showMyCloud(),
+  SHOW_OBJECT_CONTROLS_PANEL: () => togglePanel('panelObjectProperties'),
+  SHOW_PATH_CONTROLS_PANEL: () => togglePanel('panelPathEdit'),
   SHOW_RULERS: (): boolean => viewMenu.toggleRulers(),
   SIGN_IN: (): void => Dialog.showLoginDialog(),
   SIGN_OUT: (): Promise<boolean> => signOut(),

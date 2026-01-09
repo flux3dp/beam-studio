@@ -42,6 +42,7 @@ const GoButton = ({ hasDiscoverdMachine }: Props): React.JSX.Element => {
   return (
     <div
       className={classNames(styles.button, { [styles.disabled]: !hasDiscoverdMachine || mode !== CanvasMode.Draw })}
+      data-tutorial="go-button"
       onClick={throttledHandleExportClick.call}
       title={lang.tutorial.newInterface.start_work}
     >

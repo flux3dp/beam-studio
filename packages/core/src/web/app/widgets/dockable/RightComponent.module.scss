@@ -1,0 +1,10 @@
+.container {
+  height: 100%;
+  display: flex;
+  align-items: center;
+
+  .action {
+    padding: 4px;
+    color: currentColor;
+  }
+}

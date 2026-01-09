@@ -31,6 +31,7 @@ const FrameButton = (): React.JSX.Element => {
   return (
     <div
       className={classNames(styles.button, { [styles.disabled]: isDisabled })}
+      data-tutorial="frame-button"
       onClick={() => showFramingModal()}
       title={lang.topbar.frame_task}
     >

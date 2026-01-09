@@ -1,5 +1,6 @@
 import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
 
+import { Button, Tour } from 'antd';
 import classNames from 'classnames';
 import { pipe } from 'remeda';
 
@@ -15,10 +16,13 @@ import SelectMachineButton from '@core/app/components/beambox/top-bar/SelectMach
 import TopBarHints from '@core/app/components/beambox/top-bar/TopBarHints';
 import WelcomePageButton from '@core/app/components/beambox/top-bar/WelcomePageButton';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { generateInterfaceTutorial } from '@core/app/constants/tutorialConstants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import { moveToStep } from '@core/app/views/tutorials/utils';
+import { loadLayout } from '@core/app/widgets/dockable/utils';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';
@@ -30,6 +34,8 @@ import AutoFocusButton from './AutoFocusButton';
 import Tabs from './tabs/Tabs';
 import styles from './TopBar.module.scss';
 
+const ttt = generateInterfaceTutorial();
+
 const UnmemorizedTopBar = (): React.JSX.Element => {
   const { isDragRegion, isWeb } = useMemo(
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: getOS() === 'MacOS' && !isWeb, isWeb })),
@@ -40,6 +46,8 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [current, setCurrent] = useState(0);
 
   useEffect(() => registerWindowUpdateTitle(), []);
 
@@ -95,6 +103,40 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
           )}
         </div>
         <div className={classNames(styles.controls, styles.right)}>
+          <Button
+            onClick={() => {
+              console.log('Start Top Bar Tour');
+              loadLayout('fallback');
+              setCurrent(0);
+              setOpen(true);
+            }}
+            style={{ '-webkit-app-region': 'no-drag' }}
+          >
+            Tour
+          </Button>
+          <Tour
+            current={current}
+            disabledInteraction={ttt.disabledInteraction} // Disable in interface and enable in new user tutorial
+            indicatorsRender={(current, total) => (
+              // Fix layout loop when close to border
+              <span className={styles.indicators}>
+                {current + 1} / {total}
+              </span>
+            )}
+            mask={{ color: 'rgba(0, 0, 0, 0.3)' }}
+            onChange={async (step) => {
+              console.log('step', step);
+              await moveToStep(ttt.steps[step]);
+              setCurrent(step);
+            }}
+            onClose={() => {
+              setOpen(false);
+              loadLayout('cached');
+            }} // TODO: add confirm when closing in the middle of tour
+            open={open}
+            rootClassName={styles.tour}
+            steps={ttt.steps}
+          />
           <SelectMachineButton />
           <DocumentButton />
           <AutoFocusButton />

@@ -17,6 +17,7 @@ interface Props {
   showBadge?: boolean;
   style?: React.CSSProperties;
   title: string;
+  tutorialKey?: string;
 }
 
 function LeftPanelButton({
@@ -29,10 +30,12 @@ function LeftPanelButton({
   showBadge = false,
   style,
   title,
+  tutorialKey,
 }: Props): React.JSX.Element {
   return (
     <div
       className={classNames(styles.container, { [styles.active]: active, [styles.disabled]: disabled }, className)}
+      data-tutorial={tutorialKey}
       id={id}
       onClick={disabled ? undefined : onClick}
       style={style}

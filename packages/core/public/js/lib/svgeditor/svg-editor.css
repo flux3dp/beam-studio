@@ -39,34 +39,6 @@ select {
 	padding-top: 4px;
 }
 
-#sidepanel_handle {
-	display: inline-block;
-	position: absolute;
-	background-color: #D0D0D0;
-	font-weight: bold;
-	left: 0;
-	top: 40%;
-	width: 1em;
-	padding: 5px 1px 5px 5px;
-	margin-left: 3px;
-	cursor: pointer;
-	border-radius: 5px;
-	-moz-border-radius: 5px;
-	-webkit-border-radius: 5px;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-}
-
-#sidepanel_handle:hover {
-	font-weight: bold;
-}
-
-#sidepanel_handle * {
-	cursor: pointer;
-	-moz-user-select: none;
-	-webkit-user-select: none;
-}
-
 #layerlist_container::-webkit-scrollbar {
 	display: unset;
 	-webkit-appearance: none;

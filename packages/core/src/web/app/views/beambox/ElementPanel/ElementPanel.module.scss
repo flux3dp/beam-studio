@@ -107,6 +107,10 @@ $icon-button-width: 32px;
 .drawer {
   position: absolute;
 
+  :global(.ant-drawer-content) {
+    background: white !important; // overwrite inline style in widgets/Drawer
+  }
+
   // Overwrite antd padding
   .drawer-header {
     padding: 12px 18px;
