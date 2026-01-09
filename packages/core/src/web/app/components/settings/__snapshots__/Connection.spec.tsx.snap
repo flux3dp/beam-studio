@@ -29,7 +29,7 @@ exports[`should render correctly invalid ip address is given 1`] = `
     checked:
     192.168.2.2
     disabled:
-    false
+    undefined
     <input
       checked=""
       class="switch-control"
