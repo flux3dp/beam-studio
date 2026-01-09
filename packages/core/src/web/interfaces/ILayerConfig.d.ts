@@ -83,6 +83,7 @@ type UVConfig = {
   rightPadding: number;
   uvCuringAfter: boolean;
   uvCuringRepeat: number;
+  uvPrintingRepeat: number;
   uvStrength: number;
   uvXStep: number;
 };
