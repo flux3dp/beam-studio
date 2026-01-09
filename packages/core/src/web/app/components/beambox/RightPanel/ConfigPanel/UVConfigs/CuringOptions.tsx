@@ -1,21 +1,21 @@
-import React, { memo, useContext } from 'react';
+import React, { memo } from 'react';
 
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import styles from '../Block.module.scss';
-import ConfigPanelContext from '../ConfigPanelContext';
 import initState from '../initState';
 import NumberBlock from '../NumberBlock';
 
-const UVCuring = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
+const CuringOptions = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
   const { change, uvCuringAfter } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const handleToggle = () => {
     const newVal = !uvCuringAfter.value;
 
@@ -43,17 +43,27 @@ const UVCuring = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
         />
       </div>
       {uvCuringAfter.value && (
-        <NumberBlock
-          configKey="uvCuringRepeat"
-          id="uvCuringRepeat"
-          max={20}
-          min={1}
-          title="UV Curing Repeat"
-          type={type}
-        />
+        <>
+          <NumberBlock
+            configKey="uvPrintingRepeat"
+            id="uvPrintingRepeat"
+            max={100}
+            min={0}
+            title="UV Printing Repeat"
+            type={type}
+          />
+          <NumberBlock
+            configKey="uvCuringRepeat"
+            id="uvCuringRepeat"
+            max={100}
+            min={1}
+            title="UV Curing Repeat"
+            type={type}
+          />
+        </>
       )}
     </>
   );
 });
 
-export default UVCuring;
+export default CuringOptions;
