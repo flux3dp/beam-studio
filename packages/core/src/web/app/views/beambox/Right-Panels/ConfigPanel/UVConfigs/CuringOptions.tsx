@@ -13,7 +13,7 @@ import ConfigPanelContext from '../ConfigPanelContext';
 import initState from '../initState';
 import NumberBlock from '../NumberBlock';
 
-const UVCuring = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
+const CuringOptions = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
   const { change, uvCuringAfter } = useConfigPanelStore();
   const { selectedLayers } = useContext(ConfigPanelContext);
   const handleToggle = () => {
@@ -43,17 +43,27 @@ const UVCuring = memo(({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
         />
       </div>
       {uvCuringAfter.value && (
-        <NumberBlock
-          configKey="uvCuringRepeat"
-          id="uvCuringRepeat"
-          max={20}
-          min={1}
-          title="UV Curing Repeat"
-          type={type}
-        />
+        <>
+          <NumberBlock
+            configKey="uvPrintingRepeat"
+            id="uvPrintingRepeat"
+            max={100}
+            min={0}
+            title="UV Printing Repeat"
+            type={type}
+          />
+          <NumberBlock
+            configKey="uvCuringRepeat"
+            id="uvCuringRepeat"
+            max={100}
+            min={1}
+            title="UV Curing Repeat"
+            type={type}
+          />
+        </>
       )}
     </>
   );
 });
 
-export default UVCuring;
+export default CuringOptions;
