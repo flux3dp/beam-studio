@@ -236,11 +236,13 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         }
       };
 
+      const videoName = `video/wide-angle-calibration/2-cut${isHexaRf ? '-fhx2rf' : ''}`;
+
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/wide-angle-calibration/2-cut.webm', type: 'video/webm' },
-            { src: 'video/wide-angle-calibration/2-cut.mp4', type: 'video/mp4' },
+            { src: `${videoName}.webm`, type: 'video/webm' },
+            { src: `${videoName}.mp4`, type: 'video/mp4' },
           ]}
           buttons={[
             { label: tCali.cancel, onClick: () => handleClose(false) },
