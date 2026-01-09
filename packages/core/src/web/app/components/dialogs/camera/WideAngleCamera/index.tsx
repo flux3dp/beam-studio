@@ -157,8 +157,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/bb2-calibration/wide-angle-1-prepare-materials.webm', type: 'video/webm' },
-            { src: 'video/bb2-calibration/wide-angle-1-prepare-materials.mp4', type: 'video/mp4' },
+            { src: 'video/wide-angle-calibration/1-prepare-materials.webm', type: 'video/webm' },
+            { src: 'video/wide-angle-calibration/1-prepare-materials.mp4', type: 'video/mp4' },
           ]}
           buttons={[
             { label: tCali.cancel, onClick: () => handleClose(false) },
@@ -236,11 +236,13 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         }
       };
 
+      const videoName = `video/wide-angle-calibration/2-cut${isHexaRf ? '-fhx2rf' : ''}`;
+
       return (
         <Instruction
           animationSrcs={[
-            { src: 'video/bb2-calibration/wide-angle-2-cut.webm', type: 'video/webm' },
-            { src: 'video/bb2-calibration/wide-angle-2-cut.mp4', type: 'video/mp4' },
+            { src: `${videoName}.webm`, type: 'video/webm' },
+            { src: `${videoName}.mp4`, type: 'video/mp4' },
           ]}
           buttons={[
             { label: tCali.cancel, onClick: () => handleClose(false) },
@@ -262,8 +264,8 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
     .with(Step.SOLVE_PNP_INSTRUCTION_1, Step.SOLVE_PNP_INSTRUCTION_2, (step) => (
       <Instruction
         animationSrcs={[
-          { src: 'video/bb2-calibration/wide-angle-3-align.webm', type: 'video/webm' },
-          { src: 'video/bb2-calibration/wide-angle-3-align.mp4', type: 'video/mp4' },
+          { src: 'video/wide-angle-calibration/3-align.webm', type: 'video/webm' },
+          { src: 'video/wide-angle-calibration/3-align.mp4', type: 'video/mp4' },
         ]}
         buttons={[
           { label: tCali.back, onClick: prev },

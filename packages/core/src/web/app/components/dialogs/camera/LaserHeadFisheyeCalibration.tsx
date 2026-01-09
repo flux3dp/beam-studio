@@ -76,8 +76,8 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
     return (
       <Instruction
         animationSrcs={[
-          { src: 'video/bb2-calibration/1-chessboard.webm', type: 'video/webm' },
-          { src: 'video/bb2-calibration/1-chessboard.mp4', type: 'video/mp4' },
+          { src: 'video/laser-head-calibration/1-chessboard.webm', type: 'video/webm' },
+          { src: 'video/laser-head-calibration/1-chessboard.mp4', type: 'video/mp4' },
         ]}
         buttons={[
           {
@@ -112,7 +112,11 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         charuco={[15, 10]}
         chessboard={[24, 14]}
         description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
-        indicator={{ height: '65%', left: '10%', top: '30%', width: '80%' }}
+        indicator={
+          isHexaRf
+            ? { height: '95%', left: '2.5%', top: '2.5%', width: '95%' }
+            : { height: '65%', left: '10%', top: '30%', width: '80%' }
+        }
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
         updateParam={updateParam}
@@ -156,8 +160,8 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
     return (
       <Instruction
         animationSrcs={[
-          { src: 'video/bb2-calibration/2-cut.webm', type: 'video/webm' },
-          { src: 'video/bb2-calibration/2-cut.mp4', type: 'video/mp4' },
+          { src: 'video/laser-head-calibration/2-cut.webm', type: 'video/webm' },
+          { src: 'video/laser-head-calibration/2-cut.mp4', type: 'video/mp4' },
         ]}
         buttons={[
           isAdvanced
@@ -186,8 +190,8 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
     return (
       <Instruction
         animationSrcs={[
-          { src: 'video/bb2-calibration/3-align.webm', type: 'video/webm' },
-          { src: 'video/bb2-calibration/3-align.mp4', type: 'video/mp4' },
+          { src: 'video/laser-head-calibration/3-align.webm', type: 'video/webm' },
+          { src: 'video/laser-head-calibration/3-align.mp4', type: 'video/mp4' },
         ]}
         buttons={[
           { label: tCali.back, onClick: () => setStep(Steps.PUT_PAPER) },
