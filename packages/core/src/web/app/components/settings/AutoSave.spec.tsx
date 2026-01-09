@@ -43,6 +43,7 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
 
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
+jest.mock('./components/SettingSwitch');
 
 const mockIsWeb = jest.fn();
 
@@ -66,18 +67,6 @@ describe('should render correctly', () => {
           fileNumber: 5,
           timeInterval: 10,
         }}
-        options={
-          [
-            {
-              label: 'On',
-              value: true,
-            },
-            {
-              label: 'Off',
-              value: false,
-            },
-          ] as any
-        }
         setEditingAutosaveConfig={setEditingAutosaveConfig}
         setWarnings={setWarnings}
         warnings={{}}
@@ -86,7 +75,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.change(container.querySelector('.select-control'), { target: { value: true } });
+    fireEvent.click(container.querySelector('.switch-control'));
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(1);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(1, {
       directory: '/MyDocuments',
@@ -141,12 +130,6 @@ describe('should render correctly', () => {
           fileNumber: 5,
           timeInterval: 10,
         }}
-        options={
-          [
-            { label: 'On', value: true },
-            { label: 'Off', value: false },
-          ] as any
-        }
         setEditingAutosaveConfig={setEditingAutosaveConfig}
         setWarnings={setWarnings}
         warnings={{
@@ -183,12 +166,6 @@ describe('should render correctly', () => {
           fileNumber: 5,
           timeInterval: 10,
         }}
-        options={
-          [
-            { label: 'On', value: true },
-            { label: 'Off', value: false },
-          ] as any
-        }
         setEditingAutosaveConfig={setEditingAutosaveConfig}
         setWarnings={setWarnings}
         warnings={{}}

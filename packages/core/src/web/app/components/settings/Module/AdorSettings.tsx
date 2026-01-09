@@ -11,9 +11,8 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import { getModuleOffsetsFromStore, updateModuleOffsetsInStore } from '@core/helpers/device/moduleOffsets';
 import useI18n from '@core/helpers/useI18n';
 
-import SettingFormItem from './components/SettingFormItem';
-import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
+import SettingFormItem from '../components/SettingFormItem';
+import SettingSelect from '../components/SettingSelect';
 
 interface Props {
   unitInputProps: Partial<SettingUnitInputProps>;
@@ -21,7 +20,7 @@ interface Props {
 
 const targetWorkarea: WorkAreaModel = 'ado1';
 
-const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
+const AdorSettings = ({ unitInputProps }: Props): React.JSX.Element => {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
   const commonProps = useMemo(() => {
@@ -68,7 +67,6 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
 
   return (
     <>
-      <div className={styles.subtitle}>{lang.settings.groups.ador_modules}</div>
       <SettingSelect
         defaultValue={getPreference('default-laser-module')}
         id="default-laser-module"
@@ -125,4 +123,4 @@ const AdorModule = ({ unitInputProps }: Props): React.JSX.Element => {
   );
 };
 
-export default AdorModule;
+export default AdorSettings;

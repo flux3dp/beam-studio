@@ -12,7 +12,7 @@ function drawingEllipse() {
 
 function applySettings() {
   cy.get('div.btn-done').click();
-  cy.wait(1000);
+  cy.window().its('svgCanvas', { timeout: 5000 });
 }
 
 describe('update the preference', () => {
@@ -25,9 +25,10 @@ describe('update the preference', () => {
     cy.go2Preference();
     cy.get('#select-lang').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'English');
 
-    cy.get('#set-guessing-poke').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+    // Switches - check aria-checked attribute (Ant Design Switch)
+    cy.get('#set-guessing-poke').should('have.attr', 'aria-checked', 'true');
 
-    cy.get('#set-auto-connect').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+    cy.get('#set-auto-connect').should('have.attr', 'aria-checked', 'true');
 
     cy.get('#set-camera-preview-speed-level')
       .closest('.ant-select')
@@ -63,48 +64,50 @@ describe('update the preference', () => {
       .find('.ant-select-selection-item')
       .should('have.text', 'Beambox');
 
-    cy.get('#set-guide').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+    // Switch - show_guides defaults to Off (false)
+    cy.get('#set-guide').should('have.attr', 'aria-checked', 'false');
 
     cy.get('#set-guide-axis-x').should('have.attr', 'value', '0');
     cy.get('#set-guide-axis-y').should('have.attr', 'value', '0');
 
     cy.get('#set-bitmap-quality').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Low');
 
-    cy.get('#set-anti-aliasing').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+    // Switch - anti-aliasing defaults to On (true)
+    cy.get('#set-anti-aliasing').should('have.attr', 'aria-checked', 'true');
 
-    cy.get('#set-continuous-drawing')
-      .closest('.ant-select')
-      .find('.ant-select-selection-item')
-      .should('have.text', 'Off');
+    // Switch - continuous_drawing defaults to Off (false)
+    cy.get('#set-continuous-drawing').should('have.attr', 'aria-checked', 'false');
 
-    cy.get('#set-simplify-clipper-path')
-      .closest('.ant-select')
-      .find('.ant-select-selection-item')
-      .should('have.text', 'Off');
+    // Switch - simplify_clipper_path defaults to Off (false)
+    cy.get('#set-simplify-clipper-path').should('have.attr', 'aria-checked', 'false');
 
-    cy.get('#set-fast-gradient').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+    // Switch - fast_gradient defaults to On (true)
+    cy.get('#set-fast-gradient').should('have.attr', 'aria-checked', 'true');
 
-    cy.get('#set-vector-speed-constraint')
-      .closest('.ant-select')
-      .find('.ant-select-selection-item')
-      .should('have.text', 'On');
+    // Switch - vector_speed_constraint defaults to On (true)
+    cy.get('#set-vector-speed-constraint').should('have.attr', 'aria-checked', 'true');
 
     cy.get('#loop-input').should('have.attr', 'value', '0');
 
-    cy.get('#font-substitue').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'On');
+    // Switch - font-substitute defaults to On (true)
+    cy.get('#font-substitue').should('have.attr', 'aria-checked', 'true');
 
     cy.get('#font-convert').closest('.ant-select').find('.ant-select-selection-item').should('have.text', '2.0');
 
-    cy.get('#default-open-bottom').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+    // Switch - default-open-bottom defaults to Off (false)
+    cy.get('#default-open-bottom').should('have.attr', 'aria-checked', 'false');
 
-    cy.get('#default-autofocus').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+    // Switch - default-autofocus defaults to Off (false)
+    cy.get('#default-autofocus').should('have.attr', 'aria-checked', 'false');
 
-    cy.get('#default-diode').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+    // Switch - default-diode defaults to Off (false)
+    cy.get('#default-diode').should('have.attr', 'aria-checked', 'false');
 
     cy.get('#set_diode_offset-x').should('have.attr', 'value', '70');
     cy.get('#set_diode_offset-y').should('have.attr', 'value', '7');
 
-    cy.get('#set-sentry').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'Off');
+    // Switch - enable-sentry defaults to Off (false)
+    cy.get('#set-sentry').should('have.attr', 'aria-checked', 'false');
   });
 
   it('change units and see if home page gets changed ', () => {
@@ -182,9 +185,9 @@ describe('update the preference', () => {
 
   it('change guide setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-guide').closest('.ant-select').as('select');
-    cy.get('@select').find('.ant-select-selection-item').click();
-    cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
+    // Switch - click to toggle on
+    cy.get('#set-guide').click();
+    cy.get('#set-guide').should('have.attr', 'aria-checked', 'true');
 
     cy.get('#set-guide-axis-x').clear({ force: true }).type('10').blur();
     cy.get('#set-guide-axis-y').clear({ force: true }).type('10').blur();
@@ -213,9 +216,8 @@ describe('update the preference', () => {
 
   it('change anti aliasing setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-anti-aliasing').closest('.ant-select').as('select');
-    cy.get('@select').find('.ant-select-selection-item').click();
-    cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
+    // Switch - anti-aliasing defaults to true, so we verify it's on
+    cy.get('#set-anti-aliasing').should('have.attr', 'aria-checked', 'true');
     applySettings();
     drawingEllipse();
     cy.get('svg#svgcontent').should(($shapeRendering) => {
@@ -226,9 +228,9 @@ describe('update the preference', () => {
 
   it('change continuous drawing setting and see if home page gets changed ', () => {
     cy.go2Preference();
-    cy.get('#set-continuous-drawing').closest('.ant-select').as('select');
-    cy.get('@select').find('.ant-select-selection-item').click();
-    cy.get('.ant-select-item-option-content').contains('On').click({ force: true });
+    // Switch - click to toggle on
+    cy.get('#set-continuous-drawing').click();
+    cy.get('#set-continuous-drawing').should('have.attr', 'aria-checked', 'true');
     applySettings();
 
     cy.clickToolBtn('Rectangle');
@@ -265,9 +267,9 @@ describe('update the preference', () => {
     );
     cy.go2Preference(true);
 
-    cy.get('#set-vector-speed-constraint').closest('.ant-select').as('select');
-    cy.get('@select').find('.ant-select-selection-item').click();
-    cy.get('.ant-select-item-option-content').contains('Off').click({ force: true });
+    // Switch - click to toggle off
+    cy.get('#set-vector-speed-constraint').click();
+    cy.get('#set-vector-speed-constraint').should('have.attr', 'aria-checked', 'false');
     applySettings();
     drawingEllipse();
     cy.get('.layers > .tab-icon').click();

@@ -18,6 +18,7 @@ const useSettingStore = create(() => ({ getConfig: mockGetConfig, setConfig: moc
 jest.mock('@core/app/pages/Settings/useSettingStore', () => ({ useSettingStore }));
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
+jest.mock('./components/SettingSwitch');
 
 import Connection from './Connection';
 
@@ -29,24 +30,19 @@ describe('should render correctly', () => {
   test('invalid ip address is given', async () => {
     mockGetConfig.mockReturnValue('192.168.2.2');
 
-    const { container } = render(
-      <Connection
-        options={
-          [
-            { label: 'On', value: true },
-            { label: 'Off', value: false },
-          ] as any
-        }
-      />,
-    );
+    const { container } = render(<Connection />);
 
     expect(container).toMatchSnapshot();
-    expect(mockGetConfig).toHaveBeenCalledTimes(4);
+    expect(mockGetConfig).toHaveBeenCalledTimes(3);
     expect(mockGetConfig).toHaveBeenNthCalledWith(1, 'poke-ip-addr');
 
-    const input = container.querySelector('input');
+    // Find the IP input inside the ip-list section (not the switch controls)
+    const ipSection = container.querySelector('#connect-ip-list');
+    let input = ipSection.querySelector('input');
 
-    fireEvent.change(input, { target: { value: '192.168.3.3;192.168.4.4;192.168.1111.111' } });
+    fireEvent.change(input, { target: { value: '192.168.1111.111' } });
+    // Re-query input after change since key={`${ip}-${index}`} causes React to remount
+    input = ipSection.querySelector('input');
     fireEvent.blur(input);
 
     expect(popUp).toHaveBeenCalledTimes(1);
@@ -57,41 +53,33 @@ describe('should render correctly', () => {
     });
     expect(mockSetConfig).not.toHaveBeenCalled();
 
-    fireEvent.click(container.querySelector('.icon'));
-    expect(open).toHaveBeenCalledTimes(1);
-    expect(open).toHaveBeenNthCalledWith(1, 'https://support.flux3dp.com/hc/en-us/sections/360000302135');
+    const switchControls = container.querySelectorAll('.switch-control');
 
-    const controls = container.querySelectorAll('.select-control');
-
-    fireEvent.change(controls[0], { target: { value: false } });
+    // mockGetConfig returns '192.168.2.2' which is truthy, so clicking toggles to false
+    fireEvent.click(switchControls[0]);
     expect(mockSetConfig).toHaveBeenCalledTimes(1);
     expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'guessing_poke', false);
 
-    fireEvent.change(controls[1], { target: { value: true } });
+    fireEvent.click(switchControls[1]);
     expect(mockSetConfig).toHaveBeenCalledTimes(2);
-    expect(mockSetConfig).toHaveBeenNthCalledWith(2, 'auto_connect', true);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(2, 'auto_connect', false);
   });
 
   test('valid ip address is given', () => {
     mockGetConfig.mockReturnValue('192.168.1.1');
 
-    const { container } = render(
-      <Connection
-        options={
-          [
-            { label: 'On', value: true },
-            { label: 'Off', value: false },
-          ] as any
-        }
-      />,
-    );
+    const { container } = render(<Connection />);
 
-    const input = container.querySelector('input');
+    // Find the IP input inside the ip-list section (not the switch controls)
+    const ipSection = container.querySelector('#connect-ip-list');
+    let input = ipSection.querySelector('input');
 
-    fireEvent.change(input, { target: { value: '192.168.3.3;192.168.4.4' } });
+    fireEvent.change(input, { target: { value: '192.168.3.3' } });
+    // Re-query input after change since key={`${ip}-${index}`} causes React to remount
+    input = ipSection.querySelector('input');
     fireEvent.blur(input);
     expect(popUp).not.toHaveBeenCalled();
     expect(mockSetConfig).toHaveBeenCalledTimes(1);
-    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'poke-ip-addr', '192.168.3.3;192.168.4.4');
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'poke-ip-addr', '192.168.3.3');
   });
 });

@@ -4,22 +4,21 @@ exports[`should render correctly hide in web 1`] = `<div />`;
 
 exports[`should render correctly initially no warning 1`] = `
 <div>
-  <div
-    class="subtitle"
-  >
-    Auto Save
-  </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-auto-save
     label:
     Auto Save
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-auto-save"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>
@@ -100,22 +99,21 @@ exports[`should render correctly initially no warning 1`] = `
 
 exports[`should render correctly initially with warning 1`] = `
 <div>
-  <div
-    class="subtitle"
-  >
-    Auto Save
-  </div>
   <div>
-    mock-select-control id:
+    mock-switch-control id:
     set-auto-save
     label:
     Auto Save
     url:
-    options:
-    [{"label":"On","value":true},{"label":"Off","value":false}]
+    checked:
+    false
+    disabled:
+    undefined
     <input
-      class="select-control"
+      class="switch-control"
       id="set-auto-save"
+      readonly=""
+      type="checkbox"
     />
   </div>
   <div>

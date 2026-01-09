@@ -1,80 +1,130 @@
 import * as React from 'react';
+import { useMemo, useState } from 'react';
 
-import { InfoCircleOutlined } from '@ant-design/icons';
-import { Input } from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
+import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
+import { Button, Input } from 'antd';
 
 import alert from '@core/app/actions/alert-caller';
+import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import alertConstants from '@core/app/constants/alert-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import useI18n from '@core/helpers/useI18n';
-import browser from '@core/implementations/browser';
 
-import SettingFormItem from './components/SettingFormItem';
-import SettingSelect from './components/SettingSelect';
-import styles from './Settings.module.scss';
+import styles from './Connection.module.scss';
 
-interface Props {
-  options: DefaultOptionType[];
-}
+// Validates IPv4 addresses with octet ranges (0-255)
+const IPV4_PATTERN = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
 
-function Connection({ options }: Props): React.JSX.Element {
+const parseIpList = (ipString: string): string[] => {
+  const ips = ipString.split(/[,;]\s*/).filter(Boolean);
+
+  return ips.length > 0 ? ips : [''];
+};
+
+function Connection(): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, setConfig } = useSettingStore();
-  const originalIP = getConfig('poke-ip-addr');
-  const checkIPFormat = (e: React.FocusEvent): void => {
-    const me = e.currentTarget as HTMLInputElement;
-    const ips = me.value.split(/[,;] ?/);
-    const ipv4Pattern = /^\d{1,3}[.]\d{1,3}[.]\d{1,3}[.]\d{1,3}$/;
 
-    for (const ip of ips) {
-      if (ip !== '' && typeof ip === 'string' && ipv4Pattern.test(ip) === false) {
-        me.value = originalIP;
-        alert.popUp({
-          id: 'wrong-ip-error',
-          message: `${lang.settings.wrong_ip_format}\n${ip}`,
-          type: alertConstants.SHOW_POPUP_ERROR,
-        });
+  // eslint-disable-next-line hooks/exhaustive-deps -- Only parse once on mount
+  const initialIpList = useMemo(() => parseIpList(getConfig('poke-ip-addr')), []);
+  const [ipList, setIpList] = useState<string[]>(initialIpList);
+  const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
 
-        return;
-      }
+  const updateIpConfig = (newList: string[]): void => {
+    setIpList(newList);
+
+    const validIps = newList.filter(Boolean).join(',');
+
+    setConfig('poke-ip-addr', validIps);
+  };
+
+  const handleIpChange = (index: number, value: string): void => {
+    const newList = [...ipList];
+
+    newList[index] = value;
+    setIpList(newList);
+  };
+
+  const handleIpBlur = (index: number, value: string): void => {
+    if (value !== '' && !IPV4_PATTERN.test(value)) {
+      alert.popUp({
+        id: 'wrong-ip-error',
+        message: `${lang.settings.wrong_ip_format}\n${value}`,
+        type: alertConstants.SHOW_POPUP_ERROR,
+      });
+
+      const newList = [...ipList];
+
+      newList[index] = initialIpList[index] || '';
+      setIpList(newList);
+
+      return;
     }
 
-    setConfig('poke-ip-addr', me.value);
+    // Use value directly to avoid stale state from closure
+    const newList = [...ipList];
+
+    newList[index] = value;
+    updateIpConfig(newList);
   };
+
+  const handleAddIp = (): void => {
+    setIpList([...ipList, '']);
+  };
+
+  const handleRemoveIp = (): void => {
+    if (ipList.length > 1) {
+      const indexToRemove = selectedIndex !== null && selectedIndex < ipList.length ? selectedIndex : ipList.length - 1;
+      const newList = ipList.filter((_, i) => i !== indexToRemove);
+
+      updateIpConfig(newList);
+      setSelectedIndex(null);
+    }
+  };
+
+  const guessingPoke = getConfig('guessing_poke');
 
   return (
     <>
-      <div className={styles.subtitle}>
-        {lang.settings.groups.connection}
-        <InfoCircleOutlined
-          className={styles.icon}
-          onClick={() => browser.open(lang.settings.help_center_urls.connection)}
-        />
-      </div>
-      <SettingFormItem id="connect-ip-list" label={lang.settings.ip}>
-        <Input
-          autoComplete="false"
-          className={styles.input}
-          defaultValue={getConfig('poke-ip-addr')}
-          id="ip-input"
-          onBlur={checkIPFormat}
-        />
-      </SettingFormItem>
-      <SettingSelect
-        defaultValue={getConfig('guessing_poke')}
+      <SettingSwitch
+        checked={guessingPoke}
         id="set-guessing-poke"
         label={lang.settings.guess_poke}
         onChange={(e) => setConfig('guessing_poke', e)}
-        options={options}
       />
-      <SettingSelect
-        defaultValue={getConfig('auto_connect')}
+      <SettingSwitch
+        checked={getConfig('auto_connect')}
         id="set-auto-connect"
         label={lang.settings.auto_connect}
         onChange={(e) => setConfig('auto_connect', e)}
-        options={options}
       />
+      <div className={styles['ip-section']} id="connect-ip-list">
+        <span className={styles['ip-label']}>{lang.settings.ip}</span>
+        <div className={styles['ip-list']}>
+          {ipList.map((ip, index) => (
+            <Input
+              autoComplete="off"
+              className={styles['ip-input']}
+              key={`${ip}-${index}`}
+              onBlur={(e) => handleIpBlur(index, e.target.value)}
+              onChange={(e) => handleIpChange(index, e.target.value)}
+              onFocus={() => setSelectedIndex(index)}
+              placeholder="192.168.1.1"
+              value={ip}
+            />
+          ))}
+        </div>
+        <div className={styles['ip-buttons']}>
+          <Button className={styles['ip-button']} icon={<PlusOutlined />} onClick={handleAddIp} type="text" />
+          <Button
+            className={styles['ip-button']}
+            disabled={ipList.length <= 1}
+            icon={<MinusOutlined />}
+            onClick={handleRemoveIp}
+            type="text"
+          />
+        </div>
+      </div>
     </>
   );
 }

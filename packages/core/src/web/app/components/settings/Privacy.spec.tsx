@@ -14,27 +14,18 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
   useSettingStore,
 }));
 
-jest.mock('./components/SettingSelect');
+jest.mock('./components/SettingSwitch');
 
 import Privacy from './Privacy';
 
 test('should render correctly', () => {
   mockGetConfig.mockReturnValue(true);
 
-  const { container } = render(
-    <Privacy
-      options={
-        [
-          { label: 'On', value: true },
-          { label: 'Off', value: false },
-        ] as any
-      }
-    />,
-  );
+  const { container } = render(<Privacy />);
 
   expect(container).toMatchSnapshot();
 
-  fireEvent.change(container.querySelector('.select-control'), { target: { value: false } });
+  fireEvent.click(container.querySelector('.switch-control'));
   expect(mockGetConfig).toHaveBeenCalledWith('enable-sentry');
   expect(mockSetConfig).toHaveBeenCalledWith('enable-sentry', false);
 });

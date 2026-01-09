@@ -17,6 +17,7 @@ jest.mock('@core/app/pages/Settings/useSettingStore', () => ({
 
 jest.mock('./components/SettingSelect');
 jest.mock('./components/SettingFormItem');
+jest.mock('./components/SettingSwitch');
 
 import Engraving from './Engraving';
 
@@ -29,16 +30,7 @@ test('should render correctly', () => {
     return true;
   });
 
-  const { container } = render(
-    <Engraving
-      options={
-        [
-          { label: 'On', value: true },
-          { label: 'Off', value: false },
-        ] as any
-      }
-    />,
-  );
+  const { container } = render(<Engraving />);
 
   expect(mockGetPreference).toHaveBeenCalledTimes(5);
   expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'fast_gradient');
@@ -46,19 +38,21 @@ test('should render correctly', () => {
   expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'segmented-engraving');
   expect(container).toMatchSnapshot();
 
-  const controls = container.querySelectorAll('.select-control');
+  // Test SettingSwitch controls
+  const switchControls = container.querySelectorAll('.switch-control');
 
-  fireEvent.change(controls[0], { target: { value: false } });
+  fireEvent.click(switchControls[0]);
   expect(mockSetPreference).toHaveBeenCalledTimes(1);
   expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'fast_gradient', false);
 
-  fireEvent.change(controls[1], { target: { value: false } });
-
+  fireEvent.click(switchControls[1]);
   expect(mockSetPreference).toHaveBeenCalledTimes(2);
-  expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'reverse-engraving', false);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'segmented-engraving', false);
 
-  fireEvent.change(controls[2], { target: { value: false } });
+  // Test SettingSelect control
+  const selectControl = container.querySelector('.select-control');
 
+  fireEvent.change(selectControl, { target: { value: false } });
   expect(mockSetPreference).toHaveBeenCalledTimes(3);
-  expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'segmented-engraving', false);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'reverse-engraving', false);
 });

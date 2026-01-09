@@ -48,8 +48,8 @@ const useDefaultConfig = async (): Promise<void> => {
 
   try {
     await fs.mkdir(directory, true);
-  } catch {
-    console.error('Failed to create auto save directory, disabled auto save');
+  } catch (error) {
+    console.error(`Failed to create auto-save directory '${directory}', auto-save disabled:`, error);
     defaultConfig.enabled = false;
   }
 
