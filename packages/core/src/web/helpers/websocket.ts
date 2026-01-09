@@ -271,7 +271,9 @@ export default (options: Option): WrappedWebSocket => {
       }
 
       if (socketOptions.autoReconnect === true) {
-        ws = createWebSocket(createWsOpts);
+        setTimeout(() => {
+          ws = createWebSocket(createWsOpts);
+        }, 3000);
       } else {
         ws = null; // release
       }
@@ -315,7 +317,7 @@ export default (options: Option): WrappedWebSocket => {
     if (!ws && socketOptions.autoReconnect) {
       setTimeout(() => {
         initWebSocket();
-      }, 300);
+      }, 30000);
     }
   };
 

@@ -1,18 +1,20 @@
 import { sprintf } from 'sprintf-js';
 
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import { MACHINE_CONNECTION_TIMEOUT } from '@core/app/pages/ConnectMachineIp/constants';
 import { saveDeviceAndSettings } from '@core/app/pages/ConnectMachineIp/utils/deviceStorage';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
-import { discoverManager } from '@core/helpers/api/discover';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import i18n from '@core/helpers/i18n';
+import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
+import isJson from '@core/helpers/is-json';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 const KEY = 'qr-auto-connect';
 const DEFAULT_WEB_PORT = '8000';
 const SUCCESS_MESSAGE_DELAY_MS = 1500;
 const ERROR_MESSAGE_DURATION_MS = 3000;
+const PROBE_TIMEOUT_SECONDS = 10;
+const PROBE_TIMEOUT_MS = PROBE_TIMEOUT_SECONDS * 1000;
 
 const showMessage = (content: string, level: MessageLevel = MessageLevel.LOADING) =>
   MessageCaller.openMessage({ content, duration: 0, key: KEY, level });
@@ -28,42 +30,146 @@ const clearQRCodeParams = (): void => {
   window.history.replaceState({}, '', url.toString());
 };
 
-const waitForDevice = (targetIps: string[]): Promise<IDeviceInfo | null> => {
+/**
+ * Directly probe a machine's backend via WebSocket without modifying localStorage.
+ * This creates a temporary WebSocket connection to verify the machine is a valid FLUX device.
+ * Returns the device info if successful, null otherwise.
+ */
+const probeDeviceDirectly = (ip: string, port: string = DEFAULT_WEB_PORT): Promise<IDeviceInfo | null> => {
   return new Promise((resolve) => {
-    let timeLeft = MACHINE_CONNECTION_TIMEOUT;
-    let interval: NodeJS.Timeout;
+    const url = `ws://${ip}:${port}/ws/discover`;
+    let ws: InsecureWebsocket | null | WebSocket = null;
+    let resolved = false;
+
     const cleanup = (result: IDeviceInfo | null) => {
-      clearInterval(interval);
-      unregister();
+      if (resolved) return;
+
+      resolved = true;
+
+      try {
+        ws?.close();
+      } catch {
+        // Ignore close errors
+      }
+
       resolve(result);
     };
 
-    // Poke all target IPs to trigger discovery
-    targetIps.forEach((ip) => {
-      try {
-        discoverManager.poke(ip);
-      } catch (e) {
-        console.warn(`QR Auto-Connect: Failed to poke IP ${ip}:`, e);
-      }
-    });
+    // Timeout if no response
+    const timeoutId = setTimeout(() => {
+      console.log(`QR Auto-Connect: Probe timeout for ${ip}`);
+      cleanup(null);
+    }, PROBE_TIMEOUT_MS);
 
-    // Register listener for real-time device discovery
-    const unregister = discoverManager.register(KEY, (devices) => {
-      const match = devices.find((d) => targetIps.includes(d.ipaddr));
+    try {
+      // Use InsecureWebsocket for HTTPS contexts, regular WebSocket for HTTP
+      const useInsecure = window.location.protocol === 'https:' && checkFluxTunnel();
+      const WebSocketClass = useInsecure ? InsecureWebsocket : WebSocket;
 
-      if (match) cleanup(match);
-    });
+      ws = new WebSocketClass(url);
 
-    showMessage(sprintf(i18n.lang.message.connectingMachine, `${timeLeft}s`));
+      ws.onopen = () => {
+        console.log(`QR Auto-Connect: WebSocket opened to ${ip}`);
+        // Send poke command to trigger device info response
+        ws?.send(JSON.stringify({ cmd: 'poke', ipaddr: ip }));
+      };
 
-    // Countdown timer for timeout
-    interval = setInterval(() => {
-      timeLeft--;
-      showMessage(sprintf(i18n.lang.message.connectingMachine, `${timeLeft}s`));
+      ws.onmessage = (event: MessageEvent) => {
+        try {
+          const data = isJson(event.data) ? JSON.parse(event.data) : event.data;
 
-      if (timeLeft <= 0) cleanup(null);
-    }, 1000);
+          // Check if this is a valid device info response
+          if (data && data.uuid && data.ipaddr) {
+            console.log(`QR Auto-Connect: Found device at ${ip}:`, data.name);
+            clearTimeout(timeoutId);
+            cleanup(data as IDeviceInfo);
+          }
+        } catch (e) {
+          console.warn(`QR Auto-Connect: Error parsing message from ${ip}:`, e);
+        }
+      };
+
+      ws.onerror = () => {
+        console.log(`QR Auto-Connect: WebSocket error for ${ip}`);
+        clearTimeout(timeoutId);
+        cleanup(null);
+      };
+
+      ws.onclose = () => {
+        clearTimeout(timeoutId);
+
+        if (!resolved) {
+          cleanup(null);
+        }
+      };
+    } catch (e) {
+      console.warn(`QR Auto-Connect: Failed to create WebSocket for ${ip}:`, e);
+      clearTimeout(timeoutId);
+      cleanup(null);
+    }
   });
+};
+
+/**
+ * Probe multiple IPs in parallel and return the first successful device.
+ * This is faster than sequential checking when any IP might work.
+ * Displays a countdown message while probing.
+ */
+const findDeviceByProbing = async (targetIps: string[]): Promise<IDeviceInfo | null> => {
+  let timeLeft = PROBE_TIMEOUT_SECONDS;
+  let foundDevice: IDeviceInfo | null = null;
+
+  // Show initial countdown message
+  showMessage(sprintf(i18n.lang.message.connectingMachine, `${timeLeft}s`));
+
+  // Start countdown interval
+  const countdownInterval = setInterval(() => {
+    timeLeft--;
+
+    if (timeLeft > 0 && !foundDevice) {
+      showMessage(sprintf(i18n.lang.message.connectingMachine, `${timeLeft}s`));
+    }
+  }, 1000);
+
+  // Race all probes - first successful response wins
+  const probePromises = targetIps.map(async (ip) => {
+    const device = await probeDeviceDirectly(ip);
+
+    if (device) {
+      foundDevice = device;
+
+      return device;
+    }
+
+    // Return a never-resolving promise for failed probes so Promise.race ignores them
+    return new Promise<IDeviceInfo>(() => {});
+  });
+
+  // Add a timeout promise that resolves to null
+  const timeoutPromise = new Promise<null>((resolve) => {
+    setTimeout(() => resolve(null), PROBE_TIMEOUT_MS + 1000);
+  });
+
+  try {
+    const result = await Promise.race([...probePromises, timeoutPromise]);
+
+    clearInterval(countdownInterval);
+
+    return result;
+  } catch {
+    clearInterval(countdownInterval);
+
+    return null;
+  }
+};
+
+/**
+ * Configure localStorage to point WebSocket connections to the target machine.
+ * This is necessary for subsequent operations that use the global discoverManager.
+ */
+const configureWebSocketTarget = (ip: string): void => {
+  localStorage.setItem('host', ip);
+  localStorage.setItem('port', DEFAULT_WEB_PORT);
 };
 
 export const handleAutoConnect = async (): Promise<boolean> => {
@@ -86,20 +192,18 @@ export const handleAutoConnect = async (): Promise<boolean> => {
       throw new Error(i18n.lang.initialize.connect_machine_ip.invalid_format);
     }
 
-    showMessage(i18n.lang.initialize.connecting);
-
-    // Wait for device to be discovered
-    const device = await waitForDevice(validIps);
+    // Step 1: Probe all IPs in parallel via direct WebSocket connection
+    const device = await findDeviceByProbing(validIps);
 
     if (!device) {
       throw new Error(i18n.lang.message.device_not_found.message);
     }
 
+    // Step 2: Save device settings
     await saveDeviceAndSettings(device);
 
-    // Only set localStorage after successful save to maintain consistency
-    localStorage.setItem('host', device.ipaddr);
-    localStorage.setItem('port', DEFAULT_WEB_PORT);
+    // Step 3: Now that we found a valid device, configure localStorage
+    configureWebSocketTarget(device.ipaddr);
 
     // Update TopBar UI if user is already on editor page
     if (window.location.hash.includes('/studio/beambox')) {
