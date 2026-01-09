@@ -264,6 +264,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             <MenuItem onClick={() => callback('IMPORT_HELLO_BEAMBOX')}>{menuCms.import_hello_beambox}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMBOX_2')}>{menuCms.import_beambox_2_example}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_HEXA')}>{menuCms.import_hexa_example}</MenuItem>
+            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_HEXA_RF')}>{menuCms.import_hexa_rf_example}</MenuItem>
             {!isWeb() && (
               <MenuItem onClick={() => callback('IMPORT_EXAMPLE_PROMARK')}>{menuCms.import_promark_example}</MenuItem>
             )}
