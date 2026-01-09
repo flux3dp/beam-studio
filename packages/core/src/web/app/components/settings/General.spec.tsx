@@ -22,9 +22,17 @@ const mockIsWeb = jest.fn();
 
 jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
+jest.mock('@core/helpers/system-helper', () => ({
+  getArchDisplayName: () => 'Apple Silicon',
+}));
+
 import General from './General';
 
 describe('should render correctly', () => {
+  beforeAll(() => {
+    window.FLUX = { version: '2.5.0' } as typeof window.FLUX;
+  });
+
   test('desktop version', () => {
     mockIsWeb.mockReturnValue(false);
 

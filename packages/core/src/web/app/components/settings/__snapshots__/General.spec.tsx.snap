@@ -42,7 +42,7 @@ exports[`should render correctly desktop version 1`] = `
       <div
         class="version"
       >
-        Version undefined
+        Version 2.5.0 (Apple Silicon)
       </div>
     </div>
   </div>
