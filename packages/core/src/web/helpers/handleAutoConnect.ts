@@ -1,5 +1,6 @@
 import { sprintf } from 'sprintf-js';
 
+import alertCaller from '@core/app/actions/alert-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { saveDeviceAndSettings } from '@core/app/pages/ConnectMachineIp/utils/deviceStorage';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
@@ -12,7 +13,6 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 const KEY = 'qr-auto-connect';
 const DEFAULT_WEB_PORT = '8000';
 const SUCCESS_MESSAGE_DELAY_MS = 1500;
-const ERROR_MESSAGE_DURATION_MS = 3000;
 const PROBE_TIMEOUT_SECONDS = 10;
 const PROBE_TIMEOUT_MS = PROBE_TIMEOUT_SECONDS * 1000;
 
@@ -226,9 +226,15 @@ export const handleAutoConnect = async (): Promise<boolean> => {
 
     console.error('QR Auto-Connect Failed:', msg);
 
-    showMessage(msg, MessageLevel.ERROR);
+    closeMessage();
     clearQRCodeParams();
-    setTimeout(closeMessage, ERROR_MESSAGE_DURATION_MS);
+
+    // Show alert dialog with troubleshooting guide link
+    alertCaller.popUp({
+      caption: msg,
+      message: i18n.lang.initialize.connect_machine_ip.connection_failed_hint,
+      messageIcon: 'warning',
+    });
 
     return false;
   }
