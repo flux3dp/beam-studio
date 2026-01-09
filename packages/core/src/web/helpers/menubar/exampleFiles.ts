@@ -22,6 +22,7 @@ export const exampleFileKeys = [
   'IMPORT_EXAMPLE_BEAMO_2_LASER',
   'IMPORT_EXAMPLE_BEAMO_2_PRINT',
   'IMPORT_EXAMPLE_HEXA',
+  'IMPORT_EXAMPLE_HEXA_RF',
   'IMPORT_EXAMPLE_PROMARK',
   'IMPORT_HELLO_BEAMBOX',
 ] as const;
@@ -66,6 +67,7 @@ const basicExamples: ExampleFileMap = {
   IMPORT_EXAMPLE_BEAMO_2_LASER: 'examples/beamo_2_example_laser.bvg',
   IMPORT_EXAMPLE_BEAMO_2_PRINT: '',
   IMPORT_EXAMPLE_HEXA: 'examples/hexa_example.bvg',
+  IMPORT_EXAMPLE_HEXA_RF: 'examples/hexa_rf_example.bvg',
   IMPORT_HELLO_BEAMBOX: 'examples/hello-beambox.bvg',
   IMPORT_MATERIAL_TESTING_PRINT: '',
 };

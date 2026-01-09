@@ -540,6 +540,7 @@ export interface ILang {
             abs_engraving: string;
             acrylic_3mm_cutting: string;
             acrylic_5mm_cutting: string;
+            acrylic_7mm_cutting: string;
             acrylic_8mm_cutting: string;
             acrylic_10mm_cutting: string;
             acrylic_engraving: string;
@@ -579,6 +580,7 @@ export interface ILang {
             leather_printing: string;
             mdf_3mm_cutting: string;
             mdf_5mm_cutting: string;
+            mdf_7mm_cutting: string;
             mdf_engraving: string;
             mdf_printing: string;
             metal_bw_engraving: string;
@@ -612,6 +614,7 @@ export interface ILang {
             abs_engraving: string;
             acrylic_3mm_cutting: string;
             acrylic_5mm_cutting: string;
+            acrylic_7mm_cutting: string;
             acrylic_8mm_cutting: string;
             acrylic_10mm_cutting: string;
             acrylic_engraving: string;
@@ -651,6 +654,7 @@ export interface ILang {
             leather_printing: string;
             mdf_3mm_cutting: string;
             mdf_5mm_cutting: string;
+            mdf_7mm_cutting: string;
             mdf_engraving: string;
             mdf_printing: string;
             metal_bw_engraving: string;
@@ -2236,6 +2240,7 @@ export interface ILang {
       import_hello_beambox: string;
       import_hello_beamo: string;
       import_hexa_example: string;
+      import_hexa_rf_example: string;
       import_material_printing_test: string;
       import_material_testing_cut: string;
       import_material_testing_engrave: string;
