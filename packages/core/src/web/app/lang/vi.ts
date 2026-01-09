@@ -2238,6 +2238,7 @@ const lang: ILang = {
       import_hello_beambox: 'Ví dụ của Beambox',
       import_hello_beamo: 'Ví dụ của beamo',
       import_hexa_example: 'Ví dụ về HEXA',
+      import_hexa_rf_example: 'Ví dụ về HEXA RF',
       import_material_printing_test: 'Kiểm tra in vật liệu',
       import_material_testing_cut: 'Kiểm tra cắt vật liệu',
       import_material_testing_engrave: 'Kiểm tra khắc vật liệu',

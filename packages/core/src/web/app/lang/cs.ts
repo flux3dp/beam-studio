@@ -2239,6 +2239,7 @@ const lang: ILang = {
       import_hello_beambox: 'Příklady Beambox',
       import_hello_beamo: 'Příklady beamo',
       import_hexa_example: 'Příklad HEXA',
+      import_hexa_rf_example: 'Příklad HEXA RF',
       import_material_printing_test: 'Test tisknutí materiálu',
       import_material_testing_cut: 'Test řezání materiálu',
       import_material_testing_engrave: 'Test gravírování materiálu',

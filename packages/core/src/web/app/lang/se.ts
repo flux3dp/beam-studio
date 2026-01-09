@@ -2238,6 +2238,7 @@ const lang: ILang = {
       import_hello_beambox: 'Exempel på Beambox',
       import_hello_beamo: 'Exempel på beamo',
       import_hexa_example: 'Exempel på HEXA',
+      import_hexa_rf_example: 'Exempel på HEXA RF',
       import_material_printing_test: 'Materialutskriftstest',
       import_material_testing_cut: 'Materialskärningstest',
       import_material_testing_engrave: 'Materialgraveringstest',

@@ -2238,6 +2238,7 @@ const lang: ILang = {
       import_hello_beambox: 'Contoh Beambox',
       import_hello_beamo: 'Contoh beamo',
       import_hexa_example: 'Contoh HEXA',
+      import_hexa_rf_example: 'Contoh HEXA RF',
       import_material_printing_test: 'Ujian Cetak Bahan',
       import_material_testing_cut: 'Ujian Pemotongan Bahan',
       import_material_testing_engrave: 'Ujian Ukiran Bahan',

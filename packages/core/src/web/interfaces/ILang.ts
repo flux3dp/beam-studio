@@ -2231,6 +2231,7 @@ export interface ILang {
       import_hello_beambox: string;
       import_hello_beamo: string;
       import_hexa_example: string;
+      import_hexa_rf_example: string;
       import_material_printing_test: string;
       import_material_testing_cut: string;
       import_material_testing_engrave: string;
