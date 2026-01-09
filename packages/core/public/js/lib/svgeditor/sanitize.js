@@ -241,6 +241,7 @@
       'data-rightPadding',
       'data-uvCuringAfter',
       'data-uvCuringRepeat',
+      'data-uvPrintingRepeat',
       'data-uvStrength',
       'data-uvXStep',
     ],
