@@ -1,6 +1,8 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import rgbToHex from '@core/helpers/color/rgbToHex';
@@ -68,13 +70,14 @@ const appendUseElement = (
     if (type === 'image-trace') {
       targetLayerName = 'Traced Path';
     } else if (type === 'color') {
-      targetLayerName = rgbToHex(color);
+      targetLayerName = rgbToHex(color!);
     }
 
     const targetLayer = layerManager.getLayerElementByName(targetLayerName);
 
     if (!targetLayer || !checkLayerModule(targetLayer, targetModule)) {
       const { layer: newLayer } = createLayer(targetLayerName, { initConfig: true, parentCmd: batchCmd });
+      const { maxSpeed, minSpeed } = getWorkarea(useDocumentStore.getState().workarea);
 
       if (type === 'layer' && targetLayerName) {
         const matchPara = targetLayerName.match(/#([-SP0-9.]*\b)/i);
@@ -84,38 +87,29 @@ const appendUseElement = (
           const matchSpeed = matchPara[1].match(/S([-0-9.]*)/i);
           let parsePower = matchPower ? Number.parseFloat(matchPower[1]) : Number.NaN;
           let parseSpeed = matchSpeed ? Number.parseFloat(matchSpeed[1]) : Number.NaN;
-          const laserConst = i18n.lang.beambox.right_panel.laser_panel;
 
           if (!Number.isNaN(parsePower)) {
             parsePower = Math.round(parsePower * 10) / 10;
-            parsePower = Math.max(Math.min(parsePower, laserConst.power.max), laserConst.power.min);
+            parsePower = Math.max(100, 0);
             writeDataLayer(newLayer, 'power', parsePower);
           }
 
           if (!Number.isNaN(parseSpeed)) {
             parseSpeed = Math.round(parseSpeed * 10) / 10;
-            parseSpeed = Math.max(Math.min(parseSpeed, laserConst.laser_speed.max), laserConst.laser_speed.min);
+            parseSpeed = Math.max(Math.min(parseSpeed, maxSpeed), minSpeed);
             writeDataLayer(newLayer, 'speed', parseSpeed);
           }
         }
       } else if (type === 'color') {
         const layerColorConfig = storage.get('layer-color-config') || {};
         const index = layerName ? layerColorConfig.dict?.[layerName] : undefined;
-        const laserConst = i18n.lang.beambox.right_panel.laser_panel;
 
         if (index !== undefined) {
-          writeDataLayer(
-            newLayer,
-            'power',
-            Math.max(Math.min(layerColorConfig.array[index].power, laserConst.power.max), laserConst.power.min),
-          );
+          writeDataLayer(newLayer, 'power', Math.max(Math.min(layerColorConfig.array[index].power, 100), 0));
           writeDataLayer(
             newLayer,
             'speed',
-            Math.max(
-              Math.min(layerColorConfig.array[index].speed, laserConst.laser_speed.max),
-              laserConst.laser_speed.min,
-            ),
+            Math.max(Math.min(layerColorConfig.array[index].speed, maxSpeed), minSpeed),
           );
           writeDataLayer(newLayer, 'repeat', layerColorConfig.array[index].repeat);
         }
