@@ -700,15 +700,6 @@ export interface ILang {
         halftone_link: string;
         height: string;
         ink_saturation: string;
-        laser_speed: {
-          fast: string;
-          max: number;
-          min: number;
-          slow: string;
-          step: number;
-          text: string;
-          unit: string;
-        };
         low_air_assist_warning: string;
         low_power_warning: string;
         low_speed_warning: string;
@@ -719,14 +710,6 @@ export interface ILang {
         multi_layer: string;
         para_in_use: string;
         parameters: string;
-        power: {
-          high: string;
-          low: string;
-          max: number;
-          min: number;
-          step: number;
-          text: string;
-        };
         preset_management: {
           add_new: string;
           delete: string;
