@@ -29,7 +29,7 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
     checkFpm1() && { label: 'Promark', value: 'fpm1' },
     isDev() && { label: 'Lazervida', value: 'flv1' },
     { label: 'Beambox II', value: 'fbb2' },
-    checkFUV1() && { label: 'FLUX UV', value: 'fuv1' },
+    checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
   ].filter(Boolean);
 
   const unitOptions = [
