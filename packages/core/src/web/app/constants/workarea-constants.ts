@@ -15,10 +15,10 @@ export type WorkAreaLabel =
   | 'Beambox Pro'
   | 'beamo'
   | 'beamo II'
-  | 'FLUX UV'
   | 'HEXA'
   | 'HEXA RF'
   | 'Lazervida'
+  | 'Miro UV'
   | 'Promark';
 
 export const workArea = [
@@ -246,7 +246,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
   },
   fuv1: {
     height: 215,
-    label: 'FLUX UV',
+    label: 'Miro UV',
     maxSpeed: 750,
     minSpeed: 0.5,
     pxHeight: 215 * dpmm,
