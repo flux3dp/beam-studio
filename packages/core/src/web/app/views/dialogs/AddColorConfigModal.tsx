@@ -13,12 +13,29 @@ interface Props {
   onClose: () => void;
 }
 
-const AddColorConfigModal = ({ handleAddConfig, onClose }: Props): React.JSX.Element => {
+interface InputConfig {
+  defaultValue: number;
+  key: 'power' | 'repeat' | 'speed';
+  max: number;
+  min: number;
+  precision: number;
+  unit: string;
+}
+
+const inputConfigs: InputConfig[] = [
+  { defaultValue: 50, key: 'power', max: 100, min: 1, precision: 1, unit: '%' },
+  { defaultValue: 10, key: 'speed', max: 300, min: 3, precision: 1, unit: 'mm/s' },
+  { defaultValue: 1, key: 'repeat', max: 10, min: 1, precision: 0, unit: '' },
+];
+
+function AddColorConfigModal({ handleAddConfig, onClose }: Props): React.JSX.Element {
   const lang = useI18n().beambox.layer_color_config_panel;
   const [newColor, setNewColor] = useState('#FFFFFF');
-  const powerRef = useRef(50);
-  const speedRef = useRef(10);
-  const repeatRef = useRef(1);
+  const valuesRef = useRef({ power: 50, repeat: 1, speed: 10 });
+
+  const updateNewColor = (color: string) => {
+    setNewColor(color.toUpperCase());
+  };
 
   return (
     <DraggableModal
@@ -27,9 +44,9 @@ const AddColorConfigModal = ({ handleAddConfig, onClose }: Props): React.JSX.Ele
       onOk={() =>
         handleAddConfig({
           color: newColor,
-          power: powerRef.current,
-          repeat: repeatRef.current,
-          speed: speedRef.current,
+          power: valuesRef.current.power,
+          repeat: valuesRef.current.repeat,
+          speed: valuesRef.current.speed,
         })
       }
       open
@@ -39,57 +56,29 @@ const AddColorConfigModal = ({ handleAddConfig, onClose }: Props): React.JSX.Ele
         <div className={styles['input-row']}>
           <div className={styles.label}>{lang.color}</div>
           <div className={styles['color-input']}>
-            <ColorPicker initColor={newColor} onChange={setNewColor} />
+            <ColorPicker initColor={newColor} onChange={updateNewColor} />
           </div>
         </div>
-        <div className={styles['input-row']}>
-          <div className={styles.label}>{lang.power}</div>
-          <UnitInput
-            controls={false}
-            defaultValue={powerRef.current}
-            max={100}
-            min={1}
-            onChange={(val) => {
-              powerRef.current = val ?? 50;
-            }}
-            precision={1}
-            unit="%"
-            unitClassName={styles.unit}
-          />
-        </div>
-        <div className={styles['input-row']}>
-          <div className={styles.label}>{lang.speed}</div>
-          <UnitInput
-            controls={false}
-            defaultValue={speedRef.current}
-            max={300}
-            min={3}
-            onChange={(val) => {
-              speedRef.current = val ?? 10;
-            }}
-            precision={1}
-            unit="mm/s"
-            unitClassName={styles.unit}
-          />
-        </div>
-        <div className={styles['input-row']}>
-          <div className={styles.label}>{lang.repeat}</div>
-          <UnitInput
-            controls={false}
-            defaultValue={repeatRef.current}
-            max={10}
-            min={1}
-            onChange={(val) => {
-              repeatRef.current = val ?? 1;
-            }}
-            precision={0}
-            unit=""
-            unitClassName={styles.unit}
-          />
-        </div>
+        {inputConfigs.map(({ defaultValue, key, max, min, precision, unit }) => (
+          <div className={styles['input-row']} key={key}>
+            <div className={styles.label}>{lang[key]}</div>
+            <UnitInput
+              controls={false}
+              defaultValue={defaultValue}
+              max={max}
+              min={min}
+              onChange={(val) => {
+                valuesRef.current[key] = val ?? defaultValue;
+              }}
+              precision={precision}
+              unit={unit}
+              unitClassName={styles.unit}
+            />
+          </div>
+        ))}
       </div>
     </DraggableModal>
   );
-};
+}
 
 export default AddColorConfigModal;
