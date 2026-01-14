@@ -1,32 +1,26 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.6.0 beta
+// 2.6.1 beta
 const CHANGES_TW = {
   added: [
-    '新增 AI 創作功能。',
-    '優化相機預覽使用流程，使用者在相機預覽過程中仍可編輯畫布中物件。',
-    'Beambox II 相機支援自動曝光功能 (需搭配韌體 v6.0.15)。',
+    '支援 HEXA RF 機型。',
+    '新增 於 Mac（Apple Silicon）上安裝 Intel 版本時的警告提示。',
+    '新增 泰隆尼雅語系支援。',
     '新增 進階校正參數設定。',
   ],
-  changed: [
-    '更換 Mac 版 Beam Studio icon。',
-    '調整 位移複製功能面板排版。',
-    '調整 陣列功能面板排版。',
-    '優化 beamo II 相機校正流程。',
-  ],
+  changed: ['偏好設定頁面調整為視窗形式顯示。', '偏好設定套用完成後不再重整畫面。', '調整 西班牙文翻譯。'],
   fixed: [],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added the AI Creation feature.',
-    'Improved the Camera Preview workflow—users can now continue editing objects on the canvas while in Camera Preview.',
-    'Beambox II camera now supports Auto Exposure (requires firmware v6.0.15).',
+    'Added a warning message when installing the Intel version on Apple silicon Macs.',
+    'Added Catalan language support.',
   ],
   changed: [
-    'Updated the Beam Studio icon on macOS.',
-    'Adjusted the layout of the Offset panel.',
-    'Adjusted the layout of the Array panel.',
+    'Updated Preferences to open in a modal.',
+    'Applied changes in Preferences without reloading the page.',
+    'Updated Spanish translations.',
   ],
   fixed: [],
 };
