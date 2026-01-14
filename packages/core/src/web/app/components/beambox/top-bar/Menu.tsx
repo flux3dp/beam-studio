@@ -257,14 +257,14 @@ export default function Menu({ email }: Props): React.JSX.Element {
             </MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE')}>{menuCms.import_hello_beamo}</MenuItem>
             {checkBM2() && (
-              <>
-                <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_LASER')}>
-                  {menuCms.import_beamo_2_laser_example}
-                </MenuItem>
-                <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT')}>
-                  {menuCms.import_beamo_2_printing_example}
-                </MenuItem>
-              </>
+              <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_LASER')}>
+                {menuCms.import_beamo_2_laser_example}
+              </MenuItem>
+            )}
+            {checkBM2() && (
+              <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT')}>
+                {menuCms.import_beamo_2_printing_example}
+              </MenuItem>
             )}
             <MenuItem onClick={() => callback('IMPORT_HELLO_BEAMBOX')}>{menuCms.import_hello_beambox}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMBOX_2')}>{menuCms.import_beambox_2_example}</MenuItem>
