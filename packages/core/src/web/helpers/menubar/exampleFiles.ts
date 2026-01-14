@@ -3,6 +3,7 @@ import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
+import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, isAtPage } from '@core/helpers/hashHelper';
@@ -135,7 +136,17 @@ export const getExamples = (workarea: WorkAreaModel): ExampleFileMap => {
 export const getExampleVisibility = (
   workarea: WorkAreaModel,
 ): { disabledKeys: ExampleFileKey[]; enabledKeys: ExampleFileKey[] } => {
-  const examples = getExamples(workarea);
+  const examples = { ...getExamples(workarea) };
+
+  if (!checkBM2()) {
+    delete examples.IMPORT_EXAMPLE_BEAMO_2_LASER;
+    delete examples.IMPORT_EXAMPLE_BEAMO_2_PRINT;
+  }
+
+  if (!checkHxRf()) {
+    delete examples.IMPORT_EXAMPLE_HEXA_RF;
+  }
+
   const enabledKeys = Object.keys(examples) as ExampleFileKey[];
   const disabledKeys: ExampleFileKey[] = exampleFileKeys.filter((key) => !enabledKeys.includes(key));
 

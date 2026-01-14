@@ -8,6 +8,7 @@ import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { discoverManager } from '@core/helpers/api/discover';
+import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isWeb from '@core/helpers/is-web';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
@@ -255,16 +256,22 @@ export default function Menu({ email }: Props): React.JSX.Element {
               {menuCms.import_ador_printing_example_full}
             </MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE')}>{menuCms.import_hello_beamo}</MenuItem>
-            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_LASER')}>
-              {menuCms.import_beamo_2_laser_example}
-            </MenuItem>
-            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT')}>
-              {menuCms.import_beamo_2_printing_example}
-            </MenuItem>
+            {checkBM2() && (
+              <>
+                <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_LASER')}>
+                  {menuCms.import_beamo_2_laser_example}
+                </MenuItem>
+                <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMO_2_PRINT')}>
+                  {menuCms.import_beamo_2_printing_example}
+                </MenuItem>
+              </>
+            )}
             <MenuItem onClick={() => callback('IMPORT_HELLO_BEAMBOX')}>{menuCms.import_hello_beambox}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_BEAMBOX_2')}>{menuCms.import_beambox_2_example}</MenuItem>
             <MenuItem onClick={() => callback('IMPORT_EXAMPLE_HEXA')}>{menuCms.import_hexa_example}</MenuItem>
-            <MenuItem onClick={() => callback('IMPORT_EXAMPLE_HEXA_RF')}>{menuCms.import_hexa_rf_example}</MenuItem>
+            {checkHxRf() && (
+              <MenuItem onClick={() => callback('IMPORT_EXAMPLE_HEXA_RF')}>{menuCms.import_hexa_rf_example}</MenuItem>
+            )}
             {!isWeb() && (
               <MenuItem onClick={() => callback('IMPORT_EXAMPLE_PROMARK')}>{menuCms.import_promark_example}</MenuItem>
             )}
