@@ -14,6 +14,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager, { ExpansionType } from '@core/app/svgedit/workarea';
@@ -83,6 +84,10 @@ export const getExportOpt = async (
     if (!useDevPaddingAcc) config.acc = 8000;
   } else {
     config.hardware_name = model;
+  }
+
+  if (model === 'fhx2rf') {
+    config.watt = useCanvasStore.getState().watt;
   }
 
   if (useDevPaddingAcc) config.acc = paddingAccel;

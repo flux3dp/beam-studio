@@ -163,6 +163,10 @@ export type TFcodeOptionalConfig = Partial<{
    * vector speed limit
    */
   vsl: number;
+  /**
+   * selected laser wattage
+   */
+  watt: number;
   z_offset: number;
 }>;
 
