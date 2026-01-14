@@ -33,7 +33,7 @@ export async function checkBlockedSerial(serial: string): Promise<boolean> {
     return true;
   }
 
-  const hashedSerial = await sha256(serial);
+  const hashedSerial = sha256(serial);
   const { latest, serials } = await getBlockedSerials();
   const isBlocked = serials.includes(hashedSerial);
 
