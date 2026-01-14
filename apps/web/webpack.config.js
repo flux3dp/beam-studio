@@ -1,20 +1,79 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const CopyPlugin = require('copy-webpack-plugin');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+
+// Supported locales matching router.tsx localeMap
+const SUPPORTED_LOCALES = [
+  'da',
+  'de',
+  'el',
+  'en',
+  'fi',
+  'fr',
+  'id',
+  'it',
+  'ja',
+  'ko',
+  'ms',
+  'nb',
+  'nl',
+  'pl',
+  'sv',
+  'th',
+  'vi',
+  'zh-tw',
+];
 
 const core = path.resolve(__dirname, '../../packages/core');
 const coreWeb = path.resolve(core, 'src/web');
 
 module.exports = {
   devtool: 'source-map',
+  // Optimize chunk splitting to reduce the number of bundle files
+  optimization: {
+    splitChunks: {
+      // Increase minSize to prevent creating many tiny chunks
+      minSize: 50000, // 50KB minimum chunk size
+      maxAsyncRequests: 10, // Limit parallel async chunk requests
+      cacheGroups: {
+        // Group all SVG shape icons into a single chunk
+        shapeIcons: {
+          test: /[\\/]icons[\\/]shape[\\/]/,
+          name: 'shape-icons',
+          chunks: 'async',
+          enforce: true,
+          priority: 20,
+        },
+        // Group Ant Design into a single chunk
+        antd: {
+          test: /[\\/]node_modules[\\/](antd|@ant-design|rc-[a-z-]+)[\\/]/,
+          name: 'antd',
+          chunks: 'all',
+          priority: 15,
+        },
+        // Group other node_modules into vendor chunk
+        vendors: {
+          test: /[\\/]node_modules[\\/]/,
+          name: 'vendors',
+          chunks: 'initial',
+          priority: -10,
+        },
+        // Merge small async chunks into common chunk
+        asyncCommon: {
+          minChunks: 2,
+          chunks: 'async',
+          name: 'async-common',
+          priority: 5,
+          reuseExistingChunk: true,
+        },
+      },
+    },
+  },
   entry: {
     main: path.resolve(__dirname, 'src/index.tsx'),
-    ['potrace.worker']: path.resolve(coreWeb, 'helpers/potrace/potrace.worker.ts'),
-    ['clipper.worker']: path.resolve(coreWeb, 'helpers/clipper/clipper.worker.ts'),
-    ['image-tracer.worker']: path.resolve(coreWeb, 'helpers/image-tracer/image-tracer.worker.ts'),
-    ['image-symbol.worker']: path.resolve(coreWeb, 'helpers/symbol-helper/image-symbol.worker.ts'),
   },
   mode: 'development',
   module: {
@@ -159,6 +218,8 @@ module.exports = {
     new MiniCssExtractPlugin({
       filename: '[name].[chunkhash].css',
     }),
+    // Limit dayjs locales to only supported languages (reduces ~150 chunks to ~18)
+    new webpack.ContextReplacementPlugin(/dayjs[/\\]locale$/, new RegExp(`(${SUPPORTED_LOCALES.join('|')})\\.js$`)),
   ],
   resolve: {
     alias: {
