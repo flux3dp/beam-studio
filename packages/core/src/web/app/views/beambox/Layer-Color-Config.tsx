@@ -1,5 +1,4 @@
-import * as React from 'react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { DeleteFilled, PlusCircleFilled } from '@ant-design/icons';
 import type { FormInstance, InputRef } from 'antd';

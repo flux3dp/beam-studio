@@ -3,12 +3,8 @@ import { nxE2EPreset } from '@nx/cypress/plugins/cypress-preset';
 
 const preset = nxE2EPreset(__filename, {
   cypressDir: 'cypress/',
-  webServerCommands: {
-    default: 'nx run web:start',
-  },
-  webServerConfig: {
-    timeout: 300000, // 5min
-  },
+  webServerCommands: { default: 'nx run web:start' },
+  webServerConfig: { timeout: 300000 }, // 5min
   ciWebServerCommand: 'nx run web:start',
 });
 

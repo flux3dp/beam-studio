@@ -28,7 +28,7 @@ const getBlockedSerials = async (): Promise<{ latest: boolean; serials: string[]
   return cache;
 };
 
-export const checkBlockedSerial = async (serial: string): Promise<boolean> => {
+export async function checkBlockedSerial(serial: string): Promise<boolean> {
   if (Date.now() < new Date('2025/2/3 10:0:0 +8:00').valueOf()) {
     return true;
   }
@@ -48,4 +48,4 @@ export const checkBlockedSerial = async (serial: string): Promise<boolean> => {
   });
 
   return false;
-};
+}

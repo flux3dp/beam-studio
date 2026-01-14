@@ -17,10 +17,7 @@ const setStorage = () => {
   window.localStorage.setItem('enable-sentry', 'false');
   window.localStorage.setItem(
     'alert-config',
-    JSON.stringify({
-      'skip-interface-tutorial': true,
-      'done-first-cali': true,
-    }),
+    JSON.stringify({ 'skip-interface-tutorial': true, 'done-first-cali': true }),
   );
   window.localStorage.setItem('last-installed-version', 'web');
   window.localStorage.setItem('did-gesture-tutorial', '1');
@@ -32,15 +29,13 @@ Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {})
   // Wait a bit to ensure any pending reload from previous test completes
   cy.wait(500);
   setStorage();
+
   cy.visit('/#/studio/beambox', { ...opts, failOnStatusCode: false });
   cy.on('window:load', (win) => {
-    // eslint-disable-next-line no-param-reassign
     win.onbeforeunload = null;
   });
   // Use GoButton to detect frontend render
-  cy.get('[title="Start Work"]', { timeout: 30000 }).should('exist', {
-    timeout: 30000,
-  });
+  cy.get('[title="Start Work"]', { timeout: 30000 }).should('exist', { timeout: 30000 });
   cy.window().its('svgCanvas', { timeout: 3000 });
   // timeout 200 in getSVGAsync
   cy.wait(250);
@@ -48,14 +43,15 @@ Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {})
 
 Cypress.Commands.add('loginAndLandingEditor', (opts: Partial<Cypress.VisitOptions> = {}) => {
   setStorage();
+
   window.localStorage.setItem('printer-is-ready', 'false');
   cy.visit('/#/initialize/connect/flux-id-login', opts);
   cy.on('window:load', (win) => {
-    // eslint-disable-next-line no-param-reassign
     win.onbeforeunload = null;
   });
   const username = Cypress.env('username');
   const password = Cypress.env('password');
+
   cy.get('input#email-input').type(username);
   cy.get('input#password-input').type(password);
   cy.get('button[class^="ant-btn"]').contains('Login').click({ force: true });

@@ -73,33 +73,22 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
     // save original image data as base64
     const origImageUrls = Array.from(
       new Set(elems.filter((elem) => elem.tagName === 'image').map((elem) => elem.getAttribute('origImage'))),
+    ).filter((url): url is string => url !== null);
+
+    await Promise.allSettled(
+      origImageUrls.map(async (url) => {
+        const resp = await fetch(url);
+        const blob = await resp.blob();
+        const base64 = await new Promise<string>((resolve) => {
+          const reader = new FileReader();
+
+          reader.onload = () => resolve(reader.result as string);
+          reader.readAsDataURL(blob);
+        });
+
+        serializedData.imageData[url] = base64;
+      }),
     );
-    const promises = [];
-
-    for (const url of origImageUrls) {
-      if (!url) continue;
-
-      promises.push(
-        // eslint-disable-next-line no-async-promise-executor
-        new Promise<void>(async (resolve) => {
-          try {
-            const resp = await fetch(url);
-            const blob = await resp.blob();
-            const base64 = await new Promise<string>((resolve) => {
-              const reader = new FileReader();
-
-              reader.onload = () => resolve(reader.result as string);
-              reader.readAsDataURL(blob);
-            });
-
-            serializedData.imageData[url] = base64;
-          } finally {
-            resolve();
-          }
-        }),
-      );
-    }
-    await Promise.allSettled(promises);
 
     try {
       await navigator.clipboard.writeText(`BX clip:${JSON.stringify(serializedData)}`);
