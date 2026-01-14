@@ -6,7 +6,8 @@ describe('mirror tools', () => {
   it('horizontal flip ', () => {
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
-    cy.wait(500);
+    // Wait for text element to be created
+    cy.get('#svg_1').should('exist');
     cy.inputText('TEST TEXT HORIZONTAL');
     cy.get('.tab.objects').click();
     cy.get('#horizontal_flip').click();
@@ -19,7 +20,8 @@ describe('mirror tools', () => {
   it('vertical flip', () => {
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
-    cy.wait(500);
+    // Wait for text element to be created
+    cy.get('#svg_1').should('exist');
     cy.inputText('TEST TEXT VERTICAL');
     cy.get('.tab.objects').click();
     cy.get('#vertical_flip').click();

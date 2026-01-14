@@ -8,12 +8,12 @@ describe('verify undo/redo behaviors', () => {
   });
 
   const drawText = () => {
-    cy.wait(300);
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 10, y: 20 });
-    cy.wait(500);
-    cy.inputText('Test Undo/Redo{enter}');
+    // Wait for text element to be created
     cy.get('#svg_1').should('exist');
+    cy.inputText('Test Undo/Redo{enter}');
+    cy.get('#svg_1').should('contain.text', 'Test Undo/Redo');
     cy.get('.tab.objects').click();
   };
 

@@ -4,7 +4,6 @@ const moduleBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Pan
 describe('upload tools', () => {
   it('upload png', () => {
     cy.landingEditor();
-    cy.wait(500);
     cy.uploadFile('flux.png', 'image/png');
     cy.get('#svg_1').should('exist');
     cy.get('#w_size').should('have.value', '300');
@@ -35,7 +34,7 @@ describe('upload tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 400, 400, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.wait(500);
+    // Wait for element size to be computed
     cy.get('#w_size').should('have.attr', 'value').and('eq', '522.17');
     cy.get('#h_size').should('have.attr', 'value').and('eq', '465.52');
   });

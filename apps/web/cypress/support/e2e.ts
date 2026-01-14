@@ -22,23 +22,6 @@ import '@testing-library/cypress/add-commands';
 
 Cypress.on('uncaught:exception', (err, runnable) => false);
 
-const setStorage = () => {
-  window.localStorage.setItem('printer-is-ready', 'true');
-  window.localStorage.setItem('keep-flux-id-login', 'true');
-  window.localStorage.setItem('enable-sentry', 'false');
-  window.localStorage.setItem(
-    'alert-config',
-    JSON.stringify({
-      'skip-interface-tutorial': true,
-      'done-first-cali': true,
-    }),
-  );
-  window.localStorage.setItem('last-installed-version', 'web');
-  window.localStorage.setItem('did-gesture-tutorial', '1');
-  window.localStorage.setItem('beambox-preference', '{"font-convert":"2.0", "auto-switch-tab": false}');
-  window.localStorage.setItem('announcement-record', '{"times":1,"isIgnored":[], "skip":true}');
-};
-
 // Clear service caches once before all tests
 before(() => {
   cy.window({ log: false }).then((win) => {
@@ -49,7 +32,6 @@ before(() => {
       });
     }
   });
-  setStorage();
 });
 
 Cypress.on('window:before:load', (win) => {

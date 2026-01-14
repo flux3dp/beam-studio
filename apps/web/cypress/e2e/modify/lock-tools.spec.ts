@@ -1,6 +1,5 @@
 it('lock', () => {
   cy.landingEditor();
-  cy.wait(300);
   cy.clickToolBtn('Polygon');
   cy.get('svg#svgcontent').trigger('mousedown', 10, 10, { force: true });
   cy.get('svg#svgcontent').trigger('mousemove', 50, 50, { force: true });

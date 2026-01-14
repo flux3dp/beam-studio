@@ -4,13 +4,12 @@ describe('mobile text tools', () => {
     cy.landingEditor();
     cy.get('.adm-tab-bar-item').contains('Text').click();
     cy.get('svg#svgcontent').dblclick(300, 200);
-    cy.wait(500);
-    cy.inputText('{backspace}{backspace}{backspace}{backspace}TEST TEXT FONT');
+    // Wait for text element to be created
     cy.get('#svg_1').should('exist');
+    cy.inputText('{backspace}{backspace}{backspace}{backspace}TEST TEXT FONT');
     cy.get('#svg_1').should('have.text', 'TEST TEXT FONT');
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
     cy.get('div#object-panel').should('exist');
-    cy.wait(500);
     cy.get('#font_family').click();
     cy.get(
       '[class*="src-web-app-views-beambox-Right-Panels-ObjectPanelItem-module__option"] img[alt="Noto Sans"]',

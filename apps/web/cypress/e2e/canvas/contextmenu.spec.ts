@@ -1,7 +1,6 @@
 describe('canvas contextmenu', () => {
   it('canvas contextmenu with mouse', () => {
     cy.landingEditor();
-    cy.wait(500);
     cy.get('#svg_editor > div > nav.react-contextmenu').should('not.visible');
     cy.get('#workarea').rightclick(100, 100);
     cy.get('#svg_editor > div > nav.react-contextmenu').should('be.visible');

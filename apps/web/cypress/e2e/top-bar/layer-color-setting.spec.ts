@@ -9,8 +9,8 @@ it('layer color setting', () => {
 
   cy.get('.ant-btn').contains('Add Color').click();
   // Open color picker and select color via hex input (scope to the Add Color modal)
-  cy.wait(500); // Wait for modal animation
-  cy.get('.ant-modal').last().find('[class*="ColorPicker-module__trigger"]').click();
+  // Wait for Add Color modal to be fully rendered
+  cy.get('.ant-modal').last().find('[class*="ColorPicker-module__trigger"]').should('be.visible').click();
   cy.get('.ant-color-picker-hex-input input').clear().type('AA0000', { delay: 100 });
   cy.get('.ant-color-picker').contains('OK').click();
   // Update power value (first input in the Add Color modal, Power field)

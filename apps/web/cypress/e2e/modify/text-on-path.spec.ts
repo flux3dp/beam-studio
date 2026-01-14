@@ -1,10 +1,10 @@
 describe('text on path', () => {
   beforeEach(() => {
     cy.landingEditor();
-    cy.wait(300);
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
-    cy.wait(1000);
+    // Wait for text element to be created
+    cy.get('#svg_1').should('exist');
     cy.inputText('123456789{enter}');
     cy.getElementTitle().contains('Layer 1 > Text');
     cy.clickToolBtn('Ellipse');
@@ -14,7 +14,8 @@ describe('text on path', () => {
       .trigger('mouseup', { force: true });
     cy.getElementTitle().contains('Layer 1 > Oval');
     cy.get('svg#svgcontent').click({ force: true });
-    cy.wait(500);
+    // Wait for ellipse to be ready for selection
+    cy.get('#svg_2').should('exist');
     cy.get('#svgcontent')
       .trigger('mousedown', { pageX: 1000, pageY: 1000, force: true })
       .trigger('mousemove', { pageX: 200, pageY: 100, force: true })

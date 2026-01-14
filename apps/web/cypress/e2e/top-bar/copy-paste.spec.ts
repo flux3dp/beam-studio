@@ -6,7 +6,8 @@ describe('verify copy/paste behaviors', () => {
   const copyAndPaste = () => {
     cy.get('#svg_1').should('exist');
     cy.get('#svg_1').realClick({ button: 'right' });
-    cy.wait(500);
+    // Wait for context menu to appear
+    cy.get('.react-contextmenu').should('be.visible');
 
     cy.get('.react-contextmenu').contains('Copy').click();
     cy.get('#svg_1').realClick({ button: 'right' });
@@ -34,7 +35,7 @@ describe('verify copy/paste behaviors', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.wait(500);
+    cy.get('#svg_1').should('exist');
     copyAndPaste();
     cy.get('g.layer').find('line').should('have.length', '2');
   });
@@ -42,9 +43,11 @@ describe('verify copy/paste behaviors', () => {
   it('text', () => {
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 10, y: 20 });
-    cy.wait(500);
+    // Wait for text input to be ready
+    cy.get('#svg_1').should('exist');
     cy.inputText('Test Copy And Paste');
-    cy.wait(500);
+    // Wait for text to be rendered
+    cy.get('#svg_1').should('contain.text', 'Test Copy And Paste');
     copyAndPaste();
     cy.get('g.layer').find('text').should('have.length', '2');
   });

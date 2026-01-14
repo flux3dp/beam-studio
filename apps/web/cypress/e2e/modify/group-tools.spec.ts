@@ -1,7 +1,6 @@
 describe('group tools', () => {
   beforeEach(() => {
     cy.landingEditor();
-    cy.wait(300);
   });
 
   const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';

@@ -1,7 +1,6 @@
 describe('drawing', () => {
   beforeEach(() => {
     cy.landingEditor();
-    cy.wait(300);
   });
 
   it('rectangle', () => {
@@ -83,7 +82,6 @@ describe('drawing', () => {
       .should(($grip) => {
         expect($grip.attr('cy')).to.be.closeTo(453, 2);
       });
-    cy.wait(500);
 
     cy.get('.tab.objects').click();
     cy.get('div.option-input > input').clear().type('8').blur();
