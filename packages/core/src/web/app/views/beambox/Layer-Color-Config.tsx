@@ -340,7 +340,6 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
 
     const configData = { array: dataSource, dict: backwardCompatibleConfigDict };
 
-    console.log(configData);
     storage.set('layer-color-config', configData);
     onClose();
   };

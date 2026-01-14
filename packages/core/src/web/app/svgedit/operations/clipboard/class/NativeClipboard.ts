@@ -75,14 +75,21 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
       new Set(elems.filter((elem) => elem.tagName === 'image').map((elem) => elem.getAttribute('origImage'))),
     ).filter((url): url is string => url !== null);
 
-    await Promise.allSettled(
+    const imageResults = await Promise.allSettled(
       origImageUrls.map(async (url) => {
         const resp = await fetch(url);
+
+        if (!resp.ok) {
+          throw new Error(`HTTP ${resp.status}: Failed to fetch ${url}`);
+        }
+
         const blob = await resp.blob();
-        const base64 = await new Promise<string>((resolve) => {
+        const base64 = await new Promise<string>((resolve, reject) => {
           const reader = new FileReader();
 
           reader.onload = () => resolve(reader.result as string);
+          reader.onerror = () => reject(new Error(`FileReader failed for ${url}`));
+          reader.onabort = () => reject(new Error(`FileReader aborted for ${url}`));
           reader.readAsDataURL(blob);
         });
 
@@ -90,10 +97,16 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
       }),
     );
 
+    const failedImages = imageResults.filter((r) => r.status === 'rejected');
+
+    if (failedImages.length > 0) {
+      console.warn(`Failed to process ${failedImages.length} image(s) for clipboard`);
+    }
+
     try {
       await navigator.clipboard.writeText(`BX clip:${JSON.stringify(serializedData)}`);
     } catch (err) {
-      console.log('🚀 ~ NativeClipboard.ts:101 ~ NativeClipboard ~ err:', err);
+      console.error('Failed to write to clipboard:', err);
     }
   };
 
@@ -104,7 +117,13 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
       return null;
     }
 
-    return JSON.parse(clipboardData.substring(8)) as ClipboardData;
+    try {
+      return JSON.parse(clipboardData.substring(8)) as ClipboardData;
+    } catch (err) {
+      console.error('Failed to parse clipboard data:', err);
+
+      return null;
+    }
   };
 
   getData = async (): Promise<Element[]> => {
@@ -173,7 +192,8 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
 
       return clipboardData.startsWith('BX clip:');
     } catch (err) {
-      console.log('🚀 ~ NativeClipboard.ts:181 ~ NativeClipboard ~ err:', err);
+      // Expected when clipboard permission is denied or document is not focused
+      console.warn('Failed to read clipboard:', err);
 
       return false;
     }
