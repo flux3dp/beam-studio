@@ -58,7 +58,7 @@
     "electron-builder": "26.3.6",
     "jest": "^29.7.0",
     "mini-css-extract-plugin": "^2.9.2",
-    "playwright": "^1.31.2",
+    "playwright": "^1.55.1",
     "sass": "^1.83.4",
     "sass-loader": "^16.0.4",
     "style-loader": "^3.3.1",
