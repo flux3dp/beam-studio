@@ -74,7 +74,7 @@ export class NativeClipboard extends Clipboard implements ClipboardCore {
     // save original image data as base64
     const origImageUrls = Array.from(
       new Set(elems.filter((elem) => elem.tagName === 'image').map((elem) => elem.getAttribute('origImage'))),
-    ).filter((url): url is string => url !== null);
+    ).filter(Boolean);
 
     const imageResults = await Promise.allSettled(
       origImageUrls.map(async (url) => {

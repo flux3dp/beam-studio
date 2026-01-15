@@ -142,7 +142,6 @@ describe('Image manipulation functions', () => {
       helpers.assertElementAttribute('#svg_1', 'data-threshold', '254');
       helpers.assertElementAttribute('#svg_1', 'data-shading', 'true');
 
-      helpers.waitForImageProcessing();
       helpers.assertImageHash('#svg_1', 'changeGradient.withGradient');
     });
   });
