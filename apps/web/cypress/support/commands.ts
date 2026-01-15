@@ -70,7 +70,7 @@ Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {})
             expect(win.localStorage.getItem('printer-is-ready')).to.eq('true');
           });
         },
-      }
+      },
     );
 
     // After session restore, visit the editor to get fresh DOM/svgCanvas
@@ -155,32 +155,29 @@ Cypress.Commands.add('uploadFile', (fileName: string, fileType = '') => {
  * @param options.selector - Element selector to wait for (default: '#svg_1')
  * @param options.timeout - Max wait time in ms (default: 15000)
  */
-Cypress.Commands.add(
-  'uploadImage',
-  (fileName: string, options?: { selector?: string; timeout?: number }) => {
-    const { selector = '#svg_1', timeout = 15000 } = options || {};
+Cypress.Commands.add('uploadImage', (fileName: string, options?: { selector?: string; timeout?: number }) => {
+  const { selector = '#svg_1', timeout = 15000 } = options || {};
 
-    // Determine file type from extension
-    const ext = fileName.split('.').pop()?.toLowerCase();
-    const fileTypeMap: Record<string, string> = {
-      png: 'image/png',
-      jpg: 'image/jpeg',
-      jpeg: 'image/jpeg',
-      gif: 'image/gif',
-      webp: 'image/webp',
-    };
-    const fileType = fileTypeMap[ext || ''] || 'image/png';
+  // Determine file type from extension
+  const ext = fileName.split('.').pop()?.toLowerCase();
+  const fileTypeMap: Record<string, string> = {
+    png: 'image/png',
+    jpg: 'image/jpeg',
+    jpeg: 'image/jpeg',
+    gif: 'image/gif',
+    webp: 'image/webp',
+  };
+  const fileType = fileTypeMap[ext || ''] || 'image/png';
 
-    // Upload the file
-    cy.uploadFile(fileName, fileType);
+  // Upload the file
+  cy.uploadFile(fileName, fileType);
 
-    // Wait for the image to be processed (element exists with valid base64 data)
-    cy.get(selector, { timeout })
-      .should('exist')
-      .should('have.attr', 'xlink:href')
-      .and('match', /^data:image\//);
-  },
-);
+  // Wait for the image to be processed (element exists with valid base64 data)
+  cy.get(selector, { timeout })
+    .should('exist')
+    .should('have.attr', 'xlink:href')
+    .and('match', /^data:image\//);
+});
 
 Cypress.Commands.add('dragTo', { prevSubject: 'element' }, (subject, targetEl) => {
   cy.wrap(subject).trigger('dragstart', { force: true });
@@ -275,7 +272,8 @@ Cypress.Commands.add('getTopBar', (childSelector = '') => {
 });
 
 Cypress.Commands.add('moveElementToLayer', (targetLayer: string, needConfirm = true) => {
-  cy.findByTestId('move-layer-select').find('.ant-select-selector').click();
+  // Wait for select to be rendered (depends on SelectedElementContext update)
+  cy.findByTestId('move-layer-select', { timeout: 10000 }).should('exist').find('.ant-select-selector').click();
   cy.get('.ant-select-item').contains(targetLayer).click();
   if (needConfirm) cy.get('.ant-btn').contains('Yes').click();
 });

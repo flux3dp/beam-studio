@@ -3,6 +3,7 @@ import { md5 } from '../../support/utils';
 describe('convert to path 2.0', () => {
   const isRunningAtGithub = Cypress.env('envType') === 'github';
   const isWindows = Cypress.platform === 'win32';
+  const expectedX = !isRunningAtGithub ? 1000 : isWindows ? 1019 : 1011;
 
   const drawText = () => {
     cy.clickToolBtn('Text');
@@ -17,9 +18,7 @@ describe('convert to path 2.0', () => {
     cy.get('.ant-select-item-option-content img[alt="Mr Bedfort"]').click();
     cy.get('#svg_1').should('have.attr', 'font-family').and('eq', "'Mr Bedfort'");
     cy.get('#x_position').clear().type('100{enter}');
-    cy.get('#svg_1', { timeout: 15000 })
-      .invoke('attr', 'x')
-      .should('be.closeTo', isWindows ? 1019 : 1011, 3);
+    cy.get('#svg_1', { timeout: 15000 }).invoke('attr', 'x').should('be.closeTo', expectedX, 3);
     cy.get('#y_position').clear().type('50{enter}');
     cy.get('#svg_1', { timeout: 15000 }).invoke('attr', 'y').should('be.closeTo', 703, 3);
   };

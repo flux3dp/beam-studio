@@ -45,7 +45,7 @@ const helpers = {
   },
 
   openObjectsTab: () => {
-    cy.get('.tab.objects').click();
+    cy.get('.tab.objects').click({ force: true });
   },
 
   selectImage: () => {

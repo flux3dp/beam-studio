@@ -1,7 +1,7 @@
 const path = require('path');
 
+const CopyPlugin = require('copy-webpack-plugin');
 const { merge } = require('webpack-merge');
-const WorkboxPlugin = require('workbox-webpack-plugin');
 
 const config = require('./webpack.config.js');
 
@@ -19,17 +19,13 @@ module.exports = merge(config, {
     filename: '[name].bundle.js',
   },
   plugins: [
-    // Generate minimal service worker for dev - prevents stale prod SW from being used
-    new WorkboxPlugin.GenerateSW({
-      skipWaiting: true,
-      clientsClaim: true,
-      // Exclude everything from precache - dev doesn't need offline support
-      exclude: [/.*/],
-      // Minimal runtime caching to satisfy Workbox requirement
-      runtimeCaching: [
+    // Copy a minimal no-op service worker to override any stale production SW
+    // This avoids the GenerateSW warning in watch mode (see: https://github.com/GoogleChrome/workbox/issues/1790)
+    new CopyPlugin({
+      patterns: [
         {
-          urlPattern: /^https?:\/\/localhost/,
-          handler: 'NetworkFirst',
+          from: path.resolve(__dirname, 'src/service-worker.dev.js'),
+          to: 'service-worker.js',
         },
       ],
     }),
