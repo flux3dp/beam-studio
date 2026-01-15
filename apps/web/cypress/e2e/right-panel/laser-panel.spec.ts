@@ -229,8 +229,8 @@ describe('manipulate laser panel', () => {
     cy.get('button[class^="ant-btn"]').contains('OK').click();
     cy.get('button[title="Manage Parameters"]').click();
     cy.get('[title="Export"]').click();
-    cy.wait(5000);
-    cy.readFile(cypressDownloadPath)
+    // Wait for file to be downloaded by checking it exists
+    cy.readFile(cypressDownloadPath, { timeout: 15000 })
       .its('presets')
       .should('have.length', 73)
       .its('72')

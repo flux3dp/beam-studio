@@ -1,7 +1,6 @@
 describe('object change tools', () => {
   beforeEach(() => {
     cy.landingEditor();
-    cy.wait(300);
     cy.clickToolBtn('Polygon');
     cy.get('svg#svgcontent').trigger('mousedown', 50, 50, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });

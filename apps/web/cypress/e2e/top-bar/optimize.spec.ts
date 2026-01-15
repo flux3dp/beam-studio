@@ -1,6 +1,5 @@
 it('arrangement', () => {
   cy.landingEditor();
-  cy.wait(100);
   cy.clickToolBtn('Rectangle');
   cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
   cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });

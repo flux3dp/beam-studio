@@ -1,7 +1,6 @@
 describe('text tools', () => {
   beforeEach(() => {
     cy.landingEditor();
-    cy.wait(300);
   });
 
   const fontDisplay = () =>
@@ -10,9 +9,9 @@ describe('text tools', () => {
   const drawText1 = () => {
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
-    cy.wait(1000);
-    cy.inputText('TEST TEXT FONT');
+    // Wait for text element to be created
     cy.get('#svg_1').should('exist');
+    cy.inputText('TEST TEXT FONT');
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
     cy.get('.tab.objects').click();
   };
@@ -20,10 +19,9 @@ describe('text tools', () => {
   const drawText2 = () => {
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 150, y: 150 });
-
-    cy.wait(1000);
-    cy.inputText('TEST TEXT STYLE');
+    // Wait for text element to be created
     cy.get('#svg_2').should('exist');
+    cy.inputText('TEST TEXT STYLE');
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
     cy.realPress(['Enter']);
   };
@@ -32,8 +30,8 @@ describe('text tools', () => {
     drawText1();
     cy.get('div#object-panel').should('exist');
     cy.get('.ant-select[title="Font"]').click();
-    cy.wait(1000);
-    cy.get('.rc-virtual-list-holder img[alt="Noto Sans"]').click();
+    // Wait for font list to load
+    cy.get('.rc-virtual-list-holder img[alt="Noto Sans"]').should('be.visible').click();
     fontDisplay().should('have.attr', 'alt').and('eq', 'Noto Sans');
     cy.get('#svg_1')
       .should('have.attr', 'font-family')

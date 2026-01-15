@@ -8,19 +8,18 @@ it('layer color setting', () => {
   cy.get('.ant-modal').should('be.visible');
 
   cy.get('.ant-btn').contains('Add Color').click();
-  cy.get('.input-column input').eq(0).should('have.value', '#FFFFFF');
-  cy.get('.input-column input').eq(0).clear().type('#AA0000');
-  cy.get('.input-column input').eq(1).should('have.value', '50.0');
-  cy.get('.input-column input').eq(1).clear().type('25');
+  // Open color picker and select color via hex input (scope to the Add Color modal)
+  // Wait for Add Color modal to be fully rendered
+  cy.get('.ant-modal').last().find('[class*="ColorPicker-module__trigger"]').should('be.visible').click();
+  cy.get('.ant-color-picker-hex-input input').clear().type('AA0000', { delay: 100 });
+  cy.get('.ant-color-picker').contains('OK').click();
+  // Update power value (first input in the Add Color modal, Power field)
+  cy.get('.ant-modal').last().find('.ant-input-number-input').first().clear().type('25');
   cy.contains('.ant-btn-primary', /^Add$/).click();
 
   cy.get('button.ant-pagination-item-link .anticon-right').click();
   const rowSelector = 'tr[data-row-key="#AA0000"]';
-  cy.get(`${rowSelector} .config-color-block`).should(
-    'have.css',
-    'background-color',
-    'rgb(170, 0, 0)'
-  );
+  cy.get(`${rowSelector} .config-color-block`).should('have.css', 'background-color', 'rgb(170, 0, 0)');
   cy.get(`${rowSelector} .editable-cell-value-wrap`).eq(0).should('contain.text', '#AA0000');
   cy.get(`${rowSelector} .editable-cell-value-wrap`).eq(1).should('contain.text', '10\u00a0mm/s');
   cy.get(`${rowSelector} .editable-cell-value-wrap`).eq(2).should('contain.text', '25\u00a0%');
@@ -36,4 +35,8 @@ it('layer color setting', () => {
 
   cy.get(`${rowSelector} .anticon-delete`).should('be.visible').click();
   cy.get(rowSelector).should('not.exist');
+
+  // Close the modal to ensure clean state for subsequent test runs
+  cy.get('.ant-btn').contains('Save').click();
+  cy.get('.ant-modal').should('not.exist');
 });

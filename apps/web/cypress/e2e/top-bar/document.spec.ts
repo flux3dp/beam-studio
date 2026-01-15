@@ -13,7 +13,8 @@ describe('manipulate document setting', () => {
 
   it('resolution', () => {
     openDocument();
-    cy.wait(300);
+    // Wait for document settings modal to open
+    cy.get('#dpi').should('exist');
     cy.get('#dpi').closest('.ant-select').as('select');
     cy.get('@select').find('.ant-select-selection-item').should('have.text', 'Medium (250 DPI)');
     cy.get('@select').find('.ant-select-selection-item').click();

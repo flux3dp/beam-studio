@@ -204,8 +204,7 @@ describe('update the preference', () => {
     cy.get('.ant-select-item-option-content').contains('Normal').click({ force: true });
     applySettings();
 
-    cy.uploadFile('flux.png', 'image/png');
-    cy.wait(3000);
+    cy.uploadImage('flux.png');
     cy.get('#svg_1')
       .invoke('attr', 'xlink:href')
       .then((href) => {

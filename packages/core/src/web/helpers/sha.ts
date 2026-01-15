@@ -1,3 +1,6 @@
-import CryptoJS from 'crypto-js';
+import SHA256 from 'crypto-js/sha256';
 
-export const sha256 = (message = ''): string => CryptoJS.SHA256(message).toString();
+/**
+ * Computes SHA-256 hash of the given message.
+ */
+export const sha256 = (message = ''): string => SHA256(message).toString();

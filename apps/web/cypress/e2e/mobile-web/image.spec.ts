@@ -47,7 +47,7 @@ const helpers = {
   },
 
   waitForProgress: (timeout = 5000) => {
-    cy.get('.progress', { timeout }).should('not.exist');
+    cy.waitForProgress(timeout);
   },
 
   clickModalOk: () => {
@@ -94,7 +94,7 @@ describe('Mobile Image Tools', () => {
 
   describe('Gradient Operations', () => {
     it('should enable trace function when gradient is removed', () => {
-      helpers.uploadTestImage();
+      cy.uploadImage('flux.png');
 
       // Remove gradient to enable trace
       cy.get('#gradient').should('exist').click({ force: true });
@@ -130,15 +130,22 @@ describe('Mobile Image Tools', () => {
     it('should replace image with another file', () => {
       helpers.uploadTestImage();
 
-      // Replace with new image
-      cy.get('#replace_with').click({ force: true });
-      cy.get('#file-input').attachFile('map.jpg');
-      helpers.waitForProgress();
-      cy.wait(8000);
+      // Capture original href and nest all subsequent operations
+      cy.get('#svg_1')
+        .invoke('attr', 'origImage')
+        .then((origImage) => {
+          // Replace with new image
+          cy.get('#replace_with').click({ force: true });
+          cy.get('#file-input').attachFile('map.jpg');
+          helpers.waitForProgress();
 
-      // Verify replacement
-      helpers.selectImage();
-      helpers.assertImageHash('#svg_1', 'replaceImage');
+          // Wait until href actually changes (Cypress will retry this assertion)
+          cy.get('#svg_1').invoke('attr', 'origImage').should('not.equal', origImage);
+
+          // Verify replacement hash
+          helpers.selectImage();
+          helpers.assertImageHash('#svg_1', 'replaceImage');
+        });
     });
 
     it('should adjust image brightness', () => {
@@ -148,7 +155,7 @@ describe('Mobile Image Tools', () => {
       // Open grading modal
       cy.get('#grading').click({ force: true });
       cy.get('.ant-modal-content').should('exist');
-      cy.wait(1000);
+      cy.waitForImageProcessing();
 
       // Adjust brightness value
       cy.get('[class*="_-_-packages-core-src-web-app-components-dialogs-image-index-module__field--"]').should('exist');
@@ -157,7 +164,7 @@ describe('Mobile Image Tools', () => {
       // Apply changes
       helpers.clickModalOk();
       helpers.waitForProgress();
-      cy.wait(5000);
+      cy.get('.ant-modal-content').should('not.exist');
 
       // Verify result
       helpers.assertImageHash('#svg_1', 'brightness');
@@ -169,7 +176,8 @@ describe('Mobile Image Tools', () => {
 
       // Start crop operation
       cy.get('#crop').click({ force: true });
-      cy.wait(3000);
+      // Wait for crop modal to fully render
+      cy.get('.point-se').should('be.visible');
 
       // Adjust crop area
       cy.get('.point-se').move({ deltaX: 0, deltaY: -100 });
@@ -178,7 +186,7 @@ describe('Mobile Image Tools', () => {
       helpers.clickModalOk();
       helpers.waitForProgress(10000);
       cy.get('div.ant-modal-body').should('not.exist');
-      cy.wait(3000);
+      cy.waitForImageProcessing();
 
       // Verify result
       helpers.assertImageHash('#svg_1', 'crop');
@@ -190,8 +198,8 @@ describe('Mobile Image Tools', () => {
 
       // Apply invert
       cy.get('#invert').click({ force: true });
-      helpers.waitForProgress(3000);
-      cy.wait(3000);
+      helpers.waitForProgress(10000);
+      cy.waitForImageProcessing();
 
       // Verify result
       helpers.selectImage();

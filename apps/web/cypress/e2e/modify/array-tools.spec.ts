@@ -20,7 +20,6 @@ describe('array tools', () => {
   it('image', () => {
     cy.uploadFile('flux.png', 'image/png');
     doAllThing();
-    cy.wait(500);
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('image').should('have.length', '4');
   });
@@ -30,7 +29,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 50, 50, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.wait(500);
+    cy.get('#svg_1').should('exist');
     doAllThing();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('polygon').should('have.length', '4');
@@ -41,7 +40,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.wait(500);
+    cy.get('#svg_1').should('exist');
     doAllThing();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('line').should('have.length', '4');
@@ -50,7 +49,8 @@ describe('array tools', () => {
   it('text', () => {
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 10, y: 20 });
-    cy.wait(1500);
+    // Wait for text element to be created
+    cy.get('#svg_1').should('exist');
     cy.inputText('Test Array');
     doAllThing();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
@@ -64,7 +64,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.wait(500);
+    cy.get('#svg_2').should('exist');
     // Select both
     cy.get('svg#svgcontent').trigger('mousedown', 50, 50, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 600, 600, { force: true });
@@ -86,7 +86,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 50, 50, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.wait(500);
+    cy.get('#svg_2').should('exist');
     doAllThing();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]', { timeout: 3000 }).children('line').should('have.length', '4');

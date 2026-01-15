@@ -53,11 +53,11 @@ const helpers = {
   },
 
   waitForProgress: (timeout = 5000) => {
-    cy.get('.progress', { timeout }).should('not.exist');
+    cy.waitForProgress(timeout);
   },
 
-  waitForImageProcessing: (delay = 10000) => {
-    cy.wait(delay);
+  waitForImageProcessing: (timeout = 15000) => {
+    cy.waitForImageProcessing(timeout);
   },
 
   toggleGradient: (switchIndex = 0) => {
@@ -142,7 +142,6 @@ describe('Image manipulation functions', () => {
       helpers.assertElementAttribute('#svg_1', 'data-threshold', '254');
       helpers.assertElementAttribute('#svg_1', 'data-shading', 'true');
 
-      cy.wait(5000);
       helpers.assertImageHash('#svg_1', 'changeGradient.withGradient');
     });
   });
@@ -165,15 +164,13 @@ describe('Image manipulation functions', () => {
     it('should apply grading adjustments', () => {
       cy.disableImageDownSampling();
       helpers.uploadTestImage();
-      helpers.selectImage();
-      cy.wait(2000);
+      helpers.waitForImageProcessing();
       helpers.selectImage();
       helpers.openObjectsTab();
 
       // Open grading modal
       cy.get('#grading').click();
       cy.get('div.ant-modal').should('exist');
-      cy.wait(2000);
       helpers.waitForProgress();
 
       // Adjust grading curve
@@ -186,7 +183,7 @@ describe('Image manipulation functions', () => {
 
       helpers.clickModalOk();
       helpers.waitForProgress();
-      helpers.waitForImageProcessing();
+      cy.get('div.ant-modal').should('not.exist');
       helpers.assertImageHash('#svg_1', 'grading');
     });
 
@@ -197,7 +194,8 @@ describe('Image manipulation functions', () => {
 
       // Start crop operation
       cy.get('#crop').click();
-      cy.wait(3000);
+      // Wait for crop modal to fully render
+      cy.get('.point-se').should('be.visible');
 
       // Adjust crop area
       cy.get('.point-se').move({ deltaX: 0, deltaY: -200 });

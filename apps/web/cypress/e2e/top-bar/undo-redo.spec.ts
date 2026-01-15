@@ -27,8 +27,8 @@ describe('verify undo/redo behaviors', () => {
   });
 
   function checkBehaviors() {
-    cy.wait(500);
-    cy.get('div[title="Undo"]').click();
+    // Wait for the undo button to be clickable (indicates state is ready)
+    cy.get('div[title="Undo"]').should('be.visible').click();
     cy.get('#svg_1').should('not.exist');
     cy.get('div[title="Redo"]').click();
     cy.get('#svg_1').should('exist');

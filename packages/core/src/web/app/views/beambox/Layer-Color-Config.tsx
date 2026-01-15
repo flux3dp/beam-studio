@@ -1,15 +1,14 @@
-/* eslint-disable ts/no-unused-vars */
-import * as React from 'react';
-import { useContext, useEffect, useRef, useState } from 'react';
+import React, { useContext, useEffect, useRef, useState } from 'react';
 
 import { DeleteFilled, PlusCircleFilled } from '@ant-design/icons';
-import type { FormInstance } from 'antd';
-import { Button, Form, InputNumber, Modal, Space, Table } from 'antd';
+import type { FormInstance, InputRef } from 'antd';
+import { Button, Form, InputNumber, Space, Table } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
 import type { ColorConfig } from '@core/app/constants/color-constants';
 import { DefaultColorConfigs } from '@core/app/constants/color-constants';
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import Input from '@core/app/widgets/Input';
 import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
 import useI18n from '@core/helpers/useI18n';
@@ -34,7 +33,11 @@ const formatHexColor = (input: string): null | string => {
   const matchRGB = val.match(/(rgb)?\([0-9]{1,3},[0-9]{1,3},[0-9]{1,3}\)(?!.)/i);
 
   if (matchRGB) {
-    const rgb = matchRGB[0].match(/[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}/)[0].split(',');
+    const rgbMatch = matchRGB[0].match(/[0-9]{1,3},[0-9]{1,3},[0-9]{1,3}/);
+
+    if (!rgbMatch) return null;
+
+    const rgb = rgbMatch[0].split(',');
     let hex = (
       Number.parseInt(rgb[0], 10) * 65536 +
       Number.parseInt(rgb[1], 10) * 256 +
@@ -57,9 +60,7 @@ const formatHexColor = (input: string): null | string => {
 
 const EditableContext = React.createContext<FormInstance<any> | null>(null);
 
-interface EditableRowProps {
-  index: number;
-}
+type EditableRowProps = React.HTMLAttributes<HTMLTableRowElement>;
 
 interface Props {
   onClose: () => void;
@@ -78,7 +79,7 @@ interface EditableCellProps {
   validator: (val: string) => string;
 }
 
-const EditableRow = ({ index, ...props }: EditableRowProps) => {
+const EditableRow = (props: EditableRowProps) => {
   const [form] = Form.useForm();
 
   return (
@@ -104,7 +105,8 @@ const EditableCell = ({
   ...restProps
 }: EditableCellProps) => {
   const [editing, setEditing] = useState(false);
-  const inputRef = useRef(null);
+  // Using InputRef for both Input and InputNumber as they share the focus() method
+  const inputRef = useRef<InputRef>(null) as React.MutableRefObject<InputRef>;
   const form = useContext(EditableContext);
 
   useEffect(() => {
@@ -115,12 +117,12 @@ const EditableCell = ({
 
   const toggleEdit = () => {
     setEditing(!editing);
-    form.setFieldsValue({ [dataIndex]: record[dataIndex] });
+    form?.setFieldsValue({ [dataIndex]: record[dataIndex] });
   };
 
   const save = async () => {
     try {
-      const values = await form.validateFields();
+      const values = await form?.validateFields();
 
       toggleEdit();
       handleSave({ ...record, ...values });
@@ -165,13 +167,13 @@ const EditableCell = ({
             onBlur={save}
             onPressEnter={save}
             parser={(value) => Number(value?.replace(unit, ''))}
-            ref={inputRef}
+            ref={inputRef as any}
             size="small"
           />
         ) : (
           <Input
             onBlur={(e) => {
-              form.setFieldsValue({ [dataIndex]: formatHexColor(e.target.value) });
+              form?.setFieldsValue({ [dataIndex]: formatHexColor(e.target.value) });
               save();
             }}
             onPressEnter={save}
@@ -203,8 +205,7 @@ const EditableCell = ({
 };
 
 type DataType = ColorConfig & { key: React.Key };
-type EditableTableProps = Parameters<typeof Table>[0];
-type ColumnTypes = Exclude<EditableTableProps['columns'], undefined>;
+type ColumnTypes = Exclude<Parameters<typeof Table<DataType>>[0]['columns'], undefined>;
 
 const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
   const {
@@ -259,7 +260,7 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
       dataIndex: 'color',
       editable: true,
       title: t.color,
-      validator: (value) => formatHexColor(value) || value,
+      validator: (value: string) => formatHexColor(value) || value,
       width: '130px',
     },
     {
@@ -291,7 +292,7 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
     },
     {
       dataIndex: 'operation',
-      render: (_, record: { key: React.Key }) => (
+      render: (_: unknown, record: DataType) => (
         <Button onClick={() => handleDelete(record.key)} type="text">
           <DeleteFilled />
         </Button>
@@ -339,7 +340,6 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
 
     const configData = { array: dataSource, dict: backwardCompatibleConfigDict };
 
-    console.log(configData);
     storage.set('layer-color-config', configData);
     onClose();
   };
@@ -373,8 +373,8 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
     }
   };
 
-  const render = () => (
-    <Modal centered footer={renderFooter()} onCancel={onClose} open title={t.layer_color_config}>
+  return (
+    <DraggableModal footer={renderFooter()} onCancel={onClose} open title={t.layer_color_config}>
       <Space direction="vertical" style={{ width: '100%' }}>
         <Button onClick={() => setDisplayAddPanel(true)} type="primary">
           <PlusCircleFilled />
@@ -398,10 +398,8 @@ const LayerColorConfigPanel = (props: Props): React.JSX.Element => {
           <AddColorConfigModal handleAddConfig={handleAddConfig} onClose={() => setDisplayAddPanel(false)} />
         )}
       </Space>
-    </Modal>
+    </DraggableModal>
   );
-
-  return render();
 };
 
 export default LayerColorConfigPanel;

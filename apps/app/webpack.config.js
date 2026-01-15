@@ -1,9 +1,32 @@
 const path = require('path');
+const webpack = require('webpack');
 
 const CopyPlugin = require('copy-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
 const nodeConfig = require('./webpack.node.js');
+
+// Supported locales matching router.tsx localeMap
+const SUPPORTED_LOCALES = [
+  'da',
+  'de',
+  'el',
+  'en',
+  'fi',
+  'fr',
+  'id',
+  'it',
+  'ja',
+  'ko',
+  'ms',
+  'nb',
+  'nl',
+  'pl',
+  'sv',
+  'th',
+  'vi',
+  'zh-tw',
+];
 
 const app = path.resolve(__dirname, 'src');
 const core = path.resolve(__dirname, '../../packages/core');
@@ -15,6 +38,7 @@ module.exports = [
     devtool: 'source-map',
     entry: {
       main: path.resolve(app, 'main.ts'),
+      // Workers must be explicit entries in Electron to ensure proper bundling with polyfills
       ['potrace.worker']: path.resolve(coreWeb, 'helpers/potrace/potrace.worker.ts'),
       ['clipper.worker']: path.resolve(coreWeb, 'helpers/clipper/clipper.worker.ts'),
       ['image-tracer.worker']: path.resolve(coreWeb, 'helpers/image-tracer/image-tracer.worker.ts'),
@@ -110,6 +134,8 @@ module.exports = [
           { from: path.resolve(coreWeb, 'assets/assets'), to: path.resolve(__dirname, 'public/assets') },
         ],
       }),
+      // Limit dayjs locales to only supported languages
+      new webpack.ContextReplacementPlugin(/dayjs[/\\]locale$/, new RegExp(`(${SUPPORTED_LOCALES.join('|')})\\.js$`)),
     ],
     resolve: {
       alias: {

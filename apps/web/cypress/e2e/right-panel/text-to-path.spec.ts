@@ -7,9 +7,9 @@ describe('convert to path 2.0', () => {
   const drawText = () => {
     cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 100 });
-    cy.wait(1000);
-    cy.inputText('123');
+    // Wait for text element to be created
     cy.get('#svg_1').should('exist');
+    cy.inputText('123');
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
     cy.get('.tab.objects').click();
     cy.get('div#object-panel').should('exist');

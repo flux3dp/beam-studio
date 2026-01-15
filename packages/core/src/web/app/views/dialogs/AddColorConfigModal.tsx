@@ -1,96 +1,84 @@
-import React, { useState } from 'react';
-
-import { Modal } from 'antd';
+import React, { useRef, useState } from 'react';
 
 import type { ColorConfig } from '@core/app/constants/color-constants';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
-import ValidationTextInput from '@core/app/widgets/Validation-Text-Input';
+import ColorPicker from '@core/app/widgets/ColorPicker';
+import DraggableModal from '@core/app/widgets/DraggableModal';
+import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
+
+import styles from './AddColorConfigModal.module.scss';
 
 interface Props {
   handleAddConfig: (config: ColorConfig) => void;
   onClose: () => void;
 }
 
-const AddColorConfigModal = ({ handleAddConfig, onClose }: Props): React.JSX.Element => {
+interface InputConfig {
+  defaultValue: number;
+  key: 'power' | 'repeat' | 'speed';
+  max: number;
+  min: number;
+  precision: number;
+  unit: string;
+}
+
+const inputConfigs: InputConfig[] = [
+  { defaultValue: 50, key: 'power', max: 100, min: 1, precision: 1, unit: '%' },
+  { defaultValue: 10, key: 'speed', max: 300, min: 3, precision: 1, unit: 'mm/s' },
+  { defaultValue: 1, key: 'repeat', max: 10, min: 1, precision: 0, unit: '' },
+];
+
+function AddColorConfigModal({ handleAddConfig, onClose }: Props): React.JSX.Element {
   const lang = useI18n().beambox.layer_color_config_panel;
   const [newColor, setNewColor] = useState('#FFFFFF');
-  let newPower = 50;
-  let newSpeed = 10;
-  let newRepeat = 1;
+  const valuesRef = useRef({ power: 50, repeat: 1, speed: 10 });
+
+  const updateNewColor = (color: string) => {
+    setNewColor(color.toUpperCase());
+  };
 
   return (
-    <Modal
+    <DraggableModal
       okText={lang.add}
       onCancel={onClose}
       onOk={() =>
         handleAddConfig({
           color: newColor,
-          power: newPower,
-          repeat: newRepeat,
-          speed: newSpeed,
+          power: valuesRef.current.power,
+          repeat: valuesRef.current.repeat,
+          speed: valuesRef.current.speed,
         })
       }
       open
       title={lang.add_config}
     >
-      <div className="add-config-panel">
-        <div className="input-column">
-          <div className="color-block" style={{ backgroundColor: newColor }} />
-          <div className="name color">{`${lang.color} :`}</div>
-          <ValidationTextInput
-            defaultValue={newColor}
-            getValue={(val) => {
-              setNewColor(val);
-            }}
-            validation={(val) => val}
-          />
+      <div className={styles.container}>
+        <div className={styles['input-row']}>
+          <div className={styles.label}>{lang.color}</div>
+          <div className={styles['color-input']}>
+            <ColorPicker initColor={newColor} onChange={updateNewColor} />
+          </div>
         </div>
-        <div className="input-column">
-          <div className="name">{`${lang.power} :`}</div>
-          <UnitInput
-            className={{ power: true }}
-            decimal={1}
-            defaultValue={newPower}
-            getValue={(val) => {
-              newPower = val;
-            }}
-            max={100}
-            min={1}
-            unit="%"
-          />
-        </div>
-        <div className="input-column">
-          <div className="name">{`${lang.speed} :`}</div>
-          <UnitInput
-            className={{ speed: true }}
-            decimal={1}
-            defaultValue={newSpeed}
-            getValue={(val) => {
-              newSpeed = val;
-            }}
-            max={300}
-            min={3}
-            unit="mm/s"
-          />
-        </div>
-        <div className="input-column">
-          <div className="name">{`${lang.repeat} :`}</div>
-          <UnitInput
-            className={{ repeat: true }}
-            decimal={0}
-            defaultValue={newRepeat}
-            getValue={(val) => {
-              newRepeat = val;
-            }}
-            max={10}
-            min={1}
-            unit=""
-          />
-        </div>
+        {inputConfigs.map(({ defaultValue, key, max, min, precision, unit }) => (
+          <div className={styles['input-row']} key={key}>
+            <div className={styles.label}>{lang[key]}</div>
+            <UnitInput
+              controls={false}
+              defaultValue={defaultValue}
+              max={max}
+              min={min}
+              onChange={(val) => {
+                valuesRef.current[key] = val ?? defaultValue;
+              }}
+              precision={precision}
+              unit={unit}
+              unitClassName={styles.unit}
+            />
+          </div>
+        ))}
       </div>
-    </Modal>
+    </DraggableModal>
   );
-};
+}
 
 export default AddColorConfigModal;

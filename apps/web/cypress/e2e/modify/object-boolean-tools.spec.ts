@@ -9,7 +9,6 @@ const drawRectangle = () => {
   cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   cy.get('#svg_1').should('exist');
-  cy.wait(500);
   cy.get('.tab.objects').click();
   cy.get('#infill').click();
   cy.get('#x_position').clear().type('0{enter}');
@@ -24,29 +23,25 @@ const drawEllipse = () => {
   cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   cy.get('#svg_2').should('exist');
-  cy.wait(500);
   cy.get('#infill').click();
   cy.get('#cx_position').clear().type('0{enter}');
   cy.get('#cy_position').clear().type('0{enter}');
   cy.get('#rx_size').clear().type('150{enter}');
   cy.get('#ry_size').clear().type('150{enter}');
-  cy.wait(500);
 };
 
 const drawText = () => {
   cy.clickToolBtn('Text');
   cy.get('svg#svgcontent').realClick({ x: 0, y: 0 });
-  cy.wait(500);
-  cy.inputText('ABC');
+  // Wait for text element to be created
   cy.get('#svg_2').should('exist');
+  cy.inputText('ABC');
   cy.get('.tab.objects').click();
-  cy.wait(500);
   cy.get('#infill').click();
   cy.get('#x_position').clear().type('0{enter}');
   cy.get('#y_position').clear().type('0{enter}');
   cy.get('#w_size').clear().type('75{enter}');
   cy.get('#h_size').clear().type('75{enter}');
-  cy.wait(500);
 };
 
 function selectAll() {

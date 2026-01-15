@@ -11,7 +11,7 @@ exports[`test AddColorConfigModal should render correctly 1`] = `
         class="ant-modal-mask"
       />
       <div
-        class="ant-modal-wrap"
+        class="ant-modal-wrap ant-modal-centered"
         tabindex="-1"
       >
         <div
@@ -19,135 +19,185 @@ exports[`test AddColorConfigModal should render correctly 1`] = `
           aria-modal="true"
           class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
           role="dialog"
-          style="width: 520px;"
+          style="width: 0px;"
         >
           <div
             style="outline: none;"
             tabindex="0"
           >
             <div
-              class="ant-modal-content"
+              class="react-draggable"
+              style="min-width: min(520px, 95vw); transform: translate(0px, 0px)translate(0px,0px);"
             >
-              <button
-                aria-label="Close"
-                class="ant-modal-close"
-                type="button"
+              <div
+                class="ant-modal-content"
               >
-                <span
-                  class="ant-modal-close-x"
+                <button
+                  aria-label="Close"
+                  class="ant-modal-close"
+                  type="button"
                 >
                   <span
-                    aria-label="close"
-                    class="anticon anticon-close ant-modal-close-icon"
-                    role="img"
+                    class="ant-modal-close-x"
                   >
-                    <svg
-                      aria-hidden="true"
-                      data-icon="close"
-                      fill="currentColor"
-                      fill-rule="evenodd"
-                      focusable="false"
-                      height="1em"
-                      viewBox="64 64 896 896"
-                      width="1em"
+                    <span
+                      aria-label="close"
+                      class="anticon anticon-close ant-modal-close-icon"
+                      role="img"
                     >
-                      <path
-                        d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
-                      />
-                    </svg>
+                      <svg
+                        aria-hidden="true"
+                        data-icon="close"
+                        fill="currentColor"
+                        fill-rule="evenodd"
+                        focusable="false"
+                        height="1em"
+                        viewBox="64 64 896 896"
+                        width="1em"
+                      >
+                        <path
+                          d="M799.86 166.31c.02 0 .04.02.08.06l57.69 57.7c.04.03.05.05.06.08a.12.12 0 010 .06c0 .03-.02.05-.06.09L569.93 512l287.7 287.7c.04.04.05.06.06.09a.12.12 0 010 .07c0 .02-.02.04-.06.08l-57.7 57.69c-.03.04-.05.05-.07.06a.12.12 0 01-.07 0c-.03 0-.05-.02-.09-.06L512 569.93l-287.7 287.7c-.04.04-.06.05-.09.06a.12.12 0 01-.07 0c-.02 0-.04-.02-.08-.06l-57.69-57.7c-.04-.03-.05-.05-.06-.07a.12.12 0 010-.07c0-.03.02-.05.06-.09L454.07 512l-287.7-287.7c-.04-.04-.05-.06-.06-.09a.12.12 0 010-.07c0-.02.02-.04.06-.08l57.7-57.69c.03-.04.05-.05.07-.06a.12.12 0 01.07 0c.03 0 .05.02.09.06L512 454.07l287.7-287.7c.04-.04.06-.05.09-.06a.12.12 0 01.07 0z"
+                        />
+                      </svg>
+                    </span>
                   </span>
-                </span>
-              </button>
-              <div
-                class="ant-modal-header"
-              >
+                </button>
                 <div
-                  class="ant-modal-title"
-                  id="test-id"
-                >
-                  Add Config
-                </div>
-              </div>
-              <div
-                class="ant-modal-body"
-              >
-                <div
-                  class="add-config-panel"
+                  class="ant-modal-header"
                 >
                   <div
-                    class="input-column"
+                    class="ant-modal-title"
+                    id="test-id"
                   >
                     <div
-                      class="color-block"
-                      style="background-color: rgb(255, 255, 255);"
-                    />
-                    <div
-                      class="name color"
+                      style="cursor: move; width: 100%;"
                     >
-                      Color :
-                    </div>
-                    <input
-                      type="text"
-                      value="#FFFFFF"
-                    />
-                  </div>
-                  <div
-                    class="input-column"
-                  >
-                    <div
-                      class="name"
-                    >
-                      Power :
-                    </div>
-                    <div>
-                      UnitInput
-                    </div>
-                  </div>
-                  <div
-                    class="input-column"
-                  >
-                    <div
-                      class="name"
-                    >
-                      Speed :
-                    </div>
-                    <div>
-                      UnitInput
-                    </div>
-                  </div>
-                  <div
-                    class="input-column"
-                  >
-                    <div
-                      class="name"
-                    >
-                      Repeat :
-                    </div>
-                    <div>
-                      UnitInput
+                      Add Config
                     </div>
                   </div>
                 </div>
-              </div>
-              <div
-                class="ant-modal-footer"
-              >
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
-                  type="button"
+                <div
+                  class="ant-modal-body"
                 >
-                  <span>
-                    Cancel
-                  </span>
-                </button>
-                <button
-                  class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
-                  type="button"
+                  <div
+                    class="container"
+                  >
+                    <div
+                      class="input-row"
+                    >
+                      <div
+                        class="label"
+                      >
+                        Color
+                      </div>
+                      <div
+                        class="color-input"
+                      >
+                        <div>
+                          <div
+                            class="trigger"
+                          >
+                            <div
+                              class="color"
+                              style="background: rgb(255, 255, 255);"
+                            />
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div
+                      class="input-row"
+                    >
+                      <div
+                        class="label"
+                      >
+                        Power
+                      </div>
+                      <div>
+                        UnitInput: 
+                        <p>
+                          precision: 
+                          1
+                        </p>
+                        <p>
+                          unit: 
+                          %
+                        </p>
+                        <input
+                          max="100"
+                          min="1"
+                          value=""
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="input-row"
+                    >
+                      <div
+                        class="label"
+                      >
+                        Speed
+                      </div>
+                      <div>
+                        UnitInput: 
+                        <p>
+                          precision: 
+                          1
+                        </p>
+                        <p>
+                          unit: 
+                          mm/s
+                        </p>
+                        <input
+                          max="300"
+                          min="3"
+                          value=""
+                        />
+                      </div>
+                    </div>
+                    <div
+                      class="input-row"
+                    >
+                      <div
+                        class="label"
+                      >
+                        Repeat
+                      </div>
+                      <div>
+                        UnitInput: 
+                        <p>
+                          precision: 
+                          0
+                        </p>
+                        <input
+                          max="10"
+                          min="1"
+                          value=""
+                        />
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div
+                  class="ant-modal-footer"
                 >
-                  <span>
-                    Add
-                  </span>
-                </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+                    type="button"
+                  >
+                    <span>
+                      Cancel
+                    </span>
+                  </button>
+                  <button
+                    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+                    type="button"
+                  >
+                    <span>
+                      Add
+                    </span>
+                  </button>
+                </div>
               </div>
             </div>
           </div>

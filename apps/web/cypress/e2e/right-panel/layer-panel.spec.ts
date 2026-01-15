@@ -99,7 +99,6 @@ describe('manipulate layers', () => {
   });
 
   it('hide the layer ', () => {
-    cy.wait(1000);
     cy.clickToolBtn('Rectangle');
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
@@ -123,11 +122,9 @@ describe('manipulate layers', () => {
   it('merge down one layer', () => {
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 2);
-    cy.wait(500);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).scrollIntoView();
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).trigger('mousedown', { button: 2 });
     cy.get('#merge_down_layer').click({ force: true });
-    cy.wait(500);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 1');
   });
@@ -181,13 +178,11 @@ describe('manipulate layers', () => {
   });
 
   it('move object to different layer', () => {
-    cy.wait(300);
     cy.clickToolBtn('Rectangle');
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('div.tab.layers').click();
-    cy.wait(100);
     cy.selectPreset('Leather - 3mm Cutting');
     cy.get('#power-input').should('have.value', '65');
     cy.get('#speed-input').should('have.value', '3');
@@ -201,7 +196,7 @@ describe('manipulate layers', () => {
     cy.clickToolBtn('Cursor');
     cy.get('#svg_1').click({ force: true });
     cy.get('div.tab.layers').click();
-    cy.wait(500);
+    // Wait for layer panel to update with the new preset values
     cy.get('#power-input').should('have.value', '60');
     cy.get('#speed-input').should('have.value', '20');
     cy.get('#repeat').should('have.value', '1');

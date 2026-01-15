@@ -1,6 +1,5 @@
 it('offset', () => {
   cy.landingEditor();
-  cy.wait(300);
   cy.clickToolBtn('Rectangle');
   cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
   cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
@@ -13,7 +12,8 @@ it('offset', () => {
   cy.get('svg#svgcontent').trigger('mousedown', -10, -10, { force: true });
   cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-  cy.wait(500);
+  // Wait for selection to be recognized
+  cy.findAllByText('Multiple Objects').should('exist');
   cy.get('.tab.objects').click();
   cy.get('#offset').click();
   cy.findByTestId('offset-distance').clear().type('10').blur();

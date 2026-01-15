@@ -24,6 +24,39 @@ const i18n = {
   繁體中文: { language: '語言', title: '未命名' },
 };
 
+/**
+ * Selects an option from an Ant Design virtual list dropdown using keyboard navigation.
+ * @param selectAlias - Cypress alias for the select element (e.g., '@select')
+ * @param optionText - The text of the option to select
+ */
+function selectOptionWithKeyboard(selectAlias: string, optionText: string) {
+  // Use arrow down to navigate through options until we find the target
+  // Ant Design Select keeps track of the active option and scrolls automatically
+  const maxAttempts = 30; // Enough for 21 languages
+
+  const findAndSelect = (attempt = 0) => {
+    if (attempt >= maxAttempts) {
+      throw new Error(`Option "${optionText}" not found after ${maxAttempts} keyboard navigation attempts.`);
+    }
+
+    // Check if the currently active option matches our target
+    cy.get('.ant-select-item-option-active .ant-select-item-option-content').then(($active) => {
+      if ($active.text().trim() === optionText) {
+        // Found it - press Enter to select
+        cy.get(selectAlias).find('.ant-select-selection-search-input').type('{enter}', { force: true });
+      } else {
+        // Not found yet - press arrow down and try again
+        cy.get(selectAlias)
+          .find('.ant-select-selection-search-input')
+          .type('{downarrow}', { force: true })
+          .then(() => findAndSelect(attempt + 1));
+      }
+    });
+  };
+
+  findAndSelect();
+}
+
 function checkLang(lang: string) {
   const { language, title } = i18n[lang];
 
@@ -32,36 +65,9 @@ function checkLang(lang: string) {
   cy.get('@select').find('.ant-select-selection-item').click();
   cy.get('@select').should('have.class', 'ant-select-open');
 
-  // Scroll to the desired language option
-  cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)')
-    .find('.rc-virtual-list-holder') // Target the scrollable container
-    .then(($container) => {
-      const findOption = () =>
-        $container
-          .find('.ant-select-item-option-content')
-          .toArray()
-          .find((el) => el.textContent?.trim() === lang);
-
-      // Scroll until the desired option is found
-      const scrollAndFind = (attempt = 0) => {
-        if (attempt >= 20) {
-          throw new Error(`Option "${lang}" not found after 10 scroll attempts.`);
-        }
-
-        const option = findOption();
-
-        if (option) {
-          cy.wrap(option).click({ force: true });
-        } else {
-          $container[0].scrollBy(0, attempt <= 10 ? 100 : -100); // Scroll down by 100px
-
-          // Wait for the DOM to update after scrolling
-          cy.wait(200).then(() => scrollAndFind(attempt + 1));
-        }
-      };
-
-      scrollAndFind();
-    });
+  // Use keyboard navigation to select the language option
+  // This is more reliable than scroll-based approach for virtual lists
+  selectOptionWithKeyboard('@select', lang);
 
   // Verify the language label - SettingFormItem now uses custom layout with CSS modules
   // The label is in a sibling div with class containing 'label'

@@ -3,7 +3,8 @@ describe('mobile pen tools', () => {
     cy.viewport('iphone-xr');
     cy.landingEditor();
     cy.get('.adm-tab-bar-item').contains('Pen').click();
-    cy.wait(500);
+    // Wait for pen tool to be active
+    cy.get('g#selectorParentGroup').should('have.css', 'cursor', 'crosshair');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('svg#svgcontent').trigger('mousedown', 150, 150, { force: true });
@@ -16,7 +17,6 @@ describe('mobile pen tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#drawingCtrlPoint_0c2').should('exist');
     cy.get('svg#svgcontent').dblclick({ force: true });
-    cy.wait(500);
     cy.get('#svg_1', { timeout: 7000 }).should('exist');
     cy.get('.adm-floating-panel').contains('Path Edit').should('exist');
   });

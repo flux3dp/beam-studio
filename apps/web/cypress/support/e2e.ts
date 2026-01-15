@@ -20,10 +20,19 @@ import 'cypress-file-upload';
 import '@4tw/cypress-drag-drop';
 import '@testing-library/cypress/add-commands';
 
-// Alternatively you can use CommonJS syntax:
-// require('./commands')
-
 Cypress.on('uncaught:exception', (err, runnable) => false);
+
+// Clear service caches once before all tests
+before(() => {
+  cy.window({ log: false }).then((win) => {
+    // Clear all caches
+    if ('caches' in win) {
+      win.caches.keys().then((cacheNames) => {
+        cacheNames.forEach((cacheName) => win.caches.delete(cacheName));
+      });
+    }
+  });
+});
 
 Cypress.on('window:before:load', (win) => {
   const original = win.EventTarget.prototype.addEventListener;
