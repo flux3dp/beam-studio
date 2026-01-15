@@ -72,6 +72,8 @@ describe('ador layer', () => {
       // Click twice to prevent flaky issue where first click sometimes fails to select the element
       cy.get('#svg_1').should('exist').should('be.visible').click({ force: true });
       cy.get('#svg_1').should('exist').should('be.visible').click({ force: true });
+      // Switch to layers tab after selecting element (clicking element may switch to objects tab)
+      cy.get('.tab.layers').click({ force: true });
       cy.moveElementToLayer(layer, false);
       cy.get('.ant-modal-title').should('have.text', expectedText);
       cy.contains('button.ant-btn', 'Confirm').click({ force: true });

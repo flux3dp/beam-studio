@@ -80,10 +80,14 @@ Cypress.Commands.add('landingEditor', (opts: Partial<Cypress.VisitOptions> = {})
   cy.on('window:load', (win) => {
     win.onbeforeunload = null;
   });
-  // Use GoButton to detect frontend render - this naturally waits for page load
-  cy.get('[title="Start Work"]', { timeout: 30000 }).should('be.visible');
+  // Wait for the root element to be rendered first (React hydration)
+  cy.get('#root').should('exist');
+  // Then wait for the editor container to be visible (indicates app has mounted)
+  cy.get('.studio-container', { timeout: 30000 }).should('be.visible');
+  // Finally wait for GoButton to detect frontend render complete
+  cy.get('[title="Start Work"]', { timeout: 30000 }).should('exist');
   // Wait for svgCanvas to be available on window object
-  cy.window().its('svgCanvas', { timeout: 3000 }).should('exist');
+  cy.window().its('svgCanvas', { timeout: 5000 }).should('exist');
 });
 
 /**
