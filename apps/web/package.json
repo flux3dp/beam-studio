@@ -11,8 +11,8 @@
     "start": "webpack serve --config webpack.dev.js"
   },
   "dependencies": {
-    "@sentry/browser": "^6.8.0",
-    "@sentry/tracing": "^6.8.0",
+    "@sentry/browser": "^7.119.1",
+    "@sentry/tracing": "^7.119.1",
     "eventemitter3": "^5.0.1",
     "file-saver": "^2.0.5",
     "js-cookie": "^3.0.5"

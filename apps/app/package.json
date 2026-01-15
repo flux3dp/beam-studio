@@ -20,7 +20,7 @@
   },
   "dependencies": {
     "@electron/remote": "^2.1.2",
-    "@sentry/electron": "^6.7.0",
+    "@sentry/electron": "^7.5.0",
     "custom-electron-titlebar": "^4.2.8",
     "electron-store": "^8.2.0",
     "electron-updater": "^6.6.2",
@@ -39,7 +39,6 @@
     "@babel/core": "^7.26.9",
     "@babel/preset-env": "^7.14.1",
     "@babel/preset-react": "^7.14.5",
-    "@playwright/test": "^1.31.2",
     "@sentry/webpack-plugin": "^2.16.1",
     "@svgr/webpack": "^8.1.0",
     "@types/fontkit": "^2.0.8",
