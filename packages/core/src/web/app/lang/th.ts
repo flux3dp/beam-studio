@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'การวาดต่อเนื่อง',
     crop_task_thumbnail: 'ภาพขนาดย่อครอบตัดเนื้อหา',
     crop_task_thumbnail_tooltip: 'แสดงเฉพาะรูปย่อของพื้นที่ที่มีเนื้อหา โดยไม่รวมพื้นที่ว่างของผืนผ้าใบ',
-    curve_engraving_speed_limit: 'จำกัดความเร็วในการแกะสลักเส้นโค้ง',
     custom_preview_height: 'ความสูงแสดงตัวอย่างกําหนดเอง',
     default_beambox_model: 'การตั้งค่าเอกสารเริ่มต้น',
     default_borderless_mode: 'เปิดด้านล่างเริ่มต้น',

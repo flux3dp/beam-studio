@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Doorlopende tekening',
     crop_task_thumbnail: 'Inhoud bijgesneden miniatuur',
     crop_task_thumbnail_tooltip: 'Toon alleen de miniatuur van het gebied met inhoud, exclusief lege canvasgebieden.',
-    curve_engraving_speed_limit: 'Snelheidslimiet voor kromme graveren',
     custom_preview_height: 'Aangepaste voorbeeldhoogte',
     default_beambox_model: 'Standaard documentinstellingen',
     default_borderless_mode: 'Open onderkant standaard',

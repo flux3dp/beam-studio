@@ -18,7 +18,6 @@ export type AlertConfigKey =
   | 'skip_camera_cable_alert'
   | 'skip_check_thumbnail_warning'
   | 'skip_curve_speed_limit_warning'
-  | 'skip_curve_speed_warning'
   | 'skip_dxf_oversize_warning'
   | 'skip_dxf_version_warning'
   | 'skip_image_path_warning'

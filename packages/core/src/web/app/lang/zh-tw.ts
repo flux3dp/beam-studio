@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: '連續繪製',
     crop_task_thumbnail: '內容裁切縮圖',
     crop_task_thumbnail_tooltip: '僅顯示含有內容區域的縮圖，排除空白畫布區域。',
-    curve_engraving_speed_limit: '曲面雕刻速度限制',
     custom_preview_height: '自訂預覽高度',
     default_beambox_model: '預設文件設定',
     default_borderless_mode: '開蓋模式預設',

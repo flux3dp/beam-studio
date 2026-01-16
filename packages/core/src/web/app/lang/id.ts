@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Gambar Kontinu',
     crop_task_thumbnail: 'Thumbnail potong konten',
     crop_task_thumbnail_tooltip: 'Tampilkan hanya thumbnail dari area yang berisi konten, kecuali area kanvas kosong.',
-    curve_engraving_speed_limit: 'Batas kecepatan ukiran kurva',
     custom_preview_height: 'Tinggi Pratinjau Kustom',
     default_beambox_model: 'Pengaturan Dokumen Default',
     default_borderless_mode: 'Buka Bawah Default',

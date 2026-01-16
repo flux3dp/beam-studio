@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: '連続描画',
     crop_task_thumbnail: 'コンテンツ切り抜きサムネイル',
     crop_task_thumbnail_tooltip: '内容がある領域のサムネイルのみを表示し、空白のキャンバス領域は除外します。',
-    curve_engraving_speed_limit: 'カーブ彫刻の速度制限',
     custom_preview_height: 'カスタムプレビュー高さ',
     default_beambox_model: 'デフォルト作業エリア',
     default_borderless_mode: 'オープンボトム既定',

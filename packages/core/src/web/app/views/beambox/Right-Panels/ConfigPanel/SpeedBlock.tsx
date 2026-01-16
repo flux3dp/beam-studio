@@ -6,7 +6,6 @@ import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { pick } from 'remeda';
 import { sprintf } from 'sprintf-js';
-import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
@@ -28,7 +27,6 @@ import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import isDev from '@core/helpers/is-dev';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
@@ -105,27 +103,15 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, [workarea, addOnInfo, isAutoFeederOn]);
 
   const maxValue = useMemo(() => {
-    if (isDev()) return workareaMaxSpeed;
+    let value = workareaMaxSpeed;
 
-    return match({ layerModule, workarea })
-      .when(
-        ({ layerModule }) => layerModule === LayerModule.PRINTER_4C,
-        () => 45,
-      )
-      .when(
-        ({ layerModule, workarea }) => layerModule === LayerModule.LASER_1064 && workarea === 'fbm2',
-        () => 150,
-      )
-      .otherwise(() => workareaMaxSpeed);
-  }, [workareaMaxSpeed, layerModule, workarea]);
+    if (curveSpeedLimit !== undefined && hasCurveEngraving) value = Math.min(value, curveSpeedLimit);
 
-  const curveEngravingSpeedWarning = useMemo(() => {
-    if (!curveSpeedLimit || !isLaser) return '';
+    if (layerModule === LayerModule.PRINTER_4C) value = Math.min(value, 45);
+    else if (layerModule === LayerModule.LASER_1064 && workarea === 'fbm2') value = Math.min(value, 150);
 
-    return sprintf(t.speed_constrain_warning_curve_engraving, {
-      limit: `${units.convertUnit(curveSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
-    });
-  }, [curveSpeedLimit, isLaser, t.speed_constrain_warning_curve_engraving, fakeUnit, displayUnit]);
+    return value;
+  }, [workareaMaxSpeed, layerModule, workarea, hasCurveEngraving, curveSpeedLimit]);
 
   const vectorSpeedWarning = useMemo(() => {
     if (!vectorSpeedLimit || !isLaser) return '';
@@ -140,16 +126,13 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       limit: `${units.convertUnit(moduleSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
     });
   }, [t.speed_constrain_warning_module_addon, fakeUnit, displayUnit]);
-  const hasCurveLimit = useGlobalPreferenceStore((state) => state.curve_engraving_speed_limit);
   const hasVectorLimit = useGlobalPreferenceStore((state) => state.vector_speed_constraint);
   const hasModuleAddon = useDocumentStore((state) => state['enable-1064'] || state['enable-4c']);
 
   let warningText = '';
 
   if (!isPromark && isLaser) {
-    if (hasCurveLimit && hasCurveEngraving && curveSpeedLimit && value > curveSpeedLimit) {
-      warningText = curveEngravingSpeedWarning;
-    } else if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
+    if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
       warningText = vectorSpeedWarning;
     } else if (minSpeedWarning && value < minSpeedWarning) {
       warningText = t.low_speed_warning;

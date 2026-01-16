@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Dibujo continuo',
     crop_task_thumbnail: 'Miniatura del recorte de contenido',
     crop_task_thumbnail_tooltip: 'Mostrar solo la miniatura del área que contiene contenido, excluyendo las áreas en blanco del lienzo.',
-    curve_engraving_speed_limit: 'Lí',
     custom_preview_height: 'Altura de vista previa personalizada',
     default_beambox_model: 'Configuración predeterminada de documentos',
     default_borderless_mode: 'Fondo abierto predeterminado',

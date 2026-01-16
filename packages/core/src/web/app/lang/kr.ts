@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: '연속 그리기',
     crop_task_thumbnail: '콘텐츠 자르기 썸네일',
     crop_task_thumbnail_tooltip: '내용이 포함된 영역의 축소판만 표시하고 빈 캔버스 영역은 제외합니다.',
-    curve_engraving_speed_limit: '곡선 조각 속도 제한',
     custom_preview_height: '사용자 정의 미리보기 높이',
     default_beambox_model: '기본 문서 설정',
     default_borderless_mode: '열린 밑면 기본 설정',

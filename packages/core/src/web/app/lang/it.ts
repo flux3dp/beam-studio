@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Disegno continuo',
     crop_task_thumbnail: 'Miniatura ritaglio contenuto',
     crop_task_thumbnail_tooltip: 'Mostra solo la miniatura dell’area contenente contenuto, escludendo le aree vuote della tela.',
-    curve_engraving_speed_limit: 'Limite di velocità per l’incisione su curva',
     custom_preview_height: 'Altezza anteprima personalizzata',
     default_beambox_model: 'Impostazione documento predefinita',
     default_borderless_mode: 'Apri inferiore predefinito',

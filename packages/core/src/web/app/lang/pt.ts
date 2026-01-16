@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Desenho contínuo',
     crop_task_thumbnail: 'Miniatura de corte de conteúdo',
     crop_task_thumbnail_tooltip: 'Exibir apenas a miniatura da área contendo conteúdo, excluindo áreas em branco da tela.',
-    curve_engraving_speed_limit: 'Limite de velocidade de gravação em curva',
     custom_preview_height: 'Altura de visualização personalizada',
     default_beambox_model: 'Configuração de documento padrão',
     default_borderless_mode: 'Abrir sem borda por padrão',

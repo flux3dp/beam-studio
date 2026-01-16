@@ -1985,7 +1985,6 @@ export interface ILang {
     continuous_drawing: string;
     crop_task_thumbnail: string;
     crop_task_thumbnail_tooltip: string;
-    curve_engraving_speed_limit: string;
     custom_preview_height: string;
     default_beambox_model: string;
     default_borderless_mode: string;

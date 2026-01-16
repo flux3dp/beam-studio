@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Souvislé kreslení',
     crop_task_thumbnail: 'Náhled oříznutého obsahu',
     crop_task_thumbnail_tooltip: 'Zobrazte pouze miniaturu oblasti obsahující obsah, s vyloučením prázdných oblastí plátna.',
-    curve_engraving_speed_limit: 'Omezení rychlosti gravírování křivky',
     custom_preview_height: 'Vlastní výška náhledu',
     default_beambox_model: 'Výchozí nastavení dokumentu',
     default_borderless_mode: 'Výchozí otevření spodní části',

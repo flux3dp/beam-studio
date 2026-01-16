@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Lukisan Berterusan',
     crop_task_thumbnail: 'Imej kecil potong kandungan',
     crop_task_thumbnail_tooltip: 'Paparkan hanya lakaran kecil kawasan yang mengandungi kandungan, kecuali kawasan kanvas kosong.',
-    curve_engraving_speed_limit: 'Had kelajuan ukiran lengkung',
     custom_preview_height: 'Ketinggian Pratonton Tersuai',
     default_beambox_model: 'Tetapan Dokumen Lalai',
     default_borderless_mode: 'Buka Bawah Lalai',

@@ -81,7 +81,6 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockUseGlobalPreferenceStore = jest.fn();
 const initialGlobalPreference = {
-  curve_engraving_speed_limit: true,
   'print-advanced-mode': false,
   vector_speed_constraint: true,
 };

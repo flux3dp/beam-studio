@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Ciągłe rysowanie',
     crop_task_thumbnail: 'Miniatura przycięcia zawartości',
     crop_task_thumbnail_tooltip: 'Wyświetlaj tylko miniaturę obszaru zawierającego treść, z wyłączeniem pustych obszarów płótna.',
-    curve_engraving_speed_limit: 'Ograniczenie prędkości grawerowania krzywej',
     custom_preview_height: 'Niestandardowa wysokość podglądu',
     default_beambox_model: 'Domyślne ustawienie dokumentu',
     default_borderless_mode: 'Domyślnie otwarte dno',

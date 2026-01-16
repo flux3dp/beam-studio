@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Dessin continu',
     crop_task_thumbnail: 'Vignette de recadrage de contenu',
     crop_task_thumbnail_tooltip: 'Affiche uniquement la vignette de la zone contenant du contenu, en excluant les zones blanches du canevas.',
-    curve_engraving_speed_limit: 'Limite de vitesse de gravure sur courbe',
     custom_preview_height: "Hauteur d'aperçu personnalisée",
     default_beambox_model: 'Modèle par défaut Beambox',
     default_borderless_mode: 'Ouverture inférieure par défaut',

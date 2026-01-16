@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Συνεχής σχεδίαση',
     crop_task_thumbnail: 'Μικρογραφία περικομμένου περιεχομένου',
     crop_task_thumbnail_tooltip: 'Εμφανίστε μόνο τη μικρογραφία της περιοχής που περιέχει περιεχόμενο, εξαιρώντας τα κενά μέρη του καμβά.',
-    curve_engraving_speed_limit: 'Όριο ταχύτητας χάραξης καμπύλης',
     custom_preview_height: 'Προσαρμοσμένο Ύψος Προεπισκόπησης',
     default_beambox_model: 'Προεπιλεγμένη ρύθμιση εγγράφου',
     default_borderless_mode: 'Προεπιλογή Άνοιγμα Κάτω',

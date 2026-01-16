@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Kontinuierliches Zeichnen',
     crop_task_thumbnail: 'Inhalt zugeschnittenes Vorschaubild',
     crop_task_thumbnail_tooltip: 'Zeige nur die Miniatur des Bereichs mit Inhalt, ohne leere Leinwandbereiche.',
-    curve_engraving_speed_limit: 'Geschwindigkeitsbegrenzung für Kurvengravur',
     custom_preview_height: 'Benutzerdefinierte Vorschauhöhe',
     default_beambox_model: 'Standarddokumenteinstellung',
     default_borderless_mode: 'Boden offen',

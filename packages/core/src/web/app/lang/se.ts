@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Kontinuerlig ritning',
     crop_task_thumbnail: 'Innehåll beskuren miniatyr',
     crop_task_thumbnail_tooltip: 'Visa endast miniatyren för området som innehåller innehåll och uteslut tomma dukområden.',
-    curve_engraving_speed_limit: 'Hastighetsgräns för kurvgravering',
     custom_preview_height: 'Anpassad förhandsgranskningshöjd',
     default_beambox_model: 'Standarddokumentinställning',
     default_borderless_mode: 'Öppna botten som standard',

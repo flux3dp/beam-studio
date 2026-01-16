@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Jatkuva piirto',
     crop_task_thumbnail: 'Sisällön rajattu pikkukuva',
     crop_task_thumbnail_tooltip: 'Näytä vain sisältöalueen pikkukuva, jättäen tyhjät kangasalueet pois.',
-    curve_engraving_speed_limit: 'Kaiverruksen nopeusrajoitus kaareville pinnoille',
     custom_preview_height: 'Mukautettu esikatselukorkeus',
     default_beambox_model: 'Oletusasiakirja-asetukset',
     default_borderless_mode: 'Avaa alaosa oletuksena',

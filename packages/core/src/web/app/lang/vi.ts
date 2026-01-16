@@ -1987,7 +1987,6 @@ const lang: ILang = {
     continuous_drawing: 'Vẽ liên tục',
     crop_task_thumbnail: 'Thu nhỏ cắt nội dung',
     crop_task_thumbnail_tooltip: 'Chỉ hiển thị ảnh thu nhỏ của khu vực có nội dung, loại trừ các vùng trống trên canvas.',
-    curve_engraving_speed_limit: 'Giới hạn tốc độ khắc đường cong',
     custom_preview_height: 'Chiều cao xem trước tùy chỉnh',
     default_beambox_model: 'Thiết lập mặc định',
     default_borderless_mode: 'Mở đáy mặc định',

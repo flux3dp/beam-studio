@@ -12,7 +12,6 @@ const state: GlobalPreference = {
   auto_align: true,
   continuous_drawing: false,
   'crop-task-thumbnail': false,
-  curve_engraving_speed_limit: true,
   'default-autofocus': false,
   'default-borderless': false,
   'default-diode': false,
