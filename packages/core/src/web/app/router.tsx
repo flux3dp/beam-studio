@@ -52,8 +52,8 @@ import Dialog from '@core/app/views/dialogs/Dialog';
 import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
-import { AutoConnectHandler } from './components/AutoConnectHandler';
 import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
+import useAutoConnect from './hooks/useAutoConnect';
 import { DEFAULT_CONFIG, useSettingStore } from './pages/Settings/useSettingStore';
 
 const { defaultAlgorithm } = theme;
@@ -86,6 +86,8 @@ const App = (): React.JSX.Element => {
   const [messageApi, contextHolder] = message.useMessage();
   const { getConfig } = useSettingStore();
 
+  useAutoConnect();
+
   Object.keys(DEFAULT_CONFIG).forEach((key) => {
     if (key === 'enable-sentry') return;
 
@@ -114,7 +116,6 @@ const App = (): React.JSX.Element => {
                 <Dialog />
                 <AlertsAndProgress />
                 {contextHolder}
-                <AutoConnectHandler />
                 <HashRouter>
                   <Switch>
                     <Route component={GoogleOAuth} exact path="/google-auth" />

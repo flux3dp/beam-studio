@@ -2,7 +2,7 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import { saveDeviceAndSettings } from '@core/app/pages/ConnectMachineIp/utils/deviceStorage';
+import { finishWithDevice } from '@core/app/pages/ConnectMachineIp/utils/finishWithDevice';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import i18n from '@core/helpers/i18n';
@@ -46,9 +46,7 @@ function setupLocalStorageIp(ip: string): void {
 /**
  * Parses comma-separated IPs and returns validated, deduplicated list.
  */
-function parseAndValidateIPs(param: null | string): string[] {
-  if (!param) return [];
-
+function parseAndValidateIPs(param: string): string[] {
   const rawIPs = param
     .split(',')
     .map((ip) => ip.trim())
@@ -151,7 +149,7 @@ async function findDeviceByProbing(targetIps: string[]): Promise<IDeviceInfo | n
   const probePromises = targetIps.map(async (ip) => {
     const device = await probeDeviceDirectly(ip);
 
-    if (device) return device;
+    if (device) return { ...device, ipaddr: ip };
 
     // Return a never-resolving promise so Promise.race ignores failed probes
     return new Promise<IDeviceInfo>(() => {});
@@ -162,9 +160,7 @@ async function findDeviceByProbing(targetIps: string[]): Promise<IDeviceInfo | n
   });
 
   try {
-    const result = await Promise.race([...probePromises, timeoutPromise]);
-
-    return result;
+    return await Promise.race([...probePromises, timeoutPromise]);
   } catch {
     return null;
   } finally {
@@ -174,6 +170,13 @@ async function findDeviceByProbing(targetIps: string[]): Promise<IDeviceInfo | n
 
 export async function handleAutoConnect(): Promise<boolean> {
   const machineIpParam = new URLSearchParams(window.location.search).get('machineIp');
+
+  if (!machineIpParam) {
+    clearUrlParams();
+
+    return false;
+  }
+
   const validIps = parseAndValidateIPs(machineIpParam);
 
   console.log('QR Auto-Connect: Starting with IPs:', validIps);
@@ -185,7 +188,7 @@ export async function handleAutoConnect(): Promise<boolean> {
 
     if (!device) throw new Error(i18n.lang.message.device_not_found.message);
 
-    await saveDeviceAndSettings(device);
+    await finishWithDevice(device);
     setupLocalStorageIp(device.ipaddr);
 
     // Update TopBar UI if user is already on editor page
