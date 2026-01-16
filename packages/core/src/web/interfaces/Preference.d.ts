@@ -51,7 +51,6 @@ export type GlobalPreference = {
   auto_align: boolean;
   continuous_drawing: boolean;
   'crop-task-thumbnail': boolean;
-  curve_engraving_speed_limit: boolean;
   'default-autofocus': boolean;
   'default-borderless': boolean;
   'default-diode': boolean;

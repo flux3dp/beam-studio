@@ -9,7 +9,6 @@ import useI18n from '@core/helpers/useI18n';
 import { SettingsCard, SettingSelect, type SettingUnitInputProps } from '../../shared';
 
 import AdorSettings from './AdorSettings';
-import BB2Settings from './BB2Settings';
 import Beamo2Settings from './Beamo2Settings';
 import BeamoSettings from './BeamoSettings';
 
@@ -26,7 +25,6 @@ function Module({ subSectionTitleClass, unitInputProps, wrapped = false }: Props
     { label: 'Ador', value: 'ado1' },
     { label: 'beamo', value: 'fbm1' },
     checkBM2() && { label: 'beamo II', value: 'fbm2' },
-    { label: 'Beambox II', value: 'fbb2' },
   ].filter(Boolean);
 
   const renderModuleSettings = () =>
@@ -34,7 +32,6 @@ function Module({ subSectionTitleClass, unitInputProps, wrapped = false }: Props
       .with('fbm1', () => <BeamoSettings unitInputProps={unitInputProps} />)
       .with('ado1', () => <AdorSettings unitInputProps={unitInputProps} />)
       .with('fbm2', () => <Beamo2Settings />)
-      .with('fbb2', () => <BB2Settings />)
       .otherwise(() => null);
 
   if (!wrapped) {

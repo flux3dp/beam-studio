@@ -21,7 +21,6 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   borderless: false,
   continuous_drawing: false,
   'crop-task-thumbnail': false,
-  curve_engraving_speed_limit: true,
   'customized-dimension': { fpm1: { height: 150, width: 150 } },
   'default-autofocus': false,
   'default-borderless': false,
