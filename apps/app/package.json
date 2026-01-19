@@ -139,11 +139,6 @@
       "artifactName": "Beam Studio ${version}.${ext}",
       "sign": false
     },
-    "deb": {
-      "depends": [
-        "libfontconfig1-dev"
-      ]
-    },
     "nsis": {
       "include": "win-install.nsh",
       "artifactName": "Beam Studio Installer ${version}.${ext}",
