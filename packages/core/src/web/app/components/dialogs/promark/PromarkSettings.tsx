@@ -175,7 +175,7 @@ const PromarkSettings = ({ device, initData, onClose }: Props): React.JSX.Elemen
     <Flex align="center" className={styles.footer} justify="space-between">
       <Flex align="center" gap={8}>
         <Button className={styles.button} onClick={handlePreview}>
-          {t.preview}
+          {tGlobal.preview}
           {isPreviewing ? (
             <Spin indicator={<LoadingOutlined className={styles.icon} spin />} />
           ) : (

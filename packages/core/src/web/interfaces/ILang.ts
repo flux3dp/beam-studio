@@ -146,7 +146,6 @@ export interface ILang {
       auto_feeder: string;
       autofocus1: string;
       autofocus2: string;
-      camera_preview: string;
       camera_preview_borderless_mode: string;
       curve_engraving: string;
       pass_through: string;
@@ -1414,7 +1413,17 @@ export interface ILang {
     UNKNOWN_ERROR: string;
   };
   global: Record<
-    'apply' | 'back' | 'cancel' | 'mode_conflict' | 'ok' | 'save' | 'save_and_exit' | 'saving' | 'select' | 'stop',
+    | 'apply'
+    | 'back'
+    | 'cancel'
+    | 'mode_conflict'
+    | 'ok'
+    | 'preview'
+    | 'save'
+    | 'save_and_exit'
+    | 'saving'
+    | 'select'
+    | 'stop',
     string
   > & {
     editing: Record<'redo' | 'reset' | 'reset_view' | 'undo' | 'zoom_in' | 'zoom_out', string>;
@@ -1633,7 +1642,6 @@ export interface ILang {
     | 'max'
     | 'min'
     | 'parameter'
-    | 'preview'
     // table setting form
     | 'rows'
     | 'size'
@@ -1905,7 +1913,6 @@ export interface ILang {
     mark_parameters: string;
     offsetX: string;
     offsetY: string;
-    preview: string;
     red_dot: string;
     scale: string;
     scaleX: string;
@@ -1926,7 +1933,6 @@ export interface ILang {
     error_tolerance_link: string;
     invert: string;
     placeholder: string;
-    preview: string;
     title: string;
   };
   rotary_settings: {

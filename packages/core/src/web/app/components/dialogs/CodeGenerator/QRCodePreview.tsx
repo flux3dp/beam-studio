@@ -20,7 +20,7 @@ export interface QRcodeRef {
 
 const QRCodePreview = forwardRef<QRcodeRef, QRcodeProps>((props: QRcodeProps, ref): React.JSX.Element => {
   const { errorLevel, isInvert, value } = props;
-  const { qr_code_generator: t } = useI18n();
+  const { global: tGlobal } = useI18n();
   const divRef = useRef<HTMLDivElement>(null);
 
   useImperativeHandle(ref, () => ({
@@ -41,7 +41,7 @@ const QRCodePreview = forwardRef<QRcodeRef, QRcodeProps>((props: QRcodeProps, re
           value={value}
         />
       ) : (
-        <div className={styles.placeholder}>{t.preview}</div>
+        <div className={styles.placeholder}>{tGlobal.preview}</div>
       )}
     </div>
   );
