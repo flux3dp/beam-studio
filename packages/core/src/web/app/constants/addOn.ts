@@ -31,7 +31,12 @@ export interface AddOnInfo {
     xRange?: [number, number];
   };
   autoFocus?: boolean;
-  curveEngraving?: boolean;
+  /**
+   * curveEngraving
+   * non-null value means the model support curve engraving
+   * acceleration means the value to override z-acceleration in fcode
+   */
+  curveEngraving?: { acceleration?: number };
   framingLowLaser?: boolean;
   hybridLaser?: boolean;
   jobOrigin?: boolean;
@@ -98,7 +103,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       vectorSpeedLimit: 30,
       xRange: [100, 400],
     },
-    curveEngraving: true,
+    curveEngraving: {},
     jobOrigin: true,
     lowerFocus: true,
     passThrough: { maxHeight: 300, xRange: [100, 400] },
@@ -135,7 +140,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
       vectorSpeedLimit: 30,
       xRange: [0, 340],
     },
-    curveEngraving: checkBM2CurveEngraving(),
+    curveEngraving: checkBM2CurveEngraving() ? { acceleration: 1000 } : undefined,
     jobOrigin: true,
     lowerFocus: true,
     multiModules: true,

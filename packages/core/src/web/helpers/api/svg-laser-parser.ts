@@ -249,23 +249,23 @@ export const getExportOpt = async (
       points: rawPoints,
       subdividedPoints,
     } = curveEngravingModeController.data!;
-    const points: Array<[number, number, number]> =
-      subdividedPoints ??
-      (rawPoints
-        .flat()
-        .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]])
-        .filter((p) => p[2] !== null) as Array<[number, number, number]>);
 
     // if lowest is null, it means no points is measured successfully
     if (lowest !== null && highest !== null) {
-      const data = {
+      const points: Array<[number, number, number]> =
+        subdividedPoints ??
+        (rawPoints
+          .flat()
+          .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]])
+          .filter((p) => p[2] !== null) as Array<[number, number, number]>);
+
+      config.curve_engraving = {
+        acceleration: addOnInfo.curveEngraving.acceleration,
         bbox,
         gap,
         points,
         safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
       };
-
-      config.curve_engraving = data;
     }
   }
 
