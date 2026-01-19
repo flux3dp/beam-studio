@@ -14,7 +14,7 @@ interface CameraProps {
 
 const Camera = ({ zoomKey, zoomRatio = 1.5 }: CameraProps) => {
   const currentZoomKey = useRef(zoomKey);
-  const [position, setPosition] = useState(null);
+  const [position, setPosition] = useState<null | THREE.Vector3>(null);
 
   useFrame(({ camera }) => {
     if (zoomKey !== currentZoomKey.current) {
