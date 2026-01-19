@@ -608,6 +608,9 @@ importers:
       three:
         specifier: ^0.159.0
         version: 0.159.0
+      three-subdivide:
+        specifier: ^1.1.5
+        version: 1.1.5(three@0.159.0)
       ts-pattern:
         specifier: ^5.6.2
         version: 5.7.1
@@ -10268,6 +10271,11 @@ packages:
     resolution: {integrity: sha512-kv0Byb++AXztEGsULgMAs8U2jgUdz6HPpAB/wDJnLiLlaWQX2APHhiTJIN7rqW+Of0eRgcp7jn05U1BsCP3xBA==}
     peerDependencies:
       three: '>=0.128.0'
+
+  three-subdivide@1.1.5:
+    resolution: {integrity: sha512-eEWMevrsHIMnC1xbsZSQZIB8QBr8XeXZhTSAdYrLm3ZC/yTdR4ocOZ2Qi+gEyPJFOt3iirQ+SQR0jCamk7e6FQ==}
+    peerDependencies:
+      three: '>= 0.125.0'
 
   three@0.159.0:
     resolution: {integrity: sha512-eCmhlLGbBgucuo4VEA9IO3Qpc7dh8Bd4VKzr7WfW4+8hMcIfoAVi1ev0pJYN9PTTsCslbcKgBwr2wNZ1EvLInA==}
@@ -23410,6 +23418,10 @@ snapshots:
       draco3d: 1.5.7
       fflate: 0.6.10
       potpack: 1.0.2
+      three: 0.159.0
+
+  three-subdivide@1.1.5(three@0.159.0):
+    dependencies:
       three: 0.159.0
 
   three@0.159.0: {}
