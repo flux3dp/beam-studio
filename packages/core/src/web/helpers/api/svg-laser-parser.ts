@@ -238,17 +238,20 @@ export const getExportOpt = async (
   }
 
   if (curveEngravingModeController.hasArea() && addOnInfo.curveEngraving) {
-    const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
+    const { bbox, gap, highest, lowest, objectHeight, points: rawPoints } = curveEngravingModeController.data!;
+    const points: Array<[number, number, number]> =
+      curveEngravingModeController.subdividedPoints ??
+      (rawPoints
+        .flat()
+        .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]])
+        .filter((p) => p[2] !== null) as Array<[number, number, number]>);
 
     // if lowest is null, it means no points is measured successfully
     if (lowest !== null && highest !== null) {
       const data = {
         bbox,
         gap,
-        points: points
-          .flat()
-          .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]] as [number, number, null | number])
-          .filter((p) => p[2] !== null),
+        points,
         safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
       };
 

@@ -1,93 +1,145 @@
 import Delaunator from 'delaunator';
 import * as THREE from 'three';
+import { match } from 'ts-pattern';
 
-export const createTriangularGeometry = (points: Array<[number, number, number]>, width: number, height: number) => {
-  const vertices: number[] = [];
-  const indices: number[] = [];
-  const uvs: number[] = []; // UV coordinates
+type Point3D = [number, number, number];
+type Triangle = [Point3D, Point3D, Point3D];
+
+const getEdgeLength2D = (p1: Point3D, p2: Point3D): number => Math.hypot(p2[0] - p1[0], p2[1] - p1[1]);
+
+const getMidpoint = (p1: Point3D, p2: Point3D): Point3D => [
+  (p1[0] + p2[0]) / 2,
+  (p1[1] + p2[1]) / 2,
+  (p1[2] + p2[2]) / 2,
+];
+
+const getPlaneAngle = (p1: Point3D, p2: Point3D, p3: Point3D): number => {
+  const v1 = new THREE.Vector3(p2[0] - p1[0], p2[1] - p1[1], p2[2] - p1[2]);
+  const v2 = new THREE.Vector3(p3[0] - p1[0], p3[1] - p1[1], p3[2] - p1[2]);
+  const normal = new THREE.Vector3();
+
+  normal.crossVectors(v1, v2).normalize();
+
+  let angle = THREE.MathUtils.radToDeg(normal.angleTo(new THREE.Vector3(0, 0, -1))); // deg
+
+  angle = angle > 90 ? 180 - angle : angle;
+
+  return angle;
+};
+
+/**
+ * Subdivide triangles based on edge length using longest edge bisection algorithm.
+ * For each triangle, if any edge's 2D Euclidean distance (x, y) exceeds maxEdgeLength,
+ * the triangle is split by adding a vertex at the midpoint of the longest edge.
+ * This process would not change the z profile of the surface.
+ *
+ * @param triangles - Array of triangles, each triangle is [p1, p2, p3] where each point is [x, y, z]
+ * @param maxEdgeLength - Maximum acceptable 2D edge length before subdivision
+ * @param angleLimit - Only triangles planar larger than this angle (degrees) will be subdivided
+ * @returns Array of subdivided triangles
+ */
+export const subdivideTrianglesByEdgeLength = (triangles: Triangle[], maxEdgeLength: number): Triangle[] => {
+  const result: Triangle[] = [];
+  const currentTriangles: Triangle[] = [...triangles];
+
+  console.log('Starting subdivision with', currentTriangles.length, 'triangles', maxEdgeLength);
+
+  const start = performance.now();
+
+  while (currentTriangles.length > 0) {
+    const [p1, p2, p3] = currentTriangles.pop()!;
+    const l12 = getEdgeLength2D(p1, p2);
+    const l23 = getEdgeLength2D(p2, p3);
+    const l31 = getEdgeLength2D(p3, p1);
+    const maxLength = Math.max(l12, l23, l31);
+
+    if (maxLength <= maxEdgeLength) {
+      result.push([p1, p2, p3]);
+      continue;
+    }
+
+    match(maxLength)
+      .with(l12, () => {
+        const m = getMidpoint(p1, p2);
+
+        currentTriangles.push([p1, m, p3], [m, p2, p3]);
+      })
+      .with(l23, () => {
+        const m = getMidpoint(p2, p3);
+
+        currentTriangles.push([p1, p2, m], [p1, m, p3]);
+      })
+      .with(l31, () => {
+        const m = getMidpoint(p3, p1);
+
+        currentTriangles.push([p1, p2, m], [m, p2, p3]);
+      })
+      .otherwise(() => {
+        console.error('Unexpected case in triangle subdivision:', [p1, p2, p3]);
+      });
+  }
+
+  console.log('Subdivision completed in', performance.now() - start, 'ms');
+  console.log('Resulting triangles count:', result.length);
+
+  return result;
+};
+
+export const createTriangularGeometry = (
+  points: Point3D[],
+  width: number,
+  height: number,
+  maxEdgeLength: number = 5,
+) => {
   const delaunay = Delaunator.from(
     points,
     (p) => p[0],
     (p) => p[1],
   );
 
-  console.log('delaunay', delaunay);
+  // Extract triangles from Delaunay result
+  const triangles: Triangle[] = [];
 
   for (let i = 0; i < delaunay.triangles.length; i += 3) {
-    // Add triangle
-    for (let j = 0; j < 3; j++) {
-      const point = points[delaunay.triangles[i + j]];
+    const p1 = points[delaunay.triangles[i]];
+    const p2 = points[delaunay.triangles[i + 1]];
+    const p3 = points[delaunay.triangles[i + 2]];
 
-      vertices.push(point[0], point[1], point[2]);
-      uvs.push(point[0] / width + 0.5, point[1] / height + 0.5);
-      indices.push(i + j);
-    }
+    triangles.push([p1, p2, p3]);
+  }
+
+  // Subdivide triangles based on edge length
+  const subdividedTriangles = maxEdgeLength > 0 ? subdivideTrianglesByEdgeLength(triangles, maxEdgeLength) : triangles;
+
+  // Build geometry arrays from subdivided triangles
+  const vertices: number[] = [];
+  const indices: number[] = [];
+  const uvs: number[] = [];
+
+  for (const [p1, p2, p3] of subdividedTriangles) {
+    const baseIndex = vertices.length / 3;
+
+    vertices.push(p1[0], p1[1], p1[2]);
+    vertices.push(p2[0], p2[1], p2[2]);
+    vertices.push(p3[0], p3[1], p3[2]);
+
+    uvs.push(p1[0] / width + 0.5, p1[1] / height + 0.5);
+    uvs.push(p2[0] / width + 0.5, p2[1] / height + 0.5);
+    uvs.push(p3[0] / width + 0.5, p3[1] / height + 0.5);
+
+    indices.push(baseIndex, baseIndex + 1, baseIndex + 2);
   }
 
   const geometry = new THREE.BufferGeometry();
 
   geometry.setAttribute('position', new THREE.Float32BufferAttribute(vertices, 3));
-  geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2)); // Set UVs
+  geometry.setAttribute('uv', new THREE.Float32BufferAttribute(uvs, 2));
   geometry.setIndex(indices);
-
-  console.log(geometry);
-
-  interpolateTriangularGeometry(geometry, width, height);
-
   geometry.computeVertexNormals();
 
-  console.log(geometry);
+  console.log('Created triangular geometry with', vertices.length / 3, 'vertices and', indices.length / 3, 'triangles');
 
   return geometry;
-};
-
-export const interpolateTriangularGeometry = (geometry: THREE.BufferGeometry, width: number, height: number) => {
-  const positions = geometry.getAttribute('position');
-  const newPositions: number[] = [];
-  const newUVs: number[] = [];
-  const newIndices: number[] = [];
-
-  for (let i = 0; i < positions.count; i += 3) {
-    /** Triangle: add p4, p5, p6
-     *    p1----------p2        p1----p4----p2
-     *     \          /          \   /  \   /
-     *      \        /            \ /    \ /
-     *       \      /     ==>     p5------p6
-     *        \    /                \    /
-     *         \  /                  \  /
-     *          p3                    p3
-     */
-
-    const p1 = new THREE.Vector3(positions.getX(i), positions.getY(i), positions.getZ(i));
-    const p2 = new THREE.Vector3(positions.getX(i + 1), positions.getY(i + 1), positions.getZ(i + 1));
-    const p3 = new THREE.Vector3(positions.getX(i + 2), positions.getY(i + 2), positions.getZ(i + 2));
-    const p4 = new THREE.Vector3().addVectors(p1, p2).multiplyScalar(0.5);
-    const p5 = new THREE.Vector3().addVectors(p1, p3).multiplyScalar(0.5);
-    const p6 = new THREE.Vector3().addVectors(p2, p3).multiplyScalar(0.5);
-
-    const triangles = [
-      [p1, p4, p5],
-      [p4, p2, p6],
-      [p5, p6, p3],
-      [p4, p6, p5],
-    ];
-
-    for (const points of triangles) {
-      newPositions.push(points[0].x, points[0].y, points[0].z);
-      newPositions.push(points[1].x, points[1].y, points[1].z);
-      newPositions.push(points[2].x, points[2].y, points[2].z);
-
-      newUVs.push(points[0].x / width + 0.5, points[0].y / height + 0.5);
-      newUVs.push(points[1].x / width + 0.5, points[1].y / height + 0.5);
-      newUVs.push(points[2].x / width + 0.5, points[2].y / height + 0.5);
-      newIndices.push(newIndices.length, newIndices.length + 1, newIndices.length + 2);
-    }
-  }
-
-  geometry.setAttribute('position', new THREE.Float32BufferAttribute(newPositions, 3));
-  geometry.setAttribute('uv', new THREE.Float32BufferAttribute(newUVs, 2));
-  geometry.setIndex(newIndices);
-  // geometry.computeVertexNormals();
 };
 
 export const setGeometryAngleAlertColor = (
@@ -100,16 +152,11 @@ export const setGeometryAngleAlertColor = (
   const colors = [];
 
   for (let i = 0; i < positions.count; i += 3) {
-    const v1 = new THREE.Vector3(positions.getX(i), positions.getY(i), positions.getZ(i));
-    const v2 = new THREE.Vector3(positions.getX(i + 1), positions.getY(i + 1), positions.getZ(i + 1));
-    const v3 = new THREE.Vector3(positions.getX(i + 2), positions.getY(i + 2), positions.getZ(i + 2));
-    const normal = new THREE.Vector3();
-
-    normal.crossVectors(v2.sub(v1), v3.sub(v1)).normalize();
-
-    let angle = THREE.MathUtils.radToDeg(normal.angleTo(new THREE.Vector3(0, 0, -1))); // deg
-
-    angle = angle > 90 ? 180 - angle : angle;
+    const angle = getPlaneAngle(
+      [positions.getX(i), positions.getY(i), positions.getZ(i)],
+      [positions.getX(i + 1), positions.getY(i + 1), positions.getZ(i + 1)],
+      [positions.getX(i + 2), positions.getY(i + 2), positions.getZ(i + 2)],
+    );
 
     const color = angle > angleThreshold ? alertColor : defaultColor;
 

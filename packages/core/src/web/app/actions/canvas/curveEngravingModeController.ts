@@ -29,6 +29,7 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 class CurveEngravingModeController {
   started: boolean;
   data: CurveEngraving | null;
+  subdividedPoints?: Array<[number, number, number]>;
   boundarySvg?: SVGSVGElement;
   boundaryPath?: SVGPathElement;
   areaPath?: SVGPathElement;
@@ -430,6 +431,18 @@ class CurveEngravingModeController {
     }
 
     return cmd;
+  };
+
+  setSubdividedPoints = (points: Array<[number, number, number]> | null) => {
+    if (points === null) {
+      delete this.subdividedPoints;
+
+      return;
+    }
+
+    this.subdividedPoints = points;
+
+    console.log('Subdivided points set:', points, 'current data:', this.data);
   };
 }
 

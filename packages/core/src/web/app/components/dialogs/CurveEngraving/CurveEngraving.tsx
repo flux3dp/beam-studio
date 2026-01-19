@@ -9,7 +9,9 @@ import * as THREE from 'three';
 import constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import Canvas from '@core/app/widgets/three/Canvas';
+import UnitInput from '@core/app/widgets/UnitInput';
 import translateErrorMessage from '@core/helpers/device/curve-measurer/translateError';
+import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { CurveEngraving as ICurveEngraving } from '@core/interfaces/ICurveEngraving';
@@ -17,6 +19,7 @@ import type { CurveEngraving as ICurveEngraving } from '@core/interfaces/ICurveE
 import styles from './CurveEngraving.module.scss';
 import getCanvasImage from './getCanvasImage';
 import Plane from './Plane';
+import { usePointsData } from './utils/usePointsData';
 
 interface Props {
   data: ICurveEngraving;
@@ -33,7 +36,12 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
   const [displayCamera, setDisplayCamera] = useState(false);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
   const [isAntdMotionCompleted, setIsAntdMotionCompleted] = useState(false);
-  const { bbox } = data;
+  const [doSubdivision, setDoSubdivision] = useState(false);
+  const [loopSubdivisionIter, setLoopSubdivisionIter] = useState(1);
+  const [maxEdgeLength, setMaxEdgeLength] = useState(15);
+  const isDevMode = useMemo(() => isDev(), []);
+  // reverse y and z axis due to different coordinate system for three.js and curve engraving device
+  const pointsData = usePointsData(data.points, { reverseY: true, reverseZ: true });
 
   useEffect(() => {
     setTimeout(() => {
@@ -43,15 +51,15 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
   }, []);
 
   const canvasImagePromise = useMemo(async () => {
-    const { height, width, x, y } = bbox;
+    const { height, minX: x, minY: y, width } = pointsData;
     const { dpmm } = constant;
     const res = await getCanvasImage(x * dpmm, y * dpmm, width * dpmm, height * dpmm);
 
     return res;
-  }, [bbox]);
+  }, [pointsData]);
 
   const cameraImagePromise = useMemo(async () => {
-    const { height, width, x, y } = bbox;
+    const { height, minX: x, minY: y, width } = pointsData;
     const { dpmm } = constant;
     const canvasUrl = await previewModeBackgroundDrawer.getCameraCanvasUrl();
 
@@ -69,7 +77,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     const imageBitmap = await createImageBitmap(i, x * dpmm, y * dpmm, width * dpmm, height * dpmm);
 
     return imageBitmap;
-  }, [bbox]);
+  }, [pointsData]);
 
   const updateImage = useCallback(async () => {
     if (!displayCamera && !displayCanvas) {
@@ -77,7 +85,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     }
 
     const { dpmm } = constant;
-    const { height, width } = bbox;
+    const { height, width } = pointsData;
     const outCanvas = document.createElement('canvas');
 
     outCanvas.width = Math.round(width * dpmm);
@@ -107,7 +115,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     const base64 = outCanvas.toDataURL('image/jpeg', 1);
 
     return setImage(base64);
-  }, [bbox, displayCanvas, displayCamera, canvasImagePromise, cameraImagePromise]);
+  }, [pointsData, displayCanvas, displayCamera, canvasImagePromise, cameraImagePromise]);
 
   useEffect(() => {
     updateImage();
@@ -184,7 +192,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
               far: 1000,
               fov: 55,
               near: 0.1,
-              position: [0, 0, Math.max(bbox.width, bbox.height)],
+              position: [0, 0, Math.max(pointsData.width, pointsData.height)],
             }}
             gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
             linear
@@ -193,6 +201,10 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
               <Suspense fallback={null}>
                 <Plane
                   data={data}
+                  doSubdivision={doSubdivision}
+                  loopSubdivisionIter={loopSubdivisionIter}
+                  maxEdgeLength={maxEdgeLength}
+                  pointsData={pointsData}
                   selectedIndices={selectedIndices}
                   textureSource={image}
                   toggleSelectedIndex={toggleSelectIdx}
@@ -219,7 +231,41 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
         >
           {lang.curve_engraving.apply_camera}
         </Button>
+        {isDevMode && (
+          <Button
+            ghost={doSubdivision}
+            onClick={() => setDoSubdivision((cur) => !cur)}
+            shape="round"
+            type={doSubdivision ? 'primary' : 'default'}
+          >
+            subdivide
+          </Button>
+        )}
       </div>
+      {isDevMode && (
+        <div>
+          <label htmlFor="subdivision-iter">subdivision iterations:</label>
+          <UnitInput
+            id="subdivision-iter"
+            max={3}
+            min={0}
+            onChange={(val) => {
+              if (val !== null) setLoopSubdivisionIter(val);
+            }}
+            value={loopSubdivisionIter}
+          />
+          <label htmlFor="max-edge-length">max edge length (0 to disable):</label>
+          <UnitInput
+            id="max-edge-length"
+            max={100}
+            min={0}
+            onChange={(val) => {
+              if (val !== null) setMaxEdgeLength(val);
+            }}
+            value={maxEdgeLength}
+          />
+        </div>
+      )}
       <div className={styles.hint}>{lang.curve_engraving.click_to_select_point}</div>
     </Modal>
   );
