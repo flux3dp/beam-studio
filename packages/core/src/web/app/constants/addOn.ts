@@ -121,7 +121,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
     passThrough: { maxHeight: 160 },
     rotary: {
       chuck: true,
-      extendWorkarea: false,
+      extendWorkarea: true,
       mirror: false,
       roller: true,
     },
