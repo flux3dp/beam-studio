@@ -228,6 +228,10 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
 export const showZAxisAdjustment = async (device?: IDeviceInfo): Promise<void> => {
   const id = 'z-axis-adjustment';
 
+  if (!device) {
+    return;
+  }
+
   await deviceMaster.select(device);
 
   const res = await checkDeviceStatus(device);
