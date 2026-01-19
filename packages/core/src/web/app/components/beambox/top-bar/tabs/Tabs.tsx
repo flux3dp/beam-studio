@@ -153,10 +153,10 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
 
                 return (
                   <Draggable draggableId={id.toFixed(0)} index={idx} key={id}>
-                    {(draggalbeProvided) => (
+                    {(draggableProvided) => (
                       <div
-                        {...draggalbeProvided.draggableProps}
-                        {...draggalbeProvided.dragHandleProps}
+                        {...draggableProvided.draggableProps}
+                        {...draggableProvided.dragHandleProps}
                         className={classNames(styles.tab, { [styles.focused]: currentId === id })}
                         onClick={() => tabController.focusTab(id)}
                         onDoubleClick={() => {
@@ -166,7 +166,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
 
                           handleRenameCurrentTab();
                         }}
-                        ref={draggalbeProvided.innerRef}
+                        ref={draggableProvided.innerRef}
                         title={title}
                       >
                         {renderIcon(tab)}

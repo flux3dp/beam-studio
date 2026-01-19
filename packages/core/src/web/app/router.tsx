@@ -53,6 +53,7 @@ import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
 import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
+import useAutoConnect from './hooks/useAutoConnect';
 import { DEFAULT_CONFIG, useSettingStore } from './pages/Settings/useSettingStore';
 
 const { defaultAlgorithm } = theme;
@@ -84,6 +85,8 @@ console.log('Loading language', navigator.language);
 const App = (): React.JSX.Element => {
   const [messageApi, contextHolder] = message.useMessage();
   const { getConfig } = useSettingStore();
+
+  useAutoConnect();
 
   Object.keys(DEFAULT_CONFIG).forEach((key) => {
     if (key === 'enable-sentry') return;

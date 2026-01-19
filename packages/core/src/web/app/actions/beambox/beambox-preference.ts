@@ -158,8 +158,12 @@ class BeamboxPreferenceClass {
   ): void {
     const preference = storage.get('beambox-preference');
 
-    preference[key] = value;
-    storage.set('beambox-preference', preference);
+    try {
+      preference[key] = value;
+      storage.set('beambox-preference', preference);
+    } catch (error) {
+      console.trace('Error writing beambox preference', preference, key, value, error);
+    }
 
     if (shouldNotifyChanges) communicator.send(TabEvents.GlobalPreferenceChanged, key, value);
   }
