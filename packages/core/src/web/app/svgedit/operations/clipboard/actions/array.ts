@@ -1,7 +1,7 @@
+import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import undoManager from '../../../history/undoManager';
@@ -15,10 +15,17 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
+interface ArrayOptions {
+  /** When true, returns the BatchCommand without adding to history (for preview mode) */
+  skipHistory?: boolean;
+}
+
 export const generateSelectedElementArray = async (
   interval: { dx: number; dy: number },
   { column, row }: { column: number; row: number },
-): Promise<IBatchCommand | null> => {
+  options: ArrayOptions = {},
+): Promise<BatchCommand | null> => {
+  const { skipHistory = false } = options;
   const batchCmd = new history.BatchCommand('Grid elements');
 
   await copySelectedElements();
@@ -68,9 +75,15 @@ export const generateSelectedElementArray = async (
 
   svgCanvas.multiSelect(arrayElements);
 
-  if (!batchCmd.isEmpty()) {
-    undoManager.addCommandToHistory(batchCmd);
+  if (batchCmd.isEmpty()) {
+    return null;
   }
+
+  if (skipHistory) {
+    return batchCmd;
+  }
+
+  undoManager.addCommandToHistory(batchCmd);
 
   return null;
 };
