@@ -238,9 +238,19 @@ export const getExportOpt = async (
   }
 
   if (curveEngravingModeController.hasArea() && addOnInfo.curveEngraving) {
-    const { bbox, gap, highest, lowest, objectHeight, points: rawPoints } = curveEngravingModeController.data!;
+    console.log('Adding curve engraving data to fcode config', curveEngravingModeController.data);
+
+    const {
+      bbox,
+      gap,
+      highest,
+      lowest,
+      objectHeight,
+      points: rawPoints,
+      subdividedPoints,
+    } = curveEngravingModeController.data!;
     const points: Array<[number, number, number]> =
-      curveEngravingModeController.subdividedPoints ??
+      subdividedPoints ??
       (rawPoints
         .flat()
         .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]])
