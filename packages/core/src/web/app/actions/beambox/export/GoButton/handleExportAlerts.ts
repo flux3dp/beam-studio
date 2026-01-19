@@ -167,85 +167,9 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
   SymbolMaker.switchImageSymbolForAll(false);
 
-  const curveSpeedLimit = workareaObj.curveSpeedLimit?.x;
-  const hasCurveSpeedLimit = isCurveEngravingTask && curveSpeedLimit;
-  const handleCurveEngravingSpeedAlert = async (): Promise<void> => {
-    if (!hasCurveSpeedLimit) {
-      return;
-    }
-
-    let isTooFast = false;
-
-    const tooFastLayers: string[] = [];
-
-    for (let i = 0; i < layers.length; i += 1) {
-      const layer = layers[i];
-
-      if (
-        Number.parseFloat(layer.getAttribute('data-speed') ?? '0') > curveSpeedLimit &&
-        layer.getAttribute('display') !== 'none'
-      ) {
-        isTooFast = true;
-
-        const layerName = getLayerName(layer);
-
-        if (layerName) {
-          tooFastLayers.push(layerName);
-        }
-      }
-    }
-
-    if (isTooFast) {
-      await new Promise<void>((resolve) => {
-        const limit = getStorage('isInch') ? `${round(curveSpeedLimit / 25.4, 2)} in/s` : `${curveSpeedLimit} mm/s`;
-
-        if (!globalPreference['curve_engraving_speed_limit']) {
-          if (!alertConfig.read('skip_curve_speed_warning')) {
-            const message = sprintf(lang.beambox.popup.too_fast_for_curve, { limit });
-
-            alertCaller.popUp({
-              callbacks: () => resolve(),
-              checkbox: {
-                callbacks: () => {
-                  alertConfig.write('skip_curve_speed_warning', true);
-                  resolve();
-                },
-                text: lang.alert.dont_show_again,
-              },
-              message,
-              type: alertConstants.SHOW_POPUP_WARNING,
-            });
-          } else {
-            resolve();
-          }
-        } else if (!alertConfig.read('skip_curve_speed_limit_warning')) {
-          const message = sprintf(lang.beambox.popup.too_fast_for_curve_and_constrain, {
-            layers: tooFastLayers.join(', '),
-            limit,
-          });
-
-          alertCaller.popUp({
-            callbacks: () => resolve(),
-            checkbox: {
-              callbacks: () => {
-                alertConfig.write('skip_curve_speed_limit_warning', true);
-                resolve();
-              },
-              text: lang.alert.dont_show_again,
-            },
-            message,
-            type: alertConstants.SHOW_POPUP_WARNING,
-          });
-        } else {
-          resolve();
-        }
-      });
-    }
-  };
-
-  await handleCurveEngravingSpeedAlert();
-
   const handleVectorSpeedAlert = async (): Promise<void> => {
+    const curveSpeedLimit = workareaObj.curveSpeedLimit?.x;
+    const hasCurveSpeedLimit = isCurveEngravingTask && curveSpeedLimit;
     const vectorSpeedLimit =
       (isAutoFeederTask && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
 
