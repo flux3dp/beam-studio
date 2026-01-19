@@ -182,7 +182,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         options={sliderOptions}
         type={type}
         unit={displayUnit}
-        value={value}
+        value={Math.min(Math.max(value, minValue), maxValue)}
       />
       <ConfigSlider
         decimal={decimal}
