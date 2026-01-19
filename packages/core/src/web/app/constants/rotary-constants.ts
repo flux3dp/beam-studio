@@ -11,15 +11,18 @@ export interface RotaryConstants {
 const rotaryConstants: { [key in WorkAreaModel]?: RotaryConstants } = {
   ado1: {
     boundary: [0, 300],
-    maxHeight: 140,
+    maxHeight: 200,
   },
   fbb2: {
     boundary: [0, 375],
     maxHeight: 1625,
   },
+  fbm1: {
+    maxHeight: 290,
+  },
   fbm2: {
     boundary: [0, 240],
-    maxHeight: 140,
+    maxHeight: 290,
   },
   get fpm1() {
     const height = useDocumentStore.getState()['customized-dimension']?.fpm1?.height || 150;
