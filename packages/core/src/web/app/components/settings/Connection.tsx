@@ -3,82 +3,83 @@ import { useMemo, useState } from 'react';
 
 import { MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { Button, Input } from 'antd';
+import { v4 as uuidv4 } from 'uuid';
 
 import alert from '@core/app/actions/alert-caller';
 import SettingSwitch from '@core/app/components/settings/components/SettingSwitch';
 import alertConstants from '@core/app/constants/alert-constants';
 import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
+import checkIPFormat from '@core/helpers/check-ip-format';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Connection.module.scss';
 
-// Validates IPv4 addresses with octet ranges (0-255)
-const IPV4_PATTERN = /^(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/;
+interface IpItem {
+  id: string;
+  value: string;
+}
 
-const parseIpList = (ipString: string): string[] => {
-  const ips = ipString.split(/[,;]\s*/).filter(Boolean);
-
-  return ips.length > 0 ? ips : [''];
-};
+const parseIpList = (str: string): IpItem[] =>
+  str
+    .split(/[,]\s*/)
+    .filter(Boolean)
+    .map((ip) => ({ id: uuidv4(), value: ip }));
 
 function Connection(): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, setConfig } = useSettingStore();
-
   // eslint-disable-next-line hooks/exhaustive-deps -- Only parse once on mount
   const initialIpList = useMemo(() => parseIpList(getConfig('poke-ip-addr')), []);
-  const [ipList, setIpList] = useState<string[]>(initialIpList);
-  const [selectedIndex, setSelectedIndex] = useState<null | number>(null);
+  const [ipList, setIpList] = useState<IpItem[]>(initialIpList);
+  const [selectedId, setSelectedId] = useState<null | string>(null);
 
-  const updateIpConfig = (newList: string[]): void => {
+  const updateIpConfig = (newList: IpItem[]): void => {
     setIpList(newList);
 
-    const validIps = newList.filter(Boolean).join(',');
+    const validIps = newList
+      .map((item) => item.value)
+      .filter(Boolean)
+      .join(',');
 
     setConfig('poke-ip-addr', validIps);
   };
 
-  const handleIpChange = (index: number, value: string): void => {
-    const newList = [...ipList];
-
-    newList[index] = value;
-    setIpList(newList);
+  const handleIpChange = (id: string, value: string): void => {
+    setIpList((prev) => prev.map((item) => (item.id === id ? { ...item, value } : item)));
   };
 
-  const handleIpBlur = (index: number, value: string): void => {
-    if (value !== '' && !IPV4_PATTERN.test(value)) {
+  const handleIpBlur = (id: string, value: string): void => {
+    if (value !== '' && !checkIPFormat(value)) {
       alert.popUp({
         id: 'wrong-ip-error',
         message: `${lang.settings.wrong_ip_format}\n${value}`,
         type: alertConstants.SHOW_POPUP_ERROR,
       });
 
-      const newList = [...ipList];
+      const initialItem = initialIpList.find((item) => item.id === id);
+      const revertedList = ipList.map((item) => (item.id === id ? { ...item, value: initialItem?.value || '' } : item));
 
-      newList[index] = initialIpList[index] || '';
-      setIpList(newList);
+      setIpList(revertedList);
 
       return;
     }
 
-    // Use value directly to avoid stale state from closure
-    const newList = [...ipList];
+    const newList = ipList.map((item) => (item.id === id ? { ...item, value } : item));
 
-    newList[index] = value;
     updateIpConfig(newList);
   };
 
   const handleAddIp = (): void => {
-    setIpList([...ipList, '']);
+    setIpList([...ipList, { id: uuidv4(), value: '' }]);
   };
 
   const handleRemoveIp = (): void => {
     if (ipList.length > 1) {
-      const indexToRemove = selectedIndex !== null && selectedIndex < ipList.length ? selectedIndex : ipList.length - 1;
-      const newList = ipList.filter((_, i) => i !== indexToRemove);
+      const idToRemove = selectedId ?? ipList[ipList.length - 1].id;
+      const newList = ipList.filter((item) => item.id !== idToRemove);
 
       updateIpConfig(newList);
-      setSelectedIndex(null);
+      setSelectedId(null);
     }
   };
 
@@ -100,29 +101,31 @@ function Connection(): React.JSX.Element {
       />
       <div className={styles['ip-section']} id="connect-ip-list">
         <span className={styles['ip-label']}>{lang.settings.ip}</span>
-        <div className={styles['ip-list']}>
-          {ipList.map((ip, index) => (
-            <Input
-              autoComplete="off"
-              className={styles['ip-input']}
-              key={`${ip}-${index}`}
-              onBlur={(e) => handleIpBlur(index, e.target.value)}
-              onChange={(e) => handleIpChange(index, e.target.value)}
-              onFocus={() => setSelectedIndex(index)}
-              placeholder="192.168.1.1"
-              value={ip}
+        <div className={styles['ip-content']}>
+          <div className={styles['ip-list']}>
+            {ipList.map((item) => (
+              <Input
+                autoComplete="false"
+                className={styles['ip-input']}
+                key={item.id}
+                onBlur={(e) => handleIpBlur(item.id, e.target.value)}
+                onChange={(e) => handleIpChange(item.id, e.target.value)}
+                onFocus={() => setSelectedId(item.id)}
+                placeholder="192.168.1.1"
+                value={item.value}
+              />
+            ))}
+          </div>
+          <div className={styles['ip-buttons']}>
+            <Button className={styles['ip-button']} icon={<PlusOutlined />} onClick={handleAddIp} type="text" />
+            <Button
+              className={styles['ip-button']}
+              disabled={ipList.length <= 1}
+              icon={<MinusOutlined />}
+              onClick={handleRemoveIp}
+              type="text"
             />
-          ))}
-        </div>
-        <div className={styles['ip-buttons']}>
-          <Button className={styles['ip-button']} icon={<PlusOutlined />} onClick={handleAddIp} type="text" />
-          <Button
-            className={styles['ip-button']}
-            disabled={ipList.length <= 1}
-            icon={<MinusOutlined />}
-            onClick={handleRemoveIp}
-            type="text"
-          />
+          </div>
         </div>
       </div>
     </>

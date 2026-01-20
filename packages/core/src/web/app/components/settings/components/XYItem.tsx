@@ -35,26 +35,30 @@ const XYItem = ({
   values: [x, y],
 }: Props): React.JSX.Element => (
   <SettingFormItem id={id} label={label} tooltip={tooltip}>
-    <span className={classNames('font2', styles['sub-item'])}>X</span>
-    <SettingUnitInput
-      {...unitInputProps}
-      containerClassName={styles['sub-item']}
-      id={`${id}-x`}
-      max={maxX}
-      min={minX}
-      onChange={(val) => onChange('x', val)}
-      value={x}
-    />
-    <span className={classNames('font2', styles['sub-item'])}>Y</span>
-    <SettingUnitInput
-      {...unitInputProps}
-      containerClassName={styles['sub-item']}
-      id={`${id}-y`}
-      max={maxY}
-      min={minY}
-      onChange={(val) => onChange('y', val)}
-      value={y}
-    />
+    <div className={styles['xy-item']}>
+      <div className={styles['xy-set']}>
+        <span className={classNames('font2', styles['xy-label'])}>X</span>
+        <SettingUnitInput
+          {...unitInputProps}
+          id={`${id}-x`}
+          max={maxX}
+          min={minX}
+          onChange={(val) => onChange('x', val)}
+          value={x}
+        />
+      </div>
+      <div className={styles['xy-set']}>
+        <span className={classNames('font2', styles['xy-label'])}>Y</span>
+        <SettingUnitInput
+          {...unitInputProps}
+          id={`${id}-y`}
+          max={maxY}
+          min={minY}
+          onChange={(val) => onChange('y', val)}
+          value={y}
+        />
+      </div>
+    </div>
   </SettingFormItem>
 );
 

@@ -11,10 +11,11 @@ exports[`should render correctly initially no warning 1`] = `
     Auto Save
     url:
     checked:
-    false
+    true
     disabled:
     undefined
     <input
+      checked=""
       class="switch-control"
       id="set-auto-save"
       readonly=""
@@ -106,10 +107,11 @@ exports[`should render correctly initially with warning 1`] = `
     Auto Save
     url:
     checked:
-    false
+    true
     disabled:
     undefined
     <input
+      checked=""
       class="switch-control"
       id="set-auto-save"
       readonly=""

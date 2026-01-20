@@ -128,7 +128,13 @@ describe('settings/Editor', () => {
   });
 
   test('initially no warning', async () => {
-    mockGetPreference.mockImplementation((key) => (['guide_x0', 'guide_y0'].includes(key) ? 0 : false));
+    mockGetPreference.mockImplementation((key) => {
+      if (['guide_x0', 'guide_y0'].includes(key)) return 0;
+
+      if (key === 'show_guides') return true;
+
+      return false;
+    });
 
     const { container } = render(
       <Editor
@@ -142,29 +148,31 @@ describe('settings/Editor', () => {
     );
 
     // Editor renders: Workarea -> Text -> Performance (when wrapped=false)
-    // Workarea: model (x2), show_guides, guide_x0, guide_y0, auto-switch-tab, continuous_drawing,
-    //           enable-custom-backlash, enable-uv-print-file, print-advanced-mode, use-real-boundary, crop-task-thumbnail
+    // Workarea: model (x2), show_guides (x2 - once for switch, once for conditional), guide_x0, guide_y0,
+    //           auto-switch-tab, continuous_drawing, enable-custom-backlash, enable-uv-print-file,
+    //           print-advanced-mode, use-real-boundary, crop-task-thumbnail
     // Text: font-substitute, font-convert
-    // Performance: image_downsampling, anti-aliasing, path-engine, simplify_clipper_path
-    expect(mockGetPreference).toHaveBeenCalledTimes(18);
+    // Performance: image_downsampling, anti-aliasing, simplify_clipper_path, path-engine
+    expect(mockGetPreference).toHaveBeenCalledTimes(19);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'guide_x0');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(5, 'guide_y0');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(6, 'auto-switch-tab');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(7, 'continuous_drawing');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(8, 'enable-custom-backlash');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(9, 'enable-uv-print-file');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(10, 'print-advanced-mode');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(11, 'use-real-boundary');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'crop-task-thumbnail');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'font-substitute');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(14, 'font-convert');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(15, 'image_downsampling');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(16, 'anti-aliasing');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(17, 'simplify_clipper_path');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(18, 'path-engine');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'show_guides');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(5, 'guide_x0');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(6, 'guide_y0');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(7, 'auto-switch-tab');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(8, 'continuous_drawing');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(9, 'enable-custom-backlash');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(10, 'enable-uv-print-file');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(11, 'print-advanced-mode');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(12, 'use-real-boundary');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'crop-task-thumbnail');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(14, 'font-substitute');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(15, 'font-convert');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(16, 'image_downsampling');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(17, 'anti-aliasing');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(18, 'simplify_clipper_path');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(19, 'path-engine');
     expect(container).toMatchSnapshot();
 
     // Test SettingSelect controls - order is now (Workarea -> Text -> Performance):
@@ -216,10 +224,10 @@ describe('settings/Editor', () => {
     // Performance: [9] anti-aliasing, [10] simplify_clipper_path, [11] path-engine
     const switchControls = container.querySelectorAll('.switch-control');
 
-    // show_guides (starts as false, toggle to true)
+    // show_guides (starts as true, toggle to false)
     fireEvent.click(switchControls[0]);
     expect(mockSetPreference).toHaveBeenCalledTimes(4);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'show_guides', true);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'show_guides', false);
 
     // auto-switch-tab
     fireEvent.click(switchControls[1]);

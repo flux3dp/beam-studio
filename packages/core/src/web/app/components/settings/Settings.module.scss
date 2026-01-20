@@ -28,12 +28,6 @@
   }
 }
 
-.sub-item {
-  &:not(:last-child) {
-    margin-right: 10px;
-  }
-}
-
 .input-number {
   :global(.ant-input-number) {
     width: 105px;
@@ -51,4 +45,25 @@
 
 .input {
   width: 240px;
+}
+
+.xy-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 240px;
+
+  .input-number :global(.ant-input-number) {
+    width: 96px;
+  }
+}
+
+.xy-set {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xy-label {
+  flex-shrink: 0;
 }

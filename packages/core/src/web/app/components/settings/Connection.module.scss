@@ -1,3 +1,5 @@
+@use './SettingsModal/settings-variables' as *;
+
 .ip-section {
   display: flex;
   flex-direction: column;
@@ -15,9 +17,16 @@
   line-height: 1.4;
 }
 
+.ip-content {
+  border: 1px solid $settings-border-color;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
 .ip-list {
   display: flex;
   flex-direction: column;
+  padding: 12px;
   gap: 8px;
 }
 
@@ -28,14 +37,15 @@
 
   &:hover,
   &:focus {
-    border-color: #1890ff;
+    border-color: $settings-primary-blue;
   }
 }
 
 .ip-buttons {
   display: flex;
   gap: 8px;
-  margin-top: 4px;
+  padding: 8px 12px;
+  background: #f2f2f2;
 }
 
 .ip-button {

@@ -35,10 +35,11 @@ exports[`settings/Editor initially no warning 1`] = `
     Guides
     url:
     checked:
-    false
+    true
     disabled:
     undefined
     <input
+      checked=""
       class="switch-control"
       id="set-guide"
       readonly=""
@@ -52,51 +53,63 @@ exports[`settings/Editor initially no warning 1`] = `
     Guides Origin
     url:
     options:
-    <span
-      class="font2 sub-item"
+    <div
+      class="xy-item"
     >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-x"
-        max="400"
-        min="0"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-y"
-        max="375"
-        min="0"
-        value="0"
-      />
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          X
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-x
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-x"
+            max="400"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          Y
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-y
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-y"
+            max="375"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div>
@@ -316,7 +329,7 @@ exports[`settings/Editor initially no warning 1`] = `
     mock-switch-control id:
     set-simplify-clipper-path
     label:
-    Optimize the Calculated Path
+    Anchor Point Optimization
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     checked:
@@ -386,10 +399,11 @@ exports[`settings/Editor initially no warning 2`] = `
     Guides
     url:
     checked:
-    false
+    true
     disabled:
     undefined
     <input
+      checked=""
       class="switch-control"
       id="set-guide"
       readonly=""
@@ -403,51 +417,63 @@ exports[`settings/Editor initially no warning 2`] = `
     Guides Origin
     url:
     options:
-    <span
-      class="font2 sub-item"
+    <div
+      class="xy-item"
     >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-x"
-        max="400"
-        min="0"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-y"
-        max="375"
-        min="0"
-        value="0"
-      />
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          X
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-x
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-x"
+            max="400"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          Y
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-y
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-y"
+            max="375"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div>
@@ -667,7 +693,7 @@ exports[`settings/Editor initially no warning 2`] = `
     mock-switch-control id:
     set-simplify-clipper-path
     label:
-    Optimize the Calculated Path
+    Anchor Point Optimization
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     checked:
@@ -737,10 +763,11 @@ exports[`settings/Editor initially no warning 3`] = `
     Guides
     url:
     checked:
-    false
+    true
     disabled:
     undefined
     <input
+      checked=""
       class="switch-control"
       id="set-guide"
       readonly=""
@@ -754,51 +781,63 @@ exports[`settings/Editor initially no warning 3`] = `
     Guides Origin
     url:
     options:
-    <span
-      class="font2 sub-item"
+    <div
+      class="xy-item"
     >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-x"
-        max="400"
-        min="0"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-y"
-        max="375"
-        min="0"
-        value="0"
-      />
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          X
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-x
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-x"
+            max="400"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          Y
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-y
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-y"
+            max="375"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div>
@@ -1018,7 +1057,7 @@ exports[`settings/Editor initially no warning 3`] = `
     mock-switch-control id:
     set-simplify-clipper-path
     label:
-    Optimize the Calculated Path
+    Anchor Point Optimization
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     checked:
@@ -1088,10 +1127,11 @@ exports[`settings/Editor initially no warning 4`] = `
     Guides
     url:
     checked:
-    false
+    true
     disabled:
     undefined
     <input
+      checked=""
       class="switch-control"
       id="set-guide"
       readonly=""
@@ -1105,51 +1145,63 @@ exports[`settings/Editor initially no warning 4`] = `
     Guides Origin
     url:
     options:
-    <span
-      class="font2 sub-item"
+    <div
+      class="xy-item"
     >
-      X
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-x
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-x"
-        max="400"
-        min="0"
-        value="0"
-      />
-    </div>
-    <span
-      class="font2 sub-item"
-    >
-      Y
-    </span>
-    <div>
-      UnitInput: 
-      set-guide-axis-y
-      <p>
-        precision: 
-        2
-      </p>
-      <p>
-        unit: 
-        mm
-      </p>
-      <input
-        id="set-guide-axis-y"
-        max="375"
-        min="0"
-        value="0"
-      />
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          X
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-x
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-x"
+            max="400"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
+      <div
+        class="xy-set"
+      >
+        <span
+          class="font2 xy-label"
+        >
+          Y
+        </span>
+        <div>
+          UnitInput: 
+          set-guide-axis-y
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            unit: 
+            mm
+          </p>
+          <input
+            id="set-guide-axis-y"
+            max="375"
+            min="0"
+            value="0"
+          />
+        </div>
+      </div>
     </div>
   </div>
   <div>
@@ -1369,7 +1421,7 @@ exports[`settings/Editor initially no warning 4`] = `
     mock-switch-control id:
     set-simplify-clipper-path
     label:
-    Optimize the Calculated Path
+    Anchor Point Optimization
     url:
     https://support.flux3dp.com/hc/en-us/articles/360004407276
     checked:

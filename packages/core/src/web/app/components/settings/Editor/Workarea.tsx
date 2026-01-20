@@ -61,17 +61,19 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
         label={lang.settings.guides}
         onChange={(e) => setPreference('show_guides', e)}
       />
-      <XYItem
-        id="set-guide-axis"
-        label={lang.settings.guides_origin}
-        maxX={workarea.width}
-        maxY={workarea.displayHeight ?? workarea.height}
-        minX={0}
-        minY={0}
-        onChange={(axis, val) => setPreference(`guide_${axis}0`, val)}
-        unitInputProps={unitInputProps}
-        values={[getPreference('guide_x0'), getPreference('guide_y0')]}
-      />
+      {getPreference('show_guides') && (
+        <XYItem
+          id="set-guide-axis"
+          label={lang.settings.guides_origin}
+          maxX={workarea.width}
+          maxY={workarea.displayHeight ?? workarea.height}
+          minX={0}
+          minY={0}
+          onChange={(axis, val) => setPreference(`guide_${axis}0`, val)}
+          unitInputProps={unitInputProps}
+          values={[getPreference('guide_x0'), getPreference('guide_y0')]}
+        />
+      )}
       <SettingSwitch
         checked={getPreference('auto-switch-tab')}
         id="auto-switch-tab"

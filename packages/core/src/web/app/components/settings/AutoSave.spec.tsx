@@ -63,7 +63,7 @@ describe('should render correctly', () => {
       <AutoSave
         editingAutosaveConfig={{
           directory: '/MyDocuments',
-          enabled: false,
+          enabled: true,
           fileNumber: 5,
           timeInterval: 10,
         }}
@@ -79,7 +79,7 @@ describe('should render correctly', () => {
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(1);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(1, {
       directory: '/MyDocuments',
-      enabled: true,
+      enabled: false,
       fileNumber: 5,
       timeInterval: 10,
     });
@@ -90,7 +90,7 @@ describe('should render correctly', () => {
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(2);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(2, {
       directory: '/FolderNotExist',
-      enabled: false,
+      enabled: true,
       fileNumber: 5,
       timeInterval: 10,
     });
@@ -104,7 +104,7 @@ describe('should render correctly', () => {
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(3);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(3, {
       directory: '/MyDocuments',
-      enabled: false,
+      enabled: true,
       fileNumber: 5,
       timeInterval: 5,
     });
@@ -113,7 +113,7 @@ describe('should render correctly', () => {
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(4);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(4, {
       directory: '/MyDocuments',
-      enabled: false,
+      enabled: true,
       fileNumber: 10,
       timeInterval: 10,
     });
@@ -126,7 +126,7 @@ describe('should render correctly', () => {
       <AutoSave
         editingAutosaveConfig={{
           directory: '/MyDocuments',
-          enabled: false,
+          enabled: true,
           fileNumber: 5,
           timeInterval: 10,
         }}
@@ -146,7 +146,7 @@ describe('should render correctly', () => {
     expect(setEditingAutosaveConfig).toHaveBeenCalledTimes(1);
     expect(setEditingAutosaveConfig).toHaveBeenNthCalledWith(1, {
       directory: '/MyDocuments',
-      enabled: false,
+      enabled: true,
       fileNumber: 5,
       timeInterval: 10,
     });
