@@ -27,7 +27,7 @@ export type HandleTakePictureArgs<T = null> = {
 
 const useCamera = <T>(
   handleImg?: (blob: Blob, args?: T) => boolean | Promise<boolean>,
-  { firstImageArgs, index = 0, initExposure, source = 'wifi', videoElement }: Options<T> = {},
+  { firstImageArgs, index, initExposure, source = 'wifi', videoElement }: Options<T> = {},
 ): {
   autoExposure: boolean | null;
   connectWebCam: () => Promise<void>;
@@ -122,7 +122,7 @@ const useCamera = <T>(
         if (source === 'wifi') {
           await deviceMaster.connectCamera();
 
-          if (index > 0) {
+          if (index !== undefined) {
             try {
               const res = await deviceMaster.setCamera(index);
 

@@ -109,6 +109,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   if (step === Steps.CHESSBOARD) {
     return (
       <Calibration
+        cameraOptions={{ index: 0 }}
         charuco={[15, 10]}
         chessboard={[24, 14]}
         description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
@@ -207,6 +208,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   if (step === Steps.SOLVE_PNP) {
     return (
       <SolvePnP
+        cameraIndex={0}
         dh={0}
         hasNext
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
@@ -227,6 +229,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   if (step === Steps.CHECK_PNP) {
     return (
       <CheckPnP
+        cameraOptions={{ index: 0 }}
         dh={0}
         grid={isHexaRf ? hx2rfPerspectiveGrid : bb2PerspectiveGrid}
         onBack={() => setStep(Steps.SOLVE_PNP)}
