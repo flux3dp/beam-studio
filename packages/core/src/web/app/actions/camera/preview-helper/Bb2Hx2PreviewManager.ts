@@ -158,7 +158,7 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
     const { lang } = i18n;
 
     try {
-      deviceMaster.setCamera(0);
+      await deviceMaster.setCamera(0);
     } catch (err) {
       console.error('Fail to setCamera to laser head', err);
     }
