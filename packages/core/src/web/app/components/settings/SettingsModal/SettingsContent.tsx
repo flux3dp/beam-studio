@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { ConfigProvider, Form } from 'antd';
+import classNames from 'classnames';
 import { match } from 'ts-pattern';
 
 import AutoSave from '../AutoSave';
@@ -14,6 +15,7 @@ import General from '../General';
 import Module from '../Module';
 import Path from '../Path';
 import Privacy from '../Privacy';
+import Reset from '../Reset';
 
 import styles from './SettingsModal.module.scss';
 import type { CommonSettingProps, SettingCategoryConfig } from './types';
@@ -23,12 +25,19 @@ interface SettingsContentProps {
   category: SettingCategory;
   categoryConfig: SettingCategoryConfig | undefined;
   commonProps: CommonSettingProps;
+  isMobile?: boolean;
 }
 
-const SettingsContent = ({ category, categoryConfig, commonProps }: SettingsContentProps): React.JSX.Element => {
+const SettingsContent = ({
+  category,
+  categoryConfig,
+  commonProps,
+  isMobile = false,
+}: SettingsContentProps): React.JSX.Element => {
   const {
     changeActiveLang,
     editingAutosaveConfig,
+    onReset,
     setEditingAutosaveConfig,
     setWarnings,
     supportedLangs,
@@ -61,16 +70,31 @@ const SettingsContent = ({ category, categoryConfig, commonProps }: SettingsCont
       ))
       .with(SettingCategory.PRIVACY, () => <Privacy />)
       .with(SettingCategory.EXPERIMENTAL, () => <Experimental />)
+      .with(SettingCategory.RESET, () => (onReset ? <Reset onReset={onReset} /> : null))
       .exhaustive();
 
-  const skipOuterCard =
-    category === SettingCategory.GENERAL || category === SettingCategory.EDITOR || category === SettingCategory.MODULE;
+  const skipOuterCard = [
+    SettingCategory.EDITOR,
+    SettingCategory.GENERAL,
+    SettingCategory.MODULE,
+    SettingCategory.RESET,
+  ].includes(category);
+
+  const formTheme = {
+    components: { Form: { itemMarginBottom: isMobile ? 16 : 0, labelFontSize: 14 } },
+  };
 
   return (
-    <div className={styles.content}>
+    <div className={classNames(styles.content, { [styles.mobile]: isMobile })}>
       {categoryConfig && <div className={styles['section-title']}>{categoryConfig.label}</div>}
-      <ConfigProvider theme={{ components: { Form: { itemMarginBottom: 0, labelFontSize: 14 } } }}>
-        <Form colon={false} labelAlign="left" labelWrap wrapperCol={{ flex: 1 }}>
+      <ConfigProvider theme={formTheme}>
+        <Form
+          colon={false}
+          labelAlign="left"
+          labelWrap
+          layout={isMobile ? 'vertical' : 'horizontal'}
+          wrapperCol={isMobile ? undefined : { flex: 1 }}
+        >
           {skipOuterCard ? renderSection() : <SettingsCard>{renderSection()}</SettingsCard>}
         </Form>
       </ConfigProvider>

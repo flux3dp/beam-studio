@@ -1,0 +1,143 @@
+// Mobile Settings Modal Styles
+@use '../settings-variables' as *;
+
+.mobile-modal-wrap {
+  // Force modal wrapper to expand to the minWidth set by DraggableModal
+  :global(.react-draggable) {
+    width: calc(100vw - 32px);
+    max-width: 95vw;
+  }
+
+  :global(.ant-modal) {
+    max-width: calc(100vw - 32px);
+    top: 32px;
+  }
+
+  :global(.ant-modal-content) {
+    padding: 0;
+    overflow: hidden;
+    max-height: calc(100vh - 64px);
+  }
+
+  :global(.ant-modal-header) {
+    padding: 16px;
+    margin: 0;
+    border-bottom: 1px solid $settings-border-color;
+    background: $settings-background;
+  }
+
+  :global(.ant-modal-body) {
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    height: calc(100vh - 120px); // Account for header + footer
+    max-height: calc(80vh);
+    overflow: hidden !important;
+  }
+
+  :global(.ant-modal-footer) {
+    padding: 12px 16px;
+    padding-bottom: calc(16px + env(safe-area-inset-bottom));
+    margin: 0;
+    border-top: 1px solid $settings-border-color;
+    background: $settings-background;
+  }
+}
+
+.mobile-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+}
+
+.mobile-modal-title {
+  text-align: center;
+}
+
+.mobile-modal-footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  :global(.ant-btn) {
+    width: 48%;
+  }
+
+  :global(.ant-btn-primary) {
+    background-color: $settings-primary-blue;
+  }
+}
+
+.mobile-tabs-container {
+  flex-shrink: 0;
+  width: 100%;
+  overflow-x: auto;
+  overflow-y: hidden;
+  padding: 12px 16px;
+  background: $settings-background;
+  border-bottom: 1px solid $settings-border-color;
+  -webkit-overflow-scrolling: touch;
+  scrollbar-width: none; // Firefox
+
+  &::-webkit-scrollbar {
+    display: none; // Chrome/Safari
+  }
+}
+
+.mobile-tabs-scroll {
+  display: flex;
+  gap: 8px;
+  min-width: max-content;
+}
+
+.mobile-tab {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  border: 1px solid $settings-border-color;
+  background: white;
+  color: black;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  flex-shrink: 0;
+
+  &:hover {
+    background: $settings-background;
+  }
+
+  &.selected {
+    background: $settings-primary-blue;
+    color: white;
+  }
+}
+
+.mobile-tab-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.mobile-tab-label {
+  line-height: 1;
+}
+
+.mobile-settings-content {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  background: $settings-background;
+
+  // Hide scrollbar for cleaner look
+  scrollbar-width: none;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}

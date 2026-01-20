@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button } from 'antd';
 
@@ -9,11 +9,13 @@ import { useSettingStore } from '@core/app/pages/Settings/useSettingStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import i18n from '@core/helpers/i18n';
+import { useIsMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 import type { ILang } from '@core/interfaces/ILang';
 
 import { getCategoryConfigs } from './constants';
+import MobileSettingsPanel from './Mobile/MobileSettingsModal';
 import SettingsContent from './SettingsContent';
 import styles from './SettingsModal.module.scss';
 import SettingsSidebar from './SettingsSidebar';
@@ -28,6 +30,7 @@ const SettingsModal = ({
   initialCategory = SettingCategory.GENERAL,
   onClose,
 }: SettingsModalProps): React.JSX.Element => {
+  const isMobile = useIsMobile();
   const [lang, setLang] = useState<ILang>(i18n.lang);
   const [selectedCategory, setSelectedCategory] = useState<SettingCategory>(initialCategory);
   const [editingAutosaveConfig, setEditingAutosaveConfig] = useState<AutoSaveConfig>(autoSaveHelper.getConfig());
@@ -37,19 +40,24 @@ const SettingsModal = ({
   const { getConfig, resetChanges, updateToStorage } = useSettingStore();
   const defaultUnit = getConfig('default-units');
 
-  const commonUnitInputProps: Partial<SettingUnitInputProps> = useMemo(() => {
+  const unitInputProps: Partial<SettingUnitInputProps> = useMemo(() => {
     const isInch = defaultUnit === 'inches';
 
-    return { isInch, precision: isInch ? 4 : 2, step: isInch ? 2.54 : 1, unit: isInch ? 'in' : 'mm' };
+    return {
+      isInch,
+      precision: isInch ? 4 : 2,
+      step: isInch ? 2.54 : 1,
+      unit: isInch ? 'in' : 'mm',
+    };
   }, [defaultUnit]);
 
   const categoryConfigs = useMemo(() => getCategoryConfigs(lang), [lang]);
   const currentCategoryConfig = categoryConfigs.find((c) => c.key === selectedCategory);
 
-  const changeActiveLang = (value: string): void => {
+  const changeActiveLang = useCallback((value: string): void => {
     i18n.setActiveLang(value);
     setLang(i18n.lang);
-  };
+  }, []);
 
   const handleReset = async (): Promise<void> => {
     if (window.confirm(lang.settings.confirm_reset)) {
@@ -72,7 +80,20 @@ const SettingsModal = ({
     onClose();
   };
 
-  const isAllValid = Object.keys(warnings).length === 0;
+  const hasWarnings = Object.keys(warnings).length > 0;
+
+  const commonProps = useMemo(
+    () => ({
+      changeActiveLang,
+      editingAutosaveConfig,
+      setEditingAutosaveConfig,
+      setWarnings,
+      supportedLangs: AppSettings.i18n.supported_langs,
+      unitInputProps,
+      warnings,
+    }),
+    [changeActiveLang, editingAutosaveConfig, unitInputProps, warnings],
+  );
 
   const footer = (
     <div className={styles.footer}>
@@ -81,12 +102,28 @@ const SettingsModal = ({
       </div>
       <div className={styles['right-buttons']}>
         <Button onClick={handleCancel}>{lang.settings.cancel}</Button>
-        <Button disabled={!isAllValid} onClick={handleApply} type="primary">
+        <Button disabled={hasWarnings} onClick={handleApply} type="primary">
           {lang.settings.done}
         </Button>
       </div>
     </div>
   );
+
+  if (isMobile) {
+    return (
+      <MobileSettingsPanel
+        categoryConfigs={categoryConfigs}
+        commonProps={commonProps}
+        currentCategoryConfig={currentCategoryConfig}
+        isAllValid={!hasWarnings}
+        onApply={handleApply}
+        onCancel={handleCancel}
+        onReset={handleReset}
+        selectedCategory={selectedCategory}
+        setSelectedCategory={setSelectedCategory}
+      />
+    );
+  }
 
   return (
     <DraggableModal
@@ -105,19 +142,7 @@ const SettingsModal = ({
           onCategorySelect={setSelectedCategory}
           selectedCategory={selectedCategory}
         />
-        <SettingsContent
-          category={selectedCategory}
-          categoryConfig={currentCategoryConfig}
-          commonProps={{
-            changeActiveLang,
-            editingAutosaveConfig,
-            setEditingAutosaveConfig,
-            setWarnings,
-            supportedLangs: AppSettings.i18n.supported_langs,
-            unitInputProps: commonUnitInputProps,
-            warnings,
-          }}
-        />
+        <SettingsContent category={selectedCategory} categoryConfig={currentCategoryConfig} commonProps={commonProps} />
       </div>
     </DraggableModal>
   );
