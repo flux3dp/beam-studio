@@ -5,7 +5,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
-import { bm2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
+import { bm2WideAnglePerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { CameraType } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -27,7 +27,7 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private lineCheckEnabled: boolean = false;
   private fisheyeParams?: FisheyeCameraParametersV4;
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
-  private grid = bm2PerspectiveGrid;
+  private grid = bm2WideAnglePerspectiveGrid;
   private doorChecker = new DoorChecker();
   private originalExposure: null | number = null;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
