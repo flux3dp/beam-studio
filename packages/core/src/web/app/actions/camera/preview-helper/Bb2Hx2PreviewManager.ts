@@ -101,7 +101,6 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
       }
 
       if (cameraType === CameraType.LASER_HEAD) {
-        await deviceMaster.setCamera(0);
         await this.setupLaserHeadCamera();
       } else {
         await this.setupWideAngleCamera();
@@ -157,6 +156,12 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
 
   private setupLaserHeadCamera = async (): Promise<boolean> => {
     const { lang } = i18n;
+
+    try {
+      await deviceMaster.setCamera(0);
+    } catch (err) {
+      console.error('Fail to setCamera to laser head', err);
+    }
 
     try {
       if (!this.fisheyeParams) {

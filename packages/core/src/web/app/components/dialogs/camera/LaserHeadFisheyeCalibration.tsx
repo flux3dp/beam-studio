@@ -3,6 +3,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import { hexaRfModels } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
@@ -49,7 +50,9 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   const updateParam = useCallback((param: FisheyeCameraParametersV3Cali) => {
     calibratingParam.current = { ...calibratingParam.current, ...param };
   }, []);
-  const isHexaRf = useMemo(() => hexaRfModels.has(deviceMaster.currentDevice?.info.model ?? ''), []);
+  const model = useMemo(() => deviceMaster.currentDevice?.info.model ?? 'fbb2', []);
+  const isHexaRf = useMemo(() => hexaRfModels.has(model), [model]);
+  const workareaObj = useMemo(() => getWorkarea(model, 'fbb2'), [model]);
 
   if (step === Steps.CHECKPOINT_DATA) {
     return (
@@ -83,7 +86,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
           {
             label: tCali.next,
             onClick: async () => {
-              const res = await moveLaserHead();
+              const res = await moveLaserHead(workareaObj.calibrationCenter ?? workareaObj.cameraCenter);
 
               if (res) setStep(Steps.CHESSBOARD);
             },
@@ -109,6 +112,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   if (step === Steps.CHESSBOARD) {
     return (
       <Calibration
+        cameraOptions={{ index: 0 }}
         charuco={[15, 10]}
         chessboard={[24, 14]}
         description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
@@ -207,6 +211,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   if (step === Steps.SOLVE_PNP) {
     return (
       <SolvePnP
+        cameraIndex={0}
         dh={0}
         hasNext
         onBack={() => setStep(Steps.SOLVE_PNP_INSTRUCTION)}
@@ -227,6 +232,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   if (step === Steps.CHECK_PNP) {
     return (
       <CheckPnP
+        cameraOptions={{ index: 0 }}
         dh={0}
         grid={isHexaRf ? hx2rfPerspectiveGrid : bb2PerspectiveGrid}
         onBack={() => setStep(Steps.SOLVE_PNP)}
