@@ -33,9 +33,9 @@ export interface WorkArea {
   accOverride?: TAccelerationOverride;
   autoFocusOffset?: [number, number, number]; // [offsetX, offsetY, offsetZ] in mm
   autoShrink?: number;
-  calibrationCenter?: number[]; // [mm, mm]
-  cameraCenter?: number[]; // [mm, mm]
-  cameraRestPosition?: number[]; // [mm, mm]
+  calibrationCenter?: [number, number]; // [mm, mm]
+  cameraCenter?: [number, number]; // [mm, mm]
+  cameraRestPosition?: [number, number]; // [mm, mm]
   /**
    * curveSpeedLimit, undefined means no limit
    * x: speed limit for curve engraving in X axis, in mm/s
@@ -197,7 +197,8 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     accOverride: { path: { x: 1000, y: 1000 } },
     autoFocusOffset: [31.13, 1.2, 6.5],
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
-    cameraCenter: [370, 5],
+    calibrationCenter: [370, 5],
+    cameraCenter: [370, 180],
     engraveDpiOptions: ['low', 'medium', 'high', 'detailed', 'ultra'],
     height: 410,
     label: 'HEXA RF',

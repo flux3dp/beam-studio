@@ -31,7 +31,7 @@ const moveLaserHead = async (
     if (!position) {
       const { cameraCenter, height, width } = getWorkarea(device?.info.model as WorkAreaModel, 'fbb2');
 
-      position = (cameraCenter as [number, number]) ?? [width / 2, height / 2];
+      position = cameraCenter ?? [width / 2, height / 2];
     }
 
     await deviceMaster.rawMove({ f: 7500, x: position[0], y: position[1] });
