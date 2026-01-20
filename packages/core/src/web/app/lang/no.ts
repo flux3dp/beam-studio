@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Tilbakestill Beam Studio',
     segmented_engraving: 'Segmentert gravering',
     share_with_flux: 'Del Beam Studio-analyse',
-    simplify_clipper_path: 'Forenklet bane',
+    simplify_clipper_path: 'Ankerpunkt-optimalisering',
     single_object: 'Enkelt objekt',
     tabs: {
       device: 'Enhet',

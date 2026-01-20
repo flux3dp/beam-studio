@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Beam Studio 재설정',
     segmented_engraving: '분할 조각',
     share_with_flux: 'Beam Studio 분석 공유',
-    simplify_clipper_path: '계산된 경로 최적화',
+    simplify_clipper_path: '앵커 포인트 최적화',
     single_object: '단일 객체',
     tabs: {
       device: '기계',

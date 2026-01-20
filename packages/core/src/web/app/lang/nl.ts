@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Beam Studio resetten',
     segmented_engraving: 'Gesegmenteerd graveren',
     share_with_flux: 'Beam Studio-analyses delen',
-    simplify_clipper_path: 'Optimaliseer het berekende pad',
+    simplify_clipper_path: 'Ankerpunt optimalisatie',
     single_object: 'Enkel object',
     tabs: {
       device: 'Machine',

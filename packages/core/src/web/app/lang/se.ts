@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Återställ Beam Studio',
     segmented_engraving: 'Segmenterad gravyr',
     share_with_flux: 'Dela Beam Studio-analys',
-    simplify_clipper_path: 'Optimera den beräknade banan',
+    simplify_clipper_path: 'Ankarpunktsoptimering',
     single_object: 'Enskilt objekt',
     tabs: {
       device: 'Maskin',

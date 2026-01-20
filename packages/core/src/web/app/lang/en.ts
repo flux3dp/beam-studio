@@ -2078,7 +2078,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     reset_now: 'Reset Beam Studio',
     segmented_engraving: 'Segmented Engraving',
     share_with_flux: 'Share Beam Studio Analytics',
-    simplify_clipper_path: 'Optimize the Calculated Path',
+    simplify_clipper_path: 'Anchor Point Optimization',
     single_object: 'Single Object',
     tabs: {
       device: 'Machine',

@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Tetapkan Semula Beam Studio',
     segmented_engraving: 'Ukiran bersegmen',
     share_with_flux: 'Kongsi Analitik Studio Sinar',
-    simplify_clipper_path: 'Optimumkan Laluan Dikira',
+    simplify_clipper_path: 'Pengoptimuman Titik Sauh',
     single_object: 'Objek Tunggal',
     tabs: {
       device: 'Mesin',

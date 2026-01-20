@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { InfoCircleOutlined } from '@ant-design/icons';
-
 import { getArchDisplayName } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -16,7 +14,8 @@ const AboutInfo = (): React.JSX.Element => {
   return (
     <div className={styles.container}>
       <div className={styles.icon}>
-        <InfoCircleOutlined />
+        {/* <img alt="Beam Studio" draggable={false} src="core-img/BeamStudio-v2.svg" /> */}
+        <img alt="Beam Studio" draggable={false} src="core-img/BeamStudio-logo.png" />
       </div>
       <div className={styles.info}>
         <div className={styles.title}>{lang.topbar.menu.about_beam_studio}</div>

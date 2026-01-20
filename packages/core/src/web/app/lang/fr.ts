@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Réinitialiser Beam Studio',
     segmented_engraving: 'Gravure segmentée',
     share_with_flux: 'Partager les analyses de Beam Studio',
-    simplify_clipper_path: 'Optimiser le chemin calculé',
+    simplify_clipper_path: "Optimisation des points d'ancrage",
     single_object: 'Objet unique',
     tabs: {
       device: 'Machine',

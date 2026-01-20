@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Beam Studioをリセット',
     segmented_engraving: 'セグメント彫刻',
     share_with_flux: 'Beam Studio Analyticsを共有する',
-    simplify_clipper_path: '計算されたパスを最適化',
+    simplify_clipper_path: 'アンカーポイント最適化',
     single_object: '単一のオブジェクト',
     tabs: {
       device: 'マシン',
