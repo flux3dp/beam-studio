@@ -24,6 +24,8 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
+import { showSettingsModal } from '../settings/SettingsModal';
+
 import styles from './CanvasTabBar.module.scss';
 
 const events = eventEmitterFactory.createEventEmitter('canvas');
@@ -73,7 +75,6 @@ const CanvasTabBar = (): React.ReactNode => {
   const resetActiveKey = useCallback(() => setActiveKey('none'), []);
 
   const handleTabClick = async (key: string) => {
-    console.log('tab click', key);
     setMouseMode('select');
     RightPanelController.setDisplayLayer(key === 'layer');
 
@@ -87,6 +88,10 @@ const CanvasTabBar = (): React.ReactNode => {
       })
       .with('document', () => {
         dialogCaller.showDocumentSettings();
+        setTimeout(resetActiveKey, 300);
+      })
+      .with('setting', () => {
+        showSettingsModal();
         setTimeout(resetActiveKey, 300);
       })
       .with('image', () => {
@@ -149,6 +154,7 @@ const CanvasTabBar = (): React.ReactNode => {
       { icon: <TabBarIcons.Draw />, key: 'pen', title: lang.beambox.left_panel.label.pen },
       { icon: <TabBarIcons.Boxgen />, key: 'boxgen', title: lang.beambox.left_panel.label.boxgen },
       { icon: <TabBarIcons.Document />, key: 'document', title: lang.topbar.menu.document_setting_short },
+      { icon: <TabBarIcons.Setting />, key: 'setting', title: lang.settings.caption },
       { icon: <LeftPanelIcons.QRCode />, key: 'qrcode', title: lang.beambox.left_panel.label.qr_code },
       { icon: <LeftPanelIcons.PassThrough />, key: 'passthrough', title: lang.beambox.left_panel.label.pass_through },
       { icon: <div className={styles.sep} />, key: '', title: '' },
