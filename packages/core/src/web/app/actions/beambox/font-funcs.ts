@@ -41,6 +41,8 @@ getSVGAsync(({ Canvas, Edit }) => {
 
 const svgWebSocket = SvgLaserParser({ type: 'svgeditor' });
 const fontObjCache = new Map<string, fontkit.Font>();
+// Track in-flight font loading promises to prevent duplicate concurrent loads
+const fontLoadingPromises = new Map<string, Promise<fontkit.Font | undefined>>();
 
 const SubstituteResult = { CANCEL_OPERATION: 0, DO_NOT_SUB: 1, DO_SUB: 2 } as const;
 
@@ -168,31 +170,49 @@ export const getFontObj = async (font: GeneralFont): Promise<fontkit.Font | unde
     return undefined;
   }
 
-  try {
-    // 1. Check the cache first for performance
-    const cachedFont = fontObjCache.get(postscriptName);
+  // 1. Check the cache first for performance
+  const cachedFont = fontObjCache.get(postscriptName);
 
-    if (cachedFont) {
-      return cachedFont;
-    }
-
-    // 2. If not cached, determine the font type and load it
-    const fontObject = await match(font)
-      .with({ path: P.string }, (font) => localFontHelper.getLocalFont(font))
-      .with({ source: 'google' }, async (font) => await loadGoogleFont(font as GoogleFont))
-      .otherwise(async (font) => await loadWebFont(font));
-
-    // 3. If loaded successfully, add it to the cache
-    if (fontObject) {
-      fontObjCache.set(postscriptName, fontObject);
-    }
-
-    return fontObject;
-  } catch (err) {
-    console.error(`Unable to get fontObj for ${postscriptName}:`, err);
-
-    return undefined;
+  if (cachedFont) {
+    return cachedFont;
   }
+
+  // 2. Check if this font is already being loaded (in-flight promise deduplication)
+  // This prevents duplicate concurrent loads that can cause race conditions
+  const existingPromise = fontLoadingPromises.get(postscriptName);
+
+  if (existingPromise) {
+    return existingPromise;
+  }
+
+  // 3. Create a new loading promise and track it
+  const loadPromise = (async () => {
+    try {
+      const fontObject = await match(font)
+        .with({ path: P.string }, (f) => localFontHelper.getLocalFont(f))
+        .with({ source: 'google' }, async (f) => await loadGoogleFont(f as GoogleFont))
+        .otherwise(async (f) => await loadWebFont(f));
+
+      // Cache the loaded font
+      if (fontObject) {
+        fontObjCache.set(postscriptName, fontObject);
+      }
+
+      return fontObject;
+    } catch (err) {
+      console.error(`Unable to get fontObj for ${postscriptName}:`, err);
+
+      return undefined;
+    } finally {
+      // Always clean up the in-flight promise when done (success or failure)
+      fontLoadingPromises.delete(postscriptName);
+    }
+  })();
+
+  // Track the promise before awaiting
+  fontLoadingPromises.set(postscriptName, loadPromise);
+
+  return loadPromise;
 };
 
 export const convertTextToPathByFontkit = (
@@ -673,6 +693,9 @@ const convertTextToPath = async (
 
     const textAttr = getAttributes(textElement, ['data-ratiofixed', 'fill', 'fill-opacity', 'stroke', 'stroke-width']);
     const isFilled = calculateFilled(textElement); // for ghost
+
+    // Ensure fonts are loaded before calling getStartPositionOfChar/getEndPositionOfChar
+    await document.fonts.ready;
 
     let res: IConvertInfo = null;
     let preferGhost = !pathPerChar && globalPreference['font-convert'] === '1.0';

@@ -3,6 +3,7 @@ import { md5 } from '../../support/utils';
 describe('convert to path 2.0', () => {
   const isRunningAtGithub = Cypress.env('envType') === 'github';
   const isWindows = Cypress.platform === 'win32';
+  const expectedX = !isRunningAtGithub ? 1000 : isWindows ? 1019 : 1011;
 
   const drawText = () => {
     cy.clickToolBtn('Text');
@@ -17,9 +18,7 @@ describe('convert to path 2.0', () => {
     cy.get('.ant-select-item-option-content img[alt="Mr Bedfort"]').click();
     cy.get('#svg_1').should('have.attr', 'font-family').and('eq', "'Mr Bedfort'");
     cy.get('#x_position').clear().type('100{enter}');
-    cy.get('#svg_1', { timeout: 15000 })
-      .invoke('attr', 'x')
-      .should('be.closeTo', isWindows ? 1019 : 1011, 3);
+    cy.get('#svg_1', { timeout: 15000 }).invoke('attr', 'x').should('be.closeTo', expectedX, 3);
     cy.get('#y_position').clear().type('50{enter}');
     cy.get('#svg_1', { timeout: 15000 }).invoke('attr', 'y').should('be.closeTo', 703, 3);
   };
@@ -38,15 +37,16 @@ describe('convert to path 2.0', () => {
     selector: string,
     expectedValues: { default: string; githubWindows: string; githubOther: string },
   ) => {
-    cy.get(selector)
-      .invoke('attr', 'd')
-      .then((d) => {
-        let expectedValue = expectedValues.default;
-        if (isRunningAtGithub) {
-          expectedValue = isWindows ? expectedValues.githubWindows : expectedValues.githubOther;
-        }
-        expect(md5(d)).equal(expectedValue);
-      });
+    let expectedValue = expectedValues.default;
+    if (isRunningAtGithub) {
+      expectedValue = isWindows ? expectedValues.githubWindows : expectedValues.githubOther;
+    }
+    // Use should() callback for Cypress retry-ability until d attribute is computed
+    cy.get(selector, { timeout: 10000 }).should(($el) => {
+      const d = $el.attr('d');
+      expect(d).to.exist.and.not.be.empty;
+      expect(md5(d)).to.equal(expectedValue);
+    });
   };
 
   beforeEach(() => {
@@ -60,7 +60,6 @@ describe('convert to path 2.0', () => {
     cy.get('#svg_2').should('exist').click({ force: true });
     cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
-    cy.get('#svg_2').should('have.attr', 'd');
     verifyPathMd5('#svg_2', {
       default: '6fde8da297586452f7561d6dc93299bc',
       githubWindows: 'a93f7f803e8eea840d61531458838987',
@@ -83,7 +82,6 @@ describe('convert to path 2.0', () => {
     cy.get('#svg_2').should('exist').click({ force: true });
     cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
-    cy.get('#svg_2').should('have.attr', 'd');
     verifyPathMd5('#svg_2', {
       default: '0b39368fe65b64e08cd08b9c8ff625b9',
       githubWindows: '415ea1b80d7fc380646248203bfd10e4',
@@ -98,7 +96,6 @@ describe('convert to path 2.0', () => {
     cy.get('#svg_2').should('exist').click({ force: true });
     cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
-    cy.get('#svg_2').should('have.attr', 'd');
     verifyPathMd5('#svg_2', {
       default: 'd828dcc474ad48d26ecb9269cb3844fa',
       githubWindows: '9f6739e16128b247684722743e8b04a1',

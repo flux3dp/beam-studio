@@ -11,7 +11,10 @@ it('layer color setting', () => {
   // Open color picker and select color via hex input (scope to the Add Color modal)
   // Wait for Add Color modal to be fully rendered
   cy.get('.ant-modal').last().find('[class*="ColorPicker-module__trigger"]').should('be.visible').click();
-  cy.get('.ant-color-picker-hex-input input').clear().type('AA0000', { delay: 100 });
+  // Use {selectall} instead of clear() to properly replace value in React controlled input
+  cy.get('.ant-color-picker-hex-input input').should('be.visible').type('{selectall}AA0000', { delay: 100 });
+  // Wait for color picker to process the input
+  cy.get('.ant-color-picker-color-block-inner').should('have.css', 'background-color', 'rgb(170, 0, 0)');
   cy.get('.ant-color-picker').contains('OK').click();
   // Update power value (first input in the Add Color modal, Power field)
   cy.get('.ant-modal').last().find('.ant-input-number-input').first().clear().type('25');
