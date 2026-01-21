@@ -1680,6 +1680,7 @@ const lang: ILang = {
       door_opened: '도어 열림',
       door_opened_text: '카메라 미리보기를 다시 시작하기 전에 도어를 닫아 주세요.',
       fail_to_transmit_image: '#845 이미지 전송 중 오류가 발생했습니다. 기계나 Beam Studio를 다시 시작해주세요. 만약 이 오류가 계속 발생한다면, <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">이 가이드</a>를 따라주세요.',
+      switching_camera: '카메라 전환 중...',
       ws_closed_unexpectedly: '#844 기계 카메라 연결이 예기치 않게 종료되었습니다. 만약 이 오류가 계속 발생한다면, <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">이 가이드</a>를 따라주세요.',
     },
     cancelling: '취소 중...',

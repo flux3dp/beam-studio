@@ -1680,6 +1680,7 @@ const lang: ILang = {
       door_opened: 'ประตูเปิดอยู่',
       door_opened_text: 'กรุณาปิดประตูก่อนเริ่มแสดงภาพจากกล้องอีกครั้ง',
       fail_to_transmit_image: '#845 มีบางอย่างผิดพลาดกับการส่งภาพ โปรดรีสตาร์ทเครื่องของคุณหรือ Beam Studio หากข้อผิดพลาดนี้ยังคงเกิดขึ้น โปรดทําตาม<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">คู่มือนี้</a>',
+      switching_camera: 'กำลังสลับกล้อง...',
       ws_closed_unexpectedly: '#844 การเชื่อมต่อกล้องเครื่องถูกปิดโดยไม่คาดคิด หากข้อผิดพลาดนี้ยังคงเกิดขึ้น โปรดทําตาม<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">คู่มือนี้</a>',
     },
     cancelling: 'ยกเลิก...',

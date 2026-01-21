@@ -1680,6 +1680,7 @@ const lang: ILang = {
       door_opened: 'Pintu Terbuka',
       door_opened_text: 'Tutup pintu sebelum memulai ulang pratinjau kamera.',
       fail_to_transmit_image: '#845 Terjadi kesalahan transmisi gambar. Harap mulai ulang mesin atau Beam Studio. Jika error berlanjut, ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">panduan ini</a>.',
+      switching_camera: 'Mengganti kamera...',
       ws_closed_unexpectedly: '#844 Koneksi ke kamera mesin ditutup secara tidak terduga. Jika error berlanjut, ikuti <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">panduan ini</a>.',
     },
     cancelling: 'Membatalkan...',

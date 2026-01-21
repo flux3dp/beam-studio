@@ -1671,6 +1671,7 @@ export interface ILang {
       door_opened: string;
       door_opened_text: string;
       fail_to_transmit_image: string;
+      switching_camera: string;
       ws_closed_unexpectedly: string;
     };
     cancelling: string;

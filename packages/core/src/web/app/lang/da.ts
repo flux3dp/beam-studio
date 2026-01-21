@@ -1680,6 +1680,7 @@ const lang: ILang = {
       door_opened: 'Døren er åben',
       door_opened_text: 'Luk venligst døren, før du genstarter kameraforhåndsvisningen.',
       fail_to_transmit_image: '#845 Noget gik galt med billedtransmissionen. Genstart venligst din maskine eller Beam Studio. Hvis denne fejl fortsætter, skal du følge <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">denne vejledning</a>.',
+      switching_camera: 'Skifter kamera...',
       ws_closed_unexpectedly: '#844 Forbindelsen til maskinkameraet er blevet lukket uventet. Hvis denne fejl fortsætter, skal du følge <a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/4402755805071">denne vejledning</a>.',
     },
     cancelling: 'Annullerer...',

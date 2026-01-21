@@ -1680,6 +1680,7 @@ const lang: ILang = {
       door_opened: 'Puerta abierta',
       door_opened_text: 'Cierre la puerta antes de reiniciar la vista previa de la cámara.',
       fail_to_transmit_image: '#845 Se ha producido un error en la transmisión de imágenes. Reinicie la máquina o Beam Studio. Si el error persiste, siga las instrucciones de <a target=_blank href=https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079>esta guía</a>.',
+      switching_camera: 'Cambiando cámara...',
       ws_closed_unexpectedly: '#844 La conexión a la cámara de la máquina se ha cerrado inesperadamente. Si este error persiste, por favor sigue <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402755805071">esta guía</a>.',
     },
     cancelling: 'Cancelando...',

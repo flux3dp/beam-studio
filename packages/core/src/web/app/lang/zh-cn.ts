@@ -1680,6 +1680,7 @@ const lang: ILang = {
       door_opened: '门盖已打开',
       door_opened_text: '请关上门盖后再重新启动相机预览。',
       fail_to_transmit_image: '#845 相机传输照片异常，请将机器重新开机。如果问题持续发生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402756056079">此则引导</a>。',
+      switching_camera: '切换相机中...',
       ws_closed_unexpectedly: '#844 与机器相机的连线无预期的中断。如果问题持续发生，請參考<a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/4402755805071">此则引导</a>。',
     },
     cancelling: '取消中...',
