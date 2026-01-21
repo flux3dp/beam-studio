@@ -69,7 +69,8 @@ describe('ador layer', () => {
     cy.get(`div[class*="${moduleBlockPrefix}select"] > .ant-select-selector`).should('have.text', 'Printing');
 
     const moveElement = (layer: string, expectedText: string) => {
-      cy.get('#svg_1').click({ force: true });
+      // Multiple clicks needed to reliably select element after layer changes
+      cy.get('#svg_1').should('exist').should('be.visible').click().click().click();
       cy.moveElementToLayer(layer, false);
       cy.get('.ant-modal-title').should('have.text', expectedText);
       cy.contains('button.ant-btn', 'Confirm').click({ force: true });

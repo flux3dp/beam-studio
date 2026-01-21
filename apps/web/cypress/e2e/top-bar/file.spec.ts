@@ -74,21 +74,27 @@ describe('manipulate file', () => {
   });
 
   it('save as file', () => {
-    cy.clickToolBtn('Rectangle');
-    cy.get('svg#svgcontent')
-      .trigger('mousedown', 100, 100, { force: true })
-      .trigger('mousemove', 400, 400, { force: true })
-      .trigger('mouseup', { force: true });
+    // Delete the file from previous "save file" test to ensure we check the correct file
+    const downloadPath = Cypress.env('cypressDownloadBeamPath');
 
-    cy.get('#svg_1').should('exist').should('not.have.attr', 'opacity');
-    cy.get('.tab.objects').click();
-    cy.get('#x_position').clear().type('100{enter}');
-    cy.get('#y_position').clear().type('100{enter}');
-    cy.get('#w_size').clear().type('100{enter}');
-    cy.get('#h_size').clear().type('100{enter}');
+    cy.task('deleteFile', downloadPath, { log: false }).then(() => {
+      cy.clickToolBtn('Rectangle');
+      cy.get('svg#svgcontent')
+        .trigger('mousedown', 100, 100, { force: true })
+        .trigger('mousemove', 400, 400, { force: true })
+        .trigger('mouseup', { force: true });
 
-    selectMenuOption('File', 'Save As...');
-    checkCrc32(Cypress.env('cypressDownloadNewBeamPath'), { default: 162394220 });
+      cy.get('#svg_1').should('exist').should('not.have.attr', 'opacity');
+      cy.get('.tab.objects').click();
+      cy.get('#x_position').clear().type('100{enter}');
+      cy.get('#y_position').clear().type('100{enter}');
+      cy.get('#w_size').clear().type('100{enter}');
+      cy.get('#h_size').clear().type('100{enter}');
+
+      selectMenuOption('File', 'Save As...');
+      // "Save As" also saves to untitled.beam (same as "Save"), so use the same path
+      checkCrc32(downloadPath, { default: 162394220 });
+    });
   });
 
   it('export bvg file', () => {

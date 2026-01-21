@@ -5,7 +5,41 @@ on:
   workflow_dispatch:
 
 jobs:
+  # Build job - runs once and shares artifact with all test machines
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Pnpm
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: false
+
+      - name: Setup Node 22
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: "pnpm"
+
+      - name: Install dependencies
+        run: pnpm install --filter=web --filter=core
+
+      - name: Build web app (dev mode)
+        run: pnpm --filter=web build:dev
+
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: web-dist
+          path: apps/web/dist
+          retention-days: 1
+
+  # Test jobs - download pre-built artifact and run tests in parallel
   e2e-test:
+    needs: build
     runs-on: windows-latest
     strategy:
       fail-fast: false
@@ -29,11 +63,17 @@ jobs:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
 
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: web-dist
+          path: apps/web/dist
+
       - name: Copy pnpm-lock.yaml
         run: cp ../../pnpm-lock.yaml .
         working-directory: apps/web
 
-      # seperate into 2 step according to https://github.com/cypress-io/github-action/blob/master/README.md#pnpm-workspaces
+      # Install dependencies (needed for Cypress)
       - name: Install dependencies
         uses: cypress-io/github-action@v6
         with:
@@ -41,7 +81,10 @@ jobs:
           runTests: false
           install-command: pnpm install --filter=web --filter=core
 
-      - name: Setup web and run e2e tests
+      - name: Install serve
+        run: npm install -g serve
+
+      - name: Run e2e tests
         uses: cypress-io/github-action@v6
         env:
           CYPRESS_username: ${{ secrets.CYPRESS_USERNAME }}
@@ -53,6 +96,6 @@ jobs:
           record: true
           group: "Actions"
           parallel: true
-          start: pnpm start
+          start: serve dist -l 8080 -s
           wait-on: "http://localhost:8080"
-          wait-on-timeout: 300
+          wait-on-timeout: 60

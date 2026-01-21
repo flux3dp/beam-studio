@@ -102,7 +102,7 @@ const ColorPicker = ({
       <AntdColorPicker
         disabled={disabled}
         disabledAlpha
-        onChangeComplete={(c: Color) => setColor(c.toHexString())}
+        onChange={(c: Color) => setColor(c.toHexString())}
         onOpenChange={(o: boolean) => setOpen(o)}
         open={open}
         panelRender={panelRender}
