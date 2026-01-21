@@ -24,6 +24,8 @@ function SettingSelect({ defaultValue, id, label, onChange, options, tooltip, ur
         id={id}
         onChange={onChange}
         options={options}
+        // for mobile dropdown display
+        popupMatchSelectWidth={false}
         // must use style instead of className, to prevent being overridden by antd form item
         style={{ width: 240 }}
         value={value}

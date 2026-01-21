@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { ConfigProvider, Form } from 'antd';
 import classNames from 'classnames';
@@ -34,6 +34,12 @@ const SettingsContent = ({
   commonProps,
   isMobile = false,
 }: SettingsContentProps): React.JSX.Element => {
+  const contentRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    contentRef.current?.scrollTo({ top: 0 });
+  }, [category]);
+
   const {
     changeActiveLang,
     editingAutosaveConfig,
@@ -85,7 +91,7 @@ const SettingsContent = ({
   };
 
   return (
-    <div className={classNames(styles.content, { [styles.mobile]: isMobile })}>
+    <div className={classNames(styles.content, { [styles.mobile]: isMobile })} ref={contentRef}>
       {categoryConfig && <div className={styles['section-title']}>{categoryConfig.label}</div>}
       <ConfigProvider theme={formTheme}>
         <Form
