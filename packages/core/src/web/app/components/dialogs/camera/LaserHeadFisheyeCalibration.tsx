@@ -118,7 +118,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
         indicator={
           isHexaRf
-            ? { height: '95%', left: '2.5%', top: '2.5%', width: '95%' }
+            ? { height: '82.5%', left: '2.5%', top: '0.5%', width: '95%' }
             : { height: '65%', left: '10%', top: '30%', width: '80%' }
         }
         onClose={onClose}
