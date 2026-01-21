@@ -3,7 +3,7 @@ import Constant, { hexaRfModels, promarkModels } from '@core/app/actions/beambox
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import Progress from '@core/app/actions/progress-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { CameraType } from '@core/app/constants/cameraConstants';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -37,7 +37,7 @@ class PreviewModeController {
   constructor() {}
 
   get isFullScreen() {
-    return this.previewManager?.isFullScreen;
+    return this.previewManager?.previewMode === PreviewMode.FULL_SCREEN;
   }
 
   setIsPreviewMode = (val: boolean) => {
@@ -163,19 +163,10 @@ class PreviewModeController {
         deviceMaster.setDeviceControlReconnectOnClose(device);
         this.setIsPreviewMode(true);
 
-        if (this.previewManager instanceof Bb2Hx2PreviewManager) {
-          setCameraPreviewState({
-            cameraType: this.previewManager.getCameraType(),
-            hasWideAngleCamera: this.previewManager.hasWideAngleCamera,
-            isWideAngleCameraCalibrated: this.previewManager.isWideAngleCameraCalibrated,
-          });
-        } else {
-          setCameraPreviewState({
-            cameraType: this.previewManager.isFullScreen ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD,
-            hasWideAngleCamera: false,
-            isWideAngleCameraCalibrated: false,
-          });
-        }
+        setCameraPreviewState({
+          isSwitchable: this.previewManager.isSwitchable,
+          previewMode: this.previewManager.previewMode,
+        });
 
         canvasEventEmitter.emit('UPDATE_CONTEXT');
       } catch (error) {
@@ -408,12 +399,12 @@ class PreviewModeController {
     return imgUrl;
   }
 
-  switchCamera = async (cameraType: CameraType): Promise<void> => {
-    if (!this.previewManager?.switchCamera) return;
+  switchPreviewMode = async (mode: PreviewMode): Promise<void> => {
+    if (!this.previewManager?.switchPreviewMode) return;
 
-    const res = await this.previewManager.switchCamera(cameraType);
+    const newMode = await this.previewManager.switchPreviewMode(mode);
 
-    setCameraPreviewState({ cameraType: res });
+    setCameraPreviewState({ previewMode: newMode });
   };
 }
 

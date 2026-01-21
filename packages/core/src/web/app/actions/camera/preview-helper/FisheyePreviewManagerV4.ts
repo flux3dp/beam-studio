@@ -78,6 +78,14 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     return true;
   }
 
+  async updateGrid(perspectiveGrid: PerspectiveGrid): Promise<void> {
+    this.grids = perspectiveGrid;
+    this.params.grids = perspectiveGrid;
+
+    await deviceMaster.setFisheyeParam(this.params);
+    await this.onObjectHeightChanged();
+  }
+
   onObjectHeightChanged = async (): Promise<void> => {
     await deviceMaster.setFisheyeObjectHeight(this.objectHeight);
   };

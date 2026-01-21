@@ -1,6 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import { MessageLevel } from '@core/app/actions/message-caller';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import workareaManager from '@core/app/svgedit/workarea';
 import CameraTransformAPI from '@core/helpers/api/camera-transform';
@@ -16,7 +17,7 @@ import BasePreviewManager from './BasePreviewManager';
 
 // TODO: Add tests
 class PromarkPreviewManager extends BasePreviewManager implements PreviewManager {
-  protected _isFullScreen = true;
+  protected _previewMode = PreviewMode.FULL_SCREEN;
   private fisheyeParams?: FisheyeCameraParameters;
   private cameraTransformAPI?: CameraTransformAPI;
   private webCamConnection: null | WebCamConnection = null;

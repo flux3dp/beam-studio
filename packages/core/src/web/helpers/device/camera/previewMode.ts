@@ -59,8 +59,7 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
   const { hasWideAngleCamera, parameters } = await getWideAngleCameraData(device);
 
   setCameraPreviewState({
-    hasWideAngleCamera,
-    isWideAngleCameraCalibrated: Boolean(parameters),
+    isSwitchable: hasWideAngleCamera || device.model === 'fbm2',
   });
 
   if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && parameters)) {

@@ -5,15 +5,18 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
-import { bm2WideAnglePerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
-import { CameraType } from '@core/app/constants/cameraConstants';
+import {
+  bm2PerspectiveGrid,
+  bm2WideAnglePerspectiveGrid,
+} from '@core/app/components/dialogs/camera/common/solvePnPConstants';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { setMaskImage } from '@core/app/svgedit/canvasBackground';
 import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import type { FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
+import type { FisheyeCameraParametersV4, PerspectiveGrid } from '@core/interfaces/FisheyePreview';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import { MessageLevel } from '@core/interfaces/IMessage';
 import { ProgressTypes } from '@core/interfaces/IProgress';
@@ -21,9 +24,9 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
+import RegionPreviewMixin from './RegionPreviewMixin';
 
-class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager {
-  private cameraType: CameraType = CameraType.LASER_HEAD;
+class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implements PreviewManager {
   private lineCheckEnabled: boolean = false;
   private fisheyeParams?: FisheyeCameraParametersV4;
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
@@ -32,14 +35,14 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
   private originalExposure: null | number = null;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
   protected progressType = ProgressTypes.STEPPING;
+  protected regionPreviewGrid = bm2PerspectiveGrid;
+  protected _isSwitchable = true;
+  protected _previewMode = PreviewMode.FULL_SCREEN;
 
   constructor(device: IDeviceInfo) {
     super(device);
     this.progressId = 'beamo2-preview-manager';
-  }
-
-  get isFullScreen(): boolean {
-    return true;
+    this.setRegionPreviewGrid(this.regionPreviewGrid);
   }
 
   protected getMovementSpeed = (): number => {
@@ -164,15 +167,35 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     this.closeMessage();
 
     try {
-      if (this.cameraType === CameraType.LASER_HEAD) {
-        await this.endCameraPreview();
-      }
+      await this.endCameraPreview();
     } catch (error) {
       console.log('Failed to end Beamo2PreviewManager', error);
     }
   };
 
-  public preview = async (): Promise<boolean> => {
+  public preview = async (
+    x: number,
+    y: number,
+    opts?: { overlapFlag?: number; overlapRatio?: number },
+  ): Promise<boolean> => {
+    return match(this._previewMode)
+      .with(PreviewMode.FULL_SCREEN, () => this.previewFullWorkarea())
+      .otherwise(() => this.regionPreviewAtPoint(x, y, opts));
+  };
+
+  public previewRegion = (
+    x1: number,
+    y1: number,
+    x2: number,
+    y2: number,
+    opts?: { overlapRatio?: number },
+  ): Promise<boolean> => {
+    return match(this._previewMode)
+      .with(PreviewMode.FULL_SCREEN, () => this.previewFullWorkarea())
+      .otherwise(() => this.regionPreviewArea(x1, y1, x2, y2, opts));
+  };
+
+  public previewFullWorkarea = async (): Promise<boolean> => {
     if (!this.doorChecker.keepClosed) {
       const res = await this.setUpCamera();
 
@@ -233,15 +256,37 @@ class Beamo2PreviewManager extends BasePreviewManager implements PreviewManager 
     }
   };
 
-  public previewRegion = (): Promise<boolean> => {
-    return this.preview();
-  };
+  switchPreviewMode = async (mode: PreviewMode) => {
+    const { lang } = i18n;
+    const workarea = getWorkarea(this.device.model, 'fbm2');
+    const { cameraCenter } = workarea;
+    const grid = match<PreviewMode, PerspectiveGrid>(mode)
+      .with(PreviewMode.REGION, () => ({
+        // offset grid for camera websocket because it is calibrated at camera center
+        x: [
+          bm2PerspectiveGrid.x[0] + cameraCenter![0],
+          bm2PerspectiveGrid.x[1] + cameraCenter![0],
+          bm2PerspectiveGrid.x[2],
+        ],
+        y: [
+          bm2PerspectiveGrid.y[0] + cameraCenter![1],
+          bm2PerspectiveGrid.y[1] + cameraCenter![1],
+          bm2PerspectiveGrid.y[2],
+        ],
+      }))
+      .otherwise(() => bm2WideAnglePerspectiveGrid);
 
-  public previewFullWorkarea = (): Promise<boolean> => {
-    return this.preview();
-  };
+    try {
+      this.showMessage({ content: lang.message.camera.switching_camera });
 
-  getCameraType = (): CameraType => this.cameraType;
+      await this.fisheyePreviewManager?.updateGrid(grid);
+      this._previewMode = mode;
+    } finally {
+      this.closeMessage();
+    }
+
+    return this._previewMode;
+  };
 }
 
 export default Beamo2PreviewManager;

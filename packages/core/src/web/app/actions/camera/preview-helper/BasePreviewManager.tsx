@@ -9,6 +9,7 @@ import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import type { WorkArea, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -38,10 +39,15 @@ class BasePreviewManager implements PreviewManager {
   protected lastPosition: [number, number] = [0, 0];
   protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
-  protected _isFullScreen = false;
+  protected _previewMode = PreviewMode.REGION;
+  protected _isSwitchable = false;
 
-  public get isFullScreen() {
-    return this._isFullScreen;
+  public get previewMode() {
+    return this._previewMode;
+  }
+
+  public get isSwitchable() {
+    return this._isSwitchable;
   }
 
   constructor(device: IDeviceInfo) {
