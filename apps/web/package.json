@@ -6,6 +6,7 @@
   "main": "index.tsx",
   "scripts": {
     "build": "webpack --config webpack.prod.js",
+    "build:dev": "webpack --config webpack.dev.js",
     "cy:dev": "cypress open",
     "cy:run": "cypress run",
     "start": "webpack serve --config webpack.dev.js"

@@ -42,6 +42,33 @@ export const md5 = (input: string) => {
   return rh(a) + rh(b) + rh(c) + rh(d);
 };
 
+/**
+ * Selects an option from an Ant Design virtual list dropdown using keyboard navigation.
+ * Useful for large dropdowns where scrolling-based approaches may fail.
+ */
+export function selectOptionWithKeyboard(selectAlias: string, optionText: string): void {
+  const maxAttempts = 30;
+
+  const findAndSelect = (attempt = 0) => {
+    if (attempt >= maxAttempts) {
+      throw new Error(`Option "${optionText}" not found after ${maxAttempts} keyboard navigation attempts.`);
+    }
+
+    cy.get('.ant-select-item-option-active .ant-select-item-option-content').then(($active) => {
+      if ($active.text().trim() === optionText) {
+        cy.get(selectAlias).find('.ant-select-selection-search-input').type('{enter}', { force: true });
+      } else {
+        cy.get(selectAlias)
+          .find('.ant-select-selection-search-input')
+          .type('{downarrow}', { force: true })
+          .then(() => findAndSelect(attempt + 1));
+      }
+    });
+  };
+
+  findAndSelect();
+}
+
 export default {
   md5,
 };
