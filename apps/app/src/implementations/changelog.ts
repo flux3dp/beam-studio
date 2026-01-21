@@ -2,26 +2,19 @@ import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
 // 2.6.1 beta
 const CHANGES_TW = {
-  added: [
-    '支援 HEXA RF 機型。',
-    '新增 於 Mac（Apple Silicon）上安裝 Intel 版本時的警告提示。',
-    '新增 泰隆尼雅語系支援。',
-    '新增 進階校正參數設定。',
+  added: ['開啟 beamo 旋轉軸支援擴展工作範圍功能。'],
+  changed: ['延長 FLUX ador 和 beamo II 的旋轉軸擴展工作範圍。'],
+  fixed: [
+    '修正 HEXA RF 相機訊號源切換問題。',
+    '調整 HEXA RF 雷射頭進階校正的棋盤版擺放位置。',
+    'HEXA RF 80W 機型雷射延遲參數更新。',
+    '更新 HEXA RF 範例圖檔。',
   ],
-  changed: ['偏好設定頁面調整為視窗形式顯示。', '偏好設定套用完成後不再重整畫面。', '調整 西班牙文翻譯。'],
-  fixed: [],
 };
 
 const CHANGES_EN = {
-  added: [
-    'Added a warning message when installing the Intel version on Apple silicon Macs.',
-    'Added Catalan language support.',
-  ],
-  changed: [
-    'Updated Preferences to open in a modal.',
-    'Applied changes in Preferences without reloading the page.',
-    'Updated Spanish translations.',
-  ],
+  added: ['Enabled “Extend Workarea” for Rotary on beamo.'],
+  changed: ['Extended the rotary working area expansion for FLUX Ador and beamo II.'],
   fixed: [],
 };
 
