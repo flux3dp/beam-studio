@@ -53,8 +53,8 @@ import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
 import ErrorBoundaryFallback from './components/ErrorBoundaryFallback';
+import { DEFAULT_CONFIG, useSettingStore } from './components/settings/shared/hooks/useSettingStore';
 import useAutoConnect from './hooks/useAutoConnect';
-import { DEFAULT_CONFIG, useSettingStore } from './pages/Settings/useSettingStore';
 
 const { defaultAlgorithm } = theme;
 

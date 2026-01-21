@@ -1,0 +1,37 @@
+import type { ReactNode } from 'react';
+
+import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
+
+import type { SettingUnitInputProps } from '../shared';
+
+export enum SettingCategory {
+  AUTOSAVE = 'autosave',
+  CAMERA = 'camera',
+  CONNECTION = 'connection',
+  EDITOR = 'editor',
+  ENGRAVING = 'engraving',
+  EXPERIMENTAL = 'experimental',
+  GENERAL = 'general',
+  MODULE = 'module',
+  PATH = 'path',
+  PRIVACY = 'privacy',
+  RESET = 'reset', // Mobile-only category
+}
+
+export interface SettingCategoryConfig {
+  icon: ReactNode;
+  key: SettingCategory;
+  label: string;
+  visible?: boolean;
+}
+
+export interface CommonSettingProps {
+  changeActiveLang: (value: string) => void;
+  editingAutosaveConfig: AutoSaveConfig;
+  onReset?: () => Promise<void>; // Optional - only used on mobile Reset tab
+  setEditingAutosaveConfig: (config: AutoSaveConfig) => void;
+  setWarnings: React.Dispatch<React.SetStateAction<Record<string, string>>>;
+  supportedLangs: Record<string, string>;
+  unitInputProps: Partial<SettingUnitInputProps>;
+  warnings: Record<string, string>;
+}

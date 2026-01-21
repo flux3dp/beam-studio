@@ -4,7 +4,7 @@ import React, { useMemo, useState } from 'react';
 import classNames from 'classnames';
 
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
-import TestInfo from '@core/app/components/settings/connection/TestInfo';
+import TestInfo from '@core/app/components/settings/categories/Connection/TestInfo';
 import { ConnectMachineFailedStates, TestState } from '@core/app/constants/connection-test';
 import useI18n from '@core/helpers/useI18n';
 import os from '@core/implementations/os';
@@ -18,17 +18,19 @@ import styles from './index.module.scss';
 const ConnectMachineIp = (): React.JSX.Element => {
   const lang = useI18n();
   const [ipValue, setIpValue] = useState('');
-  const { isUsb, isWired, model } = useMemo(() => {
+  const { isAdor, isNx, isUsb, isWired, model } = useMemo(() => {
     const queryString = window.location.hash.split('?')[1] || '';
     const urlParams = new URLSearchParams(queryString);
+    const modelValue = urlParams.get('model')!;
 
     return {
+      isAdor: adorModels.has(modelValue),
+      isNx: nxModels.has(modelValue),
       isUsb: urlParams.get('usb') === '1',
       isWired: urlParams.get('wired') === '1',
-      model: urlParams.get('model')!,
+      model: modelValue,
     };
   }, []);
-  const [isAdor, isNx] = useMemo(() => [adorModels.has(model), nxModels.has(model)], [model]);
   const { handleStartTest, isPromark, onFinish, state } = useConnectionTest(model, isUsb, ipValue, setIpValue);
   const { countDownDisplay, device, testState } = state;
 

@@ -1,0 +1,213 @@
+@use '../shared/styles/variables' as *;
+
+.modal-wrap {
+  :global(.ant-modal-content) {
+    padding: 0;
+    overflow: hidden;
+  }
+
+  :global(.ant-modal-header) {
+    padding: 16px 24px;
+    margin: 0;
+    border-bottom: 1px solid $settings-border-color;
+    background: $settings-background;
+  }
+
+  :global(.ant-modal-body) {
+    padding: 0;
+    display: flex;
+    height: 520px;
+    max-height: calc(80vh - 120px);
+    overflow: hidden !important; // Override scrollableContent's overflow:auto - we want scroll in .content only
+  }
+
+  :global(.ant-modal-footer) {
+    padding: 16px 24px;
+    margin: 0;
+    border-top: 1px solid $settings-border-color;
+    background: $settings-background;
+  }
+}
+
+.container {
+  display: flex;
+  width: 100%;
+  height: 100%;
+  min-height: 0; // Allow flex children to shrink and enable scrolling
+  overflow: hidden;
+}
+
+.sidebar {
+  min-width: $sidebar-width;
+  background: $settings-background;
+  border-right: 1px solid $settings-border-color;
+  padding: 12px 0;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+}
+
+.sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 16px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  color: #333;
+  font-size: 14px;
+  border-radius: 6px;
+  margin: 4px 12px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+
+  &:last-child {
+    margin-bottom: 0;
+  }
+
+  &:hover {
+    background: #e5e5e5;
+  }
+
+  &.selected {
+    background: $settings-primary-blue;
+    color: #fff;
+  }
+
+  .icon {
+    font-size: 18px;
+    width: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .label {
+    flex: 1;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+.content {
+  flex: 1;
+  min-height: 0; // Critical for enabling scroll in flex child
+  padding: 24px;
+  overflow-y: auto;
+  background: $settings-background;
+
+  &::-webkit-scrollbar {
+    width: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 4px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: #f0f0f0;
+    border-radius: 4px;
+  }
+}
+
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 20px;
+}
+
+.sub-section-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #333;
+  margin-bottom: 12px;
+  margin-top: 8px;
+  margin-left: 4px;
+
+  &:first-child {
+    margin-top: 0;
+  }
+}
+
+.footer {
+  display: flex;
+  justify-content: space-between;
+  width: 100%;
+
+  .left-buttons,
+  .right-buttons {
+    display: flex;
+    gap: 12px;
+  }
+}
+
+.content.mobile {
+  padding: 16px;
+  background: transparent;
+  overflow: visible;
+
+  // Prevent iOS zoom on focus (font-size >= 16px)
+  // Make form controls responsive in vertical layout
+  :global {
+    .ant-select {
+      font-size: 16px;
+      width: 100% !important;
+      max-width: 100%;
+    }
+
+    .ant-input {
+      font-size: 16px;
+      width: 100% !important;
+      max-width: 100%;
+    }
+
+    // For standalone number inputs, allow full width
+    // For X/Y paired inputs, shrink proportionally (min 80px)
+    .ant-input-number {
+      font-size: 16px;
+      min-width: 80px;
+      max-width: 100%;
+    }
+
+    .ant-form-item-control {
+      max-width: 100%;
+    }
+
+    // Make form item control wrapper allow flexible layout
+    .ant-form-item-control-input-content {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+  }
+
+  // XY item: stack vertically on mobile
+  :global([class*='xy-item']) {
+    width: 100%;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  // XY set: make input expand to fill available space
+  :global([class*='xy-set']) {
+    flex: 1;
+
+    // Make input number take remaining space after label
+    :global(.ant-input-number) {
+      flex: 1;
+    }
+  }
+}

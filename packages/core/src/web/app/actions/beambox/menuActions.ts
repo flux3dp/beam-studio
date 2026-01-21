@@ -8,7 +8,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
-import { showSettingsModal } from '@core/app/components/settings/SettingsModal';
+import { showSettingsModal } from '@core/app/components/settings/modal/SettingsModal';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import historyUtils from '@core/app/svgedit/history/utils';

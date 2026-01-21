@@ -24,7 +24,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import { showSettingsModal } from '../settings/SettingsModal';
+import { showSettingsModal } from '../settings/modal/SettingsModal';
 
 import styles from './CanvasTabBar.module.scss';
 

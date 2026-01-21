@@ -5,19 +5,20 @@ import { ConfigProvider, Form } from 'antd';
 import classNames from 'classnames';
 
 import settings from '@core/app/app-settings';
-import AutoSave from '@core/app/components/settings/AutoSave';
-import Camera from '@core/app/components/settings/Camera';
-import type { SettingUnitInputProps } from '@core/app/components/settings/components/SettingUnitInput';
-import Connection from '@core/app/components/settings/Connection';
-import Editor from '@core/app/components/settings/Editor';
-import Engraving from '@core/app/components/settings/Engraving';
-import Experimental from '@core/app/components/settings/Experimental';
-import General from '@core/app/components/settings/General';
-import Module from '@core/app/components/settings/Module';
-import Path from '@core/app/components/settings/Path';
-import Privacy from '@core/app/components/settings/Privacy';
-import styles from '@core/app/components/settings/Settings.module.scss';
-import TextToPath from '@core/app/components/settings/TextToPath';
+import {
+  AutoSave,
+  Camera,
+  Connection,
+  Editor,
+  Engraving,
+  Experimental,
+  General,
+  Module,
+  Path,
+  Privacy,
+} from '@core/app/components/settings/categories';
+import { FontConvertSettings, type SettingUnitInputProps, useSettingStore } from '@core/app/components/settings/shared';
+import styles from '@core/app/components/settings/shared/styles/shared.module.scss';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import { getHomePage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -27,8 +28,6 @@ import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 import type { ILang } from '@core/interfaces/ILang';
-
-import { useSettingStore } from './useSettingStore';
 
 function Settings(): React.JSX.Element {
   const { supported_langs } = settings.i18n;
@@ -115,7 +114,7 @@ function Settings(): React.JSX.Element {
             <div className={styles.subtitle}>{lang.settings.groups.path}</div>
             <Path unitInputProps={commonUnitInputProps} />
             <div className={styles.subtitle}>{lang.settings.groups.text_to_path}</div>
-            <TextToPath />
+            <FontConvertSettings />
             <div className={styles.subtitle}>{lang.settings.groups.modules}</div>
             <Module unitInputProps={commonUnitInputProps} />
             <div className={styles.subtitle}>{lang.settings.groups.privacy}</div>
