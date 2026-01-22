@@ -36,8 +36,8 @@ class PreviewModeController {
 
   constructor() {}
 
-  get isFullScreen() {
-    return this.previewManager?.previewMode === PreviewMode.FULL_SCREEN;
+  get isFullArea() {
+    return this.previewManager?.previewMode === PreviewMode.FULL_AREA;
   }
 
   setIsPreviewMode = (val: boolean) => {

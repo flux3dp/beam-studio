@@ -39,7 +39,7 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
   if (previewModeController.isStarting || previewModeController.isDrawing) return false;
 
   if (previewModeController.isPreviewMode) {
-    if (previewModeController.isFullScreen) {
+    if (previewModeController.isFullArea) {
       previewModeController.previewFullWorkarea();
 
       return false;
@@ -106,7 +106,7 @@ export const setupPreviewMode = async ({
       return;
     }
 
-    if (previewModeController.isFullScreen) {
+    if (previewModeController.isFullArea) {
       previewModeController.previewFullWorkarea().then(() => {
         if (tutorialController.getNextStepRequirement() === tutorialConstants.PREVIEW_PLATFORM) {
           tutorialController.handleNextStep();

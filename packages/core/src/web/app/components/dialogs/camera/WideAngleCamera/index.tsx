@@ -27,11 +27,11 @@ import { moveZRel } from '../common/moveZRel';
 import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
 import {
+  bb2FullAreaPerspectiveGrid,
   bb2WideAngleCameraPnpPoints,
-  bb2WideAnglePerspectiveGrid,
   getRegionalPoints,
+  hx2FullAreaPerspectiveGrid,
   hx2WideAngleCameraPnpPoints,
-  hx2WideAnglePerspectiveGrid,
 } from '../common/solvePnPConstants';
 
 const enum Step {
@@ -464,7 +464,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
         <CheckPnP
           cameraOptions={{ index: 1 }}
           dh={dh!}
-          grid={isHexaRf ? hx2WideAnglePerspectiveGrid : bb2WideAnglePerspectiveGrid}
+          grid={isHexaRf ? hx2FullAreaPerspectiveGrid : bb2FullAreaPerspectiveGrid}
           hasNext
           onBack={() => setStep(step === Step.CHECK_PNP_1 ? Step.SOLVE_PNP_TL_1 : Step.SOLVE_PNP_TL_2)}
           onClose={onClose}

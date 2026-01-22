@@ -24,6 +24,6 @@ export const CALIBRATION_PARAMS = {
 /* eslint-disable perfectionist/sort-enums */
 export const enum PreviewMode {
   REGION = 1,
-  FULL_SCREEN = 2,
+  FULL_AREA = 2,
 }
 /* eslint-enable perfectionist/sort-enums */

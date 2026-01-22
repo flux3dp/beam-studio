@@ -115,7 +115,7 @@ const PreviewSlider = (): React.ReactNode => {
   const showAutoExposure = useMemo(() => {
     if (autoExposure === null) return false;
 
-    if (previewMode === PreviewMode.FULL_SCREEN && deviceMaster.currentDevice?.info.model === 'fbm2') return false;
+    if (previewMode === PreviewMode.FULL_AREA && deviceMaster.currentDevice?.info.model === 'fbm2') return false;
 
     return true;
   }, [autoExposure, previewMode]);
@@ -167,7 +167,7 @@ const PreviewSlider = (): React.ReactNode => {
                   console.error('Failed to set exposure', e);
                 }
 
-                if (PreviewModeController.isFullScreen) {
+                if (PreviewModeController.isFullArea) {
                   await PreviewModeController.previewFullWorkarea();
                 }
               }}

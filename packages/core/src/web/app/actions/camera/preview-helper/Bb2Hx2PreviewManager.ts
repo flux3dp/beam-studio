@@ -5,8 +5,8 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { hexaRfModels, PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import {
-  bb2WideAnglePerspectiveGrid,
-  hx2WideAnglePerspectiveGrid,
+  bb2FullAreaPerspectiveGrid,
+  hx2FullAreaPerspectiveGrid,
 } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -28,7 +28,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private wideAngleFisheyeManager?: FisheyePreviewManagerV4;
   private wideAngleFisheyeParams?: FisheyeCameraParametersV4;
   private fisheyeParams?: FisheyeCameraParameters;
-  private wideAngleGrid = bb2WideAnglePerspectiveGrid;
+  private fullAreaGrid = bb2FullAreaPerspectiveGrid;
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
 
   public hasWideAngleCamera: boolean = false;
@@ -38,7 +38,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     this.progressId = 'beam-preview-manager';
 
     if (hexaRfModels.has(device.model)) {
-      this.wideAngleGrid = hx2WideAnglePerspectiveGrid;
+      this.fullAreaGrid = hx2FullAreaPerspectiveGrid;
     }
   }
 
@@ -78,7 +78,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
     const { lang } = i18n;
 
-    if (mode === PreviewMode.FULL_SCREEN && !this.wideAngleFisheyeParams) {
+    if (mode === PreviewMode.FULL_AREA && !this.wideAngleFisheyeParams) {
       alertCaller.popUpError({ message: lang.message.camera.calibration_wide_angle_camera_first });
 
       return this._previewMode;
@@ -123,7 +123,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.wideAngleFisheyeManager = new FisheyePreviewManagerV4(
         this.device,
         this.wideAngleFisheyeParams,
-        this.wideAngleGrid,
+        this.fullAreaGrid,
       );
 
       const res = await this.wideAngleFisheyeManager.setupFisheyePreview({
@@ -210,10 +210,10 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.hasWideAngleCamera = hasWideAngleCamera;
       this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;
 
-      this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_SCREEN : PreviewMode.REGION;
+      this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_AREA : PreviewMode.REGION;
 
       const res = await match(this._previewMode)
-        .with(PreviewMode.FULL_SCREEN, () => this.setupWideAngleCamera())
+        .with(PreviewMode.FULL_AREA, () => this.setupWideAngleCamera())
         .otherwise(() => this.setupLaserHeadCamera());
 
       return res;
@@ -241,7 +241,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
   public preview = (x: number, y: number, opts?: { overlapFlag?: number; overlapRatio?: number }): Promise<boolean> => {
     return match(this._previewMode)
-      .with(PreviewMode.FULL_SCREEN, () => this.previewWithWideAngleCamera())
+      .with(PreviewMode.FULL_AREA, () => this.previewWithWideAngleCamera())
       .otherwise(() => this.regionPreviewAtPoint(x, y, opts));
   };
 
@@ -253,13 +253,13 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     opts?: { overlapRatio?: number },
   ): Promise<boolean> => {
     return match(this._previewMode)
-      .with(PreviewMode.FULL_SCREEN, () => this.previewWithWideAngleCamera())
+      .with(PreviewMode.FULL_AREA, () => this.previewWithWideAngleCamera())
       .otherwise(() => this.regionPreviewArea(x1, y1, x2, y2, opts));
   };
 
   public previewFullWorkarea = (): Promise<boolean> => {
     return match(this._previewMode)
-      .with(PreviewMode.FULL_SCREEN, () => this.previewWithWideAngleCamera())
+      .with(PreviewMode.FULL_AREA, () => this.previewWithWideAngleCamera())
       .otherwise(() => Promise.resolve(false));
   };
 
@@ -306,7 +306,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   reloadLevelingOffset = async (): Promise<void> => {};
 
   resetObjectHeight = async (): Promise<boolean> => {
-    if (this._previewMode === PreviewMode.FULL_SCREEN && this.wideAngleFisheyeManager) {
+    if (this._previewMode === PreviewMode.FULL_AREA && this.wideAngleFisheyeManager) {
       return this.wideAngleFisheyeManager.resetObjectHeight();
     }
 

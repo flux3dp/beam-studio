@@ -13,7 +13,7 @@ import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
 
 // TODO: Add tests
 class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
-  protected _previewMode = PreviewMode.FULL_SCREEN;
+  protected _previewMode = PreviewMode.FULL_AREA;
   private fisheyeManager?: FisheyePreviewManager;
 
   constructor(device: IDeviceInfo) {

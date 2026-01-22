@@ -34,11 +34,11 @@ jest.mock('@core/app/stores/cameraPreview', () => ({
 }));
 
 const mockPreviewFullWorkarea = jest.fn();
-const mockIsFullScreen = jest.fn();
+const mockIsFullArea = jest.fn();
 
 jest.mock('@core/app/actions/beambox/preview-mode-controller', () => ({
-  get isFullScreen() {
-    return mockIsFullScreen();
+  get isFullArea() {
+    return mockIsFullArea();
   },
   previewFullWorkarea: () => mockPreviewFullWorkarea(),
 }));
@@ -85,7 +85,7 @@ jest.mock('antd', () => ({
 describe('test PreviewSlider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsFullScreen.mockReturnValue(true);
+    mockIsFullArea.mockReturnValue(true);
     mockMeetRequirement.mockReturnValue(true);
     document.body.innerHTML =
       '<svg id="previewSvg"><image id="backgroundImage" style="pointer-events:none; opacity: 1;"/></svg>';
@@ -162,7 +162,7 @@ describe('test PreviewSlider', () => {
   });
 
   it('should render correctly when is previewing BB2', async () => {
-    mockIsFullScreen.mockReturnValue(false);
+    mockIsFullArea.mockReturnValue(false);
 
     const imageContainer = document.getElementById('previewSvg');
 

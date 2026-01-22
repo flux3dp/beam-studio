@@ -24,7 +24,7 @@ import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
 
-import { bm2WideAnglePerspectiveGrid } from '../common/solvePnPConstants';
+import { bm2FullAreaPerspectiveGrid } from '../common/solvePnPConstants';
 
 import styles from './Align.module.scss';
 import getPerspectiveForAlign from './getPerspectiveForAlign';
@@ -79,7 +79,7 @@ const Align = ({
           const manger = new FisheyePreviewManagerV4(
             deviceMaster.currentDevice!.info,
             fisheyeParam,
-            bm2WideAnglePerspectiveGrid,
+            bm2FullAreaPerspectiveGrid,
           );
 
           const workarea = getWorkarea(deviceMaster.currentDevice!.info.model, 'fbm2');

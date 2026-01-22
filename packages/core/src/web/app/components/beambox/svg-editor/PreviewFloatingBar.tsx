@@ -100,8 +100,8 @@ export const PreviewFloatingBar = memo((): ReactNode => {
             disabled={!isPreviewMode || isDrawing || isStarting}
             id="wide-angle-camera"
             onClick={async () => {
-              if (previewMode !== PreviewMode.FULL_SCREEN) {
-                await previewModeController.switchPreviewMode(PreviewMode.FULL_SCREEN);
+              if (previewMode !== PreviewMode.FULL_AREA) {
+                await previewModeController.switchPreviewMode(PreviewMode.FULL_AREA);
               }
 
               handlePreviewClick();

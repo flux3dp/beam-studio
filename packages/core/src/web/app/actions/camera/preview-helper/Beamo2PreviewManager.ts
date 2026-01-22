@@ -7,8 +7,8 @@ import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import {
+  bm2FullAreaPerspectiveGrid,
   bm2PerspectiveGrid,
-  bm2WideAnglePerspectiveGrid,
 } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -31,13 +31,13 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private lineCheckEnabled: boolean = false;
   private fisheyeParams?: FisheyeCameraParametersV4;
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
-  private grid = bm2WideAnglePerspectiveGrid;
+  private grid = bm2FullAreaPerspectiveGrid;
   private doorChecker = new DoorChecker();
   private originalExposure: null | number = null;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
   protected progressType = ProgressTypes.STEPPING;
   protected _isSwitchable = true;
-  protected _previewMode = PreviewMode.FULL_SCREEN;
+  protected _previewMode = PreviewMode.FULL_AREA;
 
   constructor(device: IDeviceInfo) {
     super(device);
@@ -178,7 +178,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     opts?: { overlapFlag?: number; overlapRatio?: number },
   ): Promise<boolean> => {
     return match(this._previewMode)
-      .with(PreviewMode.FULL_SCREEN, () => this.previewFullWorkarea())
+      .with(PreviewMode.FULL_AREA, () => this.previewFullWorkarea())
       .otherwise(() => this.regionPreviewAtPoint(x, y, opts));
   };
 
@@ -190,7 +190,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     opts?: { overlapRatio?: number },
   ): Promise<boolean> => {
     return match(this._previewMode)
-      .with(PreviewMode.FULL_SCREEN, () => this.previewFullWorkarea())
+      .with(PreviewMode.FULL_AREA, () => this.previewFullWorkarea())
       .otherwise(() => this.regionPreviewArea(x1, y1, x2, y2, opts));
   };
 
@@ -293,10 +293,10 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           bm2PerspectiveGrid.y[2],
         ],
       }))
-      .otherwise(() => bm2WideAnglePerspectiveGrid);
+      .otherwise(() => bm2FullAreaPerspectiveGrid);
 
     // merge background image and mask image before exiting full screen preview mode
-    if (this._previewMode === PreviewMode.FULL_SCREEN && !previewModeBackgroundDrawer.isClean()) {
+    if (this._previewMode === PreviewMode.FULL_AREA && !previewModeBackgroundDrawer.isClean()) {
       // not using cache to avoid image url revoked when clearBackgroundImage
       const url = await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false });
 
@@ -304,7 +304,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       previewModeBackgroundDrawer.setCanvasUrl(url);
     }
 
-    if (mode === PreviewMode.FULL_SCREEN) {
+    if (mode === PreviewMode.FULL_AREA) {
       await this.moveTo(cameraCenter[0], cameraCenter[1]);
     }
 
