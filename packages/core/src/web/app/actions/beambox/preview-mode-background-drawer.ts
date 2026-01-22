@@ -366,8 +366,8 @@ class PreviewModeBackgroundDrawer {
     setCameraPreviewState({ isClean: true });
   }
 
-  getCameraCanvasUrl() {
-    return getBackgroundUrl(this.canvas.width, this.canvas.height);
+  getCameraCanvasUrl({ useCache = true }: { useCache?: boolean } = {}): Promise<string> {
+    return getBackgroundUrl(this.canvas.width, this.canvas.height, { useCache });
   }
 
   getCoordinates() {
@@ -389,6 +389,16 @@ class PreviewModeBackgroundDrawer {
     this.cameraCanvasUrl = URL.createObjectURL(blob);
     setCameraPreviewState({ isClean: false });
 
+    setBackgroundImage(this.cameraCanvasUrl);
+  };
+
+  setCanvasUrl = (url: string) => {
+    if (this.cameraCanvasUrl) {
+      URL.revokeObjectURL(this.cameraCanvasUrl);
+    }
+
+    this.cameraCanvasUrl = url;
+    setCameraPreviewState({ isClean: false });
     setBackgroundImage(this.cameraCanvasUrl);
   };
 

@@ -4,6 +4,7 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import {
   bm2PerspectiveGrid,
@@ -12,7 +13,7 @@ import {
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { setMaskImage } from '@core/app/svgedit/canvasBackground';
+import { clearBackgroundImage, setMaskImage } from '@core/app/svgedit/canvasBackground';
 import { setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -257,28 +258,40 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   };
 
   switchPreviewMode = async (mode: PreviewMode) => {
-    const { lang } = i18n;
-    const workarea = getWorkarea(this.device.model, 'fbm2');
-    const { cameraCenter } = workarea;
+    if (this._previewMode === mode) return this._previewMode;
+
+    this.showMessage({ content: i18n.lang.message.camera.switching_camera });
+
+    const cameraCenter = getWorkarea(this.device.model, 'fbm2').cameraCenter!;
     const grid = match<PreviewMode, PerspectiveGrid>(mode)
       .with(PreviewMode.REGION, () => ({
         // offset grid for camera websocket because it is calibrated at camera center
         x: [
-          bm2PerspectiveGrid.x[0] + cameraCenter![0],
-          bm2PerspectiveGrid.x[1] + cameraCenter![0],
+          bm2PerspectiveGrid.x[0] + cameraCenter[0],
+          bm2PerspectiveGrid.x[1] + cameraCenter[0],
           bm2PerspectiveGrid.x[2],
         ],
         y: [
-          bm2PerspectiveGrid.y[0] + cameraCenter![1],
-          bm2PerspectiveGrid.y[1] + cameraCenter![1],
+          bm2PerspectiveGrid.y[0] + cameraCenter[1],
+          bm2PerspectiveGrid.y[1] + cameraCenter[1],
           bm2PerspectiveGrid.y[2],
         ],
       }))
       .otherwise(() => bm2WideAnglePerspectiveGrid);
 
-    try {
-      this.showMessage({ content: lang.message.camera.switching_camera });
+    // merge background image and mask image before exiting full screen preview mode
+    if (this._previewMode === PreviewMode.FULL_SCREEN && !previewModeBackgroundDrawer.isClean()) {
+      const url = await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false });
 
+      clearBackgroundImage();
+      previewModeBackgroundDrawer.setCanvasUrl(url);
+    }
+
+    if (mode === PreviewMode.FULL_SCREEN) {
+      await this.moveTo(cameraCenter[0], cameraCenter[1]);
+    }
+
+    try {
       await this.fisheyePreviewManager?.updateGrid(grid);
       this._previewMode = mode;
     } finally {
