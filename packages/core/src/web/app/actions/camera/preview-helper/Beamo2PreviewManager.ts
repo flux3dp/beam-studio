@@ -6,10 +6,7 @@ import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
-import {
-  bm2FullAreaPerspectiveGrid,
-  bm2PerspectiveGrid,
-} from '@core/app/components/dialogs/camera/common/solvePnPConstants';
+import { bm2FullAreaPerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -283,14 +280,14 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       .with(PreviewMode.REGION, () => ({
         // offset grid for camera websocket because it is calibrated at camera center
         x: [
-          bm2PerspectiveGrid.x[0] + cameraCenter[0],
-          bm2PerspectiveGrid.x[1] + cameraCenter[0],
-          bm2PerspectiveGrid.x[2],
+          this.regionPreviewGrid.x[0] + cameraCenter[0],
+          this.regionPreviewGrid.x[1] + cameraCenter[0],
+          this.regionPreviewGrid.x[2],
         ],
         y: [
-          bm2PerspectiveGrid.y[0] + cameraCenter[1],
-          bm2PerspectiveGrid.y[1] + cameraCenter[1],
-          bm2PerspectiveGrid.y[2],
+          this.regionPreviewGrid.y[0] + cameraCenter[1],
+          this.regionPreviewGrid.y[1] + cameraCenter[1],
+          this.regionPreviewGrid.y[2],
         ],
       }))
       .otherwise(() => bm2FullAreaPerspectiveGrid);
