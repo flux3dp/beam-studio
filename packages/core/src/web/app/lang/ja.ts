@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: '焦点距離を取得中...',
       moving_to_preview_position: 'プレビュー位置に移動中...',
       please_enter_height: '正確なカメラショットを撮影するために、物体の高さを入力してください。',
+      please_focus_before_preview: 'より良いプレビュー品質を得るために、プレビュー前にオートフォーカスを実行してください。',
       press_esc_to_stop: 'ESCを押してカメラプレビューを停止します。',
       succeeded: 'プレビューに成功しました',
     },

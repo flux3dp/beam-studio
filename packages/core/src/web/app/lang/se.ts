@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Hämtar brännvidd...',
       moving_to_preview_position: 'Flyttar till förhandsvisningsposition...',
       please_enter_height: 'Ange objektets höjd. För att ta en exakt kamerabild.',
+      please_focus_before_preview: 'För att få bättre förhandsgranskningskvalitet, utför autofokus före förhandsgranskning.',
       press_esc_to_stop: 'Tryck på ESC för att stoppa kameraförhandsvisningen.',
       succeeded: 'Förhandsgranskning lyckades',
     },

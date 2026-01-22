@@ -1722,6 +1722,7 @@ export interface ILang {
       getting_focal_distance: string;
       moving_to_preview_position: string;
       please_enter_height: string;
+      please_focus_before_preview: string;
       press_esc_to_stop: string;
       succeeded: string;
     };

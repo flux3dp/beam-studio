@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: '正在取得焦距...',
       moving_to_preview_position: '正在移動至相機預覽位置...',
       please_enter_height: '請輸入物體的高度，以拍攝精確的相機照片。',
+      please_focus_before_preview: '為獲得更好的預覽品質，請在預覽前執行自動對焦。',
       press_esc_to_stop: '按下 ESC 鍵以停止相機預覽。',
       succeeded: '預覽成功',
     },

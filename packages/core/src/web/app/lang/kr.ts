@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: '초점 거리 측정 중...',
       moving_to_preview_position: '미리보기 위치로 이동 중...',
       please_enter_height: '물체의 높이를 입력하여 정확한 카메라 촬영을 위해.',
+      please_focus_before_preview: '더 나은 미리보기 품질을 얻으려면 미리보기 전에 자동 초점을 수행하세요.',
       press_esc_to_stop: 'ESC를 눌러 카메라 미리보기를 중지하세요.',
       succeeded: '미리보기 성공',
     },

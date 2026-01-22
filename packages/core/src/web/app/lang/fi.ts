@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Haetaan polttoväliä...',
       moving_to_preview_position: 'Siirrytään esikatseluasentoon...',
       please_enter_height: 'Anna kohteen korkeus. Jotta kameran kuva olisi tarkka.',
+      please_focus_before_preview: 'Saadaksesi paremman esikatselun laadun, suorita automaattitarkennus ennen esikatselua.',
       press_esc_to_stop: 'Paina ESC lopettaaksesi kameran esikatselun.',
       succeeded: 'Esikatselu onnistui',
     },

@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Obtention de la distance focale...',
       moving_to_preview_position: 'Déplacement vers la position d’aperçu...',
       please_enter_height: "Veuillez entrer la hauteur de l'objet. Afin de capturer un cliché de caméra précis.",
+      please_focus_before_preview: "Pour obtenir une meilleure qualité d'aperçu, veuillez effectuer la mise au point automatique avant l'aperçu.",
       press_esc_to_stop: 'Appuyez sur ESC pour arrêter l’aperçu de la caméra.',
       succeeded: 'Aperçu réussi',
     },

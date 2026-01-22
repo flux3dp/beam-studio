@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Ottenimento della distanza focale...',
       moving_to_preview_position: 'Spostamento nella posizione di anteprima...',
       please_enter_height: "Inserire l'altezza dell'oggetto. Per catturare uno scatto di fotocamera preciso.",
+      please_focus_before_preview: "Per ottenere una migliore qualità dell'anteprima, eseguire la messa a fuoco automatica prima dell'anteprima.",
       press_esc_to_stop: 'Premi ESC per interrompere l’anteprima della fotocamera.',
       succeeded: 'Anteprima riuscita',
     },

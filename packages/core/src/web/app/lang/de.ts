@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Ermittle Brennweite...',
       moving_to_preview_position: 'Bewege zur Vorschauposition...',
       please_enter_height: 'Bitte geben Sie die Höhe des Objekts ein, um eine präzise Kameraaufnahme zu erfassen.',
+      please_focus_before_preview: 'Um eine bessere Vorschauqualität zu erhalten, führen Sie bitte vor der Vorschau den Autofokus durch.',
       press_esc_to_stop: 'Drücken Sie ESC, um die Kameravorschau zu stoppen.',
       succeeded: 'Erfolgreich vorgeschaut',
     },

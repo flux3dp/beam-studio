@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Získávání ohniskové vzdálenosti...',
       moving_to_preview_position: 'Přesouvání do náhledové pozice...',
       please_enter_height: 'Zadejte prosím výšku objektu, aby kamera zachytila přesný záběr.',
+      please_focus_before_preview: 'Pro lepší kvalitu náhledu prosím proveďte automatické zaostření před náhledem.',
       press_esc_to_stop: 'Stisknutím ESC zastavíte náhled kamery.',
       succeeded: 'Úspěšně zobrazeno',
     },

@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Mengambil jarak fokus...',
       moving_to_preview_position: 'Memindahkan ke posisi pratinjau...',
       please_enter_height: 'Silakan masukkan tinggi objek agar dapat mengambil gambar kamera yang akurat.',
+      please_focus_before_preview: 'Untuk mendapatkan kualitas pratinjau yang lebih baik, silakan lakukan fokus otomatis sebelum pratinjau.',
       press_esc_to_stop: 'Tekan ESC untuk menghentikan pratinjau kamera.',
       succeeded: 'Berhasil dipratinjau',
     },

@@ -64,7 +64,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
         this.objectHeight = await getFocalDistance({ showError: false });
       } catch (error) {
         alertCaller.popUp({
-          message: 'To get better preview quality, please perform auto-focus before previewing.',
+          message: lang.message.preview.please_focus_before_preview,
           messageIcon: 'warning',
         });
         this.objectHeight = fallbackHeight;

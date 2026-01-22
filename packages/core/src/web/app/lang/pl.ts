@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Pobieranie odległości ogniskowej...',
       moving_to_preview_position: 'Przenoszenie do pozycji podglądu...',
       please_enter_height: 'Proszę podać wysokość obiektu. Aby uchwycić precyzyjne ujęcie kamery.',
+      please_focus_before_preview: 'Aby uzyskać lepszą jakość podglądu, wykonaj autofokus przed podglądem.',
       press_esc_to_stop: 'Naciśnij ESC, aby zatrzymać podgląd kamery.',
       succeeded: 'Pomyślnie wyświetlono podgląd',
     },

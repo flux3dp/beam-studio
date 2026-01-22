@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Obteniendo distancia focal...',
       moving_to_preview_position: 'Pasando a la posición de vista previa...',
       please_enter_height: 'Introduzca la altura del objeto para capturar una toma precisa con la cámara.',
+      please_focus_before_preview: 'Para obtener una mejor calidad de vista previa, realice el enfoque automático antes de previsualizar.',
       press_esc_to_stop: 'Presiona ESC para detener la vista previa de la cámara.',
       succeeded: 'Vista previa con éxito',
     },

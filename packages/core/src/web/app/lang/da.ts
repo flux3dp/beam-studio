@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Henter brændvidde...',
       moving_to_preview_position: 'Flytter til forhåndsvisningsposition...',
       please_enter_height: 'Angiv venligst objektets højde. For at optage et præcist kamerabillede.',
+      please_focus_before_preview: 'For at få bedre forhåndsvisningskvalitet, udfør venligst automatisk fokusering før forhåndsvisning.',
       press_esc_to_stop: 'Tryk på ESC for at stoppe kameraforhåndsvisningen.',
       succeeded: 'Forhåndsvisning lykkedes',
     },

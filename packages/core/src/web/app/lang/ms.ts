@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Mendapatkan jarak fokus...',
       moving_to_preview_position: 'Bergerak ke posisi pratonton...',
       please_enter_height: 'Sila masukkan ketinggian objek. Bagi menangkap gambar kamera yang tepat.',
+      please_focus_before_preview: 'Untuk mendapatkan kualiti pratonton yang lebih baik, sila lakukan fokus automatik sebelum pratonton.',
       press_esc_to_stop: 'Tekan ESC untuk menghentikan pratonton kamera.',
       succeeded: 'Berjaya dipratonton',
     },

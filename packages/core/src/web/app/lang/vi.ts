@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Đang lấy khoảng cách tiêu cự...',
       moving_to_preview_position: 'Đang di chuyển đến vị trí xem trước...',
       please_enter_height: 'Vui lòng nhập chiều cao của vật thể. Để chụp ảnh camera chính xác.',
+      please_focus_before_preview: 'Để có chất lượng xem trước tốt hơn, vui lòng thực hiện lấy nét tự động trước khi xem trước.',
       press_esc_to_stop: 'Nhấn ESC để dừng xem trước camera.',
       succeeded: 'Xem trước thành công',
     },

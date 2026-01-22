@@ -1731,6 +1731,7 @@ const lang: ILang = {
       getting_focal_distance: 'Bezig met ophalen van brandpuntsafstand...',
       moving_to_preview_position: 'Bezig met verplaatsen naar voorbeeldpositie...',
       please_enter_height: 'Voer de hoogte van het object in om een nauwkeurige camerafoto te maken.',
+      please_focus_before_preview: 'Voor een betere voorbeeldkwaliteit, voer automatisch scherpstellen uit voordat u een voorbeeld bekijkt.',
       press_esc_to_stop: 'Druk op ESC om de cameravoorvertoning te stoppen.',
       succeeded: 'Succesvol voorvertoond',
     },
