@@ -93,8 +93,6 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
             let alphaRatio = xDist * yDist;
 
             if (alphaRatio < 1) {
-              alphaRatio **= 1;
-
               const i = (y * width + x) * 4;
 
               imageData.data[i + 3] = Math.round(imageData.data[i + 3] * alphaRatio);
