@@ -56,13 +56,13 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
 
   if (!isWorkareaMatched && !(await showResizeAlert(device!))) return false;
 
-  const { hasWideAngleCamera, parameters } = await getWideAngleCameraData(device);
+  const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
 
   setCameraPreviewState({
     isSwitchable: hasWideAngleCamera || device.model === 'fbm2',
   });
 
-  if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && parameters)) {
+  if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && canPreview)) {
     setupPreviewMode();
 
     return false;

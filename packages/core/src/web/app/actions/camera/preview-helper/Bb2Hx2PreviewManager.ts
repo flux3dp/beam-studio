@@ -205,12 +205,12 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
       await deviceMaster.connectCamera();
 
-      const { hasWideAngleCamera, parameters } = await getWideAngleCameraData(this.device);
+      const { canPreview, hasWideAngleCamera, parameters } = await getWideAngleCameraData(this.device);
 
       this.hasWideAngleCamera = hasWideAngleCamera;
       this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;
-      this._previewMode =
-        this.hasWideAngleCamera && this.wideAngleFisheyeParams ? PreviewMode.FULL_SCREEN : PreviewMode.REGION;
+
+      this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_SCREEN : PreviewMode.REGION;
 
       const res = await match(this._previewMode)
         .with(PreviewMode.FULL_SCREEN, () => this.setupWideAngleCamera())
