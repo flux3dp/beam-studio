@@ -18,6 +18,7 @@ export interface ICommand {
 
 export interface IBatchCommand extends ICommand {
   addSubCommand: (cmd: ICommand) => void;
+  getInsertedElements: () => SVGElement[];
   isEmpty: () => boolean;
 }
 

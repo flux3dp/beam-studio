@@ -13,11 +13,22 @@ getSVGAsync(({ Canvas }) => {
 // In-memory storage for preview state per modal (persists across open/close, resets on page reload)
 const previewStateStore: Record<string, boolean> = {};
 
+/** Selection mode after committing preview */
+type SelectionMode = 'all' | 'inserted' | 'none';
+
 interface UsePreviewModalOptions {
   /** Function that generates the preview and returns a batch command */
   generatePreview: () => Promise<BatchCommand | null>;
   /** Unique key to persist preview state across modal open/close (e.g., 'array', 'offset') */
   key: string;
+  /**
+   * Selection mode after committing:
+   * - 'all': Select original elements + newly inserted elements (for ArrayModal)
+   * - 'inserted': Select only newly inserted elements (for OffsetModal)
+   * - 'none': Don't change selection
+   * @default 'none'
+   */
+  selectionMode?: SelectionMode;
 }
 
 interface UsePreviewModalReturn {
@@ -42,7 +53,11 @@ interface UsePreviewModalReturn {
  * - Undo/redo command management
  * - Independent preview enabled state per modal key (persists across open/close, resets on page reload)
  */
-const usePreviewModal = ({ generatePreview, key }: UsePreviewModalOptions): UsePreviewModalReturn => {
+const usePreviewModal = ({
+  generatePreview,
+  key,
+  selectionMode = 'none',
+}: UsePreviewModalOptions): UsePreviewModalReturn => {
   const batchCmd = useRef<BatchCommand | null>(null);
   const selectionRef = useRef<SVGElement[]>([]);
   const processing = useRef(false);
@@ -144,20 +159,39 @@ const usePreviewModal = ({ generatePreview, key }: UsePreviewModalOptions): UseP
   /**
    * Commit the preview to history. If preview is disabled, generates the result first.
    * Returns the batch command if it should be added to history, null otherwise.
+   * Selects elements based on the configured selectionMode.
    */
   const commitPreview = useCallback(async (): Promise<BatchCommand | null> => {
+    let cmd: BatchCommand | null;
+
     if (!previewEnabled) {
       // Preview was disabled, generate the actual result
-      return generatePreview();
+      cmd = await generatePreview();
+    } else {
+      // Return the existing preview command (caller handles adding to history)
+      cmd = batchCmd.current;
+      batchCmd.current = null; // Clear ref since it's being committed
     }
 
-    // Return the existing preview command (caller handles adding to history)
-    const cmd = batchCmd.current;
+    // Select elements based on selectionMode
+    if (cmd && selectionMode !== 'none') {
+      const insertedElements = cmd.getInsertedElements();
 
-    batchCmd.current = null; // Clear ref since it's being committed
+      if (selectionMode === 'all') {
+        // Select original elements + newly inserted elements
+        const allElements = [...selectionRef.current, ...insertedElements];
+
+        if (allElements.length > 0) {
+          svgCanvas.multiSelect(allElements);
+        }
+      } else if (selectionMode === 'inserted' && insertedElements.length > 0) {
+        // Select only newly inserted elements
+        svgCanvas.multiSelect(insertedElements);
+      }
+    }
 
     return cmd;
-  }, [previewEnabled, generatePreview]);
+  }, [previewEnabled, generatePreview, selectionMode]);
 
   // Store original selection on mount
   useEffect(() => {

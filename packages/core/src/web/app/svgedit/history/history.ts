@@ -403,6 +403,25 @@ export class BatchCommand extends BaseHistoryCommand implements IBatchCommand {
   isEmpty(): boolean {
     return this.stack.length === 0;
   }
+
+  /**
+   * Returns all elements that were inserted by InsertElementCommand sub-commands.
+   * Useful for selecting newly created elements after a batch operation.
+   */
+  getInsertedElements(): SVGElement[] {
+    const insertedElements: SVGElement[] = [];
+
+    for (const cmd of this.stack) {
+      if (cmd.type() === InsertElementCommand.type()) {
+        insertedElements.push(cmd.elem as SVGElement);
+      } else if (cmd instanceof BatchCommand) {
+        // Recursively get inserted elements from nested batch commands
+        insertedElements.push(...cmd.getInsertedElements());
+      }
+    }
+
+    return insertedElements;
+  }
 }
 svgedit.history.BatchCommand = BatchCommand;
 

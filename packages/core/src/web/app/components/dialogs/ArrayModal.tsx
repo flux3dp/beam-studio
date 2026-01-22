@@ -67,6 +67,7 @@ const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => 
   const { commitPreview, handlePreview, previewEnabled, setPreviewEnabled, unapplyPreview } = usePreviewModal({
     generatePreview,
     key: 'array',
+    selectionMode: 'all',
   });
 
   // Unified state updater
