@@ -3,10 +3,10 @@ describe('verify shortcuts', () => {
     cy.landingEditor();
   });
 
-  it('jump to the preference page', () => {
+  it('open the settings modal', () => {
     const cmdKey = Cypress.platform === 'darwin' ? 'command' : 'ctrl';
     cy.get('body').type(`{${cmdKey}+k}`);
-    cy.url().should('contain', '#/studio/settings');
+    cy.get('.ant-modal-title').should('have.text', 'Settings');
   });
 
   it('jump to the connection type selection page', () => {

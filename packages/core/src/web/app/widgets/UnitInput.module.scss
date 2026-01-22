@@ -6,29 +6,19 @@
     border-width: 0 0 1px;
   }
 
-  // Fix iOS 18+ WebKit bug: input height expands when clearing value and typing
-  // The bug affects all iOS browsers (Safari, Chrome) as they all use WebKit
-  // Root cause: iOS WebKit recalculates intrinsic input height on content change
-  // Solution: Use CSS containment to isolate the layout calculation
+  // Fix iOS WebKit bug: inputs within inline-block containers shift vertically
+  // when text is deleted and re-entered. Fixed in Safari Tech Preview 224 but
+  // older iOS versions still have the issue.
+  // Solution: Change display from inline-block to inline-flex
+  // Reference: https://webkit.org/blog/17210/release-notes-for-safari-technology-preview-224/
   :global(.ant-input-number) {
-    // Contain layout prevents size changes from propagating to ancestors
-    contain: layout;
+    display: inline-flex;
+    align-items: center;
   }
 
   :global(.ant-input-number-input-wrap) {
-    // Fix iOS 18+ WebKit bug: input height expands when clearing value and typing
-    // The wrap div's height is normally determined by its child input's intrinsic height
-    // On iOS, the input's intrinsic height changes on content change and doesn't revert
-    // Solution: Force the wrapper to not grow by using max-height
-    // 30px is the typical height of Ant Design's default size input content area
-    max-height: 30px;
-    overflow: hidden;
-  }
-
-  :global(.ant-input-number-input) {
-    // Ensure consistent text rendering that doesn't affect height
-    -webkit-text-size-adjust: 100%;
-    text-size-adjust: 100%;
+    display: flex;
+    align-items: center;
   }
 }
 

@@ -65,6 +65,7 @@ const SettingsModal = ({
       localStorage.clear();
       await autoSaveHelper.useDefaultConfig();
       onClose();
+      window.location.hash = '#';
       window.location.reload();
     }
   };

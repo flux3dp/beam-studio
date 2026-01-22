@@ -1,23 +1,29 @@
-import React, { useState } from 'react';
+import React, { useMemo } from 'react';
 
 import { pick } from 'remeda';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
+import { getStorage } from '@core/app/stores/storageStore';
 import useI18n from '@core/helpers/useI18n';
-import storage from '@core/implementations/storage';
 import type { GeneralFont, IDefaultFont } from '@core/interfaces/IFont';
 
 import { SettingSelect, SettingSwitch, useSettingStore } from '../../shared';
 
 const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
+const DEFAULT_FONT: IDefaultFont = { family: 'Arial', postscriptName: 'ArialMT', style: 'Regular' };
 
 function Text(): React.JSX.Element {
   const lang = useI18n();
-  const { getPreference, setPreference } = useSettingStore();
+  const { getPreference, setConfig, setPreference } = useSettingStore();
+  // Subscribe to configChanges to trigger re-render when font is updated
+  const configChanges = useSettingStore((state) => state.configChanges);
 
-  const [defaultFont, updateDefaultFont] = useState<IDefaultFont>(
-    storage.get('default-font') || { family: 'Arial', style: 'Regular' },
-  );
+  // Read from pending changes first, then storage, then default
+  const defaultFont = useMemo<IDefaultFont>(() => {
+    const pendingFont = configChanges['default-font'] as IDefaultFont | undefined;
+
+    return pendingFont || getStorage('default-font') || DEFAULT_FONT;
+  }, [configChanges]);
 
   const fontOptions = fontFamilies.map((family: string) => {
     const fontName = FontFuncs.fontNameMap.get(family);
@@ -36,22 +42,21 @@ function Text(): React.JSX.Element {
     { label: '2.0', value: '2.0' },
   ];
 
-  const saveAndUpdateFont = (font: IDefaultFont) => {
+  const saveFont = (font: IDefaultFont) => {
     const fontData = pick(font, ['family', 'style', 'postscriptName']);
 
-    storage.set('default-font', fontData);
-    updateDefaultFont(fontData);
+    setConfig('default-font', fontData);
   };
 
   const setFont = (family: string) => {
     const fonts: GeneralFont[] = FontFuncs.requestFontsOfTheFontFamily(family);
     const newDefaultFont = fonts.find(({ style }) => style === 'Regular') || fonts[0];
 
-    saveAndUpdateFont(newDefaultFont);
+    saveFont(newDefaultFont);
   };
 
   const setFontStyle = (postscriptName: string) => {
-    saveAndUpdateFont(FontFuncs.getFontOfPostscriptName(postscriptName));
+    saveFont(FontFuncs.getFontOfPostscriptName(postscriptName));
   };
 
   return (
@@ -60,13 +65,13 @@ function Text(): React.JSX.Element {
         defaultValue={defaultFont.family as string}
         id="set-default-font-family"
         label={lang.settings.default_font_family}
-        onChange={(e) => setFont(e)}
+        onChange={setFont}
         options={fontOptions}
       />
       <SettingSelect
         id="set-default-font-style"
         label={lang.settings.default_font_style}
-        onChange={(e) => setFontStyle(e)}
+        onChange={setFontStyle}
         options={fontStyleOptions}
         value={(defaultFont.postscriptName ?? defaultFont.style) as string}
       />
@@ -74,14 +79,14 @@ function Text(): React.JSX.Element {
         checked={getPreference('font-substitute')}
         id="font-substitue"
         label={lang.settings.font_substitute}
-        onChange={(e) => setPreference('font-substitute', e)}
+        onChange={(value) => setPreference('font-substitute', value)}
         url={lang.settings.help_center_urls.font_substitute}
       />
       <SettingSelect
         defaultValue={getPreference('font-convert')}
         id="font-convert"
         label={lang.settings.font_convert}
-        onChange={(e) => setPreference('font-convert', e)}
+        onChange={(value) => setPreference('font-convert', value)}
         options={fontConvertOptions}
         url={lang.settings.help_center_urls.font_convert}
       />

@@ -3,13 +3,12 @@ import { selectOptionWithKeyboard } from '../../support/utils';
 const fileNamePrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-FileName-index-module__';
 
 const i18n: Record<string, { language: string; title: string }> = {
-  Dansk: { language: 'Sprog', title: 'Untitled' },
-  Deutsch: { language: 'Sprache', title: 'Ohne Titel' },
-  Ελληνικά: { language: 'Γλώσσα', title: 'Χωρίς τίτλο' },
+  Català: { language: 'Idioma', title: 'Sense títol' },
   English: { language: 'Language', title: 'Untitled' },
-  Español: { language: 'Idioma', title: 'Sin título' },
-  Suomi: { language: 'Kieli', title: 'Nimeämätön' },
-  Français: { language: 'Langue', title: 'Sans titre' },
+  Italiano: { language: 'Lingua', title: 'Senza titolo' },
+  Norsk: { language: 'Språk', title: 'Uten tittel' },
+  'Tiếng Việt': { language: 'Ngôn ngữ', title: 'Chưa đặt tên' },
+  繁體中文: { language: '語言', title: '未命名' },
 };
 
 function checkLang(lang: string) {
@@ -24,13 +23,10 @@ function checkLang(lang: string) {
   cy.get('#select-lang-label')
     .find('[class*="label"]:not([class*="label-container"])', { timeout: 10000 })
     .should('have.text', language);
-
-  cy.get('div.btn-done').click();
-
   cy.get(`div[class*="${fileNamePrefix}file-name--"]`, { timeout: 10000 }).should('exist').and('have.text', title);
 }
 
-describe('preference language (part 1)', () => {
+describe('preference language', () => {
   beforeEach(() => {
     cy.landingEditor();
     cy.go2Preference();

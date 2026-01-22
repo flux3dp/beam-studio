@@ -71,15 +71,22 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   },
 }));
 
-const map = new Map();
+const storageMap = new Map<string, unknown>([
+  ['default-font', { family: 'Arial', postscriptName: 'ArialMT', style: 'Regular' }],
+]);
 
-map.set('default-font', {
-  family: 'Arial',
-  style: 'Regular',
-});
-jest.mock('@core/implementations/storage', () => ({
-  get: (key) => map.get(key),
-  set: (key, value) => map.set(key, value),
+const mockUseStorageStore = Object.assign(
+  (selector?: (state: Record<string, unknown>) => unknown) => {
+    const state = Object.fromEntries(storageMap);
+
+    return selector ? selector(state) : state;
+  },
+  { subscribe: () => () => {} },
+);
+
+jest.mock('@core/app/stores/storageStore', () => ({
+  getStorage: (key: string) => storageMap.get(key),
+  useStorageStore: mockUseStorageStore,
 }));
 
 jest.mock('@core/app/constants/workarea-constants', () => ({
@@ -97,14 +104,24 @@ jest.mock('@core/app/constants/workarea-constants', () => ({
 }));
 
 const mockGetConfig = jest.fn();
-const mockSetConfig = jest.fn();
 const mockGetPreference = jest.fn();
 const mockSetPreference = jest.fn();
+const mockSetConfig = jest.fn();
 
-const useSettingStore = create(() => ({
+const useSettingStore = create<{
+  configChanges: Record<string, unknown>;
+  getConfig: typeof mockGetConfig;
+  getPreference: typeof mockGetPreference;
+  setConfig: (key: string, value: unknown) => void;
+  setPreference: typeof mockSetPreference;
+}>((set, get) => ({
+  configChanges: {},
   getConfig: mockGetConfig,
   getPreference: mockGetPreference,
-  setConfig: mockSetConfig,
+  setConfig: (key, value) => {
+    mockSetConfig(key, value);
+    set({ configChanges: { ...get().configChanges, [key]: value } });
+  },
   setPreference: mockSetPreference,
 }));
 
@@ -125,6 +142,8 @@ import Editor from '.';
 describe('settings/Editor', () => {
   afterEach(() => {
     jest.resetAllMocks();
+    // Reset store state between tests
+    useSettingStore.setState({ configChanges: {} });
   });
 
   test('initially no warning', async () => {
@@ -191,20 +210,38 @@ describe('settings/Editor', () => {
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
     expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fbm1');
 
-    // Font family select
+    // Font family select - should use setConfig for deferred update
     fireEvent.change(selectControls[2], { target: { value: 'Apple LiSung' } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(2);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(2, 'default-font', {
+      family: 'Apple LiSung',
+      postscriptName: 'LiSungLight',
+      style: 'Light',
+    });
     expect(container).toMatchSnapshot();
 
     fireEvent.change(selectControls[2], { target: { value: 'Courier' } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(3);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(3, 'default-font', {
+      family: 'Courier',
+      postscriptName: 'Regular',
+      style: 'Regular',
+    });
     expect(container).toMatchSnapshot();
 
-    // Font style select
+    // Font style select - should use setConfig for deferred update
     getFontOfPostscriptName.mockReturnValue({
       family: 'Courier',
       postscriptName: 'Courier-Bold',
       style: 'Bold',
     });
     fireEvent.change(selectControls[3], { target: { value: 'Courier-Bold' } });
+    expect(mockSetConfig).toHaveBeenCalledTimes(4);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(4, 'default-font', {
+      family: 'Courier',
+      postscriptName: 'Courier-Bold',
+      style: 'Bold',
+    });
     expect(container).toMatchSnapshot();
 
     // Font convert select

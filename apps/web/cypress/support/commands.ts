@@ -208,12 +208,29 @@ Cypress.Commands.add('connectMachine', (machineName: string) => {
   cy.findByTestId('select-machine').contains(machineName).should('exist');
 });
 
+/**
+ * Navigate to a specific settings category in the settings modal sidebar
+ */
+Cypress.Commands.add('goToSettingsCategory', (category: string) => {
+  // Find sidebar item by text and click it
+  cy.get('[class*="SettingsModal-module__sidebar-item"]').contains(category).click();
+});
+
+/**
+ * Apply settings in the new settings modal
+ */
+Cypress.Commands.add('applySettings', () => {
+  cy.get('.ant-modal-footer button.ant-btn-primary').contains('Apply').click();
+});
+
 Cypress.Commands.add('go2Preference', (handleSave = false) => {
   cy.get('div.top-bar-menu-container').click({ timeout: 10000 });
   cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 7);
   cy.get('.rc-menu__submenu').contains('File').click();
   cy.get('.rc-menu__submenu').contains('Preferences').click();
-  if (handleSave) cy.get('button.ant-btn').contains("Don't Save").click();
+  if (handleSave) cy.get('button.ant-btn').contains('Cancel').click();
+  // Wait for settings modal to be visible
+  cy.get('.ant-modal-content', { timeout: 10000 }).should('be.visible');
 });
 
 Cypress.Commands.add('checkToolBtnActive', (id: string, active = true) => {

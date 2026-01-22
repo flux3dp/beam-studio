@@ -25,9 +25,11 @@ describe('reset', () => {
 
   it('resets unit preference', () => {
     cy.go2Preference();
+    cy.goToSettingsCategory('Editor');
     selectOption('#set-default-units', 'Inches');
-    cy.get('.btn.btn-done').click();
+    cy.applySettings();
     cy.go2Preference();
+    cy.goToSettingsCategory('Editor');
     cy.get('#set-default-units')
       .closest('.ant-select')
       .find('.ant-select-selection-item')
@@ -36,17 +38,20 @@ describe('reset', () => {
     resetBeamStudio();
 
     cy.go2Preference();
+    cy.goToSettingsCategory('Editor');
     cy.get('#set-default-units').closest('.ant-select').find('.ant-select-selection-item').should('have.text', 'mm');
   });
 
   it('resets open-bottom, autofocus, and diode preferences', () => {
     cy.go2Preference();
+    cy.goToSettingsCategory('Add-on');
     // Switches - click to toggle on
     ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) => {
       cy.get(selector).click();
     });
-    cy.get('.btn.btn-done').click();
+    cy.applySettings();
     cy.go2Preference();
+    cy.goToSettingsCategory('Add-on');
     // Verify switches are on
     ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
       cy.get(selector).should('have.attr', 'aria-checked', 'true'),
@@ -55,6 +60,7 @@ describe('reset', () => {
     resetBeamStudio();
 
     cy.go2Preference();
+    cy.goToSettingsCategory('Add-on');
     // Verify switches are reset to off
     ['#default-open-bottom', '#default-autofocus', '#default-diode'].forEach((selector) =>
       cy.get(selector).should('have.attr', 'aria-checked', 'false'),

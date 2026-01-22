@@ -23,6 +23,13 @@ import styles from './SettingsModal.module.scss';
 import type { CommonSettingProps, SettingCategoryConfig } from './types';
 import { SettingCategory } from './types';
 
+const CATEGORIES_WITHOUT_CARD = new Set([
+  SettingCategory.EDITOR,
+  SettingCategory.GENERAL,
+  SettingCategory.MODULE,
+  SettingCategory.RESET,
+]);
+
 interface SettingsContentProps {
   category: SettingCategory;
   categoryConfig: SettingCategoryConfig | undefined;
@@ -39,8 +46,14 @@ const SettingsContent = ({
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    contentRef.current?.scrollTo({ top: 0 });
-  }, [category]);
+    requestAnimationFrame(() => {
+      // On mobile, the .content div has overflow:visible, so the actual scroll container
+      // is the parent .mobile-settings-content. We need to scroll the correct container.
+      const scrollTarget = isMobile ? contentRef.current?.parentElement : contentRef.current;
+
+      scrollTarget?.scrollTo({ behavior: 'smooth', top: 0 });
+    });
+  }, [category, isMobile]);
 
   const {
     changeActiveLang,
@@ -81,13 +94,7 @@ const SettingsContent = ({
       .with(SettingCategory.RESET, () => (onReset ? <Reset onReset={onReset} /> : null))
       .exhaustive();
 
-  const categoriesWithoutCard = new Set([
-    SettingCategory.EDITOR,
-    SettingCategory.GENERAL,
-    SettingCategory.MODULE,
-    SettingCategory.RESET,
-  ]);
-  const skipOuterCard = categoriesWithoutCard.has(category);
+  const skipOuterCard = CATEGORIES_WITHOUT_CARD.has(category);
 
   const formTheme = {
     components: { Form: { itemMarginBottom: isMobile ? 16 : 0, labelFontSize: 14 } },
