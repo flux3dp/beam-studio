@@ -18,8 +18,6 @@ interface UsePreviewModalOptions {
   generatePreview: () => Promise<BatchCommand | null>;
   /** Unique key to persist preview state across modal open/close (e.g., 'array', 'offset') */
   key: string;
-  /** Selection restoration method: 'multiSelect' for ArrayModal, 'selectOnly' for OffsetModal */
-  selectionMethod?: 'multiSelect' | 'selectOnly';
 }
 
 interface UsePreviewModalReturn {
@@ -44,11 +42,7 @@ interface UsePreviewModalReturn {
  * - Undo/redo command management
  * - Independent preview enabled state per modal key (persists across open/close, resets on page reload)
  */
-const usePreviewModal = ({
-  generatePreview,
-  key,
-  selectionMethod = 'multiSelect',
-}: UsePreviewModalOptions): UsePreviewModalReturn => {
+const usePreviewModal = ({ generatePreview, key }: UsePreviewModalOptions): UsePreviewModalReturn => {
   const batchCmd = useRef<BatchCommand | null>(null);
   const selectionRef = useRef<SVGElement[]>([]);
   const processing = useRef(false);
@@ -69,13 +63,9 @@ const usePreviewModal = ({
 
   const restoreSelection = useCallback(() => {
     if (selectionRef.current.length > 0) {
-      if (selectionMethod === 'selectOnly') {
-        svgCanvas.selectOnly(selectionRef.current, true);
-      } else {
-        svgCanvas.multiSelect(selectionRef.current);
-      }
+      svgCanvas.selectOnly(selectionRef.current, true);
     }
-  }, [selectionMethod]);
+  }, []);
 
   const handlePreview = useCallback(async () => {
     // If preview is disabled, just unapply any existing preview

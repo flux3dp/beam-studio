@@ -68,7 +68,6 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
   const { commitPreview, handlePreview, previewEnabled, setPreviewEnabled, unapplyPreview } = usePreviewModal({
     generatePreview,
     key: 'offset',
-    selectionMethod: 'selectOnly',
   });
 
   // Generate preview on mount and when offset/unit/previewEnabled changes

@@ -73,8 +73,6 @@ export const generateSelectedElementArray = async (
     }
   }
 
-  svgCanvas.multiSelect(arrayElements);
-
   if (batchCmd.isEmpty()) {
     return null;
   }
