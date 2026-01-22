@@ -129,8 +129,8 @@ export const bm2PnPPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'to
 } as const;
 
 export const bm2PerspectiveGrid: PerspectiveGrid = {
-  x: [-95, 95, 10],
-  y: [0, 130, 10],
+  x: [-70, 70, 10],
+  y: [0, 90, 10],
 } as const;
 
 export const bm2WideAnglePerspectiveGrid: PerspectiveGrid = {
