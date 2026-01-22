@@ -5,6 +5,21 @@
     border: 1px solid #e6e6e6;
     border-width: 0 0 1px;
   }
+
+  // Fix iOS WebKit bug: inputs within inline-block containers shift vertically
+  // when text is deleted and re-entered. Fixed in Safari Tech Preview 224 but
+  // older iOS versions still have the issue.
+  // Solution: Change display from inline-block to inline-flex
+  // Reference: https://webkit.org/blog/17210/release-notes-for-safari-technology-preview-224/
+  :global(.ant-input-number) {
+    display: inline-flex;
+    align-items: center;
+  }
+
+  :global(.ant-input-number-input-wrap) {
+    display: flex;
+    align-items: center;
+  }
 }
 
 .unit {

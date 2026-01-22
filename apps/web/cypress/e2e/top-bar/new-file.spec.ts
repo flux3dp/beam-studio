@@ -22,7 +22,7 @@ it('check new file', () => {
 it('check new file after reset', () => {
   cy.landingEditor();
   cy.go2Preference();
-  cy.contains('Reset Beam Studio').click();
+  cy.get('.ant-modal-footer button').contains('Reset Beam Studio').click();
   cy.contains('Next').click();
   cy.contains('Sign in later').click();
   cy.contains('Skip').click();

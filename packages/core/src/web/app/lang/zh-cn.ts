@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: '重置所有设置',
     segmented_engraving: '分段雕刻',
     share_with_flux: '与 FLUX 分享',
-    simplify_clipper_path: '路径计算优化',
+    simplify_clipper_path: '曲线锚点优化',
     single_object: '单一物件',
     tabs: {
       device: '机器',

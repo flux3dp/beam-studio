@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'รีเซ็ต Beam Studio',
     segmented_engraving: 'การแกะสลักแบบแบ่งส่วน',
     share_with_flux: 'แชร์ข้อมูลการใช้งาน Beam Studio',
-    simplify_clipper_path: 'เพิ่มประสิทธิภาพเส้นทางที่คํานวณ',
+    simplify_clipper_path: 'การเพิ่มประสิทธิภาพจุดยึด',
     single_object: 'วัตถุเดี่ยว',
     tabs: {
       device: 'เครื่อง',

@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Restartovat Beam Studio',
     segmented_engraving: 'Segmentované gravírování',
     share_with_flux: 'Analýza Share Beam Studio',
-    simplify_clipper_path: 'Optimalizovat vypočítanou cestu',
+    simplify_clipper_path: 'Optimalizace kotevních bodů',
     single_object: 'Jeden objekt',
     tabs: {
       device: 'Přístroj',

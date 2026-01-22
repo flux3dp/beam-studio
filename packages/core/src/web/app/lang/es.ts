@@ -2078,7 +2078,7 @@ const lang: ILang = {
     reset_now: 'Reiniciar Beam Studio',
     segmented_engraving: 'Grabado segmentado',
     share_with_flux: 'Compartir Beam Studio Analytics',
-    simplify_clipper_path: 'Optimizar la trayectoria calculada',
+    simplify_clipper_path: 'Optimización de puntos de anclaje',
     single_object: 'Objeto único',
     tabs: {
       device: 'Máquina',

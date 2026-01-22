@@ -5,6 +5,11 @@ import { TextDecoder, TextEncoder } from 'util';
 import { enableFetchMocks } from 'jest-fetch-mock';
 import $ from 'jquery';
 
+// Mock uuid module for ESM compatibility
+jest.mock('uuid', () => ({
+  v4: () => 'mock-uuid-v4',
+}));
+
 declare global {
   interface Window {
     $: any;

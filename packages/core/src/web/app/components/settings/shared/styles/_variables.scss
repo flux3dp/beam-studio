@@ -1,0 +1,9 @@
+// Shared variables for Settings Modal (desktop and mobile)
+@use '@core/styles/variables' as *;
+
+$settings-background: #f5f5f5;
+$settings-primary-blue: #007aff;
+$settings-border-color: $panelBorderColor;
+
+// Desktop-specific
+$sidebar-width: 240px;

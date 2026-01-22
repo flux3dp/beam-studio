@@ -5,6 +5,7 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import NS from '@core/app/constants/namespaces';
 import { TabEvents } from '@core/app/constants/tabConstants';
+import { getStorage, useStorageStore } from '@core/app/stores/storageStore';
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
@@ -12,7 +13,6 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import isWeb from '@core/helpers/is-web';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import communicator from '@core/implementations/communicator';
-import storage from '@core/implementations/storage';
 import type { IDefaultFont } from '@core/interfaces/IFont';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -32,7 +32,7 @@ getSVGAsync((globalSVG) => {
 });
 
 export const initCurText = () => {
-  const defaultFont: IDefaultFont = storage.get('default-font');
+  const defaultFont: IDefaultFont = getStorage('default-font');
 
   curText = {
     fill_opacity: 0,
@@ -48,7 +48,7 @@ const updateCurText = (newValue: Partial<TextAttribute>): void => {
 };
 
 const useDefaultFont = (): void => {
-  const defaultFont: IDefaultFont = storage.get('default-font');
+  const defaultFont: IDefaultFont = getStorage('default-font');
 
   if (defaultFont) {
     curText.font_family = defaultFont.family;
@@ -350,6 +350,11 @@ const setTextContent = (val: string): void => {
   textActions.init();
   textActions.setCursor();
 };
+
+useStorageStore.subscribe(
+  (state) => state['default-font'],
+  ({ family, postscriptName }) => updateCurText({ font_family: family, font_postscriptName: postscriptName }),
+);
 
 export default {
   getCurText,

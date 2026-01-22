@@ -10,15 +10,16 @@ declare global {
        * @param fileName - The fixture file name (e.g., 'flux.png')
        * @param options - Optional { selector?: string, timeout?: number }
        */
-      uploadImage(
-        fileName: string,
-        options?: { selector?: string; timeout?: number },
-      ): Chainable<JQuery<HTMLElement>>;
+      uploadImage(fileName: string, options?: { selector?: string; timeout?: number }): Chainable<JQuery<HTMLElement>>;
       dragTo(targetEl: string): Chainable<JQuery<HTMLElement>>;
       disableImageDownSampling(): Chainable<void>;
       setUpBackend: (ip: string) => Chainable<void>;
       connectMachine: (ip: string) => Chainable<void>;
       go2Preference: (handleSave?: boolean) => Chainable<void>;
+      /** Navigate to a specific settings category in the settings modal sidebar */
+      goToSettingsCategory: (category: string) => Chainable<void>;
+      /** Apply settings in the new settings modal */
+      applySettings: () => Chainable<void>;
       checkToolBtnActive: (id: string, active?: boolean) => Chainable<void>;
       clickToolBtn: (id: string, checkActive?: boolean) => Chainable<void>;
       changeWorkarea: (workarea: string, save?: boolean) => Chainable<void>;

@@ -1,0 +1,98 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`should render correctly desktop version 1`] = `
+<div>
+  <div
+    class="container"
+  >
+    <div
+      class="icon"
+    >
+      <img
+        alt="Beam Studio"
+        draggable="false"
+        src="core-img/BeamStudio-logo.png"
+      />
+    </div>
+    <div
+      class="info"
+    >
+      <div
+        class="title"
+      >
+        About Beam Studio
+      </div>
+      <div
+        class="version"
+      >
+        Version 2.5.0 (Apple Silicon)
+      </div>
+    </div>
+  </div>
+  <div>
+    mock-switch-control id:
+    set-auto-update
+    label:
+    Automatically check for updates
+    url:
+    checked:
+    undefined
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-auto-update"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-select-control id:
+    select-lang
+    label:
+    Language
+    url:
+    options:
+    [{"label":"Deutsche","value":"de"},{"label":"English","value":"en"},{"label":"Español","value":"es"},{"label":"日本語","value":"ja"},{"label":"简体中文","value":"zh-cn"},{"label":"繁體中文","value":"zh-tw"}]
+    <input
+      class="select-control"
+      id="select-lang"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    set-notifications
+    label:
+    Desktop Notifications
+    url:
+    checked:
+    undefined
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-notifications"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+</div>
+`;
+
+exports[`should render correctly web version 1`] = `
+<div>
+  <div>
+    mock-select-control id:
+    select-lang
+    label:
+    Language
+    url:
+    options:
+    [{"label":"Deutsche","value":"de"},{"label":"English","value":"en"},{"label":"Español","value":"es"},{"label":"日本語","value":"ja"},{"label":"简体中文","value":"zh-cn"},{"label":"繁體中文","value":"zh-tw"}]
+    <input
+      class="select-control"
+      id="select-lang"
+    />
+  </div>
+</div>
+`;

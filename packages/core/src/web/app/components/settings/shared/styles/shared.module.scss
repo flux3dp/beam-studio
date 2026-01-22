@@ -1,0 +1,69 @@
+.subtitle {
+  line-height: 40px;
+  font-size: 20px;
+  color: #333;
+  border-bottom: 1px #ccc solid;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  width: 400px;
+
+  .icon {
+    margin-left: 10px;
+  }
+}
+
+.row {
+  line-height: 32px;
+}
+
+.form-item {
+  font-size: 13px;
+  margin-bottom: 0;
+  line-break: auto;
+  width: calc(30%);
+
+  .icon {
+    font-size: 16px;
+    margin-left: 4px;
+  }
+}
+
+.input-number {
+  :global(.ant-input-number) {
+    width: 105px;
+  }
+
+  input {
+    padding-right: 28px !important;
+  }
+
+  .unit {
+    right: 4px;
+    top: calc(20%);
+  }
+}
+
+.input {
+  width: 240px;
+}
+
+.xy-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 240px;
+
+  .input-number :global(.ant-input-number) {
+    width: 96px;
+  }
+}
+
+.xy-set {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.xy-label {
+  flex-shrink: 0;
+}

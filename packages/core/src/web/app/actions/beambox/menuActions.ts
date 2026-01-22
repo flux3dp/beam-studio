@@ -8,7 +8,7 @@ import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { showCurvePanel, showSharpenPanel } from '@core/app/components/dialogs/image';
 import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
 import { showRotarySettings } from '@core/app/components/dialogs/RotarySettings';
-import { showSettingsModal } from '@core/app/components/settings/SettingsModal';
+import { showSettingsModal } from '@core/app/components/settings/modal/SettingsModal';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import historyUtils from '@core/app/svgedit/history/utils';
@@ -30,7 +30,6 @@ import {
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
 import imageEdit from '@core/helpers/image-edit';
-import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
@@ -60,9 +59,7 @@ export default {
   ANTI_ALIASING: (): boolean => viewMenu.toggleAntiAliasing(),
   AUTO_ALIGN: (): boolean => svgCanvas.toggleAutoAlign(),
   BOX_GEN: (): void => Dialog.showBoxGen(),
-  BUG_REPORT: (): void => {
-    OutputError.downloadErrorLog();
-  },
+  BUG_REPORT: (): void => void OutputError.downloadErrorLog(),
   CHANGE_LOGS: (): void => Dialog.showChangLog(),
   CLEAR_SCENE: (): Promise<void> => FnWrapper.clearScene(),
   CODE_GENERATOR: (): void => Dialog.showCodeGenerator(),
@@ -100,9 +97,7 @@ export default {
   MATERIAL_TEST_GENERATOR: (): void => Dialog.showMaterialTestGenerator(),
   NETWORK_TESTING: (): void => Dialog.showNetworkTestingPanel(),
   OFFSET: () => showOffsetModal(),
-  OPEN: (): void => {
-    FnWrapper.importImage();
-  },
+  OPEN: (): void => void FnWrapper.importImage(),
   PASTE: (): Promise<null | {
     cmd: IBatchCommand;
     elems: Element[];
@@ -111,16 +106,9 @@ export default {
     cmd: IBatchCommand;
     elems: Element[];
   }> => pasteElements({ type: 'inPlace' }),
-  PREFERENCE: async (): Promise<void> => {
+  PREFERENCE: (): void => {
     Dialog.clearAllDialogComponents();
-
-    if (isWeb() && (await toggleUnsavedChangedDialog())) {
-      // Web/mobile uses the settings page route
-      window.location.hash = hashMap.settings;
-    } else {
-      // Desktop app uses modal dialog
-      showSettingsModal();
-    }
+    showSettingsModal();
   },
   QUESTIONNAIRE: async (): Promise<void> => {
     const res = await checkQuestionnaire({ allowOldVersion: true });
