@@ -208,6 +208,16 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     try {
       this.showMessage({ content: i18n.lang.message.preview.capturing_image });
 
+      let originalAutoExposure: boolean | null = null;
+
+      try {
+        const res = await deviceMaster.getCameraExposureAuto();
+
+        if (res?.success) originalAutoExposure = res.data;
+      } catch (error) {
+        console.error('Failed to get camera exposure auto', error);
+      }
+
       try {
         const getExposureRes = await deviceMaster.getCameraExposure();
 
@@ -236,6 +246,14 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           }
 
           darkImageUrl = await this.getPhotoFromMachine({ useLowResolution });
+        }
+
+        if (originalAutoExposure !== null) {
+          try {
+            await deviceMaster.setCameraExposureAuto(originalAutoExposure);
+          } catch (error) {
+            console.error('Failed to reset auto exposure setting', error);
+          }
         }
 
         await new Promise<void>((resolve) => PreviewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
