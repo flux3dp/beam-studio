@@ -281,6 +281,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
     // merge background image and mask image before exiting full screen preview mode
     if (this._previewMode === PreviewMode.FULL_SCREEN && !previewModeBackgroundDrawer.isClean()) {
+      // not using cache to avoid image url revoked when clearBackgroundImage
       const url = await previewModeBackgroundDrawer.getCameraCanvasUrl({ useCache: false });
 
       clearBackgroundImage();
