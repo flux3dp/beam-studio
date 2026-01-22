@@ -5,7 +5,7 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import NS from '@core/app/constants/namespaces';
 import { TabEvents } from '@core/app/constants/tabConstants';
-import { getStorage } from '@core/app/stores/storageStore';
+import { getStorage, useStorageStore } from '@core/app/stores/storageStore';
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
@@ -350,6 +350,11 @@ const setTextContent = (val: string): void => {
   textActions.init();
   textActions.setCursor();
 };
+
+useStorageStore.subscribe(
+  (state) => state['default-font'],
+  ({ family, postscriptName }) => updateCurText({ font_family: family, font_postscriptName: postscriptName }),
+);
 
 export default {
   getCurText,

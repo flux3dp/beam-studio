@@ -2,7 +2,6 @@ import React, { useEffect, useRef } from 'react';
 
 import classNames from 'classnames';
 
-import { useCategoryFilter } from '../../shared';
 import type { SettingCategory, SettingCategoryConfig } from '../types';
 
 import styles from './MobileSettingsModal.module.scss';
@@ -16,7 +15,6 @@ interface Props {
 const MobileCategoryTabs = ({ categories, onCategorySelect, selectedCategory }: Props): React.JSX.Element => {
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   const selectedTabRef = useRef<HTMLButtonElement>(null);
-  const { visibleCategories } = useCategoryFilter(categories);
 
   useEffect(() => {
     if (!selectedTabRef.current || !scrollContainerRef.current) return;
@@ -31,7 +29,7 @@ const MobileCategoryTabs = ({ categories, onCategorySelect, selectedCategory }: 
   return (
     <div className={styles['mobile-tabs-container']} ref={scrollContainerRef}>
       <div className={styles['mobile-tabs-scroll']}>
-        {visibleCategories.map((category) => {
+        {categories.map((category) => {
           const isSelected = category.key === selectedCategory;
 
           return (

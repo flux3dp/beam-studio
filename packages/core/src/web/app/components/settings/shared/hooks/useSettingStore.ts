@@ -4,7 +4,6 @@ import { combine } from 'zustand/middleware';
 
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { setStorage } from '@core/app/stores/storageStore';
-import textedit from '@core/app/svgedit/text/textedit';
 import storage from '@core/implementations/storage';
 import type { StorageKey } from '@core/interfaces/IStorage';
 import type { GlobalPreference, GlobalPreferenceKey } from '@core/interfaces/Preference';
@@ -106,13 +105,7 @@ export const useSettingStore = create<Action & State>(
 
           for (const key in configChanges) {
             try {
-              const value = configChanges[key as StorageKey];
-
-              if (key === 'default-font') {
-                textedit.updateCurText({ font_family: value.family, font_postscriptName: value.postscriptName });
-              }
-
-              setStorage(key as StorageKey, value);
+              setStorage(key as StorageKey, configChanges[key as StorageKey]);
             } catch (error) {
               console.error(`Failed to save config key '${key}':`, error);
             }

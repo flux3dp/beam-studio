@@ -228,7 +228,7 @@ Cypress.Commands.add('go2Preference', (handleSave = false) => {
   cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 7);
   cy.get('.rc-menu__submenu').contains('File').click();
   cy.get('.rc-menu__submenu').contains('Preferences').click();
-  if (handleSave) cy.get('button.ant-btn').contains('Cancel').click();
+  if (handleSave) cy.get('button.ant-btn').contains("Don't Save").click();
   // Wait for settings modal to be visible
   cy.get('.ant-modal-content', { timeout: 10000 }).should('be.visible');
 });

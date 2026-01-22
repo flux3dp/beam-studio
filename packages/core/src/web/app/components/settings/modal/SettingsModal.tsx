@@ -51,7 +51,10 @@ const SettingsModal = ({
     };
   }, [defaultUnit]);
 
-  const categoryConfigs = useMemo(() => getCategoryConfigs(lang), [lang]);
+  const categoryConfigs = useMemo(
+    () => getCategoryConfigs(lang, { isMobile }).filter((cat) => cat.visible !== false),
+    [lang, isMobile],
+  );
   const currentCategoryConfig = categoryConfigs.find((c) => c.key === selectedCategory);
 
   const changeActiveLang = useCallback((value: string): void => {

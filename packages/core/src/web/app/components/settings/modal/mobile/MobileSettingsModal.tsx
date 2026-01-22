@@ -1,14 +1,12 @@
 import React, { memo, useMemo } from 'react';
 
-import { ReloadOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
 import SettingsContent from '../SettingsContent';
-import { SettingCategory } from '../types';
-import type { CommonSettingProps, SettingCategoryConfig } from '../types';
+import type { CommonSettingProps, SettingCategory, SettingCategoryConfig } from '../types';
 
 import MobileCategoryTabs from './MobileCategoryTabs';
 import styles from './MobileSettingsModal.module.scss';
@@ -38,14 +36,6 @@ const MobileSettingsPanel = memo(
     setSelectedCategory,
   }: Props): React.JSX.Element => {
     const lang = useI18n();
-
-    const mobileCategories = useMemo<SettingCategoryConfig[]>(
-      () => [
-        ...categoryConfigs,
-        { icon: <ReloadOutlined />, key: SettingCategory.RESET, label: lang.global.editing.reset },
-      ],
-      [categoryConfigs, lang.global.editing.reset],
-    );
     const mobileCommonProps = useMemo(() => ({ ...commonProps, onReset }), [commonProps, onReset]);
 
     return (
@@ -68,7 +58,7 @@ const MobileSettingsPanel = memo(
       >
         <div className={styles['mobile-container']}>
           <MobileCategoryTabs
-            categories={mobileCategories}
+            categories={categoryConfigs}
             onCategorySelect={setSelectedCategory}
             selectedCategory={selectedCategory}
           />

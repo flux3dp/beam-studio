@@ -14,7 +14,6 @@ const AboutInfo = (): React.JSX.Element => {
   return (
     <div className={styles.container}>
       <div className={styles.icon}>
-        {/* <img alt="Beam Studio" draggable={false} src="core-img/BeamStudio-v2.svg" /> */}
         <img alt="Beam Studio" draggable={false} src="core-img/BeamStudio-logo.png" />
       </div>
       <div className={styles.info}>
