@@ -6,7 +6,6 @@ import { hexaRfModels, PreviewSpeedLevel } from '@core/app/actions/beambox/const
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import {
   bb2WideAnglePerspectiveGrid,
-  hx2rfPerspectiveGrid,
   hx2WideAnglePerspectiveGrid,
 } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
@@ -39,11 +38,8 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     this.progressId = 'beam-preview-manager';
 
     if (hexaRfModels.has(device.model)) {
-      this.regionPreviewGrid = hx2rfPerspectiveGrid;
       this.wideAngleGrid = hx2WideAnglePerspectiveGrid;
     }
-
-    this.setRegionPreviewGrid(this.regionPreviewGrid);
   }
 
   get isSwitchable(): boolean {

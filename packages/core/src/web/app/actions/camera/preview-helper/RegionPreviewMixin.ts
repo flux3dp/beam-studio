@@ -1,6 +1,12 @@
+import { match } from 'ts-pattern';
+
 import constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import { bb2PerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
+import {
+  bb2PerspectiveGrid,
+  bm2PerspectiveGrid,
+  hx2rfPerspectiveGrid,
+} from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
 
@@ -8,13 +14,19 @@ import type BasePreviewManager from './BasePreviewManager';
 
 export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePreviewManager>(Base: TBase) {
   return class RegionPreviewManager extends Base {
-    protected regionPreviewGrid: PerspectiveGrid = bb2PerspectiveGrid;
+    protected regionPreviewGrid: PerspectiveGrid;
     protected regionPreviewOffset: { x: number; y: number };
     private cameraPpmm = 5;
     protected previewPpmm = 10;
 
     constructor(...args: any[]) {
       super(...args);
+
+      this.regionPreviewGrid = match(this.device.model)
+        .with('fbb2', () => bb2PerspectiveGrid)
+        .with('fhx2rf', () => hx2rfPerspectiveGrid)
+        .with('fbm2', () => bm2PerspectiveGrid)
+        .otherwise(() => bb2PerspectiveGrid);
 
       this.regionPreviewOffset = {
         x: this.regionPreviewGrid.x[0] + (this.regionPreviewGrid.x[1] - this.regionPreviewGrid.x[0]) / 2,

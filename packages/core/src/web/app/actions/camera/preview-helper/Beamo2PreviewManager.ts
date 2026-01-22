@@ -36,14 +36,12 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private originalExposure: null | number = null;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
   protected progressType = ProgressTypes.STEPPING;
-  protected regionPreviewGrid = bm2PerspectiveGrid;
   protected _isSwitchable = true;
   protected _previewMode = PreviewMode.FULL_SCREEN;
 
   constructor(device: IDeviceInfo) {
     super(device);
     this.progressId = 'beamo2-preview-manager';
-    this.setRegionPreviewGrid(this.regionPreviewGrid);
   }
 
   protected getMovementSpeed = (): number => {
