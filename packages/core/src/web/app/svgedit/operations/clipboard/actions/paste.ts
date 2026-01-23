@@ -20,24 +20,37 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
+let dataCache: Element[] | null = null;
+
+export const clearCache = () => {
+  dataCache = null;
+};
+
 export const pasteElements = async ({
   isSubCmd = false,
   selectElement = true,
   type,
+  useCache = false,
   x,
   y,
 }: {
   isSubCmd?: boolean;
   selectElement?: boolean;
   type: 'coordinate' | 'inPlace' | 'mouse';
+  /**
+   * For array, use cached clipboard data to avoid multiple reads
+   */
+  useCache?: boolean;
   x?: number;
   y?: number;
 }): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
-  const clipboard = await clipboardCore.getData();
+  const clipboard = useCache && dataCache ? dataCache : await clipboardCore.getData();
 
   if (!clipboard?.length) {
     return null;
   }
+
+  if (!useCache || !dataCache) dataCache = clipboard;
 
   const pasted = Array.of<SVGGElement>();
   const batchCmd = new history.BatchCommand('Paste elements');

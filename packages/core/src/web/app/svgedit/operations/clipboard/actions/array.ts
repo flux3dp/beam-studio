@@ -7,7 +7,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import undoManager from '../../../history/undoManager';
 
 import { copySelectedElements } from './copy';
-import { pasteElements } from './paste';
+import { clearCache, pasteElements } from './paste';
 
 let svgCanvas: ISVGCanvas;
 
@@ -31,13 +31,21 @@ export const generateSelectedElementArray = async (
   await copySelectedElements();
 
   const arrayElements = [...svgCanvas.getSelectedWithoutTempGroup()];
+  let isCached = false;
 
   for (let i = 0; i < column; i++) {
     for (let j = 0; j < row; j++) {
       if (i !== 0 || j !== 0) {
-        const pasteRes = await pasteElements({ isSubCmd: true, selectElement: false, type: 'inPlace' });
+        const pasteRes = await pasteElements({
+          isSubCmd: true,
+          selectElement: false,
+          type: 'inPlace',
+          useCache: isCached,
+        });
 
         if (!pasteRes) continue;
+
+        isCached = true;
 
         const { cmd: pasteCmd, elems } = pasteRes;
 
@@ -72,6 +80,8 @@ export const generateSelectedElementArray = async (
       }
     }
   }
+
+  clearCache();
 
   if (batchCmd.isEmpty()) {
     return null;
