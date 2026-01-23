@@ -28,7 +28,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
   private lineCheckEnabled: boolean = false;
   private fisheyeParams?: FisheyeCameraParametersV4;
   private fisheyePreviewManager?: FisheyePreviewManagerV4;
-  private grid = bm2FullAreaPerspectiveGrid;
+  private fullAreaGrid = bm2FullAreaPerspectiveGrid;
   private doorChecker = new DoorChecker();
   private originalExposure: null | number = null;
   protected maxMovementSpeed: [number, number] = [45000, 6000]; // mm/min, speed cap of machine
@@ -80,7 +80,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       }
 
       this.fisheyePreviewManager =
-        this.fisheyePreviewManager ?? new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.grid);
+        this.fisheyePreviewManager ?? new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.fullAreaGrid);
 
       const workarea = getWorkarea(this.device.model, 'fbm2');
       const { cameraCenter } = workarea;
@@ -290,7 +290,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           this.regionPreviewGrid.y[2],
         ],
       }))
-      .otherwise(() => bm2FullAreaPerspectiveGrid);
+      .otherwise(() => this.fullAreaGrid);
 
     // merge background image and mask image before exiting full screen preview mode
     if (this._previewMode === PreviewMode.FULL_AREA && !previewModeBackgroundDrawer.isClean()) {
