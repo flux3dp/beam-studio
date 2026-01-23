@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: 'Auto Feeder',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Auto Shrink',
+      auto_shrink_tooltip: 'Only applies to layers with a resolution greater than or equal to 250 DPI.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Open Bottom',
       current_position: 'Current Position',

@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: 'ตัวป้อนอัตโนมัติ',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'ย่ออัตโนมัติ',
+      auto_shrink_tooltip: 'ใช้กับเลเยอร์ที่มีความละเอียดตั้งแต่ 250 DPI ขึ้นไปเท่านั้น',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'โหมดเปิดก้น',
       current_position: 'ตำแหน่งปัจจุบัน',

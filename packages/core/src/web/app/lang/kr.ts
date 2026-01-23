@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: '자동 공급 장치',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: '자동 축소',
+      auto_shrink_tooltip: '250 DPI 이상의 해상도를 가진 레이어에만 적용됩니다.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: '열린 바닥',
       current_position: '현재 위치',

@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: 'Automatisk matning',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Automatisk förminskning',
+      auto_shrink_tooltip: 'Gäller endast lager med en upplösning på 250 DPI eller högre.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Öppen botten',
       current_position: 'Nuvarande Position',

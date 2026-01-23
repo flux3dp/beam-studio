@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: '自動送料',
       auto_feeder_url: 'https://support.flux3dp.com/hc/zh-tw/articles/11688230498575',
       auto_shrink: '自動內縮',
+      auto_shrink_tooltip: '僅套用於解析度大於 250 DPI（含）的圖層。',
       auto_shrink_url: 'https://support.flux3dp.com/hc/zh-tw/articles/12997377035919',
       borderless_mode: '開蓋模式',
       current_position: '當前位置',

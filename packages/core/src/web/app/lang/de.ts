@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: 'Automatischer Einzug',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Automatische Verkleinerung',
+      auto_shrink_tooltip: 'Gilt nur für Ebenen mit einer Auflösung von 250 DPI oder höher.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Öffnen Sie den Boden',
       current_position: 'Aktuelle Position',

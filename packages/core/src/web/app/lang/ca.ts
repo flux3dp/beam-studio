@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: 'Alimentador automàtic',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Contracció automàtica',
+      auto_shrink_tooltip: "Només s'aplica a capes amb una resolució superior o igual a 250 DPI.",
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Fons obert',
       current_position: 'Posició actual',

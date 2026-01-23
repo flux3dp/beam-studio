@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: 'Automatische voeder',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Automatisch verkleinen',
+      auto_shrink_tooltip: 'Geldt alleen voor lagen met een resolutie van 250 DPI of hoger.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Open onderzijde',
       current_position: 'Huidige Positie',

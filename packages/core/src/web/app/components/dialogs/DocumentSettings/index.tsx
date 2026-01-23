@@ -7,7 +7,7 @@ import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import constant, { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
@@ -15,7 +15,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
-import { defaultEngraveDpiOptions, getWorkarea } from '@core/app/constants/workarea-constants';
+import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
@@ -79,7 +79,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     device: tDevice,
     global: tGlobal,
   } = useI18n();
-  const [engraveDpi, setEngraveDpi] = useState(useDocumentStore.getState().engrave_dpi);
   const {
     autoFeeder: origAutoFeeder,
     passThrough: origPassThrough,
@@ -114,18 +113,12 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const [enable1064, setEnable1064] = useState(!!useDocumentStore.getState()['enable-1064']);
   const lastPassthroughMode = useRef<'auto' | 'manual' | null>(null);
   const workareaObj = useMemo(() => getWorkarea(workarea), [workarea]);
-  const dpiOptions = workareaObj.engraveDpiOptions || defaultEngraveDpiOptions;
   const wattsOptions = useMemo(() => {
     return match(workarea)
       .with('fhx2rf', () => fhx2rfWatts.map((watt) => ({ label: `${watt}W`, value: watt })))
       .otherwise(() => null);
   }, [workarea]);
   const [watt, setWatt] = useState(useCanvasStore.getState().watt);
-
-  useEffect(() => {
-    if (!dpiOptions.includes(engraveDpi)) setEngraveDpi(dpiOptions.at(-1)!);
-  }, [dpiOptions, engraveDpi]);
-
   const isInch = useStorageStore((state) => state.isInch);
   const {
     autoFeederHeight,
@@ -170,9 +163,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       setPassThrough(false);
     }
   }, [autoFeeder]);
-  useEffect(() => {
-    if (engraveDpi === 'low') setAutoShrink(false);
-  }, [engraveDpi]);
 
   useEffect(() => setRotaryMode(storeRotaryMode), [storeRotaryMode]);
   useEffect(() => setRotaryType(storeRotaryType), [storeRotaryType]);
@@ -217,7 +207,6 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       'enable-1064': enable1064,
       'enable-autofocus': Boolean(addOnInfo.autoFocus && enableAutofocus),
       'enable-diode': Boolean(addOnInfo.hybridLaser && enableDiode),
-      engrave_dpi: engraveDpi,
     };
 
     const defaultLaser = getDefaultLaserModule(workarea);
@@ -532,27 +521,11 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 />
               </div>
             )}
-            <div className={styles.row}>
-              <label className={styles.title} htmlFor="dpi">
-                {tDocument.engrave_dpi}
-              </label>
-              <Select
-                className={styles.control}
-                id="dpi"
-                onChange={setEngraveDpi}
-                options={dpiOptions.map((value) => ({
-                  label: `${tDocument[value]} (${constant.dpiValueMap[value]} DPI)`,
-                  value,
-                }))}
-                value={engraveDpi}
-                variant="outlined"
-              />
-            </div>
             {!isPromark && (
               <div className={styles.row}>
                 <div className={styles.title}>
                   <label htmlFor="autoShrink">{tDocument.auto_shrink}</label>
-                  <Tooltip title={tDocument.auto_shrink_url}>
+                  <Tooltip title={tDocument.auto_shrink_tooltip}>
                     <QuestionCircleOutlined
                       className={styles.icon}
                       onClick={() => browser.open(tDocument.auto_shrink_url)}
@@ -560,12 +533,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                   </Tooltip>
                 </div>
                 <div className={styles.control}>
-                  <Switch
-                    checked={autoShrink}
-                    disabled={engraveDpi === 'low'}
-                    id="autoShrink"
-                    onChange={setAutoShrink}
-                  />
+                  <Switch checked={autoShrink} id="autoShrink" onChange={setAutoShrink} />
                 </div>
               </div>
             )}
@@ -587,12 +555,10 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                     <div className={styles.row}>
                       <div className={styles.title}>
                         <label htmlFor="start_button">{tDocument.start_work_button}</label>
-                        <Tooltip title={tDocument.frame_before_start_url}>
-                          <QuestionCircleOutlined
-                            className={styles.icon}
-                            onClick={() => browser.open(tDocument.frame_before_start_url)}
-                          />
-                        </Tooltip>
+                        <QuestionCircleOutlined
+                          className={styles.icon}
+                          onClick={() => browser.open(tDocument.frame_before_start_url)}
+                        />
                       </div>
                       <div className={styles.control}>
                         <Switch checked={enableStartButton} id="start_button" onChange={setEnableStartButton} />
