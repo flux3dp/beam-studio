@@ -1,3 +1,5 @@
+import type { EngraveDpiOption } from '@core/app/constants/workarea-constants';
+
 export interface ILang {
   alert: {
     abort: string;
@@ -178,7 +180,6 @@ export interface ILang {
       auto_shrink_url: string;
       borderless_mode: string;
       current_position: string;
-      detailed: string;
       disable: string;
       document_settings: string;
       door_protect: string;
@@ -187,17 +188,13 @@ export interface ILang {
       enable_autofocus: string;
       enable_diode: string;
       enable_nozzle_refresh_area: string;
-      engrave_dpi: string;
       extend_y_area: string;
       frame_before_start: string;
       frame_before_start_url: string;
-      high: string;
       job_origin: string;
       laser_source: string;
-      low: string;
       machine: string;
       manual: string;
-      medium: string;
       notification: {
         changeFromPrintingWorkareaTitle: string;
       };
@@ -210,7 +207,6 @@ export interface ILang {
       start_from: string;
       start_position: string;
       start_work_button: string;
-      ultra: string;
       workarea: string;
     };
     elements_panel: {
@@ -2007,6 +2003,8 @@ export interface ILang {
     enabled: string;
     engraving_direction: string;
     engraving_offset_tooltip: string;
+    engraving_resolution: string;
+    engraving_resolution_values: Record<EngraveDpiOption, string>;
     fast_gradient: string;
     font_convert: string;
     font_substitute: string;

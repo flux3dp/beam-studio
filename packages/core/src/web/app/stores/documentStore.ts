@@ -47,7 +47,6 @@ const getInitDocumentStore = (): DocumentState => {
     'enable-autofocus': isAutofocusEnabled,
     'enable-diode': isDiodeEnabled,
     'enable-job-origin': preference['enable-job-origin'],
-    engrave_dpi: preference.engrave_dpi,
     'extend-rotary-workarea': preference['extend-rotary-workarea'],
     'frame-before-start': preference['frame-before-start'],
     'job-origin': preference['job-origin'],

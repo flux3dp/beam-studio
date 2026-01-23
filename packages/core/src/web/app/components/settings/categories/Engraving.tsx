@@ -2,6 +2,8 @@ import React from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
+import constant from '@core/app/actions/beambox/constant';
+import type { EngraveDpiOption } from '@core/app/constants/workarea-constants';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -10,6 +12,7 @@ import { SettingFormItem, SettingSelect, SettingSwitch, SettingUnitInput, useSet
 function Engraving(): React.JSX.Element {
   const lang = useI18n();
   const { getPreference, setPreference } = useSettingStore();
+  const dpiOptions: EngraveDpiOption[] = ['low', 'medium', 'high', 'detailed', 'ultra'];
   const reverseEngravingOptions = [
     { label: lang.settings.bottom_up, value: true },
     { label: lang.settings.top_down, value: false },
@@ -17,6 +20,16 @@ function Engraving(): React.JSX.Element {
 
   return (
     <>
+      <SettingSelect
+        defaultValue={getPreference('engrave_dpi')}
+        id="set-engrave-dpi"
+        label={lang.settings.engraving_resolution}
+        onChange={(e) => setPreference('engrave_dpi', e)}
+        options={dpiOptions.map((value) => ({
+          label: `${lang.settings.engraving_resolution_values[value]} (${constant.dpiValueMap[value]} DPI)`,
+          value,
+        }))}
+      />
       <SettingSwitch
         checked={getPreference('fast_gradient')}
         id="set-fast-gradient"

@@ -23,6 +23,7 @@ const state: GlobalPreference = {
   'enable-custom-backlash': false,
   'enable-custom-preview-height': false,
   'enable-uv-print-file': false,
+  engrave_dpi: 'medium',
   fast_gradient: true,
   'font-convert': '2.0',
   'font-substitute': true,
