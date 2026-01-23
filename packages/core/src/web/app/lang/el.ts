@@ -177,6 +177,7 @@ const lang: ILang = {
       auto_feeder: 'Αυτόματος τροφοδότης',
       auto_feeder_url: 'https://support.flux3dp.com/hc/en-us/articles/11688230498575',
       auto_shrink: 'Αυτόματη σμίκρυνση',
+      auto_shrink_tooltip: 'Ισχύει μόνο για επίπεδα με ανάλυση μεγαλύτερη ή ίση με 250 DPI.',
       auto_shrink_url: 'https://support.flux3dp.com/hc/en-us/articles/12997377035919',
       borderless_mode: 'Ανοιχτό κάτω μέρος',
       current_position: 'Τρέχουσα Θέση',

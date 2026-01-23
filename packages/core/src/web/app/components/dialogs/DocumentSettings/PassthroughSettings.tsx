@@ -126,12 +126,7 @@ export const PassthroughSettings = ({ isManualMode, onClose, onSave, workarea }:
                 size="small"
                 value={autoFeederHeight}
               />
-              <Tooltip title={tDocument.auto_feeder_url}>
-                <QuestionCircleOutlined
-                  className={styles.hint}
-                  onClick={() => browser.open(tDocument.auto_feeder_url)}
-                />
-              </Tooltip>
+              <QuestionCircleOutlined className={styles.hint} onClick={() => browser.open(tDocument.auto_feeder_url)} />
             </div>
             <label className={styles.title}>{tDocument.scale}</label>
             <div className={styles.control}>

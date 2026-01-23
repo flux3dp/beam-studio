@@ -35,8 +35,11 @@
 .icon {
   font-size: 14px;
   color: #999;
-  cursor: pointer;
   flex-shrink: 0;
+
+  &.link {
+    cursor: pointer;
+  }
 
   &:hover {
     color: #666;

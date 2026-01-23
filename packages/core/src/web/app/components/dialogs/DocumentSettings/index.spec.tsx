@@ -48,7 +48,6 @@ const mockDocumentState = {
   'enable-autofocus': false,
   'enable-diode': false,
   'enable-job-origin': false,
-  engrave_dpi: 'medium',
   'extend-rotary-workarea': undefined,
   'frame-before-start': false,
   'job-origin': 1,
@@ -202,10 +201,6 @@ describe('test DocumentSettings', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    act(() => fireEvent.mouseDown(baseElement.querySelector('input#dpi')));
-    act(() => {
-      fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[2]);
-    });
     expect(baseElement).toMatchSnapshot();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="beamo"]'));
@@ -252,7 +247,6 @@ describe('test DocumentSettings', () => {
       'enable-autofocus': true,
       'enable-diode': true,
       'enable-job-origin': true,
-      engrave_dpi: 'high',
       'job-origin': 1,
       'pass-through': false,
       'rotary-type': 0,

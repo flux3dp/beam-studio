@@ -2,6 +2,7 @@ import React from 'react';
 
 import { InfoCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
+import classNames from 'classnames';
 
 import browser from '@core/implementations/browser';
 
@@ -19,11 +20,7 @@ type Props = {
 function SettingFormItem({ children, id, label, tooltip, url, warning }: Props): React.JSX.Element {
   const renderInfo = (): React.ReactNode => {
     if (url) {
-      return (
-        <Tooltip title={url}>
-          <InfoCircleOutlined className={styles.icon} onClick={() => browser.open(url)} />
-        </Tooltip>
-      );
+      return <InfoCircleOutlined className={classNames(styles.icon, styles.link)} onClick={() => browser.open(url)} />;
     }
 
     if (tooltip) {
