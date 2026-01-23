@@ -4,7 +4,6 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import { bm2FullAreaPerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
