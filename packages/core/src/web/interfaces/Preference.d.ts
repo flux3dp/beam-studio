@@ -19,7 +19,6 @@ export type DocumentState = {
   'enable-autofocus'?: boolean;
   'enable-diode'?: boolean;
   'enable-job-origin': boolean;
-  engrave_dpi: EngraveDpiOption;
   'extend-rotary-workarea': boolean;
   'frame-before-start': boolean;
   'job-origin': number;
@@ -62,6 +61,7 @@ export type GlobalPreference = {
   'enable-custom-backlash': boolean;
   'enable-custom-preview-height': boolean;
   'enable-uv-print-file': boolean;
+  engrave_dpi: EngraveDpiOption;
   fast_gradient: boolean;
   'font-convert': '1.0' | '2.0';
   'font-substitute': boolean;

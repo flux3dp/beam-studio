@@ -10,7 +10,6 @@ const state: DocumentState = {
   'enable-4c': false,
   'enable-1064': false,
   'enable-job-origin': false,
-  engrave_dpi: 'medium',
   'extend-rotary-workarea': false,
   'frame-before-start': false,
   'job-origin': 1,
