@@ -176,17 +176,11 @@ const usePreviewModal = ({
     // Select elements based on selectionMode
     if (cmd && selectionMode !== 'none') {
       const insertedElements = cmd.getInsertedElements();
+      const elementsToSelect =
+        selectionMode === 'all' ? [...selectionRef.current, ...insertedElements] : insertedElements;
 
-      if (selectionMode === 'all') {
-        // Select original elements + newly inserted elements
-        const allElements = [...selectionRef.current, ...insertedElements];
-
-        if (allElements.length > 0) {
-          svgCanvas.multiSelect(allElements);
-        }
-      } else if (selectionMode === 'inserted' && insertedElements.length > 0) {
-        // Select only newly inserted elements
-        svgCanvas.multiSelect(insertedElements);
+      if (elementsToSelect.length > 0) {
+        svgCanvas.multiSelect(elementsToSelect);
       }
     }
 
