@@ -3,7 +3,7 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
-import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import { bm2FullAreaPerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
@@ -250,7 +250,7 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           }
         }
 
-        await new Promise<void>((resolve) => PreviewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
+        await new Promise<void>((resolve) => previewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
 
         if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
       };
