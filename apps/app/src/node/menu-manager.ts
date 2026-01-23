@@ -188,7 +188,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       ].filter(Boolean),
     },
     !isPromark && { type: 'separator' },
-    (isAdor || isBb2 || isBeamo2) && {
+    (isAdor || isBb2 || isBeamo2 || isHexa2) && {
       id: 'CAMERA_CALIBRATION_DATA',
       label: r.camera_calibration_data,
       submenu: [

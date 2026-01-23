@@ -189,7 +189,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             )}
           </SubMenu>
           {!isPromark && <MenuDivider />}
-          {(isAdor || isBb2 || isBeamo2) && (
+          {(isAdor || isBb2 || isBeamo2 || isHexa2) && (
             <SubMenu label={menuCms.camera_calibration_data}>
               <MenuItem onClick={() => callback('UPLOAD_CALIBRATION_DATA', device)}>{menuCms.upload_data}</MenuItem>
               <MenuItem onClick={() => callback('DOWNLOAD_CALIBRATION_DATA', device)}>{menuCms.download_data}</MenuItem>
