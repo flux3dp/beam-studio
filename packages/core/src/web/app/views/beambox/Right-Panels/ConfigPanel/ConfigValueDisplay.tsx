@@ -2,24 +2,22 @@ import React, { useCallback, useMemo } from 'react';
 
 import UnitInput from '@core/app/widgets/UnitInput';
 import type ConfigOption from '@core/interfaces/ConfigOption';
+import type { OneOf } from '@core/interfaces/utils';
 
 import styles from './ConfigValueDisplay.module.scss';
 import Input from './Input';
 
-interface Props {
+type Props = OneOf<{ max: number; min: number }, { options: ConfigOption[] }> & {
   decimal?: number;
   hasMultiValue?: boolean;
   inputId?: string;
   isInch?: boolean;
-  max: number;
-  min: number;
   onChange: (value: number) => void;
-  options?: ConfigOption[];
   step?: number;
   type?: 'default' | 'modal' | 'panel-item';
   unit?: string;
   value: number;
-}
+};
 
 const ConfigValueDisplay = ({
   decimal = 0,
