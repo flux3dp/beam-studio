@@ -12,7 +12,8 @@ import storage from '@core/implementations/storage';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 import type { ILang } from '@core/interfaces/ILang';
 
-import { type SettingUnitInputProps, useSettingStore } from '../shared';
+import type { SettingUnitInputProps } from '../shared';
+import { useSettingStore } from '../shared';
 
 import { getCategoryConfigs } from './constants';
 import SettingsSidebar from './desktop/SettingsSidebar';

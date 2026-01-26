@@ -6,7 +6,6 @@ import {
   EditOutlined,
   ExperimentOutlined,
   LockOutlined,
-  ReloadOutlined,
   SaveOutlined,
   ScanOutlined,
   SettingOutlined,
@@ -14,6 +13,7 @@ import {
   WifiOutlined,
 } from '@ant-design/icons';
 
+import { SettingsIcons } from '@core/app/icons/Settings/SettingsIcons';
 import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import type { ILang } from '@core/interfaces/ILang';
@@ -24,7 +24,7 @@ import { SettingCategory } from './types';
 interface GetCategoryConfigsOptions {
   isMobile?: boolean;
 }
-
+//
 // Category configurations with icons and visibility rules
 export const getCategoryConfigs = (lang: ILang, options: GetCategoryConfigsOptions = {}): SettingCategoryConfig[] => {
   const { isMobile = false } = options;
@@ -83,7 +83,7 @@ export const getCategoryConfigs = (lang: ILang, options: GetCategoryConfigsOptio
       visible: isDev(),
     },
     {
-      icon: <ReloadOutlined />,
+      icon: <SettingsIcons.Reset height={14} width={14} />,
       key: SettingCategory.RESET,
       label: lang.global.editing.reset,
       visible: isMobile,
