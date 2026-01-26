@@ -162,15 +162,26 @@ const usePreviewModal = ({
    * Selects elements based on the configured selectionMode.
    */
   const commitPreview = useCallback(async (): Promise<BatchCommand | null> => {
+    // Wait for any in-progress preview to complete to avoid duplicate elements
+    while (processing.current || queueNext.current) {
+      await new Promise((resolve) => {
+        requestAnimationFrame(resolve);
+      });
+    }
+
     let cmd: BatchCommand | null;
 
     if (!previewEnabled) {
       // Preview was disabled, generate the actual result
       cmd = await generatePreview();
-    } else {
-      // Return the existing preview command (caller handles adding to history)
+    } else if (batchCmd.current) {
+      // Use the existing preview command
       cmd = batchCmd.current;
       batchCmd.current = null; // Clear ref since it's being committed
+    } else {
+      // Preview is enabled but batchCmd is null - this shouldn't happen after waiting
+      // but generate fresh as fallback
+      cmd = await generatePreview();
     }
 
     // Select elements based on selectionMode

@@ -3,23 +3,28 @@ describe('array tools', () => {
     cy.landingEditor();
   });
 
-  const doAllThing = () => {
+  const applyArray = () => {
     cy.clickToolBtn('Cursor');
     cy.get('svg#svgcontent').trigger('mousedown', -10, -10, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 400, 400, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('.tab.objects').click();
     cy.get('#array').click();
-    cy.findByTestId('columns').clear().clear().type('2').blur();
-    cy.findByTestId('rows').clear().clear().type('2').blur();
-    cy.findByTestId('array_dx').clear().clear().type('100').blur();
-    cy.findByTestId('array_dy').clear().clear().type('150').blur();
+    // Wait for modal to be ready, then use force: true to bypass race condition
+    // caused by canvas mousedown handler blurring active elements during preview generation
+    cy.findByTestId('column').should('be.visible');
+    cy.findByTestId('column').clear({ force: true }).type('2', { force: true }).blur();
+    cy.findByTestId('row').clear({ force: true }).type('2', { force: true }).blur();
+    cy.findByTestId('dx').clear({ force: true }).type('100', { force: true }).blur();
+    cy.findByTestId('dy').clear({ force: true }).type('150', { force: true }).blur();
     cy.findAllByText('Confirm').click();
+    // Wait for modal to close
+    cy.findByTestId('column').should('not.exist');
   };
 
   it('image', () => {
     cy.uploadFile('flux.png', 'image/png');
-    doAllThing();
+    applyArray();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('image').should('have.length', '4');
   });
@@ -30,7 +35,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_1').should('exist');
-    doAllThing();
+    applyArray();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('polygon').should('have.length', '4');
   });
@@ -41,7 +46,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_1').should('exist');
-    doAllThing();
+    applyArray();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('line').should('have.length', '4');
   });
@@ -52,7 +57,7 @@ describe('array tools', () => {
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');
     cy.inputText('Test Array');
-    doAllThing();
+    applyArray();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]').children('text').should('have.length', '4');
   });
@@ -71,13 +76,15 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('.tab.objects').click();
     cy.get('#group').click();
-    doAllThing();
+    applyArray();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
-    cy.get('#svg_11').children('image').should('have.length', '1');
+    // Verify 4 groups were created, each containing an image and ellipse
+    cy.get('g[data-tempgroup="true"]').children('g').should('have.length', '4');
+    cy.get('#svgcontent image').should('have.length', '4');
     cy.get('#svgcontent ellipse').should('have.length', '4');
   });
 
-  it('mutilselect', () => {
+  it('multiselect', () => {
     cy.clickToolBtn('Line');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });
@@ -87,7 +94,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_2').should('exist');
-    doAllThing();
+    applyArray();
     cy.getElementTitle().should('have.text', 'Multiple Objects');
     cy.get('g[data-tempgroup="true"]', { timeout: 3000 }).children('line').should('have.length', '4');
     cy.get('g[data-tempgroup="true"]', { timeout: 3000 }).children('polygon').should('have.length', '4');
