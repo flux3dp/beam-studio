@@ -3,6 +3,19 @@
 exports[`should render correctly 1`] = `
 <div>
   <div>
+    mock-select-control id:
+    set-engrave-dpi
+    label:
+    Resolution
+    url:
+    options:
+    [{"label":"Low (125 DPI)","value":"low"},{"label":"Medium (250 DPI)","value":"medium"},{"label":"High (500 DPI)","value":"high"},{"label":"Detailed (1000 DPI)","value":"detailed"},{"label":"Ultra High (2000 DPI)","value":"ultra"}]
+    <input
+      class="select-control"
+      id="set-engrave-dpi"
+    />
+  </div>
+  <div>
     mock-switch-control id:
     set-fast-gradient
     label:

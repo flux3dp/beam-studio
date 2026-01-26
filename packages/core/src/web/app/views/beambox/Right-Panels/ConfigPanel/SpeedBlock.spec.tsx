@@ -3,8 +3,8 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { setStorage } from '@mocks/@core/app/stores/storageStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 import ConfigPanelContext from './ConfigPanelContext';
 
@@ -118,10 +118,6 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 
 const mockEmit = jest.fn();
 
-jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
-  LayerPanelContext: React.createContext({ hasVector: false }),
-}));
-
 jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));
@@ -159,6 +155,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test SpeedBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useLayerStore.setState({ hasVector: false });
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });
@@ -211,12 +208,12 @@ describe('test SpeedBlock', () => {
   });
 
   it('should render correctly when has vector warning', () => {
+    useLayerStore.setState({ hasVector: true });
+
     const { container } = render(
-      <LayerPanelContext.Provider value={{ hasVector: true } as any}>
-        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-          <SpeedBlock />
-        </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>,
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
+        <SpeedBlock />
+      </ConfigPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -241,13 +238,12 @@ describe('test SpeedBlock', () => {
     mockUseWorkarea.mockReturnValue('fbb2');
     mockGetAutoFeeder.mockReturnValue(true);
     mockGlobalPreference['print-advanced-mode'] = true;
+    useLayerStore.setState({ hasVector: true });
 
     const { container } = render(
-      <LayerPanelContext.Provider value={{ hasVector: true } as any}>
-        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-          <SpeedBlock />
-        </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>,
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
+        <SpeedBlock />
+      </ConfigPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();
@@ -256,6 +252,7 @@ describe('test SpeedBlock', () => {
 
   it('should render correctly when has low speed warning', () => {
     mockUseWorkarea.mockReturnValue('fhexa1');
+    useLayerStore.setState({ hasVector: true });
 
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
@@ -264,11 +261,9 @@ describe('test SpeedBlock', () => {
     });
 
     const { container } = render(
-      <LayerPanelContext.Provider value={{ hasVector: true } as any}>
-        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-          <SpeedBlock />
-        </ConfigPanelContext.Provider>
-      </LayerPanelContext.Provider>,
+      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
+        <SpeedBlock />
+      </ConfigPanelContext.Provider>,
     );
 
     expect(container).toMatchSnapshot();

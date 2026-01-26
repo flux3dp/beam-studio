@@ -37,12 +37,6 @@ const mockInitState = jest.fn();
 
 jest.mock('@core/app/views/beambox/Right-Panels/ConfigPanel/initState', () => mockInitState);
 
-const mockUpdateLayerPanel = jest.fn();
-
-jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelController', () => ({
-  updateLayerPanel: mockUpdateLayerPanel,
-}));
-
 const mockAlertConfigRead = jest.fn();
 const mockAlertConfigWrite = jest.fn();
 
@@ -84,6 +78,7 @@ jest.mock('@core/helpers/presets/preset-helper', () => ({
 }));
 
 import { changeLayersModule } from './change-module';
+import { mockForceUpdate } from '@mocks/@core/app/stores/layer/layerStore';
 
 const mockLayer = {} as unknown as Element;
 
@@ -122,14 +117,14 @@ describe('test changeLayersModule', () => {
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockLayer, { val: false });
     expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenCalledTimes(1);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 
@@ -155,14 +150,14 @@ describe('test changeLayersModule', () => {
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockLayer, { val: false });
     expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenCalledTimes(1);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 
@@ -189,14 +184,14 @@ describe('test changeLayersModule', () => {
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockLayer, { val: false });
     expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenCalledTimes(1);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 
@@ -222,14 +217,14 @@ describe('test changeLayersModule', () => {
     expect(mockToggleFullColorLayer).toHaveBeenNthCalledWith(1, mockLayer, { val: true });
     expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
     expect(mockInitState).toHaveBeenCalledTimes(1);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, batchCmd);
 
     batchCmd.onAfter();
     expect(mockInitState).toHaveBeenCalledTimes(2);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(2);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(2);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(2);
   });
 });
