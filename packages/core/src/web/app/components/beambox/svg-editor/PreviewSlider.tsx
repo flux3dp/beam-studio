@@ -1,9 +1,10 @@
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ConfigProvider, Slider, Space, Switch, Tooltip } from 'antd';
 
 import constant, { supportCameraAutoExposureModels } from '@core/app/actions/beambox/constant';
 import PreviewModeController from '@core/app/actions/beambox/preview-mode-controller';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -22,7 +23,7 @@ const PreviewSlider = (): React.ReactNode => {
   const [autoExposure, setAutoExposure] = useState<boolean | null>(null);
   const [isSettingAutoExposure, setIsSettingAutoExposure] = useState(false);
   const [isRawMode, setIsRawMode] = useState(false);
-  const { isDrawing, isPreviewMode } = useCameraPreviewStore();
+  const { isDrawing, isPreviewMode, previewMode } = useCameraPreviewStore();
   const lang = useI18n();
 
   const getSetting = async () => {
@@ -111,6 +112,14 @@ const PreviewSlider = (): React.ReactNode => {
     }
   };
 
+  const showAutoExposure = useMemo(() => {
+    if (autoExposure === null) return false;
+
+    if (previewMode === PreviewMode.FULL_AREA && deviceMaster.currentDevice?.info.model === 'fbm2') return false;
+
+    return true;
+  }, [autoExposure, previewMode]);
+
   return (
     <Space className={styles.space} direction="vertical">
       {!isPreviewMode && showOpacity && (
@@ -143,7 +152,7 @@ const PreviewSlider = (): React.ReactNode => {
           >
             <Slider
               className={styles.slider}
-              disabled={(isRawMode && isDrawing) || Boolean(autoExposure)}
+              disabled={(isRawMode && isDrawing) || (showAutoExposure && Boolean(autoExposure))}
               max={Math.min(exposureSetting.max, 2000)}
               min={Math.max(exposureSetting.min, 50)}
               onChange={(value: number) => setExposureSetting({ ...exposureSetting, value })}
@@ -158,7 +167,7 @@ const PreviewSlider = (): React.ReactNode => {
                   console.error('Failed to set exposure', e);
                 }
 
-                if (PreviewModeController.isFullScreen) {
+                if (PreviewModeController.isFullArea) {
                   await PreviewModeController.previewFullWorkarea();
                 }
               }}
@@ -167,7 +176,7 @@ const PreviewSlider = (): React.ReactNode => {
               value={exposureSetting.value}
             />
             <div className={styles.value}>{exposureSetting.value}</div>
-            {autoExposure !== null && (
+            {showAutoExposure && (
               <Switch
                 checkedChildren="A"
                 className={styles.switch}
@@ -175,7 +184,7 @@ const PreviewSlider = (): React.ReactNode => {
                 loading={isSettingAutoExposure}
                 onChange={toggleAutoExposure}
                 unCheckedChildren="M"
-                value={autoExposure}
+                value={autoExposure!}
               />
             )}
           </ConfigProvider>

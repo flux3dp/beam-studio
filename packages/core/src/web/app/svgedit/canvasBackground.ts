@@ -175,7 +175,13 @@ export const setMaskImage = (url: string, maskType: BackgroundMaskType) => {
   clearBackgroundUrlCache();
 };
 
-export const getBackgroundUrl = async (width: number, height: number): Promise<string> => {
+export const getBackgroundUrl = async (
+  width: number,
+  height: number,
+  { useCache = true }: { useCache?: boolean } = {},
+): Promise<string> => {
+  if (useCache && backgroundUrlCache) return backgroundUrlCache;
+
   const backgroundImage = document.getElementById('backgroundImage') as null | SVGImageElement;
   const maskImage = document.getElementById('maskImage') as null | SVGImageElement;
   const backgroundImageUrl = backgroundImage?.getAttribute('xlink:href');
@@ -184,8 +190,6 @@ export const getBackgroundUrl = async (width: number, height: number): Promise<s
   if (!backgroundImageUrl) return '';
 
   if (!maskImageUrl) return backgroundImageUrl;
-
-  if (backgroundUrlCache) return backgroundUrlCache;
 
   const resp = await fetch(maskImageUrl);
   const maskImageBlob = await resp.blob();
@@ -240,9 +244,11 @@ export const getBackgroundUrl = async (width: number, height: number): Promise<s
     });
   });
 
-  backgroundUrlCache = URL.createObjectURL(blob);
+  const result = URL.createObjectURL(blob);
 
-  return backgroundUrlCache;
+  if (useCache) backgroundUrlCache = result;
+
+  return result;
 };
 
 export default {

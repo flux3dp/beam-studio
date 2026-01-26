@@ -26,7 +26,7 @@ import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
 import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
-import { bm2PerspectiveGrid, bm2PnPPoints, getRegionalPoints } from '../common/solvePnPConstants';
+import { bm2FullAreaPerspectiveGrid, bm2PnPPoints, getRegionalPoints } from '../common/solvePnPConstants';
 
 /* eslint-disable perfectionist/sort-objects */
 const Steps = {
@@ -343,7 +343,7 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
       return (
         <CheckPnP
           dh={0}
-          grid={bm2PerspectiveGrid}
+          grid={bm2FullAreaPerspectiveGrid}
           onBack={() => setStep(Steps.SOLVE_PNP_BR)}
           onClose={onClose}
           onNext={async () => {

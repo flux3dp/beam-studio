@@ -1,3 +1,4 @@
+import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
 import deviceMaster from '@core/helpers/device-master';
@@ -27,6 +28,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     args: {
       cameraPosition?: number[];
       closeMessage?: () => void;
+      fallbackHeight?: number;
       height?: number;
       movementFeedrate?: number;
       shouldKeepInRawMode?: boolean;
@@ -34,7 +36,7 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     } = {},
   ): Promise<boolean> {
     const { lang } = i18n;
-    const { cameraPosition, height, movementFeedrate = 7500, shouldKeepInRawMode = false } = args;
+    const { cameraPosition, fallbackHeight = 0, height, movementFeedrate = 7500, shouldKeepInRawMode = false } = args;
     const showMessage = args.updateMessage ? null : () => progressCaller.openNonstopProgress({ id: this.progressId });
     const updateMessage =
       args.updateMessage || ((message: string) => progressCaller.update(this.progressId, { message }));
@@ -58,8 +60,16 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
 
     if (height === undefined) {
       updateMessage(lang.message.preview.getting_focal_distance);
-
-      this.objectHeight = await getFocalDistance();
+      try {
+        this.objectHeight = await getFocalDistance({ showError: false });
+      } catch (error) {
+        alertCaller.popUp({
+          message: lang.message.preview.please_focus_before_preview,
+          messageIcon: 'warning',
+        });
+        this.objectHeight = fallbackHeight;
+        console.warn('Failed to get focal distance from device, use fallback height', error);
+      }
     } else {
       this.objectHeight = height;
     }
@@ -76,6 +86,14 @@ class FisheyePreviewManagerV4 extends FisheyePreviewManagerBase implements Fishe
     closeMessage?.();
 
     return true;
+  }
+
+  async updateGrid(perspectiveGrid: PerspectiveGrid): Promise<void> {
+    this.grids = perspectiveGrid;
+    this.params.grids = perspectiveGrid;
+
+    await deviceMaster.setFisheyeParam(this.params);
+    await this.onObjectHeightChanged();
   }
 
   onObjectHeightChanged = async (): Promise<void> => {

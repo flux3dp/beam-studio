@@ -8,7 +8,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const getWideAngleCameraData = async (
   device: IDeviceInfo,
-): Promise<{ hasWideAngleCamera: boolean; parameters?: FisheyeCaliParameters }> => {
+): Promise<{ canPreview?: boolean; hasWideAngleCamera: boolean; parameters?: FisheyeCaliParameters }> => {
   if (!(device.model === 'fbb2' || hexaRfModels.has(device.model))) {
     return { hasWideAngleCamera: false };
   }
@@ -52,5 +52,15 @@ export const getWideAngleCameraData = async (
     console.log('Wide-angle camera parameters not found:', err instanceof Error ? err?.message : err);
   }
 
-  return { hasWideAngleCamera: true, parameters };
+  let isDoorClosed = false;
+
+  try {
+    const res = await deviceMaster.getDoorOpen();
+
+    isDoorClosed = res.value === '0';
+  } catch (err) {
+    console.error('Fail to getDoorOpen, assume door is opened', err);
+  }
+
+  return { canPreview: !isDoorClosed && Boolean(parameters), hasWideAngleCamera: true, parameters };
 };

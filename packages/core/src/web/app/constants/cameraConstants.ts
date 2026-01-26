@@ -21,7 +21,9 @@ export const CALIBRATION_PARAMS = {
   size: 25, // mm
 };
 
-export const enum CameraType {
-  LASER_HEAD = 1,
-  WIDE_ANGLE = 2,
+/* eslint-disable perfectionist/sort-enums */
+export const enum PreviewMode {
+  REGION = 1,
+  FULL_AREA = 2,
 }
+/* eslint-enable perfectionist/sort-enums */

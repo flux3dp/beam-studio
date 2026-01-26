@@ -64,7 +64,7 @@ export const bb2WideAngleCameraPnpPoints: Record<'bottomLeft' | 'bottomRight' | 
   ] as const,
 } as const;
 
-export const bb2WideAnglePerspectiveGrid: PerspectiveGrid = {
+export const bb2FullAreaPerspectiveGrid: PerspectiveGrid = {
   x: [0, 600, 20],
   y: [0, 375, 15],
 } as const;
@@ -96,7 +96,7 @@ export const hx2WideAngleCameraPnpPoints: Record<'bottomLeft' | 'bottomRight' | 
   ] as const,
 } as const;
 
-export const hx2WideAnglePerspectiveGrid: PerspectiveGrid = {
+export const hx2FullAreaPerspectiveGrid: PerspectiveGrid = {
   x: [0, 740, 20],
   y: [0, 410, 20],
 } as const;
@@ -129,6 +129,11 @@ export const bm2PnPPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'to
 } as const;
 
 export const bm2PerspectiveGrid: PerspectiveGrid = {
+  x: [-70, 70, 10],
+  y: [0, 90, 10],
+} as const;
+
+export const bm2FullAreaPerspectiveGrid: PerspectiveGrid = {
   x: [0, 360, 10],
   y: [0, 240, 10],
 } as const;

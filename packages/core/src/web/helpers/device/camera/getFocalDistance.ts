@@ -2,7 +2,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import deviceMaster from '@core/helpers/device-master';
 import round from '@core/helpers/math/round';
 
-export const getFocalDistance = async (): Promise<number> => {
+export const getFocalDistance = async ({ showError = true }: { showError?: boolean } = {}): Promise<number> => {
   let didEnteredRawMode = false;
 
   try {
@@ -14,7 +14,8 @@ export const getFocalDistance = async (): Promise<number> => {
     const { didAf, z: probeZ } = await deviceMaster.rawGetProbePos();
 
     if (!didAf) {
-      alertCaller.popUpError({ message: 'Failed to get material height: not focused' });
+      if (showError) alertCaller.popUpError({ message: 'Failed to get material height: not focused' });
+
       throw new Error('Failed to get material height: not focused');
     }
 

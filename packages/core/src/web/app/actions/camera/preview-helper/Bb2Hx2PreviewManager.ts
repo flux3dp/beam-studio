@@ -2,16 +2,13 @@ import { sprintf } from 'sprintf-js';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import constant, { hexaRfModels, PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
+import { hexaRfModels, PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import {
-  bb2PerspectiveGrid,
-  bb2WideAnglePerspectiveGrid,
-  hx2rfPerspectiveGrid,
-  hx2WideAnglePerspectiveGrid,
+  bb2FullAreaPerspectiveGrid,
+  hx2FullAreaPerspectiveGrid,
 } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
-import { CameraType } from '@core/app/constants/cameraConstants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -23,19 +20,15 @@ import type { PreviewManager } from '@core/interfaces/PreviewManager';
 import BasePreviewManager from './BasePreviewManager';
 import FisheyePreviewManagerV4 from './FisheyePreviewManagerV4';
 import { getWideAngleCameraData } from './getWideAngleCameraData';
+import RegionPreviewMixin from './RegionPreviewMixin';
 
 // TODO: Add tests
-class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager {
-  private cameraType: CameraType = CameraType.LASER_HEAD;
+class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implements PreviewManager {
   private lineCheckEnabled: boolean = false;
   private wideAngleFisheyeManager?: FisheyePreviewManagerV4;
   private wideAngleFisheyeParams?: FisheyeCameraParametersV4;
   private fisheyeParams?: FisheyeCameraParameters;
-  private cameraPpmm = 5;
-  private previewPpmm = 10;
-  private grid = bb2PerspectiveGrid;
-  private wideAngleGrid = bb2WideAnglePerspectiveGrid;
-  private cameraCenterOffset: { x: number; y: number };
+  private fullAreaGrid = bb2FullAreaPerspectiveGrid;
   protected maxMovementSpeed: [number, number] = [54000, 6000]; // mm/min, speed cap of machine
 
   public hasWideAngleCamera: boolean = false;
@@ -45,22 +38,12 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
     this.progressId = 'beam-preview-manager';
 
     if (hexaRfModels.has(device.model)) {
-      this.grid = hx2rfPerspectiveGrid;
-      this.wideAngleGrid = hx2WideAnglePerspectiveGrid;
+      this.fullAreaGrid = hx2FullAreaPerspectiveGrid;
     }
-
-    this.cameraCenterOffset = {
-      x: this.grid.x[0] + (this.grid.x[1] - this.grid.x[0]) / 2,
-      y: this.grid.y[0] + (this.grid.y[1] - this.grid.y[0]) / 2,
-    };
   }
 
-  get isFullScreen(): boolean {
-    return this.cameraType === CameraType.WIDE_ANGLE;
-  }
-
-  get isWideAngleCameraCalibrated(): boolean {
-    return !!this.wideAngleFisheyeParams;
+  get isSwitchable(): boolean {
+    return this.hasWideAngleCamera;
   }
 
   protected getMovementSpeed = (): number => {
@@ -90,25 +73,33 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
     }
   };
 
-  switchCamera = async (cameraType: CameraType): Promise<CameraType> => {
-    if (this.cameraType === cameraType) return this.cameraType;
+  switchPreviewMode = async (mode: PreviewMode): Promise<PreviewMode> => {
+    if (this._previewMode === mode) return this._previewMode;
+
+    const { lang } = i18n;
+
+    if (mode === PreviewMode.FULL_AREA && !this.wideAngleFisheyeParams) {
+      alertCaller.popUpError({ message: lang.message.camera.calibration_wide_angle_camera_first });
+
+      return this._previewMode;
+    }
 
     try {
-      this.showMessage({ content: 'tSwitching camera' });
+      this.showMessage({ content: lang.message.camera.switching_camera });
 
-      if (this.cameraType === CameraType.LASER_HEAD) {
+      if (this._previewMode === PreviewMode.REGION) {
         await this.endLaserHeadCameraPreview(false);
       }
 
-      if (cameraType === CameraType.LASER_HEAD) {
+      if (mode === PreviewMode.REGION) {
         await this.setupLaserHeadCamera();
       } else {
         await this.setupWideAngleCamera();
       }
 
-      this.cameraType = cameraType;
+      this._previewMode = mode;
 
-      return this.cameraType;
+      return this._previewMode;
     } finally {
       this.closeMessage();
     }
@@ -132,7 +123,7 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
       this.wideAngleFisheyeManager = new FisheyePreviewManagerV4(
         this.device,
         this.wideAngleFisheyeParams,
-        this.wideAngleGrid,
+        this.fullAreaGrid,
       );
 
       const res = await this.wideAngleFisheyeManager.setupFisheyePreview({
@@ -192,7 +183,7 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
         throw new Error('Failed to set fisheye parameters');
       }
 
-      if (!(await deviceMaster.setFisheyePerspectiveGrid(this.grid))) {
+      if (!(await deviceMaster.setFisheyePerspectiveGrid(this.regionPreviewGrid))) {
         throw new Error('Failed to set fisheye perspective grid');
       }
 
@@ -214,15 +205,15 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
 
       await deviceMaster.connectCamera();
 
-      const { hasWideAngleCamera, parameters } = await getWideAngleCameraData(this.device);
+      const { canPreview, hasWideAngleCamera, parameters } = await getWideAngleCameraData(this.device);
 
       this.hasWideAngleCamera = hasWideAngleCamera;
       this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;
-      this.cameraType =
-        this.hasWideAngleCamera && this.wideAngleFisheyeParams ? CameraType.WIDE_ANGLE : CameraType.LASER_HEAD;
 
-      const res = await match<CameraType>(this.cameraType)
-        .with(CameraType.WIDE_ANGLE, () => this.setupWideAngleCamera())
+      this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_AREA : PreviewMode.REGION;
+
+      const res = await match(this._previewMode)
+        .with(PreviewMode.FULL_AREA, () => this.setupWideAngleCamera())
         .otherwise(() => this.setupLaserHeadCamera());
 
       return res;
@@ -240,7 +231,7 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
     this.closeMessage();
 
     try {
-      if (this.cameraType === CameraType.LASER_HEAD) {
+      if (this._previewMode === PreviewMode.REGION) {
         await this.endLaserHeadCameraPreview();
       }
     } catch (error) {
@@ -249,9 +240,9 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
   };
 
   public preview = (x: number, y: number, opts?: { overlapFlag?: number; overlapRatio?: number }): Promise<boolean> => {
-    return match(this.cameraType)
-      .with(CameraType.WIDE_ANGLE, () => this.previewWithWideAngleCamera())
-      .otherwise(() => this.previewWithLaserHeadCamera(x, y, opts));
+    return match(this._previewMode)
+      .with(PreviewMode.FULL_AREA, () => this.previewWithWideAngleCamera())
+      .otherwise(() => this.regionPreviewAtPoint(x, y, opts));
   };
 
   public previewRegion = (
@@ -261,171 +252,18 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
     y2: number,
     opts?: { overlapRatio?: number },
   ): Promise<boolean> => {
-    return match(this.cameraType)
-      .with(CameraType.WIDE_ANGLE, () => this.previewWithWideAngleCamera())
-      .otherwise(() => this.previewRegionWithLaserHeadCamera(x1, y1, x2, y2, opts));
+    return match(this._previewMode)
+      .with(PreviewMode.FULL_AREA, () => this.previewWithWideAngleCamera())
+      .otherwise(() => this.regionPreviewArea(x1, y1, x2, y2, opts));
   };
 
   public previewFullWorkarea = (): Promise<boolean> => {
-    return match(this.cameraType)
-      .with(CameraType.WIDE_ANGLE, () => this.previewWithWideAngleCamera())
+    return match(this._previewMode)
+      .with(PreviewMode.FULL_AREA, () => this.previewWithWideAngleCamera())
       .otherwise(() => Promise.resolve(false));
   };
 
   // Methods of Laser Head Camera Preview
-  /**
-   * getPreviewPosition
-   * @param x x in px
-   * @param y y in px
-   * @returns preview camera position x, y in mm
-   */
-  getPreviewPosition = (x: number, y: number): { x: number; y: number } => {
-    let newX = x / constant.dpmm - this.cameraCenterOffset.x;
-    let newY = y / constant.dpmm - this.cameraCenterOffset.y;
-    const { displayHeight, height: origH, width } = getWorkarea(this.workarea);
-    const height = displayHeight ?? origH;
-
-    newX = Math.min(Math.max(newX, -this.grid.x[0]), width - this.grid.x[1]);
-    newY = Math.min(Math.max(newY, -this.grid.y[0]), height - this.grid.y[1]);
-
-    return { x: newX, y: newY };
-  };
-
-  preprocessLaserHeadCameraImage = async (
-    imgUrl: string,
-    opts: { overlapFlag?: number; overlapRatio?: number } = {},
-  ): Promise<HTMLCanvasElement> => {
-    const { overlapFlag = 0, overlapRatio = 0 } = opts;
-    const img = new Image();
-
-    await new Promise<void>((resolve) => {
-      img.onload = () => resolve();
-      img.src = imgUrl;
-    });
-
-    const canvas = document.createElement('canvas');
-    const ratio = this.previewPpmm / this.cameraPpmm;
-
-    canvas.width = img.width * ratio;
-    canvas.height = img.height * ratio;
-
-    const ctx = canvas.getContext('2d', { willReadFrequently: true });
-
-    if (!ctx) {
-      throw new Error('Failed to get canvas context');
-    }
-
-    ctx.scale(ratio, ratio);
-    ctx.drawImage(img, 0, 0);
-
-    const { height, width } = canvas;
-    const overlapWidth = Math.round(width * overlapRatio);
-    const overlapHeight = Math.round(height * overlapRatio);
-
-    if (overlapWidth > 0 || overlapHeight > 0) {
-      const imageData = ctx.getImageData(0, 0, width, height);
-
-      for (let x = 0; x < width; x += 1) {
-        for (let y = 0; y < height; y += 1) {
-          const tDist = overlapFlag & 1 ? y : overlapHeight;
-
-          const rDist = overlapFlag & 2 ? width - x - 1 : overlapWidth;
-
-          const bDist = overlapFlag & 4 ? height - y - 1 : overlapHeight;
-
-          const lDist = overlapFlag & 8 ? x : overlapWidth;
-          const xDist = overlapWidth ? Math.min((Math.min(lDist, rDist) + 1) / overlapWidth, 1) : 1;
-          const yDist = overlapHeight ? Math.min((Math.min(tDist, bDist) + 1) / overlapHeight, 1) : 1;
-          let alphaRatio = xDist * yDist;
-
-          if (alphaRatio < 1) {
-            alphaRatio **= 1;
-
-            const i = (y * width + x) * 4;
-
-            imageData.data[i + 3] = Math.round(imageData.data[i + 3] * alphaRatio);
-          }
-        }
-      }
-      ctx.putImageData(imageData, 0, 0);
-    }
-
-    return canvas;
-  };
-
-  previewWithLaserHeadCamera = async (
-    x: number,
-    y: number,
-    opts: { overlapFlag?: number; overlapRatio?: number } = {},
-  ): Promise<boolean> => {
-    if (this.ended) return false;
-
-    const { overlapFlag, overlapRatio = 0 } = opts;
-    const cameraPosition = this.getPreviewPosition(x, y);
-    const imgUrl = await this.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y);
-    const imgCanvas = await this.preprocessLaserHeadCameraImage(imgUrl, { overlapFlag, overlapRatio });
-    const drawCenter = {
-      x: (cameraPosition.x + this.cameraCenterOffset.x) * constant.dpmm,
-      y: (cameraPosition.y + this.cameraCenterOffset.y) * constant.dpmm,
-    };
-
-    await PreviewModeBackgroundDrawer.drawImageToCanvas(imgCanvas, drawCenter.x, drawCenter.y, {
-      opacityMerge: overlapRatio > 0,
-    });
-
-    return true;
-  };
-
-  previewRegionWithLaserHeadCamera = async (
-    x1: number,
-    y1: number,
-    x2: number,
-    y2: number,
-    { overlapRatio = 0.05 }: { overlapRatio?: number } = {},
-  ): Promise<boolean> => {
-    const getPoints = () => {
-      const imgW = (this.grid.x[1] - this.grid.x[0]) * constant.dpmm;
-      const imgH = (this.grid.y[1] - this.grid.y[0]) * constant.dpmm;
-      const { x: l, y: t } = this.constrainPreviewXY(Math.min(x1, x2), Math.min(y1, y2));
-      const { x: r, y: b } = this.constrainPreviewXY(Math.max(x1, x2), Math.max(y1, y2));
-
-      const res: Array<{ overlapFlag: number; point: [number, number] }> = [];
-      const xStep = imgW * (1 - overlapRatio);
-      const yStep = imgH * (1 - overlapRatio);
-      const xTotal = Math.max(1, Math.ceil((r - l) / xStep));
-      const yTotal = Math.max(1, Math.ceil((b - t) / yStep));
-
-      for (let j = 0; j < yTotal; j += 1) {
-        const y = t + imgH / 2 + j * yStep;
-        const row: Array<{ overlapFlag: number; point: [number, number] }> = [];
-
-        for (let i = 0; i < xTotal; i += 1) {
-          const x = l + imgW / 2 + i * xStep;
-          let overlapFlag = 0;
-
-          // 1: top, 2: right, 4: bottom, 8: left
-          if (j !== 0) overlapFlag += 1;
-
-          if (i !== xTotal - 1) overlapFlag += 2;
-
-          if (j !== yTotal - 1) overlapFlag += 4;
-
-          if (i !== 0) overlapFlag += 8;
-
-          row.push({ overlapFlag, point: [x, y] });
-        }
-
-        if (j % 2 !== 0) row.reverse();
-
-        res.push(...row);
-      }
-
-      return res;
-    };
-
-    return this.previewRegionFromPoints(x1, y1, x2, y2, { getPoints, overlapRatio });
-  };
-
   private endLaserHeadCameraPreview = async (disconnectCamera: boolean = true): Promise<void> => {
     const res = await deviceMaster.select(this.device);
 
@@ -468,15 +306,13 @@ class Bb2Hx2PreviewManager extends BasePreviewManager implements PreviewManager 
   reloadLevelingOffset = async (): Promise<void> => {};
 
   resetObjectHeight = async (): Promise<boolean> => {
-    if (this.cameraType === CameraType.WIDE_ANGLE && this.wideAngleFisheyeManager) {
+    if (this._previewMode === PreviewMode.FULL_AREA && this.wideAngleFisheyeManager) {
       return this.wideAngleFisheyeManager.resetObjectHeight();
     }
 
     return false;
   };
   // End of Wide Angle Camera Preview
-
-  getCameraType = (): CameraType => this.cameraType;
 }
 
 export default Bb2Hx2PreviewManager;

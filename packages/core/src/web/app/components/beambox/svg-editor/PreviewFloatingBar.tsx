@@ -3,11 +3,10 @@ import { memo, type ReactNode, useMemo } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
-import alertCaller from '@core/app/actions/alert-caller';
 import { adorModels } from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
-import { CameraType } from '@core/app/constants/cameraConstants';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
@@ -66,22 +65,13 @@ const Button = memo(
 export const PreviewFloatingBar = memo((): ReactNode => {
   const {
     beambox: { left_panel: lang },
-    message: { camera: tCamera },
   } = useI18n();
   const workarea = useWorkarea();
   const isAdorSeries = useMemo(() => adorModels.has(workarea), [workarea]);
   const mode = useCanvasStore((state) => state.mode);
   const mouseMode = useCanvasStore((state) => state.mouseMode);
-  const {
-    cameraType,
-    hasWideAngleCamera,
-    isClean,
-    isDrawing,
-    isLiveMode,
-    isPreviewMode,
-    isStarting,
-    isWideAngleCameraCalibrated,
-  } = useCameraPreviewStore();
+  const { isClean, isDrawing, isLiveMode, isPreviewMode, isStarting, isSwitchable, previewMode } =
+    useCameraPreviewStore();
   const isCanvasEmpty = isDrawing || isClean;
   const isMouseInPreviewMode = useMemo(() => ['pre_preview', 'preview'].includes(mouseMode), [mouseMode]);
 
@@ -105,19 +95,13 @@ export const PreviewFloatingBar = memo((): ReactNode => {
   return (
     <div className={styles.wrap}>
       <div className={styles.container}>
-        {hasWideAngleCamera && (
+        {isSwitchable && (
           <Button
             disabled={!isPreviewMode || isDrawing || isStarting}
             id="wide-angle-camera"
             onClick={async () => {
-              if (cameraType !== CameraType.WIDE_ANGLE) {
-                if (!isWideAngleCameraCalibrated) {
-                  alertCaller.popUpError({ message: tCamera.calibration_wide_angle_camera_first });
-
-                  return;
-                }
-
-                await previewModeController.switchCamera(CameraType.WIDE_ANGLE);
+              if (previewMode !== PreviewMode.FULL_AREA) {
+                await previewModeController.switchPreviewMode(PreviewMode.FULL_AREA);
               }
 
               handlePreviewClick();
@@ -128,11 +112,13 @@ export const PreviewFloatingBar = memo((): ReactNode => {
           </Button>
         )}
         <Button
-          blue={isMouseInPreviewMode && cameraType === CameraType.LASER_HEAD}
+          blue={isMouseInPreviewMode && previewMode === PreviewMode.REGION}
           disabled={isDrawing || isStarting}
           id="laser-head-camera"
           onClick={async () => {
-            if (cameraType !== CameraType.LASER_HEAD) await previewModeController.switchCamera(CameraType.LASER_HEAD);
+            if (previewMode !== PreviewMode.REGION) {
+              await previewModeController.switchPreviewMode(PreviewMode.REGION);
+            }
 
             handlePreviewClick();
           }}

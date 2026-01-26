@@ -1,5 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyePreviewManager } from '@core/interfaces/FisheyePreview';
@@ -12,7 +13,7 @@ import FisheyePreviewManagerV2 from './FisheyePreviewManagerV2';
 
 // TODO: Add tests
 class AdorPreviewManager extends BasePreviewManager implements PreviewManager {
-  protected _isFullScreen = true;
+  protected _previewMode = PreviewMode.FULL_AREA;
   private fisheyeManager?: FisheyePreviewManager;
 
   constructor(device: IDeviceInfo) {

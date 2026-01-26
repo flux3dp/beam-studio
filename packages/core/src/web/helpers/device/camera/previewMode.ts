@@ -39,7 +39,7 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
   if (previewModeController.isStarting || previewModeController.isDrawing) return false;
 
   if (previewModeController.isPreviewMode) {
-    if (previewModeController.isFullScreen) {
+    if (previewModeController.isFullArea) {
       previewModeController.previewFullWorkarea();
 
       return false;
@@ -56,14 +56,13 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
 
   if (!isWorkareaMatched && !(await showResizeAlert(device!))) return false;
 
-  const { hasWideAngleCamera, parameters } = await getWideAngleCameraData(device);
+  const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
 
   setCameraPreviewState({
-    hasWideAngleCamera,
-    isWideAngleCameraCalibrated: Boolean(parameters),
+    isSwitchable: hasWideAngleCamera || device.model === 'fbm2',
   });
 
-  if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && parameters)) {
+  if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && canPreview)) {
     setupPreviewMode();
 
     return false;
@@ -107,7 +106,7 @@ export const setupPreviewMode = async ({
       return;
     }
 
-    if (previewModeController.isFullScreen) {
+    if (previewModeController.isFullArea) {
       previewModeController.previewFullWorkarea().then(() => {
         if (tutorialController.getNextStepRequirement() === tutorialConstants.PREVIEW_PLATFORM) {
           tutorialController.handleNextStep();

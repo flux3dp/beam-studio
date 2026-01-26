@@ -1671,6 +1671,7 @@ export interface ILang {
       door_opened: string;
       door_opened_text: string;
       fail_to_transmit_image: string;
+      switching_camera: string;
       ws_closed_unexpectedly: string;
     };
     cancelling: string;
@@ -1721,6 +1722,7 @@ export interface ILang {
       getting_focal_distance: string;
       moving_to_preview_position: string;
       please_enter_height: string;
+      please_focus_before_preview: string;
       press_esc_to_stop: string;
       succeeded: string;
     };

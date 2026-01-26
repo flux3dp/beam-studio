@@ -4,7 +4,13 @@ import type { MenuItemConstructorOptions } from 'electron';
 import { app, ipcMain, Menu, MenuItem, shell } from 'electron';
 import { funnel } from 'remeda';
 
-import { adorModels, hexaRfModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import {
+  adorModels,
+  fcodeV2Models,
+  hexaRfModels,
+  modelsWithModules,
+  promarkModels,
+} from '@core/app/actions/beambox/constant';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
@@ -188,7 +194,7 @@ function buildDeviceMenu(callback: (data: MenuData) => void, uuid: string, data:
       ].filter(Boolean),
     },
     !isPromark && { type: 'separator' },
-    (isAdor || isBb2 || isBeamo2) && {
+    fcodeV2Models.has(model) && {
       id: 'CAMERA_CALIBRATION_DATA',
       label: r.camera_calibration_data,
       submenu: [

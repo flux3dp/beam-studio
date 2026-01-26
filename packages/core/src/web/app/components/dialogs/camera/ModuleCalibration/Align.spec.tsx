@@ -87,7 +87,7 @@ const mockFishEyeParam: FisheyeCameraParametersV4<'center'> = {
 const mockSetupFisheyePreview = jest.fn();
 
 import Align from './Align';
-import { bm2PerspectiveGrid } from '../common/solvePnPConstants';
+import { bm2FullAreaPerspectiveGrid } from '../common/solvePnPConstants';
 
 describe('test Align', () => {
   beforeEach(() => {
@@ -135,7 +135,7 @@ describe('test Align', () => {
     expect(mockFisheyePreviewManagerV4).toHaveBeenLastCalledWith(
       { model: 'fbm2' },
       mockFishEyeParam,
-      bm2PerspectiveGrid,
+      bm2FullAreaPerspectiveGrid,
     );
     expect(mockDoorChecker).toHaveBeenCalledTimes(1);
     expect(mockSetupFisheyePreview).toHaveBeenCalledTimes(1);

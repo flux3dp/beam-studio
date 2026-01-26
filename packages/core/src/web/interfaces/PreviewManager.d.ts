@@ -1,4 +1,4 @@
-import type { CameraType } from '@core/app/constants/cameraConstants';
+import type { PreviewMode } from '@core/app/constants/cameraConstants';
 
 import type { CameraConfig, CameraParameters } from './Camera';
 
@@ -11,7 +11,7 @@ export interface PreviewManager {
 
   getPhotoAfterMoveTo?: (x: number, y: number) => Promise<string>;
 
-  isFullScreen: boolean;
+  isSwitchable?: boolean;
 
   /**
    * preview point
@@ -22,6 +22,8 @@ export interface PreviewManager {
   preview(x: number, y: number, opts?: { overlapFlag?: number; overlapRatio?: number }): Promise<boolean>;
 
   previewFullWorkarea?: () => Promise<boolean>;
+
+  previewMode: PreviewMode;
 
   /**
    * preview region
@@ -39,5 +41,5 @@ export interface PreviewManager {
 
   setup(args?: { progressId?: string }): Promise<boolean>;
 
-  switchCamera?: (cameraType: CameraType) => Promise<CameraType>;
+  switchPreviewMode?: (mode: PreviewMode) => Promise<PreviewMode>;
 }
