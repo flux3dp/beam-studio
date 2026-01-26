@@ -48,10 +48,6 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
 
 const mockEmit = jest.fn();
 
-jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext', () => ({
-  LayerPanelContext: React.createContext({ hasVector: false }),
-}));
-
 jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', () => ({
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));

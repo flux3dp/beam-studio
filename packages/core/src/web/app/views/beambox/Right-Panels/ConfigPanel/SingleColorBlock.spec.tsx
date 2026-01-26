@@ -4,6 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import ConfigPanelContext from './ConfigPanelContext';
 import SingleColorBlock from './SingleColorBlock';
+import { mockForceUpdate } from '@mocks/@core/app/stores/layer/layerStore';
 
 const mockBatchCommand = jest.fn();
 
@@ -11,12 +12,6 @@ jest.mock('@core/app/svgedit/history/history', () => ({
   BatchCommand: function BatchCommand(...args) {
     return mockBatchCommand(...args);
   },
-}));
-
-const mockUpdateLayerPanel = jest.fn();
-
-jest.mock('@core/app/views/beambox/Right-Panels/contexts/LayerPanelController', () => ({
-  updateLayerPanel: (...args) => mockUpdateLayerPanel(...args),
 }));
 
 const mockToggleFullColorLayer = jest.fn();
@@ -128,6 +123,6 @@ describe('test SingleColorBlock', () => {
     expect(mockBatchCommandInstance.addSubCommand).toHaveBeenNthCalledWith(2, mockSubCmd);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, mockBatchCommandInstance);
-    expect(mockUpdateLayerPanel).toHaveBeenCalledTimes(1);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
   });
 });

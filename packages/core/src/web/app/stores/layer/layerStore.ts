@@ -9,13 +9,13 @@ import doLayersContainsVector from '@core/helpers/layer/check-vector';
 
 import { useDocumentStore } from '../documentStore';
 
-interface LayerState {
+export interface LayerStoreState {
   hasGradient: boolean;
   hasVector: boolean;
   selectedLayers: string[];
 }
 
-interface LayerStoreActions {
+export interface LayerStoreActions {
   checkGradient: (workarea?: WorkAreaModel) => void;
   checkVector: () => void;
   forceUpdate: () => void;
@@ -23,7 +23,7 @@ interface LayerStoreActions {
 }
 
 export const useLayerStore = create(
-  subscribeWithSelector<LayerState & LayerStoreActions>((set, get) => ({
+  subscribeWithSelector<LayerStoreActions & LayerStoreState>((set, get) => ({
     checkGradient: (workarea: WorkAreaModel = useDocumentStore.getState().workarea) => {
       const { selectedLayers } = get();
       const isPromark = promarkModels.has(workarea);
