@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Eingabe eines Links oder Textes',
     title: 'QR-Code-Generator',
   },
+  resolution: {
+    title: 'Auflösung',
+    values: {
+      detailed: 'Detailliert',
+      high: 'Hoch',
+      low: 'Niedrig',
+      medium: 'Mittel',
+      ultra: 'Ultra Hoch',
+    },
+  },
   rotary_settings: {
     circumference: 'Umfang',
     extend_workarea: 'Arbeitsbereich erweitern',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Aktiviert',
     engraving_direction: 'Gravurrichtung',
     engraving_offset_tooltip: 'Wenn das Gravurergebnis nach links oder oben verschoben ist, verringern Sie den X/Y-Versatz; wenn es nach rechts oder unten verschoben ist, erhöhen Sie den X/Y-Versatz.',
-    engraving_resolution: 'Auflösung',
-    engraving_resolution_values: {
-      detailed: 'Detailliert',
-      high: 'Hoch',
-      low: 'Niedrig',
-      medium: 'Mittel',
-      ultra: 'Ultra Hoch',
-    },
     fast_gradient: 'Geschwindigkeitsoptimierung',
     font_convert: 'Text-zu-Pfad-Konverter',
     font_substitute: 'Ersetzen Sie nicht unterstützte Zeichen',

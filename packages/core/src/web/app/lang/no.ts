@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Skriv inn en lenke eller tekst',
     title: 'QR-kodegenerator',
   },
+  resolution: {
+    title: 'Oppløsning',
+    values: {
+      detailed: 'Detaljert',
+      high: 'Høy',
+      low: 'Lav',
+      medium: 'Medium',
+      ultra: 'Ultra høy',
+    },
+  },
   rotary_settings: {
     circumference: 'Omkrets',
     extend_workarea: 'Utvid arbeidsområdet',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Aktivert',
     engraving_direction: 'Retning',
     engraving_offset_tooltip: 'Hvis graveringsresultatet er forskjøvet til venstre eller oppover, reduser X/Y-forskyvningen; hvis det er forskjøvet til høyre eller nedover, øk X/Y-forskyvningen.',
-    engraving_resolution: 'Oppløsning',
-    engraving_resolution_values: {
-      detailed: 'Detaljert',
-      high: 'Høy',
-      low: 'Lav',
-      medium: 'Medium',
-      ultra: 'Ultra høy',
-    },
     fast_gradient: 'Hastighetsoptimalisering',
     font_convert: 'Tekst til bane konverterer',
     font_substitute: 'Erstatt ustøttede tegn',

@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Nhập liên kết hoặc văn bản',
     title: 'Tạo mã QR',
   },
+  resolution: {
+    title: 'Độ phân giải',
+    values: {
+      detailed: 'Chi tiết',
+      high: 'Cao',
+      low: 'Thấp',
+      medium: 'Trung bình',
+      ultra: 'Rất cao',
+    },
+  },
   rotary_settings: {
     circumference: 'Chu Vi',
     extend_workarea: 'Mở rộng khu vực làm việc',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Bật',
     engraving_direction: 'Hướng',
     engraving_offset_tooltip: 'Nếu kết quả khắc bị lệch sang trái hoặc lên trên, vui lòng giảm giá trị bù X/Y; nếu bị lệch sang phải hoặc xuống dưới, vui lòng tăng giá trị bù X/Y.',
-    engraving_resolution: 'Độ phân giải',
-    engraving_resolution_values: {
-      detailed: 'Chi tiết',
-      high: 'Cao',
-      low: 'Thấp',
-      medium: 'Trung bình',
-      ultra: 'Rất cao',
-    },
     fast_gradient: 'Tối ưu tốc độ',
     font_convert: 'Cài đặt bộ chuyển đổi văn bản thành đường dẫn',
     font_substitute: 'Thay thế ký tự không hỗ trợ',

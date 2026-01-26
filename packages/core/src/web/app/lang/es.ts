@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Introduzca un enlace o texto',
     title: 'Generador de código QR',
   },
+  resolution: {
+    title: 'Resolución',
+    values: {
+      detailed: 'Detallado',
+      high: 'Alto',
+      low: 'Bajo',
+      medium: 'Medio',
+      ultra: 'Ultra alto',
+    },
+  },
   rotary_settings: {
     circumference: 'Circunferencia',
     extend_workarea: 'Ampliar área de trabajo',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Habilitado',
     engraving_direction: 'Dirección',
     engraving_offset_tooltip: 'Si el resultado del grabado se desplaza hacia la izquierda o hacia arriba, reduzca el desplazamiento X/Y; si se desplaza hacia la derecha o hacia abajo, aumente el desplazamiento X/Y.',
-    engraving_resolution: 'Resolución',
-    engraving_resolution_values: {
-      detailed: 'Detallado',
-      high: 'Alto',
-      low: 'Bajo',
-      medium: 'Medio',
-      ultra: 'Ultra alto',
-    },
     fast_gradient: 'Optimización de la velocidad',
     font_convert: 'Conversor de texto a trayectoria',
     font_substitute: 'Sustituir caracteres no compatibles',

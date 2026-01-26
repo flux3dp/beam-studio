@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Εισάγετε έναν σύνδεσμο ή κείμενο',
     title: 'Δημιουργός κωδικού QR',
   },
+  resolution: {
+    title: 'Ανάλυση',
+    values: {
+      detailed: 'Λεπτομερής',
+      high: 'Υψηλή',
+      low: 'Χαμηλή',
+      medium: 'Μέτρια',
+      ultra: 'Πολύ υψηλή',
+    },
+  },
   rotary_settings: {
     circumference: 'Περιφέρεια',
     extend_workarea: 'Επέκταση περιοχής εργασίας',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Ενεργοποιημένο',
     engraving_direction: 'Κατεύθυνση',
     engraving_offset_tooltip: 'Αν το αποτέλεσμα χάραξης μετατοπίζεται προς τα αριστερά ή προς τα πάνω, μειώστε τη μετατόπιση X/Y· αν μετατοπίζεται προς τα δεξιά ή προς τα κάτω, αυξήστε τη μετατόπιση X/Y.',
-    engraving_resolution: 'Ανάλυση',
-    engraving_resolution_values: {
-      detailed: 'Λεπτομερής',
-      high: 'Υψηλή',
-      low: 'Χαμηλή',
-      medium: 'Μέτρια',
-      ultra: 'Πολύ υψηλή',
-    },
     fast_gradient: 'Βελτιστοποίηση ταχύτητας',
     font_convert: 'Μετατροπέας κειμένου σε μονοπάτι',
     font_substitute: 'Υποκατάσταση Μη Υποστηριζόμενων Χαρακτήρων',

@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Anna linkki tai teksti',
     title: 'QR-koodigeneraattori',
   },
+  resolution: {
+    title: 'Resoluutio',
+    values: {
+      detailed: 'Yksityiskohtainen',
+      high: 'Korkea',
+      low: 'Matala',
+      medium: 'Keskitaso',
+      ultra: 'Erittäin korkea',
+    },
+  },
   rotary_settings: {
     circumference: 'Ympärysmitta',
     extend_workarea: 'Laajenna työaluetta',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Käytössä',
     engraving_direction: 'Suunta',
     engraving_offset_tooltip: 'Jos kaiverrustulos siirtyy vasemmalle tai ylös, pienennä X/Y-siirtymää; jos se siirtyy oikealle tai alas, suurenna X/Y-siirtymää.',
-    engraving_resolution: 'Resoluutio',
-    engraving_resolution_values: {
-      detailed: 'Yksityiskohtainen',
-      high: 'Korkea',
-      low: 'Matala',
-      medium: 'Keskitaso',
-      ultra: 'Erittäin korkea',
-    },
     fast_gradient: 'Nopeusoptimointi',
     font_convert: 'Teksti-polku muunnin',
     font_substitute: 'Korvaa tukemattomat merkit',

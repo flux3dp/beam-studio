@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'リンクまたはテキストを入力してください',
     title: 'QRコードジェネレーター',
   },
+  resolution: {
+    title: '解像度',
+    values: {
+      detailed: '詳細',
+      high: '高',
+      low: '低',
+      medium: '中',
+      ultra: '超高',
+    },
+  },
   rotary_settings: {
     circumference: '円周',
     extend_workarea: '作業エリアを拡張する',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: '有効',
     engraving_direction: '彫刻方向',
     engraving_offset_tooltip: '彫刻結果が左または上にずれている場合は、X/Yオフセットを減らしてください。右または下にずれている場合は、X/Yオフセットを増やしてください。',
-    engraving_resolution: '解像度',
-    engraving_resolution_values: {
-      detailed: '詳細',
-      high: '高',
-      low: '低',
-      medium: '中',
-      ultra: '超高',
-    },
     fast_gradient: '速度の最適化',
     font_convert: 'テキストからパスへの変換機能',
     font_substitute: 'サポートされていない文字を置き換える',

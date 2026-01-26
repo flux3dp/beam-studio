@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Voer een link of tekst in',
     title: 'QR-codegenerator',
   },
+  resolution: {
+    title: 'Resolutie',
+    values: {
+      detailed: 'Gedetailleerd',
+      high: 'Hoog',
+      low: 'Laag',
+      medium: 'Gemiddeld',
+      ultra: 'Ultra hoog',
+    },
+  },
   rotary_settings: {
     circumference: 'Omtrek',
     extend_workarea: 'Werkgebied uitbreiden',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Ingeschakeld',
     engraving_direction: 'Richting',
     engraving_offset_tooltip: 'Als het graveerresultaat naar links of omhoog is verschoven, verlaag dan de X/Y-verschuiving; als het naar rechts of omlaag is verschoven, verhoog dan de X/Y-verschuiving.',
-    engraving_resolution: 'Resolutie',
-    engraving_resolution_values: {
-      detailed: 'Gedetailleerd',
-      high: 'Hoog',
-      low: 'Laag',
-      medium: 'Gemiddeld',
-      ultra: 'Ultra hoog',
-    },
     fast_gradient: 'Snelheidsoptimalisatie',
     font_convert: 'Tekst naar pad Converter',
     font_substitute: 'Vervang onondersteunde tekens',

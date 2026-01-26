@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Masukkan pautan atau teks',
     title: 'Penjana Kod QR',
   },
+  resolution: {
+    title: 'Resolusi',
+    values: {
+      detailed: 'Terperinci',
+      high: 'Tinggi',
+      low: 'Rendah',
+      medium: 'Sederhana',
+      ultra: 'Ultra Tinggi',
+    },
+  },
   rotary_settings: {
     circumference: 'Lilitan',
     extend_workarea: 'Perluaskan kawasan kerja',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Didayakan',
     engraving_direction: 'Arah',
     engraving_offset_tooltip: 'Jika hasil ukiran beralih ke kiri atau ke atas, sila kurangkan ofset X/Y; jika beralih ke kanan atau ke bawah, sila tambahkan ofset X/Y.',
-    engraving_resolution: 'Resolusi',
-    engraving_resolution_values: {
-      detailed: 'Terperinci',
-      high: 'Tinggi',
-      low: 'Rendah',
-      medium: 'Sederhana',
-      ultra: 'Ultra Tinggi',
-    },
     fast_gradient: 'Pengoptimuman Kelajuan',
     font_convert: 'Penukar Teks ke Laluan',
     font_substitute: 'Gantikan Aksara Tidak Disokong',

@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'Vložit odkaz nebo text',
     title: 'Generátor QR kódu',
   },
+  resolution: {
+    title: 'Rozlišení',
+    values: {
+      detailed: 'Detailní',
+      high: 'Vysoké',
+      low: 'Nízké',
+      medium: 'Střední',
+      ultra: 'Ultravysoké',
+    },
+  },
   rotary_settings: {
     circumference: 'Obvod',
     extend_workarea: 'Rozšířit pracovní oblast',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'Povoleno',
     engraving_direction: 'Směr',
     engraving_offset_tooltip: 'Pokud je výsledek gravírování posunut doleva nebo nahoru, snižte posun X/Y; pokud je posunut doprava nebo dolů, zvyšte posun X/Y.',
-    engraving_resolution: 'Rozlišení',
-    engraving_resolution_values: {
-      detailed: 'Detailní',
-      high: 'Vysoké',
-      low: 'Nízké',
-      medium: 'Střední',
-      ultra: 'Ultravysoké',
-    },
     fast_gradient: 'Optimalizace rychlosti',
     font_convert: 'Konvertor textu na cestu',
     font_substitute: 'Nahradit nepodporované znaky',

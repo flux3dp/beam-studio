@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: '링크나 텍스트를 입력해 주세요',
     title: 'QR 코드 생성기',
   },
+  resolution: {
+    title: '해상도',
+    values: {
+      detailed: '상세',
+      high: '높음',
+      low: '낮음',
+      medium: '보통',
+      ultra: '최고',
+    },
+  },
   rotary_settings: {
     circumference: '원주',
     extend_workarea: '작업 영역 확장',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: '사용',
     engraving_direction: '방향',
     engraving_offset_tooltip: '조각 결과가 왼쪽이나 위쪽으로 이동한 경우 X/Y 오프셋을 줄이세요. 오른쪽이나 아래쪽으로 이동한 경우 X/Y 오프셋을 늘리세요.',
-    engraving_resolution: '해상도',
-    engraving_resolution_values: {
-      detailed: '상세',
-      high: '높음',
-      low: '낮음',
-      medium: '보통',
-      ultra: '최고',
-    },
     fast_gradient: '속도 최적화',
     font_convert: '텍스트-경로 변환기',
     font_substitute: '지원되지 않는 문자 대체',

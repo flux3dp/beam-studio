@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: '輸入連結或文字',
     title: 'QR 碼產生器',
   },
+  resolution: {
+    title: '解析度',
+    values: {
+      detailed: '精細',
+      high: '高',
+      low: '低',
+      medium: '中',
+      ultra: '超高精細',
+    },
+  },
   rotary_settings: {
     circumference: '圓周',
     extend_workarea: '擴展工作區域',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: '啟用',
     engraving_direction: '雕刻方向',
     engraving_offset_tooltip: '如果雕刻結果向左或向上偏移，請減少 X/Y 偏移量；如果向右或向下偏移，請增加 X/Y 偏移量。',
-    engraving_resolution: '解析度',
-    engraving_resolution_values: {
-      detailed: '精細',
-      high: '高',
-      low: '低',
-      medium: '中',
-      ultra: '超高精細',
-    },
     fast_gradient: '速度優化',
     font_convert: '文字轉路徑',
     font_substitute: '自動替換字體',

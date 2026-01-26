@@ -1938,6 +1938,10 @@ export interface ILang {
     placeholder: string;
     title: string;
   };
+  resolution: {
+    title: string;
+    values: Record<EngraveDpiOption, string>;
+  };
   rotary_settings: {
     circumference: string;
     extend_workarea: string;
@@ -2004,8 +2008,6 @@ export interface ILang {
     enabled: string;
     engraving_direction: string;
     engraving_offset_tooltip: string;
-    engraving_resolution: string;
-    engraving_resolution_values: Record<EngraveDpiOption, string>;
     fast_gradient: string;
     font_convert: string;
     font_substitute: string;

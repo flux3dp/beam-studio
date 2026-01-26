@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: 'กรอกลิงก์หรือข้อความ',
     title: 'ตัวสร้างคิวอาร์โค้ด',
   },
+  resolution: {
+    title: 'ความละเอียด',
+    values: {
+      detailed: 'รายละเอียด',
+      high: 'สูง',
+      low: 'ต่ํา',
+      medium: 'ปานกลาง',
+      ultra: 'สูงมาก',
+    },
+  },
   rotary_settings: {
     circumference: 'เส้นรอบวง',
     extend_workarea: 'ขยายพื้นที่ทำงาน',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: 'เปิดใช้งาน',
     engraving_direction: 'ทิศทาง',
     engraving_offset_tooltip: 'หากผลลัพธ์การแกะสลักเลื่อนไปทางซ้ายหรือขึ้นด้านบน กรุณาลดค่าออฟเซ็ต X/Y หากเลื่อนไปทางขวาหรือลงด้านล่าง กรุณาเพิ่มค่าออฟเซ็ต X/Y',
-    engraving_resolution: 'ความละเอียด',
-    engraving_resolution_values: {
-      detailed: 'รายละเอียด',
-      high: 'สูง',
-      low: 'ต่ํา',
-      medium: 'ปานกลาง',
-      ultra: 'สูงมาก',
-    },
     fast_gradient: 'เพิ่มความเร็ว',
     font_convert: 'โปรแกรมแปลงข้อความเป็นเส้นทาง',
     font_substitute: 'แทนที่อักขระที่ไม่รองรับ',

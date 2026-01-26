@@ -1936,6 +1936,16 @@ const lang: ILang = {
     placeholder: '输入链接或文本',
     title: '二维码生成器',
   },
+  resolution: {
+    title: '分辨率',
+    values: {
+      detailed: '详细',
+      high: '高',
+      low: '低',
+      medium: '中',
+      ultra: '极高',
+    },
+  },
   rotary_settings: {
     circumference: '周长',
     extend_workarea: '扩展工作区域',
@@ -2000,14 +2010,6 @@ const lang: ILang = {
     enabled: '启用',
     engraving_direction: '雕刻方向',
     engraving_offset_tooltip: '如果雕刻结果向左或向上偏移，请减少 X/Y 偏移量；如果向右或向下偏移，请增加 X/Y 偏移量。',
-    engraving_resolution: '分辨率',
-    engraving_resolution_values: {
-      detailed: '详细',
-      high: '高',
-      low: '低',
-      medium: '中',
-      ultra: '极高',
-    },
     fast_gradient: '速度优化',
     font_convert: '文本转路径',
     font_substitute: '自动替换字体',
