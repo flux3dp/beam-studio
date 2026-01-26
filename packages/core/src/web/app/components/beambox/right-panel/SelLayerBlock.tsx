@@ -2,7 +2,7 @@ import type { ReactNode } from 'react';
 import React, { memo, useContext, useEffect, useState } from 'react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import Select from '@core/app/widgets/AntdSelect';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -20,7 +20,7 @@ function SelLayerBlock({ layerNames }: Props): ReactNode {
   const [promptMoveLayerOnce, setPromptMoveLayerOnce] = useState(false);
   const [displayValue, setDisplayValue] = useState(defaultOption);
   const { selectedElement } = useContext(SelectedElementContext);
-  const { selectedLayers } = useContext(LayerPanelContext);
+  const selectedLayers = useLayerStore.getState().selectedLayers;
 
   useEffect(() => {
     if (!selectedElement) {

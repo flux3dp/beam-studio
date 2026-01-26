@@ -1,14 +1,14 @@
 import type { ReactNode } from 'react';
-import React, { memo, useContext } from 'react';
+import React, { memo } from 'react';
 
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import useI18n from '@core/helpers/useI18n';
 
 import NumberBlock from './NumberBlock';
 
 const DottingTimeBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }): ReactNode => {
   const lang = useI18n();
-  const { hasGradient } = useContext(LayerPanelContext);
+  const hasGradient = useLayerStore((state) => state.hasGradient);
 
   if (!hasGradient) return null;
 

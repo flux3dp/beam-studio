@@ -1,9 +1,9 @@
-import React, { memo, useContext, useEffect, useMemo } from 'react';
+import React, { memo, useEffect, useMemo } from 'react';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operations/clipboard';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSetState } from '@core/helpers/hooks/useSetState';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
@@ -67,7 +67,7 @@ const Workarea = memo(({ className }: { className: string }) => {
   const isTouchable = useMemo(() => navigator.maxTouchPoints >= 1, []);
 
   // Note: Keep context to update current layer(trigger rerender) when moving a single element
-  useContext(LayerPanelContext);
+  useLayerStore();
 
   useEffect(() => {
     const updateContextMenu = (newValues: Partial<State>) => {

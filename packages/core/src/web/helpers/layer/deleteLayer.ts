@@ -1,9 +1,9 @@
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { BatchCommand, InsertElementCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import Layer from '@core/app/svgedit/layer/layer';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -80,8 +80,7 @@ export const removeDefaultLayerIfEmpty = ({ parentCmd }: { parentCmd?: IBatchCom
       const cmd = deleteLayerByName(defaultLayerName, { parentCmd });
 
       layerManager.identifyLayers();
-      LayerPanelController.setSelectedLayers([]);
-      LayerPanelController.updateLayerPanel();
+      useLayerStore.getState().setSelectedLayers([]);
 
       return cmd;
     }
