@@ -67,8 +67,10 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       const { overlapFlag = 0, overlapRatio = 0 } = opts;
       const img = new Image();
 
-      await new Promise<void>((resolve) => {
+      await new Promise<void>((resolve, reject) => {
         img.onload = () => resolve();
+        img.onerror = (err) => reject(err);
+
         img.src = imgUrl;
       });
 
@@ -128,6 +130,11 @@ export function RegionPreviewMixin<TBase extends new (...args: any[]) => BasePre
       const cameraPosition = this.getPreviewPosition(x, y);
       const imgUrl = await this.getPhotoAfterMoveTo(cameraPosition.x, cameraPosition.y);
       const imgCanvas = await this.preprocessRegionPreviewImage(imgUrl, { overlapFlag, overlapRatio });
+
+      if (!imgCanvas) return false;
+
+      URL.revokeObjectURL(imgUrl);
+
       const drawCenter = {
         x: (cameraPosition.x + this.regionPreviewOffset.x) * constant.dpmm,
         y: (cameraPosition.y + this.regionPreviewOffset.y) * constant.dpmm,
