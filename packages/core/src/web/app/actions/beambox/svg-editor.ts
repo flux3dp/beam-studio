@@ -42,7 +42,6 @@ import svgCanvasClass from '@core/app/svgedit/svgcanvas';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
@@ -78,6 +77,7 @@ import {
   setCursorAccordingToMouseMode,
   setMouseMode,
 } from '@core/app/stores/canvas/utils/mouseMode';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -184,12 +184,10 @@ const svgEditor = (window['svgEditor'] = (function () {
   });
 
   let svgCanvas: ISVGCanvas;
-  var urldata,
-    Utils = window['svgedit'].utilities,
-    /**
-     * PREFS AND CONFIG
-     */
-    curConfig: ISVGConfig = {
+  /**
+   * PREFS AND CONFIG
+   */
+  var curConfig: ISVGConfig = {
       /**
        * Can use window.location.origin to indicate the current
        * origin. Can contain a '*' to allow all domains or 'null' (as
@@ -1177,7 +1175,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       svgCanvas.clear();
       workareaManager.resetView();
       RightPanelController.setPanelType(PanelType.None); // will be updated to PanelType.Layer automatically if is not mobile
-      LayerPanelController.updateLayerPanel();
+      useLayerStore.getState().forceUpdate();
       updateContextPanel();
       svgedit.transformlist.resetListMap();
       svgCanvas.runExtensions('onNewDocument');
@@ -1198,7 +1196,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       });
     })();
 
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().forceUpdate();
 
     var centerCanvas = function () {
       // this centers the canvas vertically in the workarea (horizontal handled in CSS)
@@ -1552,7 +1550,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'json':
             Progress.popById('loading_image');
             await importPresets(file);
-            LayerPanelController.updateLayerPanel();
+            useLayerStore.getState().forceUpdate();
             break;
           case 'unknown':
             Progress.popById('loading_image');

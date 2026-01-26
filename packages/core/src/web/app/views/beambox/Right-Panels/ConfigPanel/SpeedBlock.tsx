@@ -17,10 +17,10 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
@@ -50,7 +50,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
-  const { hasVector } = useContext(LayerPanelContext);
+  const hasVector = useLayerStore((state) => state.hasVector);
   const hasCurveEngraving = useHasCurveEngraving();
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),

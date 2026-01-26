@@ -43,7 +43,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
@@ -339,6 +339,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     $(shape).mouseover(canvas.handleGenerateSensorArea).mouseleave(canvas.handleGenerateSensorArea);
 
+    if (shape.tagName === 'image') {
+      useLayerStore.getState().checkGradient();
+    } else {
+      useLayerStore.getState().checkVector();
+    }
+
     return shape;
   });
 
@@ -500,13 +506,19 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               layerManager.identifyLayers();
             }
 
+            let shouldUpdateLayerStore = false;
+
             elems.forEach((elem) => {
               if (elem.classList.contains('layer')) {
-                LayerPanelController.setSelectedLayers([]);
+                shouldUpdateLayerStore = true;
               } else {
                 updateElementColor(elem);
               }
             });
+
+            if (shouldUpdateLayerStore) {
+              useLayerStore.getState().forceUpdate();
+            }
           } else if (cmdType === InsertElementCommand.type() || cmdType === RemoveElementCommand.type()) {
             if (cmdType === InsertElementCommand.type()) {
               if (isApply) {
@@ -568,7 +580,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               ].includes(cmd.text)
             ) {
               layerManager.identifyLayers();
-              LayerPanelController.setSelectedLayers([]);
+              useLayerStore.getState().setSelectedLayers([]);
               presprayArea.togglePresprayArea();
             }
 
@@ -1255,8 +1267,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // Make sure first elements are not null
     selectedElements = selectedElements.filter(Boolean);
-
-    LayerPanelController.updateLayerPanel();
 
     this.collectAlignPoints();
   });
@@ -2437,8 +2447,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     initLayerConfig(defaultLayer);
 
     // force update selected layers
-    LayerPanelController.setSelectedLayers([]);
-    LayerPanelController.setSelectedLayers([defaultLayerName]);
+    useLayerStore.getState().setSelectedLayers([defaultLayerName]);
     presprayArea.togglePresprayArea();
 
     // clear the undo stack
@@ -4462,15 +4471,17 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     // update selection
-    const layers = selectedElements.flatMap((elem) =>
-      elem.getAttribute('data-tempgroup') === 'true' ? selectedLayers : LayerHelper.getObjectLayer(elem)?.title,
-    );
+    const layers = selectedElements
+      .flatMap((elem) =>
+        elem.getAttribute('data-tempgroup') === 'true' ? selectedLayers : LayerHelper.getObjectLayer(elem)?.title,
+      )
+      .filter(Boolean);
 
     // set the newst added layer as currentLayer
     layerManager.setCurrentLayer(layers[0]);
     // the uniq process is performed `here` to avoid duplicate layer in layer panel,
     // and remain the selected layers contains information if there are multiple elements in same layer
-    LayerPanelController.setSelectedLayers([...new Set(layers)]);
+    useLayerStore.getState().setSelectedLayers([...new Set(layers)]);
 
     selectedLayers = layers;
 
@@ -4505,7 +4516,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     // set the current layer from the remaining layers
     layerManager.setCurrentLayer(selectedLayers[0]);
-    LayerPanelController.setSelectedLayers([...new Set(selectedLayers)]);
+    useLayerStore.getState().setSelectedLayers([...new Set(selectedLayers)]);
 
     if (elem.nextSibling && (elem.nextSibling as Element).getAttribute('data-imageborder') === 'true') {
       elem.nextSibling.remove();

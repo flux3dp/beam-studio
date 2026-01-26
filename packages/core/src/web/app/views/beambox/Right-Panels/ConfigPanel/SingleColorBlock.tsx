@@ -6,9 +6,9 @@ import classNames from 'classnames';
 
 import colorConstants, { PrintingColors } from '@core/app/constants/color-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
@@ -57,7 +57,7 @@ const SingleColorBlock = (): React.JSX.Element => {
       update({ color: config });
     }
 
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().forceUpdate();
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

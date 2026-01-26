@@ -14,7 +14,6 @@ import { SelectedElementContextProvider } from '@core/app/contexts/SelectedEleme
 import { useStorageStore } from '@core/app/stores/storageStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import ImageTracePanel from '@core/app/views/beambox/ImageTracePanel/ImageTracePanel';
-import { LayerPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { hashMap } from '@core/helpers/hashHelper';
 import sentryHelper from '@core/helpers/sentry-helper';
 import BeamboxInit from '@core/implementations/beamboxInit';
@@ -49,18 +48,16 @@ const Beambox = (): React.JSX.Element => {
   return (
     <CanvasProvider>
       <SelectedElementContextProvider>
-        <LayerPanelContextProvider>
-          <div className={classNames('studio-container', 'beambox-studio', activeLang, styles.container)}>
-            <TopBar />
-            <Flex className={styles.main}>
-              <LeftPanel />
-              <SvgEditor />
-              <RightPanel />
-              <CanvasTabBar />
-            </Flex>
-          </div>
-          <ImageTracePanel />
-        </LayerPanelContextProvider>
+        <div className={classNames('studio-container', 'beambox-studio', activeLang, styles.container)}>
+          <TopBar />
+          <Flex className={styles.main}>
+            <LeftPanel />
+            <SvgEditor />
+            <RightPanel />
+            <CanvasTabBar />
+          </Flex>
+        </div>
+        <ImageTracePanel />
       </SelectedElementContextProvider>
     </CanvasProvider>
   );

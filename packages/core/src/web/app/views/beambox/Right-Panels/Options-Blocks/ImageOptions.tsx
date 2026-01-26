@@ -8,9 +8,9 @@ import classNames from 'classnames';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { sliderTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -116,8 +116,8 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
       'data-threshold': isShading ? 254 : 128,
       'xlink:href': pngBase64,
     });
-    LayerPanelController.checkGradient();
-  }, [elem, changeAttribute, generateImageData]);
+    useLayerStore.getState().checkGradient(workarea);
+  }, [elem, workarea, changeAttribute, generateImageData]);
 
   const handlePwmClick = useCallback(() => {
     const cur = elem.getAttribute('data-pwm') === '1';

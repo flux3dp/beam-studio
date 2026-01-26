@@ -7,12 +7,12 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
 import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
@@ -179,7 +179,7 @@ export const importBvgString = async (
       rotaryAxis.toggleDisplay();
     };
 
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().forceUpdate();
   }
 
   const { lang } = i18n;
@@ -255,7 +255,7 @@ export const importBvgString = async (
     // toggle full color setting according workarea supported modules
     toggleFullColorAfterWorkareaChange();
     presprayArea.togglePresprayArea();
-    LayerPanelController.setSelectedLayers([]);
+    useLayerStore.getState().setSelectedLayers([]);
 
     if (!parentCmd) {
       workareaManager.setWorkarea(workarea);
