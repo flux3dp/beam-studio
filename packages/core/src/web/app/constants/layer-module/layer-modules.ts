@@ -37,6 +37,12 @@ export const DetectedLayerModule = {
 export type LayerModuleType = (typeof LayerModule)[keyof typeof LayerModule];
 export type DetectedLayerModuleType = (typeof DetectedLayerModule)[keyof typeof DetectedLayerModule];
 
+export const laserModules = new Set<LayerModuleType>([
+  LayerModule.LASER_10W_DIODE,
+  LayerModule.LASER_20W_DIODE,
+  LayerModule.LASER_1064,
+  LayerModule.LASER_UNIVERSAL,
+]);
 export const printingModules = new Set<LayerModuleType>([LayerModule.PRINTER, LayerModule.PRINTER_4C]);
 
 export const fullColorModulesArray = [LayerModule.PRINTER, LayerModule.PRINTER_4C, LayerModule.UV_PRINT] as const;

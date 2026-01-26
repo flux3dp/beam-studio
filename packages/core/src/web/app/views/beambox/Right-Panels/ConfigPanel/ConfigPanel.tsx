@@ -13,7 +13,7 @@ import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import WattBlock from '@core/app/components/beambox/right-panel/WattBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
+import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -55,6 +55,7 @@ import AirAssistBlock from './AirAssistBlock';
 import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
 import ConfigPanelContext from './ConfigPanelContext';
+import DpiBlock from './DpiBlock';
 import FillBlock from './FillBlock';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
@@ -103,8 +104,13 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const supportedModules = useSupportedModules(workarea);
   const state = getState();
   const { fullcolor, module } = state;
-  const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
-  const is4cUV = useMemo(() => UVModules.has(module.value), [module.value]);
+  const { isLaser, isPrinting, isUV } = useMemo(() => {
+    return {
+      isLaser: laserModules.has(module.value),
+      isPrinting: printingModules.has(module.value),
+      isUV: UVModules.has(module.value),
+    };
+  }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   useEffect(() => {
@@ -257,21 +263,20 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
   const commonContent = (
     <>
-      {(isPrintingModule || is4cUV) && <HalftoneBlock type={UIType} />}
-      {!(isPrintingModule || is4cUV) && <PowerBlock type={UIType} />}
-      {(isPrintingModule || is4cUV) && <InkBlock type={UIType} />}
+      {(isPrinting || isUV) && <HalftoneBlock type={UIType} />}
+      {isLaser && <PowerBlock type={UIType} />}
+      {(isPrinting || isUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
-      {(isPrintingModule || is4cUV) && <MultipassBlock type={UIType} />}
-      {isDevMode && isPrintingModule && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
+      {isLaser && <DpiBlock type={UIType} />}
+      {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
+      {isDevMode && isPrinting && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
       {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
-      {addOnInfo.airAssist && !(isPrintingModule || is4cUV) && <AirAssistBlock type={UIType} />}
+      {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
       <RepeatBlock type={UIType} />
-      {isDevMode && isPrintingModule && fullcolor.value && UIType === 'panel-item' && (
-        <WhiteInkCheckbox type={UIType} />
-      )}
+      {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {is4cUV && <Interpolation type={UIType} />}
+      {isUV && <Interpolation type={UIType} />}
     </>
   );
 

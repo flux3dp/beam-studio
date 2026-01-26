@@ -130,7 +130,7 @@ const NumberBlock = ({
         }
       }
     },
-    [change, value, key, max, min, isPresetRelated, isTimeRelated, selectedLayers, type],
+    [change, value, key, max, min, isPresetRelated, isTimeRelated, selectedLayers, type, hasMultiValue],
   );
 
   useEffect(() => {
