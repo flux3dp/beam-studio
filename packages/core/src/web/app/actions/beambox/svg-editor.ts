@@ -93,13 +93,11 @@ declare global {
     alert: any;
     confirm: any;
     deparam: any;
-    getSvgIcon: any;
     pref: any;
     process_cancel: any;
     prompt: any;
     select: any;
     SvgCanvas: any;
-    svgIcons: any;
   }
 
   interface JQuery {
@@ -131,17 +129,11 @@ export interface ISVGEditor {
   handleFile: (file: any) => Promise<void>;
   init: () => void;
   isClipboardDataReady: any;
-  putLocale: (lang: number | string | string[], good_langs: any[]) => void;
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
   replaceBitmap: any;
   setConfig: (opts: any, cfgCfg: any) => void;
-  setIcon: (elem: any, icon_id: any) => void;
-  setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
   storagePromptClosed: boolean;
-  tool_scale: number;
-  toolButtonClick: (button: any, noHiding: any) => boolean;
-  uiStrings: any;
   updateContextPanel: () => void;
 }
 
@@ -159,7 +151,7 @@ interface ISVGPref {
 
 const svgEditor = (window['svgEditor'] = (function () {
   // EDITOR PROPERTIES: (defined below)
-  //		curPrefs, curConfig, canvas, storage, uiStrings
+  //		curPrefs, curConfig, canvas, storage
   //
   // STATE MAINTENANCE PROPERTIES
   const workarea = useDocumentStore.getState().workarea;
@@ -179,46 +171,15 @@ const svgEditor = (window['svgEditor'] = (function () {
     handleFile: async (file) => {},
     init: () => {},
     isClipboardDataReady: false,
-    putLocale: (lang: number | string | string[], good_langs: any[]) => {},
     readSVG: async (blob: any, type: any, layerName: any) => {},
     ready: () => {},
     replaceBitmap: null,
     setConfig: (opts: any, cfgCfg: any) => {},
-    setIcon: (elem: any, icon_id: any) => {},
-    setLang: (lang: any, allStrings: any) => {},
     setPanning: (active: any) => {},
     storage: storage,
-    tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
-    toolButtonClick: (button: any, noHiding: any) => {
-      return false;
-    },
-    uiStrings: {},
     updateContextPanel: () => {},
   };
 
-  const availableLangMap = {
-    da: 'da',
-    de: 'de',
-    el: 'el',
-    en: 'en',
-    es: 'es',
-    fi: 'fi',
-    fr: 'fr',
-    id: 'id',
-    it: 'it',
-    ja: 'ja',
-    kr: 'kr',
-    ms: 'ms',
-    nl: 'nl',
-    no: 'no',
-    pl: 'pl',
-    pt: 'pt',
-    se: 'se',
-    th: 'th',
-    vi: 'vi',
-    'zh-cn': 'zh-CN',
-    'zh-tw': 'zh-TW',
-  };
   let pressedKey: string[] = [];
 
   document.addEventListener('keydown', (e) => {
@@ -250,8 +211,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       bkgd_color: '#FFF',
       bkgd_url: '',
       export_notice_done: false,
-      // EDITOR OPTIONS (DIALOG)
-      lang: availableLangMap[i18n.getActiveLang()] || 'en', // Default to "en" if locale.js detection does not detect another language
       // DOCUMENT PROPERTIES (DIALOG)
       // ALERT NOTICES
       // Only shows in UI as far as alert notices, but useful to remember, so keeping as pref
@@ -317,45 +276,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // EXTENSION-RELATED (GRID)
       showlayers: true,
       snappingStep: 10,
-    },
-    /**
-     * LOCALE
-     * @todo Can we remove now that we are always loading even English? (unless locale is set to null)
-     */
-    uiStrings = (editor.uiStrings = {
-      common: {
-        cancel: 'Cancel',
-        key_backspace: 'Backspace',
-        key_del: 'Del',
-        key_down: 'Down',
-        key_up: 'Up',
-        ok: 'OK',
-      },
-      // This is needed if the locale is English, since the locale strings are not read in that instance.
-      layers: {
-        layer: 'Layer',
-      },
-      notification: {
-        defsFailOnSave:
-          'NOTE: Due to a bug in your browser, this image may appear wrong (missing gradients or elements). It will however appear correct once actually saved.',
-        dupeLayerName: 'There is already a layer named that!',
-        enterNewImgURL: 'Enter the new image URL',
-        enterNewLayerName: 'Please enter the new layer name',
-        enterNewLinkURL: 'Enter the new hyperlink URL',
-        enterUniqueLayerName: 'Please enter a unique layer name',
-        featNotSupported: 'Feature not supported',
-        invalidAttrValGiven: 'Invalid value given',
-        layerHasThatName: 'Layer already has that name',
-        noContentToFitTo: 'No content to fit to',
-        noteTheseIssues: 'Also note the following issues: ',
-        QerrorsRevertToSource: 'There were parsing errors in your SVG source.\nRevert back to original SVG source?',
-        QignoreSourceChanges: 'Ignore changes made to SVG source?',
-        QwantToOpen: 'Do you want to open a new file?\nThis will also erase your undo history!',
-        retrieving: "Retrieving '%s' ...",
-        saveFromBrowser: "Select 'Save As...' in your browser to save this image as a %s file.",
-        URLloadFail: 'Unable to load from URL',
-      },
-    });
+    };
   /**
    * EXPORTS
    */
@@ -480,10 +401,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     // Todo: Avoid var-defined functions and group functions together, etc. where possible
     var good_langs = [];
 
-    $('#lang_select option').each(function (this: HTMLOptionElement) {
-      good_langs.push(this.value);
-    });
-
     function setupCurPrefs() {
       curPrefs = $.extend(true, {}, defaultPrefs, curPrefs); // Now safe to merge with priority for curPrefs in the event any are already set
       // Export updated prefs
@@ -510,18 +427,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     setupCurConfig();
     setupCurPrefs();
 
-    var setIcon = (editor.setIcon = function (elem, icon_id) {
-      var icon = typeof icon_id === 'string' ? $.getSvgIcon(icon_id, true) : icon_id.clone();
-
-      if (!icon) {
-        console.log('NOTE: Icon image missing: ' + icon_id);
-
-        return;
-      }
-
-      $(elem).empty().append(icon);
-    });
-
     var extFunc = function () {
       $.each(curConfig.extensions, function () {
         var extname = this;
@@ -543,9 +448,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           console.log(exception);
         });
       });
-
-      // var lang = ('lang' in curPrefs) ? curPrefs.lang : null;
-      editor.putLocale(null, good_langs);
     };
 
     // Load extensions
@@ -1789,28 +1691,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     $(function () {
       window['svgCanvas'] = svgCanvas;
     });
-
-    editor.setLang = function (lang, allStrings) {
-      $.pref('lang', lang);
-      $('#lang_select').val(lang);
-
-      if (!allStrings) {
-        return;
-      }
-
-      // var notif = allStrings.notification; // Currently unused
-      // $.extend will only replace the given strings
-      var oldLayerName = $('#layerlist tr.layersel td.layername').text();
-      var rename_layer = oldLayerName === uiStrings.layers.layer + ' 1';
-
-      $.extend(uiStrings, allStrings);
-      svgCanvas.setUiStrings(allStrings);
-
-      if (rename_layer) {
-        svgCanvas.renameCurrentLayer(uiStrings.layers.layer + ' 1');
-        LayerPanelController.updateLayerPanel();
-      }
-    };
 
     //greyscale all svgContent
     (function () {
