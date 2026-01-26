@@ -640,15 +640,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     getSVGRoot: () => svgroot,
   });
 
-  // Interface strings, usually for title elements
-  var uiStrings = {
-    exportNoBlur: 'Blurred elements will appear as un-blurred',
-    exportNoDashArray: 'Strokes will appear filled',
-    exportNoforeignObject: 'foreignObject elements will not appear',
-    exportNoText: 'Text may not appear as expected',
-  };
-
-  var visElems = 'a,circle,ellipse,foreignObject,g,image,line,path,polygon,polyline,rect,svg,text,tspan,use';
   const refAttrs = ['clip-path', 'fill', 'filter', 'marker-end', 'marker-mid', 'marker-start', 'mask', 'stroke'];
 
   var elData = $.data;
@@ -2493,15 +2484,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Returns a string which describes the revision number of SvgCanvas.
   this.getVersion = function () {
     return 'svgcanvas.js ($Rev$)';
-  };
-
-  // Function: setUiStrings
-  // Update interface strings with given values
-  //
-  // Parameters:
-  // strs - Object with strings (see uiStrings for examples)
-  this.setUiStrings = function (strs) {
-    $.extend(uiStrings, strs.notification);
   };
 
   // Function: setConfig

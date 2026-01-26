@@ -2,7 +2,6 @@ import 'jquery';
 
 import 'svgedit';
 
-import 'svgicons';
 import 'touch';
 import 'jquerySvg';
 import 'pathseg';
