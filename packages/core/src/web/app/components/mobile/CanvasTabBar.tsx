@@ -9,6 +9,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { SettingsIcons } from '@core/app/icons/Settings/SettingsIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
@@ -154,7 +155,7 @@ const CanvasTabBar = (): React.ReactNode => {
       { icon: <TabBarIcons.Draw />, key: 'pen', title: lang.beambox.left_panel.label.pen },
       { icon: <TabBarIcons.Boxgen />, key: 'boxgen', title: lang.beambox.left_panel.label.boxgen },
       { icon: <TabBarIcons.Document />, key: 'document', title: lang.topbar.menu.document_setting_short },
-      { icon: <TabBarIcons.Setting />, key: 'setting', title: lang.settings.caption },
+      { icon: <SettingsIcons.Setting />, key: 'setting', title: lang.settings.caption },
       { icon: <LeftPanelIcons.QRCode />, key: 'qrcode', title: lang.beambox.left_panel.label.qr_code },
       { icon: <LeftPanelIcons.PassThrough />, key: 'passthrough', title: lang.beambox.left_panel.label.pass_through },
       { icon: <div className={styles.sep} />, key: '', title: '' },
