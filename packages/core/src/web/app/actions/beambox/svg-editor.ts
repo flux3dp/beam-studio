@@ -122,7 +122,6 @@ export interface ISVGEditor {
   clipboardData: any;
   copySelected: () => void;
   curConfig: ISVGConfig;
-  curPrefs: ISVGPref;
   cutSelected: () => void;
   deleteSelected: () => void;
   dimensions: number[];
@@ -137,22 +136,7 @@ export interface ISVGEditor {
   updateContextPanel: () => void;
 }
 
-interface ISVGPref {
-  bkgd_color?: string;
-  bkgd_url?: string;
-  export_notice_done?: boolean;
-  // EDITOR OPTIONS (DIALOG)
-  lang?: string; // Default to "en" if locale.js detection does not detect another language
-  // DOCUMENT PROPERTIES (DIALOG)
-  // ALERT NOTICES
-  // Only shows in UI as far as alert notices, but useful to remember, so keeping as pref
-  save_notice_done?: boolean;
-}
-
 const svgEditor = (window['svgEditor'] = (function () {
-  // EDITOR PROPERTIES: (defined below)
-  //		curPrefs, curConfig, canvas, storage
-  //
   // STATE MAINTENANCE PROPERTIES
   const workarea = useDocumentStore.getState().workarea;
   const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(workarea);
@@ -164,7 +148,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     clipboardData: null,
     copySelected: () => {},
     curConfig: null as any,
-    curPrefs: null as any,
     cutSelected: () => {},
     deleteSelected: () => {},
     dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
@@ -206,20 +189,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     /**
      * PREFS AND CONFIG
      */
-    // The iteration algorithm for defaultPrefs does not currently support array/objects
-    defaultPrefs: ISVGPref = {
-      bkgd_color: '#FFF',
-      bkgd_url: '',
-      export_notice_done: false,
-      // DOCUMENT PROPERTIES (DIALOG)
-      // ALERT NOTICES
-      // Only shows in UI as far as alert notices, but useful to remember, so keeping as pref
-      save_notice_done: false,
-    },
-    curPrefs: ISVGPref = {},
-    // Note: The difference between Prefs and Config is that Prefs
-    //   can be changed in the UI and are stored in the browser,
-    //   while config cannot
     curConfig: ISVGConfig = {
       /**
        * Can use window.location.origin to indicate the current
@@ -282,29 +251,6 @@ const svgEditor = (window['svgEditor'] = (function () {
    */
 
   /**
-   * Store and retrieve preferences
-   * @param {string} key The preference name to be retrieved or set
-   * @param {string} [val] The value. If the value supplied is missing or falsey, no change to the preference will be made.
-   * @returns {string} If val is missing or falsey, the value of the previously stored preference will be returned.
-   * @todo Can we change setting on the jQuery namespace (onto editor) to avoid conflicts?
-   * @todo Review whether any remaining existing direct references to
-   *	getting curPrefs can be changed to use $.pref() getting to ensure
-   *	defaultPrefs fallback (also for sake of allowInitialUserOverride); specifically, bkgd_color could be changed so that
-   *	the pref dialog has a button to auto-calculate background, but otherwise uses $.pref() to be able to get default prefs
-   *	or overridable settings
-   */
-  $.pref = function (key, val) {
-    if (val) {
-      curPrefs[key] = val;
-      editor.curPrefs = curPrefs; // Update exported value
-
-      return;
-    }
-
-    return key in curPrefs ? curPrefs[key] : defaultPrefs[key];
-  };
-
-  /**
    * EDITOR PUBLIC METHODS
    * locale.js also adds "putLang" and "readLang" as editor methods
    * @todo Sort these methods per invocation order, ideally with init at the end
@@ -343,18 +289,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     }
     $.each(opts, function (key: string, val) {
       if (opts.hasOwnProperty(key)) {
-        // Only allow prefs defined in defaultPrefs
-        if (defaultPrefs.hasOwnProperty(key)) {
-          if (cfgCfg.overwrite === false && (curConfig.preventAllURLConfig || curPrefs.hasOwnProperty(key))) {
-            return;
-          }
-
-          if (cfgCfg.allowInitialUserOverride === true) {
-            defaultPrefs[key] = val;
-          } else {
-            $.pref(key, val);
-          }
-        } else if (['allowedOrigins', 'extensions'].includes(key)) {
+        if (['allowedOrigins', 'extensions'].includes(key)) {
           if (
             cfgCfg.overwrite === false &&
             (curConfig.preventAllURLConfig ||
@@ -399,13 +334,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
   editor.init = function () {
     // Todo: Avoid var-defined functions and group functions together, etc. where possible
-    var good_langs = [];
-
-    function setupCurPrefs() {
-      curPrefs = $.extend(true, {}, defaultPrefs, curPrefs); // Now safe to merge with priority for curPrefs in the event any are already set
-      // Export updated prefs
-      editor.curPrefs = curPrefs;
-    }
 
     function setupCurConfig() {
       curConfig = $.extend(true, {}, defaultConfig, curConfig); // Now safe to merge with priority for curConfig in the event any are already set
@@ -425,7 +353,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       editor.curConfig = curConfig;
     }
     setupCurConfig();
-    setupCurPrefs();
 
     var extFunc = function () {
       $.each(curConfig.extensions, function () {
