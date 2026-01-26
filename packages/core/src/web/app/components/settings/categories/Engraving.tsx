@@ -2,8 +2,7 @@ import React from 'react';
 
 import type { DefaultOptionType } from 'antd/es/select';
 
-import constant from '@core/app/actions/beambox/constant';
-import type { EngraveDpiOption } from '@core/app/constants/workarea-constants';
+import { dpiValueMap, type EngraveDpiOption } from '@core/app/constants/resolutions';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -26,7 +25,7 @@ function Engraving(): React.JSX.Element {
         label={lang.resolution.title}
         onChange={(e) => setPreference('engrave_dpi', e)}
         options={dpiOptions.map((value) => ({
-          label: `${lang.resolution.values[value]} (${constant.dpiValueMap[value]} DPI)`,
+          label: `${lang.resolution.values[value]} (${dpiValueMap[value]} DPI)`,
           value,
         }))}
       />

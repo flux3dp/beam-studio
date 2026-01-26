@@ -6,10 +6,7 @@ import { checkBM2UV } from '@core/helpers/checkFeature';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
 import { fullColorHeadModules, LayerModule, type LayerModuleType } from './layer-module/layer-modules';
-
-export type EngraveDpiOption = 'detailed' | 'high' | 'low' | 'medium' | 'ultra';
-
-export const defaultEngraveDpiOptions: EngraveDpiOption[] = ['low', 'medium', 'high', 'detailed'];
+import type { EngraveDpiOption } from './resolutions';
 
 export type WorkAreaLabel =
   | 'Ador'
