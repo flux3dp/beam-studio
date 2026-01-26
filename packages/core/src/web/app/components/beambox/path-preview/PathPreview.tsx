@@ -823,7 +823,7 @@ class PathPreview extends React.Component<Props, State> {
         this.gcodePreview.setParsedGcode(
           parsedGcode,
           isPromark,
-          (dpiTextMap[useDocumentStore.getState()['engrave_dpi']] || 254) / 25.4,
+          (dpiTextMap[useGlobalPreferenceStore.getState().engrave_dpi] || 254) / 25.4,
           rotaryRatio,
         );
         this.simTimeMax =

@@ -1,4 +1,4 @@
-import type { EngraveDpiOption } from '@core/app/constants/workarea-constants';
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 
 export interface ILang {
   alert: {
