@@ -23,10 +23,10 @@ function Engraving(): React.JSX.Element {
       <SettingSelect
         defaultValue={getPreference('engrave_dpi')}
         id="set-engrave-dpi"
-        label={lang.settings.engraving_resolution}
+        label={lang.resolution.title}
         onChange={(e) => setPreference('engrave_dpi', e)}
         options={dpiOptions.map((value) => ({
-          label: `${lang.settings.engraving_resolution_values[value]} (${constant.dpiValueMap[value]} DPI)`,
+          label: `${lang.resolution.values[value]} (${constant.dpiValueMap[value]} DPI)`,
           value,
         }))}
       />
