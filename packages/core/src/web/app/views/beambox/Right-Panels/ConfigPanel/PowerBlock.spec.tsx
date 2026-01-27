@@ -133,7 +133,6 @@ describe('test PowerBlock', () => {
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       power: { hasMultiValue: false, value: 87 },
-      selectedLayer: 'layer1',
       update: mockUpdate,
     });
     mockCheckPwmImages.mockReturnValue(false);
@@ -163,7 +162,6 @@ describe('test PowerBlock', () => {
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       power: { value: 7 },
-      selectedLayer: 'layer1',
       update: mockUpdate,
     });
 

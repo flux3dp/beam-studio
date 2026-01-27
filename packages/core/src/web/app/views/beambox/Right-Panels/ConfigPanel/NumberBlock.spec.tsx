@@ -74,7 +74,6 @@ describe('test NumberBlock', () => {
     setStorage('default-units', 'mm');
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
-      selectedLayer: 'layer1',
       speed: { hasMultiValue: false, value: 87 },
     });
   });
