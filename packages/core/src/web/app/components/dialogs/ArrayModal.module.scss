@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .modal {
   .close-icon {
     font-size: 22px;
@@ -40,5 +42,16 @@
       height: 1px;
       background-color: #e0e0e0;
     }
+  }
+}
+
+.footer {
+  @include mixins.footer;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+
+  .checkbox {
+    margin-right: auto;
   }
 }

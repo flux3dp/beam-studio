@@ -11,6 +11,8 @@ class ClipperBase extends EventEmitter {
 
   type: 'clipper' | 'offset';
 
+  initialized: Promise<void>;
+
   constructor(type: 'clipper' | 'offset', ...args: any[]) {
     super();
     this.type = type;
@@ -30,11 +32,9 @@ class ClipperBase extends EventEmitter {
         this.emit(`error_${this.workerMsgId}`, e);
       };
 
-      if (type === 'offset') {
-        this.worker.postMessage({ cmd: 'initOffset', data: { args } });
-      } else {
-        this.worker.postMessage({ cmd: 'initClipper', data: { args } });
-      }
+      const cmd = type === 'offset' ? 'initOffset' : 'initClipper';
+
+      this.initialized = this.sendMessageToWorker(cmd, { args });
     } else {
       const ClipperLib = getClipperLib();
 
@@ -43,6 +43,8 @@ class ClipperBase extends EventEmitter {
       } else {
         this.instance = new ClipperLib.Clipper(...args);
       }
+
+      this.initialized = Promise.resolve();
     }
   }
 
@@ -63,6 +65,8 @@ class ClipperBase extends EventEmitter {
   };
 
   addPaths = async (path: any, joinType: any, endType: any): Promise<any> => {
+    await this.initialized;
+
     if (this.worker) {
       await this.sendMessageToWorker('addPaths', { endType, joinType, path });
 
@@ -73,6 +77,8 @@ class ClipperBase extends EventEmitter {
   };
 
   execute = async (...args: any): Promise<any> => {
+    await this.initialized;
+
     if (this.worker) {
       return this.sendMessageToWorker('execute', { args });
     }

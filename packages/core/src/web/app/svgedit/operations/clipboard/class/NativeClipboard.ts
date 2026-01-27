@@ -249,6 +249,14 @@ const checkNativeClipboardByReadWrite = async (): Promise<boolean> => {
 };
 
 export const checkNativeClipboardSupport = async (): Promise<boolean> => {
+  // Disable native clipboard in Cypress E2E tests - the clipboard API requires document focus
+  // which is unreliable when running in Cypress's iframe environment
+  if ('Cypress' in window) {
+    console.log('Cypress detected, using memory clipboard');
+
+    return false;
+  }
+
   const permissionResult = await checkNativeClipboardByPermissions();
 
   if (permissionResult !== undefined) return permissionResult;

@@ -1,13 +1,13 @@
+import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import undoManager from '../../../history/undoManager';
 
 import { copySelectedElements } from './copy';
-import { pasteElements } from './paste';
+import { clearCache, pasteElements } from './paste';
 
 let svgCanvas: ISVGCanvas;
 
@@ -15,22 +15,37 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
+interface ArrayOptions {
+  /** When false, returns the BatchCommand without adding to history (for preview mode) */
+  addToHistory?: boolean;
+}
+
 export const generateSelectedElementArray = async (
   interval: { dx: number; dy: number },
   { column, row }: { column: number; row: number },
-): Promise<IBatchCommand | null> => {
+  options: ArrayOptions = {},
+): Promise<BatchCommand | null> => {
+  const { addToHistory = true } = options;
   const batchCmd = new history.BatchCommand('Grid elements');
 
   await copySelectedElements();
 
   const arrayElements = [...svgCanvas.getSelectedWithoutTempGroup()];
+  let isCached = false;
 
   for (let i = 0; i < column; i++) {
     for (let j = 0; j < row; j++) {
       if (i !== 0 || j !== 0) {
-        const pasteRes = await pasteElements({ isSubCmd: true, selectElement: false, type: 'inPlace' });
+        const pasteRes = await pasteElements({
+          isSubCmd: true,
+          selectElement: false,
+          type: 'inPlace',
+          useCache: isCached,
+        });
 
         if (!pasteRes) continue;
+
+        isCached = true;
 
         const { cmd: pasteCmd, elems } = pasteRes;
 
@@ -66,11 +81,17 @@ export const generateSelectedElementArray = async (
     }
   }
 
-  svgCanvas.multiSelect(arrayElements);
+  clearCache();
 
-  if (!batchCmd.isEmpty()) {
-    undoManager.addCommandToHistory(batchCmd);
+  if (batchCmd.isEmpty()) {
+    return null;
   }
+
+  if (!addToHistory) {
+    return batchCmd;
+  }
+
+  undoManager.addCommandToHistory(batchCmd);
 
   return null;
 };

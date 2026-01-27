@@ -166,7 +166,7 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
     <Flex align="center" className={styles.footer} justify="space-between">
       <div>
         <Button className={styles.button} disabled={isMoving} onClick={handlePreview}>
-          {t.preview}
+          {tGlobal.preview}
           {isPreviewing ? (
             <Spin indicator={<LoadingOutlined className={styles.icon} spin />} />
           ) : (
@@ -227,6 +227,10 @@ export const ZAxisAdjustment = ({ device, onClose }: Props): React.JSX.Element =
 
 export const showZAxisAdjustment = async (device?: IDeviceInfo): Promise<void> => {
   const id = 'z-axis-adjustment';
+
+  if (!device) {
+    return;
+  }
 
   await deviceMaster.select(device);
 

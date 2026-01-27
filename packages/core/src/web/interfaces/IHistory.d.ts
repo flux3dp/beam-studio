@@ -3,7 +3,7 @@ export interface ICommand {
   doApply: () => void;
   doUnapply: () => void;
   elem: SVGGraphicsElement;
-  elements: () => Element[];
+  elements: (predicate?: (subCommand: ICommand) => boolean) => Element[];
   getText: () => string;
   newParent?: Element | Node;
   newValues?: { [key: string]: string };

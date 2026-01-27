@@ -1,4 +1,5 @@
 import progressCaller from '@core/app/actions/progress-caller';
+import type { BatchCommand } from '@core/app/svgedit/history/history';
 import i18n from '@core/helpers/i18n';
 
 import type { OffsetMode } from './constants';
@@ -7,12 +8,20 @@ import { performOffsetAndUnionOperations } from './performOffsetAndUnionOperatio
 import { showOffsetAlert } from './showOffSetAlert';
 import { validateAndPrepareOffsetData } from './validateAndPrepareOffsetData';
 
+interface OffsetOptions {
+  /** When false, returns the BatchCommand without adding to history (for preview mode) */
+  addToHistory?: boolean;
+}
+
 const offsetElements = async (
   mode: OffsetMode,
   distance: number,
   cornerType: 'round' | 'sharp',
   elems?: SVGElement[],
-): Promise<void> => {
+  options: OffsetOptions = {},
+): Promise<BatchCommand | null> => {
+  const { addToHistory = true } = options;
+
   progressCaller.openNonstopProgress({ id: 'offset-path', message: i18n.lang.beambox.popup.progress.calculating });
   await new Promise((resolve) => setTimeout(resolve, 50)); // Brief pause for UI
 
@@ -21,7 +30,7 @@ const offsetElements = async (
   if (!validation.isValid || !validation.elementsToOffset) {
     progressCaller.popById('offset-path');
 
-    return;
+    return null;
   }
 
   const { elementsToOffset } = validation;
@@ -37,13 +46,15 @@ const offsetElements = async (
 
     progressCaller.popById('offset-path');
 
-    return;
+    return null;
   }
 
-  createAndApplyOffsetElement(offsetResult.solutionPaths);
+  const batchCmd = createAndApplyOffsetElement(offsetResult.solutionPaths, { addToHistory });
 
   // Pop progress after all operations are done or if an error occurred and handled
   progressCaller.popById('offset-path');
+
+  return batchCmd;
 };
 
 export default offsetElements;

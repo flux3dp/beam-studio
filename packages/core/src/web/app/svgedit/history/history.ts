@@ -38,7 +38,7 @@ export class BaseHistoryCommand implements ICommand {
     return this.text;
   }
 
-  elements(): Element[] {
+  elements(_predicate?: (subCommand: ICommand) => boolean): Element[] {
     return [this.elem];
   }
 
@@ -380,20 +380,33 @@ export class BatchCommand extends BaseHistoryCommand implements IBatchCommand {
     }
   };
 
-  elements(): Element[] {
+  /**
+   * Returns elements from sub-commands, optionally filtered by a predicate.
+   * @param predicate - Optional filter function. If provided, only elements from matching sub-commands are returned.
+   *                    If omitted, returns elements from all sub-commands.
+   * @example
+   * // Get all elements
+   * cmd.elements()
+   * // Get only inserted elements
+   * cmd.elements((c) => c.type() === InsertElementCommand.type())
+   */
+  elements(predicate: (subCommand: ICommand) => boolean = () => true): Element[] {
     const elemSet = new Set<Element>();
 
     for (let i = this.stack.length - 1; i >= 0; i -= 1) {
       const cmd = this.stack[i];
 
-      cmd?.elements().forEach((elem) => {
-        elemSet.add(elem);
-      });
+      if (!cmd) continue;
+
+      if (cmd instanceof BatchCommand) {
+        // Recursively get elements from nested batch commands with same predicate
+        cmd.elements(predicate).forEach((elem) => elemSet.add(elem));
+      } else if (predicate(cmd)) {
+        cmd.elements().forEach((elem) => elemSet.add(elem));
+      }
     }
 
-    const elems = Array.from(elemSet);
-
-    return elems;
+    return Array.from(elemSet);
   }
 
   addSubCommand(cmd: BaseHistoryCommand): void {
