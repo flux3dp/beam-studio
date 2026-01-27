@@ -3,7 +3,6 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import i18n from '@core/helpers/i18n';
-import ConfigPanelContext from './ConfigPanelContext';
 
 let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
@@ -21,6 +20,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 import HalftoneBlock from './HalftoneBlock';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 const mockAddCommandToHistory = jest.fn();
 
@@ -40,8 +40,6 @@ const mockOpen = jest.fn();
 jest.mock('@core/implementations/browser', () => ({
   open: (...args) => mockOpen(...args),
 }));
-
-const mockSelectedLayers = ['layer1', 'layer2'];
 
 jest.mock('@core/app/widgets/AntdSelect', () => {
   const Select = ({ className, onChange, options, value }: any) => (
@@ -72,44 +70,29 @@ describe('test HalftoneBlock', () => {
       change: mockChange,
       halftone: { hasMultiValue: false, value: 1 },
     });
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <HalftoneBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<HalftoneBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when type is panel-item', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <HalftoneBlock type="panel-item" />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<HalftoneBlock type="panel-item" />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when type is modal', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <HalftoneBlock type="modal" />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<HalftoneBlock type="modal" />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('should change halftone value', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <HalftoneBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<HalftoneBlock />);
     const select = container.querySelector('select');
 
     fireEvent.change(select, { target: { value: '2' } });

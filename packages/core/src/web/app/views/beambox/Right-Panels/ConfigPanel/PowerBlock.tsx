@@ -7,6 +7,7 @@ import classNames from 'classnames';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -27,7 +28,6 @@ import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import AdvancedPowerPanel from './AdvancedPowerPanel';
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
@@ -39,7 +39,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, power, selectedLayer, update } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const { activeKey } = useContext(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const openModal = useCallback(() => setShowModal(true), []);

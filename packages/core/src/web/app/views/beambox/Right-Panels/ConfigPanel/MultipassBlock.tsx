@@ -6,6 +6,7 @@ import classNames from 'classnames';
 import configOptions from '@core/app/constants/config-options';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
@@ -16,7 +17,6 @@ import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-con
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
@@ -34,7 +34,6 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
   const { activeKey } = useContext(ObjectPanelContext);
 
   const { change, multipass } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { hasMultiValue, value } = multipass;
   const timeEstimationButtonEventEmitter = useMemo(
@@ -49,7 +48,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change multipass');
 
-      selectedLayers.forEach((layerName) => {
+      useLayerStore.getState().selectedLayers.forEach((layerName) => {
         writeData(layerName, 'multipass', val, { batchCmd });
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
       });

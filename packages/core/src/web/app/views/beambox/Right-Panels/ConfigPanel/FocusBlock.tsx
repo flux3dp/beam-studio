@@ -1,10 +1,11 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import isDev from '@core/helpers/is-dev';
@@ -12,7 +13,6 @@ import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
@@ -21,7 +21,6 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, focus, focusStep, repeat } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const isDevMode = useMemo(() => isDev(), []);
 
   const focusStepMax = useMemo(() => {
@@ -41,7 +40,7 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     const batchCmd = new history.BatchCommand('Toggle focus adjustment');
 
-    selectedLayers.forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
+    useLayerStore.getState().selectedLayers.forEach((layerName) => writeData(layerName, 'focus', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };
@@ -53,7 +52,9 @@ const FocusBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     const batchCmd = new history.BatchCommand('Toggle focus step');
 
-    selectedLayers.forEach((layerName) => writeData(layerName, 'focusStep', value, { batchCmd }));
+    useLayerStore
+      .getState()
+      .selectedLayers.forEach((layerName) => writeData(layerName, 'focusStep', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

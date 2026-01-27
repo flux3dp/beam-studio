@@ -1,10 +1,11 @@
-import { memo, useContext } from 'react';
+import { memo } from 'react';
 
 import classNames from 'classnames';
 import { pick } from 'remeda';
 import { useShallow } from 'zustand/react/shallow';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -12,11 +13,9 @@ import Select from '@core/app/widgets/AntdSelect';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import styles from '../Block.module.scss';
-import ConfigPanelContext from '../ConfigPanelContext';
 import initState from '../initState';
 
 const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-item' }) => {
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const { change, nozzleMode } = useConfigPanelStore(useShallow((state) => pick(state, ['change', 'nozzleMode'])));
 
   const { hasMultiValue, value } = nozzleMode;
@@ -30,7 +29,9 @@ const NozzleMode = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change Nozzle Mode');
 
-      selectedLayers.forEach((layerName) => writeData(layerName, 'nozzleMode', newValue, { batchCmd }));
+      useLayerStore
+        .getState()
+        .selectedLayers.forEach((layerName) => writeData(layerName, 'nozzleMode', newValue, { batchCmd }));
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     }

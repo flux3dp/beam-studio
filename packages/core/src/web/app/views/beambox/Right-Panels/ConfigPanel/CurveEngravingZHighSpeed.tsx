@@ -1,10 +1,11 @@
-import React, { useContext, useMemo } from 'react';
+import React, { useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
@@ -12,7 +13,6 @@ import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
 
 const CurveEngravingZHighSpeed = () => {
@@ -21,7 +21,6 @@ const CurveEngravingZHighSpeed = () => {
       right_panel: { laser_panel: t },
     },
   } = useI18n();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const {
     ceZHighSpeed: { hasMultiValue, value },
     change,
@@ -33,7 +32,9 @@ const CurveEngravingZHighSpeed = () => {
 
     const batchCmd = new history.BatchCommand('Change curve engraving z speed limit');
 
-    selectedLayers.forEach((layerName) => writeData(layerName, 'ceZHighSpeed', !checked, { batchCmd }));
+    useLayerStore
+      .getState()
+      .selectedLayers.forEach((layerName) => writeData(layerName, 'ceZHighSpeed', !checked, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

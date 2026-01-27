@@ -1,9 +1,10 @@
-import React, { memo, useContext } from 'react';
+import React, { memo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -12,7 +13,6 @@ import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './HalftoneBlock.module.scss';
 import initState from './initState';
 
@@ -21,7 +21,6 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
 
   const { change, halftone } = useConfigPanelStore();
 
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const { hasMultiValue, value } = halftone;
 
   const handleChange = (newValue: number) => {
@@ -34,7 +33,9 @@ const HalftoneBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change Halftone');
 
-      selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', newValue, { batchCmd }));
+      useLayerStore
+        .getState()
+        .selectedLayers.forEach((layerName) => writeData(layerName, 'halftone', newValue, { batchCmd }));
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
     }

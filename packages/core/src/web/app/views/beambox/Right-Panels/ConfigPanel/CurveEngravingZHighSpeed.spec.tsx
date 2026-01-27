@@ -1,8 +1,6 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
-
 let batchCmd = { count: 0, onAfter: undefined };
 const mockBatchCommand = jest.fn().mockImplementation(() => {
   batchCmd = { count: batchCmd.count + 1, onAfter: undefined };
@@ -19,6 +17,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 import CurveEngravingZHighSpeed from './CurveEngravingZHighSpeed';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 const mockWriteData = jest.fn();
 
@@ -47,14 +46,11 @@ describe('test CurveEngravingZHighSpeed', () => {
       ceZHighSpeed: { hasMultiValue: false, value: false },
       change: mockChange,
     });
+    useLayerStore.setState({ selectedLayers: mockSelectedLayers });
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <CurveEngravingZHighSpeed />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<CurveEngravingZHighSpeed />);
 
     expect(container).toMatchSnapshot();
   });
@@ -65,21 +61,13 @@ describe('test CurveEngravingZHighSpeed', () => {
       change: mockChange,
     });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <CurveEngravingZHighSpeed />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<CurveEngravingZHighSpeed />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('onToggle should work', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <CurveEngravingZHighSpeed />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<CurveEngravingZHighSpeed />);
     const btn = container.querySelector('button#curve-engraving-z-high-speed');
 
     expect(mockChange).not.toHaveBeenCalled();

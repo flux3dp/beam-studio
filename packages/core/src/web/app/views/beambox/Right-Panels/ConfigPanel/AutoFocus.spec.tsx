@@ -2,8 +2,6 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
-
 import MockNumberBlock from '@mocks/@core/app/views/beambox/Right-Panels/ConfigPanel/NumberBlock';
 
 jest.mock('./NumberBlock', () => MockNumberBlock);
@@ -43,6 +41,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 }));
 
 import AutoFocus from './AutoFocus';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 describe('test AutoFocus', () => {
   beforeEach(() => {
@@ -53,6 +52,7 @@ describe('test AutoFocus', () => {
       repeat: { hasMultiValue: false, value: 1 },
       zStep: { hasMultiValue: false, value: 0 },
     });
+    useLayerStore.setState({ selectedLayers: mockSelectedLayers });
   });
 
   it('should render correctly when height is less than 0', () => {
@@ -63,11 +63,7 @@ describe('test AutoFocus', () => {
       zStep: { hasMultiValue: false, value: 0 },
     });
 
-    const { container, queryByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <AutoFocus />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container, queryByText } = render(<AutoFocus />);
 
     expect(container).toMatchSnapshot();
     expect(queryByText('title: Object Height')).not.toBeInTheDocument();
@@ -75,11 +71,7 @@ describe('test AutoFocus', () => {
   });
 
   it('should render correctly when repeat is less than 1', () => {
-    const { container, queryByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <AutoFocus />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container, queryByText } = render(<AutoFocus />);
 
     expect(container).toMatchSnapshot();
     expect(queryByText('title: Object Height')).toBeInTheDocument();
@@ -94,11 +86,7 @@ describe('test AutoFocus', () => {
       zStep: { hasMultiValue: false, value: 0 },
     });
 
-    const { container, queryByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <AutoFocus />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container, queryByText } = render(<AutoFocus />);
 
     expect(container).toMatchSnapshot();
     expect(queryByText('title: Object Height')).toBeInTheDocument();
@@ -113,11 +101,7 @@ describe('test AutoFocus', () => {
       zStep: { hasMultiValue: false, value: 0 },
     });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <AutoFocus />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<AutoFocus />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();

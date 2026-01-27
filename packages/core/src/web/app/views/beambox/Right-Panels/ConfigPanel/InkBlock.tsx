@@ -12,6 +12,7 @@ import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
@@ -22,7 +23,6 @@ import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ColorRationModal from './ColorRatioModal';
-import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
@@ -40,7 +40,6 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, color, fullcolor, ink, module: layerModule } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { activeKey } = useContext(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
@@ -51,7 +50,7 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change ink');
 
-      selectedLayers.forEach((layerName) => {
+      useLayerStore.getState().selectedLayers.forEach((layerName) => {
         writeData(layerName, 'ink', value, { batchCmd });
         writeData(layerName, 'configName', CUSTOM_PRESET_CONSTANT, { batchCmd });
       });

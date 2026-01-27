@@ -1,19 +1,20 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 import styles from '../Block.module.scss';
-import ConfigPanelContext from '../ConfigPanelContext';
 
 import { showColorAdvancedSetting } from './utils';
 
 const ColorAdvancedSettingButton = () => {
-  const { selectedLayers } = useContext(ConfigPanelContext);
-
   return (
     <>
       <div className={styles.panel}>
-        <span className={styles.title} onClick={() => showColorAdvancedSetting(selectedLayers)}>
+        <span
+          className={styles.title}
+          onClick={() => showColorAdvancedSetting(useLayerStore.getState().selectedLayers)}
+        >
           Color Advanced Setting
           <span className={styles.icon}>
             <ConfigPanelIcons.ColorAdjustment />
