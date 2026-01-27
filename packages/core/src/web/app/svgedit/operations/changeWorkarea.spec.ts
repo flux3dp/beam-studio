@@ -29,9 +29,7 @@ describe('test changeWorkarea', () => {
     mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1');
     expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
-    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith({
-      workarea: 'fbm1',
-    });
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
     expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
     expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: mockCmd });
     expect(mockToggleFullColorAfterWorkareaChange).toHaveBeenCalledTimes(1);
@@ -49,9 +47,7 @@ describe('test changeWorkarea', () => {
     mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1', { toggleModule: false });
     expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
-    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith({
-      workarea: 'fbm1',
-    });
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
     expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
     expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: mockCmd });
     expect(mockToggleFullColorAfterWorkareaChange).not.toHaveBeenCalled();
