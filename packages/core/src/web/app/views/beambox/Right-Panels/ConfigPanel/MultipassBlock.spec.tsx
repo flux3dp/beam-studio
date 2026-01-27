@@ -2,9 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-
-import ConfigPanelContext from './ConfigPanelContext';
 
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
   <input
@@ -104,7 +103,6 @@ jest.mock('./initState', () => mockInitState);
 
 import MultipassBlock from './MultipassBlock';
 
-const mockSelectedLayers = ['layer1', 'layer2'];
 const mockUseConfigPanelStore = jest.fn();
 const mockChange = jest.fn();
 
@@ -121,6 +119,7 @@ jest.mock('@core/app/stores/globalPreferenceStore', () => ({
 describe('test MultipassBlock when type is not panel-item', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });
@@ -134,21 +133,13 @@ describe('test MultipassBlock when type is not panel-item', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <MultipassBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<MultipassBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('edit value with slider', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <MultipassBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<MultipassBlock />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();
@@ -176,11 +167,7 @@ describe('test MultipassBlock when type is not panel-item', () => {
   });
 
   test('edit value with value display', () => {
-    const { getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <MultipassBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { getByText } = render(<MultipassBlock />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();
@@ -212,9 +199,7 @@ describe('test MultipassBlock when type is panel-item', () => {
   it('should render correctly when visible', () => {
     const { container } = render(
       <ObjectPanelContext.Provider value={{ activeKey: 'multipass' } as any}>
-        <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-          <MultipassBlock type="panel-item" />
-        </ConfigPanelContext.Provider>
+        <MultipassBlock type="panel-item" />
       </ObjectPanelContext.Provider>,
     );
 

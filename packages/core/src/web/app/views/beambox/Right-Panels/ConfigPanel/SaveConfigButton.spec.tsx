@@ -2,7 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
+import useLayerStore from '@core/app/stores/layer/layerStore';
+
 import SaveConfigButton from './SaveConfigButton';
 
 const mockPopUp = jest.fn();
@@ -15,19 +16,6 @@ const mockPromptDialog = jest.fn();
 
 jest.mock('@core/app/actions/dialog-caller', () => ({
   promptDialog: (...args) => mockPromptDialog(...args),
-}));
-
-jest.mock('@core/helpers/useI18n', () => () => ({
-  beambox: {
-    right_panel: {
-      laser_panel: {
-        dropdown: {
-          save: 'save',
-        },
-        existing_name: 'existing_name',
-      },
-    },
-  },
 }));
 
 const mockWriteData = jest.fn();
@@ -45,8 +33,6 @@ jest.mock('@core/helpers/presets/preset-helper', () => ({
   savePreset: (...args) => mockSavePreset(...args),
 }));
 
-const mockSelectedLayers = ['layer1'];
-
 const mockGetState = jest.fn();
 const mockRename = jest.fn();
 
@@ -59,6 +45,8 @@ jest.mock('@core/app/stores/configPanel', () => ({
 
 describe('test SaveConfigButton', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1'] });
     mockGetState.mockReturnValue({
       focus: { hasMultiValue: false, value: -2 },
       focusStep: { hasMultiValue: false, value: -2 },
@@ -73,21 +61,13 @@ describe('test SaveConfigButton', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SaveConfigButton />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SaveConfigButton />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('button should work when customized config is empty', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SaveConfigButton />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SaveConfigButton />);
 
     expect(mockPromptDialog).not.toHaveBeenCalled();
 

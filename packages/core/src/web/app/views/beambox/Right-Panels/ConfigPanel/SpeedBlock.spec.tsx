@@ -6,8 +6,6 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { setStorage } from '@mocks/@core/app/stores/storageStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 
-import ConfigPanelContext from './ConfigPanelContext';
-
 const mockIsDev = jest.fn();
 
 jest.mock(
@@ -144,7 +142,6 @@ jest.mock('@core/helpers/addOn', () => ({
   getAutoFeeder: (...args) => mockGetAutoFeeder(...args),
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
 const mockUseConfigPanelStore = jest.fn();
 const mockChange = jest.fn();
 
@@ -155,7 +152,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test SpeedBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useLayerStore.setState({ hasVector: false });
+    useLayerStore.setState({ hasVector: false, selectedLayers: ['layer1', 'layer2'] });
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });
@@ -176,11 +173,7 @@ describe('test SpeedBlock', () => {
   });
 
   it('should render correctly when unit is mm', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(container).toMatchSnapshot();
   });
@@ -188,21 +181,13 @@ describe('test SpeedBlock', () => {
   it('should render correctly when unit is inches', () => {
     setStorage('default-units', 'inches');
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when type is panel-item', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock type="panel-item" />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock type="panel-item" />);
 
     expect(container).toMatchSnapshot();
   });
@@ -210,11 +195,7 @@ describe('test SpeedBlock', () => {
   it('should render correctly when has vector warning', () => {
     useLayerStore.setState({ hasVector: true });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(container).toMatchSnapshot();
     expect(container.querySelector('.warning')).toBeInTheDocument();
@@ -224,11 +205,7 @@ describe('test SpeedBlock', () => {
     mockUseWorkarea.mockReturnValue('fbb2');
     mockUseHasCurveEngraving.mockReturnValue(true);
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(container).toMatchSnapshot();
     expect(container.querySelector('.warning')).toBeInTheDocument();
@@ -240,11 +217,7 @@ describe('test SpeedBlock', () => {
     mockGlobalPreference['print-advanced-mode'] = true;
     useLayerStore.setState({ hasVector: true });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(container).toMatchSnapshot();
     expect(container.querySelector('.warning')).toBeInTheDocument();
@@ -260,11 +233,7 @@ describe('test SpeedBlock', () => {
       speed: { value: 1 },
     });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(container).toMatchSnapshot();
     expect(container.querySelector('.warning')).toBeInTheDocument();
@@ -280,21 +249,13 @@ describe('test SpeedBlock', () => {
       speed: { value: 1 },
     });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('onChange should work', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SpeedBlock />);
 
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
@@ -332,11 +293,7 @@ describe('test SpeedBlock', () => {
   });
 
   test('onChange of value display should work correctly', () => {
-    const { getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SpeedBlock type="modal" />
-      </ConfigPanelContext.Provider>,
-    );
+    const { getByText } = render(<SpeedBlock type="modal" />);
 
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenLastCalledWith('time-estimation-button');
