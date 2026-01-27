@@ -16,8 +16,8 @@ getSVGAsync(({ Canvas }) => {
 });
 
 interface ArrayOptions {
-  /** When true, returns the BatchCommand without adding to history (for preview mode) */
-  skipHistory?: boolean;
+  /** When false, returns the BatchCommand without adding to history (for preview mode) */
+  addToHistory?: boolean;
 }
 
 export const generateSelectedElementArray = async (
@@ -25,7 +25,7 @@ export const generateSelectedElementArray = async (
   { column, row }: { column: number; row: number },
   options: ArrayOptions = {},
 ): Promise<BatchCommand | null> => {
-  const { skipHistory = false } = options;
+  const { addToHistory = true } = options;
   const batchCmd = new history.BatchCommand('Grid elements');
 
   await copySelectedElements();
@@ -87,7 +87,7 @@ export const generateSelectedElementArray = async (
     return null;
   }
 
-  if (skipHistory) {
+  if (!addToHistory) {
     return batchCmd;
   }
 

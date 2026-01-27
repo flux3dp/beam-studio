@@ -1,6 +1,7 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useRef, useState } from 'react';
 
 import type { BatchCommand } from '@core/app/svgedit/history/history';
+import { InsertElementCommand } from '@core/app/svgedit/history/history';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -59,7 +60,7 @@ const usePreviewModal = ({
   selectionMode = 'none',
 }: UsePreviewModalOptions): UsePreviewModalReturn => {
   const batchCmd = useRef<BatchCommand | null>(null);
-  const selectionRef = useRef<SVGElement[]>([]);
+  const selectionRef = useRef<SVGElement[]>([...svgCanvas.getSelectedWithoutTempGroup()]);
   const processing = useRef(false);
   const queueNext = useRef(false);
   const focusedInputRef = useRef<HTMLElement | null>(null);
@@ -186,7 +187,7 @@ const usePreviewModal = ({
 
     // Select elements based on selectionMode
     if (cmd && selectionMode !== 'none') {
-      const insertedElements = cmd.getInsertedElements();
+      const insertedElements = cmd.elements((c) => c.type() === InsertElementCommand.type()) as SVGElement[];
       const elementsToSelect =
         selectionMode === 'all' ? [...selectionRef.current, ...insertedElements] : insertedElements;
 
@@ -197,11 +198,6 @@ const usePreviewModal = ({
 
     return cmd;
   }, [previewEnabled, generatePreview, selectionMode]);
-
-  // Store original selection on mount
-  useEffect(() => {
-    selectionRef.current = [...svgCanvas.getSelectedWithoutTempGroup()];
-  }, []);
 
   return {
     batchCmd,

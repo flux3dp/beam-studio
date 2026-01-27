@@ -62,7 +62,7 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     const { cornerType, mode } = offset;
     const { dpmm } = constant;
 
-    return offsetElements(mode, distanceMm * dpmm, cornerType, undefined, { skipHistory: true });
+    return offsetElements(mode, distanceMm * dpmm, cornerType, undefined, { addToHistory: false });
   }, [offset, unit]);
 
   const { commitPreview, handlePreview, previewEnabled, setPreviewEnabled, unapplyPreview } = usePreviewModal({

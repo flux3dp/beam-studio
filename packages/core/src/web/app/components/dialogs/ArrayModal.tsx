@@ -60,7 +60,7 @@ const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => 
     return generateSelectedElementArray(
       { dx: toPixel(data.dx), dy: toPixel(data.dy) },
       { column: data.column, row: data.row },
-      { skipHistory: true },
+      { addToHistory: false },
     );
   }, [data, unit]);
 

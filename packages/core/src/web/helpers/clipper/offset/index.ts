@@ -9,8 +9,8 @@ import { showOffsetAlert } from './showOffSetAlert';
 import { validateAndPrepareOffsetData } from './validateAndPrepareOffsetData';
 
 interface OffsetOptions {
-  /** When true, returns the BatchCommand without adding to history (for preview mode) */
-  skipHistory?: boolean;
+  /** When false, returns the BatchCommand without adding to history (for preview mode) */
+  addToHistory?: boolean;
 }
 
 const offsetElements = async (
@@ -20,7 +20,7 @@ const offsetElements = async (
   elems?: SVGElement[],
   options: OffsetOptions = {},
 ): Promise<BatchCommand | null> => {
-  const { skipHistory = false } = options;
+  const { addToHistory = true } = options;
 
   progressCaller.openNonstopProgress({ id: 'offset-path', message: i18n.lang.beambox.popup.progress.calculating });
   await new Promise((resolve) => setTimeout(resolve, 50)); // Brief pause for UI
@@ -49,7 +49,7 @@ const offsetElements = async (
     return null;
   }
 
-  const batchCmd = createAndApplyOffsetElement(offsetResult.solutionPaths, { skipHistory });
+  const batchCmd = createAndApplyOffsetElement(offsetResult.solutionPaths, { addToHistory });
 
   // Pop progress after all operations are done or if an error occurred and handled
   progressCaller.popById('offset-path');
