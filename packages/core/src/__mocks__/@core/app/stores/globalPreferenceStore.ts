@@ -71,3 +71,15 @@ export const useGlobalPreferenceStore = (selector?: (state: GlobalPreference) =>
 };
 
 useGlobalPreferenceStore.getState = () => ({ ...state, set, update });
+useGlobalPreferenceStore.setState = (newState: Partial<GlobalPreference>) => {
+  Object.assign(state, newState);
+};
+
+export const mockSubscribe = jest.fn();
+
+useGlobalPreferenceStore.subscribe = (
+  selector: (state: GlobalPreference) => Partial<GlobalPreference>,
+  listener: (state: GlobalPreference) => void,
+) => {
+  mockSubscribe(selector, listener);
+};

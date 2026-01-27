@@ -1,27 +1,12 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 
 const mockGetDefaultLaserModule = jest.fn();
 
 jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
   getDefaultLaserModule: () => mockGetDefaultLaserModule(),
-}));
-
-const mockGetGlobalPreference = jest.fn();
-const mockSubscribeGlobalPreference = jest.fn();
-
-jest.mock('@core/app/stores/globalPreferenceStore', () => ({
-  useGlobalPreferenceStore: {
-    getState: mockGetGlobalPreference,
-    subscribe: mockSubscribeGlobalPreference,
-  },
-}));
-mockGetGlobalPreference.mockReturnValue({ 'multipass-compensation': false });
-
-const mockGetState = jest.fn();
-
-jest.mock('@core/app/stores/documentStore', () => ({
-  useDocumentStore: { getState: mockGetState },
 }));
 
 const mockGetPromarkInfo = jest.fn();
@@ -115,8 +100,8 @@ describe('test layer-config-helper', () => {
       <g class="layer" data-color="#333333"><title>layer 3</title></g>
     `;
     jest.resetAllMocks();
-    mockGetState.mockReturnValue({ workarea: 'fbm1' });
-    mockGetGlobalPreference.mockReturnValue({ 'multipass-compensation': false });
+    useDocumentStore.setState({ workarea: 'fbm1' });
+    useGlobalPreferenceStore.setState({ engrave_dpi: 'high', 'multipass-compensation': false });
     mockGetAllLayers.mockReturnValue([
       { getGroup: () => mockLayer },
       { getGroup: () => mockLayer },
@@ -138,7 +123,7 @@ describe('test layer-config-helper', () => {
   test('initLayerConfig with module', () => {
     const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
 
-    mockGetState.mockReturnValue({ workarea: 'ado1' });
+    useDocumentStore.setState({ workarea: 'ado1' });
     initLayerConfig(layer1);
     expect(getLayerConfig('layer 1')).toEqual({
       ...defaultConfigs,
@@ -216,7 +201,6 @@ describe('test layer-config-helper', () => {
   });
 
   test('toggleFullColorAfterWorkareaChange to workarea without module', () => {
-    mockGetState.mockReturnValue({ workarea: 'fbm1' });
     mockGetAllLayers.mockReturnValue([
       { getGroup: () => mockLayer },
       { getGroup: () => mockLayer },
@@ -234,7 +218,7 @@ describe('test layer-config-helper', () => {
   });
 
   test('toggleFullColorAfterWorkareaChange to workarea with module', () => {
-    mockGetState.mockReturnValue({ workarea: 'ado1' });
+    useDocumentStore.setState({ workarea: 'ado1' });
     mockGetAllLayers.mockReturnValue([
       { getGroup: () => mockLayer },
       { getGroup: () => mockLayer },
@@ -278,7 +262,7 @@ describe('test layer-config-helper', () => {
       'wRepeat',
       'repeat',
     ]);
-    mockGetState.mockReturnValue({ workarea: 'fpm1' });
+    useDocumentStore.setState({ workarea: 'fpm1' });
     expect(getConfigKeys(LayerModule.PRINTER)).toEqual([
       'speed',
       'power',
@@ -319,11 +303,13 @@ describe('test layer-config-helper', () => {
 
     // @ts-ignore
     const { baseConfig } = await import('./layer-config-helper');
+    // @ts-ignore
+    const { mockSubscribe } = await import('__mocks__/@core/app/stores/globalPreferenceStore');
 
-    expect(mockSubscribeGlobalPreference).toHaveBeenCalledTimes(1);
+    expect(mockSubscribe).toHaveBeenCalledTimes(2);
 
-    const selector = mockSubscribeGlobalPreference.mock.calls[0][0];
-    const handler = mockSubscribeGlobalPreference.mock.calls[0][1];
+    const selector = mockSubscribe.mock.calls[0][0];
+    const handler = mockSubscribe.mock.calls[0][1];
 
     handler(selector({ 'multipass-compensation': true }));
     expect(baseConfig.ink).toEqual(3);

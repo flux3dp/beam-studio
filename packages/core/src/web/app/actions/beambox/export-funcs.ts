@@ -42,6 +42,7 @@ import {
   removeCurveEngravingZSpeedAnnotation,
 } from './export/annotateCurveEngravingZSpeed';
 import { annotateLayerBBox } from './export/annotateLayerBBox';
+import { annotateLayerDpmm } from './export/annotateLayerDpmm';
 import generateThumbnail from './export/generate-thumbnail';
 
 let svgCanvas: ISVGCanvas;
@@ -145,6 +146,7 @@ const fetchTaskCode = async (
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: 'Splitting Full color layer',
   });
+  annotateLayerDpmm(device);
   annotateCurveEngravingZSpeed(device);
 
   revertFunctions.push(
@@ -181,8 +183,10 @@ const fetchTaskCode = async (
   });
 
   const documentState = useDocumentStore.getState();
+  const globalPreference = useGlobalPreferenceStore.getState();
   const uploadRes = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
-    engraveDpi: documentState['engrave_dpi'],
+    // TODO: fallback dpmm for older backend, can remove after firmware ghost update
+    engraveDpi: globalPreference.engrave_dpi,
     model: workareaManager.model,
     onProgressing: (data: BackendProgressData) => handleProgress('upload-scene', data),
   });
@@ -213,7 +217,7 @@ const fetchTaskCode = async (
   });
 
   let doesSupportDiodeAndAF = true;
-  let shouldUseFastGradient = useGlobalPreferenceStore.getState().fast_gradient !== false;
+  let shouldUseFastGradient = globalPreference.fast_gradient !== false;
   let supportPwm: boolean;
   let supportJobOrigin: boolean;
   let supportAccOverrideV1: boolean;
