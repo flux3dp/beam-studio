@@ -66,6 +66,7 @@ const Handle = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement> 
   },
 );
 
+// TODO: extract layer operation methods as they don't need context now
 class LayerPanel extends React.PureComponent<Props, State> {
   private currentTouchID?: null | number;
   private firstTouchInfo?: { pageX: number; pageY: number };
