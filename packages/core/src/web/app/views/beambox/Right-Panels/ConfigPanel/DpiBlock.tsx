@@ -43,15 +43,13 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
   const handleChange = (value: number) => {
     const newDpi = valueDpiMap[value as EngraveDpiValue];
 
-    console.log(newDpi);
-
     change({ dpi: newDpi });
 
     if (type !== 'modal') {
       const batchCmd = new history.BatchCommand('Change layers dpi');
 
       useLayerStore.getState().selectedLayers.forEach((layerName) => {
-        writeData(layerName, 'dpi', value, { batchCmd });
+        writeData(layerName, 'dpi', newDpi, { batchCmd });
       });
       batchCmd.onAfter = initState;
       undoManager.addCommandToHistory(batchCmd);
