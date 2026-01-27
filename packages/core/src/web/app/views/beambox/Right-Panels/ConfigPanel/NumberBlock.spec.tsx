@@ -1,9 +1,8 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { setStorage } from '@mocks/@core/app/stores/storageStore';
-
-import ConfigPanelContext from './ConfigPanelContext';
 
 const mockGetData = jest.fn();
 const mockGetMultiSelectData = jest.fn();
@@ -52,7 +51,6 @@ jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext', ()
   ObjectPanelContext: React.createContext({ activeKey: null }),
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
 const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
@@ -69,6 +67,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test NumberBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });
@@ -82,21 +81,19 @@ describe('test NumberBlock', () => {
 
   it('should render correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <NumberBlock
-          configKey="speed"
-          hasSlider
-          id="id"
-          max={100}
-          min={0}
-          precision={2}
-          step={1}
-          title="title"
-          tooltip="tooltip"
-          type="default"
-          unit="mm"
-        />
-      </ConfigPanelContext.Provider>,
+      <NumberBlock
+        configKey="speed"
+        hasSlider
+        id="id"
+        max={100}
+        min={0}
+        precision={2}
+        step={1}
+        title="title"
+        tooltip="tooltip"
+        type="default"
+        unit="mm"
+      />,
     );
 
     expect(container).toMatchSnapshot();
@@ -104,42 +101,38 @@ describe('test NumberBlock', () => {
 
   it('should render correctly when type is panel-item', () => {
     const { container, rerender } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <NumberBlock
-          configKey="speed"
-          hasSlider
-          id="id"
-          max={100}
-          min={0}
-          precision={2}
-          step={1}
-          title="title"
-          tooltip="tooltip"
-          type="panel-item"
-          unit="mm"
-        />
-      </ConfigPanelContext.Provider>,
+      <NumberBlock
+        configKey="speed"
+        hasSlider
+        id="id"
+        max={100}
+        min={0}
+        precision={2}
+        step={1}
+        title="title"
+        tooltip="tooltip"
+        type="panel-item"
+        unit="mm"
+      />,
     );
 
     expect(container).toMatchSnapshot();
 
     rerender(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <NumberBlock
-          configKey="speed"
-          hasSlider
-          id="id"
-          max={100}
-          min={0}
-          panelType="button"
-          precision={2}
-          step={1}
-          title="title"
-          tooltip="tooltip"
-          type="panel-item"
-          unit="mm"
-        />
-      </ConfigPanelContext.Provider>,
+      <NumberBlock
+        configKey="speed"
+        hasSlider
+        id="id"
+        max={100}
+        min={0}
+        panelType="button"
+        precision={2}
+        step={1}
+        title="title"
+        tooltip="tooltip"
+        type="panel-item"
+        unit="mm"
+      />,
     );
     expect(container).toMatchSnapshot();
   });
@@ -148,21 +141,19 @@ describe('test NumberBlock', () => {
     setStorage('default-units', 'inches');
 
     const { getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <NumberBlock
-          configKey="speed"
-          hasSlider
-          id="id"
-          max={100}
-          min={0}
-          precision={2}
-          step={1}
-          title="title"
-          tooltip="tooltip"
-          type="default"
-          unit="mm"
-        />
-      </ConfigPanelContext.Provider>,
+      <NumberBlock
+        configKey="speed"
+        hasSlider
+        id="id"
+        max={100}
+        min={0}
+        precision={2}
+        step={1}
+        title="title"
+        tooltip="tooltip"
+        type="default"
+        unit="mm"
+      />,
     );
 
     expect(getByText('unit: in')).toBeInTheDocument();
@@ -172,22 +163,20 @@ describe('test NumberBlock', () => {
     setStorage('default-units', 'inches');
 
     const { getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <NumberBlock
-          configKey="speed"
-          forceUsePropsUnit
-          hasSlider
-          id="id"
-          max={100}
-          min={0}
-          precision={2}
-          step={1}
-          title="title"
-          tooltip="tooltip"
-          type="default"
-          unit="mm"
-        />
-      </ConfigPanelContext.Provider>,
+      <NumberBlock
+        configKey="speed"
+        forceUsePropsUnit
+        hasSlider
+        id="id"
+        max={100}
+        min={0}
+        precision={2}
+        step={1}
+        title="title"
+        tooltip="tooltip"
+        type="default"
+        unit="mm"
+      />,
     );
 
     expect(getByText('unit: mm')).toBeInTheDocument();
@@ -195,21 +184,19 @@ describe('test NumberBlock', () => {
 
   test('should handle change correctly', () => {
     const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <NumberBlock
-          configKey="speed"
-          hasSlider
-          id="id"
-          max={100}
-          min={0}
-          precision={2}
-          step={1}
-          title="title"
-          tooltip="tooltip"
-          type="default"
-          unit="mm"
-        />
-      </ConfigPanelContext.Provider>,
+      <NumberBlock
+        configKey="speed"
+        hasSlider
+        id="id"
+        max={100}
+        min={0}
+        precision={2}
+        step={1}
+        title="title"
+        tooltip="tooltip"
+        type="default"
+        unit="mm"
+      />,
     );
     const input = container.querySelector('input');
 

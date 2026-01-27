@@ -2,9 +2,9 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
+import useLayerStore, { mockForceUpdate } from '@mocks/@core/app/stores/layer/layerStore';
+
 import SingleColorBlock from './SingleColorBlock';
-import { mockForceUpdate } from '@mocks/@core/app/stores/layer/layerStore';
 
 const mockBatchCommand = jest.fn();
 
@@ -49,8 +49,6 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => () => mockInitState());
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-
 const mockUseConfigPanelStore = jest.fn();
 const mockChange = jest.fn();
 const mockUpdate = jest.fn();
@@ -62,6 +60,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test SingleColorBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       fullcolor: { hasMultiValue: false, value: true },
@@ -72,11 +71,7 @@ describe('test SingleColorBlock', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SingleColorBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SingleColorBlock />);
 
     expect(container).toMatchSnapshot();
   });
@@ -99,11 +94,7 @@ describe('test SingleColorBlock', () => {
     mockToggleFullColorLayer.mockReturnValue(mockSubCmd);
     mockGetMultiSelectData.mockReturnValue('mock-multi-select-data');
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <SingleColorBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<SingleColorBlock />);
     const btn = container.querySelector('button#single-color');
 
     fireEvent.click(btn);
