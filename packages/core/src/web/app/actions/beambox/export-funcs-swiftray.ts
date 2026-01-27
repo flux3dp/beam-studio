@@ -7,7 +7,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { controlConfig } from '@core/app/constants/promark-constants';
-import type { EngraveDpiOption } from '@core/app/constants/workarea-constants';
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -37,6 +37,7 @@ import type { IWrappedSwiftrayTaskFile } from '@core/interfaces/IWrappedFile';
 import { adorModels, promarkModels } from './constant';
 import { getAdorPaddingAccel } from './export/ador-utils';
 import { annotateLayerBBox } from './export/annotateLayerBBox';
+import { annotateLayerDpmm } from './export/annotateLayerDpmm';
 import generateThumbnail from './export/generate-thumbnail';
 
 let svgCanvas: ISVGCanvas;
@@ -131,8 +132,10 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
   });
 
   const documentState = useDocumentStore.getState();
+  const globalPreference = useGlobalPreferenceStore.getState();
   const uploadConfig = {
-    engraveDpi: dpiTextMap[documentState['engrave_dpi']],
+    // TODO: fallback dpmm for older backend, can remove after swiftray update
+    engraveDpi: dpiTextMap[globalPreference.engrave_dpi],
     model: workareaManager.model,
     rotaryMode: documentState['rotary_mode'],
   };
@@ -244,6 +247,7 @@ const fetchTaskCodeSwiftray = async (
     caption: i18n.lang.beambox.popup.progress.calculating,
     message: 'Splitting Full color layer',
   });
+  annotateLayerDpmm(device);
   annotateCurveEngravingZSpeed(device);
 
   // Prepare for Printing task & clean up temp modification

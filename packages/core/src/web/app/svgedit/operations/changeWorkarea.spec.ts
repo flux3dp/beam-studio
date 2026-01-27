@@ -6,43 +6,34 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   toggleFullColorAfterWorkareaChange: (...args) => mockToggleFullColorAfterWorkareaChange(...args),
 }));
 
-const mockGetState = jest.fn();
-const mockChangeMultipleDocumentStoreValues = jest.fn();
+const mockChangeDocumentStoreValue = jest.fn();
 
 jest.mock('@core/app/stores/documentStore', () => ({
-  changeMultipleDocumentStoreValues: (...args) => mockChangeMultipleDocumentStoreValues(...args),
-  useDocumentStore: {
-    getState: (...args) => mockGetState(...args),
-  },
+  changeDocumentStoreValue: (...args) => mockChangeDocumentStoreValue(...args),
 }));
 
-const mockRegulateEngraveDpiOption = jest.fn();
+const mockRegulateAllLayersDpi = jest.fn();
 
-jest.mock('@core/helpers/regulateEngraveDpi', () => ({
-  regulateEngraveDpiOption: (...args) => mockRegulateEngraveDpiOption(...args),
+jest.mock('@core/helpers/layer/regulateAllLayersDpi', () => ({
+  regulateAllLayersDpi: (...args) => mockRegulateAllLayersDpi(...args),
 }));
 
 describe('test changeWorkarea', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockGetState.mockReturnValue({
-      engrave_dpi: 'original-dpi',
-    });
-    mockRegulateEngraveDpiOption.mockReturnValue('regulated-dpi');
   });
 
   it('should work correctly', () => {
     const mockCmd = { onAfter: () => {} };
 
-    mockChangeMultipleDocumentStoreValues.mockReturnValue(mockCmd);
+    mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1');
-    expect(mockRegulateEngraveDpiOption).toHaveBeenCalledTimes(1);
-    expect(mockRegulateEngraveDpiOption).toHaveBeenLastCalledWith('fbm1', 'original-dpi');
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenCalledTimes(1);
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenLastCalledWith({
-      engrave_dpi: 'regulated-dpi',
+    expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith({
       workarea: 'fbm1',
     });
+    expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
+    expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: mockCmd });
     expect(mockToggleFullColorAfterWorkareaChange).toHaveBeenCalledTimes(1);
 
     const { onAfter } = mockCmd;
@@ -55,15 +46,14 @@ describe('test changeWorkarea', () => {
   it('should work correctly with toggleModule = false', () => {
     const mockCmd = { onAfter: () => {} };
 
-    mockChangeMultipleDocumentStoreValues.mockReturnValue(mockCmd);
+    mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1', { toggleModule: false });
-    expect(mockRegulateEngraveDpiOption).toHaveBeenCalledTimes(1);
-    expect(mockRegulateEngraveDpiOption).toHaveBeenLastCalledWith('fbm1', 'original-dpi');
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenCalledTimes(1);
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenLastCalledWith({
-      engrave_dpi: 'regulated-dpi',
+    expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith({
       workarea: 'fbm1',
     });
+    expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
+    expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: mockCmd });
     expect(mockToggleFullColorAfterWorkareaChange).not.toHaveBeenCalled();
 
     const { onAfter } = mockCmd;
