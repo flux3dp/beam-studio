@@ -5,6 +5,7 @@ import { Button } from 'antd';
 import classNames from 'classnames';
 
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import useI18n from '@core/helpers/useI18n';
 
 import { getGenerators } from './generators.config';
@@ -14,7 +15,8 @@ const Generators = memo(() => {
   const t = useI18n().topbar.menu.tools;
   const tDrawer = useI18n().generators;
   const { setDrawerMode } = useCanvasStore();
-  const generators = getGenerators({ isMobile: false }).filter((g) => g.visible !== false);
+  const workarea = useWorkarea();
+  const generators = getGenerators({ isMobile: false, workarea }).filter((g) => g.visible !== false);
 
   const handleItemClick = (onClick: () => void) => {
     setDrawerMode('none');

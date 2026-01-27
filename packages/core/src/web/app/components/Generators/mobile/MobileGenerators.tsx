@@ -3,6 +3,7 @@ import React, { memo } from 'react';
 import layoutConstants from '@core/app/constants/layout-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
+import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import useI18n from '@core/helpers/useI18n';
 
 import { getGenerators } from '../generators.config';
@@ -12,8 +13,9 @@ import styles from './MobileGenerators.module.scss';
 const MobileGenerators = memo(() => {
   const t = useI18n().topbar.menu.tools;
   const tDrawer = useI18n().generators;
+  const workarea = useWorkarea();
   const { setDrawerMode } = useCanvasStore();
-  const generators = getGenerators({ isMobile: true }).filter((g) => g.visible !== false);
+  const generators = getGenerators({ isMobile: true, workarea }).filter((g) => g.visible !== false);
   // Single expanded state with full-screen capability
   const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
 

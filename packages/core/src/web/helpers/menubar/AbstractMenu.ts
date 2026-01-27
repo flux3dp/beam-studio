@@ -57,7 +57,7 @@ const VIEW_MENU_ITEMS = [
   'AUTO_ALIGN',
   'ANTI_ALIASING',
 ];
-const TOOLS_MENU_ITEMS = ['MATERIAL_TEST_GENERATOR', 'CODE_GENERATOR', 'BOX_GEN', 'START_CURVE_ENGRAVING_MODE'];
+const TOOLS_MENU_ITEMS = ['START_CURVE_ENGRAVING_MODE'];
 
 /**
  * Special menu items that should be disabled in certain pages
