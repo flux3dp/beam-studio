@@ -1,9 +1,10 @@
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { ConfigProvider, InputNumber, Modal, Slider } from 'antd';
 
 import { ConfigModalBlock } from '@core/app/constants/antd-config';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
@@ -12,7 +13,6 @@ import useI18n from '@core/helpers/useI18n';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import styles from './AdvancedPowerPanel.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
 
 interface Props {
@@ -28,7 +28,6 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
     global: tGlobal,
   } = useI18n();
 
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const { getState, update } = useConfigPanelStore();
   const state = getState();
 
@@ -44,7 +43,7 @@ const AdvancedPowerPanel = ({ onClose }: Props): React.JSX.Element => {
     const newState = { ...state };
     const batchCmd = new history.BatchCommand('Change power advanced setting');
 
-    selectedLayers.forEach((layerName) => {
+    useLayerStore.getState().selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
 
       if (

@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import React, { memo } from 'react';
 
 import classNames from 'classnames';
 
@@ -8,19 +8,19 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getConfigKeys, writeData } from '@core/helpers/layer/layer-config-helper';
 import { getAllPresets, savePreset } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, Preset } from '@core/interfaces/ILayerConfig';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './SaveConfigButton.module.scss';
 
 const SaveConfigButton = (): React.JSX.Element => {
   const lang = useI18n().beambox.right_panel.laser_panel;
   const { getState, rename } = useConfigPanelStore();
   const state = getState();
-  const { selectedLayers } = useContext(ConfigPanelContext);
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const disabled = selectedLayers.length !== 1;
 
   const handleSave = (name: string) => {

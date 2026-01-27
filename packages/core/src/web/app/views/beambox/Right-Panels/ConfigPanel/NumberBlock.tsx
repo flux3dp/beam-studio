@@ -6,6 +6,7 @@ import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -24,7 +25,6 @@ import units from '@core/helpers/units';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
@@ -76,7 +76,6 @@ const NumberBlock = ({
     change,
     [key]: { hasMultiValue, value = 0 },
   } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const { isPresetRelated, isTimeRelated } = useMemo(
     () => ({
       isPresetRelated: presetRelatedConfigs.has(key),
@@ -114,7 +113,7 @@ const NumberBlock = ({
       if (type !== 'modal') {
         const batchCmd = noHistory ? undefined : new history.BatchCommand(`Change ${key}`);
 
-        selectedLayers.forEach((layerName) => {
+        useLayerStore.getState().selectedLayers.forEach((layerName) => {
           const layer = getLayerByName(layerName)!;
 
           writeDataLayer(layer, key, newVal, { batchCmd });
@@ -130,7 +129,7 @@ const NumberBlock = ({
         }
       }
     },
-    [change, value, key, max, min, isPresetRelated, isTimeRelated, selectedLayers, type, hasMultiValue],
+    [change, value, key, max, min, isPresetRelated, isTimeRelated, type, hasMultiValue],
   );
 
   useEffect(() => {

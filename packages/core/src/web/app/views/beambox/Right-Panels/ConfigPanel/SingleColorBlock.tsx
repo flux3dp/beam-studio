@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
@@ -16,13 +16,11 @@ import useI18n from '@core/helpers/useI18n';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
 
 const SingleColorBlock = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
   const { change, fullcolor, selectedLayer, split, update } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
 
   const handleToggleFullColor = () => {
     const batchCmd = new history.BatchCommand('Toggle full color');
@@ -31,6 +29,7 @@ const SingleColorBlock = (): React.JSX.Element => {
     change({ fullcolor: newVal });
 
     let colorChanged = false;
+    const selectedLayers = useLayerStore.getState().selectedLayers;
     const layers = selectedLayers.map((layerName) => getLayerByName(layerName)!);
 
     layers.forEach((layer) => {
