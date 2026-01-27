@@ -1,7 +1,6 @@
-import { useDocumentStore } from 'packages/core/src/__mocks__/@core/app/stores/documentStore';
-
 import { laserModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getEngraveDpmm } from '@core/app/constants/resolutions';
+import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { getData } from '@core/helpers/layer/layer-config-helper';
