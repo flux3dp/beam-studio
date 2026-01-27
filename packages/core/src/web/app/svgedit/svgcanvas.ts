@@ -1731,11 +1731,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const documentState = useDocumentStore.getState();
     const workarea: WorkAreaModel = documentState.workarea;
     const addOnInfo = getAddOnInfo(workarea);
-    const engraveDpi = documentState.engrave_dpi;
     const isUsingDiode = !!(documentState['enable-diode'] && addOnInfo.hybridLaser);
     const isUsingAF = !!documentState['enable-autofocus'];
 
-    svgcontent.setAttribute('data-engrave_dpi', engraveDpi);
     svgcontent.setAttribute('data-rotary_mode', documentState.rotary_mode ? 'true' : 'false');
     svgcontent.setAttribute('data-en_diode', String(isUsingDiode));
     svgcontent.setAttribute('data-en_af', String(isUsingAF));
