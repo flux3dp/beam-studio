@@ -9,6 +9,7 @@ import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
@@ -20,7 +21,7 @@ import initState from './initState';
 
 const SingleColorBlock = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
-  const { change, fullcolor, selectedLayer, split, update } = useConfigPanelStore();
+  const { change, fullcolor, split, update } = useConfigPanelStore();
 
   const handleToggleFullColor = () => {
     const batchCmd = new history.BatchCommand('Toggle full color');
@@ -50,7 +51,8 @@ const SingleColorBlock = (): React.JSX.Element => {
     });
 
     if (colorChanged) {
-      const selectedIdx = selectedLayers.findIndex((layerName) => layerName === selectedLayer);
+      const currentLayerName = layerManager.getCurrentLayerName();
+      const selectedIdx = selectedLayers.findIndex((layerName) => layerName === currentLayerName);
       const config = getMultiSelectData(layers, selectedIdx, 'color') as ConfigItem<string>;
 
       update({ color: config });

@@ -54,7 +54,6 @@ import AdvancedBlock from './AdvancedBlock';
 import AirAssistBlock from './AirAssistBlock';
 import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import DpiBlock from './DpiBlock';
 import FillBlock from './FillBlock';
 import HalftoneBlock from './HalftoneBlock';
@@ -85,13 +84,13 @@ interface Props {
 
 // TODO: add test
 const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
-  const initLayers = useLayerStore((state) => state.selectedLayers);
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const forceUpdate = useForceUpdate();
   const isDevMode = isDev();
-  const [selectedLayers, setSelectedLayers] = useState(initLayers);
+  const [modalMoveLayerDest, setModalMoveLayerDest] = useState(selectedLayers[0]);
   const hiddenOptions = useMemo(
     () => [
       { key: lang.dropdown.parameters, label: lang.dropdown.parameters, value: PARAMETERS_CONSTANT },
@@ -114,13 +113,12 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   useEffect(() => {
-    const currentLayerName = layerManager.getCurrentLayerName();
+    if (UIType === 'modal' && selectedLayers.length > 1) {
+      const currentLayerName = layerManager.getCurrentLayerName();
 
-    if (UIType === 'modal') setSelectedLayers([currentLayerName]);
-    else setSelectedLayers(initLayers);
-
-    change({ selectedLayer: currentLayerName });
-  }, [change, initLayers, UIType]);
+      useLayerStore.setState({ selectedLayers: [currentLayerName] });
+    }
+  }, [selectedLayers, UIType]);
 
   useEffect(() => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
@@ -152,7 +150,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [workarea, initState]);
 
-  useEffect(() => initState(selectedLayers), [selectedLayers]);
+  useEffect(() => {
+    initState(selectedLayers);
+    setModalMoveLayerDest(selectedLayers[0]);
+  }, [selectedLayers]);
 
   const presetList = usePresetList(workarea, module.value);
   const dropdownValue = useMemo(() => {
@@ -353,7 +354,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       ObjectPanelController.updateActiveKey(null);
     };
     const onSave = (): void => {
-      const destLayer = selectedLayers[0];
       const saveDataAndClose = () => {
         const batchCmd = new history.BatchCommand('Change layer parameter');
 
@@ -372,8 +372,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         onClose();
       };
 
-      if (destLayer !== initLayers[0]) {
-        moveToOtherLayer(destLayer, saveDataAndClose);
+      if (modalMoveLayerDest !== selectedLayers[0]) {
+        moveToOtherLayer(modalMoveLayerDest, saveDataAndClose);
       } else {
         saveDataAndClose();
       }
@@ -412,10 +412,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
           open
           title={lang.preset_setting.slice(0, -4)}
         >
-          {selectedLayers.length > 0 && (
+          {modalMoveLayerDest && (
             <div className={styles['change-layer']}>
               <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.current_layer}:</span>
-              <Select className={styles.select} defaultValue={selectedLayers[0]} disabled>
+              <Select className={styles.select} defaultValue={modalMoveLayerDest} disabled>
                 {layerOptions}
               </Select>
             </div>
@@ -425,9 +425,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.move_elems_to}</span>
               <Select
                 className={styles.select}
-                onChange={(layerName) => setSelectedLayers([layerName])}
+                onChange={(layerName) => setModalMoveLayerDest(layerName)}
                 popupMatchSelectWidth={false}
-                value={selectedLayers[0]}
+                value={modalMoveLayerDest}
               >
                 {layerOptions}
               </Select>
@@ -455,7 +455,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     );
   };
 
-  return <ConfigPanelContext.Provider value={{ selectedLayers }}>{getContent()}</ConfigPanelContext.Provider>;
+  return getContent();
 };
 
 export default memo(ConfigPanel);

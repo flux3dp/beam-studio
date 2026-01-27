@@ -64,7 +64,6 @@ describe('test SingleColorBlock', () => {
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       fullcolor: { hasMultiValue: false, value: true },
-      selectedLayer: 'layer1',
       split: { value: false },
       update: mockUpdate,
     });
