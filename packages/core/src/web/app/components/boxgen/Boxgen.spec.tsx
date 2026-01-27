@@ -2,60 +2,51 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
-
 import Boxgen from './Boxgen';
 
-jest.mock('@core/app/contexts/BoxgenContext', () => ({
-  BoxgenContext: React.createContext({ onClose: () => {} }),
-  BoxgenProvider: ({ children, onClose }: any) => (
-    <BoxgenContext.Provider value={{ onClose } as any}>{children}</BoxgenContext.Provider>
-  ),
+jest.mock('@core/app/stores/boxgenStore', () => ({
+  useBoxgenStore: jest.fn(() => ({
+    boxData: {
+      cover: true,
+      depth: 80,
+      height: 80,
+      joint: 'finger',
+      sheetThickness: 3,
+      teethLength: 40,
+      tSlotCount: 0,
+      tSlotDiameter: 3,
+      tSlotLength: 16,
+      volume: 'outer',
+      width: 80,
+    },
+    reset: jest.fn(),
+    setBoxData: jest.fn(),
+  })),
 }));
 
-jest.mock(
-  '@core/app/widgets/FullWindowPanel/FullWindowPanel',
-  () =>
-    ({ mobileTitle, onClose, renderContents, renderMobileContents, renderMobileFixedContent }: any) => (
-      <div>
-        <div>mobileTitle: {mobileTitle}</div>
-        <div>{renderMobileFixedContent?.()}</div>
-        <div>{renderMobileContents?.()}</div>
-        <div>{renderContents?.()}</div>
-        <button onClick={onClose} type="button">
-          back
-        </button>
-      </div>
-    ),
-);
-
-jest.mock('@core/app/widgets/FullWindowPanel/BackButton', () => ({ children }: { children: React.ReactNode }) => (
-  <div className="back button">{children}</div>
+jest.mock('@core/app/widgets/DraggableModal', () => ({ children, footer, onCancel, title }: any) => (
+  <div data-testid="draggable-modal">
+    <div>title: {title}</div>
+    <div>{children}</div>
+    <div>{footer}</div>
+    <button onClick={onCancel} type="button">
+      close
+    </button>
+  </div>
 ));
 
-jest.mock('@core/app/widgets/FullWindowPanel/Footer', () => ({ children }: { children: React.ReactNode }) => (
-  <div className="footer">{children}</div>
+jest.mock('@core/helpers/system-helper', () => ({
+  useIsMobile: jest.fn(() => false),
+}));
+
+jest.mock('./BoxCanvas', () => () => <div data-testid="mock-canvas">mock-canvas</div>);
+jest.mock('./BoxSelector', () => () => <div data-testid="mock-box-selector">mock-box-selector</div>);
+jest.mock('./Controller', () => () => <div data-testid="mock-box-controller">mock-box-controller</div>);
+jest.mock('./ExportButton', () => ({ onClose }: { onClose: () => void }) => (
+  <button data-testid="mock-export-button" onClick={onClose} type="button">
+    mock-export-button
+  </button>
 ));
-
-jest.mock(
-  '@core/app/widgets/FullWindowPanel/Header',
-  () =>
-    ({ children, title }: { children: React.ReactNode; title: string }) => (
-      <div className="header">
-        <div>title: {title}</div>
-        {children}
-      </div>
-    ),
-);
-
-jest.mock('@core/app/widgets/FullWindowPanel/Sider', () => ({ children }: { children: React.ReactNode }) => (
-  <div className="sider">{children}</div>
-));
-
-jest.mock('./BoxCanvas', () => 'mock-canvas');
-jest.mock('./BoxSelector', () => 'mock-box-selector');
-jest.mock('./Controller', () => 'mock-box-controller');
-jest.mock('./ExportButton', () => 'mock-export-button');
 
 const mockOnClose = jest.fn();
 
@@ -64,14 +55,27 @@ describe('test Boxgen', () => {
     jest.clearAllMocks();
   });
 
-  test('should rendered correctly', () => {
+  test('should render correctly', () => {
     const { container } = render(<Boxgen onClose={mockOnClose} />);
 
     expect(container).toMatchSnapshot();
+  });
+
+  test('should call onClose when close button is clicked', async () => {
+    const { container } = render(<Boxgen onClose={mockOnClose} />);
 
     const button = container.querySelector('button');
 
-    fireEvent.click(button);
-    waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
+    fireEvent.click(button!);
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
+  });
+
+  test('should call onClose when export button is clicked', async () => {
+    const { getByTestId } = render(<Boxgen onClose={mockOnClose} />);
+
+    const exportButton = getByTestId('mock-export-button');
+
+    fireEvent.click(exportButton);
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
   });
 });

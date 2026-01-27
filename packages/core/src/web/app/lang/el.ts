@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Επιλέξτε φάκελο',
     processing: 'Επεξεργασία...',
   },
+  generators: {
+    drawer_title: 'Γεννήτριες',
+  },
   generic_error: {
     OPERATION_ERROR: '[ΣΕ] Παρουσιάστηκε σύγκρουση κατάστασης, παρακαλώ επαναλάβετε την ενέργεια.',
     SUBSYSTEM_ERROR: '[ΣΥΕ] Σφάλμα κατά την εκτέλεση του έργου από το firmware της μηχανής. Παρακαλώ επανεκκινήστε τη μηχανή.',

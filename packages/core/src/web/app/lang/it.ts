@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Scegli cartella',
     processing: 'Elaborazione...',
   },
+  generators: {
+    drawer_title: 'Generatori',
+  },
   generic_error: {
     OPERATION_ERROR: "[OE] Conflitto di stato, riprovare l'azione.",
     SUBSYSTEM_ERROR: "[SE] Errore durante l'esecuzione del firmware della macchina. Riavviare la macchina.",

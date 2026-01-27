@@ -127,6 +127,17 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       </span>
     </div>
     <div
+      class="container"
+      id="left-Generator"
+      title="Generator"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
       class="separator"
     />
     <div
@@ -263,6 +274,17 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       class="container"
       id="left-AiGenerate"
       title="AI Create"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-Generator"
+      title="Generator"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"

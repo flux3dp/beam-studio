@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Tria carpeta',
     processing: 'Processant...',
   },
+  generators: {
+    drawer_title: 'Generadors',
+  },
   generic_error: {
     OPERATION_ERROR: "[OE] S'ha produït un conflicte d'estat, si us plau torna a intentar l'acció.",
     SUBSYSTEM_ERROR: '[SE] Error quan el firmware de la màquina executa la tasca. Si us plau, reinicia la màquina.',

@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Pilih Folder',
     processing: 'Memproses...',
   },
+  generators: {
+    drawer_title: 'Penjana',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Konflik status berlaku, sila cuba semula tindakan.',
     SUBSYSTEM_ERROR: '[SE] Ralat perisian mesin sewaktu melaksanakan tugas. Sila mulakan semula mesin.',

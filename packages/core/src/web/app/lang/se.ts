@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Välj mapp',
     processing: 'Bearbetar...',
   },
+  generators: {
+    drawer_title: 'Generatorer',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] En statuskonflikt inträffade, försök igen.',
     SUBSYSTEM_ERROR: '[SE] Fel vid maskinvarans programvara när uppgiften utfördes. Starta om maskinen.',

@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'เลือกโฟลเดอร์',
     processing: 'กำลังประมวลผล...',
   },
+  generators: {
+    drawer_title: 'เครื่องสร้าง',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] เกิดความขัดแย้งสถานะ โปรดลองทําซ้ําการกระทํา',
     SUBSYSTEM_ERROR: '[SE] เกิดข้อผิดพลาดเมื่อเฟิร์มแวร์ของเครื่องกําลังปฏิบัติงาน โปรดรีสตาร์ทเครื่อง',

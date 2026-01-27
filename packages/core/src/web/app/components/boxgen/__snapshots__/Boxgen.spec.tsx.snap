@@ -1,65 +1,61 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test Boxgen should rendered correctly 1`] = `
+exports[`test Boxgen should render correctly 1`] = `
 <div>
-  <div>
+  <div
+    data-testid="draggable-modal"
+  >
     <div>
-      mobileTitle: 
-      BOXGEN
+      title: 
+      Box Generator
     </div>
     <div>
-      <div>
-        <mock-box-selector />
+      <div
+        class="container"
+      >
+        <div
+          class="controls"
+        >
+          <div
+            data-testid="mock-box-selector"
+          >
+            mock-box-selector
+          </div>
+          <div
+            data-testid="mock-box-controller"
+          >
+            mock-box-controller
+          </div>
+        </div>
         <div
           class="canvas"
-        >
-          <mock-canvas />
-        </div>
+        />
       </div>
     </div>
     <div>
-      <mock-box-controller />
       <div
         class="footer"
       >
-        <mock-export-button />
-      </div>
-    </div>
-    <div>
-      <div
-        class="sider"
-      >
-        <div
-          class="back button"
+        <button
+          class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined"
+          type="button"
         >
-          Back to Beam Studio
-        </div>
-        <div
-          class="header"
+          <span>
+            Cancel
+          </span>
+        </button>
+        <button
+          data-testid="mock-export-button"
+          type="button"
         >
-          <div>
-            title: 
-            BOXGEN
-          </div>
-          <mock-box-selector />
-        </div>
-        <mock-box-controller />
-        <div
-          class="footer"
-        >
-          <mock-export-button />
-        </div>
-      </div>
-      <div
-        class="canvas"
-      >
-        <mock-canvas />
+          mock-export-button
+        </button>
       </div>
     </div>
     <button
       type="button"
     >
-      back
+      close
     </button>
   </div>
 </div>

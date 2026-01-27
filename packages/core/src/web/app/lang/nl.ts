@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Map kiezen',
     processing: 'Verwerken...',
   },
+  generators: {
+    drawer_title: 'Generatoren',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Er is een statusconflict opgetreden, probeer de actie opnieuw.',
     SUBSYSTEM_ERROR: '[SE] Fout bij het uitvoeren van de taak door de firmware van de machine. Herstart de machine.',

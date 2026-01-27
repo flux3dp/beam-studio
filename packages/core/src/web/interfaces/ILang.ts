@@ -1406,6 +1406,9 @@ export interface ILang {
     choose_folder: string;
     processing: string;
   };
+  generators: {
+    drawer_title: string;
+  };
   generic_error: {
     OPERATION_ERROR: string;
     SUBSYSTEM_ERROR: string;

@@ -32,7 +32,7 @@ export type CanvasMouseIntermediateMode =
   | 'rotate';
 export type CanvasMouseMode = CanvasMouseIntermediateMode | CanvasMouseOperationMode;
 
-export type CanvasDrawerMode = 'ai-chat' | 'ai-generate' | 'none';
+export type CanvasDrawerMode = 'ai-chat' | 'ai-generate' | 'generator' | 'none';
 
 interface CanvasStore {
   drawerMode: CanvasDrawerMode;

@@ -20,6 +20,9 @@ import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
 import { useIsMobile } from '@core/helpers/system-helper';
 
+import Generators from '../../Generators';
+import MobileGenerators from '../../Generators/mobile/MobileGenerators';
+
 import Banner from './Banner';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
@@ -91,6 +94,7 @@ export const SvgEditor = (): ReactNode => {
         )}
 
         {isMobile && drawerMode === 'ai-generate' && <MobileAiGenerate />}
+        {isMobile && drawerMode === 'generator' && <MobileGenerators />}
 
         <Drawer
           enableResizable={false}
@@ -98,6 +102,14 @@ export const SvgEditor = (): ReactNode => {
           setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-generate' : 'none')}
         >
           <AiGenerate />
+        </Drawer>
+
+        <Drawer
+          enableResizable={false}
+          isOpen={!isMobile && drawerMode === 'generator'}
+          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'generator' : 'none')}
+        >
+          <Generators />
         </Drawer>
 
         <Drawer

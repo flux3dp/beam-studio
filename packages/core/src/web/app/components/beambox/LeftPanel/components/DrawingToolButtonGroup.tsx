@@ -1,5 +1,6 @@
 import React, { memo, useContext, useMemo } from 'react';
 
+import { AppstoreOutlined } from '@ant-design/icons';
 import { match } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
@@ -151,6 +152,13 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: lang.beambox.ai_generate.header.title,
         onClick: () => toggleDrawerMode('ai-generate'),
         style: { color: drawerMode === 'ai-generate' ? '#000000' : undefined },
+      })}
+      {renderToolButton({
+        icon: <AppstoreOutlined />,
+        id: 'Generator',
+        label: 'Generator',
+        onClick: () => toggleDrawerMode('generator'),
+        style: { color: drawerMode === 'generator' ? '#000000' : undefined },
       })}
       {hasPassthroughExtension &&
         renderToolButton({

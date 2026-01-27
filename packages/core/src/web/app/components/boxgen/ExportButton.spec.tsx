@@ -2,18 +2,23 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
-
 import ExportButton from './ExportButton';
 
-jest.mock('@core/app/contexts/BoxgenContext', () => ({
-  BoxgenContext: React.createContext(null),
+const mockData = {};
+
+jest.mock('@core/app/stores/boxgenStore', () => ({
+  useBoxgenStore: jest.fn((selector) => selector({ boxData: mockData })),
+}));
+
+jest.mock('./useBoxgenWorkarea', () => () => ({
+  lengthUnit: { decimal: 2, unit: 'mm', unitRatio: 1 },
+  workarea: { canvasHeight: 210, canvasWidth: 300, label: 'beamo', value: 'fbm1' },
 }));
 
 const mockGetLayouts = jest.fn();
 
 jest.mock('@core/helpers/boxgen/Layout', () => ({
-  getLayouts: (...args) => mockGetLayouts(...args),
+  getLayouts: (...args: unknown[]) => mockGetLayouts(...args),
 }));
 
 const mockWrapSVG = jest.fn().mockReturnValue('mock-svg');
@@ -21,7 +26,7 @@ const mockWrapSVG = jest.fn().mockReturnValue('mock-svg');
 jest.mock(
   '@core/helpers/boxgen/wrapSVG',
   () =>
-    (...args) =>
+    (...args: unknown[]) =>
       mockWrapSVG(...args),
 );
 
@@ -30,7 +35,7 @@ const mockImportSvgString = jest.fn().mockResolvedValue('mock-svg-object');
 jest.mock(
   '@core/app/svgedit/operations/import/importSvgString',
   () =>
-    (...args) =>
+    (...args: unknown[]) =>
       mockImportSvgString(...args),
 );
 
@@ -38,8 +43,8 @@ const mockGetAllLayers = jest.fn();
 const mockGetLayerByName = jest.fn();
 
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
-  getAllLayers: (...args) => mockGetAllLayers(...args),
-  getLayerByName: (...args) => mockGetLayerByName(...args),
+  getAllLayers: (...args: unknown[]) => mockGetAllLayers(...args),
+  getLayerByName: (...args: unknown[]) => mockGetLayerByName(...args),
 }));
 
 const mockDisassembleUse = jest.fn();
@@ -47,25 +52,24 @@ const mockDisassembleUse = jest.fn();
 jest.mock(
   '@core/app/svgedit/operations/disassembleUse',
   () =>
-    (...args) =>
+    (...args: unknown[]) =>
       mockDisassembleUse(...args),
 );
 
 const mockAddCommandToHistory = jest.fn();
 
 jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
+  addCommandToHistory: (...args: unknown[]) => mockAddCommandToHistory(...args),
 }));
 
 const mockBatchCommand = { addSubCommand: jest.fn() };
 const mockCreateBatchCommand = jest.fn().mockImplementation(() => mockBatchCommand);
 
 jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
-  createBatchCommand: (...args) => mockCreateBatchCommand(...args),
+  createBatchCommand: (...args: unknown[]) => mockCreateBatchCommand(...args),
 }));
 
 const mockOnClose = jest.fn();
-const mockData = {};
 
 // Mock layer objects that will be returned by getLayerByName
 const mockNewLayer1 = { setVisible: jest.fn() };
@@ -93,23 +97,14 @@ describe('test ExportButton', () => {
     mockGetLayerByName.mockReturnValueOnce(mockNewLayer1).mockReturnValueOnce(mockNewLayer2);
   });
 
-  test('should behave correctly', async () => {
-    const { baseElement, container } = render(
-      <BoxgenContext.Provider
-        value={
-          {
-            boxData: mockData,
-            lengthUnit: { decimal: 0, unit: 'mm', unitRatio: 1 },
-            onClose: mockOnClose,
-            workarea: { canvasHeight: 210, canvasWidth: 300, label: 'beamo', value: 'fbm1' },
-          } as any
-        }
-      >
-        <ExportButton />
-      </BoxgenContext.Provider>,
-    );
+  test('should render correctly', () => {
+    const { container } = render(<ExportButton onClose={mockOnClose} />);
 
     expect(container).toMatchSnapshot();
+  });
+
+  test('should behave correctly', async () => {
+    const { baseElement, container } = render(<ExportButton onClose={mockOnClose} />);
 
     mockGetLayouts
       .mockReturnValueOnce({
@@ -127,29 +122,29 @@ describe('test ExportButton', () => {
 
     const button = container.querySelector('button');
 
-    fireEvent.click(button);
+    fireEvent.click(button!);
 
     const modal = baseElement.querySelector('.ant-modal-root');
 
-    waitFor(() => expect(modal).toBeInTheDocument());
+    await waitFor(() => expect(modal).toBeInTheDocument());
     expect(baseElement).toMatchSnapshot();
     expect(mockGetLayouts).toHaveBeenCalledTimes(1);
-    expect(mockGetLayouts).toBeCalledWith(300, 210, mockData, {
+    expect(mockGetLayouts).toHaveBeenCalledWith(300, 210, mockData, {
       compRadius: 0.1,
       joinOutput: false,
       textLabel: false,
     });
 
-    const paginationButtons = modal.querySelectorAll('.ant-pagination-item');
+    const paginationButtons = modal!.querySelectorAll('.ant-pagination-item');
 
     expect(paginationButtons[0]).toHaveClass('ant-pagination-item-active');
     expect(paginationButtons[1]).not.toHaveClass('ant-pagination-item-active');
-    fireEvent.click(modal.querySelector('.ant-pagination-item-2'));
-    expect(modal.querySelector('.ant-modal-body svg')).toHaveTextContent('layer2');
+    fireEvent.click(modal!.querySelector('.ant-pagination-item-2')!);
+    expect(modal!.querySelector('.ant-modal-body svg')).toHaveTextContent('layer2');
     expect(paginationButtons[0]).not.toHaveClass('ant-pagination-item-active');
     expect(paginationButtons[1]).toHaveClass('ant-pagination-item-active');
 
-    const optionButtons = modal.querySelectorAll('button.ant-switch');
+    const optionButtons = modal!.querySelectorAll('button.ant-switch');
 
     fireEvent.click(optionButtons[0]);
     expect(mockGetLayouts).toHaveBeenCalledTimes(3);
@@ -169,7 +164,7 @@ describe('test ExportButton', () => {
       textLabel: true,
     });
 
-    fireEvent.click(modal.querySelector('.ant-btn-primary'));
+    fireEvent.click(modal!.querySelector('.ant-btn-primary')!);
     await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockWrapSVG).toHaveBeenCalledTimes(4);

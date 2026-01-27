@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Vælg mappe',
     processing: 'Behandler...',
   },
+  generators: {
+    drawer_title: 'Generatorer',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Der opstod en statuskonflikt, prøv handlingen igen.',
     SUBSYSTEM_ERROR: '[SE] Fejl, da maskinfirmwaren udførte opgaven. Genstart maskinen.',

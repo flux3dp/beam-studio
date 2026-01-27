@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: '폴더를 선택해 주세요.',
     processing: '처리 중...',
   },
+  generators: {
+    drawer_title: '생성기',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] 상태 충돌이 발생했습니다. 작업을 다시 시도해 주세요.',
     SUBSYSTEM_ERROR: '[SE] 기계 펌웨어가 작업을 실행하는 중 오류가 발생했습니다. 기계를 다시 시작해 주세요.',

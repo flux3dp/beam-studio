@@ -1400,11 +1400,14 @@ const lang: ILang = {
     rotation_frame_warning: 'Die Rahmenvorschau dreht sich einmal. Bitte nicht währenddessen stoppen, um eine Verschiebung der Markierung zu vermeiden.',
     rotation_framing_desc: 'Vorschau des gesamten Drehbereichs, die Achse dreht sich gemäß der Vorschau.',
     start_task: 'Aufgabe Starten',
-    start_task_description: 'Nach Abschluss der Rahmenvorschau klicken Sie auf „Aufgabe Starten“, um den Auftrag einzureichen.',
+    start_task_description: 'Nach Abschluss der Rahmenvorschau klicken Sie auf „Aufgabe Starten", um den Auftrag einzureichen.',
   },
   general: {
     choose_folder: 'Ordner Auswählen',
     processing: 'Verarbeitung...',
+  },
+  generators: {
+    drawer_title: 'Generatoren',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Ein Statuskonflikt ist aufgetreten. Bitte wiederholen Sie die Aktion.',

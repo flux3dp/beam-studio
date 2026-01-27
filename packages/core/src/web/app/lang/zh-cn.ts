@@ -1400,11 +1400,14 @@ const lang: ILang = {
     rotation_frame_warning: '外框预览会旋转一圈，请避免中途停止，以免导致打点位置偏移。',
     rotation_framing_desc: '预览完整旋转范围，旋转轴会随着预览旋转。',
     start_task: '开始任务',
-    start_task_description: '完成外框预览后，点击“开始任务”提交工作。',
+    start_task_description: '完成外框预览后，点击"开始任务"提交工作。',
   },
   general: {
     choose_folder: '选择档案夹',
     processing: '处理中...',
+  },
+  generators: {
+    drawer_title: '生成器',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] 机器发生状态冲突，请再试一次',

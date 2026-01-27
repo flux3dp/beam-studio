@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'フォルダーの選択',
     processing: '処理中...',
   },
+  generators: {
+    drawer_title: 'ジェネレーター',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] ステータスの競合が発生しました。アクションを再試行してください。',
     SUBSYSTEM_ERROR: '[SE] マシンファームウェアがタスクを実行しているときにエラーが発生しました。マシンを再起動してください',

@@ -1400,11 +1400,14 @@ const lang: ILang = {
     rotation_frame_warning: 'Náhled rámečku se otočí o jednu otáčku. Nepřerušujte jej, aby nedošlo k posunutí polohy bodu.',
     rotation_framing_desc: 'Náhled celého rozsahu rotace, osa se pohybuje podle náhledu.',
     start_task: 'Spustit Úkol',
-    start_task_description: 'Po dokončení náhledu rámce klikněte na „Spustit Úkol“ pro odeslání úlohy.',
+    start_task_description: 'Po dokončení náhledu rámce klikněte na „Spustit Úkol" pro odeslání úlohy.',
   },
   general: {
     choose_folder: 'Vyberte složku',
     processing: 'Zpracovávám',
+  },
+  generators: {
+    drawer_title: 'Generátory',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Nastal stavový konflikt, opakujte prosím akci.',

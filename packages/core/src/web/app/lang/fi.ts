@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Valitse kansio',
     processing: 'Käsitellään...',
   },
+  generators: {
+    drawer_title: 'Generaattorit',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Tilakonflikti tapahtui, yritä toimintoa uudelleen.',
     SUBSYSTEM_ERROR: '[SE] Virhe, kun laiteohjelmisto suoritti tehtävää. Käynnistä laite uudelleen.',

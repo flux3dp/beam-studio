@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Choose Folder',
     processing: 'Processing...',
   },
+  generators: {
+    drawer_title: 'Generators',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] A status conflict occurred, please retry the action.',
     SUBSYSTEM_ERROR: '[SE] Error when machine firmware executing the task. Please restart the machine.',

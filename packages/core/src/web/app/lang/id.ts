@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Pilih Folder',
     processing: 'Memproses...',
   },
+  generators: {
+    drawer_title: 'Generator',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Terjadi konflik status, harap coba ulangi tindakan.',
     SUBSYSTEM_ERROR: '[SE] Terjadi kesalahan saat firmware mesin mengeksekusi tugas. Harap mulai ulang mesin.',

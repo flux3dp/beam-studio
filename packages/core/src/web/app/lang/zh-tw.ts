@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: '選擇檔案夾',
     processing: '處理中...',
   },
+  generators: {
+    drawer_title: '產生器',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] 機器發生狀態衝突，請再試一次',
     SUBSYSTEM_ERROR: '[SE] 韌體執行雕刻程序錯誤，請嘗試重新啟動機器',

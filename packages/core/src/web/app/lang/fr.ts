@@ -1406,6 +1406,9 @@ const lang: ILang = {
     choose_folder: 'Choisir un dossier',
     processing: 'Traitement...',
   },
+  generators: {
+    drawer_title: 'Générateurs',
+  },
   generic_error: {
     OPERATION_ERROR: "[OE] Un conflit d'état s'est produit, veuillez réessayer l'action.",
     SUBSYSTEM_ERROR: "[SE] Erreur lors de l'exécution de la tâche par le micrologiciel de la machine. Veuillez redémarrer la machine.",
