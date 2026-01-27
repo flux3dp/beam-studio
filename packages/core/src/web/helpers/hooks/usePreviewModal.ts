@@ -35,6 +35,8 @@ interface UsePreviewModalOptions {
 interface UsePreviewModalReturn {
   /** The current batch command for the preview */
   batchCmd: React.MutableRefObject<BatchCommand | null>;
+  /** Cancel the preview: unapply changes and restores original selection */
+  cancelPreview: () => void;
   /** Commit the preview to history (generates if preview disabled, commits existing otherwise) */
   commitPreview: () => Promise<BatchCommand | null>;
   /** Trigger a preview generation */
@@ -43,8 +45,6 @@ interface UsePreviewModalReturn {
   previewEnabled: boolean;
   /** Set the preview enabled state */
   setPreviewEnabled: (enabled: boolean) => void;
-  /** Unapply the current preview (for cancel) */
-  unapplyPreview: () => void;
 }
 
 /**
@@ -150,10 +150,14 @@ const usePreviewModal = ({
     }
   }, [previewEnabled, generatePreview, restoreSelection]);
 
-  const unapplyPreview = useCallback(() => {
+  const cancelPreview = useCallback(() => {
     if (batchCmd.current) {
       batchCmd.current.unapply();
       batchCmd.current = null;
+    }
+
+    if (selectionRef.current.length > 0) {
+      svgCanvas.multiSelect(selectionRef.current);
     }
   }, []);
 
@@ -201,11 +205,11 @@ const usePreviewModal = ({
 
   return {
     batchCmd,
+    cancelPreview,
     commitPreview,
     handlePreview,
     previewEnabled,
     setPreviewEnabled,
-    unapplyPreview,
   };
 };
 

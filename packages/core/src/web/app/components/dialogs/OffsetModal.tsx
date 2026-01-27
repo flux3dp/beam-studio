@@ -65,7 +65,7 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     return offsetElements(mode, distanceMm * dpmm, cornerType, undefined, { addToHistory: false });
   }, [offset, unit]);
 
-  const { commitPreview, handlePreview, previewEnabled, setPreviewEnabled, unapplyPreview } = usePreviewModal({
+  const { cancelPreview, commitPreview, handlePreview, previewEnabled, setPreviewEnabled } = usePreviewModal({
     generatePreview,
     key: 'offset',
     selectionMode: 'inserted',
@@ -94,7 +94,7 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
   };
 
   const handleCancel = () => {
-    unapplyPreview();
+    cancelPreview();
     close();
   };
 

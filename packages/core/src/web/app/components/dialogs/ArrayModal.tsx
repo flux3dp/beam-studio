@@ -64,7 +64,7 @@ const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => 
     );
   }, [data, unit]);
 
-  const { commitPreview, handlePreview, previewEnabled, setPreviewEnabled, unapplyPreview } = usePreviewModal({
+  const { cancelPreview, commitPreview, handlePreview, previewEnabled, setPreviewEnabled } = usePreviewModal({
     generatePreview,
     key: 'array',
     selectionMode: 'all',
@@ -101,7 +101,7 @@ const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => 
   };
 
   const onCancel = () => {
-    unapplyPreview();
+    cancelPreview();
     close();
   };
 
