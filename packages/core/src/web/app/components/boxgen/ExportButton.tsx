@@ -1,10 +1,10 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useState } from 'react';
 
 import { DownloadOutlined } from '@ant-design/icons';
 import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
 
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
+import { useBoxgenStore } from '@core/app/stores/boxgenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -16,18 +16,20 @@ import useI18n from '@core/helpers/useI18n';
 import type { IExportOptions } from '@core/interfaces/IBoxgen';
 
 import styles from './ExportButton.module.scss';
+import useBoxgenWorkarea from './useBoxgenWorkarea';
 
-const ExportDialog = ({
-  setVisible,
-  visible,
-}: {
+interface ExportDialogProps {
+  onClose: () => void;
   setVisible: (visible: boolean) => void;
   visible: boolean;
-}): ReactNode => {
+}
+
+const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): ReactNode => {
   const lang = useI18n().boxgen;
-  const { boxData, lengthUnit, onClose, workarea } = useContext(BoxgenContext);
+  const boxData = useBoxgenStore((state) => state.boxData);
+  const { lengthUnit, workarea } = useBoxgenWorkarea();
   const { decimal, unit, unitRatio } = lengthUnit;
-  const isMM = useMemo(() => unit === 'mm', [unit]);
+  const isMM = unit === 'mm';
   const [page, setPage] = useState(1);
   const [options, setOptions] = useState<IExportOptions>({
     compRadius: 0.1,
@@ -106,7 +108,7 @@ const ExportDialog = ({
     undoManager.addCommandToHistory(batchCmd);
     setConfirmLoading(false);
     setVisible(false);
-    onClose?.();
+    onClose();
   };
 
   return (
@@ -183,7 +185,11 @@ const ExportDialog = ({
   );
 };
 
-const ExportButton = (): React.JSX.Element => {
+interface ExportButtonProps {
+  onClose: () => void;
+}
+
+const ExportButton = ({ onClose }: ExportButtonProps): React.JSX.Element => {
   const lang = useI18n().boxgen;
   const [visible, setVisible] = useState(false);
 
@@ -192,7 +198,7 @@ const ExportButton = (): React.JSX.Element => {
       <Button onClick={() => setVisible(true)} type="primary">
         {lang.continue_import}
       </Button>
-      <ExportDialog setVisible={setVisible} visible={visible} />
+      <ExportDialog onClose={onClose} setVisible={setVisible} visible={visible} />
     </>
   );
 };

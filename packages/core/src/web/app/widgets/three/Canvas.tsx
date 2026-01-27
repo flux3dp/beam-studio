@@ -14,7 +14,7 @@ interface CameraProps {
 
 const Camera = ({ zoomKey, zoomRatio = 1.5 }: CameraProps) => {
   const currentZoomKey = useRef(zoomKey);
-  const [position, setPosition] = useState(null);
+  const [position, setPosition] = useState<null | THREE.Vector3>(null);
 
   useFrame(({ camera }) => {
     if (zoomKey !== currentZoomKey.current) {
@@ -58,16 +58,16 @@ const Camera = ({ zoomKey, zoomRatio = 1.5 }: CameraProps) => {
 interface Props extends RenderProps<HTMLCanvasElement> {
   children?: React.ReactNode;
   orbitControls?: React.ReactNode;
-  withControler?: boolean;
+  withController?: boolean;
 }
 
-const ThreeCanvas = ({ children, orbitControls, withControler = true, ...props }: Props): React.JSX.Element => {
+const ThreeCanvas = ({ children, orbitControls, withController = true, ...props }: Props): React.JSX.Element => {
   const [resetKey, setResetKey] = useState(0);
   const [zoomKey, setZoomKey] = useState(0);
 
   return (
     <>
-      {withControler && <CanvasController setResetKey={setResetKey} setZoomKey={setZoomKey} />}
+      {withController && <CanvasController setResetKey={setResetKey} setZoomKey={setZoomKey} />}
       <Canvas key={resetKey} {...props}>
         {children}
         {orbitControls ?? <OrbitControls dampingFactor={0.3} />}

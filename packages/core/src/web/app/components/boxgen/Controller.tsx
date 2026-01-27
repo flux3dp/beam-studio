@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { PlusOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Divider, Form, InputNumber, Radio, Slider, Space, Switch, Tooltip } from 'antd';
@@ -14,17 +14,20 @@ import {
   SHEET_THICKNESS_INCH,
   SHEET_THICKNESS_MM,
 } from '@core/app/constants/boxgen-constants';
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
+import { useBoxgenStore } from '@core/app/stores/boxgenStore';
 import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
 import type { IController } from '@core/interfaces/IBoxgen';
 
 import styles from './Controller.module.scss';
+import type { LengthUnit } from './useBoxgenWorkarea';
+import useBoxgenWorkarea from './useBoxgenWorkarea';
 
 const LengthInputItem = ({
   className,
   hidden,
   label,
+  lengthUnit,
   max,
   min = 0,
   name,
@@ -33,12 +36,12 @@ const LengthInputItem = ({
   className?: string;
   hidden?: boolean;
   label: string;
+  lengthUnit: LengthUnit;
   max?: number;
   min?: number;
   name: string;
   step?: number;
 }) => {
-  const { lengthUnit } = useContext(BoxgenContext);
   const { decimal, unit, unitRatio } = lengthUnit;
 
   return (
@@ -59,8 +62,8 @@ const LengthInputItem = ({
 
 const Controller = (): React.JSX.Element => {
   const lang = useI18n().boxgen;
-
-  const { boxData, lengthUnit, setBoxData, workarea } = useContext(BoxgenContext);
+  const { boxData, setBoxData } = useBoxgenStore();
+  const { lengthUnit, workarea } = useBoxgenWorkarea();
   const workareaLimit = Math.min(workarea.canvasWidth, workarea.canvasHeight);
   const { decimal, unit, unitRatio } = lengthUnit;
   const isMM = unit === 'mm';
@@ -193,6 +196,7 @@ const Controller = (): React.JSX.Element => {
         form={form}
         initialValues={boxData}
         labelCol={{ span: 8 }}
+        layout="horizontal"
         onValuesChange={onValuesChange}
       >
         <Form.Item label={lang.volume} name="volume">
@@ -207,6 +211,7 @@ const Controller = (): React.JSX.Element => {
         <LengthInputItem
           className={styles['small-margin']}
           label={lang.width}
+          lengthUnit={lengthUnit}
           max={workareaLimit}
           min={1}
           name="width"
@@ -214,11 +219,12 @@ const Controller = (): React.JSX.Element => {
         <LengthInputItem
           className={styles['small-margin']}
           label={lang.height}
+          lengthUnit={lengthUnit}
           max={workareaLimit}
           min={1}
           name="height"
         />
-        <LengthInputItem label={lang.depth} max={workareaLimit} min={1} name="depth" />
+        <LengthInputItem label={lang.depth} lengthUnit={lengthUnit} max={workareaLimit} min={1} name="depth" />
         <Form.Item label={lang.thickness} name="sheetThickness">
           <Select
             dropdownRender={(menu) => (
@@ -287,6 +293,7 @@ const Controller = (): React.JSX.Element => {
             className={styles['no-margin']}
             hidden={boxData.joint !== 'finger'}
             label=""
+            lengthUnit={lengthUnit}
             max={maxTeethLength}
             min={1}
             name="teethLength"
