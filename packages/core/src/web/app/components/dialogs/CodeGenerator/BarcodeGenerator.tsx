@@ -97,7 +97,7 @@ const BarcodeGenerator = forwardRef<BarcodeRef, Props>(({ isInvert, setIsInvert,
             </ConfigProvider>
           </Space.Compact>
 
-          <Flex gap={32} justify="center">
+          <Flex className={styles['form-container']} gap={32} justify="center">
             <Flex vertical>
               <Form.Item className={styles['flex-child']} label={t.bar_width}>
                 <InputNumber

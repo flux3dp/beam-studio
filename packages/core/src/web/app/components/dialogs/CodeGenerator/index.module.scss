@@ -1,20 +1,29 @@
 .title-flex {
   line-height: '24px';
   margin-bottom: 20;
-}
 
-.fw-n {
-  font-weight: normal;
+  @media screen and (max-width: 600px) {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
 }
 
 .variable-block {
   margin-top: 20px;
+
+  @media screen and (max-width: 600px) {
+    margin-top: 12px;
+  }
 
   .row {
     display: flex;
     align-items: center;
     gap: 12px;
     margin-top: 12px;
+
+    @media screen and (max-width: 600px) {
+      flex-wrap: wrap;
+    }
 
     .label {
       font-weight: bold;
@@ -27,6 +36,12 @@
 
     .select {
       width: 220px;
+
+      @media screen and (max-width: 600px) {
+        width: 100%;
+        flex: 1;
+        min-width: 0;
+      }
     }
 
     .offset {
@@ -35,8 +50,18 @@
       gap: 8px;
       margin-left: auto;
 
+      @media screen and (max-width: 600px) {
+        margin-left: 0;
+        width: 100%;
+        margin-top: 8px;
+      }
+
       :global(.ant-input-number) {
         width: 160px;
+
+        @media screen and (max-width: 600px) {
+          flex: 1;
+        }
       }
     }
   }

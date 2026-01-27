@@ -8,12 +8,14 @@ import type { ControlPosition, DraggableData, DraggableEvent } from 'react-dragg
 import { match } from 'ts-pattern';
 
 import layoutConstants from '@core/app/constants/layout-constants';
+import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './DraggableModal.module.scss';
 
 interface Props extends Omit<ModalProps, 'centered'> {
   centered?: boolean;
   defaultPosition?: ControlPosition;
+  disableMobileDrag?: boolean;
   scrollableContent?: boolean;
   width?: number | string;
   xRef?: 'center' | 'left' | 'right';
@@ -24,6 +26,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
   const {
     children,
     defaultPosition = { x: 0, y: 0 },
+    disableMobileDrag,
     modalRender = (modal) => modal,
     scrollableContent,
     title,
@@ -32,11 +35,13 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     yRef = 'center',
     ...restProps
   } = props;
+  const isMobile = useIsMobile();
   const [disabled, setDisabled] = useState(true);
   const [bounds, setBounds] = useState({ bottom: 0, left: 0, right: 0, top: 0 });
   const [draggableHeight, setDraggableHeight] = useState(0);
   const [draggableWidth, setDraggableWidth] = useState(0);
   const draggableRef = useRef<HTMLDivElement>(null);
+  const isDragDisabled = disableMobileDrag && isMobile;
 
   // eslint-disable-next-line hooks/exhaustive-deps
   useEffect(() => {
@@ -95,13 +100,16 @@ const DraggableModal = (props: Props): React.JSX.Element => {
         <Draggable
           bounds={bounds}
           defaultPosition={defaultPosition}
-          disabled={disabled}
+          disabled={disabled || isDragDisabled}
           nodeRef={draggableRef}
           onStart={onStart}
           positionOffset={positionOffset}
         >
           <div
-            className={classNames({ [styles.scrollable]: scrollableContent })}
+            className={classNames({
+              [styles.mobileScrollable]: isDragDisabled,
+              [styles.scrollable]: scrollableContent,
+            })}
             ref={draggableRef}
             style={{ minWidth: `min(${typeof width === 'string' ? width : `${width}px`}, 95vw)` }}
           >
@@ -117,9 +125,9 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           onFocus={() => {}}
           onMouseOut={() => setDisabled(true)}
           onMouseOver={() => {
-            if (disabled) setDisabled(false);
+            if (disabled && !isDragDisabled) setDisabled(false);
           }}
-          style={{ cursor: 'move', width: '100%' }}
+          style={{ cursor: isDragDisabled ? 'default' : 'move', width: '100%' }}
           // end
         >
           {title}
