@@ -114,7 +114,6 @@ export default class SegmentControlPoint {
         stroke: '#0091ff',
         'stroke-width': 1,
         style: 'pointer-events:all',
-        'xlink:title': window.svgEditor.uiStrings.pathCtrlPtTooltip,
       });
       svgedit.path.getGripContainer().appendChild(point);
     }

@@ -42,7 +42,6 @@ import svgCanvasClass from '@core/app/svgedit/svgcanvas';
 import textActions from '@core/app/svgedit/text/textactions';
 import textEdit from '@core/app/svgedit/text/textedit';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
@@ -78,6 +77,7 @@ import {
   setCursorAccordingToMouseMode,
   setMouseMode,
 } from '@core/app/stores/canvas/utils/mouseMode';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -93,13 +93,11 @@ declare global {
     alert: any;
     confirm: any;
     deparam: any;
-    getSvgIcon: any;
     pref: any;
     process_cancel: any;
     prompt: any;
     select: any;
     SvgCanvas: any;
-    svgIcons: any;
   }
 
   interface JQuery {
@@ -124,43 +122,21 @@ export interface ISVGEditor {
   clipboardData: any;
   copySelected: () => void;
   curConfig: ISVGConfig;
-  curPrefs: ISVGPref;
   cutSelected: () => void;
   deleteSelected: () => void;
   dimensions: number[];
   handleFile: (file: any) => Promise<void>;
   init: () => void;
   isClipboardDataReady: any;
-  putLocale: (lang: number | string | string[], good_langs: any[]) => void;
   readSVG: (blob: any, type: any, layerName: any) => Promise<unknown>;
   replaceBitmap: any;
   setConfig: (opts: any, cfgCfg: any) => void;
-  setIcon: (elem: any, icon_id: any) => void;
-  setLang: (lang: any, allStrings: any) => void;
   setPanning: (active: any) => void;
   storagePromptClosed: boolean;
-  tool_scale: number;
-  toolButtonClick: (button: any, noHiding: any) => boolean;
-  uiStrings: any;
   updateContextPanel: () => void;
 }
 
-interface ISVGPref {
-  bkgd_color?: string;
-  bkgd_url?: string;
-  export_notice_done?: boolean;
-  // EDITOR OPTIONS (DIALOG)
-  lang?: string; // Default to "en" if locale.js detection does not detect another language
-  // DOCUMENT PROPERTIES (DIALOG)
-  // ALERT NOTICES
-  // Only shows in UI as far as alert notices, but useful to remember, so keeping as pref
-  save_notice_done?: boolean;
-}
-
 const svgEditor = (window['svgEditor'] = (function () {
-  // EDITOR PROPERTIES: (defined below)
-  //		curPrefs, curConfig, canvas, storage, uiStrings
-  //
   // STATE MAINTENANCE PROPERTIES
   const workarea = useDocumentStore.getState().workarea;
   const { pxDisplayHeight, pxHeight, pxWidth } = getWorkarea(workarea);
@@ -172,53 +148,21 @@ const svgEditor = (window['svgEditor'] = (function () {
     clipboardData: null,
     copySelected: () => {},
     curConfig: null as any,
-    curPrefs: null as any,
     cutSelected: () => {},
     deleteSelected: () => {},
     dimensions: [pxWidth, pxDisplayHeight ?? pxHeight],
     handleFile: async (file) => {},
     init: () => {},
     isClipboardDataReady: false,
-    putLocale: (lang: number | string | string[], good_langs: any[]) => {},
     readSVG: async (blob: any, type: any, layerName: any) => {},
     ready: () => {},
     replaceBitmap: null,
     setConfig: (opts: any, cfgCfg: any) => {},
-    setIcon: (elem: any, icon_id: any) => {},
-    setLang: (lang: any, allStrings: any) => {},
     setPanning: (active: any) => {},
     storage: storage,
-    tool_scale: 1, // Dependent on icon size, so any use to making configurable instead? Used by JQuerySpinBtn.js
-    toolButtonClick: (button: any, noHiding: any) => {
-      return false;
-    },
-    uiStrings: {},
     updateContextPanel: () => {},
   };
 
-  const availableLangMap = {
-    da: 'da',
-    de: 'de',
-    el: 'el',
-    en: 'en',
-    es: 'es',
-    fi: 'fi',
-    fr: 'fr',
-    id: 'id',
-    it: 'it',
-    ja: 'ja',
-    kr: 'kr',
-    ms: 'ms',
-    nl: 'nl',
-    no: 'no',
-    pl: 'pl',
-    pt: 'pt',
-    se: 'se',
-    th: 'th',
-    vi: 'vi',
-    'zh-cn': 'zh-CN',
-    'zh-tw': 'zh-TW',
-  };
   let pressedKey: string[] = [];
 
   document.addEventListener('keydown', (e) => {
@@ -240,28 +184,10 @@ const svgEditor = (window['svgEditor'] = (function () {
   });
 
   let svgCanvas: ISVGCanvas;
-  var urldata,
-    Utils = window['svgedit'].utilities,
-    /**
-     * PREFS AND CONFIG
-     */
-    // The iteration algorithm for defaultPrefs does not currently support array/objects
-    defaultPrefs: ISVGPref = {
-      bkgd_color: '#FFF',
-      bkgd_url: '',
-      export_notice_done: false,
-      // EDITOR OPTIONS (DIALOG)
-      lang: availableLangMap[i18n.getActiveLang()] || 'en', // Default to "en" if locale.js detection does not detect another language
-      // DOCUMENT PROPERTIES (DIALOG)
-      // ALERT NOTICES
-      // Only shows in UI as far as alert notices, but useful to remember, so keeping as pref
-      save_notice_done: false,
-    },
-    curPrefs: ISVGPref = {},
-    // Note: The difference between Prefs and Config is that Prefs
-    //   can be changed in the UI and are stored in the browser,
-    //   while config cannot
-    curConfig: ISVGConfig = {
+  /**
+   * PREFS AND CONFIG
+   */
+  var curConfig: ISVGConfig = {
       /**
        * Can use window.location.origin to indicate the current
        * origin. Can contain a '*' to allow all domains or 'null' (as
@@ -317,71 +243,10 @@ const svgEditor = (window['svgEditor'] = (function () {
       // EXTENSION-RELATED (GRID)
       showlayers: true,
       snappingStep: 10,
-    },
-    /**
-     * LOCALE
-     * @todo Can we remove now that we are always loading even English? (unless locale is set to null)
-     */
-    uiStrings = (editor.uiStrings = {
-      common: {
-        cancel: 'Cancel',
-        key_backspace: 'Backspace',
-        key_del: 'Del',
-        key_down: 'Down',
-        key_up: 'Up',
-        ok: 'OK',
-      },
-      // This is needed if the locale is English, since the locale strings are not read in that instance.
-      layers: {
-        layer: 'Layer',
-      },
-      notification: {
-        defsFailOnSave:
-          'NOTE: Due to a bug in your browser, this image may appear wrong (missing gradients or elements). It will however appear correct once actually saved.',
-        dupeLayerName: 'There is already a layer named that!',
-        enterNewImgURL: 'Enter the new image URL',
-        enterNewLayerName: 'Please enter the new layer name',
-        enterNewLinkURL: 'Enter the new hyperlink URL',
-        enterUniqueLayerName: 'Please enter a unique layer name',
-        featNotSupported: 'Feature not supported',
-        invalidAttrValGiven: 'Invalid value given',
-        layerHasThatName: 'Layer already has that name',
-        noContentToFitTo: 'No content to fit to',
-        noteTheseIssues: 'Also note the following issues: ',
-        QerrorsRevertToSource: 'There were parsing errors in your SVG source.\nRevert back to original SVG source?',
-        QignoreSourceChanges: 'Ignore changes made to SVG source?',
-        QwantToOpen: 'Do you want to open a new file?\nThis will also erase your undo history!',
-        retrieving: "Retrieving '%s' ...",
-        saveFromBrowser: "Select 'Save As...' in your browser to save this image as a %s file.",
-        URLloadFail: 'Unable to load from URL',
-      },
-    });
+    };
   /**
    * EXPORTS
    */
-
-  /**
-   * Store and retrieve preferences
-   * @param {string} key The preference name to be retrieved or set
-   * @param {string} [val] The value. If the value supplied is missing or falsey, no change to the preference will be made.
-   * @returns {string} If val is missing or falsey, the value of the previously stored preference will be returned.
-   * @todo Can we change setting on the jQuery namespace (onto editor) to avoid conflicts?
-   * @todo Review whether any remaining existing direct references to
-   *	getting curPrefs can be changed to use $.pref() getting to ensure
-   *	defaultPrefs fallback (also for sake of allowInitialUserOverride); specifically, bkgd_color could be changed so that
-   *	the pref dialog has a button to auto-calculate background, but otherwise uses $.pref() to be able to get default prefs
-   *	or overridable settings
-   */
-  $.pref = function (key, val) {
-    if (val) {
-      curPrefs[key] = val;
-      editor.curPrefs = curPrefs; // Update exported value
-
-      return;
-    }
-
-    return key in curPrefs ? curPrefs[key] : defaultPrefs[key];
-  };
 
   /**
    * EDITOR PUBLIC METHODS
@@ -422,18 +287,7 @@ const svgEditor = (window['svgEditor'] = (function () {
     }
     $.each(opts, function (key: string, val) {
       if (opts.hasOwnProperty(key)) {
-        // Only allow prefs defined in defaultPrefs
-        if (defaultPrefs.hasOwnProperty(key)) {
-          if (cfgCfg.overwrite === false && (curConfig.preventAllURLConfig || curPrefs.hasOwnProperty(key))) {
-            return;
-          }
-
-          if (cfgCfg.allowInitialUserOverride === true) {
-            defaultPrefs[key] = val;
-          } else {
-            $.pref(key, val);
-          }
-        } else if (['allowedOrigins', 'extensions'].includes(key)) {
+        if (['allowedOrigins', 'extensions'].includes(key)) {
           if (
             cfgCfg.overwrite === false &&
             (curConfig.preventAllURLConfig ||
@@ -478,17 +332,6 @@ const svgEditor = (window['svgEditor'] = (function () {
 
   editor.init = function () {
     // Todo: Avoid var-defined functions and group functions together, etc. where possible
-    var good_langs = [];
-
-    $('#lang_select option').each(function (this: HTMLOptionElement) {
-      good_langs.push(this.value);
-    });
-
-    function setupCurPrefs() {
-      curPrefs = $.extend(true, {}, defaultPrefs, curPrefs); // Now safe to merge with priority for curPrefs in the event any are already set
-      // Export updated prefs
-      editor.curPrefs = curPrefs;
-    }
 
     function setupCurConfig() {
       curConfig = $.extend(true, {}, defaultConfig, curConfig); // Now safe to merge with priority for curConfig in the event any are already set
@@ -508,19 +351,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       editor.curConfig = curConfig;
     }
     setupCurConfig();
-    setupCurPrefs();
-
-    var setIcon = (editor.setIcon = function (elem, icon_id) {
-      var icon = typeof icon_id === 'string' ? $.getSvgIcon(icon_id, true) : icon_id.clone();
-
-      if (!icon) {
-        console.log('NOTE: Icon image missing: ' + icon_id);
-
-        return;
-      }
-
-      $(elem).empty().append(icon);
-    });
 
     var extFunc = function () {
       $.each(curConfig.extensions, function () {
@@ -543,9 +373,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           console.log(exception);
         });
       });
-
-      // var lang = ('lang' in curPrefs) ? curPrefs.lang : null;
-      editor.putLocale(null, good_langs);
     };
 
     // Load extensions
@@ -1348,7 +1175,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       svgCanvas.clear();
       workareaManager.resetView();
       RightPanelController.setPanelType(PanelType.None); // will be updated to PanelType.Layer automatically if is not mobile
-      LayerPanelController.updateLayerPanel();
+      useLayerStore.getState().forceUpdate();
       updateContextPanel();
       svgedit.transformlist.resetListMap();
       svgCanvas.runExtensions('onNewDocument');
@@ -1369,7 +1196,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       });
     })();
 
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().forceUpdate();
 
     var centerCanvas = function () {
       // this centers the canvas vertically in the workarea (horizontal handled in CSS)
@@ -1723,7 +1550,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           case 'json':
             Progress.popById('loading_image');
             await importPresets(file);
-            LayerPanelController.updateLayerPanel();
+            useLayerStore.getState().forceUpdate();
             break;
           case 'unknown':
             Progress.popById('loading_image');
@@ -1789,28 +1616,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     $(function () {
       window['svgCanvas'] = svgCanvas;
     });
-
-    editor.setLang = function (lang, allStrings) {
-      $.pref('lang', lang);
-      $('#lang_select').val(lang);
-
-      if (!allStrings) {
-        return;
-      }
-
-      // var notif = allStrings.notification; // Currently unused
-      // $.extend will only replace the given strings
-      var oldLayerName = $('#layerlist tr.layersel td.layername').text();
-      var rename_layer = oldLayerName === uiStrings.layers.layer + ' 1';
-
-      $.extend(uiStrings, allStrings);
-      svgCanvas.setUiStrings(allStrings);
-
-      if (rename_layer) {
-        svgCanvas.renameCurrentLayer(uiStrings.layers.layer + ' 1');
-        LayerPanelController.updateLayerPanel();
-      }
-    };
 
     //greyscale all svgContent
     (function () {

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
@@ -6,9 +6,10 @@ import classNames from 'classnames';
 
 import colorConstants, { PrintingColors } from '@core/app/constants/color-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData, getMultiSelectData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
@@ -16,13 +17,11 @@ import useI18n from '@core/helpers/useI18n';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
 
 const SingleColorBlock = (): React.JSX.Element => {
   const t = useI18n().beambox.right_panel.laser_panel;
-  const { change, fullcolor, selectedLayer, split, update } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
+  const { change, fullcolor, split, update } = useConfigPanelStore();
 
   const handleToggleFullColor = () => {
     const batchCmd = new history.BatchCommand('Toggle full color');
@@ -31,6 +30,7 @@ const SingleColorBlock = (): React.JSX.Element => {
     change({ fullcolor: newVal });
 
     let colorChanged = false;
+    const selectedLayers = useLayerStore.getState().selectedLayers;
     const layers = selectedLayers.map((layerName) => getLayerByName(layerName)!);
 
     layers.forEach((layer) => {
@@ -51,13 +51,14 @@ const SingleColorBlock = (): React.JSX.Element => {
     });
 
     if (colorChanged) {
-      const selectedIdx = selectedLayers.findIndex((layerName) => layerName === selectedLayer);
+      const currentLayerName = layerManager.getCurrentLayerName();
+      const selectedIdx = selectedLayers.findIndex((layerName) => layerName === currentLayerName);
       const config = getMultiSelectData(layers, selectedIdx, 'color') as ConfigItem<string>;
 
       update({ color: config });
     }
 
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().forceUpdate();
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

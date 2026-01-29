@@ -3,6 +3,7 @@ import React from 'react';
 import classNames from 'classnames';
 
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import ColorPicker from '@core/app/widgets/ColorPicker';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -11,10 +12,9 @@ import styles from './DragImage.module.scss';
 
 interface Props {
   draggingLayer: null | string;
-  selectedLayers: string[];
 }
 
-function DragImage({ draggingLayer = null, selectedLayers }: Props): React.JSX.Element {
+function DragImage({ draggingLayer = null }: Props): React.JSX.Element {
   if (!draggingLayer) {
     return <div id="drag-image" />;
   }
@@ -30,8 +30,10 @@ function DragImage({ draggingLayer = null, selectedLayers }: Props): React.JSX.E
   const color = getData(layer, 'color') ?? '#333333';
   const isVisible = layerObject.isVisible();
   const backLayers = [];
+  // No need to rerender DragImage when selectedLayers change, so not using useLayerStore hook here
+  const layerCount = useLayerStore.getState().selectedLayers.length;
 
-  for (let i = selectedLayers.length - 1; i >= 1; i -= 1) {
+  for (let i = layerCount - 1; i >= 1; i -= 1) {
     backLayers.push(<div className={styles.back} key={i} style={{ left: 10 * i, top: -10 * i }} />);
   }
 

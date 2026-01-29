@@ -3,6 +3,7 @@ import React from 'react';
 import { render } from '@testing-library/react';
 
 import DpiInfo from './DpiInfo';
+import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
 const mockUseIsMobile = jest.fn();
 
@@ -10,21 +11,22 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => mockUseIsMobile(),
 }));
 
-const mockUseDocumentStore = jest.fn();
+const mockUseConfigPanelStore = jest.fn();
 const mockState = {
-  engrave_dpi: 'low',
+  dpi: { value: 'low' },
+  module: { value: LayerModule.LASER_UNIVERSAL },
 };
 
-jest.mock('@core/app/stores/documentStore', () => ({
-  useDocumentStore: (...args) => mockUseDocumentStore(...args),
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
 }));
 
 describe('test DpiInfo', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockState.engrave_dpi = 'low';
+    mockState.dpi = { value: 'low' };
     mockUseIsMobile.mockReturnValue(false);
-    mockUseDocumentStore.mockImplementation((selector) => {
+    mockUseConfigPanelStore.mockImplementation((selector) => {
       return selector(mockState);
     });
   });
@@ -34,7 +36,7 @@ describe('test DpiInfo', () => {
 
     expect(container).toMatchSnapshot();
 
-    mockState.engrave_dpi = 'high';
+    mockState.dpi = { value: 'high' };
     rerender(<DpiInfo />);
 
     expect(container).toMatchSnapshot();
@@ -42,7 +44,7 @@ describe('test DpiInfo', () => {
 
   it('should render correctly in mobile', () => {
     mockUseIsMobile.mockReturnValue(true);
-    mockState.engrave_dpi = 'ultra';
+    mockState.dpi = { value: 'ultra' };
 
     const { container } = render(<DpiInfo />);
 

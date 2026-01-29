@@ -6,21 +6,20 @@ import classNames from 'classnames';
 
 import units from '@core/helpers/units';
 import type ConfigOption from '@core/interfaces/ConfigOption';
+import type { OneOf } from '@core/interfaces/utils';
 
 import styles from './ConfigSlider.module.scss';
 
-interface Props {
+type Props = OneOf<{ max: number; min: number }, { options: ConfigOption[] }> & {
   decimal?: number;
   id?: string;
-  max: number;
-  min: number;
   onChange: (value: number) => void;
   options?: ConfigOption[] | null;
   speedLimit?: boolean;
   step?: number;
   unit?: string;
   value: number;
-}
+};
 
 const ConfigSlider = ({
   decimal = 0,

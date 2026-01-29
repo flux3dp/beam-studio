@@ -1,16 +1,16 @@
-import React, { useContext, useMemo, useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { Col, ConfigProvider, Modal, Row } from 'antd';
 
 import { ColorRatioModalBlock } from '@core/app/constants/antd-config';
 import { PrintingColors } from '@core/app/constants/color-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigItem } from '@core/interfaces/ILayerConfig';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import ModalBlock from './ModalBlock';
 
 interface Props {
@@ -28,7 +28,6 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
   } = useI18n();
   const { getState, update } = useConfigPanelStore();
   const state = getState();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const [draftValue, setDraftValue] = useState<{ [key: string]: ConfigItem<number> }>({
     cRatio: state.cRatio,
     kRatio: state.kRatio,
@@ -42,7 +41,7 @@ const ColorRationModal = ({ fullColor, onClose }: Props): React.JSX.Element => {
       ? ['cRatio', 'mRatio', 'yRatio', 'kRatio']
       : ['printingStrength'];
 
-    selectedLayers.forEach((layerName) => {
+    useLayerStore.getState().selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
 
       keys.forEach((key) => {

@@ -3,8 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-
-import ConfigPanelContext from './ConfigPanelContext';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 const mockUseConfigPanelStore = jest.fn();
 
@@ -36,11 +35,10 @@ jest.mock('@core/helpers/layer-module/change-module', () => ({
 
 import ModuleBlock from './ModuleBlock';
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-
 describe('test ModuleBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
     mockUseWorkarea.mockReturnValue('ado1');
     mockUseConfigPanelStore.mockReturnValue({
       module: { hasMultiValue: false, value: LayerModule.LASER_10W_DIODE },
@@ -49,11 +47,7 @@ describe('test ModuleBlock', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <ModuleBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<ModuleBlock />);
 
     expect(container).toMatchSnapshot();
     expect(mockUseWorkarea).toHaveBeenCalledTimes(1);
@@ -64,11 +58,7 @@ describe('test ModuleBlock', () => {
     mockUseWorkarea.mockReturnValue('fpm1');
     mockUseSupportedModules.mockReturnValue([LayerModule.LASER_UNIVERSAL]);
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <ModuleBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<ModuleBlock />);
 
     expect(container).toBeEmptyDOMElement();
   });
@@ -77,12 +67,9 @@ describe('test ModuleBlock', () => {
     const mockLayerElem = {};
 
     mockGetLayerElementByName.mockReturnValue(mockLayerElem);
+    useLayerStore.setState({ selectedLayers: ['layer1'] });
 
-    const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: ['layer1'] }}>
-        <ModuleBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { baseElement, getByText } = render(<ModuleBlock />);
 
     fireEvent.mouseDown(baseElement.querySelector('.ant-select-selector'));
     fireEvent.click(getByText('20W Diode Laser'));

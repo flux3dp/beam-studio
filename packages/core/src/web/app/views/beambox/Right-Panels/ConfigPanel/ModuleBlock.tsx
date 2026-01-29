@@ -1,9 +1,10 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 
 import { pipe } from 'remeda';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
@@ -14,7 +15,6 @@ import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './ModuleBlock.module.scss';
 
 const ModuleBlock = (): React.ReactNode => {
@@ -26,7 +26,7 @@ const ModuleBlock = (): React.ReactNode => {
     layer_module: tModule,
   } = useI18n();
   const { module } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const { value } = module;
   const workarea = useWorkarea();
   const supportedModules = useSupportedModules(workarea);

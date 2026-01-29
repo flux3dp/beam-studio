@@ -1,15 +1,15 @@
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Modal, Switch } from 'antd';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { ConfigKey, ConfigKeyTypeMap } from '@core/interfaces/ILayerConfig';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import styles from './FillSettingModal.module.scss';
 import Input from './Input';
 
@@ -26,7 +26,6 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
   } = useI18n();
   const { getState, update } = useConfigPanelStore();
   const state = getState();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const [draftValue, setDraftValue] = useState({
     biDirectional: state.biDirectional,
     crossHatch: state.crossHatch,
@@ -37,7 +36,7 @@ const FillSettingModal = ({ onClose }: Props): React.JSX.Element => {
   const handleSave = () => {
     const keys = ['fillInterval', 'fillAngle', 'biDirectional', 'crossHatch'] as const;
 
-    selectedLayers.forEach((layerName) => {
+    useLayerStore.getState().selectedLayers.forEach((layerName) => {
       const layer = getLayerByName(layerName)!;
 
       keys.forEach((key) => {

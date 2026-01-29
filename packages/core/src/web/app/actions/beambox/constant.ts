@@ -95,13 +95,6 @@ export default {
       Y: 15, // mm
     },
   },
-  dpiValueMap: {
-    detailed: 1000,
-    high: 500,
-    low: 125,
-    medium: 250,
-    ultra: 2000,
-  },
   dpmm,
   fcodeV2Models,
   highPowerModels: ['fhx2rf', 'fhexa1', 'ado1', 'flv1', 'fpm1'],

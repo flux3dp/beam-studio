@@ -2,7 +2,8 @@ import type { PreviewSpeedLevelType } from '@core/app/actions/beambox/constant';
 import type { RotaryType } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
-import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 import type { Prettify } from './utils';
 
@@ -19,7 +20,6 @@ export type DocumentState = {
   'enable-autofocus'?: boolean;
   'enable-diode'?: boolean;
   'enable-job-origin': boolean;
-  engrave_dpi: EngraveDpiOption;
   'extend-rotary-workarea': boolean;
   'frame-before-start': boolean;
   'job-origin': number;
@@ -62,6 +62,7 @@ export type GlobalPreference = {
   'enable-custom-backlash': boolean;
   'enable-custom-preview-height': boolean;
   'enable-uv-print-file': boolean;
+  engrave_dpi: EngraveDpiOption;
   fast_gradient: boolean;
   'font-convert': '1.0' | '2.0';
   'font-substitute': boolean;

@@ -5,7 +5,7 @@ import MockNumberBlock from '@mocks/@core/app/views/beambox/Right-Panels/ConfigP
 
 jest.mock('./NumberBlock', () => MockNumberBlock);
 
-import ConfigPanelContext from './ConfigPanelContext';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 const mockWriteData = jest.fn();
 
@@ -36,7 +36,6 @@ jest.mock('./initState', () => mockInitState);
 
 import WobbleBlock from './WobbleBlock';
 
-const mockSelectedLayers = ['layer1', 'layer2'];
 const mockUseConfigPanelStore = jest.fn();
 const mockChange = jest.fn();
 
@@ -47,6 +46,7 @@ jest.mock('@core/app/stores/configPanel', () => ({
 describe('test WobbleBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       wobbleDiameter: { hasMultiValue: false, value: 0.2 },
@@ -61,11 +61,7 @@ describe('test WobbleBlock', () => {
       wobbleStep: { hasMultiValue: false, value: 0.05 },
     });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <WobbleBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<WobbleBlock />);
 
     expect(container).toMatchSnapshot();
   });
@@ -77,31 +73,19 @@ describe('test WobbleBlock', () => {
       wobbleStep: { hasMultiValue: false, value: -1 },
     });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <WobbleBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<WobbleBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
   it('should render correctly when toggle is on', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <WobbleBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<WobbleBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('handlers should work', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <WobbleBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<WobbleBlock />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();

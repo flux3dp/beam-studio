@@ -167,7 +167,6 @@ export default interface ISVGCanvas {
   setSvgElemPosition: (para: 'x' | 'y', val: number, elem?: SVGElement, addToHistory?: boolean) => IBatchCommand;
   setSvgElemSize: (type: 'height' | 'rx' | 'ry' | 'width', val: number, addToHistory?: boolean) => IBatchCommand | null;
   setSvgString: (content: string) => boolean;
-  setUiStrings(allStrings: Record<string, string>): void;
   simplifyPath: (elements?: SVGAElement[]) => void;
   sortTempGroupByLayer: () => void;
   spaceKey: boolean;

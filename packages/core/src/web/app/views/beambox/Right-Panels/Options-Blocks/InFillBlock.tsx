@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -75,7 +75,7 @@ const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode =>
       isAllFilled: !isAnyFilled,
       isAnyFilled: !isAnyFilled,
     }));
-    LayerPanelController.checkVector();
+    useLayerStore.getState().checkVector();
   };
 
   const isPartiallyFilled = elems[0].tagName === 'g' && isAnyFilled && !isAllFilled;

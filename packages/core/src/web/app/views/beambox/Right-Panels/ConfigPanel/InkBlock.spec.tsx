@@ -3,8 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { PrintingColors } from '@core/app/constants/color-constants';
-
-import ConfigPanelContext from './ConfigPanelContext';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 jest.mock('./ConfigSlider', () => ({ id, max, min, onChange, value }: any) => (
   <input
@@ -97,7 +96,6 @@ jest.mock('./initState', () => mockInitState);
 import InkBlock from './InkBlock';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
-const mockSelectedLayers = ['layer1', 'layer2'];
 const mockUseConfigPanelStore = jest.fn();
 const mockChange = jest.fn();
 
@@ -114,6 +112,7 @@ jest.mock('@core/app/stores/globalPreferenceStore', () => ({
 describe('test InkBlock', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
     batchCmd = { count: 0, onAfter: undefined };
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
@@ -126,21 +125,13 @@ describe('test InkBlock', () => {
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <InkBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<InkBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('onChange should work', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <InkBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<InkBlock />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();
@@ -166,11 +157,7 @@ describe('test InkBlock', () => {
   });
 
   test('onChange of value display should work', () => {
-    const { getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <InkBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { getByText } = render(<InkBlock />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteData).not.toHaveBeenCalled();
@@ -193,11 +180,7 @@ describe('test InkBlock', () => {
   });
 
   test('open and close modal should work', () => {
-    const { container, queryByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <InkBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container, queryByText } = render(<InkBlock />);
 
     fireEvent.click(container.querySelector('.icon'));
     expect(queryByText('MockColorRatioModal')).toBeInTheDocument();

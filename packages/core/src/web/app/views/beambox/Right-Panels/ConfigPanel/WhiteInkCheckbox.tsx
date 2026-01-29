@@ -1,10 +1,11 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 
 import { Checkbox, Switch } from 'antd';
 
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
@@ -12,7 +13,6 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
 import styles from './WhiteInkCheckbox.module.scss';
 import WhiteInkSettingsModal from './WhiteInkSettingsModal';
@@ -34,7 +34,6 @@ const WhiteInkCheckbox = ({ type = 'default' }: Props): ReactNode => {
 
   const [showModal, setShowModal] = useState(false);
   const { change, wInk } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const { value } = wInk;
 
   if (type === 'modal') {
@@ -48,7 +47,7 @@ const WhiteInkCheckbox = ({ type = 'default' }: Props): ReactNode => {
 
     const batchCmd = new history.BatchCommand('Change white ink toggle');
 
-    selectedLayers.forEach((layerName) => writeData(layerName, 'wInk', newVal, { batchCmd }));
+    useLayerStore.getState().selectedLayers.forEach((layerName) => writeData(layerName, 'wInk', newVal, { batchCmd }));
     batchCmd.onAfter = initState;
     svgCanvas.addCommandToHistory(batchCmd);
   };

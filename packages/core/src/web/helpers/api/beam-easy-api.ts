@@ -2,6 +2,7 @@ import { EventEmitter } from 'eventemitter3';
 
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { importBvgString } from '@core/app/svgedit/operations/import/importBvg';
 import { discoverManager } from '@core/helpers/api/discover';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
@@ -117,8 +118,8 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     this.bvg = bvgString;
     /*
     this.bvg = `
-    <svg id="svgcontent" width="3000" height="2100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" data-top="-1300" data-left="-512" data-zoom="0.115" data-rotary_mode="0" data-engrave_dpi="medium">
-      <g data-repeat="1" data-strength="1" data-speed="20" clip-path="url(#scene_mask)" data-color="#333333" class="layer">
+    <svg id="svgcontent" width="3000" height="2100" xmlns="http://www.w3.org/2000/svg" xmlns:svg="http://www.w3.org/2000/svg" data-top="-1300" data-left="-512" data-zoom="0.115" data-rotary_mode="0">
+      <g data-repeat="1" data-strength="1" data-speed="20" clip-path="url(#scene_mask)" data-dpi="medium" data-color="#333333" class="layer">
         <title>預設圖層</title>
         <rect fill="black" vector-effect="non-scaling-stroke" fill-opacity="0" id="svg_1" stroke="#333333" height="913.57312" width="713.4571" y="196.98372" x="201.85626"/>
       </g>
@@ -126,9 +127,9 @@ export default window['EasyManipulator'] = class EasyManipulator extends EventEm
     await importBvgString(this.bvg);
 
     const { uploadFile } = await ExportFuncs.prepareFileWrappedFromSvgStringAndThumbnail();
-    const { engrave_dpi: engraveDpi, workarea } = useDocumentStore.getState();
+    const { workarea } = useDocumentStore.getState();
     const { message, res } = await svgeditorParser.uploadToSvgeditorAPI(uploadFile, {
-      engraveDpi,
+      engraveDpi: useGlobalPreferenceStore.getState().engrave_dpi,
       model: this.device ? this.device.model : workarea,
     });
 

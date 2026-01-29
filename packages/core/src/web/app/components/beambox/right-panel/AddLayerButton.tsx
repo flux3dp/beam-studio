@@ -4,6 +4,7 @@ import Icon from '@ant-design/icons';
 
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import TutorialController from '@core/app/views/tutorials/tutorialController';
 import { createLayer } from '@core/helpers/layer/layer-helper';
@@ -11,11 +12,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import styles from './AddLayerButton.module.scss';
 
-interface Props {
-  setSelectedLayers: (selectedLayers: string[]) => void;
-}
-
-function AddLayerButton({ setSelectedLayers }: Props): React.JSX.Element {
+function AddLayerButton(): React.JSX.Element {
   const lang = useI18n().beambox.right_panel.layer_panel;
 
   const addNewLayer = (): void => {
@@ -33,7 +30,7 @@ function AddLayerButton({ setSelectedLayers }: Props): React.JSX.Element {
       TutorialController.handleNextStep();
     }
 
-    setSelectedLayers([uniqName]);
+    useLayerStore.getState().setSelectedLayers([uniqName]);
   };
 
   return (

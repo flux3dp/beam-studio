@@ -103,7 +103,6 @@ export default class PathNodePoint implements IPathNodePoint {
         stroke: '#0091ff',
         'stroke-width': 1,
         style: 'pointer-events:all',
-        'xlink:title': window.svgEditor.uiStrings.pathNodeTooltip,
       });
       point = pointGripContainer.appendChild(point);
 

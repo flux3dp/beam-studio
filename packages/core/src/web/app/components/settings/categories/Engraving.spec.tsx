@@ -32,10 +32,11 @@ test('should render correctly', () => {
 
   const { container } = render(<Engraving />);
 
-  expect(mockGetPreference).toHaveBeenCalledTimes(5);
-  expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'fast_gradient');
-  expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'reverse-engraving');
-  expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'segmented-engraving');
+  expect(mockGetPreference).toHaveBeenCalledTimes(6);
+  expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'engrave_dpi');
+  expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'fast_gradient');
+  expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'reverse-engraving');
+  expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'segmented-engraving');
   expect(container).toMatchSnapshot();
 
   // Test SettingSwitch controls
@@ -50,9 +51,13 @@ test('should render correctly', () => {
   expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'segmented-engraving', false);
 
   // Test SettingSelect control
-  const selectControl = container.querySelector('.select-control');
+  const selectControls = container.querySelectorAll('.select-control');
 
-  fireEvent.change(selectControl, { target: { value: false } });
+  fireEvent.change(selectControls[0], { target: { value: 'detailed' } });
   expect(mockSetPreference).toHaveBeenCalledTimes(3);
-  expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'reverse-engraving', false);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'engrave_dpi', 'detailed');
+
+  fireEvent.change(selectControls[1], { target: { value: false } });
+  expect(mockSetPreference).toHaveBeenCalledTimes(4);
+  expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'reverse-engraving', false);
 });

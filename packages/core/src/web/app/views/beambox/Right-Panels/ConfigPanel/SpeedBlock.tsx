@@ -12,15 +12,15 @@ import { useShallow } from 'zustand/react/shallow';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSpeedOptions } from '@core/app/constants/config-options';
-import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
@@ -29,13 +29,11 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
-import doLayersContainsVector from '@core/helpers/layer/check-vector';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import ConfigSlider from './ConfigSlider';
 import ConfigValueDisplay from './ConfigValueDisplay';
 import initState from './initState';
@@ -46,11 +44,11 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
   const { change, module, speed } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
+  const hasVector = useLayerStore((state) => state.hasVector);
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
-  const { hasVector } = useContext(LayerPanelContext);
   const hasCurveEngraving = useHasCurveEngraving();
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
@@ -59,8 +57,14 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   const { hasMultiValue, value } = speed;
   const layerModule = module.value;
-  const isPrinting = useMemo(() => printingModules.has(layerModule), [layerModule]);
-  const isNormalLaser = useMemo(() => layerModule === LayerModule.LASER_UNIVERSAL, [layerModule]);
+  const { isLaser, isNormalLaser, isPrinting } = useMemo(
+    () => ({
+      isLaser: laserModules.has(layerModule),
+      isNormalLaser: layerModule === LayerModule.LASER_UNIVERSAL,
+      isPrinting: printingModules.has(layerModule),
+    }),
+    [layerModule],
+  );
 
   const isInch = useStorageStore((state) => state.isInch);
   const {
@@ -116,20 +120,20 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, [workareaMaxSpeed, layerModule, workarea]);
 
   const curveEngravingSpeedWarning = useMemo(() => {
-    if (!curveSpeedLimit || isPrinting) return '';
+    if (!curveSpeedLimit || !isLaser) return '';
 
     return sprintf(t.speed_constrain_warning_curve_engraving, {
       limit: `${units.convertUnit(curveSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
     });
-  }, [curveSpeedLimit, isPrinting, t.speed_constrain_warning_curve_engraving, fakeUnit, displayUnit]);
+  }, [curveSpeedLimit, isLaser, t.speed_constrain_warning_curve_engraving, fakeUnit, displayUnit]);
 
   const vectorSpeedWarning = useMemo(() => {
-    if (!vectorSpeedLimit || isPrinting) return '';
+    if (!vectorSpeedLimit || !isLaser) return '';
 
     return sprintf(isAutoFeederOn ? t.speed_constrain_warning_auto_feeder : t.speed_constrain_warning, {
       limit: `${units.convertUnit(vectorSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
     });
-  }, [vectorSpeedLimit, isPrinting, isAutoFeederOn, t, fakeUnit, displayUnit]);
+  }, [vectorSpeedLimit, isLaser, isAutoFeederOn, t, fakeUnit, displayUnit]);
 
   const moduleSpeedWarning = useMemo(() => {
     return sprintf(t.speed_constrain_warning_module_addon, {
@@ -142,7 +146,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
   let warningText = '';
 
-  if (!isPromark && !isPrinting) {
+  if (!isPromark && isLaser) {
     if (hasCurveLimit && hasCurveEngraving && curveSpeedLimit && value > curveSpeedLimit) {
       warningText = curveEngravingSpeedWarning;
     } else if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
@@ -204,7 +208,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         min={minValue}
         onChange={handleChange}
         options={sliderOptions}
-        speedLimit={!isPrinting && (type === 'modal' ? doLayersContainsVector(selectedLayers) : hasVector)}
+        speedLimit={!isPrinting && hasVector}
         step={0.1}
         unit={displayUnit}
         value={value}

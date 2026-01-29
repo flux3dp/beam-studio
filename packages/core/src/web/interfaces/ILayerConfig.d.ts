@@ -1,5 +1,6 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { LaserType, mopaWatts, promarkWatts } from '@core/app/constants/promark-constants';
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
 
@@ -22,6 +23,7 @@ type LaserConfig = {
   /** μs ,delay to emit laser */
   delay: number;
   diode: number;
+  dpi: EngraveDpiOption;
   focus: number;
   focusStep: number;
   height: number;

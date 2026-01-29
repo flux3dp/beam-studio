@@ -4,7 +4,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import NS from '@core/app/constants/namespaces';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
+import { useLayerStore } from '@core/app/stores/layer/layerStore';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -19,7 +19,6 @@ import ungroupElement from '../group/ungroup';
 import type { BatchCommand } from '../history/history';
 import history from '../history/history';
 import undoManager from '../history/undoManager';
-import layerManager from '../layer/layerManager';
 import { getRotationAngle, setRotationAngle } from '../transform/rotation';
 import { getHref } from '../utils/href';
 
@@ -125,8 +124,7 @@ export const disassembleUse = async (
 
     const { elem: layer, title: layerTitle } = getObjectLayer(elem)!;
 
-    layerManager.setCurrentLayer(layerTitle);
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().setSelectedLayers([layerTitle]);
 
     const color = (useGlobalPreferenceStore.getState().use_layer_color ? getData(layer, 'color') : '#000') ?? '#000';
     const drawing = svgCanvas.getCurrentDrawing();
