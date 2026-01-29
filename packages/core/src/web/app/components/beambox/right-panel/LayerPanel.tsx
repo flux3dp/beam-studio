@@ -488,7 +488,6 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
     const lang = i18n.lang.beambox.right_panel.layer_panel;
 
-    const layerNames = layerManager.getAllLayerNames();
     const { hide } = this.props;
 
     return (
@@ -526,7 +525,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
             >
               {this.renderLayerPanel()}
             </ResizableBox>
-            <SelLayerBlock layerNames={layerNames} />
+            <SelLayerBlock />
             <WattBlock />
             <ConfigPanel />
           </>

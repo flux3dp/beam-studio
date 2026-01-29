@@ -4,12 +4,12 @@ const exampleList = [
   {
     label: 'Example of beamo',
     type: 'Example Files',
-    beam: '85f6e6c628d3d9c0c0ba6d31b047ef34',
+    beam: '4fc7f9ac03bac24119f46ff69dcc9e9d',
   },
   {
     label: 'Example of Beambox',
     type: 'Example Files',
-    beam: 'fab4ae5c44610a362d589a7e705d70f7',
+    beam: 'f6b070aa2155eb32bc426a6bdd87ea6c',
   },
   {
     label: 'Material Engraving Test',
@@ -39,7 +39,7 @@ const exampleList = [
   {
     label: 'Acrylic Focus Probe - 3mm',
     type: undefined,
-    beam: '7054b6487496178cfe6c47f0352b6b13',
+    beam: '40541b74a60ee5c1a37cbba3651de17a',
   },
 ];
 

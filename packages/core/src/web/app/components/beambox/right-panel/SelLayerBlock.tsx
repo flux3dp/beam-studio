@@ -3,6 +3,7 @@ import React, { memo, useContext, useEffect, useState } from 'react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -11,16 +12,14 @@ import styles from './Block.module.scss';
 
 const defaultOption = ' ';
 
-interface Props {
-  layerNames: string[];
-}
-
-function SelLayerBlock({ layerNames }: Props): ReactNode {
+function SelLayerBlock(): ReactNode {
   const lang = useI18n().beambox.right_panel.layer_panel;
   const [promptMoveLayerOnce, setPromptMoveLayerOnce] = useState(false);
   const [displayValue, setDisplayValue] = useState(defaultOption);
   const { selectedElement } = useContext(SelectedElementContext);
   const selectedLayers = useLayerStore.getState().selectedLayers;
+  // TODO: should put allLayerNames in a store to register change listener
+  const layerNames = layerManager.getAllLayerNames();
 
   useEffect(() => {
     if (!selectedElement) {
