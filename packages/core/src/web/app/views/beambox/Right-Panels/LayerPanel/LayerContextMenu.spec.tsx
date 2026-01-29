@@ -357,8 +357,7 @@ describe('test LayerContextMenu', () => {
     await waitFor(() => {
       expect(mockSplitFullColorLayer).toHaveBeenCalledTimes(1);
       expect(mockSplitFullColorLayer).toHaveBeenLastCalledWith('layer1');
-      expect(mockSetSelectedLayers).toHaveBeenCalledTimes(1);
-      expect(mockSetSelectedLayers).toHaveBeenLastCalledWith([]);
+      expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     });
   });
 
@@ -388,8 +387,7 @@ describe('test LayerContextMenu', () => {
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(1, 'data-lock');
     expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(1);
     expect(mockToggleFullColorLayer).toHaveBeenLastCalledWith(mockElem);
-    expect(mockSetSelectedLayers).toHaveBeenCalledTimes(1);
-    expect(mockSetSelectedLayers).toHaveBeenLastCalledWith([]);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(mockCmd);
     expect(mockCmd.isEmpty).toHaveBeenCalledTimes(1);
