@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'Processing...',
   },
   generators: {
-    drawer_title: 'Generators',
+    box_generator: 'Box Generator',
+    code_generator: 'Code Generator',
+    material_test_generator: 'Material Test Generator',
+    title: 'Generators',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] A status conflict occurred, please retry the action.',
@@ -2310,9 +2313,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
       switch_to_beta: 'Switch To Beta Release',
       switch_to_latest: 'Switch To Stable Release',
       tools: {
-        box_generator: 'Box Generator',
-        code_generator: 'Code Generator',
-        material_test_generator: 'Material Test Generator',
         title: 'Tools',
       },
       tutorial: 'Start Delta Family Printing Tutorial',

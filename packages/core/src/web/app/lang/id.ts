@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'Memproses...',
   },
   generators: {
-    drawer_title: 'Generator',
+    box_generator: 'Generator Kotak',
+    code_generator: 'Pembuat Kode',
+    material_test_generator: 'Generator Uji Material',
+    title: 'Generator',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Terjadi konflik status, harap coba ulangi tindakan.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Beralih ke Rilis Beta',
       switch_to_latest: 'Beralih ke Rilis Stabil',
       tools: {
-        box_generator: 'Generator Kotak',
-        code_generator: 'Pembuat Kode',
-        material_test_generator: 'Generator Uji Material',
         title: 'Alat',
       },
       tutorial: 'Mulai Tutorial Pencetakan Delta Family',

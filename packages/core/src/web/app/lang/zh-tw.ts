@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: '處理中...',
   },
   generators: {
-    drawer_title: '產生器',
+    box_generator: '盒子產生器',
+    code_generator: '條碼產生器',
+    material_test_generator: '材質測試產生器',
+    title: '產生器',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] 機器發生狀態衝突，請再試一次',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: '切換至 Beta 版',
       switch_to_latest: '切換至穩定版',
       tools: {
-        box_generator: '盒子產生器',
-        code_generator: '條碼產生器',
-        material_test_generator: '材質測試產生器',
         title: '工具',
       },
       tutorial: 'Delta Family 列印教學',

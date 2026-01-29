@@ -144,7 +144,7 @@ const CanvasTabBar = (): React.ReactNode => {
       { icon: <TabBarIcons.Shape />, key: 'shape', title: lang.beambox.left_panel.label.elements },
       { icon: <TabBarIcons.Text />, key: 'text', title: lang.beambox.left_panel.label.text },
       { icon: <LeftPanelIcons.AiGenerate />, key: 'ai-generate', title: lang.beambox.ai_generate.header.title },
-      { icon: <AppstoreOutlined />, key: 'generator', title: lang.generators.drawer_title },
+      { icon: <AppstoreOutlined />, key: 'generator', title: lang.generators.title },
       {
         icon: (
           <TabBarIcons.Layers

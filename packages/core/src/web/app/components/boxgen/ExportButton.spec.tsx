@@ -2,8 +2,6 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import ExportButton from './ExportButton';
-
 const mockData = {};
 
 jest.mock('@core/app/stores/boxgenStore', () => ({
@@ -74,6 +72,8 @@ const mockOnClose = jest.fn();
 // Mock layer objects that will be returned by getLayerByName
 const mockNewLayer1 = { setVisible: jest.fn() };
 const mockNewLayer2 = { setVisible: jest.fn() };
+
+import ExportButton from './ExportButton';
 
 describe('test ExportButton', () => {
   beforeEach(() => {

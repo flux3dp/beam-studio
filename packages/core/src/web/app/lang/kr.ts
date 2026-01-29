@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: '처리 중...',
   },
   generators: {
-    drawer_title: '생성기',
+    box_generator: '박스 생성기',
+    code_generator: '코드 생성기',
+    material_test_generator: '재질 테스트 생성기',
+    title: '생성기',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] 상태 충돌이 발생했습니다. 작업을 다시 시도해 주세요.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: '베타 릴리스로 전환',
       switch_to_latest: '안정 릴리스로 전환',
       tools: {
-        box_generator: '박스 생성기',
-        code_generator: '코드 생성기',
-        material_test_generator: '재질 테스트 생성기',
         title: '도구',
       },
       tutorial: '델타 프린터 가족용 튜토리얼 시작하기',

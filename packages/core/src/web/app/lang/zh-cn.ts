@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: '处理中...',
   },
   generators: {
-    drawer_title: '生成器',
+    box_generator: '盒子生成器',
+    code_generator: '条码生成器',
+    material_test_generator: '材质测试生成器',
+    title: '生成器',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] 机器发生状态冲突，请再试一次',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: '切换至 Beta 版',
       switch_to_latest: '切换至稳定版',
       tools: {
-        box_generator: '盒子生成器',
-        code_generator: '条码生成器',
-        material_test_generator: '材质测试生成器',
         title: '工具',
       },
       tutorial: 'Delta Family 打印教学',

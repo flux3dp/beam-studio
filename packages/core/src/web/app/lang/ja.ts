@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: '処理中...',
   },
   generators: {
-    drawer_title: 'ジェネレーター',
+    box_generator: 'ボックスジェネレーター',
+    code_generator: 'コードジェネレーター',
+    material_test_generator: '材料テストジェネレーター',
+    title: 'ジェネレーター',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] ステータスの競合が発生しました。アクションを再試行してください。',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'ベータリリースに切り替える',
       switch_to_latest: '安定版リリースに切り替える',
       tools: {
-        box_generator: 'ボックスジェネレーター',
-        code_generator: 'コードジェネレーター',
-        material_test_generator: '材料テストジェネレーター',
         title: 'ツール',
       },
       tutorial: 'デルタファミリープリントのチュートリアルを開始',

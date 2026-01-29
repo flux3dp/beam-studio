@@ -27,9 +27,7 @@ const Boxgen = ({ onClose }: Props): React.JSX.Element => {
 
   useEffect(() => {
     // Delay rendering the modal to avoid issues with shortcut scopes
-    const timer = setTimeout(() => {
-      setIsModalReady(true);
-    }, 500);
+    const timer = setTimeout(() => setIsModalReady(true), 500);
 
     return () => clearTimeout(timer);
   }, []);
@@ -44,7 +42,7 @@ const Boxgen = ({ onClose }: Props): React.JSX.Element => {
       }
       onCancel={onClose}
       open
-      title={lang.topbar.menu.tools.box_generator}
+      title={lang.generators.box_generator}
       width={isMobile ? 'calc(100vw - 32px)' : 'min(1000px, calc(100vw - 32px))'}
       wrapClassName={styles['modal-wrap']}
     >

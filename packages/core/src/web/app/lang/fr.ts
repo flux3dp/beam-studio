@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'Traitement...',
   },
   generators: {
-    drawer_title: 'Générateurs',
+    box_generator: 'Générateur de Boîtes',
+    code_generator: 'Générateur de code',
+    material_test_generator: 'Générateur de Test de Matériau',
+    title: 'Générateurs',
   },
   generic_error: {
     OPERATION_ERROR: "[OE] Un conflit d'état s'est produit, veuillez réessayer l'action.",
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Passer à la version bêta',
       switch_to_latest: 'Passer à la version stable',
       tools: {
-        box_generator: 'Générateur de Boîtes',
-        code_generator: 'Générateur de code',
-        material_test_generator: 'Générateur de Test de Matériau',
         title: 'Outils',
       },
       tutorial: "Didacticiel d'impression Delta",

@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'Verwerken...',
   },
   generators: {
-    drawer_title: 'Generatoren',
+    box_generator: 'Doos Generator',
+    code_generator: 'Codegenerator',
+    material_test_generator: 'Materiaaltestgenerator',
+    title: 'Generatoren',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Er is een statusconflict opgetreden, probeer de actie opnieuw.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Schakel over naar bètaversie',
       switch_to_latest: 'Schakel over naar stabiele release',
       tools: {
-        box_generator: 'Doos Generator',
-        code_generator: 'Codegenerator',
-        material_test_generator: 'Materiaaltestgenerator',
         title: 'Gereedschappen',
       },
       tutorial: 'Delta-familie printtutorial starten',

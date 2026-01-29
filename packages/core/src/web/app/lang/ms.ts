@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'Memproses...',
   },
   generators: {
-    drawer_title: 'Penjana',
+    box_generator: 'Penjana Kotak',
+    code_generator: 'Penjana Kod',
+    material_test_generator: 'Penjana Ujian Bahan',
+    title: 'Penjana',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Konflik status berlaku, sila cuba semula tindakan.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Tukar ke Beta Release',
       switch_to_latest: 'Tukar ke Release Stabil',
       tools: {
-        box_generator: 'Penjana Kotak',
-        code_generator: 'Penjana Kod',
-        material_test_generator: 'Penjana Ujian Bahan',
         title: 'Alat',
       },
       tutorial: 'Tutorial Permulaan',

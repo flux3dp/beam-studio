@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 
 import { DownloadOutlined } from '@ant-design/icons';
 import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
@@ -29,7 +29,7 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
   const boxData = useBoxgenStore((state) => state.boxData);
   const { lengthUnit, workarea } = useBoxgenWorkarea();
   const { decimal, unit, unitRatio } = lengthUnit;
-  const isMM = unit === 'mm';
+  const isInch = useMemo(() => unit === 'inch', [unit]);
   const [page, setPage] = useState(1);
   const [options, setOptions] = useState<IExportOptions>({
     compRadius: 0.1,
@@ -172,11 +172,11 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
             formatter={(v, { input, userTyping }) =>
               userTyping ? input : ((v as number) / unitRatio).toFixed(decimal + 2)
             }
-            max={isMM ? 0.3 : 0.3048}
+            max={isInch ? 0.3048 : 0.3}
             min={0}
             parser={(v) => Number(v) * unitRatio}
             size="small"
-            step={isMM ? 0.1 : 0.001 * unitRatio}
+            step={isInch ? 0.001 * unitRatio : 0.1}
             type="number"
           />
         </Form.Item>

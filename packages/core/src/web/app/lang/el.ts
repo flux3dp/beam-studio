@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'Επεξεργασία...',
   },
   generators: {
-    drawer_title: 'Γεννήτριες',
+    box_generator: 'Γεννήτρια Κουτιού',
+    code_generator: 'Γεννήτρια κώδικα',
+    material_test_generator: 'Γεννήτρια Δοκιμής Υλικού',
+    title: 'Γεννήτριες',
   },
   generic_error: {
     OPERATION_ERROR: '[ΣΕ] Παρουσιάστηκε σύγκρουση κατάστασης, παρακαλώ επαναλάβετε την ενέργεια.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Μετάβαση σε Beta Έκδοση',
       switch_to_latest: 'Μετάβαση σε Σταθερή Έκδοση',
       tools: {
-        box_generator: 'Γεννήτρια Κουτιού',
-        code_generator: 'Γεννήτρια κώδικα',
-        material_test_generator: 'Γεννήτρια Δοκιμής Υλικού',
         title: 'Εργαλεία',
       },
       tutorial: 'Ξεκινήστε το εκπαιδευτικό πρόγραμμα εκτύπωσης Delta',

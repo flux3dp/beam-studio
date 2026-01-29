@@ -11,16 +11,13 @@ import { getGenerators } from '../generators.config';
 import styles from './MobileGenerators.module.scss';
 
 const MobileGenerators = memo(() => {
-  const t = useI18n().topbar.menu.tools;
-  const tDrawer = useI18n().generators;
+  const t = useI18n().generators;
   const workarea = useWorkarea();
   const { setDrawerMode } = useCanvasStore();
-  const generators = getGenerators({ isMobile: true, workarea }).filter((g) => g.visible !== false);
-  // Single expanded state with full-screen capability
+  const generators = getGenerators({ isMobile: true, workarea });
   const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
 
   const handleItemClick = (onClick: () => void) => {
-    // Close the drawer and open the modal
     setDrawerMode('none');
     onClick();
   };
@@ -30,7 +27,7 @@ const MobileGenerators = memo(() => {
   };
 
   return (
-    <FloatingPanel anchors={anchors} className={styles.panel} onClose={handleClose} title={tDrawer.drawer_title}>
+    <FloatingPanel anchors={anchors} className={styles.panel} onClose={handleClose} title={t.title}>
       <div className={styles.content}>
         <div className={styles.list}>
           {generators.map((generator) => (

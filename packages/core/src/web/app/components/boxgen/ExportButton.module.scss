@@ -24,18 +24,26 @@
   }
   @media screen and (max-width: 600px) {
     flex-direction: column;
-    .form-item {
-      :global(.ant-form-item-label.ant-col) {
-        flex: none;
+    // Force horizontal layout, but allow wrapping when space is insufficient
+    // Override Ant Design's responsive flex: 0 0 100% at 576px breakpoint
+    :global(.ant-form-item) {
+      flex-flow: row wrap;
+      :global(.ant-form-item-label) {
+        flex: 0 0 auto !important;
         padding: 0;
-        min-width: 80px;
         text-align: end;
+        > label {
+          font-size: 13px;
+        }
         ::after {
           visibility: visible;
         }
       }
-      :global(.ant-form-item-control.ant-col) {
-        flex: none;
+      :global(.ant-form-item-control) {
+        // Allow grow, allow shrink, but require minimum width
+        // If min-width can't be satisfied, flex-wrap kicks in and input goes below
+        flex: 1 1 auto !important;
+        min-width: 120px;
       }
     }
   }

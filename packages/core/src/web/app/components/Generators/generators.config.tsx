@@ -4,12 +4,13 @@ import { BoxPlotOutlined, ExperimentOutlined, QrcodeOutlined } from '@ant-design
 
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { ILang } from '@core/interfaces/ILang';
 
 export interface GeneratorConfig {
   icon: React.ReactNode;
   id: string;
   onClick: () => void;
-  titleKey: 'box_generator' | 'code_generator' | 'material_test_generator';
+  titleKey: keyof ILang['generators'];
   visible?: boolean;
 }
 
@@ -19,27 +20,25 @@ interface GetGeneratorsOptions {
   workarea?: WorkAreaModel;
 }
 
-// Alphabetically ordered: Box, Code, Material Test
-export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): GeneratorConfig[] => {
-  return [
+export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): GeneratorConfig[] =>
+  [
     {
       icon: <BoxPlotOutlined />,
       id: 'box',
       onClick: () => dialogCaller.showBoxGen(),
       titleKey: 'box_generator',
-    },
+    } as const,
     {
       icon: <QrcodeOutlined />,
       id: 'code',
       onClick: () => dialogCaller.showCodeGenerator(),
       titleKey: 'code_generator',
-    },
+    } as const,
     {
       icon: <ExperimentOutlined />,
       id: 'material-test',
       onClick: () => dialogCaller.showMaterialTestGenerator(),
       titleKey: 'material_test_generator',
       visible: !isMobile,
-    },
-  ];
-};
+    } as const,
+  ].filter((generator) => generator.visible !== false);

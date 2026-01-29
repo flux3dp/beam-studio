@@ -2,7 +2,6 @@ import React, { memo } from 'react';
 
 import { CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import classNames from 'classnames';
 
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -12,11 +11,10 @@ import { getGenerators } from './generators.config';
 import styles from './Generators.module.scss';
 
 const Generators = memo(() => {
-  const t = useI18n().topbar.menu.tools;
-  const tDrawer = useI18n().generators;
+  const t = useI18n().generators;
   const { setDrawerMode } = useCanvasStore();
   const workarea = useWorkarea();
-  const generators = getGenerators({ isMobile: false, workarea }).filter((g) => g.visible !== false);
+  const generators = getGenerators({ isMobile: false, workarea });
 
   const handleItemClick = (onClick: () => void) => {
     setDrawerMode('none');
@@ -26,7 +24,7 @@ const Generators = memo(() => {
   return (
     <div className={styles.container}>
       <div className={styles.header}>
-        <h2 className={styles.title}>{tDrawer.drawer_title}</h2>
+        <h2 className={styles.title}>{t.title}</h2>
         <div className={styles.actions}>
           <Button
             className={styles['icon-button']}
@@ -40,7 +38,7 @@ const Generators = memo(() => {
       <div className={styles.list}>
         {generators.map((generator) => (
           <div
-            className={classNames(styles.item)}
+            className={styles.item}
             key={generator.id}
             onClick={() => handleItemClick(generator.onClick)}
             onKeyDown={(e) => {

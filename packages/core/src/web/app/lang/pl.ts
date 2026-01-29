@@ -1400,14 +1400,17 @@ const lang: ILang = {
     rotation_frame_warning: 'Podgląd ramki obróci się raz. Unikaj zatrzymywania się w połowie, aby zapobiec przesunięciu pozycji znakowania.',
     rotation_framing_desc: 'Podgląd pełnego zakresu obrotu, oś obraca się zgodnie z podglądem.',
     start_task: 'Rozpocznij Zadanie',
-    start_task_description: 'Po zakończeniu podglądu ramki kliknij „Rozpocznij Zadanie", aby przesłać zadanie.',
+    start_task_description: 'Po zakończeniu podglądu ramki kliknij „Rozpocznij Zadanie”, aby przesłać zadanie.',
   },
   general: {
     choose_folder: 'Wybierz folder',
     processing: 'Przetwarzanie...',
   },
   generators: {
-    drawer_title: 'Generatory',
+    box_generator: 'Generator Pudełek',
+    code_generator: 'Generator kodu',
+    material_test_generator: 'Generator Testu Materiału',
+    title: 'Generatory',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Wystąpił konflikt statusu, spróbuj ponownie.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Przełącz na Wersję Beta',
       switch_to_latest: 'Przełącz na Stabilną Wersję',
       tools: {
-        box_generator: 'Generator Pudełek',
-        code_generator: 'Generator kodu',
-        material_test_generator: 'Generator Testu Materiału',
         title: 'Narzędzia',
       },
       tutorial: 'Uruchom samouczek dotyczący drukowania z rodziny Delta',

@@ -1400,14 +1400,17 @@ const lang: ILang = {
     rotation_frame_warning: 'Die Rahmenvorschau dreht sich einmal. Bitte nicht währenddessen stoppen, um eine Verschiebung der Markierung zu vermeiden.',
     rotation_framing_desc: 'Vorschau des gesamten Drehbereichs, die Achse dreht sich gemäß der Vorschau.',
     start_task: 'Aufgabe Starten',
-    start_task_description: 'Nach Abschluss der Rahmenvorschau klicken Sie auf „Aufgabe Starten", um den Auftrag einzureichen.',
+    start_task_description: 'Nach Abschluss der Rahmenvorschau klicken Sie auf „Aufgabe Starten“, um den Auftrag einzureichen.',
   },
   general: {
     choose_folder: 'Ordner Auswählen',
     processing: 'Verarbeitung...',
   },
   generators: {
-    drawer_title: 'Generatoren',
+    box_generator: 'Box-Generator',
+    code_generator: 'Code-Generator',
+    material_test_generator: 'Materialtest-Generator',
+    title: 'Generatoren',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Ein Statuskonflikt ist aufgetreten. Bitte wiederholen Sie die Aktion.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Wechsle zur Beta-Version',
       switch_to_latest: 'Wechsle zur stabilen Version',
       tools: {
-        box_generator: 'Box-Generator',
-        code_generator: 'Code-Generator',
-        material_test_generator: 'Materialtest-Generator',
         title: 'Werkzeuge',
       },
       tutorial: 'Starte das Delta Family Printing Tutorial',

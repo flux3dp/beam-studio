@@ -1407,7 +1407,10 @@ export interface ILang {
     processing: string;
   };
   generators: {
-    drawer_title: string;
+    box_generator: string;
+    code_generator: string;
+    material_test_generator: string;
+    title: string;
   };
   generic_error: {
     OPERATION_ERROR: string;
@@ -2312,9 +2315,6 @@ export interface ILang {
       switch_to_beta: string;
       switch_to_latest: string;
       tools: {
-        box_generator: string;
-        code_generator: string;
-        material_test_generator: string;
         title: string;
       };
       tutorial: string;

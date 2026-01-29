@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'Behandler...',
   },
   generators: {
-    drawer_title: 'Generatorer',
+    box_generator: 'Boksgenerator',
+    code_generator: 'Kodegenerator',
+    material_test_generator: 'Materialetestgenerator',
+    title: 'Generatorer',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] Der opstod en statuskonflikt, prøv handlingen igen.',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Skift til Beta-udgivelse',
       switch_to_latest: 'Skift til Stabil udgivelse',
       tools: {
-        box_generator: 'Boksgenerator',
-        code_generator: 'Kodegenerator',
-        material_test_generator: 'Materialetestgenerator',
         title: 'Værktøjer',
       },
       tutorial: 'Start vejledning til Delta Family Printing',

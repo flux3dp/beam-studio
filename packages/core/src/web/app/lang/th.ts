@@ -1407,7 +1407,10 @@ const lang: ILang = {
     processing: 'กำลังประมวลผล...',
   },
   generators: {
-    drawer_title: 'เครื่องสร้าง',
+    box_generator: 'เครื่องสร้างกล่อง',
+    code_generator: 'เครื่องสร้างโค้ด',
+    material_test_generator: 'ตัวสร้างการทดสอบวัสดุ',
+    title: 'เครื่องสร้าง',
   },
   generic_error: {
     OPERATION_ERROR: '[OE] เกิดความขัดแย้งสถานะ โปรดลองทําซ้ําการกระทํา',
@@ -2310,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'สลับเป็นรุ่นเบต้า',
       switch_to_latest: 'สลับเป็นรุ่นเสถียร',
       tools: {
-        box_generator: 'เครื่องสร้างกล่อง',
-        code_generator: 'เครื่องสร้างโค้ด',
-        material_test_generator: 'ตัวสร้างการทดสอบวัสดุ',
         title: 'เครื่องมือ',
       },
       tutorial: 'คู่มือเริ่มต้น',

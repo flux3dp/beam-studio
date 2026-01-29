@@ -12,21 +12,6 @@ jest.mock('@core/app/stores/canvas/canvasStore', () => ({
   }),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  generators: {
-    drawer_title: 'Generators',
-  },
-  topbar: {
-    menu: {
-      tools: {
-        box_generator: 'Box Generator',
-        code_generator: 'Code Generator',
-        material_test_generator: 'Material Test Generator',
-      },
-    },
-  },
-}));
-
 // Mock the generators config to avoid dialog-caller dependency
 jest.mock('./generators.config', () => ({
   getGenerators: () => [
