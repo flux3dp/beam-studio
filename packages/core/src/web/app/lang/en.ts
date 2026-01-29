@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Choose Folder',
     processing: 'Processing...',
   },
+  generators: {
+    box_generator: 'Box Generator',
+    code_generator: 'Code Generator',
+    material_test_generator: 'Material Test Generator',
+    title: 'Generators',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] A status conflict occurred, please retry the action.',
     SUBSYSTEM_ERROR: '[SE] Error when machine firmware executing the task. Please restart the machine.',
@@ -2307,9 +2313,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
       switch_to_beta: 'Switch To Beta Release',
       switch_to_latest: 'Switch To Stable Release',
       tools: {
-        box_generator: 'Box Generator',
-        code_generator: 'Code Generator',
-        material_test_generator: 'Material Test Generator',
         title: 'Tools',
       },
       tutorial: 'Start Delta Family Printing Tutorial',

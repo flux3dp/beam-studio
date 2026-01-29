@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Velg mappe',
     processing: 'Behandler...',
   },
+  generators: {
+    box_generator: 'Boksgenerator',
+    code_generator: 'Kodegenerator',
+    material_test_generator: 'Materialtestgenerator',
+    title: 'Generatorer',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] En statuskonflikt oppsto, prøv handlingen på nytt.',
     SUBSYSTEM_ERROR: '[SE] Feil under utføring av oppgave i maskinvare. Start maskinen på nytt.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Bytt til Beta-versjon',
       switch_to_latest: 'Bytt til Stabil versjon',
       tools: {
-        box_generator: 'Boksgenerator',
-        code_generator: 'Kodegenerator',
-        material_test_generator: 'Materialtestgenerator',
         title: 'Verktøy',
       },
       tutorial: 'Start opplæring for Delta-serien',

@@ -1,12 +1,11 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { BoxgenProvider } from '@core/app/contexts/BoxgenContext';
-import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
-import Footer from '@core/app/widgets/FullWindowPanel/Footer';
-import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
-import Header from '@core/app/widgets/FullWindowPanel/Header';
-import Sider from '@core/app/widgets/FullWindowPanel/Sider';
+import { Button } from 'antd';
+import classNames from 'classnames';
+
+import DraggableModal from '@core/app/widgets/DraggableModal';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
+import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import BoxCanvas from './BoxCanvas';
@@ -15,52 +14,46 @@ import BoxSelector from './BoxSelector';
 import Controller from './Controller';
 import ExportButton from './ExportButton';
 
-const Boxgen = ({ onClose }: { onClose?: () => void }): React.JSX.Element => {
+interface Props {
+  onClose: () => void;
+}
+
+const Boxgen = ({ onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const tBoxgen = lang.boxgen;
+  const isMobile = useIsMobile();
+  const [isModalReady, setIsModalReady] = useState(false);
 
   useNewShortcutsScope();
 
+  useEffect(() => {
+    // Delay rendering the modal to avoid issues with shortcut scopes
+    const timer = setTimeout(() => setIsModalReady(true), 500);
+
+    return () => clearTimeout(timer);
+  }, []);
+
   return (
-    <BoxgenProvider onClose={onClose}>
-      <FullWindowPanel
-        mobileTitle={tBoxgen.title}
-        onClose={onClose}
-        renderContents={() => (
-          <>
-            <Sider>
-              <BackButton onClose={onClose}>{lang.buttons.back_to_beam_studio}</BackButton>
-              <Header title={tBoxgen.title}>
-                <BoxSelector />
-              </Header>
-              <Controller />
-              <Footer>
-                <ExportButton />
-              </Footer>
-            </Sider>
-            <div className={styles.canvas}>
-              <BoxCanvas />
-            </div>
-          </>
-        )}
-        renderMobileContents={() => (
-          <>
-            <Controller />
-            <Footer>
-              <ExportButton />
-            </Footer>
-          </>
-        )}
-        renderMobileFixedContent={() => (
-          <div>
-            <BoxSelector />
-            <div className={styles.canvas}>
-              <BoxCanvas />
-            </div>
-          </div>
-        )}
-      />
-    </BoxgenProvider>
+    <DraggableModal
+      footer={
+        <div className={styles.footer}>
+          <Button onClick={onClose}>{lang.global.cancel}</Button>
+          <ExportButton onClose={onClose} />
+        </div>
+      }
+      onCancel={onClose}
+      open
+      title={lang.generators.box_generator}
+      width={isMobile ? 'calc(100vw - 32px)' : 'min(1000px, calc(100vw - 32px))'}
+      wrapClassName={styles['modal-wrap']}
+    >
+      <div className={classNames(styles.container, { [styles.mobile]: isMobile })}>
+        <div className={styles.controls}>
+          <BoxSelector />
+          <Controller />
+        </div>
+        <div className={styles.canvas}>{isModalReady && <BoxCanvas />}</div>
+      </div>
+    </DraggableModal>
   );
 };
 

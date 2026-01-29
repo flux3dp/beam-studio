@@ -26,19 +26,36 @@
     width: 400px;
     @media screen and (max-width: 600px) {
       width: 100%;
+      // Force horizontal layout for all screen sizes
+      // Override Ant Design's responsive flex: 0 0 100% at 576px breakpoint
       :global(.ant-form-item) {
+        flex-flow: row wrap;
         margin-bottom: 16px;
         :global(.ant-form-item-label) {
-          flex: none;
+          flex: 0 0 100px !important;
           padding: 0;
-          width: 120px;
           text-align: end;
+          > label {
+            font-size: 13px;
+          }
           ::after {
             visibility: visible;
           }
         }
         :global(.ant-form-item-control) {
-          flex: 1;
+          flex: 1 1 0 !important;
+          min-width: 0;
+        }
+      }
+    }
+    // Extra small screens - even narrower labels
+    @media screen and (max-width: 400px) {
+      :global(.ant-form-item) {
+        :global(.ant-form-item-label) {
+          flex: 0 0 70px !important;
+          > label {
+            font-size: 12px;
+          }
         }
       }
     }

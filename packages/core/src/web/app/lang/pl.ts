@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Wybierz folder',
     processing: 'Przetwarzanie...',
   },
+  generators: {
+    box_generator: 'Generator Pudełek',
+    code_generator: 'Generator kodu',
+    material_test_generator: 'Generator Testu Materiału',
+    title: 'Generatory',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Wystąpił konflikt statusu, spróbuj ponownie.',
     SUBSYSTEM_ERROR: '[SE] Błąd podczas wykonywania zadania przez oprogramowanie ukałdowe urządzenia. Proszę ponownie uruchomić maszynę.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Przełącz na Wersję Beta',
       switch_to_latest: 'Przełącz na Stabilną Wersję',
       tools: {
-        box_generator: 'Generator Pudełek',
-        code_generator: 'Generator kodu',
-        material_test_generator: 'Generator Testu Materiału',
         title: 'Narzędzia',
       },
       tutorial: 'Uruchom samouczek dotyczący drukowania z rodziny Delta',

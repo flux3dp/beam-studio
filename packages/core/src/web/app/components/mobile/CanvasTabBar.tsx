@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { AppstoreOutlined } from '@ant-design/icons';
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
 import { match, P } from 'ts-pattern';
@@ -110,6 +111,10 @@ const CanvasTabBar = (): React.ReactNode => {
         toggleDrawerMode('ai-generate');
         resetActiveKey();
       })
+      .with('generator', () => {
+        toggleDrawerMode('generator');
+        resetActiveKey();
+      })
       .with('text', () => {
         events.once('addText', (newText: SVGTextElement) => {
           workareaManager.zoom((window.innerWidth / newText.getBBox().width) * 0.8);
@@ -139,6 +144,7 @@ const CanvasTabBar = (): React.ReactNode => {
       { icon: <TabBarIcons.Shape />, key: 'shape', title: lang.beambox.left_panel.label.elements },
       { icon: <TabBarIcons.Text />, key: 'text', title: lang.beambox.left_panel.label.text },
       { icon: <LeftPanelIcons.AiGenerate />, key: 'ai-generate', title: lang.beambox.ai_generate.header.title },
+      { icon: <AppstoreOutlined />, key: 'generator', title: lang.generators.title },
       {
         icon: (
           <TabBarIcons.Layers
@@ -153,10 +159,8 @@ const CanvasTabBar = (): React.ReactNode => {
         title: lang.topbar.menu.layer_setting,
       },
       { icon: <TabBarIcons.Draw />, key: 'pen', title: lang.beambox.left_panel.label.pen },
-      { icon: <TabBarIcons.Boxgen />, key: 'boxgen', title: lang.beambox.left_panel.label.boxgen },
       { icon: <TabBarIcons.Document />, key: 'document', title: lang.topbar.menu.document_setting_short },
       { icon: <SettingsIcons.Setting />, key: 'setting', title: lang.settings.caption },
-      { icon: <LeftPanelIcons.QRCode />, key: 'qrcode', title: lang.beambox.left_panel.label.qr_code },
       { icon: <LeftPanelIcons.PassThrough />, key: 'passthrough', title: lang.beambox.left_panel.label.pass_through },
       { icon: <div className={styles.sep} />, key: '', title: '' },
       { icon: <TopBarIcons.Undo />, key: 'undo', title: lang.topbar.menu.undo },

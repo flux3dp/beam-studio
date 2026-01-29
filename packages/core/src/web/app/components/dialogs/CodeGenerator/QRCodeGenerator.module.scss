@@ -5,6 +5,10 @@ $padding: 12px;
   margin-bottom: 20px;
   resize: none;
   height: 200px;
+
+  @media screen and (max-width: 600px) {
+    height: 120px;
+  }
 }
 
 .content {
@@ -14,6 +18,8 @@ $padding: 12px;
 
   @media screen and (max-width: 600px) {
     flex-direction: column;
+    align-items: center;
+    gap: 16px;
   }
 
   .qrcode-container {
@@ -22,7 +28,7 @@ $padding: 12px;
 
     --code-size: 200px;
     @media screen and (max-width: 600px) {
-      --code-size: 100px;
+      --code-size: 120px;
     }
 
     .qrcode {
@@ -55,12 +61,21 @@ $padding: 12px;
   .settings {
     margin: 58px auto;
 
+    @media screen and (max-width: 600px) {
+      margin: 0 auto;
+      width: 100%;
+    }
+
     .label {
       font-weight: 600;
     }
 
     .checkbox {
       margin-top: 20px;
+
+      @media screen and (max-width: 600px) {
+        margin-top: 12px;
+      }
     }
   }
 }

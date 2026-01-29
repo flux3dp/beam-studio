@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Ordner Auswählen',
     processing: 'Verarbeitung...',
   },
+  generators: {
+    box_generator: 'Box-Generator',
+    code_generator: 'Code-Generator',
+    material_test_generator: 'Materialtest-Generator',
+    title: 'Generatoren',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Ein Statuskonflikt ist aufgetreten. Bitte wiederholen Sie die Aktion.',
     SUBSYSTEM_ERROR: '[SE] Fehler beim Ausführen der Aufgabe durch die Maschinenfirmware. Bitte starte die Maschine neu.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Wechsle zur Beta-Version',
       switch_to_latest: 'Wechsle zur stabilen Version',
       tools: {
-        box_generator: 'Box-Generator',
-        code_generator: 'Code-Generator',
-        material_test_generator: 'Materialtest-Generator',
         title: 'Werkzeuge',
       },
       tutorial: 'Starte das Delta Family Printing Tutorial',

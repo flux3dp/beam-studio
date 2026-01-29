@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Map kiezen',
     processing: 'Verwerken...',
   },
+  generators: {
+    box_generator: 'Doos Generator',
+    code_generator: 'Codegenerator',
+    material_test_generator: 'Materiaaltestgenerator',
+    title: 'Generatoren',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Er is een statusconflict opgetreden, probeer de actie opnieuw.',
     SUBSYSTEM_ERROR: '[SE] Fout bij het uitvoeren van de taak door de firmware van de machine. Herstart de machine.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Schakel over naar bètaversie',
       switch_to_latest: 'Schakel over naar stabiele release',
       tools: {
-        box_generator: 'Doos Generator',
-        code_generator: 'Codegenerator',
-        material_test_generator: 'Materiaaltestgenerator',
         title: 'Gereedschappen',
       },
       tutorial: 'Delta-familie printtutorial starten',

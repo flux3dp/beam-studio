@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Pilih Folder',
     processing: 'Memproses...',
   },
+  generators: {
+    box_generator: 'Penjana Kotak',
+    code_generator: 'Penjana Kod',
+    material_test_generator: 'Penjana Ujian Bahan',
+    title: 'Penjana',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Konflik status berlaku, sila cuba semula tindakan.',
     SUBSYSTEM_ERROR: '[SE] Ralat perisian mesin sewaktu melaksanakan tugas. Sila mulakan semula mesin.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Tukar ke Beta Release',
       switch_to_latest: 'Tukar ke Release Stabil',
       tools: {
-        box_generator: 'Penjana Kotak',
-        code_generator: 'Penjana Kod',
-        material_test_generator: 'Penjana Ujian Bahan',
         title: 'Alat',
       },
       tutorial: 'Tutorial Permulaan',

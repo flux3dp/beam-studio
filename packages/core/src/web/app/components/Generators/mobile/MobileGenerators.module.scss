@@ -1,0 +1,55 @@
+// Using settings shared variables for consistency with MobileCategoryTabs
+@use '@core/app/components/settings/shared/styles/variables' as *;
+
+.panel {
+  z-index: 100;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  padding: 16px;
+}
+
+.list {
+  display: flex;
+  // flex-wrap: wrap;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px 16px;
+  border: 1px solid $settings-border-color;
+  border-radius: 6px;
+  background: white;
+  color: black;
+  font-size: 13px;
+  font-weight: 500;
+  white-space: nowrap;
+  cursor: pointer;
+  transition: all 0.2s ease;
+
+  &:hover {
+    background: $settings-background;
+  }
+
+  &:active {
+    background: $settings-primary-blue;
+    color: white;
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 14px;
+}
+
+.label {
+  line-height: 1;
+}

@@ -3,50 +3,59 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { DEFAULT_CONTROLLER_MM } from '@core/app/constants/boxgen-constants';
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
 
 import Controller from './Controller';
 
-jest.mock('@core/app/contexts/BoxgenContext', () => ({
-  BoxgenContext: React.createContext(null),
+const mockSetBoxData = jest.fn();
+
+jest.mock('@core/app/stores/boxgenStore', () => ({
+  useBoxgenStore: jest.fn(() => ({
+    boxData: DEFAULT_CONTROLLER_MM,
+    setBoxData: mockSetBoxData,
+  })),
 }));
 
-const mockData = DEFAULT_CONTROLLER_MM;
-const mockSetData = jest.fn();
+jest.mock('./useBoxgenWorkarea', () => () => ({
+  lengthUnit: { decimal: 2, unit: 'mm', unitRatio: 1 },
+  workarea: { canvasHeight: 210, canvasWidth: 300, label: 'beamo', value: 'fbm1' },
+}));
 
 describe('test Controller', () => {
-  test('should behave correctly', () => {
-    const { container } = render(
-      <BoxgenContext.Provider
-        value={
-          {
-            boxData: mockData,
-            lengthUnit: { decimal: 0, unit: 'mm', unitRatio: 1 },
-            setBoxData: mockSetData,
-            workarea: { canvasHeight: 210, canvasWidth: 300, label: 'beamo', value: 'fbm1' },
-          } as any
-        }
-      >
-        <Controller />
-      </BoxgenContext.Provider>,
-    );
+  beforeEach(() => {
+    jest.clearAllMocks();
+  });
+
+  test('should render correctly', () => {
+    const { container } = render(<Controller />);
 
     expect(container).toMatchSnapshot();
+  });
 
-    fireEvent.click(container.querySelector('input[value="inner"]'));
-    expect(mockSetData).toBeCalledTimes(1);
-    expect(mockSetData).toHaveBeenLastCalledWith({
-      ...mockData,
+  test('should call setBoxData when changing volume', () => {
+    const { container } = render(<Controller />);
+
+    fireEvent.click(container.querySelector('input[value="inner"]')!);
+    expect(mockSetBoxData).toHaveBeenCalledTimes(1);
+    expect(mockSetBoxData).toHaveBeenLastCalledWith({
+      ...DEFAULT_CONTROLLER_MM,
       depth: 86,
       height: 86,
       volume: 'inner',
       width: 86,
     });
+  });
 
-    fireEvent.change(container.querySelector('input#width'), { target: { value: 90 } });
-    expect(mockSetData).toBeCalledTimes(2);
-    expect(mockSetData).toHaveBeenLastCalledWith({
-      ...mockData,
+  test('should call setBoxData when changing width', () => {
+    const { container } = render(<Controller />);
+
+    // First change to inner
+    fireEvent.click(container.querySelector('input[value="inner"]')!);
+
+    // Then change width
+    fireEvent.change(container.querySelector('input#width')!, { target: { value: 90 } });
+    expect(mockSetBoxData).toHaveBeenCalledTimes(2);
+    expect(mockSetBoxData).toHaveBeenLastCalledWith({
+      ...DEFAULT_CONTROLLER_MM,
       depth: 86,
       height: 86,
       volume: 'inner',

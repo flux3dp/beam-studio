@@ -22,10 +22,6 @@ const mockSetResetKey = jest.fn().mockImplementation((fn) => {
   mockResetKey = fn(mockResetKey);
 });
 
-jest.mock('@core/app/contexts/BoxgenContext', () => ({
-  BoxgenContext: React.createContext(null),
-}));
-
 describe('test CanvasController', () => {
   test('should behave correctly', () => {
     const { container } = render(<CanvasController setResetKey={mockSetResetKey} setZoomKey={mockSetZoomKey} />);

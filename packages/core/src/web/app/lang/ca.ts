@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Tria carpeta',
     processing: 'Processant...',
   },
+  generators: {
+    box_generator: 'Generador de caixes',
+    code_generator: 'Generador de codis',
+    material_test_generator: 'Generador de prova de material',
+    title: 'Generadors',
+  },
   generic_error: {
     OPERATION_ERROR: "[OE] S'ha produït un conflicte d'estat, si us plau torna a intentar l'acció.",
     SUBSYSTEM_ERROR: '[SE] Error quan el firmware de la màquina executa la tasca. Si us plau, reinicia la màquina.',
@@ -2307,9 +2313,6 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
       switch_to_beta: 'Canviar a versió Beta',
       switch_to_latest: 'Canviar a versió estable',
       tools: {
-        box_generator: 'Generador de caixes',
-        code_generator: 'Generador de codis',
-        material_test_generator: 'Generador de prova de material',
         title: 'Eines',
       },
       tutorial: 'Iniciar tutorial impressió família Delta',

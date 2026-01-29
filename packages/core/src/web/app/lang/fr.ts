@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Choisir un dossier',
     processing: 'Traitement...',
   },
+  generators: {
+    box_generator: 'Générateur de Boîtes',
+    code_generator: 'Générateur de code',
+    material_test_generator: 'Générateur de Test de Matériau',
+    title: 'Générateurs',
+  },
   generic_error: {
     OPERATION_ERROR: "[OE] Un conflit d'état s'est produit, veuillez réessayer l'action.",
     SUBSYSTEM_ERROR: "[SE] Erreur lors de l'exécution de la tâche par le micrologiciel de la machine. Veuillez redémarrer la machine.",
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Passer à la version bêta',
       switch_to_latest: 'Passer à la version stable',
       tools: {
-        box_generator: 'Générateur de Boîtes',
-        code_generator: 'Générateur de code',
-        material_test_generator: 'Générateur de Test de Matériau',
         title: 'Outils',
       },
       tutorial: "Didacticiel d'impression Delta",

@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Chọn Thư mục',
     processing: 'Đang xử lý...',
   },
+  generators: {
+    box_generator: 'Trình Tạo Hộp',
+    code_generator: 'Trình tạo mã',
+    material_test_generator: 'Trình tạo thử nghiệm vật liệu',
+    title: 'Trình Tạo',
+  },
   generic_error: {
     OPERATION_ERROR: '[Xung đột trạng thái] Xung đột trạng thái đã xảy ra, vui lòng thử lại hành động.',
     SUBSYSTEM_ERROR: '[Lỗi hệ thống phụ] Lỗi khi phần mềm máy thực hiện nhiệm vụ. Vui lòng khởi động lại máy.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Chuyển sang Bản Beta',
       switch_to_latest: 'Chuyển sang Bản Ổn Định',
       tools: {
-        box_generator: 'Trình Tạo Hộp',
-        code_generator: 'Trình tạo mã',
-        material_test_generator: 'Trình tạo thử nghiệm vật liệu',
         title: 'Công cụ',
       },
       tutorial: 'Hướng dẫn in Delta',

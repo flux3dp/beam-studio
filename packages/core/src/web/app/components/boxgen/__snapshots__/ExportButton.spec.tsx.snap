@@ -1,19 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`test ExportButton should behave correctly 1`] = `
-<div>
-  <button
-    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
-    type="button"
-  >
-    <span>
-      Continue to Import
-    </span>
-  </button>
-</div>
-`;
-
-exports[`test ExportButton should behave correctly 2`] = `
 <body>
   <div>
     <button
@@ -439,7 +426,7 @@ exports[`test ExportButton should behave correctly 2`] = `
                                       role="spinbutton"
                                       step="0.1"
                                       type="number"
-                                      value="0.10"
+                                      value="0.1000"
                                     />
                                   </div>
                                 </div>
@@ -511,4 +498,17 @@ exports[`test ExportButton should behave correctly 2`] = `
     </div>
   </div>
 </body>
+`;
+
+exports[`test ExportButton should render correctly 1`] = `
+<div>
+  <button
+    class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid"
+    type="button"
+  >
+    <span>
+      Continue to Import
+    </span>
+  </button>
+</div>
 `;

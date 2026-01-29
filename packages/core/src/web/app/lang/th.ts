@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'เลือกโฟลเดอร์',
     processing: 'กำลังประมวลผล...',
   },
+  generators: {
+    box_generator: 'เครื่องสร้างกล่อง',
+    code_generator: 'เครื่องสร้างโค้ด',
+    material_test_generator: 'ตัวสร้างการทดสอบวัสดุ',
+    title: 'เครื่องสร้าง',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] เกิดความขัดแย้งสถานะ โปรดลองทําซ้ําการกระทํา',
     SUBSYSTEM_ERROR: '[SE] เกิดข้อผิดพลาดเมื่อเฟิร์มแวร์ของเครื่องกําลังปฏิบัติงาน โปรดรีสตาร์ทเครื่อง',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'สลับเป็นรุ่นเบต้า',
       switch_to_latest: 'สลับเป็นรุ่นเสถียร',
       tools: {
-        box_generator: 'เครื่องสร้างกล่อง',
-        code_generator: 'เครื่องสร้างโค้ด',
-        material_test_generator: 'ตัวสร้างการทดสอบวัสดุ',
         title: 'เครื่องมือ',
       },
       tutorial: 'คู่มือเริ่มต้น',

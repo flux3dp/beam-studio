@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Valitse kansio',
     processing: 'Käsitellään...',
   },
+  generators: {
+    box_generator: 'Laatikkogeneraattori',
+    code_generator: 'Koodigeneraattori',
+    material_test_generator: 'Materiaalitestin Generaattori',
+    title: 'Generaattorit',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Tilakonflikti tapahtui, yritä toimintoa uudelleen.',
     SUBSYSTEM_ERROR: '[SE] Virhe, kun laiteohjelmisto suoritti tehtävää. Käynnistä laite uudelleen.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Vaihda Beta-versioon',
       switch_to_latest: 'Vaihda Vakaa versioon',
       tools: {
-        box_generator: 'Laatikkogeneraattori',
-        code_generator: 'Koodigeneraattori',
-        material_test_generator: 'Materiaalitestin Generaattori',
         title: 'Työkalut',
       },
       tutorial: 'Aloita Delta-perheen tulostusopastus',

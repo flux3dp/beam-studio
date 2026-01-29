@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Pilih Folder',
     processing: 'Memproses...',
   },
+  generators: {
+    box_generator: 'Generator Kotak',
+    code_generator: 'Pembuat Kode',
+    material_test_generator: 'Generator Uji Material',
+    title: 'Generator',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Terjadi konflik status, harap coba ulangi tindakan.',
     SUBSYSTEM_ERROR: '[SE] Terjadi kesalahan saat firmware mesin mengeksekusi tugas. Harap mulai ulang mesin.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Beralih ke Rilis Beta',
       switch_to_latest: 'Beralih ke Rilis Stabil',
       tools: {
-        box_generator: 'Generator Kotak',
-        code_generator: 'Pembuat Kode',
-        material_test_generator: 'Generator Uji Material',
         title: 'Alat',
       },
       tutorial: 'Mulai Tutorial Pencetakan Delta Family',

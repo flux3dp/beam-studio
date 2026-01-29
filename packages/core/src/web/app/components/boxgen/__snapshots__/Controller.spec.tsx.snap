@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test Controller should behave correctly 1`] = `
+exports[`test Controller should render correctly 1`] = `
 <div>
   <div
     class="controller"
@@ -285,7 +285,7 @@ exports[`test Controller should behave correctly 1`] = `
                           role="spinbutton"
                           step="1"
                           type="number"
-                          value="80"
+                          value="80.00"
                         />
                       </div>
                     </div>
@@ -407,7 +407,7 @@ exports[`test Controller should behave correctly 1`] = `
                           role="spinbutton"
                           step="1"
                           type="number"
-                          value="80"
+                          value="80.00"
                         />
                       </div>
                     </div>
@@ -529,7 +529,7 @@ exports[`test Controller should behave correctly 1`] = `
                           role="spinbutton"
                           step="1"
                           type="number"
-                          value="80"
+                          value="80.00"
                         />
                       </div>
                     </div>
@@ -902,7 +902,7 @@ exports[`test Controller should behave correctly 1`] = `
                                     role="spinbutton"
                                     step="0.1"
                                     type="number"
-                                    value="40"
+                                    value="40.00"
                                   />
                                 </div>
                               </div>

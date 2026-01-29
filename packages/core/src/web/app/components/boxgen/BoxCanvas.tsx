@@ -1,11 +1,11 @@
-import React, { useContext, useRef } from 'react';
+import React, { useRef } from 'react';
 
 import { Edges, Stage } from '@react-three/drei';
 import * as THREE from 'three';
 import { Vector3 } from 'three';
 
 import { getFrontBackShape, getLeftRightShape, getTopBottomShape } from '@core/app/components/boxgen/Shape';
-import { BoxgenContext } from '@core/app/contexts/BoxgenContext';
+import { useBoxgenStore } from '@core/app/stores/boxgenStore';
 import Canvas from '@core/app/widgets/three/Canvas';
 
 const BoxFace = ({
@@ -15,7 +15,7 @@ const BoxFace = ({
   position: Vector3;
   type: 'FrontBack' | 'LeftRight' | 'TopBottom';
 }): React.JSX.Element => {
-  const { boxData } = useContext(BoxgenContext);
+  const boxData = useBoxgenStore((state) => state.boxData);
   const ref = useRef<THREE.Mesh>(null);
   const extrudeRef = useRef<THREE.ExtrudeGeometry>(null);
 
@@ -55,7 +55,7 @@ const BoxFace = ({
 };
 
 const BoxCanvas = (): React.JSX.Element => {
-  const { boxData } = useContext(BoxgenContext);
+  const boxData = useBoxgenStore((state) => state.boxData);
 
   return (
     <Canvas

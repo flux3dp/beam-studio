@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Escolher pasta',
     processing: 'Processando...',
   },
+  generators: {
+    box_generator: 'Gerador de Caixas',
+    code_generator: 'Gerador de código',
+    material_test_generator: 'Gerador de Teste de Material',
+    title: 'Geradores',
+  },
   generic_error: {
     OPERATION_ERROR: '[OE] Ocorreu um conflito de status, tente novamente a ação.',
     SUBSYSTEM_ERROR: '[SE] Erro ao executar a tarefa no firmware da máquina. Reinicie a máquina.',
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Mudar para a versão beta',
       switch_to_latest: 'Mudar para a libertação estável',
       tools: {
-        box_generator: 'Gerador de Caixas',
-        code_generator: 'Gerador de código',
-        material_test_generator: 'Gerador de Teste de Material',
         title: 'Ferramentas',
       },
       tutorial: 'Iniciar Tutorial de Impressão da Família Delta',

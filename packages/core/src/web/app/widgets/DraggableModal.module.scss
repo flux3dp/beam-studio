@@ -20,3 +20,27 @@
     flex: 0 0;
   }
 }
+
+.mobileScrollable {
+  @media screen and (max-width: 600px) {
+    :global(.ant-modal-content) {
+      display: flex;
+      flex-direction: column;
+      max-height: 80dvh;
+    }
+
+    :global(.ant-modal-header) {
+      flex-shrink: 0;
+    }
+
+    :global(.ant-modal-body) {
+      max-height: 60dvh;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    :global(.ant-modal-footer) {
+      flex-shrink: 0;
+    }
+  }
+}

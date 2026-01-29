@@ -17,6 +17,8 @@ jest.mock('@core/app/widgets/Drawer', () => ({ children }) => <div>{children}</d
 jest.mock('@core/app/components/Chat', () => () => <div>MockChat</div>);
 jest.mock('@core/app/components/AiGenerate', () => () => <div>MockAiGenerate</div>);
 jest.mock('@core/app/components/AiGenerate/mobile/MobileAiGenerate', () => () => <div>MockAiGenerate</div>);
+jest.mock('@core/app/components/Generators', () => () => <div>MockGenerators</div>);
+jest.mock('@core/app/components/Generators/mobile/MobileGenerators', () => () => <div>MockGenerators</div>);
 
 jest.mock('./Banner', () => () => <div>MockBanner</div>);
 jest.mock('./DpiInfo', () => () => <div>MockDpiInfo</div>);

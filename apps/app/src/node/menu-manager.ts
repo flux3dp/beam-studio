@@ -662,9 +662,6 @@ class MenuManager extends EventEmitter {
       id: '_tools',
       label: r.tools.title,
       submenu: [
-        { click: callback, enabled: false, id: 'MATERIAL_TEST_GENERATOR', label: r.tools.material_test_generator },
-        { click: callback, enabled: false, id: 'CODE_GENERATOR', label: r.tools.code_generator },
-        { click: callback, enabled: false, id: 'BOX_GEN', label: r.tools.box_generator },
         {
           click: callback,
           enabled: false,

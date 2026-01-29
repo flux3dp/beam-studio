@@ -17,8 +17,14 @@
   min-height: 200px;
   justify-content: center;
   align-items: center;
+
+  @media screen and (max-width: 600px) {
+    min-height: 100px;
+  }
 }
 
 .barcode-svg {
   max-width: 1000px;
+  width: 100%;
+  height: auto;
 }

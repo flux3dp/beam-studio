@@ -1406,6 +1406,12 @@ const lang: ILang = {
     choose_folder: 'Scegli cartella',
     processing: 'Elaborazione...',
   },
+  generators: {
+    box_generator: 'Generatore di Scatole',
+    code_generator: 'Generatore di codice',
+    material_test_generator: 'Generatore di Test Materiale',
+    title: 'Generatori',
+  },
   generic_error: {
     OPERATION_ERROR: "[OE] Conflitto di stato, riprovare l'azione.",
     SUBSYSTEM_ERROR: "[SE] Errore durante l'esecuzione del firmware della macchina. Riavviare la macchina.",
@@ -2307,9 +2313,6 @@ const lang: ILang = {
       switch_to_beta: 'Passa alla Versione Beta',
       switch_to_latest: 'Passa alla Versione Stabile',
       tools: {
-        box_generator: 'Generatore di Scatole',
-        code_generator: 'Generatore di codice',
-        material_test_generator: 'Generatore di Test Materiale',
         title: 'Strumenti',
       },
       tutorial: 'Tutorial stampa Delta',
