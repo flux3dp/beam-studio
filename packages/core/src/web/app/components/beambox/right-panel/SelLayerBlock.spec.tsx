@@ -14,26 +14,37 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   moveToOtherLayer: (...args: any[]) => mockMoveToOtherLayer(...args),
 }));
 
+const mockGetAllLayerNames = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayerNames: () => mockGetAllLayerNames(),
+}));
+
 describe('SelLayerBlock', () => {
   it('should render correctly when layer is less than 1', () => {
-    const { container } = render(<SelLayerBlock layerNames={['layer1']} />);
+    mockGetAllLayerNames.mockReturnValue(['layer1']);
+
+    const { container } = render(<SelLayerBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
-  it('should render correctly when layer is more than 1 and selected elemented is none', () => {
-    const { container } = render(<SelLayerBlock layerNames={['layer1', 'layer2']} />);
+  it('should render correctly when layer is more than 1 and selected element is none', () => {
+    mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
+
+    const { container } = render(<SelLayerBlock />);
 
     expect(container).toMatchSnapshot();
   });
 
-  it('should render correctly when layer is more than 1 and selected elemented is not in a temp group', () => {
+  it('should render correctly when layer is more than 1 and selected element is not in a temp group', () => {
     mockGetObjectLayer.mockReturnValue({ title: 'layer1' });
+    mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
 
     const mockElem = { getAttribute: () => jest.fn() };
     const { container, getByText } = render(
       <SelectedElementContext.Provider value={{ selectedElement: mockElem } as any}>
-        <SelLayerBlock layerNames={['layer1', 'layer2']} />
+        <SelLayerBlock />
       </SelectedElementContext.Provider>,
     );
 
@@ -45,11 +56,12 @@ describe('SelLayerBlock', () => {
 
   test('move to other layer', async () => {
     mockGetObjectLayer.mockReturnValue({ title: 'layer1' });
+    mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
 
     const mockElem = { getAttribute: () => jest.fn() };
     const { baseElement } = render(
       <SelectedElementContext.Provider value={{ selectedElement: mockElem } as any}>
-        <SelLayerBlock layerNames={['layer1', 'layer2']} />
+        <SelLayerBlock />
       </SelectedElementContext.Provider>,
     );
 
