@@ -169,7 +169,7 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
     const layer = selectedLayers[0];
 
     await splitFullColorLayer(layer);
-    setSelectedLayers([]);
+    forceUpdate();
   };
 
   const handleLayerFullColor = (newColor?: string) => {
@@ -192,7 +192,7 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
       undoManager.addCommandToHistory(cmd);
     }
 
-    setSelectedLayers([]);
+    forceUpdate();
   };
 
   const isMultiSelecting = selectedLayers.length > 1;
