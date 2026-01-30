@@ -4,7 +4,6 @@ import { AppstoreOutlined, BlockOutlined } from '@ant-design/icons';
 import { Button, Tooltip } from 'antd';
 import type Konva from 'konva';
 import { Group, Layer, Path, Stage } from 'react-konva';
-import { match } from 'ts-pattern';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -13,17 +12,17 @@ import {
   calculateAllPieceVisibilities,
   calculateMergeGroups,
   calculatePuzzleLayout,
-  generateBorderPath,
   generatePuzzleEdges,
 } from './puzzleGenerator';
+import { drawShapeClipPath, generateBorderPath, generateShapePath, type ShapeType } from './shapeGenerators';
 import type { PuzzleState, PuzzleTypeConfig } from './types';
 
 interface Props {
   dimensions: { height: number; width: number };
-  onViewModeChange: (mode: 'assembled' | 'exploded') => void;
+  onViewModeChange: (mode: 'assembled' | 'layers') => void;
   state: PuzzleState;
   typeConfig: PuzzleTypeConfig;
-  viewMode: 'assembled' | 'exploded';
+  viewMode: 'assembled' | 'layers';
 }
 
 /**
@@ -31,10 +30,6 @@ interface Props {
  *
  * Renders puzzles using edge paths (horizontal + vertical cuts) instead of individual pieces.
  * Uses clipFunc to clip edges to the boundary shape (ellipse/heart).
- * This approach:
- * - Naturally shows merged edges (edges between merged pieces are already removed)
- * - Clips edges outside the boundary using Konva's clipFunc
- * - Matches the exported result exactly
  */
 const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: Props): React.JSX.Element => {
   const { puzzle_generator: t } = useI18n();
@@ -42,16 +37,17 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
   const stageRef = useRef<Konva.Stage>(null);
   const [stageSize, setStageSize] = useState({ height: 300, width: 400 });
 
+  const shapeType = typeConfig.gridGenerator as ShapeType;
+  const isRectangle = shapeType === 'rectangle';
+
   // Calculate piece visibilities and merge groups for non-rectangle shapes
   const mergeGroups = useMemo(() => {
-    if (typeConfig.gridGenerator === 'rectangle') {
-      return [];
-    }
+    if (isRectangle) return [];
 
     const visibilities = calculateAllPieceVisibilities(state, typeConfig.gridGenerator);
 
     return calculateMergeGroups(visibilities, state.rows, state.columns, 0.5, typeConfig.gridGenerator, state);
-  }, [state, typeConfig.gridGenerator]);
+  }, [state, typeConfig.gridGenerator, isRectangle]);
 
   // Generate edge-based paths (with merged piece edges removed)
   const puzzleEdges = useMemo(
@@ -59,19 +55,30 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     [state, typeConfig.gridGenerator, mergeGroups],
   );
 
+  // Get puzzle layout for centering calculations
+  const puzzleLayout = useMemo(() => calculatePuzzleLayout(state), [state]);
+
+  // Generate boundary path using consolidated shape generator
+  const boundaryPath = useMemo(
+    () =>
+      generateShapePath(shapeType, {
+        height: puzzleLayout.height,
+        width: puzzleLayout.width,
+      }),
+    [shapeType, puzzleLayout.height, puzzleLayout.width],
+  );
+
   // Generate border path if border is enabled
   const borderPath = useMemo(() => {
     if (!state.border.enabled) return '';
 
-    const { columns, pieceSize, rows } = state;
-    const width = columns * pieceSize;
-    const height = rows * pieceSize;
-
-    return generateBorderPath(typeConfig.gridGenerator, width, height, state.border.width, state.border.radius);
-  }, [state, typeConfig.gridGenerator]);
-
-  // Get puzzle layout for centering calculations
-  const puzzleLayout = useMemo(() => calculatePuzzleLayout(state), [state]);
+    return generateBorderPath(shapeType, {
+      borderWidth: state.border.width,
+      cornerRadius: state.border.radius,
+      height: puzzleLayout.height,
+      width: puzzleLayout.width,
+    });
+  }, [state.border.enabled, state.border.width, state.border.radius, shapeType, puzzleLayout]);
 
   // Calculate the bounding box for proper scaling (including border if enabled)
   const puzzleBounds = useMemo(() => {
@@ -98,8 +105,6 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     });
 
     observer.observe(container);
-
-    // Initial size
     setStageSize({
       height: container.clientHeight,
       width: container.clientWidth,
@@ -108,23 +113,18 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     return () => observer.disconnect();
   }, []);
 
-  // Calculate scale to fit puzzle in view - always fill the available space
+  // Calculate scale to fit puzzle in view
   const scale = useMemo(() => {
     const padding = 40;
     const availableWidth = stageSize.width - padding * 2;
     const availableHeight = stageSize.height - padding * 2;
 
-    if (puzzleBounds.width === 0 || puzzleBounds.height === 0) {
-      return 1;
-    }
+    if (puzzleBounds.width === 0 || puzzleBounds.height === 0) return 1;
 
-    const scaleX = availableWidth / puzzleBounds.width;
-    const scaleY = availableHeight / puzzleBounds.height;
-
-    return Math.min(scaleX, scaleY);
+    return Math.min(availableWidth / puzzleBounds.width, availableHeight / puzzleBounds.height);
   }, [stageSize, puzzleBounds]);
 
-  // Center offset - position the content in the center of the stage
+  // Center offset
   const offset = useMemo(
     () => ({
       x: stageSize.width / 2,
@@ -133,50 +133,76 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     [stageSize],
   );
 
-  // Determine if we need clipping (for non-rectangle shapes)
-  const needsClipping = typeConfig.gridGenerator !== 'rectangle';
-
-  // Create clip function for Konva Group using native canvas drawing methods
-  // This clips the edge paths to the boundary shape (ellipse/heart)
+  // Create clip function for Konva Group using consolidated shape generator
   const clipFunc = useCallback(
     (ctx: Konva.Context) => {
-      if (!needsClipping) return;
+      if (isRectangle) return;
 
-      const { columns, pieceSize, rows } = state;
-      const width = columns * pieceSize;
-      const height = rows * pieceSize;
-
-      ctx.beginPath();
-
-      match(typeConfig.gridGenerator)
-        .with('circle', () => {
-          ctx.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
-        })
-        .with('heart', () => {
-          const topCurveHeight = height * 0.3;
-          const halfWidth = width / 2;
-          const halfHeight = height / 2;
-
-          const topY = -halfHeight;
-          const notchY = topY + topCurveHeight;
-          const bottomY = halfHeight;
-
-          const bottomCtrl1Y = bottomY * 0.4;
-          const bottomCtrl2Y = bottomY * 0.8;
-
-          ctx.moveTo(0, notchY);
-          ctx.bezierCurveTo(0, topY, -halfWidth, topY, -halfWidth, notchY);
-          ctx.bezierCurveTo(-halfWidth, bottomCtrl1Y, -halfWidth * 0.3, bottomCtrl2Y, 0, bottomY);
-          ctx.bezierCurveTo(halfWidth * 0.3, bottomCtrl2Y, halfWidth, bottomCtrl1Y, halfWidth, notchY);
-          ctx.bezierCurveTo(halfWidth, topY, 0, topY, 0, notchY);
-        })
-        .otherwise(() => {});
-
-      ctx.closePath();
-      // Note: Konva handles clip() internally after this function
+      drawShapeClipPath(
+        ctx as unknown as CanvasRenderingContext2D,
+        shapeType,
+        puzzleLayout.width,
+        puzzleLayout.height,
+        state.border.radius,
+      );
     },
-    [needsClipping, state, typeConfig.gridGenerator],
+    [isRectangle, shapeType, puzzleLayout.width, puzzleLayout.height, state.border.radius],
   );
+
+  // Render assembled view (default)
+  const renderAssembledView = () => (
+    <Group scaleX={scale} scaleY={scale} x={offset.x} y={offset.y}>
+      {/* Border path (if enabled) - rendered FIRST (behind) with white fill */}
+      {borderPath && <Path data={borderPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />}
+
+      {/* Boundary shape with white fill (the puzzle background) */}
+      <Path data={boundaryPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />
+
+      {/* Clipped group for edge cuts */}
+      <Group clipFunc={isRectangle ? undefined : clipFunc}>
+        {puzzleEdges.horizontalEdges && (
+          <Path data={puzzleEdges.horizontalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
+        )}
+        {puzzleEdges.verticalEdges && (
+          <Path data={puzzleEdges.verticalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
+        )}
+      </Group>
+    </Group>
+  );
+
+  // Render layers view (shows puzzle and border as separate entities)
+  const renderLayersView = () => {
+    const layerGap = 20; // Gap between layers in the view
+    const hasBorder = state.border.enabled && borderPath;
+
+    // Calculate positions for side-by-side layout
+    const puzzleOffsetX = hasBorder ? -layerGap / 2 - state.border.width : 0;
+    const borderOffsetX = hasBorder ? puzzleLayout.width / 2 + layerGap / 2 + state.border.width : 0;
+
+    return (
+      <Group scaleX={scale * 0.8} scaleY={scale * 0.8} x={offset.x} y={offset.y}>
+        {/* Puzzle layer */}
+        <Group x={puzzleOffsetX}>
+          <Path data={boundaryPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />
+          <Group clipFunc={isRectangle ? undefined : clipFunc}>
+            {puzzleEdges.horizontalEdges && (
+              <Path data={puzzleEdges.horizontalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
+            )}
+            {puzzleEdges.verticalEdges && (
+              <Path data={puzzleEdges.verticalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
+            )}
+          </Group>
+        </Group>
+
+        {/* Border layer (if enabled) - shown separately */}
+        {hasBorder && (
+          <Group x={borderOffsetX}>
+            <Path data={borderPath} fill="#f0f0f0" stroke="#0066cc" strokeWidth={0.5} />
+          </Group>
+        )}
+      </Group>
+    );
+  };
 
   return (
     <div className={styles['preview-area']}>
@@ -188,51 +214,27 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
       {/* Konva canvas */}
       <div className={styles['preview-canvas']} ref={containerRef}>
         <Stage height={stageSize.height} ref={stageRef} width={stageSize.width}>
-          <Layer>
-            {/* Edge-based rendering with clipping */}
-            <Group scaleX={scale} scaleY={scale} x={offset.x} y={offset.y}>
-              {/* Border path (if enabled) - rendered FIRST (behind) with white fill */}
-              {borderPath && <Path data={borderPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />}
-
-              {/* Boundary shape with white fill (the puzzle background) - rendered on top of border */}
-              <Path data={puzzleEdges.boundaryPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />
-
-              {/* Clipped group for edge cuts - clips to boundary shape */}
-              <Group clipFunc={needsClipping ? clipFunc : undefined}>
-                {/* Horizontal edge cuts (between rows) */}
-                {puzzleEdges.horizontalEdges && (
-                  <Path data={puzzleEdges.horizontalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
-                )}
-
-                {/* Vertical edge cuts (between columns) */}
-                {puzzleEdges.verticalEdges && (
-                  <Path data={puzzleEdges.verticalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
-                )}
-              </Group>
-            </Group>
-          </Layer>
+          <Layer>{viewMode === 'assembled' ? renderAssembledView() : renderLayersView()}</Layer>
         </Stage>
       </div>
 
-      {/* View mode toggle buttons - only show for types that support exploded view */}
-      {typeConfig.supportsExplodedView && (
-        <div className={styles['preview-footer']}>
-          <Tooltip title={t.assembled_view ?? 'Assembled View'}>
-            <Button
-              icon={<BlockOutlined />}
-              onClick={() => onViewModeChange('assembled')}
-              type={viewMode === 'assembled' ? 'primary' : 'default'}
-            />
-          </Tooltip>
-          <Tooltip title={t.exploded_view ?? 'Exploded View'}>
-            <Button
-              icon={<AppstoreOutlined />}
-              onClick={() => onViewModeChange('exploded')}
-              type={viewMode === 'exploded' ? 'primary' : 'default'}
-            />
-          </Tooltip>
-        </div>
-      )}
+      {/* View mode toggle buttons */}
+      <div className={styles['preview-footer']}>
+        <Tooltip title={t.assembled_view}>
+          <Button
+            icon={<BlockOutlined />}
+            onClick={() => onViewModeChange('assembled')}
+            type={viewMode === 'assembled' ? 'primary' : 'default'}
+          />
+        </Tooltip>
+        <Tooltip title={t.layers_view}>
+          <Button
+            icon={<AppstoreOutlined />}
+            onClick={() => onViewModeChange('layers')}
+            type={viewMode === 'layers' ? 'primary' : 'default'}
+          />
+        </Tooltip>
+      </div>
     </div>
   );
 };

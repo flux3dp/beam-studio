@@ -9,14 +9,10 @@
  * 4. Add i18n keys to lang files
  */
 
+import type { ShapeType } from './shapeGenerators';
 import type { GroupPropertyDef, NumberPropertyDef, PuzzleState, PuzzleTypeConfig, SelectPropertyDef } from './types';
 
 // TODO: Replace with actual thumbnail imports once assets are added
-// import circleThumbnail from '@core/assets/img/puzzle-generator/circle-jigsaw.jpg';
-// import rectangleThumbnail from '@core/assets/img/puzzle-generator/rectangle-jigsaw.jpg';
-// import heartThumbnail from '@core/assets/img/puzzle-generator/heart-jigsaw.jpg';
-
-// Placeholder thumbnails - will be replaced with actual images
 const circleThumbnail = '';
 const rectangleThumbnail = '';
 const heartThumbnail = '';
@@ -57,14 +53,13 @@ const PIECE_SIZE_PROPERTY: NumberPropertyDef = {
 };
 
 const TAB_SIZE_PROPERTY: NumberPropertyDef = {
-  default: 20, // Display value 0-30, internally converted to 0-12% (20 * 0.4 = 8%)
+  default: 20,
   key: 'tabSize',
   labelKey: 'tab_size',
   max: 30,
   min: 0,
   step: 1,
   type: 'slider',
-  // No unit - user sees simple 0-30 scale
 };
 
 const ORIENTATION_PROPERTY: SelectPropertyDef = {
@@ -155,7 +150,16 @@ const createImageGroup = (): GroupPropertyDef => ({
 // Border Group Properties
 // ============================================================================
 
-const createBorderGroup = (includeRadius: boolean): GroupPropertyDef => {
+interface BorderGroupOptions {
+  /** Include corner radius for rectangle */
+  includeCornerRadius?: boolean;
+  /** Include bottom sharpness for heart (uses same 'radius' key) */
+  includeHeartSharpness?: boolean;
+}
+
+const createBorderGroup = (options: BorderGroupOptions = {}): GroupPropertyDef => {
+  const { includeCornerRadius = false, includeHeartSharpness = false } = options;
+
   const children: GroupPropertyDef['children'] = [
     {
       default: false,
@@ -176,13 +180,25 @@ const createBorderGroup = (includeRadius: boolean): GroupPropertyDef => {
     },
   ];
 
-  // Only include radius for non-circular shapes
-  if (includeRadius) {
+  if (includeCornerRadius) {
     children.push({
       condition: (state: PuzzleState) => state.border.enabled,
       default: 0,
       key: 'border.radius',
       labelKey: 'border_radius',
+      max: 50,
+      min: 0,
+      step: 1,
+      type: 'slider',
+    });
+  }
+
+  if (includeHeartSharpness) {
+    children.push({
+      condition: (state: PuzzleState) => state.border.enabled,
+      default: 0,
+      key: 'border.radius',
+      labelKey: 'heart_sharpness',
       max: 50,
       min: 0,
       step: 1,
@@ -204,92 +220,41 @@ const createBorderGroup = (includeRadius: boolean): GroupPropertyDef => {
 // Puzzle Type Configurations
 // ============================================================================
 
-export const PUZZLE_TYPES: PuzzleTypeConfig[] = [
-  // Ellipse Jigsaw (labeled as "Circle" for simplicity, uses ellipse to fit full grid)
-  {
-    getClipPath: (width: number, height: number) => {
-      // Ellipse that fits the full grid dimensions
-      const rx = width / 2;
-      const ry = height / 2;
-      const cx = width / 2;
-      const cy = height / 2;
+const createPuzzleTypeConfig = (
+  id: string,
+  gridGenerator: ShapeType,
+  nameKey: string,
+  thumbnail: string,
+  borderOptions: BorderGroupOptions = {},
+): PuzzleTypeConfig => ({
+  gridGenerator,
+  id,
+  nameKey,
+  properties: [
+    createImageGroup(),
+    createBorderGroup(borderOptions),
+    COLUMNS_PROPERTY,
+    ROWS_PROPERTY,
+    PIECE_SIZE_PROPERTY,
+    TAB_SIZE_PROPERTY,
+    ORIENTATION_PROPERTY,
+  ],
+  thumbnail,
+});
 
-      return `M ${cx + rx} ${cy} A ${rx} ${ry} 0 1 1 ${cx - rx} ${cy} A ${rx} ${ry} 0 1 1 ${cx + rx} ${cy} Z`;
-    },
-    gridGenerator: 'circle',
-    id: 'circle',
-    nameKey: 'types.circle_jigsaw',
-    properties: [
-      createImageGroup(),
-      createBorderGroup(false), // No radius for ellipse
-      COLUMNS_PROPERTY,
-      ROWS_PROPERTY,
-      PIECE_SIZE_PROPERTY,
-      TAB_SIZE_PROPERTY,
-      ORIENTATION_PROPERTY,
-    ],
-    thumbnail: circleThumbnail,
-  },
+export const PUZZLE_TYPES: PuzzleTypeConfig[] = [
+  // Circle Jigsaw (ellipse that fits full grid dimensions)
+  createPuzzleTypeConfig('circle', 'circle', 'types.circle_jigsaw', circleThumbnail),
 
   // Rectangle Jigsaw
-  {
-    getClipPath: (width: number, height: number) => `M 0 0 L ${width} 0 L ${width} ${height} L 0 ${height} Z`,
-    gridGenerator: 'rectangle',
-    id: 'rectangle',
-    nameKey: 'types.rectangle_jigsaw',
-    properties: [
-      createImageGroup(),
-      createBorderGroup(true), // Include radius for rectangle
-      COLUMNS_PROPERTY,
-      ROWS_PROPERTY,
-      PIECE_SIZE_PROPERTY,
-      TAB_SIZE_PROPERTY,
-      ORIENTATION_PROPERTY,
-    ],
-    thumbnail: rectangleThumbnail,
-  },
+  createPuzzleTypeConfig('rectangle', 'rectangle', 'types.rectangle_jigsaw', rectangleThumbnail, {
+    includeCornerRadius: true,
+  }),
 
-  // Heart Jigsaw (more linear bottom curves for cleaner look)
-  {
-    getClipPath: (width: number, height: number) => {
-      // Heart shape with more linear bottom curves
-      const topCurveHeight = height * 0.3;
-      const cx = width / 2;
-      const halfWidth = width / 2;
-
-      // Key y-positions (origin at top-left for clip path)
-      const topY = 0;
-      const notchY = topCurveHeight;
-      const bottomY = height;
-
-      // Control points for more linear bottom curves
-      const bottomCtrl1Y = bottomY * 0.4; // Closer to notchY level
-      const bottomCtrl2X = halfWidth * 0.3; // 30% from center
-      const bottomCtrl2Y = bottomY * 0.8; // 80% toward bottom
-
-      return [
-        `M ${cx} ${notchY}`,
-        `C ${cx} ${topY} ${cx - halfWidth} ${topY} ${cx - halfWidth} ${notchY}`,
-        `C ${cx - halfWidth} ${bottomCtrl1Y} ${cx - bottomCtrl2X} ${bottomCtrl2Y} ${cx} ${bottomY}`,
-        `C ${cx + bottomCtrl2X} ${bottomCtrl2Y} ${cx + halfWidth} ${bottomCtrl1Y} ${cx + halfWidth} ${notchY}`,
-        `C ${cx + halfWidth} ${topY} ${cx} ${topY} ${cx} ${notchY}`,
-        'Z',
-      ].join(' ');
-    },
-    gridGenerator: 'heart',
-    id: 'heart',
-    nameKey: 'types.heart_jigsaw',
-    properties: [
-      createImageGroup(),
-      createBorderGroup(false), // No radius for heart (organic shape)
-      COLUMNS_PROPERTY,
-      ROWS_PROPERTY,
-      PIECE_SIZE_PROPERTY,
-      TAB_SIZE_PROPERTY,
-      ORIENTATION_PROPERTY,
-    ],
-    thumbnail: heartThumbnail,
-  },
+  // Heart Jigsaw (with bottom point sharpness control)
+  createPuzzleTypeConfig('heart', 'heart', 'types.heart_jigsaw', heartThumbnail, {
+    includeHeartSharpness: true,
+  }),
 ];
 
 // ============================================================================

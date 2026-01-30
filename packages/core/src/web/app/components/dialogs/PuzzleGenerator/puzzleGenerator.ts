@@ -10,8 +10,9 @@
  * - Truncate-at-boundary: Non-rectangular shapes clip the rectangular grid
  */
 
-import { match, P } from 'ts-pattern';
+import { match } from 'ts-pattern';
 
+import { generateShapePath, isPointInShape, type ShapeType } from './shapeGenerators';
 import type { PuzzleJitterMap, PuzzleState, TabJitter } from './types';
 
 // ============================================================================
@@ -447,135 +448,8 @@ const generateVerticalEdges = (
   return paths.join(' ');
 };
 
-/**
- * Generate rectangular boundary path
- */
-const generateRectangleBoundary = (
-  offsetX: number,
-  offsetY: number,
-  width: number,
-  height: number,
-  cornerRadius: number = 0,
-): string => {
-  if (cornerRadius > 0) {
-    const r = Math.min(cornerRadius, width / 2, height / 2);
-
-    return [
-      `M ${(offsetX + r).toFixed(2)} ${offsetY.toFixed(2)}`,
-      `L ${(offsetX + width - r).toFixed(2)} ${offsetY.toFixed(2)}`,
-      `A ${r} ${r} 0 0 1 ${(offsetX + width).toFixed(2)} ${(offsetY + r).toFixed(2)}`,
-      `L ${(offsetX + width).toFixed(2)} ${(offsetY + height - r).toFixed(2)}`,
-      `A ${r} ${r} 0 0 1 ${(offsetX + width - r).toFixed(2)} ${(offsetY + height).toFixed(2)}`,
-      `L ${(offsetX + r).toFixed(2)} ${(offsetY + height).toFixed(2)}`,
-      `A ${r} ${r} 0 0 1 ${offsetX.toFixed(2)} ${(offsetY + height - r).toFixed(2)}`,
-      `L ${offsetX.toFixed(2)} ${(offsetY + r).toFixed(2)}`,
-      `A ${r} ${r} 0 0 1 ${(offsetX + r).toFixed(2)} ${offsetY.toFixed(2)}`,
-      'Z',
-    ].join(' ');
-  }
-
-  return [
-    `M ${offsetX.toFixed(2)} ${offsetY.toFixed(2)}`,
-    `L ${(offsetX + width).toFixed(2)} ${offsetY.toFixed(2)}`,
-    `L ${(offsetX + width).toFixed(2)} ${(offsetY + height).toFixed(2)}`,
-    `L ${offsetX.toFixed(2)} ${(offsetY + height).toFixed(2)}`,
-    'Z',
-  ].join(' ');
-};
-
-/**
- * Generate ellipse boundary path
- * Creates an ellipse that fits the full grid dimensions (width x height)
- */
-const generateEllipseBoundary = (centerX: number, centerY: number, radiusX: number, radiusY: number): string => {
-  // Ellipse using two arc commands
-  return [
-    `M ${(centerX + radiusX).toFixed(2)} ${centerY.toFixed(2)}`,
-    `A ${radiusX.toFixed(2)} ${radiusY.toFixed(2)} 0 1 1 ${(centerX - radiusX).toFixed(2)} ${centerY.toFixed(2)}`,
-    `A ${radiusX.toFixed(2)} ${radiusY.toFixed(2)} 0 1 1 ${(centerX + radiusX).toFixed(2)} ${centerY.toFixed(2)}`,
-    'Z',
-  ].join(' ');
-};
-
-/**
- * Generate heart boundary path
- * Heart is centered at (centerX, centerY) and fits within width x height
- * Point faces downward (traditional heart orientation)
- * Bottom curves are more linear for a cleaner look
- */
-const generateHeartBoundary = (centerX: number, centerY: number, width: number, height: number): string => {
-  const topCurveHeight = height * 0.3;
-  const halfWidth = width / 2;
-  const halfHeight = height / 2;
-
-  // Key y-positions (centered at centerY)
-  const topY = centerY - halfHeight; // Very top of heart
-  const notchY = topY + topCurveHeight; // Where the top curves meet (the notch)
-  const bottomY = centerY + halfHeight; // Bottom point of heart
-
-  // Control points for more linear bottom curves
-  // First control point stays close to the side, second control point moves toward bottom center
-  const bottomLeftCtrl1Y = bottomY * 0.4 + centerY * 0.6; // Closer to notchY level
-  const bottomLeftCtrl2X = centerX - halfWidth * 0.3; // 30% from center toward left
-  const bottomLeftCtrl2Y = bottomY * 0.8 + centerY * 0.2; // 80% toward bottom
-
-  return [
-    // Start at top center notch
-    `M ${centerX.toFixed(2)} ${notchY.toFixed(2)}`,
-    // Top left curve (notch to left peak)
-    `C ${centerX.toFixed(2)} ${topY.toFixed(2)} ${(centerX - halfWidth).toFixed(2)} ${topY.toFixed(2)} ${(centerX - halfWidth).toFixed(2)} ${notchY.toFixed(2)}`,
-    // Bottom left curve (more linear - control points create straighter line to bottom)
-    `C ${(centerX - halfWidth).toFixed(2)} ${bottomLeftCtrl1Y.toFixed(2)} ${bottomLeftCtrl2X.toFixed(2)} ${bottomLeftCtrl2Y.toFixed(2)} ${centerX.toFixed(2)} ${bottomY.toFixed(2)}`,
-    // Bottom right curve (mirror of left)
-    `C ${(centerX + halfWidth * 0.3).toFixed(2)} ${bottomLeftCtrl2Y.toFixed(2)} ${(centerX + halfWidth).toFixed(2)} ${bottomLeftCtrl1Y.toFixed(2)} ${(centerX + halfWidth).toFixed(2)} ${notchY.toFixed(2)}`,
-    // Top right curve (right peak to notch)
-    `C ${(centerX + halfWidth).toFixed(2)} ${topY.toFixed(2)} ${centerX.toFixed(2)} ${topY.toFixed(2)} ${centerX.toFixed(2)} ${notchY.toFixed(2)}`,
-    'Z',
-  ].join(' ');
-};
-
-// ============================================================================
-// Border Path Generation
-// ============================================================================
-
-/**
- * Generate border path for a given shape
- * Border is offset outward from the boundary by borderWidth
- * Centered at origin (0, 0)
- */
-export const generateBorderPath = (
-  gridGenerator: string,
-  width: number,
-  height: number,
-  borderWidth: number,
-  cornerRadius: number = 0,
-): string =>
-  match(gridGenerator)
-    .with('circle', () => {
-      // Ellipse border: expand radii by borderWidth
-      const radiusX = width / 2 + borderWidth;
-      const radiusY = height / 2 + borderWidth;
-
-      return generateEllipseBoundary(0, 0, radiusX, radiusY);
-    })
-    .with('rectangle', () => {
-      // Rectangle border: expand by borderWidth with optional corner radius
-      const borderWidth2 = borderWidth * 2;
-      const newWidth = width + borderWidth2;
-      const newHeight = height + borderWidth2;
-
-      return generateRectangleBoundary(-newWidth / 2, -newHeight / 2, newWidth, newHeight, cornerRadius);
-    })
-    .with('heart', () => {
-      // Heart border: scale the heart shape outward by borderWidth
-      const scaleX = (width + borderWidth * 2) / width;
-      const scaleY = (height + borderWidth * 2) / height;
-      const newWidth = width * scaleX;
-      const newHeight = height * scaleY;
-
-      return generateHeartBoundary(0, 0, newWidth, newHeight);
-    })
-    .otherwise(() => '');
+// Note: Boundary path generation is now in shapeGenerators.ts
+// Use generateShapePath() for boundary paths
 
 // ============================================================================
 // Main Generator Functions
@@ -606,68 +480,21 @@ export const calculatePuzzleLayout = (
 };
 
 /**
- * Generate edge-based puzzle paths for a rectangular puzzle
+ * Generate edge-based puzzle paths for any shape type
+ * Uses consolidated shapeGenerators for boundary paths
  * @param mergeGroups - If provided, skip edges between merged pieces
  * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
  */
-export const generateRectanglePuzzle = (
+const generatePuzzleForShape = (
   state: PuzzleState,
+  shapeType: ShapeType,
   mergeGroups: MergeGroup[] = [],
   jitterMap?: PuzzleJitterMap,
 ): PuzzleEdges => {
   const { height, offsetX, offsetY, width } = calculatePuzzleLayout(state);
 
   return {
-    boundaryPath: generateRectangleBoundary(offsetX, offsetY, width, height),
-    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
-    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
-  };
-};
-
-/**
- * Generate edge-based puzzle paths for an ellipse puzzle
- * Uses truncate-at-boundary approach: rectangular grid clipped by ellipse
- * The ellipse fits the full grid dimensions to maximize piece coverage
- * @param mergeGroups - If provided, skip edges between merged pieces
- * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
- */
-export const generateCirclePuzzle = (
-  state: PuzzleState,
-  mergeGroups: MergeGroup[] = [],
-  jitterMap?: PuzzleJitterMap,
-): PuzzleEdges => {
-  const { height, offsetX, offsetY, width } = calculatePuzzleLayout(state);
-  const centerX = 0; // Centered at origin
-  const centerY = 0;
-  // Use full grid dimensions for ellipse radii (not min)
-  const radiusX = width / 2;
-  const radiusY = height / 2;
-
-  return {
-    boundaryPath: generateEllipseBoundary(centerX, centerY, radiusX, radiusY),
-    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
-    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
-  };
-};
-
-/**
- * Generate edge-based puzzle paths for a heart-shaped puzzle
- * Uses truncate-at-boundary approach: rectangular grid clipped by heart
- * The heart fits the full grid dimensions to maximize piece coverage
- * @param mergeGroups - If provided, skip edges between merged pieces
- * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
- */
-export const generateHeartPuzzle = (
-  state: PuzzleState,
-  mergeGroups: MergeGroup[] = [],
-  jitterMap?: PuzzleJitterMap,
-): PuzzleEdges => {
-  const { height, offsetX, offsetY, width } = calculatePuzzleLayout(state);
-  const centerX = 0;
-  const centerY = 0;
-
-  return {
-    boundaryPath: generateHeartBoundary(centerX, centerY, width, height),
+    boundaryPath: generateShapePath(shapeType, { height, width }),
     horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
     verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
   };
@@ -686,63 +513,33 @@ export const generatePuzzleEdges = (
   // Generate jitter map for natural tab variation based on orientation
   const jitterMap = generateJitterMap(state.rows, state.columns, state.orientation);
 
-  return match(gridGenerator)
-    .with(P.union('circle', 'warpedCircle'), () => generateCirclePuzzle(state, mergeGroups, jitterMap))
-    .with(P.union('heart', 'warpedHeart'), () => generateHeartPuzzle(state, mergeGroups, jitterMap))
-    .otherwise(() => generateRectanglePuzzle(state, mergeGroups, jitterMap));
-};
+  // Map gridGenerator string to ShapeType
+  const shapeType: ShapeType = match(gridGenerator)
+    .with('circle', () => 'circle' as const)
+    .with('heart', () => 'heart' as const)
+    .otherwise(() => 'rectangle' as const);
 
-// ============================================================================
-// Boundary Check Helpers
-// ============================================================================
-
-/**
- * Check if a point is inside an ellipse centered at origin
- */
-const isPointInEllipse = (x: number, y: number, radiusX: number, radiusY: number): boolean => {
-  // Ellipse equation: (x/rx)² + (y/ry)² <= 1
-  return (x * x) / (radiusX * radiusX) + (y * y) / (radiusY * radiusY) <= 1;
-};
-
-/**
- * Check if a point is inside a heart shape centered at origin
- * Uses the same heart algorithm as generateHeartBoundary
- */
-const isPointInHeart = (px: number, py: number, width: number, height: number): boolean => {
-  // Heart shape approximation using the mathematical heart curve
-  // Transform point to normalized coordinates
-  const halfWidth = width / 2;
-  const halfHeight = height / 2;
-
-  // Normalize x to [-1, 1] range
-  const nx = px / halfWidth;
-  // Normalize y to [-1, 1] range (flip so positive is up in heart coords)
-  const ny = -py / halfHeight;
-
-  // Heart curve: (x² + y² - 1)³ - x²y³ <= 0
-  // This is an approximation that works well for the standard heart shape
-  const x2 = nx * nx;
-  const y2 = ny * ny;
-  const term1 = x2 + y2 - 1;
-
-  return term1 * term1 * term1 - x2 * ny * ny * ny <= 0;
+  return generatePuzzleForShape(state, shapeType, mergeGroups, jitterMap);
 };
 
 // ============================================================================
 // Piece Visibility and Merging
 // ============================================================================
 
+// Note: Boundary check helpers are now in shapeGenerators.ts (isPointInShape)
+
 /**
  * Check if a point is inside the boundary shape
+ * Wrapper around isPointInShape that handles gridGenerator string to ShapeType conversion
  */
-const isPointInBoundary = (x: number, y: number, gridGenerator: string, width: number, height: number): boolean =>
-  match(gridGenerator)
-    .with(P.union('circle', 'warpedCircle'), () => isPointInEllipse(x, y, width / 2, height / 2))
-    .with(P.union('heart', 'warpedHeart'), () => isPointInHeart(x, y, width, height))
-    .otherwise(() => true);
+const isPointInBoundary = (x: number, y: number, gridGenerator: string, width: number, height: number): boolean => {
+  const shapeType: ShapeType = match(gridGenerator)
+    .with('circle', () => 'circle' as const)
+    .with('heart', () => 'heart' as const)
+    .otherwise(() => 'rectangle' as const);
 
-// Note: Heart top merge is now handled automatically by the improved merging algorithm
-// that processes small pieces by visibility order and allows joining existing groups
+  return isPointInShape(x, y, shapeType, width, height);
+};
 
 /**
  * Check if a piece (by its center) is inside the boundary shape

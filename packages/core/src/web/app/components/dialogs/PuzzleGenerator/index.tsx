@@ -85,7 +85,7 @@ const PuzzleGenerator = ({ onClose }: Props): React.JSX.Element => {
       onCancel={onClose}
       open
       title={tGenerators.puzzle_generator ?? 'Puzzle Generator'}
-      width={isMobile ? 'calc(100vw - 32px)' : 'min(1000px, calc(100vw - 32px))'}
+      width={isMobile ? 'calc(100vw - 32px)' : 'calc(100vw - 64px)'}
       wrapClassName={styles['modal-wrap']}
     >
       <div className={classNames(styles.container, { [styles.mobile]: isMobile })}>
