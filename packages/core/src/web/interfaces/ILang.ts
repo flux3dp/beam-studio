@@ -1407,6 +1407,7 @@ export interface ILang {
     box_generator: string;
     code_generator: string;
     material_test_generator: string;
+    puzzle_generator: string;
     title: string;
   };
   generic_error: {
@@ -1930,6 +1931,39 @@ export interface ILang {
       title: string;
       tooltip1: string;
     };
+  };
+  puzzle_generator: {
+    assembled_view: string;
+    border: string;
+    border_radius: string;
+    border_width: string;
+    cancel: string;
+    columns: string;
+    exploded_view: string;
+    export_as: string;
+    export_engrave: string;
+    export_print: string;
+    image: string;
+    import_to_canvas: string;
+    offset_x: string;
+    offset_y: string;
+    orientation: string;
+    orientation_type_1: string;
+    orientation_type_2: string;
+    orientation_type_3: string;
+    orientation_type_4: string;
+    piece_size: string;
+    preview_placeholder: string;
+    rows: string;
+    tab_size: string;
+    types: {
+      circle_jigsaw: string;
+      heart_jigsaw: string;
+      rectangle_jigsaw: string;
+    };
+    upload_hint: string;
+    upload_image: string;
+    zoom: string;
   };
   qr_code_generator: {
     error_tolerance: string;

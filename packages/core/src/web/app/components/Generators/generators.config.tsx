@@ -1,10 +1,12 @@
 import React from 'react';
 
-import { BoxPlotOutlined, ExperimentOutlined, QrcodeOutlined } from '@ant-design/icons';
+import { AppstoreOutlined, BoxPlotOutlined, ExperimentOutlined, QrcodeOutlined } from '@ant-design/icons';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import type { ILang } from '@core/interfaces/ILang';
+
+import { showPuzzleGenerator } from '../dialogs/PuzzleGenerator';
 
 export interface GeneratorConfig {
   icon: React.ReactNode;
@@ -33,6 +35,12 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       id: 'code',
       onClick: () => dialogCaller.showCodeGenerator(),
       titleKey: 'code_generator',
+    } as const,
+    {
+      icon: <AppstoreOutlined />,
+      id: 'puzzle',
+      onClick: () => showPuzzleGenerator(),
+      titleKey: 'puzzle_generator',
     } as const,
     {
       icon: <ExperimentOutlined />,
