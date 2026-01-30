@@ -2,6 +2,10 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { showCurveEngraving, showMeasureArea } from '@core/app/components/dialogs/CurveEngraving';
+import {
+  preprocessData,
+  type ThreeDisplayData,
+} from '@core/app/components/dialogs/CurveEngraving/utils/preprocessData';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -20,7 +24,7 @@ import getDevice from '@core/helpers/device/get-device';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
-import type { CurveEngraving, MeasureData } from '@core/interfaces/ICurveEngraving';
+import type { CurveEngraving, MeasureData, Point } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
@@ -29,6 +33,7 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 class CurveEngravingModeController {
   started: boolean;
   data: CurveEngraving | null;
+  displayData: null | ThreeDisplayData;
   boundarySvg?: SVGSVGElement;
   boundaryPath?: SVGPathElement;
   areaPath?: SVGPathElement;
@@ -37,6 +42,7 @@ class CurveEngravingModeController {
   constructor() {
     this.started = false;
     this.data = null;
+    this.displayData = null;
     this.measurer = null;
     canvasEventEmitter.on('canvas-change', this.updateContainer);
     useCanvasStore.subscribe(
@@ -91,6 +97,7 @@ class CurveEngravingModeController {
     }
 
     this.data = { ...this.data, ...data, subdividedPoints: undefined };
+    this.handleDataChange();
   };
 
   initMeasurer = async (): Promise<boolean> => {
@@ -235,7 +242,9 @@ class CurveEngravingModeController {
       }
 
       this.data = { bbox, ...res, subdividedPoints: undefined };
-      await showCurveEngraving(this.data, this.remeasurePoints);
+      this.handleDataChange();
+
+      await showCurveEngraving();
       this.updateAreaPath();
       canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     } finally {
@@ -260,6 +269,7 @@ class CurveEngravingModeController {
     }
 
     this.data = null;
+    this.displayData = null;
     this.updateAreaPath();
     canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
   };
@@ -280,7 +290,7 @@ class CurveEngravingModeController {
         return;
       }
 
-      await showCurveEngraving(this.data, this.remeasurePoints);
+      await showCurveEngraving();
     } finally {
       this.clearMeasurer();
     }
@@ -408,6 +418,7 @@ class CurveEngravingModeController {
       },
     );
     const postLoadData = () => {
+      this.handleDataChange();
       this.updateContainer();
       this.updateAreaPath();
       canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
@@ -430,6 +441,19 @@ class CurveEngravingModeController {
     }
 
     return cmd;
+  };
+
+  handleDataChange = () => {
+    if (!this.data) {
+      this.displayData = null;
+
+      return;
+    }
+
+    const { displayData, subdividedPoints } = preprocessData(this.data);
+
+    this.displayData = displayData;
+    this.setSubdividedPoints(subdividedPoints);
   };
 
   setSubdividedPoints = (points: Array<[number, number, number]> | null) => {

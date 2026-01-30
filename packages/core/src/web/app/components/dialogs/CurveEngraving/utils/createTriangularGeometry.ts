@@ -89,7 +89,7 @@ export const createTriangularGeometry = (
   points: Point3D[],
   width: number,
   height: number,
-  maxEdgeLength: number = 5,
+  maxEdgeLength: number = 0,
 ) => {
   const delaunay = Delaunator.from(
     points,

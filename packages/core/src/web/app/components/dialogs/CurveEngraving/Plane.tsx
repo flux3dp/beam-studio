@@ -2,21 +2,15 @@ import React, { useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { useLoader, useThree } from '@react-three/fiber';
 import * as THREE from 'three';
-import { LoopSubdivision } from 'three-subdivide';
 
-import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
-import type { CurveEngraving, Point } from '@core/interfaces/ICurveEngraving';
+import type { CurveEngraving } from '@core/interfaces/ICurveEngraving';
 
-import { createTriangularGeometry, setGeometryAngleAlertColor } from './utils/createTriangularGeometry';
-import { retrievePointsFromGeometry } from './utils/retrievePointsFromGeometry';
-import type { PointsData } from './utils/usePointsData';
+import type { ThreeDisplayData } from './utils/preprocessData';
 
 interface Props {
   data: CurveEngraving;
+  displayData: ThreeDisplayData;
   doSubdivision?: boolean;
-  loopSubdivisionIter?: number;
-  maxEdgeLength?: number;
-  pointsData: PointsData;
   selectedIndices?: Set<number>;
   textureSource?: string;
   toggleSelectedIndex?: (index: number) => void;
@@ -25,10 +19,8 @@ interface Props {
 // TODO: Add unit tests
 const Plane = ({
   data: { gap },
+  displayData,
   doSubdivision,
-  loopSubdivisionIter = 1,
-  maxEdgeLength = 15,
-  pointsData,
   selectedIndices,
   textureSource = 'core-img/white.jpg',
   toggleSelectedIndex,
@@ -37,39 +29,8 @@ const Plane = ({
   const lineRef = useRef<THREE.LineSegments>(null);
   const texture = useLoader(THREE.TextureLoader, textureSource);
   const { camera, gl, scene } = useThree();
-  const flattened = useMemo(() => pointsData.displayPoints.flat(), [pointsData]);
-  const filteredPoints = useMemo(() => flattened.filter((p) => p[2] !== null), [flattened]) as Array<
-    [number, number, number]
-  >;
-
-  const customGeometry = useMemo(
-    () => createTriangularGeometry(filteredPoints, pointsData.width, pointsData.height, maxEdgeLength),
-    [filteredPoints, pointsData, maxEdgeLength],
-  );
-
-  const subdividedGeometry = useMemo(() => {
-    return LoopSubdivision.modify(customGeometry, loopSubdivisionIter, { preserveEdges: true });
-  }, [customGeometry, loopSubdivisionIter]);
-
-  // TODO: should I do this here?
-  const subdividedPoints = useMemo<Point[]>(
-    () => retrievePointsFromGeometry(subdividedGeometry, pointsData).map((p) => [p[0], p[1], p[2]]),
-    [subdividedGeometry, pointsData],
-  );
-
-  useMemo(() => {
-    curveEngravingModeController.setSubdividedPoints(doSubdivision ? subdividedPoints : null);
-  }, [subdividedPoints, doSubdivision]);
-
-  useMemo(() => {
-    setGeometryAngleAlertColor(customGeometry);
-  }, [customGeometry]);
-
-  useMemo(() => {
-    setGeometryAngleAlertColor(subdividedGeometry);
-  }, [subdividedGeometry]);
-
-  const gridGeometry = useMemo(() => new THREE.WireframeGeometry(customGeometry), [customGeometry]);
+  const { depth, displayPoints, geometry, maxZ, subdividedGeometry } = displayData;
+  const gridGeometry = useMemo(() => new THREE.WireframeGeometry(geometry), [geometry]);
   const subdividedWireFrame = useMemo(() => new THREE.WireframeGeometry(subdividedGeometry), [subdividedGeometry]);
   const colors = useMemo(
     () => ({
@@ -81,7 +42,7 @@ const Plane = ({
   );
   const spheres = useMemo(() => {
     const size = 0.1 * Math.min(gap[0], gap[1]);
-    const out = flattened.map(([x, y, z], i) => {
+    const out = displayPoints.map(([x, y, z], i) => {
       let color;
 
       if (selectedIndices?.has(i)) {
@@ -93,11 +54,7 @@ const Plane = ({
       }
 
       return (
-        <mesh
-          key={i}
-          position={[x, y, z ?? -(pointsData.maxZ - pointsData.depth)]}
-          userData={{ index: i, isSphere: true }}
-        >
+        <mesh key={i} position={[x, y, z ?? -(maxZ - depth)]} userData={{ index: i, isSphere: true }}>
           <sphereGeometry args={[size, 16, 16]} />
           <meshBasicMaterial color={color} opacity={0.7} transparent />
         </mesh>
@@ -105,7 +62,7 @@ const Plane = ({
     });
 
     return out;
-  }, [flattened, pointsData, gap, selectedIndices, colors]);
+  }, [displayPoints, depth, maxZ, gap, selectedIndices, colors]);
 
   const handlePointerDown = useCallback(
     (event: PointerEvent) => {
@@ -183,7 +140,7 @@ const Plane = ({
 
   return (
     <>
-      <mesh geometry={doSubdivision ? subdividedGeometry : customGeometry} ref={geoMeshRef}>
+      <mesh geometry={doSubdivision ? subdividedGeometry : geometry} ref={geoMeshRef}>
         <meshBasicMaterial map={texture} opacity={0.7} side={THREE.DoubleSide} transparent vertexColors />
       </mesh>
       {doSubdivision ? (
