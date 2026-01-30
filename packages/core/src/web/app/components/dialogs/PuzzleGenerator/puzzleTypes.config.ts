@@ -251,10 +251,8 @@ export const PUZZLE_TYPES: PuzzleTypeConfig[] = [
     includeCornerRadius: true,
   }),
 
-  // Heart Jigsaw (with bottom point sharpness control)
-  createPuzzleTypeConfig('heart', 'heart', 'types.heart_jigsaw', heartThumbnail, {
-    includeHeartSharpness: true,
-  }),
+  // Heart Jigsaw (uses fixed sharpness of 25 for optimal heart shape)
+  createPuzzleTypeConfig('heart', 'heart', 'types.heart_jigsaw', heartThumbnail),
 ];
 
 // ============================================================================

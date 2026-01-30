@@ -14,7 +14,13 @@ import {
   calculatePuzzleLayout,
   generatePuzzleEdges,
 } from './puzzleGenerator';
-import { drawShapeClipPath, generateBorderPath, generateShapePath, type ShapeType } from './shapeGenerators';
+import {
+  DEFAULT_HEART_SHARPNESS,
+  drawShapeClipPath,
+  generateBorderPath,
+  generateShapePath,
+  type ShapeType,
+} from './shapeGenerators';
 import type { PuzzleState, PuzzleTypeConfig } from './types';
 
 interface Props {
@@ -69,12 +75,17 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
   );
 
   // Generate border path if border is enabled
+  // For heart shape, use DEFAULT_HEART_SHARPNESS to match the inner puzzle shape
   const borderPath = useMemo(() => {
     if (!state.border.enabled) return '';
 
+    // For heart shape, use the default sharpness to match the inner puzzle
+    // For rectangle, use the user-configured corner radius
+    const cornerRadius = shapeType === 'heart' ? DEFAULT_HEART_SHARPNESS : state.border.radius;
+
     return generateBorderPath(shapeType, {
       borderWidth: state.border.width,
-      cornerRadius: state.border.radius,
+      cornerRadius,
       height: puzzleLayout.height,
       width: puzzleLayout.width,
     });
@@ -170,39 +181,80 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     </Group>
   );
 
+  // Calculate layers view layout dimensions
+  const layersLayout = useMemo(() => {
+    const layerGap = 30; // Gap between puzzle and border in mm
+    const hasBorder = state.border.enabled;
+
+    if (!hasBorder) {
+      // No border - just center the puzzle
+      return {
+        borderOffsetX: 0,
+        hasBorder: false,
+        puzzleOffsetX: 0,
+        totalHeight: puzzleLayout.height,
+        totalWidth: puzzleLayout.width,
+      };
+    }
+
+    // Border dimensions (puzzle + border width on each side)
+    const borderWidth = puzzleLayout.width + state.border.width * 2;
+    const borderHeight = puzzleLayout.height + state.border.width * 2;
+
+    // Total width = puzzle + gap + border
+    const totalWidth = puzzleLayout.width + layerGap + borderWidth;
+    const totalHeight = Math.max(puzzleLayout.height, borderHeight);
+
+    // Center both pieces around the combined center
+    // Puzzle center is at: -totalWidth/2 + puzzleWidth/2
+    // Border center is at: totalWidth/2 - borderWidth/2
+    const puzzleOffsetX = -totalWidth / 2 + puzzleLayout.width / 2;
+    const borderOffsetX = totalWidth / 2 - borderWidth / 2;
+
+    return {
+      borderOffsetX,
+      hasBorder: true,
+      puzzleOffsetX,
+      totalHeight,
+      totalWidth,
+    };
+  }, [state.border.enabled, state.border.width, puzzleLayout]);
+
+  // Calculate scale for layers view (needs to fit both puzzle and border side-by-side)
+  const layersScale = useMemo(() => {
+    const padding = 40;
+    const availableWidth = stageSize.width - padding * 2;
+    const availableHeight = stageSize.height - padding * 2;
+
+    if (layersLayout.totalWidth === 0 || layersLayout.totalHeight === 0) return 1;
+
+    return Math.min(availableWidth / layersLayout.totalWidth, availableHeight / layersLayout.totalHeight);
+  }, [stageSize, layersLayout]);
+
   // Render layers view (shows puzzle and border as separate entities)
-  const renderLayersView = () => {
-    const layerGap = 20; // Gap between layers in the view
-    const hasBorder = state.border.enabled && borderPath;
-
-    // Calculate positions for side-by-side layout
-    const puzzleOffsetX = hasBorder ? -layerGap / 2 - state.border.width : 0;
-    const borderOffsetX = hasBorder ? puzzleLayout.width / 2 + layerGap / 2 + state.border.width : 0;
-
-    return (
-      <Group scaleX={scale * 0.8} scaleY={scale * 0.8} x={offset.x} y={offset.y}>
-        {/* Puzzle layer */}
-        <Group x={puzzleOffsetX}>
-          <Path data={boundaryPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />
-          <Group clipFunc={isRectangle ? undefined : clipFunc}>
-            {puzzleEdges.horizontalEdges && (
-              <Path data={puzzleEdges.horizontalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
-            )}
-            {puzzleEdges.verticalEdges && (
-              <Path data={puzzleEdges.verticalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
-            )}
-          </Group>
+  const renderLayersView = () => (
+    <Group scaleX={layersScale} scaleY={layersScale} x={offset.x} y={offset.y}>
+      {/* Puzzle layer */}
+      <Group x={layersLayout.puzzleOffsetX}>
+        <Path data={boundaryPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />
+        <Group clipFunc={isRectangle ? undefined : clipFunc}>
+          {puzzleEdges.horizontalEdges && (
+            <Path data={puzzleEdges.horizontalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
+          )}
+          {puzzleEdges.verticalEdges && (
+            <Path data={puzzleEdges.verticalEdges} fill="transparent" stroke="#333333" strokeWidth={0.5} />
+          )}
         </Group>
-
-        {/* Border layer (if enabled) - shown separately */}
-        {hasBorder && (
-          <Group x={borderOffsetX}>
-            <Path data={borderPath} fill="#f0f0f0" stroke="#0066cc" strokeWidth={0.5} />
-          </Group>
-        )}
       </Group>
-    );
-  };
+
+      {/* Border layer (if enabled) - shown separately */}
+      {layersLayout.hasBorder && borderPath && (
+        <Group x={layersLayout.borderOffsetX}>
+          <Path data={borderPath} fill="#f0f0f0" stroke="#0066cc" strokeWidth={0.5} />
+        </Group>
+      )}
+    </Group>
+  );
 
   return (
     <div className={styles['preview-area']}>

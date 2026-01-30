@@ -13,7 +13,7 @@ import {
   calculatePuzzleLayout,
   generatePuzzleEdges,
 } from './puzzleGenerator';
-import { generateBorderPath, type ShapeType } from './shapeGenerators';
+import { DEFAULT_HEART_SHARPNESS, generateBorderPath, type ShapeType } from './shapeGenerators';
 import type { PuzzleState, PuzzleTypeConfig } from './types';
 
 // ============================================================================
@@ -67,14 +67,19 @@ export const generateExportPaths = (state: PuzzleState, typeConfig: PuzzleTypeCo
 
 /**
  * Generate the outer decorative border (if enabled)
+ * For heart shapes, uses DEFAULT_HEART_SHARPNESS to match the inner puzzle shape
  */
 const generateOuterBorder = (state: PuzzleState, shapeType: ShapeType): string => {
   const { border } = state;
   const { height, width } = calculatePuzzleLayout(state);
 
+  // For heart shape, use the default sharpness to match the inner puzzle
+  // For rectangle, use the user-configured corner radius
+  const cornerRadius = shapeType === 'heart' ? DEFAULT_HEART_SHARPNESS : border.radius;
+
   return generateBorderPath(shapeType, {
     borderWidth: border.width,
-    cornerRadius: border.radius,
+    cornerRadius,
     height,
     width,
   });
@@ -82,6 +87,7 @@ const generateOuterBorder = (state: PuzzleState, shapeType: ShapeType): string =
 
 /**
  * Calculate the total dimensions of the puzzle including border
+ * (Used for assembled view - puzzle and border stacked)
  */
 export const calculateTotalDimensions = (state: PuzzleState): { height: number; width: number } => {
   const layout = calculatePuzzleLayout(state);
@@ -93,24 +99,102 @@ export const calculateTotalDimensions = (state: PuzzleState): { height: number; 
   };
 };
 
+/**
+ * Gap between puzzle and border in layers view export (in mm)
+ */
+const LAYERS_EXPORT_GAP = 30;
+
+/**
+ * Calculate the layout for layers view export (puzzle and border side-by-side)
+ */
+export const calculateLayersExportLayout = (
+  state: PuzzleState,
+): {
+  borderHeight: number;
+  borderOffsetX: number;
+  borderWidth: number;
+  hasBorder: boolean;
+  puzzleHeight: number;
+  puzzleOffsetX: number;
+  puzzleWidth: number;
+  totalHeight: number;
+  totalWidth: number;
+} => {
+  const layout = calculatePuzzleLayout(state);
+  const puzzleWidth = layout.width;
+  const puzzleHeight = layout.height;
+
+  if (!state.border.enabled) {
+    return {
+      borderHeight: 0,
+      borderOffsetX: 0,
+      borderWidth: 0,
+      hasBorder: false,
+      puzzleHeight,
+      puzzleOffsetX: 0,
+      puzzleWidth,
+      totalHeight: puzzleHeight,
+      totalWidth: puzzleWidth,
+    };
+  }
+
+  // Border dimensions (puzzle + border width on each side)
+  const borderWidth = puzzleWidth + state.border.width * 2;
+  const borderHeight = puzzleHeight + state.border.width * 2;
+
+  // Total width = puzzle + gap + border
+  const totalWidth = puzzleWidth + LAYERS_EXPORT_GAP + borderWidth;
+  const totalHeight = Math.max(puzzleHeight, borderHeight);
+
+  // Center both pieces around the combined center
+  // Puzzle center is at: -totalWidth/2 + puzzleWidth/2
+  // Border center is at: totalWidth/2 - borderWidth/2
+  const puzzleOffsetX = -totalWidth / 2 + puzzleWidth / 2;
+  const borderOffsetX = totalWidth / 2 - borderWidth / 2;
+
+  return {
+    borderHeight,
+    borderOffsetX,
+    borderWidth,
+    hasBorder: true,
+    puzzleHeight,
+    puzzleOffsetX,
+    puzzleWidth,
+    totalHeight,
+    totalWidth,
+  };
+};
+
 // ============================================================================
 // Canvas Export
 // ============================================================================
+
+interface SvgStringOptions {
+  /** Clip path data for non-rectangular shapes */
+  clipPathData?: string;
+  /** Element offset from combined center (for layers view) */
+  elementOffsetX?: number;
+  /** Total SVG height */
+  height: number;
+  /** Path data to render */
+  pathData: string;
+  /** Stroke color */
+  strokeColor?: string;
+  /** Total SVG width */
+  width: number;
+}
 
 /**
  * Create an SVG string for import into Beam Studio canvas
  * The puzzle is centered at origin, so we need to translate to positive coordinates
  * Optionally applies a clip-path to constrain the path to a boundary shape
  */
-const createSvgString = (
-  pathData: string,
-  width: number,
-  height: number,
-  strokeColor: string = '#000000',
-  clipPathData?: string,
-): string => {
+const createSvgString = (options: SvgStringOptions): string => {
+  const { clipPathData, elementOffsetX = 0, height, pathData, strokeColor = '#000000', width } = options;
+
   // Translate paths from centered (-w/2, -h/2) to positive coordinates (0, 0)
-  const translateX = width / 2;
+  // Plus any element offset for layers view positioning
+  const translateX = width / 2 + elementOffsetX;
   const translateY = height / 2;
 
   // If clip path is provided, use SVG clipPath element to clip the edges
@@ -139,7 +223,9 @@ const createSvgString = (
 };
 
 /**
- * Export puzzle to Beam Studio canvas
+ * Export puzzle to Beam Studio canvas with layers view layout
+ * Puzzle and border are placed side-by-side with a gap between them
+ *
  * Creates separate layers for:
  * - Puzzle Inner Cuts (horizontal + vertical edges)
  * - Puzzle Boundary (shape outline)
@@ -150,17 +236,27 @@ export const exportToCanvas = async (state: PuzzleState, typeConfig: PuzzleTypeC
   const { default: importSvgString } = await import('@core/app/svgedit/operations/import/importSvgString');
 
   const exportPaths = generateExportPaths(state, typeConfig);
-  const { height, width } = calculateTotalDimensions(state);
+  const layersLayout = calculateLayersExportLayout(state);
   const isRectangle = typeConfig.gridGenerator === 'rectangle';
+
+  // Use layers layout dimensions (puzzle + gap + border side-by-side)
+  const { puzzleOffsetX, totalHeight, totalWidth } = layersLayout;
 
   // Combine all edge cuts into one path
   const allCuts = [exportPaths.horizontalEdges, exportPaths.verticalEdges].filter(Boolean).join(' ');
 
-  // Import puzzle cuts layer
+  // Import puzzle cuts layer (positioned at puzzle offset)
   // For non-rectangular shapes, use clip-path to clip edges to boundary
   if (allCuts) {
     const clipPath = isRectangle ? undefined : exportPaths.boundaryPath;
-    const cutsSvg = createSvgString(allCuts, width, height, '#000000', clipPath);
+    const cutsSvg = createSvgString({
+      clipPathData: clipPath,
+      elementOffsetX: puzzleOffsetX,
+      height: totalHeight,
+      pathData: allCuts,
+      strokeColor: '#000000',
+      width: totalWidth,
+    });
 
     await importSvgString(cutsSvg, {
       layerName: 'Puzzle Inner Cuts',
@@ -168,9 +264,14 @@ export const exportToCanvas = async (state: PuzzleState, typeConfig: PuzzleTypeC
     });
   }
 
-  // Import boundary layer
+  // Import boundary layer (positioned at puzzle offset)
   if (exportPaths.boundaryPath) {
-    const boundarySvg = createSvgString(exportPaths.boundaryPath, width, height);
+    const boundarySvg = createSvgString({
+      elementOffsetX: puzzleOffsetX,
+      height: totalHeight,
+      pathData: exportPaths.boundaryPath,
+      width: totalWidth,
+    });
 
     await importSvgString(boundarySvg, {
       layerName: 'Puzzle Boundary',
@@ -178,9 +279,15 @@ export const exportToCanvas = async (state: PuzzleState, typeConfig: PuzzleTypeC
     });
   }
 
-  // Import outer border layer (if enabled)
-  if (exportPaths.outerBorderPath) {
-    const borderSvg = createSvgString(exportPaths.outerBorderPath, width, height, '#0000ff');
+  // Import outer border layer (positioned at border offset - right side)
+  if (exportPaths.outerBorderPath && layersLayout.hasBorder) {
+    const borderSvg = createSvgString({
+      elementOffsetX: layersLayout.borderOffsetX,
+      height: totalHeight,
+      pathData: exportPaths.outerBorderPath,
+      strokeColor: '#0000ff',
+      width: totalWidth,
+    });
 
     await importSvgString(borderSvg, {
       layerName: 'Puzzle Border (Separate Material)',

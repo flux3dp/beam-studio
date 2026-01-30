@@ -11,6 +11,16 @@
  */
 
 // ============================================================================
+// Constants
+// ============================================================================
+
+/**
+ * Default heart sharpness value (0-50 scale where 0 = sharp, 50 = rounded)
+ * Value of 25 creates a balanced, natural-looking heart shape
+ */
+export const DEFAULT_HEART_SHARPNESS = 25;
+
+// ============================================================================
 // Types
 // ============================================================================
 
@@ -108,9 +118,10 @@ export const generateEllipsePath = (options: ShapeOptions): string => {
  * Centered at (centerX, centerY), point faces downward
  *
  * @param cornerRadius - Controls bottom point sharpness (0 = sharp, 50 = very rounded)
+ *                       Defaults to DEFAULT_HEART_SHARPNESS (25) for optimal heart shape
  */
 export const generateHeartPath = (options: ShapeOptions): string => {
-  const { centerX = 0, centerY = 0, cornerRadius = 0, height, width } = options;
+  const { centerX = 0, centerY = 0, cornerRadius = DEFAULT_HEART_SHARPNESS, height, width } = options;
 
   const topCurveHeight = height * 0.3;
   const halfWidth = width / 2;
@@ -243,6 +254,8 @@ export const isPointInShape = (x: number, y: number, shapeType: ShapeType, width
 /**
  * Draw shape path on a canvas context for Konva clipFunc
  * Shape is centered at origin (0, 0)
+ *
+ * @param cornerRadius - For rectangle: corner rounding. For heart: ignored (uses DEFAULT_HEART_SHARPNESS)
  */
 export const drawShapeClipPath = (
   ctx: CanvasRenderingContext2D,
@@ -268,8 +281,8 @@ export const drawShapeClipPath = (
       const notchY = topY + topCurveHeight;
       const bottomY = halfHeight;
 
-      // Bottom point sharpness
-      const sharpness = 1 - cornerRadius / 50;
+      // Use default heart sharpness for consistent heart shape
+      const sharpness = 1 - DEFAULT_HEART_SHARPNESS / 50;
       const bottomPullFactor = 0.3 + sharpness * 0.5;
       const bottomCtrl1Y = notchY + (bottomY - notchY) * 0.4;
       const bottomCtrl2X = halfWidth * bottomPullFactor;
