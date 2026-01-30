@@ -81,6 +81,7 @@ const PuzzleGenerator = ({ onClose }: Props): React.JSX.Element => {
           </Button>
         </div>
       }
+      maskClosable={false}
       onCancel={onClose}
       open
       title={tGenerators.puzzle_generator ?? 'Puzzle Generator'}

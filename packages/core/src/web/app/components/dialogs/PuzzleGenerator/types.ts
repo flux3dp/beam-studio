@@ -157,3 +157,36 @@ export const createDefaultPuzzleState = (typeId: string): PuzzleState => ({
 
 export type PuzzleStateUpdater = (updates: Partial<PuzzleState>) => void;
 export type NestedStateUpdater<T> = (key: keyof PuzzleState, updates: Partial<T>) => void;
+
+// ============================================================================
+// Jitter Types (for natural-looking tab variation)
+// ============================================================================
+
+/**
+ * Jitter coefficients for a single tab edge (Draradech algorithm)
+ *
+ * These coefficients create unique, natural-looking tabs:
+ * - flip: Random direction (true = outward, false = inward) - KEY for variety!
+ * - a: Start curve offset (inherited from previous tab's 'e', inverted if flip changed)
+ * - b: Horizontal shift of the entire knob
+ * - c: Vertical shift of the entire knob
+ * - d: Asymmetry factor (makes left/right sides of knob different)
+ * - e: End curve offset (passed to next tab as 'a')
+ */
+export interface TabJitter {
+  a: number;
+  b: number;
+  c: number;
+  d: number;
+  e: number;
+  flip: boolean; // Random tab direction - this is what creates real variety!
+}
+
+/**
+ * Pre-computed jitter map for entire puzzle
+ * Ensures reproducibility and smooth continuity between adjacent tabs
+ */
+export interface PuzzleJitterMap {
+  horizontal: TabJitter[][]; // [rowIndex][colIndex] for horizontal edges (rows-1 rows)
+  vertical: TabJitter[][]; // [rowIndex][colIndex] for vertical edges (cols-1 columns)
+}

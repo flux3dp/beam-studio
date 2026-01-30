@@ -12,7 +12,7 @@
 
 import { match, P } from 'ts-pattern';
 
-import type { PuzzleState } from './types';
+import type { PuzzleJitterMap, PuzzleState, TabJitter } from './types';
 
 // ============================================================================
 // Types
@@ -51,20 +51,171 @@ export interface MergeGroup {
 // Tab depth multiplier (relative to tabSize) - based on Draradech algorithm
 const TAB_DEPTH_MULTIPLIER = 3.0;
 
+// Default jitter amount (4% = 0.04) - controls how much tabs vary from each other
+const DEFAULT_JITTER = 0.04;
+
+// Each orientation type has a unique seed for distinct visual character
+// These create reproducible but visually different puzzle patterns
+const ORIENTATION_SEEDS: Record<1 | 2 | 3 | 4, number> = {
+  1: 1337, // Classic pattern
+  2: 4242, // Inverted pattern
+  3: 7890, // Row-alternating pattern
+  4: 2468, // Column-alternating pattern
+};
+
+// ============================================================================
+// Seeded Random Number Generator (Draradech algorithm)
+// ============================================================================
+
+/**
+ * Create a seeded pseudo-random number generator
+ * Uses sine-based PRNG for deterministic, reproducible results
+ * Same seed always produces the same sequence of random numbers
+ */
+const createSeededRandom = (seed: number): (() => number) => {
+  let currentSeed = seed;
+
+  return () => {
+    const x = Math.sin(currentSeed) * 10000;
+
+    currentSeed += 1;
+
+    return x - Math.floor(x);
+  };
+};
+
+/**
+ * Generate a uniform random value in [min, max] range
+ */
+const uniform = (random: () => number, min: number, max: number): number => min + random() * (max - min);
+
+/**
+ * Generate a random boolean (Draradech's rbool)
+ */
+const rbool = (random: () => number): boolean => random() > 0.5;
+
+// ============================================================================
+// Jitter Map Generation
+// ============================================================================
+
+/**
+ * Generate jitter coefficients for ALL edges in the puzzle (Draradech algorithm)
+ *
+ * This ensures:
+ * - Reproducibility: Same orientation = same puzzle every time
+ * - Continuity: Adjacent tabs share the 'a/e' coefficient for smooth flow
+ * - Natural variety: Each tab has RANDOM flip direction + unique jitter
+ *
+ * Key insights from Draradech:
+ * 1. Each tab's flip direction is RANDOM (not checkerboard pattern)
+ * 2. Coefficient 'a' = previous 'e', BUT inverted if flip direction changed
+ *    This creates smooth transitions between tabs regardless of direction
+ */
+export const generateJitterMap = (
+  rows: number,
+  cols: number,
+  orientation: 1 | 2 | 3 | 4,
+  jitter: number = DEFAULT_JITTER,
+): PuzzleJitterMap => {
+  const seed = ORIENTATION_SEEDS[orientation];
+  const random = createSeededRandom(seed);
+  const j = jitter;
+
+  // Generate horizontal edges (rows-1 edges, each with cols segments)
+  const horizontal: TabJitter[][] = [];
+
+  for (let yi = 0; yi < rows - 1; yi++) {
+    horizontal[yi] = [];
+
+    // Initialize for first segment in this row
+    let prevE = uniform(random, -j, j);
+    let prevFlip = rbool(random);
+
+    for (let xi = 0; xi < cols; xi++) {
+      // Random flip direction for THIS tab - this is what creates variety!
+      const flip = rbool(random);
+
+      // Key Draradech insight: invert 'a' if flip direction changed
+      // This ensures smooth curve transitions regardless of tab direction
+      const a = flip === prevFlip ? prevE : -prevE;
+
+      const jitterCoeffs: TabJitter = {
+        a,
+        b: uniform(random, -j, j),
+        c: uniform(random, -j, j),
+        d: uniform(random, -j, j),
+        e: uniform(random, -j, j),
+        flip,
+      };
+
+      horizontal[yi][xi] = jitterCoeffs;
+
+      // Pass to next segment
+      prevE = jitterCoeffs.e;
+      prevFlip = flip;
+    }
+  }
+
+  // Generate vertical edges (cols-1 edges, each with rows segments)
+  const vertical: TabJitter[][] = [];
+
+  for (let xi = 0; xi < cols - 1; xi++) {
+    vertical[xi] = [];
+
+    // Initialize for first segment in this column
+    let prevE = uniform(random, -j, j);
+    let prevFlip = rbool(random);
+
+    for (let yi = 0; yi < rows; yi++) {
+      const flip = rbool(random);
+      const a = flip === prevFlip ? prevE : -prevE;
+
+      const jitterCoeffs: TabJitter = {
+        a,
+        b: uniform(random, -j, j),
+        c: uniform(random, -j, j),
+        d: uniform(random, -j, j),
+        e: uniform(random, -j, j),
+        flip,
+      };
+
+      vertical[xi][yi] = jitterCoeffs;
+
+      prevE = jitterCoeffs.e;
+      prevFlip = flip;
+    }
+  }
+
+  return { horizontal, vertical };
+};
+
 // ============================================================================
 // Bezier Curve Tab Generation
 // ============================================================================
 
 /**
- * Generate a single tab edge using cubic Bezier curves
+ * Default jitter coefficients (no variation - used for preview pieces)
+ */
+const DEFAULT_TAB_JITTER: TabJitter = { a: 0, b: 0, c: 0, d: 0, e: 0, flip: true };
+
+/**
+ * Generate a single tab edge using cubic Bezier curves with jitter
  * Based on Draradech's 10-point Bezier profile
+ *
+ * The jitter coefficients create natural variation in each tab:
+ * - a: Start curve offset (inherited from previous tab's 'e')
+ * - b: Horizontal shift of the entire knob
+ * - c: Vertical shift of the entire knob
+ * - d: Asymmetry factor (makes left/right sides different)
+ * - e: End curve offset (passed to next tab as 'a')
  *
  * @param startX - Start X coordinate
  * @param startY - Start Y coordinate
  * @param endX - End X coordinate
  * @param endY - End Y coordinate
- * @param tabSize - Tab size as fraction (0-0.3)
+ * @param tabSize - Tab size as fraction (0-0.12)
  * @param flip - true = tab bulges in positive perpendicular direction
+ * @param jitter - Jitter coefficients for natural variation
  */
 const generateTabCurve = (
   startX: number,
@@ -73,6 +224,7 @@ const generateTabCurve = (
   endY: number,
   tabSize: number,
   flip: boolean,
+  jitter: TabJitter = DEFAULT_TAB_JITTER,
 ): string => {
   // Edge vector
   const dx = endX - startX;
@@ -94,23 +246,27 @@ const generateTabCurve = (
   // Tab size parameter (t in original algorithm)
   const t = tabSize;
 
+  // Extract jitter coefficients
+  const { a, b, c, d, e } = jitter;
+
   // Helper to compute point along edge with perpendicular offset
   const point = (alongEdge: number, perpOffset: number): { x: number; y: number } => ({
     x: startX + dx * alongEdge + wx * perpOffset * length * flipMult,
     y: startY + dy * alongEdge + wy * perpOffset * length * flipMult,
   });
 
-  // Control points defining the tab profile (p1-p9, p0 is implicit start point)
-  // Based on deterministic version (no jitter)
-  const p1 = point(0.2, 0.0);
-  const p2 = point(0.5, -t);
-  const p3 = point(0.5 - t, t);
-  const p4 = point(0.5 - 2.0 * t, TAB_DEPTH_MULTIPLIER * t);
-  const p5 = point(0.5 + 2.0 * t, TAB_DEPTH_MULTIPLIER * t);
-  const p6 = point(0.5 + t, t);
-  const p7 = point(0.5, -t);
-  const p8 = point(0.8, 0.0);
-  const p9 = point(1.0, 0.0);
+  // Control points defining the tab profile with jitter applied
+  // p0 is implicit start point at (0, 0)
+  // Jitter offsets create unique, natural-looking tabs
+  const p1 = point(0.2, a); // Entry influenced by previous tab
+  const p2 = point(0.5 + b + d, -t + c); // Approach to knob
+  const p3 = point(0.5 - t + b, t + c); // Knob left edge
+  const p4 = point(0.5 - 2.0 * t + b - d, TAB_DEPTH_MULTIPLIER * t + c); // Knob left peak
+  const p5 = point(0.5 + 2.0 * t + b - d, TAB_DEPTH_MULTIPLIER * t + c); // Knob right peak
+  const p6 = point(0.5 + t + b, t + c); // Knob right edge
+  const p7 = point(0.5 + b + d, -t + c); // Exit from knob
+  const p8 = point(0.8, e); // Exit curve (influences next tab)
+  const p9 = point(1.0, 0.0); // End point
 
   // Build the Bezier curve path
   // Three cubic Bezier segments: p0→p3, p3→p6, p6→p9
@@ -159,12 +315,14 @@ const getTabSizeFraction = (displayValue: number): number => {
  * Generate all horizontal edge cuts (between rows)
  * These are the cuts that go left-to-right, separating row N from row N+1
  * @param mergeGroups - If provided, skip edges between merged pieces
+ * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
  */
 const generateHorizontalEdges = (
   state: PuzzleState,
   offsetX: number,
   offsetY: number,
   mergeGroups: MergeGroup[] = [],
+  jitterMap?: PuzzleJitterMap,
 ): string => {
   const { columns, orientation, pieceSize, rows, tabSize } = state;
   const t = getTabSizeFraction(tabSize); // Convert display value to fraction
@@ -201,10 +359,13 @@ const generateHorizontalEdges = (
         currentSegmentStart = x1;
       }
 
-      const flip = getTabFlip(yi, xi, orientation);
+      // Get jitter for this specific edge (yi-1 because horizontal edges are 0-indexed)
+      const jitter = jitterMap?.horizontal[yi - 1]?.[xi];
+      // Use random flip from jitter if available, otherwise fall back to deterministic pattern
+      const flip = jitter?.flip ?? getTabFlip(yi, xi, orientation);
 
       if (t > 0) {
-        pathData += ' ' + generateTabCurve(x1, y, x2, y, t, flip);
+        pathData += ' ' + generateTabCurve(x1, y, x2, y, t, flip, jitter);
       } else {
         pathData += ' ' + generateStraightEdge(x2, y);
       }
@@ -222,12 +383,14 @@ const generateHorizontalEdges = (
  * Generate all vertical edge cuts (between columns)
  * These are the cuts that go top-to-bottom, separating column N from column N+1
  * @param mergeGroups - If provided, skip edges between merged pieces
+ * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
  */
 const generateVerticalEdges = (
   state: PuzzleState,
   offsetX: number,
   offsetY: number,
   mergeGroups: MergeGroup[] = [],
+  jitterMap?: PuzzleJitterMap,
 ): string => {
   const { columns, orientation, pieceSize, rows, tabSize } = state;
   const t = getTabSizeFraction(tabSize); // Convert display value to fraction
@@ -264,11 +427,13 @@ const generateVerticalEdges = (
         currentSegmentStart = y1;
       }
 
-      // Use offset orientation for vertical edges to ensure proper interlocking
-      const flip = getTabFlip(yi, xi, orientation);
+      // Get jitter for this specific edge (xi-1 because vertical edges are 0-indexed)
+      const jitter = jitterMap?.vertical[xi - 1]?.[yi];
+      // Use random flip from jitter if available, otherwise fall back to deterministic pattern
+      const flip = jitter?.flip ?? !getTabFlip(yi, xi, orientation); // Invert for vertical when using fallback
 
       if (t > 0) {
-        pathData += ' ' + generateTabCurve(x, y1, x, y2, t, !flip); // Invert flip for vertical
+        pathData += ' ' + generateTabCurve(x, y1, x, y2, t, flip, jitter);
       } else {
         pathData += ' ' + generateStraightEdge(x, y2);
       }
@@ -370,6 +535,49 @@ const generateHeartBoundary = (centerX: number, centerY: number, width: number, 
 };
 
 // ============================================================================
+// Border Path Generation
+// ============================================================================
+
+/**
+ * Generate border path for a given shape
+ * Border is offset outward from the boundary by borderWidth
+ * Centered at origin (0, 0)
+ */
+export const generateBorderPath = (
+  gridGenerator: string,
+  width: number,
+  height: number,
+  borderWidth: number,
+  cornerRadius: number = 0,
+): string =>
+  match(gridGenerator)
+    .with('circle', () => {
+      // Ellipse border: expand radii by borderWidth
+      const radiusX = width / 2 + borderWidth;
+      const radiusY = height / 2 + borderWidth;
+
+      return generateEllipseBoundary(0, 0, radiusX, radiusY);
+    })
+    .with('rectangle', () => {
+      // Rectangle border: expand by borderWidth with optional corner radius
+      const borderWidth2 = borderWidth * 2;
+      const newWidth = width + borderWidth2;
+      const newHeight = height + borderWidth2;
+
+      return generateRectangleBoundary(-newWidth / 2, -newHeight / 2, newWidth, newHeight, cornerRadius);
+    })
+    .with('heart', () => {
+      // Heart border: scale the heart shape outward by borderWidth
+      const scaleX = (width + borderWidth * 2) / width;
+      const scaleY = (height + borderWidth * 2) / height;
+      const newWidth = width * scaleX;
+      const newHeight = height * scaleY;
+
+      return generateHeartBoundary(0, 0, newWidth, newHeight);
+    })
+    .otherwise(() => '');
+
+// ============================================================================
 // Main Generator Functions
 // ============================================================================
 
@@ -400,14 +608,19 @@ export const calculatePuzzleLayout = (
 /**
  * Generate edge-based puzzle paths for a rectangular puzzle
  * @param mergeGroups - If provided, skip edges between merged pieces
+ * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
  */
-export const generateRectanglePuzzle = (state: PuzzleState, mergeGroups: MergeGroup[] = []): PuzzleEdges => {
+export const generateRectanglePuzzle = (
+  state: PuzzleState,
+  mergeGroups: MergeGroup[] = [],
+  jitterMap?: PuzzleJitterMap,
+): PuzzleEdges => {
   const { height, offsetX, offsetY, width } = calculatePuzzleLayout(state);
 
   return {
     boundaryPath: generateRectangleBoundary(offsetX, offsetY, width, height),
-    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups),
-    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups),
+    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
+    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
   };
 };
 
@@ -416,8 +629,13 @@ export const generateRectanglePuzzle = (state: PuzzleState, mergeGroups: MergeGr
  * Uses truncate-at-boundary approach: rectangular grid clipped by ellipse
  * The ellipse fits the full grid dimensions to maximize piece coverage
  * @param mergeGroups - If provided, skip edges between merged pieces
+ * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
  */
-export const generateCirclePuzzle = (state: PuzzleState, mergeGroups: MergeGroup[] = []): PuzzleEdges => {
+export const generateCirclePuzzle = (
+  state: PuzzleState,
+  mergeGroups: MergeGroup[] = [],
+  jitterMap?: PuzzleJitterMap,
+): PuzzleEdges => {
   const { height, offsetX, offsetY, width } = calculatePuzzleLayout(state);
   const centerX = 0; // Centered at origin
   const centerY = 0;
@@ -427,8 +645,8 @@ export const generateCirclePuzzle = (state: PuzzleState, mergeGroups: MergeGroup
 
   return {
     boundaryPath: generateEllipseBoundary(centerX, centerY, radiusX, radiusY),
-    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups),
-    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups),
+    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
+    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
   };
 };
 
@@ -437,32 +655,42 @@ export const generateCirclePuzzle = (state: PuzzleState, mergeGroups: MergeGroup
  * Uses truncate-at-boundary approach: rectangular grid clipped by heart
  * The heart fits the full grid dimensions to maximize piece coverage
  * @param mergeGroups - If provided, skip edges between merged pieces
+ * @param jitterMap - Pre-computed jitter coefficients for natural tab variation
  */
-export const generateHeartPuzzle = (state: PuzzleState, mergeGroups: MergeGroup[] = []): PuzzleEdges => {
+export const generateHeartPuzzle = (
+  state: PuzzleState,
+  mergeGroups: MergeGroup[] = [],
+  jitterMap?: PuzzleJitterMap,
+): PuzzleEdges => {
   const { height, offsetX, offsetY, width } = calculatePuzzleLayout(state);
   const centerX = 0;
   const centerY = 0;
 
   return {
     boundaryPath: generateHeartBoundary(centerX, centerY, width, height),
-    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups),
-    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups),
+    horizontalEdges: generateHorizontalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
+    verticalEdges: generateVerticalEdges(state, offsetX, offsetY, mergeGroups, jitterMap),
   };
 };
 
 /**
  * Main generator function - routes to appropriate shape generator
+ * Automatically generates jitter map based on orientation for natural tab variation
  * @param mergeGroups - If provided, skip edges between merged pieces
  */
 export const generatePuzzleEdges = (
   state: PuzzleState,
   gridGenerator: string,
   mergeGroups: MergeGroup[] = [],
-): PuzzleEdges =>
-  match(gridGenerator)
-    .with(P.union('circle', 'warpedCircle'), () => generateCirclePuzzle(state, mergeGroups))
-    .with(P.union('heart', 'warpedHeart'), () => generateHeartPuzzle(state, mergeGroups))
-    .otherwise(() => generateRectanglePuzzle(state, mergeGroups));
+): PuzzleEdges => {
+  // Generate jitter map for natural tab variation based on orientation
+  const jitterMap = generateJitterMap(state.rows, state.columns, state.orientation);
+
+  return match(gridGenerator)
+    .with(P.union('circle', 'warpedCircle'), () => generateCirclePuzzle(state, mergeGroups, jitterMap))
+    .with(P.union('heart', 'warpedHeart'), () => generateHeartPuzzle(state, mergeGroups, jitterMap))
+    .otherwise(() => generateRectanglePuzzle(state, mergeGroups, jitterMap));
+};
 
 // ============================================================================
 // Boundary Check Helpers
@@ -512,6 +740,32 @@ const isPointInBoundary = (x: number, y: number, gridGenerator: string, width: n
     .with(P.union('circle', 'warpedCircle'), () => isPointInEllipse(x, y, width / 2, height / 2))
     .with(P.union('heart', 'warpedHeart'), () => isPointInHeart(x, y, width, height))
     .otherwise(() => true);
+
+/**
+ * Check if a piece at the heart's top center should be force-merged
+ * The heart notch at the top center creates partial pieces that should merge.
+ *
+ * This is a simpler approach: if a piece is in row 0 and near the horizontal center,
+ * and it has partial visibility (between 10% and 90%), it should merge with neighbors.
+ */
+const shouldForceHeartTopMerge = (
+  pieceRow: number,
+  pieceCol: number,
+  visibleRatio: number,
+  columns: number,
+): boolean => {
+  // Only check row 0 (top row where the notch is)
+  if (pieceRow !== 0) return false;
+
+  // Only check pieces near the horizontal center
+  const centerCol = (columns - 1) / 2;
+
+  if (Math.abs(pieceCol - centerCol) > 1.5) return false;
+
+  // Force merge if piece has partial visibility (affected by notch)
+  // Pieces fully inside (>90%) or fully outside (<10%) don't need special handling
+  return visibleRatio > 0.1 && visibleRatio < 0.9;
+};
 
 /**
  * Check if a piece (by its center) is inside the boundary shape
@@ -590,124 +844,302 @@ export const calculateAllPieceVisibilities = (state: PuzzleState, gridGenerator:
 
 /**
  * Find merge groups for small pieces (< threshold visibility)
- * Uses iterative merging: keeps merging until combined visibility >= 80%
- * Direction priority: right, left, bottom, top (takes first valid neighbor)
+ *
+ * Uses a two-pass algorithm for better visual consistency:
+ * 1. First pass: Merge horizontally (right, then left) - creates horizontal strips
+ * 2. Second pass: Merge vertically (bottom, then top) - handles remaining small pieces
+ * 3. Third pass: Expand groups until ≥80% visibility
+ *
+ * Special features:
+ * - Heart shape: Detects top center pieces split by the notch and merges them
+ * - Odd columns: Center column pieces merge symmetrically with both neighbors
+ *
+ * This approach creates more consistent merge patterns, especially for shapes like
+ * heart where the top center notch can split pieces visually.
  */
 export const calculateMergeGroups = (
   visibilities: PieceVisibility[],
   rows: number,
   columns: number,
   threshold: number = 0.5,
+  gridGenerator: string = 'rectangle',
+  _state?: PuzzleState,
 ): MergeGroup[] => {
   const mergeGroups: MergeGroup[] = [];
   const processedPieces = new Set<string>();
+  // Track pieces that have been merged (but may still need more merging)
+  const mergedIntoGroup = new Map<string, number>(); // key -> group index
 
   const getKey = (row: number, col: number) => `${row}-${col}`;
   const getVisibility = (row: number, col: number) => visibilities.find((v) => v.row === row && v.col === col);
 
-  // Helper to get neighbors in priority order: right, left, bottom, top
-  const getNeighborsInOrder = (row: number, col: number) => [
-    { col: col + 1, row }, // right
-    { col: col - 1, row }, // left
-    { col, row: row + 1 }, // bottom
-    { col, row: row - 1 }, // top
-  ];
+  // Check if this is a center column in an odd-column grid
+  const isOddColumns = columns % 2 === 1;
+  const centerCol = Math.floor(columns / 2);
 
-  // Find small pieces and merge them with neighbors
+  // Helper to check if a piece needs merging
+  const needsMerging = (row: number, col: number): boolean => {
+    const vis = getVisibility(row, col);
+
+    if (!vis) return false;
+
+    if (vis.visibleRatio <= 0.01) return false; // Completely outside
+
+    if (vis.visibleRatio >= threshold) return false; // Large enough
+
+    return true;
+  };
+
+  // Helper to check if a heart top piece should be force-merged
+  const shouldForceHeartMerge = (row: number, col: number): boolean => {
+    if (gridGenerator !== 'heart') return false;
+
+    const vis = getVisibility(row, col);
+
+    if (!vis) return false;
+
+    return shouldForceHeartTopMerge(row, col, vis.visibleRatio, columns);
+  };
+
+  // Helper to try merging a piece in a specific direction
+  const tryMerge = (sourceRow: number, sourceCol: number, targetRow: number, targetCol: number): boolean => {
+    // Check bounds
+    if (targetRow < 0 || targetRow >= rows || targetCol < 0 || targetCol >= columns) {
+      return false;
+    }
+
+    const sourceKey = getKey(sourceRow, sourceCol);
+    const targetKey = getKey(targetRow, targetCol);
+    const targetVis = getVisibility(targetRow, targetCol);
+
+    // Skip if target is completely outside
+    if (!targetVis || targetVis.visibleRatio <= 0.01) {
+      return false;
+    }
+
+    // Check if source is already in a group
+    const sourceGroupIdx = mergedIntoGroup.get(sourceKey);
+
+    if (sourceGroupIdx !== undefined) {
+      // Source is already in a group - check if target can join
+      if (mergedIntoGroup.has(targetKey) || processedPieces.has(targetKey)) {
+        return false;
+      }
+
+      // Add target to existing group
+      const group = mergeGroups[sourceGroupIdx];
+
+      group.pieces.push({ col: targetCol, row: targetRow });
+      group.sharedEdges.push({
+        col1: sourceCol,
+        col2: targetCol,
+        row1: sourceRow,
+        row2: targetRow,
+      });
+      mergedIntoGroup.set(targetKey, sourceGroupIdx);
+
+      return true;
+    }
+
+    // Source is not in a group yet - check if target is available
+    if (mergedIntoGroup.has(targetKey) || processedPieces.has(targetKey)) {
+      return false;
+    }
+
+    // Create new merge group
+    const newGroupIdx = mergeGroups.length;
+
+    mergeGroups.push({
+      pieces: [
+        { col: sourceCol, row: sourceRow },
+        { col: targetCol, row: targetRow },
+      ],
+      sharedEdges: [
+        {
+          col1: sourceCol,
+          col2: targetCol,
+          row1: sourceRow,
+          row2: targetRow,
+        },
+      ],
+    });
+    mergedIntoGroup.set(sourceKey, newGroupIdx);
+    mergedIntoGroup.set(targetKey, newGroupIdx);
+
+    return true;
+  };
+
+  // Mark completely outside pieces as processed
   for (const piece of visibilities) {
-    const key = getKey(piece.row, piece.col);
-
-    if (processedPieces.has(key)) {
-      continue;
-    }
-
-    if (piece.visibleRatio >= threshold) {
-      // Not a small piece
-      continue;
-    }
-
     if (piece.visibleRatio <= 0.01) {
-      // Completely outside - skip entirely
-      processedPieces.add(key);
-      continue;
+      processedPieces.add(getKey(piece.row, piece.col));
     }
+  }
 
-    // Start a merge group with this small piece
-    const groupPieces: Array<{ col: number; row: number; visibility: number }> = [
-      { col: piece.col, row: piece.row, visibility: piece.visibleRatio },
-    ];
-    const sharedEdges: MergeGroup['sharedEdges'] = [];
-    let totalVisibility = piece.visibleRatio;
+  // ========================================
+  // PASS 0: Handle heart top center pieces
+  // ========================================
+  // For heart shapes, pieces at the top center near the notch should merge with neighbors
+  // This creates symmetric merged pieces around the heart notch
+  if (gridGenerator === 'heart') {
+    for (let col = 0; col < columns; col++) {
+      // Only check row 0 (top row with the notch)
+      if (shouldForceHeartMerge(0, col)) {
+        const key = getKey(0, col);
 
-    processedPieces.add(key);
+        if (processedPieces.has(key) || mergedIntoGroup.has(key)) continue;
 
-    // Keep merging until we have >= 80% visibility
+        // Force merge with both horizontal neighbors for symmetry
+        if (col > 0) tryMerge(0, col, 0, col - 1);
+
+        if (col < columns - 1) tryMerge(0, col, 0, col + 1);
+      }
+    }
+  }
+
+  // ========================================
+  // PASS 1: Horizontal merging (row by row)
+  // ========================================
+  // Process each row from left to right, merging small pieces horizontally
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      if (!needsMerging(row, col)) continue;
+
+      const key = getKey(row, col);
+
+      if (processedPieces.has(key)) continue;
+
+      // For odd columns, if this is the center column, merge symmetrically with both sides
+      if (isOddColumns && col === centerCol) {
+        // Merge with both left and right for symmetry
+        if (col > 0) tryMerge(row, col, row, col - 1);
+
+        if (col < columns - 1) tryMerge(row, col, row, col + 1);
+
+        continue;
+      }
+
+      // Try to merge with right neighbor first
+      if (col + 1 < columns) {
+        const rightVis = getVisibility(row, col + 1);
+
+        // Merge if right neighbor exists (either small or large)
+        if (rightVis && rightVis.visibleRatio > 0.01) {
+          tryMerge(row, col, row, col + 1);
+        }
+      }
+
+      // If still not merged, try left neighbor
+      if (!mergedIntoGroup.has(key) && col - 1 >= 0) {
+        const leftVis = getVisibility(row, col - 1);
+
+        if (leftVis && leftVis.visibleRatio > 0.01) {
+          tryMerge(row, col, row, col - 1);
+        }
+      }
+    }
+  }
+
+  // ========================================
+  // PASS 2: Vertical merging (remaining small pieces)
+  // ========================================
+  // Process remaining unmerged small pieces with vertical merging
+  for (let row = 0; row < rows; row++) {
+    for (let col = 0; col < columns; col++) {
+      if (!needsMerging(row, col)) continue;
+
+      const key = getKey(row, col);
+
+      if (processedPieces.has(key)) continue;
+
+      if (mergedIntoGroup.has(key)) continue; // Already merged in horizontal pass
+
+      // Try to merge with bottom neighbor first
+      if (row + 1 < rows) {
+        const bottomVis = getVisibility(row + 1, col);
+
+        if (bottomVis && bottomVis.visibleRatio > 0.01) {
+          tryMerge(row, col, row + 1, col);
+        }
+      }
+
+      // If still not merged, try top neighbor
+      if (!mergedIntoGroup.has(key) && row - 1 >= 0) {
+        const topVis = getVisibility(row - 1, col);
+
+        if (topVis && topVis.visibleRatio > 0.01) {
+          tryMerge(row, col, row - 1, col);
+        }
+      }
+    }
+  }
+
+  // ========================================
+  // PASS 3: Ensure minimum visibility (expand groups if needed)
+  // ========================================
+  // For groups that still have low total visibility, try to expand
+  for (let groupIdx = 0; groupIdx < mergeGroups.length; groupIdx++) {
+    const group = mergeGroups[groupIdx];
+    let totalVisibility = group.pieces.reduce((sum, p) => {
+      const vis = getVisibility(p.row, p.col);
+
+      return sum + (vis?.visibleRatio ?? 0);
+    }, 0);
+
+    // Keep expanding until we reach 80% or can't expand more
     while (totalVisibility < 0.8) {
-      let foundNeighbor = false;
+      let expanded = false;
 
-      // Try to find a neighbor for any piece in the current group
-      for (const groupPiece of groupPieces) {
-        const neighbors = getNeighborsInOrder(groupPiece.row, groupPiece.col);
+      // Try to expand from any piece in the group
+      for (const piece of group.pieces) {
+        // Try all four directions: right, left, bottom, top
+        const neighbors = [
+          { col: piece.col + 1, row: piece.row },
+          { col: piece.col - 1, row: piece.row },
+          { col: piece.col, row: piece.row + 1 },
+          { col: piece.col, row: piece.row - 1 },
+        ];
 
         for (const neighbor of neighbors) {
-          // Check bounds
           if (neighbor.row < 0 || neighbor.row >= rows || neighbor.col < 0 || neighbor.col >= columns) {
             continue;
           }
 
           const neighborKey = getKey(neighbor.row, neighbor.col);
 
-          // Skip if already processed or already in group
-          if (processedPieces.has(neighborKey)) {
+          if (mergedIntoGroup.has(neighborKey) || processedPieces.has(neighborKey)) {
             continue;
           }
 
           const neighborVis = getVisibility(neighbor.row, neighbor.col);
 
-          // Skip if completely outside
           if (!neighborVis || neighborVis.visibleRatio <= 0.01) {
             continue;
           }
 
-          // Found a valid neighbor - add to group
-          groupPieces.push({
-            col: neighbor.col,
-            row: neighbor.row,
-            visibility: neighborVis.visibleRatio,
-          });
-          sharedEdges.push({
-            col1: groupPiece.col,
+          // Add neighbor to group
+          group.pieces.push({ col: neighbor.col, row: neighbor.row });
+          group.sharedEdges.push({
+            col1: piece.col,
             col2: neighbor.col,
-            row1: groupPiece.row,
+            row1: piece.row,
             row2: neighbor.row,
           });
+          mergedIntoGroup.set(neighborKey, groupIdx);
           totalVisibility += neighborVis.visibleRatio;
-          processedPieces.add(neighborKey);
-          foundNeighbor = true;
-          break; // Take first valid neighbor, then re-evaluate
-        }
-
-        if (foundNeighbor) {
+          expanded = true;
           break;
         }
+
+        if (expanded) break;
       }
 
-      // If no neighbor found for any piece in group, stop merging
-      if (!foundNeighbor) {
-        break;
-      }
-    }
-
-    // Only create merge group if we actually merged pieces (more than 1 piece)
-    if (groupPieces.length > 1) {
-      mergeGroups.push({
-        pieces: groupPieces.map((p) => ({ col: p.col, row: p.row })),
-        sharedEdges,
-      });
+      if (!expanded) break;
     }
   }
 
-  return mergeGroups;
+  // Filter out empty groups (shouldn't happen, but safety check)
+  return mergeGroups.filter((g) => g.pieces.length > 1);
 };
 
 /**

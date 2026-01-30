@@ -8,12 +8,12 @@
  */
 
 import * as paper from 'paper';
-import { match } from 'ts-pattern';
 
 import {
   calculateAllPieceVisibilities,
   calculateMergeGroups,
   calculatePuzzleLayout,
+  generateBorderPath,
   generatePuzzleEdges,
 } from './puzzleGenerator';
 import type { PuzzleState, PuzzleTypeConfig } from './types';
@@ -299,6 +299,8 @@ export const generateExportPaths = (state: PuzzleState, typeConfig: PuzzleTypeCo
         state.rows,
         state.columns,
         0.5,
+        typeConfig.gridGenerator,
+        state,
       );
 
   // Generate edges with merged piece edges removed
@@ -312,6 +314,7 @@ export const generateExportPaths = (state: PuzzleState, typeConfig: PuzzleTypeCo
       boundaryPath: edges.boundaryPath,
       cutPaths: [],
       horizontalEdges: edges.horizontalEdges,
+      outerBorderPath: state.border.enabled ? generateOuterBorder(state, typeConfig) : undefined,
       verticalEdges: edges.verticalEdges,
     };
   }
@@ -332,53 +335,13 @@ export const generateExportPaths = (state: PuzzleState, typeConfig: PuzzleTypeCo
 
 /**
  * Generate the outer decorative border (if enabled)
+ * Uses the shared generateBorderPath function from puzzleGenerator
  */
 const generateOuterBorder = (state: PuzzleState, typeConfig: PuzzleTypeConfig): string => {
   const { border } = state;
   const { height, width } = calculatePuzzleLayout(state);
-  const borderWidth = border.width;
 
-  return match(typeConfig.gridGenerator)
-    .with('circle', () => {
-      const radiusX = width / 2 + borderWidth;
-      const radiusY = height / 2 + borderWidth;
-
-      return [
-        `M ${radiusX.toFixed(2)} 0`,
-        `A ${radiusX.toFixed(2)} ${radiusY.toFixed(2)} 0 1 1 ${(-radiusX).toFixed(2)} 0`,
-        `A ${radiusX.toFixed(2)} ${radiusY.toFixed(2)} 0 1 1 ${radiusX.toFixed(2)} 0`,
-        'Z',
-      ].join(' ');
-    })
-    .with('rectangle', () => {
-      const halfWidth = width / 2 + borderWidth;
-      const halfHeight = height / 2 + borderWidth;
-      const r = Math.min(border.radius, halfWidth, halfHeight);
-
-      if (r > 0) {
-        return [
-          `M ${(-halfWidth + r).toFixed(2)} ${(-halfHeight).toFixed(2)}`,
-          `L ${(halfWidth - r).toFixed(2)} ${(-halfHeight).toFixed(2)}`,
-          `A ${r} ${r} 0 0 1 ${halfWidth.toFixed(2)} ${(-halfHeight + r).toFixed(2)}`,
-          `L ${halfWidth.toFixed(2)} ${(halfHeight - r).toFixed(2)}`,
-          `A ${r} ${r} 0 0 1 ${(halfWidth - r).toFixed(2)} ${halfHeight.toFixed(2)}`,
-          `L ${(-halfWidth + r).toFixed(2)} ${halfHeight.toFixed(2)}`,
-          `A ${r} ${r} 0 0 1 ${(-halfWidth).toFixed(2)} ${(halfHeight - r).toFixed(2)}`,
-          `L ${(-halfWidth).toFixed(2)} ${(-halfHeight + r).toFixed(2)}`,
-          `A ${r} ${r} 0 0 1 ${(-halfWidth + r).toFixed(2)} ${(-halfHeight).toFixed(2)}`,
-          'Z',
-        ].join(' ');
-      }
-
-      return [
-        `M ${(-halfWidth).toFixed(2)} ${(-halfHeight).toFixed(2)}`,
-        `L ${halfWidth.toFixed(2)} ${(-halfHeight).toFixed(2)}`,
-        `L ${halfWidth.toFixed(2)} ${halfHeight.toFixed(2)}`,
-        `L ${(-halfWidth).toFixed(2)} ${halfHeight.toFixed(2)}`,
-        'Z',
-      ].join(' ');
-    })
-    .otherwise(() => '');
+  return generateBorderPath(typeConfig.gridGenerator, width, height, border.width, border.radius);
 };
 
 /**

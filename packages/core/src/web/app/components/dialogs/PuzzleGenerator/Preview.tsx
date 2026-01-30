@@ -13,6 +13,7 @@ import {
   calculateAllPieceVisibilities,
   calculateMergeGroups,
   calculatePuzzleLayout,
+  generateBorderPath,
   generatePuzzleEdges,
 } from './puzzleGenerator';
 import type { PuzzleState, PuzzleTypeConfig } from './types';
@@ -49,7 +50,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
 
     const visibilities = calculateAllPieceVisibilities(state, typeConfig.gridGenerator);
 
-    return calculateMergeGroups(visibilities, state.rows, state.columns, 0.5);
+    return calculateMergeGroups(visibilities, state.rows, state.columns, 0.5, typeConfig.gridGenerator, state);
   }, [state, typeConfig.gridGenerator]);
 
   // Generate edge-based paths (with merged piece edges removed)
@@ -58,19 +59,31 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     [state, typeConfig.gridGenerator, mergeGroups],
   );
 
+  // Generate border path if border is enabled
+  const borderPath = useMemo(() => {
+    if (!state.border.enabled) return '';
+
+    const { columns, pieceSize, rows } = state;
+    const width = columns * pieceSize;
+    const height = rows * pieceSize;
+
+    return generateBorderPath(typeConfig.gridGenerator, width, height, state.border.width, state.border.radius);
+  }, [state, typeConfig.gridGenerator]);
+
   // Get puzzle layout for centering calculations
   const puzzleLayout = useMemo(() => calculatePuzzleLayout(state), [state]);
 
-  // Calculate the bounding box for proper scaling
-  const puzzleBounds = useMemo(
-    () => ({
-      height: puzzleLayout.height,
-      width: puzzleLayout.width,
-      x: puzzleLayout.offsetX,
-      y: puzzleLayout.offsetY,
-    }),
-    [puzzleLayout],
-  );
+  // Calculate the bounding box for proper scaling (including border if enabled)
+  const puzzleBounds = useMemo(() => {
+    const borderOffset = state.border.enabled ? state.border.width : 0;
+
+    return {
+      height: puzzleLayout.height + borderOffset * 2,
+      width: puzzleLayout.width + borderOffset * 2,
+      x: puzzleLayout.offsetX - borderOffset,
+      y: puzzleLayout.offsetY - borderOffset,
+    };
+  }, [puzzleLayout, state.border.enabled, state.border.width]);
 
   // Handle container resize
   useEffect(() => {
@@ -178,7 +191,10 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
           <Layer>
             {/* Edge-based rendering with clipping */}
             <Group scaleX={scale} scaleY={scale} x={offset.x} y={offset.y}>
-              {/* Boundary shape with white fill (the puzzle background) */}
+              {/* Border path (if enabled) - rendered FIRST (behind) with white fill */}
+              {borderPath && <Path data={borderPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />}
+
+              {/* Boundary shape with white fill (the puzzle background) - rendered on top of border */}
               <Path data={puzzleEdges.boundaryPath} fill="#ffffff" stroke="#333333" strokeWidth={0.5} />
 
               {/* Clipped group for edge cuts - clips to boundary shape */}
