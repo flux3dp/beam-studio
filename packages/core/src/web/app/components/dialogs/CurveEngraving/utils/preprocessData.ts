@@ -22,17 +22,25 @@ export interface ThreeDisplayData {
 
 /**
  * Preprocess curve engraving data to Three.js display friendly format, and also generate subdivided points if needed
+ * @param data Curve engraving data
+ * @param options Preprocessing options
+ * @param options.interpolateLength interpolation until triangle edges are below this length. Default is 0 (no interpolation)
+ * @param options.reverseX Whether to reverse the X axis for Three.js display. Usually false.
+ * @param options.reverseY Whether to reverse the Y axis for Three.js display. Usually true.
+ * @param options.reverseZ Whether to reverse the Z axis for Three.js display. Usually true.
+ * @param options.subdivisionIterations Number of Loop subdivision iterations to apply for smoother surface. Default is 2.
+ * @returns Preprocessed Three.js display data and subdivided points
  */
 export const preprocessData = (
   data: CurveEngraving,
   {
-    maxEdgeLength = 0,
+    interpolateLength = 0,
     reverseX = false,
-    reverseY = false,
-    reverseZ = false,
+    reverseY = true,
+    reverseZ = true,
     subdivisionIterations = 2,
   }: {
-    maxEdgeLength?: number;
+    interpolateLength?: number;
     reverseX?: boolean;
     reverseY?: boolean;
     reverseZ?: boolean;
@@ -74,7 +82,7 @@ export const preprocessData = (
     return [newX, newY, newZ] as Point;
   });
   const filteredPoints = displayPoints.filter((p) => p[2] !== null) as Array<[number, number, number]>;
-  const geometry = createTriangularGeometry(filteredPoints, width, height, maxEdgeLength);
+  const geometry = createTriangularGeometry(filteredPoints, width, height, interpolateLength);
   const subdividedGeometry = LoopSubdivision.modify(geometry, subdivisionIterations, { preserveEdges: true });
   const subdividedPoints = retrievePointsFromGeometry(subdividedGeometry, {
     centerX: maxX / 2 + minX / 2,

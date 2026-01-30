@@ -29,22 +29,18 @@ const getPlaneAngle = (p1: Point3D, p2: Point3D, p3: Point3D): number => {
 
 /**
  * Subdivide triangles based on edge length using longest edge bisection algorithm.
- * For each triangle, if any edge's 2D Euclidean distance (x, y) exceeds maxEdgeLength,
+ * For each triangle, if any edge's 2D Euclidean distance (x, y) exceeds interpolateLength,
  * the triangle is split by adding a vertex at the midpoint of the longest edge.
  * This process would not change the z profile of the surface.
  *
  * @param triangles - Array of triangles, each triangle is [p1, p2, p3] where each point is [x, y, z]
- * @param maxEdgeLength - Maximum acceptable 2D edge length before subdivision
+ * @param interpolateLength - Maximum acceptable 2D edge length before subdivision
  * @param angleLimit - Only triangles planar larger than this angle (degrees) will be subdivided
  * @returns Array of subdivided triangles
  */
-export const subdivideTrianglesByEdgeLength = (triangles: Triangle[], maxEdgeLength: number): Triangle[] => {
+export const interpolateTriangles = (triangles: Triangle[], interpolateLength: number): Triangle[] => {
   const result: Triangle[] = [];
   const currentTriangles: Triangle[] = [...triangles];
-
-  console.log('Starting subdivision with', currentTriangles.length, 'triangles', maxEdgeLength);
-
-  const start = performance.now();
 
   while (currentTriangles.length > 0) {
     const [p1, p2, p3] = currentTriangles.pop()!;
@@ -53,7 +49,7 @@ export const subdivideTrianglesByEdgeLength = (triangles: Triangle[], maxEdgeLen
     const l31 = getEdgeLength2D(p3, p1);
     const maxLength = Math.max(l12, l23, l31);
 
-    if (maxLength <= maxEdgeLength) {
+    if (maxLength <= interpolateLength) {
       result.push([p1, p2, p3]);
       continue;
     }
@@ -79,9 +75,6 @@ export const subdivideTrianglesByEdgeLength = (triangles: Triangle[], maxEdgeLen
       });
   }
 
-  console.log('Subdivision completed in', performance.now() - start, 'ms');
-  console.log('Resulting triangles count:', result.length);
-
   return result;
 };
 
@@ -89,7 +82,7 @@ export const createTriangularGeometry = (
   points: Point3D[],
   width: number,
   height: number,
-  maxEdgeLength: number = 0,
+  interpolateLength: number = 0,
 ) => {
   const delaunay = Delaunator.from(
     points,
@@ -109,7 +102,7 @@ export const createTriangularGeometry = (
   }
 
   // Subdivide triangles based on edge length
-  const subdividedTriangles = maxEdgeLength > 0 ? subdivideTrianglesByEdgeLength(triangles, maxEdgeLength) : triangles;
+  const subdividedTriangles = interpolateLength > 0 ? interpolateTriangles(triangles, interpolateLength) : triangles;
 
   // Build geometry arrays from subdivided triangles
   const vertices: number[] = [];
