@@ -741,31 +741,8 @@ const isPointInBoundary = (x: number, y: number, gridGenerator: string, width: n
     .with(P.union('heart', 'warpedHeart'), () => isPointInHeart(x, y, width, height))
     .otherwise(() => true);
 
-/**
- * Check if a piece at the heart's top center should be force-merged
- * The heart notch at the top center creates partial pieces that should merge.
- *
- * This is a simpler approach: if a piece is in row 0 and near the horizontal center,
- * and it has partial visibility (between 10% and 90%), it should merge with neighbors.
- */
-const shouldForceHeartTopMerge = (
-  pieceRow: number,
-  pieceCol: number,
-  visibleRatio: number,
-  columns: number,
-): boolean => {
-  // Only check row 0 (top row where the notch is)
-  if (pieceRow !== 0) return false;
-
-  // Only check pieces near the horizontal center
-  const centerCol = (columns - 1) / 2;
-
-  if (Math.abs(pieceCol - centerCol) > 1.5) return false;
-
-  // Force merge if piece has partial visibility (affected by notch)
-  // Pieces fully inside (>90%) or fully outside (<10%) don't need special handling
-  return visibleRatio > 0.1 && visibleRatio < 0.9;
-};
+// Note: Heart top merge is now handled automatically by the improved merging algorithm
+// that processes small pieces by visibility order and allows joining existing groups
 
 /**
  * Check if a piece (by its center) is inside the boundary shape
@@ -790,6 +767,11 @@ export const isPieceInsideBoundary = (
 /**
  * Calculate how much of a piece is inside the boundary using grid sampling
  * Returns a ratio from 0 (completely outside) to 1 (completely inside)
+ *
+ * Uses a 5x5 interior grid PLUS the 4 corner points PLUS tab tip sampling
+ * to catch pieces where:
+ * - Very small corners might be missed by the interior grid
+ * - The rectangular base is outside but tabs extend into the boundary
  */
 const calculatePieceVisibility = (
   pieceRow: number,
@@ -799,12 +781,24 @@ const calculatePieceVisibility = (
 ): number => {
   if (gridGenerator === 'rectangle') return 1;
 
-  const { columns, pieceSize, rows } = state;
+  const { columns, pieceSize, rows, tabSize } = state;
   const { offsetX, offsetY } = calculatePuzzleLayout(state);
   const width = columns * pieceSize;
   const height = rows * pieceSize;
 
-  // Sample a 5x5 grid of points within the piece
+  // Piece bounds
+  const pieceLeft = offsetX + pieceCol * pieceSize;
+  const pieceTop = offsetY + pieceRow * pieceSize;
+  const pieceRight = pieceLeft + pieceSize;
+  const pieceBottom = pieceTop + pieceSize;
+  const pieceCenterX = (pieceLeft + pieceRight) / 2;
+  const pieceCenterY = (pieceTop + pieceBottom) / 2;
+
+  // Tab geometry: tab extends TAB_DEPTH_MULTIPLIER * t beyond the edge
+  const t = getTabSizeFraction(tabSize);
+  const tabExtension = TAB_DEPTH_MULTIPLIER * t * pieceSize;
+
+  // Sample a 5x5 grid of points within the piece (interior sampling)
   const sampleCount = 5;
   let insideCount = 0;
 
@@ -819,7 +813,68 @@ const calculatePieceVisibility = (
     }
   }
 
-  return insideCount / (sampleCount * sampleCount);
+  // Also check the 4 corner points to catch very small corners
+  const corners = [
+    { x: pieceLeft, y: pieceTop }, // top-left
+    { x: pieceRight, y: pieceTop }, // top-right
+    { x: pieceLeft, y: pieceBottom }, // bottom-left
+    { x: pieceRight, y: pieceBottom }, // bottom-right
+  ];
+
+  for (const corner of corners) {
+    if (isPointInBoundary(corner.x, corner.y, gridGenerator, width, height)) {
+      insideCount++;
+    }
+  }
+
+  // Sample tab regions - tabs can extend beyond the rectangular piece boundary
+  // This catches pieces where the base is outside but tabs are inside
+  // We sample multiple points along each potential tab (base, middle, tip)
+  // and check BOTH directions since flip is determined by jitter map
+  const tabSamples: Array<{ x: number; y: number }> = [];
+
+  // For each edge that's not on the puzzle boundary, sample tab points in both directions
+  // Tab extends from edge center, at distances: t*pieceSize (base), 2t*pieceSize (middle), 3t*pieceSize (tip)
+  const tabDistances = [t * pieceSize, 2 * t * pieceSize, tabExtension];
+
+  // Top edge - check tabs extending both up and down
+  if (pieceRow > 0) {
+    for (const dist of tabDistances) {
+      tabSamples.push({ x: pieceCenterX, y: pieceTop - dist }); // extends up
+    }
+  }
+
+  // Bottom edge
+  if (pieceRow < rows - 1) {
+    for (const dist of tabDistances) {
+      tabSamples.push({ x: pieceCenterX, y: pieceBottom + dist }); // extends down
+    }
+  }
+
+  // Left edge
+  if (pieceCol > 0) {
+    for (const dist of tabDistances) {
+      tabSamples.push({ x: pieceLeft - dist, y: pieceCenterY }); // extends left
+    }
+  }
+
+  // Right edge
+  if (pieceCol < columns - 1) {
+    for (const dist of tabDistances) {
+      tabSamples.push({ x: pieceRight + dist, y: pieceCenterY }); // extends right
+    }
+  }
+
+  for (const sample of tabSamples) {
+    if (isPointInBoundary(sample.x, sample.y, gridGenerator, width, height)) {
+      insideCount++;
+    }
+  }
+
+  // Total samples: 25 (grid) + 4 (corners) + tab samples (up to 4 edges × 3 distances = 12)
+  const totalSamples = sampleCount * sampleCount + 4 + tabSamples.length;
+
+  return insideCount / totalSamples;
 };
 
 /**
@@ -845,37 +900,28 @@ export const calculateAllPieceVisibilities = (state: PuzzleState, gridGenerator:
 /**
  * Find merge groups for small pieces (< threshold visibility)
  *
- * Uses a two-pass algorithm for better visual consistency:
- * 1. First pass: Merge horizontally (right, then left) - creates horizontal strips
- * 2. Second pass: Merge vertically (bottom, then top) - handles remaining small pieces
- * 3. Third pass: Expand groups until ≥80% visibility
+ * Uses a multi-pass algorithm with HORIZONTAL-FIRST priority:
+ * 1. PASS 1: Horizontal merging (right, then left) - creates horizontal strips
+ * 2. PASS 2: Vertical merging (bottom, then top) - handles remaining pieces
+ * 3. PASS 3: Expand groups until ≥80% total visibility
  *
- * Special features:
- * - Heart shape: Detects top center pieces split by the notch and merges them
- * - Odd columns: Center column pieces merge symmetrically with both neighbors
- *
- * This approach creates more consistent merge patterns, especially for shapes like
- * heart where the top center notch can split pieces visually.
+ * Key fix: Small pieces CAN join existing merge groups (neighbor already merged).
+ * This ensures no small pieces get "orphaned" when their only valid neighbor
+ * was already merged by another small piece.
  */
 export const calculateMergeGroups = (
   visibilities: PieceVisibility[],
   rows: number,
   columns: number,
   threshold: number = 0.5,
-  gridGenerator: string = 'rectangle',
+  _gridGenerator: string = 'rectangle',
   _state?: PuzzleState,
 ): MergeGroup[] => {
   const mergeGroups: MergeGroup[] = [];
-  const processedPieces = new Set<string>();
-  // Track pieces that have been merged (but may still need more merging)
   const mergedIntoGroup = new Map<string, number>(); // key -> group index
 
   const getKey = (row: number, col: number) => `${row}-${col}`;
   const getVisibility = (row: number, col: number) => visibilities.find((v) => v.row === row && v.col === col);
-
-  // Check if this is a center column in an odd-column grid
-  const isOddColumns = columns % 2 === 1;
-  const centerCol = Math.floor(columns / 2);
 
   // Helper to check if a piece needs merging
   const needsMerging = (row: number, col: number): boolean => {
@@ -883,27 +929,29 @@ export const calculateMergeGroups = (
 
     if (!vis) return false;
 
-    if (vis.visibleRatio <= 0.01) return false; // Completely outside
+    if (vis.visibleRatio === 0) return false; // Completely outside (no sample points inside)
 
     if (vis.visibleRatio >= threshold) return false; // Large enough
 
     return true;
   };
 
-  // Helper to check if a heart top piece should be force-merged
-  const shouldForceHeartMerge = (row: number, col: number): boolean => {
-    if (gridGenerator !== 'heart') return false;
+  // Helper to add a shared edge between two pieces in a group
+  const addSharedEdge = (group: MergeGroup, row1: number, col1: number, row2: number, col2: number) => {
+    const edgeExists = group.sharedEdges.some(
+      (e) =>
+        (e.row1 === row1 && e.col1 === col1 && e.row2 === row2 && e.col2 === col2) ||
+        (e.row1 === row2 && e.col1 === col2 && e.row2 === row1 && e.col2 === col1),
+    );
 
-    const vis = getVisibility(row, col);
-
-    if (!vis) return false;
-
-    return shouldForceHeartTopMerge(row, col, vis.visibleRatio, columns);
+    if (!edgeExists) {
+      group.sharedEdges.push({ col1, col2, row1, row2 });
+    }
   };
 
-  // Helper to try merging a piece in a specific direction
+  // Helper to try merging source piece with target neighbor
+  // KEY FIX: Allows joining existing groups!
   const tryMerge = (sourceRow: number, sourceCol: number, targetRow: number, targetCol: number): boolean => {
-    // Check bounds
     if (targetRow < 0 || targetRow >= rows || targetCol < 0 || targetCol >= columns) {
       return false;
     }
@@ -913,40 +961,30 @@ export const calculateMergeGroups = (
     const targetVis = getVisibility(targetRow, targetCol);
 
     // Skip if target is completely outside
-    if (!targetVis || targetVis.visibleRatio <= 0.01) {
+    if (!targetVis || targetVis.visibleRatio === 0) {
       return false;
     }
 
-    // Check if source is already in a group
-    const sourceGroupIdx = mergedIntoGroup.get(sourceKey);
+    // Skip if source is already merged
+    if (mergedIntoGroup.has(sourceKey)) {
+      return false;
+    }
 
-    if (sourceGroupIdx !== undefined) {
-      // Source is already in a group - check if target can join
-      if (mergedIntoGroup.has(targetKey) || processedPieces.has(targetKey)) {
-        return false;
-      }
+    // Check if target is already in a group
+    const targetGroupIdx = mergedIntoGroup.get(targetKey);
 
-      // Add target to existing group
-      const group = mergeGroups[sourceGroupIdx];
+    if (targetGroupIdx !== undefined) {
+      // KEY FIX: Join the target's existing group instead of failing!
+      const group = mergeGroups[targetGroupIdx];
 
-      group.pieces.push({ col: targetCol, row: targetRow });
-      group.sharedEdges.push({
-        col1: sourceCol,
-        col2: targetCol,
-        row1: sourceRow,
-        row2: targetRow,
-      });
-      mergedIntoGroup.set(targetKey, sourceGroupIdx);
+      group.pieces.push({ col: sourceCol, row: sourceRow });
+      addSharedEdge(group, sourceRow, sourceCol, targetRow, targetCol);
+      mergedIntoGroup.set(sourceKey, targetGroupIdx);
 
       return true;
     }
 
-    // Source is not in a group yet - check if target is available
-    if (mergedIntoGroup.has(targetKey) || processedPieces.has(targetKey)) {
-      return false;
-    }
-
-    // Create new merge group
+    // Neither is in a group - create a new group
     const newGroupIdx = mergeGroups.length;
 
     mergeGroups.push({
@@ -954,14 +992,7 @@ export const calculateMergeGroups = (
         { col: sourceCol, row: sourceRow },
         { col: targetCol, row: targetRow },
       ],
-      sharedEdges: [
-        {
-          col1: sourceCol,
-          col2: targetCol,
-          row1: sourceRow,
-          row2: targetRow,
-        },
-      ],
+      sharedEdges: [{ col1: sourceCol, col2: targetCol, row1: sourceRow, row2: targetRow }],
     });
     mergedIntoGroup.set(sourceKey, newGroupIdx);
     mergedIntoGroup.set(targetKey, newGroupIdx);
@@ -969,30 +1000,170 @@ export const calculateMergeGroups = (
     return true;
   };
 
-  // Mark completely outside pieces as processed
-  for (const piece of visibilities) {
-    if (piece.visibleRatio <= 0.01) {
-      processedPieces.add(getKey(piece.row, piece.col));
+  // ========================================
+  // PASS 0: Very small corner pieces (< 25% visibility)
+  // ========================================
+  // These pieces are at the very corners of non-rectangular shapes.
+  // They often have ALL cardinal neighbors either outside the boundary
+  // or also very small. We handle them first with extended neighbor search
+  // including DIAGONAL neighbors as a last resort.
+  //
+  // IMPORTANT: Diagonal merges require a "bridge" piece to create a connected
+  // region, since diagonally adjacent pieces only share a corner point, not an edge.
+  const verySmallThreshold = 0.25;
+  const verySmallPieces = visibilities
+    .filter((v) => v.visibleRatio > 0 && v.visibleRatio < verySmallThreshold)
+    .sort((a, b) => a.visibleRatio - b.visibleRatio); // Smallest first
+
+  // Helper to perform diagonal merge with bridge piece
+  const tryDiagonalMerge = (sourceRow: number, sourceCol: number, diagRow: number, diagCol: number): boolean => {
+    const sourceKey = getKey(sourceRow, sourceCol);
+
+    if (mergedIntoGroup.has(sourceKey)) return false;
+
+    const diagVis = getVisibility(diagRow, diagCol);
+
+    if (!diagVis || diagVis.visibleRatio === 0) return false;
+
+    // Find a bridge piece (either horizontal or vertical intermediate)
+    // Bridge options: (sourceRow, diagCol) or (diagRow, sourceCol)
+    const bridgeOptions = [
+      { col: diagCol, row: sourceRow }, // horizontal bridge
+      { col: sourceCol, row: diagRow }, // vertical bridge
+    ];
+
+    for (const bridge of bridgeOptions) {
+      if (bridge.row < 0 || bridge.row >= rows || bridge.col < 0 || bridge.col >= columns) {
+        continue;
+      }
+
+      const bridgeVis = getVisibility(bridge.row, bridge.col);
+
+      // Bridge must have some visibility
+      if (!bridgeVis || bridgeVis.visibleRatio === 0) {
+        continue;
+      }
+
+      const bridgeKey = getKey(bridge.row, bridge.col);
+      const diagKey = getKey(diagRow, diagCol);
+
+      // Check if any of the three pieces are already in groups
+      const sourceGroupIdx = mergedIntoGroup.get(sourceKey);
+      const bridgeGroupIdx = mergedIntoGroup.get(bridgeKey);
+      const diagGroupIdx = mergedIntoGroup.get(diagKey);
+
+      // If source is already merged, skip
+      if (sourceGroupIdx !== undefined) return false;
+
+      // Case 1: Bridge is in a group - add source to that group
+      if (bridgeGroupIdx !== undefined) {
+        const group = mergeGroups[bridgeGroupIdx];
+
+        group.pieces.push({ col: sourceCol, row: sourceRow });
+        addSharedEdge(group, sourceRow, sourceCol, bridge.row, bridge.col);
+        mergedIntoGroup.set(sourceKey, bridgeGroupIdx);
+
+        // Also add diagonal if not in group
+        if (diagGroupIdx === undefined) {
+          group.pieces.push({ col: diagCol, row: diagRow });
+          addSharedEdge(group, bridge.row, bridge.col, diagRow, diagCol);
+          mergedIntoGroup.set(diagKey, bridgeGroupIdx);
+        }
+
+        return true;
+      }
+
+      // Case 2: Diagonal is in a group - add source and bridge to that group
+      if (diagGroupIdx !== undefined) {
+        const group = mergeGroups[diagGroupIdx];
+
+        // Add bridge first
+        group.pieces.push({ col: bridge.col, row: bridge.row });
+        addSharedEdge(group, bridge.row, bridge.col, diagRow, diagCol);
+        mergedIntoGroup.set(bridgeKey, diagGroupIdx);
+
+        // Then add source
+        group.pieces.push({ col: sourceCol, row: sourceRow });
+        addSharedEdge(group, sourceRow, sourceCol, bridge.row, bridge.col);
+        mergedIntoGroup.set(sourceKey, diagGroupIdx);
+
+        return true;
+      }
+
+      // Case 3: None are in groups - create new group with all three
+      const newGroupIdx = mergeGroups.length;
+
+      mergeGroups.push({
+        pieces: [
+          { col: sourceCol, row: sourceRow },
+          { col: bridge.col, row: bridge.row },
+          { col: diagCol, row: diagRow },
+        ],
+        sharedEdges: [
+          { col1: sourceCol, col2: bridge.col, row1: sourceRow, row2: bridge.row },
+          { col1: bridge.col, col2: diagCol, row1: bridge.row, row2: diagRow },
+        ],
+      });
+      mergedIntoGroup.set(sourceKey, newGroupIdx);
+      mergedIntoGroup.set(bridgeKey, newGroupIdx);
+      mergedIntoGroup.set(diagKey, newGroupIdx);
+
+      return true;
     }
-  }
 
-  // ========================================
-  // PASS 0: Handle heart top center pieces
-  // ========================================
-  // For heart shapes, pieces at the top center near the notch should merge with neighbors
-  // This creates symmetric merged pieces around the heart notch
-  if (gridGenerator === 'heart') {
-    for (let col = 0; col < columns; col++) {
-      // Only check row 0 (top row with the notch)
-      if (shouldForceHeartMerge(0, col)) {
-        const key = getKey(0, col);
+    return false;
+  };
 
-        if (processedPieces.has(key) || mergedIntoGroup.has(key)) continue;
+  for (const piece of verySmallPieces) {
+    const { col, row } = piece;
+    const key = getKey(row, col);
 
-        // Force merge with both horizontal neighbors for symmetry
-        if (col > 0) tryMerge(0, col, 0, col - 1);
+    if (mergedIntoGroup.has(key)) continue;
 
-        if (col < columns - 1) tryMerge(0, col, 0, col + 1);
+    // Try cardinal neighbors first (horizontal priority)
+    const cardinalNeighbors = [
+      { col: col + 1, row }, // right
+      { col: col - 1, row }, // left
+      { col, row: row + 1 }, // bottom
+      { col, row: row - 1 }, // top
+    ];
+
+    let merged = false;
+
+    for (const neighbor of cardinalNeighbors) {
+      if (neighbor.row < 0 || neighbor.row >= rows || neighbor.col < 0 || neighbor.col >= columns) {
+        continue;
+      }
+
+      const neighborVis = getVisibility(neighbor.row, neighbor.col);
+
+      if (!neighborVis || neighborVis.visibleRatio === 0) {
+        continue;
+      }
+
+      if (tryMerge(row, col, neighbor.row, neighbor.col)) {
+        merged = true;
+        break;
+      }
+    }
+
+    if (merged) continue;
+
+    // If cardinal neighbors failed, try diagonal neighbors with bridge
+    const diagonalNeighbors = [
+      { col: col + 1, row: row + 1 }, // bottom-right
+      { col: col - 1, row: row + 1 }, // bottom-left
+      { col: col + 1, row: row - 1 }, // top-right
+      { col: col - 1, row: row - 1 }, // top-left
+    ];
+
+    for (const diag of diagonalNeighbors) {
+      if (diag.row < 0 || diag.row >= rows || diag.col < 0 || diag.col >= columns) {
+        continue;
+      }
+
+      if (tryDiagonalMerge(row, col, diag.row, diag.col)) {
+        break;
       }
     }
   }
@@ -1000,104 +1171,93 @@ export const calculateMergeGroups = (
   // ========================================
   // PASS 1: Horizontal merging (row by row)
   // ========================================
-  // Process each row from left to right, merging small pieces horizontally
+  // Process each row from left to right, prioritizing horizontal merges
+  // Direction priority: RIGHT first, then LEFT
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < columns; col++) {
       if (!needsMerging(row, col)) continue;
 
       const key = getKey(row, col);
 
-      if (processedPieces.has(key)) continue;
+      if (mergedIntoGroup.has(key)) continue;
 
-      // For odd columns, if this is the center column, merge symmetrically with both sides
-      if (isOddColumns && col === centerCol) {
-        // Merge with both left and right for symmetry
-        if (col > 0) tryMerge(row, col, row, col - 1);
-
-        if (col < columns - 1) tryMerge(row, col, row, col + 1);
-
-        continue;
-      }
-
-      // Try to merge with right neighbor first
+      // Try RIGHT neighbor first (horizontal priority)
       if (col + 1 < columns) {
         const rightVis = getVisibility(row, col + 1);
 
-        // Merge if right neighbor exists (either small or large)
-        if (rightVis && rightVis.visibleRatio > 0.01) {
-          tryMerge(row, col, row, col + 1);
+        if (rightVis && rightVis.visibleRatio > 0) {
+          if (tryMerge(row, col, row, col + 1)) continue;
         }
       }
 
-      // If still not merged, try left neighbor
-      if (!mergedIntoGroup.has(key) && col - 1 >= 0) {
+      // Try LEFT neighbor
+      if (col - 1 >= 0) {
         const leftVis = getVisibility(row, col - 1);
 
-        if (leftVis && leftVis.visibleRatio > 0.01) {
-          tryMerge(row, col, row, col - 1);
+        if (leftVis && leftVis.visibleRatio > 0) {
+          if (tryMerge(row, col, row, col - 1)) continue;
         }
       }
     }
   }
 
   // ========================================
-  // PASS 2: Vertical merging (remaining small pieces)
+  // PASS 2: Vertical merging (remaining pieces)
   // ========================================
   // Process remaining unmerged small pieces with vertical merging
+  // Direction priority: BOTTOM first, then TOP
   for (let row = 0; row < rows; row++) {
     for (let col = 0; col < columns; col++) {
       if (!needsMerging(row, col)) continue;
 
       const key = getKey(row, col);
 
-      if (processedPieces.has(key)) continue;
+      if (mergedIntoGroup.has(key)) continue;
 
-      if (mergedIntoGroup.has(key)) continue; // Already merged in horizontal pass
-
-      // Try to merge with bottom neighbor first
+      // Try BOTTOM neighbor first
       if (row + 1 < rows) {
         const bottomVis = getVisibility(row + 1, col);
 
-        if (bottomVis && bottomVis.visibleRatio > 0.01) {
-          tryMerge(row, col, row + 1, col);
+        if (bottomVis && bottomVis.visibleRatio > 0) {
+          if (tryMerge(row, col, row + 1, col)) continue;
         }
       }
 
-      // If still not merged, try top neighbor
-      if (!mergedIntoGroup.has(key) && row - 1 >= 0) {
+      // Try TOP neighbor
+      if (row - 1 >= 0) {
         const topVis = getVisibility(row - 1, col);
 
-        if (topVis && topVis.visibleRatio > 0.01) {
-          tryMerge(row, col, row - 1, col);
+        if (topVis && topVis.visibleRatio > 0) {
+          if (tryMerge(row, col, row - 1, col)) continue;
         }
       }
     }
   }
 
   // ========================================
-  // PASS 3: Ensure minimum visibility (expand groups if needed)
+  // PASS 3: Ensure minimum visibility (≥80%)
   // ========================================
-  // For groups that still have low total visibility, try to expand
+  // For groups that still have low total visibility, expand them
+  // Direction priority: RIGHT, LEFT, BOTTOM, TOP (horizontal first)
   for (let groupIdx = 0; groupIdx < mergeGroups.length; groupIdx++) {
     const group = mergeGroups[groupIdx];
+
     let totalVisibility = group.pieces.reduce((sum, p) => {
       const vis = getVisibility(p.row, p.col);
 
       return sum + (vis?.visibleRatio ?? 0);
     }, 0);
 
-    // Keep expanding until we reach 80% or can't expand more
     while (totalVisibility < 0.8) {
       let expanded = false;
 
-      // Try to expand from any piece in the group
       for (const piece of group.pieces) {
-        // Try all four directions: right, left, bottom, top
+        // Horizontal-first neighbor order
         const neighbors = [
-          { col: piece.col + 1, row: piece.row },
-          { col: piece.col - 1, row: piece.row },
-          { col: piece.col, row: piece.row + 1 },
-          { col: piece.col, row: piece.row - 1 },
+          { col: piece.col + 1, row: piece.row }, // right
+          { col: piece.col - 1, row: piece.row }, // left
+          { col: piece.col, row: piece.row + 1 }, // bottom
+          { col: piece.col, row: piece.row - 1 }, // top
         ];
 
         for (const neighbor of neighbors) {
@@ -1107,13 +1267,13 @@ export const calculateMergeGroups = (
 
           const neighborKey = getKey(neighbor.row, neighbor.col);
 
-          if (mergedIntoGroup.has(neighborKey) || processedPieces.has(neighborKey)) {
+          if (mergedIntoGroup.has(neighborKey)) {
             continue;
           }
 
           const neighborVis = getVisibility(neighbor.row, neighbor.col);
 
-          if (!neighborVis || neighborVis.visibleRatio <= 0.01) {
+          if (!neighborVis || neighborVis.visibleRatio === 0) {
             continue;
           }
 

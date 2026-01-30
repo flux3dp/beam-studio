@@ -222,7 +222,7 @@ export const processPuzzlePieces = (
       const piecePath = generatePiecePath(row, col, state);
       const result = intersectPieceWithBoundary(piecePath, edges.boundaryPath, project);
 
-      if (result && result.visibleRatio > 0.01) {
+      if (result && result.visibleRatio > 0) {
         // Skip completely outside pieces
         allPieces.push({
           area: result.area,
