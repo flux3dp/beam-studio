@@ -8,9 +8,9 @@ import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -203,7 +203,7 @@ function finalizeImport(
     elements.forEach((elem) => elem.setAttribute('data-np', '1'));
   }
 
-  LayerPanelController.setSelectedLayers([layerManager.getCurrentLayerName()!]);
+  useLayerStore.getState().setSelectedLayers([layerManager.getCurrentLayerName()!]);
 
   match(elements)
     .with([], () => svgCanvas.clearSelection())

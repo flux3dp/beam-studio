@@ -1,3 +1,4 @@
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import selector from '@core/app/svgedit/selector';
 import findDefs from '@core/app/svgedit/utils/findDef';
@@ -109,6 +110,8 @@ export const deleteElements = (elems: Element[], isSub = false): IBatchCommand =
 
   svgCanvas.call('changed', deletedElems);
   svgCanvas.clearSelection();
+  useLayerStore.getState().checkVector();
+  useLayerStore.getState().checkGradient();
 
   return batchCmd;
 };

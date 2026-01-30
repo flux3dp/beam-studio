@@ -1,75 +1,73 @@
+const mockBatchCommand = jest.fn();
+
+jest.mock('@core/app/svgedit/history/history', () => ({
+  BatchCommand: function (...args: unknown[]) {
+    return mockBatchCommand(...args);
+  },
+}));
+
+let batchCmd: { addSubCommand: jest.Mock; onAfter: (() => void) | undefined };
+
 import changeWorkarea from './changeWorkarea';
 
 const mockToggleFullColorAfterWorkareaChange = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  toggleFullColorAfterWorkareaChange: (...args) => mockToggleFullColorAfterWorkareaChange(...args),
+  toggleFullColorAfterWorkareaChange: (...args: unknown[]) => mockToggleFullColorAfterWorkareaChange(...args),
 }));
 
-const mockGetState = jest.fn();
-const mockChangeMultipleDocumentStoreValues = jest.fn();
+const mockChangeDocumentStoreValue = jest.fn();
 
 jest.mock('@core/app/stores/documentStore', () => ({
-  changeMultipleDocumentStoreValues: (...args) => mockChangeMultipleDocumentStoreValues(...args),
-  useDocumentStore: {
-    getState: (...args) => mockGetState(...args),
-  },
+  changeDocumentStoreValue: (...args: unknown[]) => mockChangeDocumentStoreValue(...args),
 }));
 
-const mockRegulateEngraveDpiOption = jest.fn();
+const mockRegulateAllLayersDpi = jest.fn();
 
-jest.mock('@core/helpers/regulateEngraveDpi', () => ({
-  regulateEngraveDpiOption: (...args) => mockRegulateEngraveDpiOption(...args),
+jest.mock('@core/helpers/layer/regulateAllLayersDpi', () => ({
+  regulateAllLayersDpi: (...args: unknown[]) => mockRegulateAllLayersDpi(...args),
 }));
 
 describe('test changeWorkarea', () => {
   beforeEach(() => {
-    jest.resetAllMocks();
-    mockGetState.mockReturnValue({
-      engrave_dpi: 'original-dpi',
-    });
-    mockRegulateEngraveDpiOption.mockReturnValue('regulated-dpi');
+    jest.clearAllMocks();
+    batchCmd = { addSubCommand: jest.fn(), onAfter: undefined };
+    mockBatchCommand.mockReturnValue(batchCmd);
   });
 
   it('should work correctly', () => {
     const mockCmd = { onAfter: () => {} };
 
-    mockChangeMultipleDocumentStoreValues.mockReturnValue(mockCmd);
+    mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
+    expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(0);
     changeWorkarea('fbm1');
-    expect(mockRegulateEngraveDpiOption).toHaveBeenCalledTimes(1);
-    expect(mockRegulateEngraveDpiOption).toHaveBeenLastCalledWith('fbm1', 'original-dpi');
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenCalledTimes(1);
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenLastCalledWith({
-      engrave_dpi: 'regulated-dpi',
-      workarea: 'fbm1',
-    });
+
+    expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
+    expect(batchCmd.addSubCommand).toHaveBeenCalledTimes(1);
+    expect(batchCmd.addSubCommand).toHaveBeenLastCalledWith(mockCmd);
+    expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
+    expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: batchCmd });
     expect(mockToggleFullColorAfterWorkareaChange).toHaveBeenCalledTimes(1);
 
-    const { onAfter } = mockCmd;
-
     jest.resetAllMocks();
-    onAfter();
+    batchCmd.onAfter?.();
     expect(mockToggleFullColorAfterWorkareaChange).toHaveBeenCalledTimes(1);
   });
 
   it('should work correctly with toggleModule = false', () => {
     const mockCmd = { onAfter: () => {} };
 
-    mockChangeMultipleDocumentStoreValues.mockReturnValue(mockCmd);
+    mockChangeDocumentStoreValue.mockReturnValue(mockCmd);
     changeWorkarea('fbm1', { toggleModule: false });
-    expect(mockRegulateEngraveDpiOption).toHaveBeenCalledTimes(1);
-    expect(mockRegulateEngraveDpiOption).toHaveBeenLastCalledWith('fbm1', 'original-dpi');
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenCalledTimes(1);
-    expect(mockChangeMultipleDocumentStoreValues).toHaveBeenLastCalledWith({
-      engrave_dpi: 'regulated-dpi',
-      workarea: 'fbm1',
-    });
+    expect(mockChangeDocumentStoreValue).toHaveBeenCalledTimes(1);
+    expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
+    expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
+    expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: batchCmd });
     expect(mockToggleFullColorAfterWorkareaChange).not.toHaveBeenCalled();
 
-    const { onAfter } = mockCmd;
-
     jest.resetAllMocks();
-    onAfter();
+    batchCmd.onAfter?.();
     expect(mockToggleFullColorAfterWorkareaChange).not.toHaveBeenCalled();
   });
 });

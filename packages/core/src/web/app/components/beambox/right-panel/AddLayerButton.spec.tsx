@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import AddLayerButton from './AddLayerButton';
+import { mockSetSelectedLayers } from '@mocks/@core/app/stores/layer/layerStore';
 
 const mockHasLayer = jest.fn();
 
@@ -28,15 +29,13 @@ jest.mock('@core/app/constants/tutorial-constants', () => ({
   ADD_NEW_LAYER: 'ADD_NEW_LAYER',
 }));
 
-const mockSetSelectedLayers = jest.fn();
-
 describe('test AddLayerButton', () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
 
   it('should render correctly', () => {
-    const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
+    const { container } = render(<AddLayerButton />);
 
     expect(container).toMatchSnapshot();
   });
@@ -44,7 +43,7 @@ describe('test AddLayerButton', () => {
   test('add new layer when name is not used', () => {
     mockHasLayer.mockReturnValue(false);
 
-    const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
+    const { container } = render(<AddLayerButton />);
 
     fireEvent.click(container.querySelector('.btn'));
     expect(mockHasLayer).toHaveBeenCalledTimes(1);
@@ -57,7 +56,7 @@ describe('test AddLayerButton', () => {
   test('add new layer when name is used', () => {
     mockHasLayer.mockReturnValueOnce(true).mockReturnValueOnce(false);
 
-    const { container } = render(<AddLayerButton setSelectedLayers={mockSetSelectedLayers} />);
+    const { container } = render(<AddLayerButton />);
 
     fireEvent.click(container.querySelector('.btn'));
     expect(mockHasLayer).toHaveBeenCalledTimes(2);

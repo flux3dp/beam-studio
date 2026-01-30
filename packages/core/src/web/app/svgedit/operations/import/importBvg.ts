@@ -5,28 +5,36 @@ import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { fullColorHeadModules, LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeMultipleDocumentStoreValues, useDocumentStore } from '@core/app/stores/documentStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
-import { applyDefaultLaserModule, toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
+import {
+  applyDefaultLaserModule,
+  toggleFullColorAfterWorkareaChange,
+  writeDataLayer,
+} from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
   getDefaultLaserModule,
   getLayersByModule,
   hasModuleLayer,
 } from '@core/helpers/layer-module/layer-module-helper';
+import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { DocumentState } from '@core/interfaces/Preference';
+
+import layerManager from '../../layer/layerManager';
 
 import setSvgContent from './setSvgContent';
 
@@ -110,9 +118,12 @@ export const importBvgString = async (
     const engraveDpi = str.match(/data-engrave_dpi="([a-zA-Z]+)"/)?.[1];
 
     if (engraveDpi) {
-      newDocumentState['engrave_dpi'] = engraveDpi as EngraveDpiOption;
-    } else {
-      newDocumentState['engrave_dpi'] = 'medium';
+      // Backward compatibility for global preference 'engrave_dpi'
+      const regulatedDpi = regulateEngraveDpiOption(currentWorkarea, engraveDpi as EngraveDpiOption);
+
+      layerManager.getAllLayers().forEach((layer) => {
+        writeDataLayer(layer.getGroup(), 'dpi', regulatedDpi);
+      });
     }
 
     if (addOnInfo.hybridLaser) {
@@ -179,7 +190,7 @@ export const importBvgString = async (
       rotaryAxis.toggleDisplay();
     };
 
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().forceUpdate();
   }
 
   const { lang } = i18n;
@@ -255,7 +266,7 @@ export const importBvgString = async (
     // toggle full color setting according workarea supported modules
     toggleFullColorAfterWorkareaChange();
     presprayArea.togglePresprayArea();
-    LayerPanelController.setSelectedLayers([]);
+    useLayerStore.getState().setSelectedLayers([]);
 
     if (!parentCmd) {
       workareaManager.setWorkarea(workarea);

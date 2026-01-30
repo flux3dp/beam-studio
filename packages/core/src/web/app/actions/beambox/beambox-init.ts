@@ -10,7 +10,6 @@ import updateFontConvert from '@core/app/components/dialogs/updateFontConvert';
 import AlertConstants from '@core/app/constants/alert-constants';
 import FontConstants from '@core/app/constants/font-constants';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
@@ -28,7 +27,6 @@ import { initializeAllFonts } from '@core/helpers/fonts/fontInitialization';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import { prefetchAiConfig } from '@core/helpers/query';
-import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import sentryHelper from '@core/helpers/sentry-helper';
 import registerImageSymbolEvents from '@core/helpers/symbol-helper/registerImageSymbolEvents';
 import { isMobile } from '@core/helpers/system-helper';
@@ -70,13 +68,6 @@ class BeamboxInit {
     boundaryDrawer.registerEvents();
     registerImageSymbolEvents();
     initCurText();
-
-    useDocumentStore
-      .getState()
-      .set(
-        'engrave_dpi',
-        regulateEngraveDpiOption(useDocumentStore.getState().workarea, useDocumentStore.getState().engrave_dpi),
-      );
 
     // WebSocket for Adobe Illustrator Plug-In
     aiExtension.init();

@@ -2,8 +2,6 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
-
 const mockGet = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
@@ -65,13 +63,13 @@ jest.mock('./initState', () => mockInitState);
 const mockUseConfigPanelStore = jest.fn();
 const mockGetState = jest.fn();
 const mockUpdate = jest.fn();
-const mockSelectedLayers = ['layer1', 'layer2'];
 
 jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: mockUseConfigPanelStore,
 }));
 
 import FillSettingModal from './FillSettingModal';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 describe('test FillSettingModal', () => {
   beforeEach(() => {
@@ -89,24 +87,17 @@ describe('test FillSettingModal', () => {
       fillAngle: { hasMultiValue: false, value: 0 },
       fillInterval: { hasMultiValue: false, value: 0.1 },
     });
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
   });
 
   it('should render correctly', () => {
-    const { baseElement } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <FillSettingModal onClose={mockOnClose} />
-      </ConfigPanelContext.Provider>,
-    );
+    const { baseElement } = render(<FillSettingModal onClose={mockOnClose} />);
 
     expect(baseElement).toMatchSnapshot();
   });
 
   test('save should work', () => {
-    const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <FillSettingModal onClose={mockOnClose} />
-      </ConfigPanelContext.Provider>,
-    );
+    const { baseElement, getByText } = render(<FillSettingModal onClose={mockOnClose} />);
 
     changeValue(baseElement);
     expect(mockUpdate).not.toHaveBeenCalled();
@@ -139,11 +130,7 @@ describe('test FillSettingModal', () => {
   });
 
   test('cancel should work', () => {
-    const { baseElement, getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <FillSettingModal onClose={mockOnClose} />
-      </ConfigPanelContext.Provider>,
-    );
+    const { baseElement, getByText } = render(<FillSettingModal onClose={mockOnClose} />);
 
     changeValue(baseElement);
     expect(mockUpdate).not.toHaveBeenCalled();

@@ -35,6 +35,7 @@ const state: StorageStoreState = {
   'default-units': 'mm',
   /** @deprecated Customized laser configurations for version <= 2.3.9 */
   defaultLaserConfigsInUse: null,
+  'device-store': {},
   /** 1 for done */
   'did-gesture-tutorial': 1,
   'elements-history': [],

@@ -15,6 +15,7 @@ import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
+import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
@@ -34,6 +35,7 @@ const attributeMap: Record<ConfigKey, string> = {
   delay: 'data-delay',
   diode: 'data-diode',
   dottingTime: 'data-dottingTime',
+  dpi: 'data-dpi',
   fillAngle: 'data-fillAngle',
   fillInterval: 'data-fillInterval',
   focus: 'data-focus',
@@ -85,6 +87,10 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   delay: 0,
   diode: 0,
   dottingTime: 100,
+  dpi: regulateEngraveDpiOption(
+    useGlobalPreferenceStore.getState().model,
+    useGlobalPreferenceStore.getState().engrave_dpi,
+  ),
   fillAngle: 0,
   fillInterval: 0.01,
   focus: -2,
@@ -128,6 +134,16 @@ useGlobalPreferenceStore.subscribe(
     baseConfig.wInk = value ? -12 : -4;
   },
 );
+
+const updateDefaultDpi = (): void => {
+  baseConfig.dpi = regulateEngraveDpiOption(
+    useDocumentStore.getState().workarea,
+    useGlobalPreferenceStore.getState().engrave_dpi,
+  );
+};
+
+useGlobalPreferenceStore.subscribe((state) => state.engrave_dpi, updateDefaultDpi);
+useDocumentStore.subscribe((state) => state.workarea, updateDefaultDpi);
 
 export const moduleBaseConfig: Partial<Record<LayerModuleType, Partial<Omit<ConfigKeyTypeMap, 'module'>>>> = {
   [LayerModule.PRINTER]: {
@@ -312,7 +328,7 @@ export const getData = <T extends ConfigKey>(
     attr = attributeMap.printingSpeed;
   }
 
-  if (['clipRect', 'color', 'configName'].includes(key)) {
+  if (['clipRect', 'color', 'configName', 'dpi'].includes(key)) {
     return (layer.getAttribute(attr) || defaultConfig[key]) as ConfigKeyTypeMap[T];
   }
 

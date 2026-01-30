@@ -1,3 +1,5 @@
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
+
 export interface ILang {
   alert: {
     abort: string;
@@ -175,10 +177,10 @@ export interface ILang {
       auto_feeder: string;
       auto_feeder_url: string;
       auto_shrink: string;
+      auto_shrink_tooltip: string;
       auto_shrink_url: string;
       borderless_mode: string;
       current_position: string;
-      detailed: string;
       disable: string;
       document_settings: string;
       door_protect: string;
@@ -187,17 +189,13 @@ export interface ILang {
       enable_autofocus: string;
       enable_diode: string;
       enable_nozzle_refresh_area: string;
-      engrave_dpi: string;
       extend_y_area: string;
       frame_before_start: string;
       frame_before_start_url: string;
-      high: string;
       job_origin: string;
       laser_source: string;
-      low: string;
       machine: string;
       manual: string;
-      medium: string;
       notification: {
         changeFromPrintingWorkareaTitle: string;
       };
@@ -210,7 +208,6 @@ export interface ILang {
       start_from: string;
       start_position: string;
       start_work_button: string;
-      ultra: string;
       workarea: string;
     };
     elements_panel: {
@@ -1940,6 +1937,10 @@ export interface ILang {
     invert: string;
     placeholder: string;
     title: string;
+  };
+  resolution: {
+    title: string;
+    values: Record<EngraveDpiOption, string>;
   };
   rotary_settings: {
     circumference: string;

@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import { ConfigProvider, Modal } from 'antd';
 import classNames from 'classnames';
@@ -13,17 +13,17 @@ import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
 import WattBlock from '@core/app/components/beambox/right-panel/WattBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
+import { laserModules, LayerModule, UVModules } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import DottingTimeBlock from '@core/app/views/beambox/Right-Panels/ConfigPanel/DottingTimeBlock';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import tutorialController from '@core/app/views/tutorials/tutorialController';
@@ -54,7 +54,7 @@ import AdvancedBlock from './AdvancedBlock';
 import AirAssistBlock from './AirAssistBlock';
 import Backlash from './Backlash';
 import styles from './ConfigPanel.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
+import DpiBlock from './DpiBlock';
 import FillBlock from './FillBlock';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
@@ -84,13 +84,13 @@ interface Props {
 
 // TODO: add test
 const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
-  const { selectedLayers: initLayers } = useContext(LayerPanelContext);
+  const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const forceUpdate = useForceUpdate();
   const isDevMode = isDev();
-  const [selectedLayers, setSelectedLayers] = useState(initLayers);
+  const [modalMoveLayerDest, setModalMoveLayerDest] = useState(selectedLayers[0]);
   const hiddenOptions = useMemo(
     () => [
       { key: lang.dropdown.parameters, label: lang.dropdown.parameters, value: PARAMETERS_CONSTANT },
@@ -103,18 +103,22 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
   const supportedModules = useSupportedModules(workarea);
   const state = getState();
   const { fullcolor, module } = state;
-  const isPrintingModule = useMemo(() => printingModules.has(module.value), [module.value]);
-  const is4cUV = useMemo(() => UVModules.has(module.value), [module.value]);
+  const { isLaser, isPrinting, isUV } = useMemo(() => {
+    return {
+      isLaser: laserModules.has(module.value),
+      isPrinting: printingModules.has(module.value),
+      isUV: UVModules.has(module.value),
+    };
+  }, [module.value]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
 
   useEffect(() => {
-    const currentLayerName = layerManager.getCurrentLayerName();
+    if (UIType === 'modal' && selectedLayers.length > 1) {
+      const currentLayerName = layerManager.getCurrentLayerName();
 
-    if (UIType === 'modal') setSelectedLayers([currentLayerName]);
-    else setSelectedLayers(initLayers);
-
-    change({ selectedLayer: currentLayerName });
-  }, [change, initLayers, UIType]);
+      useLayerStore.getState().setSelectedLayers([currentLayerName]);
+    }
+  }, [selectedLayers, UIType]);
 
   useEffect(() => {
     const canvasEvents = eventEmitterFactory.createEventEmitter('canvas');
@@ -146,7 +150,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [workarea, initState]);
 
-  useEffect(() => initState(selectedLayers), [selectedLayers]);
+  useEffect(() => {
+    initState(selectedLayers);
+    setModalMoveLayerDest(selectedLayers[0]);
+  }, [selectedLayers]);
 
   const presetList = usePresetList(workarea, module.value);
   const dropdownValue = useMemo(() => {
@@ -257,21 +264,20 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
 
   const commonContent = (
     <>
-      {(isPrintingModule || is4cUV) && <HalftoneBlock type={UIType} />}
-      {!(isPrintingModule || is4cUV) && <PowerBlock type={UIType} />}
-      {(isPrintingModule || is4cUV) && <InkBlock type={UIType} />}
+      {(isPrinting || isUV) && <HalftoneBlock type={UIType} />}
+      {isLaser && <PowerBlock type={UIType} />}
+      {(isPrinting || isUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
-      {(isPrintingModule || is4cUV) && <MultipassBlock type={UIType} />}
-      {isDevMode && isPrintingModule && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
+      {isLaser && <DpiBlock type={UIType} />}
+      {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
+      {isDevMode && isPrinting && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
       {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
-      {addOnInfo.airAssist && !(isPrintingModule || is4cUV) && <AirAssistBlock type={UIType} />}
+      {addOnInfo.airAssist && isLaser && <AirAssistBlock type={UIType} />}
       <RepeatBlock type={UIType} />
-      {isDevMode && isPrintingModule && fullcolor.value && UIType === 'panel-item' && (
-        <WhiteInkCheckbox type={UIType} />
-      )}
+      {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {is4cUV && <Interpolation type={UIType} />}
+      {isUV && <Interpolation type={UIType} />}
     </>
   );
 
@@ -348,7 +354,6 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       ObjectPanelController.updateActiveKey(null);
     };
     const onSave = (): void => {
-      const destLayer = selectedLayers[0];
       const saveDataAndClose = () => {
         const batchCmd = new history.BatchCommand('Change layer parameter');
 
@@ -367,8 +372,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
         onClose();
       };
 
-      if (destLayer !== initLayers[0]) {
-        moveToOtherLayer(destLayer, saveDataAndClose);
+      if (modalMoveLayerDest !== selectedLayers[0]) {
+        moveToOtherLayer(modalMoveLayerDest, saveDataAndClose);
       } else {
         saveDataAndClose();
       }
@@ -407,10 +412,10 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
           open
           title={lang.preset_setting.slice(0, -4)}
         >
-          {selectedLayers.length > 0 && (
+          {modalMoveLayerDest && (
             <div className={styles['change-layer']}>
               <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.current_layer}:</span>
-              <Select className={styles.select} defaultValue={selectedLayers[0]} disabled>
+              <Select className={styles.select} defaultValue={modalMoveLayerDest} disabled>
                 {layerOptions}
               </Select>
             </div>
@@ -420,9 +425,9 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
               <span className={styles.title}>{i18n.lang.beambox.right_panel.layer_panel.move_elems_to}</span>
               <Select
                 className={styles.select}
-                onChange={(layerName) => setSelectedLayers([layerName])}
+                onChange={(layerName) => setModalMoveLayerDest(layerName)}
                 popupMatchSelectWidth={false}
-                value={selectedLayers[0]}
+                value={modalMoveLayerDest}
               >
                 {layerOptions}
               </Select>
@@ -450,7 +455,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     );
   };
 
-  return <ConfigPanelContext.Provider value={{ selectedLayers }}>{getContent()}</ConfigPanelContext.Provider>;
+  return getContent();
 };
 
 export default memo(ConfigPanel);

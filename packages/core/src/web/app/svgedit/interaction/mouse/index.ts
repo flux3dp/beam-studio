@@ -13,6 +13,7 @@ import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, hasClipboardData } from '@core/app/svgedit/operations/clipboard';
@@ -20,7 +21,6 @@ import createNewText from '@core/app/svgedit/text/createNewText';
 import textEdit from '@core/app/svgedit/text/textedit';
 import touchEvents from '@core/app/svgedit/touchEvents';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import TopBarHintsController from '@core/app/views/beambox/TopBar/contexts/TopBarHintsController';
 import * as TutorialController from '@core/app/views/tutorials/tutorialController';
@@ -303,7 +303,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
             if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
               layerManager.setCurrentLayer(targetLayer.title);
-              LayerPanelController.setSelectedLayers([targetLayer.title]);
+              useLayerStore.getState().setSelectedLayers([targetLayer.title]);
             }
           }
         }
@@ -1132,7 +1132,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           svgCanvas.tempGroupSelectedElements();
           svgEditor.updateContextPanel();
         } else if (tempLayer) {
-          LayerPanelController.setSelectedLayers([tempLayer]);
+          useLayerStore.getState().setSelectedLayers([tempLayer]);
         }
       }
 
@@ -1144,7 +1144,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
         if (targetLayer && !selectedElements.includes(targetLayer.elem) && targetLayer.elem !== currentLayer) {
           layerManager.setCurrentLayer(targetLayer.title);
-          LayerPanelController.setSelectedLayers([targetLayer.title]);
+          useLayerStore.getState().setSelectedLayers([targetLayer.title]);
         }
       }
     // eslint-disable-next-line no-fallthrough

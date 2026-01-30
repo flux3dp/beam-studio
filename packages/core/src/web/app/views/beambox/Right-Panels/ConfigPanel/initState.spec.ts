@@ -21,12 +21,7 @@ jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
 }));
 
-const mockLayerPanelController = {
-  getSelectedLayers: jest.fn(),
-};
-
-jest.mock('../contexts/LayerPanelController', () => mockLayerPanelController);
-
+import useLayerStore from '@mocks/@core/app/stores/layer/layerStore';
 import initState from './initState';
 
 describe('test initState', () => {
@@ -55,7 +50,7 @@ describe('test initState', () => {
   });
 
   test('initState without arg', () => {
-    mockLayerPanelController.getSelectedLayers.mockReturnValue(['layer3', 'layer4']);
+    useLayerStore.setState({ selectedLayers: ['layer3', 'layer4'] });
     mockGetCurrentLayerName.mockReturnValue('layer3');
     mockGetLayersConfig.mockReturnValue('mock-layers-config');
 

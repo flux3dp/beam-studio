@@ -35,6 +35,7 @@ const getInitStore = (): GlobalPreference => {
     'enable-custom-backlash': preference['enable-custom-backlash'],
     'enable-custom-preview-height': preference['enable-custom-preview-height'],
     'enable-uv-print-file': preference['enable-uv-print-file'],
+    engrave_dpi: preference.engrave_dpi,
     fast_gradient: preference.fast_gradient,
     'font-convert': preference['font-convert'],
     'font-substitute': preference['font-substitute'],

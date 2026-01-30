@@ -5,14 +5,15 @@
 import { match } from 'ts-pattern';
 
 import Alert from '@core/app/actions/alert-caller';
-import constant, { dpmm, hexaRfModelsArray, modelsWithModules } from '@core/app/actions/beambox/constant';
+import constant, { dpmm, modelsWithModules } from '@core/app/actions/beambox/constant';
 import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import Progress from '@core/app/actions/progress-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { DetectedLayerModule, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import type { EngraveDpiOption, WorkAreaModel } from '@core/app/constants/workarea-constants';
+import { type EngraveDpiOption, getEngraveDpmm } from '@core/app/constants/resolutions';
+import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -945,13 +946,7 @@ export default (parserOpts: { onFatal?: (data) => void; type?: string }) => {
             .with('detailed', 'ultra', () => args.push('-udpi'))
             .otherwise(() => {});
 
-          const dpmm = {
-            detailed: hexaRfModelsArray.includes(model) ? 40 : 50,
-            high: 20,
-            low: 5,
-            medium: 10,
-            ultra: 80,
-          }[regulatedDpi];
+          const dpmm = getEngraveDpmm(regulatedDpi, model);
 
           args.push(`-dpmm ${dpmm}`);
 

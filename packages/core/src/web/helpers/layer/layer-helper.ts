@@ -5,12 +5,12 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import i18n from '@core/helpers/i18n';
@@ -230,7 +230,7 @@ export const setLayerLock = (
   if (parentCmd) {
     parentCmd.addSubCommand(cmd);
   } else {
-    cmd.onAfter = () => LayerPanelController.updateLayerPanel();
+    cmd.onAfter = () => useLayerStore.getState().forceUpdate();
     undoManager.addCommandToHistory(cmd);
   }
 
@@ -245,7 +245,7 @@ export const setLayersLock = (layerNames: string[], isLocked: boolean): IBatchCo
   }
 
   if (!batchCmd.isEmpty()) {
-    batchCmd.onAfter = () => LayerPanelController.updateLayerPanel();
+    batchCmd.onAfter = () => useLayerStore.getState().forceUpdate();
     undoManager.addCommandToHistory(batchCmd);
   }
 
@@ -487,7 +487,7 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
 
     moveSelectedToLayer(destLayer);
     layerManager.setCurrentLayer(destLayer);
-    LayerPanelController.setSelectedLayers([destLayer]);
+    useLayerStore.getState().setSelectedLayers([destLayer]);
     callback?.();
   };
   const selectedElements = svgCanvas.getSelectedElems();

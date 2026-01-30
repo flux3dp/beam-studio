@@ -6,13 +6,13 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { LaserType } from '@core/app/constants/promark-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
@@ -260,7 +260,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
     undoManager.addCommandToHistory(batchCmd.current);
 
     svgEditor.updateContextPanel();
-    LayerPanelController.updateLayerPanel();
+    useLayerStore.getState().forceUpdate();
 
     onClose();
   };

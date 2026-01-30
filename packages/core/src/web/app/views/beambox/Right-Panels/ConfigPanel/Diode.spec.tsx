@@ -2,8 +2,6 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
-
 const mockWriteData = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
@@ -31,6 +29,7 @@ const mockInitState = jest.fn();
 jest.mock('./initState', () => mockInitState);
 
 import Diode from './Diode';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 const mockSelectedLayers = ['layer1', 'layer2'];
 const mockUseConfigPanelStore = jest.fn();
@@ -47,24 +46,17 @@ describe('test Diode', () => {
       change: mockChange,
       diode: { hasMultiValue: false, value: 1 },
     });
+    useLayerStore.setState({ selectedLayers: mockSelectedLayers });
   });
 
   it('should render correctly', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <Diode />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<Diode />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('onToggle should work', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <Diode />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<Diode />);
     const btn = container.querySelector('button#diode');
 
     expect(mockChange).not.toHaveBeenCalled();

@@ -4,13 +4,13 @@ import type { AddOnInfo } from '@core/app/constants/addOn';
 import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { changeDocumentStoreValue, useDocumentStore } from '@core/app/stores/documentStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import { deleteUseRef } from '@core/app/svgedit/operations/delete';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
-import LayerPanelController from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import { cloneLayerConfig, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
@@ -257,7 +257,7 @@ const sliceWorkarea = async (
 
   const onAfter = () => {
     layerManager.identifyLayers();
-    LayerPanelController.setSelectedLayers([]);
+    useLayerStore.getState().setSelectedLayers([]);
   };
 
   onAfter();

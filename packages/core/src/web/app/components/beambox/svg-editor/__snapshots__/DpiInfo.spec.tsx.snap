@@ -6,7 +6,7 @@ exports[`test DpiInfo should render correctly 1`] = `
     class="container"
   >
     <i>
-      Engraving Resolution
+      Resolution
       : 
       125
        DPI
@@ -21,7 +21,7 @@ exports[`test DpiInfo should render correctly 2`] = `
     class="container"
   >
     <i>
-      Engraving Resolution
+      Resolution
       : 
       500
        DPI
@@ -36,7 +36,7 @@ exports[`test DpiInfo should render correctly in mobile 1`] = `
     class="container mobile"
   >
     <i>
-      Engraving Resolution
+      Resolution
       : 
       2000
        DPI

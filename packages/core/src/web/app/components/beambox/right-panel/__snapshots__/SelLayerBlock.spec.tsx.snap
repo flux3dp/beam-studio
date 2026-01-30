@@ -2,9 +2,9 @@
 
 exports[`SelLayerBlock should render correctly when layer is less than 1 1`] = `<div />`;
 
-exports[`SelLayerBlock should render correctly when layer is more than 1 and selected elemented is none 1`] = `<div />`;
+exports[`SelLayerBlock should render correctly when layer is more than 1 and selected element is none 1`] = `<div />`;
 
-exports[`SelLayerBlock should render correctly when layer is more than 1 and selected elemented is not in a temp group 1`] = `
+exports[`SelLayerBlock should render correctly when layer is more than 1 and selected element is not in a temp group 1`] = `
 <div>
   <div
     class="container"

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import ConfigPanelContext from './ConfigPanelContext';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 
 jest.mock('./AdvancedPowerPanel', () => ({ onClose }: any) => (
   <div id="AdvancedPowerPanel">
@@ -116,6 +116,12 @@ const mockInitState = jest.fn();
 
 jest.mock('./initState', () => mockInitState);
 
+const mockGetCurrentLayerName = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getCurrentLayerName: (...args) => mockGetCurrentLayerName(...args),
+}));
+
 import PowerBlock from './PowerBlock';
 
 const mockUseConfigPanelStore = jest.fn();
@@ -126,47 +132,35 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
 }));
 
-const mockSelectedLayers = ['layer1', 'layer2'];
-
 describe('test PowerBlock', () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+    useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       power: { hasMultiValue: false, value: 87 },
-      selectedLayer: 'layer1',
       update: mockUpdate,
     });
-  });
-
-  beforeEach(() => {
-    jest.clearAllMocks();
     mockCheckPwmImages.mockReturnValue(false);
     mockGetLayerByName.mockImplementation((name) => name);
     mockGetData.mockReturnValue(0);
+    mockGetCurrentLayerName.mockReturnValue('layer1');
     batchCmd = { count: 0, onAfter: undefined };
   });
 
   it('should render correctly', () => {
-    const { container, unmount } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <PowerBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container, unmount } = render(<PowerBlock />);
 
     expect(container).toMatchSnapshot();
     expect(mockEventsOn).toHaveBeenCalledTimes(1);
-    expect(mockEventsOn).lastCalledWith('pwm-changed', expect.any(Function));
+    expect(mockEventsOn).toHaveBeenLastCalledWith('pwm-changed', expect.any(Function));
     unmount();
     expect(mockEventsOff).toHaveBeenCalledTimes(1);
-    expect(mockEventsOff).lastCalledWith('pwm-changed', expect.any(Function));
+    expect(mockEventsOff).toHaveBeenLastCalledWith('pwm-changed', expect.any(Function));
   });
 
   it('should render correctly when type is panel-item', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <PowerBlock type="panel-item" />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<PowerBlock type="panel-item" />);
 
     expect(container).toMatchSnapshot();
   });
@@ -175,15 +169,10 @@ describe('test PowerBlock', () => {
     mockUseConfigPanelStore.mockReturnValue({
       change: mockChange,
       power: { value: 7 },
-      selectedLayer: 'layer1',
       update: mockUpdate,
     });
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <PowerBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<PowerBlock />);
 
     expect(container).toMatchSnapshot();
   });
@@ -191,11 +180,7 @@ describe('test PowerBlock', () => {
   it('should render correctly when hasPwmImages is true', () => {
     mockCheckPwmImages.mockReturnValue(true);
 
-    const { container, getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <PowerBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container, getByText } = render(<PowerBlock />);
     const icon = container.querySelector('.icon');
 
     expect(icon).not.toBeNull();
@@ -204,11 +189,7 @@ describe('test PowerBlock', () => {
   });
 
   test('onChange should work', () => {
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <PowerBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<PowerBlock />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockWriteDataLayer).not.toHaveBeenCalled();
@@ -221,7 +202,7 @@ describe('test PowerBlock', () => {
     expect(mockChange).toHaveBeenCalledTimes(1);
     expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', power: 88 });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change power');
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change power');
     expect(batchCmd.count).toBe(1);
     expect(mockGetLayerByName).toHaveBeenCalledTimes(2);
     expect(mockGetLayerByName).toHaveBeenNthCalledWith(1, 'layer1');
@@ -240,17 +221,13 @@ describe('test PowerBlock', () => {
     expect(mockGetData).toHaveBeenNthCalledWith(2, 'layer2', 'minPower');
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
+    expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);
   });
 
   test('change power to less than minPower should work', () => {
     mockGetData.mockReturnValue(88);
 
-    const { container } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <PowerBlock />
-      </ConfigPanelContext.Provider>,
-    );
+    const { container } = render(<PowerBlock />);
 
     expect(mockChange).not.toHaveBeenCalled();
     expect(mockUpdate).not.toHaveBeenCalled();
@@ -263,7 +240,7 @@ describe('test PowerBlock', () => {
 
     fireEvent.change(input, { target: { value: '86' } });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change power');
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change power');
     expect(batchCmd.count).toBe(1);
     expect(mockGetLayerByName).toHaveBeenCalledTimes(2);
     expect(mockGetLayerByName).toHaveBeenNthCalledWith(1, 'layer1');
@@ -283,7 +260,7 @@ describe('test PowerBlock', () => {
     expect(mockGetData).toHaveBeenNthCalledWith(1, 'layer1', 'minPower');
     expect(mockGetData).toHaveBeenNthCalledWith(2, 'layer2', 'minPower');
     expect(mockGetMultiSelectData).toHaveBeenCalledTimes(1);
-    expect(mockGetMultiSelectData).lastCalledWith(['layer1', 'layer2'], 0, 'minPower');
+    expect(mockGetMultiSelectData).toHaveBeenLastCalledWith(['layer1', 'layer2'], 0, 'minPower');
     expect(mockChange).toHaveBeenCalledTimes(1);
     expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', power: 86 });
     expect(mockUpdate).toHaveBeenCalledTimes(1);
@@ -291,11 +268,7 @@ describe('test PowerBlock', () => {
   });
 
   test('onChange of value display should work correctly', () => {
-    const { getByText } = render(
-      <ConfigPanelContext.Provider value={{ selectedLayers: mockSelectedLayers }}>
-        <PowerBlock type="modal" />
-      </ConfigPanelContext.Provider>,
-    );
+    const { getByText } = render(<PowerBlock type="modal" />);
 
     expect(getByText('type: modal')).toBeInTheDocument();
     expect(mockChange).not.toHaveBeenCalled();

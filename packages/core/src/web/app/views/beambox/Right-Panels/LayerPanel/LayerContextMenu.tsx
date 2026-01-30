@@ -3,6 +3,8 @@ import React, { useContext, useState } from 'react';
 import { Button, Switch } from 'antd';
 import { Popover } from 'antd-mobile';
 import classNames from 'classnames';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/shallow';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
@@ -13,9 +15,9 @@ import type { PrintingColors } from '@core/app/constants/color-constants';
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import { ObjectPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
@@ -50,7 +52,9 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
   const LANG = lang.beambox.right_panel.layer_panel;
   const LANG2 = lang.alert;
   const workarea = useWorkarea();
-  const { forceUpdate, selectedLayers, setSelectedLayers } = useContext(LayerPanelContext);
+  const { forceUpdate, selectedLayers, setSelectedLayers } = useLayerStore(
+    useShallow(pick(['forceUpdate', 'selectedLayers', 'setSelectedLayers'])),
+  );
   const isMobile = useIsMobile();
   const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
@@ -188,7 +192,7 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
       undoManager.addCommandToHistory(cmd);
     }
 
-    setSelectedLayers([]);
+    forceUpdate();
   };
 
   const isMultiSelecting = selectedLayers.length > 1;

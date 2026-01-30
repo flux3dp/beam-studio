@@ -1,6 +1,5 @@
 import { printingModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
-import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import imageData from '@core/helpers/image-data';
 import { getData } from '@core/helpers/layer/layer-config-helper';
@@ -16,18 +15,19 @@ import updateImageDisplay from './updateImageDisplay';
 const updateImagesResolution = async (): Promise<() => void> => {
   const allLayers = getAllLayers();
   const { image_downsampling: isImagesDownSamplingEnabled } = useGlobalPreferenceStore.getState();
-  const { engrave_dpi: engraveDpi } = useDocumentStore.getState();
-  const isHighResolution = ['detail', 'high', 'ultra'].includes(engraveDpi);
-
   const promises: Array<Promise<void>> = [];
   const changedImages: SVGImageElement[] = [];
 
   allLayers.forEach((layer) => {
     const layerModule = getData(layer, 'module');
 
-    if (!(printingModules.has(layerModule!) || isImagesDownSamplingEnabled || isHighResolution)) {
+    if (!(printingModules.has(layerModule!) || isImagesDownSamplingEnabled)) {
       return;
     }
+
+    const dpi = getData(layer, 'dpi') || 'medium';
+
+    if (!['detail', 'high', 'ultra'].includes(dpi)) return;
 
     const images = Array.from(layer.querySelectorAll('image'));
 

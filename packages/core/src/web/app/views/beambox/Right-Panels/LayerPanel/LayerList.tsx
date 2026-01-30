@@ -1,16 +1,18 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 
 import { SwipeAction } from 'antd-mobile';
 import type { Action, SwipeActionRef } from 'antd-mobile/es/components/swipe-action';
 import classNames from 'classnames';
+import { pick } from 'remeda';
 import { match } from 'ts-pattern';
+import { useShallow } from 'zustand/shallow';
 
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import { LayerPanelContext } from '@core/app/views/beambox/Right-Panels/contexts/LayerPanelContext';
 import ColorPicker from '@core/app/widgets/ColorPicker';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -56,7 +58,10 @@ const LayerList = ({
   setLayerVisibility,
   unLockLayers,
 }: Props): React.JSX.Element => {
-  const { forceUpdate, selectedLayers, setSelectedLayers } = useContext(LayerPanelContext);
+  const { forceUpdate, selectedLayers, setSelectedLayers } = useLayerStore(
+    useShallow(pick(['forceUpdate', 'selectedLayers', 'setSelectedLayers'])),
+  );
+
   const items: React.ReactNode[] = [];
   const currentLayerName = layerManager.getCurrentLayerName();
   const isMobile = useIsMobile();

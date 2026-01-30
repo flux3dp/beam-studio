@@ -1,4 +1,4 @@
-import React, { createContext } from 'react';
+import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
@@ -62,7 +62,6 @@ jest.mock('./NozzleBlock', () => () => <div>Mock NozzleBlock</div>);
 jest.mock('./PulseWidthBlock', () => () => <div>Mock PulseWidthBlock</div>);
 jest.mock('./SingleColorBlock', () => () => <div>Mock SingleColorBlock</div>);
 jest.mock('./WobbleBlock', () => () => <div>Mock WobbleBlock</div>);
-jest.mock('./ConfigPanelContext', () => createContext(null));
 jest.mock('./RefreshIntervalBlock', () => () => <div>Mock RefreshIntervalBlock</div>);
 jest.mock('./RefreshThresholdBlock', () => () => <div>Mock RefreshThresholdBlock</div>);
 

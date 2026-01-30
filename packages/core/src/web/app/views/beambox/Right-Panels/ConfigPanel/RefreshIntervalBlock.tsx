@@ -1,16 +1,16 @@
-import React, { memo, useContext } from 'react';
+import React, { memo } from 'react';
 
 import { Switch } from 'antd';
 import classNames from 'classnames';
 
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
-import ConfigPanelContext from './ConfigPanelContext';
 import initState from './initState';
 import NumberBlock from './NumberBlock';
 
@@ -20,7 +20,6 @@ const RefreshIntervalBlock = ({
   type?: 'default' | 'modal' | 'panel-item';
 }): React.JSX.Element => {
   const { change, refreshInterval } = useConfigPanelStore();
-  const { selectedLayers } = useContext(ConfigPanelContext);
   const t = useI18n().beambox.right_panel.laser_panel;
 
   const handleToggle = () => {
@@ -30,7 +29,9 @@ const RefreshIntervalBlock = ({
 
     const batchCmd = new history.BatchCommand('Change Printer Refresh Toggle');
 
-    selectedLayers.forEach((layerName) => writeData(layerName, 'refreshInterval', value, { batchCmd }));
+    useLayerStore
+      .getState()
+      .selectedLayers.forEach((layerName) => writeData(layerName, 'refreshInterval', value, { batchCmd }));
     batchCmd.onAfter = initState;
     undoManager.addCommandToHistory(batchCmd);
   };

@@ -239,7 +239,6 @@ module.exports = {
       sanitize: path.resolve(__dirname, 'public/js/lib/svgeditor/sanitize'),
       svgedit: path.resolve(__dirname, 'public/js/lib/svgeditor/svgedit'),
       svgeditor: path.resolve(__dirname, 'public/js/lib/svgeditor'),
-      svgicons: path.resolve(__dirname, 'public/js/lib/svgeditor/svgicons/jquery.svgicons'),
       svgtransformlist: path.resolve(__dirname, 'public/js/lib/svgeditor/svgtransformlist'),
       svgutils: path.resolve(__dirname, 'public/js/lib/svgeditor/svgutils'),
       touch: path.resolve(__dirname, 'public/js/lib/svgeditor/touch'),
