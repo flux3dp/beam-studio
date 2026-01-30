@@ -357,7 +357,8 @@ describe('test LayerContextMenu', () => {
     await waitFor(() => {
       expect(mockSplitFullColorLayer).toHaveBeenCalledTimes(1);
       expect(mockSplitFullColorLayer).toHaveBeenLastCalledWith('layer1');
-      expect(mockForceUpdate).toHaveBeenCalledTimes(1);
+      expect(mockSetSelectedLayers).toHaveBeenCalledTimes(1);
+      expect(mockSetSelectedLayers).toHaveBeenLastCalledWith([]);
     });
   });
 
