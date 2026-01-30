@@ -959,15 +959,9 @@ const path = require('path');
       if (bBoxCanBeOptimizedOverNativeGetBBox(angle, hasMatrixTransform)) {
         // Get the BBox from the raw path for these elements
         // TODO: why ellipse and not circle
-        var elemNames = ['ellipse', 'path', 'line', 'polyline', 'polygon'];
-        if (elemNames.indexOf(elem.tagName) >= 0) {
-          if (elem.tagName === 'path') {
-            const pathSegList = elem.pathSegList || elem.pathSegList._list;
-            if (pathSegList?.length <= 700) {
-              bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
-            }
-          }
-          if (!isPathTooComplecated) {
+        if (elem.tagName === 'path') {
+          const pathSegList = elem.pathSegList || elem.pathSegList._list;
+          if (pathSegList?.length <= 700) {
             bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
           }
         } else if (elem.tagName == 'rect') {
