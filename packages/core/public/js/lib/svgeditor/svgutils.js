@@ -961,8 +961,12 @@ const path = require('path');
         // TODO: why ellipse and not circle
         var elemNames = ['ellipse', 'path', 'line', 'polyline', 'polygon'];
         if (elemNames.indexOf(elem.tagName) >= 0) {
-          const isPathTooComplecated =
-            elem.tagName === 'path' && (!elem.pathSegList || elem.pathSegList._list.length > 700);
+          if (elem.tagName === 'path') {
+            const pathSegList = elem.pathSegList || elem.pathSegList._list;
+            if (pathSegList?.length <= 700) {
+              bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
+            }
+          }
           if (!isPathTooComplecated) {
             bb = good_bb = svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
           }
