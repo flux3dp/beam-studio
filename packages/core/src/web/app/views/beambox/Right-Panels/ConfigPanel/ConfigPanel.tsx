@@ -116,7 +116,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
     if (UIType === 'modal' && selectedLayers.length > 1) {
       const currentLayerName = layerManager.getCurrentLayerName();
 
-      useLayerStore.setState({ selectedLayers: [currentLayerName] });
+      useLayerStore.getState().setSelectedLayers([currentLayerName]);
     }
   }, [selectedLayers, UIType]);
 
