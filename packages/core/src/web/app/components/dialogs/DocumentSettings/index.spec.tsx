@@ -201,7 +201,6 @@ describe('test DocumentSettings', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    expect(baseElement).toMatchSnapshot();
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="beamo"]'));
     fireEvent.click(baseElement.querySelector('button#rotaryMaster'));

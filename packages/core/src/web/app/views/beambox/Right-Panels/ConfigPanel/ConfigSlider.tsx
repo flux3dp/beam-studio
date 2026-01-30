@@ -14,7 +14,6 @@ type Props = OneOf<{ max: number; min: number }, { options: ConfigOption[] }> & 
   decimal?: number;
   id?: string;
   onChange: (value: number) => void;
-  options?: ConfigOption[] | null;
   speedLimit?: boolean;
   step?: number;
   unit?: string;

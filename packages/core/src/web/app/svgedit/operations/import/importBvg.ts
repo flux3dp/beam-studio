@@ -19,7 +19,7 @@ import i18n from '@core/helpers/i18n';
 import {
   applyDefaultLaserModule,
   toggleFullColorAfterWorkareaChange,
-  writeData,
+  writeDataLayer,
 } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -119,8 +119,10 @@ export const importBvgString = async (
 
     if (engraveDpi) {
       // Backward compatibility for global preference 'engrave_dpi'
-      layerManager.getAllLayerNames().forEach((name) => {
-        writeData(name, 'dpi', regulateEngraveDpiOption(currentWorkarea, engraveDpi as EngraveDpiOption));
+      const regulatedDpi = regulateEngraveDpiOption(currentWorkarea, engraveDpi as EngraveDpiOption);
+
+      layerManager.getAllLayers().forEach((layer) => {
+        writeDataLayer(layer.getGroup(), 'dpi', regulatedDpi);
       });
     }
 
