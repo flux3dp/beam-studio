@@ -2,7 +2,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
+import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 
@@ -13,7 +13,7 @@ interface Props {
 // TODO add unit tests
 const CurveEngravingTool = ({ className }: Props): JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const hasCurveEngraving = useHasCurveEngraving();
+  const hasCurveEngraving = useCurveEngravingStore((state) => state.hasData);
   const mouseMode = useCanvasStore((state) => state.mouseMode);
 
   const lang = useI18n().beambox.left_panel.label;

@@ -18,7 +18,10 @@ jest.mock('@core/helpers/eventEmitterFactory', () => ({
   },
 }));
 
-jest.mock('@core/helpers/hooks/useHasCurveEngraving', () => () => false);
+jest.mock('@core/app/stores/curveEngravingStore', () => ({
+  useCurveEngravingStore: (selector: (state: { hasData: boolean; maxAngle: number }) => unknown) =>
+    selector({ hasData: false, maxAngle: 0 }),
+}));
 
 jest.mock('antd', () => ({
   ...jest.requireActual('antd'),

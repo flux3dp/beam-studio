@@ -14,6 +14,7 @@ import { getSpeedOptions } from '@core/app/constants/config-options';
 import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -25,7 +26,6 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
@@ -47,7 +47,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
-  const hasCurveEngraving = useHasCurveEngraving();
+  const hasCurveEngraving = useCurveEngravingStore((state) => state.hasData);
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
     [],

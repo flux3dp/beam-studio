@@ -46,7 +46,7 @@ export const preprocessData = (
     reverseZ?: boolean;
     subdivisionIterations?: number;
   } = {},
-): { displayData: ThreeDisplayData; subdividedPoints: Array<[number, number, number]> } => {
+): { displayData: ThreeDisplayData; maxAngle: number; subdividedPoints: Array<[number, number, number]> } => {
   // Apply offset
   let points = data.points
     .flat()
@@ -94,7 +94,8 @@ export const preprocessData = (
   });
 
   setGeometryAngleAlertColor(geometry);
-  setGeometryAngleAlertColor(subdividedGeometry);
+
+  const maxAngle = setGeometryAngleAlertColor(subdividedGeometry);
 
   return {
     displayData: {
@@ -111,6 +112,7 @@ export const preprocessData = (
       subdividedGeometry,
       width,
     },
+    maxAngle,
     subdividedPoints,
   };
 };

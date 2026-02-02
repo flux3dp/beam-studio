@@ -13,6 +13,7 @@ import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { setCurveEngravingState } from '@core/app/stores/curveEngravingStore';
 import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
@@ -246,7 +247,6 @@ class CurveEngravingModeController {
 
       await showCurveEngraving();
       this.updateAreaPath();
-      canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     } finally {
       this.clearMeasurer();
     }
@@ -271,7 +271,7 @@ class CurveEngravingModeController {
     this.data = null;
     this.displayData = null;
     this.updateAreaPath();
-    canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
+    setCurveEngravingState({ hasData: false, maxAngle: 0 });
   };
 
   hasArea = () => Boolean(this.data);
@@ -421,7 +421,6 @@ class CurveEngravingModeController {
       this.handleDataChange();
       this.updateContainer();
       this.updateAreaPath();
-      canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     };
 
     customCmd.onAfter = postLoadData;
@@ -446,14 +445,16 @@ class CurveEngravingModeController {
   handleDataChange = () => {
     if (!this.data) {
       this.displayData = null;
+      setCurveEngravingState({ hasData: false, maxAngle: 0 });
 
       return;
     }
 
-    const { displayData, subdividedPoints } = preprocessData(this.data);
+    const { displayData, maxAngle, subdividedPoints } = preprocessData(this.data);
 
     this.displayData = displayData;
     this.setSubdividedPoints(subdividedPoints);
+    setCurveEngravingState({ hasData: true, maxAngle });
   };
 
   setSubdividedPoints = (points: Array<[number, number, number]> | null) => {

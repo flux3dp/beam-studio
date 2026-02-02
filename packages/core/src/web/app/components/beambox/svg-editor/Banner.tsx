@@ -9,9 +9,9 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Banner.module.scss';
@@ -23,7 +23,7 @@ const Banner = (): React.ReactNode => {
   const mode = useCanvasStore((state) => state.mode);
   const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
   const { selectedDevice } = useContext(CanvasContext);
-  const hasCurveEngravingData = useHasCurveEngraving();
+  const hasCurveEngravingData = useCurveEngravingStore((state) => state.hasData);
   const {
     'auto-feeder': autoFeeder,
     borderless: isBorderless,

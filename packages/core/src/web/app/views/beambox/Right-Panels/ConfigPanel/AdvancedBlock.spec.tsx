@@ -46,9 +46,12 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   }),
 }));
 
-const mockUseHasCurveEngraving = jest.fn();
+const mockCurveEngravingState = { hasData: false, maxAngle: 0 };
 
-jest.mock('@core/helpers/hooks/useHasCurveEngraving', () => () => mockUseHasCurveEngraving());
+jest.mock('@core/app/stores/curveEngravingStore', () => ({
+  useCurveEngravingStore: (selector: (state: { hasData: boolean; maxAngle: number }) => unknown) =>
+    selector(mockCurveEngravingState),
+}));
 
 jest.mock('./AmDensityBlock', () => () => <div>Mock AmDensityBlock</div>);
 jest.mock('./AutoFocus', () => () => <div>Mock AutoFocus</div>);
@@ -75,7 +78,7 @@ describe('test AdvancedBlock', () => {
   beforeEach(() => {
     useDocumentStore.setState({ 'enable-autofocus': true, 'enable-diode': true, workarea: 'fbm1' });
     mockGetAddOnInfo.mockReturnValue({ autoFocus: false, hybridLaser: false, lowerFocus: false });
-    mockUseHasCurveEngraving.mockReturnValue(false);
+    mockCurveEngravingState.hasData = false;
     mockUseWorkarea.mockReturnValue('fbb1');
     mockGetPromarkInfo.mockReturnValue(null);
     mockUseConfigPanelStore.mockReturnValue({ module: { value: LayerModule.LASER_UNIVERSAL } });
@@ -156,7 +159,7 @@ describe('test AdvancedBlock', () => {
   });
 
   it('should render correctly with curve engraving', () => {
-    mockUseHasCurveEngraving.mockReturnValue(true);
+    mockCurveEngravingState.hasData = true;
     mockGetAddOnInfo.mockReturnValue({ autoFocus: true, hybridLaser: false, lowerFocus: true });
     mockUseWorkarea.mockReturnValue('fbb2');
 

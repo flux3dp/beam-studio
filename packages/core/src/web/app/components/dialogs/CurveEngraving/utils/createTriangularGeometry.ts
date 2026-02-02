@@ -140,9 +140,10 @@ export const setGeometryAngleAlertColor = (
   angleThreshold: number = 45,
   alertColor: [number, number, number] = [1, 2 / 3, 2 / 3],
   defaultColor: [number, number, number] = [1, 1, 1],
-) => {
+): number => {
   const positions = geometry.getAttribute('position');
   const colors = [];
+  let maxAngle = 0;
 
   for (let i = 0; i < positions.count; i += 3) {
     const angle = getPlaneAngle(
@@ -150,6 +151,8 @@ export const setGeometryAngleAlertColor = (
       [positions.getX(i + 1), positions.getY(i + 1), positions.getZ(i + 1)],
       [positions.getX(i + 2), positions.getY(i + 2), positions.getZ(i + 2)],
     );
+
+    maxAngle = Math.max(maxAngle, angle);
 
     const color = angle > angleThreshold ? alertColor : defaultColor;
 
@@ -159,4 +162,6 @@ export const setGeometryAngleAlertColor = (
   }
 
   geometry.setAttribute('color', new THREE.Float32BufferAttribute(colors, 3));
+
+  return maxAngle;
 };

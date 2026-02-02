@@ -17,6 +17,7 @@ import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/co
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
@@ -27,7 +28,6 @@ import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import isDev from '@core/helpers/is-dev';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -136,7 +136,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     })),
   );
 
-  const hasCurveEngravingData = useHasCurveEngraving();
+  const hasCurveEngravingData = useCurveEngravingStore((state) => state.hasData);
   const mode = useCanvasStore((state) => state.mode);
   const isCurveEngraving = useMemo(() => {
     if (!addOnInfo.curveEngraving) return false;
