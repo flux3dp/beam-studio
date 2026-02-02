@@ -136,8 +136,6 @@ function onDeviceUpdated(deviceInfo: IDeviceInfo) {
   const { alive, serial, source, uuid } = deviceInfo;
   const deviceID = `${source}:${uuid}`;
 
-  tabManager?.sendToFocusedView(MiscEvents.DeviceStatus, deviceInfo);
-
   if (alive) {
     if (menuManager) {
       if (

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { __setMockOS } from '@mocks/@core/helpers/getOS';
 
 const defaultGlobalPreference = {
@@ -93,7 +94,7 @@ describe('should render correctly', () => {
 
     fireEvent.click(getByText('Show Rulers'));
     expect(emit).toHaveBeenCalledTimes(1);
-    expect(emit).toHaveBeenNthCalledWith(1, 'MENU_CLICK', null, {
+    expect(emit).toHaveBeenNthCalledWith(1, MenuEvents.MenuClick, null, {
       id: 'SHOW_RULERS',
     });
     mockGlobalPreference.show_rulers = true;

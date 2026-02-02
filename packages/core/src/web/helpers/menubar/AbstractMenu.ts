@@ -5,6 +5,7 @@ import menuActions from '@core/app/actions/beambox/menuActions';
 import menuDeviceActions from '@core/app/actions/beambox/menuDeviceActions';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
+import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import DeviceMaster from '@core/helpers/device-master';
 import { isAtPage } from '@core/helpers/hashHelper';
@@ -95,7 +96,7 @@ export default abstract class AbstractMenu {
       const menuEventListener = menuEventListenerFactory.createMenuEventListener();
 
       menuEventListener.on(
-        'MENU_CLICK',
+        MenuEvents.MenuClick,
         (
           _: any,
           menuItem: {

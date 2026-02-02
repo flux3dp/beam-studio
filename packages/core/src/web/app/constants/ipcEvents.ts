@@ -36,7 +36,6 @@ export const TabEvents = {
 
 // Backend status events
 export const BackendEvents = {
-  BackendDown: 'backend-down',
   BackendUp: 'backend-up',
   CheckBackendStatus: 'check-backend-status',
   CheckSwiftray: 'check-swiftray',
@@ -75,8 +74,6 @@ export const MenuEvents = {
   MenuClick: 'menu-click',
   NewAppMenu: 'new-app-menu',
   OpenRecentFiles: 'open-recent-files',
-  PopupMenu: 'popup-menu-item',
-  SetAsDefault: 'set-as-default',
   UpdateCustomTitlebar: 'update-custom-titlebar',
   UpdateMenu: 'update-menu',
   UpdateRecentFilesMenu: 'update-recent-files-menu',
@@ -100,11 +97,9 @@ export const MiscEvents = {
   AskForPermission: 'ask-for-permission',
   CloseReply: 'close-reply',
   DebugInspect: 'debug-inspect',
-  DeviceStatus: 'device-status',
   DeviceUpdated: 'device-updated',
   FrontendReady: 'frontend-ready',
   NotifyLanguage: 'notify-language',
-  NotifyMachineStatus: 'notify-machine-status',
   OpenFile: 'open-file',
   SaveDialogPopped: 'save-dialog-popped',
   SetDevMode: 'set-dev-mode',

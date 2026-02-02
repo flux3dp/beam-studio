@@ -345,7 +345,7 @@ class MenuManager extends EventEmitter {
     }
     Menu.setApplicationMenu(this.appmenu);
     updateRecentMenu(false);
-    this.emit('NEW_APP_MENU');
+    this.emit(MenuEvents.NewAppMenu);
   }
 
   onMenuClick = (data: MenuData): void => {

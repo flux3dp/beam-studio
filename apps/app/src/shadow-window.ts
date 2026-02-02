@@ -1,9 +1,11 @@
 import electron from 'electron';
 
+import { SvgEvents } from '@core/app/constants/ipcEvents';
+
 const main = async () => {
   const { ipcRenderer: ipc } = electron;
 
-  ipc.on('SVG_URL_TO_IMG_URL', (e, data) => {
+  ipc.on(SvgEvents.SvgUrlToImgUrl, (e, data) => {
     const { fullColor, height, id, senderId, strokeWidth, url, width } = data;
     const img = new Image(width + Number.parseInt(strokeWidth, 10), height + Number.parseInt(strokeWidth, 10));
 
@@ -38,7 +40,11 @@ const main = async () => {
       const imageBlob = await res.blob();
       const imageUrl = URL.createObjectURL(imageBlob);
 
-      ipc.send('SVG_URL_TO_IMG_URL_DONE', { id, imageUrl, senderId });
+      ipc.send(SvgEvents.SvgUrlToImgUrlDone, { id, imageUrl, senderId });
+    };
+
+    img.onerror = (error) => {
+      console.error('Failed to load SVG image for conversion:', url, error);
     };
 
     img.src = url;
