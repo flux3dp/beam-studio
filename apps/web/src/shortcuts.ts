@@ -1,3 +1,4 @@
+import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { menuItems } from '@core/app/constants/menuItems';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import shortcuts from '@core/helpers/shortcuts';
@@ -8,7 +9,7 @@ for (const { action: id, shortcut, splitKey } of Object.values(menuItems)) {
   shortcuts.on(
     shortcut,
     () => {
-      eventEmitter.emit('MENU_CLICK', null, { id });
+      eventEmitter.emit(MenuEvents.MenuClick, null, { id });
     },
     { splitKey },
   );

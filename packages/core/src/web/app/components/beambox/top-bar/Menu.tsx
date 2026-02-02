@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
 
 import { fcodeV2Models, hexaRfModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -96,7 +97,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
     topbar: { menu: menuCms },
   } = lang;
   const callback = (id: string, device?: IDeviceInfo) => {
-    eventEmitter.emit('MENU_CLICK', null, {
+    eventEmitter.emit(MenuEvents.MenuClick, null, {
       id,
       machineName: device?.name,
       serial: device?.serial,

@@ -9,10 +9,6 @@ const initBackendEvents = (): void => {
     console.log(`Backend start at ${status.port}`);
   });
 
-  communicator.on(BackendEvents.BackendDown, () => {
-    window.FLUX.backendAlive = false;
-  });
-
   communicator.on(
     BackendEvents.NotifyBackendStatus,
     (_: any, status: { backend: { alive: boolean; logFile: any; port: number } }) => {
