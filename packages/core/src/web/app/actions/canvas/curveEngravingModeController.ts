@@ -466,6 +466,54 @@ class CurveEngravingModeController {
 
     this.data = { ...this.data!, subdividedPoints: points };
   };
+
+  /**
+   * Use for testing purpose only
+   */
+  generateTestData = () => {
+    const generateData = (): CurveEngraving => {
+      const bbox = { height: 100, width: 100, x: 0, y: 0 };
+      const gap = 20;
+      let highest: null | number = null;
+      let lowest: null | number = null;
+      const points: CurveEngraving['points'] = [];
+
+      for (let i = bbox.x; i <= bbox.width; i += gap) {
+        const currentRow: Point[] = [];
+
+        for (let j = bbox.y; j <= bbox.height; j += gap) {
+          const value = Math.random() * 20;
+
+          if (highest === null || value > highest) {
+            highest = value;
+          }
+
+          if (lowest === null || value < lowest) {
+            lowest = value;
+          }
+
+          currentRow.push([i, j, value, 1, 1]);
+        }
+
+        points.push(currentRow);
+      }
+
+      return {
+        bbox,
+        errors: [],
+        gap: [gap, gap],
+        highest,
+        lowest,
+        objectHeight: highest !== null ? highest + 10 : 0,
+        points,
+      };
+    };
+
+    this.data = generateData();
+    this.handleDataChange();
+    this.updateContainer();
+    this.updateAreaPath();
+  };
 }
 
 const curveEngravingModeController = new CurveEngravingModeController();
