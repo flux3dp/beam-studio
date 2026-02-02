@@ -7,7 +7,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import progressCaller from '@core/app/actions/progress-caller';
 import tabController from '@core/app/actions/tabController';
-import tabConstants, { TabEvents } from '@core/app/constants/tabConstants';
+import { TabConstants, TabEvents } from '@core/app/constants/ipcEvents';
 import cloudFile from '@core/helpers/api/cloudFile';
 import { hashMap } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -49,7 +49,7 @@ export const checkTabCount = (): boolean => {
   } else {
     const tabs = tabController.getAllTabs();
 
-    if (tabs.length < tabConstants.maxTab) {
+    if (tabs.length < TabConstants.maxTab) {
       return true;
     }
 

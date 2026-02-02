@@ -15,6 +15,7 @@ import SelectMachineButton from '@core/app/components/beambox/top-bar/SelectMach
 import TopBarHints from '@core/app/components/beambox/top-bar/TopBarHints';
 import WelcomePageButton from '@core/app/components/beambox/top-bar/WelcomePageButton';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -46,10 +47,10 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   useEffect(() => {
     const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
 
-    communicator.on('window-fullscreen', onFullScreenChange);
+    communicator.on(MiscEvents.WindowFullscreen, onFullScreenChange);
 
     return () => {
-      communicator.off('window-fullscreen', onFullScreenChange);
+      communicator.off(MiscEvents.WindowFullscreen, onFullScreenChange);
     };
   }, []);
 

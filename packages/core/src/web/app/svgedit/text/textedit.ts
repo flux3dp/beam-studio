@@ -3,8 +3,8 @@
  */
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import NS from '@core/app/constants/namespaces';
-import { TabEvents } from '@core/app/constants/tabConstants';
 import { getStorage, useStorageStore } from '@core/app/stores/storageStore';
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';

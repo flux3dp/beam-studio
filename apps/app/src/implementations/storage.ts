@@ -1,6 +1,6 @@
 import Store from 'electron-store';
 
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import type { Storage, StorageManager } from '@core/interfaces/IStorage';
 
 import communicator from './communicator';

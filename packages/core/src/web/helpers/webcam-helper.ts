@@ -1,4 +1,5 @@
 import { selectUsbDevice } from '@core/app/components/dialogs/UsbDeviceSelector';
+import { MiscEvents } from '@core/app/constants/ipcEvents';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import communicator from '@core/implementations/communicator';
@@ -18,7 +19,7 @@ const askForPermission = async (): Promise<boolean> => {
     }
   }
 
-  const res = communicator.sendSync('ASK_FOR_PERMISSION', 'camera');
+  const res = communicator.sendSync(MiscEvents.AskForPermission, 'camera');
 
   return res;
 };

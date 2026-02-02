@@ -1,11 +1,10 @@
 import { create } from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
 
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { Storage, StorageKey, StorageStoreState } from '@core/interfaces/IStorage';
-
-import { TabEvents } from '../constants/tabConstants';
 
 const initStore = (): StorageStoreState => {
   const store = storage.getStore();

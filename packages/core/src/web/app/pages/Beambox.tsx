@@ -9,6 +9,7 @@ import RightPanel from '@core/app/components/beambox/right-panel/RightPanel';
 import SvgEditor from '@core/app/components/beambox/svg-editor/SvgEditor';
 import TopBar from '@core/app/components/beambox/top-bar/TopBar';
 import CanvasTabBar from '@core/app/components/mobile/CanvasTabBar';
+import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasProvider } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContextProvider } from '@core/app/contexts/SelectedElementContext';
 import { useStorageStore } from '@core/app/stores/storageStore';
@@ -30,16 +31,16 @@ const beamboxInit = new BeamboxInit();
 const Beambox = (): React.JSX.Element => {
   useEffect(() => {
     window.homePage = hashMap.editor;
-    communicator.send('FRONTEND_READY');
+    communicator.send(MiscEvents.FrontendReady);
     // Init view
     workareaManager.resetView();
     beamboxInit.showStartUpDialogs();
 
-    communicator.on('NEW_APP_MENU', BeamboxGlobalInteraction.attach);
+    communicator.on(MenuEvents.NewAppMenu, BeamboxGlobalInteraction.attach);
 
     return () => {
       BeamboxGlobalInteraction.detach();
-      communicator.off('NEW_APP_MENU', BeamboxGlobalInteraction.attach);
+      communicator.off(MenuEvents.NewAppMenu, BeamboxGlobalInteraction.attach);
     };
   }, []);
 

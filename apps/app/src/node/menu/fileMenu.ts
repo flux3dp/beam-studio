@@ -2,7 +2,7 @@ import type { MenuItemConstructorOptions } from 'electron';
 import { ipcMain, Menu, MenuItem } from 'electron';
 import ElectronStore from 'electron-store';
 
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { MenuEvents, TabEvents } from '@core/app/constants/ipcEvents';
 import type { ILang } from '@core/interfaces/ILang';
 
 import i18n from '../helpers/i18n';
@@ -214,7 +214,7 @@ export const updateRecentMenu = (updateWindowMenu = true): void => {
       recentMenu.append(
         new MenuItem({
           click: () => {
-            getFocusedView()?.webContents.send('OPEN_RECENT_FILES', filePath);
+            getFocusedView()?.webContents.send(MenuEvents.OpenRecentFiles, filePath);
           },
           id: label,
           label,
@@ -235,12 +235,12 @@ export const updateRecentMenu = (updateWindowMenu = true): void => {
     Menu.setApplicationMenu(Menu.getApplicationMenu());
 
     if (platform === 'win32' && updateWindowMenu) {
-      getFocusedView()?.webContents.send('UPDATE_MENU');
+      getFocusedView()?.webContents.send(MenuEvents.UpdateMenu);
     }
   }
 };
 
-ipcMain.on('UPDATE_RECENT_FILES_MENU', () => {
+ipcMain.on(MenuEvents.UpdateRecentFilesMenu, () => {
   updateRecentMenu(true);
 });
 

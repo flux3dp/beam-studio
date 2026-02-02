@@ -1,6 +1,7 @@
 import { Subject } from 'rxjs';
 import { filter, map, mergeMap, scan } from 'rxjs/operators';
 
+import { SvgEvents } from '@core/app/constants/ipcEvents';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import communicator from '@core/implementations/communicator';
 
@@ -118,10 +119,10 @@ const svgToImgUrl = async (data: SvgToImageUrlData) =>
 
 const svgToImgUrlByShadowWindow = async (data: SvgToImageUrlData) =>
   new Promise<string>((resolve) => {
-    communicator.once(`SVG_URL_TO_IMG_URL_DONE_${requestId}`, (_: any, url: string) => {
+    communicator.once(`${SvgEvents.SvgUrlToImgUrlDone}-${requestId}`, (_: any, url: string) => {
       resolve(url);
     });
-    communicator.send('SVG_URL_TO_IMG_URL', data);
+    communicator.send(SvgEvents.SvgUrlToImgUrl, data);
   });
 
 const getImageUrl = async ({

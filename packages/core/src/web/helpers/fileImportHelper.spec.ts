@@ -71,7 +71,7 @@ jest.mock('@core/implementations/recentMenuUpdater', () => ({
   openRecentFiles: mockOpenRecentFiles,
 }));
 
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import { checkTabCount, importFileInCurrentTab, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 
 const mockFiles: any = {

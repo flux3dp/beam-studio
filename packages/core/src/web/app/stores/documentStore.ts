@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
 
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
@@ -8,7 +9,6 @@ import type { BeamboxPreference, DocumentState, DocumentStateKey } from '@core/i
 
 import beamboxPreference from '../actions/beambox/beambox-preference';
 import { getAddOnInfo } from '../constants/addOn';
-import { TabEvents } from '../constants/tabConstants';
 import { changeBeamboxPreferenceValue } from '../svgedit/history/beamboxPreferenceCommand';
 import history, { BaseHistoryCommand } from '../svgedit/history/history';
 

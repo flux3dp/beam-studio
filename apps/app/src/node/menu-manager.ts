@@ -11,13 +11,13 @@ import {
   modelsWithModules,
   promarkModels,
 } from '@core/app/actions/beambox/constant';
+import { AuthEvents, MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import versionChecker from '@core/helpers/version-checker';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import i18n from './helpers/i18n';
 import { getFocusedView } from './helpers/tabHelper';
 import type { MenuData } from './interfaces/Menu';
-import events from './ipc-events';
 import { buildFileMenu, updateRecentMenu } from './menu/fileMenu';
 
 let r = i18n.lang.topbar.menu;
@@ -307,13 +307,13 @@ class MenuManager extends EventEmitter {
 
     this.reconstructMenu = () => reconstructMenuHandler.call();
 
-    ipcMain.on(events.NOTIFY_LANGUAGE, () => {
+    ipcMain.on(MiscEvents.NotifyLanguage, () => {
       i18n.reloadActiveLang();
       r = i18n.lang.topbar.menu;
       this.constructMenu();
     });
 
-    ipcMain.on('SET_DEV_MODE', (_, isDevMode) => {
+    ipcMain.on(MiscEvents.SetDevMode, (_, isDevMode) => {
       const hasChanged = this.isDevMode !== isDevMode;
 
       this.isDevMode = isDevMode;
@@ -323,7 +323,7 @@ class MenuManager extends EventEmitter {
       }
     });
 
-    ipcMain.on(events.UPDATE_ACCOUNT, (e, info) => {
+    ipcMain.on(AuthEvents.UpdateAccount, (e, info) => {
       accountInfo = info;
       this.reconstructMenu();
     });
@@ -361,7 +361,7 @@ class MenuManager extends EventEmitter {
         }
       }
 
-      this.emit(events.MENU_CLICK, eventData, this.appmenu);
+      this.emit(MenuEvents.MenuClick, eventData, this.appmenu);
     }
 
     if (process.platform === 'win32') {
@@ -373,7 +373,7 @@ class MenuManager extends EventEmitter {
     const view = getFocusedView();
 
     if (view) {
-      view.webContents.send(events.UPDATE_CUSTOM_TITLEBAR);
+      view.webContents.send(MenuEvents.UpdateCustomTitlebar);
     }
   }
 

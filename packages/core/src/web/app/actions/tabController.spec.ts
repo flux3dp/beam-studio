@@ -1,5 +1,5 @@
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');

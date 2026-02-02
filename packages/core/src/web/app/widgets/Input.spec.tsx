@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import Input from './Input';
+import { MiscEvents } from '@core/app/constants/ipcEvents';
 
 const mockSend = jest.fn();
 
@@ -15,20 +16,20 @@ describe('test Input', () => {
     const { container } = render(<Input />);
 
     fireEvent.focus(container.querySelector('input'));
-    expect(mockSend).toHaveBeenCalledWith('SET_EDITING_STANDARD_INPUT', true);
+    expect(mockSend).toHaveBeenCalledWith(MiscEvents.SetEditingStandardInput, true);
   });
 
   it('should stop editing input when onBlur', () => {
     const { container } = render(<Input />);
 
     fireEvent.blur(container.querySelector('input'));
-    expect(mockSend).toHaveBeenCalledWith('SET_EDITING_STANDARD_INPUT', false);
+    expect(mockSend).toHaveBeenCalledWith(MiscEvents.SetEditingStandardInput, false);
   });
 
   it('should stop editing input when unmount', () => {
     const { unmount } = render(<Input />);
 
     unmount();
-    expect(mockSend).toHaveBeenCalledWith('SET_EDITING_STANDARD_INPUT', false);
+    expect(mockSend).toHaveBeenCalledWith(MiscEvents.SetEditingStandardInput, false);
   });
 });

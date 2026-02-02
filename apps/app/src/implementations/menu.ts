@@ -1,7 +1,7 @@
 import { Menu as ElectronMenu } from '@electron/remote';
 import { funnel } from 'remeda';
 
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { MenuEvents, MiscEvents, TabEvents } from '@core/app/constants/ipcEvents';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -27,8 +27,8 @@ class Menu extends AbstractMenu {
   constructor(aCommunicator: any) {
     super();
     this.communicator = aCommunicator;
-    communicator.on('UPDATE_MENU', updateWindowsMenu);
-    communicator.on('NEW_APP_MENU', () => {
+    communicator.on(MenuEvents.UpdateMenu, updateWindowsMenu);
+    communicator.on(MenuEvents.NewAppMenu, () => {
       this.initMenuItemStatus();
     });
     communicator.on(TabEvents.TabFocused, () => {
@@ -109,14 +109,14 @@ class Menu extends AbstractMenu {
 
   updateLanguage(): void {
     if (this.communicator) {
-      this.communicator.send('NOTIFY_LANGUAGE');
+      this.communicator.send(MiscEvents.NotifyLanguage);
       updateWindowsMenu();
     }
   }
 
   setDevMode(isDevMode: boolean): void {
     if (this.communicator) {
-      this.communicator.send('SET_DEV_MODE', isDevMode);
+      this.communicator.send(MiscEvents.SetDevMode, isDevMode);
       updateWindowsMenu();
     }
   }

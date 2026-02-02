@@ -1,12 +1,12 @@
 import { create } from 'zustand';
 import { combine, subscribeWithSelector } from 'zustand/middleware';
 
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 import type { BeamboxPreference, GlobalPreference, GlobalPreferenceKey } from '@core/interfaces/Preference';
 
 import beamboxPreference from '../actions/beambox/beambox-preference';
-import { TabEvents } from '../constants/tabConstants';
 
 export type GlobalPreferenceStore = GlobalPreference & {
   reload: () => void;

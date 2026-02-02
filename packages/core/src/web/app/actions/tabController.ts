@@ -1,7 +1,7 @@
 import { EventEmitter } from 'eventemitter3';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
