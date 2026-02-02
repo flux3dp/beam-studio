@@ -2,8 +2,9 @@ import type { WebContents } from 'electron';
 import { app, ipcMain } from 'electron';
 import { autoUpdater } from 'electron-updater';
 
+import { UpdateEvents } from '@core/app/constants/ipcEvents';
+
 import { getFocusedView } from './helpers/tabHelper';
-import events from './ipc-events';
 
 export class UpdateManager {
   isDownloading: boolean;
@@ -27,7 +28,7 @@ export class UpdateManager {
 
       const res = { info, isUpdateAvailable: true };
 
-      this.send(events.UPDATE_AVAILABLE, res);
+      this.send(UpdateEvents.UpdateAvailable, res);
     });
     autoUpdater.on('update-not-available', (info) => {
       console.log('Update Not Available, Info:', info);
@@ -35,18 +36,18 @@ export class UpdateManager {
 
       const res = { info, isUpdateAvailable: false };
 
-      this.send(events.UPDATE_AVAILABLE, res);
+      this.send(UpdateEvents.UpdateAvailable, res);
     });
     autoUpdater.on('update-downloaded', (info) => {
       console.log('Update Downloaded, Info:', info);
       this.isDownloading = false;
-      this.send(events.UPDATE_DOWNLOADED, info);
+      this.send(UpdateEvents.UpdateDownloaded, info);
     });
     autoUpdater.on('download-progress', (progress) => {
       console.log(progress);
-      this.send(events.DOWNLOAD_PROGRESS, progress);
+      this.send(UpdateEvents.DownloadProgress, progress);
     });
-    ipcMain.on(events.CHECK_FOR_UPDATE, (event, channel) => {
+    ipcMain.on(UpdateEvents.CheckForUpdate, (event, channel) => {
       if (channel) {
         autoUpdater.channel = channel;
       } else {
@@ -55,13 +56,13 @@ export class UpdateManager {
 
       this.checkForUpdates(event.sender);
     });
-    ipcMain.on(events.DOWNLOAD_UPDATE, () => {
+    ipcMain.on(UpdateEvents.DownloadUpdate, () => {
       if (!this.isDownloading) {
         autoUpdater.downloadUpdate();
         this.isDownloading = true;
       }
     });
-    ipcMain.on(events.QUIT_AND_INSTALL, () => {
+    ipcMain.on(UpdateEvents.QuitAndInstall, () => {
       autoUpdater.quitAndInstall();
     });
   }
@@ -75,7 +76,7 @@ export class UpdateManager {
       console.error(error);
       res = { error, isUpdateAvailable: true };
     }
-    webContents.send(events.UPDATE_AVAILABLE, res);
+    webContents.send(UpdateEvents.UpdateAvailable, res);
   };
 
   private send = (event: string, data: unknown): void => {

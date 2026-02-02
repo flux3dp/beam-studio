@@ -9,6 +9,8 @@ import { app, ipcMain } from 'electron';
 // @ts-expect-error Missing type definitions
 import type WebSocket from 'ws';
 
+import { BackendEvents } from '@core/app/constants/ipcEvents';
+
 function uglyJsonParser(data: string): any {
   try {
     return JSON.parse(data);
@@ -104,7 +106,7 @@ class BackendManager extends EventEmitter {
     this.proc = undefined;
     this.ws = undefined;
     this.wsConn = undefined;
-    ipcMain.on('CHECK_SWIFTRAY', (event) => {
+    ipcMain.on(BackendEvents.CheckSwiftray, (event) => {
       event.returnValue = this.checkSwiftrayExists();
     });
   }

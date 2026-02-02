@@ -2,7 +2,7 @@ import type { WebContents } from 'electron';
 import { ipcMain } from 'electron';
 import ping from 'ping';
 
-import events from './ipc-events';
+import { NetworkEvents } from '@core/app/constants/ipcEvents';
 
 const testNetwork = async (ip: string, time: number, webContents: WebContents) => {
   const start = Date.now();
@@ -14,7 +14,7 @@ const testNetwork = async (ip: string, time: number, webContents: WebContents) =
     const elapsedTime = Date.now() - start;
     const percentage = Math.round((100 * elapsedTime) / time);
 
-    webContents.send(events.TEST_NETWORK_PROGRESS, percentage);
+    webContents.send(NetworkEvents.TestNetworkProgress, percentage);
     // wait for the network to be ready
     pingCount += 1;
 
@@ -62,22 +62,22 @@ const checkIPExist = async (ip: string, trial: number) => {
 };
 
 const registerEvents = (): void => {
-  ipcMain.removeAllListeners(events.TEST_NETWORK);
-  ipcMain.on(events.TEST_NETWORK, async (event, ip, time) => {
+  ipcMain.removeAllListeners(NetworkEvents.TestNetwork);
+  ipcMain.on(NetworkEvents.TestNetwork, async (event, ip, time) => {
     const { sender } = event;
     const res = await testNetwork(ip, time, sender);
 
-    event.sender.send(events.TEST_NETWORK_RESULT, res);
+    event.sender.send(NetworkEvents.TestNetworkResult, res);
 
     event.returnValue = res;
   });
 
-  ipcMain.removeAllListeners(events.CHECK_IP_EXIST);
-  ipcMain.on(events.CHECK_IP_EXIST, async (event, ip, trial) => {
+  ipcMain.removeAllListeners(NetworkEvents.CheckIpExist);
+  ipcMain.on(NetworkEvents.CheckIpExist, async (event, ip, trial) => {
     const { sender } = event;
     const res = await checkIPExist(ip, trial);
 
-    sender.send(events.CHECK_IP_EXIST_RESULT, res);
+    sender.send(NetworkEvents.CheckIpExistResult, res);
 
     event.returnValue = res;
   });

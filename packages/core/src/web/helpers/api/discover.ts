@@ -4,7 +4,7 @@
  */
 import { funnel } from 'remeda';
 
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { MiscEvents, TabEvents } from '@core/app/constants/ipcEvents';
 import DeviceList from '@core/helpers/device-list';
 import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
@@ -178,7 +178,7 @@ export class DiscoverManager {
     }
 
     if (!this.isWebClient) {
-      communicator.send('DEVICE_UPDATED', device);
+      communicator.send(MiscEvents.DeviceUpdated, device);
     }
 
     this.devices = DeviceList({ ...this.deviceMap, ...this.swiftrayDevices });
@@ -194,7 +194,7 @@ export class DiscoverManager {
       if (!this.isWebClient && res.devices.length === 0) {
         Object.keys(this.swiftrayDevices).forEach((uuid) => {
           this.swiftrayDevices[uuid].alive = false;
-          communicator.send('DEVICE_UPDATED', this.swiftrayDevices[uuid]);
+          communicator.send(MiscEvents.DeviceUpdated, this.swiftrayDevices[uuid]);
         });
       }
 
@@ -204,7 +204,7 @@ export class DiscoverManager {
         acc[device.uuid] = device;
 
         if (!this.isWebClient) {
-          communicator.send('DEVICE_UPDATED', device);
+          communicator.send(MiscEvents.DeviceUpdated, device);
         }
 
         return acc;

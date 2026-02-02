@@ -6,6 +6,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
 import alertConstants from '@core/app/constants/alert-constants';
+import { BackendEvents } from '@core/app/constants/ipcEvents';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
@@ -606,7 +607,7 @@ const checkSwiftray = (): boolean => {
     return false;
   }
 
-  return communicator.sendSync('CHECK_SWIFTRAY');
+  return communicator.sendSync(BackendEvents.CheckSwiftray);
 };
 const hasSwiftray = checkSwiftray();
 

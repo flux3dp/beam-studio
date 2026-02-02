@@ -1,19 +1,20 @@
+import { BackendEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import communicator from '@core/implementations/communicator';
 
 const initBackendEvents = (): void => {
-  communicator.on('BACKEND_UP', (_: any, status: { alive: boolean; logFile: any; port: number }) => {
+  communicator.on(BackendEvents.BackendUp, (_: any, status: { alive: boolean; logFile: any; port: number }) => {
     window.FLUX.ghostPort = status.port;
     window.FLUX.logFile = status.logFile;
     window.FLUX.backendAlive = status.alive;
     console.log(`Backend start at ${status.port}`);
   });
 
-  communicator.on('BACKEND_DOWN', () => {
+  communicator.on(BackendEvents.BackendDown, () => {
     window.FLUX.backendAlive = false;
   });
 
   communicator.on(
-    'NOTIFY_BACKEND_STATUS',
+    BackendEvents.NotifyBackendStatus,
     (_: any, status: { backend: { alive: boolean; logFile: any; port: number } }) => {
       console.log(status);
       window.FLUX.ghostPort = status.backend.port;
@@ -28,8 +29,8 @@ const initBackendEvents = (): void => {
     },
   );
 
-  communicator.send('CHECK_BACKEND_STATUS');
-  communicator.send('NOTIFY_LANGUAGE');
+  communicator.send(BackendEvents.CheckBackendStatus);
+  communicator.send(MiscEvents.NotifyLanguage);
 };
 
 export default initBackendEvents;

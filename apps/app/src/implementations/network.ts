@@ -1,15 +1,25 @@
 import dns from 'dns';
 
+import { NetworkEvents } from '@core/app/constants/ipcEvents';
 import communicator from '@core/implementations/communicator';
 import type { INetwork } from '@core/interfaces/INetwork';
+
+const IPC_TIMEOUT = 30000; // 30 seconds
 
 export default {
   checkIPExist: async (ip: string, trial: number) =>
     new Promise<{ error?: string; isExisting: boolean }>((resolve) => {
-      communicator.once('CHECK_IP_EXIST_RESULT', (e: any, res: { error?: string; isExisting: boolean }) =>
-        resolve(res),
-      );
-      communicator.send('CHECK_IP_EXIST', ip, trial);
+      const handler = (e: any, res: { error?: string; isExisting: boolean }) => {
+        clearTimeout(timeout);
+        resolve(res);
+      };
+      const timeout = setTimeout(() => {
+        communicator.off(NetworkEvents.CheckIpExistResult, handler);
+        resolve({ error: 'IPC timeout', isExisting: false });
+      }, IPC_TIMEOUT);
+
+      communicator.once(NetworkEvents.CheckIpExistResult, handler);
+      communicator.send(NetworkEvents.CheckIpExist, ip, trial);
     }),
   dnsLookUpAll(
     hostname: string,
@@ -21,31 +31,36 @@ export default {
     new Promise((resolve) => {
       const onCommunicatorProgress = (e: any, percentage: number) => onProgress(percentage);
 
-      communicator.on('TEST_NETWORK_PROGRESS', onCommunicatorProgress);
-      communicator.once(
-        'TEST_NETWORK_RESULT',
-        (
-          e: any,
-          res:
-            | PromiseLike<{
-                avgRRT?: number;
-                err?: string;
-                quality?: number;
-                reason?: string;
-                successRate?: number;
-              }>
-            | {
-                avgRRT?: number;
-                err?: string;
-                quality?: number;
-                reason?: string;
-                successRate?: number;
-              },
-        ) => {
-          communicator.off('TEST_NETWORK_PROGRESS', onCommunicatorProgress);
-          resolve(res);
+      type NetworkTestResult = {
+        avgRRT?: number;
+        err?: string;
+        quality?: number;
+        reason?: string;
+        successRate?: number;
+      };
+
+      const cleanup = () => {
+        clearTimeout(timeout);
+        communicator.off(NetworkEvents.TestNetworkProgress, onCommunicatorProgress);
+      };
+
+      const handler = (e: any, res: NetworkTestResult | PromiseLike<NetworkTestResult>) => {
+        cleanup();
+        resolve(res);
+      };
+
+      // Network test timeout is based on the requested time plus buffer
+      const timeout = setTimeout(
+        () => {
+          communicator.off(NetworkEvents.TestNetworkResult, handler);
+          cleanup();
+          resolve({ err: 'IPC timeout', quality: 0 });
         },
+        time * 1000 + IPC_TIMEOUT,
       );
-      communicator.send('TEST_NETWORK', ip, time);
+
+      communicator.on(NetworkEvents.TestNetworkProgress, onCommunicatorProgress);
+      communicator.once(NetworkEvents.TestNetworkResult, handler);
+      communicator.send(NetworkEvents.TestNetwork, ip, time);
     }),
 } as INetwork;

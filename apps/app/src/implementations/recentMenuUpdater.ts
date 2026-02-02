@@ -1,5 +1,6 @@
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
+import { MenuEvents } from '@core/app/constants/ipcEvents';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
@@ -22,7 +23,7 @@ getSVGAsync((globalSVG) => {
 });
 
 const update = () => {
-  communicator.send('UPDATE_RECENT_FILES_MENU');
+  communicator.send(MenuEvents.UpdateRecentFilesMenu);
 };
 
 const openRecentFiles = async (filePath: string): Promise<void> => {
@@ -78,7 +79,7 @@ const openRecentFiles = async (filePath: string): Promise<void> => {
   }
 };
 
-communicator.on('OPEN_RECENT_FILES', async (_evt: any, filePath: string) => openRecentFiles(filePath));
+communicator.on(MenuEvents.OpenRecentFiles, async (_evt: any, filePath: string) => openRecentFiles(filePath));
 
 export default {
   openRecentFiles,

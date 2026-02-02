@@ -8,7 +8,7 @@ import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
-import tabConstants from '@core/app/constants/tabConstants';
+import { TabConstants } from '@core/app/constants/ipcEvents';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
@@ -194,7 +194,7 @@ const Tabs = ({ inverse }: Props): React.JSX.Element => {
           )}
         </Droppable>
       </DragDropContext>
-      {(!tabConstants.maxTab || tabs.length < tabConstants.maxTab) && (
+      {(!TabConstants.maxTab || tabs.length < TabConstants.maxTab) && (
         <div className={styles.add} onClick={tabController.addNewTab}>
           <PlusOutlined />
         </div>

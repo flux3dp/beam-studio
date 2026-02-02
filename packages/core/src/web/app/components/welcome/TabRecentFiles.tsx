@@ -5,7 +5,7 @@ import { FolderOpenOutlined } from '@ant-design/icons';
 import tabController from '@core/app/actions/tabController';
 import GridFile from '@core/app/components/welcome/GridFileLocal';
 import GridNew from '@core/app/components/welcome/GridNew';
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import beamFileHelper from '@core/helpers/beam-file-helper';
 import useI18n from '@core/helpers/useI18n';

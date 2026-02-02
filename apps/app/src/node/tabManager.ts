@@ -6,12 +6,11 @@ import type { BaseWindow, IpcMainEvent } from 'electron';
 import { ipcMain, WebContentsView } from 'electron';
 
 import type { CanvasMode } from '@core/app/constants/canvasMode';
-import tabConstants, { TabEvents } from '@core/app/constants/tabConstants';
+import { MiscEvents, TabConstants, TabEvents } from '@core/app/constants/ipcEvents';
 import type { Tab as FrontendTab } from '@core/interfaces/Tab';
 
 import i18n from './helpers/i18n';
 import initStore from './helpers/initStore';
-import events from './ipc-events';
 
 interface Tab extends Omit<FrontendTab, 'id'> {
   view: WebContentsView;
@@ -80,7 +79,7 @@ class TabManager {
       this.sendToOtherViews(e.sender.id, TabEvents.UpdateUser, data);
     });
 
-    ipcMain.on(events.FRONTEND_READY, (e) => {
+    ipcMain.on(MiscEvents.FrontendReady, (e) => {
       const { id } = e.sender;
       let tab: null | Tab = null;
 
@@ -97,7 +96,7 @@ class TabManager {
         }
 
         this.sendToView(id, id === this.focusedId ? TabEvents.TabFocused : TabEvents.TabBlurred);
-        this.sendToView(id, 'window-fullscreen', this.mainWindow.isFullScreen());
+        this.sendToView(id, MiscEvents.WindowFullscreen, this.mainWindow.isFullScreen());
         this.notifyTabUpdated();
       }
     });
@@ -283,7 +282,7 @@ class TabManager {
   };
 
   private preloadTab = (): void => {
-    if (!this.preloadedTab && (!tabConstants.maxTab || this.tabsList.length < tabConstants.maxTab)) {
+    if (!this.preloadedTab && (!TabConstants.maxTab || this.tabsList.length < TabConstants.maxTab)) {
       this.preloadedTab = this.createTab();
       this.focusTab(this.focusedId);
     }
@@ -368,7 +367,7 @@ class TabManager {
       const saveDialogPoppedHandler = (evt: IpcMainEvent) => {
         if (evt.sender === view.webContents) {
           eventReceived = true;
-          ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
+          ipcMain.removeListener(MiscEvents.SaveDialogPopped, saveDialogPoppedHandler);
 
           if (this.focusedId !== id) {
             this.focusTab(id);
@@ -385,14 +384,14 @@ class TabManager {
             resolve(false);
           }
 
-          ipcMain.removeListener('CLOSE_REPLY', closeReplyHandler);
-          ipcMain.removeListener('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
+          ipcMain.removeListener(MiscEvents.CloseReply, closeReplyHandler);
+          ipcMain.removeListener(MiscEvents.SaveDialogPopped, saveDialogPoppedHandler);
         }
       };
 
-      ipcMain.on('CLOSE_REPLY', closeReplyHandler);
-      ipcMain.on('SAVE_DIALOG_POPPED', saveDialogPoppedHandler);
-      view.webContents.send('WINDOW_CLOSE');
+      ipcMain.on(MiscEvents.CloseReply, closeReplyHandler);
+      ipcMain.on(MiscEvents.SaveDialogPopped, saveDialogPoppedHandler);
+      view.webContents.send(MiscEvents.WindowClose);
       // if no event received in 10 seconds
       // something may goes wrong in frontend, close the view
       setTimeout(() => {

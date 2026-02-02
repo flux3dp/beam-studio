@@ -24,6 +24,7 @@ import TabMyCloud from '@core/app/components/welcome/TabMyCloud';
 import TabRecentFiles from '@core/app/components/welcome/TabRecentFiles';
 import ThemedButton from '@core/app/components/welcome/ThemedButton';
 import UserInfo from '@core/app/components/welcome/UserInfo';
+import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
@@ -111,17 +112,17 @@ const Welcome = (): ReactNode => {
     } else {
       const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
 
-      communicator.on('window-fullscreen', onFullScreenChange);
-      communicator.on('NEW_APP_MENU', beamboxGlobalInteraction.attach);
+      communicator.on(MiscEvents.WindowFullscreen, onFullScreenChange);
+      communicator.on(MenuEvents.NewAppMenu, beamboxGlobalInteraction.attach);
       beamboxGlobalInteraction.attach();
       window.homePage = hashMap.welcome;
       setIsLoading(false);
-      communicator.send('FRONTEND_READY');
+      communicator.send(MiscEvents.FrontendReady);
 
       return () => {
         beamboxGlobalInteraction.detach();
-        communicator.off('NEW_APP_MENU', beamboxGlobalInteraction.attach);
-        communicator.off('window-fullscreen', onFullScreenChange);
+        communicator.off(MenuEvents.NewAppMenu, beamboxGlobalInteraction.attach);
+        communicator.off(MiscEvents.WindowFullscreen, onFullScreenChange);
       };
     }
   }, []);

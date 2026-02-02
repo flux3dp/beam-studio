@@ -22,6 +22,7 @@ import { captureMessage, init as SentryInit } from '@sentry/electron/main';
 import { setupTitlebar } from 'custom-electron-titlebar/main';
 import { pick } from 'remeda';
 
+import { BackendEvents, MenuEvents, MiscEvents, SvgEvents } from '@core/app/constants/ipcEvents';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 import BackendManager from './backend-manager';
@@ -30,7 +31,6 @@ import { getDeepLinkUrl, handleDeepLinkUrl } from './deep-link-helper';
 import fontHelper from './font-helper';
 import checkMacOsBuild from './helpers/checkMacOsBuild';
 import { setTabManager } from './helpers/tabHelper';
-import events from './ipc-events';
 import MenuManager from './menu-manager';
 import MonitorManager from './monitor-manager';
 import networkHelper from './network-helper';
@@ -124,7 +124,7 @@ if (process.platform === 'linux') {
 function onGhostUp(data: { port: number }) {
   globalData.backend.alive = true;
   globalData.backend.port = data.port;
-  tabManager?.sendToAllViews(events.BACKEND_UP, globalData.backend);
+  tabManager?.sendToAllViews(BackendEvents.BackendUp, globalData.backend);
 }
 
 function onGhostDown() {
@@ -136,7 +136,7 @@ function onDeviceUpdated(deviceInfo: IDeviceInfo) {
   const { alive, serial, source, uuid } = deviceInfo;
   const deviceID = `${source}:${uuid}`;
 
-  tabManager?.sendToFocusedView('device-status', deviceInfo);
+  tabManager?.sendToFocusedView(MiscEvents.DeviceStatus, deviceInfo);
 
   if (alive) {
     if (menuManager) {
@@ -150,13 +150,13 @@ function onDeviceUpdated(deviceInfo: IDeviceInfo) {
       const didUpdated = menuManager.updateDevice(uuid, deviceInfo);
 
       if (didUpdated) {
-        tabManager?.sendToAllViews('UPDATE_MENU');
+        tabManager?.sendToAllViews(MenuEvents.UpdateMenu);
       }
     }
   } else if (globalData.devices[deviceID]) {
     if (menuManager) {
       menuManager.removeDevice(uuid, globalData.devices[deviceID]);
-      tabManager?.sendToAllViews('UPDATE_MENU');
+      tabManager?.sendToAllViews(MenuEvents.UpdateMenu);
     }
 
     delete globalData.devices[deviceID];
@@ -288,11 +288,11 @@ function createMainWindow() {
     tabManager?.addNewTab();
   });
 
-  menuManager?.on('DEBUG-INSPECT', () => {
+  menuManager?.on(MiscEvents.DebugInspect, () => {
     tabManager?.getFocusedView()?.webContents.openDevTools();
   });
 
-  ipcMain.on('DEBUG-INSPECT', (evt) => {
+  ipcMain.on(MiscEvents.DebugInspect, (evt) => {
     evt.sender.openDevTools();
   });
 
@@ -300,25 +300,25 @@ function createMainWindow() {
 
   // see https://github.com/AlexTorresDev/custom-electron-titlebar/blob/2471c5a4df6c9146f7f8d8598e503789cfc1190c/src/main/attach-titlebar-to-window.ts
   mainWindow.on('enter-full-screen', () => {
-    tabManager?.sendToAllViews('window-fullscreen', true);
+    tabManager?.sendToAllViews(MiscEvents.WindowFullscreen, true);
   });
   mainWindow.on('leave-full-screen', () => {
-    tabManager?.sendToAllViews('window-fullscreen', false);
+    tabManager?.sendToAllViews(MiscEvents.WindowFullscreen, false);
   });
 
   if (process.platform === 'win32') {
     // original attachTitlebarToWindow for windows
     mainWindow.on('focus', () => {
-      tabManager?.sendToFocusedView('window-focus', true);
+      tabManager?.sendToFocusedView(MiscEvents.WindowFocus, true);
     });
     mainWindow.on('blur', () => {
-      tabManager?.sendToFocusedView('window-focus', false);
+      tabManager?.sendToFocusedView(MiscEvents.WindowFocus, false);
     });
     mainWindow.on('maximize', () => {
-      tabManager?.sendToAllViews('window-maximize', true);
+      tabManager?.sendToAllViews(MiscEvents.WindowMaximize, true);
     });
     mainWindow.on('unmaximize', () => {
-      tabManager?.sendToAllViews('window-maximize', false);
+      tabManager?.sendToAllViews(MiscEvents.WindowMaximize, false);
     });
   }
 
@@ -334,11 +334,11 @@ app.on('open-file', (event, filePath) => {
 
   if (app.isReady() && tabManager) {
     // Send the file path to the focused renderer process
-    tabManager.sendToFocusedView('open-file', filePath);
+    tabManager.sendToFocusedView(MiscEvents.OpenFile, filePath);
   }
 });
 
-ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => {
+ipcMain.on(MiscEvents.AskForPermission, async (event, key: 'camera' | 'microphone') => {
   if (process.platform === 'darwin') {
     const res = await systemPreferences.askForMediaAccess(key);
 
@@ -360,45 +360,45 @@ ipcMain.on('ASK_FOR_PERMISSION', async (event, key: 'camera' | 'microphone') => 
   event.returnValue = true;
 });
 
-ipcMain.on('DEVICE_UPDATED', (_event, deviceInfo: IDeviceInfo) => {
+ipcMain.on(MiscEvents.DeviceUpdated, (_event, deviceInfo: IDeviceInfo) => {
   onDeviceUpdated(deviceInfo);
 });
 
-ipcMain.on(events.CHECK_BACKEND_STATUS, (event) => {
+ipcMain.on(BackendEvents.CheckBackendStatus, (event) => {
   if (mainWindow) {
-    event.sender.send(events.NOTIFY_BACKEND_STATUS, { backend: globalData.backend, devices: globalData.devices });
+    event.sender.send(BackendEvents.NotifyBackendStatus, { backend: globalData.backend, devices: globalData.devices });
   } else {
     console.error('Recv async-status request but main window not exist');
   }
 });
 
-ipcMain.on(events.SVG_URL_TO_IMG_URL, (event, data) => {
+ipcMain.on(SvgEvents.SvgUrlToImgUrl, (event, data) => {
   const info = pick(data, ['bb', 'fullColor', 'id', 'imageRatio', 'strokeWidth']);
   const { imgHeight: height, imgWidth: width, svgUrl: url } = data;
 
   if (shadowWindow) {
     const senderId = event.sender.id;
 
-    shadowWindow.webContents.send(events.SVG_URL_TO_IMG_URL, { ...info, height, senderId, url, width });
+    shadowWindow.webContents.send(SvgEvents.SvgUrlToImgUrl, { ...info, height, senderId, url, width });
   }
 });
 
-ipcMain.on(events.SVG_URL_TO_IMG_URL_DONE, (_event, data) => {
+ipcMain.on(SvgEvents.SvgUrlToImgUrlDone, (_event, data) => {
   const { id, imageUrl, senderId } = data;
 
-  tabManager?.sendToView(senderId, `${events.SVG_URL_TO_IMG_URL_DONE}_${id}`, imageUrl);
+  tabManager?.sendToView(senderId, `${SvgEvents.SvgUrlToImgUrlDone}-${id}`, imageUrl);
 });
 
 fontHelper.registerEvents();
 
 let editingStandardInput = false;
 
-ipcMain.on(events.SET_EDITING_STANDARD_INPUT, (_event, arg) => {
+ipcMain.on(MiscEvents.SetEditingStandardInput, (_event, arg) => {
   editingStandardInput = arg;
   console.log('Set SET_EDITING_STANDARD_INPUT', arg);
 });
 
-ipcMain.on('FRONTEND_READY', (event) => {
+ipcMain.on(MiscEvents.FrontendReady, (event) => {
   const webContents = event.sender;
   const webContentsId = webContents.id;
 
@@ -407,7 +407,7 @@ ipcMain.on('FRONTEND_READY', (event) => {
     console.log(`WelcomeTab Id: ${webContentsId} is ready. Sending file: ${fileToOpenOnLaunch}`);
 
     // Send the file path
-    webContents.send('open-file', fileToOpenOnLaunch);
+    webContents.send(MiscEvents.OpenFile, fileToOpenOnLaunch);
 
     // Clear the global variable
     fileToOpenOnLaunch = null;
@@ -442,7 +442,7 @@ if (gotTheLock) {
 
     if (filePath && tabManager) {
       // Send the file path to the focused renderer process
-      tabManager.sendToFocusedView('open-file', filePath);
+      tabManager.sendToFocusedView(MiscEvents.OpenFile, filePath);
     }
   });
 
@@ -465,7 +465,7 @@ const onMenuClick = (data: { id: string; machineName?: string; serial?: string; 
   const info = pick(data, ['id', 'machineName', 'serial', 'uuid']);
 
   if (!editingStandardInput) {
-    tabManager?.sendToFocusedView(events.MENU_CLICK, info);
+    tabManager?.sendToFocusedView(MenuEvents.MenuClick, info);
 
     return;
   }
@@ -481,10 +481,10 @@ const onMenuClick = (data: { id: string; machineName?: string; serial?: string; 
 
 const init = () => {
   menuManager = new MenuManager();
-  menuManager.on(events.MENU_CLICK, onMenuClick);
-  menuManager.on('NEW_APP_MENU', () => {
-    tabManager?.sendToAllViews('UPDATE_MENU');
-    tabManager?.sendToFocusedView('NEW_APP_MENU');
+  menuManager.on(MenuEvents.MenuClick, onMenuClick);
+  menuManager.on(MenuEvents.NewAppMenu, () => {
+    tabManager?.sendToAllViews(MenuEvents.UpdateMenu);
+    tabManager?.sendToFocusedView(MenuEvents.NewAppMenu);
   });
 
   if (!mainWindow) {

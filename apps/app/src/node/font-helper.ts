@@ -1,8 +1,9 @@
 import { ipcMain } from 'electron';
 import fontScanner from 'font-scanner';
 
+import { FontEvents } from '@core/app/constants/ipcEvents';
+
 import type Font from './interfaces/Fonts';
-import events from './ipc-events';
 
 let fontsListCache: Font[] = [];
 
@@ -55,26 +56,26 @@ const findFontSync = (arg: Font) => {
 };
 
 const registerEvents = (): void => {
-  ipcMain.on(events.GET_AVAILABLE_FONTS, (event) => {
+  ipcMain.on(FontEvents.GetAvailableFonts, (event) => {
     const fonts = fontScanner.getAvailableFontsSync();
 
     fontsListCache = fonts;
     event.returnValue = fonts;
   });
 
-  ipcMain.on(events.FIND_FONTS, (event, arg) => {
+  ipcMain.on(FontEvents.FindFonts, (event, arg) => {
     const fonts = findFontsSync(arg);
 
     event.returnValue = fonts;
   });
 
-  ipcMain.on(events.FIND_FONT, (event, arg) => {
+  ipcMain.on(FontEvents.FindFont, (event, arg) => {
     const font = findFontSync(arg);
 
     event.returnValue = font;
   });
 
-  ipcMain.on(events.SUBSTITUTE_FONT, (event, postscriptName, text) => {
+  ipcMain.on(FontEvents.SubstituteFont, (event, postscriptName, text) => {
     const font = fontScanner.substituteFontSync(postscriptName, text);
 
     event.returnValue = font;

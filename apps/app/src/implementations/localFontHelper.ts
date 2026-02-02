@@ -1,6 +1,7 @@
 import type { FontCollection, Font as FontkitFont } from 'fontkit';
 import { openSync } from 'fontkit';
 
+import { FontEvents } from '@core/app/constants/ipcEvents';
 import communicator from '@core/implementations/communicator';
 import type { FontDescriptor, LocalFontHelper } from '@core/interfaces/IFont';
 
@@ -10,13 +11,13 @@ interface Font extends FontkitFont {
 
 export default {
   findFont(fontDescriptor: FontDescriptor): FontDescriptor {
-    return communicator.sendSync('FIND_FONT', fontDescriptor);
+    return communicator.sendSync(FontEvents.FindFont, fontDescriptor);
   },
   findFonts(fontDescriptor: FontDescriptor): FontDescriptor[] {
-    return communicator.sendSync('FIND_FONTS', fontDescriptor);
+    return communicator.sendSync(FontEvents.FindFonts, fontDescriptor);
   },
   getAvailableFonts(): FontDescriptor[] {
-    return communicator.sendSync('GET_AVAILABLE_FONTS');
+    return communicator.sendSync(FontEvents.GetAvailableFonts);
   },
   getFontName(font: FontDescriptor): string {
     let fontName = font.family;
@@ -88,6 +89,6 @@ export default {
     }
   },
   substituteFont(postscriptName: string, text: string): FontDescriptor[] {
-    return communicator.sendSync('SUBSTITUTE_FONT', postscriptName, text);
+    return communicator.sendSync(FontEvents.SubstituteFont, postscriptName, text);
   },
 } as LocalFontHelper;

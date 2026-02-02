@@ -2,6 +2,7 @@ import { app, session } from '@electron/remote';
 import { Titlebar, TitlebarColor } from 'custom-electron-titlebar';
 
 import globalEvents from '@core/app/actions/global';
+import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import router from '@core/app/router';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
@@ -58,7 +59,7 @@ function menuBar() {
 
   titlebar.updateTitle(' ');
   window.titlebar = titlebar;
-  communicator.on('UPDATE_CUSTOM_TITLEBAR', () => {
+  communicator.on(MenuEvents.UpdateCustomTitlebar, () => {
     window.dispatchEvent(new Event('mousedown'));
   });
 }
@@ -84,18 +85,18 @@ export default function main(): void {
   setReferer();
   menuBar();
 
-  communicator.on('open-file', (_event: any, filePath: string) => {
+  communicator.on(MiscEvents.OpenFile, (_event: any, filePath: string) => {
     if (filePath) {
       // Use the helper to open the file in a new tab
       setFileInAnotherTab({ filePath, type: 'open' });
     }
   });
 
-  communicator.on('WINDOW_CLOSE', async () => {
+  communicator.on(MiscEvents.WindowClose, async () => {
     const res = await toggleUnsavedChangedDialog();
 
     if (res) {
-      communicator.send('CLOSE_REPLY', true);
+      communicator.send(MiscEvents.CloseReply, true);
     }
   });
 

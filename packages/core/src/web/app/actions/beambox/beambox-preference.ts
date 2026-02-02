@@ -1,10 +1,10 @@
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
 import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
-import { TabEvents } from '@core/app/constants/tabConstants';
 import { getOS } from '@core/helpers/getOS';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';

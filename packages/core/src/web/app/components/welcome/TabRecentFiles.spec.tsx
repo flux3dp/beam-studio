@@ -51,7 +51,7 @@ jest.mock('@core/app/components/welcome/GridFileLocal', () => 'mock-grid-file');
 jest.mock('@core/app/components/welcome/GridNew', () => 'mock-grid-new');
 
 import TabRecentFiles from './TabRecentFiles';
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 
 describe('test TabRecentFiles', () => {
   it('should render correctly', async () => {

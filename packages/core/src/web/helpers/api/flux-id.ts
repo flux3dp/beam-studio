@@ -4,7 +4,7 @@ import { funnel } from 'remeda';
 
 import alert from '@core/app/actions/alert-caller';
 import progress from '@core/app/actions/progress-caller';
-import { TabEvents } from '@core/app/constants/tabConstants';
+import { AuthEvents, TabEvents } from '@core/app/constants/ipcEvents';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
@@ -78,7 +78,7 @@ const handleErrorMessage = (error?: AxiosError) => {
 
 const updateAccountMenu = (user: IUser | null = null) => {
   if (!isWeb()) {
-    communicator.send('UPDATE_ACCOUNT', user);
+    communicator.send(AuthEvents.UpdateAccount, user);
   }
 };
 
@@ -335,13 +335,13 @@ export const init = async (): Promise<void> => {
     });
 
     // Setup oauth events for electron
-    communicator.on('FB_AUTH_TOKEN', (_: Event, dataString: string) => {
+    communicator.on(AuthEvents.FbAuthToken, (_: Event, dataString: string) => {
       const data = parseQueryData(dataString);
       const token = data.access_token;
 
       signInWithFBToken(token);
     });
-    communicator.on('GOOGLE_AUTH', (e: Event, dataString: string) => {
+    communicator.on(AuthEvents.GoogleAuth, (_: Event, dataString: string) => {
       const data = parseQueryData(dataString);
 
       signInWithGoogleCode(data);

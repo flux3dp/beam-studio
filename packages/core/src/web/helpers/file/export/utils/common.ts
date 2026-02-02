@@ -1,4 +1,5 @@
 import Alert from '@core/app/actions/alert-caller';
+import { MiscEvents } from '@core/app/constants/ipcEvents';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import i18n from '@core/helpers/i18n';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -20,7 +21,7 @@ export const switchSymbolWrapper = <T>(fn: () => T): T => {
 
 export const toggleUnsavedChangedDialog = async (): Promise<boolean> =>
   new Promise((resolve) => {
-    communicator.send('SAVE_DIALOG_POPPED');
+    communicator.send(MiscEvents.SaveDialogPopped);
 
     if (!currentFileManager.getHasUnsavedChanges() || window.location.hash !== '#/studio/beambox') {
       resolve(true);
