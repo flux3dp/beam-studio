@@ -11,6 +11,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSpeedOptions } from '@core/app/constants/config-options';
+import { getWarningSpeed as getCurveEngravingWarningSpeed } from '@core/app/constants/curveEngraving';
 import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
@@ -47,7 +48,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
-  const hasCurveEngraving = useCurveEngravingStore((state) => state.hasData);
+  const { hasData: hasCurveEngraving, maxAngle } = useCurveEngravingStore();
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
     [],
@@ -161,6 +162,19 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     () => (simpleMode && isPrinting ? getSpeedOptions(lang, layerModule) : undefined),
     [simpleMode, isPrinting, lang, layerModule],
   );
+  const warningPercent = useMemo(() => {
+    let warningSpeed: null | number = null;
+
+    if (hasCurveEngraving) {
+      warningSpeed = getCurveEngravingWarningSpeed(workarea, maxAngle);
+    } else if (!isPrinting && hasVector && vectorSpeedLimit) {
+      warningSpeed = vectorSpeedLimit;
+    }
+
+    if (warningSpeed === null) return undefined;
+
+    return ((warningSpeed - minValue) / (maxValue - minValue)) * 100;
+  }, [isPrinting, hasVector, vectorSpeedLimit, minValue, maxValue, hasCurveEngraving, workarea, maxAngle]);
 
   const content = (
     <div className={classNames(styles.panel, styles[type])}>
@@ -191,10 +205,10 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         min={minValue}
         onChange={handleChange}
         options={sliderOptions}
-        speedLimit={!isPrinting && hasVector}
         step={0.1}
         unit={displayUnit}
         value={value}
+        warningPercent={warningPercent}
       />
       {warningText ? (
         <div className={styles.warning}>

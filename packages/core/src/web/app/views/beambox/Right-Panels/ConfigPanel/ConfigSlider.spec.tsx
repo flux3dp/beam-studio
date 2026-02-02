@@ -45,7 +45,17 @@ describe('test ConfigSlider', () => {
     );
 
     expect(container).toMatchSnapshot();
-    rerender(<ConfigSlider id="mock-id" max={100} min={0} onChange={mockPropOnChange} speedLimit step={1} value={7} />);
+    rerender(
+      <ConfigSlider
+        id="mock-id"
+        max={100}
+        min={0}
+        onChange={mockPropOnChange}
+        step={1}
+        value={7}
+        warningPercent={50}
+      />,
+    );
     expect(container).toMatchSnapshot();
     expect(getByText('value: 7')).toBeInTheDocument();
     fireEvent.click(getByText('onChange'));

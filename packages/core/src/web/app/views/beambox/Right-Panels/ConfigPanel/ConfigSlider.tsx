@@ -14,10 +14,13 @@ type Props = OneOf<{ max: number; min: number }, { options: ConfigOption[] }> & 
   decimal?: number;
   id?: string;
   onChange: (value: number) => void;
-  speedLimit?: boolean;
   step?: number;
   unit?: string;
   value: number;
+  /**
+   * 0-100, percentage of the slider change color from green - yellow - red
+   */
+  warningPercent?: number;
 };
 
 const ConfigSlider = ({
@@ -27,10 +30,10 @@ const ConfigSlider = ({
   min,
   onChange,
   options,
-  speedLimit = false,
   step = 1,
   unit,
   value,
+  warningPercent,
 }: Props) => {
   // If value is not in options, add the value to options
   const sliderOptions = useMemo(() => {
@@ -88,7 +91,15 @@ const ConfigSlider = ({
   const maxValue = sliderOptions ? sliderOptions.length - 1 : max;
 
   return (
-    <div className={classNames(styles.container, { [styles.limit]: speedLimit })} id={id}>
+    <div
+      className={classNames(styles.container, { [styles.limit]: warningPercent !== undefined })}
+      id={id}
+      style={
+        warningPercent !== undefined
+          ? ({ '--warning-percent': `${warningPercent}%` } as React.CSSProperties)
+          : undefined
+      }
+    >
       <ConfigProvider
         theme={{
           components: {
