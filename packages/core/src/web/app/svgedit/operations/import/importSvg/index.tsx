@@ -205,16 +205,18 @@ function finalizeImport(
 
   useLayerStore.getState().setSelectedLayers([layerManager.getCurrentLayerName()!]);
 
-  let pos = { x: Infinity, y: Infinity };
+  let minX = Infinity;
+  let minY = Infinity;
 
   elements.forEach((elem) => {
     const { x, y } = svgCanvas.getSvgRealLocation(elem);
 
-    pos = { x: Math.min(pos.x, x), y: Math.min(pos.y, y) };
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
   });
 
   if (elements.length > 0) {
-    moveElements(Array(elements.length).fill(-pos.x), Array(elements.length).fill(-pos.y), elements, false, true);
+    moveElements(Array(elements.length).fill(-minX), Array(elements.length).fill(-minY), elements, false, true);
     svgCanvas.multiSelect(elements);
   }
 
