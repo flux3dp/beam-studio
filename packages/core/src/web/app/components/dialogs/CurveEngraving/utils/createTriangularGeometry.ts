@@ -35,7 +35,6 @@ const getPlaneAngle = (p1: Point3D, p2: Point3D, p3: Point3D): number => {
  *
  * @param triangles - Array of triangles, each triangle is [p1, p2, p3] where each point is [x, y, z]
  * @param interpolateLength - Maximum acceptable 2D edge length before subdivision
- * @param angleLimit - Only triangles planar larger than this angle (degrees) will be subdivided
  * @returns Array of subdivided triangles
  */
 export const interpolateTriangles = (triangles: Triangle[], interpolateLength: number): Triangle[] => {
