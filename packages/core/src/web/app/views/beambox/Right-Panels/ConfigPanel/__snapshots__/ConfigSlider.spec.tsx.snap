@@ -1,51 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test ConfigSlider should render correctly when isGradient if false 1`] = `
-<div>
-  <div
-    class="container"
-    id="mock-id"
-  >
-    <div>
-      Mock Antd ConfigProvider
-      <p>
-        theme: 
-      </p>
-      <div>
-        Mock Antd Slider
-        <p>
-          min: 
-          0
-        </p>
-        <p>
-          max: 
-          100
-        </p>
-        <p>
-          step: 
-          1
-        </p>
-        <p>
-          value: 
-          10
-        </p>
-        <button
-          type="button"
-        >
-          onChangeComplete
-        </button>
-        <button
-          type="button"
-        >
-          onChange
-        </button>
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`test ConfigSlider should work 1`] = `
+exports[`test ConfigSlider should render correctly when isGradient is true 1`] = `
 <div>
   <div
     class="container gradient"
@@ -91,10 +46,55 @@ exports[`test ConfigSlider should work 1`] = `
 </div>
 `;
 
+exports[`test ConfigSlider should work 1`] = `
+<div>
+  <div
+    class="container"
+    id="mock-id"
+  >
+    <div>
+      Mock Antd ConfigProvider
+      <p>
+        theme: 
+      </p>
+      <div>
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          100
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          10
+        </p>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
 exports[`test ConfigSlider should work 2`] = `
 <div>
   <div
-    class="container gradient limit"
+    class="container limit"
     id="mock-id"
     style="--warning-percent: 50%;"
   >
@@ -102,7 +102,6 @@ exports[`test ConfigSlider should work 2`] = `
       Mock Antd ConfigProvider
       <p>
         theme: 
-        {"components":{"Slider":{"dotActiveBorderColor":"#494949","handleActiveColor":"#494949","handleColor":"#cecece","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}},"token":{"colorPrimary":"#494949","colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949"}}
       </p>
       <div>
         Mock Antd Slider
@@ -141,7 +140,7 @@ exports[`test ConfigSlider should work 2`] = `
 exports[`test ConfigSlider should work 3`] = `
 <div>
   <div
-    class="container gradient limit"
+    class="container limit"
     id="mock-id"
     style="--warning-percent: 50%;"
   >
@@ -149,7 +148,6 @@ exports[`test ConfigSlider should work 3`] = `
       Mock Antd ConfigProvider
       <p>
         theme: 
-        {"components":{"Slider":{"dotActiveBorderColor":"#494949","handleActiveColor":"#494949","handleColor":"#cecece","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}},"token":{"colorPrimary":"#494949","colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949"}}
       </p>
       <div>
         Mock Antd Slider
