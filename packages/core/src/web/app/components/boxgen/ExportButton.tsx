@@ -68,7 +68,7 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
     } while (boxLayers.includes(uniqBoxName));
 
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import box layer');
-    const promises: Array<Promise<SVGUseElement>> = [];
+    const promises: Array<Promise<SVGUseElement[]>> = [];
 
     layouts.pages.forEach((pageContent, idx) => {
       let content = wrapSVG(canvasWidth, canvasHeight, pageContent.shape);
@@ -97,7 +97,8 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
 
     const elems = (await Promise.allSettled(promises))
       .map((p) => (p.status === 'fulfilled' ? p.value : null))
-      .filter(Boolean);
+      .filter(Boolean)
+      .flat();
 
     await disassembleUse(elems, { parentCmd: batchCmd, showProgress: false, skipConfirm: true });
     newLayers.slice(options.textLabel ? 2 : 1).forEach((layerName) => {

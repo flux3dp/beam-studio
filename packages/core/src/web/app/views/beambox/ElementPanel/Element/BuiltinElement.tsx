@@ -52,14 +52,16 @@ const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
 
     const layerModule = getData(getLayerByName(layerName)!, 'module') as LayerModuleType;
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import Element SVG');
-    const newElementnewElement = await importSvgString(iconString, {
+    const newElements = await importSvgString(iconString, {
       layerName,
       parentCmd: batchCmd,
       targetModule: layerModule,
       type: 'layer',
     });
 
-    await postImportElement(newElementnewElement, batchCmd);
+    console.assert(newElements.length === 1, 'Expected BuiltinElement import to return one element');
+
+    await postImportElement(newElements[0], batchCmd);
     undoManager.addCommandToHistory(batchCmd);
   }
 };

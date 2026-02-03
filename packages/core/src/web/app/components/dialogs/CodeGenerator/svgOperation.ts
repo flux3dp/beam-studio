@@ -178,12 +178,16 @@ export async function importBarcodeSvgElement(
   const svgString = `<svg width="${width}" height="${height}" viewBox="${viewBox}" xmlns="http://www.w3.org/2000/svg">
   <path d="${d}" fill="black" fill-opacity="1"></path></svg>`;
 
-  return await importSvgString(svgString, {
+  const newElements = await importSvgString(svgString, {
     hidden: opts?.hidden,
     parentCmd: opts?.batchCmd,
     removeDefaultLayer: !opts?.hidden,
     type: 'layer',
   });
+
+  console.assert(newElements.length === 1, 'Expected importBarcodeSvgElement import to return one element');
+
+  return newElements[0];
 }
 
 /* QR Code */
@@ -222,10 +226,14 @@ export async function importQrCodeSvgElement(
 
   const svgString = isInvert ? handleQrCodeInvertColor(svgElement) : new XMLSerializer().serializeToString(svgElement);
 
-  return await importSvgString(svgString, {
+  const newElements = await importSvgString(svgString, {
     hidden: opts?.hidden,
     parentCmd: opts?.batchCmd,
     removeDefaultLayer: !opts?.hidden,
     type: 'layer',
   });
+
+  console.assert(newElements.length === 1, 'Expected importQrCodeSvgElement import to return one element');
+
+  return newElements[0];
 }

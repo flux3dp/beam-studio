@@ -8,7 +8,7 @@ import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type { ImportType } from '@core/interfaces/ImportSvg';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -37,14 +37,14 @@ const importSvgString = async (
     targetModule?: LayerModuleType;
     type?: ImportType;
   },
-): Promise<SVGUseElement> => {
+): Promise<SVGUseElement[]> => {
   const batchCmd = new history.BatchCommand('Import Image');
 
-  function setDataXform(use_el, it) {
+  function setDataXform(use_el: SVGUseElement, isImageTrace: boolean) {
     const bb = svgedit.utilities.getBBox(use_el);
     let dataXform = '';
 
-    if (it) {
+    if (isImageTrace) {
       dataXform = `x=0 y=0 width=${bb.width} height=${bb.height}`;
     } else {
       $.each(bb, (key: string, value) => {
@@ -68,7 +68,7 @@ const importSvgString = async (
     await Promise.all(
       symbols.map(async (symbol) => appendUseElement(symbol, { hidden, layerName, targetModule, type })),
     )
-  ).filter((res) => res?.element);
+  ).filter((res) => res?.element) as Array<{ command: ICommand; element: SVGUseElement }>;
 
   const commands = results.map(({ command }) => command);
 
@@ -117,7 +117,9 @@ const importSvgString = async (
     svgCanvas.call('changed', [document.getElementById('svgcontent')]);
   }
 
-  return useElements[useElements.length - 1];
+  console.log(useElements);
+
+  return useElements;
 };
 
 export default importSvgString;

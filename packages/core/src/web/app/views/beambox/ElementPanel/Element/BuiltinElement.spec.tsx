@@ -41,7 +41,7 @@ jest.mock('@core/app/svgedit/history/undoManager', () => ({
 }));
 
 const mockElement = document.createElement('use');
-const mockImportSvgString = jest.fn().mockResolvedValue(mockElement);
+const mockImportSvgString = jest.fn().mockResolvedValue([mockElement]);
 
 jest.mock('@core/app/svgedit/operations/import/importSvgString', () => mockImportSvgString);
 

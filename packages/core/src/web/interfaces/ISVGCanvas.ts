@@ -6,7 +6,6 @@ import type { SelectorManager } from '@core/app/svgedit/selector';
 import type textActions from '@core/app/svgedit/text/textactions';
 import type { Units } from '@core/helpers/units';
 import type { IBatchCommand, ICommand, IUndoManager } from '@core/interfaces/IHistory';
-import type { ImportType } from '@core/interfaces/ImportSvg';
 import type IShapeStyle from '@core/interfaces/IShapeStyle';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 import type ISVGDrawing from '@core/interfaces/ISVGDrawing';
@@ -108,15 +107,6 @@ export default interface ISVGCanvas {
   groupSelectedElements: (isSubCmd?: boolean) => void | { command: BaseHistoryCommand; group: SVGGElement };
   groupSvgElem: (elem: SVGElement) => void;
   handleGenerateSensorArea: (evt: MouseEvent) => void;
-  importSvgString(
-    xmlString: string,
-    args: {
-      layerName?: string;
-      parentCmd?: IBatchCommand;
-      targetModule?: number;
-      type?: ImportType;
-    },
-  ): Promise<SVGUseElement>;
   isAutoAlign: boolean;
   isElemFillable: (elem: Element) => boolean;
   leaveContext: () => void;
