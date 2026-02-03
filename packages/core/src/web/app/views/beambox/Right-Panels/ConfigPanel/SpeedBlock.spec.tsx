@@ -130,8 +130,8 @@ import SpeedBlock from './SpeedBlock';
 const mockCurveEngravingState = { hasData: false, maxAngle: 0 };
 
 jest.mock('@core/app/stores/curveEngravingStore', () => ({
-  useCurveEngravingStore: (selector: (state: { hasData: boolean; maxAngle: number }) => unknown) =>
-    selector(mockCurveEngravingState),
+  useCurveEngravingStore: (selector?: (state: { hasData: boolean; maxAngle: number }) => unknown) =>
+    selector ? selector(mockCurveEngravingState) : mockCurveEngravingState,
 }));
 
 const mockUseWorkarea = jest.fn();
