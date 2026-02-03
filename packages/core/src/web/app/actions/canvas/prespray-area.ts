@@ -58,6 +58,8 @@ const constrainPresprayArea = (): void => {
   // Use drag(0, 0) with endDrag to trigger position constraint
   startDrag();
   drag(0, 0);
+  // Y constraint for PRINTER_4C
+  updateDimensions();
 };
 
 canvasEvents.on('boundary-updated', constrainPresprayArea);
