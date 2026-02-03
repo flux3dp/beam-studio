@@ -167,8 +167,10 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
 
     if (hasCurveEngraving) {
       warningSpeed = getCurveEngravingWarningSpeed(workarea, maxAngle);
-    } else if (!isPrinting && hasVector && vectorSpeedLimit) {
-      warningSpeed = vectorSpeedLimit;
+    }
+
+    if (!isPrinting && hasVector && vectorSpeedLimit) {
+      warningSpeed = warningSpeed ? Math.min(warningSpeed, vectorSpeedLimit) : vectorSpeedLimit;
     }
 
     if (warningSpeed === null) return undefined;

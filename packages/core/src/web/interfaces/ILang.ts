@@ -499,7 +499,6 @@ export interface ILang {
       too_fast_for_auto_feeder: string;
       too_fast_for_auto_feeder_and_constrain: string;
       too_fast_for_curve: string;
-      too_fast_for_curve_and_constrain: string;
       too_fast_for_path: string;
       too_fast_for_path_and_constrain: string;
       touchpad: string;

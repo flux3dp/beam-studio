@@ -7,14 +7,17 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import Dialog from '@core/app/actions/dialog-caller';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
+import { getWarningSpeed } from '@core/app/constants/curveEngraving';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getStorage } from '@core/app/stores/storageStore';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import alertConfig from '@core/helpers/api/alert-config';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
+import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
 import { hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import round from '@core/helpers/math/round';
@@ -165,94 +168,97 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     return true;
   }
 
-  SymbolMaker.switchImageSymbolForAll(false);
-
-  const handleVectorSpeedAlert = async (): Promise<void> => {
-    const curveSpeedLimit = workareaObj.curveSpeedLimit?.x;
-    const hasCurveSpeedLimit = isCurveEngravingTask && curveSpeedLimit;
+  const handleSpeedAlert = async (): Promise<void> => {
+    const curveSpeedLimit = isCurveEngravingTask
+      ? getWarningSpeed(workarea, useCurveEngravingStore.getState().maxAngle)
+      : null;
     const vectorSpeedLimit =
       (isAutoFeederTask && addOnInfo.autoFeeder?.vectorSpeedLimit) || workareaObj.vectorSpeedLimit;
 
-    if (!vectorSpeedLimit) return;
+    if (!curveSpeedLimit && !vectorSpeedLimit) return;
 
-    if (hasCurveSpeedLimit && vectorSpeedLimit >= curveSpeedLimit) return;
+    const doLayerContainVectors = (layer: Element) => {
+      const paths: SVGElement[] = Array.from(layer.querySelectorAll('path, rect, ellipse, polygon, line'));
+      const uses: SVGUseElement[] = Array.from(layer.querySelectorAll('use'));
 
-    const checkHighSpeed = (layer: Element) => {
-      if (layer.getAttribute('display') === 'none') {
-        return false;
-      }
+      Array.from(uses).forEach((use: Element) => {
+        const href = use.getAttribute('xlink:href');
+        const elem = document.querySelector(`${href}`);
 
-      const speed = Number.parseFloat(layer.getAttribute('data-speed') ?? '20');
+        if (!elem) {
+          return;
+        }
 
-      // already popped by curve speed alert
-      if (hasCurveSpeedLimit && speed > curveSpeedLimit) {
-        return false;
-      }
+        paths.push(...(Array.from(elem.querySelectorAll('path, rect, ellipse, polygon, line')) as SVGElement[]));
 
-      return speed > vectorSpeedLimit;
+        if (use.getAttribute('data-wireframe') === 'true') {
+          return true;
+        }
+      });
+
+      return paths.some((path) => {
+        const fill = path.getAttribute('fill');
+        const fillOpacity = Number.parseFloat(path.getAttribute('fill-opacity') ?? '1');
+
+        return fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fillOpacity === 0;
+      });
     };
 
-    let isTooFast = false;
-    const tooFastLayers: string[] = [];
-
-    for (let i = 0; i < layers.length; i += 1) {
-      const layer = layers[i];
-
-      if (checkHighSpeed(layer)) {
-        const paths: SVGElement[] = Array.from(layer.querySelectorAll('path, rect, ellipse, polygon, line'));
-        const uses: SVGUseElement[] = Array.from(layer.querySelectorAll('use'));
-        let hasWireframe = false;
-
-        Array.from(uses).forEach((use: Element) => {
-          const href = use.getAttribute('xlink:href');
-          const elem = document.querySelector(`${href}`);
-
-          if (!elem) {
-            return;
-          }
-
-          paths.push(...(Array.from(elem.querySelectorAll('path, rect, ellipse, polygon, line')) as SVGElement[]));
-
-          if (use.getAttribute('data-wireframe') === 'true') {
-            isTooFast = true;
-            hasWireframe = true;
-
-            const layerName = getLayerName(layer);
-
-            if (layerName) {
-              tooFastLayers.push(layerName);
-            }
-          }
-        });
-
-        if (hasWireframe) {
-          break;
-        }
-
-        for (let j = 0; j < paths.length; j += 1) {
-          const path = paths[j];
-          const fill = path.getAttribute('fill');
-          const fillOpacity = Number.parseFloat(path.getAttribute('fill-opacity') ?? '1');
-
-          if (fill === 'none' || fill === '#FFF' || fill === '#FFFFFF' || fillOpacity === 0) {
-            isTooFast = true;
-
-            const layerName = getLayerName(layer);
-
-            if (layerName) {
-              tooFastLayers.push(layerName);
-            }
-
-            break;
-          }
-        }
+    const isLayerTooFast = (layer: Element) => {
+      if (layer.getAttribute('display') === 'none') {
+        return { curve: false, vector: false };
       }
-    }
+
+      const speed = getData(layer, 'speed') ?? 20;
+
+      console.log(vectorSpeedLimit, doLayerContainVectors(layer));
+
+      return {
+        curve: curveSpeedLimit !== null && speed > curveSpeedLimit,
+        vector: vectorSpeedLimit !== undefined && Boolean(speed > vectorSpeedLimit && doLayerContainVectors(layer)),
+      };
+    };
+
+    SymbolMaker.switchImageSymbolForAll(false);
+
+    const { curveLayers, vectorLayers } = layers.reduce(
+      (acc, layer) => {
+        const { curve, vector } = isLayerTooFast(layer);
+
+        if (curve || vector) {
+          const layerName = getLayerName(layer);
+
+          if (curve) {
+            acc.curveLayers.push(layerName);
+          }
+
+          if (vector) {
+            acc.vectorLayers.push(layerName);
+          }
+        }
+
+        return acc;
+      },
+      { curveLayers: [] as string[], vectorLayers: [] as string[] },
+    );
+
+    console.log(curveLayers, vectorLayers);
+
     SymbolMaker.switchImageSymbolForAll(true);
 
-    if (isTooFast) {
+    if (curveLayers.length > 0) {
       await new Promise<void>((resolve) => {
-        const limit = getStorage('isInch') ? `${round(vectorSpeedLimit / 25.4, 2)} in/s` : `${vectorSpeedLimit} mm/s`;
+        alertCaller.popUp({
+          callbacks: () => resolve(),
+          message: sprintf(lang.beambox.popup.too_fast_for_curve, { layers: curveLayers.join(', ') }),
+          type: alertConstants.SHOW_POPUP_WARNING,
+        });
+      });
+    }
+
+    if (vectorLayers.length > 0) {
+      await new Promise<void>((resolve) => {
+        const limit = getStorage('isInch') ? `${round(vectorSpeedLimit! / 25.4, 2)} in/s` : `${vectorSpeedLimit!} mm/s`;
 
         if (!globalPreference['vector_speed_constraint']) {
           if (!alertConfig.read('skip_path_speed_warning')) {
@@ -282,7 +288,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
               ? lang.beambox.popup.too_fast_for_auto_feeder_and_constrain
               : lang.beambox.popup.too_fast_for_path_and_constrain,
             {
-              layers: tooFastLayers.join(', '),
+              layers: vectorLayers.join(', '),
               limit,
             },
           );
@@ -306,7 +312,7 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
     }
   };
 
-  await handleVectorSpeedAlert();
+  await handleSpeedAlert();
 
   return true;
 };
