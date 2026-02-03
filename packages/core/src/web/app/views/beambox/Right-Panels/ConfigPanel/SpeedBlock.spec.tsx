@@ -81,7 +81,6 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockUseGlobalPreferenceStore = jest.fn();
 const initialGlobalPreference = {
-  curve_engraving_speed_limit: true,
   'print-advanced-mode': false,
   vector_speed_constraint: true,
 };
@@ -128,9 +127,12 @@ jest.mock('./initState', () => mockInitState);
 
 import SpeedBlock from './SpeedBlock';
 
-const mockUseHasCurveEngraving = jest.fn();
+const mockCurveEngravingState = { hasData: false, maxAngle: 0 };
 
-jest.mock('@core/helpers/hooks/useHasCurveEngraving', () => () => mockUseHasCurveEngraving());
+jest.mock('@core/app/stores/curveEngravingStore', () => ({
+  useCurveEngravingStore: (selector?: (state: { hasData: boolean; maxAngle: number }) => unknown) =>
+    selector ? selector(mockCurveEngravingState) : mockCurveEngravingState,
+}));
 
 const mockUseWorkarea = jest.fn();
 
@@ -156,7 +158,7 @@ describe('test SpeedBlock', () => {
     mockCreateEventEmitter.mockReturnValueOnce({
       emit: mockEmit,
     });
-    mockUseHasCurveEngraving.mockReturnValue(false);
+    mockCurveEngravingState.hasData = false;
     setStorage('default-units', 'mm');
     mockUseWorkarea.mockReturnValue('fbm1');
     mockGetAutoFeeder.mockReturnValue(false);
@@ -201,14 +203,14 @@ describe('test SpeedBlock', () => {
     expect(container.querySelector('.warning')).toBeInTheDocument();
   });
 
-  it('should render correctly when has curve engraving warning', () => {
+  it('should render correctly when has curve engraving data', () => {
     mockUseWorkarea.mockReturnValue('fbb2');
-    mockUseHasCurveEngraving.mockReturnValue(true);
+    mockCurveEngravingState.hasData = true;
 
     const { container } = render(<SpeedBlock />);
 
+    // Curve engraving limits maxValue but doesn't show a warning
     expect(container).toMatchSnapshot();
-    expect(container.querySelector('.warning')).toBeInTheDocument();
   });
 
   it('should render correctly when has auto feeder vector speed warning', () => {

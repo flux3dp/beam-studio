@@ -15,6 +15,7 @@ export interface MeasureData {
   lowest: null | number; // Lowest measured height, accutally the max measured value, null if no value
   objectHeight: number;
   points: Points;
+  subdividedPoints?: Array<[number, number, number]>; // [x, y, z]
 }
 
 export interface CurveEngraving extends MeasureData {

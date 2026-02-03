@@ -238,28 +238,37 @@ export const getExportOpt = async (
   }
 
   if (curveEngravingModeController.hasArea() && addOnInfo.curveEngraving) {
-    const { bbox, gap, highest, lowest, objectHeight, points } = curveEngravingModeController.data!;
+    const {
+      bbox,
+      gap,
+      highest,
+      lowest,
+      objectHeight,
+      points: rawPoints,
+      subdividedPoints,
+    } = curveEngravingModeController.data!;
 
     // if lowest is null, it means no points is measured successfully
     if (lowest !== null && highest !== null) {
-      const data = {
+      const points: Array<[number, number, number]> =
+        subdividedPoints ??
+        (rawPoints
+          .flat()
+          .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]])
+          .filter((p) => p[2] !== null) as Array<[number, number, number]>);
+
+      config.curve_engraving = {
+        acceleration: addOnInfo.curveEngraving.acceleration,
         bbox,
         gap,
-        points: points
-          .flat()
-          .map((p) => [p[0] + (p[3] ?? 0), p[1] + (p[4] ?? 0), p[2]] as [number, number, null | number])
-          .filter((p) => p[2] !== null),
+        points,
         safe_height: Math.max(Math.min(highest, lowest - objectHeight), 0),
       };
-
-      config.curve_engraving = data;
     }
   }
 
-  if (config.curve_engraving) {
-    if (globalPreference['curve_engraving_speed_limit'] && workareaObj.curveSpeedLimit?.x) {
-      config.csl = workareaObj.curveSpeedLimit.x * 60; // convert to mm/min
-    }
+  if (config.curve_engraving && workareaObj.curveSpeedLimit?.x) {
+    config.csl = workareaObj.curveSpeedLimit.x * 60;
   }
 
   if (globalPreference['vector_speed_constraint']) {

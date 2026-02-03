@@ -2,6 +2,10 @@ import alertCaller from '@core/app/actions/alert-caller';
 import constant from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { showCurveEngraving, showMeasureArea } from '@core/app/components/dialogs/CurveEngraving';
+import {
+  preprocessData,
+  type ThreeDisplayData,
+} from '@core/app/components/dialogs/CurveEngraving/utils/preprocessData';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
@@ -9,6 +13,7 @@ import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { setCurveEngravingState } from '@core/app/stores/curveEngravingStore';
 import { changeMultipleDocumentStoreValues } from '@core/app/stores/documentStore';
 import CustomCommand from '@core/app/svgedit/history/CustomCommand';
 import { BatchCommand } from '@core/app/svgedit/history/history';
@@ -20,7 +25,7 @@ import getDevice from '@core/helpers/device/get-device';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import type { CurveMeasurer } from '@core/interfaces/CurveMeasurer';
-import type { CurveEngraving, MeasureData } from '@core/interfaces/ICurveEngraving';
+import type { CurveEngraving, MeasureData, Point } from '@core/interfaces/ICurveEngraving';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
@@ -29,6 +34,7 @@ const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 class CurveEngravingModeController {
   started: boolean;
   data: CurveEngraving | null;
+  displayData: null | ThreeDisplayData;
   boundarySvg?: SVGSVGElement;
   boundaryPath?: SVGPathElement;
   areaPath?: SVGPathElement;
@@ -37,6 +43,7 @@ class CurveEngravingModeController {
   constructor() {
     this.started = false;
     this.data = null;
+    this.displayData = null;
     this.measurer = null;
     canvasEventEmitter.on('canvas-change', this.updateContainer);
     useCanvasStore.subscribe(
@@ -90,7 +97,8 @@ class CurveEngravingModeController {
       return;
     }
 
-    this.data = { ...this.data, ...data };
+    this.data = { ...this.data, ...data, subdividedPoints: undefined };
+    this.handleDataChange();
   };
 
   initMeasurer = async (): Promise<boolean> => {
@@ -234,10 +242,11 @@ class CurveEngravingModeController {
         return;
       }
 
-      this.data = { bbox, ...res };
-      await showCurveEngraving(this.data, this.remeasurePoints);
+      this.data = { bbox, ...res, subdividedPoints: undefined };
+      this.handleDataChange();
+
+      await showCurveEngraving();
       this.updateAreaPath();
-      canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     } finally {
       this.clearMeasurer();
     }
@@ -260,8 +269,9 @@ class CurveEngravingModeController {
     }
 
     this.data = null;
+    this.displayData = null;
     this.updateAreaPath();
-    canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
+    setCurveEngravingState({ hasData: false, maxAngle: 0 });
   };
 
   hasArea = () => Boolean(this.data);
@@ -280,7 +290,7 @@ class CurveEngravingModeController {
         return;
       }
 
-      await showCurveEngraving(this.data, this.remeasurePoints);
+      await showCurveEngraving();
     } finally {
       this.clearMeasurer();
     }
@@ -408,9 +418,9 @@ class CurveEngravingModeController {
       },
     );
     const postLoadData = () => {
+      this.handleDataChange();
       this.updateContainer();
       this.updateAreaPath();
-      canvasEventEmitter.emit('CURVE_ENGRAVING_AREA_SET');
     };
 
     customCmd.onAfter = postLoadData;
@@ -430,6 +440,69 @@ class CurveEngravingModeController {
     }
 
     return cmd;
+  };
+
+  handleDataChange = () => {
+    if (!this.data) {
+      this.displayData = null;
+      setCurveEngravingState({ hasData: false, maxAngle: 0 });
+
+      return;
+    }
+
+    const { displayData, maxAngle, subdividedPoints } = preprocessData(this.data);
+
+    this.displayData = displayData;
+    this.data.subdividedPoints = subdividedPoints;
+    setCurveEngravingState({ hasData: true, maxAngle });
+  };
+
+  /**
+   * Use for testing purpose only
+   */
+  generateTestData = () => {
+    const generateData = (): CurveEngraving => {
+      const bbox = { height: 100, width: 100, x: 0, y: 0 };
+      const gap = 20;
+      let highest: null | number = null;
+      let lowest: null | number = null;
+      const points: CurveEngraving['points'] = [];
+
+      for (let i = bbox.x; i <= bbox.width; i += gap) {
+        const currentRow: Point[] = [];
+
+        for (let j = bbox.y; j <= bbox.height; j += gap) {
+          const value = Math.random() * 20;
+
+          if (highest === null || value > highest) {
+            highest = value;
+          }
+
+          if (lowest === null || value < lowest) {
+            lowest = value;
+          }
+
+          currentRow.push([i, j, value, 1, 1]);
+        }
+
+        points.push(currentRow);
+      }
+
+      return {
+        bbox,
+        errors: [],
+        gap: [gap, gap],
+        highest,
+        lowest,
+        objectHeight: highest !== null ? highest + 10 : 0,
+        points,
+      };
+    };
+
+    this.data = generateData();
+    this.handleDataChange();
+    this.updateContainer();
+    this.updateAreaPath();
   };
 }
 

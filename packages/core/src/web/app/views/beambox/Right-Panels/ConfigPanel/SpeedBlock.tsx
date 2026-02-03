@@ -6,15 +6,16 @@ import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { pick } from 'remeda';
 import { sprintf } from 'sprintf-js';
-import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
 
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { getSpeedOptions } from '@core/app/constants/config-options';
+import { getWarningSpeed as getCurveEngravingWarningSpeed } from '@core/app/constants/curveEngraving';
 import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -26,9 +27,7 @@ import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelIte
 import objectPanelItemStyles from '@core/app/views/beambox/Right-Panels/ObjectPanelItem.module.scss';
 import { getAutoFeeder } from '@core/helpers/addOn';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import isDev from '@core/helpers/is-dev';
 import { CUSTOM_PRESET_CONSTANT, writeData } from '@core/helpers/layer/layer-config-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
@@ -49,7 +48,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
   const { activeKey } = useContext(ObjectPanelContext);
   const visible = activeKey === 'speed';
-  const hasCurveEngraving = useHasCurveEngraving();
+  const { hasData: hasCurveEngraving, maxAngle } = useCurveEngravingStore();
   const timeEstimationButtonEventEmitter = useMemo(
     () => eventEmitterFactory.createEventEmitter('time-estimation-button'),
     [],
@@ -105,27 +104,15 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   }, [workarea, addOnInfo, isAutoFeederOn]);
 
   const maxValue = useMemo(() => {
-    if (isDev()) return workareaMaxSpeed;
+    let value = workareaMaxSpeed;
 
-    return match({ layerModule, workarea })
-      .when(
-        ({ layerModule }) => layerModule === LayerModule.PRINTER_4C,
-        () => 45,
-      )
-      .when(
-        ({ layerModule, workarea }) => layerModule === LayerModule.LASER_1064 && workarea === 'fbm2',
-        () => 150,
-      )
-      .otherwise(() => workareaMaxSpeed);
-  }, [workareaMaxSpeed, layerModule, workarea]);
+    if (curveSpeedLimit !== undefined && hasCurveEngraving) value = Math.min(value, curveSpeedLimit);
 
-  const curveEngravingSpeedWarning = useMemo(() => {
-    if (!curveSpeedLimit || !isLaser) return '';
+    if (layerModule === LayerModule.PRINTER_4C) value = Math.min(value, 45);
+    else if (layerModule === LayerModule.LASER_1064 && workarea === 'fbm2') value = Math.min(value, 150);
 
-    return sprintf(t.speed_constrain_warning_curve_engraving, {
-      limit: `${units.convertUnit(curveSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
-    });
-  }, [curveSpeedLimit, isLaser, t.speed_constrain_warning_curve_engraving, fakeUnit, displayUnit]);
+    return value;
+  }, [workareaMaxSpeed, layerModule, workarea, hasCurveEngraving, curveSpeedLimit]);
 
   const vectorSpeedWarning = useMemo(() => {
     if (!vectorSpeedLimit || !isLaser) return '';
@@ -140,16 +127,13 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       limit: `${units.convertUnit(moduleSpeedLimit, fakeUnit, 'mm', 2)} ${displayUnit}`,
     });
   }, [t.speed_constrain_warning_module_addon, fakeUnit, displayUnit]);
-  const hasCurveLimit = useGlobalPreferenceStore((state) => state.curve_engraving_speed_limit);
   const hasVectorLimit = useGlobalPreferenceStore((state) => state.vector_speed_constraint);
   const hasModuleAddon = useDocumentStore((state) => state['enable-1064'] || state['enable-4c']);
 
   let warningText = '';
 
   if (!isPromark && isLaser) {
-    if (hasCurveLimit && hasCurveEngraving && curveSpeedLimit && value > curveSpeedLimit) {
-      warningText = curveEngravingSpeedWarning;
-    } else if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
+    if (hasVector && hasVectorLimit && vectorSpeedLimit && value > vectorSpeedLimit) {
       warningText = vectorSpeedWarning;
     } else if (minSpeedWarning && value < minSpeedWarning) {
       warningText = t.low_speed_warning;
@@ -178,6 +162,21 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
     () => (simpleMode && isPrinting ? getSpeedOptions(lang, layerModule) : undefined),
     [simpleMode, isPrinting, lang, layerModule],
   );
+  const warningPercent = useMemo(() => {
+    let warningSpeed: null | number = null;
+
+    if (hasCurveEngraving) {
+      warningSpeed = getCurveEngravingWarningSpeed(workarea, maxAngle);
+    }
+
+    if (!isPrinting && hasVector && vectorSpeedLimit) {
+      warningSpeed = warningSpeed ? Math.min(warningSpeed, vectorSpeedLimit) : vectorSpeedLimit;
+    }
+
+    if (warningSpeed === null) return undefined;
+
+    return ((warningSpeed - minValue) / (maxValue - minValue)) * 100;
+  }, [isPrinting, hasVector, vectorSpeedLimit, minValue, maxValue, hasCurveEngraving, workarea, maxAngle]);
 
   const content = (
     <div className={classNames(styles.panel, styles[type])}>
@@ -199,7 +198,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         options={sliderOptions}
         type={type}
         unit={displayUnit}
-        value={value}
+        value={Math.min(Math.max(value, minValue), maxValue)}
       />
       <ConfigSlider
         decimal={decimal}
@@ -208,10 +207,10 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
         min={minValue}
         onChange={handleChange}
         options={sliderOptions}
-        speedLimit={!isPrinting && hasVector}
         step={0.1}
         unit={displayUnit}
         value={value}
+        warningPercent={warningPercent}
       />
       {warningText ? (
         <div className={styles.warning}>

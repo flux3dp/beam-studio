@@ -156,6 +156,7 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     cameraCenter: [180, 7],
     cameraRestPosition: [180, 20],
     curveSpeedLimit: {
+      x: 100,
       zRegular: 1800,
     },
     height: 240,

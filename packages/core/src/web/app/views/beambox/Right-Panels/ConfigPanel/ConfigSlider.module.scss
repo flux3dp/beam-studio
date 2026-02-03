@@ -27,9 +27,8 @@
           linear-gradient(
             to right,
             #89d307 0%,
-            #9ede05 2%,
-            #fff600 4%,
-            #c50101 6%
+            #fff600 var(--warning-percent),
+            #c50101 100%
           );
       }
     }

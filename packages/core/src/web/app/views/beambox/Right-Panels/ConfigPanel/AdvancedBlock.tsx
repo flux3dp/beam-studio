@@ -9,10 +9,10 @@ import { LayerModule, printingModules } from '@core/app/constants/layer-module/l
 import { LaserType } from '@core/app/constants/promark-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
+import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import useHasCurveEngraving from '@core/helpers/hooks/useHasCurveEngraving';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import { getPromarkLimit } from '@core/helpers/layer/layer-config-helper';
@@ -40,7 +40,7 @@ const AdvancedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'pan
   const forceUpdate = useForceUpdate();
   const lang = useI18n().beambox.right_panel.laser_panel;
   const workarea = useWorkarea();
-  const hasCurveEngraving = useHasCurveEngraving();
+  const hasCurveEngraving = useCurveEngravingStore((state) => state.hasData);
   const { addOnInfo, workareaObject } = useMemo(
     () => ({ addOnInfo: getAddOnInfo(workarea), workareaObject: getWorkarea(workarea) }),
     [workarea],

@@ -46,6 +46,7 @@ export type TFcodeOptionalConfig = Partial<{
    */
   csl: number;
   curve_engraving: {
+    acceleration?: number;
     bbox: BBox;
     gap: [number, number];
     points: Array<[number, number, null | number]>;

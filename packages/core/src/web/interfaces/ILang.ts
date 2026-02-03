@@ -499,7 +499,6 @@ export interface ILang {
       too_fast_for_auto_feeder: string;
       too_fast_for_auto_feeder_and_constrain: string;
       too_fast_for_curve: string;
-      too_fast_for_curve_and_constrain: string;
       too_fast_for_path: string;
       too_fast_for_path_and_constrain: string;
       touchpad: string;
@@ -1985,7 +1984,6 @@ export interface ILang {
     continuous_drawing: string;
     crop_task_thumbnail: string;
     crop_task_thumbnail_tooltip: string;
-    curve_engraving_speed_limit: string;
     custom_preview_height: string;
     default_beambox_model: string;
     default_borderless_mode: string;

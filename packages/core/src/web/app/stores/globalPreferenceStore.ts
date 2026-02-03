@@ -24,7 +24,6 @@ const getInitStore = (): GlobalPreference => {
     auto_align: preference.auto_align,
     continuous_drawing: preference.continuous_drawing,
     'crop-task-thumbnail': preference['crop-task-thumbnail'],
-    curve_engraving_speed_limit: preference.curve_engraving_speed_limit,
     'default-autofocus': preference['default-autofocus'],
     'default-borderless': preference['default-borderless'],
     'default-diode': preference['default-diode'],

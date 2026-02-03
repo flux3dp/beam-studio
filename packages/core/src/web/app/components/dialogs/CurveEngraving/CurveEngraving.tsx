@@ -8,32 +8,33 @@ import * as THREE from 'three';
 
 import constant from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
+import curveEngravingModeController from '@core/app/actions/canvas/curveEngravingModeController';
 import Canvas from '@core/app/widgets/three/Canvas';
 import translateErrorMessage from '@core/helpers/device/curve-measurer/translateError';
+import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import type { CurveEngraving as ICurveEngraving } from '@core/interfaces/ICurveEngraving';
 
 import styles from './CurveEngraving.module.scss';
 import getCanvasImage from './getCanvasImage';
 import Plane from './Plane';
 
 interface Props {
-  data: ICurveEngraving;
   onClose: () => void;
-  onRemeasure: (indices: number[]) => Promise<ICurveEngraving | null>;
 }
 
 // TODO: Add unit tests
-const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.JSX.Element => {
+const CurveEngraving = ({ onClose }: Props): React.JSX.Element => {
   const lang = useI18n();
-  const [data, setData] = useState(initData);
+  const [data, setData] = useState(curveEngravingModeController.data!);
+  const [displayData, setDisplayData] = useState(curveEngravingModeController.displayData!);
   const [image, setImage] = useState<string | undefined>();
   const [displayCanvas, setDisplayCanvas] = useState(false);
   const [displayCamera, setDisplayCamera] = useState(false);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
   const [isAntdMotionCompleted, setIsAntdMotionCompleted] = useState(false);
-  const { bbox } = data;
+  const [doSubdivision, setDoSubdivision] = useState(true);
+  const isDevMode = useMemo(() => isDev(), []);
 
   useEffect(() => {
     setTimeout(() => {
@@ -43,15 +44,15 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
   }, []);
 
   const canvasImagePromise = useMemo(async () => {
-    const { height, width, x, y } = bbox;
+    const { height, minX: x, minY: y, width } = displayData;
     const { dpmm } = constant;
     const res = await getCanvasImage(x * dpmm, y * dpmm, width * dpmm, height * dpmm);
 
     return res;
-  }, [bbox]);
+  }, [displayData]);
 
   const cameraImagePromise = useMemo(async () => {
-    const { height, width, x, y } = bbox;
+    const { height, minX: x, minY: y, width } = displayData;
     const { dpmm } = constant;
     const canvasUrl = await previewModeBackgroundDrawer.getCameraCanvasUrl();
 
@@ -69,7 +70,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     const imageBitmap = await createImageBitmap(i, x * dpmm, y * dpmm, width * dpmm, height * dpmm);
 
     return imageBitmap;
-  }, [bbox]);
+  }, [displayData]);
 
   const updateImage = useCallback(async () => {
     if (!displayCamera && !displayCanvas) {
@@ -77,7 +78,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     }
 
     const { dpmm } = constant;
-    const { height, width } = bbox;
+    const { height, width } = displayData;
     const outCanvas = document.createElement('canvas');
 
     outCanvas.width = Math.round(width * dpmm);
@@ -107,7 +108,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
     const base64 = outCanvas.toDataURL('image/jpeg', 1);
 
     return setImage(base64);
-  }, [bbox, displayCanvas, displayCamera, canvasImagePromise, cameraImagePromise]);
+  }, [displayData, displayCanvas, displayCamera, canvasImagePromise, cameraImagePromise]);
 
   useEffect(() => {
     updateImage();
@@ -125,13 +126,14 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
 
   const handleRemeasure = useCallback(async () => {
     const indices = Array.from(selectedIndices).sort((a, b) => a - b);
-    const newData = await onRemeasure(indices);
+    const res = await curveEngravingModeController.remeasurePoints(indices);
 
-    if (newData) {
-      setData(newData);
+    if (res) {
+      setData(curveEngravingModeController.data!);
+      setDisplayData(curveEngravingModeController.displayData!);
       setSelectedIndices(new Set());
     }
-  }, [onRemeasure, selectedIndices]);
+  }, [selectedIndices]);
 
   const measureError = useMemo(() => {
     if (selectedIndices.size === 1) {
@@ -184,7 +186,7 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
               far: 1000,
               fov: 55,
               near: 0.1,
-              position: [0, 0, Math.max(bbox.width, bbox.height)],
+              position: [0, 0, Math.max(displayData.width, displayData.height)],
             }}
             gl={{ antialias: true, toneMapping: THREE.NoToneMapping }}
             linear
@@ -193,6 +195,8 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
               <Suspense fallback={null}>
                 <Plane
                   data={data}
+                  displayData={displayData}
+                  doSubdivision={doSubdivision}
                   selectedIndices={selectedIndices}
                   textureSource={image}
                   toggleSelectedIndex={toggleSelectIdx}
@@ -219,6 +223,16 @@ const CurveEngraving = ({ data: initData, onClose, onRemeasure }: Props): React.
         >
           {lang.curve_engraving.apply_camera}
         </Button>
+        {isDevMode && (
+          <Button
+            ghost={doSubdivision}
+            onClick={() => setDoSubdivision((cur) => !cur)}
+            shape="round"
+            type={doSubdivision ? 'primary' : 'default'}
+          >
+            subdivide
+          </Button>
+        )}
       </div>
       <div className={styles.hint}>{lang.curve_engraving.click_to_select_point}</div>
     </Modal>

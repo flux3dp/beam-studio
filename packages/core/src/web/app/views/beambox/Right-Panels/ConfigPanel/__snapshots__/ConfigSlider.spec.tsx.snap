@@ -51,6 +51,7 @@ exports[`test ConfigSlider should work 2`] = `
   <div
     class="container limit"
     id="mock-id"
+    style="--warning-percent: 50%;"
   >
     <div>
       Mock Antd ConfigProvider
@@ -97,6 +98,7 @@ exports[`test ConfigSlider should work 3`] = `
   <div
     class="container limit"
     id="mock-id"
+    style="--warning-percent: 50%;"
   >
     <div>
       Mock Antd ConfigProvider
