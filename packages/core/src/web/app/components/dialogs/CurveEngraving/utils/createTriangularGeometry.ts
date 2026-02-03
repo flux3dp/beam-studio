@@ -130,8 +130,6 @@ export const createTriangularGeometry = (
   geometry.setIndex(indices);
   geometry.computeVertexNormals();
 
-  console.log('Created triangular geometry with', vertices.length / 3, 'vertices and', indices.length / 3, 'triangles');
-
   return geometry;
 };
 

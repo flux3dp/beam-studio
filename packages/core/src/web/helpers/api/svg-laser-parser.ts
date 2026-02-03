@@ -238,8 +238,6 @@ export const getExportOpt = async (
   }
 
   if (curveEngravingModeController.hasArea() && addOnInfo.curveEngraving) {
-    console.log('Adding curve engraving data to fcode config', curveEngravingModeController.data);
-
     const {
       bbox,
       gap,
