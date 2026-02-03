@@ -178,8 +178,11 @@ const importDxf = async (file: Blob): Promise<void> => {
       new Promise<void>(async (resolve) => {
         const imageSymbol = await SymbolMaker.makeImageSymbol(symbol);
 
-        svgedit.utilities.setHref(useElem, `#${imageSymbol.id}`);
-        svgCanvas.updateElementColor(useElem);
+        if (imageSymbol) {
+          svgedit.utilities.setHref(useElem, `#${imageSymbol.id}`);
+          svgCanvas.updateElementColor(useElem);
+        }
+
         resolve();
       }),
     );

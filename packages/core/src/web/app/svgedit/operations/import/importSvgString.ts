@@ -96,8 +96,10 @@ const importSvgString = async (
         fullColor: layer?.getAttribute('data-fullcolor') === '1',
       });
 
-      svgCanvas.setHref(element, `#${imageSymbol.id}`);
-      updateElementColor(element);
+      if (imageSymbol) {
+        svgCanvas.setHref(element, `#${imageSymbol.id}`);
+        updateElementColor(element);
+      }
     }),
   );
 
@@ -116,8 +118,6 @@ const importSvgString = async (
   if (!hidden) {
     svgCanvas.call('changed', [document.getElementById('svgcontent')]);
   }
-
-  console.log(useElements);
 
   return useElements;
 };
