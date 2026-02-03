@@ -53,6 +53,7 @@ const WhiteInkSpeed = ({ hasMultiValue, onChange, value }: Props): React.JSX.Ele
       <ConfigSlider
         decimal={decimal}
         id="white-speed"
+        isGradient
         max={maxValue}
         min={minValue}
         onChange={onChange}
