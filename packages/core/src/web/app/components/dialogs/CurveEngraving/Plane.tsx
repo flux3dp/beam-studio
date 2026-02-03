@@ -79,13 +79,12 @@ const Plane = ({
       raycaster.setFromCamera(mouse, camera);
 
       const intersects = raycaster.intersectObjects(scene.children, true);
+      const sphere = intersects.find((intersect) => intersect.object.userData.isSphere);
 
-      if (intersects.length > 0) {
-        const intersected = intersects[0].object;
+      if (sphere) {
+        toggleSelectedIndex?.(sphere.object.userData.index);
 
-        if (intersected.userData.isSphere) {
-          toggleSelectedIndex?.(intersected.userData.index);
-        }
+        return;
       }
     },
     [camera, scene, toggleSelectedIndex],
@@ -114,15 +113,12 @@ const Plane = ({
       raycaster.setFromCamera(mouse, camera);
 
       const intersects = raycaster.intersectObjects(scene.children, true);
+      const sphere = intersects.find((intersect) => intersect.object.userData.isSphere);
 
-      if (intersects.length > 0) {
-        const intersected = intersects[0].object;
+      if (sphere) {
+        canvas.style.cursor = 'pointer';
 
-        if (intersected.userData.isSphere) {
-          canvas.style.cursor = 'pointer';
-
-          return;
-        }
+        return;
       }
 
       canvas.style.cursor = 'grab';

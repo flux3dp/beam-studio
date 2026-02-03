@@ -33,7 +33,7 @@ const CurveEngraving = ({ onClose }: Props): React.JSX.Element => {
   const [displayCamera, setDisplayCamera] = useState(false);
   const [selectedIndices, setSelectedIndices] = useState<Set<number>>(new Set());
   const [isAntdMotionCompleted, setIsAntdMotionCompleted] = useState(false);
-  const [doSubdivision, setDoSubdivision] = useState(false);
+  const [doSubdivision, setDoSubdivision] = useState(true);
   const isDevMode = useMemo(() => isDev(), []);
 
   useEffect(() => {
