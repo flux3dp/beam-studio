@@ -211,8 +211,6 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
 
       const speed = getData(layer, 'speed') ?? 20;
 
-      console.log(vectorSpeedLimit, doLayerContainVectors(layer));
-
       return {
         curve: curveSpeedLimit !== null && speed > curveSpeedLimit,
         vector: vectorSpeedLimit !== undefined && Boolean(speed > vectorSpeedLimit && doLayerContainVectors(layer)),
@@ -241,8 +239,6 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
       },
       { curveLayers: [] as string[], vectorLayers: [] as string[] },
     );
-
-    console.log(curveLayers, vectorLayers);
 
     SymbolMaker.switchImageSymbolForAll(true);
 
