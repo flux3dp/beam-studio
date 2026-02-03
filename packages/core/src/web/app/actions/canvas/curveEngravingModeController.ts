@@ -453,18 +453,8 @@ class CurveEngravingModeController {
     const { displayData, maxAngle, subdividedPoints } = preprocessData(this.data);
 
     this.displayData = displayData;
-    this.setSubdividedPoints(subdividedPoints);
+    this.data.subdividedPoints = subdividedPoints;
     setCurveEngravingState({ hasData: true, maxAngle });
-  };
-
-  setSubdividedPoints = (points: Array<[number, number, number]> | null) => {
-    if (points === null) {
-      delete this.data?.subdividedPoints;
-
-      return;
-    }
-
-    this.data = { ...this.data!, subdividedPoints: points };
   };
 
   /**

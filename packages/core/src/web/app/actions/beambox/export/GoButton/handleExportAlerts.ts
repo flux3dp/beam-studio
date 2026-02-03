@@ -181,20 +181,17 @@ export const handleExportAlerts = async (device: IDeviceInfo, lang: ILang): Prom
       const paths: SVGElement[] = Array.from(layer.querySelectorAll('path, rect, ellipse, polygon, line'));
       const uses: SVGUseElement[] = Array.from(layer.querySelectorAll('use'));
 
-      Array.from(uses).forEach((use: Element) => {
+      for (let i = 0; i < uses.length; i++) {
+        const use = uses[i];
         const href = use.getAttribute('xlink:href');
         const elem = document.querySelector(`${href}`);
 
-        if (!elem) {
-          return;
-        }
+        if (!elem) continue;
 
         paths.push(...(Array.from(elem.querySelectorAll('path, rect, ellipse, polygon, line')) as SVGElement[]));
 
-        if (use.getAttribute('data-wireframe') === 'true') {
-          return true;
-        }
-      });
+        if (use.getAttribute('data-wireframe') === 'true') return true;
+      }
 
       return paths.some((path) => {
         const fill = path.getAttribute('fill');

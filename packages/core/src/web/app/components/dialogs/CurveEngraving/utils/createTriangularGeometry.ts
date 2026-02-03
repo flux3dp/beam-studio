@@ -65,13 +65,10 @@ export const interpolateTriangles = (triangles: Triangle[], interpolateLength: n
 
         currentTriangles.push([p1, p2, m], [p1, m, p3]);
       })
-      .with(l31, () => {
+      .otherwise(() => {
         const m = getMidpoint(p3, p1);
 
         currentTriangles.push([p1, p2, m], [m, p2, p3]);
-      })
-      .otherwise(() => {
-        console.error('Unexpected case in triangle subdivision:', [p1, p2, p3]);
       });
   }
 
