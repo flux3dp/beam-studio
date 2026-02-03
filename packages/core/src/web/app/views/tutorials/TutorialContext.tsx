@@ -150,9 +150,10 @@ export const TutorialContextProvider = ({
 
     return () => {
       eventEmitter.removeAllListeners();
-      clearDefaultRect();
     };
-  }, [handleNextStep, getNextStepRequirement, clearDefaultRect]);
+  }, [handleNextStep, getNextStepRequirement]);
+
+  useEffect(() => () => clearDefaultRect(), [clearDefaultRect]);
 
   const contextValue = useMemo(
     () => ({

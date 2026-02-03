@@ -1174,7 +1174,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       setMouseMode('select');
       svgCanvas.clear();
       workareaManager.resetView();
-      RightPanelController.setPanelType(PanelType.None); // will be updated to PanelType.Layer automatically if is not mobile
+      RightPanelController.setPanelType(isMobile() ? PanelType.None : PanelType.Layer);
       useLayerStore.getState().forceUpdate();
       updateContextPanel();
       svgedit.transformlist.resetListMap();

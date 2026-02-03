@@ -141,5 +141,5 @@ jobs:
           WIN_CODESIGN_CREDENTIAL: ${{ secrets.WIN_CODESIGN_CREDENTIAL }}
           WIN_CODESIGN_SERVER: ${{ secrets.WIN_CODESIGN_SERVER }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SWIFTRAY_DAEMON_VERSION: 1.4.2
+          SWIFTRAY_DAEMON_VERSION: 1.4.3
           SKIP_CODE_SIGN: ${{ github.event.inputs.skip_code_sign }}

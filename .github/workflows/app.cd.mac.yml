@@ -124,7 +124,12 @@ jobs:
           ./backend/flux_api/flux_api --test
 
           echo "Downloading Swiftray..."
-          curl https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/mac/swiftray-$SWIFTRAY_DAEMON_VERSION.zip --output swiftray.zip
+          if [ "${{ matrix.target }}" = "arm64" ]; then
+            export SWIFTRAY_PATH="mac-arm64"
+          else
+            export SWIFTRAY_PATH="mac"
+          fi
+          curl https://swiftray-daemon.s3.ap-northeast-1.amazonaws.com/$SWIFTRAY_PATH/swiftray-$SWIFTRAY_DAEMON_VERSION.zip --output swiftray.zip
           mkdir ./swiftray
           tar -xf swiftray.zip -C ./swiftray
           mv ./swiftray/Swiftray.app ./backend
@@ -151,12 +156,7 @@ jobs:
             export APPLE_TEAM_ID=""
           fi
 
-          if [ "${{ matrix.target }}" = "both" ]; then
-            echo "Building for x64 and arm64..."
-            pnpm nx run app:dist --x64 --publish always
-            export PUBLISH_PATH="-arm64"
-            pnpm nx run app:dist --arm64 --publish always
-          elif [ "${{ matrix.target }}" = "arm64" ]; then
+          if [ "${{ matrix.target }}" = "arm64" ]; then
             echo "Building for arm64..."
             export PUBLISH_PATH="-arm64"
             pnpm nx run app:dist --arm64 --publish always
@@ -176,4 +176,4 @@ jobs:
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SWIFTRAY_DAEMON_VERSION: 1.4.2
+          SWIFTRAY_DAEMON_VERSION: 1.4.3
