@@ -1,6 +1,6 @@
 import { selectOptionWithKeyboard } from '../../support/utils';
 
-const fileNamePrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-FileName-index-module__';
+const fileNamePrefix = '_-_-packages-core-src-web-app-components-beambox-TopBar-FileName-index-module__';
 
 const i18n: Record<string, { language: string; title: string }> = {
   Català: { language: 'Idioma', title: 'Sense títol' },

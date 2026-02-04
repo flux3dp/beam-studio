@@ -1,7 +1,7 @@
 import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
-const laserPanelBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-Block-module__';
+const laserPanelBlockPrefix = '_-_-packages-core-src-web-app-components-beambox-RightPanel-ConfigPanel-Block-module__';
 
 function drawingEllipse() {
   cy.clickToolBtn('Ellipse');

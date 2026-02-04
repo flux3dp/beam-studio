@@ -1,5 +1,6 @@
-const layerListClassPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
-const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-right-panel-AddLayerButton-module__btn';
+const layerListClassPrefix =
+  '_-_-packages-core-src-web-app-components-beambox-RightPanel-LayerPanel-LayerList-module__';
+const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-RightPanel-AddLayerButton-module__btn';
 
 describe('manipulate layers (advanced)', () => {
   beforeEach(() => {

@@ -1,5 +1,6 @@
-const layerListPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
-const moduleBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
+const layerListPrefix = '_-_-packages-core-src-web-app-components-beambox-RightPanel-LayerPanel-LayerList-module__';
+const moduleBlockPrefix =
+  '_-_-packages-core-src-web-app-components-beambox-RightPanel-ConfigPanel-ModuleBlock-module__';
 
 describe('upload tools', () => {
   it('upload png', () => {
