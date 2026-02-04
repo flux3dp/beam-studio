@@ -1,5 +1,6 @@
 describe('manipulate document setting (workarea)', () => {
-  const moduleBlockPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-ConfigPanel-ModuleBlock-module__';
+  const moduleBlockPrefix =
+    '_-_-packages-core-src-web-app-components-beambox-RightPanel-ConfigPanel-ModuleBlock-module__';
 
   beforeEach(() => {
     cy.landingEditor();
@@ -39,7 +40,7 @@ describe('manipulate document setting (workarea)', () => {
     cy.get('#svgcontent').should('have.attr', 'viewBox', '0 0 4300 3200');
     cy.changeWorkarea('beamo');
     cy.get('.ant-modal-content').should('exist');
-    cy.get('[class*="src-web-app-views-dialogs-Alert-module__message-container"]').should(
+    cy.get('[class*="src-web-app-components-dialogs-Alert-module__message-container"]').should(
       'have.text',
       'Do you want to convert the Printing Layers into Laser Layers?',
     );

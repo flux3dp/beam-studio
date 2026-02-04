@@ -3,11 +3,11 @@ import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import { getWideAngleCameraData } from '@core/app/actions/camera/preview-helper/getWideAngleCameraData';
+import tutorialController from '@core/app/components/tutorials/tutorialController';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
-import tutorialController from '@core/app/views/tutorials/tutorialController';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
 import i18n from '@core/helpers/i18n';

@@ -10,7 +10,7 @@ jest.mock('@core/implementations/storage', () => ({
 
 const mockGetSelectedDevice = jest.fn();
 
-jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('@core/app/components/beambox/TopBar/contexts/TopBarController', () => ({
   getSelectedDevice: () => mockGetSelectedDevice(),
 }));
 

@@ -6,8 +6,8 @@
  * Copyright(c) 2010 Alexis Deveria
  * Copyright(c) 2010 Jeff Schiller
  */
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import { getValue } from '@core/app/views/beambox/Right-Panels/DimensionPanel/utils';
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
+import { getValue } from '@core/app/components/beambox/RightPanel/DimensionPanel/utils';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { isMobile } from '@core/helpers/system-helper';
 

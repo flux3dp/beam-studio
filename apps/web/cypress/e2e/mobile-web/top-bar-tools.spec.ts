@@ -1,4 +1,4 @@
-const topbarModulesPrefix = '_-_-packages-core-src-web-app-components-beambox-top-bar-';
+const topbarModulesPrefix = '_-_-packages-core-src-web-app-components-beambox-TopBar-';
 
 describe('check the existence of the top bar tools on mobile', () => {
   beforeEach(() => {

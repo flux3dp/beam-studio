@@ -6,6 +6,8 @@ import { match, P } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
+import RightPanelController from '@core/app/components/beambox/RightPanel/contexts/RightPanelController';
 import { showPassThrough } from '@core/app/components/pass-through';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
@@ -19,8 +21,6 @@ import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import historyUtils from '@core/app/svgedit/history/utils';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useIsMobile } from '@core/helpers/system-helper';

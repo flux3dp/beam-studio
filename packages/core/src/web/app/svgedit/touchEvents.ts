@@ -1,7 +1,7 @@
 import Hammer from 'hammerjs';
 
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import workareaManager from '@core/app/svgedit/workarea';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 
 const calculateTouchCenter = (touches: TouchList) => {
   const center = { x: 0, y: 0 };

@@ -35,7 +35,7 @@ jest.mock('@core/app/svgedit/history/undoManager', () => ({
 
 const mockInitState = jest.fn();
 
-jest.mock('@core/app/views/beambox/Right-Panels/ConfigPanel/initState', () => mockInitState);
+jest.mock('@core/app/components/beambox/RightPanel/ConfigPanel/initState', () => mockInitState);
 
 const mockAlertConfigRead = jest.fn();
 const mockAlertConfigWrite = jest.fn();

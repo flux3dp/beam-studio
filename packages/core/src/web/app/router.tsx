@@ -28,6 +28,8 @@ import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
 import { HashRouter, Route, Switch } from 'react-router-dom';
 
+import AlertsAndProgress from '@core/app/components/dialogs/AlertAndProgress';
+import Dialog from '@core/app/components/dialogs/Dialog';
 import { AlertProgressContextProvider } from '@core/app/contexts/AlertProgressContext';
 import { DialogContextProvider } from '@core/app/contexts/DialogContext';
 import Beambox from '@core/app/pages/Beambox';
@@ -47,8 +49,6 @@ import SelectMachineModel from '@core/app/pages/SelectMachineModel';
 import SelectPromarkLaserSource from '@core/app/pages/SelectPromarkLaserSource';
 import Settings from '@core/app/pages/Settings';
 import Welcome from '@core/app/pages/Welcome';
-import AlertsAndProgress from '@core/app/views/dialogs/AlertAndProgress';
-import Dialog from '@core/app/views/dialogs/Dialog';
 import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
 

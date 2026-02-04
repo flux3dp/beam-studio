@@ -1,10 +1,10 @@
 import * as React from 'react';
 
 import Dialog from '@core/app/actions/dialog-caller';
+import Monitor from '@core/app/components/monitor/Monitor';
 import { Mode } from '@core/app/constants/monitor-constants';
 import type { PreviewTask, VariableTextTask } from '@core/app/contexts/MonitorContext';
 import { MonitorContextProvider } from '@core/app/contexts/MonitorContext';
-import Monitor from '@core/app/views/monitor/Monitor';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import type { VariableTextElemHandler } from '@core/helpers/variableText';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';

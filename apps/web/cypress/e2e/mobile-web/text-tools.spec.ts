@@ -12,7 +12,7 @@ describe('mobile text tools', () => {
     cy.get('div#object-panel').should('exist');
     cy.get('#font_family').click();
     cy.get(
-      '[class*="src-web-app-views-beambox-Right-Panels-ObjectPanelItem-module__option"] img[alt="Noto Sans"]',
+      '[class*="src-web-app-components-beambox-RightPanel-ObjectPanelItem-module__option"] img[alt="Noto Sans"]',
     ).click();
   });
 

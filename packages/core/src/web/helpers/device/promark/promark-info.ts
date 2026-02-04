@@ -1,6 +1,6 @@
 import { promarkModels } from '@core/app/actions/beambox/constant';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { LaserType } from '@core/app/constants/promark-constants';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import storage from '@core/implementations/storage';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 

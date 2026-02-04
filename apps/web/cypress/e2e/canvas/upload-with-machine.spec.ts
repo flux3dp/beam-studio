@@ -2,9 +2,9 @@ import { md5 } from '../../support/utils';
 
 const isRunningAtGithub = Cypress.env('envType') === 'github';
 const beamSeriesName = Cypress.env('beamSeriesName');
-const layerListPrefix = '_-_-packages-core-src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__';
+const layerListPrefix = '_-_-packages-core-src-web-app-components-beambox-RightPanel-LayerPanel-LayerList-module__';
 const colorPickerPrefix = '_-_-packages-core-src-web-app-widgets-ColorPicker-module__';
-const progressPrefix = '_-_-packages-core-src-web-app-views-dialogs-AlertAndProgress-module__';
+const progressPrefix = '_-_-packages-core-src-web-app-components-dialogs-AlertAndProgress-module__';
 
 function chooseImportOption(module?: string, layering?: string) {
   cy.get(`div[class*="${progressPrefix}nonstop--"`).should('exist');

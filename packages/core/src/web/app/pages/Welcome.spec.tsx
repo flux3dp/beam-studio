@@ -3,7 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/app/components/Chat', () => 'mock-chat');
-jest.mock('@core/app/components/beambox/top-bar/tabs/Tabs', () => 'mock-tabs');
+jest.mock('@core/app/components/beambox/TopBar/tabs/Tabs', () => 'mock-tabs');
 jest.mock('@core/app/components/welcome/Banners', () => 'mock-banners');
 jest.mock('@core/app/components/welcome/TabFollowUs', () => 'mock-tab-follow-us');
 jest.mock('@core/app/components/welcome/TabHelpCenter', () => 'mock-tab-help-center');

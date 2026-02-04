@@ -19,16 +19,16 @@ describe('disassemable', () => {
   it('disassemable', () => {
     cy.connectMachine(beamSeriesName);
     cy.uploadFile('svg.svg', 'image/svg+xml');
-    cy.get('div[class*="src-web-app-views-dialogs-AlertAndProgress-module__nonstop--"').should('exist');
+    cy.get('div[class*="src-web-app-components-dialogs-AlertAndProgress-module__nonstop--"').should('exist');
     cy.contains('.ant-modal-content', 'Select layering style:').as('modal');
     cy.get('@modal').contains('Layer').click();
     cy.get('@modal').contains('OK').click();
-    cy.get('div[class*="src-web-app-views-dialogs-AlertAndProgress-module__nonstop--"', {
+    cy.get('div[class*="src-web-app-components-dialogs-AlertAndProgress-module__nonstop--"', {
       timeout: 10000,
     }).should('not.exist');
     cy.get('#svg_2').should('exist');
     cy.getElementTitle().contains('Layer 1 > SVG Object').should('exist');
-    cy.get('[class*="src-web-app-views-beambox-Right-Panels-LayerPanel-LayerList-module__row--"]').should(
+    cy.get('[class*="src-web-app-components-beambox-RightPanel-LayerPanel-LayerList-module__row--"]').should(
       'have.attr',
       'data-layer',
       'Layer 1',

@@ -5,6 +5,7 @@ import constant, { hexaRfModelsArray, promarkModels } from '@core/app/actions/be
 import { fetchTaskCodeSwiftray } from '@core/app/actions/beambox/export-funcs-swiftray';
 import MonitorController from '@core/app/actions/monitor-controller';
 import Progress from '@core/app/actions/progress-caller';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
@@ -13,7 +14,6 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import workareaManager from '@core/app/svgedit/workarea';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import svgLaserParser from '@core/helpers/api/svg-laser-parser';
 import { hasSwiftray } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';
