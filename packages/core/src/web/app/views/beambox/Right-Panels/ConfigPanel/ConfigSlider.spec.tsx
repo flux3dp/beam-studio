@@ -15,15 +15,15 @@ jest.mock('antd', () => ({
       {children}
     </div>
   ),
-  Slider: ({ max, min, onAfterChange, onChange, step, value }: any) => (
+  Slider: ({ max, min, onChange, onChangeComplete, step, value }: any) => (
     <div>
       Mock Antd Slider
       <p>min: {min}</p>
       <p>max: {max}</p>
       <p>step: {step}</p>
       <p>value: {value}</p>
-      <button onClick={() => onAfterChange(MOCK_AFTER_CHANGE_VALUE)} type="button">
-        onAfterChange
+      <button onClick={() => onChangeComplete(MOCK_AFTER_CHANGE_VALUE)} type="button">
+        onChangeComplete
       </button>
       <button onClick={() => onChange(MOCK_CHANGE_VALUE)} type="button">
         onChange
@@ -62,8 +62,16 @@ describe('test ConfigSlider', () => {
     expect(container).toMatchSnapshot();
     expect(getByText(`value: ${MOCK_CHANGE_VALUE}`)).toBeInTheDocument();
     expect(mockPropOnChange).not.toBeCalled();
-    fireEvent.click(getByText('onAfterChange'));
+    fireEvent.click(getByText('onChangeComplete'));
     expect(mockPropOnChange).toBeCalledTimes(1);
     expect(mockPropOnChange).toHaveBeenLastCalledWith(MOCK_AFTER_CHANGE_VALUE);
+  });
+
+  it('should render correctly when isGradient is true', () => {
+    const { container } = render(
+      <ConfigSlider id="mock-id" isGradient max={100} min={0} onChange={mockPropOnChange} step={1} value={10} />,
+    );
+
+    expect(container).toMatchSnapshot();
   });
 });

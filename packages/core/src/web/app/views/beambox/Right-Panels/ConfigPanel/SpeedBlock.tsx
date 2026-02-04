@@ -203,6 +203,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       <ConfigSlider
         decimal={decimal}
         id="speed"
+        isGradient
         max={maxValue}
         min={minValue}
         onChange={handleChange}

@@ -2,34 +2,39 @@
   :global(.ant-slider),
   :global(.ant-slider:hover) {
     margin: 5px 0;
-
-    :global(.ant-slider-rail) {
-      background-blend-mode: overlay, normal;
-      background-image:
-        linear-gradient(
-          to bottom,
-          rgba(255, 255, 255, 0.5),
-          rgba(0, 0, 0, 0.5)
-        ),
-        linear-gradient(to right, #89d307, #9ede05 59%, #fff600 71%, #c50101);
-    }
   }
 
-  &.limit {
-    :global(.ant-slider) {
+  &.gradient {
+    :global(.ant-slider),
+    :global(.ant-slider:hover) {
       :global(.ant-slider-rail) {
+        background-blend-mode: overlay, normal;
         background-image:
           linear-gradient(
             to bottom,
             rgba(255, 255, 255, 0.5),
             rgba(0, 0, 0, 0.5)
           ),
-          linear-gradient(
-            to right,
-            #89d307 0%,
-            #fff600 var(--warning-percent),
-            #c50101 100%
-          );
+          linear-gradient(to right, #89d307, #9ede05 59%, #fff600 71%, #c50101);
+      }
+    }
+
+    &.limit {
+      :global(.ant-slider) {
+        :global(.ant-slider-rail) {
+          background-image:
+            linear-gradient(
+              to bottom,
+              rgba(255, 255, 255, 0.5),
+              rgba(0, 0, 0, 0.5)
+            ),
+            linear-gradient(
+              to right,
+              #89d307 0%,
+              #fff600 var(--warning-percent),
+              #c50101 100%
+            );
+        }
       }
     }
   }
