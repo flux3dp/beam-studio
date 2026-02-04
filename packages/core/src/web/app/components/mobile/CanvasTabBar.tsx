@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { AppstoreOutlined } from '@ant-design/icons';
 import { Badge } from 'antd';
 import { TabBar } from 'antd-mobile';
 import { match, P } from 'ts-pattern';
@@ -9,6 +8,7 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { showPassThrough } from '@core/app/components/pass-through';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { SettingsIcons } from '@core/app/icons/Settings/SettingsIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
@@ -144,7 +144,7 @@ const CanvasTabBar = (): React.ReactNode => {
       { icon: <TabBarIcons.Shape />, key: 'shape', title: lang.beambox.left_panel.label.elements },
       { icon: <TabBarIcons.Text />, key: 'text', title: lang.beambox.left_panel.label.text },
       { icon: <LeftPanelIcons.AiGenerate />, key: 'ai-generate', title: lang.beambox.ai_generate.header.title },
-      { icon: <AppstoreOutlined />, key: 'generator', title: lang.generators.title },
+      { icon: <GeneratorIcons.Generator />, key: 'generator', title: lang.generators.title },
       {
         icon: (
           <TabBarIcons.Layers
