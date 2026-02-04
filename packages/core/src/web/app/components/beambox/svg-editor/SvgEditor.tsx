@@ -8,7 +8,7 @@ import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import AiGenerate from '@core/app/components/AiGenerate';
 import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGenerate';
-import PathPreview from '@core/app/components/beambox/path-preview/PathPreview';
+import PathPreview from '@core/app/components/beambox/PathPreview';
 import Chat from '@core/app/components/Chat';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { CanvasMode } from '@core/app/constants/canvasMode';

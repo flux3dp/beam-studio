@@ -11,8 +11,6 @@ import constant, { promarkModels } from '@core/app/actions/beambox/constant';
 import exportFuncs from '@core/app/actions/beambox/export-funcs';
 import { dpiTextMap } from '@core/app/actions/beambox/export-funcs-swiftray';
 import progressCaller from '@core/app/actions/progress-caller';
-import Pointable from '@core/app/components/beambox/path-preview/Pointable';
-import SidePanel from '@core/app/components/beambox/path-preview/SidePanel';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import alertConstants from '@core/app/constants/alert-constants';
@@ -42,10 +40,11 @@ import {
 } from '@core/helpers/variableText';
 import VersionChecker from '@core/helpers/version-checker';
 
-import { parseGcode } from '../../../views/beambox/tmpParseGcode';
-
-import styles from './PathPreview.module.scss';
+import styles from './index.module.scss';
+import Pointable from './Pointable';
 import ProgressBar from './ProgressBar';
+import SidePanel from './SidePanel';
+import { parseGcode } from './tmpParseGcode';
 
 const TOOLS_PANEL_HEIGHT = 100;
 const MAJOR_GRID_SPACING = 50;

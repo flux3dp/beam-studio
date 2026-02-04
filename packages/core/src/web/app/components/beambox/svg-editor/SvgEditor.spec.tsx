@@ -11,7 +11,7 @@ jest.mock('@core/helpers/fileImportHelper', () => ({
   importFileInCurrentTab: (...args) => mockImportFileInCurrentTab(...args),
 }));
 
-jest.mock('@core/app/components/beambox/path-preview/PathPreview', () => () => <div>MockPathPreview</div>);
+jest.mock('@core/app/components/beambox/PathPreview', () => () => <div>MockPathPreview</div>);
 jest.mock('@core/app/components/common/ZoomBlock', () => () => <div>MockZoomBlock</div>);
 jest.mock('@core/app/widgets/Drawer', () => ({ children }) => <div>{children}</div>);
 jest.mock('@core/app/components/Chat', () => () => <div>MockChat</div>);
