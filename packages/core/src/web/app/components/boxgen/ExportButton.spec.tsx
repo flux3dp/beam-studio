@@ -28,7 +28,7 @@ jest.mock(
       mockWrapSVG(...args),
 );
 
-const mockImportSvgString = jest.fn().mockResolvedValue('mock-svg-object');
+const mockImportSvgString = jest.fn().mockResolvedValue(['mock-svg-object']);
 
 jest.mock(
   '@core/app/svgedit/operations/import/importSvgString',

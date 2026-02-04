@@ -342,13 +342,13 @@ const makeImageSymbol = async (
     imageSymbol?: SVGSymbolElement;
     scale?: number;
   } = {},
-): Promise<SVGSymbolElement> => {
+): Promise<null | SVGSymbolElement> => {
   const { force = false, fullColor = false, scale = 1 } = opts;
   let { imageSymbol } = opts;
   const svgdoc = (document.getElementById('svgcanvas') as Element).ownerDocument;
 
   // eslint-disable-next-line no-async-promise-executor
-  return new Promise<SVGSymbolElement>(async (resolve) => {
+  return new Promise<null | SVGSymbolElement>(async (resolve) => {
     const generateTempSvg = () => {
       const tempSvg = svgdoc.createElementNS(NS.SVG, 'svg');
       const tempUse = svgdoc.createElementNS(NS.SVG, 'use');
@@ -372,8 +372,8 @@ const makeImageSymbol = async (
         svgedit.utilities.setHref(useElemForBB, `#${symbol.id}`);
         bb = useElemForBB.getBBox();
         svgedit.utilities.setHref(useElemForBB, '');
-        bb.height = Math.max(1, bb.height);
-        bb.width = Math.max(1, bb.width);
+        bb.height = Math.max(0, bb.height);
+        bb.width = Math.max(0, bb.width);
 
         const obj = {
           height: Number.parseFloat(bb.height.toFixed(5)),
@@ -398,6 +398,13 @@ const makeImageSymbol = async (
     };
 
     const bb = calculateSvgBBox();
+
+    if (bb.width < 1 || bb.height < 1) {
+      resolve(null);
+
+      return;
+    }
+
     const imageRatio = calculateImageRatio(bb);
     const strokeWidth = fullColor ? 1 : getStrokeWidth(imageRatio, scale);
 
@@ -487,10 +494,8 @@ const reRenderImageSymbol = async (useElement: SVGUseElement, opts: { force?: bo
 
       if (imageSymbol && imageSymbol.tagName === 'symbol') {
         await makeImageSymbol(currentSymbol, { force, fullColor, imageSymbol, scale });
-        useElement.setAttribute('xlink:href', `#${imageSymbolId}`);
       } else {
-        imageSymbol = await makeImageSymbol(currentSymbol, { force, fullColor, scale });
-        useElement.setAttribute('xlink:href', `#${imageSymbol.id}`);
+        await makeImageSymbol(currentSymbol, { force, fullColor, scale });
       }
     }
   }

@@ -77,7 +77,6 @@ import undoManager from './history/undoManager';
 import { MouseInteraction } from './interaction/mouse';
 import layerManager from './layer/layerManager';
 import disassembleUse from './operations/disassembleUse';
-import importSvgString from './operations/import/importSvgString';
 import setSvgContent from './operations/import/setSvgContent';
 import { moveElements, moveSelectedElements } from './operations/move';
 import PathActions from './operations/pathActions';
@@ -2289,24 +2288,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Returns:
   // This function returns false if the set was unsuccessful, true otherwise.
   this.setSvgString = setSvgContent;
-
-  // Function: importSvgString
-  // This function imports the input SVG XML as a <symbol> in the <defs>, then adds a
-  // <use> to the current layer.
-  //
-  // Parameters:
-  // xmlString - The SVG as XML text.
-  //
-  // Returns:
-  // This function returns null if the import was unsuccessful, or the element otherwise.
-  // TODO:
-  // * properly handle if namespace is introduced by imported content (must add to svgcontent
-  // and update all prefixes in the imported node)
-  // * properly handle recalculating dimensions, recalculateDimensions() doesn't handle
-  // arbitrary transform lists, but makes some assumptions about how the transform list
-  // was obtained
-  // * import should happen in top-left of current zoomed viewport
-  this.importSvgString = importSvgString;
 
   // TODO(codedread): Move all layer/context functions in draw.js
   // Layer API Functions

@@ -1,5 +1,4 @@
 import { sprintf } from 'sprintf-js';
-import { match, P } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { modelsWithModules } from '@core/app/actions/beambox/constant';
@@ -11,6 +10,7 @@ import { useDocumentStore } from '@core/app/stores/documentStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { moveElements } from '@core/app/svgedit/operations/move';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -205,10 +205,20 @@ function finalizeImport(
 
   useLayerStore.getState().setSelectedLayers([layerManager.getCurrentLayerName()!]);
 
-  match(elements)
-    .with([], () => svgCanvas.clearSelection())
-    .with([P._], (elements) => svgCanvas.selectOnly(elements))
-    .otherwise(() => svgCanvas.selectOnly(svgCanvas.tempGroupSelectedElements()));
+  let minX = Infinity;
+  let minY = Infinity;
+
+  elements.forEach((elem) => {
+    const { x, y } = svgCanvas.getSvgRealLocation(elem);
+
+    minX = Math.min(minX, x);
+    minY = Math.min(minY, y);
+  });
+
+  if (elements.length > 0) {
+    moveElements(Array(elements.length).fill(-minX), Array(elements.length).fill(-minY), elements, false, true);
+    svgCanvas.multiSelect(elements);
+  }
 
   if (!parentCmd && !batchCmd.isEmpty()) {
     svgCanvas.addCommandToHistory(batchCmd);

@@ -58,7 +58,7 @@ const readSVG = (
     type,
   }: { layerName?: string; parentCmd?: IBatchCommand; targetModule?: LayerModuleType; type: ImportType },
 ) =>
-  new Promise<SVGUseElement>((resolve) => {
+  new Promise<SVGUseElement[]>((resolve) => {
     const parsedLayerName = layerName === 'nolayer' ? undefined : layerName;
     const reader = new FileReader();
 
@@ -67,7 +67,7 @@ const readSVG = (
       const filePath = fileSystem.getPathForFile(input as File);
       const modifiedSvgString = preprocessSvgString(rawSvgString, type, filePath);
 
-      const newElement = await importSvgString(modifiedSvgString, {
+      const newElements = await importSvgString(modifiedSvgString, {
         layerName: parsedLayerName,
         parentCmd,
         targetModule,
@@ -77,7 +77,7 @@ const readSVG = (
       // Apply style
       svgCanvas.svgToString($('#svgcontent')[0], 0);
 
-      resolve(newElement);
+      resolve(newElements);
     };
 
     reader.readAsText(input);
@@ -92,20 +92,20 @@ export async function processOutputData(
   const newElements: SVGUseElement[] = [];
 
   if (['color', 'nolayer'].includes(importType)) {
-    if (outputData.strokes) newElements.push(await readSVG(outputData.strokes, elementOptions));
+    if (outputData.strokes) newElements.push(...(await readSVG(outputData.strokes, elementOptions)));
 
-    if (outputData.colors) newElements.push(await readSVG(outputData.colors, elementOptions));
+    if (outputData.colors) newElements.push(...(await readSVG(outputData.colors, elementOptions)));
   } else if (importType === 'layer') {
     const keys = Object.keys(outputData).filter((key) => !['bitmap', 'bitmapOffset'].includes(key));
 
     for (const layerName of keys) {
       if (outputData[layerName]) {
-        newElements.push(await readSVG(outputData[layerName], { ...elementOptions, layerName }));
+        newElements.push(...(await readSVG(outputData[layerName], { ...elementOptions, layerName })));
       }
     }
   } else {
     // Fallback for other types, or perhaps this branch is never hit if importType is validated
-    newElements.push(await readSVG(blob, elementOptions));
+    newElements.push(...(await readSVG(blob, elementOptions)));
   }
 
   return newElements.filter(Boolean); // Filter out any null/undefined results from readSVG

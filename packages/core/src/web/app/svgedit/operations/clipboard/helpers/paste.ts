@@ -37,11 +37,16 @@ const pasteRef = async (
 
   defs.appendChild(copiedRef);
   batchCmd.addSubCommand(new history.InsertElementCommand(copiedRef));
-  svgedit.utilities.setHref(useElement, `#${copiedRef.id}`);
+  useElement.setAttribute('xlink:href', `#${copiedRef.id}`);
 
-  const imageSymbol = symbolMaker.createImageSymbol(copiedRef);
+  const imageSymbol = await symbolMaker.makeImageSymbol(copiedRef);
 
-  batchCmd.addSubCommand(new history.InsertElementCommand(imageSymbol));
+  if (imageSymbol) {
+    batchCmd.addSubCommand(new history.InsertElementCommand(imageSymbol));
+    useElement.setAttribute('xlink:href', `#${imageSymbol.id}`);
+    // Re-render to apply color, scale, etc.
+    await symbolMaker.reRenderImageSymbol(useElement);
+  }
 
   if (parentCmd) {
     parentCmd.addSubCommand(batchCmd);
@@ -49,7 +54,6 @@ const pasteRef = async (
     undoManager.addCommandToHistory(batchCmd);
   }
 
-  await symbolMaker.reRenderImageSymbol(useElement);
   updateElementColor(useElement);
 };
 
