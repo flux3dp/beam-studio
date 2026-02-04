@@ -2,8 +2,8 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { finishWithDevice } from '@core/app/pages/ConnectMachineIp/utils/finishWithDevice';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import checkIPFormat from '@core/helpers/check-ip-format';
 import i18n from '@core/helpers/i18n';
 import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';

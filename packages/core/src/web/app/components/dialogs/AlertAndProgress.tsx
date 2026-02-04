@@ -1,12 +1,13 @@
 import React, { useContext, useEffect, useRef } from 'react';
 
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
-import Alert from '@core/app/views/dialogs/Alert';
-import NonStopProgress from '@core/app/views/dialogs/NonStopProgress';
-import Progress from '@core/app/views/dialogs/Progress';
 import browser from '@core/implementations/browser';
 import type { IAlert } from '@core/interfaces/IAlert';
 import { type IProgressDialog, ProgressTypes } from '@core/interfaces/IProgress';
+
+import Alert from './Alert';
+import NonStopProgress from './NonStopProgress';
+import Progress from './Progress';
 
 const isProgress = (d: IAlert | IProgressDialog): d is IProgressDialog => Boolean(d.isProgress);
 

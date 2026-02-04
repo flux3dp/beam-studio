@@ -4,11 +4,9 @@ import { render } from '@testing-library/react';
 
 import AlertAndProgress from './AlertAndProgress';
 
-jest.mock('@core/app/views/dialogs/Alert', () => ({ data }: any) => <div>DummyAlert {JSON.stringify(data)}</div>);
-jest.mock('@core/app/views/dialogs/Progress', () => ({ data }: any) => <div>DummyProgress {JSON.stringify(data)}</div>);
-jest.mock('@core/app/views/dialogs/NonStopProgress', () => ({ data }: any) => (
-  <div>DummyNonStopProgress {JSON.stringify(data)}</div>
-));
+jest.mock('./Alert', () => ({ data }: any) => <div>DummyAlert {JSON.stringify(data)}</div>);
+jest.mock('./Progress', () => ({ data }: any) => <div>DummyProgress {JSON.stringify(data)}</div>);
+jest.mock('./NonStopProgress', () => ({ data }: any) => <div>DummyNonStopProgress {JSON.stringify(data)}</div>);
 
 jest.mock('@core/app/contexts/AlertProgressContext', () => ({
   AlertProgressContext: React.createContext({

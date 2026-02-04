@@ -14,7 +14,7 @@ import InputKeyWrapper from '@core/app/widgets/InputKeyWrapper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 
-import AddColorConfigModal from '../dialogs/AddColorConfigModal';
+import AddColorConfigModal from './AddColorConfigModal';
 
 const formatHexColor = (input: string): null | string => {
   const val = input.replace(/ +/, '');

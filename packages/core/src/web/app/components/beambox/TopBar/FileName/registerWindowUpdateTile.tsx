@@ -1,6 +1,6 @@
 import ReactDomServer from 'react-dom/server';
 
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { getOS } from '@core/helpers/getOS';
 
 import FileName from '.';

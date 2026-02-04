@@ -1,4 +1,4 @@
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import storage from '@core/implementations/storage';
 
 export const fhx2rfWatts = [30, 60, 80] as const;

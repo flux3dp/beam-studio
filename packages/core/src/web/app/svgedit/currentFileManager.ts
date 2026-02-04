@@ -1,4 +1,4 @@
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';

@@ -75,7 +75,7 @@ pnpm nx affected:lint    # Lint only affected projects
 
 ### Important Services & Components
 
-- **SVGEditor**: Main editing canvas (packages/core/src/web/app/views/beambox/SvgEditor.tsx)
+- **SVGEditor**: Main editing canvas (packages/core/src/web/app/components/beambox/SvgEditor/)
 - **Device Management**: packages/core/src/web/helpers/device/
 - **API Clients**: packages/core/src/web/helpers/api/
 - **Canvas Operations**: packages/core/src/web/app/svgedit/

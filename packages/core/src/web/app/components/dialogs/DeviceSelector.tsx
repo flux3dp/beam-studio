@@ -5,9 +5,9 @@ import { Modal, Spin } from 'antd';
 import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import deviceConstants from '@core/app/constants/device-constants';
 import ConnectionTypeIcons from '@core/app/icons/connection-type/ConnectionTypeIcons';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { discoverManager, SEND_DEVICES_INTERVAL } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { hashMap } from '@core/helpers/hashHelper';

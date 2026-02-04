@@ -4,6 +4,7 @@ import {
   removeCurveEngravingZSpeedAnnotation,
 } from '@core/app/actions/beambox/export/annotateCurveEngravingZSpeed';
 import Progress from '@core/app/actions/progress-caller';
+import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { controlConfig } from '@core/app/constants/promark-constants';
@@ -11,7 +12,6 @@ import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import { getExportOpt } from '@core/helpers/api/svg-laser-parser';
 import { swiftrayClient } from '@core/helpers/api/swiftray-client';
 import AwsHelper from '@core/helpers/aws-helper';

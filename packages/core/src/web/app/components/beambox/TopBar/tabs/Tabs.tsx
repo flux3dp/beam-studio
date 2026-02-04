@@ -11,10 +11,11 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabConstants } from '@core/app/constants/ipcEvents';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
-import TopBarController from '@core/app/views/beambox/TopBar/contexts/TopBarController';
 import cloudFile from '@core/helpers/api/cloudFile';
 import useI18n from '@core/helpers/useI18n';
 import type Tab from '@core/interfaces/Tab';
+
+import TopBarController from '../contexts/TopBarController';
 
 import styles from './Tabs.module.scss';
 
