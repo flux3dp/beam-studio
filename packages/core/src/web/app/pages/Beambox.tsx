@@ -5,7 +5,7 @@ import classNames from 'classnames';
 
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import LeftPanel from '@core/app/components/beambox/LeftPanel';
-import RightPanel from '@core/app/components/beambox/right-panel/RightPanel';
+import RightPanel from '@core/app/components/beambox/RightPanel';
 import SvgEditor from '@core/app/components/beambox/svg-editor/SvgEditor';
 import TopBar from '@core/app/components/beambox/top-bar/TopBar';
 import CanvasTabBar from '@core/app/components/mobile/CanvasTabBar';

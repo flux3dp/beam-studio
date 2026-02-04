@@ -4,7 +4,7 @@ import { Button, ColorPicker, Input, Popover } from 'antd';
 import type { Color } from 'antd/es/color-picker';
 import classNames from 'classnames';
 
-import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
+import ColorBlock from '@core/app/components/beambox/RightPanel/ColorBlock';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';

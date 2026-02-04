@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from 'react';
 
-import ColorBlock from '@core/app/components/beambox/right-panel/ColorBlock';
+import ColorBlock from '@core/app/components/beambox/RightPanel/ColorBlock';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
