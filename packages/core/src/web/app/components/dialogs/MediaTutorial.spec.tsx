@@ -50,7 +50,7 @@ describe('should MediaTutorial', () => {
     expect(mockMediaLoad).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Done'));
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
     expect(baseElement).toMatchSnapshot();
   });
 
@@ -59,6 +59,6 @@ describe('should MediaTutorial', () => {
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(baseElement.querySelector('.ant-modal-close'));
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 });

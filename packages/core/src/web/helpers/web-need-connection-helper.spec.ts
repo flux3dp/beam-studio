@@ -52,29 +52,29 @@ describe('test webNeedConnectionWrapper', () => {
   it('should call callback if version is not web', () => {
     window.FLUX.version = 'not web';
     webNeedConnectionWrapper(mockCallback);
-    expect(mockCallback).toBeCalledTimes(1);
-    expect(mockPopUp).not.toBeCalled();
+    expect(mockCallback).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).not.toHaveBeenCalled();
   });
 
   it('should call callback if version is web and checkConnection return true', () => {
     window.FLUX.version = 'web';
     mockCheckConnection.mockReturnValue(true);
     webNeedConnectionWrapper(mockCallback);
-    expect(mockCallback).toBeCalledTimes(1);
-    expect(mockPopUp).not.toBeCalled();
+    expect(mockCallback).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).not.toHaveBeenCalled();
   });
 
   it('should call callback if version is web and checkConnection return false', async () => {
     window.FLUX.version = 'web';
     mockCheckConnection.mockReturnValue(false);
     webNeedConnectionWrapper(mockCallback);
-    expect(mockCallback).not.toBeCalled();
-    expect(mockPopUp).toBeCalledTimes(1);
+    expect(mockCallback).not.toHaveBeenCalled();
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
 
     const popUpCallback = mockPopUp.mock.calls[0][0].callbacks;
 
     await popUpCallback();
-    expect(mockToggleUnsavedChangedDialog).toBeCalledTimes(1);
-    expect(mockUpdateActiveKey).toBeCalledTimes(1);
+    expect(mockToggleUnsavedChangedDialog).toHaveBeenCalledTimes(1);
+    expect(mockUpdateActiveKey).toHaveBeenCalledTimes(1);
   });
 });

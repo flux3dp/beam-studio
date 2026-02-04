@@ -298,13 +298,11 @@ describe('test layer-config-helper', () => {
     });
   });
 
-  test('baseConfig when multipass-compensation changed', async () => {
+  test('baseConfig when multipass-compensation changed', () => {
     jest.resetModules();
 
-    // @ts-ignore
-    const { baseConfig } = await import('./layer-config-helper');
-    // @ts-ignore
-    const { mockSubscribe } = await import('__mocks__/@core/app/stores/globalPreferenceStore');
+    const { baseConfig } = require('./layer-config-helper');
+    const { mockSubscribe } = require('__mocks__/@core/app/stores/globalPreferenceStore');
 
     expect(mockSubscribe).toHaveBeenCalledTimes(2);
 

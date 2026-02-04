@@ -66,10 +66,10 @@ describe('test GridFile', () => {
     const previewImg = container.querySelector('.guide-lines');
 
     fireEvent.click(previewImg);
-    expect(mockSetSelectedId).toBeCalledTimes(1);
+    expect(mockSetSelectedId).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedId).toHaveBeenNthCalledWith(1, 'mock-uuid');
     fireEvent.doubleClick(previewImg);
-    expect(mockOpen).toBeCalledTimes(1);
+    expect(mockOpen).toHaveBeenCalledTimes(1);
     expect(mockOpen).toHaveBeenNthCalledWith(1, mockFile);
 
     let dropdown = container.querySelector('.ant-dropdown');
@@ -82,17 +82,17 @@ describe('test GridFile', () => {
     expect(dropdown).toHaveClass('overlay');
     expect(dropdown).not.toHaveClass('ant-dropdown-hidden');
     expect(container).toMatchSnapshot();
-    expect(mockSetSelectedId).toBeCalledTimes(2);
+    expect(mockSetSelectedId).toHaveBeenCalledTimes(2);
     expect(mockSetSelectedId).toHaveBeenNthCalledWith(2, 'mock-uuid');
 
     fireEvent.click(getByText('Open'));
     expect(dropdown).toHaveClass('ant-dropdown-hidden');
-    expect(mockOpen).toBeCalledTimes(2);
+    expect(mockOpen).toHaveBeenCalledTimes(2);
     expect(mockOpen).toHaveBeenNthCalledWith(2, mockFile);
 
     fireEvent.click(getByText('Rename'));
-    expect(mockSetEditingId).toBeCalledTimes(1);
-    expect(mockSetEditingId).toBeCalledWith('mock-uuid');
+    expect(mockSetEditingId).toHaveBeenCalledTimes(1);
+    expect(mockSetEditingId).toHaveBeenCalledWith('mock-uuid');
     rerender(
       <MyCloudContext.Provider value={{ ...mockContext, editingId: 'mock-uuid' }}>
         <GridFile file={mockFile} />
@@ -105,8 +105,8 @@ describe('test GridFile', () => {
     expect(container).toMatchSnapshot();
     fireEvent.change(input, { target: { value: 'new name' } });
     fireEvent.blur(input);
-    expect(mockRename).toBeCalledTimes(1);
-    expect(mockRename).toBeCalledWith(mockFile, 'new name');
+    expect(mockRename).toHaveBeenCalledTimes(1);
+    expect(mockRename).toHaveBeenCalledWith(mockFile, 'new name');
 
     rerender(
       <MyCloudContext.Provider value={mockContext}>
@@ -115,12 +115,12 @@ describe('test GridFile', () => {
     );
 
     fireEvent.click(getByText('Duplicate'));
-    expect(mockDuplicate).toBeCalledTimes(1);
-    expect(mockDuplicate).toBeCalledWith(mockFile);
+    expect(mockDuplicate).toHaveBeenCalledTimes(1);
+    expect(mockDuplicate).toHaveBeenCalledWith(mockFile);
 
     fireEvent.click(getByText('Download'));
-    expect(mockDownload).toBeCalledTimes(1);
-    expect(mockDownload).toBeCalledWith(mockFile);
+    expect(mockDownload).toHaveBeenCalledTimes(1);
+    expect(mockDownload).toHaveBeenCalledWith(mockFile);
 
     fireEvent.click(getByText('Delete'));
 
@@ -129,8 +129,8 @@ describe('test GridFile', () => {
     expect(confirm).toBeInTheDocument();
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('OK'));
-    expect(mockDelete).toBeCalledTimes(1);
-    expect(mockDelete).toBeCalledWith(mockFile);
+    expect(mockDelete).toHaveBeenCalledTimes(1);
+    expect(mockDelete).toHaveBeenCalledWith(mockFile);
   });
 
   test('should rendered correctly in mobile', () => {
@@ -147,7 +147,7 @@ describe('test GridFile', () => {
     const previewImg = container.querySelector('.guide-lines');
 
     fireEvent.click(previewImg);
-    expect(mockSetSelectedId).toBeCalledTimes(1);
+    expect(mockSetSelectedId).toHaveBeenCalledTimes(1);
     expect(mockSetSelectedId).toHaveBeenNthCalledWith(1, 'mock-uuid');
 
     const dropdown = container.querySelector('.ant-dropdown');
@@ -155,6 +155,6 @@ describe('test GridFile', () => {
     expect(dropdown).toBeInTheDocument();
     expect(dropdown).not.toHaveClass('ant-dropdown-hidden');
     fireEvent.doubleClick(previewImg);
-    expect(mockOpen).not.toBeCalled();
+    expect(mockOpen).not.toHaveBeenCalled();
   });
 });

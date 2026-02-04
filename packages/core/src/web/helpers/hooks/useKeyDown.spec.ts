@@ -15,8 +15,8 @@ describe('test useKeyDown', () => {
     const removeEventListener = jest.spyOn(document, 'removeEventListener');
     const { unmount } = renderHook(() => useKeyDown({ keyDown, keyUp, predicate }));
 
-    expect(addEventListener).toBeCalledWith('keydown', expect.any(Function));
-    expect(addEventListener).toBeCalledWith('keyup', expect.any(Function));
+    expect(addEventListener).toHaveBeenCalledWith('keydown', expect.any(Function));
+    expect(addEventListener).toHaveBeenCalledWith('keyup', expect.any(Function));
     expect(removeEventListener).toHaveBeenCalledTimes(0);
 
     const keyDownEvent = new KeyboardEvent('keydown');

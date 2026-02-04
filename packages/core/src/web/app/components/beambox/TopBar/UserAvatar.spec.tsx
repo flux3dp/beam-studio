@@ -17,7 +17,7 @@ describe('test UserAvatar', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(container.querySelector('.user-avatar'));
-    expect(showFluxCreditDialog).toBeCalledTimes(1);
+    expect(showFluxCreditDialog).toHaveBeenCalledTimes(1);
   });
 
   test('with user avatar', () => {

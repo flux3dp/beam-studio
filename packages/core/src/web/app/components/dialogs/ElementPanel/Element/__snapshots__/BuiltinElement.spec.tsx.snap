@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`test BuiltinElement should render correctly 1`] = `
 <div>
@@ -8,14 +8,7 @@ exports[`test BuiltinElement should render correctly 1`] = `
     role="img"
     tabindex="-1"
   >
-    <svgr-url
-      aria-hidden="true"
-      classname=""
-      fill="currentColor"
-      focusable="false"
-      height="1em"
-      width="1em"
-    />
+    svgr-url
   </span>
 </div>
 `;
@@ -28,14 +21,7 @@ exports[`test BuiltinElement should render correctly when mainType missing 1`] =
     role="img"
     tabindex="-1"
   >
-    <svgr-url
-      aria-hidden="true"
-      classname=""
-      fill="currentColor"
-      focusable="false"
-      height="1em"
-      width="1em"
-    />
+    svgr-url
   </span>
 </div>
 `;

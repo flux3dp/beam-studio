@@ -51,11 +51,11 @@ describe('test FluxPlusModal', () => {
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.click(baseElement.querySelector('.button'));
-    expect(open).toBeCalledTimes(1);
-    expect(open).toBeCalledWith('https://website_url');
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://website_url');
 
     fireEvent.click(baseElement.querySelector('.ant-modal-close'));
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   test('mobile', () => {

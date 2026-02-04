@@ -37,7 +37,7 @@ describe('test TopBarController', () => {
 
     TopBarController.setElement(testElem);
     expect(mockOnObjectBlur).toHaveBeenCalledTimes(1);
-    expect(mockOnObjectFocus).toBeCalledTimes(1);
+    expect(mockOnObjectFocus).toHaveBeenCalledTimes(1);
     expect(mockOnObjectFocus).toHaveBeenLastCalledWith([testElem]);
     expect(mockEmit).toHaveBeenCalledTimes(1);
     expect(mockEmit).toHaveBeenNthCalledWith(1, 'SET_ELEMENT', testElem);

@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`test canvas/grid update zoom and toggle 1`] = `"<svg id="canvasGrid" class="container" style="display: inline;" viewBox="0 0 100 100"><g><line x1="0" y1="-15.5" x2="0" y2="84.5" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.5"></line><line x1="100" y1="-15.5" x2="100" y2="84.5" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.18"></line></g><g><line x1="0" y1="0" x2="100" y2="0" stroke="black" stroke-width="1" vector-effect="non-scaling-stroke" opacity="0.5"></line></g></svg>"`;
 

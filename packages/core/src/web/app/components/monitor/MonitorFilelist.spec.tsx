@@ -51,7 +51,7 @@ describe('test MonitorFilelist', () => {
     );
 
     await waitFor(() => {
-      expect(mockLs).toBeCalledTimes(1);
+      expect(mockLs).toHaveBeenCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
     });
     expect(container).toMatchSnapshot();
@@ -72,7 +72,7 @@ describe('test MonitorFilelist', () => {
     );
 
     await waitFor(() => {
-      expect(mockLs).toBeCalledTimes(2);
+      expect(mockLs).toHaveBeenCalledTimes(2);
       expect(mockLs).toHaveBeenNthCalledWith(1, '');
       expect(mockLs).toHaveBeenNthCalledWith(2, 'USB');
     });
@@ -93,7 +93,7 @@ describe('test MonitorFilelist', () => {
     );
 
     await waitFor(() => {
-      expect(mockLs).toBeCalledTimes(1);
+      expect(mockLs).toHaveBeenCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
     });
 
@@ -107,7 +107,7 @@ describe('test MonitorFilelist', () => {
       </MonitorContext.Provider>,
     );
     await waitFor(() => {
-      expect(mockLs).toBeCalledTimes(2);
+      expect(mockLs).toHaveBeenCalledTimes(2);
       expect(mockLs).toHaveBeenLastCalledWith('path/fa');
     });
     expect(getByText('de')).toBeInTheDocument();
@@ -130,7 +130,7 @@ describe('test MonitorFilelist', () => {
       </MonitorContext.Provider>,
     );
     await waitFor(() => {
-      expect(mockLs).toBeCalledTimes(3);
+      expect(mockLs).toHaveBeenCalledTimes(3);
       expect(mockLs).toHaveBeenLastCalledWith('path/fa');
     });
     expect(getByText('dh')).toBeInTheDocument();
@@ -147,9 +147,9 @@ describe('test MonitorFilelist', () => {
     );
 
     await waitFor(() => {
-      expect(mockLs).toBeCalledTimes(1);
+      expect(mockLs).toHaveBeenCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
-      expect(mockPopUpError).toBeCalledTimes(1);
+      expect(mockPopUpError).toHaveBeenCalledTimes(1);
       expect(mockPopUpError).toHaveBeenLastCalledWith({ id: 'ls error', message: 'error' });
     });
     expect(container).toMatchSnapshot();
@@ -168,7 +168,7 @@ describe('test MonitorFilelist', () => {
     );
 
     await waitFor(() => {
-      expect(mockLs).toBeCalledTimes(1);
+      expect(mockLs).toHaveBeenCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
     });
 
@@ -177,10 +177,10 @@ describe('test MonitorFilelist', () => {
     const divContainer = container.querySelector('.container');
 
     fireEvent.drop(divContainer, { dataTransfer: { files: [mockFile1] } });
-    expect(mockUploadFile).not.toBeCalled();
+    expect(mockUploadFile).not.toHaveBeenCalled();
 
     fireEvent.drop(divContainer, { dataTransfer: { files: [mockFile2] } });
-    expect(mockUploadFile).toBeCalledTimes(1);
+    expect(mockUploadFile).toHaveBeenCalledTimes(1);
     expect(mockUploadFile).toHaveBeenLastCalledWith(mockFile2);
   });
 });

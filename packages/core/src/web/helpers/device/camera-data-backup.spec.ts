@@ -113,11 +113,11 @@ describe('test camera-data-backup', () => {
       message: 'downloading_data',
       onCancel: expect.any(Function),
     });
-    expect(mockPopById).toBeCalledTimes(targetDirs.length + 2);
-    expect(mockUpdate).toBeCalledTimes(targetDirs.length * 2);
-    expect(mockDownloadFile).toBeCalledTimes(targetDirs.length * 2);
-    expect(mockJsZipInstance.folder).toBeCalledTimes(targetDirs.length);
-    expect(mockJsZipInstance.file).toBeCalledTimes(targetDirs.length * 2);
+    expect(mockPopById).toHaveBeenCalledTimes(targetDirs.length + 2);
+    expect(mockUpdate).toHaveBeenCalledTimes(targetDirs.length * 2);
+    expect(mockDownloadFile).toHaveBeenCalledTimes(targetDirs.length * 2);
+    expect(mockJsZipInstance.folder).toHaveBeenCalledTimes(targetDirs.length);
+    expect(mockJsZipInstance.file).toHaveBeenCalledTimes(targetDirs.length * 2);
     for (let i = 0; i < targetDirs.length; i++) {
       expect(mockUpdate).toHaveBeenNthCalledWith(i * 2 + 1, 'camera-data-backup', {
         message: `downloading_data ${targetDirs[i]} 1/2<br/>estimated_time_left 3.00 seconds`,
@@ -156,12 +156,12 @@ describe('test camera-data-backup', () => {
     });
     await downloadCameraData('deviceName');
     checkDownloadFiles();
-    expect(mockPopUp).toBeCalledTimes(1);
-    expect(mockPopUp).toBeCalledWith({ message: 'download_success' });
-    expect(mockJsZipInstance.generateAsync).not.toBeCalled();
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledWith({ message: 'download_success' });
+    expect(mockJsZipInstance.generateAsync).not.toHaveBeenCalled();
     mockJsZipInstance.generateAsync.mockResolvedValue('blob');
-    expect(mockWriteFileDialog).toBeCalledTimes(1);
-    expect(mockWriteFileDialog).toBeCalledWith(expect.any(Function), 'title', 'deviceName', [
+    expect(mockWriteFileDialog).toHaveBeenCalledTimes(1);
+    expect(mockWriteFileDialog).toHaveBeenCalledWith(expect.any(Function), 'title', 'deviceName', [
       { extensions: ['zip'], name: 'zip' },
     ]);
 
@@ -169,18 +169,18 @@ describe('test camera-data-backup', () => {
     const content = await getContent();
 
     expect(content).toBe('blob');
-    expect(mockJsZipInstance.generateAsync).toBeCalledTimes(1);
+    expect(mockJsZipInstance.generateAsync).toHaveBeenCalledTimes(1);
     expect(mockJsZipInstance.generateAsync).toHaveBeenNthCalledWith(1, { type: 'blob' });
-    expect(mockSet).toBeCalledTimes(1);
-    expect(mockSet).toBeCalledWith('ador-backup-path', 'path');
+    expect(mockSet).toHaveBeenCalledTimes(1);
+    expect(mockSet).toHaveBeenCalledWith('ador-backup-path', 'path');
   });
 
   test('download with no files', async () => {
     mockLs.mockResolvedValue({ files: [] });
     await downloadCameraData('deviceName');
-    expect(mockPopUpError).toBeCalledTimes(1);
-    expect(mockPopUpError).toBeCalledWith({ message: 'no_picture_found' });
-    expect(mockWriteFileDialog).not.toBeCalled();
+    expect(mockPopUpError).toHaveBeenCalledTimes(1);
+    expect(mockPopUpError).toHaveBeenCalledWith({ message: 'no_picture_found' });
+    expect(mockWriteFileDialog).not.toHaveBeenCalled();
   });
 
   test('download with no path selected', async () => {
@@ -196,8 +196,8 @@ describe('test camera-data-backup', () => {
     });
     await downloadCameraData('deviceName');
     checkDownloadFiles();
-    expect(mockPopUp).not.toBeCalled();
-    expect(mockSet).not.toBeCalled();
+    expect(mockPopUp).not.toHaveBeenCalled();
+    expect(mockSet).not.toHaveBeenCalled();
   });
 
   test('successfully upload', async () => {
@@ -229,21 +229,21 @@ describe('test camera-data-backup', () => {
     });
 
     await uploadCameraData();
-    expect(mockGetFileFromDialog).toBeCalledTimes(1);
-    expect(mockGetFileFromDialog).toBeCalledWith({
+    expect(mockGetFileFromDialog).toHaveBeenCalledTimes(1);
+    expect(mockGetFileFromDialog).toHaveBeenCalledWith({
       defaultPath: 'path',
       filters: [{ extensions: ['zip'], name: 'zip' }],
       properties: ['openFile'],
     });
-    expect(mockOpenSteppingProgress).toBeCalledTimes(1);
-    expect(mockOpenSteppingProgress).toBeCalledWith({
+    expect(mockOpenSteppingProgress).toHaveBeenCalledTimes(1);
+    expect(mockOpenSteppingProgress).toHaveBeenCalledWith({
       id: 'camera-data-backup',
       message: 'uploading_data',
       onCancel: expect.any(Function),
     });
-    expect(mockLoadAsync).toBeCalledTimes(1);
-    expect(mockLoadAsync).toBeCalledWith('arrayBuffer');
-    expect(mockJsZipInstance.filter).toBeCalledTimes(1);
+    expect(mockLoadAsync).toHaveBeenCalledTimes(1);
+    expect(mockLoadAsync).toHaveBeenCalledWith('arrayBuffer');
+    expect(mockJsZipInstance.filter).toHaveBeenCalledTimes(1);
 
     const filterFunction = mockJsZipInstance.filter.mock.calls[0][0];
 
@@ -251,52 +251,52 @@ describe('test camera-data-backup', () => {
     expect(filterFunction('camera_calib/file2', { dir: false })).toBe(true);
     expect(filterFunction('camera_calib/some-sub-folder/file', { dir: false })).toBe(false);
     expect(filterFunction('auto_leveling', { dir: true })).toBe(false);
-    expect(mockAsyncGetData).toBeCalledTimes(4);
-    expect(mockAsyncGetData).toBeCalledWith('blob');
-    expect(mockUploadToDirectory).toBeCalledTimes(3);
-    expect(mockUploadToDirectory).toBeCalledWith(
+    expect(mockAsyncGetData).toHaveBeenCalledTimes(4);
+    expect(mockAsyncGetData).toHaveBeenCalledWith('blob');
+    expect(mockUploadToDirectory).toHaveBeenCalledTimes(3);
+    expect(mockUploadToDirectory).toHaveBeenCalledWith(
       { name: 'file1', size: 1 },
       'camera_calib',
       'file1',
       expect.any(Function),
     );
-    expect(mockUploadToDirectory).toBeCalledWith(
+    expect(mockUploadToDirectory).toHaveBeenCalledWith(
       { name: 'file2', size: 2 },
       'camera_calib',
       'file2',
       expect.any(Function),
     );
-    expect(mockUploadToDirectory).toBeCalledWith(
+    expect(mockUploadToDirectory).toHaveBeenCalledWith(
       { name: 'file1', size: 3 },
       'auto_leveling',
       'file1',
       expect.any(Function),
     );
-    expect(mockUpdate).toBeCalledTimes(3);
-    expect(mockUpdate).toBeCalledWith('camera-data-backup', {
+    expect(mockUpdate).toHaveBeenCalledTimes(3);
+    expect(mockUpdate).toHaveBeenCalledWith('camera-data-backup', {
       message: 'uploading_data 1/4<br/>estimated_time_left 7.00 seconds',
       percentage: 13,
     });
-    expect(mockUpdate).toBeCalledWith('camera-data-backup', {
+    expect(mockUpdate).toHaveBeenCalledWith('camera-data-backup', {
       message: 'uploading_data 2/4<br/>estimated_time_left 3.33 seconds',
       percentage: 38,
     });
-    expect(mockUpdate).toBeCalledWith('camera-data-backup', {
+    expect(mockUpdate).toHaveBeenCalledWith('camera-data-backup', {
       message: 'uploading_data 3/4<br/>estimated_time_left 1.80 seconds',
       percentage: 63,
     });
-    expect(mockPopUp).toBeCalledTimes(1);
-    expect(mockPopUp).toBeCalledWith({ message: 'upload_success' });
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledWith({ message: 'upload_success' });
   });
 
   test('upload with no file selected', async () => {
     mockGetFileFromDialog.mockResolvedValue(null);
     await uploadCameraData();
-    expect(mockGetFileFromDialog).toBeCalledTimes(1);
-    expect(mockOpenSteppingProgress).not.toBeCalled();
-    expect(mockUploadToDirectory).not.toBeCalled();
-    expect(mockPopUp).not.toBeCalled();
-    expect(mockLoadAsync).not.toBeCalled();
+    expect(mockGetFileFromDialog).toHaveBeenCalledTimes(1);
+    expect(mockOpenSteppingProgress).not.toHaveBeenCalled();
+    expect(mockUploadToDirectory).not.toHaveBeenCalled();
+    expect(mockPopUp).not.toHaveBeenCalled();
+    expect(mockLoadAsync).not.toHaveBeenCalled();
   });
 
   test('upload with no file in zip', async () => {
@@ -306,11 +306,11 @@ describe('test camera-data-backup', () => {
     mockLoadAsync.mockResolvedValue(mockJsZipInstance);
     mockJsZipInstance.filter.mockReturnValue([]);
     await uploadCameraData();
-    expect(mockGetFileFromDialog).toBeCalledTimes(1);
-    expect(mockOpenSteppingProgress).toBeCalledTimes(1);
-    expect(mockPopById).toBeCalledTimes(1);
-    expect(mockUploadToDirectory).not.toBeCalled();
-    expect(mockPopUpError).toBeCalledTimes(1);
-    expect(mockPopUpError).toBeCalledWith({ message: 'incorrect_folder' });
+    expect(mockGetFileFromDialog).toHaveBeenCalledTimes(1);
+    expect(mockOpenSteppingProgress).toHaveBeenCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(1);
+    expect(mockUploadToDirectory).not.toHaveBeenCalled();
+    expect(mockPopUpError).toHaveBeenCalledTimes(1);
+    expect(mockPopUpError).toHaveBeenCalledWith({ message: 'incorrect_folder' });
   });
 });

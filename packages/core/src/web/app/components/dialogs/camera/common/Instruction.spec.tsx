@@ -28,8 +28,8 @@ describe('test Instruction', () => {
 
     const button = getByText('label');
 
-    expect(mockOnClick).not.toBeCalled();
+    expect(mockOnClick).not.toHaveBeenCalled();
     fireEvent.click(button);
-    expect(mockOnClick).toBeCalledTimes(1);
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });

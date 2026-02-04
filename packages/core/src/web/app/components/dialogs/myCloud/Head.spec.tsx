@@ -54,8 +54,8 @@ describe('test Head', () => {
 
     expect(dropdown).toBeInTheDocument();
     fireEvent.click(getByText('Name: A - Z'));
-    expect(mockSetSortby).toBeCalledTimes(1);
-    expect(mockSetSortby).toBeCalledWith('a2z', { label: 'Name: A - Z', value: 'a2z' });
+    expect(mockSetSortby).toHaveBeenCalledTimes(1);
+    expect(mockSetSortby).toHaveBeenCalledWith('a2z', { label: 'Name: A - Z', value: 'a2z' });
   });
 
   test('should rendered correctly in mobile', () => {
@@ -70,7 +70,7 @@ describe('test Head', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('Name: A - Z'));
-    expect(mockSetSortby).toBeCalledTimes(1);
-    expect(mockSetSortby).toBeCalledWith('a2z');
+    expect(mockSetSortby).toHaveBeenCalledTimes(1);
+    expect(mockSetSortby).toHaveBeenCalledWith('a2z');
   });
 });

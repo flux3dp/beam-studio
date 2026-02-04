@@ -268,7 +268,7 @@ describe('test MultiColorOptions mobile', () => {
     expect(mockAddSubCommand).toHaveBeenCalledTimes(2);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(1, mockChangeCmd);
     expect(mockAddSubCommand).toHaveBeenNthCalledWith(2, mockChangeCmd);
-    expect(mockAddCommandToHistory).not.toBeCalled();
+    expect(mockAddCommandToHistory).not.toHaveBeenCalled();
     expect(mockReRenderImageSymbolArray).toHaveBeenCalledTimes(1);
     expect(mockReRenderImageSymbolArray).toHaveBeenLastCalledWith(expect.anything(), {
       force: true,

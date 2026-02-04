@@ -55,12 +55,12 @@ describe('test FluxPlusWarning', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('Subscribe now'));
-    expect(open).toBeCalledTimes(1);
-    expect(open).toBeCalledWith('https://member_center_url');
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://member_center_url');
 
     fireEvent.click(getByText('Sign In'));
-    expect(onClose).toBeCalledTimes(1);
-    expect(showLoginDialog).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(showLoginDialog).toHaveBeenCalledTimes(1);
   });
 
   test('access monotype feature', () => {
@@ -69,12 +69,12 @@ describe('test FluxPlusWarning', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('Get Add-on'));
-    expect(open).toBeCalledTimes(1);
-    expect(open).toBeCalledWith('https://member_center_url');
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://member_center_url');
 
     fireEvent.click(getByText('Sign In'));
-    expect(onClose).toBeCalledTimes(1);
-    expect(showLoginDialog).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(showLoginDialog).toHaveBeenCalledTimes(1);
   });
 
   test('with user', () => {

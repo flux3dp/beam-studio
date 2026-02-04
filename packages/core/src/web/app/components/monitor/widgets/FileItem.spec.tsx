@@ -52,9 +52,9 @@ describe('should render correctly', () => {
     );
 
     await waitFor(() => {
-      expect(mockFileInfo).toBeCalledTimes(1);
+      expect(mockFileInfo).toHaveBeenCalledTimes(1);
       expect(mockFileInfo).toHaveBeenLastCalledWith('path', 'file');
-      expect(mockCreateObjectURL).toBeCalledTimes(1);
+      expect(mockCreateObjectURL).toHaveBeenCalledTimes(1);
       expect(mockCreateObjectURL).toHaveBeenLastCalledWith(mockData[2]);
     });
     expect(container).toMatchSnapshot();
@@ -80,11 +80,11 @@ describe('should render correctly', () => {
     mockFileInfo.mockResolvedValue(mockData);
     mockCreateObjectURL.mockReturnValue('mock-url2');
     await waitFor(() => {
-      expect(mockFileInfo).toBeCalledTimes(2);
+      expect(mockFileInfo).toHaveBeenCalledTimes(2);
       expect(mockFileInfo).toHaveBeenLastCalledWith('path2', 'file2');
-      expect(mockCreateObjectURL).toBeCalledTimes(2);
+      expect(mockCreateObjectURL).toHaveBeenCalledTimes(2);
       expect(mockCreateObjectURL).toHaveBeenLastCalledWith(mockData2[2]);
-      expect(mockRevokeObjectURL).toBeCalledTimes(1);
+      expect(mockRevokeObjectURL).toHaveBeenCalledTimes(1);
       expect(mockRevokeObjectURL).toHaveBeenLastCalledWith('mock-url');
     });
     expect(container).toMatchSnapshot();
@@ -113,28 +113,28 @@ describe('should render correctly', () => {
     );
 
     await waitFor(() => {
-      expect(mockFileInfo).toBeCalledTimes(1);
+      expect(mockFileInfo).toHaveBeenCalledTimes(1);
       expect(mockFileInfo).toHaveBeenLastCalledWith('path', 'file');
-      expect(mockCreateObjectURL).toBeCalledTimes(1);
+      expect(mockCreateObjectURL).toHaveBeenCalledTimes(1);
       expect(mockCreateObjectURL).toHaveBeenLastCalledWith(mockData[2]);
     });
 
     const divContainer = container.querySelector('.container');
 
-    expect(mockOnHighlightItem).not.toBeCalled();
+    expect(mockOnHighlightItem).not.toHaveBeenCalled();
     fireEvent.click(divContainer);
-    expect(mockOnHighlightItem).toBeCalledTimes(1);
+    expect(mockOnHighlightItem).toHaveBeenCalledTimes(1);
     expect(mockOnHighlightItem).toHaveBeenLastCalledWith({ name: 'file', type: 'FILE' });
 
-    expect(mockOnSelectFile).not.toBeCalled();
+    expect(mockOnSelectFile).not.toHaveBeenCalled();
     fireEvent.doubleClick(divContainer);
-    expect(mockOnSelectFile).toBeCalledTimes(1);
+    expect(mockOnSelectFile).toHaveBeenCalledTimes(1);
     expect(mockOnSelectFile).toHaveBeenLastCalledWith('file', mockData);
 
     const icon = container.querySelector('i');
 
-    expect(mockOnDeleteFile).not.toBeCalled();
+    expect(mockOnDeleteFile).not.toHaveBeenCalled();
     fireEvent.click(icon);
-    expect(mockOnDeleteFile).toBeCalledTimes(1);
+    expect(mockOnDeleteFile).toHaveBeenCalledTimes(1);
   });
 });

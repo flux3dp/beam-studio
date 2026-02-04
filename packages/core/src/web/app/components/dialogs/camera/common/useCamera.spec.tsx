@@ -144,7 +144,7 @@ describe('test useCamera', () => {
     render(<MockComponent handleImg={mockHandleImg} />);
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(3);
-    expect(mockHandleImg).not.toBeCalled();
+    expect(mockHandleImg).not.toHaveBeenCalled();
     expect(mockPopUpError).toHaveBeenCalledTimes(1);
     expect(mockPopUpError).toHaveBeenCalledWith({ message: 'Unable to get image' });
   });
@@ -160,7 +160,7 @@ describe('test useCamera', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(3);
     expect(mockHandleImg).toHaveBeenCalledTimes(1);
-    expect(mockPopUpError).not.toBeCalled();
+    expect(mockPopUpError).not.toHaveBeenCalled();
   });
 
   test('unstable handle image', async () => {
@@ -172,7 +172,7 @@ describe('test useCamera', () => {
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockTakeOnePicture).toHaveBeenCalledTimes(3);
     expect(mockHandleImg).toHaveBeenCalledTimes(3);
-    expect(mockPopUpError).not.toBeCalled();
+    expect(mockPopUpError).not.toHaveBeenCalled();
   });
 
   describe('getAutoExposure', () => {

@@ -23,8 +23,8 @@ describe('test DocumentButton', () => {
     const { container } = render(<DocumentButton />);
 
     expect(container).toMatchSnapshot();
-    expect(mockShowDocumentSettings).not.toBeCalled();
+    expect(mockShowDocumentSettings).not.toHaveBeenCalled();
     fireEvent.click(container.firstChild);
-    expect(mockShowDocumentSettings).toBeCalledTimes(1);
+    expect(mockShowDocumentSettings).toHaveBeenCalledTimes(1);
   });
 });

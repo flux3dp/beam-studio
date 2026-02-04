@@ -22,10 +22,10 @@ describe('test UnitInput', () => {
     const input = container.querySelector('input');
 
     fireEvent.change(input, { target: { value: '1' } });
-    expect(mockOnChange).not.toBeCalled();
+    expect(mockOnChange).not.toHaveBeenCalled();
     fireEvent.blur(input);
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(1);
   });
 
   test('onChange with fireOnChage', () => {
@@ -33,8 +33,8 @@ describe('test UnitInput', () => {
     const input = container.querySelector('input');
 
     fireEvent.change(input, { target: { value: '1' } });
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(1);
   });
 
   test('inch conversion', () => {
@@ -44,8 +44,8 @@ describe('test UnitInput', () => {
     expect(input).toHaveValue('1');
     fireEvent.change(input, { target: { value: '2' } });
     fireEvent.blur(input);
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith(50.8);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(50.8);
   });
 
   test('clip min', () => {
@@ -54,8 +54,8 @@ describe('test UnitInput', () => {
 
     fireEvent.change(input, { target: { value: '1' } });
     fireEvent.blur(input);
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith(10);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(10);
   });
 
   test('clip max', () => {
@@ -64,7 +64,7 @@ describe('test UnitInput', () => {
 
     fireEvent.change(input, { target: { value: '11' } });
     fireEvent.blur(input);
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith(10);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith(10);
   });
 });
