@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`test SpeedBlock should render correctly when has auto feeder vector speed warning 1`] = `
 <div>

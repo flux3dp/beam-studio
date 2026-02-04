@@ -12,16 +12,15 @@ jest.mock('@core/app/stores/storageStore', () => ({
 
 let i18n;
 
-const resetI18n = async () => {
+const resetI18n = () => {
   jest.resetModules();
   jest.clearAllMocks();
-  // @ts-ignore
-  i18n = (await import('./i18n')).default;
+  i18n = require('./i18n').default;
 };
 
 describe('test i18n', () => {
-  beforeEach(async () => {
-    await resetI18n();
+  beforeEach(() => {
+    resetI18n();
   });
 
   test('setActiveLang', () => {

@@ -33,11 +33,11 @@ describe('test image-edit-panel/preprocess', () => {
 
     const res = await preprocessByUrl('bloburl');
 
-    expect(mockUrlToImage).toBeCalledTimes(1);
+    expect(mockUrlToImage).toHaveBeenCalledTimes(1);
     expect(mockUrlToImage).toHaveBeenLastCalledWith('bloburl');
-    expect(mockJimpImage.resize).toBeCalledTimes(1);
+    expect(mockJimpImage.resize).toHaveBeenCalledTimes(1);
     expect(mockJimpImage.resize).toHaveBeenLastCalledWith(600, 'AUTO');
-    expect(mockImageToUrl).toBeCalledTimes(1);
+    expect(mockImageToUrl).toHaveBeenCalledTimes(1);
     expect(mockImageToUrl).toHaveBeenLastCalledWith(mockJimpImage);
     expect(res).toEqual({
       blobUrl: 'mock-url',

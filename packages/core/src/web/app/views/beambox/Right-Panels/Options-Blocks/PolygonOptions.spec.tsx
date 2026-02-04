@@ -84,17 +84,17 @@ describe('test PolygonOptions', () => {
     fireEvent.blur(input);
 
     expect(container).toMatchSnapshot();
-    expect(mockCreateBatchCommand).toBeCalledTimes(1);
+    expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenNthCalledWith(1, 'Change Polygon Sides');
     expect(mockUpdatePolygonSides).toHaveBeenCalledTimes(1);
     expect(mockUpdatePolygonSides).toHaveBeenCalledWith(elem, 3);
-    expect(mockBeginUndoableChange).toBeCalledTimes(2);
+    expect(mockBeginUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'sides', [elem]);
     expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'points', [elem]);
-    expect(mockFinishUndoableChange).toBeCalledTimes(2);
-    expect(mockBatchCmd.isEmpty).toBeCalledTimes(3);
-    expect(mockBatchCmd.addSubCommand).toBeCalledTimes(2);
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
+    expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
+    expect(mockBatchCmd.isEmpty).toHaveBeenCalledTimes(3);
+    expect(mockBatchCmd.addSubCommand).toHaveBeenCalledTimes(2);
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, mockBatchCmd);
 
     jest.clearAllMocks();
@@ -110,11 +110,11 @@ describe('test PolygonOptions', () => {
     fireEvent.change(input, { target: { value: 5 } });
     fireEvent.blur(input);
     expect(mockUpdatePolygonSides).not.toHaveBeenCalled();
-    expect(mockBeginUndoableChange).not.toBeCalled();
-    expect(mockFinishUndoableChange).not.toBeCalled();
-    expect(mockBatchCmd.isEmpty).not.toBeCalled();
-    expect(mockBatchCmd.addSubCommand).not.toBeCalled();
-    expect(mockAddCommandToHistory).not.toBeCalled();
+    expect(mockBeginUndoableChange).not.toHaveBeenCalled();
+    expect(mockFinishUndoableChange).not.toHaveBeenCalled();
+    expect(mockBatchCmd.isEmpty).not.toHaveBeenCalled();
+    expect(mockBatchCmd.addSubCommand).not.toHaveBeenCalled();
+    expect(mockAddCommandToHistory).not.toHaveBeenCalled();
   });
 
   test('should render correctly in mobile', async () => {

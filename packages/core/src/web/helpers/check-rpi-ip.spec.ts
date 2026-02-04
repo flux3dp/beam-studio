@@ -20,7 +20,7 @@ describe('test check-rpi-ip', () => {
     const res = await checkRpiIp();
 
     expect(res).toBe('123.123.123.123');
-    expect(mockDnsLookUpAll).toBeCalledTimes(1);
+    expect(mockDnsLookUpAll).toHaveBeenCalledTimes(1);
     expect(mockDnsLookUpAll).toHaveBeenLastCalledWith('raspberrypi.local');
   });
 
@@ -30,7 +30,7 @@ describe('test check-rpi-ip', () => {
     const res = await checkRpiIp();
 
     expect(res).toBe(null);
-    expect(mockDnsLookUpAll).toBeCalledTimes(1);
+    expect(mockDnsLookUpAll).toHaveBeenCalledTimes(1);
     expect(mockDnsLookUpAll).toHaveBeenLastCalledWith('raspberrypi.local');
   });
 
@@ -40,9 +40,9 @@ describe('test check-rpi-ip', () => {
     const res = await checkRpiIp();
 
     expect(res).toBe(null);
-    expect(mockDnsLookUpAll).toBeCalledTimes(1);
+    expect(mockDnsLookUpAll).toHaveBeenCalledTimes(1);
     expect(mockDnsLookUpAll).toHaveBeenLastCalledWith('raspberrypi.local');
-    expect(mockConsoleLog).toBeCalledTimes(1);
+    expect(mockConsoleLog).toHaveBeenCalledTimes(1);
     expect(mockConsoleLog).toHaveBeenLastCalledWith('DNS server not found raspberrypi.local');
   });
 });

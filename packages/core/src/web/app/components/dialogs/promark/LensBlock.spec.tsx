@@ -37,7 +37,7 @@ describe('test LensBlock', () => {
         const input = getByTestId(id);
 
         fireEvent.change(input, { target: { value: value.toString() } });
-        expect(mockSetData).toBeCalledTimes(1);
+        expect(mockSetData).toHaveBeenCalledTimes(1);
 
         const [[dispatch]] = mockSetData.mock.calls;
 
@@ -54,7 +54,7 @@ describe('test LensBlock', () => {
     const btn = getByText('Switch X/Y');
 
     fireEvent.click(btn);
-    expect(mockSetData).toBeCalledTimes(1);
+    expect(mockSetData).toHaveBeenCalledTimes(1);
 
     const [[dispatch]] = mockSetData.mock.calls;
 

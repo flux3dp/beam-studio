@@ -31,7 +31,7 @@ describe('test FieldBlock', () => {
         const input = getByTestId(id);
 
         fireEvent.change(input, { target: { value: '10' } });
-        expect(mockSetField).toBeCalledTimes(1);
+        expect(mockSetField).toHaveBeenCalledTimes(1);
 
         const [[dispatch]] = mockSetField.mock.calls;
 

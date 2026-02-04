@@ -51,12 +51,12 @@ describe('test FluxCredit', () => {
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('Go to Member Center'));
-    expect(open).toBeCalledTimes(1);
-    expect(open).toBeCalledWith('https://member.flux3dp.com/en-US/subscription');
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://member.flux3dp.com/en-US/subscription');
 
     fireEvent.click(getByText('Log out'));
-    expect(signOut).toBeCalledTimes(1);
-    waitFor(() => expect(onClose).toBeCalledTimes(1));
+    expect(signOut).toHaveBeenCalledTimes(1);
+    waitFor(() => expect(onClose).toHaveBeenCalledTimes(1));
   });
 
   test('should render correctly on mobile', () => {

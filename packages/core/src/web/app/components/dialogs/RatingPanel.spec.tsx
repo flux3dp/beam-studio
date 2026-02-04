@@ -81,14 +81,14 @@ describe('test RatingPanel', () => {
 
     fireEvent.click(getByText('change'));
     expect(container).toMatchSnapshot();
-    expect(onSubmit).not.toBeCalled();
+    expect(onSubmit).not.toHaveBeenCalled();
     fireEvent.click(getByText('ok'));
-    expect(onSubmit).toBeCalledTimes(1);
+    expect(onSubmit).toHaveBeenCalledTimes(1);
     expect(onSubmit).toHaveBeenLastCalledWith(5);
     expect(container).toMatchSnapshot();
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
     fireEvent.click(getByText('ok'));
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   test('toggle checkbox and cancel should work', () => {
@@ -96,10 +96,10 @@ describe('test RatingPanel', () => {
 
     fireEvent.click(getByText('checkbox'));
     expect(container).toMatchSnapshot();
-    expect(onClose).not.toBeCalled();
-    expect(mockSetNotShowing).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(mockSetNotShowing).not.toHaveBeenCalled();
     fireEvent.click(getByText('cancel'));
-    expect(onClose).toBeCalledTimes(1);
-    expect(mockSetNotShowing).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(mockSetNotShowing).toHaveBeenCalledTimes(1);
   });
 });

@@ -35,13 +35,13 @@ describe('test MonitorTabExtraContent', () => {
 
     expect(mockShowUploadDialog).not.toHaveBeenCalled();
     fireEvent.click(uploadBtn);
-    expect(mockShowUploadDialog).toBeCalledTimes(1);
+    expect(mockShowUploadDialog).toHaveBeenCalledTimes(1);
 
     const downloadBtn = container.querySelectorAll('button')[1];
 
     expect(mockOnDownload).not.toHaveBeenCalled();
     fireEvent.click(downloadBtn);
-    expect(mockOnDownload).toBeCalledTimes(1);
+    expect(mockOnDownload).toHaveBeenCalledTimes(1);
   });
 
   it('should render correctly when mode is not file', () => {

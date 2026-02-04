@@ -64,7 +64,7 @@ describe('test RatioLock', () => {
     const button = container.querySelector('button');
 
     fireEvent.click(button);
-    expect(mockOnClick).toBeCalledTimes(1);
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 
   test('onClick on mobile', () => {
@@ -74,6 +74,6 @@ describe('test RatioLock', () => {
     const button = container.querySelector('button');
 
     fireEvent.click(button);
-    expect(mockOnClick).toBeCalledTimes(1);
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });

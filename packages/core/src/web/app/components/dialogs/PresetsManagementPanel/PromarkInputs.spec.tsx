@@ -73,7 +73,7 @@ describe('PromarkInputs', () => {
     const input = getByTestId(key);
 
     fireEvent.change(input, { target: { value } });
-    expect(handleChange).toBeCalledTimes(1);
+    expect(handleChange).toHaveBeenCalledTimes(1);
     expect(handleChange).toHaveBeenLastCalledWith(key, value);
   });
 
@@ -84,7 +84,7 @@ describe('PromarkInputs', () => {
     const input = getByTestId(key);
 
     fireEvent.click(input);
-    expect(handleChange).toBeCalledTimes(1);
+    expect(handleChange).toHaveBeenCalledTimes(1);
     expect(handleChange).toHaveBeenLastCalledWith(key, value);
   });
 });

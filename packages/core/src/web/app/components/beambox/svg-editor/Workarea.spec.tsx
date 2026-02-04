@@ -124,10 +124,10 @@ describe('test workarea', () => {
     });
     expect(container).toMatchSnapshot();
 
-    expect(getSelectedElems).toBeCalled();
-    expect(mockgetObjectLayer).toBeCalled();
+    expect(getSelectedElems).toHaveBeenCalled();
+    expect(mockgetObjectLayer).toHaveBeenCalled();
     expect(getByText('Layer 1')).toBeDisabled();
-    expect(mockMoveToOtherLayer).not.toBeCalled();
+    expect(mockMoveToOtherLayer).not.toHaveBeenCalled();
     fireEvent.click(getByText('Layer 2'));
     expect(mockMoveToOtherLayer).toHaveBeenCalledTimes(1);
     expect(mockMoveToOtherLayer).toHaveBeenLastCalledWith('Layer 2', expect.anything(), false);

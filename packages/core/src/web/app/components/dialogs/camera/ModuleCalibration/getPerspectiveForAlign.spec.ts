@@ -77,15 +77,15 @@ describe('test getPerspectiveForAlign', () => {
       'mock-center' as any,
     );
 
-    expect(mockGetWorkarea).toBeCalledTimes(2);
+    expect(mockGetWorkarea).toHaveBeenCalledTimes(2);
     expect(mockGetWorkarea).toHaveBeenNthCalledWith(1, 'ado1', 'ado1');
     expect(mockGetWorkarea).toHaveBeenNthCalledWith(2, 'ado1', 'ado1');
-    expect(mockFetchAutoLevelingData).toBeCalledTimes(3);
+    expect(mockFetchAutoLevelingData).toHaveBeenCalledTimes(3);
     expect(mockFetchAutoLevelingData).toHaveBeenNthCalledWith(1, 'hexa_platform');
     expect(mockFetchAutoLevelingData).toHaveBeenNthCalledWith(2, 'bottom_cover');
     expect(mockFetchAutoLevelingData).toHaveBeenNthCalledWith(3, 'offset');
-    expect(mockInterpolatePointsFromHeight).not.toBeCalled();
-    expect(mockGetPerspectivePointsZ3Regression).toBeCalledTimes(1);
+    expect(mockInterpolatePointsFromHeight).not.toHaveBeenCalled();
+    expect(mockGetPerspectivePointsZ3Regression).toHaveBeenCalledTimes(1);
     expect(mockGetPerspectivePointsZ3Regression).toHaveBeenLastCalledWith(1, 'mock-z3-reg-param', {
       center: 'mock-center',
       chessboard: [48, 36],

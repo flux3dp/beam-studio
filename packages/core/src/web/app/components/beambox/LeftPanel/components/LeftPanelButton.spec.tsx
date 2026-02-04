@@ -32,8 +32,8 @@ describe('test LeftPanelButton', () => {
       <LeftPanelButton icon={<div>test</div>} id="test" onClick={mockOnClick} title="test" />,
     );
 
-    expect(mockOnClick).not.toBeCalled();
+    expect(mockOnClick).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('.container'));
-    expect(mockOnClick).toBeCalledTimes(1);
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });

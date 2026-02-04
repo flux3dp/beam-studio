@@ -204,7 +204,7 @@ test('should render correctly', async () => {
   act(() => {
     eventEmitter.emit('OPEN_MESSAGE', { level: MessageLevel.INFO });
   });
-  expect(mockMessageApi.info).toBeCalledTimes(1);
+  expect(mockMessageApi.info).toHaveBeenCalledTimes(1);
 
   unmount();
   expect(eventEmitter.eventNames().length).toBe(0);

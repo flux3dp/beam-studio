@@ -62,14 +62,14 @@ describe('test DirectoryItem', () => {
     );
     const divContainer = container.querySelector('.container');
 
-    expect(mockOnHighlightItem).not.toBeCalled();
+    expect(mockOnHighlightItem).not.toHaveBeenCalled();
     fireEvent.click(divContainer);
-    expect(mockOnHighlightItem).toBeCalledTimes(1);
+    expect(mockOnHighlightItem).toHaveBeenCalledTimes(1);
     expect(mockOnHighlightItem).toHaveBeenLastCalledWith({ name: 'directory', type: 'FOLDER' });
 
-    expect(mockOnSelectFolder).not.toBeCalled();
+    expect(mockOnSelectFolder).not.toHaveBeenCalled();
     fireEvent.doubleClick(divContainer);
-    expect(mockOnSelectFolder).toBeCalledTimes(1);
+    expect(mockOnSelectFolder).toHaveBeenCalledTimes(1);
     expect(mockOnSelectFolder).toHaveBeenLastCalledWith('directory');
   });
 });

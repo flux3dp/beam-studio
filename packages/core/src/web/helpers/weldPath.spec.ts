@@ -66,18 +66,18 @@ describe('test weldPath', () => {
 
     const res = weldPath(pathD);
 
-    expect(mockImportSVG).toBeCalledTimes(1);
-    expect(mockUnite).toBeCalledTimes(2);
+    expect(mockImportSVG).toHaveBeenCalledTimes(1);
+    expect(mockUnite).toHaveBeenCalledTimes(2);
     // sorted by area
     expect(mockUnite).toHaveBeenNthCalledWith(1, mockObjC);
     expect(mockUnite).toHaveBeenNthCalledWith(2, mockObjB);
-    expect(mockObjA.remove).toBeCalledTimes(1);
-    expect(mockObjB.remove).toBeCalledTimes(1);
-    expect(mockObjC.remove).toBeCalledTimes(1);
-    expect(mockObjA.reverse).not.toBeCalled();
-    expect(mockObjB.reverse).not.toBeCalled();
-    expect(mockObjC.reverse).toBeCalledTimes(1);
-    expect(mockGetAttribute).toBeCalledTimes(3);
+    expect(mockObjA.remove).toHaveBeenCalledTimes(1);
+    expect(mockObjB.remove).toHaveBeenCalledTimes(1);
+    expect(mockObjC.remove).toHaveBeenCalledTimes(1);
+    expect(mockObjA.reverse).not.toHaveBeenCalled();
+    expect(mockObjB.reverse).not.toHaveBeenCalled();
+    expect(mockObjC.reverse).toHaveBeenCalledTimes(1);
+    expect(mockGetAttribute).toHaveBeenCalledTimes(3);
     expect(res).toEqual('mock-path-1,mock-path-2,mock-path-3,');
   });
 });

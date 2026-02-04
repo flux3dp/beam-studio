@@ -43,11 +43,11 @@ describe('test Progress', () => {
 
     const cancelButton = getByText('Cancel');
 
-    expect(mockPopById).not.toBeCalled();
-    expect(mockOnCancel).not.toBeCalled();
+    expect(mockPopById).not.toHaveBeenCalled();
+    expect(mockOnCancel).not.toHaveBeenCalled();
     fireEvent.click(cancelButton);
-    expect(mockPopById).toBeCalledTimes(1);
+    expect(mockPopById).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenLastCalledWith('progress');
-    expect(mockOnCancel).toBeCalledTimes(1);
+    expect(mockOnCancel).toHaveBeenCalledTimes(1);
   });
 });

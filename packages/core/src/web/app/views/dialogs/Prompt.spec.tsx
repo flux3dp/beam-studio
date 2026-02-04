@@ -28,18 +28,18 @@ describe('test Prompt', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    expect(onYes).not.toBeCalled();
-    expect(onClose).not.toBeCalled();
+    expect(onYes).not.toHaveBeenCalled();
+    expect(onClose).not.toHaveBeenCalled();
     baseElement.querySelector('input').value = 'value';
     fireEvent.click(getByText('OK'));
-    expect(onYes).toBeCalledTimes(1);
+    expect(onYes).toHaveBeenCalledTimes(1);
     expect(onYes).toHaveBeenLastCalledWith('value');
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
 
-    expect(onCancel).not.toBeCalled();
+    expect(onCancel).not.toHaveBeenCalled();
     fireEvent.click(getByText('Cancel'));
-    expect(onCancel).toBeCalledTimes(1);
-    expect(onClose).toBeCalledTimes(2);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(2);
   });
 
   it('should work with confirmValue', () => {
@@ -56,23 +56,23 @@ describe('test Prompt', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    expect(onYes).not.toBeCalled();
+    expect(onYes).not.toHaveBeenCalled();
     baseElement.querySelector('input').value = 'not-value';
     fireEvent.click(getByText('OK'));
-    expect(onYes).toBeCalledTimes(1);
+    expect(onYes).toHaveBeenCalledTimes(1);
     expect(onYes).toHaveBeenLastCalledWith('not-value');
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
 
     baseElement.querySelector('input').value = 'value';
     fireEvent.click(getByText('OK'));
-    expect(onYes).toBeCalledTimes(2);
+    expect(onYes).toHaveBeenCalledTimes(2);
     expect(onYes).toHaveBeenLastCalledWith('value');
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
 
-    expect(onCancel).not.toBeCalled();
+    expect(onCancel).not.toHaveBeenCalled();
     fireEvent.click(getByText('Cancel'));
-    expect(onCancel).toBeCalledTimes(1);
-    expect(onClose).toBeCalledTimes(2);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(2);
   });
 
   it('should work with alertConfigKey', () => {
@@ -91,25 +91,25 @@ describe('test Prompt', () => {
     expect(baseElement).toMatchSnapshot();
 
     fireEvent.click(baseElement.querySelector('input[type="checkbox"]'));
-    expect(onYes).not.toBeCalled();
+    expect(onYes).not.toHaveBeenCalled();
     baseElement.querySelector('input').value = 'not-value';
     fireEvent.click(getByText('OK'));
-    expect(onYes).toBeCalledTimes(1);
+    expect(onYes).toHaveBeenCalledTimes(1);
     expect(onYes).toHaveBeenLastCalledWith('not-value');
-    expect(onClose).not.toBeCalled();
-    expect(mockWrite).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
+    expect(mockWrite).not.toHaveBeenCalled();
 
     baseElement.querySelector('input').value = 'value';
     fireEvent.click(getByText('OK'));
-    expect(onYes).toBeCalledTimes(2);
+    expect(onYes).toHaveBeenCalledTimes(2);
     expect(onYes).toHaveBeenLastCalledWith('value');
-    expect(onClose).toBeCalledTimes(1);
-    expect(mockWrite).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(mockWrite).toHaveBeenCalledTimes(1);
     expect(mockWrite).toHaveBeenLastCalledWith('skip_svg_version_warning', true);
 
-    expect(onCancel).not.toBeCalled();
+    expect(onCancel).not.toHaveBeenCalled();
     fireEvent.click(getByText('Cancel'));
-    expect(onCancel).toBeCalledTimes(1);
-    expect(onClose).toBeCalledTimes(2);
+    expect(onCancel).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(2);
   });
 });

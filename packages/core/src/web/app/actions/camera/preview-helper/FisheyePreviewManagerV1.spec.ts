@@ -142,7 +142,7 @@ describe('test FisheyePreviewManagerV1', () => {
     expect(mockRawAndHome).toHaveBeenCalledTimes(1);
     expect(mockRawAndHome).toHaveBeenCalledWith(mockUpdateMessage);
     expect(mockEndSubTask).toHaveBeenCalledTimes(1);
-    expect(mockOnObjectHeightChanged).toBeCalledTimes(1);
+    expect(mockOnObjectHeightChanged).toHaveBeenCalledTimes(1);
     expect(mockCloseMessage).toHaveBeenCalledTimes(1);
   });
 
@@ -182,8 +182,8 @@ describe('test FisheyePreviewManagerV1', () => {
     manager.onObjectHeightChanged = mockOnObjectHeightChanged;
     mockGetWorkarea.mockReturnValue({ deep: 100, height: 300, width: 430 });
     await manager.update3DRotation({ ch: 5, dh: 20, rx: 1, ry: 2, rz: 3, sh: 4, tx: 0, ty: 0 });
-    expect(mockGetWorkarea).toBeCalledTimes(1);
-    expect(mockGetWorkarea).toBeCalledWith('model-1', 'ado1');
+    expect(mockGetWorkarea).toHaveBeenCalledTimes(1);
+    expect(mockGetWorkarea).toHaveBeenCalledWith('model-1', 'ado1');
     expect(mockSet3dRotation).toHaveBeenCalledTimes(1);
     expect(mockSet3dRotation).toHaveBeenCalledWith({ h: 380, rx: 1, ry: 2, rz: 3, tx: 0, ty: 0 });
     expect(mockOnObjectHeightChanged).toHaveBeenCalledTimes(1);

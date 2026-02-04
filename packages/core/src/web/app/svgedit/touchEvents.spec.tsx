@@ -74,7 +74,7 @@ describe('test touchEvents', () => {
     });
 
     canvas.dispatchEvent(onePointTouchStart);
-    expect(mouseDown).not.toBeCalled();
+    expect(mouseDown).not.toHaveBeenCalled();
     jest.runOnlyPendingTimers();
     expect(mouseDown).toHaveBeenNthCalledWith(1, onePointTouchStart);
 
@@ -121,7 +121,7 @@ describe('test touchEvents', () => {
     });
 
     canvas.dispatchEvent(firstPointTouchStart);
-    expect(mouseDown).not.toBeCalled();
+    expect(mouseDown).not.toHaveBeenCalled();
 
     const twoPointTouchStart = new TouchEvent('touchstart', {
       // @ts-expect-error scale is defined in chrome & safari

@@ -97,6 +97,14 @@ jest.mock('@core/helpers/use-force-update', () => (): (() => void) => {
   return forceUpdate;
 });
 
+const MockIconComponent = () => 'svgr-url';
+const mockImportIcon = jest.fn();
+
+jest.mock('./importIcon', () => ({
+  __esModule: true,
+  default: (...args: unknown[]) => mockImportIcon(...args),
+}));
+
 import BuiltinElement from './BuiltinElement';
 
 describe('test BuiltinElement', () => {
@@ -104,6 +112,7 @@ describe('test BuiltinElement', () => {
     jest.clearAllMocks();
 
     mockGetCurrentLayerName.mockReturnValue('mock-layer-name');
+    mockImportIcon.mockResolvedValue(MockIconComponent);
   });
 
   it('should render correctly', async () => {
@@ -127,9 +136,7 @@ describe('test BuiltinElement', () => {
   });
 
   it('should render null when icon not found', async () => {
-    jest.doMock('@core/app/icons/shape/basic/mock-null.svg', () => {
-      throw new Error("Cannot find module './basic/mock-null.svg'");
-    });
+    mockImportIcon.mockRejectedValueOnce(new Error("Cannot find module './basic/mock-null.svg'"));
 
     const errorLog = jest.spyOn(console, 'error');
     const { container } = render(<BuiltinElement mainType="basic" path="mock-null" />);
@@ -142,7 +149,6 @@ describe('test BuiltinElement', () => {
     });
     expect(container).toBeEmptyDOMElement();
     expect(mockCloseDrawer).not.toHaveBeenCalled();
-    jest.dontMock('@core/app/icons/shape/basic/mock-null.svg');
   });
 
   it('should import predefined object', async () => {

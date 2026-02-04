@@ -27,14 +27,14 @@ describe('test image-edit-panel/handle-finish', () => {
       height: 200,
       width: 100,
     });
-    expect(mockAddBatchCommand).toBeCalledTimes(1);
+    expect(mockAddBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockAddBatchCommand).toHaveBeenLastCalledWith('Image Edit', mockElement, {
       height: 200,
       origImage: 'mock-src',
       width: 100,
       'xlink:href': 'mock-base64',
     });
-    expect(mockSelectOnly).toBeCalledTimes(1);
+    expect(mockSelectOnly).toHaveBeenCalledTimes(1);
     expect(mockSelectOnly).toHaveBeenLastCalledWith([mockElement], true);
   });
 });

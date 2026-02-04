@@ -30,8 +30,8 @@ describe('test ColorBlock', () => {
   test('onClick', () => {
     const { container } = render(<ColorBlock color="#333333" onClick={mockOnClick} />);
 
-    expect(mockOnClick).not.toBeCalled();
+    expect(mockOnClick).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('div.color>div'));
-    expect(mockOnClick).toBeCalledTimes(1);
+    expect(mockOnClick).toHaveBeenCalledTimes(1);
   });
 });

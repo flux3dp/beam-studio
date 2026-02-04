@@ -55,7 +55,7 @@ describe('test FullWindowPanel', () => {
 
     expect(container).toMatchSnapshot();
     expect(queryByText('Desktop Contents')).not.toBeInTheDocument();
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
     fireEvent.click(getByText('close'));
     expect(mockOnClose).toHaveBeenCalledTimes(1);
   });

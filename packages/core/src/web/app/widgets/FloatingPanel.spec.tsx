@@ -76,12 +76,12 @@ describe('test FloatingPanel', () => {
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-100px)))'));
     await waitFor(() => expect(panelEl.getAttribute('data-animating')).toBe('false'));
     expect(Math.round(Number(panelEl.style.height.slice(0, -2)))).toBe(100);
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
     mockDrag(draggableBar, 0, 100);
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (0px)))'));
     await waitFor(() => expect(panelEl.getAttribute('data-animating')).toBe('false'));
     expect(Number(panelEl.style.height.slice(0, -2)) === 0).toBeTruthy();
-    await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
   });
 
   it('should close when close is true', async () => {
@@ -89,13 +89,13 @@ describe('test FloatingPanel', () => {
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
 
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-40px)))'));
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
 
     const btn = container.querySelector('button');
 
     fireEvent.click(btn);
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (0px)))'));
-    await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
   });
 
   it('should close when clicking close button', async () => {
@@ -107,12 +107,12 @@ describe('test FloatingPanel', () => {
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
 
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-40px)))'));
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
 
     const close = container.querySelector('.close-icon');
 
     fireEvent.click(close);
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (0px)))'));
-    await waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
   });
 });

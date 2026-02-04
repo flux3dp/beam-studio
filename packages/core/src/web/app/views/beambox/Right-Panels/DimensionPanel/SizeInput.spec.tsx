@@ -75,7 +75,7 @@ describe('test SizeInput', () => {
     const input = container.querySelector('input');
 
     fireEvent.change(input, { target: { value: 1 } });
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith('width', 1);
   });
 
@@ -84,23 +84,23 @@ describe('test SizeInput', () => {
 
     const { container, unmount } = render(<SizeInput onChange={mockOnChange} type="w" value={0} />);
 
-    expect(mockCreateEventEmitter).toBeCalledTimes(1);
-    expect(mockOn).toBeCalledTimes(1);
-    expect(mockOn).toBeCalledWith('UPDATE_DIMENSION_VALUES', expect.any(Function));
-    expect(mockRemoveListener).toBeCalledTimes(0);
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledWith('UPDATE_DIMENSION_VALUES', expect.any(Function));
+    expect(mockRemoveListener).toHaveBeenCalledTimes(0);
 
     const handler = mockOn.mock.calls[0][1];
 
     mockGetValue.mockReturnValue(1);
     handler({ width: 10 });
     expect(container.querySelector('input').value).toBe('1.00');
-    expect(mockGetValue).toBeCalledTimes(1);
+    expect(mockGetValue).toHaveBeenCalledTimes(1);
     expect(mockGetValue).toHaveBeenNthCalledWith(1, { width: 10 }, 'w', {
       allowUndefined: true,
       unit: 'mm',
     });
     unmount();
-    expect(mockRemoveListener).toBeCalledTimes(1);
+    expect(mockRemoveListener).toHaveBeenCalledTimes(1);
     expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'UPDATE_DIMENSION_VALUES', handler);
   });
 
@@ -111,7 +111,7 @@ describe('test SizeInput', () => {
     const button = container.querySelector('button');
 
     fireEvent.click(button);
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith('width', 1);
   });
 
@@ -122,6 +122,6 @@ describe('test SizeInput', () => {
     const input = container.querySelector('input');
 
     fireEvent.blur(input);
-    expect(mockOnBlur).toBeCalledTimes(1);
+    expect(mockOnBlur).toHaveBeenCalledTimes(1);
   });
 });

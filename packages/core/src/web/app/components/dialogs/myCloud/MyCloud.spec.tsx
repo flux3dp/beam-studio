@@ -97,13 +97,13 @@ describe('test MyCloud', () => {
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Upgrade'));
-    expect(open).toBeCalledTimes(1);
-    expect(open).toBeCalledWith('https://website_url');
+    expect(open).toHaveBeenCalledTimes(1);
+    expect(open).toHaveBeenCalledWith('https://website_url');
 
     const closeButton = baseElement.querySelector('.ant-modal-close');
 
     fireEvent.click(closeButton);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('should rendered correctly when user is subscribed', () => {
@@ -132,6 +132,6 @@ describe('test MyCloud', () => {
     const button = container.querySelector('.close-icon');
 
     fireEvent.click(button);
-    waitFor(() => expect(mockOnClose).toBeCalledTimes(1));
+    waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
   });
 });

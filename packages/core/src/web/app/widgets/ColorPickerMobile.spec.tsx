@@ -62,23 +62,23 @@ describe('test ColorPickerMobile', () => {
     const { container, getByText } = render(<MockComponent />);
 
     mockSelectColor(container, 'AAFFFF');
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith('#aaffff', false);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith('#aaffff', false);
     fireEvent.click(getByText('Cancel'));
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('preview and ok', () => {
     const { container, getByText } = render(<MockComponent />);
 
     mockSelectColor(container, 'AAFFFF');
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith('#aaffff', false);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith('#aaffff', false);
     fireEvent.click(getByText('OK'));
-    expect(mockOnChange).toBeCalledTimes(2);
-    expect(mockOnChange).toBeCalledWith('#aaffff', undefined);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(2);
+    expect(mockOnChange).toHaveBeenCalledWith('#aaffff', undefined);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('hex input', () => {
@@ -86,13 +86,13 @@ describe('test ColorPickerMobile', () => {
     const input = container.querySelector('.footer .input input');
 
     fireEvent.change(input, { target: { value: 'aaaaff' } });
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith('#aaaaff', false);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith('#aaaaff', false);
     fireEvent.change(input, { target: { value: 'aaaaf' } });
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(input).toHaveDisplayValue('aaaaf');
     fireEvent.blur(input);
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(input).toHaveAttribute('value', 'AAAAFF');
   });
 
@@ -101,7 +101,7 @@ describe('test ColorPickerMobile', () => {
     const claerBtn = container.querySelector('.clear-button>div');
 
     fireEvent.click(claerBtn);
-    expect(mockOnChange).toBeCalledTimes(1);
-    expect(mockOnChange).toBeCalledWith('none', false);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledWith('none', false);
   });
 });

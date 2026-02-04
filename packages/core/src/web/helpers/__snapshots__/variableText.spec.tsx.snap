@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
 exports[`test variableText helper convertVariableText 1`] = `
 <body>
@@ -99,7 +99,7 @@ exports[`test variableText helper convertVariableText 1`] = `
         12:34:56.123+08:00Z
       </tspan>
       <tspan>
-        星期一 二月
+        Monday February
       </tspan>
     </text>
     

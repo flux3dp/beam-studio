@@ -144,7 +144,7 @@ describe('test InkBlock', () => {
     expect(mockChange).toHaveBeenCalledTimes(1);
     expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', ink: 8 });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change ink');
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change ink');
     expect(batchCmd.count).toBe(1);
     expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'ink', 8, { batchCmd });
@@ -153,7 +153,7 @@ describe('test InkBlock', () => {
     expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
+    expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);
   });
 
   test('onChange of value display should work', () => {
@@ -167,7 +167,7 @@ describe('test InkBlock', () => {
     expect(mockChange).toHaveBeenCalledTimes(1);
     expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', ink: 8 });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change ink');
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change ink');
     expect(batchCmd.count).toBe(1);
     expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'ink', 8, { batchCmd });
@@ -176,7 +176,7 @@ describe('test InkBlock', () => {
     expect(mockWriteData).toHaveBeenNthCalledWith(4, 'layer2', 'configName', 'CUSTOM_PRESET_CONSTANT', { batchCmd });
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
+    expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);
   });
 
   test('open and close modal should work', () => {

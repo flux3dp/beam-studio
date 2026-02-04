@@ -21,6 +21,7 @@ import useForceUpdate from '@core/helpers/use-force-update';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Element.module.scss';
+import importIcon from './importIcon';
 
 let svgCanvas: ISVGCanvas;
 
@@ -87,10 +88,8 @@ const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string })
       return;
     }
 
-    import(`@core/app/icons/shape/${key}.svg`)
-      .then((module) => {
-        const icon: ComponentType = module.default;
-
+    importIcon(key)
+      .then((icon) => {
         icons[key] = icon;
         forceUpdate();
       })

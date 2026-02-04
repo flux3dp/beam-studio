@@ -100,16 +100,16 @@ describe('test PromarkSettings', () => {
 
     const previewBtn = await findByText('Preview');
 
-    expect(mockStartFraming).not.toBeCalled();
-    expect(mockLoadTaskToSwiftray).not.toBeCalled();
+    expect(mockStartFraming).not.toHaveBeenCalled();
+    expect(mockLoadTaskToSwiftray).not.toHaveBeenCalled();
     mockApplyRedDot.mockReturnValue({
       field: 'mock-field',
       galvoParameters: 'mock-galvoParameters',
     });
 
     await act(async () => fireEvent.click(previewBtn));
-    expect(mockApplyRedDot).toBeCalledTimes(1);
-    expect(mockApplyRedDot).toBeCalledWith(
+    expect(mockApplyRedDot).toHaveBeenCalledTimes(1);
+    expect(mockApplyRedDot).toHaveBeenCalledWith(
       {
         offsetX: 0,
         offsetY: 0,
@@ -126,20 +126,20 @@ describe('test PromarkSettings', () => {
         y: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
       },
     );
-    expect(mockSetGalvoParameters).toBeCalledTimes(1);
-    expect(mockSetGalvoParameters).toBeCalledWith('mock-galvoParameters');
-    expect(mockSetField).toBeCalledTimes(1);
-    expect(mockSetField).toBeCalledWith(150, 'mock-field');
-    expect(mockGenerateCalibrationTaskString).toBeCalledTimes(1);
-    expect(mockGenerateCalibrationTaskString).toBeCalledWith({
+    expect(mockSetGalvoParameters).toHaveBeenCalledTimes(1);
+    expect(mockSetGalvoParameters).toHaveBeenCalledWith('mock-galvoParameters');
+    expect(mockSetField).toHaveBeenCalledTimes(1);
+    expect(mockSetField).toHaveBeenCalledWith(150, 'mock-field');
+    expect(mockGenerateCalibrationTaskString).toHaveBeenCalledTimes(1);
+    expect(mockGenerateCalibrationTaskString).toHaveBeenCalledWith({
       width: 150,
     });
-    expect(mockLoadTaskToSwiftray).toBeCalledTimes(1);
-    expect(mockLoadTaskToSwiftray).toBeCalledWith('task', 'fpm1');
-    expect(mockStartFraming).toBeCalledTimes(1);
-    expect(mockStopFraming).not.toBeCalled();
+    expect(mockLoadTaskToSwiftray).toHaveBeenCalledTimes(1);
+    expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1');
+    expect(mockStartFraming).toHaveBeenCalledTimes(1);
+    expect(mockStopFraming).not.toHaveBeenCalled();
     await act(async () => fireEvent.click(previewBtn));
-    expect(mockStopFraming).toBeCalledTimes(1);
+    expect(mockStopFraming).toHaveBeenCalledTimes(1);
   });
 
   test('Mark button', async () => {
@@ -149,38 +149,38 @@ describe('test PromarkSettings', () => {
 
     const markBtn = await findByText('Mark');
 
-    expect(mockLoadTaskToSwiftray).not.toBeCalled();
-    expect(mockDoPromarkCalibration).not.toBeCalled();
+    expect(mockLoadTaskToSwiftray).not.toHaveBeenCalled();
+    expect(mockDoPromarkCalibration).not.toHaveBeenCalled();
     await act(() => fireEvent.click(markBtn));
-    expect(mockGenerateCalibrationTaskString).toBeCalledTimes(1);
-    expect(mockGenerateCalibrationTaskString).toBeCalledWith({
+    expect(mockGenerateCalibrationTaskString).toHaveBeenCalledTimes(1);
+    expect(mockGenerateCalibrationTaskString).toHaveBeenCalledWith({
       power: 50,
       speed: 1000,
       width: 150,
     });
-    expect(mockLoadTaskToSwiftray).toBeCalledTimes(1);
-    expect(mockLoadTaskToSwiftray).toBeCalledWith('task', 'fpm1');
-    expect(mockDoPromarkCalibration).toBeCalledTimes(1);
-    expect(mockStartFraming).not.toBeCalled();
+    expect(mockLoadTaskToSwiftray).toHaveBeenCalledTimes(1);
+    expect(mockLoadTaskToSwiftray).toHaveBeenCalledWith('task', 'fpm1');
+    expect(mockDoPromarkCalibration).toHaveBeenCalledTimes(1);
+    expect(mockStartFraming).not.toHaveBeenCalled();
   });
 
   test('Cancel button', async () => {
     const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
     const cancelBtn = await findByText('Cancel');
 
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
     fireEvent.click(cancelBtn);
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('Save button', async () => {
     const { findByText } = render(<PromarkSettings device={mockDevice} initData={{}} onClose={mockOnClose} />);
     const saveBtn = await findByText('Save');
 
-    expect(mockPromarkUpdate).not.toBeCalled();
+    expect(mockPromarkUpdate).not.toHaveBeenCalled();
     await act(() => fireEvent.click(saveBtn));
-    expect(mockPromarkUpdate).toBeCalledTimes(1);
-    expect(mockPromarkUpdate).toBeCalledWith('123', {
+    expect(mockPromarkUpdate).toHaveBeenCalledTimes(1);
+    expect(mockPromarkUpdate).toHaveBeenCalledWith('123', {
       field: { angle: 0, offsetX: 0, offsetY: 0 },
       galvoParameters: {
         x: { bulge: 1, scale: 100, skew: 1, trapezoid: 1 },
@@ -188,6 +188,6 @@ describe('test PromarkSettings', () => {
       },
       redDot: { offsetX: 0, offsetY: 0, scaleX: 1, scaleY: 1 },
     });
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 });

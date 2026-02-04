@@ -18,9 +18,9 @@ describe('test AboutBeamStudio', () => {
     const { baseElement, getByText } = render(<AboutBeamStudio onClose={onClose} />);
 
     expect(baseElement).toMatchSnapshot();
-    expect(onClose).not.toBeCalled();
+    expect(onClose).not.toHaveBeenCalled();
     fireEvent.click(getByText('OK'));
-    expect(onClose).toBeCalledTimes(1);
+    expect(onClose).toHaveBeenCalledTimes(1);
   });
 
   afterAll(() => {

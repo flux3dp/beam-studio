@@ -39,7 +39,7 @@ describe('ContextMenu tests', () => {
 
     expect(container).toMatchSnapshot();
     act(() => showMenu({ id: 'ID', position: { x, y } }));
-    expect(setState).not.toBeCalled();
+    expect(setState).not.toHaveBeenCalled();
     expect(container.querySelectorAll('.react-contextmenu--visible').length).toBe(0);
     expect(container).toMatchSnapshot();
   });

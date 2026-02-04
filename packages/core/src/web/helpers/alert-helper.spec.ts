@@ -42,9 +42,9 @@ describe('test alert helper', () => {
 
   test('should register alert events', () => {
     alertHelper.registerAlertEvents();
-    expect(mockEventEmitter.on).toBeCalledTimes(1);
+    expect(mockEventEmitter.on).toHaveBeenCalledTimes(1);
     expect(mockEventEmitter.on).toHaveBeenLastCalledWith('PLAY', expect.any(Function));
-    expect(mockPopUp).not.toBeCalled();
+    expect(mockPopUp).not.toHaveBeenCalled();
   });
 
   test('should show invitation', () => {
@@ -52,14 +52,14 @@ describe('test alert helper', () => {
 
     const eventHandler = mockEventEmitter.on.mock.calls[0][1];
 
-    expect(mockPopUp).not.toBeCalled();
-    expect(mockConfigRead).not.toBeCalled();
+    expect(mockPopUp).not.toHaveBeenCalled();
+    expect(mockConfigRead).not.toHaveBeenCalled();
     mockConfigRead.mockReturnValue(false);
     // Count = 1, show FB group invitation
     eventHandler();
-    expect(mockConfigRead).toBeCalledTimes(1);
+    expect(mockConfigRead).toHaveBeenCalledTimes(1);
     expect(mockConfigRead).toHaveBeenLastCalledWith('skip-fb-group-invitation');
-    expect(mockPopUp).toBeCalledTimes(1);
+    expect(mockPopUp).toHaveBeenCalledTimes(1);
     expect(mockPopUp).toHaveBeenLastCalledWith({
       buttonLabels: ['Count Me In', 'Maybe Later', 'Already Joined'],
       callbacks: [expect.any(Function), expect.any(Function), expect.any(Function)],
@@ -73,24 +73,24 @@ describe('test alert helper', () => {
       primaryButtonIndex: 0,
     });
 
-    expect(mockConfigWrite).not.toBeCalled();
-    expect(mockOpen).not.toBeCalled();
+    expect(mockConfigWrite).not.toHaveBeenCalled();
+    expect(mockOpen).not.toHaveBeenCalled();
 
     const onJoinNow = mockPopUp.mock.calls[0][0].callbacks[0];
 
     onJoinNow();
-    expect(mockConfigWrite).toBeCalledTimes(1);
-    expect(mockConfigWrite).toBeCalledWith('skip-fb-group-invitation', true);
-    expect(mockOpen).toBeCalledTimes(1);
-    expect(mockOpen).toBeCalledWith('https://www.facebook.com/groups/flux.laser/');
+    expect(mockConfigWrite).toHaveBeenCalledTimes(1);
+    expect(mockConfigWrite).toHaveBeenCalledWith('skip-fb-group-invitation', true);
+    expect(mockOpen).toHaveBeenCalledTimes(1);
+    expect(mockOpen).toHaveBeenCalledWith('https://www.facebook.com/groups/flux.laser/');
 
     jest.clearAllMocks();
     // Count = 1~4, do nothing
     eventHandler();
     eventHandler();
     eventHandler();
-    expect(mockConfigRead).not.toBeCalled();
-    expect(mockPopUp).not.toBeCalled();
+    expect(mockConfigRead).not.toHaveBeenCalled();
+    expect(mockPopUp).not.toHaveBeenCalled();
 
     // Count = 5, show social media invitation
     eventHandler();

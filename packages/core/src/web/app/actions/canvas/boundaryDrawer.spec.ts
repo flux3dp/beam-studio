@@ -166,10 +166,9 @@ import type { BoundaryDrawer } from './boundaryDrawer';
 
 let boundaryDrawer: BoundaryDrawer;
 
-const resetBoundaryDrawer = async () => {
+const resetBoundaryDrawer = () => {
   jest.resetModules();
-  // @ts-ignore
-  ({ boundaryDrawer } = await import('./boundaryDrawer'));
+  ({ boundaryDrawer } = require('./boundaryDrawer'));
   jest.clearAllMocks();
   boundaryDrawer.registerEvents();
   registeredEvents.canvas['boundary-updated'] = mockOnBoundaryUpdated;
@@ -198,7 +197,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('update without boundary', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     registeredEvents.canvas['canvas-change']();
     await waitFor(() => expect(mockOnBoundaryUpdated).toHaveBeenCalled());
     // auto feeder
@@ -223,7 +222,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('show boundary with auto feeder', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     mockGetAutoFeeder.mockReturnValue(true);
     registeredEvents.document['auto-feeder']();
     await waitFor(() => expect(mockOnBoundaryUpdated).toHaveBeenCalled());
@@ -233,7 +232,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('show boundary with pass through', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     mockGetPassThrough.mockReturnValue(true);
     mockWorkarea.expansion = [0, 123];
     mockWorkarea.height = 3750 + 123;
@@ -246,7 +245,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('show boundary with open bottom', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
     mockDocumentStore.borderless = true;
     registeredEvents.document['borderless']();
@@ -257,7 +256,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('show boundary with uv print layer', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     mockGetSupportedModules.mockReturnValue([LayerModule.LASER_UNIVERSAL, LayerModule.UV_PRINT]);
     mockState.module.value = LayerModule.UV_PRINT;
     registeredEvents.store['module']();
@@ -267,7 +266,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('show boundary with single module', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm2NoExpansion);
     mockWorkarea.expansion = [0, 0];
     mockState.module.value = LayerModule.UV_WHITE_INK;
@@ -283,7 +282,7 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with printer module', async () => {
     // compare with 'show boundary with single module'
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm2NoExpansion);
     mockWorkarea.expansion = [0, 0];
     mockState.module.value = LayerModule.PRINTER_4C;
@@ -299,7 +298,7 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with union module', async () => {
     // compare with 'show boundary with single module'
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm2NoExpansion);
     mockWorkarea.expansion = [0, 0];
     mockState.module.value = LayerModule.UV_WHITE_INK;
@@ -334,7 +333,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('show boundary with diode module addon', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     mockDocumentStore['enable-diode'] = true;
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
     registeredEvents.document['enable-diode']();
@@ -345,7 +344,7 @@ describe('test boundaryDrawer', () => {
   });
 
   test('show boundary with diode module layer', async () => {
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     mockDocumentStore['enable-diode'] = true;
     mockState.diode.value = 1;
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
@@ -358,7 +357,7 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with multiple factors', async () => {
     // open bottom + diode
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm1);
     mockDocumentStore.borderless = true;
     mockDocumentStore['enable-diode'] = true;
@@ -372,7 +371,7 @@ describe('test boundaryDrawer', () => {
 
   test('show boundary with top expansion', async () => {
     Object.assign(mockWorkarea, defaultWorkarea.bm2);
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     registeredEvents.canvas['canvas-change']();
     await waitFor(() => expect(mockOnBoundaryUpdated).toHaveBeenCalled());
     expectBoundaryResult('M0,-400H3600V2400H0ZM0,0H3600V2400H0Z');
@@ -380,7 +379,7 @@ describe('test boundaryDrawer', () => {
 
   test('show real boundary', async () => {
     // compare with 'show boundary with single module'
-    await resetBoundaryDrawer();
+    resetBoundaryDrawer();
     Object.assign(mockWorkarea, defaultWorkarea.bm2NoExpansion);
     mockWorkarea.expansion = [0, 0];
     mockState.module.value = LayerModule.UV_WHITE_INK;

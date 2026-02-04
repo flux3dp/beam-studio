@@ -77,10 +77,10 @@ describe('test FlipButtons', () => {
 
     expect(mockFlipSelectedElements).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('#horizontal_flip'));
-    expect(mockFlipSelectedElements).toBeCalledTimes(1);
+    expect(mockFlipSelectedElements).toHaveBeenCalledTimes(1);
     expect(mockFlipSelectedElements).toHaveBeenLastCalledWith(-1, 1);
     fireEvent.click(container.querySelector('#vertical_flip'));
-    expect(mockFlipSelectedElements).toBeCalledTimes(2);
+    expect(mockFlipSelectedElements).toHaveBeenCalledTimes(2);
     expect(mockFlipSelectedElements).toHaveBeenLastCalledWith(1, -1);
   });
 });

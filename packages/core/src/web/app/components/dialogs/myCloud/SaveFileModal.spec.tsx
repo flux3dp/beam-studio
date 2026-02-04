@@ -50,8 +50,8 @@ describe('test SaveFileModal', () => {
     expect(baseElement).toMatchSnapshot();
     fireEvent.change(input, { target: { value: 'a file name' } });
     fireEvent.click(getByText('OK'));
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledWith('a file name');
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledWith('a file name');
   });
 
   test('should save to old file correctly with uuid', () => {
@@ -59,8 +59,8 @@ describe('test SaveFileModal', () => {
 
     expect(baseElement).toMatchSnapshot();
     fireEvent.click(getByText('Save'));
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledWith(null);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledWith(null);
   });
 
   test('should save to another file correctly with uuid', () => {
@@ -75,15 +75,15 @@ describe('test SaveFileModal', () => {
 
     fireEvent.change(input, { target: { value: 'new file name' } });
     fireEvent.click(getByText('OK'));
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledWith('new file name');
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledWith('new file name');
   });
 
   test('should behave correctly when cancelled', () => {
     const { baseElement } = render(<SaveFileModal onClose={mockOnClose} />);
 
     fireEvent.click(baseElement.querySelector('.anticon-close'));
-    expect(mockOnClose).toBeCalledTimes(1);
-    expect(mockOnClose).toBeCalledWith(null, true);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledWith(null, true);
   });
 });

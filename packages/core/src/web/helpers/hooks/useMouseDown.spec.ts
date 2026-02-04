@@ -15,8 +15,8 @@ describe('test useMouseDown', () => {
     const removeEventListener = jest.spyOn(document, 'removeEventListener');
     const { unmount } = renderHook(() => useMouseDown({ mouseDown, mouseUp, predicate }));
 
-    expect(addEventListener).toBeCalledWith('mousedown', expect.any(Function));
-    expect(addEventListener).toBeCalledWith('mouseup', expect.any(Function));
+    expect(addEventListener).toHaveBeenCalledWith('mousedown', expect.any(Function));
+    expect(addEventListener).toHaveBeenCalledWith('mouseup', expect.any(Function));
     expect(removeEventListener).toHaveBeenCalledTimes(0);
 
     const mouseDownEvent = new MouseEvent('mousedown');

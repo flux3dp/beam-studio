@@ -98,22 +98,22 @@ describe('test PathEditPanel', () => {
 
     expect(container).toMatchSnapshot();
 
-    expect(setSelectedNodeType).not.toBeCalled();
+    expect(setSelectedNodeType).not.toHaveBeenCalled();
     fireEvent.click(getByTitle('Smooth'));
-    expect(setSelectedNodeType).toBeCalledTimes(1);
+    expect(setSelectedNodeType).toHaveBeenCalledTimes(1);
     expect(setSelectedNodeType).toHaveBeenLastCalledWith(1);
 
-    expect(mockSetRound).not.toBeCalled();
+    expect(mockSetRound).not.toHaveBeenCalled();
     fireEvent.click(getByText('Round'));
-    expect(mockSetRound).toBeCalledTimes(1);
+    expect(mockSetRound).toHaveBeenCalledTimes(1);
 
-    expect(mockSetSharp).not.toBeCalled();
+    expect(mockSetSharp).not.toHaveBeenCalled();
     fireEvent.click(getByText('Sharp'));
-    expect(mockSetRound).toBeCalledTimes(1);
+    expect(mockSetRound).toHaveBeenCalledTimes(1);
 
-    expect(mockDisconnectNode).not.toBeCalled();
+    expect(mockDisconnectNode).not.toHaveBeenCalled();
     fireEvent.click(getByText('Disconnect'));
-    expect(mockDisconnectNode).toBeCalledTimes(1);
+    expect(mockDisconnectNode).toHaveBeenCalledTimes(1);
   });
 
   test('should render correctly in mobile', async () => {
@@ -126,30 +126,30 @@ describe('test PathEditPanel', () => {
     await waitFor(() => expect(panelEl.getAttribute('data-animating')).toBe('false'));
     expect(container).toMatchSnapshot();
 
-    expect(setSelectedNodeType).not.toBeCalled();
+    expect(setSelectedNodeType).not.toHaveBeenCalled();
     fireEvent.click(getByTitle('Smooth'));
-    expect(setSelectedNodeType).toBeCalledTimes(1);
+    expect(setSelectedNodeType).toHaveBeenCalledTimes(1);
     expect(setSelectedNodeType).toHaveBeenLastCalledWith(1);
 
-    expect(mockSetRound).not.toBeCalled();
+    expect(mockSetRound).not.toHaveBeenCalled();
     fireEvent.click(getByText('Round'));
-    expect(mockSetRound).toBeCalledTimes(1);
+    expect(mockSetRound).toHaveBeenCalledTimes(1);
 
-    expect(mockSetSharp).not.toBeCalled();
+    expect(mockSetSharp).not.toHaveBeenCalled();
     fireEvent.click(getByText('Sharp'));
-    expect(mockSetRound).toBeCalledTimes(1);
+    expect(mockSetRound).toHaveBeenCalledTimes(1);
 
-    expect(mockDisconnectNode).not.toBeCalled();
+    expect(mockDisconnectNode).not.toHaveBeenCalled();
     fireEvent.click(getByText('Disconnect'));
-    expect(mockDisconnectNode).toBeCalledTimes(1);
+    expect(mockDisconnectNode).toHaveBeenCalledTimes(1);
 
-    expect(deleteSelected).not.toBeCalled();
+    expect(deleteSelected).not.toHaveBeenCalled();
     fireEvent.click(getByText('Delete'));
-    expect(deleteSelected).toBeCalledTimes(1);
+    expect(deleteSelected).toHaveBeenCalledTimes(1);
 
-    expect(toSelectMode).not.toBeCalled();
+    expect(toSelectMode).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('.close-icon'));
     await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (0px)))'));
-    await waitFor(() => expect(toSelectMode).toBeCalledTimes(1));
+    await waitFor(() => expect(toSelectMode).toHaveBeenCalledTimes(1));
   });
 });

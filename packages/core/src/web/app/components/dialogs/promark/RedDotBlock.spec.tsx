@@ -34,7 +34,7 @@ describe('test RedDotBlock', () => {
             value: '10',
           },
         });
-        expect(mockSetRedDot).toBeCalledTimes(1);
+        expect(mockSetRedDot).toHaveBeenCalledTimes(1);
 
         const [[dispatch]] = mockSetRedDot.mock.calls;
 

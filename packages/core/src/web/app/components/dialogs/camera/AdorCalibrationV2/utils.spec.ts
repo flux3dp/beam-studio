@@ -174,17 +174,17 @@ describe('test AdorCalibrationV2 utils', () => {
       message: 'downloading_pictures',
       onCancel: expect.any(Function),
     });
-    expect(mockLs).toBeCalledTimes(1);
+    expect(mockLs).toHaveBeenCalledTimes(1);
     expect(mockLs).toHaveBeenLastCalledWith('camera_calib');
-    expect(mockStartFisheyeCalibrate).toBeCalledTimes(1);
-    expect(mockDownloadFile).toBeCalledTimes(2);
+    expect(mockStartFisheyeCalibrate).toHaveBeenCalledTimes(1);
+    expect(mockDownloadFile).toHaveBeenCalledTimes(2);
     expect(mockDownloadFile).toHaveBeenNthCalledWith(1, 'camera_calib', 'pic_-10.0_top_left.jpg', expect.any(Function));
     expect(mockDownloadFile).toHaveBeenNthCalledWith(2, 'camera_calib', 'pic_20.0_top_left.jpg', expect.any(Function));
-    expect(mockAddFisheyeCalibrateImg).toBeCalledTimes(2);
+    expect(mockAddFisheyeCalibrateImg).toHaveBeenCalledTimes(2);
     expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(1, -10, 'camera_calib/pic_-10.0_top_left.jpg');
     expect(mockAddFisheyeCalibrateImg).toHaveBeenNthCalledWith(2, 20, 'camera_calib/pic_20.0_top_left.jpg');
-    expect(mockDoFishEyeCalibration).toBeCalledTimes(1);
-    expect(mockUpdate).toBeCalledTimes(5);
+    expect(mockDoFishEyeCalibration).toHaveBeenCalledTimes(1);
+    expect(mockUpdate).toHaveBeenCalledTimes(5);
     expect(mockUpdate).toHaveBeenNthCalledWith(1, 'calibrate-with-device-pictures', {
       message: 'downloading_pictures 1/2<br/>estimated_time_left 3.00 s',
       percentage: 25,

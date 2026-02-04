@@ -134,9 +134,9 @@ describe('should render correctly', () => {
       );
 
       expect(container).toMatchSnapshot();
-      expect(mockOnClick1).toBeCalledTimes(0);
+      expect(mockOnClick1).toHaveBeenCalledTimes(0);
       fireEvent.click(container.querySelector('div.object-panel-item'));
-      expect(mockOnClick1).toBeCalledTimes(1);
+      expect(mockOnClick1).toHaveBeenCalledTimes(1);
       expect(container.querySelector('div.object-panel-item')).toHaveClass('active');
     });
   });
@@ -170,13 +170,13 @@ describe('should render correctly', () => {
 
       fireEvent.click(container.querySelector('div.object-panel-item'));
       expect(baseElement).toMatchSnapshot();
-      expect(mockOnClick1).toBeCalledTimes(0);
+      expect(mockOnClick1).toHaveBeenCalledTimes(0);
       fireEvent.click(getByText('mock action 1'));
-      expect(mockOnClick1).toBeCalledTimes(1);
+      expect(mockOnClick1).toHaveBeenCalledTimes(1);
       expect(baseElement.querySelector('div.action')).toHaveClass('active');
       await waitFor(() => expect(baseElement.querySelector('div.action')).not.toHaveClass('active'), { timeout: 2000 });
       fireEvent.click(getByText('mock action 2'));
-      expect(mockOnClick2).toBeCalledTimes(0);
+      expect(mockOnClick2).toHaveBeenCalledTimes(0);
       expect(baseElement.querySelectorAll('div.action')[1]).not.toHaveClass('active');
     });
   });
@@ -198,42 +198,42 @@ describe('should render correctly', () => {
       expect(mask).not.toHaveClass('hide');
       expect(objectPanelItem).toHaveClass('active');
       expect(baseElement).toMatchSnapshot();
-      expect(mockUpdateValue).toBeCalledTimes(0);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(0);
 
       fireEvent.click(baseElement.querySelectorAll('.step-buttons button')[1]);
-      expect(mockUpdateValue).toBeCalledTimes(1);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(1);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(1, 2);
       expect(displayBtn).toHaveTextContent('2');
 
       fireEvent.click(getByText('8'));
-      expect(mockUpdateValue).toBeCalledTimes(2);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(2);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(2, 28);
       expect(displayBtn).toHaveTextContent('28');
 
       fireEvent.click(getByText('.'));
-      expect(mockUpdateValue).toBeCalledTimes(3);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(3);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(3, 28);
       expect(displayBtn).toHaveTextContent('28.');
       expect(getByText('.').parentElement).toHaveClass('adm-button-disabled');
 
       fireEvent.click(getByText('5'));
-      expect(mockUpdateValue).toBeCalledTimes(4);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(4);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(4, 28.5);
       expect(displayBtn).toHaveTextContent('28.5');
 
       fireEvent.click(getByText('3'));
-      expect(mockUpdateValue).toBeCalledTimes(5);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(5);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(5, 28.53);
       expect(displayBtn).toHaveTextContent('28.53');
       expect(getByText('1').parentElement).toHaveClass('adm-button-disabled');
 
       fireEvent.click(baseElement.querySelectorAll('.step-buttons button')[0]);
-      expect(mockUpdateValue).toBeCalledTimes(6);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(6);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(6, 27.53);
       expect(displayBtn).toHaveTextContent('27.53');
 
       fireEvent.click(baseElement.querySelectorAll('.input-keys button')[11]);
-      expect(mockUpdateValue).toBeCalledTimes(7);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(7);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(7, 27.5);
       expect(displayBtn).toHaveTextContent('27.5');
 
@@ -261,24 +261,24 @@ describe('should render correctly', () => {
       fireEvent.click(objectPanelItem);
       expect(mask).not.toHaveClass('hide');
       expect(objectPanelItem).toHaveClass('active');
-      expect(mockUpdateValue).toBeCalledTimes(0);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(0);
 
       expect(getByText('.').parentElement).toHaveClass('adm-button-disabled');
       expect(getByText('1').parentElement).toHaveClass('adm-button-disabled');
       fireEvent.click(baseElement.querySelectorAll('.input-keys button')[11]);
-      expect(mockUpdateValue).toBeCalledTimes(1);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(1);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(1, 0.9906);
       expect(displayBtn).toHaveTextContent('0.039');
       expect(getByText('.').parentElement).toHaveClass('adm-button-disabled');
       expect(getByText('1').parentElement).not.toHaveClass('adm-button-disabled');
 
       fireEvent.click(baseElement.querySelectorAll('.step-buttons button')[1]);
-      expect(mockUpdateValue).toBeCalledTimes(2);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(2);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(2, 26.3906);
       expect(displayBtn).toHaveTextContent('1.039');
 
       fireEvent.click(getByText('0'));
-      expect(mockUpdateValue).toBeCalledTimes(3);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(3);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(3, 26.3906);
       expect(displayBtn).toHaveTextContent('1.0390');
       expect(getByText('1').parentElement).toHaveClass('adm-button-disabled');
@@ -307,10 +307,10 @@ describe('should render correctly', () => {
       fireEvent.click(objectPanelItem);
       expect(mask).not.toHaveClass('hide');
       expect(objectPanelItem).toHaveClass('active');
-      expect(mockUpdateValue).toBeCalledTimes(0);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(0);
 
       fireEvent.click(baseElement.querySelectorAll('.step-buttons button')[1]);
-      expect(mockUpdateValue).toBeCalledTimes(1);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(1);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(1, 2);
       expect(displayBtn).toHaveTextContent('2°');
 
@@ -342,7 +342,7 @@ describe('should render correctly', () => {
       expect(getByText('1').parentElement).not.toHaveClass('adm-button-disabled');
       fireEvent.click(getByText('1'));
       expect(displayBtn).toHaveTextContent('0.111');
-      expect(mockUpdateValue).toBeCalledTimes(4);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(4);
       expect(getByText('1').parentElement).toHaveClass('adm-button-disabled');
     });
 
@@ -376,12 +376,12 @@ describe('should render correctly', () => {
       fireEvent.click(getByText('5'));
       fireEvent.click(getByText('1'));
       expect(displayBtn).toHaveTextContent('51');
-      expect(mockUpdateValue).toBeCalledTimes(2);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(2);
       fireEvent.click(mask);
       expect(mask).toHaveClass('hide');
       expect(baseElement.querySelector('.adm-popover')).toHaveClass('adm-popover-hidden');
       expect(objectPanelItem).not.toHaveClass('active');
-      expect(mockUpdateValue).toBeCalledTimes(3);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(3);
       expect(displayBtn).toHaveTextContent('50');
     });
   });
@@ -417,12 +417,12 @@ describe('should render correctly', () => {
       fireEvent.click(objectPanelItem);
       expect(mask).not.toHaveClass('hide');
       expect(objectPanelItem).toHaveClass('active');
-      expect(mockUpdateValue).toBeCalledTimes(0);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(0);
       expect(getByText('option-1').parentElement).toHaveClass('active');
       expect(getByText('option-2').parentElement).not.toHaveClass('active');
 
       fireEvent.click(getByText('option-2'));
-      expect(mockUpdateValue).toBeCalledTimes(1);
+      expect(mockUpdateValue).toHaveBeenCalledTimes(1);
       expect(mockUpdateValue).toHaveBeenNthCalledWith(1, 2);
       expect(displayContent).toHaveTextContent('display label 2');
       await waitFor(() => expect(objectPanelItem).not.toHaveClass('active'));

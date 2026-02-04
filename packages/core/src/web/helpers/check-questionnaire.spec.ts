@@ -54,7 +54,7 @@ describe('test check-questionnaire', () => {
 
     const result = await checkQuestionnaire({ useCache: false });
 
-    expect(mockGet).toBeCalledTimes(1);
+    expect(mockGet).toHaveBeenCalledTimes(1);
     expect(mockGet).toHaveBeenLastCalledWith('questionnaire-version');
     expect(result.version).toBe(3);
     expect(result.urls).toEqual({

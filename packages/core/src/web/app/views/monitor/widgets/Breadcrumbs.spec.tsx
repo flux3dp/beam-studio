@@ -45,7 +45,7 @@ describe('test Breadcrumbs', () => {
     );
     const home = container.querySelector('[aria-label="home"]');
 
-    expect(mockOnSelectFolder).not.toBeCalled();
+    expect(mockOnSelectFolder).not.toHaveBeenCalled();
     fireEvent.click(home);
     expect(mockOnSelectFolder).toHaveBeenLastCalledWith('', true);
 

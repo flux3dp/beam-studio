@@ -31,16 +31,16 @@ describe('test CanvasController', () => {
     const buttons = container.querySelectorAll('.button');
 
     fireEvent.click(buttons[0]);
-    expect(mockSetResetKey).toBeCalledTimes(1);
+    expect(mockSetResetKey).toHaveBeenCalledTimes(1);
     expect(mockResetKey).toBe(1);
     fireEvent.click(buttons[1]);
-    expect(mockSetZoomKey).toBeCalledTimes(1);
+    expect(mockSetZoomKey).toHaveBeenCalledTimes(1);
     expect(mockZoomKey).toBe(-1);
     fireEvent.click(buttons[1]);
-    expect(mockSetZoomKey).toBeCalledTimes(2);
+    expect(mockSetZoomKey).toHaveBeenCalledTimes(2);
     expect(mockZoomKey).toBe(-2);
     fireEvent.click(buttons[2]);
-    expect(mockSetZoomKey).toBeCalledTimes(3);
+    expect(mockSetZoomKey).toHaveBeenCalledTimes(3);
     expect(mockZoomKey).toBe(3);
   });
 });

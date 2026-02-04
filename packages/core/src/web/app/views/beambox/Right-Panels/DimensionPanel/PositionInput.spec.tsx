@@ -88,7 +88,7 @@ describe('test PositionInput', () => {
     const input = container.querySelector('input');
 
     fireEvent.change(input, { target: { value: 1 } });
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith('x', 1);
   });
 
@@ -97,23 +97,23 @@ describe('test PositionInput', () => {
 
     const { container, unmount } = render(<PositionInput onChange={mockOnChange} type="x" value={0} />);
 
-    expect(mockCreateEventEmitter).toBeCalledTimes(1);
-    expect(mockOn).toBeCalledTimes(1);
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
     expect(mockOn).toHaveBeenNthCalledWith(1, 'UPDATE_DIMENSION_VALUES', expect.any(Function));
-    expect(mockRemoveListener).toBeCalledTimes(0);
+    expect(mockRemoveListener).toHaveBeenCalledTimes(0);
     mockGetValue.mockReturnValue(1);
 
     const handler = mockOn.mock.calls[0][1];
 
     handler({ x: 10 });
-    expect(mockGetValue).toBeCalledTimes(1);
+    expect(mockGetValue).toHaveBeenCalledTimes(1);
     expect(mockGetValue).toHaveBeenNthCalledWith(1, { x: 10 }, 'x', {
       allowUndefined: true,
       unit: 'mm',
     });
     expect(container.querySelector('input').value).toBe('1.00');
     unmount();
-    expect(mockRemoveListener).toBeCalledTimes(1);
+    expect(mockRemoveListener).toHaveBeenCalledTimes(1);
     expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'UPDATE_DIMENSION_VALUES', handler);
   });
 
@@ -124,7 +124,7 @@ describe('test PositionInput', () => {
     const button = container.querySelector('button');
 
     fireEvent.click(button);
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith('x', 1);
   });
 });

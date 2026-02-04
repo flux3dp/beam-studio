@@ -39,7 +39,7 @@ describe('test ObjectPanelController', () => {
     ObjectPanelController.updateObjectPanel();
     expect(clearTimeout).toHaveBeenCalledTimes(1);
     expect(setTimeout).toHaveBeenCalledTimes(1);
-    expect(emit).not.toBeCalled();
+    expect(emit).not.toHaveBeenCalled();
     jest.runAllTimers();
     expect(emit).toHaveBeenCalledTimes(1);
     expect(emit).toHaveBeenNthCalledWith(1, 'UPDATE_OBJECT_PANEL');

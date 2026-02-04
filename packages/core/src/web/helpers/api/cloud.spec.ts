@@ -33,27 +33,27 @@ describe('test cloud api', () => {
     mockGet.mockReturnValueOnce('2023-05-14');
     mockPost.mockResolvedValueOnce({ data: { status: 'ok' } });
     await cloud.recordActivity();
-    expect(mockGetCurrentUser).toBeCalledTimes(1);
-    expect(mockGet).toBeCalledTimes(1);
+    expect(mockGetCurrentUser).toHaveBeenCalledTimes(1);
+    expect(mockGet).toHaveBeenCalledTimes(1);
     expect(mockGet).toHaveBeenNthCalledWith(1, 'last-record-activity');
-    expect(mockToISOString).toBeCalledTimes(1);
-    expect(mockPost).toBeCalledTimes(1);
+    expect(mockToISOString).toHaveBeenCalledTimes(1);
+    expect(mockPost).toHaveBeenCalledTimes(1);
     expect(mockPost).toHaveBeenNthCalledWith(
       1,
       '/user/activity/beam-studio',
       { version: '1.0.0' },
       { withCredentials: true },
     );
-    expect(mockSet).toBeCalledTimes(1);
+    expect(mockSet).toHaveBeenCalledTimes(1);
     expect(mockSet).toHaveBeenNthCalledWith(1, 'last-record-activity', '2023-05-15');
   });
 
   test('recordActivity should work when not logged in', async () => {
     mockGetCurrentUser.mockReturnValueOnce(null);
     await cloud.recordActivity();
-    expect(mockGet).not.toBeCalled();
-    expect(mockPost).not.toBeCalled();
-    expect(mockSet).not.toBeCalled();
+    expect(mockGet).not.toHaveBeenCalled();
+    expect(mockPost).not.toHaveBeenCalled();
+    expect(mockSet).not.toHaveBeenCalled();
   });
 
   test('recordActivity should work when already recorded', async () => {
@@ -61,10 +61,10 @@ describe('test cloud api', () => {
     mockToISOString.mockReturnValueOnce('2023-05-15T00:00:00.000Z');
     mockGet.mockReturnValueOnce('2023-05-15');
     await cloud.recordActivity();
-    expect(mockGet).toBeCalledTimes(1);
+    expect(mockGet).toHaveBeenCalledTimes(1);
     expect(mockGet).toHaveBeenNthCalledWith(1, 'last-record-activity');
-    expect(mockToISOString).toBeCalledTimes(1);
-    expect(mockPost).not.toBeCalled();
-    expect(mockSet).not.toBeCalled();
+    expect(mockToISOString).toHaveBeenCalledTimes(1);
+    expect(mockPost).not.toHaveBeenCalled();
+    expect(mockSet).not.toHaveBeenCalled();
   });
 });
