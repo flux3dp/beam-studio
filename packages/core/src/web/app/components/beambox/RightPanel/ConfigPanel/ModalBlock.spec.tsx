@@ -20,12 +20,12 @@ describe('test ColorRatioBlock', () => {
       <ModalBlock color="c" label="label" max={200} min={0} setValue={mockSetValue} title="title" value={50} />,
     );
 
-    expect(mockSetValue).not.toBeCalled();
+    expect(mockSetValue).not.toHaveBeenCalled();
 
     const ratioInput = container.querySelectorAll('input')[0];
 
     fireEvent.change(ratioInput, { target: { value: 49 } });
-    expect(mockSetValue).toBeCalledTimes(1);
+    expect(mockSetValue).toHaveBeenCalledTimes(1);
     expect(mockSetValue).toHaveBeenLastCalledWith(49);
     rerender(<ModalBlock color="c" label="label" max={200} min={0} setValue={mockSetValue} title="title" value={49} />);
     expect(ratioInput.value).toBe('49');

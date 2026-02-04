@@ -69,14 +69,14 @@ describe('PrintingInputs', () => {
 
     fireEvent.mouseDown(inkToggle);
     fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[0]);
-    expect(handleChange).toBeCalledTimes(1);
+    expect(handleChange).toHaveBeenCalledTimes(1);
     expect(handleChange).toHaveBeenLastCalledWith('ink', 1);
 
     const halftoneToggle = baseElement.querySelector('#halftoneSelect');
 
     fireEvent.mouseDown(halftoneToggle);
     fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1]);
-    expect(handleChange).toBeCalledTimes(2);
+    expect(handleChange).toHaveBeenCalledTimes(2);
     expect(handleChange).toHaveBeenLastCalledWith('halftone', 2);
   });
 
@@ -99,25 +99,25 @@ describe('PrintingInputs', () => {
     const inkInput = getByTestId('ink');
 
     fireEvent.change(inkInput, { target: { value: 2 } });
-    expect(handleChange).toBeCalledTimes(1);
+    expect(handleChange).toHaveBeenCalledTimes(1);
     expect(handleChange).toHaveBeenLastCalledWith('ink', 2);
 
     const cRatioInput = getByTestId('cRatio');
 
     fireEvent.change(cRatioInput, { target: { value: 2 } });
-    expect(handleChange).toBeCalledTimes(2);
+    expect(handleChange).toHaveBeenCalledTimes(2);
     expect(handleChange).toHaveBeenLastCalledWith('cRatio', 2);
 
     const speedInput = getByTestId('speed');
 
     fireEvent.change(speedInput, { target: { value: 50 } });
-    expect(handleChange).toBeCalledTimes(3);
+    expect(handleChange).toHaveBeenCalledTimes(3);
     expect(handleChange).toHaveBeenLastCalledWith('speed', 50);
 
     const multipassInput = getByTestId('multipass');
 
     fireEvent.change(multipassInput, { target: { value: 2 } });
-    expect(handleChange).toBeCalledTimes(4);
+    expect(handleChange).toHaveBeenCalledTimes(4);
     expect(handleChange).toHaveBeenLastCalledWith('multipass', 2);
   });
 });

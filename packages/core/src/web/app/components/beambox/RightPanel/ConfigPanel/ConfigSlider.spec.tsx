@@ -61,9 +61,9 @@ describe('test ConfigSlider', () => {
     fireEvent.click(getByText('onChange'));
     expect(container).toMatchSnapshot();
     expect(getByText(`value: ${MOCK_CHANGE_VALUE}`)).toBeInTheDocument();
-    expect(mockPropOnChange).not.toBeCalled();
+    expect(mockPropOnChange).not.toHaveBeenCalled();
     fireEvent.click(getByText('onChangeComplete'));
-    expect(mockPropOnChange).toBeCalledTimes(1);
+    expect(mockPropOnChange).toHaveBeenCalledTimes(1);
     expect(mockPropOnChange).toHaveBeenLastCalledWith(MOCK_AFTER_CHANGE_VALUE);
   });
 

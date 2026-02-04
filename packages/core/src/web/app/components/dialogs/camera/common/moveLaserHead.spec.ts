@@ -79,16 +79,16 @@ describe('moveLaserHead', () => {
       id: 'move-laser-head',
       message: 'moving_laser_head',
     });
-    expect(mockEnterRawMode).toBeCalledTimes(1);
-    expect(mockRawHome).toBeCalledTimes(1);
-    expect(mockRawStartLineCheckMod).toBeCalledTimes(1);
-    expect(mockGetWorkarea).toBeCalledTimes(1);
-    expect(mockGetWorkarea).toBeCalledWith('fbb2', 'fbb2');
-    expect(mockRawMove).toBeCalledTimes(1);
-    expect(mockRawMove).toBeCalledWith({ f: 7500, x: 50, y: 50 });
-    expect(mockRawEndLineCheckMode).toBeCalledTimes(1);
-    expect(mockRawLooseMotor).toBeCalledTimes(1);
-    expect(mockEndSubTask).toBeCalledTimes(1);
+    expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
+    expect(mockRawHome).toHaveBeenCalledTimes(1);
+    expect(mockRawStartLineCheckMod).toHaveBeenCalledTimes(1);
+    expect(mockGetWorkarea).toHaveBeenCalledTimes(1);
+    expect(mockGetWorkarea).toHaveBeenCalledWith('fbb2', 'fbb2');
+    expect(mockRawMove).toHaveBeenCalledTimes(1);
+    expect(mockRawMove).toHaveBeenCalledWith({ f: 7500, x: 50, y: 50 });
+    expect(mockRawEndLineCheckMode).toHaveBeenCalledTimes(1);
+    expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenCalledWith('move-laser-head');
     expect(mockPopUpError).not.toHaveBeenCalled();
   });
@@ -103,17 +103,17 @@ describe('moveLaserHead', () => {
     const res = await moveLaserHead();
 
     expect(res).toBe(false);
-    expect(mockEnterRawMode).toBeCalledTimes(1);
-    expect(mockRawHome).toBeCalledTimes(1);
+    expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
+    expect(mockRawHome).toHaveBeenCalledTimes(1);
     expect(mockRawStartLineCheckMod).not.toHaveBeenCalled();
     expect(mockGetWorkarea).not.toHaveBeenCalled();
     expect(mockRawMove).not.toHaveBeenCalled();
     expect(mockRawEndLineCheckMode).not.toHaveBeenCalled();
-    expect(mockRawLooseMotor).toBeCalledTimes(1);
-    expect(mockEndSubTask).toBeCalledTimes(1);
+    expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenCalledWith('move-laser-head');
     expect(mockPopUpError).toHaveBeenCalledWith({ message: 'failed_to_move_laser_head' });
-    expect(mockConsoleError).toBeCalledTimes(1);
+    expect(mockConsoleError).toHaveBeenCalledTimes(1);
     expect(mockConsoleError).toHaveBeenCalledWith(mockError);
   });
 
@@ -127,19 +127,19 @@ describe('moveLaserHead', () => {
     const res = await moveLaserHead();
 
     expect(res).toBe(false);
-    expect(mockEnterRawMode).toBeCalledTimes(1);
-    expect(mockRawHome).toBeCalledTimes(1);
-    expect(mockRawStartLineCheckMod).toBeCalledTimes(1);
-    expect(mockGetWorkarea).toBeCalledTimes(1);
-    expect(mockGetWorkarea).toBeCalledWith('fbb2', 'fbb2');
-    expect(mockRawMove).toBeCalledTimes(1);
-    expect(mockRawMove).toBeCalledWith({ f: 7500, x: 50, y: 50 });
-    expect(mockRawEndLineCheckMode).toBeCalledTimes(1);
-    expect(mockRawLooseMotor).toBeCalledTimes(1);
-    expect(mockEndSubTask).toBeCalledTimes(1);
+    expect(mockEnterRawMode).toHaveBeenCalledTimes(1);
+    expect(mockRawHome).toHaveBeenCalledTimes(1);
+    expect(mockRawStartLineCheckMod).toHaveBeenCalledTimes(1);
+    expect(mockGetWorkarea).toHaveBeenCalledTimes(1);
+    expect(mockGetWorkarea).toHaveBeenCalledWith('fbb2', 'fbb2');
+    expect(mockRawMove).toHaveBeenCalledTimes(1);
+    expect(mockRawMove).toHaveBeenCalledWith({ f: 7500, x: 50, y: 50 });
+    expect(mockRawEndLineCheckMode).toHaveBeenCalledTimes(1);
+    expect(mockRawLooseMotor).toHaveBeenCalledTimes(1);
+    expect(mockEndSubTask).toHaveBeenCalledTimes(1);
     expect(mockPopById).toHaveBeenCalledWith('move-laser-head');
     expect(mockPopUpError).toHaveBeenCalledWith({ message: 'failed_to_move_laser_head' });
-    expect(mockConsoleError).toBeCalledTimes(1);
+    expect(mockConsoleError).toHaveBeenCalledTimes(1);
     expect(mockConsoleError).toHaveBeenCalledWith(mockError);
   });
 });

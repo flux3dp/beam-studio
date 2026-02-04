@@ -70,7 +70,7 @@ describe('test Monitor', () => {
     );
 
     expect(baseElement).toMatchSnapshot();
-    expect(mockGetDisplayStatus).toBeCalledTimes(1);
+    expect(mockGetDisplayStatus).toHaveBeenCalledTimes(1);
     expect(mockGetDisplayStatus).toHaveBeenLastCalledWith(mockContext.report.st_label);
   });
 
@@ -84,7 +84,7 @@ describe('test Monitor', () => {
     );
 
     expect(baseElement).toMatchSnapshot();
-    expect(mockGetDisplayStatus).toBeCalledTimes(1);
+    expect(mockGetDisplayStatus).toHaveBeenCalledTimes(1);
     expect(mockGetDisplayStatus).toHaveBeenLastCalledWith(mockContext.report.st_label);
   });
 
@@ -96,7 +96,7 @@ describe('test Monitor', () => {
     );
 
     expect(baseElement).toMatchSnapshot();
-    expect(mockGetDisplayStatus).not.toBeCalled();
+    expect(mockGetDisplayStatus).not.toHaveBeenCalled();
   });
 
   test('should call onClose when click close button', () => {
@@ -107,7 +107,7 @@ describe('test Monitor', () => {
     );
 
     fireEvent.click(baseElement.querySelector('.ant-modal-close'));
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   test('should call setMonitorMode when click tab', () => {
@@ -118,7 +118,7 @@ describe('test Monitor', () => {
     );
 
     fireEvent.click(getByText('camera'));
-    expect(mockSetMonitorMode).toBeCalledTimes(1);
+    expect(mockSetMonitorMode).toHaveBeenCalledTimes(1);
     expect(mockSetMonitorMode).toHaveBeenLastCalledWith(Mode.CAMERA);
     rerender(
       <MonitorContext.Provider value={{ ...mockContext, mode: Mode.CAMERA } as any}>
@@ -126,7 +126,7 @@ describe('test Monitor', () => {
       </MonitorContext.Provider>,
     );
     fireEvent.click(getByText('label'));
-    expect(mockSetMonitorMode).toBeCalledTimes(2);
+    expect(mockSetMonitorMode).toHaveBeenCalledTimes(2);
     expect(mockSetMonitorMode).toHaveBeenLastCalledWith(Mode.FILE);
   });
 });

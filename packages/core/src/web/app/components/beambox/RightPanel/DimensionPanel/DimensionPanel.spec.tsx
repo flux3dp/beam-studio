@@ -281,9 +281,9 @@ describe('test DimensionPanel', () => {
     const { container } = renderDimensionPanel(mockImage);
     const inputW = container.querySelector('#size-w');
 
-    expect(mockBeginUndoableChange).not.toBeCalled();
-    expect(mockChangeSelectedAttributeNoUndo).not.toBeCalled();
-    expect(mockFinishUndoableChange).not.toBeCalled();
+    expect(mockBeginUndoableChange).not.toHaveBeenCalled();
+    expect(mockChangeSelectedAttributeNoUndo).not.toHaveBeenCalled();
+    expect(mockFinishUndoableChange).not.toHaveBeenCalled();
 
     const mockCmd = { isEmpty: () => false };
 
@@ -303,15 +303,15 @@ describe('test DimensionPanel', () => {
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [mockImage]);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [mockImage]);
-    expect(mockFinishUndoableChange).toBeCalledTimes(2);
+    expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenNthCalledWith(1, 'Object Panel Size Change');
     expect(addSubCommand).toHaveBeenCalledTimes(2);
-    expect(mockUpdateDimensionValues).toBeCalledTimes(1);
+    expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenLastCalledWith({ height: 1500, width: 1000 });
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
-    expect(mockForceUpdate).toBeCalledTimes(1);
-    expect(mockReRenderImageSymbol).not.toBeCalled();
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
+    expect(mockReRenderImageSymbol).not.toHaveBeenCalled();
   });
 
   test('rerender image symbol', () => {
@@ -335,7 +335,7 @@ describe('test DimensionPanel', () => {
     const inputW = container.querySelector('#size-w');
 
     fireEvent.blur(inputW);
-    expect(mockReRenderImageSymbol).toBeCalledTimes(1);
+    expect(mockReRenderImageSymbol).toHaveBeenCalledTimes(1);
     expect(mockReRenderImageSymbol).toHaveBeenLastCalledWith(mockElem);
   });
 });
@@ -496,9 +496,9 @@ describe('test DimensionPanel in mobile', () => {
     const { container } = renderDimensionPanel(mockImage);
     const inputW = container.querySelector('#size-w');
 
-    expect(mockBeginUndoableChange).not.toBeCalled();
-    expect(mockChangeSelectedAttributeNoUndo).not.toBeCalled();
-    expect(mockFinishUndoableChange).not.toBeCalled();
+    expect(mockBeginUndoableChange).not.toHaveBeenCalled();
+    expect(mockChangeSelectedAttributeNoUndo).not.toHaveBeenCalled();
+    expect(mockFinishUndoableChange).not.toHaveBeenCalled();
 
     const mockCmd = { isEmpty: () => false };
 
@@ -518,15 +518,15 @@ describe('test DimensionPanel in mobile', () => {
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [mockImage]);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [mockImage]);
-    expect(mockFinishUndoableChange).toBeCalledTimes(2);
+    expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenNthCalledWith(1, 'Object Panel Size Change');
     expect(addSubCommand).toHaveBeenCalledTimes(2);
-    expect(mockUpdateDimensionValues).toBeCalledTimes(1);
+    expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenLastCalledWith({ height: 1500, width: 1000 });
-    expect(mockAddCommandToHistory).toBeCalledTimes(1);
-    expect(mockForceUpdate).toBeCalledTimes(1);
-    expect(mockReRenderImageSymbol).not.toBeCalled();
+    expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
+    expect(mockForceUpdate).toHaveBeenCalledTimes(1);
+    expect(mockReRenderImageSymbol).not.toHaveBeenCalled();
   });
 
   test('rerender image symbol', () => {
@@ -550,7 +550,7 @@ describe('test DimensionPanel in mobile', () => {
     const inputW = container.querySelector('#size-w');
 
     fireEvent.blur(inputW);
-    expect(mockReRenderImageSymbol).toBeCalledTimes(1);
+    expect(mockReRenderImageSymbol).toHaveBeenCalledTimes(1);
     expect(mockReRenderImageSymbol).toHaveBeenLastCalledWith(mockElem);
   });
 });

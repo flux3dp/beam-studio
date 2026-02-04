@@ -70,7 +70,7 @@ describe('test Rotation', () => {
     const input = container.querySelector('input');
 
     fireEvent.change(input, { target: { value: 1 } });
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith(1);
   });
 
@@ -79,17 +79,17 @@ describe('test Rotation', () => {
 
     const { container, unmount } = render(<Rotation onChange={mockOnChange} value={0} />);
 
-    expect(mockCreateEventEmitter).toBeCalledTimes(1);
-    expect(mockOn).toBeCalledTimes(1);
-    expect(mockOn).toBeCalledWith('UPDATE_DIMENSION_VALUES', expect.any(Function));
-    expect(mockRemoveListener).toBeCalledTimes(0);
+    expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledTimes(1);
+    expect(mockOn).toHaveBeenCalledWith('UPDATE_DIMENSION_VALUES', expect.any(Function));
+    expect(mockRemoveListener).toHaveBeenCalledTimes(0);
 
     const handler = mockOn.mock.calls[0][1];
 
     handler({ rotation: 1 });
     expect(container.querySelector('input').value).toBe('1.00');
     unmount();
-    expect(mockRemoveListener).toBeCalledTimes(1);
+    expect(mockRemoveListener).toHaveBeenCalledTimes(1);
     expect(mockRemoveListener).toHaveBeenNthCalledWith(1, 'UPDATE_DIMENSION_VALUES', handler);
   });
 
@@ -100,7 +100,7 @@ describe('test Rotation', () => {
     const button = container.querySelector('button');
 
     fireEvent.click(button);
-    expect(mockOnChange).toBeCalledTimes(1);
+    expect(mockOnChange).toHaveBeenCalledTimes(1);
     expect(mockOnChange).toHaveBeenLastCalledWith(1);
   });
 });

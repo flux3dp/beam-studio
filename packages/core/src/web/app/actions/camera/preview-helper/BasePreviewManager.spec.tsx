@@ -186,7 +186,7 @@ describe('test BasePreviewManager', () => {
       const res = await p;
 
       expect(res).toBeNull();
-      expect(mockCreateObjectURL).not.toBeCalled();
+      expect(mockCreateObjectURL).not.toHaveBeenCalled();
       expect(mockEnd).toHaveBeenCalledTimes(1);
     });
   });

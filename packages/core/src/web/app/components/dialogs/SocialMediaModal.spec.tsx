@@ -48,7 +48,7 @@ describe('test SocialMediaModal', () => {
 
     expect(link).not.toBeNull();
     fireEvent.click(link);
-    expect(mockOpen).toBeCalledWith('https://www.instagram.com/flux_inc/');
+    expect(mockOpen).toHaveBeenCalledWith('https://www.instagram.com/flux_inc/');
 
     const closeButton = getByText('Close');
 
@@ -72,7 +72,7 @@ describe('test SocialMediaModal', () => {
 
     expect(link).not.toBeNull();
     fireEvent.click(link);
-    expect(mockOpen).toBeCalledWith('https://www.instagram.com/fluxinctaiwan/');
+    expect(mockOpen).toHaveBeenCalledWith('https://www.instagram.com/fluxinctaiwan/');
   });
 
   it('should render correctly with autoPopup flag', () => {
@@ -91,7 +91,7 @@ describe('test SocialMediaModal', () => {
 
     expect(link).not.toBeNull();
     fireEvent.click(link);
-    expect(mockOpen).toBeCalledWith('https://www.instagram.com/flux_inc/');
+    expect(mockOpen).toHaveBeenCalledWith('https://www.instagram.com/flux_inc/');
 
     const checkbox = baseElement.querySelector('input[type="checkbox"]');
 

@@ -274,7 +274,7 @@ describe('test SpeedBlock', () => {
     expect(mockChange).toHaveBeenCalledTimes(1);
     expect(mockChange).toHaveBeenLastCalledWith({ configName: 'CUSTOM_PRESET_CONSTANT', speed: 88 });
     expect(mockBatchCommand).toHaveBeenCalledTimes(1);
-    expect(mockBatchCommand).lastCalledWith('Change speed');
+    expect(mockBatchCommand).toHaveBeenLastCalledWith('Change speed');
     expect(batchCmd.count).toBe(1);
     expect(mockWriteData).toHaveBeenCalledTimes(4);
     expect(mockWriteData).toHaveBeenNthCalledWith(1, 'layer1', 'speed', 88, {
@@ -291,7 +291,7 @@ describe('test SpeedBlock', () => {
     expect(mockEmit).toHaveBeenLastCalledWith('SET_ESTIMATED_TIME', null);
     expect(batchCmd.onAfter).toBe(mockInitState);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
-    expect(mockAddCommandToHistory).lastCalledWith(batchCmd);
+    expect(mockAddCommandToHistory).toHaveBeenLastCalledWith(batchCmd);
   });
 
   test('onChange of value display should work correctly', () => {

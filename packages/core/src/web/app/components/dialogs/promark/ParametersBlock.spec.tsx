@@ -32,7 +32,7 @@ describe('test ParametersBlock', () => {
         const input = getByTestId(id);
 
         fireEvent.change(input, { target: { value: '10' } });
-        expect(mockSetParameters).toBeCalledTimes(1);
+        expect(mockSetParameters).toHaveBeenCalledTimes(1);
 
         const [[dispatch]] = mockSetParameters.mock.calls;
 

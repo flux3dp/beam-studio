@@ -47,21 +47,21 @@ describe('test ImageTracePanel', () => {
     const { container, unmount } = render(<ImageTracePanel />);
 
     expect(container).toMatchSnapshot();
-    expect(mockOnCropperShown).toBeCalledTimes(1);
+    expect(mockOnCropperShown).toHaveBeenCalledTimes(1);
 
     const [listener] = mockOnCropperShown.mock.calls[0];
 
     act(() => listener());
     expect(container).toMatchSnapshot();
-    expect(mockRemoveCropperShownListener).not.toBeCalled();
+    expect(mockRemoveCropperShownListener).not.toHaveBeenCalled();
     unmount();
-    expect(mockRemoveCropperShownListener).toBeCalledTimes(1);
+    expect(mockRemoveCropperShownListener).toHaveBeenCalledTimes(1);
   });
 
   test('state transfer should work', () => {
     const { container, getByText } = render(<ImageTracePanel />);
 
-    expect(mockOnCropperShown).toBeCalledTimes(1);
+    expect(mockOnCropperShown).toHaveBeenCalledTimes(1);
 
     const [listener] = mockOnCropperShown.mock.calls[0];
 

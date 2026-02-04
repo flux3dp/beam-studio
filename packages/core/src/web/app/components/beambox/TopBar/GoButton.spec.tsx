@@ -142,7 +142,7 @@ describe('test GoButton', () => {
     expect(container).toMatchSnapshot();
     expect(mockSetExportFn).toHaveBeenCalledTimes(1);
     expect(mockOnContextChanged).toHaveBeenCalledTimes(1);
-    expect(mockOnContextChanged).toBeCalledWith(CanvasMode.Draw, mockDevice);
+    expect(mockOnContextChanged).toHaveBeenCalledWith(CanvasMode.Draw, mockDevice);
 
     expect(mockExport).not.toHaveBeenCalled();
     fireEvent.click(container.querySelector('.button'));

@@ -32,17 +32,17 @@ describe('test AddColorConfigModal', () => {
   it('should call onClose when click cancel button', () => {
     const { getByText } = render(<AddColorConfigModal handleAddConfig={mockHandleAddConfig} onClose={mockOnClose} />);
 
-    expect(mockOnClose).not.toBeCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
     fireEvent.click(getByText('Cancel'));
-    expect(mockOnClose).toBeCalledTimes(1);
+    expect(mockOnClose).toHaveBeenCalledTimes(1);
   });
 
   it('should call handleAddConfig when click add button', () => {
     const { getByText } = render(<AddColorConfigModal handleAddConfig={mockHandleAddConfig} onClose={mockOnClose} />);
 
-    expect(mockHandleAddConfig).not.toBeCalled();
+    expect(mockHandleAddConfig).not.toHaveBeenCalled();
     fireEvent.click(getByText('Add'));
-    expect(mockHandleAddConfig).toBeCalledTimes(1);
+    expect(mockHandleAddConfig).toHaveBeenCalledTimes(1);
     expect(mockHandleAddConfig).toHaveBeenLastCalledWith({
       color: '#FFFFFF',
       power: 50,
