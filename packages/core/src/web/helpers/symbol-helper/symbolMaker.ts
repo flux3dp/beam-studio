@@ -494,11 +494,8 @@ const reRenderImageSymbol = async (useElement: SVGUseElement, opts: { force?: bo
 
       if (imageSymbol && imageSymbol.tagName === 'symbol') {
         await makeImageSymbol(currentSymbol, { force, fullColor, imageSymbol, scale });
-        useElement.setAttribute('xlink:href', `#${imageSymbolId}`);
       } else {
-        const res = await makeImageSymbol(currentSymbol, { force, fullColor, scale });
-
-        if (res) useElement.setAttribute('xlink:href', `#${res.id}`);
+        await makeImageSymbol(currentSymbol, { force, fullColor, scale });
       }
     }
   }
