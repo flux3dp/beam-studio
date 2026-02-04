@@ -1,4 +1,4 @@
-import { eventEmitter } from '@core/app/views/tutorials/TutorialContext';
+import { eventEmitter } from './TutorialContext';
 
 export const handleNextStep = (): void => {
   eventEmitter.emit('HANDLE_NEXT_STEP');

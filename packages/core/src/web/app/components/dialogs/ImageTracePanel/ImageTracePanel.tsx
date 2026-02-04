@@ -3,8 +3,9 @@ import React, { useEffect, useState } from 'react';
 import type Cropper from 'cropperjs';
 
 import BeamboxStore from '@core/app/stores/beambox-store';
-import StepCrop from '@core/app/views/beambox/ImageTracePanel/StepCrop';
-import StepTune from '@core/app/views/beambox/ImageTracePanel/StepTune';
+
+import StepCrop from './StepCrop';
+import StepTune from './StepTune';
 
 enum Step {
   CROP = 1,

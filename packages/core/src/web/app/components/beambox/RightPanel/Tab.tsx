@@ -2,11 +2,11 @@ import React, { useContext } from 'react';
 
 import classNames from 'classnames';
 
+import * as TutorialController from '@core/app/components/tutorials/tutorialController';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
-import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import useI18n from '@core/helpers/useI18n';
 
 interface Props {

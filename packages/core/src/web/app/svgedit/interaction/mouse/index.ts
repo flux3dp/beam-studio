@@ -10,6 +10,7 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import TopBarHintsController from '@core/app/components/beambox/TopBar/contexts/TopBarHintsController';
+import * as TutorialController from '@core/app/components/tutorials/tutorialController';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
@@ -23,7 +24,6 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import touchEvents from '@core/app/svgedit/touchEvents';
 import workareaManager from '@core/app/svgedit/workarea';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import * as TutorialController from '@core/app/views/tutorials/tutorialController';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';

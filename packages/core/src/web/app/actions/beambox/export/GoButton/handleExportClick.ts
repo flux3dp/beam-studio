@@ -2,9 +2,9 @@ import previewModeController from '@core/app/actions/beambox/preview-mode-contro
 import canvasEvents from '@core/app/actions/canvas/canvasEvents';
 import Dialog from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { getNextStepRequirement, handleNextStep } from '@core/app/components/tutorials/tutorialController';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import textActions from '@core/app/svgedit/text/textactions';
-import { getNextStepRequirement, handleNextStep } from '@core/app/views/tutorials/tutorialController';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';

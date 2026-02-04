@@ -2,11 +2,11 @@ import React from 'react';
 
 import Icon from '@ant-design/icons';
 
+import TutorialController from '@core/app/components/tutorials/tutorialController';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import TutorialController from '@core/app/views/tutorials/tutorialController';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 

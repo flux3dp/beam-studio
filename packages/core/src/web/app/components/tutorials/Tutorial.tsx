@@ -5,7 +5,6 @@ import { Modal as AntdModal } from 'antd';
 
 import Alert from '@core/app/actions/alert-caller';
 import AlertConstants from '@core/app/constants/alert-constants';
-import { TutorialContext, TutorialContextProvider } from '@core/app/views/tutorials/TutorialContext';
 import DialogBox from '@core/app/widgets/Dialog-Box';
 import Modal from '@core/app/widgets/Modal';
 import ModalWithHole from '@core/app/widgets/Modal-With-Hole';
@@ -14,6 +13,7 @@ import type { ITutorialDialog } from '@core/interfaces/ITutorial';
 
 // TODO: move all styles from web to modules.scss
 import styles from './Tutorial.module.scss';
+import { TutorialContext, TutorialContextProvider } from './TutorialContext';
 
 interface ComponentProps {
   endTutorial: () => void;

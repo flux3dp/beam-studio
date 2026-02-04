@@ -44,7 +44,7 @@ import textEdit from '@core/app/svgedit/text/textedit';
 import workareaManager from '@core/app/svgedit/workarea';
 import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import { getNextStepRequirement } from '@core/app/views/tutorials/tutorialController';
+import { getNextStepRequirement } from '@core/app/components/tutorials/tutorialController';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
