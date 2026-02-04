@@ -1,9 +1,8 @@
 import React from 'react';
 
-import { BoxPlotOutlined, ExperimentOutlined, QrcodeOutlined } from '@ant-design/icons';
-
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
 import type { ILang } from '@core/interfaces/ILang';
 
 export interface GeneratorConfig {
@@ -23,19 +22,19 @@ interface GetGeneratorsOptions {
 export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): GeneratorConfig[] =>
   [
     {
-      icon: <BoxPlotOutlined />,
+      icon: <GeneratorIcons.Box />,
       id: 'box',
       onClick: () => dialogCaller.showBoxGen(),
       titleKey: 'box_generator',
     } as const,
     {
-      icon: <QrcodeOutlined />,
+      icon: <GeneratorIcons.Code />,
       id: 'code',
       onClick: () => dialogCaller.showCodeGenerator(),
       titleKey: 'code_generator',
     } as const,
     {
-      icon: <ExperimentOutlined />,
+      icon: <GeneratorIcons.Material />,
       id: 'material-test',
       onClick: () => dialogCaller.showMaterialTestGenerator(),
       titleKey: 'material_test_generator',

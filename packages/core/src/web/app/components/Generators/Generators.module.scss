@@ -75,12 +75,13 @@ $text-secondary: #666666;
 }
 
 .icon {
-  font-size: 18px;
-  width: 24px;
+  font-size: 32px;
+  width: 32px;
+  height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
-  color: inherit;
+  color: #7c7c7c;
 }
 
 .label {
