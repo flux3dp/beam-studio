@@ -7,7 +7,7 @@ import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-i
 import LeftPanel from '@core/app/components/beambox/LeftPanel';
 import RightPanel from '@core/app/components/beambox/RightPanel';
 import SvgEditor from '@core/app/components/beambox/svg-editor/SvgEditor';
-import TopBar from '@core/app/components/beambox/top-bar/TopBar';
+import TopBar from '@core/app/components/beambox/TopBar';
 import CanvasTabBar from '@core/app/components/mobile/CanvasTabBar';
 import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasProvider } from '@core/app/contexts/CanvasContext';

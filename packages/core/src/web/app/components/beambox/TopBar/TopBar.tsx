@@ -3,17 +3,6 @@ import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'r
 import classNames from 'classnames';
 import { pipe } from 'remeda';
 
-import CommonTools from '@core/app/components/beambox/top-bar/CommonTools';
-import DocumentButton from '@core/app/components/beambox/top-bar/DocumentButton';
-import FileName from '@core/app/components/beambox/top-bar/FileName';
-import { registerWindowUpdateTitle } from '@core/app/components/beambox/top-bar/FileName/registerWindowUpdateTile';
-import FrameButton from '@core/app/components/beambox/top-bar/FrameButton';
-import GoButton from '@core/app/components/beambox/top-bar/GoButton';
-import Menu from '@core/app/components/beambox/top-bar/Menu';
-import PathPreviewButton from '@core/app/components/beambox/top-bar/PathPreviewButton';
-import SelectMachineButton from '@core/app/components/beambox/top-bar/SelectMachineButton';
-import TopBarHints from '@core/app/components/beambox/top-bar/TopBarHints';
-import WelcomePageButton from '@core/app/components/beambox/top-bar/WelcomePageButton';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
@@ -28,8 +17,19 @@ import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
 import AutoFocusButton from './AutoFocusButton';
+import CommonTools from './CommonTools';
+import DocumentButton from './DocumentButton';
+import FileName from './FileName';
+import { registerWindowUpdateTitle } from './FileName/registerWindowUpdateTile';
+import FrameButton from './FrameButton';
+import GoButton from './GoButton';
+import Menu from './Menu';
+import PathPreviewButton from './PathPreviewButton';
+import SelectMachineButton from './SelectMachineButton';
 import Tabs from './tabs/Tabs';
 import styles from './TopBar.module.scss';
+import TopBarHints from './TopBarHints';
+import WelcomePageButton from './WelcomePageButton';
 
 const UnmemorizedTopBar = (): React.JSX.Element => {
   const { isDragRegion, isWeb } = useMemo(

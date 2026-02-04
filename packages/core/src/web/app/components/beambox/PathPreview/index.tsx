@@ -1,1 +1,3 @@
-export { default } from './PathPreview';
+import PathPreview from './PathPreview';
+
+export default PathPreview;
