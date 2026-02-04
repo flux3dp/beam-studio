@@ -13,6 +13,7 @@ import styles from './ConfigSlider.module.scss';
 type Props = OneOf<{ max: number; min: number }, { options: ConfigOption[] }> & {
   decimal?: number;
   id?: string;
+  isGradient?: boolean;
   onChange: (value: number) => void;
   step?: number;
   unit?: string;
@@ -26,6 +27,7 @@ type Props = OneOf<{ max: number; min: number }, { options: ConfigOption[] }> & 
 const ConfigSlider = ({
   decimal = 0,
   id,
+  isGradient,
   max,
   min,
   onChange,
@@ -77,7 +79,7 @@ const ConfigSlider = ({
 
   useEffect(() => setDisplayValue(getDisplayValueFromValue(value)), [value, getDisplayValueFromValue]);
 
-  const handleAfterChange = (val: number) => {
+  const handleChangeComplete = (val: number) => {
     if (optionValues) {
       onChange(optionValues[val]);
     } else {
@@ -92,7 +94,10 @@ const ConfigSlider = ({
 
   return (
     <div
-      className={classNames(styles.container, { [styles.limit]: warningPercent !== undefined })}
+      className={classNames(styles.container, {
+        [styles.gradient]: isGradient,
+        [styles.limit]: warningPercent !== undefined,
+      })}
       id={id}
       style={
         warningPercent !== undefined
@@ -101,36 +106,40 @@ const ConfigSlider = ({
       }
     >
       <ConfigProvider
-        theme={{
-          components: {
-            Slider: {
-              dotActiveBorderColor: '#494949',
-              handleActiveColor: '#494949',
-              handleColor: '#cecece',
-              trackBg: 'transparent',
-              trackBgDisabled: 'transparent',
-              trackHoverBg: 'transparent',
-            },
-          },
-          token: {
-            colorPrimary: '#494949',
-            colorPrimaryBorder: '#cecece',
-            colorPrimaryBorderHover: '#494949',
-          },
-        }}
+        theme={
+          isGradient
+            ? {
+                components: {
+                  Slider: {
+                    dotActiveBorderColor: '#494949',
+                    handleActiveColor: '#494949',
+                    handleColor: '#cecece',
+                    trackBg: 'transparent',
+                    trackBgDisabled: 'transparent',
+                    trackHoverBg: 'transparent',
+                  },
+                },
+                token: {
+                  colorPrimary: '#494949',
+                  colorPrimaryBorder: '#cecece',
+                  colorPrimaryBorderHover: '#494949',
+                },
+              }
+            : undefined
+        }
       >
         <Slider
           max={sliderOptions ? sliderOptions.length - 1 : max}
           min={sliderOptions ? 0 : min}
-          onAfterChange={handleAfterChange}
           onChange={handleChange}
+          onChangeComplete={handleChangeComplete}
           step={sliderOptions ? 1 : step}
           tooltip={
             {
               arrow: { pointAtCenter: true },
               formatter: (val: number) =>
                 sliderOptions ? optionLabels?.[val] : units.convertUnit(val, fakeUnit, 'mm').toFixed(decimal),
-              // hack because antd tooltip of slider won't autoslide
+              // hack because antd tooltip of slider won't auto slide
               placement: displayValue === maxValue ? 'topLeft' : 'top',
             } as TooltipProps as any
           }
