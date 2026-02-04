@@ -55,7 +55,7 @@ jest.mock(
 const getNextStepRequirement = jest.fn();
 const handleNextStep = jest.fn();
 
-jest.mock('@core/app/views/tutorials/tutorialController', () => ({
+jest.mock('@core/app/components/tutorials/tutorialController', () => ({
   getNextStepRequirement: (...args) => getNextStepRequirement(...args),
   handleNextStep: (...args) => handleNextStep(...args),
 }));

@@ -36,7 +36,7 @@ jest.mock('@core/app/actions/tabController', () => ({
 const mockOnTitleChange = jest.fn();
 const mockOffTitleChange = jest.fn();
 
-jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
+jest.mock('../contexts/TopBarController', () => ({
   offTitleChange: (...args) => mockOffTitleChange(...args),
   onTitleChange: (...args) => mockOnTitleChange(...args),
 }));

@@ -20,7 +20,7 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
 const mockGetNextStepRequirement = jest.fn();
 const mockHandleNextStep = jest.fn();
 
-jest.mock('@core/app/views/tutorials/tutorialController', () => ({
+jest.mock('@core/app/components/tutorials/tutorialController', () => ({
   getNextStepRequirement: () => mockGetNextStepRequirement(),
   handleNextStep: () => mockHandleNextStep(),
 }));

@@ -13,12 +13,6 @@ jest.mock('@core/app/components/dialogs/FramingModal', () => ({
   showFramingModal: (...args) => mockShowFramingModal(...args),
 }));
 
-const mockGetSelectedDevice = jest.fn();
-
-jest.mock('@core/app/views/beambox/TopBar/contexts/TopBarController', () => ({
-  getSelectedDevice: () => mockGetSelectedDevice(),
-}));
-
 const mockOn = jest.fn();
 
 jest.mock('@core/helpers/shortcuts', () => ({
@@ -47,7 +41,6 @@ describe('test FrameButton', () => {
     const handler = mockOn.mock.calls[0][1];
 
     expect(mockShowFramingModal).not.toBeCalled();
-    mockGetSelectedDevice.mockReturnValue({ model: 'fpm1' });
     handler();
     expect(mockShowFramingModal).toBeCalledTimes(1);
   });

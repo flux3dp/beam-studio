@@ -3,7 +3,7 @@ import React from 'react';
 
 import { act, fireEvent, render } from '@testing-library/react';
 
-import ColorPanel from '../../../views/beambox/RightPanels/ColorPanel';
+import ColorPanel from './ColorPanel';
 
 const mockSetIsColorPreviewing = jest.fn();
 

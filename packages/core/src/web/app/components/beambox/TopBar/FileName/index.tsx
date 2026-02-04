@@ -1,10 +1,11 @@
 import React, { useEffect } from 'react';
 
-import TopBarController from '@core/app/components/beambox/TopBar/contexts/TopBarController';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
+
+import TopBarController from '../contexts/TopBarController';
 
 import styles from './index.module.scss';
 

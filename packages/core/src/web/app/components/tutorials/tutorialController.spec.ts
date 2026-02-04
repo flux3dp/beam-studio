@@ -1,6 +1,6 @@
 const mockEmit = jest.fn();
 
-jest.mock('@core/app/views/tutorials/TutorialContext', () => ({
+jest.mock('./TutorialContext', () => ({
   eventEmitter: {
     emit: mockEmit,
   },
