@@ -5,20 +5,11 @@ import { ResizableBox } from 'react-resizable';
 
 import Alert from '@core/app/actions/alert-caller';
 import Dialog from '@core/app/actions/dialog-caller';
-import AddLayerButton from '@core/app/components/beambox/RightPanel/AddLayerButton';
-import DragImage from '@core/app/components/beambox/RightPanel/DragImage';
-import SelLayerBlock from '@core/app/components/beambox/RightPanel/SelLayerBlock';
-import WattBlock from '@core/app/components/beambox/RightPanel/WattBlock';
 import layoutConstants from '@core/app/constants/layout-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import ConfigPanel from '@core/app/views/beambox/Right-Panels/ConfigPanel/ConfigPanel';
-import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
-import LayerContextMenu from '@core/app/views/beambox/Right-Panels/LayerPanel/LayerContextMenu';
-import LayerList from '@core/app/views/beambox/Right-Panels/LayerPanel/LayerList';
-import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -33,7 +24,16 @@ import { isMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import AddLayerButton from './AddLayerButton';
+import ConfigPanel from './ConfigPanel/ConfigPanel';
+import RightPanelController from './contexts/RightPanelController';
+import DragImage from './DragImage';
+import LayerContextMenu from './LayerPanel/LayerContextMenu';
+import LayerList from './LayerPanel/LayerList';
 import styles from './LayerPanel.module.scss';
+import ObjectPanelItem from './ObjectPanelItem';
+import SelLayerBlock from './SelLayerBlock';
+import WattBlock from './WattBlock';
 
 let svgCanvas: ISVGCanvas;
 

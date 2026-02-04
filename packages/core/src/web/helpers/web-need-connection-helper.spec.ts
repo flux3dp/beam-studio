@@ -14,7 +14,7 @@ jest.mock('@core/helpers/file/export', () => ({
 
 const mockUpdateActiveKey = jest.fn();
 
-jest.mock('@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController', () => ({
+jest.mock('@core/app/components/beambox/RightPanel/contexts/ObjectPanelController', () => ({
   updateActiveKey: (...args) => mockUpdateActiveKey(...args),
 }));
 

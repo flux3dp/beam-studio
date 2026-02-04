@@ -1,6 +1,8 @@
 import React from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
+import GoogleFontsPanel from '@core/app/components/beambox/RightPanel/OptionsBlocks/TextOptions/components/GoogleFontsPanel';
 import Boxgen from '@core/app/components/boxgen/Boxgen';
 import AboutBeamStudio from '@core/app/components/dialogs/AboutBeamStudio';
 import AnnouncementPanel from '@core/app/components/dialogs/AnnouncementPanel';
@@ -33,8 +35,6 @@ import Tutorial from '@core/app/components/tutorials/Tutorial';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
-import GoogleFontsPanel from '@core/app/views/beambox/Right-Panels/Options-Blocks/TextOptions/components/GoogleFontsPanel';
 import DialogBox from '@core/app/widgets/Dialog-Box';
 import InputLightBox from '@core/app/widgets/InputLightbox';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';

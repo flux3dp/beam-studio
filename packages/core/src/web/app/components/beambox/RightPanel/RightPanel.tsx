@@ -4,24 +4,24 @@ import React, { memo, useCallback, useContext, useEffect, useState } from 'react
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
 
-import LayerPanel from '@core/app/components/beambox/RightPanel/LayerPanel';
-import Tab from '@core/app/components/beambox/RightPanel/Tab';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { ObjectPanelContextProvider } from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelContext';
-import ObjectPanel from '@core/app/views/beambox/Right-Panels/ObjectPanel';
-import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
-import PathEditPanel from '@core/app/views/beambox/Right-Panels/PathEditPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
 import { useIsMobile } from '@core/helpers/system-helper';
 
+import { ObjectPanelContextProvider } from './contexts/ObjectPanelContext';
+import LayerPanel from './LayerPanel';
+import ObjectPanel from './ObjectPanel';
+import ObjectPanelItem from './ObjectPanelItem';
+import PathEditPanel from './PathEditPanel';
 import styles from './RightPanel.module.scss';
+import Tab from './Tab';
 
 const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-panel');
 

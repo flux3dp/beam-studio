@@ -3,12 +3,12 @@ import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'r
 import classNames from 'classnames';
 import { pipe } from 'remeda';
 
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';

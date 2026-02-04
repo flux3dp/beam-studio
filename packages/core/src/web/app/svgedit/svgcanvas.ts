@@ -36,6 +36,7 @@ import grid from '@core/app/actions/canvas/grid';
 import { guideLineDrawer } from '@core/app/actions/canvas/guideLines';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { CanvasElements } from '@core/app/constants/canvasElements';
@@ -45,7 +46,6 @@ import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseM
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';

@@ -14,7 +14,7 @@ jest.mock('@core/helpers/layer/layer-config-helper', () => ({
 
 const mockInitState = jest.fn();
 
-jest.mock('@core/app/views/beambox/Right-Panels/ConfigPanel/initState', () => mockInitState);
+jest.mock('@core/app/components/beambox/RightPanel/ConfigPanel/initState', () => mockInitState);
 
 import aiExtension from './ai-extension';
 

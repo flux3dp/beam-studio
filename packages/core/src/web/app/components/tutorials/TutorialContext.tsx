@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
+import RightPanelController from '@core/app/components/beambox/RightPanel/contexts/RightPanelController';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import tutorialConstants, { TutorialCallbacks } from '@core/app/constants/tutorial-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import RightPanelController from '@core/app/views/beambox/Right-Panels/contexts/RightPanelController';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

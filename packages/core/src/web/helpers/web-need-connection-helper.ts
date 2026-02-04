@@ -1,6 +1,6 @@
 import alertCaller from '@core/app/actions/alert-caller';
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import alertConstants from '@core/app/constants/alert-constants';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
 import { discoverManager } from '@core/helpers/api/discover';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';

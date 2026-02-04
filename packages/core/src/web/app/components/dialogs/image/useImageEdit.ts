@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import progressCaller from '@core/app/actions/progress-caller';
-import ObjectPanelController from '@core/app/views/beambox/Right-Panels/contexts/ObjectPanelController';
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import { useSetState } from '@core/helpers/hooks/useSetState';
 import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
 import jimpHelper from '@core/helpers/jimp-helper';

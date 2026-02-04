@@ -2,8 +2,6 @@ import React, { memo, useContext, useEffect } from 'react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import initState from '@core/app/views/beambox/Right-Panels/ConfigPanel/initState';
-import ObjectPanelItem from '@core/app/views/beambox/Right-Panels/ObjectPanelItem';
 import Select from '@core/app/widgets/AntdSelect';
 import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { fhx2rfWatts, getHexa2RfWatt, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
@@ -13,6 +11,8 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';
+import initState from './ConfigPanel/initState';
+import ObjectPanelItem from './ObjectPanelItem';
 
 const WattBlock = memo(() => {
   const isMobile = useIsMobile();

@@ -3,8 +3,8 @@
  * Ref: none
  */
 import tabController from '@core/app/actions/tabController';
+import initState from '@core/app/components/beambox/RightPanel/ConfigPanel/initState';
 import importSvg from '@core/app/svgedit/operations/import/importSvg';
-import initState from '@core/app/views/beambox/Right-Panels/ConfigPanel/initState';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 import Websocket from '@core/helpers/websocket';
 
