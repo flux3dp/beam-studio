@@ -12,11 +12,11 @@ import {
 import { CalibrationContext, CalibrationProvider } from '@core/app/contexts/CalibrationContext';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-import StepAskReadjust from '../../views/beambox/CameraCalibration/StepAskReadjust';
-import StepBeforeAnalyzePicture from '../../views/beambox/CameraCalibration/StepBeforeAnalyzePicture';
-import StepFinish from '../../views/beambox/CameraCalibration/StepFinish';
-import StepPutPaper from '../../views/beambox/CameraCalibration/StepPutPaper';
-import StepRefocus from '../../views/beambox/CameraCalibration/StepRefocus';
+import StepAskReadjust from './StepAskReadjust';
+import StepBeforeAnalyzePicture from './StepBeforeAnalyzePicture';
+import StepFinish from './StepFinish';
+import StepPutPaper from './StepPutPaper';
+import StepRefocus from './StepRefocus';
 
 const CameraCalibrationComponent = (): null | React.JSX.Element => {
   const { currentStep } = useContext(CalibrationContext);

@@ -1,7 +1,7 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import constant, { hexaRfModels, promarkModels } from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { showCameraCalibration } from '@core/app/components/beambox/CameraCalibration';
+import { showCameraCalibration } from '@core/app/components/dialogs/camera/CameraCalibration/CameraCalibration';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import checkCamera from '@core/helpers/device/check-camera';
