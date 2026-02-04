@@ -1,8 +1,5 @@
 import React from 'react';
 
-import dayjs from 'dayjs';
-import timezone from 'dayjs/plugin/timezone';
-import utc from 'dayjs/plugin/utc';
 import JsBarcode from 'jsbarcode';
 import type { Root } from 'react-dom/client';
 import { createRoot } from 'react-dom/client';
@@ -25,15 +22,13 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
+import getLocalizedTime from '@core/helpers/getLocalizedTime';
 import i18n from '@core/helpers/i18n';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
-
-dayjs.extend(utc);
-dayjs.extend(timezone);
 
 let svgCanvas: ISVGCanvas;
 
@@ -204,30 +199,6 @@ const updateContent = async (
     }
     elem.remove();
   }
-};
-
-const getLocalizedTime = async () => {
-  let lang = navigator.language.toLowerCase();
-  const timeZone = Intl.DateTimeFormat().resolvedOptions().timeZone || 'UTC';
-
-  try {
-    console.log(`[dayjs] Loading locale '${lang}'`);
-    await import(`dayjs/locale/${lang}.js`);
-    dayjs.locale(lang);
-  } catch {
-    console.warn(`[dayjs] Locale '${lang}' not found`);
-    try {
-      lang = lang.split('-')[0];
-      console.log(`[dayjs] Loading locale '${lang}'`);
-      await import(`dayjs/locale/${lang}.js`);
-      dayjs.locale(lang);
-    } catch {
-      console.warn(`[dayjs] Locale '${lang}' not found, using default 'en'`);
-      dayjs.locale('en');
-    }
-  }
-
-  return dayjs().tz(timeZone);
 };
 
 export const convertVariableText = async ({

@@ -72,6 +72,13 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   getObjectLayer: () => 'mock-layer',
 }));
 
+const mockGetLocalizedTime = jest.fn();
+
+jest.mock('@core/helpers/getLocalizedTime', () => ({
+  __esModule: true,
+  default: () => mockGetLocalizedTime(),
+}));
+
 const mockClearSelection = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -266,15 +273,15 @@ describe('test variableText helper', () => {
 
     jest.useFakeTimers();
     jest.setSystemTime(new Date('2025-02-03T12:34:56.1234'));
-    Object.defineProperty(navigator, 'language', {
-      value: 'zh-TW',
-    });
-    jest.spyOn(Intl.DateTimeFormat.prototype, 'resolvedOptions').mockReturnValue({
-      calendar: 'gregory',
-      locale: 'zh-TW',
-      numberingSystem: 'latn',
-      timeZone: 'Asia/Taipei',
-    });
+
+    const dayjs = require('dayjs');
+
+    require('dayjs/locale/zh-tw');
+    dayjs.extend(require('dayjs/plugin/utc'));
+    dayjs.extend(require('dayjs/plugin/timezone'));
+    dayjs.locale('zh-tw');
+    mockGetLocalizedTime.mockReturnValue(dayjs().tz('Asia/Taipei'));
+
     mockGetState.mockReturnValue(mockState);
 
     document.body.innerHTML = mockBody.convertVariableText;

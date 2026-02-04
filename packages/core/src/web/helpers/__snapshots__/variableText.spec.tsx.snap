@@ -99,7 +99,7 @@ exports[`test variableText helper convertVariableText 1`] = `
         12:34:56.123+08:00Z
       </tspan>
       <tspan>
-        Monday February
+        星期一 二月
       </tspan>
     </text>
     
