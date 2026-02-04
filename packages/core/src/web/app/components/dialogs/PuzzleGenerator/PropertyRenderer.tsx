@@ -1,10 +1,12 @@
 import React, { useCallback } from 'react';
 
 import { UploadOutlined } from '@ant-design/icons';
-import { InputNumber, Select, Slider, Switch } from 'antd';
+import { Select, Slider, Switch } from 'antd';
 import { match, P } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
+import { useStorageStore } from '@core/app/stores/storageStore';
+import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './index.module.scss';
@@ -103,7 +105,9 @@ const PropertyRenderer = ({
         state={state}
       />
     ))
-    .with({ type: 'image-upload' }, (property) => <ImageUploadProperty property={property} setValue={setValue} />)
+    .with({ type: 'image-upload' }, (property) => (
+      <ImageUploadProperty getValue={getValue} property={property} setValue={setValue} />
+    ))
     .exhaustive();
 };
 
@@ -120,29 +124,38 @@ const SliderProperty = ({
   property,
   setValue,
 }: BasePropertyProps<NumberPropertyDef>): React.JSX.Element => {
+  const isInch = useStorageStore((s) => s.isInch);
   const value = (getValue(property.key) as number) ?? property.default;
+
+  const isMmProperty = property.unit === 'mm';
+  const step = property.step ?? 1;
+  const inchStep = isMmProperty && isInch ? 0.254 : step;
+  const precision = isMmProperty && isInch ? 4 : Math.max(0, Math.ceil(-Math.log10(step)));
+  const displayUnit = isMmProperty ? (isInch ? 'in' : 'mm') : property.unit;
 
   return (
     <div className={styles['property-row']}>
-      <div className={styles['property-label']}>
-        {getLabel(property.labelKey)}
-        {property.unit && <span className={styles['property-unit']}>({property.unit})</span>}
-      </div>
+      <div className={styles['property-label']}>{getLabel(property.labelKey)}</div>
       <div className={styles['property-control']}>
         <Slider
           className={styles.slider}
           max={property.max}
           min={property.min}
           onChange={(val) => setValue(property.key, val)}
-          step={property.step ?? 1}
+          step={step}
+          tooltip={{ open: false }}
           value={value}
         />
-        <InputNumber
+        <UnitInput
           className={styles['number-input']}
+          controls={false}
+          isInch={isMmProperty ? isInch : undefined}
           max={property.max}
           min={property.min}
-          onChange={(val) => val !== null && setValue(property.key, val)}
-          step={property.step ?? 1}
+          onChange={(val) => val !== undefined && setValue(property.key, val)}
+          precision={precision}
+          step={inchStep}
+          unit={displayUnit}
           value={value}
         />
       </div>
@@ -273,15 +286,17 @@ const GroupProperty = ({
 };
 
 interface ImageUploadPropertyProps {
+  getValue: (key: string) => unknown;
   property: ImageUploadPropertyDef;
   setValue: (key: string, value: unknown) => void;
 }
 
-const ImageUploadProperty = ({ property, setValue }: ImageUploadPropertyProps): React.JSX.Element => {
+const ImageUploadProperty = ({ getValue, property, setValue }: ImageUploadPropertyProps): React.JSX.Element => {
   const { puzzle_generator: t } = useI18n();
   const parentKey = property.key.split('.')[0];
   const dataUrlKey = `${parentKey}.dataUrl`;
   const fileKey = `${parentKey}.file`;
+  const currentDataUrl = getValue(dataUrlKey) as null | string;
   const acceptedTypes = property.accept.split(',');
 
   const processFile = useCallback(
@@ -353,7 +368,11 @@ const ImageUploadProperty = ({ property, setValue }: ImageUploadPropertyProps): 
   );
 
   return (
-    <div className={styles['image-upload']} onDragOver={(e) => e.preventDefault()} onDrop={handleDrop}>
+    <div
+      className={`${styles['image-upload']} ${currentDataUrl ? styles['has-image'] : ''}`}
+      onDragOver={(e) => e.preventDefault()}
+      onDrop={handleDrop}
+    >
       <input
         accept={property.accept}
         id="puzzle-image-upload"
@@ -362,9 +381,18 @@ const ImageUploadProperty = ({ property, setValue }: ImageUploadPropertyProps): 
         type="file"
       />
       <label htmlFor="puzzle-image-upload" style={{ cursor: 'pointer', display: 'block' }}>
-        <UploadOutlined className={styles['upload-icon']} />
-        <div className={styles['upload-text']}>{t.upload_image}</div>
-        <div className={styles['upload-hint']}>{t.upload_hint}</div>
+        {currentDataUrl ? (
+          <>
+            <img alt="" className={styles['image-preview']} src={currentDataUrl} />
+            <div className={styles['upload-text']}>{t.change_image}</div>
+          </>
+        ) : (
+          <>
+            <UploadOutlined className={styles['upload-icon']} />
+            <div className={styles['upload-text']}>{t.upload_image}</div>
+            <div className={styles['upload-hint']}>{t.upload_hint}</div>
+          </>
+        )}
       </label>
     </div>
   );

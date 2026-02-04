@@ -2,8 +2,10 @@ import React, { useEffect, useMemo, useRef, useState } from 'react';
 
 import { Tooltip } from 'antd';
 import type Konva from 'konva';
-import { Group, Layer, Path, Stage } from 'react-konva';
+import { Group, Image, Layer, Path, Stage } from 'react-konva';
+import useImage from 'use-image';
 
+import { useStorageStore } from '@core/app/stores/storageStore';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './index.module.scss';
@@ -12,8 +14,8 @@ import { drawShapeClipPath, getShapeMetadata } from './shapeGenerators';
 import type { PuzzleState, PuzzleTypeConfig } from './types';
 
 const COLORS = {
-  design: { border: '#333333', boundary: '#333333', fill: '#ffffff', inner: '#333333', outlines: '#333333' },
-  exploded: { border: '#8bc34a', boundary: '#3f51b5', fill: '#ffffff', inner: '#f44336', outlines: '#ffc107' },
+  design: { border: '#333333', boundary: '#333333', fill: 'transparent', inner: '#333333', outlines: '#333333' },
+  exploded: { border: '#8bc34a', boundary: '#3f51b5', fill: 'transparent', inner: '#f44336', outlines: '#ffc107' },
 } as const;
 
 type ViewMode = keyof typeof COLORS;
@@ -65,6 +67,7 @@ const computeViewLayout = (
 
 const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: PreviewProps): React.JSX.Element => {
   const { puzzle_generator: t } = useI18n();
+  const isInch = useStorageStore((s) => s.isInch);
   const containerRef = useRef<HTMLDivElement>(null);
   const [stageSize, setStageSize] = useState({ height: 300, width: 400 });
 
@@ -105,6 +108,47 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     };
   }, [meta.fillsBoundingBox, meta.boundaryCornerRadius, shapeType, geometry.layout.width, geometry.layout.height]);
 
+  // --- 3b. Image Overlay ---
+  const [konvaImage] = useImage(state.image.enabled && state.image.dataUrl ? state.image.dataUrl : '', 'anonymous');
+
+  /** Computes "center and cover" placement for the image overlay */
+  const imageLayout = useMemo(() => {
+    if (!konvaImage || !state.image.enabled) return null;
+
+    const { bleed, offsetX, offsetY, zoom } = state.image;
+    const { height: puzzleH, width: puzzleW } = geometry.layout;
+    const targetW = puzzleW + bleed * 2;
+    const targetH = puzzleH + bleed * 2;
+
+    // Cover: scale to fill target area maintaining aspect ratio
+    const coverScale = Math.max(targetW / konvaImage.width, targetH / konvaImage.height);
+    const scale = coverScale * (zoom / 100);
+    const drawW = konvaImage.width * scale;
+    const drawH = konvaImage.height * scale;
+
+    return { height: drawH, width: drawW, x: -drawW / 2 + offsetX, y: -drawH / 2 + offsetY };
+  }, [konvaImage, state.image, geometry.layout]);
+
+  /** Clip function for the image — expands boundary by bleed amount */
+  const imageClipFunc = useMemo(() => {
+    const { bleed } = state.image;
+
+    if (bleed > 0) {
+      return (ctx: Konva.Context) => {
+        drawShapeClipPath(
+          ctx as unknown as CanvasRenderingContext2D,
+          shapeType,
+          geometry.layout.width + bleed * 2,
+          geometry.layout.height + bleed * 2,
+          meta.boundaryCornerRadius,
+        );
+      };
+    }
+
+    // No bleed: reuse boundary clip (or undefined for shapes that fill their box)
+    return clipFunc;
+  }, [state.image, clipFunc, shapeType, geometry.layout.width, geometry.layout.height, meta.boundaryCornerRadius]);
+
   // --- 4. Resize Observer ---
   useEffect(() => {
     if (!containerRef.current) return undefined;
@@ -126,12 +170,27 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     </Group>
   );
 
+  const renderImageOverlay = () =>
+    konvaImage && imageLayout ? (
+      <Group clipFunc={imageClipFunc}>
+        <Image
+          height={imageLayout.height}
+          image={konvaImage}
+          width={imageLayout.width}
+          x={imageLayout.x}
+          y={imageLayout.y}
+        />
+      </Group>
+    ) : null;
+
   const renderPuzzleStack = (
     cf: ((ctx: Konva.Context) => void) | undefined,
     colors: (typeof COLORS)[keyof typeof COLORS],
     xOffset = 0,
+    showImage = false,
   ) => (
     <Group x={xOffset}>
+      {showImage && renderImageOverlay()}
       <Path data={geometry.boundaryPath} fill={colors.fill} stroke={colors.boundary} strokeWidth={0.5} />
       {renderEdges(cf, colors.inner)}
     </Group>
@@ -143,6 +202,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     colors: (typeof COLORS)[keyof typeof COLORS],
     cf?: (ctx: Konva.Context) => void,
     layout?: ReturnType<typeof computeViewLayout>,
+    withImage = false,
   ) => {
     const vl = layout ?? viewConfig;
 
@@ -152,7 +212,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
           {geometry.boardBasePath && (
             <Path data={geometry.boardBasePath} fill={colors.fill} stroke={colors.border} strokeWidth={0.5} />
           )}
-          {renderPuzzleStack(cf, colors)}
+          {renderPuzzleStack(cf, colors, 0, withImage)}
         </Group>
       );
     }
@@ -161,6 +221,8 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
       <Group>
         {vl.showExploded ? (
           <Group x={vl.raisedEdgesX}>
+            {/* Image renders first (below raised edges) so bleed doesn't cover the frame */}
+            {withImage && renderImageOverlay()}
             <Path
               data={geometry.raisedEdgesPath}
               fill={colors.fill}
@@ -168,10 +230,10 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
               stroke={colors.boundary}
               strokeWidth={0.5}
             />
-            {renderPuzzleStack(cf, colors)}
+            {renderPuzzleStack(cf, colors, 0, false)}
           </Group>
         ) : (
-          renderPuzzleStack(cf, colors)
+          renderPuzzleStack(cf, colors, 0, withImage)
         )}
         {vl.showExploded && (
           <Group x={vl.boardX}>
@@ -196,7 +258,9 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
   return (
     <div className={styles['preview-area']}>
       <div className={styles['preview-header']}>
-        {dimensions.width}mm × {dimensions.height}mm
+        {isInch
+          ? `${(dimensions.width / 25.4).toFixed(2)}in × ${(dimensions.height / 25.4).toFixed(2)}in`
+          : `${dimensions.width}mm × ${dimensions.height}mm`}
       </div>
       <div className={styles['preview-canvas']} ref={containerRef}>
         <Stage height={stageSize.height} width={stageSize.width}>
@@ -206,7 +270,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
             x={stageSize.width / 2}
             y={stageSize.height / 2 + viewConfig.offsetY}
           >
-            {renderScene(viewMode, currentColors, clipFunc)}
+            {renderScene(viewMode, currentColors, clipFunc, undefined, true)}
           </Layer>
         </Stage>
         <div className={styles['view-mode-overlay']}>
@@ -218,7 +282,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
               >
                 <Stage height={THUMB_SIZE} listening={false} width={THUMB_SIZE}>
                   <Layer scaleX={thumbLayout.scale} scaleY={thumbLayout.scale} x={THUMB_SIZE / 2} y={THUMB_SIZE / 2}>
-                    {renderScene(mode, COLORS[mode], clipFunc, thumbLayout)}
+                    {renderScene(mode, COLORS[mode], clipFunc, thumbLayout, true)}
                   </Layer>
                 </Stage>
               </div>

@@ -1930,9 +1930,11 @@ const lang: ILang = {
     },
   },
   puzzle_generator: {
+    bleed: '出血',
     board_radius: '邊框圓角',
     board_width: '邊框寬度',
     cancel: '取消',
+    change_image: '點擊更換圖片',
     columns: '欄數',
     design_preview: '設計預覽',
     exploded_view: '分解檢視',

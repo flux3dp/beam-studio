@@ -1932,9 +1932,11 @@ export interface ILang {
     };
   };
   puzzle_generator: {
+    bleed: string;
     board_radius: string;
     board_width: string;
     cancel: string;
+    change_image: string;
     columns: string;
     design_preview: string;
     exploded_view: string;

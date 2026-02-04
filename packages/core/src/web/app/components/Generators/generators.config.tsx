@@ -1,7 +1,5 @@
 import React from 'react';
 
-import { ExperimentOutlined } from '@ant-design/icons';
-
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
@@ -44,7 +42,7 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       titleKey: 'puzzle_generator',
     } as const,
     {
-      icon: <ExperimentOutlined />,
+      icon: <GeneratorIcons.Material />,
       id: 'material-test',
       onClick: () => dialogCaller.showMaterialTestGenerator(),
       titleKey: 'material_test_generator',

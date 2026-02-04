@@ -62,6 +62,7 @@ export interface PuzzleTypeConfig {
 }
 
 export interface ImageState {
+  bleed: number;
   dataUrl: null | string;
   enabled: boolean;
   exportAs: 'engrave' | 'print';
@@ -111,6 +112,7 @@ export type PuzzleState = CirclePuzzleState | HeartPuzzleState | RectanglePuzzle
 export type PuzzleStateUpdate = Partial<BasePuzzleState & { radius: number }>;
 
 export const createDefaultImageState = (): ImageState => ({
+  bleed: 2,
   dataUrl: null,
   enabled: false,
   exportAs: 'print',

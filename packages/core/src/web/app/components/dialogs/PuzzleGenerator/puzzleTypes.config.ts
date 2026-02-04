@@ -77,6 +77,9 @@ const ORIENTATION_PROPERTY: SelectPropertyDef = {
   type: 'select',
 };
 
+const imageEnabled = (state: PuzzleState): boolean => state.image.enabled;
+const imageUploaded = (state: PuzzleState): boolean => state.image.enabled && state.image.dataUrl !== null;
+
 const createImageGroup = (): GroupPropertyDef => ({
   children: [
     {
@@ -87,7 +90,7 @@ const createImageGroup = (): GroupPropertyDef => ({
     },
     {
       accept: 'image/jpeg,image/png,image/webp',
-      condition: (state: PuzzleState) => state.image.enabled,
+      condition: imageEnabled,
       key: 'image.upload',
       labelKey: 'upload_image',
       maxResolution: 4000,
@@ -95,7 +98,7 @@ const createImageGroup = (): GroupPropertyDef => ({
       type: 'image-upload',
     },
     {
-      condition: (state: PuzzleState) => state.image.enabled,
+      condition: imageUploaded,
       default: 100,
       key: 'image.zoom',
       labelKey: 'zoom',
@@ -106,7 +109,18 @@ const createImageGroup = (): GroupPropertyDef => ({
       unit: '%',
     },
     {
-      condition: (state: PuzzleState) => state.image.enabled,
+      condition: imageUploaded,
+      default: 0,
+      key: 'image.bleed',
+      labelKey: 'bleed',
+      max: 5,
+      min: 0,
+      step: 0.5,
+      type: 'slider',
+      unit: 'mm',
+    },
+    {
+      condition: imageUploaded,
       default: 0,
       key: 'image.offsetX',
       labelKey: 'offset_x',
@@ -116,7 +130,7 @@ const createImageGroup = (): GroupPropertyDef => ({
       type: 'slider',
     },
     {
-      condition: (state: PuzzleState) => state.image.enabled,
+      condition: imageUploaded,
       default: 0,
       key: 'image.offsetY',
       labelKey: 'offset_y',
@@ -126,7 +140,7 @@ const createImageGroup = (): GroupPropertyDef => ({
       type: 'slider',
     },
     {
-      condition: (state: PuzzleState) => state.image.enabled,
+      condition: imageUploaded,
       default: 'print',
       key: 'image.exportAs',
       labelKey: 'export_as',
