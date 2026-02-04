@@ -1406,6 +1406,7 @@ export interface ILang {
     box_generator: string;
     code_generator: string;
     material_test_generator: string;
+    puzzle_generator: string;
     title: string;
   };
   generic_error: {
@@ -1929,6 +1930,45 @@ export interface ILang {
       title: string;
       tooltip1: string;
     };
+  };
+  puzzle_generator: {
+    board_radius: string;
+    board_width: string;
+    cancel: string;
+    columns: string;
+    design_preview: string;
+    exploded_view: string;
+    export_as: string;
+    export_engrave: string;
+    export_failed: string;
+    export_print: string;
+    file_too_large: string;
+    heart_sharpness: string;
+    image: string;
+    image_load_failed: string;
+    import_to_canvas: string;
+    offset_x: string;
+    offset_y: string;
+    orientation: string;
+    orientation_type_1: string;
+    orientation_type_2: string;
+    orientation_type_3: string;
+    orientation_type_4: string;
+    piece_size: string;
+    preview_placeholder: string;
+    puzzle_board: string;
+    radius: string;
+    rows: string;
+    tab_size: string;
+    types: {
+      circle_jigsaw: string;
+      heart_jigsaw: string;
+      rectangle_jigsaw: string;
+    };
+    unsupported_file_type: string;
+    upload_hint: string;
+    upload_image: string;
+    zoom: string;
   };
   qr_code_generator: {
     error_tolerance: string;

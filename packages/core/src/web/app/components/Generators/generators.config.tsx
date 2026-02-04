@@ -1,9 +1,13 @@
 import React from 'react';
 
+import { ExperimentOutlined } from '@ant-design/icons';
+
 import dialogCaller from '@core/app/actions/dialog-caller';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
 import type { ILang } from '@core/interfaces/ILang';
+
+import { showPuzzleGenerator } from '../dialogs/PuzzleGenerator';
 
 export interface GeneratorConfig {
   icon: React.ReactNode;
@@ -34,7 +38,13 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       titleKey: 'code_generator',
     } as const,
     {
-      icon: <GeneratorIcons.Material />,
+      icon: <GeneratorIcons.Puzzle />,
+      id: 'puzzle',
+      onClick: () => showPuzzleGenerator(),
+      titleKey: 'puzzle_generator',
+    } as const,
+    {
+      icon: <ExperimentOutlined />,
       id: 'material-test',
       onClick: () => dialogCaller.showMaterialTestGenerator(),
       titleKey: 'material_test_generator',
