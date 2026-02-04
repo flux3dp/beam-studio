@@ -119,6 +119,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
       />
       <ConfigSlider
         id="power_value"
+        isGradient
         max={MAX_VALUE}
         min={MIN_VALUE}
         onChange={handleChange}

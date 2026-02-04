@@ -1,9 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`test ConfigSlider should work 1`] = `
+exports[`test ConfigSlider should render correctly when isGradient is true 1`] = `
 <div>
   <div
-    class="container"
+    class="container gradient"
     id="mock-id"
   >
     <div>
@@ -33,7 +33,52 @@ exports[`test ConfigSlider should work 1`] = `
         <button
           type="button"
         >
-          onAfterChange
+          onChangeComplete
+        </button>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test ConfigSlider should work 1`] = `
+<div>
+  <div
+    class="container"
+    id="mock-id"
+  >
+    <div>
+      Mock Antd ConfigProvider
+      <p>
+        theme: 
+      </p>
+      <div>
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          100
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          10
+        </p>
+        <button
+          type="button"
+        >
+          onChangeComplete
         </button>
         <button
           type="button"
@@ -57,7 +102,6 @@ exports[`test ConfigSlider should work 2`] = `
       Mock Antd ConfigProvider
       <p>
         theme: 
-        {"components":{"Slider":{"dotActiveBorderColor":"#494949","handleActiveColor":"#494949","handleColor":"#cecece","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}},"token":{"colorPrimary":"#494949","colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949"}}
       </p>
       <div>
         Mock Antd Slider
@@ -80,7 +124,7 @@ exports[`test ConfigSlider should work 2`] = `
         <button
           type="button"
         >
-          onAfterChange
+          onChangeComplete
         </button>
         <button
           type="button"
@@ -104,7 +148,6 @@ exports[`test ConfigSlider should work 3`] = `
       Mock Antd ConfigProvider
       <p>
         theme: 
-        {"components":{"Slider":{"dotActiveBorderColor":"#494949","handleActiveColor":"#494949","handleColor":"#cecece","trackBg":"transparent","trackBgDisabled":"transparent","trackHoverBg":"transparent"}},"token":{"colorPrimary":"#494949","colorPrimaryBorder":"#cecece","colorPrimaryBorderHover":"#494949"}}
       </p>
       <div>
         Mock Antd Slider
@@ -127,7 +170,7 @@ exports[`test ConfigSlider should work 3`] = `
         <button
           type="button"
         >
-          onAfterChange
+          onChangeComplete
         </button>
         <button
           type="button"
