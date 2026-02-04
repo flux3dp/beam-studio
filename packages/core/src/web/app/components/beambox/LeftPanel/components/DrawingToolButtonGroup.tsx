@@ -1,6 +1,5 @@
 import React, { memo, useContext, useMemo } from 'react';
 
-import { AppstoreOutlined } from '@ant-design/icons';
 import { match } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
@@ -8,6 +7,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
+import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -154,7 +154,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         style: { color: drawerMode === 'ai-generate' ? '#000000' : undefined },
       })}
       {renderToolButton({
-        icon: <AppstoreOutlined />,
+        icon: <GeneratorIcons.Generator />,
         id: 'Generator',
         label: lang.generators.title,
         onClick: () => toggleDrawerMode('generator'),
