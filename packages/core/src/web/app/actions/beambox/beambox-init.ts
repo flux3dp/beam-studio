@@ -24,7 +24,6 @@ import {
   askAndInitSentry,
   initializeDefaultFont,
   showFirstCalibrationDialog,
-  showUpdateFontConvertDialog,
   showUpdatePathEngineDialog,
 } from '@core/helpers/initialization';
 import isWeb from '@core/helpers/is-web';
@@ -110,7 +109,6 @@ class BeamboxInit {
       }
     }
 
-    await showUpdateFontConvertDialog(isNewUser);
     await showUpdatePathEngineDialog(isNewUser);
 
     if (isNewUser && globalPreference['use-auto-exposure'] === undefined) {
