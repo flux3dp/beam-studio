@@ -1,4 +1,4 @@
-// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+// Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`test Controller should render correctly 1`] = `
 <div>
@@ -276,7 +276,7 @@ exports[`test Controller should render correctly 1`] = `
                         class="ant-input-number-input-wrap"
                       >
                         <input
-                          aria-valuemax="210"
+                          aria-valuemax="300"
                           aria-valuemin="1"
                           aria-valuenow="80"
                           autocomplete="off"
