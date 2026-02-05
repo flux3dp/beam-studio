@@ -18,10 +18,10 @@ jobs:
         with:
           run_install: false
 
-      - name: Setup Node 22
+      - name: Setup Node 24
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 24
           cache: "pnpm"
 
       - name: Install dependencies
@@ -44,7 +44,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        node-version: [22]
+        node-version: [24]
         # run copies of the current job in parallel
         containers: [1, 2, 3, 4, 5]
     steps:

@@ -146,7 +146,7 @@ module.exports = [
       modules: ['node_modules', path.resolve(core, 'node_modules')],
     },
     // stats: 'errors-only',
-    target: 'electron30-renderer',
+    target: 'electron40-renderer',
   },
   {
     devtool: 'source-map',
@@ -189,7 +189,7 @@ module.exports = [
       extensions: ['.tsx', '.ts', '.jsx', '.js', '.sass'],
     },
     // stats: 'errors-only',
-    target: 'electron30-renderer',
+    target: 'electron40-renderer',
   },
   {
     // stats: 'errors-only',

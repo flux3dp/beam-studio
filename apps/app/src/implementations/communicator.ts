@@ -3,6 +3,9 @@ import electron from 'electron';
 import type { ICommunicator } from '@core/interfaces/ICommunicator';
 
 export default {
+  invoke(channel: string, ...args: any[]) {
+    return electron.ipcRenderer.invoke(channel, ...args);
+  },
   off(channel: string, listener: any) {
     return electron.ipcRenderer.off(channel, listener);
   },
