@@ -109,7 +109,6 @@ test('test beambox-preference', () => {
     padding_accel_diode: 4500,
     'pass-through': false,
     'path-engine': 'swiftray',
-    'path-engine-dialog-shown': false,
     preview_movement_speed_level: 0,
     'print-advanced-mode': false,
     'promark-safety-door': false,

@@ -39,7 +39,6 @@ const state: GlobalPreference = {
   padding_accel: 5000,
   padding_accel_diode: 4500,
   'path-engine': 'swiftray',
-  'path-engine-dialog-shown': false,
   preview_movement_speed_level: PreviewSpeedLevel.SLOW,
   'print-advanced-mode': false,
   'reverse-engraving': false,

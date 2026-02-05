@@ -80,7 +80,6 @@ export type GlobalPreference = {
   padding_accel: number;
   padding_accel_diode: number;
   'path-engine': 'fluxghost' | 'swiftray';
-  'path-engine-dialog-shown'?: boolean;
   preview_movement_speed_level: PreviewSpeedLevelType;
   'print-advanced-mode': boolean;
   'reverse-engraving': boolean;

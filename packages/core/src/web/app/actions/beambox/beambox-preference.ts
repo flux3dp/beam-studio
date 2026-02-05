@@ -57,7 +57,6 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   padding_accel_diode: 4500,
   'pass-through': false,
   'path-engine': 'swiftray',
-  'path-engine-dialog-shown': false,
   preview_movement_speed_level: PreviewSpeedLevel.SLOW,
   'print-advanced-mode': false,
   'promark-safety-door': false,
