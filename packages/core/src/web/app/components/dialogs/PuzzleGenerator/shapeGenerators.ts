@@ -155,17 +155,184 @@ export const generateShapePath = (shapeType: ShapeType, options: ShapeOptions): 
     .with('rectangle', () => generateRectanglePath(options))
     .exhaustive();
 
+// ── Bézier offset utilities (used for heart border) ──────────────────────────
+
+type Point = [number, number];
+type CubicSegment = [Point, Point, Point, Point];
+
+/** Evaluate a cubic Bézier at parameter t. */
+const cubicAt = ([p0, p1, p2, p3]: CubicSegment, t: number): Point => {
+  const u = 1 - t;
+
+  return [
+    u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0],
+    u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1],
+  ];
+};
+
+/** Tangent (derivative) of a cubic Bézier at parameter t. */
+const cubicTangentAt = ([p0, p1, p2, p3]: CubicSegment, t: number): Point => {
+  const u = 1 - t;
+
+  return [
+    3 * (u * u * (p1[0] - p0[0]) + 2 * u * t * (p2[0] - p1[0]) + t * t * (p3[0] - p2[0])),
+    3 * (u * u * (p1[1] - p0[1]) + 2 * u * t * (p2[1] - p1[1]) + t * t * (p3[1] - p2[1])),
+  ];
+};
+
+/** Outward unit normal for counter-clockwise winding in Y-down coords: (-dy, dx). */
+const outwardNormal = ([dx, dy]: Point): Point => {
+  const len = Math.sqrt(dx * dx + dy * dy);
+
+  return len < 1e-10 ? [0, 0] : [-dy / len, dx / len];
+};
+
+/** Sample a Bézier segment into offset points (excluding t=1 to avoid duplicates). */
+const sampleOffsetSegment = (seg: CubicSegment, offset: number, count: number): Point[] => {
+  const pts: Point[] = [];
+
+  for (let i = 0; i <= count; i++) {
+    const t = i / count;
+    const [px, py] = cubicAt(seg, t);
+    const tangent = cubicTangentAt(seg, t);
+    const [nx, ny] = outwardNormal(tangent);
+
+    if (nx === 0 && ny === 0) continue;
+
+    pts.push([px + nx * offset, py + ny * offset]);
+  }
+
+  return pts;
+};
+
+/**
+ * Generate an SVG path offset outward from the heart by `offset` mm.
+ * Updates:
+ * 1. Trims segments at the center line to prevent overlapping loops ("lines over x coord").
+ * 2. Uses a specific Arc sweep (1) at the top notch to ensure it curves UP (outward),
+ * fixing the "weird curve below" issue.
+ */
+const generateOffsetHeartPath = (options: ShapeOptions, offset: number): string => {
+  const { centerX = 0, centerY = 0, cornerRadius = DEFAULT_HEART_SHARPNESS, height, width } = options;
+
+  const topCurveHeight = height * 0.3;
+  const halfWidth = width / 2;
+  const halfHeight = height / 2;
+  const topY = centerY - halfHeight;
+  const notchY = topY + topCurveHeight;
+  const bottomY = centerY + halfHeight;
+
+  const sharpness = 1 - cornerRadius / 50;
+  const bottomPullFactor = 0.3 + sharpness * 0.5;
+  const bottomCtrl1Y = notchY + (bottomY - notchY) * 0.4;
+  const bottomCtrl2X = halfWidth * bottomPullFactor;
+  const bottomCtrl2Y = bottomY - (bottomY - notchY) * (0.2 + (1 - sharpness) * 0.3);
+
+  const segments: CubicSegment[] = [
+    [
+      [centerX, notchY],
+      [centerX, topY],
+      [centerX - halfWidth, topY],
+      [centerX - halfWidth, notchY],
+    ],
+    [
+      [centerX - halfWidth, notchY],
+      [centerX - halfWidth, bottomCtrl1Y],
+      [centerX - bottomCtrl2X, bottomCtrl2Y],
+      [centerX, bottomY],
+    ],
+    [
+      [centerX, bottomY],
+      [centerX + bottomCtrl2X, bottomCtrl2Y],
+      [centerX + halfWidth, bottomCtrl1Y],
+      [centerX + halfWidth, notchY],
+    ],
+    [
+      [centerX + halfWidth, notchY],
+      [centerX + halfWidth, topY],
+      [centerX, topY],
+      [centerX, notchY],
+    ],
+  ];
+
+  const N = 512;
+  const segPoints = segments.map((seg) => sampleOffsetSegment(seg, offset, N));
+
+  // [FIX] Trim any points that cross the center line ("remove lines over x coord")
+  // Left Lobe (Seg 0): Keep x <= centerX
+  segPoints[0] = segPoints[0].filter((p) => p[0] <= centerX);
+  // Right Lobe (Seg 3): Keep x >= centerX
+  segPoints[3] = segPoints[3].filter((p) => p[0] >= centerX);
+
+  // Ensure segments aren't empty after trimming (fallback to original start/end)
+  if (segPoints[0].length === 0) segPoints[0].push([centerX - offset, notchY]);
+
+  if (segPoints[3].length === 0) segPoints[3].push([centerX + offset, notchY]);
+
+  const f = (v: number) => v.toFixed(2);
+  const parts: string[] = [];
+
+  // Start path
+  const firstPt = segPoints[0][0];
+
+  parts.push(`M ${f(firstPt[0])} ${f(firstPt[1])}`);
+
+  for (let s = 0; s < segments.length; s++) {
+    const pts = segPoints[s];
+
+    if (pts.length === 0) continue;
+
+    // Line segments
+    const startIdx = s === 0 ? 1 : 0;
+
+    for (let i = startIdx; i < pts.length; i++) {
+      parts.push(`L ${f(pts[i][0])} ${f(pts[i][1])}`);
+    }
+
+    // Join to next segment
+    const nextS = (s + 1) % segments.length;
+    const lastPt = pts[pts.length - 1];
+    const nextPts = segPoints[nextS];
+
+    if (nextPts.length > 0) {
+      const nextFirst = nextPts[0];
+      const gap = Math.sqrt((lastPt[0] - nextFirst[0]) ** 2 + (lastPt[1] - nextFirst[1]) ** 2);
+
+      if (gap > 0.01) {
+        if (s === 3) {
+          // [FIX] Top Notch: Use Sweep=1
+          // This forces the arc to curve UP (outward) instead of dipping down.
+          // This bridges the gap with a clean rounded top.
+          parts.push(`A ${f(offset)} ${f(offset)} 0 0 1 ${f(nextFirst[0])} ${f(nextFirst[1])}`);
+        } else {
+          // Convex Corners (Lobes, Bottom): Use Sweep=0
+          // Standard rounded corner.
+          parts.push(`A ${f(offset)} ${f(offset)} 0 0 0 ${f(nextFirst[0])} ${f(nextFirst[1])}`);
+        }
+      }
+    }
+  }
+
+  parts.push('Z');
+
+  return parts.join(' ');
+};
+
+// ── Border path generation ───────────────────────────────────────────────────
+
 export const generateBorderPath = (shapeType: ShapeType, options: BorderOptions): string => {
   const { borderWidth, cornerRadius = 0, height, width, ...rest } = options;
 
-  const expandedOptions: ShapeOptions = {
+  if (shapeType === 'heart') {
+    return generateOffsetHeartPath({ ...rest, cornerRadius, height, width }, borderWidth);
+  }
+
+  return generateShapePath(shapeType, {
     ...rest,
     cornerRadius,
     height: height + borderWidth * 2,
     width: width + borderWidth * 2,
-  };
-
-  return generateShapePath(shapeType, expandedOptions);
+  });
 };
 
 export interface RaisedEdgesOptions extends BorderOptions {
@@ -181,24 +348,26 @@ export interface RaisedEdgesOptions extends BorderOptions {
 export const generateRaisedEdgesPath = (shapeType: ShapeType, options: RaisedEdgesOptions): string => {
   const { borderWidth, cornerRadius = 0, height, innerCornerRadius, width, ...rest } = options;
 
-  // Outer boundary (same size as board base)
-  const outerOptions: ShapeOptions = {
-    ...rest,
-    cornerRadius,
-    height: height + borderWidth * 2,
-    width: width + borderWidth * 2,
-  };
+  const shapeOpts: ShapeOptions = { ...rest, cornerRadius, height, width };
+
+  // Outer boundary — offset path for hearts, uniform expansion for others
+  const outerPath =
+    shapeType === 'heart'
+      ? generateOffsetHeartPath(shapeOpts, borderWidth)
+      : generateShapePath(shapeType, {
+          ...rest,
+          cornerRadius,
+          height: height + borderWidth * 2,
+          width: width + borderWidth * 2,
+        });
 
   // Inner boundary (puzzle shape) — uses innerCornerRadius if specified
-  const innerOptions: ShapeOptions = {
+  const innerPath = generateShapePath(shapeType, {
     ...rest,
     cornerRadius: innerCornerRadius ?? cornerRadius,
     height,
     width,
-  };
-
-  const outerPath = generateShapePath(shapeType, outerOptions);
-  const innerPath = generateShapePath(shapeType, innerOptions);
+  });
 
   // Combine paths - the inner path creates the cutout
   return `${outerPath} ${innerPath}`;
