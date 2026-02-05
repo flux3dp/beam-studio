@@ -18,8 +18,7 @@ export const loadTaskToSwiftray = async (scene: string, model: WorkAreaModel): P
       uploadName: 'calibration.svg',
     },
     { onError: () => {}, onFinished: () => {}, onProgressing: () => {} },
-    // use mid dpi (254)
-    { engraveDpi: 254, model, rotaryMode: false },
+    { model, rotaryMode: false },
   );
 
   if (!uploadRes.success) {

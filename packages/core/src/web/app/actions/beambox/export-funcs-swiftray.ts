@@ -132,10 +132,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
   });
 
   const documentState = useDocumentStore.getState();
-  const globalPreference = useGlobalPreferenceStore.getState();
   const uploadConfig = {
-    // TODO: fallback dpmm for older backend, can remove after swiftray update
-    engraveDpi: dpiTextMap[globalPreference.engrave_dpi],
     model: workareaManager.model,
     rotaryMode: documentState['rotary_mode'],
   };
