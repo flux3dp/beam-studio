@@ -307,7 +307,6 @@ class SwiftrayClient extends EventEmitter {
       onProgressing: (progress) => void;
     },
     loadOptions: {
-      engraveDpi: number;
       model: string;
       rotaryMode: boolean;
     },
@@ -318,7 +317,6 @@ class SwiftrayClient extends EventEmitter {
 
     const uploadRes = await this.action<{ error?: ErrorObject; success: boolean }>('/parser', 'loadSVG', {
       defaultConfig,
-      engraveDpi: loadOptions.engraveDpi,
       file,
       model: loadOptions.model,
       rotaryMode: loadOptions.rotaryMode,
