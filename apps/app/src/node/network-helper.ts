@@ -68,8 +68,6 @@ const registerEvents = (): void => {
     const res = await testNetwork(ip, time, sender);
 
     event.sender.send(NetworkEvents.TestNetworkResult, res);
-
-    event.returnValue = res;
   });
 
   ipcMain.removeAllListeners(NetworkEvents.CheckIpExist);
@@ -78,8 +76,6 @@ const registerEvents = (): void => {
     const res = await checkIPExist(ip, trial);
 
     sender.send(NetworkEvents.CheckIpExistResult, res);
-
-    event.returnValue = res;
   });
 };
 

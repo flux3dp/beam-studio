@@ -22,7 +22,7 @@ jobs:
     runs-on: windows-latest
     strategy:
       matrix:
-        node-version: [22]
+        node-version: [24]
         python-version: [3.8]
         arch: [64]
 

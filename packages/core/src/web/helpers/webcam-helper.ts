@@ -19,9 +19,15 @@ const askForPermission = async (): Promise<boolean> => {
     }
   }
 
-  const res = communicator.sendSync(MiscEvents.AskForPermission, 'camera');
+  try {
+    const res = await communicator.invoke(MiscEvents.AskForPermission, 'camera');
 
-  return res;
+    return res;
+  } catch (err) {
+    console.error('Failed to check camera permission via IPC:', err);
+
+    return false;
+  }
 };
 
 const listDevices = async (): Promise<MediaDeviceInfo[]> => {

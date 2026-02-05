@@ -29,6 +29,6 @@ module.exports = [
       },
       extensions: ['.ts', '.js'],
     },
-    target: 'electron30-main',
+    target: 'electron40-main',
   },
 ];
