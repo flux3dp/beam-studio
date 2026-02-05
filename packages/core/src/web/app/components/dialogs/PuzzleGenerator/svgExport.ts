@@ -8,8 +8,8 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import imageData from '@core/helpers/image-data';
-import { createLayer } from '@core/helpers/layer/layer-helper';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
+import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -27,7 +27,7 @@ getSVGAsync(({ Canvas }) => {
 // Colors matching the exploded view preview
 const EXPORT_COLORS = {
   boardBase: '#8bc34a', // Green - border color in exploded view
-  outlines: '#ffc107', // Amber - outline color in exploded view
+  guideLines: '#ffc107', // Amber - guide lines color in exploded view
   pieces: '#f44336', // Red - inner color in exploded view
   raisedEdges: '#3f51b5', // Blue - boundary color in exploded view
 } as const;
@@ -188,11 +188,25 @@ const exportImageLayer = async (
   // Clip dimensions — expand by bleed if set
   const clipW = geo.layout.width + image.bleed * 2;
   const clipH = geo.layout.height + image.bleed * 2;
-  const placement = computeImagePlacement(img.naturalWidth, img.naturalHeight, geo.layout.width, geo.layout.height, image);
+  const placement = computeImagePlacement(
+    img.naturalWidth,
+    img.naturalHeight,
+    geo.layout.width,
+    geo.layout.height,
+    image,
+  );
 
   // Render image clipped to shape on offscreen canvas (10 px/mm for sharp output)
   const pxPerMm = 10;
-  const croppedDataUrl = renderCroppedImage(img, placement, shapeType, clipW, clipH, meta.boundaryCornerRadius, pxPerMm);
+  const croppedDataUrl = renderCroppedImage(
+    img,
+    placement,
+    shapeType,
+    clipW,
+    clipH,
+    meta.boundaryCornerRadius,
+    pxPerMm,
+  );
 
   const isPrinting = image.exportAs === 'print';
   const targetModule = isPrinting ? LayerModule.PRINTER : getDefaultLaserModule();
@@ -285,9 +299,9 @@ export const exportToCanvas = async (
     });
   }
 
-  // RIGHT SIDE: Outlines on board base (if border enabled)
-  if (layout.hasBorder && innerCuts) {
-    await importLayer('Outlines', EXPORT_COLORS.outlines, {
+  // RIGHT SIDE: Guide Lines on board base (if border and guideLines enabled)
+  if (layout.hasBorder && state.border.guideLines && innerCuts) {
+    await importLayer('Guide Lines', EXPORT_COLORS.guideLines, {
       ...baseOpts,
       clipPathData: clipPath,
       elementOffsetX: layout.boardOffsetX,

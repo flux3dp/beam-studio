@@ -1943,6 +1943,7 @@ const lang: ILang = {
     export_failed: '無法將拼圖匯入畫布，請重試或調整拼圖設定。',
     export_print: '列印圖層',
     file_too_large: '選擇的檔案超過允許的最大大小。',
+    guide_lines: '導引線',
     heart_sharpness: '尖端銳度',
     image: '圖片',
     image_load_failed: '無法載入所選圖片，請嘗試其他檔案。',

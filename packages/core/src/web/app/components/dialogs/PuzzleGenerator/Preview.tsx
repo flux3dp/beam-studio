@@ -14,8 +14,8 @@ import { drawShapeClipPath, getShapeMetadata } from './shapeGenerators';
 import type { PuzzleState, PuzzleTypeConfig } from './types';
 
 const COLORS = {
-  design: { border: '#333333', boundary: '#333333', fill: 'transparent', inner: '#333333', outlines: '#333333' },
-  exploded: { border: '#8bc34a', boundary: '#3f51b5', fill: 'transparent', inner: '#f44336', outlines: '#ffc107' },
+  design: { border: '#333333', boundary: '#333333', fill: 'transparent', guideLines: '#333333', inner: '#333333' },
+  exploded: { border: '#8bc34a', boundary: '#3f51b5', fill: 'transparent', guideLines: '#ffc107', inner: '#f44336' },
 } as const;
 
 type ViewMode = keyof typeof COLORS;
@@ -238,7 +238,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
         {vl.showExploded && (
           <Group x={vl.boardX}>
             <Path data={geometry.boardBasePath} fill={colors.fill} stroke={colors.border} strokeWidth={0.5} />
-            {renderEdges(cf, colors.outlines, 0.3)}
+            {state.border.guideLines && renderEdges(cf, colors.guideLines, 0.3)}
           </Group>
         )}
       </Group>

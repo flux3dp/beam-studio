@@ -226,11 +226,13 @@ const GroupProperty = ({
   // Find the toggle property if enabledBy is set
   const isEnabled = property.enabledBy ? (getValue(property.enabledBy) as boolean) : true;
 
-  // Find toggle child for the header
-  const toggleChild = property.children.find((child) => child.type === 'toggle');
+  // Find the header toggle (the one that controls the group's enabled state)
+  const toggleChild = property.enabledBy
+    ? property.children.find((child) => child.key === property.enabledBy)
+    : undefined;
 
-  // Get other children (non-toggle)
-  const contentChildren = property.children.filter((child) => child.type !== 'toggle');
+  // Get other children (exclude only the header toggle)
+  const contentChildren = property.children.filter((child) => child !== toggleChild);
 
   if (property.expandable) {
     return (

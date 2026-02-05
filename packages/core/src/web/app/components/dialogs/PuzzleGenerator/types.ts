@@ -74,6 +74,7 @@ export interface ImageState {
 
 export interface BorderState {
   enabled: boolean;
+  guideLines: boolean;
   radius: number;
   width: number;
 }
@@ -124,6 +125,7 @@ export const createDefaultImageState = (): ImageState => ({
 
 export const createDefaultBorderState = (): BorderState => ({
   enabled: false,
+  guideLines: false,
   radius: 0,
   width: 5,
 });

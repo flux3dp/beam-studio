@@ -212,6 +212,15 @@ const createBorderGroup = (options: BorderGroupOptions = {}): GroupPropertyDef =
     });
   }
 
+  // Guide Lines toggle always last — after all dimensional controls
+  children.push({
+    condition: (state: PuzzleState) => state.border.enabled,
+    default: false,
+    key: 'border.guideLines',
+    labelKey: 'guide_lines',
+    type: 'toggle',
+  });
+
   return {
     children,
     enabledBy: 'border.enabled',

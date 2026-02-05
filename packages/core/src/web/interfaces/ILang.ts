@@ -1945,6 +1945,7 @@ export interface ILang {
     export_failed: string;
     export_print: string;
     file_too_large: string;
+    guide_lines: string;
     heart_sharpness: string;
     image: string;
     image_load_failed: string;
