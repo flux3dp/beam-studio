@@ -119,7 +119,8 @@ class TabController extends EventEmitter {
     if (this.isFirstTab === null) {
       const firstTab = this.getAllTabs().find((t) => !t.isWelcomeTab);
 
-      this.isFirstTab = firstTab?.id === this.currentId;
+      // No tab without welcome tab found means current tab is the first tab (preloading)
+      this.isFirstTab = !firstTab || firstTab.id === this.currentId;
     }
 
     return this.isFirstTab;
