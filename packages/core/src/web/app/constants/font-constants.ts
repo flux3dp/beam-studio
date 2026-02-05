@@ -2,13 +2,10 @@
 // https://stackoverflow.com/questions/14563064/japanese-standard-web-fonts
 // https://en.wikipedia.org/wiki/List_of_CJK_fonts#Sans-serif
 
+import type { OSName } from '@core/helpers/getOS';
+
 const fontConstants: {
-  [lang: string]: {
-    Linux?: string;
-    MacOS?: string;
-    web?: string;
-    Windows?: string;
-  };
+  [lang: string]: Partial<Record<OSName, string> & { web: string }>;
 } = {
   ja: {
     Linux: 'Ubuntu',

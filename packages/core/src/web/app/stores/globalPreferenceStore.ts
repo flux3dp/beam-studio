@@ -52,6 +52,7 @@ const getInitStore = (): GlobalPreference => {
     padding_accel: preference.padding_accel,
     padding_accel_diode: preference.padding_accel_diode,
     'path-engine': preference['path-engine'],
+    'path-engine-dialog-shown': preference['path-engine-dialog-shown'],
     preview_movement_speed_level: preference.preview_movement_speed_level,
     'print-advanced-mode': preference['print-advanced-mode'],
     'reverse-engraving': preference['reverse-engraving'],

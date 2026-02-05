@@ -21,14 +21,14 @@ $icon-margin: 8px;
 
   .message {
     font-family:
-      'Helvetica Neue', 'HelveticaNeue-Light', 'Helvetica Neue Light',
-      Helvetica, Arial, 'Lucida Grande', sans-serif, 'Microsoft JhengHei',
-      '微軟正黑體';
+      'Helvetica Neue', 'HelveticaNeue-Light', 'Helvetica Neue Light', Helvetica, Arial, 'Lucida Grande', sans-serif,
+      'Microsoft JhengHei', '微軟正黑體';
     margin: 0;
     padding: 0;
     position: relative;
     word-break: normal;
     word-wrap: normal;
+    white-space: break-spaces;
 
     &.with-icon {
       width: calc(100% - #{$icon-size + $icon-margin});

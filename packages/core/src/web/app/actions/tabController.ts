@@ -15,10 +15,11 @@ import type { Tab } from '@core/interfaces/Tab';
 
 class TabController extends EventEmitter {
   private currentInfo: null | { hasUnsavedChanges: boolean; isCloud: boolean; title: string } = null;
+  private isWelcomeTab: boolean | null = null;
+  private isFirstTab: boolean | null = null;
 
   public currentId: null | number = null;
   public isFocused = false;
-  public isWelcomeTab: boolean | null = null;
 
   constructor() {
     super();
@@ -34,6 +35,7 @@ class TabController extends EventEmitter {
     });
     communicator.on(TabEvents.TabUpdated, (_: unknown, tabs: Tab[]) => {
       this.emit(TabEvents.TabUpdated, tabs);
+      this.isFirstTab = null;
     });
     communicator.on(TabEvents.ImportFileInTab, (_: unknown, file: FileData) => {
       importFileInCurrentTab(file);
@@ -111,6 +113,18 @@ class TabController extends EventEmitter {
     }
 
     return this.isWelcomeTab;
+  };
+
+  getIsFirstTab = (): boolean => {
+    if (this.isFirstTab === null) {
+      const firstTab = this.getAllTabs().filter((t) => !t.isWelcomeTab)[0];
+
+      this.isFirstTab = firstTab?.id === this.currentId;
+
+      return this.isFirstTab;
+    }
+
+    return this.isFirstTab;
   };
 
   addNewTab = (): void => communicator.send(TabEvents.AddNewTab);
