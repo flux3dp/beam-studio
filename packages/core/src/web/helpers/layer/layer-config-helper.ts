@@ -12,6 +12,7 @@ import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import isDev from '@core/helpers/is-dev';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
@@ -647,7 +648,7 @@ export const getPromarkLimit = (): {
   pulseWidth?: { max: number; min: number };
 } =>
   // pulseWidth for M100 V1: 10~500, M20 V1: 2~350
-  match(getPromarkInfo())
+  match({ ...getPromarkInfo(), isDev: isDev() })
     .with({ laserType: LaserType.MOPA, watt: 60 }, () => ({
       frequency: { max: 3000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
@@ -656,6 +657,8 @@ export const getPromarkLimit = (): {
       frequency: { max: 4000, min: 1 },
       pulseWidth: { max: 500, min: 2 },
     }))
+    .with({ isDev: true, laserType: LaserType.Desktop }, () => ({ frequency: { max: 200, min: 10 } }))
+    .with({ watt: 100 }, () => ({ frequency: { max: 200, min: 55 } }))
     .with({ watt: 50 }, () => ({ frequency: { max: 170, min: 45 } }))
     .with({ watt: 30 }, () => ({ frequency: { max: 60, min: 30 } }))
     .otherwise(() => ({ frequency: { max: 60, min: 27 } }));
