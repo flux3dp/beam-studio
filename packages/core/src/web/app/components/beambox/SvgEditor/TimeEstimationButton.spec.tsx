@@ -41,10 +41,6 @@ describe('should render correctly', () => {
   });
 
   it('should render correctly with estimatedTime', () => {
-    Object.defineProperty(window, 'os', {
-      value: 'MacOS',
-    });
-
     const { container } = render(
       <TimeEstimationButtonContext.Provider
         value={{
@@ -77,10 +73,6 @@ describe('should render correctly', () => {
   });
 
   test('when WITHOUT estimatedTime', async () => {
-    Object.defineProperty(window, 'os', {
-      value: 'Windows',
-    });
-
     const mockSetEstimatedTime = jest.fn();
     const { container } = render(
       <TimeEstimationButtonContext.Provider
@@ -104,9 +96,6 @@ describe('should render correctly', () => {
   });
 
   test('web check connection', async () => {
-    Object.defineProperty(window, 'os', {
-      value: 'MacOS',
-    });
     Object.defineProperty(window, 'FLUX', {
       value: {
         version: 'web',
