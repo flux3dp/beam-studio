@@ -64,7 +64,8 @@ const Controller = (): React.JSX.Element => {
   const lang = useI18n().boxgen;
   const { boxData, setBoxData } = useBoxgenStore();
   const { lengthUnit, workarea } = useBoxgenWorkarea();
-  const workareaLimit = Math.min(workarea.canvasWidth, workarea.canvasHeight);
+  const longSideLimit = Math.max(workarea.canvasWidth, workarea.canvasHeight);
+  const shortSideLimit = Math.min(workarea.canvasWidth, workarea.canvasHeight);
   const { decimal, unit, unitRatio } = lengthUnit;
   const isMM = unit === 'mm';
 
@@ -181,7 +182,11 @@ const Controller = (): React.JSX.Element => {
         <Tooltip
           arrow={{ pointAtCenter: true }}
           placement="bottomLeft"
-          title={sprintf(lang.max_dimension_tooltip, `${(workareaLimit / unitRatio).toFixed(isMM ? 0 : 2)}${unit}`)}
+          title={sprintf(
+            lang.max_dimension_tooltip,
+            `${(longSideLimit / unitRatio).toFixed(isMM ? 0 : 2)}${unit}`,
+            `${(shortSideLimit / unitRatio).toFixed(isMM ? 0 : 2)}${unit}`,
+          )}
         >
           <QuestionCircleOutlined className={styles.icon} />
         </Tooltip>
@@ -212,7 +217,7 @@ const Controller = (): React.JSX.Element => {
           className={styles['small-margin']}
           label={lang.width}
           lengthUnit={lengthUnit}
-          max={workareaLimit}
+          max={longSideLimit}
           min={1}
           name="width"
         />
@@ -220,11 +225,11 @@ const Controller = (): React.JSX.Element => {
           className={styles['small-margin']}
           label={lang.height}
           lengthUnit={lengthUnit}
-          max={workareaLimit}
+          max={shortSideLimit}
           min={1}
           name="height"
         />
-        <LengthInputItem label={lang.depth} lengthUnit={lengthUnit} max={workareaLimit} min={1} name="depth" />
+        <LengthInputItem label={lang.depth} lengthUnit={lengthUnit} max={shortSideLimit} min={1} name="depth" />
         <Form.Item label={lang.thickness} name="sheetThickness">
           <Select
             dropdownRender={(menu) => (

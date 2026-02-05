@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Nhập',
     inner: 'Bên trong',
     joints: 'Khớp nối',
-    max_dimension_tooltip: 'Kích thước tối đa là %s.',
+    max_dimension_tooltip: 'Chiều rộng tối đa là %s, chiều cao/chiều sâu tối đa là %s.',
     merge: 'Gộp',
     outer: 'Bên ngoài',
     reset: 'Đặt lại',

@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Importer',
     inner: 'Intérieur',
     joints: 'Joint',
-    max_dimension_tooltip: 'La largeur/hauteur/profondeur maximale est de %s.',
+    max_dimension_tooltip: 'La largeur maximale est de %s, la hauteur/profondeur maximale est de %s.',
     merge: 'Fusionner',
     outer: 'Extérieur',
     reset: 'Réinitialiser',

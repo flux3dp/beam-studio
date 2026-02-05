@@ -67,13 +67,30 @@ jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args: unknown[]) => mockCreateBatchCommand(...args),
 }));
 
+const mockForceUpdateLayerStore = jest.fn();
+
+jest.mock('@core/app/stores/layer/layerStore', () => ({
+  getState: () => ({
+    forceUpdate: () => mockForceUpdateLayerStore(),
+  }),
+}));
+
+const mockGetObjectLayer = jest.fn();
+
+jest.mock('@core/helpers/layer/layer-helper', () => ({
+  getObjectLayer: (...args: unknown[]) => mockGetObjectLayer(...args),
+}));
+
 const mockOnClose = jest.fn();
 
 // Mock layer objects that will be returned by getLayerByName
 const mockNewLayer1 = { setVisible: jest.fn() };
+const mockNewLayer1Label = { setVisible: jest.fn() };
 const mockNewLayer2 = { setVisible: jest.fn() };
+const mockNewLayer2Label = { setVisible: jest.fn() };
 
 import ExportButton from './ExportButton';
+import { match } from 'ts-pattern';
 
 describe('test ExportButton', () => {
   beforeEach(() => {
@@ -94,7 +111,22 @@ describe('test ExportButton', () => {
     mockImportSvgString.mockResolvedValue('mock-svg-object');
     mockCreateBatchCommand.mockImplementation(() => mockBatchCommand);
     mockGetAllLayers.mockReturnValue([mockLayer1, mockLayer2]);
-    mockGetLayerByName.mockReturnValueOnce(mockNewLayer1).mockReturnValueOnce(mockNewLayer2);
+    mockGetObjectLayer.mockImplementation((obj: string) => {
+      return match(obj)
+        .with('mock-svg-object-1', () => ({ title: 'layer1' }))
+        .with('mock-svg-object-1-label', () => ({ title: 'layer1-label' }))
+        .with('mock-svg-object-2', () => ({ title: 'layer2' }))
+        .with('mock-svg-object-2-label', () => ({ title: 'layer2-label' }))
+        .otherwise(() => null);
+    });
+    mockGetLayerByName.mockImplementation((name: string) => {
+      return match(name)
+        .with('layer1', () => mockNewLayer1)
+        .with('layer1-label', () => mockNewLayer1Label)
+        .with('layer2', () => mockNewLayer2)
+        .with('layer2-label', () => mockNewLayer2Label)
+        .otherwise(() => null);
+    });
   });
 
   test('should render correctly', () => {
@@ -163,52 +195,62 @@ describe('test ExportButton', () => {
       joinOutput: true,
       textLabel: true,
     });
+    mockImportSvgString
+      .mockResolvedValueOnce('mock-svg-object-2')
+      .mockResolvedValueOnce('mock-svg-object-2-label')
+      .mockResolvedValueOnce('mock-svg-object-1')
+      .mockResolvedValueOnce('mock-svg-object-1-label');
 
     fireEvent.click(modal!.querySelector('.ant-btn-primary')!);
     await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockWrapSVG).toHaveBeenCalledTimes(4);
-    expect(mockWrapSVG).toHaveBeenNthCalledWith(1, 300, 210, ['layer1-1', 'layer1-2']);
-    expect(mockWrapSVG).toHaveBeenNthCalledWith(2, 300, 210, ['layer1-1 label', 'layer1-2 label']);
-    expect(mockWrapSVG).toHaveBeenNthCalledWith(3, 300, 210, ['layer2']);
-    expect(mockWrapSVG).toHaveBeenNthCalledWith(4, 300, 210, ['layer2 label']);
+    expect(mockWrapSVG).toHaveBeenNthCalledWith(1, 300, 210, ['layer2']);
+    expect(mockWrapSVG).toHaveBeenNthCalledWith(2, 300, 210, ['layer2 label']);
+    expect(mockWrapSVG).toHaveBeenNthCalledWith(3, 300, 210, ['layer1-1', 'layer1-2']);
+    expect(mockWrapSVG).toHaveBeenNthCalledWith(4, 300, 210, ['layer1-1 label', 'layer1-2 label']);
     expect(mockImportSvgString).toHaveBeenCalledTimes(4);
     expect(mockImportSvgString).toHaveBeenNthCalledWith(1, 'mock-svg', {
-      layerName: 'Box 3-1',
-      parentCmd: mockBatchCommand,
-      type: 'layer',
-    });
-    expect(mockImportSvgString).toHaveBeenNthCalledWith(2, 'mock-svg', {
-      layerName: 'Box 3-1 Label',
-      parentCmd: mockBatchCommand,
-      type: 'layer',
-    });
-    expect(mockImportSvgString).toHaveBeenNthCalledWith(3, 'mock-svg', {
       layerName: 'Box 3-2',
       parentCmd: mockBatchCommand,
       type: 'layer',
     });
-    expect(mockImportSvgString).toHaveBeenNthCalledWith(4, 'mock-svg', {
+    expect(mockImportSvgString).toHaveBeenNthCalledWith(2, 'mock-svg', {
       layerName: 'Box 3-2 Label',
+      parentCmd: mockBatchCommand,
+      type: 'layer',
+    });
+    expect(mockImportSvgString).toHaveBeenNthCalledWith(3, 'mock-svg', {
+      layerName: 'Box 3-1',
+      parentCmd: mockBatchCommand,
+      type: 'layer',
+    });
+    expect(mockImportSvgString).toHaveBeenNthCalledWith(4, 'mock-svg', {
+      layerName: 'Box 3-1 Label',
       parentCmd: mockBatchCommand,
       type: 'layer',
     });
     expect(mockDisassembleUse).toHaveBeenCalledTimes(1);
     expect(mockDisassembleUse).toHaveBeenNthCalledWith(
       1,
-      ['mock-svg-object', 'mock-svg-object', 'mock-svg-object', 'mock-svg-object'],
+      ['mock-svg-object-2', 'mock-svg-object-2-label', 'mock-svg-object-1', 'mock-svg-object-1-label'],
       {
         parentCmd: mockBatchCommand,
         showProgress: false,
         skipConfirm: true,
       },
     );
-    expect(mockGetLayerByName).toHaveBeenCalledWith('Box 3-2');
-    expect(mockGetLayerByName).toHaveBeenCalledWith('Box 3-2 Label');
-    expect(mockNewLayer1.setVisible).toHaveBeenCalledTimes(1);
-    expect(mockNewLayer1.setVisible).toHaveBeenCalledWith(false, { addToHistory: false });
+    expect(mockGetObjectLayer).toHaveBeenCalledTimes(4);
+    expect(mockGetObjectLayer).toHaveBeenNthCalledWith(1, 'mock-svg-object-2');
+    expect(mockGetObjectLayer).toHaveBeenNthCalledWith(2, 'mock-svg-object-2-label');
+    expect(mockGetObjectLayer).toHaveBeenNthCalledWith(3, 'mock-svg-object-1');
+    expect(mockGetObjectLayer).toHaveBeenNthCalledWith(4, 'mock-svg-object-1-label');
+    expect(mockNewLayer1.setVisible).not.toHaveBeenCalled();
+    expect(mockNewLayer1Label.setVisible).not.toHaveBeenCalled();
     expect(mockNewLayer2.setVisible).toHaveBeenCalledTimes(1);
     expect(mockNewLayer2.setVisible).toHaveBeenCalledWith(false, { addToHistory: false });
+    expect(mockNewLayer2Label.setVisible).toHaveBeenCalledTimes(1);
+    expect(mockNewLayer2Label.setVisible).toHaveBeenCalledWith(false, { addToHistory: false });
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 });

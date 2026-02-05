@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Importovat',
     inner: 'Vnitřní',
     joints: 'Spoj',
-    max_dimension_tooltip: 'Maximální šířka/výška/hloubka je nastavena na %s.',
+    max_dimension_tooltip: 'Maximální šířka je %s, maximální výška/hloubka je nastavena na %s.',
     merge: 'Sloučit',
     outer: 'Vnější',
     reset: 'Restartovat',

@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: '导入',
     inner: '内部',
     joints: '拼接',
-    max_dimension_tooltip: '最大宽度/高度/深度设置为 %s。',
+    max_dimension_tooltip: '最大宽度为 %s，最大高度/深度设置为 %s。',
     merge: '合并',
     outer: '外部',
     reset: '重置',

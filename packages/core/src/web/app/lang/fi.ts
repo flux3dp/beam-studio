@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Tuo',
     inner: 'Sisäinen',
     joints: 'Liitos',
-    max_dimension_tooltip: 'Maksimileveys/korkeus/syvyys on %s.',
+    max_dimension_tooltip: 'Maksimileveys on %s, maksimikorkeus/syvyys on %s.',
     merge: 'Yhdistä',
     outer: 'Ulkoinen',
     reset: 'Nollaa',

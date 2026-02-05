@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'นําเข้า',
     inner: 'ภายใน',
     joints: 'รอยต่อ',
-    max_dimension_tooltip: 'ความกว้าง/ความสูง/ความลึกสูงสุดคือ %s',
+    max_dimension_tooltip: 'ความกว้างสูงสุดคือ %s, ความสูง/ความลึกสูงสุดคือ %s',
     merge: 'รวม',
     outer: 'ภายนอก',
     reset: 'รีเซ็ต',

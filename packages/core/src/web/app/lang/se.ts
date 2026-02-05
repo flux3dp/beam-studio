@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Importera',
     inner: 'Inre',
     joints: 'Fog',
-    max_dimension_tooltip: 'Max bredd/höjd/djup inställning är %s.',
+    max_dimension_tooltip: 'Max bredd är %s, max höjd/djup inställning är %s.',
     merge: 'Sammanfoga',
     outer: 'Yttre',
     reset: 'Återställ',
