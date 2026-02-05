@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'インポート',
     inner: '内側',
     joints: 'ジョイント',
-    max_dimension_tooltip: '最大幅/高さ/奥行きの設定は %s です。',
+    max_dimension_tooltip: '最大幅は %s、最大高さ/奥行きの設定は %s です。',
     merge: 'マージ',
     outer: '外側',
     reset: 'リセット',

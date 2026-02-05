@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Importar',
     inner: 'Interior',
     joints: 'Unión',
-    max_dimension_tooltip: 'El ajuste máximo de ancho/alto/fondo es %s.',
+    max_dimension_tooltip: 'El ancho máximo es %s, el ajuste máximo de alto/fondo es %s.',
     merge: 'Fusionar',
     outer: 'Exterior',
     reset: 'Restablecer',

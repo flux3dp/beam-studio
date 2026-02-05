@@ -5,6 +5,7 @@ import { DownloadOutlined } from '@ant-design/icons';
 import { Button, Form, InputNumber, Modal, Pagination, Switch } from 'antd';
 
 import { useBoxgenStore } from '@core/app/stores/boxgenStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -12,6 +13,7 @@ import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import { getLayouts } from '@core/helpers/boxgen/Layout';
 import wrapSVG from '@core/helpers/boxgen/wrapSVG';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { IExportOptions } from '@core/interfaces/IBoxgen';
 
@@ -49,7 +51,6 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
     setConfirmLoading(true);
 
     const boxLayers: string[] = [];
-    const newLayers: string[] = [];
 
     layerManager.getAllLayers().forEach((layer) => {
       const name = layer.getName();
@@ -70,28 +71,27 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
     const batchCmd = HistoryCommandFactory.createBatchCommand('Import box layer');
     const promises: Array<Promise<SVGUseElement[]>> = [];
 
-    layouts.pages.forEach((pageContent, idx) => {
+    layouts.pages.toReversed().forEach((pageContent, idx) => {
+      const displayIdx = layouts.pages.length - idx;
       let content = wrapSVG(canvasWidth, canvasHeight, pageContent.shape);
 
       promises.push(
         importSvgString(content, {
-          layerName: `${uniqBoxName}-${idx + 1}`,
+          layerName: `${uniqBoxName}-${displayIdx}`,
           parentCmd: batchCmd,
           type: 'layer',
         }),
       );
-      newLayers.push(`${uniqBoxName}-${idx + 1}`);
 
       if (options.textLabel) {
         content = wrapSVG(canvasWidth, canvasHeight, pageContent.label);
         promises.push(
           importSvgString(content, {
-            layerName: `${uniqBoxName}-${idx + 1} Label`,
+            layerName: `${uniqBoxName}-${displayIdx} Label`,
             parentCmd: batchCmd,
             type: 'layer',
           }),
         );
-        newLayers.push(`${uniqBoxName}-${idx + 1} Label`);
       }
     });
 
@@ -99,13 +99,16 @@ const ExportDialog = ({ onClose, setVisible, visible }: ExportDialogProps): Reac
       .map((p) => (p.status === 'fulfilled' ? p.value : null))
       .filter(Boolean)
       .flat();
+    const newLayers = elems.map((elem) => getObjectLayer(elem)?.title).filter(Boolean);
 
     await disassembleUse(elems, { parentCmd: batchCmd, showProgress: false, skipConfirm: true });
+    newLayers.reverse();
     newLayers.slice(options.textLabel ? 2 : 1).forEach((layerName) => {
       const layerObject = layerManager.getLayerByName(layerName);
 
       layerObject?.setVisible(false, { addToHistory: false });
     });
+    useLayerStore.getState().forceUpdate();
     undoManager.addCommandToHistory(batchCmd);
     setConfirmLoading(false);
     setVisible(false);

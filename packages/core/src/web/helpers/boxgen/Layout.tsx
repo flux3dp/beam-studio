@@ -29,18 +29,13 @@ const getBlockDistance = (options: IExportOptions) => (options.joinOutput ? [0, 
 
 export class OutputPage {
   options: IExportOptions;
-
   shapes: ShapeDisplayObject[] = [];
-
   nextX = 0;
-
   cursorX = 0;
-
   cursorY = 0;
-
   maxX = 0;
-
   maxY = 0;
+  isEmpty = true;
 
   constructor(canvasWidth: number, canvasHeight: number, options: IExportOptions) {
     this.nextX = options.compRadius * 2;
@@ -61,7 +56,7 @@ export class OutputPage {
       this.cursorY = inflation;
     }
 
-    if (this.cursorX + shape.width + inflation > this.maxX) {
+    if (!this.isEmpty && this.cursorX + shape.width + inflation > this.maxX) {
       return false;
     }
 
@@ -71,6 +66,7 @@ export class OutputPage {
       x: this.cursorX + shape.width / 2,
       y: this.cursorY + shape.height / 2,
     });
+    this.isEmpty = false;
     this.cursorY += shape.height + dy + inflation;
     this.nextX = Math.max(this.nextX, this.cursorX + shape.width + dx + inflation);
 
@@ -93,16 +89,13 @@ export const getLayouts = (
   const leftRightShape = getLeftRightShape({ ...data, height, width });
 
   const shapes = [
+    data.cover && { ...topBottomShape, text: 'Top' },
     { ...topBottomShape, text: 'Bottom' },
     { ...frontBackShape, text: 'Front' },
     { ...frontBackShape, text: 'Back' },
     { ...leftRightShape, text: 'Left' },
     { ...leftRightShape, text: 'Right' },
-  ];
-
-  if (data.cover) {
-    shapes.unshift({ ...topBottomShape, text: 'Top' });
-  }
+  ].filter(Boolean);
 
   const outputs: OutputPage[] = [new OutputPage(canvasWidth, canvasHeight, options)];
 

@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Importer',
     inner: 'Indre',
     joints: 'Sammenføyning',
-    max_dimension_tooltip: 'Maks bredde/høyde/dybde er %s.',
+    max_dimension_tooltip: 'Maks bredde er %s, maks høyde/dybde er %s.',
     merge: 'Slå sammen',
     outer: 'Ytre',
     reset: 'Tilbakestill',

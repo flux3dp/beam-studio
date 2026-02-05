@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Impor',
     inner: 'Dalam',
     joints: 'Sambungan',
-    max_dimension_tooltip: 'Maks lebar/tinggi/kedalaman pengaturan adalah %s.',
+    max_dimension_tooltip: 'Maks lebar adalah %s, maks tinggi/kedalaman pengaturan adalah %s.',
     merge: 'Gabung',
     outer: 'Luar',
     reset: 'Setel Ulang',

@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: '匯入',
     inner: '內部',
     joints: '接合',
-    max_dimension_tooltip: '最大寬度/高度/深度設定為 %s。',
+    max_dimension_tooltip: '最大寬度為 %s，最大高度/深度設定為 %s。',
     merge: '合併',
     outer: '外部',
     reset: '重置',

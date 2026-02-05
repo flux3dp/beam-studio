@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: 'Importar',
     inner: 'Intern',
     joints: 'Unió',
-    max_dimension_tooltip: "La configuració màxima d'amplada/alçada/profunditat és %s. ",
+    max_dimension_tooltip: "L'amplada màxima és %s, la configuració màxima d'alçada/profunditat és %s. ",
     merge: 'Fusionar',
     outer: 'Extern',
     reset: 'Restablir',

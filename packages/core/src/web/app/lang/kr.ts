@@ -1003,7 +1003,7 @@ const lang: ILang = {
     import: '가져오기',
     inner: '내부',
     joints: '접합부',
-    max_dimension_tooltip: '최대 너비/높이/깊이 설정은 %s입니다.',
+    max_dimension_tooltip: '최대 너비는 %s, 최대 높이/깊이 설정은 %s입니다.',
     merge: '병합',
     outer: '외부',
     reset: '리셋',
