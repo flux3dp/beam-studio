@@ -9,15 +9,17 @@ import DraggableModal from '@core/app/widgets/DraggableModal';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
+import OptionsPanel from './components/OptionsPanel';
+import Preview from './components/Preview';
+import TypeSelector from './components/TypeSelector';
+import type { ViewMode } from './constants';
+import { exportToCanvas } from './geometry';
 import styles from './index.module.scss';
-import OptionsPanel from './OptionsPanel';
-import Preview from './Preview';
 import { getDefaultPuzzleType, getPuzzleTypeById, PUZZLE_TYPES } from './puzzleTypes.config';
-import type { ShapeType } from './shapeGenerators';
-import { exportToCanvas } from './svgExport';
-import type { PuzzleState, PuzzleStateUpdate } from './types';
+import type { NestedStateKey, PuzzleState, PuzzleStateUpdate, ShapeType } from './types';
 import { createDefaultPuzzleState } from './types';
-import TypeSelector from './TypeSelector';
+
+const DIALOG_ID = 'puzzle-generator';
 
 interface PuzzleGeneratorProps {
   onClose: () => void;
@@ -46,9 +48,14 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
   );
 
   const handleNestedStateChange = useCallback(
-    <K extends 'border' | 'image'>(key: K, updates: Partial<PuzzleState[K]>) =>
+    <K extends NestedStateKey>(key: K, updates: Partial<PuzzleState[K]>) =>
       setState((prev) => ({ ...prev, [key]: { ...prev[key], ...updates } }) as PuzzleState),
     [],
+  );
+
+  const handleViewModeChange = useCallback(
+    (viewMode: ViewMode) => handleStateChange({ viewMode }),
+    [handleStateChange],
   );
 
   const handleImport = useCallback(async () => {
@@ -88,7 +95,7 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
         <TypeSelector currentTypeId={state.typeId} onTypeChange={handleTypeChange} puzzleTypes={PUZZLE_TYPES} />
         <Preview
           dimensions={puzzleDimensions}
-          onViewModeChange={(viewMode) => handleStateChange({ viewMode })}
+          onViewModeChange={handleViewModeChange}
           state={state}
           typeConfig={currentTypeConfig}
           viewMode={state.viewMode}
@@ -105,15 +112,15 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
 };
 
 export const showPuzzleGenerator = (onClose: () => void = () => {}): void => {
-  if (isIdExist('puzzle-generator')) {
+  if (isIdExist(DIALOG_ID)) {
     return;
   }
 
   addDialogComponent(
-    'puzzle-generator',
+    DIALOG_ID,
     <PuzzleGenerator
       onClose={() => {
-        popDialogById('puzzle-generator');
+        popDialogById(DIALOG_ID);
         onClose();
       }}
     />,

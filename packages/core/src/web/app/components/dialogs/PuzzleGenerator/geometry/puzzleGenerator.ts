@@ -1,9 +1,26 @@
 import { match } from 'ts-pattern';
 
-import { generateShapePath, getShapeMetadata, isPointInShape, type ShapeType } from './shapeGenerators';
-import type { PuzzleJitterMap, PuzzleState, TabJitter } from './types';
+import type { PuzzleState, ShapeType } from '../types';
+
+import { generateShapePath, getShapeMetadata, isPointInShape } from './shapeGenerators';
 
 // --- Types ---
+
+/** Jitter coefficients for a single tab edge */
+export interface TabJitter {
+  a: number;
+  b: number;
+  c: number;
+  d: number;
+  e: number;
+  flip: boolean;
+}
+
+export interface PuzzleJitterMap {
+  horizontal: TabJitter[][];
+  vertical: TabJitter[][];
+}
+
 export interface PuzzleEdges {
   boundaryPath: string;
   horizontalEdges: string;
@@ -40,7 +57,7 @@ const DIAGONAL_DIRECTIONS = [
 ] as const;
 
 // --- Helpers ---
-const f2 = (n: number) => n.toFixed(2);
+const fmt = (n: number) => n.toFixed(2);
 const uniform = (random: () => number, min: number, max: number): number => min + random() * (max - min);
 const getTabSizeFraction = (val: number) => (val * 0.4) / 100;
 const createSeededRandom = (seed: number) => {
@@ -169,7 +186,7 @@ export const generatePuzzleEdges = (
         );
 
         if (!active) {
-          data += ` M ${f2(x1)} ${f2(y1)}`;
+          data += ` M ${fmt(x1)} ${fmt(y1)}`;
           active = true;
         }
 
@@ -177,7 +194,7 @@ export const generatePuzzleEdges = (
           t > 0
             ? //
               ` ${generateTabCurve(x1, y1, x2, y2, t, flip, jitter)}`
-            : ` L ${f2(x2)} ${f2(y2)}`;
+            : ` L ${fmt(x2)} ${fmt(y2)}`;
       }
 
       if (data) {
@@ -214,7 +231,8 @@ export const calculateMergeGroups = (
   const mergedMap = new Map<string, number>();
 
   const getKey = (r: number, c: number) => `${r}-${c}`;
-  const getVisibility = (r: number, c: number) => visibility.find((v) => v.row === r && v.col === c);
+  const visibilityMap = new Map(visibility.map((v) => [getKey(v.row, v.col), v]));
+  const getVisibility = (r: number, c: number) => visibilityMap.get(getKey(r, c));
 
   /** Internal helper to perform the actual data updates for a merge */
   const applyMerge = (sR: number, sC: number, tR: number, tC: number) => {
@@ -338,7 +356,7 @@ const generateTabCurve = (
     point(1.0, 0),
   ];
 
-  const formatPoint = (p: { x: number; y: number }) => `${f2(p.x)} ${f2(p.y)}`;
+  const formatPoint = (p: { x: number; y: number }) => `${fmt(p.x)} ${fmt(p.y)}`;
   const curve = (i: number) => `C ${formatPoint(pts[i])} ${formatPoint(pts[i + 1])} ${formatPoint(pts[i + 2])}`;
 
   return `${curve(0)} ${curve(3)} ${curve(6)}`;

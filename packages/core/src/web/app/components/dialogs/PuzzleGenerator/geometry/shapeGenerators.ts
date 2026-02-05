@@ -5,9 +5,9 @@
 
 import { match } from 'ts-pattern';
 
-export const DEFAULT_HEART_SHARPNESS = 25;
+import type { ShapeType } from '../types';
 
-export type ShapeType = 'circle' | 'heart' | 'rectangle';
+export const DEFAULT_HEART_SHARPNESS = 25;
 
 export interface ShapeOptions {
   /** Center X coordinate (default: 0) */
@@ -74,9 +74,23 @@ export const generateEllipsePath = (options: ShapeOptions): string => {
   ].join(' ');
 };
 
-export const generateHeartPath = (options: ShapeOptions): string => {
-  const { centerX = 0, centerY = 0, cornerRadius = DEFAULT_HEART_SHARPNESS, height, width } = options;
+interface HeartControlPoints {
+  bottomCtrl1Y: number;
+  bottomCtrl2X: number;
+  bottomCtrl2Y: number;
+  bottomY: number;
+  halfWidth: number;
+  notchY: number;
+  topY: number;
+}
 
+/** Single source of truth for heart shape geometry — used by path, offset, and clip generators. */
+const computeHeartControlPoints = (
+  width: number,
+  height: number,
+  centerY: number,
+  cornerRadius: number,
+): HeartControlPoints => {
   const topCurveHeight = height * 0.3;
   const halfWidth = width / 2;
   const halfHeight = height / 2;
@@ -89,6 +103,18 @@ export const generateHeartPath = (options: ShapeOptions): string => {
   const bottomCtrl1Y = notchY + (bottomY - notchY) * 0.4;
   const bottomCtrl2X = halfWidth * bottomPullFactor;
   const bottomCtrl2Y = bottomY - (bottomY - notchY) * (0.2 + (1 - sharpness) * 0.3);
+
+  return { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY };
+};
+
+export const generateHeartPath = (options: ShapeOptions): string => {
+  const { centerX = 0, centerY = 0, cornerRadius = DEFAULT_HEART_SHARPNESS, height, width } = options;
+  const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } = computeHeartControlPoints(
+    width,
+    height,
+    centerY,
+    cornerRadius,
+  );
 
   return [
     `M ${centerX.toFixed(2)} ${notchY.toFixed(2)}`,
@@ -214,19 +240,12 @@ const sampleOffsetSegment = (seg: CubicSegment, offset: number, count: number): 
  */
 const generateOffsetHeartPath = (options: ShapeOptions, offset: number): string => {
   const { centerX = 0, centerY = 0, cornerRadius = DEFAULT_HEART_SHARPNESS, height, width } = options;
-
-  const topCurveHeight = height * 0.3;
-  const halfWidth = width / 2;
-  const halfHeight = height / 2;
-  const topY = centerY - halfHeight;
-  const notchY = topY + topCurveHeight;
-  const bottomY = centerY + halfHeight;
-
-  const sharpness = 1 - cornerRadius / 50;
-  const bottomPullFactor = 0.3 + sharpness * 0.5;
-  const bottomCtrl1Y = notchY + (bottomY - notchY) * 0.4;
-  const bottomCtrl2X = halfWidth * bottomPullFactor;
-  const bottomCtrl2Y = bottomY - (bottomY - notchY) * (0.2 + (1 - sharpness) * 0.3);
+  const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } = computeHeartControlPoints(
+    width,
+    height,
+    centerY,
+    cornerRadius,
+  );
 
   const segments: CubicSegment[] = [
     [
@@ -373,6 +392,11 @@ export const generateRaisedEdgesPath = (shapeType: ShapeType, options: RaisedEdg
   return `${outerPath} ${innerPath}`;
 };
 
+/**
+ * Point-in-shape tests. All assume centered-at-origin coordinates.
+ * - Ellipse: takes radii (half-dimensions)
+ * - Heart/Rectangle: take full width/height; the dispatcher `isPointInShape` handles the conversion
+ */
 export const isPointInEllipse = (x: number, y: number, radiusX: number, radiusY: number): boolean =>
   (x * x) / (radiusX * radiusX) + (y * y) / (radiusY * radiusY) <= 1;
 
@@ -437,20 +461,12 @@ export const drawShapeClipPath = (
       ctx.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
     })
     .with('heart', () => {
-      const topCurveHeight = height * 0.3;
-      const halfWidth = width / 2;
-      const halfHeight = height / 2;
-
-      const topY = -halfHeight;
-      const notchY = topY + topCurveHeight;
-      const bottomY = halfHeight;
-
-      // Use default heart sharpness for consistent heart shape
-      const sharpness = 1 - DEFAULT_HEART_SHARPNESS / 50;
-      const bottomPullFactor = 0.3 + sharpness * 0.5;
-      const bottomCtrl1Y = notchY + (bottomY - notchY) * 0.4;
-      const bottomCtrl2X = halfWidth * bottomPullFactor;
-      const bottomCtrl2Y = bottomY - (bottomY - notchY) * (0.2 + (1 - sharpness) * 0.3);
+      const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } = computeHeartControlPoints(
+        width,
+        height,
+        0,
+        DEFAULT_HEART_SHARPNESS,
+      );
 
       ctx.moveTo(0, notchY);
       ctx.bezierCurveTo(0, topY, -halfWidth, topY, -halfWidth, notchY);

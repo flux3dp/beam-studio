@@ -1,0 +1,99 @@
+.preview-area {
+  flex: 1 1 auto;
+  min-width: 300px;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid #d9d9d9;
+  border-radius: 8px;
+  background-color: #fafafa;
+  position: relative;
+  overflow: hidden;
+
+  &.mobile {
+    min-height: 250px;
+    order: -1; // Show preview first on mobile
+  }
+}
+
+.preview-info {
+  position: absolute;
+  top: 8px;
+  left: 8px;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.9);
+  padding: 4px 8px;
+  border-radius: 4px;
+  border: 1px solid #e8e8e8;
+}
+
+.preview-header {
+  font-size: 12px;
+  color: #666;
+}
+
+.color-legend {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.legend-entry {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  color: #999;
+}
+
+.legend-swatch {
+  width: 10px;
+  height: 10px;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.preview-canvas {
+  flex: 1;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.view-mode-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  gap: 12px;
+  z-index: 10;
+}
+
+.view-mode-btn {
+  width: 80px;
+  height: 80px;
+  border: 2px solid #d9d9d9;
+  border-radius: 8px;
+  cursor: pointer;
+  overflow: hidden;
+  background: #fafafa;
+  padding: 0;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover {
+    border-color: #40a9ff;
+  }
+
+  &.active {
+    border-color: #1890ff;
+    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
+  }
+}

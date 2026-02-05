@@ -1933,6 +1933,7 @@ export interface ILang {
   };
   puzzle_generator: {
     bleed: string;
+    board_base: string;
     board_radius: string;
     board_width: string;
     cancel: string;
@@ -1949,6 +1950,7 @@ export interface ILang {
     heart_sharpness: string;
     image: string;
     image_load_failed: string;
+    image_resolution_warning: string;
     import_to_canvas: string;
     offset_x: string;
     offset_y: string;
@@ -1960,7 +1962,9 @@ export interface ILang {
     piece_size: string;
     preview_placeholder: string;
     puzzle_board: string;
+    puzzle_pieces: string;
     radius: string;
+    raised_edges: string;
     rows: string;
     tab_size: string;
     types: {

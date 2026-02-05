@@ -1,6 +1,6 @@
 import { match } from 'ts-pattern';
 
-import type { ShapeType } from './shapeGenerators';
+export type ShapeType = 'circle' | 'heart' | 'rectangle';
 
 export type PropertyType = 'group' | 'image-upload' | 'number' | 'select' | 'slider' | 'toggle';
 
@@ -105,12 +105,17 @@ export interface RectanglePuzzleState extends BasePuzzleState {
 
 export type PuzzleState = CirclePuzzleState | HeartPuzzleState | RectanglePuzzleState;
 
+/** Keys for nested state objects updated via `onNestedStateChange`. */
+export type NestedStateKey = 'border' | 'image';
+
 /**
  * Fields that can be updated through the dynamic property system.
- * Includes all shared fields plus every shape-specific field (e.g. `radius`).
+ * Auto-derived from each state variant so new shape-specific fields are included automatically.
  * Excludes `typeId` — shape switching is handled by `createDefaultPuzzleState`.
  */
-export type PuzzleStateUpdate = Partial<BasePuzzleState & { radius: number }>;
+export type PuzzleStateUpdate = Partial<
+  Omit<CirclePuzzleState, 'typeId'> & Omit<HeartPuzzleState, 'typeId'> & Omit<RectanglePuzzleState, 'typeId'>
+>;
 
 export const createDefaultImageState = (): ImageState => ({
   bleed: 2,
@@ -130,7 +135,7 @@ export const createDefaultBorderState = (): BorderState => ({
   width: 5,
 });
 
-const baseDefaults: BasePuzzleState = {
+const createBaseDefaults = (): BasePuzzleState => ({
   border: createDefaultBorderState(),
   columns: 5,
   image: createDefaultImageState(),
@@ -139,26 +144,11 @@ const baseDefaults: BasePuzzleState = {
   rows: 5,
   tabSize: 20,
   viewMode: 'design',
-};
+});
 
 export const createDefaultPuzzleState = (typeId: ShapeType): PuzzleState =>
   match(typeId)
-    .with('circle', () => ({ ...baseDefaults, typeId: 'circle' as const }))
-    .with('heart', () => ({ ...baseDefaults, typeId: 'heart' as const }))
-    .with('rectangle', () => ({ ...baseDefaults, radius: 0, typeId: 'rectangle' as const }))
+    .with('circle', () => ({ ...createBaseDefaults(), typeId: 'circle' as const }))
+    .with('heart', () => ({ ...createBaseDefaults(), typeId: 'heart' as const }))
+    .with('rectangle', () => ({ ...createBaseDefaults(), radius: 0, typeId: 'rectangle' as const }))
     .exhaustive();
-
-/** Jitter coefficients for a single tab edge */
-export interface TabJitter {
-  a: number;
-  b: number;
-  c: number;
-  d: number;
-  e: number;
-  flip: boolean;
-}
-
-export interface PuzzleJitterMap {
-  horizontal: TabJitter[][];
-  vertical: TabJitter[][];
-}

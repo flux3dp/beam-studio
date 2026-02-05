@@ -1,14 +1,18 @@
 import React from 'react';
 
+import classNames from 'classnames';
+
+import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './index.module.scss';
+import type { NestedStateKey, PuzzleState, PuzzleStateUpdate, PuzzleTypeConfig } from '../types';
+import { resolveTypeName } from '../utils';
+
+import styles from './OptionsPanel.module.scss';
 import PropertyRenderer from './PropertyRenderer';
-import type { PuzzleState, PuzzleStateUpdate, PuzzleTypeConfig } from './types';
-import { resolveTypeName } from './utils';
 
 interface OptionsPanelProps {
-  onNestedStateChange: <K extends 'border' | 'image'>(key: K, updates: Partial<PuzzleState[K]>) => void;
+  onNestedStateChange: <K extends NestedStateKey>(key: K, updates: Partial<PuzzleState[K]>) => void;
   onStateChange: (updates: PuzzleStateUpdate) => void;
   state: PuzzleState;
   typeConfig: PuzzleTypeConfig;
@@ -21,9 +25,10 @@ const OptionsPanel = ({
   typeConfig,
 }: OptionsPanelProps): React.JSX.Element => {
   const { puzzle_generator: t } = useI18n();
+  const isMobile = useIsMobile();
 
   return (
-    <div className={styles['options-panel']}>
+    <div className={classNames(styles['options-panel'], { [styles.mobile]: isMobile })}>
       <div className={styles['options-header']}>{resolveTypeName(t, typeConfig.nameKey)}</div>
       <div className={styles['options-content']}>
         {typeConfig.properties.map((property) => (

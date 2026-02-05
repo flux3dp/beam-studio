@@ -10,6 +10,8 @@
  * 3. Makes memoization straightforward at the component level
  */
 
+import type { PuzzleState, ShapeType } from '../types';
+
 import {
   calculateAllPieceVisibilities,
   calculateMergeGroups,
@@ -18,14 +20,7 @@ import {
   type MergeGroup,
   type PuzzleEdges,
 } from './puzzleGenerator';
-import {
-  generateBorderPath,
-  generateRaisedEdgesPath,
-  generateShapePath,
-  getShapeMetadata,
-  type ShapeType,
-} from './shapeGenerators';
-import type { PuzzleState } from './types';
+import { generateBorderPath, generateRaisedEdgesPath, generateShapePath, getShapeMetadata } from './shapeGenerators';
 
 /** Gap between puzzle and board in exploded view (mm) */
 export const LAYER_GAP = 30;
@@ -53,9 +48,6 @@ export interface PuzzleGeometry {
   mergeGroups: MergeGroup[];
   /** Raised edges frame path with inner cutout (if border enabled) */
   raisedEdgesPath?: string;
-  /** Total dimensions for view scaling */
-  totalHeight: number;
-  totalWidth: number;
 }
 
 /**
@@ -104,11 +96,6 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
   const frameWidth = layout.width + (state.border.enabled ? state.border.width * 2 : 0);
   const frameHeight = layout.height + (state.border.enabled ? state.border.width * 2 : 0);
 
-  // Total dimensions depend on whether we're showing exploded view with border
-  const hasBorderLayout = state.border.enabled;
-  const totalWidth = hasBorderLayout ? frameWidth * 2 + LAYER_GAP : layout.width;
-  const totalHeight = hasBorderLayout ? frameHeight : layout.height;
-
   return {
     boardBasePath,
     boundaryPath,
@@ -118,8 +105,6 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
     layout,
     mergeGroups,
     raisedEdgesPath,
-    totalHeight,
-    totalWidth,
   };
 };
 

@@ -1,3 +1,4 @@
+import { dpmm } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -14,9 +15,11 @@ import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-h
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { COLORS } from '../constants';
+import type { ImageState, PuzzleState, PuzzleTypeConfig, ShapeType } from '../types';
+
 import { computeExportLayout, computePuzzleGeometry, type PuzzleGeometry } from './puzzleGeometry';
-import { drawShapeClipPath, getShapeMetadata, type ShapeType } from './shapeGenerators';
-import type { ImageState, PuzzleState, PuzzleTypeConfig } from './types';
+import { drawShapeClipPath, getShapeMetadata } from './shapeGenerators';
 
 let svgCanvas: ISVGCanvas;
 
@@ -24,20 +27,12 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-// Colors matching the exploded view preview
-const EXPORT_COLORS = {
-  boardBase: '#8bc34a', // Green - border color in exploded view
-  guideLines: '#ffc107', // Amber - guide lines color in exploded view
-  pieces: '#f44336', // Red - inner color in exploded view
-  raisedEdges: '#3f51b5', // Blue - boundary color in exploded view
-} as const;
-
 /** Sets the color of a layer after import */
 const setLayerColor = async (layerName: string, color: string): Promise<void> => {
   const layer = layerManager.getLayerByName(layerName);
 
   if (!layer) {
-    console.warn(`setLayerColor: Layer "${layerName}" not found after import`);
+    console.warn(`Layer "${layerName}" was not found after import. A layer with this name may already exist.`);
 
     return;
   }
@@ -98,6 +93,10 @@ const computeImagePlacement = (
   puzzleH: number,
   imageState: ImageState,
 ) => {
+  if (imgW === 0 || imgH === 0) {
+    console.warn('Cannot compute image placement for zero-dimension image');
+  }
+
   const { bleed, offsetX, offsetY, zoom } = imageState;
   const targetW = puzzleW + bleed * 2;
   const targetH = puzzleH + bleed * 2;
@@ -131,7 +130,13 @@ const renderCroppedImage = (
   canvas.width = canvasW;
   canvas.height = canvasH;
 
-  const ctx = canvas.getContext('2d')!;
+  const ctx = canvas.getContext('2d');
+
+  if (!ctx) {
+    console.warn(`Failed to create canvas 2D context for image export (canvas size: ${canvasW}x${canvasH}px)`);
+
+    return '';
+  }
 
   // Work in mm coordinates: translate to center (in px), then scale so 1 unit = 1 mm
   ctx.translate(canvasW / 2, canvasH / 2);
@@ -154,14 +159,24 @@ const processImageForDisplay = (
   height: number,
   isFullColor: boolean,
 ): Promise<string> =>
-  new Promise((resolve) => {
-    imageData(sourceUrl, {
-      grayscale: isFullColor ? undefined : { is_rgba: true, is_shading: true, is_svg: false, threshold: 254 },
-      height,
-      isFullResolution: true,
-      onComplete: (result: { pngBase64: string }) => resolve(result.pngBase64),
-      width,
-    });
+  new Promise((resolve, reject) => {
+    const timeout = setTimeout(() => reject(new Error('Image processing timed out')), 30000);
+
+    try {
+      imageData(sourceUrl, {
+        grayscale: isFullColor ? undefined : { is_rgba: true, is_shading: true, is_svg: false, threshold: 254 },
+        height,
+        isFullResolution: true,
+        onComplete: (result: { pngBase64: string }) => {
+          clearTimeout(timeout);
+          resolve(result.pngBase64);
+        },
+        width,
+      });
+    } catch (err) {
+      clearTimeout(timeout);
+      reject(err);
+    }
   });
 
 /**
@@ -196,17 +211,8 @@ const exportImageLayer = async (
     image,
   );
 
-  // Render image clipped to shape on offscreen canvas (10 px/mm for sharp output)
-  const pxPerMm = 10;
-  const croppedDataUrl = renderCroppedImage(
-    img,
-    placement,
-    shapeType,
-    clipW,
-    clipH,
-    meta.boundaryCornerRadius,
-    pxPerMm,
-  );
+  // Render image clipped to shape on offscreen canvas
+  const croppedDataUrl = renderCroppedImage(img, placement, shapeType, clipW, clipH, meta.boundaryCornerRadius, dpmm);
 
   const isPrinting = image.exportAs === 'print';
   const targetModule = isPrinting ? LayerModule.PRINTER : getDefaultLaserModule();
@@ -228,7 +234,19 @@ const exportImageLayer = async (
 
   // 2. Process cropped image through imageData for proper display
   const croppedImg = await loadImage(croppedDataUrl);
-  const origBlobUrl = URL.createObjectURL(await (await fetch(croppedDataUrl)).blob());
+  // Note: blob URL is intentionally not revoked — it persists as the `origImage` attribute
+  // on the SVG element, required by Beam Studio's image editing tools for the session lifetime.
+  let origBlobUrl: string;
+
+  try {
+    const response = await fetch(croppedDataUrl);
+    const blob = await response.blob();
+
+    origBlobUrl = URL.createObjectURL(blob);
+  } catch (err) {
+    throw new Error('Failed to process cropped image for export. The image may be too large.', { cause: err });
+  }
+
   const displayBase64 = await processImageForDisplay(
     origBlobUrl,
     croppedImg.naturalWidth,
@@ -237,11 +255,10 @@ const exportImageLayer = async (
   );
 
   // 3. Place image element on canvas — position matches the puzzle center
-  const svgDpmm = 10;
-  const canvasW = clipW * svgDpmm;
-  const canvasH = clipH * svgDpmm;
-  const canvasX = (layout.totalWidth / 2 + layout.raisedEdgesOffsetX - clipW / 2) * svgDpmm;
-  const canvasY = (layout.totalHeight / 2 - clipH / 2) * svgDpmm;
+  const canvasW = clipW * dpmm;
+  const canvasH = clipH * dpmm;
+  const canvasX = (layout.totalWidth / 2 + layout.raisedEdgesOffsetX - clipW / 2) * dpmm;
+  const canvasY = (layout.totalHeight / 2 - clipH / 2) * dpmm;
 
   const imageEl = svgCanvas.addSvgElementFromJson({
     attr: {
@@ -278,13 +295,15 @@ export const exportToCanvas = async (
   typeConfig: PuzzleTypeConfig,
   geometry?: PuzzleGeometry,
 ): Promise<void> => {
+  if (!svgCanvas) throw new Error('SVG canvas not yet initialized — exportToCanvas called too early');
+
   // Use provided geometry or compute fresh
-  const geo = geometry ?? computePuzzleGeometry(state, typeConfig.shapeType);
+  const geo = geometry ?? computePuzzleGeometry(state, typeConfig.id);
   const layout = computeExportLayout(geo, state.border.enabled);
 
   // Combine edge paths for cutting
   const innerCuts = [geo.edges.horizontalEdges, geo.edges.verticalEdges].filter(Boolean).join(' ');
-  const meta = getShapeMetadata(typeConfig.shapeType, state);
+  const meta = getShapeMetadata(typeConfig.id, state);
   const clipPath = meta.fillsBoundingBox ? undefined : geo.boundaryPath;
   const baseOpts = { height: layout.totalHeight, width: layout.totalWidth };
 
@@ -292,7 +311,7 @@ export const exportToCanvas = async (
 
   // RIGHT SIDE: Board Base (if border enabled)
   if (layout.hasBorder && geo.boardBasePath) {
-    await importLayer('Board Base', EXPORT_COLORS.boardBase, {
+    await importLayer('Board Base', COLORS.exploded.boardBase, {
       ...baseOpts,
       elementOffsetX: layout.boardOffsetX,
       pathData: geo.boardBasePath,
@@ -301,7 +320,7 @@ export const exportToCanvas = async (
 
   // RIGHT SIDE: Guide Lines on board base (if border and guideLines enabled)
   if (layout.hasBorder && state.border.guideLines && innerCuts) {
-    await importLayer('Guide Lines', EXPORT_COLORS.guideLines, {
+    await importLayer('Guide Lines', COLORS.exploded.guideLines, {
       ...baseOpts,
       clipPathData: clipPath,
       elementOffsetX: layout.boardOffsetX,
@@ -311,7 +330,7 @@ export const exportToCanvas = async (
 
   // LEFT SIDE: Raised Edges frame (if border enabled)
   if (layout.hasBorder && geo.raisedEdgesPath) {
-    await importLayer('Raised Edges', EXPORT_COLORS.raisedEdges, {
+    await importLayer('Raised Edges', COLORS.exploded.raisedEdges, {
       ...baseOpts,
       elementOffsetX: layout.raisedEdgesOffsetX,
       pathData: geo.raisedEdgesPath,
@@ -320,7 +339,7 @@ export const exportToCanvas = async (
 
   // LEFT SIDE: Puzzle Pieces (always)
   if (innerCuts) {
-    await importLayer('Puzzle Pieces', EXPORT_COLORS.pieces, {
+    await importLayer('Puzzle Pieces', COLORS.exploded.pieces, {
       ...baseOpts,
       clipPathData: clipPath,
       elementOffsetX: layout.raisedEdgesOffsetX,
@@ -330,7 +349,7 @@ export const exportToCanvas = async (
 
   // IMAGE LAYER (top-most — imported last so it appears highest in the layer panel)
   if (state.image.enabled && state.image.dataUrl) {
-    await exportImageLayer(state, typeConfig.shapeType, geo, layout);
+    await exportImageLayer(state, typeConfig.id, geo, layout);
   }
 
   // Refresh layer panel to show new layers

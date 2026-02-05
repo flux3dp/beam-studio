@@ -1,4 +1,4 @@
-import type { ShapeType } from './shapeGenerators';
+import type { ShapeType } from './types';
 import type {
   GroupPropertyDef,
   NumberPropertyDef,
@@ -233,7 +233,6 @@ const createBorderGroup = (options: BorderGroupOptions = {}): GroupPropertyDef =
 
 const createPuzzleTypeConfig = (
   id: ShapeType,
-  gridGenerator: ShapeType,
   nameKey: string,
   thumbnail: string,
   borderOptions: BorderGroupOptions = {},
@@ -251,44 +250,19 @@ const createPuzzleTypeConfig = (
     ORIENTATION_PROPERTY,
     ...extraProperties,
   ],
-  shapeType: gridGenerator,
+  shapeType: id,
   thumbnail,
 });
 
 export const PUZZLE_TYPES: PuzzleTypeConfig[] = [
-  createPuzzleTypeConfig('circle', 'circle', 'types.circle_jigsaw', circleThumbnail),
-  createPuzzleTypeConfig(
-    'rectangle',
-    'rectangle',
-    'types.rectangle_jigsaw',
-    rectangleThumbnail,
-    { includeCornerRadius: true },
-    [RADIUS_PROPERTY],
-  ),
-  createPuzzleTypeConfig('heart', 'heart', 'types.heart_jigsaw', heartThumbnail),
+  createPuzzleTypeConfig('circle', 'types.circle_jigsaw', circleThumbnail),
+  createPuzzleTypeConfig('rectangle', 'types.rectangle_jigsaw', rectangleThumbnail, { includeCornerRadius: true }, [
+    RADIUS_PROPERTY,
+  ]),
+  createPuzzleTypeConfig('heart', 'types.heart_jigsaw', heartThumbnail),
 ];
 
 export const getPuzzleTypeById = (id: string): PuzzleTypeConfig | undefined =>
   PUZZLE_TYPES.find((type) => type.id === id);
 
 export const getDefaultPuzzleType = (): PuzzleTypeConfig => PUZZLE_TYPES[0];
-
-export const getDefaultsForType = (typeConfig: PuzzleTypeConfig): Record<string, unknown> => {
-  const defaults: Record<string, unknown> = {};
-
-  const extractDefaults = (properties: PuzzleTypeConfig['properties'], prefix = '') => {
-    for (const prop of properties) {
-      const key = prefix ? `${prefix}.${prop.key}` : prop.key;
-
-      if (prop.type === 'group') {
-        extractDefaults(prop.children, prop.key);
-      } else if ('default' in prop) {
-        defaults[key] = prop.default;
-      }
-    }
-  };
-
-  extractDefaults(typeConfig.properties);
-
-  return defaults;
-};
