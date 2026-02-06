@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Zresetuj Beam Studio',
     segmented_engraving: 'Grawerowanie segmentowe',
     share_with_flux: 'Udostępnij analizy Beam Studio',
+    show_banners: 'Wyświetl baner na stronie głównej',
     simplify_clipper_path: 'Optymalizacja punktów kotwiczenia',
     single_object: 'Pojedynczy obiekt',
     tabs: {

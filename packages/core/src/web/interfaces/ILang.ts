@@ -2088,6 +2088,7 @@ export interface ILang {
     reset_now: string;
     segmented_engraving: string;
     share_with_flux: string;
+    show_banners: string;
     simplify_clipper_path: string;
     single_object: string;
     tabs: {

@@ -14,7 +14,7 @@ interface Props {
 
 function General({ changeActiveLang, supportedLangs, wrapped = false }: Props): React.JSX.Element {
   const lang = useI18n();
-  const { getConfig, setConfig } = useSettingStore();
+  const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
   const langOptions = Object.keys(supportedLangs).map((value) => ({ label: supportedLangs[value], value }));
 
   const Wrapper = wrapped ? SettingsCard : React.Fragment;
@@ -51,6 +51,14 @@ function General({ changeActiveLang, supportedLangs, wrapped = false }: Props): 
           />
         </Wrapper>
       )}
+      <Wrapper>
+        <SettingSwitch
+          checked={getPreference('show_banners')}
+          id="set-show-banners"
+          label={lang.settings.show_banners}
+          onChange={(e) => setPreference('show_banners', e)}
+        />
+      </Wrapper>
     </>
   );
 }

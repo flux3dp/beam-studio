@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Nollaa Beam Studio',
     segmented_engraving: 'Segmentoitu kaiverrus',
     share_with_flux: 'Jaa Beam Studion analytiikka',
+    show_banners: 'Näytä kotisivun banneri',
     simplify_clipper_path: 'Ankkuripisteiden optimointi',
     single_object: 'Yksittäinen objekti',
     tabs: {

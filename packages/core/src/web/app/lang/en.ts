@@ -2090,6 +2090,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     reset_now: 'Reset Beam Studio',
     segmented_engraving: 'Segmented Engraving',
     share_with_flux: 'Share Beam Studio Analytics',
+    show_banners: 'Home Banner Display',
     simplify_clipper_path: 'Anchor Point Optimization',
     single_object: 'Single Object',
     tabs: {

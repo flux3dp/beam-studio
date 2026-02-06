@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Επαναφορά Beam Studio',
     segmented_engraving: 'Τμηματική χάραξη',
     share_with_flux: 'Κοινοποίηση αναλυτικών Beam Studio',
+    show_banners: 'Εμφάνιση μπάνερ αρχικής σελίδας',
     simplify_clipper_path: 'Βελτιστοποίηση σημείων αγκύρωσης',
     single_object: 'Ένα Αντικείμενο',
     tabs: {

@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Restartovat Beam Studio',
     segmented_engraving: 'Segmentované gravírování',
     share_with_flux: 'Analýza Share Beam Studio',
+    show_banners: 'Zobrazit banner domovské stránky',
     simplify_clipper_path: 'Optimalizace kotevních bodů',
     single_object: 'Jeden objekt',
     tabs: {

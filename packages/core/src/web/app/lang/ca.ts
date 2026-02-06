@@ -2090,6 +2090,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     reset_now: 'Restablir Beam Studio',
     segmented_engraving: 'Gravat segmentat',
     share_with_flux: 'Compartir analítiques Beam Studio',
+    show_banners: "Mostra el banner d'inici",
     simplify_clipper_path: "Optimització de punts d'ancoratge",
     single_object: 'Objecte únic',
     tabs: {

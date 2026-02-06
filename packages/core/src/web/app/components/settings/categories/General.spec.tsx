@@ -4,11 +4,15 @@ import { fireEvent, render } from '@testing-library/react';
 import { create } from 'zustand';
 
 const mockGetConfig = jest.fn();
+const mockGetPreference = jest.fn();
 const mockSetConfig = jest.fn();
+const mockSetPreference = jest.fn();
 
 const useSettingStore = create(() => ({
   getConfig: mockGetConfig,
+  getPreference: mockGetPreference,
   setConfig: mockSetConfig,
+  setPreference: mockSetPreference,
 }));
 
 jest.mock('@core/app/components/settings/shared/hooks/useSettingStore', () => ({
@@ -67,6 +71,10 @@ describe('should render correctly', () => {
     fireEvent.click(switchControls[1]);
     expect(mockSetConfig).toHaveBeenCalledTimes(2);
     expect(mockSetConfig).toHaveBeenNthCalledWith(2, 'notification', true);
+
+    fireEvent.click(switchControls[2]);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'show_banners', true);
   });
 
   test('web version', () => {

@@ -85,6 +85,7 @@ export type GlobalPreference = {
   'reverse-engraving': boolean;
   'segmented-engraving': boolean;
   should_remind_calibrate_camera: boolean;
+  show_banners: boolean;
   show_grids: boolean;
   show_guides: boolean;
   show_rulers: boolean;
