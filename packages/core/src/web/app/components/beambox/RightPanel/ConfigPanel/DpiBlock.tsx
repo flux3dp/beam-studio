@@ -34,9 +34,9 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     return options.map((dpiLabel) => {
       const value = dpiValueMap[dpiLabel];
 
-      return { label: `${lang.resolution.values[dpiLabel]} (${value} DPI)`, value };
+      return { label: `${value} DPI`, value };
     });
-  }, [workarea, lang]);
+  }, [workarea]);
   const { change, dpi } = useConfigPanelStore(useShallow(pick(['dpi', 'change'])));
 
   const dpiNumber = useMemo(() => dpiValueMap[dpi.value], [dpi.value]);
@@ -83,9 +83,7 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
               autoClose={false}
               content={
                 <Button className={objectPanelItemStyles['number-item']} fill="outline" shape="rounded" size="mini">
-                  <span
-                    style={{ whiteSpace: 'nowrap' }}
-                  >{`${lang.resolution.values[dpi.value]} (${dpiNumber} DPI)`}</span>
+                  <span style={{ whiteSpace: 'nowrap' }}>{`${dpiNumber} DPI`}</span>
                 </Button>
               }
               id="dpi"
