@@ -106,9 +106,7 @@ class BackendManager extends EventEmitter {
     this.proc = undefined;
     this.ws = undefined;
     this.wsConn = undefined;
-    ipcMain.on(BackendEvents.CheckSwiftray, (event) => {
-      event.returnValue = this.checkSwiftrayExists();
-    });
+    ipcMain.handle(BackendEvents.CheckSwiftray, () => this.checkSwiftrayExists());
   }
 
   setRecover(): void {
