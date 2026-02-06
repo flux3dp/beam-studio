@@ -44,6 +44,7 @@ const state: GlobalPreference = {
   'reverse-engraving': false,
   'segmented-engraving': true,
   should_remind_calibrate_camera: true,
+  show_banners: true,
   show_grids: true,
   show_guides: false,
   show_rulers: false,

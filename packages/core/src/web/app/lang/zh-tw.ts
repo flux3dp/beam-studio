@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: '重置所有設定',
     segmented_engraving: '分段雕刻',
     share_with_flux: '分享 Beam Studio 分析',
+    show_banners: '顯示首頁橫幅',
     simplify_clipper_path: '曲線錨點優化',
     single_object: '單一物件',
     tabs: {

@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Beam Studio resetten',
     segmented_engraving: 'Gesegmenteerd graveren',
     share_with_flux: 'Beam Studio-analyses delen',
+    show_banners: 'Startpagina-banner weergeven',
     simplify_clipper_path: 'Ankerpunt optimalisatie',
     single_object: 'Enkel object',
     tabs: {

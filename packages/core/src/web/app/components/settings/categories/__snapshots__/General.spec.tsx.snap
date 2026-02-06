@@ -76,6 +76,23 @@ exports[`should render correctly desktop version 1`] = `
       type="checkbox"
     />
   </div>
+  <div>
+    mock-switch-control id:
+    set-show-banners
+    label:
+    Home Banner Display
+    url:
+    checked:
+    undefined
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-show-banners"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
 </div>
 `;
 
@@ -92,6 +109,23 @@ exports[`should render correctly web version 1`] = `
     <input
       class="select-control"
       id="select-lang"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    set-show-banners
+    label:
+    Home Banner Display
+    url:
+    checked:
+    undefined
+    disabled:
+    undefined
+    <input
+      class="switch-control"
+      id="set-show-banners"
+      readonly=""
+      type="checkbox"
     />
   </div>
 </div>

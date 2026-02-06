@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Đặt lại Beam Studio',
     segmented_engraving: 'Khắc phân đoạn',
     share_with_flux: 'Chia sẻ Phân tích Beam Studio',
+    show_banners: 'Hiển thị banner trang chủ',
     simplify_clipper_path: 'Tối ưu hóa điểm neo',
     single_object: 'Đối tượng đơn',
     tabs: {

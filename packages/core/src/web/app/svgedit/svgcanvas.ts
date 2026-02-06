@@ -48,6 +48,7 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
 import updateElementColor from '@core/helpers/color/updateElementColor';
+import { getAttributes } from '@core/helpers/element/attribute';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
 import jimpHelper from '@core/helpers/jimp-helper';
@@ -3452,15 +3453,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // TODO: Why is this applying attributes from cur_shape, then inside utilities.convertToPath it's pulling addition attributes from elem?
     // TODO: If convertToPath is called with one elem, cur_shape and elem are probably the same; but calling with multiple is a bug or cool feature.
     const attrs = {
-      fill: elem.getAttribute('fill'),
-      'fill-opacity': elem.getAttribute('fill-opacity'),
+      ...getAttributes(elem, ['fill', 'fill-opacity', 'stroke', 'stroke-width', 'vector-effect']),
       opacity: cur_shape.opacity,
-      stroke: elem.getAttribute('stroke'),
       'stroke-dasharray': cur_shape.stroke_dasharray,
       'stroke-linecap': cur_shape.stroke_linecap,
       'stroke-linejoin': cur_shape.stroke_linejoin,
       'stroke-opacity': cur_shape.stroke_opacity,
-      'stroke-width': elem.getAttribute('stroke-width') || 1,
     };
     const { cmd, path } = svgedit.utilities.convertToPath(
       elem,

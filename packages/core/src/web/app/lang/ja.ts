@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Beam Studioをリセット',
     segmented_engraving: 'セグメント彫刻',
     share_with_flux: 'Beam Studio Analyticsを共有する',
+    show_banners: 'ホームバナーを表示',
     simplify_clipper_path: 'アンカーポイント最適化',
     single_object: '単一のオブジェクト',
     tabs: {

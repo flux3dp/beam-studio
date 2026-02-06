@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: 'Atur ulang Beam Studio',
     segmented_engraving: 'Pengukiran tersegmentasi',
     share_with_flux: 'Bagikan Analitik Beam Studio',
+    show_banners: 'Tampilkan spanduk beranda',
     simplify_clipper_path: 'Optimasi Titik Jangkar',
     single_object: 'Objek Tunggal',
     tabs: {

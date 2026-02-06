@@ -57,6 +57,7 @@ const getInitStore = (): GlobalPreference => {
     'reverse-engraving': preference['reverse-engraving'],
     'segmented-engraving': preference['segmented-engraving'],
     should_remind_calibrate_camera: preference.should_remind_calibrate_camera,
+    show_banners: preference.show_banners,
     show_grids: preference.show_grids,
     show_guides: preference.show_guides,
     show_rulers: preference.show_rulers,

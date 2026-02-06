@@ -28,6 +28,7 @@ import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import { DmktIcon } from '@core/app/icons/icons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { axiosFluxId, fluxIDEvents, getCurrentUser } from '@core/helpers/api/flux-id';
 import { hashMap } from '@core/helpers/hashHelper';
@@ -68,6 +69,7 @@ const Welcome = (): ReactNode => {
     welcome_page: t,
   } = useI18n();
   const activeLang = useStorageStore((state) => state['active-lang']) ?? 'en';
+  const showBanners = useGlobalPreferenceStore((state) => state.show_banners);
   const isMobile = useIsMobile();
   const [currentUser, setCurrentUser] = useState<IUser | null>(getCurrentUser());
   const [banners, setBanners] = useState<IBanner[]>([]);
@@ -82,6 +84,12 @@ const Welcome = (): ReactNode => {
   }, []);
 
   const fetchBanners = useCallback(async () => {
+    if (!showBanners) {
+      setBanners([]);
+
+      return;
+    }
+
     try {
       let lang = activeLang;
 
@@ -99,7 +107,7 @@ const Welcome = (): ReactNode => {
       console.error('Failed to fetch banners:', error);
     }
     setBanners(defaultShopBanner ? [defaultShopBanner] : []);
-  }, [activeLang, defaultShopBanner]);
+  }, [showBanners, activeLang, defaultShopBanner]);
 
   useEffect(() => {
     fetchBanners();

@@ -2090,6 +2090,7 @@ const lang: ILang = {
     reset_now: '重置所有设置',
     segmented_engraving: '分段雕刻',
     share_with_flux: '与 FLUX 分享',
+    show_banners: '显示首页横幅',
     simplify_clipper_path: '曲线锚点优化',
     single_object: '单一物件',
     tabs: {
