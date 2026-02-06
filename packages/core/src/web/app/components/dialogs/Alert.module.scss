@@ -29,6 +29,7 @@ $icon-margin: 8px;
     position: relative;
     word-break: normal;
     word-wrap: normal;
+    white-space: break-spaces;
 
     &.with-icon {
       width: calc(100% - #{$icon-size + $icon-margin});

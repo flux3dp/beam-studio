@@ -43,10 +43,6 @@ declare global {
 
 window.$ = $;
 enableFetchMocks();
-Object.defineProperty(window, 'os', {
-  value: '',
-  writable: true,
-});
 Object.defineProperty(window, 'FLUX', {
   value: {},
   writable: true,

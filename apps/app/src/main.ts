@@ -35,7 +35,6 @@ declare global {
       websockets: any;
     };
     jQuery: any;
-    os: 'Linux' | 'MacOS' | 'others' | 'Windows';
     requirejs: (_deps: string[], _callback: (..._modules: any[]) => void) => void;
     svgCanvas: any;
     svgedit: any;

@@ -185,7 +185,6 @@ export interface ILang {
       document_settings: string;
       door_protect: string;
       door_protect_desc: string;
-      enable: string;
       enable_autofocus: string;
       enable_diode: string;
       enable_nozzle_refresh_area: string;
@@ -460,6 +459,11 @@ export interface ILang {
       nolayer: string;
       not_support_object_type: string;
       or_turn_off_borderless_mode: string;
+      path_engine_upgrade: {
+        caption: string;
+        keep_current: string;
+        message: string;
+      };
       pdf2svg: {
         error_pdf2svg_not_found: string;
         error_when_converting_pdf: string;
@@ -1286,7 +1290,6 @@ export interface ILang {
       caption: string;
       message: string;
     };
-    enable: string;
     firmware_version: string;
     ink_color: string;
     ink_level: string;
@@ -1418,6 +1421,7 @@ export interface ILang {
     | 'apply'
     | 'back'
     | 'cancel'
+    | 'enable'
     | 'mode_conflict'
     | 'ok'
     | 'preview'

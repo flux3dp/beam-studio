@@ -2,6 +2,7 @@ import { sprintf } from 'sprintf-js';
 
 import Alert from '@core/app/actions/alert-caller';
 import Progress from '@core/app/actions/progress-caller';
+import tabController from '@core/app/actions/tabController';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { UpdateEvents } from '@core/app/constants/ipcEvents';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
@@ -181,7 +182,7 @@ const switchVersion = (): void => {
 
 export default {
   autoCheck(): void {
-    const doCheck = storage.get('auto_check_update');
+    const doCheck = storage.get('auto_check_update') && tabController.getIsFirstTab();
 
     if (doCheck) {
       checkForUpdate(true);

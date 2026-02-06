@@ -38,7 +38,7 @@ const state: GlobalPreference = {
   'one-way-printing': true,
   padding_accel: 5000,
   padding_accel_diode: 4500,
-  'path-engine': 'fluxghost',
+  'path-engine': 'swiftray',
   preview_movement_speed_level: PreviewSpeedLevel.SLOW,
   'print-advanced-mode': false,
   'reverse-engraving': false,

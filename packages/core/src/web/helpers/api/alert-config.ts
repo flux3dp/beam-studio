@@ -2,6 +2,7 @@ import storage from '@core/implementations/storage';
 
 export type AlertConfigKey =
   | 'done-first-cali'
+  | 'is-path-engine-dialog-shown'
   | 'skip-auto-feeder-instruction'
   | 'skip-fb-group-invitation'
   | 'skip-high-power-confirm'
@@ -28,12 +29,12 @@ export type AlertConfigKey =
   | 'skip_variable_text_warning';
 
 const alertConfig = {
-  read: (key: AlertConfigKey) => {
+  read: (key: AlertConfigKey): boolean | undefined => {
     const config = storage.get('alert-config') || {};
 
     return config[key];
   },
-  write: (key: AlertConfigKey, value: any): void => {
+  write: (key: AlertConfigKey, value: boolean): void => {
     const config = storage.get('alert-config') || {};
 
     config[key] = value;

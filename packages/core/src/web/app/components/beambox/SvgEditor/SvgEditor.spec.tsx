@@ -41,16 +41,12 @@ jest.mock('@core/app/svgedit/workarea', () => ({ zoom: (...args) => mockZoom(...
 
 describe('test svg-editor', () => {
   test('should render correctly in mac', () => {
-    Object.defineProperty(window, 'os', { value: 'MacOS' });
-
     const { container } = render(<SvgEditor />);
 
     expect(container).toMatchSnapshot();
   });
 
   test('should render correctly in win', () => {
-    Object.defineProperty(window, 'os', { value: 'Windows' });
-
     const { container } = render(<SvgEditor />);
 
     expect(container).toMatchSnapshot();
