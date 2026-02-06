@@ -116,6 +116,8 @@ class TabController extends EventEmitter {
   };
 
   getIsFirstTab = (): boolean => {
+    if (this.getIsWelcomeTab()) return false;
+
     if (this.isFirstTab === null) {
       const firstTab = this.getAllTabs().find((t) => !t.isWelcomeTab);
 
