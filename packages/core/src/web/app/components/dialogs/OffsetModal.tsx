@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, Checkbox } from 'antd';
 
@@ -12,6 +12,7 @@ import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
 import offsetElements from '@core/helpers/clipper/offset';
+import type { CornerType, OffsetMode } from '@core/helpers/clipper/offset/constants';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import usePreviewModal from '@core/helpers/hooks/usePreviewModal';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -21,17 +22,31 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './OffsetModal.module.scss';
 
 type OffsetProp = {
-  cornerType: 'round' | 'sharp';
+  cornerType: CornerType;
   distance: number;
-  mode: 'expand' | 'inward' | 'outward' | 'shrink';
+  mode: OffsetMode;
 };
 
-type Distance = { default: number };
-
-const unitSettings: Record<'inch' | 'mm', { distance: Distance; preciseDistance: Distance; precision: number }> = {
-  inch: { distance: { default: 0.2 }, preciseDistance: { default: 0.002 }, precision: 2 },
-  mm: { distance: { default: 3 }, preciseDistance: { default: 0.05 }, precision: 2 },
+const unitSettings: Record<'inch' | 'mm', { precision: number }> = {
+  inch: { precision: 2 },
+  mm: { precision: 2 },
 };
+
+const defaultDistances: Record<'inch' | 'mm', Record<OffsetMode, number>> = {
+  inch: { expand: 0.002, inward: 0.2, outward: 0.2, shrink: 0.002 },
+  mm: { expand: 0.05, inward: 3, outward: 3, shrink: 0.05 },
+};
+
+// In-memory storage for offset config (persists across modal open/close, resets on page reload).
+// Distances are stored in the unit active at save time; discarded if the unit changes.
+interface SavedOffsetConfig {
+  cornerType: CornerType;
+  distances: Record<OffsetMode, number>;
+  mode: OffsetMode;
+  unit: 'inch' | 'mm';
+}
+
+let savedOffsetConfig: null | SavedOffsetConfig = null;
 
 interface Props {
   onClose: () => void;
@@ -43,18 +58,47 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     global: tGlobal,
   } = useI18n();
   const unit = useStorageStore((state) => (state.isInch ? 'inch' : 'mm'));
-  const { distance, preciseDistance, precision } = useMemo(() => unitSettings[unit], [unit]);
+  const { precision } = useMemo(() => unitSettings[unit], [unit]);
   const isMobile = useIsMobile();
 
   useNewShortcutsScope();
 
-  const [offset, setOffset] = useState<OffsetProp>({
-    cornerType: 'round',
-    distance: distance.default,
-    mode: 'outward',
+  // Per-mode distance map, restored from previous session if same unit; otherwise unit defaults
+  const saved = savedOffsetConfig?.unit === unit ? savedOffsetConfig : null;
+  const [modeDistances, setModeDistances] = useState<Record<OffsetMode, number>>(
+    () => saved?.distances ?? { ...defaultDistances[unit] },
+  );
+  const [offset, setOffset] = useState<OffsetProp>(() => {
+    if (saved) {
+      return {
+        cornerType: saved.cornerType,
+        distance: saved.distances[saved.mode],
+        mode: saved.mode,
+      };
+    }
+
+    return { cornerType: 'round', distance: defaultDistances[unit].outward, mode: 'outward' };
   });
 
-  const getDistance = (mode: OffsetProp['mode']) => (['expand', 'shrink'].includes(mode) ? preciseDistance : distance);
+  // Refs so the unmount cleanup (empty deps) can access latest state
+  const offsetRef = useRef(offset);
+
+  offsetRef.current = offset;
+
+  const modeDistancesRef = useRef(modeDistances);
+
+  modeDistancesRef.current = modeDistances;
+
+  // Save config to in-memory store on unmount (uses refs to read latest state)
+  useEffect(
+    () => () => {
+      const { cornerType, distance: dist, mode } = offsetRef.current;
+      const distances = { ...modeDistancesRef.current, [mode]: dist };
+
+      savedOffsetConfig = { cornerType, distances, mode, unit };
+    },
+    [unit],
+  );
 
   // Preview generation function
   const generatePreview = useCallback(async () => {
@@ -129,7 +173,16 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
         <span className={styles.label}>{lang._offset.direction}</span>
         <Select
           className={styles.select}
-          onChange={(mode) => setOffset({ ...offset, distance: getDistance(mode).default, mode })}
+          onChange={(val: OffsetMode) => {
+            // Persist current mode's distance in per-mode cache, then restore the target mode's distance
+            setModeDistances((prev) => {
+              const updated = { ...prev, [offset.mode]: offset.distance };
+
+              setOffset({ ...offset, distance: updated[val], mode: val });
+
+              return updated;
+            });
+          }}
           options={[
             { label: lang._offset.outward, value: 'outward' },
             { label: lang._offset.inward, value: 'inward' },
@@ -160,7 +213,9 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
           className={styles.input}
           data-testid="offset-distance"
           min={0}
-          onChange={(dist) => setOffset({ ...offset, distance: dist! })}
+          onChange={(dist) => {
+            if (dist != null) setOffset({ ...offset, distance: dist });
+          }}
           precision={precision}
           type="number"
           value={offset.distance}

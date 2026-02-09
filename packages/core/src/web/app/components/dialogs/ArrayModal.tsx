@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, Checkbox } from 'antd';
 
@@ -26,6 +26,10 @@ interface ArrayData {
   row: number;
 }
 
+// In-memory storage for array config (persists across modal open/close, resets on page reload).
+// Distances are stored in the unit active at save time; discarded if the unit changes.
+let savedArrayConfig: null | { data: ArrayData; unit: 'inch' | 'mm' } = null;
+
 const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => {
   const {
     beambox: { tool_panels: t },
@@ -46,12 +50,26 @@ const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => 
     [unit],
   );
 
-  const [data, setData] = useState<ArrayData>({
-    column: 3,
-    dx: config.default,
-    dy: config.default,
-    row: 3,
-  });
+  const [data, setData] = useState<ArrayData>(
+    () =>
+      (savedArrayConfig?.unit === unit ? savedArrayConfig.data : null) ?? {
+        column: 3,
+        dx: config.default,
+        dy: config.default,
+        row: 3,
+      },
+  );
+  const dataRef = useRef(data);
+
+  dataRef.current = data;
+
+  // Save config to in-memory store on unmount (uses ref so cleanup reads latest state)
+  useEffect(
+    () => () => {
+      savedArrayConfig = { data: dataRef.current, unit };
+    },
+    [unit],
+  );
 
   // Preview generation function
   const generatePreview = useCallback(async () => {
