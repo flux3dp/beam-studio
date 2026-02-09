@@ -3323,7 +3323,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       };
     }
 
-    const isFilled = Number.parseFloat(elem.getAttribute('fill-opacity')) !== 0 && $(elem).attr('fill') !== 'none';
+    const fill = elem.getAttribute('fill') || '#000000';
+    const isFilled =
+      Number.parseFloat(elem.getAttribute('fill-opacity') ?? '1') !== 0 &&
+      !['#fff', '#ffffff', 'none'].includes(fill.toLowerCase());
 
     return {
       isAllFilled: isFilled,
