@@ -347,7 +347,7 @@ exports[`settings/Editor initially no warning 1`] = `
     mock-switch-control id:
     path-engine
     label:
-    Path Calculation Acceleration (Beta)
+    Path Calculation Acceleration
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
@@ -711,7 +711,7 @@ exports[`settings/Editor initially no warning 2`] = `
     mock-switch-control id:
     path-engine
     label:
-    Path Calculation Acceleration (Beta)
+    Path Calculation Acceleration
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
@@ -1075,7 +1075,7 @@ exports[`settings/Editor initially no warning 3`] = `
     mock-switch-control id:
     path-engine
     label:
-    Path Calculation Acceleration (Beta)
+    Path Calculation Acceleration
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
@@ -1439,7 +1439,7 @@ exports[`settings/Editor initially no warning 4`] = `
     mock-switch-control id:
     path-engine
     label:
-    Path Calculation Acceleration (Beta)
+    Path Calculation Acceleration
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
