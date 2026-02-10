@@ -68,8 +68,6 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     sessionConfig = { data, unit };
   }, [data, unit]);
 
-  const distance = data.distances[data.mode];
-
   // Preview generation function
   const generatePreview = useCallback(async () => {
     const { cornerType, distances, mode } = data;
@@ -89,7 +87,7 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
   useEffect(() => {
     handlePreview();
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [data, unit, previewEnabled]);
+  }, [data.distances[data.mode], unit, previewEnabled]);
 
   const close = () => {
     onClose();
@@ -179,7 +177,7 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
           }}
           precision={precision}
           type="number"
-          value={distance}
+          value={data.distances[data.mode]}
         />
       </div>
     </DraggableModal>
