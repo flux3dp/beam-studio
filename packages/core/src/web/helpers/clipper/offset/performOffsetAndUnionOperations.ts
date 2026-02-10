@@ -4,7 +4,7 @@ import ClipperBase from '../clipper';
 import getClipperLib from '../getClipperLib';
 
 import { calculateResultHierarchy } from './calculateResultHierarchy';
-import type { OffsetMode, Path } from './constants';
+import type { CornerType, OffsetMode, Path } from './constants';
 import { ARC_TOLERANCE, MITER_LIMIT, SCALE_FACTOR } from './constants';
 import { processElementForOffset } from './processElementForOffset';
 
@@ -17,7 +17,7 @@ export async function performOffsetAndUnionOperations(
   elementsToOffset: SVGElement[],
   mode: OffsetMode,
   distance: number,
-  cornerType: 'round' | 'sharp',
+  cornerType: CornerType,
 ): Promise<OffsetOperationResult> {
   const ClipperLib = getClipperLib();
 

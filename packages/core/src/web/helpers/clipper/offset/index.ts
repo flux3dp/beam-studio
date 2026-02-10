@@ -2,7 +2,7 @@ import progressCaller from '@core/app/actions/progress-caller';
 import type { BatchCommand } from '@core/app/svgedit/history/history';
 import i18n from '@core/helpers/i18n';
 
-import type { OffsetMode } from './constants';
+import type { CornerType, OffsetMode } from './constants';
 import { createAndApplyOffsetElement } from './createAndApplyOffsetElement';
 import { performOffsetAndUnionOperations } from './performOffsetAndUnionOperations';
 import { showOffsetAlert } from './showOffSetAlert';
@@ -16,7 +16,7 @@ interface OffsetOptions {
 const offsetElements = async (
   mode: OffsetMode,
   distance: number,
-  cornerType: 'round' | 'sharp',
+  cornerType: CornerType,
   elems?: SVGElement[],
   options: OffsetOptions = {},
 ): Promise<BatchCommand | null> => {

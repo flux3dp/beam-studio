@@ -1,5 +1,6 @@
 import round from '@core/helpers/math/round';
 
+export type DisplayUnit = 'inch' | 'mm';
 export type Units = 'cm' | 'inch' | 'mm' | 'pt' | 'px' | 'text';
 export type TimeUnits = 'h' | 'm' | 'ms' | 's';
 
