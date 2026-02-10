@@ -2,7 +2,7 @@ import type { MutableRefObject } from 'react';
 import React, { forwardRef } from 'react';
 
 import classNames from 'classnames';
-import { DragDropContext, Draggable, Droppable } from 'react-beautiful-dnd';
+import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
 
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import useI18n from '@core/helpers/useI18n';

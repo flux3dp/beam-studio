@@ -172,7 +172,7 @@ exports[`test FluxPlusModal should render correctly 1`] = `
                     class="banner"
                   >
                     <svgr-url
-                      classname="icon"
+                      class="icon"
                     />
                     <div
                       class="features"

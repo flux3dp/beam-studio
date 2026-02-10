@@ -28,7 +28,7 @@ exports[`test FloatingPanel should render correctly 1`] = `
       >
         <svgr-url
           aria-hidden="true"
-          classname=""
+          class=""
           fill="currentColor"
           focusable="false"
           height="1em"

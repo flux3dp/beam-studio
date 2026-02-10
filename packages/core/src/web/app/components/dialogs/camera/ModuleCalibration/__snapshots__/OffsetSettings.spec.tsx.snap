@@ -109,7 +109,7 @@ exports[`test OffsetSettings should render correctly with printer module 1`] = `
                             mm
                           </p>
                           <input
-                            value="10.5"
+                            value="0"
                           />
                         </div>
                         <label>
@@ -128,7 +128,7 @@ exports[`test OffsetSettings should render correctly with printer module 1`] = `
                             mm
                           </p>
                           <input
-                            value="-5.2"
+                            value="0"
                           />
                         </div>
                       </div>

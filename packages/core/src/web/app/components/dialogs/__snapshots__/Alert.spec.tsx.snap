@@ -65,7 +65,7 @@ exports[`test Alert should render correctly 1`] = `
                       link1
                     </span>
                     <svgr-url
-                      classname="icon"
+                      class="icon"
                     />
                   </button>
                   <button
@@ -76,7 +76,7 @@ exports[`test Alert should render correctly 1`] = `
                       link2
                     </span>
                     <svgr-url
-                      classname="icon"
+                      class="icon"
                     />
                   </button>
                 </div>

@@ -13,7 +13,7 @@ exports[`test UserAvatar no user 1`] = `
         style="width: 28px; height: 28px; font-size: 14px;"
       >
         <svgr-url
-          classname="default-avatar"
+          class="default-avatar"
         />
       </span>
     </span>
@@ -34,11 +34,11 @@ exports[`test UserAvatar with subscription 1`] = `
         style="width: 28px; height: 28px; font-size: 14px;"
       >
         <svgr-url
-          classname="default-avatar"
+          class="default-avatar"
         />
       </span>
       <svgr-url
-        classname="ant-scroll-number-custom-component badge"
+        class="ant-scroll-number-custom-component badge"
         style="margin-top: 4px; right: 4px;"
       />
     </span>

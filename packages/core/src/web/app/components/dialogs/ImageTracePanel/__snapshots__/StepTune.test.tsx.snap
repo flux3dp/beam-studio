@@ -40,7 +40,6 @@ exports[`test StepTune should render correctly 1`] = `
                   >
                     <img
                       id="tunedImage"
-                      src=""
                       style="height: 529px; width: 529px;"
                     />
                   </div>

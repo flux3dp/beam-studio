@@ -3,7 +3,6 @@
 exports[`test workarea should render correctly 1`] = `
 <div>
   <dummy-context-menu-trigger
-    disable="false"
     holdtodisplay="-1"
     holdtodisplaymouse="-1"
     id="canvas-contextmenu"
@@ -22,27 +21,27 @@ exports[`test workarea should render correctly 1`] = `
     id="canvas-contextmenu"
   >
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Cut
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Copy
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Paste
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Paste in Place
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Duplicate
     </dummy-menu-item>
@@ -50,7 +49,7 @@ exports[`test workarea should render correctly 1`] = `
       class="separator"
     />
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Delete
     </dummy-menu-item>
@@ -58,12 +57,12 @@ exports[`test workarea should render correctly 1`] = `
       class="separator"
     />
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Group
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Ungroup
     </dummy-menu-item>
@@ -71,22 +70,22 @@ exports[`test workarea should render correctly 1`] = `
       class="separator"
     />
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Bring to Front
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Bring Forward
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Send Backward
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Send to Back
     </dummy-menu-item>
@@ -94,17 +93,15 @@ exports[`test workarea should render correctly 1`] = `
       class="separator"
     />
     <dummy-sub-menu
-      disabled="true"
+      disabled=""
       title="Move elements to:"
     >
       <dummy-menu-item
-        disabled="true"
+        disabled=""
       >
         Layer 1
       </dummy-menu-item>
-      <dummy-menu-item
-        disabled="false"
-      >
+      <dummy-menu-item>
         Layer 2
       </dummy-menu-item>
     </dummy-sub-menu>
@@ -115,7 +112,7 @@ exports[`test workarea should render correctly 1`] = `
 exports[`test workarea should render correctly 2`] = `
 <div>
   <dummy-context-menu-trigger
-    disable="true"
+    disable=""
     holdtodisplay="-1"
     holdtodisplaymouse="-1"
     id="canvas-contextmenu"
@@ -133,90 +130,67 @@ exports[`test workarea should render correctly 2`] = `
   <dummy-context-menu
     id="canvas-contextmenu"
   >
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Cut
     </dummy-menu-item>
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Copy
     </dummy-menu-item>
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Paste
     </dummy-menu-item>
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Paste in Place
     </dummy-menu-item>
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Duplicate
     </dummy-menu-item>
     <div
       class="separator"
     />
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Delete
     </dummy-menu-item>
     <div
       class="separator"
     />
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Group
     </dummy-menu-item>
     <dummy-menu-item
-      disabled="true"
+      disabled=""
     >
       Ungroup
     </dummy-menu-item>
     <div
       class="separator"
     />
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Bring to Front
     </dummy-menu-item>
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Bring Forward
     </dummy-menu-item>
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Send Backward
     </dummy-menu-item>
-    <dummy-menu-item
-      disabled="false"
-    >
+    <dummy-menu-item>
       Send to Back
     </dummy-menu-item>
     <div
       class="separator"
     />
     <dummy-sub-menu
-      disabled="false"
       title="Move elements to:"
     >
       <dummy-menu-item
-        disabled="true"
+        disabled=""
       >
         Layer 1
       </dummy-menu-item>
-      <dummy-menu-item
-        disabled="false"
-      >
+      <dummy-menu-item>
         Layer 2
       </dummy-menu-item>
     </dummy-sub-menu>

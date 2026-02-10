@@ -116,7 +116,7 @@ exports[`test PromarkSettings should render correctly 1`] = `
                         Preview
                       </span>
                       <svgr-url
-                        classname="icon"
+                        class="icon"
                       />
                     </button>
                     <button

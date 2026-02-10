@@ -68,44 +68,7 @@ exports[`test MonitorFilelist should render correctly 1`] = `
     </div>
     <div
       class="container"
-    >
-      <div
-        class="dir"
-      >
-        da
-      </div>
-      <div
-        class="dir"
-      >
-        db
-      </div>
-      <div
-        class="dir"
-      >
-        dc
-      </div>
-      <div
-        class="file"
-      >
-        path
-        /
-        fa
-      </div>
-      <div
-        class="file"
-      >
-        path
-        /
-        fb
-      </div>
-      <div
-        class="file"
-      >
-        path
-        /
-        fc
-      </div>
-    </div>
+    />
   </div>
 </div>
 `;

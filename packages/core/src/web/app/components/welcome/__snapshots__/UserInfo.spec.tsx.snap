@@ -117,7 +117,7 @@ exports[`test UserInfo should render correctly when not login 1`] = `
         style="width: 32px; height: 32px; font-size: 16px;"
       >
         <svgr-url
-          classname="default-avatar"
+          class="default-avatar"
         />
       </span>
       <div

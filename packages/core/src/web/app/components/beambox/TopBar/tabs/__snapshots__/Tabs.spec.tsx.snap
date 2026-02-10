@@ -7,8 +7,8 @@ exports[`test Tabs should render correctly 1`] = `
   >
     <div
       class="tabs"
-      data-rbd-droppable-context-id="0"
-      data-rbd-droppable-id="tabs"
+      data-rfd-droppable-context-id="_r_0_"
+      data-rfd-droppable-id="tabs"
     >
       <div
         class="tab small"
@@ -34,12 +34,12 @@ exports[`test Tabs should render correctly 1`] = `
         </span>
       </div>
       <div
-        aria-describedby="rbd-hidden-text-0-hidden-text-0"
+        aria-describedby="rfd-hidden-text-_r_0_-hidden-text-_r_1_"
         class="tab focused"
-        data-rbd-drag-handle-context-id="0"
-        data-rbd-drag-handle-draggable-id="1"
-        data-rbd-draggable-context-id="0"
-        data-rbd-draggable-id="1"
+        data-rfd-drag-handle-context-id="_r_0_"
+        data-rfd-drag-handle-draggable-id="1"
+        data-rfd-draggable-context-id="_r_0_"
+        data-rfd-draggable-id="1"
         draggable="false"
         role="button"
         tabindex="0"
@@ -76,19 +76,19 @@ exports[`test Tabs should render correctly 1`] = `
         </span>
       </div>
       <div
-        aria-describedby="rbd-hidden-text-0-hidden-text-0"
+        aria-describedby="rfd-hidden-text-_r_0_-hidden-text-_r_1_"
         class="tab"
-        data-rbd-drag-handle-context-id="0"
-        data-rbd-drag-handle-draggable-id="2"
-        data-rbd-draggable-context-id="0"
-        data-rbd-draggable-id="2"
+        data-rfd-drag-handle-context-id="_r_0_"
+        data-rfd-drag-handle-draggable-id="2"
+        data-rfd-draggable-context-id="_r_0_"
+        data-rfd-draggable-id="2"
         draggable="false"
         role="button"
         tabindex="0"
         title="preview"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
         />
         <span
           class="name"
@@ -121,12 +121,12 @@ exports[`test Tabs should render correctly 1`] = `
         </span>
       </div>
       <div
-        aria-describedby="rbd-hidden-text-0-hidden-text-0"
+        aria-describedby="rfd-hidden-text-_r_0_-hidden-text-_r_1_"
         class="tab"
-        data-rbd-drag-handle-context-id="0"
-        data-rbd-drag-handle-draggable-id="3"
-        data-rbd-draggable-context-id="0"
-        data-rbd-draggable-id="3"
+        data-rfd-drag-handle-context-id="_r_0_"
+        data-rfd-drag-handle-draggable-id="3"
+        data-rfd-draggable-context-id="_r_0_"
+        data-rfd-draggable-id="3"
         draggable="false"
         role="button"
         tabindex="0"
@@ -182,19 +182,19 @@ exports[`test Tabs should render correctly 1`] = `
         </span>
       </div>
       <div
-        aria-describedby="rbd-hidden-text-0-hidden-text-0"
+        aria-describedby="rfd-hidden-text-_r_0_-hidden-text-_r_1_"
         class="tab"
-        data-rbd-drag-handle-context-id="0"
-        data-rbd-drag-handle-draggable-id="4"
-        data-rbd-draggable-context-id="0"
-        data-rbd-draggable-id="4"
+        data-rfd-drag-handle-context-id="_r_0_"
+        data-rfd-drag-handle-draggable-id="4"
+        data-rfd-draggable-context-id="_r_0_"
+        data-rfd-draggable-id="4"
         draggable="false"
         role="button"
         tabindex="0"
         title="Cloud File"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
         />
         <span
           class="name"
@@ -227,19 +227,19 @@ exports[`test Tabs should render correctly 1`] = `
         </span>
       </div>
       <div
-        aria-describedby="rbd-hidden-text-0-hidden-text-0"
+        aria-describedby="rfd-hidden-text-_r_0_-hidden-text-_r_1_"
         class="tab"
-        data-rbd-drag-handle-context-id="0"
-        data-rbd-drag-handle-draggable-id="5"
-        data-rbd-draggable-context-id="0"
-        data-rbd-draggable-id="5"
+        data-rfd-drag-handle-context-id="_r_0_"
+        data-rfd-drag-handle-draggable-id="5"
+        data-rfd-draggable-context-id="_r_0_"
+        data-rfd-draggable-id="5"
         draggable="false"
         role="button"
         tabindex="0"
         title="Curve Engraving"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
         />
         <span
           class="name"
@@ -309,16 +309,16 @@ exports[`test Tabs tab controller events should be registered and unregistered c
   >
     <div
       class="tabs"
-      data-rbd-droppable-context-id="2"
-      data-rbd-droppable-id="tabs"
+      data-rfd-droppable-context-id="_r_g_"
+      data-rfd-droppable-id="tabs"
     >
       <div
-        aria-describedby="rbd-hidden-text-2-hidden-text-14"
+        aria-describedby="rfd-hidden-text-_r_g_-hidden-text-_r_h_"
         class="tab focused"
-        data-rbd-drag-handle-context-id="2"
-        data-rbd-drag-handle-draggable-id="1"
-        data-rbd-draggable-context-id="2"
-        data-rbd-draggable-id="1"
+        data-rfd-drag-handle-context-id="_r_g_"
+        data-rfd-drag-handle-draggable-id="1"
+        data-rfd-draggable-context-id="_r_g_"
+        data-rfd-draggable-id="1"
         draggable="false"
         role="button"
         tabindex="0"
@@ -355,12 +355,12 @@ exports[`test Tabs tab controller events should be registered and unregistered c
         </span>
       </div>
       <div
-        aria-describedby="rbd-hidden-text-2-hidden-text-14"
+        aria-describedby="rfd-hidden-text-_r_g_-hidden-text-_r_h_"
         class="tab"
-        data-rbd-drag-handle-context-id="2"
-        data-rbd-drag-handle-draggable-id="2"
-        data-rbd-draggable-context-id="2"
-        data-rbd-draggable-id="2"
+        data-rfd-drag-handle-context-id="_r_g_"
+        data-rfd-drag-handle-draggable-id="2"
+        data-rfd-draggable-context-id="_r_g_"
+        data-rfd-draggable-id="2"
         draggable="false"
         role="button"
         tabindex="0"

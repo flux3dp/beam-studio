@@ -85,11 +85,11 @@ describe('test workarea', () => {
       select: boolean;
       ungroup: boolean;
     }) => {
-      const menuDisabled = container.querySelector('#canvas-contextmenu').getAttribute('disable') === 'true';
-      const select = getByText('Cut').getAttribute('disabled') === 'false';
-      const paste = getByText('Paste').getAttribute('disabled') === 'false';
-      const group = select ? getByText('Group').getAttribute('disabled') === 'false' : expect.anything();
-      const ungroup = select ? getByText('Ungroup').getAttribute('disabled') === 'false' : expect.anything();
+      const menuDisabled = container.querySelector('#canvas-contextmenu').hasAttribute('disable');
+      const select = getByText('Cut').getAttribute('disabled') !== '';
+      const paste = getByText('Paste').getAttribute('disabled') !== '';
+      const group = select ? getByText('Group').getAttribute('disabled') !== '' : expect.anything();
+      const ungroup = select ? getByText('Ungroup').getAttribute('disabled') !== '' : expect.anything();
 
       expect(state).toEqual({ group, menuDisabled, paste, select, ungroup });
     };

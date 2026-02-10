@@ -181,7 +181,7 @@ exports[`test PresetsManagementPanel should render correctly 1`] = `
                         </span>
                       </button>
                       <svgr-url
-                        classname="ant-dropdown-trigger icon"
+                        class="ant-dropdown-trigger icon"
                       />
                     </div>
                   </div>
@@ -498,7 +498,7 @@ exports[`test PresetsManagementPanel should render correctly with print module 1
                         </span>
                       </button>
                       <svgr-url
-                        classname="ant-dropdown-trigger icon"
+                        class="ant-dropdown-trigger icon"
                       />
                     </div>
                   </div>
