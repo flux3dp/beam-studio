@@ -12,26 +12,35 @@ import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import UnitInput from '@core/app/widgets/UnitInput';
 import offsetElements from '@core/helpers/clipper/offset';
+import type { CornerType, OffsetMode } from '@core/helpers/clipper/offset/constants';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import usePreviewModal from '@core/helpers/hooks/usePreviewModal';
 import { useIsMobile } from '@core/helpers/system-helper';
+import type { DisplayUnit } from '@core/helpers/units';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './OffsetModal.module.scss';
 
-type OffsetProp = {
-  cornerType: 'round' | 'sharp';
-  distance: number;
-  mode: 'expand' | 'inward' | 'outward' | 'shrink';
+interface OffsetData {
+  cornerType: CornerType;
+  distances: Record<OffsetMode, number>;
+  mode: OffsetMode;
+}
+
+const unitSettings: Record<DisplayUnit, { precision: number }> = {
+  inch: { precision: 2 },
+  mm: { precision: 2 },
 };
 
-type Distance = { default: number };
-
-const unitSettings: Record<'inch' | 'mm', { distance: Distance; preciseDistance: Distance; precision: number }> = {
-  inch: { distance: { default: 0.2 }, preciseDistance: { default: 0.002 }, precision: 2 },
-  mm: { distance: { default: 3 }, preciseDistance: { default: 0.05 }, precision: 2 },
+const defaultDistances: Record<DisplayUnit, Record<OffsetMode, number>> = {
+  inch: { expand: 0.002, inward: 0.2, outward: 0.2, shrink: 0.002 },
+  mm: { expand: 0.05, inward: 3, outward: 3, shrink: 0.05 },
 };
+
+// In-memory storage for offset config (persists across modal open/close, resets on page reload).
+// Distances are stored in the unit active at save time; discarded if the unit changes.
+let sessionConfig: null | { data: OffsetData; unit: DisplayUnit } = null;
 
 interface Props {
   onClose: () => void;
@@ -43,27 +52,30 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     global: tGlobal,
   } = useI18n();
   const unit = useStorageStore((state) => (state.isInch ? 'inch' : 'mm'));
-  const { distance, preciseDistance, precision } = useMemo(() => unitSettings[unit], [unit]);
+  const { precision } = useMemo(() => unitSettings[unit], [unit]);
   const isMobile = useIsMobile();
 
   useNewShortcutsScope();
 
-  const [offset, setOffset] = useState<OffsetProp>({
-    cornerType: 'round',
-    distance: distance.default,
-    mode: 'outward',
-  });
+  const [data, setData] = useState<OffsetData>(() =>
+    sessionConfig?.unit === unit
+      ? sessionConfig.data
+      : { cornerType: 'round', distances: { ...defaultDistances[unit] }, mode: 'outward' },
+  );
 
-  const getDistance = (mode: OffsetProp['mode']) => (['expand', 'shrink'].includes(mode) ? preciseDistance : distance);
+  // Save config to in-memory store on change
+  useEffect(() => {
+    sessionConfig = { data, unit };
+  }, [data, unit]);
 
   // Preview generation function
   const generatePreview = useCallback(async () => {
-    const distanceMm = +units.convertUnit(offset.distance, 'mm', unit).toFixed(2);
-    const { cornerType, mode } = offset;
+    const { cornerType, distances, mode } = data;
+    const distanceMm = +units.convertUnit(distances[mode], 'mm', unit).toFixed(2);
     const { dpmm } = constant;
 
     return offsetElements(mode, distanceMm * dpmm, cornerType, undefined, { addToHistory: false });
-  }, [offset, unit]);
+  }, [data, unit]);
 
   const { cancelPreview, commitPreview, handlePreview, previewEnabled, setPreviewEnabled } = usePreviewModal({
     generatePreview,
@@ -71,11 +83,11 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
     selectionMode: 'inserted',
   });
 
-  // Generate preview on mount and when offset/unit/previewEnabled changes
+  // Generate preview on mount and when data/unit/previewEnabled changes
   useEffect(() => {
     handlePreview();
     // eslint-disable-next-line hooks/exhaustive-deps
-  }, [offset.distance, offset.mode, offset.cornerType, unit, previewEnabled]);
+  }, [data.distances[data.mode], unit, previewEnabled]);
 
   const close = () => {
     onClose();
@@ -129,13 +141,13 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
         <span className={styles.label}>{lang._offset.direction}</span>
         <Select
           className={styles.select}
-          onChange={(mode) => setOffset({ ...offset, distance: getDistance(mode).default, mode })}
+          onChange={(val: OffsetMode) => setData((prev) => ({ ...prev, mode: val }))}
           options={[
             { label: lang._offset.outward, value: 'outward' },
             { label: lang._offset.inward, value: 'inward' },
           ]}
           popupMatchSelectWidth={false}
-          value={offset.mode}
+          value={data.mode}
         />
       </div>
       <div className={styles.field}>
@@ -143,13 +155,13 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
         <Select
           className={styles.select}
           data-testid="offset-corner"
-          onChange={(val) => setOffset({ ...offset, cornerType: val })}
+          onChange={(val) => setData((prev) => ({ ...prev, cornerType: val }))}
           options={[
             { label: lang._offset.round, value: 'round' },
             { label: lang._offset.sharp, value: 'sharp' },
           ]}
           popupMatchSelectWidth={false}
-          value={offset.cornerType}
+          value={data.cornerType}
         />
       </div>
       <div className={styles.divider} />
@@ -160,10 +172,12 @@ const OffsetModal = ({ onClose }: Props): React.JSX.Element => {
           className={styles.input}
           data-testid="offset-distance"
           min={0}
-          onChange={(dist) => setOffset({ ...offset, distance: dist! })}
+          onChange={(dist) => {
+            if (dist != null) setData((prev) => ({ ...prev, distances: { ...prev.distances, [prev.mode]: dist } }));
+          }}
           precision={precision}
           type="number"
-          value={offset.distance}
+          value={data.distances[data.mode]}
         />
       </div>
     </DraggableModal>
