@@ -1,27 +1,29 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.6.1 beta
+// 2.6.3 beta
 const CHANGES_TW = {
   added: [
-    '支援 HEXA RF 機型。',
-    '新增 於 Mac（Apple Silicon）上安裝 Intel 版本時的警告提示。',
-    '新增 泰隆尼雅語系支援。',
-    '新增 進階校正參數設定。',
+    '新增 位移複製與陣列功能即時預覽編輯效果。',
+    'Promark 支援 Mac Apple Silicon (M 系列) 晶片系統。',
+    '全面導入 加速算圖引擎，大幅優化路徑規劃與工作生成速度。',
+    '支援 各圖層獨立設定雕刻解析度。',
+    '新增 左側工具列「產生器」分類。',
+    '新增 HEXA RF 照片校正資料上傳與下載功能。',
+    '新增 beamo II 照片校正資料上傳與下載功能。',
   ],
-  changed: ['偏好設定頁面調整為視窗形式顯示。', '偏好設定套用完成後不再重整畫面。', '調整 西班牙文翻譯。'],
+  changed: ['雕刻解析度設定由「文件設定」移至「圖層設定」。'],
   fixed: [],
 };
 
 const CHANGES_EN = {
   added: [
-    'Added a warning message when installing the Intel version on Apple silicon Macs.',
-    'Added Catalan language support.',
+    'Added Preview for Offset and Array functions.',
+    'Promark now supports Mac Apple Silicon (M-series) systems.',
+    'Fully integrated the Path Calculation Acceleration engine, significantly improving path planning and job generation speed.',
+    'Supports independent engraving resolution settings per layer.',
+    'Added a new “Generator” category to the left toolbar.',
   ],
-  changed: [
-    'Updated Preferences to open in a modal.',
-    'Applied changes in Preferences without reloading the page.',
-    'Updated Spanish translations.',
-  ],
+  changed: ['Moved engraving resolution settings from Document Settings to Layer Settings.'],
   fixed: [],
 };
 
