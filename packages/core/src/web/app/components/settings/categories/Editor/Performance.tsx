@@ -44,7 +44,7 @@ function Performance(): React.JSX.Element {
         <SettingSwitch
           checked={getPreference('path-engine') === 'swiftray'}
           id="path-engine"
-          label={`${lang.settings.calculation_optimization} (Beta)`}
+          label={lang.settings.calculation_optimization}
           onChange={(e) => setPreference('path-engine', e ? 'swiftray' : 'fluxghost')}
           url={lang.settings.help_center_urls.calculation_optimization}
         />

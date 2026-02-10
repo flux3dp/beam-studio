@@ -49,6 +49,9 @@ const setElementsColor = (elements: Element[], color: string, isFullColor = fals
           ) {
             elem.setAttribute('fill', color);
             elem.setAttribute('fill-opacity', '1');
+          } else if (['#fff', '#ffffff'].includes(attrFill?.toLowerCase() ?? '')) {
+            elem.setAttribute('fill', 'none');
+            elem.setAttribute('fill-opacity', '0');
           }
         } else {
           elem.removeAttribute('vector-effect');
