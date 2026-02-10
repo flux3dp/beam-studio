@@ -1,3 +1,5 @@
+export type CornerType = 'round' | 'sharp';
+
 export type OffsetMode =
   | 'expand' // GAP in single object THICKER (material shrinks)
   | 'inward' // Material shrinks

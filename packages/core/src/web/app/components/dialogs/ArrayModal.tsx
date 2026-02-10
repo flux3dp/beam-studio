@@ -14,6 +14,7 @@ import UnitInput from '@core/app/widgets/UnitInput';
 import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import usePreviewModal from '@core/helpers/hooks/usePreviewModal';
 import { useIsMobile } from '@core/helpers/system-helper';
+import type { DisplayUnit } from '@core/helpers/units';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 
@@ -25,6 +26,10 @@ interface ArrayData {
   dy: number;
   row: number;
 }
+
+// In-memory storage for array config (persists across modal open/close, resets on page reload).
+// Distances are stored in the unit active at save time; discarded if the unit changes.
+let sessionConfig: null | { data: ArrayData; unit: DisplayUnit } = null;
 
 const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => {
   const {
@@ -46,12 +51,16 @@ const ArrayModal = ({ onClose }: { onClose: () => void }): React.JSX.Element => 
     [unit],
   );
 
-  const [data, setData] = useState<ArrayData>({
-    column: 3,
-    dx: config.default,
-    dy: config.default,
-    row: 3,
-  });
+  const [data, setData] = useState<ArrayData>(() =>
+    sessionConfig?.unit === unit
+      ? { ...sessionConfig.data }
+      : { column: 3, dx: config.default, dy: config.default, row: 3 },
+  );
+
+  // Save config to in-memory store on change
+  useEffect(() => {
+    sessionConfig = { data, unit };
+  }, [data, unit]);
 
   // Preview generation function
   const generatePreview = useCallback(async () => {

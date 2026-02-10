@@ -5,7 +5,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import type ClipperBase from '../clipper';
 
-import type { OffsetMode, Path } from './constants';
+import type { CornerType, OffsetMode, Path } from './constants';
 import { SCALE_FACTOR } from './constants';
 
 let svgedit: any;
@@ -18,7 +18,7 @@ export async function processElementForOffset(
   elem: SVGElement,
   clipperInstance: ClipperBase,
   ClipperLib: any,
-  cornerType: 'round' | 'sharp',
+  cornerType: CornerType,
   mode: OffsetMode,
 ): Promise<{ isUnsupported: boolean; success: boolean }> {
   if (!elem) {
