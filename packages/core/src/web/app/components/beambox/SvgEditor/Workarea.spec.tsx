@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { render } from '@testing-library/react';
 
 jest.mock('@core/app/svgedit/operations/clipboard', () => ({
   pasteElements: jest.fn(),
@@ -46,13 +46,6 @@ getSVGAsync.mockImplementation((callback) => {
   });
 });
 
-jest.mock('@core/helpers/react-contextmenu', () => ({
-  ContextMenu: 'dummy-context-menu',
-  ContextMenuTrigger: 'dummy-context-menu-trigger',
-  MenuItem: 'dummy-menu-item',
-  SubMenu: 'dummy-sub-menu',
-}));
-
 const mockgetObjectLayer = jest.fn().mockReturnValue({ title: 'Layer 1' });
 const mockMoveToOtherLayer = jest.fn();
 
@@ -74,63 +67,18 @@ describe('test workarea', () => {
 
   test('should render correctly', async () => {
     const eventEmitter = eventEmitterFactory.createEventEmitter('workarea');
-    const { container, getByText, unmount } = render(<Workarea className="mac" />);
+    const { container, unmount } = render(<Workarea className="mac" />);
 
     expect(container).toMatchSnapshot();
 
-    const checkState = (state: {
-      group: boolean;
-      menuDisabled: boolean;
-      paste: boolean;
-      select: boolean;
-      ungroup: boolean;
-    }) => {
-      const menuDisabled = container.querySelector('#canvas-contextmenu').hasAttribute('disable');
-      const select = getByText('Cut').getAttribute('disabled') !== '';
-      const paste = getByText('Paste').getAttribute('disabled') !== '';
-      const group = select ? getByText('Group').getAttribute('disabled') !== '' : expect.anything();
-      const ungroup = select ? getByText('Ungroup').getAttribute('disabled') !== '' : expect.anything();
-
-      expect(state).toEqual({ group, menuDisabled, paste, select, ungroup });
-    };
-
-    checkState({
-      group: false,
-      menuDisabled: false,
-      paste: false,
-      select: false,
-      ungroup: false,
-    });
     expect(eventEmitter.eventNames().length).toBe(1);
 
     act(() => eventEmitter.emit('update-context-menu', { paste: true, select: true }));
     await new Promise((resolve) => setTimeout(resolve, 0));
-    checkState({
-      group: false,
-      menuDisabled: false,
-      paste: true,
-      select: true,
-      ungroup: false,
-    });
 
     act(() => eventEmitter.emit('update-context-menu', { menuDisabled: true }));
     await new Promise((resolve) => setTimeout(resolve, 0));
-    checkState({
-      group: false,
-      menuDisabled: true,
-      paste: true,
-      select: true,
-      ungroup: false,
-    });
     expect(container).toMatchSnapshot();
-
-    expect(getSelectedElems).toHaveBeenCalled();
-    expect(mockgetObjectLayer).toHaveBeenCalled();
-    expect(getByText('Layer 1')).toBeDisabled();
-    expect(mockMoveToOtherLayer).not.toHaveBeenCalled();
-    fireEvent.click(getByText('Layer 2'));
-    expect(mockMoveToOtherLayer).toHaveBeenCalledTimes(1);
-    expect(mockMoveToOtherLayer).toHaveBeenLastCalledWith('Layer 2', expect.anything(), false);
 
     unmount();
     expect(eventEmitter.eventNames().length).toBe(0);

@@ -99,29 +99,13 @@ exports[`test Calibration should render correctly 1`] = `
                       class="imgContainer"
                     >
                       <div
-                        class="react-contextmenu-wrapper"
+                        class="ant-dropdown-trigger"
                       >
                         <img
                           alt="Chessboard"
                           src="mock-url"
                         />
                       </div>
-                      <nav
-                        class="react-contextmenu"
-                        role="menu"
-                        style="opacity: 0; pointer-events: none; position: fixed;"
-                        tabindex="-1"
-                      >
-                        <div
-                          aria-disabled="false"
-                          class="react-contextmenu-item"
-                          id="download"
-                          role="menuitem"
-                          tabindex="-1"
-                        >
-                          Download
-                        </div>
-                      </nav>
                     </div>
                     <div>
                       <h1>
@@ -278,29 +262,13 @@ exports[`test Calibration should render correctly 2`] = `
                       class="imgContainer"
                     >
                       <div
-                        class="react-contextmenu-wrapper"
+                        class="ant-dropdown-trigger"
                       >
                         <img
                           alt="Chessboard"
                           src="mock-url"
                         />
                       </div>
-                      <nav
-                        class="react-contextmenu"
-                        role="menu"
-                        style="opacity: 0; pointer-events: none; position: fixed;"
-                        tabindex="-1"
-                      >
-                        <div
-                          aria-disabled="false"
-                          class="react-contextmenu-item"
-                          id="download"
-                          role="menuitem"
-                          tabindex="-1"
-                        >
-                          Download
-                        </div>
-                      </nav>
                     </div>
                     <div>
                       <h1>

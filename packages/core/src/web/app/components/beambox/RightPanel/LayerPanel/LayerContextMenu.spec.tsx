@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { act, fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { mockForceUpdate, mockSetSelectedLayers } from '@mocks/@core/app/stores/layer/layerStore';
@@ -112,11 +112,23 @@ const mockGetLayerName = jest.fn();
 
 const mockElem = {
   getAttribute: jest.fn(),
+  setAttribute: jest.fn(),
 };
 
 const mockSelectOnlyLayer = jest.fn();
 const mockRenameLayer = jest.fn();
 const t = i18n.lang.beambox.right_panel.layer_panel.layers;
+
+const renderDesktop = (extraProps = {}) =>
+  render(
+    <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} {...extraProps}>
+      <div data-testid="trigger">Layer List</div>
+    </LayerContextMenu>,
+  );
+
+const openContextMenu = () => {
+  fireEvent.contextMenu(screen.getByTestId('trigger'));
+};
 
 describe('test LayerContextMenu', () => {
   beforeEach(() => {
@@ -125,27 +137,31 @@ describe('test LayerContextMenu', () => {
     mockMergeLayers.mockResolvedValue('mockLayer');
   });
 
-  it('should render correctly when multiselecting', () => {
+  it('should render correctly when multiselecting', async () => {
     mockGetLayerName.mockReturnValue('layer1');
     useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
 
-    const { container } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    const { baseElement } = renderDesktop();
 
-    expect(container).toMatchSnapshot();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.rename)).toBeInTheDocument();
+    });
+    expect(baseElement).toMatchSnapshot();
     expect(mockUseWorkarea).toHaveBeenCalledTimes(1);
   });
 
-  it('should render correctly when selecting last', () => {
+  it('should render correctly when selecting last', async () => {
     mockGetLayerName.mockReturnValue('layer1');
     useLayerStore.setState({ selectedLayers: ['layer1'] });
 
-    const { container } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    const { baseElement } = renderDesktop();
 
-    expect(container).toMatchSnapshot();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.rename)).toBeInTheDocument();
+    });
+    expect(baseElement).toMatchSnapshot();
   });
 
   it('should render correctly in mobile', () => {
@@ -160,47 +176,53 @@ describe('test LayerContextMenu', () => {
     expect(container).toMatchSnapshot();
   });
 
-  test('rename layer should work', () => {
+  test('rename layer should work', async () => {
     useLayerStore.setState({ selectedLayers: ['layer2'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.rename)).toBeInTheDocument();
+    });
 
     expect(mockSelectOnlyLayer).not.toHaveBeenCalled();
     expect(mockRenameLayer).not.toHaveBeenCalled();
-    fireEvent.click(getByText(t.rename));
+    fireEvent.click(screen.getByText(t.rename));
     expect(mockSelectOnlyLayer).toHaveBeenCalledTimes(1);
     expect(mockSelectOnlyLayer).toHaveBeenLastCalledWith('layer2');
     expect(mockRenameLayer).toHaveBeenCalledTimes(1);
   });
 
-  test('cloneLayers should work', () => {
+  test('cloneLayers should work', async () => {
     useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.dupe)).toBeInTheDocument();
+    });
 
     expect(mockCloneLayers).not.toHaveBeenCalled();
     mockCloneLayers.mockReturnValue(['layer1 copy', 'layer2 copy']);
     expect(mockSetSelectedLayers).not.toHaveBeenCalled();
-    fireEvent.click(getByText(t.dupe));
+    fireEvent.click(screen.getByText(t.dupe));
     expect(mockCloneLayers).toHaveBeenCalledWith(['layer1', 'layer2']);
     expect(mockSetSelectedLayers).toHaveBeenCalledWith(['layer1 copy', 'layer2 copy']);
   });
 
-  test('lock layers should work', () => {
+  test('lock layers should work', async () => {
     useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.lock)).toBeInTheDocument();
+    });
 
     expect(mockClearSelection).not.toHaveBeenCalled();
     expect(mockSetLayersLock).not.toHaveBeenCalled();
     expect(mockSetSelectedLayers).not.toHaveBeenCalled();
-    fireEvent.click(getByText(t.lock));
+    fireEvent.click(screen.getByText(t.lock));
     expect(mockClearSelection).toHaveBeenCalledTimes(1);
     expect(mockSetLayersLock).toHaveBeenCalledTimes(1);
     expect(mockSetLayersLock).toHaveBeenCalledWith(['layer1', 'layer2'], true);
@@ -213,7 +235,7 @@ describe('test LayerContextMenu', () => {
     mockElem.getAttribute.mockReturnValue('true');
     useLayerStore.setState({ selectedLayers: ['layer1'] });
 
-    const { container, getByText } = render(
+    const { container } = render(
       <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
     );
 
@@ -221,24 +243,26 @@ describe('test LayerContextMenu', () => {
     expect(mockClearSelection).not.toHaveBeenCalled();
     expect(mockSetLayersLock).not.toHaveBeenCalled();
     expect(mockSetSelectedLayers).not.toHaveBeenCalled();
-    fireEvent.click(getByText(t.unlock));
+    fireEvent.click(screen.getByText(t.unlock));
     expect(mockClearSelection).toHaveBeenCalledTimes(1);
     expect(mockSetLayersLock).toHaveBeenCalledTimes(1);
     expect(mockSetLayersLock).toHaveBeenCalledWith(['layer1'], false);
     expect(mockForceUpdate).toHaveBeenCalledTimes(1);
   });
 
-  test('deleteLayers should work', () => {
+  test('deleteLayers should work', async () => {
     useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.del)).toBeInTheDocument();
+    });
 
     expect(mockDeleteLayers).not.toHaveBeenCalled();
     expect(mockSetSelectedLayers).not.toHaveBeenCalled();
     expect(mockTogglePresprayArea).not.toHaveBeenCalled();
-    fireEvent.click(getByText(t.del));
+    fireEvent.click(screen.getByText(t.del));
     expect(mockDeleteLayers).toHaveBeenCalledWith(['layer1', 'layer2']);
     expect(mockSetSelectedLayers).toHaveBeenCalledWith([]);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
@@ -247,15 +271,17 @@ describe('test LayerContextMenu', () => {
   test('merge down should work', async () => {
     useLayerStore.setState({ selectedLayers: ['layer1'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.merge_down)).toBeInTheDocument();
+    });
 
     mockGetLayerPosition.mockReturnValue(1);
     mockGetLayerName.mockReturnValue('layer2');
     expect(mockMergeLayers).not.toHaveBeenCalled();
     expect(mockSetSelectedLayers).not.toHaveBeenCalled();
-    fireEvent.click(getByText(t.merge_down));
+    fireEvent.click(screen.getByText(t.merge_down));
     expect(mockGetLayerPosition).toHaveBeenCalledTimes(1);
     expect(mockGetLayerPosition).toHaveBeenCalledWith('layer1');
     expect(mockGetLayerName).toHaveBeenCalledTimes(2);
@@ -271,16 +297,18 @@ describe('test LayerContextMenu', () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2', 'layer3']);
     useLayerStore.setState({ selectedLayers: ['layer2'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.merge_all)).toBeInTheDocument();
+    });
 
     expect(mockMergeLayers).not.toHaveBeenCalled();
     mockMergeLayers.mockReturnValue('layer1');
     expect(mockSetSelectedLayers).not.toHaveBeenCalled();
     mockGetLayerElementByName.mockReturnValue(mockElem);
     mockElem.getAttribute.mockReturnValue('1');
-    fireEvent.click(getByText(t.merge_all));
+    fireEvent.click(screen.getByText(t.merge_all));
     expect(mockGetAllLayerNames).toHaveBeenCalledTimes(1);
     expect(mockMergeLayers).toHaveBeenCalledTimes(1);
     expect(mockMergeLayers).toHaveBeenLastCalledWith(['layer1', 'layer2', 'layer3']);
@@ -295,9 +323,11 @@ describe('test LayerContextMenu', () => {
   test('merge selected should work', async () => {
     useLayerStore.setState({ selectedLayers: ['layer1', 'layer2'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.merge_selected)).toBeInTheDocument();
+    });
 
     mockGetCurrentLayerName.mockReturnValue('layer2');
     mockMergeLayers.mockReturnValue('layer2');
@@ -305,7 +335,7 @@ describe('test LayerContextMenu', () => {
     expect(mockMergeLayers).not.toHaveBeenCalled();
     mockGetLayerElementByName.mockReturnValue(mockElem);
     mockElem.getAttribute.mockReturnValue('0');
-    fireEvent.click(getByText(t.merge_selected));
+    fireEvent.click(screen.getByText(t.merge_selected));
     expect(mockGetCurrentLayerName).toHaveBeenCalledTimes(1);
     expect(mockMergeLayers).toHaveBeenCalledTimes(1);
     expect(mockMergeLayers).toHaveBeenLastCalledWith(['layer1', 'layer2'], 'layer2');
@@ -325,17 +355,19 @@ describe('test LayerContextMenu', () => {
     mockGetData.mockReturnValueOnce(LayerModule.PRINTER).mockReturnValueOnce(false);
     useLayerStore.getState().setSelectedLayers(['layer1']);
 
-    const { container } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    const { baseElement } = renderDesktop();
 
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.rename)).toBeInTheDocument();
+    });
     expect(mockGetLayerElementByName).toHaveBeenCalledTimes(1);
     expect(mockGetLayerElementByName).toHaveBeenLastCalledWith('layer1');
     expect(mockGetData).toHaveBeenCalledTimes(3);
     expect(mockGetData).toHaveBeenNthCalledWith(1, mockElem, 'module');
     expect(mockGetData).toHaveBeenNthCalledWith(2, mockElem, 'fullcolor');
     expect(mockGetData).toHaveBeenNthCalledWith(3, mockElem, 'split');
-    expect(container).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
   });
 
   test('click split color should work', async () => {
@@ -344,13 +376,15 @@ describe('test LayerContextMenu', () => {
     mockGetData.mockReturnValueOnce(LayerModule.PRINTER).mockReturnValueOnce(true);
     useLayerStore.setState({ selectedLayers: ['layer1'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.splitFullColor)).toBeInTheDocument();
+    });
 
     expect(mockSplitFullColorLayer).not.toHaveBeenCalled();
     await act(async () => {
-      fireEvent.click(getByText(t.splitFullColor));
+      fireEvent.click(screen.getByText(t.splitFullColor));
     });
     expect(mockPopUp).toHaveBeenCalledTimes(1);
     mockPopUp.mock.calls[0][0].onConfirm();
@@ -369,9 +403,11 @@ describe('test LayerContextMenu', () => {
     mockElem.getAttribute.mockReturnValueOnce('false');
     useLayerStore.setState({ selectedLayers: ['layer1'] });
 
-    const { getByText } = render(
-      <LayerContextMenu renameLayer={mockRenameLayer} selectOnlyLayer={mockSelectOnlyLayer} />,
-    );
+    renderDesktop();
+    openContextMenu();
+    await waitFor(() => {
+      expect(screen.getByText(t.switchToFullColor)).toBeInTheDocument();
+    });
 
     expect(mockSplitFullColorLayer).not.toHaveBeenCalled();
 
@@ -382,7 +418,7 @@ describe('test LayerContextMenu', () => {
     mockToggleFullColorLayer.mockReturnValue(mockCmd);
     mockCmd.isEmpty.mockReturnValue(false);
     await act(async () => {
-      fireEvent.click(getByText(t.switchToFullColor));
+      fireEvent.click(screen.getByText(t.switchToFullColor));
     });
     expect(mockElem.getAttribute).toHaveBeenCalledTimes(1);
     expect(mockElem.getAttribute).toHaveBeenNthCalledWith(1, 'data-lock');

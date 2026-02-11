@@ -1,6 +1,8 @@
+import type { ReactNode } from 'react';
 import React, { use, useState } from 'react';
 
 import { Button, Switch } from 'antd';
+import type { MenuProps } from 'antd';
 import { Popover } from 'antd-mobile';
 import classNames from 'classnames';
 import { pick } from 'remeda';
@@ -19,6 +21,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
+import ContextMenu from '@core/app/widgets/ContextMenu';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { deleteLayers } from '@core/helpers/layer/deleteLayer';
@@ -26,7 +29,6 @@ import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLa
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { cloneLayers, getLayerPosition, mergeLayers, setLayersLock } from '@core/helpers/layer/layer-helper';
-import { ContextMenu, MenuItem } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -44,11 +46,12 @@ getSVGAsync((globalSVG) => {
 });
 
 interface Props {
+  children?: ReactNode;
   renameLayer: () => void;
   selectOnlyLayer: (name: string) => void;
 }
 
-const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.Element => {
+const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): React.JSX.Element => {
   const lang = useI18n();
   const LANG = lang.beambox.right_panel.layer_panel;
   const LANG2 = lang.alert;
@@ -61,9 +64,9 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
   const layerElem = layerManager.getLayerElementByName(selectedLayers[0])!;
   const isLocked = layerElem?.getAttribute('data-lock') === 'true';
-  const onContextMenuShow = (e: CustomEvent) => {
-    const trigger = e.detail.data?.target as Element;
-    const layerItem = trigger?.closest('.layer-item');
+  const handleContextMenu = (e: React.MouseEvent) => {
+    const target = e.target as Element;
+    const layerItem = target?.closest('.layer-item');
     const layerName = layerItem?.getAttribute('data-layer');
 
     if (layerName && !selectedLayers.includes(layerName)) {
@@ -307,50 +310,55 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
       />
     </div>
   ) : (
-    <ContextMenu id="layer-contextmenu" onShow={onContextMenuShow}>
-      <MenuItem attributes={{ id: 'renameLayer' }} disabled={isMultiSelecting} onClick={handleRename}>
-        {LANG.layers.rename}
-      </MenuItem>
-      <MenuItem attributes={{ id: 'dupelayer' }} onClick={handleCloneLayers}>
-        {LANG.layers.dupe}
-      </MenuItem>
-      <MenuItem attributes={{ id: 'locklayer' }} onClick={toggleLayerLocked}>
-        {isLocked ? LANG.layers.unlock : LANG.layers.lock}
-      </MenuItem>
-      <MenuItem attributes={{ id: 'deletelayer' }} onClick={handleDeleteLayers}>
-        {LANG.layers.del}
-      </MenuItem>
-      <MenuItem
-        attributes={{ id: 'merge_down_layer' }}
-        disabled={isMultiSelecting || isSelectingLast}
-        onClick={handleMergeDown}
-      >
-        {LANG.layers.merge_down}
-      </MenuItem>
-      <MenuItem attributes={{ id: 'merge_all_layer' }} disabled={isMultiSelecting} onClick={handleMergeAll}>
-        {LANG.layers.merge_all}
-      </MenuItem>
-      <MenuItem attributes={{ id: 'merge_selected_layer' }} disabled={!isMultiSelecting} onClick={handleMergeSelected}>
-        {LANG.layers.merge_selected}
-      </MenuItem>
-      {isSelectingPrinterLayer && (
-        <>
-          <MenuItem
-            attributes={{ id: 'toggle_fullcolor_layer' }}
-            disabled={isMultiSelecting || isSplitLayer}
-            onClick={() => handleLayerFullColor()}
-          >
-            {isFullColor ? LANG.layers.switchToSingleColor : LANG.layers.switchToFullColor}
-          </MenuItem>
-          <MenuItem
-            attributes={{ id: 'split_color' }}
-            disabled={isMultiSelecting || !isFullColor}
-            onClick={handleSplitColor}
-          >
-            {LANG.layers.splitFullColor}
-          </MenuItem>
-        </>
-      )}
+    <ContextMenu
+      items={
+        [
+          { disabled: isMultiSelecting, key: 'renameLayer', label: LANG.layers.rename, onClick: handleRename },
+          { key: 'dupelayer', label: LANG.layers.dupe, onClick: handleCloneLayers },
+          {
+            key: 'locklayer',
+            label: isLocked ? LANG.layers.unlock : LANG.layers.lock,
+            onClick: toggleLayerLocked,
+          },
+          { key: 'deletelayer', label: LANG.layers.del, onClick: handleDeleteLayers },
+          {
+            disabled: isMultiSelecting || isSelectingLast,
+            key: 'merge_down_layer',
+            label: LANG.layers.merge_down,
+            onClick: handleMergeDown,
+          },
+          {
+            disabled: isMultiSelecting,
+            key: 'merge_all_layer',
+            label: LANG.layers.merge_all,
+            onClick: handleMergeAll,
+          },
+          {
+            disabled: !isMultiSelecting,
+            key: 'merge_selected_layer',
+            label: LANG.layers.merge_selected,
+            onClick: handleMergeSelected,
+          },
+          ...(isSelectingPrinterLayer
+            ? [
+                {
+                  disabled: isMultiSelecting || isSplitLayer,
+                  key: 'toggle_fullcolor_layer',
+                  label: isFullColor ? LANG.layers.switchToSingleColor : LANG.layers.switchToFullColor,
+                  onClick: () => handleLayerFullColor(),
+                },
+                {
+                  disabled: isMultiSelecting || !isFullColor,
+                  key: 'split_color',
+                  label: LANG.layers.splitFullColor,
+                  onClick: handleSplitColor,
+                },
+              ]
+            : []),
+        ] satisfies MenuProps['items']
+      }
+    >
+      <div onContextMenu={handleContextMenu}>{children}</div>
     </ContextMenu>
   );
 };

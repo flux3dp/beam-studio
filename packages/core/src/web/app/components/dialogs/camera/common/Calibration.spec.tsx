@@ -1,6 +1,6 @@
 import React, { act } from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 
 import Calibration from './Calibration';
 import i18n from '@mocks/@core/helpers/i18n';
@@ -224,7 +224,13 @@ describe('test Calibration', () => {
       <Calibration chessboard={[7, 7]} onClose={jest.fn()} onNext={mockOnNext} updateParam={mockUpdateParam} />,
     );
 
-    fireEvent.click(baseElement.querySelector('#download'));
+    const img = baseElement.querySelector('img[alt="Chessboard"]');
+
+    fireEvent.contextMenu(img);
+    await waitFor(() => {
+      expect(screen.getByText(i18n.lang.monitor.download)).toBeInTheDocument();
+    });
+    fireEvent.click(screen.getByText(i18n.lang.monitor.download));
     expect(mockWriteFileDialog).toHaveBeenCalledTimes(1);
   });
 
