@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 
@@ -26,7 +26,7 @@ const MonitorRelocate = ({ device }: MonitorRelocateProps): React.JSX.Element =>
   const [isHd, setIsHd] = useState(false);
   const imgRef = useRef<HTMLImageElement>(null);
 
-  const { cameraOffset, currentPosition, onMaintainMoveEnd, onMaintainMoveStart } = useContext(MonitorContext);
+  const { cameraOffset, currentPosition, onMaintainMoveEnd, onMaintainMoveStart } = use(MonitorContext);
 
   const isBeamboxCamera = useMemo(
     () => ['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(device.model),

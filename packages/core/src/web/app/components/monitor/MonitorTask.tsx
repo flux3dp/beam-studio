@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ClockCircleOutlined, FileOutlined, LoadingOutlined } from '@ant-design/icons';
 import type { ProgressProps } from 'antd';
@@ -26,8 +26,7 @@ interface Props {
 
 const MonitorTask = ({ device }: Props): React.JSX.Element => {
   const { framing: tFraming, monitor: tMonitor } = useI18n();
-  const { fileInfo, mode, previewTask, report, taskImageURL, totalTaskTime, uploadProgress } =
-    useContext(MonitorContext);
+  const { fileInfo, mode, previewTask, report, taskImageURL, totalTaskTime, uploadProgress } = use(MonitorContext);
   const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
   const [isOnPlaying, setIsOnPlaying] = useState(false);
   /* for Promark framing */

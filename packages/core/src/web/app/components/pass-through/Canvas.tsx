@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { use, useEffect, useMemo } from 'react';
 
 import constant from '@core/app/actions/beambox/constant';
 import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
@@ -9,7 +9,7 @@ import { PassThroughContext } from './PassThroughContext';
 
 const Canvas = (): React.JSX.Element => {
   const canvasManager = useMemo(() => PassThroughCanvasManager.getInstance(), []);
-  const { addOnInfo, guideMark, passThroughHeight, workareaObj } = useContext(PassThroughContext);
+  const { addOnInfo, guideMark, passThroughHeight, workareaObj } = use(PassThroughContext);
 
   useEffect(() => () => PassThroughCanvasManager.clear(), []);
 

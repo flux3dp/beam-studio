@@ -165,5 +165,5 @@ export const TutorialContextProvider = ({
     [currentStep, dialogStylesAndContents, handleNextStep, hasNextButton],
   );
 
-  return <TutorialContext.Provider value={contextValue}>{children}</TutorialContext.Provider>;
+  return <TutorialContext value={contextValue}>{children}</TutorialContext>;
 };

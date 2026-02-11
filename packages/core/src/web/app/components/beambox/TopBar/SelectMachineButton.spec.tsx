@@ -54,9 +54,9 @@ describe('test SelectMachineButton', () => {
 
   test('should render correctly', () => {
     const { container } = render(
-      <CanvasContext.Provider value={{ selectedDevice: null } as any}>
+      <CanvasContext value={{ selectedDevice: null } as any}>
         <SelectMachineButton />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -69,9 +69,9 @@ describe('test SelectMachineButton', () => {
     useIsMobile.mockReturnValue(true);
 
     const { container } = render(
-      <CanvasContext.Provider value={{ selectedDevice: null } as any}>
+      <CanvasContext value={{ selectedDevice: null } as any}>
         <SelectMachineButton />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -82,9 +82,9 @@ describe('test SelectMachineButton', () => {
 
   test('with device', () => {
     const { container } = render(
-      <CanvasContext.Provider value={{ selectedDevice: { model: 'fbm1', name: 'device name' } } as any}>
+      <CanvasContext value={{ selectedDevice: { model: 'fbm1', name: 'device name' } } as any}>
         <SelectMachineButton />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -97,9 +97,9 @@ describe('test SelectMachineButton', () => {
     mockGetIsPreviewMode.mockReturnValue(true);
 
     const { container } = render(
-      <CanvasContext.Provider value={{ selectedDevice: null } as any}>
+      <CanvasContext value={{ selectedDevice: null } as any}>
         <SelectMachineButton />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();

@@ -22,7 +22,7 @@ describe('test BackButton', () => {
 
   it('should render correctly', () => {
     const { container, rerender } = render(
-      <FullWindowPanelContext.Provider
+      <FullWindowPanelContext
         value={{
           isDesktop: true,
           isMobile: true,
@@ -30,12 +30,12 @@ describe('test BackButton', () => {
         }}
       >
         <BackButton>Back</BackButton>
-      </FullWindowPanelContext.Provider>,
+      </FullWindowPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
     rerender(
-      <FullWindowPanelContext.Provider
+      <FullWindowPanelContext
         value={{
           isDesktop: false,
           isMobile: false,
@@ -43,7 +43,7 @@ describe('test BackButton', () => {
         }}
       >
         <BackButton>Back</BackButton>
-      </FullWindowPanelContext.Provider>,
+      </FullWindowPanelContext>,
     );
     expect(container).toMatchSnapshot();
   });

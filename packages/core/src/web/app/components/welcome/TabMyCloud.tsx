@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { use, useMemo } from 'react';
 
 import { CloudOutlined } from '@ant-design/icons';
 
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const MyCloudContent = ({ user }: Props) => {
-  const { files, setSelectedId } = useContext(MyCloudContext);
+  const { files, setSelectedId } = use(MyCloudContext);
   const { my_cloud: t } = useI18n();
 
   const content = useMemo(() => {

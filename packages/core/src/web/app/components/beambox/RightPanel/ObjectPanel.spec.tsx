@@ -144,8 +144,8 @@ describe('should render correctly', () => {
 
   test('no elements', () => {
     const { container } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
-        <ObjectPanelContext.Provider
+      <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+        <ObjectPanelContext
           value={{
             activeKey: null,
             dimensionValues: {
@@ -159,9 +159,9 @@ describe('should render correctly', () => {
           }}
         >
           <ObjectPanel />
-        </ObjectPanelContext.Provider>
+        </ObjectPanelContext>
         ,
-      </SelectedElementContext.Provider>,
+      </SelectedElementContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -176,8 +176,8 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<rect id="svg_1" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -191,8 +191,8 @@ describe('should render correctly', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -216,8 +216,8 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<g id="svg_1" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -231,8 +231,8 @@ describe('should render correctly', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -251,8 +251,8 @@ describe('should render correctly', () => {
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -266,8 +266,8 @@ describe('should render correctly', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -306,8 +306,8 @@ describe('should render correctly', () => {
       calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -321,8 +321,8 @@ describe('should render correctly', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -340,8 +340,8 @@ describe('should render correctly in mobile', () => {
 
   test('no elements', () => {
     const { container } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
-        <ObjectPanelContext.Provider
+      <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+        <ObjectPanelContext
           value={{
             activeKey: null,
             dimensionValues: {
@@ -355,8 +355,8 @@ describe('should render correctly in mobile', () => {
           }}
         >
           <ObjectPanel />
-        </ObjectPanelContext.Provider>
-      </SelectedElementContext.Provider>,
+        </ObjectPanelContext>
+      </SelectedElementContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -372,8 +372,8 @@ describe('should render correctly in mobile', () => {
       document.body.innerHTML = '<rect id="svg_1" />';
 
       const { container, getByText } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -387,8 +387,8 @@ describe('should render correctly in mobile', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -413,8 +413,8 @@ describe('should render correctly in mobile', () => {
       document.body.innerHTML = '<g id="svg_1" />';
 
       const { container, getByText } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -428,8 +428,8 @@ describe('should render correctly in mobile', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -450,8 +450,8 @@ describe('should render correctly in mobile', () => {
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
 
       const { container, getByText } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -465,8 +465,8 @@ describe('should render correctly in mobile', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -505,8 +505,8 @@ describe('should render correctly in mobile', () => {
       calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext.Provider
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
+          <ObjectPanelContext
             value={{
               activeKey: null,
               dimensionValues: {
@@ -520,8 +520,8 @@ describe('should render correctly in mobile', () => {
             }}
           >
             <ObjectPanel />
-          </ObjectPanelContext.Provider>
-        </SelectedElementContext.Provider>,
+          </ObjectPanelContext>
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();

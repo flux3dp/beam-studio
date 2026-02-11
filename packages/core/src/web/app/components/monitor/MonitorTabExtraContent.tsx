@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { DownloadOutlined, UploadOutlined } from '@ant-design/icons';
 
@@ -8,7 +8,7 @@ import { MonitorContext } from '@core/app/contexts/MonitorContext';
 import styles from './MonitorTabExtraContent.module.scss';
 
 const MonitorTabExtraContent = (): React.ReactNode => {
-  const { currentPath, highlightedItem, mode, onDownload, showUploadDialog } = useContext(MonitorContext);
+  const { currentPath, highlightedItem, mode, onDownload, showUploadDialog } = use(MonitorContext);
 
   if (mode !== Mode.FILE) {
     return null;

@@ -32,5 +32,5 @@ export const TopBarHintsContextProvider = ({ children }: TopBarHintsContextProvi
 
   const value = useMemo(() => ({ hintType }), [hintType]);
 
-  return <TopBarHintsContext.Provider value={value}>{children}</TopBarHintsContext.Provider>;
+  return <TopBarHintsContext value={value}>{children}</TopBarHintsContext>;
 };

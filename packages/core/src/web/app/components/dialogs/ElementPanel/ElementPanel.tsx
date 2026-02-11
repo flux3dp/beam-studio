@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useMemo, useRef, useState } from 'react';
+import React, { use, useMemo, useRef, useState } from 'react';
 
 import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
@@ -33,7 +33,7 @@ export const ElementPanelContent = (): ReactNode => {
     setActiveSubType,
     setSearchKey,
     updateSearchContents,
-  } = useContext(ElementPanelContext);
+  } = use(ElementPanelContext);
   const [error, setError] = useState(false);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();

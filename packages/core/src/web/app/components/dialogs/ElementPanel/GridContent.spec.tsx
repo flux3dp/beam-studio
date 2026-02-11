@@ -19,7 +19,7 @@ describe('test GridContent', () => {
   it('should render mainType content correctly', () => {
     // sub type label + builtin icons
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: false } as any}>
+      <ElementPanelContext value={{ getNPIcons: mockGetNPIcons, hasLogin: false } as any}>
         <GridContent
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
@@ -32,7 +32,7 @@ describe('test GridContent', () => {
             term: 'shape',
           }}
         />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -41,7 +41,7 @@ describe('test GridContent', () => {
   it('should render mainType content correctly when login', () => {
     // sub type button + builtin icons + np icons
     const { container } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={{ getNPIcons: mockGetNPIcons, hasLogin: true, setActiveSubType: mockSetActiveSubType } as any}
       >
         <GridContent
@@ -56,7 +56,7 @@ describe('test GridContent', () => {
             term: 'shape',
           }}
         />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -70,7 +70,7 @@ describe('test GridContent', () => {
   it('should render subType content correctly', () => {
     // builtin icons + np icons + load more button
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
+      <ElementPanelContext value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
@@ -83,7 +83,7 @@ describe('test GridContent', () => {
             term: 'shape',
           }}
         />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -106,7 +106,7 @@ describe('test GridContent', () => {
   it('should render search content correctly', () => {
     // builtin icons + np icons + load more button
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
+      <ElementPanelContext value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             fileNames: ['basic/icon-star1', 'basic/icon-star2', 'decor/i_circular-1'],
@@ -118,7 +118,7 @@ describe('test GridContent', () => {
             term: 'shape',
           }}
         />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -141,7 +141,7 @@ describe('test GridContent', () => {
   it('should render loading correctly', () => {
     // builtin icons + np icons + 100 skeletons
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
+      <ElementPanelContext value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
@@ -155,7 +155,7 @@ describe('test GridContent', () => {
             term: 'shape',
           }}
         />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -164,7 +164,7 @@ describe('test GridContent', () => {
   it('should render correctly when missing fileNames', () => {
     // np icons + load more button
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
+      <ElementPanelContext value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             mainType: 'basic',
@@ -176,7 +176,7 @@ describe('test GridContent', () => {
             term: 'shape',
           }}
         />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -185,7 +185,7 @@ describe('test GridContent', () => {
   it('should render correctly when missing npIcons', () => {
     // builtin icons
     const { container } = render(
-      <ElementPanelContext.Provider value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
+      <ElementPanelContext value={{ getNPIcons: mockGetNPIcons, hasLogin: true } as any}>
         <GridContent
           content={{
             fileNames: ['icon-star1', 'icon-star2'],
@@ -193,7 +193,7 @@ describe('test GridContent', () => {
             term: 'shape',
           }}
         />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();

@@ -42,14 +42,14 @@ describe('should render correctly', () => {
 
   it('should render correctly with estimatedTime', () => {
     const { container } = render(
-      <TimeEstimationButtonContext.Provider
+      <TimeEstimationButtonContext
         value={{
           estimatedTime: 60,
           setEstimatedTime: () => {},
         }}
       >
         <TimeEstimationButton />
-      </TimeEstimationButtonContext.Provider>,
+      </TimeEstimationButtonContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -59,14 +59,14 @@ describe('should render correctly', () => {
     useCanvasStore.getState().setMode(CanvasMode.PathPreview);
 
     const { container } = render(
-      <TimeEstimationButtonContext.Provider
+      <TimeEstimationButtonContext
         value={{
           estimatedTime: 60,
           setEstimatedTime: () => {},
         }}
       >
         <TimeEstimationButton />
-      </TimeEstimationButtonContext.Provider>,
+      </TimeEstimationButtonContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -75,14 +75,14 @@ describe('should render correctly', () => {
   test('when WITHOUT estimatedTime', async () => {
     const mockSetEstimatedTime = jest.fn();
     const { container } = render(
-      <TimeEstimationButtonContext.Provider
+      <TimeEstimationButtonContext
         value={{
           estimatedTime: null,
           setEstimatedTime: mockSetEstimatedTime,
         }}
       >
         <TimeEstimationButton />
-      </TimeEstimationButtonContext.Provider>,
+      </TimeEstimationButtonContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -104,14 +104,14 @@ describe('should render correctly', () => {
 
     const mockSetEstimatedTime = jest.fn();
     const { container } = render(
-      <TimeEstimationButtonContext.Provider
+      <TimeEstimationButtonContext
         value={{
           estimatedTime: null,
           setEstimatedTime: mockSetEstimatedTime,
         }}
       >
         <TimeEstimationButton />
-      </TimeEstimationButtonContext.Provider>,
+      </TimeEstimationButtonContext>,
     );
 
     expect(container).toMatchSnapshot();

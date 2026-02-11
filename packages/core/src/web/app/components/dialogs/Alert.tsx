@@ -2,7 +2,7 @@
  * new Alert Modal using antd Modal
  */
 import type { ReactNode } from 'react';
-import React, { useContext, useMemo, useState } from 'react';
+import React, { use, useMemo, useState } from 'react';
 
 import { CheckCircleFilled, CloseCircleFilled, ExclamationCircleFilled, InfoCircleFilled } from '@ant-design/icons';
 import { Button, Checkbox, Modal } from 'antd';
@@ -82,7 +82,7 @@ const Alert = ({
 }: Props): React.JSX.Element => {
   const lang = useI18n().alert;
   const activeLang = useStorageStore((state) => state['active-lang']);
-  const { popFromStack } = useContext(AlertProgressContext);
+  const { popFromStack } = use(AlertProgressContext);
   const [checkboxChecked, setCheckboxChecked] = useState(false);
 
   const renderCheckbox = (): ReactNode => {

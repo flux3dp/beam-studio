@@ -153,9 +153,9 @@ describe('test MultiColorOptions', () => {
 
   it('should render correctly', () => {
     const { container } = render(
-      <CanvasContext.Provider value={{ isColorPreviewing: false } as any}>
+      <CanvasContext value={{ isColorPreviewing: false } as any}>
         <MultiColorOptions elem={document.createElement('rect')} />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -163,9 +163,9 @@ describe('test MultiColorOptions', () => {
 
   test('editing color in use element should work', async () => {
     const { getAllByText, getByText } = render(
-      <CanvasContext.Provider value={{ isColorPreviewing: false } as any}>
+      <CanvasContext value={{ isColorPreviewing: false } as any}>
         <MultiColorOptions elem={mockUseElem} />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
     const mockChangeCmd = { isEmpty: () => false };
 
@@ -218,11 +218,9 @@ describe('test MultiColorOptions mobile', () => {
 
   it('should render correctly', () => {
     const { container, getByText } = render(
-      <CanvasContext.Provider
-        value={{ isColorPreviewing: false, setIsColorPreviewing: mockSetIsColorPreviewing } as any}
-      >
+      <CanvasContext value={{ isColorPreviewing: false, setIsColorPreviewing: mockSetIsColorPreviewing } as any}>
         <MultiColorOptions elem={document.createElement('rect')} />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     act(() => {
@@ -236,11 +234,9 @@ describe('test MultiColorOptions mobile', () => {
 
   test('editing color in use element should work', async () => {
     const { container, getByText } = render(
-      <CanvasContext.Provider
-        value={{ isColorPreviewing: false, setIsColorPreviewing: mockSetIsColorPreviewing } as any}
-      >
+      <CanvasContext value={{ isColorPreviewing: false, setIsColorPreviewing: mockSetIsColorPreviewing } as any}>
         <MultiColorOptions elem={mockUseElem} />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
     const mockChangeCmd = { isEmpty: () => false };
 

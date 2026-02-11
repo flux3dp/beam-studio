@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { Result } from 'antd';
 
@@ -10,7 +10,7 @@ import useI18n from '@core/helpers/useI18n';
 
 const StepFinish = (): React.JSX.Element => {
   const lang = useI18n().calibration;
-  const { borderless, onClose } = useContext(CalibrationContext);
+  const { borderless, onClose } = use(CalibrationContext);
 
   return (
     <DraggableModal

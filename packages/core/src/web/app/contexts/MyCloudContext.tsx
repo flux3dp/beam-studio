@@ -200,7 +200,7 @@ export function MyCloudProvider({
   };
 
   return (
-    <MyCloudContext.Provider
+    <MyCloudContext
       value={{
         editingId,
         fileOperation: {
@@ -220,6 +220,6 @@ export function MyCloudProvider({
       }}
     >
       {children}
-    </MyCloudContext.Provider>
+    </MyCloudContext>
   );
 }

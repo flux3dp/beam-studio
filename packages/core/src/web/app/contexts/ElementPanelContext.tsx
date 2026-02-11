@@ -356,7 +356,7 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
   }, [contentType]);
 
   return (
-    <ElementPanelContext.Provider
+    <ElementPanelContext
       value={{
         activeMainType,
         activeSubType,
@@ -378,6 +378,6 @@ export const ElementPanelProvider = ({ children, onClose }: ElementPanelProvider
       }}
     >
       {children}
-    </ElementPanelContext.Provider>
+    </ElementPanelContext>
   );
 };

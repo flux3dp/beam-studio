@@ -37,7 +37,7 @@ describe('should render correctly', () => {
     mockCreateObjectURL.mockReturnValue('mock-url');
 
     const { container, rerender } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             highlightedItem: { name: 'file', type: 'FILE' },
@@ -48,7 +48,7 @@ describe('should render correctly', () => {
         }
       >
         <FileItem fileName="file" path="path" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     await waitFor(() => {
@@ -61,7 +61,7 @@ describe('should render correctly', () => {
     expect(container.querySelector('img').getAttribute('src')).toEqual('mock-url');
 
     rerender(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             highlightedItem: { name: 'file2', type: 'FILE' },
@@ -72,7 +72,7 @@ describe('should render correctly', () => {
         }
       >
         <FileItem fileName="file2" path="path2" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     const mockData2 = ['mock-file', { author: 'flux' }, new Blob(['456'])];
@@ -98,7 +98,7 @@ describe('should render correctly', () => {
     mockCreateObjectURL.mockReturnValue('mock-url');
 
     const { container } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             highlightedItem: { name: 'file', type: 'FILE' },
@@ -109,7 +109,7 @@ describe('should render correctly', () => {
         }
       >
         <FileItem fileName="file" path="path" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     await waitFor(() => {

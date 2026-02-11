@@ -24,9 +24,9 @@ const mockContext = {
 describe('test MonitorTabExtraContent', () => {
   it('should render correctly', () => {
     const { container } = render(
-      <MonitorContext.Provider value={mockContext as any}>
+      <MonitorContext value={mockContext as any}>
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -46,9 +46,9 @@ describe('test MonitorTabExtraContent', () => {
 
   it('should render correctly when mode is not file', () => {
     const { container } = render(
-      <MonitorContext.Provider value={{ ...mockContext, mode: Mode.CAMERA } as any}>
+      <MonitorContext value={{ ...mockContext, mode: Mode.CAMERA } as any}>
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -56,11 +56,9 @@ describe('test MonitorTabExtraContent', () => {
 
   it('should render correctly when highlightedItem is not file', () => {
     const { container } = render(
-      <MonitorContext.Provider
-        value={{ ...mockContext, highlightedItem: { name: 'test', type: ItemType.FOLDER } } as any}
-      >
+      <MonitorContext value={{ ...mockContext, highlightedItem: { name: 'test', type: ItemType.FOLDER } } as any}>
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -68,9 +66,9 @@ describe('test MonitorTabExtraContent', () => {
 
   it('should render correctly when currentPath is empty', () => {
     const { container } = render(
-      <MonitorContext.Provider value={{ ...mockContext, currentPath: [] } as any}>
+      <MonitorContext value={{ ...mockContext, currentPath: [] } as any}>
         <MonitorTabExtraContent />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();

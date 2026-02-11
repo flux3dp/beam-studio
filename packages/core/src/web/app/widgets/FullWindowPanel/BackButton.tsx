@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { Button } from 'antd';
 import classNames from 'classnames';
@@ -15,7 +15,7 @@ interface Props {
 }
 
 const BackButton = ({ children, className = '', onClose }: Props): React.JSX.Element => {
-  const { isDesktop, isWindows } = useContext(FullWindowPanelContext);
+  const { isDesktop, isWindows } = use(FullWindowPanelContext);
 
   return (
     <Button

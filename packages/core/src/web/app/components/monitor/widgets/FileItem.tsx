@@ -1,5 +1,5 @@
 import type { SyntheticEvent } from 'react';
-import React, { useContext, useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 import classNames from 'classnames';
 
@@ -52,7 +52,7 @@ const FileItem = ({ fileName, path }: Props): React.JSX.Element => {
     // eslint-disable-next-line hooks/exhaustive-deps
   }, [path, fileName]);
 
-  const { highlightedItem, onDeleteFile, onHighlightItem, onSelectFile } = useContext(MonitorContext);
+  const { highlightedItem, onDeleteFile, onHighlightItem, onSelectFile } = use(MonitorContext);
   const { fileInfo, imgSrc } = state;
   const isSelected = highlightedItem.name === fileName && highlightedItem.type === ItemType.FILE;
 

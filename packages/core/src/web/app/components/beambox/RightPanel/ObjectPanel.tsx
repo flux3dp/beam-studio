@@ -1,4 +1,4 @@
-import React, { memo, useContext } from 'react';
+import React, { memo, use } from 'react';
 
 import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
@@ -40,7 +40,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const lang = useI18n();
   const tObjectPanel = lang.beambox.right_panel.object_panel;
   const isMobile = useIsMobile();
-  const { selectedElement: elem } = useContext(SelectedElementContext);
+  const { selectedElement: elem } = use(SelectedElementContext);
   const getAvailableFunctions = () => {
     if (!elem) {
       return {};

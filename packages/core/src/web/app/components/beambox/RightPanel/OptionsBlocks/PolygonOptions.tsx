@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { use, useEffect } from 'react';
 
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
@@ -24,7 +24,7 @@ interface Props {
 }
 
 function PolygonOptions({ elem }: Props): React.JSX.Element {
-  const { polygonSides } = useContext(ObjectPanelContext);
+  const { polygonSides } = use(ObjectPanelContext);
   const [sides, setSides] = React.useState(polygonSides || 5);
   const isMobile = useIsMobile();
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;

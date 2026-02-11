@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { CapsuleTabs } from 'antd-mobile';
 
@@ -11,7 +11,7 @@ import styles from './Head.module.scss';
 
 const Head = (): React.JSX.Element => {
   const lang = useI18n().my_cloud.sort;
-  const { setSortBy, sortBy } = useContext(MyCloudContext);
+  const { setSortBy, sortBy } = use(MyCloudContext);
   const isMobile = useIsMobile();
 
   const sortOptions = [

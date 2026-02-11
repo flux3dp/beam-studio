@@ -40,5 +40,5 @@ export const TimeEstimationButtonContextProvider = ({
     [estimatedTime, handleSetEstimatedTime],
   );
 
-  return <TimeEstimationButtonContext.Provider value={value}>{children}</TimeEstimationButtonContext.Provider>;
+  return <TimeEstimationButtonContext value={value}>{children}</TimeEstimationButtonContext>;
 };

@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { memo, use, useCallback, useEffect, useMemo, useState } from 'react';
 
 import { ExclamationCircleOutlined } from '@ant-design/icons';
 import { Button, Popover } from 'antd-mobile';
@@ -42,7 +42,7 @@ function PowerBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const t = lang.beambox.right_panel.laser_panel;
   const { change, power, update } = useConfigPanelStore();
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
-  const { activeKey } = useContext(ObjectPanelContext);
+  const { activeKey } = use(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const openModal = useCallback(() => setShowModal(true), []);
   const closeModal = useCallback(() => setShowModal(false), []);

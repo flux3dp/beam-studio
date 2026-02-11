@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useMemo, useState } from 'react';
+import React, { memo, use, useCallback, useMemo, useState } from 'react';
 
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
@@ -42,7 +42,7 @@ function InkBlock({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
   const t = lang.beambox.right_panel.laser_panel;
   const { change, color, fullcolor, ink, module: layerModule } = useConfigPanelStore();
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
-  const { activeKey } = useContext(ObjectPanelContext);
+  const { activeKey } = use(ObjectPanelContext);
   const [showModal, setShowModal] = useState(false);
   const visible = activeKey === 'power';
   const handleChange = (value: number) => {

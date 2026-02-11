@@ -1,5 +1,5 @@
 /* eslint-disable reactRefresh/only-export-components */
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import React, { use, useEffect, useMemo, useRef } from 'react';
 
 import Icon, { DownOutlined } from '@ant-design/icons';
 import { Button, Divider, Popover } from 'antd-mobile';
@@ -22,7 +22,7 @@ interface Props {
 }
 
 const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onClick }: Props): React.ReactNode => {
-  const context = useContext(ObjectPanelContext);
+  const context = use(ObjectPanelContext);
   const { activeKey, updateActiveKey } = context;
 
   if (disabled) {
@@ -73,7 +73,7 @@ const ObjectPanelNumber = ({
   updateValue,
   value = 0,
 }: NumberItemProps): React.JSX.Element => {
-  const context = useContext(ObjectPanelContext);
+  const context = use(ObjectPanelContext);
   const { activeKey } = context;
   const isActive = activeKey === id;
   const isDefaultInch = useStorageStore((state) => state.isInch);
@@ -188,7 +188,7 @@ interface ActionListProps {
 }
 
 const ObjectPanelActionList = ({ actions, content, disabled, id, label }: ActionListProps): React.JSX.Element => {
-  const context = useContext(ObjectPanelContext);
+  const context = use(ObjectPanelContext);
   const { activeKey } = context;
   const isActive = activeKey === id;
   const [activeAction, setActiveAction] = React.useState<string[]>([]);
@@ -260,7 +260,7 @@ const ObjectPanelSelect = <T extends number | string>({
   options,
   selected,
 }: SelectProps<T>): React.JSX.Element => {
-  const context = useContext(ObjectPanelContext);
+  const context = use(ObjectPanelContext);
   const { activeKey, updateActiveKey } = context;
   const isActive = activeKey === id;
   const ref = useRef(null);
@@ -334,7 +334,7 @@ const ObjectPanelSelect = <T extends number | string>({
 const ObjectPanelDivider = (): React.JSX.Element => <Divider className={styles.divider} direction="vertical" />;
 
 const ObjectPanelMask = (): React.JSX.Element => {
-  const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
+  const { activeKey, updateActiveKey } = use(ObjectPanelContext);
 
   return (
     <div

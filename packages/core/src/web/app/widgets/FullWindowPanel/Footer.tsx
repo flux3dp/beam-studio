@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import classNames from 'classnames';
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const Footer = ({ children, className = '' }: Props): React.JSX.Element => {
-  const { isDesktop, isMobile, isWindows } = useContext(FullWindowPanelContext);
+  const { isDesktop, isMobile, isWindows } = use(FullWindowPanelContext);
 
   return (
     <div

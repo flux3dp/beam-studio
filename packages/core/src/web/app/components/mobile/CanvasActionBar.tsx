@@ -7,7 +7,7 @@ import { SelectedElementContext } from '@core/app/contexts/SelectedElementContex
 import { TrashIcon } from '@core/app/icons/icons';
 
 const CanvasActionBar = (): React.JSX.Element => {
-  const { selectedElement } = React.useContext(SelectedElementContext);
+  const { selectedElement } = React.use(SelectedElementContext);
   const [activeKey, setActiveKey] = React.useState('dmkt');
 
   const tabs = [

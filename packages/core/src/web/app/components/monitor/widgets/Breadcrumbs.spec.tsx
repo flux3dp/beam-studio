@@ -15,7 +15,7 @@ const mockOnSelectFolder = jest.fn();
 describe('test Breadcrumbs', () => {
   it('should render correctly', () => {
     const { container } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             currentPath: ['a', 'b', 'c'],
@@ -24,7 +24,7 @@ describe('test Breadcrumbs', () => {
         }
       >
         <Breadcrumbs />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -32,7 +32,7 @@ describe('test Breadcrumbs', () => {
 
   test('selecting folders should work', () => {
     const { container, getByText } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             currentPath: ['a', 'b', 'c'],
@@ -41,7 +41,7 @@ describe('test Breadcrumbs', () => {
         }
       >
         <Breadcrumbs />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
     const home = container.querySelector('[aria-label="home"]');
 

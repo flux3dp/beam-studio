@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import classNames from 'classnames';
 
@@ -12,7 +12,7 @@ interface Props {
 }
 
 const DirectoryItem = ({ name }: Props): React.JSX.Element => {
-  const { highlightedItem, onHighlightItem, onSelectFolder } = useContext(MonitorContext);
+  const { highlightedItem, onHighlightItem, onSelectFolder } = use(MonitorContext);
   const isSelected = highlightedItem.type === ItemType.FOLDER && highlightedItem.name === name;
 
   const handleClick = () => onHighlightItem({ name, type: ItemType.FOLDER });

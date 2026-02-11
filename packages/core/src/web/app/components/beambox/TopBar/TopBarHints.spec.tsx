@@ -8,24 +8,24 @@ import TopBarHints from './TopBarHints';
 
 test('should render correctly', () => {
   let { container } = render(
-    <TopBarHintsContext.Provider value={{ hintType: null }}>
+    <TopBarHintsContext value={{ hintType: null }}>
       <TopBarHints />
-    </TopBarHintsContext.Provider>,
+    </TopBarHintsContext>,
   );
 
   expect(container).toMatchSnapshot();
 
   ({ container } = render(
-    <TopBarHintsContext.Provider value={{ hintType: 'POLYGON' }}>
+    <TopBarHintsContext value={{ hintType: 'POLYGON' }}>
       <TopBarHints />
-    </TopBarHintsContext.Provider>,
+    </TopBarHintsContext>,
   ));
   expect(container).toMatchSnapshot();
 
   ({ container } = render(
-    <TopBarHintsContext.Provider value={{ hintType: 'CIRCLE' }}>
+    <TopBarHintsContext value={{ hintType: 'CIRCLE' }}>
       <TopBarHints />
-    </TopBarHintsContext.Provider>,
+    </TopBarHintsContext>,
   ));
   expect(container).toMatchSnapshot();
 });

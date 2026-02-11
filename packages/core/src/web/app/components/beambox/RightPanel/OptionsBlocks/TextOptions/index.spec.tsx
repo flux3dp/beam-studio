@@ -501,7 +501,7 @@ describe('TextOptions', () => {
       writable: true,
     });
 
-    React.useContext = jest.fn().mockReturnValue({ updateObjectPanel: mockUpdateObjectPanel });
+    React.use = jest.fn().mockReturnValue({ updateObjectPanel: mockUpdateObjectPanel });
   });
 
   describe('Desktop view', () => {

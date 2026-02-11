@@ -16,7 +16,7 @@ const mockOnSelectFolder = jest.fn();
 describe('test DirectoryItem', () => {
   it('should render correctly', () => {
     const { container, rerender } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             highlightedItem: { name: 'directory', type: 'FOLDER' },
@@ -26,12 +26,12 @@ describe('test DirectoryItem', () => {
         }
       >
         <DirectoryItem name="directory" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
     rerender(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             highlightedItem: { name: 'directory2', type: 'FOLDER' },
@@ -41,14 +41,14 @@ describe('test DirectoryItem', () => {
         }
       >
         <DirectoryItem name="directory" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
     expect(container).toMatchSnapshot();
   });
 
   test('context events should work', () => {
     const { container } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             highlightedItem: { name: 'directory', type: 'FOLDER' },
@@ -58,7 +58,7 @@ describe('test DirectoryItem', () => {
         }
       >
         <DirectoryItem name="directory" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
     const divContainer = container.querySelector('.container');
 

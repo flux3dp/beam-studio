@@ -1,4 +1,4 @@
-import { memo, useContext, useMemo } from 'react';
+import { memo, use, useMemo } from 'react';
 
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
@@ -56,7 +56,7 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
     }
   };
 
-  const { activeKey } = useContext(ObjectPanelContext);
+  const { activeKey } = use(ObjectPanelContext);
   const visible = activeKey === 'dpi';
 
   const content = (

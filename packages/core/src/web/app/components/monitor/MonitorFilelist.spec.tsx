@@ -45,9 +45,9 @@ describe('test MonitorFilelist', () => {
     });
 
     const { container } = render(
-      <MonitorContext.Provider value={{ shouldUpdateFileList: false } as any}>
+      <MonitorContext value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="path" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     await waitFor(() => {
@@ -66,9 +66,9 @@ describe('test MonitorFilelist', () => {
       .mockRejectedValueOnce('error');
 
     const { container, queryByText } = render(
-      <MonitorContext.Provider value={{ shouldUpdateFileList: false } as any}>
+      <MonitorContext value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     await waitFor(() => {
@@ -87,9 +87,9 @@ describe('test MonitorFilelist', () => {
     });
 
     const { getByText, rerender } = render(
-      <MonitorContext.Provider value={{ shouldUpdateFileList: false } as any}>
+      <MonitorContext value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="path" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     await waitFor(() => {
@@ -102,9 +102,9 @@ describe('test MonitorFilelist', () => {
       files: ['fd', 'fe', 'ff'],
     });
     rerender(
-      <MonitorContext.Provider value={{ shouldUpdateFileList: false } as any}>
+      <MonitorContext value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="path/fa" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
     await waitFor(() => {
       expect(mockLs).toHaveBeenCalledTimes(2);
@@ -118,7 +118,7 @@ describe('test MonitorFilelist', () => {
       files: ['fh', 'fi', 'fj'],
     });
     rerender(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             setShouldUpdateFileList: mockSetShouldUpdateFileList,
@@ -127,7 +127,7 @@ describe('test MonitorFilelist', () => {
         }
       >
         <MonitorFilelist path="path/fa" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
     await waitFor(() => {
       expect(mockLs).toHaveBeenCalledTimes(3);
@@ -141,9 +141,9 @@ describe('test MonitorFilelist', () => {
     mockLs.mockResolvedValueOnce({ error: 'error' });
 
     const { container } = render(
-      <MonitorContext.Provider value={{ shouldUpdateFileList: false } as any}>
+      <MonitorContext value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="path" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     await waitFor(() => {
@@ -162,9 +162,9 @@ describe('test MonitorFilelist', () => {
     });
 
     const { container } = render(
-      <MonitorContext.Provider value={{ shouldUpdateFileList: false, uploadFile: mockUploadFile } as any}>
+      <MonitorContext value={{ shouldUpdateFileList: false, uploadFile: mockUploadFile } as any}>
         <MonitorFilelist path="path" />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     await waitFor(() => {

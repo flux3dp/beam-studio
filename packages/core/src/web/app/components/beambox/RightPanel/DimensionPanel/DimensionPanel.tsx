@@ -1,4 +1,4 @@
-import React, { useCallback, useContext } from 'react';
+import React, { use, useCallback } from 'react';
 
 import { ConfigProvider } from 'antd';
 
@@ -69,7 +69,7 @@ interface Props {
 }
 
 const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
-  const { getDimensionValues, updateDimensionValues } = useContext(ObjectPanelContext);
+  const { getDimensionValues, updateDimensionValues } = use(ObjectPanelContext);
 
   const isMobile = useIsMobile();
 

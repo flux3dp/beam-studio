@@ -8,13 +8,13 @@ import Dialog from './Dialog';
 
 test('should render correctly', () => {
   const { container } = render(
-    <DialogContext.Provider
+    <DialogContext
       value={{
         dialogComponents: [{ component: <div>Hello World</div> }, { component: <span>Hello Flux</span> }],
       }}
     >
       <Dialog className="flux" />
-    </DialogContext.Provider>,
+    </DialogContext>,
   );
 
   expect(container).toMatchSnapshot();

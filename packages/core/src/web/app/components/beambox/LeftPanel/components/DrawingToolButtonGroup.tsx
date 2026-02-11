@@ -1,4 +1,4 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, use, useMemo } from 'react';
 
 import { match } from 'ts-pattern';
 
@@ -39,7 +39,7 @@ type ToolButtonProps = {
 const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.left_panel;
-  const { hasPassthroughExtension } = useContext(CanvasContext);
+  const { hasPassthroughExtension } = use(CanvasContext);
   const { isDrawing, isStarting } = useCameraPreviewStore();
   const { drawerMode, mouseMode, toggleDrawerMode } = useCanvasStore();
   const activeButton = useMemo(

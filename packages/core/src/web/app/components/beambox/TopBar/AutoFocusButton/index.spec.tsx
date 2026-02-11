@@ -187,9 +187,9 @@ describe('AutoFocusButton', () => {
 
   const renderComponent = (contextValue = {}) => {
     return render(
-      <CanvasContext.Provider value={{ ...defaultContextValue, ...contextValue } as any}>
+      <CanvasContext value={{ ...defaultContextValue, ...contextValue } as any}>
         <AutoFocusButton />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
   };
 

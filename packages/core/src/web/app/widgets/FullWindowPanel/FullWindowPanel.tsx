@@ -43,7 +43,7 @@ const FullWindowPanel = ({
 
   if (isMobile) {
     return (
-      <FullWindowPanelContext.Provider value={{ isDesktop: !web, isMobile, isWindows }}>
+      <FullWindowPanelContext value={{ isDesktop: !web, isMobile, isWindows }}>
         <FloatingPanel
           anchors={[0, window.innerHeight - layoutConstants.titlebarHeight]}
           className={classNames(styles.container, {
@@ -56,12 +56,12 @@ const FullWindowPanel = ({
         >
           {renderMobileContents?.()}
         </FloatingPanel>
-      </FullWindowPanelContext.Provider>
+      </FullWindowPanelContext>
     );
   }
 
   return (
-    <FullWindowPanelContext.Provider value={{ isDesktop: !web, isMobile, isWindows }}>
+    <FullWindowPanelContext value={{ isDesktop: !web, isMobile, isWindows }}>
       <div
         className={classNames(styles.container, {
           [styles.desktop]: !web,
@@ -70,7 +70,7 @@ const FullWindowPanel = ({
       >
         {renderContents?.()}
       </div>
-    </FullWindowPanelContext.Provider>
+    </FullWindowPanelContext>
   );
 };
 

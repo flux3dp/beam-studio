@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { use, useEffect } from 'react';
 
 import { Modal } from 'antd';
 import { SpinLoading } from 'antd-mobile';
@@ -11,7 +11,7 @@ import styles from './AlertAndProgress.module.scss';
 
 const NonStopProgress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
   const lang = useI18n();
-  const { popById } = useContext(AlertProgressContext);
+  const { popById } = use(AlertProgressContext);
   const { caption, id, key, onCancel, timeout } = data;
 
   useEffect(() => {

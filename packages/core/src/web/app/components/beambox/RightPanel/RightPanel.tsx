@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { memo, useCallback, useContext, useEffect, useState } from 'react';
+import React, { memo, use, useCallback, useEffect, useState } from 'react';
 
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
@@ -27,8 +27,8 @@ const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-pan
 
 const RightPanel = (): ReactNode => {
   const mode = useCanvasStore((state) => state.mode);
-  const { isPathEditing } = useContext(CanvasContext);
-  const { selectedElement } = useContext(SelectedElementContext);
+  const { isPathEditing } = use(CanvasContext);
+  const { selectedElement } = use(SelectedElementContext);
   const isMobile = useIsMobile();
   const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);
   const isTabAutoSwitch = useGlobalPreferenceStore((state) => state['auto-switch-tab']);

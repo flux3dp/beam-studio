@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 import { QuestionOutlined } from '@ant-design/icons';
 import { Button, Col, Form, InputNumber, Row, Space } from 'antd';
@@ -20,7 +20,7 @@ const StepBeforeAnalyzePicture = (): React.JSX.Element => {
   const [showHint, setShowHint] = useState(false);
   const [showLastConfig, setShowLastConfig] = useState(false);
   const [form] = Form.useForm();
-  const context = useContext(CalibrationContext);
+  const context = use(CalibrationContext);
   const {
     borderless,
     cameraPosition,

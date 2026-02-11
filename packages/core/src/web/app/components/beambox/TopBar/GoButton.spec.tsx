@@ -134,9 +134,9 @@ describe('test GoButton', () => {
     mockHandleExportClick.mockReturnValue(mockExport);
 
     const { container } = render(
-      <CanvasContext.Provider value={{ selectedDevice: mockDevice } as any}>
+      <CanvasContext value={{ selectedDevice: mockDevice } as any}>
         <GoButton hasDiscoverdMachine={false} />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();

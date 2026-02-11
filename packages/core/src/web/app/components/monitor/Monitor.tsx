@@ -29,7 +29,7 @@ const key = 'monitor.upload.file';
 const Monitor = ({ device }: Props): React.JSX.Element => {
   const LANG = useI18n();
   const { currentPath, mode, onClose, report, setMonitorMode, taskImageURL, uploadProgress } =
-    React.useContext(MonitorContext);
+    React.use(MonitorContext);
   const isPromark = useMemo(() => promarkModels.has(device.model), [device.model]);
   // if Promark, taskMode is always working to prevent FramingTaskManager unmount
   const taskMode = report.st_id === deviceConstants.status.IDLE && !isPromark ? Mode.PREVIEW : Mode.WORKING;

@@ -56,5 +56,5 @@ export const DialogContextProvider = ({ children }: DialogContextProviderProps):
 
   const value = useMemo(() => ({ dialogComponents }), [dialogComponents]);
 
-  return <DialogContext.Provider value={value}>{children}</DialogContext.Provider>;
+  return <DialogContext value={value}>{children}</DialogContext>;
 };

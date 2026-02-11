@@ -57,9 +57,9 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
 describe('should render correctly', () => {
   test('no selected element', () => {
     const { container } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: null }}>
+      <SelectedElementContext value={{ selectedElement: null }}>
         <Tab panelType={PanelType.Layer} switchPanel={jest.fn()} />
-      </SelectedElementContext.Provider>,
+      </SelectedElementContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -69,9 +69,9 @@ describe('should render correctly', () => {
     document.body.innerHTML = '<path id="svg_1"></path>';
 
     const { container } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+      <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
         <Tab panelType={PanelType.PathEdit} switchPanel={jest.fn()} />
-      </SelectedElementContext.Provider>,
+      </SelectedElementContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -85,9 +85,9 @@ describe('should render correctly', () => {
         const switchPanel = jest.fn();
 
         const { container } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
             <Tab panelType={PanelType.Object} switchPanel={switchPanel} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         expect(container).toMatchSnapshot();
@@ -99,9 +99,9 @@ describe('should render correctly', () => {
         document.body.innerHTML = '<g id="svg_3" data-tempgroup="true"></g>';
 
         const { container, getByText } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_3') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         expect(container).toMatchSnapshot();
@@ -112,9 +112,9 @@ describe('should render correctly', () => {
         document.body.innerHTML = '<use id="svg_1" data-dxf="true"></use>';
 
         const { container, getByText } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         expect(container).toMatchSnapshot();
@@ -125,9 +125,9 @@ describe('should render correctly', () => {
         document.body.innerHTML = '<use id="svg_1" data-svg="true"></use>';
 
         const { container, getByText } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         expect(container).toMatchSnapshot();
@@ -138,9 +138,9 @@ describe('should render correctly', () => {
         document.body.innerHTML = '<g id="svg_1" data-textpath-g="1"></g>';
 
         const { container, getByText } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         expect(container).toMatchSnapshot();
@@ -151,9 +151,9 @@ describe('should render correctly', () => {
         document.body.innerHTML = '<use id="svg_1"></use>';
 
         const { container } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
             <Tab panelType={PanelType.Object} switchPanel={jest.fn()} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         expect(container).toMatchSnapshot();
@@ -171,9 +171,9 @@ describe('should render correctly', () => {
         const switchPanel = jest.fn();
 
         const { container } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
             <Tab panelType={PanelType.Object} switchPanel={switchPanel} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         expect(container).toMatchSnapshot();
@@ -190,9 +190,9 @@ describe('should render correctly', () => {
         const switchPanel = jest.fn();
 
         const { container } = render(
-          <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+          <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
             <Tab panelType={PanelType.Object} switchPanel={switchPanel} />
-          </SelectedElementContext.Provider>,
+          </SelectedElementContext>,
         );
 
         getNextStepRequirement.mockReturnValue('');

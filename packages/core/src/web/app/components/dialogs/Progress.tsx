@@ -1,4 +1,4 @@
-import React, { useContext, useEffect } from 'react';
+import React, { use, useEffect } from 'react';
 
 import { Progress as AntdProgress, Modal } from 'antd';
 
@@ -12,7 +12,7 @@ import styles from './Progress.module.scss';
 const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
   const lang = useI18n();
   const isMobile = useIsMobile();
-  const { popById } = useContext(AlertProgressContext);
+  const { popById } = use(AlertProgressContext);
   const { caption, id, key, message, onCancel, percentage, progressKey, timeout } = data;
 
   useEffect(() => {

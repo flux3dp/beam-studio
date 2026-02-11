@@ -1,4 +1,4 @@
-import React, { act, useContext } from 'react';
+import React, { act, use } from 'react';
 
 import { render } from '@testing-library/react';
 
@@ -7,7 +7,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { TimeEstimationButtonContext, TimeEstimationButtonContextProvider } from './TimeEstimationButtonContext';
 
 const Children = () => {
-  const { estimatedTime } = useContext(TimeEstimationButtonContext);
+  const { estimatedTime } = use(TimeEstimationButtonContext);
 
   return <>{estimatedTime}</>;
 };

@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { use, useState } from 'react';
 
 import { Button, Switch } from 'antd';
 import { Popover } from 'antd-mobile';
@@ -57,7 +57,7 @@ const LayerContextMenu = ({ renameLayer, selectOnlyLayer }: Props): React.JSX.El
     useShallow(pick(['forceUpdate', 'selectedLayers', 'setSelectedLayers'])),
   );
   const isMobile = useIsMobile();
-  const { activeKey, updateActiveKey } = useContext(ObjectPanelContext);
+  const { activeKey, updateActiveKey } = use(ObjectPanelContext);
   const [color, setColor] = useState(colorConstants.printingLayerColor[0]);
   const layerElem = layerManager.getLayerElementByName(selectedLayers[0])!;
   const isLocked = layerElem?.getAttribute('data-lock') === 'true';

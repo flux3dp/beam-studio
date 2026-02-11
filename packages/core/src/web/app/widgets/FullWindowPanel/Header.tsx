@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import classNames from 'classnames';
 
@@ -15,7 +15,7 @@ interface Props {
 
 const Header = ({ children, className = '', icon, title }: Props): React.JSX.Element => {
   // For future need to use context
-  useContext(FullWindowPanelContext);
+  use(FullWindowPanelContext);
 
   return (
     <div className={classNames(styles.header, className)}>

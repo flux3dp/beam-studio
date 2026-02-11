@@ -30,7 +30,7 @@ describe('test MonitorControl', () => {
   describe('should render correctly', () => {
     test('mode is preview', () => {
       const { container } = render(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.PREVIEW,
@@ -52,7 +52,7 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -60,7 +60,7 @@ describe('test MonitorControl', () => {
 
     test('mode is working', () => {
       const { container, rerender } = render(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.WORKING,
@@ -82,13 +82,13 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
 
       expect(container).toMatchSnapshot();
 
       rerender(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.WORKING,
@@ -110,12 +110,12 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
       expect(container).toMatchSnapshot();
 
       rerender(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.WORKING,
@@ -137,7 +137,7 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -147,7 +147,7 @@ describe('test MonitorControl', () => {
     beforeEach(() => useIsMobile.mockReturnValue(true));
     test('mode is preview', () => {
       const { container } = render(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.PREVIEW,
@@ -169,7 +169,7 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -177,7 +177,7 @@ describe('test MonitorControl', () => {
 
     test('mode is working', () => {
       const { container, rerender } = render(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.WORKING,
@@ -199,13 +199,13 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
 
       expect(container).toMatchSnapshot();
 
       rerender(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.WORKING,
@@ -227,12 +227,12 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
       expect(container).toMatchSnapshot();
 
       rerender(
-        <MonitorContext.Provider
+        <MonitorContext
           value={
             {
               mode: Mode.WORKING,
@@ -254,7 +254,7 @@ describe('test MonitorControl', () => {
             setIsOnPlaying={jest.fn()}
             setUseEstTime={jest.fn()}
           />
-        </MonitorContext.Provider>,
+        </MonitorContext>,
       );
       expect(container).toMatchSnapshot();
     });
@@ -262,7 +262,7 @@ describe('test MonitorControl', () => {
 
   test('play button in preview mode', () => {
     const { getByText } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             mode: Mode.PREVIEW,
@@ -284,7 +284,7 @@ describe('test MonitorControl', () => {
           setIsOnPlaying={jest.fn()}
           setUseEstTime={jest.fn()}
         />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(onPlay).not.toHaveBeenCalled();
@@ -294,7 +294,7 @@ describe('test MonitorControl', () => {
 
   test('pause and stop in working mode', () => {
     const { getByText } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             mode: Mode.WORKING,
@@ -316,7 +316,7 @@ describe('test MonitorControl', () => {
           setIsOnPlaying={jest.fn()}
           setUseEstTime={jest.fn()}
         />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(onPause).not.toHaveBeenCalled();

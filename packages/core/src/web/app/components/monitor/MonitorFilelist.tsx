@@ -1,5 +1,5 @@
 import type { DragEventHandler } from 'react';
-import React, { memo, useCallback, useContext, useEffect, useRef, useState } from 'react';
+import React, { memo, use, useCallback, useEffect, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import DeviceConstants from '@core/app/constants/device-constants';
@@ -26,7 +26,7 @@ const MonitorFilelist = ({ path }: Props): React.JSX.Element => {
     directories: [],
     files: [],
   });
-  const { setShouldUpdateFileList, shouldUpdateFileList, uploadFile } = useContext(MonitorContext);
+  const { setShouldUpdateFileList, shouldUpdateFileList, uploadFile } = use(MonitorContext);
 
   const preventDefaultEvent: DragEventHandler<HTMLDivElement> = useCallback((e) => e.preventDefault(), []);
 

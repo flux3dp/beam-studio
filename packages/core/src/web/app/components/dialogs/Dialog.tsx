@@ -11,7 +11,7 @@ interface Props {
 }
 
 const Dialog = ({ className = '' }: Props): React.JSX.Element => {
-  const { dialogComponents } = React.useContext(DialogContext);
+  const { dialogComponents } = React.use(DialogContext);
   const renderComponents = () => {
     const components = [];
 

@@ -64,9 +64,9 @@ describe('test Monitor', () => {
 
   it('should render correctly', () => {
     const { baseElement } = render(
-      <MonitorContext.Provider value={mockContext as any}>
+      <MonitorContext value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -78,9 +78,9 @@ describe('test Monitor', () => {
     mockIsNorthAmerica.mockReturnValue(true);
 
     const { baseElement } = render(
-      <MonitorContext.Provider value={mockContext as any}>
+      <MonitorContext value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -90,9 +90,9 @@ describe('test Monitor', () => {
 
   it('should display uploading when has upload progress', () => {
     const { baseElement } = render(
-      <MonitorContext.Provider value={{ ...mockContext, uploadProgress: 50 } as any}>
+      <MonitorContext value={{ ...mockContext, uploadProgress: 50 } as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -101,9 +101,9 @@ describe('test Monitor', () => {
 
   test('should call onClose when click close button', () => {
     const { baseElement } = render(
-      <MonitorContext.Provider value={mockContext as any}>
+      <MonitorContext value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     fireEvent.click(baseElement.querySelector('.ant-modal-close'));
@@ -112,18 +112,18 @@ describe('test Monitor', () => {
 
   test('should call setMonitorMode when click tab', () => {
     const { getByText, rerender } = render(
-      <MonitorContext.Provider value={mockContext as any}>
+      <MonitorContext value={mockContext as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     fireEvent.click(getByText('camera'));
     expect(mockSetMonitorMode).toHaveBeenCalledTimes(1);
     expect(mockSetMonitorMode).toHaveBeenLastCalledWith(Mode.CAMERA);
     rerender(
-      <MonitorContext.Provider value={{ ...mockContext, mode: Mode.CAMERA } as any}>
+      <MonitorContext value={{ ...mockContext, mode: Mode.CAMERA } as any}>
         <Monitor device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
     fireEvent.click(getByText('label'));
     expect(mockSetMonitorMode).toHaveBeenCalledTimes(2);

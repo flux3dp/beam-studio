@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import classNames from 'classnames';
 
@@ -18,8 +18,8 @@ function Tab({ panelType, switchPanel }: Props): React.JSX.Element {
   const lang = useI18n();
   const langTopBar = lang.topbar;
   const langRightPanel = lang.beambox.right_panel;
-  const { selectedElement } = useContext(SelectedElementContext);
-  const { isPathEditing } = useContext(CanvasContext);
+  const { selectedElement } = use(SelectedElementContext);
+  const { isPathEditing } = use(CanvasContext);
   const isObjectDisabled = !isPathEditing && !selectedElement;
   let objectTitle = langRightPanel.tabs.objects;
 

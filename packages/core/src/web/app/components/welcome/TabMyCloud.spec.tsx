@@ -8,9 +8,7 @@ const mockContext: any = { value: {} };
 
 jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext({}),
-  MyCloudProvider: ({ children }) => (
-    <MyCloudContext.Provider value={mockContext.value}>{children}</MyCloudContext.Provider>
-  ),
+  MyCloudProvider: ({ children }) => <MyCloudContext value={mockContext.value}>{children}</MyCloudContext>,
 }));
 
 jest.mock('@core/app/components/dialogs/myCloud/GridFile', () => 'mock-grid-file');

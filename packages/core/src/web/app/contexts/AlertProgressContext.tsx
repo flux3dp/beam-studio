@@ -314,5 +314,5 @@ export const AlertProgressContextProvider = ({
     [alertProgressStack, popById, popFromStack],
   );
 
-  return <AlertProgressContext.Provider value={value}>{children}</AlertProgressContext.Provider>;
+  return <AlertProgressContext value={value}>{children}</AlertProgressContext>;
 };

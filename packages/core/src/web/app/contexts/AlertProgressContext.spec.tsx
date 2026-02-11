@@ -36,7 +36,7 @@ const mockMessageApi = {
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('alert-progress');
 const Children = () => {
-  const { alertProgressStack } = React.useContext(AlertProgressContext);
+  const { alertProgressStack } = React.use(AlertProgressContext);
 
   return (
     <>

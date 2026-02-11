@@ -26,11 +26,11 @@ import MainContent from './MainContent';
 describe('test MainContent', () => {
   it('should render correctly', () => {
     const { container } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={{ contents: [{}, {}], contentType: ContentType.MainType, hasLogin: true, historyIcons: [] } as any}
       >
         <MainContent types={[]} />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -38,11 +38,11 @@ describe('test MainContent', () => {
 
   it('should render correctly when not login', () => {
     const { container } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={{ contents: [{}, {}], contentType: ContentType.MainType, hasLogin: false, historyIcons: [] } as any}
       >
         <MainContent types={[]} />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -55,7 +55,7 @@ describe('test MainContent', () => {
 
   it('should render history correctly', () => {
     const { container } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={
           {
             contents: [{}, {}],
@@ -71,7 +71,7 @@ describe('test MainContent', () => {
         }
       >
         <MainContent types={[]} />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -79,7 +79,7 @@ describe('test MainContent', () => {
 
   it('should render search hint correctly', () => {
     const { container } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={
           {
             contents: [],
@@ -93,7 +93,7 @@ describe('test MainContent', () => {
         }
       >
         <MainContent types={MainTypes} />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -108,7 +108,7 @@ describe('test MainContent', () => {
 
   it('should render search hint correctly when no result', () => {
     const { container } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={
           {
             contents: [{ term: 'search' }],
@@ -122,7 +122,7 @@ describe('test MainContent', () => {
         }
       >
         <MainContent types={MainTypes} />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(container).toMatchSnapshot();

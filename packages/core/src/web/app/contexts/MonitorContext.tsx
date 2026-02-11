@@ -1144,7 +1144,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
     } = this;
 
     return (
-      <MonitorContext.Provider
+      <MonitorContext
         value={{
           onClose,
           ...this.state,
@@ -1165,7 +1165,7 @@ export class MonitorContextProvider extends React.Component<Props, State> {
         }}
       >
         {children}
-      </MonitorContext.Provider>
+      </MonitorContext>
     );
   }
 }

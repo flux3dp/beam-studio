@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { Button } from 'antd';
 
@@ -19,7 +19,7 @@ const PassThrough = ({ onClose }: { onClose: () => void }): React.JSX.Element =>
   const lang = useI18n();
   const isMobile = useIsMobile();
   const tPassThrough = useI18n().pass_through;
-  const { handleExport } = useContext(PassThroughContext);
+  const { handleExport } = use(PassThroughContext);
 
   const button = (
     <Button
