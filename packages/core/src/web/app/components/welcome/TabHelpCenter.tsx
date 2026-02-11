@@ -63,7 +63,7 @@ const guides = [
     name: 'Beam Studio',
     src: 'core-img/BeamStudio-logo.png',
   },
-];
+].filter(Boolean);
 
 const TabHelpCenter = () => {
   const {
