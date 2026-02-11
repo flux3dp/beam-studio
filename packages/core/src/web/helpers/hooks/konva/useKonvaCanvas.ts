@@ -35,7 +35,7 @@ interface ReturnType {
  * @returns ReturnType
  */
 const useKonvaCanvas = (
-  stageRef: MutableRefObject<Konva.Stage>,
+  stageRef: MutableRefObject<Konva.Stage | null>,
   { maxScale = 20, minScale = 0.01, onScaleChanged }: Options = {},
 ): ReturnType => {
   const [isDragging, setIsDragging] = useState(false);
@@ -49,7 +49,7 @@ const useKonvaCanvas = (
     mouseDown: useCallback(() => {
       setIsDragging(true);
       // start drag directly
-      stageRef.current.startDrag();
+      stageRef.current?.startDrag();
       // eslint-disable-next-line hooks/exhaustive-deps
     }, []),
     mouseUp: useCallback(() => setIsDragging(false), []),
@@ -59,6 +59,9 @@ const useKonvaCanvas = (
   const handleMove = useCallback(
     ({ evt: { deltaX, deltaY } }: Konva.KonvaEventObject<WheelEvent>) => {
       const stage = stageRef.current;
+
+      if (!stage) return;
+
       const { x, y } = stage.position();
 
       stage.position({ x: x - deltaX, y: y - deltaY });
@@ -70,6 +73,9 @@ const useKonvaCanvas = (
   const handleZoom = useCallback(
     (scale: number, isPointer = false) => {
       const stage = stageRef.current;
+
+      if (!stage) return;
+
       const oldScale = stage.scaleX();
       const targetPosition = isPointer ? stage.getPointerPosition() : { x: stage.width() / 2, y: stage.height() / 2 };
 
@@ -100,6 +106,9 @@ const useKonvaCanvas = (
   const handleZoomByScale = useCallback(
     (scaleBy: number, isPointer = false) => {
       const stage = stageRef.current;
+
+      if (!stage) return;
+
       const scale = stage.scaleX();
 
       handleZoom(scale * scaleBy, isPointer);
