@@ -187,7 +187,7 @@ export const getShapeMetadata = (
         boundaryHeight: gridH,
         centerYOffset: 0,
         fillsBoundingBox: puzzleRadius <= 0,
-        innerCutoutCornerRadius: puzzleRadius > 0 ? puzzleRadius : state.border.radius,
+        innerCutoutCornerRadius: puzzleRadius,
       };
     })
     .exhaustive();

@@ -69,14 +69,17 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
     ) : undefined;
 
   // Scene renderer (design vs exploded)
-  const renderScene = (mode: ViewMode, sceneColors: typeof colors, layout: typeof viewLayout) =>
-    mode === 'design' ? (
+  // Exploded view represents exported output — hide image when exportAs is 'none' (alignment-only)
+  const renderScene = (mode: ViewMode, sceneColors: typeof colors, layout: typeof viewLayout) => {
+    const showImage = mode === 'design' || state.image.exportAs !== 'none';
+
+    return mode === 'design' ? (
       <DesignScene
         borderEnabled={state.border.enabled}
         clipFunc={boundaryClip}
         colors={sceneColors}
         geometry={geometry}
-        imageOverlay={imageOverlayNode}
+        imageOverlay={showImage ? imageOverlayNode : undefined}
       />
     ) : (
       <ExplodedScene
@@ -85,10 +88,11 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
         colors={sceneColors}
         geometry={geometry}
         guideLines={state.border.guideLines}
-        imageOverlay={imageOverlayNode}
+        imageOverlay={showImage ? imageOverlayNode : undefined}
         layout={layout}
       />
     );
+  };
 
   // Thumbnails
   const thumbConfigs = useMemo(

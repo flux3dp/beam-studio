@@ -110,7 +110,7 @@ const createImageGroup = (): GroupPropertyDef => ({
     },
     {
       condition: imageUploaded,
-      default: 0,
+      default: 2,
       key: 'image.bleed',
       labelKey: 'bleed',
       max: 20,
