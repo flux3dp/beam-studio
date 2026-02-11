@@ -17,14 +17,9 @@ const SelectProperty = ({
   const value = (getValue(property.key) as number | string) ?? property.default;
 
   return (
-    <div className={styles['property-row']}>
+    <div className={styles['select-row']}>
       <div className={styles['property-label']}>{getLabel(property.labelKey)}</div>
-      <Select
-        onChange={(val) => setValue(property.key, val)}
-        onKeyDown={(e) => e.stopPropagation()}
-        style={{ width: '100%' }}
-        value={value}
-      >
+      <Select onChange={(val) => setValue(property.key, val)} onKeyDown={(e) => e.stopPropagation()} value={value}>
         {property.options.map((opt) => (
           <Select.Option key={opt.value} value={opt.value}>
             {getLabel(opt.labelKey)}

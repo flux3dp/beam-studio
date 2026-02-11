@@ -23,6 +23,21 @@
   }
 }
 
+.select-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+
+  .property-label {
+    flex-shrink: 0;
+  }
+
+  :global(.ant-select) {
+    width: 120px;
+  }
+}
+
 .property-unit {
   color: #999;
   font-size: 12px;
