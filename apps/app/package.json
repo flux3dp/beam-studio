@@ -1,6 +1,6 @@
 {
   "name": "@beam-studio/app",
-  "version": "2.6.4-alpha",
+  "version": "2.6.5-alpha",
   "license": "AGPL-3.0-only",
   "homepage": "https://github.com/flux3dp/beam-studio",
   "description": "Beam Studio Electron App",
