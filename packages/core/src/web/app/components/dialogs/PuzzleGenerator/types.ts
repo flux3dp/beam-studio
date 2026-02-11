@@ -156,7 +156,6 @@ export interface ImageState {
   dataUrl: null | string;
   enabled: boolean;
   exportAs: 'engrave' | 'none' | 'print';
-  file: File | null;
   /** Horizontal offset as percentage of puzzle width (-150 to 150) */
   offsetX: number;
   /** Vertical offset as percentage of puzzle height (-150 to 150) */
@@ -214,7 +213,6 @@ export const createDefaultImageState = (): ImageState => ({
   dataUrl: null,
   enabled: false,
   exportAs: 'print',
-  file: null,
   offsetX: 0,
   offsetY: 0,
   zoom: 100,

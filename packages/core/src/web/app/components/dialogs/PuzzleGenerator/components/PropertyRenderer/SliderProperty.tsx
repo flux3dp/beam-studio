@@ -25,7 +25,12 @@ const SliderProperty = ({
   const step = property.step ?? 1;
   const inchStep = isMmProperty && isInch ? 0.254 : step;
   const precision = isMmProperty && isInch ? 2 : Math.max(0, Math.ceil(-Math.log10(step)));
-  const displayUnit = isMmProperty ? (isInch ? 'in' : 'mm') : property.unit;
+  let displayUnit = property.unit;
+
+  if (isMmProperty) {
+    displayUnit = isInch ? 'in' : 'mm';
+  }
+
   const isModified = value !== property.default;
 
   const handleReset = () => setValue(property.key, property.default);

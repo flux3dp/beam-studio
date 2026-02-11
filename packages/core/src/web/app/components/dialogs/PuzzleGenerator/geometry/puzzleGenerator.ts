@@ -278,29 +278,29 @@ export const calculateAllPieceVisibilities = (
 ): PieceVisibility[] => {
   const meta = getShapeMetadata(shapeType, state);
   const effectiveHeight = boundaryHeight ?? layout.height;
+  const { columns, rows } = state;
 
-  if (meta.fillsBoundingBox) {
-    return Array.from({ length: state.rows * state.columns }, (_, i) => ({
-      col: i % state.columns,
-      row: Math.floor(i / state.columns),
-      visibleRatio: 1,
-    }));
-  }
+  return Array.from({ length: rows * columns }, (_, i) => {
+    const col = i % columns;
+    const row = Math.floor(i / columns);
 
-  return Array.from({ length: state.rows * state.columns }, (_, i) => ({
-    col: i % state.columns,
-    row: Math.floor(i / state.columns),
-    visibleRatio: calculatePieceVisibility(
-      Math.floor(i / state.columns),
-      i % state.columns,
-      state,
-      shapeType,
-      layout,
-      meta.boundaryCornerRadius,
-      centerYOffset,
-      effectiveHeight,
-    ),
-  }));
+    return {
+      col,
+      row,
+      visibleRatio: meta.fillsBoundingBox
+        ? 1
+        : calculatePieceVisibility(
+            row,
+            col,
+            state,
+            shapeType,
+            layout,
+            meta.boundaryCornerRadius,
+            centerYOffset,
+            effectiveHeight,
+          ),
+    };
+  });
 };
 
 export const calculateMergeGroups = (

@@ -17,10 +17,8 @@ const ToggleProperty = ({
   const value = (getValue(property.key) as boolean) ?? property.default;
 
   return (
-    <div className={styles['property-row']} style={{ alignItems: 'center', flexDirection: 'row' }}>
-      <div className={styles['property-label']} style={{ flex: 1 }}>
-        {getLabel(property.labelKey)}
-      </div>
+    <div className={styles['toggle-row']}>
+      <div className={styles['property-label']}>{getLabel(property.labelKey)}</div>
       <Switch checked={value} onChange={(checked) => setValue(property.key, checked)} />
     </div>
   );

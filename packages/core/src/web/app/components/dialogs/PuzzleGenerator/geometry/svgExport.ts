@@ -33,9 +33,10 @@ const setLayerColor = async (layerName: string, color: string): Promise<void> =>
   const layer = layerManager.getLayerByName(layerName);
 
   if (!layer) {
-    console.warn(`Layer "${layerName}" was not found after import. A layer with this name may already exist.`);
-
-    return;
+    throw new Error(
+      `Layer "${layerName}" was not found after import. A layer with this name may already exist — ` +
+        'try renaming or removing existing puzzle layers first.',
+    );
   }
 
   layer.setColor(color);
@@ -112,9 +113,10 @@ const renderCroppedImage = (
   const ctx = canvas.getContext('2d');
 
   if (!ctx) {
-    console.warn(`Failed to create canvas 2D context for image export (canvas size: ${canvasW}x${canvasH}px)`);
-
-    return '';
+    throw new Error(
+      `Failed to create canvas 2D context (canvas size: ${canvasW}x${canvasH}px). ` +
+        'Try reducing piece count or piece size.',
+    );
   }
 
   // Work in mm coordinates: translate to center (in px), then scale so 1 unit = 1 mm
@@ -132,31 +134,38 @@ const renderCroppedImage = (
 };
 
 /** Processes an image through imageData and returns the display base64 */
-const processImageForDisplay = (
+const processImageForDisplay = async (
   sourceUrl: string,
   width: number,
   height: number,
   isFullColor: boolean,
-): Promise<string> =>
-  new Promise((resolve, reject) => {
+): Promise<string> => {
+  const result = await new Promise<{ pngBase64: string }>((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Image processing timed out')), 30000);
 
-    try {
-      imageData(sourceUrl, {
-        grayscale: isFullColor ? undefined : { is_rgba: true, is_shading: true, is_svg: false, threshold: 254 },
-        height,
-        isFullResolution: true,
-        onComplete: (result: { pngBase64: string }) => {
-          clearTimeout(timeout);
-          resolve(result.pngBase64);
-        },
-        width,
-      });
-    } catch (err) {
-      clearTimeout(timeout);
-      reject(err);
-    }
+    const cleanup = () => clearTimeout(timeout);
+
+    imageData(sourceUrl, {
+      grayscale: isFullColor ? undefined : { is_rgba: true, is_shading: true, is_svg: false, threshold: 254 },
+      height,
+      isFullResolution: true,
+      onComplete: (res: { pngBase64: string }) => {
+        cleanup();
+        resolve(res);
+      },
+      width,
+    }).catch((err: unknown) => {
+      cleanup();
+      reject(err instanceof Error ? err : new Error('Image processing failed'));
+    });
   });
+
+  if (!result?.pngBase64) {
+    throw new Error('Image processing completed but produced no output. The image may be corrupted.');
+  }
+
+  return result.pngBase64;
+};
 
 /**
  * Exports the puzzle image as a pre-cropped `<image>` element on a new canvas layer.
@@ -184,12 +193,22 @@ const exportImageLayer = async (
   const clipH = meta.boundaryHeight + image.bleed * 2;
   const placement = computeImagePlacement(img.naturalWidth, img.naturalHeight, geo.layout, image);
 
-  // Skip export if image has zero dimensions (shouldn't happen, but guard against it)
-  if (!placement) return;
+  if (!placement) {
+    throw new Error(
+      'Failed to compute image placement — the uploaded image may be corrupted. Please try re-uploading.',
+    );
+  }
 
   // Render image clipped to shape on offscreen canvas
   const croppedDataUrl = renderCroppedImage(
-    img, placement, shapeType, clipW, clipH, meta.boundaryCornerRadius, dpmm, meta.centerYOffset,
+    img,
+    placement,
+    shapeType,
+    clipW,
+    clipH,
+    meta.boundaryCornerRadius,
+    dpmm,
+    meta.centerYOffset,
   );
 
   const isPrinting = image.exportAs === 'print';

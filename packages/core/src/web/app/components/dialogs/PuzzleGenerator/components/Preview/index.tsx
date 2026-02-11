@@ -104,24 +104,12 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
   const legendEntries = useMemo(() => {
     if (viewMode !== 'exploded') return [];
 
-    const entries: Array<{ color: string; label: string }> = [];
-
-    // Raised Edges only shown when border is enabled (separate frame layer)
-    if (state.border.enabled) {
-      entries.push({ color: COLORS.exploded.raisedEdges, label: t.raised_edges });
-    }
-
-    // Puzzle Pieces always shown
-    entries.push({ color: COLORS.exploded.pieces, label: t.puzzle_pieces });
-
-    // Board Base only when border is enabled
-    if (state.border.enabled) {
-      entries.push({ color: COLORS.exploded.boardBase, label: t.board_base });
-    }
-
-    if (state.border.guideLines) entries.push({ color: COLORS.exploded.guideLines, label: t.guide_lines });
-
-    return entries;
+    return [
+      state.border.enabled && { color: COLORS.exploded.raisedEdges, label: t.raised_edges },
+      { color: COLORS.exploded.pieces, label: t.puzzle_pieces },
+      state.border.enabled && { color: COLORS.exploded.boardBase, label: t.board_base },
+      state.border.guideLines && { color: COLORS.exploded.guideLines, label: t.guide_lines },
+    ].filter(Boolean) as Array<{ color: string; label: string }>;
   }, [viewMode, state.border.enabled, state.border.guideLines, t]);
 
   // Dimension display

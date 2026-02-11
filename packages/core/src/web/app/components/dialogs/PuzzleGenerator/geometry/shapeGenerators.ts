@@ -363,16 +363,16 @@ const generateOffsetHeartPath = (options: ShapeOptions, offset: number): string 
 export const generateBorderPath = (shapeType: ShapeType, options: BorderOptions): string => {
   const { borderWidth, cornerRadius = 0, height, width, ...rest } = options;
 
-  if (shapeType === 'heart') {
-    return generateOffsetHeartPath({ ...rest, cornerRadius, height, width }, borderWidth);
-  }
-
-  return generateShapePath(shapeType, {
-    ...rest,
-    cornerRadius,
-    height: height + borderWidth * 2,
-    width: width + borderWidth * 2,
-  });
+  return match(shapeType)
+    .with('heart', () => generateOffsetHeartPath({ ...rest, cornerRadius, height, width }, borderWidth))
+    .otherwise(() =>
+      generateShapePath(shapeType, {
+        ...rest,
+        cornerRadius,
+        height: height + borderWidth * 2,
+        width: width + borderWidth * 2,
+      }),
+    );
 };
 
 export interface RaisedEdgesOptions extends BorderOptions {
@@ -386,20 +386,10 @@ export interface RaisedEdgesOptions extends BorderOptions {
  * Uses even-odd fill rule to create the cutout effect.
  */
 export const generateRaisedEdgesPath = (shapeType: ShapeType, options: RaisedEdgesOptions): string => {
-  const { borderWidth, cornerRadius = 0, height, innerCornerRadius, width, ...rest } = options;
+  const { innerCornerRadius, ...borderOpts } = options;
+  const { cornerRadius = 0, height, width, ...rest } = borderOpts;
 
-  const shapeOpts: ShapeOptions = { ...rest, cornerRadius, height, width };
-
-  // Outer boundary — offset path for hearts, uniform expansion for others
-  const outerPath =
-    shapeType === 'heart'
-      ? generateOffsetHeartPath(shapeOpts, borderWidth)
-      : generateShapePath(shapeType, {
-          ...rest,
-          cornerRadius,
-          height: height + borderWidth * 2,
-          width: width + borderWidth * 2,
-        });
+  const outerPath = generateBorderPath(shapeType, { ...borderOpts, cornerRadius });
 
   // Inner boundary (puzzle shape) — uses innerCornerRadius if specified
   const innerPath = generateShapePath(shapeType, {
@@ -409,7 +399,6 @@ export const generateRaisedEdgesPath = (shapeType: ShapeType, options: RaisedEdg
     width,
   });
 
-  // Combine paths - the inner path creates the cutout
   return `${outerPath} ${innerPath}`;
 };
 
@@ -450,12 +439,7 @@ export const isPointInHeart = (px: number, py: number, width: number, height: nu
   const polygon: Array<[number, number]> = [];
 
   // Sample a cubic Bézier segment
-  const sampleSegment = (
-    p0: [number, number],
-    p1: [number, number],
-    p2: [number, number],
-    p3: [number, number],
-  ) => {
+  const sampleSegment = (p0: [number, number], p1: [number, number], p2: [number, number], p3: [number, number]) => {
     for (let i = 0; i < STEPS; i++) {
       const t = i / STEPS;
       const u = 1 - t;
@@ -545,8 +529,12 @@ export const drawShapeClipPath = (
       ctx.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
     })
     .with('heart', () => {
-      const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } =
-        computeHeartControlPoints(width, height, centerYOffset, DEFAULT_HEART_SHARPNESS);
+      const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } = computeHeartControlPoints(
+        width,
+        height,
+        centerYOffset,
+        DEFAULT_HEART_SHARPNESS,
+      );
 
       ctx.moveTo(0, notchY);
       ctx.bezierCurveTo(0, topY, -halfWidth, topY, -halfWidth, notchY);

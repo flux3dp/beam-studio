@@ -20,7 +20,6 @@ const ImageUploadProperty = ({
   const inputId = useId();
   const parentKey = property.key.split('.')[0];
   const dataUrlKey = `${parentKey}.dataUrl`;
-  const fileKey = `${parentKey}.file`;
   const currentDataUrl = getValue(dataUrlKey) as null | string;
   const acceptedTypes = useMemo(() => property.accept.split(','), [property.accept]);
 
@@ -56,7 +55,6 @@ const ImageUploadProperty = ({
             });
           }
 
-          setValue(fileKey, file);
           setValue(dataUrlKey, dataUrl);
         };
         img.onerror = () => {
@@ -72,7 +70,7 @@ const ImageUploadProperty = ({
 
       reader.readAsDataURL(file);
     },
-    [property.maxSizeMB, property.maxResolution, acceptedTypes, setValue, fileKey, dataUrlKey, getLabel],
+    [property.maxSizeMB, property.maxResolution, acceptedTypes, setValue, dataUrlKey, getLabel],
   );
 
   const handleFileSelect = useCallback(

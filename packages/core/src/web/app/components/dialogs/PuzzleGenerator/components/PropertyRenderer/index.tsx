@@ -38,12 +38,6 @@ const PropertyRenderer = ({
     return null;
   }
 
-  const getShapeValue = (key: string): unknown => {
-    if (key === 'radius' && state.typeId === 'rectangle') return state.radius;
-
-    return undefined;
-  };
-
   const getValue = (key: string): unknown => {
     const parts = key.split('.');
 
@@ -58,10 +52,12 @@ const PropertyRenderer = ({
       return undefined;
     }
 
-    // Try shared fields first, then shape-specific fields
     if (key in state) return state[key as keyof typeof state];
 
-    return getShapeValue(key);
+    // Shape-specific fields
+    if (key === 'radius' && state.typeId === 'rectangle') return state.radius;
+
+    return undefined;
   };
 
   const setValue = (key: string, value: unknown): void => {
