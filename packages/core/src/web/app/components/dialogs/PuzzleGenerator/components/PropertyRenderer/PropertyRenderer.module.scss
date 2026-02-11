@@ -1,0 +1,162 @@
+.property-row {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.property-label {
+  font-size: 13px;
+  color: #333;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.property-unit {
+  color: #999;
+  font-size: 12px;
+}
+
+.property-control {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+
+  .slider {
+    flex: 1;
+  }
+
+  .number-input {
+    width: 70px;
+  }
+}
+
+// Slider property layout: label + reset + input on same row, slider below
+.slider-property {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+
+  .slider-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+  }
+
+  .slider-input-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+  }
+
+  .reset-button {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 24px;
+    height: 24px;
+    padding: 0;
+    border: none;
+    border-radius: 4px;
+    background: transparent;
+    color: #999;
+    cursor: pointer;
+    transition: all 0.2s;
+
+    &:hover {
+      background: #f0f0f0;
+      color: #1890ff;
+    }
+  }
+
+  .number-input {
+    width: 120px;
+  }
+
+  .slider {
+    margin: 11px 12px;
+  }
+}
+
+// Group/Accordion styles
+.property-group {
+  border: 1px solid #e8e8e8;
+  border-radius: 6px;
+  overflow: hidden;
+  margin-bottom: 4px;
+}
+
+.group-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 8px 12px;
+  background: #fafafa;
+  cursor: pointer;
+  transition: background-color 0.2s;
+
+  &:hover {
+    background: #f0f0f0;
+  }
+
+  .group-title {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 500;
+  }
+}
+
+.group-content {
+  padding: 12px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  border-top: 1px solid #e8e8e8;
+}
+
+// Image upload area
+.image-upload {
+  border: 2px dashed #d9d9d9;
+  border-radius: 6px;
+  padding: 16px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color 0.2s,
+    background-color 0.2s;
+
+  &:hover {
+    border-color: #1890ff;
+    background-color: #f0f7ff;
+  }
+
+  &.has-image {
+    border-style: solid;
+    padding: 8px;
+  }
+
+  .upload-icon {
+    font-size: 24px;
+    color: #999;
+    margin-bottom: 8px;
+  }
+
+  .upload-text {
+    font-size: 13px;
+    color: #666;
+  }
+
+  .upload-hint {
+    font-size: 11px;
+    color: #999;
+    margin-top: 4px;
+  }
+
+  .image-preview {
+    max-width: 100%;
+    max-height: 100px;
+    border-radius: 4px;
+  }
+}

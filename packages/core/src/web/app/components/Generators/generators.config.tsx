@@ -5,6 +5,8 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
 import type { ILang } from '@core/interfaces/ILang';
 
+import { showPuzzleGenerator } from '../dialogs/PuzzleGenerator';
+
 export interface GeneratorConfig {
   icon: React.ReactNode;
   id: string;
@@ -32,6 +34,12 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       id: 'code',
       onClick: () => dialogCaller.showCodeGenerator(),
       titleKey: 'code_generator',
+    } as const,
+    {
+      icon: <GeneratorIcons.Puzzle />,
+      id: 'puzzle',
+      onClick: () => showPuzzleGenerator(),
+      titleKey: 'puzzle_generator',
     } as const,
     {
       icon: <GeneratorIcons.Material />,

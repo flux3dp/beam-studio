@@ -1,0 +1,26 @@
+.options-panel {
+  flex: 0 0 280px;
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+  padding-right: 4px;
+
+  &.mobile {
+    flex: 1 1 auto;
+    max-height: 300px;
+  }
+}
+
+.options-header {
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  padding-bottom: 8px;
+  border-bottom: 1px solid #e8e8e8;
+}
+
+.options-content {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
