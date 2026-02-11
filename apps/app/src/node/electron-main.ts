@@ -336,26 +336,24 @@ app.on('open-file', (event, filePath) => {
   }
 });
 
-ipcMain.on(MiscEvents.AskForPermission, async (event, key: 'camera' | 'microphone') => {
+ipcMain.handle(MiscEvents.AskForPermission, async (_event, key: 'camera' | 'microphone') => {
   if (process.platform === 'darwin') {
     const res = await systemPreferences.askForMediaAccess(key);
 
     console.log('ask for permission', key, res);
-    event.returnValue = res;
 
-    return;
+    return res;
   }
 
   if (process.platform === 'win32') {
     const res = systemPreferences.getMediaAccessStatus(key);
 
     console.log('ask for permission', key, res);
-    event.returnValue = res !== 'denied';
 
-    return;
+    return res !== 'denied';
   }
 
-  event.returnValue = true;
+  return true;
 });
 
 ipcMain.on(MiscEvents.DeviceUpdated, (_event, deviceInfo: IDeviceInfo) => {

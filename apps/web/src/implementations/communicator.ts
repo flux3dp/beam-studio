@@ -5,6 +5,15 @@ import type { ICommunicator } from '@core/interfaces/ICommunicator';
 export const listener = new EventEmitter();
 export const sender = new EventEmitter();
 export default {
+  async invoke(channel: string, ...args: any[]): Promise<any> {
+    // Web shim: synchronous since there is no IPC bridge.
+    // Handlers must set res.returnValue synchronously.
+    const res = { returnValue: null as any };
+
+    sender.emit(channel, res, ...args);
+
+    return Promise.resolve(res.returnValue);
+  },
   off(channel: string, handler: any): void {
     listener.off(channel, handler);
   },

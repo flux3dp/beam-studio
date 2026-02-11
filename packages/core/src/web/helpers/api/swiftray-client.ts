@@ -598,16 +598,24 @@ class SwiftrayClient extends EventEmitter {
   }
 }
 
-const checkSwiftray = (): boolean => {
+const checkSwiftray = async (): Promise<boolean> => {
   const res = !isWeb() && getOS() !== 'Linux';
 
   if (!res) {
     return false;
   }
 
-  return communicator.sendSync(BackendEvents.CheckSwiftray);
+  return Boolean(await communicator.invoke(BackendEvents.CheckSwiftray));
 };
-const hasSwiftray = checkSwiftray();
+let hasSwiftray = false;
+
+checkSwiftray()
+  .then((val) => {
+    hasSwiftray = val;
+  })
+  .catch((err) => {
+    console.error('Failed to check Swiftray availability:', err);
+  });
 
 const swiftrayHost = localStorage.getItem('swiftrayHost') || 'localhost';
 const swiftrayClient = new SwiftrayClient(`ws://${swiftrayHost}:6611`);
