@@ -1,6 +1,6 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.6.3 beta
+// 2.6.4 beta
 const CHANGES_TW = {
   added: [
     '新增 位移複製與陣列功能即時預覽編輯效果。',
