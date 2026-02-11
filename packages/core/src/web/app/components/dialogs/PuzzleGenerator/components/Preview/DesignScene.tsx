@@ -4,7 +4,6 @@ import type Konva from 'konva';
 import { Group, Path } from 'react-konva';
 
 import type { ColorSet } from '../../constants';
-import { STROKE_WIDTH } from '../../constants';
 import type { PuzzleGeometry } from '../../types';
 
 import PuzzleStack from './PuzzleStack';
@@ -15,12 +14,13 @@ export interface SceneProps {
   colors: ColorSet;
   geometry: PuzzleGeometry;
   imageOverlay?: React.ReactNode;
+  strokeWidth: number;
 }
 
-const DesignScene = memo(({ borderEnabled, clipFunc, colors, geometry, imageOverlay }: SceneProps) => (
+const DesignScene = memo(({ borderEnabled, clipFunc, colors, geometry, imageOverlay, strokeWidth }: SceneProps) => (
   <Group>
     {geometry.boardBasePath && (
-      <Path data={geometry.boardBasePath} fill={colors.fill} stroke={colors.boardBase} strokeWidth={STROKE_WIDTH} />
+      <Path data={geometry.boardBasePath} fill={colors.fill} stroke={colors.boardBase} strokeWidth={strokeWidth} />
     )}
     <PuzzleStack
       borderEnabled={borderEnabled}
@@ -29,6 +29,7 @@ const DesignScene = memo(({ borderEnabled, clipFunc, colors, geometry, imageOver
       colors={colors}
       edges={geometry.edges}
       imageOverlay={imageOverlay}
+      strokeWidth={strokeWidth}
     />
   </Group>
 ));

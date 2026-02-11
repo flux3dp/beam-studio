@@ -9,7 +9,7 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import { COLORS, MM_PER_INCH, OVERLAY_BOTTOM, STAGE_PADDING, THUMB_PAD, THUMB_SIZE } from '../../constants';
+import { COLORS, MM_PER_INCH, OVERLAY_BOTTOM, STAGE_PADDING, STROKE_PX, THUMB_PAD, THUMB_SIZE } from '../../constants';
 import type { ViewMode } from '../../constants';
 import { computePuzzleGeometry } from '../../geometry';
 import useClipFunctions from '../../hooks/useClipFunctions';
@@ -70,8 +70,10 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
 
   // Scene renderer (design vs exploded)
   // Exploded view represents exported output — hide image when exportAs is 'none' (alignment-only)
+  // Stroke width is scale-compensated so lines stay a constant pixel thickness on screen
   const renderScene = (mode: ViewMode, sceneColors: typeof colors, layout: typeof viewLayout) => {
     const showImage = mode === 'design' || state.image.exportAs !== 'none';
+    const strokeWidth = STROKE_PX / layout.scale;
 
     return mode === 'design' ? (
       <DesignScene
@@ -80,6 +82,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
         colors={sceneColors}
         geometry={geometry}
         imageOverlay={showImage ? imageOverlayNode : undefined}
+        strokeWidth={strokeWidth}
       />
     ) : (
       <ExplodedScene
@@ -90,6 +93,7 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
         guideLines={state.border.guideLines}
         imageOverlay={showImage ? imageOverlayNode : undefined}
         layout={layout}
+        strokeWidth={strokeWidth}
       />
     );
   };

@@ -2,7 +2,7 @@ import React, { memo } from 'react';
 
 import { Group, Path } from 'react-konva';
 
-import { GUIDE_STROKE_WIDTH, STROKE_WIDTH } from '../../constants';
+import { GUIDE_STROKE_RATIO } from '../../constants';
 
 import type { ViewLayout } from './computeViewLayout';
 import type { SceneProps } from './DesignScene';
@@ -15,7 +15,16 @@ interface ExplodedSceneProps extends SceneProps {
 }
 
 const ExplodedScene = memo(
-  ({ borderEnabled, clipFunc, colors, geometry, guideLines, imageOverlay, layout }: ExplodedSceneProps) => (
+  ({
+    borderEnabled,
+    clipFunc,
+    colors,
+    geometry,
+    guideLines,
+    imageOverlay,
+    layout,
+    strokeWidth,
+  }: ExplodedSceneProps) => (
     <Group>
       {layout.showExploded ? (
         <>
@@ -27,7 +36,7 @@ const ExplodedScene = memo(
               fill={colors.fill}
               fillRule="evenodd"
               stroke={colors.raisedEdges}
-              strokeWidth={STROKE_WIDTH}
+              strokeWidth={strokeWidth}
             />
             <PuzzleStack
               borderEnabled={borderEnabled}
@@ -35,6 +44,7 @@ const ExplodedScene = memo(
               clipFunc={clipFunc}
               colors={colors}
               edges={geometry.edges}
+              strokeWidth={strokeWidth}
             />
           </Group>
           <Group x={layout.boardX}>
@@ -42,14 +52,14 @@ const ExplodedScene = memo(
               data={geometry.boardBasePath}
               fill={colors.fill}
               stroke={colors.boardBase}
-              strokeWidth={STROKE_WIDTH}
+              strokeWidth={strokeWidth}
             />
             {guideLines && (
               <PuzzleEdges
                 clipFunc={clipFunc}
                 horizontalData={geometry.edges.horizontalEdges}
                 stroke={colors.guideLines}
-                strokeWidth={GUIDE_STROKE_WIDTH}
+                strokeWidth={strokeWidth * GUIDE_STROKE_RATIO}
                 verticalData={geometry.edges.verticalEdges}
               />
             )}
@@ -63,6 +73,7 @@ const ExplodedScene = memo(
           colors={colors}
           edges={geometry.edges}
           imageOverlay={imageOverlay}
+          strokeWidth={strokeWidth}
         />
       )}
     </Group>

@@ -97,11 +97,11 @@ export const ORIENTATION_SEEDS: Record<1 | 2 | 3 | 4, number> = {
 /** Padding around the stage area */
 export const STAGE_PADDING = 40;
 
-/** Default stroke width for puzzle paths */
-export const STROKE_WIDTH = 0.5;
+/** Target stroke width in screen pixels — divided by scale to get puzzle-space width */
+export const STROKE_PX = 1.5;
 
-/** Stroke width for guide lines (thinner than main paths) */
-export const GUIDE_STROKE_WIDTH = 0.3;
+/** Guide lines are thinner than main strokes (ratio relative to STROKE_PX) */
+export const GUIDE_STROKE_RATIO = 0.6;
 
 /** Thumbnail button size in pixels */
 export const THUMB_SIZE = 80;
