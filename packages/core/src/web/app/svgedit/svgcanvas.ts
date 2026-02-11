@@ -65,7 +65,7 @@ import imageProcessor from '@core/implementations/imageProcessor';
 import recentMenuUpdater from '@core/implementations/recentMenuUpdater';
 import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
+import type { IPoint } from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';
 
 import canvasBackground from './canvasBackground';
@@ -88,8 +88,8 @@ import { setRotationAngle } from './transform/rotation';
 import { binarySearchLowerBoundIndex } from './utils/binarySearchIndex';
 import findDefs from './utils/findDef';
 import { findNearestAndFarthestAlignPoints } from './utils/findNearestAndFarthestAlignPoints';
+import { getBBox } from './utils/getBBox';
 import { isLineCoincide } from './utils/isLineCoincide';
-import { rotateBBox } from './utils/rotateBBox';
 import workareaManager from './workarea';
 
 let svgCanvas: ISVGCanvas;
@@ -406,9 +406,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   var getHref = (canvas.getHref = svgedit.utilities.getHref);
   var setHref = (canvas.setHref = svgedit.utilities.setHref);
-  var getPathBBox = svgedit.utilities.getPathBBox;
 
-  canvas.getBBox = svgedit.utilities.getBBox;
+  // Export for .js files
+  canvas.getBBox = (elem: SVGGraphicsElement) => getBBox(elem);
+  svgedit.utilities.getBBox = (elem: SVGGraphicsElement) => getBBox(elem, { ignoreTransform: true });
   canvas.getRotationAngle = svgedit.utilities.getRotationAngle;
 
   var getElem = (canvas.getElem = svgedit.utilities.getElem);
@@ -635,10 +636,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return canvas.addSvgElementFromJson(jsonMap);
     },
     currentZoom: () => workareaManager.zoomRatio,
-    // TODO(codedread): Remove when getStrokedBBox() has been put into svgutils.js.
-    getStrokedBBox: function (elems) {
-      return canvas.getStrokedBBox([elems]);
-    },
     svgContent: () => svgcontent,
     svgRoot: () => svgroot,
   });
@@ -897,23 +894,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return resultList;
   });
 
-  // TODO(codedread): Migrate this into svgutils.js
-  // Function: getStrokedBBox
-  // Get the bounding box for one or more stroked and/or transformed elements
-  //
-  // Parameters:
-  // elems - Array with DOM elements to check
-  //
-  // Returns:
-  // A single bounding box object
-  var getStrokedBBox = (this.getStrokedBBox = function (elems?: Element | Element[]) {
-    if (!elems) {
-      elems = getVisibleElements();
-    }
-
-    return svgedit.utilities.getStrokedBBox(elems, addSvgElementFromJson, pathActions);
-  });
-
   // Function: getVisibleElements
   // Get all elements that have a BBox (excludes <defs>, <title>, etc).
   // Note that 0-opacity, off-screen etc elements are still considered "visible"
@@ -953,7 +933,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Returns:
   // An array with objects that include:
   // * elem - The element
-  // * bbox - The element's BBox as retrieved from getStrokedBBox
+  // * bbox - The element's BBox as retrieved from getBBox
   var getVisibleElementsAndBBoxes = (this.getVisibleElementsAndBBoxes = function (parent?) {
     if (!parent) {
       parent = $(svgcontent).children(); // Prevent layers from being included
@@ -987,17 +967,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           }
 
           if (elem.getBBox) {
-            let bbox;
+            const bbox = getBBox(elem, { ignoreRotation: false });
 
-            if (elem.tagName === 'use') {
-              bbox = canvas.getSvgRealLocation(elem);
-            } else {
-              bbox = canvas.calculateTransformedBBox(elem);
-            }
-
-            const angle = svgedit.utilities.getRotationAngle(elem);
-
-            bbox = rotateBBox(bbox, angle);
             contentElems.push({
               bbox,
               elem,
@@ -1225,7 +1196,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         continue;
       }
 
-      var bbox = svgedit.utilities.getBBox(elem);
+      const bbox = getBBox(elem, { ignoreTransform: true });
 
       if (!bbox) {
         continue;
@@ -1247,9 +1218,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     if (showGrips || selectedElements.length === 1) {
-      selectorManager.requestSelector(selectedElements[0]).show(true);
+      selectorManager.requestSelector(selectedElements[0])?.show(true);
     } else {
-      selectorManager.requestSelector(selectedElements[0]).show(true, false);
+      selectorManager.requestSelector(selectedElements[0])?.show(true, false);
     }
 
     // make sure the elements are in the correct order
@@ -2221,7 +2192,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         }
 
         // get object's bounding box
-        var bb = svgedit.utilities.getBBox(elems[0]);
+        var bb = getBBox(elems[0], { ignoreTransform: true });
 
         // This will occur if the element is inside a <defs> or a <symbol>,
         // in which we shouldn't need to convert anyway.
@@ -2785,7 +2756,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.reorientGrads = function reorientGrads(elem, m) {
     var i;
-    var bb = svgedit.utilities.getBBox(elem);
+    var bb = getBBox(elems[0], { ignoreTransform: true });
 
     for (i = 0; i < 2; i++) {
       var type = i === 0 ? 'fill' : 'stroke';
@@ -3484,19 +3455,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return { cmd, path };
   };
 
-  /**
-   * Function: getConvertedPathBBox
-   * The BBox of an element-as-path
-   *
-   * Parameters:
-   * elem - The DOM element to be converted to path and getting bbox from.
-   *
-   * Returns:
-   * The path's bounding box object
-   */
-  this.getConvertedPathBBox = (elem: Element) =>
-    svgedit.utilities.getBBoxOfElementAsPath(elem, addSvgElementFromJson, pathActions);
-
   // Function: changeSelectedAttributeNoUndo
   // This function makes the changes to the elements. It does not add the change
   // to the history stack.
@@ -3526,7 +3484,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       // Set x,y vals on elements that don't have them
       if ((attr === 'x' || attr === 'y') && no_xy_elems.includes(elem.tagName)) {
-        const bbox = getStrokedBBox([elem]);
+        const bbox = getBBox(elem, { ignoreRotation: false, withStroke: true });
         const diffX = attr === 'x' ? newValue - bbox.x : 0;
         const diffY = attr === 'y' ? newValue - bbox.y : 0;
         const zoom = workareaManager.zoomRatio;
@@ -3629,15 +3587,15 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               // remove old rotate
               tlist.removeItem(n);
 
-              var box = svgedit.utilities.getBBox(elem);
-              var center = svgedit.math.transformPoint(
+              const box = getBBox(elem, { ignoreTransform: true });
+              const center = svgedit.math.transformPoint(
                 box.x + box.width / 2,
                 box.y + box.height / 2,
                 svgedit.math.transformListToTransform(tlist).matrix,
               );
-              var cx = center.x;
-              var cy = center.y;
-              var newrot = svgroot.createSVGTransform();
+              const cx = center.x;
+              const cy = center.y;
+              const newrot = svgroot.createSVGTransform();
 
               newrot.setRotate(angle, cx, cy);
               tlist.insertItemBefore(newrot, n);
@@ -3996,8 +3954,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     if (!CanvasElements.visibleElems.includes(tagName) || angle) return [];
 
-    const bbox = ['text', 'use'].includes(elem.tagName) ? this.getSvgRealLocation(elem) : elem.getBBox();
-    const getPoints = (bbox: DOMRect) => {
+    const bbox = getBBox(elem);
+    const getPoints = (bbox: { height: number; width: number; x: number; y: number }) => {
       const points = Array.of<IPoint>();
       const levels = [0, 0.5, 1] as const;
 
@@ -4214,7 +4172,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           }
 
           // get child's old center of rotation
-          var cbox = svgedit.utilities.getBBox(elem);
+          var cbox = getBBox(elem, { ignoreTransform: true });
           var ceqm = svgedit.math.transformListToTransform(chtlist).matrix;
           var coldc = svgedit.math.transformPoint(cbox.x + cbox.width / 2, cbox.y + cbox.height / 2, ceqm);
 
@@ -4423,7 +4381,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             y: elem.getAttribute('y') || 0,
           });
         } else if (elem.tagName === 'use') {
-          const realLocation = this.getUseElementLocationBeforeTransform(elem);
+          const realLocation = getBBox(elem, { ignoreTransform: true });
 
           svgedit.utilities.assignAttributes(imageBorder, {
             height: realLocation.height,
@@ -4729,39 +4687,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.moveElements = moveElements;
 
   this.getCenter = function (elem) {
-    let centerX;
-    let centerY;
-
-    switch (elem.tagName) {
-      case 'image':
-      case 'rect':
-        centerX = elem.x.baseVal.value + elem.width.baseVal.value / 2;
-        centerY = elem.y.baseVal.value + elem.height.baseVal.value / 2;
-        break;
-      case 'line':
-        centerX = (elem.x1.baseVal.value + elem.x2.baseVal.value) / 2;
-        centerY = (elem.y1.baseVal.value + elem.y2.baseVal.value) / 2;
-        break;
-      case 'ellipse':
-        centerX = elem.cx.baseVal.value;
-        centerY = elem.cy.baseVal.value;
-        break;
-      case 'polygon':
-      case 'path':
-      case 'use':
-      case 'text':
-        const realLocation = this.getSvgRealLocation(elem);
-
-        centerX = realLocation.x + realLocation.width / 2;
-        centerY = realLocation.y + realLocation.height / 2;
-        break;
-      default:
-        break;
-    }
+    const bbox = getBBox(elem);
 
     return {
-      x: centerX,
-      y: centerY,
+      x: bbox.x + bbox.width / 2,
+      y: bbox.y + bbox.height / 2,
     };
   };
 
@@ -4989,14 +4919,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     for (let i = 0; i < len; ++i) {
       const elem = selectedElements[i];
-      let bbox;
-
-      if (elem.tagName === 'use') {
-        bbox = this.getSvgRealLocation(elem);
-      } else {
-        bbox = this.calculateTransformedBBox(elem);
-      }
-
+      const bbox = getBBox(elem);
       const center = { x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height / 2 };
       const centers = [center];
       const flipPara = { horizon, vertical };
@@ -5080,14 +5003,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       batchCmd.addSubCommand(cmd);
     }
 
-    let bbox;
-
-    if (elem.tagName === 'use') {
-      bbox = this.getSvgRealLocation(elem);
-    } else {
-      bbox = this.calculateTransformedBBox(elem);
-    }
-
+    const bbox = getBBox(elem);
     const cx = bbox.x + bbox.width / 2;
     const cy = bbox.y + bbox.height / 2;
     const dx = flipPara.horizon < 0 ? 2 * (center.x - cx) : 0;
@@ -5217,7 +5133,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
 
       elem = selectedElements[i];
-      bboxes[i] = getStrokedBBox([elem]);
+      bboxes[i] = getBBox(elem, { ignoreRotation: false, withStroke: true });
 
       // now bbox is axis-aligned and handles rotation
       switch (relativeTo) {
@@ -5375,138 +5291,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.clear();
 
-  this.getUseElementLocationBeforeTransform = function (elem) {
-    const xform = $(elem).attr('data-xform');
-    const elemX = Number.parseFloat($(elem).attr('x') || '0');
-    const elemY = Number.parseFloat($(elem).attr('y') || '0');
-    let obj: { [key: string]: number } = {};
-
-    if (xform) {
-      xform.split(' ').forEach((pair) => {
-        const [key, value] = pair.split('=');
-
-        if (value === undefined) {
-          return;
-        }
-
-        obj[key] = Number.parseFloat(value);
-      });
-    } else {
-      obj = elem.getBBox();
-      obj.x = 0;
-      obj.y = 0;
-    }
-
-    obj.x += elemX;
-    obj.y += elemY;
-
-    return obj;
-  };
-
-  this.getSvgRealLocation = function (elem: SVGGraphicsElement): IRect {
-    if (elem.tagName === 'text') return this.calculateTransformedBBox(elem);
-
-    if (elem.tagName !== 'use') return elem.getBBox();
-
-    const xform = $(elem).attr('data-xform');
-    const elemX = Number.parseFloat($(elem).attr('x') || '0');
-    const elemY = Number.parseFloat($(elem).attr('y') || '0');
-
-    let obj: { [key: string]: number } = {};
-
-    if (xform) {
-      xform.split(' ').forEach((pair: any) => {
-        const [key, value] = pair.split('=');
-
-        if (value === undefined) {
-          return;
-        }
-
-        obj[key] = Number.parseFloat(value);
-      });
-    } else {
-      obj = elem.getBBox() as any;
-      obj.x = 0;
-      obj.y = 0;
-    }
-
-    const tlist = svgedit.transformlist.getTransformList(elem);
-    let rotationIndex = -1;
-
-    for (let i = tlist.numberOfItems - 1; i >= 0; i--) {
-      if (tlist.getItem(i).type === 4) {
-        rotationIndex = i;
-        break;
-      }
-    }
-
-    // ignore rotation
-    const { matrix: { a = 1, b = 0, c = 0, d = 1, e = 0, f = 0 } = {} } =
-      rotationIndex === tlist.numberOfItems - 1 ? {} : svgedit.math.transformListToTransform(tlist, rotationIndex + 1);
-
-    obj.x += elemX;
-    obj.y += elemY;
-
-    let x = a * obj.x + c * obj.y + e;
-    let y = b * obj.x + d * obj.y + f;
-    let width = obj.width * a + obj.height * c;
-    let height = obj.width * b + obj.height * d;
-
-    if (width < 0) {
-      x += width;
-      width *= -1;
-    }
-
-    if (height < 0) {
-      y += height;
-      height *= -1;
-    }
-
-    height = round(height, 4);
-    width = round(width, 4);
-    x = round(x, 4);
-    y = round(y, 4);
-
-    return { height, width, x, y };
-  };
-
-  this.calculateTransformedBBox = function (elem: Element, ignoreRotation = true): IRect {
-    const tlist = svgedit.transformlist.getTransformList(elem);
-    const bbox = elem.getBBox();
-    let points = [
-      { x: bbox.x, y: bbox.y },
-      { x: bbox.x + bbox.width, y: bbox.y },
-      { x: bbox.x, y: bbox.y + bbox.height },
-      { x: bbox.x + bbox.width, y: bbox.y + bbox.height },
-    ];
-
-    for (let i = tlist.numberOfItems - 1; i >= 0; i--) {
-      const t = tlist.getItem(i);
-
-      if (ignoreRotation && t.type === 4) {
-        break;
-      }
-
-      points = points.map((p) => {
-        const x = t.matrix.a * p.x + t.matrix.c * p.y + t.matrix.e;
-        const y = t.matrix.b * p.x + t.matrix.d * p.y + t.matrix.f;
-
-        return { x, y };
-      });
-    }
-
-    let [minX, minY, maxX, maxY] = [points[0].x, points[0].y, points[0].x, points[0].y];
-
-    points.forEach((p) => {
-      minX = Math.min(p.x, minX);
-      maxX = Math.max(p.x, maxX);
-      minY = Math.min(p.y, minY);
-      maxY = Math.max(p.y, maxY);
-    });
-
-    return { height: maxY - minY, width: maxX - minX, x: minX, y: minY };
-  };
-
   this.moveElemPosition = function (dx, dy, elem) {
     if (elem === null) {
       return;
@@ -5563,22 +5347,22 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         break;
     }
 
-    selectorManager.requestSelector(elem).resize();
+    selectorManager.requestSelector(elem)?.resize();
     recalculateAllSelectedDimensions();
   };
 
   this.setSvgElemPosition = function (para, val, elem?, addToHistory = true) {
     const selected = elem || selectedElements[0];
-    const realLocation = this.getSvgRealLocation(selected);
+    const bbox = getBBox(selected);
     let dx = 0;
     let dy = 0;
 
     switch (para) {
       case 'x':
-        dx = val - realLocation.x;
+        dx = val - bbox.x;
         break;
       case 'y':
-        dy = val - realLocation.y;
+        dy = val - bbox.y;
         break;
     }
 
@@ -5593,7 +5377,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       tlist.appendItem(xform);
     }
 
-    selectorManager.requestSelector(selected).resize();
+    selectorManager.requestSelector(selected)?.resize();
 
     const cmd = recalculateAllSelectedDimensions(!addToHistory);
 
@@ -5606,24 +5390,24 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     if (!selected) return;
 
-    const realLocation = this.getSvgRealLocation(selected);
+    const bbox = getBBox(selected);
     let sx = 1;
     let sy = 1;
 
     switch (para) {
       case 'width':
-        sx = val / realLocation.width;
+        sx = val / bbox.width;
         break;
       case 'height':
-        sy = val / realLocation.height;
+        sy = val / bbox.height;
         break;
     }
 
     startTransform = selected.getAttribute('transform'); // ???maybe non need
 
     const tlist = svgedit.transformlist.getTransformList(selected);
-    const left = realLocation.x;
-    const top = realLocation.y;
+    const left = bbox.x;
+    const top = bbox.y;
 
     // update the transform list with translate,scale,translate
     const translateOrigin = svgroot.createSVGTransform();
@@ -5648,9 +5432,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       tlist.appendItem(translateOrigin);
     }
 
-    selectorManager.requestSelector(selected).resize();
+    selectorManager.requestSelector(selected)?.resize();
 
-    selectorManager.requestSelector(selected).show(true);
+    selectorManager.requestSelector(selected)?.show(true);
 
     const cmd = svgedit.recalculate.recalculateDimensions(selected);
 
@@ -5665,46 +5449,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       return batchCmd;
     }
-  };
-
-  this.zoomSvgElem = function (zoomScale) {
-    const selected = selectedElements[0];
-    const realLocation = this.getSvgRealLocation(selected);
-
-    startTransform = selected.getAttribute('transform'); // ???maybe non need
-
-    const tlist = svgedit.transformlist.getTransformList(selected);
-    const left = realLocation.x;
-    const top = realLocation.y;
-
-    // update the transform list with translate,scale,translate
-    const translateOrigin = svgroot.createSVGTransform();
-    const scale = svgroot.createSVGTransform();
-    const translateBack = svgroot.createSVGTransform();
-
-    translateOrigin.setTranslate(-left, -top);
-    scale.setScale(zoomScale, zoomScale);
-    translateBack.setTranslate(left, top);
-
-    const hasMatrix = svgedit.math.hasMatrixTransform(tlist);
-
-    if (hasMatrix) {
-      const pos = svgedit.utilities.getRotationAngle(selected) ? 1 : 0;
-
-      tlist.insertItemBefore(translateOrigin, pos);
-      tlist.insertItemBefore(scale, pos);
-      tlist.insertItemBefore(translateBack, pos);
-    } else {
-      tlist.appendItem(translateBack);
-      tlist.appendItem(scale);
-      tlist.appendItem(translateOrigin);
-    }
-
-    selectorManager.requestSelector(selected).resize();
-
-    selectorManager.requestSelector(selected).show(true);
-
-    svgedit.recalculate.recalculateDimensions(selected);
   };
 
   // Function: addExtension
@@ -5732,7 +5476,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
           findDuplicateGradient,
           getId,
           getNextId,
-          getPathBBox,
           InsertElementCommand,
           isIdentity: svgedit.math.isIdentity,
           logMatrix,

@@ -11,6 +11,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -209,7 +210,7 @@ function finalizeImport(
   let minY = Infinity;
 
   elements.forEach((elem) => {
-    const { x, y } = svgCanvas.getSvgRealLocation(elem);
+    const { x, y } = getBBox(elem);
 
     minX = Math.min(minX, x);
     minY = Math.min(minY, y);

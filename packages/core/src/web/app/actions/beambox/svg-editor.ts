@@ -78,6 +78,7 @@ import {
   setMouseMode,
 } from '@core/app/stores/canvas/utils/mouseMode';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -477,7 +478,7 @@ const svgEditor = (window['svgEditor'] = (function () {
 
             // Get BBox vals for g, polyline and path
             if (['g', 'path', 'polygon', 'polyline'].includes(elname)) {
-              var bb = svgCanvas.getStrokedBBox([elem]);
+              const bb = getBBox(elem, { withStroke: true, ignoreRotation: false });
 
               if (bb) {
                 x = bb.x;
@@ -493,7 +494,7 @@ const svgEditor = (window['svgEditor'] = (function () {
                 }
               }
             } else if (['text'].includes(elname)) {
-              const bb = svgCanvas.calculateTransformedBBox(elem);
+              const bb = getBBox(elem);
 
               x = bb.x;
               y = bb.y;
@@ -601,14 +602,14 @@ const svgEditor = (window['svgEditor'] = (function () {
             case 'use':
               $('#container_panel').show();
 
-              if (el_name === 'use' && $(elem).attr('data-xform')) {
-                const location = svgCanvas.getSvgRealLocation(elem);
+              if (el_name === 'use') {
+                const bbox = getBBox(elem);
 
                 ObjectPanelController.updateDimensionValues({
-                  height: location.height,
-                  width: location.width,
-                  x: location.x,
-                  y: location.y,
+                  height: bbox.height,
+                  width: bbox.width,
+                  x: bbox.x,
+                  y: bbox.y,
                 });
               }
 

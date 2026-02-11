@@ -10,6 +10,7 @@ import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import textedit from '@core/app/svgedit/text/textedit';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { discoverManager } from '@core/helpers/api/discover';
 import SvgLaserParser from '@core/helpers/api/svg-laser-parser';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -403,7 +404,7 @@ const convertTextToPathByGhost = async (
       throw new Error('No connection');
     }
 
-    const bbox = svgCanvas.calculateTransformedBBox(textElem);
+    const bbox = getBBox(textElem as SVGTextElement);
     const { postscriptName } = font;
     const res = await fontHelper.getWebFontAndUpload(postscriptName!);
 

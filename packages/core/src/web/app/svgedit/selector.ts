@@ -15,6 +15,8 @@ import { getMouseMode } from '../stores/canvas/utils/mouseMode';
 import { getStorage } from '../stores/storageStore';
 
 import { getRotationAngle } from './transform/rotation';
+import { getTransformList } from './transform/transformlist';
+import { getBBox, getBBoxFromElements } from './utils/getBBox';
 import workareaManager from './workarea';
 
 const { svgedit } = window;
@@ -232,11 +234,11 @@ export class Selector {
    * @param bbox Optional bbox to use for resize (prevents duplicate getBBox call).
    */
   calculateDimension(bbox?: BBox) {
-    const elem = this.elem as Element;
+    const elem = this.elem as SVGGraphicsElement;
     const currentZoom = workareaManager.zoomRatio;
     const { tagName } = elem;
 
-    const tlist = svgedit.transformlist.getTransformList(elem);
+    const tlist = getTransformList(elem);
     let m = svgedit.math.transformListToTransform(tlist).matrix;
 
     // This should probably be handled somewhere else, but for now
@@ -244,12 +246,15 @@ export class Selector {
     m.e *= currentZoom;
     m.f *= currentZoom;
 
-    let elemBBox = bbox || svgedit.utilities.getBBox(elem);
+    let elemBBox = bbox || getBBox(elem, { ignoreTransform: true });
 
     if (tagName === 'g' && !$.data(elem, 'gsvg')) {
       // The bbox for a group does not include stroke vals, so we
       // get the bbox based on its children.
-      const strokedBBox = svgFactory.getStrokedBBox(elem.childNodes);
+      const strokedBBox = getBBoxFromElements(Array.from(elem.childNodes) as SVGGraphicsElement[], {
+        ignoreRotation: false,
+        withStroke: true,
+      });
 
       if (strokedBBox) {
         elemBBox = strokedBBox;
@@ -425,7 +430,7 @@ export class Selector {
       let rectCx = cx;
       let rectCy = y - rectDist;
       let rotate = 0;
-      const textBBox = svgedit.utilities.getBBox(this.dimensionInfo);
+      const textBBox = getBBox(this.dimensionInfo, { ignoreTransform: true });
       const rectW = textBBox.width + 30;
       const rectH = textBBox.height + 10;
 

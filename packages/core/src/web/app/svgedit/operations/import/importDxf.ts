@@ -17,6 +17,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getBBox } from '../../utils/getBBox';
+
 let svgCanvas: ISVGCanvas;
 let svgedit;
 
@@ -156,7 +158,7 @@ const importDxf = async (file: Blob): Promise<void> => {
     layerManager.getCurrentLayer()!.appendChildren([useElem]);
     batchCmd.addSubCommand(new history.InsertElementCommand(useElem));
 
-    const bb = svgedit.utilities.getBBox(useElem);
+    const bb = getBBox(useElem, { ignoreTransform: true });
 
     const attrs = [];
     const keys = Object.keys(bb);

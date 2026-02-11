@@ -1,6 +1,7 @@
 import { match } from 'ts-pattern';
 
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import type ClipperBase from '../clipper';
@@ -37,7 +38,7 @@ export async function processElementForOffset(
       return { isUnsupported: true, success: true };
     }
 
-    const bbox = svgedit.utilities.getBBox(elem);
+    const bbox = getBBox(elem, { ignoreTransform: true });
     const rotation = {
       angle: getRotationAngle(elem),
       cx: bbox.x + bbox.width / 2,

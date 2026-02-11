@@ -12,6 +12,8 @@ import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type { ImportType } from '@core/interfaces/ImportSvg';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getBBox } from '../../utils/getBBox';
+
 let svgedit: any;
 let svgCanvas: ISVGCanvas;
 
@@ -41,7 +43,7 @@ const importSvgString = async (
   const batchCmd = new history.BatchCommand('Import Image');
 
   function setDataXform(use_el: SVGUseElement, isImageTrace: boolean) {
-    const bb = svgedit.utilities.getBBox(use_el);
+    const bb = getBBox(use_el, { ignoreTransform: true });
     let dataXform = '';
 
     if (isImageTrace) {

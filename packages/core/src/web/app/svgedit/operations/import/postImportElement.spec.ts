@@ -1,5 +1,11 @@
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 
+const mockGetBBox = jest.fn().mockReturnValue({ height: 25, width: 15, x: 15, y: 10 });
+
+jest.mock('../../utils/getBBox', () => ({
+  getBBox: (elem: SVGElement) => mockGetBBox(elem),
+}));
+
 const mockDisassembleUse = jest.fn();
 
 jest.mock('@core/app/svgedit/operations/disassembleUse', () => mockDisassembleUse);
@@ -11,7 +17,6 @@ jest.mock('@core/helpers/color/updateElementColor', () => mockUpdateElementColor
 const mockCmd1 = 'mock-cmd-1';
 const mockCmd2 = 'mock-cmd-2';
 const mockCmd3 = 'mock-cmd-3';
-const mockGetSvgRealLocation = jest.fn().mockReturnValue({ height: 25, width: 15, x: 15, y: 10 });
 const mockSelectOnly = jest.fn();
 const mockSetSvgElemSize = jest.fn().mockReturnValue(mockCmd1);
 const mockSetSvgElemPosition = jest.fn().mockReturnValue(mockCmd2);
@@ -23,7 +28,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     callback({
       Canvas: {
         getSelectedElems: mockGetSelectedElems,
-        getSvgRealLocation: mockGetSvgRealLocation,
         groupSelectedElements: mockGroupSelectedElements,
         selectOnly: mockSelectOnly,
         setSvgElemPosition: mockSetSvgElemPosition,
@@ -49,8 +53,8 @@ describe('test postImportElement', () => {
   it('should import svg object, update location and disassemble', async () => {
     await postImportElement(mockElement, mockBatchCommand);
 
-    expect(mockGetSvgRealLocation).toHaveBeenCalledTimes(1);
-    expect(mockGetSvgRealLocation).toHaveBeenCalledWith(mockElement);
+    expect(mockGetBBox).toHaveBeenCalledTimes(1);
+    expect(mockGetBBox).toHaveBeenCalledWith(mockElement);
     expect(mockSelectOnly).toHaveBeenCalledTimes(1);
     expect(mockSelectOnly).toHaveBeenCalledWith([mockElement]);
     expect(mockSetSvgElemPosition).toHaveBeenCalledTimes(2);
@@ -78,8 +82,8 @@ describe('test postImportElement', () => {
     mockPathElement.setAttribute('data-tempgroup', 'true');
     await postImportElement(mockElement, mockBatchCommand);
 
-    expect(mockGetSvgRealLocation).toHaveBeenCalledTimes(1);
-    expect(mockGetSvgRealLocation).toHaveBeenCalledWith(mockElement);
+    expect(mockGetBBox).toHaveBeenCalledTimes(1);
+    expect(mockGetBBox).toHaveBeenCalledWith(mockElement);
     expect(mockSelectOnly).toHaveBeenCalledTimes(1);
     expect(mockSelectOnly).toHaveBeenCalledWith([mockElement]);
     expect(mockSetSvgElemPosition).toHaveBeenCalledTimes(2);

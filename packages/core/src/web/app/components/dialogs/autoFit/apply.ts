@@ -6,6 +6,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { cloneElements } from '@core/app/svgedit/operations/clipboard';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -48,8 +49,7 @@ const apply = async (
   // move the element to the main contour
   const mainContour = contours[mainIdx];
   const [mx, my] = mainContour.center;
-  const elemBBox =
-    element.tagName === 'use' ? svgCanvas.getSvgRealLocation(element) : svgCanvas.calculateTransformedBBox(element);
+  const elemBBox = getBBox(element as SVGElement);
   const ex = elemBBox.x + elemBBox.width / 2;
   const ey = elemBBox.y + elemBBox.height / 2;
 
@@ -71,10 +71,7 @@ const apply = async (
 
   for (let i = 0; i < elemsToClone.length; i += 1) {
     const elemToClone = elemsToClone[i];
-    const bbox =
-      elemToClone.tagName === 'use'
-        ? svgCanvas.getSvgRealLocation(elemToClone)
-        : svgCanvas.calculateTransformedBBox(elemToClone);
+    const bbox = getBBox(elemToClone as SVGElement);
     const center = [bbox.x + bbox.width / 2, bbox.y + bbox.height / 2];
     const elemDx = center[0] - mainContour.center[0];
     const elemDy = center[1] - mainContour.center[1];
