@@ -2756,7 +2756,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.reorientGrads = function reorientGrads(elem, m) {
     var i;
-    var bb = getBBox(elems[0], { ignoreTransform: true });
+    var bb = getBBox(elem, { ignoreTransform: true });
 
     for (i = 0; i < 2; i++) {
       var type = i === 0 ? 'fill' : 'stroke';

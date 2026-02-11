@@ -2,18 +2,10 @@ import React, { memo, useEffect, useRef } from 'react';
 
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Info.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 interface Props {
   element: SVGElement;
