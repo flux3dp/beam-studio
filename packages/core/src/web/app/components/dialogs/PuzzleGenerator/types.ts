@@ -24,7 +24,6 @@ export interface TabJitter {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export interface PuzzleEdges {
-  boundaryPath: string;
   horizontalEdges: string;
   verticalEdges: string;
 }
@@ -32,6 +31,12 @@ export interface PuzzleEdges {
 export interface MergeGroup {
   pieces: Array<{ col: number; row: number }>;
   sharedEdges: Array<{ col1: number; col2: number; row1: number; row2: number }>;
+}
+
+export interface PieceVisibility {
+  col: number;
+  row: number;
+  visibleRatio: number;
 }
 
 export interface PuzzleLayout {
@@ -55,6 +60,8 @@ export interface PuzzleGeometry {
   layout: PuzzleLayout;
   /** Merge groups for shapes that don't fill their bounding box */
   mergeGroups: MergeGroup[];
+  /** Shape metadata computed by the orchestrator — includes center Y offset for heart */
+  meta: ShapeMetadata;
   /** Raised edges frame path with inner cutout (if border enabled) */
   raisedEdgesPath?: string;
 }
@@ -68,6 +75,14 @@ export interface ShapeMetadata {
   borderCornerRadius: number;
   /** Corner radius for the puzzle boundary (resolved from state) */
   boundaryCornerRadius: number;
+  /**
+   * Height to use for the boundary shape. Equals grid height for most shapes.
+   * For heart with HEART_FIT_TO_GRID, this is stretched (gridHeight / 0.925) so
+   * the heart's visual extremes (lobe peaks + bottom point) touch the grid edges.
+   */
+  boundaryHeight: number;
+  /** Vertical offset for the shape center (heart: shifts so extremes are symmetric about grid center) */
+  centerYOffset: number;
   /** Whether the shape fills its entire bounding box (no clipping/merging needed when true) */
   fillsBoundingBox: boolean;
   /** Corner radius for the inner cutout of raised edges (resolved from state) */

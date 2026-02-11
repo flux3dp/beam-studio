@@ -43,18 +43,24 @@ export const LAYER_GAP = 30;
 /** Default sharpness for heart shape bottom point (0-50 scale) */
 export const DEFAULT_HEART_SHARPNESS = 25;
 
+/** When true, the heart shape is vertically stretched so lobe peaks and bottom point touch grid edges. */
+export const HEART_FIT_TO_GRID = true;
+
+/**
+ * The heart's actual visual height as a fraction of its nominal bounding box height.
+ * Lobe peaks are at centerY - 0.425h (not -0.5h) because the Bezier control points
+ * at topY are handles, not through-points. The curve reaches 75% of the way from
+ * notchY to topY: notchY - 0.75 * topCurveHeight = -0.2h - 0.225h = -0.425h.
+ * Visual span = 0.425h + 0.5h = 0.925h. Constant — independent of cornerRadius.
+ */
+export const HEART_VISUAL_HEIGHT_RATIO = 0.925;
+
 // ─────────────────────────────────────────────────────────────────────────────
 // VISIBILITY - Piece merging algorithm thresholds
 // ─────────────────────────────────────────────────────────────────────────────
 
-/** Threshold for very small corner pieces requiring diagonal bridging (< 25%) */
-export const VISIBILITY_VERY_SMALL = 0.25;
-
-/** Default threshold for merging small pieces with neighbors (< 50%) */
-export const VISIBILITY_MERGE_THRESHOLD = 0.5;
-
-/** Target combined visibility for merged groups during expansion (>= 80%) */
-export const VISIBILITY_GROUP_TARGET = 0.8;
+/** Default threshold for merging small pieces with neighbors (< 40%) */
+export const VISIBILITY_MERGE_THRESHOLD = 0.4;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // JIGSAW - Tab generation and jitter constants
@@ -83,22 +89,6 @@ export const ORIENTATION_SEEDS: Record<1 | 2 | 3 | 4, number> = {
   3: 7890,
   4: 2468,
 };
-
-/** Cardinal direction offsets for neighbor traversal */
-export const CARDINAL_DIRECTIONS = [
-  { c: 1, r: 0 },
-  { c: -1, r: 0 },
-  { c: 0, r: 1 },
-  { c: 0, r: -1 },
-] as const;
-
-/** Diagonal direction offsets for corner bridging */
-export const DIAGONAL_DIRECTIONS = [
-  { dc: 1, dr: 1 },
-  { dc: -1, dr: 1 },
-  { dc: 1, dr: -1 },
-  { dc: -1, dr: -1 },
-] as const;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // PREVIEW - UI sizing and display constants

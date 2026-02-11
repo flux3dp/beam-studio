@@ -20,7 +20,7 @@ import type { PuzzleGeometry, PuzzleState, PuzzleTypeConfig, ShapeType } from '.
 
 import { computeImagePlacement, type ImagePlacement } from './imageLayout';
 import { computeExportLayout, computePuzzleGeometry } from './puzzleGeometry';
-import { drawShapeClipPath, getShapeMetadata } from './shapeGenerators';
+import { drawShapeClipPath } from './shapeGenerators';
 
 let svgCanvas: ISVGCanvas;
 
@@ -100,6 +100,7 @@ const renderCroppedImage = (
   clipH: number,
   cornerRadius: number,
   pxPerMm: number,
+  centerYOffset: number = 0,
 ): string => {
   const canvasW = Math.ceil(clipW * pxPerMm);
   const canvasH = Math.ceil(clipH * pxPerMm);
@@ -121,7 +122,7 @@ const renderCroppedImage = (
   ctx.scale(pxPerMm, pxPerMm);
 
   // Clip to the boundary shape (drawShapeClipPath draws centered at origin in mm)
-  drawShapeClipPath(ctx, shapeType, clipW, clipH, cornerRadius);
+  drawShapeClipPath(ctx, shapeType, clipW, clipH, cornerRadius, centerYOffset);
   ctx.clip();
 
   // Draw the image (placement coords are in mm, centered at origin)
@@ -176,18 +177,20 @@ const exportImageLayer = async (
   if (!image.dataUrl) return;
 
   const img = await loadImage(image.dataUrl);
-  const meta = getShapeMetadata(shapeType, state);
+  const { meta } = geo;
 
-  // Clip dimensions — expand by bleed if set
+  // Clip dimensions — use boundaryHeight (stretched for heart), expand by bleed
   const clipW = geo.layout.width + image.bleed * 2;
-  const clipH = geo.layout.height + image.bleed * 2;
+  const clipH = meta.boundaryHeight + image.bleed * 2;
   const placement = computeImagePlacement(img.naturalWidth, img.naturalHeight, geo.layout, image);
 
   // Skip export if image has zero dimensions (shouldn't happen, but guard against it)
   if (!placement) return;
 
   // Render image clipped to shape on offscreen canvas
-  const croppedDataUrl = renderCroppedImage(img, placement, shapeType, clipW, clipH, meta.boundaryCornerRadius, dpmm);
+  const croppedDataUrl = renderCroppedImage(
+    img, placement, shapeType, clipW, clipH, meta.boundaryCornerRadius, dpmm, meta.centerYOffset,
+  );
 
   const isPrinting = image.exportAs === 'print';
   const targetModule = isPrinting ? LayerModule.PRINTER : getDefaultLaserModule();
@@ -278,8 +281,7 @@ export const exportToCanvas = async (
 
   // Combine edge paths for cutting
   const innerCuts = [geo.edges.horizontalEdges, geo.edges.verticalEdges].filter(Boolean).join(' ');
-  const meta = getShapeMetadata(typeConfig.id, state);
-  const clipPath = meta.fillsBoundingBox ? undefined : geo.boundaryPath;
+  const clipPath = geo.meta.fillsBoundingBox ? undefined : geo.boundaryPath;
   const baseOpts = { height: layout.totalHeight, width: layout.totalWidth };
 
   // Export layers in order (bottom to top in layer panel)

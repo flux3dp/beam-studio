@@ -5,7 +5,7 @@
 
 import { match } from 'ts-pattern';
 
-import { DEFAULT_HEART_SHARPNESS } from '../constants';
+import { DEFAULT_HEART_SHARPNESS, HEART_FIT_TO_GRID, HEART_VISUAL_HEIGHT_RATIO } from '../constants';
 import type { ShapeMetadata, ShapeType } from '../types';
 
 interface ShapeOptions {
@@ -128,35 +128,70 @@ export const generateHeartPath = (options: ShapeOptions): string => {
 /**
  * Resolves shape metadata from state. Single source of truth for shape-specific behavior.
  * Adding a new shape to ShapeType will force an update here via .exhaustive().
+ *
+ * For heart with HEART_FIT_TO_GRID enabled:
+ * - `boundaryHeight` is stretched (gridH / 0.925) so the heart's visual extremes fill the grid
+ * - `centerYOffset` shifts the heart center so lobe peaks touch grid top and bottom point touches grid bottom
+ *
+ * Math: lobe peaks are at centerY - 0.425·H, bottom at centerY + 0.5·H.
+ * Solving for both to touch ±gridH/2:
+ *   scaledH = gridH / (0.425 + 0.5) = gridH / 0.925
+ *   centerY = -gridH/2 + 0.425 · scaledH
  */
 export const getShapeMetadata = (
   shapeType: ShapeType,
-  state: { border: { radius: number }; radius?: number },
-): ShapeMetadata =>
-  match(shapeType)
+  state: { border: { radius: number }; pieceSize: number; radius?: number; rows: number },
+): ShapeMetadata => {
+  const gridH = state.rows * state.pieceSize;
+
+  return match(shapeType)
     .with('circle', () => ({
       borderCornerRadius: state.border.radius,
       boundaryCornerRadius: 0,
+      boundaryHeight: gridH,
+      centerYOffset: 0,
       fillsBoundingBox: false,
       innerCutoutCornerRadius: state.border.radius,
     }))
-    .with('heart', () => ({
-      borderCornerRadius: DEFAULT_HEART_SHARPNESS,
-      boundaryCornerRadius: DEFAULT_HEART_SHARPNESS,
-      fillsBoundingBox: false,
-      innerCutoutCornerRadius: DEFAULT_HEART_SHARPNESS,
-    }))
+    .with('heart', () => {
+      if (HEART_FIT_TO_GRID) {
+        const scaledH = gridH / HEART_VISUAL_HEIGHT_RATIO;
+        // Shift center so lobe peaks (-0.425·scaledH from center) touch grid top (-gridH/2)
+        const centerY = -gridH / 2 + 0.425 * scaledH;
+
+        return {
+          borderCornerRadius: DEFAULT_HEART_SHARPNESS,
+          boundaryCornerRadius: DEFAULT_HEART_SHARPNESS,
+          boundaryHeight: scaledH,
+          centerYOffset: centerY,
+          fillsBoundingBox: false,
+          innerCutoutCornerRadius: DEFAULT_HEART_SHARPNESS,
+        };
+      }
+
+      return {
+        borderCornerRadius: DEFAULT_HEART_SHARPNESS,
+        boundaryCornerRadius: DEFAULT_HEART_SHARPNESS,
+        boundaryHeight: gridH,
+        centerYOffset: 0,
+        fillsBoundingBox: false,
+        innerCutoutCornerRadius: DEFAULT_HEART_SHARPNESS,
+      };
+    })
     .with('rectangle', () => {
       const puzzleRadius = state.radius ?? 0;
 
       return {
         borderCornerRadius: state.border.radius,
         boundaryCornerRadius: puzzleRadius,
+        boundaryHeight: gridH,
+        centerYOffset: 0,
         fillsBoundingBox: puzzleRadius <= 0,
         innerCutoutCornerRadius: puzzleRadius > 0 ? puzzleRadius : state.border.radius,
       };
     })
     .exhaustive();
+};
 
 export const generateShapePath = (shapeType: ShapeType, options: ShapeOptions): string =>
   match(shapeType)
@@ -189,6 +224,8 @@ const cubicTangentAt = ([p0, p1, p2, p3]: CubicSegment, t: number): Point => {
     3 * (u * u * (p1[1] - p0[1]) + 2 * u * t * (p2[1] - p1[1]) + t * t * (p3[1] - p2[1])),
   ];
 };
+
+// ── Bézier offset utilities (used for heart border) ──────────────────────────
 
 /** Outward unit normal for counter-clockwise winding in Y-down coords: (-dy, dx). */
 const outwardNormal = ([dx, dy]: Point): Point => {
@@ -384,13 +421,74 @@ export const generateRaisedEdgesPath = (shapeType: ShapeType, options: RaisedEdg
 export const isPointInEllipse = (x: number, y: number, radiusX: number, radiusY: number): boolean =>
   (x * x) / (radiusX * radiusX) + (y * y) / (radiusY * radiusY) <= 1;
 
+/**
+ * Point-in-heart test using the actual Bézier geometry.
+ * Uses ray casting algorithm: count intersections with the heart boundary.
+ * A point is inside if it has an odd number of intersections to the right.
+ *
+ * For symmetric results, we use the heart's left-right symmetry:
+ * test with |x| and check the left half of the heart.
+ */
 export const isPointInHeart = (px: number, py: number, width: number, height: number): boolean => {
-  const nx = px / (width / 2);
-  const ny = -py / (height / 2);
-  const x2 = nx * nx;
-  const term1 = x2 + ny * ny - 1;
+  // Get the same control points used by generateHeartPath
+  const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } = computeHeartControlPoints(
+    width,
+    height,
+    0, // centerY = 0 (centered at origin)
+    DEFAULT_HEART_SHARPNESS,
+  );
 
-  return term1 * term1 * term1 - x2 * ny * ny * ny <= 0;
+  // Quick bounds check
+  if (py < topY || py > bottomY || Math.abs(px) > halfWidth) return false;
+
+  // Use symmetry: test with absolute x value against left half of heart
+  // This ensures perfectly symmetric results for left and right pieces
+  const testX = -Math.abs(px);
+
+  // Build polygon for LEFT HALF of heart only (from notch down left side and back)
+  const STEPS = 48; // Higher resolution for accuracy
+  const polygon: Array<[number, number]> = [];
+
+  // Sample a cubic Bézier segment
+  const sampleSegment = (
+    p0: [number, number],
+    p1: [number, number],
+    p2: [number, number],
+    p3: [number, number],
+  ) => {
+    for (let i = 0; i < STEPS; i++) {
+      const t = i / STEPS;
+      const u = 1 - t;
+      const x = u * u * u * p0[0] + 3 * u * u * t * p1[0] + 3 * u * t * t * p2[0] + t * t * t * p3[0];
+      const y = u * u * u * p0[1] + 3 * u * u * t * p1[1] + 3 * u * t * t * p2[1] + t * t * t * p3[1];
+
+      polygon.push([x, y]);
+    }
+  };
+
+  // Left half: notch → left lobe → bottom → close with vertical line at x=0
+  // Segment 1: notch → left lobe (top curve)
+  sampleSegment([0, notchY], [0, topY], [-halfWidth, topY], [-halfWidth, notchY]);
+  // Segment 2: left lobe → bottom
+  sampleSegment([-halfWidth, notchY], [-halfWidth, bottomCtrl1Y], [-bottomCtrl2X, bottomCtrl2Y], [0, bottomY]);
+  // Close the half with a straight line from bottom back to notch (along x=0)
+  polygon.push([0, bottomY]);
+  polygon.push([0, notchY]);
+
+  // Ray casting algorithm
+  let inside = false;
+  const n = polygon.length;
+
+  for (let i = 0, j = n - 1; i < n; j = i++) {
+    const [xi, yi] = polygon[i];
+    const [xj, yj] = polygon[j];
+
+    if (yi > py !== yj > py && testX < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+      inside = !inside;
+    }
+  }
+
+  return inside;
 };
 
 export const isPointInRectangle = (x: number, y: number, width: number, height: number, cornerRadius = 0): boolean => {
@@ -423,10 +521,11 @@ export const isPointInShape = (
   width: number,
   height: number,
   cornerRadius = 0,
+  centerYOffset = 0,
 ): boolean =>
   match(shapeType)
     .with('circle', () => isPointInEllipse(x, y, width / 2, height / 2))
-    .with('heart', () => isPointInHeart(x, y, width, height))
+    .with('heart', () => isPointInHeart(x, y - centerYOffset, width, height))
     .with('rectangle', () => isPointInRectangle(x, y, width, height, cornerRadius))
     .exhaustive();
 
@@ -437,6 +536,7 @@ export const drawShapeClipPath = (
   width: number,
   height: number,
   cornerRadius: number = 0,
+  centerYOffset: number = 0,
 ): void => {
   ctx.beginPath();
 
@@ -445,12 +545,8 @@ export const drawShapeClipPath = (
       ctx.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
     })
     .with('heart', () => {
-      const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } = computeHeartControlPoints(
-        width,
-        height,
-        0,
-        DEFAULT_HEART_SHARPNESS,
-      );
+      const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } =
+        computeHeartControlPoints(width, height, centerYOffset, DEFAULT_HEART_SHARPNESS);
 
       ctx.moveTo(0, notchY);
       ctx.bezierCurveTo(0, topY, -halfWidth, topY, -halfWidth, notchY);

@@ -11,7 +11,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import { COLORS, MM_PER_INCH, OVERLAY_BOTTOM, STAGE_PADDING, THUMB_PAD, THUMB_SIZE } from '../../constants';
 import type { ViewMode } from '../../constants';
-import { computePuzzleGeometry, getShapeMetadata } from '../../geometry';
+import { computePuzzleGeometry } from '../../geometry';
 import useClipFunctions from '../../hooks/useClipFunctions';
 import useContainerSize from '../../hooks/useContainerSize';
 import useImageLayout from '../../hooks/useImageLayout';
@@ -38,11 +38,11 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
   const { containerRef, size: stageSize } = useContainerSize();
 
   const shapeType = typeConfig.id;
-  const meta = useMemo(() => getShapeMetadata(shapeType, state), [shapeType, state]);
   const colors = COLORS[viewMode];
 
-  // Core data
+  // Core data — geometry includes metadata (with fitted dimensions for heart)
   const geometry = useMemo(() => computePuzzleGeometry(state, shapeType), [state, shapeType]);
+  const { meta } = geometry;
   const { boundaryClip, imageClip } = useClipFunctions(shapeType, geometry, meta, state.image.bleed);
 
   // View layout

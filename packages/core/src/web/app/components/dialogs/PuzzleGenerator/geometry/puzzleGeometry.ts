@@ -35,24 +35,32 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
   // Visibility & merging (expensive - skip when shape fills its bounding box)
   const mergeGroups = meta.fillsBoundingBox
     ? []
-    : calculateMergeGroups(calculateAllPieceVisibilities(state, shapeType), state.rows, state.columns);
+    : calculateMergeGroups(
+        calculateAllPieceVisibilities(state, shapeType, layout, meta.centerYOffset, meta.boundaryHeight),
+        state.rows,
+        state.columns,
+      );
 
-  const edges = generatePuzzleEdges(state, shapeType, mergeGroups);
+  const edges = generatePuzzleEdges(state, layout, mergeGroups);
+
+  // Boundary path: use boundaryHeight (stretched for heart) and centerYOffset
   const boundaryPath = generateShapePath(shapeType, {
+    centerY: meta.centerYOffset,
     cornerRadius: meta.boundaryCornerRadius,
-    height: layout.height,
+    height: meta.boundaryHeight,
     width: layout.width,
   });
 
-  // Border paths (conditional)
+  // Border paths
   let boardBasePath: string | undefined;
   let raisedEdgesPath: string | undefined;
 
   if (state.border.enabled) {
     const borderOpts = {
       borderWidth: state.border.width,
+      centerY: meta.centerYOffset,
       cornerRadius: meta.borderCornerRadius,
-      height: layout.height,
+      height: meta.boundaryHeight,
       width: layout.width,
     };
 
@@ -65,7 +73,7 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
 
   // Pre-compute dimensions for layout calculations
   const frameWidth = layout.width + (state.border.enabled ? state.border.width * 2 : 0);
-  const frameHeight = layout.height + (state.border.enabled ? state.border.width * 2 : 0);
+  const frameHeight = meta.boundaryHeight + (state.border.enabled ? state.border.width * 2 : 0);
 
   return {
     boardBasePath,
@@ -75,6 +83,7 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
     frameWidth,
     layout,
     mergeGroups,
+    meta,
     raisedEdgesPath,
   };
 };
@@ -95,11 +104,12 @@ export const computeExportLayout = (geometry: PuzzleGeometry, borderEnabled: boo
   }
 
   const totalW = geometry.frameWidth * 2 + LAYER_GAP;
+  const boardOffsetX = (totalW - geometry.frameWidth) / 2;
 
   return {
-    boardOffsetX: totalW / 2 - geometry.frameWidth / 2,
+    boardOffsetX,
     hasBorder: true,
-    raisedEdgesOffsetX: -totalW / 2 + geometry.frameWidth / 2,
+    raisedEdgesOffsetX: -boardOffsetX,
     totalHeight: geometry.frameHeight,
     totalWidth: totalW,
   };
