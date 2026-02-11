@@ -1975,6 +1975,7 @@ const lang: ILang = {
     types: {
       circle_jigsaw: '圓形拼圖',
       heart_jigsaw: '愛心拼圖',
+      hex_jigsaw: '六角形拼圖',
       rectangle_jigsaw: '方形拼圖',
     },
     unsupported_file_type: '不支援的檔案類型，請使用 JPG、PNG 或 WebP。',

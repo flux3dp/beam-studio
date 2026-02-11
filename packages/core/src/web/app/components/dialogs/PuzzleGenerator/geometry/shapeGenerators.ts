@@ -125,6 +125,261 @@ export const generateHeartPath = (options: ShapeOptions): string => {
   ].join(' ');
 };
 
+// ── Hexagon utilities ─────────────────────────────────────────────────────────
+
+/** Compute the 6 vertices of a flat-top hexagon centered at (cx, cy) with given width and height. */
+const computeHexVertices = (
+  width: number,
+  height: number,
+  cx: number,
+  cy: number,
+): Array<[number, number]> => {
+  const hw = width / 2;
+  const hh = height / 2;
+  const qw = width / 4;
+
+  // Flat-top: right, upper-right, upper-left, left, lower-left, lower-right
+  return [
+    [cx + hw, cy],
+    [cx + qw, cy - hh],
+    [cx - qw, cy - hh],
+    [cx - hw, cy],
+    [cx - qw, cy + hh],
+    [cx + qw, cy + hh],
+  ];
+};
+
+/**
+ * Compute the tangent-point distance from a vertex for a given arc radius.
+ *
+ * For a polygon corner with interior angle θ, an inscribed arc of radius R
+ * touches each edge at distance `d = R / tan(θ/2)` from the vertex.
+ * At 90° (rectangle) d = R; at 120° (regular hex) d ≈ 1.73·R.
+ */
+const computeTangentDistance = (
+  curr: [number, number],
+  prev: [number, number],
+  next: [number, number],
+  arcRadius: number,
+): number => {
+  const v1x = prev[0] - curr[0];
+  const v1y = prev[1] - curr[1];
+  const v2x = next[0] - curr[0];
+  const v2y = next[1] - curr[1];
+  const dot = v1x * v2x + v1y * v2y;
+  const len1 = Math.sqrt(v1x * v1x + v1y * v1y);
+  const len2 = Math.sqrt(v2x * v2x + v2y * v2y);
+  const cosAngle = Math.max(-1, Math.min(1, dot / (len1 * len2)));
+  const halfAngle = Math.acos(cosAngle) / 2; // half of interior angle
+
+  // d = R / tan(halfAngle)
+  const tanHalf = Math.tan(halfAngle);
+
+  return tanHalf > 1e-10 ? arcRadius / tanHalf : arcRadius;
+};
+
+/**
+ * Generate SVG path for a flat-top hexagon with optional rounded corners.
+ *
+ * `cornerRadius` is treated as the **arc radius** (like CSS border-radius):
+ * the inscribed circle at each corner has this radius. Tangent-point distances
+ * are derived from the actual interior angle at each vertex, so arcs look
+ * correct even on stretched (non-regular) hexagons.
+ */
+export const generateHexPath = (options: ShapeOptions): string => {
+  const { centerX = 0, centerY = 0, cornerRadius = 0, height, width } = options;
+  const vertices = computeHexVertices(width, height, centerX, centerY);
+  const n = vertices.length;
+  const f = (v: number) => v.toFixed(2);
+
+  if (cornerRadius <= 0) {
+    const parts = vertices.map((v, i) => `${i === 0 ? 'M' : 'L'} ${f(v[0])} ${f(v[1])}`);
+
+    parts.push('Z');
+
+    return parts.join(' ');
+  }
+
+  // Clamp arc radius so tangent distances don't exceed half-edge lengths
+  let maxR = cornerRadius;
+
+  for (let i = 0; i < n; i++) {
+    const prev = vertices[(i - 1 + n) % n];
+    const curr = vertices[i];
+    const next = vertices[(i + 1) % n];
+    const d = computeTangentDistance(curr, prev, next, cornerRadius);
+    const edgePrevLen = Math.sqrt((prev[0] - curr[0]) ** 2 + (prev[1] - curr[1]) ** 2);
+    const edgeNextLen = Math.sqrt((next[0] - curr[0]) ** 2 + (next[1] - curr[1]) ** 2);
+    const maxD = Math.min(edgePrevLen / 2, edgeNextLen / 2);
+
+    if (d > maxD) {
+      // Scale down: maxR such that computeTangentDistance(..., maxR) = maxD
+      maxR = Math.min(maxR, (maxD / d) * cornerRadius);
+    }
+  }
+
+  const r = maxR;
+
+  const parts: string[] = [];
+
+  for (let i = 0; i < n; i++) {
+    const prev = vertices[(i - 1 + n) % n];
+    const curr = vertices[i];
+    const next = vertices[(i + 1) % n];
+
+    const d = computeTangentDistance(curr, prev, next, r);
+
+    // Unit vectors from vertex toward each adjacent vertex
+    const toPrevLen = Math.sqrt((prev[0] - curr[0]) ** 2 + (prev[1] - curr[1]) ** 2);
+    const toNextLen = Math.sqrt((next[0] - curr[0]) ** 2 + (next[1] - curr[1]) ** 2);
+
+    // Tangent points at distance d from vertex along each edge
+    const tangentFromPrev: [number, number] = [
+      curr[0] + ((prev[0] - curr[0]) / toPrevLen) * d,
+      curr[1] + ((prev[1] - curr[1]) / toPrevLen) * d,
+    ];
+    const tangentToNext: [number, number] = [
+      curr[0] + ((next[0] - curr[0]) / toNextLen) * d,
+      curr[1] + ((next[1] - curr[1]) / toNextLen) * d,
+    ];
+
+    if (i === 0) {
+      parts.push(`M ${f(tangentToNext[0])} ${f(tangentToNext[1])}`);
+    } else {
+      parts.push(`L ${f(tangentFromPrev[0])} ${f(tangentFromPrev[1])}`);
+      parts.push(`A ${f(r)} ${f(r)} 0 0 0 ${f(tangentToNext[0])} ${f(tangentToNext[1])}`);
+    }
+  }
+
+  // Close: arc around vertex 0
+  {
+    const prev = vertices[n - 1];
+    const curr = vertices[0];
+    const next = vertices[1];
+    const d = computeTangentDistance(curr, prev, next, r);
+    const toPrevLen = Math.sqrt((prev[0] - curr[0]) ** 2 + (prev[1] - curr[1]) ** 2);
+    const toNextLen = Math.sqrt((next[0] - curr[0]) ** 2 + (next[1] - curr[1]) ** 2);
+    const tangentFromPrev: [number, number] = [
+      curr[0] + ((prev[0] - curr[0]) / toPrevLen) * d,
+      curr[1] + ((prev[1] - curr[1]) / toPrevLen) * d,
+    ];
+    const tangentToNext: [number, number] = [
+      curr[0] + ((next[0] - curr[0]) / toNextLen) * d,
+      curr[1] + ((next[1] - curr[1]) / toNextLen) * d,
+    ];
+
+    parts.push(`L ${f(tangentFromPrev[0])} ${f(tangentFromPrev[1])}`);
+    parts.push(`A ${f(r)} ${f(r)} 0 0 0 ${f(tangentToNext[0])} ${f(tangentToNext[1])}`);
+  }
+
+  parts.push('Z');
+
+  return parts.join(' ');
+};
+
+/**
+ * Point-in-hexagon test with radius-aware corner refinement.
+ * Two-phase approach (like rectangle):
+ * 1. Check if inside sharp hex polygon
+ * 2. If radius > 0 and point is in a corner region, refine with arc check
+ */
+export const isPointInHex = (
+  px: number,
+  py: number,
+  width: number,
+  height: number,
+  cornerRadius = 0,
+): boolean => {
+  const vertices = computeHexVertices(width, height, 0, 0);
+  const n = vertices.length;
+
+  // Phase 1: Ray casting against sharp hex polygon
+  let inside = false;
+
+  for (let i = 0, j = n - 1; i < n; j = i++) {
+    const [xi, yi] = vertices[i];
+    const [xj, yj] = vertices[j];
+
+    if (yi > py !== yj > py && px < ((xj - xi) * (py - yi)) / (yj - yi) + xi) {
+      inside = !inside;
+    }
+  }
+
+  if (!inside) return false;
+
+  if (cornerRadius <= 0) return true;
+
+  // Phase 2: Corner arc refinement — check each vertex's corner region
+  // Clamp arc radius the same way as generateHexPath
+  let r = cornerRadius;
+
+  for (let i = 0; i < n; i++) {
+    const prev = vertices[(i - 1 + n) % n];
+    const curr = vertices[i];
+    const next = vertices[(i + 1) % n];
+    const d = computeTangentDistance(curr, prev, next, cornerRadius);
+    const edgePrevLen = Math.sqrt((prev[0] - curr[0]) ** 2 + (prev[1] - curr[1]) ** 2);
+    const edgeNextLen = Math.sqrt((next[0] - curr[0]) ** 2 + (next[1] - curr[1]) ** 2);
+    const maxD = Math.min(edgePrevLen / 2, edgeNextLen / 2);
+
+    if (d > maxD) {
+      r = Math.min(r, (maxD / d) * cornerRadius);
+    }
+  }
+
+  for (let i = 0; i < n; i++) {
+    const prev = vertices[(i - 1 + n) % n];
+    const curr = vertices[i];
+    const next = vertices[(i + 1) % n];
+
+    // Tangent distance for this vertex (angle-aware)
+    const d = computeTangentDistance(curr, prev, next, r);
+
+    // Unit vectors along edges from vertex
+    const toPrevX = prev[0] - curr[0];
+    const toPrevY = prev[1] - curr[1];
+    const toPrevLen = Math.sqrt(toPrevX * toPrevX + toPrevY * toPrevY);
+    const toNextX = next[0] - curr[0];
+    const toNextY = next[1] - curr[1];
+    const toNextLen = Math.sqrt(toNextX * toNextX + toNextY * toNextY);
+
+    const uPrevX = toPrevX / toPrevLen;
+    const uPrevY = toPrevY / toPrevLen;
+    const uNextX = toNextX / toNextLen;
+    const uNextY = toNextY / toNextLen;
+
+    // Check if point is in the corner region (within tangent distance d of vertex along each edge)
+    const relX = px - curr[0];
+    const relY = py - curr[1];
+    const projPrev = relX * uPrevX + relY * uPrevY;
+    const projNext = relX * uNextX + relY * uNextY;
+
+    if (projPrev < d && projPrev >= 0 && projNext < d && projNext >= 0) {
+      // Arc center is along the bisector at distance r / sin(halfAngle) from vertex
+      const bisX = uPrevX + uNextX;
+      const bisY = uPrevY + uNextY;
+      const bisLen = Math.sqrt(bisX * bisX + bisY * bisY);
+
+      if (bisLen > 1e-10) {
+        const cosAngle = Math.max(-1, Math.min(1, uPrevX * uNextX + uPrevY * uNextY));
+        const halfAngle = Math.acos(cosAngle) / 2;
+        const sinHalf = Math.sin(halfAngle);
+        const arcCenterDist = sinHalf > 1e-10 ? r / sinHalf : r;
+
+        const arcCenterX = curr[0] + (bisX / bisLen) * arcCenterDist;
+        const arcCenterY = curr[1] + (bisY / bisLen) * arcCenterDist;
+
+        const dx = px - arcCenterX;
+        const dy = py - arcCenterY;
+
+        if (dx * dx + dy * dy > r * r) return false;
+      }
+    }
+  }
+
+  return true;
+};
+
 /**
  * Resolves shape metadata from state. Single source of truth for shape-specific behavior.
  * Adding a new shape to ShapeType will force an update here via .exhaustive().
@@ -178,6 +433,18 @@ export const getShapeMetadata = (
         innerCutoutCornerRadius: DEFAULT_HEART_SHARPNESS,
       };
     })
+    .with('hexagon', () => {
+      const puzzleRadius = state.radius ?? 0;
+
+      return {
+        borderCornerRadius: state.border.radius,
+        boundaryCornerRadius: puzzleRadius,
+        boundaryHeight: gridH,
+        centerYOffset: 0,
+        fillsBoundingBox: false,
+        innerCutoutCornerRadius: puzzleRadius,
+      };
+    })
     .with('rectangle', () => {
       const puzzleRadius = state.radius ?? 0;
 
@@ -197,6 +464,7 @@ export const generateShapePath = (shapeType: ShapeType, options: ShapeOptions): 
   match(shapeType)
     .with('circle', () => generateEllipsePath(options))
     .with('heart', () => generateHeartPath(options))
+    .with('hexagon', () => generateHexPath(options))
     .with('rectangle', () => generateRectanglePath(options))
     .exhaustive();
 
@@ -510,6 +778,7 @@ export const isPointInShape = (
   match(shapeType)
     .with('circle', () => isPointInEllipse(x, y, width / 2, height / 2))
     .with('heart', () => isPointInHeart(x, y - centerYOffset, width, height))
+    .with('hexagon', () => isPointInHex(x, y, width, height, cornerRadius))
     .with('rectangle', () => isPointInRectangle(x, y, width, height, cornerRadius))
     .exhaustive();
 
@@ -541,6 +810,53 @@ export const drawShapeClipPath = (
       ctx.bezierCurveTo(-halfWidth, bottomCtrl1Y, -bottomCtrl2X, bottomCtrl2Y, 0, bottomY);
       ctx.bezierCurveTo(bottomCtrl2X, bottomCtrl2Y, halfWidth, bottomCtrl1Y, halfWidth, notchY);
       ctx.bezierCurveTo(halfWidth, topY, 0, topY, 0, notchY);
+    })
+    .with('hexagon', () => {
+      const vertices = computeHexVertices(width, height, 0, 0);
+      const n = vertices.length;
+
+      if (cornerRadius > 0) {
+        // Clamp arc radius so tangent distances don't exceed half-edge lengths
+        let r = cornerRadius;
+
+        for (let i = 0; i < n; i++) {
+          const prev = vertices[(i - 1 + n) % n];
+          const curr = vertices[i];
+          const next = vertices[(i + 1) % n];
+          const d = computeTangentDistance(curr, prev, next, cornerRadius);
+          const edgePrevLen = Math.sqrt((prev[0] - curr[0]) ** 2 + (prev[1] - curr[1]) ** 2);
+          const edgeNextLen = Math.sqrt((next[0] - curr[0]) ** 2 + (next[1] - curr[1]) ** 2);
+          const maxD = Math.min(edgePrevLen / 2, edgeNextLen / 2);
+
+          if (d > maxD) {
+            r = Math.min(r, (maxD / d) * cornerRadius);
+          }
+        }
+
+        // Canvas arcTo handles the arc geometry correctly given the arc radius.
+        // We lineTo the tangent point before each vertex, then arcTo rounds the corner.
+        const v0 = vertices[0];
+        const v1 = vertices[1];
+        const vLast = vertices[n - 1];
+        const d0 = computeTangentDistance(v0, vLast, v1, r);
+        const toNextLen0 = Math.sqrt((v1[0] - v0[0]) ** 2 + (v1[1] - v0[1]) ** 2);
+
+        ctx.moveTo(v0[0] + ((v1[0] - v0[0]) / toNextLen0) * d0, v0[1] + ((v1[1] - v0[1]) / toNextLen0) * d0);
+
+        for (let i = 1; i <= n; i++) {
+          const prev = vertices[(i - 1 + n) % n];
+          const curr = vertices[i % n];
+          const next = vertices[(i + 1) % n];
+
+          ctx.arcTo(curr[0], curr[1], next[0], next[1], r);
+        }
+      } else {
+        ctx.moveTo(vertices[0][0], vertices[0][1]);
+
+        for (let i = 1; i < n; i++) {
+          ctx.lineTo(vertices[i][0], vertices[i][1]);
+        }
+      }
     })
     .with('rectangle', () => {
       const left = -width / 2;

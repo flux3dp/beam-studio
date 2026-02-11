@@ -1977,6 +1977,7 @@ export interface ILang {
     types: {
       circle_jigsaw: string;
       heart_jigsaw: string;
+      hex_jigsaw: string;
       rectangle_jigsaw: string;
     };
     unsupported_file_type: string;

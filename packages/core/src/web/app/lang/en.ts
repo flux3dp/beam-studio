@@ -1975,6 +1975,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     types: {
       circle_jigsaw: 'Circle Jigsaw',
       heart_jigsaw: 'Heart Jigsaw',
+      hex_jigsaw: 'Hexagon Jigsaw',
       rectangle_jigsaw: 'Rectangle Jigsaw',
     },
     unsupported_file_type: 'Unsupported file type. Please use JPG, PNG, or WebP.',

@@ -2,7 +2,7 @@ import { match } from 'ts-pattern';
 
 import type { ViewMode } from './constants';
 
-export type ShapeType = 'circle' | 'heart' | 'rectangle';
+export type ShapeType = 'circle' | 'heart' | 'hexagon' | 'rectangle';
 
 /** Jitter coefficients for a single tab edge */
 export interface TabJitter {
@@ -189,12 +189,17 @@ export interface HeartPuzzleState extends BasePuzzleState {
   typeId: 'heart';
 }
 
+export interface HexagonPuzzleState extends BasePuzzleState {
+  radius: number;
+  typeId: 'hexagon';
+}
+
 export interface RectanglePuzzleState extends BasePuzzleState {
   radius: number;
   typeId: 'rectangle';
 }
 
-export type PuzzleState = CirclePuzzleState | HeartPuzzleState | RectanglePuzzleState;
+export type PuzzleState = CirclePuzzleState | HeartPuzzleState | HexagonPuzzleState | RectanglePuzzleState;
 
 /** Keys for nested state objects updated via `onNestedStateChange`. */
 export type NestedStateKey = 'border' | 'image';
@@ -205,7 +210,10 @@ export type NestedStateKey = 'border' | 'image';
  * Excludes `typeId` — shape switching is handled by `createDefaultPuzzleState`.
  */
 export type PuzzleStateUpdate = Partial<
-  Omit<CirclePuzzleState, 'typeId'> & Omit<HeartPuzzleState, 'typeId'> & Omit<RectanglePuzzleState, 'typeId'>
+  Omit<CirclePuzzleState, 'typeId'> &
+    Omit<HeartPuzzleState, 'typeId'> &
+    Omit<HexagonPuzzleState, 'typeId'> &
+    Omit<RectanglePuzzleState, 'typeId'>
 >;
 
 export const createDefaultImageState = (): ImageState => ({
@@ -240,5 +248,6 @@ export const createDefaultPuzzleState = (typeId: ShapeType): PuzzleState =>
   match(typeId)
     .with('circle', () => ({ ...createBaseDefaults(), typeId: 'circle' as const }))
     .with('heart', () => ({ ...createBaseDefaults(), typeId: 'heart' as const }))
+    .with('hexagon', () => ({ ...createBaseDefaults(), radius: 0, typeId: 'hexagon' as const }))
     .with('rectangle', () => ({ ...createBaseDefaults(), radius: 0, typeId: 'rectangle' as const }))
     .exhaustive();

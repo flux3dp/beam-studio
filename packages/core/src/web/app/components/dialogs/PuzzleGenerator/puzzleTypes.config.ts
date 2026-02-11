@@ -12,6 +12,7 @@ import type {
 const circleThumbnail = '';
 const rectangleThumbnail = '';
 const heartThumbnail = '';
+const hexagonThumbnail = '';
 
 const COLUMNS_PROPERTY: NumberPropertyDef = {
   default: 5,
@@ -248,6 +249,9 @@ export const PUZZLE_TYPES: PuzzleTypeConfig[] = [
   ]),
   createPuzzleTypeConfig('circle', 'types.circle_jigsaw', circleThumbnail),
   createPuzzleTypeConfig('heart', 'types.heart_jigsaw', heartThumbnail),
+  createPuzzleTypeConfig('hexagon', 'types.hex_jigsaw', hexagonThumbnail, { includeCornerRadius: true }, [
+    RADIUS_PROPERTY,
+  ]),
 ];
 
 export const getPuzzleTypeById = (id: string): PuzzleTypeConfig | undefined =>
