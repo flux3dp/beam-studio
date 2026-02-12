@@ -19,7 +19,7 @@ import {
   calculatePuzzleLayout,
   generatePuzzleEdges,
 } from './puzzleGenerator';
-import { generateBorderPath, generateRaisedEdgesPath, generateShapePath, getShapeMetadata } from './shapeGenerators';
+import { generateBorderPath, generateRaisedEdgesPath, generateShapePath, getShapeMetadata } from './shapes';
 
 /**
  * Computes all puzzle geometry in a single pass.
@@ -36,7 +36,14 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
   const mergeGroups = meta.fillsBoundingBox
     ? []
     : calculateMergeGroups(
-        calculateAllPieceVisibilities(state, shapeType, layout, meta.centerYOffset, meta.boundaryHeight),
+        calculateAllPieceVisibilities(
+          state,
+          shapeType,
+          layout,
+          meta.centerYOffset,
+          meta.boundaryHeight,
+          meta.boundaryCornerRadius,
+        ),
         state.rows,
         state.columns,
       );

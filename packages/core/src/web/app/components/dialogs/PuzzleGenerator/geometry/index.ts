@@ -11,8 +11,9 @@ export { computeImagePlacement, type ImagePlacement } from './imageLayout';
 // puzzleGeometry — unified geometry service
 export { computeExportLayout, computePuzzleGeometry } from './puzzleGeometry';
 
-// shapeGenerators — shape paths, metadata, clipping
-export { drawShapeClipPath, getShapeMetadata } from './shapeGenerators';
+// shapes — shape registry and dispatcher functions
+export { drawShapeClipPath, getShapeMetadata } from './shapes';
+export type { ShapeGenerator, ShapeOptions } from './shapes';
 
 // svgExport — export pipeline
 export { exportToCanvas } from './svgExport';

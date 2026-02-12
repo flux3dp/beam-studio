@@ -114,3 +114,16 @@ export const OVERLAY_BOTTOM = THUMB_SIZE + 24;
 
 /** Millimeters per inch for unit conversion */
 export const MM_PER_INCH = 25.4;
+
+// ─────────────────────────────────────────────────────────────────────────────
+// DEFAULT VALUES - Shared between state initialization and property definitions
+// ─────────────────────────────────────────────────────────────────────────────
+
+export const DEFAULT_COLUMNS = 5;
+export const DEFAULT_ROWS = 5;
+export const DEFAULT_PIECE_SIZE = 15;
+export const DEFAULT_TAB_SIZE = 20;
+export const DEFAULT_BORDER_WIDTH = 5;
+export const DEFAULT_BORDER_RADIUS = 0;
+export const DEFAULT_ORIENTATION = 1;
+export const DEFAULT_RADIUS = 0;

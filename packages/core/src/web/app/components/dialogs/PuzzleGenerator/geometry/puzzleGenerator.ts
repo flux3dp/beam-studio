@@ -17,7 +17,7 @@ import type {
   TabJitter,
 } from '../types';
 
-import { getShapeMetadata, isPointInShape } from './shapeGenerators';
+import { isPointInShape } from './shapes';
 
 interface PuzzleJitterMap {
   horizontal: TabJitter[][];
@@ -273,11 +273,10 @@ export const calculateAllPieceVisibilities = (
   state: PuzzleState,
   shapeType: ShapeType,
   layout: PuzzleLayout,
-  centerYOffset: number = 0,
-  boundaryHeight?: number,
+  centerYOffset: number,
+  boundaryHeight: number,
+  boundaryCornerRadius: number,
 ): PieceVisibility[] => {
-  const meta = getShapeMetadata(shapeType, state);
-  const effectiveHeight = boundaryHeight ?? layout.height;
   const { columns, rows } = state;
 
   return Array.from({ length: rows * columns }, (_, i) => {
@@ -287,18 +286,16 @@ export const calculateAllPieceVisibilities = (
     return {
       col,
       row,
-      visibleRatio: meta.fillsBoundingBox
-        ? 1
-        : calculatePieceVisibility(
-            row,
-            col,
-            state,
-            shapeType,
-            layout,
-            meta.boundaryCornerRadius,
-            centerYOffset,
-            effectiveHeight,
-          ),
+      visibleRatio: calculatePieceVisibility(
+        row,
+        col,
+        state,
+        shapeType,
+        layout,
+        boundaryCornerRadius,
+        centerYOffset,
+        boundaryHeight,
+      ),
     };
   });
 };

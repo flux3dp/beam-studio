@@ -1,6 +1,16 @@
 import { match } from 'ts-pattern';
 
 import type { ViewMode } from './constants';
+import {
+  DEFAULT_BORDER_RADIUS,
+  DEFAULT_BORDER_WIDTH,
+  DEFAULT_COLUMNS,
+  DEFAULT_ORIENTATION,
+  DEFAULT_PIECE_SIZE,
+  DEFAULT_RADIUS,
+  DEFAULT_ROWS,
+  DEFAULT_TAB_SIZE,
+} from './constants';
 
 export type ShapeType = 'circle' | 'heart' | 'hexagon' | 'rectangle';
 
@@ -206,15 +216,12 @@ export type NestedStateKey = 'border' | 'image';
 
 /**
  * Fields that can be updated through the dynamic property system.
- * Auto-derived from each state variant so new shape-specific fields are included automatically.
+ * Uses a distributive mapped union — an update can contain fields from any single shape variant.
  * Excludes `typeId` — shape switching is handled by `createDefaultPuzzleState`.
  */
-export type PuzzleStateUpdate = Partial<
-  Omit<CirclePuzzleState, 'typeId'> &
-    Omit<HeartPuzzleState, 'typeId'> &
-    Omit<HexagonPuzzleState, 'typeId'> &
-    Omit<RectanglePuzzleState, 'typeId'>
->;
+export type PuzzleStateUpdate = {
+  [K in PuzzleState['typeId']]: Partial<Omit<Extract<PuzzleState, { typeId: K }>, 'typeId'>>;
+}[PuzzleState['typeId']];
 
 export const createDefaultImageState = (): ImageState => ({
   bleed: 2,
@@ -229,18 +236,18 @@ export const createDefaultImageState = (): ImageState => ({
 export const createDefaultBorderState = (): BorderState => ({
   enabled: false,
   guideLines: false,
-  radius: 0,
-  width: 5,
+  radius: DEFAULT_BORDER_RADIUS,
+  width: DEFAULT_BORDER_WIDTH,
 });
 
 const createBaseDefaults = (): BasePuzzleState => ({
   border: createDefaultBorderState(),
-  columns: 5,
+  columns: DEFAULT_COLUMNS,
   image: createDefaultImageState(),
-  orientation: 1,
-  pieceSize: 15,
-  rows: 5,
-  tabSize: 20,
+  orientation: DEFAULT_ORIENTATION,
+  pieceSize: DEFAULT_PIECE_SIZE,
+  rows: DEFAULT_ROWS,
+  tabSize: DEFAULT_TAB_SIZE,
   viewMode: 'design',
 });
 
@@ -248,6 +255,6 @@ export const createDefaultPuzzleState = (typeId: ShapeType): PuzzleState =>
   match(typeId)
     .with('circle', () => ({ ...createBaseDefaults(), typeId: 'circle' as const }))
     .with('heart', () => ({ ...createBaseDefaults(), typeId: 'heart' as const }))
-    .with('hexagon', () => ({ ...createBaseDefaults(), radius: 0, typeId: 'hexagon' as const }))
-    .with('rectangle', () => ({ ...createBaseDefaults(), radius: 0, typeId: 'rectangle' as const }))
+    .with('hexagon', () => ({ ...createBaseDefaults(), radius: DEFAULT_RADIUS, typeId: 'hexagon' as const }))
+    .with('rectangle', () => ({ ...createBaseDefaults(), radius: DEFAULT_RADIUS, typeId: 'rectangle' as const }))
     .exhaustive();

@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { Button } from 'antd';
 import classNames from 'classnames';
@@ -17,7 +17,7 @@ import type { ViewMode } from './constants';
 import { exportToCanvas } from './geometry';
 import styles from './index.module.scss';
 import { getDefaultPuzzleType, getPuzzleTypeById, PUZZLE_TYPES } from './puzzleTypes.config';
-import type { NestedStateKey, PuzzleState, PuzzleStateUpdate, ShapeType } from './types';
+import type { NestedStateKey, PuzzleGeometry, PuzzleState, PuzzleStateUpdate, ShapeType } from './types';
 import { createDefaultPuzzleState } from './types';
 
 const DIALOG_ID = 'puzzle-generator';
@@ -34,6 +34,9 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
   const [state, setState] = useState<PuzzleState>(() => createDefaultPuzzleState(defaultType.id));
   const [isModified, setIsModified] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
+
+  // Ref to hold geometry computed by Preview — avoids recomputation on export
+  const geometryRef = useRef<null | PuzzleGeometry>(null);
 
   const currentTypeConfig = useMemo(() => getPuzzleTypeById(state.typeId) ?? defaultType, [state.typeId, defaultType]);
 
@@ -86,7 +89,8 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
     setIsExporting(true);
 
     try {
-      await exportToCanvas(state, currentTypeConfig);
+      // Pass geometry from Preview to avoid recomputation
+      await exportToCanvas(state, currentTypeConfig, geometryRef.current ?? undefined);
       onClose();
     } catch (error) {
       console.error('Failed to export puzzle to canvas:', error);
@@ -119,6 +123,9 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
         <TypeSelector currentTypeId={state.typeId} onTypeChange={handleTypeChange} puzzleTypes={PUZZLE_TYPES} />
         <Preview
           dimensions={puzzleDimensions}
+          onGeometryComputed={(geo) => {
+            geometryRef.current = geo;
+          }}
           onViewModeChange={handleViewModeChange}
           state={state}
           typeConfig={currentTypeConfig}

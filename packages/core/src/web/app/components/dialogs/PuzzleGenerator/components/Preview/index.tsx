@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
@@ -15,7 +15,7 @@ import { computePuzzleGeometry } from '../../geometry';
 import useClipFunctions from '../../hooks/useClipFunctions';
 import useContainerSize from '../../hooks/useContainerSize';
 import useImageLayout from '../../hooks/useImageLayout';
-import type { PuzzleState, PuzzleTypeConfig } from '../../types';
+import type { PuzzleGeometry, PuzzleState, PuzzleTypeConfig } from '../../types';
 
 import computeViewLayout from './computeViewLayout';
 import DesignScene from './DesignScene';
@@ -25,13 +25,21 @@ import styles from './Preview.module.scss';
 
 interface PreviewProps {
   dimensions: { height: number; width: number };
+  onGeometryComputed?: (geometry: PuzzleGeometry) => void;
   onViewModeChange: (mode: ViewMode) => void;
   state: PuzzleState;
   typeConfig: PuzzleTypeConfig;
   viewMode: ViewMode;
 }
 
-const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: PreviewProps): React.JSX.Element => {
+const Preview = ({
+  dimensions,
+  onGeometryComputed,
+  onViewModeChange,
+  state,
+  typeConfig,
+  viewMode,
+}: PreviewProps): React.JSX.Element => {
   const { puzzle_generator: t } = useI18n();
   const isMobile = useIsMobile();
   const isInch = useStorageStore((s) => s.isInch);
@@ -40,8 +48,35 @@ const Preview = ({ dimensions, onViewModeChange, state, typeConfig, viewMode }: 
   const shapeType = typeConfig.id;
   const colors = COLORS[viewMode];
 
-  // Core data — geometry includes metadata (with fitted dimensions for heart)
-  const geometry = useMemo(() => computePuzzleGeometry(state, shapeType), [state, shapeType]);
+  // Destructure geometry-affecting fields for stable memoization
+  const { border, columns, orientation, pieceSize, rows, tabSize, typeId } = state;
+  const puzzleRadius = 'radius' in state ? state.radius : undefined;
+
+  // Core data — only recompute when geometry-affecting fields change
+  // (excludes viewMode, image.*, etc.)
+  const geometry = useMemo(
+    () => computePuzzleGeometry(state, shapeType),
+    // eslint-disable-next-line hooks/exhaustive-deps
+    [
+      border.enabled,
+      border.radius,
+      border.width,
+      columns,
+      orientation,
+      pieceSize,
+      puzzleRadius,
+      rows,
+      shapeType,
+      tabSize,
+      typeId,
+    ],
+  );
+
+  // Report geometry to parent for export optimization
+  useEffect(() => {
+    onGeometryComputed?.(geometry);
+  }, [geometry, onGeometryComputed]);
+
   const { meta } = geometry;
   const { boundaryClip, imageClip } = useClipFunctions(shapeType, geometry, meta, state.image.bleed);
 

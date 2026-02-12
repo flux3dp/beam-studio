@@ -20,7 +20,7 @@ import type { PuzzleGeometry, PuzzleState, PuzzleTypeConfig, ShapeType } from '.
 
 import { computeImagePlacement, type ImagePlacement } from './imageLayout';
 import { computeExportLayout, computePuzzleGeometry } from './puzzleGeometry';
-import { drawShapeClipPath } from './shapeGenerators';
+import { drawShapeClipPath } from './shapes';
 
 let svgCanvas: ISVGCanvas;
 

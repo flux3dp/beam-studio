@@ -1,3 +1,13 @@
+import {
+  DEFAULT_BORDER_RADIUS,
+  DEFAULT_BORDER_WIDTH,
+  DEFAULT_COLUMNS,
+  DEFAULT_ORIENTATION,
+  DEFAULT_PIECE_SIZE,
+  DEFAULT_RADIUS,
+  DEFAULT_ROWS,
+  DEFAULT_TAB_SIZE,
+} from './constants';
 import type { ShapeType } from './types';
 import type {
   GroupPropertyDef,
@@ -15,7 +25,7 @@ const heartThumbnail = '';
 const hexagonThumbnail = '';
 
 const COLUMNS_PROPERTY: NumberPropertyDef = {
-  default: 5,
+  default: DEFAULT_COLUMNS,
   key: 'columns',
   labelKey: 'columns',
   max: 20,
@@ -25,7 +35,7 @@ const COLUMNS_PROPERTY: NumberPropertyDef = {
 };
 
 const ROWS_PROPERTY: NumberPropertyDef = {
-  default: 5,
+  default: DEFAULT_ROWS,
   key: 'rows',
   labelKey: 'rows',
   max: 20,
@@ -35,7 +45,7 @@ const ROWS_PROPERTY: NumberPropertyDef = {
 };
 
 const PIECE_SIZE_PROPERTY: NumberPropertyDef = {
-  default: 15,
+  default: DEFAULT_PIECE_SIZE,
   key: 'pieceSize',
   labelKey: 'piece_size',
   max: 100,
@@ -46,7 +56,7 @@ const PIECE_SIZE_PROPERTY: NumberPropertyDef = {
 };
 
 const TAB_SIZE_PROPERTY: NumberPropertyDef = {
-  default: 20,
+  default: DEFAULT_TAB_SIZE,
   key: 'tabSize',
   labelKey: 'tab_size',
   max: 30,
@@ -56,7 +66,7 @@ const TAB_SIZE_PROPERTY: NumberPropertyDef = {
 };
 
 const RADIUS_PROPERTY: NumberPropertyDef = {
-  default: 0,
+  default: DEFAULT_RADIUS,
   key: 'radius',
   labelKey: 'radius',
   max: 50,
@@ -66,7 +76,7 @@ const RADIUS_PROPERTY: NumberPropertyDef = {
 };
 
 const ORIENTATION_PROPERTY: SelectPropertyDef = {
-  default: 1,
+  default: DEFAULT_ORIENTATION,
   key: 'orientation',
   labelKey: 'orientation',
   options: [
@@ -178,7 +188,7 @@ const createBorderGroup = (options: BorderGroupOptions = {}): GroupPropertyDef =
     },
     {
       condition: (state: PuzzleState) => state.border.enabled,
-      default: 5,
+      default: DEFAULT_BORDER_WIDTH,
       key: 'border.width',
       labelKey: 'board_width',
       max: 20,
@@ -192,7 +202,7 @@ const createBorderGroup = (options: BorderGroupOptions = {}): GroupPropertyDef =
   if (includeCornerRadius) {
     children.push({
       condition: (state: PuzzleState) => state.border.enabled,
-      default: 0,
+      default: DEFAULT_BORDER_RADIUS,
       key: 'border.radius',
       labelKey: 'board_radius',
       max: 50,
