@@ -49,7 +49,7 @@ const Preview = ({
   const colors = COLORS[viewMode];
 
   // Destructure geometry-affecting fields for stable memoization
-  const { border, columns, orientation, pieceSize, rows, tabSize, typeId } = state;
+  const { border, columns, image, orientation, pieceSize, rows, tabSize, typeId } = state;
   const puzzleRadius = 'radius' in state ? state.radius : undefined;
 
   // Core data — only recompute when geometry-affecting fields change
@@ -62,6 +62,9 @@ const Preview = ({
       border.radius,
       border.width,
       columns,
+      image.bleed,
+      image.dataUrl,
+      image.enabled,
       orientation,
       pieceSize,
       puzzleRadius,

@@ -79,8 +79,17 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
   }
 
   // Pre-compute dimensions for layout calculations
-  const frameWidth = layout.width + (state.border.enabled ? state.border.width * 2 : 0);
-  const frameHeight = meta.boundaryHeight + (state.border.enabled ? state.border.width * 2 : 0);
+  // Calculate expansion from board base
+  const borderExpansion = state.border.enabled ? state.border.width * 2 : 0;
+
+  // Calculate expansion from image bleed (only when image is uploaded)
+  const bleedExpansion = state.image.enabled && state.image.dataUrl !== null ? state.image.bleed * 2 : 0;
+
+  // Use maximum of the two expansions (they don't stack)
+  const frameExpansion = Math.max(borderExpansion, bleedExpansion);
+
+  const frameWidth = layout.width + frameExpansion;
+  const frameHeight = meta.boundaryHeight + frameExpansion;
 
   return {
     boardBasePath,
@@ -100,13 +109,17 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
  * Used by svgExport.ts for placing elements in the final SVG.
  */
 export const computeExportLayout = (geometry: PuzzleGeometry, borderEnabled: boolean) => {
+  const hasFrameExpansion = geometry.frameWidth > geometry.layout.width;
+
   if (!borderEnabled) {
+    // When bleed is active (but no board), use expanded frame dimensions
+    // but don't create exploded layout
     return {
       boardOffsetX: 0,
       hasBorder: false,
       raisedEdgesOffsetX: 0,
-      totalHeight: geometry.layout.height,
-      totalWidth: geometry.layout.width,
+      totalHeight: hasFrameExpansion ? geometry.frameHeight : geometry.layout.height,
+      totalWidth: hasFrameExpansion ? geometry.frameWidth : geometry.layout.width,
     };
   }
 

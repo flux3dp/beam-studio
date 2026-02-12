@@ -22,12 +22,13 @@ const computeViewLayout = (
 ): ViewLayout => {
   const isExploded = mode === 'exploded';
   const showExploded = isExploded && borderEnabled;
+  const hasFrameExpansion = geo.frameWidth > geo.layout.width;
 
-  const totalWidth = match({ borderEnabled, showExploded })
+  const totalWidth = match({ hasFrameExpansion, showExploded })
     .with({ showExploded: true }, () => geo.frameWidth * 2 + LAYER_GAP)
-    .with({ borderEnabled: true }, () => geo.frameWidth)
+    .with({ hasFrameExpansion: true }, () => geo.frameWidth)
     .otherwise(() => geo.layout.width);
-  const totalHeight = borderEnabled ? geo.frameHeight : geo.layout.height;
+  const totalHeight = hasFrameExpansion ? geo.frameHeight : geo.layout.height;
 
   const availW = containerW - padding * 2;
   const availH = containerH - padding - paddingBottom;
