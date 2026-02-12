@@ -76,6 +76,7 @@ import history from './history/history';
 import historyRecording from './history/historyrecording';
 import undoManager from './history/undoManager';
 import { MouseInteraction } from './interaction/mouse';
+import { getEventPageXY } from './interaction/mouse/utils/getEventPoint';
 import layerManager from './layer/layerManager';
 import disassembleUse from './operations/disassembleUse';
 import setSvgContent from './operations/import/setSvgContent';
@@ -1395,7 +1396,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     const root_sctm = ($('#svgcontent')[0] as any).getScreenCTM().inverse();
-    const pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, root_sctm);
+    const { x, y } = getEventPageXY(evt);
+    const pt = svgedit.math.transformPoint(x, y, root_sctm);
 
     // bbox center at x, y width, hieght 10px
     const selectionRegion = {
@@ -1544,8 +1546,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
 
       const zoom = workareaManager.zoomRatio;
-      const rootSctm = ($('#svgcontent')[0] as any).getScreenCTM().inverse();
-      const pt = svgedit.math.transformPoint(evt.pageX, evt.pageY, rootSctm);
+      const rootSctm = ($('#svgcontent')[0] as any).getScreenCTM()?.inverse() ?? new DOMMatrix();
+      const { x, y } = getEventPageXY(evt);
+      const pt = svgedit.math.transformPoint(x, y, rootSctm);
       const mouseX = pt.x * zoom;
       const mouseY = pt.y * zoom;
 

@@ -15,6 +15,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getEventPageXY } from '../interaction/mouse/utils/getEventPoint';
 import { getBBox } from '../utils/getBBox';
 
 enum TextType {
@@ -659,9 +660,12 @@ class TextActions {
       return;
     }
 
-    const rootSctm = (document.getElementById('svgcontent') as unknown as SVGGraphicsElement).getScreenCTM().inverse();
+    const rootSctm =
+      (document.getElementById('svgcontent') as unknown as SVGGraphicsElement).getScreenCTM()?.inverse() ??
+      new DOMMatrix();
     const zoom = workareaManager.zoomRatio;
-    const ept = svgedit.math.transformPoint(evt.pageX, evt.pageY, rootSctm);
+    const { x, y } = getEventPageXY(evt);
+    const ept = svgedit.math.transformPoint(x, y, rootSctm);
     const mouseX = ept.x * zoom;
     const mouseY = ept.y * zoom;
     const pt = this.screenToPt(mouseX, mouseY);
