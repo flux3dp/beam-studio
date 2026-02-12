@@ -1,20 +1,11 @@
 import React, { memo, useEffect, useRef } from 'react';
 
 import AlertIcons from '@core/app/icons/alerts/AlertIcons';
-import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
-import rotateBBox from '@core/app/svgedit/utils/rotateBBox';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './Info.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 interface Props {
   element: SVGElement;
@@ -26,10 +17,7 @@ const Info = ({ element }: Props): React.JSX.Element => {
 
   useEffect(() => {
     if (svgRef.current) {
-      const bbox =
-        element.tagName === 'use' ? svgCanvas.getSvgRealLocation(element) : svgCanvas.calculateTransformedBBox(element);
-      const angle = getRotationAngle(element);
-      let { height, width, x, y } = rotateBBox(bbox, angle);
+      let { height, width, x, y } = getBBox(element, { ignoreRotation: false });
       const padding = 0.1;
 
       x -= padding * width;

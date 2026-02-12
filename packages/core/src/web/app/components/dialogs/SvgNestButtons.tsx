@@ -8,6 +8,7 @@ import Alert from '@core/app/actions/alert-caller';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import workareaManager from '@core/app/svgedit/workarea';
 import Modal from '@core/app/widgets/Modal';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
@@ -63,13 +64,13 @@ class SvgNestButtons extends React.Component<Props, State> {
     }
   }
 
-  nestElements = (elements: Element[], containerElem?: HTMLElement, config?: any) => {
+  nestElements = (elements: SVGElement[], containerElem?: SVGGraphicsElement, config?: any) => {
     let containerPoints;
     const ClipperLib = getClipperLib();
 
     if (containerElem) {
       const containerDPath = svgedit.utilities.getPathDFromElement(containerElem);
-      const bbox = svgedit.utilities.getBBox(containerElem);
+      const bbox = getBBox(containerElem as SVGGraphicsElement, { ignoreTransform: true });
       const rotation = {
         angle: svgedit.utilities.getRotationAngle(containerElem),
         cx: bbox.x + bbox.width / 2,
@@ -97,24 +98,12 @@ class SvgNestButtons extends React.Component<Props, State> {
     for (let i = 0; i < elements.length; i++) {
       let elem = elements[i];
 
-      if (!elem) {
+      if (!elem || elem.tagName === 'filter') {
         continue;
       }
 
-      let bbox;
+      const bbox = getBBox(elem);
       const id = elem.getAttribute('id');
-
-      switch (elem.tagName) {
-        case 'use':
-          bbox = svgCanvas.getSvgRealLocation(elem as SVGUseElement);
-          break;
-        case 'filter':
-          continue;
-        default:
-          bbox = svgCanvas.calculateTransformedBBox(elem);
-          break;
-      }
-
       const rotation = {
         angle: svgedit.utilities.getRotationAngle(elem),
         cx: bbox.x + bbox.width / 2,

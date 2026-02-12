@@ -25,6 +25,7 @@ import type ISVGPathElement from '@core/interfaces/ISVGPathElement';
 
 import Path from '../path/Path';
 import Segment from '../path/Segment';
+import { getBBox } from '../utils/getBBox';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
 
@@ -216,7 +217,7 @@ const toEditMode = (element: Element): void => {
   setMouseMode('pathedit');
   svgCanvas.clearSelection();
   svgedit.path.path.show(true).update();
-  svgedit.path.path.oldbbox = svgedit.utilities.getBBox(svgedit.path.path.elem);
+  svgedit.path.path.oldbbox = getBBox(svgedit.path.path.elem, { ignoreTransform: true });
   $(svgedit.path.path.elem).attr('cursor', 'copy'); // Set path cursor type
   subpath = false;
 };
@@ -1540,7 +1541,7 @@ const smoothByFitPath = (elem: SVGPathElement) => {
   const _round = (val: number) => round(val, 2);
   const d = elem.getAttribute('d')!;
   const dPaths = d.split(/(?=M)/);
-  const bbox = svgedit.utilities.getBBox(elem);
+  const bbox = getBBox(elem, { ignoreTransform: true });
   const rotation = {
     angle: svgedit.utilities.getRotationAngle(elem),
     cx: bbox.x + bbox.width / 2,

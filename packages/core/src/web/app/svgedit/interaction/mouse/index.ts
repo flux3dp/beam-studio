@@ -36,6 +36,7 @@ import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
 
+import { getBBox } from '../../utils/getBBox';
 import wheelEventHandlerGenerator from '../wheelEventHandler';
 
 import { getEventPoint } from './utils/getEventPoint';
@@ -60,7 +61,8 @@ const SENSOR_AREA_RADIUS = 10;
 let startX = 0;
 let startY = 0;
 let moved = false;
-let initBBox = {};
+// Record the bbox before resize to calculate desire transform matrix
+let resizeInitBBox: { height: number; width: number; x: number; y: number } = { height: 0, width: 0, x: 0, y: 0 };
 let startMouseX = 0;
 let startMouseY = 0;
 let selectedBBox: IRect | null = null;
@@ -329,16 +331,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
       // Getting the BBox from the selection box, since we know we
       // want to orient around it
-      const selectBox = document.getElementById(`selectedBox_${mouseTarget.id}`);
-
-      initBBox = svgedit.utilities.getBBox(selectBox);
-
-      const bb: Record<string, number> = {};
-
-      $.each(initBBox, (key, val) => {
-        bb[key] = val / workareaManager.zoomRatio;
-      });
-      initBBox = mouseTarget.tagName === 'use' ? svgCanvas.getSvgRealLocation(mouseTarget) : bb;
+      resizeInitBBox = getBBox(mouseTarget);
       // append three dummy transforms to the tlist so that
       // we can translate,scale,translate in mousemove
 
@@ -509,7 +502,7 @@ const mouseDown = async (evt: MouseEvent) => {
     true,
   );
 
-  if (selectedElements?.[0]) selectedBBox = svgCanvas.getSvgRealLocation(selectedElements[0]);
+  if (selectedElements?.[0]) selectedBBox = getBBox(selectedElements[0]);
   else selectedBBox = null;
 
   $.each(extensionResult, (_, r) => {
@@ -523,7 +516,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const resizeMode = svgCanvas.getCurrentResizeMode();
   const transforms = svgedit.transformlist.getTransformList(selected);
   const hasMatrix = svgedit.math.hasMatrixTransform(transforms);
-  const box = hasMatrix ? initBBox : svgedit.utilities.getBBox(selected);
+  const box = hasMatrix ? resizeInitBBox : getBBox(selected, { ignoreTransform: true });
   const isUnfixedResize = (selected.getAttribute('data-ratiofixed') === 'true') === evt.shiftKey;
   const angle = svgedit.utilities.getRotationAngle(selected);
   let { height, width, x: left, y: top } = box;
@@ -941,7 +934,7 @@ const mouseMove = (evt: MouseEvent) => {
       svgCanvas.textActions.mouseMove(mouseX, mouseY);
       break;
     case 'rotate':
-      box = svgedit.utilities.getBBox(selected);
+      box = getBBox(selected, { ignoreTransform: true });
 
       cx = box.x + box.width / 2;
       cy = box.y + box.height / 2;

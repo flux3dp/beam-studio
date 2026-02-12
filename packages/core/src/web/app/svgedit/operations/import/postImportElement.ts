@@ -4,6 +4,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getBBox } from '../../utils/getBBox';
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -14,7 +16,7 @@ getSVGAsync((globalSVG) => {
  * Resize and reposition, set ratio fix, disassembleUse, and updateElementColor
  */
 const postImportElement = async (elem: SVGElement, batchCmd: IBatchCommand) => {
-  const { height, width } = svgCanvas.getSvgRealLocation(elem);
+  const { height, width } = getBBox(elem);
   const [newWidth, newHeight] = width > height ? [500, (height * 500) / width] : [(width * 500) / height, 500];
 
   svgCanvas.selectOnly([elem]);

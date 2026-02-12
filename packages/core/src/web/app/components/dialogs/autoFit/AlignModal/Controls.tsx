@@ -19,7 +19,7 @@ import { calculateDimensionCenter } from './dimension';
 interface Props {
   contour: AutoFitContour;
   dimension: ImageDimension;
-  imageRef: MutableRefObject<Konva.Image>;
+  imageRef: MutableRefObject<Konva.Image | null>;
   initDimension: ImageDimension;
   setDimension: Dispatch<SetStateAction<ImageDimension>>;
 }

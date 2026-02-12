@@ -15,6 +15,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getBBox } from '../utils/getBBox';
+
 enum TextType {
   MULTI_LINE = 1,
   NULL = 0,
@@ -180,7 +182,7 @@ class TextActions {
 
         let start;
         let end;
-        const tspanbb = svgedit.utilities.getBBox(tspans[i]);
+        const tspanbb = getBBox(tspans[i], { ignoreTransform: true });
 
         // temporarily set text content to get bbox
         if (lines[i] === '') tspans[i].textContent = 'a';
@@ -537,9 +539,8 @@ class TextActions {
     let charpos = this.curtext.getCharNumAtPosition(pt);
     let rowIndex = 0;
 
-    this.textbb = svgedit.utilities.getBBox(this.curtext);
+    this.textbb = getBBox(this.curtext, { ignoreTransform: true });
 
-    // console.log(textbb);
     if (charpos < 0) {
       // Out of text range, look at mouse coords
       const totalLength = this.chardata.reduce((acc, cur) => acc + cur.length, 0);
@@ -1076,7 +1077,7 @@ class TextActions {
 
     const xform = this.curtext.getAttribute('transform');
 
-    this.textbb = svgedit.utilities.getBBox(this.curtext);
+    this.textbb = getBBox(this.curtext, { ignoreTransform: true });
     this.matrix = xform ? svgedit.math.getMatrix(this.curtext) : null;
 
     this.calculateChardata();

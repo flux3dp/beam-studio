@@ -3,6 +3,8 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { getBBox } from '../utils/getBBox';
+
 import transformlist from './transformlist';
 
 let svgCanvas: ISVGCanvas;
@@ -39,7 +41,7 @@ export const setRotationAngle = (
   { addToHistory = false, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
 ): void => {
   const oldTransform = elem.getAttribute('transform');
-  const bbox = svgedit.utilities.getBBox(elem);
+  const bbox = getBBox(elem, { ignoreTransform: true });
   const cx = bbox.x + bbox.width / 2;
   const cy = bbox.y + bbox.height / 2;
   const tlist = svgedit.transformlist.getTransformList(elem);

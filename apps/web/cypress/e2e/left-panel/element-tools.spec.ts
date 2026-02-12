@@ -29,6 +29,6 @@ describe('import from element panel', () => {
     cy.get('#svg_9').should('have.attr', 'fill', '#333333');
     cy.get('#svg_9')
       .invoke('attr', 'd')
-      .then((html) => expect(md5(html)).equal('df2c88105c672bb740c0ebd9ee1f0e88'));
+      .then((html) => expect(md5(html)).equal('3224b6b40f3f204d1e60083ead786c5a'));
   });
 });

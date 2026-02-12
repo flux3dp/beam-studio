@@ -1,4 +1,4 @@
-const getTransformList = (
+export const getTransformList = (
   elem: SVGGradientElement | SVGGraphicsElement | SVGPatternElement,
 ): null | SVGTransformList => {
   // https://developer.mozilla.org/en-US/docs/Web/API/SVGTransform

@@ -38,7 +38,6 @@ export default interface ISVGCanvas {
   bind: (eventName: string, callback: ((win: any, elem: any) => void) | boolean) => void;
   calcElemFilledInfo: (elem: Element) => { isAllFilled: boolean; isAnyFilled: boolean };
   calcPathClosed: (elem: Element) => boolean;
-  calculateTransformedBBox(elem: Element, ignoreRotation?: boolean): IRect;
   call: (eventName: string, args?: any | SVGElement[]) => void;
   changeSelectedAttribute(attr: string, val: number | string, elems?: Element[]): void;
   changeSelectedAttributeNoUndo: (attr: string, val: number | string, elems?: Element[]) => void;
@@ -97,8 +96,6 @@ export default interface ISVGCanvas {
   getSelectedWithoutTempGroup: () => SVGElement[];
   getStarted: () => boolean;
   getStartTransform: () => any;
-  getStrokedBBox(elems: Element[]): IRect;
-  getSvgRealLocation: (elem: SVGElement) => IRect;
   getSvgString: (opts?: { fixTopExpansion?: boolean; unit?: Units }) => string;
   getTempGroup: () => SVGGElement;
   getTitle: () => string;
@@ -177,5 +174,4 @@ export default interface ISVGCanvas {
   };
   updateElementColor: (elem: Element) => void;
   updateRecentFiles(path: string): void;
-  zoomSvgElem: (zoom: number) => void;
 }

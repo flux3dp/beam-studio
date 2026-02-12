@@ -10,6 +10,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import { deleteUseRef } from '@core/app/svgedit/operations/delete';
 import findDefs from '@core/app/svgedit/utils/findDef';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
@@ -165,7 +166,7 @@ const sliceWorkarea = async (
         const child = children[k] as SVGGraphicsElement;
 
         if (child.tagName !== 'use' && child.tagName !== 'text') {
-          const { height: childH, y: childY } = svgCanvas.calculateTransformedBBox(child, false);
+          const { height: childH, y: childY } = getBBox(child, { ignoreRotation: false });
 
           if (childY + childH < start || childY > end) {
             child.remove();

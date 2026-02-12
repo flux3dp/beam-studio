@@ -1204,12 +1204,7 @@
                     //console.log(elementData);
                     const elemId = elementData.source;
                     const elem = $(`#${elemId}`)[0];
-                    let bbox;
-                    if (elem.tagName === 'use') {
-                        bbox = svgCanvas.getSvgRealLocation(elem);
-                    } else {
-                        bbox = svgCanvas.calculateTransformedBBox(elem);
-                    }
+                    let bbox = svgCanvas.getBBox(elem);
                     let [dx, dy] = [0, 0];
 					let tempMove = elementData.tempMove || {x: 0, y: 0, angle: 0};
 					//console.log(tempMove);

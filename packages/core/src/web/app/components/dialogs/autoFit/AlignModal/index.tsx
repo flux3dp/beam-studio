@@ -9,22 +9,15 @@ import constant from '@core/app/actions/beambox/constant';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import useKonvaCanvas from '@core/helpers/hooks/konva/useKonvaCanvas';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import Controls from './Controls';
 import type { ImageDimension } from './dimension';
 import styles from './index.module.scss';
 import KonvaImage from './KonvaImage';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 interface Props {
   contour: AutoFitContour;
@@ -60,7 +53,7 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): React.JSX.El
       });
     });
 
-    observer.observe(containerRef.current);
+    observer.observe(containerRef.current!);
 
     return () => {
       observer.disconnect();
@@ -102,8 +95,7 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): React.JSX.El
   });
 
   const { elemAngle, elemBBox } = useMemo(() => {
-    const bbox =
-      element.tagName === 'use' ? svgCanvas.getSvgRealLocation(element) : svgCanvas.calculateTransformedBBox(element);
+    const bbox = getBBox(element as SVGElement);
     const angle = getRotationAngle(element);
 
     return { elemAngle: angle, elemBBox: bbox };
@@ -153,7 +145,7 @@ const AlignModal = ({ contour, element, onApply, onClose }: Props): React.JSX.El
 
   const handleApply = () => {
     onApply(initDimension, imageDimension);
-    onClose();
+    onClose?.();
   };
 
   return (

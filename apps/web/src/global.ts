@@ -17,10 +17,8 @@ declare global {
         isWindows: () => boolean;
         supportsEditableText: () => () => boolean;
         supportsGoodTextCharPos: () => boolean;
-        supportsHVLineContainerBBox: () => () => boolean;
         supportsNativeTransformLists: () => () => boolean;
         supportsNonScalingStroke: () => () => boolean;
-        supportsPathBBox: () => () => boolean;
         supportsPathInsertItemBefore: () => () => boolean;
         supportsPathReplaceItem: () => () => boolean;
         supportsSvg: () => () => boolean;

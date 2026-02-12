@@ -2,6 +2,7 @@ import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import selector from '@core/app/svgedit/selector';
+import { getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -110,7 +111,7 @@ export const pasteElements = async ({
       ctrY = y!;
     }
 
-    const bbox = svgCanvas.getStrokedBBox(pasted);
+    const bbox = getBBoxFromElements(pasted, { ignoreRotation: false, withStroke: true });
 
     dx = ctrX - (bbox.x + bbox.width / 2);
     dy = ctrY - (bbox.y + bbox.height / 2);

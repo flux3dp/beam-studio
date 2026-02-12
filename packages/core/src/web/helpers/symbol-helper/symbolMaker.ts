@@ -7,6 +7,7 @@ import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import findDefs from '@core/app/svgedit/utils/findDef';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
@@ -468,7 +469,7 @@ const reRenderImageSymbol = async (useElement: SVGUseElement, opts: { force?: bo
   if (!useElement.parentNode) return;
 
   const { force = false } = opts;
-  const { height, width } = svgCanvas.getSvgRealLocation(useElement);
+  const { height, width } = getBBox(useElement);
   const { height: origHeight, width: origWidth } = useElement.getBBox();
 
   if (origWidth * origHeight === 0) return;
