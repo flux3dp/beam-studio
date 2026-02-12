@@ -10,10 +10,10 @@ describe('polygen tools', () => {
   it('change sides by keyboard', () => {
     cy.get('#svg_1').trigger('keydown', { code: 189, key: '-', force: true });
     cy.get('#svg_1').trigger('keyup', { code: 189, key: '-', force: true });
-    cy.get('#polygon-sides > input').should('have.attr', 'value').and('eq', '4');
+    cy.get('input#polygon-sides').should('have.attr', 'value').and('eq', '4');
     cy.get('#svg_1').trigger('keydown', { code: 187, key: '+', force: true });
     cy.get('#svg_1').trigger('keyup', { code: 187, key: '+', force: true });
-    cy.get('#polygon-sides > input').should('have.attr', 'value').and('eq', '5');
+    cy.get('input#polygon-sides').should('have.attr', 'value').and('eq', '5');
   });
 
   it('lock rotate by shift', () => {
