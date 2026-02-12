@@ -1,10 +1,11 @@
 import * as React from 'react';
+import { useCallback, useEffect } from 'react';
 
 import classNames from 'classnames';
 
 import shortcuts from '../../helpers/shortcuts';
 
-interface Props {
+interface ModalProps {
   children?: React.JSX.Element;
   className?: any;
   content?: React.JSX.Element;
@@ -12,54 +13,49 @@ interface Props {
   onClose?: (any?) => void;
   onOpen?: (any?) => void;
 }
-class View extends React.Component<Props> {
-  componentDidMount() {
-    const { disabledEscapeOnBackground = false, onClose = () => {} } = this.props;
 
-    this.onOpen();
+const Modal = ({
+  children,
+  className = {},
+  content = <div />,
+  disabledEscapeOnBackground = false,
+  onClose = () => {},
+  onOpen,
+}: ModalProps): React.JSX.Element => {
+  const onEscapeOnBackground = useCallback(
+    (e) => {
+      if (!disabledEscapeOnBackground) {
+        onClose(e);
+      }
+    },
+    [disabledEscapeOnBackground, onClose],
+  );
+
+  useEffect(() => {
+    onOpen?.();
     shortcuts.on(['Escape'], (e) => {
       if (!disabledEscapeOnBackground) {
         onClose(e);
       }
     });
-  }
 
-  componentWillUnmount() {
-    shortcuts.off(['Escape']);
+    return () => {
+      shortcuts.off(['Escape']);
 
-    if (window.svgEditor) {
-      shortcuts.on(['Escape'], window.svgEditor.clickSelect);
-    }
-  }
+      if (window.svgEditor) {
+        shortcuts.on(['Escape'], window.svgEditor.clickSelect);
+      }
+    };
+  }, []);
 
-  onOpen = () => {
-    const { onOpen = () => {} } = this.props;
+  className['modal-window'] = true;
 
-    if (onOpen) {
-      onOpen(this);
-    }
-  };
+  return (
+    <div className={classNames(className)}>
+      <div className="modal-background" onClick={onEscapeOnBackground} />
+      <div className="modal-body">{children || content}</div>
+    </div>
+  );
+};
 
-  onEscapeOnBackground = (e): void => {
-    const { disabledEscapeOnBackground = false, onClose = () => {} } = this.props;
-
-    if (!disabledEscapeOnBackground) {
-      onClose(e);
-    }
-  };
-
-  render() {
-    const { children, className = {}, content = <div /> } = this.props;
-
-    className['modal-window'] = true;
-
-    return (
-      <div className={classNames(className)}>
-        <div className="modal-background" onClick={this.onEscapeOnBackground} />
-        <div className="modal-body">{children || content}</div>
-      </div>
-    );
-  }
-}
-
-export default View;
+export default Modal;

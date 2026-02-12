@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -14,48 +14,31 @@ export const TimeEstimationButtonContext = React.createContext<ITimeEstimationBu
 
 const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
 
-interface State {
-  estimatedTime: null | number;
+interface TimeEstimationButtonContextProviderProps {
+  children: React.ReactNode;
 }
 
-export class TimeEstimationButtonContextProvider extends React.Component<any, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      estimatedTime: null,
+export const TimeEstimationButtonContextProvider = ({
+  children,
+}: TimeEstimationButtonContextProviderProps): React.JSX.Element => {
+  const [estimatedTime, setEstimatedTime] = useState<null | number>(null);
+
+  const handleSetEstimatedTime = useCallback((newTime: null | number) => {
+    setEstimatedTime((prev) => (newTime !== prev ? newTime : prev));
+  }, []);
+
+  useEffect(() => {
+    timeEstimationButtonEventEmitter.on('SET_ESTIMATED_TIME', handleSetEstimatedTime);
+
+    return () => {
+      timeEstimationButtonEventEmitter.off('SET_ESTIMATED_TIME', handleSetEstimatedTime);
     };
-  }
+  }, [handleSetEstimatedTime]);
 
-  componentDidMount() {
-    timeEstimationButtonEventEmitter.on('SET_ESTIMATED_TIME', this.setEstimatedTime.bind(this));
-  }
+  const value = useMemo(
+    () => ({ estimatedTime, setEstimatedTime: handleSetEstimatedTime }),
+    [estimatedTime, handleSetEstimatedTime],
+  );
 
-  componentWillUnmount() {
-    timeEstimationButtonEventEmitter.removeAllListeners();
-  }
-
-  setEstimatedTime = (newTime: null | number): void => {
-    const { estimatedTime } = this.state;
-
-    if (newTime !== estimatedTime) {
-      this.setState({ estimatedTime: newTime });
-    }
-  };
-
-  render() {
-    const { setEstimatedTime } = this;
-    const { estimatedTime } = this.state;
-    const { children } = this.props;
-
-    return (
-      <TimeEstimationButtonContext.Provider
-        value={{
-          estimatedTime,
-          setEstimatedTime,
-        }}
-      >
-        {children}
-      </TimeEstimationButtonContext.Provider>
-    );
-  }
-}
+  return <TimeEstimationButtonContext.Provider value={value}>{children}</TimeEstimationButtonContext.Provider>;
+};

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -10,47 +10,27 @@ export const TopBarHintsContext = React.createContext<{
 
 const topBarHintsEventEmitter = eventEmitterFactory.createEventEmitter('top-bar-hints');
 
-interface State {
-  hintType: string;
+interface TopBarHintsContextProviderProps {
+  children: React.ReactNode;
 }
 
-export class TopBarHintsContextProvider extends React.Component<any, State> {
-  constructor(props) {
-    super(props);
-    this.state = {
-      hintType: null,
+export const TopBarHintsContextProvider = ({ children }: TopBarHintsContextProviderProps): React.JSX.Element => {
+  const [hintType, setHintType] = useState<string>(null);
+
+  const setHint = useCallback((type: string) => setHintType(type), []);
+  const removeHint = useCallback(() => setHintType(null), []);
+
+  useEffect(() => {
+    topBarHintsEventEmitter.on('SET_HINT', setHint);
+    topBarHintsEventEmitter.on('REMOVE_HINT', removeHint);
+
+    return () => {
+      topBarHintsEventEmitter.off('SET_HINT', setHint);
+      topBarHintsEventEmitter.off('REMOVE_HINT', removeHint);
     };
-  }
+  }, [setHint, removeHint]);
 
-  componentDidMount() {
-    topBarHintsEventEmitter.on('SET_HINT', this.setHint.bind(this));
-    topBarHintsEventEmitter.on('REMOVE_HINT', this.removeHint.bind(this));
-  }
+  const value = useMemo(() => ({ hintType }), [hintType]);
 
-  componentWillUnmount() {
-    topBarHintsEventEmitter.removeAllListeners();
-  }
-
-  setHint = (hintType: string): void => {
-    this.setState({ hintType });
-  };
-
-  removeHint = (): void => {
-    this.setState({ hintType: null });
-  };
-
-  render() {
-    const { children } = this.props;
-    const { hintType } = this.state;
-
-    return (
-      <TopBarHintsContext.Provider
-        value={{
-          hintType,
-        }}
-      >
-        {children}
-      </TopBarHintsContext.Provider>
-    );
-  }
-}
+  return <TopBarHintsContext.Provider value={value}>{children}</TopBarHintsContext.Provider>;
+};

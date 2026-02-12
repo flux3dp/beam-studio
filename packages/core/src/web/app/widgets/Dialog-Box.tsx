@@ -11,7 +11,7 @@ interface Position {
   top?: number;
 }
 
-interface Props {
+interface DialogBoxProps {
   arrowColor?: string;
   arrowDirection?: ArrowDirection;
   arrowHeight?: number;
@@ -23,16 +23,18 @@ interface Props {
   position?: Position;
 }
 
-class DialogBox extends React.PureComponent<Props> {
-  renderArrow = () => {
-    const {
-      arrowColor = '#0091ff',
-      arrowDirection = 'left',
-      arrowHeight = 17,
-      arrowPadding = 15,
-      arrowWidth = 20,
-      position = { left: 100, top: 100 },
-    } = this.props;
+const DialogBox = ({
+  arrowColor = '#0091ff',
+  arrowDirection = 'left',
+  arrowHeight = 17,
+  arrowPadding = 15,
+  arrowWidth = 20,
+  children,
+  content,
+  onClose,
+  position = { left: 100, top: 100 },
+}: DialogBoxProps): React.JSX.Element => {
+  const renderArrow = () => {
     const arrowStyle: any = {
       bottom: {
         borderColor: `${arrowColor} transparent transparent transparent`,
@@ -63,14 +65,7 @@ class DialogBox extends React.PureComponent<Props> {
     return <div className={classNames('dialog-box-arrow', arrowDirection)} style={arrowStyle} />;
   };
 
-  calculatePositioStyle = () => {
-    const {
-      arrowDirection = 'left',
-      arrowHeight = 17,
-      arrowPadding = 15,
-      arrowWidth = 20,
-      position = { left: 100, top: 100 } as any,
-    } = this.props;
+  const calculatePositionStyle = () => {
     const horizontalRef = position.left === undefined ? 'right' : 'left';
     const verticalRef = position.top === undefined ? 'bottom' : 'top';
     const style: any = {};
@@ -86,8 +81,7 @@ class DialogBox extends React.PureComponent<Props> {
     return style;
   };
 
-  renderCloseButton = () => {
-    const { onClose, position = { left: 100, top: 100 } } = this.props;
+  const renderCloseButton = () => {
     const horizontalRef = position.left === undefined ? 'right' : 'left';
 
     return (
@@ -100,17 +94,13 @@ class DialogBox extends React.PureComponent<Props> {
     );
   };
 
-  render() {
-    const { children, content } = this.props;
-
-    return (
-      <div className={classNames('dialog-box-container')} style={this.calculatePositioStyle()}>
-        {this.renderArrow()}
-        <div className={classNames('dialog-box')}>{children || content}</div>
-        {this.renderCloseButton()}
-      </div>
-    );
-  }
-}
+  return (
+    <div className={classNames('dialog-box-container')} style={calculatePositionStyle()}>
+      {renderArrow()}
+      <div className={classNames('dialog-box')}>{children || content}</div>
+      {renderCloseButton()}
+    </div>
+  );
+};
 
 export default DialogBox;

@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 
@@ -16,44 +16,23 @@ const getImageSize = (url: string, onSize: (size: number[]) => void) => {
   img.src = url;
 };
 
-interface Props {
+interface MonitorCameraProps {
   device: IDeviceInfo;
 }
 
-interface State {
-  isHd: boolean;
-}
+const MonitorCamera = ({ device }: MonitorCameraProps): React.JSX.Element => {
+  const [isHd, setIsHd] = useState(false);
 
-export default class MonitorCamera extends React.PureComponent<Props, State> {
-  private isBeamboxCamera: boolean;
+  const isBeamboxCamera = useMemo(
+    () => ['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(device.model),
+    [device.model],
+  );
 
-  private cameraStream: any;
+  const deviceRef = useRef(device);
 
-  constructor(props: Props) {
-    super(props);
+  deviceRef.current = device;
 
-    const { device } = this.props;
-    const { model } = device;
-
-    this.isBeamboxCamera = ['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(
-      model,
-    );
-    this.state = {
-      isHd: false,
-    };
-  }
-
-  async componentDidMount() {
-    this.cameraStream = await DeviceMaster.streamCamera();
-    this.cameraStream.subscribe(this.processImage);
-  }
-
-  componentWillUnmount() {
-    DeviceMaster.disconnectCamera();
-  }
-
-  processImage = ({ imgBlob }: { imgBlob: Blob }) => {
-    const { device } = this.props;
+  const processImage = useCallback(({ imgBlob }: { imgBlob: Blob }) => {
     const cameraImage = document.getElementById('camera-image');
 
     if (!cameraImage) {
@@ -61,21 +40,22 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
     }
 
     const url = URL.createObjectURL(imgBlob);
+    const currentDevice = deviceRef.current;
 
-    if (device) {
-      if (!hdChecked[device.serial]) {
+    if (currentDevice) {
+      if (!hdChecked[currentDevice.serial]) {
         getImageSize(url, (size: number[]) => {
           console.log('image size', size);
 
           if (size[0] > 720) {
-            hdChecked[device.serial] = 2;
+            hdChecked[currentDevice.serial] = 2;
           } else if (size[0] > 0) {
-            hdChecked[device.serial] = 1;
+            hdChecked[currentDevice.serial] = 1;
           }
         });
       }
 
-      this.setState({ isHd: hdChecked[device.serial] !== 1 });
+      setIsHd(hdChecked[currentDevice.serial] !== 1);
     }
 
     const originalUrl = cameraImage.getAttribute('src');
@@ -85,19 +65,33 @@ export default class MonitorCamera extends React.PureComponent<Props, State> {
     }
 
     cameraImage.setAttribute('src', url);
-  };
+  }, []);
 
-  render() {
-    const { isHd } = this.state;
-    const className = classNames('camera-image', {
-      'beambox-camera': this.isBeamboxCamera,
-      hd: isHd,
-    });
+  useEffect(() => {
+    let cameraStream: any;
 
-    return (
-      <div className="camera">
-        <img className={className} id="camera-image" />
-      </div>
-    );
-  }
-}
+    const startCamera = async () => {
+      cameraStream = await DeviceMaster.streamCamera();
+      cameraStream.subscribe(processImage);
+    };
+
+    startCamera();
+
+    return () => {
+      DeviceMaster.disconnectCamera();
+    };
+  }, [processImage]);
+
+  const className = classNames('camera-image', {
+    'beambox-camera': isBeamboxCamera,
+    hd: isHd,
+  });
+
+  return (
+    <div className="camera">
+      <img className={className} id="camera-image" />
+    </div>
+  );
+};
+
+export default MonitorCamera;

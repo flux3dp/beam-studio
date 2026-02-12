@@ -1,7 +1,6 @@
-import React, { useContext } from 'react';
+import React, { act, useContext } from 'react';
 
 import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 
 import { DialogContext, DialogContextProvider, eventEmitter } from './DialogContext';
 

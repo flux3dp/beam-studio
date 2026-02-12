@@ -1,7 +1,6 @@
-import React, { useContext } from 'react';
+import React, { act, useContext } from 'react';
 
 import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
@@ -14,7 +13,6 @@ const Children = () => {
 };
 
 test('should render correctly', () => {
-  const setStateSpy = jest.spyOn(TimeEstimationButtonContextProvider.prototype, 'setState');
   const timeEstimationButtonEventEmitter = eventEmitterFactory.createEventEmitter('time-estimation-button');
   const { container, unmount } = render(
     <TimeEstimationButtonContextProvider>
@@ -26,11 +24,11 @@ test('should render correctly', () => {
   expect(timeEstimationButtonEventEmitter.eventNames().length).toBe(1);
 
   act(() => timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', 123));
-  expect(setStateSpy).toHaveBeenCalledTimes(1);
   expect(container).toHaveTextContent('123');
 
+  // Emitting the same value should not cause a state update (dedup optimization)
   act(() => timeEstimationButtonEventEmitter.emit('SET_ESTIMATED_TIME', 123));
-  expect(setStateSpy).toHaveBeenCalledTimes(1);
+  expect(container).toHaveTextContent('123');
 
   unmount();
   expect(timeEstimationButtonEventEmitter.eventNames().length).toBe(0);

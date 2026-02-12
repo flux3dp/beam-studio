@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { act } from 'react';
 
 import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 
 import { MessageLevel } from '@core/app/actions/message-caller';
 import AlertConstants from '@core/app/constants/alert-constants';

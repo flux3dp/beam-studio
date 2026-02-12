@@ -1,9 +1,9 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { CloseOutlined, LoadingOutlined, PlusOutlined } from '@ant-design/icons';
-import classNames from 'classnames';
 import type { DropResult } from '@hello-pangea/dnd';
 import { DragDropContext, Draggable, Droppable } from '@hello-pangea/dnd';
+import classNames from 'classnames';
 
 import dialogCaller from '@core/app/actions/dialog-caller';
 import tabController from '@core/app/actions/tabController';
