@@ -203,112 +203,115 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
   const isSelectingLast = selectedLayers.length === 1 && layerManager.getLayerName(0) === selectedLayers[0];
 
   return isMobile ? (
-    <div className={styles['item-group']}>
-      <ObjectPanelItem.Divider />
-      {isSelectingPrinterLayer && (
-        <ObjectPanelItem.Item
-          content={<LayerPanelIcons.Expand />}
-          disabled={isMultiSelecting || !isFullColor}
-          id="split_color"
-          label={LANG.layers.splitFullColor}
-          onClick={handleSplitColor}
-        />
-      )}
-      {isSelectingPrinterLayer && (
-        <Popover
-          content={
-            <>
-              <div className={colorPickerStyles.preset}>
-                {colorConstants.printingLayerColor.map((preset) => (
-                  <div
-                    className={classNames(
-                      colorPickerStyles['preset-block'],
-                      colorPickerStyles.color,
-                      colorPickerStyles.printing,
-                      { [colorPickerStyles.checked]: preset === color },
-                    )}
-                    key={preset}
-                    onClick={() => setColor(preset)}
-                  >
-                    <div className={colorPickerStyles.inner} style={{ backgroundColor: preset }} />
-                  </div>
-                ))}
-              </div>
-              <div className={colorPickerStyles.footer}>
-                <Button
-                  className={colorPickerStyles.btn}
-                  onClick={() => {
-                    updateActiveKey(null);
-                    handleLayerFullColor(color);
-                    setColor(colorConstants.printingLayerColor[0]);
-                  }}
-                  type="primary"
-                >
-                  {LANG2.ok}
-                </Button>
-                <Button
-                  className={colorPickerStyles.btn}
-                  onClick={() => {
-                    updateActiveKey(null);
-                    setColor(colorConstants.printingLayerColor[0]);
-                  }}
-                  type="default"
-                >
-                  {LANG2.cancel}
-                </Button>
-              </div>
-            </>
-          }
-          visible={activeKey === 'toggle_fullcolor_layer' && isFullColor}
-        >
+    <>
+      {children}
+      <div className={styles['item-group']}>
+        <ObjectPanelItem.Divider />
+        {isSelectingPrinterLayer && (
           <ObjectPanelItem.Item
-            autoClose={false}
-            content={<Switch checked={isFullColor} />}
-            disabled={isMultiSelecting || isSplitLayer}
-            id="toggle_fullcolor_layer"
-            label={LANG.layers.fullColor}
-            onClick={() => {
-              if (!isFullColor && !isSplitLayer) {
-                handleLayerFullColor();
-                updateActiveKey(null);
-              }
-            }}
+            content={<LayerPanelIcons.Expand />}
+            disabled={isMultiSelecting || !isFullColor}
+            id="split_color"
+            label={LANG.layers.splitFullColor}
+            onClick={handleSplitColor}
           />
-        </Popover>
-      )}
-      <ObjectPanelItem.Item
-        content={<ObjectPanelIcons.Trash />}
-        id="deletelayer"
-        label={LANG.layers.del}
-        onClick={handleDeleteLayers}
-      />
-      <ObjectPanelItem.Item
-        content={<LayerPanelIcons.Merge />}
-        disabled={isMultiSelecting || isSelectingLast}
-        id="merge_down_layer"
-        label={LANG.layers.merge_down}
-        onClick={handleMergeDown}
-      />
-      <ObjectPanelItem.Item
-        content={isLocked ? <LayerPanelIcons.Unlock /> : <LayerPanelIcons.Lock />}
-        id="locklayer"
-        label={isLocked ? LANG.layers.unlock : LANG.layers.lock}
-        onClick={toggleLayerLocked}
-      />
-      <ObjectPanelItem.Item
-        content={<ObjectPanelIcons.Duplicate />}
-        id="dupelayer"
-        label={LANG.layers.dupe}
-        onClick={handleCloneLayers}
-      />
-      <ObjectPanelItem.Item
-        content={<LayerPanelIcons.Rename />}
-        disabled={isMultiSelecting}
-        id="renameLayer"
-        label={LANG.layers.rename}
-        onClick={handleRename}
-      />
-    </div>
+        )}
+        {isSelectingPrinterLayer && (
+          <Popover
+            content={
+              <>
+                <div className={colorPickerStyles.preset}>
+                  {colorConstants.printingLayerColor.map((preset) => (
+                    <div
+                      className={classNames(
+                        colorPickerStyles['preset-block'],
+                        colorPickerStyles.color,
+                        colorPickerStyles.printing,
+                        { [colorPickerStyles.checked]: preset === color },
+                      )}
+                      key={preset}
+                      onClick={() => setColor(preset)}
+                    >
+                      <div className={colorPickerStyles.inner} style={{ backgroundColor: preset }} />
+                    </div>
+                  ))}
+                </div>
+                <div className={colorPickerStyles.footer}>
+                  <Button
+                    className={colorPickerStyles.btn}
+                    onClick={() => {
+                      updateActiveKey(null);
+                      handleLayerFullColor(color);
+                      setColor(colorConstants.printingLayerColor[0]);
+                    }}
+                    type="primary"
+                  >
+                    {LANG2.ok}
+                  </Button>
+                  <Button
+                    className={colorPickerStyles.btn}
+                    onClick={() => {
+                      updateActiveKey(null);
+                      setColor(colorConstants.printingLayerColor[0]);
+                    }}
+                    type="default"
+                  >
+                    {LANG2.cancel}
+                  </Button>
+                </div>
+              </>
+            }
+            visible={activeKey === 'toggle_fullcolor_layer' && isFullColor}
+          >
+            <ObjectPanelItem.Item
+              autoClose={false}
+              content={<Switch checked={isFullColor} />}
+              disabled={isMultiSelecting || isSplitLayer}
+              id="toggle_fullcolor_layer"
+              label={LANG.layers.fullColor}
+              onClick={() => {
+                if (!isFullColor && !isSplitLayer) {
+                  handleLayerFullColor();
+                  updateActiveKey(null);
+                }
+              }}
+            />
+          </Popover>
+        )}
+        <ObjectPanelItem.Item
+          content={<ObjectPanelIcons.Trash />}
+          id="deletelayer"
+          label={LANG.layers.del}
+          onClick={handleDeleteLayers}
+        />
+        <ObjectPanelItem.Item
+          content={<LayerPanelIcons.Merge />}
+          disabled={isMultiSelecting || isSelectingLast}
+          id="merge_down_layer"
+          label={LANG.layers.merge_down}
+          onClick={handleMergeDown}
+        />
+        <ObjectPanelItem.Item
+          content={isLocked ? <LayerPanelIcons.Unlock /> : <LayerPanelIcons.Lock />}
+          id="locklayer"
+          label={isLocked ? LANG.layers.unlock : LANG.layers.lock}
+          onClick={toggleLayerLocked}
+        />
+        <ObjectPanelItem.Item
+          content={<ObjectPanelIcons.Duplicate />}
+          id="dupelayer"
+          label={LANG.layers.dupe}
+          onClick={handleCloneLayers}
+        />
+        <ObjectPanelItem.Item
+          content={<LayerPanelIcons.Rename />}
+          disabled={isMultiSelecting}
+          id="renameLayer"
+          label={LANG.layers.rename}
+          onClick={handleRename}
+        />
+      </div>
+    </>
   ) : (
     <ContextMenu
       items={
