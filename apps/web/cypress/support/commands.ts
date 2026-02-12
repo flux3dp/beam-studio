@@ -224,10 +224,10 @@ Cypress.Commands.add('applySettings', () => {
 });
 
 Cypress.Commands.add('go2Preference', (handleSave = false) => {
-  cy.get('div.top-bar-menu-container').click({ timeout: 10000 });
-  cy.get('ul.rc-menu--dir-bottom>li.rc-menu__submenu').should('have.length', 7);
-  cy.get('.rc-menu__submenu').contains('File').click();
-  cy.get('.rc-menu__submenu').contains('Preferences').click();
+  cy.get('[data-testid="top-bar-menu"]').click({ timeout: 10000 });
+  cy.get('ul.szh-menu--dir-bottom>li.szh-menu__submenu').should('have.length', 7);
+  cy.get('.szh-menu__submenu').contains('File').click();
+  cy.get('.szh-menu__submenu').contains('Preferences').click();
   if (handleSave) cy.get('button.ant-btn').contains("Don't Save").click();
   // Wait for settings modal to be visible
   cy.get('.ant-modal-content', { timeout: 10000 }).should('be.visible');

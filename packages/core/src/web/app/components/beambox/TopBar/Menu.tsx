@@ -1,6 +1,8 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { MenuDivider, MenuItem, SubMenu, Menu as TopBarMenu } from '@szhsin/react-menu';
+import '@szhsin/react-menu/dist/index.css';
+import '@szhsin/react-menu/dist/transitions/slide.css';
 
 import { fcodeV2Models, hexaRfModels, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { MenuEvents } from '@core/app/constants/ipcEvents';
@@ -17,6 +19,8 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
+
+import styles from './Menu.module.scss';
 
 interface Props {
   email?: string;
@@ -229,11 +233,12 @@ export default function Menu({ email }: Props): React.JSX.Element {
   return (
     <TopBarMenu
       menuButton={
-        <div className="menu-btn-container">
-          <img className="icon" src="img/logo-line.svg" />
-          <img className="icon-arrow" src="img/icon-arrow-d.svg" />
+        <div className={styles['menu-btn-container']}>
+          <img className={styles.icon} src="img/logo-line.svg" />
+          <img className={styles['icon-arrow']} src="img/icon-arrow-d.svg" />
         </div>
       }
+      transition
     >
       <SubMenu label={menuCms.file}>
         <MenuItem onClick={() => callback('CLEAR_SCENE')}>{hotkey('clear_scene')}</MenuItem>
@@ -380,13 +385,13 @@ export default function Menu({ email }: Props): React.JSX.Element {
         <MenuItem onClick={() => callback('ROTARY_SETUP')}>{menuCms.rotary_setup}</MenuItem>
       </SubMenu>
       <SubMenu label={menuCms.view}>
-        <MenuItem className="rc-menu__item--type-checkbox" onClick={() => callback('ZOOM_IN')}>
+        <MenuItem className="szh-menu__item--type-checkbox" onClick={() => callback('ZOOM_IN')}>
           {hotkey('zoom_in')}
         </MenuItem>
-        <MenuItem className="rc-menu__item--type-checkbox" onClick={() => callback('ZOOM_OUT')}>
+        <MenuItem className="szh-menu__item--type-checkbox" onClick={() => callback('ZOOM_OUT')}>
           {hotkey('zoom_out')}
         </MenuItem>
-        <MenuItem className="rc-menu__item--type-checkbox" onClick={() => callback('FITS_TO_WINDOW')}>
+        <MenuItem className="szh-menu__item--type-checkbox" onClick={() => callback('FITS_TO_WINDOW')}>
           {menuCms.fit_to_window}
         </MenuItem>
         <MenuItem

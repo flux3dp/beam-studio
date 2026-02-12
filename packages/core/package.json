@@ -17,7 +17,7 @@
     "@react-three/drei": "^10.7.7",
     "@react-three/fiber": "^9.5.0",
     "@sentry/react": "^10.34.0",
-    "@szhsin/react-menu": "^1.10.1",
+    "@szhsin/react-menu": "^4.5.1",
     "@tanstack/react-query": "^5.90.10",
     "antd": "5.23.2",
     "antd-mobile": "^5.42.3",

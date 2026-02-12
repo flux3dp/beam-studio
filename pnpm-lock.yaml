@@ -492,8 +492,8 @@ importers:
         specifier: ^10.34.0
         version: 10.34.0(react@19.2.4)
       '@szhsin/react-menu':
-        specifier: ^1.10.1
-        version: 1.11.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+        specifier: ^4.5.1
+        version: 4.5.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
       '@tanstack/react-query':
         specifier: ^5.90.10
         version: 5.90.10(react@19.2.4)
@@ -3985,12 +3985,11 @@ packages:
   '@swc/types@0.1.22':
     resolution: {integrity: sha512-D13mY/ZA4PPEFSy6acki9eBT/3WgjMoRqNcdpIvjaYLQ44Xk5BdaL7UkDxAh6Z9UOe7tCCp67BVmZCojYp9owg==}
 
-  '@szhsin/react-menu@1.11.0':
-    resolution: {integrity: sha512-kaW/IpcokmyVwX7WGe6ijQI/xQDw5nQXUKyiioy40dm5gt45+Lo7cqGVUoy7Qj8275Q9tgN6hcazWX/DCcYUfQ==}
-    engines: {node: '>=10'}
+  '@szhsin/react-menu@4.5.1':
+    resolution: {integrity: sha512-kRTS7Pq0YdkucQexXVy5HkpzKsJdXbAhpmzve0wPokpsaG+4Ca3cphEn6WkRCWXfn1gZXosxcZCeb34ocmUPDw==}
     peerDependencies:
-      react: '>=16.8.0'
-      react-dom: '>=16.8.0'
+      react: '>=16.14.0'
+      react-dom: '>=16.14.0'
 
   '@szmarczak/http-timer@4.0.6':
     resolution: {integrity: sha512-4BAffykYOgO+5nzBWYwE3W90sBgLJoUPRWWcL8wlyiM8IB8ipJz3UMJ9KXQd1RKQXpKp8Tutn80HZtWsu2u76w==}
@@ -10194,6 +10193,12 @@ packages:
     peerDependenciesMeta:
       react-dom:
         optional: true
+
+  react-transition-state@2.3.3:
+    resolution: {integrity: sha512-wsIyg07ohlWEAYDZHvuXh/DY7mxlcLb0iqVv2aMXJ0gwgPVKNWKhOyNyzuJy/tt/6urSq0WT6BBZ/tdpybaAsQ==}
+    peerDependencies:
+      react: '>=16.8.0'
+      react-dom: '>=16.8.0'
 
   react-use-measure@2.1.7:
     resolution: {integrity: sha512-KrvcAo13I/60HpwGO5jpW7E9DfusKyLPLvuHlUyP5zqnmAPhNc6qTRjUQrdTADl0lpPpDVU2/Gg51UlOGHXbdg==}
@@ -17377,11 +17382,11 @@ snapshots:
     dependencies:
       '@swc/counter': 0.1.3
 
-  '@szhsin/react-menu@1.11.0(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
+  '@szhsin/react-menu@4.5.1(react-dom@19.2.4(react@19.2.4))(react@19.2.4)':
     dependencies:
-      prop-types: 15.8.1
       react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
+      react-transition-state: 2.3.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
 
   '@szmarczak/http-timer@4.0.6':
     dependencies:
@@ -25046,6 +25051,11 @@ snapshots:
       react: 19.2.4
       set-cookie-parser: 2.7.2
     optionalDependencies:
+      react-dom: 19.2.4(react@19.2.4)
+
+  react-transition-state@2.3.3(react-dom@19.2.4(react@19.2.4))(react@19.2.4):
+    dependencies:
+      react: 19.2.4
       react-dom: 19.2.4(react@19.2.4)
 
   react-use-measure@2.1.7(react-dom@19.2.4(react@19.2.4))(react@19.2.4):

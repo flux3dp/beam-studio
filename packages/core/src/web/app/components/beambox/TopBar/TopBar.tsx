@@ -109,7 +109,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         <TopBarHints />
       </TopBarHintsContextProvider>
       {isWeb && (
-        <div className={classNames('top-bar-menu-container', styles.menu)}>
+        <div className={classNames(styles['top-bar-menu-container'], styles.menu)} data-testid="top-bar-menu">
           <Menu email={currentUser?.email} />
         </div>
       )}
