@@ -1,4 +1,4 @@
-import React, { forwardRef } from 'react';
+import React from 'react';
 
 import { InfoCircleOutlined } from '@ant-design/icons';
 import type { QRCodeProps } from 'antd';
@@ -18,7 +18,7 @@ interface Props {
   text: string;
 }
 
-const QRCodeGenerator = forwardRef<QRcodeRef, Props>(({ isInvert, setIsInvert, setText, text }, ref) => {
+const QRCodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props & { ref?: React.Ref<QRcodeRef> }) => {
   const { qr_code_generator: t } = useI18n();
   const [errorLevel, setErrorLevel] = React.useState<QRCodeProps['errorLevel']>('L');
 
@@ -70,6 +70,6 @@ const QRCodeGenerator = forwardRef<QRcodeRef, Props>(({ isInvert, setIsInvert, s
       </div>
     </div>
   );
-});
+};
 
 export default QRCodeGenerator;

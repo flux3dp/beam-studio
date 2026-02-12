@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { useEffect } from 'react';
 
 import type { InputProps, InputRef } from 'antd';
 import { Input as AntdInput } from 'antd';
@@ -13,7 +13,7 @@ const setStopEditingInput = (): void => communicator.send(MiscEvents.SetEditingS
  * Basically Antd Input Wrapper
  * with onFocus and onBlur to setEditingInput and setStopEditingInput in order to disable electron shortcuts
  */
-const Input = forwardRef<InputRef, InputProps>(({ onBlur, onFocus, ...props }, ref): React.JSX.Element => {
+const Input = ({ onBlur, onFocus, ref, ...props }: InputProps & { ref?: React.Ref<InputRef> }): React.JSX.Element => {
   useEffect(() => () => setStopEditingInput(), []);
 
   return (
@@ -30,6 +30,6 @@ const Input = forwardRef<InputRef, InputProps>(({ onBlur, onFocus, ...props }, r
       ref={ref}
     />
   );
-});
+};
 
 export default Input;

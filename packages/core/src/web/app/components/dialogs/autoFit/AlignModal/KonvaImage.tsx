@@ -1,5 +1,5 @@
 import type { MutableRefObject } from 'react';
-import React, { forwardRef, useEffect, useRef, useState } from 'react';
+import React, { useEffect, useRef, useState } from 'react';
 
 import type Konva from 'konva';
 import { Image, Transformer } from 'react-konva';
@@ -76,109 +76,113 @@ interface Props {
   onMouseLeave?: () => void;
 }
 
-const KonvaImage = forwardRef<Konva.Image, Props>(
-  (
-    { element, elementBBox, initDimension, isDragging, onChange, onMouseEnter, onMouseLeave }: Props,
-    imageRef: MutableRefObject<Konva.Image>,
-  ): React.JSX.Element => {
-    const [imageUrl, setImageUrl] = useState<null | string>(null);
-    const [image, status] = useImage(imageUrl);
-    const transformerInited = useRef(false);
-    const transformerRef = useRef<Konva.Transformer>(null);
+const KonvaImage = ({
+  element,
+  elementBBox,
+  initDimension,
+  isDragging,
+  onChange,
+  onMouseEnter,
+  onMouseLeave,
+  ref: imageRef,
+}: Props & { ref: MutableRefObject<Konva.Image> }): React.JSX.Element => {
+  const [imageUrl, setImageUrl] = useState<null | string>(null);
+  const [image, status] = useImage(imageUrl);
+  const transformerInited = useRef(false);
+  const transformerRef = useRef<Konva.Transformer>(null);
 
-    useEffect(() => {
-      getImageUrl(element, elementBBox).then(setImageUrl);
-    }, [element, elementBBox]);
+  useEffect(() => {
+    getImageUrl(element, elementBBox).then(setImageUrl);
+  }, [element, elementBBox]);
 
-    useEffect(() => {
-      if (!transformerInited.current && imageRef.current && transformerRef.current) {
-        transformerRef.current.nodes([imageRef.current]);
-        transformerInited.current = true;
-      }
-    });
-
-    const { height, rotation, width, x, y } = initDimension;
-
-    if (!image || status !== 'loaded') {
-      return null;
+  useEffect(() => {
+    if (!transformerInited.current && imageRef.current && transformerRef.current) {
+      transformerRef.current.nodes([imageRef.current]);
+      transformerInited.current = true;
     }
+  });
 
-    return (
-      <>
-        <Image
-          cursor="move"
-          draggable={!isDragging}
-          height={height}
-          image={image}
-          onDragEnd={(e) => {
-            onChange({ x: e.target.x(), y: e.target.y() });
-          }}
-          onDragMove={(e) => {
-            onChange({ x: e.target.x(), y: e.target.y() });
-          }}
-          onMouseEnter={onMouseEnter}
-          onMouseLeave={onMouseLeave}
-          onTransform={() => {
-            const node = imageRef.current;
-            const scaleX = node.scaleX();
-            const scaleY = node.scaleY();
+  const { height, rotation, width, x, y } = initDimension;
 
-            onChange({
-              height: node.height() * scaleY,
-              rotation: node.rotation(),
-              width: node.width() * scaleX,
-              x: node.x(),
-              y: node.y(),
-            });
-          }}
-          onTransformEnd={() => {
-            const node = imageRef.current;
-            const scaleX = node.scaleX();
-            const scaleY = node.scaleY();
+  if (!image || status !== 'loaded') {
+    return null;
+  }
 
-            node.scaleX(1);
-            node.scaleY(1);
-            node.width(node.width() * scaleX);
-            node.height(node.height() * scaleY);
-            onChange({
-              height: node.height(),
-              rotation: node.rotation(),
-              width: node.width(),
-              x: node.x(),
-              y: node.y(),
-            });
-          }}
-          ref={imageRef}
-          rotation={rotation}
-          width={width}
-          x={x}
-          y={y}
-        />
-        <Transformer
-          anchorSize={8}
-          anchorStyleFunc={(anchor) => {
-            anchor.width(8);
-            anchor.height(8);
-            anchor.strokeWidth(2);
-            anchor.cornerRadius(4);
+  return (
+    <>
+      <Image
+        cursor="move"
+        draggable={!isDragging}
+        height={height}
+        image={image}
+        onDragEnd={(e) => {
+          onChange({ x: e.target.x(), y: e.target.y() });
+        }}
+        onDragMove={(e) => {
+          onChange({ x: e.target.x(), y: e.target.y() });
+        }}
+        onMouseEnter={onMouseEnter}
+        onMouseLeave={onMouseLeave}
+        onTransform={() => {
+          const node = imageRef.current;
+          const scaleX = node.scaleX();
+          const scaleY = node.scaleY();
 
-            if (anchor.hasName('rotater')) {
-              anchor.fill('#12b700');
-              anchor.stroke('#0000ff');
-            } else {
-              anchor.stroke('#000000');
-            }
-          }}
-          borderDash={[5, 5]}
-          borderStroke="#0000ff"
-          flipEnabled={false}
-          ref={transformerRef}
-          rotateAnchorCursor="url(core-img/rotate.png) 12 12, auto"
-          rotateAnchorOffset={20}
-        />
-      </>
-    );
-  },
-);
+          onChange({
+            height: node.height() * scaleY,
+            rotation: node.rotation(),
+            width: node.width() * scaleX,
+            x: node.x(),
+            y: node.y(),
+          });
+        }}
+        onTransformEnd={() => {
+          const node = imageRef.current;
+          const scaleX = node.scaleX();
+          const scaleY = node.scaleY();
+
+          node.scaleX(1);
+          node.scaleY(1);
+          node.width(node.width() * scaleX);
+          node.height(node.height() * scaleY);
+          onChange({
+            height: node.height(),
+            rotation: node.rotation(),
+            width: node.width(),
+            x: node.x(),
+            y: node.y(),
+          });
+        }}
+        ref={imageRef}
+        rotation={rotation}
+        width={width}
+        x={x}
+        y={y}
+      />
+      <Transformer
+        anchorSize={8}
+        anchorStyleFunc={(anchor) => {
+          anchor.width(8);
+          anchor.height(8);
+          anchor.strokeWidth(2);
+          anchor.cornerRadius(4);
+
+          if (anchor.hasName('rotater')) {
+            anchor.fill('#12b700');
+            anchor.stroke('#0000ff');
+          } else {
+            anchor.stroke('#000000');
+          }
+        }}
+        borderDash={[5, 5]}
+        borderStroke="#0000ff"
+        flipEnabled={false}
+        ref={transformerRef}
+        rotateAnchorCursor="url(core-img/rotate.png) 12 12, auto"
+        rotateAnchorOffset={20}
+      />
+    </>
+  );
+};
 
 export default KonvaImage;

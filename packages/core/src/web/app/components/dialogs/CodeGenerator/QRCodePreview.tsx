@@ -1,4 +1,4 @@
-import React, { forwardRef, useImperativeHandle, useRef } from 'react';
+import React, { useImperativeHandle, useRef } from 'react';
 
 import type { QRCodeProps } from 'antd';
 import { QRCode } from 'antd';
@@ -18,8 +18,8 @@ export interface QRcodeRef {
   getProps: () => QRcodeProps;
 }
 
-const QRCodePreview = forwardRef<QRcodeRef, QRcodeProps>((props: QRcodeProps, ref): React.JSX.Element => {
-  const { errorLevel, isInvert, value } = props;
+const QRCodePreview = (props: QRcodeProps & { ref?: React.Ref<QRcodeRef> }): React.JSX.Element => {
+  const { errorLevel, isInvert, ref, value } = props;
   const { global: tGlobal } = useI18n();
   const divRef = useRef<HTMLDivElement>(null);
 
@@ -45,6 +45,6 @@ const QRCodePreview = forwardRef<QRcodeRef, QRcodeProps>((props: QRcodeProps, re
       )}
     </div>
   );
-});
+};
 
 export default QRCodePreview;

@@ -55,15 +55,17 @@ interface State {
   draggingLayer?: string;
 }
 
-const Handle = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement> & { handleAxis?: string }>(
-  ({ handleAxis: _, ...eventHandlers }, ref) => {
-    return (
-      <div className={styles.handle} ref={ref} {...eventHandlers}>
-        <LayerPanelIcons.Handle />
-      </div>
-    );
-  },
-);
+const Handle = ({
+  handleAxis: _,
+  ref,
+  ...eventHandlers
+}: React.HTMLProps<HTMLDivElement> & { handleAxis?: string; ref?: React.Ref<HTMLDivElement> }) => {
+  return (
+    <div className={styles.handle} ref={ref} {...eventHandlers}>
+      <LayerPanelIcons.Handle />
+    </div>
+  );
+};
 
 // TODO: extract layer operation methods as they don't need context now
 class LayerPanel extends React.PureComponent<Props, State> {

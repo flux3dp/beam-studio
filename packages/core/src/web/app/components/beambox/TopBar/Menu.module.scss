@@ -119,7 +119,9 @@
   color: #212529;
   border: none;
   border-radius: 0.25rem;
-  box-shadow: 0 3px 7px rgba(0, 0, 0, 0.133), 0 0.6px 2px rgba(0, 0, 0, 0.1);
+  box-shadow:
+    0 3px 7px rgba(0, 0, 0, 0.133),
+    0 0.6px 2px rgba(0, 0, 0, 0.1);
   min-width: 10rem;
   padding: 0.5rem 0;
 }
@@ -139,7 +141,7 @@
 }
 
 :global(.szh-menu__item--type-radio::before) {
-  content: "○";
+  content: '○';
   position: absolute;
   left: 0.8rem;
   top: 0.55rem;
@@ -147,7 +149,7 @@
 }
 
 :global(.szh-menu__item--type-radio.szh-menu__item--checked::before) {
-  content: "●";
+  content: '●';
 }
 
 :global(.szh-menu__item--type-checkbox) {
@@ -160,8 +162,9 @@
 }
 
 :global(.szh-menu__item--type-checkbox.szh-menu__item--checked::before) {
-  content: "✓";
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Arial, Helvetica, sans-serif;
+  content: '✓';
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
 }
 
 :global(.szh-menu__submenu > .szh-menu__item) {
@@ -169,7 +172,7 @@
 }
 
 :global(.szh-menu__submenu > .szh-menu__item::after) {
-  content: "❯";
+  content: '❯';
   position: absolute;
   right: 1rem;
 }

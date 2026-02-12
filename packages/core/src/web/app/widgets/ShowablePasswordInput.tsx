@@ -1,15 +1,15 @@
-import React, { forwardRef, useState } from 'react';
+import React, { useState } from 'react';
 
 interface Props {
   id: string;
   placeholder: string;
+  ref?: React.Ref<HTMLInputElement>;
 }
 
 /**
  * @deprecated The method should not be used
  */
-
-const ShowablePasswordInput = forwardRef<HTMLInputElement, Props>(({ id, placeholder }: Props, ref: any) => {
+const ShowablePasswordInput = ({ id, placeholder, ref }: Props) => {
   const [visible, setVisible] = useState(false);
 
   return (
@@ -27,6 +27,6 @@ const ShowablePasswordInput = forwardRef<HTMLInputElement, Props>(({ id, placeho
       />
     </div>
   );
-});
+};
 
 export default ShowablePasswordInput;
