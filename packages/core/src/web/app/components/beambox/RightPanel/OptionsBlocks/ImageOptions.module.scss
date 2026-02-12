@@ -24,18 +24,11 @@
 .options {
   .option-block {
     @include mixins.option-block();
+  }
 
-    .option-input {
-      > input {
-        padding: 1px;
-      }
-
-      &.long {
-        width: 70px;
-        > input {
-          width: 70px;
-        }
-      }
+  .input {
+    :global(.ant-input-number-input) {
+      height: 20px;
     }
   }
 }

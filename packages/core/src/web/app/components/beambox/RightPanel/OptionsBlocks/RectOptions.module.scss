@@ -2,10 +2,4 @@
 
 div.rounded-corner {
   @include mixins.icon-input();
-
-  :global(.ui-control-unit-input-v2) {
-    input {
-      width: 66px;
-    }
-  }
 }
