@@ -50,6 +50,7 @@ import SelectMachineModel from '@core/app/pages/SelectMachineModel';
 import SelectPromarkLaserSource from '@core/app/pages/SelectPromarkLaserSource';
 import Settings from '@core/app/pages/Settings';
 import Welcome from '@core/app/pages/Welcome';
+import Logger from '@core/helpers/logger';
 import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
 
@@ -97,7 +98,25 @@ const App = (): React.JSX.Element => {
 
   return (
     <QueryClientProvider client={queryClient}>
-      <ErrorBoundary FallbackComponent={ErrorBoundaryFallback}>
+      <ErrorBoundary
+        FallbackComponent={ErrorBoundaryFallback}
+        onError={(error, info) => {
+          // Log errors to Logger utility for debugging
+          const logger = Logger('error-boundary', 100);
+
+          logger.append({
+            componentStack: info.componentStack,
+            message: error.message,
+            stack: error.stack,
+            timestamp: new Date().toISOString(),
+          });
+
+          // Log React 19 context errors specifically for development
+          if (error.message.includes('use() called outside provider')) {
+            console.error('[Context Error]', error.message, info.componentStack);
+          }
+        }}
+      >
         <AlertProgressContextProvider messageApi={messageApi}>
           <DialogContextProvider>
             <ConfigProvider

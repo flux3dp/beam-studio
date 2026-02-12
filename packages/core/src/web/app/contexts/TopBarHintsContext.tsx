@@ -25,8 +25,8 @@ export const TopBarHintsContextProvider = ({ children }: TopBarHintsContextProvi
     topBarHintsEventEmitter.on('REMOVE_HINT', removeHint);
 
     return () => {
-      topBarHintsEventEmitter.off('SET_HINT', setHint);
-      topBarHintsEventEmitter.off('REMOVE_HINT', removeHint);
+      topBarHintsEventEmitter.removeListener('SET_HINT', setHint);
+      topBarHintsEventEmitter.removeListener('REMOVE_HINT', removeHint);
     };
   }, [setHint, removeHint]);
 

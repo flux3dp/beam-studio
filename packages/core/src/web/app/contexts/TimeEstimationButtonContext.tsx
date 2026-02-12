@@ -31,7 +31,7 @@ export const TimeEstimationButtonContextProvider = ({
     timeEstimationButtonEventEmitter.on('SET_ESTIMATED_TIME', handleSetEstimatedTime);
 
     return () => {
-      timeEstimationButtonEventEmitter.off('SET_ESTIMATED_TIME', handleSetEstimatedTime);
+      timeEstimationButtonEventEmitter.removeListener('SET_ESTIMATED_TIME', handleSetEstimatedTime);
     };
   }, [handleSetEstimatedTime]);
 

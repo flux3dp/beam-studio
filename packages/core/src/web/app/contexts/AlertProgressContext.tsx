@@ -287,15 +287,15 @@ export const AlertProgressContextProvider = ({
     eventEmitter.on('CHECK_PROGRESS_EXIST', checkProgressExist);
 
     return () => {
-      eventEmitter.off('OPEN_PROGRESS', openProgress);
-      eventEmitter.off('OPEN_MESSAGE', openMessage);
-      eventEmitter.off('CLOSE_MESSAGE', closeMessage);
-      eventEmitter.off('POP_LAST_PROGRESS', popLastProgress);
-      eventEmitter.off('UPDATE_PROGRESS', updateProgress);
-      eventEmitter.off('POP_BY_ID', popById);
-      eventEmitter.off('POP_UP', popUp);
-      eventEmitter.off('CHECK_ID_EXIST', checkIdExist);
-      eventEmitter.off('CHECK_PROGRESS_EXIST', checkProgressExist);
+      eventEmitter.removeListener('OPEN_PROGRESS', openProgress);
+      eventEmitter.removeListener('OPEN_MESSAGE', openMessage);
+      eventEmitter.removeListener('CLOSE_MESSAGE', closeMessage);
+      eventEmitter.removeListener('POP_LAST_PROGRESS', popLastProgress);
+      eventEmitter.removeListener('UPDATE_PROGRESS', updateProgress);
+      eventEmitter.removeListener('POP_BY_ID', popById);
+      eventEmitter.removeListener('POP_UP', popUp);
+      eventEmitter.removeListener('CHECK_ID_EXIST', checkIdExist);
+      eventEmitter.removeListener('CHECK_PROGRESS_EXIST', checkProgressExist);
     };
   }, [
     openProgress,

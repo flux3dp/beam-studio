@@ -1,0 +1,68 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`test ContextMenu should handle empty items array 1`] = `
+<div>
+  <div
+    class="ant-dropdown-trigger"
+    data-testid="trigger"
+  >
+    Trigger
+  </div>
+</div>
+`;
+
+exports[`test ContextMenu should handle null/undefined items gracefully 1`] = `
+<div>
+  <div
+    class="ant-dropdown-trigger"
+    data-testid="trigger"
+  >
+    Trigger
+  </div>
+</div>
+`;
+
+exports[`test ContextMenu should render disabled menu 1`] = `
+<div>
+  <div
+    class="ant-dropdown-trigger"
+    data-testid="trigger"
+    disabled=""
+  >
+    Trigger
+  </div>
+</div>
+`;
+
+exports[`test ContextMenu should render with multiple items and dividers 1`] = `
+<div>
+  <div
+    class="ant-dropdown-trigger"
+    data-testid="trigger"
+  >
+    Trigger
+  </div>
+</div>
+`;
+
+exports[`test ContextMenu should render with nested items (submenu) 1`] = `
+<div>
+  <div
+    class="ant-dropdown-trigger"
+    data-testid="trigger"
+  >
+    Trigger
+  </div>
+</div>
+`;
+
+exports[`test ContextMenu should render with single item 1`] = `
+<div>
+  <div
+    class="ant-dropdown-trigger"
+    data-testid="trigger"
+  >
+    Trigger
+  </div>
+</div>
+`;
