@@ -1,7 +1,7 @@
-import React, { useMemo } from 'react';
+import React from 'react';
 
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 import { supportUsbModels } from '@core/app/actions/beambox/constant';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
@@ -19,8 +19,8 @@ const TYPE_URL_MAP = {
 
 const SelectConnectionType = (): React.JSX.Element => {
   const lang = useI18n().initialize;
-  const { search } = useLocation();
-  const model = useMemo(() => new URLSearchParams(search).get('model') as WorkAreaModel, [search]);
+  const [searchParams] = useSearchParams();
+  const model = searchParams.get('model') as WorkAreaModel;
 
   const handleBack = () => {
     window.location.hash = hashMap.machineSetup;

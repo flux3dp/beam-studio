@@ -2,7 +2,7 @@ import React, { useMemo } from 'react';
 
 import { Collapse } from 'antd';
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 import { adorModels, nxModels } from '@core/app/actions/beambox/constant';
 import useI18n from '@core/helpers/useI18n';
@@ -11,12 +11,12 @@ import styles from './ConnectWired.module.scss';
 
 const ConnectWired = (): React.JSX.Element => {
   const lang = useI18n().initialize;
-  const { search } = useLocation();
+  const [searchParams] = useSearchParams();
   const [model, isAdor, isNx] = useMemo(() => {
-    const model = new URLSearchParams(search).get('model') ?? '';
+    const model = searchParams.get('model') ?? '';
 
     return [model, adorModels.has(model), nxModels.has(model)];
-  }, [search]);
+  }, [searchParams]);
 
   const imageSrc = useMemo(() => {
     if (isAdor) {

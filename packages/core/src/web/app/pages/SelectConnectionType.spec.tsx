@@ -4,12 +4,12 @@ import { fireEvent, render } from '@testing-library/react';
 
 import SelectConnectionType from './SelectConnectionType';
 
-jest.mock('react-router-dom', () => ({
-  ...jest.requireActual('react-router-dom'),
-  useLocation: () => ({
-    pathname: '#/initialize/connect/select-connection-type',
-    search: '?model=ado1',
-  }),
+const mockSearchParams = new URLSearchParams('model=ado1');
+const mockSetSearchParams = jest.fn();
+
+jest.mock('react-router', () => ({
+  ...jest.requireActual('react-router'),
+  useSearchParams: () => [mockSearchParams, mockSetSearchParams],
 }));
 
 const mockShowLoadingWindow = jest.fn();

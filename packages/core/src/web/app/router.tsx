@@ -23,10 +23,9 @@ import svSE from 'antd/locale/sv_SE';
 import thTH from 'antd/locale/th_TH';
 import viVN from 'antd/locale/vi_VN';
 import zhTW from 'antd/locale/zh_TW';
-import type { Container } from 'react-dom';
 import { createRoot } from 'react-dom/client';
 import { ErrorBoundary } from 'react-error-boundary';
-import { HashRouter, Route, Switch } from 'react-router-dom';
+import { HashRouter, Route, Routes } from 'react-router';
 
 import AlertsAndProgress from '@core/app/components/dialogs/AlertAndProgress';
 import Dialog from '@core/app/components/dialogs/Dialog';
@@ -117,29 +116,28 @@ const App = (): React.JSX.Element => {
                 <AlertsAndProgress />
                 {contextHolder}
                 <HashRouter>
-                  <Switch>
-                    <Route component={GoogleOAuth} exact path="/google-auth" />
-                    <Route component={FacebookOAuth} exact path="/fb-auth" />
-                    <Route component={SelectConnectionType} exact path="/initialize/connect/select-connection-type" />
-                    <Route component={SelectMachineModel} exact path="/initialize/connect/select-machine-model" />
-                    <Route component={ConnectMachineIp} exact path="/initialize/connect/connect-machine-ip" />
-                    <Route component={ConnectUsb} exact path="/initialize/connect/connect-usb" />
-                    <Route component={ConnectWiFi} exact path="/initialize/connect/connect-wi-fi" />
-                    <Route component={ConnectWired} exact path="/initialize/connect/connect-wired" />
-                    <Route component={ConnectEthernet} exact path="/initialize/connect/connect-ethernet" />
-                    <Route component={FluxIdLogin} exact path="/initialize/connect/flux-id-login" />
+                  <Routes>
+                    <Route element={<GoogleOAuth />} path="/google-auth" />
+                    <Route element={<FacebookOAuth />} path="/fb-auth" />
+                    <Route element={<SelectConnectionType />} path="/initialize/connect/select-connection-type" />
+                    <Route element={<SelectMachineModel />} path="/initialize/connect/select-machine-model" />
+                    <Route element={<ConnectMachineIp />} path="/initialize/connect/connect-machine-ip" />
+                    <Route element={<ConnectUsb />} path="/initialize/connect/connect-usb" />
+                    <Route element={<ConnectWiFi />} path="/initialize/connect/connect-wi-fi" />
+                    <Route element={<ConnectWired />} path="/initialize/connect/connect-wired" />
+                    <Route element={<ConnectEthernet />} path="/initialize/connect/connect-ethernet" />
+                    <Route element={<FluxIdLogin />} path="/initialize/connect/flux-id-login" />
                     <Route
-                      component={SelectPromarkLaserSource}
-                      exact
+                      element={<SelectPromarkLaserSource />}
                       path="/initialize/connect/select-promark-laser-source"
                     />
-                    <Route component={PromarkSettings} exact path="/initialize/connect/promark-settings" />
-                    <Route component={Settings} exact path="/studio/settings" />
-                    <Route component={Beambox} exact path="/studio/beambox" />
-                    <Route component={Welcome} exact path="/studio/welcome" />
-                    <Route component={Error} path="/error/*" />
-                    <Route component={Home} path="*" />
-                  </Switch>
+                    <Route element={<PromarkSettings />} path="/initialize/connect/promark-settings" />
+                    <Route element={<Settings />} path="/studio/settings" />
+                    <Route element={<Beambox />} path="/studio/beambox" />
+                    <Route element={<Welcome />} path="/studio/welcome" />
+                    <Route element={<Error />} path="/error/*" />
+                    <Route element={<Home />} path="*" />
+                  </Routes>
                 </HashRouter>
               </StyleProvider>
             </ConfigProvider>
@@ -151,8 +149,8 @@ const App = (): React.JSX.Element => {
   );
 };
 
-const router = (container: Container): void => {
-  createRoot(container as any).render(<App />);
+const router = (container: DocumentFragment | Element): void => {
+  createRoot(container).render(<App />);
 };
 
 export default router;
