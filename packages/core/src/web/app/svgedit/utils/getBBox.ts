@@ -110,10 +110,23 @@ export const getBBox = (
   { ignoreRotation = true, ignoreTransform = false, withStroke = false }: GetBBoxOptions = {},
 ): { height: number; width: number; x: number; y: number } => {
   const { tagName } = elem;
-  const bbox: { height: number; width: number; x: number; y: number } = match(tagName)
-    .with('use', () => getUseBBoxByDataXform(elem as SVGUseElement))
-    .with('text', () => getTextBBox(elem as SVGTextElement))
-    .otherwise(() => (elem as SVGGraphicsElement).getBBox());
+  let bbox: { height: number; width: number; x: number; y: number };
+
+  try {
+    bbox = match(tagName)
+      .with('use', () => getUseBBoxByDataXform(elem as SVGUseElement))
+      .with('text', () => getTextBBox(elem as SVGTextElement))
+      .otherwise(() => (elem as SVGGraphicsElement).getBBox());
+  } catch (error) {
+    console.error('Error in getBBox for element', elem, error);
+    try {
+      bbox = (elem as SVGGraphicsElement).getBBox();
+    } catch (error) {
+      console.error('Error in getBBox fallback for element', elem, error);
+
+      return { height: 0, width: 0, x: 0, y: 0 };
+    }
+  }
 
   if (withStroke) {
     const offset = getStrokeOffsetForBBox(elem);
@@ -209,6 +222,9 @@ export const getBBoxFromElements = (
     (acc, elem) => {
       const bbox = getBBox(elem, getBBoxOptions);
 
+      // If the element has no size, ignore it. (avoid min x and y to be 0)
+      if (bbox.width === 0 && bbox.height === 0) return acc;
+
       if (bbox.x < acc.minX) acc.minX = bbox.x;
 
       if (bbox.y < acc.minY) acc.minY = bbox.y;
@@ -221,6 +237,10 @@ export const getBBoxFromElements = (
     },
     { maxX: -Infinity, maxY: -Infinity, minX: Infinity, minY: Infinity },
   );
+
+  if (maxX === -Infinity || maxY === -Infinity || minX === Infinity || minY === Infinity) {
+    return { height: 0, width: 0, x: 0, y: 0 };
+  }
 
   return { height: maxY - minY, width: maxX - minX, x: minX, y: minY };
 };
