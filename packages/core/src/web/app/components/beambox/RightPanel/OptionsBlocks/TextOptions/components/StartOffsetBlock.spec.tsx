@@ -8,22 +8,6 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ className, decimal, defaultValue, displayMultiValue, getValue, max, min }: any) => (
-      <div>
-        mock-unit-input min:{min}
-        max:{max}
-        decimal:{decimal}
-        defaultValue:{defaultValue}
-        displayMultiValue:{displayMultiValue ? 'true' : 'false'}
-        className:{JSON.stringify(className)}
-        <input className="unit-input" onChange={(e) => getValue(+e.target.value)} />
-      </div>
-    ),
-);
-
 jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem');
 
 import StartOffsetBlock from './StartOffsetBlock';
@@ -38,7 +22,7 @@ describe('test StartOffsetBlock', () => {
     fireEvent.click(container.querySelector('div.option-block'));
     expect(container).toMatchSnapshot();
 
-    fireEvent.change(container.querySelector('input.unit-input'), { target: { value: 100 } });
+    fireEvent.change(container.querySelector('input'), { target: { value: 100 } });
     expect(onValueChange).toHaveBeenCalledTimes(1);
     expect(onValueChange).toHaveBeenNthCalledWith(1, 100);
     expect(container).toMatchSnapshot();

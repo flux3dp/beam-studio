@@ -368,17 +368,6 @@ jest.mock('@core/app/widgets/AntdSelect', () => ({ className, onChange, options,
   );
 });
 
-jest.mock(
-  '@core/app/widgets/Unit-Input-v2',
-  () =>
-    ({ className, defaultValue, displayMultiValue, getValue, id }: any) => (
-      <div className={typeof className === 'object' ? Object.keys(className).join(' ') : className}>
-        mock-unit-input id:{id} defaultValue:{defaultValue} displayMultiValue:{displayMultiValue ? 'true' : 'false'}
-        <input onChange={(e) => getValue(+e.target.value)} />
-      </div>
-    ),
-);
-
 jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem', () => ({
   Item: ({ content, id, label, onClick }: any) => (
     <div onClick={onClick}>

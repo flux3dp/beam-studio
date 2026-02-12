@@ -5,7 +5,7 @@
     padding: 1px;
     border: 1px solid transparent;
     border-radius: 4px;
-    height: 25px;
+    height: var(--height);
 
     &:focus {
       border-color: variables.$primary-blue;

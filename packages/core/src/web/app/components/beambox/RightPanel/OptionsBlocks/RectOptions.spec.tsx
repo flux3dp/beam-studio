@@ -6,12 +6,6 @@ import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 
 import RectOptions from './RectOptions';
 
-const get = jest.fn();
-
-jest.mock('@core/implementations/storage', () => ({
-  get: (...args) => get(...args),
-}));
-
 const useIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({
@@ -37,9 +31,7 @@ describe('should render correctly', () => {
     jest.resetAllMocks();
   });
 
-  test('unit is inches', () => {
-    get.mockReturnValue('inches');
-
+  test('on change should work', () => {
     const updateDimensionValues = jest.fn();
     const { container } = render(
       <ObjectPanelContext.Provider value={{ dimensionValues: { rx: 0 }, updateDimensionValues } as any}>
@@ -48,25 +40,13 @@ describe('should render correctly', () => {
     );
 
     expect(container).toMatchSnapshot();
-    fireEvent.change(container.querySelector('input'), { target: { value: 1 } });
+    fireEvent.change(container.querySelector('input'), { target: { value: 10 } });
     fireEvent.blur(container.querySelector('input'));
 
     expect(changeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 254, [document.getElementById('flux')]);
+    expect(changeSelectedAttribute).toHaveBeenNthCalledWith(1, 'rx', 100, [document.getElementById('flux')]);
     expect(updateDimensionValues).toHaveBeenCalledTimes(1);
-    expect(updateDimensionValues).toHaveBeenNthCalledWith(1, { rx: 254 });
-  });
-
-  test('unit is not inches', () => {
-    get.mockReturnValue(null);
-
-    const { container } = render(
-      <ObjectPanelContext.Provider value={{ dimensionValues: { rx: 10 }, updateDimensionValues: jest.fn() } as any}>
-        <RectOptions elem={document.getElementById('flux')} />
-      </ObjectPanelContext.Provider>,
-    );
-
-    expect(container).toMatchSnapshot();
+    expect(updateDimensionValues).toHaveBeenNthCalledWith(1, { rx: 100 });
   });
 });
 
@@ -77,7 +57,6 @@ describe('should render correctly in mobile', () => {
 
   test('unit is not inches', () => {
     useIsMobile.mockReturnValue(true);
-    get.mockReturnValue(null);
 
     const updateDimensionValues = jest.fn();
     const { container } = render(

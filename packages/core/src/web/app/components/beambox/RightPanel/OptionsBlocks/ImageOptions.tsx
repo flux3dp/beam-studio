@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useContext, useMemo, useRef } from 'react';
+import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ConfigProvider, InputNumber, Slider, Switch } from 'antd';
@@ -11,7 +11,6 @@ import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import ImageData from '@core/helpers/image-data';
 import { isMobile } from '@core/helpers/system-helper';
@@ -25,6 +24,7 @@ import ObjectPanelController from '../contexts/ObjectPanelController';
 import ObjectPanelItem from '../ObjectPanelItem';
 
 import styles from './ImageOptions.module.scss';
+import OptionsInput from './OptionsInput';
 
 interface Props {
   elem: Element;
@@ -86,18 +86,18 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
   const generateImageData = useCallback(
     (isShading: boolean, threshold: number): Promise<IImageDataResult> =>
       new Promise<IImageDataResult>((resolve) => {
-        ImageData(elem.getAttribute('origImage'), {
+        ImageData(elem.getAttribute('origImage')!, {
           grayscale: {
             is_rgba: true,
             is_shading: isShading,
             is_svg: false,
             threshold,
           },
-          height: Number.parseFloat(elem.getAttribute('height')),
+          height: Number.parseFloat(elem.getAttribute('height') || '0'),
           onComplete: (result: IImageDataResult) => {
             resolve(result);
           },
-          width: Number.parseFloat(elem.getAttribute('width')),
+          width: Number.parseFloat(elem.getAttribute('width') || '0'),
         });
       }),
     [elem],
@@ -243,14 +243,14 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
       <Fragment key="threshold">
         <div className={classNames(styles['option-block'], styles['with-slider'])}>
           <div className={styles.label}>{lang.threshold}</div>
-          <UnitInput
-            className={{ [styles['option-input']]: true }}
-            decimal={0}
-            defaultValue={threshold}
-            getValue={handleThresholdChange}
+          <OptionsInput
+            className={styles.input}
+            height={20}
             max={maxThreshold}
             min={1}
-            unit=""
+            onChange={handleThresholdChange}
+            precision={0}
+            value={threshold}
           />
         </div>
         <ConfigProvider theme={sliderTheme}>
@@ -262,6 +262,21 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
 
   const depthPass = +(elem.getAttribute('data-pass') ?? '0');
   const depthZStep = +(elem.getAttribute('data-zstep') ?? '0');
+  const handleInputChange = useCallback(
+    (val: null | number, key: 'data-pass' | 'data-zstep') => {
+      if (val === null) return;
+
+      changeAttribute({ [key]: val });
+    },
+    [changeAttribute],
+  );
+
+  useEffect(() => {
+    if (depthPass > 0 && depthZStep > 10 / depthPass) {
+      changeAttribute({ 'data-zstep': 10 / depthPass });
+    }
+  }, [changeAttribute, depthPass, depthZStep]);
+
   const promarkDepthBlock = useMemo(() => {
     if (!isPromark || !isGradient) return null;
 
@@ -271,7 +286,7 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
           <div className={styles.label}>{lang.depth_engraving}</div>
           <Switch
             checked={depthPass > 0}
-            onChange={() => changeAttribute({ 'data-pass': depthPass === 0 ? 100 : -depthPass })}
+            onChange={() => handleInputChange(depthPass === 0 ? 100 : -depthPass, 'data-pass')}
             size="small"
           />
         </div>
@@ -279,34 +294,36 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
           <>
             <div className={styles['option-block']}>
               <div className={styles.label}>{lang.layer_count}</div>
-              <UnitInput
-                className={{ [styles['option-input']]: true }}
-                decimal={0}
-                defaultValue={depthPass}
-                getValue={(val) => changeAttribute({ 'data-pass': val })}
+              <OptionsInput
+                className={styles.input}
+                height={20}
                 max={1000}
                 min={1}
-                unit=""
+                onChange={(val) => handleInputChange(val, 'data-pass')}
+                precision={0}
+                value={depthPass}
               />
             </div>
             <div className={styles['option-block']}>
               <div className={styles.label}>{tLaserPanel.z_step}</div>
-              <UnitInput
-                className={{ [styles.long]: true, [styles['option-input']]: true }}
-                decimal={3}
-                defaultValue={depthZStep}
-                getValue={(val) => changeAttribute({ 'data-zstep': val })}
+              <OptionsInput
+                className={styles.input}
+                height={20}
                 max={depthPass > 0 ? 10 / depthPass : 10}
                 min={0}
+                onChange={(val) => handleInputChange(val, 'data-zstep')}
+                precision={3}
                 step={0.01}
                 unit="mm"
+                value={depthZStep}
+                width={70}
               />
             </div>
           </>
         )}
       </Fragment>
     );
-  }, [isPromark, isGradient, depthPass, depthZStep, lang, tLaserPanel.z_step, changeAttribute]);
+  }, [isPromark, isGradient, depthPass, depthZStep, lang, tLaserPanel.z_step, handleInputChange]);
 
   return isMobile() ? (
     <>

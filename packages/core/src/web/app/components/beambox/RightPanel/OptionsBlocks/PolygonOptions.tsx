@@ -2,7 +2,6 @@ import React, { useContext, useEffect } from 'react';
 
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -11,6 +10,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelItem from '../ObjectPanelItem';
 
+import OptionsInput from './OptionsInput';
 import styles from './PolygonOptions.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -35,8 +35,8 @@ function PolygonOptions({ elem }: Props): React.JSX.Element {
     }
   }, [polygonSides]);
 
-  const handleSideChanage = (val: number) => {
-    if (val === sides) {
+  const handleSideChange = (val: null | number) => {
+    if (val === null || val === sides) {
       return;
     }
 
@@ -73,7 +73,7 @@ function PolygonOptions({ elem }: Props): React.JSX.Element {
         label={lang.sides}
         min={3}
         unit=""
-        updateValue={handleSideChanage}
+        updateValue={handleSideChange}
         value={sides}
       />
     ) : (
@@ -81,13 +81,7 @@ function PolygonOptions({ elem }: Props): React.JSX.Element {
         <div className={styles.label} title={lang.sides}>
           <OptionPanelIcons.PolygonSide />
         </div>
-        <UnitInput
-          className={{ 'option-input': true }}
-          decimal={0}
-          defaultValue={sides}
-          getValue={(val) => handleSideChanage(val)}
-          min={3}
-        />
+        <OptionsInput id="polygon-sides" min={3} onChange={handleSideChange} precision={0} value={sides} />
       </div>
     );
 

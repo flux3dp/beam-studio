@@ -25,10 +25,4 @@
   .option-block {
     @include mixins.option-block();
   }
-
-  .input {
-    :global(.ant-input-number-input) {
-      height: 20px;
-    }
-  }
 }

@@ -9,8 +9,8 @@ describe('rectangle tools', () => {
   });
 
   it('rounded corner', () => {
-    cy.get('div.option-input > input').dblclick({ force: true });
-    cy.get('div.option-input > input').clear({ force: true }).type('40', { force: true }).blur();
+    cy.get('#rounded-corner > input').dblclick({ force: true });
+    cy.get('#rounded-corner > input').clear({ force: true }).type('40', { force: true }).blur();
     cy.get('#svg_1').should('have.attr', 'rx').and('eq', '400');
   });
 

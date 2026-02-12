@@ -27,15 +27,26 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
         title="Size"
       >
         <div
-          class="option-input"
+          class="input"
         >
-          mock-unit-input id:
+          UnitInput: 
           font_size
-           defaultValue:
-          200
-           displayMultiValue:
-          false
-          <input />
+          <p>
+            precision: 
+            0
+          </p>
+          <p>
+            underline
+          </p>
+          <p>
+            unit: 
+            px
+          </p>
+          <input
+            id="font_size"
+            min="1"
+            value="200"
+          />
         </div>
       </div>
       <div
@@ -72,15 +83,22 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
           <svgr-url />
         </div>
         <div
-          class="option-input"
+          class="input"
         >
-          mock-unit-input id:
+          UnitInput: 
           line_spacing
-           defaultValue:
-          1
-           displayMultiValue:
-          false
-          <input />
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            underline
+          </p>
+          <input
+            id="line_spacing"
+            min="0.8"
+            value="1"
+          />
         </div>
       </div>
       <div
@@ -93,15 +111,21 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
           <svgr-url />
         </div>
         <div
-          class="option-input"
+          class="input"
         >
-          mock-unit-input id:
+          UnitInput: 
           letter_spacing
-           defaultValue:
-          0
-           displayMultiValue:
-          false
-          <input />
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            underline
+          </p>
+          <input
+            id="letter_spacing"
+            value="0"
+          />
         </div>
       </div>
       <button
@@ -149,15 +173,26 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
         title="Size"
       >
         <div
-          class="option-input"
+          class="input"
         >
-          mock-unit-input id:
+          UnitInput: 
           font_size
-           defaultValue:
-          200
-           displayMultiValue:
-          false
-          <input />
+          <p>
+            precision: 
+            0
+          </p>
+          <p>
+            underline
+          </p>
+          <p>
+            unit: 
+            px
+          </p>
+          <input
+            id="font_size"
+            min="1"
+            value="200"
+          />
         </div>
       </div>
       <div
@@ -194,15 +229,22 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
           <svgr-url />
         </div>
         <div
-          class="option-input"
+          class="input"
         >
-          mock-unit-input id:
+          UnitInput: 
           line_spacing
-           defaultValue:
-          1
-           displayMultiValue:
-          false
-          <input />
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            underline
+          </p>
+          <input
+            id="line_spacing"
+            min="0.8"
+            value="1"
+          />
         </div>
       </div>
       <div
@@ -215,15 +257,21 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
           <svgr-url />
         </div>
         <div
-          class="option-input"
+          class="input"
         >
-          mock-unit-input id:
+          UnitInput: 
           letter_spacing
-           defaultValue:
-          0
-           displayMultiValue:
-          false
-          <input />
+          <p>
+            precision: 
+            2
+          </p>
+          <p>
+            underline
+          </p>
+          <input
+            id="letter_spacing"
+            value="0"
+          />
         </div>
       </div>
       <button
@@ -271,15 +319,26 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
         title="Size"
       >
         <div
-          class="option-input"
+          class="input"
         >
-          mock-unit-input id:
+          UnitInput: 
           font_size
-           defaultValue:
-          200
-           displayMultiValue:
-          false
-          <input />
+          <p>
+            precision: 
+            0
+          </p>
+          <p>
+            underline
+          </p>
+          <p>
+            unit: 
+            px
+          </p>
+          <input
+            id="font_size"
+            min="1"
+            value="200"
+          />
         </div>
       </div>
       <div
@@ -313,15 +372,21 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
         <svgr-url />
       </div>
       <div
-        class="option-input"
+        class="input"
       >
-        mock-unit-input id:
+        UnitInput: 
         letter_spacing
-         defaultValue:
-        0
-         displayMultiValue:
-        false
-        <input />
+        <p>
+          precision: 
+          2
+        </p>
+        <p>
+          underline
+        </p>
+        <input
+          id="letter_spacing"
+          value="0"
+        />
       </div>
     </div>
     <div>
