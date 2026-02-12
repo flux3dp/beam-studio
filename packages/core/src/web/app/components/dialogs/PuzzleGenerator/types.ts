@@ -5,6 +5,7 @@ import {
   DEFAULT_BORDER_RADIUS,
   DEFAULT_BORDER_WIDTH,
   DEFAULT_COLUMNS,
+  DEFAULT_HEXAGON_ROWS,
   DEFAULT_ORIENTATION,
   DEFAULT_PIECE_SIZE,
   DEFAULT_RADIUS,
@@ -255,6 +256,11 @@ export const createDefaultPuzzleState = (typeId: ShapeType): PuzzleState =>
   match(typeId)
     .with('circle', () => ({ ...createBaseDefaults(), typeId: 'circle' as const }))
     .with('heart', () => ({ ...createBaseDefaults(), typeId: 'heart' as const }))
-    .with('hexagon', () => ({ ...createBaseDefaults(), radius: DEFAULT_RADIUS, typeId: 'hexagon' as const }))
+    .with('hexagon', () => ({
+      ...createBaseDefaults(),
+      radius: DEFAULT_RADIUS,
+      rows: DEFAULT_HEXAGON_ROWS,
+      typeId: 'hexagon' as const,
+    }))
     .with('rectangle', () => ({ ...createBaseDefaults(), radius: DEFAULT_RADIUS, typeId: 'rectangle' as const }))
     .exhaustive();

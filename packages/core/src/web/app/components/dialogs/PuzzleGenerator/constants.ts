@@ -127,3 +127,10 @@ export const DEFAULT_BORDER_WIDTH = 5;
 export const DEFAULT_BORDER_RADIUS = 0;
 export const DEFAULT_ORIENTATION = 1;
 export const DEFAULT_RADIUS = 0;
+
+/**
+ * Hexagon-specific defaults for a more regular-looking hexagon.
+ * Regular flat-top hexagon has height/width ratio = √3/2 ≈ 0.866.
+ * With 5 columns, optimal is ~4.33 rows. Using 4 rows gives ratio = 0.8 (close to regular).
+ */
+export const DEFAULT_HEXAGON_ROWS = 4;
