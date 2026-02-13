@@ -228,7 +228,9 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   );
 
   const handleFontSizeChange = useCallback(
-    (val: number): void => {
+    (val: null | number): void => {
+      if (val === null) return;
+
       textEdit.setFontSize(val, textElements);
       onConfigChange('fontSize', val);
     },
@@ -236,7 +238,9 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   );
 
   const handleLetterSpacingChange = useCallback(
-    (val: number): void => {
+    (val: null | number): void => {
+      if (val === null) return;
+
       textEdit.setLetterSpacing(val, textElements);
       onConfigChange('letterSpacing', val);
     },
@@ -244,7 +248,9 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   );
 
   const handleLineSpacingChange = useCallback(
-    (val: number): void => {
+    (val: null | number): void => {
+      if (val === null) return;
+
       textEdit.setLineSpacing(val, textElements);
       onConfigChange('lineSpacing', val);
     },
@@ -252,7 +258,9 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   );
 
   const handleStartOffsetChange = useCallback(
-    (val: number): void => {
+    (val: null | number): void => {
+      if (val === null) return;
+
       textPathEdit.setStartOffset(val, elem as SVGGElement);
       onConfigChange('startOffset', val);
     },

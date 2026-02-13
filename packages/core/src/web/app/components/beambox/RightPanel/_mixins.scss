@@ -77,23 +77,6 @@
     }
   }
 
-  .option-input {
-    width: 40px;
-    height: 20px;
-    line-height: 20px;
-    margin: 0px;
-
-    input {
-      height: 20px;
-    }
-
-    &.no-unit {
-      input {
-        padding: 1px;
-      }
-    }
-  }
-
   &.with-select {
     margin: 2px 0;
   }

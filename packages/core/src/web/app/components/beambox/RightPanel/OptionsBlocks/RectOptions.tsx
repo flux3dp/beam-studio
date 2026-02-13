@@ -1,9 +1,8 @@
-import React, { useContext } from 'react';
+import React, { useContext, useEffect, useState } from 'react';
 
 import Constant from '@core/app/actions/beambox/constant';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -13,6 +12,7 @@ import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelController from '../contexts/ObjectPanelController';
 import ObjectPanelItem from '../ObjectPanelItem';
 
+import OptionsInput from './OptionsInput';
 import styles from './RectOptions.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -29,11 +29,19 @@ function RectOptions({ elem }: Props): React.JSX.Element {
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const { dimensionValues, updateDimensionValues } = useContext(ObjectPanelContext);
-  const { rx } = dimensionValues;
+  const { rx: dimensionValuesRx } = dimensionValues;
   const isInch = useStorageStore((state) => state.isInch);
+  const [rx, setRx] = useState(dimensionValuesRx || 0);
 
-  const handleRoundedCornerChange = (val: number) => {
+  useEffect(() => {
+    setRx(dimensionValuesRx || 0);
+  }, [dimensionValuesRx]);
+
+  const handleRoundedCornerChange = (val: null | number) => {
+    if (val === null) return;
+
     val *= Constant.dpmm;
+    setRx(val);
     svgCanvas.changeSelectedAttribute('rx', val, [elem]);
     updateDimensionValues({ rx: val });
   };
@@ -55,12 +63,15 @@ function RectOptions({ elem }: Props): React.JSX.Element {
         <div className={styles.label} title={lang.rounded_corner}>
           <OptionPanelIcons.RoundedCorner />
         </div>
-        <UnitInput
-          className={{ 'option-input': true }}
-          defaultValue={rx / Constant.dpmm || 0}
-          getValue={(val) => handleRoundedCornerChange(val)}
+        <OptionsInput
+          id="rounded-corner"
+          isInch={isInch}
           min={0}
+          onChange={handleRoundedCornerChange}
+          precision={2}
           unit={isInch ? 'in' : 'mm'}
+          value={rx / Constant.dpmm || 0}
+          width={66}
         />
       </div>
     );

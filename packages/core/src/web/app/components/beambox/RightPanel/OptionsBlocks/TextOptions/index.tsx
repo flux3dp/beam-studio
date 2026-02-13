@@ -20,7 +20,6 @@ import selector from '@core/app/svgedit/selector';
 import type { Selector } from '@core/app/svgedit/selector';
 import textEdit from '@core/app/svgedit/text/textedit';
 import Select from '@core/app/widgets/AntdSelect';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import fontHelper from '@core/helpers/fonts/fontHelper';
@@ -43,6 +42,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
 import InFillBlock from '../InFillBlock';
+import OptionsInput from '../OptionsInput';
 import StartOffsetBlock from '../TextOptions/components/StartOffsetBlock';
 import VerticalAlignBlock from '../TextOptions/components/VerticalAlignBlock';
 import { useFontHandlers } from '../TextOptions/hooks/useFontHandlers';
@@ -617,15 +617,15 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       />
     ) : (
       <div className={styles['font-size']} title={langOptionPanel.font_size}>
-        <UnitInput
-          className={{ 'option-input': true }}
-          decimal={0}
-          defaultValue={fontSize.value}
+        <OptionsInput
           displayMultiValue={fontSize.hasMultiValue}
-          getValue={(val) => handleFontSizeChange(val)}
           id="font_size"
           min={1}
+          onChange={handleFontSizeChange}
+          precision={0}
           unit="px"
+          value={fontSize.value}
+          width={68}
         />
       </div>
     );
@@ -648,14 +648,13 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         <div className={styles.label} title={langOptionPanel.letter_spacing}>
           <OptionPanelIcons.LetterSpacing />
         </div>
-        <UnitInput
-          className={{ 'option-input': true }}
-          defaultValue={letterSpacing.value}
+        <OptionsInput
           displayMultiValue={letterSpacing.hasMultiValue}
-          getValue={(val) => handleLetterSpacingChange(val)}
           id="letter_spacing"
+          onChange={handleLetterSpacingChange}
+          precision={2}
           step={0.05}
-          unit=""
+          value={letterSpacing.value}
         />
       </div>
     );
@@ -680,16 +679,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         <div className={styles.label} title={langOptionPanel.line_spacing}>
           <OptionPanelIcons.LineSpacing />
         </div>
-        <UnitInput
-          className={{ 'option-input': true }}
-          decimal={1}
-          defaultValue={lineSpacing.value}
+        <OptionsInput
           displayMultiValue={lineSpacing.hasMultiValue}
-          getValue={(val) => handleLineSpacingChange(val)}
           id="line_spacing"
           min={0.8}
+          onChange={handleLineSpacingChange}
+          precision={2}
           step={0.1}
-          unit=""
+          value={lineSpacing.value}
         />
       </div>
     );

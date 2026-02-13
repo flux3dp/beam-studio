@@ -13,11 +13,20 @@ exports[`test PolygonOptions should render correctly 1`] = `
         <svgr-url />
       </div>
       <div
-        class="option-input ui ui-control-unit-input-v2"
+        class="input"
       >
+        UnitInput: 
+        polygon-sides
+        <p>
+          precision: 
+          0
+        </p>
+        <p>
+          underline
+        </p>
         <input
-          step="1"
-          type="text"
+          id="polygon-sides"
+          min="3"
           value="5"
         />
       </div>
@@ -39,11 +48,20 @@ exports[`test PolygonOptions should render correctly 2`] = `
         <svgr-url />
       </div>
       <div
-        class="option-input ui ui-control-unit-input-v2"
+        class="input"
       >
+        UnitInput: 
+        polygon-sides
+        <p>
+          precision: 
+          0
+        </p>
+        <p>
+          underline
+        </p>
         <input
-          step="1"
-          type="text"
+          id="polygon-sides"
+          min="3"
           value="5"
         />
       </div>
@@ -65,11 +83,20 @@ exports[`test PolygonOptions should render correctly 3`] = `
         <svgr-url />
       </div>
       <div
-        class="option-input ui ui-control-unit-input-v2"
+        class="input"
       >
+        UnitInput: 
+        polygon-sides
+        <p>
+          precision: 
+          0
+        </p>
+        <p>
+          underline
+        </p>
         <input
-          step="1"
-          type="text"
+          id="polygon-sides"
+          min="3"
           value="8"
         />
       </div>
@@ -91,11 +118,20 @@ exports[`test PolygonOptions should render correctly 4`] = `
         <svgr-url />
       </div>
       <div
-        class="option-input ui ui-control-unit-input-v2"
+        class="input"
       >
+        UnitInput: 
+        polygon-sides
+        <p>
+          precision: 
+          0
+        </p>
+        <p>
+          underline
+        </p>
         <input
-          step="1"
-          type="text"
+          id="polygon-sides"
+          min="3"
           value="5"
         />
       </div>

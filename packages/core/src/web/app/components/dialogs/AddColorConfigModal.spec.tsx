@@ -20,8 +20,6 @@ jest.mock('@core/helpers/useI18n', () => () => ({
   },
 }));
 
-jest.mock('@core/app/widgets/Unit-Input-v2', () => () => <div>UnitInput</div>);
-
 describe('test AddColorConfigModal', () => {
   it('should render correctly', () => {
     const { baseElement } = render(<AddColorConfigModal handleAddConfig={mockHandleAddConfig} onClose={mockOnClose} />);

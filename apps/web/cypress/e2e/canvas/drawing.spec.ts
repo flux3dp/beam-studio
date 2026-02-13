@@ -84,7 +84,7 @@ describe('drawing', () => {
       });
 
     cy.get('.tab.objects').click();
-    cy.get('div.option-input > input').clear().type('8').blur();
+    cy.get('input#polygon-sides').clear().type('8').blur();
     cy.get('#svg_1').should('have.attr', 'sides').and('eq', '8');
 
     cy.get('button#infill').click();

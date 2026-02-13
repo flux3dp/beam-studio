@@ -10,21 +10,21 @@ exports[`test StartOffsetBlock should render correctly 1`] = `
     >
       Text Offset
     </div>
-    <div>
-      mock-unit-input min:
-      0
-      max:
-      100
-      decimal:
-      0
-      defaultValue:
-      0
-      displayMultiValue:
-      false
-      className:
-      {"no-unit":true,"option-input":true}
+    <div
+      class="input"
+    >
+      UnitInput: 
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        underline
+      </p>
       <input
-        class="unit-input"
+        max="100"
+        min="0"
+        value="0"
       />
     </div>
   </div>
@@ -41,21 +41,21 @@ exports[`test StartOffsetBlock should render correctly 2`] = `
     >
       Text Offset
     </div>
-    <div>
-      mock-unit-input min:
-      0
-      max:
-      100
-      decimal:
-      0
-      defaultValue:
-      0
-      displayMultiValue:
-      false
-      className:
-      {"no-unit":true,"option-input":true}
+    <div
+      class="input"
+    >
+      UnitInput: 
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        underline
+      </p>
       <input
-        class="unit-input"
+        max="100"
+        min="0"
+        value="0"
       />
     </div>
   </div>
@@ -72,21 +72,21 @@ exports[`test StartOffsetBlock should render correctly 3`] = `
     >
       Text Offset
     </div>
-    <div>
-      mock-unit-input min:
-      0
-      max:
-      100
-      decimal:
-      0
-      defaultValue:
-      0
-      displayMultiValue:
-      false
-      className:
-      {"no-unit":true,"option-input":true}
+    <div
+      class="input"
+    >
+      UnitInput: 
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        underline
+      </p>
       <input
-        class="unit-input"
+        max="100"
+        min="0"
+        value="0"
       />
     </div>
   </div>
@@ -128,21 +128,21 @@ exports[`test StartOffsetBlock should render correctly with multiple values 1`] 
     >
       Text Offset
     </div>
-    <div>
-      mock-unit-input min:
-      0
-      max:
-      100
-      decimal:
-      0
-      defaultValue:
-      0
-      displayMultiValue:
-      true
-      className:
-      {"no-unit":true,"option-input":true}
+    <div
+      class="input"
+    >
+      UnitInput: 
+      <p>
+        precision: 
+        0
+      </p>
+      <p>
+        underline
+      </p>
       <input
-        class="unit-input"
+        max="100"
+        min="0"
+        value="0"
       />
     </div>
   </div>

@@ -67,14 +67,6 @@
     width: 68px;
     margin-bottom: 1px;
     margin-right: auto;
-
-    :global(.ui-control-unit-input-v2) {
-      margin: 0;
-
-      input {
-        width: 68px;
-      }
-    }
   }
 
   .font-style {
@@ -85,13 +77,6 @@
     @include mixins.icon-input();
     margin-right: 8px;
     margin-bottom: 0;
-
-    :global(.ui-control-unit-input-v2) {
-      margin: 4px 0;
-      input {
-        padding: 1px;
-      }
-    }
   }
 
   .vertical-text {

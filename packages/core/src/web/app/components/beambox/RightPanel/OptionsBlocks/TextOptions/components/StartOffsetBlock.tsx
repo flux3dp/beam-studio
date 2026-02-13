@@ -2,13 +2,14 @@ import React from 'react';
 
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import styles from '@core/app/components/beambox/RightPanel/OptionsPanel.module.scss';
-import UnitInput from '@core/app/widgets/Unit-Input-v2';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
+import OptionsInput from '../../OptionsInput';
+
 interface Props {
   hasMultiValue?: boolean;
-  onValueChange: (val: number) => void;
+  onValueChange: (val: null | number) => void;
   value: number;
 }
 
@@ -31,15 +32,14 @@ export default function StartOffsetBlock({ hasMultiValue, onValueChange, value }
   ) : (
     <div className={styles['option-block']}>
       <div className={styles.label}>{LANG.start_offset}</div>
-      <UnitInput
-        className={{ [styles['no-unit']]: true, [styles['option-input']]: true }}
-        decimal={0}
-        defaultValue={value}
+      <OptionsInput
         displayMultiValue={hasMultiValue}
-        getValue={onValueChange}
+        height={20}
         max={100}
         min={0}
-        unit=""
+        onChange={onValueChange}
+        precision={0}
+        value={value}
       />
     </div>
   );

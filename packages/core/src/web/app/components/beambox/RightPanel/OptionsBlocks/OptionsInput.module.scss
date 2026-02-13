@@ -1,0 +1,9 @@
+@use '@core/styles/variables' as variables;
+
+.input {
+  :global(.ant-input-number-input) {
+    padding: 1px;
+    border-radius: 4px;
+    height: var(--height);
+  }
+}
