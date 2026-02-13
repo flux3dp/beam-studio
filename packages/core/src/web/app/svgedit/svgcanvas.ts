@@ -157,7 +157,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   container.appendChild(svgroot);
 
   // The actual element that represents the final output SVG element
-  var svgcontent = svgdoc.createElementNS(NS.SVG, 'svg');
+  var svgcontent = svgdoc.createElementNS(NS.SVG, 'svg') as unknown as SVGSVGElement;
 
   // CUSTOM VARIABLES
   const alignPoints: Record<'x' | 'y', Array<Record<'x' | 'y', number>>> = { x: [], y: [] };
@@ -1395,9 +1395,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return selectorManager.selectorParentGroup;
     }
 
-    const root_sctm = ($('#svgcontent')[0] as any).getScreenCTM().inverse();
+    const rootScreenCTM = svgcontent.getScreenCTM()?.inverse() ?? new DOMMatrix();
     const { x, y } = getEventPageXY(evt);
-    const pt = svgedit.math.transformPoint(x, y, root_sctm);
+    const pt = svgedit.math.transformPoint(x, y, rootScreenCTM);
 
     // bbox center at x, y width, hieght 10px
     const selectionRegion = {
@@ -1406,7 +1406,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       x: pt.x - 50,
       y: pt.y - 50,
     };
-    const intersectList = getIntersectionList(selectionRegion).reverse();
+    const intersectList = (getIntersectionList(selectionRegion) ?? []).reverse();
 
     curBBoxes = [];
 
