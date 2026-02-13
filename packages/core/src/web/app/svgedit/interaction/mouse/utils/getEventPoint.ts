@@ -9,7 +9,7 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-const getEvtPageXY = (e: MouseEvent | TouchEvent) => {
+export const getEventPageXY = (e: MouseEvent | TouchEvent) => {
   if ('touches' in e) {
     const touch = e.touches[0] || e.changedTouches[0];
 
@@ -21,7 +21,7 @@ const getEvtPageXY = (e: MouseEvent | TouchEvent) => {
 
 export function getEventPoint(evt: MouseEvent | TouchEvent): IPoint {
   const matrix = svgCanvas?.getRootScreenMatrix();
-  const { x, y } = getEvtPageXY(evt);
+  const { x, y } = getEventPageXY(evt);
 
   if (!matrix) {
     return { x, y };
