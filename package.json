@@ -10,7 +10,7 @@
     "lint": "nx run-many --target=lint --all",
     "nx": "nx",
     "run": "nx run",
-    "test": "nx run-many --target=test --all"
+    "test": "nx run core:test"
   },
   "dependencies": {
     "react": "^19.2.4",
