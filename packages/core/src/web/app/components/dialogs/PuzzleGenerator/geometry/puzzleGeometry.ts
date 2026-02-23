@@ -4,15 +4,11 @@
  * Single source of truth for all puzzle geometry calculations.
  * Used by both Preview.tsx (rendering) and svgExport.ts (export).
  *
- * This consolidation:
- * 1. Eliminates duplicate calculations between preview and export
- * 2. Ensures consistent geometry across the application
- * 3. Makes memoization straightforward at the component level
- * 4. Caches expensive visibility/merge calculations when enabled
+ * Eliminates duplicate calculations, ensures consistency, and caches
  */
 
 import { LAYER_GAP } from '../constants';
-import type { MergeGroup, PieceVisibility, PuzzleGeometry, PuzzleState, ShapeType } from '../types';
+import type { ClipContext, MergeGroup, PieceVisibility, PuzzleGeometry, PuzzleState, ShapeType } from '../types';
 
 import {
   calculateAllPieceVisibilities,
@@ -56,10 +52,6 @@ const computeVisibilityAndMerges = (
   return { mergeGroups, visibility };
 };
 
-/**
- * Computes all puzzle geometry in a single pass.
- * Caches visibility/merge calculations to avoid ~8,500 point-in-shape tests per recompute.
- */
 export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType): PuzzleGeometry => {
   const layout = calculatePuzzleLayout(state);
   const meta = getShapeMetadata(shapeType, state);
@@ -86,8 +78,6 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
   }
 
   const edges = generatePuzzleEdges(state, layout, mergeGroups);
-
-  // Boundary path: use boundaryHeight (stretched for heart) and centerYOffset
   const boundaryPath = generateShapePath(shapeType, {
     centerY: meta.centerYOffset,
     cornerRadius: meta.boundaryCornerRadius,
@@ -95,7 +85,6 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
     width: layout.width,
   });
 
-  // Border paths
   let boardBasePath: string | undefined;
   let raisedEdgesPath: string | undefined;
 
@@ -115,22 +104,25 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
     });
   }
 
-  // Pre-compute dimensions for layout calculations
-  // Calculate expansion from board base
   const borderExpansion = state.border.enabled ? state.border.width * 2 : 0;
-
-  // Calculate expansion from image bleed (only when image is uploaded)
   const bleedExpansion = state.image.enabled && state.image.dataUrl !== null ? state.image.bleed * 2 : 0;
-
-  // Use maximum of the two expansions (they don't stack)
   const frameExpansion = Math.max(borderExpansion, bleedExpansion);
 
   const frameWidth = layout.width + frameExpansion;
   const frameHeight = meta.boundaryHeight + frameExpansion;
 
+  const clipContext: ClipContext = {
+    centerYOffset: meta.centerYOffset,
+    cornerRadius: meta.boundaryCornerRadius,
+    height: meta.boundaryHeight,
+    shapeType,
+    width: layout.width,
+  };
+
   return {
     boardBasePath,
     boundaryPath,
+    clipContext,
     edges,
     frameHeight,
     frameWidth,
@@ -141,16 +133,10 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
   };
 };
 
-/**
- * Computes export-specific layout positions.
- * Used by svgExport.ts for placing elements in the final SVG.
- */
 export const computeExportLayout = (geometry: PuzzleGeometry, borderEnabled: boolean) => {
   const hasFrameExpansion = geometry.frameWidth > geometry.layout.width;
 
   if (!borderEnabled) {
-    // When bleed is active (but no board), use expanded frame dimensions
-    // but don't create exploded layout
     return {
       boardOffsetX: 0,
       hasBorder: false,

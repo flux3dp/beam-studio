@@ -44,46 +44,33 @@ export interface PuzzleLayout {
   width: number;
 }
 
+export interface ClipContext {
+  centerYOffset: number;
+  cornerRadius: number;
+  height: number;
+  shapeType: ShapeType;
+  width: number;
+}
+
 export interface PuzzleGeometry {
-  /** Board base outer boundary path (if border enabled) */
   boardBasePath?: string;
-  /** Shape boundary path for clipping */
   boundaryPath: string;
-  /** Puzzle edge paths */
+  clipContext: ClipContext;
   edges: PuzzleEdges;
-  /** Frame dimensions (puzzle + border) */
   frameHeight: number;
   frameWidth: number;
-  /** Base layout info */
   layout: PuzzleLayout;
-  /** Merge groups for shapes that don't fill their bounding box */
   mergeGroups: MergeGroup[];
-  /** Shape metadata computed by the orchestrator — includes center Y offset for heart */
   meta: ShapeMetadata;
-  /** Raised edges frame path with inner cutout (if border enabled) */
   raisedEdgesPath?: string;
 }
 
-/**
- * Shape metadata describing capabilities and parameter resolution.
- * Queried by consumer code instead of checking shape names directly.
- */
 export interface ShapeMetadata {
-  /** Corner radius for the outer border frame (resolved from state) */
   borderCornerRadius: number;
-  /** Corner radius for the puzzle boundary (resolved from state) */
   boundaryCornerRadius: number;
-  /**
-   * Height to use for the boundary shape. Equals grid height for most shapes.
-   * For heart with HEART_FIT_TO_GRID, this is stretched (gridHeight / 0.925) so
-   * the heart's visual extremes (lobe peaks + bottom point) touch the grid edges.
-   */
   boundaryHeight: number;
-  /** Vertical offset for the shape center (heart: shifts so extremes are symmetric about grid center) */
   centerYOffset: number;
-  /** Whether the shape fills its entire bounding box (no clipping/merging needed when true) */
   fillsBoundingBox: boolean;
-  /** Corner radius for the inner cutout of raised edges (resolved from state) */
   innerCutoutCornerRadius: number;
 }
 

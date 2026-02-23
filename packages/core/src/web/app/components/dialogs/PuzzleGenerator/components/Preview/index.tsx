@@ -81,7 +81,7 @@ const Preview = ({
   }, [geometry, onGeometryComputed]);
 
   const { meta } = geometry;
-  const { boundaryClip, imageClip } = useClipFunctions(shapeType, geometry, meta, state.image.bleed);
+  const { boundaryClip, imageClip } = useClipFunctions(geometry, meta, state.image.bleed);
 
   // View layout
   const viewLayout = useMemo(

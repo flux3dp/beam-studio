@@ -8,7 +8,7 @@
  * so no changes are needed in puzzleGeometry.ts, puzzleGenerator.ts, etc.
  */
 
-import type { ShapeType } from '../../types';
+import type { ClipContext, ShapeType } from '../../types';
 
 import { circleShape } from './circle';
 import { heartShape } from './heart';
@@ -68,14 +68,9 @@ export const isPointInShape = (
   centerYOffset = 0,
 ): boolean => getShape(shapeType).isPointInside(x, y, width, height, cornerRadius, centerYOffset);
 
-export const drawShapeClipPath = (
-  ctx: CanvasRenderingContext2D,
-  shapeType: ShapeType,
-  width: number,
-  height: number,
-  cornerRadius = 0,
-  centerYOffset = 0,
-): void => {
+export const drawShapeClipPath = (ctx: CanvasRenderingContext2D, clipContext: ClipContext): void => {
+  const { centerYOffset, cornerRadius, height, shapeType, width } = clipContext;
+
   getShape(shapeType).drawClipPath(ctx, width, height, cornerRadius, centerYOffset);
 };
 
