@@ -43,7 +43,7 @@ describe('verify top bar behaviors under device disconnection', () => {
   });
 
   it('toturial is unable to start', () => {
-    cy.get('div.menu-btn-container').click();
+    cy.get('div[data-testid="top-bar-menu"]').click();
     cy.contains('Help').click();
     cy.contains('Show Start Tutorial').click();
     cy.contains('Searching machine for tutorial...').should('exist');

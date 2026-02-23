@@ -245,8 +245,8 @@ Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
 });
 
 Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
-  cy.get('div.menu-btn-container').click();
-  cy.get('.rc-menu__submenu').contains('Edit').click();
+  cy.get('div[data-testid="top-bar-menu"]').click();
+  cy.get('.szh-menu__submenu').contains('Edit').click();
   cy.contains('Document Settings').click();
   cy.get('#workareaSelect').closest('.ant-select').as('select');
   cy.get('@select').find('.ant-select-selection-item').click();

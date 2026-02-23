@@ -50,7 +50,9 @@ describe('ador layer', () => {
 
     const mergeLayer = (layer: string, expectedText: string) => {
       cy.get(`div[data-layer="${layer}"]`).eq(1).rightclick();
-      cy.get('#merge_down_layer').click();
+      cy.get('.ant-dropdown').should('be.visible').within(() => {
+        cy.contains('.ant-dropdown-menu-item', 'Merge Down').click({ force: true });
+      });
       cy.get('.ant-modal-title').should('have.text', expectedText);
       cy.contains('button.ant-btn', 'Confirm').click({ force: true });
     };

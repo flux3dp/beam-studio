@@ -1,9 +1,9 @@
 it('layer color setting', () => {
   cy.landingEditor();
 
-  cy.get('div.menu-btn-container').click();
-  cy.get('.rc-menu__submenu').contains('Edit').click();
-  cy.get('.rc-menu__item').contains('Layer').click();
+  cy.get('div[data-testid="top-bar-menu"]').click();
+  cy.get('.szh-menu__submenu').contains('Edit').click();
+  cy.get('.szh-menu__item').contains('Layer').click();
   cy.contains('Color Settings').click();
   cy.get('.ant-modal').should('be.visible');
 
@@ -29,9 +29,9 @@ it('layer color setting', () => {
   cy.get(`${rowSelector} .editable-cell-value-wrap`).eq(3).should('contain.text', '1');
 
   cy.get('.ant-btn').contains('Save').click();
-  cy.get('div.menu-btn-container').click();
-  cy.get('.rc-menu__submenu').contains('Edit').click();
-  cy.get('.rc-menu__item').contains('Layer').click();
+  cy.get('div[data-testid="top-bar-menu"]').click();
+  cy.get('.szh-menu__submenu').contains('Edit').click();
+  cy.get('.szh-menu__item').contains('Layer').click();
   cy.contains('Color Settings').click();
   cy.get('button.ant-pagination-item-link .anticon-right').click();
   cy.get(rowSelector).should('exist');

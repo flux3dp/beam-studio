@@ -9,13 +9,13 @@ describe('check the existence of the top bar tools on mobile', () => {
 
   it('menu', () => {
     cy.get(`[class*="${topbarModulesPrefix}TopBar-module__menu`).should('exist');
-    cy.get('.menu-btn-container').click();
-    cy.get('.rc-menu__item').contains('File').should('exist');
-    cy.get('.rc-menu__item').contains('Edit').should('exist');
-    cy.get('.rc-menu__item').contains('View').should('exist');
-    cy.get('.rc-menu__item').contains('Machines').should('exist');
-    cy.get('.rc-menu__item').contains('Account').should('exist');
-    cy.get('.rc-menu__item').contains('Help').should('exist');
+    cy.get('[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__item').contains('File').should('exist');
+    cy.get('.szh-menu__item').contains('Edit').should('exist');
+    cy.get('.szh-menu__item').contains('View').should('exist');
+    cy.get('.szh-menu__item').contains('Machines').should('exist');
+    cy.get('.szh-menu__item').contains('Account').should('exist');
+    cy.get('.szh-menu__item').contains('Help').should('exist');
   });
 
   it('welcome page button', () => {

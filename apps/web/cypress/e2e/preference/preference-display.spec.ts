@@ -203,7 +203,7 @@ describe('update the preference (display)', () => {
   it('click reset button and see if home page gets changed ', () => {
     cy.go2Preference();
     cy.get('.ant-modal-footer button').contains('Reset Beam Studio').click();
-    cy.url().should('contain', `${baseUrl}/#/`);
+    cy.url().should('contain', `${baseUrl}/`);
     cy.get('h1.headline').should('exist');
   });
 });

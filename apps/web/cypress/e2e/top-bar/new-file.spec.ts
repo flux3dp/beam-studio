@@ -12,9 +12,9 @@ it('check new file', () => {
   cy.get('svg#svgcontent').trigger('mousedown', 100, 150, { force: true });
   cy.get('svg#svgcontent').trigger('mousedown', 0, 0, { force: true });
   cy.get('#svg_1').should('exist');
-  cy.get('div.menu-btn-container').click();
-  cy.get('.rc-menu__submenu').contains('File').click();
-  cy.get('.rc-menu').contains('New').click();
+  cy.get('div[data-testid="top-bar-menu"]').click();
+  cy.get('.szh-menu__submenu').contains('File').click();
+  cy.get('.szh-menu').contains('New').click();
   cy.contains('button span', "Don't Save").click();
   cy.get('#svg_1').should('not.exist');
 });
@@ -50,9 +50,9 @@ it('check new file after reset', () => {
   cy.get('svg#svgcontent').trigger('mousedown', 100, 150, { force: true });
   cy.get('svg#svgcontent').trigger('mousedown', 0, 0, { force: true });
   cy.get('#svg_1').should('exist');
-  cy.get('div.menu-btn-container').click();
-  cy.get('.rc-menu__submenu').contains('File').click();
-  cy.get('.rc-menu').contains('New').click();
+  cy.get('div[data-testid="top-bar-menu"]').click();
+  cy.get('.szh-menu__submenu').contains('File').click();
+  cy.get('.szh-menu').contains('New').click();
   cy.contains('button span', "Don't Save").click();
   cy.get('#svg_1').should('not.exist');
 });
