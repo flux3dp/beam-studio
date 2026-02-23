@@ -2,6 +2,7 @@ import {
   DEFAULT_BORDER_RADIUS,
   DEFAULT_BORDER_WIDTH,
   DEFAULT_COLUMNS,
+  DEFAULT_HEXAGON_ROWS,
   DEFAULT_ORIENTATION,
   DEFAULT_PIECE_SIZE,
   DEFAULT_RADIUS,
@@ -36,6 +37,16 @@ const COLUMNS_PROPERTY: NumberPropertyDef = {
 
 const ROWS_PROPERTY: NumberPropertyDef = {
   default: DEFAULT_ROWS,
+  key: 'rows',
+  labelKey: 'rows',
+  max: 20,
+  min: 2,
+  step: 1,
+  type: 'slider',
+};
+
+const HEXAGON_ROWS_PROPERTY: NumberPropertyDef = {
+  default: DEFAULT_HEXAGON_ROWS,
   key: 'rows',
   labelKey: 'rows',
   max: 20,
@@ -259,9 +270,22 @@ export const PUZZLE_TYPES: PuzzleTypeConfig[] = [
   ]),
   createPuzzleTypeConfig('circle', 'types.circle_jigsaw', circleThumbnail),
   createPuzzleTypeConfig('heart', 'types.heart_jigsaw', heartThumbnail),
-  createPuzzleTypeConfig('hexagon', 'types.hex_jigsaw', hexagonThumbnail, { includeCornerRadius: true }, [
-    RADIUS_PROPERTY,
-  ]),
+  // Hexagon uses custom rows default, so define manually
+  {
+    id: 'hexagon',
+    nameKey: 'types.hex_jigsaw',
+    properties: [
+      createImageGroup(),
+      createBorderGroup({ includeCornerRadius: true }),
+      COLUMNS_PROPERTY,
+      HEXAGON_ROWS_PROPERTY,
+      PIECE_SIZE_PROPERTY,
+      TAB_SIZE_PROPERTY,
+      ORIENTATION_PROPERTY,
+      RADIUS_PROPERTY,
+    ],
+    thumbnail: hexagonThumbnail,
+  },
 ];
 
 export const getPuzzleTypeById = (id: string): PuzzleTypeConfig | undefined =>

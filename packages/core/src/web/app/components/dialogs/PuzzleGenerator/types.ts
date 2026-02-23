@@ -1,17 +1,4 @@
-import { match } from 'ts-pattern';
-
 import type { ViewMode } from './constants';
-import {
-  DEFAULT_BORDER_RADIUS,
-  DEFAULT_BORDER_WIDTH,
-  DEFAULT_COLUMNS,
-  DEFAULT_HEXAGON_ROWS,
-  DEFAULT_ORIENTATION,
-  DEFAULT_PIECE_SIZE,
-  DEFAULT_RADIUS,
-  DEFAULT_ROWS,
-  DEFAULT_TAB_SIZE,
-} from './constants';
 
 export type ShapeType = 'circle' | 'heart' | 'hexagon' | 'rectangle';
 
@@ -224,43 +211,11 @@ export type PuzzleStateUpdate = {
   [K in PuzzleState['typeId']]: Partial<Omit<Extract<PuzzleState, { typeId: K }>, 'typeId'>>;
 }[PuzzleState['typeId']];
 
-export const createDefaultImageState = (): ImageState => ({
-  bleed: 2,
-  dataUrl: null,
-  enabled: false,
-  exportAs: 'print',
-  offsetX: 0,
-  offsetY: 0,
-  zoom: 100,
-});
-
-export const createDefaultBorderState = (): BorderState => ({
-  enabled: false,
-  guideLines: false,
-  radius: DEFAULT_BORDER_RADIUS,
-  width: DEFAULT_BORDER_WIDTH,
-});
-
-const createBaseDefaults = (): BasePuzzleState => ({
-  border: createDefaultBorderState(),
-  columns: DEFAULT_COLUMNS,
-  image: createDefaultImageState(),
-  orientation: DEFAULT_ORIENTATION,
-  pieceSize: DEFAULT_PIECE_SIZE,
-  rows: DEFAULT_ROWS,
-  tabSize: DEFAULT_TAB_SIZE,
-  viewMode: 'design',
-});
-
-export const createDefaultPuzzleState = (typeId: ShapeType): PuzzleState =>
-  match(typeId)
-    .with('circle', () => ({ ...createBaseDefaults(), typeId: 'circle' as const }))
-    .with('heart', () => ({ ...createBaseDefaults(), typeId: 'heart' as const }))
-    .with('hexagon', () => ({
-      ...createBaseDefaults(),
-      radius: DEFAULT_RADIUS,
-      rows: DEFAULT_HEXAGON_ROWS,
-      typeId: 'hexagon' as const,
-    }))
-    .with('rectangle', () => ({ ...createBaseDefaults(), radius: DEFAULT_RADIUS, typeId: 'rectangle' as const }))
-    .exhaustive();
+/**
+ * Creates default puzzle state by deriving values from property configuration.
+ * Config (puzzleTypes.config.ts) is the single source of truth for defaults.
+ *
+ * NOTE: This is now implemented in configToState.ts to avoid circular dependencies.
+ * Re-exported here for convenience.
+ */
+export { createDefaultStateFromConfig } from './configToState';
