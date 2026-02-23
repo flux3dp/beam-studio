@@ -10,28 +10,6 @@ jest.mock('@core/helpers/system-helper', () => ({
   useIsMobile: () => useIsMobile(),
 }));
 
-jest.mock('@core/helpers/i18n', () => ({
-  lang: {
-    beambox: {
-      right_panel: {
-        object_panel: {
-          path_edit_panel: {
-            connect: 'Connect',
-            delete: 'Delete',
-            disconnect: 'Disconnect',
-            node_type: 'NODE TYPE',
-            round: 'Round',
-            sharp: 'Sharp',
-          },
-        },
-        tabs: {
-          path_edit: 'Path Edit',
-        },
-      },
-    },
-  },
-}));
-
 const setSelectedNodeType = jest.fn();
 const deleteSelected = jest.fn();
 const mockSetSharp = jest.fn();

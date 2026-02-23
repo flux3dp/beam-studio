@@ -17,7 +17,7 @@ exports[`test workarea should render correctly 1`] = `
 exports[`test workarea should render correctly 2`] = `
 <div>
   <div
-    class="ant-dropdown-trigger mac"
+    class="ant-dropdown-trigger mac ant-dropdown-open"
     disabled=""
     id="workarea"
   >

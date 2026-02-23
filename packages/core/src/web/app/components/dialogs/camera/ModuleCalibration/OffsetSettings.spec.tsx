@@ -73,6 +73,14 @@ describe('test OffsetSettings', () => {
       workarea: 'ado1',
     });
 
+    // Wait for the offset values to be loaded and displayed
+    const inputs = baseElement.querySelectorAll('input');
+
+    await waitFor(() => {
+      expect(inputs[0]).toHaveValue('10.5');
+      expect(inputs[1]).toHaveValue('-5.2');
+    });
+
     expect(baseElement).toMatchSnapshot();
   });
 
