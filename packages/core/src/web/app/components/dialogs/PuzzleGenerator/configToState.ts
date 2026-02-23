@@ -44,8 +44,11 @@ const extractDefaults = (properties: PropertyDef[], state: any): void => {
     if (prop.type === 'group') {
       // Recursively process group children
       extractDefaults(prop.children, state);
-    } else if (prop.type !== 'image-upload' && 'default' in prop) {
-      // Extract default value for all property types except image-upload
+    } else if (prop.type === 'image-upload') {
+      // Initialize image.dataUrl as null to match type declaration
+      setNestedValue(state, prop.key, null);
+    } else if ('default' in prop) {
+      // Extract default value for all other property types
       setNestedValue(state, prop.key, prop.default);
     }
   });

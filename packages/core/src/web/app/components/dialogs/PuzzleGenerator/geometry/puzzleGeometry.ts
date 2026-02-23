@@ -4,7 +4,9 @@
  * Single source of truth for all puzzle geometry calculations.
  * Used by both Preview.tsx (rendering) and svgExport.ts (export).
  *
- * Eliminates duplicate calculations, ensures consistency, and caches
+ * Caches visibility and merge group calculations for shapes that don't fill
+ * their bounding box (heart, hexagon). The cache is invalidated when grid
+ * dimensions, piece size, orientation, or border settings change.
  */
 
 import { LAYER_GAP } from '../constants';
@@ -133,6 +135,17 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
   };
 };
 
+/**
+ * Computes layout for SVG export with optional border side-by-side arrangement.
+ *
+ * When border is disabled:
+ * - Single centered element with optional image bleed expansion
+ *
+ * When border is enabled:
+ * - Two-part layout: board base on right, puzzle pieces + raised edges frame on left
+ * - Separated by LAYER_GAP to prevent overlap during laser cutting
+ * - raisedEdgesOffsetX is negative to shift left side leftward from canvas origin
+ */
 export const computeExportLayout = (geometry: PuzzleGeometry, borderEnabled: boolean) => {
   const hasFrameExpansion = geometry.frameWidth > geometry.layout.width;
 

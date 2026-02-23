@@ -28,7 +28,6 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-/** Sets the color of a layer after import */
 const setLayerColor = async (layerName: string, color: string): Promise<void> => {
   const layer = layerManager.getLayerByName(layerName);
 
@@ -71,13 +70,11 @@ const createSvgString = ({ clipPathData, elementOffsetX = 0, height, pathData, w
   </svg>`;
 };
 
-/** Helper to import a layer with color */
 const importLayer = async (layerName: string, color: string, svgOptions: SvgStringOptions): Promise<void> => {
   await importSvgString(createSvgString(svgOptions), { layerName, type: 'layer' });
   await setLayerColor(layerName, color);
 };
 
-/** Loads an image element from a data URL */
 const loadImage = (dataUrl: string): Promise<HTMLImageElement> =>
   new Promise((resolve, reject) => {
     const img = new window.Image();
@@ -119,12 +116,19 @@ const renderCroppedImage = (
     );
   }
 
-  // Work in mm coordinates: translate to center (in px), then scale so 1 unit = 1 mm
+  // Set up coordinate system: translate origin to canvas center (in px),
+  // then scale so drawing units = 1mm. All subsequent drawing is in mm.
   ctx.translate(canvasW / 2, canvasH / 2);
   ctx.scale(pxPerMm, pxPerMm);
 
   // Clip to the boundary shape (drawShapeClipPath draws centered at origin in mm)
-  drawShapeClipPath(ctx, shapeType, clipW, clipH, cornerRadius, centerYOffset);
+  drawShapeClipPath(ctx, {
+    centerYOffset,
+    cornerRadius,
+    height: clipH,
+    shapeType,
+    width: clipW,
+  });
   ctx.clip();
 
   // Draw the image (placement coords are in mm, centered at origin)
@@ -188,7 +192,8 @@ const exportImageLayer = async (
   const img = await loadImage(image.dataUrl);
   const { meta } = geo;
 
-  // Clip dimensions — use boundaryHeight (stretched for heart), expand by bleed
+  // Clip dimensions — use meta.boundaryHeight (which is vertically stretched for heart shapes
+  // to fit the visual bounds to the grid, vs layout.height which is the grid height), expand by bleed
   const clipW = geo.layout.width + image.bleed * 2;
   const clipH = meta.boundaryHeight + image.bleed * 2;
   const placement = computeImagePlacement(img.naturalWidth, img.naturalHeight, geo.layout, image);
@@ -231,8 +236,10 @@ const exportImageLayer = async (
 
   // 2. Process cropped image through imageData for proper display
   const croppedImg = await loadImage(croppedDataUrl);
-  // Note: blob URL is intentionally not revoked — it persists as the `origImage` attribute
-  // on the SVG element, required by Beam Studio's image editing tools for the session lifetime.
+  // Note: blob URL is intentionally not revoked. It's stored in the `origImage` attribute
+  // and must remain valid for the element's lifetime. Beam Studio's image editing tools
+  // (ImageEditPanel, CropPanel) require this blob URL to be accessible throughout the session.
+  // Revoking it would break the image reference and cause loading failures.
   let origBlobUrl: string;
 
   try {
@@ -298,7 +305,8 @@ export const exportToCanvas = async (
   const geo = geometry ?? computePuzzleGeometry(state, typeConfig.id);
   const layout = computeExportLayout(geo, state.border.enabled);
 
-  // Combine edge paths for cutting
+  // Combine horizontal and vertical edge paths into a single SVG path string for laser cutting.
+  // filter(Boolean) removes empty strings when a direction has no edges (e.g., hexagon with no vertical cuts).
   const innerCuts = [geo.edges.horizontalEdges, geo.edges.verticalEdges].filter(Boolean).join(' ');
   const clipPath = geo.meta.fillsBoundingBox ? undefined : geo.boundaryPath;
   const baseOpts = { height: layout.totalHeight, width: layout.totalWidth };
@@ -334,7 +342,8 @@ export const exportToCanvas = async (
   }
 
   // LEFT SIDE: Puzzle Pieces (always)
-  // When border is disabled, include boundary path (it belongs to puzzle pieces, not a separate frame)
+  // When border is disabled, include boundary path with puzzle pieces (the outer edge is part of the puzzle itself).
+  // When border is enabled, the boundary path is omitted here because the board base layer provides the outer edge.
   const puzzlePiecesPath = layout.hasBorder ? innerCuts : [geo.boundaryPath, innerCuts].filter(Boolean).join(' ');
 
   if (puzzlePiecesPath) {

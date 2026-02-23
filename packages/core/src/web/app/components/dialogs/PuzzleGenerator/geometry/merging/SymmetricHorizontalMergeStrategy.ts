@@ -8,8 +8,8 @@
  * Key features:
  * - Horizontal-only merging (no vertical merges)
  * - Symmetric pair processing for visual balance
- * - Inward preference during neighbor selection (toward center)
- * - Outward preference during group expansion (away from center)
+ * - Inward tiebreaker during neighbor selection: when visibility is equal, prefers neighbors closer to center column
+ * - Outward tiebreaker during group expansion: when visibility is equal, prefers neighbors farther from center column
  * - Center-column pieces can form 3-piece symmetric groups
  */
 
@@ -211,6 +211,10 @@ export class SymmetricHorizontalMergeStrategy implements MergeStrategy {
       }
     };
 
+    // Process pieces in order of increasing visibility (smallest first), with tiebreakers:
+    // 1. Pieces farther from center column (edge pieces first)
+    // 2. Top rows before bottom rows
+    // This ensures symmetric pairs are processed together and small edge pieces merge first.
     const sortedByVisibility = [...visibility]
       .filter((v) => v.visibleRatio && v.visibleRatio < threshold)
       .sort((a, b) => {
