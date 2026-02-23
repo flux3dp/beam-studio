@@ -8,10 +8,11 @@
  * 1. Eliminates duplicate calculations between preview and export
  * 2. Ensures consistent geometry across the application
  * 3. Makes memoization straightforward at the component level
+ * 4. Caches expensive visibility/merge calculations when enabled
  */
 
 import { LAYER_GAP } from '../constants';
-import type { PuzzleGeometry, PuzzleState, ShapeType } from '../types';
+import type { MergeGroup, PieceVisibility, PuzzleGeometry, PuzzleState, ShapeType } from '../types';
 
 import {
   calculateAllPieceVisibilities,
@@ -21,32 +22,68 @@ import {
 } from './puzzleGenerator';
 import { generateBorderPath, generateRaisedEdgesPath, generateShapePath, getShapeMetadata } from './shapes';
 
+interface GeometryCache {
+  mergeGroups: MergeGroup[];
+  stateHash: string;
+  visibility: PieceVisibility[];
+}
+
+let cache: GeometryCache | null = null;
+
+const hashGeometryState = (state: PuzzleState, shapeType: ShapeType): string => {
+  const { border, columns, orientation, pieceSize, rows, typeId } = state;
+  const radius = 'radius' in state ? state.radius : 0;
+
+  return `${typeId}-${shapeType}-${columns}x${rows}-${pieceSize}-${orientation}-${border.enabled}-${border.width}-${border.radius}-${radius}`;
+};
+
+const computeVisibilityAndMerges = (
+  state: PuzzleState,
+  shapeType: ShapeType,
+  layout: ReturnType<typeof calculatePuzzleLayout>,
+  meta: ReturnType<typeof getShapeMetadata>,
+): { mergeGroups: MergeGroup[]; visibility: PieceVisibility[] } => {
+  const visibility = calculateAllPieceVisibilities(
+    state,
+    shapeType,
+    layout,
+    meta.centerYOffset,
+    meta.boundaryHeight,
+    meta.boundaryCornerRadius,
+  );
+  const mergeGroups = calculateMergeGroups(visibility, state.rows, state.columns);
+
+  return { mergeGroups, visibility };
+};
+
 /**
  * Computes all puzzle geometry in a single pass.
- *
- * @param state - Current puzzle state
- * @param shapeType - Shape type from config
- * @returns Complete geometry data for rendering and export
+ * Caches visibility/merge calculations to avoid ~8,500 point-in-shape tests per recompute.
  */
 export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType): PuzzleGeometry => {
   const layout = calculatePuzzleLayout(state);
   const meta = getShapeMetadata(shapeType, state);
 
-  // Visibility & merging (expensive - skip when shape fills its bounding box)
-  const mergeGroups = meta.fillsBoundingBox
-    ? []
-    : calculateMergeGroups(
-        calculateAllPieceVisibilities(
-          state,
-          shapeType,
-          layout,
-          meta.centerYOffset,
-          meta.boundaryHeight,
-          meta.boundaryCornerRadius,
-        ),
-        state.rows,
-        state.columns,
-      );
+  let visibility: PieceVisibility[];
+  let mergeGroups: MergeGroup[];
+
+  if (meta.fillsBoundingBox) {
+    visibility = [];
+    mergeGroups = [];
+  } else {
+    const stateHash = hashGeometryState(state, shapeType);
+
+    if (cache?.stateHash === stateHash) {
+      visibility = cache.visibility;
+      mergeGroups = cache.mergeGroups;
+    } else {
+      const computed = computeVisibilityAndMerges(state, shapeType, layout, meta);
+
+      visibility = computed.visibility;
+      mergeGroups = computed.mergeGroups;
+      cache = { mergeGroups, stateHash, visibility };
+    }
+  }
 
   const edges = generatePuzzleEdges(state, layout, mergeGroups);
 
