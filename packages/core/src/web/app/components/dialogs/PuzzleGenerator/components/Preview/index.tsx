@@ -2,7 +2,8 @@ import React, { useEffect, useMemo } from 'react';
 
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
-import { Layer, Stage } from 'react-konva';
+import type Konva from 'konva';
+import { Group, Image, Layer, Stage } from 'react-konva';
 import useImage from 'use-image';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
@@ -11,16 +12,13 @@ import useI18n from '@core/helpers/useI18n';
 
 import { COLORS, MM_PER_INCH, OVERLAY_BOTTOM, STAGE_PADDING, STROKE_PX, THUMB_PAD, THUMB_SIZE } from '../../constants';
 import type { ViewMode } from '../../constants';
-import { computePuzzleGeometry } from '../../geometry';
-import useClipFunctions from '../../hooks/useClipFunctions';
+import { computeImagePlacement, computePuzzleGeometry, drawShapeClipPath } from '../../geometry';
 import useContainerSize from '../../hooks/useContainerSize';
-import useImageLayout from '../../hooks/useImageLayout';
-import type { PuzzleGeometry, PuzzleState, PuzzleTypeConfig } from '../../types';
+import type { ClipContext, PuzzleGeometry, PuzzleState, PuzzleTypeConfig } from '../../types';
 
 import computeViewLayout from './computeViewLayout';
 import DesignScene from './DesignScene';
 import ExplodedScene from './ExplodedScene';
-import ImageOverlay from './ImageOverlay';
 import styles from './Preview.module.scss';
 
 interface PreviewProps {
@@ -81,7 +79,28 @@ const Preview = ({
   }, [geometry, onGeometryComputed]);
 
   const { meta } = geometry;
-  const { boundaryClip, imageClip } = useClipFunctions(geometry, meta, state.image.bleed);
+
+  // Clip functions for boundary and image
+  const createClipFunc =
+    (clipContext: ClipContext): ((ctx: Konva.Context) => void) =>
+    (ctx: Konva.Context) =>
+      drawShapeClipPath(ctx as unknown as CanvasRenderingContext2D, clipContext);
+
+  const boundaryClip = useMemo(() => {
+    if (meta.fillsBoundingBox) return undefined;
+
+    return createClipFunc(geometry.clipContext);
+  }, [meta.fillsBoundingBox, geometry.clipContext]);
+
+  const imageClip = useMemo(() => {
+    const expandedContext: ClipContext = {
+      ...geometry.clipContext,
+      height: geometry.clipContext.height + state.image.bleed * 2,
+      width: geometry.clipContext.width + state.image.bleed * 2,
+    };
+
+    return createClipFunc(expandedContext);
+  }, [state.image.bleed, geometry.clipContext]);
 
   // View layout
   const viewLayout = useMemo(
@@ -98,12 +117,26 @@ const Preview = ({
     [stageSize, viewMode, geometry, state.border.enabled],
   );
 
+  // Image overlay rendering
   const [konvaImage] = useImage(state.image.enabled && state.image.dataUrl ? state.image.dataUrl : '', 'anonymous');
-  const imageLayout = useImageLayout(konvaImage, state.image, geometry.layout);
+
+  const imageLayout = useMemo(() => {
+    if (!konvaImage || !state.image.enabled) return null;
+
+    return computeImagePlacement(konvaImage.width, konvaImage.height, geometry.layout, state.image);
+  }, [konvaImage, state.image, geometry.layout]);
 
   const imageOverlayNode =
     konvaImage && imageLayout ? (
-      <ImageOverlay clipFunc={imageClip} image={konvaImage} layout={imageLayout} />
+      <Group clipFunc={imageClip}>
+        <Image
+          height={imageLayout.height}
+          image={konvaImage}
+          width={imageLayout.width}
+          x={imageLayout.x}
+          y={imageLayout.y}
+        />
+      </Group>
     ) : undefined;
 
   // Scene renderer (design vs exploded)

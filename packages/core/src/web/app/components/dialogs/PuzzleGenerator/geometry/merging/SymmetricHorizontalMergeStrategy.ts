@@ -119,9 +119,7 @@ export class SymmetricHorizontalMergeStrategy implements MergeStrategy {
     };
 
     const mergeToward = (r: number, c: number, targetC: number): undefined | { groupIdx: number; isNew: boolean } => {
-      if (mergedMap.has(getKey(r, c))) return undefined;
-
-      if (!exists(r, targetC)) return undefined;
+      if (mergedMap.has(getKey(r, c)) || !exists(r, targetC)) return undefined;
 
       const existingGroupIdx = mergedMap.get(getKey(r, targetC));
 
@@ -134,42 +132,30 @@ export class SymmetricHorizontalMergeStrategy implements MergeStrategy {
       return { groupIdx: createGroup(r, c, r, targetC), isNew: true };
     };
 
-    const tryMerge = (r: number, c: number) => {
-      const best = findBestNeighbor(r, c, horizontalDirs);
-
-      if (!best) return;
-
-      const result = mergeToward(r, c, best.c);
-
-      if (result?.isNew) expandGroup(result.groupIdx);
-    };
-
     const processSymmetricPair = (r: number, leftC: number, rightC: number) => {
       const leftDone = mergedMap.has(getKey(r, leftC));
       const rightDone = mergedMap.has(getKey(r, rightC));
 
       if (leftDone && rightDone) return;
 
-      if (!leftDone) {
-        const best = findBestNeighbor(r, leftC, horizontalDirs);
+      const best = leftDone ? null : findBestNeighbor(r, leftC, horizontalDirs);
 
-        if (best) {
-          const dc = best.c - leftC;
+      if (best) {
+        const dc = best.c - leftC;
+        const leftResult = mergeToward(r, leftC, leftC + dc);
+        const rightResult = !rightDone ? mergeToward(r, rightC, rightC - dc) : undefined;
 
-          const leftResult = mergeToward(r, leftC, leftC + dc);
+        if (rightResult?.isNew) expandGroup(rightResult.groupIdx);
 
-          if (!rightDone) {
-            const rightResult = mergeToward(r, rightC, rightC - dc);
-
-            if (rightResult?.isNew) expandGroup(rightResult.groupIdx);
-          }
-
-          if (leftResult?.isNew) expandGroup(leftResult.groupIdx);
-        } else if (!rightDone) {
-          tryMerge(r, rightC);
-        }
+        if (leftResult?.isNew) expandGroup(leftResult.groupIdx);
       } else if (!rightDone) {
-        tryMerge(r, rightC);
+        const rightBest = findBestNeighbor(r, rightC, horizontalDirs);
+
+        if (rightBest) {
+          const result = mergeToward(r, rightC, rightBest.c);
+
+          if (result?.isNew) expandGroup(result.groupIdx);
+        }
       }
     };
 

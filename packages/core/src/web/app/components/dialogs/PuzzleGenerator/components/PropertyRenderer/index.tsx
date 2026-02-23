@@ -39,34 +39,23 @@ const PropertyRenderer = ({
   }
 
   const getValue = (key: string): unknown => {
-    const parts = key.split('.');
+    if (key.includes('.')) {
+      const [group, prop] = key.split('.');
+      const groupState = state[group as NestedStateKey];
 
-    if (parts.length === 2) {
-      const [group, prop] = parts as [NestedStateKey, string];
-      const groupState = state[group];
-
-      if (typeof groupState === 'object' && groupState !== null) {
-        return groupState[prop as keyof typeof groupState];
-      }
-
-      return undefined;
+      return typeof groupState === 'object' && groupState !== null
+        ? groupState[prop as keyof typeof groupState]
+        : undefined;
     }
 
-    if (key in state) return state[key as keyof typeof state];
-
-    // Shape-specific fields
-    if (key === 'radius' && state.typeId === 'rectangle') return state.radius;
-
-    return undefined;
+    return state[key as keyof typeof state];
   };
 
   const setValue = (key: string, value: unknown): void => {
-    const parts = key.split('.');
+    if (key.includes('.')) {
+      const [group, prop] = key.split('.');
 
-    if (parts.length === 2) {
-      const [group, prop] = parts as [NestedStateKey, string];
-
-      onNestedStateChange(group, { [prop]: value });
+      onNestedStateChange(group as NestedStateKey, { [prop]: value });
     } else {
       onStateChange({ [key]: value } as PuzzleStateUpdate);
     }

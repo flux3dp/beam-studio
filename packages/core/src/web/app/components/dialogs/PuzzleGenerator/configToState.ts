@@ -1,78 +1,61 @@
 /**
- * Derives default puzzle state from property configuration.
- * This makes puzzleTypes.config.ts the single source of truth for defaults.
+ * Factory for creating default puzzle state.
+ * Explicit defaults with type-specific overrides — no config traversal needed.
  */
 
-import { getPuzzleTypeById } from './puzzleTypes.config';
-import type { PropertyDef, PuzzleState, ShapeType } from './types';
+import {
+  DEFAULT_BORDER_RADIUS,
+  DEFAULT_BORDER_WIDTH,
+  DEFAULT_COLUMNS,
+  DEFAULT_HEXAGON_ROWS,
+  DEFAULT_ORIENTATION,
+  DEFAULT_PIECE_SIZE,
+  DEFAULT_RADIUS,
+  DEFAULT_ROWS,
+  DEFAULT_TAB_SIZE,
+} from './constants';
+import type { PuzzleState, ShapeType } from './types';
 
-/**
- * Sets a nested value in an object using dot notation.
- * @example setNestedValue(obj, 'border.width', 5) → obj.border.width = 5
- */
-const setNestedValue = (obj: any, path: string, value: unknown): void => {
-  const parts = path.split('.');
+/** Base defaults shared by all puzzle types */
+const BASE_DEFAULTS = {
+  border: {
+    enabled: false,
+    guideLines: false,
+    radius: DEFAULT_BORDER_RADIUS,
+    width: DEFAULT_BORDER_WIDTH,
+  },
+  columns: DEFAULT_COLUMNS,
+  image: {
+    bleed: 2,
+    dataUrl: null,
+    enabled: false,
+    exportAs: 'print' as const,
+    offsetX: 0,
+    offsetY: 0,
+    zoom: 100,
+  },
+  orientation: DEFAULT_ORIENTATION as 1 | 2 | 3 | 4,
+  pieceSize: DEFAULT_PIECE_SIZE,
+  rows: DEFAULT_ROWS,
+  tabSize: DEFAULT_TAB_SIZE,
+  viewMode: 'design' as const,
+};
 
-  if (parts.length === 1) {
-    obj[path] = value;
-
-    return;
-  }
-
-  let current = obj;
-
-  for (let i = 0; i < parts.length - 1; i++) {
-    const key = parts[i];
-
-    if (!(key in current)) {
-      current[key] = {};
-    }
-
-    current = current[key];
-  }
-
-  current[parts[parts.length - 1]] = value;
+/** Type-specific overrides for shapes with unique defaults */
+const TYPE_SPECIFIC_DEFAULTS: Record<ShapeType, Partial<PuzzleState>> = {
+  circle: {},
+  heart: {},
+  hexagon: { radius: DEFAULT_RADIUS, rows: DEFAULT_HEXAGON_ROWS },
+  rectangle: { radius: DEFAULT_RADIUS },
 };
 
 /**
- * Recursively extracts default values from property definitions.
- * Type-specific defaults are handled by using different property definitions
- * in the config (e.g., HEXAGON_ROWS_PROPERTY vs ROWS_PROPERTY).
+ * Creates a default PuzzleState for the given shape type.
+ * Combines base defaults with type-specific overrides.
  */
-const extractDefaults = (properties: PropertyDef[], state: any): void => {
-  properties.forEach((prop) => {
-    if (prop.type === 'group') {
-      // Recursively process group children
-      extractDefaults(prop.children, state);
-    } else if (prop.type === 'image-upload') {
-      // Initialize image.dataUrl as null to match type declaration
-      setNestedValue(state, prop.key, null);
-    } else if ('default' in prop) {
-      // Extract default value for all other property types
-      setNestedValue(state, prop.key, prop.default);
-    }
-  });
-};
-
-/**
- * Creates a default PuzzleState by reading property definitions from config.
- * This ensures config is the single source of truth for all defaults.
- */
-export const createDefaultStateFromConfig = (typeId: ShapeType): PuzzleState => {
-  const config = getPuzzleTypeById(typeId);
-
-  if (!config) {
-    throw new Error(`Unknown puzzle type: ${typeId}`);
-  }
-
-  // Start with typeId and viewMode (not in properties)
-  const state: any = {
+export const createDefaultStateFromConfig = (typeId: ShapeType): PuzzleState =>
+  ({
+    ...BASE_DEFAULTS,
+    ...TYPE_SPECIFIC_DEFAULTS[typeId],
     typeId,
-    viewMode: 'design',
-  };
-
-  // Extract all defaults from property tree
-  extractDefaults(config.properties, state);
-
-  return state as PuzzleState;
-};
+  }) as PuzzleState;

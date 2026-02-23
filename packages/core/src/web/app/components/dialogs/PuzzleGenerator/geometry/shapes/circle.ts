@@ -5,7 +5,7 @@
 
 import type { ShapeMetadata } from '../../types';
 
-import type { BorderOptions, MetadataInput, ShapeGenerator, ShapeOptions } from './types';
+import { createExpandedBorderPath, type MetadataInput, type ShapeGenerator, type ShapeOptions } from './types';
 
 const generateEllipsePath = (options: ShapeOptions): string => {
   const { centerX = 0, centerY = 0, height, width } = options;
@@ -28,15 +28,7 @@ export const circleShape: ShapeGenerator = {
     ctx.closePath();
   },
 
-  generateBorderPath(options: BorderOptions): string {
-    const { borderWidth, cornerRadius: _cornerRadius, height, width, ...rest } = options;
-
-    return generateEllipsePath({
-      ...rest,
-      height: height + borderWidth * 2,
-      width: width + borderWidth * 2,
-    });
-  },
+  generateBorderPath: (options) => createExpandedBorderPath(generateEllipsePath, options),
 
   generatePath: generateEllipsePath,
 

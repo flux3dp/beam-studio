@@ -84,3 +84,20 @@ export interface ShapeGenerator {
     centerYOffset?: number,
   ): boolean;
 }
+
+/**
+ * Default border path generator for shapes that simply expand dimensions.
+ * Heart shape uses custom Bézier offset instead.
+ */
+export const createExpandedBorderPath = (
+  generatePath: (options: ShapeOptions) => string,
+  options: BorderOptions,
+): string => {
+  const { borderWidth, height, width, ...rest } = options;
+
+  return generatePath({
+    ...rest,
+    height: height + borderWidth * 2,
+    width: width + borderWidth * 2,
+  });
+};

@@ -5,7 +5,7 @@
 
 import type { ShapeMetadata } from '../../types';
 
-import type { BorderOptions, MetadataInput, ShapeGenerator, ShapeOptions } from './types';
+import { createExpandedBorderPath, type MetadataInput, type ShapeGenerator, type ShapeOptions } from './types';
 
 const generateRectanglePath = (options: ShapeOptions): string => {
   const { centerX = 0, centerY = 0, cornerRadius = 0, height, width } = options;
@@ -67,16 +67,7 @@ export const rectangleShape: ShapeGenerator = {
     ctx.closePath();
   },
 
-  generateBorderPath(options: BorderOptions): string {
-    const { borderWidth, cornerRadius, height, width, ...rest } = options;
-
-    return generateRectanglePath({
-      ...rest,
-      cornerRadius,
-      height: height + borderWidth * 2,
-      width: width + borderWidth * 2,
-    });
-  },
+  generateBorderPath: (options) => createExpandedBorderPath(generateRectanglePath, options),
 
   generatePath: generateRectanglePath,
 
