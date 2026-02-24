@@ -76,12 +76,18 @@ $text-secondary: #666666;
 
 .icon {
   font-size: 32px;
-  width: 32px;
-  height: 32px;
+  min-width: 32px;
+  min-height: 32px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: #7c7c7c;
+
+  svg {
+    width: 32px;
+    height: 32px;
+    overflow: visible;
+  }
 }
 
 .label {

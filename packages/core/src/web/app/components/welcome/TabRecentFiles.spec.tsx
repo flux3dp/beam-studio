@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { render } from '@testing-library/react';
+import { render, waitFor } from '@testing-library/react';
 
 const mockFetch = jest.fn().mockResolvedValue({ blob: async () => 'mockBlob' });
 
@@ -59,23 +59,29 @@ describe('test TabRecentFiles', () => {
 
     const { container } = render(<TabRecentFiles />);
 
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockFetch).toHaveBeenNthCalledWith(1, 'file1.beam');
-    expect(mockFetch).toHaveBeenNthCalledWith(2, 'file2.beam');
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(container.querySelectorAll('mock-grid-file')).toHaveLength(2);
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenNthCalledWith(1, 'file1.beam');
+      expect(mockFetch).toHaveBeenNthCalledWith(2, 'file2.beam');
+    });
+
+    await waitFor(() => {
+      expect(container.querySelectorAll('mock-grid-file')).toHaveLength(2);
+    });
     expect(container).toMatchSnapshot();
 
     mockGet.mockReturnValue(['file3.beam']);
     mockOnFocused.mock.calls[0][0]();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockFetch).toHaveBeenCalledTimes(2);
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenCalledTimes(2);
+    });
 
     mockCommunicator[TabEvents.UpdateRecentFiles]({});
     mockOnFocused.mock.calls[0][0]();
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(mockFetch).toHaveBeenNthCalledWith(3, 'file3.beam');
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    expect(container.querySelectorAll('mock-grid-file')).toHaveLength(1);
+    await waitFor(() => {
+      expect(mockFetch).toHaveBeenNthCalledWith(3, 'file3.beam');
+    });
+    await waitFor(() => {
+      expect(container.querySelectorAll('mock-grid-file')).toHaveLength(1);
+    });
   });
 });

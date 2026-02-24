@@ -599,6 +599,7 @@ export default {
 
     addDialogComponent('network-test', <NetworkTestingPanel ip={ip!} onClose={() => popDialogById('network-test')} />);
   },
+
   showRadioSelectDialog: <T,>({
     options,
     defaultValue = options[0].value,
