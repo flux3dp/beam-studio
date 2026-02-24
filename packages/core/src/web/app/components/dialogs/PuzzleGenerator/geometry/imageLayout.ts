@@ -2,7 +2,7 @@
  * Image layout utilities for "center and cover" placement.
  *
  * This module provides shared image placement logic used by both:
- * - Preview (via useImageLayout hook)
+ * - Preview (via direct call in Preview/index.tsx)
  * - Export (via svgExport)
  *
  * All coordinates are in mm, centered at origin (0, 0).

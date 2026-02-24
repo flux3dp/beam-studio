@@ -20,6 +20,14 @@ export interface ShapeOptions {
   width: number;
 }
 
+/** Options for drawClipPath and isPointInside — shape dimensions in centered-at-origin space. */
+export interface ShapeBoundsOptions {
+  centerYOffset?: number;
+  cornerRadius?: number;
+  height: number;
+  width: number;
+}
+
 export interface BorderOptions extends ShapeOptions {
   borderWidth: number;
 }
@@ -51,13 +59,7 @@ export interface ShapeGenerator {
    * Draw the shape boundary on a Canvas 2D context (for Konva clipFunc and image export clipping).
    * Must call ctx.beginPath() and ctx.closePath().
    */
-  drawClipPath(
-    ctx: CanvasRenderingContext2D,
-    width: number,
-    height: number,
-    cornerRadius?: number,
-    centerYOffset?: number,
-  ): void;
+  drawClipPath(ctx: CanvasRenderingContext2D, bounds: ShapeBoundsOptions): void;
 
   /**
    * Generate SVG path for the border (expanded shape for board base).
@@ -75,14 +77,7 @@ export interface ShapeGenerator {
    * Point-in-shape test for visibility calculations.
    * All coordinates are in centered-at-origin space.
    */
-  isPointInside(
-    x: number,
-    y: number,
-    width: number,
-    height: number,
-    cornerRadius?: number,
-    centerYOffset?: number,
-  ): boolean;
+  isPointInside(x: number, y: number, bounds: ShapeBoundsOptions): boolean;
 }
 
 /**

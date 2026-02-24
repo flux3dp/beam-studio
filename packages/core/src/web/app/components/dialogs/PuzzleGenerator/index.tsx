@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import { Button } from 'antd';
 import classNames from 'classnames';
+import { ErrorBoundary } from 'react-error-boundary';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
@@ -93,8 +94,10 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
       await exportToCanvas(state, currentTypeConfig, geometryRef.current ?? undefined);
       onClose();
     } catch (error) {
+      const detail = error instanceof Error ? error.message : String(error);
+
       console.error('Failed to export puzzle to canvas:', error);
-      alertCaller.popUpError({ message: t.export_failed });
+      alertCaller.popUpError({ message: `${t.export_failed}\n\n${detail}` });
     } finally {
       setIsExporting(false);
     }
@@ -121,16 +124,25 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
     >
       <div className={classNames(styles.container, { [styles.mobile]: isMobile })}>
         <TypeSelector currentTypeId={state.typeId} onTypeChange={handleTypeChange} puzzleTypes={PUZZLE_TYPES} />
-        <Preview
-          dimensions={puzzleDimensions}
-          onGeometryComputed={(geo) => {
-            geometryRef.current = geo;
-          }}
-          onViewModeChange={handleViewModeChange}
-          state={state}
-          typeConfig={currentTypeConfig}
-          viewMode={state.viewMode}
-        />
+        <ErrorBoundary
+          fallbackRender={({ error }) => (
+            <div className={styles['preview-error']}>
+              <p>Preview failed to render. Try adjusting parameters.</p>
+              <pre>{error.message}</pre>
+            </div>
+          )}
+        >
+          <Preview
+            dimensions={puzzleDimensions}
+            onGeometryComputed={(geo) => {
+              geometryRef.current = geo;
+            }}
+            onViewModeChange={handleViewModeChange}
+            state={state}
+            typeConfig={currentTypeConfig}
+            viewMode={state.viewMode}
+          />
+        </ErrorBoundary>
         <OptionsPanel
           onNestedStateChange={handleNestedStateChange}
           onStateChange={handleStateChange}

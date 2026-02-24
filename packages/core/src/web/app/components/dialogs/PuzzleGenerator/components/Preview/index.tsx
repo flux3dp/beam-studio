@@ -118,7 +118,16 @@ const Preview = ({
   );
 
   // Image overlay rendering
-  const [konvaImage] = useImage(state.image.enabled && state.image.dataUrl ? state.image.dataUrl : '', 'anonymous');
+  const [konvaImage, imageStatus] = useImage(
+    state.image.enabled && state.image.dataUrl ? state.image.dataUrl : '',
+    'anonymous',
+  );
+
+  useEffect(() => {
+    if (imageStatus === 'failed') {
+      console.warn('Failed to load preview image from data URL');
+    }
+  }, [imageStatus]);
 
   const imageLayout = useMemo(() => {
     if (!konvaImage || !state.image.enabled) return null;

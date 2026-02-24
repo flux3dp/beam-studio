@@ -22,7 +22,7 @@ const generateEllipsePath = (options: ShapeOptions): string => {
 };
 
 export const circleShape: ShapeGenerator = {
-  drawClipPath(ctx, width, height) {
+  drawClipPath(ctx, { height, width }) {
     ctx.beginPath();
     ctx.ellipse(0, 0, width / 2, height / 2, 0, 0, Math.PI * 2);
     ctx.closePath();
@@ -45,7 +45,7 @@ export const circleShape: ShapeGenerator = {
     };
   },
 
-  isPointInside(x, y, width, height) {
+  isPointInside(x, y, { height, width }) {
     const radiusX = width / 2;
     const radiusY = height / 2;
 

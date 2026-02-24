@@ -101,7 +101,7 @@ const outwardNormal = ([dx, dy]: Point): Point => {
   return len < 1e-10 ? [0, 0] : [-dy / len, dx / len];
 };
 
-/** Sample a Bézier segment into offset points (excluding t=1 to avoid duplicates). */
+/** Sample a Bézier segment into offset points */
 const sampleOffsetSegment = (seg: CubicSegment, offset: number, count: number): Point[] => {
   const pts: Point[] = [];
 
@@ -281,7 +281,7 @@ const isPointInHeart = (px: number, py: number, width: number, height: number): 
 // ── ShapeGenerator implementation ───────────────────────────────────────────
 
 export const heartShape: ShapeGenerator = {
-  drawClipPath(ctx, width, height, _cornerRadius, centerYOffset = 0) {
+  drawClipPath(ctx, { centerYOffset = 0, height, width }) {
     const { bottomCtrl1Y, bottomCtrl2X, bottomCtrl2Y, bottomY, halfWidth, notchY, topY } = computeHeartControlPoints(
       width,
       height,
@@ -334,7 +334,7 @@ export const heartShape: ShapeGenerator = {
     };
   },
 
-  isPointInside(x, y, width, height, _cornerRadius, centerYOffset = 0) {
+  isPointInside(x, y, { centerYOffset = 0, height, width }) {
     return isPointInHeart(x, y - centerYOffset, width, height);
   },
 };

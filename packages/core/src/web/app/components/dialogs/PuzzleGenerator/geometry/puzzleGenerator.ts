@@ -38,7 +38,18 @@ const createSeededRandom = (seed: number) => {
     return x - Math.floor(x);
   };
 };
-/** Generate a single tab edge using cubic Bezier curves with jitter */
+/**
+ * Generate a single tab (knob) edge between two grid points using 3 cubic Bézier curves.
+ *
+ * The tab shape is constructed in edge-local coordinates:
+ * - "along" = fraction (0→1) of the edge from (x1,y1) to (x2,y2)
+ * - "perp"  = perpendicular offset (positive = tab protrudes outward)
+ *
+ * The 3 Bézier curves form:
+ *   1. Entry slope (0.0→0.2→neck): gentle rise from edge into neck
+ *   2. Tab body  (neck→bulge→neck): the wide interlocking knob
+ *   3. Exit slope (neck→0.8→1.0): gentle descent back to edge
+ */
 const generateTabCurve = (
   x1: number,
   y1: number,

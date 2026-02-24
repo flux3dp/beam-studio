@@ -19,7 +19,8 @@ import type {
   SelectPropertyDef,
 } from './types';
 
-// TODO: Replace with actual thumbnail imports once assets are added
+// TODO: Add shape thumbnail assets (e.g., PNG/SVG icons ~64×64px).
+// Import them here and assign below. TypeSelector falls back to text labels when empty.
 const circleThumbnail = '';
 const rectangleThumbnail = '';
 const heartThumbnail = '';

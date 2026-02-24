@@ -5,8 +5,8 @@
  * Used by both Preview.tsx (rendering) and svgExport.ts (export).
  *
  * Caches visibility and merge group calculations for shapes that don't fill
- * their bounding box (heart, hexagon). The cache is invalidated when grid
- * dimensions, piece size, orientation, or border settings change.
+ * their bounding box. The cache is invalidated when geometry-affecting fields
+ * change (see hashGeometryState for the full list of cache keys).
  */
 
 import { LAYER_GAP } from '../constants';

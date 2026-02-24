@@ -134,7 +134,15 @@ const renderCroppedImage = (
   // Draw the image (placement coords are in mm, centered at origin)
   ctx.drawImage(img, placement.x, placement.y, placement.width, placement.height);
 
-  return canvas.toDataURL('image/png');
+  try {
+    return canvas.toDataURL('image/png');
+  } catch (err) {
+    throw new Error(
+      `Failed to encode puzzle image as PNG (canvas: ${canvasW}×${canvasH}px). ` +
+        'Try reducing piece count or piece size.',
+      { cause: err },
+    );
+  }
 };
 
 /** Processes an image through imageData and returns the display base64 */
@@ -146,7 +154,6 @@ const processImageForDisplay = async (
 ): Promise<string> => {
   const result = await new Promise<{ pngBase64: string }>((resolve, reject) => {
     const timeout = setTimeout(() => reject(new Error('Image processing timed out')), 30000);
-
     const cleanup = () => clearTimeout(timeout);
 
     imageData(sourceUrl, {

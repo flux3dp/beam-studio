@@ -18,6 +18,9 @@ import type { MergeGroup, PieceVisibility } from '../../types';
 import type { MergeStrategy } from './types';
 
 export class SymmetricHorizontalMergeStrategy implements MergeStrategy {
+  /**
+   * Merges under-threshold pieces into groups that meet the visibility threshold.
+   */
   calculateMergeGroups(visibility: PieceVisibility[], rows: number, cols: number, threshold: number): MergeGroup[] {
     const groups: MergeGroup[] = [];
     const mergedMap = new Map<string, number>();

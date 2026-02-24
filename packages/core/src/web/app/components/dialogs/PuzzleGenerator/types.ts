@@ -26,14 +26,17 @@ export interface PuzzleEdges {
   verticalEdges: string;
 }
 
+export interface GridPosition {
+  col: number;
+  row: number;
+}
+
 export interface MergeGroup {
-  pieces: Array<{ col: number; row: number }>;
+  pieces: GridPosition[];
   sharedEdges: Array<{ col1: number; col2: number; row1: number; row2: number }>;
 }
 
-export interface PieceVisibility {
-  col: number;
-  row: number;
+export interface PieceVisibility extends GridPosition {
   visibleRatio: number;
 }
 

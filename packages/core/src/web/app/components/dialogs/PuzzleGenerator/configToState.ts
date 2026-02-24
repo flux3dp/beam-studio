@@ -1,7 +1,9 @@
 /**
  * Factory for creating default puzzle state.
- * Explicit defaults with type-specific overrides — no config traversal needed.
+ * Explicit defaults with type-specific overrides.
  */
+
+import { match } from 'ts-pattern';
 
 import {
   DEFAULT_BORDER_RADIUS,
@@ -41,21 +43,13 @@ const BASE_DEFAULTS = {
   viewMode: 'design' as const,
 };
 
-/** Type-specific overrides for shapes with unique defaults */
-const TYPE_SPECIFIC_DEFAULTS: Record<ShapeType, Partial<PuzzleState>> = {
-  circle: {},
-  heart: {},
-  hexagon: { radius: DEFAULT_RADIUS, rows: DEFAULT_HEXAGON_ROWS },
-  rectangle: { radius: DEFAULT_RADIUS },
-};
-
 /**
  * Creates a default PuzzleState for the given shape type.
- * Combines base defaults with type-specific overrides.
  */
 export const createDefaultStateFromConfig = (typeId: ShapeType): PuzzleState =>
-  ({
-    ...BASE_DEFAULTS,
-    ...TYPE_SPECIFIC_DEFAULTS[typeId],
-    typeId,
-  }) as PuzzleState;
+  match(typeId)
+    .with('circle', (id) => ({ ...BASE_DEFAULTS, typeId: id }))
+    .with('heart', (id) => ({ ...BASE_DEFAULTS, typeId: id }))
+    .with('hexagon', (id) => ({ ...BASE_DEFAULTS, radius: DEFAULT_RADIUS, rows: DEFAULT_HEXAGON_ROWS, typeId: id }))
+    .with('rectangle', (id) => ({ ...BASE_DEFAULTS, radius: DEFAULT_RADIUS, typeId: id }))
+    .exhaustive();

@@ -226,7 +226,7 @@ const isPointInHex = (px: number, py: number, width: number, height: number, cor
 // ── ShapeGenerator implementation ───────────────────────────────────────────
 
 export const hexagonShape: ShapeGenerator = {
-  drawClipPath(ctx, width, height, cornerRadius = 0) {
+  drawClipPath(ctx, { cornerRadius = 0, height, width }) {
     const vertices = computeHexVertices(width, height, 0, 0);
     const n = vertices.length;
 
@@ -273,7 +273,7 @@ export const hexagonShape: ShapeGenerator = {
     };
   },
 
-  isPointInside(x, y, width, height, cornerRadius = 0) {
+  isPointInside(x, y, { cornerRadius = 0, height, width }) {
     return isPointInHex(x, y, width, height, cornerRadius);
   },
 };

@@ -42,7 +42,7 @@ const generateRectanglePath = (options: ShapeOptions): string => {
 };
 
 export const rectangleShape: ShapeGenerator = {
-  drawClipPath(ctx, width, height, cornerRadius = 0) {
+  drawClipPath(ctx, { cornerRadius = 0, height, width }) {
     const left = -width / 2;
     const top = -height / 2;
 
@@ -85,7 +85,7 @@ export const rectangleShape: ShapeGenerator = {
     };
   },
 
-  isPointInside(x, y, width, height, cornerRadius = 0) {
+  isPointInside(x, y, { cornerRadius = 0, height, width }) {
     const hw = width / 2;
     const hh = height / 2;
 

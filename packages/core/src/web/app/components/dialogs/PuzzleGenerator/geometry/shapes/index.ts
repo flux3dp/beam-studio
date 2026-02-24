@@ -66,15 +66,22 @@ export const isPointInShape = (
   height: number,
   cornerRadius = 0,
   centerYOffset = 0,
-): boolean => getShape(shapeType).isPointInside(x, y, width, height, cornerRadius, centerYOffset);
+): boolean => getShape(shapeType).isPointInside(x, y, { centerYOffset, cornerRadius, height, width });
 
 export const drawShapeClipPath = (ctx: CanvasRenderingContext2D, clipContext: ClipContext): void => {
-  const { centerYOffset, cornerRadius, height, shapeType, width } = clipContext;
+  const { shapeType, ...bounds } = clipContext;
 
-  getShape(shapeType).drawClipPath(ctx, width, height, cornerRadius, centerYOffset);
+  getShape(shapeType).drawClipPath(ctx, bounds);
 };
 
 export const getShapeMetadata = (shapeType: ShapeType, state: MetadataInput) => getShape(shapeType).getMetadata(state);
 
 // Re-export types for convenience
-export type { BorderOptions, MetadataInput, RaisedEdgesOptions, ShapeGenerator, ShapeOptions } from './types';
+export type {
+  BorderOptions,
+  MetadataInput,
+  RaisedEdgesOptions,
+  ShapeBoundsOptions,
+  ShapeGenerator,
+  ShapeOptions,
+} from './types';
