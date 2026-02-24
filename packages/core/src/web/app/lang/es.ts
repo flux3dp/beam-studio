@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Bordes elevados',
     reset_to_default: 'Restablecer valores predeterminados',
     rows: 'Filas',
-    switch_type_warning: 'Su configuración actual aún no se ha importado al lienzo.\\nCambiar el tipo de puzle restablecerá toda la configuración a los valores predeterminados.',
+    switch_type_warning: 'Su configuración actual aún no se ha importado al lienzo.\nCambiar el tipo de puzle restablecerá toda la configuración a los valores predeterminados.',
     tab_size: 'Tamaño de la pestaña',
     types: {
       circle_jigsaw: 'Puzle circular',

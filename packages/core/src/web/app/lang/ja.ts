@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: '立体エッジ',
     reset_to_default: 'デフォルトにリセット',
     rows: '行数',
-    switch_type_warning: '現在の設定はまだキャンバスにインポートされていません。\\nパズルタイプを切り替えると、すべての設定がデフォルト値にリセットされます。',
+    switch_type_warning: '現在の設定はまだキャンバスにインポートされていません。\nパズルタイプを切り替えると、すべての設定がデフォルト値にリセットされます。',
     tab_size: 'タブのサイズ',
     types: {
       circle_jigsaw: '円形ジグソー',

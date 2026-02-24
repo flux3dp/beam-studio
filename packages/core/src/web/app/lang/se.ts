@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Upphöjda kanter',
     reset_to_default: 'Återställ till standard',
     rows: 'Rader',
-    switch_type_warning: 'Dina nuvarande inställningar har inte importerats till arbetsytan än.\\nAtt byta pusseltyp kommer att återställa alla inställningar till standardvärden.',
+    switch_type_warning: 'Dina nuvarande inställningar har inte importerats till arbetsytan än.\nAtt byta pusseltyp kommer att återställa alla inställningar till standardvärden.',
     tab_size: 'Flikstorlek',
     types: {
       circle_jigsaw: 'Runt pussel',

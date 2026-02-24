@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Kohotetut reunat',
     reset_to_default: 'Palauta oletusarvot',
     rows: 'Rivit',
-    switch_type_warning: 'Nykyisiä asetuksiasi ei ole vielä tuotu piirtoalustalle.\\nPalapelityypin vaihtaminen palauttaa kaikki asetukset oletusarvoihin.',
+    switch_type_warning: 'Nykyisiä asetuksiasi ei ole vielä tuotu piirtoalustalle.\nPalapelityypin vaihtaminen palauttaa kaikki asetukset oletusarvoihin.',
     tab_size: 'Välilehden koko',
     types: {
       circle_jigsaw: 'Pyöreä palapeli',

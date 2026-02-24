@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Vyvýšené hrany',
     reset_to_default: 'Obnovit výchozí',
     rows: 'Řádky',
-    switch_type_warning: 'Vaše aktuální nastavení ještě nebyla importována na plátno.\\nZměna typu puzzle obnoví všechna nastavení na výchozí hodnoty.',
+    switch_type_warning: 'Vaše aktuální nastavení ještě nebyla importována na plátno.\nZměna typu puzzle obnoví všechna nastavení na výchozí hodnoty.',
     tab_size: 'Velikost záložky',
     types: {
       circle_jigsaw: 'Kruhové puzzle',

@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Bordi rialzati',
     reset_to_default: 'Ripristina valori predefiniti',
     rows: 'Righe',
-    switch_type_warning: 'Le impostazioni correnti non sono ancora state importate sulla tela.\\nIl cambiamento del tipo di puzzle ripristinerà tutte le impostazioni ai valori predefiniti.',
+    switch_type_warning: 'Le impostazioni correnti non sono ancora state importate sulla tela.\nIl cambiamento del tipo di puzzle ripristinerà tutte le impostazioni ai valori predefiniti.',
     tab_size: 'Dimensione linguetta',
     types: {
       circle_jigsaw: 'Puzzle circolare',

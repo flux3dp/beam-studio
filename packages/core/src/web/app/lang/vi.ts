@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Viền nổi',
     reset_to_default: 'Đặt lại về mặc định',
     rows: 'Hàng',
-    switch_type_warning: 'Cài đặt hiện tại của bạn chưa được nhập vào canvas.\\nChuyển đổi loại ghép hình sẽ đặt lại tất cả cài đặt về giá trị mặc định.',
+    switch_type_warning: 'Cài đặt hiện tại của bạn chưa được nhập vào canvas.\nChuyển đổi loại ghép hình sẽ đặt lại tất cả cài đặt về giá trị mặc định.',
     tab_size: 'Kích thước tab',
     types: {
       circle_jigsaw: 'Ghép hình tròn',

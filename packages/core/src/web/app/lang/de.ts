@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Erhabene Kanten',
     reset_to_default: 'Auf Standardwerte zurücksetzen',
     rows: 'Zeilen',
-    switch_type_warning: 'Ihre aktuellen Einstellungen wurden noch nicht auf die Leinwand importiert.\\nDas Wechseln des Puzzle-Typs setzt alle Einstellungen auf die Standardwerte zurück.',
+    switch_type_warning: 'Ihre aktuellen Einstellungen wurden noch nicht auf die Leinwand importiert.\nDas Wechseln des Puzzle-Typs setzt alle Einstellungen auf die Standardwerte zurück.',
     tab_size: 'Tab-Größe',
     types: {
       circle_jigsaw: 'Kreisförmiges Puzzle',

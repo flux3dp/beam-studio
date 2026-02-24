@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: '立体边框',
     reset_to_default: '重置为默认值',
     rows: '行数',
-    switch_type_warning: '您当前的设置尚未导入至画布。\\n切换拼图类型将会重设所有设置为默认值。',
+    switch_type_warning: '您当前的设置尚未导入至画布。\n切换拼图类型将会重设所有设置为默认值。',
     tab_size: '凸片大小',
     types: {
       circle_jigsaw: '圆形拼图',

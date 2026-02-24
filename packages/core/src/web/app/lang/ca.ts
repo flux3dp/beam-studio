@@ -1970,7 +1970,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     raised_edges: 'Vores elevades',
     reset_to_default: 'Restableix els valors per defecte',
     rows: 'Files',
-    switch_type_warning: "La vostra configuració actual encara no s'ha importat al llenç.\\nCanviar el tipus de trencaclosques restablirà tota la configuració als valors per defecte.",
+    switch_type_warning: "La vostra configuració actual encara no s'ha importat al llenç.\nCanviar el tipus de trencaclosques restablirà tota la configuració als valors per defecte.",
     tab_size: 'Mida de la pestanya',
     types: {
       circle_jigsaw: 'Trencaclosques circular',

@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Bordas elevadas',
     reset_to_default: 'Redefinir para padrão',
     rows: 'Linhas',
-    switch_type_warning: 'Suas configurações atuais ainda não foram importadas para a tela.\\nAlterar o tipo de quebra-cabeças redefinirá todas as configurações para os valores padrão.',
+    switch_type_warning: 'Suas configurações atuais ainda não foram importadas para a tela.\nAlterar o tipo de quebra-cabeças redefinirá todas as configurações para os valores padrão.',
     tab_size: 'Tamanho da aba',
     types: {
       circle_jigsaw: 'Quebra-cabeças circular',

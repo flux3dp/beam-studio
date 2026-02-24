@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Tepi timbul',
     reset_to_default: 'Tetapkan semula ke lalai',
     rows: 'Baris',
-    switch_type_warning: 'Tetapan semasa anda belum diimport ke kanvas.\\nMenukar jenis teka-teki akan menetapkan semula semua tetapan ke nilai lalai.',
+    switch_type_warning: 'Tetapan semasa anda belum diimport ke kanvas.\nMenukar jenis teka-teki akan menetapkan semula semua tetapan ke nilai lalai.',
     tab_size: 'Saiz tab',
     types: {
       circle_jigsaw: 'Teka-teki bulat',

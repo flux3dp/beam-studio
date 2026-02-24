@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Hevede kanter',
     reset_to_default: 'Tilbakestill til standard',
     rows: 'Rader',
-    switch_type_warning: 'Dine nåværende innstillinger er ikke importert til lerretet ennå.\\nBytte av puslespilltype vil tilbakestille alle innstillinger til standardverdier.',
+    switch_type_warning: 'Dine nåværende innstillinger er ikke importert til lerretet ennå.\nBytte av puslespilltype vil tilbakestille alle innstillinger til standardverdier.',
     tab_size: 'Fanestørrelse',
     types: {
       circle_jigsaw: 'Rundt puslespill',

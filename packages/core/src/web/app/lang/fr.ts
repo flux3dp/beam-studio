@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Bords surélevés',
     reset_to_default: 'Réinitialiser aux valeurs par défaut',
     rows: 'Lignes',
-    switch_type_warning: "Vos paramètres actuels n'ont pas encore été importés sur le canevas.\\nChanger le type de puzzle réinitialisera tous les paramètres aux valeurs par défaut.",
+    switch_type_warning: "Vos paramètres actuels n'ont pas encore été importés sur le canevas.\nChanger le type de puzzle réinitialisera tous les paramètres aux valeurs par défaut.",
     tab_size: "Taille de l'onglet",
     types: {
       circle_jigsaw: 'Puzzle circulaire',

@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Wypukłe krawędzie',
     reset_to_default: 'Przywróć domyślne',
     rows: 'Wiersze',
-    switch_type_warning: 'Twoje obecne ustawienia nie zostały jeszcze zaimportowane na płótno.\\nZmiana typu puzzli zresetuje wszystkie ustawienia do wartości domyślnych.',
+    switch_type_warning: 'Twoje obecne ustawienia nie zostały jeszcze zaimportowane na płótno.\nZmiana typu puzzli zresetuje wszystkie ustawienia do wartości domyślnych.',
     tab_size: 'Rozmiar zakładki',
     types: {
       circle_jigsaw: 'Okrągłe puzzle',

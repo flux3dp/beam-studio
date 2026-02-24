@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: '돌출 가장자리',
     reset_to_default: '기본값으로 재설정',
     rows: '행 수',
-    switch_type_warning: '현재 설정이 아직 캔버스로 가져오지 않았습니다.\\n퍼즐 유형을 전환하면 모든 설정이 기본값으로 재설정됩니다.',
+    switch_type_warning: '현재 설정이 아직 캔버스로 가져오지 않았습니다.\n퍼즐 유형을 전환하면 모든 설정이 기본값으로 재설정됩니다.',
     tab_size: '탭 크기',
     types: {
       circle_jigsaw: '원형 퍼즐',

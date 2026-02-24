@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Verhoogde randen',
     reset_to_default: 'Terug naar standaard',
     rows: 'Rijen',
-    switch_type_warning: 'Uw huidige instellingen zijn nog niet naar het canvas geïmporteerd.\\nHet wijzigen van het puzzeltype zal alle instellingen herstellen naar de standaardwaarden.',
+    switch_type_warning: 'Uw huidige instellingen zijn nog niet naar het canvas geïmporteerd.\nHet wijzigen van het puzzeltype zal alle instellingen herstellen naar de standaardwaarden.',
     tab_size: 'Lipgrootte',
     types: {
       circle_jigsaw: 'Ronde puzzel',

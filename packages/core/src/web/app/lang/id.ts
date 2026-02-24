@@ -1970,7 +1970,7 @@ const lang: ILang = {
     raised_edges: 'Tepi timbul',
     reset_to_default: 'Reset ke default',
     rows: 'Baris',
-    switch_type_warning: 'Pengaturan Anda saat ini belum diimpor ke canvas.\\nMengubah jenis puzzle akan mengatur ulang semua pengaturan ke nilai default.',
+    switch_type_warning: 'Pengaturan Anda saat ini belum diimpor ke canvas.\nMengubah jenis puzzle akan mengatur ulang semua pengaturan ke nilai default.',
     tab_size: 'Ukuran tab',
     types: {
       circle_jigsaw: 'Puzzle lingkaran',
