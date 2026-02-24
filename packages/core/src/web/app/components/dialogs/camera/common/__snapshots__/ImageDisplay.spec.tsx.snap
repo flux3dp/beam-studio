@@ -19,7 +19,7 @@ exports[`test ImageDisplay should render correctly with img 1`] = `
         type="button"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
           height="24"
           width="24"
         />
@@ -31,7 +31,7 @@ exports[`test ImageDisplay should render correctly with img 1`] = `
         type="button"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
           height="24"
           width="24"
         />
@@ -71,7 +71,7 @@ exports[`test ImageDisplay should render correctly with img 2`] = `
         type="button"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
           height="24"
           width="24"
         />
@@ -83,7 +83,7 @@ exports[`test ImageDisplay should render correctly with img 2`] = `
         type="button"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
           height="24"
           width="24"
         />
@@ -134,7 +134,7 @@ exports[`test ImageDisplay should render correctly without img 1`] = `
         type="button"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
           height="24"
           width="24"
         />
@@ -146,7 +146,7 @@ exports[`test ImageDisplay should render correctly without img 1`] = `
         type="button"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
           height="24"
           width="24"
         />

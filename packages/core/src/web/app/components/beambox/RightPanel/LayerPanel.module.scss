@@ -41,18 +41,13 @@ $layer-background: white;
   width: 100%;
   position: relative;
 
-  :global(.react-contextmenu-wrapper) {
+  .layerlist-container {
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: scroll;
     height: 100%;
-    width: 100%;
-
-    .layerlist-container {
-      position: relative;
-      overflow-x: hidden;
-      overflow-y: scroll;
-      height: 100%;
-      &::-webkit-scrollbar {
-        display: none;
-      }
+    &::-webkit-scrollbar {
+      display: none;
     }
   }
 }

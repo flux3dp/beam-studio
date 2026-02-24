@@ -5,7 +5,7 @@ const isRunningAtGithub = Cypress.env('envType') === 'github';
 const isWindows = Cypress.platform === 'win32';
 
 const selectMenuOption = (submenu, option) => {
-  cy.get('div.menu-btn-container').click();
+  cy.get('div[data-testid="top-bar-menu"]').click();
   cy.contains(submenu).click();
   cy.contains(option).click();
 };

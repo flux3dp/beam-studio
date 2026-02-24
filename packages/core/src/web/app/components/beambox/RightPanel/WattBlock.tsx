@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect } from 'react';
+import React, { memo, use, useEffect } from 'react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -16,7 +16,7 @@ import ObjectPanelItem from './ObjectPanelItem';
 
 const WattBlock = memo(() => {
   const isMobile = useIsMobile();
-  const { selectedDevice } = useContext(CanvasContext);
+  const { selectedDevice } = use(CanvasContext);
   const workarea = useWorkarea();
   const value = useCanvasStore((state) => state.watt);
   const {

@@ -1,5 +1,5 @@
 /* eslint-disable reactRefresh/only-export-components */
-import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import React, { useEffect, useImperativeHandle, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 import type { Options } from 'jsbarcode';
@@ -64,8 +64,8 @@ export interface BarcodeRef {
   getProps: () => BarcodeProps;
 }
 
-const BarcodePreview = forwardRef<BarcodeRef, BarcodeProps>((props: Readonly<BarcodeProps>, ref): React.JSX.Element => {
-  const { className, options = defaultOptions, renderer = 'svg', value } = props;
+const BarcodePreview = (props: Readonly<BarcodeProps & { ref?: React.Ref<BarcodeRef> }>): React.JSX.Element => {
+  const { className, options = defaultOptions, ref, renderer = 'svg', value } = props;
   const {
     barcode_generator: { barcode: t },
   } = useI18n();
@@ -109,6 +109,6 @@ const BarcodePreview = forwardRef<BarcodeRef, BarcodeProps>((props: Readonly<Bar
       <span className={errorClasses}>{error}</span>
     </div>
   );
-});
+};
 
 export default BarcodePreview;

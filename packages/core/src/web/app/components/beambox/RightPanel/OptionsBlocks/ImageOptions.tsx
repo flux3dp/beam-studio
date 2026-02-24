@@ -1,4 +1,4 @@
-import React, { Fragment, useCallback, useContext, useEffect, useMemo, useRef } from 'react';
+import React, { Fragment, use, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { ConfigProvider, InputNumber, Slider, Switch } from 'antd';
@@ -35,7 +35,7 @@ const ImageOptions = ({ elem }: Props): React.JSX.Element => {
     laser_panel: tLaserPanel,
     object_panel: { option_panel: lang },
   } = useI18n().beambox.right_panel;
-  const { updateObjectPanel } = useContext(ObjectPanelContext);
+  const { updateObjectPanel } = use(ObjectPanelContext);
   const thresholdCache = useRef(Array.from<null | string>({ length: 256 }).fill(null));
   const curCallID = useRef(0);
   const nextCallID = useRef(1);

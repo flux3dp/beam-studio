@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { use, useEffect, useRef } from 'react';
 
 import classNames from 'classnames';
 import { funnel } from 'remeda';
@@ -21,7 +21,7 @@ interface Props {
 const GoButton = ({ hasDiscoverdMachine }: Props): React.JSX.Element => {
   const lang = useI18n();
   const mode = useCanvasStore((state) => state.mode);
-  const { selectedDevice } = useContext(CanvasContext);
+  const { selectedDevice } = use(CanvasContext);
   const shortcutHandler = useRef<() => void>(() => {});
   const throttledHandleExportClick = funnel(handleExportClick(lang), { minGapMs: 2000, triggerAt: 'start' });
 

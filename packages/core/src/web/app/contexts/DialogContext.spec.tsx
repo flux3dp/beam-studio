@@ -1,12 +1,11 @@
-import React, { useContext } from 'react';
+import React, { act, use } from 'react';
 
 import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 
 import { DialogContext, DialogContextProvider, eventEmitter } from './DialogContext';
 
 const Children = () => {
-  const { dialogComponents } = useContext(DialogContext);
+  const { dialogComponents } = use(DialogContext);
 
   return (
     <>

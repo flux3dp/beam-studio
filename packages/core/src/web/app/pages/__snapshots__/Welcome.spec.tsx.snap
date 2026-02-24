@@ -9,7 +9,7 @@ exports[`test Welcome should render correctly 1`] = `
       class="top-bar draggable mac space"
     >
       <mock-tabs
-        inverse="true"
+        inverse=""
       />
     </div>
     <div
@@ -203,7 +203,7 @@ exports[`test Welcome should render correctly 1`] = `
             class="menu-item"
           >
             <svgr-url
-              classname="beamy-icon"
+              class="beamy-icon"
             />
              
             Beamy
@@ -311,7 +311,7 @@ exports[`test Welcome should render correctly 2`] = `
       class="top-bar draggable mac space"
     >
       <mock-tabs
-        inverse="true"
+        inverse=""
       />
     </div>
     <div
@@ -505,7 +505,7 @@ exports[`test Welcome should render correctly 2`] = `
             class="menu-item active"
           >
             <svgr-url
-              classname="beamy-icon"
+              class="beamy-icon"
             />
              
             Beamy
@@ -610,7 +610,7 @@ exports[`test Welcome should render correctly in mobile 1`] = `
       class="top-bar draggable mac space"
     >
       <mock-tabs
-        inverse="true"
+        inverse=""
       />
     </div>
     <div
@@ -850,7 +850,7 @@ exports[`test Welcome should render correctly in mobile 1`] = `
                     class="menu-item"
                   >
                     <svgr-url
-                      classname="beamy-icon"
+                      class="beamy-icon"
                     />
                      
                     Beamy
@@ -968,7 +968,7 @@ exports[`test Welcome should render correctly in mobile 2`] = `
       class="top-bar draggable mac space"
     >
       <mock-tabs
-        inverse="true"
+        inverse=""
       />
     </div>
     <div
@@ -1208,7 +1208,7 @@ exports[`test Welcome should render correctly in mobile 2`] = `
                     class="menu-item"
                   >
                     <svgr-url
-                      classname="beamy-icon"
+                      class="beamy-icon"
                     />
                      
                     Beamy
@@ -1485,7 +1485,7 @@ exports[`test Welcome should render correctly in web 1`] = `
             class="menu-item"
           >
             <svgr-url
-              classname="beamy-icon"
+              class="beamy-icon"
             />
              
             Beamy
@@ -1755,7 +1755,7 @@ exports[`test Welcome should render correctly in web 2`] = `
             class="menu-item active"
           >
             <svgr-url
-              classname="beamy-icon"
+              class="beamy-icon"
             />
              
             Beamy

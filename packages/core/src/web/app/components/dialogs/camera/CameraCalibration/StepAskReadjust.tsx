@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { Button } from 'antd';
 
@@ -20,7 +20,7 @@ const StepAskReadjust = (): React.JSX.Element => {
   const lang = useI18n();
   const langCalibration = lang.calibration;
   const langAlert = lang.alert;
-  const context = useContext(CalibrationContext);
+  const context = use(CalibrationContext);
   const { device, gotoNextStep, onClose, setCameraPosition, setCurrentOffset, setImgBlobUrl, setLastConfig } = context;
 
   const onSkip = async () => {

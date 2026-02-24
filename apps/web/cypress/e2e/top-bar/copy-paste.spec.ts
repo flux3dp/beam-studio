@@ -7,11 +7,11 @@ describe('verify copy/paste behaviors', () => {
     cy.get('#svg_1').should('exist');
     cy.get('#svg_1').realClick({ button: 'right' });
     // Wait for context menu to appear
-    cy.get('.react-contextmenu').should('be.visible');
+    cy.get('.ant-dropdown').should('be.visible');
 
-    cy.get('.react-contextmenu').contains('Copy').click();
+    cy.get('.ant-dropdown-menu-item').contains('Copy').click();
     cy.get('#svg_1').realClick({ button: 'right' });
-    cy.get('.react-contextmenu').contains('Paste').click();
+    cy.get('.ant-dropdown-menu-item').contains('Paste').click();
     cy.get('#svg_2').should('exist');
   };
 

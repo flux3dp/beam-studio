@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 
 import { Segmented } from 'antd';
 
@@ -23,7 +23,7 @@ const StepRefocus = (): React.JSX.Element => {
   const lang = useI18n();
   const langAlert = lang.alert;
   const langCalibration = lang.calibration;
-  const context = useContext(CalibrationContext);
+  const context = use(CalibrationContext);
   const {
     calibratedMachines,
     device,

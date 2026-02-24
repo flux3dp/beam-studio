@@ -229,7 +229,7 @@ exports[`should render correctly should render correctly for Promark 1`] = `
           class="ant-btn-icon"
         >
           <svgr-url
-            classname="icon-framing"
+            class="icon-framing"
           />
         </span>
         <span>

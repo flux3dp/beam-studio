@@ -43,9 +43,9 @@ describe('SelLayerBlock', () => {
 
     const mockElem = { getAttribute: () => jest.fn() };
     const { container, getByText } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: mockElem } as any}>
+      <SelectedElementContext value={{ selectedElement: mockElem } as any}>
         <SelLayerBlock />
-      </SelectedElementContext.Provider>,
+      </SelectedElementContext>,
     );
 
     expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
@@ -60,9 +60,9 @@ describe('SelLayerBlock', () => {
 
     const mockElem = { getAttribute: () => jest.fn() };
     const { baseElement } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: mockElem } as any}>
+      <SelectedElementContext value={{ selectedElement: mockElem } as any}>
         <SelLayerBlock />
-      </SelectedElementContext.Provider>,
+      </SelectedElementContext>,
     );
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input')));

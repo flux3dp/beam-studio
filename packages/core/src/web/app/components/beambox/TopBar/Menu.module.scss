@@ -1,3 +1,185 @@
+.menu-btn-container {
+  height: 40px;
+  opacity: 0.7;
+  cursor: pointer;
+  &:hover {
+    opacity: 1;
+  }
+}
+
 .icon {
-  font-size: 20px;
+  height: 40px;
+}
+
+.icon-arrow {
+  height: 40px;
+  margin-left: -15px;
+}
+
+.szh-menu-container {
+  position: relative;
+  width: 0px;
+  height: 0px;
+}
+
+// Library CSS handles base menu styles, we just add custom content styling
+:global(.szh-menu) {
+  span {
+    &.action {
+      width: 90%;
+    }
+
+    &.hotkey {
+      padding-left: 15px;
+      width: auto;
+      text-align: right;
+    }
+  }
+}
+
+:global(.szh-menu__arrow) {
+  box-sizing: border-box;
+  width: 0.75rem;
+  height: 0.75rem;
+  background-color: #fff;
+  border: 1px solid transparent;
+  border-left-color: rgba(0, 0, 0, 0.1);
+  border-top-color: rgba(0, 0, 0, 0.1);
+  position: absolute;
+  z-index: -1;
+}
+
+:global(.szh-menu__arrow--dir-left) {
+  right: -0.375rem;
+  transform: translateY(-50%) rotate(135deg);
+}
+
+:global(.szh-menu__arrow--dir-right) {
+  left: -0.375rem;
+  transform: translateY(-50%) rotate(-45deg);
+}
+
+:global(.szh-menu__arrow--dir-top) {
+  bottom: -0.375rem;
+  transform: translateX(-50%) rotate(-135deg);
+}
+
+:global(.szh-menu__arrow--dir-bottom) {
+  top: -0.375rem;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+:global(.szh-menu__item) {
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+}
+
+:global(.szh-menu__item:focus) {
+  outline: none;
+}
+
+:global(.szh-menu__item--hover) {
+  background-color: #ebebeb;
+}
+
+:global(.szh-menu__item--focusable) {
+  cursor: default;
+  background-color: inherit;
+}
+
+:global(.szh-menu__item--disabled) {
+  cursor: default;
+  color: #aaa;
+}
+
+:global(.szh-menu__submenu) {
+  position: relative;
+}
+
+:global(.szh-menu__group) {
+  box-sizing: border-box;
+}
+
+:global(.szh-menu__radio-group) {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+:global(.szh-menu__divider) {
+  height: 1px;
+  margin: 0.5rem 0;
+  background-color: rgba(0, 0, 0, 0.12);
+}
+
+// Menu theme styling (additional to library's base styles)
+:global(.szh-menu) {
+  user-select: none;
+  color: #212529;
+  border: none;
+  border-radius: 0.25rem;
+  box-shadow:
+    0 3px 7px rgba(0, 0, 0, 0.133),
+    0 0.6px 2px rgba(0, 0, 0, 0.1);
+  min-width: 10rem;
+  padding: 0.5rem 0;
+}
+
+:global(.szh-menu__item) {
+  position: relative;
+  padding: 0.375rem 1.5rem;
+}
+
+:global(.szh-menu__item--active) {
+  color: #fff;
+  background-color: #007bff;
+}
+
+:global(.szh-menu__item--type-radio) {
+  padding-left: 2.2rem;
+}
+
+:global(.szh-menu__item--type-radio::before) {
+  content: '○';
+  position: absolute;
+  left: 0.8rem;
+  top: 0.55rem;
+  font-size: 0.8rem;
+}
+
+:global(.szh-menu__item--type-radio.szh-menu__item--checked::before) {
+  content: '●';
+}
+
+:global(.szh-menu__item--type-checkbox) {
+  padding-left: 2.2rem;
+}
+
+:global(.szh-menu__item--type-checkbox::before) {
+  position: absolute;
+  left: 0.8rem;
+}
+
+:global(.szh-menu__item--type-checkbox.szh-menu__item--checked::before) {
+  content: '✓';
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+}
+
+:global(.szh-menu__submenu > .szh-menu__item) {
+  padding-right: 2.5rem;
+}
+
+:global(.szh-menu__submenu > .szh-menu__item::after) {
+  content: '❯';
+  position: absolute;
+  right: 1rem;
+}
+
+:global(.szh-menu__header) {
+  color: #888;
+  font-size: 0.8em;
+  padding: 0.2rem 1.5rem;
+  text-transform: uppercase;
 }

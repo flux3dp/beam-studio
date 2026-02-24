@@ -125,7 +125,7 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
   }, [updateObjectPanel]);
 
   return (
-    <ObjectPanelContext.Provider
+    <ObjectPanelContext
       value={{
         activeKey,
         dimensionValues: dimensionValues.current,
@@ -137,6 +137,6 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
       }}
     >
       {children}
-    </ObjectPanelContext.Provider>
+    </ObjectPanelContext>
   );
 };

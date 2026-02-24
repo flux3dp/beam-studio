@@ -15,23 +15,25 @@ exports[`should render correctly already signed in 1`] = `
     />
   </div>
   <div
-    class="rc-menu-container"
+    class="szh-menu-container szh-menu-container--itemTransition"
+    style="position: absolute;"
   >
     <ul
       aria-label="Menu"
-      class="rc-menu rc-menu--open rc-menu--animation rc-menu--dir-bottom"
+      class="szh-menu szh-menu--state-opening szh-menu--align-start szh-menu--dir-bottom"
       role="menu"
-      style="left: 0px; top: 0px;"
+      style="margin: 0px; position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -39,13 +41,14 @@ exports[`should render correctly already signed in 1`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -53,13 +56,14 @@ exports[`should render correctly already signed in 1`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -67,13 +71,14 @@ exports[`should render correctly already signed in 1`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -81,13 +86,14 @@ exports[`should render correctly already signed in 1`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -95,41 +101,42 @@ exports[`should render correctly already signed in 1`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="true"
           aria-haspopup="true"
-          class="rc-menu__item rc-menu__item--open"
+          class="szh-menu__item szh-menu__item--open szh-menu__item--hover szh-menu__item--submenu"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
         >
           Account
         </div>
         <ul
           aria-label="Account"
-          class="rc-menu rc-menu--open rc-menu--animation rc-menu--dir-right"
+          class="szh-menu szh-menu--state-opening szh-menu--align-start szh-menu--dir-right"
           role="menu"
-          style="left: 0px; top: 0px;"
+          style="margin: 0px; position: absolute; left: 0px; top: 0px;"
           tabindex="-1"
         >
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Log out (tester@flux3dp.com)
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Design Market
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
@@ -138,13 +145,14 @@ exports[`should render correctly already signed in 1`] = `
         </ul>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -170,9 +178,6 @@ exports[`should render correctly open the browser and reach the correct page 1`]
       src="img/icon-arrow-d.svg"
     />
   </div>
-  <div
-    class="rc-menu-container"
-  />
 </div>
 `;
 
@@ -191,23 +196,25 @@ exports[`should render correctly open the browser and reach the correct page 2`]
     />
   </div>
   <div
-    class="rc-menu-container"
+    class="szh-menu-container szh-menu-container--itemTransition"
+    style="position: absolute;"
   >
     <ul
       aria-label="Menu"
-      class="rc-menu rc-menu--open rc-menu--animation rc-menu--dir-bottom"
+      class="szh-menu szh-menu--state-opening szh-menu--align-start szh-menu--dir-bottom"
       role="menu"
-      style="left: 0px; top: 0px;"
+      style="margin: 0px; position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -215,13 +222,14 @@ exports[`should render correctly open the browser and reach the correct page 2`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -229,13 +237,14 @@ exports[`should render correctly open the browser and reach the correct page 2`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -243,13 +252,14 @@ exports[`should render correctly open the browser and reach the correct page 2`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -257,13 +267,14 @@ exports[`should render correctly open the browser and reach the correct page 2`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -271,13 +282,14 @@ exports[`should render correctly open the browser and reach the correct page 2`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -285,13 +297,14 @@ exports[`should render correctly open the browser and reach the correct page 2`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -318,23 +331,25 @@ exports[`should render correctly open the browser and reach the correct page 3`]
     />
   </div>
   <div
-    class="rc-menu-container"
+    class="szh-menu-container szh-menu-container--itemTransition"
+    style="position: absolute;"
   >
     <ul
       aria-label="Menu"
-      class="rc-menu rc-menu--open rc-menu--animation rc-menu--dir-bottom"
+      class="szh-menu szh-menu--state-opening szh-menu--align-start szh-menu--dir-bottom"
       role="menu"
-      style="left: 0px; top: 0px;"
+      style="margin: 0px; position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -342,13 +357,14 @@ exports[`should render correctly open the browser and reach the correct page 3`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -356,13 +372,14 @@ exports[`should render correctly open the browser and reach the correct page 3`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -370,13 +387,14 @@ exports[`should render correctly open the browser and reach the correct page 3`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -384,13 +402,14 @@ exports[`should render correctly open the browser and reach the correct page 3`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -398,13 +417,14 @@ exports[`should render correctly open the browser and reach the correct page 3`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -412,94 +432,95 @@ exports[`should render correctly open the browser and reach the correct page 3`]
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="true"
           aria-haspopup="true"
-          class="rc-menu__item rc-menu__item--open"
+          class="szh-menu__item szh-menu__item--open szh-menu__item--hover szh-menu__item--submenu"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
         >
           Help
         </div>
         <ul
           aria-label="Help"
-          class="rc-menu rc-menu--open rc-menu--animation rc-menu--dir-right"
+          class="szh-menu szh-menu--state-opening szh-menu--align-start szh-menu--dir-right"
           role="menu"
-          style="left: 0px; top: 0px;"
+          style="margin: 0px; position: absolute; left: 0px; top: 0px;"
           tabindex="-1"
         >
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             About Beam Studio
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Show Start Tutorial
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Show Interface Introduction
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Hand Gesture Introduction
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Change Logs
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Help Center
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Keyboard shortcuts
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Contact Us
           </li>
           <li
-            class="rc-menu__divider"
+            class="szh-menu__divider"
             role="separator"
           />
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
             Community Forum
           </li>
           <li
-            class="rc-menu__item"
+            class="szh-menu__item"
             role="menuitem"
             tabindex="-1"
           >
@@ -526,9 +547,6 @@ exports[`should render correctly test checkbox menu item 1`] = `
       src="img/icon-arrow-d.svg"
     />
   </div>
-  <div
-    class="rc-menu-container"
-  />
 </div>
 `;
 
@@ -547,23 +565,25 @@ exports[`should render correctly test checkbox menu item 2`] = `
     />
   </div>
   <div
-    class="rc-menu-container"
+    class="szh-menu-container szh-menu-container--itemTransition"
+    style="position: absolute;"
   >
     <ul
       aria-label="Menu"
-      class="rc-menu rc-menu--open rc-menu--animation rc-menu--dir-bottom"
+      class="szh-menu szh-menu--state-opening szh-menu--align-start szh-menu--dir-bottom"
       role="menu"
-      style="left: 0px; top: 0px;"
+      style="margin: 0px; position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -571,13 +591,14 @@ exports[`should render correctly test checkbox menu item 2`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -585,27 +606,28 @@ exports[`should render correctly test checkbox menu item 2`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="true"
           aria-haspopup="true"
-          class="rc-menu__item rc-menu__item--open"
+          class="szh-menu__item szh-menu__item--open szh-menu__item--hover szh-menu__item--submenu"
           role="menuitem"
-          tabindex="-1"
+          tabindex="0"
         >
           View
         </div>
         <ul
           aria-label="View"
-          class="rc-menu rc-menu--open rc-menu--animation rc-menu--dir-right"
+          class="szh-menu szh-menu--state-opening szh-menu--align-start szh-menu--dir-right"
           role="menu"
-          style="left: 0px; top: 0px;"
+          style="margin: 0px; position: absolute; left: 0px; top: 0px;"
           tabindex="-1"
         >
           <li
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitem"
             tabindex="-1"
           >
@@ -621,7 +643,7 @@ exports[`should render correctly test checkbox menu item 2`] = `
             </span>
           </li>
           <li
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitem"
             tabindex="-1"
           >
@@ -637,7 +659,7 @@ exports[`should render correctly test checkbox menu item 2`] = `
             </span>
           </li>
           <li
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitem"
             tabindex="-1"
           >
@@ -645,19 +667,19 @@ exports[`should render correctly test checkbox menu item 2`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
             Auto Fit to Window Size
           </li>
           <li
-            class="rc-menu__divider"
+            class="szh-menu__divider"
             role="separator"
           />
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -665,7 +687,7 @@ exports[`should render correctly test checkbox menu item 2`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -673,7 +695,7 @@ exports[`should render correctly test checkbox menu item 2`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -681,7 +703,7 @@ exports[`should render correctly test checkbox menu item 2`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -689,7 +711,7 @@ exports[`should render correctly test checkbox menu item 2`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -698,13 +720,14 @@ exports[`should render correctly test checkbox menu item 2`] = `
         </ul>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -712,13 +735,14 @@ exports[`should render correctly test checkbox menu item 2`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -726,13 +750,14 @@ exports[`should render correctly test checkbox menu item 2`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -740,13 +765,14 @@ exports[`should render correctly test checkbox menu item 2`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -773,23 +799,25 @@ exports[`should render correctly test checkbox menu item 3`] = `
     />
   </div>
   <div
-    class="rc-menu-container"
+    class="szh-menu-container szh-menu-container--itemTransition"
+    style="position: absolute;"
   >
     <ul
       aria-label="Menu"
-      class="rc-menu rc-menu--closing rc-menu--animation rc-menu--dir-bottom"
+      class="szh-menu szh-menu--state-closing szh-menu--align-start szh-menu--dir-bottom"
       role="menu"
-      style="left: 0px; top: 0px;"
+      style="margin: 0px; position: absolute; left: 0px; top: 0px;"
       tabindex="-1"
     >
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -797,13 +825,14 @@ exports[`should render correctly test checkbox menu item 3`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -811,13 +840,14 @@ exports[`should render correctly test checkbox menu item 3`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -825,13 +855,13 @@ exports[`should render correctly test checkbox menu item 3`] = `
         </div>
         <ul
           aria-label="View"
-          class="rc-menu rc-menu--closing rc-menu--animation rc-menu--dir-right"
+          class="szh-menu szh-menu--state-closing szh-menu--align-start szh-menu--dir-right"
           role="menu"
-          style="left: 0px; top: 0px;"
+          style="margin: 0px; position: absolute; left: 0px; top: 0px;"
           tabindex="-1"
         >
           <li
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitem"
             tabindex="-1"
           >
@@ -847,7 +877,7 @@ exports[`should render correctly test checkbox menu item 3`] = `
             </span>
           </li>
           <li
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitem"
             tabindex="-1"
           >
@@ -863,7 +893,7 @@ exports[`should render correctly test checkbox menu item 3`] = `
             </span>
           </li>
           <li
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitem"
             tabindex="-1"
           >
@@ -871,19 +901,19 @@ exports[`should render correctly test checkbox menu item 3`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
             Auto Fit to Window Size
           </li>
           <li
-            class="rc-menu__divider"
+            class="szh-menu__divider"
             role="separator"
           />
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -891,7 +921,7 @@ exports[`should render correctly test checkbox menu item 3`] = `
           </li>
           <li
             aria-checked="true"
-            class="rc-menu__item rc-menu__item--type-checkbox rc-menu__item--checked"
+            class="szh-menu__item szh-menu__item--type-checkbox szh-menu__item--checked"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -899,7 +929,7 @@ exports[`should render correctly test checkbox menu item 3`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -907,7 +937,7 @@ exports[`should render correctly test checkbox menu item 3`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -915,7 +945,7 @@ exports[`should render correctly test checkbox menu item 3`] = `
           </li>
           <li
             aria-checked="false"
-            class="rc-menu__item rc-menu__item--type-checkbox"
+            class="szh-menu__item szh-menu__item--type-checkbox"
             role="menuitemcheckbox"
             tabindex="-1"
           >
@@ -924,13 +954,14 @@ exports[`should render correctly test checkbox menu item 3`] = `
         </ul>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -938,13 +969,14 @@ exports[`should render correctly test checkbox menu item 3`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -952,13 +984,14 @@ exports[`should render correctly test checkbox menu item 3`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >
@@ -966,13 +999,14 @@ exports[`should render correctly test checkbox menu item 3`] = `
         </div>
       </li>
       <li
-        class="rc-menu__submenu"
-        role="presentation"
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
       >
         <div
           aria-expanded="false"
           aria-haspopup="true"
-          class="rc-menu__item"
+          class="szh-menu__item szh-menu__item--submenu"
           role="menuitem"
           tabindex="-1"
         >

@@ -58,9 +58,9 @@ describe('test PolygonOptions', () => {
 
   test('should render correctly', () => {
     const { container, rerender } = render(
-      <ObjectPanelContext.Provider value={{ polygonSides: 0 } as any}>
+      <ObjectPanelContext value={{ polygonSides: 0 } as any}>
         <PolygonOptions elem={document.getElementById('flux')} />
-      </ObjectPanelContext.Provider>,
+      </ObjectPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -71,9 +71,9 @@ describe('test PolygonOptions', () => {
     elem.setAttribute('sides', '5');
     document.body.appendChild(elem);
     rerender(
-      <ObjectPanelContext.Provider value={{ polygonSides: 5 } as any}>
+      <ObjectPanelContext value={{ polygonSides: 5 } as any}>
         <PolygonOptions elem={document.getElementById('flux')} />
-      </ObjectPanelContext.Provider>,
+      </ObjectPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -121,9 +121,9 @@ describe('test PolygonOptions', () => {
     useIsMobile.mockReturnValue(true);
 
     const { container, rerender } = render(
-      <ObjectPanelContext.Provider value={{ polygonSides: 0 } as any}>
+      <ObjectPanelContext value={{ polygonSides: 0 } as any}>
         <PolygonOptions elem={document.getElementById('flux')} />
-      </ObjectPanelContext.Provider>,
+      </ObjectPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -134,9 +134,9 @@ describe('test PolygonOptions', () => {
     elem.setAttribute('sides', '5');
     document.body.appendChild(elem);
     rerender(
-      <ObjectPanelContext.Provider value={{ polygonSides: 5 } as any}>
+      <ObjectPanelContext value={{ polygonSides: 5 } as any}>
         <PolygonOptions elem={document.getElementById('flux')} />
-      </ObjectPanelContext.Provider>,
+      </ObjectPanelContext>,
     );
     expect(container).toMatchSnapshot();
 

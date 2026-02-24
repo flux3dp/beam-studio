@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
@@ -8,7 +8,7 @@ import styles from './ElementTitle.module.scss';
 
 function ElementTitle(): React.ReactNode {
   const { topbar: t } = useI18n();
-  const { selectedElement } = useContext(SelectedElementContext);
+  const { selectedElement } = use(SelectedElementContext);
   let content = '';
 
   if (selectedElement) {

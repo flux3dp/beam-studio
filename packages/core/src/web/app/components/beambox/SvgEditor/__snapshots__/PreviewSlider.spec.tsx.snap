@@ -20,7 +20,7 @@ exports[`test PreviewSlider should be disabled when in raw mode and drawing 1`] 
           Brightness
         </p>
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div
@@ -100,7 +100,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 1`] 
           Brightness
         </p>
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div
@@ -164,7 +164,7 @@ exports[`test PreviewSlider should render correctly when is previewing Ador 2`] 
           Brightness
         </p>
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div
@@ -228,7 +228,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 1`] =
           Brightness
         </p>
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div
@@ -292,7 +292,7 @@ exports[`test PreviewSlider should render correctly when is previewing BB2 2`] =
           Brightness
         </p>
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div
@@ -356,7 +356,7 @@ exports[`test PreviewSlider should render correctly with preview image 1`] = `
           Preview Opacity
         </p>
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div
@@ -421,7 +421,7 @@ exports[`test PreviewSlider should render correctly with preview image 2`] = `
           Preview Opacity
         </p>
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div

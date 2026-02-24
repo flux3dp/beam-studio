@@ -6,9 +6,9 @@ import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import ContextMenu from '@core/app/widgets/ContextMenu';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCaliParameters } from '@core/interfaces/FisheyePreview';
@@ -168,18 +168,8 @@ const ChArUco = ({
             <div className={styles.imgContainer}>
               {img ? (
                 <>
-                  <ContextMenuTrigger
-                    hideOnLeaveHoldPosition
-                    holdToDisplay={-1}
-                    holdToDisplayMouse={-1}
-                    id="live-feed-context-menu"
-                  >
+                  <ContextMenu items={[{ key: 'download', label: 'Download' }]} onClick={handleDownload}>
                     <img alt="wide-angle-camera" ref={imgRef} src={img?.url} />
-                  </ContextMenuTrigger>
-                  <ContextMenu id="live-feed-context-menu">
-                    <MenuItem attributes={{ id: 'download' }} onClick={handleDownload}>
-                      Download
-                    </MenuItem>
                   </ContextMenu>
                 </>
               ) : (

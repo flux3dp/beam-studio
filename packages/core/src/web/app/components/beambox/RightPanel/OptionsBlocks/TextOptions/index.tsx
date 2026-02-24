@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
@@ -133,7 +133,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
-  const { updateObjectPanel } = useContext(ObjectPanelContext);
+  const { updateObjectPanel } = use(ObjectPanelContext);
   const fontHistory = useStorageStore((state) => state['font-history']);
   const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
   const [configs, setConfigs] = useState(defaultTextConfigs);

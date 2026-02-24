@@ -46,7 +46,7 @@ describe('should render correctly', () => {
     formatDuration.mockReturnValue('1m 30s');
 
     const { container } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             fileInfo: ['filename'],
@@ -62,7 +62,7 @@ describe('should render correctly', () => {
         }
       >
         <MonitorTask device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -74,7 +74,7 @@ describe('should render correctly', () => {
     formatDuration.mockReturnValue('1m 30s');
 
     const { container } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             fileInfo: ['filename'],
@@ -90,7 +90,7 @@ describe('should render correctly', () => {
         }
       >
         <MonitorTask device={{ name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -102,7 +102,7 @@ describe('should render correctly', () => {
     formatDuration.mockReturnValue('1m 30s');
 
     const { container } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             fileInfo: ['filename'],
@@ -118,7 +118,7 @@ describe('should render correctly', () => {
         }
       >
         <MonitorTask device={{ model: 'fpm1', name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -128,7 +128,7 @@ describe('should render correctly', () => {
 
   it('should render correctly for Promark without task data', () => {
     const { container } = render(
-      <MonitorContext.Provider
+      <MonitorContext
         value={
           {
             mode: Mode.WORKING,
@@ -142,7 +142,7 @@ describe('should render correctly', () => {
         }
       >
         <MonitorTask device={{ model: 'fpm1', name: 'device' } as any} />
-      </MonitorContext.Provider>,
+      </MonitorContext>,
     );
 
     expect(container).toMatchSnapshot();

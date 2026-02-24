@@ -1,4 +1,5 @@
 import * as React from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { CaretRightOutlined, CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Button, ConfigProvider } from 'antd';
@@ -39,32 +40,25 @@ async function setUpSvgNest() {
   }
 }
 
-interface Props {
+interface SvgNestButtonsProps {
   onClose: () => void;
 }
 
-interface State {
-  isWorking: boolean;
-}
+const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => {
+  const [isWorking, setIsWorking] = useState(false);
 
-// TODO: refactor to functional component
-class SvgNestButtons extends React.Component<Props, State> {
-  private undoNestChanges: any[] = [];
-  private nestedElements: any[] = [];
+  const undoNestChangesRef = useRef<any[]>([]);
+  const nestedElementsRef = useRef<any[]>([]);
 
-  constructor(props: any) {
+  useEffect(() => {
     LANG = i18n.lang.beambox.tool_panels;
-    super(props);
-    this.state = {
-      isWorking: false,
-    };
 
     if (!window['SvgNest' as any]) {
       setUpSvgNest();
     }
-  }
+  }, []);
 
-  nestElements = (elements: SVGElement[], containerElem?: SVGGraphicsElement, config?: any) => {
+  const nestElements = useCallback((elements: Element[], containerElem?: HTMLElement, config?: any) => {
     let containerPoints;
     const ClipperLib = getClipperLib();
 
@@ -93,8 +87,8 @@ class SvgNestButtons extends React.Component<Props, State> {
 
     const elemPoints = [];
 
-    this.undoNestChanges = [];
-    this.nestedElements = [...elements];
+    undoNestChangesRef.current = [];
+    nestedElementsRef.current = [...elements];
     for (let i = 0; i < elements.length; i++) {
       let elem = elements[i];
 
@@ -185,7 +179,7 @@ class SvgNestButtons extends React.Component<Props, State> {
         }
 
         elementsToUndo.push(...elem.childNodes);
-        this.undoNestChanges.push(undoRecord);
+        undoNestChangesRef.current.push(undoRecord);
       }
     }
 
@@ -196,16 +190,16 @@ class SvgNestButtons extends React.Component<Props, State> {
     }
 
     SvgNest.nestElements(containerPoints, elemPoints);
-  };
+  }, []);
 
-  stopNestElement = (): void => {
+  const stopNestElement = useCallback((): void => {
     const SvgNest = window['SvgNest' as any] as any;
 
     SvgNest.stop();
 
     const batchCmd = new history.BatchCommand('Svg Nest');
 
-    for (const change of this.undoNestChanges) {
+    for (const change of undoNestChangesRef.current) {
       const elem = change.element;
       const subCmd = new history.ChangeElementCommand(elem, change.attrs);
 
@@ -216,29 +210,24 @@ class SvgNestButtons extends React.Component<Props, State> {
       svgCanvas.undoMgr.addCommandToHistory(batchCmd);
     }
 
-    svgCanvas.selectOnly(this.nestedElements);
+    svgCanvas.selectOnly(nestedElementsRef.current);
 
-    if (this.nestedElements.length > 1) {
+    if (nestedElementsRef.current.length > 1) {
       svgCanvas.tempGroupSelectedElements();
     }
 
-    this.nestedElements = [];
-  };
+    nestedElementsRef.current = [];
+  }, []);
 
-  close = (): void => {
-    const { onClose } = this.props;
-    const { isWorking } = this.state;
-
+  const close = useCallback((): void => {
     if (isWorking) {
-      this.stopNestElement();
+      stopNestElement();
     }
 
     onClose();
-  };
+  }, [isWorking, onClose, stopNestElement]);
 
-  onStartOrStop = (): void => {
-    const { isWorking } = this.state;
-
+  const onStartOrStop = useCallback((): void => {
     if (!isWorking) {
       if (svgCanvas.getTempGroup()) {
         const children = svgCanvas.ungroupTempGroup();
@@ -280,45 +269,41 @@ class SvgNestButtons extends React.Component<Props, State> {
         return;
       }
 
-      this.nestElements(elems);
+      nestElements(elems);
     } else {
-      this.stopNestElement();
+      stopNestElement();
     }
 
-    this.setState({ isWorking: !isWorking });
-  };
+    setIsWorking(!isWorking);
+  }, [isWorking, nestElements, stopNestElement]);
 
-  renderStartButton = (): React.JSX.Element => {
-    const { isWorking } = this.state;
+  const renderStartButton = (): React.JSX.Element => {
     const icon = isWorking ? <LoadingOutlined /> : <CaretRightOutlined />;
     const label = isWorking ? LANG._nest.stop_nest : LANG._nest.start_nest;
 
     return (
       <ConfigProvider theme={{ token: { colorPrimary: '#3875F6' } }}>
-        <Button icon={icon} onClick={this.onStartOrStop} shape="round" type="primary">
+        <Button icon={icon} onClick={onStartOrStop} shape="round" type="primary">
           {label}
         </Button>
       </ConfigProvider>
     );
   };
 
-  render(): React.JSX.Element {
-    const { isWorking } = this.state;
-    const endText = LANG._nest.end;
-    const isWindows = !isWeb() && getOS() === 'Windows';
-    const className = classNames(styles.container, { [styles.win]: isWindows });
+  const endText = LANG._nest.end;
+  const isWindows = !isWeb() && getOS() === 'Windows';
+  const className = classNames(styles.container, { [styles.win]: isWindows });
 
-    const content = (
-      <div className={className}>
-        {this.renderStartButton()}
-        <Button icon={<CloseOutlined />} onClick={this.close} shape="round">
-          {endText}
-        </Button>
-      </div>
-    );
+  const content = (
+    <div className={className}>
+      {renderStartButton()}
+      <Button icon={<CloseOutlined />} onClick={close} shape="round">
+        {endText}
+      </Button>
+    </div>
+  );
 
-    return isWorking ? <Modal className={{ 'no-background': true }}>{content}</Modal> : content;
-  }
-}
+  return isWorking ? <Modal className={{ 'no-background': true }}>{content}</Modal> : content;
+};
 
 export default SvgNestButtons;

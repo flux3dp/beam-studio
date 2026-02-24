@@ -1,4 +1,4 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, use, useMemo } from 'react';
 
 import { Button, Popover } from 'antd-mobile';
 import classNames from 'classnames';
@@ -32,7 +32,7 @@ const MultipassBlock = ({ type = 'default' }: Props): React.JSX.Element => {
   const lang = useI18n();
   const t = lang.beambox.right_panel.laser_panel;
 
-  const { activeKey } = useContext(ObjectPanelContext);
+  const { activeKey } = use(ObjectPanelContext);
 
   const { change, multipass } = useConfigPanelStore();
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);

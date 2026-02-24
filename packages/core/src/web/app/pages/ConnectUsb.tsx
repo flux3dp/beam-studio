@@ -1,7 +1,7 @@
 import React, { useMemo } from 'react';
 
 import classNames from 'classnames';
-import { useLocation } from 'react-router-dom';
+import { useSearchParams } from 'react-router';
 
 import type { SupportUsbModels } from '@core/app/actions/beambox/constant';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
@@ -16,8 +16,8 @@ type RenderInformation = {
 
 export default function ConnectUsb(): React.JSX.Element {
   const { initialize: t } = useI18n();
-  const { search } = useLocation();
-  const model = useMemo(() => new URLSearchParams(search).get('model'), [search]) as SupportUsbModels;
+  const [searchParams] = useSearchParams();
+  const model = searchParams.get('model') as SupportUsbModels;
 
   const renderInfo = useMemo(() => {
     const renderInformation: Partial<Record<SupportUsbModels, RenderInformation>> = {

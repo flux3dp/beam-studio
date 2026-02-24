@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useEffect, useMemo, useRef } from 'react';
+import React, { use, useEffect, useMemo, useRef } from 'react';
 
 import { Button } from 'antd';
 import { sprintf } from 'sprintf-js';
@@ -22,7 +22,7 @@ interface Props {
 
 const MainContent = ({ types }: Props): ReactNode => {
   const { contents, contentType, hasLogin, historyIcons, setActiveMainType, setActiveSubType, setSearchKey } =
-    useContext(ElementPanelContext);
+    use(ElementPanelContext);
   const lang = useI18n().beambox.elements_panel;
 
   const scrollDivRef = useRef<HTMLDivElement>(null);

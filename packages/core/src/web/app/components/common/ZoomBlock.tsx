@@ -1,13 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import type { MenuProps } from 'antd';
 import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
 import macOSWindowSize from '@core/app/constants/macOS-Window-Size';
 import workareaManager from '@core/app/svgedit/workarea';
+import ContextMenu from '@core/app/widgets/ContextMenu';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import os from '@core/implementations/os';
@@ -138,11 +139,6 @@ const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): React.JSX
   const [dpmm, setDpmm] = useState(96 / 25.4);
   const [displayRatio, setDisplayRatio] = useState(1);
   const isMobile = useIsMobile();
-  const contextMenuId = useMemo(() => {
-    const id = Math.round(Math.random() * 10000);
-
-    return `zoom-block-contextmenu-${id}`;
-  }, []);
 
   useEffect(() => {
     getDpmm().then((res) => setDpmm(res));
@@ -213,29 +209,41 @@ const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): React.JSX
     [setRatio],
   );
 
+  const zoomMenuItems: MenuProps['items'] = useMemo(
+    () => [
+      { key: 'fit_to_window', label: lang.fit_to_window },
+      { type: 'divider' as const },
+      ...[25, 50, 75, 100, 150, 200].map((ratio) => ({ key: `ratio_${ratio}`, label: `${ratio} %` })),
+    ],
+    [lang.fit_to_window],
+  );
+
+  const handleMenuClick: MenuProps['onClick'] = useCallback(
+    ({ key }: { key: string }) => {
+      if (key === 'fit_to_window') {
+        resetView();
+
+        return;
+      }
+
+      const ratio = Number.parseInt(key.replace('ratio_', ''), 10);
+
+      setRatio(ratio);
+    },
+    [resetView, setRatio],
+  );
+
   return (
     <div className={classNames(styles.container, { [styles.mobile]: isMobile }, className)}>
-      <ContextMenuTrigger holdToDisplay={-1} holdToDisplayMouse={-1} id={contextMenuId}>
-        <div className={styles.btn} onClick={() => zoomOut(displayRatio)}>
-          <img src="img/icon-minus.svg" />
-        </div>
-        <ContextMenuTrigger holdToDisplay={0} holdToDisplayMouse={0} id={contextMenuId}>
-          <div className={styles.ratio}>{`${Math.round(displayRatio * 100)}%`}</div>
-        </ContextMenuTrigger>
-        <div className={styles.btn} onClick={() => zoomIn(displayRatio)}>
-          <img src="img/icon-plus.svg" />
-        </div>
-      </ContextMenuTrigger>
-      <ContextMenu id={contextMenuId}>
-        <MenuItem attributes={{ id: 'fit_to_window' }} onClick={resetView}>
-          {lang.fit_to_window}
-        </MenuItem>
-        {[25, 50, 75, 100, 150, 200].map((ratio) => (
-          <MenuItem attributes={{ id: `ratio_${ratio}%` }} key={ratio} onClick={() => setRatio(ratio)}>
-            {`${ratio} %`}
-          </MenuItem>
-        ))}
+      <div className={styles.btn} onClick={() => zoomOut(displayRatio)}>
+        <img src="img/icon-minus.svg" />
+      </div>
+      <ContextMenu items={zoomMenuItems} onClick={handleMenuClick} trigger={['contextMenu', 'click']}>
+        <div className={styles.ratio}>{`${Math.round(displayRatio * 100)}%`}</div>
       </ContextMenu>
+      <div className={styles.btn} onClick={() => zoomIn(displayRatio)}>
+        <img src="img/icon-plus.svg" />
+      </div>
     </div>
   );
 };

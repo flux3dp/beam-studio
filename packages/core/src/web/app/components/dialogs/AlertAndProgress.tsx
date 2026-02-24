@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { use, useEffect, useRef } from 'react';
 
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
 import browser from '@core/implementations/browser';
@@ -14,7 +14,7 @@ const isProgress = (d: IAlert | IProgressDialog): d is IProgressDialog => Boolea
 const AlertsAndProgress = (): React.JSX.Element => {
   const messageRef = useRef<HTMLPreElement>();
 
-  const { alertProgressStack } = useContext(AlertProgressContext);
+  const { alertProgressStack } = use(AlertProgressContext);
 
   useEffect(() => {
     const message = messageRef.current as Element;

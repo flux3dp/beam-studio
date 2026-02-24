@@ -1,4 +1,4 @@
-import React, { useContext, useState } from 'react';
+import React, { use, useState } from 'react';
 
 import classNames from 'classnames';
 
@@ -52,7 +52,7 @@ const importNPSvg = async (id: string) => {
 };
 
 const NPElement = ({ icon }: { icon: IIcon }) => {
-  const { addToHistory, closeDrawer } = useContext(ElementPanelContext);
+  const { addToHistory, closeDrawer } = use(ElementPanelContext);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(icon.hidden);
 

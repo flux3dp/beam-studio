@@ -76,7 +76,7 @@ exports[`test LensBlock should render correctly 1`] = `
               class="label"
             >
               <svgr-url
-                classname="icon"
+                class="icon"
               />
               Bulge
             </span>
@@ -101,7 +101,7 @@ exports[`test LensBlock should render correctly 1`] = `
               class="label"
             >
               <svgr-url
-                classname="icon"
+                class="icon"
               />
               Skew
             </span>
@@ -126,7 +126,7 @@ exports[`test LensBlock should render correctly 1`] = `
               class="label"
             >
               <svgr-url
-                classname="icon"
+                class="icon"
               />
               Trapezoid
             </span>
@@ -192,7 +192,7 @@ exports[`test LensBlock should render correctly 1`] = `
               class="label"
             >
               <svgr-url
-                classname="icon"
+                class="icon"
               />
               Bulge
             </span>
@@ -217,7 +217,7 @@ exports[`test LensBlock should render correctly 1`] = `
               class="label"
             >
               <svgr-url
-                classname="icon"
+                class="icon"
               />
               Skew
             </span>
@@ -242,7 +242,7 @@ exports[`test LensBlock should render correctly 1`] = `
               class="label"
             >
               <svgr-url
-                classname="icon"
+                class="icon"
               />
               Trapezoid
             </span>

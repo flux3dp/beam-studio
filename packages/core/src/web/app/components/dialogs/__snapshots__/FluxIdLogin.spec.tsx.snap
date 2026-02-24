@@ -4,8 +4,8 @@ exports[`should render correctly desktop version 1`] = `
 <body>
   <div>
     <mock-fluxplusmodal
-      classname="flux-login"
-      hidemobilebanner="true"
+      class="flux-login"
+      hidemobilebanner=""
     >
       <div
         class="title"
@@ -192,8 +192,8 @@ exports[`should render correctly desktop version 2`] = `
 <body>
   <div>
     <mock-fluxplusmodal
-      classname="flux-login"
-      hidemobilebanner="true"
+      class="flux-login"
+      hidemobilebanner=""
     >
       <div
         class="title"
@@ -380,8 +380,8 @@ exports[`should render correctly mobile version 1`] = `
 <body>
   <div>
     <mock-fluxplusmodal
-      classname="flux-login"
-      hidemobilebanner="true"
+      class="flux-login"
+      hidemobilebanner=""
     >
       <div
         class="title"
@@ -571,8 +571,8 @@ exports[`should render correctly web version 1`] = `
 <body>
   <div>
     <mock-fluxplusmodal
-      classname="flux-login"
-      hidemobilebanner="true"
+      class="flux-login"
+      hidemobilebanner=""
     >
       <div
         class="title"

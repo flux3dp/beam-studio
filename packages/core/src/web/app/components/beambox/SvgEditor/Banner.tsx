@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { use, useMemo } from 'react';
 
 import { Flex } from 'antd';
 import { pick } from 'remeda';
@@ -22,7 +22,7 @@ const Banner = (): React.ReactNode => {
   const lang = useI18n();
   const mode = useCanvasStore((state) => state.mode);
   const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
-  const { selectedDevice } = useContext(CanvasContext);
+  const { selectedDevice } = use(CanvasContext);
   const hasCurveEngravingData = useCurveEngravingStore((state) => state.hasData);
   const {
     'auto-feeder': autoFeeder,

@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { Tooltip } from 'antd';
 
@@ -12,7 +12,7 @@ import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import styles from './TimeEstimationButton.module.scss';
 
 const TimeEstimationButton = (): React.JSX.Element => {
-  const { estimatedTime, setEstimatedTime } = useContext(TimeEstimationButtonContext);
+  const { estimatedTime, setEstimatedTime } = use(TimeEstimationButtonContext);
   const lang = useI18n().beambox.time_est_button;
 
   const calculateEstimatedTime = async () => {

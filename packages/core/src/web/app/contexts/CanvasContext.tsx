@@ -108,7 +108,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
   const { children } = props;
 
   return (
-    <CanvasContext.Provider
+    <CanvasContext
       value={{
         currentUser,
         hasPassthroughExtension,
@@ -123,7 +123,7 @@ const CanvasProvider = (props: React.PropsWithChildren<Record<string, unknown>>)
       }}
     >
       {children}
-    </CanvasContext.Provider>
+    </CanvasContext>
   );
 };
 

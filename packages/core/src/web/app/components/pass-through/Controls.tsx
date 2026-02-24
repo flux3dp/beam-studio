@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { use, useCallback, useEffect, useMemo } from 'react';
 
 import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Switch, Tooltip } from 'antd';
@@ -28,7 +28,7 @@ const Controls = (): React.JSX.Element => {
     setReferenceLayer,
     workarea,
     workareaObj,
-  } = useContext(PassThroughContext);
+  } = use(PassThroughContext);
 
   const { max, min } = useMemo(
     () => ({

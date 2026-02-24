@@ -56,9 +56,9 @@ describe('test GridFile', () => {
 
   test('should behave correctly', () => {
     const { baseElement, container, getByText, rerender } = render(
-      <MyCloudContext.Provider value={mockContext}>
+      <MyCloudContext value={mockContext}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>,
+      </MyCloudContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -94,9 +94,9 @@ describe('test GridFile', () => {
     expect(mockSetEditingId).toHaveBeenCalledTimes(1);
     expect(mockSetEditingId).toHaveBeenCalledWith('mock-uuid');
     rerender(
-      <MyCloudContext.Provider value={{ ...mockContext, editingId: 'mock-uuid' }}>
+      <MyCloudContext value={{ ...mockContext, editingId: 'mock-uuid' }}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>,
+      </MyCloudContext>,
     );
 
     const input = container.querySelector('.edit');
@@ -109,9 +109,9 @@ describe('test GridFile', () => {
     expect(mockRename).toHaveBeenCalledWith(mockFile, 'new name');
 
     rerender(
-      <MyCloudContext.Provider value={mockContext}>
+      <MyCloudContext value={mockContext}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>,
+      </MyCloudContext>,
     );
 
     fireEvent.click(getByText('Duplicate'));
@@ -137,9 +137,9 @@ describe('test GridFile', () => {
     mockUseIsMobile.mockReturnValue(true);
 
     const { container } = render(
-      <MyCloudContext.Provider value={mockContext}>
+      <MyCloudContext value={mockContext}>
         <GridFile file={mockFile} />
-      </MyCloudContext.Provider>,
+      </MyCloudContext>,
     );
 
     expect(container).toMatchSnapshot();

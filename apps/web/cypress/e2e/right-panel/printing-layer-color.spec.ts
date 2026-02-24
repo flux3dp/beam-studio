@@ -49,22 +49,22 @@ describe('printing layer color', () => {
       cy.get('.ant-btn').contains('OK').click();
       cy.get('.tab.layers').click();
       cy.get('#layerdoubleclick-0').rightclick();
-      cy.get('.react-contextmenu-item').contains('Expand Layer').click();
+      cy.get('.ant-dropdown-menu-item').contains('Expand Layer').click();
       cy.get('.ant-btn').contains('Confirm').click();
       cy.contains('Splitting Full Color Layer').should('exist', { timeout: 10000 });
       cy.contains('Splitting Full Color Layer').should('not.exist', { timeout: 10000 });
       cy.findByTestId('Layer 1 (K)').should('exist');
       cy.get('#svg_2').should('be.visible').should('have.attr', 'filter', 'url(#filter#1D1D1B)');
       cy.get('#layerdoubleclick-3').rightclick();
-      cy.get('.react-contextmenu-item').contains('Delete Layer').click();
+      cy.get('.ant-dropdown-menu-item').contains('Delete Layer').click();
       cy.findByTestId('Layer 1 (C)').should('exist');
       cy.get('#svg_3').should('be.visible').should('have.attr', 'filter', 'url(#filter#009FE3)');
       cy.get('#layerdoubleclick-2').rightclick();
-      cy.get('.react-contextmenu-item').contains('Delete Layer').click();
+      cy.get('.ant-dropdown-menu-item').contains('Delete Layer').click();
       cy.findByTestId('Layer 1 (M)').should('exist');
       cy.get('#svg_4').should('be.visible').should('have.attr', 'filter', 'url(#filter#E6007E)');
       cy.get('#layerdoubleclick-1').rightclick();
-      cy.get('.react-contextmenu-item').contains('Merge Down').click();
+      cy.get('.ant-dropdown-menu-item').contains('Merge Down').click();
       cy.findByTestId('Layer 1 (Y)').should('exist');
       cy.get('#svg_4').should('be.visible').should('have.attr', 'filter', 'url(#filter#FFED00)');
 
@@ -83,7 +83,7 @@ describe('printing layer color', () => {
   it('single color layer and change color', () => {
     cy.get('.tab.layers').click();
     cy.get('#layerdoubleclick-0').rightclick();
-    cy.get('.react-contextmenu-item').contains('Switch to single color layer').click();
+    cy.get('.ant-dropdown-menu-item').contains('Switch to single color layer').click();
     cy.get(`div[class*="${colorPickerPrefix}color"]`).should('have.attr', 'style', 'background: rgb(0, 159, 227);');
     cy.get('g.layer').should('have.attr', 'data-color', '#009FE3');
 

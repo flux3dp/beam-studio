@@ -43,9 +43,9 @@ describe('test ElementPanel Header', () => {
 
   it('should render MainType correctly', () => {
     const { baseElement, getByText } = render(
-      <ElementPanelContext.Provider value={mockContext}>
+      <ElementPanelContext value={mockContext}>
         <ElementPanelContent />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -66,11 +66,9 @@ describe('test ElementPanel Header', () => {
 
   it('should render SubType correctly', () => {
     const { baseElement } = render(
-      <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}
-      >
+      <ElementPanelContext value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}>
         <ElementPanelContent />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -90,11 +88,11 @@ describe('test ElementPanel Header', () => {
 
   it('should render Search correctly', () => {
     const { baseElement } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' }}
       >
         <ElementPanelContent />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     expect(baseElement).toMatchSnapshot();
@@ -136,9 +134,9 @@ describe('test ElementPanel Header in mobile', () => {
 
   it('should render MainType correctly', async () => {
     const { container, getByText } = render(
-      <ElementPanelContext.Provider value={mockContext}>
+      <ElementPanelContext value={mockContext}>
         <ElementPanelContent />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
 
@@ -162,11 +160,9 @@ describe('test ElementPanel Header in mobile', () => {
 
   it('should render SubType correctly', async () => {
     const { container } = render(
-      <ElementPanelContext.Provider
-        value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}
-      >
+      <ElementPanelContext value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.SubType }}>
         <ElementPanelContent />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
@@ -192,11 +188,11 @@ describe('test ElementPanel Header in mobile', () => {
 
   it('should render Search correctly', async () => {
     const { container } = render(
-      <ElementPanelContext.Provider
+      <ElementPanelContext
         value={{ ...mockContext, activeSubType: 'shape', contentType: ContentType.Search, searchKey: '123' }}
       >
         <ElementPanelContent />
-      </ElementPanelContext.Provider>,
+      </ElementPanelContext>,
     );
 
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;

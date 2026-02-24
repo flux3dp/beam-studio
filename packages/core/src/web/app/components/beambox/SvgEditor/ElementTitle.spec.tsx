@@ -14,9 +14,9 @@ import ElementTitle from './ElementTitle';
 describe('should render correctly', () => {
   test('no selected element', () => {
     const { container } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: null }}>
+      <SelectedElementContext value={{ selectedElement: null }}>
         <ElementTitle />
-      </SelectedElementContext.Provider>,
+      </SelectedElementContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -27,9 +27,9 @@ describe('should render correctly', () => {
     document.body.innerHTML = '<g id="svg_1" data-tempgroup="true" />';
 
     const { container } = render(
-      <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+      <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
         <ElementTitle />
-      </SelectedElementContext.Provider>,
+      </SelectedElementContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -48,9 +48,9 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<rect id="svg_1" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
           <ElementTitle />
-        </SelectedElementContext.Provider>,
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -65,9 +65,9 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<use id="svg_1" data-svg="true" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
           <ElementTitle />
-        </SelectedElementContext.Provider>,
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -82,9 +82,9 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<use id="svg_1" data-dxf="true" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
           <ElementTitle />
-        </SelectedElementContext.Provider>,
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -99,9 +99,9 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<use id="svg_1" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
           <ElementTitle />
-        </SelectedElementContext.Provider>,
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -114,9 +114,9 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<use id="svg_1" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
           <ElementTitle />
-        </SelectedElementContext.Provider>,
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -129,9 +129,9 @@ describe('should render correctly', () => {
       document.body.innerHTML = '<g id="svg_1" data-textpath-g="true" />';
 
       const { container } = render(
-        <SelectedElementContext.Provider value={{ selectedElement: document.getElementById('svg_1') }}>
+        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
           <ElementTitle />
-        </SelectedElementContext.Provider>,
+        </SelectedElementContext>,
       );
 
       expect(container).toMatchSnapshot();

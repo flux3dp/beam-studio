@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useMemo } from 'react';
+import React, { use, useMemo } from 'react';
 
 import { Modal as AntdModal } from 'antd';
 
@@ -32,7 +32,7 @@ const applyPosition = (obj: { bottom?: number; left?: number; right?: number; to
 
 const TutorialComponent = ({ endTutorial }: ComponentProps): ReactNode => {
   const lang = useI18n().tutorial;
-  const { currentStep, dialogStylesAndContents, handleNextStep, hasNextButton } = useContext(TutorialContext);
+  const { currentStep, dialogStylesAndContents, handleNextStep, hasNextButton } = use(TutorialContext);
   const { dialogBoxStyles, hintCircle, holePosition, holeSize, refElementId, subElement, text } =
     dialogStylesAndContents[currentStep];
   const refElement = useMemo(() => (refElementId ? document.getElementById(refElementId) : null), [refElementId]);

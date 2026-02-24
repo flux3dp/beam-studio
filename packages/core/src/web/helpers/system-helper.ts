@@ -9,22 +9,24 @@ export const isMobile = (): boolean => window.innerWidth < 601;
 
 export const isMac = (): boolean => getOS() === 'MacOS';
 
+export const isIOS = (): boolean => {
+  if (typeof navigator === 'undefined') return false;
+
+  return (
+    /iPad|iPhone|iPod/.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1)
+  );
+};
+
 export const useIsMobile = (): boolean => {
-  const [val, setVal] = useState<boolean>(isMobile());
+  const [val, setVal] = useState(isMobile);
 
   useEffect(() => {
-    const handler = () => {
-      const newVal = isMobile();
-
-      if (val !== newVal) {
-        setVal(newVal);
-      }
-    };
+    const handler = () => setVal(isMobile());
 
     window.addEventListener('resize', handler);
 
     return () => window.removeEventListener('resize', handler);
-  });
+  }, []);
 
   return val;
 };

@@ -99,9 +99,9 @@ describe('test DrawingToolButtonGroup', () => {
   test('should render correctly when in pass through mode', () => {
     const contextValue = { hasPassthroughExtension: true };
     const { container } = render(
-      <CanvasContext.Provider value={contextValue as any}>
+      <CanvasContext value={contextValue as any}>
         <DrawingToolButtonGroup className="flux" />
-      </CanvasContext.Provider>,
+      </CanvasContext>,
     );
 
     expect(container).toMatchSnapshot();

@@ -118,11 +118,11 @@ const mockImage = {
 
 const renderDimensionPanel = (elem: any) => {
   return render(
-    <ObjectPanelContext.Provider
+    <ObjectPanelContext
       value={{ getDimensionValues: mockGetDimensionValues, updateDimensionValues: mockUpdateDimensionValues } as any}
     >
       <DimensionPanel elem={elem} />
-    </ObjectPanelContext.Provider>,
+    </ObjectPanelContext>,
   );
 };
 

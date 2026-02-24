@@ -1,4 +1,4 @@
-import React, { useContext } from 'react';
+import React, { use } from 'react';
 
 import { STEP_REFOCUS } from '@core/app/constants/cameraConstants';
 import { CalibrationContext } from '@core/app/contexts/CalibrationContext';
@@ -7,7 +7,7 @@ import useI18n from '@core/helpers/useI18n';
 
 const StepPutPaper = (): React.JSX.Element => {
   const lang = useI18n().calibration;
-  const { gotoNextStep, onClose } = useContext(CalibrationContext);
+  const { gotoNextStep, onClose } = use(CalibrationContext);
 
   const video = (
     <video autoPlay className="video" loop muted>

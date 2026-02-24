@@ -1,5 +1,5 @@
 import type { ComponentType } from 'react';
-import React, { useContext, useEffect, useMemo } from 'react';
+import React, { use, useEffect, useMemo } from 'react';
 
 import Icon from '@ant-design/icons';
 import ReactDomServer from 'react-dom/server';
@@ -69,7 +69,7 @@ const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
 
 const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string }): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const { addToHistory, closeDrawer } = useContext(ElementPanelContext);
+  const { addToHistory, closeDrawer } = use(ElementPanelContext);
   const [key, folder, fileName] = useMemo(() => {
     if (mainType) {
       return [`${mainType}/${path}`, mainType, path];

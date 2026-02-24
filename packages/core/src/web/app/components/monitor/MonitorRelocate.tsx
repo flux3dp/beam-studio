@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 
@@ -7,7 +7,7 @@ import RawMovePanel from '@core/app/widgets/Raw-Move-Panel';
 import DeviceMaster from '@core/helpers/device-master';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
-const hdChecked = {};
+const hdChecked: Record<string, number> = {};
 
 const getImageSize = (url: string, onSize: (size: number[]) => void) => {
   const img = new Image();
@@ -18,69 +18,50 @@ const getImageSize = (url: string, onSize: (size: number[]) => void) => {
   img.src = url;
 };
 
-interface Props {
+interface MonitorRelocateProps {
   device: IDeviceInfo;
 }
 
-interface State {
-  isHd: boolean;
-}
+const MonitorRelocate = ({ device }: MonitorRelocateProps): React.JSX.Element => {
+  const [isHd, setIsHd] = useState(false);
+  const imgRef = useRef<HTMLImageElement>(null);
 
-export default class MonitorRelocate extends React.PureComponent<Props, State> {
-  private isBeamboxCamera: boolean;
+  const { cameraOffset, currentPosition, onMaintainMoveEnd, onMaintainMoveStart } = use(MonitorContext);
 
-  private cameraStream: any;
+  const isBeamboxCamera = useMemo(
+    () => ['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(device.model),
+    [device.model],
+  );
 
-  private imgRef: React.RefObject<HTMLImageElement>;
+  const deviceRef = useRef(device);
 
-  constructor(props: Props) {
-    super(props);
-    this.isBeamboxCamera = ['darwin-dev', 'fbb1b', 'fbb1p', 'fbm1', 'fhexa1', 'laser-b1', 'laser-b2', 'mozu1'].includes(
-      props.device.model,
-    );
-    this.state = {
-      isHd: false,
-    };
-    this.imgRef = React.createRef();
-  }
+  deviceRef.current = device;
 
-  async componentDidMount() {
-    this.cameraStream = await DeviceMaster.streamCamera(false);
-    this.cameraStream.subscribe(this.processImage);
-  }
-
-  componentWillUnmount() {
-    DeviceMaster.endSubTask();
-    DeviceMaster.disconnectCamera();
-  }
-
-  processImage = ({ imgBlob }: { imgBlob: Blob }) => {
-    const { device } = this.props;
-    const cameraImage = this.imgRef.current;
+  const processImage = useCallback(({ imgBlob }: { imgBlob: Blob }) => {
+    const cameraImage = imgRef.current;
 
     if (!cameraImage) {
       return;
     }
 
     const url = URL.createObjectURL(imgBlob);
+    const currentDevice = deviceRef.current;
 
-    if (device) {
-      if (!hdChecked[device.serial]) {
+    if (currentDevice) {
+      if (!hdChecked[currentDevice.serial]) {
         getImageSize(url, (size: number[]) => {
           console.log('image size', size);
 
           if (size[0] > 720) {
-            hdChecked[device.serial] = 2;
+            hdChecked[currentDevice.serial] = 2;
           } else if (size[0] > 0) {
-            hdChecked[device.serial] = 1;
+            hdChecked[currentDevice.serial] = 1;
           }
         });
       }
 
-      this.setState({ isHd: hdChecked[device.serial] !== 1 });
+      setIsHd(hdChecked[currentDevice.serial] !== 1);
     }
-
-    this.previewBlob = imgBlob;
 
     const originalUrl = cameraImage.getAttribute('src');
 
@@ -89,11 +70,37 @@ export default class MonitorRelocate extends React.PureComponent<Props, State> {
     }
 
     cameraImage.setAttribute('src', url);
-  };
+  }, []);
 
-  renderOriginMark = () => {
-    const { cameraOffset, currentPosition } = this.context;
-    const cameraStreamImg = this.imgRef.current;
+  useEffect(() => {
+    let cameraStream: any;
+
+    const startCamera = async () => {
+      cameraStream = await DeviceMaster.streamCamera(false);
+      cameraStream.subscribe(processImage);
+    };
+
+    startCamera();
+
+    return () => {
+      DeviceMaster.endSubTask();
+      DeviceMaster.disconnectCamera();
+    };
+  }, [processImage]);
+
+  const handleMoveStart = useCallback(() => {
+    onMaintainMoveStart();
+  }, [onMaintainMoveStart]);
+
+  const handleMoveEnd = useCallback(
+    (x: number, y: number) => {
+      onMaintainMoveEnd(Math.round(x * 10) / 10, Math.round(y * 10) / 10);
+    },
+    [onMaintainMoveEnd],
+  );
+
+  const renderOriginMark = () => {
+    const cameraStreamImg = imgRef.current;
 
     if (!cameraStreamImg || !cameraOffset) {
       return null;
@@ -128,9 +135,8 @@ export default class MonitorRelocate extends React.PureComponent<Props, State> {
     );
   };
 
-  renderRelocateOrigin = () => {
-    const { cameraOffset, currentPosition } = this.context;
-    const cameraStreamImg = this.imgRef.current;
+  const renderRelocateOrigin = () => {
+    const cameraStreamImg = imgRef.current;
 
     if (!cameraStreamImg || !cameraOffset) {
       return null;
@@ -152,38 +158,21 @@ export default class MonitorRelocate extends React.PureComponent<Props, State> {
     );
   };
 
-  handleMoveStart = () => {
-    const { onMaintainMoveStart } = this.context;
+  const className = classNames('camera-image', {
+    'beambox-camera': isBeamboxCamera,
+    hd: isHd,
+  });
 
-    onMaintainMoveStart();
-  };
-
-  handleMoveEnd = (x, y) => {
-    const { onMaintainMoveEnd } = this.context;
-
-    x = Math.round(x * 10) / 10;
-    y = Math.round(y * 10) / 10;
-    onMaintainMoveEnd(x, y);
-  };
-
-  render() {
-    const { isHd } = this.state;
-    const className = classNames('camera-image', {
-      'beambox-camera': this.isBeamboxCamera,
-      hd: isHd,
-    });
-
-    return (
-      <div className="camera-relocate-container">
-        <div className="img-container">
-          <img className={className} id="camera-image" ref={this.imgRef} />
-        </div>
-        {this.renderOriginMark()}
-        {this.renderRelocateOrigin()}
-        <RawMovePanel onMoveEnd={this.handleMoveEnd} onMoveStart={this.handleMoveStart} />
+  return (
+    <div className="camera-relocate-container">
+      <div className="img-container">
+        <img className={className} id="camera-image" ref={imgRef} />
       </div>
-    );
-  }
-}
+      {renderOriginMark()}
+      {renderRelocateOrigin()}
+      <RawMovePanel onMoveEnd={handleMoveEnd} onMoveStart={handleMoveStart} />
+    </div>
+  );
+};
 
-MonitorRelocate.contextType = MonitorContext;
+export default MonitorRelocate;

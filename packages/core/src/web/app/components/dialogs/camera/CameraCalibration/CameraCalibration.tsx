@@ -1,5 +1,5 @@
 import * as React from 'react';
-import { useContext } from 'react';
+import { use } from 'react';
 
 import dialog from '@core/app/actions/dialog-caller';
 import {
@@ -19,7 +19,7 @@ import StepPutPaper from './StepPutPaper';
 import StepRefocus from './StepRefocus';
 
 const CameraCalibrationComponent = (): null | React.JSX.Element => {
-  const { currentStep } = useContext(CalibrationContext);
+  const { currentStep } = use(CalibrationContext);
 
   switch (currentStep) {
     case STEP_ASK_READJUST:

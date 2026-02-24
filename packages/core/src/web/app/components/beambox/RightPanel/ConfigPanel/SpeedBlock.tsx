@@ -1,4 +1,4 @@
-import React, { memo, useContext, useMemo } from 'react';
+import React, { memo, use, useMemo } from 'react';
 
 import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
@@ -47,7 +47,7 @@ const SpeedBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-
   const selectedLayers = useLayerStore((state) => state.selectedLayers);
   const hasVector = useLayerStore((state) => state.hasVector);
   const simpleMode = !useGlobalPreferenceStore((state) => state['print-advanced-mode']);
-  const { activeKey } = useContext(ObjectPanelContext);
+  const { activeKey } = use(ObjectPanelContext);
   const visible = activeKey === 'speed';
   const { hasData: hasCurveEngraving, maxAngle } = useCurveEngravingStore();
   const timeEstimationButtonEventEmitter = useMemo(

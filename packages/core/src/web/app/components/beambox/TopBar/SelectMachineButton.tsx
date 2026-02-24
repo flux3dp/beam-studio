@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useMemo } from 'react';
+import React, { use, useCallback, useMemo } from 'react';
 
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
@@ -12,7 +12,7 @@ import styles from './SelectMachineButton.module.scss';
 function SelectMachineButton(): React.JSX.Element {
   const isMobile = useIsMobile();
   const i18n = useI18n();
-  const { selectedDevice } = useContext(CanvasContext);
+  const { selectedDevice } = use(CanvasContext);
   const text = useMemo(() => {
     if (isMobile) {
       return '';

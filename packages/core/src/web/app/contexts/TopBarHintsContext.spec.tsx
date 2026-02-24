@@ -1,14 +1,13 @@
-import React, { useContext } from 'react';
+import React, { act, use } from 'react';
 
 import { render } from '@testing-library/react';
-import { act } from 'react-dom/test-utils';
 
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 import { TopBarHintsContext, TopBarHintsContextProvider } from './TopBarHintsContext';
 
 const Children = () => {
-  const { hintType } = useContext(TopBarHintsContext);
+  const { hintType } = use(TopBarHintsContext);
 
   return <>{hintType}</>;
 };

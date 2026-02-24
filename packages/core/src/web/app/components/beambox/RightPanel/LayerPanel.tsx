@@ -18,7 +18,6 @@ import changeLayersColor from '@core/helpers/layer/changeLayersColor';
 import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import { highlightLayer, moveLayersToPosition, setLayersLock } from '@core/helpers/layer/layer-helper';
 import { setLayerVisibility } from '@core/helpers/layer/setLayerVisibility';
-import { ContextMenuTrigger } from '@core/helpers/react-contextmenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { isMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
@@ -56,15 +55,17 @@ interface State {
   draggingLayer?: string;
 }
 
-const Handle = React.forwardRef<HTMLDivElement, React.HTMLProps<HTMLDivElement> & { handleAxis?: string }>(
-  ({ handleAxis: _, ...eventHandlers }, ref) => {
-    return (
-      <div className={styles.handle} ref={ref} {...eventHandlers}>
-        <LayerPanelIcons.Handle />
-      </div>
-    );
-  },
-);
+const Handle = ({
+  handleAxis: _,
+  ref,
+  ...eventHandlers
+}: React.HTMLProps<HTMLDivElement> & { handleAxis?: string; ref?: React.Ref<HTMLDivElement> }) => {
+  return (
+    <div className={styles.handle} ref={ref} {...eventHandlers}>
+      <LayerPanelIcons.Handle />
+    </div>
+  );
+};
 
 // TODO: extract layer operation methods as they don't need context now
 class LayerPanel extends React.PureComponent<Props, State> {
@@ -437,16 +438,10 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
   renderLayerPanel(): React.JSX.Element {
     const { draggingDestIndex, draggingLayer } = this.state;
-    const isTouchable = navigator.maxTouchPoints >= 1;
 
     return (
       <div className={styles['layer-panel']} id="layerpanel" onBlur={() => {}} onMouseOut={() => highlightLayer()}>
-        <ContextMenuTrigger
-          hideOnLeaveHoldPosition
-          holdToDisplay={isTouchable ? 1000 : -1}
-          holdToDisplayMouse={-1}
-          id="layer-contextmenu"
-        >
+        <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer}>
           <div className={styles['layerlist-container']} id="layerlist_container" ref={this.layerListContainerRef}>
             <LayerList
               draggingDestIndex={draggingDestIndex ?? null}
@@ -465,11 +460,10 @@ class LayerPanel extends React.PureComponent<Props, State> {
               unLockLayers={this.unLockLayers}
             />
           </div>
-        </ContextMenuTrigger>
+        </LayerContextMenu>
         {!isMobile() && (
           <>
             <DragImage draggingLayer={draggingLayer!} />
-            <LayerContextMenu renameLayer={this.renameLayer} selectOnlyLayer={this.selectOnlyLayer} />
             <AddLayerButton />
           </>
         )}

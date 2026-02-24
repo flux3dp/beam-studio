@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useContext, useEffect, useRef } from 'react';
+import React, { use, useEffect, useRef } from 'react';
 
 import { CloseCircleFilled, LoadingOutlined, PauseCircleFilled, PlayCircleFilled } from '@ant-design/icons';
 import { Button, Space } from 'antd';
@@ -33,7 +33,7 @@ const MonitorControl = ({
   const { monitor: tMonitor } = useI18n();
   const isMobile = useIsMobile();
   const buttonShape = isMobile ? 'round' : 'default';
-  const { mode, onPause, onPlay, onStop, report, totalTaskTime } = useContext(MonitorContext);
+  const { mode, onPause, onPlay, onStop, report, totalTaskTime } = use(MonitorContext);
   const onPlayingTimer = useRef<NodeJS.Timeout | null>(null);
 
   const triggerOnPlay = async () => {

@@ -198,9 +198,9 @@ describe('test MultipassBlock when type is not panel-item', () => {
 describe('test MultipassBlock when type is panel-item', () => {
   it('should render correctly when visible', () => {
     const { container } = render(
-      <ObjectPanelContext.Provider value={{ activeKey: 'multipass' } as any}>
+      <ObjectPanelContext value={{ activeKey: 'multipass' } as any}>
         <MultipassBlock type="panel-item" />
-      </ObjectPanelContext.Provider>,
+      </ObjectPanelContext>,
     );
 
     expect(container).toMatchSnapshot();

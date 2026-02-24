@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
@@ -54,7 +54,7 @@ const MultiColorOptions = ({ elem }: Props): React.JSX.Element => {
     newColor: '',
     origColor: '',
   });
-  const { isColorPreviewing, setIsColorPreviewing } = useContext(CanvasContext);
+  const { isColorPreviewing, setIsColorPreviewing } = use(CanvasContext);
 
   const handleColorChange = (origColor: string, newColor: string, actual = true, rerender = true) => {
     const fillElements = [];

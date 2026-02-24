@@ -6,9 +6,9 @@ import { Spin } from 'antd';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import ContextMenu from '@core/app/widgets/ContextMenu';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
-import { ContextMenu, ContextMenuTrigger, MenuItem } from '@core/helpers/react-contextmenu';
 import useI18n from '@core/helpers/useI18n';
 import dialog from '@core/implementations/dialog';
 import type { FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
@@ -165,19 +165,11 @@ const Calibration = ({
           {isUsbCamera && <video ref={videoRef} />}
           {!isUsbCamera && img && (
             <>
-              <ContextMenuTrigger
-                hideOnLeaveHoldPosition
-                holdToDisplay={-1}
-                holdToDisplayMouse={-1}
-                id="chessboard-context-menu"
-              >
-                <img alt="Chessboard" ref={imgRef} src={img?.url} />
-                {indicator && <div className={styles.indicator} style={indicator} />}
-              </ContextMenuTrigger>
-              <ContextMenu id="chessboard-context-menu">
-                <MenuItem attributes={{ id: 'download' }} onClick={handleDownload}>
-                  {t.monitor.download}
-                </MenuItem>
+              <ContextMenu items={[{ key: 'download', label: t.monitor.download }]} onClick={handleDownload}>
+                <div>
+                  <img alt="Chessboard" ref={imgRef} src={img?.url} />
+                  {indicator && <div className={styles.indicator} style={indicator} />}
+                </div>
               </ContextMenu>
             </>
           )}

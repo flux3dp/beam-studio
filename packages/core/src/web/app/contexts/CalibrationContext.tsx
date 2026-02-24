@@ -92,7 +92,7 @@ export function CalibrationProvider({
   };
 
   return (
-    <CalibrationContext.Provider
+    <CalibrationContext
       value={{
         borderless,
         calibratedMachines,
@@ -116,6 +116,6 @@ export function CalibrationProvider({
       }}
     >
       {children}
-    </CalibrationContext.Provider>
+    </CalibrationContext>
   );
 }

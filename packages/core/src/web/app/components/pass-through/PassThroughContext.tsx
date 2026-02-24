@@ -55,7 +55,7 @@ export function PassThroughProvider({ children }: Props): React.JSX.Element {
     sliceWorkarea(passThroughHeight, { addOnInfo, guideMark, refLayers: referenceLayer });
 
   return (
-    <PassThroughContext.Provider
+    <PassThroughContext
       value={{
         addOnInfo,
         guideMark,
@@ -70,6 +70,6 @@ export function PassThroughProvider({ children }: Props): React.JSX.Element {
       }}
     >
       {children}
-    </PassThroughContext.Provider>
+    </PassThroughContext>
   );
 }

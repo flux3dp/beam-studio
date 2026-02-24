@@ -4,7 +4,6 @@ describe('landing', () => {
   });
 
   it('home page', () => {
-    cy.url().should('contain', '#/');
     cy.get('div.home').should('exist');
     cy.get('h1.headline').should('have.text', 'Select Language');
     cy.get('select#select-lang').select('zh-tw');

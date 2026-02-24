@@ -45,7 +45,7 @@ export const SelectedElementContextProvider = memo(({ children }: Props): React.
     };
   }, [handleSetSelectedElem]);
 
-  return <SelectedElementContext.Provider value={{ selectedElement }}>{children}</SelectedElementContext.Provider>;
+  return <SelectedElementContext value={{ selectedElement }}>{children}</SelectedElementContext>;
 });
 
 export default {

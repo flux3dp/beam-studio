@@ -9,30 +9,30 @@ describe('manipulate view', () => {
   });
 
   it('top menu - zoom in ', () => {
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Zoom In').click();
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Zoom In').click();
     zoomRatio().should('have.text', '46%');
   });
 
   it('top menu - zoom out', () => {
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Zoom Out').click();
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Zoom Out').click();
     zoomRatio().should('have.text', '38%');
   });
 
   it('top menu - fit to window size', () => {
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Fit to Window Size').click();
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Fit to Window Size').click();
     zoomRatio().should('have.text', '42%');
   });
 
   it('auto fit to window size', () => {
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Auto Fit to Window Size').click();
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Auto Fit to Window Size').click();
     zoomRatio().should('have.text', '42%');
     cy.viewport(1500, 1200);
     const targetValue = Cypress.platform === 'win32' ? '75%' : '76%';
@@ -40,18 +40,18 @@ describe('manipulate view', () => {
   });
 
   it('show grids', () => {
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Show Grids').should('have.attr', 'aria-checked', 'true');
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Show Grids').should('have.attr', 'aria-checked', 'true');
     cy.get('#canvasGrid').then((elem) => {
       expect(elem.css('display')).equal('inline');
     });
   });
 
   it('show rulers', () => {
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Show Rulers').click();
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Show Rulers').click();
     cy.get('#ruler_x').should('exist');
     cy.get('#ruler_y').should('exist');
   });
@@ -68,16 +68,16 @@ describe('manipulate view', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_1').should('have.attr', 'stroke', '#3F51B5');
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Use Layer Color').click({ force: true });
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Use Layer Color').click({ force: true });
     cy.get('#svg_1').should('have.attr', 'stroke', '#000');
   });
 
   it('anti aliasing', () => {
-    cy.get('div.menu-btn-container').click();
-    cy.get(':nth-child(3) > .rc-menu__item').click();
-    cy.get('.rc-menu').contains('Anti-Aliasing').should('have.attr', 'aria-checked', 'true');
+    cy.get('div[data-testid="top-bar-menu"]').click();
+    cy.get('.szh-menu__submenu').contains('View').click();
+    cy.get('.szh-menu').contains('Anti-Aliasing').should('have.attr', 'aria-checked', 'true');
     cy.clickToolBtn('Ellipse');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 200, 200, { force: true });

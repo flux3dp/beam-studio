@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useRef, useState } from 'react';
+import React, { use, useEffect, useRef, useState } from 'react';
 
 import { DeleteFilled, PlusCircleFilled } from '@ant-design/icons';
 import type { FormInstance, InputRef } from 'antd';
@@ -84,9 +84,9 @@ const EditableRow = (props: EditableRowProps) => {
 
   return (
     <Form component={false} form={form} size="small">
-      <EditableContext.Provider value={form}>
+      <EditableContext value={form}>
         <tr {...props} />
-      </EditableContext.Provider>
+      </EditableContext>
     </Form>
   );
 };
@@ -107,7 +107,7 @@ const EditableCell = ({
   const [editing, setEditing] = useState(false);
   // Using InputRef for both Input and InputNumber as they share the focus() method
   const inputRef = useRef<InputRef>(null) as React.MutableRefObject<InputRef>;
-  const form = useContext(EditableContext);
+  const form = use(EditableContext);
 
   useEffect(() => {
     if (editing) {

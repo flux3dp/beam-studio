@@ -213,7 +213,6 @@ exports[`test RotarySettings promark rotary settings 1`] = `
                             disabled=""
                             id="object_diameter"
                             min="0"
-                            value=""
                           />
                         </div>
                       </div>
@@ -415,7 +414,6 @@ exports[`test RotarySettings promark rotary settings 1`] = `
                               id="overlap"
                               max="3.45"
                               min="0"
-                              value=""
                             />
                           </div>
                         </div>
@@ -714,7 +712,6 @@ exports[`test RotarySettings should render correctly 1`] = `
                             disabled=""
                             id="object_diameter"
                             min="0"
-                            value=""
                           />
                         </div>
                       </div>

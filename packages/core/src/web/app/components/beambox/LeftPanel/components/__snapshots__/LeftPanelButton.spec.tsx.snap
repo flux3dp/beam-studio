@@ -32,7 +32,7 @@ exports[`test LeftPanelButton should render flux plus icon correctly 1`] = `
         test
       </div>
       <svgr-url
-        classname="ant-scroll-number-custom-component flux-plus"
+        class="ant-scroll-number-custom-component flux-plus"
         style="margin-top: 6px; right: 4px;"
       />
     </span>

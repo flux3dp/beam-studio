@@ -1,4 +1,4 @@
-import React, { useCallback, useContext, useEffect, useMemo, useState } from 'react';
+import React, { use, useCallback, useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
 import { match, P } from 'ts-pattern';
@@ -51,7 +51,7 @@ const AutoFocusButton = (): React.JSX.Element => {
   } = useI18n();
   const mode = useCanvasStore((state) => state.mode);
   const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
-  const { selectedDevice } = useContext(CanvasContext);
+  const { selectedDevice } = use(CanvasContext);
   const [isProcessing, setIsProcessing] = useState(false);
   const isDeviceSupportAutoFocus = useMemo(
     () => supportAutoFocusModels.has(selectedDevice?.model || 'none'),

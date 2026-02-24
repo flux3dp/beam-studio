@@ -44,7 +44,7 @@ const exampleList = [
 ];
 
 const openExample = (name: string, type?: string) => {
-  cy.get('div.menu-btn-container').click();
+  cy.get('div[data-testid="top-bar-menu"]').click();
   cy.contains('File').click();
   cy.contains('Examples').click();
 

@@ -1,4 +1,4 @@
-import React, { memo, useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, use, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 import { pipe } from 'remeda';
@@ -37,7 +37,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     [],
   );
   const mode = useCanvasStore((state) => state.mode);
-  const { currentUser, hasUnsavedChange, setSelectedDevice } = useContext(CanvasContext);
+  const { currentUser, hasUnsavedChange, setSelectedDevice } = use(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
@@ -109,7 +109,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         <TopBarHints />
       </TopBarHintsContextProvider>
       {isWeb && (
-        <div className={classNames('top-bar-menu-container', styles.menu)}>
+        <div className={classNames(styles['top-bar-menu-container'], styles.menu)} data-testid="top-bar-menu">
           <Menu email={currentUser?.email} />
         </div>
       )}

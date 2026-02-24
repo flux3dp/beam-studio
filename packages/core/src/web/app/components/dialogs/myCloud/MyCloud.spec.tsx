@@ -68,7 +68,7 @@ jest.mock('@core/implementations/browser', () => ({
 jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext({}),
   MyCloudProvider: ({ children, onClose }: any) => (
-    <MyCloudContext.Provider value={{ files: mockFiles, onClose } as any}>{children}</MyCloudContext.Provider>
+    <MyCloudContext value={{ files: mockFiles, onClose } as any}>{children}</MyCloudContext>
   ),
 }));
 

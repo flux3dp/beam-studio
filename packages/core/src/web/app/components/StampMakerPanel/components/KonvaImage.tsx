@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useImperativeHandle, useRef } from 'react';
+import React, { useEffect, useImperativeHandle, useRef } from 'react';
 
 import type Konva from 'konva';
 import type { Filter } from 'konva/lib/Node';
@@ -13,7 +13,7 @@ interface Props {
 
 export type KonvaImageRef = Konva.Image & { useImageStatus: 'failed' | 'loaded' | 'loading' };
 
-const KonvaImage = forwardRef<KonvaImageRef, Props>(({ filters, horizontalFlip = false, src }, ref) => {
+const KonvaImage = ({ filters, horizontalFlip = false, ref, src }: Props & { ref?: React.Ref<KonvaImageRef> }) => {
   const [image, useImageStatus] = useImage(src, 'anonymous');
   const imageRef = useRef<Konva.Image>(null);
 
@@ -42,6 +42,6 @@ const KonvaImage = forwardRef<KonvaImageRef, Props>(({ filters, horizontalFlip =
   }, [image, horizontalFlip]);
 
   return <Image fill={'white'} filters={filters} image={image} ref={imageRef} />;
-});
+};
 
 export default KonvaImage;

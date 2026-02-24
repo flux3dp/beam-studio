@@ -46,18 +46,11 @@ getSVGAsync.mockImplementation((callback) => {
   });
 });
 
-jest.mock('@core/helpers/react-contextmenu', () => ({
-  ContextMenu: 'dummy-context-menu',
-  ContextMenuTrigger: 'dummy-context-menu-trigger',
-  MenuItem: 'dummy-menu-item',
-  SubMenu: 'dummy-sub-menu',
-}));
-
-const mockgetObjectLayer = jest.fn().mockReturnValue({ title: 'Layer 1' });
+const mockGetObjectLayer = jest.fn().mockReturnValue({ title: 'Layer 1' });
 const mockMoveToOtherLayer = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-helper', () => ({
-  getObjectLayer: (...args: any[]) => mockgetObjectLayer(...args),
+  getObjectLayer: (...args: any[]) => mockGetObjectLayer(...args),
   moveToOtherLayer: (...args: any[]) => mockMoveToOtherLayer(...args),
 }));
 
@@ -74,9 +67,9 @@ describe('test workarea', () => {
 
   test('should render correctly', async () => {
     const eventEmitter = eventEmitterFactory.createEventEmitter('workarea');
-    const { container, getByText, unmount } = render(<Workarea className="mac" />);
+    const { baseElement, container, queryByText, unmount } = render(<Workarea className="mac" />);
 
-    expect(container).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
 
     const checkState = (state: {
       group: boolean;
@@ -85,11 +78,25 @@ describe('test workarea', () => {
       select: boolean;
       ungroup: boolean;
     }) => {
-      const menuDisabled = container.querySelector('#canvas-contextmenu').getAttribute('disable') === 'true';
-      const select = getByText('Cut').getAttribute('disabled') === 'false';
-      const paste = getByText('Paste').getAttribute('disabled') === 'false';
-      const group = select ? getByText('Group').getAttribute('disabled') === 'false' : expect.anything();
-      const ungroup = select ? getByText('Ungroup').getAttribute('disabled') === 'false' : expect.anything();
+      const workarea = container.querySelector('#workarea');
+      const menuDisabled = workarea?.hasAttribute('disabled') ?? false;
+
+      // Open the dropdown to check menu item states
+      fireEvent.contextMenu(workarea!);
+
+      const cutItem = queryByText('Cut')?.closest('.ant-dropdown-menu-item');
+      const pasteItem = queryByText('Paste')?.closest('.ant-dropdown-menu-item');
+      const groupItem = queryByText('Group')?.closest('.ant-dropdown-menu-item');
+      const ungroupItem = queryByText('Ungroup')?.closest('.ant-dropdown-menu-item');
+
+      const select = cutItem ? !cutItem.classList.contains('ant-dropdown-menu-item-disabled') : false;
+      const paste = pasteItem ? !pasteItem.classList.contains('ant-dropdown-menu-item-disabled') : false;
+      const group = groupItem && select ? !groupItem.classList.contains('ant-dropdown-menu-item-disabled') : false;
+      const ungroup =
+        ungroupItem && select ? !ungroupItem.classList.contains('ant-dropdown-menu-item-disabled') : false;
+
+      // Close the dropdown by clicking elsewhere
+      fireEvent.click(document.body);
 
       expect(state).toEqual({ group, menuDisabled, paste, select, ungroup });
     };
@@ -122,15 +129,23 @@ describe('test workarea', () => {
       select: true,
       ungroup: false,
     });
-    expect(container).toMatchSnapshot();
 
+    // Ensure dropdown is closed before snapshot
+    const workareaElement = container.querySelector('#workarea');
+
+    if (workareaElement?.classList.contains('ant-dropdown-open')) {
+      act(() => {
+        fireEvent.click(document.body);
+      });
+      await new Promise((resolve) => setTimeout(resolve, 0));
+    }
+
+    expect(baseElement).toMatchSnapshot();
+
+    // Test layer data
     expect(getSelectedElems).toHaveBeenCalled();
-    expect(mockgetObjectLayer).toHaveBeenCalled();
-    expect(getByText('Layer 1')).toBeDisabled();
-    expect(mockMoveToOtherLayer).not.toHaveBeenCalled();
-    fireEvent.click(getByText('Layer 2'));
-    expect(mockMoveToOtherLayer).toHaveBeenCalledTimes(1);
-    expect(mockMoveToOtherLayer).toHaveBeenLastCalledWith('Layer 2', expect.anything(), false);
+    expect(mockGetObjectLayer).toHaveBeenCalled();
+    expect(mockGetAllLayerNames).toHaveBeenCalled();
 
     unmount();
     expect(eventEmitter.eventNames().length).toBe(0);

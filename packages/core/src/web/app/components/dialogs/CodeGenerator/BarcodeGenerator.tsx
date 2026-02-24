@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import {
   AlignCenterOutlined,
@@ -46,7 +46,7 @@ const renderOption = (option) => {
 };
 // end of copied code
 
-const BarcodeGenerator = forwardRef<BarcodeRef, Props>(({ isInvert, setIsInvert, setText, text }, ref) => {
+const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props & { ref?: React.Ref<BarcodeRef> }) => {
   const { barcode_generator: t } = useI18n();
   const [options, setOptions] = useState(defaultOptions);
   const [validFontStyles, setValidFontStyles] = useState([]);
@@ -249,6 +249,6 @@ const BarcodeGenerator = forwardRef<BarcodeRef, Props>(({ isInvert, setIsInvert,
       </ConfigProvider>
     </div>
   );
-});
+};
 
 export default BarcodeGenerator;

@@ -28,7 +28,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 1`]
       >
         <svgr-url
           aria-hidden="true"
-          classname=""
+          class=""
           fill="currentColor"
           focusable="false"
           height="1em"
@@ -267,7 +267,7 @@ exports[`test ElementPanel Header in mobile should render MainType correctly 2`]
       >
         <svgr-url
           aria-hidden="true"
-          classname=""
+          class=""
           fill="currentColor"
           focusable="false"
           height="1em"
@@ -506,7 +506,7 @@ exports[`test ElementPanel Header in mobile should render Search correctly 1`] =
       >
         <svgr-url
           aria-hidden="true"
-          classname=""
+          class=""
           fill="currentColor"
           focusable="false"
           height="1em"
@@ -745,7 +745,7 @@ exports[`test ElementPanel Header in mobile should render SubType correctly 1`] 
       >
         <svgr-url
           aria-hidden="true"
-          classname=""
+          class=""
           fill="currentColor"
           focusable="false"
           height="1em"

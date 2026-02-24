@@ -16,7 +16,7 @@ jest.mock('@core/app/widgets/FullWindowPanel/FullWindowPanel', () => ({
 describe('test Header', () => {
   it('should render correctly', () => {
     const { container, rerender } = render(
-      <FullWindowPanelContext.Provider
+      <FullWindowPanelContext
         value={{
           isDesktop: false,
           isMobile: false,
@@ -24,12 +24,12 @@ describe('test Header', () => {
         }}
       >
         <Header className="class">Header</Header>
-      </FullWindowPanelContext.Provider>,
+      </FullWindowPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
     rerender(
-      <FullWindowPanelContext.Provider
+      <FullWindowPanelContext
         value={{
           isDesktop: true,
           isMobile: true,
@@ -37,7 +37,7 @@ describe('test Header', () => {
         }}
       >
         <Header className="class class2">Header</Header>
-      </FullWindowPanelContext.Provider>,
+      </FullWindowPanelContext>,
     );
     expect(container).toMatchSnapshot();
   });

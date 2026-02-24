@@ -1,4 +1,4 @@
-import React, { memo, useCallback, useContext, useEffect, useMemo } from 'react';
+import React, { memo, use, useCallback, useEffect, useMemo } from 'react';
 
 import { ExclamationCircleOutlined, QuestionCircleOutlined } from '@ant-design/icons';
 import { Tooltip } from 'antd';
@@ -72,7 +72,7 @@ const NumberBlock = ({
   warning,
 }: Props): React.ReactNode => {
   const isPanelType = useMemo(() => type === 'panel-item', [type]);
-  const { activeKey } = useContext(ObjectPanelContext);
+  const { activeKey } = use(ObjectPanelContext);
   const {
     change,
     [key]: { hasMultiValue, value = 0 },

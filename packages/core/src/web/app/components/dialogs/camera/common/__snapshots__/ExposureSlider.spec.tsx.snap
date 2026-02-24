@@ -12,7 +12,7 @@ exports[`test ExposureSlider should render correctly 1`] = `
         title="Brightness"
       >
         <svgr-url
-          classname="icon"
+          class="icon"
         />
       </div>
       <div

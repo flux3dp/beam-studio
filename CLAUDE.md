@@ -23,14 +23,14 @@ pnpm nx run web:build    # Build web app
 
 # Testing
 pnpm nx run core:test    # Test core package
-pnpm run test         # Test all projects
-pnpm run test -u      # Test all projects and update snapshots
+pnpm test         # Test all projects
+pnpm test -u      # Test all projects and update snapshots
 pnpm test <filename>     # Run specific unit test file
 pnpm nx run web:cy:dev   # Run web E2E tests (Cypress)
 
 # Linting & Type Checking
-pnpm run lint            # Lint all projects
-pnpm run lint --fix      # Lint all projects and fix issues
+pnpm lint            # Lint all projects
+pnpm lint --fix      # Lint all projects and fix issues
 
 # Run affected projects (based on git changes)
 pnpm nx affected:test    # Test only affected projects
@@ -47,13 +47,15 @@ pnpm nx affected:lint    # Lint only affected projects
 
 ### Technology Stack
 
-- **Frontend**: React 18.3.1 with TypeScript
-- **Desktop**: Electron 35.5.1
-- **UI**: Ant Design 5.23.2
-- **Graphics**: Konva, Three.js, Canvas APIs
+- **Frontend**: React 19.2.4 with TypeScript 5.9.3
+- **Desktop**: Electron 40.1.0
+- **UI**: Ant Design 5.23.2 (with React 19 compatibility patch)
+- **Routing**: React Router 7.13.0
+- **Graphics**: react-konva 19.2.2, @react-three/fiber 9.5.0, Three.js, Canvas APIs
+- **Drag & Drop**: @hello-pangea/dnd 18.0.1
 - **State Management**: Zustand for cross-component state
-- **Build**: Webpack 5, Nx 20.0.10
-- **Testing**: Jest (unit), Cypress (E2E)
+- **Build**: Webpack 5, Nx 22.4.5
+- **Testing**: Jest 30.2.0 (unit), Cypress (E2E)
 
 ### Path Mappings
 
@@ -90,6 +92,12 @@ pnpm nx affected:lint    # Lint only affected projects
 2. **Pattern Matching**: Prefer `ts-pattern` over `switch-case` statements for better type safety and exhaustive matching. Use `.exhaustive()` by default; use `.otherwise()` only when the input is truly open-ended.
 
 3. **State Management**: Prefer Zustand for cross-component state and contexts. Use React hooks for component-local state only.
+
+4. **React 19 Patterns**:
+   - Use `use(Context)` instead of `useContext(Context)` for consuming contexts
+   - Use `<Context value={...}>` instead of `<Context.Provider value={...}>` for context providers
+   - Pass `ref` as a regular prop instead of using `React.forwardRef`
+   - Use `useSearchParams()` hook from `react-router` for query parameters
 
 ### TypeScript
 
@@ -194,13 +202,14 @@ To synchronize data between tabs:
 
 ## Development Tips
 
-1. Use `pnpm nx affected:*` commands to only run tasks on changed projects
-2. The web app runs on <http://localhost:8080> during development
-3. Electron app requires external services (FLUXGhost, etc.) for full functionality, but works with limited features when unavailable
-4. When modifying shared code in packages/core, both apps will be affected
-5. Use path aliases (@core/*) instead of relative imports for core packages
-6. When writing class member functions with `this`, prefer arrow functions to avoid `this` binding issues
-7. Follow basic accessibility practices: proper labels, focus management, keyboard navigation
+1. Use `pnpm test` (not `pnpm run test`) to run the test suite
+2. Use `pnpm nx affected:*` commands to only run tasks on changed projects
+3. The web app runs on <http://localhost:8080> during development
+4. Electron app requires external services (FLUXGhost, etc.) for full functionality, but works with limited features when unavailable
+5. When modifying shared code in packages/core, both apps will be affected
+6. Use path aliases (@core/*) instead of relative imports for core packages
+7. When writing class member functions with `this`, prefer arrow functions to avoid `this` binding issues
+8. Follow basic accessibility practices: proper labels, focus management, keyboard navigation
 
 ## Areas Needing Improvement
 

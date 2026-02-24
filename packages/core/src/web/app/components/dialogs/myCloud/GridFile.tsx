@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useEffect, useMemo, useRef, useState } from 'react';
 
 import {
   ArrowRightOutlined,
@@ -53,7 +53,7 @@ const GridFile = ({ file }: Props): React.JSX.Element => {
   const workarea = getWorkarea(file.workarea as WorkAreaModel);
   const [actionDropdownOpen, setActionDropdownOpen] = useState(false);
   const [deleteModalOpen, setDeleteModalOpen] = useState(false);
-  const { editingId, fileOperation, selectedId, setEditingId, setSelectedId } = useContext(MyCloudContext);
+  const { editingId, fileOperation, selectedId, setEditingId, setSelectedId } = use(MyCloudContext);
   const inputRef = useRef<InputRef>(null);
   const [error, setError] = useState(false);
   const isEditing = useMemo(() => editingId === file.uuid, [editingId, file]);

@@ -1,5 +1,5 @@
 // ref: http://blog.ivank.net/interpolation-with-cubic-splines.html
-import React from 'react';
+import React, { useCallback, useEffect, useRef, useState } from 'react';
 
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -15,18 +15,9 @@ interface IPoint {
   y: number;
 }
 
-interface Props {
+interface CurveControlProps {
   updateCurveFunction: (curveFunction: (x: number) => number) => void;
   updateImage: () => void;
-}
-
-interface State {
-  controlPoints: IPoint[];
-  draggingIndex?: number;
-  dragStartPoint?: IPoint;
-  originalPoint?: IPoint;
-  selectingIndex: number;
-  splineKs: number[];
 }
 
 const isPointEqual = (a: IPoint, b: IPoint) => a.x === b.x && a.y === b.y;
@@ -125,36 +116,30 @@ const generateCubicSplineFromPoints = (points: IPoint[]) => {
   return solveX(A, B);
 };
 
-export default class CurveControl extends React.PureComponent<Props, State> {
-  constructor(props: Props) {
-    super(props);
+const initialPoints: IPoint[] = [
+  { x: 0, y: 0 },
+  { x: 255, y: 255 },
+];
 
-    const { updateCurveFunction } = this.props as Props;
+const CurveControl = ({ updateCurveFunction, updateImage }: CurveControlProps): React.JSX.Element => {
+  const [controlPoints, setControlPoints] = useState<IPoint[]>(initialPoints);
+  const [splineKs, setSplineKs] = useState<number[]>(() => generateCubicSplineFromPoints(initialPoints));
+  const [selectingIndex, setSelectingIndex] = useState<null | number>(null);
+  const [draggingIndex, setDraggingIndex] = useState<null | number>(null);
+  const [dragStartPoint, setDragStartPoint] = useState<IPoint | null>(null);
+  const [originalPoint, setOriginalPoint] = useState<IPoint | null>(null);
 
-    this.state = {
-      controlPoints: [
-        { x: 0, y: 0 },
-        { x: 255, y: 255 },
-      ],
-      selectingIndex: null,
-      splineKs: generateCubicSplineFromPoints([
-        { x: 0, y: 0 },
-        { x: 255, y: 255 },
-      ]),
-    };
-    updateCurveFunction(this.cubicSplinesInterpolation);
-    shortcuts.off(['Delete', 'Backspace']);
-    shortcuts.on(['Delete', 'Backspace'], this.deleteControlPoint);
-  }
+  const controlPointsRef = useRef(controlPoints);
+  const splineKsRef = useRef(splineKs);
+  const selectingIndexRef = useRef(selectingIndex);
 
-  componentWillUnmount(): void {
-    shortcuts.off(['Delete', 'Backspace']);
-    shortcuts.on(['Delete', 'Backspace'], () => svgEditor.deleteSelected());
-  }
+  controlPointsRef.current = controlPoints;
+  splineKsRef.current = splineKs;
+  selectingIndexRef.current = selectingIndex;
 
-  cubicSplinesInterpolation = (x: number): number => {
-    const { controlPoints, splineKs } = this.state as State;
-    const ps = generateSafePoints(controlPoints);
+  const cubicSplinesInterpolation = useCallback((x: number): number => {
+    const ps = generateSafePoints(controlPointsRef.current);
+    const ks = splineKsRef.current;
     let i = 0;
 
     while (i < ps.length) {
@@ -173,8 +158,8 @@ export default class CurveControl extends React.PureComponent<Props, State> {
       q = ps[ps.length - 1].y;
     } else {
       const t = (x - ps[i - 1].x) / (ps[i].x - ps[i - 1].x);
-      const a = splineKs[i - 1] * (ps[i].x - ps[i - 1].x) - (ps[i].y - ps[i - 1].y);
-      const b = -splineKs[i] * (ps[i].x - ps[i - 1].x) + (ps[i].y - ps[i - 1].y);
+      const a = ks[i - 1] * (ps[i].x - ps[i - 1].x) - (ps[i].y - ps[i - 1].y);
+      const b = -ks[i] * (ps[i].x - ps[i - 1].x) + (ps[i].y - ps[i - 1].y);
 
       q = (1 - t) * ps[i - 1].y + t * ps[i].y + t * (1 - t) * (a * (1 - t) + b * t);
     }
@@ -182,133 +167,101 @@ export default class CurveControl extends React.PureComponent<Props, State> {
     q = Math.min(255, Math.max(0, q));
 
     return q;
-  };
+  }, []);
 
-  onBackgroundMouseDown = (e: React.MouseEvent): void => {
-    const { controlPoints } = this.state;
+  const deleteControlPoint = useCallback(() => {
+    const pts = controlPointsRef.current;
+    const idx = selectingIndexRef.current;
+
+    if (idx != null && pts.length > 2) {
+      const newPoints = [...pts];
+
+      newPoints.splice(idx, 1);
+      updateImage();
+      setControlPoints(newPoints);
+      setSelectingIndex(null);
+      setSplineKs(generateCubicSplineFromPoints(newPoints));
+    }
+  }, [updateImage]);
+
+  useEffect(() => {
+    updateCurveFunction(cubicSplinesInterpolation);
+    shortcuts.off(['Delete', 'Backspace']);
+    shortcuts.on(['Delete', 'Backspace'], deleteControlPoint);
+
+    return () => {
+      shortcuts.off(['Delete', 'Backspace']);
+      shortcuts.on(['Delete', 'Backspace'], () => svgEditor.deleteSelected());
+    };
+  }, [updateCurveFunction, cubicSplinesInterpolation, deleteControlPoint]);
+
+  const onBackgroundMouseDown = (e: React.MouseEvent) => {
     const target = e.target as Element;
 
     if (target.tagName === 'rect') {
       const index = Number.parseInt(target.getAttribute('id'), 10);
 
-      this.setState({
-        draggingIndex: index,
-        dragStartPoint: { x: e.clientX, y: e.clientY },
-        originalPoint: { ...controlPoints[index] },
-        selectingIndex: index,
-      });
+      setDraggingIndex(index);
+      setDragStartPoint({ x: e.clientX, y: e.clientY });
+      setOriginalPoint({ ...controlPoints[index] });
+      setSelectingIndex(index);
     } else {
-      this.setState({ selectingIndex: null });
+      setSelectingIndex(null);
     }
   };
 
-  onMouseMove = (e: React.MouseEvent): void => {
-    let { draggingIndex, selectingIndex } = this.state;
-
+  const onMouseUp = () => {
     if (typeof draggingIndex === 'number') {
-      const { controlPoints, dragStartPoint, originalPoint } = this.state;
-      const dX = e.clientX - dragStartPoint.x;
-      const dY = e.clientY - dragStartPoint.y;
-      let x = Math.min(255, Math.max(0, originalPoint.x + dX));
-      const y = Math.min(255, Math.max(0, originalPoint.y - dY));
-
-      if (draggingIndex > 0 && x <= controlPoints[draggingIndex - 1].x) {
-        if (x === controlPoints[draggingIndex - 1].x) {
-          x += 1;
-        } else {
-          const p = controlPoints[draggingIndex];
-
-          controlPoints[draggingIndex] = controlPoints[draggingIndex - 1];
-          controlPoints[draggingIndex - 1] = p;
-          draggingIndex -= 1;
-          selectingIndex -= 1;
-        }
-      } else if (draggingIndex < controlPoints.length - 1 && x >= controlPoints[draggingIndex + 1].x) {
-        if (x === controlPoints[draggingIndex + 1].x) {
-          x -= 1;
-        } else {
-          const p = controlPoints[draggingIndex];
-
-          controlPoints[draggingIndex] = controlPoints[draggingIndex + 1];
-          controlPoints[draggingIndex + 1] = p;
-          draggingIndex += 1;
-          selectingIndex += 1;
-        }
-      }
-
-      controlPoints[draggingIndex] = { x, y };
-
-      this.setState({
-        controlPoints: [...controlPoints],
-        draggingIndex,
-        selectingIndex,
-        splineKs: generateCubicSplineFromPoints(controlPoints),
-      });
-    }
-  };
-
-  onMouseUp = (): void => {
-    const { draggingIndex } = this.state;
-
-    if (typeof draggingIndex === 'number') {
-      const { updateImage } = this.props;
-
       updateImage();
     }
 
-    this.setState({
-      draggingIndex: null,
-    });
+    setDraggingIndex(null);
   };
 
-  renderCurve(): React.JSX.Element[] {
-    const { controlPoints: ps } = this.state;
-    let d = `M 0,${255 - ps[0].y} `;
+  const onMouseMove = (e: React.MouseEvent) => {
+    if (typeof draggingIndex !== 'number') return;
 
-    for (let { x } = ps[0]; x < ps[ps.length - 1].x; x += 0.5) {
-      const y = this.cubicSplinesInterpolation(x);
+    const newPoints = [...controlPoints];
+    const dX = e.clientX - dragStartPoint.x;
+    const dY = e.clientY - dragStartPoint.y;
+    let x = Math.min(255, Math.max(0, originalPoint.x + dX));
+    const y = Math.min(255, Math.max(0, originalPoint.y - dY));
+    let newDraggingIndex = draggingIndex;
+    let newSelectingIndex = selectingIndex;
 
-      d += `L ${x},${255 - y} `;
+    if (newDraggingIndex > 0 && x <= newPoints[newDraggingIndex - 1].x) {
+      if (x === newPoints[newDraggingIndex - 1].x) {
+        x += 1;
+      } else {
+        const p = newPoints[newDraggingIndex];
+
+        newPoints[newDraggingIndex] = newPoints[newDraggingIndex - 1];
+        newPoints[newDraggingIndex - 1] = p;
+        newDraggingIndex -= 1;
+        newSelectingIndex -= 1;
+      }
+    } else if (newDraggingIndex < newPoints.length - 1 && x >= newPoints[newDraggingIndex + 1].x) {
+      if (x === newPoints[newDraggingIndex + 1].x) {
+        x -= 1;
+      } else {
+        const p = newPoints[newDraggingIndex];
+
+        newPoints[newDraggingIndex] = newPoints[newDraggingIndex + 1];
+        newPoints[newDraggingIndex + 1] = p;
+        newDraggingIndex += 1;
+        newSelectingIndex += 1;
+      }
     }
-    d += `L ${ps[ps.length - 1].x},${255 - ps[ps.length - 1].y} L 256,${255 - ps[ps.length - 1].y}`;
 
-    return [
-      <path d={d} fill="none" key="show" stroke="#000000" />,
-      <path d={d} fill="none" key="invisible" onClick={this.addControlPoint} stroke="transparent" strokeWidth="7" />,
-    ];
-  }
+    newPoints[newDraggingIndex] = { x, y };
+    setControlPoints(newPoints);
+    setDraggingIndex(newDraggingIndex);
+    setSelectingIndex(newSelectingIndex);
+    setSplineKs(generateCubicSplineFromPoints(newPoints));
+  };
 
-  renderControlPoints(): Element[] {
-    const items = [];
-    const { controlPoints, selectingIndex } = this.state;
-
-    controlPoints.forEach((p: IPoint, index: number) => {
-      const fillOpacity = index === selectingIndex ? 1 : 0;
-
-      items.push(
-        <rect
-          fill="#000000"
-          fillOpacity={fillOpacity}
-          height={6}
-          id={index.toString()}
-          key={`${p.x},${p.y}`}
-          stroke="#000000"
-          width={6}
-          x={p.x - 3}
-          y={255 - p.y - 3}
-        />,
-      );
-    });
-
-    return items;
-  }
-
-  addControlPoint = (e: React.MouseEvent): void => {
-    const { controlPoints, draggingIndex } = this.state as State;
-
-    if (typeof draggingIndex === 'number') {
-      return;
-    }
+  const addControlPoint = (e: React.MouseEvent) => {
+    if (typeof draggingIndex === 'number') return;
 
     const getClosestPoint = (): IPoint => {
       const curveControlSVG = document.querySelector('.curve-control-svg');
@@ -316,14 +269,14 @@ export default class CurveControl extends React.PureComponent<Props, State> {
       const topBound = Math.round(curveControlSVG.getBoundingClientRect().top);
       const mouseX = Math.round(Math.min(255, Math.max(0, e.clientX - leftBound)));
       const mouseY = Math.min(255, Math.max(0, 255 - (e.clientY - topBound)));
-      let y = this.cubicSplinesInterpolation(mouseX);
+      let y = cubicSplinesInterpolation(mouseX);
       let minDist = Math.abs(y - mouseY);
       let minDistPoints = { x: mouseX, y };
       const startX = Math.max(0, Math.ceil(mouseX - minDist));
       const endX = Math.min(255, Math.floor(mouseX + minDist));
 
       for (let x = startX; x <= endX; x += 1) {
-        y = this.cubicSplinesInterpolation(x);
+        y = cubicSplinesInterpolation(x);
 
         const dist = Math.hypot(mouseX - x, mouseY - y);
 
@@ -340,62 +293,76 @@ export default class CurveControl extends React.PureComponent<Props, State> {
     const existingPointIndex = controlPoints.findIndex((p) => isPointEqual(p, clickPoint));
 
     if (existingPointIndex < 0) {
-      controlPoints.push(clickPoint);
-      controlPoints.sort((a, b) => a.x - b.x);
-      this.setState({
-        controlPoints: [...controlPoints],
-        selectingIndex: null,
-        splineKs: generateCubicSplineFromPoints(controlPoints),
-      });
+      const newPoints = [...controlPoints, clickPoint].sort((a, b) => a.x - b.x);
+
+      setControlPoints(newPoints);
+      setSelectingIndex(null);
+      setSplineKs(generateCubicSplineFromPoints(newPoints));
     } else {
-      this.setState({
-        selectingIndex: existingPointIndex,
-      });
+      setSelectingIndex(existingPointIndex);
     }
   };
 
-  deleteControlPoint = (): void => {
-    const { updateImage } = this.props;
-    const { controlPoints, selectingIndex } = this.state;
+  const renderCurve = () => {
+    const ps = controlPoints;
+    let d = `M 0,${255 - ps[0].y} `;
 
-    if (selectingIndex != null && controlPoints.length > 2) {
-      controlPoints.splice(selectingIndex, 1);
-      updateImage();
-      this.setState({
-        controlPoints: [...controlPoints],
-        selectingIndex: null,
-        splineKs: generateCubicSplineFromPoints(controlPoints),
-      });
+    for (let { x } = ps[0]; x < ps[ps.length - 1].x; x += 0.5) {
+      const y = cubicSplinesInterpolation(x);
+
+      d += `L ${x},${255 - y} `;
     }
+    d += `L ${ps[ps.length - 1].x},${255 - ps[ps.length - 1].y} L 256,${255 - ps[ps.length - 1].y}`;
+
+    return [
+      <path d={d} fill="none" key="show" stroke="#000000" />,
+      <path d={d} fill="none" key="invisible" onClick={addControlPoint} stroke="transparent" strokeWidth="7" />,
+    ];
   };
 
-  render(): React.JSX.Element {
-    const curve = this.renderCurve();
-    const controlPointsRects = this.renderControlPoints();
+  const renderControlPoints = () =>
+    controlPoints.map((p: IPoint, index: number) => {
+      const fillOpacity = index === selectingIndex ? 1 : 0;
 
-    return (
-      <div
+      return (
+        <rect
+          fill="#000000"
+          fillOpacity={fillOpacity}
+          height={6}
+          id={index.toString()}
+          key={`${p.x},${p.y}`}
+          stroke="#000000"
+          width={6}
+          x={p.x - 3}
+          y={255 - p.y - 3}
+        />
+      );
+    });
+
+  return (
+    <div
+      style={{
+        height: 260,
+        width: 260,
+      }}
+    >
+      <svg
+        className="curve-control-svg"
+        onMouseDown={onBackgroundMouseDown}
+        onMouseLeave={onMouseUp}
+        onMouseMove={onMouseMove}
+        onMouseUp={onMouseUp}
         style={{
+          border: '2px solid #b3b3b3',
           height: 260,
           width: 260,
         }}
       >
-        <svg
-          className="curve-control-svg"
-          onMouseDown={this.onBackgroundMouseDown}
-          onMouseLeave={this.onMouseUp}
-          onMouseMove={this.onMouseMove}
-          onMouseUp={this.onMouseUp}
-          style={{
-            border: '2px solid #b3b3b3',
-            height: 260,
-            width: 260,
-          }}
-        >
-          {curve}
-          {controlPointsRects}
-        </svg>
-      </div>
-    );
-  }
-}
+        {renderCurve()}
+        {renderControlPoints()}
+      </svg>
+    </div>
+  );
+};
+
+export default CurveControl;

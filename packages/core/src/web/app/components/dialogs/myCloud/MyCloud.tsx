@@ -1,4 +1,4 @@
-import React, { useContext, useMemo } from 'react';
+import React, { use, useMemo } from 'react';
 
 import { Button, Modal, Space } from 'antd';
 
@@ -25,7 +25,7 @@ const MyCloudModal = (): React.JSX.Element => {
   const LANG = useI18n();
   const lang = LANG.my_cloud;
   const isMobile = useIsMobile();
-  const { files, onClose, setSelectedId } = useContext(MyCloudContext);
+  const { files, onClose, setSelectedId } = use(MyCloudContext);
   const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
 
   const content = useMemo(() => {

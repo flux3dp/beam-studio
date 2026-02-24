@@ -41,9 +41,9 @@ describe('test Head', () => {
 
   test('should behave correctly', () => {
     const { baseElement, container, getByText } = render(
-      <MyCloudContext.Provider value={mockContext}>
+      <MyCloudContext value={mockContext}>
         <Head />
-      </MyCloudContext.Provider>,
+      </MyCloudContext>,
     );
 
     expect(container).toMatchSnapshot();
@@ -62,9 +62,9 @@ describe('test Head', () => {
     mockUseIsMobile.mockReturnValue(true);
 
     const { container, getByText } = render(
-      <MyCloudContext.Provider value={mockContext}>
+      <MyCloudContext value={mockContext}>
         <Head />
-      </MyCloudContext.Provider>,
+      </MyCloudContext>,
     );
 
     expect(container).toMatchSnapshot();

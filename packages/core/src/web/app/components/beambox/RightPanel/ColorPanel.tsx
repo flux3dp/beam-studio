@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useMemo, useRef, useState } from 'react';
+import React, { use, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { TooltipProps } from 'antd';
 import { ConfigProvider, InputNumber, Slider } from 'antd';
@@ -72,7 +72,7 @@ const ColorPanel = ({ elem }: Props): React.JSX.Element => {
     type: EditType.None,
   });
   const previewRef = useRef({ newColor: '', origColor: '' });
-  const { isColorPreviewing, setIsColorPreviewing } = useContext(CanvasContext);
+  const { isColorPreviewing, setIsColorPreviewing } = use(CanvasContext);
   const { fill, stroke, strokeWidth } = state;
 
   useDidUpdateEffect(() => {

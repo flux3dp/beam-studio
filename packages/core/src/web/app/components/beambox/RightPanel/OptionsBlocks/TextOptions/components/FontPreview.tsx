@@ -1,4 +1,4 @@
-import { forwardRef } from 'react';
+import React from 'react';
 
 import classNames from 'classnames';
 
@@ -20,9 +20,10 @@ interface FontPreviewProps {
   font: CachedGoogleFontItem;
   isSelected: boolean;
   onClick: () => void;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSelected, onClick }, ref) => {
+const FontPreview = ({ font, isSelected, onClick, ref }: FontPreviewProps) => {
   const previewText = getSampleText(font.family);
 
   return (
@@ -59,6 +60,6 @@ const FontPreview = forwardRef<HTMLDivElement, FontPreviewProps>(({ font, isSele
       </div>
     </div>
   );
-});
+};
 
 export default FontPreview;
