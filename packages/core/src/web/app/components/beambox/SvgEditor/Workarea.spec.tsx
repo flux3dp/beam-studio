@@ -67,9 +67,9 @@ describe('test workarea', () => {
 
   test('should render correctly', async () => {
     const eventEmitter = eventEmitterFactory.createEventEmitter('workarea');
-    const { container, queryByText, unmount } = render(<Workarea className="mac" />);
+    const { baseElement, container, queryByText, unmount } = render(<Workarea className="mac" />);
 
-    expect(container).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
 
     const checkState = (state: {
       group: boolean;
@@ -140,7 +140,7 @@ describe('test workarea', () => {
       await new Promise((resolve) => setTimeout(resolve, 0));
     }
 
-    expect(container).toMatchSnapshot();
+    expect(baseElement).toMatchSnapshot();
 
     // Test layer data
     expect(getSelectedElems).toHaveBeenCalled();

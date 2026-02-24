@@ -1,4 +1,4 @@
-import React, { use } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 import Constant from '@core/app/actions/beambox/constant';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
@@ -29,13 +29,19 @@ function RectOptions({ elem }: Props): React.JSX.Element {
   const lang = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const { dimensionValues, updateDimensionValues } = use(ObjectPanelContext);
-  const { rx } = dimensionValues;
+  const { rx: dimensionValuesRx } = dimensionValues;
   const isInch = useStorageStore((state) => state.isInch);
+  const [rx, setRx] = useState(dimensionValuesRx || 0);
+
+  useEffect(() => {
+    setRx(dimensionValuesRx || 0);
+  }, [dimensionValuesRx]);
 
   const handleRoundedCornerChange = (val: null | number) => {
     if (val === null) return;
 
     val *= Constant.dpmm;
+    setRx(val);
     svgCanvas.changeSelectedAttribute('rx', val, [elem]);
     updateDimensionValues({ rx: val });
   };
