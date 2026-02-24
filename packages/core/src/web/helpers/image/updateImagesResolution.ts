@@ -1,4 +1,4 @@
-import { printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { laserModules } from '@core/app/constants/layer-module/layer-modules';
 import NS from '@core/app/constants/namespaces';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import imageData from '@core/helpers/image-data';
@@ -21,13 +21,13 @@ const updateImagesResolution = async (): Promise<() => void> => {
   allLayers.forEach((layer) => {
     const layerModule = getData(layer, 'module');
 
-    if (!(printingModules.has(layerModule!) || isImagesDownSamplingEnabled)) {
-      return;
+    if (!isImagesDownSamplingEnabled) return;
+
+    if (laserModules.has(layerModule!)) {
+      const dpi = getData(layer, 'dpi') || 'medium';
+
+      if (!['detail', 'high', 'ultra'].includes(dpi)) return;
     }
-
-    const dpi = getData(layer, 'dpi') || 'medium';
-
-    if (!['detail', 'high', 'ultra'].includes(dpi)) return;
 
     const images = Array.from(layer.querySelectorAll('image'));
 
