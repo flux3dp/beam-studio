@@ -43,7 +43,8 @@ describe('verify undo/redo behaviors', () => {
     drawText();
     cy.get('.ant-select-selection-item[title="Style"]').should('have.text', 'Regular');
     cy.get('.ant-select-selection-item[title="Style"]').click();
-    cy.get('.rc-virtual-list-holder').contains('Bold').click();
+    cy.get('.ant-select-dropdown').should('be.visible');
+    cy.contains('.ant-select-item-option-content', 'Bold').click();
     cy.get('.ant-select-selection-item[title="Style"]').should('have.text', 'Bold');
     undoBtn().click();
     cy.get('#svg_1').click({ force: true });
