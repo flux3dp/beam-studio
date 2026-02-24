@@ -14,14 +14,11 @@ import updateImageDisplay from './updateImageDisplay';
  */
 const updateImagesResolution = async (): Promise<() => void> => {
   const allLayers = getAllLayers();
-  const { image_downsampling: isImagesDownSamplingEnabled } = useGlobalPreferenceStore.getState();
   const promises: Array<Promise<void>> = [];
   const changedImages: SVGImageElement[] = [];
 
   allLayers.forEach((layer) => {
     const layerModule = getData(layer, 'module');
-
-    if (!isImagesDownSamplingEnabled) return;
 
     if (laserModules.has(layerModule!)) {
       const dpi = getData(layer, 'dpi') || 'medium';
