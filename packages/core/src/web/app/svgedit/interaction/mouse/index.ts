@@ -1542,6 +1542,19 @@ const registerEvents = () => {
   container.addEventListener('mouseenter', mouseEnter);
   container.addEventListener('dblclick', dblClick);
 
+  // Capture context menu position for paste support (especially mobile).
+  // On desktop, mouseDown (button=2) already sets lastClickPoint before contextmenu
+  // fires; this listener harmlessly overwrites it with the same position.
+  // On mobile (iOS synthetic / Android native), there's no preceding mousedown,
+  // so this listener is the only source of the position.
+  const workarea = document.getElementById('workarea')!;
+
+  workarea.addEventListener('contextmenu', (evt: MouseEvent) => {
+    const pt = getEventPoint(evt);
+
+    svgCanvas.setLastClickPoint(pt);
+  });
+
   if (isWeb()) {
     const onWindowScroll = (e: any) => {
       if (e.ctrlKey) e.preventDefault();

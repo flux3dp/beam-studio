@@ -79,6 +79,7 @@ jest.mock('@core/app/svgedit/layer/layerManager', () => ({
 const useIsMobile = jest.fn();
 
 jest.mock('@core/helpers/system-helper', () => ({
+  isIOS: () => false,
   useIsMobile: () => useIsMobile(),
 }));
 
