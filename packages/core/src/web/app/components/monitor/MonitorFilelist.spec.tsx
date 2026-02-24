@@ -44,7 +44,7 @@ describe('test MonitorFilelist', () => {
       files: ['fa', 'fb', 'fc'],
     });
 
-    const { container } = render(
+    const { container, getByText } = render(
       <MonitorContext value={{ shouldUpdateFileList: false } as any}>
         <MonitorFilelist path="path" />
       </MonitorContext>,
@@ -54,6 +54,14 @@ describe('test MonitorFilelist', () => {
       expect(mockLs).toHaveBeenCalledTimes(1);
       expect(mockLs).toHaveBeenLastCalledWith('path');
     });
+
+    // Wait for the directories and files to be rendered
+    await waitFor(() => {
+      expect(getByText('da')).toBeInTheDocument();
+      expect(getByText('db')).toBeInTheDocument();
+      expect(getByText('dc')).toBeInTheDocument();
+    });
+
     expect(container).toMatchSnapshot();
   });
 
