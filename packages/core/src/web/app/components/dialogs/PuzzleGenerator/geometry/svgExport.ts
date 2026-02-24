@@ -1,8 +1,10 @@
 import { dpmm } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
+import presprayArea from '@core/app/actions/canvas/prespray-area';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -13,6 +15,7 @@ import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { COLORS } from '../constants';
@@ -70,8 +73,13 @@ const createSvgString = ({ clipPathData, elementOffsetX = 0, height, pathData, w
   </svg>`;
 };
 
-const importLayer = async (layerName: string, color: string, svgOptions: SvgStringOptions): Promise<void> => {
-  await importSvgString(createSvgString(svgOptions), { layerName, type: 'layer' });
+const importLayer = async (
+  layerName: string,
+  color: string,
+  svgOptions: SvgStringOptions,
+  parentCmd?: IBatchCommand,
+): Promise<void> => {
+  await importSvgString(createSvgString(svgOptions), { layerName, parentCmd, type: 'layer' });
   await setLayerColor(layerName, color);
 };
 
@@ -191,6 +199,7 @@ const exportImageLayer = async (
   shapeType: ShapeType,
   geo: PuzzleGeometry,
   layout: ReturnType<typeof computeExportLayout>,
+  parentCmd?: IBatchCommand,
 ): Promise<void> => {
   const { image } = state;
 
@@ -237,6 +246,7 @@ const exportImageLayer = async (
   if (printingModules.has(targetModule)) {
     writeDataLayer(layerElement, 'module', targetModule);
     writeDataLayer(layerElement, 'fullcolor', true);
+    presprayArea.togglePresprayArea();
   }
 
   layerManager.setCurrentLayer(finalName);
@@ -291,7 +301,9 @@ const exportImageLayer = async (
   svgCanvas.setHref(imageEl, displayBase64);
   updateElementColor(imageEl);
   batchCmd.addSubCommand(new history.InsertElementCommand(imageEl));
-  svgCanvas.addCommandToHistory(batchCmd);
+
+  if (parentCmd) parentCmd.addSubCommand(batchCmd);
+  else undoManager.addCommandToHistory(batchCmd);
 };
 
 /**
@@ -306,8 +318,6 @@ export const exportToCanvas = async (
   typeConfig: PuzzleTypeConfig,
   geometry?: PuzzleGeometry,
 ): Promise<void> => {
-  if (!svgCanvas) throw new Error('SVG canvas not yet initialized — exportToCanvas called too early');
-
   // Use provided geometry or compute fresh
   const geo = geometry ?? computePuzzleGeometry(state, typeConfig.id);
   const layout = computeExportLayout(geo, state.border.enabled);
@@ -317,35 +327,51 @@ export const exportToCanvas = async (
   const innerCuts = [geo.edges.horizontalEdges, geo.edges.verticalEdges].filter(Boolean).join(' ');
   const clipPath = geo.meta.fillsBoundingBox ? undefined : geo.boundaryPath;
   const baseOpts = { height: layout.totalHeight, width: layout.totalWidth };
+  const batchCmd = new history.BatchCommand('Export Puzzle');
 
   // Export layers in order (bottom to top in layer panel)
 
   // RIGHT SIDE: Board Base (if border enabled)
   if (layout.hasBorder && geo.boardBasePath) {
-    await importLayer('Board Base', COLORS.exploded.boardBase, {
-      ...baseOpts,
-      elementOffsetX: layout.boardOffsetX,
-      pathData: geo.boardBasePath,
-    });
+    await importLayer(
+      'Board Base',
+      COLORS.exploded.boardBase,
+      {
+        ...baseOpts,
+        elementOffsetX: layout.boardOffsetX,
+        pathData: geo.boardBasePath,
+      },
+      batchCmd,
+    );
   }
 
   // RIGHT SIDE: Guide Lines on board base (if border and guideLines enabled)
   if (layout.hasBorder && state.border.guideLines && innerCuts) {
-    await importLayer('Guide Lines', COLORS.exploded.guideLines, {
-      ...baseOpts,
-      clipPathData: clipPath,
-      elementOffsetX: layout.boardOffsetX,
-      pathData: innerCuts,
-    });
+    await importLayer(
+      'Guide Lines',
+      COLORS.exploded.guideLines,
+      {
+        ...baseOpts,
+        clipPathData: clipPath,
+        elementOffsetX: layout.boardOffsetX,
+        pathData: innerCuts,
+      },
+      batchCmd,
+    );
   }
 
   // LEFT SIDE: Raised Edges frame (only if border enabled - separate frame layer)
   if (layout.hasBorder && geo.raisedEdgesPath) {
-    await importLayer('Raised Edges', COLORS.exploded.raisedEdges, {
-      ...baseOpts,
-      elementOffsetX: layout.raisedEdgesOffsetX,
-      pathData: geo.raisedEdgesPath,
-    });
+    await importLayer(
+      'Raised Edges',
+      COLORS.exploded.raisedEdges,
+      {
+        ...baseOpts,
+        elementOffsetX: layout.raisedEdgesOffsetX,
+        pathData: geo.raisedEdgesPath,
+      },
+      batchCmd,
+    );
   }
 
   // LEFT SIDE: Puzzle Pieces (always)
@@ -354,21 +380,28 @@ export const exportToCanvas = async (
   const puzzlePiecesPath = layout.hasBorder ? innerCuts : [geo.boundaryPath, innerCuts].filter(Boolean).join(' ');
 
   if (puzzlePiecesPath) {
-    await importLayer('Puzzle Pieces', COLORS.exploded.pieces, {
-      ...baseOpts,
-      clipPathData: clipPath,
-      elementOffsetX: layout.raisedEdgesOffsetX,
-      pathData: puzzlePiecesPath,
-    });
+    await importLayer(
+      'Puzzle Pieces',
+      COLORS.exploded.pieces,
+      {
+        ...baseOpts,
+        clipPathData: clipPath,
+        elementOffsetX: layout.raisedEdgesOffsetX,
+        pathData: puzzlePiecesPath,
+      },
+      batchCmd,
+    );
   }
 
   // IMAGE LAYER (top-most — imported last so it appears highest in the layer panel)
   // Skip if exportAs is 'none' — image is only for alignment, not export
   if (state.image.enabled && state.image.dataUrl && state.image.exportAs !== 'none') {
-    await exportImageLayer(state, typeConfig.id, geo, layout);
+    await exportImageLayer(state, typeConfig.id, geo, layout, batchCmd);
   }
 
   // Refresh layer panel to show new layers
   svgEditor.updateContextPanel();
   useLayerStore.getState().forceUpdate();
+
+  if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 };
