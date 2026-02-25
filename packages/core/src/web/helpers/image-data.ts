@@ -95,26 +95,29 @@ export const imageData = async (
       height: opts.height || image.bitmap.height,
       width: opts.width || image.bitmap.width,
     };
+
     // DownSampling
-    const imageDownsampling = useGlobalPreferenceStore.getState()['image_downsampling'];
+    if (!opts.isFullResolution) {
+      const imageDownsampling = useGlobalPreferenceStore.getState()['image_downsampling'];
 
-    if (imageDownsampling !== false && !opts.isFullResolution) {
-      const longSide = Math.max(size.width, size.height);
-      const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);
+      if (imageDownsampling !== false) {
+        const longSide = Math.max(size.width, size.height);
+        const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);
 
-      if (downRatio < 1) {
-        size.width = Math.round(size.width * downRatio);
-        size.height = Math.round(size.height * downRatio);
+        if (downRatio < 1) {
+          size.width = Math.round(size.width * downRatio);
+          size.height = Math.round(size.height * downRatio);
+        }
       }
-    }
 
-    if (size.width * size.height > MAX_IMAGE_PIXEL) {
-      const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
+      if (size.width * size.height > MAX_IMAGE_PIXEL) {
+        const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
 
-      size.width = Math.floor(size.width * downRatio);
-      size.height = Math.floor(size.height * downRatio);
+        size.width = Math.floor(size.width * downRatio);
+        size.height = Math.floor(size.height * downRatio);
 
-      console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+        console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+      }
     }
 
     resultCanvas.width = size.width;
@@ -155,23 +158,23 @@ export const imageData = async (
       const rotationFlag = getExifRotationFlag(arrayBuffer);
 
       // DownSampling
-      if (useGlobalPreferenceStore.getState()['image_downsampling']) {
-        if (!opts.isFullResolution) {
+      if (!opts.isFullResolution) {
+        if (useGlobalPreferenceStore.getState()['image_downsampling']) {
           const longSide = Math.max(size.width, size.height);
           const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);
 
           size.width = Math.round(size.width * downRatio);
           size.height = Math.round(size.height * downRatio);
         }
-      }
 
-      if (size.width * size.height > MAX_IMAGE_PIXEL) {
-        const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
+        if (size.width * size.height > MAX_IMAGE_PIXEL) {
+          const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
 
-        size.width = Math.floor(size.width * downRatio);
-        size.height = Math.floor(size.height * downRatio);
+          size.width = Math.floor(size.width * downRatio);
+          size.height = Math.floor(size.height * downRatio);
 
-        console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+          console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+        }
       }
 
       let w = size.width;
