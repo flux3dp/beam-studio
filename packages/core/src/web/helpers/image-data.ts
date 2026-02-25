@@ -5,13 +5,31 @@ import exifr from 'exifr';
 
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import imageProcessor from '@core/implementations/imageProcessor';
+import type { IImageDataResult } from '@core/interfaces/IImage';
 
 import grayScale from './grayscale';
 import getExifRotationFlag from './image/getExifRotationFlag';
 
 const MAX_IMAGE_PIXEL = 1e8;
 
-export default async (source: Blob | string, opts: any) => {
+export const imageData = async (
+  source: Blob | string,
+  opts: {
+    grayscale?: {
+      is_rgba: boolean;
+      is_shading: boolean;
+      is_svg: boolean;
+      threshold: number;
+    };
+    height?: number;
+    isFullResolution?: boolean;
+    onComplete?: (result: IImageDataResult) => Promise<void> | void;
+    purpose?: string;
+    rotationFlag?: number;
+    type?: string;
+    width?: number;
+  },
+) => {
   opts.onComplete = opts.onComplete || (() => {});
   opts.type = opts.type || 'image/png';
 
@@ -31,7 +49,7 @@ export default async (source: Blob | string, opts: any) => {
     const isCMYK = exifrData?.ColorSpaceData === 'CMYK';
     const resp = await fetch(url);
 
-    if (opts?.purpose !== 'spliting' && isCMYK) {
+    if (opts?.purpose !== 'splitting' && isCMYK) {
       const blob = await resp.blob();
       const jpgBase64 = await new Promise<string>((resolve) => {
         const fileReader = new FileReader();
@@ -114,12 +132,12 @@ export default async (source: Blob | string, opts: any) => {
 
     const pngBase64 = resultCanvas.toDataURL('image/png');
 
-    await opts.onComplete({
+    await opts.onComplete?.({
       blob: new Blob([resultImageData.data], { type: opts.type }),
+      canvas: resultCanvas,
       data: resultImageData,
       imageBinary: resultImageData.data,
       pngBase64,
-      resultCanvas,
       size,
     });
   } else {
@@ -131,7 +149,7 @@ export default async (source: Blob | string, opts: any) => {
         height: opts.height || e.target.naturalHeight,
         width: opts.width || e.target.naturalWidth,
       };
-      let imageBinary;
+      let imageBinary: Uint8ClampedArray;
       const response = await fetch(img.src);
       const arrayBuffer = await response.arrayBuffer();
       const rotationFlag = getExifRotationFlag(arrayBuffer);
@@ -215,7 +233,7 @@ export default async (source: Blob | string, opts: any) => {
       imageBinary = ctx.getImageData(0, 0, w, h).data;
 
       if (typeof opts.grayscale !== 'undefined') {
-        imageBinary = grayScale(imageBinary, opts.grayscale);
+        imageBinary = grayScale(imageBinary, opts.grayscale) as unknown as Uint8ClampedArray;
       }
 
       imageData.data.set(imageBinary);
@@ -224,7 +242,7 @@ export default async (source: Blob | string, opts: any) => {
 
       const pngBase64 = canvas.toDataURL('image/png');
 
-      await opts.onComplete({
+      await opts.onComplete?.({
         blob: new Blob([imageData.data], { type: opts.type }),
         canvas,
         data: imageData,
@@ -246,3 +264,5 @@ export default async (source: Blob | string, opts: any) => {
     }
   }
 };
+
+export default imageData;
