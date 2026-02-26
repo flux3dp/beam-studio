@@ -94,13 +94,6 @@ test('test beambox-preference', () => {
         '5': [0, -13.37],
         '15': [0, 0],
       },
-      fbm2: {
-        '4': [81.4, 7.9],
-        '7': [15.5, -37.1],
-        '8': [19.7, -1.1],
-        '9': [30.2, -1.1],
-        '15': [0, 0],
-      },
     },
     mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
     'multipass-compensation': true,

@@ -1,6 +1,6 @@
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { GlobalPreference } from '@core/interfaces/Preference';
-import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import { defaultOffsetsForStore } from '@core/app/constants/layer-module/moduleOffsets';
 import { getOS } from '@core/helpers/getOS';
 
 const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
@@ -32,7 +32,7 @@ const state: GlobalPreference = {
   'keep-preview-result': false,
   low_power: 10,
   model: 'fbb1b',
-  'module-offsets': moduleOffsets,
+  'module-offsets': defaultOffsetsForStore,
   mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
   'multipass-compensation': true,
   'one-way-printing': true,

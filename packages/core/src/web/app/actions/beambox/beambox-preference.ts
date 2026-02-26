@@ -3,8 +3,8 @@ import constant from '@core/app/actions/beambox/constant';
 import { CHUCK_ROTARY_DIAMETER, RotaryType } from '@core/app/constants/addOn';
 import { TabEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-import type { ModuleOffsets } from '@core/app/constants/layer-module/module-offsets';
-import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import type { ModuleOffsets } from '@core/app/constants/layer-module/moduleOffsets';
+import { defaultOffsetsForStore } from '@core/app/constants/layer-module/moduleOffsets';
 import { getOS } from '@core/helpers/getOS';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
@@ -49,7 +49,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'keep-preview-result': false,
   low_power: 10,
   model: 'fbb1b',
-  'module-offsets': moduleOffsets,
+  'module-offsets': defaultOffsetsForStore,
   mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
   'multipass-compensation': true,
   'one-way-printing': true,
@@ -122,16 +122,6 @@ class BeamboxPreferenceClass {
         if (!preference['module-offsets'].ado1) {
           // migrate module-offsets from one level (ador only) to two levels
           preference['module-offsets'] = { ado1: preference['module-offsets'] as ModuleOffsets['ado1'] };
-        } else if (
-          preference['module-offsets'].fbm2 &&
-          !preference['module-offsets'].fbm2[LayerModule.LASER_UNIVERSAL]?.[2] &&
-          moduleOffsets.fbm2?.[LayerModule.LASER_UNIVERSAL]?.[2]
-        ) {
-          // remove legacy default offsets from development builds
-          delete preference['module-offsets'].fbm2;
-        } else if (preference['module-offsets'].fbm2?.[LayerModule.LASER_UNIVERSAL]) {
-          // This is for dev, can be removed after setting default
-          delete preference['module-offsets'].fbm2[LayerModule.LASER_UNIVERSAL];
         }
       }
 

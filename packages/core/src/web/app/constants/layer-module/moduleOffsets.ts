@@ -18,8 +18,10 @@ export type DeviceModuleOffsets = Partial<Record<LayerModuleType, OffsetTuple>>;
 
 export type ModuleOffsets = Partial<Record<WorkAreaModel, DeviceModuleOffsets>>;
 
+export const modelsWithStores = ['fbm2', 'fuv1'] as const;
+
 // Default Module Boundary
-const moduleOffsets: ModuleOffsets = {
+export const defaultModuleOffsets: ModuleOffsets = {
   ado1: {
     [LayerModule.LASER_10W_DIODE]: [0, 0],
     [LayerModule.LASER_20W_DIODE]: [0, 0],
@@ -42,4 +44,12 @@ const moduleOffsets: ModuleOffsets = {
   },
 };
 
-export default moduleOffsets;
+export const defaultOffsetsForStore = Object.entries(defaultModuleOffsets).reduce((acc, [model, offsets]) => {
+  if (!modelsWithStores.includes(model as WorkAreaModel)) {
+    acc[model as WorkAreaModel] = offsets;
+  }
+
+  return acc;
+}, {} as ModuleOffsets);
+
+export default defaultModuleOffsets;

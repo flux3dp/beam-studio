@@ -2,8 +2,8 @@ import { round } from 'remeda';
 
 import { boundaryDrawer } from '@core/app/actions/canvas/boundaryDrawer';
 import { getLayerModuleName, LayerModule, type LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import type { DeviceModuleOffsets, ModuleOffsets, OffsetTuple } from '@core/app/constants/layer-module/module-offsets';
-import moduleOffsets from '@core/app/constants/layer-module/module-offsets';
+import type { DeviceModuleOffsets, ModuleOffsets, OffsetTuple } from '@core/app/constants/layer-module/moduleOffsets';
+import defaultModuleOffsets, { modelsWithStores } from '@core/app/constants/layer-module/moduleOffsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -11,7 +11,6 @@ import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore
 import deviceMaster from '../device-master';
 
 const devicesModuleOffsetsCache: Record<string, DeviceModuleOffsets> = {};
-const modelsWithStores = ['fbm2', 'fuv1'] as const;
 
 export const getAllOffsetsFromDevices = async (useCache = true): Promise<DeviceModuleOffsets | null> => {
   if (!deviceMaster.currentDevice || !modelsWithStores.includes(deviceMaster.currentDevice.info.model)) return null;
@@ -45,7 +44,7 @@ export const getAllOffsets = async (
   model: WorkAreaModel,
   { useCache = true }: { useCache?: boolean } = {},
 ): Promise<DeviceModuleOffsets> => {
-  const defaultOffsets = moduleOffsets[model] ?? {};
+  const defaultOffsets = defaultModuleOffsets[model] ?? {};
 
   if (modelsWithStores.includes(model)) return (await getAllOffsetsFromDevices(useCache)) ?? defaultOffsets;
 
@@ -78,7 +77,7 @@ export const getModuleOffsetsFromStore = ({
   offsets = useGlobalPreferenceStore.getState()['module-offsets'],
   workarea = useDocumentStore.getState().workarea,
 }: GetModuleOffsetsArgs = {}): OffsetTuple => {
-  const defaultOffset = moduleOffsets[workarea]?.[module] ?? [0, 0];
+  const defaultOffset = defaultModuleOffsets[workarea]?.[module] ?? [0, 0];
   const customOffset = offsets?.[workarea]?.[module] ?? defaultOffset;
 
   return isRelative ? [customOffset[0] - defaultOffset[0], customOffset[1] - defaultOffset[1]] : customOffset;
@@ -95,7 +94,7 @@ export const getModuleOffsets = async ({
     return getModuleOffsetsFromStore({ isRelative, module, offsets, workarea });
   }
 
-  const defaultOffset = moduleOffsets[workarea]?.[module] ?? [0, 0];
+  const defaultOffset = defaultModuleOffsets[workarea]?.[module] ?? [0, 0];
   const customOffset = (await getModuleOffsetsFromDevices(module, { useCache })) ?? defaultOffset;
 
   return isRelative ? [customOffset[0] - defaultOffset[0], customOffset[1] - defaultOffset[1]] : customOffset;
@@ -120,7 +119,7 @@ export const updateModuleOffsetsInDevice = async (
   if (!workarea) workarea = deviceMaster.currentDevice.info.model;
 
   const { uuid } = deviceMaster.currentDevice.info;
-  const defaultOffset = moduleOffsets[workarea]?.[module];
+  const defaultOffset = defaultModuleOffsets[workarea]?.[module];
 
   if (defaultOffset && isRelative) {
     newOffsets = [newOffsets[0] + defaultOffset[0], newOffsets[1] + defaultOffset[1]];
@@ -153,7 +152,7 @@ export const updateModuleOffsetsInStore = (
     workarea = useDocumentStore.getState().workarea,
   }: UpdateModuleOffsetsArgs = {},
 ): ModuleOffsets => {
-  const defaultOffset = moduleOffsets[workarea]?.[module];
+  const defaultOffset = defaultModuleOffsets[workarea]?.[module];
 
   if (!offsets[workarea]) {
     offsets[workarea] = {};
