@@ -1,3 +1,4 @@
+import paper from 'paper';
 import { match } from 'ts-pattern';
 
 import {
@@ -177,6 +178,98 @@ const getEdgeData = (
   return { flip, jitter, x1, x2, y1, y2 };
 };
 
+/** Convert a Paper.js Path to SVG curve/line commands (no leading M). */
+const paperPathToCurveCommands = (path: paper.Path): string => {
+  const parts: string[] = [];
+
+  for (let i = 0; i < path.segments.length - 1; i++) {
+    const seg = path.segments[i];
+    const next = path.segments[i + 1];
+    const isLinear = seg.handleOut.isZero() && next.handleIn.isZero();
+
+    if (isLinear) {
+      parts.push(`L ${fmt(next.point.x)} ${fmt(next.point.y)}`);
+    } else {
+      const cp1x = seg.point.x + seg.handleOut.x;
+      const cp1y = seg.point.y + seg.handleOut.y;
+      const cp2x = next.point.x + next.handleIn.x;
+      const cp2y = next.point.y + next.handleIn.y;
+
+      parts.push(`C ${fmt(cp1x)} ${fmt(cp1y)} ${fmt(cp2x)} ${fmt(cp2y)} ${fmt(next.point.x)} ${fmt(next.point.y)}`);
+    }
+  }
+
+  return parts.join(' ');
+};
+
+/**
+ * Trim an edge path at boundary crossings, keeping only segments connected to the start/end vertices.
+ * Uses Paper.js getIntersections + splitAt for exact Bézier curve splitting.
+ *
+ * Returns:
+ * - startPathD: SVG curve commands (no M) for the segment connected to the start vertex
+ * - endPathD: Full SVG (M + commands) for the segment connected to the end vertex
+ */
+const trimEdgePath = (
+  edgePath: paper.Path,
+  boundaryPath: paper.PathItem,
+  startInside: boolean,
+  endInside: boolean,
+): { endPathD: null | string; startPathD: null | string } => {
+  const intersections = edgePath.getIntersections(boundaryPath);
+
+  if (intersections.length === 0) {
+    // No actual crossings — return full path if start is inside, else nothing
+    return {
+      endPathD: null,
+      startPathD: startInside ? paperPathToCurveCommands(edgePath) : null,
+    };
+  }
+
+  const offsets = intersections.map((ix) => ix.offset).sort((a, b) => a - b);
+
+  console.log('Intersections at offsets:', offsets);
+
+  // Deduplicate near-coincident intersections (tangent touches)
+  const epsilon = 0.001;
+  const uniqueOffsets = offsets.filter((v, i) => i === 0 || v - offsets[i - 1] > epsilon);
+
+  let startPathD: null | string = null;
+  let endPathD: null | string = null;
+
+  // Start segment: from edge start to first crossing
+  if (startInside && uniqueOffsets.length > 0 && uniqueOffsets[0] > epsilon) {
+    const clone = edgePath.clone({ insert: false }) as paper.Path;
+    const tail = clone.splitAt(uniqueOffsets[0]);
+
+    if (clone.segments.length > 1) {
+      startPathD = paperPathToCurveCommands(clone);
+    }
+
+    clone.remove();
+
+    if (tail) tail.remove();
+  }
+
+  // End segment: from last crossing to edge end
+  if (endInside && uniqueOffsets.length > 0 && uniqueOffsets[uniqueOffsets.length - 1] < edgePath.length - epsilon) {
+    const clone = edgePath.clone({ insert: false }) as paper.Path;
+    const tail = clone.splitAt(uniqueOffsets[uniqueOffsets.length - 1]) as null | paper.Path;
+
+    if (tail && tail.segments.length > 1) {
+      const startPt = tail.segments[0].point;
+
+      endPathD = `M ${fmt(startPt.x)} ${fmt(startPt.y)} ${paperPathToCurveCommands(tail)}`;
+    }
+
+    clone.remove();
+
+    if (tail) tail.remove();
+  }
+
+  return { endPathD, startPathD };
+};
+
 // --- Exported Functions ---
 /** Generate jitter coefficients for all edges to create natural-looking tabs */
 export const generateJitterMap = (
@@ -223,6 +316,8 @@ export const generatePuzzleEdges = (
   state: PuzzleState,
   layout: PuzzleLayout,
   mergeGroups: MergeGroup[] = [],
+  boundaryPathData: string,
+  visibility: PieceVisibility[] = [],
 ): PuzzleEdges => {
   const jitterMap = generateJitterMap(state.rows, state.columns, state.orientation);
   const t = getTabSizeFraction(state.tabSize);
@@ -237,34 +332,67 @@ export const generatePuzzleEdges = (
     ),
   );
 
+  // Pre-build O(1) visibility lookup — pieces with visibleRatio < 1 are near the boundary
+  const visMap = new Map(visibility.map((v) => [`${v.row}-${v.col}`, v.visibleRatio]));
+  const isPieceClipped = (r: number, c: number) => (visMap.get(`${r}-${c}`) ?? 0) < 1;
+
+  // Set up Paper.js for boundary-crossing edge trimming (non-rectangle shapes)
+  const paperProject: paper.Project = new paper.Project(document.createElement('canvas'));
+  const paperBoundary: paper.PathItem = new paper.Path(boundaryPathData);
+
   const genEdges = (isVert: boolean) => {
     const paths: string[] = [];
     const [maj, sec] = isVert ? [state.columns, state.rows] : [state.rows, state.columns];
 
     for (let i = 1; i < maj; i++) {
       let data = '';
-      let active = false;
+      let isDrawing = false;
 
       for (let j = 0; j < sec; j++) {
         const [r1, c1, r2, c2] = isVert ? [j, i - 1, j, i] : [i - 1, j, i, j];
 
         if (sharedEdges.has(`${r1}-${c1}:${r2}-${c2}`)) {
-          active = false;
+          isDrawing = false;
           continue;
         }
 
         const { flip, jitter, x1, x2, y1, y2 } = getEdgeData(r1, c1, isVert, state, layout, jitterMap);
 
-        if (!active) {
-          data += ` M ${fmt(x1)} ${fmt(y1)}`;
-          active = true;
-        }
+        // Trim edges near the boundary: if both adjacent pieces are not fully inside,
+        // the edge might cross the boundary and tabs could create isolated slivers
+        const needsTrim = t > 0 && isPieceClipped(r1, c1) && isPieceClipped(r2, c2);
 
-        data +=
-          t > 0
-            ? //
-              ` ${generateTabCurve(x1, y1, x2, y2, t, flip, jitter)}`
-            : ` L ${fmt(x2)} ${fmt(y2)}`;
+        if (needsTrim) {
+          const edgeSvg = `M ${fmt(x1)} ${fmt(y1)} ${generateTabCurve(x1, y1, x2, y2, t, flip, jitter)}`;
+          const edgePath = new paper.Path(edgeSvg);
+          const startInside = paperBoundary.contains(new paper.Point(x1, y1));
+          const endInside = paperBoundary.contains(new paper.Point(x2, y2));
+          const { endPathD, startPathD } = trimEdgePath(edgePath, paperBoundary!, startInside, endInside);
+
+          if (startPathD) {
+            if (!isDrawing) {
+              data += ` M ${fmt(x1)} ${fmt(y1)}`;
+            }
+
+            data += ` ${startPathD}`;
+          }
+
+          if (endPathD) {
+            data += ` ${endPathD}`;
+            isDrawing = true; // cursor is at (x2, y2)
+          } else {
+            isDrawing = false;
+          }
+
+          edgePath.remove();
+        } else {
+          if (!isDrawing) {
+            data += ` M ${fmt(x1)} ${fmt(y1)}`;
+            isDrawing = true;
+          }
+
+          data += t > 0 ? ` ${generateTabCurve(x1, y1, x2, y2, t, flip, jitter)}` : ` L ${fmt(x2)} ${fmt(y2)}`;
+        }
       }
 
       if (data) {
@@ -275,10 +403,17 @@ export const generatePuzzleEdges = (
     return paths.join('');
   };
 
-  return {
+  const result = {
     horizontalEdges: genEdges(false),
     verticalEdges: genEdges(true),
   };
+
+  // Clean up Paper.js
+  if (paperBoundary) paperBoundary.remove();
+
+  if (paperProject) paperProject.remove();
+
+  return result;
 };
 
 export const calculateAllPieceVisibilities = (
