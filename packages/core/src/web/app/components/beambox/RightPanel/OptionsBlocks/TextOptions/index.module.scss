@@ -79,6 +79,14 @@
     margin-bottom: 0;
   }
 
+  .text-align {
+    margin-right: 2px;
+
+    &.active > span {
+      color: #1890ff;
+    }
+  }
+
   .vertical-text {
     margin-left: auto;
     margin-right: 4px;
@@ -87,6 +95,14 @@
       color: #1890ff;
     }
   }
+
+  .text-content {
+    margin-top: 8px;
+  }
+}
+
+.text-content {
+  margin-top: 8px;
 }
 
 // Font family display for system fonts without preview images

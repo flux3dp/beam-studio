@@ -288,6 +288,10 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
          id:
       </div>
     </div>
+    <div>
+      mock-text-content-block textElement:
+      TEXT
+    </div>
   </div>
 </div>
 `;
@@ -541,6 +545,10 @@ exports[`TextOptions Mobile view should render correctly for multi-line text in 
      label:
     Vertical text
     <div />
+  </div>
+  <div>
+    mock-text-content-block textElement:
+    TEXT
   </div>
 </div>
 `;
@@ -796,6 +804,10 @@ exports[`TextOptions Mobile view should render correctly in mobile mode 1`] = `
      label:
     Vertical text
     <div />
+  </div>
+  <div>
+    mock-text-content-block textElement:
+    TEXT
   </div>
 </div>
 `;
