@@ -8,6 +8,7 @@ export type CanvasMouseOperationMode =
   | 'auto-focus'
   | 'curve-engraving'
   | 'ellipse'
+  | 'fit-text'
   | 'line'
   | 'path'
   | 'pathedit' // intermediate ?

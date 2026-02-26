@@ -17,7 +17,7 @@ exports[`test OffsetSettings should render correctly with printer module 1`] = `
         <div
           aria-labelledby="test-id"
           aria-modal="true"
-          class="ant-modal css-dev-only-do-not-override-hash ant-zoom-appear ant-zoom-appear-prepare ant-zoom"
+          class="ant-modal css-dev-only-do-not-override-hash"
           role="dialog"
           style="width: 0px;"
         >

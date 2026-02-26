@@ -51,6 +51,17 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
     </div>
     <div
       class="container"
+      id="left-FitText"
+      title="Fit Text"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
       id="left-Element"
       title="Elements (E)"
     >
@@ -197,6 +208,17 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       class="container"
       id="left-Text"
       title="Text (T)"
+    >
+      <span
+        class="ant-badge badge css-dev-only-do-not-override-hash"
+      >
+        <svgr-url />
+      </span>
+    </div>
+    <div
+      class="container"
+      id="left-FitText"
+      title="Fit Text"
     >
       <span
         class="ant-badge badge css-dev-only-do-not-override-hash"

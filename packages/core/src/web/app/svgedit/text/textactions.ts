@@ -15,6 +15,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import undoManager from '../history/undoManager';
 import { getEventPageXY } from '../interaction/mouse/utils/getEventPoint';
 import { getBBox } from '../utils/getBBox';
 
@@ -44,28 +45,17 @@ const { NS } = svgedit;
 class TextActions {
   public isEditing = false;
 
-  private curtext: SVGTextElement;
-
-  private textinput: HTMLInputElement;
-
+  private curtext: null | SVGTextElement = null;
+  private textinput!: HTMLInputElement;
   private cursor: Element | null = null;
-
-  private selblock;
-
-  private blinker: NodeJS.Timeout;
-
+  private selblock: null | SVGPathElement = null;
+  private blinker: NodeJS.Timeout | null = null;
   private chardata: BBox[][] = [];
-
-  private textbb;
-
-  private matrix;
-
-  private lastX;
-
-  private lastY;
-
-  private allowDbl;
-
+  private textbb: BBox = { height: 0, width: 0, x: 0, y: 0 };
+  private matrix: DOMMatrix | null = null;
+  private lastX: number = 0;
+  private lastY: number = 0;
+  private allowDbl: boolean = false;
   private isVertical = false;
 
   private fontSize = 100;
@@ -74,7 +64,7 @@ class TextActions {
 
   private valueBeforeEdit = '';
 
-  private screenToPt(xIn, yIn) {
+  private screenToPt(xIn: number, yIn: number) {
     const out = {
       x: xIn,
       y: yIn,
@@ -95,7 +85,7 @@ class TextActions {
     return out;
   }
 
-  private ptToScreen(xIn, yIn) {
+  private ptToScreen(xIn: number, yIn: number) {
     const out = {
       x: xIn,
       y: yIn,
@@ -133,13 +123,16 @@ class TextActions {
   private calculateChardata() {
     const { chardata, curtext, fontSize, isVertical, textbb, textinput } = this;
     const calculateMultilineTextChardata = () => {
+      if (!curtext) return;
+
       const tspans = Array.from(curtext.childNodes).filter(
-        (child: Element) => child.tagName === 'tspan',
+        (child): child is SVGTextContentElement =>
+          child.nodeType === Node.ELEMENT_NODE && (child as Element).tagName === 'tspan',
       ) as SVGTextContentElement[];
       const rowNumbers = tspans.length;
       const charHeight = fontSize;
       const lines = textinput.value.split('\u0085');
-      let lastRowX = null;
+      let lastRowX: null | number = null;
 
       // No contents
       if (rowNumbers === 0) {
@@ -170,7 +163,7 @@ class TextActions {
       let firstRowMaxWidth = 0;
 
       if (this.isVertical && rowNumbers > 0) {
-        for (let i = 0; i < tspans[0].textContent.length; i += 1) {
+        for (let i = 0; i < tspans[0].textContent!.length; i += 1) {
           const start = tspans[0].getStartPositionOfChar(i);
           const end = tspans[0].getEndPositionOfChar(i);
 
@@ -181,14 +174,14 @@ class TextActions {
       for (let i = 0; i < rowNumbers; i += 1) {
         chardata.push([]);
 
-        let start;
-        let end;
+        let start: DOMPoint | undefined;
+        let end: DOMPoint | undefined;
         const tspanbb = getBBox(tspans[i], { ignoreTransform: true });
 
         // temporarily set text content to get bbox
         if (lines[i] === '') tspans[i].textContent = 'a';
 
-        for (let j = 0; j < tspans[i].textContent.length; j += 1) {
+        for (let j = 0; j < tspans[i].textContent!.length; j += 1) {
           start = tspans[i].getStartPositionOfChar(j);
           end = tspans[i].getEndPositionOfChar(j);
 
@@ -206,12 +199,12 @@ class TextActions {
           let width = end.x - start.x;
 
           if (isVertical) {
-            width = i === 0 ? firstRowMaxWidth : lastRowX - start.x;
+            width = i === 0 ? firstRowMaxWidth : lastRowX! - start!.x;
           }
 
           let y: number;
 
-          if (isVertical) y = start.y - charHeight;
+          if (isVertical) y = start!.y - charHeight;
           else if (svgedit.browser?.isChrome() && lines[i] !== '') y = tspanbb.y;
           else y = textbb.y + charHeight * i;
 
@@ -229,19 +222,19 @@ class TextActions {
           let width = 0;
 
           if (isVertical) {
-            width = i === 0 ? firstRowMaxWidth : lastRowX - start.x;
+            width = i === 0 ? firstRowMaxWidth : lastRowX! - start!.x;
           }
 
           let y: number;
 
-          if (isVertical) y = end.y;
+          if (isVertical) y = end!.y;
           else if (svgedit.browser?.isChrome()) y = tspanbb.y;
           else y = textbb.y + charHeight * i;
 
           chardata[i].push({
             height: isVertical ? 0 : charHeight,
             width,
-            x: isVertical ? start.x : end.x,
+            x: isVertical ? start!.x : end!.x,
             y,
           });
         } else {
@@ -249,7 +242,7 @@ class TextActions {
           tspans[i].textContent = '';
         }
 
-        lastRowX = start.x;
+        lastRowX = start!.x;
       }
     };
 
@@ -308,6 +301,8 @@ class TextActions {
     };
 
     const calculateTextPathChardata = () => {
+      if (!curtext) return;
+
       const charNum = curtext.getNumberOfChars();
       const firstRow = [] as BBox[]; // The first and the only row for text path
 
@@ -373,7 +368,7 @@ class TextActions {
     }
   }
 
-  private indexToRowAndIndex(index) {
+  private indexToRowAndIndex(index: number) {
     let rowIndex = 0;
 
     if (!this.chardata || this.chardata.length === 0) {
@@ -487,7 +482,7 @@ class TextActions {
     return '';
   };
 
-  private setSelection(start, end, skipInput = false) {
+  private setSelection(start: number, end: number, skipInput = false) {
     if (start === end) {
       this.setCursor(end);
 
@@ -498,10 +493,10 @@ class TextActions {
       this.textinput.setSelectionRange(start, end);
     }
 
-    this.selblock = document.getElementById('text_selectblock');
+    this.selblock = document.getElementById('text_selectblock') as unknown as null | SVGPathElement;
 
     if (!this.selblock && document.getElementById('text_cursor')) {
-      this.selblock = document.createElementNS(NS.SVG, 'path');
+      this.selblock = document.createElementNS(NS.SVG, 'path') as unknown as SVGPathElement;
       svgedit.utilities.assignAttributes(this.selblock, {
         fill: 'green',
         id: 'text_selectblock',
@@ -511,7 +506,7 @@ class TextActions {
       svgedit.utilities.getElem('selectorParentGroup').appendChild(this.selblock);
     }
 
-    this.cursor.setAttribute('visibility', 'hidden');
+    this.cursor?.setAttribute('visibility', 'hidden');
 
     const dString = this.calculateSelectionBlockPathD(start, end);
 
@@ -523,7 +518,7 @@ class TextActions {
     }
   }
 
-  private getIndexFromPoint(mouseX, mouseY) {
+  private getIndexFromPoint(mouseX: number, mouseY: number) {
     // Position cursor here
     const svgroot = document.getElementById('svgroot') as unknown as SVGSVGElement;
     const pt = svgroot.createSVGPoint();
@@ -537,10 +532,10 @@ class TextActions {
     }
 
     // Determine if cursor should be on left or right of character
-    let charpos = this.curtext.getCharNumAtPosition(pt);
+    let charpos = this.curtext!.getCharNumAtPosition(pt);
     let rowIndex = 0;
 
-    this.textbb = getBBox(this.curtext, { ignoreTransform: true });
+    this.textbb = getBBox(this.curtext!, { ignoreTransform: true });
 
     if (charpos < 0) {
       // Out of text range, look at mouse coords
@@ -591,12 +586,12 @@ class TextActions {
     return charpos + rowIndex;
   }
 
-  private setCursorFromPoint(mouse_x, mouse_y) {
-    this.setCursor(this.getIndexFromPoint(mouse_x, mouse_y));
+  private setCursorFromPoint(mouseX: number, mouseY: number) {
+    this.setCursor(this.getIndexFromPoint(mouseX, mouseY));
   }
 
-  private setEndSelectionFromPoint(x, y, apply = false) {
-    const i1 = this.textinput.selectionStart;
+  private setEndSelectionFromPoint(x: number, y: number, apply = false) {
+    const i1 = this.textinput.selectionStart!;
     const i2 = this.getIndexFromPoint(x, y);
 
     if (i2 < 0) {
@@ -610,7 +605,7 @@ class TextActions {
   }
 
   private moveCursorLastRow = () => {
-    const res = this.indexToRowAndIndex(this.textinput.selectionEnd);
+    const res = this.indexToRowAndIndex(this.textinput.selectionEnd!);
     const { index } = res;
     let { rowIndex } = res;
 
@@ -631,12 +626,12 @@ class TextActions {
   };
 
   private moveCursorNextRow = () => {
-    const res = this.indexToRowAndIndex(this.textinput.selectionEnd);
+    const res = this.indexToRowAndIndex(this.textinput.selectionEnd!);
     const { index } = res;
     let { rowIndex } = res;
 
     if (rowIndex === this.chardata.length - 1) {
-      this.textinput.selectionEnd += this.chardata[rowIndex].length - index - 1;
+      this.textinput.selectionEnd = this.textinput.selectionEnd! + this.chardata[rowIndex].length - index - 1;
       this.textinput.selectionStart = this.textinput.selectionEnd;
     } else {
       let newCursorIndex = 0;
@@ -652,10 +647,12 @@ class TextActions {
   };
 
   dbClickSelectAll = (): void => {
-    this.setSelection(0, this.curtext.textContent.length);
+    if (!this.curtext) return;
+
+    this.setSelection(0, this.curtext.textContent?.length ?? 0);
   };
 
-  private selectWord(evt) {
+  private selectWord(evt: MouseEvent) {
     if (!this.allowDbl || !this.curtext) {
       return;
     }
@@ -671,7 +668,7 @@ class TextActions {
     const pt = this.screenToPt(mouseX, mouseY);
 
     const index = this.getIndexFromPoint(pt.x, pt.y);
-    const str = this.curtext.textContent;
+    const str = this.curtext.textContent!;
     const first = str.substr(0, index).replace(/[a-z0-9]+$/i, '').length;
     const m = str.substr(index).match(/^[a-z0-9]+/i);
     const last = (m ? m[0].length : 0) + index;
@@ -679,20 +676,20 @@ class TextActions {
     this.setSelection(first, last);
   }
 
-  select(elem) {
+  select(elem: SVGTextElement) {
     this.curtext = elem;
     this.setInputValueFromCurtext();
     this.toEditMode(true);
   }
 
-  start(elem) {
+  start(elem: SVGTextElement) {
     this.curtext = elem;
     this.setInputValueFromCurtext();
     this.toEditMode();
   }
 
   setInputValueFromCurtext() {
-    const { curtext } = this;
+    const curtext = this.curtext!;
     const multiLineTextContent = Array.from(curtext.childNodes)
       .filter((child) => ['textPath', 'tspan'].includes(child.nodeName))
       .map((child) => child.textContent)
@@ -701,7 +698,7 @@ class TextActions {
     this.textinput.value = multiLineTextContent;
   }
 
-  mouseDown(evt, mouseTarget, startX: number, startY: number) {
+  mouseDown(evt: MouseEvent, mouseTarget: EventTarget, startX: number, startY: number) {
     const pt = this.screenToPt(startX, startY);
 
     console.log('textaction mousedown');
@@ -719,7 +716,7 @@ class TextActions {
     this.setEndSelectionFromPoint(pt.x, pt.y);
   }
 
-  mouseUp(evt, mouseX, mouseY) {
+  mouseUp(evt: MouseEvent, mouseX: number, mouseY: number) {
     const pt = this.screenToPt(mouseX, mouseY);
 
     this.setEndSelectionFromPoint(pt.x, pt.y, true);
@@ -729,11 +726,12 @@ class TextActions {
     //  && !svgedit.math.rectsIntersect(transbb, {x: pt.x, y: pt.y, width:0, height:0})) {
     //  textActions.toSelectMode(true);
     //  }
-    const { curtext, lastX, lastY } = this;
+    const curtext = this.curtext!;
+    const { lastX, lastY } = this;
 
     if (
       evt.target !== curtext &&
-      evt.target.parentNode !== curtext &&
+      (evt.target as Node).parentNode !== curtext &&
       mouseX < lastX + 2 &&
       mouseX > lastX - 2 &&
       mouseY < lastY + 2 &&
@@ -755,7 +753,7 @@ class TextActions {
       } else if (this.textinput.selectionEnd !== this.textinput.selectionStart) {
         return;
       } else {
-        cursorIndex = this.textinput.selectionEnd;
+        cursorIndex = this.textinput.selectionEnd!;
       }
     }
 
@@ -784,9 +782,9 @@ class TextActions {
 
     if (!this.blinker) {
       this.blinker = setInterval(() => {
-        const show = this.cursor.getAttribute('display') === 'none';
+        const show = this.cursor?.getAttribute('display') === 'none';
 
-        this.cursor.setAttribute('display', show ? 'inline' : 'none');
+        this.cursor?.setAttribute('display', show ? 'inline' : 'none');
       }, 600);
     }
 
@@ -813,7 +811,8 @@ class TextActions {
   }
 
   hideCursor() {
-    clearInterval(this.blinker);
+    if (this.blinker) clearInterval(this.blinker);
+
     this.blinker = null;
     document.getElementById('text_cursor')?.remove();
     document.getElementById('text_selectblock')?.remove();
@@ -823,7 +822,7 @@ class TextActions {
     const { isVertical, textinput } = this;
 
     if (isVertical) {
-      textinput.selectionEnd = Math.max(textinput.selectionEnd - 1, 0);
+      textinput.selectionEnd = Math.max(textinput.selectionEnd! - 1, 0);
       textinput.selectionStart = textinput.selectionEnd;
     } else {
       this.moveCursorLastRow();
@@ -834,7 +833,7 @@ class TextActions {
     const { isVertical, textinput } = this;
 
     if (isVertical) {
-      textinput.selectionEnd += 1;
+      textinput.selectionEnd = textinput.selectionEnd! + 1;
       textinput.selectionStart = textinput.selectionEnd;
     } else {
       this.moveCursorNextRow();
@@ -847,7 +846,7 @@ class TextActions {
     if (isVertical) {
       this.moveCursorNextRow();
     } else {
-      textinput.selectionEnd = Math.max(textinput.selectionEnd - 1, 0);
+      textinput.selectionEnd = Math.max(textinput.selectionEnd! - 1, 0);
       textinput.selectionStart = textinput.selectionEnd;
     }
   };
@@ -858,19 +857,19 @@ class TextActions {
     if (isVertical) {
       this.moveCursorLastRow();
     } else {
-      textinput.selectionEnd += 1;
+      textinput.selectionEnd = textinput.selectionEnd! + 1;
       textinput.selectionStart = textinput.selectionEnd;
     }
   };
 
   newLine = () => {
     const { textinput } = this;
-    const oldSelectionStart = textinput.selectionStart;
+    const oldSelectionStart = textinput.selectionStart!;
 
     textinput.value = `${textinput.value.substring(
       0,
-      textinput.selectionStart,
-    )}\u0085${textinput.value.substring(textinput.selectionEnd)}`;
+      textinput.selectionStart!,
+    )}\u0085${textinput.value.substring(textinput.selectionEnd!)}`;
     textinput.selectionStart = oldSelectionStart + 1;
     textinput.selectionEnd = oldSelectionStart + 1;
   };
@@ -884,7 +883,7 @@ class TextActions {
       return;
     }
 
-    const selectedText = textinput.value.substring(textinput.selectionStart, textinput.selectionEnd);
+    const selectedText = textinput.value.substring(textinput.selectionStart!, textinput.selectionEnd!);
 
     try {
       await navigator.clipboard.writeText(selectedText);
@@ -903,8 +902,8 @@ class TextActions {
       return;
     }
 
-    const selectedText = textinput.value.substring(textinput.selectionStart, textinput.selectionEnd);
-    const start = textinput.selectionStart;
+    const selectedText = textinput.value.substring(textinput.selectionStart!, textinput.selectionEnd!);
+    const start = textinput.selectionStart!;
 
     try {
       await navigator.clipboard.writeText(selectedText);
@@ -913,7 +912,7 @@ class TextActions {
       console.error('Async: Could not copy text: ', err);
     }
     textinput.value =
-      textinput.value.substring(0, textinput.selectionStart) + textinput.value.substring(textinput.selectionEnd);
+      textinput.value.substring(0, textinput.selectionStart!) + textinput.value.substring(textinput.selectionEnd!);
     textinput.selectionStart = start;
     textinput.selectionEnd = start;
   };
@@ -921,12 +920,12 @@ class TextActions {
   pasteText = async () => {
     const { textinput } = this;
     const clipboardText = await navigator.clipboard.readText();
-    const start = textinput.selectionStart;
+    const start = textinput.selectionStart!;
 
     textinput.value =
-      textinput.value.substring(0, textinput.selectionStart) +
+      textinput.value.substring(0, textinput.selectionStart!) +
       clipboardText +
-      textinput.value.substring(textinput.selectionEnd);
+      textinput.value.substring(textinput.selectionEnd!);
     textinput.selectionStart = start + clipboardText.length;
     textinput.selectionEnd = start + clipboardText.length;
   };
@@ -940,7 +939,7 @@ class TextActions {
 
   toEditMode = (setCursor = false) => {
     const currentMode = getMouseMode();
-    const { curtext } = this;
+    const curtext = this.curtext!;
 
     this.isEditing = true;
     this.allowDbl = false;
@@ -952,7 +951,7 @@ class TextActions {
 
     const selectorManager = selector.getSelectorManager();
 
-    selectorManager.requestSelector(curtext).show(true, false);
+    selectorManager.requestSelector(curtext)?.show(true, false);
     // Make selector group accept clicks
     // selectorManager.requestSelector(curtext).selectorRect;
     this.init();
@@ -970,7 +969,7 @@ class TextActions {
   };
 
   toSelectMode(shouldSelectElem = false) {
-    const { curtext } = this;
+    const curtext = this.curtext!;
 
     this.isEditing = false;
     setMouseMode(this.previousMode);
@@ -987,7 +986,7 @@ class TextActions {
       const selectorManager = selector.getSelectorManager();
 
       selectorManager.releaseSelector(curtext);
-      svgCanvas.addToSelection([curtext.parentElement], true);
+      svgCanvas.addToSelection([curtext.parentElement as unknown as SVGElement], true);
     } else {
       svgCanvas.addToSelection([curtext], true);
     }
@@ -996,39 +995,42 @@ class TextActions {
 
     const batchCmd = new history.BatchCommand('Edit Text');
 
-    if (this.valueBeforeEdit && this.valueBeforeEdit !== this.textinput.value) {
-      if (curtext) {
+    if (curtext) {
+      if (this.valueBeforeEdit && this.valueBeforeEdit !== this.textinput.value) {
         const cmd = new history.ChangeTextCommand(curtext, this.valueBeforeEdit, this.textinput.value);
 
         batchCmd.addSubCommand(cmd);
         currentFileManager.setHasUnsavedChanges(true);
       }
-    }
 
-    if (curtext && !curtext.textContent.length) {
-      // No content, so delete text
-      let cmd: IBatchCommand;
+      if (!curtext.textContent?.length) {
+        // No content, so delete text
+        let deleteCmd: IBatchCommand;
 
-      if (curtext.getAttribute('data-textpath')) {
-        cmd = textPathEdit.detachText(curtext.parentNode as SVGGElement, true).cmd;
+        if (curtext.getAttribute('data-textpath')) {
+          const detachCmd = textPathEdit.detachText(curtext.parentNode as SVGGElement, true).cmd;
 
-        if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
+          if (detachCmd && !detachCmd.isEmpty()) batchCmd.addSubCommand(detachCmd);
 
-        cmd = deleteElements([curtext], true);
-      } else {
-        cmd = deleteSelectedElements(true);
+          deleteCmd = deleteElements([curtext], true);
+        } else {
+          deleteCmd = deleteSelectedElements(true);
+        }
+
+        if (this.valueBeforeEdit && !deleteCmd.isEmpty()) batchCmd.addSubCommand(deleteCmd);
+      } else if (!this.valueBeforeEdit) {
+        // New text, so add to history
+        batchCmd.addSubCommand(new history.InsertElementCommand(curtext));
       }
-
-      if (this.valueBeforeEdit && cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
     }
 
-    if (!batchCmd.isEmpty()) svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 
     $(this.textinput).trigger('blur');
     this.curtext = null;
   }
 
-  setInputElem(elem) {
+  setInputElem(elem: HTMLInputElement) {
     this.textinput = elem;
   }
 
@@ -1046,7 +1048,7 @@ class TextActions {
 
     if (currentMode === 'textedit') {
       this.toSelectMode();
-    } else if (isEditing) {
+    } else if (isEditing && curtext) {
       this.isEditing = false;
 
       const selectorManager = selector.getSelectorManager();
@@ -1070,11 +1072,11 @@ class TextActions {
       const selectedElements = svgCanvas.getSelectedElems();
       const [elem] = selectedElements;
 
-      this.curtext = elem;
+      this.curtext = elem as SVGTextElement;
 
       const selectorManager = selector.getSelectorManager();
 
-      selectorManager.requestSelector(this.curtext).show(true, false);
+      selectorManager.requestSelector(this.curtext)?.show(true, false);
     }
 
     this.chardata = [];
@@ -1086,9 +1088,11 @@ class TextActions {
 
     this.calculateChardata();
     this.textinput.focus();
-    $(this.curtext).unbind('dblclick', this.selectWord).dblclick(this.selectWord);
+    $(this.curtext)
+      .unbind('dblclick', this.selectWord as any)
+      .dblclick(this.selectWord as any);
 
-    this.setSelection(this.textinput.selectionStart, this.textinput.selectionEnd, true);
+    this.setSelection(this.textinput.selectionStart!, this.textinput.selectionEnd!, true);
   }
 }
 
