@@ -173,12 +173,9 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     styleOptions,
     waitForWebFont,
   } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
-  const {
-    addToHistory,
-    loadGoogleFontBinary: binaryLoader,
-    registerGoogleFont,
-    sessionLoadedFonts,
-  } = useGoogleFontStore();
+  const addToHistory = useGoogleFontStore((s) => s.addToHistory);
+  const binaryLoader = useGoogleFontStore((s) => s.loadGoogleFontBinary);
+  const registerGoogleFont = useGoogleFontStore((s) => s.registerGoogleFont);
 
   // Helper function to apply font changes to text elements with undo support
   const applyFontToElements = useCallback(
@@ -214,11 +211,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     [textElements, onConfigChange, waitForWebFont],
   );
 
-  const proactivelyLoadHistoryFonts = useCallback(() => {
-    if (fontHistory && fontHistory.length > 0) {
+  // Proactively load Google fonts from history — separate effect to avoid cascading renders
+  useEffect(() => {
+    if (fontHistory?.length > 0) {
+      const store = useGoogleFontStore.getState();
+
       fontHistory.forEach((family) => {
-        if (!useGoogleFontStore.getState().isGoogleFontLoaded(family)) {
-          useGoogleFontStore.getState().loadGoogleFont(family);
+        if (!store.isGoogleFontLoaded(family)) {
+          store.loadGoogleFont(family);
         }
       });
     }
@@ -258,8 +258,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         return;
       }
 
-      proactivelyLoadHistoryFonts();
-
       for (const textElement of textElements) {
         const elementFontFamily = textEdit.getFontFamilyData(textElement);
         const cleanFontFamily = elementFontFamily.replace(/^['"]|['"]$/g, '');
@@ -267,10 +265,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
         let font: GeneralFont;
 
+        const currentSessionLoadedFonts = useGoogleFontStore.getState().sessionLoadedFonts;
         const isGoogleFontFromAnySource =
           !localFontMatch &&
           (fontHistory.some((h) => h.toLowerCase() === cleanFontFamily.toLowerCase()) ||
-            sessionLoadedFonts.has(cleanFontFamily));
+            currentSessionLoadedFonts.has(cleanFontFamily));
 
         if (isGoogleFontFromAnySource) {
           // Create synthetic Google Font object to bypass PostScript lookup
@@ -320,7 +319,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           font.family,
           availableFontFamilies,
           fontHistory,
-          sessionLoadedFonts,
+          currentSessionLoadedFonts,
         );
 
         if (!googleFontIsLoaded && !fontIsLocallyAvailable) {
@@ -370,16 +369,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     } else {
       getFontFamilies();
     }
-  }, [
-    elem,
-    textElements,
-    availableFontFamilies,
-    configs.id.value,
-    getFontFamilies,
-    fontHistory,
-    sessionLoadedFonts,
-    proactivelyLoadHistoryFonts,
-  ]);
+  }, [elem, textElements, availableFontFamilies, configs.id.value, getFontFamilies, fontHistory]);
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
     if (newFamily === 'more-google-fonts') {
