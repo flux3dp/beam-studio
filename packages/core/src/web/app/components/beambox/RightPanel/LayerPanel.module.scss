@@ -41,6 +41,11 @@ $layer-background: white;
   width: 100%;
   position: relative;
 
+  > div {
+    // antd dropdown trigger, set to height 100% for overflow scroll to work
+    height: 100%;
+  }
+
   .layerlist-container {
     position: relative;
     overflow-x: hidden;
