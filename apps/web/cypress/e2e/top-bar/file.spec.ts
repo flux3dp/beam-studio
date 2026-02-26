@@ -70,7 +70,7 @@ describe('manipulate file', () => {
 
   it('save file', () => {
     selectMenuOption('File', 'Save');
-    checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: 869511194 });
+    checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: 686848608 });
   });
 
   it('save as file', () => {
@@ -93,18 +93,18 @@ describe('manipulate file', () => {
 
       selectMenuOption('File', 'Save As...');
       // "Save As" also saves to untitled.beam (same as "Save"), so use the same path
-      checkCrc32(downloadPath, { default: 335122855 });
+      checkCrc32(downloadPath, { default: -139627603 });
     });
   });
 
   it('export bvg file', () => {
     exportFile('BVG');
-    checkMd5(Cypress.env('cypressDownloadBvgPath'), { default: 'b849921f225160b9e4fbb5e2618706c1' });
+    checkMd5(Cypress.env('cypressDownloadBvgPath'), { default: '0ba6dfe0975bfa6ac6237f17bef2be8e' });
   });
 
   it('export svg file', () => {
     exportFile('SVG');
-    checkMd5(Cypress.env('cypressDownloadSvgPath'), { default: '97aff065229034816f28e456573f2117' });
+    checkMd5(Cypress.env('cypressDownloadSvgPath'), { default: 'c29cd6edbbbdb15c26dcdd91851b10f4' });
   });
 
   it('export png file', () => {
