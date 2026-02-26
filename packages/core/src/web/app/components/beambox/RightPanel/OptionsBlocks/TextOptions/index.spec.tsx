@@ -128,6 +128,7 @@ jest.mock('@core/app/components/beambox/RightPanel/contexts/ObjectPanelContext',
 }));
 
 const mockTextEdit = {
+  getFitTextAlign: jest.fn().mockReturnValue('start'),
   getFontFamilyData: (...args: any[]) => mockGetFontFamilyData(...args),
   getFontPostscriptName: (...args: any[]) => mockGetFontPostscriptName(...args),
   getFontSize: (...args: any[]) => mockGetFontSize(...args),
@@ -136,6 +137,10 @@ const mockTextEdit = {
   getItalic: (...args: any[]) => mockGetItalic(...args),
   getLetterSpacing: (...args: any[]) => mockGetLetterSpacing(...args),
   getLineSpacing: (...args: any[]) => mockGetLineSpacing(...args),
+  getTextContent: jest.fn().mockReturnValue(''),
+  isFitText: jest.fn().mockReturnValue(false),
+  renderText: jest.fn(),
+  setFitTextAlign: jest.fn(),
   setFontFamily: (...args: any[]) => mockSetFontFamily(...args),
   setFontPostscriptName: (...args: any[]) => mockSetFontPostscriptName(...args),
   setFontSize: (...args: any[]) => mockSetFontSize(...args),
@@ -144,9 +149,14 @@ const mockTextEdit = {
   setItalic: (...args: any[]) => mockSetItalic(...args),
   setLetterSpacing: (...args: any[]) => mockSetLetterSpacing(...args),
   setLineSpacing: (...args: any[]) => mockSetLineSpacing(...args),
+  textContentEvents: { emit: jest.fn(), on: jest.fn(), removeListener: jest.fn() },
 };
 
-jest.mock('@core/app/svgedit/text/textedit', () => mockTextEdit);
+jest.mock('@core/app/svgedit/text/textedit', () => ({
+  __esModule: true,
+  default: mockTextEdit,
+  ...mockTextEdit,
+}));
 
 const mockTextPathEdit = {
   getStartOffset: (...args: any[]) => mockGetStartOffset(...args),
@@ -229,6 +239,13 @@ jest.mock('@core/app/svgedit/history/history', () => ({
       this.addSubCommand = jest.fn();
     }
   },
+  ChangeTextCommand: class {
+    constructor(
+      public elem: any,
+      public oldText: string,
+      public newText: string,
+    ) {}
+  },
 }));
 
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
@@ -281,6 +298,14 @@ jest.mock('../TextOptions/hooks/useFontHandlers', () => ({
     waitForWebFont: mockWaitForWebFont,
   })),
 }));
+
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: jest.fn(),
+}));
+
+jest.mock('../TextOptions/components/TextContentBlock', () => ({ textElement }: any) => (
+  <div>mock-text-content-block textElement:{textElement?.tagName}</div>
+));
 
 jest.mock('../InFillBlock', () => ({ elems, id, label }: any) => (
   <div>
