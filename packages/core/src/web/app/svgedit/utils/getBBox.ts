@@ -31,6 +31,31 @@ const getTextBBox = (text: SVGTextElement): DOMRect => {
     text.textContent = '';
   }
 
+  if (text.getAttribute('data-fit-text') === 'true') {
+    const isVertical = text.getAttribute('data-verti') === 'true';
+
+    if (isVertical) {
+      let y = Number.parseFloat(text.getAttribute('y') || '0');
+      const height = Number.parseFloat(text.getAttribute('data-fit-text-size') || '0');
+
+      bbox.y = y;
+      bbox.height = height;
+    } else {
+      let x = Number.parseFloat(text.getAttribute('x') || '0');
+      const width = Number.parseFloat(text.getAttribute('data-fit-text-size') || '0');
+      const textAnchor = text.getAttribute('data-fit-text-align');
+
+      if (textAnchor === 'middle') {
+        x -= width / 2;
+      } else if (textAnchor === 'end') {
+        x -= width;
+      }
+
+      bbox.x = x;
+      bbox.width = width;
+    }
+  }
+
   return bbox;
 };
 

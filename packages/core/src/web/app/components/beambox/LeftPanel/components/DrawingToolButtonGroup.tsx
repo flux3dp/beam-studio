@@ -47,6 +47,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       match(mouseMode)
         .with('pre_preview', 'preview', () => 'Preview')
         .with('text', 'textedit', () => 'Text')
+        .with('fit-text', () => 'FitText')
         .with('rect', () => 'Rectangle')
         .with('ellipse', () => 'Ellipse')
         .with('polygon', () => 'Polygon')
@@ -108,6 +109,12 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         id: 'Text',
         label: `${t.label.text} (T)`,
         onClick: () => setMouseMode('text'),
+      })}
+      {renderToolButton({
+        icon: <LeftPanelIcons.Text />,
+        id: 'FitText',
+        label: t.label.fit_text,
+        onClick: () => setMouseMode('fit-text'),
       })}
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,

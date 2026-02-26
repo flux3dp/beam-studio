@@ -79,6 +79,7 @@ import {
 } from '@core/app/stores/canvas/utils/mouseMode';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
+import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -458,33 +459,25 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
 
       if (elem != null) {
-        var elname = elem.nodeName;
-        // If this is a link with no transform and one child, pretend
-        // its child is selected
-        //					if (elname === 'a') { // && !$(elem).attr('transform')) {
-        //						elem = elem.firstChild;
-        //					}
-
-        var angle = svgCanvas.getRotationAngle(elem);
-
-        ObjectPanelController.updateDimensionValues({ rotation: angle });
+        const { tagName } = elem;
+        const angle = getRotationAngle(elem);
 
         if (!is_node && currentMode !== 'pathedit') {
           //$('#selected_panel').show();
           // Elements in this array already have coord fields
-          if (['circle', 'ellipse', 'line'].includes(elname)) {
+          if (['circle', 'ellipse', 'line'].includes(tagName)) {
           } else {
-            var x, y;
+            let x, y;
 
             // Get BBox vals for g, polyline and path
-            if (['g', 'path', 'polygon', 'polyline'].includes(elname)) {
+            if (['g', 'path', 'polygon', 'polyline'].includes(tagName)) {
               const bb = getBBox(elem, { withStroke: true, ignoreRotation: false });
 
               if (bb) {
                 x = bb.x;
                 y = bb.y;
 
-                if (elname !== 'polyline') {
+                if (tagName !== 'polyline') {
                   let bbox = elem.getBBox();
 
                   ObjectPanelController.updateDimensionValues({
@@ -493,7 +486,7 @@ const svgEditor = (window['svgEditor'] = (function () {
                   });
                 }
               }
-            } else if (['text'].includes(elname)) {
+            } else if (['text'].includes(tagName)) {
               const bb = getBBox(elem);
 
               x = bb.x;
@@ -517,109 +510,59 @@ const svgEditor = (window['svgEditor'] = (function () {
               y: Number.parseFloat(y) || 0,
             });
 
-            svgCanvas.selectorManager.requestSelector(elem).resize();
+            svgCanvas.selectorManager.requestSelector(elem)?.resize();
           }
         } else {
-          var point = path.getNodePoint();
+          const point = path.getNodePoint();
 
-          if (point) {
-            if (unit) {
-              point.x = svgedit.units.convertUnit(point.x);
-              point.y = svgedit.units.convertUnit(point.y);
-            }
+          if (point && unit) {
+            point.x = svgedit.units.convertUnit(point.x);
+            point.y = svgedit.units.convertUnit(point.y);
           }
 
           return;
         }
 
         // update contextual tools here
-        var panels = {
-          a: [],
+        const panels: Record<string, string[]> = {
           circle: ['cx', 'cy', 'r'],
           ellipse: ['cx', 'cy', 'rx', 'ry'],
-          g: [],
           image: ['width', 'height'],
           line: ['x1', 'y1', 'x2', 'y2'],
-          path: [],
-          polygon: [],
           rect: ['rx', 'width', 'height'],
-          text: [],
-          use: [],
         };
 
-        var el_name = elem.tagName;
+        if (panels[tagName]) {
+          const curPanels = panels[tagName];
 
-        /*
-        var link_href = null;
-        if (el_name === 'a') {
-            link_href = svgCanvas.getHref(elem);
-            $('#g_panel').show();
-        }
+          const newDimensionValue: Record<string, string | number> = {};
 
-        if (elem.parentNode.tagName === 'a') {
-            if (!$(elem).siblings().length) {
-                $('#a_panel').show();
-                link_href = svgCanvas.getHref(elem.parentNode);
-            }
-        }
-        */
-
-        if (panels[el_name]) {
-          const cur_panels = panels[el_name];
-
-          //$('#' + el_name + '_panel').show();
-          const newDimensionValue = {};
-
-          $.each(cur_panels, function (i, item) {
-            var attrVal = elem.getAttribute(item);
+          curPanels.forEach((item) => {
+            let attrVal = elem.getAttribute(item);
 
             if (curConfig.baseUnit !== 'px' && elem[item]) {
-              var bv = elem[item].baseVal.value;
+              const baseValue = elem[item].baseVal.value;
 
-              attrVal = svgedit.units.convertUnit(bv);
+              attrVal = svgedit.units.convertUnit(baseValue);
             }
 
-            $('#' + el_name + '_' + item).val(attrVal || 0);
             newDimensionValue[item] = attrVal;
           });
           ObjectPanelController.updateDimensionValues(newDimensionValue);
+        }
 
-          switch (el_name) {
-            case 'text':
-              if (svgCanvas.addedNew) {
-                // Timeout needed for IE9
-                setTimeout(function () {
-                  $('#text').focus().select();
-                }, 100);
-              }
+        if (tagName === 'text') {
+          textActions.setFontSize(textEdit.getFontSize(elem));
+          textActions.setIsVertical(textEdit.getIsVertical(elem));
+        } else if (tagName === 'use') {
+          const bbox = getBBox(elem);
 
-              textActions.setFontSize(textEdit.getFontSize(elem));
-              textActions.setIsVertical(textEdit.getIsVertical(elem));
-              break;
-            case 'image':
-              break;
-            case 'g':
-            case 'use':
-              $('#container_panel').show();
-
-              if (el_name === 'use') {
-                const bbox = getBBox(elem);
-
-                ObjectPanelController.updateDimensionValues({
-                  height: bbox.height,
-                  width: bbox.width,
-                  x: bbox.x,
-                  y: bbox.y,
-                });
-              }
-
-              break;
-            case 'path':
-              //$('#container_panel').show();
-              break;
-            default:
-              break;
-          }
+          ObjectPanelController.updateDimensionValues({
+            height: bbox.height,
+            width: bbox.width,
+            x: bbox.x,
+            y: bbox.y,
+          });
         }
 
         if (svgCanvas.getTempGroup()) {
@@ -629,8 +572,8 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
         } else {
           workareaEvents.emit('update-context-menu', {
-            group: multiselected && el_name !== 'g',
-            ungroup: el_name === 'g' && !elem?.getAttribute('data-pass-through'),
+            group: multiselected && tagName !== 'g',
+            ungroup: tagName === 'g' && !elem?.getAttribute('data-pass-through'),
           });
         }
 
@@ -647,8 +590,6 @@ const svgEditor = (window['svgEditor'] = (function () {
           select: false,
         });
       }
-
-      svgCanvas.addedNew = false;
 
       if ((elem && !is_node) || multiselected) {
         // Enable regular menu options

@@ -1224,6 +1224,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       selectorManager.requestSelector(selectedElements[0])?.show(true, false);
     }
 
+    // Make sure first elements are not null
+    selectedElements = selectedElements.filter(Boolean);
     // make sure the elements are in the correct order
     // See: http://www.w3.org/TR/DOM-Level-3-Core/core.html#Node3-compareDocumentPosition
 
@@ -1236,9 +1238,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         return 1;
       }
     });
-
-    // Make sure first elements are not null
-    selectedElements = selectedElements.filter(Boolean);
 
     this.collectAlignPoints();
   });

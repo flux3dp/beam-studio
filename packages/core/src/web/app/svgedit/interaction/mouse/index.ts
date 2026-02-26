@@ -17,13 +17,6 @@ import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import history from '@core/app/svgedit/history/history';
-import layerManager from '@core/app/svgedit/layer/layerManager';
-import { cloneSelectedElements, hasClipboardData } from '@core/app/svgedit/operations/clipboard';
-import createNewText from '@core/app/svgedit/text/createNewText';
-import textEdit from '@core/app/svgedit/text/textedit';
-import touchEvents from '@core/app/svgedit/touchEvents';
-import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -36,7 +29,15 @@ import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
 
+import history from '../../history/history';
+import layerManager from '../../layer/layerManager';
+import { cloneSelectedElements, hasClipboardData } from '../../operations/clipboard';
+import createNewText from '../../text/createNewText';
+import { createNewFitText, handleFitTextTransform } from '../../text/fitText';
+import textEdit, { isFitText } from '../../text/textedit';
+import touchEvents from '../../touchEvents';
 import { getBBox } from '../../utils/getBBox';
+import workareaManager from '../../workarea';
 import wheelEventHandlerGenerator from '../wheelEventHandler';
 
 import { getEventPoint } from './utils/getEventPoint';
@@ -440,6 +441,10 @@ const mouseDown = async (evt: MouseEvent) => {
       svgCanvas.unsafeAccess.setStarted(true);
       createNewText(x, y, { isToSelect: true });
       break;
+    case 'fit-text':
+      svgCanvas.unsafeAccess.setStarted(true);
+      setRubberBoxStart(startMouseX, startMouseY);
+      break;
     case 'polygon':
       // Polygon is created in ext-polygon.js
       TopBarHintsController.setHint('POLYGON');
@@ -808,6 +813,7 @@ const mouseMove = (evt: MouseEvent) => {
     case 'preview':
     case 'multiselect':
     case 'curve-engraving':
+    case 'fit-text':
       updateRubberBox();
       // Stop adding elements to selection when mouse moving
       // Select all intersected elements when mouse up
@@ -1059,21 +1065,35 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     svgCanvas.clearBoundingBox();
   };
 
+  const getDrawnBBox = (inMM = false) => {
+    const { dpmm } = constant;
+    let bboxX = Math.min(startX, realX);
+    let bboxY = Math.min(startY, realY);
+    let width = Math.abs(startX - realX);
+    let height = Math.abs(startY - realY);
+
+    if (inMM) {
+      bboxX /= dpmm;
+      bboxY /= dpmm;
+      width /= dpmm;
+      height /= dpmm;
+    }
+
+    return { height, width, x: bboxX, y: bboxY };
+  };
+
   switch (currentMode) {
-    case 'curve-engraving':
+    case 'curve-engraving': {
       cleanUpRubberBox();
 
-      if (startX !== realX && startY !== realY) {
-        const { dpmm } = constant;
-        const bboxX = Math.min(startX, realX) / dpmm;
-        const bboxY = Math.min(startY, realY) / dpmm;
-        const width = Math.abs(startX - realX) / dpmm;
-        const height = Math.abs(startY - realY) / dpmm;
+      const { height, width, x: bboxX, y: bboxY } = getDrawnBBox(true);
 
+      if (width > 0 && height > 0) {
         curveEngravingModeController.setArea({ height, width, x: bboxX, y: bboxY });
       }
 
       return;
+    }
     case 'preview':
     case 'pre_preview':
       cleanUpRubberBox();
@@ -1205,6 +1225,12 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
               }
             });
             SymbolMaker.reRenderImageSymbolArray(allSelectedUses);
+
+            selectedElements.forEach((e) => {
+              if (e.tagName === 'text' && isFitText(e)) {
+                handleFitTextTransform(e as SVGTextElement, resizeInitBBox);
+              }
+            });
           }
 
           if (currentMode !== 'multiselect') {
@@ -1305,6 +1331,22 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       svgCanvas.selectOnly([element]);
       svgCanvas.textActions.start(element);
       break;
+    case 'fit-text': {
+      cleanUpRubberBox();
+
+      const { height, width, x: bboxX, y: bboxY } = getDrawnBBox();
+
+      if (width > 0 && height > 0) {
+        element = createNewFitText(bboxX, bboxY, width, height, {
+          isToSelect: true,
+        });
+
+        keep = true;
+        svgCanvas.textActions.start(element);
+      }
+
+      break;
+    }
     case 'polygon':
       // Polygon creation is in ext-polygon.js
       TopBarHintsController.removeHint();
@@ -1435,15 +1477,17 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       svgCanvas.selectOnly([t], true);
     }
   } else if (element) {
-    svgCanvas.addedNew = true;
-
     if (useUnit) svgedit.units.convertAttrs(element);
 
     if (element.getAttribute('opacity') !== currentShape.opacity) element.setAttribute('opacity', currentShape.opacity);
 
     element.setAttribute('style', 'pointer-events:inherit');
     svgCanvas.cleanupElement(element);
-    svgCanvas.addCommandToHistory(new history.InsertElementCommand(element));
+
+    if (element.tagName !== 'text') {
+      // text insert command is created when the text edit mode finishes, to make sure the text is really created (not empty string).
+      svgCanvas.addCommandToHistory(new history.InsertElementCommand(element));
+    }
 
     if (!isContinuousDrawing) {
       if (currentMode === 'textedit') {

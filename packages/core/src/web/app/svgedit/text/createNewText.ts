@@ -1,10 +1,11 @@
 import history from '@core/app/svgedit/history/history';
-import textEdit from '@core/app/svgedit/text/textedit';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import textEdit from './textedit';
 
 let svgCanvas: ISVGCanvas;
 
@@ -49,7 +50,6 @@ const createNewText = (
       id: svgCanvas.getNextId(),
       opacity: currentShape.opacity,
       'stroke-width': 2,
-      'text-anchor': modelText.text_anchor,
       x,
       'xml:space': 'preserve',
       y,

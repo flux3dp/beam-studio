@@ -52,7 +52,7 @@ export const setCursorAccordingToMouseMode = (mode?: CanvasMouseMode) => {
     .with('curve-engraving', () => setCursor(`url(${curveSelectUrl}) 25 7, cell`))
     .with('rotate', () => setCursor('url(core-img/rotate.png) 12 12, auto'))
     .with('pathedit', 'textedit', () => setCursor('auto'))
-    .with('line', 'ellipse', 'rect', 'polygon', 'path', () => setCursor('crosshair'))
+    .with('line', 'ellipse', 'rect', 'polygon', 'path', 'fit-text', () => setCursor('crosshair'))
     .with('text', () => setCursor('text'))
     .otherwise(() => setCursor('auto'));
 };
