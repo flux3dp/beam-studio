@@ -8,7 +8,7 @@ import { getModuleBoundary } from '@core/app/constants/layer-module/module-bound
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
 
 export interface LengthUnit {
   decimal: number;
@@ -45,9 +45,9 @@ function useBoxgenWorkarea(): BoxgenWorkareaResult {
     const { displayHeight, height, width } = currentWorkarea;
 
     if (modelsWithModules.has(workareaValue)) {
-      const laserModule = getDefaultLaserModule();
-      const boundary = getModuleBoundary(workareaValue, laserModule);
-      const labelSuffix = match(laserModule)
+      const defaultModule = getDefaultModule();
+      const boundary = getModuleBoundary(workareaValue, defaultModule);
+      const labelSuffix = match(defaultModule)
         .with(LayerModule.LASER_10W_DIODE, () => ' 10W')
         .with(LayerModule.LASER_20W_DIODE, () => ' 20W')
         .otherwise(() => '');

@@ -17,17 +17,9 @@ import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { loadContextGoogleFonts } from '@core/helpers/fonts/googleFontService';
 import i18n from '@core/helpers/i18n';
-import {
-  applyDefaultLaserModule,
-  toggleFullColorAfterWorkareaChange,
-  writeDataLayer,
-} from '@core/helpers/layer/layer-config-helper';
+import { toggleModuleAfterWorkareaChange, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
-import {
-  getDefaultLaserModule,
-  getLayersByModule,
-  hasModuleLayer,
-} from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule, getLayersByModule, hasModuleLayer } from '@core/helpers/layer-module/layer-module-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
@@ -223,8 +215,6 @@ export const importBvgString = async (
         type: alertConstants.SHOW_POPUP_INFO,
       });
     }
-  } else {
-    applyDefaultLaserModule();
   }
 
   if (getAddOnInfo(newWorkarea).multiModules) {
@@ -235,7 +225,7 @@ export const importBvgString = async (
       const layers = getLayersByModule([LayerModule.LASER_1064]);
 
       if (layers.length > 0) {
-        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, getDefaultLaserModule(newWorkarea));
+        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, getDefaultModule(newWorkarea));
       }
     } else if (hasModuleLayer([LayerModule.LASER_1064])) {
       useDocumentStore.getState().set('enable-4c', false);
@@ -264,8 +254,8 @@ export const importBvgString = async (
   const postImportBvgString: any = async () => {
     const { workarea } = useDocumentStore.getState();
 
-    // toggle full color setting according workarea supported modules
-    toggleFullColorAfterWorkareaChange();
+    // Change modules not supported to default module of the new workarea
+    toggleModuleAfterWorkareaChange();
     presprayArea.togglePresprayArea();
     useLayerStore.getState().setSelectedLayers([]);
 

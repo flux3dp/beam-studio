@@ -6,7 +6,7 @@ import { getWorkarea } from '@core/app/constants/workarea-constants';
 import Select from '@core/app/widgets/AntdSelect';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
 import { usePresetList } from '@core/helpers/presets/preset-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -31,7 +31,7 @@ export default function TextSettingForm({ className, handleChange, isInch, setti
   } = useI18n();
   const lengthUnit = isInch ? 'in/s' : 'mm/s';
   const workarea = useWorkarea();
-  const presetList = usePresetList(workarea, getDefaultLaserModule());
+  const presetList = usePresetList(workarea, getDefaultModule());
   const maxSpeed = useMemo(() => getWorkarea(workarea).maxSpeed, [workarea]);
   const dropdownOptions = useMemo(
     () => presetList.map(({ key, name }) => ({ label: name, value: key || name })),

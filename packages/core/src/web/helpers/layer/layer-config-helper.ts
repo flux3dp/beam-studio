@@ -1,7 +1,7 @@
 import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
-import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
@@ -13,7 +13,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -511,17 +511,15 @@ export const initLayerConfig = (layer: Element): void => {
   const supportModules = getSupportedModules(workarea);
   const defaultConfig = getDefaultConfig();
   const keys = Object.keys(defaultConfig) as ConfigKey[];
-  const defaultLaserModule = getDefaultLaserModule();
+  const defaultModule = getDefaultModule();
 
   for (const key of keys) {
     if (defaultConfig[key] !== undefined) {
       if (key === 'module') {
-        if (supportModules.includes(defaultLaserModule)) {
-          writeDataLayer(layer, key, defaultLaserModule, { shouldApplyModuleBaseConfig: false });
-        } else if (supportModules.includes(defaultConfig.module!)) {
+        if (supportModules.includes(defaultConfig.module!)) {
           writeDataLayer(layer, key, defaultConfig.module!, { shouldApplyModuleBaseConfig: false });
         } else {
-          writeDataLayer(layer, key, supportModules[0], { shouldApplyModuleBaseConfig: false });
+          writeDataLayer(layer, key, defaultModule, { shouldApplyModuleBaseConfig: false });
         }
       } else {
         writeDataLayer(layer, key, defaultConfig[key] as number | string);
@@ -585,44 +583,29 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
   return data as ILayerConfig;
 };
 
-export const toggleFullColorAfterWorkareaChange = (): void => {
+export const toggleModuleAfterWorkareaChange = (): void => {
   const workarea = useDocumentStore.getState().workarea;
   const supportedModules = getSupportedModules(workarea);
-  const defaultLaserModule = getDefaultLaserModule();
+  const defaultModule = getDefaultModule();
+  const printingModule = getPrintingModule();
 
   layerManager.getAllLayers().forEach((layer) => {
     const layerElement = layer.getGroup();
 
     if (!layerElement) return;
 
-    const module = getData(layerElement, 'module') as LayerModuleType;
+    const originalModule = getData(layerElement, 'module') as LayerModuleType;
 
-    if (!supportedModules.includes(module)) {
-      writeDataLayer(layerElement, 'module', defaultLaserModule);
+    if (!supportedModules.includes(originalModule)) {
+      const targetModule = (printingModules.has(originalModule) ? printingModule : defaultModule) ?? defaultModule;
 
-      if (printingModules.has(module)) toggleFullColorLayer(layerElement, { val: false });
+      writeDataLayer(layerElement, 'module', targetModule);
+
+      if (printingModules.has(targetModule) !== printingModules.has(originalModule)) {
+        toggleFullColorLayer(layerElement, { val: printingModules.has(targetModule) });
+      }
     }
   });
-};
-
-export const applyDefaultLaserModule = (): void => {
-  const workarea = useDocumentStore.getState().workarea;
-
-  if (modelsWithModules.has(workarea)) {
-    const defaultLaserModule = getDefaultLaserModule();
-
-    if (defaultLaserModule === LayerModule.LASER_UNIVERSAL) return;
-
-    layerManager.getAllLayers().forEach((layer) => {
-      const layerElement = layer.getGroup();
-
-      if (!layerElement) return;
-
-      if (getData(layerElement, 'module') === LayerModule.LASER_UNIVERSAL) {
-        writeDataLayer(layerElement, 'module', defaultLaserModule);
-      }
-    });
-  }
 };
 
 export const applyModuleBaseConfig = (

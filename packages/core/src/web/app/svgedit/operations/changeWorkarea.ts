@@ -1,7 +1,7 @@
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { changeDocumentStoreValue } from '@core/app/stores/documentStore';
 import history from '@core/app/svgedit/history/history';
-import { toggleFullColorAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
+import { toggleModuleAfterWorkareaChange } from '@core/helpers/layer/layer-config-helper';
 import { regulateAllLayersDpi } from '@core/helpers/layer/regulateAllLayersDpi';
 import type { ICommand } from '@core/interfaces/IHistory';
 
@@ -14,7 +14,7 @@ export const changeWorkarea = (workarea: WorkAreaModel, opts: { toggleModule?: b
   regulateAllLayersDpi(workarea, { parentCmd: cmd });
 
   const postWorkareaChange = () => {
-    if (toggleModule) toggleFullColorAfterWorkareaChange();
+    if (toggleModule) toggleModuleAfterWorkareaChange();
   };
 
   postWorkareaChange();

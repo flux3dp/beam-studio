@@ -252,7 +252,6 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     pxHeight: 215 * dpmm,
     pxWidth: 300 * dpmm,
     supportedModules: [LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK, LayerModule.UV_VARNISH],
-    topExpansion: 400,
     width: 300,
   },
 };

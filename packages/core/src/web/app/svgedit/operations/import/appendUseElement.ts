@@ -9,7 +9,7 @@ import rgbToHex from '@core/helpers/color/rgbToHex';
 import i18n from '@core/helpers/i18n';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import storage from '@core/implementations/storage';
 import type { ICommand } from '@core/interfaces/IHistory';
@@ -47,7 +47,7 @@ const appendUseElement = (
   }
 
   const batchCmd = new history.BatchCommand('Append Use Element');
-  const { hidden = false, layerName, targetModule = getDefaultLaserModule(), type } = args;
+  const { hidden = false, layerName, targetModule = getDefaultModule(), type } = args;
   const useEl = document.createElementNS(NS.SVG, 'use');
 
   useEl.id = svgCanvas.getNextId();

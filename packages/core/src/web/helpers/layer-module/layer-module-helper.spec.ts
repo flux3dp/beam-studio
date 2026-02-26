@@ -2,7 +2,7 @@ import { DetectedLayerModule, LayerModule } from '@core/app/constants/layer-modu
 import lang from '@core/app/lang/en';
 
 import {
-  getDefaultLaserModule,
+  getDefaultModule,
   getDetectedModulesTranslations,
   getModulesTranslations,
   getPrintingModule,
@@ -36,10 +36,10 @@ describe('test layer-module-helper', () => {
     jest.clearAllMocks();
   });
 
-  test('getDefaultLaserModule when workarea is Ador', () => {
+  test('getDefaultModule when workarea is Ador', () => {
     mockGetGlobalPreference.mockReturnValueOnce({ 'default-laser-module': LayerModule.LASER_10W_DIODE });
     mockGetState.mockReturnValue({ workarea: 'ado1' });
-    expect(getDefaultLaserModule()).toBe(LayerModule.LASER_10W_DIODE);
+    expect(getDefaultModule()).toBe(LayerModule.LASER_10W_DIODE);
     expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
     expect(mockGetState).toHaveBeenCalledTimes(1);
 
@@ -47,7 +47,7 @@ describe('test layer-module-helper', () => {
     mockGetState.mockReset();
     mockGetGlobalPreference.mockReturnValueOnce({ 'default-laser-module': LayerModule.LASER_20W_DIODE });
     mockGetState.mockReturnValue({ workarea: 'ado1' });
-    expect(getDefaultLaserModule()).toBe(LayerModule.LASER_20W_DIODE);
+    expect(getDefaultModule()).toBe(LayerModule.LASER_20W_DIODE);
     expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
     expect(mockGetState).toHaveBeenCalledTimes(1);
 
@@ -55,14 +55,23 @@ describe('test layer-module-helper', () => {
     mockGetState.mockReset();
     mockGetGlobalPreference.mockReturnValueOnce({ 'default-laser-module': LayerModule.LASER_1064 });
     mockGetState.mockReturnValue({ workarea: 'ado1' });
-    expect(getDefaultLaserModule()).toBe(LayerModule.LASER_20W_DIODE);
+    expect(getDefaultModule()).toBe(LayerModule.LASER_20W_DIODE);
     expect(mockGetGlobalPreference).toHaveBeenCalledTimes(1);
     expect(mockGetState).toHaveBeenCalledTimes(1);
   });
 
-  test('getDefaultLaserModule when workarea is not Ador', () => {
+  test('getDefaultModule when workarea is not Ador and LASER_UNIVERSAL supported', () => {
     mockGetState.mockReturnValue({ workarea: 'fbm2' });
-    expect(getDefaultLaserModule()).toBe(LayerModule.LASER_UNIVERSAL);
+    mockGetSupportedModules.mockReturnValue([LayerModule.LASER_UNIVERSAL, LayerModule.PRINTER_4C]);
+    expect(getDefaultModule()).toBe(LayerModule.LASER_UNIVERSAL);
+    expect(mockGetState).toHaveBeenCalledTimes(1);
+    expect(mockGetGlobalPreference).not.toHaveBeenCalled();
+  });
+
+  test('getDefaultModule when workarea is not Ador and LASER_UNIVERSAL not supported', () => {
+    mockGetState.mockReturnValue({ workarea: 'fuv1' });
+    mockGetSupportedModules.mockReturnValue([LayerModule.PRINTER_4C, LayerModule.UV_WHITE_INK]);
+    expect(getDefaultModule()).toBe(LayerModule.PRINTER_4C);
     expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockGetGlobalPreference).not.toHaveBeenCalled();
   });
@@ -81,6 +90,12 @@ describe('test layer-module-helper', () => {
     expect(getPrintingModule()).toBe(LayerModule.PRINTER);
     expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockGetGlobalPreference).not.toHaveBeenCalled();
+  });
+
+  test('getPrintingModule when no printer module is supported', () => {
+    mockGetState.mockReturnValue({ workarea: 'fpm1' });
+    mockGetSupportedModules.mockReturnValue([LayerModule.LASER_UNIVERSAL]);
+    expect(getPrintingModule()).toBeNull();
   });
 
   test('getModulesTranslations', () => {

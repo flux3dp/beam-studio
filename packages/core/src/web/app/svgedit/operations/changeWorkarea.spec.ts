@@ -10,10 +10,10 @@ let batchCmd: { addSubCommand: jest.Mock; onAfter: (() => void) | undefined };
 
 import changeWorkarea from './changeWorkarea';
 
-const mockToggleFullColorAfterWorkareaChange = jest.fn();
+const mockToggleModuleAfterWorkareaChange = jest.fn();
 
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  toggleFullColorAfterWorkareaChange: (...args: unknown[]) => mockToggleFullColorAfterWorkareaChange(...args),
+  toggleModuleAfterWorkareaChange: (...args: unknown[]) => mockToggleModuleAfterWorkareaChange(...args),
 }));
 
 const mockChangeDocumentStoreValue = jest.fn();
@@ -48,11 +48,11 @@ describe('test changeWorkarea', () => {
     expect(batchCmd.addSubCommand).toHaveBeenLastCalledWith(mockCmd);
     expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
     expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: batchCmd });
-    expect(mockToggleFullColorAfterWorkareaChange).toHaveBeenCalledTimes(1);
+    expect(mockToggleModuleAfterWorkareaChange).toHaveBeenCalledTimes(1);
 
     jest.resetAllMocks();
     batchCmd.onAfter?.();
-    expect(mockToggleFullColorAfterWorkareaChange).toHaveBeenCalledTimes(1);
+    expect(mockToggleModuleAfterWorkareaChange).toHaveBeenCalledTimes(1);
   });
 
   it('should work correctly with toggleModule = false', () => {
@@ -64,10 +64,10 @@ describe('test changeWorkarea', () => {
     expect(mockChangeDocumentStoreValue).toHaveBeenLastCalledWith('workarea', 'fbm1');
     expect(mockRegulateAllLayersDpi).toHaveBeenCalledTimes(1);
     expect(mockRegulateAllLayersDpi).toHaveBeenLastCalledWith('fbm1', { parentCmd: batchCmd });
-    expect(mockToggleFullColorAfterWorkareaChange).not.toHaveBeenCalled();
+    expect(mockToggleModuleAfterWorkareaChange).not.toHaveBeenCalled();
 
     jest.resetAllMocks();
     batchCmd.onAfter?.();
-    expect(mockToggleFullColorAfterWorkareaChange).not.toHaveBeenCalled();
+    expect(mockToggleModuleAfterWorkareaChange).not.toHaveBeenCalled();
   });
 });

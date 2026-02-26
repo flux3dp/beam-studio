@@ -5,7 +5,7 @@ import parseSvg from '@core/app/svgedit/operations/parseSvg';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { removeDefaultLayerIfEmpty } from '@core/helpers/layer/deleteLayer';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
@@ -29,7 +29,7 @@ const importSvgString = async (
     layerName,
     parentCmd,
     removeDefaultLayer = true,
-    targetModule = getDefaultLaserModule(),
+    targetModule = getDefaultModule(),
     type = 'nolayer',
   }: {
     hidden?: boolean;
