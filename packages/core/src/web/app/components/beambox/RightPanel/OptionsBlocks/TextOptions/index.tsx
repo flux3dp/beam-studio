@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
@@ -43,11 +44,12 @@ import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
 import InFillBlock from '../InFillBlock';
 import OptionsInput from '../OptionsInput';
-import StartOffsetBlock from '../TextOptions/components/StartOffsetBlock';
-import VerticalAlignBlock from '../TextOptions/components/VerticalAlignBlock';
-import { useFontHandlers } from '../TextOptions/hooks/useFontHandlers';
 import VariableTextBlock from '../VariableTextBlock';
 
+import StartOffsetBlock from './components/StartOffsetBlock';
+import TextContentBlock from './components/TextContentBlock';
+import VerticalAlignBlock from './components/VerticalAlignBlock';
+import { useFontHandlers } from './hooks/useFontHandlers';
 import styles from './index.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -485,7 +487,15 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     [addToHistory, applyFontToElements, binaryLoader, registerGoogleFont],
   );
 
-  const renderFontFamilyBlock = (): React.JSX.Element => {
+  const renderTextContentBlock = (): ReactNode => {
+    if (textElements.length !== 1 || isTextPath) {
+      return null;
+    }
+
+    return <TextContentBlock textElement={textElements[0]} />;
+  };
+
+  const renderFontFamilyBlock = (): ReactNode => {
     const options: FontOption[] = availableFontFamilies.map((family) => getFontFamilyOption(family));
 
     if (isMobile) {
@@ -566,7 +576,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderFontStyleBlock = (): React.JSX.Element => {
+  const renderFontStyleBlock = (): ReactNode => {
     const { fontStyle } = configs;
 
     if (isMobile) {
@@ -601,7 +611,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderFontSizeBlock = (): React.JSX.Element => {
+  const renderFontSizeBlock = (): ReactNode => {
     const { fontSize } = configs;
 
     return isMobile ? (
@@ -631,7 +641,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderLetterSpacingBlock = (): React.JSX.Element => {
+  const renderLetterSpacingBlock = (): ReactNode => {
     const { letterSpacing } = configs;
 
     return isMobile ? (
@@ -660,7 +670,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderLineSpacingBlock = (): React.JSX.Element => {
+  const renderLineSpacingBlock = (): ReactNode => {
     const { lineSpacing } = configs;
 
     return isMobile ? (
@@ -692,7 +702,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderVerticalTextSwitch = (): React.JSX.Element => {
+  const renderVerticalTextSwitch = (): ReactNode => {
     const { isVertical } = configs;
     const checked = !isVertical.hasMultiValue && isVertical.value;
 
@@ -717,7 +727,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderMultiLineTextOptions = (): React.JSX.Element => (
+  const renderMultiLineTextOptions = (): ReactNode => (
     <>
       {renderLineSpacingBlock()}
       {renderLetterSpacingBlock()}
@@ -726,7 +736,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     </>
   );
 
-  const renderTextPathOptions = (): React.JSX.Element => {
+  const renderTextPathOptions = (): ReactNode => {
     const path = Array.from(elem.querySelectorAll('path'));
     const { startOffset, verticalAlign } = configs;
 
@@ -753,6 +763,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     <>
       {isMobile ? (
         <>
+          {renderTextContentBlock()}
           {renderFontFamilyBlock()}
           {renderFontStyleBlock()}
           {renderFontSizeBlock()}
@@ -761,6 +772,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       ) : (
         <ConfigProvider theme={selectTheme}>
           <div className={styles.panel}>
+            {renderTextContentBlock()}
             {renderFontFamilyBlock()}
             <div className={styles.row}>
               {renderFontSizeBlock()}
