@@ -5,13 +5,31 @@ import exifr from 'exifr';
 
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import imageProcessor from '@core/implementations/imageProcessor';
+import type { IImageDataResult } from '@core/interfaces/IImage';
 
 import grayScale from './grayscale';
 import getExifRotationFlag from './image/getExifRotationFlag';
 
 const MAX_IMAGE_PIXEL = 1e8;
 
-export default async (source: Blob | string, opts: any) => {
+export const imageData = async (
+  source: Blob | string,
+  opts: {
+    grayscale?: {
+      is_rgba: boolean;
+      is_shading: boolean;
+      is_svg: boolean;
+      threshold: number;
+    };
+    height?: number;
+    isFullResolution?: boolean;
+    onComplete?: (result: IImageDataResult) => Promise<void> | void;
+    purpose?: string;
+    rotationFlag?: number;
+    type?: string;
+    width?: number;
+  },
+) => {
   opts.onComplete = opts.onComplete || (() => {});
   opts.type = opts.type || 'image/png';
 
@@ -31,7 +49,7 @@ export default async (source: Blob | string, opts: any) => {
     const isCMYK = exifrData?.ColorSpaceData === 'CMYK';
     const resp = await fetch(url);
 
-    if (opts?.purpose !== 'spliting' && isCMYK) {
+    if (opts?.purpose !== 'splitting' && isCMYK) {
       const blob = await resp.blob();
       const jpgBase64 = await new Promise<string>((resolve) => {
         const fileReader = new FileReader();
@@ -77,26 +95,29 @@ export default async (source: Blob | string, opts: any) => {
       height: opts.height || image.bitmap.height,
       width: opts.width || image.bitmap.width,
     };
+
     // DownSampling
-    const imageDownsampling = useGlobalPreferenceStore.getState()['image_downsampling'];
+    if (!opts.isFullResolution) {
+      const imageDownsampling = useGlobalPreferenceStore.getState()['image_downsampling'];
 
-    if (imageDownsampling !== false && !opts.isFullResolution) {
-      const longSide = Math.max(size.width, size.height);
-      const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);
+      if (imageDownsampling !== false) {
+        const longSide = Math.max(size.width, size.height);
+        const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);
 
-      if (downRatio < 1) {
-        size.width = Math.round(size.width * downRatio);
-        size.height = Math.round(size.height * downRatio);
+        if (downRatio < 1) {
+          size.width = Math.round(size.width * downRatio);
+          size.height = Math.round(size.height * downRatio);
+        }
       }
-    }
 
-    if (size.width * size.height > MAX_IMAGE_PIXEL) {
-      const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
+      if (size.width * size.height > MAX_IMAGE_PIXEL) {
+        const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
 
-      size.width = Math.floor(size.width * downRatio);
-      size.height = Math.floor(size.height * downRatio);
+        size.width = Math.floor(size.width * downRatio);
+        size.height = Math.floor(size.height * downRatio);
 
-      console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+        console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+      }
     }
 
     resultCanvas.width = size.width;
@@ -114,12 +135,12 @@ export default async (source: Blob | string, opts: any) => {
 
     const pngBase64 = resultCanvas.toDataURL('image/png');
 
-    await opts.onComplete({
+    await opts.onComplete?.({
       blob: new Blob([resultImageData.data], { type: opts.type }),
+      canvas: resultCanvas,
       data: resultImageData,
       imageBinary: resultImageData.data,
       pngBase64,
-      resultCanvas,
       size,
     });
   } else {
@@ -131,29 +152,29 @@ export default async (source: Blob | string, opts: any) => {
         height: opts.height || e.target.naturalHeight,
         width: opts.width || e.target.naturalWidth,
       };
-      let imageBinary;
+      let imageBinary: Uint8ClampedArray;
       const response = await fetch(img.src);
       const arrayBuffer = await response.arrayBuffer();
       const rotationFlag = getExifRotationFlag(arrayBuffer);
 
       // DownSampling
-      if (useGlobalPreferenceStore.getState()['image_downsampling']) {
-        if (!opts.isFullResolution) {
+      if (!opts.isFullResolution) {
+        if (useGlobalPreferenceStore.getState()['image_downsampling']) {
           const longSide = Math.max(size.width, size.height);
           const downRatio = Math.min(1, (1.5 * window.innerWidth) / longSide);
 
           size.width = Math.round(size.width * downRatio);
           size.height = Math.round(size.height * downRatio);
         }
-      }
 
-      if (size.width * size.height > MAX_IMAGE_PIXEL) {
-        const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
+        if (size.width * size.height > MAX_IMAGE_PIXEL) {
+          const downRatio = Math.sqrt(MAX_IMAGE_PIXEL / (size.width * size.height));
 
-        size.width = Math.floor(size.width * downRatio);
-        size.height = Math.floor(size.height * downRatio);
+          size.width = Math.floor(size.width * downRatio);
+          size.height = Math.floor(size.height * downRatio);
 
-        console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+          console.log(`Size exceeds MAX_IMAGE_PIXEL, downsample to ${size.width} * ${size.height}`);
+        }
       }
 
       let w = size.width;
@@ -215,7 +236,7 @@ export default async (source: Blob | string, opts: any) => {
       imageBinary = ctx.getImageData(0, 0, w, h).data;
 
       if (typeof opts.grayscale !== 'undefined') {
-        imageBinary = grayScale(imageBinary, opts.grayscale);
+        imageBinary = grayScale(imageBinary, opts.grayscale) as unknown as Uint8ClampedArray;
       }
 
       imageData.data.set(imageBinary);
@@ -224,7 +245,7 @@ export default async (source: Blob | string, opts: any) => {
 
       const pngBase64 = canvas.toDataURL('image/png');
 
-      await opts.onComplete({
+      await opts.onComplete?.({
         blob: new Blob([imageData.data], { type: opts.type }),
         canvas,
         data: imageData,
@@ -246,3 +267,5 @@ export default async (source: Blob | string, opts: any) => {
     }
   }
 };
+
+export default imageData;

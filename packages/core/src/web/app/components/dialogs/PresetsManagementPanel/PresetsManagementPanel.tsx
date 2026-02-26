@@ -10,7 +10,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import alertConstants from '@core/app/constants/alert-constants';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
+import { laserModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import presets from '@core/app/constants/presets';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import ConfigPanelIcons from '@core/app/icons/config-panel/ConfigPanelIcons';
@@ -23,7 +23,11 @@ import {
   moduleBaseConfig,
   postPresetChange,
 } from '@core/helpers/layer/layer-config-helper';
-import { getModulesTranslations, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
+import {
+  getDefaultModule,
+  getModulesTranslations,
+  getPrintingModule,
+} from '@core/helpers/layer-module/layer-module-helper';
 import {
   exportPresets,
   getAllPresets,
@@ -271,11 +275,20 @@ const PresetsManagementPanel = ({ currentModule, initPreset, onClose }: Props): 
     let presetModule: LayerModuleType | null = LayerModule.LASER_UNIVERSAL;
 
     if (hasModule) {
+      const defaultModule = getDefaultModule(workarea);
+      const printingModule = getPrintingModule(workarea);
+
+      if (!printingModule) {
+        presetModule = LayerModule.LASER_UNIVERSAL;
+      } else if (!laserModules.has(defaultModule)) {
+        presetModule = defaultModule;
+      }
+
       presetModule = await dialogCaller.showRadioSelectDialog({
         id: 'import-module',
         options: [
           { label: t.laser, value: LayerModule.LASER_UNIVERSAL },
-          { label: t.print, value: getPrintingModule(workarea) },
+          { label: t.print, value: printingModule },
         ],
         title: lang.beambox.popup.select_import_module,
       });

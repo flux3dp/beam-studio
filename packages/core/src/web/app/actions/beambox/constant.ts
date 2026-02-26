@@ -7,24 +7,15 @@ export type SupportUsbModels = (typeof supportUsbModelsArray)[number];
 export const supportUsbModelsStrict = new Set(supportUsbModelsArray);
 export const supportUsbModels = new Set(removeReadonly(supportUsbModelsArray));
 
-export const bb2ModelsArray = ['fbb2'] as const;
-export type Bb2Models = (typeof bb2ModelsArray)[number];
-export const bb2ModelsStrict = new Set(bb2ModelsArray);
-export const bb2Models = new Set(removeReadonly(bb2ModelsArray));
-
-export const hexaRfModelsArray = ['fhx2rf'] as const;
-export type HexaRfModels = (typeof hexaRfModelsArray)[number];
-export const hexaRfModelsStrict = new Set(hexaRfModelsArray);
-export const hexaRfModels = new Set(removeReadonly(hexaRfModelsArray));
-
 export const adorModelsArray = ['ado1', 'fad1'] as const;
 export const adorModels = new Set(adorModelsArray);
 
 export const promarkModelsArray = ['fpm1'] as const;
 export const promarkModels = new Set(promarkModelsArray);
 
-export const modelsWithModules = new Set([...adorModelsArray, 'fbm2']);
-export const nxModelsArray = ['fbb2', ...hexaRfModelsArray, 'fbm2'] as const;
+export const modelsWithPrinter4C = ['fbm2', 'fuv1'] as const;
+export const modelsWithModules = new Set([...adorModelsArray, ...modelsWithPrinter4C]);
+export const nxModelsArray = ['fbb2', 'fhx2rf', 'fbm2', 'fuv1'] as const;
 export const nxModels = new Set<WorkAreaModel>(nxModelsArray);
 
 export const PreviewSpeedLevel = { FAST: 3, MEDIUM: 2, SLOW: 1 } as const;
@@ -33,15 +24,14 @@ export type PreviewSpeedLevelType = (typeof PreviewSpeedLevel)[keyof typeof Prev
 export const needToShowProbeBeforeAutoFocusModelsArray = ['fbb2'] as const;
 export type NeedToShowProbeBeforeAutoFocusModelsType = (typeof needToShowProbeBeforeAutoFocusModelsArray)[number];
 
-export const fcodeV2ModelsArray = [...adorModelsArray, ...bb2ModelsArray, ...hexaRfModelsArray, 'fbm2'] as const;
+export const fcodeV2ModelsArray = [...adorModelsArray, 'fbb2', 'fhx2rf', 'fbm2', 'fuv1'] as const;
 export const fcodeV2Models = new Set(fcodeV2ModelsArray);
 
-export const supportAutoFocusModelsArray = (['fhexa1', ...fcodeV2ModelsArray] as const).filter(
-  (model) => model !== 'fbm2',
-);
+export const supportAutoFocusModelsArray = ['fhexa1', ...adorModelsArray, 'fbb2', 'fhx2rf'] as const;
 export const supportAutoFocusModels = new Set(supportAutoFocusModelsArray);
 
-export const supportCameraAutoExposureModels = [...hexaRfModelsArray, 'fbm2', 'fbb2'] as const;
+export const supportCameraAutoExposureModels = ['fhx2rf', 'fbb2', 'fbm2'] as const;
+export const modelsWithWideAngleCamera: WorkAreaModel[] = ['fbb2', 'fhx2rf'] as const;
 
 export const dpmm = 10;
 
@@ -52,13 +42,14 @@ export default {
     fad1: adorModelsArray,
     fbb1b: ['fbb1b', 'fbm1'],
     fbb1p: ['fbb1p', 'fbb1b', 'fbm1'],
-    fbb2: [...bb2ModelsArray, 'fbm2'], // TODO: add fbm2 until beamo2 machine model updated
+    fbb2: ['fbb2', 'fbm2'], // TODO: add fbm2 until beamo2 machine model updated
     fbm1: ['fbm1'],
-    fbm2: ['fbm2'],
+    fbm2: ['fbm2', 'fuv1'],
     fhexa1: ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     fhx2rf: ['fhx2rf', 'fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     flv1: ['flv1'],
     fpm1: ['fpm1'],
+    fuv1: ['fuv1', 'fbm2'],
     'laser-b1': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
     'laser-b2': ['fhexa1', 'fbb1p', 'fbb1b', 'fbm1'],
   },

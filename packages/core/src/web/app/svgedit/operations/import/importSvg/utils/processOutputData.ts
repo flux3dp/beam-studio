@@ -1,5 +1,5 @@
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import fileSystem from '@core/implementations/fileSystem';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -54,7 +54,7 @@ const readSVG = (
   {
     layerName,
     parentCmd = undefined,
-    targetModule = getDefaultLaserModule(),
+    targetModule = getDefaultModule(),
     type,
   }: { layerName?: string; parentCmd?: IBatchCommand; targetModule?: LayerModuleType; type: ImportType },
 ) =>

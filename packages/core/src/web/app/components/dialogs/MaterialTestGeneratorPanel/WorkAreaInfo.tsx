@@ -10,7 +10,7 @@ import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { getModuleBoundary } from '@core/app/constants/layer-module/module-boundary';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './WorkAreaInfo.module.scss';
@@ -28,12 +28,12 @@ export default function WorkAreaInfo({ isInch }: Props): React.JSX.Element {
     const { displayHeight, height, label, width } = getWorkarea(workarea);
 
     if (modelsWithModules.has(workarea)) {
-      const laserModule = getDefaultLaserModule();
-      const labelSuffix = match(laserModule)
+      const defaultModule = getDefaultModule();
+      const labelSuffix = match(defaultModule)
         .with(LayerModule.LASER_10W_DIODE, () => ' 10W')
         .with(LayerModule.LASER_20W_DIODE, () => ' 20W')
         .otherwise(() => '');
-      const boundary = getModuleBoundary(workarea, laserModule);
+      const boundary = getModuleBoundary(workarea, defaultModule);
 
       return {
         canvasHeight: (displayHeight ?? height) - boundary.top - boundary.bottom,

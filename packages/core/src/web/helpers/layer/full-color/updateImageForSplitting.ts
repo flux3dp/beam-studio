@@ -2,7 +2,7 @@ import exifr from 'exifr';
 
 // for rgb image, we need to transform it to cmyk
 // for cmyk images we need to update the image data
-const updateImageForSpliting = async (layerElement: SVGGElement): Promise<void> => {
+const updateImageForSplitting = async (layerElement: SVGGElement): Promise<void> => {
   const images = layerElement.querySelectorAll('image');
 
   for (let i = 0; i < images.length; i += 1) {
@@ -22,4 +22,4 @@ const updateImageForSpliting = async (layerElement: SVGGElement): Promise<void> 
   }
 };
 
-export default updateImageForSpliting;
+export default updateImageForSplitting;

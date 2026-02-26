@@ -3,7 +3,6 @@ import { type ReactNode, useCallback, useMemo, useRef, useState } from 'react';
 import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
-import { hexaRfModels } from '@core/app/actions/beambox/constant';
 import progressCaller from '@core/app/actions/progress-caller';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -68,7 +67,7 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
   const next = useCallback(() => setStep((cur) => cur + 1), []);
   const prev = useCallback(() => setStep((cur) => cur - 1), []);
   const deviceModel = useMemo(() => deviceMaster.currentDevice!.info.model, []);
-  const isHexaRf = useMemo(() => hexaRfModels.has(deviceModel), [deviceModel]);
+  const isHexaRf = useMemo(() => deviceModel === 'fhx2rf', [deviceModel]);
   const solvePnPPoints = useMemo(() => {
     if (isHexaRf) return hx2WideAngleCameraPnpPoints;
 

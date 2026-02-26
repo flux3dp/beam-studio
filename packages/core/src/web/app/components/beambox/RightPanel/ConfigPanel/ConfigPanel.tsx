@@ -66,7 +66,8 @@ import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import RepeatBlock from './RepeatBlock';
 import SpeedBlock from './SpeedBlock';
-import Interpolation from './UVConfigs/Interpolation';
+import UVLightConfigs from './UVConfigs/UVLightConfigs';
+import UVPrintingConfigs from './UVConfigs/UVPrintingConfigs';
 import WhiteInkCheckbox from './WhiteInkCheckbox';
 
 const PARAMETERS_CONSTANT = 'parameters';
@@ -278,7 +279,8 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {isUV && <Interpolation type={UIType} />}
+      {isUV && <UVPrintingConfigs type={UIType} />}
+      {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>
   );
 

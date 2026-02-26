@@ -1,4 +1,4 @@
-import { hexaRfModels } from '@core/app/actions/beambox/constant';
+import { modelsWithWideAngleCamera } from '@core/app/actions/beambox/constant';
 import { loadJson } from '@core/helpers/device/jsonDataHelper';
 import deviceMaster from '@core/helpers/device-master';
 import isDev from '@core/helpers/is-dev';
@@ -9,7 +9,7 @@ import type { IDeviceInfo } from '@core/interfaces/IDevice';
 export const getWideAngleCameraData = async (
   device: IDeviceInfo,
 ): Promise<{ canPreview?: boolean; hasWideAngleCamera: boolean; parameters?: FisheyeCaliParameters }> => {
-  if (!(device.model === 'fbb2' || hexaRfModels.has(device.model))) {
+  if (!modelsWithWideAngleCamera.includes(device.model)) {
     return { hasWideAngleCamera: false };
   }
 

@@ -3,10 +3,12 @@ import { LaserType } from '@core/app/constants/promark-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 
-const mockGetDefaultLaserModule = jest.fn();
+const mockGetDefaultModule = jest.fn();
+const mockGetPrintingModule = jest.fn();
 
 jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
-  getDefaultLaserModule: () => mockGetDefaultLaserModule(),
+  getDefaultModule: () => mockGetDefaultModule(),
+  getPrintingModule: () => mockGetPrintingModule(),
 }));
 
 const mockGetPromarkInfo = jest.fn();
@@ -24,7 +26,7 @@ import {
   getLayersConfig,
   getPromarkLimit,
   initLayerConfig,
-  toggleFullColorAfterWorkareaChange,
+  toggleModuleAfterWorkareaChange,
   writeData,
 } from './layer-config-helper';
 import type { ConfigKey } from '@core/interfaces/ILayerConfig';
@@ -124,6 +126,7 @@ describe('test layer-config-helper', () => {
     const layer1 = document.querySelectorAll('g')[1] as SVGGElement;
 
     useDocumentStore.setState({ workarea: 'ado1' });
+    mockGetDefaultModule.mockReturnValue(LayerModule.LASER_10W_DIODE);
     initLayerConfig(layer1);
     expect(getLayerConfig('layer 1')).toEqual({
       ...defaultConfigs,
@@ -200,7 +203,7 @@ describe('test layer-config-helper', () => {
     });
   });
 
-  test('toggleFullColorAfterWorkareaChange to workarea without module', () => {
+  test('toggleModuleAfterWorkareaChange to workarea without module', () => {
     mockGetAllLayers.mockReturnValue([
       { getGroup: () => mockLayer },
       { getGroup: () => mockLayer },
@@ -208,8 +211,8 @@ describe('test layer-config-helper', () => {
     ]);
 
     mockLayer.getAttribute.mockReturnValue('5');
-    mockGetDefaultLaserModule.mockReturnValue(15);
-    toggleFullColorAfterWorkareaChange();
+    mockGetDefaultModule.mockReturnValue(15);
+    toggleModuleAfterWorkareaChange();
     expect(mockToggleFullColorLayer).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(1, 'data-module', '15');
@@ -217,7 +220,7 @@ describe('test layer-config-helper', () => {
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(3, 'data-module', '15');
   });
 
-  test('toggleFullColorAfterWorkareaChange to workarea with module', () => {
+  test('toggleModuleAfterWorkareaChange to workarea with module', () => {
     useDocumentStore.setState({ workarea: 'ado1' });
     mockGetAllLayers.mockReturnValue([
       { getGroup: () => mockLayer },
@@ -226,8 +229,8 @@ describe('test layer-config-helper', () => {
     ]);
 
     mockLayer.getAttribute.mockReturnValue('15');
-    mockGetDefaultLaserModule.mockReturnValue(1);
-    toggleFullColorAfterWorkareaChange();
+    mockGetDefaultModule.mockReturnValue(1);
+    toggleModuleAfterWorkareaChange();
     expect(mockToggleFullColorLayer).not.toHaveBeenCalled();
     expect(mockLayer.setAttribute).toHaveBeenCalledTimes(3);
     expect(mockLayer.setAttribute).toHaveBeenNthCalledWith(1, 'data-module', '1');

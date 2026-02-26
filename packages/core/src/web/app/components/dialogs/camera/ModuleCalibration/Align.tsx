@@ -16,7 +16,7 @@ import {
   printingModules,
   UVModules,
 } from '@core/app/constants/layer-module/layer-modules';
-import type { OffsetTuple } from '@core/app/constants/layer-module/module-offsets';
+import type { OffsetTuple } from '@core/app/constants/layer-module/moduleOffsets';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/moduleOffsets';

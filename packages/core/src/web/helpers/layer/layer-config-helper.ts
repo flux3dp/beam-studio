@@ -1,7 +1,7 @@
 import { pipe } from 'remeda';
 import { match } from 'ts-pattern';
 
-import { modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
+import { promarkModels } from '@core/app/actions/beambox/constant';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType } from '@core/app/constants/promark-constants';
@@ -13,7 +13,7 @@ import layerManager from '@core/app/svgedit/layer/layerManager';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import { getPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule, getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getAllPresets, getDefaultPreset } from '@core/helpers/presets/preset-helper';
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -62,8 +62,14 @@ const attributeMap: Record<ConfigKey, string> = {
   refreshInterval: 'data-refreshInterval',
   refreshThreshold: 'data-refreshThreshold',
   repeat: 'data-repeat',
+  rightPadding: 'data-rightPadding',
   speed: 'data-speed',
   split: 'data-split',
+  uvCuringAfter: 'data-uvCuringAfter',
+  uvCuringRepeat: 'data-uvCuringRepeat',
+  uvPrintingRepeat: 'data-uvPrintingRepeat',
+  uvStrength: 'data-uvStrength',
+  uvXStep: 'data-uvXStep',
   wInk: 'data-wInk',
   wMultipass: 'data-wMultipass',
   wobbleDiameter: 'data-wobbleDiameter',
@@ -116,7 +122,13 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   refreshInterval: 30,
   refreshThreshold: 0,
   repeat: 1,
+  rightPadding: 0,
   speed: 20,
+  uvCuringAfter: false,
+  uvCuringRepeat: 1,
+  uvPrintingRepeat: 1,
+  uvStrength: 30,
+  uvXStep: 1,
   wInk: useGlobalPreferenceStore.getState()['multipass-compensation'] ? -12 : -4,
   wMultipass: 3,
   wobbleDiameter: -0.2,
@@ -173,6 +185,7 @@ export const booleanConfig: ConfigKey[] = [
   'biDirectional',
   'crossHatch',
   'ceZHighSpeed',
+  'uvCuringAfter',
 ] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
@@ -193,6 +206,8 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'wobbleStep',
   // UV
   'interpolation',
+  'rightPadding',
+  'uvXStep',
 ]);
 export const presetRelatedConfigs: Set<ConfigKey> = new Set([
   'power',
@@ -496,17 +511,17 @@ export const initLayerConfig = (layer: Element): void => {
   const supportModules = getSupportedModules(workarea);
   const defaultConfig = getDefaultConfig();
   const keys = Object.keys(defaultConfig) as ConfigKey[];
-  const defaultLaserModule = getDefaultLaserModule();
+  const defaultModule = getDefaultModule();
 
   for (const key of keys) {
     if (defaultConfig[key] !== undefined) {
       if (key === 'module') {
-        if (supportModules.includes(defaultLaserModule)) {
-          writeDataLayer(layer, key, defaultLaserModule, { shouldApplyModuleBaseConfig: false });
-        } else if (supportModules.includes(defaultConfig.module!)) {
-          writeDataLayer(layer, key, defaultConfig.module!, { shouldApplyModuleBaseConfig: false });
-        } else {
-          writeDataLayer(layer, key, supportModules[0], { shouldApplyModuleBaseConfig: false });
+        const targetModule = supportModules.includes(defaultConfig.module!) ? defaultConfig.module! : defaultModule;
+
+        writeDataLayer(layer, key, targetModule, { shouldApplyModuleBaseConfig: false });
+
+        if (printingModules.has(targetModule)) {
+          writeDataLayer(layer, 'fullcolor', true);
         }
       } else {
         writeDataLayer(layer, key, defaultConfig[key] as number | string);
@@ -570,44 +585,29 @@ export const getLayersConfig = (layerNames: string[], currentLayerName?: string)
   return data as ILayerConfig;
 };
 
-export const toggleFullColorAfterWorkareaChange = (): void => {
+export const toggleModuleAfterWorkareaChange = (): void => {
   const workarea = useDocumentStore.getState().workarea;
   const supportedModules = getSupportedModules(workarea);
-  const defaultLaserModule = getDefaultLaserModule();
+  const defaultModule = getDefaultModule();
+  const printingModule = getPrintingModule();
 
   layerManager.getAllLayers().forEach((layer) => {
     const layerElement = layer.getGroup();
 
     if (!layerElement) return;
 
-    const module = getData(layerElement, 'module') as LayerModuleType;
+    const originalModule = getData(layerElement, 'module') as LayerModuleType;
 
-    if (!supportedModules.includes(module)) {
-      writeDataLayer(layerElement, 'module', defaultLaserModule);
+    if (!supportedModules.includes(originalModule)) {
+      const targetModule = (printingModules.has(originalModule) ? printingModule : defaultModule) ?? defaultModule;
 
-      if (printingModules.has(module)) toggleFullColorLayer(layerElement, { val: false });
+      writeDataLayer(layerElement, 'module', targetModule);
+
+      if (printingModules.has(targetModule) !== printingModules.has(originalModule)) {
+        toggleFullColorLayer(layerElement, { addToHistory: false, val: printingModules.has(targetModule) });
+      }
     }
   });
-};
-
-export const applyDefaultLaserModule = (): void => {
-  const workarea = useDocumentStore.getState().workarea;
-
-  if (modelsWithModules.has(workarea)) {
-    const defaultLaserModule = getDefaultLaserModule();
-
-    if (defaultLaserModule === LayerModule.LASER_UNIVERSAL) return;
-
-    layerManager.getAllLayers().forEach((layer) => {
-      const layerElement = layer.getGroup();
-
-      if (!layerElement) return;
-
-      if (getData(layerElement, 'module') === LayerModule.LASER_UNIVERSAL) {
-        writeDataLayer(layerElement, 'module', defaultLaserModule);
-      }
-    });
-  }
 };
 
 export const applyModuleBaseConfig = (

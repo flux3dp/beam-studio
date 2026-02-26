@@ -13,7 +13,7 @@ import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import imageData from '@core/helpers/image-data';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
-import { getDefaultLaserModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -233,7 +233,7 @@ const exportImageLayer = async (
   );
 
   const isPrinting = image.exportAs === 'print';
-  const targetModule = isPrinting ? LayerModule.PRINTER : getDefaultLaserModule();
+  const targetModule = isPrinting ? LayerModule.PRINTER : getDefaultModule();
 
   // 1. Create a dedicated layer
   const batchCmd = new history.BatchCommand('Import Puzzle Image');

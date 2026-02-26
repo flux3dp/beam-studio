@@ -24,14 +24,14 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
 import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
-  getDefaultLaserModule,
+  getDefaultModule,
   getLayersByModule,
   getModulesTranslations,
   hasModuleLayer,
@@ -57,6 +57,7 @@ const workareaOptions = [
   checkFpm1() && { label: 'Promark', value: 'fpm1' },
   { label: 'Beambox II', value: 'fbb2' },
   checkBM2() && { label: 'beamo II', value: 'fbm2' },
+  checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
   isDev() && { label: 'Lazervida', value: 'flv1' },
 ].filter(Boolean);
 
@@ -209,13 +210,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       'enable-diode': Boolean(addOnInfo.hybridLaser && enableDiode),
     };
 
-    const defaultLaser = getDefaultLaserModule(workarea);
+    const defaultModule = getDefaultModule(workarea);
 
     if (origState['enable-4c'] && !enable4C) {
       const layers = getLayersByModule(fullColorHeadModules);
 
       if (layers.length > 0) {
-        const res = await changeLayersModule(Array.from(layers), LayerModule.PRINTER_4C, defaultLaser);
+        const res = await changeLayersModule(Array.from(layers), LayerModule.PRINTER_4C, defaultModule);
 
         if (!res) {
           delete newState['enable-4c'];
@@ -228,7 +229,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
       const layers = getLayersByModule([LayerModule.LASER_1064]);
 
       if (layers.length > 0) {
-        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, defaultLaser);
+        await changeLayersModule(Array.from(layers), LayerModule.LASER_1064, defaultModule);
       }
     }
 

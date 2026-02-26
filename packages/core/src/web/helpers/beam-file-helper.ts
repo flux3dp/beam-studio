@@ -301,7 +301,7 @@ const readImageSource = (buf: Buffer, offset: number, end: number) => {
     if (image) {
       image.setAttribute('origImage', src);
       image.setAttribute('preserveAspectRatio', 'none');
-      updateImageDisplay(image as SVGImageElement);
+      updateImageDisplay(image as SVGImageElement, { useNativeSize: true });
     }
   }
 };

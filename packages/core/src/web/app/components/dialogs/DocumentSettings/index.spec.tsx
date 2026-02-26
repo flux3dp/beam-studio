@@ -144,13 +144,13 @@ jest.mock('@core/helpers/layer-module/change-module', () => ({
   changeLayersModule: mockChangeLayersModule,
 }));
 
-const mockGetDefaultLaserModule = jest.fn();
+const mockGetDefaultModule = jest.fn();
 const mockGetLayersByModule = jest.fn();
 const mockGetModulesTranslations = jest.fn();
 const mockHasModuleLayer = jest.fn();
 
 jest.mock('@core/helpers/layer-module/layer-module-helper', () => ({
-  getDefaultLaserModule: mockGetDefaultLaserModule,
+  getDefaultModule: mockGetDefaultModule,
   getLayersByModule: mockGetLayersByModule,
   getModulesTranslations: mockGetModulesTranslations,
   hasModuleLayer: mockHasModuleLayer,
@@ -306,7 +306,7 @@ describe('test DocumentSettings', () => {
   it('should render correctly for beamo 2', async () => {
     mockGetLayersByModule.mockReturnValue(['mockLayer']);
     mockChangeLayersModule.mockResolvedValue(false);
-    mockGetDefaultLaserModule.mockReturnValue(LayerModule.LASER_UNIVERSAL);
+    mockGetDefaultModule.mockReturnValue(LayerModule.LASER_UNIVERSAL);
 
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 

@@ -9,19 +9,21 @@ import i18n from '@core/helpers/i18n';
 
 const LaserModuleSet = new Set([LayerModule.LASER_10W_DIODE, LayerModule.LASER_20W_DIODE]);
 
-export const getDefaultLaserModule = (workarea?: WorkAreaModel): LayerModuleType => {
+export const getDefaultModule = (workarea?: WorkAreaModel): LayerModuleType => {
   workarea = workarea ?? useDocumentStore.getState().workarea;
 
-  if (!adorModels.has(workarea)) {
-    return LayerModule.LASER_UNIVERSAL;
+  if (adorModels.has(workarea)) {
+    const value = useGlobalPreferenceStore.getState()['default-laser-module'];
+
+    return LaserModuleSet.has(value) ? value : LayerModule.LASER_20W_DIODE;
   }
 
-  const value = useGlobalPreferenceStore.getState()['default-laser-module'];
+  const supportedModules = getSupportedModules(workarea);
 
-  return LaserModuleSet.has(value) ? value : LayerModule.LASER_20W_DIODE;
+  return supportedModules.includes(LayerModule.LASER_UNIVERSAL) ? LayerModule.LASER_UNIVERSAL : supportedModules[0];
 };
 
-export const getPrintingModule = (workarea?: WorkAreaModel): LayerModuleType => {
+export const getPrintingModule = (workarea?: WorkAreaModel): LayerModuleType | null => {
   workarea = workarea ?? useDocumentStore.getState().workarea;
 
   const supportedModules = getSupportedModules(workarea);
@@ -30,7 +32,7 @@ export const getPrintingModule = (workarea?: WorkAreaModel): LayerModuleType => 
     return LayerModule.PRINTER_4C;
   }
 
-  return LayerModule.PRINTER;
+  return supportedModules.includes(LayerModule.PRINTER) ? LayerModule.PRINTER : null;
 };
 
 export const getModulesTranslations = (shouldNote4C = false): Record<LayerModuleType, string> => {

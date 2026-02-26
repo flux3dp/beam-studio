@@ -4,7 +4,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import svgStringToCanvas from '@core/helpers/image/svgStringToCanvas';
 
-import updateImageForSpliting from './full-color/updateImageForSpliting';
+import updateImageForSplitting from './full-color/updateImageForSplitting';
 
 const layerToImage = async (
   layer: SVGGElement,
@@ -22,7 +22,7 @@ const layerToImage = async (
   }
 
   if (isFullColor) {
-    await updateImageForSpliting(layerClone);
+    await updateImageForSplitting(layerClone);
   }
 
   const cmykLayer = layerClone.cloneNode(true) as SVGGElement;

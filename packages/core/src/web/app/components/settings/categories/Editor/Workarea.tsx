@@ -1,7 +1,7 @@
 import React from 'react';
 
 import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { checkBM2, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -29,6 +29,7 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
     checkFpm1() && { label: 'Promark', value: 'fpm1' },
     isDev() && { label: 'Lazervida', value: 'flv1' },
     { label: 'Beambox II', value: 'fbb2' },
+    checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
   ].filter(Boolean);
 
   const unitOptions = [
