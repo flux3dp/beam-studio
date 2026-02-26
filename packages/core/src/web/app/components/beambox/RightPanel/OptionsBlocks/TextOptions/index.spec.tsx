@@ -263,27 +263,25 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
   showGoogleFontsPanel: (...args: any[]) => mockShowGoogleFontsPanel(...args),
 }));
 
-jest.mock('@core/app/stores/googleFontStore', () => ({
-  useGoogleFontStore: Object.assign(
-    jest.fn(() => ({
-      addToHistory: mockAddToHistory,
-      getState: () => ({
-        isGoogleFontLoaded: mockIsGoogleFontLoaded,
-        loadGoogleFont: mockLoadGoogleFont,
-      }),
-      isGoogleFontLoaded: mockIsGoogleFontLoaded,
-      loadGoogleFont: mockLoadGoogleFont,
-      loadGoogleFontBinary: mockLoadGoogleFontBinary,
-      sessionLoadedFonts: mockSessionLoadedFonts,
-    })),
-    {
-      getState: () => ({
-        isGoogleFontLoaded: mockIsGoogleFontLoaded,
-        loadGoogleFont: mockLoadGoogleFont,
-      }),
-    },
-  ),
-}));
+jest.mock('@core/app/stores/googleFontStore', () => {
+  const storeState = {
+    addToHistory: mockAddToHistory,
+    isGoogleFontLoaded: mockIsGoogleFontLoaded,
+    loadGoogleFont: mockLoadGoogleFont,
+    loadGoogleFontBinary: mockLoadGoogleFontBinary,
+    registerGoogleFont: jest.fn(),
+    sessionLoadedFonts: mockSessionLoadedFonts,
+  };
+
+  return {
+    useGoogleFontStore: Object.assign(
+      jest.fn((selector?: (s: typeof storeState) => unknown) => (selector ? selector(storeState) : storeState)),
+      {
+        getState: () => storeState,
+      },
+    ),
+  };
+});
 
 jest.mock('../TextOptions/hooks/useFontHandlers', () => ({
   useFontHandlers: jest.fn(() => ({
