@@ -5,8 +5,10 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 
 import { getData, writeDataLayer } from '../layer-config-helper';
 
-const toggleFullColorLayer = (layer: Element, opts: { val?: boolean } = {}): IBatchCommand | null => {
-  const { val } = opts;
+const toggleFullColorLayer = (
+  layer: Element,
+  { addToHistory = true, parentCmd, val }: { addToHistory?: boolean; parentCmd?: IBatchCommand; val?: boolean } = {},
+): IBatchCommand | null => {
   const origVal = getData(layer, 'fullcolor');
   const targetVal = val ?? !origVal;
 
@@ -22,7 +24,12 @@ const toggleFullColorLayer = (layer: Element, opts: { val?: boolean } = {}): IBa
   cmd.onAfter = () => {
     updateLayerColor(layer as SVGGElement);
   };
-  undoManager.addCommandToHistory(cmd);
+
+  if (parentCmd) {
+    parentCmd.addSubCommand(cmd);
+  } else if (addToHistory) {
+    undoManager.addCommandToHistory(cmd);
+  }
 
   return cmd;
 };

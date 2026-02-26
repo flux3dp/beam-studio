@@ -516,10 +516,12 @@ export const initLayerConfig = (layer: Element): void => {
   for (const key of keys) {
     if (defaultConfig[key] !== undefined) {
       if (key === 'module') {
-        if (supportModules.includes(defaultConfig.module!)) {
-          writeDataLayer(layer, key, defaultConfig.module!, { shouldApplyModuleBaseConfig: false });
-        } else {
-          writeDataLayer(layer, key, defaultModule, { shouldApplyModuleBaseConfig: false });
+        const targetModule = supportModules.includes(defaultConfig.module!) ? defaultConfig.module! : defaultModule;
+
+        writeDataLayer(layer, key, targetModule, { shouldApplyModuleBaseConfig: false });
+
+        if (printingModules.has(targetModule)) {
+          writeDataLayer(layer, 'fullcolor', true);
         }
       } else {
         writeDataLayer(layer, key, defaultConfig[key] as number | string);
@@ -602,7 +604,7 @@ export const toggleModuleAfterWorkareaChange = (): void => {
       writeDataLayer(layerElement, 'module', targetModule);
 
       if (printingModules.has(targetModule) !== printingModules.has(originalModule)) {
-        toggleFullColorLayer(layerElement, { val: printingModules.has(targetModule) });
+        toggleFullColorLayer(layerElement, { addToHistory: false, val: printingModules.has(targetModule) });
       }
     }
   });
