@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { useEffect } from 'react';
 
 import classNames from 'classnames';
@@ -16,7 +16,7 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import workareaManager from '@core/app/svgedit/workarea';
-import Drawer from '@core/app/widgets/Drawer';
+import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -34,9 +34,9 @@ import styles from './SvgEditor.module.scss';
 import TimeEstimationButton from './TimeEstimationButton';
 import Workarea from './Workarea';
 
-export const SvgEditor = (): ReactNode => {
+const SvgEditor = (): ReactNode => {
   const isMobile = useIsMobile();
-  const { drawerMode, mode, setDrawerMode } = useCanvasStore();
+  const { drawerMode, mode } = useCanvasStore();
   const osName = useMemo(() => getOS(), []);
 
   useEffect(() => {
@@ -53,7 +53,7 @@ export const SvgEditor = (): ReactNode => {
   }, []);
 
   return (
-    <>
+    <div style={{ display: 'flex', height: '100%', width: '100%' }}>
       <div
         className={styles.container}
         id="svg_editor"
@@ -94,37 +94,28 @@ export const SvgEditor = (): ReactNode => {
           </>
         )}
 
-        {isMobile && drawerMode === 'ai-generate' && <MobileAiGenerate />}
-        {isMobile && drawerMode === 'generator' && <MobileGenerators />}
-
-        <Drawer
-          enableResizable={false}
-          isOpen={!isMobile && drawerMode === 'ai-generate'}
-          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-generate' : 'none')}
-        >
-          <AiGenerate />
-        </Drawer>
-
-        <Drawer
-          enableResizable={false}
-          isOpen={!isMobile && drawerMode === 'generator'}
-          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'generator' : 'none')}
-        >
-          <Generators />
-        </Drawer>
-
-        <Drawer
-          enableResizable={{ right: true }}
-          isOpen={drawerMode === 'ai-chat'}
-          setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'ai-chat' : 'none')}
-        >
+        {isMobile ? (
+          drawerMode === 'ai-generate' && <MobileAiGenerate />
+        ) : (
+          <ToolBarDrawer enableResizable={false} mode="ai-generate">
+            <AiGenerate />
+          </ToolBarDrawer>
+        )}
+        {isMobile ? (
+          drawerMode === 'generator' && <MobileGenerators />
+        ) : (
+          <ToolBarDrawer enableResizable={false} mode="generator">
+            <Generators />
+          </ToolBarDrawer>
+        )}
+        <ToolBarDrawer enableResizable={{ right: true }} mode="ai-chat">
           <Chat />
-        </Drawer>
+        </ToolBarDrawer>
         <ElementPanel />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
-    </>
+    </div>
   );
 };
 
-export default SvgEditor;
+export default memo(SvgEditor);

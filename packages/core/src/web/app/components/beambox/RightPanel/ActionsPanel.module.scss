@@ -17,10 +17,10 @@
     display: inline-flex;
     flex-wrap: wrap;
     justify-content: space-between;
+    gap: 8px;
 
     .btn-container {
       width: 100%;
-      margin-bottom: 8px;
       &.half {
         width: calc(50% - 4px);
       }

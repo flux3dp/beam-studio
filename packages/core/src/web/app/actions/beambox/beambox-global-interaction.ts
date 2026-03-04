@@ -1,5 +1,8 @@
 import tabController from '@core/app/actions/tabController';
+import { CanvasMode } from '@core/app/constants/canvasMode';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { isAtPage } from '@core/helpers/hashHelper';
+import { DOCKABLE_MENU_ITEMS } from '@core/helpers/menubar/AbstractMenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import menu from '@core/implementations/menu';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -26,6 +29,7 @@ class BeamboxGlobalInteraction {
       menu.checkCurveEngraving();
       this.onObjectBlur();
       this.onObjectFocus();
+      this.onCanvasModeChange();
     } else {
       // disable all
       menu.attach([]);
@@ -78,6 +82,14 @@ class BeamboxGlobalInteraction {
 
   onObjectBlur() {
     menu.disable(['GROUP', 'UNGROUP', 'DUPLICATE', 'DELETE', 'PATH', 'DECOMPOSE_PATH', 'PHOTO_EDIT', 'SVG_EDIT']);
+  }
+
+  onCanvasModeChange(isPathPreviewMode = useCanvasStore.getState().mode === CanvasMode.PathPreview) {
+    if (isAtPage('editor') && !isPathPreviewMode) {
+      menu.enable(DOCKABLE_MENU_ITEMS);
+    } else {
+      menu.disable(DOCKABLE_MENU_ITEMS);
+    }
   }
 
   detach() {

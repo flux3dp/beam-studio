@@ -29,6 +29,8 @@ export interface Storage {
   'device-store': Record<string, DeviceStore>;
   /** 1 for done */
   'did-gesture-tutorial': number;
+  /** JSON string for dockview-react layout */
+  dockviewLayout: string;
   'elements-history': History[];
   'enable-sentry': boolean | null;
   'flux-rsa-key': string;

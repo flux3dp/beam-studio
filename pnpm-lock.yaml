@@ -527,6 +527,9 @@ importers:
       delaunator:
         specifier: ^5.0.1
         version: 5.0.1
+      dockview-react:
+        specifier: ^4.13.1
+        version: 4.13.1(react@19.2.4)
       eventemitter3:
         specifier: ^5.0.1
         version: 5.0.1
@@ -6313,6 +6316,17 @@ packages:
   dns-packet@5.6.1:
     resolution: {integrity: sha512-l4gcSouhcgIKRvyy99RNVOgxXiicE+2jZoNmaNmZ6JXiGajBOJAesk1OBlJuM5k2c+eudGdLxDqXuPCKIj6kpw==}
     engines: {node: '>=6'}
+
+  dockview-core@4.13.1:
+    resolution: {integrity: sha512-+7vR0ZEoL8CNck6NqDVUMqBT22niwBu5CMMI137dZ3c8NDc7c5Si+3dGEqQgM4lNtHBLAtvypo1C4p21J2wkiQ==}
+
+  dockview-react@4.13.1:
+    resolution: {integrity: sha512-xnK0mUq+gzME/QyzM5nn+SsQO26AA2qZlCuqi1KX7wux52KIUSMraQHN5AY9Qm2qCVb/NHhCZoZNSysb/GS79A==}
+
+  dockview@4.13.1:
+    resolution: {integrity: sha512-K8xnYt3Rvkx8MYKHaEsb8aFaPyQclKRRkXS9JcpQPZUgqxumTLnSidgdd6uIfzEps6yJsXoZGQGJ9PtcaKyDcQ==}
+    peerDependencies:
+      react: ^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0
 
   doctrine@2.1.0:
     resolution: {integrity: sha512-35mSku4ZXK0vfCuHEDAwt55dg2jNajHZ1odvF+8SSr82EsZY4QmXfuWso8oEd8zRhVObSN18aM0CjSdoBX7zIw==}
@@ -20342,6 +20356,19 @@ snapshots:
   dns-packet@5.6.1:
     dependencies:
       '@leichtgewicht/ip-codec': 2.0.5
+
+  dockview-core@4.13.1: {}
+
+  dockview-react@4.13.1(react@19.2.4):
+    dependencies:
+      dockview: 4.13.1(react@19.2.4)
+    transitivePeerDependencies:
+      - react
+
+  dockview@4.13.1(react@19.2.4):
+    dependencies:
+      dockview-core: 4.13.1
+      react: 19.2.4
 
   doctrine@2.1.0:
     dependencies:

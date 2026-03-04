@@ -54,6 +54,8 @@ export const menuItems: Record<string, MenuItem> = {
   redo: createShortcut('REDO', ['Shift+Fnkey+z']),
   save_as: createShortcut('SAVE_AS', ['Shift+Fnkey+s']),
   save_scene: createShortcut('SAVE_SCENE', ['Fnkey+s']),
+  show_layer_controls_panel: createShortcut('SHOW_LAYER_CONTROLS_PANEL', ['l']),
+  show_object_properties_panel: createShortcut('SHOW_OBJECT_CONTROLS_PANEL', ['o']),
   undo: createShortcut('UNDO', ['Fnkey+z']),
   ungroup: createShortcut('UNGROUP', ['Shift+Fnkey+g']),
   // for numpad, it should use the '+' key
