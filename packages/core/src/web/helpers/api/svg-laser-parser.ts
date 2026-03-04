@@ -61,6 +61,8 @@ export const getExportOpt = async (
   const useDevPaddingAcc = isDevMode && paddingAccel;
   const workareaObj = getWorkarea(model);
 
+  config.hardware_name = model;
+
   if (model === 'fhexa1') {
     config.hardware_name = 'hexa';
 
@@ -72,23 +74,15 @@ export const getExportOpt = async (
   } else if (model === 'fbm1') {
     config.hardware_name = 'beamo';
   } else if (model === 'ado1') {
-    config.hardware_name = 'ado1';
-
     if (!useDevPaddingAcc) config.acc = opt.paddingAccel || 3200;
   } else if (model === 'fbb2') {
-    config.hardware_name = 'fbb2';
-
     if (!useDevPaddingAcc) config.acc = 8000;
   } else if (model === 'fbm2') {
-    config.hardware_name = 'fbm2';
-
     if (!useDevPaddingAcc) config.acc = 8000;
-  } else {
-    config.hardware_name = model;
-  }
-
-  if (model === 'fhx2rf') {
+  } else if (model === 'fhx2rf') {
     config.watt = useCanvasStore.getState().watt;
+
+    if (!useDevPaddingAcc) config.acc = 10000;
   }
 
   if (useDevPaddingAcc) config.acc = paddingAccel;
