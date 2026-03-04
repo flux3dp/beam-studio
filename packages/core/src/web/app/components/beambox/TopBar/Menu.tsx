@@ -9,6 +9,7 @@ import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
@@ -26,6 +27,14 @@ interface Props {
   email?: string;
 }
 
+const mockT = {
+  RESET_LAYOUT: 'Reset Layout',
+  show_layer_controls_panel: 'Show Layer Controls Panel',
+  show_object_properties_panel: 'Show Object Controls Panel',
+  SHOW_PATH_CONTROLS_PANEL: 'Show Path Controls Panel',
+  window: 'Window',
+};
+
 export default function Menu({ email }: Props): React.JSX.Element {
   const eventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
   const [devices, setDevices] = useState(Array<IDeviceInfo>());
@@ -36,6 +45,9 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const isAutoAlign = useGlobalPreferenceStore((state) => state.auto_align);
   const shouldZoomWithWindow = useGlobalPreferenceStore((state) => state.zoom_with_window);
   const isUvPrintFileEnabled = useGlobalPreferenceStore((state) => state['enable-uv-print-file']);
+  const isPanelLayerControlsShown = useDockableStore((state) => state.panelLayerControls);
+  const isPanelObjectControlsShown = useDockableStore((state) => state.panelObjectProperties);
+  const isPanelPathControlsShown = useDockableStore((state) => state.panelPathEdit);
   const [duplicateDisabled, setDuplicateDisabled] = useState(true);
   const [svgEditDisabled, setSvgEditDisabled] = useState(true);
   const [decomposePathDisabled, setDecomposePathDisabled] = useState(true);
@@ -43,12 +55,14 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const [ungroupDisabled, setUngroupDisabled] = useState(true);
   const [pathDisabled, setPathDisabled] = useState(true);
   const [imageEditDisabled, setImageEditDisabled] = useState(true);
+  const [dockableDisabled, setDockableDisabled] = useState(false);
   const menuItemUpdater = {
     DECOMPOSE_PATH: setDecomposePathDisabled,
     DUPLICATE: setDuplicateDisabled,
     GROUP: setGroupDisabled,
     PATH: setPathDisabled,
     PHOTO_EDIT: setImageEditDisabled,
+    RESET_LAYOUT: setDockableDisabled,
     SVG_EDIT: setSvgEditDisabled,
     UNGROUP: setUngroupDisabled,
   };
@@ -111,7 +125,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const openPage = (url: string) => browser.open(url);
   const hotkey = (action: string): React.JSX.Element => (
     <>
-      <span className={styles.action}>{(menuCms as any)[action]}</span>
+      <span className={styles.action}>{(menuCms as any)[action] ?? mockT[action as keyof typeof mockT]}</span>
       <span className={styles.hotkey}>{menuItems[action].representation}</span>
     </>
   );
@@ -469,6 +483,38 @@ export default function Menu({ email }: Props): React.JSX.Element {
           {menuCms.manage_account}
         </MenuItem>
       </SubMenu>
+      {!isMobile && (
+        <SubMenu label={menuCms.window}>
+          <MenuItem disabled={dockableDisabled} onClick={() => callback('RESET_LAYOUT')}>
+            {mockT.RESET_LAYOUT}
+          </MenuItem>
+          <MenuDivider />
+          <MenuItem
+            checked={isPanelLayerControlsShown}
+            disabled={dockableDisabled}
+            onClick={() => callback('SHOW_LAYER_CONTROLS_PANEL')}
+            type="checkbox"
+          >
+            {hotkey('show_layer_controls_panel')}
+          </MenuItem>
+          <MenuItem
+            checked={isPanelObjectControlsShown}
+            disabled={dockableDisabled}
+            onClick={() => callback('SHOW_OBJECT_CONTROLS_PANEL')}
+            type="checkbox"
+          >
+            {hotkey('show_object_properties_panel')}
+          </MenuItem>
+          <MenuItem
+            checked={isPanelPathControlsShown}
+            disabled={dockableDisabled}
+            onClick={() => callback('SHOW_PATH_CONTROLS_PANEL')}
+            type="checkbox"
+          >
+            {mockT.SHOW_PATH_CONTROLS_PANEL}
+          </MenuItem>
+        </SubMenu>
+      )}
       <SubMenu label={menuCms.help}>
         <MenuItem onClick={() => callback('ABOUT_BEAM_STUDIO')}>{menuCms.about_beam_studio}</MenuItem>
         {!isMobile && <MenuItem onClick={() => callback('START_TUTORIAL')}>{menuCms.show_start_tutorial}</MenuItem>}

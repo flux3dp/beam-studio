@@ -1,0 +1,19 @@
+.tab {
+  position: relative;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  padding: 0.25rem 0.5rem;
+
+  .title {
+    flex-grow: 1;
+    margin-right: 4px;
+  }
+
+  .action {
+    padding: 4px;
+    color: currentColor;
+  }
+}

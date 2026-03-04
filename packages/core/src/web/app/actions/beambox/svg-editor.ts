@@ -1306,12 +1306,6 @@ const svgEditor = (window['svgEditor'] = (function () {
             window['polygonDecreaseSides']?.();
             ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
           });
-          Shortcuts.on(['l'], () => RightPanelController.setPanelType(PanelType.Layer));
-          Shortcuts.on(['o'], () => {
-            const isPathEdit = getMouseMode() === 'pathedit';
-
-            RightPanelController.setPanelType(isPathEdit ? PanelType.PathEdit : PanelType.Object);
-          });
           Shortcuts.on(['Escape'], () => clickSelect());
         },
       };
@@ -1339,18 +1333,15 @@ const svgEditor = (window['svgEditor'] = (function () {
     );
 
     function onDragEnter(e) {
-      e.stopPropagation();
       e.preventDefault();
       // and indicator should be displayed here, such as "drop files here"
     }
 
     function onDragOver(e) {
-      e.stopPropagation();
       e.preventDefault();
     }
 
     function onDragLeave(e) {
-      e.stopPropagation();
       e.preventDefault();
       // hypothetical indicator should be removed here
     }
@@ -1442,7 +1433,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       };
 
       var importImage = function (e) {
-        e.stopPropagation();
         e.preventDefault();
         $('#workarea').removeAttr('style');
 

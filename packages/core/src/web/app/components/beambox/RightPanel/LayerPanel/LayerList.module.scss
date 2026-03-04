@@ -5,6 +5,7 @@ $active-color: #0091ff;
   width: 100%;
   border-collapse: collapse;
   background-color: #ffffff;
+  margin-left: 1px; // prevent left border of list item out of container
 
   .color {
     width: 24px;
@@ -54,16 +55,12 @@ $active-color: #0091ff;
     }
 
     .name {
-      width: 135px;
+      flex: 1;
       padding: 3px 0px;
       margin-left: 5px;
       text-align: center;
       cursor: pointer;
       line-break: anywhere;
-
-      &.with-module {
-        width: 95px;
-      }
 
       @media screen and (max-width: 600px) {
         margin-left: 10px;

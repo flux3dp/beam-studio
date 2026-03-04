@@ -4,6 +4,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
 import { ContentType } from '@core/app/constants/element-panel-constants';
+import Drawer from '@core/app/widgets/Drawer';
 
 window.innerHeight = 667;
 
@@ -33,6 +34,12 @@ const mockContext: any = {
   setSearchKey: mockSetSearchKey,
   updateSearchContents: mockUpdateSearchContents,
 };
+
+jest.mock('@core/app/widgets/dockable/ToolBarDrawer', () => ({ children, ...props }) => (
+  <Drawer isOpen setIsOpen={() => {}} {...props}>
+    {children}
+  </Drawer>
+));
 
 import { ElementPanelContent } from './ElementPanel';
 

@@ -33,7 +33,7 @@ const LINKTYPE_CORNER = 0;
 const LINKTYPE_SMOOTH = 1; // same direction, different dist
 const LINKTYPE_SYMMETRIC = 2; // same direction, same dist
 
-const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
+const PanelContent = ({ isMobile = false }: { isMobile?: boolean }): React.ReactNode => {
   const lang = useI18n().beambox.right_panel.object_panel.path_edit_panel;
   const forceUpdate = useForceUpdate();
   const onNodeTypeChange = (newType) => {
@@ -48,7 +48,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
     };
   }, [forceUpdate]);
 
-  const currentPath: ISVGPath = svgedit.path.path;
+  const currentPath: ISVGPath = svgedit?.path.path;
   let containsSharpNodes = false;
   let containsRoundNodes = false;
   const isDisabled = !currentPath || currentPath.selected_pts.length === 0;
@@ -130,7 +130,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
             className={styles.button}
             disabled={!canConnect}
             icon={<PathEditIcons.Connect />}
-            onClick={svgCanvas.pathActions.connectNodes}
+            onClick={() => svgCanvas.pathActions.connectNodes()}
             shape={buttonShape}
           >
             <span className={styles.label}>{lang.connect}</span>
@@ -140,7 +140,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
             className={styles.button}
             disabled={!canDisconnect}
             icon={<PathEditIcons.Disconnect />}
-            onClick={svgCanvas.pathActions.disconnectNode}
+            onClick={() => svgCanvas.pathActions.disconnectNode()}
             shape={buttonShape}
           >
             <span className={styles.label}>{lang.disconnect}</span>
@@ -151,7 +151,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
               className={styles.button}
               disabled={!canDelete}
               icon={<TrashIcon />}
-              onClick={svgEditor.deleteSelected}
+              onClick={() => svgEditor.deleteSelected()}
               shape={buttonShape}
             >
               <span className={styles.label}>{lang.delete}</span>
@@ -163,19 +163,15 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }) => {
   );
 };
 
-function PathEditPanel(): React.JSX.Element {
+function PathEditPanel(): React.ReactNode {
   const isMobile = useIsMobile();
   const title = useI18n().beambox.right_panel.tabs.path_edit;
 
-  if (!svgCanvas || !svgedit) {
-    return null;
-  }
-
   return isMobile ? (
     <FloatingPanel
-      anchors={[0, 280]}
+      anchors={[0, 300]}
       className={styles.panel}
-      onClose={() => svgCanvas.pathActions.toSelectMode(svgedit.path.path.elem)}
+      onClose={() => svgCanvas?.pathActions.toSelectMode(svgedit?.path.path.elem)}
       title={title}
     >
       <PanelContent isMobile />

@@ -673,16 +673,56 @@ class MenuManager extends EventEmitter {
       submenu: accountSubmenu,
     });
 
+    const windowSubmenu: MenuItemConstructorOptions['submenu'] = [];
+
     if (process.platform === 'darwin') {
-      menuItems.push({
-        label: r.window,
-        role: 'window',
-        submenu: [
-          { label: r.minimize, role: 'minimize' },
-          { label: r.close, role: 'close' },
-        ],
-      });
+      // MacOS has its own window menu, windowSubmenu will be appended to the end of it
+      windowSubmenu.push(
+        { type: 'separator' },
+        { label: r.minimize, role: 'minimize' },
+        { label: r.close, role: 'close' },
+        { type: 'separator' },
+      );
     }
+
+    windowSubmenu.push(
+      {
+        click: callback,
+        enabled: false,
+        id: 'RESET_LAYOUT',
+        label: 'RESET_LAYOUT',
+      },
+      { type: 'separator' },
+      {
+        accelerator: 'l',
+        click: callback,
+        enabled: false,
+        id: 'SHOW_LAYER_CONTROLS_PANEL',
+        label: 'SHOW_LAYER_CONTROLS_PANEL',
+        type: 'checkbox',
+      },
+      {
+        accelerator: 'o',
+        click: callback,
+        enabled: false,
+        id: 'SHOW_OBJECT_CONTROLS_PANEL',
+        label: 'SHOW_OBJECT_CONTROLS_PANEL',
+        type: 'checkbox',
+      },
+      {
+        click: callback,
+        enabled: false,
+        id: 'SHOW_PATH_CONTROLS_PANEL',
+        label: 'SHOW_PATH_CONTROLS_PANEL',
+        type: 'checkbox',
+      },
+    );
+
+    menuItems.push({
+      label: r.window,
+      role: 'window',
+      submenu: windowSubmenu,
+    });
 
     const helpSubmenu = this.buildHelpMenu(callback);
 
