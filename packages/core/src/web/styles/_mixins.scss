@@ -1,3 +1,5 @@
+@use 'sass:list';
+
 // Add antd default margin between buttons in modal footer
 // if buttons are wrapped in another element
 @mixin footer {
@@ -15,5 +17,47 @@
 @mixin when-tab-not-focused {
   :where(body:not(:global(.focused))) & {
     @content;
+  }
+}
+
+@mixin is-mobile {
+  @media screen and (max-width: 600px) {
+    @content;
+  }
+}
+@mixin is-not-mobile {
+  @media screen and (min-width: 601px) {
+    @content;
+  }
+}
+
+@mixin is-web {
+  :where(:global(#root.web)) & {
+    @content;
+  }
+}
+@mixin is-not-web {
+  :where(:global(#root:not(.web))) & {
+    @content;
+  }
+}
+
+$supported-os: (linux, macos, windows, others); // lowercase version of getOS result
+@mixin is-os($os) {
+  @if list.index($supported-os, $os) {
+    :where(:global(body.#{$os})) & {
+      @content;
+    }
+  } @else {
+    @error "Unsupported OS `#{$os}` in is-os mixin.";
+  }
+}
+@mixin is-not-os($os) {
+  @if list.index($supported-os, $os) {
+    :where(:global(body:not(.#{$os}))) & {
+      @content;
+    }
+  } @else {
+    @error "Unsupported OS `#{$os}` in is-not-os mixin.";
   }
 }

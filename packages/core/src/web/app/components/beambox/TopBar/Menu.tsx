@@ -111,8 +111,8 @@ export default function Menu({ email }: Props): React.JSX.Element {
   const openPage = (url: string) => browser.open(url);
   const hotkey = (action: string): React.JSX.Element => (
     <>
-      <span className="action">{(menuCms as any)[action]}</span>
-      <span className="hotkey">{menuItems[action].representation}</span>
+      <span className={styles.action}>{(menuCms as any)[action]}</span>
+      <span className={styles.hotkey}>{menuItems[action].representation}</span>
     </>
   );
 

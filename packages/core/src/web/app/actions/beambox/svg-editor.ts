@@ -54,7 +54,7 @@ import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
 import { importPresets } from '@core/helpers/presets/preset-helper';
-import Shortcuts from '@core/helpers/shortcuts';
+import Shortcuts, { isFocusingOnInputs } from '@core/helpers/shortcuts';
 import { isMobile } from '@core/helpers/system-helper';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -957,6 +957,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // FIXME: use document.addEventListener('keydown', (evt) => { ... })
       // because shortcuts only works with a strict key combinations match
       document.addEventListener('keydown', (evt) => {
+        if (isFocusingOnInputs()) return;
         if (evt.key === ' ') {
           svgCanvas.spaceKey = keypan = true;
           setCursor('grab');
@@ -966,6 +967,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       // FIXME: use document.addEventListener('keyup', (evt) => { ... })
       // because shortcuts are not providing keyup event now
       document.addEventListener('keyup', (evt) => {
+        if (isFocusingOnInputs()) return;
         if (evt.key === ' ') {
           setCursorAccordingToMouseMode();
           svgCanvas.spaceKey = keypan = false;
