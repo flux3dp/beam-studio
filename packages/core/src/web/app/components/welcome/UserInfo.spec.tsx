@@ -1,5 +1,4 @@
 import React from 'react';
-
 import { fireEvent, render } from '@testing-library/react';
 
 const mockShowLoginDialog = jest.fn();
@@ -38,6 +37,7 @@ const mockUser = {
 describe('test UserInfo', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockUseIsMobile.mockReturnValue(false);
   });
 
   it('should render correctly', () => {
@@ -51,7 +51,7 @@ describe('test UserInfo', () => {
     fireEvent.click(getByText('Member Center'));
     expect(mockOpen).toHaveBeenCalledWith('https://member.flux3dp.com/en-US/machine-register');
 
-    fireEvent.click(container.querySelector('.avatar')!);
+    fireEvent.click(getByText('mock-nickname'));
     expect(mockShowFluxCreditDialog).toHaveBeenCalled();
   });
 
