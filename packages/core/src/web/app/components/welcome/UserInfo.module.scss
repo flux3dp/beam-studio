@@ -3,22 +3,32 @@
   flex-direction: column;
   justify-content: center;
   background: #f0f0f0;
+
   @media screen and (min-width: 601px) {
     min-height: 164px;
     gap: 16px;
+    padding: 0 24px;
   }
+
   @media screen and (max-width: 600px) {
     padding: 12px;
     gap: 8px;
   }
 
+  .user-profile-btn {
+    background: transparent;
+    border: none;
+    outline: none;
+    padding: 0;
+    margin: 0;
+    cursor: pointer;
+    text-align: left;
+    width: 100%;
+    display: block;
+  }
+
   .avatar {
     flex-shrink: 0;
-    cursor: pointer;
-
-    &:hover {
-      filter: brightness(90%);
-    }
 
     .default-avatar {
       font-size: 52px;
@@ -33,9 +43,11 @@
   .nickname {
     font-size: 16px;
     font-weight: bold;
+    color: #000;
   }
 
   .email {
+    font-size: 14px;
     color: #525252;
   }
 }
