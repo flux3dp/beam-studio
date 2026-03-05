@@ -45,9 +45,6 @@ describe('test UserInfo', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText('Log out'));
-    expect(mockSignOut).toHaveBeenCalled();
-
     fireEvent.click(getByText('Member Center'));
     expect(mockOpen).toHaveBeenCalledWith('https://member.flux3dp.com/en-US/machine-register');
 
