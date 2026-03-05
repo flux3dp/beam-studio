@@ -55,7 +55,11 @@ const onFinished = (data: boolean) => {
 
   checkScreenSize();
   window.addEventListener('hashchange', checkScreenSize);
-  router(document.getElementById('root') as HTMLElement);
+
+  const root = document.getElementById('root') as HTMLElement;
+
+  root.classList.add('web');
+  router(root);
 };
 
 onFinished(storage.get('printer-is-ready'));

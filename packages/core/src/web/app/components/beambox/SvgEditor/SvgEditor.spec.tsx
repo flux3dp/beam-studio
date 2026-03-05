@@ -19,6 +19,7 @@ jest.mock('@core/app/components/AiGenerate', () => () => <div>MockAiGenerate</di
 jest.mock('@core/app/components/AiGenerate/mobile/MobileAiGenerate', () => () => <div>MockAiGenerate</div>);
 jest.mock('@core/app/components/Generators', () => () => <div>MockGenerators</div>);
 jest.mock('@core/app/components/Generators/mobile/MobileGenerators', () => () => <div>MockGenerators</div>);
+jest.mock('@core/app/components/dialogs/ElementPanel/ElementPanel', () => () => <div>MockElementPanel</div>);
 
 jest.mock('./Banner', () => () => <div>MockBanner</div>);
 jest.mock('./DpiInfo', () => () => <div>MockDpiInfo</div>);

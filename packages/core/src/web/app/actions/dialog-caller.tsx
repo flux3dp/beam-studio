@@ -11,7 +11,6 @@ import ChangeLog from '@core/app/components/dialogs/ChangeLog';
 import CodeGenerator from '@core/app/components/dialogs/CodeGenerator';
 import DeviceSelector from '@core/app/components/dialogs/DeviceSelector';
 import DocumentSettings from '@core/app/components/dialogs/DocumentSettings';
-import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import FluxCredit from '@core/app/components/dialogs/FluxCredit';
 import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
 import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
@@ -424,23 +423,6 @@ export default {
         />,
       );
     }),
-  showElementPanel: (onClose: () => void): void => {
-    const id = 'element-panel';
-
-    if (isIdExist(id)) {
-      return;
-    }
-
-    addDialogComponent(
-      id,
-      <ElementPanel
-        onClose={() => {
-          onClose();
-          popDialogById(id);
-        }}
-      />,
-    );
-  },
   showFluxCreditDialog: (): void => {
     if (isIdExist('flux-id-credit')) {
       return;

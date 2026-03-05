@@ -6,12 +6,13 @@ import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelI
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import ObjectPanelItem from '../ObjectPanelItem';
 
 import styles from './FlipButtons.module.scss';
 
-let svgCanvas;
+let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;

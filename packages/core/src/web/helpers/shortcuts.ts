@@ -98,7 +98,7 @@ const keyupEvent = (event: KeyboardEvent) => {
   }
 };
 
-const isFocusingOnInputs = () => {
+export const isFocusingOnInputs = () => {
   if (!document.activeElement) {
     return false;
   }
