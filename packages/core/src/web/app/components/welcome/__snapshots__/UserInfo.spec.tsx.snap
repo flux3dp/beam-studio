@@ -5,46 +5,51 @@ exports[`test UserInfo should render correctly 1`] = `
   <div
     class="info"
   >
-    <div
-      class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
-      style="gap: 16px;"
+    <button
+      class="user-profile-btn"
+      type="button"
     >
-      <span
-        class="ant-avatar ant-avatar-circle ant-avatar-image ant-avatar-icon avatar css-dev-only-do-not-override-hash"
-        style="width: 52px; height: 52px; font-size: 26px;"
-      >
-        <img
-          alt="avatar"
-          src="mock-avatar"
-        />
-      </span>
       <div
-        class="nickname"
+        class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
+        style="gap: 16px;"
       >
-        mock-nickname
-      </div>
-    </div>
-    <div
-      class="email"
-    >
-      mock-email
-    </div>
-    <div
-      class="ant-flex css-dev-only-do-not-override-hash"
-      style="gap: 8px;"
-    >
-      <button
-        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-sm ant-btn-block"
-        type="button"
-      >
-        <span>
-          Log out
+        <span
+          class="ant-avatar ant-avatar-circle ant-avatar-image ant-avatar-icon avatar css-dev-only-do-not-override-hash"
+          style="width: 52px; height: 52px; font-size: 26px;"
+        >
+          <img
+            alt="avatar"
+            src="mock-avatar"
+          />
         </span>
-      </button>
+        <div
+          class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-start ant-flex-justify-center ant-flex-vertical"
+        >
+          <div
+            class="nickname"
+          >
+            mock-nickname
+          </div>
+          <div
+            class="email"
+          >
+            mock-email
+          </div>
+        </div>
+      </div>
+    </button>
+    <div
+      class="action-section"
+    >
       <button
-        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-sm ant-btn-block yellow"
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-lg ant-btn-block yellow"
         type="button"
       >
+        <span
+          class="ant-btn-icon"
+        >
+          <svgr-url />
+        </span>
         <span>
           Member Center
         </span>
@@ -59,41 +64,51 @@ exports[`test UserInfo should render correctly in mobile 1`] = `
   <div
     class="info"
   >
-    <div
-      class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
-      style="gap: 16px;"
+    <button
+      class="user-profile-btn"
+      type="button"
     >
-      <span
-        class="ant-avatar ant-avatar-circle ant-avatar-image ant-avatar-icon avatar css-dev-only-do-not-override-hash"
-        style="width: 32px; height: 32px; font-size: 16px;"
-      >
-        <img
-          alt="avatar"
-          src="mock-avatar"
-        />
-      </span>
       <div
-        class="nickname"
+        class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
+        style="gap: 16px;"
       >
-        mock-nickname
+        <span
+          class="ant-avatar ant-avatar-circle ant-avatar-image ant-avatar-icon avatar css-dev-only-do-not-override-hash"
+          style="width: 40px; height: 40px; font-size: 20px;"
+        >
+          <img
+            alt="avatar"
+            src="mock-avatar"
+          />
+        </span>
+        <div
+          class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-start ant-flex-justify-center ant-flex-vertical"
+        >
+          <div
+            class="nickname"
+          >
+            mock-nickname
+          </div>
+          <div
+            class="email"
+          >
+            mock-email
+          </div>
+        </div>
       </div>
-    </div>
+    </button>
     <div
-      class="ant-flex css-dev-only-do-not-override-hash"
-      style="gap: 8px;"
+      class="action-section"
     >
       <button
-        class="ant-btn css-dev-only-do-not-override-hash ant-btn-default ant-btn-color-default ant-btn-variant-outlined ant-btn-sm ant-btn-block"
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-lg ant-btn-block yellow"
         type="button"
       >
-        <span>
-          Log out
+        <span
+          class="ant-btn-icon"
+        >
+          <svgr-url />
         </span>
-      </button>
-      <button
-        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-sm ant-btn-block yellow"
-        type="button"
-      >
         <span>
           Member Center
         </span>
@@ -109,31 +124,26 @@ exports[`test UserInfo should render correctly when not login 1`] = `
     class="info"
   >
     <div
-      class="ant-flex css-dev-only-do-not-override-hash ant-flex-align-center"
-      style="gap: 16px;"
+      class="login-hint-wrapper"
     >
-      <span
-        class="ant-avatar ant-avatar-circle ant-avatar-icon avatar css-dev-only-do-not-override-hash"
-        style="width: 32px; height: 32px; font-size: 16px;"
-      >
-        <svgr-url
-          class="default-avatar"
-        />
-      </span>
       <div
         class="login-hint"
       >
         Get Free AI credits on us when you sign up for a FLUX account!
       </div>
     </div>
-    <button
-      class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-block yellow"
-      type="button"
+    <div
+      class="action-section"
     >
-      <span>
-        Log in or Sign Up
-      </span>
-    </button>
+      <button
+        class="ant-btn css-dev-only-do-not-override-hash ant-btn-primary ant-btn-color-primary ant-btn-variant-solid ant-btn-lg ant-btn-block yellow"
+        type="button"
+      >
+        <span>
+          Log in or Sign Up
+        </span>
+      </button>
+    </div>
   </div>
 </div>
 `;
