@@ -11,6 +11,7 @@ import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGen
 import PathPreview from '@core/app/components/beambox/PathPreview';
 import Chat from '@core/app/components/Chat';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
+import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
@@ -119,6 +120,7 @@ export const SvgEditor = (): ReactNode => {
         >
           <Chat />
         </Drawer>
+        <ElementPanel />
       </div>
       {mode === CanvasMode.PathPreview && <PathPreview />}
     </>

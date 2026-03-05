@@ -1,5 +1,4 @@
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
-import dialogCaller from '@core/app/actions/dialog-caller';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import type { HashMapKey } from '@core/helpers/hashHelper';
 import { isAtPage } from '@core/helpers/hashHelper';
@@ -29,7 +28,7 @@ const shortcutsMap: Array<{ callback: () => void; condition?: ConditionChecker; 
   { callback: () => setMouseMode('path'), keys: ['p'] },
   { callback: () => setMouseMode('text'), keys: ['t'] },
   { callback: () => setMouseMode('select'), keys: ['v'] },
-  { callback: () => dialogCaller.showElementPanel(FnWrapper.useSelectTool), keys: ['e'] },
+  { callback: () => useCanvasStore.getState().toggleDrawerMode('element-panel'), keys: ['e'] },
   { callback: () => FnWrapper.importImage(), keys: ['i'] },
 ];
 

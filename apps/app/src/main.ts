@@ -100,6 +100,7 @@ export default function main(): void {
   });
 
   globalEvents(() => {
+    $('body').addClass(getOS().toLowerCase());
     router($('section.content')[0]);
   });
 }
