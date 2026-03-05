@@ -42,7 +42,12 @@
   }
 }
 
-$supported-os: (linux, macos, windows, others); // lowercase version of getOS result
+$supported-os: (
+  linux,
+  macos,
+  windows,
+  others
+); // lowercase version of getOS result
 @mixin is-os($os) {
   @if list.index($supported-os, $os) {
     :where(:global(body.#{$os})) & {
