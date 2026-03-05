@@ -8,7 +8,10 @@ import { Resizable } from 're-resizable';
 
 import styles from './Drawer.module.scss';
 
-export type Props = Pick<DrawerProps, 'classNames' | 'closeIcon' | 'getContainer' | 'rootClassName' | 'title'> & {
+export type Props = Pick<
+  DrawerProps,
+  'classNames' | 'closeIcon' | 'destroyOnClose' | 'getContainer' | 'rootClassName' | 'title'
+> & {
   children: ReactNode;
   enableResizable?: Enable | false;
   isOpen: boolean;
@@ -21,6 +24,7 @@ const Drawer = memo(
     children,
     classNames,
     closeIcon,
+    destroyOnClose,
     enableResizable,
     getContainer = false,
     isOpen,
@@ -41,6 +45,7 @@ const Drawer = memo(
           classNames={classNames}
           closable={false}
           closeIcon={closeIcon}
+          destroyOnClose={destroyOnClose}
           getContainer={getContainer}
           mask={false}
           onClose={onClose}

@@ -172,6 +172,7 @@ export const ElementPanelContent = (): ReactNode => {
     <Drawer
       classNames={{ body: styles['drawer-body'], header: styles['drawer-header'] }}
       closeIcon={null}
+      destroyOnClose
       enableResizable={false}
       isOpen={open}
       rootClassName={styles.drawer}
