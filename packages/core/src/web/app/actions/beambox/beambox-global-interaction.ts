@@ -2,7 +2,6 @@ import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { isAtPage } from '@core/helpers/hashHelper';
-import { DOCKABLE_MENU_ITEMS } from '@core/helpers/menubar/AbstractMenu';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import menu from '@core/implementations/menu';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -85,10 +84,17 @@ class BeamboxGlobalInteraction {
   }
 
   onCanvasModeChange(isPathPreviewMode = useCanvasStore.getState().mode === CanvasMode.PathPreview) {
+    const menuItems = [
+      'SHOW_LAYER_CONTROLS_PANEL',
+      'SHOW_OBJECT_CONTROLS_PANEL',
+      'SHOW_PATH_CONTROLS_PANEL',
+      'RESET_LAYOUT',
+    ];
+
     if (isAtPage('editor') && !isPathPreviewMode) {
-      menu.enable(DOCKABLE_MENU_ITEMS);
+      menu.enable(menuItems);
     } else {
-      menu.disable(DOCKABLE_MENU_ITEMS);
+      menu.disable(menuItems);
     }
   }
 
