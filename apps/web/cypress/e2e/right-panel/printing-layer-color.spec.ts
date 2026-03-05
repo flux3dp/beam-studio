@@ -23,7 +23,7 @@ describe('printing layer color', () => {
     cy.get('.anticon[id="basic/icon-circle"]').click();
     cy.get('.ant-drawer-header').should('not.exist');
     cy.get('#svg_1').should('be.visible').click();
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
     cy.get(`div[class*="${colorPickerPrefix}color"]`)
       .eq(0)
       .should('have.css', 'background-color', 'rgb(91, 91, 91)')
@@ -40,14 +40,14 @@ describe('printing layer color', () => {
       cy.get('.anticon[id="basic/icon-circle"]').click();
       cy.get('.ant-drawer-header').should('not.exist');
       cy.get('#svg_1').should('be.visible').click();
-      cy.get('.tab.objects').click();
+      cy.showPanel('objects');
       cy.get(`div[class*="${colorPickerPrefix}color"]`)
         .eq(0)
         .should('have.css', 'background-color', 'rgb(91, 91, 91)')
         .click();
       cy.get(`div[class*="${colorPickerPrefix}inner"][style="background-color: rgb(139, 187, 17);"]`).click();
       cy.get('.ant-btn').contains('OK').click();
-      cy.get('.tab.layers').click();
+      cy.showPanel('layers');
       cy.get('#layerdoubleclick-0').rightclick();
       cy.get('.ant-dropdown-menu-item').contains('Expand Layer').click();
       cy.get('.ant-btn').contains('Confirm').click();
@@ -81,7 +81,7 @@ describe('printing layer color', () => {
   }
 
   it('single color layer and change color', () => {
-    cy.get('.tab.layers').click();
+    cy.showPanel('layers');
     cy.get('#layerdoubleclick-0').rightclick();
     cy.get('.ant-dropdown-menu-item').contains('Switch to single color layer').click();
     cy.get(`div[class*="${colorPickerPrefix}color"]`).should('have.attr', 'style', 'background: rgb(0, 159, 227);');

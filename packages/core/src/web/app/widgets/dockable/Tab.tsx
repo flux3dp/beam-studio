@@ -98,6 +98,7 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
   return (
     <div
       className={styles.tab}
+      data-tab={panelApi.component}
       draggable
       onDragEndCapture={handleDragEnd}
       onDragStartCapture={handleDragStart}

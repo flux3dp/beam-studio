@@ -10,9 +10,11 @@ describe('manipulate layers (operations)', () => {
 
   it('duplicate the layer', () => {
     cy.get(`div[class*="${layerListClassPrefix}item"]`).rightclick();
-    cy.get('.ant-dropdown').should('be.visible').within(() => {
-      cy.contains('.ant-dropdown-menu-item', 'Duplicate').click({ force: true });
-    });
+    cy.get('.ant-dropdown')
+      .should('be.visible')
+      .within(() => {
+        cy.contains('.ant-dropdown-menu-item', 'Duplicate').click({ force: true });
+      });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 2);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 1 copy');
     cy.get(`div[class*="${layerColorPickerPrefix}color"]`).should('have.attr', 'style', 'background: rgb(51, 51, 51);');
@@ -28,9 +30,11 @@ describe('manipulate layers (operations)', () => {
 
   it('lock the layer ', () => {
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).rightclick();
-    cy.get('.ant-dropdown').should('be.visible').within(() => {
-      cy.contains('.ant-dropdown-menu-item', 'Lock').click({ force: true });
-    });
+    cy.get('.ant-dropdown')
+      .should('be.visible')
+      .within(() => {
+        cy.contains('.ant-dropdown-menu-item', 'Lock').click({ force: true });
+      });
     cy.get('#layerlock-0 > img').should('have.css', 'display', 'block');
     cy.get('#layerlock-0 > img').should('be.visible');
     cy.clickToolBtn('Rectangle');
@@ -54,7 +58,7 @@ describe('manipulate layers (operations)', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.get('div.tab.layers').click();
+    cy.showPanel('layers');
     cy.get(`div[class*="${layerListClassPrefix}vis"]`).click();
     cy.get('#svg_1').should('be.hidden');
   });
@@ -65,9 +69,11 @@ describe('manipulate layers (operations)', () => {
     }
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 10);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).rightclick();
-    cy.get('.ant-dropdown').should('be.visible').within(() => {
-      cy.contains('.ant-dropdown-menu-item', 'Merge All').click({ force: true });
-    });
+    cy.get('.ant-dropdown')
+      .should('be.visible')
+      .within(() => {
+        cy.contains('.ant-dropdown-menu-item', 'Merge All').click({ force: true });
+      });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 1');
   });
@@ -77,9 +83,11 @@ describe('manipulate layers (operations)', () => {
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 2);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).scrollIntoView();
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).rightclick();
-    cy.get('.ant-dropdown').should('be.visible').within(() => {
-      cy.contains('.ant-dropdown-menu-item', 'Merge Down').click({ force: true });
-    });
+    cy.get('.ant-dropdown')
+      .should('be.visible')
+      .within(() => {
+        cy.contains('.ant-dropdown-menu-item', 'Merge Down').click({ force: true });
+      });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 1');
   });
@@ -94,16 +102,21 @@ describe('manipulate layers (operations)', () => {
     // Ctrl/Cmd + click to multi-select (use both modifiers to cover all platforms)
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(1).click({ metaKey: true, ctrlKey: true });
     // Wait for both layers to be selected before opening context menu
-    cy.get(`div[class*="${layerListClassPrefix}item"][class*="${layerListClassPrefix}selected"]`).should('have.length', 2);
+    cy.get(`div[class*="${layerListClassPrefix}item"][class*="${layerListClassPrefix}selected"]`).should(
+      'have.length',
+      2,
+    );
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(1).rightclick();
     // Wait for dropdown to be visible, then find and click the menu item
-    cy.get('.ant-dropdown').should('be.visible').then(($dropdown) => {
-      cy.wrap($dropdown).within(() => {
-        cy.contains('.ant-dropdown-menu-item', 'Merge Selected Layers')
-          .should('not.have.class', 'ant-dropdown-menu-item-disabled')
-          .click({ force: true });
+    cy.get('.ant-dropdown')
+      .should('be.visible')
+      .then(($dropdown) => {
+        cy.wrap($dropdown).within(() => {
+          cy.contains('.ant-dropdown-menu-item', 'Merge Selected Layers')
+            .should('not.have.class', 'ant-dropdown-menu-item-disabled')
+            .click({ force: true });
+        });
       });
-    });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 3);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(0).should('have.text', 'Layer 3');
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(1).should('have.text', 'Layer 2');
