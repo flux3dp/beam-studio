@@ -12,7 +12,7 @@ describe('convert to path 2.0', () => {
     cy.get('#svg_1').should('exist');
     cy.inputText('123');
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
     cy.get('div#object-panel').should('exist');
     cy.get('.ant-select-selection-item[title="Font"]').click();
     cy.get('.ant-select-item-option-content img[alt="Mr Bedfort"]').click();

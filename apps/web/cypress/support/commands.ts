@@ -298,6 +298,12 @@ Cypress.Commands.add('moveElementToLayer', (targetLayer: string, needConfirm = t
   cy.get('.ant-select-item').contains(targetLayer).click();
   if (needConfirm) cy.get('.ant-btn').contains('Yes').click();
 });
+
+Cypress.Commands.add('showPanel', (panelName: 'layers' | 'objects') => {
+  const componentName = panelName === 'layers' ? 'rightPanelLayer' : 'rightPanelObject';
+  cy.get(`[data-tab="${componentName}"]`).click();
+});
+
 //
 //
 // -- This is a child command --

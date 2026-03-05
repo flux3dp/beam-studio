@@ -44,10 +44,6 @@ const helpers = {
     cy.uploadFile('flux.png', 'image/png');
   },
 
-  openObjectsTab: () => {
-    cy.get('.tab.objects').should('be.visible').click();
-  },
-
   selectImage: () => {
     cy.get('#svg_1').click({ force: true });
   },
@@ -100,7 +96,7 @@ describe('Image manipulation functions', () => {
     it('should enable trace function when gradient is removed', () => {
       helpers.uploadTestImage();
       helpers.selectImage();
-      helpers.openObjectsTab();
+      cy.showPanel('objects');
 
       // Verify trace is initially disabled
       cy.get('#trace').should('have.attr', 'disabled');
@@ -125,7 +121,7 @@ describe('Image manipulation functions', () => {
 
     it('should change image when gradient is toggled', () => {
       helpers.uploadTestImage();
-      helpers.openObjectsTab();
+      cy.showPanel('objects');
       helpers.toggleGradient();
 
       // Verify initial state (no gradient)
@@ -133,7 +129,7 @@ describe('Image manipulation functions', () => {
       helpers.assertElementAttribute('#svg_1', 'data-shading', 'false');
 
       helpers.selectImage();
-      helpers.openObjectsTab();
+      cy.showPanel('objects');
       helpers.assertImageHash('#svg_1', 'changeGradient.withoutGradient');
 
       // Enable gradient
@@ -149,7 +145,7 @@ describe('Image manipulation functions', () => {
   describe('Image replacement and editing', () => {
     it('should replace image with another file', () => {
       helpers.uploadTestImage();
-      helpers.openObjectsTab();
+      cy.showPanel('objects');
 
       // Replace with new image
       cy.get('#replace_with').click();
@@ -166,7 +162,7 @@ describe('Image manipulation functions', () => {
       helpers.uploadTestImage();
       helpers.waitForImageProcessing();
       helpers.selectImage();
-      helpers.openObjectsTab();
+      cy.showPanel('objects');
 
       // Open grading modal
       cy.get('#grading').click();
@@ -190,7 +186,7 @@ describe('Image manipulation functions', () => {
     it('should crop image', () => {
       cy.disableImageDownSampling();
       helpers.uploadTestImage();
-      helpers.openObjectsTab();
+      cy.showPanel('objects');
 
       // Start crop operation
       cy.get('#crop').click();
@@ -210,7 +206,7 @@ describe('Image manipulation functions', () => {
     it('should invert image colors', () => {
       cy.disableImageDownSampling();
       helpers.uploadTestImage();
-      helpers.openObjectsTab();
+      cy.showPanel('objects');
 
       // Apply invert
       cy.get('#invert').click();

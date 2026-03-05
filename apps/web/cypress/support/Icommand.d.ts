@@ -33,6 +33,7 @@ declare global {
       waitForProgress: (timeout?: number) => Chainable<void>;
       /** Wait for heavy operations like image processing to complete */
       waitForImageProcessing: (timeout?: number) => Chainable<void>;
+      showPanel: (panelName: 'layers' | 'objects') => Chainable<void>;
     }
   }
 }

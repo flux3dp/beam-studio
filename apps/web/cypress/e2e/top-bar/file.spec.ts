@@ -85,7 +85,7 @@ describe('manipulate file', () => {
         .trigger('mouseup', { force: true });
 
       cy.get('#svg_1').should('exist').should('not.have.attr', 'opacity');
-      cy.get('.tab.objects').click();
+      cy.showPanel('objects');
       cy.get('#x_position').clear().type('100{enter}');
       cy.get('#y_position').clear().type('100{enter}');
       cy.get('#w_size').clear().type('100{enter}');

@@ -27,7 +27,7 @@ describe('manipulate layers (advanced)', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_1').should('have.attr', 'stroke', '#333333');
-    cy.get('div.tab.layers').click();
+    cy.showPanel('layers');
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.clickToolBtn('Rectangle');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
@@ -41,7 +41,7 @@ describe('manipulate layers (advanced)', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.get('div.tab.layers').click();
+    cy.showPanel('layers');
     cy.selectPreset('Leather - 3mm Cutting');
     cy.get('#power-input').should('have.value', '65');
     cy.get('#speed-input').should('have.value', '3');
@@ -49,12 +49,12 @@ describe('manipulate layers (advanced)', () => {
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.selectPreset('Fabric - 5mm Cutting');
     cy.get('#svg_1').click({ force: true });
-    cy.get('div.tab.layers').click({ force: true });
+    cy.showPanel('layers');
     cy.moveElementToLayer('Layer 2');
     cy.get('#svg_1').should('have.attr', 'stroke', '#3F51B5');
     cy.clickToolBtn('Cursor');
     cy.get('#svg_1').click({ force: true });
-    cy.get('div.tab.layers').click();
+    cy.showPanel('layers');
     // Wait for layer panel to update with the new preset values
     cy.get('#power-input').should('have.value', '60');
     cy.get('#speed-input').should('have.value', '20');
