@@ -694,7 +694,6 @@ class MenuManager extends EventEmitter {
       },
       { type: 'separator' },
       {
-        accelerator: 'l',
         click: callback,
         enabled: false,
         id: 'SHOW_LAYER_CONTROLS_PANEL',
@@ -702,7 +701,6 @@ class MenuManager extends EventEmitter {
         type: 'checkbox',
       },
       {
-        accelerator: 'o',
         click: callback,
         enabled: false,
         id: 'SHOW_OBJECT_CONTROLS_PANEL',

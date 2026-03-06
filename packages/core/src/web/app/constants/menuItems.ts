@@ -60,8 +60,6 @@ export const menuItems: Partial<Record<MenuItemKey, MenuItem>> = {
   redo: createShortcut('REDO', ['Shift+Fnkey+z']),
   save_as: createShortcut('SAVE_AS', ['Shift+Fnkey+s']),
   save_scene: createShortcut('SAVE_SCENE', ['Fnkey+s']),
-  tab_layers: createShortcut('SHOW_LAYER_CONTROLS_PANEL', ['l']),
-  tab_objects: createShortcut('SHOW_OBJECT_CONTROLS_PANEL', ['o']),
   undo: createShortcut('UNDO', ['Fnkey+z']),
   ungroup: createShortcut('UNGROUP', ['Shift+Fnkey+g']),
   // for numpad, it should use the '+' key
