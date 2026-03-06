@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Převrátit vertikálně',
         zoom: 'Zoom',
       },
-      tabs: {
-        layers: 'Vrstvy',
-        objects: 'Objekty',
-        path_edit: 'Upravit cestu',
-      },
       uv_print_block: {
         title: 'UV Tisk',
       },
@@ -2353,6 +2348,7 @@ const lang: ILang = {
       redo: 'Znovu',
       reload_app: 'Znovu načíst aplikaci',
       reset: 'Restartovat',
+      reset_layout: 'Obnovit rozložení',
       rotary_setup: 'Nastavení rotačního zařízení',
       rotate: 'Otočit',
       samples: 'Příklady',
@@ -2372,6 +2368,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Přepnout na beta verzi',
       switch_to_latest: 'Přepnout na stabilní verzi',
+      tab_layers: 'Vrstvy',
+      tab_objects: 'Objekty',
+      tab_path_edit: 'Upravit cestu',
       tools: {
         title: 'Nástroje',
       },

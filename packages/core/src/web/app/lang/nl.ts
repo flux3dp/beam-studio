@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Verticaal omdraaien',
         zoom: 'Zoom',
       },
-      tabs: {
-        layers: 'Lagen',
-        objects: 'Objecten',
-        path_edit: 'Pad bewerken',
-      },
       uv_print_block: {
         title: 'UV-print',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'Opnieuw',
       reload_app: 'App opnieuw laden',
       reset: 'Resetten',
+      reset_layout: 'Indeling herstellen',
       rotary_setup: 'Draaibare Instelling',
       rotate: 'Draaien',
       samples: 'Voorbeelden',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Schakel over naar bètaversie',
       switch_to_latest: 'Schakel over naar stabiele release',
+      tab_layers: 'Lagen',
+      tab_objects: 'Objecten',
+      tab_path_edit: 'Pad bewerken',
       tools: {
         title: 'Gereedschappen',
       },

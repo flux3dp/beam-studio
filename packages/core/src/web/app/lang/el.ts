@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Κάθετη αναστροφή',
         zoom: 'Μεγέθυνση',
       },
-      tabs: {
-        layers: 'Επίπεδα',
-        objects: 'Αντικείμενα',
-        path_edit: 'Επεξεργασία Μονοπατιού',
-      },
       uv_print_block: {
         title: 'UV Εκτύπωση',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'Επανάληψη',
       reload_app: 'Επαναφόρτωση Εφαρμογής',
       reset: 'Επαναφορά',
+      reset_layout: 'Επαναφορά διάταξης',
       rotary_setup: 'Ρυθμίσεις Περιστροφής',
       rotate: 'Περιστροφή',
       samples: 'Παραδείγματα',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Μετάβαση σε Beta Έκδοση',
       switch_to_latest: 'Μετάβαση σε Σταθερή Έκδοση',
+      tab_layers: 'Επίπεδα',
+      tab_objects: 'Αντικείμενα',
+      tab_path_edit: 'Επεξεργασία Μονοπατιού',
       tools: {
         title: 'Εργαλεία',
       },

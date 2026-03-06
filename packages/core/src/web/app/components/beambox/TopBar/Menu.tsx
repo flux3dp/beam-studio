@@ -7,6 +7,7 @@ import '@szhsin/react-menu/dist/transitions/slide.css';
 import { fcodeV2Models, modelsWithModules, promarkModels } from '@core/app/actions/beambox/constant';
 import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import type { MenuItemKey } from '@core/app/constants/menuItems';
 import { menuItems } from '@core/app/constants/menuItems';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDockableStore } from '@core/app/stores/dockableStore';
@@ -26,14 +27,6 @@ import styles from './Menu.module.scss';
 interface Props {
   email?: string;
 }
-
-const mockT = {
-  RESET_LAYOUT: 'Reset Layout',
-  show_layer_controls_panel: 'Show Layer Controls Panel',
-  show_object_properties_panel: 'Show Object Controls Panel',
-  SHOW_PATH_CONTROLS_PANEL: 'Show Path Controls Panel',
-  window: 'Window',
-};
 
 export default function Menu({ email }: Props): React.JSX.Element {
   const eventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('top-bar-menu'), []);
@@ -123,10 +116,10 @@ export default function Menu({ email }: Props): React.JSX.Element {
     });
   };
   const openPage = (url: string) => browser.open(url);
-  const hotkey = (action: string): React.JSX.Element => (
+  const hotkey = (action: MenuItemKey): React.JSX.Element => (
     <>
-      <span className={styles.action}>{(menuCms as any)[action] ?? mockT[action as keyof typeof mockT]}</span>
-      <span className={styles.hotkey}>{menuItems[action].representation}</span>
+      <span className={styles.action}>{menuCms[action]}</span>
+      <span className={styles.hotkey}>{menuItems[action]?.representation}</span>
     </>
   );
 
@@ -486,7 +479,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
       {!isMobile && (
         <SubMenu label={menuCms.window}>
           <MenuItem disabled={dockableDisabled} onClick={() => callback('RESET_LAYOUT')}>
-            {mockT.RESET_LAYOUT}
+            {menuCms.reset_layout}
           </MenuItem>
           <MenuDivider />
           <MenuItem
@@ -495,7 +488,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             onClick={() => callback('SHOW_LAYER_CONTROLS_PANEL')}
             type="checkbox"
           >
-            {hotkey('show_layer_controls_panel')}
+            {hotkey('tab_layers')}
           </MenuItem>
           <MenuItem
             checked={isPanelObjectControlsShown}
@@ -503,7 +496,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             onClick={() => callback('SHOW_OBJECT_CONTROLS_PANEL')}
             type="checkbox"
           >
-            {hotkey('show_object_properties_panel')}
+            {hotkey('tab_objects')}
           </MenuItem>
           <MenuItem
             checked={isPanelPathControlsShown}
@@ -511,7 +504,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             onClick={() => callback('SHOW_PATH_CONTROLS_PANEL')}
             type="checkbox"
           >
-            {mockT.SHOW_PATH_CONTROLS_PANEL}
+            {menuCms.tab_path_edit}
           </MenuItem>
         </SubMenu>
       )}

@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Capovolgi verticalmente',
         zoom: 'Zoom',
       },
-      tabs: {
-        layers: 'Livelli',
-        objects: 'Oggetti',
-        path_edit: 'Modifica percorso',
-      },
       uv_print_block: {
         title: 'Stampa UV',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'Ripeti',
       reload_app: "Ricarica l'App",
       reset: 'Ripristina',
+      reset_layout: 'Ripristina layout',
       rotary_setup: 'Configurazione Rotativa',
       rotate: 'Ruota',
       samples: 'Esempi',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Passa alla Versione Beta',
       switch_to_latest: 'Passa alla Versione Stabile',
+      tab_layers: 'Livelli',
+      tab_objects: 'Oggetti',
+      tab_path_edit: 'Modifica percorso',
       tools: {
         title: 'Strumenti',
       },

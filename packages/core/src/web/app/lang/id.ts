@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Balik Vertikal',
         zoom: 'Perbesar',
       },
-      tabs: {
-        layers: 'Lapisan',
-        objects: 'Objek',
-        path_edit: 'Edit Jalur',
-      },
       uv_print_block: {
         title: 'Cetak UV',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'Ulangi',
       reload_app: 'Muat Ulang Aplikasi',
       reset: 'Atur Ulang',
+      reset_layout: 'Atur Ulang Tata Letak',
       rotary_setup: 'Pengaturan Rotary',
       rotate: 'Putar',
       samples: 'Contoh',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Beralih ke Rilis Beta',
       switch_to_latest: 'Beralih ke Rilis Stabil',
+      tab_layers: 'Lapisan',
+      tab_objects: 'Objek',
+      tab_path_edit: 'Edit Jalur',
       tools: {
         title: 'Alat',
       },

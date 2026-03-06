@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: '上下反転',
         zoom: 'ズーム',
       },
-      tabs: {
-        layers: 'レイヤ',
-        objects: 'オブジェクト',
-        path_edit: 'パス編集',
-      },
       uv_print_block: {
         title: 'UV印刷',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'やり直し',
       reload_app: 'アプリをリロード',
       reset: 'リセット',
+      reset_layout: 'レイアウトをリセット',
       rotary_setup: 'ロータリー',
       rotate: '回転',
       samples: 'サンプル',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'ベータリリースに切り替える',
       switch_to_latest: '安定版リリースに切り替える',
+      tab_layers: 'レイヤ',
+      tab_objects: 'オブジェクト',
+      tab_path_edit: 'パス編集',
       tools: {
         title: 'ツール',
       },

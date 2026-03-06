@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: '垂直翻轉',
         zoom: '縮放',
       },
-      tabs: {
-        layers: '圖層',
-        objects: '物件',
-        path_edit: '路徑編輯',
-      },
       uv_print_block: {
         title: 'UV 印刷',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: '重做',
       reload_app: '重新整理',
       reset: '重設',
+      reset_layout: '重置版面配置',
       rotary_setup: '旋轉軸設定',
       rotate: '旋轉',
       samples: '範例',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: '切換至 Beta 版',
       switch_to_latest: '切換至穩定版',
+      tab_layers: '圖層',
+      tab_objects: '物件',
+      tab_path_edit: '路徑編輯',
       tools: {
         title: '工具',
       },

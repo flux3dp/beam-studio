@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Odbij w pionie',
         zoom: 'Powiększenie',
       },
-      tabs: {
-        layers: 'Warstwy',
-        objects: 'Obiekty',
-        path_edit: 'Edycja ścieżki',
-      },
       uv_print_block: {
         title: 'Druk UV',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'Ponów',
       reload_app: 'Przeładuj Aplikację',
       reset: 'Resetuj',
+      reset_layout: 'Resetuj układ',
       rotary_setup: 'Ustawienia Obracania',
       rotate: 'Obróć',
       samples: 'Przykłady',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Przełącz na Wersję Beta',
       switch_to_latest: 'Przełącz na Stabilną Wersję',
+      tab_layers: 'Warstwy',
+      tab_objects: 'Obiekty',
+      tab_path_edit: 'Edycja ścieżki',
       tools: {
         title: 'Narzędzia',
       },

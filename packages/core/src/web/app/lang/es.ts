@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Volteo vertical',
         zoom: 'Ampliar',
       },
-      tabs: {
-        layers: 'Capas',
-        objects: 'Objetos',
-        path_edit: 'Editar trayectoria',
-      },
       uv_print_block: {
         title: 'Impresión UV',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'Rehacer',
       reload_app: 'Recargar la aplicación',
       reset: 'Reiniciar',
+      reset_layout: 'Restablecer diseño',
       rotary_setup: 'Configuración rotativa',
       rotate: 'Girar',
       samples: 'Ejemplos',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Cambiar a la versión Beta',
       switch_to_latest: 'Cambiar a versión estable',
+      tab_layers: 'Capas',
+      tab_objects: 'Objetos',
+      tab_path_edit: 'Editar trayectoria',
       tools: {
         title: 'Herramientas',
       },

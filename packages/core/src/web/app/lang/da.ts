@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Lodret vend',
         zoom: 'Zoom',
       },
-      tabs: {
-        layers: 'Lag',
-        objects: 'Objekter',
-        path_edit: 'Stiredigering',
-      },
       uv_print_block: {
         title: 'UV Print',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'Gendan',
       reload_app: 'Genindlæs App',
       reset: 'Nulstil',
+      reset_layout: 'Nulstil layout',
       rotary_setup: 'Roterende Opsætning',
       rotate: 'Rotér',
       samples: 'Eksempler',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Skift til Beta-udgivelse',
       switch_to_latest: 'Skift til Stabil udgivelse',
+      tab_layers: 'Lag',
+      tab_objects: 'Objekter',
+      tab_path_edit: 'Stiredigering',
       tools: {
         title: 'Værktøjer',
       },

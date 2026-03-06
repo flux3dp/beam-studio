@@ -922,11 +922,6 @@ export interface ILang {
         vflip: string;
         zoom: string;
       };
-      tabs: {
-        layers: string;
-        objects: string;
-        path_edit: string;
-      };
       uv_print_block: {
         title: string;
       };
@@ -2350,6 +2345,7 @@ export interface ILang {
       redo: string;
       reload_app: string;
       reset: string;
+      reset_layout: string;
       rotary_setup: string;
       rotate: string;
       samples: string;
@@ -2369,6 +2365,9 @@ export interface ILang {
       svg_edit: string;
       switch_to_beta: string;
       switch_to_latest: string;
+      tab_layers: string;
+      tab_objects: string;
+      tab_path_edit: string;
       tools: {
         title: string;
       };

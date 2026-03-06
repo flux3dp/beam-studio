@@ -1,3 +1,5 @@
+import React, { useEffect, useState } from 'react';
+
 import { Button } from 'antd';
 import type { IDockviewHeaderActionsProps } from 'dockview-react';
 
@@ -7,15 +9,25 @@ import styles from './RightComponent.module.scss';
 import { addFloatingGroup, setMovedPanel } from './utils';
 
 const RightComponent = ({ api, panels }: IDockviewHeaderActionsProps) => {
-  const isFloating = api.location.type === 'floating';
+  const [isFloating, setIsFloating] = useState(api.location.type === 'floating');
+
+  useEffect(() => {
+    // Note: this component may not re-render when location change, need to listen to the event
+    const dispose = api.onDidLocationChange((e) => {
+      setIsFloating(e.location.type === 'floating');
+    });
+
+    return dispose.dispose;
+  }, [api]);
 
   return (
     <div className={styles.container}>
       <Button
         icon={isFloating ? <Icons.Dock /> : <Icons.Undock />}
         onClick={(e) => {
+          setMovedPanel(panels[0].api);
+
           if (isFloating) {
-            setMovedPanel(panels[0].api);
             api.moveTo({ position: 'right' });
           } else {
             addFloatingGroup(api.id, { width: 300, x: e.clientX - 300, y: e.clientY });

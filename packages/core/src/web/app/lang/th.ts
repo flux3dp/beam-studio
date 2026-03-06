@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'พลิกแนวตั้ง',
         zoom: 'ซูม',
       },
-      tabs: {
-        layers: 'ชั้น',
-        objects: 'วัตถุ',
-        path_edit: 'แก้ไขเส้นทาง',
-      },
       uv_print_block: {
         title: 'การพิมพ์ UV',
       },
@@ -2352,6 +2347,7 @@ const lang: ILang = {
       redo: 'ทําซ้ํา',
       reload_app: 'รีโหลดแอป',
       reset: 'รีเซ็ต',
+      reset_layout: 'รีเซ็ตเลย์เอาต์',
       rotary_setup: 'การตั้งค่าการหมุน',
       rotate: 'หมุน',
       samples: 'ตัวอย่าง',
@@ -2371,6 +2367,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'สลับเป็นรุ่นเบต้า',
       switch_to_latest: 'สลับเป็นรุ่นเสถียร',
+      tab_layers: 'ชั้น',
+      tab_objects: 'วัตถุ',
+      tab_path_edit: 'แก้ไขเส้นทาง',
       tools: {
         title: 'เครื่องมือ',
       },
