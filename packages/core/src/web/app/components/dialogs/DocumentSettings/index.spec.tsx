@@ -7,7 +7,7 @@ import { LaserType } from '@core/app/constants/promark-constants';
 import i18n from '@core/helpers/i18n';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
-const mockEventEmitter = { emit: jest.fn(), on: jest.fn() };
+const mockEventEmitter = { emit: jest.fn(), off: jest.fn(), on: jest.fn() };
 const mockCreateEventEmitter = jest.fn();
 
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
@@ -166,6 +166,27 @@ const mockSetHexa2RfWatt = jest.fn();
 
 jest.mock('@core/helpers/device/deviceStore', () => ({
   setHexa2RfWatt: (...args) => mockSetHexa2RfWatt(...args),
+}));
+
+const mockGetData = jest.fn();
+const mockWriteData = jest.fn();
+
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  getData: (...args) => mockGetData(...args),
+  writeData: (...args) => mockWriteData(...args),
+}));
+
+const mockChangeConfig = jest.fn();
+const mockConfigPanelState = { change: mockChangeConfig, dpi: { value: '250' } };
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: (selector: (state: any) => any) => selector(mockConfigPanelState),
+}));
+
+jest.mock('@core/app/stores/layer/layerStore', () => ({
+  default: {
+    getState: () => ({ selectedLayers: [] }),
+  },
 }));
 
 const mockUnmount = jest.fn();
@@ -364,5 +385,61 @@ describe('test DocumentSettings', () => {
         'pass-through': false,
       }),
     );
+  });
+
+  it('should show mixed dpi when layers have different dpi', () => {
+    const layer1 = document.createElement('g');
+
+    layer1.className = 'layer';
+    layer1.setAttribute('data-name', 'layer1');
+
+    const layer2 = document.createElement('g');
+
+    layer2.className = 'layer';
+    layer2.setAttribute('data-name', 'layer2');
+
+    document.body.appendChild(layer1);
+    document.body.appendChild(layer2);
+
+    mockGetData.mockImplementation((el: Element) => {
+      if (el === layer1) return '250';
+
+      if (el === layer2) return '500';
+
+      return null;
+    });
+
+    const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
+    const dpiSelect = baseElement.querySelector('input#dpi-select');
+
+    expect(dpiSelect).toHaveValue('Mixed');
+
+    document.body.removeChild(layer1);
+    document.body.removeChild(layer2);
+  });
+
+  it('should not show mixed dpi when all layers have the same dpi', () => {
+    const layer1 = document.createElement('g');
+
+    layer1.className = 'layer';
+    layer1.setAttribute('data-name', 'layer1');
+
+    const layer2 = document.createElement('g');
+
+    layer2.className = 'layer';
+    layer2.setAttribute('data-name', 'layer2');
+
+    document.body.appendChild(layer1);
+    document.body.appendChild(layer2);
+
+    mockGetData.mockImplementation(() => '250');
+
+    const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
+    const dpiSelect = baseElement.querySelector('input#dpi-select');
+
+    expect(dpiSelect).not.toHaveValue('Mixed');
+
+    document.body.removeChild(layer1);
+    document.body.removeChild(layer2);
   });
 });
