@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
+import { pick } from 'remeda';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
@@ -15,11 +16,16 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
+import type { EngraveDpiOption, EngraveDpiValue } from '@core/app/constants/resolutions';
+import { defaultEngraveDpiOptions, dpiValueMap, valueDpiMap } from '@core/app/constants/resolutions';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
+import history from '@core/app/svgedit/history/history';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
@@ -29,6 +35,7 @@ import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
+import { getData, writeData } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
   getDefaultModule,
@@ -36,12 +43,21 @@ import {
   getModulesTranslations,
   hasModuleLayer,
 } from '@core/helpers/layer-module/layer-module-helper';
+import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import units from '@core/helpers/units';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
+import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { DocumentState } from '@core/interfaces/Preference';
 import type { PromarkInfo } from '@core/interfaces/Promark';
 
+import initState from '../../beambox/RightPanel/ConfigPanel/initState';
+
+let svgCanvas: ISVGCanvas;
+
+getSVGAsync((globalSVG) => {
+  svgCanvas = globalSVG.Canvas;
+});
 import styles from './index.module.scss';
 import JobOriginBlock from './JobOriginBlock';
 import RotaryBlock from './RotaryBlock';
@@ -121,6 +137,44 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, [workarea]);
   const [watt, setWatt] = useState(useCanvasStore.getState().watt);
   const isInch = useStorageStore((state) => state.isInch);
+  const { change: changeConfig, dpi } = useConfigPanelStore(useShallow(pick(['dpi', 'change'])));
+
+  const isSelectionMixed = useMemo(() => {
+    const allLayers = Array.from(document.querySelectorAll('g.layer'));
+
+    if (allLayers.length === 0) return false;
+
+    const dpis = new Set(allLayers.map((layerEl) => getData(layerEl, 'dpi')));
+
+    return dpis.size > 1;
+  }, []);
+
+  const currentDpiNumber = useMemo(() => {
+    if (isSelectionMixed) return 'mixed';
+
+    const canvas = (window as any).svgCanvas;
+    const selected = (canvas?.getSelectedElems?.() || []).filter(Boolean);
+
+    if (selected.length === 0) {
+      const firstLayer = document.querySelector('g.layer');
+      const firstDpi = firstLayer?.getAttribute('data-engrave-dpi');
+
+      return firstDpi ? dpiValueMap[firstDpi as EngraveDpiOption] : dpiValueMap[dpi.value as EngraveDpiOption];
+    }
+
+    return dpiValueMap[dpi.value as EngraveDpiOption];
+  }, [dpi.value, isSelectionMixed]);
+
+  const dpiOptions = useMemo(() => {
+    const options: EngraveDpiOption[] = workareaObj.engraveDpiOptions ?? defaultEngraveDpiOptions;
+    const list = options.map((opt) => ({
+      label: `${dpiValueMap[opt]} DPI`,
+      value: dpiValueMap[opt],
+    }));
+
+    return isSelectionMixed ? [...list, { label: 'Mixed', value: 'mixed' as any }] : list;
+  }, [workareaObj.engraveDpiOptions, isSelectionMixed]);
+
   const {
     autoFeederHeight,
     autoFeederScale,
@@ -522,6 +576,45 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 />
               </div>
             )}
+            <div className={styles.row}>
+              <label className={styles.title} htmlFor="dpi-select">
+                {useI18n().beambox.ai_generate.dimensions.resolution}
+              </label>
+              <Select
+                className={styles.control}
+                id="dpi-select"
+                onChange={(val) => {
+                  if (val === 'mixed' || val === undefined) return;
+
+                  const newDpiLabel = valueDpiMap[val as EngraveDpiValue];
+
+                  changeConfig({ dpi: newDpiLabel });
+
+                  const canvas = (window as any).svgCanvas;
+                  const selected = (canvas?.getSelectedElems?.() || []).filter(Boolean);
+                  const batchCmd = new history.BatchCommand('Change layers dpi');
+
+                  if (selected.length === 0) {
+                    document.querySelectorAll('g.layer').forEach((layerEl: Element) => {
+                      const layerName =
+                        layerEl.getAttribute('data-name') ?? layerEl.querySelector('title')?.textContent ?? '';
+
+                      if (layerName) writeData(layerName, 'dpi', newDpiLabel, { batchCmd });
+                    });
+                  } else {
+                    useLayerStore.getState().selectedLayers.forEach((layerName: string) => {
+                      writeData(layerName, 'dpi', newDpiLabel, { batchCmd });
+                    });
+                  }
+
+                  batchCmd.onAfter = initState;
+                  svgCanvas.addCommandToHistory(batchCmd);
+                }}
+                options={dpiOptions}
+                value={currentDpiNumber}
+                variant="outlined"
+              />
+            </div>
             {!isPromark && (
               <div className={styles.row}>
                 <div className={styles.title}>
