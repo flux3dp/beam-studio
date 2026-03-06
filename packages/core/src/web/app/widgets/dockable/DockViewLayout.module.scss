@@ -11,12 +11,14 @@ $panel-background: #d9d9d9;
   --dv-tabs-and-actions-container-background-color: #{$panel-background};
   --dv-tab-divider-color: #{$panel-background};
 
-  :global(.dv-split-view-container.dv-separator-border .dv-view:not(:first-child)::before) {
-    z-index: 4;
+  :global(.dv-split-view-container.dv-separator-border) {
+    :global(.dv-view:not(:first-child)::before) {
+      z-index: 4;
+    }
   }
 
   :global(.dv-tab) {
-    border-radius: 2px 2px 0 0;
+    border-radius: 4px 4px 0 0;
     padding: 0; // Move padding inside Tab
   }
 
@@ -27,6 +29,10 @@ $panel-background: #d9d9d9;
   :global(.dv-resize-container) {
     border: 2px solid $panel-background;
     border-radius: 4px;
+  }
+
+  :global(.dv-content-container) {
+    background: #f8f8f8;
   }
 
   .narrow {

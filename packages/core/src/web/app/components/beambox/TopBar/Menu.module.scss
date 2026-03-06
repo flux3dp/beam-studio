@@ -157,7 +157,8 @@
 
 :global(.szh-menu__item--type-checkbox.szh-menu__item--checked::before) {
   content: '✓';
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, Helvetica, sans-serif;
 }
 
 :global(.szh-menu__submenu > .szh-menu__item) {

@@ -1,11 +1,14 @@
 import type { DragEvent } from 'react';
 import { useCallback, useContext, useMemo, useRef } from 'react';
 
-import { CloseOutlined } from '@ant-design/icons';
+import Icon, { CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import type { IDockviewPanelHeaderProps } from 'dockview-react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
 import useI18n from '@core/helpers/useI18n';
 
@@ -19,36 +22,39 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
   const tabRef = useRef<HTMLDivElement>(null);
   const tempElemRef = useRef<HTMLDivElement>(null);
 
-  const title = useMemo(() => {
-    const langRightPanel = lang.beambox.right_panel;
-    const langTopBar = lang.topbar;
+  const [icon, title] = useMemo(() => {
+    const { menu: tMenu, tag_names: tTag } = lang.topbar;
     let objectTitle = '';
 
-    if (panelApi.component === 'rightPanelLayer') return `${langRightPanel.tabs.layers} (L)`;
+    if (panelApi.component === 'rightPanelLayer') {
+      return [TabBarIcons.Layers, `${tMenu.tab_layers} (L)`];
+    }
 
-    if (panelApi.component === 'rightPanelPath') return langRightPanel.tabs.path_edit;
+    if (panelApi.component === 'rightPanelPath') {
+      return [ActionPanelIcons.EditPath, tMenu.tab_path_edit];
+    }
 
     if (selectedElement) {
       if (selectedElement.getAttribute('data-tempgroup') === 'true') {
-        objectTitle = langTopBar.tag_names.multi_select;
+        objectTitle = tTag.multi_select;
       } else if (selectedElement.getAttribute('data-textpath-g')) {
-        objectTitle = langTopBar.tag_names.text_path;
+        objectTitle = tTag.text_path;
       } else if (selectedElement.getAttribute('data-pass-through')) {
-        objectTitle = langTopBar.tag_names.pass_through_object;
+        objectTitle = tTag.pass_through_object;
       } else if (selectedElement.tagName.toLowerCase() !== 'use') {
-        objectTitle = langTopBar.tag_names[selectedElement.tagName.toLowerCase() as keyof typeof langTopBar.tag_names];
+        objectTitle = tTag[selectedElement.tagName.toLowerCase() as keyof typeof tTag];
       } else if (selectedElement.getAttribute('data-svg') === 'true') {
-        objectTitle = langTopBar.tag_names.svg;
+        objectTitle = tTag.svg;
       } else if (selectedElement.getAttribute('data-dxf') === 'true') {
-        objectTitle = langTopBar.tag_names.dxf;
+        objectTitle = tTag.dxf;
       } else {
-        objectTitle = langTopBar.tag_names.use;
+        objectTitle = tTag.use;
       }
     } else {
-      objectTitle = langTopBar.tag_names.no_selection;
+      objectTitle = tTag.no_selection;
     }
 
-    return `${objectTitle} (O)`;
+    return [ObjectPanelIcons.Parameter, `${objectTitle} (O)`];
   }, [lang, panelApi.component, selectedElement]);
 
   const handleDragStart = useCallback(
@@ -105,7 +111,8 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
       ref={tabRef}
       title={title}
     >
-      <span className={styles.title}>{title}</span>
+      <Icon className={styles.icon} component={icon} />
+      <span>{title}</span>
       <Button
         className={styles.action}
         icon={<CloseOutlined />}

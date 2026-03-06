@@ -142,4 +142,7 @@ export const defaultLayout: SerializedDockview = {
   },
 };
 
+export const fixedPanelIds = ['panelTools', 'panelCanvas'];
+export const fixedGroupIds = ['groupTools', 'groupCanvas'];
+
 export const drawerContainerId = 'drawer-container';

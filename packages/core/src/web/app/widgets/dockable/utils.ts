@@ -1,4 +1,4 @@
-import type { DockviewGroupPanel, DockviewPanelApi } from 'dockview-react';
+import type { DockviewGroupPanel, DockviewGroupPanelApi, DockviewPanelApi, Position } from 'dockview-react';
 import {
   type DockviewApi,
   type DockviewReadyEvent,
@@ -17,9 +17,10 @@ import workareaManager from '@core/app/svgedit/workarea';
 import storage from '@core/implementations/storage';
 
 import {
-  borderSize,
   defaultLayout,
   drawerContainerId,
+  fixedGroupIds,
+  fixedPanelIds,
   minFloatingHeight,
   panelConfigs,
   rightPanelWidth,
@@ -29,10 +30,13 @@ import styles from './DockViewLayout.module.scss';
 let api: DockviewApi | null = null;
 let disableSaveLayout: boolean | null = null;
 let disableNewFloatingPanel = false;
-let keepSize: null | {
-  panel: DockviewPanelApi;
-  size: { height?: number; width?: number };
-} = null;
+let keepSizeInfo:
+  | null
+  | (Record<string, FloatingGroupOptions> & {
+      movedPanel: DockviewPanelApi;
+      position?: Position;
+      targetGroup?: DockviewGroupPanel;
+    }) = null;
 const restoreInfo: Partial<Record<TDynamicPanelKey, FloatingGroupOptions & { parentGroup: string }>> = {};
 let floatingInsetInfo: Array<{ element: HTMLElement; inset: string }> = [];
 
@@ -78,7 +82,7 @@ const getGroupPosition = (group: DockviewGroupPanel, isFloating: boolean): Float
   if (!option) {
     const bbox = group.element.getBoundingClientRect();
 
-    option = { height: bbox.height + borderSize, width: bbox.width + borderSize, x: bbox.left, y: bbox.top };
+    option = { height: bbox.height, width: bbox.width, x: bbox.left, y: bbox.top };
   }
 
   return option;
@@ -201,7 +205,7 @@ export const setGroupVisible = (isVisible: boolean, ignoredGroups: string[]): vo
 useCanvasStore.subscribe(
   (state) => state.mode === CanvasMode.PathPreview,
   (isPathPreviewMode) => {
-    setGroupVisible(!isPathPreviewMode, ['groupTools', 'groupCanvas']);
+    setGroupVisible(!isPathPreviewMode, fixedGroupIds);
     beamboxGlobalInteraction.onCanvasModeChange(isPathPreviewMode);
   },
 );
@@ -209,23 +213,89 @@ useCanvasStore.subscribe(
 // ===== move panel =====
 export const setMovedPanel = (panel: DockviewPanelApi | null) => {
   if (panel) {
-    const position = getPanelPosition(panel);
+    keepSizeInfo = { movedPanel: panel };
+    api!.panels.forEach((p) => {
+      if (fixedPanelIds.includes(p.id)) return;
 
-    keepSize = {
-      panel,
-      size: { height: position.height, width: position.width },
-    };
+      keepSizeInfo![p.id] = getPanelPosition(p.api);
+    });
   } else {
-    keepSize = null;
+    keepSizeInfo = null;
   }
 };
 
+const forceSize = (group: DockviewGroupPanelApi, size?: { height?: number; width?: number }) => {
+  if (group.location.type === 'floating') return;
+
+  // Note: setSize may change other panels' sizes; use strict constraints to prevent unexpected size changes
+  const constraints = {
+    maximumHeight: 9007199254740991,
+    maximumWidth: 520,
+    minimumHeight: 100,
+    minimumWidth: 260,
+  };
+
+  if (size?.width) {
+    const width = Math.max(Math.min(size.width, 520), 260);
+
+    constraints.maximumWidth = constraints.minimumWidth = width;
+  }
+
+  if (size?.height) {
+    constraints.maximumHeight = constraints.minimumHeight = size.height;
+  }
+
+  group.setConstraints(constraints);
+
+  if (size) group.setSize(size);
+};
+
 const restoreSize = () => {
-  // Dock view may change panels' sizes when drag and drop or toggle floating, which is not desired
-  // Try to roll back to original sizes
-  if (keepSize) {
-    keepSize.panel.setSize(keepSize.size);
-    keepSize = null;
+  if (!api || !keepSizeInfo) return;
+
+  disableSaveLayout = true;
+  try {
+    api.groups.forEach((group) => {
+      if (fixedGroupIds.includes(group.id)) return;
+
+      forceSize(group.api, keepSizeInfo![group.panels[0].id]);
+    });
+
+    const movedGroup = keepSizeInfo.movedPanel.group;
+
+    if (movedGroup.panels[1] && movedGroup.panels[0].id === keepSizeInfo.movedPanel.id) {
+      // Moved into old group, set group size according to second panel instead of moved panel
+      forceSize(movedGroup.api, keepSizeInfo[movedGroup.panels[1].id]);
+    } else if (keepSizeInfo.targetGroup && !fixedGroupIds.includes(keepSizeInfo.targetGroup.id)) {
+      // Split with dynamic group
+      const refPanel = keepSizeInfo.targetGroup.panels[0];
+      const refSize = keepSizeInfo[refPanel.id];
+
+      if (['bottom', 'top'].includes(keepSizeInfo.position!)) {
+        const size = { height: (refSize.height ?? 0) / 2, width: refSize.width };
+
+        forceSize(movedGroup.api, size);
+        forceSize(keepSizeInfo.targetGroup.api, size);
+      } else if (['left', 'right'].includes(keepSizeInfo.position!)) {
+        forceSize(movedGroup.api, {
+          height: refSize.height,
+          width: keepSizeInfo[keepSizeInfo.movedPanel.id].width,
+        });
+        forceSize(keepSizeInfo.targetGroup.api, { height: refSize.height, width: refSize.width });
+      }
+    }
+
+    api.layout(window.innerWidth, window.innerHeight - layoutConstants.topBarHeight, true);
+
+    api.groups.forEach(async (group) => {
+      if (fixedGroupIds.includes(group.id)) return;
+
+      forceSize(group.api);
+    });
+    api.layout(window.innerWidth, window.innerHeight - layoutConstants.topBarHeight, true);
+  } finally {
+    keepSizeInfo = null;
+    disableSaveLayout = false;
   }
 };
 
@@ -345,16 +415,9 @@ export const onReady = (event: DockviewReadyEvent) => {
     }
   });
   api.onWillDrop((e) => {
-    const { position } = e;
-
-    if (keepSize) {
-      if (['bottom', 'top'].includes(position)) {
-        keepSize.size.width = undefined;
-      } else if (['left', 'right'].includes(position)) {
-        keepSize.size.height = undefined;
-      } else {
-        keepSize = null;
-      }
+    if (keepSizeInfo) {
+      keepSizeInfo.targetGroup = e.group;
+      keepSizeInfo.position = e.position;
     }
 
     // Prevent addFloatingGroup if already handled as normal drop

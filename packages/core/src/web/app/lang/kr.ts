@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: '수직 반전',
         zoom: '확대',
       },
-      tabs: {
-        layers: '레이어',
-        objects: '개체',
-        path_edit: '경로 편집',
-      },
       uv_print_block: {
         title: 'UV 인쇄',
       },
@@ -2375,6 +2370,7 @@ const lang: ILang = {
       redo: '다시 실행',
       reload_app: '앱 다시 로드',
       reset: '재설정',
+      reset_layout: '레이아웃 재설정',
       rotary_setup: '회전 설정',
       rotate: '돌리기',
       samples: '예시',
@@ -2394,6 +2390,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: '베타 릴리스로 전환',
       switch_to_latest: '안정 릴리스로 전환',
+      tab_layers: '레이어',
+      tab_objects: '개체',
+      tab_path_edit: '경로 편집',
       tools: {
         title: '도구',
       },

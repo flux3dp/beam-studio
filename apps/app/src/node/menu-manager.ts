@@ -690,7 +690,7 @@ class MenuManager extends EventEmitter {
         click: callback,
         enabled: false,
         id: 'RESET_LAYOUT',
-        label: 'RESET_LAYOUT',
+        label: r.reset_layout,
       },
       { type: 'separator' },
       {
@@ -698,7 +698,7 @@ class MenuManager extends EventEmitter {
         click: callback,
         enabled: false,
         id: 'SHOW_LAYER_CONTROLS_PANEL',
-        label: 'SHOW_LAYER_CONTROLS_PANEL',
+        label: r.tab_layers,
         type: 'checkbox',
       },
       {
@@ -706,14 +706,14 @@ class MenuManager extends EventEmitter {
         click: callback,
         enabled: false,
         id: 'SHOW_OBJECT_CONTROLS_PANEL',
-        label: 'SHOW_OBJECT_CONTROLS_PANEL',
+        label: r.tab_objects,
         type: 'checkbox',
       },
       {
         click: callback,
         enabled: false,
         id: 'SHOW_PATH_CONTROLS_PANEL',
-        label: 'SHOW_PATH_CONTROLS_PANEL',
+        label: r.tab_path_edit,
         type: 'checkbox',
       },
     );

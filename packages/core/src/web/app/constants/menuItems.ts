@@ -1,4 +1,5 @@
 import { isMac } from '@core/helpers/system-helper';
+import type { ILang } from '@core/interfaces/ILang';
 
 export interface MenuItem {
   action: string;
@@ -38,7 +39,12 @@ const createShortcut = (action: string, shortcut: string[], splitKey = '+'): Men
   splitKey,
 });
 
-export const menuItems: Record<string, MenuItem> = {
+type StringKeys<T> = {
+  [K in keyof T]: T[K] extends string ? K : never;
+}[keyof T];
+export type MenuItemKey = StringKeys<ILang['topbar']['menu']>;
+
+export const menuItems: Partial<Record<MenuItemKey, MenuItem>> = {
   // mac option + m would be µ
   add_new_machine: createShortcut('ADD_NEW_MACHINE', ['Alt+m', 'Alt+µ']),
   // mac option + n would be Dead
@@ -54,8 +60,8 @@ export const menuItems: Record<string, MenuItem> = {
   redo: createShortcut('REDO', ['Shift+Fnkey+z']),
   save_as: createShortcut('SAVE_AS', ['Shift+Fnkey+s']),
   save_scene: createShortcut('SAVE_SCENE', ['Fnkey+s']),
-  show_layer_controls_panel: createShortcut('SHOW_LAYER_CONTROLS_PANEL', ['l']),
-  show_object_properties_panel: createShortcut('SHOW_OBJECT_CONTROLS_PANEL', ['o']),
+  tab_layers: createShortcut('SHOW_LAYER_CONTROLS_PANEL', ['l']),
+  tab_objects: createShortcut('SHOW_OBJECT_CONTROLS_PANEL', ['o']),
   undo: createShortcut('UNDO', ['Fnkey+z']),
   ungroup: createShortcut('UNGROUP', ['Shift+Fnkey+g']),
   // for numpad, it should use the '+' key

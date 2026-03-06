@@ -165,7 +165,7 @@ const PanelContent = ({ isMobile = false }: { isMobile?: boolean }): React.React
 
 function PathEditPanel(): React.ReactNode {
   const isMobile = useIsMobile();
-  const title = useI18n().beambox.right_panel.tabs.path_edit;
+  const title = useI18n().topbar.menu.tab_path_edit;
 
   return isMobile ? (
     <FloatingPanel

@@ -3,13 +3,13 @@
   height: 100%;
   display: flex;
   align-items: center;
+  gap: 4px;
   white-space: nowrap;
   text-overflow: ellipsis;
   padding: 0.25rem 0.5rem;
 
-  .title {
-    flex-grow: 1;
-    margin-right: 4px;
+  .icon {
+    font-size: 24px;
   }
 
   .action {
