@@ -81,6 +81,9 @@ exports[`test svg-editor should render correctly in mac 1`] = `
         MockChat
       </div>
     </div>
+    <div>
+      MockElementPanel
+    </div>
   </div>
 </div>
 `;
@@ -165,6 +168,9 @@ exports[`test svg-editor should render correctly in win 1`] = `
       <div>
         MockChat
       </div>
+    </div>
+    <div>
+      MockElementPanel
     </div>
   </div>
 </div>

@@ -3,7 +3,7 @@ import React, { use, useMemo, useRef, useState } from 'react';
 
 import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
 import type { InputRef } from 'antd';
-import { Button, Drawer, Input, message } from 'antd';
+import { Button, Input, message } from 'antd';
 import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
 
@@ -11,7 +11,9 @@ import type { MainType } from '@core/app/constants/element-panel-constants';
 import { ContentType, MainTypes, NPTypes } from '@core/app/constants/element-panel-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
 import { ElementPanelContext, ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import Select from '@core/app/widgets/AntdSelect';
+import Drawer from '@core/app/widgets/Drawer';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -26,7 +28,6 @@ export const ElementPanelContent = (): ReactNode => {
     closeDrawer,
     contentType,
     hasLogin,
-    onClose,
     open,
     searchKey,
     setActiveMainType,
@@ -34,6 +35,7 @@ export const ElementPanelContent = (): ReactNode => {
     setSearchKey,
     updateSearchContents,
   } = use(ElementPanelContext);
+  const { setDrawerMode } = useCanvasStore();
   const [error, setError] = useState(false);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();
@@ -161,25 +163,20 @@ export const ElementPanelContent = (): ReactNode => {
         </div>
       }
       forceClose={!open}
-      onClose={onClose}
+      onClose={closeDrawer}
       title={lang.title}
     >
       <MainContent types={allTypes} />
     </FloatingPanel>
   ) : (
     <Drawer
-      afterOpenChange={(open) => {
-        if (!open) onClose();
-      }}
       classNames={{ body: styles['drawer-body'], header: styles['drawer-header'] }}
       closeIcon={null}
-      getContainer={() => document.querySelector('#svg_editor') || document.body}
-      mask={false}
-      maskClosable={false}
-      onClose={closeDrawer}
-      open={open}
-      placement="left"
+      destroyOnClose
+      enableResizable={false}
+      isOpen={open}
       rootClassName={styles.drawer}
+      setIsOpen={(isOpen) => setDrawerMode(isOpen ? 'element-panel' : 'none')}
       title={
         <div className={classNames(styles.header, { [styles['hide-search']]: contentType !== ContentType.Search })}>
           {backButton || <div className={styles.title}>{lang.title}</div>}
@@ -188,17 +185,14 @@ export const ElementPanelContent = (): ReactNode => {
         </div>
       }
     >
-      <div className={styles.handle} onClick={closeDrawer}>
-        <LeftOutlined />
-      </div>
       <MainContent types={allTypes} />
     </Drawer>
   );
 };
 
-const ElementPanel = ({ onClose }: { onClose: () => void }) => {
+const ElementPanel = () => {
   return (
-    <ElementPanelProvider onClose={onClose}>
+    <ElementPanelProvider>
       <ElementPanelContent />
     </ElementPanelProvider>
   );
