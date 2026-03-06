@@ -578,7 +578,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
             )}
             <div className={styles.row}>
               <label className={styles.title} htmlFor="dpi-select">
-                {(tDocument as any).resolution || 'Resolution'}
+                {useI18n().beambox.ai_generate.dimensions.resolution}
               </label>
               <Select
                 className={styles.control}
