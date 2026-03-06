@@ -26,6 +26,14 @@ $panel-background: #d9d9d9;
     display: none;
   }
 
+  :global(.dv-tabs-container) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
   :global(.dv-resize-container) {
     border: 2px solid $panel-background;
     border-radius: 4px;

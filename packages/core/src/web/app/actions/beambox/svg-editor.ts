@@ -79,6 +79,7 @@ import {
 } from '@core/app/stores/canvas/utils/mouseMode';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
+import { showPanel } from '@core/app/widgets/dockable/utils';
 
 // @ts-expect-error this line is required to load svgedit
 if (svgCanvasClass) {
@@ -1305,6 +1306,14 @@ const svgEditor = (window['svgEditor'] = (function () {
           Shortcuts.on(['-'], () => {
             window['polygonDecreaseSides']?.();
             ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
+          });
+          Shortcuts.on(['l'], () => {
+            RightPanelController.setPanelType(PanelType.Layer);
+            showPanel('panelLayerControls');
+          });
+          Shortcuts.on(['o'], () => {
+            RightPanelController.setPanelType(PanelType.Object);
+            showPanel('panelObjectProperties');
           });
           Shortcuts.on(['Escape'], () => clickSelect());
         },

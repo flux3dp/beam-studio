@@ -488,7 +488,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             onClick={() => callback('SHOW_LAYER_CONTROLS_PANEL')}
             type="checkbox"
           >
-            {hotkey('tab_layers')}
+            {menuCms.tab_layers}
           </MenuItem>
           <MenuItem
             checked={isPanelObjectControlsShown}
@@ -496,7 +496,7 @@ export default function Menu({ email }: Props): React.JSX.Element {
             onClick={() => callback('SHOW_OBJECT_CONTROLS_PANEL')}
             type="checkbox"
           >
-            {hotkey('tab_objects')}
+            {menuCms.tab_objects}
           </MenuItem>
           <MenuItem
             checked={isPanelPathControlsShown}
