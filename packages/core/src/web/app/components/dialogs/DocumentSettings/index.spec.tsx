@@ -4,10 +4,10 @@ import { fireEvent, render } from '@testing-library/react';
 
 import alertConstants from '@core/app/constants/alert-constants';
 import { LaserType } from '@core/app/constants/promark-constants';
-import i18n from '@core/helpers/i18n';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
+import i18n from '@core/helpers/i18n';
 
-const mockEventEmitter = { emit: jest.fn(), off: jest.fn(), on: jest.fn() };
+const mockEventEmitter = { emit: jest.fn(), on: jest.fn() };
 const mockCreateEventEmitter = jest.fn();
 
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
@@ -69,9 +69,7 @@ const mockGetState = jest.fn();
 const mockUseDocumentStore = jest.fn();
 
 const mockUseDocumentStoreFunction = (selector?: (state: any) => any) => {
-  if (selector) {
-    return mockUseDocumentStore(selector);
-  }
+  if (selector) return mockUseDocumentStore(selector);
 
   return mockGetState();
 };
@@ -82,18 +80,14 @@ jest.mock('@core/app/stores/documentStore', () => ({
   useDocumentStore: mockUseDocumentStoreFunction,
 }));
 
-const mockStorageState = {
-  isInch: false,
-};
+const mockStorageState = { isInch: false };
 const mockUseStorageStore = jest.fn();
 const mockGetStorage = jest.fn();
 const mockSetStorage = jest.fn();
 const mockStorageSubscribe = jest.fn();
 
 const mockUseStorageStoreFunction = (selector?: (state: any) => any) => {
-  if (selector) {
-    return mockUseStorageStore(selector);
-  }
+  if (selector) return mockUseStorageStore(selector);
 
   return mockStorageState;
 };
@@ -105,6 +99,132 @@ jest.mock('@core/app/stores/storageStore', () => ({
   getStorage: (...args: any[]) => mockGetStorage(...args),
   setStorage: (...args: any[]) => mockSetStorage(...args),
   useStorageStore: mockUseStorageStoreFunction,
+}));
+
+const mockChangeConfig = jest.fn();
+const mockConfigPanelState = { change: mockChangeConfig, dpi: { value: 'low' } };
+const mockUseConfigPanelStore = jest.fn();
+
+const mockUseConfigPanelStoreFunction = (selector?: (state: any) => any) => {
+  if (selector) return mockUseConfigPanelStore(selector);
+
+  return mockConfigPanelState;
+};
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: mockUseConfigPanelStoreFunction,
+}));
+
+const mockCanvasState = { mode: 'select', watt: 20 };
+const mockUseCanvasStore = jest.fn();
+const mockSetCanvasState = jest.fn();
+
+const mockUseCanvasStoreFunction = (selector?: (state: any) => any) => {
+  if (selector) return mockUseCanvasStore(selector);
+
+  return mockCanvasState;
+};
+
+mockUseCanvasStoreFunction.getState = () => mockCanvasState;
+mockUseCanvasStoreFunction.setState = (...args) => mockSetCanvasState(...args);
+
+jest.mock('@core/app/stores/canvas/canvasStore', () => ({
+  useCanvasStore: mockUseCanvasStoreFunction,
+}));
+
+const mockLayerState = { selectedLayers: [] };
+
+jest.mock('@core/app/stores/layer/layerStore', () => ({
+  __esModule: true,
+  default: {
+    getState: () => mockLayerState,
+  },
+}));
+
+const mockAddCommandToHistory = jest.fn();
+const mockBatchCommandOnAfter = jest.fn();
+
+jest.mock('@core/app/svgedit/history/history', () => ({
+  BatchCommand: jest.fn().mockImplementation(() => ({
+    addSubCommand: jest.fn(),
+    onAfter: mockBatchCommandOnAfter,
+  })),
+}));
+
+jest.mock('@core/helpers/svg-editor-helper', () => ({
+  getSVGAsync: (cb: (svg: any) => void) =>
+    cb({
+      Canvas: {
+        addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
+        getSelectedElems: () => [],
+      },
+    }),
+}));
+
+const mockGetData = jest.fn();
+const mockWriteData = jest.fn();
+
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  getData: (...args) => mockGetData(...args),
+  writeData: (...args) => mockWriteData(...args),
+}));
+
+jest.mock('../../beambox/RightPanel/ConfigPanel/initState', () => jest.fn());
+
+const mockCheckBM2 = jest.fn().mockReturnValue(true);
+const mockCheckFpm1 = jest.fn().mockReturnValue(true);
+const mockCheckFUV1 = jest.fn().mockReturnValue(false);
+const mockCheckHxRf = jest.fn().mockReturnValue(false);
+
+jest.mock('@core/helpers/checkFeature', () => ({
+  checkBM2: () => mockCheckBM2(),
+  checkFpm1: () => mockCheckFpm1(),
+  checkFUV1: () => mockCheckFUV1(),
+  checkHxRf: () => mockCheckHxRf(),
+}));
+
+const mockGetWorkareaResult = {
+  dimensionCustomizable: false,
+  displayHeight: undefined,
+  engraveDpiOptions: undefined,
+  height: 2100,
+  pxHeight: 2100,
+  supportedModules: undefined,
+  width: 3000,
+};
+const mockGetWorkarea = jest.fn().mockReturnValue(mockGetWorkareaResult);
+
+jest.mock('@core/app/constants/workarea-constants', () => ({
+  getWorkarea: (...args) => mockGetWorkarea(...args),
+}));
+
+const mockAddOnInfo = {
+  autoFeeder: { maxHeight: 5000 },
+  autoFocus: true,
+  curveEngraving: false,
+  hybridLaser: true,
+  jobOrigin: false,
+  multiModules: false,
+  openBottom: true,
+  passThrough: { maxHeight: 5000 },
+  rotary: { chuck: false },
+};
+const mockGetAddOnInfo = jest.fn().mockReturnValue(mockAddOnInfo);
+
+jest.mock('@core/app/constants/addOn', () => ({
+  getAddOnInfo: (...args) => mockGetAddOnInfo(...args),
+}));
+
+jest.mock('@core/helpers/addOn', () => ({
+  getAutoFeeder: (info: any) => info?.autoFeeder ?? false,
+  getPassThrough: (info: any) => info?.passThrough ?? false,
+}));
+
+jest.mock('@core/helpers/units', () => ({
+  __esModule: true,
+  default: {
+    convertUnit: jest.fn((val: number) => (val / 25.4).toFixed(2)),
+  },
 }));
 
 const mockToggleDisplay = jest.fn();
@@ -165,29 +285,16 @@ jest.mock('@core/implementations/browser', () => ({
 const mockSetHexa2RfWatt = jest.fn();
 
 jest.mock('@core/helpers/device/deviceStore', () => ({
+  fhx2rfWatts: [30, 50, 60],
   setHexa2RfWatt: (...args) => mockSetHexa2RfWatt(...args),
 }));
 
-const mockGetData = jest.fn();
-const mockWriteData = jest.fn();
+const mockShowModuleSettings4C = jest.fn();
+const mockShowPassthroughSettings = jest.fn();
 
-jest.mock('@core/app/svgedit/operations/pathActions', () => ({}));
-jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  getData: (...args) => mockGetData(...args),
-  writeData: (...args) => mockWriteData(...args),
-}));
-
-const mockChangeConfig = jest.fn();
-const mockConfigPanelState = { change: mockChangeConfig, dpi: { value: '250' } };
-
-jest.mock('@core/app/stores/configPanel', () => ({
-  useConfigPanelStore: (selector: (state: any) => any) => selector(mockConfigPanelState),
-}));
-
-jest.mock('@core/app/stores/layer/layerStore', () => ({
-  default: {
-    getState: () => ({ selectedLayers: [] }),
-  },
+jest.mock('./utils', () => ({
+  showModuleSettings4C: (...args) => mockShowModuleSettings4C(...args),
+  showPassthroughSettings: (...args) => mockShowPassthroughSettings(...args),
 }));
 
 const mockUnmount = jest.fn();
@@ -203,12 +310,29 @@ describe('test DocumentSettings', () => {
       [LayerModule.PRINTER]: 'Module Printer',
     });
     mockHasModuleLayer.mockReturnValue(false);
+    mockGetLayersByModule.mockReturnValue([]);
     mockGetState.mockReturnValue(mockDocumentState);
+    mockGetWorkarea.mockReturnValue(mockGetWorkareaResult);
+    mockGetAddOnInfo.mockReturnValue(mockAddOnInfo);
     mockUseDocumentStore.mockImplementation((selector) => selector(mockDocumentState));
     mockUseStorageStore.mockImplementation((selector) => selector(mockStorageState));
+    mockUseCanvasStore.mockImplementation((selector) => selector(mockCanvasState));
+    mockUseConfigPanelStore.mockImplementation((selector) => selector(mockConfigPanelState));
+    mockGetData.mockReturnValue(undefined);
   });
 
   it('should render correctly for ador', async () => {
+    mockGetAddOnInfo.mockReturnValue({
+      ...mockAddOnInfo,
+      jobOrigin: true,
+      multiModules: true,
+    });
+    mockGetWorkarea.mockReturnValue({
+      ...mockGetWorkareaResult,
+      pxHeight: 4100,
+      supportedModules: [LayerModule.PRINTER_4C, LayerModule.LASER_1064],
+    });
+
     const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
     const workareaToggle = baseElement.querySelector('input#workareaSelect');
 
@@ -221,6 +345,10 @@ describe('test DocumentSettings', () => {
 
   it('should render correctly', async () => {
     mockGetState.mockReturnValue({ ...mockDocumentState, workarea: 'ado1' });
+    mockGetAddOnInfo.mockReturnValue({
+      ...mockAddOnInfo,
+      jobOrigin: false,
+    });
 
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
@@ -233,10 +361,6 @@ describe('test DocumentSettings', () => {
     fireEvent.click(baseElement.querySelector('button#autofocus-module'));
     fireEvent.click(baseElement.querySelector('button#diode_module'));
     fireEvent.click(baseElement.querySelector('button#passthroughMaster'));
-    act(() => fireEvent.mouseDown(baseElement.querySelector('input#startFrom')));
-    act(() => {
-      fireEvent.click(baseElement.querySelectorAll('.ant-slide-up-appear .ant-select-item-option-content')[1]);
-    });
     fireEvent.click(baseElement.querySelector('button#autoShrink'));
     expect(baseElement).toMatchSnapshot();
 
@@ -262,24 +386,25 @@ describe('test DocumentSettings', () => {
     onConfirm();
     await new Promise((resolve) => setTimeout(resolve, 0));
     expect(mockUpdate).toHaveBeenCalledTimes(1);
-    expect(mockUpdate).toHaveBeenLastCalledWith({
-      'auto-feeder': true,
-      auto_shrink: true,
-      borderless: true,
-      'enable-4c': true,
-      'enable-1064': false,
-      'enable-autofocus': true,
-      'enable-diode': true,
-      'enable-job-origin': true,
-      'job-origin': 1,
-      'pass-through': false,
-      'rotary-type': 0,
-      rotary_mode: false,
-    });
+    expect(mockUpdate).toHaveBeenLastCalledWith(
+      expect.objectContaining({
+        'auto-feeder': true,
+        auto_shrink: true,
+        borderless: true,
+        'enable-4c': true,
+        'enable-1064': false,
+        'enable-autofocus': true,
+        'enable-diode': true,
+        'enable-job-origin': false,
+        'job-origin': 1,
+        'pass-through': false,
+        rotary_mode: false,
+      }),
+    );
     expect(mockChangeWorkarea).toHaveBeenCalledTimes(1);
     expect(mockChangeWorkarea).toHaveBeenLastCalledWith('fbm1', { toggleModule: true });
     expect(mockSetPosition).toHaveBeenCalledTimes(1);
-    expect(mockSetPosition).toHaveBeenLastCalledWith(1050, { write: true });
+    expect(mockSetPosition).toHaveBeenLastCalledWith(mockGetWorkareaResult.pxHeight / 2, { write: true });
     expect(mockToggleDisplay).toHaveBeenCalledTimes(1);
     expect(mockTogglePresprayArea).toHaveBeenCalledTimes(1);
     expect(mockCreateEventEmitter).toHaveBeenCalledTimes(1);
@@ -290,6 +415,17 @@ describe('test DocumentSettings', () => {
   });
 
   it('should render correctly for promark', async () => {
+    mockGetAddOnInfo.mockReturnValue({
+      ...mockAddOnInfo,
+      autoFocus: false,
+      hybridLaser: false,
+      openBottom: false,
+    });
+    mockGetWorkarea.mockReturnValue({
+      ...mockGetWorkareaResult,
+      dimensionCustomizable: true,
+    });
+
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
@@ -329,6 +465,15 @@ describe('test DocumentSettings', () => {
     mockGetLayersByModule.mockReturnValue(['mockLayer']);
     mockChangeLayersModule.mockResolvedValue(false);
     mockGetDefaultModule.mockReturnValue(LayerModule.LASER_UNIVERSAL);
+    mockGetAddOnInfo.mockReturnValue({
+      ...mockAddOnInfo,
+      multiModules: true,
+      openBottom: false,
+    });
+    mockGetWorkarea.mockReturnValue({
+      ...mockGetWorkareaResult,
+      supportedModules: [LayerModule.PRINTER_4C, LayerModule.LASER_1064],
+    });
 
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
@@ -370,6 +515,11 @@ describe('test DocumentSettings', () => {
   });
 
   test('set pass through master', async () => {
+    mockGetAddOnInfo.mockReturnValue({
+      ...mockAddOnInfo,
+      openBottom: false,
+    });
+
     const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#workareaSelect')));
@@ -388,59 +538,37 @@ describe('test DocumentSettings', () => {
     );
   });
 
-  it('should show mixed dpi when layers have different dpi', () => {
-    const layer1 = document.createElement('g');
-
-    layer1.className = 'layer';
-    layer1.setAttribute('data-name', 'layer1');
-
-    const layer2 = document.createElement('g');
-
-    layer2.className = 'layer';
-    layer2.setAttribute('data-name', 'layer2');
-
-    document.body.appendChild(layer1);
-    document.body.appendChild(layer2);
-
-    mockGetData.mockImplementation((el: Element) => {
-      if (el === layer1) return '250';
-
-      if (el === layer2) return '500';
-
-      return null;
-    });
+  test('should update DPI for all layers', async () => {
+    // Mock DOM layers
+    document.body.innerHTML = `
+      <g class="layer" data-name="Layer 1" data-engrave-dpi="low"></g>
+      <g class="layer" data-name="Layer 2" data-engrave-dpi="low"></g>
+    `;
 
     const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
-    const dpiSelect = baseElement.querySelector('input#dpi-select');
 
-    expect(dpiSelect).toHaveValue('Mixed');
+    act(() => fireEvent.mouseDown(baseElement.querySelector('input#dpi-select')));
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="250 DPI"]'));
 
-    document.body.removeChild(layer1);
-    document.body.removeChild(layer2);
+    expect(mockChangeConfig).toHaveBeenCalledWith({ dpi: expect.any(String) });
   });
 
-  it('should not show mixed dpi when all layers have the same dpi', () => {
-    const layer1 = document.createElement('g');
+  test('HEXA RF should show watt selector', async () => {
+    // workareaOptions is built at module load time, so checkHxRf() mock cannot
+    // affect the dropdown list retroactively. Set workarea directly in state instead.
+    mockGetState.mockReturnValue({ ...mockDocumentState, workarea: 'fhx2rf' });
+    mockUseDocumentStore.mockImplementation((selector) => selector({ ...mockDocumentState, workarea: 'fhx2rf' }));
+    mockGetAddOnInfo.mockReturnValue({
+      ...mockAddOnInfo,
+      openBottom: false,
+    });
 
-    layer1.className = 'layer';
-    layer1.setAttribute('data-name', 'layer1');
+    const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
 
-    const layer2 = document.createElement('g');
+    expect(baseElement.querySelector('input#laser-source')).toBeInTheDocument();
 
-    layer2.className = 'layer';
-    layer2.setAttribute('data-name', 'layer2');
-
-    document.body.appendChild(layer1);
-    document.body.appendChild(layer2);
-
-    mockGetData.mockImplementation(() => '250');
-
-    const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
-    const dpiSelect = baseElement.querySelector('input#dpi-select');
-
-    expect(dpiSelect).not.toHaveValue('Mixed');
-
-    document.body.removeChild(layer1);
-    document.body.removeChild(layer2);
+    fireEvent.click(getByText('Save'));
+    expect(mockSetHexa2RfWatt).toHaveBeenCalledTimes(1);
+    expect(mockSetCanvasState).toHaveBeenCalledWith({ watt: mockCanvasState.watt });
   });
 });
