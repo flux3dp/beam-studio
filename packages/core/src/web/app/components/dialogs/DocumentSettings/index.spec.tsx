@@ -171,6 +171,7 @@ jest.mock('@core/helpers/device/deviceStore', () => ({
 const mockGetData = jest.fn();
 const mockWriteData = jest.fn();
 
+jest.mock('@core/app/svgedit/operations/pathActions', () => ({}));
 jest.mock('@core/helpers/layer/layer-config-helper', () => ({
   getData: (...args) => mockGetData(...args),
   writeData: (...args) => mockWriteData(...args),
