@@ -10,8 +10,8 @@ describe('manipulate layers (basic)', () => {
     cy.landingEditor();
   });
 
-  it('the side panel and its components should exist', () => {
-    cy.get('div#sidepanels').should('exist');
+  it('the layer panel and its components should exist', () => {
+    cy.get('#rightPanelLayer-tab').should('exist');
     cy.get('div#layerpanel').should('exist');
     cy.get('div#laser-panel').should('exist');
   });

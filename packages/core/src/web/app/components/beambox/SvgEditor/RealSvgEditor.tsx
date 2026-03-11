@@ -3,6 +3,8 @@ import React, { memo, useEffect, useRef } from 'react';
 
 import workareaManager from '@core/app/svgedit/workarea';
 
+import styles from './RealSvgEditor.module.scss';
+
 const moveEditor = (from: HTMLElement, to: HTMLElement) => {
   while (from.children.length > 0) {
     to.appendChild(from.children[0]);
@@ -39,18 +41,7 @@ const SvgEditor = (): ReactNode => {
     };
   }, []);
 
-  return (
-    <div
-      id="real-editor-container"
-      ref={ref}
-      style={{
-        display: 'flex',
-        flex: 1, // Fix mobile height
-        height: '100%',
-        width: '100%',
-      }}
-    />
-  );
+  return <div className={styles.container} id="real-editor-container" ref={ref} />;
 };
 
 export default memo(SvgEditor);

@@ -676,9 +676,7 @@ class MenuManager extends EventEmitter {
     const windowSubmenu: MenuItemConstructorOptions['submenu'] = [];
 
     if (process.platform === 'darwin') {
-      // MacOS has its own window menu, windowSubmenu will be appended to the end of it
       windowSubmenu.push(
-        { type: 'separator' },
         { label: r.minimize, role: 'minimize' },
         { label: r.close, role: 'close' },
         { type: 'separator' },

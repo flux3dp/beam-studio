@@ -28,6 +28,7 @@ import {
 import styles from './DockViewLayout.module.scss';
 
 let api: DockviewApi | null = null;
+let cachedLayout: SerializedDockview | string = '';
 let disableSaveLayout: boolean | null = null;
 let disableNewFloatingPanel = false;
 let keepSizeInfo:
@@ -355,7 +356,7 @@ export const saveLayout = () => {
   storage.set('dockviewLayout', layoutStr);
 };
 
-export const loadLayout = (type: 'fallback' | 'storage' = 'storage') => {
+export const loadLayout = (type: 'cached' | 'default' | 'storage' | 'tutorial') => {
   if (!api) return;
 
   let layout: SerializedDockview | string = defaultLayout;
@@ -363,6 +364,10 @@ export const loadLayout = (type: 'fallback' | 'storage' = 'storage') => {
   try {
     if (type === 'storage') {
       layout = storage.get('dockviewLayout');
+    } else if (type === 'cached') {
+      layout = cachedLayout;
+    } else {
+      cachedLayout = storage.get('dockviewLayout');
     }
 
     // Desktop storage.get returns object, skip parsing
@@ -396,7 +401,9 @@ export const loadLayout = (type: 'fallback' | 'storage' = 'storage') => {
     });
     useDockableStore.setState(newStore);
 
-    disableSaveLayout = false;
+    if (type !== 'tutorial') {
+      disableSaveLayout = false;
+    }
   }
 };
 
@@ -427,7 +434,7 @@ export const onReady = (event: DockviewReadyEvent) => {
     }, 300);
   });
 
-  loadLayout();
+  loadLayout('storage');
 };
 
 export const disableDockview = () => {

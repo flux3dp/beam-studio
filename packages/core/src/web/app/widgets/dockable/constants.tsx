@@ -10,7 +10,6 @@ import PathEditPanel from '@core/app/components/beambox/RightPanel/PathEditPanel
 import SvgEditor from '@core/app/components/beambox/SvgEditor/RealSvgEditor';
 import layoutConstants from '@core/app/constants/layout-constants';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
-import type { ILang } from '@core/interfaces/ILang';
 
 export const rightPanelWidth = layoutConstants.rightPanelWidth;
 export const maximumWidth = 520; // more than windows width * 2
@@ -26,12 +25,6 @@ export const components = {
 };
 
 export type TComponentKey = keyof typeof components;
-
-export const titleMap: Partial<Record<TComponentKey, keyof ILang['beambox']['right_panel']['tabs']>> = {
-  rightPanelLayer: 'layers',
-  rightPanelObject: 'objects',
-  rightPanelPath: 'path_edit',
-};
 
 // Note: keep key and id consistent
 type TAddPanelOptions = AddPanelOptions & {

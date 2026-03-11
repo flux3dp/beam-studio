@@ -301,7 +301,7 @@ Cypress.Commands.add('moveElementToLayer', (targetLayer: string, needConfirm = t
 
 Cypress.Commands.add('showPanel', (panelName: 'layers' | 'objects') => {
   const componentName = panelName === 'layers' ? 'rightPanelLayer' : 'rightPanelObject';
-  cy.get(`[data-tab="${componentName}"]`).click();
+  cy.get(`#${componentName}-tab`).click();
 });
 
 //

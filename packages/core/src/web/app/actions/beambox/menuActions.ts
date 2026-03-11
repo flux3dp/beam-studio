@@ -138,7 +138,7 @@ export default {
       historyUtils.redo();
     }
   },
-  RESET_LAYOUT: () => loadLayout('fallback'),
+  RESET_LAYOUT: () => loadLayout('default'),
   ROTARY_SETUP: () => showRotarySettings(),
   SAVE_AS: (): Promise<boolean> => saveAsFile(),
   SAVE_SCENE: (): Promise<boolean> => saveFile(),
@@ -168,7 +168,7 @@ export default {
       });
     });
   },
-  START_UI_INTRO: (): void => Tutorials.startInterfaceTutorial(() => {}),
+  START_UI_INTRO: (): Promise<void> => Tutorials.startInterfaceTutorial(() => {}),
   UNDO: (): void => {
     if (shortcuts.isInBaseScope()) {
       historyUtils.undo();

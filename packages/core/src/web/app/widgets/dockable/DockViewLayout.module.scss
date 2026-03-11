@@ -10,6 +10,7 @@ $panel-background: #d9d9d9;
   --dv-group-view-background-color: #{$panel-background};
   --dv-tabs-and-actions-container-background-color: #{$panel-background};
   --dv-tab-divider-color: #{$panel-background};
+  --dv-tabs-and-actions-container-height: 40px;
 
   :global(.dv-split-view-container.dv-separator-border) {
     :global(.dv-view:not(:first-child)::before) {

@@ -12,7 +12,6 @@ type ToolBarDrawerProps = Omit<Props, 'getContainer' | 'isOpen' | 'setIsOpen'> &
   mode: CanvasDrawerMode;
 };
 
-// Handle position with Dockable Layout
 const ToolBarDrawer = memo(({ mode, ...props }: ToolBarDrawerProps) => {
   const { drawerMode, mode: canvasMode, setDrawerMode } = useCanvasStore();
 

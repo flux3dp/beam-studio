@@ -1,10 +1,12 @@
 import type { DragEvent } from 'react';
-import { useCallback, useContext, useMemo, useRef } from 'react';
+import React, { useCallback, useContext, useMemo, useRef } from 'react';
 
 import Icon, { CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
 import type { IDockviewPanelHeaderProps } from 'dockview-react';
 
+import tutorialController from '@core/app/components/tutorials/tutorialController';
+import tutorialConstants from '@core/app/constants/tutorial-constants';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
@@ -22,16 +24,16 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
   const tabRef = useRef<HTMLDivElement>(null);
   const tempElemRef = useRef<HTMLDivElement>(null);
 
-  const [icon, title] = useMemo(() => {
+  const [icon, title, tutorialKey] = useMemo(() => {
     const { menu: tMenu, tag_names: tTag } = lang.topbar;
     let objectTitle = '';
 
     if (panelApi.component === 'rightPanelLayer') {
-      return [TabBarIcons.Layers, `${tMenu.tab_layers} (L)`];
+      return [TabBarIcons.Layers, `${tMenu.tab_layers} (L)`, tutorialConstants.TO_LAYER_PANEL];
     }
 
     if (panelApi.component === 'rightPanelPath') {
-      return [ActionPanelIcons.EditPath, tMenu.tab_path_edit];
+      return [ActionPanelIcons.EditPath, tMenu.tab_path_edit, null];
     }
 
     if (selectedElement) {
@@ -54,7 +56,7 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
       objectTitle = tTag.no_selection;
     }
 
-    return [ObjectPanelIcons.Parameter, `${objectTitle} (O)`];
+    return [ObjectPanelIcons.Parameter, `${objectTitle} (O)`, tutorialConstants.TO_OBJECT_PANEL];
   }, [lang, panelApi.component, selectedElement]);
 
   const handleDragStart = useCallback(
@@ -104,8 +106,13 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
   return (
     <div
       className={styles.tab}
-      data-tab={panelApi.component}
       draggable
+      id={`${panelApi.component}-tab`}
+      onClick={() => {
+        if (tutorialKey && tutorialController.getNextStepRequirement() === tutorialKey) {
+          tutorialController.handleNextStep();
+        }
+      }}
       onDragEndCapture={handleDragEnd}
       onDragStartCapture={handleDragStart}
       ref={tabRef}
