@@ -2185,6 +2185,28 @@ export interface ILang {
     title: string;
     width: string;
   };
+  tips: {
+    canvas_hold_space_to_pan: string;
+    feature_auto_fit: string;
+    feature_box_generator: string;
+    feature_code_generator: string;
+    feature_elements: string;
+    feature_layer_color_configurations: string;
+    feature_material_test: string;
+    layer_execution_order: string;
+    machine_clean_mirror: string;
+    machine_no_unattended_operation: string;
+    machine_regular_start: string;
+    object_edit_image: string;
+    object_rounded_rectangle: string;
+    object_sharpen_portrait: string;
+    settings_auto_save: string;
+    settings_default_text_font: string;
+    task_focus_lower_for_cutting: string;
+    task_leather_moisten_reduce_burn: string;
+    task_parameters_for_promark_color: string;
+    task_slower_for_smoother_acrylic_edge: string;
+  };
   topbar: {
     alerts: {
       add_content_first: string;
