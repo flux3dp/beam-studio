@@ -1,7 +1,6 @@
 import { dpmm } from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
-import { LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -13,7 +12,7 @@ import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import imageData from '@core/helpers/image-data';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
-import { getDefaultModule } from '@core/helpers/layer-module/layer-module-helper';
+import { getPrintingModule } from '@core/helpers/layer-module/layer-module-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -199,6 +198,7 @@ const exportImageLayer = async (
   shapeType: ShapeType,
   geo: PuzzleGeometry,
   layout: ReturnType<typeof computeExportLayout>,
+  layerName: string,
   parentCmd?: IBatchCommand,
 ): Promise<void> => {
   const { image } = state;
@@ -233,20 +233,22 @@ const exportImageLayer = async (
   );
 
   const isPrinting = image.exportAs === 'print';
-  const targetModule = isPrinting ? LayerModule.PRINTER : getDefaultModule();
 
   // 1. Create a dedicated layer
   const batchCmd = new history.BatchCommand('Import Puzzle Image');
-  const { layer: layerElement, name: finalName } = createLayer('Puzzle Image', {
-    addToHistory: false,
+  const { layer: layerElement, name: finalName } = createLayer(layerName, {
     initConfig: true,
     parentCmd: batchCmd,
   });
 
-  if (printingModules.has(targetModule)) {
-    writeDataLayer(layerElement, 'module', targetModule);
-    writeDataLayer(layerElement, 'fullcolor', true);
-    presprayArea.togglePresprayArea();
+  if (isPrinting) {
+    const printingModule = getPrintingModule();
+
+    if (printingModule) {
+      writeDataLayer(layerElement, 'module', printingModule);
+      writeDataLayer(layerElement, 'fullcolor', true);
+      presprayArea.togglePresprayArea();
+    }
   }
 
   layerManager.setCurrentLayer(finalName);
@@ -307,6 +309,33 @@ const exportImageLayer = async (
 };
 
 /**
+ * Returns an object mapping each key to a unique layer name by appending
+ * a shared numeric suffix. All names in one export share the same suffix to
+ * keep related layers grouped (e.g. 'Board Base 2', 'Puzzle Pieces 2').
+ */
+const getUniqueLayerNames = <T extends string>(nameMap: Record<T, string>): Record<T, string> => {
+  const baseNames: string[] = Object.values(nameMap);
+  const hasCollision = (s: string) => baseNames.some((name) => layerManager.getLayerByName(`${name}${s}`));
+  let suffix = '';
+
+  if (hasCollision('')) {
+    let n = 2;
+
+    suffix = ` ${n}`;
+
+    while (hasCollision(suffix)) {
+      n += 1;
+      suffix = ` ${n}`;
+    }
+  }
+
+  return Object.fromEntries(Object.entries<string>(nameMap).map(([key, name]) => [key, `${name}${suffix}`])) as Record<
+    T,
+    string
+  >;
+};
+
+/**
  * Exports the puzzle to the Beam Studio canvas.
  *
  * @param state - Current puzzle state
@@ -325,6 +354,15 @@ export const exportToCanvas = async (
   // Combine horizontal and vertical edge paths into a single SVG path string for laser cutting.
   // filter(Boolean) removes empty strings when a direction has no edges (e.g., hexagon with no vertical cuts).
   const innerCuts = [geo.edges.horizontalEdges, geo.edges.verticalEdges].filter(Boolean).join(' ');
+  // Build map of layer names, then resolve unique names with a shared suffix
+  const layerNames = getUniqueLayerNames({
+    boardBase: 'Board Base',
+    guideLines: 'Guide Lines',
+    image: 'Puzzle Image',
+    pieces: 'Puzzle Pieces',
+    raisedEdges: 'Raised Edges',
+  });
+
   const clipPath = geo.meta.fillsBoundingBox ? undefined : geo.boundaryPath;
   const baseOpts = { height: layout.totalHeight, width: layout.totalWidth };
   const batchCmd = new history.BatchCommand('Export Puzzle');
@@ -332,23 +370,23 @@ export const exportToCanvas = async (
   // Export layers in order (bottom to top in layer panel)
 
   // RIGHT SIDE: Board Base (if border enabled)
-  if (layout.hasBorder && geo.boardBasePath) {
+  if (layout.hasBorder && !!geo.boardBasePath) {
     await importLayer(
-      'Board Base',
+      layerNames.boardBase,
       COLORS.exploded.boardBase,
       {
         ...baseOpts,
         elementOffsetX: layout.boardOffsetX,
-        pathData: geo.boardBasePath,
+        pathData: geo.boardBasePath!,
       },
       batchCmd,
     );
   }
 
   // RIGHT SIDE: Guide Lines on board base (if border and guideLines enabled)
-  if (layout.hasBorder && state.border.guideLines && innerCuts) {
+  if (layout.hasBorder && state.border.guideLines && !!innerCuts) {
     await importLayer(
-      'Guide Lines',
+      layerNames.guideLines,
       COLORS.exploded.guideLines,
       {
         ...baseOpts,
@@ -361,14 +399,14 @@ export const exportToCanvas = async (
   }
 
   // LEFT SIDE: Raised Edges frame (only if border enabled - separate frame layer)
-  if (layout.hasBorder && geo.raisedEdgesPath) {
+  if (layout.hasBorder && !!geo.raisedEdgesPath) {
     await importLayer(
-      'Raised Edges',
+      layerNames.raisedEdges,
       COLORS.exploded.raisedEdges,
       {
         ...baseOpts,
         elementOffsetX: layout.raisedEdgesOffsetX,
-        pathData: geo.raisedEdgesPath,
+        pathData: geo.raisedEdgesPath!,
       },
       batchCmd,
     );
@@ -381,7 +419,7 @@ export const exportToCanvas = async (
 
   if (puzzlePiecesPath) {
     await importLayer(
-      'Puzzle Pieces',
+      layerNames.pieces,
       COLORS.exploded.pieces,
       {
         ...baseOpts,
@@ -395,8 +433,8 @@ export const exportToCanvas = async (
 
   // IMAGE LAYER (top-most — imported last so it appears highest in the layer panel)
   // Skip if exportAs is 'none' — image is only for alignment, not export
-  if (state.image.enabled && state.image.dataUrl && state.image.exportAs !== 'none') {
-    await exportImageLayer(state, typeConfig.id, geo, layout, batchCmd);
+  if (state.image.enabled && !!state.image.dataUrl && state.image.exportAs !== 'none') {
+    await exportImageLayer(state, typeConfig.id, geo, layout, layerNames.image, batchCmd);
   }
 
   // Refresh layer panel to show new layers
