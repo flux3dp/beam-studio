@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Nitidezza della punta',
     image: 'Immagine',
     image_load_failed: "Impossibile caricare l'immagine selezionata. Prova un altro file.",
-    image_resolution_warning: "La risoluzione dell'immagine supera {resolution}px. Ciò potrebbe influire sulla qualità di esportazione o sulle prestazioni.",
+    image_resolution_warning: "La risoluzione dell'immagine supera %(resolution)spx. Ciò potrebbe influire sulla qualità di esportazione o sulle prestazioni.",
     import_to_canvas: 'Importa su tela',
     offset_x: 'Offset X',
     offset_y: 'Offset Y',

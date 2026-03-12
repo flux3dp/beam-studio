@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Độ sắc của mũi',
     image: 'Hình ảnh',
     image_load_failed: 'Không thể tải hình ảnh đã chọn. Vui lòng thử tệp khác.',
-    image_resolution_warning: 'Độ phân giải hình ảnh vượt quá {resolution}px. Điều này có thể ảnh hưởng đến chất lượng xuất hoặc hiệu suất.',
+    image_resolution_warning: 'Độ phân giải hình ảnh vượt quá %(resolution)spx. Điều này có thể ảnh hưởng đến chất lượng xuất hoặc hiệu suất.',
     import_to_canvas: 'Nhập vào canvas',
     offset_x: 'Độ lệch X',
     offset_y: 'Độ lệch Y',

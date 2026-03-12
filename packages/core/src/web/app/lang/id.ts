@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Ketajaman ujung',
     image: 'Gambar',
     image_load_failed: 'Gagal memuat gambar yang dipilih. Silakan coba file lain.',
-    image_resolution_warning: 'Resolusi gambar melebihi {resolution}px. Ini mungkin mempengaruhi kualitas ekspor atau kinerja.',
+    image_resolution_warning: 'Resolusi gambar melebihi %(resolution)spx. Ini mungkin mempengaruhi kualitas ekspor atau kinerja.',
     import_to_canvas: 'Impor ke canvas',
     offset_x: 'Offset X',
     offset_y: 'Offset Y',

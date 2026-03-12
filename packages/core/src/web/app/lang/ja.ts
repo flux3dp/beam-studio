@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: '先端の鋭さ',
     image: '画像',
     image_load_failed: '選択した画像の読み込みに失敗しました。別のファイルをお試しください。',
-    image_resolution_warning: '画像解像度が {resolution}px を超えています。エクスポート品質またはパフォーマンスに影響する可能性があります。',
+    image_resolution_warning: '画像解像度が %(resolution)spx を超えています。エクスポート品質またはパフォーマンスに影響する可能性があります。',
     import_to_canvas: 'キャンバスにインポート',
     offset_x: 'X オフセット',
     offset_y: 'Y オフセット',

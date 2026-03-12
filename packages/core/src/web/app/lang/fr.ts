@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Netteté de la pointe',
     image: 'Image',
     image_load_failed: "Échec du chargement de l'image sélectionnée. Veuillez essayer un autre fichier.",
-    image_resolution_warning: "La résolution de l'image dépasse {resolution}px. Cela peut affecter la qualité d'exportation ou les performances.",
+    image_resolution_warning: "La résolution de l'image dépasse %(resolution)spx. Cela peut affecter la qualité d'exportation ou les performances.",
     import_to_canvas: 'Importer sur le canevas',
     offset_x: 'Décalage X',
     offset_y: 'Décalage Y',

@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Scherpte van de punt',
     image: 'Afbeelding',
     image_load_failed: 'Kan de geselecteerde afbeelding niet laden. Probeer een ander bestand.',
-    image_resolution_warning: 'De beeldresolutie overschrijdt {resolution}px. Dit kan de exportkwaliteit of prestaties beïnvloeden.',
+    image_resolution_warning: 'De beeldresolutie overschrijdt %(resolution)spx. Dit kan de exportkwaliteit of prestaties beïnvloeden.',
     import_to_canvas: 'Importeren naar canvas',
     offset_x: 'X-verschuiving',
     offset_y: 'Y-verschuiving',

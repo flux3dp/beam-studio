@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Ketajaman hujung',
     image: 'Imej',
     image_load_failed: 'Gagal memuatkan imej yang dipilih. Sila cuba fail lain.',
-    image_resolution_warning: 'Resolusi imej melebihi {resolution}px. Ini mungkin menjejaskan kualiti eksport atau prestasi.',
+    image_resolution_warning: 'Resolusi imej melebihi %(resolution)spx. Ini mungkin menjejaskan kualiti eksport atau prestasi.',
     import_to_canvas: 'Import ke kanvas',
     offset_x: 'Anjakan X',
     offset_y: 'Anjakan Y',

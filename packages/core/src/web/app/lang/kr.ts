@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: '뾰족함',
     image: '이미지',
     image_load_failed: '선택한 이미지를 로드할 수 없습니다. 다른 파일을 시도하십시오.',
-    image_resolution_warning: '이미지 해상도가 {resolution}px를 초과합니다. 내보내기 품질 또는 성능에 영향을 줄 수 있습니다.',
+    image_resolution_warning: '이미지 해상도가 %(resolution)spx를 초과합니다. 내보내기 품질 또는 성능에 영향을 줄 수 있습니다.',
     import_to_canvas: '캔버스로 가져오기',
     offset_x: 'X 오프셋',
     offset_y: 'Y 오프셋',

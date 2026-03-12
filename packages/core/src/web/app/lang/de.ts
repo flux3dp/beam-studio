@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Spitzenschärfe',
     image: 'Bild',
     image_load_failed: 'Das ausgewählte Bild konnte nicht geladen werden. Bitte versuchen Sie eine andere Datei.',
-    image_resolution_warning: 'Die Bildauflösung überschreitet {resolution}px. Dies kann die Exportqualität oder Leistung beeinträchtigen.',
+    image_resolution_warning: 'Die Bildauflösung überschreitet %(resolution)spx. Dies kann die Exportqualität oder Leistung beeinträchtigen.',
     import_to_canvas: 'Auf Leinwand importieren',
     offset_x: 'X-Versatz',
     offset_y: 'Y-Versatz',

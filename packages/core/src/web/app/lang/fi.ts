@@ -1952,7 +1952,7 @@ const lang: ILang = {
     heart_sharpness: 'Kärjen terävyys',
     image: 'Kuva',
     image_load_failed: 'Valitun kuvan lataus epäonnistui. Yritä toista tiedostoa.',
-    image_resolution_warning: 'Kuvan resoluutio ylittää {resolution}px. Tämä voi vaikuttaa viennin laatuun tai suorituskykyyn.',
+    image_resolution_warning: 'Kuvan resoluutio ylittää %(resolution)spx. Tämä voi vaikuttaa viennin laatuun tai suorituskykyyn.',
     import_to_canvas: 'Tuo piirtoalustalle',
     offset_x: 'X-siirtymä',
     offset_y: 'Y-siirtymä',
