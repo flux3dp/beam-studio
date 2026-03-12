@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'Bordbasis',
     board_radius: 'Randradius',
     board_width: 'Randbreedte',
-    cancel: 'Annuleren',
     change_image: 'Klik om afbeelding te wijzigen',
     columns: 'Kolommen',
     design_preview: 'Ontwerpvoorbeeld',

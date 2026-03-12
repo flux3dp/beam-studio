@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'Brädbas',
     board_radius: 'Ramradie',
     board_width: 'Rambredd',
-    cancel: 'Avbryt',
     change_image: 'Klicka för att ändra bild',
     columns: 'Kolumner',
     design_preview: 'Designförhandsgranskning',

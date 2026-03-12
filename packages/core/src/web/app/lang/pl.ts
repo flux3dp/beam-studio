@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'Podstawa',
     board_radius: 'Promień ramki',
     board_width: 'Szerokość ramki',
-    cancel: 'Anuluj',
     change_image: 'Kliknij, aby zmienić obraz',
     columns: 'Kolumny',
     design_preview: 'Podgląd projektu',

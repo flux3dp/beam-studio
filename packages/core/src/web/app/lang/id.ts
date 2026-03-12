@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'Dasar papan',
     board_radius: 'Radius bingkai',
     board_width: 'Lebar bingkai',
-    cancel: 'Batal',
     change_image: 'Klik untuk mengubah gambar',
     columns: 'Kolom',
     design_preview: 'Pratinjau desain',

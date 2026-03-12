@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'Đế bảng',
     board_radius: 'Bán kính viền',
     board_width: 'Độ rộng viền',
-    cancel: 'Hủy',
     change_image: 'Nhấp để thay đổi hình ảnh',
     columns: 'Cột',
     design_preview: 'Xem trước thiết kế',

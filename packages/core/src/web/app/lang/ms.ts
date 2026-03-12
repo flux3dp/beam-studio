@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'Asas papan',
     board_radius: 'Jejari bingkai',
     board_width: 'Lebar bingkai',
-    cancel: 'Batal',
     change_image: 'Klik untuk tukar imej',
     columns: 'Lajur',
     design_preview: 'Pratonton reka bentuk',

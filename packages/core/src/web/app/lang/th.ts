@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'ฐานกระดาน',
     board_radius: 'รัศมีขอบกรอบ',
     board_width: 'ความกว้างขอบ',
-    cancel: 'ยกเลิก',
     change_image: 'คลิกเพื่อเปลี่ยนภาพ',
     columns: 'คอลัมน์',
     design_preview: 'แสดงตัวอย่างการออกแบบ',

@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'ボードベース',
     board_radius: 'ボード半径',
     board_width: 'ボード幅',
-    cancel: 'キャンセル',
     change_image: 'クリックして画像を変更',
     columns: '列数',
     design_preview: 'デザインプレビュー',

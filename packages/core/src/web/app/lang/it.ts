@@ -1935,7 +1935,6 @@ const lang: ILang = {
     board_base: 'Base della tavola',
     board_radius: 'Raggio bordo',
     board_width: 'Larghezza bordo',
-    cancel: 'Annulla',
     change_image: 'Clicca per cambiare immagine',
     columns: 'Colonne',
     design_preview: 'Anteprima del design',
