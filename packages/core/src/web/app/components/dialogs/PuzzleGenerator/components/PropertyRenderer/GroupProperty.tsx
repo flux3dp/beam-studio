@@ -2,6 +2,8 @@ import React from 'react';
 
 import { Switch } from 'antd';
 
+import useI18n from '@core/helpers/useI18n';
+
 import type { GroupPropertyDef, NestedStateKey, PuzzleState, PuzzleStateUpdate } from '../../types';
 
 import styles from './PropertyRenderer.module.scss';
@@ -16,7 +18,6 @@ interface GroupPropertyProps extends BasePropertyProps<GroupPropertyDef> {
 }
 
 const GroupProperty = ({
-  getLabel,
   getValue,
   onNestedStateChange,
   onStateChange,
@@ -24,6 +25,7 @@ const GroupProperty = ({
   setValue,
   state,
 }: GroupPropertyProps): React.JSX.Element => {
+  const { puzzle_generator: t } = useI18n();
   // Find the toggle property if enabledBy is set
   const isEnabled = property.enabledBy ? (getValue(property.enabledBy) as boolean) : true;
 
@@ -39,7 +41,7 @@ const GroupProperty = ({
     return (
       <div className={styles['property-group']}>
         <div className={styles['group-header']}>
-          <span className={styles['group-title']}>{getLabel(property.labelKey)}</span>
+          <span className={styles['group-title']}>{t[property.labelKey]}</span>
           {toggleChild && (
             <Switch
               checked={getValue(toggleChild.key) as boolean}

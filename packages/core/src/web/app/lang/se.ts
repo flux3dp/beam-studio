@@ -1949,7 +1949,7 @@ const lang: ILang = {
     heart_sharpness: 'Spetsskärpa',
     image: 'Bild',
     image_load_failed: 'Kunde inte ladda den valda bilden. Försök med en annan fil.',
-    image_resolution_warning: 'Bildupplösning överstiger {resolution}px. Detta kan påverka exportkvalitet eller prestanda.',
+    image_resolution_warning: 'Bildupplösning överstiger %(resolution)spx. Detta kan påverka exportkvalitet eller prestanda.',
     import_to_canvas: 'Importera till arbetsytan',
     offset_x: 'X-förskjutning',
     offset_y: 'Y-förskjutning',

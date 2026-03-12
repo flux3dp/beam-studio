@@ -1949,7 +1949,7 @@ const lang: ILang = {
     heart_sharpness: 'ความคมของจุดแหลม',
     image: 'ภาพ',
     image_load_failed: 'ไม่สามารถโหลดภาพที่เลือก โปรดลองไฟล์อื่น',
-    image_resolution_warning: 'ความละเอียดภาพเกิน {resolution}px อาจส่งผลต่อคุณภาพการส่งออกหรือประสิทธิภาพ',
+    image_resolution_warning: 'ความละเอียดภาพเกิน %(resolution)spx อาจส่งผลต่อคุณภาพการส่งออกหรือประสิทธิภาพ',
     import_to_canvas: 'นำเข้าสู่พื้นที่ทำงาน',
     offset_x: 'ออฟเซ็ต X',
     offset_y: 'ออฟเซ็ต Y',

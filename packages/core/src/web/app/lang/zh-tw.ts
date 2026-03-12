@@ -1949,7 +1949,7 @@ const lang: ILang = {
     heart_sharpness: '尖端銳度',
     image: '圖片',
     image_load_failed: '無法載入所選圖片，請嘗試其他檔案。',
-    image_resolution_warning: '圖片解析度超過 {resolution}px，可能會影響匯出品質或效能。',
+    image_resolution_warning: '圖片解析度超過 %(resolution)spx，可能會影響匯出品質或效能。',
     import_to_canvas: '匯入至畫布',
     offset_x: 'X 偏移',
     offset_y: 'Y 偏移',

@@ -2,8 +2,6 @@ import React from 'react';
 
 import { match, P } from 'ts-pattern';
 
-import useI18n from '@core/helpers/useI18n';
-
 import type { NestedStateKey, PropertyDef, PuzzleState, PuzzleStateUpdate } from '../../types';
 
 import GroupProperty from './GroupProperty';
@@ -13,7 +11,6 @@ import SliderProperty from './SliderProperty';
 import ToggleProperty from './ToggleProperty';
 
 export interface BasePropertyProps<T extends PropertyDef> {
-  getLabel: (key: string) => string;
   getValue: (key: string) => unknown;
   property: T;
   setValue: (key: string, value: unknown) => void;
@@ -32,8 +29,6 @@ const PropertyRenderer = ({
   property,
   state,
 }: PropertyRendererProps): null | React.JSX.Element => {
-  const { puzzle_generator: t } = useI18n();
-
   if (property.visible === false || (property.condition && !property.condition(state))) {
     return null;
   }
@@ -61,25 +56,18 @@ const PropertyRenderer = ({
     }
   };
 
-  const getLabel = (labelKey: string): string => {
-    const translated = t[labelKey as keyof typeof t];
-
-    return typeof translated === 'string' ? translated : labelKey;
-  };
-
   return match(property)
     .with({ type: P.union('slider', 'number') }, (property) => (
-      <SliderProperty getLabel={getLabel} getValue={getValue} property={property} setValue={setValue} />
+      <SliderProperty getValue={getValue} property={property} setValue={setValue} />
     ))
     .with({ type: 'select' }, (property) => (
-      <SelectProperty getLabel={getLabel} getValue={getValue} property={property} setValue={setValue} />
+      <SelectProperty getValue={getValue} property={property} setValue={setValue} />
     ))
     .with({ type: 'toggle' }, (property) => (
-      <ToggleProperty getLabel={getLabel} getValue={getValue} property={property} setValue={setValue} />
+      <ToggleProperty getValue={getValue} property={property} setValue={setValue} />
     ))
     .with({ type: 'group' }, (property) => (
       <GroupProperty
-        getLabel={getLabel}
         getValue={getValue}
         onNestedStateChange={onNestedStateChange}
         onStateChange={onStateChange}
@@ -89,7 +77,7 @@ const PropertyRenderer = ({
       />
     ))
     .with({ type: 'image-upload' }, (property) => (
-      <ImageUploadProperty getLabel={getLabel} getValue={getValue} property={property} setValue={setValue} />
+      <ImageUploadProperty getValue={getValue} property={property} setValue={setValue} />
     ))
     .exhaustive();
 };

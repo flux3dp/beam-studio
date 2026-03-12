@@ -1949,7 +1949,7 @@ const lang: ILang = {
     heart_sharpness: 'Ostrost hrotu',
     image: 'Obrázek',
     image_load_failed: 'Načtení vybraného obrázku se nezdařilo. Zkuste jiný soubor.',
-    image_resolution_warning: 'Rozlišení obrázku překračuje {resolution}px. To může ovlivnit kvalitu exportu nebo výkon.',
+    image_resolution_warning: 'Rozlišení obrázku překračuje %(resolution)spx. To může ovlivnit kvalitu exportu nebo výkon.',
     import_to_canvas: 'Importovat na plátno',
     offset_x: 'Posun X',
     offset_y: 'Posun Y',
