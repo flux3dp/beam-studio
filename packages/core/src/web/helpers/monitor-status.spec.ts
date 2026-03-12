@@ -39,7 +39,7 @@ describe('test monitor-status', () => {
   test('getControlButtonType', () => {
     expect(MonitorStatus.getControlButtonType(null)).toEqual([]);
     expect(MonitorStatus.getControlButtonType({ st_id: DeviceConstants.status.INIT } as IReport)).toEqual([
-      ButtonTypes.DISABLED_PLAY,
+      ButtonTypes.STOP,
     ]);
     expect(MonitorStatus.getControlButtonType({ st_id: DeviceConstants.status.RUNNING } as IReport)).toEqual([
       ButtonTypes.STOP,
