@@ -228,8 +228,6 @@ const trimEdgePath = (
 
   const offsets = intersections.map((ix) => ix.offset).sort((a, b) => a - b);
 
-  console.log('Intersections at offsets:', offsets);
-
   // Deduplicate near-coincident intersections (tangent touches)
   const epsilon = 0.001;
   const uniqueOffsets = offsets.filter((v, i) => i === 0 || v - offsets[i - 1] > epsilon);
