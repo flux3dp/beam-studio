@@ -13,7 +13,9 @@ import layoutConstants from '@core/app/constants/layout-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
 import { defaultDockableState, useDockableStore } from '@core/app/stores/dockableStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
+import viewMenu from '@core/helpers/menubar/view';
 import storage from '@core/implementations/storage';
 
 import {
@@ -387,6 +389,7 @@ export const loadLayout = (type: 'cached' | 'default' | 'storage' | 'tutorial') 
     console.error('Failed to load layout', e);
   } finally {
     workareaManager.resetView();
+    viewMenu.updateZoomWithWindow(useGlobalPreferenceStore.getState().zoom_with_window);
 
     const panelTools = api.getPanel('panelTools');
     const newStore = structuredClone(defaultDockableState);

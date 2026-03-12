@@ -42,12 +42,21 @@ const toggleRulers = (): boolean => {
   return newVal;
 };
 
+const observer = new ResizeObserver(workareaManager.resetView);
+
 const updateZoomWithWindow = (value: boolean): void => {
+  observer.disconnect();
+  window.removeEventListener('resize', workareaManager.resetView);
+
   if (value) {
-    window.removeEventListener('resize', workareaManager.resetView);
-    window.addEventListener('resize', workareaManager.resetView);
-  } else {
-    window.removeEventListener('resize', workareaManager.resetView);
+    const workareaContainer = document.getElementById('workarea-container');
+
+    if (workareaContainer) {
+      observer.observe(workareaContainer);
+    } else {
+      // Fallback to global listener
+      window.addEventListener('resize', workareaManager.resetView);
+    }
   }
 };
 const initZoomWithWindow = (): void => {
@@ -97,4 +106,5 @@ export default {
   toggleLayerColor,
   toggleRulers,
   toggleZoomWithWindow,
+  updateZoomWithWindow,
 };
