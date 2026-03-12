@@ -227,7 +227,7 @@ Cypress.Commands.add('getMenuItem', (path: string[], target: string) => {
   cy.get('div[data-testid="top-bar-menu"]').click();
   cy.get('ul[aria-label="Menu"]').should('be.visible').as('menu');
   path.forEach((text) => {
-    cy.get('@menu').contains('.szh-menu__item--submenu', text).should('be.visible').realHover();
+    cy.get('@menu').contains('.szh-menu__item--submenu', text).should('be.visible').click();
   });
   return cy.get('@menu').contains('.szh-menu__item', target).should('be.visible');
 });

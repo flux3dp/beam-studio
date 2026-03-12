@@ -30,7 +30,7 @@ const checkCrc32 = (filePath, expectedValues) => {
 };
 
 const exportFile = (type: string) => {
-  cy.getMenuItem(['File', 'Export To...'], type);
+  cy.getMenuItem(['File', 'Export To...'], type).click();
 };
 
 const checkMd5 = (path, expectedValues) => {
@@ -54,7 +54,7 @@ describe('manipulate file', () => {
   });
 
   it('open file', () => {
-    cy.getMenuItem(['File'], 'Open');
+    cy.getMenuItem(['File'], 'Open').click();
     uploadFile('flux.png');
     cy.get('#svg_1').should('exist');
     cy.showPanel('objects');
@@ -63,7 +63,7 @@ describe('manipulate file', () => {
   });
 
   it('save file', () => {
-    cy.getMenuItem(['File'], 'Save');
+    cy.getMenuItem(['File'], 'Save').click();
     checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: 686848608 });
   });
 
@@ -85,7 +85,7 @@ describe('manipulate file', () => {
       cy.get('#w_size').clear().type('100{enter}');
       cy.get('#h_size').clear().type('100{enter}');
 
-      cy.getMenuItem(['File'], 'Save As...');
+      cy.getMenuItem(['File'], 'Save As...').click();
       // "Save As" also saves to untitled.beam (same as "Save"), so use the same path
       checkCrc32(downloadPath, { default: -139627603 });
     });
