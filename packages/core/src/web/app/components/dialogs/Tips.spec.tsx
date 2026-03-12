@@ -21,7 +21,7 @@ describe('test Tips', () => {
     const tips = container.querySelectorAll('.slick-slide');
 
     expect(container).toMatchSnapshot();
-    expect(tips.length).toBe(19);
+    expect(tips.length).toBe(20);
     expect(tips[0]).toHaveClass('slick-current');
     expect(tips[1]).not.toHaveClass('slick-current');
 

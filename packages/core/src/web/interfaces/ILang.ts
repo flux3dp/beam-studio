@@ -2197,7 +2197,8 @@ export interface ILang {
     machine_clean_mirror: string;
     machine_no_unattended_operation: string;
     machine_regular_start: string;
-    object_edit_image: string;
+    object_edit_image_to_erase: string;
+    object_polygon_sides: string;
     object_rounded_rectangle: string;
     object_sharpen_portrait: string;
     settings_auto_save: string;
