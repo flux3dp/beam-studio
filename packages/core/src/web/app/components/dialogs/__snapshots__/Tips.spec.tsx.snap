@@ -1,0 +1,998 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`test Tips should render correctly 1`] = `
+<div>
+  <div
+    class="ant-carousel css-dev-only-do-not-override-hash"
+  >
+    <div
+      class="slick-slider tips slick-initialized"
+      dir="ltr"
+    >
+      <div
+        class="slick-list"
+      >
+        <div
+          class="slick-track"
+          style="opacity: 1;"
+        >
+          <div
+            aria-hidden="false"
+            class="slick-slide slick-active slick-current"
+            data-index="0"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 1; z-index: 999; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Hold Space and drag to pan across the canvas.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="1"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                After camera preview, use Actions → Auto Fit to automatically place objects on your material.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="2"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Box Generator to create custom-sized boxes in seconds.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="3"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Barcode Generator to create QR codes and barcodes.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="4"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                The Elements panel now includes over one million graphics ready to use.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="5"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Map SVG layer colors to speed and power via Edit → Layer → Color Settings.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="6"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Material Test Generator in the left toolbar to quickly find the best settings for a material.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="7"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Layer order determines job order. Jobs run from top to bottom.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="8"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Check the mirrors and focus lens regularly and clean them when needed to prevent smoke buildup.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="9"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Never leave the machine running unattended.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="10"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Run a laser job at least once every two weeks to help extend the laser tube’s lifespan.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="11"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Image → Actions → Edit Image to erase unwanted areas in an image.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="12"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Adjust the number of sides in the polygon’s properties panel.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="13"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Set the corner radius of a rounded rectangle in the rectangle’s properties panel.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="14"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Enhance portrait engravings with Image → Actions → Sharpen.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="15"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                You can set your default font for the Text tool in Preferences.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="16"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Enable Auto Save in Preferences to avoid losing your work.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="17"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                For thicker materials, focusing about 2 mm below the surface can improve cutting results.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="18"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Lightly dampen leather before cutting to reduce burn marks.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="19"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Reducing the cutting speed slightly can produce smoother acrylic edges.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Tips should render correctly 2`] = `
+<div>
+  <div
+    class="ant-carousel css-dev-only-do-not-override-hash"
+  >
+    <div
+      class="slick-slider tips slick-initialized"
+      dir="ltr"
+    >
+      <div
+        class="slick-list"
+      >
+        <div
+          class="slick-track"
+          style="opacity: 1;"
+        >
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="0"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Hold Space and drag to pan across the canvas.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="false"
+            class="slick-slide slick-active slick-current"
+            data-index="1"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 1; z-index: 999; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                After camera preview, use Actions → Auto Fit to automatically place objects on your material.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="2"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Box Generator to create custom-sized boxes in seconds.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="3"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Barcode Generator to create QR codes and barcodes.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="4"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                The Elements panel now includes over one million graphics ready to use.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="5"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Map SVG layer colors to speed and power via Edit → Layer → Color Settings.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="6"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Material Test Generator in the left toolbar to quickly find the best settings for a material.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="7"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Layer order determines job order. Jobs run from top to bottom.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="8"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Check the mirrors and focus lens regularly and clean them when needed to prevent smoke buildup.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="9"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Never leave the machine running unattended.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="10"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Run a laser job at least once every two weeks to help extend the laser tube’s lifespan.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="11"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Image → Actions → Edit Image to erase unwanted areas in an image.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="12"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Adjust the number of sides in the polygon’s properties panel.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="13"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Set the corner radius of a rounded rectangle in the rectangle’s properties panel.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="14"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Enhance portrait engravings with Image → Actions → Sharpen.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="15"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                You can set your default font for the Text tool in Preferences.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="16"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Enable Auto Save in Preferences to avoid losing your work.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="17"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                For thicker materials, focusing about 2 mm below the surface can improve cutting results.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="18"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Lightly dampen leather before cutting to reduce burn marks.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="19"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Reducing the cutting speed slightly can produce smoother acrylic edges.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test Tips should show diffent tips with Promark 1`] = `
+<div>
+  <div
+    class="ant-carousel css-dev-only-do-not-override-hash"
+  >
+    <div
+      class="slick-slider tips slick-initialized"
+      dir="ltr"
+    >
+      <div
+        class="slick-list"
+      >
+        <div
+          class="slick-track"
+          style="opacity: 1;"
+        >
+          <div
+            aria-hidden="false"
+            class="slick-slide slick-active slick-current"
+            data-index="0"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 1; z-index: 999; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Hold Space and drag to pan across the canvas.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="1"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                After camera preview, use Actions → Auto Fit to automatically place objects on your material.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="2"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Box Generator to create custom-sized boxes in seconds.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="3"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Barcode Generator to create QR codes and barcodes.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="4"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                The Elements panel now includes over one million graphics ready to use.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="5"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Map SVG layer colors to speed and power via Edit → Layer → Color Settings.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="6"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Generators → Material Test Generator in the left toolbar to quickly find the best settings for a material.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="7"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Layer order determines job order. Jobs run from top to bottom.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="8"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Check the mirrors and focus lens regularly and clean them when needed to prevent smoke buildup.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="9"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Never leave the machine running unattended.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="10"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Run a laser job at least once every two weeks to help extend the laser tube’s lifespan.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="11"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Use Image → Actions → Edit Image to erase unwanted areas in an image.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="12"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Adjust the number of sides in the polygon’s properties panel.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="13"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Set the corner radius of a rounded rectangle in the rectangle’s properties panel.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="14"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Enhance portrait engravings with Image → Actions → Sharpen.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="15"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                You can set your default font for the Text tool in Preferences.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="16"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Enable Auto Save in Preferences to avoid losing your work.
+              </div>
+            </div>
+          </div>
+          <div
+            aria-hidden="true"
+            class="slick-slide"
+            data-index="17"
+            style="outline: none; width: 0px; position: relative; left: 0px; opacity: 0; z-index: 998; transition: opacity 300ms ease, visibility 300ms ease;"
+            tabindex="-1"
+          >
+            <div>
+              <div
+                style="width: 100%; display: inline-block;"
+                tabindex="-1"
+              >
+                Adjust pulse width and frequency on MOPA lasers to produce colors on stainless steel or titanium.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+`;

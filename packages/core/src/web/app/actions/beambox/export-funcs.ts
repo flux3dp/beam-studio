@@ -75,6 +75,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string) => {
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
     message: i18n.lang.beambox.bottom_right_panel.retreive_image_data,
+    showTips: true,
   });
   Progress.popById('retrieve-image-data');
 
@@ -121,6 +122,7 @@ const fetchTaskCode = async (
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
     message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
+    showTips: true,
   });
 
   const revertFunctions: Array<() => void> = [];
@@ -180,6 +182,7 @@ const fetchTaskCode = async (
       svgeditorParser.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   const documentState = useDocumentStore.getState();
@@ -241,6 +244,7 @@ const fetchTaskCode = async (
       svgeditorParser.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   let didErrorOccur = false;
@@ -342,6 +346,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
       svgeditorParser.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   const sceneArgsResp = await fetch('assets/bm2-4c-scene-args.txt');
@@ -378,6 +383,7 @@ const fetchBeamo24CCalibrationTaskCode = async (limitPosition: string) => {
       svgeditorParser.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   let didErrorOccur = false;
@@ -433,6 +439,7 @@ const fetchTransferredFcode = async (gcodeString: string, thumbnail: string) => 
       svgeditorParser.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   const { fileTimeCost, taskCodeBlob } = await new Promise<{
