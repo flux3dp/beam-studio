@@ -43,9 +43,7 @@ const UserInfo = ({ user }: Props): ReactNode => {
           </Flex>
         </button>
       ) : (
-        <div className={styles['login-hint-wrapper']}>
-          <div className={styles['login-hint']}>{t.not_login_placeholder}</div>
-        </div>
+        <div className={styles['login-hint']}>{t.not_login_placeholder}</div>
       )}
 
       <div className={styles['action-section']}>
