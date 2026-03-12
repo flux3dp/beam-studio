@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: '无法加载所选图片，请尝试其他文件。',
     image_resolution_warning: '图片分辨率超过 %(resolution)spx，可能会影响导出质量或性能。',
     import_to_canvas: '导入至画布',
+    layers: {
+      board_base: '底板',
+      guide_lines: '导引线',
+      image: '拼图图片',
+      pieces: '拼图切割',
+      raised_edges: '立体边框',
+    },
     offset_x: 'X 偏移',
     offset_y: 'Y 偏移',
     orientation: '拼片方向',

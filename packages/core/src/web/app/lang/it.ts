@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: "Impossibile caricare l'immagine selezionata. Prova un altro file.",
     image_resolution_warning: "La risoluzione dell'immagine supera %(resolution)spx. Ciò potrebbe influire sulla qualità di esportazione o sulle prestazioni.",
     import_to_canvas: 'Importa su tela',
+    layers: {
+      board_base: 'Base del pannello',
+      guide_lines: 'Linee guida',
+      image: 'Immagine del puzzle',
+      pieces: 'Pezzi del puzzle',
+      raised_edges: 'Bordi rialzati',
+    },
     offset_x: 'Offset X',
     offset_y: 'Offset Y',
     orientation: 'Orientamento pezzi',

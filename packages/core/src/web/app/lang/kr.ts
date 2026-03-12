@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: '선택한 이미지를 로드할 수 없습니다. 다른 파일을 시도하십시오.',
     image_resolution_warning: '이미지 해상도가 %(resolution)spx를 초과합니다. 내보내기 품질 또는 성능에 영향을 줄 수 있습니다.',
     import_to_canvas: '캔버스로 가져오기',
+    layers: {
+      board_base: '보드 베이스',
+      guide_lines: '가이드 라인',
+      image: '퍼즐 이미지',
+      pieces: '퍼즐 조각',
+      raised_edges: '돌출 테두리',
+    },
     offset_x: 'X 오프셋',
     offset_y: 'Y 오프셋',
     orientation: '조각 방향',

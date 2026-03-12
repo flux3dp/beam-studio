@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: 'Gagal memuatkan imej yang dipilih. Sila cuba fail lain.',
     image_resolution_warning: 'Resolusi imej melebihi %(resolution)spx. Ini mungkin menjejaskan kualiti eksport atau prestasi.',
     import_to_canvas: 'Import ke kanvas',
+    layers: {
+      board_base: 'Asas papan',
+      guide_lines: 'Garisan panduan',
+      image: 'Imej teka-teki',
+      pieces: 'Kepingan teka-teki',
+      raised_edges: 'Tepi terangkat',
+    },
     offset_x: 'Anjakan X',
     offset_y: 'Anjakan Y',
     orientation: 'Orientasi kepingan',

@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: 'Αποτυχία φόρτωσης της επιλεγμένης εικόνας. Δοκιμάστε ένα άλλο αρχείο.',
     image_resolution_warning: 'Η ανάλυση εικόνας υπερβαίνει τα %(resolution)spx. Αυτό μπορεί να επηρεάσει την ποιότητα εξαγωγής ή την απόδοση.',
     import_to_canvas: 'Εισαγωγή στον καμβά',
+    layers: {
+      board_base: 'Βάση πλακέτας',
+      guide_lines: 'Γραμμές οδηγοί',
+      image: 'Εικόνα παζλ',
+      pieces: 'Κομμάτια παζλ',
+      raised_edges: 'Ανυψωμένα άκρα',
+    },
     offset_x: 'Μετατόπιση X',
     offset_y: 'Μετατόπιση Y',
     orientation: 'Προσανατολισμός κομματιών',

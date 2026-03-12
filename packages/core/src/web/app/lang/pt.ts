@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: 'Falha ao carregar a imagem selecionada. Tente outro arquivo.',
     image_resolution_warning: 'A resolução da imagem excede %(resolution)spx. Isso pode afetar a qualidade de exportação ou o desempenho.',
     import_to_canvas: 'Importar para a tela',
+    layers: {
+      board_base: 'Base do tabuleiro',
+      guide_lines: 'Linhas guia',
+      image: 'Imagem do quebra-cabeças',
+      pieces: 'Peças do quebra-cabeças',
+      raised_edges: 'Bordas elevadas',
+    },
     offset_x: 'Deslocamento X',
     offset_y: 'Deslocamento Y',
     orientation: 'Orientação das peças',

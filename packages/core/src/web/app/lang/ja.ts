@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: '選択した画像の読み込みに失敗しました。別のファイルをお試しください。',
     image_resolution_warning: '画像解像度が %(resolution)spx を超えています。エクスポート品質またはパフォーマンスに影響する可能性があります。',
     import_to_canvas: 'キャンバスにインポート',
+    layers: {
+      board_base: 'ボードベース',
+      guide_lines: 'ガイドライン',
+      image: 'パズル画像',
+      pieces: 'パズルピース',
+      raised_edges: '立体フレーム',
+    },
     offset_x: 'X オフセット',
     offset_y: 'Y オフセット',
     orientation: 'ピースの向き',

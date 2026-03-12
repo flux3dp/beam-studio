@@ -9,6 +9,7 @@ import importSvgString from '@core/app/svgedit/operations/import/importSvgString
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
+import i18n from '@core/helpers/i18n';
 import imageData from '@core/helpers/image-data';
 import { writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { createLayer } from '@core/helpers/layer/layer-helper';
@@ -355,12 +356,13 @@ export const exportToCanvas = async (
   // filter(Boolean) removes empty strings when a direction has no edges (e.g., hexagon with no vertical cuts).
   const innerCuts = [geo.edges.horizontalEdges, geo.edges.verticalEdges].filter(Boolean).join(' ');
   // Build map of layer names, then resolve unique names with a shared suffix
+  const { layers: tLayers } = i18n.lang.puzzle_generator;
   const layerNames = getUniqueLayerNames({
-    boardBase: 'Board Base',
-    guideLines: 'Guide Lines',
-    image: 'Puzzle Image',
-    pieces: 'Puzzle Pieces',
-    raisedEdges: 'Raised Edges',
+    boardBase: tLayers.board_base,
+    guideLines: tLayers.guide_lines,
+    image: tLayers.image,
+    pieces: tLayers.pieces,
+    raisedEdges: tLayers.raised_edges,
   });
 
   const clipPath = geo.meta.fillsBoundingBox ? undefined : geo.boundaryPath;

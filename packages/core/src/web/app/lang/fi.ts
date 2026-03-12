@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: 'Valitun kuvan lataus epäonnistui. Yritä toista tiedostoa.',
     image_resolution_warning: 'Kuvan resoluutio ylittää %(resolution)spx. Tämä voi vaikuttaa viennin laatuun tai suorituskykyyn.',
     import_to_canvas: 'Tuo piirtoalustalle',
+    layers: {
+      board_base: 'Alustalevyn pohja',
+      guide_lines: 'Apuviivat',
+      image: 'Palapelin kuva',
+      pieces: 'Palapelin palat',
+      raised_edges: 'Korotetut reunat',
+    },
     offset_x: 'X-siirtymä',
     offset_y: 'Y-siirtymä',
     orientation: 'Palojen suunta',

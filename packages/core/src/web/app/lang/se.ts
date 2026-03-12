@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: 'Kunde inte ladda den valda bilden. Försök med en annan fil.',
     image_resolution_warning: 'Bildupplösning överstiger %(resolution)spx. Detta kan påverka exportkvalitet eller prestanda.',
     import_to_canvas: 'Importera till arbetsytan',
+    layers: {
+      board_base: 'Brädets bas',
+      guide_lines: 'Hjälplinjer',
+      image: 'Pusselbild',
+      pieces: 'Pusselbitar',
+      raised_edges: 'Upphöjda kanter',
+    },
     offset_x: 'X-förskjutning',
     offset_y: 'Y-förskjutning',
     orientation: 'Bitar orientering',

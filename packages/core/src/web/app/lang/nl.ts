@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: 'Kan de geselecteerde afbeelding niet laden. Probeer een ander bestand.',
     image_resolution_warning: 'De beeldresolutie overschrijdt %(resolution)spx. Dit kan de exportkwaliteit of prestaties beïnvloeden.',
     import_to_canvas: 'Importeren naar canvas',
+    layers: {
+      board_base: 'Bordbasis',
+      guide_lines: 'Hulplijnen',
+      image: 'Puzzelafbeelding',
+      pieces: 'Puzzelstukjes',
+      raised_edges: 'Verhoogde randen',
+    },
     offset_x: 'X-verschuiving',
     offset_y: 'Y-verschuiving',
     orientation: 'Stukken oriëntatie',

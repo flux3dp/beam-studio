@@ -1951,6 +1951,13 @@ const lang: ILang = {
     image_load_failed: 'Načtení vybraného obrázku se nezdařilo. Zkuste jiný soubor.',
     image_resolution_warning: 'Rozlišení obrázku překračuje %(resolution)spx. To může ovlivnit kvalitu exportu nebo výkon.',
     import_to_canvas: 'Importovat na plátno',
+    layers: {
+      board_base: 'Základní deska',
+      guide_lines: 'Vodicí čáry',
+      image: 'Obrázek puzzle',
+      pieces: 'Dílky puzzle',
+      raised_edges: 'Zvýšené okraje',
+    },
     offset_x: 'Posun X',
     offset_y: 'Posun Y',
     orientation: 'Orientace dílků',
