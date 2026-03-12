@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: 'Βάση πλάκας',
     board_radius: 'Ακτίνα πλαισίου',
     board_width: 'Πλάτος πλαισίου',
-    cancel: 'Ακύρωση',
     change_image: 'Κάντε κλικ για αλλαγή εικόνας',
     columns: 'Στήλες',
     design_preview: 'Προεπισκόπηση σχεδίου',

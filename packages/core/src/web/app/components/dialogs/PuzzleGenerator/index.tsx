@@ -28,7 +28,7 @@ interface PuzzleGeneratorProps {
 }
 
 const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element => {
-  const { generators: tGenerators, puzzle_generator: t } = useI18n();
+  const { generators: tGenerators, global: tGlobal, puzzle_generator: t } = useI18n();
   const isMobile = useIsMobile();
 
   const defaultType = getDefaultPuzzleType();
@@ -108,7 +108,7 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
       footer={
         <div className={styles.footer}>
           <Button disabled={isExporting} onClick={onClose}>
-            {t.cancel}
+            {tGlobal.cancel}
           </Button>
           <Button loading={isExporting} onClick={handleImport} type="primary">
             {t.import_to_canvas}
@@ -119,7 +119,6 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
       onCancel={onClose}
       open
       title={tGenerators.puzzle_generator}
-      width={isMobile ? 'calc(100vw - 32px)' : 'calc(100vw - 64px)'}
       wrapClassName={styles['modal-wrap']}
     >
       <div className={classNames(styles.container, { [styles.mobile]: isMobile })}>

@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: '보드 베이스',
     board_radius: '보드 반경',
     board_width: '보드 너비',
-    cancel: '취소',
     change_image: '클릭하여 이미지 변경',
     columns: '열 수',
     design_preview: '디자인 미리보기',

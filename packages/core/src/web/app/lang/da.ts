@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: 'Bundplade',
     board_radius: 'Kantradius',
     board_width: 'Kantbredde',
-    cancel: 'Annuller',
     change_image: 'Klik for at ændre billede',
     columns: 'Kolonner',
     design_preview: 'Designvisning',

@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: 'Base del tablero',
     board_radius: 'Radio del borde',
     board_width: 'Ancho del borde',
-    cancel: 'Cancelar',
     change_image: 'Haga clic para cambiar la imagen',
     columns: 'Columnas',
     design_preview: 'Vista previa del diseño',

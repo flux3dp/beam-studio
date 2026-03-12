@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: '底板',
     board_radius: '边框圆角',
     board_width: '边框宽度',
-    cancel: '取消',
     change_image: '点击更换图片',
     columns: '列数',
     design_preview: '设计预览',

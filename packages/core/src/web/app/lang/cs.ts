@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: 'Základní deska',
     board_radius: 'Poloměr rámu',
     board_width: 'Šířka rámu',
-    cancel: 'Zrušit',
     change_image: 'Klikněte pro změnu obrázku',
     columns: 'Sloupce',
     design_preview: 'Náhled designu',

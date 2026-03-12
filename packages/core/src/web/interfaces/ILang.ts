@@ -1940,7 +1940,6 @@ export interface ILang {
     board_base: string;
     board_radius: string;
     board_width: string;
-    cancel: string;
     change_image: string;
     columns: string;
     design_preview: string;

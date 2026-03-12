@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: 'Pohjalevy',
     board_radius: 'Reunuksen säde',
     board_width: 'Reunuksen leveys',
-    cancel: 'Peruuta',
     change_image: 'Napsauta vaihtaaksesi kuva',
     columns: 'Sarakkeet',
     design_preview: 'Suunnitelman esikatselu',

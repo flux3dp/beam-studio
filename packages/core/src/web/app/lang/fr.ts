@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: 'Base du plateau',
     board_radius: 'Rayon du bord',
     board_width: 'Largeur du bord',
-    cancel: 'Annuler',
     change_image: "Cliquez pour changer l'image",
     columns: 'Colonnes',
     design_preview: 'Aperçu du design',

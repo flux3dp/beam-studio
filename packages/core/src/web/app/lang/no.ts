@@ -1938,7 +1938,6 @@ const lang: ILang = {
     board_base: 'Brettbase',
     board_radius: 'Rammeradius',
     board_width: 'Rammebredde',
-    cancel: 'Avbryt',
     change_image: 'Klikk for å endre bilde',
     columns: 'Kolonner',
     design_preview: 'Designforhåndsvisning',
