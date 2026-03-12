@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: 'No se pudo cargar la imagen seleccionada. Pruebe con otro archivo.',
     image_resolution_warning: 'La resolución de la imagen excede %(resolution)spx. Esto puede afectar la calidad de exportación o el rendimiento.',
     import_to_canvas: 'Importar al lienzo',
+    layers: {
+      board_base: 'Base del tablero',
+      guide_lines: 'Líneas guía',
+      image: 'Imagen del puzle',
+      pieces: 'Piezas del puzle',
+      raised_edges: 'Bordes elevados',
+    },
     offset_x: 'Desplazamiento X',
     offset_y: 'Desplazamiento Y',
     orientation: 'Orientación de las piezas',

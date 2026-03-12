@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: 'ไม่สามารถโหลดภาพที่เลือก โปรดลองไฟล์อื่น',
     image_resolution_warning: 'ความละเอียดภาพเกิน %(resolution)spx อาจส่งผลต่อคุณภาพการส่งออกหรือประสิทธิภาพ',
     import_to_canvas: 'นำเข้าสู่พื้นที่ทำงาน',
+    layers: {
+      board_base: 'ฐานกระดาน',
+      guide_lines: 'เส้นนำทาง',
+      image: 'ภาพจิ๊กซอว์',
+      pieces: 'ชิ้นส่วนจิ๊กซอว์',
+      raised_edges: 'ขอบยกสูง',
+    },
     offset_x: 'ออฟเซ็ต X',
     offset_y: 'ออฟเซ็ต Y',
     orientation: 'ทิศทางของชิ้นส่วน',

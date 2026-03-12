@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: 'Gagal memuat gambar yang dipilih. Silakan coba file lain.',
     image_resolution_warning: 'Resolusi gambar melebihi %(resolution)spx. Ini mungkin mempengaruhi kualitas ekspor atau kinerja.',
     import_to_canvas: 'Impor ke canvas',
+    layers: {
+      board_base: 'Dasar papan',
+      guide_lines: 'Garis panduan',
+      image: 'Gambar puzzle',
+      pieces: 'Potongan puzzle',
+      raised_edges: 'Tepi terangkat',
+    },
     offset_x: 'Offset X',
     offset_y: 'Offset Y',
     orientation: 'Orientasi potongan',

@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: 'Không thể tải hình ảnh đã chọn. Vui lòng thử tệp khác.',
     image_resolution_warning: 'Độ phân giải hình ảnh vượt quá %(resolution)spx. Điều này có thể ảnh hưởng đến chất lượng xuất hoặc hiệu suất.',
     import_to_canvas: 'Nhập vào canvas',
+    layers: {
+      board_base: 'Đế bảng',
+      guide_lines: 'Đường dẫn hướng',
+      image: 'Hình ghép hình',
+      pieces: 'Mảnh ghép hình',
+      raised_edges: 'Cạnh nổi',
+    },
     offset_x: 'Độ lệch X',
     offset_y: 'Độ lệch Y',
     orientation: 'Hướng mảnh ghép',

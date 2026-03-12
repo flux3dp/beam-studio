@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: 'Kunne ikke laste inn det valgte bildet. Prøv en annen fil.',
     image_resolution_warning: 'Bildeoppløsning overstiger %(resolution)spx. Dette kan påvirke eksportkvalitet eller ytelse.',
     import_to_canvas: 'Importer til lerret',
+    layers: {
+      board_base: 'Brettbase',
+      guide_lines: 'Hjelpelinjer',
+      image: 'Puslespillbilde',
+      pieces: 'Puslespillbrikker',
+      raised_edges: 'Hevede kanter',
+    },
     offset_x: 'X-forskyvning',
     offset_y: 'Y-forskyvning',
     orientation: 'Brikkenes orientering',

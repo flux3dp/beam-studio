@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: 'Das ausgewählte Bild konnte nicht geladen werden. Bitte versuchen Sie eine andere Datei.',
     image_resolution_warning: 'Die Bildauflösung überschreitet %(resolution)spx. Dies kann die Exportqualität oder Leistung beeinträchtigen.',
     import_to_canvas: 'Auf Leinwand importieren',
+    layers: {
+      board_base: 'Grundplatte',
+      guide_lines: 'Hilfslinien',
+      image: 'Puzzlebild',
+      pieces: 'Puzzleteile',
+      raised_edges: 'Erhöhte Kanten',
+    },
     offset_x: 'X-Versatz',
     offset_y: 'Y-Versatz',
     orientation: 'Teile-Ausrichtung',

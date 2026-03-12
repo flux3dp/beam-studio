@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: '無法載入所選圖片，請嘗試其他檔案。',
     image_resolution_warning: '圖片解析度超過 %(resolution)spx，可能會影響匯出品質或效能。',
     import_to_canvas: '匯入至畫布',
+    layers: {
+      board_base: '底板',
+      guide_lines: '導引線',
+      image: '拼圖圖片',
+      pieces: '拼圖切割',
+      raised_edges: '立體邊框',
+    },
     offset_x: 'X 偏移',
     offset_y: 'Y 偏移',
     orientation: '拼片方向',

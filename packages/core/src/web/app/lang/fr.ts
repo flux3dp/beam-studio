@@ -1954,6 +1954,13 @@ const lang: ILang = {
     image_load_failed: "Échec du chargement de l'image sélectionnée. Veuillez essayer un autre fichier.",
     image_resolution_warning: "La résolution de l'image dépasse %(resolution)spx. Cela peut affecter la qualité d'exportation ou les performances.",
     import_to_canvas: 'Importer sur le canevas',
+    layers: {
+      board_base: 'Base du plateau',
+      guide_lines: 'Lignes de guidage',
+      image: 'Image du puzzle',
+      pieces: 'Pièces du puzzle',
+      raised_edges: 'Bords surélevés',
+    },
     offset_x: 'Décalage X',
     offset_y: 'Décalage Y',
     orientation: 'Orientation des pièces',
