@@ -63,7 +63,7 @@ describe('show tutorial', () => {
     openTutorial('Show Interface Introduction');
     checkInterfaceStep('1/17\nCamera PreviewNEXT');
     checkInterfaceStep('2/17\nSelect a machineNEXT');
-    checkInterfaceStep('3/17\nRunning FrameNEXT');
+    checkInterfaceStep('3/17\nFramingNEXT');
     checkInterfaceStep('4/17\nStart WorkNEXT');
     checkInterfaceStep('5/17\nSelect / Image / TextNEXT');
     checkInterfaceStep('6/17\nBasic ShapesNEXT');

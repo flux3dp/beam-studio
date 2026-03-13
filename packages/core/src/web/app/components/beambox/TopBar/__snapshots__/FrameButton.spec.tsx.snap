@@ -4,7 +4,7 @@ exports[`test FrameButton should render correctly 1`] = `
 <div>
   <div
     class="button"
-    title="Running Frame"
+    title="Framing"
   >
     <svgr-url />
   </div>

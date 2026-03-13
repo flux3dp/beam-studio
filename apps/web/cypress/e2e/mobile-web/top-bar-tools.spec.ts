@@ -38,7 +38,7 @@ describe('check the existence of the top bar tools on mobile', () => {
     cy.get(`[class*="${topbarModulesPrefix}TopBar-module__right"]`).should('exist');
     cy.get(`[class*="${topbarModulesPrefix}SelectMachineButton-module__button"]`).should('exist');
     cy.getTopBar('[title="Document Settings"]').should('exist');
-    cy.getTopBar('[title="Running Frame"]').should('exist');
+    cy.getTopBar('[title="Framing"]').should('exist');
     cy.getTopBar('[title="Start Work"]').should('exist');
   });
 

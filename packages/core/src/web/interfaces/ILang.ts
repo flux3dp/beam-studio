@@ -1385,7 +1385,6 @@ export interface ILang {
     area_check: string;
     areacheck_desc: string;
     calculating_task: string;
-    continuously: string;
     contour: string;
     contour_desc: string;
     framing: string;
@@ -1394,6 +1393,7 @@ export interface ILang {
     hull_desc: string;
     low_laser: string;
     low_laser_desc: string;
+    repeat: string;
     rotate_axis: string;
     rotateaxis_desc: string;
     rotation_frame_warning: string;

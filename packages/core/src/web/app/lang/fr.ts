@@ -1383,7 +1383,6 @@ const lang: ILang = {
     area_check: 'Vérification de la zone',
     areacheck_desc: "Assure la sécurité de la zone de travail en prévisualisant la boîte englobante de l'objet et la zone d'accélération de la tête laser.",
     calculating_task: 'Calcul de la tâche...',
-    continuously: 'En continu',
     contour: 'Contour',
     contour_desc: 'Aperçu du contour réel du motif.',
     framing: 'Cadrage',
@@ -1392,6 +1391,7 @@ const lang: ILang = {
     hull_desc: "Affiche un aperçu d'une forme qui suit étroitement le design, comme un élastique enroulé autour de l'objet.",
     low_laser: 'Laser faible',
     low_laser_desc: 'Définissez une valeur de laser à faible puissance pour la tâche de cadrage.',
+    repeat: 'Répéter',
     rotate_axis: 'Axe de rotation',
     rotateaxis_desc: "Aperçu du centre de l'axe de rotation, l'axe lui-même ne bouge pas.",
     rotation_frame_warning: "L'aperçu du cadre effectuera une rotation complète. Évitez de l'interrompre en cours de route afin de ne pas provoquer un décalage de la position du marquage.",
@@ -2233,7 +2233,7 @@ const lang: ILang = {
       start_preview_timeout: '#803 Délai d’attente dépassé lors du démarrage du mode aperçu. Veuillez redémarrer votre machine ou Beam Studio. Si cette erreur persiste, veuillez suivre <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">ce guide</a>.',
       variable_text_warning: "Ce travail contient du texte variable. Le système gravera d'abord le texte variable et ne suivra pas l'ordre des calques.",
     },
-    frame_task: 'Exécution du cadre',
+    frame_task: 'Cadrage',
     hint: {
       polygon: 'Appuyez sur les touches + / - pour augmenter / diminuer les côtés.',
     },
@@ -2432,7 +2432,7 @@ const lang: ILang = {
       text_path: 'Texte sur trajet',
       use: 'Objet importé',
     },
-    task_preview: 'Aperçu de la tâche',
+    task_preview: 'Aperçu du chemin',
     titles: {
       settings: 'Préférences',
     },

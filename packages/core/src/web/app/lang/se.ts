@@ -1383,7 +1383,6 @@ const lang: ILang = {
     area_check: 'Områdeskontroll',
     areacheck_desc: 'Säkerställer att arbetsområdet är säkert genom att förhandsgranska objektets begränsningsram och laserns accelerationszon.',
     calculating_task: 'Beräknar uppgift...',
-    continuously: 'Kontinuerligt',
     contour: 'Kontur',
     contour_desc: 'Förhandsgranska den faktiska mönsterkonturen.',
     framing: 'Inramning',
@@ -1392,6 +1391,7 @@ const lang: ILang = {
     hull_desc: 'Förhandsvisar en form som följer designen noggrant, som ett gummiband lindat runt objektet.',
     low_laser: 'Låg laser',
     low_laser_desc: 'Ställ in ett lågeffektslaservärde för inramningsuppgiften.',
+    repeat: 'Upprepa',
     rotate_axis: 'Rotationsaxel',
     rotateaxis_desc: 'Förhandsgranskar rotationens axelcenter, själva axeln rör sig inte.',
     rotation_frame_warning: 'Ramförhandsgranskningen kommer att rotera en gång. Undvik att stoppa halvvägs för att förhindra att markeringspositionen förskjuts.',
@@ -2233,7 +2233,7 @@ const lang: ILang = {
       start_preview_timeout: '#803 Timeout uppstod när förhandsgranskningsläget startades. Starta om din dator eller Beam Studio. Om felet kvarstår, följ <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denna guide</a>.',
       variable_text_warning: 'Det här jobbet innehåller variabel text. Systemet prioriterar att gravera den variabla texten och följer inte lagerordningen.',
     },
-    frame_task: 'Kör ram',
+    frame_task: 'Bildkomposition',
     hint: {
       polygon: 'Tryck på + / - tangenten för att öka / minska sidor.',
     },
@@ -2432,7 +2432,7 @@ const lang: ILang = {
       text_path: 'Text på bana',
       use: 'Importerat objekt',
     },
-    task_preview: 'Banor',
+    task_preview: 'Förhandsvisning av sökväg',
     titles: {
       settings: 'Inställningar',
     },

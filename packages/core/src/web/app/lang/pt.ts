@@ -1383,7 +1383,6 @@ const lang: ILang = {
     area_check: 'Verificação da Área',
     areacheck_desc: 'Garante a segurança da área de trabalho exibindo a caixa delimitadora do objeto e a zona de aceleração da cabeça do laser.',
     calculating_task: 'Calculando tarefa...',
-    continuously: 'Continuamente',
     contour: 'Contorno',
     contour_desc: 'Pré-visualize o contorno real do padrão.',
     framing: 'Moldura',
@@ -1392,6 +1391,7 @@ const lang: ILang = {
     hull_desc: 'Exibe uma pré-visualização de uma forma que segue de perto o design, como um elástico envolvido ao redor do objeto.',
     low_laser: 'Laser baixo',
     low_laser_desc: 'Defina um valor de laser de baixa potência para a tarefa de moldura.',
+    repeat: 'Repetir',
     rotate_axis: 'Eixo de rotação',
     rotateaxis_desc: 'Pré-visualização do centro do eixo de rotação, o próprio eixo não se move.',
     rotation_frame_warning: 'A pré-visualização da moldura girará uma vez. Evite parar no meio do processo para evitar desalinhamento da posição da marcação.',
@@ -2233,7 +2233,7 @@ const lang: ILang = {
       start_preview_timeout: '#803 O tempo limite ocorreu ao iniciar o modo de visualização. Reinicie seu computador ou o Beam Studio. Se este erro persistir, siga <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">este guia</a>.',
       variable_text_warning: 'Este trabalho contém texto variável. O sistema priorizará a gravação do conteúdo de texto variável e não seguirá a ordem das camadas.',
     },
-    frame_task: 'Executando quadro',
+    frame_task: 'Enquadramento',
     hint: {
       polygon: 'Pressione as teclas + / - para aumentar / diminuir os lados.',
     },
@@ -2432,7 +2432,7 @@ const lang: ILang = {
       text_path: 'Texto em Caminho',
       use: 'Objeto Importado',
     },
-    task_preview: 'Visualização da trajetória',
+    task_preview: 'Pré-visualização do caminho',
     titles: {
       settings: 'Configurações',
     },
