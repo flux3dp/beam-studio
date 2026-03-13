@@ -1383,7 +1383,6 @@ const lang: ILang = {
     area_check: 'Semakan Kawasan',
     areacheck_desc: 'Memastikan kawasan kerja selamat dengan memaparkan kotak sempadan objek dan zon pecutan kepala laser.',
     calculating_task: 'Mengira tugas...',
-    continuously: 'Berterusan',
     contour: 'Kontur',
     contour_desc: 'Pratonton kontur corak sebenar.',
     framing: 'Pembingkaian',
@@ -1392,6 +1391,7 @@ const lang: ILang = {
     hull_desc: 'Memaparkan bentuk yang rapat mengikuti reka bentuk, seperti gelang getah yang dililitkan pada objek.',
     low_laser: 'Laser rendah',
     low_laser_desc: 'Tetapkan nilai laser berkuasa rendah untuk tugas pembingkaian.',
+    repeat: 'Ulang',
     rotate_axis: 'Paksi putaran',
     rotateaxis_desc: 'Pratonton pusat paksi putaran, paksi itu sendiri tidak bergerak.',
     rotation_frame_warning: 'Pratonton bingkai akan berputar sekali. Elakkan berhenti di tengah jalan untuk mengelakkan penyimpangan kedudukan tanda.',
@@ -2233,7 +2233,7 @@ const lang: ILang = {
       start_preview_timeout: '#803 Timeout telah berlaku ketika memulakan mod pratonton. Sila mulakan semula mesin atau Beam Studio anda. Jika ralat ini berterusan, sila ikuti <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">panduan ini</a>.',
       variable_text_warning: 'Kerja ini mengandungi teks berubah. Sistem akan mengutamakan ukiran kandungan teks berubah dan tidak mengikut susunan lapisan.',
     },
-    frame_task: 'Bingkai sedang berjalan',
+    frame_task: 'Pembingkaian',
     hint: {
       polygon: 'Tekan kekunci + / - untuk menambah / mengurangkan sisi.',
     },
@@ -2432,7 +2432,7 @@ const lang: ILang = {
       text_path: 'Teks pada Laluan',
       use: 'Objek Diimport',
     },
-    task_preview: 'Laluan pratonton',
+    task_preview: 'Pratonton Laluan',
     titles: {
       settings: 'Tetapan',
     },

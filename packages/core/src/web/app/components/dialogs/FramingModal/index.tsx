@@ -83,7 +83,7 @@ const FramingModal = ({ device, onClose, startOnOpen = false }: Props): React.JS
             disabled={isFraming}
             onChange={(e) => setLoop(e.target.checked)}
           >
-            {tFraming.continuously}
+            {tFraming.repeat}
           </Checkbox>
           <Button className={styles.button} onClick={onClose}>
             {lang.alert.cancel}

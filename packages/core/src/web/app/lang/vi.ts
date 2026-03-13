@@ -1383,7 +1383,6 @@ const lang: ILang = {
     area_check: 'Kiểm tra khu vực',
     areacheck_desc: 'Đảm bảo khu vực làm việc an toàn bằng cách xem trước hộp giới hạn của đối tượng và vùng gia tốc của đầu laser.',
     calculating_task: 'Đang tính toán nhiệm vụ...',
-    continuously: 'Liên tục',
     contour: 'Đường viền',
     contour_desc: 'Xem trước đường viền mẫu thực tế.',
     framing: 'Đóng khung',
@@ -1392,6 +1391,7 @@ const lang: ILang = {
     hull_desc: 'Xem trước hình dạng bám sát thiết kế, giống như dây cao su bao quanh đối tượng.',
     low_laser: 'Laser yếu',
     low_laser_desc: 'Đặt giá trị laser công suất thấp cho nhiệm vụ đóng khung.',
+    repeat: 'Lặp lại',
     rotate_axis: 'Trục xoay',
     rotateaxis_desc: 'Xem trước trung tâm trục xoay, trục không di chuyển.',
     rotation_frame_warning: 'Bản xem trước khung sẽ xoay một vòng. Tránh dừng giữa chừng để tránh lệch vị trí đánh dấu.',
@@ -2233,7 +2233,7 @@ const lang: ILang = {
       start_preview_timeout: '#803 Đã xảy ra lỗi khi bắt đầu chế độ xem trước. Vui lòng khởi động lại máy hoặc Beam Studio. Nếu lỗi này vẫn xảy ra, vui lòng làm theo <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">hướng dẫn này</a>.',
       variable_text_warning: 'Công việc này có chứa văn bản biến đổi. Hệ thống sẽ ưu tiên khắc nội dung văn bản biến đổi và không theo thứ tự lớp.',
     },
-    frame_task: 'Đang chạy khung',
+    frame_task: 'Đóng khung',
     hint: {
       polygon: 'Nhấn phím + / - để tăng / giảm số cạnh',
     },
@@ -2432,7 +2432,7 @@ const lang: ILang = {
       text_path: 'Văn bản trên đường dẫn',
       use: 'Đối tượng nhập khẩu',
     },
-    task_preview: 'Xem trước đường đi',
+    task_preview: 'Xem trước đường dẫn',
     titles: {
       settings: 'Tùy chọn',
     },
