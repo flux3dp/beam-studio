@@ -20,8 +20,6 @@ import useI18n from '@core/helpers/useI18n';
 import styles from './ElementPanel.module.scss';
 import MainContent from './MainContent';
 
-const mode = 'element-panel';
-
 export const ElementPanelContent = (): ReactNode => {
   const {
     activeMainType,
@@ -174,7 +172,7 @@ export const ElementPanelContent = (): ReactNode => {
       closeIcon={null}
       destroyOnClose
       enableResizable={false}
-      mode={mode}
+      mode="element-panel"
       rootClassName={styles.drawer}
       title={
         <div className={classNames(styles.header, { [styles['hide-search']]: contentType !== ContentType.Search })}>

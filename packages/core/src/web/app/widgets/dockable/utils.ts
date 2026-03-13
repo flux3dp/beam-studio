@@ -9,6 +9,7 @@ import {
 import beamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import { TabEvents } from '@core/app/constants/ipcEvents';
 import layoutConstants from '@core/app/constants/layout-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
@@ -16,6 +17,7 @@ import { defaultDockableState, useDockableStore } from '@core/app/stores/dockabl
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import viewMenu from '@core/helpers/menubar/view';
+import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
 import {
@@ -439,6 +441,8 @@ export const onReady = (event: DockviewReadyEvent) => {
 
   loadLayout('storage');
 };
+
+communicator.on(TabEvents.ReloadSettings, () => loadLayout('storage'));
 
 export const disableDockview = () => {
   api = null;
