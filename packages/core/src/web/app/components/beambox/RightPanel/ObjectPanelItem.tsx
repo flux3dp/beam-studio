@@ -22,34 +22,40 @@ interface Props {
   onClick?: () => void;
 }
 
-const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onClick }: Props): React.ReactNode => {
-  const context = use(ObjectPanelContext);
-  const { activeKey, updateActiveKey } = context;
+const ObjectPanelItem = React.forwardRef(
+  (
+    { autoClose = true, content, disabled, id, label, onClick }: Props,
+    ref: React.Ref<HTMLDivElement>,
+  ): React.ReactNode => {
+    const context = use(ObjectPanelContext);
+    const { activeKey, updateActiveKey } = context;
 
-  if (disabled) {
-    return null;
-  }
+    if (disabled) {
+      return null;
+    }
 
-  return (
-    <div
-      className={classNames(styles['object-panel-item'], {
-        [styles.active]: activeKey === id,
-      })}
-      id={id}
-      onClick={async () => {
-        updateActiveKey(id);
-        await onClick?.();
+    return (
+      <div
+        className={classNames(styles['object-panel-item'], {
+          [styles.active]: activeKey === id,
+        })}
+        id={id}
+        onClick={async () => {
+          updateActiveKey(id);
+          await onClick?.();
 
-        if (autoClose) {
-          setTimeout(() => updateActiveKey(null), 300);
-        }
-      }}
-    >
-      <div className={styles.main}>{content}</div>
-      {label && <div className={styles.label}>{label}</div>}
-    </div>
-  );
-};
+          if (autoClose) {
+            setTimeout(() => updateActiveKey(null), 300);
+          }
+        }}
+        ref={ref}
+      >
+        <div className={styles.main}>{content}</div>
+        {label && <div className={styles.label}>{label}</div>}
+      </div>
+    );
+  },
+);
 
 interface NumberItemProps {
   decimal?: number;
