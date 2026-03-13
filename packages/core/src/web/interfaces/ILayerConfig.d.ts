@@ -27,6 +27,7 @@ type LaserConfig = {
   focus: number;
   focusStep: number;
   height: number;
+  highQuality: boolean;
   minPower: number;
   power: number;
   speed: number;

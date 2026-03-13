@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Halvtoner',
         halftone_link: 'https://support.flux3dp.com/hc/zh-tw/articles/9402670389647',
         height: 'Objekthøjde',
+        high_quality: 'Høj kvalitet',
+        high_quality_desc: 'Gælder kun for fyldte vektorgravering og billedobjekter. Aktivering af dette vil reducere graveringshastigheden for finere resultater.',
         ink_saturation: 'Mætning',
         low_air_assist_warning: 'Det anbefales at sætte luftassistance til over 50 % for effektivt at reducere risikoen for, at materialet antændes.',
         low_power_warning: 'Lavere laserstyrke (under 10%) kan muligvis ikke udsende laserlys.',
