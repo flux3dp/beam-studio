@@ -1,10 +1,10 @@
-import type { DockviewGroupPanel, DockviewGroupPanelApi, DockviewPanelApi, Position } from 'dockview-react';
+import type { DockviewGroupPanel, DockviewGroupPanelApi, DockviewPanelApi, Position } from 'dockview';
 import {
   type DockviewApi,
   type DockviewReadyEvent,
   type FloatingGroupOptions,
   type SerializedDockview,
-} from 'dockview-react';
+} from 'dockview';
 
 import beamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
 import tabController from '@core/app/actions/tabController';

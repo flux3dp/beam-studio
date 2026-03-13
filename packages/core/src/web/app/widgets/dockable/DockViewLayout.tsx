@@ -1,7 +1,7 @@
 import { useEffect } from 'react';
 
-import { DockviewReact, themeLight } from 'dockview-react';
-import 'dockview-react/dist/styles/dockview.css';
+import { DockviewReact, themeLight } from 'dockview';
+import 'dockview/dist/styles/dockview.css';
 
 import { components } from './constants';
 import styles from './DockViewLayout.module.scss';

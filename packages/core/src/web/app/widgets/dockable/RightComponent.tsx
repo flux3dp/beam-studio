@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 
 import { Button } from 'antd';
-import type { IDockviewHeaderActionsProps } from 'dockview-react';
+import type { IDockviewHeaderActionsProps } from 'dockview';
 
 import Icons from '@core/app/icons/dockable/DockableIcons';
 

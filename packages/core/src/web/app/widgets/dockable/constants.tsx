@@ -1,7 +1,5 @@
-import 'dockview-react/dist/styles/dockview.css';
-
-import type { FloatingGroupOptions } from 'dockview-react';
-import { type AddPanelOptions, Orientation, type SerializedDockview } from 'dockview-react';
+import type { FloatingGroupOptions } from 'dockview';
+import { type AddPanelOptions, Orientation, type SerializedDockview } from 'dockview';
 
 import LeftPanel from '@core/app/components/beambox/LeftPanel';
 import LayerPanel from '@core/app/components/beambox/RightPanel/LayerPanel';

@@ -3,7 +3,7 @@ import React, { useCallback, useContext, useMemo, useRef } from 'react';
 
 import Icon, { CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
-import type { IDockviewPanelHeaderProps } from 'dockview-react';
+import type { IDockviewPanelHeaderProps } from 'dockview';
 
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
