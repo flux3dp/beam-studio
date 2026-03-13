@@ -44,13 +44,7 @@ const exampleList = [
 ];
 
 const openExample = (name: string, type?: string) => {
-  cy.get('div[data-testid="top-bar-menu"]').click();
-  cy.contains('File').click();
-  cy.contains('Examples').click();
-
-  if (type) cy.contains(type).click();
-
-  cy.contains(name).click();
+  cy.getMenuItem(type ? ['File', 'Examples', type] : ['File', 'Examples'], name).click();
 };
 
 const validateExample = (expectedHash: string) => {

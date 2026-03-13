@@ -10,9 +10,8 @@ describe('manipulate layers (basic)', () => {
     cy.landingEditor();
   });
 
-  it('the side panel and its components should exist', () => {
-    cy.get('div#sidepanels').should('exist');
-    cy.get('div.right-panel-tabs').should('exist');
+  it('the layer panel and its components should exist', () => {
+    cy.get('#rightPanelLayer-tab').should('exist');
     cy.get('div#layerpanel').should('exist');
     cy.get('div#laser-panel').should('exist');
   });
@@ -50,16 +49,20 @@ describe('manipulate layers (basic)', () => {
 
   it('delete the layer', () => {
     cy.get(`div[class*="${layerListClassPrefix}item"]`).rightclick();
-    cy.get('.ant-dropdown').should('be.visible').within(() => {
-      cy.contains('.ant-dropdown-menu-item', 'Delete').click({ force: true });
-    });
+    cy.get('.ant-dropdown')
+      .should('be.visible')
+      .within(() => {
+        cy.contains('.ant-dropdown-menu-item', 'Delete').click({ force: true });
+      });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 2);
     cy.get(`div[class*="${layerListClassPrefix}item"]`).eq(1).click().rightclick();
-    cy.get('.ant-dropdown').should('be.visible').within(() => {
-      cy.contains('.ant-dropdown-menu-item', 'Delete').click({ force: true });
-    });
+    cy.get('.ant-dropdown')
+      .should('be.visible')
+      .within(() => {
+        cy.contains('.ant-dropdown-menu-item', 'Delete').click({ force: true });
+      });
     cy.get(`div[class*="${layerListClassPrefix}item"]`).should('have.length', 1);
     cy.get(`div[class*="${layerListClassPrefix}item"] div[class*="${layerListClassPrefix}name"]`).should(
       'have.text',

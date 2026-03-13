@@ -223,13 +223,17 @@ Cypress.Commands.add('applySettings', () => {
   cy.get('.ant-modal-footer button.ant-btn-primary').contains('Apply').click();
 });
 
-Cypress.Commands.add('go2Preference', (handleSave = false) => {
-  cy.get('[data-testid="top-bar-menu"]').click({ timeout: 10000 });
-  cy.get('ul.szh-menu--dir-bottom>li.szh-menu__submenu').should('have.length', 7);
-  cy.get('.szh-menu__submenu').contains('File').click();
-  cy.get('.szh-menu__submenu').contains('Preferences').click();
-  if (handleSave) cy.get('button.ant-btn').contains("Don't Save").click();
-  // Wait for settings modal to be visible
+Cypress.Commands.add('getMenuItem', (path: string[], target: string) => {
+  cy.get('div[data-testid="top-bar-menu"]').click();
+  cy.get('ul[aria-label="Menu"]').should('be.visible').as('menu');
+  path.forEach((text) => {
+    cy.get('@menu').contains('.szh-menu__item--submenu', text).should('be.visible').click();
+  });
+  return cy.get('@menu').contains('.szh-menu__item', target).should('be.visible');
+});
+
+Cypress.Commands.add('go2Preference', () => {
+  cy.getMenuItem(['File'], 'Preferences').click();
   cy.get('.ant-modal-content', { timeout: 10000 }).should('be.visible');
 });
 
@@ -245,9 +249,7 @@ Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
 });
 
 Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
-  cy.get('div[data-testid="top-bar-menu"]').click();
-  cy.get('.szh-menu__submenu').contains('Edit').click();
-  cy.contains('Document Settings').click();
+  cy.getMenuItem(['Edit'], 'Document Settings').click();
   cy.get('#workareaSelect').closest('.ant-select').as('select');
   cy.get('@select').find('.ant-select-selection-item').click();
   cy.get('@select').should('have.class', 'ant-select-open');
@@ -298,6 +300,12 @@ Cypress.Commands.add('moveElementToLayer', (targetLayer: string, needConfirm = t
   cy.get('.ant-select-item').contains(targetLayer).click();
   if (needConfirm) cy.get('.ant-btn').contains('Yes').click();
 });
+
+Cypress.Commands.add('showPanel', (panelName: 'layers' | 'objects') => {
+  const componentName = panelName === 'layers' ? 'rightPanelLayer' : 'rightPanelObject';
+  cy.get(`#${componentName}-tab`).click();
+});
+
 //
 //
 // -- This is a child command --

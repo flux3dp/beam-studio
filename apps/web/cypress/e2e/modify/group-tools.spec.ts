@@ -29,14 +29,14 @@ describe('group tools', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_1').should('exist');
-    cy.get('div.layers > .tab-icon').click();
+    cy.showPanel('layers');
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.clickToolBtn('Ellipse');
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 150, 150, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_2').should('exist');
-    cy.get('div.layers > .tab-icon').click();
+    cy.showPanel('layers');
     cy.get(`button[class*="${addLayerBtnPrefix}"]`).click({ force: true });
     cy.clickToolBtn('Polygon');
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
@@ -50,7 +50,7 @@ describe('group tools', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 300, 300, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.findAllByText('Multiple Objects').should('exist');
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
   };
 
   it('group', () => {

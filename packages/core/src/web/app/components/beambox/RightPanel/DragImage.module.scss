@@ -1,7 +1,9 @@
+@use '@core/styles/variables' as variables;
+
 .container {
   position: fixed;
-  z-index: -1;
-  width: 242px;
+  left: 110vw; // Move it out of viewport
+  width: variables.$sidePanelWidth; // This width won't really match the actual side panel width
   background-color: transparent;
 
   .back {

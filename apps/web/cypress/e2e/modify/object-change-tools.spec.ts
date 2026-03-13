@@ -6,7 +6,7 @@ describe('object change tools', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_1').should('exist');
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
   });
 
   it('change object location by hand movement', () => {

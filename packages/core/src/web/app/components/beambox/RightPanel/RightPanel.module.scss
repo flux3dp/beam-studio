@@ -1,25 +1,14 @@
 @use '@core/styles/variables' as variables;
 
 .sidepanels {
-  flex: 0 0 auto;
   border: none;
   background-color: #f8f8f8;
-  width: variables.$sidePanelWidth;
   height: 100%;
   padding: 0px;
   opacity: 1;
   overflow-x: visible;
   overflow-y: hidden;
   transition: opacity 0.3s;
-
-  &.wide {
-    width: variables.$winSidePanelWidth;
-  }
-
-  &:hover {
-    opacity: 1;
-    z-index: 4;
-  }
 
   @media screen and (max-width: 600px) {
     position: fixed;

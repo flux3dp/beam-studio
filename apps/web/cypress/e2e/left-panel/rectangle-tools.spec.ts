@@ -5,7 +5,7 @@ describe('rectangle tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 100, 100, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 400, 400, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
   });
 
   it('rounded corner', () => {

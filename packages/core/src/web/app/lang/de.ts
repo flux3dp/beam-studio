@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Vertical Spiegeln',
         zoom: 'Zoomen',
       },
-      tabs: {
-        layers: 'Ebenen',
-        objects: 'Objects',
-        path_edit: 'Pfadbearbeitung',
-      },
       uv_print_block: {
         title: 'UV-Druck',
       },
@@ -2375,6 +2370,7 @@ const lang: ILang = {
       redo: 'Wiederholen',
       reload_app: 'App neu laden',
       reset: 'Zurücksetzen',
+      reset_layout: 'Layout zurücksetzen',
       rotary_setup: 'Drehvorrichtung Einrichten',
       rotate: 'Drehen',
       samples: 'Beispiele',
@@ -2394,6 +2390,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Wechsle zur Beta-Version',
       switch_to_latest: 'Wechsle zur stabilen Version',
+      tab_layers: 'Ebenen',
+      tab_objects: 'Objects',
+      tab_path_edit: 'Pfadbearbeitung',
       tools: {
         title: 'Werkzeuge',
       },

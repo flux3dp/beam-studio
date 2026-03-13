@@ -156,6 +156,21 @@ exports[`should render correctly already signed in 1`] = `
           role="menuitem"
           tabindex="-1"
         >
+          Window
+        </div>
+      </li>
+      <li
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="szh-menu__item szh-menu__item--submenu"
+          role="menuitem"
+          tabindex="-1"
+        >
           Help
         </div>
       </li>
@@ -308,6 +323,21 @@ exports[`should render correctly open the browser and reach the correct page 2`]
           role="menuitem"
           tabindex="-1"
         >
+          Window
+        </div>
+      </li>
+      <li
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="szh-menu__item szh-menu__item--submenu"
+          role="menuitem"
+          tabindex="-1"
+        >
           Help
         </div>
       </li>
@@ -429,6 +459,21 @@ exports[`should render correctly open the browser and reach the correct page 3`]
           tabindex="-1"
         >
           Account
+        </div>
+      </li>
+      <li
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="szh-menu__item szh-menu__item--submenu"
+          role="menuitem"
+          tabindex="-1"
+        >
+          Window
         </div>
       </li>
       <li
@@ -776,6 +821,21 @@ exports[`should render correctly test checkbox menu item 2`] = `
           role="menuitem"
           tabindex="-1"
         >
+          Window
+        </div>
+      </li>
+      <li
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="szh-menu__item szh-menu__item--submenu"
+          role="menuitem"
+          tabindex="-1"
+        >
           Help
         </div>
       </li>
@@ -996,6 +1056,21 @@ exports[`should render correctly test checkbox menu item 3`] = `
           tabindex="-1"
         >
           Account
+        </div>
+      </li>
+      <li
+        class="szh-menu__submenu"
+        role="none"
+        style="position: relative;"
+      >
+        <div
+          aria-expanded="false"
+          aria-haspopup="true"
+          class="szh-menu__item szh-menu__item--submenu"
+          role="menuitem"
+          tabindex="-1"
+        >
+          Window
         </div>
       </li>
       <li

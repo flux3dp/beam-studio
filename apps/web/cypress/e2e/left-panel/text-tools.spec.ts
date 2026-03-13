@@ -13,7 +13,7 @@ describe('text tools', () => {
     cy.get('#svg_1').should('exist');
     cy.inputText('TEST TEXT FONT');
     cy.getElementTitle().should('have.text', 'Layer 1 > Text');
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
   };
 
   const drawText2 = () => {

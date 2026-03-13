@@ -100,7 +100,7 @@ describe('test PathEditPanel', () => {
     const { container, getByText, getByTitle } = render(<PathEditPanel />);
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;
 
-    await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-280px)))'));
+    await waitFor(() => expect(panelEl.style.transform).toBe('translateY(calc(100% + (-300px)))'));
     await waitFor(() => expect(panelEl.getAttribute('data-animating')).toBe('false'));
     expect(container).toMatchSnapshot();
 

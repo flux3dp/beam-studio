@@ -7,6 +7,7 @@ describe('upload tools', () => {
     cy.landingEditor();
     cy.uploadFile('flux.png', 'image/png');
     cy.get('#svg_1').should('exist');
+    cy.showPanel('objects');
     cy.get('#w_size').should('have.value', '300');
     cy.get('#h_size').should('have.value', '210');
   });
@@ -15,6 +16,7 @@ describe('upload tools', () => {
     cy.landingEditor();
     cy.uploadFile('map.jpg', 'image/jpg');
     cy.get('#svg_1').should('exist');
+    cy.showPanel('objects');
     cy.get('#w_size').should('have.value', '553');
     cy.get('#h_size').should('have.value', '387.9');
   });
@@ -36,6 +38,7 @@ describe('upload tools', () => {
     cy.get('svg#svgcontent').trigger('mousemove', 400, 400, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     // Wait for element size to be computed
+    cy.showPanel('objects');
     cy.get('#w_size').should('have.attr', 'value').and('eq', '522.17');
     cy.get('#h_size').should('have.attr', 'value').and('eq', '465.52');
   });
