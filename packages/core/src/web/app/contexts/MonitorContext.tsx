@@ -63,6 +63,7 @@ const {
   COMPLETED,
   FATAL,
   IDLE,
+  INIT,
   PAUSED,
   PAUSED_FROM_RUNNING,
   PAUSED_FROM_STARTING,
@@ -82,6 +83,7 @@ const reportStates = new Set([
   TOOLHEAD_CHANGE,
   COMPLETED,
   RECONNECTING,
+  INIT,
 ]);
 
 export interface PreviewTask {
