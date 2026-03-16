@@ -252,9 +252,6 @@ describe('should render correctly', () => {
 
     fireEvent.click(getByText(tActionPanel.array));
     expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
-
-    fireEvent.click(getByText(tActionPanel.smart_nest));
-    expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
 
   test('text', async () => {
@@ -268,7 +265,7 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
 
     convertTextToPathFontFunc.mockResolvedValueOnce({ path: null });
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     await tick();
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenNthCalledWith(1, {
@@ -326,7 +323,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
@@ -345,7 +342,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
@@ -364,7 +361,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
@@ -383,7 +380,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);

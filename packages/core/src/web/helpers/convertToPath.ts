@@ -94,6 +94,37 @@ export const convertTextToPath = async ({
   return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined, status };
 };
 
+export const convertTempGroupTextsToPath = async ({
+  element,
+  isToSelect = false,
+  weldingTexts = false,
+}: {
+  element: SVGElement;
+  isToSelect?: boolean;
+  weldingTexts?: boolean;
+}): Promise<void> => {
+  const elements = svgCanvas.ungroupTempGroup(element);
+  const paths: SVGPathElement[] = [];
+  const batchCommand = new BatchCommand('Convert Texts in Temp Group to Path');
+
+  for (const el of elements) {
+    const { path } = await convertTextToPath({
+      element: el,
+      isToSelect: false,
+      parentCommand: batchCommand,
+      weldingTexts,
+    });
+
+    if (path) paths.push(path);
+  }
+
+  undoManager.addCommandToHistory(batchCommand);
+
+  if (isToSelect && paths.length > 0) {
+    paths.length === 1 ? svgCanvas.selectOnly(paths) : svgCanvas.multiSelect(paths);
+  }
+};
+
 export const convertTextOnPathToPath = async ({
   element,
   isToSelect: _isToSelect,
