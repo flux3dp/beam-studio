@@ -130,7 +130,7 @@ export const getExportOpt = async (
   }
 
   const updateAccOverride = (value: TAccelerationOverride) => {
-    if (!config.acc_override) config.acc_override = value;
+    if (!config.acc_override) config.acc_override = structuredClone(value);
 
     const keys = Object.keys(value) as Array<keyof typeof value>;
 
