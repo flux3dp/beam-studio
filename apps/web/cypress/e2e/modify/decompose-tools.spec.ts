@@ -8,7 +8,7 @@ it('decompose', () => {
   cy.get('.ant-drawer-header').should('not.exist');
   cy.get('#svg_9').should('exist').should('have.attr', 'fill', '#333333');
   cy.get('#svg_9').click({ force: true });
-  cy.get('.tab.objects').click();
+  cy.showPanel('objects');
   cy.get('button#infill').click();
   cy.get('button#decompose_path').click();
   cy.get('#svg_10').should('exist').should('have.attr', 'stroke', '#333333').should('have.attr', 'fill-opacity', '0');

@@ -45,7 +45,7 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
 
     const newUserTutorial = generateNewUserTutorial(device.model);
 
-    Dialog.showTutorial(newUserTutorial, callback);
+    await Dialog.showTutorial(newUserTutorial, callback);
   } else {
     const buttons = [
       {
@@ -78,8 +78,8 @@ const startNewUserTutorial = async (callback: () => void): Promise<void> => {
   }
 };
 
-const startInterfaceTutorial = (callback: () => void) => {
-  Dialog.showTutorial(generateInterfaceTutorial(), callback);
+const startInterfaceTutorial = async (callback: () => void) => {
+  await Dialog.showTutorial(generateInterfaceTutorial(), callback);
 };
 
 export default {

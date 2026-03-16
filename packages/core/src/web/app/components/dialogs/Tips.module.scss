@@ -1,0 +1,8 @@
+.tips {
+  margin-top: 12px;
+  // Set width for antd Carousel to calculate width correctly during modal opening
+  --force-width: min(472px, calc(100vw - 48px - 16px - 24px));
+  max-width: var(--force-width);
+  min-width: var(--force-width);
+  width: var(--force-width);
+}

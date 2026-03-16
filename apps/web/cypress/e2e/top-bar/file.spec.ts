@@ -4,12 +4,6 @@ import { md5 } from '../../support/utils';
 const isRunningAtGithub = Cypress.env('envType') === 'github';
 const isWindows = Cypress.platform === 'win32';
 
-const selectMenuOption = (submenu, option) => {
-  cy.get('div[data-testid="top-bar-menu"]').click();
-  cy.contains(submenu).click();
-  cy.contains(option).click();
-};
-
 const uploadFile = (fileName, selector = 'input#file-input') => {
   cy.fixture(fileName, 'base64')
     .then(Cypress.Blob.base64StringToBlob)
@@ -35,9 +29,8 @@ const checkCrc32 = (filePath, expectedValues) => {
   });
 };
 
-const exportFile = (type) => {
-  selectMenuOption('File', 'Export To...');
-  cy.contains(type).click();
+const exportFile = (type: string) => {
+  cy.getMenuItem(['File', 'Export To...'], type).click();
 };
 
 const checkMd5 = (path, expectedValues) => {
@@ -61,15 +54,16 @@ describe('manipulate file', () => {
   });
 
   it('open file', () => {
-    selectMenuOption('File', 'Open');
+    cy.getMenuItem(['File'], 'Open').click();
     uploadFile('flux.png');
     cy.get('#svg_1').should('exist');
+    cy.showPanel('objects');
     cy.get('#w_size').should('have.value', '300');
     cy.get('#h_size').should('have.value', '210');
   });
 
   it('save file', () => {
-    selectMenuOption('File', 'Save');
+    cy.getMenuItem(['File'], 'Save').click();
     checkCrc32(Cypress.env('cypressDownloadBeamPath'), { default: 686848608 });
   });
 
@@ -85,13 +79,13 @@ describe('manipulate file', () => {
         .trigger('mouseup', { force: true });
 
       cy.get('#svg_1').should('exist').should('not.have.attr', 'opacity');
-      cy.get('.tab.objects').click();
+      cy.showPanel('objects');
       cy.get('#x_position').clear().type('100{enter}');
       cy.get('#y_position').clear().type('100{enter}');
       cy.get('#w_size').clear().type('100{enter}');
       cy.get('#h_size').clear().type('100{enter}');
 
-      selectMenuOption('File', 'Save As...');
+      cy.getMenuItem(['File'], 'Save As...').click();
       // "Save As" also saves to untitled.beam (same as "Save"), so use the same path
       checkCrc32(downloadPath, { default: -139627603 });
     });

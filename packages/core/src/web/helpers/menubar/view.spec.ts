@@ -1,3 +1,9 @@
+class ResizeObserver {
+  observe() {}
+  disconnect() {}
+}
+global.ResizeObserver = ResizeObserver as any;
+
 const subscribedEvents = {};
 
 const mockGetGlobalPreference = jest.fn();

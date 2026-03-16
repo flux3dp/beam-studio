@@ -94,7 +94,7 @@ export const generateNewUserTutorial = (workarea: WorkAreaModel): ITutorial => {
             left: 55,
             top: calculateTop(5, TopRef.TOPBAR),
             get width(): number {
-              return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
+              return window.innerWidth - layoutConstants.leftPanelWidth - layoutConstants.rightPanelWidth - 10;
             },
           },
           holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(0) },
@@ -162,7 +162,7 @@ export const generateNewUserTutorial = (workarea: WorkAreaModel): ITutorial => {
         left: 55,
         top: calculateTop(5, TopRef.TOPBAR),
         get width(): number {
-          return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
+          return window.innerWidth - layoutConstants.leftPanelWidth - layoutConstants.rightPanelWidth - 10;
         },
       },
       holePosition: { left: 50, right: layoutConstants.rightPanelWidth, top: calculateTop(40) },
@@ -252,7 +252,7 @@ export const generateNewUserTutorial = (workarea: WorkAreaModel): ITutorial => {
         left: 55,
         top: calculateTop(5, TopRef.TOPBAR),
         get width(): number {
-          return window.innerWidth - layoutConstants.sidePanelsWidth - 10;
+          return window.innerWidth - layoutConstants.leftPanelWidth - layoutConstants.rightPanelWidth - 10;
         },
       },
       holePosition: {
@@ -268,23 +268,23 @@ export const generateNewUserTutorial = (workarea: WorkAreaModel): ITutorial => {
       ? null
       : {
           dialogBoxStyles: {
-            arrowDirection: 'right',
+            arrowDirection: 'top',
             position: {
-              right: 44,
-              top: calculateTop(20, TopRef.TOPBAR),
+              right: 100,
+              top: calculateTop(40, TopRef.TOPBAR),
             },
           },
           hintCircle: {
-            height: 40,
-            right: 0,
-            top: calculateTop(0, TopRef.TOPBAR),
-            width: 40,
+            height: 36,
+            right: 2,
+            top: calculateTop(2, TopRef.TOPBAR),
+            width: layoutConstants.rightPanelWidth - 4,
           },
           holePosition: {
             right: 0,
             top: calculateTop(0, TopRef.TOPBAR),
           },
-          holeSize: { height: 40, width: 32 },
+          holeSize: { height: 40, width: layoutConstants.rightPanelWidth },
           nextStepRequirement: nextStepRequirements.TO_OBJECT_PANEL,
           text: t.newUser.switch_to_object_panel,
         },
@@ -313,23 +313,23 @@ export const generateNewUserTutorial = (workarea: WorkAreaModel): ITutorial => {
     {
       callback: TutorialCallbacks.SCROLL_TO_PARAMETER,
       dialogBoxStyles: {
-        arrowDirection: 'right',
+        arrowDirection: 'top',
         position: {
-          right: calculateRight(4, RightRef.RIGHT_PANEL),
-          top: calculateTop(20, TopRef.TOPBAR),
+          right: 220,
+          top: calculateTop(40, TopRef.TOPBAR),
         },
       },
       hintCircle: {
-        height: 40,
-        right: calculateRight(-36, RightRef.RIGHT_PANEL),
-        top: calculateTop(0, TopRef.TOPBAR),
-        width: 40,
+        height: 36,
+        right: 2,
+        top: calculateTop(2, TopRef.TOPBAR),
+        width: layoutConstants.rightPanelWidth - 4,
       },
       holePosition: {
-        right: calculateRight(-31, RightRef.RIGHT_PANEL),
+        right: 0,
         top: calculateTop(0, TopRef.TOPBAR),
       },
-      holeSize: { height: 40, width: 32 },
+      holeSize: { height: 40, width: layoutConstants.rightPanelWidth },
       nextStepRequirement: nextStepRequirements.TO_LAYER_PANEL,
       text: t.newUser.switch_to_layer_panel,
     },

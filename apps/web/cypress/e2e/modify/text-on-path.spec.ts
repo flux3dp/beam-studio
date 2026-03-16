@@ -21,7 +21,7 @@ describe('text on path', () => {
       .trigger('mousemove', { pageX: 200, pageY: 100, force: true })
       .trigger('mouseup', { force: true });
     cy.getElementTitle().contains('Multiple Objects');
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
     cy.get('button#create_textpath').click();
     cy.getElementTitle().contains('Layer 1 > Text on Path');
     cy.get('#svg_1')

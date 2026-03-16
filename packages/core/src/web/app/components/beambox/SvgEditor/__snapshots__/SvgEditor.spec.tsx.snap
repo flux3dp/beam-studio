@@ -3,82 +3,89 @@
 exports[`test svg-editor should render correctly in mac 1`] = `
 <div>
   <div
-    class="container"
-    id="svg_editor"
+    style="display: flex; height: 100%; width: 100%;"
   >
-    <div>
-      MockBanner
-    </div>
     <div
-      class="workarea-container"
-      id="workarea-container"
+      class="container"
+      id="svg_editor"
     >
       <div>
-        MockElementTitle
+        MockBanner
       </div>
-      <div>
-        MockRuler
-      </div>
-      <div>
-        MockWorkarea
-      </div>
-    </div>
-    <div
-      class="invisible-tools"
-    >
       <div
-        id="tool_import"
-        style="display: none;"
-      />
-      <input
-        id="text"
-        size="32"
-        type="text"
-      />
-      <div
-        id="cur_context_panel"
-      />
-      <div
-        class="dropdown"
-        id="option_lists"
-      />
-    </div>
-    <div>
-      MockPreviewFloatingBar
-    </div>
-    <div>
-      MockZoomBlock
-    </div>
-    <div>
-      MockDpiInfo
-    </div>
-    <div
-      class="bottom-right"
-    >
-      <div
-        class="controls"
+        class="workarea-container"
+        id="workarea-container"
       >
         <div>
-          MockTimeEstimationButton
+          MockElementTitle
         </div>
         <div>
-          MockPreviewSlider
+          MockRuler
+        </div>
+        <div>
+          MockWorkarea
         </div>
       </div>
-    </div>
-    <div>
-      <div>
-        MockAiGenerate
+      <div
+        class="invisible-tools"
+      >
+        <div
+          id="tool_import"
+          style="display: none;"
+        />
+        <input
+          id="text"
+          size="32"
+          type="text"
+        />
+        <div
+          id="cur_context_panel"
+        />
+        <div
+          class="dropdown"
+          id="option_lists"
+        />
       </div>
-    </div>
-    <div>
       <div>
-        MockGenerators
+        MockPreviewFloatingBar
       </div>
-    </div>
-    <div>
       <div>
-        MockChat
+        MockZoomBlock
+      </div>
+      <div>
+        MockDpiInfo
+      </div>
+      <div
+        class="bottom-right"
+      >
+        <div
+          class="controls"
+        >
+          <div>
+            MockTimeEstimationButton
+          </div>
+          <div>
+            MockPreviewSlider
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          MockAiGenerate
+        </div>
+      </div>
+      <div>
+        <div>
+          MockGenerators
+        </div>
+      </div>
+      <div>
+        <div>
+          MockChat
+        </div>
+      </div>
+      <div>
+        MockElementPanel
       </div>
     </div>
   </div>
@@ -88,82 +95,89 @@ exports[`test svg-editor should render correctly in mac 1`] = `
 exports[`test svg-editor should render correctly in win 1`] = `
 <div>
   <div
-    class="container"
-    id="svg_editor"
+    style="display: flex; height: 100%; width: 100%;"
   >
-    <div>
-      MockBanner
-    </div>
     <div
-      class="workarea-container"
-      id="workarea-container"
+      class="container"
+      id="svg_editor"
     >
       <div>
-        MockElementTitle
+        MockBanner
       </div>
-      <div>
-        MockRuler
-      </div>
-      <div>
-        MockWorkarea
-      </div>
-    </div>
-    <div
-      class="invisible-tools"
-    >
       <div
-        id="tool_import"
-        style="display: none;"
-      />
-      <input
-        id="text"
-        size="32"
-        type="text"
-      />
-      <div
-        id="cur_context_panel"
-      />
-      <div
-        class="dropdown"
-        id="option_lists"
-      />
-    </div>
-    <div>
-      MockPreviewFloatingBar
-    </div>
-    <div>
-      MockZoomBlock
-    </div>
-    <div>
-      MockDpiInfo
-    </div>
-    <div
-      class="bottom-right"
-    >
-      <div
-        class="controls"
+        class="workarea-container"
+        id="workarea-container"
       >
         <div>
-          MockTimeEstimationButton
+          MockElementTitle
         </div>
         <div>
-          MockPreviewSlider
+          MockRuler
+        </div>
+        <div>
+          MockWorkarea
         </div>
       </div>
-    </div>
-    <div>
-      <div>
-        MockAiGenerate
+      <div
+        class="invisible-tools"
+      >
+        <div
+          id="tool_import"
+          style="display: none;"
+        />
+        <input
+          id="text"
+          size="32"
+          type="text"
+        />
+        <div
+          id="cur_context_panel"
+        />
+        <div
+          class="dropdown"
+          id="option_lists"
+        />
       </div>
-    </div>
-    <div>
       <div>
-        MockGenerators
+        MockPreviewFloatingBar
       </div>
-    </div>
-    <div>
       <div>
-        MockChat
+        MockZoomBlock
+      </div>
+      <div>
+        MockDpiInfo
+      </div>
+      <div
+        class="bottom-right"
+      >
+        <div
+          class="controls"
+        >
+          <div>
+            MockTimeEstimationButton
+          </div>
+          <div>
+            MockPreviewSlider
+          </div>
+        </div>
+      </div>
+      <div>
+        <div>
+          MockAiGenerate
+        </div>
+      </div>
+      <div>
+        <div>
+          MockGenerators
+        </div>
+      </div>
+      <div>
+        <div>
+          MockChat
+        </div>
+      </div>
+      <div>
+        MockElementPanel
       </div>
     </div>
   </div>

@@ -5,9 +5,10 @@ const osName = getOS();
 
 export default {
   layerListHeight: 400, // px
+  leftPanelWidth: 50, // px
   menubarHeight: osName === 'Windows' && !isWeb() ? 30 : 40, // px
   rightPanelScrollBarWidth: osName !== 'MacOS' ? 16 : 0, // px
-  rightPanelWidth: osName !== 'MacOS' ? 258 : 242, // px
+  rightPanelWidth: 260, // px
   rulerWidth: 15, // px
   sidePanelsWidth: osName !== 'MacOS' ? 308 : 292, // px
   titlebarHeight: osName === 'Windows' && !isWeb() ? 30 : 0, // px

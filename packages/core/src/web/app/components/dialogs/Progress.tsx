@@ -2,6 +2,7 @@ import React, { use, useEffect } from 'react';
 
 import { Progress as AntdProgress, Modal } from 'antd';
 
+import Tips from '@core/app/components/dialogs/Tips';
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -57,6 +58,7 @@ const Progress = ({ data }: { data: IProgressDialog }): React.JSX.Element => {
         status="active"
         strokeColor={{ '0%': '#108ee9', '100%': '#87d068' }}
       />
+      {data.showTips && <Tips />}
     </Modal>
   );
 };

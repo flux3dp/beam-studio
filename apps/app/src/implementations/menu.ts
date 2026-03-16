@@ -2,6 +2,7 @@ import { Menu as ElectronMenu } from '@electron/remote';
 import { funnel } from 'remeda';
 
 import { MenuEvents, MiscEvents, TabEvents } from '@core/app/constants/ipcEvents';
+import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -53,6 +54,29 @@ class Menu extends AbstractMenu {
       this.rerenderMenu();
     });
 
+    // dockview layout related
+    useDockableStore.subscribe(
+      (state) => state.panelLayerControls,
+      (isVisible) => {
+        this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', isVisible);
+        this.rerenderMenu();
+      },
+    );
+    useDockableStore.subscribe(
+      (state) => state.panelObjectProperties,
+      (isVisible) => {
+        this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', isVisible);
+        this.rerenderMenu();
+      },
+    );
+    useDockableStore.subscribe(
+      (state) => state.panelPathEdit,
+      (isVisible) => {
+        this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', isVisible);
+        this.rerenderMenu();
+      },
+    );
+
     const isDev = localStorage.getItem('dev') === 'true';
 
     this.setDevMode(isDev);
@@ -80,6 +104,7 @@ class Menu extends AbstractMenu {
 
   initMenuItemStatus = (): void => {
     const globalPreference = useGlobalPreferenceStore.getState();
+    const dockableStore = useDockableStore.getState();
 
     // checkboxes
     this.changeMenuItemStatus(['ZOOM_WITH_WINDOW'], 'checked', globalPreference.zoom_with_window);
@@ -90,6 +115,9 @@ class Menu extends AbstractMenu {
     this.changeMenuItemStatus(['AUTO_ALIGN'], 'checked', globalPreference.auto_align);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'visible', globalPreference['enable-uv-print-file']);
     this.changeMenuItemStatus(['EXPORT_UV_PRINT'], 'enabled', false);
+    this.changeMenuItemStatus(['SHOW_LAYER_CONTROLS_PANEL'], 'checked', dockableStore.panelLayerControls);
+    this.changeMenuItemStatus(['SHOW_OBJECT_CONTROLS_PANEL'], 'checked', dockableStore.panelObjectProperties);
+    this.changeMenuItemStatus(['SHOW_PATH_CONTROLS_PANEL'], 'checked', dockableStore.panelPathEdit);
 
     this.updateMenuByWorkarea(useDocumentStore.getState().workarea);
   };

@@ -40,6 +40,10 @@ jest.mock('@core/app/stores/storageStore', () => ({
   useStorageStore: mockUseStorageStore,
 }));
 
+jest.mock('@core/helpers/system-helper', () => ({
+  useIsMobile: () => true,
+}));
+
 import { ObjectPanelContextProvider } from './contexts/ObjectPanelContext';
 
 import ObjectPanelItem from './ObjectPanelItem';

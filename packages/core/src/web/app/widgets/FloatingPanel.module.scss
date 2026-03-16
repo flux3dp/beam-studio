@@ -7,6 +7,7 @@ div.panel {
     display: flex;
     flex-direction: column;
     margin-top: -1px;
+    overflow-y: auto;
   }
 
   .close-icon {
@@ -24,7 +25,7 @@ div.panel {
   }
 
   .scroll-content {
-    overflow-y: scroll;
+    overflow-y: auto;
     // Space for bottom toolbar
     margin-bottom: 60px;
     padding-bottom: 12px;

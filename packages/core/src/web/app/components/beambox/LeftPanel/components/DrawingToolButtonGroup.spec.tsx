@@ -7,7 +7,7 @@ import { CanvasContext } from '@core/app/contexts/CanvasContext';
 const mockSetMouseMode = jest.fn();
 
 jest.mock('@core/app/stores/canvas/utils/mouseMode', () => ({
-  setMouseMode: (...args) => mockSetMouseMode(...args),
+  setMouseMode: mockSetMouseMode,
 }));
 
 const mockUseSelectTool = jest.fn();
@@ -16,12 +16,6 @@ const mockImportImage = jest.fn();
 jest.mock('@core/app/actions/beambox/svgeditor-function-wrapper', () => ({
   importImage: mockImportImage,
   useSelectTool: mockUseSelectTool,
-}));
-
-const mockShowElementPanel = jest.fn();
-
-jest.mock('@core/app/actions/dialog-caller', () => ({
-  showElementPanel: mockShowElementPanel,
 }));
 
 jest.mock('@core/app/contexts/CanvasContext', () => ({
@@ -38,6 +32,14 @@ const mockHandlePreviewClick = jest.fn();
 
 jest.mock('@core/helpers/device/camera/previewMode', () => ({
   handlePreviewClick: mockHandlePreviewClick,
+}));
+
+const mockToggleDrawerMode = jest.fn();
+
+jest.mock('@core/app/stores/canvas/canvasStore', () => ({
+  useCanvasStore: () => ({
+    toggleDrawerMode: mockToggleDrawerMode,
+  }),
 }));
 
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
@@ -77,7 +79,8 @@ describe('test DrawingToolButtonGroup', () => {
     expect(mockSetMouseMode).toHaveBeenNthCalledWith(5, 'line');
 
     fireEvent.click(container.querySelector('#left-Element'));
-    expect(mockShowElementPanel).toHaveBeenCalledTimes(1);
+    expect(mockToggleDrawerMode).toHaveBeenCalledTimes(1);
+    expect(mockToggleDrawerMode).toHaveBeenNthCalledWith(1, 'element-panel');
 
     fireEvent.click(container.querySelector('#left-Pen'));
     expect(mockSetMouseMode).toHaveBeenCalledTimes(6);

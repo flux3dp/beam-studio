@@ -10,6 +10,7 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import type { FileData } from '@core/helpers/fileImportHelper';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import i18n from '@core/helpers/i18n';
+import isWeb from '@core/helpers/is-web';
 import communicator from '@core/implementations/communicator';
 import type { Tab } from '@core/interfaces/Tab';
 
@@ -19,7 +20,7 @@ class TabController extends EventEmitter {
   private isFirstTab: boolean | null = null;
 
   public currentId: null | number = null;
-  public isFocused = false;
+  public isFocused = isWeb();
 
   constructor() {
     super();

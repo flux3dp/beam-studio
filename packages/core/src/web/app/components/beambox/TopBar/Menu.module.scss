@@ -16,25 +16,19 @@
   margin-left: -15px;
 }
 
-.szh-menu-container {
-  position: relative;
-  width: 0px;
-  height: 0px;
+.action {
+  width: 90%;
+}
+
+.hotkey {
+  padding-left: 15px;
+  width: auto;
+  text-align: right;
 }
 
 // Library CSS handles base menu styles, we just add custom content styling
 :global(.szh-menu) {
-  span {
-    &.action {
-      width: 90%;
-    }
-
-    &.hotkey {
-      padding-left: 15px;
-      width: auto;
-      text-align: right;
-    }
-  }
+  z-index: 1001; // Ensure menu appears above antd drawer
 }
 
 :global(.szh-menu__arrow) {

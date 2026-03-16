@@ -6,7 +6,7 @@ it('arrangement', () => {
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
 
   cy.get('#svg_1').click({ force: true });
-  cy.get('.tab.objects').click();
+  cy.showPanel('objects');
   cy.contains('Smart Nest').click();
   // Fixme: svgNest will failed in e2e
   cy.contains('Arrange');

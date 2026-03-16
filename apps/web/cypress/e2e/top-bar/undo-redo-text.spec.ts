@@ -14,7 +14,7 @@ describe('verify undo/redo behaviors', () => {
     cy.get('#svg_1').should('exist');
     cy.inputText('Test Undo/Redo{enter}');
     cy.get('#svg_1').should('contain.text', 'Test Undo/Redo');
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
   };
 
   it('text', () => {

@@ -10,9 +10,8 @@ $icon-gap: 13px;
   gap: $icon-gap;
   padding: $icon-gap 0;
   background: #f8f8f8;
-  border: 1px solid variables.$panelBorderColor;
-  border-width: 0 1px 1px 0;
   overflow-y: scroll;
+  height: 100%;
 
   &::-webkit-scrollbar {
     display: none;

@@ -1,0 +1,40 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`test RealSvgEditor should move elements correctly 1`] = `
+<body>
+  <div
+    id="safe-editor-container"
+  />
+  <div>
+    <div
+      class="container"
+      id="real-editor-container"
+    >
+      <svg
+        id="mock-canvas"
+        style="pointer-events:none; opacity: 1;"
+      />
+      <div
+        id="test"
+      />
+    </div>
+  </div>
+</body>
+`;
+
+exports[`test RealSvgEditor should move elements correctly 2`] = `
+<body>
+  <div
+    id="safe-editor-container"
+  >
+    <svg
+      id="mock-canvas"
+      style="pointer-events:none; opacity: 1;"
+    />
+    <div
+      id="test"
+    />
+  </div>
+  <div />
+</body>
+`;

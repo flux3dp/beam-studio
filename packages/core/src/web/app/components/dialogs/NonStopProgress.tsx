@@ -3,6 +3,7 @@ import React, { use, useEffect } from 'react';
 import { Modal } from 'antd';
 import { SpinLoading } from 'antd-mobile';
 
+import Tips from '@core/app/components/dialogs/Tips';
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
 import useI18n from '@core/helpers/useI18n';
 import type { IProgressDialog } from '@core/interfaces/IProgress';
@@ -46,6 +47,7 @@ const NonStopProgress = ({ data }: { data: IProgressDialog }): React.JSX.Element
           <SpinLoading color="primary" style={{ '--size': '48px' }} />
         </div>
         <div className={styles.caption}>{caption}</div>
+        {data.showTips && <Tips />}
       </div>
     </Modal>
   );

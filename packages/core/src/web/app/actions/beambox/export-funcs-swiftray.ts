@@ -58,6 +58,7 @@ const generateUploadFile = async (thumbnail: string, thumbnailUrl: string): Prom
   Progress.openNonstopProgress({
     id: 'retrieve-image-data',
     message: i18n.lang.beambox.bottom_right_panel.retreive_image_data,
+    showTips: true,
   });
   Progress.popById('retrieve-image-data');
 
@@ -129,6 +130,7 @@ const uploadToParser = async (uploadFile: IWrappedSwiftrayTaskFile): Promise<boo
       swiftrayClient.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   const documentState = useDocumentStore.getState();
@@ -217,6 +219,7 @@ const fetchTaskCodeSwiftray = async (
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
     message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
+    showTips: true,
   });
 
   const revertFunctions: Array<() => void> = [];
@@ -303,6 +306,7 @@ const fetchTaskCodeSwiftray = async (
       swiftrayClient.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   const addOnInfo = getAddOnInfo(workareaManager.model);
@@ -395,6 +399,7 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
     caption: i18n.lang.beambox.popup.progress.calculating,
     id: 'fetch-task-code',
     message: i18n.lang.beambox.bottom_right_panel.convert_text_to_path_before_export,
+    showTips: true,
   });
 
   // Convert text to path
@@ -454,6 +459,7 @@ const fetchFramingTaskCode = async (hull: boolean): Promise<null | string> => {
       swiftrayClient.interruptCalculation();
       isCanceled = true;
     },
+    showTips: true,
   });
 
   const taskConfig: any = {

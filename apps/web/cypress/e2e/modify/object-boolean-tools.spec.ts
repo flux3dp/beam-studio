@@ -9,7 +9,7 @@ const drawRectangle = () => {
   cy.get('svg#svgcontent').trigger('mousemove', 100, 100, { force: true });
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   cy.get('#svg_1').should('exist');
-  cy.get('.tab.objects').click();
+  cy.showPanel('objects');
   cy.get('#infill').click();
   cy.get('#x_position').clear().type('0{enter}');
   cy.get('#y_position').clear().type('0{enter}');
@@ -36,7 +36,7 @@ const drawText = () => {
   // Wait for text element to be created
   cy.get('#svg_2').should('exist');
   cy.inputText('ABC');
-  cy.get('.tab.objects').click();
+  cy.showPanel('objects');
   cy.get('#infill').click();
   cy.get('#x_position').clear().type('0{enter}');
   cy.get('#y_position').clear().type('0{enter}');

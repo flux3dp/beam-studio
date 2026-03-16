@@ -11,7 +11,6 @@ import ChangeLog from '@core/app/components/dialogs/ChangeLog';
 import CodeGenerator from '@core/app/components/dialogs/CodeGenerator';
 import DeviceSelector from '@core/app/components/dialogs/DeviceSelector';
 import DocumentSettings from '@core/app/components/dialogs/DocumentSettings';
-import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import FluxCredit from '@core/app/components/dialogs/FluxCredit';
 import FluxIdLogin from '@core/app/components/dialogs/FluxIdLogin';
 import FluxPlusWarning from '@core/app/components/dialogs/FluxPlusWarning';
@@ -36,6 +35,7 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import DialogBox from '@core/app/widgets/Dialog-Box';
+import { loadLayout } from '@core/app/widgets/dockable/utils';
 import InputLightBox from '@core/app/widgets/InputLightbox';
 import type { AlertConfigKey } from '@core/helpers/api/alert-config';
 import { getCurrentUser, getInfo } from '@core/helpers/api/flux-id';
@@ -424,23 +424,6 @@ export default {
         />,
       );
     }),
-  showElementPanel: (onClose: () => void): void => {
-    const id = 'element-panel';
-
-    if (isIdExist(id)) {
-      return;
-    }
-
-    addDialogComponent(
-      id,
-      <ElementPanel
-        onClose={() => {
-          onClose();
-          popDialogById(id);
-        }}
-      />,
-    );
-  },
   showFluxCreditDialog: (): void => {
     if (isIdExist('flux-id-credit')) {
       return;
@@ -719,7 +702,7 @@ export default {
       />,
     );
   },
-  showTutorial: (tutorial: ITutorial, callback: () => void): void => {
+  showTutorial: async (tutorial: ITutorial, callback: () => void): Promise<void> => {
     const { id } = tutorial;
 
     if (isIdExist(id)) {
@@ -727,6 +710,8 @@ export default {
     }
 
     svgCanvas.clearSelection();
+    loadLayout('tutorial');
+    await new Promise((resolve) => setTimeout(resolve, 50)); // wait for layout to load
     layerPanelEventEmitter.emit('startTutorial');
     addDialogComponent(
       id,
@@ -737,6 +722,7 @@ export default {
         onClose={() => {
           popDialogById(id);
           layerPanelEventEmitter.emit('endTutorial');
+          loadLayout('cached');
           callback();
         }}
       />,

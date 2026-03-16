@@ -106,7 +106,10 @@ const CanvasTabBar = (): React.ReactNode => {
         historyUtils[action]();
         setTimeout(resetActiveKey, 300);
       })
-      .with('shape', () => dialogCaller.showElementPanel(resetActiveKey))
+      .with('shape', () => {
+        toggleDrawerMode('element-panel');
+        resetActiveKey();
+      })
       .with('ai-generate', () => {
         toggleDrawerMode('ai-generate');
         resetActiveKey();

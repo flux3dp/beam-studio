@@ -1,0 +1,74 @@
+@use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
+
+$panel-background: #d9d9d9;
+
+// Note: div in selector is required to increase specificity to override default styles of dockview
+div.dockview {
+  --dv-drag-over-background-color: rgba(24, 144, 255, 0.2);
+  --dv-drag-over-border: 3px solid #1890ff;
+  --dv-floating-box-shadow: 0px 0px 20px 0px rgba(0, 0, 0, 0.3);
+  --dv-group-view-background-color: #{$panel-background};
+  --dv-tabs-and-actions-container-background-color: #{$panel-background};
+  --dv-tab-divider-color: #{$panel-background};
+  --dv-tabs-and-actions-container-height: 40px;
+
+  :global(.dv-split-view-container.dv-separator-border) {
+    :global(.dv-view:not(:first-child)::before) {
+      z-index: 4;
+    }
+  }
+
+  :global(.dv-tab) {
+    border-radius: 4px 4px 0 0;
+    padding: 0; // Move padding inside Tab
+  }
+
+  :global(.dv-view:not(.visible)) {
+    display: none;
+  }
+
+  :global(.dv-tabs-container) {
+    scrollbar-width: none;
+    -ms-overflow-style: none;
+    &::-webkit-scrollbar {
+      display: none;
+    }
+  }
+
+  :global(.dv-resize-container) {
+    border: 2px solid $panel-background;
+    border-radius: 4px;
+  }
+
+  :global(.dv-content-container) {
+    background: #f8f8f8;
+  }
+
+  .narrow {
+    // For groups that is too narrow (<100px), drop targets take full width by dockview
+    // Override to 50%
+    :global(.dv-drop-target-left) {
+      width: 50% !important;
+    }
+
+    :global(.dv-drop-target-right) {
+      width: 50% !important;
+      left: 50% !important;
+    }
+  }
+
+  :global(.dv-drop-target-small-horizontal) {
+    // Override border width and color for short tab to display
+    border: var(--dv-drag-over-border) !important;
+
+    &:global(.dv-drop-target-left) {
+      width: 50% !important;
+    }
+
+    &:global(.dv-drop-target-right) {
+      width: 50% !important;
+      left: 50% !important;
+    }
+  }
+}

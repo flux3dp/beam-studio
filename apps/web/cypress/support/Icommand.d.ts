@@ -15,7 +15,8 @@ declare global {
       disableImageDownSampling(): Chainable<void>;
       setUpBackend: (ip: string) => Chainable<void>;
       connectMachine: (ip: string) => Chainable<void>;
-      go2Preference: (handleSave?: boolean) => Chainable<void>;
+      getMenuItem(path: string[], target: string): Chainable<JQuery<HTMLElement>>;
+      go2Preference: () => Chainable<void>;
       /** Navigate to a specific settings category in the settings modal sidebar */
       goToSettingsCategory: (category: string) => Chainable<void>;
       /** Apply settings in the new settings modal */
@@ -33,6 +34,7 @@ declare global {
       waitForProgress: (timeout?: number) => Chainable<void>;
       /** Wait for heavy operations like image processing to complete */
       waitForImageProcessing: (timeout?: number) => Chainable<void>;
+      showPanel: (panelName: 'layers' | 'objects') => Chainable<void>;
     }
   }
 }

@@ -19,7 +19,9 @@ interface ComponentProps {
   endTutorial: () => void;
 }
 
-const applyPosition = (obj: { bottom?: number; left?: number; right?: number; top?: number }, rect: DOMRect) => {
+type TPosition = { bottom: number; left: number; right: number; top: number };
+
+const applyPosition = (obj: Partial<TPosition>, rect: TPosition) => {
   const positionedObj: typeof obj = { ...obj };
   const keys = ['top', 'bottom', 'left', 'right'] as const;
 
@@ -36,7 +38,18 @@ const TutorialComponent = ({ endTutorial }: ComponentProps): ReactNode => {
   const { dialogBoxStyles, hintCircle, holePosition, holeSize, refElementId, subElement, text } =
     dialogStylesAndContents[currentStep];
   const refElement = useMemo(() => (refElementId ? document.getElementById(refElementId) : null), [refElementId]);
-  const refRect = useMemo(() => (refElement ? refElement.getBoundingClientRect() : null), [refElement]);
+  const refRect = useMemo(() => {
+    const bbox = refElement?.getBoundingClientRect();
+
+    return bbox
+      ? ({
+          bottom: window.innerHeight - bbox.bottom,
+          left: bbox.left,
+          right: window.innerWidth - bbox.right,
+          top: bbox.top,
+        } as TPosition)
+      : null;
+  }, [refElement]);
 
   const dialogPosition = useMemo(() => {
     if (!dialogBoxStyles?.position) return undefined;

@@ -922,11 +922,6 @@ export interface ILang {
         vflip: string;
         zoom: string;
       };
-      tabs: {
-        layers: string;
-        objects: string;
-        path_edit: string;
-      };
       uv_print_block: {
         title: string;
       };
@@ -2185,6 +2180,29 @@ export interface ILang {
     title: string;
     width: string;
   };
+  tips: {
+    canvas_hold_space_to_pan: string;
+    feature_auto_fit: string;
+    feature_box_generator: string;
+    feature_code_generator: string;
+    feature_elements: string;
+    feature_layer_color_configurations: string;
+    feature_material_test: string;
+    layer_execution_order: string;
+    machine_clean_mirror: string;
+    machine_no_unattended_operation: string;
+    machine_regular_start: string;
+    object_edit_image_to_erase: string;
+    object_polygon_sides: string;
+    object_rounded_rectangle: string;
+    object_sharpen_portrait: string;
+    settings_auto_save: string;
+    settings_default_text_font: string;
+    task_focus_lower_for_cutting: string;
+    task_leather_moisten_reduce_burn: string;
+    task_parameters_for_promark_color: string;
+    task_slower_for_smoother_acrylic_edge: string;
+  };
   topbar: {
     alerts: {
       add_content_first: string;
@@ -2350,6 +2368,7 @@ export interface ILang {
       redo: string;
       reload_app: string;
       reset: string;
+      reset_layout: string;
       rotary_setup: string;
       rotate: string;
       samples: string;
@@ -2369,6 +2388,9 @@ export interface ILang {
       svg_edit: string;
       switch_to_beta: string;
       switch_to_latest: string;
+      tab_layers: string;
+      tab_objects: string;
+      tab_path_edit: string;
       tools: {
         title: string;
       };
