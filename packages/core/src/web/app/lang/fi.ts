@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Pystysuora kääntö',
         zoom: 'Lähennä',
       },
-      tabs: {
-        layers: 'Tasot',
-        objects: 'Kuvio',
-        path_edit: 'Polun muokkaus',
-      },
       uv_print_block: {
         title: 'UV-tulostus',
       },
@@ -2375,6 +2370,7 @@ const lang: ILang = {
       redo: 'Tee uudelleen',
       reload_app: 'Lataa Sovellus Uudelleen',
       reset: 'Nollaa',
+      reset_layout: 'Palauta asettelu',
       rotary_setup: 'Kierron Asetukset',
       rotate: 'Kierrä',
       samples: 'Esimerkkejä',
@@ -2394,6 +2390,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Vaihda Beta-versioon',
       switch_to_latest: 'Vaihda Vakaa versioon',
+      tab_layers: 'Tasot',
+      tab_objects: 'Kuvio',
+      tab_path_edit: 'Polun muokkaus',
       tools: {
         title: 'Työkalut',
       },

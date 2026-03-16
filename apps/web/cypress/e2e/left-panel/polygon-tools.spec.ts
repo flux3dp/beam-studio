@@ -2,9 +2,12 @@ describe('polygen tools', () => {
   beforeEach(() => {
     cy.landingEditor();
     cy.clickToolBtn('Polygon');
+    cy.get('#workarea').should('have.css', 'cursor', 'crosshair');
     cy.get('svg#svgcontent').trigger('mousedown', 200, 200, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 250, 250, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
+    cy.get('#svg_1').should('exist');
+    cy.showPanel('objects');
   });
 
   it('change sides by keyboard', () => {

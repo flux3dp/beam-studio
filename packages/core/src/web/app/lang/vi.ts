@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: 'Lật dọc',
         zoom: 'Thu phóng',
       },
-      tabs: {
-        layers: 'Lớp',
-        objects: 'Đối tượng',
-        path_edit: 'Chỉnh sửa đường dẫn',
-      },
       uv_print_block: {
         title: 'In UV',
       },
@@ -2375,6 +2370,7 @@ const lang: ILang = {
       redo: 'Làm lại',
       reload_app: 'Tải lại Ứng Dụng',
       reset: 'Đặt lại',
+      reset_layout: 'Đặt lại bố cục',
       rotary_setup: 'Cài Đặt Xoay',
       rotate: 'Xoay',
       samples: 'Ví dụ',
@@ -2394,6 +2390,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: 'Chuyển sang Bản Beta',
       switch_to_latest: 'Chuyển sang Bản Ổn Định',
+      tab_layers: 'Lớp',
+      tab_objects: 'Đối tượng',
+      tab_path_edit: 'Chỉnh sửa đường dẫn',
       tools: {
         title: 'Công cụ',
       },

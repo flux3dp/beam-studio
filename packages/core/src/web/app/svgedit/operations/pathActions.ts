@@ -2,6 +2,7 @@
 import * as paper from 'paper';
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
+import RightPanelController from '@core/app/components/beambox/RightPanel/contexts/RightPanelController';
 import { type CanvasMouseMode } from '@core/app/stores/canvas/canvasStore';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
@@ -256,6 +257,7 @@ const toSelectMode = (elem?: Element): void => {
 
   svgedit.path.path = null;
   svgEditor.updateContextPanel();
+  RightPanelController.updatePathEditPanel();
 };
 
 const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, startY: number) => {

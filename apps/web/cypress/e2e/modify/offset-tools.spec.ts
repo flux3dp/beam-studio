@@ -14,7 +14,7 @@ it('offset', () => {
   cy.get('svg#svgcontent').trigger('mouseup', { force: true });
   // Wait for selection to be recognized
   cy.findAllByText('Multiple Objects').should('exist');
-  cy.get('.tab.objects').click();
+  cy.showPanel('objects');
   cy.get('#offset').click();
   // Wait for modal and initial preview to be ready
   cy.findByTestId('offset-distance').should('be.visible').and('not.be.disabled');

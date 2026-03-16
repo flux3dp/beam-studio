@@ -82,7 +82,7 @@ describe('update the preference (behavior)', () => {
 
   it('remove speed limit and see if home page gets changed ', () => {
     drawingEllipse();
-    cy.get('.layers > .tab-icon').click();
+    cy.showPanel('layers');
     cy.get('#speed div.ant-slider-handle').trigger('mousedown');
     cy.get('#speed div.ant-slider-handle').trigger('mousemove', 200, 0, {
       force: true,
@@ -101,7 +101,7 @@ describe('update the preference (behavior)', () => {
     cy.get('#set-vector-speed-constraint').should('have.attr', 'aria-checked', 'false');
     cy.applySettings();
     drawingEllipse();
-    cy.get('.layers > .tab-icon').click();
+    cy.showPanel('layers');
     cy.get('#speed div.ant-slider-handle').trigger('mousedown');
     cy.get('#speed div.ant-slider-handle').trigger('mousemove', 200, 0, {
       force: true,

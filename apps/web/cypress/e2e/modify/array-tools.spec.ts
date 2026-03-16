@@ -8,7 +8,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', -10, -10, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 400, 400, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
     cy.get('#array').click();
     // Wait for modal to be ready, then use force: true to bypass race condition
     // caused by canvas mousedown handler blurring active elements during preview generation
@@ -74,7 +74,7 @@ describe('array tools', () => {
     cy.get('svg#svgcontent').trigger('mousedown', 50, 50, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 600, 600, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.get('.tab.objects').click();
+    cy.showPanel('objects');
     cy.get('#group').click();
     applyArray();
     cy.getElementTitle().should('have.text', 'Multiple Objects');

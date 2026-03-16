@@ -1,8 +1,6 @@
 describe('show tutorial', () => {
   const openTutorial = (text: string) => {
-    cy.get('div[data-testid="top-bar-menu"]').click();
-    cy.contains('Help').click();
-    cy.contains(text).click();
+    cy.getMenuItem(['Help'], text).click();
   };
 
   const checkInterfaceStep = (text: string) => {

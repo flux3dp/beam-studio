@@ -33,7 +33,7 @@ describe('move element to another layer', () => {
 
   function moveToLayer(elementId, targetLayer) {
     cy.get(elementId).click({ force: true });
-    cy.get('.tab.layers').click();
+    cy.showPanel('layers');
 
     verifyInputValues({ strength: '15', speed: '20', repeat: '1' });
 

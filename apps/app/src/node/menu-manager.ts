@@ -673,16 +673,52 @@ class MenuManager extends EventEmitter {
       submenu: accountSubmenu,
     });
 
+    const windowSubmenu: MenuItemConstructorOptions['submenu'] = [];
+
     if (process.platform === 'darwin') {
-      menuItems.push({
-        label: r.window,
-        role: 'window',
-        submenu: [
-          { label: r.minimize, role: 'minimize' },
-          { label: r.close, role: 'close' },
-        ],
-      });
+      windowSubmenu.push(
+        { label: r.minimize, role: 'minimize' },
+        { label: r.close, role: 'close' },
+        { type: 'separator' },
+      );
     }
+
+    windowSubmenu.push(
+      {
+        click: callback,
+        enabled: false,
+        id: 'RESET_LAYOUT',
+        label: r.reset_layout,
+      },
+      { type: 'separator' },
+      {
+        click: callback,
+        enabled: false,
+        id: 'SHOW_LAYER_CONTROLS_PANEL',
+        label: r.tab_layers,
+        type: 'checkbox',
+      },
+      {
+        click: callback,
+        enabled: false,
+        id: 'SHOW_OBJECT_CONTROLS_PANEL',
+        label: r.tab_objects,
+        type: 'checkbox',
+      },
+      {
+        click: callback,
+        enabled: false,
+        id: 'SHOW_PATH_CONTROLS_PANEL',
+        label: r.tab_path_edit,
+        type: 'checkbox',
+      },
+    );
+
+    menuItems.push({
+      label: r.window,
+      role: 'window',
+      submenu: windowSubmenu,
+    });
 
     const helpSubmenu = this.buildHelpMenu(callback);
 

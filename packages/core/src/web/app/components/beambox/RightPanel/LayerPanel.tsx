@@ -74,7 +74,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
   private startDragTimer?: NodeJS.Timeout | null;
   private draggingScrollTimer?: NodeJS.Timeout | null;
   private draggingScrollDirection = 0;
-  private layerListContainerRef: React.RefObject<HTMLDivElement>;
+  private layerListContainerRef: React.RefObject<HTMLDivElement | null>;
   private isDoingTutorial = false;
   private currentHeight = defaultLayerHeight;
   private oldHeight = defaultLayerHeight;
@@ -289,9 +289,9 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   onSensorAreaDragEnter = (index: number): void => {
-    const { draggingDestIndex } = this.state;
+    const { draggingDestIndex, draggingLayer } = this.state;
 
-    if (index !== draggingDestIndex) {
+    if (draggingLayer && index !== draggingDestIndex) {
       this.setState({ draggingDestIndex: index });
     }
   };

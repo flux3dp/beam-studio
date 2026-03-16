@@ -922,11 +922,6 @@ const lang: ILang = {
         vflip: '垂直翻转',
         zoom: '缩放',
       },
-      tabs: {
-        layers: '图层',
-        objects: '物件',
-        path_edit: '路径编辑',
-      },
       uv_print_block: {
         title: 'UV打印',
       },
@@ -2375,6 +2370,7 @@ const lang: ILang = {
       redo: '重做',
       reload_app: '重新整理',
       reset: '重設',
+      reset_layout: '重置布局',
       rotary_setup: '旋转轴设置',
       rotate: '旋轉',
       samples: '范例',
@@ -2394,6 +2390,9 @@ const lang: ILang = {
       svg_edit: 'SVG',
       switch_to_beta: '切换至 Beta 版',
       switch_to_latest: '切换至稳定版',
+      tab_layers: '图层',
+      tab_objects: '物件',
+      tab_path_edit: '路径编辑',
       tools: {
         title: '工具',
       },
