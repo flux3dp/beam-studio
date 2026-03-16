@@ -11,13 +11,6 @@ const initSentry = (): void => {
     console.log('Sentry Initiated');
     sentry.initSentry();
     isSentryInited = true;
-    Sentry.captureMessage('User Census', {
-      level: 'info',
-      tags: {
-        census: 'v1',
-        from: 'renderer',
-      },
-    });
   }
 };
 
