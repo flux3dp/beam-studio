@@ -40,6 +40,10 @@ export type ColorSet = (typeof COLORS)[ViewMode];
 /** Gap between puzzle and board in exploded view (mm) */
 export const LAYER_GAP = 30;
 
+/** Laser kerf width (mm). Inner edges are trimmed at this inset from the boundary so cuts end cleanly after kerf removal. */
+// export const DEFAULT_KERF_WIDTH = 0.2;
+export const DEFAULT_KERF_WIDTH = 0.2;
+
 /** Default sharpness for heart shape bottom point (0-50 scale) */
 export const DEFAULT_HEART_SHARPNESS = 25;
 

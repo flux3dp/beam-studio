@@ -46,6 +46,7 @@
     "p-queue": "^9.0.1",
     "papaparse": "^5.5.2",
     "paper": "^0.12.17",
+    "paperjs-offset": "^1.0.8",
     "rc-virtual-list": "^3.4.13",
     "re-resizable": "^6.11.2",
     "react": "^19.2.4",

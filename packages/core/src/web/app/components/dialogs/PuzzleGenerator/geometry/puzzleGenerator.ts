@@ -1,8 +1,10 @@
 import paper from 'paper';
+import { PaperOffset } from 'paperjs-offset';
 import { match } from 'ts-pattern';
 
 import {
   DEFAULT_JITTER,
+  DEFAULT_KERF_WIDTH,
   DEFAULT_TAB_JITTER,
   ORIENTATION_SEEDS,
   TAB_DEPTH_MULTIPLIER,
@@ -182,9 +184,12 @@ const getEdgeData = (
 const paperPathToCurveCommands = (path: paper.Path): string => {
   const parts: string[] = [];
 
-  for (let i = 0; i < path.segments.length - 1; i++) {
+  for (let i = 0; i < path.segments.length; i++) {
     const seg = path.segments[i];
-    const next = path.segments[i + 1];
+    const next = seg.next;
+
+    if (!next) continue;
+
     const isLinear = seg.handleOut.isZero() && next.handleIn.isZero();
 
     if (isLinear) {
@@ -202,9 +207,21 @@ const paperPathToCurveCommands = (path: paper.Path): string => {
   return parts.join(' ');
 };
 
+const getKerfWidth = (): number => {
+  const stored = localStorage.getItem('puzzle-kerf');
+
+  return stored ? Number.parseFloat(stored) : DEFAULT_KERF_WIDTH;
+};
+
 /**
  * Trim an edge path at boundary crossings, keeping only segments connected to the start/end vertices.
  * Uses Paper.js getIntersections + splitAt for exact Bézier curve splitting.
+ *
+ * Two boundaries are used:
+ * - boundaryPath (original): determines the first and last crossing offsets —
+ *   where the edge enters/exits the puzzle area.
+ * - insetBoundaryPath (kerf-compensated): determines middle crossing offsets —
+ *   where tab protrusions are trimmed inward for clean laser cuts.
  *
  * Returns:
  * - startPathD: SVG curve commands (no M) for the segment connected to the start vertex
@@ -213,10 +230,11 @@ const paperPathToCurveCommands = (path: paper.Path): string => {
 const trimEdgePath = (
   edgePath: paper.Path,
   boundaryPath: paper.PathItem,
+  insetBoundaryPath: paper.PathItem,
   startInside: boolean,
   endInside: boolean,
 ): { endPathD: null | string; startPathD: null | string } => {
-  const intersections = edgePath.getIntersections(boundaryPath);
+  const intersections = edgePath.getIntersections(insetBoundaryPath);
 
   if (intersections.length === 0) {
     // No actual crossings — return full path if start is inside, else nothing
@@ -226,43 +244,51 @@ const trimEdgePath = (
     };
   }
 
-  const offsets = intersections.map((ix) => ix.offset).sort((a, b) => a - b);
-
   // Deduplicate near-coincident intersections (tangent touches)
   const epsilon = 0.001;
-  const uniqueOffsets = offsets.filter((v, i) => i === 0 || v - offsets[i - 1] > epsilon);
+  const getUniqueOffsets = (offsets: number[]) => offsets.filter((v, i) => i === 0 || v - offsets[i - 1] > epsilon);
+  let offsets = getUniqueOffsets(intersections.map((ix) => ix.offset));
+  const originalOffsets = getUniqueOffsets(edgePath.getIntersections(boundaryPath).map((ix) => ix.offset));
+
+  if (offsets.length === originalOffsets.length) {
+    offsets = originalOffsets; // Prefer original offsets when available for better accuracy at tangents
+  }
 
   let startPathD: null | string = null;
   let endPathD: null | string = null;
 
   // Start segment: from edge start to first crossing
-  if (startInside && uniqueOffsets.length > 0 && uniqueOffsets[0] > epsilon) {
-    const clone = edgePath.clone({ insert: false }) as paper.Path;
-    const tail = clone.splitAt(uniqueOffsets[0]);
+  if (startInside && offsets.length > 0 && offsets[0] > epsilon) {
+    const head = edgePath.clone({ insert: false });
 
-    if (clone.segments.length > 1) {
-      startPathD = paperPathToCurveCommands(clone);
+    head.splitAt(offsets[0]);
+
+    if (head.segments.length > 1) {
+      // Find nearest point on original boundary and make it the end of the start segment for cleaner cuts at tangents
+      const nearestPoint = boundaryPath.getNearestPoint(head.segments[head.segments.length - 1].point);
+
+      head.lineTo(nearestPoint);
+      startPathD = paperPathToCurveCommands(head);
     }
 
-    clone.remove();
-
-    if (tail) tail.remove();
+    head.remove();
   }
 
   // End segment: from last crossing to edge end
-  if (endInside && uniqueOffsets.length > 0 && uniqueOffsets[uniqueOffsets.length - 1] < edgePath.length - epsilon) {
-    const clone = edgePath.clone({ insert: false }) as paper.Path;
-    const tail = clone.splitAt(uniqueOffsets[uniqueOffsets.length - 1]) as null | paper.Path;
-
-    if (tail && tail.segments.length > 1) {
-      const startPt = tail.segments[0].point;
-
-      endPathD = `M ${fmt(startPt.x)} ${fmt(startPt.y)} ${paperPathToCurveCommands(tail)}`;
-    }
+  if (endInside && offsets.length > 0 && offsets[offsets.length - 1] < edgePath.length - epsilon) {
+    const clone = edgePath.clone({ insert: false });
+    const tail = clone.splitAt(offsets[offsets.length - 1]);
 
     clone.remove();
 
-    if (tail) tail.remove();
+    if (tail.segments.length > 0) {
+      // Find nearest point on original boundary and make it the start of the end segment for cleaner cuts at tangents
+      const nearestPoint = boundaryPath.getNearestPoint(tail.segments[0].point);
+
+      endPathD = `M ${fmt(nearestPoint.x)} ${fmt(nearestPoint.y)} ${paperPathToCurveCommands(tail)}`;
+    }
+
+    tail.remove();
   }
 
   return { endPathD, startPathD };
@@ -336,7 +362,8 @@ export const generatePuzzleEdges = (
 
   // Set up Paper.js for boundary-crossing edge trimming (non-rectangle shapes)
   const paperProject: paper.Project = new paper.Project(document.createElement('canvas'));
-  const paperBoundary: paper.PathItem = new paper.Path(boundaryPathData);
+  const paperBoundary = new paper.Path(boundaryPathData);
+  const insetPaperBoundary = PaperOffset.offset(paperBoundary, -getKerfWidth()) as paper.Path; // Inset boundary for trim points — kerf compensation moves cuts inward
 
   const genEdges = (isVert: boolean) => {
     const paths: string[] = [];
@@ -365,7 +392,13 @@ export const generatePuzzleEdges = (
           const edgePath = new paper.Path(edgeSvg);
           const startInside = paperBoundary.contains(new paper.Point(x1, y1));
           const endInside = paperBoundary.contains(new paper.Point(x2, y2));
-          const { endPathD, startPathD } = trimEdgePath(edgePath, paperBoundary!, startInside, endInside);
+          const { endPathD, startPathD } = trimEdgePath(
+            edgePath,
+            paperBoundary,
+            insetPaperBoundary,
+            startInside,
+            endInside,
+          );
 
           if (startPathD) {
             if (!isDrawing) {
@@ -407,9 +440,9 @@ export const generatePuzzleEdges = (
   };
 
   // Clean up Paper.js
-  if (paperBoundary) paperBoundary.remove();
-
-  if (paperProject) paperProject.remove();
+  insetPaperBoundary.remove();
+  paperBoundary.remove();
+  paperProject.remove();
 
   return result;
 };
