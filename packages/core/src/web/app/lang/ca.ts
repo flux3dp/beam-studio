@@ -2212,6 +2212,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     task_leather_moisten_reduce_burn: 'Humiteja lleugerament el cuir abans de tallar per reduir les marques de cremada.',
     task_parameters_for_promark_color: "Ajusta l'amplada de pols i la freqüència als làsers MOPA per produir colors en acer inoxidable o titani.",
     task_slower_for_smoother_acrylic_edge: 'Reduir lleugerament la velocitat de tall pot produir vores acríliques més suaus.',
+    tips: 'Consells:',
   },
   topbar: {
     alerts: {

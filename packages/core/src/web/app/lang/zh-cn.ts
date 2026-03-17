@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: '切割皮革前稍微沾湿，可减少烧焦情形。',
     task_parameters_for_promark_color: '通过调整 MOPA 激光的脉宽与频率，可在不锈钢或钛上产生不同颜色。',
     task_slower_for_smoother_acrylic_edge: '稍微降低亚克力的切割速度，有助于让切割边缘更光滑。',
+    tips: '小技巧：',
   },
   topbar: {
     alerts: {

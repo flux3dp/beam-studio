@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'ทำให้หนังชื้นเล็กน้อยก่อนตัดเพื่อลดรอยไหม้',
     task_parameters_for_promark_color: 'ปรับความกว้างพัลส์และความถี่บนเลเซอร์ MOPA เพื่อสร้างสีบนสแตนเลสหรือไทเทเนียม',
     task_slower_for_smoother_acrylic_edge: 'การลดความเร็วในการตัดเล็กน้อยสามารถสร้างขอบอะคริลิกที่เรียบขึ้นได้',
+    tips: 'เคล็ดลับ:',
   },
   topbar: {
     alerts: {

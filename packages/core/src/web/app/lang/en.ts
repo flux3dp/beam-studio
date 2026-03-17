@@ -2212,6 +2212,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     task_leather_moisten_reduce_burn: 'Lightly dampen leather before cutting to reduce burn marks.',
     task_parameters_for_promark_color: 'Adjust pulse width and frequency on MOPA lasers to produce colors on stainless steel or titanium.',
     task_slower_for_smoother_acrylic_edge: 'Reducing the cutting speed slightly can produce smoother acrylic edges.',
+    tips: 'Tips:',
   },
   topbar: {
     alerts: {

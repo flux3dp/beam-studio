@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Kostuta nahka kevyesti ennen leikkaamista vähentääksesi palamajälkiä.',
     task_parameters_for_promark_color: 'Säädä pulssin leveyttä ja taajuutta MOPA-lasereissa tuottaaksesi värejä ruostumattomalle teräkselle tai titaniumille.',
     task_slower_for_smoother_acrylic_edge: 'Leikkausnopeuden hieman hidastaminen voi tuottaa tasaisempia akryylireunoja.',
+    tips: 'Vinkkejä:',
   },
   topbar: {
     alerts: {

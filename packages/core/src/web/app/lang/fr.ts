@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Humidifiez légèrement le cuir avant de le couper pour réduire les marques de brûlure.',
     task_parameters_for_promark_color: "Ajustez la largeur d'impulsion et la fréquence sur les lasers MOPA pour produire des couleurs sur l'acier inoxydable ou le titane.",
     task_slower_for_smoother_acrylic_edge: 'Réduire légèrement la vitesse de coupe peut produire des bords acryliques plus lisses.',
+    tips: 'Conseils :',
   },
   topbar: {
     alerts: {

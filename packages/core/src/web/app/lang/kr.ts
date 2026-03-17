@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: '절단하기 전에 가죽을 가볍게 적시면 화상 자국을 줄일 수 있습니다.',
     task_parameters_for_promark_color: 'MOPA 레이저에서 펄스 폭과 주파수를 조정하여 스테인리스 스틸 또는 티타늄에 색상을 만들 수 있습니다.',
     task_slower_for_smoother_acrylic_edge: '절단 속도를 약간 줄이면 더 매끄러운 아크릴 가장자리를 만들 수 있습니다.',
+    tips: '팁:',
   },
   topbar: {
     alerts: {

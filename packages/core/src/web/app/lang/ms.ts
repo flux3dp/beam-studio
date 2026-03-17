@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Lembapkan kulit sedikit sebelum memotong untuk mengurangkan tanda terbakar.',
     task_parameters_for_promark_color: 'Laraskan lebar nadi dan frekuensi pada laser MOPA untuk menghasilkan warna pada keluli tahan karat atau titanium.',
     task_slower_for_smoother_acrylic_edge: 'Mengurangkan kelajuan pemotongan sedikit boleh menghasilkan tepi akrilik yang lebih licin.',
+    tips: 'Petua:',
   },
   topbar: {
     alerts: {

@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Befugt læder let før skæring for at reducere brændmærker.',
     task_parameters_for_promark_color: 'Juster pulsbredde og frekvens på MOPA-lasere for at producere farver på rustfrit stål eller titanium.',
     task_slower_for_smoother_acrylic_edge: 'At reducere skærehastigheden lidt kan producere glattere akrylkanter.',
+    tips: 'Tips:',
   },
   topbar: {
     alerts: {

@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Inumidisci leggermente la pelle prima di tagliare per ridurre i segni di bruciatura.',
     task_parameters_for_promark_color: "Regola la larghezza dell'impulso e la frequenza sui laser MOPA per produrre colori su acciaio inossidabile o titanio.",
     task_slower_for_smoother_acrylic_edge: 'Ridurre leggermente la velocità di taglio può produrre bordi acrilici più lisci.',
+    tips: 'Suggerimenti:',
   },
   topbar: {
     alerts: {

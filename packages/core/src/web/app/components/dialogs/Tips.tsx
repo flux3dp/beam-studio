@@ -55,7 +55,9 @@ const Tips = () => {
   return (
     <Carousel autoplay autoplaySpeed={10000} className={styles.tips} dots={false} fade speed={300}>
       {tips.map((tip, i) => (
-        <div key={i}>{tip}</div>
+        <div key={i}>
+          {lang.tips} {tip}
+        </div>
       ))}
     </Carousel>
   );

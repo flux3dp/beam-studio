@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Fukta lätt läder innan skärning för att minska brännskador.',
     task_parameters_for_promark_color: 'Justera pulsbredd och frekvens på MOPA-lasrar för att producera färger på rostfritt stål eller titan.',
     task_slower_for_smoother_acrylic_edge: 'Att minska skärhastigheten något kan ge jämnare akrylkanter.',
+    tips: 'Tips:',
   },
   topbar: {
     alerts: {

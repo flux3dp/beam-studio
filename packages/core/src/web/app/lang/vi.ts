@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Làm ẩm nhẹ da trước khi cắt để giảm vết cháy.',
     task_parameters_for_promark_color: 'Điều chỉnh độ rộng xung và tần số trên laser MOPA để tạo màu trên thép không gỉ hoặc titan.',
     task_slower_for_smoother_acrylic_edge: 'Giảm tốc độ cắt một chút có thể tạo cạnh acrylic mượt mà hơn.',
+    tips: 'Mẹo:',
   },
   topbar: {
     alerts: {
