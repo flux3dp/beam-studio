@@ -590,7 +590,7 @@ const svgEditor = (window['svgEditor'] = (function () {
               if (svgCanvas.addedNew) {
                 // Timeout needed for IE9
                 setTimeout(function () {
-                  $('#text').focus().select();
+                  $('#text').focus();
                 }, 100);
               }
 

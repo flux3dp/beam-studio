@@ -33,20 +33,20 @@ const checkForUpdate = (isAutoCheck: boolean) => {
   }, 15000);
   communicator.once(
     UpdateEvents.UpdateAvailable,
-    (event: any, res: { error: { code: any }; info: { version: string }; isUpdateAvailable: any }) => {
+    (_, res: { error?: { code?: any }; info?: { version: string }; isUpdateAvailable: boolean }) => {
       hasGetResponse = true;
 
       if (!isAutoCheck) {
         Progress.popById('electron-check-update');
       }
 
-      if (res?.error) {
-        console.log(res.error);
+      if (res?.error || !res?.info) {
+        console.log(res.error, res.info);
 
         if (!isAutoCheck) {
           Alert.popUp({
             caption: LANG.check_update,
-            message: `#829 Error: ${res.error.code} `,
+            message: `#829 Error: ${res.error?.code}`,
           });
         }
 
@@ -120,14 +120,14 @@ const switchVersion = (): void => {
   communicator.send(UpdateEvents.CheckForUpdate, targetChannel);
   communicator.once(
     UpdateEvents.UpdateAvailable,
-    (event: any, res: { error: { code: any }; info: { version: any }; isUpdateAvailable: any }) => {
+    (_, res: { error?: { code?: any }; info?: { version: string }; isUpdateAvailable: boolean }) => {
       Progress.popById('electron-check-switch');
 
-      if (res.error) {
-        console.log(res.error);
+      if (res.error || !res.info) {
+        console.log(res.error, res.info);
         Alert.popUp({
           caption: LANG.switch_version,
-          message: `#829 Error: ${res.error.code} `,
+          message: `#829 Error: ${res.error?.code}`,
         });
 
         return;

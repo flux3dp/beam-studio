@@ -68,15 +68,17 @@ export class UpdateManager {
   }
 
   checkForUpdates = async (webContents: WebContents): Promise<void> => {
-    let res;
-
     try {
-      res = await autoUpdater.checkForUpdates();
+      const updaterRes = await autoUpdater.checkForUpdates();
+
+      webContents.send(UpdateEvents.UpdateAvailable, {
+        info: updaterRes?.updateInfo,
+        isUpdateAvailable: !!updaterRes?.isUpdateAvailable,
+      });
     } catch (error) {
       console.error(error);
-      res = { error, isUpdateAvailable: true };
+      webContents.send(UpdateEvents.UpdateAvailable, { error, isUpdateAvailable: true });
     }
-    webContents.send(UpdateEvents.UpdateAvailable, res);
   };
 
   private send = (event: string, data: unknown): void => {
