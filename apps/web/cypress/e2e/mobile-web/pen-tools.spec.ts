@@ -49,6 +49,7 @@ describe('mobile pen tools', () => {
 
   it('path corner', () => {
     cy.get('.ant-btn[title="Symmetry"]').invoke('attr', 'class').should('not.contain', 'active');
+    cy.wait(100); // wait for the path edit panel rendered and registered event listener
     cy.get('#pathpointgrip_3').click({ force: true });
     cy.get('.ant-btn[title="Symmetry"]').invoke('attr', 'class').should('contain', 'active');
     cy.get('[title="Corner"]').click();

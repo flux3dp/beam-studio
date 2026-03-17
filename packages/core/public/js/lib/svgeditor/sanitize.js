@@ -245,6 +245,7 @@
       'data-uvPrintingRepeat',
       'data-uvStrength',
       'data-uvXStep',
+      'data-highQuality',
     ],
     image: [
       'data-ratiofixed',

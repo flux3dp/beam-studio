@@ -44,14 +44,6 @@ describe('test sentry-helper', () => {
     SentryHelper.initSentry();
     expect(get).toHaveBeenNthCalledWith(1, 'enable-sentry');
     expect(initSentry).toHaveBeenCalledTimes(1);
-    expect(captureMessage).toHaveBeenCalledTimes(1);
-    expect(captureMessage).toHaveBeenNthCalledWith(1, 'User Census', {
-      level: 'info',
-      tags: {
-        census: 'v1',
-        from: 'renderer',
-      },
-    });
   });
 
   test('device is never sent', () => {

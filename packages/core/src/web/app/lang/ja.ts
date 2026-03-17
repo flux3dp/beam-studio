@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'ハーフトーン',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: '高さ',
+        high_quality: '高品質',
+        high_quality_desc: '塗りつぶされたベクター彫刻と画像オブジェクトにのみ適用されます。これを有効にすると、彫刻の加速度が低下し、より細かい結果が得られます。',
         ink_saturation: '飽和',
         low_air_assist_warning: '材料の発火リスクを効果的に低減するために、エアアシストを50%以上に設定することを推奨します。',
         low_power_warning: 'レーザー出力が低い (10% 未満) と、レーザー光が放出されない場合があります。',

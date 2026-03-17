@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Puolitonni',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Kohteen korkeus',
+        high_quality: 'Korkea laatu',
+        high_quality_desc: 'Koskee vain täytettyjä vektorikaiverruksia ja kuva-objekteja. Tämän käyttöönotto vähentää kaiverruskiihtyvyyttä hienompien tulosten saavuttamiseksi.',
         ink_saturation: 'Kylläisyys',
         low_air_assist_warning: 'Ilma-avustuksen asettaminen yli 50 %:iin on suositeltavaa materiaalin syttymisriskin tehokkaaseen vähentämiseen.',
         low_power_warning: 'Alhainen laserteho (alle 10 %) ei välttämättä emittoi lasersädettä.',

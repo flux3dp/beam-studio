@@ -6,7 +6,7 @@ exports[`test ImageDisplay should render correctly with img 1`] = `
     class="container"
   >
     <div
-      class="img-container"
+      class="ant-dropdown-trigger img-container"
     >
       <img
         src="test-url"
@@ -47,7 +47,7 @@ exports[`test ImageDisplay should render correctly with img 2`] = `
     class="container"
   >
     <div
-      class="img-container"
+      class="ant-dropdown-trigger img-container"
     >
       <svg
         height="0"
@@ -99,7 +99,8 @@ exports[`test ImageDisplay should render correctly without img 1`] = `
     class="container"
   >
     <div
-      class="img-container"
+      class="ant-dropdown-trigger img-container"
+      disabled=""
     >
       <div
         aria-busy="true"

@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Semitono',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Altura del objeto',
+        high_quality: 'Alta calidad',
+        high_quality_desc: 'Solo se aplica a grabados vectoriales rellenos y objetos de imagen. Al habilitarlo, se reducirá la aceleración del grabado para obtener resultados más finos.',
         ink_saturation: 'Saturación',
         low_air_assist_warning: 'Se recomienda ajustar la asistencia de aire por encima del 50 % para reducir eficazmente el riesgo de que el material se incendie.',
         low_power_warning: 'Una potencia láser inferior (por debajo del 10 %) podría no emitir la luz láser.',

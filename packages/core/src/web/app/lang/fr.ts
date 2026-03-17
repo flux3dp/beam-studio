@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Demi-teinte',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: "Hauteur de l'objet",
+        high_quality: 'Haute qualité',
+        high_quality_desc: "S'applique uniquement aux gravures vectorielles remplies et aux objets d'image. L'activation réduira l'accélération de la gravure pour des résultats plus fins.",
         ink_saturation: 'Saturation',
         low_air_assist_warning: "Il est recommandé de régler l'assistance d'air au-dessus de 50 % pour réduire efficacement le risque d'incendie du matériau.",
         low_power_warning: 'Une puissance laser inférieure (moins de 10 %) pourrait ne pas émettre la lumière laser.',

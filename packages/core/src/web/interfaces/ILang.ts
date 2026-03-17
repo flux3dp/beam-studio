@@ -698,6 +698,8 @@ export interface ILang {
         halftone: string;
         halftone_link: string;
         height: string;
+        high_quality: string;
+        high_quality_desc: string;
         ink_saturation: string;
         low_air_assist_warning: string;
         low_power_warning: string;
