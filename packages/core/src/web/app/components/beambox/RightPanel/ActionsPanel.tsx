@@ -22,7 +22,6 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
 import {
   convertSvgToPath,
-  convertTempGroupTextsToPath,
   convertTempGroupToPath,
   convertTextOnPathToPath,
   convertTextToPath,
@@ -137,7 +136,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
   const renderAutoFitButton = (opts: ButtonOpts = {}): React.JSX.Element =>
     renderButtons(
       'auto-fit',
-      `${lang.auto_fit}`,
+      lang.auto_fit,
       () => autoFit(elem as SVGElement),
       <ActionPanelIcons.AutoFit />,
       <ActionPanelIcons.AutoFit />,
@@ -600,7 +599,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const children = Array.from(elem.childNodes) as SVGElement[];
     const onlyPaths = children.every((child) => child.nodeName === 'path');
     const onlyTexts = children.every((child) => child.nodeName === 'text');
-    const isAllConvertable = children.every(
+    const isAllConvertible = children.every(
       (child) =>
         child.nodeName === 'text' ||
         CanvasElements.basicPaths.includes(child.nodeName) ||
@@ -659,7 +658,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       );
     }
 
-    if (isAllConvertable) {
+    if (isAllConvertible) {
       const hasVariableText = children.some((child) => getVariableTextType(child) !== VariableTextType.NONE);
 
       actionButtons.push(
@@ -679,7 +678,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         renderButtons(
           'weld',
           lang.weld_text,
-          () => convertTempGroupTextsToPath({ element: elem, isToSelect: true, weldingTexts: true }),
+          () => convertTempGroupToPath({ element: elem, isToSelect: true, weldingTexts: true }),
           <ActionPanelIcons.WeldText />,
           <ActionPanelIcons.WeldText />,
           {

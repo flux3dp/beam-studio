@@ -94,48 +94,6 @@ export const convertTextToPath = async ({
   return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined, status };
 };
 
-export const convertTempGroupTextsToPath = async ({
-  element,
-  isToSelect = false,
-  weldingTexts = false,
-}: {
-  element: SVGElement;
-  isToSelect?: boolean;
-  weldingTexts?: boolean;
-}): Promise<void> => {
-  const elements = svgCanvas.ungroupTempGroup(element);
-  const resultElements: SVGElement[] = [];
-  const batchCommand = new BatchCommand('Convert Texts in Temp Group to Path');
-
-  for (const el of elements) {
-    // call convertTextToPath or convertTextOnPathToPath by element tagName and attribute
-    if (el.nodeName === 'g' && el.getAttribute('data-textpath-g')) {
-      const { path } = await convertTextOnPathToPath({
-        element: el,
-        isToSelect: false,
-        parentCommand: batchCommand,
-        weldingTexts,
-      });
-
-      if (path) resultElements.push(path);
-    } else {
-      const { path } = await convertTextToPath({
-        element: el,
-        isToSelect: false,
-        parentCommand: batchCommand,
-        weldingTexts,
-      });
-
-      if (path) resultElements.push(path);
-    }
-  }
-
-  undoManager.addCommandToHistory(batchCommand);
-
-  if (isToSelect && resultElements.length > 0) {
-    resultElements.length === 1 ? svgCanvas.selectOnly(resultElements) : svgCanvas.multiSelect(resultElements);
-  }
-};
 export const convertTempGroupToPath = async ({
   element,
   isToSelect = false,

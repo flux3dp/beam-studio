@@ -29,20 +29,10 @@ jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
 const mockShowCropPanel = jest.fn();
 const mockSvgNestButtons = jest.fn();
 
-jest.mock('@core/app/svgedit/currentFileManager', () => ({
-  __esModule: true,
-  default: {},
-  getCurrentFileName: jest.fn(() => 'test-file.beam'),
-}));
+const mockAddCommandToHistory = jest.fn();
 
-jest.mock('@core/helpers/layer/layer-config-helper', () => ({
-  __esModule: true,
-  getDefaultConfig: jest.fn(() => ({})),
-}));
-
-jest.mock('@core/helpers/beam-file-helper', () => ({
-  __esModule: true,
-  readBeam: jest.fn(),
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
 }));
 jest.mock('@core/app/actions/dialog-caller', () => ({
   showCropPanel: (...args: any[]) => mockShowCropPanel(...args),
