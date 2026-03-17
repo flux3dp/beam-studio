@@ -5,27 +5,6 @@ import { fireEvent, getAllByText, render } from '@testing-library/react';
 import i18n from '@core/helpers/i18n';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
-jest.mock('@core/app/actions/canvas/curveEngravingModeController', () => ({
-  __esModule: true,
-  default: {},
-}));
-
-jest.mock('@core/app/svgedit/operations/pathActions', () => ({
-  __esModule: true,
-  default: {
-    toEditMode: jest.fn(),
-  },
-}));
-
-jest.mock('p-queue', () => jest.fn());
-
-jest.mock('delaunator', () => jest.fn());
-
-jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
-  __esModule: true,
-  default: { make: jest.fn() },
-}));
-
 const mockShowCropPanel = jest.fn();
 const mockSvgNestButtons = jest.fn();
 
