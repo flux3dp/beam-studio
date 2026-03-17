@@ -124,13 +124,9 @@ exports[`test UserInfo should render correctly when not login 1`] = `
     class="info"
   >
     <div
-      class="login-hint-wrapper"
+      class="login-hint"
     >
-      <div
-        class="login-hint"
-      >
-        Get Free AI credits on us when you sign up for a FLUX account!
-      </div>
+      Get Free AI credits on us when you sign up for a FLUX account!
     </div>
     <div
       class="action-section"
