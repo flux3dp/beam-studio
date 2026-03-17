@@ -981,13 +981,13 @@ exports[`test ElementPanel Header should render MainType correctly 1`] = `
       />
       <div
         class="ant-drawer-content-wrapper"
-        style="width: 400px; box-shadow: none;"
+        style="width: 400px;"
       >
         <div
           aria-modal="true"
           class="ant-drawer-content"
           role="dialog"
-          style="box-shadow: none; background-color: transparent;"
+          style="background-color: transparent;"
         >
           <div
             class="ant-drawer-header drawer-header"
@@ -1221,13 +1221,13 @@ exports[`test ElementPanel Header should render Search correctly 1`] = `
       />
       <div
         class="ant-drawer-content-wrapper"
-        style="width: 400px; box-shadow: none;"
+        style="width: 400px;"
       >
         <div
           aria-modal="true"
           class="ant-drawer-content"
           role="dialog"
-          style="box-shadow: none; background-color: transparent;"
+          style="background-color: transparent;"
         >
           <div
             class="ant-drawer-header drawer-header"
@@ -1420,13 +1420,13 @@ exports[`test ElementPanel Header should render SubType correctly 1`] = `
       />
       <div
         class="ant-drawer-content-wrapper"
-        style="width: 400px; box-shadow: none;"
+        style="width: 400px;"
       >
         <div
           aria-modal="true"
           class="ant-drawer-content"
           role="dialog"
-          style="box-shadow: none; background-color: transparent;"
+          style="background-color: transparent;"
         >
           <div
             class="ant-drawer-header drawer-header"
