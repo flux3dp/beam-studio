@@ -129,7 +129,13 @@ const App = (): React.JSX.Element => {
                     zIndexPopup: 100000,
                   },
                 },
-                token: { screenMD: 601, screenMDMin: 601, screenSMMax: 600 },
+                token: {
+                  fontFamily:
+                    '"Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Open Sans", Helvetica, Arial, "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體"',
+                  screenMD: 601,
+                  screenMDMin: 601,
+                  screenSMMax: 600,
+                },
               }}
             >
               <StyleProvider hashPriority="low">
