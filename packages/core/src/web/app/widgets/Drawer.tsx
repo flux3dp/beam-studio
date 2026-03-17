@@ -53,11 +53,9 @@ const Drawer = memo(
           placement="left"
           rootClassName={rootClassName}
           // use style to override :where
-          style={{ boxShadow: 'none' }}
           styles={{
             body: { display: 'flex', flexDirection: 'column', height: '100%', overflow: 'hidden', padding: '0px' },
             content: { backgroundColor: 'transparent' },
-            wrapper: { boxShadow: 'none' },
           }}
           title={title}
           width={width}
