@@ -317,17 +317,17 @@ const exportImageLayer = async (
 const getUniqueLayerNames = <T extends string>(nameMap: Record<T, string>): Record<T, string> => {
   const baseNames: string[] = Object.values(nameMap);
   const hasCollision = (s: string) => baseNames.some((name) => layerManager.getLayerByName(`${name}${s}`));
-  let suffix = '';
 
-  if (hasCollision('')) {
-    let n = 2;
+  if (!hasCollision('')) {
+    return nameMap;
+  }
 
+  let n = 2;
+  let suffix = ' 2';
+
+  while (hasCollision(suffix)) {
+    n += 1;
     suffix = ` ${n}`;
-
-    while (hasCollision(suffix)) {
-      n += 1;
-      suffix = ` ${n}`;
-    }
   }
 
   return Object.fromEntries(Object.entries<string>(nameMap).map(([key, name]) => [key, `${name}${suffix}`])) as Record<
@@ -372,7 +372,7 @@ export const exportToCanvas = async (
   // Export layers in order (bottom to top in layer panel)
 
   // RIGHT SIDE: Board Base (if border enabled)
-  if (layout.hasBorder && !!geo.boardBasePath) {
+  if (layout.hasBorder && geo.boardBasePath) {
     await importLayer(
       layerNames.boardBase,
       COLORS.exploded.boardBase,
@@ -386,7 +386,7 @@ export const exportToCanvas = async (
   }
 
   // RIGHT SIDE: Guide Lines on board base (if border and guideLines enabled)
-  if (layout.hasBorder && state.border.guideLines && !!innerCuts) {
+  if (layout.hasBorder && state.border.guideLines && innerCuts) {
     await importLayer(
       layerNames.guideLines,
       COLORS.exploded.guideLines,
@@ -401,14 +401,14 @@ export const exportToCanvas = async (
   }
 
   // LEFT SIDE: Raised Edges frame (only if border enabled - separate frame layer)
-  if (layout.hasBorder && !!geo.raisedEdgesPath) {
+  if (layout.hasBorder && geo.raisedEdgesPath) {
     await importLayer(
       layerNames.raisedEdges,
       COLORS.exploded.raisedEdges,
       {
         ...baseOpts,
         elementOffsetX: layout.raisedEdgesOffsetX,
-        pathData: geo.raisedEdgesPath!,
+        pathData: geo.raisedEdgesPath,
       },
       batchCmd,
     );
@@ -435,7 +435,7 @@ export const exportToCanvas = async (
 
   // IMAGE LAYER (top-most — imported last so it appears highest in the layer panel)
   // Skip if exportAs is 'none' — image is only for alignment, not export
-  if (state.image.enabled && !!state.image.dataUrl && state.image.exportAs !== 'none') {
+  if (state.image.enabled && state.image.dataUrl && state.image.exportAs !== 'none') {
     await exportImageLayer(state, typeConfig.id, geo, layout, layerNames.image, batchCmd);
   }
 

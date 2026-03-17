@@ -79,14 +79,12 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
     }
   }
 
-  // Generate boundary path first — needed for both rendering and edge trimming
   const boundaryPath = generateShapePath(shapeType, {
     centerY: meta.centerYOffset,
     cornerRadius: meta.boundaryCornerRadius,
     height: meta.boundaryHeight,
     width: layout.width,
   });
-
   const edges = generatePuzzleEdges(state, layout, mergeGroups, boundaryPath, visibility);
 
   let boardBasePath: string | undefined;

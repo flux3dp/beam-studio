@@ -434,17 +434,15 @@ export const generatePuzzleEdges = (
     return paths.join('');
   };
 
-  const result = {
-    horizontalEdges: genEdges(false),
-    verticalEdges: genEdges(true),
-  };
-
   // Clean up Paper.js
   insetPaperBoundary.remove();
   paperBoundary.remove();
   paperProject.remove();
 
-  return result;
+  return {
+    horizontalEdges: genEdges(false),
+    verticalEdges: genEdges(true),
+  };
 };
 
 export const calculateAllPieceVisibilities = (
