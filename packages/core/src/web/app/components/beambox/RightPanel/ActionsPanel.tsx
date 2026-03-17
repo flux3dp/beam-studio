@@ -14,6 +14,7 @@ import { textButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { BatchCommand } from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import autoFit from '@core/app/svgedit/operations/autoFit';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textEdit from '@core/app/svgedit/text/textedit';
@@ -22,6 +23,7 @@ import { convertSvgToImage } from '@core/helpers/convertToImage';
 import {
   convertSvgToPath,
   convertTempGroupTextsToPath,
+  convertTempGroupToPath,
   convertTextOnPathToPath,
   convertTextToPath,
   convertUseToPath,
@@ -598,12 +600,21 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     const children = Array.from(elem.childNodes) as SVGElement[];
     const onlyPaths = children.every((child) => child.nodeName === 'path');
     const onlyTexts = children.every((child) => child.nodeName === 'text');
+    const isAllConvertable = children.every(
+      (child) =>
+        child.nodeName === 'text' ||
+        CanvasElements.basicPaths.includes(child.nodeName) ||
+        (child.nodeName === 'g' && child.getAttribute('data-textpath-g')),
+    );
     const actionButtons: React.JSX.Element[] = [renderOffsetButton(), renderArrayButton()];
 
     const text = children.find((child) => child.nodeName === 'text') as SVGElement;
     const pathLike = children.find((child) => CanvasElements.basicPaths.includes(child.nodeName)) as SVGElement;
 
-    if (children.length === 2 && text && pathLike) {
+    const textCount = children.filter((child) => child.nodeName === 'text').length;
+    const pathLikeCount = children.filter((child) => CanvasElements.basicPaths.includes(child.nodeName)).length;
+
+    if (textCount >= 1 && pathLikeCount >= 1 && text && pathLike) {
       const isVariableText = getVariableTextType(text) !== VariableTextType.NONE;
 
       actionButtons.push(
@@ -611,16 +622,30 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'create_textpath',
           lang.create_textpath,
           () => {
-            svgCanvas.ungroupTempGroup();
+            const elements = svgCanvas.ungroupTempGroup(elem);
+            const textElements = elements.filter((el) => el.nodeName === 'text');
+            const pathLikeElements = elements.filter((el) => CanvasElements.basicPaths.includes(el.nodeName));
+            const pairCount = Math.min(textElements.length, pathLikeElements.length);
+            const batchCommand = new BatchCommand('Create Text on Path');
+            const resultGroups: SVGElement[] = [];
 
-            let path = pathLike;
+            for (let i = 0; i < pairCount; i++) {
+              let path = pathLikeElements[i];
 
-            if (pathLike.nodeName !== 'path') {
-              path = svgCanvas.convertToPath(path).path;
+              if (path.nodeName !== 'path') {
+                path = svgCanvas.convertToPath(path).path;
+              }
+
+              const cmd = textPathEdit.attachTextToPath(textElements[i], path, true);
+
+              if (cmd) batchCommand.addSubCommand(cmd);
+
+              updateElementColor(textElements[i]);
+              resultGroups.push(svgCanvas.getSelectedElems()[0]);
             }
 
-            textPathEdit.attachTextToPath(text, path);
-            updateElementColor(text);
+            undoManager.addCommandToHistory(batchCommand);
+            resultGroups.length === 1 ? svgCanvas.selectOnly(resultGroups) : svgCanvas.multiSelect(resultGroups);
           },
           <ActionPanelIcons.CreateTextpath />,
           <ActionPanelIcons.CreateTextpath />,
@@ -634,16 +659,23 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       );
     }
 
-    if (onlyTexts) {
+    if (isAllConvertable) {
       const hasVariableText = children.some((child) => getVariableTextType(child) !== VariableTextType.NONE);
 
       actionButtons.push(
         renderConvertToPathButton({
-          converter: () => convertTempGroupTextsToPath({ element: elem, isToSelect: true }),
+          converter: () => convertTempGroupToPath({ element: elem, isToSelect: true }),
           isDisabled: hasVariableText,
-          isFullLine: false,
+          isFullLine: true,
           tooltipIfDisabled: lang.disabled_by_variable_text,
         }),
+      );
+    }
+
+    if (onlyTexts) {
+      const hasVariableText = children.some((child) => getVariableTextType(child) !== VariableTextType.NONE);
+
+      actionButtons.push(
         renderButtons(
           'weld',
           lang.weld_text,

@@ -104,18 +104,79 @@ export const convertTempGroupTextsToPath = async ({
   weldingTexts?: boolean;
 }): Promise<void> => {
   const elements = svgCanvas.ungroupTempGroup(element);
-  const paths: SVGPathElement[] = [];
+  const resultElements: SVGElement[] = [];
   const batchCommand = new BatchCommand('Convert Texts in Temp Group to Path');
 
   for (const el of elements) {
-    const { path } = await convertTextToPath({
-      element: el,
-      isToSelect: false,
-      parentCommand: batchCommand,
-      weldingTexts,
-    });
+    // call convertTextToPath or convertTextOnPathToPath by element tagName and attribute
+    if (el.nodeName === 'g' && el.getAttribute('data-textpath-g')) {
+      const { path } = await convertTextOnPathToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+        weldingTexts,
+      });
 
-    if (path) paths.push(path);
+      if (path) resultElements.push(path);
+    } else {
+      const { path } = await convertTextToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+        weldingTexts,
+      });
+
+      if (path) resultElements.push(path);
+    }
+  }
+
+  undoManager.addCommandToHistory(batchCommand);
+
+  if (isToSelect && resultElements.length > 0) {
+    resultElements.length === 1 ? svgCanvas.selectOnly(resultElements) : svgCanvas.multiSelect(resultElements);
+  }
+};
+export const convertTempGroupToPath = async ({
+  element,
+  isToSelect = false,
+  weldingTexts = false,
+}: {
+  element: SVGElement;
+  isToSelect?: boolean;
+  weldingTexts?: boolean;
+}): Promise<void> => {
+  const elements = svgCanvas.ungroupTempGroup(element);
+  const batchCommand = new BatchCommand('Convert to Path');
+  const paths: SVGElement[] = [];
+
+  for (const el of elements) {
+    if (el.nodeName === 'g' && el.getAttribute('data-textpath-g')) {
+      const { group } = await convertTextOnPathToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+        weldingTexts,
+      });
+
+      if (group) paths.push(group);
+    } else if (el.nodeName === 'text') {
+      const { path } = await convertTextToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+        weldingTexts,
+      });
+
+      if (path) paths.push(path);
+    } else {
+      const { path } = await convertSvgToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+      });
+
+      if (path) paths.push(path);
+    }
   }
 
   undoManager.addCommandToHistory(batchCommand);
