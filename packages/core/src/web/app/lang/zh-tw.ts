@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: '混色模式',
         halftone_link: 'https://support.flux3dp.com/hc/zh-tw/articles/9402670389647',
         height: '物件高度',
+        high_quality: '高品質雕刻',
+        high_quality_desc: '僅適用於雕刻向量填充與影像物件。啟用後將降低雕刻加速度，以獲得更細緻的雕刻效果。',
         ink_saturation: '飽和度',
         low_air_assist_warning: '建議將吹氣輔助設為 50% 以上，可有效降低材料起火的風險。',
         low_power_warning: '功率較低時（低於 10 %），有可能不出光。',

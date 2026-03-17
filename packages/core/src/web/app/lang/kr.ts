@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: '반톤',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: '오브젝트 높이',
+        high_quality: '고품질',
+        high_quality_desc: '채워진 벡터 조각 및 이미지 개체에만 적용됩니다. 이 기능을 활성화하면 조각 가속도가 감소하여 더 세밀한 결과를 얻을 수 있습니다.',
         ink_saturation: '포화',
         low_air_assist_warning: '재료가 불에 탈 위험을 줄이기 위해 에어 어시스트를 50% 이상으로 설정하는 것이 좋습니다.',
         low_power_warning: '10% 이하의 레이저 파워는 레이저 빛을 내지 못할 수 있습니다.',

@@ -20,9 +20,10 @@ interface Props {
   id: string;
   label?: React.ReactNode;
   onClick?: () => void;
+  ref?: React.Ref<HTMLDivElement>;
 }
 
-const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onClick }: Props): React.ReactNode => {
+const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onClick, ref }: Props): React.ReactNode => {
   const context = use(ObjectPanelContext);
   const { activeKey, updateActiveKey } = context;
 
@@ -44,6 +45,7 @@ const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onCli
           setTimeout(() => updateActiveKey(null), 300);
         }
       }}
+      ref={ref}
     >
       <div className={styles.main}>{content}</div>
       {label && <div className={styles.label}>{label}</div>}

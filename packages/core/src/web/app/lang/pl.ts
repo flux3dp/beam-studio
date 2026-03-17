@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Połton',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Wysokość obiektu',
+        high_quality: 'Wysoka jakość',
+        high_quality_desc: 'Dotyczy tylko wypełnionych grawer wektorowych i obiektów obrazu. Włączenie tego zmniejszy przyspieszenie grawerowania w celu uzyskania lepszych wyników.',
         ink_saturation: 'Nasycenie',
         low_air_assist_warning: 'Zaleca się ustawienie wspomagania powietrzem powyżej 50%, aby skutecznie zmniejszyć ryzyko zapłonu materiału.',
         low_power_warning: 'Niższa moc lasera (poniżej 10%) może nie emitować światła lasera.',

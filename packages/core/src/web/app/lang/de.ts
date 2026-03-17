@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Halbton',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Objekthöhe',
+        high_quality: 'Hohe Qualität',
+        high_quality_desc: 'Gilt nur für gefüllte Vektorgravuren und Bildobjekte. Die Aktivierung reduziert die Gravurbeschleunigung für feinere Ergebnisse.',
         ink_saturation: 'Sättigung',
         low_air_assist_warning: 'Es wird empfohlen, die Luftunterstützung auf über 50 % einzustellen, um das Brandrisiko des Materials wirksam zu verringern.',
         low_power_warning: 'Niedrigere Laserleistung (unter 10 %) emittiert das Laserlicht möglicherweise nicht.',
