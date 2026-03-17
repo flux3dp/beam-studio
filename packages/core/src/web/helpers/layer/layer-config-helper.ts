@@ -44,6 +44,7 @@ const attributeMap: Record<ConfigKey, string> = {
   fullcolor: 'data-fullcolor',
   halftone: 'data-halftone',
   height: 'data-height',
+  highQuality: 'data-highQuality',
   ink: 'data-ink',
   interpolation: 'data-interpolation',
   kRatio: 'data-kRatio',
@@ -104,6 +105,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   frequency: 27,
   halftone: 1, // 1 for fm, 2 for am
   height: -3,
+  highQuality: false,
   ink: useGlobalPreferenceStore.getState()['multipass-compensation'] ? 3 : 1,
   interpolation: 1,
   kRatio: 100,
@@ -186,11 +188,13 @@ export const booleanConfig: ConfigKey[] = [
   'crossHatch',
   'ceZHighSpeed',
   'uvCuringAfter',
+  'highQuality',
 ] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'speed',
   'repeat',
+  'highQuality',
   // printing
   'printingSpeed',
   'multipass',

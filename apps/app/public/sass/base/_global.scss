@@ -7,8 +7,6 @@
 html,
 body {
   background-color: variables.$backgroundColor;
-  font-family: "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Open Sans", Helvetica, Arial,
-    "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體";
   font-size: 12px;
   height: 100%;
   margin: 0;
@@ -16,6 +14,15 @@ body {
   padding: 0;
   -webkit-user-select: none;
   overflow: hidden;
+}
+
+// Use html > body to increase priority to avoid being overridden by antd global
+html {
+  body {
+    font-family:
+      "Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Open Sans", Helvetica, Arial, "Lucida Grande",
+      sans-serif, "Microsoft JhengHei", "微軟正黑體";
+  }
 }
 
 body {

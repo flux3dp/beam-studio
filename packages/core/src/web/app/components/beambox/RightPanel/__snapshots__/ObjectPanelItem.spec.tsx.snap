@@ -10,6 +10,7 @@ exports[`should render correctly action list not disabled 1`] = `
   />
   <div
     class="adm-px-tester"
+    style="--size: 12;"
   />
   <div>
     <div
@@ -218,6 +219,7 @@ exports[`should render correctly number item when unit is mm 2`] = `
   />
   <div
     class="adm-px-tester"
+    style="--size: 12;"
   />
   <div>
     <div

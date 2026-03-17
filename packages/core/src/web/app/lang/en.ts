@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Halftone',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Object Height',
+        high_quality: 'High-Quality',
+        high_quality_desc: 'Only applies to filled vector engravings and image objects. Enabling this will reduce engraving acceleration for finer results.',
         ink_saturation: 'Saturation',
         low_air_assist_warning: 'It is recommended to set the air assist to above 50% to effectively reduce the risk of the material catching fire.',
         low_power_warning: 'Lower laser power (under 10%) might not emit the laser light.',

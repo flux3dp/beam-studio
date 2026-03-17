@@ -9,6 +9,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { promarkModels } from '@core/app/actions/beambox/constant';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import dialogCaller from '@core/app/actions/dialog-caller';
+import HighQualityBlock from '@core/app/components/beambox/RightPanel/ConfigPanel/HighQualityBlock';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
@@ -271,6 +272,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {(isPrinting || isUV) && <InkBlock type={UIType} />}
       <SpeedBlock type={UIType} />
       {isLaser && <DpiBlock type={UIType} />}
+      {workarea === 'fhx2rf' && <HighQualityBlock type={UIType} />}
       {(isPrinting || isUV) && <MultipassBlock type={UIType} />}
       {isDevMode && isPrinting && fullcolor.value && UIType === 'default' && <WhiteInkCheckbox />}
       {isDevMode && isCustomBacklashEnabled && <Backlash type={UIType} />}
@@ -369,6 +371,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
           writeData(layerName, 'ink', state.ink.value, { batchCmd });
           writeData(layerName, 'multipass', state.multipass.value, { batchCmd });
           writeData(layerName, 'halftone', state.halftone.value, { batchCmd });
+          writeData(layerName, 'highQuality', state.highQuality.value, { batchCmd });
         });
         batchCmd.onAfter = initState;
         svgCanvas.addCommandToHistory(batchCmd);

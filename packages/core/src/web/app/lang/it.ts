@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Semitono',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Altezza oggetto',
+        high_quality: 'Alta qualità',
+        high_quality_desc: "Si applica solo alle incisioni vettoriali riempite e agli oggetti immagine. L'attivazione ridurrà l'accelerazione dell'incisione per risultati più fini.",
         ink_saturation: 'Saturazione',
         low_air_assist_warning: "Si consiglia di impostare l'assistenza aria sopra il 50% per ridurre efficacemente il rischio di incendio del materiale.",
         low_power_warning: 'Una potenza laser inferiore (sotto il 10%) potrebbe non emettere il raggio laser.',

@@ -1,4 +1,4 @@
-import type { MutableRefObject, ReactNode, SyntheticEvent } from 'react';
+import type { ReactNode, SyntheticEvent } from 'react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { LoadingOutlined } from '@ant-design/icons';
@@ -6,7 +6,9 @@ import { Spin } from 'antd';
 import classNames from 'classnames';
 
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import ContextMenu from '@core/app/widgets/ContextMenu';
 import useI18n from '@core/helpers/useI18n';
+import dialog from '@core/implementations/dialog';
 
 import styles from './ImageDisplay.module.scss';
 
@@ -34,7 +36,7 @@ const ImageDisplay = ({
   renderContents,
   zoomPoints,
 }: Props & { ref?: React.Ref<HTMLDivElement> }) => {
-  const lang = useI18n();
+  const t = useI18n();
   const [imgLoaded, setImgLoaded] = useState(false);
   const imgContainerRef = useRef<HTMLDivElement | null>(null);
   const scaleRef = useRef<number>(1);
@@ -267,43 +269,51 @@ const ImageDisplay = ({
     };
   }, [handleWheel]);
 
+  const handleDownload = useCallback(() => {
+    if (!img) return;
+
+    dialog.writeFileDialog(() => img.blob, 'Save Camera Image', 'image.jpg');
+  }, [img]);
+
   const size = displayArea ?? imageSizeRef.current;
 
   return (
     <div className={classNames(styles.container, className)}>
-      <div
-        className={styles['img-container']}
-        onMouseDown={handleContainerDragStart}
-        onMouseLeave={handleDragEnd}
-        onMouseMove={handleDragMove}
-        onMouseUp={handleDragEnd}
-        ref={(node) => {
-          imgContainerRef.current = node;
+      <ContextMenu disabled={!img} items={[{ key: 'download', label: t.monitor.download }]} onClick={handleDownload}>
+        <div
+          className={styles['img-container']}
+          onMouseDown={handleContainerDragStart}
+          onMouseLeave={handleDragEnd}
+          onMouseMove={handleDragMove}
+          onMouseUp={handleDragEnd}
+          ref={(node) => {
+            imgContainerRef.current = node;
 
-          if (outRef) (outRef as MutableRefObject<HTMLDivElement>).current = node!;
-        }}
-      >
-        {!img && <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />}
-        {img &&
-          (!imgLoaded ? (
-            <img onLoad={handleImgLoad} src={img?.url} />
-          ) : (
-            <svg
-              height={size.height * scaleRef.current}
-              ref={svgRef}
-              viewBox={`${displayArea?.x ?? 0} ${displayArea?.y ?? 0} ${size.width} ${size.height}`}
-              width={size.width * scaleRef.current}
-            >
-              <image height={imageSizeRef.current.height} href={img?.url} width={imageSizeRef.current.width} />
-              {renderContents?.(scaleRef.current)}
-            </svg>
-          ))}
-      </div>
+            if (outRef) (outRef as React.RefObject<HTMLDivElement>).current = node!;
+          }}
+        >
+          {!img && <Spin className={styles.spin} indicator={<LoadingOutlined className={styles.spinner} spin />} />}
+          {img &&
+            (!imgLoaded ? (
+              <img onLoad={handleImgLoad} src={img?.url} />
+            ) : (
+              <svg
+                height={size.height * scaleRef.current}
+                ref={svgRef}
+                viewBox={`${displayArea?.x ?? 0} ${displayArea?.y ?? 0} ${size.width} ${size.height}`}
+                width={size.width * scaleRef.current}
+              >
+                <image height={imageSizeRef.current.height} href={img?.url} width={imageSizeRef.current.width} />
+                {renderContents?.(scaleRef.current)}
+              </svg>
+            ))}
+        </div>
+      </ContextMenu>
       <div className={styles['zoom-block']}>
         <button onClick={() => handleZoom(-0.1)} type="button">
           <ObjectPanelIcons.Minus className={styles.icon} height="24" width="24" />
         </button>
-        <button onClick={handleResetView}>{lang.global.editing.reset_view}</button>
+        <button onClick={handleResetView}>{t.global.editing.reset_view}</button>
         <button onClick={() => handleZoom(0.1)} type="button">
           <ObjectPanelIcons.Plus className={styles.icon} height="24" width="24" />
         </button>

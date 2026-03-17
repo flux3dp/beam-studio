@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Nửa tone',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Chiều cao vật thể',
+        high_quality: 'Chất lượng cao',
+        high_quality_desc: 'Chỉ áp dụng cho các khắc vector được tô và các đối tượng hình ảnh. Bật tính năng này sẽ giảm gia tốc khắc để có kết quả mịn màng hơn.',
         ink_saturation: 'Độ bão hòa mực',
         low_air_assist_warning: 'Nên đặt hỗ trợ khí ở mức trên 50% để giảm hiệu quả nguy cơ cháy của vật liệu.',
         low_power_warning: 'Công suất laser thấp (dưới 10%) có thể không phát ra ánh sáng laser.',

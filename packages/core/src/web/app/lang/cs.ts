@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Půltón',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Výška objektu',
+        high_quality: 'Vysoká kvalita',
+        high_quality_desc: 'Platí pouze pro vyplněné vektorové gravírování a obrázkové objekty. Povolení této možnosti sníží zrychlení gravírování pro jemnější výsledky.',
         ink_saturation: 'Saturace',
         low_air_assist_warning: 'Doporučuje se nastavit ofukování nad 50 %, aby se účinně snížilo riziko vznícení materiálu.',
         low_power_warning: 'Laser nízké intenzity (pod 10 %) nemusí vyslat laserové světlo.',

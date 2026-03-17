@@ -57,8 +57,6 @@ export const getExportOpt = async (
   const globalPreference = useGlobalPreferenceStore.getState();
 
   const isDevMode = isDev();
-  const paddingAccel = globalPreference['padding_accel'];
-  const useDevPaddingAcc = isDevMode && paddingAccel;
   const workareaObj = getWorkarea(model);
 
   config.hardware_name = model;
@@ -66,7 +64,7 @@ export const getExportOpt = async (
   if (model === 'fhexa1') {
     config.hardware_name = 'hexa';
 
-    if (!useDevPaddingAcc) config.acc = 7500;
+    config.acc = 7500;
   } else if (model === 'fbb1p') {
     config.hardware_name = 'pro';
   } else if (model === 'fbb1b') {
@@ -74,18 +72,15 @@ export const getExportOpt = async (
   } else if (model === 'fbm1') {
     config.hardware_name = 'beamo';
   } else if (model === 'ado1') {
-    if (!useDevPaddingAcc) config.acc = opt.paddingAccel || 3200;
+    config.acc = opt.paddingAccel || 3200;
   } else if (model === 'fbb2') {
-    if (!useDevPaddingAcc) config.acc = 8000;
+    config.acc = 8000;
   } else if (model === 'fbm2') {
-    if (!useDevPaddingAcc) config.acc = 8000;
+    config.acc = 8000;
   } else if (model === 'fhx2rf') {
     config.watt = useCanvasStore.getState().watt;
-
-    if (!useDevPaddingAcc) config.acc = 10000;
+    config.acc = 10000;
   }
-
-  if (useDevPaddingAcc) config.acc = paddingAccel;
 
   if (opt.codeType === 'gcode') config.gc = true;
 
@@ -130,7 +125,7 @@ export const getExportOpt = async (
   }
 
   const updateAccOverride = (value: TAccelerationOverride) => {
-    if (!config.acc_override) config.acc_override = value;
+    if (!config.acc_override) config.acc_override = structuredClone(value);
 
     const keys = Object.keys(value) as Array<keyof typeof value>;
 
@@ -317,6 +312,12 @@ export const getExportOpt = async (
   }
 
   if (isDevMode) {
+    if (globalPreference['padding_accel']) {
+      config.acc = globalPreference['padding_accel'];
+      // Use an object without x key to avoid overriding x acc, an empty object also works
+      updateAccOverride({ fill: { x: undefined } });
+    }
+
     let storageValue = localStorage.getItem('min_engraving_padding');
 
     if (storageValue) config.mep = Number(storageValue);

@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Halftoon',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Objecthoogte',
+        high_quality: 'Hoge kwaliteit',
+        high_quality_desc: 'Alleen van toepassing op gevulde vectorgraveringen en afbeeldingsobjecten. Het inschakelen hiervan vermindert de graveersversnelling voor fijnere resultaten.',
         ink_saturation: 'Verzadiging',
         low_air_assist_warning: 'Het wordt aanbevolen om de luchttoevoer boven de 50% in te stellen om het risico op brand van het materiaal effectief te verminderen.',
         low_power_warning: 'Lager laservermogen (onder 10%) zou geen laserlicht kunnen uitstralen.',

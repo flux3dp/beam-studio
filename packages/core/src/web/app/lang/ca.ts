@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Mitjos tons',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: "Alçada de l'objecte",
+        high_quality: 'Alta qualitat',
+        high_quality_desc: "Només s'aplica a gravats vectorials farcits i objectes d'imatge. Activar això reduirà l'acceleració del gravat per obtenir resultats més fins.",
         ink_saturation: 'Saturació',
         low_air_assist_warning: "Es recomana establir l'assistència d'aire per sobre del 50% per reduir eficaçment el risc que el material s'incendiï.",
         low_power_warning: 'Una potència làser més baixa (menys del 10%) podria no emetre la llum làser.',

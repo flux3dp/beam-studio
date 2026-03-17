@@ -698,6 +698,8 @@ const lang: ILang = {
         halftone: 'Setengah tone',
         halftone_link: 'https://support.flux3dp.com/hc/en-us/articles/9402670389647',
         height: 'Tinggi Objek',
+        high_quality: 'Kualitas Tinggi',
+        high_quality_desc: 'Hanya berlaku untuk pengukiran vektor yang diisi dan objek gambar. Mengaktifkan ini akan mengurangi akselerasi pengukiran untuk hasil yang lebih halus.',
         ink_saturation: 'Saturasi',
         low_air_assist_warning: 'Disarankan untuk mengatur bantuan udara di atas 50% untuk secara efektif mengurangi risiko bahan terbakar.',
         low_power_warning: 'Daya laser yang lebih rendah (di bawah 10%) mungkin tidak memancarkan cahaya laser.',
