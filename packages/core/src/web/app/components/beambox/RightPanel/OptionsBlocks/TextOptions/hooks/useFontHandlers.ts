@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 
 import { map, pipe } from 'remeda';
 import { match } from 'ts-pattern';
@@ -72,9 +72,14 @@ interface UseFontHandlersProps {
 
 export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements }: UseFontHandlersProps) => {
   const [styleOptions, setStyleOptions] = useState<FontOption[]>([]);
+  const getStyleOptionCallIdRef = useRef(0);
 
   // Update style options when font family changes
   useEffect(() => {
+    const callId = getStyleOptionCallIdRef.current > 10000 ? 1 : getStyleOptionCallIdRef.current + 1;
+
+    getStyleOptionCallIdRef.current = callId;
+
     const getStyleOptions = async (family: string) => {
       // First try local fonts
       const localFonts = FontFuncs.requestFontsOfTheFontFamily(family);
@@ -85,7 +90,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
           map(({ style }) => ({ label: style, value: style })),
         );
 
-        setStyleOptions(options);
+        if (getStyleOptionCallIdRef.current === callId) setStyleOptions(options);
 
         return;
       }
@@ -93,6 +98,8 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
       // If no local fonts found, check if it's a Google Font
       try {
         const googleFontData = await googleFontsApiCache.findFont(family);
+
+        if (getStyleOptionCallIdRef.current !== callId) return;
 
         if (googleFontData?.variants?.length) {
           const googleFontOptions = pipe(
@@ -113,7 +120,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
       }
 
       // Fallback: no variants found
-      setStyleOptions([]);
+      if (getStyleOptionCallIdRef.current === callId) setStyleOptions([]);
     };
 
     if (fontFamily.hasMultiValue) {
