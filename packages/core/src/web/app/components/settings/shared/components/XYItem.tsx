@@ -1,7 +1,5 @@
 import React from 'react';
 
-import classNames from 'classnames';
-
 import styles from '../styles/shared.module.scss';
 
 import SettingFormItem from './SettingFormItem';
@@ -36,7 +34,7 @@ const XYItem = ({
   <SettingFormItem id={id} label={label} tooltip={tooltip}>
     <div className={styles['xy-item']}>
       <div className={styles['xy-set']}>
-        <span className={classNames('font2', styles['xy-label'])}>X</span>
+        <span className={styles['xy-label']}>X</span>
         <SettingUnitInput
           {...unitInputProps}
           id={`${id}-x`}
@@ -47,7 +45,7 @@ const XYItem = ({
         />
       </div>
       <div className={styles['xy-set']}>
-        <span className={classNames('font2', styles['xy-label'])}>Y</span>
+        <span className={styles['xy-label']}>Y</span>
         <SettingUnitInput
           {...unitInputProps}
           id={`${id}-y`}

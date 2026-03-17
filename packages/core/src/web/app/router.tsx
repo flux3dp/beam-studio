@@ -48,7 +48,6 @@ import PromarkSettings from '@core/app/pages/PromarkSettings';
 import SelectConnectionType from '@core/app/pages/SelectConnectionType';
 import SelectMachineModel from '@core/app/pages/SelectMachineModel';
 import SelectPromarkLaserSource from '@core/app/pages/SelectPromarkLaserSource';
-import Settings from '@core/app/pages/Settings';
 import Welcome from '@core/app/pages/Welcome';
 import Logger from '@core/helpers/logger';
 import { queryClient } from '@core/helpers/query';
@@ -159,7 +158,6 @@ const App = (): React.JSX.Element => {
                       path="/initialize/connect/select-promark-laser-source"
                     />
                     <Route element={<PromarkSettings />} path="/initialize/connect/promark-settings" />
-                    <Route element={<Settings />} path="/studio/settings" />
                     <Route element={<Beambox />} path="/studio/beambox" />
                     <Route element={<Welcome />} path="/studio/welcome" />
                     <Route element={<Error />} path="/error/*" />

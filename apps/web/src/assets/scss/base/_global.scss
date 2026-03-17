@@ -30,22 +30,6 @@ body {
   position: relative;
 }
 
-.clearfix:after,
-.clearfix:before {
-  content: " ";
-  display: table;
-}
-
-.clearfix:after {
-  clear: both;
-}
-
-.clearfix:after,
-.clearfix:before {
-  content: " ";
-  display: table;
-}
-
 *,
 :after,
 :before {
