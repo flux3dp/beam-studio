@@ -17,9 +17,8 @@ import TypeSelector from './components/TypeSelector';
 import type { ViewMode } from './constants';
 import { exportToCanvas } from './geometry';
 import styles from './index.module.scss';
-import { getDefaultPuzzleType, getPuzzleTypeById, PUZZLE_TYPES } from './puzzleTypes.config';
+import { getDefaultPuzzleStateById, getDefaultPuzzleType, getPuzzleTypeById, PUZZLE_TYPES } from './puzzleTypes.config';
 import type { NestedStateKey, PuzzleGeometry, PuzzleState, PuzzleStateUpdate, ShapeType } from './types';
-import { createDefaultStateFromConfig } from './types';
 
 const DIALOG_ID = 'puzzle-generator';
 
@@ -32,7 +31,7 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
   const isMobile = useIsMobile();
 
   const defaultType = getDefaultPuzzleType();
-  const [state, setState] = useState<PuzzleState>(() => createDefaultStateFromConfig(defaultType.id));
+  const [state, setState] = useState<PuzzleState>(() => getDefaultPuzzleStateById(defaultType.id));
   const [isModified, setIsModified] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -52,7 +51,7 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
       if (typeId === state.typeId) return;
 
       const applyTypeChange = () => {
-        setState(createDefaultStateFromConfig(typeId));
+        setState(getDefaultPuzzleStateById(typeId));
         setIsModified(false);
       };
 

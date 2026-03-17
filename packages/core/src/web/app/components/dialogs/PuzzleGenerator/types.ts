@@ -205,12 +205,3 @@ export type NestedStateKey = 'border' | 'image';
 export type PuzzleStateUpdate = {
   [K in PuzzleState['typeId']]: Partial<Omit<Extract<PuzzleState, { typeId: K }>, 'typeId'>>;
 }[PuzzleState['typeId']];
-
-/**
- * Creates default puzzle state by deriving values from property configuration.
- * Config (puzzleTypes.config.ts) is the single source of truth for defaults.
- *
- * NOTE: This is now implemented in configToState.ts to avoid circular dependencies.
- * Re-exported here for convenience.
- */
-export { createDefaultStateFromConfig } from './configToState';
