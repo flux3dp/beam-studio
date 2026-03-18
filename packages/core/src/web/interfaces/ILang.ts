@@ -312,6 +312,7 @@ export interface ILang {
         };
         elements: string;
         end_preview: string;
+        fit_text: string;
         line: string;
         live_feed: string;
         my_cloud: string;
@@ -903,6 +904,10 @@ export interface ILang {
           stroke: string;
           stroke_color: string;
           stroke_width: string;
+          text_align_center: string;
+          text_align_justify: string;
+          text_align_left: string;
+          text_align_right: string;
           text_infill: string;
           threshold: string;
           threshold_short: string;
