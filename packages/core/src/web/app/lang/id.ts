@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Basahi kulit sedikit sebelum memotong untuk mengurangi bekas terbakar.',
     task_parameters_for_promark_color: 'Sesuaikan lebar pulsa dan frekuensi pada laser MOPA untuk menghasilkan warna pada stainless steel atau titanium.',
     task_slower_for_smoother_acrylic_edge: 'Mengurangi kecepatan pemotongan sedikit dapat menghasilkan tepi akrilik yang lebih halus.',
+    tips: 'Tips:',
   },
   topbar: {
     alerts: {

@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Befeuchten Sie Leder vor dem Schneiden leicht, um Brandspuren zu reduzieren.',
     task_parameters_for_promark_color: 'Passen Sie Pulsbreite und Frequenz an MOPA-Lasern an, um Farben auf Edelstahl oder Titan zu erzeugen.',
     task_slower_for_smoother_acrylic_edge: 'Eine leichte Reduzierung der Schnittgeschwindigkeit kann glattere Acrylkanten erzeugen.',
+    tips: 'Tipps:',
   },
   topbar: {
     alerts: {

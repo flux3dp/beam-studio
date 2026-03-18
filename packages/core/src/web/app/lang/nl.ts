@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Bevochtig leer licht voordat u het snijdt om brandvlekken te verminderen.',
     task_parameters_for_promark_color: 'Pas pulsbreedte en frequentie aan op MOPA-lasers om kleuren te produceren op roestvrij staal of titanium.',
     task_slower_for_smoother_acrylic_edge: 'Het iets verlagen van de snijsnelheid kan gladdere acrylranden produceren.',
+    tips: 'Tips:',
   },
   topbar: {
     alerts: {

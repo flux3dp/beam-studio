@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Lekko zwilż skórę przed cięciem, aby zmniejszyć ślady przypaleń.',
     task_parameters_for_promark_color: 'Dostosuj szerokość impulsu i częstotliwość laserów MOPA, aby uzyskać kolory na stali nierdzewnej lub tytanie.',
     task_slower_for_smoother_acrylic_edge: 'Nieznaczne zmniejszenie prędkości cięcia może dać gładsze krawędzie akrylu.',
+    tips: 'Wskazówki:',
   },
   topbar: {
     alerts: {

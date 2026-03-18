@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Umedeça levemente o couro antes de cortar para reduzir marcas de queimadura.',
     task_parameters_for_promark_color: 'Ajuste a largura de pulso e a frequência nos lasers MOPA para produzir cores em aço inoxidável ou titânio.',
     task_slower_for_smoother_acrylic_edge: 'Reduzir ligeiramente a velocidade de corte pode produzir bordas acrílicas mais lisas.',
+    tips: 'Dicas:',
   },
   topbar: {
     alerts: {

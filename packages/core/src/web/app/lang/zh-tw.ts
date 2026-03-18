@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: '切割皮革前稍微沾濕，可減少燒焦情形。',
     task_parameters_for_promark_color: '透過調整 MOPA 雷射的脈寬與頻率，可在不鏽鋼或鈦上產生不同顏色。',
     task_slower_for_smoother_acrylic_edge: '稍微降低壓克力的切割速度，有助於讓切割邊緣更光滑。',
+    tips: '小技巧：',
   },
   topbar: {
     alerts: {

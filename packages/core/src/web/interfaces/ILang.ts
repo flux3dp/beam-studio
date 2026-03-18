@@ -2210,6 +2210,7 @@ export interface ILang {
     task_leather_moisten_reduce_burn: string;
     task_parameters_for_promark_color: string;
     task_slower_for_smoother_acrylic_edge: string;
+    tips: string;
   };
   topbar: {
     alerts: {

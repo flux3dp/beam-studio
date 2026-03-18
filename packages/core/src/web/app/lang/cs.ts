@@ -2213,6 +2213,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: 'Mírně navlhčete kůži před řezáním, abyste snížili stopy po spálení.',
     task_parameters_for_promark_color: 'Upravte šířku pulzu a frekvenci laserů MOPA pro vytvoření barev na nerezové oceli nebo titanu.',
     task_slower_for_smoother_acrylic_edge: 'Mírné snížení rychlosti řezání může vytvořit hladší hrany akrylu.',
+    tips: 'Tipy:',
   },
   topbar: {
     alerts: {

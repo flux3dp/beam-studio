@@ -2212,6 +2212,7 @@ const lang: ILang = {
     task_leather_moisten_reduce_burn: '切断前に革を軽く湿らせると、焦げ跡を減らすことができます。',
     task_parameters_for_promark_color: 'MOPAレーザーのパルス幅と周波数を調整することで、ステンレス鋼やチタンに色を付けることができます。',
     task_slower_for_smoother_acrylic_edge: '切断速度をわずかに下げると、アクリルのエッジがより滑らかになります。',
+    tips: 'ヒント:',
   },
   topbar: {
     alerts: {
