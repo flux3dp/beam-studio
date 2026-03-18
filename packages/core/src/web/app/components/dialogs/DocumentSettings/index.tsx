@@ -143,17 +143,16 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   });
 
   const dpiOptions = useMemo(() => {
-    const options: EngraveDpiOption[] = workareaObj.engraveDpiOptions ?? defaultEngraveDpiOptions;
-    const list = options.map((value) => ({
+    const options = (workareaObj.engraveDpiOptions ?? defaultEngraveDpiOptions).map((value) => ({
       label: `${tResolution.values[value]} (${dpiValueMap[value]} DPI)`,
       value,
     }));
 
     if (dpiValue === 'mixed') {
-      list.push({ label: tResolution.values.mixed, value: 'mixed' as any });
+      options.push({ label: tResolution.values.mixed, value: 'mixed' as any });
     }
 
-    return list;
+    return options;
   }, [workareaObj.engraveDpiOptions, dpiValue, tResolution.values]);
 
   const {
