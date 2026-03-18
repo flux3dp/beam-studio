@@ -2000,6 +2000,7 @@ const lang: ILang = {
       high: 'Tinggi',
       low: 'Rendah',
       medium: 'Sedang',
+      mixed: 'Campuran',
       ultra: 'Sangat Tinggi',
     },
   },

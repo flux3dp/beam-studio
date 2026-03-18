@@ -2000,6 +2000,7 @@ const lang: ILang = {
       high: 'Vysoké',
       low: 'Nízké',
       medium: 'Střední',
+      mixed: 'Smíšené',
       ultra: 'Ultravysoké',
     },
   },

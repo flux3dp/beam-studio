@@ -2000,6 +2000,7 @@ const lang: ILang = {
       high: '높음',
       low: '낮음',
       medium: '보통',
+      mixed: '혼합',
       ultra: '최고',
     },
   },

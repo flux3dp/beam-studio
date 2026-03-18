@@ -2000,6 +2000,7 @@ const lang: ILang = {
       high: 'Høy',
       low: 'Lav',
       medium: 'Medium',
+      mixed: 'Blandet',
       ultra: 'Ultra høy',
     },
   },

@@ -1997,7 +1997,7 @@ export interface ILang {
   };
   resolution: {
     title: string;
-    values: Record<EngraveDpiOption, string>;
+    values: Record<'mixed' | EngraveDpiOption, string>;
   };
   rotary_settings: {
     circumference: string;

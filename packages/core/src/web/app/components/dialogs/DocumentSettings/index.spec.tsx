@@ -34,10 +34,6 @@ jest.mock('@core/app/actions/alert-caller', () => ({
   popUp: (...args) => mockPopUp(...args),
 }));
 
-jest.mock('@core/app/constants/alert-constants', () => ({
-  CONFIRM_CANCEL: 'CONFIRM_CANCEL',
-}));
-
 const mockUpdate = jest.fn();
 const mockDocumentState = {
   'auto-feeder': false,
@@ -69,9 +65,7 @@ const mockGetState = jest.fn();
 const mockUseDocumentStore = jest.fn();
 
 const mockUseDocumentStoreFunction = (selector?: (state: any) => any) => {
-  if (selector) {
-    return mockUseDocumentStore(selector);
-  }
+  if (selector) return mockUseDocumentStore(selector);
 
   return mockGetState();
 };
@@ -82,18 +76,14 @@ jest.mock('@core/app/stores/documentStore', () => ({
   useDocumentStore: mockUseDocumentStoreFunction,
 }));
 
-const mockStorageState = {
-  isInch: false,
-};
+const mockStorageState = { isInch: false };
 const mockUseStorageStore = jest.fn();
 const mockGetStorage = jest.fn();
 const mockSetStorage = jest.fn();
 const mockStorageSubscribe = jest.fn();
 
 const mockUseStorageStoreFunction = (selector?: (state: any) => any) => {
-  if (selector) {
-    return mockUseStorageStore(selector);
-  }
+  if (selector) return mockUseStorageStore(selector);
 
   return mockStorageState;
 };
@@ -168,6 +158,26 @@ jest.mock('@core/helpers/device/deviceStore', () => ({
   setHexa2RfWatt: (...args) => mockSetHexa2RfWatt(...args),
 }));
 
+const mockGetAllLayers = jest.fn();
+
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  getAllLayers: (...args) => mockGetAllLayers(...args),
+}));
+
+const mockConfigPanelChange = jest.fn();
+
+jest.mock('@core/app/stores/configPanel', () => ({
+  useConfigPanelStore: { getState: () => ({ change: mockConfigPanelChange }) },
+}));
+
+const mockGetData = jest.fn();
+const mockWriteDataLayer = jest.fn();
+
+jest.mock('@core/helpers/layer/layer-config-helper', () => ({
+  getData: (...args) => mockGetData(...args),
+  writeDataLayer: (...args) => mockWriteDataLayer(...args),
+}));
+
 const mockUnmount = jest.fn();
 
 import DocumentSettings from './index';
@@ -181,6 +191,7 @@ describe('test DocumentSettings', () => {
       [LayerModule.PRINTER]: 'Module Printer',
     });
     mockHasModuleLayer.mockReturnValue(false);
+    mockGetAllLayers.mockReturnValue([]);
     mockGetState.mockReturnValue(mockDocumentState);
     mockUseDocumentStore.mockImplementation((selector) => selector(mockDocumentState));
     mockUseStorageStore.mockImplementation((selector) => selector(mockStorageState));
@@ -364,5 +375,68 @@ describe('test DocumentSettings', () => {
         'pass-through': false,
       }),
     );
+  });
+
+  test('change dpis in document settings', async () => {
+    const mockGroup1 = document.createElement('g');
+    const mockGroup2 = document.createElement('g');
+
+    mockGetAllLayers.mockReturnValue([{ getGroup: () => mockGroup1 }, { getGroup: () => mockGroup2 }]);
+    mockGetData.mockReturnValue(undefined);
+
+    const { baseElement, getByText } = render(<DocumentSettings unmount={mockUnmount} />);
+
+    // Open DPI select and pick "High"
+    act(() => fireEvent.mouseDown(baseElement.querySelector('input#dpi-select')));
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="High (500 DPI)"]'));
+
+    fireEvent.click(getByText('Save'));
+
+    expect(mockWriteDataLayer).toHaveBeenCalledTimes(2);
+    expect(mockWriteDataLayer).toHaveBeenCalledWith(mockGroup1, 'dpi', 'high');
+    expect(mockWriteDataLayer).toHaveBeenCalledWith(mockGroup2, 'dpi', 'high');
+    expect(mockConfigPanelChange).toHaveBeenCalledTimes(1);
+    expect(mockConfigPanelChange).toHaveBeenCalledWith({ dpi: 'high' });
+  });
+
+  test('should show mixed dpi option when layers have different dpi values', () => {
+    const mockGroup1 = document.createElement('g');
+    const mockGroup2 = document.createElement('g');
+
+    mockGetAllLayers.mockReturnValue([{ getGroup: () => mockGroup1 }, { getGroup: () => mockGroup2 }]);
+    mockGetData.mockImplementation((group) => {
+      if (group === mockGroup1) return 'low';
+
+      if (group === mockGroup2) return 'high';
+
+      return undefined;
+    });
+
+    const { baseElement } = render(<DocumentSettings unmount={mockUnmount} />);
+
+    // The select should show the "Mixed" value
+    expect(baseElement.querySelector('input#dpi-select')).toHaveValue('');
+    expect(baseElement.querySelector('.ant-select-selection-item[title="Mixed"]')).toBeInTheDocument();
+  });
+
+  test('should not write dpi when mixed is selected on save', async () => {
+    const mockGroup1 = document.createElement('g');
+    const mockGroup2 = document.createElement('g');
+
+    mockGetAllLayers.mockReturnValue([{ getGroup: () => mockGroup1 }, { getGroup: () => mockGroup2 }]);
+    mockGetData.mockImplementation((group) => {
+      if (group === mockGroup1) return 'low';
+
+      if (group === mockGroup2) return 'high';
+
+      return undefined;
+    });
+
+    const { getByText } = render(<DocumentSettings unmount={mockUnmount} />);
+
+    fireEvent.click(getByText('Save'));
+
+    expect(mockWriteDataLayer).not.toHaveBeenCalled();
+    expect(mockConfigPanelChange).not.toHaveBeenCalled();
   });
 });

@@ -2000,6 +2000,7 @@ const lang: ILang = {
       high: 'Cao',
       low: 'Thấp',
       medium: 'Trung bình',
+      mixed: 'Hỗn hợp',
       ultra: 'Rất cao',
     },
   },
