@@ -3,7 +3,6 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
-import { pick } from 'remeda';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
@@ -34,7 +33,7 @@ import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
-import { getData, writeData } from '@core/helpers/layer/layer-config-helper';
+import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
   getDefaultModule,
@@ -128,9 +127,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, [workarea]);
   const [watt, setWatt] = useState(useCanvasStore.getState().watt);
   const isInch = useStorageStore((state) => state.isInch);
-  const { change: changeConfig } = useConfigPanelStore(useShallow(pick(['change'])));
-
-  const [dpiValue, setDpiValue] = useState(() => {
+  const [dpiValue, setDpiValue] = useState<'mixed' | EngraveDpiOption>(() => {
     const defaultDpi = defaultEngraveDpiOptions[0];
     const getDpiFromGroups = (groups: Element[]) => {
       const dpiValues = new Set(groups.map((g) => getData(g, 'dpi') as EngraveDpiOption).filter(Boolean));
@@ -323,9 +320,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     if (dpiValue !== 'mixed') {
       layerManager.getAllLayers().forEach((layer) => {
-        writeData(layer.getName(), 'dpi', dpiValue);
+        writeDataLayer(layer.getGroup(), 'dpi', dpiValue);
       });
-      changeConfig({ dpi: dpiValue as EngraveDpiOption });
+      useConfigPanelStore.getState().change({ dpi: dpiValue });
     }
 
     if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
