@@ -19,12 +19,11 @@ const DEFAULT_BORDER_RADIUS = 0;
 const DEFAULT_ORIENTATION = 1;
 const DEFAULT_RADIUS = 0;
 
-// TODO: Add shape thumbnail assets (e.g., PNG/SVG icons ~64×64px).
 // Import them here and assign below. TypeSelector falls back to text labels when empty.
-const circleThumbnail = '';
-const rectangleThumbnail = '';
-const heartThumbnail = '';
-const hexagonThumbnail = '';
+const circleThumbnail = 'core-img/puzzle-generator/circle.jpg';
+const rectangleThumbnail = 'core-img/puzzle-generator/rectangle.jpg';
+const heartThumbnail = 'core-img/puzzle-generator/heart.jpg';
+const hexagonThumbnail = 'core-img/puzzle-generator/hexagon.jpg';
 
 const generateColumnProperty = (override: Partial<NumberPropertyDef> = {}): NumberPropertyDef => ({
   default: DEFAULT_COLUMNS,
