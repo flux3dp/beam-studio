@@ -206,9 +206,8 @@ describe('AutoFocusButton', () => {
       const { container } = renderComponent({
         selectedDevice: { model: 'unsupported', name: 'Test Device' },
       });
-      const button = container.querySelector('.button');
 
-      expect(button).toHaveClass('disabled');
+      expect(container.querySelector('.button')).toBeNull();
     });
 
     it('should render disabled when mode is not Draw', () => {

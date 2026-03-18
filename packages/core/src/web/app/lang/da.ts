@@ -1380,7 +1380,6 @@ const lang: ILang = {
     area_check: 'Områdekontrol',
     areacheck_desc: 'Sikrer arbejdsområdet ved at vise objektets afgrænsningsboks og laserhovedets accelerationszone.',
     calculating_task: 'Beregner opgave...',
-    continuously: 'Kontinuerligt',
     contour: 'Kontur',
     contour_desc: 'Forhåndsvisning af det faktiske mønsteromrids.',
     framing: 'Indramning',
@@ -1389,6 +1388,7 @@ const lang: ILang = {
     hull_desc: 'Viser en form, der tæt følger designet, som et elastik, der er viklet omkring objektet.',
     low_laser: 'Lav laser',
     low_laser_desc: 'Indstil en lav laserværdi til rammeopgaven.',
+    repeat: 'Gentag',
     rotate_axis: 'Roter akse',
     rotateaxis_desc: 'Forhåndsvisning af rotationsaksens centrum, aksen selv bevæger sig ikke.',
     rotation_frame_warning: 'Rammeforhåndsvisningen vil rotere én gang. Undgå at stoppe midtvejs for at forhindre skæv markering.',
@@ -2230,7 +2230,7 @@ const lang: ILang = {
       start_preview_timeout: '#803 Timeout opstod ved start af forhåndsvisning. Genstart maskinen eller Beam Studio. Hvis fejlen fortsætter, se <a target="_blank" href="https://flux3dp.zendesk.com/hc/en-us/articles/360001791895">denne vejledning</a>.',
       variable_text_warning: 'Dette job indeholder variabel tekst. Systemet vil prioritere gravering af den variable tekst og vil ikke følge lagrækkefølgen.',
     },
-    frame_task: 'Kørende ramme',
+    frame_task: 'Indramning',
     hint: {
       polygon: 'Tryk på + / - tasten for at øge / mindske sider.',
     },
@@ -2433,7 +2433,7 @@ const lang: ILang = {
       text_path: 'Tekst på sti',
       use: 'Importeret objekt',
     },
-    task_preview: 'Opgaverammeforhåndsvisning',
+    task_preview: 'Sti-forhåndsvisning',
     titles: {
       settings: 'Indstillinger',
     },

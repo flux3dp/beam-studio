@@ -22,17 +22,17 @@ describe('verify top bar behaviors under device disconnection', () => {
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
     cy.get('#svg_1').should('exist');
 
-    cy.getTopBar('[title="Running Frame"]').should('exist');
-    cy.getTopBar('[title="Running Frame"]').click();
+    cy.getTopBar('[title="Framing"]').should('exist');
+    cy.getTopBar('[title="Framing"]').click();
     cy.get('.ant-modal-content').contains('#801').should('exist');
   });
 
   if (!isRunningAtGithub) {
     // github does not support webgl
     it('path preview button is disabled', () => {
-      cy.getTopBar('[title="Path preview"]').should('exist');
-      cy.getTopBar('[title="Path preview"]').invoke('attr', 'class').should('contain', 'disabled');
-      cy.getTopBar('[title="Path preview"]').should('have.css', 'pointer-events', 'none');
+      cy.getTopBar('[title="Path Preview"]').should('exist');
+      cy.getTopBar('[title="Path Preview"]').invoke('attr', 'class').should('contain', 'disabled');
+      cy.getTopBar('[title="Path Preview"]').should('have.css', 'pointer-events', 'none');
     });
   }
 

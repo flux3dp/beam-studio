@@ -1380,7 +1380,6 @@ const lang: ILang = {
     area_check: 'Områdekontroll',
     areacheck_desc: 'Sikrer at arbeidsområdet er trygt ved å vise objektets avgrensningsboks og laserhodets akselerasjonssone.',
     calculating_task: 'Beregner oppgave...',
-    continuously: 'Kontinuerlig',
     contour: 'Kontur',
     contour_desc: 'Forhåndsvis den faktiske mønsterkonturen.',
     framing: 'Innramming',
@@ -1389,6 +1388,7 @@ const lang: ILang = {
     hull_desc: 'Viser en form som følger designet tett, som et gummibånd rundt objektet.',
     low_laser: 'Lav laser',
     low_laser_desc: 'Sett en lav effektverdi for laser for innrammingsoppgaven.',
+    repeat: 'Gjenta',
     rotate_axis: 'Roter akse',
     rotateaxis_desc: 'Forhåndsvisning av rotasjonsakslens sentrum, akselen selv beveger seg ikke.',
     rotation_frame_warning: 'Rammeforhåndsvisningen vil rotere én gang. Unngå å stoppe midtveis for å forhindre feiljustering av markeringsposisjonen.',
@@ -2230,7 +2230,7 @@ const lang: ILang = {
       start_preview_timeout: '#803 Tidsavbrudd ved oppstart av forhåndsvisning. Start maskinen eller Beam Studio på nytt. Hvis feilen vedvarer, følg denne veiledningen',
       variable_text_warning: 'Denne jobben inneholder variabel tekst. Systemet vil prioritere gravering av variabel tekstinnhold og ikke følge lagrekkefølgen.',
     },
-    frame_task: 'Kjører ramme',
+    frame_task: 'Innramming',
     hint: {
       polygon: 'Trykk + / -tasten for å øke / redusere sider.',
     },
@@ -2433,7 +2433,7 @@ const lang: ILang = {
       text_path: 'Tekst på bane',
       use: 'Importert objekt',
     },
-    task_preview: 'Oppgaveforhåndsvisning',
+    task_preview: 'Stiforhåndsvisning',
     titles: {
       settings: 'Innstillinger',
     },
