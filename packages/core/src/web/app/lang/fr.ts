@@ -2000,6 +2000,7 @@ const lang: ILang = {
       high: 'Élevé',
       low: 'Faible',
       medium: 'Moyen',
+      mixed: 'Mixte',
       ultra: 'Ultra élevé',
     },
   },

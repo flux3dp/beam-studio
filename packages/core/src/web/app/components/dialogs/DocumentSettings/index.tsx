@@ -3,6 +3,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { QuestionCircleOutlined, SettingFilled, WarningOutlined } from '@ant-design/icons';
 import { Checkbox, ConfigProvider, Segmented, Switch, Tooltip } from 'antd';
 import classNames from 'classnames';
+import { pick } from 'remeda';
 import { match } from 'ts-pattern';
 import { useShallow } from 'zustand/shallow';
 
@@ -15,11 +16,15 @@ import alertConstants from '@core/app/constants/alert-constants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/constants/layer-module/layer-modules';
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
+import type { EngraveDpiOption } from '@core/app/constants/resolutions';
+import { defaultEngraveDpiOptions, dpiValueMap } from '@core/app/constants/resolutions';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
+import layerManager from '@core/app/svgedit/layer/layerManager';
 import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
@@ -29,6 +34,7 @@ import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import isDev from '@core/helpers/is-dev';
+import { getData, writeData } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
   getDefaultModule,
@@ -79,6 +85,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     beambox: { document_panel: tDocument },
     device: tDevice,
     global: tGlobal,
+    resolution: tResolution,
   } = useI18n();
   const {
     autoFeeder: origAutoFeeder,
@@ -121,6 +128,37 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, [workarea]);
   const [watt, setWatt] = useState(useCanvasStore.getState().watt);
   const isInch = useStorageStore((state) => state.isInch);
+  const { change: changeConfig } = useConfigPanelStore(useShallow(pick(['change'])));
+
+  const [dpiValue, setDpiValue] = useState(() => {
+    const defaultDpi = defaultEngraveDpiOptions[0];
+    const getDpiFromGroups = (groups: Element[]) => {
+      const dpiValues = new Set(groups.map((g) => getData(g, 'dpi') as EngraveDpiOption).filter(Boolean));
+
+      if (dpiValues.size > 1) return 'mixed';
+
+      const opt = [...dpiValues][0] as EngraveDpiOption;
+
+      return opt || defaultDpi;
+    };
+
+    return getDpiFromGroups(layerManager.getAllLayers().map((l) => l.getGroup()));
+  });
+
+  const dpiOptions = useMemo(() => {
+    const options: EngraveDpiOption[] = workareaObj.engraveDpiOptions ?? defaultEngraveDpiOptions;
+    const list = options.map((value) => ({
+      label: `${tResolution.values[value]} (${dpiValueMap[value]} DPI)`,
+      value,
+    }));
+
+    if (dpiValue === 'mixed') {
+      list.push({ label: tResolution.values.mixed, value: 'mixed' as any });
+    }
+
+    return list;
+  }, [workareaObj.engraveDpiOptions, dpiValue, tResolution.values]);
+
   const {
     autoFeederHeight,
     autoFeederScale,
@@ -282,6 +320,13 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
     }
 
     update(newState);
+
+    if (dpiValue !== 'mixed') {
+      layerManager.getAllLayers().forEach((layer) => {
+        writeData(layer.getName(), 'dpi', dpiValue);
+      });
+      changeConfig({ dpi: dpiValue as EngraveDpiOption });
+    }
 
     if (workareaChanged || customDimensionChanged || rotaryChanged || passThroughChanged || autoFeederChanged) {
       changeWorkarea(workarea, { toggleModule: workareaChanged });
@@ -522,6 +567,19 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
                 />
               </div>
             )}
+            <div className={styles.row}>
+              <label className={styles.title} htmlFor="dpi-select">
+                {tResolution.title}
+              </label>
+              <Select
+                className={styles.control}
+                id="dpi-select"
+                onChange={(val) => setDpiValue(val)}
+                options={dpiOptions}
+                value={dpiValue}
+                variant="outlined"
+              />
+            </div>
             {!isPromark && (
               <div className={styles.row}>
                 <div className={styles.title}>

@@ -2000,6 +2000,7 @@ const lang: ILang = {
       high: 'Korkea',
       low: 'Matala',
       medium: 'Keskitaso',
+      mixed: 'Sekoitettu',
       ultra: 'Erittäin korkea',
     },
   },
