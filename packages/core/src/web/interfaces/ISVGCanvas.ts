@@ -26,7 +26,6 @@ export default interface ISVGCanvas {
   addAlignEdges: (edges: Array<{ x1: number; x2: number; y1: number; y2: number }>) => void;
   addAlignPoint: (x: number, y: number) => void;
   addCommandToHistory: (command: ICommand) => void;
-  addedNew: boolean;
   addExtension: any;
   addSvgElementFromJson<T = SVGElement>(obj: { attr: any; curStyles?: boolean; element: string }): T;
   addToSelection: (elemsToAdd: SVGElement[], showGrips?: boolean, noCall?: boolean) => void;

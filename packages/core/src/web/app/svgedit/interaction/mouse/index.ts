@@ -1435,8 +1435,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       svgCanvas.selectOnly([t], true);
     }
   } else if (element) {
-    svgCanvas.addedNew = true;
-
     if (useUnit) svgedit.units.convertAttrs(element);
 
     if (element.getAttribute('opacity') !== currentShape.opacity) element.setAttribute('opacity', currentShape.opacity);
