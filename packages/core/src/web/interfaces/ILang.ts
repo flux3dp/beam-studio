@@ -1937,7 +1937,6 @@ export interface ILang {
     board_base: string;
     board_radius: string;
     board_width: string;
-    cancel: string;
     change_image: string;
     columns: string;
     design_preview: string;
@@ -1954,6 +1953,13 @@ export interface ILang {
     image_load_failed: string;
     image_resolution_warning: string;
     import_to_canvas: string;
+    layers: {
+      board_base: string;
+      guide_lines: string;
+      image: string;
+      pieces: string;
+      raised_edges: string;
+    };
     offset_x: string;
     offset_y: string;
     orientation: string;

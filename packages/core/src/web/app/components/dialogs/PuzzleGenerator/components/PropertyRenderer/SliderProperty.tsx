@@ -5,6 +5,7 @@ import { Slider } from 'antd';
 
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
+import useI18n from '@core/helpers/useI18n';
 
 import type { NumberPropertyDef } from '../../types';
 
@@ -12,12 +13,8 @@ import styles from './PropertyRenderer.module.scss';
 
 import type { BasePropertyProps } from './index';
 
-const SliderProperty = ({
-  getLabel,
-  getValue,
-  property,
-  setValue,
-}: BasePropertyProps<NumberPropertyDef>): React.JSX.Element => {
+const SliderProperty = ({ getValue, property, setValue }: BasePropertyProps<NumberPropertyDef>): React.JSX.Element => {
+  const { puzzle_generator: t } = useI18n();
   const isInch = useStorageStore((s) => s.isInch);
   const value = (getValue(property.key) as number) ?? property.default;
 
@@ -38,15 +35,10 @@ const SliderProperty = ({
   return (
     <div className={styles['slider-property']}>
       <div className={styles['slider-header']}>
-        <div className={styles['property-label']}>{getLabel(property.labelKey)}</div>
+        <div className={styles['property-label']}>{t[property.labelKey]}</div>
         <div className={styles['slider-input-group']}>
           {isModified && (
-            <button
-              className={styles['reset-button']}
-              onClick={handleReset}
-              title={getLabel('reset_to_default')}
-              type="button"
-            >
+            <button className={styles['reset-button']} onClick={handleReset} title={t.reset_to_default} type="button">
               <UndoOutlined />
             </button>
           )}

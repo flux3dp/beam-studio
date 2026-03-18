@@ -79,13 +79,13 @@ export const computePuzzleGeometry = (state: PuzzleState, shapeType: ShapeType):
     }
   }
 
-  const edges = generatePuzzleEdges(state, layout, mergeGroups);
   const boundaryPath = generateShapePath(shapeType, {
     centerY: meta.centerYOffset,
     cornerRadius: meta.boundaryCornerRadius,
     height: meta.boundaryHeight,
     width: layout.width,
   });
+  const edges = generatePuzzleEdges(state, layout, mergeGroups, boundaryPath, visibility);
 
   let boardBasePath: string | undefined;
   let raisedEdgesPath: string | undefined;

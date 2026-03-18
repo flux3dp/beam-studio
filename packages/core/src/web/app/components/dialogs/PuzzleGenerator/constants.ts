@@ -40,6 +40,9 @@ export type ColorSet = (typeof COLORS)[ViewMode];
 /** Gap between puzzle and board in exploded view (mm) */
 export const LAYER_GAP = 30;
 
+/** Laser kerf width (mm). Inner edges are trimmed at this inset from the boundary so cuts end cleanly after kerf removal. */
+export const DEFAULT_KERF_WIDTH = 0.2;
+
 /** Default sharpness for heart shape bottom point (0-50 scale) */
 export const DEFAULT_HEART_SHARPNESS = 25;
 
@@ -114,23 +117,3 @@ export const OVERLAY_BOTTOM = THUMB_SIZE + 24;
 
 /** Millimeters per inch for unit conversion */
 export const MM_PER_INCH = 25.4;
-
-// ─────────────────────────────────────────────────────────────────────────────
-// DEFAULT VALUES - Shared between state initialization and property definitions
-// ─────────────────────────────────────────────────────────────────────────────
-
-export const DEFAULT_COLUMNS = 5;
-export const DEFAULT_ROWS = 5;
-export const DEFAULT_PIECE_SIZE = 15;
-export const DEFAULT_TAB_SIZE = 20;
-export const DEFAULT_BORDER_WIDTH = 5;
-export const DEFAULT_BORDER_RADIUS = 0;
-export const DEFAULT_ORIENTATION = 1;
-export const DEFAULT_RADIUS = 0;
-
-/**
- * Hexagon-specific defaults for a more regular-looking hexagon.
- * Regular flat-top hexagon has height/width ratio = √3/2 ≈ 0.866.
- * With 5 columns, optimal is ~4.33 rows. Using 4 rows gives ratio = 0.8 (close to regular).
- */
-export const DEFAULT_HEXAGON_ROWS = 4;

@@ -17,9 +17,8 @@ import TypeSelector from './components/TypeSelector';
 import type { ViewMode } from './constants';
 import { exportToCanvas } from './geometry';
 import styles from './index.module.scss';
-import { getDefaultPuzzleType, getPuzzleTypeById, PUZZLE_TYPES } from './puzzleTypes.config';
+import { getDefaultPuzzleStateById, getDefaultPuzzleType, getPuzzleTypeById, PUZZLE_TYPES } from './puzzleTypes.config';
 import type { NestedStateKey, PuzzleGeometry, PuzzleState, PuzzleStateUpdate, ShapeType } from './types';
-import { createDefaultStateFromConfig } from './types';
 
 const DIALOG_ID = 'puzzle-generator';
 
@@ -28,11 +27,11 @@ interface PuzzleGeneratorProps {
 }
 
 const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element => {
-  const { generators: tGenerators, puzzle_generator: t } = useI18n();
+  const { generators: tGenerators, global: tGlobal, puzzle_generator: t } = useI18n();
   const isMobile = useIsMobile();
 
   const defaultType = getDefaultPuzzleType();
-  const [state, setState] = useState<PuzzleState>(() => createDefaultStateFromConfig(defaultType.id));
+  const [state, setState] = useState<PuzzleState>(() => getDefaultPuzzleStateById(defaultType.id));
   const [isModified, setIsModified] = useState(false);
   const [isExporting, setIsExporting] = useState(false);
 
@@ -52,7 +51,7 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
       if (typeId === state.typeId) return;
 
       const applyTypeChange = () => {
-        setState(createDefaultStateFromConfig(typeId));
+        setState(getDefaultPuzzleStateById(typeId));
         setIsModified(false);
       };
 
@@ -108,7 +107,7 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
       footer={
         <div className={styles.footer}>
           <Button disabled={isExporting} onClick={onClose}>
-            {t.cancel}
+            {tGlobal.cancel}
           </Button>
           <Button loading={isExporting} onClick={handleImport} type="primary">
             {t.import_to_canvas}
@@ -119,7 +118,6 @@ const PuzzleGenerator = ({ onClose }: PuzzleGeneratorProps): React.JSX.Element =
       onCancel={onClose}
       open
       title={tGenerators.puzzle_generator}
-      width={isMobile ? 'calc(100vw - 32px)' : 'calc(100vw - 64px)'}
       wrapClassName={styles['modal-wrap']}
     >
       <div className={classNames(styles.container, { [styles.mobile]: isMobile })}>

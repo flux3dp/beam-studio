@@ -12,6 +12,7 @@
   &.mobile {
     min-height: 250px;
     order: -1; // Show preview first on mobile
+    overflow-y: auto;
   }
 }
 

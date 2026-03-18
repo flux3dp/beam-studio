@@ -1,3 +1,5 @@
+import type { ILang } from '@core/interfaces/ILang';
+
 import type { ViewMode } from './constants';
 
 export type ShapeType = 'circle' | 'heart' | 'hexagon' | 'rectangle';
@@ -82,11 +84,14 @@ export interface ShapeMetadata {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type PropertyType = 'group' | 'image-upload' | 'number' | 'select' | 'slider' | 'toggle';
+type KeysWithType<T, V> = {
+  [K in keyof T]: T[K] extends V ? K : never;
+}[keyof T];
 
 interface BasePropertyDef {
   condition?: (state: PuzzleState) => boolean;
   key: string;
-  labelKey: string;
+  labelKey: KeysWithType<ILang['puzzle_generator'], string>;
   type: PropertyType;
   visible?: boolean;
 }
@@ -102,7 +107,7 @@ export interface NumberPropertyDef extends BasePropertyDef {
 
 export interface SelectPropertyDef extends BasePropertyDef {
   default: number | string;
-  options: Array<{ labelKey: string; value: number | string }>;
+  options: Array<{ labelKey: KeysWithType<ILang['puzzle_generator'], string>; value: number | string }>;
   type: 'select';
 }
 
@@ -200,12 +205,3 @@ export type NestedStateKey = 'border' | 'image';
 export type PuzzleStateUpdate = {
   [K in PuzzleState['typeId']]: Partial<Omit<Extract<PuzzleState, { typeId: K }>, 'typeId'>>;
 }[PuzzleState['typeId']];
-
-/**
- * Creates default puzzle state by deriving values from property configuration.
- * Config (puzzleTypes.config.ts) is the single source of truth for defaults.
- *
- * NOTE: This is now implemented in configToState.ts to avoid circular dependencies.
- * Re-exported here for convenience.
- */
-export { createDefaultStateFromConfig } from './configToState';
