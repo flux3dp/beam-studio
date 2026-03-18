@@ -18,7 +18,7 @@
   // 156 x 104 after accounting border, 3:2 for image display
   width: 160px;
   height: 108px;
-  flex-shrink: 0;
+  flex: 0 0 auto;
   border-radius: 8px;
   border: 2px solid transparent;
   overflow: hidden;
@@ -54,9 +54,5 @@
     color: #999;
     text-align: center;
     padding: 4px;
-  }
-
-  .type-selector.mobile & {
-    flex: 0 0 160px;
   }
 }
