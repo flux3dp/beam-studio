@@ -1,6 +1,6 @@
 import { md5 } from '../../support/utils';
 
-describe('convert to path 2.0', () => {
+describe('to path 2.0', () => {
   const isRunningAtGithub = Cypress.env('envType') === 'github';
   const isWindows = Cypress.platform === 'win32';
   const expectedX = !isRunningAtGithub ? 1000 : isWindows ? 1019 : 1011;
@@ -55,8 +55,8 @@ describe('convert to path 2.0', () => {
     cy.window().then((win) => cy.spy(win.console, 'log').as('log'));
   });
 
-  it('convert to path', () => {
-    cy.get('#convert_to_path').click();
+  it('to path', () => {
+    cy.get('#to_path').click();
     cy.get('#svg_2').should('exist').click({ force: true });
     cy.getElementTitle().should('have.text', 'Layer 1 > Path');
     checkConsoleLog();
@@ -73,7 +73,7 @@ describe('convert to path 2.0', () => {
       .then(($text) => {
         $text.children('tspan')[0].innerHTML = 'hello你好';
       });
-    cy.get('#convert_to_path').click();
+    cy.get('#to_path').click();
     cy.contains('Your text contains characters which are not supported by current font.').should('exist', {
       timeout: 3000,
     });

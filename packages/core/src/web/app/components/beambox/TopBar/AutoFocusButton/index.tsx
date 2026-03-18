@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React, { use, useCallback, useEffect, useMemo, useState } from 'react';
 
 import classNames from 'classnames';
@@ -39,7 +40,7 @@ getSVGAsync((globalSVG) => {
   svgCanvas = globalSVG.Canvas;
 });
 
-const AutoFocusButton = (): React.JSX.Element => {
+const AutoFocusButton = (): ReactNode => {
   const {
     alert,
     beambox,
@@ -223,10 +224,12 @@ const AutoFocusButton = (): React.JSX.Element => {
     return unregister;
   }, [isProcessing, mode]);
 
+  if (!isDeviceSupportAutoFocus) return null;
+
   return (
     <div
       className={classNames(styles.button, {
-        [styles.disabled]: isProcessing || !isDeviceSupportAutoFocus || mode !== CanvasMode.Draw || isPreviewMode,
+        [styles.disabled]: isProcessing || mode !== CanvasMode.Draw || isPreviewMode,
       })}
       onClick={handleClickButton}
       title={lang.title}

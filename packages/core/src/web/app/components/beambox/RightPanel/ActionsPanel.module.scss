@@ -8,8 +8,15 @@
   padding: 8px;
   transition: height 0.1s ease-in 0s;
 
-  .title {
-    @include mixins.title();
+  .section {
+    &:not(:first-child) {
+      margin-top: 4px;
+    }
+
+    .section-title {
+      @include mixins.title();
+      margin-bottom: 8px;
+    }
   }
 
   .btns-container {

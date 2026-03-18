@@ -829,8 +829,6 @@ export interface ILang {
           auto_fit: string;
           bevel: string;
           brightness: string;
-          convert_to_image: string;
-          convert_to_path: string;
           create_textpath: string;
           create_textpath_short: string;
           crop: string;
@@ -854,6 +852,8 @@ export interface ILang {
           sharpen: string;
           simplify: string;
           smart_nest: string;
+          to_image: string;
+          to_path: string;
           trace: string;
           ungrouping: string;
           uploading_font_to_machine: string;
@@ -1382,7 +1382,6 @@ export interface ILang {
     area_check: string;
     areacheck_desc: string;
     calculating_task: string;
-    continuously: string;
     contour: string;
     contour_desc: string;
     framing: string;
@@ -1391,6 +1390,7 @@ export interface ILang {
     hull_desc: string;
     low_laser: string;
     low_laser_desc: string;
+    repeat: string;
     rotate_axis: string;
     rotateaxis_desc: string;
     rotation_frame_warning: string;

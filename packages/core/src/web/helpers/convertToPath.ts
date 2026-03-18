@@ -94,6 +94,56 @@ export const convertTextToPath = async ({
   return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined, status };
 };
 
+export const convertTempGroupToPath = async ({
+  element,
+  isToSelect = false,
+  weldingTexts = false,
+}: {
+  element: SVGElement;
+  isToSelect?: boolean;
+  weldingTexts?: boolean;
+}): Promise<void> => {
+  const elements = svgCanvas.ungroupTempGroup(element);
+  const batchCommand = new BatchCommand('Convert to Path');
+  const paths: SVGElement[] = [];
+
+  for (const el of elements) {
+    if (el.nodeName === 'g' && el.getAttribute('data-textpath-g')) {
+      const { group } = await convertTextOnPathToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+        weldingTexts,
+      });
+
+      if (group) paths.push(group);
+    } else if (el.nodeName === 'text') {
+      const { path } = await convertTextToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+        weldingTexts,
+      });
+
+      if (path) paths.push(path);
+    } else {
+      const { path } = await convertSvgToPath({
+        element: el,
+        isToSelect: false,
+        parentCommand: batchCommand,
+      });
+
+      if (path) paths.push(path);
+    }
+  }
+
+  undoManager.addCommandToHistory(batchCommand);
+
+  if (isToSelect && paths.length > 0) {
+    paths.length === 1 ? svgCanvas.selectOnly(paths) : svgCanvas.multiSelect(paths);
+  }
+};
+
 export const convertTextOnPathToPath = async ({
   element,
   isToSelect: _isToSelect,
