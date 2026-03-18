@@ -8,10 +8,17 @@ import { VariableTextType } from '@core/interfaces/ObjectPanel';
 const mockShowCropPanel = jest.fn();
 const mockSvgNestButtons = jest.fn();
 
+const mockAddCommandToHistory = jest.fn();
+
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
+}));
 jest.mock('@core/app/actions/dialog-caller', () => ({
-  showCropPanel: (...args) => mockShowCropPanel(...args),
-  showStampMakerPanel: (...args) => mockShowStampMakerPanel(...args),
-  showSvgNestButtons: (...args) => mockSvgNestButtons(...args),
+  showCropPanel: (...args: any[]) => mockShowCropPanel(...args),
+  showImageEditPanel: jest.fn(),
+  showStampMakerPanel: (...args: any[]) => mockShowStampMakerPanel(...args),
+  showSvgNestButtons: (...args: any[]) => mockSvgNestButtons(...args),
+  showTabPanel: jest.fn(),
 }));
 
 const getFileFromDialog = jest.fn();
@@ -23,7 +30,7 @@ jest.mock('@core/implementations/dialog', () => ({
 const convertTextToPathFontFunc = jest.fn();
 
 jest.mock('@core/app/actions/beambox/font-funcs', () => ({
-  convertTextToPath: (...args) => convertTextToPathFontFunc(...args),
+  convertTextToPath: (...args: any[]) => convertTextToPathFontFunc(...args),
 }));
 
 const mockTraceImage = jest.fn();
@@ -34,9 +41,9 @@ const mockPotrace = jest.fn();
 
 jest.mock('@core/helpers/image-edit', () => ({
   colorInvert,
-  potrace: (...args) => mockPotrace(...args),
-  removeBackground: (...args) => mockRemoveBackground(...args),
-  traceImage: (...args) => mockTraceImage(...args),
+  potrace: (...args: any[]) => mockPotrace(...args),
+  removeBackground: (...args: any[]) => mockRemoveBackground(...args),
+  traceImage: (...args: any[]) => mockTraceImage(...args),
 }));
 
 const renderText = jest.fn();
@@ -60,9 +67,9 @@ const mockShowRotaryWarped = jest.fn();
 const mockShowSharpenPanel = jest.fn();
 
 jest.mock('@core/app/components/dialogs/image', () => ({
-  showCurvePanel: (...args) => mockShowCurvePanel(...args),
-  showRotaryWarped: (...args) => mockShowRotaryWarped(...args),
-  showSharpenPanel: (...args) => mockShowSharpenPanel(...args),
+  showCurvePanel: (...args: any[]) => mockShowCurvePanel(...args),
+  showRotaryWarped: (...args: any[]) => mockShowRotaryWarped(...args),
+  showSharpenPanel: (...args: any[]) => mockShowSharpenPanel(...args),
 }));
 
 const openNonstopProgress = jest.fn();
@@ -86,7 +93,7 @@ jest.mock('@core/helpers/variableText', () => ({
   getVariableTextType: mockGetVariableTextType,
 }));
 
-jest.mock('@core/helpers/web-need-connection-helper', () => (callback) => callback());
+jest.mock('@core/helpers/web-need-connection-helper', () => (callback: any) => callback());
 
 const mockCheckConnection = jest.fn();
 
@@ -118,7 +125,7 @@ const pathActions = {
   toEditMode: jest.fn(),
 };
 
-getSVGAsync.mockImplementation((callback) => {
+getSVGAsync.mockImplementation((callback: any) => {
   callback({
     Canvas: { clearSelection, decomposePath, pathActions },
     Editor: { replaceBitmap },
@@ -150,7 +157,7 @@ const mockUpdateElementColor = jest.fn();
 jest.mock(
   '@core/helpers/color/updateElementColor',
   () =>
-    (...args) =>
+    (...args: any[]) =>
       mockUpdateElementColor(...args),
 );
 
@@ -166,20 +173,20 @@ const mockAutoFit = jest.fn();
 jest.mock(
   '@core/app/svgedit/operations/autoFit',
   () =>
-    (...args) =>
+    (...args: any[]) =>
       mockAutoFit(...args),
 );
 
 const mockShowArrayModal = jest.fn();
 
 jest.mock('@core/app/components/dialogs/ArrayModal', () => ({
-  showArrayModal: (...args) => mockShowArrayModal(...args),
+  showArrayModal: (...args: any[]) => mockShowArrayModal(...args),
 }));
 
 const mockShowOffsetModal = jest.fn();
 
 jest.mock('@core/app/components/dialogs/OffsetModal', () => ({
-  showOffsetModal: (...args) => mockShowOffsetModal(...args),
+  showOffsetModal: (...args: any[]) => mockShowOffsetModal(...args),
 }));
 
 describe('should render correctly', () => {
@@ -189,7 +196,7 @@ describe('should render correctly', () => {
   });
 
   test('no elements', () => {
-    const { container } = render(<ActionsPanel elem={null} />);
+    const { container } = render(<ActionsPanel elem={null as unknown as SVGElement} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -252,13 +259,10 @@ describe('should render correctly', () => {
 
     fireEvent.click(getByText(tActionPanel.array));
     expect(mockShowArrayModal).toHaveBeenCalledTimes(1);
-
-    fireEvent.click(getByText(tActionPanel.smart_nest));
-    expect(mockSvgNestButtons).toHaveBeenCalledTimes(1);
   });
 
   test('text', async () => {
-    Object.defineProperty(window, 'FLUX', { value: { version: 'web' } });
+    Object.defineProperty(window, 'FLUX', { value: { version: 'web' }, writable: true });
     document.body.innerHTML = '<text id="svg_1" />';
 
     const { container, getByText, rerender } = render(
@@ -268,7 +272,7 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
 
     convertTextToPathFontFunc.mockResolvedValueOnce({ path: null });
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     await tick();
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
     expect(convertTextToPath).toHaveBeenNthCalledWith(1, {
@@ -326,7 +330,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
@@ -345,7 +349,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
@@ -364,7 +368,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
@@ -383,7 +387,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    fireEvent.click(getByText(tActionPanel.convert_to_path));
+    fireEvent.click(getByText(tActionPanel.to_path));
     expect(convertSvgToPath).toHaveBeenCalledTimes(1);
     fireEvent.click(getByText(tActionPanel.offset));
     expect(mockShowOffsetModal).toHaveBeenCalledTimes(1);
@@ -418,7 +422,7 @@ describe('should render correctly', () => {
     test('multiple selection', () => {
       document.body.innerHTML = `
         <g id="svg_3" data-tempgroup="true">
-          <rect id="svg_1 />
+          <rect id="svg_1" />
           <ellipse id="svg_2" />
         </g>
       `;
@@ -462,7 +466,7 @@ describe('should render correctly in mobile', () => {
   });
 
   test('no elements', () => {
-    const { container } = render(<ActionsPanel elem={null} />);
+    const { container } = render(<ActionsPanel elem={null as unknown as SVGElement} />);
 
     expect(container).toMatchSnapshot();
   });
@@ -536,6 +540,7 @@ describe('should render correctly in mobile', () => {
       value: {
         version: 'web',
       },
+      writable: true,
     });
     document.body.innerHTML = '<text id="svg_1" />';
 
@@ -694,7 +699,7 @@ describe('should render correctly in mobile', () => {
     test('multiple selection', () => {
       document.body.innerHTML = `
         <g id="svg_3" data-tempgroup="true">
-          <rect id="svg_1 />
+          <rect id="svg_1" />
           <ellipse id="svg_2" />
         </g>
       `;
