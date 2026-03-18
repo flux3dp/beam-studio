@@ -21,8 +21,7 @@ const rawAndHome = async (updateMessage?: (message: string) => void): Promise<vo
     await deviceMaster.rawHomeZ();
   }
 
-  if (checker.meetRequirement('H_CAM_COMMAND')) await deviceMaster.rawHomeCamera();
-  else await deviceMaster.rawHome();
+  await deviceMaster.rawHomeCamera();
 
   if (rotaryMode) {
     await deviceMaster.rawMoveZRelToLastHome(0);
