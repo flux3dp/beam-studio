@@ -15,8 +15,10 @@
 }
 
 .type-item {
+  // 156 x 104 after accounting border, 3:2 for image display
   width: 160px;
-  height: 120px;
+  height: 108px;
+  flex-shrink: 0;
   border-radius: 8px;
   border: 2px solid transparent;
   overflow: hidden;
