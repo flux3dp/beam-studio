@@ -1996,12 +1996,12 @@ const lang: ILang = {
   resolution: {
     title: 'Độ phân giải',
     values: {
-      detailed: 'Chi tiết',
-      high: 'Cao',
-      low: 'Thấp',
-      medium: 'Trung bình',
-      mixed: 'Hỗn hợp',
-      ultra: 'Rất cao',
+      detailed: 'Siêu Mịn',
+      high: 'Mịn',
+      low: 'Bản Nháp',
+      medium: 'Tiêu Chuẩn',
+      mixed: 'Hỗn Hợp',
+      ultra: 'Ultra HD',
     },
   },
   rotary_settings: {

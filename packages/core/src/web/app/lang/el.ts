@@ -1996,12 +1996,12 @@ const lang: ILang = {
   resolution: {
     title: 'Ανάλυση',
     values: {
-      detailed: 'Λεπτομερής',
-      high: 'Υψηλή',
-      low: 'Χαμηλή',
-      medium: 'Μέτρια',
-      mixed: 'Μικτή',
-      ultra: 'Πολύ υψηλή',
+      detailed: 'Εξαιρετικά Λεπτό',
+      high: 'Λεπτό',
+      low: 'Προσχέδιο',
+      medium: 'Τυπικό',
+      mixed: 'Μικτό',
+      ultra: 'Ultra HD',
     },
   },
   rotary_settings: {

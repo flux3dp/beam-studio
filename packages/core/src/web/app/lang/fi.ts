@@ -1994,14 +1994,14 @@ const lang: ILang = {
     title: 'QR-koodigeneraattori',
   },
   resolution: {
-    title: 'Resoluutio',
+    title: 'Tarkkuus',
     values: {
-      detailed: 'Yksityiskohtainen',
-      high: 'Korkea',
-      low: 'Matala',
-      medium: 'Keskitaso',
+      detailed: 'Ultra Hieno',
+      high: 'Hieno',
+      low: 'Luonnos',
+      medium: 'Vakio',
       mixed: 'Sekoitettu',
-      ultra: 'Erittäin korkea',
+      ultra: 'Ultra HD',
     },
   },
   rotary_settings: {

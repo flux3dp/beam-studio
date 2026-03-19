@@ -1996,12 +1996,12 @@ const lang: ILang = {
   resolution: {
     title: 'Resolusi',
     values: {
-      detailed: 'Terperinci',
-      high: 'Tinggi',
-      low: 'Rendah',
-      medium: 'Sederhana',
+      detailed: 'Ultra Halus',
+      high: 'Halus',
+      low: 'Draf',
+      medium: 'Standard',
       mixed: 'Campuran',
-      ultra: 'Ultra Tinggi',
+      ultra: 'Ultra HD',
     },
   },
   rotary_settings: {
