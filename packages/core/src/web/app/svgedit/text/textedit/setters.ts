@@ -36,7 +36,7 @@ const updateRotation = (elems: SVGElement[]): void => {
     const angle = getRotationAngle(elem);
 
     svgCanvas.setRotationAngle(0, true, elem);
-    renderText(elem);
+    renderText(elem as SVGTextElement);
     svgCanvas.setRotationAngle(angle, true, elem);
   });
 };
@@ -165,7 +165,7 @@ export const setTextContent = (val: string): void => {
   const selectedElements = svgCanvas.getSelectedElems();
   const elem = selectedElements[0];
 
-  renderText(elem, val, true);
+  renderText(elem as SVGTextElement, val, true);
   textActions.init();
   textActions.setCursor();
   textContentEvents.emit('changed');
@@ -180,7 +180,7 @@ export const setFitTextAlign = (text: SVGTextElement, align: FitTextAlign): void
   const command = new history.BatchCommand('Set Fit Text Align');
 
   if (!isVertical) {
-    const anchorRatio = { end: 1, justify: 0, middle: 0.5, start: 0 } as const;
+    const anchorRatio = { end: 1, justify: 0.5, middle: 0.5, start: 0 } as const;
     const oldRatio = anchorRatio[currentAlign];
     const newRatio = anchorRatio[align];
     const width = Number.parseFloat(text.getAttribute('data-fit-text-width') || '0');
