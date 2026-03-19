@@ -1,4 +1,5 @@
-import React, { use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import type { ReactNode } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
 import type { DefaultOptionType } from 'antd/es/select';
@@ -8,7 +9,6 @@ import FontFuncs from '@core/app/actions/beambox/font-funcs';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import dialogCaller from '@core/app/actions/dialog-caller';
-import { ObjectPanelContext } from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelContext';
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
@@ -17,8 +17,8 @@ import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import selector from '@core/app/svgedit/selector';
-import type { Selector } from '@core/app/svgedit/selector';
-import textEdit from '@core/app/svgedit/text/textedit';
+import textEdit, { isFitText } from '@core/app/svgedit/text/textedit';
+import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import Select from '@core/app/widgets/AntdSelect';
 import { getCurrentUser } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -41,13 +41,17 @@ import type { GeneralFont } from '@core/interfaces/IFont';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
+import ObjectPanelController from '../../contexts/ObjectPanelController';
 import InFillBlock from '../InFillBlock';
 import OptionsInput from '../OptionsInput';
-import StartOffsetBlock from '../TextOptions/components/StartOffsetBlock';
-import VerticalAlignBlock from '../TextOptions/components/VerticalAlignBlock';
-import { useFontHandlers } from '../TextOptions/hooks/useFontHandlers';
 import VariableTextBlock from '../VariableTextBlock';
 
+import FitTextAlignBlock from './components/FitTextAlignBlock';
+import FontSizeBlock from './components/FontSizeBlock';
+import StartOffsetBlock from './components/StartOffsetBlock';
+import TextContentBlock from './components/TextContentBlock';
+import VerticalAlignBlock from './components/VerticalAlignBlock';
+import { useFontHandlers } from './hooks/useFontHandlers';
 import styles from './index.module.scss';
 
 let svgCanvas: ISVGCanvas;
@@ -132,31 +136,25 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
-  const { updateObjectPanel } = use(ObjectPanelContext);
   const fontHistory = useStorageStore((state) => state['font-history']);
   const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
-  const selectorRef = useRef<null | Selector>(null);
   const workarea = useWorkarea();
   const showVariableText = useMemo(isVariableTextSupported, [workarea]);
+  const isAllFitText = useMemo(() => textElements.every((element) => isFitText(element)), [textElements]);
 
-  useEffect(() => {
-    selectorRef.current = selector.getSelectorManager().requestSelector(elem);
-
-    return () => {
-      selector.getSelectorManager().releaseSelector(elem);
-      selectorRef.current = null;
-    };
+  const handleSizeChange = useCallback(() => {
+    selector.getSelectorManager().resizeSelectors([elem]);
+    ObjectPanelController.updateDimensionValues(getBBox(elem));
   }, [elem]);
 
   const onConfigChange = useCallback(
     <T extends keyof TextOption>(key: T, value: TextOption[T]) => {
       setConfigs((prev) => ({ ...prev, [key]: { hasMultiValue: false, value } }));
-      selectorRef.current?.resize();
-      updateObjectPanel();
+      handleSizeChange();
     },
-    [updateObjectPanel],
+    [handleSizeChange],
   );
 
   const {
@@ -169,12 +167,9 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     styleOptions,
     waitForWebFont,
   } = useFontHandlers({ elem, fontFamily, onConfigChange, textElements });
-  const {
-    addToHistory,
-    loadGoogleFontBinary: binaryLoader,
-    registerGoogleFont,
-    sessionLoadedFonts,
-  } = useGoogleFontStore();
+  const addToHistory = useGoogleFontStore((s) => s.addToHistory);
+  const binaryLoader = useGoogleFontStore((s) => s.loadGoogleFontBinary);
+  const registerGoogleFont = useGoogleFontStore((s) => s.registerGoogleFont);
 
   // Helper function to apply font changes to text elements with undo support
   const applyFontToElements = useCallback(
@@ -210,11 +205,14 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     [textElements, onConfigChange, waitForWebFont],
   );
 
-  const proactivelyLoadHistoryFonts = useCallback(() => {
-    if (fontHistory && fontHistory.length > 0) {
+  // Proactively load Google fonts from history — separate effect to avoid cascading renders
+  useEffect(() => {
+    if (fontHistory?.length > 0) {
+      const store = useGoogleFontStore.getState();
+
       fontHistory.forEach((family) => {
-        if (!useGoogleFontStore.getState().isGoogleFontLoaded(family)) {
-          useGoogleFontStore.getState().loadGoogleFont(family);
+        if (!store.isGoogleFontLoaded(family)) {
+          store.loadGoogleFont(family);
         }
       });
     }
@@ -254,8 +252,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         return;
       }
 
-      proactivelyLoadHistoryFonts();
-
       for (const textElement of textElements) {
         const elementFontFamily = textEdit.getFontFamilyData(textElement);
         const cleanFontFamily = elementFontFamily.replace(/^['"]|['"]$/g, '');
@@ -263,10 +259,11 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
         let font: GeneralFont;
 
+        const currentSessionLoadedFonts = useGoogleFontStore.getState().sessionLoadedFonts;
         const isGoogleFontFromAnySource =
           !localFontMatch &&
           (fontHistory.some((h) => h.toLowerCase() === cleanFontFamily.toLowerCase()) ||
-            sessionLoadedFonts.has(cleanFontFamily));
+            currentSessionLoadedFonts.has(cleanFontFamily));
 
         if (isGoogleFontFromAnySource) {
           // Create synthetic Google Font object to bypass PostScript lookup
@@ -316,7 +313,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           font.family,
           availableFontFamilies,
           fontHistory,
-          sessionLoadedFonts,
+          currentSessionLoadedFonts,
         );
 
         if (!googleFontIsLoaded && !fontIsLocallyAvailable) {
@@ -357,7 +354,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       }
 
       setConfigs({ ...defaultTextConfigs, ...newConfigs });
-      selectorRef.current?.resize();
+      selector.getSelectorManager().resizeSelectors([elem]);
     };
 
     if (availableFontFamilies.length > 0) {
@@ -365,16 +362,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     } else {
       getFontFamilies();
     }
-  }, [
-    elem,
-    textElements,
-    availableFontFamilies,
-    configs.id.value,
-    getFontFamilies,
-    fontHistory,
-    sessionLoadedFonts,
-    proactivelyLoadHistoryFonts,
-  ]);
+  }, [elem, textElements, availableFontFamilies, configs.id.value, getFontFamilies, fontHistory]);
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
     if (newFamily === 'more-google-fonts') {
@@ -482,7 +470,15 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     [addToHistory, applyFontToElements, binaryLoader, registerGoogleFont],
   );
 
-  const renderFontFamilyBlock = (): React.JSX.Element => {
+  const renderTextContentBlock = (): ReactNode => {
+    if (textElements.length !== 1 || isTextPath) {
+      return null;
+    }
+
+    return <TextContentBlock textElement={textElements[0]} />;
+  };
+
+  const renderFontFamilyBlock = (): ReactNode => {
     const options: FontOption[] = availableFontFamilies.map((family) => getFontFamilyOption(family));
 
     if (isMobile) {
@@ -563,7 +559,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderFontStyleBlock = (): React.JSX.Element => {
+  const renderFontStyleBlock = (): ReactNode => {
     const { fontStyle } = configs;
 
     if (isMobile) {
@@ -627,7 +623,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderLineSpacingBlock = (): React.JSX.Element => {
+  const renderLineSpacingBlock = (): ReactNode => {
     const { lineSpacing } = configs;
 
     return isMobile ? (
@@ -659,7 +655,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderVerticalTextSwitch = (): React.JSX.Element => {
+  const renderVerticalTextSwitch = (): ReactNode => {
     const { isVertical } = configs;
     const checked = !isVertical.hasMultiValue && isVertical.value;
 
@@ -684,7 +680,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderMultiLineTextOptions = (): React.JSX.Element => (
+  const renderMultiLineTextOptions = (): ReactNode => (
     <>
       {renderLineSpacingBlock()}
       {renderLetterSpacingBlock()}
@@ -693,7 +689,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     </>
   );
 
-  const renderTextPathOptions = (): React.JSX.Element => {
+  const renderTextPathOptions = (): ReactNode => {
     const path = Array.from(elem.querySelectorAll('path'));
     const { startOffset, verticalAlign } = configs;
 
@@ -720,20 +716,24 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     <>
       {isMobile ? (
         <>
+          {renderTextContentBlock()}
           {renderFontFamilyBlock()}
           {renderFontStyleBlock()}
-          <FontSizeBlock element={elem} textElements={textElements} />
+          <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
           {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
+          {isAllFitText && <FitTextAlignBlock textElements={textElements} />}
         </>
       ) : (
         <ConfigProvider theme={selectTheme}>
           <div className={styles.panel}>
+            {renderTextContentBlock()}
             {renderFontFamilyBlock()}
             <div className={styles.row}>
-              <FontSizeBlock element={elem} textElements={textElements} />
+              <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
               {renderFontStyleBlock()}
             </div>
             {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
+            {isAllFitText && <div className={styles.row}>{<FitTextAlignBlock textElements={textElements} />}</div>}
             {!isTextPath && showVariableText && (
               <VariableTextBlock elems={textElements} id={configs.id.value} withDivider />
             )}

@@ -4,27 +4,11 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 
 const mockGetFontSize = jest.fn();
 const mockSetFontSize = jest.fn();
-const mockResizeSelectors = jest.fn();
-const mockGetBBox = jest.fn().mockReturnValue({ height: 100, width: 200, x: 0, y: 0 });
-const mockUpdateDimensionValues = jest.fn();
 let mockIsMobile = false;
 
 jest.mock('@core/app/svgedit/text/textedit', () => ({
-  __esModule: true,
   getFontSize: (...args: any[]) => mockGetFontSize(...args),
   setFontSize: (...args: any[]) => mockSetFontSize(...args),
-}));
-
-jest.mock('@core/app/svgedit/selector', () => ({
-  getSelectorManager: () => ({ resizeSelectors: mockResizeSelectors }),
-}));
-
-jest.mock('@core/app/svgedit/utils/getBBox', () => ({
-  getBBox: (...args: any[]) => mockGetBBox(...args),
-}));
-
-jest.mock('../../../contexts/ObjectPanelController', () => ({
-  updateDimensionValues: (...args: any[]) => mockUpdateDimensionValues(...args),
 }));
 
 jest.mock('@core/helpers/system-helper', () => ({
@@ -50,7 +34,6 @@ jest.mock('../../OptionsInput', () => ({ displayMultiValue, id, onChange, value 
 import FontSizeBlock from './FontSizeBlock';
 
 describe('FontSizeBlock', () => {
-  const mockElement = document.createElementNS('http://www.w3.org/2000/svg', 'g') as unknown as SVGElement;
   const mockTextElement = document.createElementNS('http://www.w3.org/2000/svg', 'text') as unknown as SVGTextElement;
 
   beforeEach(() => {
@@ -60,7 +43,7 @@ describe('FontSizeBlock', () => {
   });
 
   test('should render desktop OptionsInput with font size value', () => {
-    const { getByTestId } = render(<FontSizeBlock element={mockElement} textElements={[mockTextElement]} />);
+    const { getByTestId } = render(<FontSizeBlock textElements={[mockTextElement]} />);
     const wrapper = getByTestId('desktop-input-wrapper');
 
     expect(wrapper.textContent).toContain('value:20');
@@ -70,7 +53,7 @@ describe('FontSizeBlock', () => {
   test('should render mobile ObjectPanelItem.Number when isMobile', () => {
     mockIsMobile = true;
 
-    const { getByTestId } = render(<FontSizeBlock element={mockElement} textElements={[mockTextElement]} />);
+    const { getByTestId } = render(<FontSizeBlock textElements={[mockTextElement]} />);
     const wrapper = getByTestId('mobile-number');
 
     expect(wrapper.textContent).toContain('value:20');
@@ -83,29 +66,41 @@ describe('FontSizeBlock', () => {
 
     mockGetFontSize.mockImplementation((el) => (el === textElem1 ? 20 : 30));
 
-    const { getByTestId } = render(<FontSizeBlock element={mockElement} textElements={[textElem1, textElem2]} />);
+    const { getByTestId } = render(<FontSizeBlock textElements={[textElem1, textElem2]} />);
 
     expect(getByTestId('desktop-input-wrapper').textContent).toContain('multi:true');
   });
 
-  test('should call setFontSize and update selectors on change', () => {
-    const { getByTestId } = render(<FontSizeBlock element={mockElement} textElements={[mockTextElement]} />);
+  test('should call setFontSize and onSizeChange on change', () => {
+    const mockOnSizeChange = jest.fn();
+
+    const { getByTestId } = render(<FontSizeBlock onSizeChange={mockOnSizeChange} textElements={[mockTextElement]} />);
 
     fireEvent.change(getByTestId('desktop-input'), { target: { value: '48' } });
 
     expect(mockSetFontSize).toHaveBeenCalledWith(48, [mockTextElement]);
-    expect(mockResizeSelectors).toHaveBeenCalledWith([mockElement]);
-    expect(mockUpdateDimensionValues).toHaveBeenCalledWith(mockGetBBox(mockElement));
+    expect(mockOnSizeChange).toHaveBeenCalled();
   });
 
   test('should call setFontSize on mobile input change', () => {
     mockIsMobile = true;
 
-    const { getByTestId } = render(<FontSizeBlock element={mockElement} textElements={[mockTextElement]} />);
+    const mockOnSizeChange = jest.fn();
+
+    const { getByTestId } = render(<FontSizeBlock onSizeChange={mockOnSizeChange} textElements={[mockTextElement]} />);
 
     fireEvent.change(getByTestId('mobile-input'), { target: { value: '36' } });
 
     expect(mockSetFontSize).toHaveBeenCalledWith(36, [mockTextElement]);
+    expect(mockOnSizeChange).toHaveBeenCalled();
+  });
+
+  test('should work without onSizeChange callback', () => {
+    const { getByTestId } = render(<FontSizeBlock textElements={[mockTextElement]} />);
+
+    fireEvent.change(getByTestId('desktop-input'), { target: { value: '48' } });
+
+    expect(mockSetFontSize).toHaveBeenCalledWith(48, [mockTextElement]);
   });
 
   test('should update state when font-size attribute mutates', async () => {
@@ -113,7 +108,7 @@ describe('FontSizeBlock', () => {
 
     mockGetFontSize.mockReturnValue(20);
 
-    const { getByTestId } = render(<FontSizeBlock element={mockElement} textElements={[textEl]} />);
+    const { getByTestId } = render(<FontSizeBlock textElements={[textEl]} />);
 
     expect(getByTestId('desktop-input-wrapper').textContent).toContain('value:20');
 
@@ -129,7 +124,7 @@ describe('FontSizeBlock', () => {
   test('should disconnect observer on unmount', () => {
     const disconnectSpy = jest.spyOn(MutationObserver.prototype, 'disconnect');
 
-    const { unmount } = render(<FontSizeBlock element={mockElement} textElements={[mockTextElement]} />);
+    const { unmount } = render(<FontSizeBlock textElements={[mockTextElement]} />);
 
     unmount();
 

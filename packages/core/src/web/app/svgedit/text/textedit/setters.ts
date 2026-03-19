@@ -1,12 +1,12 @@
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import textActions from '@core/app/svgedit/text/textactions';
-import { getRotationAngle } from '@core/app/svgedit/transform/rotation';
+import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import changeAttribute from '../../history/changeAttribute';
+import changeAttribute, { changeElementsAttribute } from '../../history/changeAttribute';
 import history from '../../history/history';
 import undoManager from '../../history/undoManager';
 
@@ -35,69 +35,46 @@ const updateRotation = (elems: SVGElement[]): void => {
   elems.forEach((elem) => {
     const angle = getRotationAngle(elem);
 
-    svgCanvas.setRotationAngle(0, true, elem);
+    setRotationAngle(elem, 0, { addToHistory: false });
     renderText(elem as SVGTextElement);
-    svgCanvas.setRotationAngle(angle, true, elem);
+    setRotationAngle(elem, angle, { addToHistory: false });
   });
 };
 
 export const setFontFamily = (val: string, isSubCmd = false, elems: SVGTextElement[]): ICommand | null => {
-  let cmd: ICommand | null = null;
   const quotedVal = `'${val}'`;
 
   getCurText().font_family = quotedVal;
 
-  if (isSubCmd) {
-    svgCanvas.undoMgr.beginUndoableChange('font-family', elems);
-    svgCanvas.changeSelectedAttributeNoUndo('font-family', quotedVal, elems);
-    cmd = svgCanvas.undoMgr.finishUndoableChange();
-  } else {
-    svgCanvas.changeSelectedAttribute('font-family', quotedVal);
-  }
+  const cmd = changeElementsAttribute(elems, { 'font-family': quotedVal }, { addToHistory: !isSubCmd });
 
   initCursor(elems);
 
-  return cmd;
+  return cmd.isEmpty() ? null : cmd;
 };
 
 export const setFontPostscriptName = (val: string, isSubCmd: boolean, elems: SVGTextElement[]): ICommand | null => {
-  let cmd: ICommand | null = null;
-
   getCurText().font_postscriptName = val;
 
-  if (isSubCmd) {
-    svgCanvas.undoMgr.beginUndoableChange('font-postscript', elems);
-    svgCanvas.changeSelectedAttributeNoUndo('font-postscript', val, elems);
-    cmd = svgCanvas.undoMgr.finishUndoableChange();
-  } else {
-    svgCanvas.changeSelectedAttribute('font-postscript', val, elems);
-  }
+  const cmd = changeElementsAttribute(elems, { 'font-postscript': val }, { addToHistory: !isSubCmd });
 
-  return cmd;
+  return cmd.isEmpty() ? null : cmd;
 };
 
 export const setFontSize = (val: number, textElems: SVGTextElement[]): void => {
   getCurText().font_size = val;
-  svgCanvas.changeSelectedAttribute('font-size', val, textElems);
+  changeElementsAttribute(textElems, { 'font-size': val.toString() });
   textActions.setFontSize(val);
   initCursor(textElems);
   renderAll(textElems);
 };
 
 export const setFontWeight = (fontWeight: number, isSubCmd: boolean, textElems: SVGTextElement[]): ICommand | null => {
-  let cmd = null;
-
-  if (isSubCmd) {
-    svgCanvas.undoMgr.beginUndoableChange('font-weight', textElems);
-    svgCanvas.changeSelectedAttributeNoUndo('font-weight', fontWeight || 'normal', textElems);
-    cmd = svgCanvas.undoMgr.finishUndoableChange();
-  } else {
-    svgCanvas.changeSelectedAttribute('font-weight', fontWeight || 'normal', textElems);
-  }
+  const cmd = changeElementsAttribute(textElems, { 'font-weight': fontWeight.toString() }, { addToHistory: !isSubCmd });
 
   initCursor(textElems);
 
-  return cmd;
+  return cmd.isEmpty() ? null : cmd;
 };
 
 export const setIsVertical = (val: boolean, textElems: SVGTextElement[]): void => {
@@ -130,29 +107,27 @@ export const setIsVertical = (val: boolean, textElems: SVGTextElement[]): void =
 };
 
 export const setItalic = (val: boolean, isSubCmd = false, textElems: SVGTextElement[]): ICommand | null => {
-  let cmd = null;
-
-  if (isSubCmd) {
-    svgCanvas.undoMgr.beginUndoableChange('font-style', textElems);
-    svgCanvas.changeSelectedAttributeNoUndo('font-style', val ? 'italic' : 'normal', textElems);
-    cmd = svgCanvas.undoMgr.finishUndoableChange();
-  } else {
-    svgCanvas.changeSelectedAttribute('font-style', val ? 'italic' : 'normal', textElems);
-  }
+  const command = changeElementsAttribute(
+    textElems,
+    { 'font-style': val ? 'italic' : 'normal' },
+    { addToHistory: !isSubCmd },
+  );
 
   initCursor(textElems);
 
-  return cmd;
+  return command.isEmpty() ? null : command;
 };
 
 export const setLetterSpacing = (val: number, textElems: SVGTextElement[]): void => {
-  svgCanvas.changeSelectedAttribute('letter-spacing', val ? `${val.toString()}em` : '0em', textElems);
+  const newValue = val ? `${val.toString()}em` : '0em';
+
+  changeElementsAttribute(textElems, { 'letter-spacing': newValue });
   renderAll(textElems);
   initCursor(textElems);
 };
 
 export const setLineSpacing = (val: number, textElems: SVGTextElement[]): void => {
-  svgCanvas.changeSelectedAttribute('data-line-spacing', val, textElems);
+  changeElementsAttribute(textElems, { 'data-line-spacing': val.toString() });
   initCursor(textElems);
   updateRotation(textElems);
 };

@@ -1,4 +1,7 @@
-import { ChangeElementCommand } from './history';
+import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
+
+import { BatchCommand, ChangeElementCommand } from './history';
+import undoManager from './undoManager';
 
 export const changeAttribute = (elem: Element, newAttributes: Record<string, string>): ChangeElementCommand | null => {
   const oldAttributes: Record<string, string> = {};
@@ -20,6 +23,32 @@ export const changeAttribute = (elem: Element, newAttributes: Record<string, str
   }
 
   return new ChangeElementCommand(elem, oldAttributes);
+};
+
+export const changeElementsAttribute = (
+  elems: Element[],
+  newAttributes: Record<string, string>,
+  { addToHistory = true, parentCmd }: HistoryActionOptions = {},
+): IBatchCommand => {
+  const batchCmd = new BatchCommand('Change Elements Attribute');
+
+  elems.forEach((elem) => {
+    const cmd = changeAttribute(elem, newAttributes);
+
+    if (cmd) {
+      batchCmd.addSubCommand(cmd);
+    }
+  });
+
+  if (!batchCmd.isEmpty()) {
+    if (parentCmd) {
+      parentCmd.addSubCommand(batchCmd);
+    } else if (addToHistory) {
+      undoManager.addCommandToHistory(batchCmd);
+    }
+  }
+
+  return batchCmd;
 };
 
 export default changeAttribute;

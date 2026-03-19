@@ -1,20 +1,12 @@
 import React, { memo, useEffect, useState } from 'react';
 
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
-import selector from '@core/app/svgedit/selector';
 import { getFontSize, setFontSize } from '@core/app/svgedit/text/textedit';
-import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
-import ObjectPanelController from '../../../contexts/ObjectPanelController';
 import OptionsInput from '../../OptionsInput';
 import styles from '../index.module.scss';
-
-interface Props {
-  element: SVGElement;
-  textElements: SVGTextElement[];
-}
 
 const readValues = (textElements: SVGTextElement[]) => {
   if (textElements.length === 0) return { hasMultiValue: false, value: 0 };
@@ -32,7 +24,12 @@ const readValues = (textElements: SVGTextElement[]) => {
   return { hasMultiValue, value: first };
 };
 
-const FontSizeBlock = ({ element, textElements }: Props): React.ReactNode => {
+interface Props {
+  onSizeChange?: () => void;
+  textElements: SVGTextElement[];
+}
+
+const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode => {
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
@@ -59,8 +56,7 @@ const FontSizeBlock = ({ element, textElements }: Props): React.ReactNode => {
 
     setFontSize(val, textElements);
     setState({ hasMultiValue: false, value: val });
-    selector.getSelectorManager().resizeSelectors([element]);
-    ObjectPanelController.updateDimensionValues(getBBox(element));
+    onSizeChange?.();
   };
 
   if (isMobile) {

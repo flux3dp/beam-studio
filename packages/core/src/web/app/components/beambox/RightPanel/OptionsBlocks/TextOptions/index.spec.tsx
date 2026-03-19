@@ -20,7 +20,6 @@ enum VerticalAlign {
 
 const mockUseIsMobile = jest.fn();
 const mockUseWorkarea = jest.fn();
-const mockUpdateObjectPanel = jest.fn();
 const mockGetFontPostscriptName = jest.fn();
 const mockGetFontFamilyData = jest.fn();
 const mockGetFontWeight = jest.fn();
@@ -51,10 +50,10 @@ const mockGetWebFontPreviewUrl = jest.fn();
 const mockGetCurrentUser = jest.fn();
 const mockOpenNonstopProgress = jest.fn();
 const mockPopById = jest.fn();
-const mockRequestSelector = jest.fn();
-const mockReleaseSelector = jest.fn();
-const mockResize = jest.fn();
+const mockResizeSelectors = jest.fn();
 const mockAddCommandToHistory = jest.fn();
+const mockGetBBox = jest.fn().mockReturnValue({ height: 100, width: 200, x: 0, y: 0 });
+const mockUpdateDimensionValues = jest.fn();
 const mockBatchCommand = jest.fn();
 const mockShowGoogleFontsPanel = jest.fn();
 const mockRegisterGoogleFont = jest.fn();
@@ -63,7 +62,6 @@ const mockLoadGoogleFontBinary = jest.fn();
 const mockIsGoogleFontLoaded = jest.fn();
 const mockLoadGoogleFont = jest.fn();
 const mockSessionLoadedFonts = new Set();
-const mockHandleFontSizeChange = jest.fn();
 const mockHandleFontStyleChange = jest.fn();
 const mockHandleLetterSpacingChange = jest.fn();
 const mockHandleLineSpacingChange = jest.fn();
@@ -120,14 +118,16 @@ jest.mock('antd', () => {
 
 jest.mock('@core/helpers/hooks/useWorkarea', () => () => mockUseWorkarea());
 
-jest.mock('@core/app/components/beambox/RightPanel/contexts/ObjectPanelContext', () => ({
-  ObjectPanelContext: {
-    Consumer: ({ children }) => children({}),
-    Provider: ({ children }) => children,
-  },
+jest.mock('@core/app/svgedit/utils/getBBox', () => ({
+  getBBox: (...args: any[]) => mockGetBBox(...args),
+}));
+
+jest.mock('../../contexts/ObjectPanelController', () => ({
+  updateDimensionValues: (...args: any[]) => mockUpdateDimensionValues(...args),
 }));
 
 const mockTextEdit = {
+  getFitTextAlign: jest.fn().mockReturnValue('start'),
   getFontFamilyData: (...args: any[]) => mockGetFontFamilyData(...args),
   getFontPostscriptName: (...args: any[]) => mockGetFontPostscriptName(...args),
   getFontSize: (...args: any[]) => mockGetFontSize(...args),
@@ -136,6 +136,10 @@ const mockTextEdit = {
   getItalic: (...args: any[]) => mockGetItalic(...args),
   getLetterSpacing: (...args: any[]) => mockGetLetterSpacing(...args),
   getLineSpacing: (...args: any[]) => mockGetLineSpacing(...args),
+  getTextContent: jest.fn().mockReturnValue(''),
+  isFitText: jest.fn().mockReturnValue(false),
+  renderText: jest.fn(),
+  setFitTextAlign: jest.fn(),
   setFontFamily: (...args: any[]) => mockSetFontFamily(...args),
   setFontPostscriptName: (...args: any[]) => mockSetFontPostscriptName(...args),
   setFontSize: (...args: any[]) => mockSetFontSize(...args),
@@ -144,9 +148,14 @@ const mockTextEdit = {
   setItalic: (...args: any[]) => mockSetItalic(...args),
   setLetterSpacing: (...args: any[]) => mockSetLetterSpacing(...args),
   setLineSpacing: (...args: any[]) => mockSetLineSpacing(...args),
+  textContentEvents: { emit: jest.fn(), on: jest.fn(), removeListener: jest.fn() },
 };
 
-jest.mock('@core/app/svgedit/text/textedit', () => mockTextEdit);
+jest.mock('@core/app/svgedit/text/textedit', () => ({
+  __esModule: true,
+  default: mockTextEdit,
+  ...mockTextEdit,
+}));
 
 const mockTextPathEdit = {
   getStartOffset: (...args: any[]) => mockGetStartOffset(...args),
@@ -195,19 +204,11 @@ jest.mock('@core/app/actions/progress-caller', () => ({
   default: mockProgressCaller,
 }));
 
-const mockSelector = {
+jest.mock('@core/app/svgedit/selector', () => ({
   getSelectorManager: () => ({
-    releaseSelector: (...args: any[]) => mockReleaseSelector(...args),
-    requestSelector: (...args: any[]) => {
-      mockRequestSelector(...args);
-
-      return { resize: mockResize };
-    },
-    resizeSelectors: jest.fn(),
+    resizeSelectors: (...args: any[]) => mockResizeSelectors(...args),
   }),
-};
-
-jest.mock('@core/app/svgedit/selector', () => mockSelector);
+}));
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback: any) => {
@@ -229,6 +230,13 @@ jest.mock('@core/app/svgedit/history/history', () => ({
       this.addSubCommand = jest.fn();
     }
   },
+  ChangeTextCommand: class {
+    constructor(
+      public elem: any,
+      public oldText: string,
+      public newText: string,
+    ) {}
+  },
 }));
 
 jest.mock('@core/helpers/eventEmitterFactory', () => ({
@@ -246,31 +254,28 @@ jest.mock('@core/app/actions/dialog-caller', () => ({
   showGoogleFontsPanel: (...args: any[]) => mockShowGoogleFontsPanel(...args),
 }));
 
-jest.mock('@core/app/stores/googleFontStore', () => ({
-  useGoogleFontStore: Object.assign(
-    jest.fn(() => ({
-      addToHistory: mockAddToHistory,
-      getState: () => ({
-        isGoogleFontLoaded: mockIsGoogleFontLoaded,
-        loadGoogleFont: mockLoadGoogleFont,
-      }),
-      isGoogleFontLoaded: mockIsGoogleFontLoaded,
-      loadGoogleFont: mockLoadGoogleFont,
-      loadGoogleFontBinary: mockLoadGoogleFontBinary,
-      sessionLoadedFonts: mockSessionLoadedFonts,
-    })),
-    {
-      getState: () => ({
-        isGoogleFontLoaded: mockIsGoogleFontLoaded,
-        loadGoogleFont: mockLoadGoogleFont,
-      }),
-    },
-  ),
-}));
+jest.mock('@core/app/stores/googleFontStore', () => {
+  const storeState = {
+    addToHistory: mockAddToHistory,
+    isGoogleFontLoaded: mockIsGoogleFontLoaded,
+    loadGoogleFont: mockLoadGoogleFont,
+    loadGoogleFontBinary: mockLoadGoogleFontBinary,
+    registerGoogleFont: jest.fn(),
+    sessionLoadedFonts: mockSessionLoadedFonts,
+  };
+
+  return {
+    useGoogleFontStore: Object.assign(
+      jest.fn((selector?: (s: typeof storeState) => unknown) => (selector ? selector(storeState) : storeState)),
+      {
+        getState: () => storeState,
+      },
+    ),
+  };
+});
 
 jest.mock('../TextOptions/hooks/useFontHandlers', () => ({
   useFontHandlers: jest.fn(() => ({
-    handleFontSizeChange: mockHandleFontSizeChange,
     handleFontStyleChange: mockHandleFontStyleChange,
     handleLetterSpacingChange: mockHandleLetterSpacingChange,
     handleLineSpacingChange: mockHandleLineSpacingChange,
@@ -281,6 +286,14 @@ jest.mock('../TextOptions/hooks/useFontHandlers', () => ({
     waitForWebFont: mockWaitForWebFont,
   })),
 }));
+
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: jest.fn(),
+}));
+
+jest.mock('../TextOptions/components/TextContentBlock', () => ({ textElement }: any) => (
+  <div>mock-text-content-block textElement:{textElement?.tagName}</div>
+));
 
 jest.mock('../InFillBlock', () => ({ elems, id, label }: any) => (
   <div>
@@ -418,7 +431,6 @@ describe('TextOptions', () => {
 
     mockUseIsMobile.mockReturnValue(false);
     mockUseWorkarea.mockReturnValue('laser');
-    mockUpdateObjectPanel.mockReturnValue(jest.fn());
 
     // Reset Google Font related mocks
     mockSessionLoadedFonts.clear();
@@ -430,10 +442,6 @@ describe('TextOptions', () => {
     mockRegisterGoogleFont.mockReturnValue(undefined);
 
     // Reset font handler mocks
-    mockHandleFontSizeChange.mockImplementation((val) => {
-      mockSetFontSize(val, [mockTextElement]);
-      mockResize();
-    });
     mockHandleFontStyleChange.mockImplementation((val) => {
       mockSetFontPostscriptName('Arial-' + val, true, [mockTextElement]);
       mockSetItalic(val.includes('Italic'), true, [mockTextElement]);
@@ -442,15 +450,12 @@ describe('TextOptions', () => {
     });
     mockHandleLetterSpacingChange.mockImplementation((val) => {
       mockSetLetterSpacing(val, [mockTextElement]);
-      mockResize();
     });
     mockHandleLineSpacingChange.mockImplementation((val) => {
       mockSetLineSpacing(val, [mockTextElement]);
-      mockResize();
     });
     mockHandleVerticalTextClick.mockImplementation((checked) => {
       mockSetIsVertical(!checked, [mockTextElement]);
-      mockResize();
     });
     mockWaitForWebFont.mockResolvedValue(undefined);
 
@@ -501,7 +506,6 @@ describe('TextOptions', () => {
       writable: true,
     });
 
-    React.use = jest.fn().mockReturnValue({ updateObjectPanel: mockUpdateObjectPanel });
   });
 
   describe('Desktop view', () => {
@@ -509,7 +513,6 @@ describe('TextOptions', () => {
       const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 
       expect(container).toMatchSnapshot();
-      expect(mockRequestSelector).toHaveBeenCalledWith(mockElem);
     });
 
     test('should render correctly for text path', () => {
@@ -561,9 +564,7 @@ describe('TextOptions', () => {
 
       fireEvent.change(fontSizeInput!, { target: { value: '300' } });
 
-      expect(mockHandleFontSizeChange).toHaveBeenCalledWith(300);
       expect(mockSetFontSize).toHaveBeenCalledWith(300, [mockTextElement]);
-      expect(mockResize).toHaveBeenCalled();
     });
 
     test('should handle letter spacing change', () => {
@@ -576,7 +577,6 @@ describe('TextOptions', () => {
 
       expect(mockHandleLetterSpacingChange).toHaveBeenCalledWith(0.5);
       expect(mockSetLetterSpacing).toHaveBeenCalledWith(0.5, [mockTextElement]);
-      expect(mockResize).toHaveBeenCalled();
     });
 
     test('should handle line spacing change', () => {
@@ -589,7 +589,6 @@ describe('TextOptions', () => {
 
       expect(mockHandleLineSpacingChange).toHaveBeenCalledWith(1.5);
       expect(mockSetLineSpacing).toHaveBeenCalledWith(1.5, [mockTextElement]);
-      expect(mockResize).toHaveBeenCalled();
     });
 
     test('should handle vertical text toggle', () => {
@@ -601,7 +600,6 @@ describe('TextOptions', () => {
 
       expect(mockHandleVerticalTextClick).toHaveBeenCalledWith(false);
       expect(mockSetIsVertical).toHaveBeenCalledWith(true, [mockTextElement]);
-      expect(mockResize).toHaveBeenCalled();
     });
 
     test('should handle multiple text elements', () => {
@@ -785,13 +783,4 @@ describe('TextOptions', () => {
     });
   });
 
-  describe('Component cleanup', () => {
-    test('should release selector on unmount', () => {
-      const { unmount } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
-
-      unmount();
-
-      expect(mockReleaseSelector).toHaveBeenCalledWith(mockElem);
-    });
-  });
 });
