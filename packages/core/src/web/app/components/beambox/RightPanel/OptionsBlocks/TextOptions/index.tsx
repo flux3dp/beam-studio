@@ -84,7 +84,7 @@ const isGoogleFontLoaded = (
 };
 
 interface Props {
-  elem: Element;
+  elem: SVGElement;
   isTextPath?: boolean;
   showColorPanel?: boolean;
   textElements: SVGTextElement[];
@@ -92,7 +92,6 @@ interface Props {
 
 const defaultTextConfigs: TextConfig = {
   fontFamily: { hasMultiValue: false, value: '' },
-  fontSize: { hasMultiValue: false, value: 200 },
   fontStyle: { hasMultiValue: false, value: '' },
   id: { hasMultiValue: false, value: '' },
   isVertical: { hasMultiValue: false, value: false },
@@ -161,7 +160,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   );
 
   const {
-    handleFontSizeChange,
     handleFontStyleChange,
     handleLetterSpacingChange,
     handleLineSpacingChange,
@@ -344,7 +342,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
         updateConfigs(newConfigs, 'fontFamily', () => font.family);
         updateConfigs(newConfigs, 'fontStyle', () => font.style);
-        updateConfigs(newConfigs, 'fontSize', () => textEdit.getFontSize(textElement));
         updateConfigs(newConfigs, 'letterSpacing', () => textEdit.getLetterSpacing(textElement));
         updateConfigs(newConfigs, 'lineSpacing', () => textEdit.getLineSpacing(textElement));
         updateConfigs(newConfigs, 'isVertical', () => textEdit.getIsVertical(textElement));
@@ -601,37 +598,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderFontSizeBlock = (): React.JSX.Element => {
-    const { fontSize } = configs;
-
-    return isMobile ? (
-      <ObjectPanelItem.Number
-        decimal={0}
-        hasMultiValue={fontSize.hasMultiValue}
-        id="font_size"
-        label={langOptionPanel.font_size}
-        min={1}
-        unit="px"
-        updateValue={handleFontSizeChange}
-        value={fontSize.value}
-      />
-    ) : (
-      <div className={styles['font-size']} title={langOptionPanel.font_size}>
-        <OptionsInput
-          displayMultiValue={fontSize.hasMultiValue}
-          id="font_size"
-          min={1}
-          onChange={handleFontSizeChange}
-          precision={0}
-          unit="px"
-          value={fontSize.value}
-          width={68}
-        />
-      </div>
-    );
-  };
-
-  const renderLetterSpacingBlock = (): React.JSX.Element => {
+  const renderLetterSpacingBlock = (): ReactNode => {
     const { letterSpacing } = configs;
 
     return isMobile ? (
@@ -755,7 +722,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         <>
           {renderFontFamilyBlock()}
           {renderFontStyleBlock()}
-          {renderFontSizeBlock()}
+          <FontSizeBlock element={elem} textElements={textElements} />
           {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
         </>
       ) : (
@@ -763,7 +730,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           <div className={styles.panel}>
             {renderFontFamilyBlock()}
             <div className={styles.row}>
-              {renderFontSizeBlock()}
+              <FontSizeBlock element={elem} textElements={textElements} />
               {renderFontStyleBlock()}
             </div>
             {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}

@@ -234,16 +234,6 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
     [fontFamily.value, textElements, waitForWebFont, onConfigChange, createGoogleFontFromStyle],
   );
 
-  const handleFontSizeChange = useCallback(
-    (val: null | number): void => {
-      if (val === null) return;
-
-      textEdit.setFontSize(val, textElements);
-      onConfigChange('fontSize', val);
-    },
-    [textElements, onConfigChange],
-  );
-
   const handleLetterSpacingChange = useCallback(
     (val: null | number): void => {
       if (val === null) return;
@@ -291,7 +281,6 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   );
 
   return {
-    handleFontSizeChange,
     handleFontStyleChange,
     handleLetterSpacingChange,
     handleLineSpacingChange,
