@@ -1996,12 +1996,12 @@ const lang: ILang = {
   resolution: {
     title: 'Resolución',
     values: {
-      detailed: 'Detallado',
-      high: 'Alto',
-      low: 'Bajo',
-      medium: 'Medio',
+      detailed: 'Ultra Fino',
+      high: 'Fino',
+      low: 'Borrador',
+      medium: 'Estándar',
       mixed: 'Mixto',
-      ultra: 'Ultra alto',
+      ultra: 'Ultra HD',
     },
   },
   rotary_settings: {
