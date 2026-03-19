@@ -22,9 +22,9 @@ const DpiInfo = (): ReactNode => {
 
   return (
     <div className={classNames(styles.container, { [styles.mobile]: isMobile })}>
-      <i>
+      <span>
         {lang.title}: {dpiValueMap[dpi.value]} DPI
-      </i>
+      </span>
     </div>
   );
 };

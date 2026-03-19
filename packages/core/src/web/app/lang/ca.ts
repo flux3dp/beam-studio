@@ -1996,12 +1996,12 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
   resolution: {
     title: 'Resolució',
     values: {
-      detailed: 'Detallat',
-      high: 'Alt',
-      low: 'Baix',
-      medium: 'Mitjà',
+      detailed: 'Ultra Fi',
+      high: 'Fi',
+      low: 'Esborrany',
+      medium: 'Estàndard',
       mixed: 'Mixt',
-      ultra: 'Ultra alt',
+      ultra: 'Ultra HD',
     },
   },
   rotary_settings: {

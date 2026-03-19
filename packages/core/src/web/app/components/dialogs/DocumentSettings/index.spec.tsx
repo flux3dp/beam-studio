@@ -388,8 +388,7 @@ describe('test DocumentSettings', () => {
 
     // Open DPI select and pick "High"
     act(() => fireEvent.mouseDown(baseElement.querySelector('input#dpi-select')));
-    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="High (500 DPI)"]'));
-
+    fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="Fine (500 DPI)"]'));
     fireEvent.click(getByText('Save'));
 
     expect(mockWriteDataLayer).toHaveBeenCalledTimes(2);
