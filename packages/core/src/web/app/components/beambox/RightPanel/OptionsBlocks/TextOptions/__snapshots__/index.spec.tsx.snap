@@ -75,10 +75,10 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
     >
       <div
         class="spacing"
+        title="Line spacing"
       >
         <div
           class="label"
-          title="Line spacing"
         >
           <svgr-url />
         </div>
@@ -103,10 +103,10 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
       </div>
       <div
         class="spacing"
+        title="Letter spacing"
       >
         <div
           class="label"
-          title="Letter spacing"
         >
           <svgr-url />
         </div>
@@ -225,10 +225,10 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
     >
       <div
         class="spacing"
+        title="Line spacing"
       >
         <div
           class="label"
-          title="Line spacing"
         >
           <svgr-url />
         </div>
@@ -253,10 +253,10 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
       </div>
       <div
         class="spacing"
+        title="Letter spacing"
       >
         <div
           class="label"
-          title="Letter spacing"
         >
           <svgr-url />
         </div>
@@ -368,10 +368,10 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
     </div>
     <div
       class="spacing"
+      title="Letter spacing"
     >
       <div
         class="label"
-        title="Letter spacing"
       >
         <svgr-url />
       </div>

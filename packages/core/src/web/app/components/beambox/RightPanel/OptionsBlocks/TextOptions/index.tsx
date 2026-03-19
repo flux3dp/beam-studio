@@ -43,11 +43,12 @@ import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
 import ObjectPanelController from '../../contexts/ObjectPanelController';
 import InFillBlock from '../InFillBlock';
-import OptionsInput from '../OptionsInput';
 import VariableTextBlock from '../VariableTextBlock';
 
 import FitTextAlignBlock from './components/FitTextAlignBlock';
 import FontSizeBlock from './components/FontSizeBlock';
+import LetterSpacingBlock from './components/LetterSpacingBlock';
+import LineSpacingBlock from './components/LineSpacingBlock';
 import StartOffsetBlock from './components/StartOffsetBlock';
 import TextContentBlock from './components/TextContentBlock';
 import VerticalAlignBlock from './components/VerticalAlignBlock';
@@ -99,8 +100,6 @@ const defaultTextConfigs: TextConfig = {
   fontStyle: { hasMultiValue: false, value: '' },
   id: { hasMultiValue: false, value: '' },
   isVertical: { hasMultiValue: false, value: false },
-  letterSpacing: { hasMultiValue: false, value: 0 },
-  lineSpacing: { hasMultiValue: false, value: 1 },
   startOffset: { hasMultiValue: false, value: 0 },
   verticalAlign: { hasMultiValue: false, value: VerticalAlign.MIDDLE },
 };
@@ -159,8 +158,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
   const {
     handleFontStyleChange,
-    handleLetterSpacingChange,
-    handleLineSpacingChange,
     handleStartOffsetChange,
     handleVerticalAlignChange,
     handleVerticalTextClick,
@@ -339,8 +336,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
         updateConfigs(newConfigs, 'fontFamily', () => font.family);
         updateConfigs(newConfigs, 'fontStyle', () => font.style);
-        updateConfigs(newConfigs, 'letterSpacing', () => textEdit.getLetterSpacing(textElement));
-        updateConfigs(newConfigs, 'lineSpacing', () => textEdit.getLineSpacing(textElement));
         updateConfigs(newConfigs, 'isVertical', () => textEdit.getIsVertical(textElement));
 
         if (textElement.getAttribute('data-textpath')) {
@@ -594,67 +589,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     );
   };
 
-  const renderLetterSpacingBlock = (): ReactNode => {
-    const { letterSpacing } = configs;
-
-    return isMobile ? (
-      <ObjectPanelItem.Number
-        hasMultiValue={letterSpacing.hasMultiValue}
-        id="letter_spacing"
-        label={langOptionPanel.letter_spacing}
-        unit="em"
-        updateValue={handleLetterSpacingChange}
-        value={letterSpacing.value}
-      />
-    ) : (
-      <div className={styles.spacing}>
-        <div className={styles.label} title={langOptionPanel.letter_spacing}>
-          <OptionPanelIcons.LetterSpacing />
-        </div>
-        <OptionsInput
-          displayMultiValue={letterSpacing.hasMultiValue}
-          id="letter_spacing"
-          onChange={handleLetterSpacingChange}
-          precision={2}
-          step={0.05}
-          value={letterSpacing.value}
-        />
-      </div>
-    );
-  };
-
-  const renderLineSpacingBlock = (): ReactNode => {
-    const { lineSpacing } = configs;
-
-    return isMobile ? (
-      <ObjectPanelItem.Number
-        decimal={1}
-        hasMultiValue={lineSpacing.hasMultiValue}
-        id="line_spacing"
-        label={langOptionPanel.line_spacing}
-        min={0.8}
-        unit=""
-        updateValue={handleLineSpacingChange}
-        value={lineSpacing.value}
-      />
-    ) : (
-      <div className={styles.spacing}>
-        <div className={styles.label} title={langOptionPanel.line_spacing}>
-          <OptionPanelIcons.LineSpacing />
-        </div>
-        <OptionsInput
-          displayMultiValue={lineSpacing.hasMultiValue}
-          id="line_spacing"
-          min={0.8}
-          onChange={handleLineSpacingChange}
-          precision={2}
-          step={0.1}
-          value={lineSpacing.value}
-        />
-      </div>
-    );
-  };
-
   const renderVerticalTextSwitch = (): ReactNode => {
     const { isVertical } = configs;
     const checked = !isVertical.hasMultiValue && isVertical.value;
@@ -682,8 +616,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
   const renderMultiLineTextOptions = (): ReactNode => (
     <>
-      {renderLineSpacingBlock()}
-      {renderLetterSpacingBlock()}
+      <LineSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
+      <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
       {renderVerticalTextSwitch()}
       {!showColorPanel && !isMobile && <InFillBlock elems={[elem]} />}
     </>
@@ -695,7 +629,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
 
     return (
       <>
-        {renderLetterSpacingBlock()}
+        <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
         <StartOffsetBlock
           hasMultiValue={startOffset.hasMultiValue}
           onValueChange={handleStartOffsetChange}

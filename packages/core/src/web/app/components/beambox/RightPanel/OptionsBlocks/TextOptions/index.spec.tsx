@@ -63,8 +63,6 @@ const mockIsGoogleFontLoaded = jest.fn();
 const mockLoadGoogleFont = jest.fn();
 const mockSessionLoadedFonts = new Set();
 const mockHandleFontStyleChange = jest.fn();
-const mockHandleLetterSpacingChange = jest.fn();
-const mockHandleLineSpacingChange = jest.fn();
 const mockHandleStartOffsetChange = jest.fn();
 const mockHandleVerticalAlignChange = jest.fn();
 const mockHandleVerticalTextClick = jest.fn();
@@ -277,8 +275,6 @@ jest.mock('@core/app/stores/googleFontStore', () => {
 jest.mock('../TextOptions/hooks/useFontHandlers', () => ({
   useFontHandlers: jest.fn(() => ({
     handleFontStyleChange: mockHandleFontStyleChange,
-    handleLetterSpacingChange: mockHandleLetterSpacingChange,
-    handleLineSpacingChange: mockHandleLineSpacingChange,
     handleStartOffsetChange: mockHandleStartOffsetChange,
     handleVerticalAlignChange: mockHandleVerticalAlignChange,
     handleVerticalTextClick: mockHandleVerticalTextClick,
@@ -448,12 +444,6 @@ describe('TextOptions', () => {
       mockSetFontWeight(val.includes('Bold') ? 700 : 400, true, [mockTextElement]);
       mockAddCommandToHistory();
     });
-    mockHandleLetterSpacingChange.mockImplementation((val) => {
-      mockSetLetterSpacing(val, [mockTextElement]);
-    });
-    mockHandleLineSpacingChange.mockImplementation((val) => {
-      mockSetLineSpacing(val, [mockTextElement]);
-    });
     mockHandleVerticalTextClick.mockImplementation((checked) => {
       mockSetIsVertical(!checked, [mockTextElement]);
     });
@@ -575,7 +565,6 @@ describe('TextOptions', () => {
 
       fireEvent.change(letterSpacingInput!, { target: { value: '0.5' } });
 
-      expect(mockHandleLetterSpacingChange).toHaveBeenCalledWith(0.5);
       expect(mockSetLetterSpacing).toHaveBeenCalledWith(0.5, [mockTextElement]);
     });
 
@@ -587,7 +576,6 @@ describe('TextOptions', () => {
 
       fireEvent.change(lineSpacingInput!, { target: { value: '1.5' } });
 
-      expect(mockHandleLineSpacingChange).toHaveBeenCalledWith(1.5);
       expect(mockSetLineSpacing).toHaveBeenCalledWith(1.5, [mockTextElement]);
     });
 
