@@ -9,7 +9,7 @@ exports[`should render correctly 1`] = `
     Resolution
     url:
     options:
-    [{"label":"Low (125 DPI)","value":"low"},{"label":"Medium (250 DPI)","value":"medium"},{"label":"High (500 DPI)","value":"high"},{"label":"Detailed (1000 DPI)","value":"detailed"},{"label":"Ultra High (2000 DPI)","value":"ultra"}]
+    [{"label":"Draft (125 DPI)","value":"low"},{"label":"Standard (250 DPI)","value":"medium"},{"label":"Fine (500 DPI)","value":"high"},{"label":"Ultra Fine (1000 DPI)","value":"detailed"},{"label":"Ultra HD (2000 DPI)","value":"ultra"}]
     <input
       class="select-control"
       id="set-engrave-dpi"

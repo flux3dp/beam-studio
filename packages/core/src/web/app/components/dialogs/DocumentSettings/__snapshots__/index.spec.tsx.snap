@@ -199,9 +199,9 @@ exports[`test DocumentSettings should render correctly 1`] = `
                               </span>
                               <span
                                 class="ant-select-selection-item"
-                                title="Low (125 DPI)"
+                                title="125 DPI Draft"
                               >
-                                Low (125 DPI)
+                                125 DPI Draft
                               </span>
                             </span>
                           </div>
@@ -698,9 +698,9 @@ exports[`test DocumentSettings should render correctly 2`] = `
                               </span>
                               <span
                                 class="ant-select-selection-item"
-                                title="Low (125 DPI)"
+                                title="125 DPI Draft"
                               >
-                                Low (125 DPI)
+                                125 DPI Draft
                               </span>
                             </span>
                           </div>
@@ -1774,9 +1774,9 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                               </span>
                               <span
                                 class="ant-select-selection-item"
-                                title="Low (125 DPI)"
+                                title="125 DPI Draft"
                               >
-                                Low (125 DPI)
+                                125 DPI Draft
                               </span>
                             </span>
                           </div>
@@ -2510,9 +2510,9 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                               </span>
                               <span
                                 class="ant-select-selection-item"
-                                title="Low (125 DPI)"
+                                title="125 DPI Draft"
                               >
-                                Low (125 DPI)
+                                125 DPI Draft
                               </span>
                             </span>
                           </div>
@@ -3323,9 +3323,9 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                               </span>
                               <span
                                 class="ant-select-selection-item"
-                                title="Low (125 DPI)"
+                                title="125 DPI Draft"
                               >
-                                Low (125 DPI)
+                                125 DPI Draft
                               </span>
                             </span>
                           </div>
@@ -4312,9 +4312,9 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                               </span>
                               <span
                                 class="ant-select-selection-item"
-                                title="Low (125 DPI)"
+                                title="125 DPI Draft"
                               >
-                                Low (125 DPI)
+                                125 DPI Draft
                               </span>
                             </span>
                           </div>

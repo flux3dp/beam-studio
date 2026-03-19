@@ -5,12 +5,12 @@ exports[`test DpiInfo should render correctly 1`] = `
   <div
     class="container"
   >
-    <i>
+    <span>
       Resolution
       : 
       125
        DPI
-    </i>
+    </span>
   </div>
 </div>
 `;
@@ -20,12 +20,12 @@ exports[`test DpiInfo should render correctly 2`] = `
   <div
     class="container"
   >
-    <i>
+    <span>
       Resolution
       : 
       500
        DPI
-    </i>
+    </span>
   </div>
 </div>
 `;
@@ -35,12 +35,12 @@ exports[`test DpiInfo should render correctly in mobile 1`] = `
   <div
     class="container mobile"
   >
-    <i>
+    <span>
       Resolution
       : 
       2000
        DPI
-    </i>
+    </span>
   </div>
 </div>
 `;
