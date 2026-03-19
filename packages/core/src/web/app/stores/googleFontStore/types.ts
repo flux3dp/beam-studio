@@ -54,7 +54,6 @@ export interface GoogleFontActions {
   getFallbackPostScriptName: (fallbackFont: string) => string;
   getRegisteredFont: (postscriptName: string) => GoogleFont | undefined;
   isGoogleFontLoaded: (fontFamily: string) => boolean;
-  isLocalFont: (fontFamily: string) => boolean;
   isNetworkAvailableForGoogleFonts: () => boolean;
   isRegistered: (postscriptName: string) => boolean;
   loadGoogleFont: (fontFamily: string) => Promise<void>;

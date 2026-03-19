@@ -1,3 +1,5 @@
+import webFonts from '@core/helpers/fonts/webFonts';
+import staticGoogleFonts from '@core/helpers/fonts/webFonts.google';
 import localFontHelper from '@core/implementations/localFontHelper';
 
 import { ICON_FONT_KEYWORDS, WEB_SAFE_FONTS } from '../constants';
@@ -43,4 +45,12 @@ export const isLocalFont = (fontFamily: string): boolean => {
   const normalizedTarget = normalizeFontName(fontFamily);
 
   return localFonts.some((font) => normalizeFontName(font.family) === normalizedTarget);
+};
+
+export const isWebFont = (fontFamily: string): boolean => {
+  return webFonts.allFontNames.has(fontFamily) || staticGoogleFonts.allFontNames.has(fontFamily);
+};
+
+export const isLocalOrWebFont = (fontFamily: string): boolean => {
+  return isLocalFont(fontFamily) || isWebFont(fontFamily);
 };

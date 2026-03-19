@@ -1,6 +1,7 @@
 import { match, P } from 'ts-pattern';
 
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
+import { isLocalOrWebFont } from '@core/app/stores/googleFontStore/utils/detection';
 import { useStorageStore } from '@core/app/stores/storageStore';
 
 import { generateGoogleFontPostScriptName, generateStyleFromWeightAndItalic } from './fontUtils';
@@ -31,8 +32,7 @@ const loadStaticGoogleFonts = (lang: string): void => {
  * Keeps only local and web-safe fonts in the history
  */
 const cleanGoogleFontsFromHistory = (fontHistory: string[]): void => {
-  const store = useGoogleFontStore.getState();
-  const cleanedHistory = fontHistory.filter((family) => store.isLocalFont(family));
+  const cleanedHistory = fontHistory.filter((family) => isLocalOrWebFont(family));
 
   if (cleanedHistory.length !== fontHistory.length) {
     useStorageStore.getState().set('font-history', cleanedHistory);
@@ -43,7 +43,6 @@ const cleanGoogleFontsFromHistory = (fontHistory: string[]): void => {
  * Load Google Fonts from font history when online, skip and clean history when offline
  */
 const loadHistoryGoogleFonts = (): void => {
-  const store = useGoogleFontStore.getState();
   const fontHistory = useStorageStore.getState()['font-history'];
 
   if (!fontHistory || !Array.isArray(fontHistory) || fontHistory.length === 0) {
@@ -59,7 +58,7 @@ const loadHistoryGoogleFonts = (): void => {
     return;
   }
 
-  const googleFontsFromHistory = fontHistory.filter((family) => !store.isLocalFont(family));
+  const googleFontsFromHistory = fontHistory.filter((family) => !isLocalOrWebFont(family));
 
   if (googleFontsFromHistory.length === 0) {
     return;
@@ -84,7 +83,7 @@ const applyGoogleFontFallbacks = (textElements: SVGTextElement[]): void => {
     if (fontFamily) {
       const cleanFamily = fontFamily.replace(/^['"]+|['"]+$/g, '').trim();
 
-      if (store.isLocalFont(cleanFamily)) {
+      if (isLocalOrWebFont(cleanFamily)) {
         return;
       }
 
@@ -149,8 +148,8 @@ export const loadContextGoogleFonts = (): void => {
       if (fontFamily) {
         const cleanFamily = fontFamily.replace(/^['"]+|['"]+$/g, '').trim();
 
-        // Skip if it's a local font
-        if (store.isLocalFont(cleanFamily)) {
+        // Skip if it's a local or web font
+        if (isLocalOrWebFont(cleanFamily)) {
           return;
         }
 

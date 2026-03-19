@@ -227,7 +227,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       fontHistory
         .map((family) => {
           const isSystemFont = availableFontFamilies.some((f) => f.toLowerCase() === family.toLowerCase());
-          const useHistoryPrefix = FontFuncs.requestAvailableFontFamilies() && isSystemFont;
+          const useHistoryPrefix = FontFuncs.requestAvailableFontFamilies({ queryByLang: false }) && isSystemFont;
 
           return getFontFamilyOption(family, useHistoryPrefix);
         })
