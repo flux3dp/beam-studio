@@ -144,7 +144,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
   const dpiOptions = useMemo(() => {
     const options = (workareaObj.engraveDpiOptions ?? defaultEngraveDpiOptions).map((value) => ({
-      label: `${dpiValueMap[value]} DPI ${tResolution.values[value]}`,
+      label: `${tResolution.values[value]} (${dpiValueMap[value]} DPI)`,
       value,
     }));
 
