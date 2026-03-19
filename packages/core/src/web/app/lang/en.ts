@@ -1996,12 +1996,12 @@ Machines > ‘Promark Name’ > Promark Settings`,
   resolution: {
     title: 'Resolution',
     values: {
-      detailed: 'Detailed',
-      high: 'High',
-      low: 'Low',
-      medium: 'Medium',
+      detailed: 'Ultra Fine',
+      high: 'Fine',
+      low: 'Draft',
+      medium: 'Standard',
       mixed: 'Mixed',
-      ultra: 'Ultra High',
+      ultra: 'Ultra HD',
     },
   },
   rotary_settings: {
