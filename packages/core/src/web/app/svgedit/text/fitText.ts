@@ -93,6 +93,58 @@ export const createNewFitText = (
   return newText;
 };
 
+const fitTextAttributesBeforeResize: Map<SVGTextElement, Record<string, string>> = new Map<
+  SVGTextElement,
+  Record<string, string>
+>();
+
+export const recordFitTextAttributesBeforeResize = (text: SVGTextElement): void => {
+  const attributes = {
+    'data-fit-text-size': text.getAttribute('data-fit-text-size') || '',
+    'font-size': text.getAttribute('font-size') || '',
+    x: text.getAttribute('x') || '',
+    y: text.getAttribute('y') || '',
+  };
+
+  fitTextAttributesBeforeResize.set(text, attributes);
+};
+
+export const generateFitTextResizeCommand = (text: SVGTextElement): ICommand | null => {
+  const oldAttributes = fitTextAttributesBeforeResize.get(text);
+
+  if (!oldAttributes) {
+    return null;
+  }
+
+  fitTextAttributesBeforeResize.delete(text);
+
+  const batchCmd = new history.BatchCommand('Fit Text Resize');
+
+  for (const key in oldAttributes) {
+    const oldValue = oldAttributes[key];
+    const newValue = text.getAttribute(key) || '';
+
+    if (oldValue !== newValue) {
+      batchCmd.addSubCommand(new history.ChangeElementCommand(text, { [key]: oldValue }));
+    }
+  }
+
+  if (batchCmd.isEmpty()) {
+    return null;
+  }
+
+  batchCmd.onAfter = () => {
+    renderText(text);
+    textActions.setCursor();
+  };
+
+  return batchCmd;
+};
+
+export const clearFitTextResizeRecords = (): void => {
+  fitTextAttributesBeforeResize.clear();
+};
+
 export const setFitTextBBox = (
   text: SVGTextElement,
   newBBox: Partial<DOMRect>,

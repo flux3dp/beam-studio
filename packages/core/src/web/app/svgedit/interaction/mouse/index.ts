@@ -34,7 +34,14 @@ import undoManager from '../../history/undoManager';
 import layerManager from '../../layer/layerManager';
 import { cloneSelectedElements, hasClipboardData } from '../../operations/clipboard';
 import createNewText from '../../text/createNewText';
-import { createNewFitText, handleFitTextTransform } from '../../text/fitText';
+import {
+  clearFitTextResizeRecords,
+  createNewFitText,
+  generateFitTextResizeCommand,
+  handleFitTextTransform,
+  recordFitTextAttributesBeforeResize,
+  setFitTextBBox,
+} from '../../text/fitText';
 import textEdit, { isFitText } from '../../text/textedit';
 import touchEvents from '../../touchEvents';
 import { getBBox } from '../../utils/getBBox';
@@ -339,6 +346,12 @@ const mouseDown = async (evt: MouseEvent) => {
 
       initResizeTransform(mouseTarget);
 
+      const fitTexts = [mouseTarget, ...mouseTarget.querySelectorAll('text')].filter((e) =>
+        isFitText(e),
+      ) as SVGTextElement[];
+
+      fitTexts.forEach(recordFitTextAttributesBeforeResize);
+
       if (svgedit.browser.supportsNonScalingStroke()) {
         const delayedStroke = (ele: SVGElement) => {
           const strokeValue = ele.getAttributeNS(null, 'stroke');
@@ -521,9 +534,9 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const resizeMode = svgCanvas.getCurrentResizeMode();
   const transforms = svgedit.transformlist.getTransformList(selected);
   const hasMatrix = svgedit.math.hasMatrixTransform(transforms);
-  const box = hasMatrix ? resizeInitBBox : getBBox(selected, { ignoreTransform: true });
-  const fixedByFitText =
-    resizeMode.length > 1 && [selected, ...selected.querySelectorAll('text')].some((elem) => isFitText(elem));
+  const box = resizeInitBBox;
+  const fitTexts = [selected, ...selected.querySelectorAll('text')].filter((e) => isFitText(e)) as SVGTextElement[];
+  const fixedByFitText = resizeMode.length > 1 && fitTexts.length > 0;
   const isFreeResize = !fixedByFitText && ObjectPanelController.getDimensionValues('isRatioFixed') === evt.shiftKey;
   const angle = svgedit.utilities.getRotationAngle(selected);
   let { height, width, x: left, y: top } = box;
@@ -602,18 +615,45 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   scale.setScale(sx, sy);
   translateBack.setTranslate(left + tx, top + ty);
 
-  if (hasMatrix) {
-    const diff = angle ? 1 : 0;
+  if (resizeMode.length > 1 || !isFitText(selected)) {
+    if (hasMatrix) {
+      const diff = angle ? 1 : 0;
 
-    transforms.replaceItem(translateOrigin, 2 + diff);
-    transforms.replaceItem(scale, 1 + diff);
-    transforms.replaceItem(translateBack, diff);
+      transforms.replaceItem(translateOrigin, 2 + diff);
+      transforms.replaceItem(scale, 1 + diff);
+      transforms.replaceItem(translateBack, diff);
+    } else {
+      const N = transforms.numberOfItems;
+
+      transforms.replaceItem(translateBack, N - 3);
+      transforms.replaceItem(scale, N - 2);
+      transforms.replaceItem(translateOrigin, N - 1);
+    }
   } else {
-    const N = transforms.numberOfItems;
+    const newWidth = Math.abs(width * sx);
+    const newHeight = Math.abs(height * sy);
+    let newLeft = left;
+    let newTop = top;
 
-    transforms.replaceItem(translateBack, N - 3);
-    transforms.replaceItem(scale, N - 2);
-    transforms.replaceItem(translateOrigin, N - 1);
+    if (sx > 0) {
+      if (resizeMode.includes('w')) newLeft = left + width - newWidth;
+    } else {
+      if (resizeMode.includes('w')) newLeft = left + width;
+      else newLeft = left - newWidth;
+    }
+
+    if (sy > 0) {
+      if (resizeMode.includes('n')) newTop = top + height - newHeight;
+    } else {
+      if (resizeMode.includes('n')) newTop = top + height;
+      else newTop = top - newHeight;
+    }
+
+    setFitTextBBox(
+      selected as SVGTextElement,
+      ['e', 'w'].includes(resizeMode) ? { width: newWidth, x: newLeft } : { height: newHeight, y: newTop },
+      { addToHistory: false, oldBBox: box },
+    );
   }
 
   const graphs = ['rect', 'path', 'use', 'polygon', 'image', 'ellipse', 'g'] as const;
@@ -1225,16 +1265,22 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
             });
             SymbolMaker.reRenderImageSymbolArray(allSelectedUses);
 
-            // TODO: currently handle transform after `recalculateAllSelectedDimensions`, refactor recalculate and handle this in it in the future
-            selectedElements
-              .map((elem) => [elem.tagName === 'text' ? elem : null, ...elem.querySelectorAll('text')].filter(Boolean))
+            const fitTexts = selectedElements
+              .map((elem) => [elem, ...elem.querySelectorAll('text')])
               .flat()
-              .filter((elem) => isFitText(elem))
-              .forEach((e) => {
-                const cmd = handleFitTextTransform(e as SVGTextElement, { addToHistory: false });
+              .filter((e) => isFitText(e)) as SVGTextElement[];
 
-                if (cmd && !cmd.isEmpty()) mouseSelectModeCmds.push(cmd);
-              });
+            // TODO: currently handle transform after `recalculateAllSelectedDimensions`, refactor recalculate and handle this in it in the future
+            fitTexts.forEach((e) => {
+              const resizeCmd = generateFitTextResizeCommand(e);
+
+              if (resizeCmd) mouseSelectModeCmds.push(resizeCmd);
+
+              const transformCmd = handleFitTextTransform(e as SVGTextElement, { addToHistory: false });
+
+              if (transformCmd && !transformCmd.isEmpty()) mouseSelectModeCmds.push(transformCmd);
+            });
+            clearFitTextResizeRecords();
           }
 
           if (currentMode !== 'multiselect') {
