@@ -2437,6 +2437,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     tag_names: {
       dxf: 'DXF Object',
       ellipse: 'Oval',
+      fit_text: 'Fit Text',
       g: 'Group',
       image: 'Image',
       line: 'Line',

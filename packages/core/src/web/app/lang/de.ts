@@ -2437,6 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF-Objekt',
       ellipse: 'Oval',
+      fit_text: 'Text anpassen',
       g: 'Gruppe',
       image: 'Bild',
       line: 'Linie',

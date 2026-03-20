@@ -2437,6 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF-kohde',
       ellipse: 'Soikio',
+      fit_text: 'Sovita teksti',
       g: 'Ryhmä',
       image: 'Kuva',
       line: 'Viiva',

@@ -50,11 +50,11 @@ const LineSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactNod
     return () => observer.disconnect();
   }, [textElements]);
 
-  const handleChange = (val: null | number): void => {
-    if (val === null) return;
+  const handleChange = (value: null | number): void => {
+    if (value === null) return;
 
-    setLineSpacing(val, textElements);
-    setState({ hasMultiValue: false, value: val });
+    setLineSpacing(value, textElements);
+    setState({ hasMultiValue: false, value });
     onSizeChange?.();
   };
 

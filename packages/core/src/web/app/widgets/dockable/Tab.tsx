@@ -12,6 +12,7 @@ import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
+import { isFitText } from '@core/app/svgedit/text/textedit/getters';
 import useI18n from '@core/helpers/useI18n';
 
 import { borderSize } from './constants';
@@ -41,6 +42,8 @@ const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
         objectTitle = tTag.multi_select;
       } else if (selectedElement.getAttribute('data-textpath-g')) {
         objectTitle = tTag.text_path;
+      } else if (isFitText(selectedElement)) {
+        objectTitle = tTag.fit_text;
       } else if (selectedElement.getAttribute('data-pass-through')) {
         objectTitle = tTag.pass_through_object;
       } else if (selectedElement.tagName.toLowerCase() !== 'use') {

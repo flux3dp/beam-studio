@@ -50,11 +50,11 @@ const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactN
     return () => observer.disconnect();
   }, [textElements]);
 
-  const handleChange = (val: null | number): void => {
-    if (val === null) return;
+  const handleChange = (value: null | number): void => {
+    if (value === null) return;
 
-    setLetterSpacing(val, textElements);
-    setState({ hasMultiValue: false, value: val });
+    setLetterSpacing(value, textElements);
+    setState({ hasMultiValue: false, value });
     onSizeChange?.();
   };
 

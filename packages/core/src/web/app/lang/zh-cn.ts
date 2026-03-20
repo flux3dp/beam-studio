@@ -2437,6 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF 物件',
       ellipse: '椭圆',
+      fit_text: '文字方块',
       g: '群组',
       image: '影像',
       line: '線段',

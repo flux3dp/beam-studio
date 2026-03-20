@@ -2437,6 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF 개체',
       ellipse: '타원형',
+      fit_text: '텍스트 맞춤',
       g: '그룹',
       image: '이미지',
       line: '라인',

@@ -2434,6 +2434,7 @@ export interface ILang {
     tag_names: {
       dxf: string;
       ellipse: string;
+      fit_text: string;
       g: string;
       image: string;
       line: string;

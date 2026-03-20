@@ -2437,6 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'Objek DXF',
       ellipse: 'Bulatan',
+      fit_text: 'Sesuaikan Teks',
       g: 'Kumpulan',
       image: 'Imej',
       line: 'Garisan',

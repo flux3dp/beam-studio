@@ -2437,6 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF Αντικείμενο',
       ellipse: 'Ελλειψοειδές',
+      fit_text: 'Προσαρμογή κειμένου',
       g: 'Ομάδα',
       image: 'Εικόνα',
       line: 'Γραμμή',

@@ -2437,6 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'Đối tượng DXF',
       ellipse: 'Hình elip',
+      fit_text: 'Vừa chữ',
       g: 'Nhóm',
       image: 'Hình ảnh',
       line: 'Đường thẳng',

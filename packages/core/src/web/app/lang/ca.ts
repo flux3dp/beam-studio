@@ -2437,6 +2437,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     tag_names: {
       dxf: 'Objecte DXF',
       ellipse: 'Oval',
+      fit_text: 'Ajustar text',
       g: 'Grup',
       image: 'Imatge',
       line: 'Línia',
