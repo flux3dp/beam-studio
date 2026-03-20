@@ -29,6 +29,8 @@ type LaserConfig = {
   height: number;
   highQuality: boolean;
   minPower: number;
+  oneWayEngraving: boolean;
+  oneWayEngravingReverse: boolean;
   power: number;
   speed: number;
   zStep: number;
