@@ -60,11 +60,11 @@ export const getLineSpacing = (elem: SVGTextElement): number => {
 };
 
 export const isFitText = (elem: Element): boolean => {
-  return elem.getAttribute('data-fit-text') === 'true';
+  return !!elem.getAttribute('data-fit-text');
 };
 
-export const getFitTextWidth = (elem: Element): number => {
-  return Number.parseFloat(elem.getAttribute('data-fit-text-width') || '0');
+export const getFitTextSize = (elem: Element): number => {
+  return Number.parseFloat(elem.getAttribute('data-fit-text-size') || '0');
 };
 
 export type FitTextAlign = 'end' | 'justify' | 'middle' | 'start';
@@ -86,7 +86,7 @@ export const getTextContent = (elem: SVGTextElement): string => {
   let currentLine = '';
 
   for (const tspan of tspans) {
-    if (tspan.getAttribute('data-wrapped') === 'true') {
+    if (tspan.getAttribute('data-wrapped')) {
       currentLine += tspan.textContent ?? '';
     } else {
       if (manualLines.length > 0 || currentLine) {

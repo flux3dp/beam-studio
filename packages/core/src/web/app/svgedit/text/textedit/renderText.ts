@@ -1,9 +1,20 @@
+import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import NS from '@core/app/constants/namespaces';
 import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 
-import { getFontSize, getIsVertical, getLetterSpacing, getLineSpacing, isFitText } from './getters';
+import { getBBox } from '../../utils/getBBox';
+
+import {
+  getFitTextAlign,
+  getFitTextSize,
+  getFontSize,
+  getIsVertical,
+  getLetterSpacing,
+  getLineSpacing,
+  isFitText,
+} from './getters';
 
 const { svgedit } = window;
 
@@ -87,7 +98,7 @@ const getManualLines = (val: string | undefined, tspans: SVGTextContentElement[]
   let current = '';
 
   for (const tspan of tspans) {
-    if (tspan.getAttribute('data-wrapped') === 'true') {
+    if (tspan.getAttribute('data-wrapped')) {
       current += tspan.textContent ?? '';
     } else {
       if (lines.length > 0 || current) {
@@ -103,17 +114,227 @@ const getManualLines = (val: string | undefined, tspans: SVGTextContentElement[]
 };
 
 /**
+ * Render fitText tspan elements with character-boundary auto-wrap.
+ * Font size stays fixed; text wraps when it exceeds the box width.
+ * Continuation tspans are marked with data-wrapped="1".
+ */
+const renderFitTextTspan = (text: SVGTextElement, val?: string) => {
+  const existingTspans = (Array.from(text.childNodes) as Element[]).filter(
+    (child) => child.tagName === 'tspan',
+  ) as SVGTextContentElement[];
+  const lines = getManualLines(val, existingTspans);
+  const isVertical = getIsVertical(text);
+  const lineSpacing = getLineSpacing(text);
+  const charHeight = getFontSize(text);
+  const letterSpacing = getLetterSpacing(text);
+  const align = getFitTextAlign(text);
+
+  let isNewElementCreated = false;
+
+  textActions.setIsVertical(isVertical);
+
+  // Remove all existing tspans — we rebuild them
+  for (const tspan of existingTspans) {
+    tspan.remove();
+  }
+
+  const createTspan = (): SVGTextContentElement => {
+    const tspan = document.createElementNS(NS.SVG, 'tspan') as unknown as SVGTextContentElement;
+
+    text.appendChild(tspan);
+    isNewElementCreated = true;
+
+    return tspan;
+  };
+
+  if (isVertical) {
+    const fitTextSize = getFitTextSize(text);
+    const textX = Number(text.getAttribute('x'));
+    const textY = Number(text.getAttribute('y'));
+    const charSpacing = (1 + letterSpacing) * charHeight;
+    const charsPerColumn = charSpacing > 0 ? Math.max(1, Math.floor((fitTextSize - charHeight) / charSpacing) + 1) : 1;
+
+    let columnIndex = 0;
+
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i];
+
+      if (line.length === 0) {
+        const tspan = createTspan();
+        const xPos = textX - columnIndex * lineSpacing * charHeight;
+        let emptyY = textY + charHeight;
+
+        if (align === 'middle' || align === 'justify') {
+          emptyY = textY + charHeight + fitTextSize / 2;
+        } else if (align === 'end') {
+          emptyY = textY + charHeight + fitTextSize - charHeight;
+        }
+
+        tspan.textContent = '';
+        tspan.setAttribute('x', xPos.toFixed(2));
+        tspan.setAttribute('y', emptyY.toFixed(2));
+        columnIndex += 1;
+
+        continue;
+      }
+
+      // Split into sub-columns
+      let remaining = line;
+      let isFirstChunk = true;
+
+      while (remaining.length > 0) {
+        const chunk = remaining.substring(0, charsPerColumn);
+
+        remaining = remaining.substring(charsPerColumn);
+
+        const tspan = createTspan();
+
+        tspan.textContent = chunk;
+
+        if (!isFirstChunk) {
+          tspan.setAttribute('data-wrapped', '1');
+        }
+
+        const xPos = textX - columnIndex * lineSpacing * charHeight;
+        const n = chunk.length;
+        const xValues: string[] = [];
+        const yValues: string[] = [];
+
+        const usedHeight = charHeight + (n - 1) * charSpacing;
+        const remainingSpace = fitTextSize - usedHeight;
+        let yOffset = 0;
+        let effectiveSpacing = charSpacing;
+
+        if (align === 'middle') {
+          yOffset = remainingSpace / 2;
+        } else if (align === 'end') {
+          yOffset = remainingSpace;
+        } else if (align === 'justify') {
+          if (n > 1) {
+            effectiveSpacing = (fitTextSize - charHeight) / (n - 1);
+          } else {
+            yOffset = remainingSpace / 2;
+          }
+        }
+
+        for (let j = 0; j < n; j += 1) {
+          xValues.push(xPos.toFixed(2));
+          yValues.push((textY + charHeight + yOffset + j * effectiveSpacing).toFixed(2));
+        }
+
+        tspan.setAttribute('x', xValues.join(' '));
+        tspan.setAttribute('y', yValues.join(' '));
+
+        columnIndex += 1;
+        isFirstChunk = false;
+      }
+    }
+
+    // Vertical mode: remove text-anchor to avoid unwanted horizontal shift
+    text.removeAttribute('text-anchor');
+  } else {
+    const fitTextSize = getFitTextSize(text);
+    const textX = text.getAttribute('x')!;
+    const baseY = Number(text.getAttribute('y'));
+
+    let visualLineIndex = 0;
+
+    for (let i = 0; i < lines.length; i += 1) {
+      const line = lines[i];
+
+      if (line.length === 0 || fitTextSize <= 0) {
+        const tspan = createTspan();
+
+        tspan.textContent = '';
+        tspan.setAttribute('x', textX);
+        tspan.setAttribute('y', (baseY + visualLineIndex * lineSpacing * charHeight).toFixed(2));
+        tspan.removeAttribute('textLength');
+        tspan.removeAttribute('lengthAdjust');
+        tspan.removeAttribute('data-wrapped');
+        visualLineIndex += 1;
+
+        continue;
+      }
+
+      let remaining = line;
+      let isFirstChunk = true;
+
+      while (remaining.length > 0) {
+        const tspan = createTspan();
+
+        tspan.textContent = remaining;
+        tspan.setAttribute('x', textX);
+        tspan.setAttribute('y', (baseY + visualLineIndex * lineSpacing * charHeight).toFixed(2));
+
+        if (align === 'justify') {
+          tspan.setAttribute('textLength', fitTextSize.toString());
+          tspan.setAttribute('lengthAdjust', 'spacing');
+        } else {
+          tspan.removeAttribute('textLength');
+          tspan.removeAttribute('lengthAdjust');
+        }
+
+        if (!isFirstChunk) {
+          tspan.setAttribute('data-wrapped', '1');
+        } else {
+          tspan.removeAttribute('data-wrapped');
+        }
+
+        const naturalWidth = tspan.getComputedTextLength();
+
+        if (naturalWidth <= fitTextSize) {
+          // Fits — done with this manual line
+          break;
+        }
+
+        // Binary search for break point
+        let low = 1;
+        let high = remaining.length;
+        let breakAt = 1;
+
+        while (low <= high) {
+          const mid = Math.floor((low + high) / 2);
+
+          tspan.textContent = remaining.substring(0, mid);
+
+          if (tspan.getComputedTextLength() <= fitTextSize) {
+            breakAt = mid;
+            low = mid + 1;
+          } else {
+            high = mid - 1;
+          }
+        }
+
+        tspan.textContent = remaining.substring(0, breakAt);
+
+        remaining = remaining.substring(breakAt);
+        isFirstChunk = false;
+        visualLineIndex += 1;
+      }
+
+      visualLineIndex += 1;
+    }
+
+    // Horizontal mode: set text-anchor for SVG rendering
+    text.setAttribute('text-anchor', align === 'justify' ? 'middle' : align);
+  }
+
+  if (isNewElementCreated) updateElementColor(text);
+};
+
+/**
  * Render text element
- * @param elem element
+ * @param elem text | text path container element
  * @param val text to display, break line with \u0085, use current text content if not provided
  * @param showGrips show grip or not
  */
-export const renderText = (elem: Element, val?: string, showGrips?: boolean): void => {
+export const renderText = (elem: SVGGElement | SVGTextElement, val?: string, showGrips?: boolean): void => {
   if (!elem) {
     return;
   }
 
   let textElem = elem;
+  const isFitTextElem = isFitText(elem);
 
   if (elem.getAttribute('data-textpath-g')) {
     const text = elem.querySelector('text');
@@ -124,7 +345,7 @@ export const renderText = (elem: Element, val?: string, showGrips?: boolean): vo
     }
   } else if (elem.getAttribute('data-textpath')) {
     renderTextPath(elem as SVGTextElement, val);
-  } else if (isFitText(elem)) {
+  } else if (isFitTextElem) {
     renderFitTextTspan(elem as SVGTextElement, val);
   } else {
     // render multiLine Text
@@ -133,13 +354,22 @@ export const renderText = (elem: Element, val?: string, showGrips?: boolean): vo
 
   svgedit.recalculate.recalculateDimensions(textElem);
 
-  if (showGrips) {
-    const selectorManager = selector.getSelectorManager();
+  const selectorManager = selector.getSelectorManager();
 
+  if (showGrips) {
     selectorManager.requestSelector(textElem)?.resize();
+  }
+
+  if (isFitTextElem) {
+    // The fit text bbox may change after rendering, so update selector and dimension panel
+    if (!showGrips) {
+      selectorManager.resizeSelectors([textElem]);
+    }
+
+    ObjectPanelController.updateDimensionValues(getBBox(textElem as SVGTextElement));
   }
 };
 
 export const renderAll = (elems: SVGElement[]): void => {
-  elems.forEach((elem) => renderText(elem));
+  elems.forEach((elem) => renderText(elem as SVGTextElement));
 };

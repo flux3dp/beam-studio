@@ -1,15 +1,18 @@
-import React, { use, useCallback } from 'react';
+import React, { use, useCallback, useMemo } from 'react';
 
 import { ConfigProvider } from 'antd';
+import { match } from 'ts-pattern';
 
 import Constant from '@core/app/actions/beambox/constant';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import { setFitTextBBox } from '@core/app/svgedit/text/fitText';
+import { isFitText } from '@core/app/svgedit/text/textedit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import { useIsMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { DimensionOrderMap, DimensionValues, SizeKey } from '@core/interfaces/ObjectPanel';
 import { isPositionKey, isSizeKeyShort } from '@core/interfaces/ObjectPanel';
@@ -84,6 +87,11 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
       SymbolMaker.reRenderImageSymbolArray(allUses);
     }
   }, [elem]);
+  const isFitTextElem = useMemo(() => {
+    if (!elem) return false;
+
+    return isFitText(elem);
+  }, [elem]);
 
   const handlePositionChange = useCallback(
     (type: string, val: number): void => {
@@ -126,28 +134,29 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
   );
 
   const changeSize = useCallback(
-    (type: SizeKey, val: number): IBatchCommand | null => {
+    (type: SizeKey, val: number): ICommand | null => {
       const elemSize = val > 0.1 ? val : 0.1;
-      let cmd: IBatchCommand | null = null;
+      let cmd: ICommand | null = null;
 
-      switch (elem?.tagName) {
-        case 'ellipse':
-        case 'rect':
-        case 'image':
-          svgCanvas.undoMgr.beginUndoableChange(type, [elem]);
-          svgCanvas.changeSelectedAttributeNoUndo(type, elemSize, [elem]);
-          cmd = svgCanvas.undoMgr.finishUndoableChange();
-          break;
-        case 'g':
-        case 'polygon':
-        case 'path':
-        case 'text':
-        case 'use':
-          cmd = svgCanvas.setSvgElemSize(type, elemSize);
-          break;
-        default:
-          break;
-      }
+      match(elem?.tagName)
+        .with('ellipse', 'rect', 'image', () => {
+          svgCanvas.undoMgr.beginUndoableChange(type, [elem!]);
+          svgCanvas.changeSelectedAttributeNoUndo(type, elemSize, [elem!]);
+
+          const batchCmd = svgCanvas.undoMgr.finishUndoableChange();
+
+          cmd = batchCmd.isEmpty() ? null : batchCmd;
+        })
+        .with('g', 'polygon', 'path', 'text', 'use', (tag) => {
+          if (tag === 'text' && isFitText(elem!)) {
+            cmd = setFitTextBBox(elem as SVGTextElement, { [type]: elemSize }, { addToHistory: false });
+          } else {
+            const batchCmd = svgCanvas.setSvgElemSize(type, elemSize);
+
+            cmd = batchCmd?.isEmpty() ? null : batchCmd;
+          }
+        })
+        .otherwise(() => {});
 
       return cmd;
     },
@@ -169,7 +178,7 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
       let cmd = changeSize(type, sizeVal);
 
-      if (cmd && !cmd.isEmpty()) {
+      if (cmd) {
         batchCmd.addSubCommand(cmd);
       }
 
@@ -182,7 +191,7 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
         cmd = changeSize(counterPart, newCounterPartVal);
 
-        if (cmd && !cmd.isEmpty()) {
+        if (cmd) {
           batchCmd.addSubCommand(cmd);
         }
 
@@ -245,7 +254,7 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
       return <Rotation key="rot" onChange={handleRotationChange} value={dimensionValues.rotation || 0} />;
     }
 
-    if (type === 'lock') {
+    if (type === 'lock' && !isFitTextElem) {
       return <RatioLock isLocked={dimensionValues.isRatioFixed || false} key="lock" onClick={handleFixRatio} />;
     }
 

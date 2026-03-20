@@ -19,6 +19,8 @@ import undoManager from '../history/undoManager';
 import { getEventPageXY } from '../interaction/mouse/utils/getEventPoint';
 import { getBBox } from '../utils/getBBox';
 
+import { isFitText } from './textedit';
+
 enum TextType {
   MULTI_LINE = 1,
   NULL = 0,
@@ -159,6 +161,128 @@ class TextActions {
         return;
       }
 
+      if (isFitText(curtext)) {
+        // Group tspans into manual lines based on data-wrapped attribute
+        const tspanGroups: SVGTextContentElement[][] = [];
+        let currentGroup: SVGTextContentElement[] = [];
+
+        for (const tspan of tspans) {
+          if (tspan.getAttribute('data-wrapped')) {
+            currentGroup.push(tspan);
+          } else {
+            if (currentGroup.length > 0) {
+              tspanGroups.push(currentGroup);
+            }
+
+            currentGroup = [tspan];
+          }
+        }
+
+        if (currentGroup.length > 0) {
+          tspanGroups.push(currentGroup);
+        }
+
+        // When text is vertical, we use the widest char as first row's width
+        let firstRowMaxWidth = 0;
+
+        if (this.isVertical && tspanGroups.length > 0 && tspanGroups[0].length > 0) {
+          const firstTspan = tspanGroups[0][0];
+
+          for (let i = 0; i < (firstTspan.textContent?.length ?? 0); i += 1) {
+            const start = firstTspan.getStartPositionOfChar(i);
+            const end = firstTspan.getEndPositionOfChar(i);
+
+            firstRowMaxWidth = Math.max(firstRowMaxWidth, end.x - start.x);
+          }
+        }
+
+        for (let groupIdx = 0; groupIdx < tspanGroups.length; groupIdx += 1) {
+          chardata.push([]);
+
+          const group = tspanGroups[groupIdx];
+          const manualLine = lines[groupIdx] ?? '';
+
+          let start: DOMPoint | undefined;
+          let end: DOMPoint | undefined;
+          let isEmpty = manualLine === '';
+
+          if (isEmpty && group.length > 0) {
+            group[0].textContent = 'a';
+          }
+
+          // Collect char positions from all visual tspans in this group
+          for (const tspan of group) {
+            const tspanbb = getBBox(tspan, { ignoreTransform: true });
+            const len = tspan.textContent?.length ?? 0;
+
+            for (let j = 0; j < len; j += 1) {
+              start = tspan.getStartPositionOfChar(j);
+              end = tspan.getEndPositionOfChar(j);
+
+              if (!svgedit.browser.supportsGoodTextCharPos()) {
+                const { width, zoomRatio } = workareaManager;
+                const offset = width * zoomRatio;
+
+                start.x -= offset;
+                end.x -= offset;
+                start.x /= zoomRatio;
+                end.x /= zoomRatio;
+              }
+
+              let width = end.x - start.x;
+
+              if (isVertical) {
+                width = groupIdx === 0 && lastRowX === null ? firstRowMaxWidth : (lastRowX ?? start.x) - start.x;
+              }
+
+              let y: number;
+
+              if (isVertical) y = start.y - charHeight;
+              else if (svgedit.browser?.isChrome() && !isEmpty) y = tspanbb.y;
+              else y = textbb.y + charHeight * groupIdx;
+
+              chardata[groupIdx].push({
+                height: charHeight,
+                width,
+                x: start.x,
+                y,
+              });
+            }
+          }
+
+          // Add end-of-line cursor bbox
+          if (!isEmpty) {
+            let width = 0;
+
+            if (isVertical) {
+              width = groupIdx === 0 && lastRowX === null ? firstRowMaxWidth : (lastRowX ?? start!.x) - start!.x;
+            }
+
+            const lastTspan = group[group.length - 1];
+            const lastTspanBB = getBBox(lastTspan, { ignoreTransform: true });
+            let y: number;
+
+            if (isVertical) y = end!.y;
+            else if (svgedit.browser?.isChrome()) y = lastTspanBB.y;
+            else y = textbb.y + charHeight * groupIdx;
+
+            chardata[groupIdx].push({
+              height: isVertical ? 0 : charHeight,
+              width,
+              x: isVertical ? start!.x : end!.x,
+              y,
+            });
+          } else {
+            group[0].textContent = '';
+          }
+
+          if (start) lastRowX = start.x;
+        }
+
+        return;
+      }
+
+      // Non-fit-text: original logic
       // When text is vertical, we use the widest char as first row's width
       let firstRowMaxWidth = 0;
 
@@ -695,12 +819,12 @@ class TextActions {
     );
 
     // For fit-text with wrapped tspans, group consecutive wrapped tspans into manual lines
-    if (curtext.getAttribute('data-fit-text') === 'true') {
+    if (isFitText(curtext)) {
       const manualLines: string[] = [];
       let currentLine = '';
 
       for (const child of children) {
-        if (child.getAttribute('data-wrapped') === 'true') {
+        if (child.getAttribute('data-wrapped')) {
           currentLine += child.textContent ?? '';
         } else {
           if (manualLines.length > 0 || currentLine) {

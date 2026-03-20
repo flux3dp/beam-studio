@@ -158,7 +158,7 @@ export const setFitTextAlign = (text: SVGTextElement, align: FitTextAlign): void
     const anchorRatio = { end: 1, justify: 0.5, middle: 0.5, start: 0 } as const;
     const oldRatio = anchorRatio[currentAlign];
     const newRatio = anchorRatio[align];
-    const width = Number.parseFloat(text.getAttribute('data-fit-text-width') || '0');
+    const width = Number.parseFloat(text.getAttribute('data-fit-text-size') || '0');
     const currentX = Number.parseFloat(text.getAttribute('x') || '0');
     const subCommand = changeAttribute(text, { x: (currentX + (newRatio - oldRatio) * width).toString() });
 

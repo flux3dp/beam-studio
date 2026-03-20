@@ -17,13 +17,6 @@ import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getMouseMode, setCursor, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
-import history from '@core/app/svgedit/history/history';
-import layerManager from '@core/app/svgedit/layer/layerManager';
-import { cloneSelectedElements, hasClipboardData } from '@core/app/svgedit/operations/clipboard';
-import createNewText from '@core/app/svgedit/text/createNewText';
-import textEdit from '@core/app/svgedit/text/textedit';
-import touchEvents from '@core/app/svgedit/touchEvents';
-import workareaManager from '@core/app/svgedit/workarea';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { setupPreviewMode } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -36,7 +29,16 @@ import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint, IRect } from '@core/interfaces/ISVGCanvas';
 
+import history from '../../history/history';
+import undoManager from '../../history/undoManager';
+import layerManager from '../../layer/layerManager';
+import { cloneSelectedElements, hasClipboardData } from '../../operations/clipboard';
+import createNewText from '../../text/createNewText';
+import { createNewFitText, handleFitTextTransform } from '../../text/fitText';
+import textEdit, { isFitText } from '../../text/textedit';
+import touchEvents from '../../touchEvents';
 import { getBBox } from '../../utils/getBBox';
+import workareaManager from '../../workarea';
 import wheelEventHandlerGenerator from '../wheelEventHandler';
 
 import { getEventPoint } from './utils/getEventPoint';
@@ -440,6 +442,9 @@ const mouseDown = async (evt: MouseEvent) => {
       svgCanvas.unsafeAccess.setStarted(true);
       createNewText(x, y, { isToSelect: true });
       break;
+    case 'fit-text':
+      svgCanvas.unsafeAccess.setStarted(true);
+      break;
     case 'polygon':
       // Polygon is created in ext-polygon.js
       TopBarHintsController.setHint('POLYGON');
@@ -517,7 +522,9 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const transforms = svgedit.transformlist.getTransformList(selected);
   const hasMatrix = svgedit.math.hasMatrixTransform(transforms);
   const box = hasMatrix ? resizeInitBBox : getBBox(selected, { ignoreTransform: true });
-  const isUnfixedResize = (selected.getAttribute('data-ratiofixed') === 'true') === evt.shiftKey;
+  const fixedByFitText =
+    resizeMode.length > 1 && [selected, ...selected.querySelectorAll('text')].some((elem) => isFitText(elem));
+  const isFreeResize = !fixedByFitText && ObjectPanelController.getDimensionValues('isRatioFixed') === evt.shiftKey;
   const angle = svgedit.utilities.getRotationAngle(selected);
   let { height, width, x: left, y: top } = box;
 
@@ -528,7 +535,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     width = svgedit.utilities.snapToGrid(width);
   }
 
-  if (svgCanvas.isAutoAlign && isUnfixedResize && !angle) {
+  if (svgCanvas.isAutoAlign && isFreeResize && !angle) {
     let [inputX, inputY] = [x, y];
 
     if (!resizeMode.includes('n') && !resizeMode.includes('s')) inputY = startY;
@@ -585,11 +592,9 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
     ty = svgedit.utilities.snapToGrid(ty);
   }
 
-  const isRatioFixed = ObjectPanelController.getDimensionValues('isRatioFixed') ? 1 : 0;
-
   translateOrigin.setTranslate(-(left + tx), -(top + ty));
 
-  if (isRatioFixed ^ (evt.shiftKey ? 1 : 0)) {
+  if (!isFreeResize) {
     if (sx === 1) sx = sy;
     else sy = sx;
   }
@@ -1059,21 +1064,35 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     svgCanvas.clearBoundingBox();
   };
 
+  const getDrawnBBox = (inMM = false) => {
+    const { dpmm } = constant;
+    let bboxX = Math.min(startX, realX);
+    let bboxY = Math.min(startY, realY);
+    let width = Math.abs(startX - realX);
+    let height = Math.abs(startY - realY);
+
+    if (inMM) {
+      bboxX /= dpmm;
+      bboxY /= dpmm;
+      width /= dpmm;
+      height /= dpmm;
+    }
+
+    return { height, width, x: bboxX, y: bboxY };
+  };
+
   switch (currentMode) {
-    case 'curve-engraving':
+    case 'curve-engraving': {
       cleanUpRubberBox();
 
-      if (startX !== realX && startY !== realY) {
-        const { dpmm } = constant;
-        const bboxX = Math.min(startX, realX) / dpmm;
-        const bboxY = Math.min(startY, realY) / dpmm;
-        const width = Math.abs(startX - realX) / dpmm;
-        const height = Math.abs(startY - realY) / dpmm;
+      const { height, width, x: bboxX, y: bboxY } = getDrawnBBox(true);
 
+      if (width > 0 && height > 0) {
         curveEngravingModeController.setArea({ height, width, x: bboxX, y: bboxY });
       }
 
       return;
+    }
     case 'preview':
     case 'pre_preview':
       cleanUpRubberBox();
@@ -1205,6 +1224,17 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
               }
             });
             SymbolMaker.reRenderImageSymbolArray(allSelectedUses);
+
+            // TODO: currently handle transform after `recalculateAllSelectedDimensions`, refactor recalculate and handle this in it in the future
+            selectedElements
+              .map((elem) => [elem.tagName === 'text' ? elem : null, ...elem.querySelectorAll('text')].filter(Boolean))
+              .flat()
+              .filter((elem) => isFitText(elem))
+              .forEach((e) => {
+                const cmd = handleFitTextTransform(e as SVGTextElement, { addToHistory: false });
+
+                if (cmd && !cmd.isEmpty()) mouseSelectModeCmds.push(cmd);
+              });
           }
 
           if (currentMode !== 'multiselect') {
@@ -1263,9 +1293,9 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           batchCmd.addSubCommand(cmd);
         }
 
-        svgCanvas.addCommandToHistory(batchCmd);
+        undoManager.addCommandToHistory(batchCmd);
       } else if (mouseSelectModeCmds.length === 1) {
-        svgCanvas.addCommandToHistory(mouseSelectModeCmds[0]);
+        undoManager.addCommandToHistory(mouseSelectModeCmds[0]);
       }
 
       return;
@@ -1305,6 +1335,16 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       svgCanvas.selectOnly([element]);
       svgCanvas.textActions.start(element);
       break;
+    case 'fit-text': {
+      // Move to mouse down?
+      const fontSize = textEdit.getCurText().font_size;
+      const fitWidth = fontSize * 10;
+
+      element = createNewFitText(x, y, fitWidth, { isToSelect: true });
+      keep = true;
+      svgCanvas.textActions.start(element);
+      break;
+    }
     case 'polygon':
       // Polygon creation is in ext-polygon.js
       TopBarHintsController.removeHint();
@@ -1346,12 +1386,12 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
         if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
       } else {
-        const cmd = svgCanvas.undoMgr.finishUndoableChange();
+        const cmd = undoManager.finishUndoableChange();
 
         if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
       }
 
-      if (!batchCmd.isEmpty()) svgCanvas.addCommandToHistory(batchCmd);
+      if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 
       // perform recalculation to weed out any stray identity transforms that might get stuck
       svgCanvas.recalculateAllSelectedDimensions(true);
@@ -1441,7 +1481,11 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
     element.setAttribute('style', 'pointer-events:inherit');
     svgCanvas.cleanupElement(element);
-    svgCanvas.addCommandToHistory(new history.InsertElementCommand(element));
+
+    if (element.tagName !== 'text') {
+      // text insert command is created when the text edit mode finishes, to make sure the text is really created (not empty string).
+      undoManager.addCommandToHistory(new history.InsertElementCommand(element));
+    }
 
     if (!isContinuousDrawing) {
       if (currentMode === 'textedit') {
@@ -1474,7 +1518,7 @@ const dblClick = (evt: MouseEvent) => {
 
   if (!['preview_color', 'text', 'textedit'].includes(currentMode)) {
     if (tagName === 'text') {
-      svgCanvas.textActions.select(mouseTarget);
+      svgCanvas.textActions.select(mouseTarget as SVGTextElement);
     } else if (mouseTarget.getAttribute('data-textpath-g')) {
       const clickOnText = ['text', 'textPath'].includes((evt.target as SVGElement).tagName);
       const text = mouseTarget.querySelector('text');

@@ -6,7 +6,7 @@ export { getCurText, initCurText, updateCurText, useDefaultFont } from './curTex
 export type { FitTextAlign } from './getters';
 export {
   getFitTextAlign,
-  getFitTextWidth,
+  getFitTextSize,
   getFontFamily,
   getFontFamilyData,
   getFontPostscriptName,
@@ -38,7 +38,7 @@ export {
 import { getCurText, updateCurText, useDefaultFont } from './curText';
 import {
   getFitTextAlign,
-  getFitTextWidth,
+  getFitTextSize,
   getFontFamily,
   getFontFamilyData,
   getFontPostscriptName,
@@ -69,7 +69,7 @@ import {
 export default {
   getCurText,
   getFitTextAlign,
-  getFitTextWidth,
+  getFitTextSize,
   getFontFamily,
   getFontFamilyData,
   getFontPostscriptName,
