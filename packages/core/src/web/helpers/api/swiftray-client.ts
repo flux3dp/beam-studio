@@ -120,8 +120,6 @@ class SwiftrayClient extends EventEmitter {
   }
 
   private connect() {
-    return;
-
     if (isWeb() && !isDev()) {
       console.warn('Bypassing Swiftray connection in web mode');
 
