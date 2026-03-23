@@ -1,4 +1,5 @@
 import progressCaller from '@core/app/actions/progress-caller';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -23,15 +24,15 @@ const getFonts = (queryByLang?: boolean) => {
   const localFonts = localFontHelper.getAvailableFonts();
   const activeLang = i18n.getActiveLang();
   const googleLangFonts = googleFonts.getAvailableFonts(queryByLang ? activeLang : undefined);
-
   const webLangFonts = webFonts.getAvailableFonts(queryByLang ? activeLang : undefined);
 
+  // google font styles are applied in googleFontService.ts
   webFonts.applyStyle(webLangFonts);
 
   return [...localFonts, ...googleLangFonts, ...webLangFonts];
 };
-const visibleFontsWithoutMonotype = getFonts(true);
-const allFontsWithoutMonotype = getFonts(false);
+let visibleFontsWithoutMonotype = getFonts(true);
+let allFontsWithoutMonotype = getFonts(false);
 
 let visibleFonts: GeneralFont[] = visibleFontsWithoutMonotype;
 let allFonts: GeneralFont[] = allFontsWithoutMonotype;
@@ -60,6 +61,16 @@ const getMonotypeFonts = async (): Promise<boolean> => {
 
   return monotypeLoaded;
 };
+
+useStorageStore.subscribe(
+  (state) => state['active-lang'],
+  () => {
+    visibleFontsWithoutMonotype = getFonts(true);
+    visibleFonts = visibleFontsWithoutMonotype;
+    monotypeLoaded = false; // Reset monotype loaded state to allow reloading for new language
+    getMonotypeFonts(); // Preload monotype fonts for the new language
+  },
+);
 
 const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
   const localRes = localFontHelper.findFont(fontDescriptor);

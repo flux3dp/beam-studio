@@ -27,6 +27,8 @@ const loadStaticGoogleFonts = (lang: string): void => {
   });
 };
 
+useStorageStore.subscribe((state) => state['active-lang'], loadStaticGoogleFonts);
+
 /**
  * Clean Google Fonts from font history when offline to prevent future loading attempts
  * Keeps only local and web-safe fonts in the history
