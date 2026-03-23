@@ -1,4 +1,5 @@
 import progressCaller from '@core/app/actions/progress-caller';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -19,20 +20,22 @@ const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 const fontDirectory = '/usr/share/fonts/truetype/beam-studio/';
 let previewSourceMap = previewSrcMap;
 
-const getFonts = () => {
+const getFonts = (queryByLang?: boolean) => {
   const localFonts = localFontHelper.getAvailableFonts();
   const activeLang = i18n.getActiveLang();
-  const googleLangFonts = googleFonts.getAvailableFonts(activeLang);
+  const googleLangFonts = googleFonts.getAvailableFonts(queryByLang ? activeLang : undefined);
+  const webLangFonts = webFonts.getAvailableFonts(queryByLang ? activeLang : undefined);
 
-  const webLangFonts = webFonts.getAvailableFonts(activeLang);
-
+  // google font styles are applied in googleFontService.ts
   webFonts.applyStyle(webLangFonts);
 
   return [...localFonts, ...googleLangFonts, ...webLangFonts];
 };
-const fontsWithoutMonotype = getFonts();
+let visibleFontsWithoutMonotype = getFonts(true);
+let allFontsWithoutMonotype = getFonts(false);
 
-let availableFonts: GeneralFont[] = fontsWithoutMonotype;
+let visibleFonts: GeneralFont[] = visibleFontsWithoutMonotype;
+let allFonts: GeneralFont[] = allFontsWithoutMonotype;
 let monotypeLoaded = false;
 const getMonotypeFonts = async (): Promise<boolean> => {
   if (!isFluxPlusActive) {
@@ -49,7 +52,8 @@ const getMonotypeFonts = async (): Promise<boolean> => {
   if (res) {
     const { monotypeLangFonts, monotypePreviewSrcMap } = res;
 
-    availableFonts = [...availableFonts, ...monotypeLangFonts];
+    allFonts = [...allFonts, ...monotypeLangFonts];
+    visibleFonts = [...visibleFonts, ...monotypeLangFonts];
     previewSourceMap = { ...previewSrcMap, ...monotypePreviewSrcMap };
     monotypeLoaded = true;
     eventEmitter.emit('GET_MONOTYPE_FONTS');
@@ -57,6 +61,16 @@ const getMonotypeFonts = async (): Promise<boolean> => {
 
   return monotypeLoaded;
 };
+
+useStorageStore.subscribe(
+  (state) => state['active-lang'],
+  () => {
+    visibleFontsWithoutMonotype = getFonts(true);
+    visibleFonts = visibleFontsWithoutMonotype;
+    monotypeLoaded = false; // Reset monotype loaded state to allow reloading for new language
+    getMonotypeFonts(); // Preload monotype fonts for the new language
+  },
+);
 
 const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
   const localRes = localFontHelper.findFont(fontDescriptor);
@@ -68,7 +82,7 @@ const findFont = (fontDescriptor: FontDescriptor): GeneralFont => {
     return localRes;
   }
 
-  let match = availableFonts;
+  let match = allFonts;
   let font = match[0];
 
   if (fontDescriptor.postscriptName) {
@@ -160,7 +174,7 @@ const findFonts = (fontDescriptor: FontDescriptor): GeneralFont[] => {
     return localRes;
   }
 
-  const fonts = availableFonts;
+  const fonts = allFonts;
   const matchFamily = fontDescriptor.family ? fonts.filter((font) => font.family === fontDescriptor.family) : fonts;
   const match = matchFamily.filter((font) => {
     const keys = Object.keys(fontDescriptor);
@@ -183,14 +197,14 @@ export default {
   applyMonotypeStyle: monotypeFonts.applyStyle,
   findFont,
   findFonts,
-  getAvailableFonts: (withoutMonotype = false) => {
+  getAvailableFonts: ({ queryByLang = true, withoutMonotype = false } = {}) => {
     if (withoutMonotype) {
-      return fontsWithoutMonotype;
+      return queryByLang ? visibleFontsWithoutMonotype : allFontsWithoutMonotype;
     }
 
     getMonotypeFonts();
 
-    return availableFonts;
+    return queryByLang ? visibleFonts : allFonts;
   },
   getFontName(font: GeneralFont): string {
     if (font.family && font.family in fontNameMap) {
@@ -211,7 +225,7 @@ export default {
     }
 
     const utilWS = getUtilWS();
-    const font = availableFonts.find((f) => f.postscriptName === postscriptName) as WebFont;
+    const font = allFonts.find((f) => f.postscriptName === postscriptName) as WebFont;
     const fileName = font?.fileName || `${postscriptName}.ttf`;
     const isMonotype = font && 'hasLoaded' in font;
 
@@ -334,7 +348,7 @@ export default {
       return false;
     }
 
-    const currentFont = typeof font === 'string' ? availableFonts?.find((f) => f.postscriptName === font) : font;
+    const currentFont = typeof font === 'string' ? allFonts?.find((f) => f.postscriptName === font) : font;
 
     if (currentFont) {
       return 'path' in currentFont;

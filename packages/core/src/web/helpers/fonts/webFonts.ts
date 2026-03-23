@@ -1,3 +1,4 @@
+import { useStorageStore } from '@core/app/stores/storageStore';
 import isWeb from '@core/helpers/is-web';
 import type { WebFont } from '@core/interfaces/IFont';
 
@@ -1601,11 +1602,18 @@ const fonts: WebFont[] = [
   },
 ];
 
+const allFontNames = new Set(fonts.map((font) => font.family));
+const appliedFontFamilies: Set<string> = new Set();
+
 const applyStyle = (fontsInUse: WebFont[]): void => {
   const style = document.createElement('style');
   let styleText = '';
 
   for (let i = 0; i < fontsInUse.length; i += 1) {
+    if (appliedFontFamilies.has(fontsInUse[i].family)) {
+      continue;
+    }
+
     const font = fontsInUse[i];
 
     styleText += `
@@ -1616,12 +1624,19 @@ const applyStyle = (fontsInUse: WebFont[]): void => {
       font-display: swap;
       src : url('https://beam-studio-web.s3.ap-northeast-1.amazonaws.com/fonts/${font.fileName}');
     }`;
+    appliedFontFamilies.add(font.family);
   }
 
   const head = document.querySelector('head');
 
   style.innerHTML = styleText;
   head?.appendChild(style);
+};
+
+const applyByFontNames = (fontNames: string[]): void => {
+  const fontsInUse = fonts.filter((font) => fontNames.includes(font.family));
+
+  applyStyle(fontsInUse);
 };
 
 const getAvailableFonts = (lang?: string): WebFont[] => {
@@ -1644,7 +1659,10 @@ const getAvailableFonts = (lang?: string): WebFont[] => {
   return availableFonts;
 };
 
+applyByFontNames(useStorageStore.getState()['font-history']);
+
 export default {
+  allFontNames,
   applyStyle,
   getAvailableFonts,
 };

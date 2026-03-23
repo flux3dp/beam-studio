@@ -18,7 +18,7 @@ import {
 } from './constants';
 import { createBinaryLoader } from './loaders/binaryLoader';
 import type { CSSLinkTracker, GoogleFontStore } from './types';
-import { isIconFont, isLocalFont } from './utils/detection';
+import { isIconFont, isLocalOrWebFont } from './utils/detection';
 import { getFallbackFont, getFallbackPostScriptName } from './utils/fallbacks';
 import { createNetworkDetector, isNetworkAvailableForGoogleFonts } from './utils/network';
 import { buildGoogleFontURL, discoverAvailableVariants, findBestVariant, getCSSWeight } from './utils/variants';
@@ -122,9 +122,6 @@ export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
   isRegistered: (postscriptName: string) => {
     return get().registeredFonts.has(postscriptName);
   },
-  isLocalFont: (fontFamily: string) => {
-    return isLocalFont(fontFamily);
-  },
   loadGoogleFont: async (fontFamily: string) => {
     const state = get();
     const existingTracker = state.cssLinks.get(fontFamily);
@@ -139,7 +136,7 @@ export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
       return;
     }
 
-    if (isLocalFont(fontFamily) || isIconFont(fontFamily)) {
+    if (isLocalOrWebFont(fontFamily) || isIconFont(fontFamily)) {
       return;
     }
 
