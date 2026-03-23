@@ -13,6 +13,7 @@ import styles from './DimensionPanel.module.scss';
 import { getValue } from './utils';
 
 interface Props {
+  disabled?: boolean;
   onBlur?: () => void;
   onChange: (type: SizeKey, value: number) => void;
   type: SizeKeyShort;
@@ -26,7 +27,7 @@ const typeKeyMap: { [key in SizeKeyShort]: SizeKey } = {
   w: 'width',
 };
 
-const SizeInput = ({ onBlur, onChange, type, value }: Props): React.JSX.Element => {
+const SizeInput = ({ disabled = false, onBlur, onChange, type, value }: Props): React.JSX.Element => {
   const inputRef = useRef<HTMLInputElement>(null);
   const objectPanelEventEmitter = useMemo(() => eventEmitterFactory.createEventEmitter('object-panel'), []);
   const isMobile = useIsMobile();
@@ -97,6 +98,7 @@ const SizeInput = ({ onBlur, onChange, type, value }: Props): React.JSX.Element 
       <UnitInput
         className={styles.input}
         controls={false}
+        disabled={disabled}
         id={`${type}_size`}
         isInch={isInch}
         min={0}

@@ -8,6 +8,7 @@ import { iconButtonTheme } from '@core/app/constants/antd-config';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import { setFitTextBBox } from '@core/app/svgedit/text/fitText';
 import { isFitText } from '@core/app/svgedit/text/textedit';
+import { getIsVertical } from '@core/app/svgedit/text/textedit/getters';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import { useIsMobile } from '@core/helpers/system-helper';
@@ -91,6 +92,32 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
     if (!elem) return false;
 
     return isFitText(elem);
+  }, [elem]);
+
+  const getDisabledSizeKeys = useCallback((): Set<'h' | 'w'> => {
+    const disabled = new Set<'h' | 'w'>();
+
+    if (!elem) return disabled;
+
+    const checkFitTextElem = (e: Element): void => {
+      if (e.tagName !== 'text' || !isFitText(e)) return;
+
+      disabled.add(getIsVertical(e as SVGTextElement) ? 'w' : 'h');
+    };
+
+    // Single fit-text element
+    if (elem.tagName === 'text') {
+      checkFitTextElem(elem);
+    }
+
+    // Multiselection (temp group) containing fit-text
+    if (elem.getAttribute('data-tempgroup') === 'true') {
+      for (const child of elem.querySelectorAll(':scope > text')) {
+        checkFitTextElem(child);
+      }
+    }
+
+    return disabled;
   }, [elem]);
 
   const handlePositionChange = useCallback(
@@ -225,6 +252,7 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
   getDimensionValues(response);
 
   const { dimensionValues } = response;
+  const disabledSizeKeys = getDisabledSizeKeys();
 
   const renderBlock = (type: string): React.ReactNode => {
     if (isPositionKey(type)) {
@@ -241,6 +269,7 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
     if (isSizeKeyShort(type)) {
       return (
         <SizeInput
+          disabled={disabledSizeKeys.has(type as 'h' | 'w')}
           key={type}
           onBlur={handleSizeBlur}
           onChange={handleSizeChange}

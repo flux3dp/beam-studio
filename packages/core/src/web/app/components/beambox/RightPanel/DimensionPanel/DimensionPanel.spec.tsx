@@ -6,6 +6,24 @@ const get = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
   get: () => get(),
+  getStore: () => ({}),
+}));
+
+const mockIsFitText = jest.fn().mockReturnValue(false);
+const mockGetIsVertical = jest.fn().mockReturnValue(false);
+
+jest.mock('@core/app/svgedit/text/textedit', () => ({
+  isFitText: (...args: any[]) => mockIsFitText(...args),
+}));
+
+jest.mock('@core/app/svgedit/text/textedit/getters', () => ({
+  getIsVertical: (...args: any[]) => mockGetIsVertical(...args),
+}));
+
+const mockSetFitTextBBox = jest.fn();
+
+jest.mock('@core/app/svgedit/text/fitText', () => ({
+  setFitTextBBox: (...args: any[]) => mockSetFitTextBBox(...args),
 }));
 
 const mockReRenderImageSymbol = jest.fn();
@@ -256,8 +274,7 @@ describe('test DimensionPanel', () => {
     expect(mockChangeSelectedAttribute).not.toHaveBeenCalled();
     mockImage.getAttribute.mockReturnValueOnce('true');
     fireEvent.click(getByText('lock'));
-    expect(mockImage.getAttribute).toHaveBeenCalledTimes(1);
-    expect(mockImage.getAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed');
+    expect(mockImage.getAttribute).toHaveBeenCalledWith('data-ratiofixed');
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
     expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [mockImage]);
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
@@ -471,8 +488,7 @@ describe('test DimensionPanel in mobile', () => {
     expect(mockChangeSelectedAttribute).not.toHaveBeenCalled();
     mockImage.getAttribute.mockReturnValueOnce('true');
     fireEvent.click(getByText('lock'));
-    expect(mockImage.getAttribute).toHaveBeenCalledTimes(1);
-    expect(mockImage.getAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed');
+    expect(mockImage.getAttribute).toHaveBeenCalledWith('data-ratiofixed');
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
     expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [mockImage]);
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
