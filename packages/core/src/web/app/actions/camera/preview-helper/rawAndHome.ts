@@ -1,12 +1,9 @@
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
-import versionChecker from '@core/helpers/version-checker';
 
 const rawAndHome = async (updateMessage?: (message: string) => void): Promise<void> => {
   const { lang } = i18n;
-  const version = deviceMaster.currentDevice!.info.version;
-  const checker = versionChecker(version);
 
   if (deviceMaster.currentControlMode !== 'raw') {
     updateMessage?.(lang.message.enteringRawMode);
@@ -21,8 +18,7 @@ const rawAndHome = async (updateMessage?: (message: string) => void): Promise<vo
     await deviceMaster.rawHomeZ();
   }
 
-  if (checker.meetRequirement('H_CAM_COMMAND')) await deviceMaster.rawHomeCamera();
-  else await deviceMaster.rawHome();
+  await deviceMaster.rawHomeCamera();
 
   if (rotaryMode) {
     await deviceMaster.rawMoveZRelToLastHome(0);

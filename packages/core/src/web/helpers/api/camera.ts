@@ -13,7 +13,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import i18n from '@core/helpers/i18n';
 import rsaKey from '@core/helpers/rsa-key';
-import VersionChecker from '@core/helpers/version-checker';
+import versionChecker from '@core/helpers/version-checker';
 import Websocket from '@core/helpers/websocket';
 import type {
   FisheyeCameraParameters,
@@ -278,6 +278,22 @@ class Camera {
     return res?.toLowerCase().endsWith('ok') || false;
   };
 
+  getInCameraMode = async (): Promise<{ data: boolean; success: true } | { data: string; success: false }> => {
+    const vc = versionChecker(this.device.version!);
+
+    if (!vc.meetRequirement('BM2_CAMERA_MODE_COMMAND')) {
+      return { data: 'Camera mode command not supported in this version', success: false };
+    }
+
+    const { data, error, success } = await this.sendCommandWithNonBinaryResult('send_text get_camera_mode');
+
+    if (!success) return { data: data ?? error ?? 'Unknown Error', success: false };
+
+    const value = Number(data!.split(':').at(-1));
+
+    return { data: value === 1, success };
+  };
+
   setFisheyeMatrix = async (mat: FisheyeMatrix, setCrop = false): Promise<boolean> => {
     this.fishEyeSetting = { matrix: mat, shouldCrop: setCrop };
 
@@ -503,7 +519,7 @@ class Camera {
       return data;
     }
 
-    if (VersionChecker(this.device.version!).meetRequirement('BEAMBOX_CAMERA_SPEED_UP')) {
+    if (versionChecker(this.device.version!).meetRequirement('BEAMBOX_CAMERA_SPEED_UP')) {
       const data = await crop640x480ImageTo640x280();
 
       return data;

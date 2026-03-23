@@ -1130,6 +1130,12 @@ class DeviceMaster {
   }
 
   async rawHomeCamera() {
+    const vc = VersionChecker(this.currentDevice!.info.version);
+
+    if (!vc.meetRequirement('BM2_H_CAM_COMMAND')) {
+      return this.rawHome();
+    }
+
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.rawHome, { cameraMode: true });
@@ -1677,6 +1683,10 @@ class DeviceMaster {
 
   setCameraExposureAuto(on: boolean) {
     return this.currentDevice?.camera?.setExposureAuto(on ? 3 : 1) ?? false;
+  }
+
+  getInCameraMode() {
+    return this.currentDevice?.camera?.getInCameraMode() ?? { data: 'Camera not connected', success: false };
   }
 
   getDiscoveredDevice<T extends keyof IDeviceInfo>(
