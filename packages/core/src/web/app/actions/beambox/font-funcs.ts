@@ -91,9 +91,12 @@ const fontNameMap = new Map<string, string>();
 // Cache for available font families and lowercase mappings for O(1) lookup
 let lowercaseFontFamilyMap: Map<string, string> | null = null;
 
-const requestAvailableFontFamilies = (withoutMonotype = false) => {
+const requestAvailableFontFamilies = ({
+  queryByLang = true,
+  withoutMonotype = false,
+}: { queryByLang?: boolean; withoutMonotype?: boolean } = {}) => {
   // get all available fonts in local
-  const fonts = fontHelper.getAvailableFonts(withoutMonotype);
+  const fonts = fontHelper.getAvailableFonts({ queryByLang, withoutMonotype });
 
   fonts.forEach((font) => {
     const family = font.family!;
@@ -127,7 +130,7 @@ const requestAvailableFontFamilies = (withoutMonotype = false) => {
 // Optimized O(1) case-insensitive font family lookup
 const findFontFamilyCaseInsensitive = (family: string): string | undefined => {
   if (!lowercaseFontFamilyMap) {
-    requestAvailableFontFamilies();
+    requestAvailableFontFamilies({ queryByLang: false });
   }
 
   return lowercaseFontFamilyMap!.get(family.toLowerCase());

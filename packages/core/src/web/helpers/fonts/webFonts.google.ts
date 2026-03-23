@@ -1,3 +1,4 @@
+import { useStorageStore } from '@core/app/stores/storageStore';
 import type { WebFont } from '@core/interfaces/IFont';
 
 // Note:
@@ -1139,9 +1140,20 @@ const fonts: WebFont[] = [
   },
 ];
 
+const allFontNames = new Set(fonts.map((font) => font.family));
+const appliedFontFamilies: Set<string> = new Set();
+
 const applyStyle = (fontsInUse: WebFont[]): void => {
   const query = fontsInUse
-    .filter((font) => font.queryString)
+    .filter((font) => {
+      if (appliedFontFamilies.has(font.family)) {
+        return false;
+      }
+
+      appliedFontFamilies.add(font.family);
+
+      return font.queryString;
+    })
     .map((font) => font.queryString)
     .join('&');
 
@@ -1156,16 +1168,28 @@ const applyStyle = (fontsInUse: WebFont[]): void => {
   head?.appendChild(link);
 };
 
-const getAvailableFonts = (lang: string): WebFont[] =>
-  fonts.filter((font) => {
+const applyByFontNames = (fontNames: string[]): void => {
+  const fontsInUse = fonts.filter((font) => fontNames.includes(font.family));
+
+  applyStyle(fontsInUse);
+};
+
+const getAvailableFonts = (lang?: string): WebFont[] => {
+  if (!lang) return fonts;
+
+  return fonts.filter((font) => {
     if (!font.supportLangs) {
       return true;
     }
 
     return font.supportLangs.includes(lang);
   });
+};
+
+applyByFontNames(useStorageStore.getState()['font-history']);
 
 export default {
+  allFontNames,
   applyStyle,
   getAvailableFonts,
 };

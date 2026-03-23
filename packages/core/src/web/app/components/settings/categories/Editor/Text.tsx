@@ -9,7 +9,7 @@ import type { GeneralFont, IDefaultFont } from '@core/interfaces/IFont';
 
 import { SettingSelect, SettingSwitch, useSettingStore } from '../../shared';
 
-const fontFamilies = FontFuncs.requestAvailableFontFamilies(true);
+const fontFamilies = FontFuncs.requestAvailableFontFamilies({ withoutMonotype: true });
 const DEFAULT_FONT: IDefaultFont = { family: 'Arial', postscriptName: 'ArialMT', style: 'Regular' };
 
 function Text(): React.JSX.Element {

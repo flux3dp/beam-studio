@@ -37,7 +37,7 @@ export interface FontHelper {
   ) => Promise<{ fontLoadedPromise?: Promise<void>; success: boolean }>;
   findFont: (fontDescriptor: FontDescriptorQuery) => GeneralFont;
   findFonts: (fontDescriptor: FontDescriptorQuery) => GeneralFont[];
-  getAvailableFonts: (withoutMonotype?: boolean) => GeneralFont[];
+  getAvailableFonts: (args?: { queryByLang?: boolean; withoutMonotype?: boolean }) => GeneralFont[];
   getFontName: (font: GeneralFont) => string;
   getMonotypeFonts: () => Promise<boolean>;
   getMonotypeUrl: (postscriptName: string) => Promise<null | string>;
