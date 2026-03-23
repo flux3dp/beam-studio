@@ -34,14 +34,7 @@ function LeftPanelButtonGroup({ active = false, icon, id, options, title }: Prop
   );
 
   return (
-    <Popover
-      arrow={false}
-      classNames={{ root: styles.popover }}
-      content={content}
-      open
-      placement="right"
-      trigger="hover"
-    >
+    <Popover arrow={false} classNames={{ root: styles.popover }} content={content} placement="right" trigger="hover">
       <div className={classNames(styles.wrapper, { [styles.active]: active })}>
         <div className={classNames(buttonStyles.container, { [buttonStyles.active]: active })} id={id} title={title}>
           {icon}
