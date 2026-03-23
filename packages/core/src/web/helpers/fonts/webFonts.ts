@@ -1,5 +1,3 @@
-import { shallow } from 'zustand/shallow';
-
 import { useStorageStore } from '@core/app/stores/storageStore';
 import isWeb from '@core/helpers/is-web';
 import type { WebFont } from '@core/interfaces/IFont';
@@ -1662,7 +1660,6 @@ const getAvailableFonts = (lang?: string): WebFont[] => {
 };
 
 applyByFontNames(useStorageStore.getState()['font-history']);
-useStorageStore.subscribe((state) => state['font-history'], applyByFontNames, { equalityFn: shallow });
 
 export default {
   allFontNames,
