@@ -188,7 +188,7 @@ export default {
   findFonts,
   getAvailableFonts: ({ queryByLang = true, withoutMonotype = false } = {}) => {
     if (withoutMonotype) {
-      return queryByLang ? visibleFonts : allFontsWithoutMonotype;
+      return queryByLang ? visibleFontsWithoutMonotype : allFontsWithoutMonotype;
     }
 
     getMonotypeFonts();
