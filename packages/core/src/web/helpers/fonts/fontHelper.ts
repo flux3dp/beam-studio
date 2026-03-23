@@ -193,7 +193,7 @@ export default {
 
     getMonotypeFonts();
 
-    return allFonts;
+    return queryByLang ? visibleFonts : allFonts;
   },
   getFontName(font: GeneralFont): string {
     if (font.family && font.family in fontNameMap) {
