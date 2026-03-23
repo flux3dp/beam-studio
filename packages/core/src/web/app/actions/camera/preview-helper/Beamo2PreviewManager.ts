@@ -168,23 +168,39 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     }
   };
 
+  private checkCameraModeAndReHome = async (): Promise<void> => {
+    try {
+      const res = await deviceMaster.getInCameraMode();
+
+      if (res.success && !res.data) {
+        await deviceMaster.rawHomeCamera();
+      }
+    } catch (error) {
+      console.log('Failed to get camera mode', error);
+    }
+  };
+
   public preview = async (
     x: number,
     y: number,
     opts?: { overlapFlag?: number; overlapRatio?: number },
   ): Promise<boolean> => {
+    await this.checkCameraModeAndReHome();
+
     return match(this._previewMode)
       .with(PreviewMode.FULL_AREA, () => this.previewFullWorkarea())
       .otherwise(() => this.regionPreviewAtPoint(x, y, opts));
   };
 
-  public previewRegion = (
+  public previewRegion = async (
     x1: number,
     y1: number,
     x2: number,
     y2: number,
     opts?: { overlapRatio?: number },
   ): Promise<boolean> => {
+    await this.checkCameraModeAndReHome();
+
     return match(this._previewMode)
       .with(PreviewMode.FULL_AREA, () => this.previewFullWorkarea())
       .otherwise(() => this.regionPreviewArea(x1, y1, x2, y2, opts));
@@ -197,6 +213,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       if (!res) {
         return true;
       }
+    } else {
+      await this.checkCameraModeAndReHome();
     }
 
     try {
