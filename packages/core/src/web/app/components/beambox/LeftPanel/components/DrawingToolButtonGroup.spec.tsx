@@ -42,6 +42,20 @@ jest.mock('@core/app/stores/canvas/canvasStore', () => ({
   }),
 }));
 
+jest.mock('./LeftPanelButtonGroup', () => {
+  const MockLeftPanelButtonGroup = ({ id, options, title }: any) => (
+    <div data-testid="button-group" id={id} title={title}>
+      {options.map((opt: any) => (
+        <button key={opt.id} onClick={opt.onClick} title={opt.label}>
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  return MockLeftPanelButtonGroup;
+});
+
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 describe('test DrawingToolButtonGroup', () => {
@@ -58,7 +72,8 @@ describe('test DrawingToolButtonGroup', () => {
     fireEvent.click(container.querySelector('#left-Photo'));
     expect(mockImportImage).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(container.querySelector('#left-Text'));
+    // Click the Text option in the button group
+    fireEvent.click(container.querySelector('button[title="Text (T)"]'));
     expect(mockSetMouseMode).toHaveBeenCalledTimes(1);
     expect(mockSetMouseMode).toHaveBeenNthCalledWith(1, 'text');
 

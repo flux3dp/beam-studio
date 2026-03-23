@@ -4,6 +4,7 @@ import { match } from 'ts-pattern';
 
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import LeftPanelButton from '@core/app/components/beambox/LeftPanel/components/LeftPanelButton';
+import LeftPanelButtonGroup from '@core/app/components/beambox/LeftPanel/components/LeftPanelButtonGroup';
 import { showPassThrough } from '@core/app/components/pass-through';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
@@ -103,18 +104,32 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
         label: `${t.label.photo} (I)`,
         onClick: FnWrapper.importImage,
       })}
-      {renderToolButton({
-        icon: <LeftPanelIcons.Text />,
-        id: 'Text',
-        label: `${t.label.text} (T)`,
-        onClick: () => setMouseMode('text'),
-      })}
-      {renderToolButton({
-        icon: <LeftPanelIcons.Text />,
-        id: 'FitText',
-        label: t.label.fit_text,
-        onClick: () => setMouseMode('fit-text'),
-      })}
+      <LeftPanelButtonGroup
+        active={activeButton === 'Text' || activeButton === 'FitText'}
+        icon={<LeftPanelIcons.Text />}
+        id="left-Text"
+        options={[
+          {
+            icon: <LeftPanelIcons.Text />,
+            id: 'Text',
+            label: t.label.text,
+            onClick: () => {
+              svgCanvas?.clearSelection();
+              setMouseMode('text');
+            },
+          },
+          {
+            icon: <LeftPanelIcons.Text />,
+            id: 'FitText',
+            label: t.label.fit_text,
+            onClick: () => {
+              svgCanvas?.clearSelection();
+              setMouseMode('fit-text');
+            },
+          },
+        ]}
+        title={`${t.label.text} (T)`}
+      />
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,
         id: 'Element',
