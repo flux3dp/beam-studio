@@ -136,7 +136,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const fontHistory = useStorageStore((state) => state['font-history']);
-  const [availableFontFamilies, setAvailableFontFamilies] = useState<string[]>([]);
+  const [fontFamilies, setFontFamilies] = useState<string[]>(FontFuncs.requestAvailableFontFamilies());
   const [configs, setConfigs] = useState(defaultTextConfigs);
   const { fontFamily } = configs;
   const workarea = useWorkarea();
@@ -215,30 +215,25 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
     }
   }, [fontHistory]);
 
-  const historyFontFamilies = useMemo(
-    () =>
-      fontHistory
-        .map((family) => {
-          const isSystemFont = availableFontFamilies.some((f) => f.toLowerCase() === family.toLowerCase());
-          const useHistoryPrefix = FontFuncs.requestAvailableFontFamilies({ queryByLang: false }) && isSystemFont;
+  const historyFontFamilies = useMemo(() => {
+    const allFontFamilies = new Set(fontFamilies.map((f) => f.toLowerCase()));
 
-          return getFontFamilyOption(family, useHistoryPrefix);
-        })
-        .filter(Boolean),
-    [fontHistory, availableFontFamilies],
-  );
-
-  const getFontFamilies = useCallback(async () => {
-    setAvailableFontFamilies(FontFuncs.requestAvailableFontFamilies());
-  }, []);
+    return fontHistory
+      .map((family) => {
+        return getFontFamilyOption(family, allFontFamilies.has(family.toLowerCase()));
+      })
+      .filter(Boolean);
+  }, [fontHistory, fontFamilies]);
 
   useEffect(() => {
-    eventEmitter.on('GET_MONOTYPE_FONTS', getFontFamilies);
+    const handler = () => setFontFamilies(FontFuncs.requestAvailableFontFamilies());
+
+    eventEmitter.on('GET_MONOTYPE_FONTS', handler);
 
     return () => {
-      eventEmitter.removeListener('GET_MONOTYPE_FONTS', getFontFamilies);
+      eventEmitter.removeListener('GET_MONOTYPE_FONTS', handler);
     };
-  }, [getFontFamilies]);
+  }, []);
 
   useEffect(() => {
     const getStateFromElem = () => {
@@ -252,7 +247,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       for (const textElement of textElements) {
         const elementFontFamily = textEdit.getFontFamilyData(textElement);
         const cleanFontFamily = elementFontFamily.replace(/^['"]|['"]$/g, '');
-        const localFontMatch = availableFontFamilies.find((f) => f.toLowerCase() === cleanFontFamily.toLowerCase());
+        const localFontMatch = fontFamilies.find((f) => f.toLowerCase() === cleanFontFamily.toLowerCase());
 
         let font: GeneralFont;
 
@@ -305,17 +300,17 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         }
 
         // Check if this font should use fallback
-        const fontIsLocallyAvailable = availableFontFamilies.find((f) => f.toLowerCase() === font.family.toLowerCase());
+        const fontIsLocallyAvailable = fontFamilies.find((f) => f.toLowerCase() === font.family.toLowerCase());
         const googleFontIsLoaded = isGoogleFontLoaded(
           font.family,
-          availableFontFamilies,
+          fontFamilies,
           fontHistory,
           currentSessionLoadedFonts,
         );
 
         if (!googleFontIsLoaded && !fontIsLocallyAvailable) {
           // Use fallback fonts if postscriptName cannot find in user PC
-          const sanitizedFamily = findFallbackFont(font, availableFontFamilies);
+          const sanitizedFamily = findFallbackFont(font, fontFamilies);
 
           if (sanitizedFamily && sanitizedFamily !== font.family) {
             const fonts = FontFuncs.requestFontsOfTheFontFamily(sanitizedFamily);
@@ -352,12 +347,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       selector.getSelectorManager().resizeSelectors([elem]);
     };
 
-    if (availableFontFamilies.length > 0) {
-      getStateFromElem();
-    } else {
-      getFontFamilies();
-    }
-  }, [elem, textElements, availableFontFamilies, configs.id.value, getFontFamilies, fontHistory]);
+    getStateFromElem();
+  }, [elem, textElements, fontFamilies, configs.id.value, fontHistory]);
 
   const handleFontFamilyChange = async (newFamily: string, option: FontOption) => {
     if (newFamily === 'more-google-fonts') {
@@ -474,7 +465,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   };
 
   const renderFontFamilyBlock = (): ReactNode => {
-    const options: FontOption[] = availableFontFamilies.map((family) => getFontFamilyOption(family));
+    const options: FontOption[] = fontFamilies.map((family) => getFontFamilyOption(family));
 
     if (isMobile) {
       return (

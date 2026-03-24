@@ -1,3 +1,7 @@
+import React from 'react';
+
+import { fireEvent, render, waitFor } from '@testing-library/react';
+
 // Mock the entire googleFontsApiCache module to avoid URL construction issues
 jest.mock('@core/helpers/fonts/googleFontsApiCache', () => ({
   googleFontsApiCache: {
@@ -7,10 +11,6 @@ jest.mock('@core/helpers/fonts/googleFontsApiCache', () => ({
     getCacheStatus: jest.fn().mockReturnValue({ cached: false, isLoading: false, itemCount: 0, metrics: {} }),
   },
 }));
-
-import React from 'react';
-
-import { fireEvent, render, waitFor } from '@testing-library/react';
 
 enum VerticalAlign {
   BOTTOM = 0,
@@ -95,8 +95,6 @@ jest.mock('@core/app/stores/storageStore', () => ({
 }));
 
 jest.mock('antd', () => {
-  const React = require('react');
-
   return {
     ...jest.requireActual('antd'),
     Button: ({ children, ...props }: any) => <button {...props}>{children}</button>,
@@ -407,16 +405,10 @@ jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem', () => ({
   ),
 }));
 
-// Mock symbolMaker to avoid import.meta.url syntax error in Jest
-jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
-  __esModule: true,
-  default: jest.fn(),
-}));
-
 import TextOptions from './index';
 
 describe('TextOptions', () => {
-  const mockElem = document.createElement('g');
+  const mockElem = document.createElement('g') as unknown as SVGElement;
   const mockTextElement = document.createElement('text') as unknown as SVGTextElement;
 
   beforeEach(() => {
@@ -495,7 +487,6 @@ describe('TextOptions', () => {
       },
       writable: true,
     });
-
   });
 
   describe('Desktop view', () => {
@@ -770,5 +761,4 @@ describe('TextOptions', () => {
       expect(require('../TextOptions/hooks/useFontHandlers').useFontHandlers).toHaveBeenCalled();
     });
   });
-
 });

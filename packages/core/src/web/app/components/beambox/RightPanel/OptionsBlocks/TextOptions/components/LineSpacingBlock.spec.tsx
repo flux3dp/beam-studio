@@ -79,7 +79,9 @@ describe('LineSpacingBlock', () => {
   test('should call setLineSpacing and onSizeChange on change', () => {
     const mockOnSizeChange = jest.fn();
 
-    const { getByTestId } = render(<LineSpacingBlock onSizeChange={mockOnSizeChange} textElements={[mockTextElement]} />);
+    const { getByTestId } = render(
+      <LineSpacingBlock onSizeChange={mockOnSizeChange} textElements={[mockTextElement]} />,
+    );
 
     fireEvent.change(getByTestId('desktop-input'), { target: { value: '1.5' } });
 
@@ -92,7 +94,9 @@ describe('LineSpacingBlock', () => {
 
     const mockOnSizeChange = jest.fn();
 
-    const { getByTestId } = render(<LineSpacingBlock onSizeChange={mockOnSizeChange} textElements={[mockTextElement]} />);
+    const { getByTestId } = render(
+      <LineSpacingBlock onSizeChange={mockOnSizeChange} textElements={[mockTextElement]} />,
+    );
 
     fireEvent.change(getByTestId('mobile-input'), { target: { value: '2' } });
 
