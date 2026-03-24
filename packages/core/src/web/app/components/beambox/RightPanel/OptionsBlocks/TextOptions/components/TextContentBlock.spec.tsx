@@ -13,7 +13,10 @@ jest.mock('@core/app/svgedit/text/textedit', () => ({
   __esModule: true,
   getTextContent: (...args: any[]) => mockGetTextContent(...args),
   renderText: (...args: any[]) => mockRenderText(...args),
-  textContentEvents: { on: (...args: any[]) => mockOn(...args), removeListener: (...args: any[]) => mockRemoveListener(...args) },
+  textContentEvents: {
+    on: (...args: any[]) => mockOn(...args),
+    removeListener: (...args: any[]) => mockRemoveListener(...args),
+  },
 }));
 
 jest.mock('@core/app/svgedit/history/history', () => ({
