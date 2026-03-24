@@ -605,7 +605,6 @@
       'data-fit-text',
       'data-fit-text-align',
       'data-fit-text-size',
-      'data-fit-text',
     ],
     textPath: [
       'alignment-baseline',
