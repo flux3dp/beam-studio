@@ -5,17 +5,10 @@ import { app } from '@electron/remote';
 import electron from 'electron';
 import writeFileAtomic from 'write-file-atomic';
 
-import type { IFileSystem } from '@core/interfaces/IFileSystem';
+import type { CustomFile, IFileSystem, Path } from '@core/interfaces/IFileSystem';
 
-export type Path = 'appData' | 'documents' | 'userData';
-export default {
-  appendFile(filePath: string, data: Buffer | string): void {
-    fs.appendFileSync(filePath, data as any);
-  },
-  copyFile(src: string, dest: string): void {
-    fs.copyFileSync(src, dest);
-  },
-  delete(path: Path): void {
+const fileSystem: IFileSystem = {
+  delete(path: string): void {
     fs.unlinkSync(path);
   },
   exists(path: string): boolean {
@@ -24,7 +17,7 @@ export default {
   getPath(path: Path): string {
     return app.getPath(path);
   },
-  getPathForFile(file: File): string | undefined {
+  getPathForFile(file: CustomFile): string | undefined {
     return file.path || electron.webUtils.getPathForFile(file);
   },
   isDirectory(input: string): boolean {
@@ -45,11 +38,6 @@ export default {
   readFile(filePath: string, encoding?: BufferEncoding): Buffer | string {
     return fs.readFileSync(filePath, { encoding });
   },
-  rename(oldPath: string, newPath: string): Promise<void> {
-    const fsPromises = fs.promises;
-
-    return fsPromises.rename(oldPath, newPath);
-  },
   statSync(filePath: string) {
     const res = fs.statSync(filePath);
 
@@ -69,4 +57,6 @@ export default {
     data?.forEach((datum) => stream.write(datum));
     stream.close();
   },
-} as IFileSystem;
+};
+
+export default fileSystem;
