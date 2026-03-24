@@ -254,5 +254,3 @@ export const handleFitTextTransform = (text: SVGTextElement, opts: HistoryAction
 
   return batchCmd;
 };
-
-export default createNewFitText;

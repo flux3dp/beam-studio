@@ -16,6 +16,7 @@ import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import selector from '@core/app/svgedit/selector';
 import textEdit, { isFitText } from '@core/app/svgedit/text/textedit';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
@@ -32,13 +33,11 @@ import {
 } from '@core/helpers/fonts/fontUtils';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
 import { isVariableTextSupported } from '@core/helpers/variableText';
 import type { GeneralFont } from '@core/interfaces/IFont';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { TextConfig, TextOption } from '@core/interfaces/ObjectPanel';
 
 import ObjectPanelController from '../../contexts/ObjectPanelController';
@@ -54,12 +53,6 @@ import TextContentBlock from './components/TextContentBlock';
 import VerticalAlignBlock from './components/VerticalAlignBlock';
 import { useFontHandlers } from './hooks/useFontHandlers';
 import styles from './index.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const eventEmitter = eventEmitterFactory.createEventEmitter('font');
 
@@ -190,7 +183,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
         if (cmd) batchCmd.addSubCommand(cmd);
       });
 
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
 
       if (!isLocalFont(font)) {
         await waitForWebFont(fontLoadedPromise);

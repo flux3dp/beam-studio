@@ -29,8 +29,7 @@ interface Props {
 }
 
 const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactNode => {
-  const lang = useI18n();
-  const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
+  const t = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const [state, setState] = useState(() => readValues(textElements));
 
@@ -63,7 +62,7 @@ const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactN
       <ObjectPanelItem.Number
         hasMultiValue={state.hasMultiValue}
         id="letter_spacing"
-        label={langOptionPanel.letter_spacing}
+        label={t.letter_spacing}
         unit="em"
         updateValue={handleChange}
         value={state.value}
@@ -72,7 +71,7 @@ const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactN
   }
 
   return (
-    <div className={styles.spacing} title={langOptionPanel.letter_spacing}>
+    <div className={styles.spacing} title={t.letter_spacing}>
       <div className={styles.label}>
         <OptionPanelIcons.LetterSpacing />
       </div>

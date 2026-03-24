@@ -29,8 +29,7 @@ interface Props {
 }
 
 const LineSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactNode => {
-  const lang = useI18n();
-  const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
+  const t = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const [state, setState] = useState(() => readValues(textElements));
 
@@ -64,7 +63,7 @@ const LineSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactNod
         decimal={1}
         hasMultiValue={state.hasMultiValue}
         id="line_spacing"
-        label={langOptionPanel.line_spacing}
+        label={t.line_spacing}
         min={0.8}
         unit=""
         updateValue={handleChange}
@@ -74,7 +73,7 @@ const LineSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactNod
   }
 
   return (
-    <div className={styles.spacing} title={langOptionPanel.line_spacing}>
+    <div className={styles.spacing} title={t.line_spacing}>
       <div className={styles.label}>
         <OptionPanelIcons.LineSpacing />
       </div>

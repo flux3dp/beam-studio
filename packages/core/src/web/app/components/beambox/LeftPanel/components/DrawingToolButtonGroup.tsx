@@ -46,8 +46,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
     () =>
       match(mouseMode)
         .with('pre_preview', 'preview', () => 'Preview')
-        .with('text', 'textedit', () => 'Text')
-        .with('fit-text', () => 'FitText')
+        .with('text', 'textedit', 'fit-text', () => 'Text')
         .with('rect', () => 'Rectangle')
         .with('ellipse', () => 'Ellipse')
         .with('polygon', () => 'Polygon')

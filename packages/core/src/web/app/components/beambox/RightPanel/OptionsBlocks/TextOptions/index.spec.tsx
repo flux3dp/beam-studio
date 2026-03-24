@@ -147,37 +147,28 @@ const mockTextEdit = {
   textContentEvents: { emit: jest.fn(), on: jest.fn(), removeListener: jest.fn() },
 };
 
-jest.mock('@core/app/svgedit/text/textedit', () => ({
-  __esModule: true,
-  default: mockTextEdit,
-  ...mockTextEdit,
-}));
+jest.mock('@core/app/svgedit/text/textedit', () => mockTextEdit);
 
 const mockTextPathEdit = {
   getStartOffset: (...args: any[]) => mockGetStartOffset(...args),
   getVerticalAlign: (...args: any[]) => mockGetVerticalAlign(...args),
   setStartOffset: (...args: any[]) => mockSetStartOffset(...args),
   setVerticalAlign: (...args: any[]) => mockSetVerticalAlign(...args),
+  VerticalAlign,
 };
 
-jest.mock('@core/app/actions/beambox/textPathEdit', () => ({
-  __esModule: true,
-  default: mockTextPathEdit,
-  VerticalAlign,
-}));
+jest.mock('@core/app/actions/beambox/textPathEdit', () => mockTextPathEdit);
 
 const mockFontFuncs = {
   fontNameMap: mockFontNameMap,
   getFontOfPostscriptName: (...args: any[]) => mockGetFontOfPostscriptName(...args),
+  registerGoogleFont: (...args: any[]) => mockRegisterGoogleFont(...args),
   requestAvailableFontFamilies: () => mockRequestAvailableFontFamilies(),
   requestFontByFamilyAndStyle: (...args: any[]) => mockRequestFontByFamilyAndStyle(...args),
   requestFontsOfTheFontFamily: (...args: any[]) => mockRequestFontsOfTheFontFamily(...args),
 };
 
-jest.mock('@core/app/actions/beambox/font-funcs', () => ({
-  ...mockFontFuncs,
-  registerGoogleFont: (...args: any[]) => mockRegisterGoogleFont(...args),
-}));
+jest.mock('@core/app/actions/beambox/font-funcs', () => mockFontFuncs);
 
 const mockFontHelper = {
   applyMonotypeStyle: (...args: any[]) => mockApplyMonotypeStyle(...args),
@@ -195,10 +186,7 @@ const mockProgressCaller = {
   popById: (...args: any[]) => mockPopById(...args),
 };
 
-jest.mock('@core/app/actions/progress-caller', () => ({
-  __esModule: true,
-  default: mockProgressCaller,
-}));
+jest.mock('@core/app/actions/progress-caller', () => mockProgressCaller);
 
 jest.mock('@core/app/svgedit/selector', () => ({
   getSelectorManager: () => ({
@@ -206,16 +194,8 @@ jest.mock('@core/app/svgedit/selector', () => ({
   }),
 }));
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback: any) => {
-    callback({
-      Canvas: {
-        undoMgr: {
-          addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
-        },
-      },
-    });
-  },
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args: any[]) => mockAddCommandToHistory(...args),
 }));
 
 jest.mock('@core/app/svgedit/history/history', () => ({
@@ -279,10 +259,6 @@ jest.mock('../TextOptions/hooks/useFontHandlers', () => ({
     styleOptions: mockStyleOptions,
     waitForWebFont: mockWaitForWebFont,
   })),
-}));
-
-jest.mock('@core/app/svgedit/history/undoManager', () => ({
-  addCommandToHistory: jest.fn(),
 }));
 
 jest.mock('../TextOptions/components/TextContentBlock', () => ({ textElement }: any) => (

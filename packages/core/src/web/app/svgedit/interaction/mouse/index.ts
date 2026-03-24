@@ -630,6 +630,7 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
       transforms.replaceItem(translateOrigin, N - 1);
     }
   } else {
+    // Special Handle for Fit Text one-direction resize, we will directly update the bbox instead of applying a transform
     const newWidth = Math.abs(width * sx);
     const newHeight = Math.abs(height * sy);
     let newLeft = left;
@@ -862,9 +863,6 @@ const mouseMove = (evt: MouseEvent) => {
       // while the mouse is down, when mouse goes up, we use this to recalculate
       // the shape's coordinates
       onResizeMouseMove(evt, selected, x, y);
-      break;
-    case 'text':
-      svgedit.utilities.assignAttributes(shape, { x, y }, 1000);
       break;
     case 'line':
       if (currentConfig.gridSnapping) {
@@ -1382,9 +1380,8 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       svgCanvas.textActions.start(element);
       break;
     case 'fit-text': {
-      // Move to mouse down?
       const fontSize = textEdit.getCurText().font_size;
-      const fitWidth = fontSize * 10;
+      const fitWidth = fontSize * 7;
 
       element = createNewFitText(x, y, fitWidth, { isToSelect: true });
       keep = true;

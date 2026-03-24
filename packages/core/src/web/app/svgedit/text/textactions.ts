@@ -845,8 +845,6 @@ class TextActions {
   mouseDown(evt: MouseEvent, mouseTarget: EventTarget, startX: number, startY: number) {
     const pt = this.screenToPt(startX, startY);
 
-    console.log('textaction mousedown');
-
     this.textinput.focus();
     this.setCursorFromPoint(pt.x, pt.y);
     this.lastX = startX;
@@ -1232,9 +1230,8 @@ class TextActions {
 
     this.calculateChardata();
     this.textinput.focus();
-    $(this.curtext)
-      .unbind('dblclick', this.selectWord as any)
-      .dblclick(this.selectWord as any);
+    this.curtext.removeEventListener('dblclick', this.selectWord as any);
+    this.curtext.addEventListener('dblclick', this.selectWord as any);
 
     this.setSelection(this.textinput.selectionStart!, this.textinput.selectionEnd!, true);
   }

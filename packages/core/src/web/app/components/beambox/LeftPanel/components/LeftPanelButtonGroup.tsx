@@ -23,7 +23,7 @@ interface Props {
 
 function LeftPanelButtonGroup({ active = false, icon, id, options, title }: Props): React.JSX.Element {
   const content = (
-    <div className={styles.popoverContent}>
+    <div>
       {options.map((option) => (
         <div
           className={styles.option}

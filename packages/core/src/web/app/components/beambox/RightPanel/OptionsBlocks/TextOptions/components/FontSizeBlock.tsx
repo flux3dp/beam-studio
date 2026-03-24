@@ -28,8 +28,7 @@ interface Props {
 }
 
 const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode => {
-  const lang = useI18n();
-  const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
+  const t = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const [state, setState] = useState(() => readValues(textElements));
 
@@ -63,7 +62,7 @@ const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode =
         decimal={0}
         hasMultiValue={state.hasMultiValue}
         id="font_size"
-        label={langOptionPanel.font_size}
+        label={t.font_size}
         min={1}
         unit="px"
         updateValue={handleChange}
@@ -73,7 +72,7 @@ const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode =
   }
 
   return (
-    <div className={styles['font-size']} title={langOptionPanel.font_size}>
+    <div className={styles['font-size']} title={t.font_size}>
       <OptionsInput
         displayMultiValue={state.hasMultiValue}
         id="font_size"
