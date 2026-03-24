@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import type { ModalProps } from 'antd';
 import { Modal } from 'antd';
@@ -41,6 +41,7 @@ const DraggableModal = (props: Props): React.JSX.Element => {
   const [draggableHeight, setDraggableHeight] = useState(0);
   const [draggableWidth, setDraggableWidth] = useState(0);
   const draggableRef = useRef<HTMLDivElement>(null);
+  const currentPosition = useRef<ControlPosition>(defaultPosition);
   const isDragDisabled = disableMobileDrag && isMobile;
 
   // eslint-disable-next-line hooks/exhaustive-deps
@@ -54,18 +55,36 @@ const DraggableModal = (props: Props): React.JSX.Element => {
     }
   });
 
-  const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
+  const setBoundsAccordingToPosition = useCallback((data: ControlPosition) => {
     const { clientHeight, clientWidth } = window.document.documentElement;
     const targetRect = draggableRef.current?.getBoundingClientRect();
 
     if (!targetRect) return;
 
     setBounds({
-      bottom: clientHeight - (targetRect.bottom - uiData.y),
-      left: -targetRect.left + uiData.x,
-      right: clientWidth - (targetRect.right - uiData.x),
-      top: -targetRect.top + uiData.y + layoutConstants.topBarHeight,
+      bottom: clientHeight - (targetRect.bottom - data.y),
+      left: -targetRect.left + data.x,
+      right: clientWidth - (targetRect.right - data.x),
+      top: -targetRect.top + data.y + layoutConstants.topBarHeight,
     });
+  }, []);
+
+  useEffect(() => {
+    const handleResize = () => {
+      setBoundsAccordingToPosition(currentPosition.current);
+    };
+
+    window.addEventListener('resize', handleResize);
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, [setBoundsAccordingToPosition]);
+
+  const onStart = (_event: DraggableEvent, uiData: DraggableData) => {
+    setBoundsAccordingToPosition(uiData);
+  };
+
+  const onStop = (_event: DraggableEvent, uiData: DraggableData) => {
+    currentPosition.current = { x: uiData.x, y: uiData.y };
   };
 
   const positionOffset = useMemo(() => {
@@ -101,8 +120,9 @@ const DraggableModal = (props: Props): React.JSX.Element => {
           bounds={bounds}
           defaultPosition={defaultPosition}
           disabled={disabled || isDragDisabled}
-          nodeRef={draggableRef}
+          nodeRef={draggableRef as React.RefObject<HTMLDivElement>}
           onStart={onStart}
+          onStop={onStop}
           positionOffset={positionOffset}
         >
           <div
@@ -119,10 +139,6 @@ const DraggableModal = (props: Props): React.JSX.Element => {
       )}
       title={
         <div
-          onBlur={() => {}}
-          // fix eslintjsx-a11y/mouse-events-have-key-events
-          // https://github.com/jsx-eslint/eslint-plugin-jsx-a11y/blob/master/docs/rules/mouse-events-have-key-events.md
-          onFocus={() => {}}
           onMouseOut={() => setDisabled(true)}
           onMouseOver={() => {
             if (disabled && !isDragDisabled) setDisabled(false);
