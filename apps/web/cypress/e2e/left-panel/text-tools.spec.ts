@@ -79,6 +79,7 @@ describe('text tools', () => {
     cy.get('#svg_1').dblclick();
     cy.realPress(['Shift', 'Enter']);
     cy.inputText('LINE SPACING TEST');
+    cy.realPress(['Enter']);
     cy.get('#svg_1').should('include.text', 'TEXT FONTLINE SPACING TEST');
     cy.get('input#line_spacing').should('have.value', '1').clear().type('1.5').blur();
     cy.get('#svg_1').should('have.attr', 'data-line-spacing').and('eq', '1.5');
@@ -86,6 +87,7 @@ describe('text tools', () => {
     cy.get('#svg_2').dblclick();
     cy.realPress(['Shift', 'Enter']);
     cy.inputText('LINE SPACING TEST');
+    cy.realPress(['Enter']);
     cy.get('#svg_2').should('include.text', 'TEXT STYLELINE SPACING TEST');
     cy.get('input#line_spacing').should('have.value', '1').clear().type('5').blur();
     cy.get('#svg_2').should('have.attr', 'data-line-spacing').and('eq', '5');
