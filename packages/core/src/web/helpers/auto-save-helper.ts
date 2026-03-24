@@ -84,6 +84,7 @@ const init = (): void => {
 const startAutoSave = (): void => {
   const { timeInterval } = getConfig();
 
+  console.log('auto save service started');
   autoSaveInterval = setInterval(
     async () => {
       if (isAtPage('editor')) {
