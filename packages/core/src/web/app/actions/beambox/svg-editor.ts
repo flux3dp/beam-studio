@@ -463,6 +463,8 @@ const svgEditor = (window['svgEditor'] = (function () {
         const { tagName } = elem;
         const angle = getRotationAngle(elem);
 
+        ObjectPanelController.updateDimensionValues({ rotation: angle });
+
         if (!is_node && currentMode !== 'pathedit') {
           //$('#selected_panel').show();
           // Elements in this array already have coord fields
