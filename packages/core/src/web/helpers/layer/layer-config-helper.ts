@@ -55,6 +55,8 @@ const attributeMap: Record<ConfigKey, string> = {
   nozzleMode: 'data-nozzleMode',
   nozzleOffsetX: 'data-nozzleOffsetX',
   nozzleOffsetY: 'data-nozzleOffsetY',
+  oneWayEngraving: 'data-owe',
+  oneWayEngravingReverse: 'data-oweRev',
   power: 'data-strength',
   printingSpeed: 'data-printingSpeed',
   printingStrength: 'data-printingStrength',
@@ -117,6 +119,8 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   nozzleMode: 3,
   nozzleOffsetX: 0,
   nozzleOffsetY: 0,
+  oneWayEngraving: false,
+  oneWayEngravingReverse: false,
   power: 15,
   printingSpeed: 60,
   printingStrength: 100,
@@ -189,12 +193,16 @@ export const booleanConfig: ConfigKey[] = [
   'ceZHighSpeed',
   'uvCuringAfter',
   'highQuality',
+  'oneWayEngraving',
+  'oneWayEngravingReverse',
 ] as const;
 export const objectConfig: ConfigKey[] = ['amAngleMap', 'colorCurvesMap'] as const;
 export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'speed',
   'repeat',
   'highQuality',
+  'oneWayEngraving',
+  'oneWayEngravingReverse',
   // printing
   'printingSpeed',
   'multipass',

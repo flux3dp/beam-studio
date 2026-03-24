@@ -21,7 +21,7 @@ const CuringOptions = memo(({ type = 'default' }: { type?: 'default' | 'modal' |
 
     change({ uvCuringAfter: newVal });
 
-    const batchCmd = new history.BatchCommand('Change auto focus toggle');
+    const batchCmd = new history.BatchCommand('Change Curing After toggle');
 
     selectedLayers.forEach((layerName) => writeData(layerName, 'uvCuringAfter', newVal, { batchCmd }));
     batchCmd.onAfter = initState;
