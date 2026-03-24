@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Hvis det stadig ikke lykkes at finde det korrekte mønster, skal du sikre, at dit emne er tydeligt genkendeligt, og arbejdsområdet er rent for snavs.',
     title: 'Auto Fit',
   },
+  autosave: {
+    open_settings: 'Åbn indstillinger',
+    path_not_correct: 'Placeringen for automatisk lagring findes ikke længere.',
+    path_not_correct_desc: 'Vælg venligst en ny mappe i <b>%(preferences)s > %(autosave)s > %(path)s</b> for at fortsætte med at gemme dit arbejde.',
+  },
   barcode_generator: {
     bar_height: 'Streg højde',
     bar_width: 'Stregbredde',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Importeret objekt',
     },
     task_preview: 'Sti-forhåndsvisning',
-    titles: {
-      settings: 'Indstillinger',
-    },
     untitled: 'Untitled',
   },
   topmenu: {

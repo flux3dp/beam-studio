@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Jika masih gagal menemukan pola yang benar, pastikan benda kerja Anda dapat dikenali dengan jelas dan area kerja bersih dari kotoran.',
     title: 'Pas Otomatis',
   },
+  autosave: {
+    open_settings: 'Buka Pengaturan',
+    path_not_correct: 'Lokasi Simpan Otomatis tidak ada lagi.',
+    path_not_correct_desc: 'Silakan pilih folder baru di <b>%(preferences)s > %(autosave)s > %(path)s</b> untuk melanjutkan menyimpan pekerjaan Anda.',
+  },
   barcode_generator: {
     bar_height: 'Tinggi Batang',
     bar_width: 'Lebar Batang',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Objek Impor',
     },
     task_preview: 'Pratinjau Jalur',
-    titles: {
-      settings: 'Pengaturan',
-    },
     untitled: 'Tanpa Judul',
   },
   topmenu: {

@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Jos oikean kuvion löytäminen edelleen epäonnistuu, varmista, että työkappaleesi on selvästi tunnistettavissa ja että työalue on puhdas roskista.',
     title: 'Automaattinen Sovitus',
   },
+  autosave: {
+    open_settings: 'Avaa asetukset',
+    path_not_correct: 'Automaattisen tallennuksen sijainti ei ole enää olemassa.',
+    path_not_correct_desc: 'Valitse uusi kansio kohdasta <b>%(preferences)s > %(autosave)s > %(path)s</b> jatkaaksesi työsi tallentamista.',
+  },
   barcode_generator: {
     bar_height: 'Palkin korkeus',
     bar_width: 'Palkin leveys',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Tuotu kohde',
     },
     task_preview: 'Polun esikatselu',
-    titles: {
-      settings: 'Asetukset',
-    },
     untitled: 'Nimeämätön',
   },
   topmenu: {

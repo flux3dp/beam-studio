@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Jika masih gagal menemui corak yang betul, pastikan bahan kerja anda dapat dikenali dengan jelas dan kawasan kerja bersih daripada serpihan.',
     title: 'Muat Auto',
   },
+  autosave: {
+    open_settings: 'Buka Tetapan',
+    path_not_correct: 'Lokasi Simpan Auto tidak lagi wujud.',
+    path_not_correct_desc: 'Sila pilih folder baharu dalam <b>%(preferences)s > %(autosave)s > %(path)s</b> untuk terus menyimpan kerja anda.',
+  },
   barcode_generator: {
     bar_height: 'Tinggi Bar',
     bar_width: 'Lebar Bar',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Objek Diimport',
     },
     task_preview: 'Pratonton Laluan',
-    titles: {
-      settings: 'Tetapan',
-    },
     untitled: 'Tanpa Tajuk',
   },
   topmenu: {

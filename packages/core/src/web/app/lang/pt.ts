@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Se ainda assim não encontrar o padrão correto, certifique-se de que sua peça de trabalho é claramente reconhecível e que a área de trabalho está livre de detritos.',
     title: 'Ajuste Automático',
   },
+  autosave: {
+    open_settings: 'Abrir configurações',
+    path_not_correct: 'A localização de salvamento automático não existe mais.',
+    path_not_correct_desc: 'Por favor, escolha uma nova pasta em <b>%(preferences)s > %(autosave)s > %(path)s</b> para continuar salvando seu trabalho.',
+  },
   barcode_generator: {
     bar_height: 'Altura da barra',
     bar_width: 'Largura da barra',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Objeto Importado',
     },
     task_preview: 'Pré-visualização do caminho',
-    titles: {
-      settings: 'Configurações',
-    },
     untitled: 'Sem título',
   },
   topmenu: {

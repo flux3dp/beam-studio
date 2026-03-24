@@ -48,6 +48,11 @@ export interface ILang {
     step3: string;
     title: string;
   };
+  autosave: {
+    open_settings: string;
+    path_not_correct: string;
+    path_not_correct_desc: string;
+  };
   barcode_generator: {
     bar_height: string;
     bar_width: string;
@@ -2439,9 +2444,6 @@ export interface ILang {
       use: string;
     };
     task_preview: string;
-    titles: {
-      settings: string;
-    };
     untitled: string;
   };
   topmenu: {

@@ -6,7 +6,6 @@ import os from 'os';
 import path from 'path';
 
 import { app, ipcMain } from 'electron';
-// @ts-expect-error Missing type definitions
 import type WebSocket from 'ws';
 
 import { BackendEvents } from '@core/app/constants/ipcEvents';

@@ -18,6 +18,7 @@ const mimetypeMap: Record<string, string> = {
 const input = document.createElement('input');
 
 input.setAttribute('id', 'file-input');
+input.setAttribute('style', 'display:none');
 document.body.append(input);
 
 let lastPromiseResolve: ((result: { canceled?: boolean }) => void) | null;

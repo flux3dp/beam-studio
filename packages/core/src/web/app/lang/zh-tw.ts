@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: '如果仍然無法找到正確的形狀，請確保您的工件清晰可辨，且工作區域乾淨無雜物。',
     title: '自動對位',
   },
+  autosave: {
+    open_settings: '開啟設定',
+    path_not_correct: '自動儲存的位置不存在。',
+    path_not_correct_desc: '請前往<b>「%(preferences)s > %(autosave)s > %(path)s」</b>選擇新的資料夾，以繼續儲存檔案。',
+  },
   barcode_generator: {
     bar_height: '條高',
     bar_width: '條寬',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: '匯入物件',
     },
     task_preview: '工作預覽',
-    titles: {
-      settings: '偏好設定',
-    },
     untitled: '未命名',
   },
   topmenu: {

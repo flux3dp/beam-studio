@@ -60,7 +60,7 @@ exports[`settings/Editor initially no warning 1`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           X
         </span>
@@ -87,7 +87,7 @@ exports[`settings/Editor initially no warning 1`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           Y
         </span>
@@ -424,7 +424,7 @@ exports[`settings/Editor initially no warning 2`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           X
         </span>
@@ -451,7 +451,7 @@ exports[`settings/Editor initially no warning 2`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           Y
         </span>
@@ -788,7 +788,7 @@ exports[`settings/Editor initially no warning 3`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           X
         </span>
@@ -815,7 +815,7 @@ exports[`settings/Editor initially no warning 3`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           Y
         </span>
@@ -1152,7 +1152,7 @@ exports[`settings/Editor initially no warning 4`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           X
         </span>
@@ -1179,7 +1179,7 @@ exports[`settings/Editor initially no warning 4`] = `
         class="xy-set"
       >
         <span
-          class="font2 xy-label"
+          class="xy-label"
         >
           Y
         </span>

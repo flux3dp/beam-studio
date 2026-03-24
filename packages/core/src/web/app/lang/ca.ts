@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: "Si encara no troba el patró correcte, assegura't que la teva peça de treball sigui clarament recognoscible i que l'àrea de treball estigui lliure de residus.",
     title: 'Ajust automàtic',
   },
+  autosave: {
+    open_settings: 'Obre la configuració',
+    path_not_correct: 'La ubicació de desat automàtic ja no existeix.',
+    path_not_correct_desc: 'Si us plau, tria una nova carpeta a <b>%(preferences)s > %(autosave)s > %(path)s</b> per continuar desant el teu treball.',
+  },
   barcode_generator: {
     bar_height: 'Alçada de la barra',
     bar_width: 'Amplada de la barra',
@@ -2442,9 +2447,6 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
       use: 'Objecte importat',
     },
     task_preview: 'Previsualització del camí',
-    titles: {
-      settings: 'Preferències',
-    },
     untitled: 'Sense títol',
   },
   topmenu: {

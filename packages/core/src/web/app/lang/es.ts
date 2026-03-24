@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Si sigue sin encontrar el patrón correcto, asegúrese de que el trabajo sea claramente reconocible y que el área de trabajo esté limpio de residuos.',
     title: 'Ajuste automático',
   },
+  autosave: {
+    open_settings: 'Abrir configuración',
+    path_not_correct: 'La ubicación de guardado automático ya no existe.',
+    path_not_correct_desc: 'Por favor, elija una nueva carpeta en <b>%(preferences)s > %(autosave)s > %(path)s</b> para continuar guardando su trabajo.',
+  },
   barcode_generator: {
     bar_height: 'Altura de barra',
     bar_width: 'Ancho de barra',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Objeto importado',
     },
     task_preview: 'Vista previa de ruta',
-    titles: {
-      settings: 'Preferencias',
-    },
     untitled: 'Sin título',
   },
   topmenu: {

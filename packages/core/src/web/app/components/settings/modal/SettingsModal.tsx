@@ -67,7 +67,7 @@ const SettingsModal = ({
     if (window.confirm(lang.settings.confirm_reset)) {
       storage.clearAllExceptIP();
       localStorage.clear();
-      await autoSaveHelper.useDefaultConfig();
+      await autoSaveHelper.applyDefaultConfig();
       onClose();
       window.location.hash = '#';
       window.location.reload();
