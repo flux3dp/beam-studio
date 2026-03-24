@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: "Se non riesce ancora a trovare il modello corretto, assicurati che il tuo pezzo sia chiaramente riconoscibile e che l'area di lavoro sia pulita da detriti.",
     title: 'Adattamento Automatico',
   },
+  autosave: {
+    open_settings: 'Apri impostazioni',
+    path_not_correct: 'La posizione di salvataggio automatico non esiste più.',
+    path_not_correct_desc: 'Si prega di scegliere una nuova cartella in <b>%(preferences)s > %(autosave)s > %(path)s</b> per continuare a salvare il tuo lavoro.',
+  },
   barcode_generator: {
     bar_height: 'Altezza della barra',
     bar_width: 'Larghezza della barra',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Oggetto importato',
     },
     task_preview: 'Anteprima percorso',
-    titles: {
-      settings: 'Preferenze',
-    },
     untitled: 'Senza titolo',
   },
   topmenu: {

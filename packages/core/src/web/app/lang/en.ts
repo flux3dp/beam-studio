@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'If it still fails to find the correct pattern, please ensure your workpiece is clearly recognizable and the work area is clean of debris.',
     title: 'Auto Fit',
   },
+  autosave: {
+    open_settings: 'Open Settings',
+    path_not_correct: 'The Auto Save location no longer exists.',
+    path_not_correct_desc: 'Please choose a new folder in <b>%(preferences)s > %(autosave)s > %(path)s</b> to continue saving your work.',
+  },
   barcode_generator: {
     bar_height: 'Bar Height',
     bar_width: 'Bar Width',
@@ -2442,9 +2447,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
       use: 'Imported Object',
     },
     task_preview: 'Path Preview',
-    titles: {
-      settings: 'Preferences',
-    },
     untitled: 'Untitled',
   },
   topmenu: {

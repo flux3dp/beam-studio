@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Wenn weiterhin kein korrektes Muster gefunden wird, stellen Sie sicher, dass Ihr Werkstück klar erkennbar ist und der Arbeitsbereich frei von Ablagerungen ist.',
     title: 'Automatische Anpassung',
   },
+  autosave: {
+    open_settings: 'Einstellungen öffnen',
+    path_not_correct: 'Der Speicherort für automatisches Speichern existiert nicht mehr.',
+    path_not_correct_desc: 'Bitte wählen Sie einen neuen Ordner unter <b>%(preferences)s > %(autosave)s > %(path)s</b> aus, um Ihre Arbeit weiterhin zu speichern.',
+  },
   barcode_generator: {
     bar_height: 'Balkenhöhe',
     bar_width: 'Balkenbreite',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Importierte Objekt',
     },
     task_preview: 'Pfadvorschau',
-    titles: {
-      settings: 'Einstellungen',
-    },
     untitled: 'Ohne Titel',
   },
   topmenu: {

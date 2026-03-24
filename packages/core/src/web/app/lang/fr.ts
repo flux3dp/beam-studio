@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Si cela ne parvient toujours pas à trouver le motif correct, assurez-vous que votre pièce est clairement reconnaissable et que la zone de travail est exempte de débris.',
     title: 'Ajustement Automatique',
   },
+  autosave: {
+    open_settings: 'Ouvrir les paramètres',
+    path_not_correct: "L'emplacement de sauvegarde automatique n'existe plus.",
+    path_not_correct_desc: 'Veuillez choisir un nouveau dossier dans <b>%(preferences)s > %(autosave)s > %(path)s</b> pour continuer à enregistrer votre travail.',
+  },
   barcode_generator: {
     bar_height: 'Hauteur de barre',
     bar_width: 'Largeur de barre',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Objet importé',
     },
     task_preview: 'Aperçu du chemin',
-    titles: {
-      settings: 'Préférences',
-    },
     untitled: 'Sans titre',
   },
   topmenu: {

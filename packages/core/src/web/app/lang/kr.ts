@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: '그래도 올바른 패턴을 찾지 못하면, 작업물이 명확히 인식 가능하고 작업 영역이 깨끗한지 확인하세요.',
     title: '자동 맞춤',
   },
+  autosave: {
+    open_settings: '설정 열기',
+    path_not_correct: '자동 저장 위치가 더 이상 존재하지 않습니다.',
+    path_not_correct_desc: '<b>%(preferences)s > %(autosave)s > %(path)s</b>에서 새 폴더를 선택하여 작업을 계속 저장하세요.',
+  },
   barcode_generator: {
     bar_height: '바 높이',
     bar_width: '바 너비',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: '가져온 개체',
     },
     task_preview: '경로 미리보기',
-    titles: {
-      settings: '환경설정',
-    },
     untitled: '언타이틀',
   },
   topmenu: {

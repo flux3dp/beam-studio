@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Nếu vẫn không tìm được mẫu chính xác, hãy đảm bảo rằng vật liệu của bạn có thể nhận dạng rõ ràng và khu vực làm việc sạch sẽ, không có mảnh vụn.',
     title: 'Tự Động Vừa Khít',
   },
+  autosave: {
+    open_settings: 'Mở cài đặt',
+    path_not_correct: 'Vị trí Lưu Tự Động không còn tồn tại.',
+    path_not_correct_desc: 'Vui lòng chọn một thư mục mới trong <b>%(preferences)s > %(autosave)s > %(path)s</b> để tiếp tục lưu công việc của bạn.',
+  },
   barcode_generator: {
     bar_height: 'Chiều cao thanh',
     bar_width: 'Chiều rộng thanh',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Đối tượng nhập khẩu',
     },
     task_preview: 'Xem trước đường dẫn',
-    titles: {
-      settings: 'Tùy chọn',
-    },
     untitled: 'Chưa đặt tên',
   },
   topmenu: {

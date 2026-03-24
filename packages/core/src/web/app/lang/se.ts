@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Om det fortfarande inte går att hitta rätt mönster, se till att ditt arbetsstycke är tydligt igenkännbart och att arbetsområdet är rent från skräp.',
     title: 'Auto Fit',
   },
+  autosave: {
+    open_settings: 'Öppna inställningar',
+    path_not_correct: 'Platsen för automatisk sparning finns inte längre.',
+    path_not_correct_desc: 'Välj en ny mapp i <b>%(preferences)s > %(autosave)s > %(path)s</b> för att fortsätta spara ditt arbete.',
+  },
   barcode_generator: {
     bar_height: 'Streckhöjd',
     bar_width: 'Streckbredd',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Importerat objekt',
     },
     task_preview: 'Förhandsvisning av sökväg',
-    titles: {
-      settings: 'Inställningar',
-    },
     untitled: 'Namnlös',
   },
   topmenu: {

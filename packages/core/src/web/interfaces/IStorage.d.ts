@@ -4,7 +4,7 @@ import type { IRecord as AnnouncementRecord } from '@core/helpers/announcement-h
 import type { DeviceStore } from '@core/helpers/device/deviceStore';
 import type { IRecord as RatingRecord } from '@core/helpers/rating-helper';
 
-import type { IConfig as AutoSaveConfig } from './IAutosave';
+import type { AutoSaveConfig } from './AutoSaveConfig';
 import type { IDefaultFont } from './IFont';
 import type { Preset } from './ILayerConfig';
 import type { BeamboxPreference } from './Preference';
@@ -15,7 +15,7 @@ export interface Storage {
   'ador-backup-path': string;
   'alert-config': any;
   'announcement-record': AnnouncementRecord;
-  'auto-save-config': AutoSaveConfig;
+  'auto-save-config'?: AutoSaveConfig;
   auto_check_update: boolean;
   auto_connect: boolean;
   'beambox-preference': BeamboxPreference;

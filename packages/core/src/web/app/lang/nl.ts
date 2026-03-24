@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Als het nog steeds niet lukt om het juiste patroon te vinden, zorg er dan voor dat uw werkstuk duidelijk herkenbaar is en dat de werkruimte vrij is van vuil.',
     title: 'Auto Aanpassen',
   },
+  autosave: {
+    open_settings: 'Instellingen openen',
+    path_not_correct: 'De locatie voor automatisch opslaan bestaat niet meer.',
+    path_not_correct_desc: 'Kies een nieuwe map in <b>%(preferences)s > %(autosave)s > %(path)s</b> om uw werk te blijven opslaan.',
+  },
   barcode_generator: {
     bar_height: 'Balkhoogte',
     bar_width: 'Balkbreedte',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Geïmporteerd object',
     },
     task_preview: 'Padvoorbeeld',
-    titles: {
-      settings: 'Voorkeuren',
-    },
     untitled: 'Naamloos',
   },
   topmenu: {

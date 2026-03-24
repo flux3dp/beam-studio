@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'それでも正しいパターンが見つからない場合は、作業対象物がはっきりと認識できる状態であること、および作業エリアがゴミや汚れがない状態であることを確認してください。',
     title: '自動フィット',
   },
+  autosave: {
+    open_settings: '設定を開く',
+    path_not_correct: '自動保存の場所が存在しません。',
+    path_not_correct_desc: '<b>%(preferences)s > %(autosave)s > %(path)s</b>で新しいフォルダを選択して、作業を保存し続けてください。',
+  },
   barcode_generator: {
     bar_height: 'バーの高さ',
     bar_width: 'バー幅',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'インポートされたオブジェクト',
     },
     task_preview: 'パスプレビュー',
-    titles: {
-      settings: '環境設定',
-    },
     untitled: '無題',
   },
   topmenu: {

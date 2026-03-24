@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: '如果仍然无法找到正确的图案，请确保您的工件清晰可识别，并且工作区域干净无杂物。',
     title: '自动适配',
   },
+  autosave: {
+    open_settings: '打开设置',
+    path_not_correct: '自动保存的位置不存在。',
+    path_not_correct_desc: '请前往<b>「%(preferences)s > %(autosave)s > %(path)s」</b>选择新的文件夹，以继续保存文件。',
+  },
   barcode_generator: {
     bar_height: '条高',
     bar_width: '条宽',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: '汇入物件',
     },
     task_preview: '工作预览',
-    titles: {
-      settings: '偏好设定',
-    },
     untitled: '无标题',
   },
   topmenu: {

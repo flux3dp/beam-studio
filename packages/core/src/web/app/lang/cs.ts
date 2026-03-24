@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Pokud se stále nedaří najít správný vzor, ujistěte se, že váš předmět je jasně rozpoznatelný a pracovní plocha je čistá od nečistot.',
     title: 'Automatické přizpůsobení',
   },
+  autosave: {
+    open_settings: 'Otevřít nastavení',
+    path_not_correct: 'Umístění automatického ukládání již neexistuje.',
+    path_not_correct_desc: 'Prosím vyberte novou složku v <b>%(preferences)s > %(autosave)s > %(path)s</b> pro pokračování v ukládání vaší práce.',
+  },
   barcode_generator: {
     bar_height: 'Výška čáry',
     bar_width: 'Šířka čáry',
@@ -2443,9 +2448,6 @@ const lang: ILang = {
       use: 'Importovaný objekt',
     },
     task_preview: 'Náhled cesty',
-    titles: {
-      settings: 'Vlastnosti',
-    },
     untitled: 'Bez názvu',
   },
   topmenu: {

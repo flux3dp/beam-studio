@@ -48,6 +48,11 @@ const lang: ILang = {
     step3: 'Jeśli nadal nie uda się znaleźć odpowiedniego wzoru, upewnij się, że twój przedmiot jest wyraźnie rozpoznawalny, a obszar roboczy jest czysty i wolny od zanieczyszczeń.',
     title: 'Dopasowanie Automatyczne',
   },
+  autosave: {
+    open_settings: 'Otwórz ustawienia',
+    path_not_correct: 'Lokalizacja automatycznego zapisu już nie istnieje.',
+    path_not_correct_desc: 'Proszę wybrać nowy folder w <b>%(preferences)s > %(autosave)s > %(path)s</b>, aby kontynuować zapisywanie pracy.',
+  },
   barcode_generator: {
     bar_height: 'Wysokość paska',
     bar_width: 'Szerokość paska',
@@ -2442,9 +2447,6 @@ const lang: ILang = {
       use: 'Zaimportowany obiekt',
     },
     task_preview: 'Podgląd ścieżki',
-    titles: {
-      settings: 'Preferencje',
-    },
     untitled: 'Bez nazwy',
   },
   topmenu: {
