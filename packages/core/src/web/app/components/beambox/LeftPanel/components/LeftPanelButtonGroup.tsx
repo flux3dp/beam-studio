@@ -25,7 +25,13 @@ function LeftPanelButtonGroup({ active = false, icon, id, options, title }: Prop
   const content = (
     <div className={styles.popoverContent}>
       {options.map((option) => (
-        <div className={styles.option} key={option.id} onClick={option.onClick} title={option.label}>
+        <div
+          className={styles.option}
+          id={`tool-option-${option.id}`}
+          key={option.id}
+          onClick={option.onClick}
+          title={option.label}
+        >
           <div className={styles.optionIcon}>{option.icon}</div>
           {option.label}
         </div>

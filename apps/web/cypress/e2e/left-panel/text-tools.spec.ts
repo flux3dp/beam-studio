@@ -7,7 +7,7 @@ describe('text tools', () => {
     cy.get('.ant-select[title="Font"]').get('.ant-select-selector').get('.ant-select-selection-item img');
 
   const drawText1 = () => {
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');
@@ -17,7 +17,7 @@ describe('text tools', () => {
   };
 
   const drawText2 = () => {
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 150, y: 150 });
     // Wait for text element to be created
     cy.get('#svg_2').should('exist');

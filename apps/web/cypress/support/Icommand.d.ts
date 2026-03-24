@@ -23,6 +23,7 @@ declare global {
       applySettings: () => Chainable<void>;
       checkToolBtnActive: (id: string, active?: boolean) => Chainable<void>;
       clickToolBtn: (id: string, checkActive?: boolean) => Chainable<void>;
+      clickToolGroupBtn: (groupId: string, optionId: string, checkActive?: boolean) => Chainable<void>;
       changeWorkarea: (workarea: string, save?: boolean) => Chainable<void>;
       selectPreset: (presetName: string | RegExp) => Chainable<void>;
       inputValueCloseTo: (selector: string, value: number, tolerance: number) => Chainable<void>;

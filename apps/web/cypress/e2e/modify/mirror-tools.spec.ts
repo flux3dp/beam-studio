@@ -4,7 +4,7 @@ describe('mirror tools', () => {
   });
 
   it('horizontal flip ', () => {
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');
@@ -18,7 +18,7 @@ describe('mirror tools', () => {
   });
 
   it('vertical flip', () => {
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');

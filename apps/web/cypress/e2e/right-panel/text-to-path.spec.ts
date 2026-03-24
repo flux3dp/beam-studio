@@ -6,7 +6,7 @@ describe('to path 2.0', () => {
   const expectedX = !isRunningAtGithub ? 1000 : isWindows ? 1019 : 1011;
 
   const drawText = () => {
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 100 });
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');

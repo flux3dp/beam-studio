@@ -1,7 +1,7 @@
 describe('text on path', () => {
   beforeEach(() => {
     cy.landingEditor();
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 });
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');
