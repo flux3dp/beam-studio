@@ -354,7 +354,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
       if (svgedit.browser.supportsNonScalingStroke()) {
         const handleElementStrokeBeforeResize = (elem: SVGElement) => {
-          if (elem.getAttribute('vector-effect') === 'non-scaling-stroke') {
+          if (elem.tagName === 'g' || elem.getAttribute('vector-effect') === 'non-scaling-stroke') {
             return;
           }
 
@@ -368,10 +368,10 @@ const mouseDown = async (evt: MouseEvent) => {
 
         handleElementStrokeBeforeResize(mouseTarget);
 
-        const elements = mouseTarget.getElementsByTagName('*') as HTMLCollectionOf<SVGElement>;
+        const elements = mouseTarget.querySelectorAll('*');
 
-        for (const element of [mouseTarget, ...elements]) {
-          handleElementStrokeBeforeResize(element);
+        for (const element of elements) {
+          handleElementStrokeBeforeResize(element as SVGElement);
         }
       }
 
