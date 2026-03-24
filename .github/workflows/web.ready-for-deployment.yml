@@ -9,12 +9,12 @@ jobs:
   deployment:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v6
         with:
           node-version: "16.19"
       - name: Checkout Beam Studio Core
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: flux3dp/beam-studio-core
           ref: ${{ github.event.inputs.core_branch }}
@@ -45,7 +45,7 @@ jobs:
       matrix:
         containers: [1, 2, 3]
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
       - name: Run e2e test against the production environment
         uses: cypress-io/github-action@v5
         env:
