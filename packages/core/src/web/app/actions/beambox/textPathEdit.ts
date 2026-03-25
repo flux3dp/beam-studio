@@ -1,7 +1,7 @@
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 const { svgedit } = window;
@@ -26,7 +26,7 @@ function ungroupTextPath(gElement: SVGGElement): IBatchCommand {
     batchCmd.addSubCommand(cmd);
   }
 
-  const parent = gElement.parentElement;
+  const parent = gElement.parentElement!;
   const anchor = gElement.nextElementSibling;
   const { childNodes } = gElement;
 
@@ -42,7 +42,11 @@ function ungroupTextPath(gElement: SVGGElement): IBatchCommand {
   return batchCmd;
 }
 
-function attachTextToPath(textElement: Element, pathElement: Element, isSubCmd = false): IBatchCommand {
+function attachTextToPath(
+  textElement: Element,
+  pathElement: Element,
+  { addToHistory, parentCmd }: HistoryActionOptions = {},
+): IBatchCommand {
   if (!pathElement.id) {
     pathElement.setAttribute('id', svgCanvas.getNextId());
   }
@@ -78,6 +82,7 @@ function attachTextToPath(textElement: Element, pathElement: Element, isSubCmd =
   textElement.removeAttribute('transform');
   textElement.removeAttribute('data-vt-type');
   textElement.removeAttribute('data-vt-offset');
+  textElement.removeAttribute('text-anchor');
   textElement.setAttribute('data-textpath', '1');
   textElement.setAttribute('data-origx', originalX);
   textElement.setAttribute('data-origy', originalY);
@@ -94,19 +99,19 @@ function attachTextToPath(textElement: Element, pathElement: Element, isSubCmd =
     }),
   );
 
-  const textPathGroup = document.createElementNS(svgedit.NS.SVG, 'g');
+  const textPathGroup = document.createElementNS(svgedit.NS.SVG, 'g') as unknown as SVGGElement;
 
   textPathGroup.setAttribute('data-textpath-g', '1');
-  pathElement.parentNode.insertBefore(textPathGroup, pathElement);
+  pathElement.parentNode!.insertBefore(textPathGroup, pathElement);
   batchCmd.addSubCommand(new history.InsertElementCommand(textPathGroup));
 
-  let oldParent = pathElement.parentNode;
+  let oldParent = pathElement.parentNode!;
   let oldNextSib = pathElement.nextSibling;
 
   textPathGroup.appendChild(pathElement);
   batchCmd.addSubCommand(new history.MoveElementCommand(pathElement, oldNextSib, oldParent));
 
-  oldParent = textElement.parentNode;
+  oldParent = textElement.parentNode!;
   oldNextSib = textElement.nextSibling;
   textPathGroup.appendChild(textElement);
   batchCmd.addSubCommand(new history.MoveElementCommand(textElement, oldNextSib, oldParent));
@@ -114,12 +119,12 @@ function attachTextToPath(textElement: Element, pathElement: Element, isSubCmd =
   textPathGroup.setAttribute('id', svgCanvas.getNextId());
   svgCanvas.selectOnly([textPathGroup]);
 
-  if (!isSubCmd) {
-    if (!batchCmd.isEmpty()) {
+  if (!batchCmd.isEmpty()) {
+    if (parentCmd) {
+      parentCmd.addSubCommand(batchCmd);
+    } else if (addToHistory) {
       undoManager.addCommandToHistory(batchCmd);
     }
-
-    return null;
   }
 
   return batchCmd;
@@ -134,10 +139,10 @@ function detachText(
   text: SVGTextElement;
 } {
   const batchCmd = new history.BatchCommand('Detatch');
-  const text = element.querySelector('text');
-  const path = element.querySelector('path');
-  const originalX = text.getAttribute('data-origx');
-  const originalY = text.getAttribute('data-origy');
+  const text = element.querySelector('text')!;
+  const path = element.querySelector('path')!;
+  const originalX = text.getAttribute('data-origx')!;
+  const originalY = text.getAttribute('data-origy')!;
 
   text.removeAttribute('data-textpath');
   text.removeAttribute('data-origx');
@@ -160,8 +165,8 @@ function detachText(
     batchCmd.addSubCommand(cmd);
   }
 
-  const textPath = text.querySelector('textPath');
-  const textContent = textPath?.textContent;
+  const textPath = text.querySelector('textPath')!;
+  const textContent = textPath.textContent;
 
   textPath.remove();
   batchCmd.addSubCommand(new history.RemoveElementCommand(textPath, textPath.nextSibling, text));
@@ -184,7 +189,7 @@ function detachText(
 }
 
 function editPath(element: SVGGElement): void {
-  const path = element.querySelector('path');
+  const path = element.querySelector('path')!;
 
   svgCanvas.pathActions.toEditMode(path);
 }

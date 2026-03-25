@@ -60,7 +60,7 @@ export const getLineSpacing = (elem: SVGTextElement): number => {
 };
 
 export const isFitText = (elem: Element): boolean => {
-  return !!elem.getAttribute('data-fit-text');
+  return !!elem.getAttribute('data-fit-text') && !elem.getAttribute('data-textpath');
 };
 
 export const getFitTextSize = (elem: Element): number => {
