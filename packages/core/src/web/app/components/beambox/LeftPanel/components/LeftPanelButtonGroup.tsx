@@ -11,6 +11,7 @@ interface ToolOption {
   id: string;
   label: string;
   onClick: () => void;
+  title?: string;
 }
 
 interface Props {
@@ -30,7 +31,7 @@ function LeftPanelButtonGroup({ active = false, icon, id, options, title }: Prop
           id={`tool-option-${option.id}`}
           key={option.id}
           onClick={option.onClick}
-          title={option.label}
+          title={option.title || option.label}
         >
           <div className={styles.optionIcon}>{option.icon}</div>
           {option.label}
