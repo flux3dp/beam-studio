@@ -78,7 +78,7 @@ describe('test DrawingToolButtonGroup', () => {
     expect(mockSetMouseMode).toHaveBeenNthCalledWith(1, 'text');
 
     // Click the FitText option in the button group
-    fireEvent.click(container.querySelector('button[title="Fit Text"]'));
+    fireEvent.click(container.querySelector('button[title="Text Box"]'));
     expect(mockSetMouseMode).toHaveBeenCalledTimes(2);
     expect(mockSetMouseMode).toHaveBeenNthCalledWith(2, 'fit-text');
 

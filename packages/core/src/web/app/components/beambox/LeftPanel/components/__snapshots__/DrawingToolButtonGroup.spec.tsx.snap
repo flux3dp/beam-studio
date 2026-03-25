@@ -49,9 +49,9 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
         Text
       </button>
       <button
-        title="Fit Text"
+        title="Text Box"
       >
-        Fit Text
+        Text Box
       </button>
     </div>
     <div
@@ -209,9 +209,9 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
         Text
       </button>
       <button
-        title="Fit Text"
+        title="Text Box"
       >
-        Fit Text
+        Text Box
       </button>
     </div>
     <div
