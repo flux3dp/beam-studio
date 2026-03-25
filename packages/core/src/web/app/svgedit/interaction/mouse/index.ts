@@ -1279,6 +1279,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
               if (transformCmd && !transformCmd.isEmpty()) mouseSelectModeCmds.push(transformCmd);
             });
             clearFitTextResizeRecords();
+            ObjectPanelController.updateObjectPanel();
           }
 
           if (currentMode !== 'multiselect') {

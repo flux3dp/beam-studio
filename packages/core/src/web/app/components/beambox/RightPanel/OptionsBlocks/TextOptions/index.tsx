@@ -139,6 +139,7 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const handleSizeChange = useCallback(() => {
     selector.getSelectorManager().resizeSelectors([elem]);
     ObjectPanelController.updateDimensionValues(getBBox(elem));
+    ObjectPanelController.updateObjectPanel();
   }, [elem]);
 
   const onConfigChange = useCallback(
