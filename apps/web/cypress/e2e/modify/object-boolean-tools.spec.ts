@@ -31,7 +31,7 @@ const drawEllipse = () => {
 };
 
 const drawText = () => {
-  cy.clickToolBtn('Text');
+  cy.clickToolGroupBtn('Text', 'Text');
   cy.get('svg#svgcontent').realClick({ x: 0, y: 0 });
   // Wait for text element to be created
   cy.get('#svg_2').should('exist');

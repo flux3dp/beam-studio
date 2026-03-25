@@ -234,36 +234,6 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
     [fontFamily.value, textElements, waitForWebFont, onConfigChange, createGoogleFontFromStyle],
   );
 
-  const handleFontSizeChange = useCallback(
-    (val: null | number): void => {
-      if (val === null) return;
-
-      textEdit.setFontSize(val, textElements);
-      onConfigChange('fontSize', val);
-    },
-    [textElements, onConfigChange],
-  );
-
-  const handleLetterSpacingChange = useCallback(
-    (val: null | number): void => {
-      if (val === null) return;
-
-      textEdit.setLetterSpacing(val, textElements);
-      onConfigChange('letterSpacing', val);
-    },
-    [textElements, onConfigChange],
-  );
-
-  const handleLineSpacingChange = useCallback(
-    (val: null | number): void => {
-      if (val === null) return;
-
-      textEdit.setLineSpacing(val, textElements);
-      onConfigChange('lineSpacing', val);
-    },
-    [textElements, onConfigChange],
-  );
-
   const handleStartOffsetChange = useCallback(
     (val: null | number): void => {
       if (val === null) return;
@@ -291,10 +261,7 @@ export const useFontHandlers = ({ elem, fontFamily, onConfigChange, textElements
   );
 
   return {
-    handleFontSizeChange,
     handleFontStyleChange,
-    handleLetterSpacingChange,
-    handleLineSpacingChange,
     handleStartOffsetChange,
     handleVerticalAlignChange,
     handleVerticalTextClick,

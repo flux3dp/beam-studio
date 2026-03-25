@@ -149,7 +149,7 @@ describe('update the preference (display)', () => {
 
     cy.applySettings();
 
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 }).inputText('Bring Any Design to Life');
     cy.showPanel('objects');
     cy.get('.ant-select-selection-item[title="Font"]').should('have.text', 'AirstreamNF');
@@ -165,7 +165,7 @@ describe('update the preference (display)', () => {
 
     cy.applySettings();
 
-    cy.clickToolBtn('Text');
+    cy.clickToolGroupBtn('Text', 'Text');
     cy.get('svg#svgcontent').realClick({ x: 100, y: 200 }).inputText('Bring Any Design to Life');
     cy.showPanel('objects');
     cy.get('.ant-select-selection-item[title="Style"]').should('have.text', 'Bold');

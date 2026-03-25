@@ -63,20 +63,8 @@
     }
   }
 
-  .font-size {
-    width: 68px;
-    margin-bottom: 1px;
-    margin-right: auto;
-  }
-
   .font-style {
     width: calc(100% - 80px);
-  }
-
-  .spacing {
-    @include mixins.icon-input();
-    margin-right: 8px;
-    margin-bottom: 0;
   }
 
   .vertical-text {

@@ -27,12 +27,12 @@ jobs:
         arch: [64]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
 
       - name: Setup Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v4
+        uses: actions/setup-python@v6
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -42,7 +42,7 @@ jobs:
           run_install: false
 
       - name: Setup Node ${{ matrix.node-version }}
-        uses: actions/setup-node@v4
+        uses: actions/setup-node@v6
         with:
           node-version: ${{ matrix.node-version }}
           cache: "pnpm"
@@ -61,7 +61,7 @@ jobs:
           npm config get msvs_version
 
       - name: Checkout Beamify
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: flux3dp/beamify
           ref: 2.1.0
@@ -75,7 +75,7 @@ jobs:
         uses: flux3dp/fluxsvg@2.7.7
 
       - name: Checkout FluxClient
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           repository: flux3dp/fluxclient-dev
           ref: 2.10.1

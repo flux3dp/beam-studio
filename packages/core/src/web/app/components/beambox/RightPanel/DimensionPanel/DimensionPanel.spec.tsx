@@ -6,6 +6,24 @@ const get = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
   get: () => get(),
+  getStore: () => ({}),
+}));
+
+const mockIsFitText = jest.fn().mockReturnValue(false);
+const mockGetIsVertical = jest.fn().mockReturnValue(false);
+
+jest.mock('@core/app/svgedit/text/textedit', () => ({
+  isFitText: (...args: any[]) => mockIsFitText(...args),
+}));
+
+jest.mock('@core/app/svgedit/text/textedit/getters', () => ({
+  getIsVertical: (...args: any[]) => mockGetIsVertical(...args),
+}));
+
+const mockSetFitTextBBox = jest.fn();
+
+jest.mock('@core/app/svgedit/text/fitText', () => ({
+  setFitTextBBox: (...args: any[]) => mockSetFitTextBBox(...args),
 }));
 
 const mockReRenderImageSymbol = jest.fn();
@@ -110,8 +128,9 @@ jest.mock('../ObjectPanelItem');
 const mockGetDimensionValues = jest.fn();
 const mockUpdateDimensionValues = jest.fn();
 
-const mockImage = {
+const mockElement = {
   getAttribute: jest.fn(),
+  querySelectorAll: jest.fn(),
   setAttribute: jest.fn(),
   tagName: 'image',
 };
@@ -129,6 +148,8 @@ const renderDimensionPanel = (elem: any) => {
 describe('test DimensionPanel', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    mockElement.querySelectorAll.mockReturnValue([]);
+    mockElement.tagName = 'image';
   });
 
   test('no elements', () => {
@@ -157,7 +178,7 @@ describe('test DimensionPanel', () => {
       };
     });
 
-    const { container } = renderDimensionPanel(mockImage);
+    const { container } = renderDimensionPanel(mockElement);
 
     expect(container).toMatchSnapshot();
   });
@@ -174,7 +195,7 @@ describe('test DimensionPanel', () => {
       };
     });
 
-    const { container } = renderDimensionPanel(mockImage);
+    const { container } = renderDimensionPanel(mockElement);
 
     expect(container).toMatchSnapshot();
   });
@@ -191,13 +212,13 @@ describe('test DimensionPanel', () => {
       };
     });
 
-    const { getByText } = renderDimensionPanel(mockImage);
+    const { getByText } = renderDimensionPanel(mockElement);
 
     expect(mockGetDimensionValues).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText('position-x'));
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'x', 1000, [mockImage]);
+    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'x', 1000, [mockElement]);
     expect(mockSetSvgElemPosition).not.toHaveBeenCalled();
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
@@ -209,7 +230,7 @@ describe('test DimensionPanel', () => {
 
     fireEvent.click(getByText('position-y'));
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'y', 1000, [mockImage]);
+    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'y', 1000, [mockElement]);
     expect(mockSetSvgElemPosition).not.toHaveBeenCalled();
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
@@ -230,12 +251,12 @@ describe('test DimensionPanel', () => {
       };
     });
 
-    const { getByText } = renderDimensionPanel(mockImage);
+    const { getByText } = renderDimensionPanel(mockElement);
 
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
     expect(mockSetRotationAngle).toHaveBeenCalledTimes(1);
-    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, -80, false, mockImage);
+    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, -80, false, mockElement);
     expect(mockForceUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -251,15 +272,14 @@ describe('test DimensionPanel', () => {
       };
     });
 
-    const { getByText } = renderDimensionPanel(mockImage);
+    const { getByText } = renderDimensionPanel(mockElement);
 
     expect(mockChangeSelectedAttribute).not.toHaveBeenCalled();
-    mockImage.getAttribute.mockReturnValueOnce('true');
+    mockElement.getAttribute.mockReturnValueOnce('true');
     fireEvent.click(getByText('lock'));
-    expect(mockImage.getAttribute).toHaveBeenCalledTimes(1);
-    expect(mockImage.getAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed');
+    expect(mockElement.getAttribute).toHaveBeenCalledWith('data-ratiofixed');
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [mockImage]);
+    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [mockElement]);
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
       isRatioFixed: false,
@@ -278,7 +298,7 @@ describe('test DimensionPanel', () => {
       };
     });
 
-    const { container } = renderDimensionPanel(mockImage);
+    const { container } = renderDimensionPanel(mockElement);
     const inputW = container.querySelector('#size-w');
 
     expect(mockBeginUndoableChange).not.toHaveBeenCalled();
@@ -298,11 +318,11 @@ describe('test DimensionPanel', () => {
     });
     fireEvent.change(inputW, { target: { value: '100' } });
     expect(mockBeginUndoableChange).toHaveBeenCalledTimes(2);
-    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'width', [mockImage]);
-    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'height', [mockImage]);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'width', [mockElement]);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'height', [mockElement]);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [mockImage]);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [mockImage]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [mockElement]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [mockElement]);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenNthCalledWith(1, 'Object Panel Size Change');
@@ -325,18 +345,14 @@ describe('test DimensionPanel', () => {
         y: 0,
       };
     });
+    mockElement.tagName = 'use';
 
-    const mockElem = {
-      getAttribute: jest.fn(),
-      setAttribute: jest.fn(),
-      tagName: 'use',
-    };
-    const { container } = renderDimensionPanel(mockElem);
+    const { container } = renderDimensionPanel(mockElement);
     const inputW = container.querySelector('#size-w');
 
     fireEvent.blur(inputW);
     expect(mockReRenderImageSymbol).toHaveBeenCalledTimes(1);
-    expect(mockReRenderImageSymbol).toHaveBeenLastCalledWith(mockElem);
+    expect(mockReRenderImageSymbol).toHaveBeenLastCalledWith(mockElement);
   });
 });
 
@@ -344,6 +360,8 @@ describe('test DimensionPanel in mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockUseIsMobile.mockReturnValue(true);
+    mockElement.querySelectorAll.mockReturnValue([]);
+    mockElement.tagName = 'image';
   });
 
   test('no elements', () => {
@@ -372,7 +390,7 @@ describe('test DimensionPanel in mobile', () => {
       };
     });
 
-    const { container } = renderDimensionPanel(mockImage);
+    const { container } = renderDimensionPanel(mockElement);
 
     expect(container).toMatchSnapshot();
   });
@@ -389,7 +407,7 @@ describe('test DimensionPanel in mobile', () => {
       };
     });
 
-    const { container } = renderDimensionPanel(mockImage);
+    const { container } = renderDimensionPanel(mockElement);
 
     expect(container).toMatchSnapshot();
   });
@@ -406,13 +424,13 @@ describe('test DimensionPanel in mobile', () => {
       };
     });
 
-    const { getByText } = renderDimensionPanel(mockImage);
+    const { getByText } = renderDimensionPanel(mockElement);
 
     expect(mockGetDimensionValues).toHaveBeenCalledTimes(1);
 
     fireEvent.click(getByText('position-x'));
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'x', 1000, [mockImage]);
+    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'x', 1000, [mockElement]);
     expect(mockSetSvgElemPosition).not.toHaveBeenCalled();
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
@@ -424,7 +442,7 @@ describe('test DimensionPanel in mobile', () => {
 
     fireEvent.click(getByText('position-y'));
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'y', 1000, [mockImage]);
+    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'y', 1000, [mockElement]);
     expect(mockSetSvgElemPosition).not.toHaveBeenCalled();
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
@@ -445,12 +463,12 @@ describe('test DimensionPanel in mobile', () => {
       };
     });
 
-    const { getByText } = renderDimensionPanel(mockImage);
+    const { getByText } = renderDimensionPanel(mockElement);
 
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
     expect(mockSetRotationAngle).toHaveBeenCalledTimes(1);
-    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, -80, false, mockImage);
+    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, -80, false, mockElement);
     expect(mockForceUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -466,15 +484,14 @@ describe('test DimensionPanel in mobile', () => {
       };
     });
 
-    const { getByText } = renderDimensionPanel(mockImage);
+    const { getByText } = renderDimensionPanel(mockElement);
 
     expect(mockChangeSelectedAttribute).not.toHaveBeenCalled();
-    mockImage.getAttribute.mockReturnValueOnce('true');
+    mockElement.getAttribute.mockReturnValueOnce('true');
     fireEvent.click(getByText('lock'));
-    expect(mockImage.getAttribute).toHaveBeenCalledTimes(1);
-    expect(mockImage.getAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed');
+    expect(mockElement.getAttribute).toHaveBeenCalledWith('data-ratiofixed');
     expect(mockChangeSelectedAttribute).toHaveBeenCalledTimes(1);
-    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [mockImage]);
+    expect(mockChangeSelectedAttribute).toHaveBeenNthCalledWith(1, 'data-ratiofixed', 'false', [mockElement]);
     expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
     expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
       isRatioFixed: false,
@@ -493,7 +510,7 @@ describe('test DimensionPanel in mobile', () => {
       };
     });
 
-    const { container } = renderDimensionPanel(mockImage);
+    const { container } = renderDimensionPanel(mockElement);
     const inputW = container.querySelector('#size-w');
 
     expect(mockBeginUndoableChange).not.toHaveBeenCalled();
@@ -513,11 +530,11 @@ describe('test DimensionPanel in mobile', () => {
     });
     fireEvent.change(inputW, { target: { value: '100' } });
     expect(mockBeginUndoableChange).toHaveBeenCalledTimes(2);
-    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'width', [mockImage]);
-    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'height', [mockImage]);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'width', [mockElement]);
+    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'height', [mockElement]);
     expect(mockChangeSelectedAttributeNoUndo).toHaveBeenCalledTimes(2);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [mockImage]);
-    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [mockImage]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(1, 'width', 1000, [mockElement]);
+    expect(mockChangeSelectedAttributeNoUndo).toHaveBeenNthCalledWith(2, 'height', 1500, [mockElement]);
     expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenNthCalledWith(1, 'Object Panel Size Change');
@@ -540,17 +557,13 @@ describe('test DimensionPanel in mobile', () => {
         y: 0,
       };
     });
+    mockElement.tagName = 'use';
 
-    const mockElem = {
-      getAttribute: jest.fn(),
-      setAttribute: jest.fn(),
-      tagName: 'use',
-    };
-    const { container } = renderDimensionPanel(mockElem);
+    const { container } = renderDimensionPanel(mockElement);
     const inputW = container.querySelector('#size-w');
 
     fireEvent.blur(inputW);
     expect(mockReRenderImageSymbol).toHaveBeenCalledTimes(1);
-    expect(mockReRenderImageSymbol).toHaveBeenLastCalledWith(mockElem);
+    expect(mockReRenderImageSymbol).toHaveBeenLastCalledWith(mockElement);
   });
 });

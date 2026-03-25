@@ -1,0 +1,56 @@
+.wrapper {
+  position: relative;
+
+  &.active {
+    .indicator {
+      border-bottom-color: #000;
+    }
+  }
+
+  &:hover {
+    .indicator {
+      border-bottom-color: #000;
+    }
+  }
+}
+
+.indicator {
+  position: absolute;
+  bottom: -2px;
+  right: 8px;
+  width: 0;
+  height: 0;
+  border-left: 6px solid transparent;
+  border-right: 0 solid transparent;
+  border-bottom: 6px solid #7c7c7c;
+  pointer-events: none;
+}
+
+.popover {
+  :global(.ant-popover-inner) {
+    padding: 6px 0;
+    background: #f8f8f8;
+  }
+}
+
+.option {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 0px 12px 0px 6px;
+  cursor: pointer;
+  color: #333333;
+  font-size: 12px;
+
+  &:hover {
+    background: #e8e8e8;
+    color: #000000;
+  }
+
+  .optionIcon {
+    font-size: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+}

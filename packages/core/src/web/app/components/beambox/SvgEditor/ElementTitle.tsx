@@ -1,6 +1,7 @@
 import React, { use } from 'react';
 
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { isFitText } from '@core/app/svgedit/text/textedit';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 
@@ -20,6 +21,8 @@ function ElementTitle(): React.ReactNode {
 
       if (selectedElement.getAttribute('data-textpath-g')) {
         content = `${layerName} > ${t.tag_names.text_path}`;
+      } else if (isFitText(selectedElement)) {
+        content = `${layerName} > ${t.tag_names.fit_text}`;
       } else if (selectedElement.getAttribute('data-pass-through')) {
         content = `${layerName} > ${t.tag_names.pass_through_object}`;
       } else if (selectedElement.tagName.toLowerCase() !== 'use') {

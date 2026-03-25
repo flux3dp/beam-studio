@@ -31,12 +31,9 @@ export type DimensionOrderMap = {
 // Text Options
 export interface TextOption {
   fontFamily: string;
-  fontSize: number;
   fontStyle: any;
   id: string;
   isVertical: boolean;
-  letterSpacing: number;
-  lineSpacing: number;
   startOffset: number;
   verticalAlign: VerticalAlign;
 }

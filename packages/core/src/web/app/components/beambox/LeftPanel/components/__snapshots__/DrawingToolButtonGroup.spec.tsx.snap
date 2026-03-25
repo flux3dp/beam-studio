@@ -39,15 +39,20 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
       </span>
     </div>
     <div
-      class="container"
+      data-testid="button-group"
       id="left-Text"
-      title="Text (T)"
+      title="Text"
     >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
+      <button
+        title="Text"
       >
-        <svgr-url />
-      </span>
+        Text
+      </button>
+      <button
+        title="Text Box"
+      >
+        Text Box
+      </button>
     </div>
     <div
       class="container"
@@ -194,15 +199,20 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
       </span>
     </div>
     <div
-      class="container"
+      data-testid="button-group"
       id="left-Text"
-      title="Text (T)"
+      title="Text"
     >
-      <span
-        class="ant-badge badge css-dev-only-do-not-override-hash"
+      <button
+        title="Text"
       >
-        <svgr-url />
-      </span>
+        Text
+      </button>
+      <button
+        title="Text Box"
+      >
+        Text Box
+      </button>
     </div>
     <div
       class="container"

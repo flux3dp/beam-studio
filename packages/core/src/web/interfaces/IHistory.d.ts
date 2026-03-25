@@ -39,3 +39,9 @@ export interface IUndoManager {
   setHandler: (handler: IHistoryHandler) => void;
   undo: () => boolean;
 }
+
+// TODO: Apply to all old functions that have options parameter
+export interface HistoryActionOptions {
+  addToHistory?: boolean;
+  parentCmd?: IBatchCommand;
+}

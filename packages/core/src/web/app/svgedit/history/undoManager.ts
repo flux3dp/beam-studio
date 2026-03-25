@@ -1,4 +1,5 @@
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import isDev from '@core/helpers/is-dev';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand, IHistoryHandler, IUndoManager } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -11,6 +12,8 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
+
+const isDevMode = isDev();
 
 export class UndoManager implements IUndoManager {
   private handler: IHistoryHandler | undefined = undefined;
@@ -82,6 +85,12 @@ export class UndoManager implements IUndoManager {
     }
 
     this.undoStack.push(cmd);
+
+    if (isDevMode) {
+      console.log('add to undo stack: ', cmd.getText());
+      console.log('current undo stack: ', this.undoStack);
+    }
+
     this.undoStackPointer = this.undoStack.length;
 
     const isInitCommand = this.undoStack.length === 1 && cmd.getText() === 'Create Layer';

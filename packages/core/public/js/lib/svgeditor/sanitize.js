@@ -602,6 +602,9 @@
       'font-postscript',
       'data-vt-type',
       'data-vt-offset',
+      'data-fit-text',
+      'data-fit-text-align',
+      'data-fit-text-size',
     ],
     textPath: [
       'alignment-baseline',
@@ -656,6 +659,8 @@
       'x',
       'xml:space',
       'y',
+      'data-wrapped',
+      'lengthAdjust',
     ],
     use: [
       'data-ratiofixed',

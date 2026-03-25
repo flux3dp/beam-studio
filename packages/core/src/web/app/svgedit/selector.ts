@@ -14,6 +14,7 @@ import { isMobile } from '@core/helpers/system-helper';
 import { getMouseMode } from '../stores/canvas/utils/mouseMode';
 import { getStorage } from '../stores/storageStore';
 
+import { getIsVertical, isFitText } from './text/textedit/getters';
 import { getRotationAngle } from './transform/rotation';
 import { getTransformList } from './transform/transformlist';
 import { getBBox, getBBoxFromElements } from './utils/getBBox';
@@ -371,7 +372,10 @@ export class Selector {
     for (const dir of dirs) {
       this.resizeGrips[dir]?.setAttribute('cx', positionMap[dir][0].toString());
       this.resizeGrips[dir]?.setAttribute('cy', positionMap[dir][1].toString());
+      this.resizeGrips[dir]?.removeAttribute('display');
     }
+
+    this.updateFitTextGripVisibility();
 
     if (isMobile()) {
       const rotX = cx - btnRadius - btnMargin;
@@ -390,6 +394,39 @@ export class Selector {
       this.rotateGripTop.setAttribute('cx', cx.toString());
       this.rotateGripTop.setAttribute('cy', (y - 5 * gripRadius).toString());
       this.updateGripCursors();
+    }
+  }
+
+  private updateFitTextGripVisibility() {
+    const { elem } = this;
+
+    if (!elem) return;
+
+    const fitTextElems = [elem, ...elem.querySelectorAll('text')].filter((e) => isFitText(e)) as SVGTextElement[];
+
+    if (fitTextElems.length === 0) return;
+
+    let hideEW = false;
+    let hideNS = false;
+
+    for (const ft of fitTextElems) {
+      if (hideEW && hideNS) break;
+
+      if (getIsVertical(ft)) {
+        hideEW = true;
+      } else {
+        hideNS = true;
+      }
+    }
+
+    if (hideEW) {
+      this.resizeGrips.e?.setAttribute('display', 'none');
+      this.resizeGrips.w?.setAttribute('display', 'none');
+    }
+
+    if (hideNS) {
+      this.resizeGrips.n?.setAttribute('display', 'none');
+      this.resizeGrips.s?.setAttribute('display', 'none');
     }
   }
 

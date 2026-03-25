@@ -2,6 +2,7 @@ import { match } from 'ts-pattern';
 
 import NS from '@core/app/constants/namespaces';
 
+import { isFitText } from '../text/textedit';
 import { getTransformList } from '../transform/transformlist';
 
 const getTextBBox = (text: SVGTextElement): DOMRect => {
@@ -29,6 +30,39 @@ const getTextBBox = (text: SVGTextElement): DOMRect => {
     }
   } else if (emptyContextIndices.length > 0) {
     text.textContent = '';
+  }
+
+  if (isFitText(text)) {
+    const isVertical = text.getAttribute('data-verti') === 'true';
+    const fontSize = Number.parseFloat(text.getAttribute('font-size') || '0');
+    const tspanCount = text.querySelectorAll('tspan').length;
+    const visualLines = Math.max(1, tspanCount);
+    const lineSpacing = Number.parseFloat(text.getAttribute('data-line-spacing') || '1');
+
+    if (isVertical) {
+      const height = Number.parseFloat(text.getAttribute('data-fit-text-size') || '0');
+      const dynamicWidth = fontSize * (1 + (visualLines - 1) * lineSpacing);
+
+      bbox.y = Number.parseFloat(text.getAttribute('y') || '0');
+      bbox.height = height;
+      bbox.x = Number.parseFloat(text.getAttribute('x') || '0') + fontSize - dynamicWidth;
+      bbox.width = dynamicWidth;
+    } else {
+      let x = Number.parseFloat(text.getAttribute('x') || '0');
+      const width = Number.parseFloat(text.getAttribute('data-fit-text-size') || '0');
+      const textAnchor = text.getAttribute('data-fit-text-align');
+
+      if (textAnchor === 'middle' || textAnchor === 'justify') {
+        x -= width / 2;
+      } else if (textAnchor === 'end') {
+        x -= width;
+      }
+
+      bbox.x = x;
+      bbox.width = width;
+      bbox.y = Number.parseFloat(text.getAttribute('y') || '0') - fontSize;
+      bbox.height = fontSize * (1 + (visualLines - 1) * lineSpacing);
+    }
   }
 
   return bbox;

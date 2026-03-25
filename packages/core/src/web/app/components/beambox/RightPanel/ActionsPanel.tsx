@@ -635,16 +635,18 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
                 path = svgCanvas.convertToPath(path).path;
               }
 
-              const cmd = textPathEdit.attachTextToPath(textElements[i], path, true);
-
-              if (cmd) batchCommand.addSubCommand(cmd);
-
+              textPathEdit.attachTextToPath(textElements[i], path, { parentCmd: batchCommand });
               updateElementColor(textElements[i]);
               resultGroups.push(svgCanvas.getSelectedElems()[0]);
             }
 
-            undoManager.addCommandToHistory(batchCommand);
-            resultGroups.length === 1 ? svgCanvas.selectOnly(resultGroups) : svgCanvas.multiSelect(resultGroups);
+            if (!batchCommand.isEmpty()) {
+              undoManager.addCommandToHistory(batchCommand);
+            }
+
+            if (resultGroups.length > 0) {
+              resultGroups.length === 1 ? svgCanvas.selectOnly(resultGroups) : svgCanvas.multiSelect(resultGroups);
+            }
           },
           <ActionPanelIcons.CreateTextpath />,
           <ActionPanelIcons.CreateTextpath />,

@@ -1,0 +1,13 @@
+@use '@core/styles/variables' as variables;
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  .btn {
+    &.active > span {
+      color: variables.$primary-blue;
+    }
+  }
+}

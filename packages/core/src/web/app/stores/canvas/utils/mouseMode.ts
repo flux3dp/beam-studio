@@ -53,7 +53,7 @@ export const setCursorAccordingToMouseMode = (mode?: CanvasMouseMode) => {
     .with('rotate', () => setCursor('url(core-img/rotate.png) 12 12, auto'))
     .with('pathedit', 'textedit', () => setCursor('auto'))
     .with('line', 'ellipse', 'rect', 'polygon', 'path', () => setCursor('crosshair'))
-    .with('text', () => setCursor('text'))
+    .with('text', 'fit-text', () => setCursor('text'))
     .otherwise(() => setCursor('auto'));
 };
 

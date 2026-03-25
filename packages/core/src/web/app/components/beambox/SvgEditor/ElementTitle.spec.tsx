@@ -9,6 +9,12 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   getObjectLayer: mockGetObjectLayer,
 }));
 
+const mockIsFitText = jest.fn();
+
+jest.mock('@core/app/svgedit/text/textedit', () => ({
+  isFitText: mockIsFitText,
+}));
+
 import ElementTitle from './ElementTitle';
 
 describe('should render correctly', () => {

@@ -248,6 +248,14 @@ Cypress.Commands.add('clickToolBtn', (id: string, checkActive = true) => {
   if (checkActive) cy.checkToolBtnActive(id);
 });
 
+Cypress.Commands.add('clickToolGroupBtn', (groupId: string, optionId: string, checkActive = true) => {
+  cy.get(`div#left-${groupId}`).should('exist');
+  cy.get(`div#left-${groupId}`).trigger('mouseover');
+  cy.get(`#tool-option-${optionId}`, { timeout: 5000 }).should('be.visible').click();
+
+  if (checkActive) cy.checkToolBtnActive(groupId);
+});
+
 Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
   cy.getMenuItem(['Edit'], 'Document Settings').click();
   cy.get('#workareaSelect').closest('.ant-select').as('select');

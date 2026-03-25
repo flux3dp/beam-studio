@@ -42,6 +42,20 @@ jest.mock('@core/app/stores/canvas/canvasStore', () => ({
   }),
 }));
 
+jest.mock('./LeftPanelButtonGroup', () => {
+  const MockLeftPanelButtonGroup = ({ id, options, title }: any) => (
+    <div data-testid="button-group" id={id} title={title}>
+      {options.map((opt: any) => (
+        <button key={opt.id} onClick={opt.onClick} title={opt.label}>
+          {opt.label}
+        </button>
+      ))}
+    </div>
+  );
+
+  return MockLeftPanelButtonGroup;
+});
+
 import DrawingToolButtonGroup from './DrawingToolButtonGroup';
 
 describe('test DrawingToolButtonGroup', () => {
@@ -58,33 +72,39 @@ describe('test DrawingToolButtonGroup', () => {
     fireEvent.click(container.querySelector('#left-Photo'));
     expect(mockImportImage).toHaveBeenCalledTimes(1);
 
-    fireEvent.click(container.querySelector('#left-Text'));
+    // Click the Text option in the button group
+    fireEvent.click(container.querySelector('button[title="Text"]'));
     expect(mockSetMouseMode).toHaveBeenCalledTimes(1);
     expect(mockSetMouseMode).toHaveBeenNthCalledWith(1, 'text');
 
-    fireEvent.click(container.querySelector('#left-Rectangle'));
+    // Click the FitText option in the button group
+    fireEvent.click(container.querySelector('button[title="Text Box"]'));
     expect(mockSetMouseMode).toHaveBeenCalledTimes(2);
-    expect(mockSetMouseMode).toHaveBeenNthCalledWith(2, 'rect');
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(2, 'fit-text');
+
+    fireEvent.click(container.querySelector('#left-Rectangle'));
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(3);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(3, 'rect');
 
     fireEvent.click(container.querySelector('#left-Ellipse'));
-    expect(mockSetMouseMode).toHaveBeenCalledTimes(3);
-    expect(mockSetMouseMode).toHaveBeenNthCalledWith(3, 'ellipse');
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(4);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(4, 'ellipse');
 
     fireEvent.click(container.querySelector('#left-Polygon'));
-    expect(mockSetMouseMode).toHaveBeenCalledTimes(4);
-    expect(mockSetMouseMode).toHaveBeenNthCalledWith(4, 'polygon');
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(5);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(5, 'polygon');
 
     fireEvent.click(container.querySelector('#left-Line'));
-    expect(mockSetMouseMode).toHaveBeenCalledTimes(5);
-    expect(mockSetMouseMode).toHaveBeenNthCalledWith(5, 'line');
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(6);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(6, 'line');
 
     fireEvent.click(container.querySelector('#left-Element'));
     expect(mockToggleDrawerMode).toHaveBeenCalledTimes(1);
     expect(mockToggleDrawerMode).toHaveBeenNthCalledWith(1, 'element-panel');
 
     fireEvent.click(container.querySelector('#left-Pen'));
-    expect(mockSetMouseMode).toHaveBeenCalledTimes(6);
-    expect(mockSetMouseMode).toHaveBeenNthCalledWith(6, 'path');
+    expect(mockSetMouseMode).toHaveBeenCalledTimes(7);
+    expect(mockSetMouseMode).toHaveBeenNthCalledWith(7, 'path');
 
     fireEvent.click(container.querySelector('#left-Cursor'));
     expect(mockUseSelectTool).toHaveBeenCalledTimes(1);
