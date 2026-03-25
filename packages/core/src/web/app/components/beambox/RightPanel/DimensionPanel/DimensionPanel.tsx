@@ -99,22 +99,14 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
     if (!elem) return disabled;
 
-    const checkFitTextElem = (e: Element): void => {
-      if (e.tagName !== 'text' || !isFitText(e)) return;
+    const fitTextElems = [elem, ...elem.querySelectorAll('text')].filter((e) => isFitText(e)) as SVGTextElement[];
 
-      disabled.add(getIsVertical(e as SVGTextElement) ? 'w' : 'h');
-    };
-
-    // Single fit-text element
-    if (elem.tagName === 'text') {
-      checkFitTextElem(elem);
-    }
-
-    // Multiselection (temp group) containing fit-text
-    if (elem.getAttribute('data-tempgroup') === 'true') {
-      for (const child of elem.querySelectorAll(':scope > text')) {
-        checkFitTextElem(child);
+    for (const text of fitTextElems) {
+      if (disabled.has('h') && disabled.has('w')) {
+        break;
       }
+
+      disabled.add(getIsVertical(text) ? 'w' : 'h');
     }
 
     return disabled;
