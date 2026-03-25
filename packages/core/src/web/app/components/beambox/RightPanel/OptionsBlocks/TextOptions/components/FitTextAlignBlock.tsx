@@ -10,6 +10,8 @@ import { getFitTextAlign, setFitTextAlign } from '@core/app/svgedit/text/textedi
 import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
+import ObjectPanelItem from '../../../ObjectPanelItem';
+
 import styles from './FitTextAlignBlock.module.scss';
 
 interface Props {
@@ -56,16 +58,27 @@ const FitTextAlignBlock = ({ textElements }: Props): React.ReactNode => {
   return (
     <ConfigProvider theme={iconButtonTheme}>
       <div className={styles.container}>
-        {alignOptions.map(({ Icon, title, value }) => (
-          <Button
-            className={classNames(styles.btn, { [styles.active]: currentAlign === value, [styles.mobile]: isMobile })}
-            icon={<Icon />}
-            key={value}
-            onClick={() => handleClick(value)}
-            title={title}
-            type="text"
-          />
-        ))}
+        {alignOptions.map(({ Icon, title, value }) =>
+          isMobile ? (
+            <ObjectPanelItem.Item
+              content={<Icon />}
+              id={`fit-text-align-${value}`}
+              isActive={currentAlign === value}
+              key={value}
+              label={title}
+              onClick={() => handleClick(value)}
+            />
+          ) : (
+            <Button
+              className={classNames(styles.btn, { [styles.active]: currentAlign === value })}
+              icon={<Icon />}
+              key={value}
+              onClick={() => handleClick(value)}
+              title={title}
+              type="text"
+            />
+          ),
+        )}
       </div>
     </ConfigProvider>
   );

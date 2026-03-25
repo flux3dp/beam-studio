@@ -18,12 +18,22 @@ interface Props {
   content: React.JSX.Element;
   disabled?: boolean;
   id: string;
+  isActive?: boolean;
   label?: React.ReactNode;
   onClick?: () => void;
   ref?: React.Ref<HTMLDivElement>;
 }
 
-const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onClick, ref }: Props): React.ReactNode => {
+const ObjectPanelItem = ({
+  autoClose = true,
+  content,
+  disabled,
+  id,
+  isActive,
+  label,
+  onClick,
+  ref,
+}: Props): React.ReactNode => {
   const context = use(ObjectPanelContext);
   const { activeKey, updateActiveKey } = context;
 
@@ -34,7 +44,7 @@ const ObjectPanelItem = ({ autoClose = true, content, disabled, id, label, onCli
   return (
     <div
       className={classNames(styles['object-panel-item'], {
-        [styles.active]: activeKey === id,
+        [styles.active]: isActive || activeKey === id,
       })}
       id={id}
       onClick={async () => {

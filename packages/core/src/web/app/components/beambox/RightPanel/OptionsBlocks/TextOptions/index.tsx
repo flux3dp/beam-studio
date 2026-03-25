@@ -134,7 +134,10 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
   const { fontFamily } = configs;
   const workarea = useWorkarea();
   const showVariableText = useMemo(isVariableTextSupported, [workarea]);
-  const isAllFitText = useMemo(() => textElements.every((element) => isFitText(element)), [textElements]);
+  const isAllFitText = useMemo(
+    () => textElements.length > 0 && textElements.every((element) => isFitText(element)),
+    [textElements],
+  );
 
   const handleSizeChange = useCallback(() => {
     selector.getSelectorManager().resizeSelectors([elem]);

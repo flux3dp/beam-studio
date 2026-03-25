@@ -9,11 +9,5 @@
     &.active > span {
       color: variables.$primary-blue;
     }
-
-    &.mobile {
-      width: 32px;
-      height: 32px;
-      font-size: 32px;
-    }
   }
 }
