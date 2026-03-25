@@ -86,6 +86,7 @@ test('test beambox-preference', () => {
     'keep-preview-result': false,
     low_power: 10,
     model: 'fbb1b',
+    model_safe: false,
     'module-offsets': {
       ado1: {
         '1': [0, 0],
@@ -106,6 +107,7 @@ test('test beambox-preference', () => {
     'print-advanced-mode': false,
     'promark-safety-door': false,
     'promark-start-button': false,
+    promark_safe: false,
     'reverse-engraving': false,
     'rotary-chuck-obj-d': 133,
     'rotary-mirror': false,

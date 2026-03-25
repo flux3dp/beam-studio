@@ -27,6 +27,7 @@ export type DocumentState = {
   'pass-through-height'?: number;
   'promark-safety-door': boolean;
   'promark-start-button': boolean;
+  promark_safe: boolean;
   'rotary-chuck-obj-d': number;
   'rotary-mirror': boolean;
   'rotary-overlap': number;
@@ -73,6 +74,8 @@ export type GlobalPreference = {
   low_power: number;
   /** model: default workarea model */
   model: WorkAreaModel;
+  /** model_safe: default promark_safe */
+  model_safe: boolean;
   'module-offsets': ModuleOffsets;
   mouse_input_device: 'MOUSE' | 'TOUCHPAD';
   'multipass-compensation': boolean;

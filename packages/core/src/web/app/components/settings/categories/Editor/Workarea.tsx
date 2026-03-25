@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { checkBM2, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
@@ -15,8 +15,21 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
+  const initValues = useMemo(() => {
+    const model = getPreference('model');
+    const isSafe = getPreference('model_safe');
+
+    if (model === 'fpm1' && isSafe) {
+      return { isSafe, model: 'fpm1_safe' };
+    }
+
+    return { isSafe, model };
+
+    // eslint-disable-next-line hooks/exhaustive-deps
+  }, []);
   const selectedModel = getPreference('model');
   const workarea = getWorkarea(selectedModel);
+  const showGuides = getPreference('show_guides');
 
   const modelOptions = [
     { label: 'beamo', value: 'fbm1' },
@@ -27,6 +40,7 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
     checkHxRf() && { label: 'HEXA RF', value: 'fhx2rf' },
     { label: 'Ador', value: 'ado1' },
     checkFpm1() && { label: 'Promark', value: 'fpm1' },
+    checkFpm1() && { label: 'Promark (Safe+)', value: 'fpm1_safe' },
     isDev() && { label: 'Lazervida', value: 'flv1' },
     { label: 'Beambox II', value: 'fbb2' },
     checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
@@ -47,19 +61,30 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
         options={unitOptions}
       />
       <SettingSelect
-        defaultValue={getPreference('model')}
+        defaultValue={initValues.model}
         id="set-default-model"
         label={lang.settings.default_beambox_model}
-        onChange={(e) => setPreference('model', e)}
+        onChange={(e) => {
+          if (e === 'fpm1_safe') {
+            setPreference('model', 'fpm1');
+            setPreference('model_safe', true);
+          } else if (e === 'fpm1') {
+            setPreference('model', e);
+            setPreference('model_safe', false);
+          } else {
+            setPreference('model', e);
+            setPreference('model_safe', initValues.isSafe);
+          }
+        }}
         options={modelOptions}
       />
       <SettingSwitch
-        checked={getPreference('show_guides')}
+        checked={showGuides}
         id="set-guide"
         label={lang.settings.guides}
         onChange={(e) => setPreference('show_guides', e)}
       />
-      {getPreference('show_guides') && (
+      {showGuides && (
         <XYItem
           id="set-guide-axis"
           label={lang.settings.guides_origin}

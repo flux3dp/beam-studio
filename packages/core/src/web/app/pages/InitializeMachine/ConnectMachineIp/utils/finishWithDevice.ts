@@ -1,6 +1,7 @@
 // ConnectMachineIp/utils/deviceStorage.ts
 import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
 import { workAreaSet } from '@core/app/constants/workarea-constants';
+import { state } from '@core/app/pages/InitializeMachine/state';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import alertConfig from '@core/helpers/api/alert-config';
@@ -36,6 +37,7 @@ export const finishWithDevice = async (device: IDeviceInfo): Promise<void> => {
     alertConfig.write('done-first-cali', true);
 
     if (promarkModels.has(device.model)) {
+      useDocumentStore.getState().update({ 'promark-safety-door': !!state.withSafe, promark_safe: !!state.withSafe });
       storage.set('last-promark-serial', device.serial);
       await deviceMaster.select(device);
     }

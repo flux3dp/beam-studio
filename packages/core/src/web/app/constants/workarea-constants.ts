@@ -36,6 +36,7 @@ export const workArea = [
 ] as const;
 export type WorkAreaModel = (typeof workArea)[number];
 export const workAreaSet = new Set(workArea);
+export type WorkAreaModelWithSafe = 'fpm1_safe' | WorkAreaModel;
 
 const { dpmm } = constant;
 

@@ -1574,6 +1574,7 @@ const lang: ILang = {
     select_hexa: 'เลือก HEXA ของคุณ',
     select_language: 'เลือกภาษา',
     select_machine_type: 'เลือกรุ่นของเครื่อง',
+    select_promark: 'เลือก Promark ของคุณ',
     setting_completed: {
       back: 'กลับ',
       great: 'ยินดีต้อนรับสู่ Beam Studio',

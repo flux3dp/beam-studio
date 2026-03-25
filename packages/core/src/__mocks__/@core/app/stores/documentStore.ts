@@ -16,6 +16,7 @@ const state: DocumentState = {
   'pass-through': false,
   'promark-safety-door': false,
   'promark-start-button': false,
+  promark_safe: false,
   'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,
   'rotary-mirror': false,
   'rotary-overlap': 0,
