@@ -1,5 +1,6 @@
 import { EventEmitter } from 'eventemitter3';
 
+import { updateWindowsTitle } from '@core/app/components/beambox/TopBar/FileName/registerWindowUpdateTile';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TabEvents } from '@core/app/constants/ipcEvents';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
@@ -57,6 +58,7 @@ class TabController extends EventEmitter {
         currentInfo.isCloud !== isCloudFile ||
         currentInfo.hasUnsavedChanges !== hasUnsavedChanges
       ) {
+        updateWindowsTitle();
         this.currentInfo = { hasUnsavedChanges, isCloud: isCloudFile, title };
         communicator.send(TabEvents.SetTabTitle, title, isCloudFile, hasUnsavedChanges);
       }

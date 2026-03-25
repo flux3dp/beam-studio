@@ -5,6 +5,7 @@ import { MenuEvents, MiscEvents, TabEvents } from '@core/app/constants/ipcEvents
 import { useDockableStore } from '@core/app/stores/dockableStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useStorageStore } from '@core/app/stores/storageStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
 import AbstractMenu from '@core/helpers/menubar/AbstractMenu';
@@ -38,6 +39,11 @@ class Menu extends AbstractMenu {
   }
 
   init(): void {
+    useStorageStore.subscribe(
+      (state) => state['active-lang'],
+      () => this.updateLanguage(),
+    );
+
     // model related
     useDocumentStore.subscribe((state) => state.workarea, this.updateMenuByWorkarea);
     useGlobalPreferenceStore.subscribe(

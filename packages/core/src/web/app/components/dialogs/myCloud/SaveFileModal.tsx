@@ -15,7 +15,7 @@ const SaveFileModal = ({ onClose, uuid }: Props): React.JSX.Element => {
   const lang = LANG.my_cloud.save_file;
   const [isEditingName, setIsEditingName] = useState(!uuid);
   const [fileName, setFileName] = useState<string>(
-    (currentFileManager.getName() || LANG.topbar.untitled).split('/').pop(),
+    (currentFileManager.getName() || LANG.topbar.untitled).split('/').pop()!,
   );
   const slashError = useMemo(() => fileName.includes('/'), [fileName]);
   const error = slashError || !fileName;
