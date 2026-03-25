@@ -34,7 +34,7 @@ import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import { getVariableTextType } from '@core/helpers/variableText';
 import dialog from '@core/implementations/dialog';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
 
@@ -68,12 +68,12 @@ interface ConvertButtonOptions extends ButtonOpts {
 }
 
 interface TabButtonOptions extends ButtonOpts {
-  convertToPath: () => Promise<ConvertPathResult>;
+  convertToPath: () => ConvertPathResult | Promise<ConvertPathResult>;
 }
 
 type ConvertPathResult = {
   bbox: DOMRect;
-  command?: IBatchCommand;
+  command?: ICommand;
 };
 
 interface Section {
@@ -164,8 +164,8 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       () =>
         match({ converter, isText })
           .with({ converter: P.nonNullable }, async ({ converter }) => converter())
-          .with({ isText: true }, async () => convertTextToPath({ element: elem, isToSelect: true }))
-          .otherwise(async () => convertSvgToPath({ element: elem, isToSelect: true })),
+          .with({ isText: true }, async () => convertTextToPath(elem, { isToSelect: true }))
+          .otherwise(() => convertSvgToPath(elem, { isToSelect: true })),
       <ActionPanelIcons.ConvertToPath />,
       <ActionPanelIcons.ConvertToPathMobile />,
       { isFullLine: true, mobileLabel: lang.outline, ...opts },
@@ -195,7 +195,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
   const renderTabButton = (
     { convertToPath, ...options }: TabButtonOptions = {
-      convertToPath: () => convertSvgToPath({ element: elem, isToSelect: true }),
+      convertToPath: () => convertSvgToPath(elem, { isToSelect: true }),
     },
   ): React.JSX.Element => {
     const isFilled = match(elem.getAttribute('fill'))
@@ -216,7 +216,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
       tab,
       async () => {
         let bbox = (elem as SVGSVGElement).getBBox();
-        let command: IBatchCommand | undefined;
+        let command: ICommand | undefined;
 
         // Convert to path if it's not a path
         if (!(elem instanceof SVGPathElement)) {
@@ -397,7 +397,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           renderButtons(
             'weld',
             lang.weld_text,
-            () => convertTextToPath({ element: elem, isToSelect: true, weldingTexts: true }),
+            () => convertTextToPath(elem, { isToSelect: true, weldingTexts: true }),
             <ActionPanelIcons.WeldText />,
             <ActionPanelIcons.WeldText />,
             { isDisabled: isVariableText, isFullLine: true, tooltipIfDisabled },
@@ -422,8 +422,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           renderSmartNestButton(),
           renderAutoFitButton({ isFullLine: false }),
           renderTabButton({
-            convertToPath: () =>
-              convertTextToPath({ element: elem, isToSelect: true, parentCommand: new BatchCommand('Text Tab') }),
+            convertToPath: () => convertTextToPath(elem, { addToHistory: false, isToSelect: true }),
             isFullLine: false,
           }),
         ],
@@ -462,7 +461,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
     },
     {
       buttons: [
-        renderConvertToPathButton({ converter: () => convertTextOnPathToPath({ element: elem }), isFullLine: false }),
+        renderConvertToPathButton({ converter: () => convertTextOnPathToPath(elem), isFullLine: false }),
         renderConvertToImageButton({ isFullLine: false, isText: true }),
       ],
       title: 'CONVERSIONS',
@@ -512,7 +511,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         renderSmartNestButton(),
         renderAutoFitButton({ isFullLine: false }),
         renderTabButton({
-          convertToPath: () => convertSvgToPath({ element: elem, isToSelect: true }),
+          convertToPath: () => convertSvgToPath(elem, { isToSelect: true }),
           isFullLine: false,
         }),
       ],
@@ -534,7 +533,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
         renderSmartNestButton(),
         renderAutoFitButton({ isFullLine: false }),
         renderTabButton({
-          convertToPath: () => convertSvgToPath({ element: elem, isToSelect: true }),
+          convertToPath: () => convertSvgToPath(elem, { isToSelect: true }),
           isFullLine: false,
         }),
       ],
@@ -632,7 +631,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
               let path = pathLikeElements[i];
 
               if (path.nodeName !== 'path') {
-                path = svgCanvas.convertToPath(path).path;
+                path = convertSvgToPath(path, { parentCmd: batchCommand }).path!;
               }
 
               textPathEdit.attachTextToPath(textElements[i], path, { parentCmd: batchCommand });

@@ -2,7 +2,7 @@ import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 let svgCanvas: ISVGCanvas;
@@ -16,7 +16,7 @@ type HandleChangePathDataCommandParams = {
   batchCommand?: BatchCommand;
   d: string;
   element: SVGPathElement;
-  subCommand?: IBatchCommand;
+  subCommand?: ICommand;
 };
 
 export function handleChangePathDataCommand({

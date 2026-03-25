@@ -8,22 +8,16 @@ import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import alertConfig from './api/alert-config';
 import i18n from './i18n';
 import { getSVGAsync } from './svg-editor-helper';
 
-type ConvertToPathParams = {
-  element: SVGElement;
-  isToSelect?: boolean;
-  parentCommand?: IBatchCommand;
-};
-
 type ConvertToPathResult = {
   bbox: DOMRect;
-  command: IBatchCommand | undefined;
+  command: ICommand | undefined;
   path?: SVGPathElement;
 };
 
@@ -39,38 +33,40 @@ getSVGAsync(({ Canvas, Edit }) => {
   svgedit = Edit;
 });
 
-export const convertSvgToPath = async ({
-  element,
-  isToSelect = false,
-  parentCommand = new BatchCommand('convertSvgToPath'),
-}: ConvertToPathParams): Promise<ConvertToPathResult> => {
+export const convertSvgToPath = (
+  element: SVGElement,
+  opts: HistoryActionOptions & { isToSelect?: boolean } = {},
+): ConvertToPathResult => {
+  const { addToHistory = true, isToSelect = false, parentCmd } = opts;
   const { cmd, path } = svgCanvas.convertToPath(element, true);
 
   if (isToSelect) {
     svgCanvas.selectOnly([path]);
   }
 
-  parentCommand.addSubCommand(cmd);
-  undoManager.addCommandToHistory(parentCommand);
+  if (parentCmd) {
+    parentCmd.addSubCommand(cmd);
+  } else if (addToHistory) {
+    undoManager.addCommandToHistory(cmd);
+  }
 
-  return { bbox: path.getBBox(), command: parentCommand, path };
+  return { bbox: path.getBBox(), command: cmd, path };
 };
 
-export const convertTextToPath = async ({
-  element,
-  isToSelect = false,
-  parentCommand,
-  pathPerChar = false,
-  weldingTexts = false,
-}: {
-  element: SVGElement;
-  isToSelect?: boolean;
-  parentCommand?: IBatchCommand;
-  pathPerChar?: boolean;
-  weldingTexts?: boolean;
-}): Promise<ConvertTextToPathResult> => {
-  const isSubCommand = parentCommand !== undefined;
-
+export const convertTextToPath = async (
+  element: SVGElement,
+  {
+    addToHistory = true,
+    isToSelect = false,
+    parentCmd,
+    pathPerChar = false,
+    weldingTexts = false,
+  }: HistoryActionOptions & {
+    isToSelect?: boolean;
+    pathPerChar?: boolean;
+    weldingTexts?: boolean;
+  },
+): Promise<ConvertTextToPathResult> => {
   if (textActions.isEditing) textActions.toSelectMode();
 
   const { command, path, status } = await fontFuncs.convertTextToPath(element, {
@@ -79,19 +75,19 @@ export const convertTextToPath = async ({
     weldingTexts,
   });
 
-  if (command && isSubCommand) {
-    parentCommand.addSubCommand(command);
-  }
-
-  if (command && !isSubCommand) {
-    undoManager.addCommandToHistory(command);
+  if (command) {
+    if (parentCmd) {
+      parentCmd.addSubCommand(command);
+    } else if (addToHistory) {
+      undoManager.addCommandToHistory(command);
+    }
   }
 
   if (path && isToSelect) {
     svgCanvas.selectOnly([path]);
   }
 
-  return { bbox: path?.getBBox()!, command: parentCommand || command || undefined, path: path || undefined, status };
+  return { bbox: path?.getBBox()!, command: parentCmd || command || undefined, path: path || undefined, status };
 };
 
 export const convertTempGroupToPath = async ({
@@ -109,28 +105,24 @@ export const convertTempGroupToPath = async ({
 
   for (const el of elements) {
     if (el.nodeName === 'g' && el.getAttribute('data-textpath-g')) {
-      const { group } = await convertTextOnPathToPath({
-        element: el,
-        isToSelect: false,
-        parentCommand: batchCommand,
+      const { group } = await convertTextOnPathToPath(el, {
+        parentCmd: batchCommand,
         weldingTexts,
       });
 
       if (group) paths.push(group);
     } else if (el.nodeName === 'text') {
-      const { path } = await convertTextToPath({
-        element: el,
+      const { path } = await convertTextToPath(el, {
         isToSelect: false,
-        parentCommand: batchCommand,
+        parentCmd: batchCommand,
         weldingTexts,
       });
 
       if (path) paths.push(path);
     } else {
-      const { path } = await convertSvgToPath({
-        element: el,
+      const { path } = convertSvgToPath(el, {
         isToSelect: false,
-        parentCommand: batchCommand,
+        parentCmd: batchCommand,
       });
 
       if (path) paths.push(path);
@@ -144,20 +136,17 @@ export const convertTempGroupToPath = async ({
   }
 };
 
-export const convertTextOnPathToPath = async ({
-  element,
-  isToSelect: _isToSelect,
-  parentCommand,
-  weldingTexts = false,
-}: {
-  element: SVGElement;
-  isToSelect?: boolean;
-  parentCommand?: IBatchCommand;
-  weldingTexts?: boolean;
-}): Promise<ConvertToPathResult & { group: SVGGElement }> => {
-  const isSubCommand = Boolean(parentCommand);
-
-  if (!parentCommand) parentCommand = new BatchCommand('Convert Text on Path to Path');
+export const convertTextOnPathToPath = async (
+  element: SVGElement,
+  {
+    addToHistory = true,
+    parentCmd,
+    weldingTexts = false,
+  }: HistoryActionOptions & {
+    weldingTexts?: boolean;
+  } = {},
+): Promise<ConvertToPathResult & { group: SVGGElement }> => {
+  const cmd = new BatchCommand('Convert Text on Path to Path');
 
   const pathElement = element.querySelector('path');
   const textElement = element.querySelector('text');
@@ -166,21 +155,25 @@ export const convertTextOnPathToPath = async ({
 
   svgCanvas.clearSelection();
 
-  const { command, path } = await fontFuncs.convertTextToPath(textElement!, { isSubCommand, weldingTexts });
+  const { command, path } = await fontFuncs.convertTextToPath(textElement!, { isSubCommand: true, weldingTexts });
 
   svgCanvas.selectOnly([pathElement!, path!]);
 
   const { command: groupCmd, group } = svgCanvas.groupSelectedElements(true)!;
 
-  if (command) parentCommand.addSubCommand(command);
+  if (command) cmd.addSubCommand(command);
 
-  if (groupCmd) parentCommand.addSubCommand(groupCmd);
+  if (groupCmd) cmd.addSubCommand(groupCmd);
 
-  if (!isSubCommand) undoManager.addCommandToHistory(parentCommand);
+  if (parentCmd) {
+    parentCmd.addSubCommand(cmd);
+  } else if (addToHistory) {
+    undoManager.addCommandToHistory(cmd);
+  }
 
   return {
     bbox: path!.getBBox(),
-    command: parentCommand,
+    command: parentCmd ?? cmd,
     group,
     path: path || undefined,
   };
@@ -202,7 +195,7 @@ export const convertUseToPath = async ({
   const group = svgCanvas.getSelectedElems()[0];
 
   if (!(group instanceof SVGGElement)) {
-    return convertSvgToPath({ element: group, parentCommand: command });
+    return convertSvgToPath(group, { parentCmd: command });
   }
 
   const head = group.childNodes[0] as SVGPathElement;
@@ -265,7 +258,7 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
   success: boolean;
 }> => {
   // 1. Create a master command to record all changes.
-  const parentCommand = new history.BatchCommand('Convert All Text to Path');
+  const batchCmd = new history.BatchCommand('Convert All Text to Path');
   const texts = [
     ...document.querySelectorAll('#svgcontent g.layer:not([display="none"]) text'),
     ...document.querySelectorAll('#svg_defs text'),
@@ -273,7 +266,7 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
   let isAnyFontUnsupported = false;
 
   for (const element of texts) {
-    const { status } = await convertTextToPath({ element, parentCommand, pathPerChar });
+    const { status } = await convertTextToPath(element, { parentCmd: batchCmd, pathPerChar });
 
     if (status === ConvertResult.CANCEL_OPERATION) {
       return { revert: () => {}, success: false };
@@ -288,7 +281,7 @@ export const convertAllTextToPath = async ({ pathPerChar = false }: { pathPerCha
   const revert = () => {
     // The unapply method reverses the command. It requires an object with a
     // renderText function, which we can get from the editor's textActions.
-    parentCommand.unapply({
+    batchCmd.unapply({
       handleHistoryEvent: () => {},
       renderText: textedit.renderText,
     });

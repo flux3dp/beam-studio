@@ -47,7 +47,7 @@ export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | 
       })
       .with({ tagName: 'image' }, async (element) => {
         const { command: subCommand, rect } = generateImageRect(element as SVGImageElement);
-        const { path } = await convertSvgToPath({ element: rect!, parentCommand: subCommand });
+        const { path } = convertSvgToPath(rect!, { parentCmd: subCommand });
 
         if (subCommand) {
           command.addSubCommand(subCommand);
@@ -56,11 +56,7 @@ export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | 
         elementsToOffset.push(path!);
       })
       .with({ tagName: 'text' }, async (element) => {
-        const { command: subCommand, path } = await convertTextToPath({ element });
-
-        if (subCommand) {
-          command.addSubCommand(subCommand);
-        }
+        const { path } = await convertTextToPath(element, { parentCmd: command });
 
         elementsToOffset.push(path!);
       })
@@ -80,11 +76,7 @@ export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | 
           groups.push(element);
         })
         .with({ tagName: 'text' }, async (element) => {
-          const { command: subCommand, path } = await convertTextToPath({ element });
-
-          if (subCommand) {
-            command.addSubCommand(subCommand);
-          }
+          const { path } = await convertTextToPath(element, { parentCmd: command });
 
           elementsToOffset.push(path!);
         })
