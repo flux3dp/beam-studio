@@ -7,8 +7,9 @@ import { iconButtonTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import type { FitTextAlign } from '@core/app/svgedit/text/textedit';
 import { getFitTextAlign, setFitTextAlign } from '@core/app/svgedit/text/textedit';
+import { useIsMobile } from '@core/helpers/system-helper';
 
-import styles from '../index.module.scss';
+import styles from './FitTextAlignBlock.module.scss';
 
 const alignOptions: Array<{ Icon: React.ComponentType; value: FitTextAlign }> = [
   { Icon: OptionPanelIcons.AlignLeft, value: 'start' },
@@ -34,6 +35,7 @@ const getValue = (textElements: SVGTextElement[]): FitTextAlign | null => {
 };
 
 const FitTextAlignBlock = ({ textElements }: Props): React.ReactNode => {
+  const isMobile = useIsMobile();
   const [currentAlign, setCurrentAlign] = useState(getValue(textElements));
   const handleClick = (align: FitTextAlign) => {
     for (const textElement of textElements) {
@@ -50,15 +52,17 @@ const FitTextAlignBlock = ({ textElements }: Props): React.ReactNode => {
 
   return (
     <ConfigProvider theme={iconButtonTheme}>
-      {alignOptions.map(({ Icon, value }) => (
-        <Button
-          className={classNames(styles['text-align'], { [styles.active]: currentAlign === value })}
-          icon={<Icon />}
-          key={value}
-          onClick={() => handleClick(value)}
-          type="text"
-        />
-      ))}
+      <div className={styles.container}>
+        {alignOptions.map(({ Icon, value }) => (
+          <Button
+            className={classNames(styles.btn, { [styles.active]: currentAlign === value, [styles.mobile]: isMobile })}
+            icon={<Icon />}
+            key={value}
+            onClick={() => handleClick(value)}
+            type="text"
+          />
+        ))}
+      </div>
     </ConfigProvider>
   );
 };

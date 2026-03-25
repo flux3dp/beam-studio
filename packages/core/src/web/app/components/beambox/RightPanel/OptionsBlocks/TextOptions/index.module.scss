@@ -63,28 +63,8 @@
     }
   }
 
-  .font-size {
-    width: 68px;
-    margin-bottom: 1px;
-    margin-right: auto;
-  }
-
   .font-style {
     width: calc(100% - 80px);
-  }
-
-  .spacing {
-    @include mixins.icon-input();
-    margin-right: 8px;
-    margin-bottom: 0;
-  }
-
-  .text-align {
-    margin-right: 2px;
-
-    &.active > span {
-      color: #1890ff;
-    }
   }
 
   .vertical-text {
@@ -95,14 +75,6 @@
       color: #1890ff;
     }
   }
-
-  .text-content {
-    margin-top: 8px;
-  }
-}
-
-.text-content {
-  margin-top: 8px;
 }
 
 // Font family display for system fonts without preview images

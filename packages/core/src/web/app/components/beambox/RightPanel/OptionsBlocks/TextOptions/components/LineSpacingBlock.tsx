@@ -7,7 +7,8 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsInput from '../../OptionsInput';
-import styles from '../index.module.scss';
+
+import styles from './SpacingBlock.module.scss';
 
 const readValues = (textElements: SVGTextElement[]) => {
   if (textElements.length === 0) return { hasMultiValue: false, value: 1 };
@@ -73,7 +74,7 @@ const LineSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactNod
   }
 
   return (
-    <div className={styles.spacing} title={t.line_spacing}>
+    <div className={styles.container} title={t.line_spacing}>
       <div className={styles.label}>
         <OptionPanelIcons.LineSpacing />
       </div>

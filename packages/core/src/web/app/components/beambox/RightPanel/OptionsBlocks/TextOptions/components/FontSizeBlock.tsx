@@ -6,7 +6,8 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsInput from '../../OptionsInput';
-import styles from '../index.module.scss';
+
+import styles from './FontSizeBlock.module.scss';
 
 const readValues = (textElements: SVGTextElement[]) => {
   if (textElements.length === 0) return { hasMultiValue: false, value: 0 };
@@ -72,7 +73,7 @@ const FontSizeBlock = ({ onSizeChange, textElements }: Props): React.ReactNode =
   }
 
   return (
-    <div className={styles['font-size']} title={t.font_size}>
+    <div className={styles.container} title={t.font_size}>
       <OptionsInput
         displayMultiValue={state.hasMultiValue}
         id="font_size"

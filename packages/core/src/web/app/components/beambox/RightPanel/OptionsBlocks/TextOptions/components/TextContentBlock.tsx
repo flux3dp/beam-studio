@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React, { memo, useEffect, useRef, useState } from 'react';
 
 import { Input } from 'antd';
@@ -5,14 +6,16 @@ import { Input } from 'antd';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { getTextContent, renderText, textContentEvents } from '@core/app/svgedit/text/textedit';
+import { useIsMobile } from '@core/helpers/system-helper';
 
-import styles from '../index.module.scss';
+import styles from './TextContentBlock.module.scss';
 
 interface Props {
   textElement: SVGTextElement;
 }
 
-function TextContentBlock({ textElement }: Props): React.JSX.Element {
+function TextContentBlock({ textElement }: Props): ReactNode {
+  const isMobile = useIsMobile();
   const [textContent, setTextContent] = useState(() => getTextContent(textElement));
   const valueBeforeEditRef = useRef('');
 
@@ -32,8 +35,10 @@ function TextContentBlock({ textElement }: Props): React.JSX.Element {
     };
   }, [textElement]);
 
+  if (isMobile) return null;
+
   return (
-    <div className={styles['text-content']}>
+    <div className={styles.container}>
       <Input.TextArea
         autoSize={{ minRows: 2 }}
         id="text-content-textarea"

@@ -1,0 +1,19 @@
+@use '@core/styles/variables' as variables;
+
+.container {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+
+  .btn {
+    &.active > span {
+      color: variables.$primary-blue;
+    }
+
+    &.mobile {
+      width: 32px;
+      height: 32px;
+      font-size: 32px;
+    }
+  }
+}

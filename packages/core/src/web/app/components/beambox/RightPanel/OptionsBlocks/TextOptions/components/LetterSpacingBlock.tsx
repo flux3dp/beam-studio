@@ -7,7 +7,8 @@ import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsInput from '../../OptionsInput';
-import styles from '../index.module.scss';
+
+import styles from './SpacingBlock.module.scss';
 
 const readValues = (textElements: SVGTextElement[]) => {
   if (textElements.length === 0) return { hasMultiValue: false, value: 0 };
@@ -71,7 +72,7 @@ const LetterSpacingBlock = ({ onSizeChange, textElements }: Props): React.ReactN
   }
 
   return (
-    <div className={styles.spacing} title={t.letter_spacing}>
+    <div className={styles.container} title={t.letter_spacing}>
       <div className={styles.label}>
         <OptionPanelIcons.LetterSpacing />
       </div>
