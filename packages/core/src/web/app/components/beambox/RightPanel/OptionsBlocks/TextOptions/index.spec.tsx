@@ -54,6 +54,7 @@ const mockResizeSelectors = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 const mockGetBBox = jest.fn().mockReturnValue({ height: 100, width: 200, x: 0, y: 0 });
 const mockUpdateDimensionValues = jest.fn();
+const mockUpdateObjectPanel = jest.fn();
 const mockBatchCommand = jest.fn();
 const mockShowGoogleFontsPanel = jest.fn();
 const mockRegisterGoogleFont = jest.fn();
@@ -120,6 +121,7 @@ jest.mock('@core/app/svgedit/utils/getBBox', () => ({
 
 jest.mock('../../contexts/ObjectPanelController', () => ({
   updateDimensionValues: (...args: any[]) => mockUpdateDimensionValues(...args),
+  updateObjectPanel: (...args: any[]) => mockUpdateObjectPanel(...args),
 }));
 
 const mockTextEdit = {

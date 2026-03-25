@@ -95,7 +95,7 @@ describe('test textPathEdit', () => {
     const path = document.getElementById('path');
     const text = document.getElementById('text');
 
-    textPathEdit.attachTextToPath(text, path, false);
+    textPathEdit.attachTextToPath(text, path);
 
     const textPath = document.getElementsByTagName('textPath');
 

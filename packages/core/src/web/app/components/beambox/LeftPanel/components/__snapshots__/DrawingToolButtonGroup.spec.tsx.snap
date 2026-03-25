@@ -41,7 +41,7 @@ exports[`test DrawingToolButtonGroup should render correctly 1`] = `
     <div
       data-testid="button-group"
       id="left-Text"
-      title="Text (T)"
+      title="Text"
     >
       <button
         title="Text"
@@ -201,7 +201,7 @@ exports[`test DrawingToolButtonGroup should render correctly when in pass throug
     <div
       data-testid="button-group"
       id="left-Text"
-      title="Text (T)"
+      title="Text"
     >
       <button
         title="Text"

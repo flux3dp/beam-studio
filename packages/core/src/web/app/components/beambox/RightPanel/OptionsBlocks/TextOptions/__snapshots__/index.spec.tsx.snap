@@ -23,7 +23,7 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
       class="row"
     >
       <div
-        class="font-size"
+        class="container"
         title="Size"
       >
         <div
@@ -74,7 +74,7 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
       class="row"
     >
       <div
-        class="spacing"
+        class="container"
         title="Line spacing"
       >
         <div
@@ -102,7 +102,7 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
         </div>
       </div>
       <div
-        class="spacing"
+        class="container"
         title="Letter spacing"
       >
         <div
@@ -173,7 +173,7 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
       class="row"
     >
       <div
-        class="font-size"
+        class="container"
         title="Size"
       >
         <div
@@ -224,7 +224,7 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
       class="row"
     >
       <div
-        class="spacing"
+        class="container"
         title="Line spacing"
       >
         <div
@@ -252,7 +252,7 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
         </div>
       </div>
       <div
-        class="spacing"
+        class="container"
         title="Letter spacing"
       >
         <div
@@ -319,7 +319,7 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
       class="row"
     >
       <div
-        class="font-size"
+        class="container"
         title="Size"
       >
         <div
@@ -367,7 +367,7 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
       </div>
     </div>
     <div
-      class="spacing"
+      class="container"
       title="Letter spacing"
     >
       <div

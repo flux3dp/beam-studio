@@ -45,7 +45,7 @@ function ungroupTextPath(gElement: SVGGElement): IBatchCommand {
 function attachTextToPath(
   textElement: Element,
   pathElement: Element,
-  { addToHistory, parentCmd }: HistoryActionOptions = {},
+  { addToHistory = true, parentCmd }: HistoryActionOptions = {},
 ): IBatchCommand {
   if (!pathElement.id) {
     pathElement.setAttribute('id', svgCanvas.getNextId());
