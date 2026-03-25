@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Elementy',
         end_preview: 'Koniec podglądu',
-        fit_text: 'Dopasuj tekst',
+        fit_text: 'Pole tekstowe',
         line: 'Linia',
         live_feed: 'Na żywo',
         my_cloud: 'Moja chmura',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'Obiekt DXF',
       ellipse: 'Owal',
-      fit_text: 'Dopasuj tekst',
+      fit_text: 'Pole tekstowe',
       g: 'Grupa',
       image: 'Obraz',
       line: 'Linia',

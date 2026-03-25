@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Bentuk',
         end_preview: 'Akhiri Pratinjau',
-        fit_text: 'Sesuaikan Teks',
+        fit_text: 'Kotak Teks',
         line: 'Garis',
         live_feed: 'Siaran Langsung',
         my_cloud: 'Awan Saya',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'Objek DXF',
       ellipse: 'Oval',
-      fit_text: 'Sesuaikan Teks',
+      fit_text: 'Kotak Teks',
       g: 'Grup',
       image: 'Gambar',
       line: 'Garis',

@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: '元素',
         end_preview: '結束預覽',
-        fit_text: '填充文字',
+        fit_text: '文字方塊',
         line: '線段',
         live_feed: '即時視訊',
         my_cloud: '我的雲端',

@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Prvky',
         end_preview: 'Konec náhledu',
-        fit_text: 'Přizpůsobit text',
+        fit_text: 'Textové pole',
         line: 'Čára',
         live_feed: 'Živé vysílání',
         my_cloud: 'Můj cloud',
@@ -2438,7 +2438,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF objekt',
       ellipse: 'Ovál',
-      fit_text: 'Přizpůsobit text',
+      fit_text: 'Textové pole',
       g: 'Skupina',
       image: 'Obrázek',
       line: 'Linka',

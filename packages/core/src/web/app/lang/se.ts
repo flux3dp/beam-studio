@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Objekt',
         end_preview: 'Avsluta förhandsgranskning',
-        fit_text: 'Anpassa text',
+        fit_text: 'Textruta',
         line: 'Linje',
         live_feed: 'Livebild',
         my_cloud: 'Mitt moln',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF-objekt',
       ellipse: 'Oval',
-      fit_text: 'Anpassa text',
+      fit_text: 'Textruta',
       g: 'Grupp',
       image: 'Bild',
       line: 'Linje',

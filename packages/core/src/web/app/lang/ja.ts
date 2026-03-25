@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: '要素',
         end_preview: 'プレビューを終了',
-        fit_text: 'テキストフィット',
+        fit_text: 'テキストボックス',
         line: 'ライン',
         live_feed: 'ライブフィード',
         my_cloud: 'マイクラウド',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXFオブジェクト',
       ellipse: '楕円',
-      fit_text: 'テキストフィット',
+      fit_text: 'テキストボックス',
       g: 'グループ',
       image: 'イメージ',
       line: 'ライン',

@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Σχήματα',
         end_preview: 'Τέλος προεπισκόπησης',
-        fit_text: 'Προσαρμογή κειμένου',
+        fit_text: 'Πλαίσιο κειμένου',
         line: 'Γραμμή',
         live_feed: 'Ζωντανή μετάδοση',
         my_cloud: 'Το Cloud μου',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF Αντικείμενο',
       ellipse: 'Ελλειψοειδές',
-      fit_text: 'Προσαρμογή κειμένου',
+      fit_text: 'Πλαίσιο κειμένου',
       g: 'Ομάδα',
       image: 'Εικόνα',
       line: 'Γραμμή',

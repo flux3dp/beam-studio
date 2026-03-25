@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Elementer',
         end_preview: 'Afslut forhåndsvisning',
-        fit_text: 'Tilpas tekst',
+        fit_text: 'Tekstboks',
         line: 'Linje',
         live_feed: 'Live-feed',
         my_cloud: 'Min sky',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF-objekt',
       ellipse: 'Oval',
-      fit_text: 'Tilpas tekst',
+      fit_text: 'Tekstboks',
       g: 'Gruppe',
       image: 'Billede',
       line: 'Linje',

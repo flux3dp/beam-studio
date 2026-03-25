@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Elementi',
         end_preview: 'Termina anteprima',
-        fit_text: 'Adatta testo',
+        fit_text: 'Casella di testo',
         line: 'Linea',
         live_feed: 'Live Feed',
         my_cloud: 'La mia nuvola',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'Oggetto DXF',
       ellipse: 'Ovale',
-      fit_text: 'Adatta testo',
+      fit_text: 'Casella di testo',
       g: 'Gruppo',
       image: 'Immagine',
       line: 'Linea',

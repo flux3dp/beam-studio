@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'องค์ประกอบ',
         end_preview: 'สิ้นสุดตัวอย่าง',
-        fit_text: 'ปรับข้อความให้พอดี',
+        fit_text: 'กล่องข้อความ',
         line: 'เส้น',
         live_feed: 'ภาพถ่ายสด',
         my_cloud: 'คลาวด์ของฉัน',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'วัตถุ DXF',
       ellipse: 'วงรี',
-      fit_text: 'ปรับข้อความให้พอดี',
+      fit_text: 'กล่องข้อความ',
       g: 'กลุ่ม',
       image: 'รูปภาพ',
       line: 'เส้น',

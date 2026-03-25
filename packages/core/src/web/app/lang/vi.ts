@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Các phần tử',
         end_preview: 'Kết thúc xem trước',
-        fit_text: 'Vừa chữ',
+        fit_text: 'Hộp văn bản',
         line: 'Đường thẳng',
         live_feed: 'Phát trực tiếp',
         my_cloud: 'Đám mây của tôi',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'Đối tượng DXF',
       ellipse: 'Hình elip',
-      fit_text: 'Vừa chữ',
+      fit_text: 'Hộp văn bản',
       g: 'Nhóm',
       image: 'Hình ảnh',
       line: 'Đường thẳng',

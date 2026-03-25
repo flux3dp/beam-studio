@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Formes',
         end_preview: 'Arrêter aperçu',
-        fit_text: 'Ajuster le texte',
+        fit_text: 'Zone de texte',
         line: 'Ligne',
         live_feed: 'Diffusion en direct',
         my_cloud: 'Mon cloud',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'Objet DXF',
       ellipse: 'Ellipse',
-      fit_text: 'Ajuster le texte',
+      fit_text: 'Zone de texte',
       g: 'Groupe',
       image: 'Image',
       line: 'Ligne',

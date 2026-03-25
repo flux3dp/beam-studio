@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Vormen',
         end_preview: 'Liveweergave stoppen',
-        fit_text: 'Tekst aanpassen',
+        fit_text: 'Tekstvak',
         line: 'Lijn',
         live_feed: 'Live beeld',
         my_cloud: 'Mijn cloud',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF-object',
       ellipse: 'Ovaal',
-      fit_text: 'Tekst aanpassen',
+      fit_text: 'Tekstvak',
       g: 'Groep',
       image: 'Afbeelding',
       line: 'Lijn',

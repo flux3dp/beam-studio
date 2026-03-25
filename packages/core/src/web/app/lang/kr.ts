@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: '요소들',
         end_preview: '미리보기 종료',
-        fit_text: '텍스트 맞춤',
+        fit_text: '텍스트 상자',
         line: '선',
         live_feed: '라이브 피드',
         my_cloud: '내 클라우드',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF 개체',
       ellipse: '타원형',
-      fit_text: '텍스트 맞춤',
+      fit_text: '텍스트 상자',
       g: '그룹',
       image: '이미지',
       line: '라인',

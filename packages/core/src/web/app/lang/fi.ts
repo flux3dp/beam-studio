@@ -312,7 +312,7 @@ const lang: ILang = {
         },
         elements: 'Kuvio',
         end_preview: 'Lopeta esikatselu',
-        fit_text: 'Sovita teksti',
+        fit_text: 'Tekstikenttä',
         line: 'Viiva',
         live_feed: 'Live-syöte',
         my_cloud: 'Pilveni',
@@ -2437,7 +2437,7 @@ const lang: ILang = {
     tag_names: {
       dxf: 'DXF-kohde',
       ellipse: 'Soikio',
-      fit_text: 'Sovita teksti',
+      fit_text: 'Tekstikenttä',
       g: 'Ryhmä',
       image: 'Kuva',
       line: 'Viiva',
