@@ -44,7 +44,7 @@ export const handleExportClick =
 
       if (isRelatedModalsExist()) return;
 
-      progressCaller.openNonstopProgress({ id: 'preparing-export' });
+      await progressCaller.openNonstopProgress({ id: 'preparing-export' });
 
       if (isCanvasEmpty()) return;
 
