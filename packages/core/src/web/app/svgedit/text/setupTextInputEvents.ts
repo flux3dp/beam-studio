@@ -28,8 +28,6 @@ export const setupTextInputEvents = () => {
         if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
           const { activeElement } = document;
 
-          console.log(activeElement, evt.target);
-
           if (
             activeElement &&
             ['input', 'textarea'].includes(activeElement.tagName.toLowerCase()) &&
