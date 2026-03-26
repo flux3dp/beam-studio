@@ -87,7 +87,7 @@ const mockFishEyeParam: FisheyeCameraParametersV4<'center'> = {
 const mockSetupFisheyePreview = jest.fn();
 
 import Align from './Align';
-import { bm2FullAreaPerspectiveGrid } from '../common/solvePnPConstants';
+import { bm2FullAreaPerspectiveGrid } from '../../../../constants/fisheyeCameraConstants';
 
 describe('test Align', () => {
   beforeEach(() => {

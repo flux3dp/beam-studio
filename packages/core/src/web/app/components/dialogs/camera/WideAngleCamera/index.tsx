@@ -31,7 +31,7 @@ import {
   getRegionalPoints,
   hx2FullAreaPerspectiveGrid,
   hx2WideAngleCameraPnpPoints,
-} from '../common/solvePnPConstants';
+} from '../../../../constants/fisheyeCameraConstants';
 
 const enum Step {
   CHECK_DATA,

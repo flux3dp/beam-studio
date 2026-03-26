@@ -6,7 +6,7 @@ import {
   bb2PerspectiveGrid,
   bm2PerspectiveGrid,
   hx2rfPerspectiveGrid,
-} from '@core/app/components/dialogs/camera/common/solvePnPConstants';
+} from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import type { PerspectiveGrid } from '@core/interfaces/FisheyePreview';
 

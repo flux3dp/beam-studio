@@ -5,7 +5,7 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
-import { bm2FullAreaPerspectiveGrid } from '@core/app/components/dialogs/camera/common/solvePnPConstants';
+import { bm2FullAreaPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';

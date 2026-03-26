@@ -4,11 +4,8 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
-import {
-  bb2FullAreaPerspectiveGrid,
-  hx2FullAreaPerspectiveGrid,
-} from '@core/app/components/dialogs/camera/common/solvePnPConstants';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
+import { bb2FullAreaPerspectiveGrid, hx2FullAreaPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';

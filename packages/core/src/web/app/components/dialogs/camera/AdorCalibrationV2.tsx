@@ -18,7 +18,7 @@ import { getMaterialHeight, prepareToTakePicture, saveCheckPoint } from './AdorC
 import CheckpointData from './common/CheckpointData';
 import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
-import { adorPnPPoints } from './common/solvePnPConstants';
+import { adorPnPPoints } from '../../../constants/fisheyeCameraConstants';
 
 /* eslint-disable perfectionist/sort-enums */
 const enum Step {

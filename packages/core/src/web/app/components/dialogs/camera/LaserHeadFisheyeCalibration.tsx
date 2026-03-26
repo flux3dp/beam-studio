@@ -17,7 +17,7 @@ import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import moveLaserHead from './common/moveLaserHead';
 import SolvePnP from './common/SolvePnP';
-import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from './common/solvePnPConstants';
+import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from '../../../constants/fisheyeCameraConstants';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {

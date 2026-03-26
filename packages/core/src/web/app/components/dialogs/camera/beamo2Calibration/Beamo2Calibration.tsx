@@ -26,7 +26,11 @@ import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
 import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
-import { bm2FullAreaPerspectiveGrid, bm2PnPPoints, getRegionalPoints } from '../common/solvePnPConstants';
+import {
+  bm2FullAreaPerspectiveGrid,
+  bm2PnPPoints,
+  getRegionalPoints,
+} from '../../../../constants/fisheyeCameraConstants';
 
 /* eslint-disable perfectionist/sort-objects */
 const Steps = {

@@ -17,7 +17,7 @@ import ExposureSlider from './ExposureSlider';
 import ImageDisplay from './ImageDisplay';
 import PointIndicator from './PointIndicator';
 import styles from './SolvePnP.module.scss';
-import { adorPnPPoints } from './solvePnPConstants';
+import { adorPnPPoints } from '../../../../constants/fisheyeCameraConstants';
 import StepProgress from './StepProgress';
 import Title from './Title';
 import useCamera from './useCamera';
