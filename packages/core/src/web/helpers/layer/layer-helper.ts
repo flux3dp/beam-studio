@@ -9,6 +9,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -18,7 +19,7 @@ import { cloneLayerConfig, getData, initLayerConfig } from '@core/helpers/layer/
 import { moveSelectedToLayer } from '@core/helpers/layer/moveToLayer';
 import randomColor from '@core/helpers/randomColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { deleteLayerByName } from './deleteLayer';
@@ -80,15 +81,13 @@ export const getLayerName = (layer: Element): string => {
 // TODO: add unittest
 export const createLayer = (
   name: string,
-  opts: {
-    addToHistory?: boolean;
+  opts: HistoryActionOptions & {
     hexCode?: string;
     initConfig?: boolean;
     isFullColor?: boolean;
-    parentCmd?: IBatchCommand;
   } = {},
 ): { layer: SVGGElement; name: string } => {
-  const { addToHistory = true, hexCode, initConfig, isFullColor = false, parentCmd } = opts || {};
+  const { hexCode, initConfig, isFullColor = false, ...historyOptions } = opts;
   const batchCmd = new history.BatchCommand('Create Layer');
   const newLayer = layerManager.createLayer(name, { parentCmd: batchCmd })!;
   const layerElement = newLayer.getGroup();
@@ -106,9 +105,7 @@ export const createLayer = (
 
   if (isFullColor) newLayer.setFullColor(true);
 
-  if (parentCmd) parentCmd.addSubCommand(batchCmd);
-  else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
-
+  handleHistoryActionOptions(batchCmd, historyOptions);
   updateLayerColorFilter(layerElement);
   svgCanvas?.clearSelection();
 

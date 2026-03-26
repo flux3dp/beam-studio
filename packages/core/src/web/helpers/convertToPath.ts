@@ -4,6 +4,7 @@ import fontFuncs, { ConvertResult } from '@core/app/actions/beambox/font-funcs';
 import alertConstants from '@core/app/constants/alert-constants';
 import history, { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';
@@ -35,32 +36,26 @@ getSVGAsync(({ Canvas, Edit }) => {
 
 export const convertSvgToPath = (
   element: SVGElement,
-  opts: HistoryActionOptions & { isToSelect?: boolean } = {},
+  { isToSelect = false, ...historyOptions }: HistoryActionOptions & { isToSelect?: boolean } = {},
 ): ConvertToPathResult => {
-  const { addToHistory = true, isToSelect = false, parentCmd } = opts;
   const { cmd, path } = svgCanvas.convertToPath(element, true);
 
   if (isToSelect) {
     svgCanvas.selectOnly([path]);
   }
 
-  if (parentCmd) {
-    parentCmd.addSubCommand(cmd);
-  } else if (addToHistory) {
-    undoManager.addCommandToHistory(cmd);
-  }
+  handleHistoryActionOptions(cmd, historyOptions);
 
-  return { bbox: path.getBBox(), command: cmd, path };
+  return { bbox: path.getBBox(), command: historyOptions.parentCmd || cmd, path };
 };
 
 export const convertTextToPath = async (
   element: SVGElement,
   {
-    addToHistory = true,
     isToSelect = false,
-    parentCmd,
     pathPerChar = false,
     weldingTexts = false,
+    ...historyOptions
   }: HistoryActionOptions & {
     isToSelect?: boolean;
     pathPerChar?: boolean;
@@ -76,18 +71,19 @@ export const convertTextToPath = async (
   });
 
   if (command) {
-    if (parentCmd) {
-      parentCmd.addSubCommand(command);
-    } else if (addToHistory) {
-      undoManager.addCommandToHistory(command);
-    }
+    handleHistoryActionOptions(command, historyOptions);
   }
 
   if (path && isToSelect) {
     svgCanvas.selectOnly([path]);
   }
 
-  return { bbox: path?.getBBox()!, command: parentCmd || command || undefined, path: path || undefined, status };
+  return {
+    bbox: path?.getBBox()!,
+    command: historyOptions.parentCmd || command || undefined,
+    path: path || undefined,
+    status,
+  };
 };
 
 export const convertTempGroupToPath = async ({
@@ -139,9 +135,8 @@ export const convertTempGroupToPath = async ({
 export const convertTextOnPathToPath = async (
   element: SVGElement,
   {
-    addToHistory = true,
-    parentCmd,
     weldingTexts = false,
+    ...historyOptions
   }: HistoryActionOptions & {
     weldingTexts?: boolean;
   } = {},
@@ -165,15 +160,11 @@ export const convertTextOnPathToPath = async (
 
   if (groupCmd) cmd.addSubCommand(groupCmd);
 
-  if (parentCmd) {
-    parentCmd.addSubCommand(cmd);
-  } else if (addToHistory) {
-    undoManager.addCommandToHistory(cmd);
-  }
+  handleHistoryActionOptions(cmd, historyOptions);
 
   return {
     bbox: path!.getBBox(),
-    command: parentCmd ?? cmd,
+    command: historyOptions.parentCmd ?? cmd,
     group,
     path: path || undefined,
   };

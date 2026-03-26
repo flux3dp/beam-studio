@@ -7,10 +7,10 @@
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import NS from '@core/app/constants/namespaces';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 
 import { BatchCommand, InsertElementCommand, MoveElementCommand, RemoveElementCommand } from '../history/history';
-import undoManager from '../history/undoManager';
+import { handleHistoryActionOptions } from '../history/utils';
 
 import { Layer } from './layer';
 
@@ -136,13 +136,7 @@ export class LayerManager {
   /**
    * Merge current layer with the previous layer
    */
-  public mergeLayer = ({
-    addToHistory = true,
-    parentCmd,
-  }: {
-    addToHistory?: boolean;
-    parentCmd?: IBatchCommand;
-  }): void => {
+  public mergeLayer = (options: HistoryActionOptions): void => {
     if (!this.currentLayer) return;
 
     const currentGroup = this.currentLayer.getGroup();
@@ -187,8 +181,7 @@ export class LayerManager {
       this.layerMap.delete(name);
     }
 
-    if (parentCmd) parentCmd.addSubCommand(batchCmd);
-    else if (addToHistory !== false) undoManager.addCommandToHistory(batchCmd);
+    handleHistoryActionOptions(batchCmd, options);
   };
 
   /**
@@ -295,10 +288,7 @@ export class LayerManager {
   /**
    * Creates a new top-level layer in the drawing with the given name
    */
-  public createLayer = (
-    name?: string,
-    { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
-  ): Layer | null => {
+  public createLayer = (name?: string, options?: HistoryActionOptions): Layer | null => {
     // Check for duplicate name or generate new one
     if (!name || name === '' || this.layerMap.has(name)) {
       name = this.getNewLayerName(Array.from(this.layerMap.keys()), name || 'Layer');
@@ -313,8 +303,7 @@ export class LayerManager {
     const cmd = new InsertElementCommand(group, `Create Layer: ${name}`);
 
     // Add to history
-    if (parentCmd) parentCmd.addSubCommand(cmd);
-    else if (addToHistory) undoManager.addCommandToHistory(cmd);
+    handleHistoryActionOptions(cmd, options);
 
     this.allLayers.push(layer);
     this.layerMap.set(name, layer);

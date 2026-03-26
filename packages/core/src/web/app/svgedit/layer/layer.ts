@@ -6,10 +6,11 @@
  */
 
 import NS from '@core/app/constants/namespaces';
-import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
 import { ChangeElementCommand, RemoveElementCommand } from '../history/history';
 import undoManager from '../history/undoManager';
+import { handleHistoryActionOptions } from '../history/utils';
 
 /**
  * Layer construction options
@@ -134,10 +135,7 @@ export class Layer {
   /**
    * Set this layer visible or hidden
    */
-  public setVisible(
-    visible?: boolean,
-    { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
-  ): boolean {
+  public setVisible(visible?: boolean, options?: HistoryActionOptions): boolean {
     if (!this.group_) return false;
 
     const expected = visible === undefined || visible ? 'inline' : 'none';
@@ -149,8 +147,7 @@ export class Layer {
 
     const command = new ChangeElementCommand(this.group_, { display: oldDisplay });
 
-    if (parentCmd) parentCmd.addSubCommand(command);
-    else if (addToHistory) undoManager.addCommandToHistory(command);
+    handleHistoryActionOptions(command, options);
 
     return true;
   }
@@ -285,10 +282,7 @@ export class Layer {
    * Remove this layer's group from the DOM
    * @returns The layer SVG group that was just removed
    */
-  public removeGroup({
-    addToHistory = true,
-    parentCmd,
-  }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {}): ICommand | null {
+  public removeGroup(options?: HistoryActionOptions): ICommand | null {
     if (!this.group_) return null;
 
     const { nextSibling, parentNode } = this.group_;
@@ -297,8 +291,7 @@ export class Layer {
 
     const cmd = new RemoveElementCommand(this.group_, nextSibling, parentNode!);
 
-    if (parentCmd) parentCmd.addSubCommand(cmd);
-    else if (addToHistory) undoManager.addCommandToHistory(cmd);
+    handleHistoryActionOptions(cmd, options);
 
     return cmd;
   }

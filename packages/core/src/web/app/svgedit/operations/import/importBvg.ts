@@ -23,10 +23,11 @@ import { getDefaultModule, getLayersByModule, hasModuleLayer } from '@core/helpe
 import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { DocumentState } from '@core/interfaces/Preference';
 
+import { handleHistoryActionOptions } from '../../history/utils';
 import layerManager from '../../layer/layerManager';
 
 import setSvgContent from './setSvgContent';
@@ -39,10 +40,7 @@ getSVGAsync((globalSVG) => {
   svgedit = globalSVG.Edit;
 });
 
-export const importBvgString = async (
-  str: string,
-  opts: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
-): Promise<void> => {
+export const importBvgString = async (str: string, opts: HistoryActionOptions = {}): Promise<void> => {
   const batchCmd = new history.BatchCommand('Import Bvg');
 
   svgCanvas.clearSelection();
@@ -250,7 +248,7 @@ export const importBvgString = async (
 
   batchCmd.addSubCommand(new history.InsertElementCommand(newDefs));
 
-  const { addToHistory = true, parentCmd } = opts;
+  const { parentCmd } = opts;
   const postImportBvgString: any = async () => {
     const { workarea } = useDocumentStore.getState();
 
@@ -271,8 +269,7 @@ export const importBvgString = async (
   batchCmd.onAfter = postImportBvgString;
   loadContextGoogleFonts();
 
-  if (parentCmd) parentCmd.addSubCommand(batchCmd);
-  else if (addToHistory) svgCanvas.addCommandToHistory(batchCmd);
+  handleHistoryActionOptions(batchCmd, opts);
 };
 
 const importBvg = async (file: Blob): Promise<void> => {

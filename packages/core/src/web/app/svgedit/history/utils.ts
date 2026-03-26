@@ -1,6 +1,7 @@
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import shortcuts from '@core/helpers/shortcuts';
+import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
 import textActions from '../text/textactions';
 
@@ -75,6 +76,18 @@ const redo = ({ checkActiveElement = true, checkShortCutsScope = true }: Options
     useLayerStore.getState().forceUpdate();
     currentFileManager.setHasUnsavedChanges(true);
   }
+};
+
+export const handleHistoryActionOptions = (
+  cmd: ICommand,
+  { addToHistory = true, parentCmd }: HistoryActionOptions = {},
+) => {
+  if (!cmd) return;
+
+  if ((cmd as IBatchCommand).isEmpty && (cmd as IBatchCommand).isEmpty()) return;
+
+  if (parentCmd) parentCmd.addSubCommand(cmd);
+  else if (addToHistory) undoManager.addCommandToHistory(cmd);
 };
 
 export default {

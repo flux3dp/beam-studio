@@ -1,13 +1,13 @@
 import history from '@core/app/svgedit/history/history';
-import undoManager from '@core/app/svgedit/history/undoManager';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 
 import { getData, writeDataLayer } from '../layer-config-helper';
 
 const toggleFullColorLayer = (
   layer: Element,
-  { addToHistory = true, parentCmd, val }: { addToHistory?: boolean; parentCmd?: IBatchCommand; val?: boolean } = {},
+  { val, ...historyOptions }: HistoryActionOptions & { val?: boolean } = {},
 ): IBatchCommand | null => {
   const origVal = getData(layer, 'fullcolor');
   const targetVal = val ?? !origVal;
@@ -25,11 +25,7 @@ const toggleFullColorLayer = (
     updateLayerColor(layer as SVGGElement);
   };
 
-  if (parentCmd) {
-    parentCmd.addSubCommand(cmd);
-  } else if (addToHistory) {
-    undoManager.addCommandToHistory(cmd);
-  }
+  handleHistoryActionOptions(cmd, historyOptions);
 
   return cmd;
 };
