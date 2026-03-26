@@ -275,8 +275,7 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.to_path));
     await tick();
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, {
-      element: document.getElementById('svg_1'),
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isToSelect: true,
     });
 
@@ -284,8 +283,7 @@ describe('should render correctly', () => {
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(2, {
-      element: document.getElementById('svg_1'),
+    expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
       isToSelect: true,
       weldingTexts: true,
     });
@@ -554,16 +552,14 @@ describe('should render correctly in mobile', () => {
     fireEvent.click(getAllByText(container, tActionPanel.outline)[0]);
     await tick();
     expect(convertTextToPath).toHaveBeenCalledTimes(1);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(1, {
-      element: document.getElementById('svg_1'),
+    expect(convertTextToPath).toHaveBeenNthCalledWith(1, document.getElementById('svg_1'), {
       isToSelect: true,
     });
 
     fireEvent.click(getByText(tActionPanel.weld_text));
     await tick();
     expect(convertTextToPath).toHaveBeenCalledTimes(2);
-    expect(convertTextToPath).toHaveBeenNthCalledWith(2, {
-      element: document.getElementById('svg_1'),
+    expect(convertTextToPath).toHaveBeenNthCalledWith(2, document.getElementById('svg_1'), {
       isToSelect: true,
       weldingTexts: true,
     });

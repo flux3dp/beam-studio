@@ -11,14 +11,14 @@ import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import currentFileManager from '../currentFileManager';
 import ungroupElement from '../group/ungroup';
 import type { BatchCommand } from '../history/history';
 import history from '../history/history';
-import undoManager from '../history/undoManager';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import { getRotationAngle, setRotationAngle } from '../transform/rotation';
 import { getHref } from '../utils/href';
 
@@ -58,11 +58,10 @@ function hasValidClipPaths(root: SVGElement): boolean {
 export const disassembleUse = async (
   elems: null | SVGElement[] = null,
   {
-    addToHistory = true,
-    parentCmd,
     showProgress = true,
     skipConfirm = false,
-  }: { addToHistory?: boolean; parentCmd?: IBatchCommand; showProgress?: boolean; skipConfirm?: boolean } = {},
+    ...historyOptions
+  }: HistoryActionOptions & { showProgress?: boolean; skipConfirm?: boolean } = {},
 ): Promise<BatchCommand | void> => {
   const {
     lang: { beambox: t },
@@ -284,10 +283,7 @@ export const disassembleUse = async (
     });
   }
 
-  if (batchCmd && !batchCmd.isEmpty()) {
-    if (parentCmd) parentCmd.addSubCommand(batchCmd);
-    else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
-  }
+  handleHistoryActionOptions(batchCmd, historyOptions);
 
   return batchCmd;
 };

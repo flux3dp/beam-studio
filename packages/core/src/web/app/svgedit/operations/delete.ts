@@ -3,8 +3,10 @@ import history from '@core/app/svgedit/history/history';
 import selector from '@core/app/svgedit/selector';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 const { svgedit } = window;
 
@@ -20,15 +22,11 @@ getSVGAsync(({ Canvas }) => {
  * called after deleting a use element
  * @param use UseElement
  */
-export const deleteUseRef = (
-  use: SVGUseElement,
-  opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
-): { cmd: IBatchCommand } => {
+export const deleteUseRef = (use: SVGUseElement, opts?: HistoryActionOptions): { cmd: IBatchCommand } => {
   const refId = svgCanvas.getHref(use);
   const svgcontent = document.getElementById('svgcontent')!;
   const isReferred = svgcontent.querySelector(`use[*|href="${refId}"]`);
   const batchCmd = new history.BatchCommand(`Delete Use ${use.id} Ref`);
-  const { addToHistory = true, parentCmd } = opts || {};
 
   if (!isReferred) {
     const defs = findDefs();
@@ -54,13 +52,7 @@ export const deleteUseRef = (
     }
   }
 
-  if (!batchCmd.isEmpty()) {
-    if (parentCmd) {
-      parentCmd.addSubCommand(batchCmd);
-    } else if (addToHistory) {
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
-    }
-  }
+  handleHistoryActionOptions(batchCmd, opts);
 
   return { cmd: batchCmd };
 };

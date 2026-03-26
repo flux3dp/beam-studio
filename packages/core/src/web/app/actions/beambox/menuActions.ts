@@ -34,7 +34,6 @@ import imageEdit from '@core/helpers/image-edit';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
 import viewMenu from '@core/helpers/menubar/view';
 import OutputError from '@core/helpers/output-error';
-import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import browser from '@core/implementations/browser';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
@@ -133,11 +132,7 @@ export default {
 
     browser.open(url);
   },
-  REDO: (): void => {
-    if (shortcuts.isInBaseScope()) {
-      historyUtils.redo();
-    }
-  },
+  REDO: (): void => historyUtils.redo(),
   RESET_LAYOUT: () => loadLayout('default'),
   ROTARY_SETUP: () => showRotarySettings(),
   SAVE_AS: (): Promise<boolean> => saveAsFile(),
@@ -169,11 +164,7 @@ export default {
     });
   },
   START_UI_INTRO: (): Promise<void> => Tutorials.startInterfaceTutorial(() => {}),
-  UNDO: (): void => {
-    if (shortcuts.isInBaseScope()) {
-      historyUtils.undo();
-    }
-  },
+  UNDO: (): void => historyUtils.undo(),
   UNGROUP: () => svgCanvas.ungroupSelectedElement(),
   ZOOM_IN: (): void => workareaManager.zoomIn(),
   ZOOM_OUT: (): void => workareaManager.zoomOut(),

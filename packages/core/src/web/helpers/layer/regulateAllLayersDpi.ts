@@ -1,17 +1,14 @@
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
-import undoManager from '@core/app/svgedit/history/undoManager';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import layerManager from '@core/app/svgedit/layer/layerManager';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 
 import { regulateEngraveDpiOption } from '../regulateEngraveDpi';
 
 import { getData, writeDataLayer } from './layer-config-helper';
 
-export const regulateAllLayersDpi = (
-  workarea: WorkAreaModel,
-  { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand },
-): void => {
+export const regulateAllLayersDpi = (workarea: WorkAreaModel, options: HistoryActionOptions): void => {
   const allLayers = layerManager.getAllLayers();
   const cmd = new history.BatchCommand('Regulate DPI for all layers');
 
@@ -24,8 +21,5 @@ export const regulateAllLayersDpi = (
     }
   });
 
-  if (!cmd.isEmpty()) {
-    if (parentCmd) parentCmd.addSubCommand(cmd);
-    else if (addToHistory) undoManager.addCommandToHistory(cmd);
-  }
+  handleHistoryActionOptions(cmd, options);
 };

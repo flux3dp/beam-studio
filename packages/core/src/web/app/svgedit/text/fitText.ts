@@ -9,6 +9,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import changeAttribute from '../history/changeAttribute';
 import undoManager from '../history/undoManager';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import { getTransformList } from '../transform/transformlist';
 import { getBBox } from '../utils/getBBox';
 
@@ -149,9 +150,8 @@ export const setFitTextBBox = (
   text: SVGTextElement,
   newBBox: Partial<DOMRect>,
   {
-    addToHistory = true,
     oldBBox,
-    parentCmd,
+    ...historyOptions
   }: HistoryActionOptions & {
     oldBBox?: { height: number; width: number; x: number; y: number };
   } = {},
@@ -208,8 +208,7 @@ export const setFitTextBBox = (
   });
 
   if (cmd) {
-    if (parentCmd) parentCmd.addSubCommand(cmd);
-    else if (addToHistory) undoManager.addCommandToHistory(cmd);
+    handleHistoryActionOptions(cmd, historyOptions);
 
     cmd.onAfter = () => {
       renderText(text);

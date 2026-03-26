@@ -12,7 +12,7 @@ import useNewShortcutsScope from '@core/helpers/hooks/useNewShortcutsScope';
 import shortcuts from '@core/helpers/shortcuts';
 import { handleChangePathDataCommand } from '@core/helpers/TabPanel/handleChangePathDataCommand';
 import useI18n from '@core/helpers/useI18n';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { ICommand } from '@core/interfaces/IHistory';
 
 import { useHistory } from './hooks/useHistory';
 import styles from './index.module.scss';
@@ -27,7 +27,7 @@ import { removePerpendicularLineIfExist } from './utils/removePerpendicularLineI
 
 interface Props {
   bbox: DOMRect;
-  command?: IBatchCommand;
+  command?: ICommand;
   element: SVGElement;
   onClose: () => void;
 }

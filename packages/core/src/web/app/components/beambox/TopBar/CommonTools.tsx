@@ -29,10 +29,10 @@ function CommonTools({ hide }: Props): React.ReactNode {
 
   return (
     <div className={styles['common-tools-container']}>
-      <div onClick={historyUtils.undo} title={t.undo}>
+      <div onClick={() => historyUtils.undo({ checkShortCutsScope: false })} title={t.undo}>
         <TopBarIcons.Undo />
       </div>
-      <div onClick={historyUtils.redo} title={t.redo}>
+      <div onClick={() => historyUtils.redo({ checkShortCutsScope: false })} title={t.redo}>
         <TopBarIcons.Redo />
       </div>
       {!isMobile && (

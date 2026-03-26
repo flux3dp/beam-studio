@@ -58,14 +58,14 @@ export const convertSvgToImage: MainConverterFunc = async ({
     .when(
       (el) => el.getAttribute('data-textpath-g') === '1',
       async (el) => {
-        const { group } = await convertTextOnPathToPath({ element: el, parentCommand: parentCmd });
+        const { group } = await convertTextOnPathToPath(el, { parentCmd });
 
         return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: group });
       },
     )
     .with({ tagName: 'g' }, async (el) => await convertGroupToImage({ parentCmd, svgElement: el }, convertSvgToImage))
     .with({ tagName: 'text' }, async (el) => {
-      const { path } = await convertTextToPath({ element: el, isToSelect: false, parentCommand: parentCmd });
+      const { path } = await convertTextToPath(el, { isToSelect: false, parentCmd });
 
       return await convertSvgToImage({ isToSelect: false, parentCmd, svgElement: path! });
     })

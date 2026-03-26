@@ -1,12 +1,12 @@
 import history from '@core/app/svgedit/history/history';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import undoManager from '../../../history/undoManager';
 import { clipboardCore } from '../singleton';
 
 import { updateSymbolStyle } from './updateSymbolStyle';
@@ -19,10 +19,7 @@ getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
 
-const pasteRef = async (
-  useElement: SVGUseElement,
-  { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
-): Promise<void> => {
+const pasteRef = async (useElement: SVGUseElement, options?: HistoryActionOptions): Promise<void> => {
   const batchCmd = new history.BatchCommand('Paste Ref');
   const drawing = svgCanvas.getCurrentDrawing();
   const symbolId = svgedit.utilities.getHref(useElement);
@@ -48,12 +45,7 @@ const pasteRef = async (
     await symbolMaker.reRenderImageSymbol(useElement);
   }
 
-  if (parentCmd) {
-    parentCmd.addSubCommand(batchCmd);
-  } else if (addToHistory) {
-    undoManager.addCommandToHistory(batchCmd);
-  }
-
+  handleHistoryActionOptions(batchCmd, options);
   updateElementColor(useElement);
 };
 

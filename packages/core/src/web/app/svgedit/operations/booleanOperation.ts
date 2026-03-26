@@ -1,12 +1,13 @@
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import history from '@core/app/svgedit/history/history';
-import undoManager from '@core/app/svgedit/history/undoManager';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 import { deleteElements } from './delete';
 import { booleanOperationByPaperjs, fixEnd } from './pathActions';
@@ -22,7 +23,7 @@ getSVGAsync(({ Canvas }) => {
 export const doBooleanOperation = (
   elements: SVGElement[],
   mode: BooleanOperationMode,
-  { addToHistory = true, parentCmd }: { addToHistory?: boolean; parentCmd?: IBatchCommand } = {},
+  options?: HistoryActionOptions,
 ): void => {
   if (elements.length < 2) {
     alertCaller.popUp({
@@ -89,16 +90,12 @@ export const doBooleanOperation = (
 
   if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
-  if (parentCmd) parentCmd.addSubCommand(batchCmd);
-  else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
+  handleHistoryActionOptions(batchCmd, options);
 
   svgCanvas.selectOnly([element], true);
 };
 
-export const doBooleanOperationOnSelected = (
-  mode: BooleanOperationMode,
-  opts?: { addToHistory?: boolean; parentCmd?: IBatchCommand },
-): void => {
+export const doBooleanOperationOnSelected = (mode: BooleanOperationMode, opts?: HistoryActionOptions): void => {
   const selectedElements = svgCanvas.getSelectedElems(true);
 
   doBooleanOperation(selectedElements, mode, opts);

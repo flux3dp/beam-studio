@@ -37,7 +37,9 @@ export const convertElementsToPathInTempGroup = async ({
   svgCanvas.ungroupTempGroup(element);
 
   const convertResult = await Promise.all(
-    textList.map((child) => convertTextToPath({ element: child as SVGTextElement, isToSelect: false, parentCommand })),
+    textList.map((child) =>
+      convertTextToPath(child as SVGTextElement, { isToSelect: false, parentCmd: parentCommand }),
+    ),
   );
   const pathList = convertResult.map(({ path }) => path).filter((path): path is SVGPathElement => Boolean(path));
 

@@ -529,7 +529,13 @@ class TextActions {
       const { textbb } = this;
 
       // drawing selection block
-      if (startRowIndex === endRowIndex) {
+      // For fit-text, chars in the same manual line can be on different visual lines
+      // due to auto-wrapping. Check actual positions to determine if they're visually on the same line.
+      const sameVisualLine =
+        startRowIndex === endRowIndex &&
+        (this.isVertical ? Math.abs(startbb.x - endbb.x) < 1 : Math.abs(startbb.y - endbb.y) < 1);
+
+      if (sameVisualLine) {
         if (this.isVertical) {
           points = [
             [startbb.x, startbb.y],
@@ -1083,6 +1089,7 @@ class TextActions {
     const currentMode = getMouseMode();
     const curtext = this.curtext!;
 
+    this.textinput.disabled = false;
     this.isEditing = true;
     this.allowDbl = false;
 
@@ -1099,7 +1106,7 @@ class TextActions {
     this.init();
     this.valueBeforeEdit = this.textinput.value;
 
-    $(curtext).css('cursor', 'text');
+    curtext.style.cursor = 'text';
 
     if (setCursor) {
       this.setCursor();
@@ -1110,15 +1117,16 @@ class TextActions {
     }, 300);
   };
 
-  toSelectMode(shouldSelectElem = false) {
+  toSelectMode(shouldClearSelection = false) {
     const curtext = this.curtext!;
 
+    this.textinput.disabled = true;
     this.isEditing = false;
     setMouseMode(this.previousMode);
     this.hideCursor();
-    $(curtext).css('cursor', 'move');
+    curtext.style.cursor = '';
 
-    if (shouldSelectElem) {
+    if (shouldClearSelection) {
       svgCanvas.clearSelection();
     }
 
@@ -1168,7 +1176,7 @@ class TextActions {
 
     if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 
-    $(this.textinput).trigger('blur');
+    this.textinput.blur();
     this.curtext = null;
   }
 

@@ -3,6 +3,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import { getBBox } from '../utils/getBBox';
 
 import transformlist from './transformlist';
@@ -88,10 +89,7 @@ export const setRotationAngle = (
       cmd = undoManager.finishUndoableChange();
     }
 
-    if (cmd && !cmd.isEmpty()) {
-      if (parentCmd) parentCmd.addSubCommand(cmd);
-      else if (addToHistory) undoManager.addCommandToHistory(cmd);
-    }
+    handleHistoryActionOptions(cmd, { addToHistory, parentCmd });
   }
 };
 

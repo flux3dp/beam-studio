@@ -2,8 +2,13 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import SvgEditor from './SvgEditor';
 import type { FileData } from '@core/helpers/fileImportHelper';
+
+const mockSetupTextInputEvents = jest.fn();
+
+jest.mock('@core/app/svgedit/text/setupTextInputEvents', () => mockSetupTextInputEvents);
+
+import SvgEditor from './SvgEditor';
 
 const mockImportFileInCurrentTab = jest.fn();
 

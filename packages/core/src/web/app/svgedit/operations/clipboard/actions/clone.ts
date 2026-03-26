@@ -1,10 +1,9 @@
 import history from '@core/app/svgedit/history/history';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type { IBatchCommand } from '@core/interfaces/IHistory';
+import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-import undoManager from '../../../history/undoManager';
 
 import { copyElements } from './copy';
 import { pasteElements } from './paste';
@@ -25,11 +24,10 @@ export const cloneElements = async (
   dx: number | number[],
   dy: number | number[],
   {
-    addToHistory = true,
     callChangOnMove = true,
-    parentCmd,
     selectElement = true,
-  }: { addToHistory?: boolean; callChangOnMove?: boolean; parentCmd?: IBatchCommand; selectElement?: boolean } = {},
+    ...historyOpts
+  }: HistoryActionOptions & { callChangOnMove?: boolean; selectElement?: boolean } = {},
 ): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
   const batchCmd = new history.BatchCommand('Clone elements');
 
@@ -51,10 +49,7 @@ export const cloneElements = async (
     batchCmd.addSubCommand(moveCommand);
   }
 
-  if (!batchCmd.isEmpty()) {
-    if (parentCmd) parentCmd.addSubCommand(batchCmd);
-    else if (addToHistory) undoManager.addCommandToHistory(batchCmd);
-  }
+  handleHistoryActionOptions(batchCmd, historyOpts);
 
   return { cmd: batchCmd, elems };
 };
@@ -67,13 +62,10 @@ export const cloneElements = async (
 export const cloneSelectedElements = async (
   dx: number | number[],
   dy: number | number[],
-  options: {
-    addToHistory?: boolean;
+  options: HistoryActionOptions & {
     callChangOnMove?: boolean;
-    parentCmd?: IBatchCommand;
     selectElement?: boolean;
   } = {
-    addToHistory: true,
     callChangOnMove: true,
     selectElement: true,
   },
