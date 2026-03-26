@@ -1,9 +1,9 @@
 import { sprintf } from 'sprintf-js';
 
-import Alert from '@core/app/actions/alert-caller';
-import Progress from '@core/app/actions/progress-caller';
+import alertCaller from '@core/app/actions/alert-caller';
+import progressCaller from '@core/app/actions/progress-caller';
 import tabController from '@core/app/actions/tabController';
-import AlertConstants from '@core/app/constants/alert-constants';
+import alertConstants from '@core/app/constants/alert-constants';
 import { UpdateEvents } from '@core/app/constants/ipcEvents';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import i18n from '@core/helpers/i18n';
@@ -14,7 +14,7 @@ const checkForUpdate = (isAutoCheck: boolean) => {
   const LANG = i18n.lang.update.software;
 
   if (!isAutoCheck) {
-    Progress.openNonstopProgress({ id: 'electron-check-update', message: LANG.checking });
+    progressCaller.openNonstopProgress({ id: 'electron-check-update', message: LANG.checking });
   }
 
   let hasGetResponse = false;
@@ -23,8 +23,8 @@ const checkForUpdate = (isAutoCheck: boolean) => {
   setTimeout(() => {
     if (!hasGetResponse) {
       if (!isAutoCheck) {
-        Progress.popById('electron-check-update');
-        Alert.popUp({
+        progressCaller.popById('electron-check-update');
+        alertCaller.popUp({
           caption: LANG.check_update,
           message: LANG.no_response,
         });
@@ -39,14 +39,14 @@ const checkForUpdate = (isAutoCheck: boolean) => {
       console.log('Check update response:', res);
 
       if (!isAutoCheck) {
-        Progress.popById('electron-check-update');
+        progressCaller.popById('electron-check-update');
       }
 
       if (res?.error || !res?.info) {
         console.log(res.error, res.info);
 
         if (!isAutoCheck) {
-          Alert.popUp({
+          alertCaller.popUp({
             caption: LANG.check_update,
             message: `#829 Error: ${res.error?.code}`,
           });
@@ -55,64 +55,77 @@ const checkForUpdate = (isAutoCheck: boolean) => {
         return;
       }
 
-      const { FLUX } = window;
-      const channel = res.info.version.split('-')[1] || 'latest';
-      const currentChannel = FLUX?.version?.split('-')[1] || 'latest';
+      const showNotFoundAlert = () => {
+        if (!isAutoCheck) {
+          alertCaller.popUp({
+            caption: LANG.check_update,
+            message: LANG.not_found,
+          });
+        }
+      };
 
-      if (currentChannel !== channel) {
-        console.log(`Current Channel: ${currentChannel}, But got: ${channel}`);
-      }
-
-      if (res.isUpdateAvailable && res.info.version === FLUX?.version) {
-        console.log('Received update of same version, update silently without prompt');
-        communicator.send(UpdateEvents.DownloadUpdate);
+      if (!res.isUpdateAvailable) {
+        showNotFoundAlert();
 
         return;
       }
 
-      if (res.isUpdateAvailable && channel === currentChannel) {
-        const msg = sprintf(LANG.available_update, res.info.version, FLUX.version);
+      const { FLUX } = window;
+      const [remoteVersion, remoteChannel = 'latest'] = res.info.version.split('-');
+      const [currentVersion, currentChannel = 'latest'] = FLUX.version.split('-');
 
-        Alert.popUp({
-          buttonType: AlertConstants.YES_NO,
-          caption: LANG.check_update,
-          message: msg,
-          onNo: () => {
-            communicator.once(UpdateEvents.UpdateDownloaded, () => {});
-          },
-          onYes: () => {
-            communicator.once(UpdateEvents.UpdateDownloaded, (e: any, info: { version: any }) => {
-              const downloadedMsg = `Beam Studio v${info.version} ${LANG.install_or_not}`;
+      if (currentChannel !== remoteChannel) {
+        console.log(`Current Channel: ${currentChannel}, But got: ${remoteChannel}`);
+        showNotFoundAlert();
 
-              Alert.popUp({
-                buttonType: AlertConstants.YES_NO,
-                caption: LANG.check_update,
-                message: downloadedMsg,
-                onYes: async () => {
-                  const unsavedDialogRes = await toggleUnsavedChangedDialog();
-
-                  if (unsavedDialogRes) {
-                    communicator.send(UpdateEvents.QuitAndInstall);
-                  }
-                },
-              });
-            });
-            communicator.on(UpdateEvents.DownloadProgress, (e: any, progress: { percent: any }) => {
-              console.log('progress:', progress.percent);
-            });
-            Alert.popUp({
-              caption: LANG.check_update,
-              message: LANG.downloading,
-            });
-            communicator.send(UpdateEvents.DownloadUpdate);
-          },
-        });
-      } else if (!isAutoCheck) {
-        Alert.popUp({
-          caption: LANG.check_update,
-          message: LANG.not_found,
-        });
+        return;
       }
+
+      if (remoteVersion === currentVersion) {
+        if (currentChannel === 'alpha') {
+          console.log('Update silently for alpha version');
+          communicator.send(UpdateEvents.DownloadUpdate);
+        } else {
+          showNotFoundAlert();
+        }
+
+        return;
+      }
+
+      const msg = sprintf(LANG.available_update, res.info.version, FLUX.version);
+
+      alertCaller.popUp({
+        buttonType: alertConstants.YES_NO,
+        caption: LANG.check_update,
+        message: msg,
+        onNo: () => {
+          communicator.once(UpdateEvents.UpdateDownloaded, () => {});
+        },
+        onYes: () => {
+          communicator.once(UpdateEvents.UpdateDownloaded, (e: any, info: { version: any }) => {
+            const downloadedMsg = `Beam Studio v${info.version} ${LANG.install_or_not}`;
+
+            alertCaller.popUp({
+              buttonType: alertConstants.YES_NO,
+              caption: LANG.check_update,
+              message: downloadedMsg,
+              onYes: async () => {
+                if (await toggleUnsavedChangedDialog()) {
+                  communicator.send(UpdateEvents.QuitAndInstall);
+                }
+              },
+            });
+          });
+          communicator.on(UpdateEvents.DownloadProgress, (e: any, progress: { percent: any }) => {
+            console.log('progress:', progress.percent);
+          });
+          alertCaller.popUp({
+            caption: LANG.check_update,
+            message: LANG.downloading,
+          });
+          communicator.send(UpdateEvents.DownloadUpdate);
+        },
+      });
     },
   );
 };
@@ -122,7 +135,7 @@ const switchVersion = (): void => {
   const { FLUX } = window;
   const currentChannel = FLUX.version.split('-')[1];
 
-  Progress.openNonstopProgress({ id: 'electron-check-switch', message: LANG.checking });
+  progressCaller.openNonstopProgress({ id: 'electron-check-switch', message: LANG.checking });
 
   const targetChannel = currentChannel ? 'latest' : 'beta';
 
@@ -130,11 +143,11 @@ const switchVersion = (): void => {
   communicator.once(
     UpdateEvents.UpdateAvailable,
     (_, res: { error?: { code?: any }; info?: { version: string }; isUpdateAvailable: boolean }) => {
-      Progress.popById('electron-check-switch');
+      progressCaller.popById('electron-check-switch');
 
       if (res.error || !res.info) {
         console.log(res.error, res.info);
-        Alert.popUp({
+        alertCaller.popUp({
           caption: LANG.switch_version,
           message: `#829 Error: ${res.error?.code}`,
         });
@@ -145,8 +158,8 @@ const switchVersion = (): void => {
       if (res.isUpdateAvailable) {
         const msg = sprintf(LANG.available_switch, res.info.version, FLUX.version);
 
-        Alert.popUp({
-          buttonType: AlertConstants.YES_NO,
+        alertCaller.popUp({
+          buttonType: alertConstants.YES_NO,
           caption: LANG.switch_version,
           message: msg,
           onNo: () => {
@@ -156,8 +169,8 @@ const switchVersion = (): void => {
             communicator.once(UpdateEvents.UpdateDownloaded, (e: any, info: { version: any }) => {
               const downloadedMsg = `Beam Studio v${info.version} ${LANG.switch_or_not}`;
 
-              Alert.popUp({
-                buttonType: AlertConstants.YES_NO,
+              alertCaller.popUp({
+                buttonType: alertConstants.YES_NO,
                 caption: LANG.switch_version,
                 message: downloadedMsg,
                 onYes: async () => {
@@ -172,7 +185,7 @@ const switchVersion = (): void => {
             communicator.on(UpdateEvents.DownloadProgress, (e: any, progress: { percent: any }) => {
               console.log('progress:', progress.percent);
             });
-            Alert.popUp({
+            alertCaller.popUp({
               caption: LANG.switch_version,
               message: LANG.downloading,
             });
@@ -180,7 +193,7 @@ const switchVersion = (): void => {
           },
         });
       } else {
-        Alert.popUp({
+        alertCaller.popUp({
           caption: LANG.switch_version,
           message: LANG.switch_version_not_found,
         });
