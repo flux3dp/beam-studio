@@ -113,7 +113,8 @@
         "NSLocalNetworkUsageDescription": "Beam Studio need to use local network to connect to certain devices."
       },
       "target": [
-        "dmg"
+        "dmg",
+        "zip"
       ],
       "icon": "public/icon.icon",
       "asarUnpack": "**/*.node"
