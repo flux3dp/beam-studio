@@ -36,6 +36,8 @@ const checkForUpdate = (isAutoCheck: boolean) => {
     (_, res: { error?: { code?: any }; info?: { version: string }; isUpdateAvailable: boolean }) => {
       hasGetResponse = true;
 
+      console.log('Check update response:', res);
+
       if (!isAutoCheck) {
         Progress.popById('electron-check-update');
       }
@@ -61,7 +63,14 @@ const checkForUpdate = (isAutoCheck: boolean) => {
         console.log(`Current Channel: ${currentChannel}, But got: ${channel}`);
       }
 
-      if (res?.isUpdateAvailable && channel === currentChannel) {
+      if (res.isUpdateAvailable && res.info.version === FLUX?.version) {
+        console.log('Received update of same version, update silently without prompt');
+        communicator.send(UpdateEvents.DownloadUpdate);
+
+        return;
+      }
+
+      if (res.isUpdateAvailable && channel === currentChannel) {
         const msg = sprintf(LANG.available_update, res.info.version, FLUX.version);
 
         Alert.popUp({
