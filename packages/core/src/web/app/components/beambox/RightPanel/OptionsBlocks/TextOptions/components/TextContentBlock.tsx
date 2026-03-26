@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import React, { memo, useEffect, useRef, useState } from 'react';
 
 import { Input } from 'antd';
+import type { TextAreaRef } from 'antd/lib/input/TextArea';
 
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -17,6 +18,7 @@ interface Props {
 function TextContentBlock({ textElement }: Props): ReactNode {
   const isMobile = useIsMobile();
   const [textContent, setTextContent] = useState(() => getTextContent(textElement));
+  const textAreaRef = useRef<TextAreaRef>(null);
   const valueBeforeEditRef = useRef('');
 
   useEffect(() => {
@@ -25,7 +27,16 @@ function TextContentBlock({ textElement }: Props): ReactNode {
 
   useEffect(() => {
     const handleChanged = () => {
-      setTextContent(getTextContent(textElement));
+      const newValue = getTextContent(textElement);
+
+      const textAreaElement = textAreaRef.current?.resizableTextArea?.textArea;
+
+      if (textAreaElement) {
+        // Clear undo history if updated by other source to avoid confusion of undo history
+        textAreaElement.value = newValue;
+      }
+
+      setTextContent(newValue);
     };
 
     textContentEvents.on('changed', handleChanged);
@@ -60,6 +71,7 @@ function TextContentBlock({ textElement }: Props): ReactNode {
         onFocus={() => {
           valueBeforeEditRef.current = textContent.replace(/\n/g, '\u0085');
         }}
+        ref={textAreaRef}
         value={textContent}
       />
     </div>

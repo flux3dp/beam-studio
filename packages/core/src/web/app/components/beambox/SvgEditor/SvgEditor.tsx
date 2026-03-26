@@ -15,6 +15,7 @@ import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import setupTextInputEvents from '@core/app/svgedit/text/setupTextInputEvents';
 import workareaManager from '@core/app/svgedit/workarea';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
@@ -42,6 +43,7 @@ const SvgEditor = (): ReactNode => {
   useEffect(() => {
     if (window.$) {
       $(svgEditor.init);
+      setupTextInputEvents();
 
       if (window.importingFile) {
         importFileInCurrentTab(window.importingFile);

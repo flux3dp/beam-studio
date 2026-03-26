@@ -26,7 +26,6 @@ import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
-import historyUtils from '@core/app/svgedit/history/utils';
 import {
   copySelectedElements,
   cutSelectedElements,
@@ -48,7 +47,6 @@ import { getNextStepRequirement } from '@core/app/components/tutorials/tutorialC
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
-import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import getExifRotationFlag from '@core/helpers/image/getExifRotationFlag';
 import ImageData from '@core/helpers/image-data';
@@ -755,106 +753,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     // Lose focus for select elements when changed (Allows keyboard shortcuts to work better)
     $('select').change(function () {
       $(this).blur();
-    });
-
-    const textInput = document.getElementById('text') as HTMLInputElement;
-    let wasNewLineAdded = false;
-    const checkFunctionKeyPressed = (evt: KeyboardEvent) => {
-      return (getOS() === 'MacOS' && evt.metaKey) || (getOS() !== 'MacOS' && evt.ctrlKey);
-    };
-
-    window.addEventListener(
-      'input',
-      (e) => {
-        if (Shortcuts.isInBaseScope()) {
-          const evt = e as InputEvent;
-
-          if (evt.inputType === 'historyRedo' || evt.inputType === 'historyUndo') {
-            evt.preventDefault();
-            evt.stopPropagation();
-            if (evt.inputType === 'historyRedo') historyUtils.redo();
-            else if (evt.inputType === 'historyUndo') historyUtils.undo();
-          }
-        }
-      },
-      { capture: true },
-    );
-
-    $('#text').on('keyup input', function (this: HTMLInputElement, evt) {
-      evt.stopPropagation();
-
-      if (!textActions.isEditing && evt.type === 'input') {
-        // Hack: Windows input event will some how block undo/redo event
-        // So do undo/redo when not entering & input event triggered
-        evt.preventDefault();
-
-        const originalEvent = evt.originalEvent as InputEvent;
-
-        if (originalEvent.inputType === 'historyUndo') {
-          historyUtils.undo();
-        } else if (originalEvent.inputType === 'historyRedo') {
-          historyUtils.redo();
-        }
-
-        return;
-      }
-
-      if (evt.key === 'Enter' && !wasNewLineAdded) {
-        textActions.toSelectMode(true);
-      } else if (textActions.isEditing) {
-        textEdit.setTextContent(this.value);
-      }
-
-      if (evt.key !== 'Shift') {
-        wasNewLineAdded = false;
-      }
-    });
-    textInput.addEventListener('keydown', (evt: KeyboardEvent) => {
-      evt.stopPropagation();
-
-      if (evt.key === 'ArrowUp') {
-        evt.preventDefault();
-        textActions.onUpKey();
-      } else if (evt.key === 'ArrowDown') {
-        evt.preventDefault();
-        textActions.onDownKey();
-      } else if (evt.key === 'ArrowLeft') {
-        evt.preventDefault();
-        textActions.onLeftKey();
-      } else if (evt.key === 'ArrowRight') {
-        evt.preventDefault();
-        textActions.onRightKey();
-      } else if (evt.key === 'Escape') {
-        clickSelect();
-      }
-
-      const isFunctionKeyPressed = checkFunctionKeyPressed(evt);
-
-      if ((isMobile() || evt.shiftKey) && evt.key === 'Enter') {
-        evt.preventDefault();
-        textActions.newLine();
-        textEdit.setTextContent(textInput.value);
-        wasNewLineAdded = true;
-      } else if (isFunctionKeyPressed && evt.key === 'c') {
-        evt.preventDefault();
-        textActions.copyText();
-      } else if (isFunctionKeyPressed && evt.key === 'x') {
-        evt.preventDefault();
-        textActions.cutText();
-        textEdit.setTextContent(textInput.value);
-      } else if (isFunctionKeyPressed && evt.key === 'v') {
-        evt.preventDefault();
-        textActions.pasteText();
-        textEdit.setTextContent(textInput.value);
-      } else if (isFunctionKeyPressed && evt.key === 'a') {
-        evt.preventDefault();
-        textActions.selectAll();
-        textEdit.setTextContent(textInput.value);
-      } else if (isFunctionKeyPressed && evt.key === 'z') {
-        if (getOS() === 'MacOS') {
-          evt.preventDefault();
-        }
-      }
     });
 
     (function () {
