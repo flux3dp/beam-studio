@@ -1,6 +1,6 @@
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import history from '@core/app/svgedit/history/history';
-import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 

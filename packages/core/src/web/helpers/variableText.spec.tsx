@@ -68,6 +68,10 @@ jest.mock('@core/app/svgedit/text/textedit', () => ({
   renderText: mockRenderText,
 }));
 
+jest.mock('@core/app/svgedit/layer/layerManager', () => ({
+  setCurrentLayer: jest.fn(),
+}));
+
 jest.mock('@core/helpers/layer/layer-helper', () => ({
   getObjectLayer: () => 'mock-layer',
 }));

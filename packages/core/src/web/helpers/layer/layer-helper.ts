@@ -9,7 +9,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';

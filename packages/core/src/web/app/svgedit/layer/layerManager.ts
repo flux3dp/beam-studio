@@ -10,7 +10,7 @@ import NS from '@core/app/constants/namespaces';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 
 import { BatchCommand, InsertElementCommand, MoveElementCommand, RemoveElementCommand } from '../history/history';
-import { handleHistoryActionOptions } from '../history/utils';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 import { Layer } from './layer';
 

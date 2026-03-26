@@ -27,7 +27,7 @@ import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { DocumentState } from '@core/interfaces/Preference';
 
-import { handleHistoryActionOptions } from '../../history/utils';
+import { handleHistoryActionOptions } from '../../history/utils/handleHistoryActionOptions';
 import layerManager from '../../layer/layerManager';
 
 import setSvgContent from './setSvgContent';

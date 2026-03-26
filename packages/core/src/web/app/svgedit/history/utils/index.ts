@@ -1,16 +1,15 @@
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import shortcuts, { isFocusingOnInputs } from '@core/helpers/shortcuts';
-import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 
-import undoManager from './undoManager';
+import undoManager from '../undoManager';
 
 interface Options {
   checkFocus?: boolean;
   checkShortCutsScope?: boolean;
 }
 
-const undo = ({ checkFocus = true, checkShortCutsScope = true }: Options = {}): void => {
+export const undo = ({ checkFocus = true, checkShortCutsScope = true }: Options = {}): void => {
   if (checkShortCutsScope && !shortcuts.isInBaseScope()) return;
 
   if (checkFocus && isFocusingOnInputs()) {
@@ -32,7 +31,7 @@ const undo = ({ checkFocus = true, checkShortCutsScope = true }: Options = {}): 
   }
 };
 
-const redo = ({ checkFocus = true, checkShortCutsScope = true }: Options = {}): void => {
+export const redo = ({ checkFocus = true, checkShortCutsScope = true }: Options = {}): void => {
   if (checkShortCutsScope && !shortcuts.isInBaseScope()) return;
 
   if (checkFocus && isFocusingOnInputs()) {
@@ -52,18 +51,6 @@ const redo = ({ checkFocus = true, checkShortCutsScope = true }: Options = {}): 
     useLayerStore.getState().forceUpdate();
     currentFileManager.setHasUnsavedChanges(true);
   }
-};
-
-export const handleHistoryActionOptions = (
-  cmd: ICommand,
-  { addToHistory = true, parentCmd }: HistoryActionOptions = {},
-) => {
-  if (!cmd) return;
-
-  if ((cmd as IBatchCommand).isEmpty && (cmd as IBatchCommand).isEmpty()) return;
-
-  if (parentCmd) parentCmd.addSubCommand(cmd);
-  else if (addToHistory) undoManager.addCommandToHistory(cmd);
 };
 
 export default {

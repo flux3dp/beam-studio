@@ -1,5 +1,5 @@
 import history from '@core/app/svgedit/history/history';
-import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';

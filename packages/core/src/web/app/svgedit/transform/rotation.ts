@@ -3,7 +3,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { handleHistoryActionOptions } from '../history/utils';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import { getBBox } from '../utils/getBBox';
 
 import transformlist from './transformlist';

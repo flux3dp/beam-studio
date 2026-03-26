@@ -1,6 +1,6 @@
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

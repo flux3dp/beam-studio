@@ -9,7 +9,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import changeAttribute from '../history/changeAttribute';
 import undoManager from '../history/undoManager';
-import { handleHistoryActionOptions } from '../history/utils';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import { getTransformList } from '../transform/transformlist';
 import { getBBox } from '../utils/getBBox';
 

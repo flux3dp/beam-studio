@@ -18,7 +18,7 @@ import currentFileManager from '../currentFileManager';
 import ungroupElement from '../group/ungroup';
 import type { BatchCommand } from '../history/history';
 import history from '../history/history';
-import { handleHistoryActionOptions } from '../history/utils';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 import { getRotationAngle, setRotationAngle } from '../transform/rotation';
 import { getHref } from '../utils/href';
 

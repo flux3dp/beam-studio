@@ -1,5 +1,5 @@
 import history from '@core/app/svgedit/history/history';
-import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';

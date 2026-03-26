@@ -4,7 +4,7 @@ import fontFuncs, { ConvertResult } from '@core/app/actions/beambox/font-funcs';
 import alertConstants from '@core/app/constants/alert-constants';
 import history, { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import textActions from '@core/app/svgedit/text/textactions';

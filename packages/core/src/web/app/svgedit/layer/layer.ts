@@ -10,7 +10,7 @@ import type { HistoryActionOptions, ICommand } from '@core/interfaces/IHistory';
 
 import { ChangeElementCommand, RemoveElementCommand } from '../history/history';
 import undoManager from '../history/undoManager';
-import { handleHistoryActionOptions } from '../history/utils';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 /**
  * Layer construction options

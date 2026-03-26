@@ -1,7 +1,7 @@
 import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 
 import { BatchCommand, ChangeElementCommand } from './history';
-import { handleHistoryActionOptions } from './utils';
+import { handleHistoryActionOptions } from './utils/handleHistoryActionOptions';
 
 export const changeAttribute = (elem: Element, newAttributes: Record<string, string>): ChangeElementCommand | null => {
   const oldAttributes: Record<string, string> = {};

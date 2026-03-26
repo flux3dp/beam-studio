@@ -7,7 +7,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { handleHistoryActionOptions } from '../history/utils';
+import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
 
 import { deleteElements } from './delete';
 import { booleanOperationByPaperjs, fixEnd } from './pathActions';

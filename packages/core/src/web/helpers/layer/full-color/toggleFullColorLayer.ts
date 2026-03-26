@@ -1,5 +1,5 @@
 import history from '@core/app/svgedit/history/history';
-import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils';
+import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
 
