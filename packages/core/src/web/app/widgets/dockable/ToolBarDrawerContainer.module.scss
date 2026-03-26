@@ -8,9 +8,15 @@
   position: fixed;
   right: 0;
   top: variables.$topBarHeight;
+  height: calc(100% - variables.$topBarHeight);
   z-index: 1000;
 
   > :global(.ant-drawer) {
     position: absolute;
+  }
+
+  &.win {
+    top: 70px; // for windows title bar
+    height: calc(100% - 70px);
   }
 }

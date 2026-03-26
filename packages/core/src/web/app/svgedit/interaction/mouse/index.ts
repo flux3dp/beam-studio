@@ -353,27 +353,25 @@ const mouseDown = async (evt: MouseEvent) => {
       fitTexts.forEach(recordFitTextAttributesBeforeResize);
 
       if (svgedit.browser.supportsNonScalingStroke()) {
-        const delayedStroke = (ele: SVGElement) => {
-          const strokeValue = ele.getAttributeNS(null, 'stroke');
-
-          ele.removeAttributeNS(null, 'stroke');
-
-          // Re-apply stroke after delay. Anything higher than 1 seems to cause flicker
-          if (strokeValue !== null) {
-            setTimeout(() => {
-              ele.setAttributeNS(null, 'stroke', strokeValue);
-            }, 0);
+        const handleElementStrokeBeforeResize = (elem: SVGElement) => {
+          if (elem.tagName === 'g' || elem.getAttribute('vector-effect') === 'non-scaling-stroke') {
+            return;
           }
+
+          const originalStrokeWidth = Number.parseFloat(elem.getAttribute('stroke-width') || '1');
+
+          // need non-scaling-stroke for stroke width not to be scaled during resize
+          // adjust the stroke-width based on zoom level to keep the visual stroke width unchanged
+          elem.style.cssText =
+            `vector-effect: non-scaling-stroke; stroke-width: ${originalStrokeWidth * zoom}px;` + elem.style.cssText;
         };
 
-        mouseTarget.style.vectorEffect = 'non-scaling-stroke';
-        delayedStroke(mouseTarget);
+        handleElementStrokeBeforeResize(mouseTarget);
 
-        const elements = mouseTarget.getElementsByTagName('*') as HTMLCollectionOf<SVGElement>;
+        const elements = mouseTarget.querySelectorAll('*');
 
         for (const element of elements) {
-          element.style.vectorEffect = 'non-scaling-stroke';
-          delayedStroke(element);
+          handleElementStrokeBeforeResize(element as SVGElement);
         }
       }
 
@@ -1315,9 +1313,10 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
           if (elem) {
             elem.removeAttribute('style');
-            svgedit.utilities.walkTree(elem, (el: Element) => {
+
+            for (const el of elem.querySelectorAll('*')) {
               el.removeAttribute('style');
-            });
+            }
           }
         }
 
