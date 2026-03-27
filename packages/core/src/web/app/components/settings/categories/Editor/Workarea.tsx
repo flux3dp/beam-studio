@@ -1,7 +1,8 @@
 import React, { useMemo } from 'react';
 
-import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { checkBM2, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
+import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea, workareaOptions } from '@core/app/constants/workarea-constants';
+import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -15,36 +16,16 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
-  const initValues = useMemo(() => {
+  const initModel = useMemo(() => {
     const model = getPreference('model');
-    const isSafe = getPreference('model_safe');
+    const annotation = getPreference('model-annotation');
 
-    if (model === 'fpm1' && isSafe) {
-      return { isSafe, model: 'fpm1_safe' };
-    }
-
-    return { isSafe, model };
-
+    return encodeWorkareaAnnotation(model, annotation);
     // eslint-disable-next-line hooks/exhaustive-deps
   }, []);
   const selectedModel = getPreference('model');
   const workarea = getWorkarea(selectedModel);
   const showGuides = getPreference('show_guides');
-
-  const modelOptions = [
-    { label: 'beamo', value: 'fbm1' },
-    checkBM2() && { label: 'beamo II', value: 'fbm2' },
-    { label: 'Beambox', value: 'fbb1b' },
-    { label: 'Beambox Pro', value: 'fbb1p' },
-    { label: 'HEXA', value: 'fhexa1' },
-    checkHxRf() && { label: 'HEXA RF', value: 'fhx2rf' },
-    { label: 'Ador', value: 'ado1' },
-    checkFpm1() && { label: 'Promark', value: 'fpm1' },
-    checkFpm1() && { label: 'Promark (Safe+)', value: 'fpm1_safe' },
-    isDev() && { label: 'Lazervida', value: 'flv1' },
-    { label: 'Beambox II', value: 'fbb2' },
-    checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
-  ].filter(Boolean);
 
   const unitOptions = [
     { label: lang.menu.mm, value: 'mm' },
@@ -61,22 +42,19 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
         options={unitOptions}
       />
       <SettingSelect
-        defaultValue={initValues.model}
+        defaultValue={initModel}
         id="set-default-model"
         label={lang.settings.default_beambox_model}
-        onChange={(e) => {
-          if (e === 'fpm1_safe') {
-            setPreference('model', 'fpm1');
-            setPreference('model_safe', true);
-          } else if (e === 'fpm1') {
-            setPreference('model', e);
-            setPreference('model_safe', false);
-          } else {
-            setPreference('model', e);
-            setPreference('model_safe', initValues.isSafe);
-          }
+        onChange={(e: AnnotatedWorkareaModel) => {
+          const { annotation, workarea: newModel } = decodeWorkareaAnnotation(e);
+
+          setPreference('model', newModel);
+          setPreference('model-annotation', {
+            ...getPreference('model-annotation'),
+            [newModel]: annotation[newModel as keyof typeof annotation],
+          });
         }}
-        options={modelOptions}
+        options={workareaOptions}
       />
       <SettingSwitch
         checked={showGuides}

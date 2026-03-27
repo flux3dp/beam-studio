@@ -49,7 +49,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'keep-preview-result': false,
   low_power: 10,
   model: 'fbb1b',
-  model_safe: false,
+  'model-annotation': {},
   'module-offsets': defaultOffsetsForStore,
   mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
   'multipass-compensation': true,
@@ -62,7 +62,6 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'print-advanced-mode': false,
   'promark-safety-door': false,
   'promark-start-button': false,
-  promark_safe: false,
   'reverse-engraving': false,
   'rotary-chuck-obj-d': CHUCK_ROTARY_DIAMETER,
   'rotary-mirror': false,
@@ -85,6 +84,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   use_layer_color: true,
   vector_speed_constraint: true,
   workarea: 'fbb1b',
+  'workarea-annotation': {},
   zoom_with_window: false,
 };
 
