@@ -40,14 +40,14 @@ class BasePreviewManager implements PreviewManager {
   protected movementSpeed: null | number = null; // mm/min
   protected maxMovementSpeed: [number, number] = [18000, 6000]; // mm/min, speed cap of machine
   protected _previewMode = PreviewMode.REGION;
-  protected _isSwitchable = false;
+  protected _supportedPreviewModes: PreviewMode[] = [PreviewMode.REGION];
 
   public get previewMode() {
     return this._previewMode;
   }
 
-  public get isSwitchable() {
-    return this._isSwitchable;
+  public get supportedPreviewModes() {
+    return this._supportedPreviewModes;
   }
 
   constructor(device: IDeviceInfo) {

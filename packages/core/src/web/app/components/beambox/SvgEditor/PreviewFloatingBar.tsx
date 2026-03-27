@@ -10,7 +10,7 @@ import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
-import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
@@ -70,8 +70,17 @@ export const PreviewFloatingBar = memo((): ReactNode => {
   const isAdorSeries = useMemo(() => adorModels.has(workarea), [workarea]);
   const mode = useCanvasStore((state) => state.mode);
   const mouseMode = useCanvasStore((state) => state.mouseMode);
-  const { isClean, isDrawing, isLiveMode, isPreviewMode, isStarting, isSwitchable, previewMode } =
-    useCameraPreviewStore();
+  const {
+    isClean,
+    isDrawing,
+    isLiveMode,
+    isPreviewMode,
+    isStarting,
+    pendingPreviewMode,
+    previewMode,
+    supportedPreviewModes,
+  } = useCameraPreviewStore();
+  const activePreviewMode = pendingPreviewMode ?? previewMode;
   const isCanvasEmpty = isDrawing || isClean;
   const isMouseInPreviewMode = useMemo(() => ['pre_preview', 'preview'].includes(mouseMode), [mouseMode]);
 
@@ -95,7 +104,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
   return (
     <div className={styles.wrap}>
       <div className={styles.container}>
-        {isSwitchable && (
+        {supportedPreviewModes.length > 1 && supportedPreviewModes.includes(PreviewMode.FULL_AREA) && (
           <Button
             disabled={!isPreviewMode || isDrawing || isStarting}
             id="wide-angle-camera"
@@ -112,12 +121,16 @@ export const PreviewFloatingBar = memo((): ReactNode => {
           </Button>
         )}
         <Button
-          blue={isMouseInPreviewMode && previewMode === PreviewMode.REGION}
+          blue={isMouseInPreviewMode && activePreviewMode === PreviewMode.REGION}
           disabled={isDrawing || isStarting}
           id="laser-head-camera"
           onClick={async () => {
-            if (previewMode !== PreviewMode.REGION) {
-              await previewModeController.switchPreviewMode(PreviewMode.REGION);
+            if (isPreviewMode) {
+              if (previewMode !== PreviewMode.REGION) {
+                await previewModeController.switchPreviewMode(PreviewMode.REGION);
+              }
+            } else {
+              setCameraPreviewState({ pendingPreviewMode: PreviewMode.REGION });
             }
 
             handlePreviewClick();
@@ -126,6 +139,27 @@ export const PreviewFloatingBar = memo((): ReactNode => {
         >
           <LeftPanelIcons.Shoot />
         </Button>
+        {supportedPreviewModes.includes(PreviewMode.PRECISE_REGION) && (
+          <Button
+            blue={isMouseInPreviewMode && activePreviewMode === PreviewMode.PRECISE_REGION}
+            disabled={isDrawing || isStarting}
+            id="laser-head-camera-precise"
+            onClick={async () => {
+              if (isPreviewMode) {
+                if (previewMode !== PreviewMode.PRECISE_REGION) {
+                  await previewModeController.switchPreviewMode(PreviewMode.PRECISE_REGION);
+                }
+              } else {
+                setCameraPreviewState({ pendingPreviewMode: PreviewMode.PRECISE_REGION });
+              }
+
+              handlePreviewClick();
+            }}
+            title={lang.label.preview}
+          >
+            <LeftPanelIcons.ShootPrecise />
+          </Button>
+        )}
         <Button disabled={isCanvasEmpty} id="image-trace" onClick={startImageTrace} title={lang.label.trace}>
           <LeftPanelIcons.Trace />
         </Button>

@@ -5,7 +5,12 @@ import alertCaller from '@core/app/actions/alert-caller';
 import { PreviewSpeedLevel } from '@core/app/actions/beambox/constant';
 import PreviewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-background-drawer';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
-import { bb2FullAreaPerspectiveGrid, hx2FullAreaPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
+import {
+  bb2FullAreaPerspectiveGrid,
+  hx2FullAreaPerspectiveGrid,
+  hx2rfPerspectiveGrid,
+  hx2rfPrecisePerspectiveGrid,
+} from '@core/app/constants/fisheyeCameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
@@ -37,10 +42,6 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     if (device.model === 'fhx2rf') {
       this.fullAreaGrid = hx2FullAreaPerspectiveGrid;
     }
-  }
-
-  get isSwitchable(): boolean {
-    return this.hasWideAngleCamera;
   }
 
   protected getMovementSpeed = (): number => {
@@ -81,14 +82,27 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       return this._previewMode;
     }
 
+    const isLaserHeadMode = (m: PreviewMode) => m === PreviewMode.REGION || m === PreviewMode.PRECISE_REGION;
+
     try {
       this.showMessage({ content: lang.message.camera.switching_camera });
 
-      if (this._previewMode === PreviewMode.REGION) {
-        await this.endLaserHeadCameraPreview(false);
+      const grid = mode === PreviewMode.PRECISE_REGION ? hx2rfPrecisePerspectiveGrid : hx2rfPerspectiveGrid;
+
+      if (isLaserHeadMode(this._previewMode)) {
+        if (isLaserHeadMode(mode)) {
+          this.setRegionPreviewGrid(grid);
+          await deviceMaster.setFisheyePerspectiveGrid(grid);
+          this._previewMode = mode;
+
+          return this._previewMode;
+        } else {
+          await this.endLaserHeadCameraPreview(false);
+        }
       }
 
-      if (mode === PreviewMode.REGION) {
+      if (isLaserHeadMode(mode)) {
+        this.setRegionPreviewGrid(grid);
         await this.setupLaserHeadCamera();
       } else {
         await this.setupWideAngleCamera();
@@ -207,6 +221,12 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.hasWideAngleCamera = hasWideAngleCamera;
       this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;
 
+      this._supportedPreviewModes = [PreviewMode.REGION];
+
+      if (hasWideAngleCamera) this._supportedPreviewModes.push(PreviewMode.FULL_AREA);
+
+      if (this.device.model === 'fhx2rf') this._supportedPreviewModes.push(PreviewMode.PRECISE_REGION);
+
       this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_AREA : PreviewMode.REGION;
 
       const res = await match(this._previewMode)
@@ -228,7 +248,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
     this.closeMessage();
 
     try {
-      if (this._previewMode === PreviewMode.REGION) {
+      if (this._previewMode === PreviewMode.REGION || this._previewMode === PreviewMode.PRECISE_REGION) {
         await this.endLaserHeadCameraPreview();
       }
     } catch (error) {

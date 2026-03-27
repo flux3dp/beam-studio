@@ -164,8 +164,8 @@ class PreviewModeController {
         this.setIsPreviewMode(true);
 
         setCameraPreviewState({
-          isSwitchable: this.previewManager.isSwitchable,
           previewMode: this.previewManager.previewMode,
+          supportedPreviewModes: this.previewManager.supportedPreviewModes,
         });
 
         canvasEventEmitter.emit('UPDATE_CONTEXT');
@@ -187,6 +187,7 @@ class PreviewModeController {
     this.setIsStarting(false);
     this.setIsPreviewMode(false);
     this.setIsDrawing(false);
+    setCameraPreviewState({ pendingPreviewMode: undefined, previewMode: PreviewMode.REGION });
     await this.startPromise;
 
     if (this.liveModeTimeOut) {
