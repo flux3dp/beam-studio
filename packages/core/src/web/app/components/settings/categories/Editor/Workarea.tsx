@@ -49,7 +49,10 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
           const { annotation, workarea: newModel } = decodeWorkareaAnnotation(e);
 
           setPreference('model', newModel);
-          setPreference('model-annotation', { ...getPreference('model-annotation'), ...annotation });
+          setPreference('model-annotation', {
+            ...getPreference('model-annotation'),
+            [newModel]: annotation[newModel as keyof typeof annotation],
+          });
         }}
         options={workareaOptions}
       />

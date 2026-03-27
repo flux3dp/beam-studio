@@ -4,6 +4,8 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { create } from 'zustand';
 
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
+
 jest.mock('@core/helpers/is-dev', () => () => true);
 
 const getFontOfPostscriptName = jest.fn();
@@ -71,38 +73,6 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   },
 }));
 
-const storageMap = new Map<string, unknown>([
-  ['default-font', { family: 'Arial', postscriptName: 'ArialMT', style: 'Regular' }],
-]);
-
-const mockUseStorageStore = Object.assign(
-  (selector?: (state: Record<string, unknown>) => unknown) => {
-    const state = Object.fromEntries(storageMap);
-
-    return selector ? selector(state) : state;
-  },
-  { subscribe: () => () => {} },
-);
-
-jest.mock('@core/app/stores/storageStore', () => ({
-  getStorage: (key: string) => storageMap.get(key),
-  useStorageStore: mockUseStorageStore,
-}));
-
-jest.mock('@core/app/constants/workarea-constants', () => ({
-  getWorkarea: () => ({
-    height: 375,
-    label: 'Beambox',
-    maxSpeed: 300,
-    minPower: 10,
-    minSpeed: 0.5,
-    pxHeight: 3750,
-    pxWidth: 4000,
-    vectorSpeedLimit: 20,
-    width: 400,
-  }),
-}));
-
 const mockGetConfig = jest.fn();
 const mockGetPreference = jest.fn();
 const mockSetPreference = jest.fn();
@@ -140,6 +110,20 @@ jest.mock('@core/helpers/locale-helper', () => ({ isTwOrHk: true }));
 import Editor from '.';
 
 describe('settings/Editor', () => {
+  beforeEach(() => {
+    setStorage('default-font', { family: 'Arial', postscriptName: 'ArialMT', style: 'Regular' });
+
+    mockGetPreference.mockImplementation((key) => {
+      if (['guide_x0', 'guide_y0'].includes(key)) return 0;
+
+      if (key === 'show_guides') return true;
+
+      if (key === 'model') return 'fbb1b';
+
+      return false;
+    });
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
     // Reset store state between tests
@@ -147,14 +131,6 @@ describe('settings/Editor', () => {
   });
 
   test('initially no warning', async () => {
-    mockGetPreference.mockImplementation((key) => {
-      if (['guide_x0', 'guide_y0'].includes(key)) return 0;
-
-      if (key === 'show_guides') return true;
-
-      return false;
-    });
-
     const { container } = render(
       <Editor
         unitInputProps={{

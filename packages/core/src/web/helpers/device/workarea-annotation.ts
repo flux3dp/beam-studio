@@ -45,13 +45,24 @@ export const decodeWorkareaAnnotation = (
     return { annotation: {}, workarea: baseWorkarea };
   }
 
-  const annotation = {} as NonNullable<ModelAnnotation[keyof ModelAnnotation]>;
+  const annotation: ModelAnnotation = {};
 
   for (let i = 1; i < parts.length; i++) {
     const key = parts[i];
 
-    annotation[key as keyof typeof annotation] = true;
+    if (!key) continue;
+
+    // To clear old values
+    annotation[baseWorkarea as keyof ModelAnnotation] = undefined;
+
+    if (!annotation[baseWorkarea as keyof ModelAnnotation]) {
+      annotation[baseWorkarea as keyof ModelAnnotation] = {} as ModelAnnotation[keyof ModelAnnotation];
+    }
+
+    annotation[baseWorkarea as keyof ModelAnnotation]![
+      key as keyof NonNullable<ModelAnnotation[keyof ModelAnnotation]>
+    ] = true;
   }
 
-  return { annotation: { [baseWorkarea]: annotation }, workarea: baseWorkarea };
+  return { annotation, workarea: baseWorkarea };
 };
