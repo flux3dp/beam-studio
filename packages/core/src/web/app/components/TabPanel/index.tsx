@@ -202,12 +202,14 @@ function UnmemorizedTabPanel({ bbox, command, element, onClose }: Props): React.
       // if the paper view is not inserted, do nothing
       if (!paper.view.isInserted()) return;
 
-      elements.forEach(({ contentRect: { height, width } }) => {
-        paper.view.size.set(new paper.Size(width, height));
-        // to prevent the canvas overlap with the bottom of the screen
-        // this is a workaround for the paperjs bug,
-        // `5` is the minimum value to prevent this situation
-        paper.view.viewSize.set(new paper.Size(width, height - 5));
+      requestAnimationFrame(() => {
+        elements.forEach(({ contentRect: { height, width } }) => {
+          paper.view.size.set(new paper.Size(width, height));
+          // to prevent the canvas overlap with the bottom of the screen
+          // this is a workaround for the paperjs bug,
+          // `5` is the minimum value to prevent this situation
+          paper.view.viewSize.set(new paper.Size(width, height - 5));
+        });
       });
     });
 

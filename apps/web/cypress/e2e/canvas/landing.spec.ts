@@ -13,7 +13,7 @@ describe('landing', () => {
   });
 
   it('machine model selection page', () => {
-    const prefix = '_-_-packages-core-src-web-app-pages-SelectMachineModel';
+    const prefix = '_-_-packages-core-src-web-app-pages-InitializeMachine-SelectMachineModel';
     cy.visit('#/initialize/connect/select-machine-model');
     cy.url({ timeout: 15000 }).should('contain', '#/initialize/connect/select-machine-model');
     cy.get(`div[class^="${prefix}"]`).should('exist');

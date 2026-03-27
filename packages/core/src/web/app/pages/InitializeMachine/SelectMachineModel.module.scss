@@ -93,7 +93,6 @@
       .btn-real {
         width: 320px;
         height: 200px;
-
         padding: 40px 20px 0;
 
         @media screen and (max-width: 600px) {
@@ -103,13 +102,20 @@
           gap: 0;
           text-align: center;
         }
+
+        &.promark {
+          height: 300px;
+
+          .image {
+            height: 200px;
+          }
+        }
       }
 
       .image {
         width: 250px;
         height: 100px;
         object-fit: cover;
-
         margin-bottom: 12px;
 
         @media screen and (max-width: 600px) {

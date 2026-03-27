@@ -33,6 +33,7 @@ const getInitDocumentStore = (): DocumentState => {
   beamboxPreference.write('enable-diode', isDiodeEnabled, false);
   beamboxPreference.write('borderless', isBorderlessEnabled, false);
   beamboxPreference.write('rotary_mode', isRotaryEnabled, false);
+  beamboxPreference.write('promark_safe', preference.model_safe, false);
 
   return {
     'auto-feeder': preference['auto-feeder'],
@@ -54,6 +55,7 @@ const getInitDocumentStore = (): DocumentState => {
     'pass-through-height': preference['pass-through-height'],
     'promark-safety-door': preference['promark-safety-door'],
     'promark-start-button': preference['promark-start-button'],
+    promark_safe: preference.model_safe,
     'rotary-chuck-obj-d': preference['rotary-chuck-obj-d'],
     'rotary-mirror': preference['rotary-mirror'],
     'rotary-overlap': preference['rotary-overlap'],

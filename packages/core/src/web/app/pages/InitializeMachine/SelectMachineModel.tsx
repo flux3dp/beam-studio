@@ -7,6 +7,7 @@ import dialog from '@core/app/actions/dialog-caller';
 import windowLocationReload from '@core/app/actions/windowLocation';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
+import { state } from '@core/app/pages/InitializeMachine/state';
 import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { getHomePage } from '@core/helpers/hashHelper';
 import { isMobile } from '@core/helpers/system-helper';
@@ -23,9 +24,10 @@ type ModelItem = {
   labelClass?: string;
   model?: WorkAreaModel;
   type?: SelectedModelType;
+  withSafe?: boolean;
 };
 
-type SelectedModelType = '' | 'beambox' | 'beamo' | 'hexa';
+type SelectedModelType = '' | 'beambox' | 'beamo' | 'hexa' | 'promark';
 
 const SelectMachineModel = (): React.JSX.Element => {
   const t = useI18n().initialize;
@@ -49,12 +51,14 @@ const SelectMachineModel = (): React.JSX.Element => {
     windowLocationReload();
   }, [isNewUser, selectedModelType]);
 
-  const handleNextClick = ({ model, type }: { model?: WorkAreaModel; type?: SelectedModelType }) => {
+  const handleNextClick = ({ model, type, withSafe }: Pick<ModelItem, 'model' | 'type' | 'withSafe'>) => {
     if (type) {
       setSelectedModelType(type);
 
       return;
     }
+
+    state.withSafe = withSafe;
 
     // for promark, there is no connection type selection, go to connect-usb directly
     if (model === 'fpm1') {
@@ -91,7 +95,7 @@ const SelectMachineModel = (): React.JSX.Element => {
         model: supportHxRf ? undefined : 'fhexa1',
         type: supportHxRf ? 'hexa' : undefined,
       },
-      !isMobile() && checkFpm1() && { Icon: InitializeIcons.Promark, label: 'Promark Series', model: 'fpm1' },
+      !isMobile() && checkFpm1() && { Icon: InitializeIcons.Promark, label: 'Promark Series', type: 'promark' },
     ].filter(Boolean) as ModelItem[];
   }, []);
 
@@ -149,6 +153,26 @@ const SelectMachineModel = (): React.JSX.Element => {
     [],
   );
 
+  const promarkModelList: ModelItem[] = useMemo(
+    () => [
+      {
+        btnClass: classNames(styles['btn-real'], styles.promark),
+        imageSrc: 'core-img/init-panel/promark-real.png',
+        label: 'Promark',
+        model: 'fpm1',
+        withSafe: false,
+      },
+      {
+        btnClass: classNames(styles['btn-real'], styles.promark),
+        imageSrc: 'core-img/init-panel/promark-safe-real.png',
+        label: 'Promark (Safe+)',
+        model: 'fpm1',
+        withSafe: true,
+      },
+    ],
+    [],
+  );
+
   const { list: currentList, title: selectTitle } = useMemo(() => {
     return match(selectedModelType)
       .with('beambox', () => ({
@@ -163,11 +187,15 @@ const SelectMachineModel = (): React.JSX.Element => {
         list: hexaModelList,
         title: t.select_hexa,
       }))
+      .with('promark', () => ({
+        list: promarkModelList,
+        title: t.select_promark,
+      }))
       .otherwise(() => ({
         list: modelList,
         title: t.select_machine_type,
       }));
-  }, [selectedModelType, beamboxModelList, beamoModelList, hexaModelList, modelList, t]);
+  }, [selectedModelType, beamboxModelList, beamoModelList, hexaModelList, promarkModelList, modelList, t]);
 
   return (
     <div className={styles.container}>
@@ -180,11 +208,11 @@ const SelectMachineModel = (): React.JSX.Element => {
       <div className={styles.main}>
         <h1 className={styles.title}>{selectTitle}</h1>
         <div className={styles.btns}>
-          {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model, type }) => (
+          {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model, type, withSafe }) => (
             <div
               className={classNames(styles.btn, btnClass)}
               key={type ?? model}
-              onClick={() => handleNextClick({ model, type })}
+              onClick={() => handleNextClick({ model, type, withSafe })}
             >
               {Icon && <Icon className={styles.icon} />}
               {imageSrc && <img className={styles.image} draggable="false" src={imageSrc} />}

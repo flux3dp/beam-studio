@@ -4,27 +4,31 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const topBarEventEmitter = eventEmitterFactory.createEventEmitter('top-bar');
 
+const mockUpdateWindowsTitle = jest.fn();
+
+jest.mock('@core/app/components/beambox/TopBar/FileName/registerWindowUpdateTile', () => ({
+  updateWindowsTitle: mockUpdateWindowsTitle,
+}));
+
 const mockSend = jest.fn();
 const mockSendSync = jest.fn();
 const mockCommunicator = {};
 
 jest.mock('@core/implementations/communicator', () => ({
-  on: (event, handler) => {
+  on: (event: string, handler: (...args: any) => void) => {
     mockCommunicator[event] = handler;
   },
-  send: (...args) => mockSend(...args),
-  sendSync: (...args) => mockSendSync(...args),
+  send: mockSend,
+  sendSync: mockSendSync,
 }));
-
-import tabController from './tabController';
 
 const mockGetName = jest.fn();
 const mockGetHasUnsavedChanges = jest.fn();
 const mockIsCloudFile = jest.fn();
 
 jest.mock('@core/app/svgedit/currentFileManager', () => ({
-  getHasUnsavedChanges: (...args) => mockGetHasUnsavedChanges(...args),
-  getName: (...args) => mockGetName(...args),
+  getHasUnsavedChanges: mockGetHasUnsavedChanges,
+  getName: mockGetName,
   get isCloudFile() {
     return mockIsCloudFile();
   },
@@ -33,14 +37,16 @@ jest.mock('@core/app/svgedit/currentFileManager', () => ({
 const mockImportFileInCurrentTab = jest.fn();
 
 jest.mock('@core/helpers/fileImportHelper', () => ({
-  importFileInCurrentTab: (...args) => mockImportFileInCurrentTab(...args),
+  importFileInCurrentTab: mockImportFileInCurrentTab,
 }));
 
 const mockSet = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
-  set: (...args) => mockSet(...args),
+  set: mockSet,
 }));
+
+import tabController from './tabController';
 
 describe('test TabController', () => {
   beforeEach(() => {
@@ -87,6 +93,7 @@ describe('test TabController', () => {
     topBarEventEmitter.emit('UPDATE_TITLE');
     expect(mockSend).toHaveBeenCalledTimes(1);
     expect(mockSend).toHaveBeenCalledWith(TabEvents.SetTabTitle, 'name', true, true);
+    expect(mockUpdateWindowsTitle).toHaveBeenCalledTimes(1);
   });
 
   test('handle import files', () => {
@@ -136,17 +143,17 @@ describe('test TabController', () => {
     expect(tabController.getCurrentId()).toBe(1);
     mockSendSync.mockReturnValue([{ id: 1, isWelcomeTab: true }]);
     expect(tabController.getIsWelcomeTab()).toBe(true);
-    expect(tabController.isWelcomeTab).toBe(true);
+    expect((tabController as any).isWelcomeTab).toBe(true);
     expect(mockSendSync).toHaveBeenCalledTimes(1);
     expect(mockSendSync).toHaveBeenNthCalledWith(1, TabEvents.GetAllTabs);
 
     expect(tabController.getIsWelcomeTab()).toBe(true);
     expect(mockSendSync).toHaveBeenCalledTimes(1);
 
-    tabController.isWelcomeTab = null;
+    (tabController as any).isWelcomeTab = null;
     mockSendSync.mockReturnValue([{ id: 1, isWelcomeTab: false }]);
     expect(tabController.getIsWelcomeTab()).toBe(false);
-    expect(tabController.isWelcomeTab).toBe(false);
+    expect((tabController as any).isWelcomeTab).toBe(false);
     expect(mockSendSync).toHaveBeenCalledTimes(2);
     expect(mockSendSync).toHaveBeenNthCalledWith(2, TabEvents.GetAllTabs);
   });

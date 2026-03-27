@@ -1428,6 +1428,25 @@ exports[`test DocumentSettings should render correctly 2`] = `
                   class="ant-select-item ant-select-item-option"
                   id="workareaSelect_list_7"
                   role="option"
+                  title="Promark (Safe+)"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    Promark (Safe+)
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -1445,7 +1464,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_8"
+                  id="workareaSelect_list_9"
                   role="option"
                   title="beamo II"
                 >
@@ -1464,7 +1483,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_9"
+                  id="workareaSelect_list_10"
                   role="option"
                   title="Miro UV"
                 >
@@ -1483,7 +1502,7 @@ exports[`test DocumentSettings should render correctly 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_10"
+                  id="workareaSelect_list_11"
                   role="option"
                   title="Lazervida"
                 >
@@ -2230,6 +2249,25 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                   class="ant-select-item ant-select-item-option"
                   id="workareaSelect_list_7"
                   role="option"
+                  title="Promark (Safe+)"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    Promark (Safe+)
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -2247,7 +2285,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_8"
+                  id="workareaSelect_list_9"
                   role="option"
                   title="beamo II"
                 >
@@ -2266,7 +2304,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_9"
+                  id="workareaSelect_list_10"
                   role="option"
                   title="Miro UV"
                 >
@@ -2285,7 +2323,7 @@ exports[`test DocumentSettings should render correctly for ador 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_10"
+                  id="workareaSelect_list_11"
                   role="option"
                   title="Lazervida"
                 >
@@ -3043,6 +3081,25 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                   class="ant-select-item ant-select-item-option"
                   id="workareaSelect_list_7"
                   role="option"
+                  title="Promark (Safe+)"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    Promark (Safe+)
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -3060,7 +3117,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_8"
+                  id="workareaSelect_list_9"
                   role="option"
                   title="beamo II"
                 >
@@ -3079,7 +3136,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_9"
+                  id="workareaSelect_list_10"
                   role="option"
                   title="Miro UV"
                 >
@@ -3098,7 +3155,7 @@ exports[`test DocumentSettings should render correctly for ador 2`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_10"
+                  id="workareaSelect_list_11"
                   role="option"
                   title="Lazervida"
                 >
@@ -3884,6 +3941,25 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                   class="ant-select-item ant-select-item-option"
                   id="workareaSelect_list_7"
                   role="option"
+                  title="Promark (Safe+)"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    Promark (Safe+)
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -3901,7 +3977,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                 <div
                   aria-selected="true"
                   class="ant-select-item ant-select-item-option ant-select-item-option-selected"
-                  id="workareaSelect_list_8"
+                  id="workareaSelect_list_9"
                   role="option"
                   title="beamo II"
                 >
@@ -3920,7 +3996,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_9"
+                  id="workareaSelect_list_10"
                   role="option"
                   title="Miro UV"
                 >
@@ -3939,7 +4015,7 @@ exports[`test DocumentSettings should render correctly for beamo 2 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_10"
+                  id="workareaSelect_list_11"
                   role="option"
                   title="Lazervida"
                 >
@@ -4736,6 +4812,25 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                   class="ant-select-item ant-select-item-option"
                   id="workareaSelect_list_7"
                   role="option"
+                  title="Promark (Safe+)"
+                >
+                  <div
+                    class="ant-select-item-option-content"
+                  >
+                    Promark (Safe+)
+                  </div>
+                  <span
+                    aria-hidden="true"
+                    class="ant-select-item-option-state"
+                    style="user-select: none;"
+                    unselectable="on"
+                  />
+                </div>
+                <div
+                  aria-selected="false"
+                  class="ant-select-item ant-select-item-option"
+                  id="workareaSelect_list_8"
+                  role="option"
                   title="Beambox II"
                 >
                   <div
@@ -4753,7 +4848,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_8"
+                  id="workareaSelect_list_9"
                   role="option"
                   title="beamo II"
                 >
@@ -4772,7 +4867,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_9"
+                  id="workareaSelect_list_10"
                   role="option"
                   title="Miro UV"
                 >
@@ -4791,7 +4886,7 @@ exports[`test DocumentSettings should render correctly for promark 1`] = `
                 <div
                   aria-selected="false"
                   class="ant-select-item ant-select-item-option"
-                  id="workareaSelect_list_10"
+                  id="workareaSelect_list_11"
                   role="option"
                   title="Lazervida"
                 >
