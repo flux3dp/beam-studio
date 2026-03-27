@@ -86,7 +86,7 @@ test('test beambox-preference', () => {
     'keep-preview-result': false,
     low_power: 10,
     model: 'fbb1b',
-    model_safe: false,
+    'model-annotation': {},
     'module-offsets': {
       ado1: {
         '1': [0, 0],
@@ -107,7 +107,6 @@ test('test beambox-preference', () => {
     'print-advanced-mode': false,
     'promark-safety-door': false,
     'promark-start-button': false,
-    promark_safe: false,
     'reverse-engraving': false,
     'rotary-chuck-obj-d': 133,
     'rotary-mirror': false,
@@ -130,6 +129,7 @@ test('test beambox-preference', () => {
     use_layer_color: true,
     vector_speed_constraint: true,
     workarea: 'fbb1b',
+    'workarea-annotation': {},
     zoom_with_window: false,
   });
 

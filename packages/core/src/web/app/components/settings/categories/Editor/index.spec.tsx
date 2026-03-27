@@ -167,14 +167,14 @@ describe('settings/Editor', () => {
     );
 
     // Editor renders: Workarea -> Text -> Performance (when wrapped=false)
-    // Workarea: model and model_safe for initValues, model, show_guides, guide_x0, guide_y0,
+    // Workarea: model and model-annotation for initModel, model, show_guides, guide_x0, guide_y0,
     //           auto-switch-tab, continuous_drawing, enable-custom-backlash, enable-uv-print-file,
     //           print-advanced-mode, use-real-boundary, crop-task-thumbnail
     // Text: font-substitute, font-convert
     // Performance: image_downsampling, anti-aliasing, simplify_clipper_path, path-engine
     expect(mockGetPreference).toHaveBeenCalledTimes(19);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model_safe');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model-annotation');
     expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'show_guides');
     expect(mockGetPreference).toHaveBeenNthCalledWith(5, 'guide_x0');
@@ -210,14 +210,14 @@ describe('settings/Editor', () => {
     fireEvent.change(selectControls[1], { target: { value: 'fpm1_safe' } });
     expect(mockSetPreference).toHaveBeenCalledTimes(2);
     expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fpm1');
-    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'model_safe', true);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'model-annotation', { fpm1: { safe: true } });
     mockSetPreference.mockClear();
 
     // Model select
     fireEvent.change(selectControls[1], { target: { value: 'fbm1' } });
     expect(mockSetPreference).toHaveBeenCalledTimes(2);
     expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fbm1');
-    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'model_safe', false);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'model-annotation', {});
     mockSetPreference.mockClear();
 
     // Font family select - should use setConfig for deferred update
