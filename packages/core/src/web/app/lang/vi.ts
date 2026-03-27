@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Hình ảnh',
         polygon: 'Đa giác',
         preview: 'Xem trước Máy ảnh',
+        preview_precise: 'Xem trước camera chính xác',
         preview_wide_angle: 'Xem trước camera góc rộng',
         qr_code: 'Mã QR',
         rect: 'Hình chữ nhật',

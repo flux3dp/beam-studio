@@ -155,7 +155,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
 
               handlePreviewClick();
             }}
-            title={lang.label.preview}
+            title={lang.label.preview_precise}
           >
             <LeftPanelIcons.ShootPrecise />
           </Button>

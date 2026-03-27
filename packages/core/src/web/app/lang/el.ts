@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Εικόνα',
         polygon: 'Πολύγωνο',
         preview: 'Προεπισκόπηση κάμερας',
+        preview_precise: 'Ακριβής προεπισκόπηση κάμερας',
         preview_wide_angle: 'Προεπισκόπηση κάμερας ευρείας γωνίας',
         qr_code: 'Κωδικός QR',
         rect: 'Ορθογώνιο',
