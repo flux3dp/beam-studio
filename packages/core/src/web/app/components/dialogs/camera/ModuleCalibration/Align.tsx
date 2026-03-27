@@ -10,6 +10,7 @@ import FisheyePreviewManagerV2 from '@core/app/actions/camera/preview-helper/Fis
 import FisheyePreviewManagerV4 from '@core/app/actions/camera/preview-helper/FisheyePreviewManagerV4';
 import progressCaller from '@core/app/actions/progress-caller';
 import moveLaserHead from '@core/app/components/dialogs/camera/common/moveLaserHead';
+import { bm2FullAreaPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
 import {
   LayerModule,
   type LayerModuleType,
@@ -23,8 +24,6 @@ import { getModuleOffsets, updateModuleOffsets } from '@core/helpers/device/modu
 import deviceMaster from '@core/helpers/device-master';
 import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParameters } from '@core/interfaces/FisheyePreview';
-
-import { bm2FullAreaPerspectiveGrid } from '../common/solvePnPConstants';
 
 import styles from './Align.module.scss';
 import getPerspectiveForAlign from './getPerspectiveForAlign';

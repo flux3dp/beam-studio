@@ -4,6 +4,13 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import {
+  bb2FullAreaPerspectiveGrid,
+  bb2WideAngleCameraPnpPoints,
+  getRegionalPoints,
+  hx2FullAreaPerspectiveGrid,
+  hx2WideAngleCameraPnpPoints,
+} from '@core/app/constants/fisheyeCameraConstants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import getFocalDistance from '@core/helpers/device/camera/getFocalDistance';
@@ -25,13 +32,6 @@ import Instruction from '../common/Instruction';
 import { moveZRel } from '../common/moveZRel';
 import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
-import {
-  bb2FullAreaPerspectiveGrid,
-  bb2WideAngleCameraPnpPoints,
-  getRegionalPoints,
-  hx2FullAreaPerspectiveGrid,
-  hx2WideAngleCameraPnpPoints,
-} from '../common/solvePnPConstants';
 
 const enum Step {
   CHECK_DATA,

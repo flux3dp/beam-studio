@@ -2,6 +2,7 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -17,7 +18,6 @@ import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import moveLaserHead from './common/moveLaserHead';
 import SolvePnP from './common/SolvePnP';
-import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from './common/solvePnPConstants';
 
 /* eslint-disable perfectionist/sort-enums */
 enum Steps {

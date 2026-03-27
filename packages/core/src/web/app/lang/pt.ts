@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Imagem',
         polygon: 'Polígono',
         preview: 'Pré-visualização da Câmera',
+        preview_precise: 'Pré-visualização precisa da câmera',
         preview_wide_angle: 'Pré-visualização da câmera grande-angular',
         qr_code: 'Código QR',
         rect: 'Retângulo',

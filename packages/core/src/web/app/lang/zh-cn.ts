@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: '图片',
         polygon: '多边形',
         preview: '相机预览',
+        preview_precise: '精确相机预览',
         preview_wide_angle: '广角摄像头预览',
         qr_code: '二维码',
         rect: '方块',

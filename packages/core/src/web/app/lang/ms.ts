@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Imej',
         polygon: 'Poligon',
         preview: 'Pratonton Kamera',
+        preview_precise: 'Pratonton kamera tepat',
         preview_wide_angle: 'Pratonton kamera sudut lebar',
         qr_code: 'Kod QR',
         rect: 'Segi empat tepat',
