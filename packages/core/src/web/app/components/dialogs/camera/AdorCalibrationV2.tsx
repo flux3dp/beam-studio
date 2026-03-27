@@ -4,6 +4,7 @@ import { match } from 'ts-pattern';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
+import { adorPnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -18,7 +19,6 @@ import { getMaterialHeight, prepareToTakePicture, saveCheckPoint } from './AdorC
 import CheckpointData from './common/CheckpointData';
 import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
-import { adorPnPPoints } from '../../../constants/fisheyeCameraConstants';
 
 /* eslint-disable perfectionist/sort-enums */
 const enum Step {

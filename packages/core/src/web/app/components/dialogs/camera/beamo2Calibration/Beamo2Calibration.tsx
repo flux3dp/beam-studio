@@ -5,6 +5,11 @@ import { match } from 'ts-pattern';
 import alertCaller from '@core/app/actions/alert-caller';
 import DoorChecker from '@core/app/actions/camera/preview-helper/DoorChecker';
 import progressCaller from '@core/app/actions/progress-caller';
+import {
+  bm2FullAreaPerspectiveGrid,
+  bm2PnPPoints,
+  getRegionalPoints,
+} from '@core/app/constants/fisheyeCameraConstants';
 import { cameraCalibrationApi } from '@core/helpers/api/camera-calibration';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
@@ -26,11 +31,6 @@ import Instruction from '../common/Instruction';
 import moveLaserHead from '../common/moveLaserHead';
 import ProcessingDialog from '../common/ProcessingDialog';
 import SolvePnP from '../common/SolvePnP';
-import {
-  bm2FullAreaPerspectiveGrid,
-  bm2PnPPoints,
-  getRegionalPoints,
-} from '../../../../constants/fisheyeCameraConstants';
 
 /* eslint-disable perfectionist/sort-objects */
 const Steps = {

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { bm2FullAreaPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import type { FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
 
@@ -87,7 +88,6 @@ const mockFishEyeParam: FisheyeCameraParametersV4<'center'> = {
 const mockSetupFisheyePreview = jest.fn();
 
 import Align from './Align';
-import { bm2FullAreaPerspectiveGrid } from '../../../../constants/fisheyeCameraConstants';
 
 describe('test Align', () => {
   beforeEach(() => {
