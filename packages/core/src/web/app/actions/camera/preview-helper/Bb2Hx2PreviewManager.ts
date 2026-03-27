@@ -12,6 +12,7 @@ import {
   hx2rfPrecisePerspectiveGrid,
 } from '@core/app/constants/fisheyeCameraConstants';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { getSupportedPreviewModes } from '@core/helpers/device/camera/previewMode';
 import deviceMaster from '@core/helpers/device-master';
 import i18n from '@core/helpers/i18n';
 import type { FisheyeCameraParameters, FisheyeCameraParametersV4 } from '@core/interfaces/FisheyePreview';
@@ -221,12 +222,7 @@ class Bb2Hx2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.hasWideAngleCamera = hasWideAngleCamera;
       this.wideAngleFisheyeParams = parameters as FisheyeCameraParametersV4 | undefined;
 
-      this._supportedPreviewModes = [PreviewMode.REGION];
-
-      if (hasWideAngleCamera) this._supportedPreviewModes.push(PreviewMode.FULL_AREA);
-
-      if (this.device.model === 'fhx2rf') this._supportedPreviewModes.push(PreviewMode.PRECISE_REGION);
-
+      this._supportedPreviewModes = getSupportedPreviewModes(this.device, hasWideAngleCamera);
       this._previewMode = canPreview && this.hasWideAngleCamera ? PreviewMode.FULL_AREA : PreviewMode.REGION;
 
       const res = await match(this._previewMode)

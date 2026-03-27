@@ -187,7 +187,6 @@ class PreviewModeController {
     this.setIsStarting(false);
     this.setIsPreviewMode(false);
     this.setIsDrawing(false);
-    setCameraPreviewState({ pendingPreviewMode: undefined, previewMode: PreviewMode.REGION });
     await this.startPromise;
 
     if (this.liveModeTimeOut) {
@@ -389,6 +388,7 @@ class PreviewModeController {
     this.previewManager = null;
     this.currentDevice = null;
     this.setIsPreviewMode(false);
+    setCameraPreviewState({ pendingPreviewMode: undefined, previewMode: PreviewMode.REGION });
     this.isPreviewBlocked = false;
     deviceMaster.disconnectCamera();
   }

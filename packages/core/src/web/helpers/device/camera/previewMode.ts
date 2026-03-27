@@ -12,6 +12,7 @@ import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
 import i18n from '@core/helpers/i18n';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const endPreviewMode = (): void => {
   try {
@@ -31,6 +32,16 @@ export const endPreviewMode = (): void => {
 };
 
 let isSettingUpPreview = false;
+
+export const getSupportedPreviewModes = (device: IDeviceInfo, hasWideAngleCamera: boolean): PreviewMode[] => {
+  const modes = [PreviewMode.REGION];
+
+  if (hasWideAngleCamera || device.model === 'fbm2') modes.push(PreviewMode.FULL_AREA);
+
+  if (device.model === 'fhx2rf') modes.push(PreviewMode.PRECISE_REGION);
+
+  return modes;
+};
 
 export const handlePreviewClick = async ({ showModal = false }: { showModal?: boolean } = {}): Promise<boolean> => {
   if (tutorialController.getNextStepRequirement() === tutorialConstants.TO_PREVIEW_MODE) {
@@ -59,14 +70,8 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
 
   const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
 
-  const modes = [PreviewMode.REGION];
-
-  if (hasWideAngleCamera || device.model === 'fbm2') modes.push(PreviewMode.FULL_AREA);
-
-  if (device.model === 'fhx2rf') modes.push(PreviewMode.PRECISE_REGION);
-
   setCameraPreviewState({
-    supportedPreviewModes: modes,
+    supportedPreviewModes: getSupportedPreviewModes(device, hasWideAngleCamera),
   });
 
   if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && canPreview)) {
