@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Gambar',
         polygon: 'Poligon',
         preview: 'Pratinjau Kamera',
+        preview_precise: 'Pratinjau kamera presisi',
         preview_wide_angle: 'Pratinjau kamera sudut lebar',
         qr_code: 'Kode QR',
         rect: 'Persegi Panjang',

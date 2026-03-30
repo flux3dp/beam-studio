@@ -164,8 +164,8 @@ class PreviewModeController {
         this.setIsPreviewMode(true);
 
         setCameraPreviewState({
-          isSwitchable: this.previewManager.isSwitchable,
           previewMode: this.previewManager.previewMode,
+          supportedPreviewModes: this.previewManager.supportedPreviewModes,
         });
 
         canvasEventEmitter.emit('UPDATE_CONTEXT');
@@ -388,6 +388,7 @@ class PreviewModeController {
     this.previewManager = null;
     this.currentDevice = null;
     this.setIsPreviewMode(false);
+    setCameraPreviewState({ pendingPreviewMode: undefined, previewMode: PreviewMode.REGION });
     this.isPreviewBlocked = false;
     deviceMaster.disconnectCamera();
   }

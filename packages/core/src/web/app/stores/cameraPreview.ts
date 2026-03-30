@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { subscribeWithSelector } from 'zustand/middleware';
+import { shallow } from 'zustand/shallow';
 
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 
@@ -9,8 +10,9 @@ type CameraPreviewState = {
   isLiveMode: boolean;
   isPreviewMode: boolean;
   isStarting: boolean;
-  isSwitchable?: boolean;
+  pendingPreviewMode?: PreviewMode;
   previewMode: PreviewMode;
+  supportedPreviewModes: PreviewMode[];
 };
 
 export const useCameraPreviewStore = create(
@@ -20,9 +22,23 @@ export const useCameraPreviewStore = create(
     isLiveMode: false,
     isPreviewMode: false,
     isStarting: false,
-    isSwitchable: false,
     previewMode: PreviewMode.REGION,
+    supportedPreviewModes: [PreviewMode.REGION],
   })),
+);
+
+useCameraPreviewStore.subscribe(
+  (state) => state.supportedPreviewModes,
+  () => {
+    const { pendingPreviewMode, previewMode, supportedPreviewModes } = useCameraPreviewStore.getState();
+
+    if (pendingPreviewMode && !supportedPreviewModes.includes(pendingPreviewMode)) {
+      useCameraPreviewStore.setState({ pendingPreviewMode: undefined });
+    } else if (pendingPreviewMode == null && !supportedPreviewModes.includes(previewMode)) {
+      useCameraPreviewStore.setState({ previewMode: supportedPreviewModes[0] });
+    }
+  },
+  { equalityFn: shallow },
 );
 
 /**

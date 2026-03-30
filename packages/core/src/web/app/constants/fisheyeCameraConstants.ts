@@ -35,7 +35,12 @@ export const bb2PerspectiveGrid: PerspectiveGrid = {
 export const hx2rfPerspectiveGrid: PerspectiveGrid = {
   x: [-130, 130, 10],
   y: [0, 145, 10],
-};
+} as const;
+
+export const hx2rfPrecisePerspectiveGrid: PerspectiveGrid = {
+  x: [-80, 80, 10],
+  y: [0, 100, 10],
+} as const;
 
 export const bb2WideAngleCameraPnpPoints: Record<'bottomLeft' | 'bottomRight' | 'topLeft' | 'topRight', Points> = {
   bottomLeft: [

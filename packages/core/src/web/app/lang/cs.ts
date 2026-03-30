@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Obrázek',
         polygon: 'Polygon',
         preview: 'Náhled kamery',
+        preview_precise: 'Přesný náhled kamery',
         preview_wide_angle: 'Náhled širokoúhlé kamery',
         qr_code: 'QR kód',
         rect: 'Obdélník',

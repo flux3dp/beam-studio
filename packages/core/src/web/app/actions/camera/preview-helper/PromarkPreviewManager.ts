@@ -18,6 +18,7 @@ import BasePreviewManager from './BasePreviewManager';
 // TODO: Add tests
 class PromarkPreviewManager extends BasePreviewManager implements PreviewManager {
   protected _previewMode = PreviewMode.FULL_AREA;
+  protected _supportedPreviewModes = [PreviewMode.FULL_AREA];
   private fisheyeParams?: FisheyeCameraParameters;
   private cameraTransformAPI?: CameraTransformAPI;
   private webCamConnection: null | WebCamConnection = null;

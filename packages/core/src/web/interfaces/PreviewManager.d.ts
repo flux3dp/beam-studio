@@ -11,8 +11,6 @@ export interface PreviewManager {
 
   getPhotoAfterMoveTo?: (x: number, y: number) => Promise<string>;
 
-  isSwitchable?: boolean;
-
   /**
    * preview point
    * @param x x in px
@@ -40,6 +38,8 @@ export interface PreviewManager {
   resetObjectHeight?: () => Promise<boolean>;
 
   setup(args?: { progressId?: string }): Promise<boolean>;
+
+  supportedPreviewModes: PreviewMode[];
 
   switchPreviewMode?: (mode: PreviewMode) => Promise<PreviewMode>;
 }

@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: '이미지',
         polygon: '다각형',
         preview: '카메라 미리보기',
+        preview_precise: '정밀 카메라 미리보기',
         preview_wide_angle: '광각 카메라 미리보기',
         qr_code: 'QR 코드',
         rect: '사각형',

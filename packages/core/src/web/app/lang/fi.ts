@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Kuva',
         polygon: 'Monikulmio',
         preview: 'Kameran esikatselu',
+        preview_precise: 'Tarkka kameran esikatselu',
         preview_wide_angle: 'Laajakulmakameran esikatselu',
         qr_code: 'QR-koodi',
         rect: 'Suorakaide',

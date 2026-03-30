@@ -322,6 +322,7 @@ const lang: ILang = {
         photo: 'Afbeelding',
         polygon: 'Veelhoek',
         preview: 'Liveweergave',
+        preview_precise: 'Nauwkeurig cameravoorbeeld',
         preview_wide_angle: 'Voorbeeld van groothoekcamera',
         qr_code: 'QR-code',
         rect: 'Rechthoek',

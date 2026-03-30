@@ -4,13 +4,15 @@ import previewModeController from '@core/app/actions/beambox/preview-mode-contro
 import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import { getWideAngleCameraData } from '@core/app/actions/camera/preview-helper/getWideAngleCameraData';
 import tutorialController from '@core/app/components/tutorials/tutorialController';
+import { PreviewMode } from '@core/app/constants/cameraConstants';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
-import { setCameraPreviewState } from '@core/app/stores/cameraPreview';
+import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import showResizeAlert from '@core/helpers/device/fit-device-workarea-alert';
 import getDevice from '@core/helpers/device/get-device';
 import i18n from '@core/helpers/i18n';
+import type { IDeviceInfo } from '@core/interfaces/IDevice';
 
 export const endPreviewMode = (): void => {
   try {
@@ -30,6 +32,16 @@ export const endPreviewMode = (): void => {
 };
 
 let isSettingUpPreview = false;
+
+export const getSupportedPreviewModes = (device: IDeviceInfo, hasWideAngleCamera: boolean): PreviewMode[] => {
+  const modes = [PreviewMode.REGION];
+
+  if (hasWideAngleCamera || device.model === 'fbm2') modes.push(PreviewMode.FULL_AREA);
+
+  if (device.model === 'fhx2rf') modes.push(PreviewMode.PRECISE_REGION);
+
+  return modes;
+};
 
 export const handlePreviewClick = async ({ showModal = false }: { showModal?: boolean } = {}): Promise<boolean> => {
   if (tutorialController.getNextStepRequirement() === tutorialConstants.TO_PREVIEW_MODE) {
@@ -59,7 +71,7 @@ export const handlePreviewClick = async ({ showModal = false }: { showModal?: bo
   const { canPreview, hasWideAngleCamera } = await getWideAngleCameraData(device);
 
   setCameraPreviewState({
-    isSwitchable: hasWideAngleCamera || device.model === 'fbm2',
+    supportedPreviewModes: getSupportedPreviewModes(device, hasWideAngleCamera),
   });
 
   if (device.model === 'ado1' || device.model === 'fbm2' || (hasWideAngleCamera && canPreview)) {
@@ -105,6 +117,14 @@ export const setupPreviewMode = async ({
 
       return;
     }
+
+    const { pendingPreviewMode } = useCameraPreviewStore.getState();
+
+    if (pendingPreviewMode && pendingPreviewMode !== previewModeController.previewManager?.previewMode) {
+      await previewModeController.switchPreviewMode(pendingPreviewMode);
+    }
+
+    setCameraPreviewState({ pendingPreviewMode: undefined });
 
     if (previewModeController.isFullArea) {
       previewModeController.previewFullWorkarea().then(() => {

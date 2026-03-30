@@ -5,6 +5,7 @@ import { Segmented } from 'antd';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
+import { promarkPnPPoints } from '@core/app/constants/fisheyeCameraConstants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { loadCameraCalibrationTask } from '@core/helpers/device/promark/calibration';
@@ -20,7 +21,6 @@ import CheckpointData from './common/CheckpointData';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
 import Instruction from './common/Instruction';
 import SolvePnP from './common/SolvePnP';
-import { promarkPnPPoints } from './common/solvePnPConstants';
 import Title from './common/Title';
 
 /* eslint-disable perfectionist/sort-enums */
