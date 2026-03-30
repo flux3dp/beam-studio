@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: 'เครื่องสร้างกล่อง',
     code_generator: 'เครื่องสร้างโค้ด',
     material_test_generator: 'ตัวสร้างการทดสอบวัสดุ',
+    keychain_generator: 'Keychain Generator',
     puzzle_generator: 'เครื่องสร้างจิ๊กซอว์',
     title: 'เครื่องสร้าง',
   },
@@ -1597,6 +1598,17 @@ const lang: ILang = {
     extension_not_deteced: 'ไม่สามารถตรวจพบส่วนขยาย Beam Studio Connect',
     extension_not_deteced_description: "หากต้องการใช้ HTTPS โปรดคลิก 'ยืนยัน' เพื่อติดตั้งส่วนขยาย Beam Studio Connect หลังจากติดตั้งส่วนขยายแล้ว กรุณารีเฟรชหน้าเพื่อเปิดใช้งาน มิฉะนั้น โปรดคลิกลิงก์ด้านล่างเพื่อดูวิธีการใช้ HTTP บน Chrome",
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">ลิงก์</a>',
+  },
+  keychain_generator: {
+    export_failed: 'Failed to import keychain to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      keychain: 'Keychain',
+    },
+    switch_type_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the keychain type will reset all settings to their default values.',
+    types: {
+      rectangle: 'Rectangle',
+    },
   },
   layer_module: {
     general_laser: 'เลเซอร์',

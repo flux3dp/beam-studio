@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: 'Penjana Kotak',
     code_generator: 'Penjana Kod',
     material_test_generator: 'Penjana Ujian Bahan',
+    keychain_generator: 'Keychain Generator',
     puzzle_generator: 'Penjana teka-teki',
     title: 'Penjana',
   },
@@ -1597,6 +1598,17 @@ const lang: ILang = {
     extension_not_deteced: 'Tidak dapat Mengesan Sambungan Beam Studio Connect',
     extension_not_deteced_description: "Untuk menggunakan HTTPS, sila klik 'Sahkan' untuk memasang sambungan Beam Studio Connect. Selepas memasang sambungan, sila segarkan halaman untuk mengaktifkannya.<br/>Jika tidak, klik pautan di bawah untuk melihat cara menggunakan HTTP pada Chrome.",
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Pautan</a>',
+  },
+  keychain_generator: {
+    export_failed: 'Failed to import keychain to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      keychain: 'Keychain',
+    },
+    switch_type_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the keychain type will reset all settings to their default values.',
+    types: {
+      rectangle: 'Rectangle',
+    },
   },
   layer_module: {
     general_laser: 'Laser',

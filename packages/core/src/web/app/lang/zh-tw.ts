@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: '盒子產生器',
     code_generator: '條碼產生器',
     material_test_generator: '材質測試產生器',
+    keychain_generator: '鑰匙圈產生器',
     puzzle_generator: '拼圖產生器',
     title: '產生器',
   },
@@ -1597,6 +1598,17 @@ const lang: ILang = {
     extension_not_deteced: '無法偵測到 Beam Studio Connect 擴充功能',
     extension_not_deteced_description: '若要使用 HTTPS，請按下「確認」以前往安裝 Beam Studio Connect 擴充功能，安裝擴充功能後，請重新頁面以啟用。<br/>否則，請點擊下面的連結查看如何在 Chrome 中使用 HTTP。',
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/9935859456271">連結</a>',
+  },
+  keychain_generator: {
+    export_failed: '無法將鑰匙圈匯入畫布，請再試一次。',
+    import_to_canvas: '匯入至畫布',
+    layers: {
+      keychain: '鑰匙圈',
+    },
+    switch_type_warning: '您目前的設定尚未匯入至畫布。\n切換鑰匙圈類型將會重設所有設定為預設值。',
+    types: {
+      rectangle: '矩形',
+    },
   },
   layer_module: {
     general_laser: '雷射',

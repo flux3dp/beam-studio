@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: 'Trình Tạo Hộp',
     code_generator: 'Trình tạo mã',
     material_test_generator: 'Trình tạo thử nghiệm vật liệu',
+    keychain_generator: 'Keychain Generator',
     puzzle_generator: 'Trình tạo ghép hình',
     title: 'Trình Tạo',
   },
@@ -1597,6 +1598,17 @@ const lang: ILang = {
     extension_not_deteced: 'Không thể phát hiện Phần mở rộng Beam Studio Connect',
     extension_not_deteced_description: "Để sử dụng HTTPS, vui lòng nhấp vào 'Xác nhận' để cài đặt tiện ích mở rộng Beam Studio Connect. Sau khi cài đặt tiện ích mở rộng, vui lòng làm mới trang để kích hoạt nó.<br/>Nếu không, hãy nhấp vào liên kết bên dưới để xem cách sử dụng HTTP trên Chrome.",
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Liên kết</a>',
+  },
+  keychain_generator: {
+    export_failed: 'Failed to import keychain to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      keychain: 'Keychain',
+    },
+    switch_type_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the keychain type will reset all settings to their default values.',
+    types: {
+      rectangle: 'Rectangle',
+    },
   },
   layer_module: {
     general_laser: 'Laser',

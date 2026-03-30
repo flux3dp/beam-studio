@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: 'Generatore di Scatole',
     code_generator: 'Generatore di codice',
     material_test_generator: 'Generatore di Test Materiale',
+    keychain_generator: 'Keychain Generator',
     puzzle_generator: 'Generatore di puzzle',
     title: 'Generatori',
   },
@@ -1597,6 +1598,17 @@ const lang: ILang = {
     extension_not_deteced: "Impossibile rilevare l'estensione Beam Studio Connect",
     extension_not_deteced_description: "Per utilizzare HTTPS, fare clic su 'Conferma' per installare l'estensione Beam Studio Connect. Dopo aver installato l'estensione, aggiornare la pagina per attivarla.<br/>Altrimenti, fare clic sul link sottostante per vedere come utilizzare HTTP su Chrome.",
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Collegamento</a>',
+  },
+  keychain_generator: {
+    export_failed: 'Failed to import keychain to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      keychain: 'Keychain',
+    },
+    switch_type_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the keychain type will reset all settings to their default values.',
+    types: {
+      rectangle: 'Rectangle',
+    },
   },
   layer_module: {
     general_laser: 'Laser',

@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: '盒子生成器',
     code_generator: '条码生成器',
     material_test_generator: '材质测试生成器',
+    keychain_generator: 'Keychain Generator',
     puzzle_generator: '拼图生成器',
     title: '生成器',
   },
@@ -1597,6 +1598,17 @@ const lang: ILang = {
     extension_not_deteced: '无法检测到 Beam Studio Connect 扩展',
     extension_not_deteced_description: '要使用 HTTPS，请点击“确认”以安装 Beam Studio Connect 扩展。安装扩展后，请刷新页面以激活它。<br/>否则，请点击下面的链接查看如何在 Chrome 中使用 HTTP。',
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">链接</a>',
+  },
+  keychain_generator: {
+    export_failed: 'Failed to import keychain to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      keychain: 'Keychain',
+    },
+    switch_type_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the keychain type will reset all settings to their default values.',
+    types: {
+      rectangle: 'Rectangle',
+    },
   },
   layer_module: {
     general_laser: '激光',

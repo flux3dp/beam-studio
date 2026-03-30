@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: '박스 생성기',
     code_generator: '코드 생성기',
     material_test_generator: '재질 테스트 생성기',
+    keychain_generator: 'Keychain Generator',
     puzzle_generator: '퍼즐 생성기',
     title: '생성기',
   },
@@ -1597,6 +1598,17 @@ const lang: ILang = {
     extension_not_deteced: 'Beam Studio Connect 확장 프로그램을 감지할 수 없습니다',
     extension_not_deteced_description: "HTTPS를 사용하려면 '확인'을 클릭하여 Beam Studio Connect 확장 기능을 설치하세요. 확장 기능을 설치한 후 페이지를 새로 고쳐 활성화하세요.<br/>그렇지 않으면 아래 링크를 클릭하여 Chrome에서 HTTP를 사용하는 방법을 확인하세요.",
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">링크</a>',
+  },
+  keychain_generator: {
+    export_failed: 'Failed to import keychain to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      keychain: 'Keychain',
+    },
+    switch_type_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the keychain type will reset all settings to their default values.',
+    types: {
+      rectangle: 'Rectangle',
+    },
   },
   layer_module: {
     general_laser: '레이저',

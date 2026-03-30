@@ -1415,6 +1415,7 @@ const lang: ILang = {
     box_generator: 'Generador de caixes',
     code_generator: 'Generador de codis',
     material_test_generator: 'Generador de prova de material',
+    keychain_generator: 'Keychain Generator',
     puzzle_generator: 'Generador de trencaclosques',
     title: 'Generadors',
   },
@@ -1597,6 +1598,17 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     extension_not_deteced: "No es pot detectar l'extensió Beam Studio Connect",
     extension_not_deteced_description: "Per utilitzar HTTPS, si us plau fes clic a ‘Confirmar’ per instal·lar l'extensió Beam Studio Connect. Després d'instal·lar l'extensió, si us plau refresca la pàgina per activar-la.<br/>En cas contrari, fes clic a l'enllaç a continuació per veure com utilitzar HTTP a Chrome.",
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Enllaç</a>',
+  },
+  keychain_generator: {
+    export_failed: 'Failed to import keychain to canvas. Please try again.',
+    import_to_canvas: 'Import to Canvas',
+    layers: {
+      keychain: 'Keychain',
+    },
+    switch_type_warning: 'Your current settings have not been imported to the canvas yet.\nSwitching the keychain type will reset all settings to their default values.',
+    types: {
+      rectangle: 'Rectangle',
+    },
   },
   layer_module: {
     general_laser: 'Làser',
