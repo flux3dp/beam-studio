@@ -171,7 +171,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   const onWorkareaChange = useCallback((value: AnnotatedWorkareaModel) => {
     const { annotation, workarea: newWorkarea } = decodeWorkareaAnnotation(value);
 
-    setWorkareaAnnotation({ ...annotation, [newWorkarea]: annotation[newWorkarea as keyof typeof annotation] });
+    setWorkareaAnnotation({ ...workareaAnnotation, [newWorkarea]: annotation[newWorkarea as keyof typeof annotation] });
     setWorkarea(newWorkarea);
 
     if (newWorkarea === 'fpm1') {

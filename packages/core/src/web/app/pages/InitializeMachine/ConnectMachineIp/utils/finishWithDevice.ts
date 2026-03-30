@@ -48,9 +48,7 @@ export const finishWithDevice = async (device: IDeviceInfo): Promise<void> => {
         'workarea-annotation': { ...currentWorkareaAnnotation, ...modelAnnotation },
       };
 
-      if (device.model === 'fpm1') {
-        newDocumentState['promark-safety-door'] = !!modelAnnotation.fpm1?.safe;
-      }
+      newDocumentState['promark-safety-door'] = !!modelAnnotation.fpm1?.safe;
 
       useDocumentStore.getState().update(newDocumentState);
       storage.set('last-promark-serial', device.serial);
