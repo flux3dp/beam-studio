@@ -1575,6 +1575,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
     select_hexa: 'Select Your HEXA',
     select_language: 'Select Language',
     select_machine_type: 'Select Your Machine Type',
+    select_promark: 'Select Your Promark',
     setting_completed: {
       back: 'Back',
       great: 'Welcome to Beam Studio',

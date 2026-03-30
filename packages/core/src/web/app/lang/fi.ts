@@ -1575,6 +1575,7 @@ const lang: ILang = {
     select_hexa: 'Valitse HEXA',
     select_language: 'Valitse kieli',
     select_machine_type: 'Valitse mallisi',
+    select_promark: 'Valitse Promarkisi',
     setting_completed: {
       back: 'Takaisin',
       great: 'Tervetuloa Beam Studioon',

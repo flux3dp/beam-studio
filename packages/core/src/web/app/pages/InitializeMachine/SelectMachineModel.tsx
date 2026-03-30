@@ -5,9 +5,11 @@ import { match } from 'ts-pattern';
 
 import dialog from '@core/app/actions/dialog-caller';
 import windowLocationReload from '@core/app/actions/windowLocation';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
+import { useInitializeMachineStore } from '@core/app/pages/InitializeMachine/store';
 import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { decodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import { getHomePage } from '@core/helpers/hashHelper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -21,11 +23,12 @@ type ModelItem = {
   imageSrc?: string;
   label: string;
   labelClass?: string;
-  model?: WorkAreaModel;
+  model?: AnnotatedWorkareaModel;
   type?: SelectedModelType;
+  withSafe?: boolean;
 };
 
-type SelectedModelType = '' | 'beambox' | 'beamo' | 'hexa';
+type SelectedModelType = '' | 'beambox' | 'beamo' | 'hexa' | 'promark';
 
 const SelectMachineModel = (): React.JSX.Element => {
   const t = useI18n().initialize;
@@ -49,16 +52,19 @@ const SelectMachineModel = (): React.JSX.Element => {
     windowLocationReload();
   }, [isNewUser, selectedModelType]);
 
-  const handleNextClick = ({ model, type }: { model?: WorkAreaModel; type?: SelectedModelType }) => {
+  const handleNextClick = ({ model, type }: Pick<ModelItem, 'model' | 'type'>) => {
     if (type) {
       setSelectedModelType(type);
 
       return;
     }
 
-    // for promark, there is no connection type selection, go to connect-usb directly
-    if (model === 'fpm1') {
-      window.location.hash = `#/initialize/connect/connect-usb?model=${model}`;
+    const { annotation, workarea } = decodeWorkareaAnnotation(model!);
+
+    useInitializeMachineStore.getState().set('modelAnnotation', annotation);
+
+    if (workarea === 'fpm1') {
+      window.location.hash = `#/initialize/connect/connect-usb?model=fpm1`;
 
       return;
     }
@@ -91,7 +97,7 @@ const SelectMachineModel = (): React.JSX.Element => {
         model: supportHxRf ? undefined : 'fhexa1',
         type: supportHxRf ? 'hexa' : undefined,
       },
-      !isMobile() && checkFpm1() && { Icon: InitializeIcons.Promark, label: 'Promark Series', model: 'fpm1' },
+      !isMobile() && checkFpm1() && { Icon: InitializeIcons.Promark, label: 'Promark Series', type: 'promark' },
     ].filter(Boolean) as ModelItem[];
   }, []);
 
@@ -149,6 +155,24 @@ const SelectMachineModel = (): React.JSX.Element => {
     [],
   );
 
+  const promarkModelList: ModelItem[] = useMemo(
+    () => [
+      {
+        btnClass: classNames(styles['btn-real'], styles.promark),
+        imageSrc: 'core-img/init-panel/promark-real.png',
+        label: 'Promark',
+        model: 'fpm1',
+      },
+      {
+        btnClass: classNames(styles['btn-real'], styles.promark),
+        imageSrc: 'core-img/init-panel/promark-safe-real.png',
+        label: 'Promark (Safe+)',
+        model: 'fpm1_safe',
+      },
+    ],
+    [],
+  );
+
   const { list: currentList, title: selectTitle } = useMemo(() => {
     return match(selectedModelType)
       .with('beambox', () => ({
@@ -163,11 +187,15 @@ const SelectMachineModel = (): React.JSX.Element => {
         list: hexaModelList,
         title: t.select_hexa,
       }))
+      .with('promark', () => ({
+        list: promarkModelList,
+        title: t.select_promark,
+      }))
       .otherwise(() => ({
         list: modelList,
         title: t.select_machine_type,
       }));
-  }, [selectedModelType, beamboxModelList, beamoModelList, hexaModelList, modelList, t]);
+  }, [selectedModelType, beamboxModelList, beamoModelList, hexaModelList, promarkModelList, modelList, t]);
 
   return (
     <div className={styles.container}>

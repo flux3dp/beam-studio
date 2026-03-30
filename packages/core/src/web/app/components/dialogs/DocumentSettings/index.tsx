@@ -17,7 +17,8 @@ import { fullColorHeadModules, LayerModule, printingModules } from '@core/app/co
 import { LaserType, workareaOptions as pmWorkareaOptions } from '@core/app/constants/promark-constants';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
 import { defaultEngraveDpiOptions, dpiValueMap } from '@core/app/constants/resolutions';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
+import type { AnnotatedWorkareaModel, ModelAnnotation } from '@core/app/constants/workarea-constants';
+import { getWorkarea, workareaOptions } from '@core/app/constants/workarea-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import { useCurveEngravingStore } from '@core/app/stores/curveEngravingStore';
@@ -28,11 +29,10 @@ import changeWorkarea from '@core/app/svgedit/operations/changeWorkarea';
 import Select from '@core/app/widgets/AntdSelect';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import { getAutoFeeder, getPassThrough } from '@core/helpers/addOn';
-import { checkBM2, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
 import { fhx2rfWatts, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { getPromarkInfo, setPromarkInfo } from '@core/helpers/device/promark/promark-info';
+import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import isDev from '@core/helpers/is-dev';
 import { getData, writeDataLayer } from '@core/helpers/layer/layer-config-helper';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import {
@@ -51,20 +51,6 @@ import styles from './index.module.scss';
 import JobOriginBlock from './JobOriginBlock';
 import RotaryBlock from './RotaryBlock';
 import { showModuleSettings4C, showPassthroughSettings } from './utils';
-
-const workareaOptions = [
-  { label: 'beamo', value: 'fbm1' },
-  { label: 'Beambox', value: 'fbb1b' },
-  { label: 'Beambox Pro', value: 'fbb1p' },
-  { label: 'HEXA', value: 'fhexa1' },
-  checkHxRf() && { label: 'HEXA RF', value: 'fhx2rf' },
-  { label: 'Ador', value: 'ado1' },
-  checkFpm1() && { label: 'Promark', value: 'fpm1' },
-  { label: 'Beambox II', value: 'fbb2' },
-  checkBM2() && { label: 'beamo II', value: 'fbm2' },
-  checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
-  isDev() && { label: 'Lazervida', value: 'flv1' },
-].filter(Boolean);
 
 const promarkLaserOptions = [
   { label: 'Desktop - 20W', value: `${LaserType.Desktop}-20` },
@@ -100,6 +86,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
   }, []);
   const [pmInfo, setPmInfo] = useState(getPromarkInfo());
   const [workarea, setWorkarea] = useState(origWorkarea || 'fbb1b');
+  const [workareaAnnotation, setWorkareaAnnotation] = useState<ModelAnnotation>(
+    () => useDocumentStore.getState()['workarea-annotation'] ?? {},
+  );
   const [customDimension, setCustomDimension] = useState(useDocumentStore.getState()['customized-dimension']);
   const addOnInfo = useMemo(() => getAddOnInfo(workarea), [workarea]);
   const isPromark = useMemo(() => promarkModels.has(workarea), [workarea]);
@@ -178,6 +167,17 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     return hasCurveEngravingData || mode === CanvasMode.CurveEngraving;
   }, [addOnInfo.curveEngraving, hasCurveEngravingData, mode]);
+
+  const onWorkareaChange = useCallback((value: AnnotatedWorkareaModel) => {
+    const { annotation, workarea: newWorkarea } = decodeWorkareaAnnotation(value);
+
+    setWorkareaAnnotation({ ...workareaAnnotation, [newWorkarea]: annotation[newWorkarea as keyof typeof annotation] });
+    setWorkarea(newWorkarea);
+
+    if (newWorkarea === 'fpm1') {
+      setCheckSafetyDoor(!!annotation.fpm1?.safe);
+    }
+  }, []);
 
   // pass-through, auto-feeder, rotary mode are exclusive, disable others when one is on
   useEffect(() => {
@@ -310,6 +310,7 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
 
     if (promarkModels.has(workarea)) {
       setPromarkInfo(pmInfo);
+      newState['workarea-annotation'] = workareaAnnotation;
       newState['promark-start-button'] = enableStartButton;
       newState['frame-before-start'] = shouldFrame;
       newState['promark-safety-door'] = checkSafetyDoor;
@@ -503,9 +504,9 @@ const DocumentSettings = ({ unmount }: Props): React.JSX.Element => {
               <Select
                 className={styles.control}
                 id="workareaSelect"
-                onChange={setWorkarea}
+                onChange={onWorkareaChange}
                 options={workareaOptions}
-                value={workarea}
+                value={encodeWorkareaAnnotation(workarea, workareaAnnotation)}
                 variant="outlined"
               />
             </div>

@@ -16,6 +16,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const { initialize: t } = useI18n();
   const [laserSource, setLaserSource] = useState('');
   const [workarea, setWorkarea] = useState(0);
+  const promarkSafe = useDocumentStore((state) => !!state['workarea-annotation']?.fpm1?.safe);
 
   const generateLaserSourceOptions = (source: keyof typeof laserSourceWattMap) =>
     laserSourceWattMap[source].map((watt: number) => ({
@@ -48,7 +49,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
 
   const handleNext = () => {
     const { 'customized-dimension': customizedDimension, set } = useDocumentStore.getState();
-    const [source, watt] = laserSource.split('-');
+    const [source, watt] = laserSource.split('-') as ['Desktop' | 'MOPA', string];
 
     set('customized-dimension', {
       ...customizedDimension,
@@ -66,7 +67,12 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
 
       <Flex gap={40} justify="space-between">
         <div className={styles.image}>
-          <img draggable="false" height={300} src="core-img/init-panel/promark-real.png" width={300} />
+          <img
+            draggable="false"
+            height={300}
+            src={promarkSafe ? 'core-img/init-panel/promark-safe-real.png' : 'core-img/init-panel/promark-real.png'}
+            width={300}
+          />
         </div>
 
         <Flex vertical>

@@ -1575,6 +1575,7 @@ const lang: ILang = {
     select_hexa: 'Velg din HEXA',
     select_language: 'Velg språk',
     select_machine_type: 'Velg din modell',
+    select_promark: 'Velg din Promark',
     setting_completed: {
       back: 'Tilbake',
       great: 'Velkommen til Beam Studio',

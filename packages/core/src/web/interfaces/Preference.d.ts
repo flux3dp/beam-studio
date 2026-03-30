@@ -3,7 +3,7 @@ import type { RotaryType } from '@core/app/constants/addOn';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import type { ModuleOffsets } from '@core/app/constants/layer-module/moduleOffsets';
 import type { EngraveDpiOption } from '@core/app/constants/resolutions';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { ModelAnnotation, WorkAreaModel } from '@core/app/constants/workarea-constants';
 
 import type { Prettify } from './utils';
 
@@ -37,6 +37,7 @@ export type DocumentState = {
   rotary_mode: boolean;
   skip_prespray: boolean;
   workarea: WorkAreaModel;
+  'workarea-annotation'?: ModelAnnotation;
 };
 export type DocumentStateKey = keyof DocumentState;
 
@@ -73,6 +74,7 @@ export type GlobalPreference = {
   low_power: number;
   /** model: default workarea model */
   model: WorkAreaModel;
+  'model-annotation'?: ModelAnnotation;
   'module-offsets': ModuleOffsets;
   mouse_input_device: 'MOUSE' | 'TOUCHPAD';
   'multipass-compensation': boolean;

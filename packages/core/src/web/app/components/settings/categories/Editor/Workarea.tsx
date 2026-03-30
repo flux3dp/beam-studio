@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 
-import { getWorkarea } from '@core/app/constants/workarea-constants';
-import { checkBM2, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
+import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-constants';
+import { getWorkarea, workareaOptions } from '@core/app/constants/workarea-constants';
+import { decodeWorkareaAnnotation, encodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import isDev from '@core/helpers/is-dev';
 import useI18n from '@core/helpers/useI18n';
 
@@ -15,22 +16,16 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
   const lang = useI18n();
   const { getConfig, getPreference, setConfig, setPreference } = useSettingStore();
 
+  const initModel = useMemo(() => {
+    const model = getPreference('model');
+    const annotation = getPreference('model-annotation');
+
+    return encodeWorkareaAnnotation(model, annotation);
+    // eslint-disable-next-line hooks/exhaustive-deps
+  }, []);
   const selectedModel = getPreference('model');
   const workarea = getWorkarea(selectedModel);
-
-  const modelOptions = [
-    { label: 'beamo', value: 'fbm1' },
-    checkBM2() && { label: 'beamo II', value: 'fbm2' },
-    { label: 'Beambox', value: 'fbb1b' },
-    { label: 'Beambox Pro', value: 'fbb1p' },
-    { label: 'HEXA', value: 'fhexa1' },
-    checkHxRf() && { label: 'HEXA RF', value: 'fhx2rf' },
-    { label: 'Ador', value: 'ado1' },
-    checkFpm1() && { label: 'Promark', value: 'fpm1' },
-    isDev() && { label: 'Lazervida', value: 'flv1' },
-    { label: 'Beambox II', value: 'fbb2' },
-    checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
-  ].filter(Boolean);
+  const showGuides = getPreference('show_guides');
 
   const unitOptions = [
     { label: lang.menu.mm, value: 'mm' },
@@ -47,19 +42,27 @@ function Workarea({ unitInputProps }: Props): React.JSX.Element {
         options={unitOptions}
       />
       <SettingSelect
-        defaultValue={getPreference('model')}
+        defaultValue={initModel}
         id="set-default-model"
         label={lang.settings.default_beambox_model}
-        onChange={(e) => setPreference('model', e)}
-        options={modelOptions}
+        onChange={(e: AnnotatedWorkareaModel) => {
+          const { annotation, workarea: newModel } = decodeWorkareaAnnotation(e);
+
+          setPreference('model', newModel);
+          setPreference('model-annotation', {
+            ...getPreference('model-annotation'),
+            [newModel]: annotation[newModel as keyof typeof annotation],
+          });
+        }}
+        options={workareaOptions}
       />
       <SettingSwitch
-        checked={getPreference('show_guides')}
+        checked={showGuides}
         id="set-guide"
         label={lang.settings.guides}
         onChange={(e) => setPreference('show_guides', e)}
       />
-      {getPreference('show_guides') && (
+      {showGuides && (
         <XYItem
           id="set-guide-axis"
           label={lang.settings.guides_origin}

@@ -10,6 +10,7 @@
 
 .w-100 {
   width: 100%;
+  overflow: hidden; // Allow container to shrink when the window is resized, and trigger the ResizeObserver to update the stage size
 }
 
 .top-bar {

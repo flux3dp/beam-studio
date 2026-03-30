@@ -1575,6 +1575,7 @@ const lang: ILang = {
     select_hexa: '請選擇您的 HEXA',
     select_language: '請選擇你想使用的語言',
     select_machine_type: '請選擇您的機種',
+    select_promark: '請選擇您的 Promark',
     setting_completed: {
       back: '回到 Wi-Fi 設定',
       great: '歡迎使用 Beam Studio',

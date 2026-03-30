@@ -49,6 +49,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   'keep-preview-result': false,
   low_power: 10,
   model: 'fbb1b',
+  'model-annotation': {},
   'module-offsets': defaultOffsetsForStore,
   mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
   'multipass-compensation': true,
@@ -83,6 +84,7 @@ const DEFAULT_PREFERENCE: BeamboxPreference = {
   use_layer_color: true,
   vector_speed_constraint: true,
   workarea: 'fbb1b',
+  'workarea-annotation': {},
   zoom_with_window: false,
 };
 

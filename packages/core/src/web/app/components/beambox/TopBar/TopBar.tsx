@@ -20,7 +20,6 @@ import AutoFocusButton from './AutoFocusButton';
 import CommonTools from './CommonTools';
 import DocumentButton from './DocumentButton';
 import FileName from './FileName';
-import { registerWindowUpdateTitle } from './FileName/registerWindowUpdateTile';
 import FrameButton from './FrameButton';
 import GoButton from './GoButton';
 import Menu from './Menu';
@@ -41,8 +40,6 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
-
-  useEffect(() => registerWindowUpdateTitle(), []);
 
   useEffect(() => {
     const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);

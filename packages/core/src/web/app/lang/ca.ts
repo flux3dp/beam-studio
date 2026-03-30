@@ -1575,6 +1575,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     select_hexa: 'Selecciona el teu HEXA',
     select_language: 'Selecciona idioma',
     select_machine_type: 'Selecciona el teu tipus de màquina',
+    select_promark: 'Selecciona el teu Promark',
     setting_completed: {
       back: 'Enrere',
       great: 'Benvingut a Beam Studio',
