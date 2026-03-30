@@ -22,9 +22,7 @@ class Menu extends AbstractMenu {
     this.eventEmitter.emit('DISABLE_MENU_ITEM', items);
   }
 
-  updateLanguage(): void {
-    this.eventEmitter.emit('UPDATE_LANGUAGE');
-  }
+  updateLanguage(): void {}
 }
 
 export default new Menu();

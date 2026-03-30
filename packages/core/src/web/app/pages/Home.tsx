@@ -4,7 +4,6 @@ import appSettings from '@core/app/app-settings';
 import Modal from '@core/app/widgets/Modal';
 import SelectView from '@core/app/widgets/Select';
 import i18n from '@core/helpers/i18n';
-import menu from '@core/implementations/menu';
 
 function Home(): React.JSX.Element {
   const [lang, changeLang] = React.useState(i18n.lang);
@@ -27,9 +26,8 @@ function Home(): React.JSX.Element {
     return options;
   };
 
-  const changeActiveLang = (e) => {
+  const changeActiveLang = (e: React.ChangeEvent<HTMLSelectElement>) => {
     i18n.setActiveLang(e.currentTarget.value);
-    menu.updateLanguage();
     changeLang(i18n.lang);
   };
 

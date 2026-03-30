@@ -86,6 +86,7 @@ test('test beambox-preference', () => {
     'keep-preview-result': false,
     low_power: 10,
     model: 'fbb1b',
+    'model-annotation': {},
     'module-offsets': {
       ado1: {
         '1': [0, 0],
@@ -128,6 +129,7 @@ test('test beambox-preference', () => {
     use_layer_color: true,
     vector_speed_constraint: true,
     workarea: 'fbb1b',
+    'workarea-annotation': {},
     zoom_with_window: false,
   });
 

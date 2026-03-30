@@ -1573,6 +1573,7 @@ export interface ILang {
     // specific caption/content
     select_language: string;
     select_machine_type: string;
+    select_promark: string;
     setting_completed: {
       back: string;
       great: string;

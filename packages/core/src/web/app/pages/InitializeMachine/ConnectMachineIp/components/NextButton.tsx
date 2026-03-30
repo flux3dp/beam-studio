@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import React from 'react';
 
 import classNames from 'classnames';
@@ -14,7 +15,7 @@ interface Props {
   testState: TestState;
 }
 
-const NextButton = ({ handleStartTest, isPromark, onFinish, testState }: Props): JSX.Element => {
+const NextButton = ({ handleStartTest, isPromark, onFinish, testState }: Props): ReactNode => {
   const lang = useI18n();
   let label = lang.initialize.next;
   let handleClick = handleStartTest;

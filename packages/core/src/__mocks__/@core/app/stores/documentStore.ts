@@ -26,6 +26,7 @@ const state: DocumentState = {
   rotary_mode: false,
   skip_prespray: false,
   workarea: 'fbb1b',
+  'workarea-annotation': {},
 };
 
 const set = <K extends keyof DocumentState>(key: K, value: DocumentState[K]) => {

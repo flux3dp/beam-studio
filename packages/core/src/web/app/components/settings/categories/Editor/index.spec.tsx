@@ -4,6 +4,8 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { create } from 'zustand';
 
+import { setStorage } from '@mocks/@core/app/stores/storageStore';
+
 jest.mock('@core/helpers/is-dev', () => () => true);
 
 const getFontOfPostscriptName = jest.fn();
@@ -71,38 +73,6 @@ jest.mock('@core/app/actions/beambox/font-funcs', () => ({
   },
 }));
 
-const storageMap = new Map<string, unknown>([
-  ['default-font', { family: 'Arial', postscriptName: 'ArialMT', style: 'Regular' }],
-]);
-
-const mockUseStorageStore = Object.assign(
-  (selector?: (state: Record<string, unknown>) => unknown) => {
-    const state = Object.fromEntries(storageMap);
-
-    return selector ? selector(state) : state;
-  },
-  { subscribe: () => () => {} },
-);
-
-jest.mock('@core/app/stores/storageStore', () => ({
-  getStorage: (key: string) => storageMap.get(key),
-  useStorageStore: mockUseStorageStore,
-}));
-
-jest.mock('@core/app/constants/workarea-constants', () => ({
-  getWorkarea: () => ({
-    height: 375,
-    label: 'Beambox',
-    maxSpeed: 300,
-    minPower: 10,
-    minSpeed: 0.5,
-    pxHeight: 3750,
-    pxWidth: 4000,
-    vectorSpeedLimit: 20,
-    width: 400,
-  }),
-}));
-
 const mockGetConfig = jest.fn();
 const mockGetPreference = jest.fn();
 const mockSetPreference = jest.fn();
@@ -140,6 +110,20 @@ jest.mock('@core/helpers/locale-helper', () => ({ isTwOrHk: true }));
 import Editor from '.';
 
 describe('settings/Editor', () => {
+  beforeEach(() => {
+    setStorage('default-font', { family: 'Arial', postscriptName: 'ArialMT', style: 'Regular' });
+
+    mockGetPreference.mockImplementation((key) => {
+      if (['guide_x0', 'guide_y0'].includes(key)) return 0;
+
+      if (key === 'show_guides') return true;
+
+      if (key === 'model') return 'fbb1b';
+
+      return false;
+    });
+  });
+
   afterEach(() => {
     jest.resetAllMocks();
     // Reset store state between tests
@@ -147,14 +131,6 @@ describe('settings/Editor', () => {
   });
 
   test('initially no warning', async () => {
-    mockGetPreference.mockImplementation((key) => {
-      if (['guide_x0', 'guide_y0'].includes(key)) return 0;
-
-      if (key === 'show_guides') return true;
-
-      return false;
-    });
-
     const { container } = render(
       <Editor
         unitInputProps={{
@@ -167,15 +143,15 @@ describe('settings/Editor', () => {
     );
 
     // Editor renders: Workarea -> Text -> Performance (when wrapped=false)
-    // Workarea: model (x2), show_guides (x2 - once for switch, once for conditional), guide_x0, guide_y0,
+    // Workarea: model and model-annotation for initModel, model, show_guides, guide_x0, guide_y0,
     //           auto-switch-tab, continuous_drawing, enable-custom-backlash, enable-uv-print-file,
     //           print-advanced-mode, use-real-boundary, crop-task-thumbnail
     // Text: font-substitute, font-convert
     // Performance: image_downsampling, anti-aliasing, simplify_clipper_path, path-engine
     expect(mockGetPreference).toHaveBeenCalledTimes(19);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'show_guides');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model-annotation');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(4, 'show_guides');
     expect(mockGetPreference).toHaveBeenNthCalledWith(5, 'guide_x0');
     expect(mockGetPreference).toHaveBeenNthCalledWith(6, 'guide_y0');
@@ -204,30 +180,42 @@ describe('settings/Editor', () => {
     fireEvent.change(selectControls[0], { target: { value: 'inches' } });
     expect(mockSetConfig).toHaveBeenCalledTimes(1);
     expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'default-units', 'inches');
+    mockSetConfig.mockClear();
+
+    // Model select Promark Safe
+    fireEvent.change(selectControls[1], { target: { value: 'fpm1_safe' } });
+    expect(mockSetPreference).toHaveBeenCalledTimes(2);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fpm1');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'model-annotation', { fpm1: { safe: true } });
+    mockSetPreference.mockClear();
 
     // Model select
     fireEvent.change(selectControls[1], { target: { value: 'fbm1' } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenCalledTimes(2);
     expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'model', 'fbm1');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'model-annotation', {});
+    mockSetPreference.mockClear();
 
     // Font family select - should use setConfig for deferred update
     fireEvent.change(selectControls[2], { target: { value: 'Apple LiSung' } });
-    expect(mockSetConfig).toHaveBeenCalledTimes(2);
-    expect(mockSetConfig).toHaveBeenNthCalledWith(2, 'default-font', {
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'default-font', {
       family: 'Apple LiSung',
       postscriptName: 'LiSungLight',
       style: 'Light',
     });
     expect(container).toMatchSnapshot();
+    mockSetConfig.mockClear();
 
     fireEvent.change(selectControls[2], { target: { value: 'Courier' } });
-    expect(mockSetConfig).toHaveBeenCalledTimes(3);
-    expect(mockSetConfig).toHaveBeenNthCalledWith(3, 'default-font', {
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'default-font', {
       family: 'Courier',
       postscriptName: 'Regular',
       style: 'Regular',
     });
     expect(container).toMatchSnapshot();
+    mockSetConfig.mockClear();
 
     // Font style select - should use setConfig for deferred update
     getFontOfPostscriptName.mockReturnValue({
@@ -236,23 +224,26 @@ describe('settings/Editor', () => {
       style: 'Bold',
     });
     fireEvent.change(selectControls[3], { target: { value: 'Courier-Bold' } });
-    expect(mockSetConfig).toHaveBeenCalledTimes(4);
-    expect(mockSetConfig).toHaveBeenNthCalledWith(4, 'default-font', {
+    expect(mockSetConfig).toHaveBeenCalledTimes(1);
+    expect(mockSetConfig).toHaveBeenNthCalledWith(1, 'default-font', {
       family: 'Courier',
       postscriptName: 'Courier-Bold',
       style: 'Bold',
     });
     expect(container).toMatchSnapshot();
+    mockSetConfig.mockClear();
 
     // Font convert select
     fireEvent.change(selectControls[4], { target: { value: '2.0' } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(2);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(2, 'font-convert', '2.0');
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'font-convert', '2.0');
+    mockSetPreference.mockClear();
 
     // Image downsampling select
     fireEvent.change(selectControls[5], { target: { value: true } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(3);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(3, 'image_downsampling', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'image_downsampling', true);
+    mockSetPreference.mockClear();
 
     // Test SettingSwitch controls - order is now (Workarea -> Text -> Performance):
     // Workarea: [0] show_guides, [1] auto-switch-tab, [2] continuous_drawing, [3] enable-custom-backlash,
@@ -263,71 +254,85 @@ describe('settings/Editor', () => {
 
     // show_guides (starts as true, toggle to false)
     fireEvent.click(switchControls[0]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(4);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(4, 'show_guides', false);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'show_guides', false);
+    mockSetPreference.mockClear();
 
     // auto-switch-tab
     fireEvent.click(switchControls[1]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(5);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(5, 'auto-switch-tab', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'auto-switch-tab', true);
+    mockSetPreference.mockClear();
 
     // continuous_drawing
     fireEvent.click(switchControls[2]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(6);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(6, 'continuous_drawing', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'continuous_drawing', true);
+    mockSetPreference.mockClear();
 
     // enable-custom-backlash
     fireEvent.click(switchControls[3]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(7);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(7, 'enable-custom-backlash', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'enable-custom-backlash', true);
+    mockSetPreference.mockClear();
 
     // enable-uv-print-file
     fireEvent.click(switchControls[4]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(8);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(8, 'enable-uv-print-file', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'enable-uv-print-file', true);
+    mockSetPreference.mockClear();
 
     // print-advanced-mode
     fireEvent.click(switchControls[5]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(9);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(9, 'print-advanced-mode', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'print-advanced-mode', true);
+    mockSetPreference.mockClear();
 
     // use-real-boundary
     fireEvent.click(switchControls[6]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(10);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(10, 'use-real-boundary', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'use-real-boundary', true);
+    mockSetPreference.mockClear();
 
     // crop-task-thumbnail
     fireEvent.click(switchControls[7]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(11);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(11, 'crop-task-thumbnail', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'crop-task-thumbnail', true);
+    mockSetPreference.mockClear();
 
     // font-substitute
     fireEvent.click(switchControls[8]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(12);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(12, 'font-substitute', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'font-substitute', true);
+    mockSetPreference.mockClear();
 
     // anti-aliasing
     fireEvent.click(switchControls[9]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(13);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(13, 'anti-aliasing', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'anti-aliasing', true);
+    mockSetPreference.mockClear();
 
     // simplify_clipper_path
     fireEvent.click(switchControls[10]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(14);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(14, 'simplify_clipper_path', true);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'simplify_clipper_path', true);
+    mockSetPreference.mockClear();
 
     // path-engine (switch, not select - toggles between 'swiftray' and 'fluxghost')
     fireEvent.click(switchControls[11]);
-    expect(mockSetPreference).toHaveBeenCalledTimes(15);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(15, 'path-engine', 'swiftray');
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'path-engine', 'swiftray');
+    mockSetPreference.mockClear();
 
     // Test XYItem controls (guide axis)
     fireEvent.change(container.querySelector('#set-guide-axis-x'), { target: { value: 1 } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(16);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(16, 'guide_x0', 1);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'guide_x0', 1);
+    mockSetPreference.mockClear();
 
     fireEvent.change(container.querySelector('#set-guide-axis-y'), { target: { value: 2 } });
-    expect(mockSetPreference).toHaveBeenCalledTimes(17);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(17, 'guide_y0', 2);
+    expect(mockSetPreference).toHaveBeenCalledTimes(1);
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'guide_y0', 2);
+    mockSetPreference.mockClear();
   });
 });

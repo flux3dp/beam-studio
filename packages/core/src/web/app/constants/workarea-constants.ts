@@ -2,7 +2,8 @@ import constant from '@core/app/actions/beambox/constant';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
-import { checkBM2UV } from '@core/helpers/checkFeature';
+import { checkBM2, checkBM2UV, checkFpm1, checkFUV1, checkHxRf } from '@core/helpers/checkFeature';
+import isDev from '@core/helpers/is-dev';
 import type { TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 
 import { fullColorHeadModules, LayerModule, type LayerModuleType } from './layer-module/layer-modules';
@@ -36,6 +37,15 @@ export const workArea = [
 ] as const;
 export type WorkAreaModel = (typeof workArea)[number];
 export const workAreaSet = new Set(workArea);
+export type ModelAnnotation = {
+  fpm1?: { safe?: boolean };
+};
+type AnnotatedModels = keyof ModelAnnotation;
+type AnnotationFlags<M extends AnnotatedModels> = keyof NonNullable<ModelAnnotation[M]>;
+type AnnotatedVariants = {
+  [M in AnnotatedModels]: `${M}_${AnnotationFlags<M> & string}`;
+}[AnnotatedModels];
+export type AnnotatedWorkareaModel = AnnotatedVariants | WorkAreaModel;
 
 const { dpmm } = constant;
 
@@ -255,6 +265,21 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     width: 300,
   },
 };
+
+export const workareaOptions: Array<{ label: string; value: AnnotatedWorkareaModel }> = [
+  { label: 'beamo', value: 'fbm1' },
+  { label: 'Beambox', value: 'fbb1b' },
+  { label: 'Beambox Pro', value: 'fbb1p' },
+  { label: 'HEXA', value: 'fhexa1' },
+  checkHxRf() && { label: 'HEXA RF', value: 'fhx2rf' },
+  { label: 'Ador', value: 'ado1' },
+  checkFpm1() && { label: 'Promark', value: 'fpm1' },
+  checkFpm1() && { label: 'Promark (Safe+)', value: 'fpm1_safe' },
+  { label: 'Beambox II', value: 'fbb2' },
+  checkBM2() && { label: 'beamo II', value: 'fbm2' },
+  checkFUV1() && { label: 'Miro UV', value: 'fuv1' },
+  isDev() && { label: 'Lazervida', value: 'flv1' },
+].filter(Boolean);
 
 export const getWorkarea = (model: WorkAreaModel, fallbackModel: WorkAreaModel = 'fbm1'): WorkArea => {
   const res = workareaConstants[model] || workareaConstants[fallbackModel];
