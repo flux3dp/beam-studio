@@ -1421,6 +1421,7 @@ export interface ILang {
   generators: {
     box_generator: string;
     code_generator: string;
+    keychain_generator: string;
     material_test_generator: string;
     puzzle_generator: string;
     title: string;
@@ -1601,6 +1602,17 @@ export interface ILang {
     extension_not_deteced: string;
     extension_not_deteced_description: string;
     unsecure_url_help_center_link: string;
+  };
+  keychain_generator: {
+    export_failed: string;
+    import_to_canvas: string;
+    layers: {
+      keychain: string;
+    };
+    switch_type_warning: string;
+    types: {
+      rectangle: string;
+    };
   };
   layer_module: {
     general_laser: string;
