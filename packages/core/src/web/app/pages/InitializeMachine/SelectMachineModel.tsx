@@ -5,10 +5,11 @@ import { match } from 'ts-pattern';
 
 import dialog from '@core/app/actions/dialog-caller';
 import windowLocationReload from '@core/app/actions/windowLocation';
-import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
+import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
-import { state } from '@core/app/pages/InitializeMachine/state';
+import { useInitializeMachineStore } from '@core/app/pages/InitializeMachine/store';
 import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
+import { decodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import { getHomePage } from '@core/helpers/hashHelper';
 import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -22,7 +23,7 @@ type ModelItem = {
   imageSrc?: string;
   label: string;
   labelClass?: string;
-  model?: WorkAreaModel;
+  model?: AnnotatedWorkareaModel;
   type?: SelectedModelType;
   withSafe?: boolean;
 };
@@ -51,18 +52,19 @@ const SelectMachineModel = (): React.JSX.Element => {
     windowLocationReload();
   }, [isNewUser, selectedModelType]);
 
-  const handleNextClick = ({ model, type, withSafe }: Pick<ModelItem, 'model' | 'type' | 'withSafe'>) => {
+  const handleNextClick = ({ model, type }: Pick<ModelItem, 'model' | 'type'>) => {
     if (type) {
       setSelectedModelType(type);
 
       return;
     }
 
-    state.withSafe = withSafe;
+    const { annotation, workarea } = decodeWorkareaAnnotation(model!);
 
-    // for promark, there is no connection type selection, go to connect-usb directly
-    if (model === 'fpm1') {
-      window.location.hash = `#/initialize/connect/connect-usb?model=${model}`;
+    useInitializeMachineStore.getState().set('modelAnnotation', annotation);
+
+    if (workarea === 'fpm1') {
+      window.location.hash = `#/initialize/connect/connect-usb?model=fpm1`;
 
       return;
     }
@@ -160,14 +162,12 @@ const SelectMachineModel = (): React.JSX.Element => {
         imageSrc: 'core-img/init-panel/promark-real.png',
         label: 'Promark',
         model: 'fpm1',
-        withSafe: false,
       },
       {
         btnClass: classNames(styles['btn-real'], styles.promark),
         imageSrc: 'core-img/init-panel/promark-safe-real.png',
         label: 'Promark (Safe+)',
-        model: 'fpm1',
-        withSafe: true,
+        model: 'fpm1_safe',
       },
     ],
     [],
@@ -208,11 +208,11 @@ const SelectMachineModel = (): React.JSX.Element => {
       <div className={styles.main}>
         <h1 className={styles.title}>{selectTitle}</h1>
         <div className={styles.btns}>
-          {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model, type, withSafe }) => (
+          {currentList.map(({ btnClass, Icon, imageSrc, label, labelClass, model, type }) => (
             <div
               className={classNames(styles.btn, btnClass)}
               key={type ?? model}
-              onClick={() => handleNextClick({ model, type, withSafe })}
+              onClick={() => handleNextClick({ model, type })}
             >
               {Icon && <Icon className={styles.icon} />}
               {imageSrc && <img className={styles.image} draggable="false" src={imageSrc} />}

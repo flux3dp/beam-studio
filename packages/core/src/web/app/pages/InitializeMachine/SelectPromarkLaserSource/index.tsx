@@ -16,7 +16,7 @@ export default function ChoosePromarkLaserSource(): React.JSX.Element {
   const { initialize: t } = useI18n();
   const [laserSource, setLaserSource] = useState('');
   const [workarea, setWorkarea] = useState(0);
-  const promarkSafe = useDocumentStore((state) => state.promark_safe);
+  const promarkSafe = useDocumentStore((state) => !!state['workarea-annotation']?.fpm1?.safe);
 
   const generateLaserSourceOptions = (source: keyof typeof laserSourceWattMap) =>
     laserSourceWattMap[source].map((watt: number) => ({

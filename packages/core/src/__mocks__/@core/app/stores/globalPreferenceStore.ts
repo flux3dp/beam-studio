@@ -32,7 +32,7 @@ const state: GlobalPreference = {
   'keep-preview-result': false,
   low_power: 10,
   model: 'fbb1b',
-  model_safe: false,
+  'model-annotation': {},
   'module-offsets': defaultOffsetsForStore,
   mouse_input_device: getOS() === 'MacOS' ? 'TOUCHPAD' : 'MOUSE',
   'multipass-compensation': true,

@@ -1,7 +1,8 @@
 // ConnectMachineIp/utils/deviceStorage.ts
 import { adorModels, promarkModels } from '@core/app/actions/beambox/constant';
 import { workAreaSet } from '@core/app/constants/workarea-constants';
-import { state } from '@core/app/pages/InitializeMachine/state';
+import { useInitializeMachineStore } from '@core/app/pages/InitializeMachine/store';
+import type { DocumentStore } from '@core/app/stores/documentStore';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import alertConfig from '@core/helpers/api/alert-config';
@@ -37,7 +38,19 @@ export const finishWithDevice = async (device: IDeviceInfo): Promise<void> => {
     alertConfig.write('done-first-cali', true);
 
     if (promarkModels.has(device.model)) {
-      useDocumentStore.getState().update({ 'promark-safety-door': !!state.withSafe, promark_safe: !!state.withSafe });
+      const { modelAnnotation } = useInitializeMachineStore.getState();
+      const currentModelAnnotation = useGlobalPreferenceStore.getState()['model-annotation'];
+      const currentWorkareaAnnotation = useDocumentStore.getState()['workarea-annotation'];
+
+      useGlobalPreferenceStore.getState().set('model-annotation', { ...currentModelAnnotation, ...modelAnnotation });
+
+      const newDocumentState: Partial<DocumentStore> = {
+        'workarea-annotation': { ...currentWorkareaAnnotation, ...modelAnnotation },
+      };
+
+      newDocumentState['promark-safety-door'] = !!modelAnnotation.fpm1?.safe;
+
+      useDocumentStore.getState().update(newDocumentState);
       storage.set('last-promark-serial', device.serial);
       await deviceMaster.select(device);
     }

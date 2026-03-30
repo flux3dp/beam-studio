@@ -45,7 +45,7 @@ const getInitStore = (): GlobalPreference => {
     'keep-preview-result': preference['keep-preview-result'],
     low_power: preference.low_power,
     model: preference.model,
-    model_safe: preference.model_safe,
+    'model-annotation': preference['model-annotation'],
     'module-offsets': preference['module-offsets'],
     mouse_input_device: preference.mouse_input_device,
     'multipass-compensation': preference['multipass-compensation'],
