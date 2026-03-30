@@ -52,9 +52,6 @@ export const decodeWorkareaAnnotation = (
 
     if (!key) continue;
 
-    // To clear old values
-    annotation[baseWorkarea as keyof ModelAnnotation] = undefined;
-
     if (!annotation[baseWorkarea as keyof ModelAnnotation]) {
       annotation[baseWorkarea as keyof ModelAnnotation] = {} as ModelAnnotation[keyof ModelAnnotation];
     }

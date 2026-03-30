@@ -52,7 +52,7 @@ const SelectMachineModel = (): React.JSX.Element => {
     windowLocationReload();
   }, [isNewUser, selectedModelType]);
 
-  const handleNextClick = async ({ model, type }: Pick<ModelItem, 'model' | 'type'>) => {
+  const handleNextClick = ({ model, type }: Pick<ModelItem, 'model' | 'type'>) => {
     if (type) {
       setSelectedModelType(type);
 
@@ -61,11 +61,9 @@ const SelectMachineModel = (): React.JSX.Element => {
 
     const { annotation, workarea } = decodeWorkareaAnnotation(model!);
 
-    if (workarea === 'fpm1') {
-      useInitializeMachineStore.getState().set('modelAnnotation', {
-        fpm1: annotation.fpm1,
-      });
+    useInitializeMachineStore.getState().set('modelAnnotation', annotation);
 
+    if (workarea === 'fpm1') {
       window.location.hash = `#/initialize/connect/connect-usb?model=fpm1`;
 
       return;
