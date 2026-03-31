@@ -208,6 +208,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'oneWayEngraving',
   'oneWayEngravingReverse',
   'accX',
+  'accY',
   // printing
   'printingSpeed',
   'multipass',
