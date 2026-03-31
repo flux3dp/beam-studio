@@ -20,6 +20,8 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
 const attributeMap: Record<ConfigKey, string> = {
+  accX: 'data-accX',
+  accY: 'data-accY',
   airAssist: 'data-airAssist',
   amAngleMap: 'data-amAngleMap',
   amDensity: 'data-amDensity',
@@ -86,6 +88,8 @@ const attributeMap: Record<ConfigKey, string> = {
 export const CUSTOM_PRESET_CONSTANT = ' ';
 
 export const baseConfig: Partial<ConfigKeyTypeMap> = {
+  accX: 0,
+  accY: 0,
   airAssist: 100,
   amDensity: 2,
   backlash: 0,
@@ -203,6 +207,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'highQuality',
   'oneWayEngraving',
   'oneWayEngravingReverse',
+  'accX',
   // printing
   'printingSpeed',
   'multipass',

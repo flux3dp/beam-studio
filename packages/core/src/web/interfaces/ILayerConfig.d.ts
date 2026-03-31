@@ -18,6 +18,9 @@ type CommonConfig = {
 };
 
 type LaserConfig = {
+  /** layer level acc override, mm/s^2 */
+  accX: number;
+  accY: number;
   /** 0-100, percentage */
   airAssist: number;
   /** μs ,delay to emit laser */
