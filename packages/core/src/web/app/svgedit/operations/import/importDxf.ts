@@ -3,6 +3,7 @@ import dialogCaller from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import alertConstants from '@core/app/constants/alert-constants';
 import NS from '@core/app/constants/namespaces';
+import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import layerManager from '@core/app/svgedit/layer/layerManager';
@@ -17,6 +18,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import undoManager from '../../history/undoManager';
 import { getBBox } from '../../utils/getBBox';
 
 let svgCanvas: ISVGCanvas;
@@ -192,6 +194,8 @@ const importDxf = async (file: Blob): Promise<void> => {
   await Promise.all(promises);
 
   removeDefaultLayerIfEmpty({ parentCmd: batchCmd });
+  useLayerStore.getState().setSelectedLayers(layerNames);
+  undoManager.addCommandToHistory(batchCmd);
 };
 
 export default importDxf;
