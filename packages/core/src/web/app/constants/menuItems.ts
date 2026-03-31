@@ -1,5 +1,6 @@
 import { isMac } from '@core/helpers/system-helper';
 import type { ILang } from '@core/interfaces/ILang';
+import type { KeysWithType } from '@core/interfaces/utils';
 
 export interface MenuItem {
   action: string;
@@ -39,10 +40,7 @@ const createShortcut = (action: string, shortcut: string[], splitKey = '+'): Men
   splitKey,
 });
 
-type StringKeys<T> = {
-  [K in keyof T]: T[K] extends string ? K : never;
-}[keyof T];
-export type MenuItemKey = StringKeys<ILang['topbar']['menu']>;
+export type MenuItemKey = KeysWithType<ILang['topbar']['menu'], string>;
 
 export const menuItems: Partial<Record<MenuItemKey, MenuItem>> = {
   // mac option + m would be µ

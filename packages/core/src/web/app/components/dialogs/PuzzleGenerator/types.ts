@@ -1,4 +1,5 @@
 import type { ILang } from '@core/interfaces/ILang';
+import type { KeysWithType } from '@core/interfaces/utils';
 
 import type { ViewMode } from './constants';
 
@@ -84,9 +85,6 @@ export interface ShapeMetadata {
 // ─────────────────────────────────────────────────────────────────────────────
 
 export type PropertyType = 'group' | 'image-upload' | 'number' | 'select' | 'slider' | 'toggle';
-type KeysWithType<T, V> = {
-  [K in keyof T]: T[K] extends V ? K : never;
-}[keyof T];
 
 interface BasePropertyDef {
   condition?: (state: PuzzleState) => boolean;
