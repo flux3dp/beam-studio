@@ -1,45 +1,13 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`should render correctly should render correctly when isPathPreviewing 1`] = `
+exports[`TimeEstimationButton should render correctly with estimatedTime 1`] = `
 <div>
   <div
     class="result"
   >
     Estimated Time:
      
-    1 m 0 s
-  </div>
-</div>
-`;
-
-exports[`should render correctly should render correctly with estimatedTime 1`] = `
-<div>
-  <div
-    class="result"
-  >
-    Estimated Time:
-     
-    1 m 0 s
-  </div>
-</div>
-`;
-
-exports[`should render correctly web check connection 1`] = `
-<div>
-  <div
-    class="btn"
-  >
-    <svgr-url />
-  </div>
-</div>
-`;
-
-exports[`should render correctly when WITHOUT estimatedTime 1`] = `
-<div>
-  <div
-    class="btn"
-  >
-    <svgr-url />
+    60s
   </div>
 </div>
 `;

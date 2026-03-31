@@ -2658,6 +2658,12 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     retest: 'Tornar a provar',
     testing: 'Realitzant prova de càrrega...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Calcular temps',
+    exposure: 'Exposició',
+    opacity: 'Opacitat',
+  },
 };
 
 export default lang;

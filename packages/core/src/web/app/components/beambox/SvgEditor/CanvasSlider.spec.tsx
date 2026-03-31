@@ -2,10 +2,11 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
-import PreviewSlider from './PreviewSlider';
+import CanvasSlider from './CanvasSlider';
 
 const mockGetCurrentDevice = jest.fn();
 const mockGetCurrentControlMode = jest.fn();
@@ -49,6 +50,50 @@ jest.mock('@core/helpers/version-checker', () => () => ({
   meetRequirement: (...args) => mockMeetRequirement(...args),
 }));
 
+jest.mock('@core/helpers/eventEmitterFactory', () => ({
+  createEventEmitter: () => ({
+    on: jest.fn(),
+    removeListener: jest.fn(),
+  }),
+}));
+
+jest.mock('@core/app/svgedit/workarea', () => ({
+  zoomRatio: 1,
+}));
+
+jest.mock('@core/helpers/useI18n', () => () => ({
+  beambox: {
+    time_est_button: { calculate: 'Calculate' },
+    zoom_block: { canvas_zoom: 'Canvas Adjustment' },
+  },
+  editor: {
+    exposure: 'Brightness',
+    opacity: 'Preview Opacity',
+  },
+  zoom_block: {
+    canvas_zoom: 'Canvas Adjustment',
+    estimate_time: 'Calculate Time',
+    exposure: 'Exposure',
+    opacity: 'Opacity',
+  },
+}));
+
+jest.mock('@core/helpers/getOS', () => ({
+  getOS: () => 'others',
+}));
+
+jest.mock('@core/implementations/os', () => ({
+  process: { exec: jest.fn() },
+}));
+
+jest.mock('@core/helpers/web-need-connection-helper', () => (fn: () => void) => fn());
+
+jest.mock('@core/app/actions/beambox/export-funcs', () => ({
+  estimateTime: jest.fn().mockResolvedValue(null),
+}));
+
+jest.mock('@core/helpers/duration-formatter', () => (seconds: number) => `${seconds}s`);
+
 jest.mock('antd', () => ({
   ConfigProvider: ({ children }: any) => children,
   Slider: ({ className, disabled, max, min, onChange, onChangeComplete, step, value }: any) => (
@@ -73,6 +118,15 @@ jest.mock('antd', () => ({
       {children}
     </div>
   ),
+  Switch: ({ className, disabled, loading, onChange, value }: any) => (
+    <div className={className}>
+      Mock Antd Switch
+      <p>value: {String(value)}</p>
+      <button disabled={disabled || loading} onClick={() => onChange(!value)} type="button">
+        toggleSwitch
+      </button>
+    </div>
+  ),
   Tooltip: ({ children, title }: any) => (
     <div>
       Mock Antd Tooltip
@@ -82,7 +136,14 @@ jest.mock('antd', () => ({
   ),
 }));
 
-describe('test PreviewSlider', () => {
+const renderWithContext = (ui: React.ReactElement, estimatedTime: null | number = null) =>
+  render(
+    <TimeEstimationButtonContext value={{ estimatedTime, setEstimatedTime: jest.fn() }}>
+      {ui}
+    </TimeEstimationButtonContext>,
+  );
+
+describe('test CanvasSlider', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockIsFullArea.mockReturnValue(true);
@@ -100,7 +161,7 @@ describe('test PreviewSlider', () => {
   });
 
   it('should render correctly with preview image', async () => {
-    const { container, getByText } = render(<PreviewSlider />);
+    const { container, getByText } = renderWithContext(<CanvasSlider />);
     const imageContainer = document.getElementById('previewSvg');
 
     expect(container).toMatchSnapshot();
@@ -113,7 +174,7 @@ describe('test PreviewSlider', () => {
   it('should render correctly without background image', () => {
     document.body.innerHTML = '';
 
-    const { container } = render(<PreviewSlider />);
+    const { container } = renderWithContext(<CanvasSlider />);
 
     expect(container).toMatchSnapshot();
   });
@@ -125,7 +186,7 @@ describe('test PreviewSlider', () => {
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
-    const { container } = render(<PreviewSlider />);
+    const { container } = renderWithContext(<CanvasSlider />);
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
@@ -139,7 +200,7 @@ describe('test PreviewSlider', () => {
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
-    const { container, getByText } = render(<PreviewSlider />);
+    const { container, getByText } = renderWithContext(<CanvasSlider />);
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
@@ -170,7 +231,7 @@ describe('test PreviewSlider', () => {
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
-    const { container, getByText } = render(<PreviewSlider />);
+    const { container, getByText } = renderWithContext(<CanvasSlider />);
 
     expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
@@ -196,7 +257,7 @@ describe('test PreviewSlider', () => {
     mockUseCameraPreviewStore.mockReturnValue({ isDrawing: true, isPreviewMode: true });
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbm2' } });
 
-    const { container, getByText } = render(<PreviewSlider />);
+    const { container, getByText } = renderWithContext(<CanvasSlider />);
 
     await waitFor(() => {
       expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);

@@ -2658,6 +2658,12 @@ Machines > ‘Promark Name’ > Promark Settings`,
     retest: 'Retest',
     testing: 'Performing load test...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Calculate Time',
+    exposure: 'Exposure',
+    opacity: 'Opacity',
+  },
 };
 
 export default lang;

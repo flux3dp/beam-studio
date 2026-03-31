@@ -2658,6 +2658,12 @@ const lang: ILang = {
     retest: '再テスト',
     testing: '負荷テストを実行中...',
   },
+  zoom_block: {
+    canvas_zoom: 'ズーム',
+    estimate_time: '時間を計算',
+    exposure: '露出',
+    opacity: '不透明度',
+  },
 };
 
 export default lang;

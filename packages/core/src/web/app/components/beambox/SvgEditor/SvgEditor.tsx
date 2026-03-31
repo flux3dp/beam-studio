@@ -26,10 +26,10 @@ import Generators from '../../Generators';
 import MobileGenerators from '../../Generators/mobile/MobileGenerators';
 
 import Banner from './Banner';
+import CanvasSlider from './CanvasSlider';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
 import PreviewFloatingBar from './PreviewFloatingBar';
-import PreviewSlider from './PreviewSlider';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
 import TimeEstimationButton from './TimeEstimationButton';
@@ -88,8 +88,8 @@ const SvgEditor = (): ReactNode => {
               <div className={styles.controls}>
                 <TimeEstimationButtonContextProvider>
                   <TimeEstimationButton />
+                  <CanvasSlider setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)} />
                 </TimeEstimationButtonContextProvider>
-                <PreviewSlider />
               </div>
               {isMobile && <PreviewFloatingBar />}
             </div>

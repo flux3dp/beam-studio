@@ -1,0 +1,681 @@
+// Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
+
+exports[`test CanvasSlider should be disabled when in raw mode and drawing 1`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          2000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          450
+        </p>
+        <button
+          disabled=""
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          disabled=""
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        450
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly when is previewing 1`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly when is previewing Ador 1`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          2000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          450
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        450
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly when is previewing Ador 2`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          2000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          0.25
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        0.25
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly when is previewing BB2 1`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          2000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          450
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        450
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly when is previewing BB2 2`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          50
+        </p>
+        <p>
+          max: 
+          2000
+        </p>
+        <p>
+          step: 
+          1
+        </p>
+        <p>
+          value: 
+          0.25
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        0.25
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly with preview image 1`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          1
+        </p>
+        <p>
+          step: 
+          0.25
+        </p>
+        <p>
+          value: 
+          1
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        100
+        %
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly with preview image 2`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          1
+        </p>
+        <p>
+          step: 
+          0.25
+        </p>
+        <p>
+          value: 
+          0.25
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        25
+        %
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`test CanvasSlider should render correctly without background image 1`] = `
+<div>
+  <div
+    style="position: relative;"
+  >
+    <div
+      class="container"
+    >
+      <div
+        class="triggerArea"
+      >
+        <svgr-url
+          class="icon"
+        />
+        <span
+          aria-label="down"
+          class="anticon anticon-down"
+          role="img"
+          style="font-size: 10px;"
+        >
+          <svg
+            aria-hidden="true"
+            data-icon="down"
+            fill="currentColor"
+            focusable="false"
+            height="1em"
+            viewBox="64 64 896 896"
+            width="1em"
+          >
+            <path
+              d="M884 256h-75c-5.1 0-9.9 2.5-12.9 6.6L512 654.2 227.9 262.6c-3-4.1-7.8-6.6-12.9-6.6h-75c-6.5 0-10.3 7.4-6.5 12.7l352.6 486.1c12.8 17.6 39 17.6 51.7 0l352.6-486.1c3.9-5.3.1-12.7-6.4-12.7z"
+            />
+          </svg>
+        </span>
+      </div>
+      <div
+        class="divider"
+      />
+      <div
+        class="slider"
+      >
+        Mock Antd Slider
+        <p>
+          min: 
+          0
+        </p>
+        <p>
+          max: 
+          1
+        </p>
+        <p>
+          step: 
+          0.25
+        </p>
+        <p>
+          value: 
+          1
+        </p>
+        <button
+          type="button"
+        >
+          onChange
+        </button>
+        <button
+          type="button"
+        >
+          onChangeComplete
+        </button>
+      </div>
+      <div
+        class="value"
+      >
+        100
+        %
+      </div>
+    </div>
+  </div>
+</div>
+`;

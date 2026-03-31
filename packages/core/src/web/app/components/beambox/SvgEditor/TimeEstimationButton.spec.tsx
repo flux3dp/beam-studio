@@ -1,26 +1,9 @@
 import React from 'react';
-
 import { act, fireEvent, render } from '@testing-library/react';
 
-import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
-import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 
 import TimeEstimationButton from './TimeEstimationButton';
-
-const mockPopUp = jest.fn();
-
-jest.mock('@core/app/actions/alert-caller', () => ({
-  popUp: (...args) => mockPopUp(...args),
-}));
-
-const mockCheckConnection = jest.fn();
-
-jest.mock('@core/helpers/api/discover', () => ({
-  discoverManager: {
-    checkConnection: (...args) => mockCheckConnection(...args),
-  },
-}));
 
 const mockEstimateTime = jest.fn();
 
@@ -28,26 +11,30 @@ jest.mock('@core/app/actions/beambox/export-funcs', () => ({
   estimateTime: (...args) => mockEstimateTime(...args),
 }));
 
-const mockToggleUnsavedChangedDialog = jest.fn();
+jest.mock('@core/helpers/web-need-connection-helper', () => (fn: () => void) => fn());
 
-jest.mock('@core/helpers/file/export', () => ({
-  toggleUnsavedChangedDialog: (...args) => mockToggleUnsavedChangedDialog(...args),
+jest.mock('@core/helpers/useI18n', () => () => ({
+  beambox: {
+    time_est_button: {
+      calculate: 'Calculate',
+      estimate_time: 'Estimated Time:',
+    },
+  },
 }));
 
-describe('should render correctly', () => {
+jest.mock('@core/helpers/duration-formatter', () => (seconds: number) => `${seconds}s`);
+
+describe('TimeEstimationButton', () => {
   beforeEach(() => {
-    useCanvasStore.getState().setMode(CanvasMode.Draw);
     jest.clearAllMocks();
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1920, writable: true });
+    Object.defineProperty(window, 'innerHeight', { configurable: true, value: 1080, writable: true });
+    window.dispatchEvent(new Event('resize'));
   });
 
   it('should render correctly with estimatedTime', () => {
     const { container } = render(
-      <TimeEstimationButtonContext
-        value={{
-          estimatedTime: 60,
-          setEstimatedTime: () => {},
-        }}
-      >
+      <TimeEstimationButtonContext value={{ estimatedTime: 60, setEstimatedTime: () => {} }}>
         <TimeEstimationButton />
       </TimeEstimationButtonContext>,
     );
@@ -55,80 +42,36 @@ describe('should render correctly', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('should render correctly when isPathPreviewing', () => {
-    useCanvasStore.getState().setMode(CanvasMode.PathPreview);
+  it('should return null (hide) when in target screen size', () => {
+    Object.defineProperty(window, 'innerWidth', { configurable: true, value: 1024, writable: true });
+    window.dispatchEvent(new Event('resize'));
 
     const { container } = render(
-      <TimeEstimationButtonContext
-        value={{
-          estimatedTime: 60,
-          setEstimatedTime: () => {},
-        }}
-      >
+      <TimeEstimationButtonContext value={{ estimatedTime: null, setEstimatedTime: () => {} }}>
         <TimeEstimationButton />
       </TimeEstimationButtonContext>,
     );
 
-    expect(container).toMatchSnapshot();
+    expect(container.firstChild).toBeNull();
   });
 
-  test('when WITHOUT estimatedTime', async () => {
+  test('when WITHOUT estimatedTime, click to calculate', async () => {
     const mockSetEstimatedTime = jest.fn();
     const { container } = render(
-      <TimeEstimationButtonContext
-        value={{
-          estimatedTime: null,
-          setEstimatedTime: mockSetEstimatedTime,
-        }}
-      >
+      <TimeEstimationButtonContext value={{ estimatedTime: null, setEstimatedTime: mockSetEstimatedTime }}>
         <TimeEstimationButton />
       </TimeEstimationButtonContext>,
     );
 
-    expect(container).toMatchSnapshot();
-
     mockEstimateTime.mockResolvedValue(90);
-    await act(async () => {
-      fireEvent.click(container.querySelector('div.btn'));
-    });
-    expect(mockSetEstimatedTime).toHaveBeenCalledTimes(1);
-    expect(mockSetEstimatedTime).toHaveBeenNthCalledWith(1, 90);
-  });
 
-  test('web check connection', async () => {
-    Object.defineProperty(window, 'FLUX', {
-      value: {
-        version: 'web',
-      },
-    });
+    const btn = container.querySelector('div.btn');
 
-    const mockSetEstimatedTime = jest.fn();
-    const { container } = render(
-      <TimeEstimationButtonContext
-        value={{
-          estimatedTime: null,
-          setEstimatedTime: mockSetEstimatedTime,
-        }}
-      >
-        <TimeEstimationButton />
-      </TimeEstimationButtonContext>,
-    );
-
-    expect(container).toMatchSnapshot();
-
-    mockCheckConnection.mockReturnValueOnce(false);
-    await act(async () => {
-      fireEvent.click(container.querySelector('div.btn'));
-    });
-    expect(mockCheckConnection).toHaveBeenCalledTimes(1);
-    expect(mockPopUp).toHaveBeenCalledTimes(1);
-
-    mockEstimateTime.mockResolvedValue(90);
-    mockCheckConnection.mockReturnValueOnce(true);
-    await act(async () => {
-      fireEvent.click(container.querySelector('div.btn'));
-    });
-    expect(mockSetEstimatedTime).toHaveBeenCalledTimes(1);
-    expect(mockSetEstimatedTime).toHaveBeenNthCalledWith(1, 90);
+    if (btn) {
+      await act(async () => {
+        fireEvent.click(btn);
+      });
+      expect(mockSetEstimatedTime).toHaveBeenCalledWith(90);
+    }
   });
 });

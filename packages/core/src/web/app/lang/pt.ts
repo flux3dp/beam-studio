@@ -2658,6 +2658,12 @@ const lang: ILang = {
     retest: 'Testar novamente',
     testing: 'Executando teste de carga...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Calcular tempo',
+    exposure: 'Exposição',
+    opacity: 'Opacidade',
+  },
 };
 
 export default lang;
