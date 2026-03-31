@@ -250,6 +250,7 @@
       'data-oweRev',
       'data-accX',
       'data-accY',
+      'data-travelSpeed',
     ],
     image: [
       'data-ratiofixed',

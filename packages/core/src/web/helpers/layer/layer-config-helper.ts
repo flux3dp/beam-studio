@@ -70,6 +70,7 @@ const attributeMap: Record<ConfigKey, string> = {
   rightPadding: 'data-rightPadding',
   speed: 'data-speed',
   split: 'data-split',
+  travelSpeed: 'data-travelSpeed',
   uvCuringAfter: 'data-uvCuringAfter',
   uvCuringRepeat: 'data-uvCuringRepeat',
   uvPrintingRepeat: 'data-uvPrintingRepeat',
@@ -134,6 +135,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   repeat: 1,
   rightPadding: 0,
   speed: 20,
+  travelSpeed: 0,
   uvCuringAfter: false,
   uvCuringRepeat: 1,
   uvPrintingRepeat: 1,
@@ -209,6 +211,7 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'oneWayEngravingReverse',
   'accX',
   'accY',
+  'travelSpeed',
   // printing
   'printingSpeed',
   'multipass',
