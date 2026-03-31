@@ -99,7 +99,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         <div
           className={styles.link}
           onClick={() =>
-            downloadCalibrationFile('assets/bb2-chessboard.pdf', tCali.download_chessboard_file, 'Chessboard')
+            downloadCalibrationFile('assets/charuco-15-10.pdf', tCali.download_chessboard_file, 'Chessboard')
           }
         >
           {tCali.download_chessboard_file}
