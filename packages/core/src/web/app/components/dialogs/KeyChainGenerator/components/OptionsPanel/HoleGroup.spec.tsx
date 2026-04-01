@@ -19,7 +19,7 @@ jest.mock('antd', () => ({
   ),
 }));
 
-jest.mock('./SliderControl', () => ({ label, onChange, value }: any) => (
+jest.mock('./NumberControl', () => ({ label, onChange, value }: any) => (
   <div data-testid={`slider-${label}`}>
     <span>value:{value}</span>
     <input data-testid={`input-${label}`} onChange={(e) => onChange(Number(e.target.value))} />

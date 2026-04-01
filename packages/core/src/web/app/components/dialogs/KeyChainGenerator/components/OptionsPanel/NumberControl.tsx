@@ -7,9 +7,9 @@ import { Slider } from 'antd';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './SliderControl.module.scss';
+import styles from './NumberControl.module.scss';
 
-interface SliderControlProps {
+interface NumberControlProps {
   defaultValue: number;
   label: string;
   max: number;
@@ -18,9 +18,10 @@ interface SliderControlProps {
   step: number;
   unit: string;
   value: number;
+  withSlider?: boolean;
 }
 
-const SliderControl = ({
+const NumberControl = ({
   defaultValue,
   label,
   max,
@@ -29,7 +30,8 @@ const SliderControl = ({
   step,
   unit,
   value,
-}: SliderControlProps): ReactNode => {
+  withSlider = true,
+}: NumberControlProps): ReactNode => {
   const { keychain_generator: t } = useI18n();
   const isModified = value !== defaultValue;
   const precision = Math.max(0, Math.ceil(-Math.log10(step)));
@@ -61,11 +63,13 @@ const SliderControl = ({
           />
         </div>
       </div>
-      <Slider max={max} min={min} onChange={onChange} step={step} tooltip={{ open: false }} value={value} />
+      {withSlider && (
+        <Slider max={max} min={min} onChange={onChange} step={step} tooltip={{ open: false }} value={value} />
+      )}
     </div>
   );
 };
 
-SliderControl.displayName = 'SliderControl';
+NumberControl.displayName = 'NumberControl';
 
-export default memo(SliderControl);
+export default memo(NumberControl);
