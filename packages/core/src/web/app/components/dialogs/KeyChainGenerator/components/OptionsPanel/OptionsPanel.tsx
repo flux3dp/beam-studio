@@ -32,21 +32,24 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
   const isMobile = useIsMobile();
   const holes = useKeychainShapeStore((s) => s.state.holes);
   const texts = useKeychainShapeStore((s) => s.state.texts);
-  const updateState = useKeychainShapeStore((s) => s.updateState);
 
-  const handleHoleChange = useCallback(
-    (holeId: string, updates: Partial<HoleOptionValues>) => {
-      updateState({ holes: { ...holes, [holeId]: { ...holes[holeId], ...updates } } });
-    },
-    [updateState, holes],
-  );
+  const handleHoleChange = useCallback((holeId: string, updates: Partial<HoleOptionValues>) => {
+    const {
+      state: { holes },
+      updateState,
+    } = useKeychainShapeStore.getState();
 
-  const handleTextChange = useCallback(
-    (textId: string, updates: Partial<TextOptionValues>) => {
-      updateState({ texts: { ...texts, [textId]: { ...texts[textId], ...updates } } });
-    },
-    [updateState, texts],
-  );
+    updateState({ holes: { ...holes, [holeId]: { ...holes[holeId], ...updates } } });
+  }, []);
+
+  const handleTextChange = useCallback((textId: string, updates: Partial<TextOptionValues>) => {
+    const {
+      state: { texts },
+      updateState,
+    } = useKeychainShapeStore.getState();
+
+    updateState({ texts: { ...texts, [textId]: { ...texts[textId], ...updates } } });
+  }, []);
 
   return (
     <div className={classNames(styles.panel, { [styles.mobile]: isMobile })}>
@@ -61,8 +64,8 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
                 defaults={holeDef.defaults}
                 hole={holes[holeDef.id]}
                 id={holeDef.id}
-                key={holeDef.id}
-                onHoleChange={(updates) => handleHoleChange(holeDef.id, updates)}
+                key={`hole-${holeDef.id}`}
+                onHoleChange={handleHoleChange}
               />
             );
           }
@@ -74,8 +77,8 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
               <TextGroup
                 defaults={textDef.defaults}
                 id={textDef.id}
-                key={textDef.id}
-                onTextChange={(updates) => handleTextChange(textDef.id, updates)}
+                key={`text-${textDef.id}`}
+                onTextChange={handleTextChange}
                 text={texts[textDef.id]}
               />
             );
