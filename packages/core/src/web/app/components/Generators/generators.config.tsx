@@ -5,6 +5,7 @@ import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import GeneratorIcons from '@core/app/icons/generator/GeneratorIcons';
 import type { ILang } from '@core/interfaces/ILang';
 
+import { showKeyChainGenerator } from '../dialogs/KeyChainGenerator';
 import { showPuzzleGenerator } from '../dialogs/PuzzleGenerator';
 
 export interface GeneratorConfig {
@@ -40,6 +41,12 @@ export const getGenerators = ({ isMobile = false }: GetGeneratorsOptions = {}): 
       id: 'puzzle',
       onClick: () => showPuzzleGenerator(),
       titleKey: 'puzzle_generator',
+    } as const,
+    {
+      icon: <GeneratorIcons.Puzzle />,
+      id: 'keychain',
+      onClick: () => showKeyChainGenerator(),
+      titleKey: 'keychain_generator',
     } as const,
     {
       icon: <GeneratorIcons.Material />,
