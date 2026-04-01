@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Utvid til det faktiske maksimale arbeidsområdet, uten begrensning av heltalls rutenettlinjer.',
     use_union_boundary: 'Vis overlappende arbeidsområde',
     use_union_boundary_tooltip: 'Vis overlappende arbeidsområder for flere moduler',
+    vector_order_optimization: 'Vektorrekkefølgeoptimalisering',
     vector_speed_constraint: 'Fartsgrense',
     wrong_ip_format: 'Feil IP-format',
   },

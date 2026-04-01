@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Laajenna todelliseen maksimaaliseen työalueeseen, ilman rajoituksia kokonaislukuruudukon viivoilla.',
     use_union_boundary: 'Näytä päällekkäinen työalue',
     use_union_boundary_tooltip: 'Näytä useiden moduulien päällekkäiset työalueet',
+    vector_order_optimization: 'Vektorijärjestyksen optimointi',
     vector_speed_constraint: 'Nopeusrajoitus',
     wrong_ip_format: 'Väärä IP-muoto',
   },

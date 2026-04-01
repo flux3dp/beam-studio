@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: "Espandi all'area di lavoro massima effettiva, senza vincoli delle linee della griglia intera.",
     use_union_boundary: 'Mostra area di lavoro sovrapposta',
     use_union_boundary_tooltip: 'Visualizza aree di lavoro sovrapposte di più moduli',
+    vector_order_optimization: 'Ottimizzazione ordine vettori',
     vector_speed_constraint: 'Limite velocità',
     wrong_ip_format: 'Formati IP errati',
   },

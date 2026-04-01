@@ -98,6 +98,8 @@ export type GlobalPreference = {
   'use-auto-exposure'?: boolean;
   'use-real-boundary': boolean;
   'use-union-boundary': boolean;
+  /** Use GA optimize cutting order in swiftray */
+  use_ga_reorder: boolean;
   use_layer_color: boolean;
   vector_speed_constraint: boolean;
   zoom_with_window: boolean;

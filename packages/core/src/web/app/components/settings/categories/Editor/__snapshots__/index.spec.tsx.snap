@@ -351,12 +351,30 @@ exports[`settings/Editor initially no warning 1`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
+    true
+    disabled:
+    undefined
+    <input
+      checked=""
+      class="switch-control"
+      id="path-engine"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    use-ga-reorder
+    label:
+    Vector Order Optimization
+    url:
+    checked:
     false
     disabled:
     undefined
     <input
       class="switch-control"
-      id="path-engine"
+      id="use-ga-reorder"
       readonly=""
       type="checkbox"
     />
@@ -715,12 +733,30 @@ exports[`settings/Editor initially no warning 2`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
+    true
+    disabled:
+    undefined
+    <input
+      checked=""
+      class="switch-control"
+      id="path-engine"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    use-ga-reorder
+    label:
+    Vector Order Optimization
+    url:
+    checked:
     false
     disabled:
     undefined
     <input
       class="switch-control"
-      id="path-engine"
+      id="use-ga-reorder"
       readonly=""
       type="checkbox"
     />
@@ -1079,12 +1115,30 @@ exports[`settings/Editor initially no warning 3`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
+    true
+    disabled:
+    undefined
+    <input
+      checked=""
+      class="switch-control"
+      id="path-engine"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    use-ga-reorder
+    label:
+    Vector Order Optimization
+    url:
+    checked:
     false
     disabled:
     undefined
     <input
       class="switch-control"
-      id="path-engine"
+      id="use-ga-reorder"
       readonly=""
       type="checkbox"
     />
@@ -1443,12 +1497,30 @@ exports[`settings/Editor initially no warning 4`] = `
     url:
     https://support.flux3dp.com/hc/en-us/articles/11146997425039
     checked:
+    true
+    disabled:
+    undefined
+    <input
+      checked=""
+      class="switch-control"
+      id="path-engine"
+      readonly=""
+      type="checkbox"
+    />
+  </div>
+  <div>
+    mock-switch-control id:
+    use-ga-reorder
+    label:
+    Vector Order Optimization
+    url:
+    checked:
     false
     disabled:
     undefined
     <input
       class="switch-control"
-      id="path-engine"
+      id="use-ga-reorder"
       readonly=""
       type="checkbox"
     />

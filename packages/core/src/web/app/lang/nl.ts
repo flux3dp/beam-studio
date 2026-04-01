@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Uitbreiden tot het werkelijke maximale werkgebied, niet beperkt door gehele rasterlijnen.',
     use_union_boundary: 'Overlappend werkgebied weergeven',
     use_union_boundary_tooltip: 'Toon overlappende werkgebieden van meerdere modules',
+    vector_order_optimization: 'Vectorvolgorde-optimalisatie',
     vector_speed_constraint: 'Snelheidslimiet',
     wrong_ip_format: 'Ongeldig IP-formaat',
   },
