@@ -1,0 +1,22 @@
+.container {
+  display: flex;
+  flex-direction: row;
+  height: calc(100vh - 180px); // Full viewport minus modal header/footer
+  max-width: calc(95vw - 48px); // 48px: padding of antd modal
+  max-height: 800px; // Cap for very tall screens
+  gap: 16px;
+
+  &.mobile {
+    flex-direction: column;
+    height: auto;
+    max-height: 80svh;
+  }
+}
+
+// Footer with import button
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  height: 24px;
+}
