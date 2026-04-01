@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Rozšiřte na skutečnou maximální pracovní oblast bez omezení celočíselnými mřížkovými čarami.',
     use_union_boundary: 'Zobrazit překrývající se pracovní oblast',
     use_union_boundary_tooltip: 'Zobrazit překrývající se pracovní oblasti více modulů',
+    vector_order_optimization: 'Optimalizace pořadí vektorů',
     vector_speed_constraint: 'Omezení rychlosti',
     wrong_ip_format: 'Špatné formáty IP',
   },

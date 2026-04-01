@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Udvid til det faktiske maksimale arbejdsområde uden begrænsning af heltals gitterlinjer.',
     use_union_boundary: 'Vis overlappende arbejdsområde',
     use_union_boundary_tooltip: 'Vis overlappende arbejdsområder for flere moduler',
+    vector_order_optimization: 'Vektorrækkefølgeoptimering',
     vector_speed_constraint: 'Hastighedsgrænse',
     wrong_ip_format: 'Forkert IP-format',
   },

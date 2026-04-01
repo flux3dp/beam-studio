@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Kembangkan ke kawasan kerja maksimum sebenar, tanpa had oleh garis grid integer.',
     use_union_boundary: 'Papar kawasan kerja bertindih',
     use_union_boundary_tooltip: 'Paparkan kawasan kerja bertindih bagi beberapa modul',
+    vector_order_optimization: 'Pengoptimuman Susunan Vektor',
     vector_speed_constraint: 'Had Kelajuan',
     wrong_ip_format: 'Format IP Salah',
   },

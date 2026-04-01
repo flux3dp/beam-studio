@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Perluas ke area kerja maksimum aktual, tanpa batasan garis kisi bilangan bulat.',
     use_union_boundary: 'Tampilkan area kerja yang tumpang tindih',
     use_union_boundary_tooltip: 'Tampilkan area kerja yang tumpang tindih dari beberapa modul',
+    vector_order_optimization: 'Optimasi Urutan Vektor',
     vector_speed_constraint: 'Batas Kecepatan',
     wrong_ip_format: 'Format IP salah',
   },

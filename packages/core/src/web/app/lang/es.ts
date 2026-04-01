@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Expandir al área de trabajo máximo real, sin restricciones por líneas de cuadrícula enteras.',
     use_union_boundary: 'Mostrar área de trabajo superpuesta',
     use_union_boundary_tooltip: 'Mostrar áreas de trabajo superpuestas de varios módulos',
+    vector_order_optimization: 'Optimización del orden de vectores',
     vector_speed_constraint: 'Límite de velocidad',
     wrong_ip_format: 'Formatos IP incorrectos',
   },

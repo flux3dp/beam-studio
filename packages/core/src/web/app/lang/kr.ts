@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: '실제 최대 작업 영역까지 확장하며, 정수 격자선에 제한받지 않습니다.',
     use_union_boundary: '겹치는 작업 영역 표시',
     use_union_boundary_tooltip: '여러 모듈의 겹치는 작업 영역 표시',
+    vector_order_optimization: '벡터 순서 최적화',
     vector_speed_constraint: '속도 제한',
     wrong_ip_format: '잘못된 IP 형식',
   },

@@ -120,6 +120,8 @@ describe('settings/Editor', () => {
 
       if (key === 'model') return 'fbb1b';
 
+      if (key === 'path-engine') return 'swiftray';
+
       return false;
     });
   });
@@ -148,7 +150,7 @@ describe('settings/Editor', () => {
     //           print-advanced-mode, use-real-boundary, crop-task-thumbnail
     // Text: font-substitute, font-convert
     // Performance: image_downsampling, anti-aliasing, simplify_clipper_path, path-engine
-    expect(mockGetPreference).toHaveBeenCalledTimes(19);
+    expect(mockGetPreference).toHaveBeenCalledTimes(20);
     expect(mockGetPreference).toHaveBeenNthCalledWith(1, 'model');
     expect(mockGetPreference).toHaveBeenNthCalledWith(2, 'model-annotation');
     expect(mockGetPreference).toHaveBeenNthCalledWith(3, 'model');
@@ -164,10 +166,11 @@ describe('settings/Editor', () => {
     expect(mockGetPreference).toHaveBeenNthCalledWith(13, 'crop-task-thumbnail');
     expect(mockGetPreference).toHaveBeenNthCalledWith(14, 'font-substitute');
     expect(mockGetPreference).toHaveBeenNthCalledWith(15, 'font-convert');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(16, 'image_downsampling');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(17, 'anti-aliasing');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(18, 'simplify_clipper_path');
-    expect(mockGetPreference).toHaveBeenNthCalledWith(19, 'path-engine');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(16, 'path-engine');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(17, 'image_downsampling');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(18, 'anti-aliasing');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(19, 'simplify_clipper_path');
+    expect(mockGetPreference).toHaveBeenNthCalledWith(20, 'use_ga_reorder');
     expect(container).toMatchSnapshot();
 
     // Test SettingSelect controls - order is now (Workarea -> Text -> Performance):
@@ -321,7 +324,7 @@ describe('settings/Editor', () => {
     // path-engine (switch, not select - toggles between 'swiftray' and 'fluxghost')
     fireEvent.click(switchControls[11]);
     expect(mockSetPreference).toHaveBeenCalledTimes(1);
-    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'path-engine', 'swiftray');
+    expect(mockSetPreference).toHaveBeenNthCalledWith(1, 'path-engine', 'fluxghost');
     mockSetPreference.mockClear();
 
     // Test XYItem controls (guide axis)

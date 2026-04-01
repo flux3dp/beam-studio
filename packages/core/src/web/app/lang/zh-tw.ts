@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: '擴展至實際最大工作區域，不受整數格線限制。',
     use_union_boundary: '顯示重疊工作範圍',
     use_union_boundary_tooltip: '顯示多模組重疊的工作區域',
+    vector_order_optimization: '路徑順序最佳化',
     vector_speed_constraint: '限制上限速度',
     wrong_ip_format: 'IP格式錯誤',
   },
