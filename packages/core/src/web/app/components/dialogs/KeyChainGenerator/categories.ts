@@ -17,10 +17,11 @@ const DEFAULT_HOLE: HoleOptionValues = {
   offset: 0,
   position: 0,
   thickness: 1,
+  type: 'ring',
 };
 
 const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
-  content: '',
+  content: 'Key Chain',
   enabled: true,
   fontSize: 40,
   letterSpacing: 0,

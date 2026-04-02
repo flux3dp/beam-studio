@@ -1,7 +1,7 @@
 import paper from 'paper';
 import { PaperOffset } from 'paperjs-offset';
 
-import { PX_TO_MM_RATIO } from './constants';
+import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from './constants';
 import type { HoleOptionDef, KeyChainState } from './types';
 
 /**
@@ -65,8 +65,12 @@ export const applyHoles = (
 
     if (!hole?.enabled) continue;
 
+    const isPunch = hole.type === 'punch';
     const refPoint = path.bounds[holeDef.startPositionRef] as paper.Point;
-    const insetPath = PaperOffset.offset(path, hole.offset * PX_TO_MM_RATIO) as paper.Path;
+    const insetPath = PaperOffset.offset(
+      path,
+      (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * PX_TO_MM_RATIO,
+    ) as paper.Path;
     const startPoint = insetPath.getNearestPoint(refPoint);
     const startOffset = insetPath.getOffsetOf(startPoint);
 
@@ -78,16 +82,19 @@ export const applyHoles = (
 
     if (!point) continue;
 
-    const outerRadius = (hole.diameter / 2 + hole.thickness) * PX_TO_MM_RATIO;
     const innerRadius = (hole.diameter / 2) * PX_TO_MM_RATIO;
 
-    outerCircles.push(new paper.Path.Circle(point, outerRadius));
     innerCircles.push(new paper.Path.Circle(point, innerRadius));
+
+    if (!isPunch && hole.thickness > 0) {
+      const outerRadius = (hole.diameter / 2 + hole.thickness) * PX_TO_MM_RATIO;
+
+      outerCircles.push(new paper.Path.Circle(point, outerRadius));
+    }
   }
 
-  if (outerCircles.length === 0) return basePath;
+  if (outerCircles.length === 0 && innerCircles.length === 0) return basePath;
 
-  // Unite all outer circles with base
   let result: paper.PathItem = basePath;
 
   for (const circle of outerCircles) {

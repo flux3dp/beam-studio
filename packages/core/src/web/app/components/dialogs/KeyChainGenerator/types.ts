@@ -8,12 +8,14 @@ export interface KeyChainShape {
   svgElement: SVGSVGElement;
 }
 
+export type HoleType = 'punch' | 'ring';
 export interface HoleOptionValues {
   diameter: number;
   enabled: boolean;
   offset: number;
   position: number;
   thickness: number;
+  type: HoleType;
 }
 
 export interface HoleOptionDef {
