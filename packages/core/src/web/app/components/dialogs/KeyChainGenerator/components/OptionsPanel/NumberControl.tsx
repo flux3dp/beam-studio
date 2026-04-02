@@ -64,7 +64,15 @@ const NumberControl = ({
         </div>
       </div>
       {withSlider && (
-        <Slider max={max} min={min} onChange={onChange} step={step} tooltip={{ open: false }} value={value} />
+        <Slider
+          className={styles.slider}
+          max={max}
+          min={min}
+          onChange={onChange}
+          step={step}
+          tooltip={{ open: false }}
+          value={value}
+        />
       )}
     </div>
   );
