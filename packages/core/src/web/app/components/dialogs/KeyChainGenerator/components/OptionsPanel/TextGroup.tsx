@@ -7,12 +7,13 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { TextOptionValues } from '../../types';
 
+import FontSelect from './FontSelect';
 import GroupControl from './GroupControl';
 import styles from './GroupControl.module.scss';
 import NumberControl from './NumberControl';
 
 interface TextGroupProps {
-  defaults: TextOptionValues;
+  defaults: Omit<TextOptionValues, 'font'>;
   id: string;
   onTextChange: (id: string, updates: Partial<TextOptionValues>) => void;
   text: TextOptionValues;
@@ -34,6 +35,10 @@ const TextGroup = ({ defaults, id, onTextChange, text }: TextGroupProps): ReactN
     (lineSpacing: number) => onTextChange(id, { lineSpacing }),
     [id, onTextChange],
   );
+  const handleFontChange = useCallback(
+    (font: { family: string; postscriptName: string; style: string }) => onTextChange(id, { font }),
+    [id, onTextChange],
+  );
 
   return (
     <GroupControl enabled={text.enabled} id={id} onToggle={handleEnabledChange} title={t.text}>
@@ -44,15 +49,17 @@ const TextGroup = ({ defaults, id, onTextChange, text }: TextGroupProps): ReactN
           placeholder={t.text_placeholder}
           value={text.content}
         />
+        <FontSelect font={text.font} onChange={handleFontChange} />
         <NumberControl
           defaultValue={defaults.fontSize}
           label={t.font_size}
-          max={100}
+          max={300}
           min={10}
           onChange={handleFontSizeChange}
           step={1}
           unit="px"
           value={text.fontSize}
+          withSlider={false}
         />
         <NumberControl
           defaultValue={defaults.letterSpacing}
@@ -63,16 +70,18 @@ const TextGroup = ({ defaults, id, onTextChange, text }: TextGroupProps): ReactN
           step={0.5}
           unit="px"
           value={text.letterSpacing}
+          withSlider={false}
         />
         <NumberControl
           defaultValue={defaults.lineSpacing}
           label={t.line_spacing}
-          max={3}
+          max={5}
           min={0.5}
           onChange={handleLineSpacingChange}
           step={0.1}
           unit="x"
           value={text.lineSpacing}
+          withSlider={false}
         />
       </div>
     </GroupControl>
