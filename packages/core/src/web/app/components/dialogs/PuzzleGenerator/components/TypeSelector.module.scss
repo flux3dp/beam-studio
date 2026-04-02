@@ -12,6 +12,13 @@
     overflow-x: auto;
     overflow-y: hidden;
   }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    grid-column: 1 / -1;
+    flex-direction: row;
+    overflow-x: auto;
+    overflow-y: hidden;
+  }
 }
 
 .type-item {
