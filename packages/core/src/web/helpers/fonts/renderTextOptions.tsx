@@ -1,3 +1,5 @@
+import React from 'react';
+
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 
