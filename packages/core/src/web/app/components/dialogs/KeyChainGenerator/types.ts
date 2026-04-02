@@ -27,6 +27,11 @@ export interface HoleOptionDef {
 export interface TextOptionValues {
   content: string;
   enabled: boolean;
+  font: {
+    family: string;
+    postscriptName: string;
+    style: string;
+  };
   fontSize: number;
   letterSpacing: number;
   lineSpacing: number;
@@ -34,7 +39,7 @@ export interface TextOptionValues {
 
 export interface TextOptionDef {
   bounds: { height: number; width: number; x: number; y: number };
-  defaults: TextOptionValues;
+  defaults: Omit<TextOptionValues, 'font'>;
   id: string;
   label?: string;
   type: 'text';

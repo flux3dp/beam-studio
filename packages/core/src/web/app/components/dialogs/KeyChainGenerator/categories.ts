@@ -1,3 +1,6 @@
+import fontFuncs from '@core/app/actions/beambox/font-funcs';
+import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
+
 import { BASE_RECTANGLE } from './constants';
 import type {
   HoleOptionDef,
@@ -16,7 +19,7 @@ const DEFAULT_HOLE: HoleOptionValues = {
   thickness: 1,
 };
 
-const DEFAULT_TEXT: TextOptionValues = {
+const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
   content: '',
   enabled: true,
   fontSize: 40,
@@ -60,6 +63,9 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
     texts: {},
   };
 
+  const { font_family, font_postscriptName } = getDefaultFont();
+  const fontObj = fontFuncs.getFontOfPostscriptName(font_postscriptName);
+
   for (const option of category.options) {
     if (option.type === 'hole') {
       const holeDef = option as HoleOptionDef;
@@ -68,7 +74,10 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
     } else if (option.type === 'text') {
       const textDef = option as TextOptionDef;
 
-      result.texts[textDef.id] = { ...textDef.defaults };
+      result.texts[textDef.id] = {
+        ...textDef.defaults,
+        font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
+      };
     }
   }
 

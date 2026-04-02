@@ -67,21 +67,21 @@ export const generateStyleFromWeightAndItalic = (weight: number, italic: boolean
 
 export const getWeightAndStyleFromVariant = (variant: string) =>
   match(variant)
-    .with('regular', () => ({ style: 'Regular', weight: 400 }))
-    .with('italic', () => ({ style: 'Italic', weight: 400 }))
+    .with('regular', () => ({ italic: false, style: 'Regular', weight: 400 }))
+    .with('italic', () => ({ italic: true, style: 'Italic', weight: 400 }))
     .with(P.string.endsWith('italic'), (v) => {
       const weight = Number.parseInt(v.replace('italic', ''), 10) as FontWeight;
       const style = WEIGHT_TO_STYLE_MAP[weight] || 'Italic';
 
-      return { style: `${style} Italic`, weight };
+      return { italic: true, style: `${style} Italic`, weight };
     })
     .with(P.string.regex(/^\d+$/), (v) => {
       const weight = Number.parseInt(v, 10) as FontWeight;
       const style = WEIGHT_TO_STYLE_MAP[weight] || 'Regular';
 
-      return { style, weight };
+      return { italic: false, style, weight };
     })
-    .otherwise(() => ({ style: 'Regular', weight: 400 }));
+    .otherwise(() => ({ italic: false, style: 'Regular', weight: 400 }));
 
 export const createGoogleFontObject = ({
   fontFamily,
