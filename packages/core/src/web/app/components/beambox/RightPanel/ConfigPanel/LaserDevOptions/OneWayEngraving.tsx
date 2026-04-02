@@ -7,7 +7,6 @@ import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import isDev from '@core/helpers/is-dev';
 import { writeData } from '@core/helpers/layer/layer-config-helper';
 
 import styles from '../Block.module.scss';
@@ -15,7 +14,6 @@ import { initState } from '../initState';
 
 const OneWayEngraving = () => {
   const { change, oneWayEngraving, oneWayEngravingReverse } = useConfigPanelStore();
-  const isDevMode = isDev();
 
   const handleToggle = useCallback(
     (key: 'oneWayEngraving' | 'oneWayEngravingReverse', val: boolean) => {
@@ -31,8 +29,6 @@ const OneWayEngraving = () => {
     },
     [change],
   );
-
-  if (!isDevMode) return null;
 
   return (
     <>

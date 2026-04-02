@@ -18,6 +18,9 @@ type CommonConfig = {
 };
 
 type LaserConfig = {
+  /** layer level acc override, mm/s^2, 0 for not override */
+  accX: number;
+  accY: number;
   /** 0-100, percentage */
   airAssist: number;
   /** μs ,delay to emit laser */
@@ -33,6 +36,8 @@ type LaserConfig = {
   oneWayEngravingReverse: boolean;
   power: number;
   speed: number;
+  /** layer level travel speed, mm/s, 0 for not override, not for promark */
+  travelSpeed: number;
   zStep: number;
 };
 

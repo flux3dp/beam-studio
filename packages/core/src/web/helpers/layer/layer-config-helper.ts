@@ -20,6 +20,8 @@ import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ConfigKey, ConfigKeyTypeMap, ILayerConfig, Preset } from '@core/interfaces/ILayerConfig';
 
 const attributeMap: Record<ConfigKey, string> = {
+  accX: 'data-accX',
+  accY: 'data-accY',
   airAssist: 'data-airAssist',
   amAngleMap: 'data-amAngleMap',
   amDensity: 'data-amDensity',
@@ -68,6 +70,7 @@ const attributeMap: Record<ConfigKey, string> = {
   rightPadding: 'data-rightPadding',
   speed: 'data-speed',
   split: 'data-split',
+  travelSpeed: 'data-travelSpeed',
   uvCuringAfter: 'data-uvCuringAfter',
   uvCuringRepeat: 'data-uvCuringRepeat',
   uvPrintingRepeat: 'data-uvPrintingRepeat',
@@ -86,6 +89,8 @@ const attributeMap: Record<ConfigKey, string> = {
 export const CUSTOM_PRESET_CONSTANT = ' ';
 
 export const baseConfig: Partial<ConfigKeyTypeMap> = {
+  accX: 0,
+  accY: 0,
   airAssist: 100,
   amDensity: 2,
   backlash: 0,
@@ -130,6 +135,7 @@ export const baseConfig: Partial<ConfigKeyTypeMap> = {
   repeat: 1,
   rightPadding: 0,
   speed: 20,
+  travelSpeed: 0,
   uvCuringAfter: false,
   uvCuringRepeat: 1,
   uvPrintingRepeat: 1,
@@ -203,6 +209,9 @@ export const timeRelatedConfigs: Set<ConfigKey> = new Set([
   'highQuality',
   'oneWayEngraving',
   'oneWayEngravingReverse',
+  'accX',
+  'accY',
+  'travelSpeed',
   // printing
   'printingSpeed',
   'multipass',
