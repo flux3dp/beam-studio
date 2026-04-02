@@ -1600,11 +1600,25 @@ export interface ILang {
   };
   keychain_generator: {
     export_failed: string;
+    font_size: string;
+    hole: string;
+    hole_diameter: string;
+    hole_offset: string;
+    hole_position: string;
+    hole_thickness: string;
+    hole_type: string;
+    hole_type_punch: string;
+    hole_type_ring: string;
     import_to_canvas: string;
     layers: {
       keychain: string;
     };
+    letter_spacing: string;
+    line_spacing: string;
+    reset_to_default: string;
     switch_type_warning: string;
+    text: string;
+    text_placeholder: string;
     types: {
       rectangle: string;
     };
