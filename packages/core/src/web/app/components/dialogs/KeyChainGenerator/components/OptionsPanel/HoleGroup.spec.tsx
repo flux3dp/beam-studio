@@ -1,23 +1,24 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
-jest.mock('antd', () => ({
-  Collapse: ({ activeKey, items }: any) => (
-    <div data-testid="collapse">
-      {items.map((item: any) => (
-        <div key={item.key}>
-          <div data-testid="collapse-header">{item.label}</div>
-          {(activeKey || []).includes(item.key) && <div data-testid="collapse-content">{item.children}</div>}
-        </div>
-      ))}
-    </div>
-  ),
-  Switch: ({ checked, onChange }: any) => (
-    <button data-testid="switch" onClick={() => onChange?.(!checked)}>
-      {String(checked)}
+jest.mock('@core/app/widgets/AntdSelect', () => ({ onChange, options, value }: any) => (
+  <select data-testid="select" onChange={(e) => onChange?.(e.target.value)} value={value}>
+    {options?.map((o: any) => (
+      <option key={o.value} value={o.value}>
+        {o.label}
+      </option>
+    ))}
+  </select>
+));
+
+jest.mock('./GroupControl', () => ({ children, enabled, onToggle }: any) => (
+  <div data-testid="group-control">
+    <button data-testid="switch" onClick={() => onToggle?.(!enabled)}>
+      {String(enabled)}
     </button>
-  ),
-}));
+    {enabled && <div data-testid="group-content">{children}</div>}
+  </div>
+));
 
 jest.mock('./NumberControl', () => ({ label, onChange, value }: any) => (
   <div data-testid={`slider-${label}`}>
@@ -37,6 +38,7 @@ describe('HoleGroup', () => {
     offset: 0,
     position: 0,
     thickness: 1,
+    type: 'ring',
   };
 
   const defaultProps = {
@@ -71,7 +73,7 @@ describe('HoleGroup', () => {
     const { getByTestId } = render(<HoleGroup {...defaultProps} />);
 
     getByTestId('switch').click();
-    expect(defaultProps.onHoleChange).toHaveBeenCalledWith({ enabled: false });
+    expect(defaultProps.onHoleChange).toHaveBeenCalledWith('hole-top', { enabled: false });
   });
 
   it('should clamp offset when it exceeds maxOffset', () => {
@@ -79,15 +81,15 @@ describe('HoleGroup', () => {
     const hole = { ...defaults, offset: 10 };
 
     render(<HoleGroup {...defaultProps} hole={hole} />);
-    expect(defaultProps.onHoleChange).toHaveBeenCalledWith({ offset: 2 });
+    expect(defaultProps.onHoleChange).toHaveBeenCalledWith('hole-top', { offset: 2 });
   });
 
   it('should clamp offset when it is below minOffset', () => {
-    // minOffset = -2 * diameter = -6
+    // minOffset (ring) = -(diameter/2) - thickness + 0.5 = -1.5 - 1 + 0.5 = -2
     const hole = { ...defaults, offset: -10 };
 
     render(<HoleGroup {...defaultProps} hole={hole} />);
-    expect(defaultProps.onHoleChange).toHaveBeenCalledWith({ offset: -6 });
+    expect(defaultProps.onHoleChange).toHaveBeenCalledWith('hole-top', { offset: -2 });
   });
 
   it('should not clamp offset when within range', () => {
