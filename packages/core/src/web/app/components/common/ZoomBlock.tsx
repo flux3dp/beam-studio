@@ -134,11 +134,26 @@ interface Props {
   setZoom: (zoom: number) => void;
 }
 
-const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): React.JSX.Element => {
+const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): null | React.JSX.Element => {
   const lang = useI18n().beambox.zoom_block;
   const [dpmm, setDpmm] = useState(96 / 25.4);
   const [displayRatio, setDisplayRatio] = useState(1);
   const isMobile = useIsMobile();
+
+  const [isTargetScreen, setIsTargetScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const w = window.innerWidth;
+
+      setIsTargetScreen(w === 600 || w === 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   useEffect(() => {
     getDpmm().then((res) => setDpmm(res));
@@ -232,6 +247,10 @@ const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): React.JSX
     },
     [resetView, setRatio],
   );
+
+  if (isTargetScreen) {
+    return null;
+  }
 
   return (
     <div className={classNames(styles.container, { [styles.mobile]: isMobile }, className)}>

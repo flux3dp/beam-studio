@@ -65,7 +65,7 @@ exports[`test svg-editor should render correctly in mac 1`] = `
             MockTimeEstimationButton
           </div>
           <div>
-            MockPreviewSlider
+            MockCanvasSlider
           </div>
         </div>
       </div>
@@ -157,7 +157,7 @@ exports[`test svg-editor should render correctly in win 1`] = `
             MockTimeEstimationButton
           </div>
           <div>
-            MockPreviewSlider
+            MockCanvasSlider
           </div>
         </div>
       </div>

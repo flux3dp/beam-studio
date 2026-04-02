@@ -2659,6 +2659,12 @@ const lang: ILang = {
     retest: '重新测试',
     testing: '正在执行负载测试...',
   },
+  zoom_block: {
+    canvas_zoom: '画布调整',
+    estimate_time: '计算时间',
+    exposure: '曝光值',
+    opacity: '透明度',
+  },
 };
 
 export default lang;

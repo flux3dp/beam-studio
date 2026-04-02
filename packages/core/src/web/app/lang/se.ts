@@ -2659,6 +2659,12 @@ const lang: ILang = {
     retest: 'Testa igen',
     testing: 'Utför belastningstest...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Beräkna tid',
+    exposure: 'Exponering',
+    opacity: 'Genomskinlighet',
+  },
 };
 
 export default lang;

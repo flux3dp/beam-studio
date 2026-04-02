@@ -2659,6 +2659,12 @@ const lang: ILang = {
     retest: 'Επανάληψη δοκιμής',
     testing: 'Εκτελείται δοκιμή φόρτωσης...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Υπολογισμός χρόνου',
+    exposure: 'Έκθεση',
+    opacity: 'Αδιαφάνεια',
+  },
 };
 
 export default lang;

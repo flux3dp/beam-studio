@@ -2659,6 +2659,12 @@ const lang: ILang = {
     retest: 'Przetestuj ponownie',
     testing: 'Przeprowadzanie testu obciążenia...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Oblicz czas',
+    exposure: 'Ekspozycja',
+    opacity: 'Przezroczystość',
+  },
 };
 
 export default lang;

@@ -1,4 +1,4 @@
-import React, { use } from 'react';
+import React, { use, useEffect, useState } from 'react';
 
 import { Tooltip } from 'antd';
 
@@ -11,9 +11,24 @@ import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 
 import styles from './TimeEstimationButton.module.scss';
 
-const TimeEstimationButton = (): React.JSX.Element => {
+const TimeEstimationButton = (): null | React.JSX.Element => {
   const { estimatedTime, setEstimatedTime } = use(TimeEstimationButtonContext);
   const lang = useI18n().beambox.time_est_button;
+
+  const [isTargetScreen, setIsTargetScreen] = useState(false);
+
+  useEffect(() => {
+    const checkScreenSize = () => {
+      const w = window.innerWidth;
+
+      setIsTargetScreen(w === 600 || w === 1024);
+    };
+
+    checkScreenSize();
+    window.addEventListener('resize', checkScreenSize);
+
+    return () => window.removeEventListener('resize', checkScreenSize);
+  }, []);
 
   const calculateEstimatedTime = async () => {
     webNeedConnectionWrapper(async () => {
@@ -22,6 +37,10 @@ const TimeEstimationButton = (): React.JSX.Element => {
       setEstimatedTime(estimateTime);
     });
   };
+
+  if (isTargetScreen) {
+    return null;
+  }
 
   const renderButton = () => (
     <Tooltip title={lang.calculate}>

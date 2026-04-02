@@ -2659,6 +2659,12 @@ const lang: ILang = {
     retest: 'Opnieuw testen',
     testing: 'Bezig met het uitvoeren van de belastingtest...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Tijd berekenen',
+    exposure: 'Belichting',
+    opacity: 'Dekking',
+  },
 };
 
 export default lang;

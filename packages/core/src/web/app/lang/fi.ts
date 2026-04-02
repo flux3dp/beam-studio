@@ -2659,6 +2659,12 @@ const lang: ILang = {
     retest: 'Testaa uudelleen',
     testing: 'Suoritetaan kuormitustestiä...',
   },
+  zoom_block: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Laske aika',
+    exposure: 'Valotus',
+    opacity: 'Läpinäkyvyys',
+  },
 };
 
 export default lang;

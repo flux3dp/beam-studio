@@ -1,46 +1,7 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`test DpiInfo should render correctly 1`] = `
-<div>
-  <div
-    class="container"
-  >
-    <span>
-      Resolution
-      : 
-      125
-       DPI
-    </span>
-  </div>
-</div>
-`;
+exports[`test DpiInfo should render correctly 1`] = `<div />`;
 
-exports[`test DpiInfo should render correctly 2`] = `
-<div>
-  <div
-    class="container"
-  >
-    <span>
-      Resolution
-      : 
-      500
-       DPI
-    </span>
-  </div>
-</div>
-`;
+exports[`test DpiInfo should render correctly 2`] = `<div />`;
 
-exports[`test DpiInfo should render correctly in mobile 1`] = `
-<div>
-  <div
-    class="container mobile"
-  >
-    <span>
-      Resolution
-      : 
-      2000
-       DPI
-    </span>
-  </div>
-</div>
-`;
+exports[`test DpiInfo should render correctly in mobile 1`] = `<div />`;

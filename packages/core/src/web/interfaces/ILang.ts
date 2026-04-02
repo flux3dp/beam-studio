@@ -2656,4 +2656,10 @@ export interface ILang {
     retest: string;
     testing: string;
   };
+  zoom_block: {
+    canvas_zoom: string;
+    estimate_time: string;
+    exposure: string;
+    opacity: string;
+  };
 }
