@@ -17,16 +17,6 @@ interface OptionsPanelProps {
   category: KeyChainCategory;
 }
 
-const resolveCategoryName = (t: ReturnType<typeof useI18n>['keychain_generator'], nameKey: string): string => {
-  const parts = nameKey.split('.');
-
-  if (parts.length === 2 && parts[0] === 'types') {
-    return t.types?.[parts[1] as keyof typeof t.types] ?? nameKey;
-  }
-
-  return nameKey;
-};
-
 const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
   const { keychain_generator: t } = useI18n();
   const isMobile = useIsMobile();
@@ -53,7 +43,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
 
   return (
     <div className={classNames(styles.panel, { [styles.mobile]: isMobile })}>
-      <div className={styles.header}>{resolveCategoryName(t, category.nameKey)}</div>
+      <div className={styles.header}>{t.types[category.nameKey]}</div>
       <div className={styles.content}>
         {category.options.map((option) => {
           if (option.type === 'hole') {
