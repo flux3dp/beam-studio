@@ -4,7 +4,7 @@ import { useStorageStore } from '@core/app/stores/storageStore';
 import { calculateRetryDelay, MAX_RETRY_ATTEMPTS, REQUEST_TIMEOUT } from '@core/helpers/fonts/cacheUtils';
 import { createGoogleFontObject, getWeightAndStyleFromVariant } from '@core/helpers/fonts/fontUtils';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
-import type { GeneralFont } from '@core/interfaces/IFont';
+import type { GeneralFont, GoogleFont } from '@core/interfaces/IFont';
 
 import {
   CSS_CLEANUP_INTERVAL,
@@ -525,22 +525,33 @@ export const useGoogleFontStore = create<GoogleFontStore>((set, get) => ({
         return;
       }
 
-      const { style, weight } = getWeightAndStyleFromVariant(fontData.variants[0]);
-      const googleFont = createGoogleFontObject({
-        binaryLoader: get().loadGoogleFontBinary,
-        fontFamily,
-        style,
-        weight,
-      });
+      const newGoogleFonts: GoogleFont[] = [];
+      const { registeredFonts, loadGoogleFontBinary } = get();
 
-      if (get().registeredFonts.has(googleFont.postscriptName)) {
+      for (const variant of fontData.variants) {
+        const { style, weight } = getWeightAndStyleFromVariant(variant);
+        const googleFont = createGoogleFontObject({
+          binaryLoader: loadGoogleFontBinary,
+          fontFamily,
+          style,
+          weight,
+        });
+
+        if (!registeredFonts.has(googleFont.postscriptName)) {
+          newGoogleFonts.push(googleFont);
+        }
+      }
+
+      if (newGoogleFonts.length === 0) {
         return;
       }
 
       set((state) => {
         const newRegisteredFonts = new Map(state.registeredFonts);
 
-        newRegisteredFonts.set(googleFont.postscriptName, googleFont);
+        for (const font of newGoogleFonts) {
+          newRegisteredFonts.set(font.postscriptName, font);
+        }
 
         return { registeredFonts: newRegisteredFonts };
       });
