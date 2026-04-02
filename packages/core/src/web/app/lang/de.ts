@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Auf den tatsächlichen maximalen Arbeitsbereich erweitern, ohne durch Ganzzahllinien eingeschränkt zu sein.',
     use_union_boundary: 'Überlappenden Arbeitsbereich anzeigen',
     use_union_boundary_tooltip: 'Anzeige überlappender Arbeitsbereiche mehrerer Module',
+    vector_order_optimization: 'Vektor-Reihenfolge-Optimierung',
     vector_speed_constraint: 'Geschwindigkeitsbegrenzung',
     wrong_ip_format: 'Falsche IP-Formate',
   },

@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'ขยายไปยังพื้นที่ทำงานสูงสุดที่แท้จริง โดยไม่จำกัดด้วยเส้นกริดจำนวนเต็ม',
     use_union_boundary: 'แสดงพื้นที่ทำงานซ้อนทับ',
     use_union_boundary_tooltip: 'แสดงพื้นที่ทำงานที่ซ้อนทับของโมดูลหลายตัว',
+    vector_order_optimization: 'การเพิ่มประสิทธิภาพลำดับเวกเตอร์',
     vector_speed_constraint: 'ขีดจํากัดความเร็ว',
     wrong_ip_format: 'รูปแบบ IP ไม่ถูกต้อง',
   },

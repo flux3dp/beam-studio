@@ -412,6 +412,8 @@ export const getExportOpt = async (
     config.segment = false;
   }
 
+  config.use_ga_reorder = globalPreference.use_ga_reorder;
+
   if (documentState.auto_shrink) {
     let value = workareaObj.autoShrink;
 

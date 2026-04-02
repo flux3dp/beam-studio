@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Étendre à la zone de travail maximale réelle, sans restriction par les lignes de la grille entière.',
     use_union_boundary: 'Afficher la zone de travail superposée',
     use_union_boundary_tooltip: 'Afficher les zones de travail qui se chevauchent de plusieurs modules',
+    vector_order_optimization: "Optimisation de l'ordre des vecteurs",
     vector_speed_constraint: 'Limite de vitesse',
     wrong_ip_format: 'Formats IP incorrects',
   },

@@ -2170,6 +2170,7 @@ export interface ILang {
     use_real_boundary_tooltip: string;
     use_union_boundary: string;
     use_union_boundary_tooltip: string;
+    vector_order_optimization: string;
     vector_speed_constraint: string;
     wrong_ip_format: string;
   };

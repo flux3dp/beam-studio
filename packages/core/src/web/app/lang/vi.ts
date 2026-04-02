@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Mở rộng đến vùng làm việc tối đa thực tế, không bị giới hạn bởi các đường lưới số nguyên.',
     use_union_boundary: 'Hiển thị khu vực làm việc chồng chéo',
     use_union_boundary_tooltip: 'Hiển thị vùng làm việc chồng lên nhau của nhiều mô-đun',
+    vector_order_optimization: 'Tối ưu hóa thứ tự vector',
     vector_speed_constraint: 'Giới hạn tốc độ',
     wrong_ip_format: 'Định dạng IP không hợp lệ',
   },

@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Rozszerz do rzeczywistego maksymalnego obszaru roboczego, niezależnie od linii siatki całkowitej.',
     use_union_boundary: 'Pokaż nakładający się obszar roboczy',
     use_union_boundary_tooltip: 'Wyświetl nakładające się obszary robocze wielu modułów',
+    vector_order_optimization: 'Optymalizacja kolejności wektorów',
     vector_speed_constraint: 'Ograniczenie prędkości',
     wrong_ip_format: 'Niewłaściwe formaty adresów IP',
   },

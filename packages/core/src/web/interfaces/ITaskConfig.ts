@@ -157,6 +157,10 @@ export type TFcodeOptionalConfig = Partial<{
    */
   ts: number;
   /**
+   * Whether to use GA optimize cutting order in swiftray, default is true in backend
+   */
+  use_ga_reorder: boolean;
+  /**
    * with vector speed constraint, used for ghost 2.3.4 and before
    */
   vsc: boolean;

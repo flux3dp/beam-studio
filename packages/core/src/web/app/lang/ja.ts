@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: '実際の最大作業領域まで拡張し、整数グリッド線の制限を受けません。',
     use_union_boundary: '重なっている作業領域を表示',
     use_union_boundary_tooltip: '複数モジュールの重複する作業領域を表示',
+    vector_order_optimization: 'ベクター順序最適化',
     vector_speed_constraint: '速度制限',
     wrong_ip_format: '間違ったIP形式',
   },

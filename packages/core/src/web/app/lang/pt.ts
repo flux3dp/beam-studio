@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Expanda para a área de trabalho máxima real, sem restrição pelas linhas da grade inteira.',
     use_union_boundary: 'Mostrar Área de Trabalho Sobreposta',
     use_union_boundary_tooltip: 'Exibir áreas de trabalho sobrepostas de múltiplos módulos',
+    vector_order_optimization: 'Otimização da ordem dos vetores',
     vector_speed_constraint: 'Limite de velocidade',
     wrong_ip_format: 'Formatos de IP incorretos',
   },

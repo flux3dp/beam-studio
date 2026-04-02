@@ -2173,6 +2173,7 @@ const lang: ILang = {
     use_real_boundary_tooltip: 'Επέκταση στην πραγματική μέγιστη περιοχή εργασίας, χωρίς περιορισμό από γραμμές ακέραιου πλέγματος.',
     use_union_boundary: 'Εμφάνιση επικαλυπτόμενης περιοχής εργασίας',
     use_union_boundary_tooltip: 'Εμφάνιση επικαλυπτόμενων περιοχών εργασίας πολλών μονάδων',
+    vector_order_optimization: 'Βελτιστοποίηση σειράς διανυσμάτων',
     vector_speed_constraint: 'Όριο ταχύτητας',
     wrong_ip_format: 'Λανθασμένη μορφή IP',
   },
