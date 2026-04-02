@@ -11,6 +11,13 @@
     height: auto;
     max-height: 80svh;
   }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    grid-template-rows: auto 1fr;
+    width: calc(95vw - 48px);
+  }
 }
 
 // Footer with import button
