@@ -3,10 +3,10 @@ import NS from '@core/app/constants/namespaces';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
+import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -18,23 +18,6 @@ let svgCanvas: ISVGCanvas;
 getSVGAsync(({ Canvas }) => {
   svgCanvas = Canvas;
 });
-
-/**
- * Returns a unique layer name by appending a numeric suffix if needed.
- */
-const getUniqueLayerName = (baseName: string): string => {
-  if (!layerManager.getLayerByName(baseName)) {
-    return baseName;
-  }
-
-  let n = 2;
-
-  while (layerManager.getLayerByName(`${baseName} ${n}`)) {
-    n += 1;
-  }
-
-  return `${baseName} ${n}`;
-};
 
 /**
  * Converts all <text> elements in the SVG to <path> elements using fontkit.
@@ -119,14 +102,9 @@ export const exportToCanvas = async (): Promise<void> => {
 
   const batchCmd = new history.BatchCommand('Export Keychain');
   const { layers: tLayers } = i18n.lang.keychain_generator;
-  const layerName = getUniqueLayerName(tLayers.keychain);
+  const { name } = createLayer(tLayers.keychain, { parentCmd: batchCmd });
 
-  // Create a new layer (automatically sets it as current layer)
-  const newLayer = layerManager.createLayer(layerName, { parentCmd: batchCmd });
-
-  if (newLayer) {
-    useLayerStore.getState().setSelectedLayers([newLayer.getName()]);
-  }
+  useLayerStore.getState().setSelectedLayers([name]);
 
   // Add each path element directly to the canvas
   const srcPaths = Array.from(outSvg.querySelectorAll('path'));
