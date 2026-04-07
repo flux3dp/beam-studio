@@ -12,7 +12,6 @@ import Elements, {
   SearchMap,
   SubTypeSearchKeyMap,
 } from '@core/app/constants/element-panel-constants';
-import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setStorage, useStorageStore } from '@core/app/stores/storageStore';
 import { getCurrentUser, getNPIconsByTerm } from '@core/helpers/api/flux-id';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
@@ -78,12 +77,12 @@ interface ElementPanelContextType {
   addToHistory: (history: History) => void;
   allTypes: MainType[];
   cacheRef: React.MutableRefObject<ICache>;
-  closeDrawer: () => void;
   contents: Content[];
   contentType: ContentType;
   getNPIcons: (contentObj: Content) => Promise<void>;
   hasLogin: boolean;
   historyIcons: History[];
+  onClose: () => void;
   open: boolean;
   searchKey: string | undefined;
   setActiveMainType: React.Dispatch<React.SetStateAction<MainType>>;
@@ -98,12 +97,12 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
   addToHistory: () => {},
   allTypes: MainTypes,
   cacheRef: { current: { [ContentType.MainType]: {}, [ContentType.Search]: {}, [ContentType.SubType]: {} } },
-  closeDrawer: () => {},
   contents: [],
   contentType: ContentType.MainType,
   getNPIcons: async () => {},
   hasLogin: false,
   historyIcons: [],
+  onClose: () => {},
   open: false,
   searchKey: undefined,
   setActiveMainType: () => {},
@@ -114,12 +113,13 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
 
 interface ElementPanelProviderProps {
   children: React.ReactNode;
+  onClose: () => void;
+  open: boolean;
 }
 
 const previewCount = 12;
 
-export const ElementPanelProvider = ({ children }: ElementPanelProviderProps): ReactNode => {
-  const { drawerMode, setDrawerMode } = useCanvasStore();
+export const ElementPanelProvider = ({ children, onClose, open }: ElementPanelProviderProps): ReactNode => {
   const [activeMainType, setActiveMainType] = useState(MainTypes[0]);
   const [activeSubType, setActiveSubType] = useState<SubType | undefined>(undefined);
   const [hasLogin, setHasLogin] = useState(!!getCurrentUser());
@@ -165,8 +165,6 @@ export const ElementPanelProvider = ({ children }: ElementPanelProviderProps): R
 
     return ContentType.MainType;
   }, [activeSubType, activeMainType, searchKey]);
-
-  const closeDrawer = () => setDrawerMode('none');
 
   const addToHistory = (history: History) => {
     const newHistory = historyIcons.filter(
@@ -365,13 +363,13 @@ export const ElementPanelProvider = ({ children }: ElementPanelProviderProps): R
         addToHistory,
         allTypes,
         cacheRef,
-        closeDrawer,
         contents,
         contentType,
         getNPIcons,
         hasLogin,
         historyIcons,
-        open: drawerMode === 'element-panel',
+        onClose,
+        open,
         searchKey,
         setActiveMainType,
         setActiveSubType,

@@ -1,13 +1,16 @@
 import type { ReactNode } from 'react';
-import React, { use } from 'react';
+import React, { use, useCallback } from 'react';
 
 import classNames from 'classnames';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/shallow';
 
 import { ContentType } from '@core/app/constants/element-panel-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
 import { ElementPanelContext, ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
-import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
+import Drawer from '@core/app/widgets/Drawer';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import useI18n from '@core/helpers/useI18n';
 
@@ -17,8 +20,12 @@ import MainContent from './MainContent';
 import MainTypeSelector from './MainTypeSelector';
 import SearchBar from './SearchBar';
 
-export const ElementPanelContent = (): ReactNode => {
-  const { allTypes, closeDrawer, contentType, open } = use(ElementPanelContext);
+interface ElementPanelContentProps {
+  drawerPlacement?: React.ComponentProps<typeof Drawer>['placement'];
+}
+
+export const ElementPanelContent = ({ drawerPlacement }: ElementPanelContentProps): ReactNode => {
+  const { allTypes, contentType, onClose, open } = use(ElementPanelContext);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();
   const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
@@ -40,18 +47,20 @@ export const ElementPanelContent = (): ReactNode => {
         </div>
       }
       forceClose={!open}
-      onClose={closeDrawer}
+      onClose={onClose}
       title={lang.title}
     >
       <MainContent types={allTypes} />
     </FloatingPanel>
   ) : (
-    <ToolBarDrawer
+    <Drawer
       classNames={{ body: styles['drawer-body'], header: styles['drawer-header'] }}
       closeIcon={null}
       destroyOnClose
       enableResizable={false}
-      mode="element-panel"
+      isOpen={open}
+      onClose={onClose}
+      placement={drawerPlacement}
       rootClassName={styles.drawer}
       title={
         <div className={classNames(styles.header, { [styles['hide-search']]: contentType !== ContentType.Search })}>
@@ -62,13 +71,16 @@ export const ElementPanelContent = (): ReactNode => {
       }
     >
       <MainContent types={allTypes} />
-    </ToolBarDrawer>
+    </Drawer>
   );
 };
 
 const ElementPanel = () => {
+  const { drawerMode, setDrawerMode } = useCanvasStore(useShallow(pick(['drawerMode', 'setDrawerMode'])));
+  const onClose = useCallback(() => setDrawerMode('none'), [setDrawerMode]);
+
   return (
-    <ElementPanelProvider>
+    <ElementPanelProvider onClose={onClose} open={drawerMode === 'element-panel'}>
       <ElementPanelContent />
     </ElementPanelProvider>
   );
