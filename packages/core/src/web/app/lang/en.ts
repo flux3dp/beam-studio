@@ -2660,7 +2660,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
   },
   zoom_block: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Calculate Time',
+    estimate_time: 'Calculate',
     exposure: 'Exposure',
     opacity: 'Opacity',
   },

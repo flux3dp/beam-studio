@@ -2661,7 +2661,7 @@ const lang: ILang = {
   },
   zoom_block: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Vypočítat čas',
+    estimate_time: 'Vypočítat',
     exposure: 'Expozice',
     opacity: 'Průhlednost',
   },

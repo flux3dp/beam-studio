@@ -1,0 +1,90 @@
+.container {
+  display: flex;
+  height: 40px;
+  padding: 0px 16px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 60px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+
+  .icon {
+    font-size: 22px;
+  }
+
+  @media screen and (max-width: 600px) {
+    height: 30px;
+
+    .icon {
+      font-size: 18px;
+    }
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.triggerArea {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+
+  .zoomIcon {
+    font-size: 28px;
+    display: flex;
+    line-height: 1;
+  }
+}
+
+.zoomIcon {
+  font-size: 20px;
+  display: flex;
+  line-height: 1;
+}
+
+.zoomContent {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  font-weight: 500;
+  font-size: 14px;
+
+  .actionBtn {
+    cursor: pointer;
+    display: flex;
+  }
+
+  .ratioDisplay {
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    min-width: 45px;
+    justify-content: center;
+  }
+}
+
+.slider {
+  width: 120px;
+}
+
+.value {
+  width: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.timeDisplay {
+  text-align: center;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  white-space: nowrap;
+}

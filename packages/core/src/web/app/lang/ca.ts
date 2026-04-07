@@ -2660,7 +2660,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
   },
   zoom_block: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Calcular temps',
+    estimate_time: 'Calcular',
     exposure: 'Exposició',
     opacity: 'Opacitat',
   },

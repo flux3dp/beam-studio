@@ -10,7 +10,6 @@ import AiGenerate from '@core/app/components/AiGenerate';
 import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGenerate';
 import PathPreview from '@core/app/components/beambox/PathPreview';
 import Chat from '@core/app/components/Chat';
-import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
@@ -26,13 +25,12 @@ import Generators from '../../Generators';
 import MobileGenerators from '../../Generators/mobile/MobileGenerators';
 
 import Banner from './Banner';
-import CanvasSlider from './CanvasSlider';
+import CanvasControl from './CanvasControl';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
 import PreviewFloatingBar from './PreviewFloatingBar';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
-import TimeEstimationButton from './TimeEstimationButton';
 import Workarea from './Workarea';
 
 const SvgEditor = (): ReactNode => {
@@ -79,16 +77,11 @@ const SvgEditor = (): ReactNode => {
         {mode !== CanvasMode.PathPreview && (
           <>
             {!isMobile && <PreviewFloatingBar />}
-            <ZoomBlock
-              resetView={workareaManager.resetView}
-              setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
-            />
             <DpiInfo />
             <div className={styles['bottom-right']}>
               <div className={styles.controls}>
                 <TimeEstimationButtonContextProvider>
-                  <TimeEstimationButton />
-                  <CanvasSlider setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)} />
+                  <CanvasControl setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)} />
                 </TimeEstimationButtonContextProvider>
               </div>
               {isMobile && <PreviewFloatingBar />}

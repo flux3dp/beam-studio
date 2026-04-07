@@ -2660,7 +2660,7 @@ const lang: ILang = {
   },
   zoom_block: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Hitung Waktu',
+    estimate_time: 'Hitung',
     exposure: 'Eksposur',
     opacity: 'Opasitas',
   },
