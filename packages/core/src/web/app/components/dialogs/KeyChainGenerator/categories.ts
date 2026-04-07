@@ -3,6 +3,8 @@ import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
 import { BASE_RECTANGLE } from './constants';
 import type {
+  ElementOptionDef,
+  ElementOptionValues,
   HoleOptionDef,
   HoleOptionValues,
   KeyChainCategory,
@@ -11,7 +13,7 @@ import type {
   TextOptionValues,
 } from './types';
 
-const DEFAULT_HOLE: HoleOptionValues = {
+export const DEFAULT_HOLE: HoleOptionValues = {
   diameter: 3,
   enabled: true,
   offset: 0,
@@ -20,7 +22,12 @@ const DEFAULT_HOLE: HoleOptionValues = {
   type: 'ring',
 };
 
-const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
+export const DEFAULT_ELEMENT: ElementOptionValues = {
+  enabled: true,
+  shapeKey: '',
+};
+
+export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
   content: 'Key Chain',
   enabled: true,
   fontSize: 40,
@@ -35,6 +42,12 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     nameKey: 'rectangle',
     options: [
       {
+        bounds: { height: 120, width: 120, x: 90, y: 400 },
+        defaults: DEFAULT_ELEMENT,
+        id: '1',
+        type: 'element',
+      },
+      {
         defaults: DEFAULT_HOLE,
         id: '1',
         startPositionRef: 'topCenter',
@@ -43,7 +56,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       {
         bounds: { height: 400, width: 240, x: 30, y: 100 },
         defaults: DEFAULT_TEXT,
-        id: 'text-1',
+        id: '1',
         type: 'text',
       },
     ],
@@ -60,6 +73,7 @@ export const getCategoryById = (id: string): KeyChainCategory =>
 export const getStateForCategory = (category: KeyChainCategory): KeyChainState => {
   const result: KeyChainState = {
     categoryId: category.id,
+    elements: {},
     holes: {},
     texts: {},
   };
@@ -79,6 +93,10 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
         ...textDef.defaults,
         font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
       };
+    } else if (option.type === 'element') {
+      const elementDef = option as ElementOptionDef;
+
+      result.elements[elementDef.id] = { ...elementDef.defaults };
     }
   }
 

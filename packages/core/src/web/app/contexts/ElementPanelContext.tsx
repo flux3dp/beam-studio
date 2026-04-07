@@ -7,6 +7,7 @@ import Elements, {
   ContentType,
   generateFileNameArray,
   MainTypes,
+  NPTypes,
   SearchKeyMap,
   SearchMap,
   SubTypeSearchKeyMap,
@@ -75,6 +76,7 @@ interface ElementPanelContextType {
   activeMainType: MainType;
   activeSubType: SubType | undefined;
   addToHistory: (history: History) => void;
+  allTypes: MainType[];
   cacheRef: React.MutableRefObject<ICache>;
   closeDrawer: () => void;
   contents: Content[];
@@ -94,6 +96,7 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
   activeMainType: MainTypes[0],
   activeSubType: undefined,
   addToHistory: () => {},
+  allTypes: MainTypes,
   cacheRef: { current: { [ContentType.MainType]: {}, [ContentType.Search]: {}, [ContentType.SubType]: {} } },
   closeDrawer: () => {},
   contents: [],
@@ -126,6 +129,7 @@ export const ElementPanelProvider = ({ children }: ElementPanelProviderProps): R
   const cacheRef = useRef<ICache>({ [ContentType.MainType]: {}, [ContentType.Search]: {}, [ContentType.SubType]: {} });
   const searchRef = useRef({ term: '', timer: null as NodeJS.Timeout | null });
   const contentRef = useRef(0);
+  const allTypes = useMemo(() => (hasLogin ? [...MainTypes, ...NPTypes] : MainTypes), [hasLogin]);
 
   useEffect(() => {
     const fluxIDEventEmitter = eventEmitterFactory.createEventEmitter('flux-id');
@@ -359,6 +363,7 @@ export const ElementPanelProvider = ({ children }: ElementPanelProviderProps): R
         activeMainType,
         activeSubType,
         addToHistory,
+        allTypes,
         cacheRef,
         closeDrawer,
         contents,

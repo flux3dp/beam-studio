@@ -1,6 +1,8 @@
 import React from 'react';
 import { render } from '@testing-library/react';
 
+const mockUpdateState = jest.fn();
+
 jest.mock('@core/app/widgets/AntdSelect', () => ({ onChange, options, value }: any) => (
   <select data-testid="select" onChange={(e) => onChange?.(e.target.value)} value={value}>
     {options?.map((o: any) => (
@@ -27,7 +29,18 @@ jest.mock('./NumberControl', () => ({ label, onChange, value }: any) => (
   </div>
 ));
 
-import type { HoleOptionValues } from '../../types';
+const mockHoles: Record<string, any> = {
+  'hole-top': { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 1, type: 'ring' },
+};
+
+jest.mock('../../useKeychainShapeStore', () => ({
+  __esModule: true,
+  default: Object.assign((selector: any) => selector({ state: { holes: mockHoles } }), {
+    getState: () => ({ state: { holes: mockHoles }, updateState: mockUpdateState }),
+  }),
+}));
+
+import type { HoleOptionDef, HoleOptionValues } from '../../types';
 
 import HoleGroup from './HoleGroup';
 
@@ -41,19 +54,20 @@ describe('HoleGroup', () => {
     type: 'ring',
   };
 
-  const defaultProps = {
+  const defaultOptionDef: HoleOptionDef = {
     defaults,
-    hole: { ...defaults },
     id: 'hole-top',
-    onHoleChange: jest.fn(),
+    startPositionRef: 'topCenter',
+    type: 'hole',
   };
 
   beforeEach(() => {
     jest.clearAllMocks();
+    mockHoles['hole-top'] = { ...defaults };
   });
 
   it('should render all four slider controls when enabled', () => {
-    const { getByTestId } = render(<HoleGroup {...defaultProps} />);
+    const { getByTestId } = render(<HoleGroup optionDef={defaultOptionDef} />);
 
     expect(getByTestId('slider-Diameter')).toBeInTheDocument();
     expect(getByTestId('slider-Position')).toBeInTheDocument();
@@ -62,40 +76,53 @@ describe('HoleGroup', () => {
   });
 
   it('should pass correct values to sliders', () => {
-    const hole = { ...defaults, diameter: 4, position: 50 };
-    const { getByTestId } = render(<HoleGroup {...defaultProps} hole={hole} />);
+    mockHoles['hole-top'] = { ...defaults, diameter: 4, position: 50 };
+
+    const { getByTestId } = render(<HoleGroup optionDef={defaultOptionDef} />);
 
     expect(getByTestId('slider-Diameter')).toHaveTextContent('value:4');
     expect(getByTestId('slider-Position')).toHaveTextContent('value:50');
   });
 
-  it('should call onHoleChange when toggle is clicked', () => {
-    const { getByTestId } = render(<HoleGroup {...defaultProps} />);
+  it('should call updateState when toggle is clicked', () => {
+    const { getByTestId } = render(<HoleGroup optionDef={defaultOptionDef} />);
 
     getByTestId('switch').click();
-    expect(defaultProps.onHoleChange).toHaveBeenCalledWith('hole-top', { enabled: false });
+    expect(mockUpdateState).toHaveBeenCalledWith({
+      holes: expect.objectContaining({
+        'hole-top': expect.objectContaining({ enabled: false }),
+      }),
+    });
   });
 
   it('should clamp offset when it exceeds maxOffset', () => {
     // maxOffset = diameter/2 + thickness - 0.5 = 3/2 + 1 - 0.5 = 2
-    const hole = { ...defaults, offset: 10 };
+    mockHoles['hole-top'] = { ...defaults, offset: 10 };
 
-    render(<HoleGroup {...defaultProps} hole={hole} />);
-    expect(defaultProps.onHoleChange).toHaveBeenCalledWith('hole-top', { offset: 2 });
+    render(<HoleGroup optionDef={defaultOptionDef} />);
+    expect(mockUpdateState).toHaveBeenCalledWith({
+      holes: expect.objectContaining({
+        'hole-top': expect.objectContaining({ offset: 2 }),
+      }),
+    });
   });
 
   it('should clamp offset when it is below minOffset', () => {
     // minOffset (ring) = -(diameter/2) - thickness + 0.5 = -1.5 - 1 + 0.5 = -2
-    const hole = { ...defaults, offset: -10 };
+    mockHoles['hole-top'] = { ...defaults, offset: -10 };
 
-    render(<HoleGroup {...defaultProps} hole={hole} />);
-    expect(defaultProps.onHoleChange).toHaveBeenCalledWith('hole-top', { offset: -2 });
+    render(<HoleGroup optionDef={defaultOptionDef} />);
+    expect(mockUpdateState).toHaveBeenCalledWith({
+      holes: expect.objectContaining({
+        'hole-top': expect.objectContaining({ offset: -2 }),
+      }),
+    });
   });
 
   it('should not clamp offset when within range', () => {
-    const hole = { ...defaults, offset: 1 };
+    mockHoles['hole-top'] = { ...defaults, offset: 1 };
 
-    render(<HoleGroup {...defaultProps} hole={hole} />);
-    expect(defaultProps.onHoleChange).not.toHaveBeenCalled();
+    render(<HoleGroup optionDef={defaultOptionDef} />);
+    expect(mockUpdateState).not.toHaveBeenCalled();
   });
 });

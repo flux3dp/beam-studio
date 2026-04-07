@@ -47,7 +47,21 @@ export interface TextOptionDef {
   type: 'text';
 }
 
-export type KeyChainOptionDef = HoleOptionDef | TextOptionDef;
+export interface ElementOptionValues {
+  enabled: boolean;
+  /** Shape key in format "mainType/fileName", e.g. "basic/icon-heart1" */
+  shapeKey: string;
+}
+
+export interface ElementOptionDef {
+  bounds: { height: number; width: number; x: number; y: number };
+  defaults: ElementOptionValues;
+  id: string;
+  label?: string;
+  type: 'element';
+}
+
+export type KeyChainOptionDef = ElementOptionDef | HoleOptionDef | TextOptionDef;
 
 export interface KeyChainCategory {
   defaultViewBox: { height: number; width: number; x: number; y: number };
@@ -60,6 +74,7 @@ export interface KeyChainCategory {
 
 export interface KeyChainState {
   categoryId: string;
+  elements: Record<string, ElementOptionValues>;
   holes: Record<string, HoleOptionValues>;
   texts: Record<string, TextOptionValues>;
 }

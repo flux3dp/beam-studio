@@ -8,12 +8,13 @@ import styles from './GroupControl.module.scss';
 interface GroupControlProps {
   children: React.ReactNode;
   enabled: boolean;
+  hideSwitch?: boolean;
   id: string;
   onToggle: (enabled: boolean) => void;
   title: string;
 }
 
-const GroupControl = ({ children, enabled, id, onToggle, title }: GroupControlProps): ReactNode => {
+const GroupControl = ({ children, enabled, hideSwitch = false, id, onToggle, title }: GroupControlProps): ReactNode => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>(enabled ? [id] : []);
 
   const handleToggle = (checked: boolean) => {
@@ -24,7 +25,9 @@ const GroupControl = ({ children, enabled, id, onToggle, title }: GroupControlPr
   const header = (
     <div className={styles.header}>
       <div className={styles.title}>{title}</div>
-      <Switch checked={enabled} onChange={handleToggle} onClick={(_, e) => e.stopPropagation()} size="small" />
+      {!hideSwitch && (
+        <Switch checked={enabled} onChange={handleToggle} onClick={(_, e) => e.stopPropagation()} size="small" />
+      )}
     </div>
   );
 

@@ -5,20 +5,20 @@ import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
 
 import { PUNCH_HOLE_OFFSET } from '../../constants';
-import type { HoleOptionValues, HoleType } from '../../types';
+import type { HoleOptionDef, HoleOptionValues, HoleType } from '../../types';
+import useKeychainShapeStore from '../../useKeychainShapeStore';
 
 import GroupControl from './GroupControl';
 import styles from './GroupControl.module.scss';
 import NumberControl from './NumberControl';
 
 interface HoleGroupProps {
-  defaults: HoleOptionValues;
-  hole: HoleOptionValues;
-  id: string;
-  onHoleChange: (id: string, updates: Partial<HoleOptionValues>) => void;
+  optionDef: HoleOptionDef;
 }
 
-const HoleGroup = ({ defaults, hole, id, onHoleChange }: HoleGroupProps): ReactNode => {
+const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
+  const { defaults, id } = optionDef;
+  const hole = useKeychainShapeStore((s) => s.state.holes[id]);
   const { keychain_generator: t } = useI18n();
   const isRing = useMemo(() => hole.type === 'ring', [hole.type]);
 
@@ -31,25 +31,37 @@ const HoleGroup = ({ defaults, hole, id, onHoleChange }: HoleGroupProps): ReactN
     [isRing, hole.diameter, hole.thickness],
   );
 
-  const handleEnabledChange = useCallback((enabled: boolean) => onHoleChange(id, { enabled }), [id, onHoleChange]);
-  const handleDiameterChange = useCallback((diameter: number) => onHoleChange(id, { diameter }), [id, onHoleChange]);
-  const handlePositionChange = useCallback((position: number) => onHoleChange(id, { position }), [id, onHoleChange]);
-  const handleOffsetChange = useCallback((offset: number) => onHoleChange(id, { offset }), [id, onHoleChange]);
-  const handleThicknessChange = useCallback((thickness: number) => onHoleChange(id, { thickness }), [id, onHoleChange]);
+  const handleChange = useCallback(
+    (updates: Partial<HoleOptionValues>) => {
+      const {
+        state: { holes },
+        updateState,
+      } = useKeychainShapeStore.getState();
+
+      updateState({ holes: { ...holes, [id]: { ...holes[id], ...updates } } });
+    },
+    [id],
+  );
+
+  const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
+  const handleDiameterChange = useCallback((diameter: number) => handleChange({ diameter }), [handleChange]);
+  const handlePositionChange = useCallback((position: number) => handleChange({ position }), [handleChange]);
+  const handleOffsetChange = useCallback((offset: number) => handleChange({ offset }), [handleChange]);
+  const handleThicknessChange = useCallback((thickness: number) => handleChange({ thickness }), [handleChange]);
   const handleTypeChange = useCallback(
     (type: HoleType) => {
-      onHoleChange(id, { offset: defaults.offset, type });
+      handleChange({ offset: defaults.offset, type });
     },
-    [id, onHoleChange, defaults.offset],
+    [handleChange, defaults.offset],
   );
 
   useEffect(() => {
     if (hole.offset > maxOffset) {
-      onHoleChange(id, { offset: maxOffset });
+      handleChange({ offset: maxOffset });
     } else if (hole.offset < minOffset) {
-      onHoleChange(id, { offset: minOffset });
+      handleChange({ offset: minOffset });
     }
-  }, [maxOffset, minOffset, hole.offset, id, onHoleChange]);
+  }, [maxOffset, minOffset, hole.offset, handleChange]);
 
   const typeOptions = useMemo(
     () => [
