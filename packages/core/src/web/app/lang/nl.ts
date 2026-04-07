@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Link</a>',
   },
   keychain_generator: {
+    element: 'Element',
     export_failed: 'Kan sleutelhanger niet importeren naar het canvas. Probeer het opnieuw.',
     font_size: 'Lettergrootte',
     hole: 'Gat',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Letterafstand',
     line_spacing: 'Regelafstand',
+    more_shapes: 'Meer vormen',
     reset_to_default: 'Standaardwaarden herstellen',
     switch_type_warning: 'Uw huidige instellingen zijn nog niet geïmporteerd naar het canvas.\nHet wisselen van sleutelhangertype zal alle instellingen terugzetten naar de standaardwaarden.',
     text: 'Tekst',

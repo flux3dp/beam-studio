@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Link</a>',
   },
   keychain_generator: {
+    element: 'Element',
     export_failed: 'Nie udało się zaimportować breloka na płótno. Spróbuj ponownie.',
     font_size: 'Rozmiar czcionki',
     hole: 'Otwór',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Odstęp między literami',
     line_spacing: 'Odstęp między wierszami',
+    more_shapes: 'Więcej kształtów',
     reset_to_default: 'Przywróć domyślne',
     switch_type_warning: 'Bieżące ustawienia nie zostały jeszcze zaimportowane na płótno.\nZmiana typu breloka spowoduje zresetowanie wszystkich ustawień do wartości domyślnych.',
     text: 'Tekst',

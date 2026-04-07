@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Pautan</a>',
   },
   keychain_generator: {
+    element: 'Elemen',
     export_failed: 'Gagal mengimport rantai kunci ke kanvas. Sila cuba lagi.',
     font_size: 'Saiz fon',
     hole: 'Lubang',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Jarak huruf',
     line_spacing: 'Jarak baris',
+    more_shapes: 'Lagi Bentuk',
     reset_to_default: 'Tetapkan semula ke lalai',
     switch_type_warning: 'Tetapan semasa anda belum diimport ke kanvas lagi.\nMenukar jenis rantai kunci akan menetapkan semula semua tetapan kepada nilai lalai.',
     text: 'Teks',

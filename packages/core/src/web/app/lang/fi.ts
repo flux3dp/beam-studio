@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Linkki</a>',
   },
   keychain_generator: {
+    element: 'Elementti',
     export_failed: 'Avaimensperän tuonti kankaalle epäonnistui. Yritä uudelleen.',
     font_size: 'Kirjasinkoko',
     hole: 'Reikä',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Kirjainväli',
     line_spacing: 'Riviväli',
+    more_shapes: 'Lisää muotoja',
     reset_to_default: 'Palauta oletusarvot',
     switch_type_warning: 'Nykyisiä asetuksiasi ei ole vielä tuotu kankaalle.\nAvaimenperätyypin vaihtaminen palauttaa kaikki asetukset oletusarvoihin.',
     text: 'Teksti',

@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Enlace</a>',
   },
   keychain_generator: {
+    element: 'Elemento',
     export_failed: 'No se pudo importar el llavero al lienzo. Por favor, inténtelo de nuevo.',
     font_size: 'Tamaño de fuente',
     hole: 'Agujero',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Espaciado entre letras',
     line_spacing: 'Interlineado',
+    more_shapes: 'Más formas',
     reset_to_default: 'Restablecer valores predeterminados',
     switch_type_warning: 'Su configuración actual aún no se ha importado al lienzo.\nCambiar el tipo de llavero restablecerá toda la configuración a sus valores predeterminados.',
     text: 'Texto',

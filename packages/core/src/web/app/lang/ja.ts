@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">リンク</a>',
   },
   keychain_generator: {
+    element: '要素',
     export_failed: 'キーホルダーをキャンバスにインポートできませんでした。もう一度お試しください。',
     font_size: 'フォントサイズ',
     hole: '穴',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: '文字間隔',
     line_spacing: '行間隔',
+    more_shapes: 'その他の形状',
     reset_to_default: 'デフォルトにリセット',
     switch_type_warning: '現在の設定はまだキャンバスにインポートされていません。\nキーホルダーのタイプを切り替えると、すべての設定がデフォルト値にリセットされます。',
     text: 'テキスト',

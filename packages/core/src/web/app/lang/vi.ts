@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Liên kết</a>',
   },
   keychain_generator: {
+    element: 'Phần tử',
     export_failed: 'Không thể nhập móc khóa vào canvas. Vui lòng thử lại.',
     font_size: 'Cỡ chữ',
     hole: 'Lỗ',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Khoảng cách chữ cái',
     line_spacing: 'Khoảng cách dòng',
+    more_shapes: 'Thêm hình dạng',
     reset_to_default: 'Đặt lại mặc định',
     switch_type_warning: 'Cài đặt hiện tại của bạn chưa được nhập vào canvas.\nChuyển đổi loại móc khóa sẽ đặt lại tất cả cài đặt về giá trị mặc định.',
     text: 'Văn bản',

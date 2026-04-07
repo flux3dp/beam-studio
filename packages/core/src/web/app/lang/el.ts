@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Σύνδεσμος</a>',
   },
   keychain_generator: {
+    element: 'Στοιχείο',
     export_failed: 'Αποτυχία εισαγωγής μπρελόκ στον καμβά. Παρακαλώ δοκιμάστε ξανά.',
     font_size: 'Μέγεθος γραμματοσειράς',
     hole: 'Οπή',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Απόσταση γραμμάτων',
     line_spacing: 'Διάστιχο',
+    more_shapes: 'Περισσότερα σχήματα',
     reset_to_default: 'Επαναφορά προεπιλογών',
     switch_type_warning: 'Οι τρέχουσες ρυθμίσεις σας δεν έχουν εισαχθεί ακόμα στον καμβά.\nΗ αλλαγή τύπου μπρελόκ θα επαναφέρει όλες τις ρυθμίσεις στις προεπιλεγμένες τιμές.',
     text: 'Κείμενο',

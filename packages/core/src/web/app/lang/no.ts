@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Lenke</a>',
   },
   keychain_generator: {
+    element: 'Element',
     export_failed: 'Kunne ikke importere nøkkelring til lerretet. Vennligst prøv igjen.',
     font_size: 'Skriftstørrelse',
     hole: 'Hull',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Bokstavmellomrom',
     line_spacing: 'Linjeavstand',
+    more_shapes: 'Flere former',
     reset_to_default: 'Tilbakestill til standard',
     switch_type_warning: 'Dine nåværende innstillinger har ennå ikke blitt importert til lerretet.\nBytte av nøkkelringtype vil tilbakestille alle innstillinger til standardverdier.',
     text: 'Tekst',

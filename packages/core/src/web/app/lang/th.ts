@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">ลิงก์</a>',
   },
   keychain_generator: {
+    element: 'องค์ประกอบ',
     export_failed: 'ไม่สามารถนำเข้าพวงกุญแจไปยังแคนวาสได้ กรุณาลองอีกครั้ง',
     font_size: 'ขนาดตัวอักษร',
     hole: 'รู',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'ระยะห่างตัวอักษร',
     line_spacing: 'ระยะห่างบรรทัด',
+    more_shapes: 'รูปทรงเพิ่มเติม',
     reset_to_default: 'รีเซ็ตเป็นค่าเริ่มต้น',
     switch_type_warning: 'การตั้งค่าปัจจุบันของคุณยังไม่ได้ถูกนำเข้าไปยังแคนวาส\nการเปลี่ยนประเภทพวงกุญแจจะรีเซ็ตการตั้งค่าทั้งหมดเป็นค่าเริ่มต้น',
     text: 'ข้อความ',

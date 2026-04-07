@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Collegamento</a>',
   },
   keychain_generator: {
+    element: 'Elemento',
     export_failed: 'Impossibile importare il portachiavi nel canvas. Riprova.',
     font_size: 'Dimensione carattere',
     hole: 'Foro',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Spaziatura lettere',
     line_spacing: 'Interlinea',
+    more_shapes: 'Altre forme',
     reset_to_default: 'Ripristina predefiniti',
     switch_type_warning: 'Le impostazioni correnti non sono ancora state importate nel canvas.\nCambiare il tipo di portachiavi ripristinerà tutte le impostazioni ai valori predefiniti.',
     text: 'Testo',

@@ -5,7 +5,8 @@ import { Input } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
-import type { TextOptionValues } from '../../types';
+import type { TextOptionDef, TextOptionValues } from '../../types';
+import useKeychainShapeStore from '../../useKeychainShapeStore';
 
 import FontSelect from './FontSelect';
 import GroupControl from './GroupControl';
@@ -13,31 +14,40 @@ import styles from './GroupControl.module.scss';
 import NumberControl from './NumberControl';
 
 interface TextGroupProps {
-  defaults: Omit<TextOptionValues, 'font'>;
-  id: string;
-  onTextChange: (id: string, updates: Partial<TextOptionValues>) => void;
-  text: TextOptionValues;
+  optionDef: TextOptionDef;
 }
 
-const TextGroup = ({ defaults, id, onTextChange, text }: TextGroupProps): ReactNode => {
+const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
+  const { defaults, id } = optionDef;
+  const text = useKeychainShapeStore((s) => s.state.texts[id]);
   const { keychain_generator: t } = useI18n();
-  const handleEnabledChange = useCallback((enabled: boolean) => onTextChange(id, { enabled }), [id, onTextChange]);
+
+  const handleChange = useCallback(
+    (updates: Partial<TextOptionValues>) => {
+      const {
+        state: { texts },
+        updateState,
+      } = useKeychainShapeStore.getState();
+
+      updateState({ texts: { ...texts, [id]: { ...texts[id], ...updates } } });
+    },
+    [id],
+  );
+
+  const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
   const handleContentChange = useCallback(
-    (evt: React.ChangeEvent<HTMLTextAreaElement>) => onTextChange(id, { content: evt.target.value }),
-    [id, onTextChange],
+    (evt: React.ChangeEvent<HTMLTextAreaElement>) => handleChange({ content: evt.target.value }),
+    [handleChange],
   );
-  const handleFontSizeChange = useCallback((fontSize: number) => onTextChange(id, { fontSize }), [id, onTextChange]);
+  const handleFontSizeChange = useCallback((fontSize: number) => handleChange({ fontSize }), [handleChange]);
   const handleLetterSpacingChange = useCallback(
-    (letterSpacing: number) => onTextChange(id, { letterSpacing }),
-    [id, onTextChange],
+    (letterSpacing: number) => handleChange({ letterSpacing }),
+    [handleChange],
   );
-  const handleLineSpacingChange = useCallback(
-    (lineSpacing: number) => onTextChange(id, { lineSpacing }),
-    [id, onTextChange],
-  );
+  const handleLineSpacingChange = useCallback((lineSpacing: number) => handleChange({ lineSpacing }), [handleChange]);
   const handleFontChange = useCallback(
-    (font: { family: string; postscriptName: string; style: string }) => onTextChange(id, { font }),
-    [id, onTextChange],
+    (font: { family: string; postscriptName: string; style: string }) => handleChange({ font }),
+    [handleChange],
   );
 
   return (

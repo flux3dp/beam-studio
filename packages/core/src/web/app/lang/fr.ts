@@ -1605,7 +1605,8 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Lien</a>',
   },
   keychain_generator: {
-    export_failed: 'Impossible d\'importer le porte-clés sur le canevas. Veuillez réessayer.',
+    element: 'Élément',
+    export_failed: "Impossible d'importer le porte-clés sur le canevas. Veuillez réessayer.",
     font_size: 'Taille de police',
     hole: 'Trou',
     hole_diameter: 'Diamètre',
@@ -1621,8 +1622,9 @@ const lang: ILang = {
     },
     letter_spacing: 'Espacement des lettres',
     line_spacing: 'Interligne',
+    more_shapes: 'Plus de formes',
     reset_to_default: 'Réinitialiser par défaut',
-    switch_type_warning: 'Vos paramètres actuels n\'ont pas encore été importés sur le canevas.\nChanger le type de porte-clés réinitialisera tous les paramètres à leurs valeurs par défaut.',
+    switch_type_warning: "Vos paramètres actuels n'ont pas encore été importés sur le canevas.\nChanger le type de porte-clés réinitialisera tous les paramètres à leurs valeurs par défaut.",
     text: 'Texte',
     text_placeholder: 'Saisir le texte...',
     types: {

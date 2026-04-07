@@ -83,6 +83,7 @@ interface ElementPanelContextType {
   hasLogin: boolean;
   historyIcons: History[];
   onClose: () => void;
+  onElementSelect?: (shapeKey: string) => void;
   open: boolean;
   searchKey: string | undefined;
   setActiveMainType: React.Dispatch<React.SetStateAction<MainType>>;
@@ -103,6 +104,7 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
   hasLogin: false,
   historyIcons: [],
   onClose: () => {},
+  onElementSelect: undefined,
   open: false,
   searchKey: undefined,
   setActiveMainType: () => {},
@@ -114,12 +116,18 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
 interface ElementPanelProviderProps {
   children: React.ReactNode;
   onClose: () => void;
+  onElementSelect?: (shapeKey: string) => void;
   open: boolean;
 }
 
 const previewCount = 12;
 
-export const ElementPanelProvider = ({ children, onClose, open }: ElementPanelProviderProps): ReactNode => {
+export const ElementPanelProvider = ({
+  children,
+  onClose,
+  onElementSelect,
+  open,
+}: ElementPanelProviderProps): ReactNode => {
   const [activeMainType, setActiveMainType] = useState(MainTypes[0]);
   const [activeSubType, setActiveSubType] = useState<SubType | undefined>(undefined);
   const [hasLogin, setHasLogin] = useState(!!getCurrentUser());
@@ -369,6 +377,7 @@ export const ElementPanelProvider = ({ children, onClose, open }: ElementPanelPr
         hasLogin,
         historyIcons,
         onClose,
+        onElementSelect,
         open,
         searchKey,
         setActiveMainType,

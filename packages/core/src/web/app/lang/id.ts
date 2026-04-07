@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Tautan</a>',
   },
   keychain_generator: {
+    element: 'Elemen',
     export_failed: 'Gagal mengimpor gantungan kunci ke kanvas. Silakan coba lagi.',
     font_size: 'Ukuran huruf',
     hole: 'Lubang',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Jarak huruf',
     line_spacing: 'Jarak baris',
+    more_shapes: 'Bentuk Lainnya',
     reset_to_default: 'Atur ulang ke default',
     switch_type_warning: 'Pengaturan Anda saat ini belum diimpor ke kanvas.\nMengubah jenis gantungan kunci akan mengatur ulang semua pengaturan ke nilai default.',
     text: 'Teks',

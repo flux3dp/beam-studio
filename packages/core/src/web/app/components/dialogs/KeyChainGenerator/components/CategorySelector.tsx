@@ -25,30 +25,34 @@ const CategorySelector = ({
 
   return (
     <div className={classNames(styles['category-selector'], { [styles.mobile]: isMobile })}>
-      {categories.map((category) => (
-        <div
-          className={classNames(styles['category-item'], {
-            [styles.selected]: category.id === currentCategoryId,
-          })}
-          key={category.id}
-          onClick={() => onCategoryChange(category.id)}
-          onKeyDown={(e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-              e.preventDefault();
-              onCategoryChange(category.id);
-            }
-          }}
-          role="button"
-          tabIndex={0}
-          title={t.types[category.nameKey]}
-        >
-          {category.thumbnail ? (
-            <img alt={t.types[category.nameKey]} src={category.thumbnail} />
-          ) : (
-            <div className={styles.placeholder}>{t.types[category.nameKey]}</div>
-          )}
-        </div>
-      ))}
+      {categories.map((category) => {
+        const label = t.types[category.nameKey] ?? category.nameKey;
+
+        return (
+          <div
+            className={classNames(styles['category-item'], {
+              [styles.selected]: category.id === currentCategoryId,
+            })}
+            key={category.id}
+            onClick={() => onCategoryChange(category.id)}
+            onKeyDown={(e) => {
+              if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                onCategoryChange(category.id);
+              }
+            }}
+            role="button"
+            tabIndex={0}
+            title={label}
+          >
+            {category.thumbnail ? (
+              <img alt={label} src={category.thumbnail} />
+            ) : (
+              <div className={styles.placeholder}>{label}</div>
+            )}
+          </div>
+        );
+      })}
     </div>
   );
 };

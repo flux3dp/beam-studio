@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Link</a>',
   },
   keychain_generator: {
+    element: 'Element',
     export_failed: 'Schlüsselanhänger konnte nicht in die Leinwand importiert werden. Bitte versuchen Sie es erneut.',
     font_size: 'Schriftgröße',
     hole: 'Loch',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Zeichenabstand',
     line_spacing: 'Zeilenabstand',
+    more_shapes: 'Weitere Formen',
     reset_to_default: 'Auf Standard zurücksetzen',
     switch_type_warning: 'Ihre aktuellen Einstellungen wurden noch nicht in die Leinwand importiert.\nDurch das Wechseln des Schlüsselanhänger-Typs werden alle Einstellungen auf ihre Standardwerte zurückgesetzt.',
     text: 'Text',

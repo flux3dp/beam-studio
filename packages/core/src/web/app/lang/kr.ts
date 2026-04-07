@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">링크</a>',
   },
   keychain_generator: {
+    element: '요소',
     export_failed: '키체인을 캔버스로 가져오지 못했습니다. 다시 시도해 주세요.',
     font_size: '글꼴 크기',
     hole: '구멍',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: '자간',
     line_spacing: '행간',
+    more_shapes: '더 많은 모양',
     reset_to_default: '기본값으로 재설정',
     switch_type_warning: '현재 설정이 아직 캔버스로 가져오기되지 않았습니다.\n키체인 유형을 변경하면 모든 설정이 기본값으로 재설정됩니다.',
     text: '텍스트',

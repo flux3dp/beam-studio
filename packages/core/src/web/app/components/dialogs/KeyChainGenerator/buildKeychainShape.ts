@@ -7,7 +7,7 @@ import type { HoleOptionDef, KeyChainState } from './types';
 /**
  * Recursively collects all Paper.js Path/CompoundPath items from the imported SVG.
  */
-const collectPathItems = (item: paper.Item): paper.PathItem[] => {
+export const collectPathItems = (item: paper.Item): paper.PathItem[] => {
   if (item instanceof paper.Path || item instanceof paper.CompoundPath) {
     return [item];
   }

@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">链接</a>',
   },
   keychain_generator: {
+    element: '元素',
     export_failed: '无法将钥匙扣导入画布，请重试。',
     font_size: '字体大小',
     hole: '挂孔',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: '字距',
     line_spacing: '行距',
+    more_shapes: '更多形状',
     reset_to_default: '重置为默认值',
     switch_type_warning: '您当前的设置尚未导入至画布。\n切换钥匙扣类型将会重置所有设置为默认值。',
     text: '文字',

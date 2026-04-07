@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Odkaz</a>',
   },
   keychain_generator: {
+    element: 'Prvek',
     export_failed: 'Nepodařilo se importovat přívěsek na plátno. Zkuste to prosím znovu.',
     font_size: 'Velikost písma',
     hole: 'Otvor',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Mezery mezi písmeny',
     line_spacing: 'Řádkování',
+    more_shapes: 'Více tvarů',
     reset_to_default: 'Obnovit výchozí',
     switch_type_warning: 'Vaše aktuální nastavení ještě nebylo importováno na plátno.\nPřepnutí typu přívěsku obnoví všechna nastavení na výchozí hodnoty.',
     text: 'Text',

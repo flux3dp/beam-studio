@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/9935859456271">連結</a>',
   },
   keychain_generator: {
+    element: '元素',
     export_failed: '無法將鑰匙圈匯入畫布，請再試一次。',
     font_size: '字體大小',
     hole: '掛孔',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: '字距',
     line_spacing: '行距',
+    more_shapes: '更多形狀',
     reset_to_default: '重設為預設值',
     switch_type_warning: '您目前的設定尚未匯入至畫布。\n切換鑰匙圈類型將會重設所有設定為預設值。',
     text: '文字',

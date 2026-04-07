@@ -1605,6 +1605,8 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Link</a>',
   },
   keychain_generator: {
+    more_shapes: 'Flere former',
+    element: 'Element',
     export_failed: 'Kunne ikke importere nøglering til lærredet. Prøv venligst igen.',
     font_size: 'Skriftstørrelse',
     hole: 'Hul',

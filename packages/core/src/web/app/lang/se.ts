@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Länk</a>',
   },
   keychain_generator: {
+    element: 'Element',
     export_failed: 'Det gick inte att importera nyckelringen till arbetsytan. Försök igen.',
     font_size: 'Teckenstorlek',
     hole: 'Hål',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Teckenavstånd',
     line_spacing: 'Radavstånd',
+    more_shapes: 'Fler former',
     reset_to_default: 'Återställ till standard',
     switch_type_warning: 'Dina nuvarande inställningar har ännu inte importerats till arbetsytan.\nAtt byta nyckelringstyp återställer alla inställningar till standardvärden.',
     text: 'Text',

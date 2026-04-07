@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Link</a>',
   },
   keychain_generator: {
+    element: 'Elemento',
     export_failed: 'Falha ao importar o chaveiro para o canvas. Tente novamente.',
     font_size: 'Tamanho da fonte',
     hole: 'Furo',
@@ -1621,6 +1622,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Espaçamento entre letras',
     line_spacing: 'Espaçamento entre linhas',
+    more_shapes: 'Mais formas',
     reset_to_default: 'Restaurar padrão',
     switch_type_warning: 'Suas configurações atuais ainda não foram importadas para o canvas.\nMudar o tipo de chaveiro redefinirá todas as configurações para os valores padrão.',
     text: 'Texto',

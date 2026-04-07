@@ -1604,6 +1604,7 @@ export interface ILang {
     unsecure_url_help_center_link: string;
   };
   keychain_generator: {
+    element: string;
     export_failed: string;
     font_size: string;
     hole: string;
@@ -1620,6 +1621,7 @@ export interface ILang {
     };
     letter_spacing: string;
     line_spacing: string;
+    more_shapes: string;
     reset_to_default: string;
     switch_type_warning: string;
     text: string;
