@@ -909,6 +909,7 @@ export interface ILang {
           text_align_justify: string;
           text_align_left: string;
           text_align_right: string;
+          text_content_placeholder: string;
           text_infill: string;
           threshold: string;
           threshold_short: string;

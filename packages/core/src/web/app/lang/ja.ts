@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: '均等割り付け',
           text_align_left: '左揃え',
           text_align_right: '右揃え',
+          text_content_placeholder: 'テキストを入力',
           text_infill: 'テキストインフィル',
           threshold: 'しきい値',
           threshold_short: 'しきい値',

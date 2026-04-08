@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Justificar',
           text_align_left: 'Izquierda',
           text_align_right: 'Derecha',
+          text_content_placeholder: 'Introducir texto',
           text_infill: 'Relleno del texto',
           threshold: 'Brillo umbral',
           threshold_short: 'Umbral',

@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Uitvullen',
           text_align_left: 'Links',
           text_align_right: 'Rechts',
+          text_content_placeholder: 'Tekst invoeren',
           text_infill: 'Tekstvulling',
           threshold: 'Drempelhelderheid',
           threshold_short: 'Drempel',

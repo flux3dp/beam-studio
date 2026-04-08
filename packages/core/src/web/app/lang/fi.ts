@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Tasaus',
           text_align_left: 'Vasen',
           text_align_right: 'Oikea',
+          text_content_placeholder: 'Syötä teksti',
           text_infill: 'Tekstin täyttö',
           threshold: 'Kynnysarvo',
           threshold_short: 'Kynnys',

@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Do bloku',
           text_align_left: 'Vlevo',
           text_align_right: 'Vpravo',
+          text_content_placeholder: 'Zadejte text',
           text_infill: 'Výplň textu',
           threshold: 'Hranice jasu',
           threshold_short: 'Hranice',

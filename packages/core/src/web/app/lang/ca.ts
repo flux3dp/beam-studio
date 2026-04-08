@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Justificar',
           text_align_left: 'Esquerra',
           text_align_right: 'Dreta',
+          text_content_placeholder: 'Introduïu text',
           text_infill: 'Farciment de text',
           threshold: 'Brillantor llindar',
           threshold_short: 'Llindar',

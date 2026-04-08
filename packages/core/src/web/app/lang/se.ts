@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Marginaljustera',
           text_align_left: 'Vänster',
           text_align_right: 'Höger',
+          text_content_placeholder: 'Ange text',
           text_infill: 'Textifyllnad',
           threshold: 'Ljusstyrketröskel',
           threshold_short: 'Tröskel',

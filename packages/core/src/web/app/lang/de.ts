@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Blocksatz',
           text_align_left: 'Links',
           text_align_right: 'Rechts',
+          text_content_placeholder: 'Text eingeben',
           text_infill: 'Textfüllung',
           threshold: 'Schwellenhelligkeit',
           threshold_short: 'Schwellenwert',

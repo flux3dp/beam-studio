@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Blokkjuster',
           text_align_left: 'Venstre',
           text_align_right: 'Høyre',
+          text_content_placeholder: 'Skriv inn tekst',
           text_infill: 'Tekstutfylling',
           threshold: 'Terskel lysstyrke',
           threshold_short: 'Terskel',

@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Πλήρης στοίχιση',
           text_align_left: 'Αριστερά',
           text_align_right: 'Δεξιά',
+          text_content_placeholder: 'Εισαγωγή κειμένου',
           text_infill: 'Πλήρωση κειμένου',
           threshold: 'Φωτεινότητα ορίου',
           threshold_short: 'Κατώφλι',

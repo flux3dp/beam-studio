@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'เต็มบรรทัด',
           text_align_left: 'ซ้าย',
           text_align_right: 'ขวา',
+          text_content_placeholder: 'ป้อนข้อความ',
           text_infill: 'เติมสีในข้อความ',
           threshold: 'เกณฑ์ความสว่าง',
           threshold_short: 'เกณฑ์',
