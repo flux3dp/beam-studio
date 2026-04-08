@@ -1,5 +1,5 @@
-const undoBtn = () => cy.get('div[title="Undo"]');
-const redoBtn = () => cy.get('div[title="Redo"]');
+const undoBtn = () => cy.get('[title="Undo"]');
+const redoBtn = () => cy.get('[title="Redo"]');
 const fontDisplay = () => cy.get('.ant-select-selection-item[title="Font"] img');
 
 describe('verify undo/redo behaviors', () => {

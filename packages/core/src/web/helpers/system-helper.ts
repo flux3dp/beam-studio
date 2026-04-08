@@ -7,7 +7,9 @@ import os from '@core/implementations/os';
 
 export const isMobile = (): boolean => window.innerWidth < 601;
 
-export const isMac = (): boolean => getOS() === 'MacOS';
+const isMacCache = getOS() === 'MacOS';
+
+export const isMac = (): boolean => isMacCache;
 
 export const isIOS = (): boolean => {
   if (typeof navigator === 'undefined') return false;

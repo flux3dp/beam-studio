@@ -5,16 +5,18 @@ exports[`should render correctly is mobile 1`] = `
   <div
     class="common-tools-container"
   >
-    <div
+    <button
+      class="button"
       title="Undo"
     >
       <svgr-url />
-    </div>
-    <div
+    </button>
+    <button
+      class="button"
       title="Redo"
     >
       <svgr-url />
-    </div>
+    </button>
   </div>
 </div>
 `;
@@ -24,21 +26,24 @@ exports[`should render correctly not hiding, not mobile and in web version 1`] =
   <div
     class="common-tools-container"
   >
-    <div
+    <button
+      class="button"
       title="Undo"
     >
       <svgr-url />
-    </div>
-    <div
+    </button>
+    <button
+      class="button"
       title="Redo"
     >
       <svgr-url />
-    </div>
-    <div
+    </button>
+    <button
+      class="button"
       title="Delete"
     >
       <svgr-url />
-    </div>
+    </button>
   </div>
 </div>
 `;

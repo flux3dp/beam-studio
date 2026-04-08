@@ -52,7 +52,7 @@ class TextActions {
   private cursor: Element | null = null;
   private selblock: null | SVGPathElement = null;
   private blinker: NodeJS.Timeout | null = null;
-  private chardata: BBox[][] = [];
+  private chardata: Array<{ bboxes: BBox[]; isWrapped?: boolean }> = [];
   private textbb: BBox = { height: 0, width: 0, x: 0, y: 0 };
   private matrix: DOMMatrix | null = null;
   private lastX: number = 0;
@@ -123,7 +123,7 @@ class TextActions {
   }
 
   private calculateChardata() {
-    const { chardata, curtext, fontSize, isVertical, textbb, textinput } = this;
+    const { chardata, curtext, fontSize, isVertical, textbb } = this;
     const calculateMultilineTextChardata = () => {
       if (!curtext) return;
 
@@ -133,7 +133,6 @@ class TextActions {
       ) as SVGTextContentElement[];
       const rowNumbers = tspans.length;
       const charHeight = fontSize;
-      const lines = textinput.value.split('\u0085');
       let lastRowX: null | number = null;
 
       // No contents
@@ -156,135 +155,14 @@ class TextActions {
           };
         }
 
-        chardata.push([bb]);
+        chardata.push({ bboxes: [bb] });
 
         return;
       }
 
-      if (isFitText(curtext)) {
-        // Group tspans into manual lines based on data-wrapped attribute
-        const tspanGroups: SVGTextContentElement[][] = [];
-        let currentGroup: SVGTextContentElement[] = [];
-
-        for (const tspan of tspans) {
-          if (tspan.getAttribute('data-wrapped')) {
-            currentGroup.push(tspan);
-          } else {
-            if (currentGroup.length > 0) {
-              tspanGroups.push(currentGroup);
-            }
-
-            currentGroup = [tspan];
-          }
-        }
-
-        if (currentGroup.length > 0) {
-          tspanGroups.push(currentGroup);
-        }
-
-        // When text is vertical, we use the widest char as first row's width
-        let firstRowMaxWidth = 0;
-
-        if (this.isVertical && tspanGroups.length > 0 && tspanGroups[0].length > 0) {
-          const firstTspan = tspanGroups[0][0];
-
-          for (let i = 0; i < (firstTspan.textContent?.length ?? 0); i += 1) {
-            const start = firstTspan.getStartPositionOfChar(i);
-            const end = firstTspan.getEndPositionOfChar(i);
-
-            firstRowMaxWidth = Math.max(firstRowMaxWidth, end.x - start.x);
-          }
-        }
-
-        for (let groupIdx = 0; groupIdx < tspanGroups.length; groupIdx += 1) {
-          chardata.push([]);
-
-          const group = tspanGroups[groupIdx];
-          const manualLine = lines[groupIdx] ?? '';
-
-          let start: DOMPoint | undefined;
-          let end: DOMPoint | undefined;
-          let isEmpty = manualLine === '';
-
-          if (isEmpty && group.length > 0) {
-            group[0].textContent = 'a';
-          }
-
-          // Collect char positions from all visual tspans in this group
-          for (const tspan of group) {
-            const tspanbb = getBBox(tspan, { ignoreTransform: true });
-            const len = tspan.textContent?.length ?? 0;
-
-            for (let j = 0; j < len; j += 1) {
-              start = tspan.getStartPositionOfChar(j);
-              end = tspan.getEndPositionOfChar(j);
-
-              if (!svgedit.browser.supportsGoodTextCharPos()) {
-                const { width, zoomRatio } = workareaManager;
-                const offset = width * zoomRatio;
-
-                start.x -= offset;
-                end.x -= offset;
-                start.x /= zoomRatio;
-                end.x /= zoomRatio;
-              }
-
-              let width = end.x - start.x;
-
-              if (isVertical) {
-                width = groupIdx === 0 && lastRowX === null ? firstRowMaxWidth : (lastRowX ?? start.x) - start.x;
-              }
-
-              let y: number;
-
-              if (isVertical) y = start.y - charHeight;
-              else if (svgedit.browser?.isChrome() && !isEmpty) y = tspanbb.y;
-              else y = textbb.y + charHeight * groupIdx;
-
-              chardata[groupIdx].push({
-                height: charHeight,
-                width,
-                x: start.x,
-                y,
-              });
-            }
-          }
-
-          // Add end-of-line cursor bbox
-          if (!isEmpty) {
-            let width = 0;
-
-            if (isVertical) {
-              width = groupIdx === 0 && lastRowX === null ? firstRowMaxWidth : (lastRowX ?? start!.x) - start!.x;
-            }
-
-            const lastTspan = group[group.length - 1];
-            const lastTspanBB = getBBox(lastTspan, { ignoreTransform: true });
-            let y: number;
-
-            if (isVertical) y = end!.y;
-            else if (svgedit.browser?.isChrome()) y = lastTspanBB.y;
-            else y = textbb.y + charHeight * groupIdx;
-
-            chardata[groupIdx].push({
-              height: isVertical ? 0 : charHeight,
-              width,
-              x: isVertical ? start!.x : end!.x,
-              y,
-            });
-          } else {
-            group[0].textContent = '';
-          }
-
-          if (start) lastRowX = start.x;
-        }
-
-        return;
-      }
-
-      // Non-fit-text: original logic
       // When text is vertical, we use the widest char as first row's width
       let firstRowMaxWidth = 0;
+      const isFitTextElement = isFitText(curtext);
 
       if (this.isVertical && rowNumbers > 0) {
         for (let i = 0; i < tspans[0].textContent!.length; i += 1) {
@@ -296,14 +174,22 @@ class TextActions {
       }
 
       for (let i = 0; i < rowNumbers; i += 1) {
-        chardata.push([]);
+        const isWrapped = Boolean(isFitTextElement && tspans[i].getAttribute('data-wrapped'));
+
+        // Mark previous row as wrapped if current row is wrapped, so that we can ignore the last char bbox of previous row when placing cursor
+        if (i > 0) chardata.at(-1)!.isWrapped = isWrapped;
+
+        const rowData: (typeof chardata)[number] = { bboxes: [], isWrapped: false };
+
+        chardata.push(rowData);
 
         let start: DOMPoint | undefined;
         let end: DOMPoint | undefined;
         const tspanbb = getBBox(tspans[i], { ignoreTransform: true });
+        const rowText = tspans[i].textContent || '';
 
         // temporarily set text content to get bbox
-        if (lines[i] === '') tspans[i].textContent = 'a';
+        if (rowText === '') tspans[i].textContent = 'a';
 
         for (let j = 0; j < tspans[i].textContent!.length; j += 1) {
           start = tspans[i].getStartPositionOfChar(j);
@@ -329,10 +215,10 @@ class TextActions {
           let y: number;
 
           if (isVertical) y = start!.y - charHeight;
-          else if (svgedit.browser?.isChrome() && lines[i] !== '') y = tspanbb.y;
+          else if (svgedit.browser?.isChrome() && rowText !== '') y = tspanbb.y;
           else y = textbb.y + charHeight * i;
 
-          chardata[i].push({
+          rowData.bboxes.push({
             height: charHeight,
             width,
             x: start.x,
@@ -342,7 +228,7 @@ class TextActions {
 
         // Add a last bbox for cursor at end of text
         // Because we insert a space for empty line, we don't add last bbox for empty line
-        if (lines[i] !== '') {
+        if (rowText !== '') {
           let width = 0;
 
           if (isVertical) {
@@ -355,7 +241,7 @@ class TextActions {
           else if (svgedit.browser?.isChrome()) y = tspanbb.y;
           else y = textbb.y + charHeight * i;
 
-          chardata[i].push({
+          rowData.bboxes.push({
             height: isVertical ? 0 : charHeight,
             width,
             x: isVertical ? start!.x : end!.x,
@@ -468,7 +354,7 @@ class TextActions {
         }
       }
 
-      chardata.push(firstRow);
+      chardata.push({ bboxes: firstRow });
     };
     const currentTextType = this.getCurtextType();
 
@@ -480,7 +366,7 @@ class TextActions {
         y: 0,
       };
 
-      chardata.push([bb]);
+      chardata.push({ bboxes: [bb] });
 
       return;
     }
@@ -493,22 +379,30 @@ class TextActions {
   }
 
   private indexToRowAndIndex(index: number) {
-    let rowIndex = 0;
-
     if (!this.chardata || this.chardata.length === 0) {
       this.calculateChardata();
     }
 
-    while (index >= this.chardata[rowIndex].length) {
-      index -= this.chardata[rowIndex].length;
+    let rowIndex = 0;
+    let currentRow = this.chardata[rowIndex];
+    let isWrapped = currentRow.isWrapped;
+    let currentRowLength = currentRow.bboxes.length - (isWrapped ? 1 : 0);
+
+    while (index >= currentRowLength) {
+      index -= currentRowLength;
+
       rowIndex += 1;
 
       if (rowIndex === this.chardata.length) {
         return {
-          index: this.chardata[rowIndex].length - 1,
+          index: this.chardata[rowIndex - 1].bboxes.length - 1,
           rowIndex: this.chardata.length - 1,
         };
       }
+
+      currentRow = this.chardata[rowIndex];
+      isWrapped = currentRow.isWrapped;
+      currentRowLength = currentRow.bboxes.length - (isWrapped ? 1 : 0);
     }
 
     return { index, rowIndex };
@@ -522,8 +416,8 @@ class TextActions {
     const currentTextType = this.getCurtextType();
 
     if (currentTextType === TextType.MULTI_LINE) {
-      const startbb = chardata[startRowIndex][startIndex];
-      const endbb = chardata[endRowIndex][endIndex];
+      const startbb = chardata[startRowIndex].bboxes[startIndex];
+      const endbb = chardata[endRowIndex].bboxes[endIndex];
       let points = [];
 
       const { textbb } = this;
@@ -587,10 +481,10 @@ class TextActions {
       for (let i = startRowIndex; i <= endRowIndex; i += 1) {
         // but startRowIndex and endRowIndex should always be zero
         const jStart = i === startRowIndex ? startIndex : 0;
-        const jEnd = i === endRowIndex ? endIndex : chardata[i].length;
+        const jEnd = i === endRowIndex ? endIndex : chardata[i].bboxes.length;
 
         for (let j = jStart; j < jEnd; j += 1) {
-          const { angle = 0, height, width, x, y } = chardata[i][j];
+          const { angle = 0, height, width, x, y } = chardata[i].bboxes[j];
           const s = Math.sin(angle);
           const c = Math.cos(angle);
           const points = [
@@ -657,7 +551,7 @@ class TextActions {
     pt.y = mouseY;
 
     // No content, so return 0
-    if (this.chardata.length === 1 && this.chardata[0].length === 1) {
+    if (this.chardata.length === 1 && this.chardata[0].bboxes.length === 1) {
       return 0;
     }
 
@@ -669,11 +563,11 @@ class TextActions {
 
     if (charpos < 0) {
       // Out of text range, look at mouse coords
-      const totalLength = this.chardata.reduce((acc, cur) => acc + cur.length, 0);
+      const totalLength = this.chardata.reduce((acc, cur) => acc + cur.bboxes.length, 0);
 
       charpos = totalLength - 1;
 
-      if (mouseX <= this.chardata[0][0].x) {
+      if (mouseX <= this.chardata[0].bboxes[0].x) {
         charpos = 0;
       }
 
@@ -688,12 +582,12 @@ class TextActions {
     } else {
       let index = charpos;
 
-      while (index >= this.chardata[rowIndex].length - 1) {
-        index -= this.chardata[rowIndex].length - 1;
+      while (index >= this.chardata[rowIndex].bboxes.length - 1) {
+        index -= this.chardata[rowIndex].bboxes.length - 1;
         rowIndex += 1;
       }
 
-      const charbb = this.chardata[rowIndex][index];
+      const charbb = this.chardata[rowIndex].bboxes[index];
       const { angle = 0, height, width, x, y } = charbb;
 
       if (this.isVertical) {
@@ -712,8 +606,12 @@ class TextActions {
       }
     }
 
-    // Add rowIndex because charbb = charnum + 1 in every row
-    return charpos + rowIndex;
+    // Add count for non-wrapped rows
+    const nonWrappedRows = Array.from({ length: rowIndex }, (_, i) => i).filter(
+      (i) => !this.chardata[i].isWrapped,
+    ).length;
+
+    return charpos + nonWrappedRows;
   }
 
   private setCursorFromPoint(mouseX: number, mouseY: number) {
@@ -747,9 +645,14 @@ class TextActions {
 
       rowIndex -= 1;
       for (let i = 0; i < rowIndex; i += 1) {
-        newCursorIndex += this.chardata[i].length;
+        const { bboxes, isWrapped } = this.chardata[i];
+
+        newCursorIndex += bboxes.length - (isWrapped ? 1 : 0);
       }
-      newCursorIndex += Math.min(this.chardata[rowIndex].length - 1, index);
+
+      const { bboxes, isWrapped } = this.chardata[rowIndex];
+
+      newCursorIndex += Math.max(0, Math.min(bboxes.length - (isWrapped ? 2 : 1), index));
       this.textinput.selectionEnd = newCursorIndex;
       this.textinput.selectionStart = newCursorIndex;
     }
@@ -761,16 +664,21 @@ class TextActions {
     let { rowIndex } = res;
 
     if (rowIndex === this.chardata.length - 1) {
-      this.textinput.selectionEnd = this.textinput.selectionEnd! + this.chardata[rowIndex].length - index - 1;
+      this.textinput.selectionEnd = this.textinput.selectionEnd! + this.chardata[rowIndex].bboxes.length - index - 1;
       this.textinput.selectionStart = this.textinput.selectionEnd;
     } else {
       let newCursorIndex = 0;
 
       rowIndex += 1;
       for (let i = 0; i < rowIndex; i += 1) {
-        newCursorIndex += this.chardata[i].length;
+        const { bboxes, isWrapped } = this.chardata[i];
+
+        newCursorIndex += bboxes.length - (isWrapped ? 1 : 0);
       }
-      newCursorIndex += Math.min(this.chardata[rowIndex].length - 1, index);
+
+      const { bboxes, isWrapped } = this.chardata[rowIndex];
+
+      newCursorIndex += Math.max(0, Math.min(bboxes.length - (isWrapped ? 2 : 1), index));
       this.textinput.selectionEnd = newCursorIndex;
       this.textinput.selectionStart = newCursorIndex;
     }
@@ -910,7 +818,7 @@ class TextActions {
     }
 
     const { index: columnIndex, rowIndex } = this.indexToRowAndIndex(cursorIndex);
-    const charbb = this.chardata[rowIndex][columnIndex];
+    const charbb = this.chardata[rowIndex].bboxes[columnIndex];
 
     if (!charbb) {
       return;
