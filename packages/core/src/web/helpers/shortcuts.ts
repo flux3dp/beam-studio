@@ -229,3 +229,19 @@ export default {
     };
   },
 };
+
+export const setupSelectAllShortCut = () => {
+  const handler = (e: KeyboardEvent) => {
+    if (((isMac() && e.metaKey) || (!isMac() && e.ctrlKey)) && e.key.toLowerCase() === 'a') {
+      const { activeElement } = document;
+
+      if (activeElement && ['input', 'textarea'].includes(activeElement.tagName.toLowerCase())) {
+        (activeElement as HTMLInputElement | HTMLTextAreaElement).select();
+
+        return;
+      }
+    }
+  };
+
+  window.addEventListener('keydown', handler);
+};

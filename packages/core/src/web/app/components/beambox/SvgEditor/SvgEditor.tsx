@@ -20,6 +20,7 @@ import workareaManager from '@core/app/svgedit/workarea';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
+import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import Generators from '../../Generators';
@@ -44,6 +45,7 @@ const SvgEditor = (): ReactNode => {
     if (window.$) {
       $(svgEditor.init);
       setupTextInputEvents();
+      setupSelectAllShortCut();
 
       if (window.importingFile) {
         importFileInCurrentTab(window.importingFile);
