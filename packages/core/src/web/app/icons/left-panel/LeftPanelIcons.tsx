@@ -23,9 +23,6 @@ import Polygon from './polygon.svg';
 import QRCode from './qr-code.svg';
 import Rect from './rect.svg';
 import Send from './send.svg';
-import ShootPrecise from './shoot-precise.svg';
-import ShootWideAngle from './shoot-wide-angle.svg';
-import Shoot from './shoot.svg';
 import Text from './text.svg';
 import Trace from './trace.svg';
 
@@ -55,9 +52,6 @@ export default {
   QRCode,
   Rect,
   Send,
-  Shoot,
-  ShootPrecise,
-  ShootWideAngle,
   Text,
   Trace,
 };
