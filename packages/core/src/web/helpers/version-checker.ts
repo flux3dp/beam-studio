@@ -23,6 +23,7 @@ const requirement = {
   CLOUD: '1.5.0',
   DIODE_AND_AUTOFOCUS: '3.0.0',
   FAST_GRADIENT: '3.0.1',
+  HX2_S_CURVE: '6.2.5',
   JOB_ORIGIN: '4.3.5',
   LATEST_GHOST_FOR_WEB: '3.5.2',
   MAINTAIN_WITH_LINECHECK: '3.2.6',

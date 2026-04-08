@@ -38,6 +38,8 @@ import type { BackendProgressData, TaskMetaData } from '@core/interfaces/ITask';
 import type { IBaseConfig, IFcodeConfig, TAccelerationOverride } from '@core/interfaces/ITaskConfig';
 import type { IWrappedTaskFile } from '@core/interfaces/IWrappedFile';
 
+import versionChecker from '../version-checker';
+
 export const getExportOpt = async (
   opt: IBaseConfig,
   args?: string[],
@@ -49,6 +51,7 @@ export const getExportOpt = async (
   loopCompensation?: number;
 }> => {
   const { device, model, supportAccOverrideV1, supportJobOrigin = true, supportPwm = true } = opt;
+  const vc = versionChecker(device?.version || '0.0.0');
   const config: IFcodeConfig = {
     hardware_name: 'beambox',
     model,
@@ -80,6 +83,10 @@ export const getExportOpt = async (
   } else if (model === 'fhx2rf') {
     config.watt = useCanvasStore.getState().watt;
     config.acc = 10000;
+
+    if (vc.meetRequirement('HX2_S_CURVE')) {
+      config.s_curve = true;
+    }
   }
 
   if (opt.codeType === 'gcode') config.gc = true;
