@@ -880,9 +880,10 @@ const svgEditor = (window['svgEditor'] = (function () {
       false,
     );
 
-    var copySelected = function () {
+    const copySelected = function () {
       // disabled when focusing input element
-      if (document.activeElement.tagName.toLowerCase() === 'input') {
+      const activeElementTagName = document.activeElement?.tagName?.toLowerCase() ?? '';
+      if (['input', 'textarea'].includes(activeElementTagName)) {
         return;
       }
 
@@ -909,8 +910,9 @@ const svgEditor = (window['svgEditor'] = (function () {
         return;
       }
 
+      const activeElementTagName = document.activeElement?.tagName?.toLowerCase() ?? '';
       // disabled when focusing input element
-      if (document.activeElement.tagName.toLowerCase() === 'input') {
+      if (['input', 'textarea'].includes(activeElementTagName)) {
         return;
       }
 
