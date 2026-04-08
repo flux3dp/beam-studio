@@ -56,7 +56,7 @@ describe('should render correctly', () => {
 
     expect(container).toMatchSnapshot();
 
-    const buttons = container.querySelectorAll('div.common-tools-container > div');
+    const buttons = container.querySelectorAll('div.common-tools-container > button');
 
     fireEvent.click(buttons[0]);
     expect(undo).toHaveBeenCalledTimes(1);
