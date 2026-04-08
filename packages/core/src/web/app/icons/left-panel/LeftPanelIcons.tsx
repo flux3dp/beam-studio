@@ -23,6 +23,7 @@ import Polygon from './polygon.svg';
 import QRCode from './qr-code.svg';
 import Rect from './rect.svg';
 import Send from './send.svg';
+import TextBox from './text-box.svg';
 import Text from './text.svg';
 import Trace from './trace.svg';
 
@@ -53,5 +54,6 @@ export default {
   Rect,
   Send,
   Text,
+  TextBox,
   Trace,
 };
