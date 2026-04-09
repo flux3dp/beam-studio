@@ -4,10 +4,18 @@ import { combine } from 'zustand/middleware';
 
 import NS from '@core/app/constants/namespaces';
 
+import { applyElements } from './buildKeychainElement';
 import { applyHoles, importBasePath } from './buildKeychainShape';
 import { applyTexts } from './buildKeychainText';
 import { getDefaultState, getStateForCategory } from './categories';
-import type { HoleOptionDef, KeyChainCategory, KeyChainShape, KeyChainState, TextOptionDef } from './types';
+import type {
+  ElementOptionDef,
+  HoleOptionDef,
+  KeyChainCategory,
+  KeyChainShape,
+  KeyChainState,
+  TextOptionDef,
+} from './types';
 
 interface StoreState {
   // Paper.js cache (runtime-only, not serializable)
