@@ -28,8 +28,7 @@ const LONG_PRESS_DURATION = 500;
 function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props): React.JSX.Element {
   const [selectedOption, setSelectedOption] = useState(options[0]);
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
-  const longPressTriggeredRef = useRef(false);
+  const showPopoverTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     if (!shortcut) return;
@@ -39,39 +38,25 @@ function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props):
     });
   }, [selectedOption, shortcut]);
 
-  const clearLongPressTimer = useCallback(() => {
-    if (longPressTimerRef.current) {
-      clearTimeout(longPressTimerRef.current);
-      longPressTimerRef.current = null;
+  const clearPopoverTimer = useCallback(() => {
+    if (showPopoverTimerRef.current) {
+      clearTimeout(showPopoverTimerRef.current);
+      showPopoverTimerRef.current = null;
     }
   }, []);
 
   const handlePointerEnter = () => {
-    longPressTriggeredRef.current = false;
-    clearLongPressTimer();
-    longPressTimerRef.current = setTimeout(() => {
-      longPressTimerRef.current = null;
-      longPressTriggeredRef.current = true;
+    clearPopoverTimer();
+    showPopoverTimerRef.current = setTimeout(() => {
+      showPopoverTimerRef.current = null;
       setPopoverOpen(true);
     }, LONG_PRESS_DURATION);
-  };
-
-  const handleCancelPopOver = () => {
-    clearLongPressTimer();
   };
 
   const handleClick = useCallback(
     (e: React.MouseEvent) => {
       // Prevent antd's click trigger from auto-toggling the popover.
       e.stopPropagation();
-
-      // Does current mouse down trigger a long press? If so, we should not trigger the click action.
-      if (longPressTriggeredRef.current) {
-        longPressTriggeredRef.current = false;
-
-        return;
-      }
-
       selectedOption?.onClick();
       setPopoverOpen(false);
     },
@@ -128,10 +113,10 @@ function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props):
           className={classNames(buttonStyles.container, { [buttonStyles.active]: active })}
           id={id}
           onClick={handleClick}
-          onPointerCancel={handleCancelPopOver}
+          onPointerCancel={clearPopoverTimer}
           onPointerEnter={handlePointerEnter}
-          onPointerLeave={handleCancelPopOver}
-          onPointerUp={handleCancelPopOver}
+          onPointerLeave={clearPopoverTimer}
+          onPointerUp={clearPopoverTimer}
           title={title}
         >
           {selectedOption?.icon}
