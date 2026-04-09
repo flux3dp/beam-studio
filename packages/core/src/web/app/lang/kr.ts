@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: '양쪽 맞춤',
           text_align_left: '왼쪽',
           text_align_right: '오른쪽',
+          text_content_placeholder: '텍스트 입력',
           text_infill: '텍스트 내부 채우기',
           threshold: '임계 밝기',
           threshold_short: '임계값',

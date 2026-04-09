@@ -8,6 +8,7 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { getTextContent, renderText, textContentEvents } from '@core/app/svgedit/text/textedit';
 import { useIsMobile } from '@core/helpers/system-helper';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './TextContentBlock.module.scss';
 
@@ -16,6 +17,7 @@ interface Props {
 }
 
 function TextContentBlock({ textElement }: Props): ReactNode {
+  const t = useI18n().beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
   const [textContent, setTextContent] = useState(() => getTextContent(textElement));
   const textAreaRef = useRef<TextAreaRef>(null);
@@ -51,7 +53,7 @@ function TextContentBlock({ textElement }: Props): ReactNode {
   return (
     <div className={styles.container}>
       <Input.TextArea
-        autoSize={{ minRows: 2 }}
+        autoSize={{ minRows: 4 }}
         id="text-content-textarea"
         onBlur={() => {
           const newVal = textContent.replace(/\n/g, '\u0085');
@@ -71,6 +73,7 @@ function TextContentBlock({ textElement }: Props): ReactNode {
         onFocus={() => {
           valueBeforeEditRef.current = textContent.replace(/\n/g, '\u0085');
         }}
+        placeholder={t.text_content_placeholder}
         ref={textAreaRef}
         value={textContent}
       />

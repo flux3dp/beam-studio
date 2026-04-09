@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Căn đều',
           text_align_left: 'Trái',
           text_align_right: 'Phải',
+          text_content_placeholder: 'Nhập văn bản',
           text_infill: 'Độ đặc chữ',
           threshold: 'Ngưỡng',
           threshold_short: 'Ngưỡng',

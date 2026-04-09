@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: '分散對齊',
           text_align_left: '靠左',
           text_align_right: '靠右',
+          text_content_placeholder: '輸入文字',
           text_infill: '文字填充',
           threshold: '臨界值',
           threshold_short: '臨界值',

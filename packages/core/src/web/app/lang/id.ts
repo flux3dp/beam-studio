@@ -909,6 +909,7 @@ const lang: ILang = {
           text_align_justify: 'Rata Kanan-Kiri',
           text_align_left: 'Kiri',
           text_align_right: 'Kanan',
+          text_content_placeholder: 'Masukkan teks',
           text_infill: 'Isi Teks',
           threshold: 'Ambang Kecerahan',
           threshold_short: 'Ambang',
