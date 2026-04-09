@@ -6,21 +6,30 @@ import NS from '@core/app/constants/namespaces';
 
 import { applyElements } from './buildKeychainElement';
 import { applyHoles, importBasePath } from './buildKeychainShape';
+import { generateShapeTextBaseShape } from './buildKeychainShapeText';
+import { buildKeychainView } from './buildKeychainSvgViews';
 import { applyTexts } from './buildKeychainText';
-import { getDefaultState, getStateForCategory } from './categories';
+import { getDefaultCategory, getDefaultState, getStateForCategory } from './categories';
+import type { KeychainViewMode } from './constants';
 import type {
   ElementOptionDef,
   HoleOptionDef,
   KeyChainCategory,
   KeyChainShape,
   KeyChainState,
+  ShapeTextOptionDef,
   TextOptionDef,
 } from './types';
 
 interface StoreState {
   // Paper.js cache (runtime-only, not serializable)
   basePath: null | paper.PathItem;
-  categoryId: null | string;
+  // Counter incremented at the start of every async buildBaseShape call
+  // — used to bail out of stale builds.
+  buildVersion: number;
+  category: KeyChainCategory;
+  // Paper.js cache for inner path, path for other layer decoration elements (e.g. text-body glyphs)
+  innerPath: null | paper.PathItem;
   isModified: boolean;
   project: null | paper.Project;
   resultPath: null | paper.PathItem;
@@ -28,11 +37,15 @@ interface StoreState {
   shape: KeyChainShape | null;
   // Keychain parameters
   state: KeyChainState;
+  // Preview view mode — controls which cached SVG the Preview shows
+  viewMode: KeychainViewMode;
 }
 
 const initialState: StoreState = {
   basePath: null,
-  categoryId: null,
+  buildVersion: 0,
+  category: getDefaultCategory(),
+  innerPath: null,
   isModified: false,
   project: null,
   resultPath: null,

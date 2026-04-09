@@ -34,11 +34,13 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
   const handleChange = useCallback(
     (updates: Partial<HoleOptionValues>) => {
       const {
+        applyOptions,
         state: { holes },
         updateState,
       } = useKeychainShapeStore.getState();
 
       updateState({ holes: { ...holes, [id]: { ...holes[id], ...updates } } });
+      applyOptions();
     },
     [id],
   );

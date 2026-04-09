@@ -25,11 +25,13 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
   const handleChange = useCallback(
     (updates: Partial<TextOptionValues>) => {
       const {
+        applyOptions,
         state: { texts },
         updateState,
       } = useKeychainShapeStore.getState();
 
       updateState({ texts: { ...texts, [id]: { ...texts[id], ...updates } } });
+      applyOptions();
     },
     [id],
   );

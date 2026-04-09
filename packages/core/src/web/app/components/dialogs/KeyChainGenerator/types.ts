@@ -61,7 +61,26 @@ export interface ElementOptionDef {
   type: 'element';
 }
 
-export type KeyChainOptionDef = ElementOptionDef | HoleOptionDef | TextOptionDef;
+export interface ShapeTextOptionValues {
+  font: {
+    family: string;
+    postscriptName: string;
+    style: string;
+  };
+  fontSize: number;
+  /** Outline offset in mm — body is built by offsetting the glyph path outward by this amount. */
+  outlineOffset: number;
+  text: string;
+}
+
+export interface ShapeTextOptionDef {
+  defaults: Omit<ShapeTextOptionValues, 'font'>;
+  id: string;
+  label?: string;
+  type: 'shapeText';
+}
+
+export type KeyChainOptionDef = ElementOptionDef | HoleOptionDef | ShapeTextOptionDef | TextOptionDef;
 
 export interface KeyChainCategory {
   defaultViewBox: { height: number; width: number; x: number; y: number };
@@ -76,5 +95,6 @@ export interface KeyChainState {
   categoryId: string;
   elements: Record<string, ElementOptionValues>;
   holes: Record<string, HoleOptionValues>;
+  shapeTexts: Record<string, ShapeTextOptionValues>;
   texts: Record<string, TextOptionValues>;
 }

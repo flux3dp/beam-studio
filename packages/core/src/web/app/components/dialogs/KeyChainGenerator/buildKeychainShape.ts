@@ -55,8 +55,6 @@ export const applyHoles = (
   state: KeyChainState,
   holeDefs: HoleOptionDef[],
 ): paper.PathItem => {
-  const path = (basePath instanceof paper.CompoundPath ? (basePath.children[0] as paper.Path) : basePath) as paper.Path;
-
   const outerCircles: paper.Path[] = [];
   const innerCircles: paper.Path[] = [];
 
@@ -66,9 +64,9 @@ export const applyHoles = (
     if (!hole?.enabled) continue;
 
     const isPunch = hole.type === 'punch';
-    const refPoint = path.bounds[holeDef.startPositionRef] as paper.Point;
+    const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
     const insetPath = PaperOffset.offset(
-      path,
+      basePath as paper.Path,
       (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * PX_TO_MM_RATIO,
     ) as paper.Path;
     const startPoint = insetPath.getNearestPoint(refPoint);

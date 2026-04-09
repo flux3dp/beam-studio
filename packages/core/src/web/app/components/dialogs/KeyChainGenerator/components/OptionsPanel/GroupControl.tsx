@@ -10,7 +10,7 @@ interface GroupControlProps {
   enabled: boolean;
   hideSwitch?: boolean;
   id: string;
-  onToggle: (enabled: boolean) => void;
+  onToggle?: (enabled: boolean) => void;
   title: string;
 }
 
@@ -19,7 +19,7 @@ const GroupControl = ({ children, enabled, hideSwitch = false, id, onToggle, tit
 
   const handleToggle = (checked: boolean) => {
     setExpandedKeys(checked ? [id] : []);
-    onToggle(checked);
+    onToggle?.(checked);
   };
 
   const header = (

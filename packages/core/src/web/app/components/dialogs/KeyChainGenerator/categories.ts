@@ -9,6 +9,8 @@ import type {
   HoleOptionValues,
   KeyChainCategory,
   KeyChainState,
+  ShapeTextOptionDef,
+  ShapeTextOptionValues,
   TextOptionDef,
   TextOptionValues,
 } from './types';
@@ -33,6 +35,12 @@ export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
   fontSize: 40,
   letterSpacing: 0,
   lineSpacing: 1.2,
+};
+
+export const DEFAULT_SHAPE_TEXT: Omit<ShapeTextOptionValues, 'font'> = {
+  fontSize: 80,
+  outlineOffset: 3,
+  text: 'Awesome!',
 };
 
 export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
@@ -63,6 +71,26 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     svgContent: BASE_RECTANGLE,
     thumbnail: '',
   },
+  {
+    defaultViewBox: { height: 0, width: 0, x: 0, y: 0 },
+    id: 'text',
+    nameKey: 'text',
+    options: [
+      {
+        defaults: DEFAULT_SHAPE_TEXT,
+        id: '1',
+        type: 'shapeText',
+      },
+      {
+        defaults: DEFAULT_HOLE,
+        id: '1',
+        startPositionRef: 'leftCenter',
+        type: 'hole',
+      },
+    ],
+    svgContent: '',
+    thumbnail: '',
+  },
 ];
 
 export const getDefaultCategory = (): KeyChainCategory => KEYCHAIN_CATEGORIES[0];
@@ -75,6 +103,7 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
     categoryId: category.id,
     elements: {},
     holes: {},
+    shapeTexts: {},
     texts: {},
   };
 
@@ -97,6 +126,13 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
       const elementDef = option as ElementOptionDef;
 
       result.elements[elementDef.id] = { ...elementDef.defaults };
+    } else if (option.type === 'shapeText') {
+      const shapeTextDef = option as ShapeTextOptionDef;
+
+      result.shapeTexts[shapeTextDef.id] = {
+        ...shapeTextDef.defaults,
+        font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
+      };
     }
   }
 

@@ -32,11 +32,13 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
       }
 
       const {
+        applyOptions,
         state: { elements },
         updateState,
       } = useKeychainShapeStore.getState();
 
       updateState({ elements: { ...elements, [id]: { ...elements[id], ...updates } } });
+      applyOptions();
     },
     [id],
   );

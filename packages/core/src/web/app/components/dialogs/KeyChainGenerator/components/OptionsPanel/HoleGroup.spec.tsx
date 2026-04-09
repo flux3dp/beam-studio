@@ -33,10 +33,16 @@ const mockHoles: Record<string, any> = {
   'hole-top': { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 1, type: 'ring' },
 };
 
+const mockApplyOptions = jest.fn();
+
 jest.mock('../../useKeychainShapeStore', () => ({
   __esModule: true,
   default: Object.assign((selector: any) => selector({ state: { holes: mockHoles } }), {
-    getState: () => ({ state: { holes: mockHoles }, updateState: mockUpdateState }),
+    getState: () => ({
+      applyOptions: mockApplyOptions,
+      state: { holes: mockHoles },
+      updateState: mockUpdateState,
+    }),
   }),
 }));
 
