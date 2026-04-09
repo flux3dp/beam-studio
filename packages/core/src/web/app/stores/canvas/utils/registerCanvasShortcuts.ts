@@ -26,7 +26,6 @@ const shortcutsMap: Array<{ callback: () => void; condition?: ConditionChecker; 
   { callback: () => setMouseMode('ellipse'), keys: ['c'] },
   { callback: () => setMouseMode('rect'), keys: ['m'] },
   { callback: () => setMouseMode('path'), keys: ['p'] },
-  { callback: () => setMouseMode('text'), keys: ['t'] },
   { callback: () => setMouseMode('select'), keys: ['v'] },
   { callback: () => useCanvasStore.getState().toggleDrawerMode('element-panel'), keys: ['e'] },
   { callback: () => FnWrapper.importImage(), keys: ['i'] },

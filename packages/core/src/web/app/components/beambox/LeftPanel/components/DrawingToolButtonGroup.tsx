@@ -115,7 +115,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
               svgCanvas?.clearSelection();
               setMouseMode('text');
             },
-            title: `${t.label.text} (T)`,
+            title: t.label.text,
           },
           {
             icon: <LeftPanelIcons.TextBox />,
@@ -127,7 +127,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
             },
           },
         ]}
-        title={t.label.text}
+        shortcut="T"
       />
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,

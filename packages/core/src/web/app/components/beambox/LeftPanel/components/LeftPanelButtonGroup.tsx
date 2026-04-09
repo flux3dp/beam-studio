@@ -1,7 +1,9 @@
-import React, { useCallback, useRef, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { Popover } from 'antd';
 import classNames from 'classnames';
+
+import shortcuts from '@core/helpers/shortcuts';
 
 import buttonStyles from './LeftPanelButton.module.scss';
 import styles from './LeftPanelButtonGroup.module.scss';
@@ -18,18 +20,24 @@ interface Props {
   active?: boolean;
   id: string;
   options: ToolOption[];
-  title: string;
+  shortcut?: string;
 }
 
 const LONG_PRESS_DURATION = 500;
 
-function LeftPanelButtonGroup({ active = false, id, options, title }: Props): React.JSX.Element {
-  const [selectedId, setSelectedId] = useState<string>(options[0]?.id);
+function LeftPanelButtonGroup({ active = false, id, options, shortcut }: Props): React.JSX.Element {
+  const [selectedOption, setSelectedOption] = useState(options[0]);
   const [popoverOpen, setPopoverOpen] = useState(false);
   const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const longPressTriggeredRef = useRef(false);
 
-  const selectedOption = options.find((opt) => opt.id === selectedId) ?? options[0];
+  useEffect(() => {
+    if (!shortcut) return;
+
+    return shortcuts.on([shortcut.toLowerCase()], () => {
+      selectedOption.onClick();
+    });
+  }, [selectedOption, shortcut]);
 
   const clearLongPressTimer = useCallback(() => {
     if (longPressTimerRef.current) {
@@ -38,7 +46,7 @@ function LeftPanelButtonGroup({ active = false, id, options, title }: Props): Re
     }
   }, []);
 
-  const handlePointerDown = () => {
+  const handlePointerEnter = () => {
     longPressTriggeredRef.current = false;
     clearLongPressTimer();
     longPressTimerRef.current = setTimeout(() => {
@@ -48,7 +56,7 @@ function LeftPanelButtonGroup({ active = false, id, options, title }: Props): Re
     }, LONG_PRESS_DURATION);
   };
 
-  const handleCancelLongPress = () => {
+  const handleCancelPopOver = () => {
     clearLongPressTimer();
   };
 
@@ -71,7 +79,7 @@ function LeftPanelButtonGroup({ active = false, id, options, title }: Props): Re
   );
 
   const handleOptionClick = useCallback((option: ToolOption) => {
-    setSelectedId(option.id);
+    setSelectedOption(option);
     setPopoverOpen(false);
     option.onClick();
   }, []);
@@ -93,6 +101,18 @@ function LeftPanelButtonGroup({ active = false, id, options, title }: Props): Re
     </div>
   );
 
+  const title = useMemo(() => {
+    let base = selectedOption?.title || selectedOption?.label;
+
+    if (!base) return undefined;
+
+    if (shortcut) {
+      base += ` (${shortcut})`;
+    }
+
+    return base;
+  }, [selectedOption, shortcut]);
+
   return (
     <Popover
       arrow={false}
@@ -108,11 +128,11 @@ function LeftPanelButtonGroup({ active = false, id, options, title }: Props): Re
           className={classNames(buttonStyles.container, { [buttonStyles.active]: active })}
           id={id}
           onClick={handleClick}
-          onPointerCancel={handleCancelLongPress}
-          onPointerDown={handlePointerDown}
-          onPointerLeave={handleCancelLongPress}
-          onPointerUp={handleCancelLongPress}
-          title={selectedOption?.title || selectedOption?.label || title}
+          onPointerCancel={handleCancelPopOver}
+          onPointerEnter={handlePointerEnter}
+          onPointerLeave={handleCancelPopOver}
+          onPointerUp={handleCancelPopOver}
+          title={title}
         >
           {selectedOption?.icon}
           <div className={styles.indicator} />
