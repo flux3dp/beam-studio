@@ -52,7 +52,7 @@ describe('array tools', () => {
   });
 
   it('text', () => {
-    cy.clickToolGroupBtn('Text', 'Text');
+    cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 10, y: 20 });
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');

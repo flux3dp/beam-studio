@@ -26,17 +26,17 @@ const LONG_PRESS_DURATION = 500;
 function LeftPanelButtonGroup({ active = false, id, options, title }: Props): React.JSX.Element {
   const [selectedId, setSelectedId] = useState<string>(options[0]?.id);
   const [popoverOpen, setPopoverOpen] = useState(false);
-  const longPressTimerRef = useRef<null | ReturnType<typeof setTimeout>>(null);
+  const longPressTimerRef = useRef<NodeJS.Timeout | null>(null);
   const longPressTriggeredRef = useRef(false);
 
   const selectedOption = options.find((opt) => opt.id === selectedId) ?? options[0];
 
-  const clearLongPressTimer = () => {
+  const clearLongPressTimer = useCallback(() => {
     if (longPressTimerRef.current) {
       clearTimeout(longPressTimerRef.current);
       longPressTimerRef.current = null;
     }
-  };
+  }, []);
 
   const handlePointerDown = () => {
     longPressTriggeredRef.current = false;
@@ -52,18 +52,23 @@ function LeftPanelButtonGroup({ active = false, id, options, title }: Props): Re
     clearLongPressTimer();
   };
 
-  const handleClick = (e: React.MouseEvent) => {
-    // Prevent antd's click trigger from auto-toggling the popover.
-    e.stopPropagation();
+  const handleClick = useCallback(
+    (e: React.MouseEvent) => {
+      // Prevent antd's click trigger from auto-toggling the popover.
+      e.stopPropagation();
 
-    if (longPressTriggeredRef.current) {
-      longPressTriggeredRef.current = false;
+      // Does current mouse down trigger a long press? If so, we should not trigger the click action.
+      if (longPressTriggeredRef.current) {
+        longPressTriggeredRef.current = false;
 
-      return;
-    }
+        return;
+      }
 
-    selectedOption?.onClick();
-  };
+      selectedOption?.onClick();
+      setPopoverOpen(false);
+    },
+    [selectedOption],
+  );
 
   const handleOptionClick = useCallback((option: ToolOption) => {
     setSelectedId(option.id);
