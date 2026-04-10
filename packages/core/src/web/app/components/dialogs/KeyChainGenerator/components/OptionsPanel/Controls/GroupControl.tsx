@@ -1,7 +1,8 @@
 import type { ReactNode } from 'react';
 import React, { memo, useState } from 'react';
 
-import { Collapse, Switch } from 'antd';
+import { QuestionCircleOutlined } from '@ant-design/icons';
+import { Collapse, Switch, Tooltip } from 'antd';
 
 import styles from './GroupControl.module.scss';
 
@@ -12,6 +13,7 @@ interface GroupControlProps {
   id?: string;
   onToggle?: (enabled: boolean) => void;
   title: string;
+  tooltip?: string;
 }
 
 const GroupControl = ({
@@ -21,6 +23,7 @@ const GroupControl = ({
   id = '1',
   onToggle,
   title,
+  tooltip,
 }: GroupControlProps): ReactNode => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>(enabled ? [id] : []);
 
@@ -31,7 +34,14 @@ const GroupControl = ({
 
   const header = (
     <div className={styles.header}>
-      <div className={styles.title}>{title}</div>
+      <div className={styles.title}>
+        {title}
+        {tooltip && (
+          <Tooltip title={tooltip}>
+            <QuestionCircleOutlined className={styles.hint} />
+          </Tooltip>
+        )}
+      </div>
       {!hideSwitch && (
         <Switch checked={enabled} onChange={handleToggle} onClick={(_, e) => e.stopPropagation()} size="small" />
       )}

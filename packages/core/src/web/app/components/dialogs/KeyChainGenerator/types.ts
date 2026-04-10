@@ -95,9 +95,12 @@ export interface CustomShapeOptionDef {
   type: 'customShape';
 }
 
+export type SizeDimension = 'height' | 'width';
+
 export type KeyChainOptionDef = CustomShapeOptionDef | ElementOptionDef | HoleOptionDef | TextOptionDef;
 
 export interface KeyChainCategory {
+  defaultSize: { dimension: SizeDimension; value: number };
   defaultViewBox: { height: number; width: number; x: number; y: number };
   id: string;
   isCustomShape?: boolean;
@@ -112,5 +115,6 @@ export interface KeyChainState {
   customShape: CustomShapeOptionValues;
   elements: Record<string, ElementOptionValues>;
   holes: Record<string, HoleOptionValues>;
+  size: { dimension: SizeDimension; value: number };
   texts: Record<string, TextOptionValues>;
 }

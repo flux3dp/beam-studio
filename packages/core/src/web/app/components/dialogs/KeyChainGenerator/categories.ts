@@ -48,6 +48,7 @@ export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
 
 export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   {
+    defaultSize: { dimension: 'height', value: 58 },
     defaultViewBox: { height: 600, width: 300, x: 0, y: 0 },
     id: 'rectangle',
     nameKey: 'rectangle',
@@ -65,7 +66,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
         type: 'hole',
       },
       {
-        bounds: { height: 400, width: 240, x: 30, y: 100 },
+        bounds: { height: 250, width: 240, x: 30, y: 100 },
         defaults: DEFAULT_TEXT,
         id: '1',
         type: 'text',
@@ -75,6 +76,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     thumbnail: '',
   },
   {
+    defaultSize: { dimension: 'width', value: 100 },
     defaultViewBox: { height: 0, width: 0, x: 0, y: 0 },
     id: 'text',
     isCustomShape: true,
@@ -108,6 +110,7 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
     customShape: {} as any,
     elements: {},
     holes: {},
+    size: { ...category.defaultSize },
     texts: {},
   };
 

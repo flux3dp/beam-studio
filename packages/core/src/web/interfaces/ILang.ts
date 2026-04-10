@@ -1633,6 +1633,10 @@ export interface ILang {
     position_ref_right_center: string;
     position_ref_top_center: string;
     reset_to_default: string;
+    size: string;
+    size_height: string;
+    size_tooltip: string;
+    size_width: string;
     switch_type_warning: string;
     text: string;
     text_placeholder: string;

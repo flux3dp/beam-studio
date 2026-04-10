@@ -12,6 +12,7 @@ import CustomShapeGroup from './CustomShapeGroup';
 import ElementControl from './element/ElementControl';
 import HoleGroup from './HoleGroup';
 import styles from './OptionsPanel.module.scss';
+import SizeGroup from './SizeGroup';
 import TextGroup from './text/TextGroup';
 
 interface OptionsPanelProps {
@@ -26,6 +27,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
     <div className={classNames(styles.panel, { [styles.mobile]: isMobile })}>
       <div className={styles.header}>{t.types[category.nameKey] ?? category.nameKey}</div>
       <div className={styles.content}>
+        <SizeGroup />
         {category.options.map((option) => {
           if (option.type === 'hole') return <HoleGroup key={`hole-${option.id}`} optionDef={option} />;
 

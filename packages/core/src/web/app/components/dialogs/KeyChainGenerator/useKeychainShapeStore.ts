@@ -11,6 +11,7 @@ import { buildKeychainView } from './buildKeychainSvgViews';
 import { applyTexts } from './buildKeychainText';
 import { getDefaultCategory, getDefaultState, getStateForCategory } from './categories';
 import type { KeychainViewMode } from './constants';
+import { PX_TO_MM_RATIO } from './constants';
 import type {
   CustomShapeOptionDef,
   ElementOptionDef,
@@ -27,6 +28,8 @@ interface StoreState {
   // Counter incremented at the start of every async buildBaseShape call
   // — used to bail out of stale builds.
   buildVersion: number;
+  // Derived dimensions for display (main = size.value, other = computed from basePath bounds)
+  calculatedSize: { height: number; width: number };
   category: KeyChainCategory;
   // Paper.js cache for inner path, path for other layer decoration elements (e.g. text-body glyphs)
   innerPath: null | paper.PathItem;
@@ -35,6 +38,8 @@ interface StoreState {
   resultPath: null | paper.PathItem;
   // Computed result consumed by Preview and exportToCanvas
   shape: KeyChainShape | null;
+  // Scale ratio derived from target size vs natural bounds
+  sizeRatio: number;
   // Keychain parameters
   state: KeyChainState;
   // Preview view mode — controls which cached SVG the Preview shows
@@ -44,12 +49,14 @@ interface StoreState {
 const initialState: StoreState = {
   basePath: null,
   buildVersion: 0,
+  calculatedSize: { height: 0, width: 0 },
   category: getDefaultCategory(),
   innerPath: null,
   isModified: false,
   project: null,
   resultPath: null,
   shape: null,
+  sizeRatio: 1,
   state: getDefaultState(),
   viewMode: 'design',
 };
@@ -110,6 +117,20 @@ const generateBaseShape = (category: KeyChainCategory): { basePath: null | paper
   return { basePath, project };
 };
 
+const calculateSize = (targetSize: KeyChainState['size'], basePath: null | paper.PathItem, sizeRatio?: number) => {
+  const { dimension, value } = targetSize;
+
+  if (!basePath || value <= 0 || basePath.bounds[dimension] <= 0) return null;
+
+  sizeRatio = sizeRatio ?? (value * PX_TO_MM_RATIO) / basePath.bounds[dimension];
+
+  const otherDim = dimension === 'width' ? 'height' : 'width';
+  const otherValue = Math.round(((basePath.bounds[otherDim] * sizeRatio) / PX_TO_MM_RATIO) * 10) / 10;
+  const calculatedSize = { [dimension]: value, [otherDim]: otherValue } as { height: number; width: number };
+
+  return { calculatedSize, sizeRatio };
+};
+
 const useKeychainShapeStore = create(
   combine(initialState, (set, get) => ({
     /**
@@ -120,7 +141,7 @@ const useKeychainShapeStore = create(
      * before installing the new shape.
      */
     applyOptions: (): KeyChainShape => {
-      const { basePath, category, innerPath, project, shape: oldShape, state } = get();
+      const { basePath, category, innerPath, project, shape: oldShape, sizeRatio, state } = get();
       const { defaultViewBox, options } = category;
 
       // Dispose previous shape's owned paper objects
@@ -130,14 +151,14 @@ const useKeychainShapeStore = create(
       if (!basePath || !project) {
         const emptyShape = createEmptyShape(project);
 
-        set({ shape: emptyShape });
+        set({ shape: emptyShape, sizeRatio: 1 });
 
         return emptyShape;
       }
 
       // Apply all hole boolean ops on a clone of the cached base path
       const holeDefs = options.filter((o): o is HoleOptionDef => o.type === 'hole');
-      const resultBasePath = applyHoles(basePath.clone(), state, holeDefs);
+      const resultBasePath = applyHoles(basePath.clone(), state, holeDefs, sizeRatio);
       const bounds = resultBasePath.bounds;
 
       // Build decoration nodes (text + element shapes)
@@ -190,9 +211,14 @@ const useKeychainShapeStore = create(
       } = get();
 
       const { isCustomShape } = category;
+      const { size } = state;
 
-      // Cache hit: same non-text category with valid paper objects → nothing to do
+      // Cache hit: same non-custom category with valid paper objects → recompute sizeRatio + calculatedSize only
       if (!isCustomShape && category.id === cachedCategory.id && cachedProject && cachedBasePath) {
+        const sizeResult = calculateSize(size, cachedBasePath);
+
+        if (sizeResult) set(sizeResult);
+
         return true;
       }
 
@@ -225,7 +251,7 @@ const useKeychainShapeStore = create(
           await loadShape(customShapeValues.element.shapeKey);
         }
 
-        const result = await generateCustomBaseShape(customShapeValues);
+        const result = await generateCustomBaseShape(customShapeValues, state.size);
 
         // Stale: another buildBaseShape call has started since this one — discard our result
         if (get().buildVersion !== buildVersion) {
@@ -236,8 +262,7 @@ const useKeychainShapeStore = create(
           return false;
         }
 
-        // Winner: clean up whatever is currently cached (read fresh in case earlier sync calls
-        // already replaced it) and install our result
+        // Winner: clean up whatever is currently cached
         const { basePath: prevBasePath, innerPath: prevInnerPath, project: prevProject } = get();
 
         prevBasePath?.remove();
@@ -250,6 +275,10 @@ const useKeychainShapeStore = create(
           innerPath: result.innerPath,
           project: result.project,
         });
+
+        const sizeResult = calculateSize(size, result.basePath, result.sizeRatio);
+
+        if (sizeResult) set(sizeResult);
 
         return true;
       }
@@ -267,6 +296,10 @@ const useKeychainShapeStore = create(
         innerPath: null,
         project: result.project,
       });
+
+      const sizeResult = calculateSize(size, result.basePath);
+
+      if (sizeResult) set(sizeResult);
 
       return true;
     },

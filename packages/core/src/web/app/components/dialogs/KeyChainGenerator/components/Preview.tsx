@@ -21,6 +21,7 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
   const { containerRef, size } = useContainerSize();
   const shape = useKeychainShapeStore((s) => s.shape);
   const viewMode = useKeychainShapeStore((s) => s.viewMode);
+  const sizeRatio = useKeychainShapeStore((s) => s.sizeRatio);
   const { bounds: { height = 0, width = 0 } = {} } = shape ?? {};
 
   useEffect(() => {
@@ -57,10 +58,10 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
 
   const dimensionsMm = useMemo(
     () => ({
-      height: height / PX_TO_MM_RATIO,
-      width: width / PX_TO_MM_RATIO,
+      height: (height * sizeRatio) / PX_TO_MM_RATIO,
+      width: (width * sizeRatio) / PX_TO_MM_RATIO,
     }),
-    [height, width],
+    [height, width, sizeRatio],
   );
 
   // Compute scaled SVG container size from the active SVG's viewBox so the renderer

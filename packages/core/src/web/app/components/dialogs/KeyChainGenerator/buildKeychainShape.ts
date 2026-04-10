@@ -54,9 +54,11 @@ export const applyHoles = (
   basePath: paper.PathItem,
   state: KeyChainState,
   holeDefs: HoleOptionDef[],
+  sizeRatio: number = 1,
 ): paper.PathItem => {
   const outerCircles: paper.Path[] = [];
   const innerCircles: paper.Path[] = [];
+  const mmToPx = PX_TO_MM_RATIO / sizeRatio;
 
   for (const holeDef of holeDefs) {
     const hole = state.holes[holeDef.id];
@@ -67,7 +69,7 @@ export const applyHoles = (
     const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
     let insetPath = PaperOffset.offset(
       basePath as paper.Path,
-      (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * PX_TO_MM_RATIO,
+      (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx,
     ) as paper.Path;
 
     // Sometimes offsetting can produce a CompoundPath even if the original was a simple Path
@@ -97,12 +99,12 @@ export const applyHoles = (
 
     if (!point) continue;
 
-    const innerRadius = (hole.diameter / 2) * PX_TO_MM_RATIO;
+    const innerRadius = (hole.diameter / 2) * mmToPx;
 
     innerCircles.push(new paper.Path.Circle(point, innerRadius));
 
     if (!isPunch && hole.thickness > 0) {
-      const outerRadius = (hole.diameter / 2 + hole.thickness) * PX_TO_MM_RATIO;
+      const outerRadius = (hole.diameter / 2 + hole.thickness) * mmToPx;
 
       outerCircles.push(new paper.Path.Circle(point, outerRadius));
     }

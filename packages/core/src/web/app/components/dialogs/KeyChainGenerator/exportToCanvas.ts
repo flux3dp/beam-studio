@@ -90,21 +90,42 @@ const convertTextsToPath = async (textElements: SVGTextElement[]): Promise<SVGPa
 };
 
 /**
+ * Scales an SVG path's `d` attribute by the given ratio using Paper.js.
+ * Returns the scaled path data string.
+ */
+const scalePathData = (d: string, ratio: number): string => {
+  const p = new paper.CompoundPath(d);
+
+  p.scale(ratio, new paper.Point(0, 0));
+
+  const scaled = p.pathData;
+
+  p.remove();
+
+  return scaled;
+};
+
+/**
  * Adds every <path> to the canvas, then moves the resulting
  * elements by (-bounds.x, -bounds.y) so the layer aligns to the canvas origin.
+ * When sizeRatio ≠ 1, each path is scaled before adding.
  */
 const addPathsToCanvas = async (
   paths: SVGPathElement[],
-  // outSvg: SVGSVGElement,
   bounds: { x: number; y: number },
   batchCmd: IBatchCommand,
+  sizeRatio: number = 1,
 ): Promise<void> => {
   const createdPaths: SVGPathElement[] = [];
 
   for (const path of paths) {
-    const d = path.getAttribute('d');
+    let d = path.getAttribute('d');
 
     if (!d) continue;
+
+    if (sizeRatio !== 1) {
+      d = scalePathData(d, sizeRatio);
+    }
 
     const fill = path.getAttribute('fill') ?? 'none';
     const pathEl = svgCanvas.addSvgElementFromJson({
@@ -127,8 +148,8 @@ const addPathsToCanvas = async (
   }
 
   if (createdPaths.length > 0) {
-    const dx = createdPaths.map(() => -bounds.x);
-    const dy = createdPaths.map(() => -bounds.y);
+    const dx = createdPaths.map(() => -bounds.x * sizeRatio);
+    const dy = createdPaths.map(() => -bounds.y * sizeRatio);
     const moveCmd = moveElements(dx, dy, createdPaths, false);
 
     if (moveCmd && !moveCmd.isEmpty()) {
@@ -153,7 +174,7 @@ const pathItemToSvgPath = (item: paper.PathItem): SVGPathElement => {
   return path;
 };
 
-const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand): Promise<void> => {
+const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand, sizeRatio: number): Promise<void> => {
   const { layers: tLayers } = i18n.lang.keychain_generator;
   const { name } = createLayer(tLayers.keychain, { hexCode: KEYCHAIN_COLORS.design.base, parentCmd: batchCmd });
 
@@ -174,10 +195,10 @@ const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand): P
 
   paths.push(...(await convertTextsToPath(textElements)));
 
-  await addPathsToCanvas(paths, shape.bounds, batchCmd);
+  await addPathsToCanvas(paths, shape.bounds, batchCmd, sizeRatio);
 };
 
-const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand): Promise<void> => {
+const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, sizeRatio: number): Promise<void> => {
   if (!shape.innerPath) return;
 
   const { layers: tLayers } = i18n.lang.keychain_generator;
@@ -192,7 +213,7 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand):
 
   const innerPathSvg = [pathItemToSvgPath(shape.innerPath)];
 
-  await addPathsToCanvas(innerPathSvg, shape.bounds, batchCmd);
+  await addPathsToCanvas(innerPathSvg, shape.bounds, batchCmd, sizeRatio);
 
   // Layer 3: inner path standalone — translated below the base by `bounds.height + GAP`.
   // Reuse addPathsToCanvas by feeding it a shifted bounds origin so the move op produces
@@ -206,12 +227,12 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand):
 
   const shiftedBounds = new paper.Rectangle(
     shape.bounds.x,
-    shape.bounds.y - shape.bounds.height - EXPLODED_GAP_PX,
+    shape.bounds.y - shape.bounds.height - EXPLODED_GAP_PX / sizeRatio,
     shape.bounds.width,
     shape.bounds.height,
   );
 
-  await addPathsToCanvas(innerPathSvg, shiftedBounds, batchCmd);
+  await addPathsToCanvas(innerPathSvg, shiftedBounds, batchCmd, sizeRatio);
 };
 
 /**
@@ -225,19 +246,20 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand):
  * Reads the already-computed shape from the store; rebuilds it on demand if missing.
  */
 export const exportToCanvas = async (): Promise<void> => {
-  let shape = useKeychainShapeStore.getState().shape;
+  let { shape, sizeRatio } = useKeychainShapeStore.getState();
 
   if (!shape) {
     const { applyOptions, buildBaseShape, category } = useKeychainShapeStore.getState();
 
     await buildBaseShape(category);
     shape = applyOptions();
+    sizeRatio = useKeychainShapeStore.getState().sizeRatio;
   }
 
   const batchCmd = new history.BatchCommand('Export Keychain');
 
-  await exportBaseLayer(shape, batchCmd);
-  await exportInnerLayers(shape, batchCmd);
+  await exportBaseLayer(shape, batchCmd, sizeRatio);
+  await exportInnerLayers(shape, batchCmd, sizeRatio);
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 };

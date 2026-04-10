@@ -9,7 +9,7 @@ import { svgCache } from './buildKeychainElement';
 import { collectPathItems } from './buildKeychainShape';
 import { createTextElement } from './buildKeychainText';
 import { PX_TO_MM_RATIO } from './constants';
-import type { ShapeElementPositionRef, CustomShapeOptionValues } from './types';
+import type { CustomShapeOptionValues, ShapeElementPositionRef, SizeDimension } from './types';
 
 export const generateShapeTextPathD = async (values: CustomShapeOptionValues): Promise<null | string> => {
   const { font, fontSize, letterSpacing, lineSpacing, text } = values;
@@ -54,16 +54,15 @@ const getElementCenter = (
   textBounds: paper.Rectangle,
   positionRef: ShapeElementPositionRef,
   size: number,
-  outlineOffset: number = 0,
 ): paper.Point => {
   const { offset, point } = match(positionRef)
     .with('bottomCenter', () => ({
-      offset: { x: 0, y: size / 2 + outlineOffset / 2 },
+      offset: { x: 0, y: 0.55 * size },
       point: textBounds.bottomCenter,
     }))
-    .with('leftCenter', () => ({ offset: { x: -size / 2 - outlineOffset / 2, y: 0 }, point: textBounds.leftCenter }))
-    .with('rightCenter', () => ({ offset: { x: size / 2 + outlineOffset / 2, y: 0 }, point: textBounds.rightCenter }))
-    .with('topCenter', () => ({ offset: { x: 0, y: -size / 2 - outlineOffset / 2 }, point: textBounds.topCenter }))
+    .with('leftCenter', () => ({ offset: { x: -0.55 * size, y: 0 }, point: textBounds.leftCenter }))
+    .with('rightCenter', () => ({ offset: { x: 0.55 * size, y: 0 }, point: textBounds.rightCenter }))
+    .with('topCenter', () => ({ offset: { x: 0, y: -0.55 * size }, point: textBounds.topCenter }))
     .exhaustive();
 
   return point.add(new paper.Point(offset.x, offset.y));
@@ -108,11 +107,17 @@ const buildElementPath = (
 
 export const generateCustomBaseShape = async (
   values: CustomShapeOptionValues,
-): Promise<{ basePath: null | paper.PathItem; innerPath: null | paper.PathItem; project: paper.Project }> => {
+  size?: { dimension: SizeDimension; value: number },
+): Promise<{
+  basePath: null | paper.PathItem;
+  innerPath: null | paper.PathItem;
+  project: paper.Project;
+  sizeRatio: number;
+}> => {
   const project = new paper.Project(document.createElement('canvas'));
   const pathD = await generateShapeTextPathD(values);
 
-  if (!pathD) return { basePath: null, innerPath: null, project };
+  if (!pathD) return { basePath: null, innerPath: null, project, sizeRatio: 1 };
 
   let innerPath: paper.PathItem = new paper.Path();
   let basePath: paper.PathItem = new paper.Path();
@@ -135,12 +140,10 @@ export const generateCustomBaseShape = async (
   innerPath.strokeWidth = basePath.strokeWidth = 1;
   innerPath.strokeScaling = basePath.strokeScaling = false;
 
-  const outlineOffset = values.outlineOffset * PX_TO_MM_RATIO;
-
   // Unite element shape into both basePath and innerPath
   if (values.element.shapeKey) {
     const textBounds = basePath.bounds;
-    const center = getElementCenter(textBounds, values.element.positionRef, values.fontSize, outlineOffset);
+    const center = getElementCenter(textBounds, values.element.positionRef, values.fontSize);
     const elementPath = buildElementPath(project, values.element.shapeKey, values.fontSize, center);
 
     if (elementPath) {
@@ -150,9 +153,27 @@ export const generateCustomBaseShape = async (
     }
   }
 
-  if (!innerPath || outlineOffset <= 0) return { basePath, innerPath: null, project };
+  const outlineOffset = values.outlineOffset * PX_TO_MM_RATIO;
 
-  basePath = PaperOffset.offset(basePath as paper.Path, outlineOffset, {
+  // Compute sizeRatio from the target size vs natural inner-path bounds
+  let sizeRatio = 1;
+
+  if (size && size.value > 0) {
+    const innerDim = innerPath.bounds[size.dimension];
+
+    if (innerDim > 0) {
+      const effectiveTarget = (size.value - 2 * values.outlineOffset) * PX_TO_MM_RATIO;
+
+      sizeRatio = effectiveTarget > 0 ? effectiveTarget / innerDim : 1;
+    }
+  }
+
+  const compensatedOffset = outlineOffset / sizeRatio;
+
+  if (!innerPath || compensatedOffset <= 0) return { basePath, innerPath: null, project, sizeRatio };
+
+  // Compensate outline so that after uniform scaling by sizeRatio, the final outline = outlineOffset mm
+  basePath = PaperOffset.offset(basePath as paper.Path, compensatedOffset, {
     join: 'round',
   }).unite(new paper.Path());
 
@@ -168,5 +189,5 @@ export const generateCustomBaseShape = async (
     }
   }
 
-  return { basePath, innerPath, project };
+  return { basePath, innerPath, project, sizeRatio };
 };
