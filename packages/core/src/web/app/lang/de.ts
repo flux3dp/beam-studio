@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: 'Erneut testen',
     testing: 'Durchführen des Belastungstests...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Berechnen',
     exposure: 'Belichtung',
+    not_supported: 'Nicht unterstützt',
     opacity: 'Transparenz',
   },
 };

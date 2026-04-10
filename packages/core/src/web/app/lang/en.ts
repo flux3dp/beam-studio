@@ -2658,10 +2658,11 @@ Machines > ‘Promark Name’ > Promark Settings`,
     retest: 'Retest',
     testing: 'Performing load test...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Calculate',
     exposure: 'Exposure',
+    not_supported: 'Not Supported',
     opacity: 'Opacity',
   },
 };

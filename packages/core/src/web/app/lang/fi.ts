@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: 'Testaa uudelleen',
     testing: 'Suoritetaan kuormitustestiä...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Laske',
     exposure: 'Valotus',
+    not_supported: 'Ei tuettu',
     opacity: 'Läpinäkyvyys',
   },
 };

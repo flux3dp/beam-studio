@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: 'Opnieuw testen',
     testing: 'Bezig met het uitvoeren van de belastingtest...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Berekenen',
     exposure: 'Belichting',
+    not_supported: 'Niet ondersteund',
     opacity: 'Dekking',
   },
 };

@@ -1238,6 +1238,13 @@ export interface ILang {
     upload_success: string;
     uploading_data: string;
   };
+  canvas_control: {
+    canvas_zoom: string;
+    estimate_time: string;
+    exposure: string;
+    not_supported: string;
+    opacity: string;
+  };
   caption: {
     connectionTimeout: string;
   };
@@ -2654,11 +2661,5 @@ export interface ILang {
     ignore: string;
     retest: string;
     testing: string;
-  };
-  zoom_block: {
-    canvas_zoom: string;
-    estimate_time: string;
-    exposure: string;
-    opacity: string;
   };
 }

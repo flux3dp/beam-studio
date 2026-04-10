@@ -46,6 +46,12 @@ jest.mock('@core/helpers/version-checker', () => () => ({
   meetRequirement: (...args) => mockMeetRequirement(...args),
 }));
 
+jest.mock('@core/helpers/useI18n', () => () => ({
+  canvas_control: {
+    not_supported: 'Not Supported',
+  },
+}));
+
 jest.mock('antd', () => ({
   ConfigProvider: ({ children }: any) => children,
   Slider: ({ className, disabled, max, min, onChange, onChangeComplete, step, value }: any) => (

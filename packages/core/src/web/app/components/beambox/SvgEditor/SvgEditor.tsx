@@ -81,7 +81,10 @@ const SvgEditor = (): ReactNode => {
             <div className={styles['bottom-right']}>
               <div className={styles.controls}>
                 <TimeEstimationButtonContextProvider>
-                  <CanvasControl setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)} />
+                  <CanvasControl
+                    resetView={workareaManager.resetView}
+                    setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
+                  />
                 </TimeEstimationButtonContextProvider>
               </div>
               {isMobile && <PreviewFloatingBar />}

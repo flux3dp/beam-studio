@@ -1,7 +1,7 @@
 describe('manipulate view', () => {
   const addLayerBtnPrefix = '_-_-packages-core-src-web-app-components-beambox-RightPanel-AddLayerButton-module__btn';
-  const canvasControlPrefix = '_-_-packages-core-src-web-app-components-beambox-SvgEditor-CanvasControl-module_';
-  const zoomRatio = () => cy.get(`[class*="${canvasControlPrefix}_ratioDisplay"]`);
+  const zoomBlockPrefix = '_-_-packages-core-src-web-app-components-common-ZoomBlock-module_';
+  const zoomRatio = () => cy.get(`[class*="${zoomBlockPrefix}_ratio"]`);
 
   beforeEach(() => {
     cy.landingEditor();

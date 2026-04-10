@@ -1,12 +1,20 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
+exports[`TimeEstimationButton should render calculate text when no estimatedTime 1`] = `
+<div>
+  <div
+    class="timeDisplay"
+  >
+    Calculate
+  </div>
+</div>
+`;
+
 exports[`TimeEstimationButton should render correctly with estimatedTime 1`] = `
 <div>
   <div
-    class="result"
+    class="timeDisplay"
   >
-    Estimated Time:
-     
     60s
   </div>
 </div>

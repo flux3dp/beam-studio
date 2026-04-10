@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: 'Επανάληψη δοκιμής',
     testing: 'Εκτελείται δοκιμή φόρτωσης...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Υπολογισμός',
     exposure: 'Έκθεση',
+    not_supported: 'Δεν υποστηρίζεται',
     opacity: 'Αδιαφάνεια',
   },
 };

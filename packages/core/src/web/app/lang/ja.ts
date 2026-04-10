@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: '再テスト',
     testing: '負荷テストを実行中...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'ズーム',
     estimate_time: '計算',
     exposure: '露出',
+    not_supported: '非対応',
     opacity: '不透明度',
   },
 };

@@ -2659,10 +2659,11 @@ const lang: ILang = {
     retest: 'Otestovat znovu',
     testing: 'Provádí se zátěžový test...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Vypočítat',
     exposure: 'Expozice',
+    not_supported: 'Nepodporováno',
     opacity: 'Průhlednost',
   },
 };

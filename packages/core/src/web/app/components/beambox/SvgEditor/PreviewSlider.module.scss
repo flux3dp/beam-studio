@@ -12,3 +12,11 @@
 .switch {
   font-weight: bold;
 }
+
+.notSupported {
+  font-size: 14px;
+  white-space: nowrap;
+  color: #ffffff;
+  display: flex;
+  align-items: center;
+}

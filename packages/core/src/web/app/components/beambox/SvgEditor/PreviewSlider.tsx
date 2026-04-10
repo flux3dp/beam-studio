@@ -9,12 +9,14 @@ import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { getExposureSettings, setExposure } from '@core/helpers/device/camera/cameraExposure';
 import deviceMaster from '@core/helpers/device-master';
+import useI18n from '@core/helpers/useI18n';
 import versionChecker from '@core/helpers/version-checker';
 import type { IConfigSetting } from '@core/interfaces/IDevice';
 
 import styles from './PreviewSlider.module.scss';
 
 const PreviewSlider = (): React.ReactNode => {
+  const lang = useI18n().canvas_control;
   const [exposureSetting, setExposureSetting] = useState<IConfigSetting | null>(null);
   const [autoExposure, setAutoExposure] = useState<boolean | null>(null);
   const [isSettingAutoExposure, setIsSettingAutoExposure] = useState(false);
@@ -95,7 +97,9 @@ const PreviewSlider = (): React.ReactNode => {
     return true;
   }, [autoExposure, previewMode]);
 
-  if (!exposureSetting) return null;
+  if (!exposureSetting || (Boolean(autoExposure) && !showAutoExposure)) {
+    return <div className={styles.notSupported}>{lang.not_supported}</div>;
+  }
 
   return (
     <ConfigProvider

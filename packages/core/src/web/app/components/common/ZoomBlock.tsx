@@ -140,21 +140,6 @@ const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): null | Re
   const [displayRatio, setDisplayRatio] = useState(1);
   const isMobile = useIsMobile();
 
-  const [isTargetScreen, setIsTargetScreen] = useState(false);
-
-  useEffect(() => {
-    const checkScreenSize = () => {
-      const w = window.innerWidth;
-
-      setIsTargetScreen(w === 600 || w === 1024);
-    };
-
-    checkScreenSize();
-    window.addEventListener('resize', checkScreenSize);
-
-    return () => window.removeEventListener('resize', checkScreenSize);
-  }, []);
-
   useEffect(() => {
     getDpmm().then((res) => setDpmm(res));
   }, []);
@@ -247,10 +232,6 @@ const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): null | Re
     },
     [resetView, setRatio],
   );
-
-  if (isTargetScreen) {
-    return null;
-  }
 
   return (
     <div className={classNames(styles.container, { [styles.mobile]: isMobile }, className)}>

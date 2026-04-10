@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: 'Test på nytt',
     testing: 'Utfører belastningstest...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Beregn',
     exposure: 'Eksponering',
+    not_supported: 'Ikke støttet',
     opacity: 'Gjennomsiktighet',
   },
 };

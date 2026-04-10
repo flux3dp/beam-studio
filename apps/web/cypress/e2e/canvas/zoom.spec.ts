@@ -1,23 +1,24 @@
-const canvasControlPrefix = '_-_-packages-core-src-web-app-components-beambox-SvgEditor-CanvasControl-module_';
-const zoomRatioText = () => cy.get(`[class*="${canvasControlPrefix}_ratioDisplay"]`);
+const zoomBlockPrefix = '_-_-packages-core-src-web-app-components-common-ZoomBlock-module_';
+const zoomRatioText = () => cy.get(`[class*="${zoomBlockPrefix}_ratio"]`);
 
 it('zoom in/out', () => {
   cy.landingEditor();
-  cy.get(`[class*="${canvasControlPrefix}_container"]`).should('exist');
-  cy.get(`[class*="${canvasControlPrefix}_actionBtn"]`).should('have.length', 2);
+  cy.get(`[class*="${zoomBlockPrefix}_container"]`).should('exist');
+  cy.get(`[class*="${zoomBlockPrefix}_container"] img[src="img/icon-minus.svg"]`).parent().should('exist');
+  cy.get(`[class*="${zoomBlockPrefix}_container"] img[src="img/icon-plus.svg"]`).parent().should('exist');
 
   let zoomRatio: number;
   zoomRatioText().should(($div) => {
     zoomRatio = parseInt($div.text().replace('%', ''));
   });
 
-  cy.get(`[class*="${canvasControlPrefix}_actionBtn"]`).last().click();
+  cy.get(`[class*="${zoomBlockPrefix}_container"] img[src="img/icon-plus.svg"]`).parent().click();
   zoomRatioText().should(($div) => {
     expect(parseInt($div.text().replace('%', '')) > zoomRatio).to.be.true;
     zoomRatio = parseInt($div.text().replace('%', ''));
   });
 
-  cy.get(`[class*="${canvasControlPrefix}_actionBtn"]`).first().click();
+  cy.get(`[class*="${zoomBlockPrefix}_container"] img[src="img/icon-minus.svg"]`).parent().click();
   zoomRatioText().should(($div) => {
     expect(parseInt($div.text().replace('%', '')) < zoomRatio).to.be.true;
   });

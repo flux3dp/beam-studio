@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: 'Retester',
     testing: 'Exécution du test de charge...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zoom',
     estimate_time: 'Calculer',
     exposure: 'Exposition',
+    not_supported: 'Non pris en charge',
     opacity: 'Opacité',
   },
 };

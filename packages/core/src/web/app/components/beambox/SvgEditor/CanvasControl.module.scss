@@ -33,40 +33,11 @@
   align-items: center;
   gap: 6px;
   cursor: pointer;
-
-  .zoomIcon {
-    font-size: 28px;
-    display: flex;
-    line-height: 1;
-  }
 }
 
 .zoomIcon {
-  font-size: 20px;
   display: flex;
   line-height: 1;
-}
-
-.zoomContent {
-  display: flex;
-  align-items: center;
-  gap: 16px;
-  font-weight: 500;
-  font-size: 14px;
-
-  .actionBtn {
-    cursor: pointer;
-    display: flex;
-  }
-
-  .ratioDisplay {
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    gap: 4px;
-    min-width: 45px;
-    justify-content: center;
-  }
 }
 
 .slider {
@@ -80,11 +51,20 @@
   text-align: right;
 }
 
-.timeDisplay {
-  text-align: center;
-  cursor: pointer;
-  display: flex;
+.zoomContent {
+  position: static;
+  bottom: auto;
+  left: auto;
+  height: auto;
+  font-size: 14px;
   align-items: center;
-  justify-content: center;
-  white-space: nowrap;
+
+  img {
+    filter: invert(1);
+  }
+
+  > :nth-child(2) {
+    color: #ffffff;
+    opacity: 1;
+  }
 }

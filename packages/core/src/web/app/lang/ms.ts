@@ -2658,10 +2658,11 @@ const lang: ILang = {
     retest: 'Uji semula',
     testing: 'Melaksanakan ujian beban...',
   },
-  zoom_block: {
+  canvas_control: {
     canvas_zoom: 'Zum',
     estimate_time: 'Kira',
     exposure: 'Pendedahan',
+    not_supported: 'Tidak Disokong',
     opacity: 'Ketelusan',
   },
 };

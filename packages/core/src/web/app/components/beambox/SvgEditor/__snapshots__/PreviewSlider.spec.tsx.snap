@@ -207,6 +207,22 @@ exports[`test PreviewSlider should render correctly when previewing BB2 2`] = `
 </div>
 `;
 
-exports[`test PreviewSlider should render null when not in preview mode 1`] = `<div />`;
+exports[`test PreviewSlider should render null when not in preview mode 1`] = `
+<div>
+  <div
+    class="notSupported"
+  >
+    Not Supported
+  </div>
+</div>
+`;
 
-exports[`test PreviewSlider should render null when previewing non-fcodeV2 model 1`] = `<div />`;
+exports[`test PreviewSlider should render null when previewing non-fcodeV2 model 1`] = `
+<div>
+  <div
+    class="notSupported"
+  >
+    Not Supported
+  </div>
+</div>
+`;
