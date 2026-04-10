@@ -1621,7 +1621,7 @@ const lang: ILang = {
     import_to_canvas: 'Importer sur le canevas',
     layers: {
       keychain: 'Porte-clés',
-      keychain_inner: "Intérieur du porte-clés",
+      keychain_inner: 'Intérieur du porte-clés',
       keychain_inner_position: "Alignement de l'intérieur du porte-clés",
     },
     letter_spacing: 'Espacement des lettres',

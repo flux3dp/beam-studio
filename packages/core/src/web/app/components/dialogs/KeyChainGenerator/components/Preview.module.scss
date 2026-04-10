@@ -1,4 +1,4 @@
-.preview-area {
+.container {
   flex: 1 1 auto;
   min-width: 300px;
   display: flex;
@@ -19,7 +19,7 @@
   }
 }
 
-.preview-canvas {
+.canvas {
   flex: 1;
   position: relative;
   display: flex;
@@ -27,7 +27,7 @@
   justify-content: center;
 }
 
-.preview-content {
+.content {
   display: flex;
   flex-direction: column;
   align-items: center;

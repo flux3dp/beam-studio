@@ -1606,7 +1606,6 @@ const lang: ILang = {
   },
   keychain_generator: {
     design_preview: 'Designforhåndsvisning',
-    more_shapes: 'Flere former',
     element: 'Element',
     exploded_view: 'Eksploderet visning',
     export_failed: 'Kunne ikke importere nøglering til lærredet. Prøv venligst igen.',
@@ -1627,6 +1626,7 @@ const lang: ILang = {
     },
     letter_spacing: 'Bogstavafstand',
     line_spacing: 'Linjeafstand',
+    more_shapes: 'Flere former',
     outline_offset: 'Konturforskydning',
     position_ref: 'Position',
     position_ref_bottom_center: 'Bund',

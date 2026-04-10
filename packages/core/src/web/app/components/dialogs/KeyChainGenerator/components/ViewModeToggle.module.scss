@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .container {
   display: flex;
   gap: 12px;
@@ -25,7 +27,7 @@
   }
 
   &.active {
-    border-color: #1890ff;
+    border-color: variables.$primary-blue;
     box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
   }
 

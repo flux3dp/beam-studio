@@ -81,9 +81,9 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
   }, [svgElement, size, width, height]);
 
   return (
-    <div className={classNames(styles['preview-area'], { [styles.mobile]: isMobile })} ref={containerRef}>
-      <div className={styles['preview-canvas']}>
-        <div className={styles['preview-content']}>
+    <div className={classNames(styles.container, { [styles.mobile]: isMobile })} ref={containerRef}>
+      <div className={styles.canvas}>
+        <div className={styles.content}>
           <div ref={svgContainerRef} style={{ height: scaledSize.height, width: scaledSize.width }} />
           <div className={styles.dimensions}>
             {dimensionsMm.width.toFixed(0)} x {dimensionsMm.height.toFixed(0)} mm

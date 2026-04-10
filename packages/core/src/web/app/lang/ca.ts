@@ -1621,7 +1621,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     import_to_canvas: 'Importar al llenç',
     layers: {
       keychain: 'Clauer',
-      keychain_inner: "Interior del clauer",
+      keychain_inner: 'Interior del clauer',
       keychain_inner_position: "Alineació de l'interior del clauer",
     },
     letter_spacing: 'Espaiat entre lletres',
