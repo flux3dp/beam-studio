@@ -6,9 +6,9 @@ import classNames from 'classnames';
 
 import importIcon from '@core/app/components/dialogs/ElementPanel/Element/importIcon';
 
-import { loadShape, NP_SHAPE_PREFIX, svgCache } from '../../buildKeychainElement';
+import { loadShape, NP_SHAPE_PREFIX, svgCache } from '../../../buildKeychainElement';
 
-import styles from './ShapeSelector.module.scss';
+import styles from './PresetSelector.module.scss';
 
 /** Curated preset shape keys (7 items) shown after the current shape slot. */
 const PRESET_SHAPES: string[] = [
@@ -20,12 +20,6 @@ const PRESET_SHAPES: string[] = [
   'basic/icon-sun',
   'basic/icon-cloud',
 ];
-
-interface ShapeSelectorProps {
-  onClear: () => void;
-  onSelect: (shapeKey: string) => void;
-  selectedKey: string;
-}
 
 /** Cache of imported preset icon React components. */
 const presetIconComponents: { [key: string]: ComponentType } = {};
@@ -106,14 +100,24 @@ const CurrentShapeIcon = memo(({ shapeKey }: { shapeKey: string }): ReactNode =>
 
 CurrentShapeIcon.displayName = 'CurrentShapeIcon';
 
-const ShapeSelector = ({ onClear, onSelect, selectedKey }: ShapeSelectorProps): ReactNode => {
+interface PresetSelectorProps {
+  onSelect: (shapeKey: string) => void;
+  selectedKey: string;
+}
+
+const PresetSelector = ({ onSelect, selectedKey }: PresetSelectorProps): ReactNode => {
   return (
     <div className={styles.grid}>
       <div className={classNames(styles.item, styles.current, { [styles.empty]: !selectedKey })}>
         {selectedKey && (
           <>
             <CurrentShapeIcon shapeKey={selectedKey} />
-            <button aria-label="Clear current shape" className={styles.clear} onClick={onClear} type="button">
+            <button
+              aria-label="Clear current shape"
+              className={styles.clear}
+              onClick={() => onSelect('')}
+              type="button"
+            >
               <CloseOutlined />
             </button>
           </>
@@ -133,6 +137,6 @@ const ShapeSelector = ({ onClear, onSelect, selectedKey }: ShapeSelectorProps): 
   );
 };
 
-ShapeSelector.displayName = 'ShapeSelector';
+PresetSelector.displayName = 'PresetSelector';
 
-export default memo(ShapeSelector);
+export default memo(PresetSelector);

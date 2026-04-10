@@ -65,10 +65,27 @@ export const applyHoles = (
 
     const isPunch = hole.type === 'punch';
     const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
-    const insetPath = PaperOffset.offset(
+    let insetPath = PaperOffset.offset(
       basePath as paper.Path,
       (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * PX_TO_MM_RATIO,
     ) as paper.Path;
+
+    // Sometimes offsetting can produce a CompoundPath even if the original was a simple Path
+    // so we need to unite it back into a single Path for consistent processing
+    if (insetPath instanceof paper.CompoundPath) {
+      let united: paper.PathItem = new paper.Path();
+
+      for (const child of insetPath.children) {
+        if (child instanceof paper.Path) {
+          united = united.unite(child);
+        }
+
+        child.remove();
+      }
+
+      insetPath = (united instanceof paper.CompoundPath ? united.children[0] : united) as paper.Path;
+    }
+
     const startPoint = insetPath.getNearestPoint(refPoint);
     const startOffset = insetPath.getOffsetOf(startPoint);
 

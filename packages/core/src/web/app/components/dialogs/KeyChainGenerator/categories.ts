@@ -3,14 +3,14 @@ import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
 import { BASE_RECTANGLE } from './constants';
 import type {
+  CustomShapeOptionDef,
+  CustomShapeOptionValues,
   ElementOptionDef,
   ElementOptionValues,
   HoleOptionDef,
   HoleOptionValues,
   KeyChainCategory,
   KeyChainState,
-  ShapeTextOptionDef,
-  ShapeTextOptionValues,
   TextOptionDef,
   TextOptionValues,
 } from './types';
@@ -20,7 +20,7 @@ export const DEFAULT_HOLE: HoleOptionValues = {
   enabled: true,
   offset: 0,
   position: 0,
-  thickness: 1,
+  thickness: 2,
   type: 'ring',
 };
 
@@ -30,17 +30,20 @@ export const DEFAULT_ELEMENT: ElementOptionValues = {
 };
 
 export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
-  content: 'Key Chain',
   enabled: true,
   fontSize: 40,
   letterSpacing: 0,
   lineSpacing: 1.2,
+  text: 'Key Chain',
 };
 
-export const DEFAULT_SHAPE_TEXT: Omit<ShapeTextOptionValues, 'font'> = {
+export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
+  element: { positionRef: 'rightCenter', shapeKey: '' },
   fontSize: 80,
+  letterSpacing: 0,
+  lineSpacing: 1,
   outlineOffset: 3,
-  text: 'Awesome!',
+  text: 'Never\nGonna\nGive You Up',
 };
 
 export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
@@ -74,12 +77,13 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   {
     defaultViewBox: { height: 0, width: 0, x: 0, y: 0 },
     id: 'text',
+    isCustomShape: true,
     nameKey: 'text',
     options: [
       {
-        defaults: DEFAULT_SHAPE_TEXT,
+        defaults: DEFAULT_CUSTOM_SHAPE,
         id: '1',
-        type: 'shapeText',
+        type: 'customShape',
       },
       {
         defaults: DEFAULT_HOLE,
@@ -101,9 +105,9 @@ export const getCategoryById = (id: string): KeyChainCategory =>
 export const getStateForCategory = (category: KeyChainCategory): KeyChainState => {
   const result: KeyChainState = {
     categoryId: category.id,
+    customShape: {} as any,
     elements: {},
     holes: {},
-    shapeTexts: {},
     texts: {},
   };
 
@@ -126,11 +130,11 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
       const elementDef = option as ElementOptionDef;
 
       result.elements[elementDef.id] = { ...elementDef.defaults };
-    } else if (option.type === 'shapeText') {
-      const shapeTextDef = option as ShapeTextOptionDef;
+    } else if (option.type === 'customShape') {
+      const shapeDef = option as CustomShapeOptionDef;
 
-      result.shapeTexts[shapeTextDef.id] = {
-        ...shapeTextDef.defaults,
+      result.customShape = {
+        ...shapeDef.defaults,
         font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
       };
     }

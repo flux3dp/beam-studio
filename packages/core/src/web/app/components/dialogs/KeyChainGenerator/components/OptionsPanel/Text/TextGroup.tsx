@@ -1,17 +1,13 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
-import { Input } from 'antd';
-
 import useI18n from '@core/helpers/useI18n';
 
-import type { TextOptionDef, TextOptionValues } from '../../types';
-import useKeychainShapeStore from '../../useKeychainShapeStore';
+import type { TextOptionDef, TextOptionValues } from '../../../types';
+import useKeychainShapeStore from '../../../useKeychainShapeStore';
+import GroupControl from '../Controls/GroupControl';
 
-import FontSelect from './FontSelect';
-import GroupControl from './GroupControl';
-import styles from './GroupControl.module.scss';
-import NumberControl from './NumberControl';
+import TextFields from './TextFields';
 
 interface TextGroupProps {
   optionDef: TextOptionDef;
@@ -38,7 +34,7 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
 
   const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
   const handleContentChange = useCallback(
-    (evt: React.ChangeEvent<HTMLTextAreaElement>) => handleChange({ content: evt.target.value }),
+    (evt: React.ChangeEvent<HTMLTextAreaElement>) => handleChange({ text: evt.target.value }),
     [handleChange],
   );
   const handleFontSizeChange = useCallback((fontSize: number) => handleChange({ fontSize }), [handleChange]);
@@ -54,48 +50,21 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
 
   return (
     <GroupControl enabled={text.enabled} id={id} onToggle={handleEnabledChange} title={t.text}>
-      <div className={styles.content}>
-        <Input.TextArea
-          autoSize={{ maxRows: 4, minRows: 2 }}
-          onChange={handleContentChange}
-          placeholder={t.text_placeholder}
-          value={text.content}
-        />
-        <FontSelect font={text.font} onChange={handleFontChange} />
-        <NumberControl
-          defaultValue={defaults.fontSize}
-          label={t.font_size}
-          max={300}
-          min={10}
-          onChange={handleFontSizeChange}
-          step={1}
-          unit="px"
-          value={text.fontSize}
-          withSlider={false}
-        />
-        <NumberControl
-          defaultValue={defaults.letterSpacing}
-          label={t.letter_spacing}
-          max={20}
-          min={-5}
-          onChange={handleLetterSpacingChange}
-          step={0.5}
-          unit="px"
-          value={text.letterSpacing}
-          withSlider={false}
-        />
-        <NumberControl
-          defaultValue={defaults.lineSpacing}
-          label={t.line_spacing}
-          max={5}
-          min={0.5}
-          onChange={handleLineSpacingChange}
-          step={0.1}
-          unit="x"
-          value={text.lineSpacing}
-          withSlider={false}
-        />
-      </div>
+      <TextFields
+        contentValue={text.text}
+        defaults={defaults}
+        onContentChange={handleContentChange}
+        onFontChange={handleFontChange}
+        onFontSizeChange={handleFontSizeChange}
+        onLetterSpacingChange={handleLetterSpacingChange}
+        onLineSpacingChange={handleLineSpacingChange}
+        values={{
+          font: text.font,
+          fontSize: text.fontSize,
+          letterSpacing: text.letterSpacing,
+          lineSpacing: text.lineSpacing,
+        }}
+      />
     </GroupControl>
   );
 };

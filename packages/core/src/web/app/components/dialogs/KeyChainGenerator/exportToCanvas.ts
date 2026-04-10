@@ -1,3 +1,5 @@
+import paper from 'paper';
+
 import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
 import useLayerStore from '@core/app/stores/layer/layerStore';
@@ -8,9 +10,11 @@ import updateElementColor from '@core/helpers/color/updateElementColor';
 import i18n from '@core/helpers/i18n';
 import { createLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { getCategoryById } from './categories';
+import { EXPLODED_GAP_PX, KEYCHAIN_COLORS } from './constants';
+import type { KeyChainShape } from './types';
 import useKeychainShapeStore from './useKeychainShapeStore';
 
 let svgCanvas: ISVGCanvas;
@@ -20,18 +24,20 @@ getSVGAsync(({ Canvas }) => {
 });
 
 /**
- * Converts all <text> elements in the SVG to <path> elements using fontkit.
- * The SVG is temporarily mounted to the DOM for SVG position methods to work.
+ * Converts all <text> elements to <path> elements using fontkit.
+ * Create a SVG temporarily mounted to the DOM for SVG position methods to work.
  */
-const convertTextsToPath = async (svg: SVGSVGElement): Promise<void> => {
-  const textElements = Array.from(svg.querySelectorAll('text'));
-
-  if (textElements.length === 0) return;
+const convertTextsToPath = async (textElements: SVGTextElement[]): Promise<SVGPathElement[]> => {
+  const svg = document.createElementNS(NS.SVG, 'svg');
 
   // Mount to DOM so getStartPositionOfChar / getNumberOfChars work
   svg.style.visibility = 'hidden';
   svg.style.position = 'absolute';
   document.body.appendChild(svg);
+
+  textElements.forEach((el) => svg.appendChild(el));
+
+  const results: SVGPathElement[] = [];
 
   try {
     for (const textEl of textElements) {
@@ -72,7 +78,10 @@ const convertTextsToPath = async (svg: SVGSVGElement): Promise<void> => {
       }
 
       textEl.replaceWith(pathEl);
+      results.push(pathEl);
     }
+
+    return results;
   } finally {
     svg.remove();
     svg.style.removeProperty('visibility');
@@ -81,41 +90,23 @@ const convertTextsToPath = async (svg: SVGSVGElement): Promise<void> => {
 };
 
 /**
- * Exports the keychain SVG to the Beam Studio canvas as a new layer.
- * Reads the already-computed shape from the store (no recomputation).
+ * Adds every <path> to the canvas, then moves the resulting
+ * elements by (-bounds.x, -bounds.y) so the layer aligns to the canvas origin.
  */
-export const exportToCanvas = async (): Promise<void> => {
-  let shape = useKeychainShapeStore.getState().shape;
-
-  if (!shape) {
-    const categoryId = useKeychainShapeStore.getState().categoryId;
-    const category = getCategoryById(categoryId!);
-
-    shape = useKeychainShapeStore.getState().buildShape(category);
-  }
-
-  const { bounds, svgElement } = shape;
-  const outSvg = svgElement.cloneNode(true) as SVGSVGElement;
-
-  // Convert text elements to paths before adding to canvas
-  await convertTextsToPath(outSvg);
-
-  const batchCmd = new history.BatchCommand('Export Keychain');
-  const { layers: tLayers } = i18n.lang.keychain_generator;
-  const { name } = createLayer(tLayers.keychain, { parentCmd: batchCmd });
-
-  useLayerStore.getState().setSelectedLayers([name]);
-
-  // Add each path element directly to the canvas
-  const srcPaths = Array.from(outSvg.querySelectorAll('path'));
+const addPathsToCanvas = async (
+  paths: SVGPathElement[],
+  // outSvg: SVGSVGElement,
+  bounds: { x: number; y: number },
+  batchCmd: IBatchCommand,
+): Promise<void> => {
   const createdPaths: SVGPathElement[] = [];
 
-  for (const srcPath of srcPaths) {
-    const d = srcPath.getAttribute('d');
+  for (const path of paths) {
+    const d = path.getAttribute('d');
 
     if (!d) continue;
 
-    const fill = srcPath.getAttribute('fill') ?? 'none';
+    const fill = path.getAttribute('fill') ?? 'none';
     const pathEl = svgCanvas.addSvgElementFromJson({
       attr: {
         d,
@@ -135,7 +126,6 @@ export const exportToCanvas = async (): Promise<void> => {
     createdPaths.push(pathEl);
   }
 
-  // Move elements to top-left by offsetting the shape bounds origin
   if (createdPaths.length > 0) {
     const dx = createdPaths.map(() => -bounds.x);
     const dy = createdPaths.map(() => -bounds.y);
@@ -145,6 +135,109 @@ export const exportToCanvas = async (): Promise<void> => {
       batchCmd.addSubCommand(moveCmd);
     }
   }
+};
+
+/**
+ * Builds a `<path>` element from a paper PathItem with the standard fill/stroke setup
+ * used by the keychain export.
+ */
+const pathItemToSvgPath = (item: paper.PathItem): SVGPathElement => {
+  const path = document.createElementNS(NS.SVG, 'path') as SVGPathElement;
+
+  path.setAttribute('d', item.pathData);
+  path.setAttribute('fill', 'none');
+  path.setAttribute('stroke', '#000');
+  path.setAttribute('stroke-width', '1');
+  path.setAttribute('vector-effect', 'non-scaling-stroke');
+
+  return path;
+};
+
+const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand): Promise<void> => {
+  const { layers: tLayers } = i18n.lang.keychain_generator;
+  const { name } = createLayer(tLayers.keychain, { hexCode: KEYCHAIN_COLORS.design.base, parentCmd: batchCmd });
+
+  useLayerStore.getState().setSelectedLayers([name]);
+
+  const paths = [pathItemToSvgPath(shape.resultBasePath)];
+  const textElements: SVGTextElement[] = [];
+
+  for (const decoration of shape.decorations) {
+    const clone = decoration.cloneNode(true) as SVGElement;
+
+    if (clone.tagName.toLowerCase() === 'text') {
+      textElements.push(clone as SVGTextElement);
+    } else {
+      paths.push(clone as SVGPathElement);
+    }
+  }
+
+  paths.push(...(await convertTextsToPath(textElements)));
+
+  await addPathsToCanvas(paths, shape.bounds, batchCmd);
+};
+
+const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand): Promise<void> => {
+  if (!shape.innerPath) return;
+
+  const { layers: tLayers } = i18n.lang.keychain_generator;
+
+  // Layer 2: inner path at the original (overlapping) position — engrave/mark layer.
+  const { name: posName } = createLayer(tLayers.keychain_inner_position, {
+    hexCode: KEYCHAIN_COLORS.design.innerPosition,
+    parentCmd: batchCmd,
+  });
+
+  useLayerStore.getState().setSelectedLayers([posName]);
+
+  const innerPathSvg = [pathItemToSvgPath(shape.innerPath)];
+
+  await addPathsToCanvas(innerPathSvg, shape.bounds, batchCmd);
+
+  // Layer 3: inner path standalone — translated below the base by `bounds.height + GAP`.
+  // Reuse addPathsToCanvas by feeding it a shifted bounds origin so the move op produces
+  // a final position equivalent to (originalX, originalY + bounds.height + GAP).
+  const { name: aloneName } = createLayer(tLayers.keychain_inner, {
+    hexCode: KEYCHAIN_COLORS.design.innerAlone,
+    parentCmd: batchCmd,
+  });
+
+  useLayerStore.getState().setSelectedLayers([aloneName]);
+
+  const shiftedBounds = new paper.Rectangle(
+    shape.bounds.x,
+    shape.bounds.y - shape.bounds.height - EXPLODED_GAP_PX,
+    shape.bounds.width,
+    shape.bounds.height,
+  );
+
+  await addPathsToCanvas(innerPathSvg, shiftedBounds, batchCmd);
+};
+
+/**
+ * Exports the keychain shape to the Beam Studio canvas as new layers.
+ *
+ * - Always creates the `Keychain` layer (base path + decorations).
+ * - When the shape has an inner path, additionally creates `Keychain Inner Position`
+ *   (inner path overlaid on the base) and `Keychain Inner` (inner path translated below
+ *   the base region by `bounds.height + EXPLODED_GAP_MM`).
+ *
+ * Reads the already-computed shape from the store; rebuilds it on demand if missing.
+ */
+export const exportToCanvas = async (): Promise<void> => {
+  let shape = useKeychainShapeStore.getState().shape;
+
+  if (!shape) {
+    const { applyOptions, buildBaseShape, category } = useKeychainShapeStore.getState();
+
+    await buildBaseShape(category);
+    shape = applyOptions();
+  }
+
+  const batchCmd = new history.BatchCommand('Export Keychain');
+
+  await exportBaseLayer(shape, batchCmd);
+  await exportInnerLayers(shape, batchCmd);
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 };

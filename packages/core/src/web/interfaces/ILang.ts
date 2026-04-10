@@ -1604,7 +1604,9 @@ export interface ILang {
     unsecure_url_help_center_link: string;
   };
   keychain_generator: {
+    design_preview: string;
     element: string;
+    exploded_view: string;
     export_failed: string;
     font_size: string;
     hole: string;
@@ -1618,16 +1620,25 @@ export interface ILang {
     import_to_canvas: string;
     layers: {
       keychain: string;
+      keychain_inner: string;
+      keychain_inner_position: string;
     };
     letter_spacing: string;
     line_spacing: string;
     more_shapes: string;
+    outline_offset: string;
+    position_ref: string;
+    position_ref_bottom_center: string;
+    position_ref_left_center: string;
+    position_ref_right_center: string;
+    position_ref_top_center: string;
     reset_to_default: string;
     switch_type_warning: string;
     text: string;
     text_placeholder: string;
     types: {
       rectangle: string;
+      text: string;
     };
   };
   layer_module: {

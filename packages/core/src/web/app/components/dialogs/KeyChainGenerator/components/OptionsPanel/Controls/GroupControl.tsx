@@ -9,12 +9,19 @@ interface GroupControlProps {
   children: React.ReactNode;
   enabled: boolean;
   hideSwitch?: boolean;
-  id: string;
+  id?: string;
   onToggle?: (enabled: boolean) => void;
   title: string;
 }
 
-const GroupControl = ({ children, enabled, hideSwitch = false, id, onToggle, title }: GroupControlProps): ReactNode => {
+const GroupControl = ({
+  children,
+  enabled,
+  hideSwitch = false,
+  id = '1',
+  onToggle,
+  title,
+}: GroupControlProps): ReactNode => {
   const [expandedKeys, setExpandedKeys] = useState<string[]>(enabled ? [id] : []);
 
   const handleToggle = (checked: boolean) => {
@@ -36,7 +43,7 @@ const GroupControl = ({ children, enabled, hideSwitch = false, id, onToggle, tit
       activeKey={enabled ? expandedKeys : []}
       className={styles.container}
       collapsible={enabled ? undefined : 'disabled'}
-      items={[{ children, key: id, label: header }]}
+      items={[{ children, classNames: { body: styles.content }, key: id, label: header }]}
       onChange={(keys) => setExpandedKeys(keys as string[])}
     />
   );

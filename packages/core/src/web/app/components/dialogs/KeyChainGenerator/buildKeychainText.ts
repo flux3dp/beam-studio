@@ -6,15 +6,14 @@ import type { KeyChainState, TextOptionDef } from './types';
 /**
  * Creates an SVG <text> element with <tspan> children for multi-line text.
  */
-const createTextElement = (
-  textDef: TextOptionDef,
+export const createTextElement = (
   content: string,
   font: { family: string; postscriptName: string; style: string },
   fontSize: number,
   letterSpacing: number,
   lineSpacing: number,
+  bounds?: { height: number; width: number; x: number; y: number },
 ): SVGTextElement => {
-  const { bounds } = textDef;
   const text = document.createElementNS(NS.SVG, 'text');
 
   text.setAttribute('font-family', `'${font.family}'`);
@@ -40,16 +39,17 @@ const createTextElement = (
 
   const lines = content.split('\n');
   const lineHeight = fontSize * lineSpacing;
-  const centerX = bounds.x + bounds.width / 2;
+  const x = bounds ? bounds.x + bounds.width / 2 : 0;
+  const y = bounds ? bounds.y + fontSize : fontSize;
 
   for (let i = 0; i < lines.length; i += 1) {
     const tspan = document.createElementNS(NS.SVG, 'tspan');
 
-    tspan.setAttribute('x', String(centerX));
+    tspan.setAttribute('x', String(x));
     tspan.textContent = lines[i];
 
     if (i === 0) {
-      tspan.setAttribute('y', String(bounds.y + fontSize));
+      tspan.setAttribute('y', String(y));
     } else {
       tspan.setAttribute('dy', String(lineHeight));
     }
@@ -106,12 +106,11 @@ export const applyTexts = (svg: SVGSVGElement, state: KeyChainState, textDefs: T
   for (const textDef of textDefs) {
     const textValues = state.texts[textDef.id];
 
-    if (!textValues?.enabled || !textValues.content.trim()) continue;
+    if (!textValues?.enabled || !textValues.text.trim()) continue;
 
     const { bounds } = textDef;
-    const { content, font, fontSize, letterSpacing, lineSpacing } = textValues;
-
-    const textEl = createTextElement(textDef, content, font, fontSize, letterSpacing, lineSpacing);
+    const { font, fontSize, letterSpacing, lineSpacing, text } = textValues;
+    const textEl = createTextElement(text, font, fontSize, letterSpacing, lineSpacing, bounds);
 
     svg.appendChild(textEl);
 

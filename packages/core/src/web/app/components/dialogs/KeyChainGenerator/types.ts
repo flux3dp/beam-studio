@@ -4,8 +4,18 @@ import type { ILang } from '@core/interfaces/ILang';
 import type { KeysWithType } from '@core/interfaces/utils';
 
 export interface KeyChainShape {
+  /** Bounds of the base region in paper coordinates (used by viewBox + export shifts). */
   bounds: paper.Rectangle;
-  svgElement: SVGSVGElement;
+  /** <text> + element <path> nodes that decorate layer 1 (cloned by every consumer). */
+  decorations: SVGElement[];
+  /** Design view: result + decorations + inner path overlaid. Consumers must `.cloneNode(true)`. */
+  designSvg: SVGSVGElement;
+  /** Exploded view: design content + inner path translated below the base. */
+  explodedSvg: SVGSVGElement;
+  /** Clone of the cached inner path (text glyphs). null when there is no inner geometry. */
+  innerPath: null | paper.PathItem;
+  /** Clone of basePath after holes are punched. Used for layer 1 export and SVG generation. */
+  resultBasePath: paper.PathItem;
 }
 
 export type HoleType = 'punch' | 'ring';
@@ -27,7 +37,6 @@ export interface HoleOptionDef {
 }
 
 export interface TextOptionValues {
-  content: string;
   enabled: boolean;
   font: {
     family: string;
@@ -37,6 +46,7 @@ export interface TextOptionValues {
   fontSize: number;
   letterSpacing: number;
   lineSpacing: number;
+  text: string;
 }
 
 export interface TextOptionDef {
@@ -61,30 +71,36 @@ export interface ElementOptionDef {
   type: 'element';
 }
 
-export interface ShapeTextOptionValues {
+export type ShapeElementPositionRef = 'bottomCenter' | 'leftCenter' | 'rightCenter' | 'topCenter';
+
+export interface CustomShapeOptionValues {
+  element: { positionRef: ShapeElementPositionRef; shapeKey: string };
   font: {
     family: string;
     postscriptName: string;
     style: string;
   };
   fontSize: number;
+  letterSpacing: number;
+  lineSpacing: number;
   /** Outline offset in mm — body is built by offsetting the glyph path outward by this amount. */
   outlineOffset: number;
   text: string;
 }
 
-export interface ShapeTextOptionDef {
-  defaults: Omit<ShapeTextOptionValues, 'font'>;
+export interface CustomShapeOptionDef {
+  defaults: Omit<CustomShapeOptionValues, 'font'>;
   id: string;
   label?: string;
-  type: 'shapeText';
+  type: 'customShape';
 }
 
-export type KeyChainOptionDef = ElementOptionDef | HoleOptionDef | ShapeTextOptionDef | TextOptionDef;
+export type KeyChainOptionDef = CustomShapeOptionDef | ElementOptionDef | HoleOptionDef | TextOptionDef;
 
 export interface KeyChainCategory {
   defaultViewBox: { height: number; width: number; x: number; y: number };
   id: string;
+  isCustomShape?: boolean;
   nameKey: KeysWithType<ILang['keychain_generator']['types'], string>;
   options: KeyChainOptionDef[];
   svgContent: string;
@@ -93,8 +109,8 @@ export interface KeyChainCategory {
 
 export interface KeyChainState {
   categoryId: string;
+  customShape: CustomShapeOptionValues;
   elements: Record<string, ElementOptionValues>;
   holes: Record<string, HoleOptionValues>;
-  shapeTexts: Record<string, ShapeTextOptionValues>;
   texts: Record<string, TextOptionValues>;
 }

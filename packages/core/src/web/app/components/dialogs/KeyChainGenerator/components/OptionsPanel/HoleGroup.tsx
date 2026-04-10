@@ -8,9 +8,8 @@ import { PUNCH_HOLE_OFFSET } from '../../constants';
 import type { HoleOptionDef, HoleOptionValues, HoleType } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './GroupControl';
-import styles from './GroupControl.module.scss';
-import NumberControl from './NumberControl';
+import GroupControl from './Controls/GroupControl';
+import NumberControl from './Controls/NumberControl';
 
 interface HoleGroupProps {
   optionDef: HoleOptionDef;
@@ -75,51 +74,49 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
 
   return (
     <GroupControl enabled={hole.enabled} id={id} onToggle={handleEnabledChange} title={t.hole}>
-      <div className={styles.content}>
-        <Select onChange={handleTypeChange} options={typeOptions} value={hole.type} />
+      <Select onChange={handleTypeChange} options={typeOptions} value={hole.type} />
+      <NumberControl
+        defaultValue={defaults.diameter}
+        label={t.hole_diameter}
+        max={5}
+        min={1}
+        onChange={handleDiameterChange}
+        step={0.5}
+        unit="mm"
+        value={hole.diameter}
+      />
+      <NumberControl
+        defaultValue={defaults.position}
+        label={t.hole_position}
+        max={100}
+        min={0}
+        onChange={handlePositionChange}
+        step={1}
+        unit="%"
+        value={hole.position}
+      />
+      <NumberControl
+        defaultValue={defaults.offset}
+        label={t.hole_offset}
+        max={maxOffset}
+        min={minOffset}
+        onChange={handleOffsetChange}
+        step={0.5}
+        unit="mm"
+        value={hole.offset}
+      />
+      {isRing && (
         <NumberControl
-          defaultValue={defaults.diameter}
-          label={t.hole_diameter}
+          defaultValue={defaults.thickness}
+          label={t.hole_thickness}
           max={5}
           min={1}
-          onChange={handleDiameterChange}
+          onChange={handleThicknessChange}
           step={0.5}
           unit="mm"
-          value={hole.diameter}
+          value={hole.thickness}
         />
-        <NumberControl
-          defaultValue={defaults.position}
-          label={t.hole_position}
-          max={100}
-          min={0}
-          onChange={handlePositionChange}
-          step={1}
-          unit="%"
-          value={hole.position}
-        />
-        <NumberControl
-          defaultValue={defaults.offset}
-          label={t.hole_offset}
-          max={maxOffset}
-          min={minOffset}
-          onChange={handleOffsetChange}
-          step={0.5}
-          unit="mm"
-          value={hole.offset}
-        />
-        {isRing && (
-          <NumberControl
-            defaultValue={defaults.thickness}
-            label={t.hole_thickness}
-            max={5}
-            min={1}
-            onChange={handleThicknessChange}
-            step={0.5}
-            unit="mm"
-            value={hole.thickness}
-          />
-        )}
-      </div>
+      )}
     </GroupControl>
   );
 };

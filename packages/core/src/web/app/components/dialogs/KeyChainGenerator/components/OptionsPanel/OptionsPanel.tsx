@@ -8,11 +8,11 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { KeyChainCategory } from '../../types';
 
-import ElementControl from './ElementControl';
+import CustomShapeGroup from './CustomShapeGroup';
+import ElementControl from './Element/ElementControl';
 import HoleGroup from './HoleGroup';
 import styles from './OptionsPanel.module.scss';
-import ShapeTextGroup from './ShapeTextGroup';
-import TextGroup from './TextGroup';
+import TextGroup from './Text/TextGroup';
 
 interface OptionsPanelProps {
   category: KeyChainCategory;
@@ -33,8 +33,8 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
 
           if (option.type === 'element') return <ElementControl key={`element-${option.id}`} optionDef={option} />;
 
-          if (option.type === 'shapeText') {
-            return <ShapeTextGroup key={`shape-text-${option.id}`} optionDef={option} />;
+          if (option.type === 'customShape') {
+            return <CustomShapeGroup key={`custom-shape-${option.id}`} optionDef={option} />;
           }
 
           return null;

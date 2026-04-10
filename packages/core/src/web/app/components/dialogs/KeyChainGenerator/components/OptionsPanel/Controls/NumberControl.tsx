@@ -7,7 +7,7 @@ import { Slider } from 'antd';
 import UnitInput from '@core/app/widgets/UnitInput';
 import useI18n from '@core/helpers/useI18n';
 
-import styles from './NumberControl.module.scss';
+import styles from './Base.module.scss';
 
 interface NumberControlProps {
   defaultValue: number;
