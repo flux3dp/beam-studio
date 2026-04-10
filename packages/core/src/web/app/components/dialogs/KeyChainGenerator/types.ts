@@ -33,7 +33,6 @@ export interface HoleOptionDef {
   id: string;
   label?: string;
   startPositionRef: KeysWithType<paper.Rectangle, paper.Point>;
-  type: 'hole';
 }
 
 export interface TextOptionValues {
@@ -54,7 +53,6 @@ export interface TextOptionDef {
   defaults: Omit<TextOptionValues, 'font'>;
   id: string;
   label?: string;
-  type: 'text';
 }
 
 export interface ElementOptionValues {
@@ -68,7 +66,6 @@ export interface ElementOptionDef {
   defaults: ElementOptionValues;
   id: string;
   label?: string;
-  type: 'element';
 }
 
 export type ShapeElementPositionRef = 'bottomCenter' | 'leftCenter' | 'rightCenter' | 'topCenter';
@@ -90,14 +87,10 @@ export interface CustomShapeOptionValues {
 
 export interface CustomShapeOptionDef {
   defaults: Omit<CustomShapeOptionValues, 'font'>;
-  id: string;
   label?: string;
-  type: 'customShape';
 }
 
 export type SizeDimension = 'height' | 'width';
-
-export type KeyChainOptionDef = CustomShapeOptionDef | ElementOptionDef | HoleOptionDef | TextOptionDef;
 
 export interface KeyChainCategory {
   defaultSize: { dimension: SizeDimension; value: number };
@@ -105,7 +98,12 @@ export interface KeyChainCategory {
   id: string;
   isCustomShape?: boolean;
   nameKey: KeysWithType<ILang['keychain_generator']['types'], string>;
-  options: KeyChainOptionDef[];
+  options: {
+    customShape?: CustomShapeOptionDef;
+    elements?: ElementOptionDef[];
+    holes?: HoleOptionDef[];
+    texts?: TextOptionDef[];
+  };
   svgContent: string;
   thumbnail: string;
 }

@@ -176,11 +176,31 @@ const pathItemToSvgPath = (item: paper.PathItem): SVGPathElement => {
 
 const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand, sizeRatio: number): Promise<void> => {
   const { layers: tLayers } = i18n.lang.keychain_generator;
-  const { name } = createLayer(tLayers.keychain, { hexCode: KEYCHAIN_COLORS.design.base, parentCmd: batchCmd });
+  const { name } = createLayer(tLayers.keychain, { hexCode: KEYCHAIN_COLORS.exploded.base, parentCmd: batchCmd });
 
   useLayerStore.getState().setSelectedLayers([name]);
 
   const paths = [pathItemToSvgPath(shape.resultBasePath)];
+
+  await addPathsToCanvas(paths, shape.bounds, batchCmd, sizeRatio);
+};
+
+const exportEngravingDecorationLayer = async (
+  shape: KeyChainShape,
+  batchCmd: IBatchCommand,
+  sizeRatio: number,
+): Promise<void> => {
+  if (shape.decorations.length === 0) return;
+
+  const { layers: tLayers } = i18n.lang.keychain_generator;
+  const { name } = createLayer(tLayers.keychain_engraving, {
+    hexCode: KEYCHAIN_COLORS.exploded.decoration,
+    parentCmd: batchCmd,
+  });
+
+  useLayerStore.getState().setSelectedLayers([name]);
+
+  const paths: SVGPathElement[] = [];
   const textElements: SVGTextElement[] = [];
 
   for (const decoration of shape.decorations) {
@@ -194,7 +214,6 @@ const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand, si
   }
 
   paths.push(...(await convertTextsToPath(textElements)));
-
   await addPathsToCanvas(paths, shape.bounds, batchCmd, sizeRatio);
 };
 
@@ -205,7 +224,7 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
 
   // Layer 2: inner path at the original (overlapping) position — engrave/mark layer.
   const { name: posName } = createLayer(tLayers.keychain_inner_position, {
-    hexCode: KEYCHAIN_COLORS.design.innerPosition,
+    hexCode: KEYCHAIN_COLORS.exploded.innerPosition,
     parentCmd: batchCmd,
   });
 
@@ -219,7 +238,7 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
   // Reuse addPathsToCanvas by feeding it a shifted bounds origin so the move op produces
   // a final position equivalent to (originalX, originalY + bounds.height + GAP).
   const { name: aloneName } = createLayer(tLayers.keychain_inner, {
-    hexCode: KEYCHAIN_COLORS.design.innerAlone,
+    hexCode: KEYCHAIN_COLORS.exploded.innerAlone,
     parentCmd: batchCmd,
   });
 
@@ -238,7 +257,8 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
 /**
  * Exports the keychain shape to the Beam Studio canvas as new layers.
  *
- * - Always creates the `Keychain` layer (base path + decorations).
+ * - Always creates the `Keychain` layer (base cutting path).
+ * - When decorations exist, creates `Keychain Engraving` layer (text + element shapes).
  * - When the shape has an inner path, additionally creates `Keychain Inner Position`
  *   (inner path overlaid on the base) and `Keychain Inner` (inner path translated below
  *   the base region by `bounds.height + EXPLODED_GAP_MM`).
@@ -259,6 +279,7 @@ export const exportToCanvas = async (): Promise<void> => {
   const batchCmd = new history.BatchCommand('Export Keychain');
 
   await exportBaseLayer(shape, batchCmd, sizeRatio);
+  await exportEngravingDecorationLayer(shape, batchCmd, sizeRatio);
   await exportInnerLayers(shape, batchCmd, sizeRatio);
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);

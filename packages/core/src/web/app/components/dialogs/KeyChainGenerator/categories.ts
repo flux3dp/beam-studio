@@ -3,15 +3,11 @@ import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
 import { BASE_RECTANGLE } from './constants';
 import type {
-  CustomShapeOptionDef,
   CustomShapeOptionValues,
-  ElementOptionDef,
   ElementOptionValues,
-  HoleOptionDef,
   HoleOptionValues,
   KeyChainCategory,
   KeyChainState,
-  TextOptionDef,
   TextOptionValues,
 } from './types';
 
@@ -52,26 +48,29 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     defaultViewBox: { height: 600, width: 300, x: 0, y: 0 },
     id: 'rectangle',
     nameKey: 'rectangle',
-    options: [
-      {
-        bounds: { height: 120, width: 120, x: 90, y: 400 },
-        defaults: DEFAULT_ELEMENT,
-        id: '1',
-        type: 'element',
-      },
-      {
-        defaults: DEFAULT_HOLE,
-        id: '1',
-        startPositionRef: 'topCenter',
-        type: 'hole',
-      },
-      {
-        bounds: { height: 250, width: 240, x: 30, y: 100 },
-        defaults: DEFAULT_TEXT,
-        id: '1',
-        type: 'text',
-      },
-    ],
+    options: {
+      elements: [
+        {
+          bounds: { height: 120, width: 120, x: 90, y: 400 },
+          defaults: DEFAULT_ELEMENT,
+          id: '1',
+        },
+      ],
+      holes: [
+        {
+          defaults: DEFAULT_HOLE,
+          id: '1',
+          startPositionRef: 'topCenter',
+        },
+      ],
+      texts: [
+        {
+          bounds: { height: 250, width: 240, x: 30, y: 100 },
+          defaults: DEFAULT_TEXT,
+          id: '1',
+        },
+      ],
+    },
     svgContent: BASE_RECTANGLE,
     thumbnail: '',
   },
@@ -81,19 +80,18 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     id: 'text',
     isCustomShape: true,
     nameKey: 'text',
-    options: [
-      {
+    options: {
+      customShape: {
         defaults: DEFAULT_CUSTOM_SHAPE,
-        id: '1',
-        type: 'customShape',
       },
-      {
-        defaults: DEFAULT_HOLE,
-        id: '1',
-        startPositionRef: 'leftCenter',
-        type: 'hole',
-      },
-    ],
+      holes: [
+        {
+          defaults: DEFAULT_HOLE,
+          id: '1',
+          startPositionRef: 'leftCenter',
+        },
+      ],
+    },
     svgContent: '',
     thumbnail: '',
   },
@@ -116,31 +114,32 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
 
   const { font_family, font_postscriptName } = getDefaultFont();
   const fontObj = fontFuncs.getFontOfPostscriptName(font_postscriptName);
+  const {
+    options: { customShape, elements = [], holes = [], texts = [] },
+  } = category;
 
-  for (const option of category.options) {
-    if (option.type === 'hole') {
-      const holeDef = option as HoleOptionDef;
+  for (const holeDefs of holes) {
+    result.holes[holeDefs.id] = { ...holeDefs.defaults };
+  }
 
-      result.holes[holeDef.id] = { ...holeDef.defaults };
-    } else if (option.type === 'text') {
-      const textDef = option as TextOptionDef;
+  for (const textDef of texts) {
+    result.texts[textDef.id] = {
+      ...textDef.defaults,
+      font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
+    };
+  }
 
-      result.texts[textDef.id] = {
-        ...textDef.defaults,
-        font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
-      };
-    } else if (option.type === 'element') {
-      const elementDef = option as ElementOptionDef;
+  for (const elementDef of elements) {
+    result.elements[elementDef.id] = { ...elementDef.defaults };
+  }
 
-      result.elements[elementDef.id] = { ...elementDef.defaults };
-    } else if (option.type === 'customShape') {
-      const shapeDef = option as CustomShapeOptionDef;
+  if (customShape) {
+    const shapeDef = customShape;
 
-      result.customShape = {
-        ...shapeDef.defaults,
-        font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
-      };
-    }
+    result.customShape = {
+      ...shapeDef.defaults,
+      font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
+    };
   }
 
   return result;

@@ -72,7 +72,10 @@ export const buildKeychainView = (
 
   // Layer 1 decorations (text + element shapes) — cloned so the canonical list stays intact
   for (const decoration of decorations) {
-    svg.appendChild(decoration.cloneNode(true) as SVGElement);
+    const clone = decoration.cloneNode(true) as SVGElement;
+
+    clone.setAttribute('fill', colors.decoration);
+    svg.appendChild(clone);
   }
 
   // Layer 2: inner path at its original position

@@ -12,15 +12,7 @@ import { applyTexts } from './buildKeychainText';
 import { getDefaultCategory, getDefaultState, getStateForCategory } from './categories';
 import type { KeychainViewMode } from './constants';
 import { PX_TO_MM_RATIO } from './constants';
-import type {
-  CustomShapeOptionDef,
-  ElementOptionDef,
-  HoleOptionDef,
-  KeyChainCategory,
-  KeyChainShape,
-  KeyChainState,
-  TextOptionDef,
-} from './types';
+import type { ElementOptionDef, KeyChainCategory, KeyChainShape, KeyChainState, TextOptionDef } from './types';
 
 interface StoreState {
   // Paper.js cache (runtime-only, not serializable)
@@ -157,13 +149,13 @@ const useKeychainShapeStore = create(
       }
 
       // Apply all hole boolean ops on a clone of the cached base path
-      const holeDefs = options.filter((o): o is HoleOptionDef => o.type === 'hole');
+      const holeDefs = options.holes ?? [];
       const resultBasePath = applyHoles(basePath.clone(), state, holeDefs, sizeRatio);
       const bounds = resultBasePath.bounds;
 
       // Build decoration nodes (text + element shapes)
-      const textDefs = options.filter((o): o is TextOptionDef => o.type === 'text');
-      const elementDefs = options.filter((o): o is ElementOptionDef => o.type === 'element');
+      const textDefs = options.texts ?? [];
+      const elementDefs = options.elements ?? [];
       const decorations = buildDecorations(project, state, textDefs, elementDefs);
 
       // Clone the cached inner path so the canonical inner path is never mutated
@@ -228,7 +220,7 @@ const useKeychainShapeStore = create(
       set({ buildVersion });
 
       if (isCustomShape) {
-        const customShapeOption = category.options.find((o): o is CustomShapeOptionDef => o.type === 'customShape');
+        const customShapeOption = category.options.customShape;
 
         if (!customShapeOption) {
           console.error('No custom shape option found in category', category.id);

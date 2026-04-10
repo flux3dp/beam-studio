@@ -15,8 +15,8 @@ export const EXPLODED_GAP_PX = EXPLODED_GAP_MM * PX_TO_MM_RATIO;
  * Color sets for design (uniform black) and exploded view (visually distinct parts).
  */
 export const KEYCHAIN_COLORS = {
-  design: { base: '#000000', innerAlone: '#000000', innerPosition: '#000000' },
-  exploded: { base: '#000000', innerAlone: '#52c41a', innerPosition: '#1890ff' },
+  design: { base: '#000000', decoration: '#000000', innerAlone: '#000000', innerPosition: '#000000' },
+  exploded: { base: '#000000', decoration: '#ff7a45', innerAlone: '#52c41a', innerPosition: '#1890ff' },
 } as const;
 
 export type KeychainViewMode = keyof typeof KEYCHAIN_COLORS;

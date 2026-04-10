@@ -22,25 +22,23 @@ interface OptionsPanelProps {
 const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
   const { keychain_generator: t } = useI18n();
   const isMobile = useIsMobile();
+  const { customShape, elements = [], holes = [], texts = [] } = category.options;
 
   return (
     <div className={classNames(styles.panel, { [styles.mobile]: isMobile })}>
       <div className={styles.header}>{t.types[category.nameKey] ?? category.nameKey}</div>
       <div className={styles.content}>
         <SizeGroup />
-        {category.options.map((option) => {
-          if (option.type === 'hole') return <HoleGroup key={`hole-${option.id}`} optionDef={option} />;
-
-          if (option.type === 'text') return <TextGroup key={`text-${option.id}`} optionDef={option} />;
-
-          if (option.type === 'element') return <ElementControl key={`element-${option.id}`} optionDef={option} />;
-
-          if (option.type === 'customShape') {
-            return <CustomShapeGroup key={`custom-shape-${option.id}`} optionDef={option} />;
-          }
-
-          return null;
-        })}
+        {customShape && <CustomShapeGroup optionDef={customShape} />}
+        {elements.map((option) => (
+          <ElementControl key={`element-${option.id}`} optionDef={option} />
+        ))}
+        {texts.map((option) => (
+          <TextGroup key={`text-${option.id}`} optionDef={option} />
+        ))}
+        {holes.map((option) => (
+          <HoleGroup key={`hole-${option.id}`} optionDef={option} />
+        ))}
       </div>
     </div>
   );
