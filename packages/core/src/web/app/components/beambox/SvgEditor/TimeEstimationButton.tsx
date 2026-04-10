@@ -1,4 +1,4 @@
-import React, { use, useState } from 'react';
+import React, { use } from 'react';
 
 import ExportFuncs from '@core/app/actions/beambox/export-funcs';
 import { TimeEstimationButtonContext } from '@core/app/contexts/TimeEstimationButtonContext';
@@ -11,14 +11,10 @@ import styles from './TimeEstimationButton.module.scss';
 const TimeEstimationButton = (): React.JSX.Element => {
   const lang = useI18n();
   const { estimatedTime, setEstimatedTime } = use(TimeEstimationButtonContext);
-  const [localTime, setLocalTime] = useState<null | number>(null);
-  const displayTime = localTime !== null ? localTime : estimatedTime;
 
   const calculateEstimatedTime = async () => {
     webNeedConnectionWrapper(async () => {
       const estimateTime = await ExportFuncs.estimateTime();
-
-      setLocalTime(estimateTime);
 
       if (typeof setEstimatedTime === 'function') setEstimatedTime(estimateTime);
     });
@@ -26,7 +22,9 @@ const TimeEstimationButton = (): React.JSX.Element => {
 
   return (
     <div className={styles.timeDisplay} onClick={calculateEstimatedTime}>
-      {typeof displayTime === 'number' ? FormatDuration(Math.max(displayTime, 1)) : lang.canvas_control.estimate_time}
+      {typeof estimatedTime === 'number'
+        ? FormatDuration(Math.max(estimatedTime, 1))
+        : lang.canvas_control.estimate_time}
     </div>
   );
 };

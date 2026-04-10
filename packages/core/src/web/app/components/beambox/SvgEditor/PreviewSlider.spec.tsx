@@ -46,12 +46,6 @@ jest.mock('@core/helpers/version-checker', () => () => ({
   meetRequirement: (...args) => mockMeetRequirement(...args),
 }));
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  canvas_control: {
-    not_supported: 'Not Supported',
-  },
-}));
-
 jest.mock('antd', () => ({
   ConfigProvider: ({ children }: any) => children,
   Slider: ({ className, disabled, max, min, onChange, onChangeComplete, step, value }: any) => (
@@ -93,7 +87,7 @@ describe('test PreviewSlider', () => {
     });
   });
 
-  it('should render null when not in preview mode', () => {
+  it('should render Not Supported when not in preview mode', () => {
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: false });
 
     const { container } = render(<PreviewSlider />);
@@ -101,7 +95,7 @@ describe('test PreviewSlider', () => {
     expect(container).toMatchSnapshot();
   });
 
-  it('should render null when previewing non-fcodeV2 model', () => {
+  it('should render Not Supported when previewing non-fcodeV2 model', () => {
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 

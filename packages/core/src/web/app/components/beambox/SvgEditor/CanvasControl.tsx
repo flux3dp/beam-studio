@@ -1,12 +1,14 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DownOutlined } from '@ant-design/icons';
+import { ArrowsAltOutlined, DownOutlined } from '@ant-design/icons';
 import { Dropdown, Slider } from 'antd';
 import type { MenuProps } from 'antd';
 
+import constant from '@core/app/actions/beambox/constant';
 import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import WorkareaIcons from '@core/app/icons/workarea/WorkareaIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
+import workareaManager from '@core/app/svgedit/workarea';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './CanvasControl.module.scss';
@@ -21,13 +23,7 @@ const hasPreviewImage = (): boolean => {
   return Boolean(container?.querySelector('#backgroundImage'));
 };
 
-interface Props {
-  getZoom?: () => number;
-  resetView?: () => void;
-  setZoom?: (zoom: number) => void;
-}
-
-const CanvasControl = ({ getZoom, resetView, setZoom }: Props): React.ReactNode => {
+const CanvasControl = (): React.ReactNode => {
   const [activeMode, setActiveMode] = useState<CanvasControlMode>('zoom');
   const { isPreviewMode } = useCameraPreviewStore();
   const lang = useI18n();
@@ -44,7 +40,6 @@ const CanvasControl = ({ getZoom, resetView, setZoom }: Props): React.ReactNode 
   useEffect(() => {
     if (isPreviewMode) {
       setHasBgImage(false);
-      setOpacity(1);
       updateBgOpacity(1);
     } else {
       const exists = hasPreviewImage();
@@ -70,7 +65,7 @@ const CanvasControl = ({ getZoom, resetView, setZoom }: Props): React.ReactNode 
   const menuItems: MenuProps['items'] = useMemo(() => {
     const items: MenuProps['items'] = [
       {
-        icon: <span className={styles.zoomIcon}>⤢</span>,
+        icon: <ArrowsAltOutlined />,
         key: 'zoom',
         label: lang.canvas_control.canvas_zoom,
       },
@@ -132,9 +127,8 @@ const CanvasControl = ({ getZoom, resetView, setZoom }: Props): React.ReactNode 
       return (
         <ZoomBlock
           className={styles.zoomContent}
-          getZoom={getZoom}
-          resetView={resetView ?? (() => undefined)}
-          setZoom={setZoom ?? (() => undefined)}
+          resetView={workareaManager.resetView}
+          setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
         />
       );
     }
@@ -149,7 +143,7 @@ const CanvasControl = ({ getZoom, resetView, setZoom }: Props): React.ReactNode 
 
     if (activeMode === 'time') return <WorkareaIcons.Time className={styles.icon} />;
 
-    return <span className={styles.zoomIcon}>⤢</span>;
+    return <ArrowsAltOutlined className={styles.icon} />;
   };
 
   return (

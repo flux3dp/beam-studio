@@ -43,6 +43,26 @@ exports[`test PreviewSlider should be disabled when in raw mode and drawing 1`] 
 </div>
 `;
 
+exports[`test PreviewSlider should render Not Supported when not in preview mode 1`] = `
+<div>
+  <div
+    class="notSupported"
+  >
+    Not Supported
+  </div>
+</div>
+`;
+
+exports[`test PreviewSlider should render Not Supported when previewing non-fcodeV2 model 1`] = `
+<div>
+  <div
+    class="notSupported"
+  >
+    Not Supported
+  </div>
+</div>
+`;
+
 exports[`test PreviewSlider should render correctly when previewing Ador 1`] = `
 <div>
   <div
@@ -203,26 +223,6 @@ exports[`test PreviewSlider should render correctly when previewing BB2 2`] = `
     class="value"
   >
     0.25
-  </div>
-</div>
-`;
-
-exports[`test PreviewSlider should render null when not in preview mode 1`] = `
-<div>
-  <div
-    class="notSupported"
-  >
-    Not Supported
-  </div>
-</div>
-`;
-
-exports[`test PreviewSlider should render null when previewing non-fcodeV2 model 1`] = `
-<div>
-  <div
-    class="notSupported"
-  >
-    Not Supported
   </div>
 </div>
 `;

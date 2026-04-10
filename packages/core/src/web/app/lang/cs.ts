@@ -2198,7 +2198,6 @@ const lang: ILang = {
     invert: 'Invertovat',
     title: 'Výrobce razítek',
   },
-
   support: {
     no_vcredist: 'Nainstalujte prosím Visual C++ Redistributable 2015<br/> Ke stažení na flux3dp.com',
     no_webgl: 'WebGL není podporován. Použijte prosím jiná zařízení.',

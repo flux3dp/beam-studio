@@ -13,12 +13,6 @@ jest.mock('@core/app/actions/beambox/export-funcs', () => ({
 
 jest.mock('@core/helpers/web-need-connection-helper', () => (fn: () => void) => fn());
 
-jest.mock('@core/helpers/useI18n', () => () => ({
-  canvas_control: {
-    estimate_time: 'Calculate',
-  },
-}));
-
 jest.mock('@core/helpers/duration-formatter', () => (seconds: number) => `${seconds}s`);
 
 describe('TimeEstimationButton', () => {
