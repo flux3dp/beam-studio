@@ -9,10 +9,10 @@ import useI18n from '@core/helpers/useI18n';
 import type { KeyChainCategory } from '../../types';
 
 import CustomShapeGroup from './CustomShapeGroup';
-import ElementControl from './Element/ElementControl';
+import ElementControl from './element/ElementControl';
 import HoleGroup from './HoleGroup';
 import styles from './OptionsPanel.module.scss';
-import TextGroup from './Text/TextGroup';
+import TextGroup from './text/TextGroup';
 
 interface OptionsPanelProps {
   category: KeyChainCategory;

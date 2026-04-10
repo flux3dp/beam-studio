@@ -5,7 +5,7 @@ import { Input } from 'antd';
 
 import useI18n from '@core/helpers/useI18n';
 
-import NumberControl from '../Controls/NumberControl';
+import NumberControl from '../controls/NumberControl';
 
 import FontSelect from './FontSelect';
 

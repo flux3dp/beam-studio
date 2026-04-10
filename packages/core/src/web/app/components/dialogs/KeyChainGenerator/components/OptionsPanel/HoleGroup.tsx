@@ -8,8 +8,8 @@ import { PUNCH_HOLE_OFFSET } from '../../constants';
 import type { HoleOptionDef, HoleOptionValues, HoleType } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './Controls/GroupControl';
-import NumberControl from './Controls/NumberControl';
+import GroupControl from './controls/GroupControl';
+import NumberControl from './controls/NumberControl';
 
 interface HoleGroupProps {
   optionDef: HoleOptionDef;

@@ -6,11 +6,11 @@ import useI18n from '@core/helpers/useI18n';
 import type { CustomShapeOptionDef, CustomShapeOptionValues, ShapeElementPositionRef } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './Controls/GroupControl';
-import NumberControl from './Controls/NumberControl';
-import SelectControl from './Controls/SelectControl';
-import ElementPicker from './Element/ElementPicker';
-import TextFields from './Text/TextFields';
+import GroupControl from './controls/GroupControl';
+import NumberControl from './controls/NumberControl';
+import SelectControl from './controls/SelectControl';
+import ElementPicker from './element/ElementPicker';
+import TextFields from './text/TextFields';
 
 interface CustomShapeGroupProps {
   optionDef: CustomShapeOptionDef;
