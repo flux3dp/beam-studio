@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Dades de càmera pujades amb èxit.',
     uploading_data: 'Pujant dades...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Calcular',
+    exposure: 'Exposició',
+    not_supported: 'No compatible',
+    opacity: 'Opacitat',
+  },
   caption: {
     connectionTimeout: "Temps d'espera de connexió",
   },
@@ -2657,13 +2664,6 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     ignore: 'Ignorar',
     retest: 'Tornar a provar',
     testing: 'Realitzant prova de càrrega...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zoom',
-    estimate_time: 'Calcular',
-    exposure: 'Exposició',
-    not_supported: 'No compatible',
-    opacity: 'Opacitat',
   },
 };
 

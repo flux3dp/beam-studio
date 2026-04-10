@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Kameran tiedot on ladattu onnistuneesti.',
     uploading_data: 'Tietojen lataaminen...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Laske',
+    exposure: 'Valotus',
+    not_supported: 'Ei tuettu',
+    opacity: 'Läpinäkyvyys',
+  },
   caption: {
     connectionTimeout: 'Yhteyden aikakatkaisu',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: 'Ohita',
     retest: 'Testaa uudelleen',
     testing: 'Suoritetaan kuormitustestiä...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zoom',
-    estimate_time: 'Laske',
-    exposure: 'Valotus',
-    not_supported: 'Ei tuettu',
-    opacity: 'Läpinäkyvyys',
   },
 };
 

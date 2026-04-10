@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: '相机数据上传成功。',
     uploading_data: '正在上传数据...',
   },
+  canvas_control: {
+    canvas_zoom: '画布调整',
+    estimate_time: '计算时间',
+    exposure: '曝光值',
+    not_supported: '不支持',
+    opacity: '透明度',
+  },
   caption: {
     connectionTimeout: '连接逾时',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: '忽略',
     retest: '重新测试',
     testing: '正在执行负载测试...',
-  },
-  canvas_control: {
-    canvas_zoom: '画布调整',
-    estimate_time: '计算时间',
-    exposure: '曝光值',
-    not_supported: '不支持',
-    opacity: '透明度',
   },
 };
 

@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Kameradata har laddats upp framgångsrikt.',
     uploading_data: 'Laddar upp data...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Beräkna',
+    exposure: 'Exponering',
+    not_supported: 'Stöds inte',
+    opacity: 'Genomskinlighet',
+  },
   caption: {
     connectionTimeout: 'Anslutningstidsgräns',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: 'Ignorera',
     retest: 'Testa igen',
     testing: 'Utför belastningstest...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zoom',
-    estimate_time: 'Beräkna',
-    exposure: 'Exponering',
-    not_supported: 'Stöds inte',
-    opacity: 'Genomskinlighet',
   },
 };
 

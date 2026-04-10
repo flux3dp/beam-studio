@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'อัปโหลดข้อมูลกล้องสำเร็จ',
     uploading_data: 'กำลังอัปโหลดข้อมูล...',
   },
+  canvas_control: {
+    canvas_zoom: 'ซูม',
+    estimate_time: 'คำนวณ',
+    exposure: 'การรับแสง',
+    not_supported: 'ไม่รองรับ',
+    opacity: 'ความโปร่งแสง',
+  },
   caption: {
     connectionTimeout: 'หมดเวลาการเชื่อมต่อ',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: 'ละเว้น',
     retest: 'ทดสอบอีกครั้ง',
     testing: 'กำลังดำเนินการทดสอบโหลด...',
-  },
-  canvas_control: {
-    canvas_zoom: 'ซูม',
-    estimate_time: 'คำนวณ',
-    exposure: 'การรับแสง',
-    not_supported: 'ไม่รองรับ',
-    opacity: 'ความโปร่งแสง',
   },
 };
 

@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Dữ liệu máy ảnh đã được tải lên thành công.',
     uploading_data: 'Đang tải lên dữ liệu...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Tính',
+    exposure: 'Phơi sáng',
+    not_supported: 'Không hỗ trợ',
+    opacity: 'Độ mờ',
+  },
   caption: {
     connectionTimeout: 'Hết thời gian kết nối',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: 'Bỏ qua',
     retest: 'Kiểm tra lại',
     testing: 'Đang thực hiện kiểm tra tải...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zoom',
-    estimate_time: 'Tính',
-    exposure: 'Phơi sáng',
-    not_supported: 'Không hỗ trợ',
-    opacity: 'Độ mờ',
   },
 };
 

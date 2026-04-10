@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Data kamera berjaya dimuat naik.',
     uploading_data: 'Memuat naik data...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zum',
+    estimate_time: 'Kira',
+    exposure: 'Pendedahan',
+    not_supported: 'Tidak Disokong',
+    opacity: 'Ketelusan',
+  },
   caption: {
     connectionTimeout: 'Sambungan tamat masa',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: 'Abaikan',
     retest: 'Uji semula',
     testing: 'Melaksanakan ujian beban...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zum',
-    estimate_time: 'Kira',
-    exposure: 'Pendedahan',
-    not_supported: 'Tidak Disokong',
-    opacity: 'Ketelusan',
   },
 };
 

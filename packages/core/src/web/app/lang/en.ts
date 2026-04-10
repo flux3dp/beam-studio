@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Successfully uploaded camera data.',
     uploading_data: 'Uploading data...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Calculate',
+    exposure: 'Exposure',
+    not_supported: 'Not Supported',
+    opacity: 'Opacity',
+  },
   caption: {
     connectionTimeout: 'Connection timeout',
   },
@@ -2657,13 +2664,6 @@ Machines > ‘Promark Name’ > Promark Settings`,
     ignore: 'Ignore',
     retest: 'Retest',
     testing: 'Performing load test...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zoom',
-    estimate_time: 'Calculate',
-    exposure: 'Exposure',
-    not_supported: 'Not Supported',
-    opacity: 'Opacity',
   },
 };
 

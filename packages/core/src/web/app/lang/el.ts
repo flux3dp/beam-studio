@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Επιτυχής αποστολή δεδομένων κάμερας.',
     uploading_data: 'Ανεβάζοντας δεδομένα...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Υπολογισμός',
+    exposure: 'Έκθεση',
+    not_supported: 'Δεν υποστηρίζεται',
+    opacity: 'Αδιαφάνεια',
+  },
   caption: {
     connectionTimeout: 'Λήξη χρονικού ορίου σύνδεσης',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: 'Αγνόηση',
     retest: 'Επανάληψη δοκιμής',
     testing: 'Εκτελείται δοκιμή φόρτωσης...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zoom',
-    estimate_time: 'Υπολογισμός',
-    exposure: 'Έκθεση',
-    not_supported: 'Δεν υποστηρίζεται',
-    opacity: 'Αδιαφάνεια',
   },
 };
 

@@ -1236,6 +1236,13 @@ const lang: ILang = {
     upload_success: 'Dados da câmera enviados com sucesso.',
     uploading_data: 'Enviando dados...',
   },
+  canvas_control: {
+    canvas_zoom: 'Zoom',
+    estimate_time: 'Calcular',
+    exposure: 'Exposição',
+    not_supported: 'Não suportado',
+    opacity: 'Opacidade',
+  },
   caption: {
     connectionTimeout: 'Tempo limite de conexão',
   },
@@ -2657,13 +2664,6 @@ const lang: ILang = {
     ignore: 'Ignorar',
     retest: 'Testar novamente',
     testing: 'Executando teste de carga...',
-  },
-  canvas_control: {
-    canvas_zoom: 'Zoom',
-    estimate_time: 'Calcular',
-    exposure: 'Exposição',
-    not_supported: 'Não suportado',
-    opacity: 'Opacidade',
   },
 };
 
