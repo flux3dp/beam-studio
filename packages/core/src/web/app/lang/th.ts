@@ -30,6 +30,8 @@ const lang: ILang = {
     error_tip1: '1. งานศิลปะถูกวางไว้อย่างถูกต้องบนวัสดุหรือไม่?',
     error_tip2: '2. ขอบเขตของวัสดุชัดเจนพอสำหรับการจดจำหรือไม่?',
     failed_to_find_contour: 'ไม่พบเส้นขอบสำหรับการปรับพอดีอัตโนมัติ',
+    how_to_improve_accuracy: 'จะปรับปรุงความแม่นยำในการตรวจจับได้อย่างไร?',
+    how_to_improve_accuracy_url: 'https://support.flux3dp.com/hc/en-us/articles/15792349372687',
     learn_more: 'ดูบทแนะนำ',
     learn_more_url: 'https://support.flux3dp.com/hc/en-us/articles/10273384373775',
     offset_x: 'ระยะเยื้อง X',

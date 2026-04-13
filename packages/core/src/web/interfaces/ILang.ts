@@ -30,6 +30,8 @@ export interface ILang {
     error_tip1: string;
     error_tip2: string;
     failed_to_find_contour: string;
+    how_to_improve_accuracy: string;
+    how_to_improve_accuracy_url: string;
     learn_more: string;
     learn_more_url: string;
     offset_x: string;
