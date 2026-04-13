@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: '吊环',
     import_to_canvas: '导入至画布',
     layers: {
-      keychain: '钥匙扣',
-      keychain_inner: '钥匙扣内侧',
-      keychain_inner_position: '钥匙扣内侧位置',
+      keychain: '钥匙扣 - 外框',
+      keychain_deco_cutting: '钥匙扣装饰 - 切割',
+      keychain_deco_cutting_guide: '钥匙扣装饰 - 切割定位',
+      keychain_deco_engraving: '钥匙扣装饰 - 雕刻',
     },
     letter_spacing: '字距',
     line_spacing: '行距',

@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Kroužek',
     import_to_canvas: 'Importovat na plátno',
     layers: {
-      keychain: 'Přívěsek',
-      keychain_inner: 'Vnitřek přívěsku',
-      keychain_inner_position: 'Zarovnání vnitřku přívěsku',
+      keychain: 'Přívěsek - Obrys',
+      keychain_deco_cutting: 'Dekorace přívěsku - Řezání',
+      keychain_deco_cutting_guide: 'Dekorace přívěsku - Řezací vodítko',
+      keychain_deco_engraving: 'Dekorace přívěsku - Gravírování',
     },
     letter_spacing: 'Mezery mezi písmeny',
     line_spacing: 'Řádkování',

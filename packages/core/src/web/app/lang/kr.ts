@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: '링',
     import_to_canvas: '캔버스로 가져오기',
     layers: {
-      keychain: '키체인',
-      keychain_inner: '키체인 내부',
-      keychain_inner_position: '키체인 내부 정렬',
+      keychain: '키체인 - 외곽선',
+      keychain_deco_cutting: '키체인 장식 - 절단',
+      keychain_deco_cutting_guide: '키체인 장식 - 절단 가이드',
+      keychain_deco_engraving: '키체인 장식 - 각인',
     },
     letter_spacing: '자간',
     line_spacing: '행간',

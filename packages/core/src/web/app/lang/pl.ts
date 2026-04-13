@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Pierścień',
     import_to_canvas: 'Importuj na płótno',
     layers: {
-      keychain: 'Brelok',
-      keychain_inner: 'Wnętrze breloka',
-      keychain_inner_position: 'Wyrównanie wnętrza breloka',
+      keychain: 'Brelok - Obrys',
+      keychain_deco_cutting: 'Dekoracje breloka - Cięcie',
+      keychain_deco_cutting_guide: 'Dekoracje breloka - Linia cięcia',
+      keychain_deco_engraving: 'Dekoracje breloka - Grawerowanie',
     },
     letter_spacing: 'Odstęp między literami',
     line_spacing: 'Odstęp między wierszami',

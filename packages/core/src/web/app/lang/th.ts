@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'ห่วง',
     import_to_canvas: 'นำเข้าไปยังแคนวาส',
     layers: {
-      keychain: 'พวงกุญแจ',
-      keychain_inner: 'ด้านในพวงกุญแจ',
-      keychain_inner_position: 'การจัดตำแหน่งด้านในพวงกุญแจ',
+      keychain: 'พวงกุญแจ - เส้นขอบ',
+      keychain_deco_cutting: 'ตกแต่งพวงกุญแจ - การตัด',
+      keychain_deco_cutting_guide: 'ตกแต่งพวงกุญแจ - แนวตัด',
+      keychain_deco_engraving: 'ตกแต่งพวงกุญแจ - การแกะสลัก',
     },
     letter_spacing: 'ระยะห่างตัวอักษร',
     line_spacing: 'ระยะห่างบรรทัด',

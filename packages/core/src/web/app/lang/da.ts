@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Ring',
     import_to_canvas: 'Importér til lærred',
     layers: {
-      keychain: 'Nøglering',
-      keychain_inner: 'Nøglering indre',
-      keychain_inner_position: 'Justering af nøglering indre',
+      keychain: 'Nøglering - Omrids',
+      keychain_deco_cutting: 'Nøgleringsdekorationer - Skæring',
+      keychain_deco_cutting_guide: 'Nøgleringsdekorationer - Skærevejledning',
+      keychain_deco_engraving: 'Nøgleringsdekorationer - Gravering',
     },
     letter_spacing: 'Bogstavafstand',
     line_spacing: 'Linjeafstand',

@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Anello',
     import_to_canvas: 'Importa nel canvas',
     layers: {
-      keychain: 'Portachiavi',
-      keychain_inner: 'Interno portachiavi',
-      keychain_inner_position: 'Allineamento interno portachiavi',
+      keychain: 'Portachiavi - Contorno',
+      keychain_deco_cutting: 'Decorazioni portachiavi - Taglio',
+      keychain_deco_cutting_guide: 'Decorazioni portachiavi - Guida di taglio',
+      keychain_deco_engraving: 'Decorazioni portachiavi - Incisione',
     },
     letter_spacing: 'Spaziatura lettere',
     line_spacing: 'Interlinea',

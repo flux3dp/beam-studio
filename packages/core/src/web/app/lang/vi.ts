@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Vòng',
     import_to_canvas: 'Nhập vào canvas',
     layers: {
-      keychain: 'Móc khóa',
-      keychain_inner: 'Phần bên trong móc khóa',
-      keychain_inner_position: 'Căn chỉnh phần bên trong móc khóa',
+      keychain: 'Móc khóa - Đường viền',
+      keychain_deco_cutting: 'Trang trí móc khóa - Cắt',
+      keychain_deco_cutting_guide: 'Trang trí móc khóa - Hướng dẫn cắt',
+      keychain_deco_engraving: 'Trang trí móc khóa - Khắc',
     },
     letter_spacing: 'Khoảng cách chữ cái',
     line_spacing: 'Khoảng cách dòng',

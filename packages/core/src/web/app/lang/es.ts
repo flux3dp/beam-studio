@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Anillo',
     import_to_canvas: 'Importar al lienzo',
     layers: {
-      keychain: 'Llavero',
-      keychain_inner: 'Interior del llavero',
-      keychain_inner_position: 'Alineación del interior del llavero',
+      keychain: 'Llavero - Contorno',
+      keychain_deco_cutting: 'Decoraciones del llavero - Corte',
+      keychain_deco_cutting_guide: 'Decoraciones del llavero - Guía de corte',
+      keychain_deco_engraving: 'Decoraciones del llavero - Grabado',
     },
     letter_spacing: 'Espaciado entre letras',
     line_spacing: 'Interlineado',

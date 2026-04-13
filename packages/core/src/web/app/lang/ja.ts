@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'リング',
     import_to_canvas: 'キャンバスにインポート',
     layers: {
-      keychain: 'キーホルダー',
-      keychain_inner: 'キーホルダー内側',
-      keychain_inner_position: 'キーホルダー内側の配置',
+      keychain: 'キーホルダー - 外枠',
+      keychain_deco_cutting: 'キーホルダー装飾 - カット',
+      keychain_deco_cutting_guide: 'キーホルダー装飾 - カットガイド',
+      keychain_deco_engraving: 'キーホルダー装飾 - 彫刻',
     },
     letter_spacing: '文字間隔',
     line_spacing: '行間隔',

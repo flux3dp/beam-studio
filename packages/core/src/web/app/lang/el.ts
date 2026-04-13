@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Δαχτυλίδι',
     import_to_canvas: 'Εισαγωγή στον καμβά',
     layers: {
-      keychain: 'Μπρελόκ',
-      keychain_inner: 'Εσωτερικό μπρελόκ',
-      keychain_inner_position: 'Ευθυγράμμιση εσωτερικού μπρελόκ',
+      keychain: 'Μπρελόκ - Περίγραμμα',
+      keychain_deco_cutting: 'Διακοσμήσεις μπρελόκ - Κοπή',
+      keychain_deco_cutting_guide: 'Διακοσμήσεις μπρελόκ - Οδηγός κοπής',
+      keychain_deco_engraving: 'Διακοσμήσεις μπρελόκ - Χάραξη',
     },
     letter_spacing: 'Απόσταση γραμμάτων',
     line_spacing: 'Διάστιχο',

@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Ring',
     import_to_canvas: 'Importeren naar canvas',
     layers: {
-      keychain: 'Sleutelhanger',
-      keychain_inner: 'Binnenkant sleutelhanger',
-      keychain_inner_position: 'Uitlijning binnenkant sleutelhanger',
+      keychain: 'Sleutelhanger - Omtrek',
+      keychain_deco_cutting: 'Sleutelhangerversieringen - Snijden',
+      keychain_deco_cutting_guide: 'Sleutelhangerversieringen - Snijgids',
+      keychain_deco_engraving: 'Sleutelhangerversieringen - Graveren',
     },
     letter_spacing: 'Letterafstand',
     line_spacing: 'Regelafstand',

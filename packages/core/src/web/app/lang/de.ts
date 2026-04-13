@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Ring',
     import_to_canvas: 'In Leinwand importieren',
     layers: {
-      keychain: 'Schlüsselanhänger',
-      keychain_inner: 'Schlüsselanhänger Innenseite',
-      keychain_inner_position: 'Ausrichtung der Innenseite',
+      keychain: 'Schlüsselanhänger - Umriss',
+      keychain_deco_cutting: 'Schlüsselanhänger Dekorationen - Schneiden',
+      keychain_deco_cutting_guide: 'Schlüsselanhänger Dekorationen - Schnittführung',
+      keychain_deco_engraving: 'Schlüsselanhänger Dekorationen - Gravur',
     },
     letter_spacing: 'Zeichenabstand',
     line_spacing: 'Zeilenabstand',

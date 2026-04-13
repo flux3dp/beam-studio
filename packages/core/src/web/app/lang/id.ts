@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Cincin',
     import_to_canvas: 'Impor ke kanvas',
     layers: {
-      keychain: 'Gantungan Kunci',
-      keychain_inner: 'Bagian Dalam Gantungan Kunci',
-      keychain_inner_position: 'Perataan Bagian Dalam Gantungan Kunci',
+      keychain: 'Gantungan Kunci - Garis Luar',
+      keychain_deco_cutting: 'Dekorasi Gantungan Kunci - Pemotongan',
+      keychain_deco_cutting_guide: 'Dekorasi Gantungan Kunci - Panduan Pemotongan',
+      keychain_deco_engraving: 'Dekorasi Gantungan Kunci - Ukiran',
     },
     letter_spacing: 'Jarak huruf',
     line_spacing: 'Jarak baris',

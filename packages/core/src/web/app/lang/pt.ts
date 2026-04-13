@@ -1620,9 +1620,10 @@ const lang: ILang = {
     hole_type_ring: 'Anel',
     import_to_canvas: 'Importar para o canvas',
     layers: {
-      keychain: 'Chaveiro',
-      keychain_inner: 'Interior do chaveiro',
-      keychain_inner_position: 'Alinhamento do interior do chaveiro',
+      keychain: 'Chaveiro - Contorno',
+      keychain_deco_cutting: 'Decorações do chaveiro - Corte',
+      keychain_deco_cutting_guide: 'Decorações do chaveiro - Guia de corte',
+      keychain_deco_engraving: 'Decorações do chaveiro - Gravação',
     },
     letter_spacing: 'Espaçamento entre letras',
     line_spacing: 'Espaçamento entre linhas',
