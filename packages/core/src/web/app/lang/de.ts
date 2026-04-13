@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'In Leinwand importieren',
     layers: {
       keychain: 'Schlüsselanhänger - Umriss',
-      keychain_deco_cutting: 'Schlüsselanhänger Dekorationen - Schneiden',
-      keychain_deco_cutting_guide: 'Schlüsselanhänger Dekorationen - Schnittführung',
+      keychain_deco_emboss: 'Schlüsselanhänger Dekorationen - Schneiden',
+      keychain_deco_emboss_guide: 'Schlüsselanhänger Dekorationen - Schnittführung',
       keychain_deco_engraving: 'Schlüsselanhänger Dekorationen - Gravur',
     },
     letter_spacing: 'Zeichenabstand',

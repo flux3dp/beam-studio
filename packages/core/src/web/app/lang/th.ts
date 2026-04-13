@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'นำเข้าไปยังแคนวาส',
     layers: {
       keychain: 'พวงกุญแจ - เส้นขอบ',
-      keychain_deco_cutting: 'ตกแต่งพวงกุญแจ - การตัด',
-      keychain_deco_cutting_guide: 'ตกแต่งพวงกุญแจ - แนวตัด',
+      keychain_deco_emboss: 'ตกแต่งพวงกุญแจ - การตัด',
+      keychain_deco_emboss_guide: 'ตกแต่งพวงกุญแจ - แนวตัด',
       keychain_deco_engraving: 'ตกแต่งพวงกุญแจ - การแกะสลัก',
     },
     letter_spacing: 'ระยะห่างตัวอักษร',

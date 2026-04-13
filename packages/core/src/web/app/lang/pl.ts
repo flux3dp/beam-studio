@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importuj na płótno',
     layers: {
       keychain: 'Brelok - Obrys',
-      keychain_deco_cutting: 'Dekoracje breloka - Cięcie',
-      keychain_deco_cutting_guide: 'Dekoracje breloka - Linia cięcia',
+      keychain_deco_emboss: 'Dekoracje breloka - Cięcie',
+      keychain_deco_emboss_guide: 'Dekoracje breloka - Linia cięcia',
       keychain_deco_engraving: 'Dekoracje breloka - Grawerowanie',
     },
     letter_spacing: 'Odstęp między literami',

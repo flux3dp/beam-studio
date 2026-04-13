@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importar al lienzo',
     layers: {
       keychain: 'Llavero - Contorno',
-      keychain_deco_cutting: 'Decoraciones del llavero - Corte',
-      keychain_deco_cutting_guide: 'Decoraciones del llavero - Guía de corte',
+      keychain_deco_emboss: 'Decoraciones del llavero - Corte',
+      keychain_deco_emboss_guide: 'Decoraciones del llavero - Guía de corte',
       keychain_deco_engraving: 'Decoraciones del llavero - Grabado',
     },
     letter_spacing: 'Espaciado entre letras',

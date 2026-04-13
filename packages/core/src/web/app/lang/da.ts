@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importér til lærred',
     layers: {
       keychain: 'Nøglering - Omrids',
-      keychain_deco_cutting: 'Nøgleringsdekorationer - Skæring',
-      keychain_deco_cutting_guide: 'Nøgleringsdekorationer - Skærevejledning',
+      keychain_deco_emboss: 'Nøgleringsdekorationer - Skæring',
+      keychain_deco_emboss_guide: 'Nøgleringsdekorationer - Skærevejledning',
       keychain_deco_engraving: 'Nøgleringsdekorationer - Gravering',
     },
     letter_spacing: 'Bogstavafstand',

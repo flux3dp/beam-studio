@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importer sur le canevas',
     layers: {
       keychain: 'Porte-clés - Contour',
-      keychain_deco_cutting: 'Décorations du porte-clés - Découpe',
-      keychain_deco_cutting_guide: 'Décorations du porte-clés - Guide de découpe',
+      keychain_deco_emboss: 'Décorations du porte-clés - Découpe',
+      keychain_deco_emboss_guide: 'Décorations du porte-clés - Guide de découpe',
       keychain_deco_engraving: 'Décorations du porte-clés - Gravure',
     },
     letter_spacing: 'Espacement des lettres',

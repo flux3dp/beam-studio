@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importera till arbetsyta',
     layers: {
       keychain: 'Nyckelring - Kontur',
-      keychain_deco_cutting: 'Nyckelringsdekorationer - Skärning',
-      keychain_deco_cutting_guide: 'Nyckelringsdekorationer - Skärguide',
+      keychain_deco_emboss: 'Nyckelringsdekorationer - Skärning',
+      keychain_deco_emboss_guide: 'Nyckelringsdekorationer - Skärguide',
       keychain_deco_engraving: 'Nyckelringsdekorationer - Gravyr',
     },
     letter_spacing: 'Teckenavstånd',

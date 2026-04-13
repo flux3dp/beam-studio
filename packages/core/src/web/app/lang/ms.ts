@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Import ke kanvas',
     layers: {
       keychain: 'Rantai Kunci - Garis Luar',
-      keychain_deco_cutting: 'Hiasan Rantai Kunci - Pemotongan',
-      keychain_deco_cutting_guide: 'Hiasan Rantai Kunci - Panduan Pemotongan',
+      keychain_deco_emboss: 'Hiasan Rantai Kunci - Pemotongan',
+      keychain_deco_emboss_guide: 'Hiasan Rantai Kunci - Panduan Pemotongan',
       keychain_deco_engraving: 'Hiasan Rantai Kunci - Ukiran',
     },
     letter_spacing: 'Jarak huruf',

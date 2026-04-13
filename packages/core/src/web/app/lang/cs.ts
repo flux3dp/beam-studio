@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importovat na plátno',
     layers: {
       keychain: 'Přívěsek - Obrys',
-      keychain_deco_cutting: 'Dekorace přívěsku - Řezání',
-      keychain_deco_cutting_guide: 'Dekorace přívěsku - Řezací vodítko',
+      keychain_deco_emboss: 'Dekorace přívěsku - Řezání',
+      keychain_deco_emboss_guide: 'Dekorace přívěsku - Řezací vodítko',
       keychain_deco_engraving: 'Dekorace přívěsku - Gravírování',
     },
     letter_spacing: 'Mezery mezi písmeny',

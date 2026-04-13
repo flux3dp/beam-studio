@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Εισαγωγή στον καμβά',
     layers: {
       keychain: 'Μπρελόκ - Περίγραμμα',
-      keychain_deco_cutting: 'Διακοσμήσεις μπρελόκ - Κοπή',
-      keychain_deco_cutting_guide: 'Διακοσμήσεις μπρελόκ - Οδηγός κοπής',
+      keychain_deco_emboss: 'Διακοσμήσεις μπρελόκ - Κοπή',
+      keychain_deco_emboss_guide: 'Διακοσμήσεις μπρελόκ - Οδηγός κοπής',
       keychain_deco_engraving: 'Διακοσμήσεις μπρελόκ - Χάραξη',
     },
     letter_spacing: 'Απόσταση γραμμάτων',

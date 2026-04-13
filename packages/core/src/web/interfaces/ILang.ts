@@ -1620,8 +1620,8 @@ export interface ILang {
     import_to_canvas: string;
     layers: {
       keychain: string;
-      keychain_deco_cutting: string;
-      keychain_deco_cutting_guide: string;
+      keychain_deco_emboss: string;
+      keychain_deco_emboss_guide: string;
       keychain_deco_engraving: string;
     };
     letter_spacing: string;

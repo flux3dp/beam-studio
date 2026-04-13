@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Tuo kankaalle',
     layers: {
       keychain: 'Avaimenperä - Ääriviiva',
-      keychain_deco_cutting: 'Avaimenperän koristeet - Leikkaus',
-      keychain_deco_cutting_guide: 'Avaimenperän koristeet - Leikkausohje',
+      keychain_deco_emboss: 'Avaimenperän koristeet - Leikkaus',
+      keychain_deco_emboss_guide: 'Avaimenperän koristeet - Leikkausohje',
       keychain_deco_engraving: 'Avaimenperän koristeet - Kaiverrus',
     },
     letter_spacing: 'Kirjainväli',

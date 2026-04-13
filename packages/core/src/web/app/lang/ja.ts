@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'キャンバスにインポート',
     layers: {
       keychain: 'キーホルダー - 外枠',
-      keychain_deco_cutting: 'キーホルダー装飾 - カット',
-      keychain_deco_cutting_guide: 'キーホルダー装飾 - カットガイド',
+      keychain_deco_emboss: 'キーホルダー装飾 - カット',
+      keychain_deco_emboss_guide: 'キーホルダー装飾 - カットガイド',
       keychain_deco_engraving: 'キーホルダー装飾 - 彫刻',
     },
     letter_spacing: '文字間隔',

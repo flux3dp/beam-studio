@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: '匯入至畫布',
     layers: {
       keychain: '鑰匙圈 - 外框',
-      keychain_deco_cutting: '鑰匙圈裝飾 - 切割',
-      keychain_deco_cutting_guide: '鑰匙圈裝飾 - 切割對位',
+      keychain_deco_emboss: '鑰匙圈裝飾 - 浮雕',
+      keychain_deco_emboss_guide: '鑰匙圈裝飾 - 浮雕對位',
       keychain_deco_engraving: '鑰匙圈裝飾 - 雕刻',
     },
     letter_spacing: '字距',

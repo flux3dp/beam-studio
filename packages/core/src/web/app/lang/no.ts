@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importer til lerret',
     layers: {
       keychain: 'Nøkkelring - Omriss',
-      keychain_deco_cutting: 'Nøkkelringdekorasjoner - Kutting',
-      keychain_deco_cutting_guide: 'Nøkkelringdekorasjoner - Kutteguide',
+      keychain_deco_emboss: 'Nøkkelringdekorasjoner - Kutting',
+      keychain_deco_emboss_guide: 'Nøkkelringdekorasjoner - Kutteguide',
       keychain_deco_engraving: 'Nøkkelringdekorasjoner - Gravering',
     },
     letter_spacing: 'Bokstavmellomrom',

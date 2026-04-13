@@ -1621,8 +1621,8 @@ const lang: ILang = {
     import_to_canvas: 'Importa nel canvas',
     layers: {
       keychain: 'Portachiavi - Contorno',
-      keychain_deco_cutting: 'Decorazioni portachiavi - Taglio',
-      keychain_deco_cutting_guide: 'Decorazioni portachiavi - Guida di taglio',
+      keychain_deco_emboss: 'Decorazioni portachiavi - Taglio',
+      keychain_deco_emboss_guide: 'Decorazioni portachiavi - Guida di taglio',
       keychain_deco_engraving: 'Decorazioni portachiavi - Incisione',
     },
     letter_spacing: 'Spaziatura lettere',

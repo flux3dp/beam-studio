@@ -224,7 +224,7 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
   const { layers: tLayers } = i18n.lang.keychain_generator;
 
   // Layer 2: inner path at the original (overlapping) position — engrave/mark layer.
-  const { name: posName } = createLayer(tLayers.keychain_deco_cutting_guide, {
+  const { name: posName } = createLayer(tLayers.keychain_deco_emboss_guide, {
     hexCode: KEYCHAIN_COLORS.exploded.innerPosition,
     parentCmd: batchCmd,
   });
@@ -240,7 +240,7 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
   // Layer 3: inner path standalone — translated below the base by `bounds.height + GAP`.
   // Reuse addPathsToCanvas by feeding it a shifted bounds origin so the move op produces
   // a final position equivalent to (originalX, originalY + bounds.height + GAP).
-  const { name: aloneName } = createLayer(tLayers.keychain_deco_cutting, {
+  const { name: aloneName } = createLayer(tLayers.keychain_deco_emboss, {
     hexCode: KEYCHAIN_COLORS.exploded.innerAlone,
     parentCmd: batchCmd,
   });
