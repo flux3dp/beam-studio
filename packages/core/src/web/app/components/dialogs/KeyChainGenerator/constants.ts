@@ -7,6 +7,9 @@ export const BASE_RECTANGLE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="
   <rect x="10" y="10" width="280" height="580" rx="30" ry="30" fill="none" stroke="#000" stroke-width="4"/>
 </svg>`;
 
+export const INNER_ALIGN_OFFSET_MM = 0.2;
+export const INNER_ALIGN_OFFSET_PX = INNER_ALIGN_OFFSET_MM * PX_TO_MM_RATIO;
+
 /** Vertical gap (mm) between the base path and the standalone inner path in exploded view / export. */
 export const EXPLODED_GAP_MM = 5;
 export const EXPLODED_GAP_PX = EXPLODED_GAP_MM * PX_TO_MM_RATIO;

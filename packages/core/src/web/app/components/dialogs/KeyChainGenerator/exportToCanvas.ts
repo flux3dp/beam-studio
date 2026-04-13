@@ -1,4 +1,5 @@
 import paper from 'paper';
+import { PaperOffset } from 'paperjs-offset';
 
 import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
@@ -13,7 +14,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-import { EXPLODED_GAP_PX, KEYCHAIN_COLORS } from './constants';
+import { EXPLODED_GAP_PX, INNER_ALIGN_OFFSET_PX, KEYCHAIN_COLORS } from './constants';
 import type { KeyChainShape } from './types';
 import useKeychainShapeStore from './useKeychainShapeStore';
 
@@ -230,9 +231,11 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
 
   useLayerStore.getState().setSelectedLayers([posName]);
 
-  const innerPathSvg = [pathItemToSvgPath(shape.innerPath)];
+  const insetPath = PaperOffset.offset(shape.innerPath.clone() as paper.Path, -INNER_ALIGN_OFFSET_PX / sizeRatio, {
+    insert: false,
+  });
 
-  await addPathsToCanvas(innerPathSvg, shape.bounds, batchCmd, sizeRatio);
+  await addPathsToCanvas([pathItemToSvgPath(insetPath)], shape.bounds, batchCmd, sizeRatio);
 
   // Layer 3: inner path standalone — translated below the base by `bounds.height + GAP`.
   // Reuse addPathsToCanvas by feeding it a shifted bounds origin so the move op produces
@@ -251,7 +254,7 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
     shape.bounds.height,
   );
 
-  await addPathsToCanvas(innerPathSvg, shiftedBounds, batchCmd, sizeRatio);
+  await addPathsToCanvas([pathItemToSvgPath(shape.innerPath)], shiftedBounds, batchCmd, sizeRatio);
 };
 
 /**
