@@ -31,7 +31,7 @@ const lang: ILang = {
     error_tip2: '2. 材料的轮廓是否足够清晰以便识别？',
     failed_to_find_contour: '未能找到用于自动适配的轮廓',
     how_to_improve_accuracy: '如何提高检测准确度？',
-    how_to_improve_accuracy_url: 'https://support.flux3dp.com/hc/zh-cn/articles/15792349372687',
+    how_to_improve_accuracy_url: 'https://support.flux3dp.com/hc/en-us/articles/15792349372687',
     learn_more: '查看教程',
     learn_more_url: 'https://support.flux3dp.com/hc/en-us/articles/10273384373775',
     offset_x: '偏移 X',
