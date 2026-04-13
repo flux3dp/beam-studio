@@ -1,7 +1,7 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
 
-import type { KeyChainState, TextOptionDef } from './types';
+import type { KeyChainState, TextOptionDef } from '../types';
 
 /**
  * Creates an SVG <text> element with <tspan> children for multi-line text.

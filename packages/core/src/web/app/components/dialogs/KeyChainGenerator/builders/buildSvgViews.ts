@@ -2,7 +2,7 @@ import type paper from 'paper';
 
 import NS from '@core/app/constants/namespaces';
 
-import { EXPLODED_GAP_PX, KEYCHAIN_COLORS, type KeychainViewMode } from './constants';
+import { EXPLODED_GAP_PX, KEYCHAIN_COLORS, type KeychainViewMode } from '../constants';
 
 interface BuildKeychainViewParams {
   bounds: paper.Rectangle;
@@ -49,7 +49,7 @@ const createPathElement = (d: string, stroke: string): SVGPathElement => {
  *   extended downward and a translated copy of the inner path is appended below the base.
  *   Different parts use distinct colors for visual separation.
  */
-export const buildKeychainView = (
+export const buildSvgView = (
   mode: KeychainViewMode,
   { bounds, decorations, defaultViewBox, innerPath, resultBasePath }: BuildKeychainViewParams,
 ): SVGSVGElement => {

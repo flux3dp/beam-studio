@@ -4,11 +4,15 @@ import { combine } from 'zustand/middleware';
 
 import NS from '@core/app/constants/namespaces';
 
-import { generateCustomBaseShape } from './buildKeychainCustomBaseShape';
-import { applyElements, loadShape } from './buildKeychainElement';
-import { applyHoles, importBasePath } from './buildKeychainShape';
-import { buildKeychainView } from './buildKeychainSvgViews';
-import { applyTexts } from './buildKeychainText';
+import {
+  applyElements,
+  applyHoles,
+  applyTexts,
+  buildSvgView,
+  generateCustomBaseShape,
+  importBasePath,
+  loadShape,
+} from './builders';
 import { getDefaultCategory, getDefaultState, getStateForCategory } from './categories';
 import type { KeychainViewMode } from './constants';
 import { PX_TO_MM_RATIO } from './constants';
@@ -168,8 +172,8 @@ const useKeychainShapeStore = create(
         innerPath: innerPathClone,
         resultBasePath,
       };
-      const designSvg = buildKeychainView('design', buildParams);
-      const explodedSvg = buildKeychainView('exploded', buildParams);
+      const designSvg = buildSvgView('design', buildParams);
+      const explodedSvg = buildSvgView('exploded', buildParams);
 
       const shape: KeyChainShape = {
         bounds,

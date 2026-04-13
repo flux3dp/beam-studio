@@ -8,7 +8,7 @@ import { ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import useI18n from '@core/helpers/useI18n';
 
-import { loadShape } from '../../../buildKeychainElement';
+import { loadShape } from '../../../builders';
 
 import styles from './ElementControl.module.scss';
 import PresetSelector from './PresetSelector';

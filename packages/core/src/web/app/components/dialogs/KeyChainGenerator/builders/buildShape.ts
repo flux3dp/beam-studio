@@ -1,8 +1,8 @@
 import paper from 'paper';
 import { PaperOffset } from 'paperjs-offset';
 
-import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from './constants';
-import type { HoleOptionDef, KeyChainState } from './types';
+import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from '../constants';
+import type { HoleOptionDef, KeyChainState } from '../types';
 
 /**
  * Recursively collects all Paper.js Path/CompoundPath items from the imported SVG.

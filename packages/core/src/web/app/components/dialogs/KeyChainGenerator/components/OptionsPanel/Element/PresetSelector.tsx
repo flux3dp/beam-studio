@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import importIcon from '@core/app/components/dialogs/ElementPanel/Element/importIcon';
 
-import { loadShape, NP_SHAPE_PREFIX, svgCache } from '../../../buildKeychainElement';
+import { loadShape, NP_SHAPE_PREFIX, svgCache } from '../../../builders';
 
 import styles from './PresetSelector.module.scss';
 
