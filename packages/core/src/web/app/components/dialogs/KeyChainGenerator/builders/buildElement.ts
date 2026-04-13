@@ -6,8 +6,9 @@ import ReactDomServer from 'react-dom/server';
 
 import { getNPIconByID } from '@core/helpers/api/flux-id';
 
-import { collectPathItems } from './buildShape';
 import type { ElementOptionDef, KeyChainState } from '../types';
+
+import { collectPathItems } from './buildShape';
 
 /** Prefix used for Noun Project shape keys, e.g. `np/12345`. */
 export const NP_SHAPE_PREFIX = 'np/';

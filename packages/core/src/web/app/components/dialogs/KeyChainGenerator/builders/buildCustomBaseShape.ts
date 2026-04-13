@@ -5,11 +5,12 @@ import { match } from 'ts-pattern';
 import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/actions/beambox/font-funcs';
 import NS from '@core/app/constants/namespaces';
 
+import { PX_TO_MM_RATIO } from '../constants';
+import type { CustomShapeOptionValues, ShapeElementPositionRef, SizeDimension } from '../types';
+
 import { svgCache } from './buildElement';
 import { collectPathItems } from './buildShape';
 import { createTextElement } from './buildText';
-import { PX_TO_MM_RATIO } from '../constants';
-import type { CustomShapeOptionValues, ShapeElementPositionRef, SizeDimension } from '../types';
 
 export const generateShapeTextPathD = async (values: CustomShapeOptionValues): Promise<null | string> => {
   const { font, fontSize, letterSpacing, lineSpacing, text } = values;
