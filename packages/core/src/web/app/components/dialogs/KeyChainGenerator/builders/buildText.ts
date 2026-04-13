@@ -42,18 +42,20 @@ export const createTextElement = (
   const x = bounds ? bounds.x + bounds.width / 2 : 0;
   const y = bounds ? bounds.y + fontSize : fontSize;
 
+  for (let i = lines.length - 1; i >= 0; i -= 1) {
+    if (lines[i].trim() === '') {
+      lines.pop();
+    } else {
+      break;
+    }
+  }
+
   for (let i = 0; i < lines.length; i += 1) {
     const tspan = document.createElementNS(NS.SVG, 'tspan');
 
     tspan.setAttribute('x', String(x));
     tspan.textContent = lines[i];
-
-    if (i === 0) {
-      tspan.setAttribute('y', String(y));
-    } else {
-      tspan.setAttribute('dy', String(lineHeight));
-    }
-
+    tspan.setAttribute('y', String(y + i * lineHeight));
     text.appendChild(tspan);
   }
 
@@ -67,14 +69,10 @@ const updateTextFontSize = (textEl: SVGTextElement, fontSize: number, lineSpacin
   textEl.setAttribute('font-size', String(fontSize));
 
   const lineHeight = fontSize * lineSpacing;
-  const tspans = textEl.querySelectorAll('tspan');
+  const baseY = boundsY + fontSize;
 
-  tspans.forEach((tspan, i) => {
-    if (i === 0) {
-      tspan.setAttribute('y', String(boundsY + fontSize));
-    } else {
-      tspan.setAttribute('dy', String(lineHeight));
-    }
+  textEl.querySelectorAll('tspan').forEach((tspan, i) => {
+    tspan.setAttribute('y', String(baseY + i * lineHeight));
   });
 };
 
@@ -131,12 +129,11 @@ export const applyTexts = (svg: SVGSVGElement, state: KeyChainState, textDefs: T
 
     // Vertical center: shift the first tspan's y so text block is centered in bounds
     const offsetY = (bounds.height - finalBBox.height) / 2;
-    const firstTspan = textEl.querySelector('tspan');
 
-    if (firstTspan) {
-      const currentY = Number.parseFloat(firstTspan.getAttribute('y') ?? '0');
+    textEl.querySelectorAll('tspan').forEach((tspan) => {
+      const y = Number.parseFloat(tspan.getAttribute('y') ?? '0');
 
-      firstTspan.setAttribute('y', String(currentY + offsetY));
-    }
+      tspan.setAttribute('y', String(y + offsetY));
+    });
   }
 };
