@@ -34,7 +34,7 @@ const createPathElement = (d: string, stroke: string): SVGPathElement => {
   path.setAttribute('d', d);
   path.setAttribute('fill', 'none');
   path.setAttribute('stroke', stroke);
-  path.setAttribute('stroke-width', '2');
+  path.setAttribute('stroke-width', '1');
   path.setAttribute('vector-effect', 'non-scaling-stroke');
 
   return path;

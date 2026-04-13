@@ -6,18 +6,28 @@ import type { KeyChainState, TextOptionDef } from '../types';
 /**
  * Creates an SVG <text> element with <tspan> children for multi-line text.
  */
-export const createTextElement = (
+export const createTextElement = async (
   content: string,
   font: { family: string; postscriptName: string; style: string },
   fontSize: number,
   letterSpacing: number,
   lineSpacing: number,
   bounds?: { height: number; width: number; x: number; y: number },
-): SVGTextElement => {
+): Promise<SVGTextElement> => {
   const text = document.createElementNS(NS.SVG, 'text');
 
   text.setAttribute('font-family', `'${font.family}'`);
   text.setAttribute('font-postscript', font.postscriptName);
+  text.setAttributeNS(NS.XML, 'xml:space', 'preserve');
+
+  try {
+    await Promise.race([
+      document.fonts.load(`${fontSize}px '${font.family}'`),
+      new Promise((resolve) => setTimeout(resolve, 3000)), // timeout to prevent hanging if font fails to load
+    ]);
+  } catch {
+    console.error(`Fail to load ${font.family}`);
+  }
 
   const fontDesc = fontFuncs.getFontOfPostscriptName(font.postscriptName);
 
@@ -80,17 +90,16 @@ const updateTextFontSize = (textEl: SVGTextElement, fontSize: number, lineSpacin
  * Measures the bounding box of a text element by temporarily attaching the
  * parent SVG to the DOM. The SVG is removed after measurement.
  */
-const measureTextBBox = (svg: SVGSVGElement, textEl: SVGTextElement): { height: number; width: number } => {
+const measureTextBBox = (svg: SVGSVGElement, textEl: SVGTextElement): DOMRect => {
   svg.style.visibility = 'hidden';
   document.body.appendChild(svg);
 
   const bbox = textEl.getBBox();
-  const result = { height: bbox.height, width: bbox.width };
 
   document.body.removeChild(svg);
   svg.style.removeProperty('visibility');
 
-  return result;
+  return bbox;
 };
 
 /**
@@ -100,7 +109,11 @@ const measureTextBBox = (svg: SVGSVGElement, textEl: SVGTextElement): { height: 
  * 3. If bbox exceeds bounds, scale down fontSize to fit
  * 4. Detach svg from DOM
  */
-export const applyTexts = (svg: SVGSVGElement, state: KeyChainState, textDefs: TextOptionDef[]): void => {
+export const applyTexts = async (
+  svg: SVGSVGElement,
+  state: KeyChainState,
+  textDefs: TextOptionDef[],
+): Promise<void> => {
   for (const textDef of textDefs) {
     const textValues = state.texts[textDef.id];
 
@@ -108,7 +121,7 @@ export const applyTexts = (svg: SVGSVGElement, state: KeyChainState, textDefs: T
 
     const { bounds } = textDef;
     const { font, fontSize, letterSpacing, lineSpacing, text } = textValues;
-    const textEl = createTextElement(text, font, fontSize, letterSpacing, lineSpacing, bounds);
+    const textEl = await createTextElement(text, font, fontSize, letterSpacing, lineSpacing, bounds);
 
     svg.appendChild(textEl);
 
@@ -128,7 +141,7 @@ export const applyTexts = (svg: SVGSVGElement, state: KeyChainState, textDefs: T
     }
 
     // Vertical center: shift the first tspan's y so text block is centered in bounds
-    const offsetY = (bounds.height - finalBBox.height) / 2;
+    const offsetY = bounds.y + bounds.height / 2 - (finalBBox.y + finalBBox.height / 2);
 
     textEl.querySelectorAll('tspan').forEach((tspan) => {
       const y = Number.parseFloat(tspan.getAttribute('y') ?? '0');

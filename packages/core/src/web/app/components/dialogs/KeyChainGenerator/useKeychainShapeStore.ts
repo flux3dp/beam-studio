@@ -63,15 +63,15 @@ const initialState: StoreState = {
  * never inserted into the DOM by this function — `applyTexts` may briefly attach it for
  * bbox measurement, but cleans up before returning.
  */
-const buildDecorations = (
+const buildDecorations = async (
   project: paper.Project,
   state: KeyChainState,
   textDefs: TextOptionDef[],
   elementDefs: ElementOptionDef[],
-): SVGElement[] => {
+): Promise<SVGElement[]> => {
   const tempSvg = document.createElementNS(NS.SVG, 'svg');
 
-  applyTexts(tempSvg, state, textDefs);
+  await applyTexts(tempSvg, state, textDefs);
   applyElements(project, tempSvg, state, elementDefs);
 
   return Array.from(tempSvg.children) as SVGElement[];
@@ -136,7 +136,7 @@ const useKeychainShapeStore = create(
      * The previous shape's owned paper objects (resultBasePath, innerPath) are disposed
      * before installing the new shape.
      */
-    applyOptions: (): KeyChainShape => {
+    applyOptions: async (): Promise<KeyChainShape> => {
       const { basePath, category, innerPath, project, shape: oldShape, sizeRatio, state } = get();
       const { defaultViewBox, options } = category;
 
@@ -160,7 +160,7 @@ const useKeychainShapeStore = create(
       // Build decoration nodes (text + element shapes)
       const textDefs = options.texts ?? [];
       const elementDefs = options.elements ?? [];
-      const decorations = buildDecorations(project, state, textDefs, elementDefs);
+      const decorations = await buildDecorations(project, state, textDefs, elementDefs);
 
       // Clone the cached inner path so the canonical inner path is never mutated
       const innerPathClone = innerPath ? innerPath.clone() : null;

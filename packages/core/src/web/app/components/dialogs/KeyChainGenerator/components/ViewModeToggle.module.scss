@@ -13,22 +13,18 @@
   border-radius: 8px;
   cursor: pointer;
   overflow: hidden;
-  background: #fafafa;
+  background: transparent;
   padding: 4px;
-  transition:
-    border-color 0.2s,
-    box-shadow 0.2s;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:hover {
-    border-color: #40a9ff;
+    border-color: variables.$primary-blue-hover;
   }
 
   &.active {
     border-color: variables.$primary-blue;
-    box-shadow: 0 0 0 2px rgba(24, 144, 255, 0.2);
   }
 
   .thumb {

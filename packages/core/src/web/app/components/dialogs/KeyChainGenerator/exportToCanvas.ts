@@ -275,7 +275,7 @@ export const exportToCanvas = async (): Promise<void> => {
     const { applyOptions, buildBaseShape, category } = useKeychainShapeStore.getState();
 
     await buildBaseShape(category);
-    shape = applyOptions();
+    shape = await applyOptions();
     sizeRatio = useKeychainShapeStore.getState().sizeRatio;
   }
 

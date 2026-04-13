@@ -1,3 +1,5 @@
+@use '@core/styles/variables' as variables;
+
 .category-selector {
   flex: 0 0 168px;
   display: flex;
@@ -26,22 +28,18 @@
   width: 160px;
   height: 108px;
   flex: 0 0 auto;
+  border: 2px solid #d9d9d9;
   border-radius: 8px;
-  border: 2px solid transparent;
   overflow: hidden;
   cursor: pointer;
-  transition:
-    border-color 0.2s,
-    transform 0.2s;
   background-color: #f5f5f5;
 
   &:hover {
-    border-color: #d9d9d9;
-    transform: scale(1.02);
+    border-color: variables.$primary-blue-hover;
   }
 
-  &.selected {
-    border-color: #1890ff;
+  &.active {
+    border-color: variables.$primary-blue;
   }
 
   img {

@@ -64,7 +64,6 @@ describe('HoleGroup', () => {
     defaults,
     id: 'hole-top',
     startPositionRef: 'topCenter',
-    type: 'hole',
   };
 
   beforeEach(() => {

@@ -21,7 +21,7 @@ export const generateShapeTextPathD = async (values: CustomShapeOptionValues): P
 
   if (!fontDesc) return null;
 
-  const textEl = createTextElement(text, font, fontSize, letterSpacing, lineSpacing);
+  const textEl = await createTextElement(text, font, fontSize, letterSpacing, lineSpacing);
 
   // Shape-text uses outline rendering on the temp DOM element (cosmetic; fontkit reads positions only)
   textEl.setAttribute('fill', 'none');

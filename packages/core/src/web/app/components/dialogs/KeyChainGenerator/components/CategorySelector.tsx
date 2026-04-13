@@ -29,9 +29,9 @@ const CategorySelector = ({
         const label = t.types[category.nameKey] ?? category.nameKey;
 
         return (
-          <div
+          <button
             className={classNames(styles['category-item'], {
-              [styles.selected]: category.id === currentCategoryId,
+              [styles.active]: category.id === currentCategoryId,
             })}
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
@@ -50,7 +50,7 @@ const CategorySelector = ({
             ) : (
               <div className={styles.placeholder}>{label}</div>
             )}
-          </div>
+          </button>
         );
       })}
     </div>
