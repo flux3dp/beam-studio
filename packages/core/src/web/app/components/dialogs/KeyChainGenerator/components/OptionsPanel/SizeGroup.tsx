@@ -6,8 +6,8 @@ import useI18n from '@core/helpers/useI18n';
 import type { SizeDimension } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './controls/GroupControl';
-import NumberControl from './controls/NumberControl';
+import GroupControl from './Controls/GroupControl';
+import NumberControl from './Controls/NumberControl';
 
 const SizeGroup = (): ReactNode => {
   const { keychain_generator: t } = useI18n();

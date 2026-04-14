@@ -7,7 +7,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { TextOptionDef, TextOptionValues } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
-import GroupControl from '../controls/GroupControl';
+import GroupControl from '../Controls/GroupControl';
 
 import TextFields from './TextFields';
 
