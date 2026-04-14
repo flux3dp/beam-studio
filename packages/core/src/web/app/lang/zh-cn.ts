@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: '正在上传数据...',
   },
   canvas_control: {
-    canvas_zoom: '画布调整',
     calculate: '预估时间',
+    canvas_zoom: '画布调整',
     exposure: '曝光值',
     not_supported: '不支持',
     opacity: '透明度',

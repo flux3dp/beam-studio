@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: 'Mengunggah data...',
   },
   canvas_control: {
-    canvas_zoom: 'Zoom',
     calculate: 'Perkirakan waktu',
+    canvas_zoom: 'Zoom',
     exposure: 'Eksposur',
     not_supported: 'Tidak Didukung',
     opacity: 'Opasitas',

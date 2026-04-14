@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: 'Laddar upp data...',
   },
   canvas_control: {
-    canvas_zoom: 'Zoom',
     calculate: 'Uppskatta tid',
+    canvas_zoom: 'Zoom',
     exposure: 'Exponering',
     not_supported: 'Stöds inte',
     opacity: 'Genomskinlighet',

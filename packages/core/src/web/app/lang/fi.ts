@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: 'Tietojen lataaminen...',
   },
   canvas_control: {
-    canvas_zoom: 'Zoom',
     calculate: 'Arvioi aika',
+    canvas_zoom: 'Zoom',
     exposure: 'Valotus',
     not_supported: 'Ei tuettu',
     opacity: 'Läpinäkyvyys',

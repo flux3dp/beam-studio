@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: 'Đang tải lên dữ liệu...',
   },
   canvas_control: {
-    canvas_zoom: 'Zoom',
     calculate: 'Ước tính thời gian',
+    canvas_zoom: 'Zoom',
     exposure: 'Phơi sáng',
     not_supported: 'Không hỗ trợ',
     opacity: 'Độ mờ',

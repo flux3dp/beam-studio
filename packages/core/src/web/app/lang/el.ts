@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: 'Ανεβάζοντας δεδομένα...',
   },
   canvas_control: {
-    canvas_zoom: 'Zoom',
     calculate: 'Υπολογισμός χρόνου',
+    canvas_zoom: 'Zoom',
     exposure: 'Έκθεση',
     not_supported: 'Δεν υποστηρίζεται',
     opacity: 'Αδιαφάνεια',

@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: 'Nahrávám data...',
   },
   canvas_control: {
-    canvas_zoom: 'Zoom',
     calculate: 'Odhadnout délku',
+    canvas_zoom: 'Zoom',
     exposure: 'Expozice',
     not_supported: 'Nepodporováno',
     opacity: 'Průhlednost',

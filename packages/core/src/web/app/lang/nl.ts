@@ -1233,8 +1233,8 @@ const lang: ILang = {
     uploading_data: 'Gegevens uploaden...',
   },
   canvas_control: {
-    canvas_zoom: 'Zoom',
     calculate: 'Schat tijd in',
+    canvas_zoom: 'Zoom',
     exposure: 'Belichting',
     not_supported: 'Niet ondersteund',
     opacity: 'Dekking',
