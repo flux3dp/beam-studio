@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'デザインプレビュー',
     element: '要素',
+    emboss: 'エンボス',
     exploded_view: '分解ビュー',
     export_failed: 'キーホルダーをキャンバスにインポートできませんでした。もう一度お試しください。',
     font_size: 'フォントサイズ',

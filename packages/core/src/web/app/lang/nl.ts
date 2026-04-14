@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Ontwerpvoorbeeld',
     element: 'Element',
+    emboss: 'Reliëf',
     exploded_view: 'Exploded weergave',
     export_failed: 'Kan sleutelhanger niet importeren naar het canvas. Probeer het opnieuw.',
     font_size: 'Lettergrootte',

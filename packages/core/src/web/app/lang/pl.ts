@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Podgląd projektu',
     element: 'Element',
+    emboss: 'Tłoczenie',
     exploded_view: 'Widok rozstrzelony',
     export_failed: 'Nie udało się zaimportować breloka na płótno. Spróbuj ponownie.',
     font_size: 'Rozmiar czcionki',

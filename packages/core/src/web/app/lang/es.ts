@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Vista previa del diseño',
     element: 'Elemento',
+    emboss: 'Relieve',
     exploded_view: 'Vista expandida',
     export_failed: 'No se pudo importar el llavero al lienzo. Por favor, inténtelo de nuevo.',
     font_size: 'Tamaño de fuente',

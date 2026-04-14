@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Προεπισκόπηση σχεδίου',
     element: 'Στοιχείο',
+    emboss: 'Ανάγλυφο',
     exploded_view: 'Ανεπτυγμένη όψη',
     export_failed: 'Αποτυχία εισαγωγής μπρελόκ στον καμβά. Παρακαλώ δοκιμάστε ξανά.',
     font_size: 'Μέγεθος γραμματοσειράς',

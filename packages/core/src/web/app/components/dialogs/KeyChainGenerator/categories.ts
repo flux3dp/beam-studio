@@ -41,7 +41,7 @@ export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
   letterSpacing: 0,
   lineSpacing: 1,
   outlineOffset: 3,
-  text: 'Never\nGonna\nGive You Up',
+  text: 'Awesome!',
 };
 
 export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [

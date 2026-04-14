@@ -1607,6 +1607,7 @@ Machines > ‘Promark Name’ > Promark Settings`,
   keychain_generator: {
     design_preview: 'Design Preview',
     element: 'Element',
+    emboss: 'Emboss',
     exploded_view: 'Exploded View',
     export_failed: 'Failed to import keychain to canvas. Please try again.',
     font_size: 'Font size',

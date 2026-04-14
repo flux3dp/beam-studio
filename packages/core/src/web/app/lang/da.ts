@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Designforhåndsvisning',
     element: 'Element',
+    emboss: 'Prægning',
     exploded_view: 'Eksploderet visning',
     export_failed: 'Kunne ikke importere nøglering til lærredet. Prøv venligst igen.',
     font_size: 'Skriftstørrelse',

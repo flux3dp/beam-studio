@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Suunnitelman esikatselu',
     element: 'Elementti',
+    emboss: 'Kohokuviointi',
     exploded_view: 'Räjäytysnäkymä',
     export_failed: 'Avaimensperän tuonti kankaalle epäonnistui. Yritä uudelleen.',
     font_size: 'Kirjasinkoko',

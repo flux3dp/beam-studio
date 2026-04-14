@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Pratinjau Desain',
     element: 'Elemen',
+    emboss: 'Embos',
     exploded_view: 'Tampilan Terurai',
     export_failed: 'Gagal mengimpor gantungan kunci ke kanvas. Silakan coba lagi.',
     font_size: 'Ukuran huruf',

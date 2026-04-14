@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Xem trước thiết kế',
     element: 'Phần tử',
+    emboss: 'Dập nổi',
     exploded_view: 'Chế độ xem phân rã',
     export_failed: 'Không thể nhập móc khóa vào canvas. Vui lòng thử lại.',
     font_size: 'Cỡ chữ',

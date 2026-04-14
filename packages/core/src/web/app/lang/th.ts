@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'ตัวอย่างการออกแบบ',
     element: 'องค์ประกอบ',
+    emboss: 'นูน',
     exploded_view: 'มุมมองแยกส่วน',
     export_failed: 'ไม่สามารถนำเข้าพวงกุญแจไปยังแคนวาสได้ กรุณาลองอีกครั้ง',
     font_size: 'ขนาดตัวอักษร',

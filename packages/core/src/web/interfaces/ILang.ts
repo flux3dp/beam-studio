@@ -1606,6 +1606,7 @@ export interface ILang {
   keychain_generator: {
     design_preview: string;
     element: string;
+    emboss: string;
     exploded_view: string;
     export_failed: string;
     font_size: string;

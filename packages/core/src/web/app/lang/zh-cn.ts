@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: '设计预览',
     element: '元素',
+    emboss: '浮雕',
     exploded_view: '分解视图',
     export_failed: '无法将钥匙扣导入画布，请重试。',
     font_size: '字体大小',

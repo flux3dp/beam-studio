@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Náhled designu',
     element: 'Prvek',
+    emboss: 'Reliéf',
     exploded_view: 'Rozložený pohled',
     export_failed: 'Nepodařilo se importovat přívěsek na plátno. Zkuste to prosím znovu.',
     font_size: 'Velikost písma',

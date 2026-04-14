@@ -1607,6 +1607,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
   keychain_generator: {
     design_preview: 'Previsualització del disseny',
     element: 'Element',
+    emboss: 'Relleu',
     exploded_view: 'Vista expandida',
     export_failed: "No s'ha pogut importar el clauer al llenç. Si us plau, torneu-ho a provar.",
     font_size: 'Mida de la lletra',

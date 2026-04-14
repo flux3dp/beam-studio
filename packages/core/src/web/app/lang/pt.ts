@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Pré-visualização do design',
     element: 'Elemento',
+    emboss: 'Relevo',
     exploded_view: 'Vista explodida',
     export_failed: 'Falha ao importar o chaveiro para o canvas. Tente novamente.',
     font_size: 'Tamanho da fonte',

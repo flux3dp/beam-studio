@@ -1607,6 +1607,7 @@ const lang: ILang = {
   keychain_generator: {
     design_preview: 'Designvorschau',
     element: 'Element',
+    emboss: 'Prägung',
     exploded_view: 'Explosionsansicht',
     export_failed: 'Schlüsselanhänger konnte nicht in die Leinwand importiert werden. Bitte versuchen Sie es erneut.',
     font_size: 'Schriftgröße',
