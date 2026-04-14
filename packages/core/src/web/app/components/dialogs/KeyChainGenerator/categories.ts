@@ -69,7 +69,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
         {
           defaults: DEFAULT_HOLE,
           id: '1',
-          startPositionRef: 'rightCenter',
+          startPositionRef: 'topCenter',
         },
       ],
       texts: [
