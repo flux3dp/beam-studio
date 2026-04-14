@@ -116,30 +116,33 @@ export const generateCustomBaseShape = async (
   sizeRatio: number;
 }> => {
   const project = new paper.Project(document.createElement('canvas'));
-  const pathD = await generateShapeTextPathD(values);
-
-  if (!pathD) return { basePath: null, innerPath: null, project, sizeRatio: 1 };
 
   let innerPath: paper.PathItem = new paper.Path();
   let basePath: paper.PathItem = new paper.Path();
 
-  const segments = pathD.split(/(?=[M])/).filter(Boolean);
-
-  for (const segment of segments) {
-    const subPath = new paper.Path(segment);
-
-    basePath = basePath.unite(subPath);
-
-    if (innerPath.intersects(subPath)) {
-      innerPath = innerPath.unite(subPath);
-    } else {
-      innerPath = innerPath.exclude(subPath);
-    }
-  }
-
   innerPath.strokeColor = basePath.strokeColor = new paper.Color(0, 0, 0);
   innerPath.strokeWidth = basePath.strokeWidth = 1;
   innerPath.strokeScaling = basePath.strokeScaling = false;
+
+  const pathD = await generateShapeTextPathD(values);
+
+  if (!pathD && !values.element.shapeKey) return { basePath: null, innerPath: null, project, sizeRatio: 1 };
+
+  if (pathD) {
+    const segments = pathD.split(/(?=[M])/).filter(Boolean);
+
+    for (const segment of segments) {
+      const subPath = new paper.Path(segment);
+
+      basePath = basePath.unite(subPath);
+
+      if (innerPath.intersects(subPath)) {
+        innerPath = innerPath.unite(subPath);
+      } else {
+        innerPath = innerPath.exclude(subPath);
+      }
+    }
+  }
 
   // Unite element shape into both basePath and innerPath
   if (values.element.shapeKey) {
