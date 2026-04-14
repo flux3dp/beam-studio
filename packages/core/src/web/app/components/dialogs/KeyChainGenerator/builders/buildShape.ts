@@ -1,5 +1,4 @@
 import paper from 'paper';
-import { PaperOffset } from 'paperjs-offset';
 
 import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from '../constants';
 import type { HoleOptionDef, KeyChainState } from '../types';
@@ -67,46 +66,26 @@ export const applyHoles = (
 
     const isPunch = hole.type === 'punch';
     const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
-    let insetPath = PaperOffset.offset(
-      basePath as paper.Path,
-      (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx,
-    ) as paper.Path;
-
-    // Sometimes offsetting can produce a CompoundPath even if the original was a simple Path
-    // so we need to unite it back into a single Path for consistent processing
-    if (insetPath instanceof paper.CompoundPath) {
-      let united: paper.PathItem = new paper.Path();
-
-      for (const child of insetPath.children) {
-        if (child instanceof paper.Path) {
-          united = united.unite(child);
-        }
-
-        child.remove();
-      }
-
-      insetPath = (united instanceof paper.CompoundPath ? united.children[0] : united) as paper.Path;
-    }
-
-    const startPoint = insetPath.getNearestPoint(refPoint);
-    const startOffset = insetPath.getOffsetOf(startPoint);
-
+    const mainPath =
+      basePath instanceof paper.CompoundPath ? (basePath.children[0] as paper.Path) : (basePath as paper.Path);
+    const startPoint = mainPath.getNearestPoint(refPoint);
+    const startOffset = mainPath.getOffsetOf(startPoint);
     const normalizedPosition = (hole.position % 100) / 100;
-    const pathOffset = (startOffset + normalizedPosition * insetPath.length) % insetPath.length;
-    const point = insetPath.getPointAt(pathOffset);
+    const pathOffset = (startOffset + normalizedPosition * mainPath.length) % mainPath.length;
+    const point = mainPath.getPointAt(pathOffset);
+    const normal = mainPath.getNormalAt(pathOffset);
+    const center = point.add(normal.multiply((hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx));
 
-    insetPath.remove();
-
-    if (!point) continue;
+    if (!center) continue;
 
     const innerRadius = (hole.diameter / 2) * mmToPx;
 
-    innerCircles.push(new paper.Path.Circle(point, innerRadius));
+    innerCircles.push(new paper.Path.Circle(center, innerRadius));
 
     if (!isPunch && hole.thickness > 0) {
       const outerRadius = (hole.diameter / 2 + hole.thickness) * mmToPx;
 
-      outerCircles.push(new paper.Path.Circle(point, outerRadius));
+      outerCircles.push(new paper.Path.Circle(center, outerRadius));
     }
   }
 
