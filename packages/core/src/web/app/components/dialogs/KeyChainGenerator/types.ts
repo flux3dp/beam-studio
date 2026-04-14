@@ -6,8 +6,8 @@ import type { KeysWithType } from '@core/interfaces/utils';
 export interface KeyChainShape {
   /** Bounds of the base region in paper coordinates (used by viewBox + export shifts). */
   bounds: paper.Rectangle;
-  /** <text> + element <path> nodes that decorate layer 1 (cloned by every consumer). */
-  decorations: SVGElement[];
+  /** Text + element decoration nodes, split by layer destination. */
+  decorations: { emboss: SVGElement[]; engraving: SVGElement[] };
   /** Design view: result + decorations + inner path overlaid. Consumers must `.cloneNode(true)`. */
   designSvg: SVGSVGElement;
   /** Exploded view: design content + inner path translated below the base. */
@@ -36,6 +36,7 @@ export interface HoleOptionDef {
 }
 
 export interface TextOptionValues {
+  emboss: boolean;
   enabled: boolean;
   font: {
     family: string;
@@ -56,6 +57,7 @@ export interface TextOptionDef {
 }
 
 export interface ElementOptionValues {
+  emboss: boolean;
   enabled: boolean;
   /** Shape key in format "mainType/fileName", e.g. "basic/icon-heart1" */
   shapeKey: string;

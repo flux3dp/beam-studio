@@ -7,7 +7,7 @@ export const BASE_RECTANGLE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="
   <rect x="10" y="10" width="280" height="580" rx="30" ry="30" fill="none" stroke="#000" stroke-width="4"/>
 </svg>`;
 
-export const INNER_ALIGN_OFFSET_MM = 0.2;
+export const INNER_ALIGN_OFFSET_MM = 0.1;
 export const INNER_ALIGN_OFFSET_PX = INNER_ALIGN_OFFSET_MM * PX_TO_MM_RATIO;
 
 /** Vertical gap (mm) between the base path and the standalone inner path in exploded view / export. */
@@ -18,8 +18,18 @@ export const EXPLODED_GAP_PX = EXPLODED_GAP_MM * PX_TO_MM_RATIO;
  * Color sets for design (uniform black) and exploded view (visually distinct parts).
  */
 export const KEYCHAIN_COLORS = {
-  design: { base: '#000000', decoration: '#000000', innerAlone: '#000000', innerPosition: '#000000' },
-  exploded: { base: '#000000', decoration: '#ff7a45', innerAlone: '#52c41a', innerPosition: '#1890ff' },
+  design: {
+    base: '#000000',
+    emboss: '#000000',
+    embossAlign: '#000000',
+    engraving: '#000000',
+  },
+  exploded: {
+    base: '#000000',
+    emboss: '#52c41a',
+    embossAlign: '#1890ff',
+    engraving: '#ff7a45',
+  },
 } as const;
 
 export type KeychainViewMode = keyof typeof KEYCHAIN_COLORS;

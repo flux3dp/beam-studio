@@ -6,7 +6,7 @@ import { EXPLODED_GAP_PX, KEYCHAIN_COLORS, type KeychainViewMode } from '../cons
 
 interface BuildKeychainViewParams {
   bounds: paper.Rectangle;
-  decorations: SVGElement[];
+  decorations: { emboss: SVGElement[]; engraving: SVGElement[] };
   defaultViewBox: { height: number; width: number; x: number; y: number };
   innerPath: null | paper.PathItem;
   resultBasePath: paper.PathItem;
@@ -55,8 +55,9 @@ export const buildSvgView = (
 ): SVGSVGElement => {
   const colors = KEYCHAIN_COLORS[mode];
   const viewBox = computeDesignViewBox(bounds, defaultViewBox);
+  const hasInnerContent = innerPath || decorations.emboss.length > 0;
 
-  if (mode === 'exploded' && innerPath) {
+  if (mode === 'exploded' && hasInnerContent) {
     viewBox.height += bounds.height + EXPLODED_GAP_PX;
   }
 
@@ -71,24 +72,51 @@ export const buildSvgView = (
   svg.appendChild(createPathElement(resultBasePath.pathData, colors.base));
 
   // Layer 1 decorations (text + element shapes) — cloned so the canonical list stays intact
-  for (const decoration of decorations) {
+  for (const decoration of decorations.engraving) {
     const clone = decoration.cloneNode(true) as SVGElement;
 
-    clone.setAttribute('fill', colors.decoration);
+    clone.setAttribute('fill', colors.engraving);
+    svg.appendChild(clone);
+  }
+
+  // Emboss decorations — rendered with stroke-only in the emboss color
+  for (const decoration of decorations.emboss) {
+    const clone = decoration.cloneNode(true) as SVGElement;
+
+    clone.setAttribute('fill', 'none');
+    clone.setAttribute('stroke', colors.embossAlign);
+    clone.setAttribute('stroke-width', '1');
+    clone.setAttribute('vector-effect', 'non-scaling-stroke');
     svg.appendChild(clone);
   }
 
   // Layer 2: inner path at its original position
-  if (innerPath) {
-    svg.appendChild(createPathElement(innerPath.pathData, colors.innerPosition));
+  if (hasInnerContent) {
+    if (innerPath) {
+      svg.appendChild(createPathElement(innerPath.pathData, colors.embossAlign));
+    }
 
-    // Exploded extra: translated copy of the inner path below the base
-    if (mode === 'exploded') {
+    // Exploded extra: translated copies of inner path + emboss decorations below the base
+    if (mode === 'exploded' && hasInnerContent) {
       const group = document.createElementNS(NS.SVG, 'g');
       const dy = bounds.height + EXPLODED_GAP_PX;
 
       group.setAttribute('transform', `translate(0, ${dy})`);
-      group.appendChild(createPathElement(innerPath.pathData, colors.innerAlone));
+
+      if (innerPath) {
+        group.appendChild(createPathElement(innerPath.pathData, colors.emboss));
+      }
+
+      for (const decoration of decorations.emboss) {
+        const clone = decoration.cloneNode(true) as SVGElement;
+
+        clone.setAttribute('fill', 'none');
+        clone.setAttribute('stroke', colors.emboss);
+        clone.setAttribute('stroke-width', '1');
+        clone.setAttribute('vector-effect', 'non-scaling-stroke');
+        group.appendChild(clone);
+      }
+
       svg.appendChild(group);
     }
   }

@@ -111,7 +111,7 @@ const scalePathData = (d: string, ratio: number): string => {
  * elements by (-bounds.x, -bounds.y) so the layer aligns to the canvas origin.
  * When sizeRatio ≠ 1, each path is scaled before adding.
  */
-const addPathsToCanvas = async (
+const exportPathsToSvgCanvas = async (
   paths: SVGPathElement[],
   bounds: { x: number; y: number },
   batchCmd: IBatchCommand,
@@ -183,65 +183,103 @@ const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand, si
 
   const paths = [pathItemToSvgPath(shape.resultBasePath)];
 
-  await addPathsToCanvas(paths, shape.bounds, batchCmd, sizeRatio);
+  await exportPathsToSvgCanvas(paths, shape.bounds, batchCmd, sizeRatio);
 };
 
-const exportEngravingDecorationLayer = async (
+const convertSvgElementsToPath = async (elements: SVGElement[]): Promise<SVGPathElement[]> => {
+  const textElements: SVGTextElement[] = [];
+  const pathElements: SVGPathElement[] = [];
+
+  for (const element of elements) {
+    const clone = element.cloneNode(true) as SVGElement;
+
+    if (clone.tagName.toLowerCase() === 'text') {
+      textElements.push(clone as SVGTextElement);
+    } else {
+      pathElements.push(clone as SVGPathElement);
+    }
+  }
+
+  const convertedPaths = await convertTextsToPath(textElements);
+
+  pathElements.push(...convertedPaths);
+
+  return pathElements;
+};
+
+/**
+ * Converts SVGElements to Paper.js PathItems.
+ * used when need to perform boolean operations on decorations (e.g. unite emboss with inner path)
+ */
+const convertSvgElementsToPathItems = async (elements: SVGElement[]): Promise<paper.PathItem[]> => {
+  const paths = await convertSvgElementsToPath(elements);
+  const items: paper.PathItem[] = paths
+    .map((path) => {
+      const d = path.getAttribute('d');
+
+      return d ? new paper.CompoundPath(d) : null;
+    })
+    .filter(Boolean);
+
+  return items;
+};
+
+const exportEngravingLayer = async (
   shape: KeyChainShape,
   batchCmd: IBatchCommand,
   sizeRatio: number,
 ): Promise<void> => {
-  if (shape.decorations.length === 0) return;
+  if (shape.decorations.engraving.length === 0) return;
 
   const { layers: tLayers } = i18n.lang.keychain_generator;
   const { name } = createLayer(tLayers.keychain_deco_engraving, {
-    hexCode: KEYCHAIN_COLORS.exploded.decoration,
+    hexCode: KEYCHAIN_COLORS.exploded.engraving,
     parentCmd: batchCmd,
   });
 
   useLayerStore.getState().setSelectedLayers([name]);
 
-  const paths: SVGPathElement[] = [];
-  const textElements: SVGTextElement[] = [];
+  const paths = await convertSvgElementsToPath(shape.decorations.engraving);
 
-  for (const decoration of shape.decorations) {
-    const clone = decoration.cloneNode(true) as SVGElement;
+  await exportPathsToSvgCanvas(paths, shape.bounds, batchCmd, sizeRatio);
+};
 
-    if (clone.tagName.toLowerCase() === 'text') {
-      textElements.push(clone as SVGTextElement);
-    } else {
-      paths.push(clone as SVGPathElement);
+/**
+ * Exports inner path and emboss decorations.
+ * Use paper.js to unite inner path with emboss decorations and then export to in position guide layer and standalone layer.
+ */
+const exportEmbossLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, sizeRatio: number): Promise<void> => {
+  let combinedInnerPath = shape.innerPath?.clone() ?? null;
+
+  if (shape.decorations.emboss.length > 0) {
+    const embossPathItems = await convertSvgElementsToPathItems(shape.decorations.emboss);
+
+    for (const item of embossPathItems) {
+      combinedInnerPath = combinedInnerPath ? combinedInnerPath.unite(item) : item;
     }
   }
 
-  paths.push(...(await convertTextsToPath(textElements)));
-  await addPathsToCanvas(paths, shape.bounds, batchCmd, sizeRatio);
-};
-
-const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, sizeRatio: number): Promise<void> => {
-  if (!shape.innerPath) return;
+  if (!combinedInnerPath) return;
 
   const { layers: tLayers } = i18n.lang.keychain_generator;
 
-  // Layer 2: inner path at the original (overlapping) position — engrave/mark layer.
+  // Position guide layer - inset the combined inner path by `INNER_ALIGN_OFFSET_PX` so it's slightly smaller than the base path,
   const { name: posName } = createLayer(tLayers.keychain_deco_emboss_guide, {
-    hexCode: KEYCHAIN_COLORS.exploded.innerPosition,
+    hexCode: KEYCHAIN_COLORS.exploded.embossAlign,
     parentCmd: batchCmd,
   });
 
   useLayerStore.getState().setSelectedLayers([posName]);
 
-  const insetPath = PaperOffset.offset(shape.innerPath.clone() as paper.Path, -INNER_ALIGN_OFFSET_PX / sizeRatio, {
+  const insetPath = PaperOffset.offset(combinedInnerPath.clone() as paper.Path, -INNER_ALIGN_OFFSET_PX / sizeRatio, {
     insert: false,
   });
 
-  await addPathsToCanvas([pathItemToSvgPath(insetPath)], shape.bounds, batchCmd, sizeRatio);
+  await exportPathsToSvgCanvas([pathItemToSvgPath(insetPath)], shape.bounds, batchCmd, sizeRatio);
 
-  // Layer 3: inner path standalone — translated below the base by `bounds.height + GAP`.
-  // Reuse addPathsToCanvas by feeding it a shifted bounds origin so the move op produces
-  // a final position equivalent to (originalX, originalY + bounds.height + GAP).
+  // Standalone layer — translated below the base by `bounds.height + GAP`.
   const { name: aloneName } = createLayer(tLayers.keychain_deco_emboss, {
-    hexCode: KEYCHAIN_COLORS.exploded.innerAlone,
+    hexCode: KEYCHAIN_COLORS.exploded.emboss,
     parentCmd: batchCmd,
   });
 
@@ -254,7 +292,7 @@ const exportInnerLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand, 
     shape.bounds.height,
   );
 
-  await addPathsToCanvas([pathItemToSvgPath(shape.innerPath)], shiftedBounds, batchCmd, sizeRatio);
+  await exportPathsToSvgCanvas([pathItemToSvgPath(combinedInnerPath)], shiftedBounds, batchCmd, sizeRatio);
 };
 
 /**
@@ -282,8 +320,8 @@ export const exportToCanvas = async (): Promise<void> => {
   const batchCmd = new history.BatchCommand('Export Keychain');
 
   await exportBaseLayer(shape, batchCmd, sizeRatio);
-  await exportEngravingDecorationLayer(shape, batchCmd, sizeRatio);
-  await exportInnerLayers(shape, batchCmd, sizeRatio);
+  await exportEngravingLayer(shape, batchCmd, sizeRatio);
+  await exportEmbossLayers(shape, batchCmd, sizeRatio);
 
   if (!batchCmd.isEmpty()) undoManager.addCommandToHistory(batchCmd);
 };

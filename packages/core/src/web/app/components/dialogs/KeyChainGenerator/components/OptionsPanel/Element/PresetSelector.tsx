@@ -1,5 +1,5 @@
 import type { ComponentType, ReactNode } from 'react';
-import React, { memo, useEffect, useState } from 'react';
+import React, { memo, useEffect, useMemo, useState } from 'react';
 
 import Icon, { CloseOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
@@ -65,13 +65,14 @@ PresetIcon.displayName = 'PresetIcon';
  * Noun Project icons (`np/<id>`) via the SVG-string cache.
  */
 const CurrentShapeIcon = memo(({ shapeKey }: { shapeKey: string }): ReactNode => {
-  const [svg, setSvg] = useState<null | string>(svgCache.get(shapeKey) ?? null);
+  const isNpIcon = useMemo(() => shapeKey.startsWith(NP_SHAPE_PREFIX), [shapeKey]);
+  const [npSvgString, setNpSvgString] = useState<null | string>(svgCache.get(shapeKey) ?? null);
 
   useEffect(() => {
-    if (!shapeKey.startsWith(NP_SHAPE_PREFIX)) return;
+    if (!isNpIcon) return;
 
     if (svgCache.has(shapeKey)) {
-      setSvg(svgCache.get(shapeKey) ?? null);
+      setNpSvgString(svgCache.get(shapeKey) ?? null);
 
       return;
     }
@@ -82,20 +83,20 @@ const CurrentShapeIcon = memo(({ shapeKey }: { shapeKey: string }): ReactNode =>
       .then((markup) => {
         if (cancelled || !markup) return;
 
-        setSvg(markup);
+        setNpSvgString(markup);
       })
       .catch((err) => console.error(`Failed to load shape ${shapeKey}:`, err));
 
     return () => {
       cancelled = true;
     };
-  }, [shapeKey]);
+  }, [shapeKey, isNpIcon]);
 
-  if (shapeKey.startsWith(NP_SHAPE_PREFIX)) return <PresetIcon shapeKey={shapeKey} />;
+  if (!isNpIcon) return <PresetIcon shapeKey={shapeKey} />;
 
-  if (!svg) return <div className={styles.iconPlaceholder} />;
+  if (!npSvgString) return <div className={styles.iconPlaceholder} />;
 
-  return <div className={styles.icon} dangerouslySetInnerHTML={{ __html: svg }} />;
+  return <div className={styles.icon} dangerouslySetInnerHTML={{ __html: npSvgString }} />;
 });
 
 CurrentShapeIcon.displayName = 'CurrentShapeIcon';

@@ -21,11 +21,13 @@ export const DEFAULT_HOLE: HoleOptionValues = {
 };
 
 export const DEFAULT_ELEMENT: ElementOptionValues = {
+  emboss: false,
   enabled: true,
   shapeKey: '',
 };
 
 export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
+  emboss: false,
   enabled: true,
   fontSize: 40,
   letterSpacing: 0,

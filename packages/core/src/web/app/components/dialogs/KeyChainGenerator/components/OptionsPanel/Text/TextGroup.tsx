@@ -1,6 +1,8 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
+import { Switch } from 'antd';
+
 import useI18n from '@core/helpers/useI18n';
 
 import type { TextOptionDef, TextOptionValues } from '../../../types';
@@ -33,6 +35,7 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
   );
 
   const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
+  const handleEmbossChange = useCallback((emboss: boolean) => handleChange({ emboss }), [handleChange]);
   const handleContentChange = useCallback(
     (evt: React.ChangeEvent<HTMLTextAreaElement>) => handleChange({ text: evt.target.value }),
     [handleChange],
@@ -65,6 +68,10 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
           lineSpacing: text.lineSpacing,
         }}
       />
+      <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
+        <span>{t.emboss}</span>
+        <Switch checked={text.emboss} onChange={handleEmbossChange} size="small" />
+      </div>
     </GroupControl>
   );
 };

@@ -5,9 +5,8 @@ import { combine } from 'zustand/middleware';
 import NS from '@core/app/constants/namespaces';
 
 import {
-  applyElements,
   applyHoles,
-  applyTexts,
+  buildDecorations,
   buildSvgView,
   generateCustomBaseShape,
   importBasePath,
@@ -16,7 +15,7 @@ import {
 import { getDefaultCategory, getDefaultState, getStateForCategory } from './categories';
 import type { KeychainViewMode } from './constants';
 import { PX_TO_MM_RATIO } from './constants';
-import type { ElementOptionDef, KeyChainCategory, KeyChainShape, KeyChainState, TextOptionDef } from './types';
+import type { KeyChainCategory, KeyChainShape, KeyChainState } from './types';
 
 interface StoreState {
   // Paper.js cache (runtime-only, not serializable)
@@ -57,26 +56,6 @@ const initialState: StoreState = {
   viewMode: 'design',
 };
 
-/**
- * Runs the existing decoration helpers (applyTexts, applyElements) against a temporary
- * SVG element and returns the produced child nodes as a flat array. The temp SVG is
- * never inserted into the DOM by this function — `applyTexts` may briefly attach it for
- * bbox measurement, but cleans up before returning.
- */
-const buildDecorations = async (
-  project: paper.Project,
-  state: KeyChainState,
-  textDefs: TextOptionDef[],
-  elementDefs: ElementOptionDef[],
-): Promise<SVGElement[]> => {
-  const tempSvg = document.createElementNS(NS.SVG, 'svg');
-
-  await applyTexts(tempSvg, state, textDefs);
-  applyElements(project, tempSvg, state, elementDefs);
-
-  return Array.from(tempSvg.children) as SVGElement[];
-};
-
 const createEmptyShape = (project: null | paper.Project): KeyChainShape => {
   const emptySvg = document.createElementNS(NS.SVG, 'svg');
 
@@ -86,7 +65,7 @@ const createEmptyShape = (project: null | paper.Project): KeyChainShape => {
 
   return {
     bounds: project?.activeLayer.bounds ?? new paper.Rectangle(0, 0, 0, 0),
-    decorations: [],
+    decorations: { emboss: [], engraving: [] },
     designSvg: emptySvg,
     explodedSvg: emptySvg.cloneNode(true) as SVGSVGElement,
     innerPath: null,
@@ -161,7 +140,6 @@ const useKeychainShapeStore = create(
       const textDefs = options.texts ?? [];
       const elementDefs = options.elements ?? [];
       const decorations = await buildDecorations(project, state, textDefs, elementDefs);
-
       // Clone the cached inner path so the canonical inner path is never mutated
       const innerPathClone = innerPath ? innerPath.clone() : null;
 
