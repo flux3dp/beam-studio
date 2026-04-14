@@ -44,6 +44,9 @@ const Info = ({ element }: Props): React.JSX.Element => {
           <li>{t.step2}</li>
           <li>{t.step3}</li>
         </ol>
+        <button className={styles.link} onClick={() => browser.open(t.how_to_improve_accuracy_url)} type="button">
+          {t.how_to_improve_accuracy}
+        </button>
       </div>
       <div className={styles.artwork}>
         <div className={styles.text}>{t.selected_artwork}:</div>
