@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">ลิงก์</a>',
   },
   keychain_generator: {
+    decoration: 'การตกแต่ง',
     design_preview: 'ตัวอย่างการออกแบบ',
     element: 'องค์ประกอบ',
     emboss: 'นูน',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'ข้อความ',
     text_placeholder: 'ป้อนข้อความ...',
     types: {
+      hotel_key_chain: 'พวงกุญแจโรงแรม',
       rectangle: 'สี่เหลี่ยมผืนผ้า',
       text: 'ข้อความ',
     },

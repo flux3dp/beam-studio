@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">リンク</a>',
   },
   keychain_generator: {
+    decoration: 'デコレーション',
     design_preview: 'デザインプレビュー',
     element: '要素',
     emboss: 'エンボス',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'テキスト',
     text_placeholder: 'テキストを入力...',
     types: {
+      hotel_key_chain: 'ホテルキーチェーン',
       rectangle: '長方形',
       text: 'テキスト',
     },

@@ -136,10 +136,11 @@ const useKeychainShapeStore = create(
       const resultBasePath = applyHoles(basePath.clone(), state, holeDefs, sizeRatio);
       const bounds = resultBasePath.bounds;
 
-      // Build decoration nodes (text + element shapes)
-      const textDefs = options.texts ?? [];
-      const elementDefs = options.elements ?? [];
-      const decorations = await buildDecorations(project, state, textDefs, elementDefs);
+      // Build decoration nodes (text + element shapes + decoration paths)
+      const texts = options.texts ?? [];
+      const elements = options.elements ?? [];
+      const decorationPaths = options.decorationPaths ?? [];
+      const decorations = await buildDecorations(project, state, texts, elements, decorationPaths);
       // Clone the cached inner path so the canonical inner path is never mutated
       const innerPathClone = innerPath ? innerPath.clone() : null;
 

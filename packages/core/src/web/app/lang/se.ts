@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Länk</a>',
   },
   keychain_generator: {
+    decoration: 'Dekoration',
     design_preview: 'Designförhandsvisning',
     element: 'Element',
     emboss: 'Prägling',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'Text',
     text_placeholder: 'Ange text...',
     types: {
+      hotel_key_chain: 'Hotell nyckelring',
       rectangle: 'Rektangel',
       text: 'Text',
     },

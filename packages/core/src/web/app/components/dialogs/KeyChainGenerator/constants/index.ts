@@ -1,11 +1,7 @@
 /** 10 SVG px = 1mm on canvas export */
 export const PX_TO_MM_RATIO = 10;
 
-export const PUNCH_HOLE_OFFSET = -3;
-
-export const BASE_RECTANGLE = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 600">
-  <rect x="10" y="10" width="280" height="580" rx="30" ry="30" fill="none" stroke="#000" stroke-width="4"/>
-</svg>`;
+export const PUNCH_HOLE_OFFSET = -5;
 
 export const INNER_ALIGN_OFFSET_MM = 0.1;
 export const INNER_ALIGN_OFFSET_PX = INNER_ALIGN_OFFSET_MM * PX_TO_MM_RATIO;

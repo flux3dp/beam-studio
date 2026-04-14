@@ -2,7 +2,7 @@ import type paper from 'paper';
 
 import NS from '@core/app/constants/namespaces';
 
-import type { ElementOptionDef, KeyChainState, TextOptionDef } from '../types';
+import type { DecorationPathOptionDef, ElementOptionDef, KeyChainState, TextOptionDef } from '../types';
 
 import { applyElements } from './buildElement';
 import { applyTexts } from './buildText';
@@ -12,34 +12,58 @@ interface DecorationResult {
   engraving: SVGElement[];
 }
 
+const applyDecorationPaths = (
+  svg: SVGSVGElement,
+  state: KeyChainState,
+  decorationDefs: DecorationPathOptionDef[],
+): void => {
+  for (const def of decorationDefs) {
+    const values = state.decorationPaths[def.id];
+
+    if (!values?.enabled) continue;
+
+    const pathEl = document.createElementNS(NS.SVG, 'path');
+
+    pathEl.setAttribute('d', def.d);
+    pathEl.setAttribute('fill', '#000');
+    svg.appendChild(pathEl);
+  }
+};
+
 /**
- * Runs the decoration helpers (applyTexts, applyElements) against temporary SVG elements,
- * splitting definitions by emboss flag, and returns both engraving and emboss decoration arrays.
+ * Runs the decoration helpers (applyTexts, applyElements, applyDecorationPaths) against
+ * temporary SVG elements, splitting definitions by emboss flag, and returns both engraving
+ * and emboss decoration arrays.
  */
 export const buildDecorations = async (
   project: paper.Project,
   state: KeyChainState,
   textDefs: TextOptionDef[],
   elementDefs: ElementOptionDef[],
+  decorationDefs: DecorationPathOptionDef[],
 ): Promise<DecorationResult> => {
-  const engravingTextDefs = textDefs.filter((d) => !state.texts[d.id]?.emboss);
-  const engravingElementDefs = elementDefs.filter((d) => !state.elements[d.id]?.emboss);
-  const embossTextDefs = textDefs.filter((d) => state.texts[d.id]?.emboss);
-  const embossElementDefs = elementDefs.filter((d) => state.elements[d.id]?.emboss);
+  const engravingTexts = textDefs.filter((d) => !state.texts[d.id]?.emboss);
+  const engravingElements = elementDefs.filter((d) => !state.elements[d.id]?.emboss);
+  const engravingDecorationPaths = decorationDefs.filter((d) => !state.decorationPaths[d.id]?.emboss);
+  const embossTexts = textDefs.filter((d) => state.texts[d.id]?.emboss);
+  const embossElements = elementDefs.filter((d) => state.elements[d.id]?.emboss);
+  const embossDecorationPaths = decorationDefs.filter((d) => state.decorationPaths[d.id]?.emboss);
 
   // Build engraving decorations
   const tempSvg = document.createElementNS(NS.SVG, 'svg');
 
-  await applyTexts(tempSvg, state, engravingTextDefs);
-  applyElements(project, tempSvg, state, engravingElementDefs);
+  await applyTexts(tempSvg, state, engravingTexts);
+  applyElements(project, tempSvg, state, engravingElements);
+  applyDecorationPaths(tempSvg, state, engravingDecorationPaths);
 
   const engraving = Array.from(tempSvg.children) as SVGElement[];
 
   // Build emboss decorations
   const embossSvg = document.createElementNS(NS.SVG, 'svg');
 
-  await applyTexts(embossSvg, state, embossTextDefs);
-  applyElements(project, embossSvg, state, embossElementDefs);
+  await applyTexts(embossSvg, state, embossTexts);
+  applyElements(project, embossSvg, state, embossElements);
+  applyDecorationPaths(embossSvg, state, embossDecorationPaths);
 
   const emboss = Array.from(embossSvg.children) as SVGElement[];
 

@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Lien</a>',
   },
   keychain_generator: {
+    decoration: 'Décoration',
     design_preview: 'Aperçu du design',
     element: 'Élément',
     emboss: 'Relief',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'Texte',
     text_placeholder: 'Saisir le texte...',
     types: {
+      hotel_key_chain: "Porte-clés d'hôtel",
       rectangle: 'Rectangle',
       text: 'Texte',
     },

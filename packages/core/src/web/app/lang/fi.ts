@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Linkki</a>',
   },
   keychain_generator: {
+    decoration: 'Koristelu',
     design_preview: 'Suunnitelman esikatselu',
     element: 'Elementti',
     emboss: 'Kohokuviointi',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'Teksti',
     text_placeholder: 'Syötä teksti...',
     types: {
+      hotel_key_chain: 'Hotellin avaimenperä',
       rectangle: 'Suorakulmio',
       text: 'Teksti',
     },

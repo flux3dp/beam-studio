@@ -26,7 +26,7 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
     [isRing, hole.diameter, hole.thickness],
   );
   const minOffset = useMemo(
-    () => (isRing ? -(hole.diameter / 2) - hole.thickness + 0.5 : -5),
+    () => (isRing ? -(hole.diameter / 2) - hole.thickness + 0.5 : -3),
     [isRing, hole.diameter, hole.thickness],
   );
 

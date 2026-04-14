@@ -70,6 +70,19 @@ export interface ElementOptionDef {
   label?: string;
 }
 
+export interface DecorationOptionValues {
+  emboss: boolean;
+  enabled: boolean;
+}
+
+export interface DecorationPathOptionDef {
+  /** SVG path d attribute — in category's natural coordinates. */
+  d: string;
+  defaults: DecorationOptionValues;
+  id: string;
+  label?: string;
+}
+
 export type ShapeElementPositionRef = 'bottomCenter' | 'leftCenter' | 'rightCenter' | 'topCenter';
 
 export interface CustomShapeOptionValues {
@@ -102,6 +115,7 @@ export interface KeyChainCategory {
   nameKey: KeysWithType<ILang['keychain_generator']['types'], string>;
   options: {
     customShape?: CustomShapeOptionDef;
+    decorationPaths?: DecorationPathOptionDef[];
     elements?: ElementOptionDef[];
     holes?: HoleOptionDef[];
     texts?: TextOptionDef[];
@@ -113,6 +127,7 @@ export interface KeyChainCategory {
 export interface KeyChainState {
   categoryId: string;
   customShape: CustomShapeOptionValues;
+  decorationPaths: Record<string, DecorationOptionValues>;
   elements: Record<string, ElementOptionValues>;
   holes: Record<string, HoleOptionValues>;
   size: { dimension: SizeDimension; value: number };

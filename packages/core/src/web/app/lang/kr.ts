@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">링크</a>',
   },
   keychain_generator: {
+    decoration: '장식',
     design_preview: '디자인 미리보기',
     element: '요소',
     emboss: '엠보싱',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: '텍스트',
     text_placeholder: '텍스트 입력...',
     types: {
+      hotel_key_chain: '호텔 키체인',
       rectangle: '직사각형',
       text: '텍스트',
     },

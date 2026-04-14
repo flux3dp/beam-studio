@@ -1,9 +1,11 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
-import { BASE_RECTANGLE } from './constants';
+import { BASE_RECTANGLE, HOTEL_KEY_CHAIN } from './constants/categoryShapes';
+import { HOTEL_KEY_CHAIN_RIBBON_BAND } from './constants/decorations';
 import type {
   CustomShapeOptionValues,
+  DecorationOptionValues,
   ElementOptionValues,
   HoleOptionValues,
   KeyChainCategory,
@@ -35,6 +37,11 @@ export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
   text: 'Key Chain',
 };
 
+export const DEFAULT_DECORATION_PATH: DecorationOptionValues = {
+  emboss: false,
+  enabled: true,
+};
+
 export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
   element: { positionRef: 'rightCenter', shapeKey: '' },
   fontSize: 80,
@@ -62,7 +69,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
         {
           defaults: DEFAULT_HOLE,
           id: '1',
-          startPositionRef: 'topCenter',
+          startPositionRef: 'rightCenter',
         },
       ],
       texts: [
@@ -74,6 +81,50 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: BASE_RECTANGLE,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'height', value: 100 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'hotel_key_chain',
+    nameKey: 'hotel_key_chain',
+    options: {
+      decorationPaths: [
+        {
+          d: HOTEL_KEY_CHAIN_RIBBON_BAND,
+          defaults: DEFAULT_DECORATION_PATH,
+          id: '1',
+          label: 'Ribbon Band',
+        },
+      ],
+      elements: [
+        {
+          bounds: { height: 225, width: 225, x: 387.5, y: 263 },
+          defaults: DEFAULT_ELEMENT,
+          id: '1',
+        },
+      ],
+      holes: [
+        {
+          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          id: '1',
+          startPositionRef: 'topCenter',
+        },
+      ],
+      texts: [
+        {
+          bounds: { height: 125, width: 330, x: 335, y: 512 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 90, text: 'Jack' },
+          id: '1',
+        },
+        {
+          bounds: { height: 125, width: 240, x: 380, y: 661 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 24, text: 'A small object to\nHold Big Memories' },
+          id: '2',
+        },
+      ],
+    },
+    svgContent: HOTEL_KEY_CHAIN,
     thumbnail: '',
   },
   {
@@ -108,6 +159,7 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
   const result: KeyChainState = {
     categoryId: category.id,
     customShape: {} as any,
+    decorationPaths: {},
     elements: {},
     holes: {},
     size: { ...category.defaultSize },
@@ -117,8 +169,12 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
   const { font_family, font_postscriptName } = getDefaultFont();
   const fontObj = fontFuncs.getFontOfPostscriptName(font_postscriptName);
   const {
-    options: { customShape, elements = [], holes = [], texts = [] },
+    options: { customShape, decorationPaths: decorations = [], elements = [], holes = [], texts = [] },
   } = category;
+
+  for (const decorationDef of decorations) {
+    result.decorationPaths[decorationDef.id] = { ...decorationDef.defaults };
+  }
 
   for (const holeDefs of holes) {
     result.holes[holeDefs.id] = { ...holeDefs.defaults };

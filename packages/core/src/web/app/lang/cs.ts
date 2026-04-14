@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Odkaz</a>',
   },
   keychain_generator: {
+    decoration: 'Dekorace',
     design_preview: 'Náhled designu',
     element: 'Prvek',
     emboss: 'Reliéf',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'Text',
     text_placeholder: 'Zadejte text...',
     types: {
+      hotel_key_chain: 'Hotelový přívěsek',
       rectangle: 'Obdélník',
       text: 'Text',
     },

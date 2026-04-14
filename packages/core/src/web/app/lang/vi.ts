@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Liên kết</a>',
   },
   keychain_generator: {
+    decoration: 'Trang trí',
     design_preview: 'Xem trước thiết kế',
     element: 'Phần tử',
     emboss: 'Dập nổi',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'Văn bản',
     text_placeholder: 'Nhập văn bản...',
     types: {
+      hotel_key_chain: 'Móc khóa khách sạn',
       rectangle: 'Hình chữ nhật',
       text: 'Văn bản',
     },

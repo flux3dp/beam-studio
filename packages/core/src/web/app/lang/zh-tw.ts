@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/zh-tw/articles/9935859456271">連結</a>',
   },
   keychain_generator: {
+    decoration: '裝飾',
     design_preview: '設計預覽',
     element: '元素',
     emboss: '浮雕',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: '文字',
     text_placeholder: '輸入文字...',
     types: {
+      hotel_key_chain: '飯店鑰匙圈',
       rectangle: '矩形',
       text: '文字',
     },

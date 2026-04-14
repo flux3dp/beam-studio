@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Pautan</a>',
   },
   keychain_generator: {
+    decoration: 'Hiasan',
     design_preview: 'Pratonton Reka Bentuk',
     element: 'Elemen',
     emboss: 'Timbul',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'Teks',
     text_placeholder: 'Masukkan teks...',
     types: {
+      hotel_key_chain: 'Rantai Kunci Hotel',
       rectangle: 'Segi empat tepat',
       text: 'Teks',
     },

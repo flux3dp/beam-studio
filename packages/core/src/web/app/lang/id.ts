@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Tautan</a>',
   },
   keychain_generator: {
+    decoration: 'Dekorasi',
     design_preview: 'Pratinjau Desain',
     element: 'Elemen',
     emboss: 'Embos',
@@ -1644,6 +1645,7 @@ const lang: ILang = {
     text: 'Teks',
     text_placeholder: 'Masukkan teks...',
     types: {
+      hotel_key_chain: 'Gantungan Kunci Hotel',
       rectangle: 'Persegi panjang',
       text: 'Teks',
     },
