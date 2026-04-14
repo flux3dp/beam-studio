@@ -949,10 +949,6 @@ export interface ILang {
       text: string;
       use: string;
     };
-    time_est_button: {
-      calculate: string;
-      estimate_time: string;
-    };
     tool_panels: {
       _nest: {
         end: string;
@@ -1239,8 +1235,8 @@ export interface ILang {
     uploading_data: string;
   };
   canvas_control: {
+    calculate: string;
     canvas_zoom: string;
-    estimate_time: string;
     exposure: string;
     not_supported: string;
     opacity: string;

@@ -949,10 +949,6 @@ const lang: ILang = {
       text: '텍스트',
       use: 'SVG 가져오기',
     },
-    time_est_button: {
-      calculate: '예상 시간',
-      estimate_time: '예상 시간:',
-    },
     tool_panels: {
       _nest: {
         end: '닫기',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: '줌',
-    estimate_time: '계산',
+    calculate: '예상 시간',
     exposure: '노출',
     not_supported: '지원되지 않음',
     opacity: '투명도',

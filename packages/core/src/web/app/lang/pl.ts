@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Tekst',
       use: 'Importuj pliki SVG',
     },
-    time_est_button: {
-      calculate: 'Oszacuj czas',
-      estimate_time: 'Szacowany czas:',
-    },
     tool_panels: {
       _nest: {
         end: 'Zamknij',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Oblicz',
+    calculate: 'Oszacuj czas',
     exposure: 'Ekspozycja',
     not_supported: 'Nieobsługiwane',
     opacity: 'Przezroczystość',

@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'テキスト',
       use: 'Import Svg',
     },
-    time_est_button: {
-      calculate: '時間を計算',
-      estimate_time: '推定所要時間：',
-    },
     tool_panels: {
       _nest: {
         end: '終了する',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'ズーム',
-    estimate_time: '計算',
+    calculate: '時間を計算',
     exposure: '露出',
     not_supported: '非対応',
     opacity: '不透明度',

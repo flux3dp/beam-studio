@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Tekst',
       use: 'Importeer SVG',
     },
-    time_est_button: {
-      calculate: 'Schat tijd in',
-      estimate_time: 'Geschatte tijd:',
-    },
     tool_panels: {
       _nest: {
         end: 'Sluiten',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Berekenen',
+    calculate: 'Schat tijd in',
     exposure: 'Belichting',
     not_supported: 'Niet ondersteund',
     opacity: 'Dekking',

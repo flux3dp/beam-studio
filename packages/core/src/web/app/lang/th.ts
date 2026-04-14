@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'ข้อความ',
       use: 'นําเข้า SVG',
     },
-    time_est_button: {
-      calculate: 'ประมาณเวลา',
-      estimate_time: 'เวลาที่ประมาณ:',
-    },
     tool_panels: {
       _nest: {
         end: 'ปิด',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'ซูม',
-    estimate_time: 'คำนวณ',
+    calculate: 'ประมาณเวลา',
     exposure: 'การรับแสง',
     not_supported: 'ไม่รองรับ',
     opacity: 'ความโปร่งแสง',

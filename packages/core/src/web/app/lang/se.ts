@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Text',
       use: 'Importera SVG',
     },
-    time_est_button: {
-      calculate: 'Uppskatta tid',
-      estimate_time: 'Uppskattad tid:',
-    },
     tool_panels: {
       _nest: {
         end: 'Stäng',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Beräkna',
+    calculate: 'Uppskatta tid',
     exposure: 'Exponering',
     not_supported: 'Stöds inte',
     opacity: 'Genomskinlighet',

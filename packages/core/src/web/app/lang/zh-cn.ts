@@ -949,10 +949,6 @@ const lang: ILang = {
       text: '文字',
       use: '汇入图档',
     },
-    time_est_button: {
-      calculate: '预估时间',
-      estimate_time: '预计所需时间：',
-    },
     tool_panels: {
       _nest: {
         end: '结束',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: '画布调整',
-    estimate_time: '计算时间',
+    calculate: '预估时间',
     exposure: '曝光值',
     not_supported: '不支持',
     opacity: '透明度',

@@ -5,7 +5,7 @@ exports[`TimeEstimationButton should render calculate text when no estimatedTime
   <div
     class="timeDisplay"
   >
-    Calculate
+    Estimate time
   </div>
 </div>
 `;

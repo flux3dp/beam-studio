@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { type ReactNode, useCallback, useEffect, useMemo, useState } from 'react';
 
 import type { MenuProps } from 'antd';
 import classNames from 'classnames';
@@ -130,11 +130,12 @@ const getDpmm = async (): Promise<number> => {
 interface Props {
   className?: string;
   getZoom?: () => number;
+  ratioClassName?: string;
   resetView: () => void;
   setZoom: (zoom: number) => void;
 }
 
-const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): null | React.JSX.Element => {
+const ZoomBlock = ({ className, getZoom, ratioClassName, resetView, setZoom }: Props): ReactNode => {
   const lang = useI18n().beambox.zoom_block;
   const [dpmm, setDpmm] = useState(96 / 25.4);
   const [displayRatio, setDisplayRatio] = useState(1);
@@ -239,7 +240,7 @@ const ZoomBlock = ({ className, getZoom, resetView, setZoom }: Props): null | Re
         <img src="img/icon-minus.svg" />
       </div>
       <ContextMenu items={zoomMenuItems} onClick={handleMenuClick} trigger={['contextMenu', 'click']}>
-        <div className={styles.ratio}>{`${Math.round(displayRatio * 100)}%`}</div>
+        <div className={classNames(styles.ratio, ratioClassName)}>{`${Math.round(displayRatio * 100)}%`}</div>
       </ContextMenu>
       <div className={styles.btn} onClick={() => zoomIn(displayRatio)}>
         <img src="img/icon-plus.svg" />

@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Teksti',
       use: 'Tuo SVG',
     },
-    time_est_button: {
-      calculate: 'Arvioi aika',
-      estimate_time: 'Arvioitu aika:',
-    },
     tool_panels: {
       _nest: {
         end: 'Sulje',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Laske',
+    calculate: 'Arvioi aika',
     exposure: 'Valotus',
     not_supported: 'Ei tuettu',
     opacity: 'Läpinäkyvyys',

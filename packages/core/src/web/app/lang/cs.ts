@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Text',
       use: 'Import SVG',
     },
-    time_est_button: {
-      calculate: 'Odhadnout délku',
-      estimate_time: 'Odhadovaná délka:',
-    },
     tool_panels: {
       _nest: {
         end: 'Zavřít',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Vypočítat',
+    calculate: 'Odhadnout délku',
     exposure: 'Expozice',
     not_supported: 'Nepodporováno',
     opacity: 'Průhlednost',

@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Teks',
       use: 'Impor SVG',
     },
-    time_est_button: {
-      calculate: 'Perkirakan waktu',
-      estimate_time: 'Perkiraan Waktu:',
-    },
     tool_panels: {
       _nest: {
         end: 'Tutup',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Hitung',
+    calculate: 'Perkirakan waktu',
     exposure: 'Eksposur',
     not_supported: 'Tidak Didukung',
     opacity: 'Opasitas',

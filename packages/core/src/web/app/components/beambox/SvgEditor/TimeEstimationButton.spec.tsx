@@ -37,7 +37,7 @@ describe('TimeEstimationButton', () => {
       </TimeEstimationButtonContext>,
     );
 
-    expect(getByText('Calculate')).toBeInTheDocument();
+    expect(getByText('Estimate time')).toBeInTheDocument();
     expect(container).toMatchSnapshot();
   });
 
@@ -52,7 +52,7 @@ describe('TimeEstimationButton', () => {
     mockEstimateTime.mockResolvedValue(90);
 
     await act(async () => {
-      fireEvent.click(getByText('Calculate'));
+      fireEvent.click(getByText('Estimate time'));
     });
 
     expect(mockSetEstimatedTime).toHaveBeenCalledWith(90);

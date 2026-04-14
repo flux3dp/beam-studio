@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Κείμενο',
       use: 'Εισαγωγή SVG',
     },
-    time_est_button: {
-      calculate: 'Υπολογισμός χρόνου',
-      estimate_time: 'Εκτιμώμενος χρόνος:',
-    },
     tool_panels: {
       _nest: {
         end: 'Κλείσιμο',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Υπολογισμός',
+    calculate: 'Υπολογισμός χρόνου',
     exposure: 'Έκθεση',
     not_supported: 'Δεν υποστηρίζεται',
     opacity: 'Αδιαφάνεια',

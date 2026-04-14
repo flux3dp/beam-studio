@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Văn bản',
       use: 'Nhập SVG',
     },
-    time_est_button: {
-      calculate: 'Ước tính thời gian',
-      estimate_time: 'Thời gian ước tính:',
-    },
     tool_panels: {
       _nest: {
         end: 'Đóng',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Tính',
+    calculate: 'Ước tính thời gian',
     exposure: 'Phơi sáng',
     not_supported: 'Không hỗ trợ',
     opacity: 'Độ mờ',

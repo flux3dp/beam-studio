@@ -57,9 +57,9 @@
   img {
     filter: invert(1);
   }
+}
 
-  > :nth-child(2) {
-    color: #ffffff;
-    opacity: 1;
-  }
+.ratio {
+  color: #ffffff;
+  opacity: 1;
 }

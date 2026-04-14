@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Tekst',
       use: 'Importer SVG',
     },
-    time_est_button: {
-      calculate: 'Estimer tid',
-      estimate_time: 'Estimeret tid:',
-    },
     tool_panels: {
       _nest: {
         end: 'Luk',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zoom',
-    estimate_time: 'Beregn',
+    calculate: 'Estimer tid',
     exposure: 'Eksponering',
     not_supported: 'Ikke understøttet',
     opacity: 'Gennemsigtighed',

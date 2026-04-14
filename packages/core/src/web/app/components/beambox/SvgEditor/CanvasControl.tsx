@@ -1,7 +1,8 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type { ReactNode } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { ArrowsAltOutlined, DownOutlined } from '@ant-design/icons';
-import { Dropdown, Slider } from 'antd';
+import { Dropdown } from 'antd';
 import type { MenuProps } from 'antd';
 
 import constant from '@core/app/actions/beambox/constant';
@@ -12,62 +13,36 @@ import workareaManager from '@core/app/svgedit/workarea';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './CanvasControl.module.scss';
+import OpacitySlider from './OpacitySlider';
 import PreviewSlider from './PreviewSlider';
 import TimeEstimationButton from './TimeEstimationButton';
 
 type CanvasControlMode = 'exposure' | 'opacity' | 'time' | 'zoom';
 
-const hasPreviewImage = (): boolean => {
-  const container = document.querySelector('#previewSvg');
-
-  return Boolean(container?.querySelector('#backgroundImage'));
-};
-
-const CanvasControl = (): React.ReactNode => {
+const CanvasControl = (): ReactNode => {
   const [activeMode, setActiveMode] = useState<CanvasControlMode>('zoom');
-  const { isPreviewMode } = useCameraPreviewStore();
-  const lang = useI18n();
-
-  const [opacity, setOpacity] = useState(1);
-  const [hasBgImage, setHasBgImage] = useState(false);
-
-  const updateBgOpacity = useCallback((val: number) => {
-    const container: null | SVGGElement = document.querySelector('#previewSvg');
-
-    if (container) container.style.opacity = String(val);
-  }, []);
-
-  useEffect(() => {
-    if (isPreviewMode) {
-      setHasBgImage(false);
-      updateBgOpacity(1);
-    } else {
-      const exists = hasPreviewImage();
-
-      setHasBgImage(exists);
-
-      if (exists) updateBgOpacity(opacity);
-    }
-  }, [isPreviewMode, opacity, updateBgOpacity]);
+  const isPreviewMode = useCameraPreviewStore((state) => state.isPreviewMode);
+  const isClean = useCameraPreviewStore((state) => state.isClean);
+  const lang = useI18n().canvas_control;
 
   useEffect(() => {
     if (isPreviewMode) {
       setActiveMode('exposure');
     } else {
       setActiveMode((prev) => {
-        if (prev === 'exposure') return hasPreviewImage() ? 'opacity' : 'zoom';
+        if (prev === 'exposure') return isClean ? 'zoom' : 'opacity';
 
         return prev;
       });
     }
-  }, [isPreviewMode]);
+  }, [isPreviewMode, isClean]);
 
   const menuItems: MenuProps['items'] = useMemo(() => {
     const items: MenuProps['items'] = [
       {
         icon: <ArrowsAltOutlined />,
         key: 'zoom',
-        label: lang.canvas_control.canvas_zoom,
+        label: lang.canvas_zoom,
       },
     ];
 
@@ -75,58 +50,37 @@ const CanvasControl = (): React.ReactNode => {
       items.push({
         icon: <WorkareaIcons.Exposure />,
         key: 'exposure',
-        label: lang.canvas_control.exposure,
+        label: lang.exposure,
       });
-    } else if (hasBgImage) {
+    } else if (!isClean) {
       items.push({
         icon: <WorkareaIcons.Opacity />,
         key: 'opacity',
-        label: lang.canvas_control.opacity,
+        label: lang.opacity,
       });
     }
 
     items.push({
       icon: <WorkareaIcons.Time />,
       key: 'time',
-      label: lang.beambox.time_est_button.calculate,
+      label: lang.calculate,
     });
 
     return items;
-  }, [isPreviewMode, hasBgImage, lang]);
+  }, [isPreviewMode, isClean, lang]);
 
   const renderContent = () => {
-    if (activeMode === 'exposure') {
-      return <PreviewSlider />;
-    }
+    if (activeMode === 'exposure') return <PreviewSlider />;
 
-    if (activeMode === 'opacity') {
-      return (
-        <>
-          <Slider
-            className={styles.slider}
-            max={1}
-            min={0}
-            onChange={(val: number) => {
-              setOpacity(val);
-              updateBgOpacity(val);
-            }}
-            step={0.25}
-            tooltip={{ open: false }}
-            value={opacity}
-          />
-          <div className={styles.value}>{opacity * 100}%</div>
-        </>
-      );
-    }
+    if (activeMode === 'opacity') return <OpacitySlider />;
 
-    if (activeMode === 'time') {
-      return <TimeEstimationButton />;
-    }
+    if (activeMode === 'time') return <TimeEstimationButton />;
 
     if (activeMode === 'zoom') {
       return (
         <ZoomBlock
           className={styles.zoomContent}
+          ratioClassName={styles.ratio}
           resetView={workareaManager.resetView}
           setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
         />

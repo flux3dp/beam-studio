@@ -949,10 +949,6 @@ const lang: ILang = {
       text: 'Teks',
       use: 'Import SVG',
     },
-    time_est_button: {
-      calculate: 'Anggarkan masa',
-      estimate_time: 'Anggaran Masa:',
-    },
     tool_panels: {
       _nest: {
         end: 'Tutup',
@@ -1238,7 +1234,7 @@ const lang: ILang = {
   },
   canvas_control: {
     canvas_zoom: 'Zum',
-    estimate_time: 'Kira',
+    calculate: 'Anggarkan masa',
     exposure: 'Pendedahan',
     not_supported: 'Tidak Disokong',
     opacity: 'Ketelusan',
