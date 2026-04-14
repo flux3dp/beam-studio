@@ -1,14 +1,13 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
-import { Switch } from 'antd';
-
 import useI18n from '@core/helpers/useI18n';
 
 import type { DecorationOptionValues, DecorationPathOptionDef } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
 import GroupControl from './Controls/GroupControl';
+import SwitchControl from './Controls/SwitchControl';
 
 interface DecorationControlProps {
   optionDef: DecorationPathOptionDef;
@@ -43,10 +42,7 @@ const DecorationControl = ({ optionDef }: DecorationControlProps): ReactNode => 
       onToggle={handleEnabledChange}
       title={t.decoration}
     >
-      <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-        <span>{t.emboss}</span>
-        <Switch checked={decoration.emboss} onChange={handleEmbossChange} size="small" />
-      </div>
+      <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={decoration.emboss} />
     </GroupControl>
   );
 };

@@ -1,14 +1,13 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
-import { Switch } from 'antd';
-
 import useI18n from '@core/helpers/useI18n';
 
 import type { ElementOptionDef } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
+import GroupControl from '../Controls/GroupControl';
+import SwitchControl from '../Controls/SwitchControl';
 
-import styles from './ElementControl.module.scss';
 import ElementPicker from './ElementPicker';
 
 interface ElementControlProps {
@@ -19,6 +18,20 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
   const { id } = optionDef;
   const element = useKeychainShapeStore((s) => s.state.elements[id]);
   const { keychain_generator: t } = useI18n();
+
+  const handleEnabledChange = useCallback(
+    (enabled: boolean) => {
+      const {
+        applyOptions,
+        state: { elements },
+        updateState,
+      } = useKeychainShapeStore.getState();
+
+      updateState({ elements: { ...elements, [id]: { ...elements[id], enabled } } });
+      applyOptions();
+    },
+    [id],
+  );
 
   const handleChange = useCallback(
     (shapeKey: string) => {
@@ -49,13 +62,12 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
   );
 
   return (
-    <div className={styles.container}>
+    // <div className={styles.container}>
+    <GroupControl enabled={element.enabled} onToggle={handleEnabledChange} title={t.element}>
       <ElementPicker onChange={handleChange} selectedKey={element.shapeKey} />
-      <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-        <span>{t.emboss}</span>
-        <Switch checked={element.emboss} onChange={handleEmbossChange} size="small" />
-      </div>
-    </div>
+      <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={element.emboss} />
+    </GroupControl>
+    // </div>
   );
 };
 

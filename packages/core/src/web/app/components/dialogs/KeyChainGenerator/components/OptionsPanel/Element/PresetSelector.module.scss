@@ -1,6 +1,8 @@
 @use '@core/styles/variables' as variables;
 
 .grid {
+  height: 150px;
+  overflow-y: auto;
   display: grid;
   grid-template-columns: repeat(4, 1fr);
   gap: 12px;

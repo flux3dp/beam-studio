@@ -1,7 +1,7 @@
 import type { ComponentType, ReactNode } from 'react';
 import React, { memo, useEffect, useMemo, useState } from 'react';
 
-import Icon, { CloseOutlined } from '@ant-design/icons';
+import Icon, { CloseOutlined, EllipsisOutlined } from '@ant-design/icons';
 import classNames from 'classnames';
 
 import importIcon from '@core/app/components/dialogs/ElementPanel/Element/importIcon';
@@ -102,11 +102,12 @@ const CurrentShapeIcon = memo(({ shapeKey }: { shapeKey: string }): ReactNode =>
 CurrentShapeIcon.displayName = 'CurrentShapeIcon';
 
 interface PresetSelectorProps {
+  onMore?: () => void;
   onSelect: (shapeKey: string) => void;
   selectedKey: string;
 }
 
-const PresetSelector = ({ onSelect, selectedKey }: PresetSelectorProps): ReactNode => {
+const PresetSelector = ({ onMore, onSelect, selectedKey }: PresetSelectorProps): ReactNode => {
   return (
     <div className={styles.grid}>
       <div className={classNames(styles.item, styles.current, { [styles.empty]: !selectedKey })}>
@@ -134,6 +135,11 @@ const PresetSelector = ({ onSelect, selectedKey }: PresetSelectorProps): ReactNo
           <PresetIcon shapeKey={key} />
         </button>
       ))}
+      {onMore && (
+        <button className={classNames(styles.item, styles.more)} onClick={onMore} type="button">
+          <EllipsisOutlined />
+        </button>
+      )}
     </div>
   );
 };

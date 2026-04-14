@@ -1,13 +1,12 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback } from 'react';
 
-import { Switch } from 'antd';
-
 import useI18n from '@core/helpers/useI18n';
 
 import type { TextOptionDef, TextOptionValues } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
 import GroupControl from '../Controls/GroupControl';
+import SwitchControl from '../Controls/SwitchControl';
 
 import TextFields from './TextFields';
 
@@ -68,10 +67,7 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
           lineSpacing: text.lineSpacing,
         }}
       />
-      <div style={{ alignItems: 'center', display: 'flex', justifyContent: 'space-between' }}>
-        <span>{t.emboss}</span>
-        <Switch checked={text.emboss} onChange={handleEmbossChange} size="small" />
-      </div>
+      <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={text.emboss} />
     </GroupControl>
   );
 };
