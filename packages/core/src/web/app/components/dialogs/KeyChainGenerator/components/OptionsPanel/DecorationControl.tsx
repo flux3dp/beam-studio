@@ -8,14 +8,16 @@ import useKeychainShapeStore from '../../useKeychainShapeStore';
 
 import GroupControl from './Controls/GroupControl';
 import SwitchControl from './Controls/SwitchControl';
+import DecorationPathSelector from './DecorationPathSelector';
 
 interface DecorationControlProps {
   optionDef: DecorationPathOptionDef;
 }
 
 const DecorationControl = ({ optionDef }: DecorationControlProps): ReactNode => {
-  const { id } = optionDef;
+  const { id, options } = optionDef;
   const decoration = useKeychainShapeStore((s) => s.state.decorationPaths[id]);
+  const viewBox = useKeychainShapeStore((s) => s.category.defaultViewBox);
   const { keychain_generator: t } = useI18n();
 
   const handleChange = useCallback(
@@ -33,16 +35,23 @@ const DecorationControl = ({ optionDef }: DecorationControlProps): ReactNode => 
   );
 
   const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
+  const handleSelectKey = useCallback((selectedKey: string) => handleChange({ selectedKey }), [handleChange]);
   const handleEmbossChange = useCallback((emboss: boolean) => handleChange({ emboss }), [handleChange]);
 
   return (
-    <GroupControl
-      enabled={decoration.enabled}
-      id={`decoration-${id}`}
-      onToggle={handleEnabledChange}
-      title={t.decoration}
-    >
-      <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={decoration.emboss} />
+    <GroupControl enabled={decoration.enabled} onToggle={handleEnabledChange} title={t.decoration}>
+      <DecorationPathSelector
+        onSelect={handleSelectKey}
+        options={options}
+        selectedKey={decoration.selectedKey}
+        viewBox={viewBox}
+      />
+      <SwitchControl
+        disabled={!decoration.enabled}
+        label={t.emboss}
+        onChange={handleEmbossChange}
+        value={decoration.emboss}
+      />
     </GroupControl>
   );
 };

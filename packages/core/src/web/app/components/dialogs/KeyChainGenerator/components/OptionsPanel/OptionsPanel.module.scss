@@ -26,4 +26,11 @@
   flex-direction: column;
   gap: 12px;
   overflow-y: auto;
+
+  > *:not(:last-child)::after {
+    content: '';
+    display: block;
+    height: 1px;
+    background: #e8e8e8;
+  }
 }

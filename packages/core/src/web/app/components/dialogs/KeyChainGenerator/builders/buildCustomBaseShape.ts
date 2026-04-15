@@ -58,12 +58,12 @@ const getElementCenter = (
 ): paper.Point => {
   const { offset, point } = match(positionRef)
     .with('bottomCenter', () => ({
-      offset: { x: 0, y: 0.55 * size },
+      offset: { x: 0, y: 0.65 * size },
       point: textBounds.bottomCenter,
     }))
-    .with('leftCenter', () => ({ offset: { x: -0.55 * size, y: 0 }, point: textBounds.leftCenter }))
-    .with('rightCenter', () => ({ offset: { x: 0.55 * size, y: 0 }, point: textBounds.rightCenter }))
-    .with('topCenter', () => ({ offset: { x: 0, y: -0.55 * size }, point: textBounds.topCenter }))
+    .with('leftCenter', () => ({ offset: { x: -0.65 * size, y: 0 }, point: textBounds.leftCenter }))
+    .with('rightCenter', () => ({ offset: { x: 0.65 * size, y: 0 }, point: textBounds.rightCenter }))
+    .with('topCenter', () => ({ offset: { x: 0, y: -0.65 * size }, point: textBounds.topCenter }))
     .exhaustive();
 
   return point.add(new paper.Point(offset.x, offset.y));
@@ -125,8 +125,11 @@ export const generateCustomBaseShape = async (
   innerPath.strokeScaling = basePath.strokeScaling = false;
 
   const pathD = await generateShapeTextPathD(values);
+  const hasElement = values.element.enabled && values.element.shapeKey;
 
-  if (!pathD && !values.element.shapeKey) return { basePath: null, innerPath: null, project, sizeRatio: 1 };
+  if (!pathD && !hasElement) {
+    return { basePath: null, innerPath: null, project, sizeRatio: 1 };
+  }
 
   if (pathD) {
     const segments = pathD.split(/(?=[M])/).filter(Boolean);
@@ -145,7 +148,7 @@ export const generateCustomBaseShape = async (
   }
 
   // Unite element shape into both basePath and innerPath
-  if (values.element.shapeKey) {
+  if (hasElement) {
     const textBounds = basePath.bounds;
     const center = getElementCenter(textBounds, values.element.positionRef, values.fontSize);
     const elementPath = buildElementPath(project, values.element.shapeKey, values.fontSize, center);

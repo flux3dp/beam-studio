@@ -2,7 +2,7 @@ import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
 import { BASE_RECTANGLE, HOTEL_KEY_CHAIN } from './constants/categoryShapes';
-import { HOTEL_KEY_CHAIN_RIBBON_BAND } from './constants/decorations';
+import { DEFAULT_ELEMENT_OPTIONS } from './constants/elementOptions';
 import type {
   CustomShapeOptionValues,
   DecorationOptionValues,
@@ -25,7 +25,7 @@ export const DEFAULT_HOLE: HoleOptionValues = {
 export const DEFAULT_ELEMENT: ElementOptionValues = {
   emboss: false,
   enabled: true,
-  shapeKey: '',
+  shapeKey: DEFAULT_ELEMENT_OPTIONS[0],
 };
 
 export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
@@ -40,10 +40,11 @@ export const DEFAULT_TEXT: Omit<TextOptionValues, 'font'> = {
 export const DEFAULT_DECORATION_PATH: DecorationOptionValues = {
   emboss: false,
   enabled: true,
+  selectedKey: '',
 };
 
 export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
-  element: { positionRef: 'rightCenter', shapeKey: '' },
+  element: { enabled: true, positionRef: 'rightCenter', shapeKey: DEFAULT_ELEMENT_OPTIONS[0] },
   fontSize: 80,
   letterSpacing: 0,
   lineSpacing: 1,
@@ -60,9 +61,9 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     options: {
       decorationPaths: [
         {
-          d: HOTEL_KEY_CHAIN_RIBBON_BAND,
-          defaults: DEFAULT_DECORATION_PATH,
+          defaults: { ...DEFAULT_DECORATION_PATH, selectedKey: 'hotel_ribbon_band' },
           id: '1',
+          options: ['hotel_ribbon_band'],
         },
       ],
       elements: [
@@ -70,6 +71,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           bounds: { height: 225, width: 225, x: 387.5, y: 263 },
           defaults: DEFAULT_ELEMENT,
           id: '1',
+          options: DEFAULT_ELEMENT_OPTIONS,
         },
       ],
       holes: [
@@ -106,6 +108,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           bounds: { height: 120, width: 120, x: 90, y: 400 },
           defaults: DEFAULT_ELEMENT,
           id: '1',
+          options: DEFAULT_ELEMENT_OPTIONS,
         },
       ],
       holes: [
@@ -135,6 +138,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     options: {
       customShape: {
         defaults: DEFAULT_CUSTOM_SHAPE,
+        elementOptions: DEFAULT_ELEMENT_OPTIONS,
       },
       holes: [
         {

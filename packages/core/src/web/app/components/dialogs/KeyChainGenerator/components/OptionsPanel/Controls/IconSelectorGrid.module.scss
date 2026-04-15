@@ -1,0 +1,50 @@
+@use '@core/styles/variables' as variables;
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 12px;
+  max-height: 150px;
+  overflow-y: auto;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
+.item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  aspect-ratio: 1;
+  border: 2px solid transparent;
+  border-radius: 4px;
+  background: #fafafa;
+  cursor: pointer;
+  padding: 4px;
+
+  &:hover {
+    border-color: #d9d9d9;
+  }
+
+  &.selected {
+    border-color: variables.$primary-blue;
+    background: #e6f4ff;
+  }
+}
+
+.icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+
+  svg {
+    width: 100%;
+    height: 100%;
+    fill: black;
+  }
+}

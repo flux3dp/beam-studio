@@ -222,7 +222,7 @@ const useKeychainShapeStore = create(
 
         const customShapeValues = state.customShape;
 
-        if (customShapeValues.element?.shapeKey) {
+        if (customShapeValues.element?.enabled && customShapeValues.element.shapeKey) {
           await loadShape(customShapeValues.element.shapeKey);
         }
 

@@ -64,7 +64,7 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
   return (
     // <div className={styles.container}>
     <GroupControl enabled={element.enabled} onToggle={handleEnabledChange} title={t.element}>
-      <ElementPicker onChange={handleChange} selectedKey={element.shapeKey} />
+      <ElementPicker onChange={handleChange} options={optionDef.options} selectedKey={element.shapeKey} />
       <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={element.emboss} />
     </GroupControl>
     // </div>

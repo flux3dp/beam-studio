@@ -2,6 +2,7 @@ import type paper from 'paper';
 
 import NS from '@core/app/constants/namespaces';
 
+import { DECORATION_PATHS } from '../constants/decorations';
 import type { DecorationPathOptionDef, ElementOptionDef, KeyChainState, TextOptionDef } from '../types';
 
 import { applyElements } from './buildElement';
@@ -22,9 +23,13 @@ const applyDecorationPaths = (
 
     if (!values?.enabled) continue;
 
+    const d = DECORATION_PATHS[values.selectedKey];
+
+    if (!d) continue;
+
     const pathEl = document.createElementNS(NS.SVG, 'path');
 
-    pathEl.setAttribute('d', def.d);
+    pathEl.setAttribute('d', d);
     pathEl.setAttribute('fill', '#000');
     svg.appendChild(pathEl);
   }
@@ -53,7 +58,7 @@ export const buildDecorations = async (
   const tempSvg = document.createElementNS(NS.SVG, 'svg');
 
   await applyTexts(tempSvg, state, engravingTexts);
-  applyElements(project, tempSvg, state, engravingElements);
+  await applyElements(project, tempSvg, state, engravingElements);
   applyDecorationPaths(tempSvg, state, engravingDecorationPaths);
 
   const engraving = Array.from(tempSvg.children) as SVGElement[];
@@ -62,7 +67,7 @@ export const buildDecorations = async (
   const embossSvg = document.createElementNS(NS.SVG, 'svg');
 
   await applyTexts(embossSvg, state, embossTexts);
-  applyElements(project, embossSvg, state, embossElements);
+  await applyElements(project, embossSvg, state, embossElements);
   applyDecorationPaths(embossSvg, state, embossDecorationPaths);
 
   const emboss = Array.from(embossSvg.children) as SVGElement[];

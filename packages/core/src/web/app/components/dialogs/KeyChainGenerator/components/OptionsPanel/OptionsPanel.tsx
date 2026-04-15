@@ -9,7 +9,6 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { KeyChainCategory } from '../../types';
 
-import GroupControl from './Controls/GroupControl';
 import CustomShapeGroup from './CustomShapeGroup';
 import DecorationControl from './DecorationControl';
 import ElementControl from './Element/ElementControl';
@@ -51,13 +50,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
           {elements.map((option) => (
             <ElementControl key={`element-${option.id}`} optionDef={option} />
           ))}
-          {decorations && (
-            <GroupControl enabled hideSwitch id="decorations" title={t.decoration}>
-              {decorations.map((option) => (
-                <DecorationControl key={`decoration-${option.id}`} optionDef={option} />
-              ))}
-            </GroupControl>
-          )}
+          {decorations?.map((option) => <DecorationControl key={`decoration-${option.id}`} optionDef={option} />)}
           {texts.map((option) => (
             <TextGroup key={`text-${option.id}`} optionDef={option} />
           ))}

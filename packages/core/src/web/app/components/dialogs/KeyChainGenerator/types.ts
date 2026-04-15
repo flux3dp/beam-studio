@@ -68,25 +68,26 @@ export interface ElementOptionDef {
   defaults: ElementOptionValues;
   id: string;
   label?: string;
+  options: string[];
 }
 
 export interface DecorationOptionValues {
   emboss: boolean;
   enabled: boolean;
+  selectedKey: string;
 }
 
 export interface DecorationPathOptionDef {
-  /** SVG path d attribute — in category's natural coordinates. */
-  d: string;
   defaults: DecorationOptionValues;
   id: string;
-  label?: string;
+  /** Ordered keys into DECORATION_PATHS — first key is the default selection. */
+  options: string[];
 }
 
 export type ShapeElementPositionRef = 'bottomCenter' | 'leftCenter' | 'rightCenter' | 'topCenter';
 
 export interface CustomShapeOptionValues {
-  element: { positionRef: ShapeElementPositionRef; shapeKey: string };
+  element: { enabled: boolean; positionRef: ShapeElementPositionRef; shapeKey: string };
   font: {
     family: string;
     postscriptName: string;
@@ -102,6 +103,7 @@ export interface CustomShapeOptionValues {
 
 export interface CustomShapeOptionDef {
   defaults: Omit<CustomShapeOptionValues, 'font'>;
+  elementOptions: string[];
   label?: string;
 }
 

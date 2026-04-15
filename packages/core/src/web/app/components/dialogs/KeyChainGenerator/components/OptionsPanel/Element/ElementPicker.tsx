@@ -4,28 +4,19 @@ import React, { memo, useCallback, useState } from 'react';
 import { ElementPanelContent } from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import { ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
 
-import { loadShape } from '../../../builders';
-
 import PresetSelector from './PresetSelector';
 
 interface ElementPickerProps {
   onChange: (shapeKey: string) => void;
+  options: string[];
   selectedKey: string;
   title?: string;
 }
 
-const ElementPicker = ({ onChange, selectedKey }: ElementPickerProps): ReactNode => {
+const ElementPicker = ({ onChange, options, selectedKey }: ElementPickerProps): ReactNode => {
   const [browserOpen, setBrowserOpen] = useState(false);
 
-  const handleSelect = useCallback(
-    async (shapeKey: string) => {
-      if (shapeKey) await loadShape(shapeKey);
-
-      onChange(shapeKey);
-    },
-    [onChange],
-  );
-
+  const handleSelect = useCallback(async (shapeKey: string) => onChange(shapeKey), [onChange]);
   const openBrowser = useCallback(() => setBrowserOpen(true), []);
   const closeBrowser = useCallback(() => setBrowserOpen(false), []);
   const handleElementSelect = useCallback(
@@ -38,7 +29,7 @@ const ElementPicker = ({ onChange, selectedKey }: ElementPickerProps): ReactNode
 
   return (
     <>
-      <PresetSelector onMore={openBrowser} onSelect={handleSelect} selectedKey={selectedKey} />
+      <PresetSelector onMore={openBrowser} onSelect={handleSelect} options={options} selectedKey={selectedKey} />
       <ElementPanelProvider onClose={closeBrowser} onElementSelect={handleElementSelect} open={browserOpen}>
         <ElementPanelContent drawerPlacement="right" />
       </ElementPanelProvider>

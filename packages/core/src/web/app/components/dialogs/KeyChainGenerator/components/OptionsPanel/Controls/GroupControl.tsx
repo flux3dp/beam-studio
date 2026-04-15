@@ -51,7 +51,6 @@ const GroupControl = ({
   return (
     <Collapse
       activeKey={enabled ? expandedKeys : []}
-      className={styles.container}
       collapsible={enabled ? undefined : 'disabled'}
       ghost
       items={[{ children, classNames: { body: styles.content }, key: id, label: header }]}

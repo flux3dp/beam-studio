@@ -66,6 +66,12 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
     [handleChange],
   );
 
+  const toggleElementEnabled = useCallback(
+    (enabled: boolean) => {
+      handleChange({ element: { ...shape.element, enabled } });
+    },
+    [handleChange, shape.element],
+  );
   const handleElementShapeChange = useCallback(
     (shapeKey: string) => {
       handleChange({ element: { ...shape.element, shapeKey } });
@@ -99,8 +105,7 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
 
   return (
     <>
-      <GroupControl enabled hideSwitch title={t.content}>
-        <div>{t.text}</div>
+      <GroupControl enabled hideSwitch title={`${t.content} - ${t.text}`}>
         <TextFields
           contentValue={textDraft}
           defaults={defaults}
@@ -111,8 +116,18 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
           onLineSpacingChange={handleLineSpacingChange}
           values={textValues}
         />
-        <div>{t.element}</div>
-        <ElementPicker onChange={handleElementShapeChange} selectedKey={shape.element.shapeKey} title={t.element} />
+      </GroupControl>
+      <GroupControl
+        enabled={shape.element.enabled}
+        onToggle={toggleElementEnabled}
+        title={`${t.content} - ${t.element}`}
+      >
+        <ElementPicker
+          onChange={handleElementShapeChange}
+          options={optionDef.elementOptions}
+          selectedKey={shape.element.shapeKey}
+          title={t.element}
+        />
         {shape.element.shapeKey && (
           <SelectControl
             label={t.position_ref}
@@ -121,17 +136,17 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
             value={shape.element.positionRef}
           />
         )}
-        <NumberControl
-          defaultValue={defaults.outlineOffset}
-          label={t.outline_offset}
-          max={10}
-          min={0.5}
-          onChange={handleOutlineOffsetChange}
-          step={0.5}
-          unit="mm"
-          value={shape.outlineOffset}
-        />
       </GroupControl>
+      <NumberControl
+        defaultValue={defaults.outlineOffset}
+        label={t.outline_offset}
+        max={10}
+        min={0.5}
+        onChange={handleOutlineOffsetChange}
+        step={0.5}
+        unit="mm"
+        value={shape.outlineOffset}
+      />
     </>
   );
 };

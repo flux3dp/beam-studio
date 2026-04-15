@@ -60,25 +60,25 @@ export const loadShape = async (shapeKey: string): Promise<null | string> => {
  * Applies all enabled element options to the SVG by importing each shape
  * through Paper.js, scaling to fit bounds, then exporting as flat SVG paths.
  */
-export const applyElements = (
+export const applyElements = async (
   project: paper.Project,
   svg: SVGSVGElement,
   state: KeyChainState,
   elementDefs: ElementOptionDef[],
-): void => {
+): Promise<void> => {
   for (const elementDef of elementDefs) {
     const elementValues = state.elements[elementDef.id];
 
     if (!elementValues?.enabled || !elementValues.shapeKey) continue;
 
-    const cachedSvg = svgCache.get(elementValues.shapeKey);
+    const svgString = await loadShape(elementValues.shapeKey);
 
-    if (!cachedSvg) continue;
+    if (!svgString) continue;
 
     const { bounds } = elementDef;
 
     // Import the SVG into Paper.js project
-    const svgItem = project.importSVG(cachedSvg, { expandShapes: true });
+    const svgItem = project.importSVG(svgString, { expandShapes: true });
     const pathItems = collectPathItems(svgItem);
 
     if (pathItems.length === 0) {
