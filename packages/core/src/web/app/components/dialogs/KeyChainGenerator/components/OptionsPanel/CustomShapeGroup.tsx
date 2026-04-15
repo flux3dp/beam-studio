@@ -99,16 +99,8 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
 
   return (
     <>
-      <ElementPicker onChange={handleElementShapeChange} selectedKey={shape.element.shapeKey} title={t.element} />
-      {shape.element.shapeKey && (
-        <SelectControl
-          label={t.position_ref}
-          onChange={handlePositionRefChange}
-          options={positionRefOptions}
-          value={shape.element.positionRef}
-        />
-      )}
-      <GroupControl enabled hideSwitch title={t.text}>
+      <GroupControl enabled hideSwitch title={t.content}>
+        <div>{t.text}</div>
         <TextFields
           contentValue={textDraft}
           defaults={defaults}
@@ -119,17 +111,27 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
           onLineSpacingChange={handleLineSpacingChange}
           values={textValues}
         />
+        <div>{t.element}</div>
+        <ElementPicker onChange={handleElementShapeChange} selectedKey={shape.element.shapeKey} title={t.element} />
+        {shape.element.shapeKey && (
+          <SelectControl
+            label={t.position_ref}
+            onChange={handlePositionRefChange}
+            options={positionRefOptions}
+            value={shape.element.positionRef}
+          />
+        )}
+        <NumberControl
+          defaultValue={defaults.outlineOffset}
+          label={t.outline_offset}
+          max={10}
+          min={0.5}
+          onChange={handleOutlineOffsetChange}
+          step={0.5}
+          unit="mm"
+          value={shape.outlineOffset}
+        />
       </GroupControl>
-      <NumberControl
-        defaultValue={defaults.outlineOffset}
-        label={t.outline_offset ?? 'Outline offset'}
-        max={10}
-        min={0.5}
-        onChange={handleOutlineOffsetChange}
-        step={0.5}
-        unit="mm"
-        value={shape.outlineOffset}
-      />
     </>
   );
 };

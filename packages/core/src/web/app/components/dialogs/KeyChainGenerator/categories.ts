@@ -53,37 +53,6 @@ export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
 
 export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   {
-    defaultSize: { dimension: 'height', value: 58 },
-    defaultViewBox: { height: 600, width: 300, x: 0, y: 0 },
-    id: 'rectangle',
-    nameKey: 'rectangle',
-    options: {
-      elements: [
-        {
-          bounds: { height: 120, width: 120, x: 90, y: 400 },
-          defaults: DEFAULT_ELEMENT,
-          id: '1',
-        },
-      ],
-      holes: [
-        {
-          defaults: DEFAULT_HOLE,
-          id: '1',
-          startPositionRef: 'topCenter',
-        },
-      ],
-      texts: [
-        {
-          bounds: { height: 250, width: 240, x: 30, y: 100 },
-          defaults: DEFAULT_TEXT,
-          id: '1',
-        },
-      ],
-    },
-    svgContent: BASE_RECTANGLE,
-    thumbnail: '',
-  },
-  {
     defaultSize: { dimension: 'height', value: 100 },
     defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
     id: 'hotel_key_chain',
@@ -94,7 +63,6 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
           d: HOTEL_KEY_CHAIN_RIBBON_BAND,
           defaults: DEFAULT_DECORATION_PATH,
           id: '1',
-          label: 'Ribbon Band',
         },
       ],
       elements: [
@@ -125,6 +93,37 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: HOTEL_KEY_CHAIN,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'height', value: 58 },
+    defaultViewBox: { height: 600, width: 300, x: 0, y: 0 },
+    id: 'rectangle',
+    nameKey: 'rectangle',
+    options: {
+      elements: [
+        {
+          bounds: { height: 120, width: 120, x: 90, y: 400 },
+          defaults: DEFAULT_ELEMENT,
+          id: '1',
+        },
+      ],
+      holes: [
+        {
+          defaults: DEFAULT_HOLE,
+          id: '1',
+          startPositionRef: 'topCenter',
+        },
+      ],
+      texts: [
+        {
+          bounds: { height: 250, width: 240, x: 30, y: 100 },
+          defaults: DEFAULT_TEXT,
+          id: '1',
+        },
+      ],
+    },
+    svgContent: BASE_RECTANGLE,
     thumbnail: '',
   },
   {

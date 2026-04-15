@@ -1604,6 +1604,7 @@ export interface ILang {
     unsecure_url_help_center_link: string;
   };
   keychain_generator: {
+    content: string;
     decoration: string;
     design_preview: string;
     element: string;

@@ -1,13 +1,13 @@
 .container {
   border: 1px solid #e8e8e8;
-  border-radius: 8px;
+  border-width: 0 0 1px;
+  border-radius: 0;
 }
 
 .header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  background: #fafafa;
 }
 
 .title {
@@ -26,4 +26,6 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  padding-block: 0 !important;
+  margin-bottom: 12px;
 }

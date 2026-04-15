@@ -53,6 +53,7 @@ const GroupControl = ({
       activeKey={enabled ? expandedKeys : []}
       className={styles.container}
       collapsible={enabled ? undefined : 'disabled'}
+      ghost
       items={[{ children, classNames: { body: styles.content }, key: id, label: header }]}
       onChange={(keys) => setExpandedKeys(keys as string[])}
     />

@@ -1605,6 +1605,7 @@ const lang: ILang = {
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">링크</a>',
   },
   keychain_generator: {
+    content: '내용',
     decoration: '장식',
     design_preview: '디자인 미리보기',
     element: '요소',

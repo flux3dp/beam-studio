@@ -3,7 +3,6 @@ import React, { memo, useCallback, useState } from 'react';
 
 import { ElementPanelContent } from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import { ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
-import useI18n from '@core/helpers/useI18n';
 
 import { loadShape } from '../../../builders';
 
@@ -15,8 +14,7 @@ interface ElementPickerProps {
   title?: string;
 }
 
-const ElementPicker = ({ onChange, selectedKey, title }: ElementPickerProps): ReactNode => {
-  const { keychain_generator: t } = useI18n();
+const ElementPicker = ({ onChange, selectedKey }: ElementPickerProps): ReactNode => {
   const [browserOpen, setBrowserOpen] = useState(false);
 
   const handleSelect = useCallback(

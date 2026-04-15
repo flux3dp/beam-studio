@@ -1605,6 +1605,7 @@ Màquines > ‘Nom Promark’ > Configuració de Promark`,
     unsecure_url_help_center_link: '<a target="_blank" href="https://support.flux3dp.com/hc/en-us/articles/9935859456271">Enllaç</a>',
   },
   keychain_generator: {
+    content: 'Contingut',
     decoration: 'Decoració',
     design_preview: 'Previsualització del disseny',
     element: 'Element',
