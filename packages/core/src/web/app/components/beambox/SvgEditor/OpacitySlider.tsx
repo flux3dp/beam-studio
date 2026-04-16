@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback } from 'react';
 
 import { Slider } from 'antd';
 
@@ -15,10 +15,6 @@ const OpacitySlider = (): ReactNode => {
 
     if (container) container.style.opacity = String(val);
   }, []);
-
-  useEffect(() => {
-    updateBgOpacity(opacity);
-  }, [opacity, updateBgOpacity]);
 
   const handleChange = (val: number) => {
     setCameraPreviewState({ bgOpacity: val });
