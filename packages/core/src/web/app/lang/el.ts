@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Κείμενο',
       use: 'Εισαγωγή SVG',
     },
-    time_est_button: {
-      calculate: 'Υπολογισμός χρόνου',
-      estimate_time: 'Εκτιμώμενος χρόνος:',
-    },
     tool_panels: {
       _nest: {
         end: 'Κλείσιμο',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Αντίγραφο ασφαλείας δεδομένων κάμερας',
     upload_success: 'Επιτυχής αποστολή δεδομένων κάμερας.',
     uploading_data: 'Ανεβάζοντας δεδομένα...',
+  },
+  canvas_control: {
+    calculate: 'Υπολογισμός χρόνου',
+    canvas_zoom: 'Zoom',
+    exposure: 'Έκθεση',
+    not_supported: 'Δεν υποστηρίζεται',
+    opacity: 'Αδιαφάνεια',
   },
   caption: {
     connectionTimeout: 'Λήξη χρονικού ορίου σύνδεσης',

@@ -1,41 +1,22 @@
-.space:empty {
-  display: none;
+.slider {
+  width: 120px;
 }
 
-.container {
-  display: flex;
-  height: 40px;
-  padding: 0px 16px;
-  align-items: center;
-  gap: 12px;
-  border-radius: 60px;
-  background-color: rgba(0, 0, 0, 0.6);
+.value {
+  width: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.switch {
+  font-weight: bold;
+}
+
+.notSupported {
+  font-size: 14px;
+  white-space: nowrap;
   color: #ffffff;
-
-  .icon {
-    font-size: 22px;
-  }
-
-  .slider {
-    width: 120px;
-  }
-
-  .value {
-    width: 32px;
-    font-size: 14px;
-    font-weight: 700;
-    text-align: right;
-  }
-
-  @media screen and (max-width: 600px) {
-    height: 30px;
-
-    .icon {
-      font-size: 18px;
-    }
-  }
-
-  .switch {
-    font-weight: bold;
-  }
+  display: flex;
+  align-items: center;
 }

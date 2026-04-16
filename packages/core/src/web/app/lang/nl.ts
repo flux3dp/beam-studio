@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Tekst',
       use: 'Importeer SVG',
     },
-    time_est_button: {
-      calculate: 'Schat tijd in',
-      estimate_time: 'Geschatte tijd:',
-    },
     tool_panels: {
       _nest: {
         end: 'Sluiten',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Camera gegevens back-up',
     upload_success: 'Camera-gegevens succesvol geüpload.',
     uploading_data: 'Gegevens uploaden...',
+  },
+  canvas_control: {
+    calculate: 'Schat tijd in',
+    canvas_zoom: 'Zoom',
+    exposure: 'Belichting',
+    not_supported: 'Niet ondersteund',
+    opacity: 'Dekking',
   },
   caption: {
     connectionTimeout: 'Verbinding time-out',

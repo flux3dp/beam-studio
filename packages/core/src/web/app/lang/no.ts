@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Tekst',
       use: 'Importer SVG',
     },
-    time_est_button: {
-      calculate: 'Estimér tid',
-      estimate_time: 'Estimert tid:',
-    },
     tool_panels: {
       _nest: {
         end: 'Lukk',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Sikkerhetskopiering av kameradata',
     upload_success: 'Kameradata er lastet opp.',
     uploading_data: 'Laster opp data...',
+  },
+  canvas_control: {
+    calculate: 'Estimér tid',
+    canvas_zoom: 'Zoom',
+    exposure: 'Eksponering',
+    not_supported: 'Ikke støttet',
+    opacity: 'Gjennomsiktighet',
   },
   caption: {
     connectionTimeout: 'Tilkoblingstidsavbrudd',

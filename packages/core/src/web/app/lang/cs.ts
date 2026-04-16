@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Text',
       use: 'Import SVG',
     },
-    time_est_button: {
-      calculate: 'Odhadnout délku',
-      estimate_time: 'Odhadovaná délka:',
-    },
     tool_panels: {
       _nest: {
         end: 'Zavřít',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Záloha dat z kamery',
     upload_success: 'Data z kamery úspěšně nahrána.',
     uploading_data: 'Nahrávám data...',
+  },
+  canvas_control: {
+    calculate: 'Odhadnout délku',
+    canvas_zoom: 'Zoom',
+    exposure: 'Expozice',
+    not_supported: 'Nepodporováno',
+    opacity: 'Průhlednost',
   },
   caption: {
     connectionTimeout: 'Vypršel časový limit připojení',
@@ -2217,7 +2220,6 @@ const lang: ILang = {
     no_vcredist: 'Nainstalujte prosím Visual C++ Redistributable 2015<br/> Ke stažení na flux3dp.com',
     no_webgl: 'WebGL není podporován. Použijte prosím jiná zařízení.',
   },
-
   tab_panel: {
     apply: 'Použít záložky',
     gap: 'Mezera',

@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Teksti',
       use: 'Tuo SVG',
     },
-    time_est_button: {
-      calculate: 'Arvioi aika',
-      estimate_time: 'Arvioitu aika:',
-    },
     tool_panels: {
       _nest: {
         end: 'Sulje',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Kameran tietojen varmuuskopiointi',
     upload_success: 'Kameran tiedot on ladattu onnistuneesti.',
     uploading_data: 'Tietojen lataaminen...',
+  },
+  canvas_control: {
+    calculate: 'Arvioi aika',
+    canvas_zoom: 'Zoom',
+    exposure: 'Valotus',
+    not_supported: 'Ei tuettu',
+    opacity: 'Läpinäkyvyys',
   },
   caption: {
     connectionTimeout: 'Yhteyden aikakatkaisu',

@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Text',
       use: 'SVG importieren',
     },
-    time_est_button: {
-      calculate: 'Zeit berechnen',
-      estimate_time: 'Geschätzte benötigte Zeit:',
-    },
     tool_panels: {
       _nest: {
         end: 'Schließen',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Kameradaten sichern',
     upload_success: 'Kameradaten erfolgreich hochgeladen.',
     uploading_data: 'Daten werden hochgeladen...',
+  },
+  canvas_control: {
+    calculate: 'Zeit berechnen',
+    canvas_zoom: 'Zoom',
+    exposure: 'Belichtung',
+    not_supported: 'Nicht unterstützt',
+    opacity: 'Transparenz',
   },
   caption: {
     connectionTimeout: 'Verbindungs-Timeout',

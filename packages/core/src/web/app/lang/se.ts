@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Text',
       use: 'Importera SVG',
     },
-    time_est_button: {
-      calculate: 'Uppskatta tid',
-      estimate_time: 'Uppskattad tid:',
-    },
     tool_panels: {
       _nest: {
         end: 'Stäng',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Kamera Data Backup',
     upload_success: 'Kameradata har laddats upp framgångsrikt.',
     uploading_data: 'Laddar upp data...',
+  },
+  canvas_control: {
+    calculate: 'Uppskatta tid',
+    canvas_zoom: 'Zoom',
+    exposure: 'Exponering',
+    not_supported: 'Stöds inte',
+    opacity: 'Genomskinlighet',
   },
   caption: {
     connectionTimeout: 'Anslutningstidsgräns',

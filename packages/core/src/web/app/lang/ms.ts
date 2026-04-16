@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Teks',
       use: 'Import SVG',
     },
-    time_est_button: {
-      calculate: 'Anggarkan masa',
-      estimate_time: 'Anggaran Masa:',
-    },
     tool_panels: {
       _nest: {
         end: 'Tutup',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Simpanan Data Kamera',
     upload_success: 'Data kamera berjaya dimuat naik.',
     uploading_data: 'Memuat naik data...',
+  },
+  canvas_control: {
+    calculate: 'Anggarkan masa',
+    canvas_zoom: 'Zum',
+    exposure: 'Pendedahan',
+    not_supported: 'Tidak Disokong',
+    opacity: 'Ketelusan',
   },
   caption: {
     connectionTimeout: 'Sambungan tamat masa',

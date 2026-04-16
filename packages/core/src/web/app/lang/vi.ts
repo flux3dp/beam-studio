@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Văn bản',
       use: 'Nhập SVG',
     },
-    time_est_button: {
-      calculate: 'Ước tính thời gian',
-      estimate_time: 'Thời gian ước tính:',
-    },
     tool_panels: {
       _nest: {
         end: 'Đóng',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Sao lưu dữ liệu máy ảnh',
     upload_success: 'Dữ liệu máy ảnh đã được tải lên thành công.',
     uploading_data: 'Đang tải lên dữ liệu...',
+  },
+  canvas_control: {
+    calculate: 'Ước tính thời gian',
+    canvas_zoom: 'Zoom',
+    exposure: 'Phơi sáng',
+    not_supported: 'Không hỗ trợ',
+    opacity: 'Độ mờ',
   },
   caption: {
     connectionTimeout: 'Hết thời gian kết nối',

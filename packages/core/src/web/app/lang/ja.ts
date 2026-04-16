@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'テキスト',
       use: 'Import Svg',
     },
-    time_est_button: {
-      calculate: '時間を計算',
-      estimate_time: '推定所要時間：',
-    },
     tool_panels: {
       _nest: {
         end: '終了する',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'カメラデータのバックアップ',
     upload_success: 'カメラデータのアップロードに成功しました。',
     uploading_data: 'データをアップロード中...',
+  },
+  canvas_control: {
+    calculate: '時間を計算',
+    canvas_zoom: 'ズーム',
+    exposure: '露出',
+    not_supported: '非対応',
+    opacity: '不透明度',
   },
   caption: {
     connectionTimeout: '接続タイムアウト',

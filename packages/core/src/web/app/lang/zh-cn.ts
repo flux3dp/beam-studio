@@ -952,10 +952,6 @@ const lang: ILang = {
       text: '文字',
       use: '汇入图档',
     },
-    time_est_button: {
-      calculate: '预估时间',
-      estimate_time: '预计所需时间：',
-    },
     tool_panels: {
       _nest: {
         end: '结束',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: '相机数据备份',
     upload_success: '相机数据上传成功。',
     uploading_data: '正在上传数据...',
+  },
+  canvas_control: {
+    calculate: '预估时间',
+    canvas_zoom: '画布调整',
+    exposure: '曝光值',
+    not_supported: '不支持',
+    opacity: '透明度',
   },
   caption: {
     connectionTimeout: '连接逾时',

@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Text',
       use: 'Import SVG',
     },
-    time_est_button: {
-      calculate: 'Estimate time',
-      estimate_time: 'Estimated Time:',
-    },
     tool_panels: {
       _nest: {
         end: 'Close',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Camera Data Backup',
     upload_success: 'Successfully uploaded camera data.',
     uploading_data: 'Uploading data...',
+  },
+  canvas_control: {
+    calculate: 'Estimate time',
+    canvas_zoom: 'Zoom',
+    exposure: 'Exposure',
+    not_supported: 'Not Supported',
+    opacity: 'Opacity',
   },
   caption: {
     connectionTimeout: 'Connection timeout',
