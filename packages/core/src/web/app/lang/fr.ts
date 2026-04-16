@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Texte',
       use: 'Importer SVG',
     },
-    time_est_button: {
-      calculate: 'Estimer le temps',
-      estimate_time: 'Temps estimé :',
-    },
     tool_panels: {
       _nest: {
         end: 'Fermer',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Sauvegarde des données de la caméra',
     upload_success: 'Données de la caméra téléchargées avec succès.',
     uploading_data: 'Chargement des données...',
+  },
+  canvas_control: {
+    calculate: 'Estimer le temps',
+    canvas_zoom: 'Zoom',
+    exposure: 'Exposition',
+    not_supported: 'Non pris en charge',
+    opacity: 'Opacité',
   },
   caption: {
     connectionTimeout: 'Délai de connexion',

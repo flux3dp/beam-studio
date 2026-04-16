@@ -5,6 +5,7 @@ import { shallow } from 'zustand/shallow';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 
 type CameraPreviewState = {
+  bgOpacity: number;
   isClean: boolean;
   isDrawing: boolean;
   isLiveMode: boolean;
@@ -17,6 +18,7 @@ type CameraPreviewState = {
 
 export const useCameraPreviewStore = create(
   subscribeWithSelector<CameraPreviewState>(() => ({
+    bgOpacity: 1,
     isClean: true,
     isDrawing: false,
     isLiveMode: false,

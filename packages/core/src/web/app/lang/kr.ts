@@ -952,10 +952,6 @@ const lang: ILang = {
       text: '텍스트',
       use: 'SVG 가져오기',
     },
-    time_est_button: {
-      calculate: '예상 시간',
-      estimate_time: '예상 시간:',
-    },
     tool_panels: {
       _nest: {
         end: '닫기',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: '카메라 데이터 백업',
     upload_success: '카메라 데이터 업로드에 성공했습니다.',
     uploading_data: '데이터 업로드 중...',
+  },
+  canvas_control: {
+    calculate: '예상 시간',
+    canvas_zoom: '줌',
+    exposure: '노출',
+    not_supported: '지원되지 않음',
+    opacity: '투명도',
   },
   caption: {
     connectionTimeout: '연결 시간 초과',

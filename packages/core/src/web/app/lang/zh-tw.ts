@@ -952,10 +952,6 @@ const lang: ILang = {
       text: '文字',
       use: '匯入圖檔',
     },
-    time_est_button: {
-      calculate: '計算時間',
-      estimate_time: '預計所需時間：',
-    },
     tool_panels: {
       _nest: {
         end: '結束',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: '相機資料備份',
     upload_success: '相機數據上傳成功。',
     uploading_data: '正在上傳資料...',
+  },
+  canvas_control: {
+    calculate: '計算時間',
+    canvas_zoom: '畫布調整',
+    exposure: '曝光值',
+    not_supported: '不支援',
+    opacity: '透明度',
   },
   caption: {
     connectionTimeout: '連線逾時',

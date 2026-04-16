@@ -17,7 +17,7 @@ jest.mock('@core/helpers/fileImportHelper', () => ({
 }));
 
 jest.mock('@core/app/components/beambox/PathPreview', () => () => <div>MockPathPreview</div>);
-jest.mock('@core/app/components/common/ZoomBlock', () => () => <div>MockZoomBlock</div>);
+jest.mock('./CanvasControl', () => () => <div>MockCanvasControl</div>);
 jest.mock('@core/app/widgets/dockable/ToolBarDrawer', () => ({ children }) => <div>{children}</div>);
 jest.mock('@core/app/components/Chat', () => () => <div>MockChat</div>);
 jest.mock('@core/app/components/AiGenerate', () => () => <div>MockAiGenerate</div>);
@@ -30,9 +30,7 @@ jest.mock('./Banner', () => () => <div>MockBanner</div>);
 jest.mock('./DpiInfo', () => () => <div>MockDpiInfo</div>);
 jest.mock('./ElementTitle', () => () => <div>MockElementTitle</div>);
 jest.mock('./PreviewFloatingBar', () => () => <div>MockPreviewFloatingBar</div>);
-jest.mock('./PreviewSlider', () => () => <div>MockPreviewSlider</div>);
 jest.mock('./Ruler', () => () => <div>MockRuler</div>);
-jest.mock('./TimeEstimationButton', () => () => <div>MockTimeEstimationButton</div>);
 jest.mock('./Workarea', () => () => <div>MockWorkarea</div>);
 
 const mockInit = jest.fn();

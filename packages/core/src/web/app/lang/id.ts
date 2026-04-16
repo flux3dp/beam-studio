@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Teks',
       use: 'Impor SVG',
     },
-    time_est_button: {
-      calculate: 'Perkirakan waktu',
-      estimate_time: 'Perkiraan Waktu:',
-    },
     tool_panels: {
       _nest: {
         end: 'Tutup',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Cadangkan Data Kamera',
     upload_success: 'Data kamera berhasil diunggah.',
     uploading_data: 'Mengunggah data...',
+  },
+  canvas_control: {
+    calculate: 'Perkirakan waktu',
+    canvas_zoom: 'Zoom',
+    exposure: 'Eksposur',
+    not_supported: 'Tidak Didukung',
+    opacity: 'Opasitas',
   },
   caption: {
     connectionTimeout: 'Koneksi timeout',

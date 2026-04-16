@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'ข้อความ',
       use: 'นําเข้า SVG',
     },
-    time_est_button: {
-      calculate: 'ประมาณเวลา',
-      estimate_time: 'เวลาที่ประมาณ:',
-    },
     tool_panels: {
       _nest: {
         end: 'ปิด',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'การสำรองข้อมูลกล้อง',
     upload_success: 'อัปโหลดข้อมูลกล้องสำเร็จ',
     uploading_data: 'กำลังอัปโหลดข้อมูล...',
+  },
+  canvas_control: {
+    calculate: 'ประมาณเวลา',
+    canvas_zoom: 'ซูม',
+    exposure: 'การรับแสง',
+    not_supported: 'ไม่รองรับ',
+    opacity: 'ความโปร่งแสง',
   },
   caption: {
     connectionTimeout: 'หมดเวลาการเชื่อมต่อ',

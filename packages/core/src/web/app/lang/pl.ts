@@ -952,10 +952,6 @@ const lang: ILang = {
       text: 'Tekst',
       use: 'Importuj pliki SVG',
     },
-    time_est_button: {
-      calculate: 'Oszacuj czas',
-      estimate_time: 'Szacowany czas:',
-    },
     tool_panels: {
       _nest: {
         end: 'Zamknij',
@@ -1238,6 +1234,13 @@ const lang: ILang = {
     title: 'Kopiuj dane kamery',
     upload_success: 'Pomyślnie przesłano dane z kamery.',
     uploading_data: 'Przesyłanie danych...',
+  },
+  canvas_control: {
+    calculate: 'Oszacuj czas',
+    canvas_zoom: 'Zoom',
+    exposure: 'Ekspozycja',
+    not_supported: 'Nieobsługiwane',
+    opacity: 'Przezroczystość',
   },
   caption: {
     connectionTimeout: 'Czas połączenia minął',
