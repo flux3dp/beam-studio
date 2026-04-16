@@ -140,6 +140,8 @@ export type TFcodeOptionalConfig = Partial<{
    * whether to move z axis in rotary task to avoid collision, default is true in backend
    */
   rotary_z_motion?: boolean;
+  /** s-curve acceleration */
+  s_curve: boolean;
   /**
    * whether to split bitmap into segments, default is true in backend
    */
@@ -156,6 +158,10 @@ export type TFcodeOptionalConfig = Partial<{
    * travel speed
    */
   ts: number;
+  /**
+   * Whether to use GA optimize cutting order in swiftray, default is true in backend
+   */
+  use_ga_reorder: boolean;
   /**
    * with vector speed constraint, used for ghost 2.3.4 and before
    */

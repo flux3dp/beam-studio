@@ -43,6 +43,8 @@ const DpiBlock = ({ type = 'default' }: { type?: 'default' | 'modal' | 'panel-it
   const handleChange = (value: number) => {
     const newDpi = valueDpiMap[value as EngraveDpiValue];
 
+    if (!dpi.hasMultiValue && newDpi === dpi.value) return;
+
     change({ dpi: newDpi });
 
     if (type !== 'modal') {

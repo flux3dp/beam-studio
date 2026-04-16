@@ -30,6 +30,8 @@ export interface ILang {
     error_tip1: string;
     error_tip2: string;
     failed_to_find_contour: string;
+    how_to_improve_accuracy: string;
+    how_to_improve_accuracy_url: string;
     learn_more: string;
     learn_more_url: string;
     offset_x: string;
@@ -909,6 +911,7 @@ export interface ILang {
           text_align_justify: string;
           text_align_left: string;
           text_align_right: string;
+          text_content_placeholder: string;
           text_infill: string;
           threshold: string;
           threshold_short: string;
@@ -2173,6 +2176,7 @@ export interface ILang {
     use_real_boundary_tooltip: string;
     use_union_boundary: string;
     use_union_boundary_tooltip: string;
+    vector_order_optimization: string;
     vector_speed_constraint: string;
     wrong_ip_format: string;
   };

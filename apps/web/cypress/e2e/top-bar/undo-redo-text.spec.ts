@@ -1,5 +1,5 @@
-const undoBtn = () => cy.get('div[title="Undo"]');
-const redoBtn = () => cy.get('div[title="Redo"]');
+const undoBtn = () => cy.get('[title="Undo"]');
+const redoBtn = () => cy.get('[title="Redo"]');
 const fontDisplay = () => cy.get('.ant-select-selection-item[title="Font"] img');
 
 describe('verify undo/redo behaviors', () => {
@@ -8,7 +8,7 @@ describe('verify undo/redo behaviors', () => {
   });
 
   const drawText = () => {
-    cy.clickToolGroupBtn('Text', 'Text');
+    cy.clickToolBtn('Text');
     cy.get('svg#svgcontent').realClick({ x: 10, y: 20 });
     // Wait for text element to be created
     cy.get('#svg_1').should('exist');

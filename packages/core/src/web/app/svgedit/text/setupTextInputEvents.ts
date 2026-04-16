@@ -109,8 +109,9 @@ export const setupTextInputEvents = () => {
     }
   });
 
-  textInput.addEventListener('blur', () => {
-    if (textActions.isEditing) {
+  textInput.addEventListener('blur', (e) => {
+    // if relatedTarget is null: click to not interactive area (or svg canvas), do nothing.
+    if (e.relatedTarget && textActions.isEditing) {
       textActions.toSelectMode();
       textInput.value = '';
     }

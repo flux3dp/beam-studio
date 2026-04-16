@@ -246,6 +246,11 @@
       'data-uvStrength',
       'data-uvXStep',
       'data-highQuality',
+      'data-owe',
+      'data-oweRev',
+      'data-accX',
+      'data-accY',
+      'data-travelSpeed',
     ],
     image: [
       'data-ratiofixed',

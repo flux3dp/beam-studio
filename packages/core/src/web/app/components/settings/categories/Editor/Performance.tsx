@@ -16,6 +16,8 @@ function Performance(): React.JSX.Element {
     { label: lang.settings.normal, value: false },
   ] as unknown as DefaultOptionType[];
 
+  const isUsingSwiftray = getPreference('path-engine') === 'swiftray';
+
   return (
     <>
       <SettingSelect
@@ -42,11 +44,19 @@ function Performance(): React.JSX.Element {
       />
       {hasSwiftray && (
         <SettingSwitch
-          checked={getPreference('path-engine') === 'swiftray'}
+          checked={isUsingSwiftray}
           id="path-engine"
           label={lang.settings.calculation_optimization}
           onChange={(e) => setPreference('path-engine', e ? 'swiftray' : 'fluxghost')}
           url={lang.settings.help_center_urls.calculation_optimization}
+        />
+      )}
+      {hasSwiftray && isUsingSwiftray && (
+        <SettingSwitch
+          checked={getPreference('use_ga_reorder')}
+          id="use-ga-reorder"
+          label={lang.settings.vector_order_optimization}
+          onChange={(e) => setPreference('use_ga_reorder', e)}
         />
       )}
     </>

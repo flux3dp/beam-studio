@@ -8,6 +8,7 @@ import previewModeBackgroundDrawer from '@core/app/actions/beambox/preview-mode-
 import previewModeController from '@core/app/actions/beambox/preview-mode-controller';
 import { PreviewMode } from '@core/app/constants/cameraConstants';
 import { CanvasMode } from '@core/app/constants/canvasMode';
+import CameraIcons from '@core/app/icons/camera/CameraIcons';
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
@@ -117,7 +118,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
             }}
             title={lang.label.preview_wide_angle}
           >
-            <LeftPanelIcons.ShootWideAngle />
+            <CameraIcons.Single />
           </Button>
         )}
         <Button
@@ -137,7 +138,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
           }}
           title={lang.label.preview}
         >
-          <LeftPanelIcons.Shoot />
+          <CameraIcons.Normal />
         </Button>
         {supportedPreviewModes.includes(PreviewMode.PRECISE_REGION) && (
           <Button
@@ -157,7 +158,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
             }}
             title={lang.label.preview_precise}
           >
-            <LeftPanelIcons.ShootPrecise />
+            <CameraIcons.Precise />
           </Button>
         )}
         <Button disabled={isCanvasEmpty} id="image-trace" onClick={startImageTrace} title={lang.label.trace}>

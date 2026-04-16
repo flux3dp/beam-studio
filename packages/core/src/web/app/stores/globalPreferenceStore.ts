@@ -66,6 +66,7 @@ const getInitStore = (): GlobalPreference => {
     'use-auto-exposure': preference['use-auto-exposure'],
     'use-real-boundary': preference['use-real-boundary'],
     'use-union-boundary': preference['use-union-boundary'],
+    use_ga_reorder: preference.use_ga_reorder,
     use_layer_color: preference.use_layer_color,
     vector_speed_constraint: preference.vector_speed_constraint,
     zoom_with_window: preference.zoom_with_window,

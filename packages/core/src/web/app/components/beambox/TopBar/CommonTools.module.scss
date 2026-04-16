@@ -6,7 +6,11 @@
   align-items: center;
   gap: 8px;
 
-  > div {
+  .button {
     @include mixins.button();
+
+    background: none;
+    padding: 0;
+    border: none;
   }
 }

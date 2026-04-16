@@ -13,12 +13,7 @@ it('check the existence of the left toolbar and default active tool', () => {
   checkActive('Cursor');
 
   drawingTools.forEach((tool) => {
-    if (tool === 'Text') {
-      cy.clickToolGroupBtn('Text', 'Text', false);
-    } else {
-      cy.clickToolBtn(tool);
-    }
-
+    cy.clickToolBtn(tool);
     checkActive(tool);
   });
 });

@@ -61,9 +61,9 @@ import FillBlock from './FillBlock';
 import HalftoneBlock from './HalftoneBlock';
 import initState from './initState';
 import InkBlock from './InkBlock';
+import LaserDevOptions from './LaserDevOptions';
 import ModuleBlock from './ModuleBlock';
 import MultipassBlock from './MultipassBlock';
-import OneWayEngraving from './OneWayEngraving/OneWayEngraving';
 import ParameterTitle from './ParameterTitle';
 import PowerBlock from './PowerBlock';
 import RepeatBlock from './RepeatBlock';
@@ -282,7 +282,7 @@ const ConfigPanel = ({ UIType = 'default' }: Props): React.JSX.Element => {
       {isDevMode && isPrinting && fullcolor.value && UIType === 'panel-item' && <WhiteInkCheckbox type={UIType} />}
       {isPromark && <FillBlock type={UIType} />}
       {isPromark && <DottingTimeBlock type={UIType} />}
-      {isLaser && <OneWayEngraving />}
+      {isLaser && <LaserDevOptions />}
       {isUV && <UVPrintingConfigs type={UIType} />}
       {workarea === 'fuv1' && <UVLightConfigs type={UIType} />}
     </>
