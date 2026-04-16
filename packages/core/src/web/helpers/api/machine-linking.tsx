@@ -241,7 +241,7 @@ const BirthdayModal = ({ onClose, resolve }: { onClose: () => void; resolve: (ag
 };
 
 const getAgeBeforeLinking = async () => {
-  const dialogId = 'birthay-modal';
+  const dialogId = 'birthday-modal';
 
   if (dialogCaller.isIdExist(dialogId)) return null;
 
