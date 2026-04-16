@@ -1,12 +1,14 @@
 import type { ReactNode } from 'react';
-import React, { useCallback, useEffect, useState } from 'react';
+import React, { useCallback, useEffect } from 'react';
 
 import { Slider } from 'antd';
+
+import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 
 import styles from './OpacitySlider.module.scss';
 
 const OpacitySlider = (): ReactNode => {
-  const [opacity, setOpacity] = useState(1);
+  const opacity = useCameraPreviewStore((state) => state.bgOpacity);
 
   const updateBgOpacity = useCallback((val: number) => {
     const container: null | SVGGElement = document.querySelector('#previewSvg');
@@ -18,13 +20,18 @@ const OpacitySlider = (): ReactNode => {
     updateBgOpacity(opacity);
   }, [opacity, updateBgOpacity]);
 
+  const handleChange = (val: number) => {
+    setCameraPreviewState({ bgOpacity: val });
+    updateBgOpacity(val);
+  };
+
   return (
     <>
       <Slider
         className={styles.slider}
         max={1}
         min={0}
-        onChange={setOpacity}
+        onChange={handleChange}
         step={0.25}
         tooltip={{ open: false }}
         value={opacity}
