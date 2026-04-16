@@ -242,13 +242,12 @@ const BirthdayModal = ({ onClose, resolve }: { onClose: () => void; resolve: (ag
 
 const getAgeBeforeLinking = async () => {
   const dialogId = 'birthday-modal';
+  const closeDialog = () => dialogCaller.popDialogById(dialogId);
 
-  if (dialogCaller.isIdExist(dialogId)) return null;
-
-  const onClose = () => dialogCaller.popDialogById(dialogId);
+  if (dialogCaller.isIdExist(dialogId)) closeDialog();
 
   return new Promise<null | number>((resolve) =>
-    dialogCaller.addDialogComponent(dialogId, <BirthdayModal onClose={onClose} resolve={resolve} />),
+    dialogCaller.addDialogComponent(dialogId, <BirthdayModal onClose={closeDialog} resolve={resolve} />),
   );
 };
 
