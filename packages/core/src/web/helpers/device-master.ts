@@ -10,6 +10,7 @@ import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import storage from '@core/implementations/storage';
 import type {
@@ -21,7 +22,13 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 import type { TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
-import type { FirmwareType, IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
+import type {
+  FirmwareType,
+  IDeviceConnection,
+  IDeviceDetailInfo,
+  IDeviceInfo,
+  IDeviceInfoFlux,
+} from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
 import Camera from './api/camera';
@@ -307,7 +314,13 @@ class DeviceMaster {
       return this.selectDeviceWithSwiftray(deviceInfo);
     }
 
-    return this.selectDeviceWithGhost(deviceInfo);
+    const res = await this.selectDeviceWithGhost(deviceInfo);
+
+    if (res.success) {
+      tryMachineLinking(deviceInfo);
+    }
+
+    return res;
   }
 
   async selectDeviceWithGhost(deviceInfo: IDeviceInfo): Promise<SelectionResult> {
@@ -1469,6 +1482,12 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.deviceDetailInfo);
+  }
+
+  async getDeviceInfoFlux(): Promise<IDeviceInfoFlux> {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.deviceInfoFlux);
   }
 
   async getReport() {

@@ -682,6 +682,17 @@ class Control extends EventEmitter implements IControlSocket {
     return this.useWaitAnyResponse('task quit');
   };
 
+  deviceInfoFlux = async (): Promise<any> => {
+    if (this.mode) {
+      throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);
+    }
+
+    const resp = await this.useWaitAnyResponse('deviceinfo_flux');
+    const data = JSON.parse(resp.data.split('\n')[1]);
+
+    return data;
+  };
+
   deviceDetailInfo = (): Promise<IDeviceDetailInfo> => {
     if (this.mode) {
       throw new Error(ErrorConstants.CONTROL_SOCKET_MODE_ERROR);

@@ -1629,6 +1629,24 @@ export interface ILang {
     uv_varnish: string;
     uv_white_ink: string;
   };
+  machine_linking: {
+    continue: string;
+    i_have_read: string;
+    input_birthday_to_link: string;
+    input_birthday_to_link_note: string;
+    link_failed: string;
+    link_failed_already_linked: string;
+    link_failed_cannot_set_secret: string;
+    link_failed_under_age: string;
+    link_machine: string;
+    link_machine_to_account: string;
+    link_success: string;
+    link_to_my_flux_id: string;
+    privacy_policy: string;
+    privacy_policy_link: string;
+    process_linking: string;
+    use_without_linking: string;
+  };
   machine_status: {
     '-17': string;
     '-10': string;

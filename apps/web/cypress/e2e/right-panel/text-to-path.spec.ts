@@ -16,10 +16,14 @@ describe('to path 2.0', () => {
     cy.get('div#object-panel').should('exist');
     cy.get('.ant-select-selection-item[title="Font"]').click();
     cy.get('.ant-select-item-option-content img[alt="Mr Bedfort"]').click();
+    cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').should('exist');
     cy.get('#svg_1').should('have.attr', 'font-family').and('eq', "'Mr Bedfort'");
+    cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden)').should('not.exist');
     cy.get('#x_position').clear().type('100{enter}');
+    cy.get('#x_position').should('have.value', '100');
     cy.get('#svg_1', { timeout: 15000 }).invoke('attr', 'x').should('be.closeTo', expectedX, 3);
     cy.get('#y_position').clear().type('50{enter}');
+    cy.get('#y_position').should('have.value', '50');
     cy.get('#svg_1', { timeout: 15000 }).invoke('attr', 'y').should('be.closeTo', 703, 3);
   };
 

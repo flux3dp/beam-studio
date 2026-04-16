@@ -20,7 +20,7 @@ exports[`test workarea should render correctly 2`] = `
 <body>
   <div>
     <div
-      class="ant-dropdown-trigger mac ant-dropdown-open"
+      class="ant-dropdown-trigger mac"
       disabled=""
       id="workarea"
     >
@@ -32,8 +32,8 @@ exports[`test workarea should render correctly 2`] = `
   </div>
   <div>
     <div
-      class="ant-dropdown ant-slide-up-appear ant-slide-up-appear-prepare ant-slide-up css-dev-only-do-not-override-hash ant-dropdown-placement-topLeft"
-      style="--arrow-x: 0px; --arrow-y: 2px; left: 0px; top: -1000vh; box-sizing: border-box; bottom: 4px;"
+      class="ant-dropdown ant-dropdown-hidden css-dev-only-do-not-override-hash ant-dropdown-placement-topLeft"
+      style="--arrow-x: 0px; --arrow-y: 2px; left: 0px; top: -1000vh; box-sizing: border-box; bottom: 4px; pointer-events: none;"
     >
       <ul
         class="ant-dropdown-menu ant-dropdown-menu-root ant-dropdown-menu-vertical ant-dropdown-menu-light css-dev-only-do-not-override-hash"

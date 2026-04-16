@@ -1,6 +1,6 @@
-import React, { act } from 'react';
+import React from 'react';
 
-import { fireEvent, render } from '@testing-library/react';
+import { act, fireEvent, render } from '@testing-library/react';
 
 jest.mock('@core/app/svgedit/operations/clipboard', () => ({
   pasteElements: jest.fn(),
@@ -71,18 +71,18 @@ describe('test workarea', () => {
 
     expect(baseElement).toMatchSnapshot();
 
-    const checkState = (state: {
+    const checkState = async (state: {
       group: boolean;
       menuDisabled: boolean;
       paste: boolean;
       select: boolean;
       ungroup: boolean;
     }) => {
-      const workarea = container.querySelector('#workarea');
-      const menuDisabled = workarea?.hasAttribute('disabled') ?? false;
+      const workarea = container.querySelector('#workarea')!;
+      const menuDisabled = workarea.hasAttribute('disabled');
 
       // Open the dropdown to check menu item states
-      fireEvent.contextMenu(workarea!);
+      await act(() => fireEvent.contextMenu(workarea));
 
       const cutItem = queryByText('Cut')?.closest('.ant-dropdown-menu-item');
       const pasteItem = queryByText('Paste')?.closest('.ant-dropdown-menu-item');
@@ -96,12 +96,12 @@ describe('test workarea', () => {
         ungroupItem && select ? !ungroupItem.classList.contains('ant-dropdown-menu-item-disabled') : false;
 
       // Close the dropdown by clicking elsewhere
-      fireEvent.click(document.body);
+      await act(() => fireEvent.click(workarea));
 
       expect(state).toEqual({ group, menuDisabled, paste, select, ungroup });
     };
 
-    checkState({
+    await checkState({
       group: false,
       menuDisabled: false,
       paste: false,
@@ -111,8 +111,7 @@ describe('test workarea', () => {
     expect(eventEmitter.eventNames().length).toBe(1);
 
     act(() => eventEmitter.emit('update-context-menu', { paste: true, select: true }));
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    checkState({
+    await checkState({
       group: false,
       menuDisabled: false,
       paste: true,
@@ -121,24 +120,13 @@ describe('test workarea', () => {
     });
 
     act(() => eventEmitter.emit('update-context-menu', { menuDisabled: true }));
-    await new Promise((resolve) => setTimeout(resolve, 0));
-    checkState({
+    await checkState({
       group: false,
       menuDisabled: true,
       paste: true,
       select: true,
       ungroup: false,
     });
-
-    // Ensure dropdown is closed before snapshot
-    const workareaElement = container.querySelector('#workarea');
-
-    if (workareaElement?.classList.contains('ant-dropdown-open')) {
-      act(() => {
-        fireEvent.click(document.body);
-      });
-      await new Promise((resolve) => setTimeout(resolve, 0));
-    }
 
     expect(baseElement).toMatchSnapshot();
 

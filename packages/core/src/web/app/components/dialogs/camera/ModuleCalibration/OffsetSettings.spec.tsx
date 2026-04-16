@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { fireEvent, render, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, waitFor } from '@testing-library/react';
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 
@@ -60,11 +60,11 @@ describe('test OffsetSettings', () => {
   });
 
   it('should render correctly with printer module', async () => {
-    const { baseElement } = render(<OffsetSettings layerModule={LayerModule.PRINTER} onClose={mockOnClose} />);
+    const { baseElement } = await act(() =>
+      render(<OffsetSettings layerModule={LayerModule.PRINTER} onClose={mockOnClose} />),
+    );
 
-    await waitFor(() => {
-      expect(mockGetModuleOffsets).toHaveBeenCalledTimes(1);
-    });
+    expect(mockGetModuleOffsets).toHaveBeenCalledTimes(1);
 
     expect(mockGetModuleOffsets).toHaveBeenCalledWith({
       isRelative: true,
@@ -76,10 +76,8 @@ describe('test OffsetSettings', () => {
     // Wait for the offset values to be loaded and displayed
     const inputs = baseElement.querySelectorAll('input');
 
-    await waitFor(() => {
-      expect(inputs[0]).toHaveValue('10.5');
-      expect(inputs[1]).toHaveValue('-5.2');
-    });
+    expect(inputs[0]).toHaveValue('10.5');
+    expect(inputs[1]).toHaveValue('-5.2');
 
     expect(baseElement).toMatchSnapshot();
   });
