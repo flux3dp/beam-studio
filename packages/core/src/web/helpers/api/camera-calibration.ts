@@ -444,6 +444,7 @@ class CameraCalibrationApi {
     img: ArrayBuffer | Blob,
     squareX: number,
     squareY: number,
+    opts: { is_vertical?: boolean } = {},
   ): Promise<
     { imgp: number[][]; objp: number[][]; ratio: number; success: true } | { reason: string; success: false }
   > =>
@@ -471,10 +472,9 @@ class CameraCalibrationApi {
       };
 
       const size = img instanceof Blob ? img.size : img.byteLength;
-      const args = [size, squareX, squareY];
 
-      // detect_charuco [file_length] [squareX] [squareY]
-      this.ws.send(`detect_charuco ${args.filter((arg) => arg !== undefined).join(' ')}`);
+      // detect_charuco [file_length] [squareX] [squareY] [opts]
+      this.ws.send(['detect_charuco', size, squareX, squareY, JSON.stringify(opts)].join(' '));
     });
   calibrateCamera = (
     objPoints: number[][][],

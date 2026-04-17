@@ -57,7 +57,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
       <CheckpointData
         allowCheckPoint={false}
         askUser
-        getData={() => promarkDataStore.get(serial, 'cameraParameters')}
+        getData={() => promarkDataStore.get(serial, 'cameraParameters') as FisheyeCameraParametersV3}
         onClose={onClose}
         onNext={(res: boolean) => {
           if (res) {
@@ -148,7 +148,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
 
   if (step === Steps.PUT_PAPER) {
     const handleNext = async () => {
-      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice.info);
+      const deviceStatus = await checkDeviceStatus(deviceMaster.currentDevice!.info);
 
       if (!deviceStatus) {
         return;
@@ -166,7 +166,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
       } catch (err) {
         console.error(err);
 
-        if (err && err[1] === 'DOOR_OPENED') {
+        if (err && (err as any)[1] === 'DOOR_OPENED') {
           await deviceMaster.stop();
           alertCaller.popUp({
             buttonType: alertConstants.RETRY_CANCEL,

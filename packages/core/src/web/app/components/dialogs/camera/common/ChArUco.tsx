@@ -20,6 +20,7 @@ import StepProgress from './StepProgress';
 import useLiveFeed from './useLiveFeed';
 
 interface Props {
+  calibrationThresholds?: { average?: number; good?: number };
   cameraIndex?: number;
   isFisheye?: boolean;
   isVertical?: boolean;
@@ -33,6 +34,7 @@ interface Props {
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
 const ChArUco = ({
+  calibrationThresholds: { average: averageThreshold = 1.5, good: goodThreshold = 2 } = {},
   cameraIndex,
   isFisheye = true,
   isVertical,
@@ -66,7 +68,7 @@ const ChArUco = ({
     pauseLive();
     progressCaller.openNonstopProgress({ id: 'detect-charuco' });
 
-    const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10);
+    const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10, { is_vertical: isVertical });
 
     progressCaller.popById('detect-charuco');
     console.log(`Detect ChArUco at ${step}:`, res);
@@ -109,7 +111,7 @@ const ChArUco = ({
       console.log('Calibrate with ChArUco', calibrateRes);
 
       const { d, indices, k, ret, rvec, tvec } = calibrateRes;
-      const shouldProceed = await handleCalibrationResult(ret, 1.5, 2);
+      const shouldProceed = await handleCalibrationResult(ret, goodThreshold, averageThreshold);
 
       if (!shouldProceed) {
         restartLive();
@@ -130,7 +132,20 @@ const ChArUco = ({
       updateParam({ d, is_fisheye: isFisheye, k, ret, rvec, tvec });
       onNext();
     }
-  }, [tCali, steps, step, img, pauseLive, restartLive, onNext, updateParam]);
+  }, [
+    tCali,
+    steps,
+    step,
+    img,
+    pauseLive,
+    restartLive,
+    onNext,
+    updateParam,
+    isFisheye,
+    isVertical,
+    averageThreshold,
+    goodThreshold,
+  ]);
 
   return (
     <DraggableModal
@@ -184,7 +199,11 @@ const ChArUco = ({
               setExposureSetting={setExposureSetting}
             />
           </div>
-          <div className={styles.right}>{imageUrl && <img src={imageUrl} />}</div>
+          {imageUrl && (
+            <div className={styles.right}>
+              <img src={imageUrl} />
+            </div>
+          )}
         </Flex>
       </div>
     </DraggableModal>

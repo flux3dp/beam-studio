@@ -11,7 +11,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from './Calibration.module.scss';
-import Calibration from './common/Calibration';
+import ChArUco from './common/ChArUco';
 import CheckPnP from './common/CheckPnP';
 import CheckpointData from './common/CheckpointData';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
@@ -75,6 +75,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   }
 
   if (step === Steps.PRE_CHESSBOARD) {
+    // TODO: update animation and texting
     return (
       <Instruction
         animationSrcs={[
@@ -99,7 +100,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         <div
           className={styles.link}
           onClick={() =>
-            downloadCalibrationFile('assets/bb2-chessboard.pdf', tCali.download_chessboard_file, 'Chessboard')
+            downloadCalibrationFile('assets/charuco-15-10.pdf', tCali.download_chessboard_file, 'Chessboard')
           }
         >
           {tCali.download_chessboard_file}
@@ -110,18 +111,25 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
 
   if (step === Steps.CHESSBOARD) {
     return (
-      <Calibration
-        cameraOptions={{ index: 0 }}
-        charuco={[15, 10]}
-        chessboard={[24, 14]}
-        description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
-        indicator={
-          isHexaRf
-            ? { height: '82.5%', left: '2.5%', top: '0.5%', width: '95%' }
-            : { height: '65%', left: '10%', top: '30%', width: '80%' }
-        }
+      <ChArUco
+        calibrationThresholds={{ average: 3.5, good: 2.8 }}
+        cameraIndex={0}
+        isFisheye
+        isVertical
         onClose={onClose}
-        onNext={() => setStep(Steps.PUT_PAPER)}
+        onNext={async () => {
+          setStep(Steps.PUT_PAPER);
+        }}
+        onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
+        steps={[
+          { description: tCali.charuco_position_left, key: 'left' },
+          { description: tCali.charuco_position_right, key: 'right' },
+        ].map(({ description, key }) => ({
+          description,
+          // TODO: add image url for bb2/ fhx2rf
+          imageUrl: `core-img/calibration/bm2-charuco-${key}.jpg`,
+          key,
+        }))}
         updateParam={updateParam}
       />
     );
