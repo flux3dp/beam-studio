@@ -172,6 +172,7 @@ const addOnData: Record<WorkAreaModel, AddOnInfo> = {
           rotaryRatio: CHUCK_ROTARY_DIAMETER / FEEDER_DIAMETER / 2,
         }
       : undefined,
+    curveEngraving: isDev() ? {} : undefined,
     jobOrigin: true,
     lowerFocus: true,
     rotary: {

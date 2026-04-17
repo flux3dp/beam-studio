@@ -102,7 +102,7 @@ const appendUseElement = (
         }
       } else if (type === 'color') {
         const layerColorConfig = storage.get('layer-color-config') || {};
-        const index = layerName ? layerColorConfig.dict?.[layerName] : undefined;
+        const index = layerColorConfig.dict?.[targetLayerName];
 
         if (index !== undefined) {
           writeDataLayer(newLayer, 'power', Math.max(Math.min(layerColorConfig.array[index].power, 100), 0));
