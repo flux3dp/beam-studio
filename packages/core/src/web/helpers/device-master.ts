@@ -316,8 +316,9 @@ class DeviceMaster {
 
     const res = await this.selectDeviceWithGhost(deviceInfo);
 
-    if (res.success) {
-      tryMachineLinking(deviceInfo);
+    // Check not in any sub-mode
+    if (res.success && res.isDeviceChanged && !this.currentDevice?.control?.getMode()) {
+      await tryMachineLinking(deviceInfo);
     }
 
     return res;
@@ -330,10 +331,12 @@ class DeviceMaster {
     }
 
     const { uuid } = deviceInfo;
+    let isDeviceChanged = false;
 
     // kill existing camera connection
     if (this.currentDevice?.info?.uuid !== uuid) {
       this.disconnectCamera();
+      isDeviceChanged = true;
     }
 
     const device: IDeviceConnection = this.getDeviceByUUID(uuid);
@@ -358,7 +361,7 @@ class DeviceMaster {
         this.currentDevice = device;
         Progress.popById('select-device');
 
-        return { success: true };
+        return { isDeviceChanged, success: true };
       } catch {
         await device.control?.killSelf();
       }
@@ -374,6 +377,7 @@ class DeviceMaster {
       Progress.popById('select-device');
 
       return {
+        isDeviceChanged,
         success: true,
       };
     } catch (e) {
@@ -394,7 +398,7 @@ class DeviceMaster {
 
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
       if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
-        return await this.runAuthProcess(uuid, device, deviceInfo);
+        return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
       this.popConnectionError(uuid, errorCode as ConnectionError);
@@ -415,10 +419,12 @@ class DeviceMaster {
     }
 
     const { uuid } = deviceInfo;
+    let isDeviceChanged = false;
 
     // kill existing camera connection
     if (this.currentDevice?.info?.uuid !== uuid) {
       this.disconnectCamera();
+      isDeviceChanged = true;
     }
 
     const device: IDeviceConnection = this.getDeviceByUUID(uuid);
@@ -493,7 +499,7 @@ class DeviceMaster {
 
       Progress.popById('select-device');
 
-      return { success: true };
+      return { isDeviceChanged, success: true };
     } catch (e) {
       let error = e as any;
 
@@ -512,7 +518,7 @@ class DeviceMaster {
 
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
       if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
-        return await this.runAuthProcess(uuid, device, deviceInfo);
+        return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
       this.popConnectionError(uuid, errorCode as ConnectionError);

@@ -244,7 +244,7 @@ const getAgeBeforeLinking = async () => {
   const dialogId = 'birthday-modal';
   const closeDialog = () => dialogCaller.popDialogById(dialogId);
 
-  if (dialogCaller.isIdExist(dialogId)) closeDialog();
+  if (dialogCaller.isIdExist(dialogId)) return null;
 
   return new Promise<null | number>((resolve) =>
     dialogCaller.addDialogComponent(dialogId, <BirthdayModal onClose={closeDialog} resolve={resolve} />),
@@ -276,27 +276,32 @@ export const tryMachineLinking = async (deviceInfo: IDeviceInfo): Promise<void> 
 
   const lang = i18n.lang.machine_linking;
 
-  alertCaller.popUp({
-    buttonType: alertConstants.YES_NO,
-    caption: lang.link_machine,
-    checkbox: {
-      callbacks: () => storage.set('skip_machine_linking', [...skippedSerial, deviceInfo.serial]),
-      text: i18n.lang.alert.dont_show_again,
-    },
-    id: 'device-link',
-    message: sprintf(lang.link_machine_to_account, { name: deviceInfo.name }),
-    onYes: async () => {
-      if (userAge === null) {
-        userAge = await getAgeBeforeLinking();
+  await new Promise<void>((resolve) => {
+    alertCaller.popUp({
+      buttonType: alertConstants.YES_NO,
+      caption: lang.link_machine,
+      checkbox: {
+        callbacks: () => storage.set('skip_machine_linking', [...skippedSerial, deviceInfo.serial]),
+        text: i18n.lang.alert.dont_show_again,
+      },
+      id: 'device-link',
+      message: sprintf(lang.link_machine_to_account, { name: deviceInfo.name }),
+      onNo: resolve,
+      onYes: async () => {
+        if (userAge === null) {
+          userAge = await getAgeBeforeLinking();
 
-        if (userAge === null || userAge < ageRequirement) {
-          alertCaller.popUpError({ caption: lang.link_failed_under_age, message: lang.link_failed });
+          if (userAge === null || userAge < ageRequirement) {
+            alertCaller.popUpError({ caption: lang.link_failed_under_age, message: lang.link_failed });
+            resolve();
 
-          return;
+            return;
+          }
         }
-      }
 
-      await linkMachine(deviceInfo);
-    },
+        await linkMachine(deviceInfo);
+        resolve();
+      },
+    });
   });
 };
