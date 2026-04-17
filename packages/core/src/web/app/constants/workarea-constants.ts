@@ -220,6 +220,11 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
     calibrationCenter: [370, 5],
     cameraCenter: [370, 180],
+    curveSpeedLimit: {
+      x: 50,
+      zHighSpeed: 300,
+      zRegular: 140,
+    },
     engraveDpiOptions: ['low', 'medium', 'high', 'detailed', 'ultra'],
     height: 410,
     label: 'HEXA RF',
