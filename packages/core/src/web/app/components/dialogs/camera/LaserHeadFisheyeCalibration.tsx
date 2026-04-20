@@ -75,7 +75,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   }
 
   if (step === Steps.PRE_CHESSBOARD) {
-    // TODO: update animation and texting
+    // TODO: update animation
     return (
       <Instruction
         animationSrcs={[
@@ -94,16 +94,11 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
           },
         ]}
         onClose={onClose}
-        steps={[tCali.put_chessboard_bb2_desc_1, tCali.put_chessboard_bb2_desc_2, tCali.put_chessboard_bb2_desc_3]}
+        steps={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
         title={tCali.put_chessboard}
       >
-        <div
-          className={styles.link}
-          onClick={() =>
-            downloadCalibrationFile('assets/charuco-15-10.pdf', tCali.download_chessboard_file, 'Chessboard')
-          }
-        >
-          {tCali.download_chessboard_file}
+        <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10-with-mark.pdf')}>
+          {tCali.download_calibration_pattern}
         </div>
       </Instruction>
     );
@@ -122,14 +117,9 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         }}
         onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
         steps={[
-          { description: tCali.charuco_position_left, key: 'left' },
-          { description: tCali.charuco_position_right, key: 'right' },
-        ].map(({ description, key }) => ({
-          description,
-          // TODO: add image url for bb2/ fhx2rf
-          imageUrl: `core-img/calibration/bm2-charuco-${key}.jpg`,
-          key,
-        }))}
+          { descriptions: [tCali.charuco_move_to_point_a, tCali.charuco_capture], key: 'left', name: 'A' },
+          { descriptions: [tCali.charuco_move_to_point_b, tCali.charuco_capture], key: 'right', name: 'B' },
+        ]}
         updateParam={updateParam}
       />
     );

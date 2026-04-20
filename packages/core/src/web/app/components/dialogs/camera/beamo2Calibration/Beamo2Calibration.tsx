@@ -152,12 +152,12 @@ const Beamo2Calibration = ({ isAdvanced, onClose }: Props): ReactNode => {
           }}
           onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
           steps={[
-            { description: tCalibration.charuco_position_left, key: 'left' },
-            { description: tCalibration.charuco_position_right, key: 'right' },
-          ].map(({ description, key }) => ({
-            description,
+            { key: 'left', name: tCalibration.charuco_position_left },
+            { key: 'right', name: tCalibration.charuco_position_right },
+          ].map(({ key, name }) => ({
             imageUrl: `core-img/calibration/bm2-charuco-${key}.jpg`,
             key,
+            name,
           }))}
           updateParam={updateParam}
         />

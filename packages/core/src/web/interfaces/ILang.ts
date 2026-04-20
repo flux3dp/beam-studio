@@ -1081,6 +1081,8 @@ export interface ILang {
     cancel: string;
     charuco_auto_focus: string;
     charuco_capture: string;
+    charuco_move_to_point_a: string;
+    charuco_move_to_point_b: string;
     charuco_place_charuco_horizontal: string;
     charuco_place_charuco_vertical: string;
     charuco_position_bottom_left: string;
@@ -1162,9 +1164,6 @@ export interface ILang {
     put_chessboard_1: string;
     put_chessboard_2: string;
     put_chessboard_3: string;
-    put_chessboard_bb2_desc_1: string;
-    put_chessboard_bb2_desc_2: string;
-    put_chessboard_bb2_desc_3: string;
     put_chessboard_bm2_1: string;
     put_chessboard_bm2_2: string;
     put_chessboard_promark_1: string;

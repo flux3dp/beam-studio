@@ -27,7 +27,7 @@ interface Props {
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   onPrev: () => void;
-  steps: Array<{ description: string; imageUrl?: string; key: string }>;
+  steps: Array<{ descriptions?: string[]; imageUrl?: string; key: string; name: string }>;
   title?: string;
   updateParam: (param: FisheyeCaliParameters) => void;
 }
@@ -62,7 +62,7 @@ const ChArUco = ({
     dialog.writeFileDialog(() => img!.blob, 'Save Picture', 'charuco.jpg');
   }, [img]);
 
-  const { description, imageUrl } = useMemo(() => steps[step], [step, steps]);
+  const { descriptions, imageUrl, name } = useMemo(() => steps[step], [step, steps]);
 
   const handleNext = useCallback(async () => {
     pauseLive();
@@ -161,25 +161,31 @@ const ChArUco = ({
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
-      title={title ?? `${tCali.title_capture_calibration_pattern} (${description})`}
+      title={title ?? `${tCali.title_capture_calibration_pattern} (${name})`}
       width="80vw"
     >
       <div className={styles.container}>
         <ol className={styles.desc}>
-          <li
-            dangerouslySetInnerHTML={{
-              __html: sprintf(
-                isVertical ? tCali.charuco_place_charuco_vertical : tCali.charuco_place_charuco_horizontal,
-                description,
-              ),
-            }}
-          />
-          {step === 0 && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
-          <li>{tCali.charuco_capture}</li>
+          {descriptions ? (
+            descriptions.map((desc, index) => <li dangerouslySetInnerHTML={{ __html: desc }} key={index} />)
+          ) : (
+            <>
+              <li
+                dangerouslySetInnerHTML={{
+                  __html: sprintf(
+                    isVertical ? tCali.charuco_place_charuco_vertical : tCali.charuco_place_charuco_horizontal,
+                    name,
+                  ),
+                }}
+              />
+              {step === 0 && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
+              <li>{tCali.charuco_capture}</li>
+            </>
+          )}
         </ol>
         <Flex align="center" className={styles.content} justify="space-between">
           <div className={styles.left}>
-            <StepProgress className={styles.progress} currentStep={step} steps={steps.map((s) => s.description)} />
+            <StepProgress className={styles.progress} currentStep={step} steps={steps.map((s) => s.name)} />
             <div className={styles.imgContainer}>
               {img ? (
                 <>
