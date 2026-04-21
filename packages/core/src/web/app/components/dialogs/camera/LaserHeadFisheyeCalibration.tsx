@@ -75,12 +75,11 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   }
 
   if (step === Steps.PRE_CHESSBOARD) {
-    // TODO: update animation
     return (
       <Instruction
         animationSrcs={[
-          { src: 'video/laser-head-calibration/1-chessboard.webm', type: 'video/webm' },
-          { src: 'video/laser-head-calibration/1-chessboard.mp4', type: 'video/mp4' },
+          { src: 'video/laser-head-calibration/1-charuco.webm', type: 'video/webm' },
+          { src: 'video/laser-head-calibration/1-charuco.mp4', type: 'video/mp4' },
         ]}
         buttons={[
           {
@@ -117,8 +116,18 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         }}
         onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
         steps={[
-          { descriptions: [tCali.charuco_move_to_point_a, tCali.charuco_capture], key: 'left', name: 'A' },
-          { descriptions: [tCali.charuco_move_to_point_b, tCali.charuco_capture], key: 'right', name: 'B' },
+          {
+            descriptions: [tCali.charuco_move_to_point_a, tCali.charuco_capture],
+            imageUrl: 'core-img/calibration/charuco-a.jpg',
+            key: 'left',
+            name: 'A',
+          },
+          {
+            descriptions: [tCali.charuco_move_to_point_b, tCali.charuco_capture],
+            imageUrl: 'core-img/calibration/charuco-b.jpg',
+            key: 'right',
+            name: 'B',
+          },
         ]}
         updateParam={updateParam}
       />
