@@ -477,6 +477,7 @@ const onMenuClick = (data: { id: string; machineName?: string; serial?: string; 
 const init = () => {
   menuManager = new MenuManager();
   menuManager.on(MenuEvents.MenuClick, onMenuClick);
+  ipcMain.on(MenuEvents.MenuClick, (_event, data) => onMenuClick(data));
   menuManager.on(MenuEvents.NewAppMenu, () => {
     tabManager?.sendToAllViews(MenuEvents.UpdateMenu);
     tabManager?.sendToFocusedView(MenuEvents.NewAppMenu);

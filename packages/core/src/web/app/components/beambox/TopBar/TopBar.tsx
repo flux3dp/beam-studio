@@ -1,4 +1,4 @@
-import React, { memo, use, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 import { pipe } from 'remeda';
@@ -13,12 +13,14 @@ import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';
 import getIsWeb from '@core/helpers/is-web';
+import { useIsIpad } from '@core/helpers/system-helper';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
 import AutoFocusButton from './AutoFocusButton';
 import CommonTools from './CommonTools';
 import DocumentButton from './DocumentButton';
+import DrawerMenu, { DrawerMenuTrigger } from './DrawerMenu';
 import FileName from './FileName';
 import FrameButton from './FrameButton';
 import GoButton from './GoButton';
@@ -35,11 +37,16 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: getOS() === 'MacOS' && !isWeb, isWeb })),
     [],
   );
+  const isIpad = useIsIpad();
+
   const mode = useCanvasStore((state) => state.mode);
   const { currentUser, hasUnsavedChange, setSelectedDevice } = use(CanvasContext);
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
+  const [isDrawerMenuOpen, setIsDrawerMenuOpen] = useState(false);
+  const openDrawerMenu = useCallback(() => setIsDrawerMenuOpen(true), []);
+  const closeDrawerMenu = useCallback(() => setIsDrawerMenuOpen(false), []);
 
   useEffect(() => {
     const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
@@ -78,6 +85,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         })}
         onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
+        {isIpad && <DrawerMenuTrigger onClick={openDrawerMenu} />}
         <div
           className={classNames(styles.controls, styles.left, {
             [styles.space]: (isDragRegion && !isFullScreen) || isWeb,
@@ -105,11 +113,12 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
       <TopBarHintsContextProvider>
         <TopBarHints />
       </TopBarHintsContextProvider>
-      {isWeb && (
+      {isWeb && !isIpad && (
         <div className={classNames(styles['top-bar-menu-container'], styles.menu)} data-testid="top-bar-menu">
           <Menu email={currentUser?.email} />
         </div>
       )}
+      {isIpad && <DrawerMenu email={currentUser?.email} isOpen={isDrawerMenuOpen} onClose={closeDrawerMenu} />}
     </>
   );
 };

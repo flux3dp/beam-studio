@@ -7,6 +7,8 @@ import os from '@core/implementations/os';
 
 export const isMobile = (): boolean => window.innerWidth < 601;
 
+export const isIpad = (): boolean => window.innerWidth <= 1024;
+
 export const isMac = (): boolean => getOS() === 'MacOS';
 
 export const isIOS = (): boolean => {
@@ -22,6 +24,20 @@ export const useIsMobile = (): boolean => {
 
   useEffect(() => {
     const handler = () => setVal(isMobile());
+
+    window.addEventListener('resize', handler);
+
+    return () => window.removeEventListener('resize', handler);
+  }, []);
+
+  return val;
+};
+
+export const useIsIpad = (): boolean => {
+  const [val, setVal] = useState(isIpad);
+
+  useEffect(() => {
+    const handler = () => setVal(isIpad());
 
     window.addEventListener('resize', handler);
 

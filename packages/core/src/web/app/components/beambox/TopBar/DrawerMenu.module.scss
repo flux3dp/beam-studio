@@ -1,0 +1,110 @@
+.trigger {
+  display: flex;
+  align-items: center;
+  background: transparent;
+  border: none;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
+  }
+
+  &:active {
+    background: rgba(255, 255, 255, 0.25);
+  }
+}
+
+.trigger-logo {
+  height: 32px;
+}
+
+.trigger-hamburger {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  padding-right: 8px;
+  span {
+    display: block;
+    width: 16px;
+    height: 2px;
+    background: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.drawer-menu {
+  :global(.ant-drawer-body) {
+    padding: 0;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.back-button {
+  display: flex;
+  gap: 8px;
+  background: none;
+  border: none;
+  padding: 0;
+}
+
+.title {
+  font-size: 18px;
+  font-weight: 700;
+  color: #1a1a1a;
+}
+
+.close-button {
+  display: flex;
+  background: none;
+  border: none;
+  padding: 4px;
+  color: #666;
+  font-size: 18px;
+}
+
+.menu-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.menu-item {
+  display: flex;
+  padding: 16px 20px;
+
+  &:active {
+    background-color: #f0f0f0;
+  }
+
+  &.disabled {
+    color: #bbb;
+
+    &:active {
+      background-color: transparent;
+    }
+  }
+}
+
+.menu-item-label {
+  flex: 1;
+}
+
+.check-icon {
+  width: 20px;
+  color: #1890ff;
+  font-size: 14px;
+}
+
+.arrow-icon {
+  color: #bbb;
+}
+
+.divider {
+  height: 1px;
+  margin: 0;
+  background-color: #e8e8e8;
+  border: none;
+}
