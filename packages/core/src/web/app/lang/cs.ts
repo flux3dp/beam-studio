@@ -30,7 +30,9 @@ const lang: ILang = {
     error_tip1: '1. Je kresba umístěna na materiálu správně?',
     error_tip2: '2. Jsou obrysy materiálu dostatečně jasné pro rozpoznání?',
     failed_to_find_contour: 'Nepodařilo se najít žádné obrysy pro automatické přizpůsobení',
-    learn_more: 'Zobrazit návod.',
+    how_to_improve_accuracy: 'Jak zlepšit přesnost detekce?',
+    how_to_improve_accuracy_url: 'https://support.flux3dp.com/hc/en-us/articles/15792349372687',
+    learn_more: 'Zobrazit návod',
     learn_more_url: 'https://support.flux3dp.com/hc/en-us/articles/10273384373775',
     offset_x: 'Posun X',
     offset_y: 'Posun Y',
@@ -909,6 +911,7 @@ const lang: ILang = {
           text_align_justify: 'Do bloku',
           text_align_left: 'Vlevo',
           text_align_right: 'Vpravo',
+          text_content_placeholder: 'Zadejte text',
           text_infill: 'Výplň textu',
           threshold: 'Hranice jasu',
           threshold_short: 'Hranice',
@@ -948,10 +951,6 @@ const lang: ILang = {
       image: 'Obrázek',
       text: 'Text',
       use: 'Import SVG',
-    },
-    time_est_button: {
-      calculate: 'Odhadnout délku',
-      estimate_time: 'Odhadovaná délka:',
     },
     tool_panels: {
       _nest: {
@@ -1235,6 +1234,13 @@ const lang: ILang = {
     title: 'Záloha dat z kamery',
     upload_success: 'Data z kamery úspěšně nahrána.',
     uploading_data: 'Nahrávám data...',
+  },
+  canvas_control: {
+    calculate: 'Odhadnout délku',
+    canvas_zoom: 'Zoom',
+    exposure: 'Expozice',
+    not_supported: 'Nepodporováno',
+    opacity: 'Průhlednost',
   },
   caption: {
     connectionTimeout: 'Vypršel časový limit připojení',
@@ -1623,6 +1629,24 @@ const lang: ILang = {
     uv_print: 'UV Tisk',
     uv_varnish: 'Lak',
     uv_white_ink: 'Bílý inkoust',
+  },
+  machine_linking: {
+    continue: 'Pokračovat',
+    i_have_read: 'Přečetl/a jsem',
+    input_birthday_to_link: 'Zadejte datum narození pro dokončení propojení zařízení',
+    input_birthday_to_link_note: '*Slouží k ověření, zda váš věk splňuje požadavky na způsobilost',
+    link_failed: 'Propojení se nezdařilo.',
+    link_failed_already_linked: 'Toto zařízení je aktuálně propojeno s jiným FLUX ID. Můžete je dále používat nebo propojit se svým účtem.',
+    link_failed_cannot_set_secret: 'Nelze uložit informace o propojení do zařízení. Zkontrolujte připojení mezi počítačem a zařízením.',
+    link_failed_under_age: 'V současné době nesplňujete podmínky pro používání této služby a nemůžete dokončit propojení zařízení.',
+    link_machine: 'Propojit FLUX ID',
+    link_machine_to_account: 'Připojeno k %(name)s. Chcete toto zařízení propojit se svým účtem?',
+    link_success: 'Propojení úspěšné.',
+    link_to_my_flux_id: 'Propojit s mým FLUX ID',
+    privacy_policy: 'Zásady ochrany osobních údajů',
+    privacy_policy_link: 'https://flux3dp.com/privacy/',
+    process_linking: 'Propojování…',
+    use_without_linking: 'Použít bez propojení',
   },
   machine_status: {
     '-17': 'IO mód kazety',
@@ -2196,7 +2220,6 @@ const lang: ILang = {
     no_vcredist: 'Nainstalujte prosím Visual C++ Redistributable 2015<br/> Ke stažení na flux3dp.com',
     no_webgl: 'WebGL není podporován. Použijte prosím jiná zařízení.',
   },
-
   tab_panel: {
     apply: 'Použít záložky',
     gap: 'Mezera',

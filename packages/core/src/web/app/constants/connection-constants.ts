@@ -11,5 +11,6 @@ export enum ConnectionError {
 
 export interface SelectionResult {
   error?: ConnectionError;
+  isDeviceChanged?: boolean;
   success: boolean;
 }

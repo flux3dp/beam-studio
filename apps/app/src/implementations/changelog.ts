@@ -1,36 +1,43 @@
 import type { IChangeLog } from '@core/interfaces/IChangeLog';
 
-// 2.6.6 beta
+// 2.6.7 beta
 const CHANGES_TW = {
-  added: ['新增 拼圖產生器。', '新增 可拖曳的佈局面板。', '新增 HEXA RF 高品質雕刻模式。'],
+  added: [
+    '新增 文字方塊工具。',
+    '新增 機器與文件設定中新增 Promark (Safe+) 機型。',
+    '新增 HEXA RF 相機支援精細預覽模式。',
+  ],
   changed: [
-    '調整物件屬性功能分類。',
-    '統一 UI 字體並微調介面排版。',
-    '更新 Beamy AI 客服按鈕圖示。',
-    '移除不支援遠端自動對焦機型的 AF 按鈕入口。',
+    '重新命名雕刻解析度選項。',
+    '改善路徑工作執行順序。',
+    '調整自動對位功能說明引導。',
+    '更換相機預覽拍照按鈕圖示。',
+    '調整 HEXA RF 雷射加速演算法。',
+    '調整 beamo II 相機預覽時重新歸零機制。',
   ],
   fixed: [
-    '修正元素功能搜尋列無法輸入空格的問題。',
-    '修正 Swiftray 算圖對白色與透明物件的容許值。',
-    '修正 Promark 門檢提示偶爾未顯示的問題。',
-    '修正 Promark 第一圖層功率為 0 時，初始化狀態未即時切換為「工作中」的問題。',
-    '修正 HEXA RF 門蓋相機曝光調整功能問題。',
+    '修正 路徑預覽顯示異常問題。',
+    '修正 自動儲存功能異常。',
+    '修正 Promark 啟用擺動功能時，可能從中心點開始出光的問題。',
+    '修正 拼圖生成器於視窗縮放時介面錯位問題。',
+    '修正 列印圖層中的向量物件於縮放時，路徑邊框預覽粗細異常問題。',
   ],
 };
 
 const CHANGES_EN = {
-  added: ['Added Puzzle Generator.', 'Added a draggable layout panel in the UI.'],
+  added: ['Added Text Box tool.', 'Added Promark (Safe+) model to Machine Setup and Document settings.'],
   changed: [
-    'Reorganized object property categories.',
-    'Unified UI fonts and refined interface layout.',
-    'Updated Beamy AI support button icon.',
-    'Removed AF button entry on devices that do not support remote autofocus.',
+    'Renamed engraving resolution options.',
+    'Optimized path execution order.',
+    'Updated guidance for Auto Fit.',
+    'Updated camera preview capture button icon.',
   ],
   fixed: [
-    'Fixed issue where spaces could not be entered in the Elements search bar.',
-    'Improved tolerance for white and transparent objects in Swiftray rendering.',
-    'Fixed issue where the Promark door warning did not always appear.',
-    'Fixed issue where the job state did not switch to “Working” when the first layer power was set to 0 on Promark',
+    'Fixed an issue with incorrect Path Preview display.',
+    'Fixed an issue with Auto-save functionality.',
+    'Fixed an issue where Promark may start firing from the center when Wobble mode is enabled.',
+    'Fixed UI misalignment in Puzzle Generator when resizing the window.',
+    'Fixed an issue where path outline thickness of vector objects in print layers appears inconsistent when scaling',
   ],
 };
 

@@ -4,12 +4,7 @@ describe('select tools', () => {
   });
 
   function selectAndVerifyTool(tool, clickPosition, text) {
-    if (tool === 'Text') {
-      cy.clickToolGroupBtn('Text', 'Text');
-    } else {
-      cy.clickToolBtn(tool);
-    }
-
+    cy.clickToolBtn(tool);
     cy.get('svg#svgcontent').realClick(clickPosition);
 
     if (text) cy.inputText(text);

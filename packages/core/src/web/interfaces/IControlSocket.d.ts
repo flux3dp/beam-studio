@@ -5,7 +5,7 @@ import type { SwiftrayClient } from '@core/helpers/api/swiftray-client';
 
 import type { RawChipSettings } from './Cartridge';
 import type { FisheyeCameraParameters, RotationParameters3D } from './FisheyePreview';
-import type { FirmwareType, IDeviceDetailInfo, IReport } from './IDevice';
+import type { FirmwareType, IDeviceDetailInfo, IDeviceInfoFlux, IReport } from './IDevice';
 import type { ButtonState, Field, LensCorrection } from './Promark';
 import type { WrappedWebSocket } from './WebSocket';
 
@@ -13,27 +13,25 @@ export type Mode = '' | 'cartridge_io' | 'raw' | 'red_laser_measure' | 'z_speed_
 
 interface IControlSocket extends EventEmitter {
   abort(): Promise<unknown>;
-
   addTask<T>(taskFunction: (...args) => T, ...args: unknown[]): Promise<T>;
   cartridgeIOJsonRpcReq?: (
     method: string,
     params: unknown,
   ) => Promise<{ data: { result: { hash: string; sign: string } }; status: string }>;
   checkButton: () => Promise<ButtonState>;
-
   checkTaskAlive?: () => Promise<boolean>;
   connect(): Promise<void>;
   connection: null | SwiftrayClient | WrappedWebSocket;
   deleteDeviceSetting(name: string): Promise<unknown>;
   deleteFile(fileNameWithPath: string): Promise<unknown>;
   deviceDetailInfo(): Promise<IDeviceDetailInfo>;
+  deviceInfoFlux: () => Promise<IDeviceInfoFlux>;
   downloadFile(fileNameWithPath: string): Promise<[string, Blob]>;
   downloadLog(logName: string): Promise<Array<Blob | string>>;
   endSubTask(): Promise<void>;
   enterRawMode(): Promise<unknown>;
   enterSubTask(mode: Mode, timeout?: number): Promise<void>;
   fetchAutoLevelingData?: (dataType: 'bottom_cover' | 'hexa_platform' | 'offset') => Promise<{ [key: string]: number }>;
-  // method not supported by SwiftrayClient
   fetchCameraCalibrateImage?: (name?: string) => Promise<Blob>;
   fetchFisheye3DRotation?: () => Promise<RotationParameters3D>;
   fetchFisheyeParams?: () => Promise<FisheyeCameraParameters>;

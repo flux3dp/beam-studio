@@ -1,0 +1,65 @@
+.container {
+  display: flex;
+  height: 40px;
+  padding: 0px 16px;
+  align-items: center;
+  gap: 12px;
+  border-radius: 60px;
+  background-color: rgba(0, 0, 0, 0.6);
+  color: #ffffff;
+
+  .icon {
+    font-size: 22px;
+  }
+
+  @media screen and (max-width: 600px) {
+    height: 30px;
+
+    .icon {
+      font-size: 18px;
+    }
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 16px;
+  background-color: rgba(255, 255, 255, 0.3);
+}
+
+.triggerArea {
+  height: 100%;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  cursor: pointer;
+}
+
+.slider {
+  width: 120px;
+}
+
+.value {
+  width: 32px;
+  font-size: 14px;
+  font-weight: 700;
+  text-align: right;
+}
+
+.zoomContent {
+  position: static;
+  bottom: auto;
+  left: auto;
+  height: auto;
+  font-size: 14px;
+  align-items: center;
+
+  img {
+    filter: invert(1);
+  }
+
+  .ratio {
+    color: #ffffff;
+    opacity: 1;
+  }
+}

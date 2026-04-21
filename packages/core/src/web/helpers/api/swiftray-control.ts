@@ -6,7 +6,7 @@ import type { RawChipSettings } from '@core/interfaces/Cartridge';
 import type { FisheyeCameraParameters, RotationParameters3D } from '@core/interfaces/FisheyePreview';
 import type { Mode, TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
-import type { FirmwareType, IDeviceDetailInfo } from '@core/interfaces/IDevice';
+import type { FirmwareType, IDeviceDetailInfo, IDeviceInfoFlux } from '@core/interfaces/IDevice';
 import type { Field, LensCorrection } from '@core/interfaces/Promark';
 
 import type { SwiftrayClient } from './swiftray-client';
@@ -418,6 +418,10 @@ class SwiftrayControl extends EventEmitter implements IControlSocket {
     console.warn('SwiftrayControl.deviceDetailInfo is not implemented well in swiftray');
 
     return this.sc.deviceInfo();
+  };
+
+  deviceInfoFlux = async (): Promise<IDeviceInfoFlux> => {
+    throw new Error('Method not implemented.');
   };
 
   getPreview = async () => {

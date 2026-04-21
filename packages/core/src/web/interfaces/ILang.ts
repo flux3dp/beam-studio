@@ -30,6 +30,8 @@ export interface ILang {
     error_tip1: string;
     error_tip2: string;
     failed_to_find_contour: string;
+    how_to_improve_accuracy: string;
+    how_to_improve_accuracy_url: string;
     learn_more: string;
     learn_more_url: string;
     offset_x: string;
@@ -909,6 +911,7 @@ export interface ILang {
           text_align_justify: string;
           text_align_left: string;
           text_align_right: string;
+          text_content_placeholder: string;
           text_infill: string;
           threshold: string;
           threshold_short: string;
@@ -948,10 +951,6 @@ export interface ILang {
       image: string;
       text: string;
       use: string;
-    };
-    time_est_button: {
-      calculate: string;
-      estimate_time: string;
     };
     tool_panels: {
       _nest: {
@@ -1237,6 +1236,13 @@ export interface ILang {
     title: string;
     upload_success: string;
     uploading_data: string;
+  };
+  canvas_control: {
+    calculate: string;
+    canvas_zoom: string;
+    exposure: string;
+    not_supported: string;
+    opacity: string;
   };
   caption: {
     connectionTimeout: string;
@@ -1622,6 +1628,24 @@ export interface ILang {
     uv_print: string;
     uv_varnish: string;
     uv_white_ink: string;
+  };
+  machine_linking: {
+    continue: string;
+    i_have_read: string;
+    input_birthday_to_link: string;
+    input_birthday_to_link_note: string;
+    link_failed: string;
+    link_failed_already_linked: string;
+    link_failed_cannot_set_secret: string;
+    link_failed_under_age: string;
+    link_machine: string;
+    link_machine_to_account: string;
+    link_success: string;
+    link_to_my_flux_id: string;
+    privacy_policy: string;
+    privacy_policy_link: string;
+    process_linking: string;
+    use_without_linking: string;
   };
   machine_status: {
     '-17': string;

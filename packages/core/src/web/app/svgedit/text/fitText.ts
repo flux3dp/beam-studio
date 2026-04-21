@@ -216,6 +216,8 @@ export const setFitTextBBox = (
     };
   }
 
+  // Set size for correct text action cursor size
+  textActions.setFontSize(newFontSize);
   renderText(text);
 
   return cmd;

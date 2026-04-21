@@ -642,8 +642,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           {renderFontFamilyBlock()}
           {renderFontStyleBlock()}
           <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
-          {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
           {isAllFitText && <FitTextAlignBlock textElements={textElements} />}
+          {isTextPath ? renderTextPathOptions() : renderMultiLineTextOptions()}
         </>
       ) : (
         <ConfigProvider theme={selectTheme}>
@@ -654,8 +654,8 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
               <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />
               {renderFontStyleBlock()}
             </div>
-            {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
             {isAllFitText && <div className={styles.row}>{<FitTextAlignBlock textElements={textElements} />}</div>}
+            {isTextPath ? renderTextPathOptions() : <div className={styles.row}>{renderMultiLineTextOptions()}</div>}
             {!isTextPath && showVariableText && (
               <VariableTextBlock elems={textElements} id={configs.id.value} withDivider />
             )}

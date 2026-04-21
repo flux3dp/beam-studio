@@ -105,7 +105,6 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       })}
       <LeftPanelButtonGroup
         active={activeButton === 'Text' || activeButton === 'FitText'}
-        icon={<LeftPanelIcons.Text />}
         id="left-Text"
         options={[
           {
@@ -116,10 +115,10 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
               svgCanvas?.clearSelection();
               setMouseMode('text');
             },
-            title: `${t.label.text} (T)`,
+            title: t.label.text,
           },
           {
-            icon: <LeftPanelIcons.Text />,
+            icon: <LeftPanelIcons.TextBox />,
             id: 'FitText',
             label: t.label.fit_text,
             onClick: () => {
@@ -128,7 +127,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
             },
           },
         ]}
-        title={t.label.text}
+        shortcut="T"
       />
       {renderToolButton({
         icon: <LeftPanelIcons.Element />,

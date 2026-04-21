@@ -7,7 +7,7 @@ it('zoom in/out', () => {
   cy.get(`[class*="${zoomBlockPrefix}_container"] img[src="img/icon-minus.svg"]`).parent().should('exist');
   cy.get(`[class*="${zoomBlockPrefix}_container"] img[src="img/icon-plus.svg"]`).parent().should('exist');
 
-  let zoomRatio;
+  let zoomRatio: number;
   zoomRatioText().should(($div) => {
     zoomRatio = parseInt($div.text().replace('%', ''));
   });

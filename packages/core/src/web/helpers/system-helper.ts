@@ -9,7 +9,9 @@ export const isMobile = (): boolean => window.innerWidth < 601;
 
 export const isIpad = (): boolean => window.innerWidth <= 1024;
 
-export const isMac = (): boolean => getOS() === 'MacOS';
+const isMacCache = getOS() === 'MacOS';
+
+export const isMac = (): boolean => isMacCache;
 
 export const isIOS = (): boolean => {
   if (typeof navigator === 'undefined') return false;

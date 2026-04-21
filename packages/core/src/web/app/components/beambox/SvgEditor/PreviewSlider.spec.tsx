@@ -2,9 +2,6 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import { CanvasMode } from '@core/app/constants/canvasMode';
-import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-
 import PreviewSlider from './PreviewSlider';
 
 const mockGetCurrentDevice = jest.fn();
@@ -66,18 +63,13 @@ jest.mock('antd', () => ({
       </button>
     </div>
   ),
-  Space: ({ children, className, direction }: any) => (
+  Switch: ({ className, disabled, loading, onChange, value }: any) => (
     <div className={className}>
-      Mock Antd Space
-      <p>direction: {direction}</p>
-      {children}
-    </div>
-  ),
-  Tooltip: ({ children, title }: any) => (
-    <div>
-      Mock Antd Tooltip
-      <p>title: {title}</p>
-      {children}
+      Mock Antd Switch
+      <p>value: {String(value)}</p>
+      <button disabled={disabled || loading} onClick={() => onChange(!value)} type="button">
+        toggleSwitch
+      </button>
     </div>
   ),
 }));
@@ -87,65 +79,43 @@ describe('test PreviewSlider', () => {
     jest.clearAllMocks();
     mockIsFullArea.mockReturnValue(true);
     mockMeetRequirement.mockReturnValue(true);
-    document.body.innerHTML =
-      '<svg id="previewSvg"><image id="backgroundImage" style="pointer-events:none; opacity: 1;"/></svg>';
-    mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: false });
     mockGetExposureSettings.mockReturnValue({
       max: 10000,
       min: 50,
       step: 1,
       value: 450,
     });
-    useCanvasStore.getState().setMode(CanvasMode.Draw);
   });
 
-  it('should render correctly with preview image', async () => {
-    const { container, getByText } = render(<PreviewSlider />);
-    const imageContainer = document.getElementById('previewSvg');
-
-    expect(container).toMatchSnapshot();
-
-    fireEvent.click(getByText('onChange'));
-    expect(imageContainer).toHaveStyle({ opacity: 0.25 });
-    expect(container).toMatchSnapshot();
-  });
-
-  it('should render correctly without background image', () => {
-    document.body.innerHTML = '';
+  it('should render Not Supported when not in preview mode', () => {
+    mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: false });
 
     const { container } = render(<PreviewSlider />);
 
     expect(container).toMatchSnapshot();
   });
 
-  it('should render correctly when is previewing', () => {
-    const imageContainer = document.getElementById('previewSvg');
-
-    imageContainer.style.opacity = '0.5';
+  it('should render Not Supported when previewing non-fcodeV2 model', () => {
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'model-1' } });
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
     const { container } = render(<PreviewSlider />);
 
-    expect(imageContainer).toHaveStyle({ opacity: 1 });
     expect(container).toMatchSnapshot();
     expect(mockGetExposureSettings).not.toHaveBeenCalled();
   });
 
-  it('should render correctly when is previewing Ador', async () => {
-    const imageContainer = document.getElementById('previewSvg');
-
-    imageContainer.style.opacity = '0.5';
+  it('should render correctly when previewing Ador', async () => {
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'ado1' } });
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
-    const { container, getByText } = render(<PreviewSlider />);
+    const { container, findByText, getByText } = render(<PreviewSlider />);
 
-    expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
       expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);
     });
     expect(mockMeetRequirement).not.toHaveBeenCalled();
+    await findByText('onChange');
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));
@@ -161,22 +131,18 @@ describe('test PreviewSlider', () => {
     });
   });
 
-  it('should render correctly when is previewing BB2', async () => {
+  it('should render correctly when previewing BB2', async () => {
     mockIsFullArea.mockReturnValue(false);
-
-    const imageContainer = document.getElementById('previewSvg');
-
-    imageContainer.style.opacity = '0.5';
     mockGetCurrentDevice.mockReturnValue({ info: { model: 'fbb2' } });
     mockUseCameraPreviewStore.mockReturnValue({ isPreviewMode: true });
 
-    const { container, getByText } = render(<PreviewSlider />);
+    const { container, findByText, getByText } = render(<PreviewSlider />);
 
-    expect(imageContainer).toHaveStyle({ opacity: 1 });
     await waitFor(() => {
       expect(mockGetExposureSettings).toHaveBeenCalledTimes(1);
     });
     expect(mockMeetRequirement).toHaveBeenNthCalledWith(1, 'BB2_SEPARATE_EXPOSURE');
+    await findByText('onChange');
     expect(container).toMatchSnapshot();
 
     fireEvent.click(getByText('onChange'));

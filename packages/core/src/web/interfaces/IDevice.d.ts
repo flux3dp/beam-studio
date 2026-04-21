@@ -59,3 +59,9 @@ export interface IConfigSetting {
   step: number;
   value: number;
 }
+/** For machine linking */
+export interface IDeviceInfoFlux {
+  /** JSON string */
+  info: string;
+  signature: number;
+}

@@ -29,16 +29,24 @@ function CommonTools({ hide }: Props): React.ReactNode {
 
   return (
     <div className={styles['common-tools-container']}>
-      <div onClick={() => historyUtils.undo({ checkShortCutsScope: false })} title={t.undo}>
+      <button
+        className={styles.button}
+        onClick={() => historyUtils.undo({ checkShortCutsScope: false })}
+        title={t.undo}
+      >
         <TopBarIcons.Undo />
-      </div>
-      <div onClick={() => historyUtils.redo({ checkShortCutsScope: false })} title={t.redo}>
+      </button>
+      <button
+        className={styles.button}
+        onClick={() => historyUtils.redo({ checkShortCutsScope: false })}
+        title={t.redo}
+      >
         <TopBarIcons.Redo />
-      </div>
+      </button>
       {!isMobile && (
-        <div onClick={() => svgEditor.deleteSelected()} title={t.delete}>
+        <button className={styles.button} onClick={() => svgEditor.deleteSelected()} title={t.delete}>
           <TopBarIcons.Trash />
-        </div>
+        </button>
       )}
     </div>
   );

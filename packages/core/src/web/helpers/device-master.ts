@@ -10,6 +10,7 @@ import type { SelectionResult } from '@core/app/constants/connection-constants';
 import { ConnectionError } from '@core/app/constants/connection-constants';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { tryMachineLinking } from '@core/helpers/api/machine-linking';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import storage from '@core/implementations/storage';
 import type {
@@ -21,7 +22,13 @@ import type {
 } from '@core/interfaces/FisheyePreview';
 import type { TPromarkFramingOpt } from '@core/interfaces/IControlSocket';
 import type IControlSocket from '@core/interfaces/IControlSocket';
-import type { FirmwareType, IDeviceConnection, IDeviceDetailInfo, IDeviceInfo } from '@core/interfaces/IDevice';
+import type {
+  FirmwareType,
+  IDeviceConnection,
+  IDeviceDetailInfo,
+  IDeviceInfo,
+  IDeviceInfoFlux,
+} from '@core/interfaces/IDevice';
 import type { Field, GalvoParameters } from '@core/interfaces/Promark';
 
 import Camera from './api/camera';
@@ -307,7 +314,14 @@ class DeviceMaster {
       return this.selectDeviceWithSwiftray(deviceInfo);
     }
 
-    return this.selectDeviceWithGhost(deviceInfo);
+    const res = await this.selectDeviceWithGhost(deviceInfo);
+
+    // Check not in any sub-mode
+    if (res.success && res.isDeviceChanged && !this.currentDevice?.control?.getMode()) {
+      await tryMachineLinking(deviceInfo);
+    }
+
+    return res;
   }
 
   async selectDeviceWithGhost(deviceInfo: IDeviceInfo): Promise<SelectionResult> {
@@ -317,10 +331,12 @@ class DeviceMaster {
     }
 
     const { uuid } = deviceInfo;
+    let isDeviceChanged = false;
 
     // kill existing camera connection
     if (this.currentDevice?.info?.uuid !== uuid) {
       this.disconnectCamera();
+      isDeviceChanged = true;
     }
 
     const device: IDeviceConnection = this.getDeviceByUUID(uuid);
@@ -345,7 +361,7 @@ class DeviceMaster {
         this.currentDevice = device;
         Progress.popById('select-device');
 
-        return { success: true };
+        return { isDeviceChanged, success: true };
       } catch {
         await device.control?.killSelf();
       }
@@ -361,6 +377,7 @@ class DeviceMaster {
       Progress.popById('select-device');
 
       return {
+        isDeviceChanged,
         success: true,
       };
     } catch (e) {
@@ -381,7 +398,7 @@ class DeviceMaster {
 
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
       if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
-        return await this.runAuthProcess(uuid, device, deviceInfo);
+        return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
       this.popConnectionError(uuid, errorCode as ConnectionError);
@@ -402,10 +419,12 @@ class DeviceMaster {
     }
 
     const { uuid } = deviceInfo;
+    let isDeviceChanged = false;
 
     // kill existing camera connection
     if (this.currentDevice?.info?.uuid !== uuid) {
       this.disconnectCamera();
+      isDeviceChanged = true;
     }
 
     const device: IDeviceConnection = this.getDeviceByUUID(uuid);
@@ -480,7 +499,7 @@ class DeviceMaster {
 
       Progress.popById('select-device');
 
-      return { success: true };
+      return { isDeviceChanged, success: true };
     } catch (e) {
       let error = e as any;
 
@@ -499,7 +518,7 @@ class DeviceMaster {
 
       // AUTH_FAILED seems to not be used by firmware and fluxghost anymore. Keep it just in case.
       if ([ConnectionError.AUTH_ERROR, ConnectionError.AUTH_FAILED].includes(errorCode as ConnectionError)) {
-        return await this.runAuthProcess(uuid, device, deviceInfo);
+        return { ...(await this.runAuthProcess(uuid, device, deviceInfo)), isDeviceChanged };
       }
 
       this.popConnectionError(uuid, errorCode as ConnectionError);
@@ -1469,6 +1488,12 @@ class DeviceMaster {
     const controlSocket = await this.getControl();
 
     return controlSocket.addTask(controlSocket.deviceDetailInfo);
+  }
+
+  async getDeviceInfoFlux(): Promise<IDeviceInfoFlux> {
+    const controlSocket = await this.getControl();
+
+    return controlSocket.addTask(controlSocket.deviceInfoFlux);
   }
 
   async getReport() {

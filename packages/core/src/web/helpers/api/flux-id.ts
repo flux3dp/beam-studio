@@ -24,6 +24,7 @@ export interface ResponseWithError<T = any, D = any> extends AxiosResponse<T, D>
 
 export const FLUXID_HOST = 'https://id.flux3dp.com';
 
+const CSRF_TOKEN_NAME = 'csrftoken';
 const OAUTH_REDIRECT_URI = `${FLUXID_HOST}/api/beam-studio/auth`;
 const FB_OAUTH_URI = 'https://www.facebook.com/v10.0/dialog/oauth';
 const FB_APP_ID = '1071530792957137';
@@ -329,7 +330,7 @@ export const init = async (): Promise<void> => {
   if (!isWeb()) {
     // Set csrf cookie for electron only
     cookies.on('changed', (_event: any, cookie: Cookie, _cause: string, removed: boolean) => {
-      if (cookie.domain === FLUXID_DOMAIN && cookie.name === 'csrftoken' && !removed) {
+      if (cookie.domain === FLUXID_DOMAIN && cookie.name === CSRF_TOKEN_NAME && !removed) {
         setHeaders(cookie.value);
       }
     });
@@ -350,7 +351,7 @@ export const init = async (): Promise<void> => {
     // Init csrftoken for electron
     const csrfcookies = await cookies.get({
       domain: FLUXID_DOMAIN,
-      name: 'csrftoken',
+      name: CSRF_TOKEN_NAME,
     });
 
     if (csrfcookies.length > 0) {
@@ -499,7 +500,7 @@ export const getNPIconByID = async (id: string): Promise<null | string> => {
 
 export const getDefaultHeader = () => {
   if (isWeb()) {
-    const csrfToken = cookies.getBrowserCookie('csrftoken');
+    const csrfToken = cookies.getBrowserCookie(CSRF_TOKEN_NAME);
 
     return {
       'X-CSRFToken': csrfToken,

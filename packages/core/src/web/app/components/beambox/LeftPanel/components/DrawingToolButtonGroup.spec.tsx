@@ -43,8 +43,8 @@ jest.mock('@core/app/stores/canvas/canvasStore', () => ({
 }));
 
 jest.mock('./LeftPanelButtonGroup', () => {
-  const MockLeftPanelButtonGroup = ({ id, options, title }: any) => (
-    <div data-testid="button-group" id={id} title={title}>
+  const MockLeftPanelButtonGroup = ({ id, options, shortcut }: any) => (
+    <div data-testid="button-group" id={id} title={`${options[0].label} (${shortcut})`}>
       {options.map((opt: any) => (
         <button key={opt.id} onClick={opt.onClick} title={opt.label}>
           {opt.label}

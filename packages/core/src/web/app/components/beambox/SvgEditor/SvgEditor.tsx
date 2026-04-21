@@ -4,35 +4,32 @@ import { useEffect } from 'react';
 
 import classNames from 'classnames';
 
-import constant from '@core/app/actions/beambox/constant';
 import svgEditor from '@core/app/actions/beambox/svg-editor';
 import AiGenerate from '@core/app/components/AiGenerate';
 import MobileAiGenerate from '@core/app/components/AiGenerate/mobile/MobileAiGenerate';
 import PathPreview from '@core/app/components/beambox/PathPreview';
 import Chat from '@core/app/components/Chat';
-import ZoomBlock from '@core/app/components/common/ZoomBlock';
 import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import setupTextInputEvents from '@core/app/svgedit/text/setupTextInputEvents';
-import workareaManager from '@core/app/svgedit/workarea';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
+import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
 import { useIsMobile } from '@core/helpers/system-helper';
 
 import Generators from '../../Generators';
 import MobileGenerators from '../../Generators/mobile/MobileGenerators';
 
 import Banner from './Banner';
+import CanvasControl from './CanvasControl';
 import DpiInfo from './DpiInfo';
 import ElementTitle from './ElementTitle';
 import PreviewFloatingBar from './PreviewFloatingBar';
-import PreviewSlider from './PreviewSlider';
 import Ruler from './Ruler';
 import styles from './SvgEditor.module.scss';
-import TimeEstimationButton from './TimeEstimationButton';
 import Workarea from './Workarea';
 
 const SvgEditor = (): ReactNode => {
@@ -44,6 +41,7 @@ const SvgEditor = (): ReactNode => {
     if (window.$) {
       $(svgEditor.init);
       setupTextInputEvents();
+      setupSelectAllShortCut();
 
       if (window.importingFile) {
         importFileInCurrentTab(window.importingFile);
@@ -79,17 +77,12 @@ const SvgEditor = (): ReactNode => {
         {mode !== CanvasMode.PathPreview && (
           <>
             {!isMobile && <PreviewFloatingBar />}
-            <ZoomBlock
-              resetView={workareaManager.resetView}
-              setZoom={(zoom) => workareaManager.zoom(zoom / constant.dpmm)}
-            />
             <DpiInfo />
             <div className={styles['bottom-right']}>
               <div className={styles.controls}>
                 <TimeEstimationButtonContextProvider>
-                  <TimeEstimationButton />
+                  <CanvasControl />
                 </TimeEstimationButtonContextProvider>
-                <PreviewSlider />
               </div>
               {isMobile && <PreviewFloatingBar />}
             </div>
