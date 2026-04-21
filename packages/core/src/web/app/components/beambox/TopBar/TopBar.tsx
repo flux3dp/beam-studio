@@ -1,4 +1,4 @@
-import React, { memo, use, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, { memo, use, useEffect, useMemo, useRef, useState } from 'react';
 
 import classNames from 'classnames';
 import { pipe } from 'remeda';
@@ -20,7 +20,7 @@ import storage from '@core/implementations/storage';
 import AutoFocusButton from './AutoFocusButton';
 import CommonTools from './CommonTools';
 import DocumentButton from './DocumentButton';
-import DrawerMenu, { DrawerMenuTrigger } from './DrawerMenu';
+import DrawerMenu from './DrawerMenu';
 import FileName from './FileName';
 import FrameButton from './FrameButton';
 import GoButton from './GoButton';
@@ -44,9 +44,6 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
   const [hasDiscoveredMachine, setHasDiscoveredMachine] = useState(false);
   const defaultDeviceUUID = useRef<null | string>(storage.get('selected-device') ?? null);
   const [isFullScreen, setIsFullScreen] = useState(false);
-  const [isDrawerMenuOpen, setIsDrawerMenuOpen] = useState(false);
-  const openDrawerMenu = useCallback(() => setIsDrawerMenuOpen(true), []);
-  const closeDrawerMenu = useCallback(() => setIsDrawerMenuOpen(false), []);
 
   useEffect(() => {
     const onFullScreenChange = (_: unknown, isFullScreen: boolean) => setIsFullScreen(isFullScreen);
@@ -85,7 +82,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         })}
         onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
-        {isIpad && <DrawerMenuTrigger onClick={openDrawerMenu} />}
+        {isWeb && isIpad && <DrawerMenu email={currentUser?.email} />}
         <div
           className={classNames(styles.controls, styles.left, {
             [styles.space]: (isDragRegion && !isFullScreen) || isWeb,
@@ -118,7 +115,6 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
           <Menu email={currentUser?.email} />
         </div>
       )}
-      {isWeb && isIpad && <DrawerMenu email={currentUser?.email} isOpen={isDrawerMenuOpen} onClose={closeDrawerMenu} />}
     </>
   );
 };

@@ -7,11 +7,7 @@ import os from '@core/implementations/os';
 
 export const isMobile = (): boolean => window.innerWidth < 601;
 
-export const isIpad = (): boolean => {
-  const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
-
-  return isTouchDevice && window.innerWidth <= 1024;
-};
+export const isIpad = (): boolean => window.innerWidth <= 1024;
 
 const isMacCache = getOS() === 'MacOS';
 

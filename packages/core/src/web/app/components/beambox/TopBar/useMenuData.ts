@@ -20,6 +20,7 @@ export type MenuNodeType = 'checkbox' | 'divider' | 'item' | 'submenu';
 export interface MenuNode {
   checked?: boolean;
   children?: MenuNode[];
+  className?: string;
   device?: IDeviceInfo;
   disabled?: boolean;
   hotkey?: MenuItemKey;
@@ -470,9 +471,14 @@ const useMenuData = (email?: string): MenuNode[] => {
 
   const viewMenu: MenuNode = {
     children: [
-      { hotkey: 'zoom_in', id: 'ZOOM_IN', type: 'item' },
-      { hotkey: 'zoom_out', id: 'ZOOM_OUT', type: 'item' },
-      { id: 'FITS_TO_WINDOW', label: menuCms.fit_to_window, type: 'item' },
+      { className: 'szh-menu__item--type-checkbox', hotkey: 'zoom_in', id: 'ZOOM_IN', type: 'item' },
+      { className: 'szh-menu__item--type-checkbox', hotkey: 'zoom_out', id: 'ZOOM_OUT', type: 'item' },
+      {
+        className: 'szh-menu__item--type-checkbox',
+        id: 'FITS_TO_WINDOW',
+        label: menuCms.fit_to_window,
+        type: 'item',
+      },
       { checked: shouldZoomWithWindow, id: 'ZOOM_WITH_WINDOW', label: menuCms.zoom_with_window, type: 'checkbox' },
       divider,
       { checked: shouldShowGrids, id: 'SHOW_GRIDS', label: menuCms.show_grids, type: 'checkbox' },
