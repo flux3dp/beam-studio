@@ -4,17 +4,7 @@ import localeHelper from './locale-helper';
 
 const enableAllMachines = window?.localStorage?.getItem('enableAllMachines') === 'true';
 
-export const checkFpm1 = (): boolean =>
-  (localeHelper.isTwOrHk ||
-    localeHelper.isMy ||
-    localeHelper.isPs ||
-    localeHelper.isJp ||
-    localeHelper.isKr ||
-    localeHelper.isAu ||
-    localeHelper.isAr ||
-    enableAllMachines ||
-    isDev()) &&
-  !isWeb();
+export const checkFpm1 = (): boolean => !isWeb();
 export const checkHxRf = (): boolean => enableAllMachines || isDev() || localeHelper.isTwOrHk;
 export const checkBM2 = (): boolean => enableAllMachines || isDev() || localeHelper.isTwOrHk;
 // TODO: Can be removed after we move all testing machine to fuv1
