@@ -118,7 +118,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
           <Menu email={currentUser?.email} />
         </div>
       )}
-      {isIpad && <DrawerMenu email={currentUser?.email} isOpen={isDrawerMenuOpen} onClose={closeDrawerMenu} />}
+      {isWeb && isIpad && <DrawerMenu email={currentUser?.email} isOpen={isDrawerMenuOpen} onClose={closeDrawerMenu} />}
     </>
   );
 };

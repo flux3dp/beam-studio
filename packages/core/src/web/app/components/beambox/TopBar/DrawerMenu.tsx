@@ -1,4 +1,4 @@
-import React, { useRef, useState } from 'react';
+import React, { useMemo, useRef, useState } from 'react';
 
 import { CheckOutlined, CloseOutlined, LeftOutlined, RightOutlined } from '@ant-design/icons';
 import { Drawer } from 'antd';
@@ -19,7 +19,7 @@ interface TriggerProps {
 
 export function DrawerMenuTrigger({ onClick }: TriggerProps): React.JSX.Element {
   return (
-    <button className={styles.trigger} onClick={onClick} type="button">
+    <button className={styles.trigger} data-testid="drawer-menu-trigger" onClick={onClick} type="button">
       <img className={styles['trigger-logo']} src="img/beam-studio-v2.svg" />
       <span className={styles['trigger-hamburger']}>
         <span />
@@ -42,11 +42,27 @@ export default function DrawerMenu({ email, isOpen, onClose }: Props): React.JSX
   const menuData = useMenuData(email);
   const menuCms = useI18n().topbar.menu;
   // Navigation stack: each entry is { title, nodes }
-  const [navStack, setNavStack] = useState<Array<{ nodes: MenuNode[]; title: string }>>([]);
+  // const [navStack, setNavStack] = useState<Array<{ nodes: MenuNode[]; title: string }>>([]);
+  const [navStack, setNavStack] = useState<number[]>([]);
   const pendingAction = useRef<null | { device?: IDeviceInfo; id: string }>(null);
 
-  const currentTitle = navStack.length > 0 ? navStack[navStack.length - 1].title : ROOT_TITLE;
-  const currentNodes = navStack.length > 0 ? navStack[navStack.length - 1].nodes : menuData;
+  const { currentNodes, currentTitle } = useMemo(() => {
+    let nodes = menuData;
+    let title = ROOT_TITLE;
+
+    for (const index of navStack) {
+      const node = nodes[index];
+
+      if (!node || node.type !== 'submenu' || !node.children) {
+        break;
+      }
+
+      title = node.label ?? title;
+      nodes = node.children;
+    }
+
+    return { currentNodes: nodes, currentTitle: title };
+  }, [menuData, navStack]);
 
   const handleAfterOpenChange = (open: boolean) => {
     if (!open) {
@@ -70,11 +86,11 @@ export default function DrawerMenu({ email, isOpen, onClose }: Props): React.JSX
     setNavStack((prev) => prev.slice(0, -1));
   };
 
-  const handleNodeClick = (node: MenuNode) => {
+  const handleNodeClick = (node: MenuNode, index: number) => {
     if (node.disabled) return;
 
     if (node.type === 'submenu' && node.children) {
-      setNavStack((prev) => [...prev, { nodes: node.children!, title: node.label ?? '' }]);
+      setNavStack((prev) => [...prev, index]);
 
       return;
     }
@@ -141,7 +157,7 @@ export default function DrawerMenu({ email, isOpen, onClose }: Props): React.JSX
             <li
               className={`${styles['menu-item']}${node.disabled ? ` ${styles.disabled}` : ''}`}
               key={node.id ?? `item-${index}`}
-              onClick={() => handleNodeClick(node)}
+              onClick={() => handleNodeClick(node, index)}
             >
               <span className={styles['menu-item-label']}>
                 {isCheckbox && <span className={styles['check-icon']}>{node.checked ? <CheckOutlined /> : null}</span>}
