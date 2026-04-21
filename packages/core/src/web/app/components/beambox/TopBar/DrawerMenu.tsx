@@ -4,6 +4,8 @@ import { CheckOutlined, CloseOutlined, LeftOutlined, RightOutlined } from '@ant-
 import { Drawer } from 'antd';
 
 import { MenuEvents } from '@core/app/constants/ipcEvents';
+import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import isWeb from '@core/helpers/is-web';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import communicator from '@core/implementations/communicator';
@@ -70,14 +72,20 @@ export default function DrawerMenu({ email, isOpen, onClose }: Props): React.JSX
 
       if (pendingAction.current) {
         const { device, id } = pendingAction.current;
-
-        pendingAction.current = null;
-        communicator.send(MenuEvents.MenuClick, {
+        const payload = {
           id,
           machineName: device?.name,
           serial: device?.serial,
           uuid: device?.uuid,
-        });
+        };
+
+        pendingAction.current = null;
+
+        if (isWeb()) {
+          eventEmitterFactory.createEventEmitter('top-bar-menu').emit(MenuEvents.MenuClick, null, payload);
+        } else {
+          communicator.send(MenuEvents.MenuClick, payload);
+        }
       }
     }
   };
