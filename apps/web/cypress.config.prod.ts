@@ -22,6 +22,4 @@ export default defineConfig({
     baseUrl: 'http://studio.flux3dp.com',
     specPattern: 'cypress/e2e/**/*.{js,jsx,ts,tsx}',
   },
-  viewportWidth: 1280,
-  viewportHeight: 800,
 })

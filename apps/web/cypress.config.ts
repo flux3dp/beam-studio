@@ -44,6 +44,4 @@ export default defineConfig({
   pageLoadTimeout: 120000, // 2 minutes for slow initial page loads
   experimentalMemoryManagement: true,
   numTestsKeptInMemory: 30,
-  viewportWidth: 1280,
-  viewportHeight: 800,
 });
