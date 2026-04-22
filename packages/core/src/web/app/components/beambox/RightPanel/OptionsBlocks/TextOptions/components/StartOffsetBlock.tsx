@@ -2,7 +2,7 @@ import React from 'react';
 
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import styles from '@core/app/components/beambox/RightPanel/OptionsPanel.module.scss';
-import { useIsMobile } from '@core/helpers/system-helper';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsInput from '../../OptionsInput';

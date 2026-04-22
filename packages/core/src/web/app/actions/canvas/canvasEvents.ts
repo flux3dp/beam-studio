@@ -1,4 +1,5 @@
 import BeamboxGlobalInteraction from '@core/app/actions/beambox/beambox-global-interaction';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 
 const canvasEventEmitter = eventEmitterFactory.createEventEmitter('canvas');
@@ -11,7 +12,7 @@ export const setSelectedElement = (elem: Element | null): void => {
     BeamboxGlobalInteraction.onObjectFocus([elem]);
   }
 
-  canvasEventEmitter.emit('SET_SELECTED_ELEMENT', elem);
+  useSelectedElementStore.setState({ selectedElement: elem });
 };
 
 export const addImage = (): void => {

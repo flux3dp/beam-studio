@@ -18,12 +18,12 @@ import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import historyUtils from '@core/app/svgedit/history/utils';
 import createNewText from '@core/app/svgedit/text/createNewText';
 import workareaManager from '@core/app/svgedit/workarea';
 import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import { showSettingsModal } from '../settings/modal/SettingsModal';

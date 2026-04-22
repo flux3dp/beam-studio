@@ -4,7 +4,7 @@ import { Progress as AntdProgress, Modal } from 'antd';
 
 import Tips from '@core/app/components/dialogs/Tips';
 import { AlertProgressContext } from '@core/app/contexts/AlertProgressContext';
-import { useIsMobile } from '@core/helpers/system-helper';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 import type { IProgressDialog } from '@core/interfaces/IProgress';
 

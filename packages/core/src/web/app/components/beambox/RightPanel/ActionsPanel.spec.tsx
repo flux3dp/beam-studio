@@ -4,6 +4,7 @@ import { fireEvent, getAllByText, render } from '@testing-library/react';
 
 import i18n from '@core/helpers/i18n';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockShowCropPanel = jest.fn();
 const mockSvgNestButtons = jest.fn();
@@ -107,12 +108,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
-const isMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  isMobile: () => isMobile(),
-}));
-
 const disassembleUse = jest.fn();
 
 jest.mock('@core/app/svgedit/operations/disassembleUse', () => disassembleUse);
@@ -150,8 +145,6 @@ jest.mock('@core/helpers/convertToImage', () => ({
   convertSvgToImage,
 }));
 
-import ActionsPanel from './ActionsPanel';
-
 const mockUpdateElementColor = jest.fn();
 
 jest.mock(
@@ -188,6 +181,8 @@ const mockShowOffsetModal = jest.fn();
 jest.mock('@core/app/components/dialogs/OffsetModal', () => ({
   showOffsetModal: (...args: any[]) => mockShowOffsetModal(...args),
 }));
+
+import ActionsPanel from './ActionsPanel';
 
 describe('should render correctly', () => {
   beforeEach(() => {
@@ -459,7 +454,7 @@ describe('should render correctly', () => {
 describe('should render correctly in mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    isMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockGetVariableTextType.mockReturnValue(VariableTextType.NONE);
   });
 

@@ -4,9 +4,9 @@ import classNames from 'classnames';
 
 import { objectPanelInputTheme } from '@core/app/constants/antd-config';
 import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import ObjectPanelItem from '../ObjectPanelItem';

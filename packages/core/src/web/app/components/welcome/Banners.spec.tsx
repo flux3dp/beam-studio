@@ -2,6 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 jest.useFakeTimers();
 
 const mockOpen = jest.fn();
@@ -9,14 +11,6 @@ const mockOpen = jest.fn();
 jest.mock('@core/implementations/browser', () => ({
   open: mockOpen,
 }));
-
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: mockUseIsMobile,
-}));
-
-import Banners from './Banners';
 
 const mockBanners = [
   {
@@ -35,6 +29,8 @@ const mockBanners = [
     url: 'url-3',
   },
 ];
+
+import Banners from './Banners';
 
 describe('test Banners', () => {
   beforeEach(() => {
@@ -103,7 +99,7 @@ describe('test Banners', () => {
   });
 
   it('should render correctly in mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<Banners banners={mockBanners} />);
 

@@ -3,8 +3,7 @@ import React from 'react';
 import { act, fireEvent, render } from '@testing-library/react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
-
-import MultiColorOptions from './MultiColorOptions';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 jest.mock('@core/app/contexts/CanvasContext', () => ({
   CanvasContext: React.createContext({ isColorPreviewing: false }),
@@ -117,12 +116,6 @@ jest.mock('@core/app/widgets/HorizontalScrollContainer', () => ({ children, clas
   <div className={className}>{children}</div>
 ));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
-
 jest.mock('@core/helpers/useI18n', () => () => ({
   beambox: {
     right_panel: {
@@ -137,6 +130,8 @@ jest.mock('@core/helpers/useI18n', () => () => ({
 
 const mockUseElem = document.createElement('use');
 const mockSetIsColorPreviewing = jest.fn();
+
+import MultiColorOptions from './MultiColorOptions';
 
 describe('test MultiColorOptions', () => {
   beforeEach(() => {
@@ -205,7 +200,7 @@ describe('test MultiColorOptions', () => {
 describe('test MultiColorOptions mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockColloectColors.mockReturnValue({
       '#AAFFFF': [{ attribute: 'fill', element: '1', useElement: mockUseElem }],
       '#FFAAFF': [

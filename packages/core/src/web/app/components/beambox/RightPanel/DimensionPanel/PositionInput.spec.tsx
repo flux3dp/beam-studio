@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import PositionInput from './PositionInput';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockCreateEventEmitter = jest.fn();
 const mockOn = jest.fn();
@@ -16,12 +16,6 @@ const mockGet = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
-}));
-
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
 }));
 
 jest.mock('../ObjectPanelItem', () => ({
@@ -42,6 +36,8 @@ jest.mock('./utils', () => ({
 
 const mockOnChange = jest.fn();
 
+import PositionInput from './PositionInput';
+
 describe('test PositionInput', () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -52,7 +48,7 @@ describe('test PositionInput', () => {
   });
 
   it('should render correctly on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container, rerender } = render(<PositionInput onChange={mockOnChange} type="x" value={0} />);
 
@@ -74,7 +70,7 @@ describe('test PositionInput', () => {
   });
 
   it('should render correctly on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<PositionInput onChange={mockOnChange} type="x" value={0} />);
 
@@ -82,7 +78,7 @@ describe('test PositionInput', () => {
   });
 
   test('onChange on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<PositionInput onChange={mockOnChange} type="x" value={0} />);
     const input = container.querySelector('input');
@@ -93,7 +89,7 @@ describe('test PositionInput', () => {
   });
 
   test('UPDATE_DIMENSION_VALUES event on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container, unmount } = render(<PositionInput onChange={mockOnChange} type="x" value={0} />);
 
@@ -118,7 +114,7 @@ describe('test PositionInput', () => {
   });
 
   test('onChange on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<PositionInput onChange={mockOnChange} type="x" value={0} />);
     const button = container.querySelector('button');

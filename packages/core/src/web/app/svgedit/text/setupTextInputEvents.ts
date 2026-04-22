@@ -1,6 +1,6 @@
+import { isMobile } from '@core/app/stores/screenStore';
 import { getOS } from '@core/helpers/getOS';
 import shortcuts from '@core/helpers/shortcuts';
-import { isMobile } from '@core/helpers/system-helper';
 
 import textActions from './textactions';
 import textedit from './textedit';

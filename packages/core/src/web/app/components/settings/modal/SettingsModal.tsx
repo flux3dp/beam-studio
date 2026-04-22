@@ -4,10 +4,10 @@ import { Button } from 'antd';
 
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
 import AppSettings from '@core/app/app-settings';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import autoSaveHelper from '@core/helpers/auto-save-helper';
 import i18n from '@core/helpers/i18n';
-import { useIsMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
 import type { AutoSaveConfig } from '@core/interfaces/AutoSaveConfig';
 import type { ILang } from '@core/interfaces/ILang';

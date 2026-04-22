@@ -4,13 +4,13 @@ import { Button, ConfigProvider, Modal } from 'antd';
 import Cropper from 'cropperjs';
 
 import progressCaller from '@core/app/actions/progress-caller';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import Select from '@core/app/widgets/AntdSelect';
 import calculateBase64 from '@core/helpers/image-edit-panel/calculate-base64';
 import handleFinish from '@core/helpers/image-edit-panel/handle-finish';
 import type { CropperDimension } from '@core/helpers/image-edit-panel/preprocess';
 import { preprocessByUrl } from '@core/helpers/image-edit-panel/preprocess';
 import jimpHelper from '@core/helpers/jimp-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './CropPanel.module.scss';

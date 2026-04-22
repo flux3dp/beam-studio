@@ -1,7 +1,7 @@
 import React from 'react';
 import { act, fireEvent, render, waitFor } from '@testing-library/react';
 
-import CropPanel from './CropPanel';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockCropper = jest.fn();
 
@@ -51,18 +51,14 @@ jest.mock('helpers/image-edit-panel/preprocess', () => ({
   preprocessByUrl: (...args) => mockPreprocessByUrl(...args),
 }));
 
-const useIsMobile = jest.fn();
-
-jest.mock('helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
-
 const mockRevokeObjectURL = jest.fn();
 
 const mockImage = {
   getAttribute: jest.fn(),
 };
 const mockOnClose = jest.fn();
+
+import CropPanel from './CropPanel';
 
 describe('test CropPanel', () => {
   beforeEach(() => {
@@ -196,7 +192,7 @@ describe('test CropPanel', () => {
   });
 
   it('should render correctly in mobile', async () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
       dimension: { height: 100, width: 100, x: 0, y: 0 },
@@ -415,7 +411,7 @@ describe('test CropPanel', () => {
   });
 
   test('change aspect ratio', async () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockPreprocessByUrl.mockResolvedValue({
       blobUrl: 'mock-url-1',
       dimension: { height: 150, width: 100, x: 0, y: 0 },

@@ -53,7 +53,7 @@ import ImageData from '@core/helpers/image-data';
 import isWeb from '@core/helpers/is-web';
 import { importPresets } from '@core/helpers/presets/preset-helper';
 import Shortcuts, { isFocusingOnInputs } from '@core/helpers/shortcuts';
-import { isMobile } from '@core/helpers/system-helper';
+import { isMobile } from '@core/app/stores/screenStore';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type ISVGConfig from '@core/interfaces/ISVGConfig';

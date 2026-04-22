@@ -178,11 +178,11 @@ Mouse mode `'text'`: click creates the element at mouseDown position, then immed
 
 ## fitText.ts — FitText Creation and Transform
 
-### createNewFitText(boxX, boxY, width, options)
+### createNewFitText(boxX, boxY, options)
 
 Creates a fitText element via click-to-create:
 - `font-size` = `curText.font_size` (user's current default)
-- `data-fit-text-size` = width (default: fontSize × 10)
+- `data-fit-text-size` = width (default: fontSize × 7)
 - Default `data-fit-text-align` = `'middle'`
 - `x` = boxX + width/2 (centered for middle alignment)
 - `y` = boxY + fontSize (SVG baseline)

@@ -3,10 +3,10 @@ import React, { useMemo } from 'react';
 import { match, P } from 'ts-pattern';
 
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import { isVariableTextSupported } from '@core/helpers/variableText';
 
 import ColorPanel from './ColorPanel';

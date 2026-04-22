@@ -11,10 +11,10 @@ import type { MainType } from '@core/app/constants/element-panel-constants';
 import { ContentType, MainTypes, NPTypes } from '@core/app/constants/element-panel-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
 import { ElementPanelContext, ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import Select from '@core/app/widgets/AntdSelect';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './ElementPanel.module.scss';

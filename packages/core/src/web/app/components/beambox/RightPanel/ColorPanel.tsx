@@ -7,6 +7,7 @@ import constant from '@core/app/actions/beambox/constant';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import ColorPicker from '@core/app/widgets/ColorPicker';
@@ -15,7 +16,6 @@ import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

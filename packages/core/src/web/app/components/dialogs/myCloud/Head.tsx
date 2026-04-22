@@ -3,8 +3,8 @@ import React, { use } from 'react';
 import { CapsuleTabs } from 'antd-mobile';
 
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import Select from '@core/app/widgets/AntdSelect';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Head.module.scss';

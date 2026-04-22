@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 
 const mockApi: any = {
   component: 'rightPanelLayer',
@@ -75,83 +75,61 @@ describe('test Tab', () => {
     });
 
     test('no selected element', () => {
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: null }}>
-          <Tab api={mockApi} {...dummyProps} />
-        </SelectedElementContext>,
-      );
+      const { container } = render(<Tab api={mockApi} {...dummyProps} />);
 
       expect(container).toMatchSnapshot();
     });
 
     test('simple type object', () => {
       document.body.innerHTML = '<ellipse id="svg_1"></ellipse>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
 
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <Tab api={mockApi} {...dummyProps} />
-        </SelectedElementContext>,
-      );
+      const { container } = render(<Tab api={mockApi} {...dummyProps} />);
 
       expect(container).toMatchSnapshot();
     });
 
     test('multiple objects', () => {
       document.body.innerHTML = '<g id="svg_3" data-tempgroup="true"></g>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
 
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
-          <Tab api={mockApi} {...dummyProps} />
-        </SelectedElementContext>,
-      );
+      const { container } = render(<Tab api={mockApi} {...dummyProps} />);
 
       expect(container).toMatchSnapshot();
     });
 
     test('dxf object', () => {
       document.body.innerHTML = '<use id="svg_1" data-dxf="true"></use>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
 
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <Tab api={mockApi} {...dummyProps} />
-        </SelectedElementContext>,
-      );
+      const { container } = render(<Tab api={mockApi} {...dummyProps} />);
 
       expect(container).toMatchSnapshot();
     });
 
     test('svg object', () => {
       document.body.innerHTML = '<use id="svg_1" data-svg="true"></use>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
 
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <Tab api={mockApi} {...dummyProps} />
-        </SelectedElementContext>,
-      );
+      const { container } = render(<Tab api={mockApi} {...dummyProps} />);
 
       expect(container).toMatchSnapshot();
     });
 
     test('textpath object', () => {
       document.body.innerHTML = '<g id="svg_1" data-textpath-g="1"></g>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
 
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <Tab api={mockApi} {...dummyProps} />
-        </SelectedElementContext>,
-      );
+      const { container } = render(<Tab api={mockApi} {...dummyProps} />);
 
       expect(container).toMatchSnapshot();
     });
 
     test('other types', () => {
       document.body.innerHTML = '<use id="svg_1"></use>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
 
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <Tab api={mockApi} {...dummyProps} />
-        </SelectedElementContext>,
-      );
+      const { container } = render(<Tab api={mockApi} {...dummyProps} />);
 
       expect(container).toMatchSnapshot();
     });

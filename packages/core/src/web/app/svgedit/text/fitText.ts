@@ -29,6 +29,7 @@ interface FitTextOptions {
   fill?: string;
   isToSelect?: boolean;
   text?: string;
+  width?: number;
 }
 
 /**
@@ -40,12 +41,13 @@ interface FitTextOptions {
 export const createNewFitText = (
   boxX: number,
   boxY: number,
-  width: number,
-  { addToHistory = false, fill = '#333333', isToSelect = false, text = '' }: FitTextOptions = {},
+  { addToHistory = false, fill = '#333333', isToSelect = false, text = '', width }: FitTextOptions = {},
 ): SVGElement => {
   const currentShape = svgCanvas.getCurrentShape();
   const modelText = getCurText();
   const fontSize = modelText.font_size;
+
+  if (!width) width = fontSize * 7;
 
   // Use middle as default alignment and calculate x.
   const fitTextAlign = 'middle';

@@ -2,17 +2,14 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 const mockGetFontSize = jest.fn();
 const mockSetFontSize = jest.fn();
-let mockIsMobile = false;
 
 jest.mock('@core/app/svgedit/text/textedit', () => ({
   getFontSize: (...args: any[]) => mockGetFontSize(...args),
   setFontSize: (...args: any[]) => mockSetFontSize(...args),
-}));
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockIsMobile,
 }));
 
 jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem', () => ({
@@ -38,7 +35,7 @@ describe('FontSizeBlock', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsMobile = false;
+    useScreenStore.setState({ isMobile: false });
     mockGetFontSize.mockReturnValue(20);
   });
 
@@ -51,7 +48,7 @@ describe('FontSizeBlock', () => {
   });
 
   test('should render mobile ObjectPanelItem.Number when isMobile', () => {
-    mockIsMobile = true;
+    useScreenStore.setState({ isMobile: true });
 
     const { getByTestId } = render(<FontSizeBlock textElements={[mockTextElement]} />);
     const wrapper = getByTestId('mobile-number');
@@ -83,7 +80,7 @@ describe('FontSizeBlock', () => {
   });
 
   test('should call setFontSize on mobile input change', () => {
-    mockIsMobile = true;
+    useScreenStore.setState({ isMobile: true });
 
     const mockOnSizeChange = jest.fn();
 

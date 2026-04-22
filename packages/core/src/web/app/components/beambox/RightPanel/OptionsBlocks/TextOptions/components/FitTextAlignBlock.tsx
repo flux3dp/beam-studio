@@ -5,9 +5,9 @@ import classNames from 'classnames';
 
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import type { FitTextAlign } from '@core/app/svgedit/text/textedit';
 import { getFitTextAlign, setFitTextAlign } from '@core/app/svgedit/text/textedit';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import ObjectPanelItem from '../../../ObjectPanelItem';

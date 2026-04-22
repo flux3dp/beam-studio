@@ -2,13 +2,7 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import OptionsPanel from './OptionsPanel';
-
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 jest.mock('@core/helpers/variableText', () => ({
   isVariableTextSupported: () => true,
@@ -35,6 +29,8 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
 }));
 
 const getElem = (id: string) => document.getElementById(id) as unknown as SVGElement;
+
+import OptionsPanel from './OptionsPanel';
 
 describe('should render correctly', () => {
   beforeEach(() => {
@@ -129,7 +125,7 @@ describe('should render correctly', () => {
 describe('should render correctly in mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
   });
 
   test('rect', () => {

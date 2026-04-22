@@ -2,8 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import FullWindowPanel from './FullWindowPanel';
 import { __setMockOS } from '@mocks/@core/helpers/getOS';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 jest.mock(
   '@core/app/widgets/FloatingPanel',
@@ -25,13 +25,9 @@ const mockIsWeb = jest.fn();
 
 jest.mock('@core/helpers/is-web', () => () => mockIsWeb());
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
-
 const mockOnClose = jest.fn();
+
+import FullWindowPanel from './FullWindowPanel';
 
 describe('test FullWindowPanel', () => {
   beforeEach(() => {
@@ -41,7 +37,7 @@ describe('test FullWindowPanel', () => {
 
   it('should render correctly in mobile', () => {
     mockIsWeb.mockReturnValue(true);
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container, getByText, queryByText } = render(
       <FullWindowPanel
@@ -63,7 +59,7 @@ describe('test FullWindowPanel', () => {
   it('should render correctly in desktop', () => {
     __setMockOS('Windows');
     mockIsWeb.mockReturnValue(true);
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container, queryByText } = render(
       <FullWindowPanel

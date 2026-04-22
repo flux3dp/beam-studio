@@ -5,11 +5,11 @@ import classNames from 'classnames';
 
 import constant from '@core/app/actions/beambox/constant';
 import macOSWindowSize from '@core/app/constants/macOS-Window-Size';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import workareaManager from '@core/app/svgedit/workarea';
 import ContextMenu from '@core/app/widgets/ContextMenu';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import os from '@core/implementations/os';
 

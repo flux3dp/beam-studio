@@ -2,14 +2,8 @@ import React from 'react';
 
 import { render } from '@testing-library/react';
 
-import DpiInfo from './DpiInfo';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
-
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockUseConfigPanelStore = jest.fn();
 const mockState = {
@@ -21,11 +15,13 @@ jest.mock('@core/app/stores/configPanel', () => ({
   useConfigPanelStore: (...args) => mockUseConfigPanelStore(...args),
 }));
 
+import DpiInfo from './DpiInfo';
+
 describe('test DpiInfo', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockState.dpi = { value: 'low' };
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
     mockUseConfigPanelStore.mockImplementation((selector) => {
       return selector(mockState);
     });
@@ -43,7 +39,7 @@ describe('test DpiInfo', () => {
   });
 
   it('should render correctly in mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockState.dpi = { value: 'ultra' };
 
     const { container } = render(<DpiInfo />);

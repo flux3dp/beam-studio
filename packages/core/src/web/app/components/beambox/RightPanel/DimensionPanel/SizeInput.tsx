@@ -1,10 +1,10 @@
 import React, { memo, useCallback, useEffect, useMemo, useRef } from 'react';
 
 import { objectPanelInputTheme } from '@core/app/constants/antd-config';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import UnitInput from '@core/app/widgets/UnitInput';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { useIsMobile } from '@core/helpers/system-helper';
 import type { DimensionValues, SizeKey, SizeKeyShort } from '@core/interfaces/ObjectPanel';
 
 import ObjectPanelItem from '../ObjectPanelItem';

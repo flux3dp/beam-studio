@@ -2,6 +2,8 @@ import * as React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 enum VerticalAlign {
   BOTTOM = 0,
   MIDDLE = 1,
@@ -9,12 +11,6 @@ enum VerticalAlign {
 }
 
 jest.mock('@core/app/actions/beambox/textPathEdit', () => ({ VerticalAlign }));
-
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
 
 jest.mock('@core/app/components/beambox/RightPanel/ObjectPanelItem');
 
@@ -47,7 +43,7 @@ describe('test VerticalAlignBlock', () => {
   });
 
   test('should render correctly in mobile', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const onValueChange = jest.fn();
     const { container, getByText } = render(
@@ -64,7 +60,7 @@ describe('test VerticalAlignBlock', () => {
   });
 
   test('should render correctly with multiple values in mobile', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const onValueChange = jest.fn();
     const { container } = render(

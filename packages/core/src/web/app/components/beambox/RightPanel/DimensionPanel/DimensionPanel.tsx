@@ -5,13 +5,13 @@ import { match } from 'ts-pattern';
 
 import Constant from '@core/app/actions/beambox/constant';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import { setFitTextBBox } from '@core/app/svgedit/text/fitText';
 import { isFitText } from '@core/app/svgedit/text/textedit';
 import { getIsVertical } from '@core/app/svgedit/text/textedit/getters';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';

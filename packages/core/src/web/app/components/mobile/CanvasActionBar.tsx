@@ -3,11 +3,11 @@ import React from 'react';
 import { TabBar } from 'antd-mobile';
 
 import svgEditor from '@core/app/actions/beambox/svg-editor';
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { TrashIcon } from '@core/app/icons/icons';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 
 const CanvasActionBar = (): React.JSX.Element => {
-  const { selectedElement } = React.use(SelectedElementContext);
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const [activeKey, setActiveKey] = React.useState('dmkt');
 
   const tabs = [

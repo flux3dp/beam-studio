@@ -3,8 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
-
-import Head from './Head';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 jest.mock('@core/helpers/useI18n', () => () => ({
   my_cloud: {
@@ -28,11 +27,7 @@ jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext(null),
 }));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
+import Head from './Head';
 
 describe('test Head', () => {
   beforeEach(() => {
@@ -59,7 +54,7 @@ describe('test Head', () => {
   });
 
   test('should rendered correctly in mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container, getByText } = render(
       <MyCloudContext value={mockContext}>

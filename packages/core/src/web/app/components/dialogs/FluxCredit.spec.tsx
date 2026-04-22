@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import FluxCredit from './FluxCredit';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockUser = {
   email: 'test123@gmail.com',
@@ -28,15 +28,11 @@ jest.mock('@core/helpers/api/flux-id', () => ({
   signOut: (...args) => signOut(...args),
 }));
 
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
-
 jest.mock('@core/helpers/is-flux-plus-active', () => true);
 
 const onClose = jest.fn();
+
+import FluxCredit from './FluxCredit';
 
 describe('test FluxCredit', () => {
   beforeEach(() => {
@@ -61,7 +57,7 @@ describe('test FluxCredit', () => {
 
   test('should render correctly on mobile', () => {
     getCurrentUser.mockReturnValue(mockUser);
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<FluxCredit onClose={onClose} />);
 

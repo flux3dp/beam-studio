@@ -1,8 +1,8 @@
 import type { ReactNode } from 'react';
-import React, { memo, use, useEffect, useState } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import { getObjectLayer, moveToOtherLayer } from '@core/helpers/layer/layer-helper';
@@ -16,7 +16,7 @@ function SelLayerBlock(): ReactNode {
   const lang = useI18n().beambox.right_panel.layer_panel;
   const [promptMoveLayerOnce, setPromptMoveLayerOnce] = useState(false);
   const [displayValue, setDisplayValue] = useState(defaultOption);
-  const { selectedElement } = use(SelectedElementContext);
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const selectedLayers = useLayerStore.getState().selectedLayers;
   // TODO: should put allLayerNames in a store to register change listener
   const layerNames = layerManager.getAllLayerNames();

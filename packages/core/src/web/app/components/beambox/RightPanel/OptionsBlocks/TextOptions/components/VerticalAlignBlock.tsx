@@ -5,8 +5,8 @@ import classNames from 'classnames';
 import { VerticalAlign } from '@core/app/actions/beambox/textPathEdit';
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import styles from '@core/app/components/beambox/RightPanel/OptionsPanel.module.scss';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import Select from '@core/app/widgets/AntdSelect';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 interface Props {
