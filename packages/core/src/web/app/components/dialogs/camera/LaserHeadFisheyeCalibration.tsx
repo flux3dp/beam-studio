@@ -105,9 +105,7 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         isFisheye
         isVertical
         onClose={onClose}
-        onNext={async () => {
-          setStep(Steps.PUT_PAPER);
-        }}
+        onNext={() => setStep(Steps.PUT_PAPER)}
         onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
         steps={[
           {
