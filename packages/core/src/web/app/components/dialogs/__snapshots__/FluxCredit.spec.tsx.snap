@@ -142,6 +142,10 @@ exports[`test FluxCredit should render correctly without user detail 1`] = `
     <div
       class="content"
     >
+      <img
+        alt="Logged in"
+        src="core-img/flux-plus/man-high-five.jpg"
+      />
       <div
         class="head"
       >

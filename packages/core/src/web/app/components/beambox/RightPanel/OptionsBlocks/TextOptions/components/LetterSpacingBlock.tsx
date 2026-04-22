@@ -2,8 +2,8 @@ import React, { memo, useEffect, useState } from 'react';
 
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { getLetterSpacing, setLetterSpacing } from '@core/app/svgedit/text/textedit';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import OptionsInput from '../../OptionsInput';

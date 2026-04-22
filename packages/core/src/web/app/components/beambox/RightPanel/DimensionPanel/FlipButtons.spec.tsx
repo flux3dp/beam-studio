@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import FlipButtons from './FlipButtons';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockFlipSelectedElements = jest.fn();
 
@@ -14,12 +14,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
       },
     });
   },
-}));
-
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
 }));
 
 jest.mock('@core/helpers/useI18n', () => () => ({
@@ -49,13 +43,15 @@ jest.mock('../ObjectPanelItem', () => ({
   ),
 }));
 
+import FlipButtons from './FlipButtons';
+
 describe('test FlipButtons', () => {
   beforeEach(() => {
     jest.resetAllMocks();
   });
 
   it('should render correctly when not in mobile', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<FlipButtons />);
 
@@ -63,7 +59,7 @@ describe('test FlipButtons', () => {
   });
 
   it('should render correctly when in mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<FlipButtons />);
 
@@ -71,7 +67,7 @@ describe('test FlipButtons', () => {
   });
 
   test('callback should work', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<FlipButtons />);
 

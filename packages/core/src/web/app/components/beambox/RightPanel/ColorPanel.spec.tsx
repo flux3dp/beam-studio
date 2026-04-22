@@ -3,7 +3,7 @@ import React from 'react';
 
 import { act, fireEvent, render } from '@testing-library/react';
 
-import ColorPanel from './ColorPanel';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockSetIsColorPreviewing = jest.fn();
 
@@ -113,15 +113,11 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   },
 }));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
-
 const mockElem = {
   getAttribute: jest.fn(),
 };
+
+import ColorPanel from './ColorPanel';
 
 describe('test ColorPanel', () => {
   beforeEach(() => {
@@ -204,7 +200,7 @@ describe('test ColorPanel mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
     mockElem.getAttribute.mockReturnValueOnce('#ff0000').mockReturnValueOnce('#00ff00').mockReturnValueOnce('1');
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockCreateBatchCommand.mockReturnValue(mockBatchCommand);
     mockRequestSelector.mockReturnValue({ resize: jest.fn() });
   });

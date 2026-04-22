@@ -220,21 +220,21 @@ exports[`test Banners should render correctly with only one banner 1`] = `
         class="banner"
       >
         <img
-          src="mobile-image-1.png"
+          src="desktop-image-1.png"
         />
       </div>
       <div
         class="banner"
       >
         <img
-          src="mobile-image-1.png"
+          src="desktop-image-1.png"
         />
       </div>
       <div
         class="banner"
       >
         <img
-          src="mobile-image-1.png"
+          src="desktop-image-1.png"
         />
       </div>
     </div>

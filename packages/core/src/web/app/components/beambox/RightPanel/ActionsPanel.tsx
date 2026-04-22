@@ -13,6 +13,7 @@ import { showOffsetModal } from '@core/app/components/dialogs/OffsetModal';
 import { textButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import { isMobile } from '@core/app/stores/screenStore';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import autoFit from '@core/app/svgedit/operations/autoFit';
@@ -29,7 +30,6 @@ import {
 } from '@core/helpers/convertToPath';
 import imageEdit from '@core/helpers/image-edit';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { isMobile } from '@core/helpers/system-helper';
 import useForceUpdate from '@core/helpers/use-force-update';
 import useI18n from '@core/helpers/useI18n';
 import { getVariableTextType } from '@core/helpers/variableText';

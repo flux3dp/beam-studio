@@ -4,9 +4,9 @@ import { QuestionCircleOutlined } from '@ant-design/icons';
 import { Button, Space, Tooltip } from 'antd';
 
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { getCurrentUser, signOut } from '@core/helpers/api/flux-id';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 

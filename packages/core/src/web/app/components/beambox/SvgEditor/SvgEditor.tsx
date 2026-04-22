@@ -13,12 +13,12 @@ import ElementPanel from '@core/app/components/dialogs/ElementPanel/ElementPanel
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { TimeEstimationButtonContextProvider } from '@core/app/contexts/TimeEstimationButtonContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import setupTextInputEvents from '@core/app/svgedit/text/setupTextInputEvents';
 import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
 import { importFileInCurrentTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
 import { setupSelectAllShortCut } from '@core/helpers/shortcuts';
-import { useIsMobile } from '@core/helpers/system-helper';
 
 import Generators from '../../Generators';
 import MobileGenerators from '../../Generators/mobile/MobileGenerators';

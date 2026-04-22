@@ -5,13 +5,13 @@ import { pipe } from 'remeda';
 import type { LayerModuleType } from '@core/app/constants/layer-module/layer-modules';
 import { useConfigPanelStore } from '@core/app/stores/configPanel';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import Select from '@core/app/widgets/AntdSelect';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { changeLayersModule } from '@core/helpers/layer-module/change-module';
 import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import ObjectPanelItem from '../ObjectPanelItem';

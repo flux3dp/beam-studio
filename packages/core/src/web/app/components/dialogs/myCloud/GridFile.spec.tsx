@@ -4,8 +4,7 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 import type { IFile } from '@core/interfaces/IMyCloud';
-
-import GridFile from './GridFile';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockFile: IFile = {
   created_at: '2024-01-09T04:14:36.801586Z',
@@ -43,11 +42,7 @@ jest.mock('@core/app/contexts/MyCloudContext', () => ({
   MyCloudContext: React.createContext(null),
 }));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
+import GridFile from './GridFile';
 
 describe('test GridFile', () => {
   beforeEach(() => {
@@ -134,7 +129,7 @@ describe('test GridFile', () => {
   });
 
   test('should rendered correctly in mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(
       <MyCloudContext value={mockContext}>

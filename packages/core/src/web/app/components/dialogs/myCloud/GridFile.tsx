@@ -17,7 +17,7 @@ import dayjs from 'dayjs';
 import type { WorkAreaModel } from '@core/app/constants/workarea-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
-import { useIsMobile } from '@core/helpers/system-helper';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 import type { IFile } from '@core/interfaces/IMyCloud';
 

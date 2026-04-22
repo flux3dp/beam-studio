@@ -6,8 +6,8 @@ import { Button, Divider, Popover } from 'antd-mobile';
 import classNames from 'classnames';
 
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { useIsMobile } from '@core/helpers/system-helper';
 import units from '@core/helpers/units';
 
 import { ObjectPanelContext } from './contexts/ObjectPanelContext';

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import FluxPlusModal from './FluxPlusModal';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const open = jest.fn();
 
@@ -26,15 +26,11 @@ jest.mock('@core/helpers/useI18n', () => () => ({
   },
 }));
 
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
-
 jest.mock('@core/helpers/is-flux-plus-active', () => true);
 
 const onClose = jest.fn();
+
+import FluxPlusModal from './FluxPlusModal';
 
 describe('test FluxPlusModal', () => {
   beforeEach(() => {
@@ -59,7 +55,7 @@ describe('test FluxPlusModal', () => {
   });
 
   test('mobile', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { baseElement } = render(
       <FluxPlusModal className="mock-class" onClose={onClose}>
@@ -71,7 +67,7 @@ describe('test FluxPlusModal', () => {
   });
 
   test('mobile with hideMobileBanner', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { baseElement } = render(
       <FluxPlusModal className="mock-class" hideMobileBanner onClose={onClose}>

@@ -2,6 +2,10 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import { ObjectPanelContext } from './contexts/ObjectPanelContext';
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 jest.mock(
   './ActionsPanel',
   () =>
@@ -87,12 +91,6 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync,
 }));
 
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
-
 const calcPathClosed = jest.fn();
 const distHori = jest.fn();
 const distVert = jest.fn();
@@ -133,8 +131,6 @@ jest.mock('@core/app/svgedit/operations/clipboard', () => ({
   cloneSelectedElements: (...args) => mockCloneSelectedElements(...args),
 }));
 
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
-import { ObjectPanelContext } from './contexts/ObjectPanelContext';
 import ObjectPanel from './ObjectPanel';
 
 describe('should render correctly', () => {
@@ -335,7 +331,7 @@ describe('should render correctly', () => {
 describe('should render correctly in mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
   });
 
   test('no elements', () => {
@@ -365,7 +361,7 @@ describe('should render correctly in mobile', () => {
   describe('one element', () => {
     beforeEach(() => {
       jest.resetAllMocks();
-      useIsMobile.mockReturnValue(true);
+      useScreenStore.setState({ isMobile: true });
     });
 
     test('not g element', () => {
@@ -442,7 +438,7 @@ describe('should render correctly in mobile', () => {
   describe('two elements', () => {
     beforeEach(() => {
       jest.resetAllMocks();
-      useIsMobile.mockReturnValue(true);
+      useScreenStore.setState({ isMobile: true });
     });
 
     test('contains rect, polygon or ellipse elements', () => {

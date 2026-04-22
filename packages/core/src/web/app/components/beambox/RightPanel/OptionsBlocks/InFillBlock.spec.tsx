@@ -2,13 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import InFillBlock from './InFillBlock';
-
-const mockIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockIsMobile(),
-}));
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const isElemFillable = jest.fn();
 const calcElemFilledInfo = jest.fn();
@@ -27,6 +21,8 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     });
   },
 }));
+
+import InFillBlock from './InFillBlock';
 
 describe('should render correctly', () => {
   afterEach(() => {
@@ -164,7 +160,7 @@ describe('should render correctly', () => {
 describe('should render correctly in mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
   });
 
   test('id given', () => {
@@ -191,7 +187,6 @@ describe('should render correctly in mobile', () => {
     const { container } = render(<InFillBlock elems={[document.getElementById('flux')]} />);
 
     expect(container).toMatchSnapshot();
-    expect(mockIsMobile).toHaveBeenCalledTimes(1);
     expect(isElemFillable).toHaveBeenCalledTimes(1);
     expect(isElemFillable).toHaveBeenNthCalledWith(1, document.getElementById('flux'));
     expect(calcElemFilledInfo).not.toHaveBeenCalled();

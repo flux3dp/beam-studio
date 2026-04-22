@@ -10,9 +10,9 @@ import { iconButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

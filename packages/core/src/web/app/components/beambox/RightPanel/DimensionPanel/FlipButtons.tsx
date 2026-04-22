@@ -3,8 +3,8 @@ import React, { memo } from 'react';
 import { Button } from 'antd';
 
 import DimensionPanelIcons from '@core/app/icons/dimension-panel/DimensionPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

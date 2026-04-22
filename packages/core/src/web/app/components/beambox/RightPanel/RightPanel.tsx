@@ -11,10 +11,10 @@ import { SelectedElementContext } from '@core/app/contexts/SelectedElementContex
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { focusPanel, showPanel } from '@core/app/widgets/dockable/utils';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
-import { useIsMobile } from '@core/helpers/system-helper';
 
 import LayerPanel from './LayerPanel';
 import ObjectPanel from './ObjectPanel';

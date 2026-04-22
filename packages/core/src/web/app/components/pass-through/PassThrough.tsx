@@ -3,12 +3,12 @@ import React, { use } from 'react';
 import { Button } from 'antd';
 
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import Footer from '@core/app/widgets/FullWindowPanel/Footer';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 import Header from '@core/app/widgets/FullWindowPanel/Header';
 import Sider from '@core/app/widgets/FullWindowPanel/Sider';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import Canvas from './Canvas';

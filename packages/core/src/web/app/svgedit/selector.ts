@@ -8,8 +8,8 @@
  */
 import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import { getValue } from '@core/app/components/beambox/RightPanel/DimensionPanel/utils';
+import { isMobile } from '@core/app/stores/screenStore';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
-import { isMobile } from '@core/helpers/system-helper';
 
 import { getMouseMode } from '../stores/canvas/utils/mouseMode';
 import { getStorage } from '../stores/storageStore';

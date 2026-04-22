@@ -4,10 +4,10 @@ import React, { memo, useEffect, useRef, useState } from 'react';
 import { Input } from 'antd';
 import type { TextAreaRef } from 'antd/lib/input/TextArea';
 
+import { useIsMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { getTextContent, renderText, textContentEvents } from '@core/app/svgedit/text/textedit';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './TextContentBlock.module.scss';

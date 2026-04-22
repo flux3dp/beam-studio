@@ -2,12 +2,12 @@ import React, { memo, use, useEffect } from 'react';
 
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import Select from '@core/app/widgets/AntdSelect';
 import type { Hexa2RfWatt } from '@core/helpers/device/deviceStore';
 import { fhx2rfWatts, getHexa2RfWatt, setHexa2RfWatt } from '@core/helpers/device/deviceStore';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { postPresetChange } from '@core/helpers/layer/layer-config-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './Block.module.scss';

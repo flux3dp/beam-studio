@@ -5,22 +5,17 @@ import { fireEvent, render } from '@testing-library/react';
 import DeviceConstants from '@core/app/constants/device-constants';
 import { Mode } from '@core/app/constants/monitor-constants';
 import { MonitorContext } from '@core/app/contexts/MonitorContext';
-
-import MonitorControl from './MonitorControl';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 jest.mock('@core/app/contexts/MonitorContext', () => ({
   MonitorContext: React.createContext(null),
 }));
 
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
-
 const onPlay = jest.fn();
 const onPause = jest.fn();
 const onStop = jest.fn();
+
+import MonitorControl from './MonitorControl';
 
 describe('test MonitorControl', () => {
   afterEach(() => {
@@ -144,7 +139,7 @@ describe('test MonitorControl', () => {
   });
 
   describe('should render correctly in mobile', () => {
-    beforeEach(() => useIsMobile.mockReturnValue(true));
+    beforeEach(() => useScreenStore.setState({ isMobile: true }));
     test('mode is preview', () => {
       const { container } = render(
         <MonitorContext

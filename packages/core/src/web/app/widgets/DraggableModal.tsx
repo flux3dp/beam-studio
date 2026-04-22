@@ -8,7 +8,7 @@ import type { ControlPosition, DraggableData, DraggableEvent } from 'react-dragg
 import { match } from 'ts-pattern';
 
 import layoutConstants from '@core/app/constants/layout-constants';
-import { useIsMobile } from '@core/helpers/system-helper';
+import { useIsMobile } from '@core/app/stores/screenStore';
 
 import styles from './DraggableModal.module.scss';
 

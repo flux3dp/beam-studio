@@ -3,6 +3,7 @@ import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
 import i18n from '@core/helpers/i18n';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const get = jest.fn();
 const set = jest.fn();
@@ -11,8 +12,6 @@ jest.mock('@core/implementations/storage', () => ({
   get: (...args) => get(...args),
   set: (...args) => set(...args),
 }));
-
-import FluxIdLogin from './FluxIdLogin';
 
 const popUpError = jest.fn();
 const popUp = jest.fn();
@@ -52,15 +51,11 @@ jest.mock('@core/helpers/api/flux-id', () => ({
   signOut: (...args) => signOut(...args),
 }));
 
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
-
 jest.mock('./FluxPlusModal', () => 'mock-FluxPlusModal');
 
 jest.mock('@core/helpers/is-flux-plus-active', () => true);
+
+import FluxIdLogin from './FluxIdLogin';
 
 describe('should render correctly', () => {
   beforeEach(() => {
@@ -110,7 +105,7 @@ describe('should render correctly', () => {
   test('mobile version', () => {
     const onClose = jest.fn();
 
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { baseElement, getByText } = render(<FluxIdLogin onClose={onClose} silent={false} />);
 

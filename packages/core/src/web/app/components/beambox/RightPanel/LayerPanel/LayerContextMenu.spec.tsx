@@ -4,8 +4,7 @@ import { act, fireEvent, render, screen, waitFor } from '@testing-library/react'
 
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import { mockForceUpdate, mockSetSelectedLayers } from '@mocks/@core/app/stores/layer/layerStore';
-
-import LayerContextMenu from './LayerContextMenu';
+import { useScreenStore } from '@core/app/stores/screenStore';
 import i18n from '@core/helpers/i18n';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 
@@ -76,11 +75,8 @@ jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getLayerName: (...args) => mockGetLayerName(...args),
 }));
 
-const useIsMobile = jest.fn();
-
 jest.mock('@core/helpers/system-helper', () => ({
   isIOS: () => false,
-  useIsMobile: () => useIsMobile(),
 }));
 
 const mockUseWorkarea = jest.fn();
@@ -119,6 +115,8 @@ const mockElem = {
 const mockSelectOnlyLayer = jest.fn();
 const mockRenameLayer = jest.fn();
 const t = i18n.lang.beambox.right_panel.layer_panel.layers;
+
+import LayerContextMenu from './LayerContextMenu';
 
 const renderDesktop = (extraProps = {}) =>
   render(
@@ -166,7 +164,7 @@ describe('test LayerContextMenu', () => {
   });
 
   it('should render correctly in mobile', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockGetLayerName.mockReturnValue('layer1');
     useLayerStore.setState({ selectedLayers: ['layer2'] });
 
@@ -231,7 +229,7 @@ describe('test LayerContextMenu', () => {
   });
 
   test('unlock layers should work', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockGetLayerElementByName.mockReturnValue(mockElem);
     mockElem.getAttribute.mockReturnValue('true');
     useLayerStore.setState({ selectedLayers: ['layer1'] });

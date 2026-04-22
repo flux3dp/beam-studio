@@ -2,8 +2,6 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import Boxgen from './Boxgen';
-
 jest.mock('@core/app/stores/boxgenStore', () => ({
   useBoxgenStore: jest.fn(() => ({
     boxData: {
@@ -35,10 +33,6 @@ jest.mock('@core/app/widgets/DraggableModal', () => ({ children, footer, onCance
   </div>
 ));
 
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: jest.fn(() => false),
-}));
-
 jest.mock('./BoxCanvas', () => () => <div data-testid="mock-canvas">mock-canvas</div>);
 jest.mock('./BoxSelector', () => () => <div data-testid="mock-box-selector">mock-box-selector</div>);
 jest.mock('./Controller', () => () => <div data-testid="mock-box-controller">mock-box-controller</div>);
@@ -49,6 +43,8 @@ jest.mock('./ExportButton', () => ({ onClose }: { onClose: () => void }) => (
 ));
 
 const mockOnClose = jest.fn();
+
+import Boxgen from './Boxgen';
 
 describe('test Boxgen', () => {
   beforeEach(() => {

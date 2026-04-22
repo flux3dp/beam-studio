@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import SizeInput from './SizeInput';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockCreateEventEmitter = jest.fn();
 const mockOn = jest.fn();
@@ -16,12 +16,6 @@ const mockGet = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
   get: (...args) => mockGet(...args),
-}));
-
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
 }));
 
 jest.mock('../ObjectPanelItem', () => ({
@@ -43,6 +37,8 @@ jest.mock('./utils', () => ({
 const mockOnChange = jest.fn();
 const mockOnBlur = jest.fn();
 
+import SizeInput from './SizeInput';
+
 describe('test SizeInput', () => {
   beforeEach(() => {
     jest.resetAllMocks();
@@ -53,7 +49,7 @@ describe('test SizeInput', () => {
   });
 
   it('should render correctly on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<SizeInput onChange={mockOnChange} type="w" value={0} />);
 
@@ -61,7 +57,7 @@ describe('test SizeInput', () => {
   });
 
   it('should render correctly on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<SizeInput onChange={mockOnChange} type="w" value={0} />);
 
@@ -69,7 +65,7 @@ describe('test SizeInput', () => {
   });
 
   test('onChange on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<SizeInput onChange={mockOnChange} type="w" value={0} />);
     const input = container.querySelector('input');
@@ -80,7 +76,7 @@ describe('test SizeInput', () => {
   });
 
   test('UPDATE_DIMENSION_VALUES event on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container, unmount } = render(<SizeInput onChange={mockOnChange} type="w" value={0} />);
 
@@ -105,7 +101,7 @@ describe('test SizeInput', () => {
   });
 
   test('onChange on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<SizeInput onChange={mockOnChange} type="w" value={0} />);
     const button = container.querySelector('button');
@@ -116,7 +112,7 @@ describe('test SizeInput', () => {
   });
 
   test('onBlur', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<SizeInput onBlur={mockOnBlur} onChange={mockOnChange} type="w" value={0} />);
     const input = container.querySelector('input');

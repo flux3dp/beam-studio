@@ -2,9 +2,9 @@ import React, { use, useEffect, useState } from 'react';
 
 import Constant from '@core/app/actions/beambox/constant';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

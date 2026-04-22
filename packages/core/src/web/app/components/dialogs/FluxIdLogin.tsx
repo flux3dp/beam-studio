@@ -6,6 +6,7 @@ import classNames from 'classnames';
 
 import alert from '@core/app/actions/alert-caller';
 import dialogCaller from '@core/app/actions/dialog-caller';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import {
   externalLinkFBSignIn,
   externalLinkGoogleSignIn,
@@ -14,7 +15,6 @@ import {
   signOut,
 } from '@core/helpers/api/flux-id';
 import isFluxPlusActive from '@core/helpers/is-flux-plus-active';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import storage from '@core/implementations/storage';
