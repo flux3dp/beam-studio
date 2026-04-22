@@ -119,7 +119,7 @@ const PromarkCalibration = ({ device: { model, serial }, onClose }: Props): Reac
             ? [tCali.put_charuco_promark_desc_1, tCali.put_charuco_promark_desc_2]
             : [tCali.put_chessboard_promark_desc_1, tCali.put_chessboard_promark_desc_2]
         }
-        title={<Title link={tCali.promark_help_link} title={tCali.put_chessboard} />}
+        title={<Title link={tCali.promark_help_link} title={tCali.put_charuco} />}
       >
         <div className={styles.link} onClick={handleDownloadChessboard}>
           {withSafe ? tCali.download_calibration_pattern : tCali.download_chessboard_file}

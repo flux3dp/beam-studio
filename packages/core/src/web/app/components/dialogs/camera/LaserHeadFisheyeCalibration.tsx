@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
@@ -51,7 +50,6 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   }, []);
   const model = useMemo(() => deviceMaster.currentDevice?.info.model ?? 'fbb2', []);
   const isHexaRf = useMemo(() => model === 'fhx2rf', [model]);
-  const workareaObj = useMemo(() => getWorkarea(model, 'fbb2'), [model]);
 
   if (step === Steps.CHECKPOINT_DATA) {
     return (
@@ -84,17 +82,13 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
         buttons={[
           {
             label: tCali.next,
-            onClick: async () => {
-              const res = await moveLaserHead(workareaObj.calibrationCenter ?? workareaObj.cameraCenter);
-
-              if (res) setStep(Steps.CHESSBOARD);
-            },
+            onClick: () => setStep(Steps.CHESSBOARD),
             type: 'primary',
           },
         ]}
         onClose={onClose}
-        steps={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
-        title={tCali.put_chessboard}
+        steps={[tCali.put_charuco_1, tCali.put_charuco_2, tCali.put_charuco_3]}
+        title={tCali.put_charuco}
       >
         <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10-with-mark.pdf')}>
           {tCali.download_calibration_pattern}
