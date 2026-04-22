@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import { ObjectPanelContext } from './contexts/ObjectPanelContext';
 import { useScreenStore } from '@core/app/stores/screenStore';
 
@@ -140,7 +140,36 @@ describe('should render correctly', () => {
 
   test('no elements', () => {
     const { container } = render(
-      <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+      <ObjectPanelContext
+        value={{
+          activeKey: null,
+          dimensionValues: {
+            rx: 1,
+          },
+          getDimensionValues: jest.fn(),
+          polygonSides: 5,
+          updateActiveKey: jest.fn(),
+          updateDimensionValues: jest.fn(),
+          updateObjectPanel: jest.fn(),
+        }}
+      >
+        <ObjectPanel />
+      </ObjectPanelContext>,
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  describe('one element', () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
+    });
+
+    test('not g element', () => {
+      document.body.innerHTML = '<rect id="svg_1" />';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+
+      const { container } = render(
         <ObjectPanelContext
           value={{
             activeKey: null,
@@ -155,40 +184,7 @@ describe('should render correctly', () => {
           }}
         >
           <ObjectPanel />
-        </ObjectPanelContext>
-        ,
-      </SelectedElementContext>,
-    );
-
-    expect(container).toMatchSnapshot();
-  });
-
-  describe('one element', () => {
-    beforeEach(() => {
-      jest.resetAllMocks();
-    });
-
-    test('not g element', () => {
-      document.body.innerHTML = '<rect id="svg_1" />';
-
-      const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -210,25 +206,24 @@ describe('should render correctly', () => {
 
     test('is g element', () => {
       document.body.innerHTML = '<g id="svg_1" />';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
 
       const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        <ObjectPanelContext
+          value={{
+            activeKey: null,
+            dimensionValues: {
+              rx: 1,
+            },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
+            updateActiveKey: jest.fn(),
+            updateDimensionValues: jest.fn(),
+            updateObjectPanel: jest.fn(),
+          }}
+        >
+          <ObjectPanel />
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -245,25 +240,24 @@ describe('should render correctly', () => {
     test('contains rect, polygon or ellipse elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
 
       const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        <ObjectPanelContext
+          value={{
+            activeKey: null,
+            dimensionValues: {
+              rx: 1,
+            },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
+            updateActiveKey: jest.fn(),
+            updateDimensionValues: jest.fn(),
+            updateObjectPanel: jest.fn(),
+          }}
+        >
+          <ObjectPanel />
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -299,26 +293,25 @@ describe('should render correctly', () => {
     test('contains other types of elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
       calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        <ObjectPanelContext
+          value={{
+            activeKey: null,
+            dimensionValues: {
+              rx: 1,
+            },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
+            updateActiveKey: jest.fn(),
+            updateDimensionValues: jest.fn(),
+            updateObjectPanel: jest.fn(),
+          }}
+        >
+          <ObjectPanel />
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -336,7 +329,37 @@ describe('should render correctly in mobile', () => {
 
   test('no elements', () => {
     const { container } = render(
-      <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
+      <ObjectPanelContext
+        value={{
+          activeKey: null,
+          dimensionValues: {
+            rx: 1,
+          },
+          getDimensionValues: jest.fn(),
+          polygonSides: 5,
+          updateActiveKey: jest.fn(),
+          updateDimensionValues: jest.fn(),
+          updateObjectPanel: jest.fn(),
+        }}
+      >
+        <ObjectPanel />
+      </ObjectPanelContext>,
+    );
+
+    expect(container).toMatchSnapshot();
+  });
+
+  describe('one element', () => {
+    beforeEach(() => {
+      jest.resetAllMocks();
+      useScreenStore.setState({ isMobile: true });
+    });
+
+    test('not g element', () => {
+      document.body.innerHTML = '<rect id="svg_1" />';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
+
+      const { container, getByText } = render(
         <ObjectPanelContext
           value={{
             activeKey: null,
@@ -351,40 +374,7 @@ describe('should render correctly in mobile', () => {
           }}
         >
           <ObjectPanel />
-        </ObjectPanelContext>
-      </SelectedElementContext>,
-    );
-
-    expect(container).toMatchSnapshot();
-  });
-
-  describe('one element', () => {
-    beforeEach(() => {
-      jest.resetAllMocks();
-      useScreenStore.setState({ isMobile: true });
-    });
-
-    test('not g element', () => {
-      document.body.innerHTML = '<rect id="svg_1" />';
-
-      const { container, getByText } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -407,25 +397,24 @@ describe('should render correctly in mobile', () => {
 
     test('is g element', () => {
       document.body.innerHTML = '<g id="svg_1" />';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_1') });
 
       const { container, getByText } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_1') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        <ObjectPanelContext
+          value={{
+            activeKey: null,
+            dimensionValues: {
+              rx: 1,
+            },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
+            updateActiveKey: jest.fn(),
+            updateDimensionValues: jest.fn(),
+            updateObjectPanel: jest.fn(),
+          }}
+        >
+          <ObjectPanel />
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -444,25 +433,24 @@ describe('should render correctly in mobile', () => {
     test('contains rect, polygon or ellipse elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><rect id="svg_1"></rect><ellipse id="svg_2"></ellipse></g>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
 
       const { container, getByText } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        <ObjectPanelContext
+          value={{
+            activeKey: null,
+            dimensionValues: {
+              rx: 1,
+            },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
+            updateActiveKey: jest.fn(),
+            updateDimensionValues: jest.fn(),
+            updateObjectPanel: jest.fn(),
+          }}
+        >
+          <ObjectPanel />
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();
@@ -498,26 +486,25 @@ describe('should render correctly in mobile', () => {
     test('contains other types of elements', () => {
       document.body.innerHTML =
         '<g id="svg_3" data-tempgroup="true"><path id="svg_1"></path><line id="svg_2"></line></g>';
+      useSelectedElementStore.setState({ selectedElement: document.getElementById('svg_3') });
       calcPathClosed.mockReturnValue(true);
 
       const { container } = render(
-        <SelectedElementContext value={{ selectedElement: document.getElementById('svg_3') }}>
-          <ObjectPanelContext
-            value={{
-              activeKey: null,
-              dimensionValues: {
-                rx: 1,
-              },
-              getDimensionValues: jest.fn(),
-              polygonSides: 5,
-              updateActiveKey: jest.fn(),
-              updateDimensionValues: jest.fn(),
-              updateObjectPanel: jest.fn(),
-            }}
-          >
-            <ObjectPanel />
-          </ObjectPanelContext>
-        </SelectedElementContext>,
+        <ObjectPanelContext
+          value={{
+            activeKey: null,
+            dimensionValues: {
+              rx: 1,
+            },
+            getDimensionValues: jest.fn(),
+            polygonSides: 5,
+            updateActiveKey: jest.fn(),
+            updateDimensionValues: jest.fn(),
+            updateObjectPanel: jest.fn(),
+          }}
+        >
+          <ObjectPanel />
+        </ObjectPanelContext>,
       );
 
       expect(container).toMatchSnapshot();

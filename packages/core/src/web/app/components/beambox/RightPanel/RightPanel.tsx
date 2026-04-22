@@ -7,11 +7,11 @@ import { match, P } from 'ts-pattern';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import { focusPanel, showPanel } from '@core/app/widgets/dockable/utils';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -28,7 +28,7 @@ const rightPanelEventEmitter = eventEmitterFactory.createEventEmitter('right-pan
 const RightPanel = (): ReactNode => {
   const mode = useCanvasStore((state) => state.mode);
   const { isPathEditing } = use(CanvasContext);
-  const { selectedElement } = use(SelectedElementContext);
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const isMobile = useIsMobile();
   const [panelType, setPanelType] = useState(isMobile ? PanelType.None : PanelType.Layer);
   const isTabAutoSwitch = useGlobalPreferenceStore((state) => state['auto-switch-tab']);

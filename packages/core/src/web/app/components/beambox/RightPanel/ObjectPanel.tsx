@@ -1,4 +1,4 @@
-import React, { memo, use } from 'react';
+import React, { memo } from 'react';
 
 import { Button, ConfigProvider } from 'antd';
 import classNames from 'classnames';
@@ -8,9 +8,9 @@ import FnWrapper from '@core/app/actions/beambox/svgeditor-function-wrapper';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import { CanvasElements } from '@core/app/constants/canvasElements';
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -40,7 +40,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const lang = useI18n();
   const tObjectPanel = lang.beambox.right_panel.object_panel;
   const isMobile = useIsMobile();
-  const { selectedElement: elem } = use(SelectedElementContext);
+  const elem = useSelectedElementStore((state) => state.selectedElement);
   const getAvailableFunctions = () => {
     if (!elem) {
       return {};

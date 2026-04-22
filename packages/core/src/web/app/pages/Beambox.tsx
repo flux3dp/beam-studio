@@ -13,7 +13,6 @@ import ImageTracePanel from '@core/app/components/dialogs/ImageTracePanel/ImageT
 import CanvasTabBar from '@core/app/components/mobile/CanvasTabBar';
 import { MenuEvents, MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasProvider } from '@core/app/contexts/CanvasContext';
-import { SelectedElementContextProvider } from '@core/app/contexts/SelectedElementContext';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import workareaManager from '@core/app/svgedit/workarea';
@@ -54,32 +53,30 @@ const Beambox = (): React.JSX.Element => {
 
   return (
     <CanvasProvider>
-      <SelectedElementContextProvider>
-        <div className={classNames('studio-container', 'beambox-studio', activeLang, styles.container)}>
-          <TopBar />
-          <ObjectPanelContextProvider>
-            <ToolBarDrawerContainer />
-            {isMobile ? (
-              <>
-                <RealSvgEditor />
-                <RightPanel />
-                <CanvasTabBar />
-              </>
-            ) : (
-              <Flex className={styles.main}>
-                <DockViewLayout />
-                {/* Note: RightPanel in non mobile mode is used to handle PanelType changes */}
-                <RightPanel />
-              </Flex>
-            )}
-            {/* This is a temp place for SvgEditor, will be moved out&in */}
-            <div id="safe-editor-container" style={{ display: 'none' }}>
-              <SvgEditor />
-            </div>
-          </ObjectPanelContextProvider>
-        </div>
-        <ImageTracePanel />
-      </SelectedElementContextProvider>
+      <div className={classNames('studio-container', 'beambox-studio', activeLang, styles.container)}>
+        <TopBar />
+        <ObjectPanelContextProvider>
+          <ToolBarDrawerContainer />
+          {isMobile ? (
+            <>
+              <RealSvgEditor />
+              <RightPanel />
+              <CanvasTabBar />
+            </>
+          ) : (
+            <Flex className={styles.main}>
+              <DockViewLayout />
+              {/* Note: RightPanel in non mobile mode is used to handle PanelType changes */}
+              <RightPanel />
+            </Flex>
+          )}
+          {/* This is a temp place for SvgEditor, will be moved out&in */}
+          <div id="safe-editor-container" style={{ display: 'none' }}>
+            <SvgEditor />
+          </div>
+        </ObjectPanelContextProvider>
+      </div>
+      <ImageTracePanel />
     </CanvasProvider>
   );
 };

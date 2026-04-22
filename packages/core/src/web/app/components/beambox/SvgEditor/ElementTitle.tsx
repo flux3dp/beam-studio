@@ -1,6 +1,6 @@
-import React, { use } from 'react';
+import React from 'react';
 
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import { isFitText } from '@core/app/svgedit/text/textedit';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -9,7 +9,7 @@ import styles from './ElementTitle.module.scss';
 
 function ElementTitle(): React.ReactNode {
   const { topbar: t } = useI18n();
-  const { selectedElement } = use(SelectedElementContext);
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   let content = '';
 
   if (selectedElement) {
