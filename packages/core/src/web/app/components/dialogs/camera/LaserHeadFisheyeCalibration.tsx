@@ -3,7 +3,6 @@ import React, { useCallback, useMemo, useRef, useState } from 'react';
 import alertCaller from '@core/app/actions/alert-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { bb2PerspectiveGrid, bb2PnPPoints, hx2rfPerspectiveGrid } from '@core/app/constants/fisheyeCameraConstants';
-import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { setFisheyeConfig } from '@core/helpers/camera-calibration-helper';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
@@ -11,7 +10,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { FisheyeCameraParametersV3, FisheyeCameraParametersV3Cali } from '@core/interfaces/FisheyePreview';
 
 import styles from './Calibration.module.scss';
-import Calibration from './common/Calibration';
+import ChArUco from './common/ChArUco';
 import CheckPnP from './common/CheckPnP';
 import CheckpointData from './common/CheckpointData';
 import downloadCalibrationFile from './common/downloadCalibrationFile';
@@ -51,7 +50,6 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
   }, []);
   const model = useMemo(() => deviceMaster.currentDevice?.info.model ?? 'fbb2', []);
   const isHexaRf = useMemo(() => model === 'fhx2rf', [model]);
-  const workareaObj = useMemo(() => getWorkarea(model, 'fbb2'), [model]);
 
   if (step === Steps.CHECKPOINT_DATA) {
     return (
@@ -78,31 +76,22 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
     return (
       <Instruction
         animationSrcs={[
-          { src: 'video/laser-head-calibration/1-chessboard.webm', type: 'video/webm' },
-          { src: 'video/laser-head-calibration/1-chessboard.mp4', type: 'video/mp4' },
+          { src: 'video/laser-head-calibration/1-charuco.webm', type: 'video/webm' },
+          { src: 'video/laser-head-calibration/1-charuco.mp4', type: 'video/mp4' },
         ]}
         buttons={[
           {
             label: tCali.next,
-            onClick: async () => {
-              const res = await moveLaserHead(workareaObj.calibrationCenter ?? workareaObj.cameraCenter);
-
-              if (res) setStep(Steps.CHESSBOARD);
-            },
+            onClick: () => setStep(Steps.CHESSBOARD),
             type: 'primary',
           },
         ]}
         onClose={onClose}
-        steps={[tCali.put_chessboard_bb2_desc_1, tCali.put_chessboard_bb2_desc_2, tCali.put_chessboard_bb2_desc_3]}
-        title={tCali.put_chessboard}
+        steps={[tCali.put_charuco_1, tCali.put_charuco_2, tCali.put_charuco_3]}
+        title={tCali.put_charuco}
       >
-        <div
-          className={styles.link}
-          onClick={() =>
-            downloadCalibrationFile('assets/bb2-chessboard.pdf', tCali.download_chessboard_file, 'Chessboard')
-          }
-        >
-          {tCali.download_chessboard_file}
+        <div className={styles.link} onClick={() => downloadCalibrationFile('assets/charuco-15-10-with-mark.pdf')}>
+          {tCali.download_calibration_pattern}
         </div>
       </Instruction>
     );
@@ -110,18 +99,28 @@ const LaserHeadFisheyeCalibration = ({ isAdvanced, onClose }: Props): React.JSX.
 
   if (step === Steps.CHESSBOARD) {
     return (
-      <Calibration
-        cameraOptions={{ index: 0 }}
-        charuco={[15, 10]}
-        chessboard={[24, 14]}
-        description={[tCali.put_chessboard_1, tCali.put_chessboard_2, tCali.put_chessboard_3]}
-        indicator={
-          isHexaRf
-            ? { height: '82.5%', left: '2.5%', top: '0.5%', width: '95%' }
-            : { height: '65%', left: '10%', top: '30%', width: '80%' }
-        }
+      <ChArUco
+        calibrationThresholds={{ average: 3.5, good: 2.8 }}
+        cameraIndex={0}
+        isFisheye
+        isVertical
         onClose={onClose}
         onNext={() => setStep(Steps.PUT_PAPER)}
+        onPrev={() => setStep(Steps.PRE_CHESSBOARD)}
+        steps={[
+          {
+            descriptions: [tCali.charuco_move_to_point_a, tCali.charuco_capture],
+            imageUrl: 'core-img/calibration/charuco-a.jpg',
+            key: 'left',
+            name: 'A',
+          },
+          {
+            descriptions: [tCali.charuco_move_to_point_b, tCali.charuco_capture],
+            imageUrl: 'core-img/calibration/charuco-b.jpg',
+            key: 'right',
+            name: 'B',
+          },
+        ]}
         updateParam={updateParam}
       />
     );
