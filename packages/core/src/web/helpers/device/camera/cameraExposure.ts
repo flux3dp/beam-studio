@@ -16,7 +16,8 @@ export const getExposureSettings = async () => {
     return { max: 1000, min: 50, step: 1, value: res.data } as IConfigSetting;
   }
 
-  if (currentMode !== '') await deviceMaster.endSubTask();
+  // Call without await intentionally, to call endSubtask and getDeviceSetting simultaneously, to avoid race condition in control socket
+  if (currentMode !== '') deviceMaster.endSubTask();
 
   const exposureRes = await deviceMaster.getDeviceSetting('camera_exposure_absolute');
 
@@ -34,7 +35,8 @@ export const setExposure = async (value: number): Promise<boolean> => {
     return res;
   }
 
-  if (currentMode !== '') await deviceMaster.endSubTask();
+  // Call without await intentionally, to call endSubtask and getDeviceSetting simultaneously, to avoid race condition in control socket
+  if (currentMode !== '') deviceMaster.endSubTask();
 
   await deviceMaster.setDeviceSetting('camera_exposure_absolute', value.toString());
 

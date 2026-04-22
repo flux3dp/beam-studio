@@ -15,11 +15,13 @@
   }
 
   .content {
+    width: 100%;
     min-height: 40vh;
   }
 
   .left {
-    width: 68%;
+    flex: 1 1 auto;
+    min-width: 70%;
   }
 
   .right {
