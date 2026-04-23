@@ -20,21 +20,15 @@ import { useVariableTextState } from '@core/app/stores/variableText';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
+import selector from '@core/app/svgedit/selector';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
 import getLocalizedTime from '@core/helpers/getLocalizedTime';
 import i18n from '@core/helpers/i18n';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import { VariableTextType } from '@core/interfaces/ObjectPanel';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 export const isVariableTextSupported = (): boolean => {
   // Note:
@@ -127,7 +121,7 @@ const updateContent = async (
     const subcmd = new history.ChangeTextCommand(elem, oldValue, value);
 
     batchCmd.addSubCommand(subcmd);
-    textedit.renderText(elem, value);
+    textedit.renderText(elem as SVGTextElement, value);
   } else {
     // QRcode or Barcode
     batchCmd.addSubCommand(new history.RemoveElementCommand(elem, elem.nextSibling, elem.parentNode!));
@@ -214,7 +208,7 @@ export const convertVariableText = async ({
   let texts: NodeListOf<SVGElement>;
 
   textActions.clear();
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   tmpContainer.style.visibility = 'hidden';
   barcodeContainer.style.visibility = 'hidden';
   document.body.appendChild(tmpContainer);
@@ -289,8 +283,8 @@ export const convertVariableText = async ({
 
     batchCmd.onAfter = () => {
       textActions.clear();
-      svgCanvas.clearSelection();
-      svgCanvas.selectorManager.releaseSelectors();
+      selectionManager.clearSelection();
+      selector.getSelectorManager().releaseSelectors();
     };
 
     if (addToHistory) {
@@ -317,7 +311,7 @@ export const convertVariableText = async ({
 
     return () => batchCmd.unapply({ handleHistoryEvent: () => {}, renderText: textedit.renderText });
   } finally {
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
     root.unmount();
     tmpContainer.remove();
     barcodeContainer.remove();
@@ -334,8 +328,8 @@ export const removeVariableText = (): (() => void) | null => {
   const revertMaps: Array<{ elem: Element; nextSibling: Node | null; parentNode: Node | null }> = [];
 
   textActions.clear();
-  svgCanvas.clearSelection();
-  svgCanvas.selectorManager.releaseSelectors();
+  selectionManager.clearSelection();
+  selector.getSelectorManager().releaseSelectors();
   allElements.forEach((elem) => {
     revertMaps.unshift({ elem, nextSibling: elem.nextSibling, parentNode: elem.parentNode });
     elem.remove();
@@ -343,8 +337,8 @@ export const removeVariableText = (): (() => void) | null => {
 
   const revert = () => {
     textActions.clear();
-    svgCanvas.clearSelection();
-    svgCanvas.selectorManager.releaseSelectors();
+    selectionManager.clearSelection();
+    selector.getSelectorManager().releaseSelectors();
     revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
         parentNode!.insertBefore(elem, nextSibling);
@@ -394,14 +388,14 @@ export const extractVariableText = (doExtract = true): null | VariableTextElemHa
 
   const extract = () => {
     textActions.clear();
-    svgCanvas.clearSelection();
-    svgCanvas.selectorManager.releaseSelectors();
+    selectionManager.clearSelection();
+    selector.getSelectorManager().releaseSelectors();
     revertMaps.forEach(({ elem }) => elem.remove());
   };
   const revert = () => {
     textActions.clear();
-    svgCanvas.clearSelection();
-    svgCanvas.selectorManager.releaseSelectors();
+    selectionManager.clearSelection();
+    selector.getSelectorManager().releaseSelectors();
     revertMaps.forEach(({ elem, nextSibling, parentNode }) => {
       if (nextSibling) {
         parentNode!.insertBefore(elem, nextSibling);

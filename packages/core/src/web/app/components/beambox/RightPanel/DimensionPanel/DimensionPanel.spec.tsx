@@ -37,12 +37,8 @@ jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
 
 const mockChangeSelectedAttribute = jest.fn();
 const mockSetSvgElemPosition = jest.fn();
-const mockSetRotationAngle = jest.fn();
-const mockBeginUndoableChange = jest.fn();
 const mockChangeSelectedAttributeNoUndo = jest.fn();
-const mockFinishUndoableChange = jest.fn();
 const setSvgElemSize = jest.fn();
-const mockAddCommandToHistory = jest.fn();
 const flipSelectedElements = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -52,17 +48,33 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
         changeSelectedAttribute: (...args) => mockChangeSelectedAttribute(...args),
         changeSelectedAttributeNoUndo: (...args) => mockChangeSelectedAttributeNoUndo(...args),
         flipSelectedElements: (...args) => flipSelectedElements(...args),
-        setRotationAngle: (...args) => mockSetRotationAngle(...args),
         setSvgElemPosition: (...args) => mockSetSvgElemPosition(...args),
         setSvgElemSize: (...args) => setSvgElemSize(...args),
-        undoMgr: {
-          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
-          beginUndoableChange: (...args) => mockBeginUndoableChange(...args),
-          finishUndoableChange: (...args) => mockFinishUndoableChange(...args),
-        },
       },
     });
   },
+}));
+
+const mockAddCommandToHistory = jest.fn();
+const mockBeginUndoableChange = jest.fn();
+const mockFinishUndoableChange = jest.fn();
+
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
+  beginUndoableChange: (...args) => mockBeginUndoableChange(...args),
+  finishUndoableChange: (...args) => mockFinishUndoableChange(...args),
+}));
+
+const mockSetRotationAngle = jest.fn();
+
+jest.mock('@core/app/svgedit/transform/rotation', () => ({
+  setRotationAngle: (...args) => mockSetRotationAngle(...args),
+}));
+
+const mockResizeSelector = jest.fn();
+
+jest.mock('@core/app/svgedit/selector', () => ({
+  resizeSelector: (...args) => mockResizeSelector(...args),
 }));
 
 jest.mock('./FlipButtons', () => () => <div>Mock FlipButtons</div>);
@@ -252,7 +264,11 @@ describe('test DimensionPanel', () => {
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
     expect(mockSetRotationAngle).toHaveBeenCalledTimes(1);
-    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, -80, false, mockElement);
+    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, mockElement, -80);
+    expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
+    expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
+      rotation: -80,
+    });
     expect(mockForceUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -295,7 +311,7 @@ describe('test DimensionPanel', () => {
     });
 
     const { container } = renderDimensionPanel(mockElement);
-    const inputW = container.querySelector('#size-w');
+    const inputW = container.querySelector('#size-w')!;
 
     expect(mockBeginUndoableChange).not.toHaveBeenCalled();
     expect(mockChangeSelectedAttributeNoUndo).not.toHaveBeenCalled();
@@ -344,7 +360,7 @@ describe('test DimensionPanel', () => {
     mockElement.tagName = 'use';
 
     const { container } = renderDimensionPanel(mockElement);
-    const inputW = container.querySelector('#size-w');
+    const inputW = container.querySelector('#size-w')!;
 
     fireEvent.blur(inputW);
     expect(mockReRenderImageSymbol).toHaveBeenCalledTimes(1);
@@ -464,7 +480,11 @@ describe('test DimensionPanel in mobile', () => {
     expect(mockSetRotationAngle).not.toHaveBeenCalled();
     fireEvent.click(getByText('rotation'));
     expect(mockSetRotationAngle).toHaveBeenCalledTimes(1);
-    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, -80, false, mockElement);
+    expect(mockSetRotationAngle).toHaveBeenNthCalledWith(1, mockElement, -80);
+    expect(mockUpdateDimensionValues).toHaveBeenCalledTimes(1);
+    expect(mockUpdateDimensionValues).toHaveBeenNthCalledWith(1, {
+      rotation: -80,
+    });
     expect(mockForceUpdate).toHaveBeenCalledTimes(1);
   });
 
@@ -507,7 +527,7 @@ describe('test DimensionPanel in mobile', () => {
     });
 
     const { container } = renderDimensionPanel(mockElement);
-    const inputW = container.querySelector('#size-w');
+    const inputW = container.querySelector('#size-w')!;
 
     expect(mockBeginUndoableChange).not.toHaveBeenCalled();
     expect(mockChangeSelectedAttributeNoUndo).not.toHaveBeenCalled();
@@ -556,7 +576,7 @@ describe('test DimensionPanel in mobile', () => {
     mockElement.tagName = 'use';
 
     const { container } = renderDimensionPanel(mockElement);
-    const inputW = container.querySelector('#size-w');
+    const inputW = container.querySelector('#size-w')!;
 
     fireEvent.blur(inputW);
     expect(mockReRenderImageSymbol).toHaveBeenCalledTimes(1);

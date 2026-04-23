@@ -1,6 +1,8 @@
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
 import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import selectionManager from '@core/app/svgedit/selection';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -53,13 +55,13 @@ export function createAndApplyOffsetElement(
   batchCmd.addSubCommand(new history.InsertElementCommand(newElem));
   updateElementColor(newElem);
 
-  svgCanvas.selectOnly([newElem], true);
+  selectionManager.selectOnly([newElem], true);
 
   if (!addToHistory) {
     return batchCmd;
   }
 
-  svgCanvas.addCommandToHistory(batchCmd);
+  undoManager.addCommandToHistory(batchCmd);
 
   console.log('Offset element operation completed.');
 

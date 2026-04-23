@@ -19,6 +19,7 @@ import ungroupElement from '../group/ungroup';
 import type { BatchCommand } from '../history/history';
 import history from '../history/history';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
+import selectionManager from '../selection';
 import { getRotationAngle, setRotationAngle } from '../transform/rotation';
 import { getHref } from '../utils/href';
 
@@ -67,7 +68,7 @@ export const disassembleUse = async (
     lang: { beambox: t },
   } = i18n;
 
-  if (!elems) elems = [...svgCanvas.getSelectedElems()] as SVGElement[];
+  if (!elems) elems = selectionManager.getSelectedElements(true);
 
   if (!skipConfirm) {
     const confirm = await new Promise((resolve) => {
@@ -257,14 +258,16 @@ export const disassembleUse = async (
 
       if (!cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
-      svgCanvas.selectOnly(children as SVGElement[], true);
+      selectionManager.selectOnly(children as SVGElement[], true);
     } else {
-      svgCanvas.selectOnly([g], true);
+      selectionManager.selectOnly([g], true);
     }
 
-    if (ratioFixed) svgCanvas.getSelectedElems().forEach((elem) => elem.setAttribute('data-ratiofixed', ratioFixed));
+    if (ratioFixed) {
+      selectionManager.getSelectedElements().forEach((elem) => elem.setAttribute('data-ratiofixed', ratioFixed));
+    }
 
-    svgCanvas.tempGroupSelectedElements();
+    selectionManager.tempGroupSelectedElements();
     currentFileManager.setHasUnsavedChanges(true);
   }
 

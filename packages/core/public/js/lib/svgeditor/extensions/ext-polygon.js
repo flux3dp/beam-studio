@@ -60,10 +60,6 @@ svgEditor.addExtension('polygon', function (S) {
     let polygonExt = {
         name: 'polygon',
         mouseDown: function (opts) {
-            // var e = opts.event;
-            var sRgb = svgCanvas.getColor('stroke');
-            // ccSRgbEl = sRgb.substring(1, rgb.length);
-            var sWidth = svgCanvas.getStrokeWidth();
 
             if (svgCanvas.getMode() == 'polygon') {
                 started = true;

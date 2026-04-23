@@ -17,11 +17,7 @@ describe('select tools', () => {
 
     cy.clickToolBtn('Cursor');
     cy.get('#svg_1').realClick();
-
-    cy.window().then((win) => {
-      const el = win.eval('svgCanvas.getSelectedElems()');
-      cy.get(el).should('have.length', 1).and('have.id', 'svg_1');
-    });
+    cy.getElementTitle().should('have.text', 'Layer 1 > Text');
   });
 
   it('multi select', () => {
@@ -46,15 +42,10 @@ describe('select tools', () => {
       .trigger('mouseup', { force: true });
 
     cy.findAllByText('Multiple Objects').should('exist');
-
-    cy.window().then((win) => {
-      const el = win.eval('svgCanvas.getTempGroup()');
-      const childNodes = Array.from(el.childNodes);
-
-      expect(childNodes).to.have.length(2);
-      expect(childNodes[0]).to.have.id('svg_1');
-      expect(childNodes[1]).to.have.id('svg_2');
-    });
+    cy.get('[data-tempgroup="true"]').should('exist');
+    cy.get('[data-tempgroup="true"]').children().should('have.length', 2);
+    cy.get('[data-tempgroup="true"]').children().first().should('have.id', 'svg_1');
+    cy.get('[data-tempgroup="true"]').children().last().should('have.id', 'svg_2');
   });
 
   it('select rotate', () => {

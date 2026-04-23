@@ -10,6 +10,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import changeAttribute from '../history/changeAttribute';
 import undoManager from '../history/undoManager';
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
+import selectionManager from '../selection';
 import { getTransformList } from '../transform/transformlist';
 import { getBBox } from '../utils/getBBox';
 
@@ -84,7 +85,7 @@ export const createNewFitText = (
   }
 
   if (isToSelect) {
-    svgCanvas.selectOnly([newText]);
+    selectionManager.selectOnly([newText]);
   }
 
   if (addToHistory) {

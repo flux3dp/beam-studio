@@ -1,16 +1,9 @@
 import tabController from '@core/app/actions/tabController';
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import selectionManager from '@core/app/svgedit/selection';
 import { isAtPage } from '@core/helpers/hashHelper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import menu from '@core/implementations/menu';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 class BeamboxGlobalInteraction {
   constructor() {
@@ -36,7 +29,7 @@ class BeamboxGlobalInteraction {
   };
 
   onObjectFocus(elems?: Element[]) {
-    let selectedElements = elems || svgCanvas?.getSelectedElems().filter(Boolean);
+    let selectedElements = elems || selectionManager.getSelectedElements();
 
     if (!selectedElements?.length) {
       return;
@@ -60,7 +53,7 @@ class BeamboxGlobalInteraction {
       menu.enable(['DECOMPOSE_PATH']);
     }
 
-    if (selectedElements.length > 0 && firstElement.getAttribute('data-tempgroup') === 'true') {
+    if (selectedElements.length > 0 && selectionManager.isMultiSelecting) {
       selectedElements = Array.from(firstElement.childNodes) as Element[];
     }
 

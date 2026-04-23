@@ -29,7 +29,7 @@ export interface IAlert {
     text: string;
     url: string;
   }>;
-  message: React.JSX.Element | string;
+  message: ReactNode;
   messageIcon?: MessageIcon;
   onCancel?: Function;
   onConfirm?: Function;

@@ -543,10 +543,7 @@ const path = require('path');
   // attrs - Apply attributes to new path. see canvas.convertToPath
   // addSvgElementFromJson - Function to add the path element to the current layer. See canvas.addSvgElementFromJson
   // pathActions - If a transform exists, pathActions.resetOrientation() is used. See: canvas.pathActions.
-  // clearSelection - see canvas.clearSelection
-  // addToSelection - see canvas.addToSelection
   // history - see svgedit.history
-  // addCommandToHistory - see canvas.addCommandToHistory
   //
   // Returns:
   // The converted path element or null if the DOM element was not recognized.

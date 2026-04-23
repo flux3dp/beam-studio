@@ -6,6 +6,9 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import undoManager from '../../history/undoManager';
+import selectionManager from '../../selection';
+
 let svgCanvas: ISVGCanvas;
 
 getSVGAsync((globalSVG) => {
@@ -92,11 +95,11 @@ const readBitmapFile = async (
       width,
     });
     updateElementColor(newImage);
-    svgCanvas.selectOnly([newImage]);
+    selectionManager.selectOnly([newImage]);
 
     const cmd = new history.InsertElementCommand(newImage);
 
-    if (!parentCmd) svgCanvas.undoMgr.addCommandToHistory(cmd);
+    if (!parentCmd) undoManager.addCommandToHistory(cmd);
     else parentCmd.addSubCommand(cmd);
 
     if (!offset) {

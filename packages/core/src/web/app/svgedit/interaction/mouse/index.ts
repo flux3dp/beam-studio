@@ -33,6 +33,8 @@ import history from '../../history/history';
 import undoManager from '../../history/undoManager';
 import layerManager from '../../layer/layerManager';
 import { cloneSelectedElements, hasClipboardData } from '../../operations/clipboard';
+import selectionManager from '../../selection';
+import { resizeSelector } from '../../selector';
 import createNewText from '../../text/createNewText';
 import {
   clearFitTextResizeRecords,
@@ -44,6 +46,7 @@ import {
 } from '../../text/fitText';
 import textEdit, { isFitText } from '../../text/textedit';
 import touchEvents from '../../touchEvents';
+import { setRotationAngle } from '../../transform/rotation';
 import { getBBox } from '../../utils/getBBox';
 import workareaManager from '../../workarea';
 import wheelEventHandlerGenerator from '../wheelEventHandler';
@@ -112,7 +115,7 @@ const mouseDown = async (evt: MouseEvent) => {
 
   const currentShape = svgCanvas.getCurrentShape();
   const zoom = workareaManager.zoomRatio;
-  let selectedElements = svgCanvas.getSelectedElems();
+  let selectedElements = selectionManager.getSelectedElements();
   const started = svgCanvas.getStarted();
   const svgRoot = svgCanvas.getRoot();
   const rightClick = evt.button === MouseButtons.Right;
@@ -254,7 +257,7 @@ const mouseDown = async (evt: MouseEvent) => {
       if (mouseTarget !== svgRoot && (isElemTempGroup || layerSelectable)) {
         // Mouse down on element
         if (!selectedElements.includes(mouseTarget)) {
-          if (!evt.shiftKey) svgCanvas.clearSelection(true);
+          if (!evt.shiftKey) selectionManager.clearSelection(true);
 
           if (navigator.maxTouchPoints > 1 && ['MacOS', 'others'].includes(getOS())) {
             // in touchable mobiles, allow multiselect if click on non selected element
@@ -262,26 +265,26 @@ const mouseDown = async (evt: MouseEvent) => {
             setMouseMode('multiselect');
             setRubberBoxStart(startMouseX, startMouseY);
           } else {
-            svgCanvas.addToSelection([mouseTarget]);
-            selectedElements = svgCanvas.getSelectedElems();
+            selectionManager.addToSelection([mouseTarget]);
+            selectedElements = selectionManager.getSelectedElements();
 
             if (selectedElements.length > 1) {
-              svgCanvas.tempGroupSelectedElements();
-              selectedElements = svgCanvas.getSelectedElems();
+              selectionManager.tempGroupSelectedElements();
+              selectedElements = selectionManager.getSelectedElements();
             }
           }
 
           justSelected = mouseTarget;
           svgCanvas.pathActions.clear();
         } else if (evt.shiftKey) {
-          if (mouseTarget === svgCanvas.getTempGroup()) {
+          if (selectionManager.isTempGroup(mouseTarget)) {
             const elemToRemove = svgCanvas.getMouseTarget(evt, false);
 
-            svgCanvas.removeFromTempGroup(elemToRemove);
-            selectedElements = svgCanvas.getSelectedElems();
+            selectionManager.removeFromTempGroup(elemToRemove);
+            selectedElements = selectionManager.getSelectedElements();
           } else {
-            svgCanvas.clearSelection();
-            selectedElements = svgCanvas.getSelectedElems();
+            selectionManager.clearSelection();
+            selectedElements = selectionManager.getSelectedElements();
           }
         }
 
@@ -289,7 +292,7 @@ const mouseDown = async (evt: MouseEvent) => {
           if (evt.altKey) {
             const cmd = (await cloneSelectedElements(0, 0, { addToHistory: false }))?.cmd;
 
-            selectedElements = svgCanvas.getSelectedElems();
+            selectedElements = selectionManager.getSelectedElements();
 
             if (cmd && !cmd.isEmpty()) mouseSelectModeCmds.push(cmd);
           }
@@ -320,7 +323,7 @@ const mouseDown = async (evt: MouseEvent) => {
         }
       } else if (mouseTarget === svgRoot && !rightClick) {
         // Mouse down on svg root
-        svgCanvas.clearSelection();
+        selectionManager.clearSelection();
         setMouseMode('multiselect');
         setRubberBoxStart(startMouseX, startMouseY);
       }
@@ -398,7 +401,7 @@ const mouseDown = async (evt: MouseEvent) => {
       });
 
       updateElementColor(newRect);
-      svgCanvas.selectOnly([newRect], true);
+      selectionManager.selectOnly([newRect], true);
       break;
     case 'line':
       svgCanvas.unsafeAccess.setStarted(true);
@@ -424,7 +427,7 @@ const mouseDown = async (evt: MouseEvent) => {
       });
 
       updateElementColor(newLine);
-      svgCanvas.selectOnly([newLine], true);
+      selectionManager.selectOnly([newLine], true);
       canvasEvents.addLine(newLine);
       break;
     case 'ellipse':
@@ -447,7 +450,7 @@ const mouseDown = async (evt: MouseEvent) => {
       });
 
       updateElementColor(newEllipse);
-      svgCanvas.selectOnly([newEllipse], true);
+      selectionManager.selectOnly([newEllipse], true);
       break;
     case 'text':
       svgCanvas.unsafeAccess.setStarted(true);
@@ -492,19 +495,19 @@ const mouseDown = async (evt: MouseEvent) => {
       svgCanvas.unsafeAccess.setStarted(true);
 
       // we are starting an undoable change (a drag-rotation)
-      if (!svgCanvas.getTempGroup()) {
+      if (!selectionManager.isMultiSelecting) {
         svgCanvas.undoMgr.beginUndoableChange('transform', selectedElements);
       }
 
       break;
     case 'drag-prespray-area':
       svgCanvas.unsafeAccess.setStarted(true);
-      svgCanvas.clearSelection();
+      selectionManager.clearSelection();
       presprayArea.startDrag();
       break;
     case 'drag-rotary-axis':
       svgCanvas.unsafeAccess.setStarted(true);
-      svgCanvas.clearSelection();
+      selectionManager.clearSelection();
       rotaryAxis.mouseDown();
       break;
     default:
@@ -704,7 +707,7 @@ const mouseMove = (evt: MouseEvent) => {
   const currentMode = getMouseMode();
   const zoom = workareaManager.zoomRatio;
   const currentConfig = svgCanvas.getCurrentConfig();
-  const selectedElements = svgCanvas.getSelectedElems();
+  const selectedElements = selectionManager.getSelectedElements();
   const rubberBox = svgCanvas.getRubberBox();
   const svgRoot = svgCanvas.getRoot();
 
@@ -998,7 +1001,8 @@ const mouseMove = (evt: MouseEvent) => {
         angle = Math.round(angle / snap) * snap;
       }
 
-      svgCanvas.setRotationAngle(angle < -180 ? 360 + angle : angle, true);
+      setRotationAngle(selected, angle < -180 ? 360 + angle : angle, { addToHistory: false });
+      resizeSelector(selected);
       ObjectPanelController.updateDimensionValues({
         rotation: angle < -180 ? 360 + angle : angle,
       });
@@ -1046,7 +1050,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
   const currentMode = getMouseMode();
   const currentShape = svgCanvas.getCurrentShape();
   const zoom = workareaManager.zoomRatio;
-  let selectedElements = svgCanvas.getSelectedElems();
+  let selectedElements = selectionManager.getSelectedElements();
   const rubberBox = svgCanvas.getRubberBox();
 
   if (blocked) svgCanvas.unsafeAccess.setStarted(false);
@@ -1174,10 +1178,10 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           layerManager.setCurrentLayer(tempLayer!);
         }
 
-        svgCanvas.selectOnly(selectedElements);
+        selectionManager.selectOnly(selectedElements);
 
         if (selectedElements.length > 1) {
-          svgCanvas.tempGroupSelectedElements();
+          selectionManager.tempGroupSelectedElements();
           svgEditor.updateContextPanel();
         } else if (tempLayer) {
           useLayerStore.getState().setSelectedLayers([tempLayer]);
@@ -1302,7 +1306,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
           } else if (evt.shiftKey) {
             // else, if it was selected and this is a shift-click, remove it from selection
             if (tempJustSelected !== t) {
-              svgCanvas.removeFromSelection([t as SVGElement]);
+              selectionManager.removeFromSelection([t as SVGElement]);
             }
           }
         } // no change in mouse position
@@ -1376,7 +1380,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       break;
     case 'text':
       keep = true;
-      svgCanvas.selectOnly([element]);
+      selectionManager.selectOnly([element]);
       svgCanvas.textActions.start(element);
       break;
     case 'fit-text': {
@@ -1419,10 +1423,9 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       setMouseMode('select');
 
       const batchCmd = new history.BatchCommand('Rotate Elements');
-      const tempGroup = svgCanvas.getTempGroup();
 
-      if (tempGroup) {
-        const cmd = svgCanvas.pushGroupProperties(tempGroup, true);
+      if (selectionManager.isMultiSelecting) {
+        const cmd = selectionManager.pushTempGroupProperties();
 
         if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
       } else {
@@ -1483,7 +1486,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     element.parentNode.removeChild(element);
     element = null;
     t = evt.target;
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
 
     // if this element is in a group, go up until we reach the top-level group
     // just below the layer groups
@@ -1512,7 +1515,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
     if (isNeedToSelect) {
       // switch into "select" mode if we've clicked on an element
       setMouseMode('select');
-      svgCanvas.selectOnly([t], true);
+      selectionManager.selectOnly([t], true);
     }
   } else if (element) {
     if (useUnit) svgedit.units.convertAttrs(element);
@@ -1531,13 +1534,13 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       if (currentMode === 'textedit') {
         svgCanvas.selectorManager.requestSelector(element)?.show(true);
       } else if (element.parentNode) {
-        svgCanvas.selectOnly([element], true);
+        selectionManager.selectOnly([element], true);
         svgCanvas.call('changed', [element]);
       }
     }
   }
 
-  if (isContinuousDrawing && getMouseMode() !== 'textedit') svgCanvas.clearSelection();
+  if (isContinuousDrawing && getMouseMode() !== 'textedit') selectionManager.clearSelection();
 
   svgCanvas.unsafeAccess.setStartTransform(null);
 };
@@ -1548,11 +1551,6 @@ const mouseEnter = (evt: MouseEvent) => {
 
 const dblClick = (evt: MouseEvent) => {
   const currentMode = getMouseMode();
-  const parent = (evt.target as SVGElement).parentNode as SVGElement;
-
-  // Do nothing if already in current group
-  if (parent === svgCanvas.getCurrentGroup()) return;
-
   const mouseTarget: Element = svgCanvas.getMouseTarget(evt);
   const { tagName } = mouseTarget;
 
@@ -1585,9 +1583,6 @@ const dblClick = (evt: MouseEvent) => {
   } else if (currentMode === 'preview_color') {
     canvasEvents.setColorPreviewing(false);
   }
-
-  // Reset context
-  if (svgCanvas.getCurrentGroup()) svgCanvas.leaveContext();
 };
 
 const registerEvents = () => {

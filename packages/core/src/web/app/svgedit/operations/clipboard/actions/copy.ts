@@ -1,22 +1,15 @@
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import selectionManager from '@core/app/svgedit/selection';
 
 import { clipboardCore } from '../singleton';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 export const copyElements = async (elems: Element[]): Promise<void> => {
   await clipboardCore.copyElements(elems);
 };
 
 export const copySelectedElements = async (): Promise<void> => {
-  const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
+  const selectedElems = selectionManager.getSelectedElements(true);
 
   await copyElements(selectedElems);
 
-  svgCanvas.tempGroupSelectedElements();
+  selectionManager.tempGroupSelectedElements();
 };

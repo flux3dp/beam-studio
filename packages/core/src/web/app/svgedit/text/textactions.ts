@@ -11,12 +11,11 @@ import history from '@core/app/svgedit/history/history';
 import { deleteElements, deleteSelectedElements } from '@core/app/svgedit/operations/delete';
 import selector from '@core/app/svgedit/selector';
 import workareaManager from '@core/app/svgedit/workarea';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import undoManager from '../history/undoManager';
 import { getEventPageXY } from '../interaction/mouse/utils/getEventPoint';
+import selectionManager from '../selection';
 import { getBBox } from '../utils/getBBox';
 
 import { isFitText } from './textedit';
@@ -34,12 +33,6 @@ interface BBox {
   x: number;
   y: number;
 }
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const { svgedit } = window;
 const { NS } = svgedit;
@@ -1035,7 +1028,7 @@ class TextActions {
     curtext.style.cursor = '';
 
     if (shouldClearSelection) {
-      svgCanvas.clearSelection();
+      selectionManager.clearSelection();
     }
 
     const isTextPath = curtext.getAttribute('data-textpath') === '1';
@@ -1044,9 +1037,9 @@ class TextActions {
       const selectorManager = selector.getSelectorManager();
 
       selectorManager.releaseSelector(curtext);
-      svgCanvas.addToSelection([curtext.parentElement as unknown as SVGElement], true);
+      selectionManager.addToSelection([curtext.parentElement as unknown as SVGElement], true);
     } else {
-      svgCanvas.addToSelection([curtext], true);
+      selectionManager.addToSelection([curtext], true);
     }
 
     svgedit.recalculate.recalculateDimensions(curtext);
@@ -1120,17 +1113,9 @@ class TextActions {
     if (!this.curtext) {
       return;
     }
-    // if (svgedit.browser.supportsEditableText()) {
-    //   curtext.select();
-    //   return;
-    // }
 
     if (!this.curtext.parentNode) {
-      // Result of the ffClone, need to get correct element
-      const selectedElements = svgCanvas.getSelectedElems();
-      const [elem] = selectedElements;
-
-      this.curtext = elem as SVGTextElement;
+      this.curtext = selectionManager.getSelectedElements()[0] as SVGTextElement;
 
       const selectorManager = selector.getSelectorManager();
 

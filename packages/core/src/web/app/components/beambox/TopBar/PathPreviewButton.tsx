@@ -10,22 +10,15 @@ import { CanvasMode } from '@core/app/constants/canvasMode';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import selectionManager from '@core/app/svgedit/selection';
 import checkWebGL from '@core/helpers/check-webgl';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import isDev from '@core/helpers/is-dev';
 import isWeb from '@core/helpers/is-web';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './PathPreviewButton.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface Props {
   isDeviceConnected: boolean;
@@ -43,7 +36,7 @@ function PathPreviewButton({ isDeviceConnected }: Props): ReactNode {
 
   const changeToPathPreviewMode = (): void => {
     if (mode !== CanvasMode.PathPreview && !isCanvasEmpty()) {
-      svgCanvas.clearSelection();
+      selectionManager.clearSelection();
       togglePathPreview();
     }
   };

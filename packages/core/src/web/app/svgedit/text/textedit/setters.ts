@@ -4,11 +4,11 @@ import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ICommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import changeAttribute, { changeElementsAttribute } from '../../history/changeAttribute';
 import history from '../../history/history';
 import undoManager from '../../history/undoManager';
+import selectionManager from '../../selection';
 
 import { getCurText } from './curText';
 import type { FitTextAlign } from './getters';
@@ -17,11 +17,9 @@ import { renderAll, renderText } from './renderText';
 
 export const textContentEvents = eventEmitterFactory.createEventEmitter('text-content');
 
-let svgCanvas: ISVGCanvas;
 let svgEditor: ISVGEditor;
 
 getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
   svgEditor = globalSVG.Editor;
 });
 
@@ -137,8 +135,9 @@ export const setLineSpacing = (val: number, textElems: SVGTextElement[]): void =
  * @param val new text value
  */
 export const setTextContent = (val: string): void => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const elem = selectedElements[0];
+  const elem = selectionManager.getSelectedElements()[0];
+
+  if (!(elem instanceof SVGTextElement)) return;
 
   renderText(elem as SVGTextElement, val, true);
   textActions.init();

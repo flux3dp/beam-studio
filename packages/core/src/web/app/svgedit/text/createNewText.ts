@@ -5,6 +5,9 @@ import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import undoManager from '../history/undoManager';
+import selectionManager from '../selection';
+
 import textEdit from './textedit';
 
 let svgCanvas: ISVGCanvas;
@@ -56,7 +59,7 @@ const createNewText = (
     },
     curStyles: true,
     element: 'text',
-  });
+  }) as SVGTextElement;
 
   updateElementColor(newText);
 
@@ -64,12 +67,12 @@ const createNewText = (
     textEdit.renderText(newText, text);
 
     if (isToSelect) {
-      svgCanvas.selectOnly([newText]);
+      selectionManager.selectOnly([newText]);
     }
   }
 
   if (addToHistory) {
-    svgCanvas.addCommandToHistory(new history.InsertElementCommand(newText));
+    undoManager.addCommandToHistory(new history.InsertElementCommand(newText));
   }
 
   canvasEvents.emit('addText', newText);

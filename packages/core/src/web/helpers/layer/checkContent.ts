@@ -1,22 +1,15 @@
 import MessageCaller from '@core/app/actions/message-caller';
 import { CanvasElements } from '@core/app/constants/canvasElements';
+import selectionManager from '@core/app/svgedit/selection';
 import i18n from '@core/helpers/i18n';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import { MessageLevel } from '@core/interfaces/IMessage';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const selector = CanvasElements.visibleElems
   .map((tag) => `g.layer:not([display="none"]):not([data-repeat="0"]) ${tag}`)
   .join(', ');
 
 export const isCanvasEmpty = (): boolean => {
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   const isEmpty = !document.querySelector(selector);
 

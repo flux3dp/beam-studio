@@ -14,15 +14,14 @@ jest.mock('@core/helpers/layer/layer-helper', () => ({
   getLayerName: (...args) => mockGetLayerName(...args),
 }));
 
-const mockGetTempGroup = jest.fn();
+const mockIsMultiSelecting = jest.fn();
+const mockGetElementsFromTempGroupByLayer = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (cb) =>
-    cb({
-      Canvas: {
-        getTempGroup: (...args) => mockGetTempGroup(...args),
-      },
-    }),
+jest.mock('@core/app/svgedit/selection', () => ({
+  getElementsFromTempGroupByLayer: (...args) => mockGetElementsFromTempGroupByLayer(...args),
+  get isMultiSelecting() {
+    return mockIsMultiSelecting();
+  },
 }));
 
 const mockSetElementsColor = jest.fn();
@@ -52,6 +51,7 @@ describe('test updateLayerColor', () => {
     layer.setAttribute('data-color', '#123456');
     mockGetState.mockReturnValue({ use_layer_color: true });
     mockGetLayerName.mockReturnValueOnce(null);
+    mockIsMultiSelecting.mockReturnValue(false);
     await updateLayerColor(layer as Element as SVGGElement);
     expect(mockGetState).toHaveBeenCalledTimes(1);
     expect(mockSetElementsColor).toHaveBeenCalledWith([mockRect], '#123456', false);

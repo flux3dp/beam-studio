@@ -1,6 +1,7 @@
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
+import selectionManager from '@core/app/svgedit/selection';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -118,7 +119,7 @@ function attachTextToPath(
   batchCmd.addSubCommand(new history.MoveElementCommand(textElement, oldNextSib, oldParent));
 
   textPathGroup.setAttribute('id', svgCanvas.getNextId());
-  svgCanvas.selectOnly([textPathGroup]);
+  selectionManager.selectOnly([textPathGroup]);
 
   handleHistoryActionOptions(batchCmd, options);
 

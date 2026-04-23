@@ -4,19 +4,12 @@ import { BatchCommand, InsertElementCommand } from '@core/app/svgedit/history/hi
 import undoManager from '@core/app/svgedit/history/undoManager';
 import Layer from '@core/app/svgedit/layer/layer';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import type { IBatchCommand, ICommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import i18n from '../i18n';
-import { getSVGAsync } from '../svg-editor-helper';
 
 import { initLayerConfig } from './layer-config-helper';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 // TODO: add unittest
 
@@ -36,7 +29,7 @@ export const deleteLayerByName = (
 export const deleteLayers = (layerNames: string[]): void => {
   const batchCmd: IBatchCommand = new BatchCommand('Delete Layer(s)');
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   for (let i = 0; i < layerNames.length; i += 1) {
     deleteLayerByName(layerNames[i], { parentCmd: batchCmd });

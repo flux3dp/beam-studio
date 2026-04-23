@@ -5,6 +5,7 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { cloneElements } from '@core/app/svgedit/operations/clipboard';
 import { moveElements } from '@core/app/svgedit/operations/move';
+import selectionManager from '@core/app/svgedit/selection';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
@@ -67,7 +68,7 @@ const apply = async (
 
   moveElements([mx + offsetX - ex], [my + offsetY - ey], [element], false);
 
-  const elemsToClone = element.getAttribute('data-tempgroup') ? svgCanvas.ungroupTempGroup() : [element];
+  const elemsToClone = selectionManager.getSelectedElements(true);
 
   for (let i = 0; i < elemsToClone.length; i += 1) {
     const elemToClone = elemsToClone[i];

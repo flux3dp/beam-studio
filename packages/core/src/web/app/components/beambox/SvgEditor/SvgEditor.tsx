@@ -70,8 +70,6 @@ const SvgEditor = (): ReactNode => {
         <div className={styles['invisible-tools']}>
           <div id="tool_import" style={{ display: 'none' }} />
           <input id="text" size={32} type="text" />
-          <div id="cur_context_panel" />
-          <div className="dropdown" id="option_lists" />
         </div>
 
         {mode !== CanvasMode.PathPreview && (

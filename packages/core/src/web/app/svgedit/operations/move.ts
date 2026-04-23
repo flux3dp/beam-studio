@@ -5,6 +5,9 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import undoManager from '../history/undoManager';
+import selectionManager from '../selection';
+
 // TODO: decouple with svgcanvas
 
 const { svgedit } = window;
@@ -21,7 +24,7 @@ export function moveElements(
   elems: Element[],
   undoable = true,
   noCall = false,
-): IBatchCommand {
+): IBatchCommand | null {
   // if single values, scale them to the zoom
   let zoomedX: number;
   let zoomedY: number;
@@ -73,7 +76,7 @@ export function moveElements(
   }
 
   if (!batchCmd.isEmpty()) {
-    if (undoable) svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+    if (undoable) undoManager.addCommandToHistory(batchCmd);
 
     if (!noCall) svgCanvas.call('changed', elems);
 
@@ -83,19 +86,23 @@ export function moveElements(
   return null;
 }
 
-export function moveSelectedElements(dx: number | number[], dy: number | number[], undoable = true): IBatchCommand {
+export function moveSelectedElements(
+  dx: number | number[],
+  dy: number | number[],
+  undoable = true,
+): IBatchCommand | null {
   // if single values, scale them to the zoom
-  const selectedElements = svgCanvas.getSelectedElems();
+  const selectedElements = selectionManager.getSelectedElements();
   const batchCmd = moveElements(dx, dy, selectedElements, undoable);
   const selectorManager = selector.getSelectorManager();
 
   selectedElements.forEach((elem: Element) => {
-    selectorManager.requestSelector(elem).resize();
+    selectorManager.requestSelector(elem)?.resize();
   });
 
   if (batchCmd && !batchCmd.isEmpty()) {
     if (undoable) {
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
 
     svgCanvas.call('changed', selectedElements);

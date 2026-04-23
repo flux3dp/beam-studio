@@ -7,9 +7,12 @@ import Constant from '@core/app/actions/beambox/constant';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import { resizeSelector } from '@core/app/svgedit/selector';
 import { setFitTextBBox } from '@core/app/svgedit/text/fitText';
 import { isFitText } from '@core/app/svgedit/text/textedit';
 import { getIsVertical } from '@core/app/svgedit/text/textedit/getters';
+import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import SymbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import useForceUpdate from '@core/helpers/use-force-update';
@@ -141,11 +144,13 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
       }
 
       if (elem.getAttribute('data-tempgroup') === 'true' && !addToHistory) {
-        svgCanvas.setRotationAngle(rotationDeg, true, elem);
-        updateDimensionValues({ rotation: rotationDeg });
+        setRotationAngle(elem, rotationDeg, { addToHistory: false });
       } else {
-        svgCanvas.setRotationAngle(rotationDeg, false, elem);
+        setRotationAngle(elem, rotationDeg);
       }
+
+      updateDimensionValues({ rotation: rotationDeg });
+      resizeSelector(elem);
 
       forceUpdate();
     },
@@ -159,10 +164,10 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
       match(elem?.tagName)
         .with('ellipse', 'rect', 'image', () => {
-          svgCanvas.undoMgr.beginUndoableChange(type, [elem!]);
+          undoManager.beginUndoableChange(type, [elem!]);
           svgCanvas.changeSelectedAttributeNoUndo(type, elemSize, [elem!]);
 
-          const batchCmd = svgCanvas.undoMgr.finishUndoableChange();
+          const batchCmd = undoManager.finishUndoableChange();
 
           cmd = batchCmd.isEmpty() ? null : batchCmd;
         })
@@ -220,7 +225,7 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
       updateDimensionValues(newValues);
 
       if (batchCmd && !batchCmd.isEmpty()) {
-        svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+        undoManager.addCommandToHistory(batchCmd);
       }
 
       forceUpdate();

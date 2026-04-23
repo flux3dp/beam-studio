@@ -26,6 +26,7 @@ import TutorialConstants from '@core/app/constants/tutorial-constants';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import history from '@core/app/svgedit/history/history';
+import selectionManager from '@core/app/svgedit/selection';
 import {
   copySelectedElements,
   cutSelectedElements,
@@ -412,7 +413,6 @@ const svgEditor = (window['svgEditor'] = (function () {
     // var flyoutspeed = 1250; // Currently unused
     var selectedElement: any = null;
     var multiselected = false;
-    var origTitle = $('title:first').text();
 
     var togglePathEditMode = function (editmode, elems) {
       if (editmode) {
@@ -430,7 +430,7 @@ const svgEditor = (window['svgEditor'] = (function () {
       setMouseMode('select');
 
       if (clearSelection) {
-        svgCanvas.clearSelection();
+        selectionManager.clearSelection();
       }
     });
 
@@ -464,7 +464,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         ObjectPanelController.updateDimensionValues({ rotation: angle });
 
         if (!is_node && currentMode !== 'pathedit') {
-          //$('#selected_panel').show();
           // Elements in this array already have coord fields
           if (['circle', 'ellipse', 'line'].includes(tagName)) {
           } else {
@@ -566,7 +565,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
         }
 
-        if (svgCanvas.getTempGroup()) {
+        if (selectionManager.isMultiSelecting) {
           workareaEvents.emit('update-context-menu', {
             group: true,
             ungroup: false,
@@ -604,38 +603,19 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     editor.updateContextPanel = updateContextPanel;
 
-    var updateTitle = function (title?: string) {
-      title = title || svgCanvas.getDocumentTitle();
-
-      var newTitle = origTitle + (title ? ': ' + title : '');
-
-      // Remove title update with current context info, isn't really necessary
-      //				if (cur_context) {
-      //					new_title = new_title + cur_context;
-      //				}
-      $('title:first').text(newTitle);
-    };
-
     // called when we've selected a different element
-    var selectedChanged = function (win, elems) {
-      var mode = getMouseMode();
+    const selectedChanged = function (win, elems) {
+      const mode = getMouseMode();
 
       // TODO: is this needed?
       if (mode === 'select') setMouseMode('select');
-
-      var is_node = mode === 'pathedit';
 
       // if elems[1] is present, then we have more than one element
       selectedElement = elems.length === 1 || elems[1] == null ? elems[0] : null;
       multiselected = elems.length >= 2 && elems[1] != null;
       // Deal with pathedit mode
-      togglePathEditMode(is_node, elems);
+      togglePathEditMode(mode === 'pathedit', elems);
       updateContextPanel();
-      svgCanvas.runExtensions('selectedChanged', {
-        elems: elems,
-        multiselected: multiselected,
-        selectedElement: selectedElement,
-      });
 
       if (elems.length === 1 && elems[0]?.tagName === 'polygon') {
         ObjectPanelController.updatePolygonSides($(selectedElement).attr('sides'));
@@ -647,108 +627,10 @@ const svgEditor = (window['svgEditor'] = (function () {
       updateContextPanel();
     };
 
-    $('#cur_context_panel').delegate('a', 'click', function () {
-      var link = $(this);
-
-      if (link.attr('data-root')) {
-        svgCanvas.leaveContext();
-      } else {
-        svgCanvas.setContext(link.text());
-      }
-
-      svgCanvas.clearSelection();
-
-      return false;
-    });
-
-    var contextChanged = function (win, context) {
-      var link_str = '';
-
-      if (context) {
-        var str = '';
-
-        link_str = '<a href="#" data-root="y">' + layerManager.getCurrentLayerName() + '</a>';
-
-        $(context)
-          .parentsUntil('#svgcontent > g')
-          .andSelf()
-          .each(function () {
-            if (this.id) {
-              str += ' > ' + this.id;
-
-              if (this !== context) {
-                link_str += ' > <a href="#">' + this.id + '</a>';
-              } else {
-                link_str += ' > ' + this.id;
-              }
-            }
-          });
-      }
-
-      $('#cur_context_panel').toggle(!!context).html(link_str);
-
-      updateTitle();
-    };
-
-    var uaPrefix = (function () {
-      var prop;
-      var regex = /^(Moz|Webkit|Khtml|O|ms|Icab)(?=[A-Z])/;
-      var someScript = document.getElementsByTagName('script')[0];
-
-      for (prop in someScript.style) {
-        if (regex.test(prop)) {
-          // test is faster than match, so it's better to perform
-          // that on the lot and match only when necessary
-          return prop.match(regex)[0];
-        }
-      }
-
-      // Nothing found so far?
-      if ('WebkitOpacity' in someScript.style) {
-        return 'Webkit';
-      }
-
-      if ('KhtmlOpacity' in someScript.style) {
-        return 'Khtml';
-      }
-
-      return '';
-    })();
-
     // bind the selected event to our function that handles updates to the UI
     svgCanvas.bind('selected', selectedChanged);
     svgCanvas.bind('changed', elementChanged);
-    svgCanvas.bind('contextset', contextChanged);
     textActions.setInputElem($('#text')[0]);
-
-    var changeStrokeWidth = function (ctl) {
-      var val = ctl.value;
-
-      if (val == 0 && selectedElement && ['line', 'polyline'].includes(selectedElement.nodeName)) {
-        val = ctl.value = 1;
-      }
-
-      svgCanvas.setStrokeWidth(val);
-    };
-
-    // Maybe useful
-    var changeBlur = function (ctl, val?, noUndo?: boolean) {
-      if (val == null) {
-        val = ctl.value;
-      }
-
-      var complete = false;
-
-      if (!ctl || !ctl.handle) {
-        complete = true;
-      }
-
-      if (noUndo) {
-        svgCanvas.setBlurNoUndo(val);
-      } else {
-        svgCanvas.setBlur(val, complete);
-      }
-    };
 
     // Lose focus for select elements when changed (Allows keyboard shortcuts to work better)
     $('select').change(function () {
@@ -858,9 +740,9 @@ const svgEditor = (window['svgEditor'] = (function () {
 
     editor.deleteSelected = deleteSelected;
 
-    var cutSelected = function () {
+    const cutSelected = function () {
       // disabled when focusing input element
-      if (document.activeElement.tagName.toLowerCase() === 'input') {
+      if (document.activeElement?.tagName.toLowerCase() === 'input') {
         return;
       }
 
@@ -997,20 +879,6 @@ const svgEditor = (window['svgEditor'] = (function () {
       }
     });
 
-    var moveSelected = function (dx, dy) {
-      if (selectedElement != null || multiselected) {
-        if (curConfig.gridSnapping) {
-          // Use grid snap value regardless of zoom level
-          var multi = workareaManager.zoomRatio * curConfig.snappingStep;
-
-          dx *= multi;
-          dy *= multi;
-        }
-
-        moveSelectedElements(dx, dy);
-      }
-    };
-
     var clearScene = async function () {
       const res = await toggleUnsavedChangedDialog();
 
@@ -1068,7 +936,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowUp'], (e) => {
             if (selectedElement) {
-              moveSelected([0], [-moveUnit]);
+              moveSelectedElements([0], [-moveUnit]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1077,7 +945,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowUp'], (e) => {
             if (selectedElement) {
-              moveSelected([0], [-moveUnit * 10]);
+              moveSelectedElements([0], [-moveUnit * 10]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1086,7 +954,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowDown'], (e) => {
             if (selectedElement) {
-              moveSelected([0], [moveUnit]);
+              moveSelectedElements([0], [moveUnit]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1095,7 +963,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowDown'], (e) => {
             if (selectedElement) {
-              moveSelected([0], [moveUnit * 10]);
+              moveSelectedElements([0], [moveUnit * 10]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1104,7 +972,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowLeft'], (e) => {
             if (selectedElement) {
-              moveSelected([-moveUnit], [0]);
+              moveSelectedElements([-moveUnit], [0]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1113,7 +981,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowLeft'], (e) => {
             if (selectedElement) {
-              moveSelected([-moveUnit * 10], [0]);
+              moveSelectedElements([-moveUnit * 10], [0]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1122,7 +990,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['ArrowRight'], (e) => {
             if (selectedElement) {
-              moveSelected([moveUnit], [0]);
+              moveSelectedElements([moveUnit], [0]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1131,7 +999,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           });
           Shortcuts.on(['Shift+ArrowRight'], (e) => {
             if (selectedElement) {
-              moveSelected([moveUnit * 10], [0]);
+              moveSelectedElements([moveUnit * 10], [0]);
             } else {
               const workArea = document.getElementById('workarea');
 
@@ -1307,7 +1175,7 @@ const svgEditor = (window['svgEditor'] = (function () {
           caption: lang.popup.loading_image,
           id: 'loading_image',
         });
-        svgCanvas.clearSelection();
+        selectionManager.clearSelection();
 
         const fileType = (() => {
           if (file.name.toLowerCase().endsWith('.beam')) {

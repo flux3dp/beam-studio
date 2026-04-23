@@ -1,9 +1,11 @@
+import type { ReactNode } from 'react';
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import RightPanelController from '@core/app/components/beambox/RightPanel/contexts/RightPanelController';
 import { PanelType } from '@core/app/constants/right-panel-types';
 import tutorialConstants, { TutorialCallbacks } from '@core/app/constants/tutorial-constants';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import selectionManager from '@core/app/svgedit/selection';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -43,7 +45,7 @@ export const TutorialContextProvider = ({
   dialogStylesAndContents,
   hasNextButton,
   onClose,
-}: Props): JSX.Element => {
+}: Props): ReactNode => {
   const [currentStep, setCurrentStep] = useState(0);
   const defaultRectRef = useRef<Element | undefined>(undefined);
   const mouseMode = useCanvasStore((state) => state.mouseMode);
@@ -51,7 +53,7 @@ export const TutorialContextProvider = ({
   const clearDefaultRect = useCallback(() => {
     if (defaultRectRef.current) {
       defaultRectRef.current.remove();
-      svgCanvas.clearSelection();
+      selectionManager.clearSelection();
       RightPanelController.setPanelType(PanelType.Layer);
       defaultRectRef.current = undefined;
     }
@@ -78,7 +80,7 @@ export const TutorialContextProvider = ({
     });
 
     defaultRectRef.current = defaultRect;
-    svgCanvas.selectOnly([defaultRect], true);
+    selectionManager.selectOnly([defaultRect], true);
     RightPanelController.setPanelType(PanelType.Object);
   }, [clearDefaultRect]);
 

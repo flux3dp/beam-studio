@@ -1,6 +1,7 @@
 import history from '@core/app/svgedit/history/history';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
+import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
 import { getBBoxFromElements } from '@core/app/svgedit/utils/getBBox';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -87,7 +88,7 @@ export const pasteElements = async ({
     });
   }
 
-  if (selectElement) svgCanvas.selectOnly(pasted, true);
+  if (selectElement) selectionManager.selectOnly(pasted, true);
 
   let dx: number | undefined;
   let dy: number | undefined;
@@ -137,7 +138,7 @@ export const pasteElements = async ({
 
       selectorManager.requestSelector(pasted[0])?.resize();
     } else {
-      svgCanvas.tempGroupSelectedElements();
+      selectionManager.tempGroupSelectedElements();
     }
   }
 

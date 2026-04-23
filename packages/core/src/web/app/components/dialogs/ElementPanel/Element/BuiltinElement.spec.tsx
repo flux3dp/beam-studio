@@ -72,7 +72,6 @@ jest.mock('@core/app/svgedit/layer/layerManager', () => ({
 }));
 
 const mockAddSvgElementFromJson = jest.fn().mockReturnValue(mockElement);
-const mockSelectOnly = jest.fn();
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
@@ -80,9 +79,14 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
       Canvas: {
         addSvgElementFromJson: mockAddSvgElementFromJson,
         getNextId: jest.fn(),
-        selectOnly: mockSelectOnly,
       },
     }),
+}));
+
+const mockSelectOnly = jest.fn();
+
+jest.mock('@core/app/svgedit/selection', () => ({
+  selectOnly: mockSelectOnly,
 }));
 
 const mockForceUpdate = jest.fn();
@@ -155,7 +159,7 @@ describe('test BuiltinElement', () => {
     const { container } = render(<BuiltinElement mainType="basic" path="mock-circle" />);
 
     await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
-    fireEvent.click(container.querySelector('.icon'));
+    fireEvent.click(container.querySelector('.icon')!);
     await waitFor(() => expect(mockCloseDrawer).toHaveBeenCalledTimes(1));
     expect(mockAddSvgElementFromJson).toHaveBeenCalledTimes(1);
     expect(mockGetCurrentLayerName).not.toHaveBeenCalled();
@@ -172,7 +176,7 @@ describe('test BuiltinElement', () => {
   it('should import svg object, update location and disassemble', async () => {
     const { container } = render(<BuiltinElement mainType="basic" path="mock-icon" />);
 
-    fireEvent.click(container.querySelector('.icon'));
+    fireEvent.click(container.querySelector('.icon')!);
     await waitFor(() => expect(mockCloseDrawer).toHaveBeenCalledTimes(1));
     expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
     expect(mockGetCurrentLayerName).toHaveBeenCalledTimes(1);

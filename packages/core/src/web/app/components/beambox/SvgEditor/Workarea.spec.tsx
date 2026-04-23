@@ -30,13 +30,11 @@ const ungroupSelectedElement = jest.fn();
 const moveTopBottomSelected = jest.fn();
 const moveUpSelectedElement = jest.fn();
 const moveDownSelectedElement = jest.fn();
-const getSelectedElems = jest.fn().mockReturnValue([{ getAttribute: () => 'false' }]);
 
 getSVGAsync.mockImplementation((callback) => {
   callback({
     Canvas: {
       cloneSelectedElements,
-      getSelectedElems,
       groupSelectedElements,
       moveDownSelectedElement,
       moveTopBottomSelected,
@@ -45,6 +43,13 @@ getSVGAsync.mockImplementation((callback) => {
     },
   });
 });
+
+const getSelectedElements = jest.fn();
+
+jest.mock('@core/app/svgedit/selection', () => ({
+  getSelectedElements,
+  isTempGroup: () => false,
+}));
 
 const mockGetObjectLayer = jest.fn().mockReturnValue({ title: 'Layer 1' });
 const mockMoveToOtherLayer = jest.fn();
@@ -63,6 +68,7 @@ describe('test workarea', () => {
     jest.clearAllMocks();
 
     mockGetAllLayerNames.mockReturnValue(['Layer 1', 'Layer 2']);
+    getSelectedElements.mockReturnValue([{}]);
   });
 
   test('should render correctly', async () => {
@@ -131,7 +137,7 @@ describe('test workarea', () => {
     expect(baseElement).toMatchSnapshot();
 
     // Test layer data
-    expect(getSelectedElems).toHaveBeenCalled();
+    expect(getSelectedElements).toHaveBeenCalled();
     expect(mockGetObjectLayer).toHaveBeenCalled();
     expect(mockGetAllLayerNames).toHaveBeenCalled();
 

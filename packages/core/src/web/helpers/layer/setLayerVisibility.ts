@@ -2,6 +2,7 @@ import presprayArea from '@core/app/actions/canvas/prespray-area';
 import history from '@core/app/svgedit/history/history';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -33,7 +34,7 @@ export const setLayerVisibility = (layerName: string, value: boolean, opts?: His
   handleHistoryActionOptions(batchCmd, opts);
 
   if (layerObject === layerManager.getCurrentLayer()) {
-    svgcanvas.clearSelection();
+    selectionManager.clearSelection();
     svgcanvas.pathActions.clear();
   }
 };

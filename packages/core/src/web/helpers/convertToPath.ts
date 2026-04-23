@@ -7,6 +7,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
+import selectionManager from '@core/app/svgedit/selection';
 import textActions from '@core/app/svgedit/text/textactions';
 import textedit from '@core/app/svgedit/text/textedit';
 import type { HistoryActionOptions, IBatchCommand, ICommand } from '@core/interfaces/IHistory';
@@ -41,7 +42,7 @@ export const convertSvgToPath = (
   const { cmd, path } = svgCanvas.convertToPath(element, true);
 
   if (isToSelect) {
-    svgCanvas.selectOnly([path]);
+    selectionManager.selectOnly([path]);
   }
 
   handleHistoryActionOptions(cmd, historyOptions);
@@ -75,7 +76,7 @@ export const convertTextToPath = async (
   }
 
   if (path && isToSelect) {
-    svgCanvas.selectOnly([path]);
+    selectionManager.selectOnly([path]);
   }
 
   return {
@@ -95,7 +96,7 @@ export const convertTempGroupToPath = async ({
   isToSelect?: boolean;
   weldingTexts?: boolean;
 }): Promise<void> => {
-  const elements = svgCanvas.ungroupTempGroup(element);
+  const elements = selectionManager.ungroupTempGroup(element);
   const batchCommand = new BatchCommand('Convert to Path');
   const paths: SVGElement[] = [];
 
@@ -128,7 +129,7 @@ export const convertTempGroupToPath = async ({
   undoManager.addCommandToHistory(batchCommand);
 
   if (isToSelect && paths.length > 0) {
-    paths.length === 1 ? svgCanvas.selectOnly(paths) : svgCanvas.multiSelect(paths);
+    selectionManager.multiSelect(paths);
   }
 };
 
@@ -148,11 +149,11 @@ export const convertTextOnPathToPath = async (
 
   if (textActions.isEditing) textActions.toSelectMode();
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   const { command, path } = await fontFuncs.convertTextToPath(textElement!, { isSubCommand: true, weldingTexts });
 
-  svgCanvas.selectOnly([pathElement!, path!]);
+  selectionManager.selectOnly([pathElement!, path!]);
 
   const { command: groupCmd, group } = svgCanvas.groupSelectedElements(true)!;
 
@@ -183,7 +184,7 @@ export const convertUseToPath = async ({
     skipConfirm: true,
   })) as BatchCommand;
 
-  const group = svgCanvas.getSelectedElems()[0];
+  const group = selectionManager.getSelectedElements()[0];
 
   if (!(group instanceof SVGGElement)) {
     return convertSvgToPath(group, { parentCmd: command });
@@ -205,7 +206,7 @@ export const convertUseToPath = async ({
   head.removeAttribute('data-next-sibling');
 
   if (isToSelect) {
-    svgCanvas.selectOnly([head]);
+    selectionManager.selectOnly([head]);
   }
 
   return { bbox: head.getBBox(), command, path: head };
