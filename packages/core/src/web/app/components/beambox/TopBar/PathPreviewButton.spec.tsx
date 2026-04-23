@@ -15,21 +15,11 @@ jest.mock('@core/helpers/layer/checkContent', () => ({
   isCanvasEmpty,
 }));
 
-const getSVGAsync = jest.fn();
-
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync,
-}));
-
 const clearSelection = jest.fn();
 
-getSVGAsync.mockImplementation((callback) => {
-  callback({
-    Canvas: {
-      clearSelection,
-    },
-  });
-});
+jest.mock('@core/app/svgedit/selection', () => ({
+  clearSelection,
+}));
 
 import PathPreviewButton from './PathPreviewButton';
 
@@ -95,7 +85,7 @@ describe('test PathPreviewButton', () => {
 
         const { container } = render(<PathPreviewButton isDeviceConnected />);
 
-        fireEvent.click(container.querySelector('div[class*="button"]'));
+        fireEvent.click(container.querySelector('div[class*="button"]')!);
         expect(clearSelection).not.toHaveBeenCalled();
       });
 
@@ -111,7 +101,7 @@ describe('test PathPreviewButton', () => {
 
           const { container } = render(<PathPreviewButton isDeviceConnected />);
 
-          fireEvent.click(container.querySelector('div[class*="button"]'));
+          fireEvent.click(container.querySelector('div[class*="button"]')!);
           expect(isCanvasEmpty).toHaveBeenCalledTimes(1);
         });
 
@@ -121,7 +111,7 @@ describe('test PathPreviewButton', () => {
 
           const { container } = render(<PathPreviewButton isDeviceConnected />);
 
-          fireEvent.click(container.querySelector('div[class*="button"]'));
+          fireEvent.click(container.querySelector('div[class*="button"]')!);
           expect(isCanvasEmpty).toHaveBeenCalledTimes(1);
           expect(clearSelection).toHaveBeenCalledTimes(1);
           expect(useCanvasStore.getState().mode).toBe(CanvasMode.PathPreview);

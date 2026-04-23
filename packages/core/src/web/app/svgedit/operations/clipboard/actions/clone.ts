@@ -1,18 +1,11 @@
 import history from '@core/app/svgedit/history/history';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import { moveElements } from '@core/app/svgedit/operations/move';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import selectionManager from '@core/app/svgedit/selection';
 import type { HistoryActionOptions, IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { copyElements } from './copy';
 import { pasteElements } from './paste';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 /**
  * Create deep DOM copies (clones) of all selected elements
@@ -70,10 +63,10 @@ export const cloneSelectedElements = async (
     selectElement: true,
   },
 ): Promise<null | { cmd: IBatchCommand; elems: Element[] }> => {
-  const selectedElems = svgCanvas.getSelectedWithoutTempGroup();
+  const selectedElems = selectionManager.getSelectedElements(true);
   const clonedResult = await cloneElements(selectedElems, dx, dy, options);
 
-  svgCanvas.tempGroupSelectedElements();
+  selectionManager.tempGroupSelectedElements();
 
   return clonedResult;
 };

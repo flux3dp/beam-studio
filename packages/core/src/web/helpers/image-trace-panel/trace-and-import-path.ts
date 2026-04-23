@@ -2,7 +2,9 @@
 import ImageTracer from 'imagetracerjs';
 
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
+import selectionManager from '@core/app/svgedit/selection';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -36,7 +38,7 @@ const traceAndImportPath = async (
       path.addEventListener('mouseover', svgCanvas.handleGenerateSensorArea);
       path.addEventListener('mouseleave', svgCanvas.handleGenerateSensorArea);
       batchCmd.addSubCommand(new history.InsertElementCommand(path));
-      svgCanvas.selectOnly([g]);
+      selectionManager.selectOnly([g]);
       ImageTracer.appendSVGString(svgstr.replace(/<\/?svg[^>]*>/g, ''), gId);
 
       const gBBox = g.getBBox();
@@ -64,8 +66,8 @@ const traceAndImportPath = async (
       g.remove();
       path.setAttribute('d', d);
       moveElements([x], [y], [path], false);
-      svgCanvas.selectOnly([path], true);
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      selectionManager.selectOnly([path], true);
+      undoManager.addCommandToHistory(batchCmd);
       resolve(true);
     });
   });

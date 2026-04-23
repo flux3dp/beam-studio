@@ -2,14 +2,7 @@ import { useCallback, useRef, useState } from 'react';
 
 import type { BatchCommand } from '@core/app/svgedit/history/history';
 import { InsertElementCommand } from '@core/app/svgedit/history/history';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
+import selectionManager from '@core/app/svgedit/selection';
 
 // In-memory storage for preview state per modal (persists across open/close, resets on page reload)
 const previewStateStore: Record<string, boolean> = {};
@@ -60,7 +53,7 @@ const usePreviewModal = ({
   selectionMode = 'none',
 }: UsePreviewModalOptions): UsePreviewModalReturn => {
   const batchCmd = useRef<BatchCommand | null>(null);
-  const selectionRef = useRef<SVGElement[]>([...svgCanvas.getSelectedWithoutTempGroup()]);
+  const selectionRef = useRef<SVGElement[]>([...selectionManager.getSelectedElements(true)]);
   const processing = useRef(false);
   const queueNext = useRef(false);
   const focusedInputRef = useRef<HTMLElement | null>(null);
@@ -79,7 +72,7 @@ const usePreviewModal = ({
 
   const restoreSelection = useCallback(() => {
     if (selectionRef.current.length > 0) {
-      svgCanvas.selectOnly(selectionRef.current, true);
+      selectionManager.selectOnly(selectionRef.current, true);
     }
   }, []);
 
@@ -157,7 +150,7 @@ const usePreviewModal = ({
     }
 
     if (selectionRef.current.length > 0) {
-      svgCanvas.multiSelect(selectionRef.current);
+      selectionManager.multiSelect(selectionRef.current);
     }
   }, []);
 
@@ -196,7 +189,7 @@ const usePreviewModal = ({
         selectionMode === 'all' ? [...selectionRef.current, ...insertedElements] : insertedElements;
 
       if (elementsToSelect.length > 0) {
-        svgCanvas.multiSelect(elementsToSelect);
+        selectionManager.multiSelect(elementsToSelect);
       }
     }
 

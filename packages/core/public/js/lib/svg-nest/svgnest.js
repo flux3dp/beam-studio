@@ -1206,20 +1206,20 @@
                     const elem = $(`#${elemId}`)[0];
                     let bbox = svgCanvas.getBBox(elem);
                     let [dx, dy] = [0, 0];
-					let tempMove = elementData.tempMove || {x: 0, y: 0, angle: 0};
-					//console.log(tempMove);
+					          let tempMove = elementData.tempMove || {x: 0, y: 0, angle: 0};
+					          //console.log(tempMove);
                     let center = tempMove.origCenter || {x: bbox.x + bbox.width /2, y: bbox.y + bbox.height/2};
-					//console.log(center);
+					          //console.log(center);
                     if (p.rotation !== 0 || (tempMove && tempMove.angle !== 0)) {
                         const angle = svgedit.utilities.getRotationAngle(elem) - tempMove.angle;
                         const new_angle = (angle + p.rotation) % 360 ;
-                        svgCanvas.setRotationAngle(new_angle, true, elem);
+                        svgCanvas.setRotationAngle(elem, new_angle, { addToHistory: false });
                         const rad = p.rotation / 180 * Math.PI;
                         dx = center.x * Math.cos(rad) - center.y * Math.sin(rad) - center.x;
                         dy = center.x * Math.sin(rad) + center.y * Math.cos(rad) - center.y;
-					}
-					//console.log('x', p.x, dx, tempMove.x)
-					//console.log('y', p.y, dy, tempMove.y)
+                    }
+                    //console.log('x', p.x, dx, tempMove.x)
+                    //console.log('y', p.y, dy, tempMove.y)
                     svgCanvas.moveElements([p.x + dx - tempMove.x], [p.y + dy - tempMove.y], [elem], false);
                     tempMove = {
                         x: p.x + dx,//relevant to original center

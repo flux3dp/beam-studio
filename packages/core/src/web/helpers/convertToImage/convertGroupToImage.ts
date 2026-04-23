@@ -1,5 +1,6 @@
 import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
+import selectionManager from '@core/app/svgedit/selection';
 import { getRotationAngle, setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
@@ -51,7 +52,7 @@ export const convertGroupToImage = async (
 
   // remove temporary group to prevent the element cannot be inserted during undo
   if (svgElement.getAttribute('data-tempgroup') === 'true') {
-    svgCanvas.ungroupTempGroup(svgElement);
+    selectionManager.ungroupTempGroup(svgElement);
   }
 
   for await (const child of children) {
@@ -65,7 +66,7 @@ export const convertGroupToImage = async (
 
   // Group the newly created images
   if (imageElements.length > 0) {
-    svgCanvas.selectOnly(imageElements);
+    selectionManager.selectOnly(imageElements);
 
     const groupResult = svgCanvas.groupSelectedElements(true);
 

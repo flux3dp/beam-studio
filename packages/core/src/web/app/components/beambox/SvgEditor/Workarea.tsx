@@ -6,6 +6,7 @@ import svgEditor from '@core/app/actions/beambox/svg-editor';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { cloneSelectedElements, pasteElements } from '@core/app/svgedit/operations/clipboard';
+import selectionManager from '@core/app/svgedit/selection';
 import ContextMenu from '@core/app/widgets/ContextMenu';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { useSetState } from '@core/helpers/hooks/useSetState';
@@ -27,7 +28,7 @@ const getCurrentLayer = (selectedElement?: Element): null | string => {
     return null;
   }
 
-  if (selectedElement.getAttribute('data-tempgroup') === 'true') {
+  if (selectionManager.isTempGroup(selectedElement)) {
     const originalLayers = new Set(
       ([...selectedElement.childNodes] as SVGElement[])
         .filter((elem) => elem?.getAttribute('data-imageborder') !== 'true')
@@ -84,7 +85,7 @@ const Workarea = memo(({ className }: { className: string }) => {
 
   const getMenuItems = useCallback((): MenuProps['items'] => {
     const layerNames = layerManager.getAllLayerNames();
-    const selectedElems = svgCanvas?.getSelectedElems();
+    const selectedElems = selectionManager.getSelectedElements();
     const currentLayer = getCurrentLayer(selectedElems?.[0]);
 
     return [

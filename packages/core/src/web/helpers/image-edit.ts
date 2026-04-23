@@ -10,6 +10,8 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
 import { moveElements } from '@core/app/svgedit/operations/move';
 import { simplifyPath } from '@core/app/svgedit/operations/pathActions';
+import selectionManager from '@core/app/svgedit/selection';
+import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import alertConfig from '@core/helpers/api/alert-config';
 import { axiosFluxId, getCurrentUser, getDefaultHeader } from '@core/helpers/api/flux-id';
 import type { ResponseWithError } from '@core/helpers/api/flux-id';
@@ -32,7 +34,7 @@ getSVGAsync((globalSVG) => {
 const REMOVE_BACKGROUND_COST = 0.02;
 
 const getSelectedElem = (): null | SVGImageElement => {
-  const selectedElements = svgCanvas.getSelectedElems();
+  const selectedElements = selectionManager.getSelectedElements();
   const len = selectedElements.length;
 
   if (len > 1) return null;
@@ -146,7 +148,7 @@ const colorInvert = async (elem?: SVGImageElement): Promise<void> => {
       origImage: newImgUrl,
       'xlink:href': base64Img,
     });
-    svgCanvas.selectOnly([element], true);
+    selectionManager.selectOnly([element], true);
   }
 
   progress.popById('photo-edit-processing');
@@ -226,7 +228,7 @@ const traceImage = async (img = getSelectedElem()): Promise<void> => {
 
   ImageTracer.appendSVGString(svgStr, gId);
 
-  svgCanvas.selectOnly([g]);
+  selectionManager.selectOnly([g]);
 
   let gBBox = g.getBBox();
 
@@ -253,7 +255,7 @@ const traceImage = async (img = getSelectedElem()): Promise<void> => {
 
   if (!d) {
     progress.popById('vectorize-image');
-    svgCanvas.selectOnly([element]);
+    selectionManager.selectOnly([element]);
 
     return;
   }
@@ -265,9 +267,9 @@ const traceImage = async (img = getSelectedElem()): Promise<void> => {
 
   path.setAttribute('d', d);
   moveElements([dx], [dy], [path], false);
-  svgCanvas.setRotationAngle(angle, true, path);
+  setRotationAngle(path, angle, { addToHistory: false });
   updateElementColor(path);
-  svgCanvas.selectOnly([path], true);
+  selectionManager.selectOnly([path], true);
   batchCmd.addSubCommand(new history.InsertElementCommand(path));
 
   const cmd = deleteElements([img], true);
@@ -442,7 +444,7 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
       origImage: blobUrl,
       'xlink:href': base64Img,
     });
-    svgCanvas.selectOnly([element], true);
+    selectionManager.selectOnly([element], true);
   } finally {
     progress.popById('photo-edit-processing');
   }
@@ -532,7 +534,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
   scale.setScale(sx, sy);
   transforms.insertItemBefore(scale, 0);
   g.innerHTML = svgStr;
-  svgCanvas.setRotationAngle(imgRotation, true, g);
+  setRotationAngle(g, imgRotation, { addToHistory: false });
   svgCanvas.pushGroupProperties(g, false);
 
   const path = svgCanvas.addSvgElementFromJson({
@@ -545,7 +547,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
     element: 'path',
   }) as SVGPathElement;
 
-  svgCanvas.selectOnly([g]);
+  selectionManager.selectOnly([g]);
 
   const dx = imgBBox.x;
   const dy = imgBBox.y;
@@ -581,7 +583,7 @@ const potrace = async (elem?: SVGImageElement): Promise<void> => {
   simplifyPath(path);
   moveElements([dx], [dy], [path], false);
   updateElementColor(path);
-  svgCanvas.selectOnly([path], true);
+  selectionManager.selectOnly([path], true);
 
   const batchCmd = new history.BatchCommand('Potrace Image');
 

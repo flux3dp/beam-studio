@@ -29,11 +29,13 @@ import RatingPanel from '@core/app/components/dialogs/RatingPanel';
 import SocialMediaModal from '@core/app/components/dialogs/SocialMediaModal';
 import SvgNestButtons from '@core/app/components/dialogs/SvgNestButtons';
 import ImageEditPanel from '@core/app/components/ImageEditPanel';
+import StampMakerPanel from '@core/app/components/StampMakerPanel';
 import TabPanel from '@core/app/components/TabPanel';
 import Tutorial from '@core/app/components/tutorials/Tutorial';
 import alertConstants from '@core/app/constants/alert-constants';
 import { eventEmitter } from '@core/app/contexts/DialogContext';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import selectionManager from '@core/app/svgedit/selection';
 import DialogBox from '@core/app/widgets/Dialog-Box';
 import { loadLayout } from '@core/app/widgets/dockable/utils';
 import InputLightBox from '@core/app/widgets/InputLightbox';
@@ -44,7 +46,6 @@ import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import i18n from '@core/helpers/i18n';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import versionChecker from '@core/helpers/version-checker';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type { ChipSettings } from '@core/interfaces/Cartridge';
@@ -52,17 +53,8 @@ import type { IAnnouncement } from '@core/interfaces/IAnnouncement';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';
 import type { IDialogBoxStyle, IInputLightBox, InputType, IPrompt } from '@core/interfaces/IDialog';
 import type { ICommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IMediaTutorial, ITutorial } from '@core/interfaces/ITutorial';
 import type { GlobalPreferenceKey } from '@core/interfaces/Preference';
-
-import StampMakerPanel from '../components/StampMakerPanel';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const layerPanelEventEmitter = eventEmitterFactory.createEventEmitter('layer-panel');
 
@@ -353,13 +345,16 @@ export default {
       return;
     }
 
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
+    if (selectionManager.isMultiSelecting) {
       return;
     }
 
-    const element = selectedElements[0];
+    const element = selectionManager.getSelectedElements()[0];
+
+    if (!element || element.tagName !== 'image') {
+      return;
+    }
+
     const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
 
     addDialogComponent(
@@ -463,13 +458,16 @@ export default {
       return;
     }
 
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
+    if (selectionManager.isMultiSelecting) {
       return;
     }
 
-    const element = selectedElements[0];
+    const element = selectionManager.getSelectedElements()[0];
+
+    if (!element || element.tagName !== 'image') {
+      return;
+    }
+
     const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
 
     addDialogComponent(
@@ -641,13 +639,16 @@ export default {
       return;
     }
 
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
+    if (selectionManager.isMultiSelecting) {
       return;
     }
 
-    const element = selectedElements[0];
+    const element = selectionManager.getSelectedElements()[0];
+
+    if (!element || element.tagName !== 'image') {
+      return;
+    }
+
     const src = element.getAttribute('origImage') || element.getAttribute('xlink:href');
 
     addDialogComponent(
@@ -680,13 +681,15 @@ export default {
       return;
     }
 
-    const selectedElements = svgCanvas.getSelectedElems();
-
-    if (selectedElements.length !== 1) {
+    if (selectionManager.isMultiSelecting) {
       return;
     }
 
-    const element = selectedElements[0];
+    const element = selectionManager.getSelectedElements()[0];
+
+    if (!element) {
+      return;
+    }
 
     addDialogComponent(
       'tab-panel',
@@ -709,7 +712,7 @@ export default {
       return;
     }
 
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
     loadLayout('tutorial');
     await new Promise((resolve) => setTimeout(resolve, 50)); // wait for layout to load
     layerPanelEventEmitter.emit('startTutorial');

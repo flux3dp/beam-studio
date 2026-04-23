@@ -13,6 +13,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import importSvgString from '@core/app/svgedit/operations/import/importSvgString';
 import postImportElement from '@core/app/svgedit/operations/import/postImportElement';
+import selectionManager from '@core/app/svgedit/selection';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getLayerByName } from '@core/helpers/layer/layer-helper';
@@ -41,7 +42,7 @@ const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
     undoManager.addCommandToHistory(new history.InsertElementCommand(newElement));
     updateElementColor(newElement);
 
-    svgCanvas.selectOnly([newElement]);
+    selectionManager.selectOnly([newElement]);
   } else {
     const iconString = ReactDomServer.renderToStaticMarkup(<IconComponent />).replace(
       /fill= ?"#(fff(fff)?|FFF(FFF))"/g,

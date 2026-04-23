@@ -133,10 +133,8 @@ jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
   switchImageSymbolForAll: jest.fn(),
 }));
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) => {
-    callback({ Canvas: { clearSelection: jest.fn() } });
-  },
+jest.mock('@core/app/svgedit/selection', () => ({
+  clearSelection: jest.fn(),
 }));
 
 jest.mock('@core/app/constants/workarea-constants', () => ({
@@ -196,7 +194,7 @@ describe('AutoFocusButton', () => {
   describe('Rendering', () => {
     it('should render the button with correct styles when device supports auto focus', () => {
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       expect(button).toBeInTheDocument();
       expect(button).not.toHaveClass('disabled');
@@ -207,14 +205,14 @@ describe('AutoFocusButton', () => {
         selectedDevice: { model: 'unsupported', name: 'Test Device' },
       });
 
-      expect(container.querySelector('.button')).toBeNull();
+      expect(container.querySelector('.button')!).toBeNull();
     });
 
     it('should render disabled when mode is not Draw', () => {
       useCameraPreviewStore.setState({ isPreviewMode: true });
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       expect(button).toHaveClass('disabled');
     });
@@ -223,7 +221,7 @@ describe('AutoFocusButton', () => {
   describe('Click handling', () => {
     it('should handle click when button is enabled', () => {
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       // Check button is not disabled
       expect(button).not.toHaveClass('disabled');
@@ -242,7 +240,7 @@ describe('AutoFocusButton', () => {
       mockAlertConfigRead.mockReturnValue(true);
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -269,7 +267,7 @@ describe('AutoFocusButton', () => {
       mockSelect.mockResolvedValue({ success: false });
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -288,7 +286,7 @@ describe('AutoFocusButton', () => {
       mockCheckDeviceStatus.mockResolvedValue(false);
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -309,7 +307,7 @@ describe('AutoFocusButton', () => {
       });
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -334,7 +332,7 @@ describe('AutoFocusButton', () => {
       });
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -350,7 +348,7 @@ describe('AutoFocusButton', () => {
 
     it('should not proceed when already processing', () => {
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       // First click
       fireEvent.click(button);
@@ -369,7 +367,7 @@ describe('AutoFocusButton', () => {
       useCanvasStore.setState({ mode: CanvasMode.AutoFocus });
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -384,7 +382,7 @@ describe('AutoFocusButton', () => {
       const { container } = renderComponent({
         selectedDevice: { model: 'fhexa1', name: 'HEXA Device' },
       });
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -399,7 +397,7 @@ describe('AutoFocusButton', () => {
       const { container } = renderComponent({
         selectedDevice: { model: 'fbb2', name: 'BB2 Device' },
       });
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -415,7 +413,7 @@ describe('AutoFocusButton', () => {
       const { container } = renderComponent({
         selectedDevice: { model: 'fbb2', name: 'BB2 Device' },
       });
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 
@@ -469,7 +467,7 @@ describe('AutoFocusButton', () => {
       mockAlertConfigRead.mockReturnValue(true);
 
       const { container } = renderComponent();
-      const button = container.querySelector('.button');
+      const button = container.querySelector('.button')!;
 
       fireEvent.click(button);
 

@@ -24,26 +24,24 @@ import { regulateEngraveDpiOption } from '@core/helpers/regulateEngraveDpi';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
 import type { HistoryActionOptions } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { DocumentState } from '@core/interfaces/Preference';
 
 import { handleHistoryActionOptions } from '../../history/utils/handleHistoryActionOptions';
 import layerManager from '../../layer/layerManager';
+import selectionManager from '../../selection';
 
 import setSvgContent from './setSvgContent';
 
-let svgCanvas: ISVGCanvas;
 let svgedit: any;
 
 getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
 });
 
 export const importBvgString = async (str: string, opts: HistoryActionOptions = {}): Promise<void> => {
   const batchCmd = new history.BatchCommand('Import Bvg');
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   const setContentCmd = setSvgContent(str.replace(/STYLE>/g, 'style>').replace(/<STYLE/g, '<style'));
 

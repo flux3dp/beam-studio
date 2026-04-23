@@ -12,6 +12,7 @@ import undoManager from '@core/app/svgedit/history/undoManager';
 import { handleHistoryActionOptions } from '@core/app/svgedit/history/utils/handleHistoryActionOptions';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { handlePastedRef } from '@core/app/svgedit/operations/clipboard';
+import selectionManager from '@core/app/svgedit/selection';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateLayerColorFilter from '@core/helpers/color/updateLayerColorFilter';
 import i18n from '@core/helpers/i18n';
@@ -107,7 +108,7 @@ export const createLayer = (
 
   handleHistoryActionOptions(batchCmd, historyOptions);
   updateLayerColorFilter(layerElement);
-  svgCanvas?.clearSelection();
+  selectionManager.clearSelection();
 
   return { layer: layerElement, name: finalName };
 };
@@ -169,7 +170,7 @@ export const cloneLayer = (
   } else if (!isSub) {
     undoManager.addCommandToHistory(batchCmd);
     layerManager.identifyLayers();
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
   }
 
   return { cmd: batchCmd, elem: newLayerElem, name: newName };
@@ -181,7 +182,7 @@ export const cloneLayers = (layerNames: string[]): string[] => {
   const clonedLayerNames: string[] = [];
   const batchCmd = new history.BatchCommand('Clone Layer(s)');
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   for (let i = 0; i < layerNames.length; i += 1) {
     const res = cloneLayer(layerNames[i], { isSub: true, parentCmd: batchCmd });
@@ -327,7 +328,7 @@ const mergeLayer = (
 };
 
 export const mergeLayers = async (layerNames: string[], baseLayerName?: string): Promise<null | string> => {
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   const batchCmd = new history.BatchCommand('Merge Layer(s)');
 
@@ -487,7 +488,7 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
     useLayerStore.getState().setSelectedLayers([destLayer]);
     callback?.();
   };
-  const selectedElements = svgCanvas.getSelectedElems();
+  const selectedElements = selectionManager.getSelectedElements();
   const origLayer = getObjectLayer(selectedElements[0])?.elem;
   const isPrintingLayer = origLayer && printingModules.has(getData(origLayer, 'module')!);
   const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer)!, 'module')!);

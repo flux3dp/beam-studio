@@ -1,16 +1,9 @@
 import { match, P } from 'ts-pattern';
 
 import { BatchCommand } from '@core/app/svgedit/history/history';
+import selectionManager from '@core/app/svgedit/selection';
 import { convertSvgToPath, convertTextToPath, convertUseToPath, generateImageRect } from '@core/helpers/convertToPath';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 interface ValidationResult {
   elementsToOffset?: SVGElement[];
@@ -19,7 +12,7 @@ interface ValidationResult {
 }
 
 export async function validateAndPrepareOffsetData(currentElems: SVGElement[] | undefined): Promise<ValidationResult> {
-  const originalElements = [...(currentElems || svgCanvas.getSelectedElems(true))];
+  const originalElements = [...(currentElems || selectionManager.getSelectedElements(true))];
   let command: IBatchCommand | undefined = new BatchCommand('validateAndPrepareOffsetData');
 
   if (originalElements.length === 0) {

@@ -1,16 +1,10 @@
 import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import selectionManager from '@core/app/svgedit/selection';
 import type { ICommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
-let svgCanvas: ISVGCanvas;
 const { svgedit } = window;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 type HandleChangePathDataCommandParams = {
   batchCommand?: BatchCommand;
@@ -37,5 +31,5 @@ export function handleChangePathDataCommand({
   batchCommand.addSubCommand(command);
   undoManager.addCommandToHistory(batchCommand);
 
-  svgCanvas.selectOnly([element], true);
+  selectionManager.selectOnly([element], true);
 }

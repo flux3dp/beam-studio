@@ -1,8 +1,5 @@
-import traceAndImportPath from './trace-and-import-path';
-
 const mockAddSvgElementFromJson = jest.fn();
 const mockGetNextId = jest.fn();
-const mockSelectOnly = jest.fn();
 const mockSetSvgElemSize = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 
@@ -10,22 +7,28 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
-        addSvgElementFromJson: (...args) => mockAddSvgElementFromJson(...args),
-        getNextId: (...args) => mockGetNextId(...args),
+        addSvgElementFromJson: mockAddSvgElementFromJson,
+        getNextId: mockGetNextId,
         handleGenerateSensorArea: 'mock-handleGenerateSensorArea',
-        selectOnly: (...args) => mockSelectOnly(...args),
-        setSvgElemSize: (...args) => mockSetSvgElemSize(...args),
-        undoMgr: {
-          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
-        },
+        setSvgElemSize: mockSetSvgElemSize,
       },
     }),
+}));
+
+const mockSelectOnly = jest.fn();
+
+jest.mock('@core/app/svgedit/selection', () => ({
+  selectOnly: mockSelectOnly,
+}));
+
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: mockAddCommandToHistory,
 }));
 
 const mockMoveElements = jest.fn();
 
 jest.mock('@core/app/svgedit/operations/move', () => ({
-  moveElements: (...args) => mockMoveElements(...args),
+  moveElements: mockMoveElements,
 }));
 
 const mockAddSubCommand = jest.fn();
@@ -49,10 +52,9 @@ const mockImageTracer = {
   imageToSVG: jest.fn(),
 };
 
-jest.mock('imagetracerjs', () => ({
-  appendSVGString: (...args) => mockImageTracer.appendSVGString(...args),
-  imageToSVG: (...args) => mockImageTracer.imageToSVG(...args),
-}));
+jest.mock('imagetracerjs', () => mockImageTracer);
+
+import traceAndImportPath from './trace-and-import-path';
 
 describe('test traceAndImportPath', () => {
   it('should work', async () => {

@@ -1,3 +1,5 @@
+import type { ReactNode } from 'react';
+
 import { sprintf } from 'sprintf-js';
 
 import alertCaller from '@core/app/actions/alert-caller';
@@ -9,16 +11,16 @@ import type { LayerModuleType } from '@core/app/constants/layer-module/layer-mod
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import { moveElements } from '@core/app/svgedit/operations/move';
+import selectionManager from '@core/app/svgedit/selection';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import alertConfig from '@core/helpers/api/alert-config';
 import i18n from '@core/helpers/i18n';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type { ILang } from '@core/interfaces/ILang';
 import type { ImportType } from '@core/interfaces/ImportSvg';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { determineImportType } from './utils/determineImportType';
 import { determineTargetModule } from './utils/determineTargetModule';
@@ -26,17 +28,11 @@ import { handleBitmapImport } from './utils/handleBitmapImport';
 import { processOutputData } from './utils/processOutputData';
 import { uploadAndDivideSvg } from './utils/uploadAndDivideSvg';
 
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
-
 const MAX_SVG_FILE_SIZE_BYTES = 3 * 1024 * 1024; // 3MB
 const ELEMENT_COUNT_THRESHOLD = 1_000; // 1000 elements
 const PATH_D_COMMAND_COUNT_THRESHOLD = 50_000; // 50,000 commands
 
-const callTooLargeAlert = (id: string, message: JSX.Element | string) =>
+const callTooLargeAlert = (id: string, message: ReactNode) =>
   new Promise<boolean>((resolve) => {
     if (alertConfig.read('skip-svg-import-warning')) {
       resolve(true); // If the user has opted out of the alert, resolve immediately
@@ -218,11 +214,11 @@ function finalizeImport(
 
   if (elements.length > 0) {
     moveElements(Array(elements.length).fill(-minX), Array(elements.length).fill(-minY), elements, false, true);
-    svgCanvas.multiSelect(elements);
+    selectionManager.multiSelect(elements);
   }
 
   if (!parentCmd && !batchCmd.isEmpty()) {
-    svgCanvas.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 }
 

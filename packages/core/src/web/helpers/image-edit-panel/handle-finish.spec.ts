@@ -1,21 +1,16 @@
-import handleFinish from './handle-finish';
-
 const mockSelectOnly = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        selectOnly: (...args) => mockSelectOnly(...args),
-      },
-    }),
+jest.mock('@core/app/svgedit/selection', () => ({
+  selectOnly: mockSelectOnly,
 }));
 
 const mockAddBatchCommand = jest.fn();
 
 jest.mock('@core/helpers/image-edit', () => ({
-  addBatchCommand: (...args) => mockAddBatchCommand(...args),
+  addBatchCommand: mockAddBatchCommand,
 }));
+
+import handleFinish from './handle-finish';
 
 describe('test image-edit-panel/handle-finish', () => {
   it('should work', () => {

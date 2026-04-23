@@ -1,19 +1,12 @@
 import type { BatchCommand } from '@core/app/svgedit/history/history';
 import history from '@core/app/svgedit/history/history';
 import { moveElements } from '@core/app/svgedit/operations/move';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import selectionManager from '@core/app/svgedit/selection';
 
 import undoManager from '../../../history/undoManager';
 
 import { copySelectedElements } from './copy';
 import { clearCache, pasteElements } from './paste';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 interface ArrayOptions {
   /** When false, returns the BatchCommand without adding to history (for preview mode) */
@@ -30,7 +23,7 @@ export const generateSelectedElementArray = async (
 
   await copySelectedElements();
 
-  const arrayElements = [...svgCanvas.getSelectedWithoutTempGroup()];
+  const arrayElements = [...selectionManager.getSelectedElements(true)];
   let isCached = false;
 
   for (let i = 0; i < column; i++) {

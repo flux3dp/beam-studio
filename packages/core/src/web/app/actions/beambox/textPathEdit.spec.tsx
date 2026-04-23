@@ -35,7 +35,6 @@ const mockSvgCanvas = {
     toEditMode: jest.fn(),
   },
   pushGroupProperties: jest.fn(),
-  selectOnly: jest.fn(),
 };
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
@@ -43,6 +42,12 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     callback({
       Canvas: mockSvgCanvas,
     }),
+}));
+
+const mockSelectOnly = jest.fn();
+
+jest.mock('@core/app/svgedit/selection', () => ({
+  selectOnly: mockSelectOnly,
 }));
 
 const textAndPathHtml = `
@@ -85,15 +90,15 @@ describe('test textPathEdit', () => {
 
     const svg = document.getElementsByTagName('svg')[0];
 
-    expect(document.getElementById('path').parentElement).toBe(svg);
-    expect(document.getElementById('text').parentElement).toBe(svg);
+    expect(document.getElementById('path')!.parentElement).toBe(svg);
+    expect(document.getElementById('text')!.parentElement).toBe(svg);
   });
 
   test('attachTextToPath', () => {
     document.body.innerHTML = textAndPathHtml;
 
-    const path = document.getElementById('path');
-    const text = document.getElementById('text');
+    const path = document.getElementById('path')!;
+    const text = document.getElementById('text')!;
 
     textPathEdit.attachTextToPath(text, path);
 
@@ -102,7 +107,7 @@ describe('test textPathEdit', () => {
     expect(textPath.length).toBe(1);
     expect(textPath[0].parentElement).toBe(text);
     expect(textPath[0].getAttribute('href')).toBe('#path');
-    expect(mockSvgCanvas.selectOnly).toHaveBeenCalledTimes(1);
+    expect(mockSelectOnly).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
   });
 
@@ -110,7 +115,7 @@ describe('test textPathEdit', () => {
     document.body.innerHTML = textPathHtml;
 
     const g = document.getElementsByTagName('g')[0];
-    const text = document.getElementById('text');
+    const text = document.getElementById('text')!;
     const { textContent } = text;
 
     textPathEdit.detachText(g, false);

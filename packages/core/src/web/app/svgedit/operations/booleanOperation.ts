@@ -8,6 +8,7 @@ import type { HistoryActionOptions } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { handleHistoryActionOptions } from '../history/utils/handleHistoryActionOptions';
+import selectionManager from '../selection';
 
 import { deleteElements } from './delete';
 import { booleanOperationByPaperjs, fixEnd } from './pathActions';
@@ -92,11 +93,11 @@ export const doBooleanOperation = (
 
   handleHistoryActionOptions(batchCmd, options);
 
-  svgCanvas.selectOnly([element], true);
+  selectionManager.selectOnly([element], true);
 };
 
 export const doBooleanOperationOnSelected = (mode: BooleanOperationMode, opts?: HistoryActionOptions): void => {
-  const selectedElements = svgCanvas.getSelectedElems(true);
+  const selectedElements = selectionManager.getSelectedElements(true);
 
   doBooleanOperation(selectedElements, mode, opts);
 };

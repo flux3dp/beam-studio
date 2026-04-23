@@ -6,6 +6,7 @@ import NS from '@core/app/constants/namespaces';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
 import updateImageDisplay from '@core/helpers/image/updateImageDisplay';
 import isDev from '@core/helpers/is-dev';
@@ -52,7 +53,7 @@ const splitFullColorLayer = async (
     return null;
   }
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   progressCaller.openNonstopProgress({
     id: PROGRESS_ID,
@@ -233,7 +234,7 @@ const splitFullColorLayer = async (
     }
   }
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   progressCaller.popById(PROGRESS_ID);
 
   return { cmd: batchCmd, newLayers: newLayers.filter((l) => !!l) };

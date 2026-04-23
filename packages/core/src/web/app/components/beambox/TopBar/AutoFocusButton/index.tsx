@@ -20,25 +20,19 @@ import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { toggleAutoFocus } from '@core/app/stores/canvas/utils/autoFocus';
+import selectionManager from '@core/app/svgedit/selection';
 import alertConfig from '@core/helpers/api/alert-config';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import deviceMaster from '@core/helpers/device-master';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import shortcuts from '@core/helpers/shortcuts';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import { MessageLevel } from '@core/interfaces/IMessage';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { IPoint } from '@core/interfaces/ISVGCanvas';
 
 import styles from './index.module.scss';
 
-let svgCanvas: ISVGCanvas;
 const autoFocusEventEmitter = eventEmitterFactory.createEventEmitter('auto-focus');
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const AutoFocusButton = (): ReactNode => {
   const {
@@ -200,7 +194,7 @@ const AutoFocusButton = (): ReactNode => {
         await deviceMaster.rawHome();
       };
 
-      svgCanvas.clearSelection();
+      selectionManager.clearSelection();
       toggleAutoFocus(true);
       await setupDevice();
     } finally {

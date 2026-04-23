@@ -113,7 +113,6 @@ const disassembleUse = jest.fn();
 jest.mock('@core/app/svgedit/operations/disassembleUse', () => disassembleUse);
 jest.mock('@core/app/svgedit/operations/delete', () => ({ deleteElements: jest.fn() }));
 
-const clearSelection = jest.fn();
 const decomposePath = jest.fn();
 const replaceBitmap = jest.fn();
 const pathActions = {
@@ -122,10 +121,16 @@ const pathActions = {
 
 getSVGAsync.mockImplementation((callback: any) => {
   callback({
-    Canvas: { clearSelection, decomposePath, pathActions },
+    Canvas: { decomposePath, pathActions },
     Editor: { replaceBitmap },
   });
 });
+
+const clearSelection = jest.fn();
+
+jest.mock('@core/app/svgedit/selection', () => ({
+  clearSelection,
+}));
 
 const convertSvgToPath = jest.fn();
 const convertUseToPath = jest.fn();

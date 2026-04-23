@@ -85,15 +85,14 @@ jest.mock('@core/helpers/getLocalizedTime', () => ({
 
 const mockClearSelection = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (callback) =>
-    callback({
-      Canvas: {
-        clearSelection: mockClearSelection,
-        getCurrentDrawing: () => ({ setCurrentLayer: jest.fn() }),
-        selectorManager: { releaseSelectors: jest.fn() },
-      },
-    }),
+jest.mock('@core/app/svgedit/selector', () => ({
+  getSelectorManager: () => ({
+    releaseSelectors: jest.fn(),
+  }),
+}));
+
+jest.mock('@core/app/svgedit/selection', () => ({
+  clearSelection: mockClearSelection,
 }));
 
 const mockBody = {
@@ -187,23 +186,23 @@ describe('test variableText helper', () => {
     let elem: SVGTextElement;
 
     document.body.innerHTML = '<text></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextType(elem)).toBe(VariableTextType.NONE);
 
     document.body.innerHTML = '<text data-vt-type="0"></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextType(elem)).toBe(VariableTextType.NONE);
 
     document.body.innerHTML = '<text data-vt-type="1"></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextType(elem)).toBe(VariableTextType.NUMBER);
 
     document.body.innerHTML = '<text data-vt-type="2"></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextType(elem)).toBe(VariableTextType.TIME);
 
     document.body.innerHTML = '<text data-vt-type="3"></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextType(elem)).toBe(VariableTextType.CSV);
   });
 
@@ -211,15 +210,15 @@ describe('test variableText helper', () => {
     let elem: SVGTextElement;
 
     document.body.innerHTML = '<text></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextOffset(elem)).toBe(0);
 
     document.body.innerHTML = '<text data-vt-offset="0"></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextOffset(elem)).toBe(0);
 
     document.body.innerHTML = '<text data-vt-offset="10"></text>';
-    elem = document.querySelector('text');
+    elem = document.querySelector('text')!;
     expect(getVariableTextOffset(elem)).toBe(10);
   });
 
@@ -249,7 +248,7 @@ describe('test variableText helper', () => {
     expect(hasVariableText({ visibleOnly: true })).toBe(false);
 
     document.body.innerHTML = '<text data-vt-type="1"></text><g></g>';
-    expect(hasVariableText({ root: document.querySelector('g') })).toBe(false);
+    expect(hasVariableText({ root: document.querySelector('g')! })).toBe(false);
   });
 
   test('getRealCurrent', () => {

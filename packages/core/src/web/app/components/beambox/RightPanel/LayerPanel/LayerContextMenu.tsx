@@ -21,6 +21,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
 import ContextMenu from '@core/app/widgets/ContextMenu';
 import updateLayerColor from '@core/helpers/color/updateLayerColor';
@@ -30,20 +31,12 @@ import splitFullColorLayer from '@core/helpers/layer/full-color/splitFullColorLa
 import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColorLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { cloneLayers, getLayerPosition, mergeLayers, setLayersLock } from '@core/helpers/layer/layer-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelItem from '../ObjectPanelItem';
 
 import styles from './LayerContextMenu.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface Props {
   children?: ReactNode;
@@ -92,7 +85,7 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
   };
 
   const toggleLayerLocked = () => {
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
     setLayersLock(selectedLayers, !isLocked);
     forceUpdate();
   };
@@ -177,7 +170,7 @@ const LayerContextMenu = ({ children, renameLayer, selectOnlyLayer }: Props): Re
   };
 
   const handleLayerFullColor = (newColor?: string) => {
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
 
     if (!isSelectingPrinterLayer) {
       return;
