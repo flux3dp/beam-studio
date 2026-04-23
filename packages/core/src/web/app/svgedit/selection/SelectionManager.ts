@@ -16,7 +16,7 @@ const { svgedit } = window;
 export class SelectionManager {
   private selectedElements: SVGElement[] = [];
 
-  private tempGroup: Element | null = null;
+  private tempGroup: null | SVGGElement = null;
 
   private selectedLayers: string[] = [];
 
@@ -167,10 +167,10 @@ export class SelectionManager {
     }
 
     const hasAlreadyTempGroup = this.selectedElements[0].getAttribute('data-tempgroup');
-    let g: Element;
+    let g: SVGGElement;
 
     if (hasAlreadyTempGroup) {
-      g = this.selectedElements[0];
+      g = this.selectedElements[0] as SVGGElement;
     } else {
       // create and insert the group element
       g = this.svgCanvas!.addSvgElementFromJson({
@@ -273,12 +273,10 @@ export class SelectionManager {
 
     this.selectedLayers = layers;
 
-    this.selectOnly([g as SVGElement], true);
+    this.selectOnly([g], true);
     this.tempGroup = g;
 
-    console.log('temp group created');
-
-    return g as unknown as SVGElement[];
+    return [g];
   };
 
   removeFromTempGroup = (elem: Element): void => {

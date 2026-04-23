@@ -579,7 +579,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         }
 
         const isRatioFixed = elem.getAttribute('data-ratiofixed') === 'true';
-        console.log(elem);
 
         ObjectPanelController.updateDimensionValues({ isRatioFixed });
       } else if (multiselected) {

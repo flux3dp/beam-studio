@@ -247,9 +247,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return canvas.currentDrawing;
   });
 
-  // pointer to current group (for in-group editing)
-  var current_group = null;
-
   // Object containing data for the currently selected styles
   var all_properties: { [key: string]: any } = {
     shape: {
@@ -695,9 +692,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Object to contain image data for raster images that were found encodable
   const encodableImages = {};
 
-  // Array with current disabled elements (for in-group editing)
-  let disabled_elems = [];
-
   // Object with save options
   const save_options: { [key: string]: any } = {
     round_digits: 5,
@@ -1073,13 +1067,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //	$(svgroot).children().each(cb);
   // };
 
-  // Function: setRotationAngle
-  // Removes any old rotations if present, prepends a new rotation at the
-  // transformed center
-  //
-  // Parameters:
-  // val - The new rotation angle in degrees
-  // preventUndo - Boolean indicating whether the action should be undoable or not
+  // exported for use in js svgnest, can remove after refactoring it
   this.setRotationAngle = setRotationAngle;
 
   // Function: recalculateAllSelectedDimensions

@@ -1213,7 +1213,7 @@
                     if (p.rotation !== 0 || (tempMove && tempMove.angle !== 0)) {
                         const angle = svgedit.utilities.getRotationAngle(elem) - tempMove.angle;
                         const new_angle = (angle + p.rotation) % 360 ;
-                        svgCanvas.setRotationAngle(elem, new_angle, { addToHisory: false });
+                        svgCanvas.setRotationAngle(elem, new_angle, { addToHistory: false });
                         const rad = p.rotation / 180 * Math.PI;
                         dx = center.x * Math.cos(rad) - center.y * Math.sin(rad) - center.x;
                         dy = center.x * Math.sin(rad) + center.y * Math.cos(rad) - center.y;
