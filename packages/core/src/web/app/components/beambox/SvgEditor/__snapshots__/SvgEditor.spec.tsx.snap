@@ -38,9 +38,6 @@ exports[`test svg-editor should render correctly in mac 1`] = `
           size="32"
           type="text"
         />
-        <div
-          id="cur_context_panel"
-        />
       </div>
       <div>
         MockPreviewFloatingBar
@@ -119,9 +116,6 @@ exports[`test svg-editor should render correctly in win 1`] = `
           id="text"
           size="32"
           type="text"
-        />
-        <div
-          id="cur_context_panel"
         />
       </div>
       <div>

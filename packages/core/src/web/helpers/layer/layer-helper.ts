@@ -490,9 +490,6 @@ export const moveToOtherLayer = (destLayer: string, callback: () => void, showAl
   };
   const selectedElements = selectionManager.getSelectedElements();
   const origLayer = getObjectLayer(selectedElements[0])?.elem;
-
-  console.log('origLayer', origLayer);
-
   const isPrintingLayer = origLayer && printingModules.has(getData(origLayer, 'module')!);
   const isDestPrintingLayer = printingModules.has(getData(getLayerByName(destLayer)!, 'module')!);
   const moveOutFromFullColorLayer = isPrintingLayer && !isDestPrintingLayer;

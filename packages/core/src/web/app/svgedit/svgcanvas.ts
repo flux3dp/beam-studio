@@ -1852,7 +1852,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Returns:
   // The current drawing as raw SVG XML text.
   this.getSvgString = function (opts: { unit?: Units } = {}) {
-    if (selectionManager.hasTempGroup()) {
+    if (selectionManager.isMultiSelecting) {
       selectionManager.ungroupTempGroup();
     }
 
@@ -3575,10 +3575,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
           if (angle !== 0) {
             setRotationAngle(topElem, 0, { parentCmd: batchCmd });
-
-            if (cmd && !cmd.isEmpty()) {
-              batchCmd.addSubCommand(cmd);
-            }
 
             stack.push({ elem: topElem, originalAngle: angle });
           }

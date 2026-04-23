@@ -1424,7 +1424,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
       const batchCmd = new history.BatchCommand('Rotate Elements');
 
-      if (selectionManager.hasTempGroup()) {
+      if (selectionManager.isMultiSelecting) {
         const cmd = selectionManager.pushTempGroupProperties();
 
         if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);

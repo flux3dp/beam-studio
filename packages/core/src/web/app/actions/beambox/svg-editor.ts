@@ -464,7 +464,6 @@ const svgEditor = (window['svgEditor'] = (function () {
         ObjectPanelController.updateDimensionValues({ rotation: angle });
 
         if (!is_node && currentMode !== 'pathedit') {
-          //$('#selected_panel').show();
           // Elements in this array already have coord fields
           if (['circle', 'ellipse', 'line'].includes(tagName)) {
           } else {

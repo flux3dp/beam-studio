@@ -12,7 +12,7 @@ const updateLayerColor = async (layer: SVGGElement): Promise<void> => {
   const isFullColor = layer.getAttribute('data-fullcolor') === '1';
   const elems = Array.from(layer.childNodes);
 
-  if (selectionManager.hasTempGroup()) {
+  if (selectionManager.isMultiSelecting) {
     const layerName = getLayerName(layer);
     const multiSelectedElems = selectionManager.getElementsFromTempGroupByLayer(layerName);
 

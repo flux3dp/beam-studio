@@ -151,10 +151,6 @@ export class SelectionManager {
     return this.tempGroup !== null;
   }
 
-  hasTempGroup(): boolean {
-    return this.tempGroup !== null;
-  }
-
   isTempGroup(elem: Element | null): boolean {
     return this.tempGroup !== null && elem === this.tempGroup;
   }
