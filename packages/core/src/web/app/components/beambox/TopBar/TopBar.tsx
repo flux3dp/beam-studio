@@ -9,11 +9,11 @@ import { MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useIsTablet } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';
 import getIsWeb from '@core/helpers/is-web';
-import { useIsTablet } from '@core/helpers/system-helper';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
