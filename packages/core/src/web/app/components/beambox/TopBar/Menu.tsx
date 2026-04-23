@@ -6,7 +6,17 @@ import '@szhsin/react-menu/dist/transitions/slide.css';
 
 import { MenuEvents } from '@core/app/constants/ipcEvents';
 import { menuItems } from '@core/app/constants/menuItems';
+
+import { getWorkarea } from '@core/app/constants/workarea-constants';
+import { useDockableStore } from '@core/app/stores/dockableStore';
+import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
+import { discoverManager } from '@core/helpers/api/discover';
+import { checkBM2, checkHxRf } from '@core/helpers/checkFeature';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
+import isWeb from '@core/helpers/is-web';
+import { getModulesTranslations } from '@core/helpers/layer-module/layer-module-helper';
+
 import useI18n from '@core/helpers/useI18n';
 import browser from '@core/implementations/browser';
 import type { IDeviceInfo } from '@core/interfaces/IDevice';

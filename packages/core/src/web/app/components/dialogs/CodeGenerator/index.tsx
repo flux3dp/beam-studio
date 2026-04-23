@@ -33,9 +33,7 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
       },
     },
     code_generator: tCodeGenerator,
-    topbar: {
-      menu: { tools: tTools },
-    },
+    generators: tGenerators,
   } = useI18n();
   const [tabKey, setTabKey] = useState('qrcode');
   const [isInvert, setIsInvert] = useState(false);
@@ -122,7 +120,7 @@ export default function CodeGenerator({ onClose }: Props): React.JSX.Element {
       open
       title={
         <Flex className={styles['title-flex']} gap={12}>
-          <div>{tTools.code_generator}</div>
+          <div>{tGenerators.code_generator}</div>
           <Radio.Group
             className={styles['fw-n']}
             defaultValue={tabKey}

@@ -2,6 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 
 const mockGetSupportedModules = jest.fn();
@@ -23,8 +24,6 @@ jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getLayerByName: (...args) => mockGetLayerByName(...args),
   identifyLayers: (...args) => mockIdentifyLayers(...args),
 }));
-
-import LayerList from './LayerList';
 
 const mockUseWorkarea = jest.fn();
 
@@ -49,12 +48,6 @@ const mockDeleteLayerByName = jest.fn();
 
 jest.mock('@core/helpers/layer/deleteLayer', () => ({
   deleteLayerByName: (...args) => mockDeleteLayerByName(...args),
-}));
-
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
 }));
 
 jest.mock(
@@ -88,10 +81,12 @@ const mockOnLayerColorChange = jest.fn();
 const mockSetLayerVisibility = jest.fn();
 const mockUnLockLayers = jest.fn();
 
+import LayerList from './LayerList';
+
 describe('test LayerList', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
     mockGetSupportedModules.mockReturnValue([15]);
   });
 
@@ -187,7 +182,7 @@ describe('test LayerList', () => {
 
       return false;
     });
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     useLayerStore.setState({ selectedLayers: ['layer1'] });
 
     const { container } = render(

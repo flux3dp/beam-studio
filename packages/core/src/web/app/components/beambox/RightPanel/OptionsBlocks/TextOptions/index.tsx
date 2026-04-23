@@ -14,6 +14,7 @@ import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
 import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
@@ -33,7 +34,6 @@ import {
 } from '@core/helpers/fonts/fontUtils';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
-import { useIsMobile } from '@core/helpers/system-helper';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
 import { isVariableTextSupported } from '@core/helpers/variableText';

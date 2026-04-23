@@ -2,9 +2,7 @@ import React, { act } from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
-
-import SelLayerBlock from './SelLayerBlock';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 
 const mockGetObjectLayer = jest.fn();
 const mockMoveToOtherLayer = jest.fn();
@@ -19,6 +17,8 @@ const mockGetAllLayerNames = jest.fn();
 jest.mock('@core/app/svgedit/layer/layerManager', () => ({
   getAllLayerNames: () => mockGetAllLayerNames(),
 }));
+
+import SelLayerBlock from './SelLayerBlock';
 
 describe('SelLayerBlock', () => {
   it('should render correctly when layer is less than 1', () => {
@@ -42,11 +42,10 @@ describe('SelLayerBlock', () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
 
     const mockElem = { getAttribute: () => jest.fn() };
-    const { container, getByText } = render(
-      <SelectedElementContext value={{ selectedElement: mockElem } as any}>
-        <SelLayerBlock />
-      </SelectedElementContext>,
-    );
+
+    useSelectedElementStore.setState({ selectedElement: mockElem as any });
+
+    const { container, getByText } = render(<SelLayerBlock />);
 
     expect(mockGetObjectLayer).toHaveBeenCalledTimes(1);
     expect(mockGetObjectLayer).toHaveBeenLastCalledWith(mockElem);
@@ -59,11 +58,10 @@ describe('SelLayerBlock', () => {
     mockGetAllLayerNames.mockReturnValue(['layer1', 'layer2']);
 
     const mockElem = { getAttribute: () => jest.fn() };
-    const { baseElement } = render(
-      <SelectedElementContext value={{ selectedElement: mockElem } as any}>
-        <SelLayerBlock />
-      </SelectedElementContext>,
-    );
+
+    useSelectedElementStore.setState({ selectedElement: mockElem as any });
+
+    const { baseElement } = render(<SelLayerBlock />);
 
     act(() => fireEvent.mouseDown(baseElement.querySelector('input')));
     fireEvent.click(baseElement.querySelector('.rc-virtual-list [title="layer2"]'));

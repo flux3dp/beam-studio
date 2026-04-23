@@ -3,6 +3,7 @@ import React, { use, useEffect, useState } from 'react';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import ColorPicker from '@core/app/widgets/ColorPicker';
 import ColorPickerMobile from '@core/app/widgets/ColorPickerMobile';
@@ -12,7 +13,6 @@ import colloectColors from '@core/helpers/color/collectColors';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import symbolMaker from '@core/helpers/symbol-helper/symbolMaker';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import RatioLock from './RatioLock';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 jest.mock('../ObjectPanelItem', () => ({
   Item: ({ content, id, onClick }: any) => (
@@ -24,13 +24,9 @@ jest.mock('@core/helpers/useI18n', () => () => ({
   },
 }));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
-
 const mockOnClick = jest.fn();
+
+import RatioLock from './RatioLock';
 
 describe('test RatioLock', () => {
   beforeEach(() => {
@@ -38,7 +34,7 @@ describe('test RatioLock', () => {
   });
 
   it('should render correctly on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container, rerender } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
 
@@ -48,7 +44,7 @@ describe('test RatioLock', () => {
   });
 
   it('should render correctly on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container, rerender } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
 
@@ -58,7 +54,7 @@ describe('test RatioLock', () => {
   });
 
   test('onClick on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
     const button = container.querySelector('button');
@@ -68,7 +64,7 @@ describe('test RatioLock', () => {
   });
 
   test('onClick on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<RatioLock isLocked={false} onClick={mockOnClick} />);
     const button = container.querySelector('button');

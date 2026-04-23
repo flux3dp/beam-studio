@@ -8,6 +8,7 @@ import Dialog from '@core/app/actions/dialog-caller';
 import layoutConstants from '@core/app/constants/layout-constants';
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { isMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
@@ -19,7 +20,6 @@ import { cloneLayerConfig } from '@core/helpers/layer/layer-config-helper';
 import { highlightLayer, moveLayersToPosition, setLayersLock } from '@core/helpers/layer/layer-helper';
 import { setLayerVisibility } from '@core/helpers/layer/setLayerVisibility';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { isMobile } from '@core/helpers/system-helper';
 import storage from '@core/implementations/storage';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

@@ -1,5 +1,5 @@
 import type { DragEvent } from 'react';
-import React, { useCallback, useContext, useMemo, useRef } from 'react';
+import React, { useCallback, useMemo, useRef } from 'react';
 
 import Icon, { CloseOutlined } from '@ant-design/icons';
 import { Button } from 'antd';
@@ -7,11 +7,11 @@ import type { IDockviewPanelHeaderProps } from 'dockview';
 
 import tutorialController from '@core/app/components/tutorials/tutorialController';
 import tutorialConstants from '@core/app/constants/tutorial-constants';
-import { SelectedElementContext } from '@core/app/contexts/SelectedElementContext';
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import TabBarIcons from '@core/app/icons/tab-bar/TabBarIcons';
 import type { TDynamicPanelKey } from '@core/app/stores/dockableStore';
+import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import { isFitText } from '@core/app/svgedit/text/textedit/getters';
 import useI18n from '@core/helpers/useI18n';
 
@@ -21,7 +21,7 @@ import { addFloatingPanel, removePanel, setMovedPanel } from './utils';
 
 const Tab = ({ api: panelApi }: IDockviewPanelHeaderProps) => {
   const lang = useI18n();
-  const { selectedElement } = useContext(SelectedElementContext);
+  const selectedElement = useSelectedElementStore((state) => state.selectedElement);
   const tabRef = useRef<HTMLDivElement>(null);
   const tempElemRef = useRef<HTMLDivElement>(null);
 

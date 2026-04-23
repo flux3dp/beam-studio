@@ -2,17 +2,14 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 const mockGetLineSpacing = jest.fn();
 const mockSetLineSpacing = jest.fn();
-let mockIsMobile = false;
 
 jest.mock('@core/app/svgedit/text/textedit', () => ({
   getLineSpacing: (...args: any[]) => mockGetLineSpacing(...args),
   setLineSpacing: (...args: any[]) => mockSetLineSpacing(...args),
-}));
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockIsMobile,
 }));
 
 jest.mock('@core/app/icons/option-panel/OptionPanelIcons', () => ({
@@ -42,7 +39,7 @@ describe('LineSpacingBlock', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsMobile = false;
+    useScreenStore.setState({ isMobile: false });
     mockGetLineSpacing.mockReturnValue(1);
   });
 
@@ -55,7 +52,7 @@ describe('LineSpacingBlock', () => {
   });
 
   test('should render mobile ObjectPanelItem.Number when isMobile', () => {
-    mockIsMobile = true;
+    useScreenStore.setState({ isMobile: true });
     mockGetLineSpacing.mockReturnValue(1.5);
 
     const { getByTestId } = render(<LineSpacingBlock textElements={[mockTextElement]} />);
@@ -90,7 +87,7 @@ describe('LineSpacingBlock', () => {
   });
 
   test('should call setLineSpacing on mobile input change', () => {
-    mockIsMobile = true;
+    useScreenStore.setState({ isMobile: true });
 
     const mockOnSizeChange = jest.fn();
 

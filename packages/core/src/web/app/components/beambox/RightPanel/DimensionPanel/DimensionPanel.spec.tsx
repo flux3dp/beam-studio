@@ -2,6 +2,9 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
+
 const get = jest.fn();
 
 jest.mock('@core/implementations/storage', () => ({
@@ -31,9 +34,6 @@ const mockReRenderImageSymbol = jest.fn();
 jest.mock('@core/helpers/symbol-helper/symbolMaker', () => ({
   reRenderImageSymbol: (...args) => mockReRenderImageSymbol(...args),
 }));
-
-import DimensionPanel from './DimensionPanel';
-import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 
 const mockChangeSelectedAttribute = jest.fn();
 const mockSetSvgElemPosition = jest.fn();
@@ -107,12 +107,6 @@ jest.mock('./RatioLock', () => ({ isLocked, onClick }: any) => (
   </div>
 ));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
-
 const mockForceUpdate = jest.fn();
 
 jest.mock('@core/helpers/use-force-update', () => () => mockForceUpdate);
@@ -134,6 +128,8 @@ const mockElement = {
   setAttribute: jest.fn(),
   tagName: 'image',
 };
+
+import DimensionPanel from './DimensionPanel';
 
 const renderDimensionPanel = (elem: any) => {
   return render(
@@ -359,7 +355,7 @@ describe('test DimensionPanel', () => {
 describe('test DimensionPanel in mobile', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
     mockElement.querySelectorAll.mockReturnValue([]);
     mockElement.tagName = 'image';
   });

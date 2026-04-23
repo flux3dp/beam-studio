@@ -218,7 +218,6 @@ export const workareaConstants: Record<WorkAreaModel, WorkArea> = {
     accOverride: { path: { x: 1000, y: 1000 } },
     autoFocusOffset: [31.13, 1.2, 6.5],
     autoShrink: 0.05, // TODO: use same value as other machines, may need to adjust
-    calibrationCenter: [370, 5],
     cameraCenter: [370, 180],
     curveSpeedLimit: {
       x: 50,

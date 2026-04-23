@@ -6,6 +6,7 @@ import RightPanelController from '@core/app/components/beambox/RightPanel/contex
 import { type CanvasMouseMode } from '@core/app/stores/canvas/canvasStore';
 import { getMouseMode, setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { isMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
@@ -18,7 +19,6 @@ import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import round from '@core/helpers/math/round';
 import shortcuts from '@core/helpers/shortcuts';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { isMobile } from '@core/helpers/system-helper';
 import type { ICommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import type { ISVGPath, ISVGPathSeg } from '@core/interfaces/ISVGPath';

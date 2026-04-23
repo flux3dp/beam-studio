@@ -5,14 +5,9 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
 import { ContentType } from '@core/app/constants/element-panel-constants';
 import Drawer from '@core/app/widgets/Drawer';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 window.innerHeight = 667;
-
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
 
 jest.mock('@core/app/contexts/ElementPanelContext', () => ({ ElementPanelContext: React.createContext({}) }));
 
@@ -136,7 +131,7 @@ describe('test ElementPanel Header', () => {
 describe('test ElementPanel Header in mobile', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
   });
 
   it('should render MainType correctly', async () => {

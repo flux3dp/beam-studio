@@ -2,7 +2,7 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-import Rotation from './Rotation';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockCreateEventEmitter = jest.fn();
 const mockOn = jest.fn();
@@ -30,13 +30,9 @@ jest.mock('@core/helpers/useI18n', () => () => ({
   },
 }));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
-
 const mockOnChange = jest.fn();
+
+import Rotation from './Rotation';
 
 describe('test Rotation', () => {
   beforeEach(() => {
@@ -48,7 +44,7 @@ describe('test Rotation', () => {
   });
 
   it('should render correctly on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
 
@@ -56,7 +52,7 @@ describe('test Rotation', () => {
   });
 
   it('should render correctly on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
 
@@ -64,7 +60,7 @@ describe('test Rotation', () => {
   });
 
   test('onChange on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
     const input = container.querySelector('input');
@@ -75,7 +71,7 @@ describe('test Rotation', () => {
   });
 
   test('UPDATE_DIMENSION_VALUES event on desktop', () => {
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container, unmount } = render(<Rotation onChange={mockOnChange} value={0} />);
 
@@ -94,7 +90,7 @@ describe('test Rotation', () => {
   });
 
   test('onChange on mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<Rotation onChange={mockOnChange} value={0} />);
     const button = container.querySelector('button');

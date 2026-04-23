@@ -2,11 +2,7 @@ import * as React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const getSVGAsync = jest.fn();
 
@@ -42,7 +38,7 @@ describe('should render correctly', () => {
   });
 
   test('is mobile', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<CommonTools hide={false} />);
 
@@ -50,7 +46,7 @@ describe('should render correctly', () => {
   });
 
   test('not hiding, not mobile and in web version', () => {
-    useIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
 
     const { container } = render(<CommonTools hide={false} />);
 

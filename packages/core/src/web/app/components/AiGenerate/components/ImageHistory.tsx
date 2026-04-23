@@ -6,7 +6,7 @@ import { pick } from 'remeda';
 import { match, P } from 'ts-pattern';
 import { useShallow } from 'zustand/react/shallow';
 
-import { isMobile } from '@core/helpers/system-helper';
+import { isMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 
 import { useAiGenerateStore } from '../useAiGenerateStore';

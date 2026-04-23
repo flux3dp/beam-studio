@@ -304,7 +304,7 @@ Cypress.Commands.add('getTopBar', (childSelector = '') => {
 });
 
 Cypress.Commands.add('moveElementToLayer', (targetLayer: string, needConfirm = true) => {
-  // Wait for select to be rendered (depends on SelectedElementContext update)
+  // Wait for select to be rendered (depends on selectedElementStore update)
   cy.findByTestId('move-layer-select', { timeout: 10000 }).should('exist').find('.ant-select-selector').click();
   cy.get('.ant-select-item').contains(targetLayer).click();
   if (needConfirm) cy.get('.ant-btn').contains('Yes').click();

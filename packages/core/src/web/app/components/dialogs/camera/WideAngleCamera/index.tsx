@@ -186,15 +186,15 @@ const WideAngleCamera = ({ onClose }: Props): ReactNode => {
           onNext={next}
           onPrev={prev}
           steps={[
-            { description: tCali.charuco_position_top_left, key: 'topLeft' },
-            { description: tCali.charuco_position_top_right, key: 'topRight' },
-            { description: tCali.charuco_position_bottom_left, key: 'bottomLeft' },
-            { description: tCali.charuco_position_bottom_right, key: 'bottomRight' },
-            { description: tCali.charuco_position_center, key: 'center' },
-          ].map(({ description, key }) => ({
-            description,
+            { key: 'topLeft', name: tCali.charuco_position_top_left },
+            { key: 'topRight', name: tCali.charuco_position_top_right },
+            { key: 'bottomLeft', name: tCali.charuco_position_bottom_left },
+            { key: 'bottomRight', name: tCali.charuco_position_bottom_right },
+            { key: 'center', name: tCali.charuco_position_center },
+          ].map(({ key, name }) => ({
             imageUrl: `core-img/calibration/bb2-charuco-${key}.jpg`,
             key,
+            name,
           }))}
           title={title}
           updateParam={updateParam}

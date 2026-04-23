@@ -2,6 +2,9 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+import { ObjectPanelContextProvider } from './contexts/ObjectPanelContext';
+
 const mockOnClick1 = jest.fn();
 const mockOnClick2 = jest.fn();
 const mockUpdateValue = jest.fn();
@@ -39,12 +42,6 @@ const mockStorage = { isInch: false };
 jest.mock('@core/app/stores/storageStore', () => ({
   useStorageStore: mockUseStorageStore,
 }));
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => true,
-}));
-
-import { ObjectPanelContextProvider } from './contexts/ObjectPanelContext';
 
 import ObjectPanelItem from './ObjectPanelItem';
 
@@ -100,6 +97,7 @@ const MockSelect = ({
 describe('should render correctly', () => {
   beforeEach(() => {
     jest.resetAllMocks();
+    useScreenStore.setState({ isMobile: true });
     mockUseStorageStore.mockImplementation((selector?) => (selector ? selector(mockStorage) : mockStorage));
     mockStorage.isInch = false;
   });

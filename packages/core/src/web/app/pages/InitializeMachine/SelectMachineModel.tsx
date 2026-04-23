@@ -8,10 +8,10 @@ import windowLocationReload from '@core/app/actions/windowLocation';
 import type { AnnotatedWorkareaModel } from '@core/app/constants/workarea-constants';
 import InitializeIcons from '@core/app/icons/initialize/InitializeIcons';
 import { useInitializeMachineStore } from '@core/app/pages/InitializeMachine/store';
+import { isMobile } from '@core/app/stores/screenStore';
 import { checkBM2, checkFpm1, checkHxRf } from '@core/helpers/checkFeature';
 import { decodeWorkareaAnnotation } from '@core/helpers/device/workarea-annotation';
 import { getHomePage } from '@core/helpers/hashHelper';
-import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import storage from '@core/implementations/storage';
 

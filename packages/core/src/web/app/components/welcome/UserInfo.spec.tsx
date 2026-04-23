@@ -1,6 +1,8 @@
 import React from 'react';
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 const mockShowLoginDialog = jest.fn();
 const mockShowFluxCreditDialog = jest.fn();
 
@@ -15,29 +17,23 @@ jest.mock('@core/helpers/api/flux-id', () => ({
   signOut: mockSignOut,
 }));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: mockUseIsMobile,
-}));
-
 const mockOpen = jest.fn();
 
 jest.mock('@core/implementations/browser', () => ({
   open: mockOpen,
 }));
 
-import UserInfo from './UserInfo';
-
 const mockUser = {
   email: 'mock-email',
   info: { avatar: 'mock-avatar', nickname: 'mock-nickname' },
 };
 
+import UserInfo from './UserInfo';
+
 describe('test UserInfo', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
   });
 
   it('should render correctly', () => {
@@ -53,7 +49,7 @@ describe('test UserInfo', () => {
   });
 
   it('should render correctly in mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<UserInfo user={mockUser} />);
 

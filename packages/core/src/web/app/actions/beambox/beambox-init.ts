@@ -8,6 +8,7 @@ import tabController from '@core/app/actions/tabController';
 import AlertConstants from '@core/app/constants/alert-constants';
 import { getGestureIntroduction } from '@core/app/constants/media-tutorials';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import { isMobile } from '@core/app/stores/screenStore';
 import { getStorage, setStorage } from '@core/app/stores/storageStore';
 import { initCurText } from '@core/app/svgedit/text/textedit';
 import alertHelper from '@core/helpers/alert-helper';
@@ -29,7 +30,6 @@ import {
 import isWeb from '@core/helpers/is-web';
 import { prefetchAiConfig } from '@core/helpers/query';
 import registerImageSymbolEvents from '@core/helpers/symbol-helper/registerImageSymbolEvents';
-import { isMobile } from '@core/helpers/system-helper';
 import menu from '@core/implementations/menu';
 import storage from '@core/implementations/storage';
 

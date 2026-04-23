@@ -3,10 +3,10 @@ import React, { createContext, useMemo } from 'react';
 import classNames from 'classnames';
 
 import layoutConstants from '@core/app/constants/layout-constants';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import { getOS } from '@core/helpers/getOS';
 import isWeb from '@core/helpers/is-web';
-import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './FullWindowPanel.module.scss';
 

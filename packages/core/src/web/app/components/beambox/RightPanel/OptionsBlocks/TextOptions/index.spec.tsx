@@ -2,6 +2,8 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 // Mock the entire googleFontsApiCache module to avoid URL construction issues
 jest.mock('@core/helpers/fonts/googleFontsApiCache', () => ({
   googleFontsApiCache: {
@@ -18,7 +20,6 @@ enum VerticalAlign {
   TOP = 2,
 }
 
-const mockUseIsMobile = jest.fn();
 const mockUseWorkarea = jest.fn();
 const mockGetFontPostscriptName = jest.fn();
 const mockGetFontFamilyData = jest.fn();
@@ -72,10 +73,6 @@ const mockStyleOptions = [
   { label: 'Regular', value: 'Regular' },
   { label: 'Bold', value: 'Bold' },
 ];
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
 
 jest.mock('@core/app/stores/storageStore', () => ({
   getStorage: jest.fn((key: string) => {
@@ -395,7 +392,7 @@ describe('TextOptions', () => {
     mockElem.setAttribute('id', 'test-elem');
     mockTextElement.setAttribute('font-family', 'Arial');
 
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
     mockUseWorkarea.mockReturnValue('laser');
 
     // Reset Google Font related mocks
@@ -581,7 +578,7 @@ describe('TextOptions', () => {
 
   describe('Mobile view', () => {
     beforeEach(() => {
-      mockUseIsMobile.mockReturnValue(true);
+      useScreenStore.setState({ isMobile: true });
     });
 
     test('should render correctly for multi-line text in mobile', () => {
@@ -607,8 +604,6 @@ describe('TextOptions', () => {
     test('should render correctly in mobile mode', () => {
       const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 
-      // Verify mobile mode is properly detected and basic rendering works
-      expect(mockUseIsMobile).toHaveBeenCalled();
       expect(container).toMatchSnapshot();
     });
 
@@ -651,7 +646,7 @@ describe('TextOptions', () => {
 
   describe('Google Fonts Integration', () => {
     test('should show "More Google Fonts" option in dropdown', () => {
-      mockUseIsMobile.mockReturnValue(false); // Ensure desktop mode for this test
+      useScreenStore.setState({ isMobile: false }); // Ensure desktop mode for this test
 
       const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 
@@ -726,7 +721,7 @@ describe('TextOptions', () => {
     });
 
     test('should handle font family change with "more-google-fonts" option', async () => {
-      mockUseIsMobile.mockReturnValue(false); // Ensure desktop mode
+      useScreenStore.setState({ isMobile: false }); // Ensure desktop mode
 
       const { container } = render(<TextOptions elem={mockElem} textElements={[mockTextElement]} />);
 

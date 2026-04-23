@@ -2,9 +2,9 @@ import React from 'react';
 
 import type { ISVGEditor } from '@core/app/actions/beambox/svg-editor';
 import TopBarIcons from '@core/app/icons/top-bar/TopBarIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import historyUtils from '@core/app/svgedit/history/utils';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './CommonTools.module.scss';

@@ -2,15 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-
-import PolygonOptions from './PolygonOptions';
-
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
 
 const mockUpdatePolygonSides = jest.fn((elem, val) => {
   const sides = +elem.getAttribute('sides');
@@ -47,6 +40,8 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 jest.mock('../ObjectPanelItem');
+
+import PolygonOptions from './PolygonOptions';
 
 describe('test PolygonOptions', () => {
   beforeEach(() => {
@@ -118,7 +113,7 @@ describe('test PolygonOptions', () => {
   });
 
   test('should render correctly in mobile', async () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container, rerender } = render(
       <ObjectPanelContext value={{ polygonSides: 0 } as any}>

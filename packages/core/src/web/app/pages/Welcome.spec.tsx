@@ -2,6 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 jest.mock('@core/app/components/Chat', () => 'mock-chat');
 jest.mock('@core/app/components/beambox/TopBar/tabs/Tabs', () => 'mock-tabs');
 jest.mock('@core/app/components/welcome/Banners', () => 'mock-banners');
@@ -53,11 +55,8 @@ jest.mock('@core/helpers/is-web', () => mockIsWeb);
 
 jest.mock('@core/helpers/locale-helper', () => ({ isNorthAmerica: true, isTw: false }));
 
-const mockUseIsMobile = jest.fn();
-
 jest.mock('@core/helpers/system-helper', () => ({
   isMac: () => true,
-  useIsMobile: mockUseIsMobile,
 }));
 
 const mockOpen = jest.fn();
@@ -71,7 +70,7 @@ import Welcome from './Welcome';
 describe('test Welcome', () => {
   beforeEach(() => {
     jest.resetAllMocks();
-    mockUseIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
     mockGetIsWelcomeTab.mockReturnValue(true);
   });
 
@@ -123,7 +122,7 @@ describe('test Welcome', () => {
   });
 
   it('should render correctly in mobile', () => {
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container, getByText } = render(<Welcome />);
 

@@ -2,13 +2,7 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-import PathEditPanel from './PathEditPanel';
-
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const setSelectedNodeType = jest.fn();
 const deleteSelected = jest.fn();
@@ -68,6 +62,8 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
     }),
 }));
 
+import PathEditPanel from './PathEditPanel';
+
 describe('test PathEditPanel', () => {
   beforeEach(() => jest.clearAllMocks());
 
@@ -95,7 +91,7 @@ describe('test PathEditPanel', () => {
   });
 
   test('should render correctly in mobile', async () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container, getByText, getByTitle } = render(<PathEditPanel />);
     const panelEl = container.querySelector('.adm-floating-panel') as HTMLElement;

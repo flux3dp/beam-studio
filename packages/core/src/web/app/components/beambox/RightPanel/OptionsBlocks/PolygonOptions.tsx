@@ -1,9 +1,9 @@
 import React, { use, useEffect } from 'react';
 
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

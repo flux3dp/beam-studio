@@ -1380,10 +1380,7 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       svgCanvas.textActions.start(element);
       break;
     case 'fit-text': {
-      const fontSize = textEdit.getCurText().font_size;
-      const fitWidth = fontSize * 7;
-
-      element = createNewFitText(x, y, fitWidth, { isToSelect: true });
+      element = createNewFitText(x, y, { isToSelect: true });
       keep = true;
       svgCanvas.textActions.start(element);
       break;

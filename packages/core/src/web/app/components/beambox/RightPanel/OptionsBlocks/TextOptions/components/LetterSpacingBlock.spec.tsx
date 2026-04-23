@@ -2,17 +2,14 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
+
 const mockGetLetterSpacing = jest.fn();
 const mockSetLetterSpacing = jest.fn();
-let mockIsMobile = false;
 
 jest.mock('@core/app/svgedit/text/textedit', () => ({
   getLetterSpacing: (...args: any[]) => mockGetLetterSpacing(...args),
   setLetterSpacing: (...args: any[]) => mockSetLetterSpacing(...args),
-}));
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockIsMobile,
 }));
 
 jest.mock('@core/app/icons/option-panel/OptionPanelIcons', () => ({
@@ -42,7 +39,7 @@ describe('LetterSpacingBlock', () => {
 
   beforeEach(() => {
     jest.clearAllMocks();
-    mockIsMobile = false;
+    useScreenStore.setState({ isMobile: false });
     mockGetLetterSpacing.mockReturnValue(0);
   });
 
@@ -57,7 +54,7 @@ describe('LetterSpacingBlock', () => {
   });
 
   test('should render mobile ObjectPanelItem.Number when isMobile', () => {
-    mockIsMobile = true;
+    useScreenStore.setState({ isMobile: true });
     mockGetLetterSpacing.mockReturnValue(0.2);
 
     const { getByTestId } = render(<LetterSpacingBlock textElements={[mockTextElement]} />);
@@ -92,7 +89,7 @@ describe('LetterSpacingBlock', () => {
   });
 
   test('should call setLetterSpacing on mobile input change', () => {
-    mockIsMobile = true;
+    useScreenStore.setState({ isMobile: true });
 
     const mockOnSizeChange = jest.fn();
 

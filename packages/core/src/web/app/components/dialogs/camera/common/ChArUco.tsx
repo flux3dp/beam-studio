@@ -20,19 +20,21 @@ import StepProgress from './StepProgress';
 import useLiveFeed from './useLiveFeed';
 
 interface Props {
+  calibrationThresholds?: { average?: number; good?: number };
   cameraIndex?: number;
   isFisheye?: boolean;
   isVertical?: boolean;
   onClose: (complete?: boolean) => void;
   onNext: () => void;
   onPrev: () => void;
-  steps: Array<{ description: string; imageUrl?: string; key: string }>;
+  steps: Array<{ descriptions?: string[]; imageUrl?: string; key: string; name: string }>;
   title?: string;
   updateParam: (param: FisheyeCaliParameters) => void;
 }
 
 // TODO: how to handle the case when some pictures are not detected or points are too less?
 const ChArUco = ({
+  calibrationThresholds: { average: averageThreshold = 1.5, good: goodThreshold = 2 } = {},
   cameraIndex,
   isFisheye = true,
   isVertical,
@@ -60,13 +62,13 @@ const ChArUco = ({
     dialog.writeFileDialog(() => img!.blob, 'Save Picture', 'charuco.jpg');
   }, [img]);
 
-  const { description, imageUrl } = useMemo(() => steps[step], [step, steps]);
+  const { descriptions, imageUrl, name } = useMemo(() => steps[step], [step, steps]);
 
   const handleNext = useCallback(async () => {
     pauseLive();
     progressCaller.openNonstopProgress({ id: 'detect-charuco' });
 
-    const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10);
+    const res = await cameraCalibrationApi.detectChAruCo(img!.blob, 15, 10, { is_vertical: isVertical });
 
     progressCaller.popById('detect-charuco');
     console.log(`Detect ChArUco at ${step}:`, res);
@@ -109,7 +111,7 @@ const ChArUco = ({
       console.log('Calibrate with ChArUco', calibrateRes);
 
       const { d, indices, k, ret, rvec, tvec } = calibrateRes;
-      const shouldProceed = await handleCalibrationResult(ret, 1.5, 2);
+      const shouldProceed = await handleCalibrationResult(ret, goodThreshold, averageThreshold);
 
       if (!shouldProceed) {
         restartLive();
@@ -130,7 +132,20 @@ const ChArUco = ({
       updateParam({ d, is_fisheye: isFisheye, k, ret, rvec, tvec });
       onNext();
     }
-  }, [tCali, steps, step, img, pauseLive, restartLive, onNext, updateParam]);
+  }, [
+    tCali,
+    steps,
+    step,
+    img,
+    pauseLive,
+    restartLive,
+    onNext,
+    updateParam,
+    isFisheye,
+    isVertical,
+    averageThreshold,
+    goodThreshold,
+  ]);
 
   return (
     <DraggableModal
@@ -146,25 +161,31 @@ const ChArUco = ({
       maskClosable={false}
       onCancel={() => onClose(false)}
       open
-      title={title ?? `${tCali.title_capture_calibration_pattern} (${description})`}
+      title={title ?? `${tCali.title_capture_calibration_pattern} (${name})`}
       width="80vw"
     >
       <div className={styles.container}>
         <ol className={styles.desc}>
-          <li
-            dangerouslySetInnerHTML={{
-              __html: sprintf(
-                isVertical ? tCali.charuco_place_charuco_vertical : tCali.charuco_place_charuco_horizontal,
-                description,
-              ),
-            }}
-          />
-          {step === 0 && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
-          <li>{tCali.charuco_capture}</li>
+          {descriptions ? (
+            descriptions.map((desc, index) => <li dangerouslySetInnerHTML={{ __html: desc }} key={index} />)
+          ) : (
+            <>
+              <li
+                dangerouslySetInnerHTML={{
+                  __html: sprintf(
+                    isVertical ? tCali.charuco_place_charuco_vertical : tCali.charuco_place_charuco_horizontal,
+                    name,
+                  ),
+                }}
+              />
+              {step === 0 && <li dangerouslySetInnerHTML={{ __html: tCali.charuco_auto_focus }} />}
+              <li>{tCali.charuco_capture}</li>
+            </>
+          )}
         </ol>
         <Flex align="center" className={styles.content} justify="space-between">
           <div className={styles.left}>
-            <StepProgress className={styles.progress} currentStep={step} steps={steps.map((s) => s.description)} />
+            <StepProgress className={styles.progress} currentStep={step} steps={steps.map((s) => s.name)} />
             <div className={styles.imgContainer}>
               {img ? (
                 <>
@@ -184,7 +205,11 @@ const ChArUco = ({
               setExposureSetting={setExposureSetting}
             />
           </div>
-          <div className={styles.right}>{imageUrl && <img src={imageUrl} />}</div>
+          {imageUrl && (
+            <div className={styles.right}>
+              <img src={imageUrl} />
+            </div>
+          )}
         </Flex>
       </div>
     </DraggableModal>

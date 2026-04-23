@@ -6,8 +6,8 @@ import type Konva from 'konva';
 import { Group, Image, Layer, Stage } from 'react-konva';
 import useImage from 'use-image';
 
+import { useIsMobile } from '@core/app/stores/screenStore';
 import { useStorageStore } from '@core/app/stores/storageStore';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import { COLORS, MM_PER_INCH, OVERLAY_BOTTOM, STAGE_PADDING, STROKE_PX, THUMB_PAD, THUMB_SIZE } from '../../constants';

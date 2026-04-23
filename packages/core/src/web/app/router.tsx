@@ -1,6 +1,6 @@
 import '@ant-design/v5-patch-for-react-19';
 
-import * as React from 'react';
+import React, { useEffect } from 'react';
 
 import { StyleProvider } from '@ant-design/cssinjs';
 import { QueryClientProvider } from '@tanstack/react-query';
@@ -49,6 +49,7 @@ import SelectConnectionType from '@core/app/pages/InitializeMachine/SelectConnec
 import SelectMachineModel from '@core/app/pages/InitializeMachine/SelectMachineModel';
 import SelectPromarkLaserSource from '@core/app/pages/InitializeMachine/SelectPromarkLaserSource';
 import Welcome from '@core/app/pages/Welcome';
+import { antdScreenTokens, initScreenStore } from '@core/app/stores/screenStore';
 import Logger from '@core/helpers/logger';
 import { queryClient } from '@core/helpers/query';
 import type { StorageKey } from '@core/interfaces/IStorage';
@@ -95,6 +96,10 @@ const App = (): React.JSX.Element => {
     getConfig(key as StorageKey);
   });
 
+  useEffect(() => {
+    initScreenStore();
+  }, []);
+
   return (
     <QueryClientProvider client={queryClient}>
       <ErrorBoundary
@@ -131,9 +136,7 @@ const App = (): React.JSX.Element => {
                 token: {
                   fontFamily:
                     '"Helvetica Neue", "HelveticaNeue-Light", "Helvetica Neue Light", "Open Sans", Helvetica, Arial, "Lucida Grande", sans-serif, "Microsoft JhengHei", "微軟正黑體"',
-                  screenMD: 601,
-                  screenMDMin: 601,
-                  screenSMMax: 600,
+                  ...antdScreenTokens,
                 },
               }}
             >

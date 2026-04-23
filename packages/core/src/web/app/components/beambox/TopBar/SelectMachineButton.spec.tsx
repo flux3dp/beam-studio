@@ -4,9 +4,8 @@ import { fireEvent, render } from '@testing-library/react';
 
 import { CanvasMode } from '@core/app/constants/canvasMode';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
-
-import SelectMachineButton from './SelectMachineButton';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockGetIsPreviewMode = jest.fn();
 const mockEndPreviewMode = jest.fn();
@@ -24,12 +23,6 @@ jest.mock('@core/app/contexts/CanvasContext', () => ({
   }),
 }));
 
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
-
 const mockGetDevice = jest.fn();
 
 jest.mock(
@@ -39,10 +32,12 @@ jest.mock(
       mockGetDevice(...args),
 );
 
+import SelectMachineButton from './SelectMachineButton';
+
 describe('test SelectMachineButton', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    useIsMobile.mockReturnValue(false);
+    useScreenStore.setState({ isMobile: false });
     useCanvasStore.getState().setMode(CanvasMode.Draw);
     mockGetIsPreviewMode.mockReturnValue(false);
     mockGetDevice.mockResolvedValue({
@@ -66,7 +61,7 @@ describe('test SelectMachineButton', () => {
   });
 
   test('mobile', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(
       <CanvasContext value={{ selectedDevice: null } as any}>

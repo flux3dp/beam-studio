@@ -5,8 +5,8 @@ import { Alert, Button, Input } from 'antd';
 import classNames from 'classnames';
 
 import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
+import { isMobile } from '@core/app/stores/screenStore';
 import type { InputField } from '@core/helpers/api/ai-image-config';
-import { isMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 
 import type { ImageInput } from '../types';

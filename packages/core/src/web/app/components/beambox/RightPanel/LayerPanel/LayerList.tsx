@@ -12,6 +12,7 @@ import { LayerModule, printingModules } from '@core/app/constants/layer-module/l
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import ColorPicker from '@core/app/widgets/ColorPicker';
 import { useSupportedModules } from '@core/helpers/hooks/useSupportedModules';
@@ -19,7 +20,6 @@ import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { deleteLayerByName } from '@core/helpers/layer/deleteLayer';
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { setLayerLock } from '@core/helpers/layer/layer-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 
 import styles from './LayerList.module.scss';
 

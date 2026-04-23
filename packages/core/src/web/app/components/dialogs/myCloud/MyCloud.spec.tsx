@@ -4,8 +4,7 @@ import { fireEvent, render, waitFor } from '@testing-library/react';
 
 import { MyCloudContext } from '@core/app/contexts/MyCloudContext';
 import type { IFile } from '@core/interfaces/IMyCloud';
-
-import MyCloud from './MyCloud';
+import { useScreenStore } from '@core/app/stores/screenStore';
 
 const mockFiles: IFile[] = [
   {
@@ -72,18 +71,14 @@ jest.mock('@core/app/contexts/MyCloudContext', () => ({
   ),
 }));
 
-const mockUseIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => mockUseIsMobile(),
-}));
-
 jest.mock('@core/helpers/is-flux-plus-active', () => true);
 
 jest.mock('./GridFile', () => ({ file }: any) => <div>Mock Grid File: {JSON.stringify(file)}</div>);
 jest.mock('./Head', () => 'mock-head');
 
 const mockOnClose = jest.fn();
+
+import MyCloud from './MyCloud';
 
 describe('test MyCloud', () => {
   beforeEach(() => {
@@ -123,7 +118,7 @@ describe('test MyCloud', () => {
 
   test('should rendered correctly in mobile', () => {
     getCurrentUser.mockReturnValue(mockUser);
-    mockUseIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const { container } = render(<MyCloud onClose={mockOnClose} />);
 

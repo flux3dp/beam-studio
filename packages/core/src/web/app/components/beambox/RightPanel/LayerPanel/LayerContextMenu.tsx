@@ -18,6 +18,7 @@ import { printingModules } from '@core/app/constants/layer-module/layer-modules'
 import LayerPanelIcons from '@core/app/icons/layer-panel/LayerPanelIcons';
 import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
+import { useIsMobile } from '@core/app/stores/screenStore';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import colorPickerStyles from '@core/app/widgets/ColorPicker.module.scss';
@@ -30,7 +31,6 @@ import toggleFullColorLayer from '@core/helpers/layer/full-color/toggleFullColor
 import { getData } from '@core/helpers/layer/layer-config-helper';
 import { cloneLayers, getLayerPosition, mergeLayers, setLayersLock } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import { useIsMobile } from '@core/helpers/system-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 

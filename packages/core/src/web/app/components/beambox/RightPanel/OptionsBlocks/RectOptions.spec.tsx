@@ -2,15 +2,8 @@ import React from 'react';
 
 import { fireEvent, render } from '@testing-library/react';
 
+import { useScreenStore } from '@core/app/stores/screenStore';
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
-
-import RectOptions from './RectOptions';
-
-const useIsMobile = jest.fn();
-
-jest.mock('@core/helpers/system-helper', () => ({
-  useIsMobile: () => useIsMobile(),
-}));
 
 const changeSelectedAttribute = jest.fn();
 
@@ -25,6 +18,8 @@ jest.mock('@core/helpers/svg-editor-helper', () => ({
 }));
 
 jest.mock('../ObjectPanelItem');
+
+import RectOptions from './RectOptions';
 
 describe('should render correctly', () => {
   afterEach(() => {
@@ -56,7 +51,7 @@ describe('should render correctly in mobile', () => {
   });
 
   test('unit is not inches', () => {
-    useIsMobile.mockReturnValue(true);
+    useScreenStore.setState({ isMobile: true });
 
     const updateDimensionValues = jest.fn();
     const { container } = render(
