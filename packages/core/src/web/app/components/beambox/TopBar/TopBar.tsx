@@ -9,7 +9,7 @@ import { MiscEvents } from '@core/app/constants/ipcEvents';
 import { CanvasContext } from '@core/app/contexts/CanvasContext';
 import { TopBarHintsContextProvider } from '@core/app/contexts/TopBarHintsContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
-import { useIsTablet } from '@core/app/stores/screenStore';
+import { useIsTabletOrMobile } from '@core/app/stores/screenStore';
 import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';
@@ -37,7 +37,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: getOS() === 'MacOS' && !isWeb, isWeb })),
     [],
   );
-  const isTablet = useIsTablet();
+  const isTablet = useIsTabletOrMobile();
 
   const mode = useCanvasStore((state) => state.mode);
   const { currentUser, hasUnsavedChange, setSelectedDevice } = use(CanvasContext);
