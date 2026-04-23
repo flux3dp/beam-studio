@@ -11,6 +11,10 @@ const mockUpdatePolygonSides = jest.fn((elem, val) => {
   elem.setAttribute('sides', (sides + val).toString());
 });
 
+jest.mock('@core/app/svgedit/polygon', () => ({
+  updatePolygonSides: mockUpdatePolygonSides,
+}));
+
 const mockCreateBatchCommand = jest.fn();
 const mockBatchCmd = {
   addSubCommand: jest.fn(),
@@ -21,22 +25,10 @@ jest.mock('@core/app/svgedit/history/HistoryCommandFactory', () => ({
   createBatchCommand: (...args) => mockCreateBatchCommand(...args),
 }));
 
-const mockBeginUndoableChange = jest.fn();
-const mockFinishUndoableChange = jest.fn();
 const mockAddCommandToHistory = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (cb) => {
-    cb({
-      Canvas: {
-        undoMgr: {
-          addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
-          beginUndoableChange: (...args) => mockBeginUndoableChange(...args),
-          finishUndoableChange: (...args) => mockFinishUndoableChange(...args),
-        },
-      },
-    });
-  },
+jest.mock('@core/app/svgedit/history/undoManager', () => ({
+  addCommandToHistory: (...args) => mockAddCommandToHistory(...args),
 }));
 
 jest.mock('../ObjectPanelItem');
@@ -46,15 +38,13 @@ import PolygonOptions from './PolygonOptions';
 describe('test PolygonOptions', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    window.updatePolygonSides = mockUpdatePolygonSides;
     mockCreateBatchCommand.mockReturnValue(mockBatchCmd);
-    mockFinishUndoableChange.mockReturnValue(mockBatchCmd);
   });
 
   test('should render correctly', () => {
     const { container, rerender } = render(
       <ObjectPanelContext value={{ polygonSides: 0 } as any}>
-        <PolygonOptions elem={document.getElementById('flux')} />
+        <PolygonOptions elem={document.getElementById('flux')!} />
       </ObjectPanelContext>,
     );
 
@@ -67,13 +57,13 @@ describe('test PolygonOptions', () => {
     document.body.appendChild(elem);
     rerender(
       <ObjectPanelContext value={{ polygonSides: 5 } as any}>
-        <PolygonOptions elem={document.getElementById('flux')} />
+        <PolygonOptions elem={document.getElementById('flux')!} />
       </ObjectPanelContext>,
     );
 
     expect(container).toMatchSnapshot();
 
-    const input = container.querySelector('input');
+    const input = container.querySelector('input')!;
 
     fireEvent.change(input, { target: { value: 8 } });
     fireEvent.blur(input);
@@ -82,13 +72,8 @@ describe('test PolygonOptions', () => {
     expect(mockCreateBatchCommand).toHaveBeenCalledTimes(1);
     expect(mockCreateBatchCommand).toHaveBeenNthCalledWith(1, 'Change Polygon Sides');
     expect(mockUpdatePolygonSides).toHaveBeenCalledTimes(1);
-    expect(mockUpdatePolygonSides).toHaveBeenCalledWith(elem, 3);
-    expect(mockBeginUndoableChange).toHaveBeenCalledTimes(2);
-    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(1, 'sides', [elem]);
-    expect(mockBeginUndoableChange).toHaveBeenNthCalledWith(2, 'points', [elem]);
-    expect(mockFinishUndoableChange).toHaveBeenCalledTimes(2);
-    expect(mockBatchCmd.isEmpty).toHaveBeenCalledTimes(3);
-    expect(mockBatchCmd.addSubCommand).toHaveBeenCalledTimes(2);
+    expect(mockUpdatePolygonSides).toHaveBeenCalledWith(elem, 3, { parentCmd: mockBatchCmd });
+    expect(mockBatchCmd.isEmpty).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenCalledTimes(1);
     expect(mockAddCommandToHistory).toHaveBeenNthCalledWith(1, mockBatchCmd);
 
@@ -98,15 +83,13 @@ describe('test PolygonOptions', () => {
     fireEvent.blur(input);
     expect(container).toMatchSnapshot();
     expect(mockUpdatePolygonSides).toHaveBeenCalledTimes(1);
-    expect(mockUpdatePolygonSides).toHaveBeenCalledWith(elem, -3);
+    expect(mockUpdatePolygonSides).toHaveBeenCalledWith(elem, -3, { parentCmd: mockBatchCmd });
 
     jest.clearAllMocks();
 
     fireEvent.change(input, { target: { value: 5 } });
     fireEvent.blur(input);
     expect(mockUpdatePolygonSides).not.toHaveBeenCalled();
-    expect(mockBeginUndoableChange).not.toHaveBeenCalled();
-    expect(mockFinishUndoableChange).not.toHaveBeenCalled();
     expect(mockBatchCmd.isEmpty).not.toHaveBeenCalled();
     expect(mockBatchCmd.addSubCommand).not.toHaveBeenCalled();
     expect(mockAddCommandToHistory).not.toHaveBeenCalled();
@@ -117,7 +100,7 @@ describe('test PolygonOptions', () => {
 
     const { container, rerender } = render(
       <ObjectPanelContext value={{ polygonSides: 0 } as any}>
-        <PolygonOptions elem={document.getElementById('flux')} />
+        <PolygonOptions elem={document.getElementById('flux')!} />
       </ObjectPanelContext>,
     );
 
@@ -130,15 +113,15 @@ describe('test PolygonOptions', () => {
     document.body.appendChild(elem);
     rerender(
       <ObjectPanelContext value={{ polygonSides: 5 } as any}>
-        <PolygonOptions elem={document.getElementById('flux')} />
+        <PolygonOptions elem={document.getElementById('flux')!} />
       </ObjectPanelContext>,
     );
     expect(container).toMatchSnapshot();
 
     expect(mockUpdatePolygonSides).not.toHaveBeenCalled();
-    fireEvent.change(container.querySelector('input'), { target: { value: 3 } });
+    fireEvent.change(container.querySelector('input')!, { target: { value: 3 } });
 
     expect(mockUpdatePolygonSides).toHaveBeenCalledTimes(1);
-    expect(mockUpdatePolygonSides).toHaveBeenLastCalledWith(expect.anything(), -2);
+    expect(mockUpdatePolygonSides).toHaveBeenLastCalledWith(expect.anything(), -2, { parentCmd: mockBatchCmd });
   });
 });

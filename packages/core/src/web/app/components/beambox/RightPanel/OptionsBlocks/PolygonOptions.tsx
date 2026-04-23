@@ -3,21 +3,15 @@ import React, { use, useEffect } from 'react';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import undoManager from '@core/app/svgedit/history/undoManager';
+import { updatePolygonSides } from '@core/app/svgedit/polygon';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { ObjectPanelContext } from '../contexts/ObjectPanelContext';
 import ObjectPanelItem from '../ObjectPanelItem';
 
 import OptionsInput from './OptionsInput';
 import styles from './PolygonOptions.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 interface Props {
   elem: Element;
@@ -42,24 +36,10 @@ function PolygonOptions({ elem }: Props): React.JSX.Element {
 
     const batchCmd = HistoryCommandFactory.createBatchCommand('Change Polygon Sides');
 
-    svgCanvas.undoMgr.beginUndoableChange('sides', [elem]);
-    svgCanvas.undoMgr.beginUndoableChange('points', [elem]);
-    window.updatePolygonSides?.(elem, val - sides);
-
-    let cmd = svgCanvas.undoMgr.finishUndoableChange();
-
-    if (!cmd.isEmpty()) {
-      batchCmd.addSubCommand(cmd);
-    }
-
-    cmd = svgCanvas.undoMgr.finishUndoableChange();
-
-    if (!cmd.isEmpty()) {
-      batchCmd.addSubCommand(cmd);
-    }
+    updatePolygonSides(elem, val - sides, { parentCmd: batchCmd });
 
     if (!batchCmd.isEmpty()) {
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
 
     setSides(Number.parseInt(elem.getAttribute('sides') || `${val}`, 10));

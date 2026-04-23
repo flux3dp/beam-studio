@@ -247,13 +247,9 @@ const toSelectMode = (elem?: Element): void => {
   }
 
   if (selPath) {
-    if (elem.parentNode?.getAttribute('data-textpath-g')) {
-      svgCanvas.call('selected', [elem.parentNode]);
-      selectionManager.addToSelection([elem.parentNode], true);
-    } else {
-      svgCanvas.call('selected', [elem]);
-      selectionManager.addToSelection([elem], true);
-    }
+    const elemToSelect = (elem!.parentNode as HTMLElement)?.getAttribute('data-textpath-g') ? elem!.parentNode : elem;
+
+    selectionManager.selectOnly([elemToSelect as SVGElement], true);
   }
 
   svgedit.path.path = null;
@@ -282,13 +278,6 @@ const mouseDown = (evt: MouseEvent, mouseTarget: SVGElement, startX: number, sta
     let stretchy = svgedit.utilities.getElem('path_stretch_line');
 
     newPoint = [x, y];
-
-    if (svgCanvas.getCurrentConfig().gridSnapping) {
-      x = svgedit.utilities.snapToGrid(x);
-      y = svgedit.utilities.snapToGrid(y);
-      mouseX = svgedit.utilities.snapToGrid(mouseX);
-      mouseY = svgedit.utilities.snapToGrid(mouseY);
-    }
 
     if (svgCanvas.isAutoAlign) svgCanvas.addAlignPoint(x, y);
 

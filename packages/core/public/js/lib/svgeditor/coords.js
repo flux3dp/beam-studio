@@ -31,7 +31,6 @@ var pathMap = [0, 'z', 'M', 'm', 'L', 'l', 'C', 'c', 'Q', 'q', 'A', 'a',
 /**
  * @typedef editorContext
  * @type {?object}
- * @property {function} getGridSnapping
  * @property {function} getDrawing
 */
 var editorContext_ = null;
@@ -54,14 +53,8 @@ svgedit.coords.remapElement = function(selected, changes, m) {
     remap = (x, y) => svgedit.math.transformPoint(x, y, m),
     scalew = (w) => svgedit.math.roundToDefault(m.a * w),
     scaleh = (h) => svgedit.math.roundToDefault(m.d * h),
-    doSnapping = editorContext_.getGridSnapping() && selected.parentNode.parentNode.localName === 'svg',
     finishUp = function() {
       var o;
-      if (doSnapping) {
-        for (o in changes) {
-          changes[o] = svgedit.utilities.snapToGrid(changes[o]);
-        }
-      }
       svgedit.utilities.assignAttributes(selected, changes, 1000, true);
     },
     box = svgedit.utilities.getBBox(selected);

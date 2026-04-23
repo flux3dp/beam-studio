@@ -30,14 +30,11 @@ declare global {
       websockets: any;
     };
     jQuery: any;
-    polygonAddSides: (val?: number) => void;
-    polygonDecreaseSides: (val?: number) => void;
     requirejs: (deps: string[], callback: (...modules: any[]) => void) => void;
     svgCanvas: any;
     svgedit: any;
     svgEditor: any;
     titlebar?: any;
-    updatePolygonSides: (elem: Element, val: number) => void;
   }
 }
 

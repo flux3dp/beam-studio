@@ -36,7 +36,6 @@ import grid from '@core/app/actions/canvas/grid';
 import { guideLineDrawer } from '@core/app/actions/canvas/guideLines';
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
-import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
 import * as TutorialController from '@core/app/components/tutorials/tutorialController';
 import { getAddOnInfo } from '@core/app/constants/addOn';
 import { CanvasElements } from '@core/app/constants/canvasElements';
@@ -73,7 +72,6 @@ import currentFileManager from './currentFileManager';
 import { ungroupElement } from './group/ungroup';
 import type { BaseHistoryCommand } from './history/history';
 import history from './history/history';
-import historyRecording from './history/historyrecording';
 import undoManager from './history/undoManager';
 import { MouseInteraction } from './interaction/mouse';
 import { getEventPageXY } from './interaction/mouse/utils/getEventPoint';
@@ -117,7 +115,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   const NS = svgedit.NS;
 
   // Default configuration options
-  const curConfig: { [key: string]: any } = { dimensions: [640, 480], ...config };
+  const curConfig: { [key: string]: any } = { ...config };
   var canvas = this;
   const pathActions = PathActions(this);
 
@@ -134,11 +132,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         NS.SVG +
         '" xlinkns="' +
         NS.XLINK +
-        '" ' +
-        'width="' +
-        curConfig.dimensions[0] +
-        '" height="' +
-        curConfig.dimensions[1] +
+        '" xmlns:xlink="' +
+        NS.XLINK +
         '" overflow="visible">' +
         '<defs>' +
         '<filter id="canvashadow" filterUnits="objectBoundingBox">' +
@@ -201,16 +196,16 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // TODO: Clear out all other attributes first?
     $(svgcontent)
       .attr({
-        height: workareaManager.height ?? curConfig.dimensions[1],
+        height: workareaManager.height,
         id: 'svgcontent',
         overflow: 'visible',
         style: 'will-change: scroll-position, contents, transform;',
-        width: workareaManager.width ?? curConfig.dimensions[0],
-        x: workareaManager.width ?? curConfig.dimensions[0],
+        width: workareaManager.width,
+        x: workareaManager.width,
         xmlns: NS.SVG,
         'xmlns:se': NS.SE,
         'xmlns:xlink': NS.XLINK,
-        y: workareaManager.height ?? curConfig.dimensions[1],
+        y: workareaManager.height,
       })
       .appendTo(svgroot);
 
@@ -358,9 +353,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // initialize from units.js
   // send in an object implementing the ElementContainer interface (see units.js)
   svgedit.units.init({
-    getBaseUnit: function () {
-      return curConfig.baseUnit;
-    },
     getElement: svgedit.utilities.getElem,
     getHeight: () => workareaManager.height,
     getRoundDigits: function () {
@@ -373,9 +365,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   // import from svgutils.js
   svgedit.utilities.init({
-    getBaseUnit: function () {
-      return curConfig.baseUnit;
-    },
     getDOMContainer: function () {
       return container;
     },
@@ -385,9 +374,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     // TODO: replace this mostly with a way to get the current drawing.
     getSelectedElements: function () {
       return selectionManager.getSelectedElements();
-    },
-    getSnappingStep: function () {
-      return curConfig.snappingStep;
     },
     getSVGContent: function () {
       return svgcontent;
@@ -421,9 +407,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   svgedit.coords.init({
     getDrawing: function () {
       return getCurrentDrawing();
-    },
-    getGridSnapping: function () {
-      return curConfig.gridSnapping;
     },
   });
   this.remapElement = svgedit.coords.remapElement;
@@ -603,12 +586,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.addCommandToHistory = addCommandToHistory;
 
-  function historyRecordingService(hrService?) {
-    return hrService || new historyRecording.HistoryRecordingService(canvas.undoMgr);
-  }
-
   canvasBackground.setupBackground(
-    curConfig.dimensions,
+    [3000, 2100], // Will be update after workareaManager init
     () => svgroot,
     () => svgcontent,
   );
@@ -722,9 +701,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   let curBBoxes = [];
 
-  // Object to contain all included extensions
-  const extensions = {};
-
   // Canvas point for the most recent right click
   let lastClickPoint = null;
 
@@ -745,7 +721,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getCurrentShape = () => cur_shape;
   this.getCurrentZoom = () => workareaManager.zoomRatio;
   this.getLastClickPoint = () => lastClickPoint;
-  // TODO: keep for ext-polygon.js, can remove after refactoring it
   this.getMode = function () {
     return getMouseMode();
   };
@@ -753,7 +728,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getRootElem = () => svgroot;
   this.getRootScreenMatrix = () => root_sctm;
   this.getRubberBox = () => rubberBox;
-  this.getSelectedElems = (ungroupTempGroup = false) => selectionManager.getSelectedElements(ungroupTempGroup);
   this.getStarted = () => started;
   this.getStartTransform = () => startTransform;
   this.setRootScreenMatrix = (matrix: SVGMatrix) => {
@@ -780,23 +754,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       startTransform = transform;
     },
   };
-
-  // Should this return an array by default, so extension results aren't overwritten?
-  var runExtensions = (this.runExtensions = function (action, vars, returnArray = false) {
-    let result = returnArray ? [] : false;
-
-    $.each(extensions, function (name: string, opts: any) {
-      if (opts && action in opts) {
-        if (returnArray) {
-          (result as any[]).push(opts[action](vars));
-        } else {
-          result = opts[action](vars);
-        }
-      }
-    });
-
-    return result;
-  });
 
   this.importIds = function () {
     return import_ids;
@@ -1060,13 +1017,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return clone;
   };
 
-  // this.each is deprecated, if any extension used this it can be recreated by doing this:
-  // $(canvas.getRootElem()).children().each(...)
-
-  // this.each = function(cb) {
-  //	$(svgroot).children().each(cb);
-  // };
-
   // exported for use in js svgnest, can remove after refactoring it
   this.setRotationAngle = setRotationAngle;
 
@@ -1104,18 +1054,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   const logMatrix = function (m: SVGMatrix) {
     console.log([m.a, m.b, m.c, m.d, m.e, m.f]);
   };
-
-  // Group: Selection
-
-  // Function: clearSelection
-  // Clears the selection. The 'selected' handler is then called.
-  // Parameters:
-  // noCall - Optional boolean that when true does not call the "selected" handler
-  this.clearSelection = (noCall?: boolean) => selectionManager.clearSelection(noCall);
-
-  // Parameters:
-  // elems - an array of DOM elements to be selected
-  this.selectOnly = (elems, showGrips?) => selectionManager.selectOnly(elems, showGrips);
 
   // TODO: could use slice here to make this faster?
   // TODO: should the 'selected' handler
@@ -1836,10 +1774,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       .attr('src', val);
   };
 
-  this.open = function () {
-    // Nothing by default, handled by optional widget/extension
-  };
-
   this.removeUnusedDefs = () => {
     while (removeUnusedDefElems() > 0) {
       null;
@@ -2149,19 +2083,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // keep for ext-xxxx.js
   this.getZoom = () => workareaManager.zoomRatio;
 
-  // Function: getSnapToGrid
-  // Returns the current snap to grid setting
-  this.getSnapToGrid = function () {
-    return curConfig.gridSnapping;
-  };
-
   // Function: setMode
   // Sets the editor's mode to the given string
   //
   // Parameters:
   // name - String with the new mode to change to
   this.setMode = function (name) {
-    // TODO: keep for ext-polygon.js, can remove after refactoring it
     setMouseMode(name);
   };
 
@@ -4005,57 +3932,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       if (addToHistory) addCommandToHistory(batchCmd);
 
       return batchCmd;
-    }
-  };
-
-  // Function: addExtension
-  // Add an extension to the editor
-  //
-  // Parameters:
-  // name - String with the ID of the extension
-  // ext_func - Function supplied by the extension with its data
-
-  this.addExtension = function (name, ext_func) {
-    var ext;
-
-    if (!(name in extensions)) {
-      // Provide private vars/funcs here. Is there a better way to do this?
-      if ($.isFunction(ext_func)) {
-        ext = ext_func({
-          ...canvas,
-          BatchCommand,
-          call,
-          ChangeElementCommand,
-          copyElem: function (elem) {
-            return getCurrentDrawing().copyElem(elem);
-          },
-          ffClone,
-          getId,
-          getNextId,
-          InsertElementCommand,
-          isIdentity: svgedit.math.isIdentity,
-          logMatrix,
-          MoveElementCommand,
-          nonce: getCurrentDrawing().getNonce(),
-          ObjectPanelController,
-          preventClickDefault: svgedit.utilities.preventClickDefault,
-          RemoveElementCommand,
-          svgcontent,
-          SVGEditTransformList: svgedit.transformlist.SVGTransformList,
-          svgroot,
-          toString,
-          transformBox: svgedit.math.transformBox,
-          transformPoint,
-          walkTree: svgedit.utilities.walkTree,
-        });
-      } else {
-        ext = ext_func;
-      }
-
-      extensions[name] = ext;
-      call('extension_added', ext);
-    } else {
-      console.log('Cannot add extension "' + name + '", an extension by that name already exists.');
     }
   };
 };
