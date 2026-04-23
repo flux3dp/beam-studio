@@ -17,23 +17,31 @@ jest.mock('@core/helpers/color/updateElementColor', () => mockUpdateElementColor
 const mockCmd1 = 'mock-cmd-1';
 const mockCmd2 = 'mock-cmd-2';
 const mockCmd3 = 'mock-cmd-3';
-const mockSelectOnly = jest.fn();
 const mockSetSvgElemSize = jest.fn().mockReturnValue(mockCmd1);
 const mockSetSvgElemPosition = jest.fn().mockReturnValue(mockCmd2);
-const mockGetSelectedElems = jest.fn();
 const mockGroupSelectedElements = jest.fn().mockReturnValue({ command: mockCmd3 });
 
 jest.mock('@core/helpers/svg-editor-helper', () => ({
   getSVGAsync: (callback) =>
     callback({
       Canvas: {
-        getSelectedElems: mockGetSelectedElems,
         groupSelectedElements: mockGroupSelectedElements,
-        selectOnly: mockSelectOnly,
         setSvgElemPosition: mockSetSvgElemPosition,
         setSvgElemSize: mockSetSvgElemSize,
       },
     }),
+}));
+
+const mockGetSelectedElements = jest.fn();
+const mockSelectOnly = jest.fn();
+const mockIsMultiSelecting = jest.fn();
+
+jest.mock('@core/app/svgedit/selection', () => ({
+  getSelectedElements: mockGetSelectedElements,
+  get isMultiSelecting() {
+    return mockIsMultiSelecting();
+  },
+  selectOnly: mockSelectOnly,
 }));
 
 let mockPathElement: SVGElement;
@@ -47,7 +55,8 @@ describe('test postImportElement', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     mockPathElement = document.createElement('path') as unknown as SVGElement;
-    mockGetSelectedElems.mockReturnValue([mockPathElement]);
+    mockGetSelectedElements.mockReturnValue([mockPathElement]);
+    mockIsMultiSelecting.mockReturnValue(false);
   });
 
   it('should import svg object, update location and disassemble', async () => {
@@ -79,7 +88,7 @@ describe('test postImportElement', () => {
   });
 
   it('should group elements correctly', async () => {
-    mockPathElement.setAttribute('data-tempgroup', 'true');
+    mockIsMultiSelecting.mockReturnValue(true);
     await postImportElement(mockElement, mockBatchCommand);
 
     expect(mockGetBBox).toHaveBeenCalledTimes(1);

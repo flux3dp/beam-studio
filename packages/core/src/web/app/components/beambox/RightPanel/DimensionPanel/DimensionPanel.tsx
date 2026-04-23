@@ -7,6 +7,7 @@ import Constant from '@core/app/actions/beambox/constant';
 import { iconButtonTheme } from '@core/app/constants/antd-config';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import { resizeSelector } from '@core/app/svgedit/selector';
 import { setFitTextBBox } from '@core/app/svgedit/text/fitText';
 import { isFitText } from '@core/app/svgedit/text/textedit';
@@ -163,10 +164,10 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
 
       match(elem?.tagName)
         .with('ellipse', 'rect', 'image', () => {
-          svgCanvas.undoMgr.beginUndoableChange(type, [elem!]);
+          undoManager.beginUndoableChange(type, [elem!]);
           svgCanvas.changeSelectedAttributeNoUndo(type, elemSize, [elem!]);
 
-          const batchCmd = svgCanvas.undoMgr.finishUndoableChange();
+          const batchCmd = undoManager.finishUndoableChange();
 
           cmd = batchCmd.isEmpty() ? null : batchCmd;
         })
@@ -224,7 +225,7 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
       updateDimensionValues(newValues);
 
       if (batchCmd && !batchCmd.isEmpty()) {
-        svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+        undoManager.addCommandToHistory(batchCmd);
       }
 
       forceUpdate();

@@ -41,10 +41,6 @@ exports[`test svg-editor should render correctly in mac 1`] = `
         <div
           id="cur_context_panel"
         />
-        <div
-          class="dropdown"
-          id="option_lists"
-        />
       </div>
       <div>
         MockPreviewFloatingBar
@@ -126,10 +122,6 @@ exports[`test svg-editor should render correctly in win 1`] = `
         />
         <div
           id="cur_context_panel"
-        />
-        <div
-          class="dropdown"
-          id="option_lists"
         />
       </div>
       <div>

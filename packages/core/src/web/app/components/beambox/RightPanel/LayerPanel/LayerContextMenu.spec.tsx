@@ -10,13 +10,8 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 
 const mockClearSelection = jest.fn();
 
-jest.mock('@core/helpers/svg-editor-helper', () => ({
-  getSVGAsync: (cb) =>
-    cb({
-      Canvas: {
-        clearSelection: () => mockClearSelection(),
-      },
-    }),
+jest.mock('@core/app/svgedit/selection', () => ({
+  clearSelection: mockClearSelection,
 }));
 
 const mockAddCommandToHistory = jest.fn();
