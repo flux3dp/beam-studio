@@ -106,6 +106,7 @@ export default function DrawerMenu({ email }: Props): React.JSX.Element {
   };
 
   const visibleNodes = currentNodes.filter((node) => node.visible !== false);
+  const hasCheckbox = visibleNodes.some((node) => node.type === 'checkbox');
 
   return (
     <>
@@ -158,8 +159,10 @@ export default function DrawerMenu({ email }: Props): React.JSX.Element {
                 onClick={() => handleNodeClick(node, index)}
               >
                 <span className={styles['menu-item-label']}>
-                  {isCheckbox && (
-                    <span className={styles['check-icon']}>{node.checked ? <CheckOutlined /> : null}</span>
+                  {hasCheckbox && (
+                    <span className={styles['check-icon']}>
+                      {isCheckbox && node.checked ? <CheckOutlined /> : null}
+                    </span>
                   )}
                   {label}
                 </span>

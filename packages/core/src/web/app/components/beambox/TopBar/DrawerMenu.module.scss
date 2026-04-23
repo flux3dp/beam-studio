@@ -49,6 +49,11 @@
   background: none;
   border: none;
   padding: 0;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 .title {
@@ -64,6 +69,11 @@
   padding: 4px;
   color: #666;
   font-size: 18px;
+  cursor: pointer;
+
+  &:hover {
+    opacity: 0.7;
+  }
 }
 
 .menu-list {
@@ -75,15 +85,17 @@
 .menu-item {
   display: flex;
   padding: 16px 20px;
+  cursor: pointer;
 
-  &:active {
+  &:hover {
     background-color: #f0f0f0;
   }
 
   &.disabled {
     color: #bbb;
+    cursor: default;
 
-    &:active {
+    &:hover {
       background-color: transparent;
     }
   }
@@ -94,6 +106,7 @@
 }
 
 .check-icon {
+  display: inline-block;
   width: 20px;
   color: #1890ff;
   font-size: 14px;

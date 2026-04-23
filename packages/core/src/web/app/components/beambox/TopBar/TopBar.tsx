@@ -13,7 +13,7 @@ import { discoverManager } from '@core/helpers/api/discover';
 import checkSoftwareForAdor from '@core/helpers/check-software';
 import { getOS } from '@core/helpers/getOS';
 import getIsWeb from '@core/helpers/is-web';
-import { useIsIpad } from '@core/helpers/system-helper';
+import { useIsTablet } from '@core/helpers/system-helper';
 import communicator from '@core/implementations/communicator';
 import storage from '@core/implementations/storage';
 
@@ -37,7 +37,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
     () => pipe(getIsWeb(), (isWeb) => ({ isDragRegion: getOS() === 'MacOS' && !isWeb, isWeb })),
     [],
   );
-  const isIpad = useIsIpad();
+  const isTablet = useIsTablet();
 
   const mode = useCanvasStore((state) => state.mode);
   const { currentUser, hasUnsavedChange, setSelectedDevice } = use(CanvasContext);
@@ -82,7 +82,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
         })}
         onClick={() => ObjectPanelController.updateActiveKey(null)}
       >
-        {isWeb && isIpad && <DrawerMenu email={currentUser?.email} />}
+        {isWeb && isTablet && <DrawerMenu email={currentUser?.email} />}
         <div
           className={classNames(styles.controls, styles.left, {
             [styles.space]: (isDragRegion && !isFullScreen) || isWeb,
@@ -110,7 +110,7 @@ const UnmemorizedTopBar = (): React.JSX.Element => {
       <TopBarHintsContextProvider>
         <TopBarHints />
       </TopBarHintsContextProvider>
-      {isWeb && !isIpad && (
+      {isWeb && !isTablet && (
         <div className={classNames(styles['top-bar-menu-container'], styles.menu)} data-testid="top-bar-menu">
           <Menu email={currentUser?.email} />
         </div>
