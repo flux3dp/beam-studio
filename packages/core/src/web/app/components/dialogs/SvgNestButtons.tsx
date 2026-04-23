@@ -16,23 +16,18 @@ import workareaManager from '@core/app/svgedit/workarea';
 import Modal from '@core/app/widgets/Modal';
 import getClipperLib from '@core/helpers/clipper/getClipperLib';
 import { getOS } from '@core/helpers/getOS';
-import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
 import requirejsHelper from '@core/helpers/requirejs-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import useI18n from '@core/helpers/useI18n';
 
 import styles from './SvgNestButtons.module.scss';
 
-let svgCanvas: ISVGCanvas;
 let svgedit: any;
 
 getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
   svgedit = globalSVG.Edit;
 });
-
-let LANG = i18n.lang.beambox.tool_panels;
 
 async function setUpSvgNest() {
   if (isWeb()) {
@@ -48,13 +43,12 @@ interface SvgNestButtonsProps {
 
 const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => {
   const [isWorking, setIsWorking] = useState(false);
+  const lang = useI18n().beambox.tool_panels;
 
   const undoNestChangesRef = useRef<any[]>([]);
   const nestedElementsRef = useRef<any[]>([]);
 
   useEffect(() => {
-    LANG = i18n.lang.beambox.tool_panels;
-
     if (!window['SvgNest' as any]) {
       setUpSvgNest();
     }
@@ -255,7 +249,7 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
       console.log(elems);
 
       if (elems.length === 0) {
-        Alert.popUp({ caption: LANG.nest, message: LANG._nest.no_element });
+        Alert.popUp({ caption: lang.nest, message: lang._nest.no_element });
 
         return;
       }
@@ -266,11 +260,11 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
     }
 
     setIsWorking(!isWorking);
-  }, [isWorking, nestElements, stopNestElement]);
+  }, [isWorking, nestElements, stopNestElement, lang]);
 
   const renderStartButton = (): React.JSX.Element => {
     const icon = isWorking ? <LoadingOutlined /> : <CaretRightOutlined />;
-    const label = isWorking ? LANG._nest.stop_nest : LANG._nest.start_nest;
+    const label = isWorking ? lang._nest.stop_nest : lang._nest.start_nest;
 
     return (
       <ConfigProvider theme={{ token: { colorPrimary: '#3875F6' } }}>
@@ -281,7 +275,6 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
     );
   };
 
-  const endText = LANG._nest.end;
   const isWindows = !isWeb() && getOS() === 'Windows';
   const className = classNames(styles.container, { [styles.win]: isWindows });
 
@@ -289,7 +282,7 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
     <div className={className}>
       {renderStartButton()}
       <Button icon={<CloseOutlined />} onClick={close} shape="round">
-        {endText}
+        {lang._nest.end}
       </Button>
     </div>
   );
