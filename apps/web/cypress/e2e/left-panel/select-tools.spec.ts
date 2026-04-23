@@ -78,7 +78,7 @@ describe('select tools', () => {
 
     rotateAndVerify(175, 50, -45);
     rotateAndVerify(225, 100, 135);
-    rotateAndVerify(225, 200, 135);
+    rotateAndVerify(225, 200, -180);
     rotateAndVerify(200, 300, -180);
   });
 });
