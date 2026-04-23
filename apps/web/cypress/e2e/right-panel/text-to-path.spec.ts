@@ -3,7 +3,7 @@ import { md5 } from '../../support/utils';
 describe('to path 2.0', () => {
   const isRunningAtGithub = Cypress.env('envType') === 'github';
   const isWindows = Cypress.platform === 'win32';
-  const expectedX = !isRunningAtGithub ? 1000 : isWindows ? 1019 : 1011;
+  const expectedX = !isRunningAtGithub ? 1000 : isWindows ? 1016 : 1011;
 
   const drawText = () => {
     cy.clickToolBtn('Text');

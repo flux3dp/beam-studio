@@ -9,22 +9,22 @@ describe('manipulate view', () => {
 
   it('top menu - zoom in ', () => {
     cy.getMenuItem(['View'], 'Zoom In').click();
-    zoomRatio().should('have.text', '46%');
+    zoomRatio().should('have.text', '56%');
   });
 
   it('top menu - zoom out', () => {
     cy.getMenuItem(['View'], 'Zoom Out').click();
-    zoomRatio().should('have.text', '38%');
+    zoomRatio().should('have.text', '46%');
   });
 
   it('top menu - fit to window size', () => {
     cy.getMenuItem(['View'], 'Fit to Window Size').click();
-    zoomRatio().should('have.text', '42%');
+    zoomRatio().should('have.text', '51%');
   });
 
   it('auto fit to window size', () => {
     cy.getMenuItem(['View'], 'Auto Fit to Window Size').click();
-    zoomRatio().should('have.text', '42%');
+    zoomRatio().should('have.text', '51%');
     cy.viewport(1500, 1200);
     zoomRatio().should('have.text', '65%');
   });

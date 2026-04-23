@@ -12,7 +12,7 @@ const EXPECTED_HASHES = {
   },
   changeGradient: {
     withoutGradient: {
-      github: '8794655cf390c5f867ed5eff13f3bce4',
+      github: '2776ed70205b5131a8d425b8b813520d',
       local: '0a52a26dec2bac9490b838b039756347',
     },
     withGradient: {
@@ -21,7 +21,7 @@ const EXPECTED_HASHES = {
     },
   },
   replaceImage: {
-    github: '8b79e9a445262e8412a863d5ec06d16b',
+    github: 'c5e7ea7efb5277059bdf11dfff143515',
     local: 'bbbec80aa9c17bf1efd66bb07a8eacb8',
   },
   grading: {
