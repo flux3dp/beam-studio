@@ -10,7 +10,6 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
-import TopBarHintsController from '@core/app/components/beambox/TopBar/contexts/TopBarHintsController';
 import * as TutorialController from '@core/app/components/tutorials/tutorialController';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
@@ -438,11 +437,12 @@ const mouseDown = async (evt: MouseEvent) => {
       svgCanvas.unsafeAccess.setStarted(true);
       break;
     case 'polygon': {
+      svgCanvas.unsafeAccess.setStarted(true);
+
       const poly = polygonMouseDown(startX, startY);
 
-      if (poly) svgCanvas.unsafeAccess.setStarted(true);
-
-      TopBarHintsController.setHint('POLYGON');
+      updateElementColor(poly);
+      selectionManager.selectOnly([poly], true);
       break;
     }
     case 'path':
@@ -501,7 +501,6 @@ const mouseDown = async (evt: MouseEvent) => {
 };
 
 const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: number) => {
-  const currentConfig = svgCanvas.getCurrentConfig();
   const svgRoot = svgCanvas.getRoot();
   const resizeMode = svgCanvas.getCurrentResizeMode();
   const transforms = svgedit.transformlist.getTransformList(selected);
@@ -663,7 +662,6 @@ const mouseMove = (evt: MouseEvent) => {
   const started = svgCanvas.getStarted();
   const currentMode = getMouseMode();
   const zoom = workareaManager.zoomRatio;
-  const currentConfig = svgCanvas.getCurrentConfig();
   const selectedElements = selectionManager.getSelectedElements();
   const rubberBox = svgCanvas.getRubberBox();
   const svgRoot = svgCanvas.getRoot();
@@ -947,7 +945,11 @@ const mouseMove = (evt: MouseEvent) => {
       rotaryAxis.mouseMove(y);
       break;
     case 'polygon':
-      polygonMouseMove(mouseX, mouseY, evt, selected);
+      polygonMouseMove(x, y, evt, selected as SVGPolygonElement);
+
+      const bbox = getBBox(selected);
+
+      ObjectPanelController.updateDimensionValues({ height: bbox.height, width: bbox.width, x: bbox.x, y: bbox.y });
       break;
     default:
       break;
@@ -1312,7 +1314,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
       keep = polyResult.keep;
       element = polyResult.element;
-      TopBarHintsController.removeHint();
       break;
     }
     case 'path':
