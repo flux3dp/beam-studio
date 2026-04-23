@@ -15,6 +15,8 @@ import type { WebFont } from '@core/interfaces/IFont';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import selectionManager from '../../selection';
+
 let svgedit;
 let svgCanvas: ISVGCanvas;
 
@@ -112,7 +114,7 @@ const postContentChange = () => {
   });
   // reset transform lists
   svgedit.transformlist.resetListMap();
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgedit.path.clearData();
   document.querySelector('#svgroot').appendChild(selector.getSelectorManager().selectorParentGroup);
 

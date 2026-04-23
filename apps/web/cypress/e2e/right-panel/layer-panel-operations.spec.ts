@@ -46,11 +46,7 @@ describe('manipulate layers (operations)', () => {
     cy.get('svg#svgcontent').trigger('mousedown', -10, -10, { force: true });
     cy.get('svg#svgcontent').trigger('mousemove', 400, 400, { force: true });
     cy.get('svg#svgcontent').trigger('mouseup', { force: true });
-    cy.window().then((win) => {
-      const svgCanvas = (win as any).svgCanvas;
-      const el = svgCanvas.getSelectedElems();
-      cy.wrap(el).should('have.length', 0);
-    });
+    cy.contains('No Selection').should('exist');
   });
 
   it('hide the layer ', () => {

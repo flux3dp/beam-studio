@@ -1,5 +1,6 @@
 import tabController from '@core/app/actions/tabController';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import { checkTabCount, setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { checkIsAtEditor, hashMap, isAtPage } from '@core/helpers/hashHelper';
 import i18n from '@core/helpers/i18n';
@@ -21,17 +22,11 @@ getSVGAsync((globalSVG) => {
 });
 
 const align = (type: 'b' | 'c' | 'l' | 'm' | 'r' | 't') => {
-  if (svgCanvas.getTempGroup()) {
-    const children = svgCanvas.ungroupTempGroup();
-
-    svgCanvas.selectOnly(children, false);
-  }
-
-  const selectedElements = svgCanvas.getSelectedElems();
-  const mode = selectedElements.filter(Boolean).length > 1 ? 'selected' : 'page';
+  const selectedElements = selectionManager.getSelectedElements(true);
+  const mode = selectedElements.length > 1 ? 'selected' : 'page';
 
   svgCanvas.alignSelectedElements(type, mode);
-  svgCanvas.tempGroupSelectedElements();
+  selectionManager.tempGroupSelectedElements();
 };
 
 const funcs = {
@@ -68,9 +63,6 @@ const funcs = {
     }
 
     await svgEditor.clearScene();
-  },
-  clearSelection(): void {
-    svgCanvas.clearSelection();
   },
   // main panel
   importImage: async (): Promise<void> => {
@@ -166,7 +158,7 @@ const funcs = {
         width,
       });
       svgCanvas.updateElementColor(newImage);
-      svgCanvas.selectOnly([newImage]);
+      selectionManager.selectOnly([newImage]);
 
       (window as any).updateContextPanel();
     };

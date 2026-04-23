@@ -6,6 +6,7 @@ import Progress from '@core/app/actions/progress-caller';
 import { LayerModule } from '@core/app/constants/layer-module/layer-modules';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import workareaManager from '@core/app/svgedit/workarea';
 import { convertAllTextToPath } from '@core/helpers/convertToPath';
 import i18n from '@core/helpers/i18n';
@@ -32,7 +33,7 @@ export const exportAsBVG = async (): Promise<boolean> => {
     return false;
   }
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   const defaultFileName = getDefaultFileName();
   const langFile = i18n.lang.topmenu.file;
@@ -71,7 +72,7 @@ export const exportAsSVG = async (): Promise<void> => {
     return;
   }
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
   const getContent = async () => {
@@ -99,7 +100,7 @@ export const exportAsSVG = async (): Promise<void> => {
 export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
   const langFile = i18n.lang.topmenu.file;
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
   const getContent = async () => {
@@ -142,7 +143,7 @@ export const exportAsImage = async (type: 'jpg' | 'png'): Promise<void> => {
 };
 
 export const exportUvPrintAsPdf = async (): Promise<void> => {
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
   const {

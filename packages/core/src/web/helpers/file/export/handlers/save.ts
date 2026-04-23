@@ -1,6 +1,7 @@
 import { pipe, prop } from 'remeda';
 
 import currentFileManager from '@core/app/svgedit/currentFileManager';
+import selectionManager from '@core/app/svgedit/selection';
 import { getOS } from '@core/helpers/getOS';
 import i18n from '@core/helpers/i18n';
 import isWeb from '@core/helpers/is-web';
@@ -22,7 +23,7 @@ getSVGAsync(({ Canvas }) => {
 });
 
 export const saveAsFile = async (): Promise<boolean> => {
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
   const defaultFileName = getDefaultFileName();
@@ -69,7 +70,7 @@ export const saveFile = async (): Promise<boolean> => {
     return await saveAsFile();
   }
 
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgCanvas.removeUnusedDefs();
 
   if (currentFileManager.isCloudFile) {

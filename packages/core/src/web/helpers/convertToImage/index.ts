@@ -7,14 +7,13 @@ import ungroupElement from '@core/app/svgedit/group/ungroup';
 import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import { deleteElements } from '@core/app/svgedit/operations/delete';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
+import selectionManager from '@core/app/svgedit/selection';
 
 import updateElementColor from '../color/updateElementColor';
 import { convertTextOnPathToPath, convertTextToPath } from '../convertToPath';
 import i18n from '../i18n';
 import { sortLayerNamesByPosition } from '../layer/layer-helper';
 import moveElementsToLayer from '../layer/moveToLayer';
-import { getSVGAsync } from '../svg-editor-helper';
 
 import { combineImagesIntoSingleElement } from './combineImagesIntoSingleElement';
 import { convertGroupToImage } from './convertGroupToImage';
@@ -23,12 +22,6 @@ import { getLayerTitles } from './getLayerTitles';
 import { rasterizeGenericSvgElement } from './rasterizeGenericSvgElement';
 import type { MainConverterFunc } from './types';
 import { waitForHrefTransformation } from './waitForHrefTransformation';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 /**
  * Main entry point for converting any supported SVG element to an image.
@@ -125,7 +118,7 @@ export const convertSvgToImage: MainConverterFunc = async ({
     }
 
     updateElementColor(combinedImage);
-    svgCanvas.selectOnly([combinedImage]);
+    selectionManager.selectOnly([combinedImage]);
     undoManager.addCommandToHistory(parentCmd);
   }
 

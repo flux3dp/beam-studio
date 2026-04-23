@@ -8,7 +8,9 @@ import classNames from 'classnames';
 import Alert from '@core/app/actions/alert-caller';
 import { CanvasElements } from '@core/app/constants/canvasElements';
 import history from '@core/app/svgedit/history/history';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import { getBBox } from '@core/app/svgedit/utils/getBBox';
 import workareaManager from '@core/app/svgedit/workarea';
 import Modal from '@core/app/widgets/Modal';
@@ -207,15 +209,10 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
     }
 
     if (!batchCmd.isEmpty()) {
-      svgCanvas.undoMgr.addCommandToHistory(batchCmd);
+      undoManager.addCommandToHistory(batchCmd);
     }
 
-    svgCanvas.selectOnly(nestedElementsRef.current);
-
-    if (nestedElementsRef.current.length > 1) {
-      svgCanvas.tempGroupSelectedElements();
-    }
-
+    selectionManager.multiSelect(nestedElementsRef.current);
     nestedElementsRef.current = [];
   }, []);
 
@@ -229,15 +226,9 @@ const SvgNestButtons = ({ onClose }: SvgNestButtonsProps): React.JSX.Element => 
 
   const onStartOrStop = useCallback((): void => {
     if (!isWorking) {
-      if (svgCanvas.getTempGroup()) {
-        const children = svgCanvas.ungroupTempGroup();
+      const elems = selectionManager.getSelectedElements(true);
 
-        svgCanvas.selectOnly(children, false);
-      }
-
-      const elems = svgCanvas.getSelectedElems().filter((e) => e);
-
-      svgCanvas.clearSelection();
+      selectionManager.clearSelection();
 
       if (elems.length === 0) {
         // Empty use all elements

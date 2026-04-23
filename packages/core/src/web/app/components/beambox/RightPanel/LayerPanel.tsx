@@ -11,6 +11,7 @@ import useLayerStore from '@core/app/stores/layer/layerStore';
 import { isMobile } from '@core/app/stores/screenStore';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import eventEmitterFactory from '@core/helpers/eventEmitterFactory';
 import { getOS } from '@core/helpers/getOS';
@@ -160,8 +161,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
   };
 
   selectOnlyLayer = (layerName: string): void => {
-    svgCanvas.clearSelection();
-
+    selectionManager.clearSelection();
     useLayerStore.getState().setSelectedLayers([layerName]);
   };
 
@@ -302,7 +302,7 @@ class LayerPanel extends React.PureComponent<Props, State> {
 
     if (draggingDestIndex !== null && draggingDestIndex !== undefined) {
       moveLayersToPosition(selectedLayers, draggingDestIndex);
-      svgCanvas.sortTempGroupByLayer();
+      selectionManager.sortTempGroupByLayer();
     }
 
     this.setState({

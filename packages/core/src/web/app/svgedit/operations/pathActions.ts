@@ -10,6 +10,7 @@ import { isMobile } from '@core/app/stores/screenStore';
 import history from '@core/app/svgedit/history/history';
 import PathNodePoint from '@core/app/svgedit/path/PathNodePoint';
 import SegmentControlPoint from '@core/app/svgedit/path/SegmentControlPoint';
+import selectionManager from '@core/app/svgedit/selection';
 import selector from '@core/app/svgedit/selector';
 import workareaManager from '@core/app/svgedit/workarea';
 import * as BezierFitCurve from '@core/helpers/bezier-fit-curve';
@@ -216,7 +217,7 @@ const toEditMode = (element: Element): void => {
 
   previousMode = isContinuousDrawing ? getMouseMode() : 'select';
   setMouseMode('pathedit');
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgedit.path.path.show(true).update();
   svgedit.path.path.oldbbox = getBBox(svgedit.path.path.elem, { ignoreTransform: true });
   $(svgedit.path.path.elem).attr('cursor', 'copy'); // Set path cursor type
@@ -238,7 +239,7 @@ const toSelectMode = (elem?: Element): void => {
   svgedit.path.path.saveSegmentControlPointInfo();
   svgedit.path.path.saveNodeTypeInfo();
   currentPath = false;
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
 
   if (svgedit.path.path.matrix) {
     // Rotated, so may need to re-calculate the center
@@ -248,10 +249,10 @@ const toSelectMode = (elem?: Element): void => {
   if (selPath) {
     if (elem.parentNode?.getAttribute('data-textpath-g')) {
       svgCanvas.call('selected', [elem.parentNode]);
-      svgCanvas.addToSelection([elem.parentNode], true);
+      selectionManager.addToSelection([elem.parentNode], true);
     } else {
       svgCanvas.call('selected', [elem]);
-      svgCanvas.addToSelection([elem], true);
+      selectionManager.addToSelection([elem], true);
     }
   }
 
@@ -925,7 +926,7 @@ const reorient = (selectedElements): void => {
   };
 
   batchCmd.addSubCommand(new history.ChangeElementCommand(elem, changes));
-  svgCanvas.clearSelection();
+  selectionManager.clearSelection();
   svgCanvas.resetOrientation(elem);
 
   svgCanvas.addCommandToHistory(batchCmd);
@@ -935,7 +936,7 @@ const reorient = (selectedElements): void => {
 
   svgCanvas.clear();
 
-  svgCanvas.addToSelection([elem], true);
+  selectionManager.addToSelection([elem], true);
   svgCanvas.call('changed', selectedElements);
 };
 

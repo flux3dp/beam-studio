@@ -82,10 +82,11 @@ import disassembleUse from './operations/disassembleUse';
 import setSvgContent from './operations/import/setSvgContent';
 import { moveElements, moveSelectedElements } from './operations/move';
 import PathActions from './operations/pathActions';
+import selectionManager from './selection';
 import selector from './selector';
 import textActions from './text/textactions';
 import textEdit from './text/textedit';
-import { setRotationAngle } from './transform/rotation';
+import { getRotationAngle, setRotationAngle } from './transform/rotation';
 import { binarySearchLowerBoundIndex } from './utils/binarySearchIndex';
 import findDefs from './utils/findDef';
 import { findNearestAndFarthestAlignPoints } from './utils/findNearestAndFarthestAlignPoints';
@@ -269,11 +270,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Current shape style properties
   var cur_shape = all_properties.shape;
 
-  // Array with all the currently selected elements
-  // default size of 1 until it needs to grow bigger
-  let selectedElements = Array.of<SVGElement>();
-  let selectedLayers = Array.of<string>();
-  let tempGroup: Element | null = null;
+  // Selection and temp group state managed by selectionManager
 
   // Function: addSvgElementFromJson
   // Create a new SVG element based on the given object keys/values and add it to the current layer
@@ -305,7 +302,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       shape = svgdoc.createElementNS(NS.SVG, data.element);
 
       if (currentLayer) {
-        (current_group || currentLayer).appendChild(shape);
+        currentLayer.appendChild(shape);
       }
     }
 
@@ -390,7 +387,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     },
     // TODO: replace this mostly with a way to get the current drawing.
     getSelectedElements: function () {
-      return selectedElements;
+      return selectionManager.getSelectedElements();
     },
     getSnappingStep: function () {
       return curConfig.snappingStep;
@@ -490,7 +487,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
       if (eventType === EventTypes.BEFORE_UNAPPLY || eventType === EventTypes.BEFORE_APPLY) {
         onBefore();
-        canvas.clearSelection();
+        selectionManager.clearSelection();
       } else if (eventType === EventTypes.AFTER_APPLY || eventType === EventTypes.AFTER_UNAPPLY) {
         try {
           var elems = cmd.elements();
@@ -546,11 +543,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             var values = isApply ? cmd.newValues : cmd.oldValues;
             const changedValues = Object.keys(values);
 
-            // If stdDeviation was changed, update the blur.
-            if (values.stdDeviation) {
-              canvas.setBlurOffsets(cmd.elem.parentNode, values.stdDeviation);
-            }
-
             if (changedValues.includes('transform')) {
               svgedit.transformlist.removeElementFromListMap(cmd.elem);
             }
@@ -586,17 +578,17 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               presprayArea.togglePresprayArea();
             }
 
-            const textElems = elems.filter((elem) => elem.tagName === 'text');
+            const textElems = elems.filter((elem) => elem.tagName === 'text') as SVGTextElement[];
 
             for (let i = 0; i < textElems.length; i++) {
               const textElem = textElems[i];
-              const angle = svgedit.utilities.getRotationAngle(textElem);
+              const angle = getRotationAngle(textElem);
 
-              if (angle !== 0) canvas.setRotationAngle(0, true, textElem);
+              if (angle !== 0) setRotationAngle(textElem, 0, { addToHistory: false });
 
-              textEdit.renderText(textElem as SVGTextElement);
+              textEdit.renderText(textElem);
 
-              if (angle !== 0) canvas.setRotationAngle(angle, true, textElem);
+              if (angle !== 0) setRotationAngle(textElem, angle, { addToHistory: false });
             }
           }
         } finally {
@@ -755,7 +747,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     svgcontent = content;
   };
   this.getCurrentConfig = () => curConfig;
-  this.getCurrentGroup = () => current_group;
   this.getCurrentResizeMode = () => current_resize_mode;
   this.getCurrentShape = () => cur_shape;
   this.getCurrentZoom = () => workareaManager.zoomRatio;
@@ -768,18 +759,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.getRootElem = () => svgroot;
   this.getRootScreenMatrix = () => root_sctm;
   this.getRubberBox = () => rubberBox;
-  this.getSelectedElems = (ungroupTempGroup = false) => {
-    if (ungroupTempGroup && tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    return selectedElements;
-  };
+  this.getSelectedElems = (ungroupTempGroup = false) => selectionManager.getSelectedElements(ungroupTempGroup);
   this.getStarted = () => started;
   this.getStartTransform = () => startTransform;
-  this.getTempGroup = () => tempGroup;
   this.setRootScreenMatrix = (matrix: SVGMatrix) => {
     root_sctm = matrix;
   };
@@ -796,9 +778,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.unsafeAccess = {
     setRubberBox: (v) => {
       rubberBox = v;
-    },
-    setSelectedElements: (elems: SVGElement[]) => {
-      selectedElements = elems;
     },
     setStarted: (v: boolean) => {
       started = v;
@@ -889,7 +868,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
     }
 
-    // addToSelection expects an array, but it's ok to pass a NodeList
     // because using square-bracket notation is allowed:
     // http://www.w3.org/TR/DOM-Level-2-Core/ecma-script-binding.html
     return resultList;
@@ -1068,18 +1046,22 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   //
   // Parameters:
   // elem - The (text) DOM element to clone
-  var ffClone = function (elem) {
+  var ffClone = function (elem: SVGElement) {
     if (!svgedit.browser.isGecko()) {
       return elem;
     }
 
-    var clone = elem.cloneNode(true);
+    var clone = elem.cloneNode(true) as SVGElement;
 
-    elem.parentNode.insertBefore(clone, elem);
-    elem.parentNode.removeChild(elem);
+    elem.parentNode?.insertBefore(clone, elem);
+    elem.parentNode?.removeChild(elem);
     selectorManager.releaseSelector(elem);
+
+    const selectedElements = selectionManager.getSelectedElements();
+
     selectedElements[0] = clone;
-    selectorManager.requestSelector(clone).show(true);
+    selectionManager.setSelectedElements([...selectedElements]);
+    selectorManager.requestSelector(clone)?.show(true);
 
     return clone;
   };
@@ -1098,31 +1080,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // val - The new rotation angle in degrees
   // preventUndo - Boolean indicating whether the action should be undoable or not
-  this.setRotationAngle = function (val, preventUndo, elem) {
-    // ensure val is the proper type
-    val = Number.parseFloat(val);
-    elem = elem || selectedElements[0];
-
-    setRotationAngle(elem, val, { addToHistory: !preventUndo });
-
-    if (!preventUndo) {
-      call('changed', [elem]);
-    }
-
-    const elemSelector = selectorManager.requestSelector(selectedElements[0]);
-
-    if (elemSelector) {
-      elemSelector.resize();
-      elemSelector.updateGripCursors();
-    }
-  };
+  this.setRotationAngle = setRotationAngle;
 
   // Function: recalculateAllSelectedDimensions
   // Runs recalculateDimensions on the selected elements,
   // adding the changes to a single batch command
   var recalculateAllSelectedDimensions = (this.recalculateAllSelectedDimensions = function (isSubCommand = false) {
-    var text = current_resize_mode === 'none' ? 'position' : 'size';
-    var batchCmd = new history.BatchCommand(text);
+    const batchCmd = new history.BatchCommand(current_resize_mode === 'none' ? 'position' : 'size');
+    const selectedElements = selectionManager.getSelectedElements();
 
     var i = selectedElements.length;
 
@@ -1158,154 +1123,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Clears the selection. The 'selected' handler is then called.
   // Parameters:
   // noCall - Optional boolean that when true does not call the "selected" handler
-  const clearSelection = (this.clearSelection = (noCall = false) => {
-    if (selectedElements[0]) {
-      if (tempGroup) svgCanvas.ungroupTempGroup();
+  this.clearSelection = (noCall?: boolean) => selectionManager.clearSelection(noCall);
 
-      for (const element of selectedElements) {
-        if (!element) break;
-
-        selectorManager.releaseSelector(element);
-      }
-
-      selectedElements.length = 0;
-
-      this.collectAlignPoints();
-
-      if (!noCall) call('selected', selectedElements);
-    }
-  });
-
-  // TODO: do we need to worry about selectedBBoxes here?
-
-  // Function: addToSelection
-  // Adds a list of elements to the selection. The 'selected' handler is then called.
-  //
-  // Parameters:
-  // elemsToAdd - an array of DOM elements to add to the selection
-  // showGrips - a boolean flag indicating whether the resize grips should be shown
-  const addToSelection = (this.addToSelection = (elemsToAdd, showGrips?, noCall?) => {
-    elemsToAdd = elemsToAdd.filter(Boolean);
-
-    if (elemsToAdd.length === 0) return;
-
-    // now add each element consecutively
-    for (let i = elemsToAdd.length - 1; i >= 0; i -= 1) {
-      let elem = elemsToAdd[i];
-
-      if (!elem) {
-        continue;
-      }
-
-      const bbox = getBBox(elem, { ignoreTransform: true });
-
-      if (!bbox) {
-        continue;
-      }
-
-      if (elem.tagName === 'a' && elem.childNodes.length === 1) {
-        // Make "a" element's child be the selected element
-        elem = elem.firstChild;
-      }
-
-      // if it's not already there, add it
-      if (!selectedElements.includes(elem)) {
-        selectedElements.push(elem);
-      }
-    }
-
-    if (!noCall) {
-      call('selected', selectedElements);
-    }
-
-    if (showGrips || selectedElements.length === 1) {
-      selectorManager.requestSelector(selectedElements[0])?.show(true);
-    } else {
-      selectorManager.requestSelector(selectedElements[0])?.show(true, false);
-    }
-
-    // Make sure first elements are not null
-    selectedElements = selectedElements.filter(Boolean);
-    // make sure the elements are in the correct order
-    // See: http://www.w3.org/TR/DOM-Level-3-Core/core.html#Node3-compareDocumentPosition
-
-    selectedElements.sort(function (a, b) {
-      if (a && b && a.compareDocumentPosition) {
-        return (b.compareDocumentPosition(a) & 6) - 3;
-      }
-
-      if (a == null) {
-        return 1;
-      }
-    });
-
-    this.collectAlignPoints();
-  });
-
-  // Function: selectOnly()
-  // Selects only the given elements, shortcut for clearSelection(); addToSelection()
-  //
   // Parameters:
   // elems - an array of DOM elements to be selected
-  const selectOnly = (this.selectOnly = function (elems, showGrips?) {
-    clearSelection(true);
-    addToSelection(elems, showGrips);
-  });
-
-  this.multiSelect = (elems) => {
-    clearSelection(true);
-    addToSelection(elems, true);
-
-    if (elems.length > 1) {
-      this.tempGroupSelectedElements();
-    }
-  };
+  this.selectOnly = (elems, showGrips?) => selectionManager.selectOnly(elems, showGrips);
 
   // TODO: could use slice here to make this faster?
   // TODO: should the 'selected' handler
-
-  // Function: removeFromSelection
-  // Removes elements from the selection.
-  //
-  // Parameters:
-  // elemsToRemove - an array of elements to remove from selection
-  var removeFromSelection = (this.removeFromSelection = function (elemsToRemove, noCall) {
-    if (selectedElements[0] == null) {
-      return;
-    }
-
-    if (elemsToRemove.length === 0) {
-      return;
-    }
-
-    // find every element and remove it from our array copy
-    var i;
-    var j = 0;
-    var newSelectedItems = [];
-    var len = selectedElements.length;
-
-    newSelectedItems.length = len;
-    for (i = 0; i < len; ++i) {
-      var elem = selectedElements[i];
-
-      if (elem) {
-        // keep the item
-        if (!elemsToRemove.includes(elem)) {
-          newSelectedItems[j] = elem;
-          j++;
-        } else {
-          // remove the item and its selector
-          selectorManager.releaseSelector(elem);
-        }
-      }
-    }
-    // the copy becomes the master now
-    selectedElements = newSelectedItems.filter((elem) => elem);
-
-    if (selectedElements.length === 0 && !noCall) {
-      call('selected', selectedElements);
-    }
-  });
 
   // Function: selectAllInCurrentLayer
   // Clears the selection, then adds all elements in the current layer to the selection.
@@ -1315,19 +1140,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (currentLayer && currentLayer.getAttribute('data-lock') !== 'true') {
       setMouseMode('select');
 
-      const elemsToAdd = (Array.from((current_group || currentLayer).childNodes) as Element[]).filter(
-        (c: Element) => !CanvasElements.defElems.includes(c.tagName),
+      const elemsToAdd = (Array.from(currentLayer.childNodes) as SVGElement[]).filter(
+        (c: SVGElement) => !CanvasElements.defElems.includes(c.tagName),
       );
 
       if (elemsToAdd.length < 1) {
         console.warn('Selecting empty layer in "selectAllInCurrentLayer"');
       } else {
-        selectOnly(elemsToAdd, false);
-
-        if (elemsToAdd.length > 1) {
-          svgCanvas.tempGroupSelectedElements();
-        }
-
+        selectionManager.multiSelect(elemsToAdd);
         svgEditor.updateContextPanel();
       }
     }
@@ -1338,7 +1158,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
    * @returns {null}
    */
   this.selectAll = () => {
-    clearSelection();
+    selectionManager.clearSelection();
     setMouseMode('select');
 
     const allLayers = layerManager.getAllLayers();
@@ -1353,8 +1173,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         layerElement.getAttribute('data-lock') !== 'true' &&
         layerElement.getAttribute('display') !== 'none'
       ) {
-        const elemsToAdd = (Array.from(layerElement.childNodes) as Element[]).filter(
-          (node: Element) => !CanvasElements.defElems.includes(node.tagName),
+        const elemsToAdd = (Array.from(layerElement.childNodes) as SVGElement[]).filter(
+          (node: SVGElement) => !CanvasElements.defElems.includes(node.tagName),
         );
 
         elemsToSelect.push(...elemsToAdd);
@@ -1362,12 +1182,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     if (elemsToSelect.length > 0) {
-      selectOnly(elemsToSelect, false);
-
-      if (elemsToSelect.length > 1) {
-        svgCanvas.tempGroupSelectedElements();
-      }
-
+      selectionManager.multiSelect(elemsToSelect);
       svgEditor.updateContextPanel();
     }
   };
@@ -1694,12 +1509,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         svgcontent.insertBefore(node, svgcontent.firstChild);
       }
     });
-
-    // Move out of in-group editing mode
-    if (current_group) {
-      leaveContext();
-      selectOnly([current_group]);
-    }
 
     const documentState = useDocumentStore.getState();
     const workarea: WorkAreaModel = documentState.workarea;
@@ -2055,11 +1864,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Returns:
   // The current drawing as raw SVG XML text.
   this.getSvgString = function (opts: { unit?: Units } = {}) {
-    if (tempGroup) {
-      this.ungroupTempGroup();
+    if (selectionManager.hasTempGroup()) {
+      selectionManager.ungroupTempGroup();
     }
 
-    this.ungroupAllTempGroup();
+    selectionManager.ungroupAllTempGroup();
     save_options.apply = false;
 
     return this.svgCanvasToString(opts);
@@ -2294,81 +2103,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return false;
   };
 
-  this.sortTempGroupByLayer = () => {
-    if (!tempGroup) return;
-
-    const allLayerNames = layerManager.getAllLayerNames();
-
-    for (let i = 0; i < allLayerNames.length; i++) {
-      const elems = tempGroup.querySelectorAll(`[data-original-layer="${allLayerNames[i]}"]`);
-
-      for (let j = 0; j < elems.length; j++) {
-        tempGroup.appendChild(elems[j]);
-      }
-    }
-  };
-
   this.updateElementColor = updateElementColor;
-
-  // Function: leaveContext
-  // Return from a group context to the regular kind, make any previously
-  // disabled elements enabled again
-  var leaveContext = (this.leaveContext = function () {
-    var i;
-    var len = disabled_elems.length;
-
-    if (len) {
-      for (i = 0; i < len; i++) {
-        var elem = disabled_elems[i];
-        var orig = elData(elem, 'orig_opac');
-
-        if (orig !== 1) {
-          elem.setAttribute('opacity', orig);
-        } else {
-          elem.removeAttribute('opacity');
-        }
-
-        elem.setAttribute('style', 'pointer-events: inherit');
-      }
-      disabled_elems = [];
-      clearSelection(true);
-      call('contextset', null);
-    }
-
-    current_group = null;
-  });
-
-  // Function: setContext
-  // Set the current context (for in-group editing)
-  var setContext = (this.setContext = function (elem) {
-    leaveContext();
-
-    if (typeof elem === 'string') {
-      elem = svgedit.utilities.getElem(elem);
-    }
-
-    // Edit inside this group
-    current_group = elem;
-
-    // Disable other elements
-    $(elem)
-      .parentsUntil('#svgcontent')
-      .andSelf()
-      .siblings()
-      .each(function () {
-        var opac = Number(this.getAttribute('opacity')) || 1;
-
-        // Store the original's opacity
-        elData(this, 'orig_opac', opac);
-        this.setAttribute('opacity', (opac * 0.33).toString());
-        this.setAttribute('style', 'pointer-events: none');
-        disabled_elems.push(this);
-      });
-
-    clearSelection();
-    call('contextset', current_group);
-  });
-
   // Group: Document functions
 
   // Function: clear
@@ -2376,7 +2111,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   this.clear = function () {
     pathActions.clear();
 
-    clearSelection();
+    selectionManager.clearSelection();
 
     svgedit.utilities.clearDefs();
 
@@ -2422,16 +2157,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Alias function
   this.linkControlPoints = pathActions.linkControlPoints;
 
-  this.getSelectedWithoutTempGroup = () => {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    return selectedElements;
-  };
-
   // Function: getZoom
   // keep for ext-xxxx.js
   this.getZoom = () => workareaManager.zoomRatio;
@@ -2440,150 +2165,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Returns the current snap to grid setting
   this.getSnapToGrid = function () {
     return curConfig.gridSnapping;
-  };
-
-  // Function: getVersion
-  // Returns a string which describes the revision number of SvgCanvas.
-  this.getVersion = function () {
-    return 'svgcanvas.js ($Rev$)';
-  };
-
-  // Function: setConfig
-  // Update configuration options with given values
-  //
-  // Parameters:
-  // opts - Object with options (see curConfig for examples)
-  this.setConfig = function (opts) {
-    $.extend(curConfig, opts);
-  };
-
-  // Function: getTitle
-  // Returns the current group/SVG's title contents
-  this.getTitle = function (elem) {
-    var i;
-
-    elem = elem || selectedElements[0];
-
-    if (!elem) {
-      return;
-    }
-
-    var childs = elem.childNodes;
-
-    for (i = 0; i < childs.length; i++) {
-      if (childs[i].nodeName === 'title') {
-        return childs[i].textContent;
-      }
-    }
-
-    return '';
-  };
-
-  // Function: setGroupTitle
-  // Sets the group/SVG's title content
-  // TODO: Combine this with setDocumentTitle
-  this.setGroupTitle = function (val) {
-    var elem = selectedElements[0];
-
-    elem = $(elem).data('gsvg') || elem;
-
-    var ts: any = $(elem).children('title');
-
-    var batchCmd = new history.BatchCommand('Set Label');
-
-    if (!val.length) {
-      // Remove title element
-      var tsNextSibling = ts.nextSibling;
-
-      batchCmd.addSubCommand(new history.RemoveElementCommand(ts[0], tsNextSibling, elem));
-      ts.remove();
-    } else if (ts.length) {
-      // Change title contents
-      var title = ts[0];
-
-      batchCmd.addSubCommand(
-        new history.ChangeElementCommand(title, {
-          '#text': title.textContent,
-        }),
-      );
-      title.textContent = val;
-    } else {
-      // Add title element
-      title = svgdoc.createElementNS(NS.SVG, 'title');
-      title.textContent = val;
-      $(elem).prepend(title);
-      batchCmd.addSubCommand(new history.InsertElementCommand(title));
-    }
-
-    addCommandToHistory(batchCmd);
-  };
-
-  // Function: getDocumentTitle
-  // Returns the current document title or an empty string if not found
-  var getDocumentTitle = (this.getDocumentTitle = function () {
-    return canvas.getTitle(svgcontent);
-  });
-
-  // Function: setDocumentTitle
-  // Adds/updates a title element for the document with the given name.
-  // This is an undoable action
-  //
-  // Parameters:
-  // newtitle - String with the new title
-  this.setDocumentTitle = function (newtitle) {
-    var i;
-    var childs = svgcontent.childNodes;
-    var doc_title: any = false;
-    var old_title = '';
-
-    var batchCmd = new history.BatchCommand('Change Image Title');
-
-    for (i = 0; i < childs.length; i++) {
-      if (childs[i].nodeName === 'title') {
-        doc_title = childs[i];
-        old_title = doc_title.textContent;
-        break;
-      }
-    }
-
-    if (!doc_title) {
-      doc_title = svgdoc.createElementNS(NS.SVG, 'title');
-      svgcontent.insertBefore(doc_title, svgcontent.firstChild);
-    }
-
-    if (newtitle.length) {
-      doc_title.textContent = newtitle;
-    } else {
-      // No title given, so element is not necessary
-      doc_title.parentNode.removeChild(doc_title);
-    }
-
-    batchCmd.addSubCommand(
-      new history.ChangeElementCommand(doc_title, {
-        '#text': old_title,
-      }),
-    );
-    addCommandToHistory(batchCmd);
-  };
-
-  // Function: getEditorNS
-  // Returns the editor's namespace URL, optionally adds it to root element
-  //
-  // Parameters:
-  // add - Boolean to indicate whether or not to add the namespace value
-  this.getEditorNS = function (add) {
-    if (add) {
-      svgcontent.setAttribute('xmlns:se', NS.SE);
-    }
-
-    return NS.SE;
-  };
-
-  // Function: getOffset
-  // Returns an object with x, y values indicating the svgcontent element's
-  // position in the editor's canvas.
-  this.getOffset = function () {
-    return $(svgcontent).attr(['x', 'y']);
   };
 
   // Function: setMode
@@ -2597,164 +2178,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   // Group: Element Styling
-
-  // Function: getColor
-  // Returns the current fill/stroke option
-  this.getColor = function (type) {
-    return cur_properties[type];
-  };
-
-  // Function: setColor
-  // Change the current stroke/fill color/gradient value
-  //
-  // Parameters:
-  // type - String indicating fill or stroke
-  // val - The value to set the stroke attribute to
-  // preventUndo - Boolean indicating whether or not this should be and undoable option
-  this.setColor = function (type, val, preventUndo) {
-    cur_shape[type] = val;
-    cur_properties[type + '_paint'] = {
-      type: 'solidColor',
-    };
-
-    var elems = [];
-
-    function addNonG(e) {
-      if (e.nodeName !== 'g') {
-        elems.push(e);
-      }
-    }
-
-    var i = selectedElements.length;
-
-    while (i--) {
-      var elem = selectedElements[i];
-
-      if (elem) {
-        if (elem.tagName === 'g') {
-          svgedit.utilities.walkTree(elem, addNonG);
-        } else if (type === 'fill') {
-          if (elem.tagName !== 'polyline' && elem.tagName !== 'line') {
-            elems.push(elem);
-          }
-        } else {
-          elems.push(elem);
-        }
-      }
-    }
-
-    if (elems.length > 0) {
-      if (!preventUndo) {
-        changeSelectedAttribute(type, val, elems);
-        call('changed', elems);
-      } else {
-        changeSelectedAttributeNoUndo(type, val, elems);
-      }
-    }
-  };
-
-  // Function: setGradient
-  // Apply the current gradient to selected element's fill or stroke
-  //
-  // Parameters
-  // type - String indicating "fill" or "stroke" to apply to an element
-  var setGradient = (this.setGradient = function (type) {
-    if (!cur_properties[type + '_paint'] || cur_properties[type + '_paint'].type === 'solidColor') {
-      return;
-    }
-
-    var grad = canvas[type + 'Grad'];
-    // find out if there is a duplicate gradient already in the defs
-    var duplicate_grad = findDuplicateGradient(grad);
-    var defs = findDefs();
-
-    // no duplicate found, so import gradient into defs
-    if (!duplicate_grad) {
-      var orig_grad = grad;
-
-      grad = defs.appendChild(svgdoc.importNode(grad, true));
-      // get next id and set it on the grad
-      grad.id = getNextId();
-    } else {
-      // use existing gradient
-      grad = duplicate_grad;
-    }
-
-    canvas.setColor(type, 'url(#' + grad.id + ')');
-  });
-
-  // Function: findDuplicateGradient
-  // Check if exact gradient already exists
-  //
-  // Parameters:
-  // grad - The gradient DOM element to compare to others
-  //
-  // Returns:
-  // The existing gradient if found, null if not
-  var findDuplicateGradient = function (grad) {
-    var defs = findDefs();
-    var existing_grads = $(defs).find('linearGradient, radialGradient');
-    var i = existing_grads.length;
-    var rad_attrs = ['r', 'cx', 'cy', 'fx', 'fy'];
-
-    while (i--) {
-      var og = existing_grads[i];
-
-      if (grad.tagName === 'linearGradient') {
-        if (
-          grad.getAttribute('x1') !== og.getAttribute('x1') ||
-          grad.getAttribute('y1') !== og.getAttribute('y1') ||
-          grad.getAttribute('x2') !== og.getAttribute('x2') ||
-          grad.getAttribute('y2') !== og.getAttribute('y2')
-        ) {
-          continue;
-        }
-      } else {
-        const gradAttrs = $(grad).attr(rad_attrs);
-        const ogAttrs = $(og).attr(rad_attrs);
-        let diff = false;
-
-        $.each(rad_attrs, function (i, attr) {
-          if (gradAttrs[attr] !== ogAttrs[attr]) {
-            diff = true;
-          }
-        });
-
-        if (diff) {
-          continue;
-        }
-      }
-
-      // else could be a duplicate, iterate through stops
-      var stops = grad.getElementsByTagNameNS(NS.SVG, 'stop');
-      var ostops = og.getElementsByTagNameNS(NS.SVG, 'stop');
-
-      if (stops.length !== ostops.length) {
-        continue;
-      }
-
-      var j = stops.length;
-
-      while (j--) {
-        var stop = stops[j];
-        var ostop = ostops[j];
-
-        if (
-          stop.getAttribute('offset') !== ostop.getAttribute('offset') ||
-          stop.getAttribute('stop-opacity') !== ostop.getAttribute('stop-opacity') ||
-          stop.getAttribute('stop-color') !== ostop.getAttribute('stop-color')
-        ) {
-          break;
-        }
-      }
-
-      if (j === -1) {
-        return og;
-      }
-    } // for each gradient in defs
-
-    return null;
-  };
 
   this.reorientGrads = function reorientGrads(elem, m) {
     var i;
@@ -2803,404 +2226,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  // Function: getStrokeWidth
-  // Returns the current stroke-width value
-  this.getStrokeWidth = function () {
-    return cur_properties.stroke_width;
-  };
-
-  // Function: setStrokeWidth
-  // Sets the stroke width for the current selected elements
-  // When attempting to set a line's width to 0, this changes it to 1 instead
-  //
-  // Parameters:
-  // val - A Float indicating the new stroke width value
-  this.setStrokeWidth = function (val) {
-    if (val == 0 && ['line', 'path'].includes(getMouseMode())) {
-      canvas.setStrokeWidth(1);
-
-      return;
-    }
-
-    cur_properties.stroke_width = val;
-
-    var elems = [];
-
-    function addNonG(e) {
-      if (e.nodeName !== 'g') {
-        elems.push(e);
-      }
-    }
-
-    var i = selectedElements.length;
-
-    while (i--) {
-      var elem = selectedElements[i];
-
-      if (elem) {
-        if (elem.tagName === 'g') {
-          svgedit.utilities.walkTree(elem, addNonG);
-        } else {
-          elems.push(elem);
-        }
-      }
-    }
-
-    if (elems.length > 0) {
-      changeSelectedAttribute('stroke-width', val, elems);
-      call('changed', selectedElements);
-    }
-  };
-
-  // Function: setStrokeAttr
-  // Set the given stroke-related attribute the given value for selected elements
-  //
-  // Parameters:
-  // attr - String with the attribute name
-  // val - String or number with the attribute value
-  this.setStrokeAttr = function (attr, val) {
-    cur_shape[attr.replace('-', '_')] = val;
-
-    var elems = [];
-
-    function addNonG(e) {
-      if (e.nodeName !== 'g') {
-        elems.push(e);
-      }
-    }
-
-    var i = selectedElements.length;
-
-    while (i--) {
-      var elem = selectedElements[i];
-
-      if (elem) {
-        if (elem.tagName === 'g') {
-          svgedit.utilities.walkTree(elem, function (e) {
-            if (e.nodeName !== 'g') {
-              elems.push(e);
-            }
-          });
-        } else {
-          elems.push(elem);
-        }
-      }
-    }
-
-    if (elems.length > 0) {
-      changeSelectedAttribute(attr, val, elems);
-      call('changed', selectedElements);
-    }
-  };
-
-  // Function: getStyle
-  // Returns current style options
-  this.getStyle = function () {
-    return cur_shape;
-  };
-
-  // Function: getOpacity
-  // Returns the current opacity
-  this.getOpacity = function () {
-    return cur_shape.opacity;
-  };
-
-  // Function: setOpacity
-  // Sets the given opacity to the current selected elements
-  this.setOpacity = function (val) {
-    cur_shape.opacity = val;
-    changeSelectedAttribute('opacity', val);
-  };
-
-  // Function: getOpacity
-  // Returns the current fill opacity
-  this.getFillOpacity = function () {
-    return cur_shape.fill_opacity;
-  };
-
-  // Function: getStrokeOpacity
-  // Returns the current stroke opacity
-  this.getStrokeOpacity = function () {
-    return cur_shape.stroke_opacity;
-  };
-
-  // Function: setPaintOpacity
-  // Sets the current fill/stroke opacity
-  //
-  // Parameters:
-  // type - String with "fill" or "stroke"
-  // val - Float with the new opacity value
-  // preventUndo - Boolean indicating whether or not this should be an undoable action
-  this.setPaintOpacity = function (type, val, preventUndo) {
-    cur_shape[type + '_opacity'] = val;
-
-    if (!preventUndo) {
-      changeSelectedAttribute(type + '-opacity', val);
-    } else {
-      changeSelectedAttributeNoUndo(type + '-opacity', val);
-    }
-  };
-
-  // Function: getPaintOpacity
-  // Gets the current fill/stroke opacity
-  //
-  // Parameters:
-  // type - String with "fill" or "stroke"
-  this.getPaintOpacity = function (type) {
-    return type === 'fill' ? this.getFillOpacity() : this.getStrokeOpacity();
-  };
-
-  // Function: getBlur
-  // Gets the stdDeviation blur value of the given element
-  //
-  // Parameters:
-  // elem - The element to check the blur value for
-  this.getBlur = function (elem) {
-    var val = 0;
-    //	var elem = selectedElements[0];
-
-    if (elem) {
-      var filter_url = elem.getAttribute('filter');
-
-      if (filter_url) {
-        var blur = svgedit.utilities.getElem(elem.id + '_blur');
-
-        if (blur) {
-          val = blur.firstChild.getAttribute('stdDeviation');
-        }
-      }
-    }
-
-    return val;
-  };
-
-  (function () {
-    var cur_command = null;
-    var filter = null;
-    var filterHidden = false;
-
-    // Function: setBlurNoUndo
-    // Sets the stdDeviation blur value on the selected element without being undoable
-    //
-    // Parameters:
-    // val - The new stdDeviation value
-    canvas.setBlurNoUndo = function (val) {
-      if (!filter) {
-        canvas.setBlur(val);
-
-        return;
-      }
-
-      if (val === 0) {
-        // Don't change the StdDev, as that will hide the element.
-        // Instead, just remove the value for "filter"
-        changeSelectedAttributeNoUndo('filter', '');
-        filterHidden = true;
-      } else {
-        var elem = selectedElements[0];
-
-        if (filterHidden) {
-          changeSelectedAttributeNoUndo('filter', 'url(#' + elem.id + '_blur)');
-        }
-
-        if (svgedit.browser.isWebkit()) {
-          console.log('e', elem);
-          elem.removeAttribute('filter');
-          elem.setAttribute('filter', 'url(#' + elem.id + '_blur)');
-        }
-
-        changeSelectedAttributeNoUndo('stdDeviation', val, [filter.firstChild]);
-        canvas.setBlurOffsets(filter, val);
-      }
-    };
-
-    function finishChange() {
-      var bCmd = canvas.undoMgr.finishUndoableChange();
-
-      cur_command.addSubCommand(bCmd);
-      addCommandToHistory(cur_command);
-      cur_command = null;
-      filter = null;
-    }
-
-    // Function: setBlurOffsets
-    // Sets the x, y, with, height values of the filter element in order to
-    // make the blur not be clipped. Removes them if not neeeded
-    //
-    // Parameters:
-    // filter - The filter DOM element to update
-    // stdDev - The standard deviation value on which to base the offset size
-    canvas.setBlurOffsets = function (filter, stdDev) {
-      if (stdDev > 3) {
-        // TODO: Create algorithm here where size is based on expected blur
-        svgedit.utilities.assignAttributes(
-          filter,
-          {
-            height: '200%',
-            width: '200%',
-            x: '-50%',
-            y: '-50%',
-          },
-          100,
-        );
-      } else {
-        // Removing these attributes hides text in Chrome (see Issue 579)
-        if (!svgedit.browser.isWebkit()) {
-          filter.removeAttribute('x');
-          filter.removeAttribute('y');
-          filter.removeAttribute('width');
-          filter.removeAttribute('height');
-        }
-      }
-    };
-
-    // Function: setBlur
-    // Adds/updates the blur filter to the selected element
-    //
-    // Parameters:
-    // val - Float with the new stdDeviation blur value
-    // complete - Boolean indicating whether or not the action should be completed (to add to the undo manager)
-    canvas.setBlur = function (val, complete) {
-      if (cur_command) {
-        finishChange();
-
-        return;
-      }
-
-      // Looks for associated blur, creates one if not found
-      var elem = selectedElements[0];
-      var elem_id = elem.id;
-
-      filter = svgedit.utilities.getElem(elem_id + '_blur');
-
-      val -= 0;
-
-      var batchCmd = new history.BatchCommand();
-
-      // Blur found!
-      if (filter) {
-        if (val === 0) {
-          filter = null;
-        }
-      } else {
-        // Not found, so create
-        var newblur = addSvgElementFromJson({
-          attr: {
-            in: 'SourceGraphic',
-            stdDeviation: val,
-          },
-          element: 'feGaussianBlur',
-        });
-
-        filter = addSvgElementFromJson({
-          attr: {
-            id: elem_id + '_blur',
-          },
-          element: 'filter',
-        });
-
-        filter.appendChild(newblur);
-        findDefs().appendChild(filter);
-
-        batchCmd.addSubCommand(new history.InsertElementCommand(filter));
-      }
-
-      var changes = {
-        filter: elem.getAttribute('filter'),
-      };
-
-      if (val === 0) {
-        elem.removeAttribute('filter');
-        batchCmd.addSubCommand(new history.ChangeElementCommand(elem, changes));
-
-        return;
-      }
-
-      changeSelectedAttribute('filter', 'url(#' + elem_id + '_blur)');
-      batchCmd.addSubCommand(new history.ChangeElementCommand(elem, changes));
-      canvas.setBlurOffsets(filter, val);
-
-      cur_command = batchCmd;
-      canvas.undoMgr.beginUndoableChange('stdDeviation', [filter ? filter.firstChild : null]);
-
-      if (complete) {
-        canvas.setBlurNoUndo(val);
-        finishChange();
-      }
-    };
-  })();
-
-  // Useless for beambox
-  // Function: setLinkURL
-  // Sets the new link URL for the selected anchor element.
-  //
-  // Parameters:
-  // val - String with the link URL/path
-  this.setLinkURL = function (val) {
-    var elem = selectedElements[0];
-
-    if (!elem) {
-      return;
-    }
-
-    if (elem.tagName !== 'a') {
-      // See if parent is an anchor
-      var parents_a = $(elem).parents('a');
-
-      if (parents_a.length) {
-        elem = parents_a[0];
-      } else {
-        return;
-      }
-    }
-
-    var cur_href = getHref(elem);
-
-    if (cur_href === val) {
-      return;
-    }
-
-    var batchCmd = new history.BatchCommand('Change Link URL');
-
-    setHref(elem, val);
-    batchCmd.addSubCommand(
-      new history.ChangeElementCommand(elem, {
-        '#href': cur_href,
-      }),
-    );
-
-    addCommandToHistory(batchCmd);
-  };
-
-  // Function: setRectRadius
-  // Sets the rx & ry values to the selected rect element to change its corner radius
-  //
-  // Parameters:
-  // val - The new radius
-  this.setRectRadius = function (val) {
-    var selected = selectedElements[0];
-
-    if (selected != null && selected.tagName === 'rect') {
-      var r = selected.getAttribute('rx');
-
-      if (String(r) !== String(val)) {
-        selected.setAttribute('rx', val);
-        selected.setAttribute('ry', val);
-        addCommandToHistory(
-          new history.ChangeElementCommand(
-            selected,
-            {
-              rx: r,
-              ry: r,
-            },
-            'Radius',
-          ),
-        );
-        call('changed', [selected]);
-      }
-    }
-  };
-
   this.isElemFillable = (elem: Element) => {
     if (elem.tagName === 'g') {
       const childNodes = elem.childNodes;
@@ -3221,7 +2246,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     return elem.tagName === 'path' ? this.calcPathClosed(elem) : true;
   };
 
-  this.calcPathClosed = (pathElem) => {
+  this.calcPathClosed = (pathElem: SVGPathElement) => {
     const segList = pathElem.pathSegList._list || pathElem.pathSegList;
     let [startX, startY, currentX, currentY, isDrawing, isClosed] = [0, 0, 0, 0, false, true];
 
@@ -3340,7 +2365,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
   };
 
-  this.setElementFill = function (elem, color) {
+  this.setElementFill = function (elem: SVGElement, color: string) {
     const batchCmd = new history.BatchCommand('set elem fill');
     let cmd;
 
@@ -3351,7 +2376,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
     canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
-    elem.setAttribute('fill-opacity', 1);
+    elem.setAttribute('fill-opacity', '1');
     cmd = canvas.undoMgr.finishUndoableChange();
 
     if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
@@ -3388,7 +2413,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (!batchCmd.isEmpty()) addCommandToHistory(batchCmd);
   };
 
-  this.setElementUnfill = function (elem, color) {
+  this.setElementUnfill = function (elem: SVGElement, color: string) {
     const batchCmd = new history.BatchCommand('set elem unfill');
     let cmd;
 
@@ -3399,7 +2424,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
 
     canvas.undoMgr.beginUndoableChange('fill-opacity', [elem]);
-    elem.setAttribute('fill-opacity', 0);
+    elem.setAttribute('fill-opacity', '0');
     cmd = canvas.undoMgr.finishUndoableChange();
 
     if (cmd && !cmd.isEmpty()) batchCmd.addSubCommand(cmd);
@@ -3445,7 +2470,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     );
 
     if (path) {
-      if (selectedElements.includes(elem)) selectOnly([path]);
+      if (selectionManager.getSelectedElements().includes(elem)) selectionManager.selectOnly([path]);
 
       if (cmd && !cmd.isEmpty() && !isSubCmd) {
         addCommandToHistory(cmd);
@@ -3471,11 +2496,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       pathActions.moveNode(attr, newValue);
     }
 
-    elems = elems || selectedElements;
+    elems = elems || selectionManager.getSelectedElements();
 
     var i = elems.length;
     var no_xy_elems = ['g', 'polyline', 'path', 'polygon'];
-    var good_g_attrs = ['transform', 'opacity', 'filter'];
 
     while (i--) {
       var elem = elems[i];
@@ -3558,7 +2582,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
         // codedread: it is now possible for this function to be called with elements
         // that are not in the selectedElements array, we need to only request a
         // selector if the element is in that array
-        if (selectedElements.includes(elem)) {
+        if (selectionManager.getSelectedElements().includes(elem)) {
           setTimeout(() => {
             // Due to element replacement, this element may no longer
             // be part of the DOM
@@ -3566,7 +2590,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
               return;
             }
 
-            if (selectedElements.includes(elem)) {
+            if (selectionManager.getSelectedElements().includes(elem)) {
               selectorManager.requestSelector(elem).resize();
             } else {
               selectorManager.releaseSelector(elem);
@@ -3620,7 +2644,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // newValue - String or number with the new attribute value
   // elems - The DOM elements to apply the change to
   var changeSelectedAttribute = (this.changeSelectedAttribute = function (attr, val, elems?) {
-    elems = elems || selectedElements;
+    elems = elems || selectionManager.getSelectedElements();
     canvas.undoMgr.beginUndoableChange(attr, elems);
 
     var i = elems.length;
@@ -3653,16 +2677,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     recentMenuUpdater.update();
   };
 
-  this.simplifyPath = (elems?: Element[]) => {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
+  this.simplifyPath = (elems?: SVGElement[]) => {
     const batchCmd = new history.BatchCommand('Simplify Path');
 
-    elems = elems || [...selectedElements];
+    elems = elems || selectionManager.getSelectedElements(true);
     elems.forEach((elem) => {
       if (elem?.tagName !== 'path') return;
 
@@ -3675,30 +2693,24 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     });
 
     addCommandToHistory(batchCmd);
-    this.multiSelect(elems);
+    selectionManager.multiSelect(elems);
 
     return batchCmd;
   };
 
-  this.decomposePath = (elems) => {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    const allNewPaths = [];
+  this.decomposePath = (elems: SVGElement[]) => {
+    const allNewPaths: SVGElement[] = [];
     const batchCmd = new history.BatchCommand('Decompose Image');
 
-    elems = elems || selectedElements;
+    elems = elems || selectionManager.getSelectedElements(true);
     elems.forEach((elem) => {
       if (!elem || elem.tagName !== 'path') {
         return;
       }
 
-      const angle = svgedit.utilities.getRotationAngle(elem);
+      const angle = getRotationAngle(elem);
 
-      this.setRotationAngle(0, true, elem);
+      setRotationAngle(elem, 0, { addToHistory: false });
 
       const dAbs: string = svgedit.utilities.convertPath(elem);
       const subPaths = dAbs.split('M').filter((d) => d.length);
@@ -3735,15 +2747,15 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       const parent = elem.parentNode;
       const nextSibling = elem.nextSibling;
 
-      parent.removeChild(elem);
+      parent?.removeChild(elem);
       batchCmd.addSubCommand(new history.RemoveElementCommand(elem, nextSibling, parent));
 
       if (newPaths.length > 0) {
-        selectOnly(newPaths, false);
+        selectionManager.multiSelect(newPaths);
 
-        const g = this.tempGroupSelectedElements();
+        const g = selectionManager.getSelectedElements()[0];
 
-        this.setRotationAngle(angle, true, g);
+        setRotationAngle(g, angle, { addToHistory: false });
         allNewPaths.push(...newPaths);
       }
     });
@@ -3758,8 +2770,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
 
     if (allNewPaths.length > 0) {
-      selectOnly(allNewPaths, false);
-      this.tempGroupSelectedElements();
+      selectionManager.multiSelect(allNewPaths);
     }
   };
 
@@ -3884,7 +2895,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
   this.collectAlignPoints = () => {
     const elements = Array.of<SVGGraphicsElement>();
-    const layers: Element[] = $('#svgcontent > g.layer').toArray();
+    const layers = document.querySelectorAll('#svgcontent > g.layer');
 
     for (const layer of layers) {
       if (layer?.getAttribute('display') === 'none' || !layer?.childNodes.length) continue;
@@ -3892,6 +2903,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       elements.push(...(layer.childNodes as unknown as SVGGraphicsElement[]));
     }
 
+    const selectedElements = selectionManager.getSelectedElements();
     const unSelectedElements = elements.filter((elem) => !selectedElements.includes(elem));
     const unFlatedPoints = unSelectedElements.map((elem) => getElemAlignPoints(elem));
     const edges = unFlatedPoints
@@ -3928,7 +2940,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.getSelectedElementsAlignPoints = () =>
-    selectedElements.flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
+    selectionManager.getSelectedElements().flatMap((elem) => getElemAlignPoints(elem as SVGGraphicsElement));
 
   this.addAlignPoint = function (x: number, y: number) {
     const { length } = alignPoints.x;
@@ -3977,11 +2989,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.groupSelectedElements = (isSubCmd = false): void | { command: BaseHistoryCommand; group: SVGGElement } => {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
+    const selectedElements = selectionManager.getSelectedElements(true);
 
     if (selectedElements.length < 1) return;
 
@@ -4039,7 +3047,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     updateElementColor(group);
 
     // update selection
-    selectOnly([group], true);
+    selectionManager.selectOnly([group], true);
 
     return { command: batchCmd, group };
   };
@@ -4069,9 +3077,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
 
     var gattrs: { [key: string]: any } = $(g).attr(['filter', 'opacity']);
     var gfilter;
-    var gblur;
     var changes;
-    var drawing = getCurrentDrawing();
 
     for (i = 0; i < len; i++) {
       var elem = children[i];
@@ -4088,45 +3094,14 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
 
       if (gattrs.filter) {
-        var cblur = this.getBlur(elem);
-        var orig_cblur = cblur;
-
-        if (!gblur) {
-          gblur = this.getBlur(g);
-        }
-
-        if (cblur) {
-          // Is this formula correct?
-          cblur = Number(gblur) + Number(cblur);
-        } else if (cblur === 0) {
-          cblur = gblur;
-        }
-
         // If child has no current filter, get group's filter or clone it.
-        if (!orig_cblur) {
-          // Set group's filter to use first child's ID
-          if (!gfilter) {
-            gfilter = svgedit.utilities.getRefElem(gattrs.filter);
-          } else {
-            // Clone the group's filter
-            gfilter = drawing.copyElem(gfilter);
-            findDefs().appendChild(gfilter);
-          }
-        } else {
-          gfilter = svgedit.utilities.getRefElem(elem.getAttribute('filter'));
-        }
+        gfilter = svgedit.utilities.getRefElem(elem.getAttribute('filter'));
 
         // Change this in future for different filters
         var suffix = gfilter.firstChild.tagName === 'feGaussianBlur' ? 'blur' : 'filter';
 
         gfilter.id = elem.id + '_' + suffix;
         changeSelectedAttribute('filter', 'url(#' + gfilter.id + ')', [elem]);
-
-        // Update blur value
-        if (cblur) {
-          changeSelectedAttribute('stdDeviation', cblur, [gfilter.firstChild]);
-          canvas.setBlurOffsets(gfilter, cblur);
-        }
       }
 
       startTransform = elem.getAttribute('transform');
@@ -4269,13 +3244,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Unwraps all the elements in a selected group (g) element. This requires
   // significant recalculations to apply group's transforms, etc to its children
   this.ungroupSelectedElement = (isSubCmd = false) => {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    var g = selectedElements[0];
+    var g = selectionManager.getSelectedElements(true)[0];
 
     if (!g) {
       return;
@@ -4287,20 +3256,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       return;
     }
 
-    var parents_a = $(g).parents('a');
-
-    if (parents_a.length) {
-      g = parents_a[0];
-    }
-
     const res = ungroupElement(g);
 
     if (res) {
       const { batchCmd, children } = res;
 
-      clearSelection();
-      addToSelection(children);
-      this.tempGroupSelectedElements();
+      selectionManager.multiSelect(children as SVGElement[]);
 
       if (!batchCmd.isEmpty() && !isSubCmd) addCommandToHistory(batchCmd);
 
@@ -4308,302 +3269,20 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     }
   };
 
-  this.tempGroupSelectedElements = function () {
-    if (selectedElements.length <= 1) {
-      return selectedElements;
-    }
-
-    const hasAlreadyTempGroup = selectedElements[0].getAttribute('data-tempgroup');
-    let g;
-
-    if (hasAlreadyTempGroup) {
-      g = selectedElements[0];
-    } else {
-      // create and insert the group element
-      g = addSvgElementFromJson({
-        attr: { 'data-ratiofixed': true, 'data-tempgroup': true, id: getNextId() },
-        element: 'g',
-      });
-
-      // Move to direct under svgcontent to avoid group under invisible layer
-      const svgcontent = document.getElementById('svgcontent');
-
-      svgcontent.appendChild(g);
-    }
-
-    // now move all children into the group
-    const len = selectedElements.length;
-
-    for (let i = 0; i < len; i++) {
-      if (hasAlreadyTempGroup && i === 0) {
-        continue;
-      }
-
-      let elem = selectedElements[i];
-
-      if (elem == null) {
-        continue;
-      }
-
-      if (elem.parentNode && elem.parentNode.tagName === 'a' && elem.parentNode.childNodes.length === 1) {
-        elem = elem.parentNode;
-      }
-
-      if (elem === tempGroup || elem.getAttribute('data-tempgroup') === 'true') {
-        while (elem.childNodes.length > 0) {
-          g.appendChild(elem.childNodes[0]);
-        }
-
-        elem.remove();
-      } else {
-        const originalLayer = LayerHelper.getObjectLayer(elem);
-
-        if (originalLayer && originalLayer.title) {
-          const title = originalLayer.title;
-
-          $(elem).attr('data-original-layer', title);
-
-          if (elem.nextSibling) {
-            $(elem).attr('data-next-sibling', elem.nextSibling.id);
-          }
-        }
-
-        g.appendChild(elem);
-      }
-
-      if (['image', 'use'].includes(elem.tagName)) {
-        const imageBorder = svgdoc.createElementNS(NS.SVG, 'rect');
-
-        if (elem.tagName === 'image') {
-          svgedit.utilities.assignAttributes(imageBorder, {
-            height: elem.getAttribute('height'),
-            transform: elem.getAttribute('transform') || '',
-            width: elem.getAttribute('width'),
-            x: elem.getAttribute('x') || 0,
-            y: elem.getAttribute('y') || 0,
-          });
-        } else if (elem.tagName === 'use') {
-          const realLocation = getBBox(elem, { ignoreTransform: true });
-
-          svgedit.utilities.assignAttributes(imageBorder, {
-            height: realLocation.height,
-            transform: elem.getAttribute('transform') || '',
-            width: realLocation.width,
-            x: realLocation.x,
-            y: realLocation.y,
-          });
-        }
-
-        svgedit.utilities.assignAttributes(imageBorder, {
-          'data-imageborder': true,
-          fill: 'none',
-          stroke: 'none',
-          style: 'pointer-events:none',
-          'vector-effect': 'non-scaling-stroke',
-        });
-
-        g.appendChild(imageBorder);
-      }
-    }
-
-    if (hasAlreadyTempGroup) {
-      tempGroup = null;
-    }
-
-    // update selection
-    const layers = selectedElements
-      .flatMap((elem) =>
-        elem.getAttribute('data-tempgroup') === 'true' ? selectedLayers : LayerHelper.getObjectLayer(elem)?.title,
-      )
-      .filter(Boolean);
-
-    // set the newst added layer as currentLayer
-    layerManager.setCurrentLayer(layers[0]);
-    // the uniq process is performed `here` to avoid duplicate layer in layer panel,
-    // and remain the selected layers contains information if there are multiple elements in same layer
-    useLayerStore.getState().setSelectedLayers([...new Set(layers)]);
-
-    selectedLayers = layers;
-
-    selectOnly([g], true);
-    tempGroup = g;
-
-    console.log('temp group created');
-
-    return g;
-  };
-
-  /**
-   * remove elemt from temp group
-   * @param {Element} elem element to remove
-   */
-  this.removeFromTempGroup = (elem: Element) => {
-    if (!tempGroup || !tempGroup.contains(elem)) {
-      return;
-    }
-
-    const originalLayerName = elem.getAttribute('data-original-layer')!;
-    const originalLayer = layerManager.getLayerElementByName(originalLayerName);
-    const currentLayer = layerManager.getCurrentLayerElement()!;
-    const targetLayer = originalLayer || currentLayer;
-
-    // explicitly remove one element from the temp group layers
-    const idx = selectedLayers.indexOf(originalLayerName);
-
-    if (idx >= 0) {
-      selectedLayers.splice(idx, 1);
-    }
-
-    // set the current layer from the remaining layers
-    layerManager.setCurrentLayer(selectedLayers[0]);
-    useLayerStore.getState().setSelectedLayers([...new Set(selectedLayers)]);
-
-    if (elem.nextSibling && (elem.nextSibling as Element).getAttribute('data-imageborder') === 'true') {
-      elem.nextSibling.remove();
-    }
-
-    let nextSiblingId = elem.getAttribute('data-next-sibling');
-
-    if (nextSiblingId) {
-      nextSiblingId = nextSiblingId.replace('#', '\\#');
-
-      const nextSibling = targetLayer.querySelector(`#${nextSiblingId}`);
-
-      if (nextSibling) {
-        targetLayer.insertBefore(elem, nextSibling);
-      } else {
-        targetLayer.appendChild(elem);
-      }
-
-      elem.removeAttribute('data-next-sibling');
-    } else {
-      targetLayer.appendChild(elem);
-    }
-
-    updateElementColor(elem);
-
-    if (tempGroup.childNodes.length > 1) {
-      selectorManager.requestSelector(tempGroup).resize();
-      svgEditor.updateContextPanel();
-    } else if (tempGroup.childNodes.length === 1) {
-      const lastElem = tempGroup.firstChild;
-
-      this.ungroupTempGroup();
-      this.selectOnly([lastElem], true);
-    } else {
-      console.warn('Removing last child from temp group. This should not happen, should find out why');
-      this.ungroupTempGroup();
-    }
-  };
-
-  this.ungroupAllTempGroup = function () {
-    const allTempGroups = Array.from(document.querySelectorAll('[data-tempgroup="true"]'));
-
-    allTempGroups.forEach((g) => {
-      this.ungroupTempGroup(g);
-    });
-  };
-
-  // Function: ungroupTempGroup
-  // Unwraps all the elements in a selected group (g) element. This requires
-  // significant recalculations to apply group's transforms, etc to its children
-  this.ungroupTempGroup = function (elem = null) {
-    let g = elem || selectedElements[0] || tempGroup;
-
-    if (!g) {
-      return;
-    }
-
-    // Look for parent "a"
-    if (g.tagName === 'g' || g.tagName === 'a') {
-      const batchCmd = new history.BatchCommand('Ungroup Temp Group');
-      const cmd = pushGroupProperties(g, true);
-
-      if (cmd) {
-        batchCmd.addSubCommand(cmd);
-      }
-
-      var parent = g.parentNode;
-      var children = Array.from({ length: g.childNodes.length });
-
-      var i = 0;
-
-      while (g.lastChild) {
-        const elem = g.lastChild as Element;
-        var oldParent = elem.parentNode;
-
-        if (elem.getAttribute('data-imageborder') === 'true') {
-          elem.remove();
-          continue;
-        }
-
-        // Remove child title elements
-        if (elem.tagName === 'title') {
-          oldParent!.removeChild(elem);
-          continue;
-        }
-
-        const originalLayer = layerManager.getLayerElementByName(elem.getAttribute('data-original-layer')!);
-        const currentLayer = layerManager.getCurrentLayerElement()!;
-        const targetLayer = originalLayer || currentLayer;
-        let nextSiblingId = elem.getAttribute('data-next-sibling');
-
-        if (nextSiblingId) {
-          nextSiblingId = nextSiblingId.replace('#', '\\#');
-
-          const nextSibling = targetLayer.querySelector(`#${nextSiblingId}`);
-
-          if (nextSibling) {
-            targetLayer.insertBefore(elem, nextSibling);
-          } else {
-            targetLayer.appendChild(elem);
-          }
-
-          elem.removeAttribute('data-next-sibling');
-        } else {
-          targetLayer.appendChild(elem);
-        }
-
-        updateElementColor(elem as SVGElement);
-
-        children[i++] = elem;
-      }
-
-      if (!batchCmd.isEmpty()) {
-        addCommandToHistory(batchCmd);
-      }
-
-      tempGroup = null;
-      g = parent.removeChild(g);
-      // remove the group from the selection
-      clearSelection();
-    }
-
-    return children;
-  };
-
-  this.getTempGroup = () => tempGroup;
-
   // Function: moveUpSelectedElement
   // Move selected element up in layer
   this.moveUpSelectedElement = function () {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    const selected = selectedElements[0];
+    const selected = selectionManager.getSelectedElements(true)[0];
 
     if (selected != null) {
       let t = selected;
-      const oldParent = t.parentNode;
+      const oldParent = t.parentNode!;
       const oldNextSibling = t.nextSibling;
       let nextSibling = t.nextSibling;
 
       if (nextSibling) {
         nextSibling = nextSibling.nextSibling;
-        t = t.parentNode.insertBefore(t, nextSibling);
+        t = t.parentNode!.insertBefore(t, nextSibling);
 
         // If the element actually moved position, add the command and fire the changed
         // event handler.
@@ -4618,22 +3297,16 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Function: moveDownSelectedElement
   // Move selected element back in layer
   this.moveDownSelectedElement = function () {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    const selected = selectedElements[0];
+    const selected = selectionManager.getSelectedElements(true)[0];
 
     if (selected != null) {
       let t = selected;
-      const oldParent = t.parentNode;
+      const oldParent = t.parentNode!;
       const oldNextSibling = t.nextSibling;
       const prevSibling = t.previousSibling;
 
       if (prevSibling && !CanvasElements.defElems.includes(prevSibling.tagName)) {
-        t = t.parentNode.insertBefore(t, prevSibling);
+        t = t.parentNode!.insertBefore(t, prevSibling);
 
         // If the element actually moved position, add the command and fire the changed
         // event handler.
@@ -4651,31 +3324,25 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // Parameters:
   // dir - String that's either 'top' or 'bottom'
   this.moveTopBottomSelected = function (dir) {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    var selected = selectedElements[0];
+    const selected = selectionManager.getSelectedElements(true)[0];
 
     if (!selected) {
       return;
     }
 
     let t = selected;
-    const oldParent = t.parentNode;
+    const oldParent = t.parentNode!;
     const oldNextSibling = t.nextSibling;
 
     if (dir === 'bottom') {
-      let firstChild = t.parentNode.firstChild;
+      let firstChild = t.parentNode!.firstChild;
 
       while (CanvasElements.defElems.includes(firstChild.tagName)) {
         firstChild = firstChild.nextSibling;
       }
-      t = t.parentNode.insertBefore(t, firstChild);
+      t = t.parentNode!.insertBefore(t, firstChild);
     } else {
-      t = t.parentNode.appendChild(t);
+      t = t.parentNode!.appendChild(t);
     }
 
     if (oldNextSibling !== t.nextSibling) {
@@ -4698,35 +3365,29 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.distHori = (isSubCmd) => {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    const realSelectedElements = selectedElements.filter((e) => e);
-    const len = realSelectedElements.length;
+    const selectedElements = selectionManager.getSelectedElements(true);
+    const len = selectedElements.length;
 
     if (len < 3) {
-      this.tempGroupSelectedElements();
+      selectionManager.tempGroupSelectedElements();
 
       return;
     }
 
     const batchCmd = new history.BatchCommand('Dist Hori');
 
-    realSelectedElements.sort((a, b) => {
+    selectedElements.sort((a, b) => {
       const xa = this.getCenter(a).x;
       const xb = this.getCenter(b).x;
 
       return xa - xb;
     });
 
-    const minX = this.getCenter(realSelectedElements[0]).x;
-    const maxX = this.getCenter(realSelectedElements[len - 1]).x;
+    const minX = this.getCenter(selectedElements[0]).x;
+    const maxX = this.getCenter(selectedElements[len - 1]).x;
 
     if (maxX === minX) {
-      this.tempGroupSelectedElements();
+      selectionManager.tempGroupSelectedElements();
 
       return;
     }
@@ -4734,8 +3395,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const dx = (maxX - minX) / (len - 1);
 
     for (let i = 1; i < len - 1; i++) {
-      const x = this.getCenter(realSelectedElements[i]).x;
-      const cmd = moveElements([minX + dx * i - x], [0], [realSelectedElements[i]], false);
+      const x = this.getCenter(selectedElements[i]).x;
+      const cmd = moveElements([minX + dx * i - x], [0], [selectedElements[i]], false);
 
       if (cmd && !cmd.isEmpty()) {
         batchCmd.addSubCommand(cmd);
@@ -4746,41 +3407,35 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       addCommandToHistory(batchCmd);
     }
 
-    this.tempGroupSelectedElements();
+    selectionManager.tempGroupSelectedElements();
 
     return batchCmd;
   };
 
   this.distVert = (isSubCmd) => {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    const realSelectedElements = selectedElements.filter((e) => e);
-    const len = realSelectedElements.length;
+    const selectedElements = selectionManager.getSelectedElements(true);
+    const len = selectedElements.length;
 
     if (len < 3) {
-      this.tempGroupSelectedElements();
+      selectionManager.tempGroupSelectedElements();
 
       return;
     }
 
     const batchCmd = new history.BatchCommand('Dist Verti');
 
-    realSelectedElements.sort((a, b) => {
+    selectedElements.sort((a, b) => {
       const ya = this.getCenter(a).y;
       const yb = this.getCenter(b).y;
 
       return ya - yb;
     });
 
-    const minY = this.getCenter(realSelectedElements[0]).y;
-    const maxY = this.getCenter(realSelectedElements[len - 1]).y;
+    const minY = this.getCenter(selectedElements[0]).y;
+    const maxY = this.getCenter(selectedElements[len - 1]).y;
 
     if (maxY === minY) {
-      this.tempGroupSelectedElements();
+      selectionManager.tempGroupSelectedElements();
 
       return;
     }
@@ -4788,8 +3443,8 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const dy = (maxY - minY) / (len - 1);
 
     for (let i = 1; i < len - 1; i++) {
-      const y = this.getCenter(realSelectedElements[i]).y;
-      const cmd = moveElements([0], [minY + dy * i - y], [realSelectedElements[i]], false);
+      const y = this.getCenter(selectedElements[i]).y;
+      const cmd = moveElements([0], [minY + dy * i - y], [selectedElements[i]], false);
 
       if (cmd && !cmd.isEmpty()) {
         batchCmd.addSubCommand(cmd);
@@ -4800,17 +3455,13 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       addCommandToHistory(batchCmd);
     }
 
-    this.tempGroupSelectedElements();
+    selectionManager.tempGroupSelectedElements();
 
     return batchCmd;
   };
 
   this.distEven = function () {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
+    const selectedElements = selectionManager.getSelectedElements(true);
 
     const centerXs = [];
     const centerYs = [];
@@ -4823,20 +3474,19 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     let indexMaxX = -1;
     let indexMaxY = -1;
 
-    const realSelectedElements = selectedElements.filter((e) => e);
-    const len = realSelectedElements.length;
+    const len = selectedElements.length;
 
     if (len < 3) {
       return;
     }
 
     for (let i = 0; i < len; i += 1) {
-      if (realSelectedElements[i] == null) {
+      if (selectedElements[i] == null) {
         console.error('distributing null');
         break;
       }
 
-      const elem = realSelectedElements[i];
+      const elem = selectedElements[i];
 
       const center = this.getCenter(elem);
 
@@ -4894,12 +3544,12 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       }
 
       if (i < len) {
-        this.moveElemPosition(startX + dx * j - centerXs[i], startY + dy * j - centerYs[i], realSelectedElements[i]);
+        this.moveElemPosition(startX + dx * j - centerXs[i], startY + dy * j - centerYs[i], selectedElements[i]);
       } else {
         this.moveElemPosition(
           startX + dx * j - centerXs[i - len],
           startY + dy * j - centerYs[i - len],
-          realSelectedElements[i - len],
+          selectedElements[i - len],
         );
       }
 
@@ -4908,18 +3558,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.flipSelectedElements = async function (horizon = 1, vertical = 1) {
-    let len = selectedElements.length;
-
-    for (let i = 0; i < selectedElements.length; ++i) {
-      if (!selectedElements[i]) {
-        len = i;
-        break;
-      }
-    }
-
+    const selectedElements = selectionManager.getSelectedElements();
     const batchCmd = new history.BatchCommand('Flip Elements');
 
-    for (let i = 0; i < len; ++i) {
+    for (let i = 0; i < selectedElements.length; ++i) {
       const elem = selectedElements[i];
       const bbox = getBBox(elem);
       const center = { x: bbox.x + bbox.width / 2, y: bbox.y + bbox.height / 2 };
@@ -4929,7 +3571,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       startTransform = elem.getAttribute('transform'); // maybe not need
 
       let cmd;
-      const stack: Array<{ elem?: Element; originalAngle?: number }> = [{ elem }];
+      const stack: Array<{ elem: SVGElement; originalAngle?: number }> = [{ elem }];
 
       while (stack.length > 0) {
         const { elem: topElem, originalAngle } = stack.pop()!;
@@ -4941,12 +3583,10 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             batchCmd.addSubCommand(cmd);
           }
         } else if (originalAngle == null) {
-          const angle = svgedit.utilities.getRotationAngle(topElem);
+          const angle = getRotationAngle(topElem);
 
           if (angle !== 0) {
-            canvas.undoMgr.beginUndoableChange('transform', [topElem]);
-            canvas.setRotationAngle(0, true, topElem);
-            cmd = canvas.undoMgr.finishUndoableChange();
+            setRotationAngle(topElem, 0, { parentCmd: batchCmd });
 
             if (cmd && !cmd.isEmpty()) {
               batchCmd.addSubCommand(cmd);
@@ -4974,16 +3614,16 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             y = (-b * x + a * y - a * f + b * e) / delta;
           }
           centers.push({ x, y });
-          topElem.childNodes.forEach((e: Element) => {
-            stack.push({ elem: e });
+          topElem.childNodes.forEach((elem) => {
+            stack.push({ elem: elem as SVGElement });
           });
         } else {
           centers.pop();
-          canvas.setRotationAngle(-originalAngle, true, topElem);
+          setRotationAngle(topElem, -originalAngle, { addToHistory: false });
         }
       }
       selectorManager.requestSelector(elem)?.resize();
-      selectorManager.requestSelector(elem)?.show(len === 1);
+      selectorManager.requestSelector(elem)?.show(selectedElements.length === 1);
       svgEditor.updateContextPanel();
     }
     addCommandToHistory(batchCmd);
@@ -4995,9 +3635,9 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
     const angle = svgedit.utilities.getRotationAngle(elem);
 
     canvas.undoMgr.beginUndoableChange('transform', [elem]);
-    canvas.setRotationAngle(0, true, elem);
+    setRotationAngle(elem, 0, { addToHistory: false });
     svgedit.recalculate.recalculateDimensions(elem);
-    canvas.setRotationAngle(-angle, true, elem);
+    setRotationAngle(elem, -angle, { addToHistory: false });
 
     let cmd = canvas.undoMgr.finishUndoableChange();
 
@@ -5108,33 +3748,19 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // relative_to - String that must be one of the following:
   // "selected", "largest", "smallest", "page"
   this.alignSelectedElements = function (type, relativeTo) {
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
+    const bboxes = [];
+    let minx = Number.MAX_VALUE;
+    let maxx = Number.MIN_VALUE;
+    let miny = Number.MAX_VALUE;
+    let maxy = Number.MIN_VALUE;
+    let curwidth = Number.MIN_VALUE;
+    let curheight = Number.MIN_VALUE;
 
-      this.selectOnly(children, false);
-    }
+    const selectedElements = selectionManager.getSelectedElements(true);
 
-    var i;
-    var elem;
-    var bboxes = [];
-    var minx = Number.MAX_VALUE;
-    var maxx = Number.MIN_VALUE;
-    var miny = Number.MAX_VALUE;
-    var maxy = Number.MIN_VALUE;
-    var curwidth = Number.MIN_VALUE;
-    var curheight = Number.MIN_VALUE;
-    var len = selectedElements.length;
+    for (let i = 0; i < selectedElements.length; ++i) {
+      const elem = selectedElements[i];
 
-    if (!len) {
-      return;
-    }
-
-    for (i = 0; i < len; ++i) {
-      if (selectedElements[i] == null) {
-        break;
-      }
-
-      elem = selectedElements[i];
       bboxes[i] = getBBox(elem, { ignoreRotation: false, withStroke: true });
 
       // now bbox is axis-aligned and handles rotation
@@ -5203,17 +3829,11 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
       maxy = maxY;
     }
 
-    var dx = new Array(len);
-    var dy = new Array(len);
+    var dx = new Array(selectedElements.length);
+    var dy = new Array(selectedElements.length);
 
-    for (i = 0; i < len; ++i) {
-      if (selectedElements[i] == null) {
-        break;
-      }
-
-      elem = selectedElements[i];
-
-      var bbox = bboxes[i];
+    for (let i = 0; i < selectedElements.length; ++i) {
+      const bbox = bboxes[i];
 
       dx[i] = 0;
       dy[i] = 0;
@@ -5242,55 +3862,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   // Group: Additional editor tools
-
-  // Function: cycleElement
-  // Select the next/previous element within the current layer
-  //
-  // Parameters:
-  // next - Boolean where true = next and false = previous element
-  this.cycleElement = function (next) {
-    var num;
-
-    if (tempGroup) {
-      const children = this.ungroupTempGroup();
-
-      this.selectOnly(children, false);
-    }
-
-    var cur_elem = selectedElements[0];
-    var elem = false;
-    var all_elems = getVisibleElements(current_group || layerManager.getCurrentLayerElement());
-
-    if (!all_elems.length) {
-      return;
-    }
-
-    if (cur_elem == null) {
-      num = next ? all_elems.length - 1 : 0;
-      elem = all_elems[num];
-    } else {
-      var i = all_elems.length;
-
-      while (i--) {
-        if (all_elems[i] === cur_elem) {
-          num = next ? i - 1 : i + 1;
-
-          if (num >= all_elems.length) {
-            num = 0;
-          } else if (num < 0) {
-            num = all_elems.length - 1;
-          }
-
-          elem = all_elems[num];
-          break;
-        }
-      }
-    }
-
-    selectOnly([elem], true);
-    call('selected', selectedElements);
-  };
-
   this.clear();
 
   this.moveElemPosition = function (dx, dy, elem) {
@@ -5354,7 +3925,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   };
 
   this.setSvgElemPosition = function (para, val, elem?, addToHistory = true) {
-    const selected = elem || selectedElements[0];
+    const selected = elem || selectionManager.getSelectedElements()[0];
     const bbox = getBBox(selected);
     let dx = 0;
     let dy = 0;
@@ -5388,7 +3959,7 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
   // refer to resize behavior in mouseup mousemove mousedown
   this.setSvgElemSize = function (para: string, val: number, addToHistory = false) {
     const batchCmd = new history.BatchCommand('set size');
-    const selected = selectedElements[0];
+    const selected = selectionManager.getSelectedElements()[0];
 
     if (!selected) return;
 
@@ -5475,7 +4046,6 @@ export default $.SvgCanvas = function (container: SVGElement, config: ISVGConfig
             return getCurrentDrawing().copyElem(elem);
           },
           ffClone,
-          findDuplicateGradient,
           getId,
           getNextId,
           InsertElementCommand,

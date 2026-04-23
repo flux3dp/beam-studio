@@ -58,11 +58,6 @@ describe('group tools', () => {
     selectAll();
     cy.get('button#group').click();
     cy.getElementTitle().should('have.text', 'Layer 1 > Group');
-    cy.window().then((win) => {
-      const el = win.eval('svgCanvas.getSelectedElems()');
-      cy.get(el).should('length', '1');
-      cy.get(el).should('id', 'svg_5');
-    });
   });
 
   it('ungroup', () => {
@@ -72,10 +67,7 @@ describe('group tools', () => {
     cy.getElementTitle().should('have.text', 'Layer 1 > Group');
     cy.get('button#ungroup').click();
     cy.clickToolBtn('Cursor');
-    cy.window().then((win) => {
-      const el = win.eval('svgCanvas.getSelectedElems()');
-      cy.get(el).should('length', '0');
-    });
+    cy.contains('No Selection').should('exist');
     cy.get('#svg_1').should('have.attr', 'data-original-layer').and('eq', 'Layer 1');
     cy.get('#svg_2').should('have.attr', 'data-original-layer').and('eq', 'Layer 1');
     cy.get('#svg_3').should('have.attr', 'data-original-layer').and('eq', 'Layer 1');
@@ -86,11 +78,6 @@ describe('group tools', () => {
     selectAll();
     cy.get('button#group').click();
     cy.getElementTitle().should('have.text', 'Layer 3 > Group');
-    cy.window().then((win) => {
-      const el = win.eval('svgCanvas.getSelectedElems()');
-      cy.get(el).should('length', '1');
-      cy.get(el).should('id', 'svg_5');
-    });
   });
 
   it('ungroup other layer', () => {
@@ -100,10 +87,7 @@ describe('group tools', () => {
     cy.getElementTitle().should('have.text', 'Layer 3 > Group');
     cy.get('button#ungroup').click();
     cy.clickToolBtn('Cursor');
-    cy.window().then((win) => {
-      const el = win.eval('svgCanvas.getSelectedElems()');
-      cy.get(el).should('length', '0');
-    });
+    cy.contains('No Selection').should('exist');
     cy.get('#svg_1').should('have.attr', 'data-original-layer').and('eq', 'Layer 1');
     cy.get('#svg_2').should('have.attr', 'data-original-layer').and('eq', 'Layer 2');
     cy.get('#svg_3').should('have.attr', 'data-original-layer').and('eq', 'Layer 3');

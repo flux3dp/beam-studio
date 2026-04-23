@@ -1,12 +1,5 @@
+import selectionManager from '@core/app/svgedit/selection';
 import imageEdit from '@core/helpers/image-edit';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 const handleFinish = (
   element: SVGImageElement,
@@ -17,7 +10,7 @@ const handleFinish = (
   const changes: Record<string, number | string> = { origImage: src, 'xlink:href': base64, ...attrs };
 
   imageEdit.addBatchCommand('Image Edit', element, changes);
-  svgCanvas.selectOnly([element], true);
+  selectionManager.selectOnly([element], true);
 };
 
 export default handleFinish;

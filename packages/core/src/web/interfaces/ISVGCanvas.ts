@@ -28,7 +28,6 @@ export default interface ISVGCanvas {
   addCommandToHistory: (command: ICommand) => void;
   addExtension: any;
   addSvgElementFromJson<T = SVGElement>(obj: { attr: any; curStyles?: boolean; element: string }): T;
-  addToSelection: (elemsToAdd: SVGElement[], showGrips?: boolean, noCall?: boolean) => void;
   alignSelectedElements(
     type: 'b' | 'c' | 'l' | 'm' | 'r' | 't',
     relativeTo: 'largest' | 'page' | 'selected' | 'smallest',
@@ -44,6 +43,7 @@ export default interface ISVGCanvas {
   clear: () => void;
   clearAlignLines: () => void;
   clearBoundingBox: () => void;
+  /** @deprecated use selectionManager.clearSelection instead, keep for ext-polygon.js */
   clearSelection: (noCall?: boolean) => void;
   collectAlignPoints: () => void;
   convertGradients: (elem: Element) => void;
@@ -65,16 +65,13 @@ export default interface ISVGCanvas {
   events: EventEmitter;
   findMatchedAlignPoints: (x: number, y: number) => Record<'farthest' | 'nearest', Record<'x' | 'y', IPoint | null>>;
   flipSelectedElements: (horizon?: number, vertical?: number) => Promise<void>;
-  getColor: (key: string) => string;
   getContainer: () => SVGElement;
   getContentElem: () => SVGGElement;
   getCurrentConfig: () => ISVGConfig;
   getCurrentDrawing: () => ISVGDrawing;
-  getCurrentGroup: () => SVGGElement;
   getCurrentResizeMode: () => string;
   getCurrentShape: () => IShapeStyle;
   getCurrentZoom: () => number; // New getter for current_zoom
-  getDocumentTitle: () => string;
   getHref: (elem: SVGElement) => string;
   getId: () => string;
   getImageSource: () => Promise<Record<string, ArrayBuffer>>;
@@ -82,23 +79,16 @@ export default interface ISVGCanvas {
   getMode: () => string;
   getMouseTarget: (evt: MouseEvent, allowTempGroup?: boolean) => SVGElement;
   getNextId: () => string;
-  getPaintOpacity: (pickerType: string) => number;
   getRefElem(refString: string): Element;
   getRoot: () => SVGSVGElement;
   getRootScreenMatrix: () => SVGMatrix;
-  /**
-   * @deprecated use svgedit/transfrom/rotation.ts#getRotationAngle instead
-   */
-  getRotationAngle(elem: Element): number;
   getRubberBox: () => SVGRectElement;
   getSelectedElementsAlignPoints: () => IPoint[];
+  /** @deprecated use selectionManager.getSelectedElements instead, keep for ext-polygon.js */
   getSelectedElems: (ungroupTempGroup?: boolean) => SVGElement[];
-  getSelectedWithoutTempGroup: () => SVGElement[];
   getStarted: () => boolean;
   getStartTransform: () => any;
   getSvgString: (opts?: { fixTopExpansion?: boolean; unit?: Units }) => string;
-  getTempGroup: () => SVGGElement;
-  getTitle: () => string;
   getVisibleElementsAndBBoxes: (elems?: SVGElement[]) => Array<{ bbox: IRect; elem: Element }>;
   getZoom: () => number; // Old getter for current_zoom
   groupSelectedElements: (isSubCmd?: boolean) => void | { command: BaseHistoryCommand; group: SVGGElement };
@@ -106,11 +96,9 @@ export default interface ISVGCanvas {
   handleGenerateSensorArea: (evt: MouseEvent) => void;
   isAutoAlign: boolean;
   isElemFillable: (elem: Element) => boolean;
-  leaveContext: () => void;
   moveDownSelectedElement(): void;
   moveTopBottomSelected(direction: 'bottom' | 'top'): void;
   moveUpSelectedElement(): void;
-  multiSelect(elements: SVGElement[]): void;
   opacityAnimation: SVGAnimateElement;
   open: () => void;
   pathActions: IPathActions;
@@ -120,8 +108,6 @@ export default interface ISVGCanvas {
   ready: (arg0: () => void) => any;
   recalculateAllSelectedDimensions: (isSubCommand?: boolean) => IBatchCommand;
   removeAlignEdges: (n: number) => void;
-  removeFromSelection: (elems: SVGElement[]) => void;
-  removeFromTempGroup: (elem: SVGElement) => void;
   removeUnusedDefs: () => void;
   renameCurrentLayer: (layerName: string) => void;
   reorientGrads: (elem: SVGElement, matrix: SVGMatrix) => void;
@@ -129,15 +115,11 @@ export default interface ISVGCanvas {
   resetOrientation: (elem: SVGElement) => void;
   runExtensions: (eventName: string, args?: any, returnArray?: boolean) => any;
   selectAll: () => void;
+  /** @deprecated use selectionManager.selectOnly instead, keep for ext-polygon.js */
   selectOnly: (elems: SVGElement[], showGrips?: boolean) => void;
   selectorManager: SelectorManager;
   sensorAreaInfo: { dx: number; dy: number; elem: SVGElement; x: number; y: number };
-  setBlur(blurValue: number, shouldComplete: boolean): void;
-  setBlurNoUndo(blurValue: number): void;
-  setColor: (pickerType: string, color: string, preventUndo?: boolean) => void;
-  setConfig(curConfig: ISVGConfig): void;
   setContentElem: (content: Element) => void;
-  setContext(element: Element): void;
   setCurrentResizeMode: (mode: string) => void;
   setCurrentStyleProperties: (key: string, val: number | string) => void;
   setElemsFill: (elems: Element[]) => void;
@@ -145,30 +127,21 @@ export default interface ISVGCanvas {
   setHref: (elem: SVGElement | SVGImageElement, href: string) => void;
   setLastClickPoint: (point: { x: number; y: number }) => void;
   setMode: (mode: string) => void;
-  setOpacity: (opacity: number) => void;
-  setPaintOpacity: (pickerType: string, opacity: number, preventUndo?: boolean) => void;
   setRootScreenMatrix: (matrix: SVGMatrix) => void;
-  setRotationAngle: (val: number, preventUndo: boolean, elem?: SVGElement) => void;
-  setStrokeAttr(attrKey: string, value: string): void;
-  setStrokeWidth(width: number): void;
   setSvgElemPosition: (para: 'x' | 'y', val: number, elem?: SVGElement, addToHistory?: boolean) => IBatchCommand;
   setSvgElemSize: (type: 'height' | 'rx' | 'ry' | 'width', val: number, addToHistory?: boolean) => IBatchCommand | null;
   setSvgString: (content: string) => boolean;
-  simplifyPath: (elements?: SVGAElement[]) => void;
-  sortTempGroupByLayer: () => void;
+  simplifyPath: (elements?: SVGElement[]) => void;
   spaceKey: boolean;
   svgToString(elem: Element, indent: number, units?: Units): string;
-  tempGroupSelectedElements: () => SVGElement[];
   textActions: typeof textActions;
   toggleAutoAlign: () => boolean;
   undoMgr: IUndoManager;
   ungroupSelectedElement(): void;
-  ungroupTempGroup(elem?: SVGElement): SVGElement[];
   uniquifyElems: (elem: SVGElement) => void;
   unsafeAccess: {
     setCurrentMode: (v: string) => void;
     setRubberBox: (v: SVGRectElement) => void;
-    setSelectedElements: (elems: SVGElement[]) => void;
     setStarted: (v: boolean) => void;
     setStartTransform: (transform: any) => void;
   };

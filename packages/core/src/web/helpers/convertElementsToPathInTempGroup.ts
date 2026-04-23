@@ -1,17 +1,10 @@
 import { partition } from 'remeda';
 
 import history from '@core/app/svgedit/history/history';
+import selectionManager from '@core/app/svgedit/selection';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { convertTextToPath } from './convertToPath';
-import { getSVGAsync } from './svg-editor-helper';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 export const convertElementsToPathInTempGroup = async ({
   element,
@@ -20,7 +13,7 @@ export const convertElementsToPathInTempGroup = async ({
   element: SVGGElement;
   parentCommand?: IBatchCommand;
 }): Promise<SVGElement[]> => {
-  if (element.getAttribute('data-tempgroup') !== 'true') {
+  if (!selectionManager.isTempGroup(element)) {
     console.error('Element is not a temporary group');
 
     return [];
@@ -34,7 +27,7 @@ export const convertElementsToPathInTempGroup = async ({
     return [element];
   }
 
-  svgCanvas.ungroupTempGroup(element);
+  selectionManager.ungroupTempGroup(element);
 
   const convertResult = await Promise.all(
     textList.map((child) =>
@@ -43,7 +36,7 @@ export const convertElementsToPathInTempGroup = async ({
   );
   const pathList = convertResult.map(({ path }) => path).filter((path): path is SVGPathElement => Boolean(path));
 
-  svgCanvas.selectOnly([...(otherList as SVGElement[]), ...pathList]);
+  selectionManager.multiSelect([...(otherList as SVGElement[]), ...pathList]);
 
-  return svgCanvas.tempGroupSelectedElements();
+  return selectionManager.getSelectedElements();
 };

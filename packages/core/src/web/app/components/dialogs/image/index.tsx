@@ -1,21 +1,13 @@
 import { addDialogComponent, isIdExist, popDialogById } from '@core/app/actions/dialog-controller';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
+import selectionManager from '@core/app/svgedit/selection';
 import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import Curve from './Curve';
 import RotaryWarped from './RotaryWarped';
 import Sharpen from './Sharpen';
 
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
-
 const getProps = () => {
-  const selectedElements = svgCanvas.getSelectedElems();
-  const [element] = selectedElements;
+  const element = selectionManager.getSelectedElements()[0];
 
   if (!element || element.tagName !== 'image') return;
 

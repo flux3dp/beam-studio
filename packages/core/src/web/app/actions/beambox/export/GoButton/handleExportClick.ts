@@ -4,25 +4,18 @@ import Dialog from '@core/app/actions/dialog-caller';
 import progressCaller from '@core/app/actions/progress-caller';
 import { getNextStepRequirement, handleNextStep } from '@core/app/components/tutorials/tutorialController';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
+import selectionManager from '@core/app/svgedit/selection';
 import textActions from '@core/app/svgedit/text/textactions';
 import checkDeviceStatus from '@core/helpers/check-device-status';
 import { checkBlockedSerial } from '@core/helpers/device/checkBlockedSerial';
 import getDevice from '@core/helpers/device/get-device';
 import promarkButtonHandler from '@core/helpers/device/promark/promark-button-handler';
 import { isCanvasEmpty } from '@core/helpers/layer/checkContent';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { ILang } from '@core/interfaces/ILang';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import { checkModuleCalibration } from './checkModuleCalibration';
 import { exportTask } from './exportTask';
 import { handleExportAlerts } from './handleExportAlerts';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 const isRelatedModalsExist = (): boolean => {
   const progressList = [
@@ -51,7 +44,7 @@ export const handleExportClick =
       promarkButtonHandler.setStatus('preparing');
       // remove all selected elements, to prevent the svg image resource not found
       textActions.clear();
-      svgCanvas.selectOnly([]);
+      selectionManager.clearSelection();
       canvasEvents.setSelectedElement(null);
 
       if (getNextStepRequirement() === TutorialConstants.SEND_FILE) handleNextStep();

@@ -1,16 +1,10 @@
 import history from '@core/app/svgedit/history/history';
 import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
+import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
+import selectionManager from '@core/app/svgedit/selection';
 import updateElementColor from '@core/helpers/color/updateElementColor';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const moveElementsToLayer = (layerName: string, elements: SVGElement[]): IBatchCommand | null => {
   const layer = layerManager.getLayerByName(layerName);
@@ -33,7 +27,7 @@ const moveElementsToLayer = (layerName: string, elements: SVGElement[]): IBatchC
     });
 
     const oldNextSibling = element.nextSibling;
-    const oldParent = element.parentNode;
+    const oldParent = element.parentNode!;
 
     layer.appendChildren([element]);
     updateElementColor(element);
@@ -44,20 +38,14 @@ const moveElementsToLayer = (layerName: string, elements: SVGElement[]): IBatchC
 };
 
 export const moveSelectedToLayer = (layerName: string): void => {
-  if (svgCanvas.getTempGroup()) {
-    const children = svgCanvas.ungroupTempGroup();
-
-    svgCanvas.selectOnly(children, false);
-  }
-
-  const selectedElements = svgCanvas.getSelectedElems();
+  const selectedElements = selectionManager.getSelectedElements(true);
   const batchCmd = moveElementsToLayer(layerName, selectedElements);
 
   if (batchCmd && !batchCmd.isEmpty()) {
-    svgCanvas.addCommandToHistory(batchCmd);
+    undoManager.addCommandToHistory(batchCmd);
   }
 
-  svgCanvas.tempGroupSelectedElements();
+  selectionManager.multiSelect(selectedElements);
 };
 
 export default moveElementsToLayer;

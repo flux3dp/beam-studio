@@ -14,6 +14,7 @@ import NS from '@core/app/constants/namespaces';
 import { getWorkarea } from '@core/app/constants/workarea-constants';
 import { useDocumentStore } from '@core/app/stores/documentStore';
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import selectionManager from '@core/app/svgedit/selection';
 import findDefs from '@core/app/svgedit/utils/findDef';
 import workareaManager from '@core/app/svgedit/workarea';
 import { getAutoFeeder } from '@core/helpers/addOn';
@@ -533,7 +534,7 @@ class FramingTaskManager extends EventEmitter {
       return this.taskCodeCache[type];
     }
 
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
 
     if (type === FramingType.Contour) {
       const taskCode = await fetchFramingTaskCode(false);
@@ -561,7 +562,7 @@ class FramingTaskManager extends EventEmitter {
       return this.taskCache[type].points;
     }
 
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
 
     if (type === FramingType.Framing || type === FramingType.RotateFraming) {
       const coords = await getCoords(true);

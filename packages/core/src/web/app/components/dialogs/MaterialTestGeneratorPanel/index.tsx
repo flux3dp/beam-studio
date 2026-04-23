@@ -12,6 +12,7 @@ import history from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import layerManager from '@core/app/svgedit/layer/layerManager';
 import createNewText from '@core/app/svgedit/text/createNewText';
+import { setRotationAngle } from '@core/app/svgedit/transform/rotation';
 import workareaManager from '@core/app/svgedit/workarea';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import updateElementColor from '@core/helpers/color/updateElementColor';
@@ -157,7 +158,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
       },
     );
 
-    svgCanvas.setRotationAngle(-90, true, colText);
+    setRotationAngle(colText, -90, { addToHistory: false });
 
     Array.from({ length: row.count.value }).forEach((_, index) => {
       const rowText = createNewText(
@@ -176,7 +177,7 @@ const MaterialTestGeneratorPanel = ({ onClose }: Props): React.JSX.Element => {
         },
       );
 
-      svgCanvas.setRotationAngle(90, true, rowText);
+      setRotationAngle(rowText, 90, { addToHistory: false });
     });
 
     Array.from({ length: column.count.value }).forEach((_, index) => {

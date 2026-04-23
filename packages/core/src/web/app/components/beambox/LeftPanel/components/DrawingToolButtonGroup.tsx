@@ -12,18 +12,11 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import { useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { setMouseMode } from '@core/app/stores/canvas/utils/mouseMode';
+import selectionManager from '@core/app/svgedit/selection';
 import { handlePreviewClick } from '@core/helpers/device/camera/previewMode';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from '../index.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync(({ Canvas }) => {
-  svgCanvas = Canvas;
-});
 
 type ToolButtonProps = {
   className?: string;
@@ -73,7 +66,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
       icon={icon}
       id={`left-${id}`}
       onClick={() => {
-        svgCanvas?.clearSelection();
+        selectionManager.clearSelection();
         onClick();
       }}
       showBadge={showBadge}
@@ -112,7 +105,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
             id: 'Text',
             label: t.label.text,
             onClick: () => {
-              svgCanvas?.clearSelection();
+              selectionManager.clearSelection();
               setMouseMode('text');
             },
             title: t.label.text,
@@ -122,7 +115,7 @@ const DrawingToolButtonGroup = ({ className }: { className: string }): React.JSX
             id: 'FitText',
             label: t.label.fit_text,
             onClick: () => {
-              svgCanvas?.clearSelection();
+              selectionManager.clearSelection();
               setMouseMode('fit-text');
             },
           },

@@ -692,3 +692,9 @@ export default {
   getSelectorManager,
   init,
 };
+
+export const resizeSelector = (element: Element) => {
+  const selectorManager = getSelectorManager();
+
+  selectorManager.requestSelector(element)?.resize();
+};

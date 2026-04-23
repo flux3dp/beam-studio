@@ -13,20 +13,13 @@ import LeftPanelIcons from '@core/app/icons/left-panel/LeftPanelIcons';
 import beamboxStore from '@core/app/stores/beambox-store';
 import { setCameraPreviewState, useCameraPreviewStore } from '@core/app/stores/cameraPreview';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
+import selectionManager from '@core/app/svgedit/selection';
 import { endPreviewMode, handlePreviewClick } from '@core/helpers/device/camera/previewMode';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import localeHelper from '@core/helpers/locale-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
-import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
 import styles from './PreviewFloatingBar.module.scss';
-
-let svgCanvas: ISVGCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 const Button = memo(
   ({
@@ -91,7 +84,7 @@ export const PreviewFloatingBar = memo((): ReactNode => {
 
   const startImageTrace = () => {
     endPreviewMode();
-    svgCanvas.clearSelection();
+    selectionManager.clearSelection();
     beamboxStore.emitShowCropper();
   };
 

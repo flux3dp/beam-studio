@@ -4,6 +4,7 @@ import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import type { IBatchCommand } from '@core/interfaces/IHistory';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 
+import selectionManager from '../../selection';
 import { getBBox } from '../../utils/getBBox';
 
 let svgCanvas: ISVGCanvas;
@@ -19,7 +20,7 @@ const postImportElement = async (elem: SVGElement, batchCmd: IBatchCommand) => {
   const { height, width } = getBBox(elem);
   const [newWidth, newHeight] = width > height ? [500, (height * 500) / width] : [(width * 500) / height, 500];
 
-  svgCanvas.selectOnly([elem]);
+  selectionManager.selectOnly([elem]);
   [
     svgCanvas.setSvgElemSize('width', newWidth),
     svgCanvas.setSvgElemSize('height', newHeight),
@@ -33,7 +34,7 @@ const postImportElement = async (elem: SVGElement, batchCmd: IBatchCommand) => {
   elem.setAttribute('data-ratiofixed', 'true');
   await disassembleUse([elem], { parentCmd: batchCmd, skipConfirm: true });
 
-  if (svgCanvas.getSelectedElems()[0].getAttribute('data-tempgroup')) {
+  if (selectionManager.isMultiSelecting) {
     const groupResult = svgCanvas.groupSelectedElements();
 
     if (groupResult) {
@@ -41,7 +42,7 @@ const postImportElement = async (elem: SVGElement, batchCmd: IBatchCommand) => {
     }
   }
 
-  updateElementColor(svgCanvas.getSelectedElems()[0]);
+  updateElementColor(selectionManager.getSelectedElements()[0]);
 };
 
 export default postImportElement;

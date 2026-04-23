@@ -57,6 +57,7 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
 
   const getDimensionValues = useCallback((response: { dimensionValues: any }, key?: DimensionKey) => {
     response.dimensionValues = key ? dimensionValues.current[key] : dimensionValues.current;
+    // console.log(dimensionValues.current);
   }, []);
 
   useEffect(() => {
@@ -68,6 +69,8 @@ export const ObjectPanelContextProvider = ({ children }: Props): React.JSX.Eleme
   }, [getDimensionValues]);
 
   const updateDimensionValues = useCallback((newValues: DimensionValues) => {
+    // console.trace('updateDimensionValues', newValues);
+
     dimensionValues.current = {
       ...dimensionValues.current,
       ...newValues,

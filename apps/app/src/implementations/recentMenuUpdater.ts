@@ -3,6 +3,7 @@ import AlertConstants from '@core/app/constants/alert-constants';
 import { MenuEvents } from '@core/app/constants/ipcEvents';
 import currentFileManager from '@core/app/svgedit/currentFileManager';
 import importBvg from '@core/app/svgedit/operations/import/importBvg';
+import selectionManager from '@core/app/svgedit/selection';
 import BeamFileHelper from '@core/helpers/beam-file-helper';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
@@ -44,7 +45,7 @@ const openRecentFiles = async (filePath: string): Promise<void> => {
       currentFileManager.setLocalFile(filePath);
       svgCanvas.updateRecentFiles(filePath);
       try {
-        svgCanvas.clearSelection();
+        selectionManager.clearSelection();
 
         const fetchPath = filePath.replaceAll('#', '%23');
 

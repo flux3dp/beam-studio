@@ -18,6 +18,7 @@ import { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
 import autoFit from '@core/app/svgedit/operations/autoFit';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
+import selectionManager from '@core/app/svgedit/selection';
 import textEdit from '@core/app/svgedit/text/textedit';
 import updateElementColor from '@core/helpers/color/updateElementColor';
 import { convertSvgToImage } from '@core/helpers/convertToImage';
@@ -230,7 +231,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           bbox,
           command,
           onClose: () => {
-            svgCanvas.clearSelection();
+            selectionManager.clearSelection();
           },
         });
       },
@@ -449,7 +450,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
             const { path, text } = textPathEdit.detachText(elem as SVGGElement);
 
             textEdit.renderText(text);
-            svgCanvas.multiSelect([text, path]);
+            selectionManager.multiSelect([text, path]);
           },
           <ActionPanelIcons.DecomposeTextpath />,
           <ActionPanelIcons.DecomposeTextpath />,
@@ -620,7 +621,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
           'create_textpath',
           lang.create_textpath,
           () => {
-            const elements = svgCanvas.ungroupTempGroup(elem);
+            const elements = selectionManager.ungroupTempGroup(elem);
             const textElements = elements.filter((el) => el.nodeName === 'text');
             const pathLikeElements = elements.filter((el) => CanvasElements.basicPaths.includes(el.nodeName));
             const pairCount = Math.min(textElements.length, pathLikeElements.length);
@@ -636,7 +637,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
 
               textPathEdit.attachTextToPath(textElements[i], path, { parentCmd: batchCommand });
               updateElementColor(textElements[i]);
-              resultGroups.push(svgCanvas.getSelectedElems()[0]);
+              resultGroups.push(selectionManager.getSelectedElements()[0]);
             }
 
             if (!batchCommand.isEmpty()) {
@@ -644,7 +645,7 @@ const ActionsPanel = ({ elem }: Props): React.JSX.Element => {
             }
 
             if (resultGroups.length > 0) {
-              resultGroups.length === 1 ? svgCanvas.selectOnly(resultGroups) : svgCanvas.multiSelect(resultGroups);
+              selectionManager.multiSelect(resultGroups);
             }
           },
           <ActionPanelIcons.CreateTextpath />,

@@ -1,15 +1,9 @@
 import { useGlobalPreferenceStore } from '@core/app/stores/globalPreferenceStore';
+import selectionManager from '@core/app/svgedit/selection';
 import { getLayerName } from '@core/helpers/layer/layer-helper';
-import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 
 import setElementsColor from './setElementsColor';
 import updateLayerColorFilter from './updateLayerColorFilter';
-
-let svgCanvas;
-
-getSVGAsync((globalSVG) => {
-  svgCanvas = globalSVG.Canvas;
-});
 
 // TODO: add test
 const updateLayerColor = async (layer: SVGGElement): Promise<void> => {
@@ -17,11 +11,10 @@ const updateLayerColor = async (layer: SVGGElement): Promise<void> => {
   const color = (useLayerColor ? layer.getAttribute('data-color') : '#000') ?? '#000';
   const isFullColor = layer.getAttribute('data-fullcolor') === '1';
   const elems = Array.from(layer.childNodes);
-  const tempGroup = svgCanvas.getTempGroup();
 
-  if (tempGroup) {
+  if (selectionManager.hasTempGroup()) {
     const layerName = getLayerName(layer);
-    const multiSelectedElems = tempGroup.querySelectorAll(`[data-original-layer="${layerName}"]`);
+    const multiSelectedElems = selectionManager.getElementsFromTempGroupByLayer(layerName);
 
     elems.push(...multiSelectedElems);
   }
