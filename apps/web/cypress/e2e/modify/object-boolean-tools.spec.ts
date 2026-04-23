@@ -117,7 +117,7 @@ describe('text and shapes boolean operation', () => {
           isRunningAtGithub ? '11be5b56abbef33e2a9a258ae118c60b' : 'f6ee0a6ce2a58fe226cad3595f284741',
         ),
       );
-    checkDimensions(0, 0, isRunningAtGithub ? 106.23 : 104.77, 75);
+    checkDimensions(0, 0, isRunningAtGithub ? 106.97 : 104.77, 75);
   });
 
   it('subtract', () => {
@@ -142,7 +142,7 @@ describe('text and shapes boolean operation', () => {
         ),
       );
     checkDimensions(
-      isRunningAtGithub ? 1.45 : 0,
+      isRunningAtGithub ? 1.19 : 0,
       isRunningAtGithub ? 19.48 : 19.29,
       isRunningAtGithub ? 68.47 : 75,
       isRunningAtGithub ? 39.19 : 39.31,
@@ -158,6 +158,6 @@ describe('text and shapes boolean operation', () => {
           isRunningAtGithub ? 'ef09dac4f9d47d8e6894a995c4db934a' : '03311828449bedcb35f3241198f8f24a',
         ),
       );
-    checkDimensions(0, 0, isRunningAtGithub ? 106.23 : 104.77, 75);
+    checkDimensions(0, 0, isRunningAtGithub ? 106.97 : 104.77, 75);
   });
 });

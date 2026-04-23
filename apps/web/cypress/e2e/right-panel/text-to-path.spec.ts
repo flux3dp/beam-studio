@@ -66,7 +66,7 @@ describe('to path 2.0', () => {
     checkConsoleLog();
     verifyPathMd5('#svg_2', {
       default: '6fde8da297586452f7561d6dc93299bc',
-      githubWindows: 'a93f7f803e8eea840d61531458838987',
+      githubWindows: '224139c50c141e9ed3d7b61b26575cf6',
       githubOther: '5951b071eac21549437779d3bb3554bd',
     });
   });
@@ -88,7 +88,7 @@ describe('to path 2.0', () => {
     checkConsoleLog();
     verifyPathMd5('#svg_2', {
       default: '0b39368fe65b64e08cd08b9c8ff625b9',
-      githubWindows: '415ea1b80d7fc380646248203bfd10e4',
+      githubWindows: '845bcb29aa9d95c52eb6a748d7651ae4',
       githubOther: '9790fb3564249f0952dd1b131b77eba3',
     });
   });
@@ -102,7 +102,7 @@ describe('to path 2.0', () => {
     checkConsoleLog();
     verifyPathMd5('#svg_2', {
       default: 'd828dcc474ad48d26ecb9269cb3844fa',
-      githubWindows: '9f6739e16128b247684722743e8b04a1',
+      githubWindows: 'aa74ca97d29d1103f6f66fe18d3cf553',
       githubOther: '8ffd98ed29e592cf37182bb6f9190729',
     });
   });

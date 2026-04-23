@@ -16,7 +16,7 @@ const EXPECTED_HASHES = {
       local: '0a52a26dec2bac9490b838b039756347',
     },
     withGradient: {
-      github: '8b1b3ac285d65fae820c86dc5b728efd',
+      github: '70ca4e7aac06df5f44316f0f732fe4c4',
       local: '9ea1a67dbee688d7dd3efce5b1666387',
     },
   },

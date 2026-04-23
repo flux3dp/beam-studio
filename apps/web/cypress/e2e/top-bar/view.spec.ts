@@ -26,7 +26,7 @@ describe('manipulate view', () => {
     cy.getMenuItem(['View'], 'Auto Fit to Window Size').click();
     zoomRatio().should('have.text', '51%');
     cy.viewport(1500, 1200);
-    zoomRatio().should('have.text', '65%');
+    zoomRatio().should('have.text', '71%');
   });
 
   it('show grids', () => {

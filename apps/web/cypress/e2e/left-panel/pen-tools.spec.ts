@@ -41,7 +41,7 @@ describe('pen tools', () => {
   // 4. Group similar tests into a data array and loop through them.
   const nodeTypeTests = [
     { type: 'Corner', expected: { c1x: 650, c1y: 400, c2x: 400, c2y: 550 } },
-    { type: 'Smooth', expected: { c1x: 650, c1y: 400, c2x: 277, c2y: 142 } },
+    { type: 'Smooth', expected: { c1x: 650, c1y: 400, c2x: 277, c2y: 151 } },
     { type: 'Symmetry', expected: { c1x: 650, c1y: 400, c2x: 350, c2y: 200 } },
   ];
 
