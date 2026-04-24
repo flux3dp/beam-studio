@@ -23,7 +23,6 @@ const requirement = {
   CLOUD: '1.5.0',
   DIODE_AND_AUTOFOCUS: '3.0.0',
   FAST_GRADIENT: '3.0.1',
-  HX2_S_CURVE: '6.2.5',
   JOB_ORIGIN: '4.3.5',
   LATEST_GHOST_FOR_WEB: '3.5.2',
   MAINTAIN_WITH_LINECHECK: '3.2.6',
@@ -46,22 +45,27 @@ const requirement = {
 export type RequirementKey = keyof typeof requirement;
 
 // 1.7.0 > 1.5.0 > 1.5b12 > 1.5a12
-export default (sourceVersion: string): { meetRequirement: (key: RequirementKey) => boolean } => {
+export default (
+  sourceVersion: string,
+): {
+  meetRequirement: (key: RequirementKey) => boolean;
+  meetVersion: (targetVersion: string) => boolean;
+} => {
   const currentVersion = sourceVersion.split('.');
-  const meetVersion = (targetVersion: string | string[]) => {
-    targetVersion = typeof targetVersion === 'string' ? targetVersion.split('.') : targetVersion;
+  const meetVersion = (targetVersion: string) => {
+    const targetVersions = targetVersion.split('.');
 
     // Compare first version number
-    if (Number.parseInt(targetVersion[0], 10) !== Number.parseInt(currentVersion[0], 10)) {
-      return Number.parseInt(targetVersion[0], 10) < Number.parseInt(currentVersion[0], 10);
+    if (Number.parseInt(targetVersions[0], 10) !== Number.parseInt(currentVersion[0], 10)) {
+      return Number.parseInt(targetVersions[0], 10) < Number.parseInt(currentVersion[0], 10);
     }
 
-    const targetMinorVersion = targetVersion[1].split(/[ab]/);
+    const targetMinorVersion = targetVersions[1].split(/[ab]/);
     const currentMinorVersion = currentVersion[1].split(/[ab]/);
 
     // Compare second version number - Adapt with 1.5b12 style.
     // Crashes when beta / alpha version number exceed 40000
-    if (Number.parseInt(targetVersion[1] || '0', 10) >= 40000) {
+    if (Number.parseInt(targetVersions[1] || '0', 10) >= 40000) {
       throw new Error('Second version number overflow, should be < 40000');
     }
 
@@ -74,11 +78,11 @@ export default (sourceVersion: string): { meetRequirement: (key: RequirementKey)
     let currentMinorScore =
       Number.parseInt(currentMinorVersion[0], 10) * 120000 - Number.parseInt(currentMinorVersion[1] || '0', 10);
 
-    if (targetVersion[1].includes('a')) {
+    if (targetVersions[1].includes('a')) {
       targetMinorScore -= 80000;
     } // Alpha Version => Score -80000
 
-    if (targetVersion[1].includes('b')) {
+    if (targetVersions[1].includes('b')) {
       targetMinorScore -= 40000;
     } // Beta Version => Score -40000
 
@@ -91,7 +95,7 @@ export default (sourceVersion: string): { meetRequirement: (key: RequirementKey)
     }
 
     if (targetMinorScore === currentMinorScore) {
-      return Number.parseInt(targetVersion[2] || '0', 10) <= Number.parseInt(currentVersion[2] || '0', 10);
+      return Number.parseInt(targetVersions[2] || '0', 10) <= Number.parseInt(currentVersion[2] || '0', 10);
     }
 
     return targetMinorScore < currentMinorScore;
@@ -101,5 +105,6 @@ export default (sourceVersion: string): { meetRequirement: (key: RequirementKey)
 
   return {
     meetRequirement,
+    meetVersion,
   };
 };
