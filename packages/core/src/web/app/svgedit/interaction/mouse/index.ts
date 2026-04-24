@@ -10,7 +10,6 @@ import curveEngravingModeController from '@core/app/actions/canvas/curveEngravin
 import presprayArea from '@core/app/actions/canvas/prespray-area';
 import rotaryAxis from '@core/app/actions/canvas/rotary-axis';
 import ObjectPanelController from '@core/app/components/beambox/RightPanel/contexts/ObjectPanelController';
-import TopBarHintsController from '@core/app/components/beambox/TopBar/contexts/TopBarHintsController';
 import * as TutorialController from '@core/app/components/tutorials/tutorialController';
 import { MouseButtons } from '@core/app/constants/mouse-constants';
 import TutorialConstants from '@core/app/constants/tutorial-constants';
@@ -33,6 +32,7 @@ import history from '../../history/history';
 import undoManager from '../../history/undoManager';
 import layerManager from '../../layer/layerManager';
 import { cloneSelectedElements, hasClipboardData } from '../../operations/clipboard';
+import { polygonMouseDown, polygonMouseMove, polygonMouseUp } from '../../polygon';
 import selectionManager from '../../selection';
 import { resizeSelector } from '../../selector';
 import createNewText from '../../text/createNewText';
@@ -120,7 +120,6 @@ const mouseDown = async (evt: MouseEvent) => {
   const svgRoot = svgCanvas.getRoot();
   const rightClick = evt.button === MouseButtons.Right;
   let currentMode = getMouseMode();
-  let extensionResult = null;
 
   svgCanvas.setRootScreenMatrix(($('#svgcontent')[0] as any).getScreenCTM().inverse());
 
@@ -132,11 +131,6 @@ const mouseDown = async (evt: MouseEvent) => {
   moved = false;
 
   mouseSelectModeCmds.length = 0;
-
-  if (svgCanvas.getCurrentConfig().gridSnapping) {
-    x = svgedit.utilities.snapToGrid(x);
-    y = svgedit.utilities.snapToGrid(y);
-  }
 
   startX = x;
   startY = y;
@@ -203,23 +197,6 @@ const mouseDown = async (evt: MouseEvent) => {
     console.log('svgCanvas gripping', getMouseMode(), svgCanvas.getCurrentResizeMode());
   } else if (svgCanvas.textActions.isEditing) {
     setMouseMode('textedit');
-  }
-
-  extensionResult = svgCanvas.runExtensions('checkMouseTarget', { mouseTarget }, true);
-
-  if (extensionResult) {
-    let currentStarted = svgCanvas.getStarted();
-
-    $.each(extensionResult, (_, r) => {
-      currentStarted = currentStarted || r?.started;
-    });
-    svgCanvas.unsafeAccess.setStarted(currentStarted);
-
-    if (currentStarted && currentMode !== 'path') {
-      console.log('extension ate the mouseDown event');
-
-      return;
-    }
   }
 
   if (presprayArea.checkMouseTarget(mouseTarget)) setMouseMode('drag-prespray-area');
@@ -459,10 +436,15 @@ const mouseDown = async (evt: MouseEvent) => {
     case 'fit-text':
       svgCanvas.unsafeAccess.setStarted(true);
       break;
-    case 'polygon':
-      // Polygon is created in ext-polygon.js
-      TopBarHintsController.setHint('POLYGON');
+    case 'polygon': {
+      svgCanvas.unsafeAccess.setStarted(true);
+
+      const poly = polygonMouseDown(startX, startY);
+
+      updateElementColor(poly);
+      selectionManager.selectOnly([poly], true);
       break;
+    }
     case 'path':
     case 'pathedit':
       if (svgCanvas.isAutoAlign) {
@@ -511,26 +493,14 @@ const mouseDown = async (evt: MouseEvent) => {
       rotaryAxis.mouseDown();
       break;
     default:
-      // This could occur in an extension
       break;
   }
 
-  extensionResult = svgCanvas.runExtensions(
-    'mouseDown',
-    { event: evt, ObjectPanelController, selectedElements, start_x: startX, start_y: startY },
-    true,
-  );
-
   if (selectedElements?.[0]) selectedBBox = getBBox(selectedElements[0]);
   else selectedBBox = null;
-
-  $.each(extensionResult, (_, r) => {
-    if (r?.started) svgCanvas.unsafeAccess.setStarted(true);
-  });
 };
 
 const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: number) => {
-  const currentConfig = svgCanvas.getCurrentConfig();
   const svgRoot = svgCanvas.getRoot();
   const resizeMode = svgCanvas.getCurrentResizeMode();
   const transforms = svgedit.transformlist.getTransformList(selected);
@@ -541,13 +511,6 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const isFreeResize = !fixedByFitText && ObjectPanelController.getDimensionValues('isRatioFixed') === evt.shiftKey;
   const angle = svgedit.utilities.getRotationAngle(selected);
   let { height, width, x: left, y: top } = box;
-
-  if (currentConfig.gridSnapping) {
-    x = svgedit.utilities.snapToGrid(x);
-    y = svgedit.utilities.snapToGrid(y);
-    height = svgedit.utilities.snapToGrid(height);
-    width = svgedit.utilities.snapToGrid(width);
-  }
 
   if (svgCanvas.isAutoAlign && isFreeResize && !angle) {
     let [inputX, inputY] = [x, y];
@@ -598,13 +561,6 @@ const onResizeMouseMove = (evt: MouseEvent, selected: SVGElement, x: number, y: 
   const translateOrigin = svgRoot.createSVGTransform();
   const scale = svgRoot.createSVGTransform();
   const translateBack = svgRoot.createSVGTransform();
-
-  if (currentConfig.gridSnapping) {
-    left = svgedit.utilities.snapToGrid(left);
-    top = svgedit.utilities.snapToGrid(top);
-    tx = svgedit.utilities.snapToGrid(tx);
-    ty = svgedit.utilities.snapToGrid(ty);
-  }
 
   translateOrigin.setTranslate(-(left + tx), -(top + ty));
 
@@ -706,7 +662,6 @@ const mouseMove = (evt: MouseEvent) => {
   const started = svgCanvas.getStarted();
   const currentMode = getMouseMode();
   const zoom = workareaManager.zoomRatio;
-  const currentConfig = svgCanvas.getCurrentConfig();
   const selectedElements = selectionManager.getSelectedElements();
   const rubberBox = svgCanvas.getRubberBox();
   const svgRoot = svgCanvas.getRoot();
@@ -755,11 +710,6 @@ const mouseMove = (evt: MouseEvent) => {
     return;
   }
 
-  if (currentConfig.gridSnapping) {
-    x = svgedit.utilities.snapToGrid(x);
-    y = svgedit.utilities.snapToGrid(y);
-  }
-
   const updateRubberBox = () => {
     svgedit.utilities.assignAttributes(
       rubberBox,
@@ -785,11 +735,6 @@ const mouseMove = (evt: MouseEvent) => {
       if (selectedElements[0] !== null) {
         dx = x - startX;
         dy = y - startY;
-
-        if (currentConfig.gridSnapping) {
-          dx = svgedit.utilities.snapToGrid(dx);
-          dy = svgedit.utilities.snapToGrid(dy);
-        }
 
         let current = { x, y };
 
@@ -866,11 +811,6 @@ const mouseMove = (evt: MouseEvent) => {
       onResizeMouseMove(evt, selected, x, y);
       break;
     case 'line':
-      if (currentConfig.gridSnapping) {
-        x = svgedit.utilities.snapToGrid(x);
-        y = svgedit.utilities.snapToGrid(y);
-      }
-
       let x2 = x;
       let y2 = y;
 
@@ -903,13 +843,6 @@ const mouseMove = (evt: MouseEvent) => {
       } else {
         newX = Math.min(startX, x);
         newY = Math.min(startY, y);
-      }
-
-      if (currentConfig.gridSnapping) {
-        w = svgedit.utilities.snapToGrid(w);
-        h = svgedit.utilities.snapToGrid(h);
-        newX = svgedit.utilities.snapToGrid(newX);
-        newY = svgedit.utilities.snapToGrid(newY);
       }
 
       if (!isSquare && svgCanvas.isAutoAlign) {
@@ -947,11 +880,6 @@ const mouseMove = (evt: MouseEvent) => {
     // update path stretch line coordinates
     case 'path':
     case 'pathedit':
-      if (currentConfig.gridSnapping) {
-        x = svgedit.utilities.snapToGrid(x);
-        y = svgedit.utilities.snapToGrid(y);
-      }
-
       if (evt.shiftKey) {
         const { path } = svgedit.path;
         const x1 = path?.dragging ? path.dragging[0] : startX;
@@ -990,10 +918,6 @@ const mouseMove = (evt: MouseEvent) => {
       cy = center.y;
       angle = (Math.atan2(cy - y, cx - x) * (180 / Math.PI) - angleOffset) % 360;
 
-      if (currentConfig.gridSnapping) {
-        angle = svgedit.utilities.snapToGrid(angle);
-      }
-
       if (evt.shiftKey) {
         // restrict rotations to nice angles (WRS)
         const snap = 45;
@@ -1020,17 +944,16 @@ const mouseMove = (evt: MouseEvent) => {
     case 'drag-rotary-axis':
       rotaryAxis.mouseMove(y);
       break;
+    case 'polygon':
+      polygonMouseMove(x, y, evt, selected as SVGPolygonElement);
+
+      const bbox = getBBox(selected);
+
+      ObjectPanelController.updateDimensionValues({ height: bbox.height, width: bbox.width, x: bbox.x, y: bbox.y });
+      break;
     default:
       break;
   }
-
-  svgCanvas.runExtensions('mouseMove', {
-    event: evt,
-    mouse_x: mouseX,
-    mouse_y: mouseY,
-    ObjectPanelController,
-    selected,
-  });
 };
 
 // - in create mode, the element's opacity is set properly, we create an InsertElementCommand
@@ -1070,9 +993,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
 
   let element = svgedit.utilities.getElem(svgCanvas.getId());
   let keep = false;
-
-  // TODO: Make true when in multi-unit mode
-  const useUnit = false;
 
   svgCanvas.unsafeAccess.setStarted(false);
 
@@ -1389,10 +1309,13 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       svgCanvas.textActions.start(element);
       break;
     }
-    case 'polygon':
-      // Polygon creation is in ext-polygon.js
-      TopBarHintsController.removeHint();
+    case 'polygon': {
+      const polyResult = polygonMouseUp(isContinuousDrawing);
+
+      keep = polyResult.keep;
+      element = polyResult.element;
       break;
+    }
     case 'path':
       // set element to null here so that it is not removed nor finalized
       element = null;
@@ -1457,27 +1380,8 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       element = null;
       break;
     default:
-      // This could occur in an extension
       break;
   }
-
-  const extResult = svgCanvas.runExtensions(
-    'mouseUp',
-    { event: evt, isContinuousDrawing, mouse_x: mouseX, mouse_y: mouseY },
-    true,
-  );
-
-  let startedFlag = svgCanvas.getStarted();
-
-  $.each(extResult, (_, r: any) => {
-    if (r) {
-      keep = r.keep || keep;
-      element = r.element;
-      startedFlag = r.started || startedFlag;
-    }
-  });
-
-  svgCanvas.unsafeAccess.setStarted(startedFlag);
 
   if (!keep && element) {
     svgCanvas.getCurrentDrawing().releaseId(svgCanvas.getId());
@@ -1518,8 +1422,6 @@ const mouseUp = async (evt: MouseEvent, blocked = false) => {
       selectionManager.selectOnly([t], true);
     }
   } else if (element) {
-    if (useUnit) svgedit.units.convertAttrs(element);
-
     if (element.getAttribute('opacity') !== currentShape.opacity) element.setAttribute('opacity', currentShape.opacity);
 
     element.setAttribute('style', 'pointer-events:inherit');
