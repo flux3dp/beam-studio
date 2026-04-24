@@ -61,6 +61,7 @@ export const getExportOpt = async (
 
   const isDevMode = isDev();
   const workareaObj = getWorkarea(model);
+  const addOnInfo = getAddOnInfo(model);
 
   config.hardware_name = model;
 
@@ -83,17 +84,16 @@ export const getExportOpt = async (
   } else if (model === 'fhx2rf') {
     config.watt = useCanvasStore.getState().watt;
     config.acc = 10000;
+  }
 
-    if (vc.meetRequirement('HX2_S_CURVE')) {
-      config.s_curve = true;
-    }
+  if (addOnInfo.sCurve && vc.meetVersion(addOnInfo.sCurve)) {
+    config.s_curve = true;
   }
 
   if (opt.codeType === 'gcode') config.gc = true;
 
   if (globalPreference['reverse-engraving']) config.rev = true;
 
-  const addOnInfo = getAddOnInfo(model);
   const hasJobOrigin = documentState['enable-job-origin'] && addOnInfo.jobOrigin && supportJobOrigin;
 
   if (hasJobOrigin) {

@@ -82,7 +82,7 @@ jobs:
         uses: actions/checkout@v5
         with:
           repository: flux3dp/fluxclient-dev
-          ref: 2.10.2
+          ref: 2.10.3
           token: ${{ secrets.REPO_TOKEN }}
           path: ./apps/app/.github/actions/fluxclient
 
@@ -176,4 +176,4 @@ jobs:
           APPLE_ID: ${{ secrets.APPLEID_DEAN }}
           APPLE_APP_SPECIFIC_PASSWORD: ${{ secrets.APPLEIDPASS_DEAN }}
           SENTRY_AUTH_TOKEN: ${{ secrets.SENTRY_AUTH_TOKEN }}
-          SWIFTRAY_DAEMON_VERSION: 1.4.6
+          SWIFTRAY_DAEMON_VERSION: 1.4.7
