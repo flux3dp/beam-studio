@@ -34,13 +34,17 @@ const DecorationControl = ({ optionDef }: DecorationControlProps): ReactNode => 
     [id],
   );
 
-  const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
-  const handleSelectKey = useCallback((selectedKey: string) => handleChange({ selectedKey }), [handleChange]);
+  const handleSelectKey = useCallback(
+    (selectedKey: string) => handleChange({ enabled: true, selectedKey }),
+    [handleChange],
+  );
+  const handleClear = useCallback(() => handleChange({ enabled: false, selectedKey: '' }), [handleChange]);
   const handleEmbossChange = useCallback((emboss: boolean) => handleChange({ emboss }), [handleChange]);
 
   return (
     <GroupCollapse title={t.decoration}>
       <DecorationPathSelector
+        onClear={decoration.enabled ? handleClear : undefined}
         onSelect={handleSelectKey}
         options={options}
         selectedKey={decoration.selectedKey}

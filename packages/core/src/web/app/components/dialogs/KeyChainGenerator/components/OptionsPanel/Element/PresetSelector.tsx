@@ -6,9 +6,11 @@ import classNames from 'classnames';
 
 import importIcon from '@core/app/components/dialogs/ElementPanel/Element/importIcon';
 
+import { loadShape, svgCache } from '../../../builders/buildElement';
 import type { IconSelectorItem } from '../Controls/IconSelectorGrid';
 import IconSelectorGrid from '../Controls/IconSelectorGrid';
 import iconSelectorStyles from '../Controls/IconSelectorGrid.module.scss';
+import SelectedItemSlot from '../Controls/SelectedItemSlot';
 
 import styles from './PresetSelector.module.scss';
 
@@ -51,14 +53,50 @@ const PresetIcon = memo(({ shapeKey }: { shapeKey: string }): ReactNode => {
 
 PresetIcon.displayName = 'PresetIcon';
 
+/** Renders any shape icon (built-in or np/) using the shared svgCache from buildElement. */
+const ShapeIcon = memo(({ shapeKey }: { shapeKey: string }): ReactNode => {
+  const [svgMarkup, setSvgMarkup] = useState(() => svgCache.get(shapeKey) ?? '');
+
+  useEffect(() => {
+    if (!shapeKey) return;
+
+    const cached = svgCache.get(shapeKey);
+
+    if (cached) {
+      setSvgMarkup(cached);
+
+      return;
+    }
+
+    let cancelled = false;
+
+    loadShape(shapeKey).then((result) => {
+      if (cancelled || !result) return;
+
+      setSvgMarkup(result);
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [shapeKey]);
+
+  if (!svgMarkup) return null;
+
+  return <span className={styles.icon} dangerouslySetInnerHTML={{ __html: svgMarkup }} />;
+});
+
+ShapeIcon.displayName = 'ShapeIcon';
+
 interface PresetSelectorProps {
+  onClear?: () => void;
   onMore?: () => void;
   onSelect: (shapeKey: string) => void;
   options: string[];
   selectedKey: string;
 }
 
-const PresetSelector = ({ onMore, onSelect, options, selectedKey }: PresetSelectorProps): ReactNode => {
+const PresetSelector = ({ onClear, onMore, onSelect, options, selectedKey }: PresetSelectorProps): ReactNode => {
   const items: IconSelectorItem[] = useMemo(
     () => options.map((key) => ({ icon: <PresetIcon shapeKey={key} />, key })),
     [options],
@@ -70,7 +108,15 @@ const PresetSelector = ({ onMore, onSelect, options, selectedKey }: PresetSelect
     </button>
   ) : undefined;
 
-  return <IconSelectorGrid items={items} onSelect={onSelect} selectedKey={selectedKey} suffix={moreButton} />;
+  const prefix = (
+    <SelectedItemSlot onClear={selectedKey ? onClear : undefined}>
+      {selectedKey && <ShapeIcon shapeKey={selectedKey} />}
+    </SelectedItemSlot>
+  );
+
+  return (
+    <IconSelectorGrid items={items} onSelect={onSelect} prefix={prefix} selectedKey={selectedKey} suffix={moreButton} />
+  );
 };
 
 PresetSelector.displayName = 'PresetSelector';

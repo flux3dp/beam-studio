@@ -19,20 +19,6 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
   const element = useKeychainShapeStore((s) => s.state.elements[id]);
   const { keychain_generator: t } = useI18n();
 
-  const handleEnabledChange = useCallback(
-    (enabled: boolean) => {
-      const {
-        applyOptions,
-        state: { elements },
-        updateState,
-      } = useKeychainShapeStore.getState();
-
-      updateState({ elements: { ...elements, [id]: { ...elements[id], enabled } } });
-      applyOptions();
-    },
-    [id],
-  );
-
   const handleChange = useCallback(
     (shapeKey: string) => {
       const {
@@ -41,11 +27,22 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
         updateState,
       } = useKeychainShapeStore.getState();
 
-      updateState({ elements: { ...elements, [id]: { ...elements[id], shapeKey } } });
+      updateState({ elements: { ...elements, [id]: { ...elements[id], enabled: true, shapeKey } } });
       applyOptions();
     },
     [id],
   );
+
+  const handleClear = useCallback(() => {
+    const {
+      applyOptions,
+      state: { elements },
+      updateState,
+    } = useKeychainShapeStore.getState();
+
+    updateState({ elements: { ...elements, [id]: { ...elements[id], enabled: false, shapeKey: '' } } });
+    applyOptions();
+  }, [id]);
 
   const handleEmbossChange = useCallback(
     (emboss: boolean) => {
@@ -63,7 +60,12 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
 
   return (
     <GroupCollapse title={t.element}>
-      <ElementPicker onChange={handleChange} options={optionDef.options} selectedKey={element.shapeKey} />
+      <ElementPicker
+        onChange={handleChange}
+        onClear={element.enabled ? handleClear : undefined}
+        options={optionDef.options}
+        selectedKey={element.shapeKey}
+      />
       <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={element.emboss} />
     </GroupCollapse>
   );

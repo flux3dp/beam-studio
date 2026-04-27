@@ -8,12 +8,13 @@ import PresetSelector from './PresetSelector';
 
 interface ElementPickerProps {
   onChange: (shapeKey: string) => void;
+  onClear?: () => void;
   options: string[];
   selectedKey: string;
   title?: string;
 }
 
-const ElementPicker = ({ onChange, options, selectedKey }: ElementPickerProps): ReactNode => {
+const ElementPicker = ({ onChange, onClear, options, selectedKey }: ElementPickerProps): ReactNode => {
   const [browserOpen, setBrowserOpen] = useState(false);
 
   const handleSelect = useCallback(async (shapeKey: string) => onChange(shapeKey), [onChange]);
@@ -29,7 +30,13 @@ const ElementPicker = ({ onChange, options, selectedKey }: ElementPickerProps): 
 
   return (
     <>
-      <PresetSelector onMore={openBrowser} onSelect={handleSelect} options={options} selectedKey={selectedKey} />
+      <PresetSelector
+        onClear={onClear}
+        onMore={openBrowser}
+        onSelect={handleSelect}
+        options={options}
+        selectedKey={selectedKey}
+      />
       <ElementPanelProvider onClose={closeBrowser} onElementSelect={handleElementSelect} open={browserOpen}>
         <ElementPanelContent drawerPlacement="right" />
       </ElementPanelProvider>
