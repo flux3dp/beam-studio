@@ -8,7 +8,7 @@ import IconSelectorGrid from './Controls/IconSelectorGrid';
 import SelectedItemSlot from './Controls/SelectedItemSlot';
 
 interface DecorationPathSelectorProps {
-  onClear: () => void;
+  onClear?: () => void;
   onSelect: (key: string) => void;
   options: string[];
   selectedKey: string;
