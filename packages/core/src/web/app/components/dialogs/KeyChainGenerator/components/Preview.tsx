@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useRef } from 'react';
 
 import classNames from 'classnames';
 
-import { useIsMobile } from '@core/helpers/system-helper';
+import { useIsMobile } from '@core/app/stores/screenStore';
 
 import { PX_TO_MM_RATIO } from '../constants';
 import useContainerSize from '../hooks/useContainerSize';
