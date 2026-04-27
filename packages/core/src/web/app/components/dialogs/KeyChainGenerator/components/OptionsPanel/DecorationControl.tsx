@@ -6,7 +6,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { DecorationOptionValues, DecorationPathOptionDef } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './Controls/GroupControl';
+import GroupCollapse from './Controls/GroupCollapse';
 import SwitchControl from './Controls/SwitchControl';
 import DecorationPathSelector from './DecorationPathSelector';
 
@@ -39,7 +39,7 @@ const DecorationControl = ({ optionDef }: DecorationControlProps): ReactNode => 
   const handleEmbossChange = useCallback((emboss: boolean) => handleChange({ emboss }), [handleChange]);
 
   return (
-    <GroupControl enabled={decoration.enabled} onToggle={handleEnabledChange} title={t.decoration}>
+    <GroupCollapse title={t.decoration}>
       <DecorationPathSelector
         onSelect={handleSelectKey}
         options={options}
@@ -52,7 +52,7 @@ const DecorationControl = ({ optionDef }: DecorationControlProps): ReactNode => 
         onChange={handleEmbossChange}
         value={decoration.emboss}
       />
-    </GroupControl>
+    </GroupCollapse>
   );
 };
 

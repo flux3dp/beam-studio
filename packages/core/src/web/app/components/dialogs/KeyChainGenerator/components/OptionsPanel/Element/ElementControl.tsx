@@ -5,7 +5,7 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { ElementOptionDef } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
-import GroupControl from '../Controls/GroupControl';
+import GroupCollapse from '../Controls/GroupCollapse';
 import SwitchControl from '../Controls/SwitchControl';
 
 import ElementPicker from './ElementPicker';
@@ -62,12 +62,10 @@ const ElementControl = ({ optionDef }: ElementControlProps): ReactNode => {
   );
 
   return (
-    // <div className={styles.container}>
-    <GroupControl enabled={element.enabled} onToggle={handleEnabledChange} title={t.element}>
+    <GroupCollapse title={t.element}>
       <ElementPicker onChange={handleChange} options={optionDef.options} selectedKey={element.shapeKey} />
       <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={element.emboss} />
-    </GroupControl>
-    // </div>
+    </GroupCollapse>
   );
 };
 

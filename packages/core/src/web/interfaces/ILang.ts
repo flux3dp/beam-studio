@@ -1611,15 +1611,16 @@ export interface ILang {
     emboss: string;
     exploded_view: string;
     export_failed: string;
-    font_size: string;
     hole: string;
-    hole_diameter: string;
-    hole_offset: string;
-    hole_position: string;
-    hole_thickness: string;
-    hole_type: string;
-    hole_type_punch: string;
-    hole_type_ring: string;
+    hole_options: {
+      diameter: string;
+      hole_type: string;
+      offset: string;
+      position: string;
+      thickness: string;
+      type_punch: string;
+      type_ring: string;
+    };
     import_to_canvas: string;
     layers: {
       keychain: string;
@@ -1627,8 +1628,6 @@ export interface ILang {
       keychain_deco_emboss_guide: string;
       keychain_deco_engraving: string;
     };
-    letter_spacing: string;
-    line_spacing: string;
     more_shapes: string;
     outline_offset: string;
     position_ref: string;
@@ -1643,7 +1642,15 @@ export interface ILang {
     size_width: string;
     switch_type_warning: string;
     text: string;
-    text_placeholder: string;
+    text_options: {
+      font_family: string;
+      font_settings: string;
+      font_size: string;
+      font_style: string;
+      letter_spacing: string;
+      line_spacing: string;
+      text_placeholder: string;
+    };
     types: {
       hotel_key_chain: string;
       rectangle: string;

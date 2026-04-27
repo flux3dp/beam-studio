@@ -5,16 +5,16 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { TextOptionDef, TextOptionValues } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
-import GroupControl from '../Controls/GroupControl';
+import Card from '../Controls/Card';
 import SwitchControl from '../Controls/SwitchControl';
 
 import TextFields from './TextFields';
 
-interface TextGroupProps {
+interface TextControlProps {
   optionDef: TextOptionDef;
 }
 
-const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
+const TextControl = ({ optionDef }: TextControlProps): ReactNode => {
   const { defaults, id } = optionDef;
   const text = useKeychainShapeStore((s) => s.state.texts[id]);
   const { keychain_generator: t } = useI18n();
@@ -51,7 +51,7 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
   );
 
   return (
-    <GroupControl enabled={text.enabled} id={id} onToggle={handleEnabledChange} title={t.text}>
+    <Card enabled={text.enabled} onToggle={handleEnabledChange} title={`${t.text} - ${id}`}>
       <TextFields
         contentValue={text.text}
         defaults={defaults}
@@ -68,10 +68,10 @@ const TextGroup = ({ optionDef }: TextGroupProps): ReactNode => {
         }}
       />
       <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={text.emboss} />
-    </GroupControl>
+    </Card>
   );
 };
 
-TextGroup.displayName = 'TextGroup';
+TextControl.displayName = 'TextControl';
 
-export default memo(TextGroup);
+export default memo(TextControl);

@@ -1,21 +1,21 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
-import Select from '@core/app/widgets/AntdSelect';
 import useI18n from '@core/helpers/useI18n';
 
 import { PUNCH_HOLE_OFFSET } from '../../constants';
 import type { HoleOptionDef, HoleOptionValues, HoleType } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './Controls/GroupControl';
+import Card from './Controls/Card';
 import NumberControl from './Controls/NumberControl';
+import SelectControl from './Controls/SelectControl';
 
-interface HoleGroupProps {
+interface HoleControlProps {
   optionDef: HoleOptionDef;
 }
 
-const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
+const HoleControl = ({ optionDef }: HoleControlProps): ReactNode => {
   const { defaults, id } = optionDef;
   const hole = useKeychainShapeStore((s) => s.state.holes[id]);
   const { keychain_generator: t } = useI18n();
@@ -66,18 +66,23 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
 
   const typeOptions = useMemo(
     () => [
-      { label: t.hole_type_ring, value: 'ring' as const },
-      { label: t.hole_type_punch, value: 'punch' as const },
+      { label: t.hole_options.type_ring, value: 'ring' as const },
+      { label: t.hole_options.type_punch, value: 'punch' as const },
     ],
     [t],
   );
 
   return (
-    <GroupControl enabled={hole.enabled} id={id} onToggle={handleEnabledChange} title={t.hole}>
-      <Select onChange={handleTypeChange} options={typeOptions} value={hole.type} />
+    <Card enabled={hole.enabled} onToggle={handleEnabledChange} title={`${t.hole} - ${id}`}>
+      <SelectControl
+        label={t.hole_options.hole_type}
+        onChange={handleTypeChange}
+        options={typeOptions}
+        value={hole.type}
+      />
       <NumberControl
         defaultValue={defaults.diameter}
-        label={t.hole_diameter}
+        label={t.hole_options.diameter}
         max={5}
         min={1}
         onChange={handleDiameterChange}
@@ -87,7 +92,7 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
       />
       <NumberControl
         defaultValue={defaults.position}
-        label={t.hole_position}
+        label={t.hole_options.position}
         max={100}
         min={0}
         onChange={handlePositionChange}
@@ -97,7 +102,7 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
       />
       <NumberControl
         defaultValue={defaults.offset}
-        label={t.hole_offset}
+        label={t.hole_options.offset}
         max={maxOffset}
         min={minOffset}
         onChange={handleOffsetChange}
@@ -108,7 +113,7 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
       {isRing && (
         <NumberControl
           defaultValue={defaults.thickness}
-          label={t.hole_thickness}
+          label={t.hole_options.thickness}
           max={5}
           min={1}
           onChange={handleThicknessChange}
@@ -117,10 +122,10 @@ const HoleGroup = ({ optionDef }: HoleGroupProps): ReactNode => {
           value={hole.thickness}
         />
       )}
-    </GroupControl>
+    </Card>
   );
 };
 
-HoleGroup.displayName = 'HoleGroup';
+HoleControl.displayName = 'HoleControl';
 
-export default memo(HoleGroup);
+export default memo(HoleControl);

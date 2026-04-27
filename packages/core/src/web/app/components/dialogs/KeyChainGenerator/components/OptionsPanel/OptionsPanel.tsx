@@ -9,13 +9,14 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { KeyChainCategory } from '../../types';
 
+import GroupCollapse from './Controls/GroupCollapse';
 import CustomShapeGroup from './CustomShapeGroup';
 import DecorationControl from './DecorationControl';
 import ElementControl from './Element/ElementControl';
-import HoleGroup from './HoleGroup';
+import HoleControl from './HoleControl';
 import styles from './OptionsPanel.module.scss';
 import SizeGroup from './SizeGroup';
-import TextGroup from './Text/TextGroup';
+import TextControl from './Text/TextControl';
 
 interface OptionsPanelProps {
   category: KeyChainCategory;
@@ -51,12 +52,20 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
             <ElementControl key={`element-${option.id}`} optionDef={option} />
           ))}
           {decorations?.map((option) => <DecorationControl key={`decoration-${option.id}`} optionDef={option} />)}
-          {texts.map((option) => (
-            <TextGroup key={`text-${option.id}`} optionDef={option} />
-          ))}
-          {holes.map((option) => (
-            <HoleGroup key={`hole-${option.id}`} optionDef={option} />
-          ))}
+          {texts.length > 0 && (
+            <GroupCollapse key="texts" title={t.text}>
+              {texts.map((option) => (
+                <TextControl key={`text-${option.id}`} optionDef={option} />
+              ))}
+            </GroupCollapse>
+          )}
+          {holes.length > 0 && (
+            <GroupCollapse key="holes" title={t.hole}>
+              {holes.map((option) => (
+                <HoleControl key={`hole-${option.id}`} optionDef={option} />
+              ))}
+            </GroupCollapse>
+          )}
         </div>
       </div>
     </ConfigProvider>

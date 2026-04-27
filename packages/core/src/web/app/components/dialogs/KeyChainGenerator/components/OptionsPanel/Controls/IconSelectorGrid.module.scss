@@ -8,7 +8,13 @@
   overflow-y: auto;
 
   &::-webkit-scrollbar {
-    display: none;
+    width: 4px;
+    margin-right: 4px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: #c1c1c1;
+    border-radius: 2px;
   }
 }
 

@@ -6,7 +6,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { SizeDimension } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './Controls/GroupControl';
+import GroupCollapse from './Controls/GroupCollapse';
 import NumberControl from './Controls/NumberControl';
 
 const SizeGroup = (): ReactNode => {
@@ -24,7 +24,7 @@ const SizeGroup = (): ReactNode => {
   }, []);
 
   return (
-    <GroupControl enabled hideSwitch title={t.size} tooltip={t.size_tooltip}>
+    <GroupCollapse title={t.size} tooltip={t.size_tooltip}>
       <NumberControl
         label={t.size_width}
         max={200}
@@ -45,7 +45,7 @@ const SizeGroup = (): ReactNode => {
         value={calculatedSize.height}
         withSlider={false}
       />
-    </GroupControl>
+    </GroupCollapse>
   );
 };
 

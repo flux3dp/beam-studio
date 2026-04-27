@@ -2,6 +2,10 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+
+  &.no-event {
+    pointer-events: none;
+  }
 }
 
 .title {
@@ -19,7 +23,7 @@
 .content {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: 12px;
   padding-block: 0 !important;
   margin-bottom: 12px;
 }

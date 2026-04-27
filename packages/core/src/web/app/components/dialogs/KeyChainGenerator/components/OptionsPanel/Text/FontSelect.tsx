@@ -2,10 +2,12 @@ import type { ReactNode } from 'react';
 import React, { memo, useCallback, useMemo } from 'react';
 
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
-import Select from '@core/app/widgets/AntdSelect';
 import { fontFamilySelectFilterOption, renderTextOptions } from '@core/helpers/fonts/renderTextOptions';
 import { resolveFontByStyle } from '@core/helpers/fonts/resolveFontByStyle';
 import { useFontStyleOptions } from '@core/helpers/fonts/useFontStyleOptions';
+import useI18n from '@core/helpers/useI18n';
+
+import SelectControl from '../Controls/SelectControl';
 
 interface FontSelectProps {
   font: { family: string; postscriptName: string; style: string };
@@ -13,6 +15,8 @@ interface FontSelectProps {
 }
 
 const FontSelect = ({ font, onChange }: FontSelectProps): ReactNode => {
+  const t = useI18n().keychain_generator.text_options;
+
   const fontOptions = useMemo(() => {
     return fontFuncs.requestAvailableFontFamilies().map((value: string) => renderTextOptions(value));
   }, []);
@@ -45,17 +49,19 @@ const FontSelect = ({ font, onChange }: FontSelectProps): ReactNode => {
 
   return (
     <>
-      <Select
-        allowClear={false}
+      <SelectControl
         filterOption={fontFamilySelectFilterOption}
+        label={t.font_family}
         onChange={handleFamilyChange}
         options={fontOptions}
         popupMatchSelectWidth={false}
         showSearch
         value={font.family}
+        width={150}
       />
-      <Select
+      <SelectControl
         disabled={styleOptions.length <= 1}
+        label={t.font_style}
         onChange={handleStyleChange}
         options={styleOptions}
         popupMatchSelectWidth={false}

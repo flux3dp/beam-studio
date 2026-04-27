@@ -6,7 +6,7 @@ import useI18n from '@core/helpers/useI18n';
 import type { CustomShapeOptionDef, CustomShapeOptionValues, ShapeElementPositionRef } from '../../types';
 import useKeychainShapeStore from '../../useKeychainShapeStore';
 
-import GroupControl from './Controls/GroupControl';
+import GroupCollapse from './Controls/GroupCollapse';
 import NumberControl from './Controls/NumberControl';
 import SelectControl from './Controls/SelectControl';
 import ElementPicker from './Element/ElementPicker';
@@ -105,7 +105,7 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
 
   return (
     <>
-      <GroupControl enabled hideSwitch title={`${t.content} - ${t.text}`}>
+      <GroupCollapse title={`${t.content} - ${t.text}`}>
         <TextFields
           contentValue={textDraft}
           defaults={defaults}
@@ -116,12 +116,8 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
           onLineSpacingChange={handleLineSpacingChange}
           values={textValues}
         />
-      </GroupControl>
-      <GroupControl
-        enabled={shape.element.enabled}
-        onToggle={toggleElementEnabled}
-        title={`${t.content} - ${t.element}`}
-      >
+      </GroupCollapse>
+      <GroupCollapse title={`${t.content} - ${t.element}`}>
         <ElementPicker
           onChange={handleElementShapeChange}
           options={optionDef.elementOptions}
@@ -136,7 +132,7 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
             value={shape.element.positionRef}
           />
         )}
-      </GroupControl>
+      </GroupCollapse>
       <NumberControl
         defaultValue={defaults.outlineOffset}
         label={t.outline_offset}
