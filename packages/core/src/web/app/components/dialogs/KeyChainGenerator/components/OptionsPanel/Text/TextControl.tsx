@@ -5,7 +5,6 @@ import useI18n from '@core/helpers/useI18n';
 
 import type { TextOptionDef, TextOptionValues } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
-import Card from '../Controls/Card';
 import SwitchControl from '../Controls/SwitchControl';
 
 import TextFields from './TextFields';
@@ -33,7 +32,6 @@ const TextControl = ({ optionDef }: TextControlProps): ReactNode => {
     [id],
   );
 
-  const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
   const handleEmbossChange = useCallback((emboss: boolean) => handleChange({ emboss }), [handleChange]);
   const handleContentChange = useCallback(
     (evt: React.ChangeEvent<HTMLTextAreaElement>) => handleChange({ text: evt.target.value }),
@@ -51,7 +49,7 @@ const TextControl = ({ optionDef }: TextControlProps): ReactNode => {
   );
 
   return (
-    <Card enabled={text.enabled} onToggle={handleEnabledChange} title={`${t.text} - ${id}`}>
+    <>
       <TextFields
         contentValue={text.text}
         defaults={defaults}
@@ -68,7 +66,7 @@ const TextControl = ({ optionDef }: TextControlProps): ReactNode => {
         }}
       />
       <SwitchControl label={t.emboss} onChange={handleEmbossChange} value={text.emboss} />
-    </Card>
+    </>
   );
 };
 

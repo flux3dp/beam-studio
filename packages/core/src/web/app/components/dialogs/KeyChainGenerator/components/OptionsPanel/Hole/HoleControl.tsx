@@ -3,13 +3,12 @@ import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { PUNCH_HOLE_OFFSET } from '../../constants';
-import type { HoleOptionDef, HoleOptionValues, HoleType } from '../../types';
-import useKeychainShapeStore from '../../useKeychainShapeStore';
+import { PUNCH_HOLE_OFFSET } from '../../../constants';
+import type { HoleOptionDef, HoleOptionValues, HoleType } from '../../../types';
+import useKeychainShapeStore from '../../../useKeychainShapeStore';
 
-import Card from './Controls/Card';
-import NumberControl from './Controls/NumberControl';
-import SelectControl from './Controls/SelectControl';
+import NumberControl from '../Controls/NumberControl';
+import SelectControl from '../Controls/SelectControl';
 
 interface HoleControlProps {
   optionDef: HoleOptionDef;
@@ -44,7 +43,6 @@ const HoleControl = ({ optionDef }: HoleControlProps): ReactNode => {
     [id],
   );
 
-  const handleEnabledChange = useCallback((enabled: boolean) => handleChange({ enabled }), [handleChange]);
   const handleDiameterChange = useCallback((diameter: number) => handleChange({ diameter }), [handleChange]);
   const handlePositionChange = useCallback((position: number) => handleChange({ position }), [handleChange]);
   const handleOffsetChange = useCallback((offset: number) => handleChange({ offset }), [handleChange]);
@@ -73,7 +71,7 @@ const HoleControl = ({ optionDef }: HoleControlProps): ReactNode => {
   );
 
   return (
-    <Card enabled={hole.enabled} onToggle={handleEnabledChange} title={`${t.hole} - ${id}`}>
+    <>
       <SelectControl
         label={t.hole_options.hole_type}
         onChange={handleTypeChange}
@@ -122,7 +120,7 @@ const HoleControl = ({ optionDef }: HoleControlProps): ReactNode => {
           value={hole.thickness}
         />
       )}
-    </Card>
+    </>
   );
 };
 

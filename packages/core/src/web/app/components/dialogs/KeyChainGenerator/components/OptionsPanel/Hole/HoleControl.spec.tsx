@@ -13,16 +13,7 @@ jest.mock('@core/app/widgets/AntdSelect', () => ({ onChange, options, value }: a
   </select>
 ));
 
-jest.mock('./GroupControl', () => ({ children, enabled, onToggle }: any) => (
-  <div data-testid="group-control">
-    <button data-testid="switch" onClick={() => onToggle?.(!enabled)}>
-      {String(enabled)}
-    </button>
-    {enabled && <div data-testid="group-content">{children}</div>}
-  </div>
-));
-
-jest.mock('./NumberControl', () => ({ label, onChange, value }: any) => (
+jest.mock('../Controls/NumberControl', () => ({ label, onChange, value }: any) => (
   <div data-testid={`slider-${label}`}>
     <span>value:{value}</span>
     <input data-testid={`input-${label}`} onChange={(e) => onChange(Number(e.target.value))} />
@@ -35,7 +26,7 @@ const mockHoles: Record<string, any> = {
 
 const mockApplyOptions = jest.fn();
 
-jest.mock('../../useKeychainShapeStore', () => ({
+jest.mock('../../../useKeychainShapeStore', () => ({
   __esModule: true,
   default: Object.assign((selector: any) => selector({ state: { holes: mockHoles } }), {
     getState: () => ({
@@ -46,7 +37,7 @@ jest.mock('../../useKeychainShapeStore', () => ({
   }),
 }));
 
-import type { HoleOptionDef, HoleOptionValues } from '../../types';
+import type { HoleOptionDef, HoleOptionValues } from '../../../types';
 
 import HoleControl from './HoleControl';
 
@@ -87,17 +78,6 @@ describe('HoleControl', () => {
 
     expect(getByTestId('slider-Diameter')).toHaveTextContent('value:4');
     expect(getByTestId('slider-Position')).toHaveTextContent('value:50');
-  });
-
-  it('should call updateState when toggle is clicked', () => {
-    const { getByTestId } = render(<HoleControl optionDef={defaultOptionDef} />);
-
-    getByTestId('switch').click();
-    expect(mockUpdateState).toHaveBeenCalledWith({
-      holes: expect.objectContaining({
-        'hole-top': expect.objectContaining({ enabled: false }),
-      }),
-    });
   });
 
   it('should clamp offset when it exceeds maxOffset', () => {

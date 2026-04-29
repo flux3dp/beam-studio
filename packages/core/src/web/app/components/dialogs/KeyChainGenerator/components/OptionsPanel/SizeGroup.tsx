@@ -27,23 +27,21 @@ const SizeGroup = (): ReactNode => {
     <GroupCollapse title={t.size} tooltip={t.size_tooltip}>
       <NumberControl
         label={t.size_width}
-        max={200}
+        max={1500}
         min={5}
         onChange={(val) => handleChange('width', val)}
         step={1}
         unit="mm"
         value={calculatedSize.width}
-        withSlider={false}
       />
       <NumberControl
         label={t.size_height}
-        max={200}
+        max={1500}
         min={5}
         onChange={(val) => handleChange('height', val)}
         step={1}
         unit="mm"
         value={calculatedSize.height}
-        withSlider={false}
       />
     </GroupCollapse>
   );

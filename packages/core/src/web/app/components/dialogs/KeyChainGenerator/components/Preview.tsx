@@ -64,13 +64,15 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
     [height, width, sizeRatio],
   );
 
+  console.log(size);
+
   // Compute scaled SVG container size from the active SVG's viewBox so the renderer
   // can fill the available space without distorting (preserveAspectRatio handles the
   // actual fitting inside the container).
-  const padding = 32;
   const scaledSize = useMemo(() => {
     if (!svgElement) return { height: 0, width: 0 };
 
+    const padding = 16;
     const viewBox = svgElement.viewBox.baseVal;
     const vbWidth = viewBox.width || width || 1;
     const vbHeight = viewBox.height || height || 1;
@@ -83,13 +85,11 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
 
   return (
     <div className={classNames(styles.container, { [styles.mobile]: isMobile })} ref={containerRef}>
+      <div className={styles.dimensions}>
+        {dimensionsMm.width.toFixed(0)} x {dimensionsMm.height.toFixed(0)} mm
+      </div>
       <div className={styles.canvas}>
-        <div className={styles.content}>
-          <div ref={svgContainerRef} style={{ height: scaledSize.height, width: scaledSize.width }} />
-          <div className={styles.dimensions}>
-            {dimensionsMm.width.toFixed(0)} x {dimensionsMm.height.toFixed(0)} mm
-          </div>
-        </div>
+        <div ref={svgContainerRef} style={{ height: scaledSize.height, width: scaledSize.width }} />
       </div>
       <ViewModeToggle designSvg={shape?.designSvg ?? null} explodedSvg={shape?.explodedSvg ?? null} />
     </div>
