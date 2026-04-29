@@ -230,6 +230,14 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         console.error('Failed to get camera exposure auto', error);
       }
 
+      if (originalAutoExposure) {
+        try {
+          await deviceMaster.setCameraExposureAuto(false);
+        } catch (error) {
+          console.error('Failed to set camera exposure auto to false', error);
+        }
+      }
+
       try {
         const getExposureRes = await deviceMaster.getCameraExposure();
 
@@ -260,6 +268,16 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           darkImageUrl = await this.getPhotoFromMachine({ useLowResolution });
         }
 
+        await new Promise<void>((resolve) => previewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
+
+        if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
+      };
+
+      try {
+        await takePictures(true);
+        this.showMessage({ content: i18n.lang.message.preview.capturing_image });
+        await takePictures(false);
+      } finally {
         if (originalAutoExposure !== null) {
           try {
             await deviceMaster.setCameraExposureAuto(originalAutoExposure);
@@ -268,15 +286,8 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
           }
         }
 
-        await new Promise<void>((resolve) => previewModeBackgroundDrawer.drawFullWorkarea(lightImageUrl, resolve));
-
-        if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
-      };
-
-      await takePictures(true);
-      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
-      await takePictures(false);
-      this.originalExposure = null;
+        this.originalExposure = null;
+      }
 
       this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
 
