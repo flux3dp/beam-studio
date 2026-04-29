@@ -1809,6 +1809,8 @@ const lang: ILang = {
     go: '시작',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 공기 흐름 센서 이상',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 바닥이 열려 있습니다. 계속하려면 바닥을 닫으세요.',
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 잉크 카트리지 온도 경고\n잉크 카트리지 온도가 정상 범위를 초과했습니다.\n보호를 위해 작업이 중단되었습니다. 잉크 카트리지를 다시 설치하고 작업을 재시작하세요.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 잉크 카트리지 전원 오류\n잉크 카트리지에서 비정상적인 전원 연결이 감지되었습니다. 잉크 카트리지를 다시 설치한 후 재시도하세요.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 프린트헤드 커버 설치 실패',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 프린트헤드 커버 제거 실패',
     HARDWARE_ERROR_DOOR_OPENED: '#901 계속하려면 문을 닫으세요.',
@@ -1818,12 +1820,18 @@ const lang: ILang = {
     HARDWARE_ERROR_HEADTYPE_NONE: '#917 모듈이 감지되지 않습니다. 계속하려면 모듈이 올바르게 설치되었는지 확인하십시오.',
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: '#918 알 수 없는 모듈이 감지되었습니다. 계속하려면 올바른 모듈을 설치하십시오.',
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: '#920 호밍(Homing) 풀오프 오류',
+    HARDWARE_ERROR_KEY_OFF: '#929 안전 키가 감지되지 않음\n안전 키가 감지되지 않거나 비활성화되었습니다. 안전을 위해 키가 올바르게 켜질 때까지 기계가 작동하지 않습니다.\n작업을 재시작하기 전에 안전 키를 삽입하고 켜 주세요.',
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 레이저 온도 이상\n레이저 온도가 너무 높습니다. 작동을 중지하고 레이저가 냉각된 후 재시작하세요.',
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 레이저 전압 이상\n레이저 전압 오류입니다. 기계를 재시작하세요. 문제가 지속되면 고객 지원에 문의하세요.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 치명적인 오류: 메인보드 오프라인. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 메인보드 응답 없음\n메인보드가 응답하지 않습니다. 작업을 다시 시작하세요.',
+    HARDWARE_ERROR_NO_INK_DETECTED: '#926 잉크 카트리지가 감지되지 않음\n1. 프린트 모듈을 제거하세요.\n2. 잉크 카트리지를 모듈에 삽입하세요.\n3. 프린트 모듈을 기계에 다시 설치하세요.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 과열되었습니다. 몇 분 기다려주세요.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z축 리셋 실패',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 프린터 모듈 응답 없음.',
     HARDWARE_ERROR_PROBE_SHOWED: '프로브를 철회해주세요.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 워터탱크를 확인해주세요.',
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 원격 인터록 작동\n원격 인터록 커넥터를 확인하고 안전하게 연결되어 있는지 확인한 후 작업을 재시작하세요.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 로터리 모듈이 감지되지 않습니다.',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 치명적인 오류: 하위 시스템 응답 없음. FLUX 지원팀에 문의하세요.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: '문제가 발생했습니다. 기계를 다시 시작하세요.', // Deprecated in FW 3.3.1
