@@ -273,19 +273,21 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
         if (darkImageUrl) setMaskImage(darkImageUrl, 'fbm2Camera');
       };
 
-      await takePictures(true);
-      this.showMessage({ content: i18n.lang.message.preview.capturing_image });
-      await takePictures(false);
-
-      if (originalAutoExposure !== null) {
-        try {
-          await deviceMaster.setCameraExposureAuto(originalAutoExposure);
-        } catch (error) {
-          console.error('Failed to reset auto exposure setting', error);
+      try {
+        await takePictures(true);
+        this.showMessage({ content: i18n.lang.message.preview.capturing_image });
+        await takePictures(false);
+      } finally {
+        if (originalAutoExposure !== null) {
+          try {
+            await deviceMaster.setCameraExposureAuto(originalAutoExposure);
+          } catch (error) {
+            console.error('Failed to reset auto exposure setting', error);
+          }
         }
-      }
 
-      this.originalExposure = null;
+        this.originalExposure = null;
+      }
 
       this.showMessage({ content: i18n.lang.message.preview.succeeded, duration: 3, level: MessageLevel.SUCCESS });
 
