@@ -1809,6 +1809,8 @@ const lang: ILang = {
     go: '开始',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 气流侦测异常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 底盖开启，将底盖关上以继续',
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 墨盒温度警报\n墨盒温度超出正常范围。\n为保护设备，作业已中断。请重新安装墨盒并重新开始作业。',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 墨盒电源错误\n墨盒检测到异常电源连接。请重新安装墨盒后再试一次。',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 打印头保护盖安装失败',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 打印头保护盖移除失败',
     HARDWARE_ERROR_DOOR_OPENED: '#901 门盖开启，将门盖关上以继续',
@@ -1818,12 +1820,18 @@ const lang: ILang = {
     HARDWARE_ERROR_HEADTYPE_NONE: '#917 未检测到模块。请确保模块已正确安装以继续。',
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: '#918 检测到未知模块。请安装正确的模块以继续。',
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: '#920 归零 PULL-OFF 失败',
+    HARDWARE_ERROR_KEY_OFF: '#929 未检测到安全钥匙\n未检测到安全钥匙或安全钥匙已停用。为了您的安全，机器在钥匙正确开启前无法运行。\n请插入安全钥匙并开启后再重新开始作业。',
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 激光温度异常\n激光温度过高。请停止操作并等待激光冷却后再重新启动。',
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 激光电压异常\n激光电压错误。请重新启动机器。如问题持续，请联系客服。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 主板没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 主板无响应\n主板无响应。请重新开始作业。',
+    HARDWARE_ERROR_NO_INK_DETECTED: '#926 未检测到墨盒\n1. 取下打印模块。\n2. 将墨盒装入模块中。\n3. 将打印模块重新安装回机器。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 水温过高，请稍后再继续',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z轴归零失败',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 打印模块无响应。',
     HARDWARE_ERROR_PROBE_SHOWED: '请收回探针。',
     HARDWARE_ERROR_PUMP_ERROR: '#900 水冷未开，请联系客服 (02) 2651-3171',
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 远程联锁装置已触发\n请检查远程联锁接头，确保连接牢固后再重新开始作业。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 未侦测到旋转轴',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 子系统没有回应。请联系 FLUX 客服。', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: '固件发生错误\n请重新启动机器', // Deprecated in FW 3.3.1

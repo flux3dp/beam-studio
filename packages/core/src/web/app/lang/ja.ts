@@ -1809,6 +1809,8 @@ const lang: ILang = {
     go: '開始',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 エアフローセンサー異常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 ボトムカバーオープン。ドアを閉めて続行します。',
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 インクカートリッジ温度アラート\nインクカートリッジの温度が正常範囲を超えています。\n保護のため、作業が中断されました。インクカートリッジを再装着し、作業を再開してください。',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 インクカートリッジ電源エラー\nインクカートリッジに異常な電源接続が検出されました。インクカートリッジを再装着してからもう一度お試しください。',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 プリントヘッドカバーの装着に失敗しました',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 プリントヘッドカバーの取り外しに失敗しました',
     HARDWARE_ERROR_DOOR_OPENED: '#901 続行するにはドアを閉じてください。',
@@ -1818,12 +1820,18 @@ const lang: ILang = {
     HARDWARE_ERROR_HEADTYPE_NONE: '#917 モジュールが検出されません。続行するにはモジュールが正しくインストールされていることを確認してください。',
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: '#918 未知のモジュールが検出されました。続行するには正しいモジュールをインストールしてください。',
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: '#920 Homing Pull-Off Error',
+    HARDWARE_ERROR_KEY_OFF: '#929 セーフティキーが検出されません\nセーフティキーが検出されないか、無効になっています。安全のため、キーが正しくオンになるまで機器は動作できません。\n作業を再開する前に、セーフティキーを挿入してオンにしてください。',
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 レーザー温度異常\nレーザー温度が高すぎます。操作を停止し、レーザーが冷却されてから再開してください。',
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 レーザー電圧異常\nレーザー電圧エラーです。機器を再起動してください。問題が解決しない場合は、カスタマーサポートにお問い合わせください。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 重大なエラー：メインボードがオフラインです。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 メインボード応答なし\nメインボードが応答していません。ジョブを再開してください。',
+    HARDWARE_ERROR_NO_INK_DETECTED: '#926 インクカートリッジが検出されません\n1. プリントモジュールを取り外してください。\n2. インクカートリッジをモジュールに挿入してください。\n3. プリントモジュールを機器に再装着してください。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 過熱。数分お待ちください。',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z軸リセットに失敗しました',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 プリンターモジュールが応答しません。',
     HARDWARE_ERROR_PROBE_SHOWED: 'プローブを格納してください。',
     HARDWARE_ERROR_PUMP_ERROR: '#900 水槽にご確認ください。',
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 リモートインターロック作動\nリモートインターロックコネクタを確認し、しっかり接続されていることを確認してからジョブを再開してください。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 ロータリーモジュールが検出されません',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 重大なエラー：サブシステムが応答しません。 FLUXサポートにお問い合わせください。', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: '何かがうまくいかなかった\nマシンを再起動してください', // Deprecated in FW 3.3.1

@@ -1809,6 +1809,8 @@ const lang: ILang = {
     go: '開始',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 氣流偵測異常',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 底蓋開啟，將底蓋關上以繼續',
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 墨匣高溫警示\n墨匣溫度已超出正常範圍。\n為了保護設備，已中斷本次工作。請重新安裝墨匣後再重新啟動工作。',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 墨匣電源錯誤\n偵測到墨匣電源連接異常。請重新安裝墨匣後再試一次。',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 列印頭保護蓋安裝失敗',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 列印頭保護蓋移除失敗',
     HARDWARE_ERROR_DOOR_OPENED: '#901 門蓋開啟，將門蓋關上以繼續',
@@ -1818,12 +1820,18 @@ const lang: ILang = {
     HARDWARE_ERROR_HEADTYPE_NONE: '#917 未偵測到模組，請確認模組頭已正確安裝以繼續操作。',
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: '#918 偵測到未知模組。請安裝正確的模組以繼續。',
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: '#920 歸零 PULL-OFF 失敗',
+    HARDWARE_ERROR_KEY_OFF: '#929 未偵測到安全鑰\n未偵測到安全鑰或安全鑰已被停用。為了您的安全，安全鑰正確開啟前，機器無法運作。\n請插入安全鑰並轉到開啟位置後，再重新啟動工作。',
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 雷射溫度異常\n雷射溫度過高。請停止操作，待雷射降溫後再重新開始。',
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 雷射電壓異常\n雷射電壓錯誤。請重新啟動機器。若問題持續，請聯繫客服。',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 主板沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 主板沒有回應\n主板沒有回應。請重新啟動工作。',
+    HARDWARE_ERROR_NO_INK_DETECTED: '#926 未偵測到墨匣\n1. 移除列印模組。\n2. 將墨匣插入模組。\n3. 請將列印模組重新安裝至機器。',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 水溫過高，請稍後再繼續',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Z 軸歸零失敗',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 列印頭無回應。',
     HARDWARE_ERROR_PROBE_SHOWED: '請收回探針。',
     HARDWARE_ERROR_PUMP_ERROR: '#900 水冷未開，請聯繫客服。',
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 遠端連鎖保護觸發\n請檢查遠端連鎖保護連接器，確認已牢固連接後再重新啟動工作。',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 未偵測到旋轉軸',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 子系統沒有回應。請聯繫 FLUX 客服。', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: '韌體發生錯誤<br/>請重新啟動機器', // Deprecated in FW 3.3.1

@@ -1809,6 +1809,8 @@ const lang: ILang = {
     go: 'Začít',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Anomálie senzoru proudění vzduchu',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Spodní část otevřena. Pro pokračování prosím uzavřete spodní část.',
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Upozornění na teplotu inkoustové cartridge\nTeplota inkoustové cartridge překračuje normální rozsah.\nPro ochranu byl úkol přerušen. Prosím znovu nainstalujte inkoustovou cartridge a restartujte úkol.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Chyba napájení inkoustové cartridge\nByla zjištěna abnormální napájecí přípojka inkoustové cartridge. Prosím znovu nainstalujte inkoustovou cartridge a zkuste to znovu.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Instalace krytu tiskové hlavy se nezdařila',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Odebrání krytu tiskové hlavy se nezdařilo',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Pro pokračování prosím zavřete dvířka.',
@@ -1818,12 +1820,18 @@ const lang: ILang = {
     HARDWARE_ERROR_HEADTYPE_NONE: '#917 Modul nedetekován. Pro pokračování se prosím ujistěte, že je modul správně nainstalován.',
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: '#918 Neznámý modul detekován. Pro pokračování prosím nainstalujte správný modul.',
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: '#920 Chyba Homing Pull-Off',
+    HARDWARE_ERROR_KEY_OFF: '#929 Bezpečnostní klíč nebyl rozpoznán\nBezpečnostní klíč nebyl rozpoznán nebo byl deaktivován. Pro vaši bezpečnost nemůže stroj pracovat, dokud nebude klíč správně zapnut.\nProsím vložte bezpečnostní klíč a zapněte ho před obnovením práce.',
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Abnormální teplota laseru\nTeplota laseru je příliš vysoká. Prosím zastavte provoz a nechte laser vychladnout před opětovným spuštěním.',
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Abnormální napětí laseru\nChyba napětí laseru. Prosím restartujte stroj. Pokud problém přetrvává, kontaktujte zákaznickou podporu.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Kritická chyba: Základní deska off-line. Kontaktujte prosím FLUX podporu.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Základní deska neodpovídá\nZákladní deska neodpovídá. Prosím restartujte úlohu.',
+    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Nebyla detekována inkoustová cartridge\n1. Vyjměte tiskový modul.\n2. Vložte inkoustovou cartridge do modulu.\n3. Znovu nainstalujte tiskový modul do stroje.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Přehřátí. Vyčkejte prosím několik minut.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Restart osy Z neúspěšný',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Tiskový modul neodpovídá.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Prosím, zatáhněte sondu.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Zkontrolujte prosím nádržku s vodou.',
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Vzdálený bezpečnostní spínač aktivován\nProsím zkontrolujte konektor vzdáleného bezpečnostního spínače a ujistěte se, že je bezpečně připojen, než obnovíte práci.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nebyl identifikován rotační modul',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Kritická chyba: Subsystém neodpovídá. Kontaktujte prosím FLUX podporu.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: 'Něco je v nepořádku\nRestartujte prosím přístroj', // Deprecated in FW 3.3.1

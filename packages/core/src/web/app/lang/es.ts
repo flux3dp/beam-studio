@@ -1809,6 +1809,8 @@ const lang: ILang = {
     go: 'Comenzar',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Sensor de caudal de aire anómalo',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Parte inferior abierta. Ciérrela para continuar.',
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Alerta de temperatura del cartucho de tinta\nLa temperatura del cartucho de tinta está por encima del rango normal.\nComo medida de protección, el trabajo ha sido interrumpido. Reinstale el cartucho de tinta y reinicie el trabajo.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Error de alimentación del cartucho de tinta\nSe ha detectado una conexión de alimentación anómala en el cartucho de tinta. Reinstale el cartucho de tinta e inténtelo de nuevo.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 No se ha podido instalar la cubierta del cabezal de impresión.',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 No se ha podido retirar la cubierta del cabezal de impresión.',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Cierra la puerta para continuar.',
@@ -1818,12 +1820,18 @@ const lang: ILang = {
     HARDWARE_ERROR_HEADTYPE_NONE: '#917 Módulo no detectado. Asegúrese de que el módulo esté instalado correctamente para continuar.',
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: '#918 Se ha detectado un módulo desconocido. Instale el módulo correcto para continuar.',
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: '#920 Error de retorno al punto de origen',
+    HARDWARE_ERROR_KEY_OFF: '#929 Llave de seguridad no detectada\nLa llave de seguridad no se detecta o ha sido desactivada. Por su seguridad, la máquina no puede funcionar hasta que la llave esté correctamente encendida.\nInserte la llave de seguridad y enciéndala antes de reiniciar el trabajo.',
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Temperatura del láser anormal\nLa temperatura del láser es demasiado alta. Detenga la operación y permita que el láser se enfríe antes de reiniciar.',
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Voltaje del láser anormal\nError de voltaje del láser. Reinicie la máquina. Si el problema persiste, contacte con el servicio de atención al cliente.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Error crítico: placa base desconectada. Póngase en contacto con el servicio de asistencia de FLUX.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Placa base sin respuesta\nLa placa base no responde. Reinicie el trabajo.',
+    HARDWARE_ERROR_NO_INK_DETECTED: '#926 No se detectó cartucho de tinta\n1. Retire el módulo de impresión.\n2. Inserte un cartucho de tinta en el módulo.\n3. Reinstale el módulo de impresión en la máquina.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Sobrecalentamiento. Por favor, espere unos minutos.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Fallo en el reinicio del eje Z',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 El módulo de impresión no responde.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Por favor, retraiga la sonda.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Compruebe su depósito de agua.',
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Enclavamiento remoto activado\nCompruebe el conector de enclavamiento remoto y asegúrese de que esté conectado de forma segura antes de reiniciar el trabajo.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 No se detectó ningún módulo rotativo.',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Error crítico: El subsistema no responde. Póngase en contacto con el servicio de asistencia de FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: 'Algo salió mal.\nPor favor, reinicia la máquina', // Deprecated in FW 3.3.1

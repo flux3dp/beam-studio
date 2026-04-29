@@ -1809,6 +1809,8 @@ const lang: ILang = {
     go: 'Rozpocznij',
     HARDWARE_ERROR_AIR_ASSIST_ABNORMAL: '#913 Nieprawidłowość czujnika przepływu powietrza',
     HARDWARE_ERROR_BOTTOM_OPENED: '#903 Dno otwarte. Zamknij dno, aby kontynuować.',
+    HARDWARE_ERROR_CARTRIDGE_OVERHEAT: '#931 Alert temperatury wkładu atramentowego\nTemperatura wkładu atramentowego przekracza normalny zakres.\nDla ochrony praca została przerwana. Zainstaluj ponownie wkład atramentowy i uruchom pracę ponownie.',
+    HARDWARE_ERROR_CARTRIDGE_POWERON_FAILED: '#930 Błąd zasilania wkładu atramentowego\nWykryto nieprawidłowe połączenie zasilania wkładu atramentowego. Zainstaluj ponownie wkład atramentowy i spróbuj ponownie.',
     HARDWARE_ERROR_COVER_NOT_CLOSED: '#924 Nie udało się zainstalować pokrywy głowicy drukującej',
     HARDWARE_ERROR_COVER_NOT_OPENED: '#925 Nie udało się usunąć pokrywy głowicy drukującej',
     HARDWARE_ERROR_DOOR_OPENED: '#901 Zamknij drzwi, aby kontynuować.',
@@ -1818,12 +1820,18 @@ const lang: ILang = {
     HARDWARE_ERROR_HEADTYPE_NONE: '#917 Nie wykryto modułu. Aby kontynuować, upewnij się, że moduł jest poprawnie zainstalowany.',
     HARDWARE_ERROR_HEADTYPE_UNKNOWN: '#918 Wykryto nieznany moduł. Aby kontynuować, zainstaluj odpowiedni moduł.',
     HARDWARE_ERROR_HOMING_PULLOFF_FAILED: '#920 Błąd odrywania od pozycji bazowej',
+    HARDWARE_ERROR_KEY_OFF: '#929 Nie wykryto klucza bezpieczeństwa\nKlucz bezpieczeństwa nie został wykryty lub został dezaktywowany. Dla Twojego bezpieczeństwa maszyna nie może działać, dopóki klucz nie zostanie prawidłowo włączony.\nWłóż klucz bezpieczeństwa i włącz go przed ponownym uruchomieniem pracy.',
+    HARDWARE_ERROR_LASER_TEMPERATURE_ABNORMAL: '#933 Nieprawidłowa temperatura lasera\nTemperatura lasera jest zbyt wysoka. Zatrzymaj pracę i pozwól laserowi ostygnąć przed ponownym uruchomieniem.',
+    HARDWARE_ERROR_LASER_VOLTAGE_ABNORMAL: '#932 Nieprawidłowe napięcie lasera\nBłąd napięcia lasera. Uruchom ponownie maszynę. Jeśli problem będzie się powtarzał, skontaktuj się z obsługą klienta.',
     HARDWARE_ERROR_MAINBOARD_ERROR: '#401 Błąd krytyczny: płyta główna odłączona. Skontaktuj się z pomocą techniczną FLUX.', // Deprecated in FW 3.3.1
+    HARDWARE_ERROR_MAINBOARD_NO_RESPONSE: '#928 Płyta główna nie odpowiada\nPłyta główna nie odpowiada. Uruchom ponownie zadanie.',
+    HARDWARE_ERROR_NO_INK_DETECTED: '#926 Nie wykryto wkładu atramentowego\n1. Wyjmij moduł drukujący.\n2. Włóż wkład atramentowy do modułu.\n3. Zainstaluj ponownie moduł drukujący w maszynie.',
     HARDWARE_ERROR_OVER_TEMPERATURE: '#902 Przegrzanie. Poczekaj kilka minut.',
     HARDWARE_ERROR_PLATFORM_HOMING_FAILED: '#910 Resetowanie osi Z nie powiodło się',
     HARDWARE_ERROR_PRINTER_NO_RESPONSE: '#919 Moduł drukarki brak reakcji.',
     HARDWARE_ERROR_PROBE_SHOWED: 'Proszę cofnąć sondę.',
     HARDWARE_ERROR_PUMP_ERROR: '#900 Sprawdź w swoim zbiorniku na wodę.',
+    HARDWARE_ERROR_REMOTE_INTERLOCK_OPENED: '#927 Zdalny interlock wyzwolony\nSprawdź złącze zdalnego interlocka i upewnij się, że jest bezpiecznie podłączone przed ponownym uruchomieniem zadania.',
     HARDWARE_ERROR_ROTARY_NOT_DETECTED: '#914 Nie wykryto modułu obrotowego',
     HARDWARE_ERROR_SUBSYSTEM_ERROR: '#402 Błąd krytyczny: Brak odpowiedzi podsystemu. Skontaktuj się z pomocą techniczną FLUX.', // Deprecated in FW 3.3.1
     HARDWARE_FAILURE: 'Coś poszło nie tak\nProszę ponownie uruchomić komputer', // Deprecated in FW 3.3.1
