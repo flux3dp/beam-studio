@@ -64,8 +64,6 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
     [height, width, sizeRatio],
   );
 
-  console.log(size);
-
   // Compute scaled SVG container size from the active SVG's viewBox so the renderer
   // can fill the available space without distorting (preserveAspectRatio handles the
   // actual fitting inside the container).

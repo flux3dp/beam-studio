@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Εισαγωγή κειμένου...',
     },
     types: {
-      hotel_key_chain: 'Μπρελόκ ξενοδοχείου',
-      rectangle: 'Ορθογώνιο',
+      capsule: 'Στυλ κάψουλας',
+      oval: 'Οβάλ στυλ',
+      round_arch: 'Στυλ στρογγυλής αψίδας',
+      surfing_board: 'Στυλ σανίδας σερφ',
+      tag: 'Στυλ ετικέτας',
       text: 'Κείμενο',
     },
   },

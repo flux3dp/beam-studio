@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Saisir le texte...',
     },
     types: {
-      hotel_key_chain: "Porte-clés d'hôtel",
-      rectangle: 'Rectangle',
+      capsule: 'Style capsule',
+      oval: 'Style ovale',
+      round_arch: 'Style arc arrondi',
+      surfing_board: 'Style planche de surf',
+      tag: 'Style étiquette',
       text: 'Texte',
     },
   },

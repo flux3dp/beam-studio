@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Inserisci testo...',
     },
     types: {
-      hotel_key_chain: 'Portachiavi da hotel',
-      rectangle: 'Rettangolo',
+      capsule: 'Stile capsula',
+      oval: 'Stile ovale',
+      round_arch: 'Stile arco tondo',
+      surfing_board: 'Stile tavola da surf',
+      tag: 'Stile etichetta',
       text: 'Testo',
     },
   },

@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Zadejte text...',
     },
     types: {
-      hotel_key_chain: 'Hotelový přívěsek',
-      rectangle: 'Obdélník',
+      capsule: 'Styl kapsle',
+      oval: 'Oválný styl',
+      round_arch: 'Styl kulatého oblouku',
+      surfing_board: 'Styl surfového prkna',
+      tag: 'Styl štítku',
       text: 'Text',
     },
   },

@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'ป้อนข้อความ...',
     },
     types: {
-      hotel_key_chain: 'พวงกุญแจโรงแรม',
-      rectangle: 'สี่เหลี่ยมผืนผ้า',
+      capsule: 'สไตล์แคปซูล',
+      oval: 'สไตล์วงรี',
+      round_arch: 'สไตล์ซุ้มโค้ง',
+      surfing_board: 'สไตล์กระดานโต้คลื่น',
+      tag: 'สไตล์ป้ายแท็ก',
       text: 'ข้อความ',
     },
   },

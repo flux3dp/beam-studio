@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: '輸入文字...',
     },
     types: {
-      hotel_key_chain: '飯店鑰匙圈',
-      rectangle: '矩形',
+      capsule: '膠囊形',
+      oval: '橢圓形造型',
+      round_arch: '圓拱形',
+      surfing_board: '衝浪板造型',
+      tag: '標籤造型',
       text: '文字',
     },
   },

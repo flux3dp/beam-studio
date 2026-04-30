@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Wprowadź tekst...',
     },
     types: {
-      hotel_key_chain: 'Brelok hotelowy',
-      rectangle: 'Prostokąt',
+      capsule: 'Styl kapsułki',
+      oval: 'Styl owalny',
+      round_arch: 'Styl okrągłego łuku',
+      surfing_board: 'Styl deski surfingowej',
+      tag: 'Styl zawieszki',
       text: 'Tekst',
     },
   },

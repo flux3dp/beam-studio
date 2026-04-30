@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Syötä teksti...',
     },
     types: {
-      hotel_key_chain: 'Hotellin avaimenperä',
-      rectangle: 'Suorakulmio',
+      capsule: 'Kapselityyli',
+      oval: 'Soikea tyyli',
+      round_arch: 'Pyöreä kaari -tyyli',
+      surfing_board: 'Surffalauta-tyyli',
+      tag: 'Tunniste-tyyli',
       text: 'Teksti',
     },
   },

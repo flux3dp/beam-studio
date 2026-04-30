@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Tekst invoeren...',
     },
     types: {
-      hotel_key_chain: 'Hotel sleutelhanger',
-      rectangle: 'Rechthoek',
+      capsule: 'Capsulestijl',
+      oval: 'Ovale stijl',
+      round_arch: 'Ronde boogstijl',
+      surfing_board: 'Surfplankstijl',
+      tag: 'Labelstijl',
       text: 'Tekst',
     },
   },

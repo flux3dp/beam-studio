@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Nhập văn bản...',
     },
     types: {
-      hotel_key_chain: 'Móc khóa khách sạn',
-      rectangle: 'Hình chữ nhật',
+      capsule: 'Kiểu viên nang',
+      oval: 'Kiểu hình bầu dục',
+      round_arch: 'Kiểu vòm tròn',
+      surfing_board: 'Kiểu ván lướt sóng',
+      tag: 'Kiểu thẻ treo',
       text: 'Văn bản',
     },
   },

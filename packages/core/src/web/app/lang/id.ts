@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: 'Masukkan teks...',
     },
     types: {
-      hotel_key_chain: 'Gantungan Kunci Hotel',
-      rectangle: 'Persegi panjang',
+      capsule: 'Gaya Kapsul',
+      oval: 'Gaya Oval',
+      round_arch: 'Gaya Lengkung Bulat',
+      surfing_board: 'Gaya Papan Selancar',
+      tag: 'Gaya Label',
       text: 'Teks',
     },
   },

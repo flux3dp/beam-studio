@@ -1652,8 +1652,11 @@ export interface ILang {
       text_placeholder: string;
     };
     types: {
-      hotel_key_chain: string;
-      rectangle: string;
+      capsule: string;
+      oval: string;
+      round_arch: string;
+      surfing_board: string;
+      tag: string;
       text: string;
     };
   };

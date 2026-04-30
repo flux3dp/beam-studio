@@ -1653,8 +1653,11 @@ const lang: ILang = {
       text_placeholder: '텍스트 입력...',
     },
     types: {
-      hotel_key_chain: '호텔 키체인',
-      rectangle: '직사각형',
+      capsule: '캡슐 스타일',
+      oval: '타원 스타일',
+      round_arch: '라운드 아치 스타일',
+      surfing_board: '서핑보드 스타일',
+      tag: '태그 스타일',
       text: '텍스트',
     },
   },

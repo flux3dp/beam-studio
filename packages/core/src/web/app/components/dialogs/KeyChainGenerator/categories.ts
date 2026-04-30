@@ -1,7 +1,7 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
-import { BASE_RECTANGLE, HOTEL_KEY_CHAIN } from './constants/categoryShapes';
+import { CAPSULE, OVAL, ROUND_ARCH, SURFING_BOARD } from './constants/categoryShapes';
 import { DEFAULT_ELEMENT_OPTIONS } from './constants/elementOptions';
 import type {
   CustomShapeOptionValues,
@@ -54,16 +54,16 @@ export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
 
 export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   {
-    defaultSize: { dimension: 'height', value: 100 },
+    defaultSize: { dimension: 'height', value: 80 },
     defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
-    id: 'hotel_key_chain',
-    nameKey: 'hotel_key_chain',
+    id: 'surfing_board',
+    nameKey: 'surfing_board',
     options: {
       decorationPaths: [
         {
-          defaults: { ...DEFAULT_DECORATION_PATH, selectedKey: 'hotel_ribbon_band' },
+          defaults: { ...DEFAULT_DECORATION_PATH, selectedKey: 'ribbon_band' },
           id: '1',
-          options: ['hotel_ribbon_band'],
+          options: ['ribbon_band'],
         },
       ],
       elements: [
@@ -94,18 +94,18 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
         },
       ],
     },
-    svgContent: HOTEL_KEY_CHAIN,
+    svgContent: SURFING_BOARD,
     thumbnail: '',
   },
   {
-    defaultSize: { dimension: 'height', value: 58 },
-    defaultViewBox: { height: 600, width: 300, x: 0, y: 0 },
-    id: 'rectangle',
-    nameKey: 'rectangle',
+    defaultSize: { dimension: 'height', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'capsule',
+    nameKey: 'capsule',
     options: {
       elements: [
         {
-          bounds: { height: 120, width: 120, x: 90, y: 400 },
+          bounds: { height: 250, width: 250, x: 375, y: 394 },
           defaults: DEFAULT_ELEMENT,
           id: '1',
           options: DEFAULT_ELEMENT_OPTIONS,
@@ -113,20 +113,91 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: DEFAULT_HOLE,
+          defaults: { ...DEFAULT_HOLE, type: 'punch' },
           id: '1',
           startPositionRef: 'topCenter',
         },
       ],
       texts: [
         {
-          bounds: { height: 250, width: 240, x: 30, y: 100 },
-          defaults: DEFAULT_TEXT,
+          bounds: { height: 100, width: 400, x: 300, y: 255 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 70, text: 'Jack' },
           id: '1',
+        },
+        {
+          bounds: { height: 129, width: 334, x: 333, y: 685 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 35, text: 'A small object to\nHold Big Memories' },
+          id: '2',
         },
       ],
     },
-    svgContent: BASE_RECTANGLE,
+    svgContent: CAPSULE,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'width', value: 80 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'oval',
+    nameKey: 'oval',
+    options: {
+      holes: [
+        {
+          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          id: '1',
+          startPositionRef: 'leftCenter',
+        },
+      ],
+      texts: [
+        {
+          bounds: { height: 160, width: 620, x: 215, y: 420 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+          id: '1',
+        },
+        // {
+        //   bounds: { height: 129, width: 334, x: 333, y: 685 },
+        //   defaults: { ...DEFAULT_TEXT, fontSize: 35, text: 'A small object to\nHold Big Memories' },
+        //   id: '2',
+        // },
+      ],
+    },
+    svgContent: OVAL,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'height', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'round_arch',
+    nameKey: 'round_arch',
+    options: {
+      elements: [
+        {
+          bounds: { height: 308, width: 308, x: 346, y: 272 },
+          defaults: DEFAULT_ELEMENT,
+          id: '1',
+          options: DEFAULT_ELEMENT_OPTIONS,
+        },
+      ],
+      holes: [
+        {
+          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          id: '1',
+          startPositionRef: 'topCenter',
+        },
+      ],
+      texts: [
+        {
+          bounds: { height: 100, width: 420, x: 290, y: 625 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+          id: '1',
+        },
+        {
+          bounds: { height: 85, width: 420, x: 290, y: 770 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 35, text: 'A small object to\nHold Big Memories' },
+          id: '2',
+        },
+      ],
+    },
+    svgContent: ROUND_ARCH,
     thumbnail: '',
   },
   {
