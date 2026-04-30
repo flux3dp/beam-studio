@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klik "Guna" untuk menggunakan Auto Fit pada corak ini.',
     preview_first: 'Sila lakukan pratonton kamera terlebih dahulu.',
     reset_position: 'Tetapkan Semula Kedudukan',
+    retry_with_remove_bg: 'Cuba semula dengan alih keluar latar belakang',
     rotation: 'Putar',
     select_a_pattern: 'Pilih Corak',
     selected_artwork: 'Karya Seni Terpilih',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Jika tiada corak dijumpai, pratonton kamera sekali lagi dan gunakan Muat Auto.',
     step3: 'Jika masih gagal menemui corak yang betul, pastikan bahan kerja anda dapat dikenali dengan jelas dan kawasan kerja bersih daripada serpihan.',
     title: 'Muat Auto',
+    use_original_image: 'Gunakan imej asal',
   },
   autosave: {
     open_settings: 'Buka Tetapan',

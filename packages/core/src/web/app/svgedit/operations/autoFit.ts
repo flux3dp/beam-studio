@@ -5,11 +5,17 @@ import progressCaller from '@core/app/actions/progress-caller';
 import { showAutoFitPanel } from '@core/app/components/dialogs/autoFit';
 import getUtilWS from '@core/helpers/api/utils-ws';
 import i18n from '@core/helpers/i18n';
+import { removeImageBackground } from '@core/helpers/image-edit';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
 import workareaManager from '../workarea';
 
-const dataCache: { data?: AutoFitContour[][]; url: string } = { url: '' };
+let dataCache: {
+  data?: AutoFitContour[][];
+  removedBgData?: AutoFitContour[][];
+  removedBgImageUrl?: string;
+  url: string;
+} = { url: '' };
 
 // TODO: add unit test
 const autoFit = async (elem: SVGElement): Promise<void> => {
@@ -27,16 +33,14 @@ const autoFit = async (elem: SVGElement): Promise<void> => {
     const utilWS = getUtilWS();
     const resp = await fetch(previewBackgroundUrl);
     const blob = await resp.blob();
+    const isSplicingImg = !constant.adorModels.includes(workareaManager.model);
     let data: AutoFitContour[][];
 
     if (dataCache.url === previewBackgroundUrl && dataCache.data) {
       data = dataCache.data;
     } else {
-      data = await utilWS.getAllSimilarContours(blob, {
-        isSplcingImg: !constant.adorModels.includes(workareaManager.model),
-      });
-      dataCache.url = previewBackgroundUrl;
-      dataCache.data = data;
+      data = await utilWS.getAllSimilarContours(blob, { isSplicingImg });
+      dataCache = { data, url: previewBackgroundUrl };
     }
 
     if (data.length === 0) {
@@ -45,7 +49,43 @@ const autoFit = async (elem: SVGElement): Promise<void> => {
       return;
     }
 
-    showAutoFitPanel(elem, previewBackgroundUrl, data);
+    const onRetryWithRemoveBackground = async (): Promise<null | {
+      data: AutoFitContour[][];
+      imageUrl: string;
+    }> => {
+      if (dataCache.url === previewBackgroundUrl && dataCache.removedBgData) {
+        return { data: dataCache.removedBgData, imageUrl: dataCache.removedBgImageUrl! };
+      }
+
+      try {
+        progressCaller.openNonstopProgress({ id: 'auto-fit-retry', message: i18n.lang.general.processing });
+
+        const previewResp = await fetch(previewBackgroundUrl);
+        const previewBlob = await previewResp.blob();
+        const cleanedBlob = await removeImageBackground(previewBlob);
+
+        if (!cleanedBlob) return null;
+
+        const newData = await utilWS.getAllSimilarContours(cleanedBlob, { isSplicingImg });
+
+        if (newData.length === 0) {
+          alertCaller.popUp({ message: lang.failed_to_find_contour });
+
+          return null;
+        }
+
+        const newImageUrl = URL.createObjectURL(cleanedBlob);
+
+        dataCache.removedBgData = newData;
+        dataCache.removedBgImageUrl = newImageUrl;
+
+        return { data: newData, imageUrl: newImageUrl };
+      } finally {
+        progressCaller.popById('auto-fit-retry');
+      }
+    };
+
+    showAutoFitPanel(elem, previewBackgroundUrl, data, onRetryWithRemoveBackground);
 
     return;
   } catch (error) {

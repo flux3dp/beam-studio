@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klicken Sie auf „Anwenden“, um Auto Fit auf dieses Muster anzuwenden.',
     preview_first: 'Bitte führen Sie zuerst die Kamera-Vorschau durch.',
     reset_position: 'Position zurücksetzen',
+    retry_with_remove_bg: 'Mit Hintergrundentfernung erneut versuchen',
     rotation: 'Drehen',
     select_a_pattern: 'Wählen Sie ein Muster',
     selected_artwork: 'Ausgewähltes Kunstwerk',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Wenn kein Muster gefunden wird, prüfen Sie die Kameravorschau erneut und verwenden Sie Automatische Anpassung.',
     step3: 'Wenn weiterhin kein korrektes Muster gefunden wird, stellen Sie sicher, dass Ihr Werkstück klar erkennbar ist und der Arbeitsbereich frei von Ablagerungen ist.',
     title: 'Automatische Anpassung',
+    use_original_image: 'Originalbild verwenden',
   },
   autosave: {
     open_settings: 'Einstellungen öffnen',

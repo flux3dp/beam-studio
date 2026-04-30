@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klik "Terapkan" untuk menerapkan Auto Fit pada pola ini.',
     preview_first: 'Silakan lakukan pratinjau kamera terlebih dahulu.',
     reset_position: 'Atur Ulang Posisi',
+    retry_with_remove_bg: 'Coba lagi dengan hapus latar belakang',
     rotation: 'Putar',
     select_a_pattern: 'Pilih Pola',
     selected_artwork: 'Karya Seni yang Dipilih',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Jika tidak ditemukan pola, pratinjau kamera lagi dan terapkan Pas Otomatis.',
     step3: 'Jika masih gagal menemukan pola yang benar, pastikan benda kerja Anda dapat dikenali dengan jelas dan area kerja bersih dari kotoran.',
     title: 'Pas Otomatis',
+    use_original_image: 'Gunakan gambar asli',
   },
   autosave: {
     open_settings: 'Buka Pengaturan',

@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '点击“套用”以将自动适配应用于此图案。',
     preview_first: '请先进行相机预览。',
     reset_position: '重置位置',
+    retry_with_remove_bg: '移除背景后重新检测',
     rotation: '旋转',
     select_a_pattern: '选择图案',
     selected_artwork: '已选作品',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: '如果未找到图案，请再次预览并应用自动适配。',
     step3: '如果仍然无法找到正确的图案，请确保您的工件清晰可识别，并且工作区域干净无杂物。',
     title: '自动适配',
+    use_original_image: '使用原始图片',
   },
   autosave: {
     open_settings: '打开设置',

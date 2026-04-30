@@ -282,19 +282,18 @@ const traceImage = async (img = getSelectedElem()): Promise<void> => {
   progress.popById('vectorize-image');
 };
 
-const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
-  const element = elem || getSelectedElem();
-
-  if (!element) {
-    return;
-  }
-
+/**
+ * Sends an image blob to the remove-background API.
+ * Handles auth check, credit check, and warning dialog internally.
+ * @returns The cleaned PNG blob on success, null on cancel/error.
+ */
+export const removeImageBackground = async (imageBlob: Blob): Promise<Blob | null> => {
   const user = getCurrentUser();
 
   if (!user) {
     dialogCaller.showLoginDialog();
 
-    return;
+    return null;
   }
 
   const showBalanceAlert = () =>
@@ -303,7 +302,7 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
   if ((user.info?.subscription && user.info.subscription.credit) + user.info.credit < 0.02) {
     showBalanceAlert();
 
-    return;
+    return null;
   }
 
   if (!alertConfig.read('skip_bg_removal_warning')) {
@@ -327,26 +326,13 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
     });
 
     if (!res) {
-      return;
+      return null;
     }
   }
 
-  progress.openNonstopProgress({
-    id: 'photo-edit-processing',
-    message: i18n.lang.beambox.photo_edit_panel.processing,
-  });
-
-  const { imgUrl, isFullColor } = getImageAttributes(element);
-
-  if (!imgUrl) {
-    return;
-  }
-
-  const imgGet = await fetch(imgUrl);
-  const imgData = await imgGet.blob();
   const form = new FormData();
 
-  form.append('image', imgData);
+  form.append('image', imageBlob);
 
   try {
     const removeResult = (await axiosFluxId.post('/api/remove-background', form, {
@@ -381,14 +367,14 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
           onConfirm: dialogCaller.showLoginDialog,
         });
 
-        return;
+        return null;
       }
 
       alertCaller.popUpError({
         message: `Server Error: ${status} ${errorDetail || message}`,
       });
 
-      return;
+      return null;
     }
 
     const contentType = removeResult.headers['content-type'];
@@ -422,17 +408,49 @@ const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
         }
       }
 
-      return;
+      return null;
     }
 
     if (contentType !== 'image/png') {
       console.error('unknown response type', contentType);
       alertCaller.popUpError({ message: `Unknown Response Type: ${contentType}` });
 
+      return null;
+    }
+
+    return removeResult.data as Blob;
+  } catch {
+    return null;
+  }
+};
+
+const removeBackground = async (elem?: SVGImageElement): Promise<void> => {
+  const element = elem || getSelectedElem();
+
+  if (!element) {
+    return;
+  }
+
+  const { imgUrl, isFullColor } = getImageAttributes(element);
+
+  if (!imgUrl) {
+    return;
+  }
+
+  progress.openNonstopProgress({
+    id: 'photo-edit-processing',
+    message: i18n.lang.beambox.photo_edit_panel.processing,
+  });
+
+  try {
+    const imgGet = await fetch(imgUrl);
+    const imgData = await imgGet.blob();
+    const blob = await removeImageBackground(imgData);
+
+    if (!blob) {
       return;
     }
 
-    const blob = removeResult.data as Blob;
     const blobUrl = URL.createObjectURL(blob);
     const newThreshold = 254;
     const base64Img = await generateBase64Image(blobUrl, true, newThreshold, isFullColor);
@@ -683,6 +701,7 @@ export default {
   getImageAttributes,
   potrace,
   removeBackground,
+  removeImageBackground,
   traceImage,
   trapezoid,
 };

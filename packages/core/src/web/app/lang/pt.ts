@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Clique em "Aplicar" para aplicar o Auto Fit a este padrão.',
     preview_first: 'Por favor, realize a pré-visualização da câmera primeiro.',
     reset_position: 'Redefinir posição',
+    retry_with_remove_bg: 'Tentar novamente com remoção de fundo',
     rotation: 'Girar',
     select_a_pattern: 'Selecionar um padrão',
     selected_artwork: 'Obra de arte selecionada',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Se nenhum padrão for encontrado, visualize novamente a câmera e aplique Ajuste Automático.',
     step3: 'Se ainda assim não encontrar o padrão correto, certifique-se de que sua peça de trabalho é claramente reconhecível e que a área de trabalho está livre de detritos.',
     title: 'Ajuste Automático',
+    use_original_image: 'Usar imagem original',
   },
   autosave: {
     open_settings: 'Abrir configurações',

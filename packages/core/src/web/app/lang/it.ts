@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Fai clic su "Applica" per applicare Auto Fit a questo motivo.',
     preview_first: "Eseguire prima l'anteprima della fotocamera.",
     reset_position: 'Ripristina posizione',
+    retry_with_remove_bg: 'Riprova con rimozione dello sfondo',
     rotation: 'Ruota',
     select_a_pattern: 'Seleziona un modello',
     selected_artwork: "Opera d'arte selezionata",
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Se non viene trovato alcun modello, anteprima nuovamente la fotocamera e applica Adattamento Automatico.',
     step3: "Se non riesce ancora a trovare il modello corretto, assicurati che il tuo pezzo sia chiaramente riconoscibile e che l'area di lavoro sia pulita da detriti.",
     title: 'Adattamento Automatico',
+    use_original_image: 'Usa immagine originale',
   },
   autosave: {
     open_settings: 'Apri impostazioni',

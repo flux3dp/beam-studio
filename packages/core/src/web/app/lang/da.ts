@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klik på "Anvend" for at anvende Auto Fit på dette mønster.',
     preview_first: 'Udfør venligst kameraforhåndsvisning først.',
     reset_position: 'Nulstil position',
+    retry_with_remove_bg: 'Prøv igen med fjernelse af baggrund',
     rotation: 'Drej',
     select_a_pattern: 'Vælg et mønster',
     selected_artwork: 'Valgt kunstværk',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Hvis der ikke findes noget mønster, skal du forhåndsvise kameraet igen og anvende Auto Fit.',
     step3: 'Hvis det stadig ikke lykkes at finde det korrekte mønster, skal du sikre, at dit emne er tydeligt genkendeligt, og arbejdsområdet er rent for snavs.',
     title: 'Auto Fit',
+    use_original_image: 'Brug originalt billede',
   },
   autosave: {
     open_settings: 'Åbn indstillinger',

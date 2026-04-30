@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '點擊「套用」以將自動對位套用於此形狀。',
     preview_first: '請先進行相機預覽',
     reset_position: '重置位置',
+    retry_with_remove_bg: '移除背景後重新偵測',
     rotation: '旋轉',
     select_a_pattern: '選擇形狀',
     selected_artwork: '已選圖檔',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: '如果未找到形狀，請再次進行相機預覽並應用自動對位。',
     step3: '如果仍然無法找到正確的形狀，請確保您的工件清晰可辨，且工作區域乾淨無雜物。',
     title: '自動對位',
+    use_original_image: '使用原始圖片',
   },
   autosave: {
     open_settings: '開啟設定',

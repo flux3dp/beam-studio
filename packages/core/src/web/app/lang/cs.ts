@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klikněte na „Použít“ pro použití automatického přizpůsobení na tento vzor.',
     preview_first: 'Nejprve proveďte náhled fotoaparátu.',
     reset_position: 'Obnovit pozici',
+    retry_with_remove_bg: 'Zkusit znovu s odstraněním pozadí',
     rotation: 'Otočit',
     select_a_pattern: 'Vyberte vzor',
     selected_artwork: 'Vybrané dílo',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Pokud nebyl nalezen žádný vzor, znovu náhled kamery a použijte funkci Automatické přizpůsobení.',
     step3: 'Pokud se stále nedaří najít správný vzor, ujistěte se, že váš předmět je jasně rozpoznatelný a pracovní plocha je čistá od nečistot.',
     title: 'Automatické přizpůsobení',
+    use_original_image: 'Použít původní obrázek',
   },
   autosave: {
     open_settings: 'Otevřít nastavení',

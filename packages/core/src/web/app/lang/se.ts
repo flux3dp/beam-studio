@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klicka på "Tillämpa" för att använda Auto Fit på detta mönster.',
     preview_first: 'Utför kameraförhandsgranskningen först.',
     reset_position: 'Återställ position',
+    retry_with_remove_bg: 'Försök igen med bakgrundsborttagning',
     rotation: 'Rotera',
     select_a_pattern: 'Välj ett mönster',
     selected_artwork: 'Vald konstverk',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Om inget mönster hittas, förhandsgranska kameran igen och använd Auto Fit.',
     step3: 'Om det fortfarande inte går att hitta rätt mönster, se till att ditt arbetsstycke är tydligt igenkännbart och att arbetsområdet är rent från skräp.',
     title: 'Auto Fit',
+    use_original_image: 'Använd originalbild',
   },
   autosave: {
     open_settings: 'Öppna inställningar',

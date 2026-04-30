@@ -42,6 +42,7 @@ export interface ILang {
     position_step2: string;
     preview_first: string;
     reset_position: string;
+    retry_with_remove_bg: string;
     rotation: string;
     select_a_pattern: string;
     selected_artwork: string;
@@ -49,6 +50,7 @@ export interface ILang {
     step2: string;
     step3: string;
     title: string;
+    use_original_image: string;
   };
   autosave: {
     open_settings: string;

@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: "Cliquez sur « Appliquer » pour appliquer l'ajustement automatique à ce motif.",
     preview_first: "Veuillez d'abord effectuer l'aperçu de la caméra.",
     reset_position: 'Réinitialiser la position',
+    retry_with_remove_bg: "Réessayer avec suppression de l'arrière-plan",
     rotation: 'Pivoter',
     select_a_pattern: 'Sélectionner un motif',
     selected_artwork: "Œuvre d'art sélectionnée",
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: "Si aucun motif n'est trouvé, prévisualisez à nouveau la caméra et appliquez Ajustement Automatique.",
     step3: 'Si cela ne parvient toujours pas à trouver le motif correct, assurez-vous que votre pièce est clairement reconnaissable et que la zone de travail est exempte de débris.',
     title: 'Ajustement Automatique',
+    use_original_image: "Utiliser l'image originale",
   },
   autosave: {
     open_settings: 'Ouvrir les paramètres',

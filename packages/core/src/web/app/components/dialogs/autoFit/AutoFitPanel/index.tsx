@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
@@ -22,24 +22,35 @@ interface Props {
   element: SVGElement;
   imageUrl: string;
   onClose?: () => void;
+  onRetryWithRemoveBackground?: () => Promise<null | { data: AutoFitContour[][]; imageUrl: string }>;
 }
 
 // TODO: add unit test for AutoFitPanel & its components
-const AutoFitPanel = ({ data, element, imageUrl, onClose }: Props): React.JSX.Element => {
+const AutoFitPanel = ({
+  data: initialData,
+  element,
+  imageUrl: initialImageUrl,
+  onClose,
+  onRetryWithRemoveBackground,
+}: Props): React.JSX.Element => {
   useNewShortcutsScope();
 
+  const [currentData, setCurrentData] = useState(initialData);
+  const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl);
+  const [isBackgroundRemoved, setIsBackgroundRemoved] = useState(false);
+  const isRetrying = useRef(false);
   const [focusedIndex, setFocusedIndex] = useState(0);
-  const { contours: mainContours, indice: mainIndice } = useMemo(() => {
-    const indice = data.map((group) => {
+  const { contours: mainContours, indices: mainIndices } = useMemo(() => {
+    const indices = currentData.map((group) => {
       const angles = group.map(({ angle }) => angle);
       const middleAngle = angles.sort()[Math.floor(angles.length / 2)];
 
       return group.findIndex(({ angle }) => angle === middleAngle);
     });
-    const contours = data.map((group, i) => group[indice[i]]);
+    const contours = currentData.map((group, i) => group[indices[i]]);
 
-    return { contours, indice };
-  }, [data]);
+    return { contours, indices };
+  }, [currentData]);
 
   const {
     beambox: {
@@ -51,10 +62,39 @@ const AutoFitPanel = ({ data, element, imageUrl, onClose }: Props): React.JSX.El
   } = useI18n();
   const handleNext = useCallback(() => {
     showAlignModal(element, mainContours[focusedIndex], (initD, d) => {
-      apply(element, data[focusedIndex], mainIndice[focusedIndex], initD, d);
+      apply(element, currentData[focusedIndex], mainIndices[focusedIndex], initD, d);
       onClose?.();
     });
-  }, [element, data, focusedIndex, mainContours, mainIndice, onClose]);
+  }, [element, currentData, focusedIndex, mainContours, mainIndices, onClose]);
+
+  const handleToggleRemoveBackground = useCallback(async () => {
+    if (!onRetryWithRemoveBackground) return;
+
+    if (isBackgroundRemoved) {
+      setCurrentData(initialData);
+      setCurrentImageUrl(initialImageUrl);
+      setFocusedIndex(0);
+      setIsBackgroundRemoved(false);
+
+      return;
+    }
+
+    if (isRetrying.current) return;
+
+    isRetrying.current = true;
+    try {
+      const result = await onRetryWithRemoveBackground();
+
+      if (result) {
+        setCurrentData(result.data);
+        setCurrentImageUrl(result.imageUrl);
+        setFocusedIndex(0);
+        setIsBackgroundRemoved(true);
+      }
+    } finally {
+      isRetrying.current = false;
+    }
+  }, [onRetryWithRemoveBackground, isBackgroundRemoved, initialData, initialImageUrl]);
 
   return (
     <FullWindowPanel
@@ -65,9 +105,13 @@ const AutoFitPanel = ({ data, element, imageUrl, onClose }: Props): React.JSX.El
           <Sider className={styles.sider}>
             <BackButton onClose={onClose}>{tButtons.back_to_beam_studio}</BackButton>
             <Header icon={<ActionPanelIcons.AutoFit className={styles.icon} />} title={tActionPanel.auto_fit} />
-            <Info element={element} />
+            <Info
+              element={element}
+              isBackgroundRemoved={isBackgroundRemoved}
+              onToggleRemoveBackground={onRetryWithRemoveBackground ? handleToggleRemoveBackground : undefined}
+            />
           </Sider>
-          <Canvas data={data} focusedIndex={focusedIndex} imageUrl={imageUrl} />
+          <Canvas data={currentData} focusedIndex={focusedIndex} imageUrl={currentImageUrl} />
           <ShapeSelector
             contours={mainContours}
             focusedIndex={focusedIndex}

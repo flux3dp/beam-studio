@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '「適用する」をクリックして、このパターンにオートフィットを適用します。',
     preview_first: '自動フィットの前にカメラプレビューを行ってください。',
     reset_position: '位置をリセット',
+    retry_with_remove_bg: '背景除去してリトライ',
     rotation: '回転',
     select_a_pattern: 'パターンを選択',
     selected_artwork: '選択されたアートワーク',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'パターンが見つからない場合は、カメラプレビューをもう一度行い、「自動フィット」を適用してください。',
     step3: 'それでも正しいパターンが見つからない場合は、作業対象物がはっきりと認識できる状態であること、および作業エリアがゴミや汚れがない状態であることを確認してください。',
     title: '自動フィット',
+    use_original_image: '元の画像を使用',
   },
   autosave: {
     open_settings: '設定を開く',

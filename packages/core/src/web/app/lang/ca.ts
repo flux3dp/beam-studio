@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Fes clic a "Aplicar" per aplicar l\'ajust automàtic a aquest patró.',
     preview_first: 'Si us plau, realitza primer la vista prèvia de la càmera.',
     reset_position: 'Restablir posició',
+    retry_with_remove_bg: 'Reintenta amb eliminació de fons',
     rotation: 'Rotar',
     select_a_pattern: 'Selecciona un patró',
     selected_artwork: 'Obra seleccionada',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: "Si no es troba cap patró, si us plau, torna a fer la vista prèvia de la càmera i aplica l'ajust automàtic.",
     step3: "Si encara no troba el patró correcte, assegura't que la teva peça de treball sigui clarament recognoscible i que l'àrea de treball estigui lliure de residus.",
     title: 'Ajust automàtic',
+    use_original_image: 'Utilitza la imatge original',
   },
   autosave: {
     open_settings: 'Obre la configuració',

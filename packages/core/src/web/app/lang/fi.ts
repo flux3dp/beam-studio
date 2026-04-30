@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Napsauta "Käytä" soveltaaksesi automaattista sovitusta tähän kuvioon.',
     preview_first: 'Suorita ensin kameran esikatselu.',
     reset_position: 'Palauta sijainti',
+    retry_with_remove_bg: 'Yritä uudelleen taustan poistolla',
     rotation: 'Kiertää',
     select_a_pattern: 'Valitse kuvio',
     selected_artwork: 'Valittu taideteos',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Jos kuviota ei löydy, esikatsele kamera uudelleen ja käytä Automaattinen Sovitus -toimintoa.',
     step3: 'Jos oikean kuvion löytäminen edelleen epäonnistuu, varmista, että työkappaleesi on selvästi tunnistettavissa ja että työalue on puhdas roskista.',
     title: 'Automaattinen Sovitus',
+    use_original_image: 'Käytä alkuperäistä kuvaa',
   },
   autosave: {
     open_settings: 'Avaa asetukset',

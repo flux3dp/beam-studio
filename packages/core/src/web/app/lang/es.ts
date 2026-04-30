@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Pulse en "Aplicar" para aplicar el ajuste automático a este patrón.',
     preview_first: 'Por favor, realice primero la vista previa de la cámara.',
     reset_position: 'Restablecer posición',
+    retry_with_remove_bg: 'Reintentar con eliminación de fondo',
     rotation: 'Rotar',
     select_a_pattern: 'Seleccionar un patrón',
     selected_artwork: 'Diseño seleccionado',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Si no encuentra un patrón, vuelva a vista previa de la cámara y aplique el ajuste automático.',
     step3: 'Si sigue sin encontrar el patrón correcto, asegúrese de que el trabajo sea claramente reconocible y que el área de trabajo esté limpio de residuos.',
     title: 'Ajuste automático',
+    use_original_image: 'Usar imagen original',
   },
   autosave: {
     open_settings: 'Abrir configuración',

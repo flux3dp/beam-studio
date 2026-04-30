@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Nhấn "Áp dụng" để áp dụng Tự động căn chỉnh lên mẫu này.',
     preview_first: 'Vui lòng thực hiện xem trước máy ảnh trước.',
     reset_position: 'Đặt lại vị trí',
+    retry_with_remove_bg: 'Thử lại với xóa nền',
     rotation: 'Xoay',
     select_a_pattern: 'Chọn mẫu',
     selected_artwork: 'Tác phẩm nghệ thuật đã chọn',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Nếu không tìm thấy mẫu nào, vui lòng xem lại bản xem trước camera và áp dụng Tự động căn chỉnh.',
     step3: 'Nếu vẫn không tìm được mẫu chính xác, hãy đảm bảo rằng vật liệu của bạn có thể nhận dạng rõ ràng và khu vực làm việc sạch sẽ, không có mảnh vụn.',
     title: 'Tự Động Vừa Khít',
+    use_original_image: 'Sử dụng ảnh gốc',
   },
   autosave: {
     open_settings: 'Mở cài đặt',

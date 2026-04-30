@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '"적용"을 클릭하여 이 패턴에 Auto Fit을 적용하세요.',
     preview_first: '먼저 카메라 미리보기를 수행하세요.',
     reset_position: '위치 초기화',
+    retry_with_remove_bg: '배경 제거 후 다시 시도',
     rotation: '회전',
     select_a_pattern: '패턴 선택',
     selected_artwork: '선택된 아트워크',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: '패턴을 찾을 수 없는 경우 카메라 미리보기를 다시 실행하고 자동 맞춤을 적용하세요.',
     step3: '그래도 올바른 패턴을 찾지 못하면, 작업물이 명확히 인식 가능하고 작업 영역이 깨끗한지 확인하세요.',
     title: '자동 맞춤',
+    use_original_image: '원본 이미지 사용',
   },
   autosave: {
     open_settings: '설정 열기',

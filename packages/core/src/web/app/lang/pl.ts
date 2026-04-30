@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Kliknij „Zastosuj”, aby zastosować automatyczne dopasowanie do tego wzoru.',
     preview_first: 'Najpierw wykonaj podgląd kamery.',
     reset_position: 'Zresetuj pozycję',
+    retry_with_remove_bg: 'Spróbuj ponownie z usunięciem tła',
     rotation: 'Obróć',
     select_a_pattern: 'Wybierz wzór',
     selected_artwork: 'Wybrane dzieło sztuki',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Jeśli żaden wzór nie zostanie znaleziony, ponownie przejrzyj podgląd kamery i zastosuj Dopasowanie Automatyczne.',
     step3: 'Jeśli nadal nie uda się znaleźć odpowiedniego wzoru, upewnij się, że twój przedmiot jest wyraźnie rozpoznawalny, a obszar roboczy jest czysty i wolny od zanieczyszczeń.',
     title: 'Dopasowanie Automatyczne',
+    use_original_image: 'Użyj oryginalnego obrazu',
   },
   autosave: {
     open_settings: 'Otwórz ustawienia',

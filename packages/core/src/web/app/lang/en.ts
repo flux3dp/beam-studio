@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Click "Apply" to apply Auto Fit onto this pattern.',
     preview_first: 'Please perform the camera preview first.',
     reset_position: 'Reset Position',
+    retry_with_remove_bg: 'Retry with Remove Background',
     rotation: 'Rotate',
     select_a_pattern: 'Select a Pattern',
     selected_artwork: 'Selected Artwork',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'If no pattern is found, please camera preview again and apply Auto Fit.',
     step3: 'If it still fails to find the correct pattern, please ensure your workpiece is clearly recognizable and the work area is clean of debris.',
     title: 'Auto Fit',
+    use_original_image: 'Use Original Image',
   },
   autosave: {
     open_settings: 'Open Settings',

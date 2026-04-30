@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klik op "Toepassen" om Auto Fit op dit patroon toe te passen.',
     preview_first: 'Voer eerst een cameravoorvertoning uit.',
     reset_position: 'Positie resetten',
+    retry_with_remove_bg: 'Opnieuw proberen met achtergrondverwijdering',
     rotation: 'Draaien',
     select_a_pattern: 'Kies een patroon',
     selected_artwork: 'Geselecteerd kunstwerk',
@@ -49,6 +50,7 @@ const lang: ILang = {
     step2: 'Als er geen patroon wordt gevonden, bekijk de cameravoorkeur opnieuw en pas Auto Aanpassen toe.',
     step3: 'Als het nog steeds niet lukt om het juiste patroon te vinden, zorg er dan voor dat uw werkstuk duidelijk herkenbaar is en dat de werkruimte vrij is van vuil.',
     title: 'Auto Aanpassen',
+    use_original_image: 'Gebruik originele afbeelding',
   },
   autosave: {
     open_settings: 'Instellingen openen',
