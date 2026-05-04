@@ -1,7 +1,8 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
-import { CAPSULE, OVAL, ROUND_ARCH, SURFING_BOARD } from './constants/categoryShapes';
+import { CAPSULE, OVAL, ROUND_ARCH, SURFING_BOARD, TAG } from './constants/categoryShapes';
+import { OVAL_TEXT_PATH_BOTTOM, OVAL_TEXT_PATH_TOP } from './constants/decorations';
 import { DEFAULT_ELEMENT_OPTIONS } from './constants/elementOptions';
 import type {
   CustomShapeOptionValues,
@@ -135,14 +136,14 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     thumbnail: '',
   },
   {
-    defaultSize: { dimension: 'width', value: 80 },
+    defaultSize: { dimension: 'width', value: 50 },
     defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
     id: 'oval',
     nameKey: 'oval',
     options: {
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: { ...DEFAULT_HOLE, offset: -3, type: 'punch' },
           id: '1',
           startPositionRef: 'leftCenter',
         },
@@ -150,14 +151,19 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       texts: [
         {
           bounds: { height: 160, width: 620, x: 215, y: 420 },
-          defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+          defaults: { ...DEFAULT_TEXT, fontSize: 120, text: 'Jack' },
           id: '1',
         },
-        // {
-        //   bounds: { height: 129, width: 334, x: 333, y: 685 },
-        //   defaults: { ...DEFAULT_TEXT, fontSize: 35, text: 'A small object to\nHold Big Memories' },
-        //   id: '2',
-        // },
+        {
+          defaults: { ...DEFAULT_TEXT, fontSize: 40, text: 'A small object to hold Big Memories' },
+          id: '2',
+          path: OVAL_TEXT_PATH_TOP,
+        },
+        {
+          defaults: { ...DEFAULT_TEXT, fontSize: 40, text: 'A small object to hold Big Memories' },
+          id: '3',
+          path: OVAL_TEXT_PATH_BOTTOM,
+        },
       ],
     },
     svgContent: OVAL,
@@ -198,6 +204,43 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
     },
     svgContent: ROUND_ARCH,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'height', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'tag',
+    nameKey: 'tag',
+    options: {
+      elements: [
+        {
+          bounds: { height: 308, width: 308, x: 346, y: 317 },
+          defaults: DEFAULT_ELEMENT,
+          id: '1',
+          options: DEFAULT_ELEMENT_OPTIONS,
+        },
+      ],
+      holes: [
+        {
+          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          id: '1',
+          startPositionRef: 'topCenter',
+        },
+      ],
+      texts: [
+        {
+          bounds: { height: 100, width: 374, x: 313, y: 668 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+          id: '1',
+        },
+        {
+          bounds: { height: 20, width: 374, x: 313, y: 787 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 35, text: 'A small object to\nHold Big Memories' },
+          id: '2',
+        },
+      ],
+    },
+    svgContent: TAG,
     thumbnail: '',
   },
   {

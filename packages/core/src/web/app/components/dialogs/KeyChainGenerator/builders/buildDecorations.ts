@@ -11,6 +11,8 @@ import { applyTexts } from './buildText';
 interface DecorationResult {
   emboss: SVGElement[];
   engraving: SVGElement[];
+  /** Invisible reference paths for textPath href resolution — not rendered, but needed for export. */
+  refPaths: SVGPathElement[];
 }
 
 const applyDecorationPaths = (
@@ -61,7 +63,7 @@ export const buildDecorations = async (
   await applyElements(project, tempSvg, state, engravingElements);
   applyDecorationPaths(tempSvg, state, engravingDecorationPaths);
 
-  const engraving = Array.from(tempSvg.children) as SVGElement[];
+  const allEngraving = Array.from(tempSvg.children) as SVGElement[];
 
   // Build emboss decorations
   const embossSvg = document.createElementNS(NS.SVG, 'svg');
@@ -70,7 +72,28 @@ export const buildDecorations = async (
   await applyElements(project, embossSvg, state, embossElements);
   applyDecorationPaths(embossSvg, state, embossDecorationPaths);
 
-  const emboss = Array.from(embossSvg.children) as SVGElement[];
+  const allEmboss = Array.from(embossSvg.children) as SVGElement[];
 
-  return { emboss, engraving };
+  // Separate invisible textPath reference paths from visible decorations
+  const isRefPath = (el: SVGElement): el is SVGPathElement => el.hasAttribute('data-textpath-ref');
+  const engraving: SVGElement[] = [];
+  const emboss: SVGElement[] = [];
+  const refPaths: SVGPathElement[] = [];
+
+  allEngraving.forEach((el) => {
+    if (isRefPath(el)) {
+      refPaths.push(el);
+    } else {
+      engraving.push(el);
+    }
+  });
+  allEmboss.forEach((el) => {
+    if (isRefPath(el)) {
+      refPaths.push(el);
+    } else {
+      emboss.push(el);
+    }
+  });
+
+  return { emboss, engraving, refPaths };
 };

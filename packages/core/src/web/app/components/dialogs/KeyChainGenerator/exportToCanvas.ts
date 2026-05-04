@@ -27,8 +27,13 @@ getSVGAsync(({ Canvas }) => {
 /**
  * Converts all <text> elements to <path> elements using fontkit.
  * Create a SVG temporarily mounted to the DOM for SVG position methods to work.
+ * When refPaths are provided they are mounted before the text elements so
+ * textPath href references resolve correctly.
  */
-const convertTextsToPath = async (textElements: SVGTextElement[]): Promise<SVGPathElement[]> => {
+const convertTextsToPath = async (
+  textElements: SVGTextElement[],
+  refPaths: SVGPathElement[] = [],
+): Promise<SVGPathElement[]> => {
   const svg = document.createElementNS(NS.SVG, 'svg');
 
   // Mount to DOM so getStartPositionOfChar / getNumberOfChars work
@@ -36,6 +41,8 @@ const convertTextsToPath = async (textElements: SVGTextElement[]): Promise<SVGPa
   svg.style.position = 'absolute';
   document.body.appendChild(svg);
 
+  // Mount reference paths first so textPath href="#..." references resolve
+  refPaths.forEach((p) => svg.appendChild(p));
   textElements.forEach((el) => svg.appendChild(el));
 
   const results: SVGPathElement[] = [];
@@ -186,7 +193,10 @@ const exportBaseLayer = async (shape: KeyChainShape, batchCmd: IBatchCommand, si
   await exportPathsToSvgCanvas(paths, shape.bounds, batchCmd, sizeRatio);
 };
 
-const convertSvgElementsToPath = async (elements: SVGElement[]): Promise<SVGPathElement[]> => {
+const convertSvgElementsToPath = async (
+  elements: SVGElement[],
+  refPaths: SVGPathElement[] = [],
+): Promise<SVGPathElement[]> => {
   const textElements: SVGTextElement[] = [];
   const pathElements: SVGPathElement[] = [];
 
@@ -200,7 +210,7 @@ const convertSvgElementsToPath = async (elements: SVGElement[]): Promise<SVGPath
     }
   }
 
-  const convertedPaths = await convertTextsToPath(textElements);
+  const convertedPaths = await convertTextsToPath(textElements, refPaths);
 
   pathElements.push(...convertedPaths);
 
@@ -211,8 +221,11 @@ const convertSvgElementsToPath = async (elements: SVGElement[]): Promise<SVGPath
  * Converts SVGElements to Paper.js PathItems.
  * used when need to perform boolean operations on decorations (e.g. unite emboss with inner path)
  */
-const convertSvgElementsToPathItems = async (elements: SVGElement[]): Promise<paper.PathItem[]> => {
-  const paths = await convertSvgElementsToPath(elements);
+const convertSvgElementsToPathItems = async (
+  elements: SVGElement[],
+  refPaths: SVGPathElement[] = [],
+): Promise<paper.PathItem[]> => {
+  const paths = await convertSvgElementsToPath(elements, refPaths);
   const items: paper.PathItem[] = paths
     .map((path) => {
       const d = path.getAttribute('d');
@@ -239,7 +252,7 @@ const exportEngravingLayer = async (
 
   useLayerStore.getState().setSelectedLayers([name]);
 
-  const paths = await convertSvgElementsToPath(shape.decorations.engraving);
+  const paths = await convertSvgElementsToPath(shape.decorations.engraving, shape.decorations.refPaths);
 
   await exportPathsToSvgCanvas(paths, shape.bounds, batchCmd, sizeRatio);
 };
@@ -252,7 +265,7 @@ const exportEmbossLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand,
   let combinedInnerPath = shape.innerPath?.clone() ?? null;
 
   if (shape.decorations.emboss.length > 0) {
-    const embossPathItems = await convertSvgElementsToPathItems(shape.decorations.emboss);
+    const embossPathItems = await convertSvgElementsToPathItems(shape.decorations.emboss, shape.decorations.refPaths);
 
     for (const item of embossPathItems) {
       combinedInnerPath = combinedInnerPath ? combinedInnerPath.unite(item) : item;

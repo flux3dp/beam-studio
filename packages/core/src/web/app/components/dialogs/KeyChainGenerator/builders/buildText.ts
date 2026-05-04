@@ -4,15 +4,12 @@ import NS from '@core/app/constants/namespaces';
 import type { KeyChainState, TextOptionDef } from '../types';
 
 /**
- * Creates an SVG <text> element with <tspan> children for multi-line text.
+ * Creates a <text> element with font attributes loaded and applied.
  */
-export const createTextElement = async (
-  content: string,
+const createBaseTextElement = async (
   font: { family: string; postscriptName: string; style: string },
   fontSize: number,
   letterSpacing: number,
-  lineSpacing: number,
-  bounds?: { height: number; width: number; x: number; y: number },
 ): Promise<SVGTextElement> => {
   const text = document.createElementNS(NS.SVG, 'text');
 
@@ -23,7 +20,7 @@ export const createTextElement = async (
   try {
     await Promise.race([
       document.fonts.load(`${fontSize}px '${font.family}'`),
-      new Promise((resolve) => setTimeout(resolve, 3000)), // timeout to prevent hanging if font fails to load
+      new Promise((resolve) => setTimeout(resolve, 3000)),
     ]);
   } catch {
     console.error(`Fail to load ${font.family}`);
@@ -46,6 +43,22 @@ export const createTextElement = async (
   if (letterSpacing !== 0) {
     text.setAttribute('letter-spacing', String(letterSpacing));
   }
+
+  return text;
+};
+
+/**
+ * Creates an SVG <text> element with <tspan> children for multi-line text.
+ */
+export const createTextElement = async (
+  content: string,
+  font: { family: string; postscriptName: string; style: string },
+  fontSize: number,
+  letterSpacing: number,
+  lineSpacing: number,
+  bounds?: { height: number; width: number; x: number; y: number },
+): Promise<SVGTextElement> => {
+  const text = await createBaseTextElement(font, fontSize, letterSpacing);
 
   const lines = content.split('\n');
   const lineHeight = fontSize * lineSpacing;
@@ -70,6 +83,41 @@ export const createTextElement = async (
   }
 
   return text;
+};
+
+/**
+ * Creates an invisible reference <path> (marked with data-textpath-ref) and a
+ * <text><textPath> element for text-on-path.
+ */
+export const createTextPath = async (
+  content: string,
+  font: { family: string; postscriptName: string; style: string },
+  fontSize: number,
+  letterSpacing: number,
+  pathD: string,
+  pathId: string,
+): Promise<{ refPath: SVGPathElement; textEl: SVGTextElement }> => {
+  // Invisible reference path
+  const refPath = document.createElementNS(NS.SVG, 'path');
+
+  refPath.setAttribute('id', pathId);
+  refPath.setAttribute('d', pathD);
+  refPath.setAttribute('fill', 'none');
+  refPath.setAttribute('stroke', 'none');
+  refPath.setAttribute('data-textpath-ref', 'true');
+
+  // Text element
+  const textEl = await createBaseTextElement(font, fontSize, letterSpacing);
+
+  // textPath child — newlines replaced with spaces since textPath is single-line
+  const textPath = document.createElementNS(NS.SVG, 'textPath');
+
+  textPath.setAttribute('href', `#${pathId}`);
+  textPath.setAttribute('startOffset', '50%');
+  textPath.textContent = content.replace(/\n/g, ' ');
+  textEl.appendChild(textPath);
+
+  return { refPath, textEl };
 };
 
 /**
@@ -119,8 +167,21 @@ export const applyTexts = async (
 
     if (!textValues?.enabled || !textValues.text.trim()) continue;
 
-    const { bounds } = textDef;
     const { font, fontSize, letterSpacing, lineSpacing, text } = textValues;
+
+    // Text-on-path mode
+    if ('path' in textDef) {
+      const pathId = `kc-tp-${textDef.id}`;
+      const { refPath, textEl } = await createTextPath(text, font, fontSize, letterSpacing, textDef.path, pathId);
+
+      svg.appendChild(refPath);
+      svg.appendChild(textEl);
+
+      continue;
+    }
+
+    // Bounded tspan mode (original behavior)
+    const { bounds } = textDef;
     const textEl = await createTextElement(text, font, fontSize, letterSpacing, lineSpacing, bounds);
 
     svg.appendChild(textEl);

@@ -21,3 +21,8 @@ export const ROUND_ARCH = `<svg width="1000" height="1000" viewBox="0 0 1000 100
 <path d="M500 102C637.979 102 750 214.021 750 352V900.234H250V352C250 214.021 362.021 102 500 102Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
 </svg>
 `;
+
+export const TAG = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" xmlns="http://www.w3.org/2000/svg">
+<path d="M273 790.955V309.508L500.098 108.148L727.196 309.508V790.955C727.196 822.749 699.944 850 668.151 850H332.046C300.252 850 273 822.748 273 790.955Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+</svg>
+`;

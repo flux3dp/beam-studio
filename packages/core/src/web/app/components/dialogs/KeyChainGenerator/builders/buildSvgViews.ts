@@ -6,7 +6,7 @@ import { EXPLODED_GAP_PX, KEYCHAIN_COLORS, type KeychainViewMode } from '../cons
 
 interface BuildKeychainViewParams {
   bounds: paper.Rectangle;
-  decorations: { emboss: SVGElement[]; engraving: SVGElement[] };
+  decorations: { emboss: SVGElement[]; engraving: SVGElement[]; refPaths: SVGPathElement[] };
   defaultViewBox: { height: number; width: number; x: number; y: number };
   innerPath: null | paper.PathItem;
   resultBasePath: paper.PathItem;
@@ -70,6 +70,11 @@ export const buildSvgView = (
 
   // Layer 1: result base path
   svg.appendChild(createPathElement(resultBasePath.pathData, colors.base));
+
+  // Invisible reference paths for textPath href resolution — must be in DOM before <text> elements
+  for (const refPath of decorations.refPaths) {
+    svg.appendChild(refPath.cloneNode(true));
+  }
 
   // Layer 1 decorations (text + element shapes) — cloned so the canonical list stays intact
   for (const decoration of decorations.engraving) {

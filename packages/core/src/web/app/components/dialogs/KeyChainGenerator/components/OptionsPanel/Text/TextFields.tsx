@@ -14,6 +14,7 @@ interface TextFieldsProps {
   contentValue: string;
   defaults: { fontSize: number; letterSpacing: number; lineSpacing: number };
   extraFields?: ReactNode;
+  isTextPath?: boolean;
   onContentChange: (evt: React.ChangeEvent<HTMLTextAreaElement>) => void;
   onFontChange: (font: { family: string; postscriptName: string; style: string }) => void;
   onFontSizeChange: (fontSize: number) => void;
@@ -30,6 +31,7 @@ interface TextFieldsProps {
 const TextFields = ({
   contentValue,
   defaults,
+  isTextPath = false,
   onContentChange,
   onFontChange,
   onFontSizeChange,
@@ -86,17 +88,19 @@ const TextFields = ({
                   value={values.letterSpacing}
                   withSlider={false}
                 />
-                <NumberControl
-                  defaultValue={defaults.lineSpacing}
-                  label={t.line_spacing}
-                  max={5}
-                  min={0.5}
-                  onChange={onLineSpacingChange}
-                  step={0.1}
-                  unit="x"
-                  value={values.lineSpacing}
-                  withSlider={false}
-                />
+                {!isTextPath && (
+                  <NumberControl
+                    defaultValue={defaults.lineSpacing}
+                    label={t.line_spacing}
+                    max={5}
+                    min={0.5}
+                    onChange={onLineSpacingChange}
+                    step={0.1}
+                    unit="x"
+                    value={values.lineSpacing}
+                    withSlider={false}
+                  />
+                )}
               </>
             ),
             classNames: { body: styles.fields },

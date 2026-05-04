@@ -7,7 +7,7 @@ export interface KeyChainShape {
   /** Bounds of the base region in paper coordinates (used by viewBox + export shifts). */
   bounds: paper.Rectangle;
   /** Text + element decoration nodes, split by layer destination. */
-  decorations: { emboss: SVGElement[]; engraving: SVGElement[] };
+  decorations: { emboss: SVGElement[]; engraving: SVGElement[]; refPaths: SVGPathElement[] };
   /** Design view: result + decorations + inner path overlaid. Consumers must `.cloneNode(true)`. */
   designSvg: SVGSVGElement;
   /** Exploded view: design content + inner path translated below the base. */
@@ -49,12 +49,21 @@ export interface TextOptionValues {
   text: string;
 }
 
-export interface TextOptionDef {
-  bounds: { height: number; width: number; x: number; y: number };
+interface TextOptionDefBase {
   defaults: Omit<TextOptionValues, 'font'>;
   id: string;
   label?: string;
 }
+
+interface BoundsTextOptionDef extends TextOptionDefBase {
+  bounds: { height: number; width: number; x: number; y: number };
+}
+
+interface PathTextOptionDef extends TextOptionDefBase {
+  path: string;
+}
+
+export type TextOptionDef = BoundsTextOptionDef | PathTextOptionDef;
 
 export interface ElementOptionValues {
   emboss: boolean;

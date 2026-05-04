@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import React, { memo, useCallback } from 'react';
+import React, { memo, useCallback, useMemo } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
 
@@ -31,6 +31,7 @@ const TextControl = ({ optionDef }: TextControlProps): ReactNode => {
     },
     [id],
   );
+  const isTextPath = useMemo(() => 'path' in optionDef, [optionDef]);
 
   const handleEmbossChange = useCallback((emboss: boolean) => handleChange({ emboss }), [handleChange]);
   const handleContentChange = useCallback(
@@ -53,6 +54,7 @@ const TextControl = ({ optionDef }: TextControlProps): ReactNode => {
       <TextFields
         contentValue={text.text}
         defaults={defaults}
+        isTextPath={isTextPath}
         onContentChange={handleContentChange}
         onFontChange={handleFontChange}
         onFontSizeChange={handleFontSizeChange}
