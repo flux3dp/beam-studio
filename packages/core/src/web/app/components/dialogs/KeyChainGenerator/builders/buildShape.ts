@@ -1,4 +1,5 @@
 import paper from 'paper';
+import { PaperOffset } from 'paperjs-offset';
 
 import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from '../constants';
 import type { HoleOptionDef, KeyChainState } from '../types';
@@ -67,16 +68,35 @@ export const applyHoles = (
     if (!hole?.enabled) continue;
 
     const isPunch = hole.type === 'punch';
-    const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
     const mainPath =
       basePath instanceof paper.CompoundPath ? (basePath.children[0] as paper.Path) : (basePath as paper.Path);
-    const startPoint = mainPath.getNearestPoint(refPoint);
-    const startOffset = mainPath.getOffsetOf(startPoint);
     const normalizedPosition = (hole.position % 100) / 100;
-    const pathOffset = (startOffset + normalizedPosition * mainPath.length) % mainPath.length;
-    const point = mainPath.getPointAt(pathOffset);
-    const normal = mainPath.getNormalAt(pathOffset);
-    const center = point.add(normal.multiply((hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx));
+
+    const holeOffsetDist = (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx;
+    const offsetPath = PaperOffset.offset(mainPath, holeOffsetDist, { insert: false, join: 'round' });
+    let center: paper.Point;
+
+    if (offsetPath instanceof paper.Path) {
+      // Use offset path to find hole center if the path is not separated by offset
+      const refPoint = offsetPath.bounds[holeDef.startPositionRef] as paper.Point;
+      const startPoint = offsetPath.getNearestPoint(refPoint);
+      const startOffset = offsetPath.getOffsetOf(startPoint);
+      const pathOffset = (startOffset + normalizedPosition * offsetPath.length) % offsetPath.length;
+
+      center = offsetPath.getPointAt(pathOffset);
+    } else {
+      // Fallback to main path with normal-based offset if offsetPath is a CompoundPath (i.e. path was separated by offset)
+      const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
+      const startPoint = mainPath.getNearestPoint(refPoint);
+      const startOffset = mainPath.getOffsetOf(startPoint);
+      const pathOffset = (startOffset + normalizedPosition * mainPath.length) % mainPath.length;
+      const point = mainPath.getPointAt(pathOffset);
+      const normal = mainPath.getNormalAt(pathOffset);
+
+      center = point.add(normal.multiply(holeOffsetDist));
+    }
+
+    offsetPath.remove();
 
     if (!center) continue;
 
