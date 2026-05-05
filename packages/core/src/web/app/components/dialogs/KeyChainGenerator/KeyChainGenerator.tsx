@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button } from 'antd';
 import classNames from 'classnames';
@@ -31,10 +31,6 @@ const KeyChainGenerator = ({ onClose }: KeyChainGeneratorProps): React.JSX.Eleme
   const categoryId = useKeychainShapeStore((s) => s.state.categoryId);
   const isModified = useKeychainShapeStore((s) => s.isModified);
   const setCategoryState = useKeychainShapeStore((s) => s.setCategoryState);
-  const reset = useKeychainShapeStore((s) => s.reset);
-
-  useEffect(() => reset, [reset]);
-
   const currentCategory = useMemo(() => getCategoryById(categoryId) ?? defaultCategory, [categoryId, defaultCategory]);
 
   const handleCategoryChange = useCallback(

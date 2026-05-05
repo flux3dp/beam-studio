@@ -35,7 +35,7 @@ interface StoreState {
   shape: KeyChainShape | null;
   // Scale ratio derived from target size vs natural bounds
   sizeRatio: number;
-  // Keychain parameters
+  // Keychain parameters (initialized on mount)
   state: KeyChainState;
   // Preview view mode — controls which cached SVG the Preview shows
   viewMode: KeychainViewMode;
@@ -52,7 +52,7 @@ const initialState: StoreState = {
   resultPath: null,
   shape: null,
   sizeRatio: 1,
-  state: getDefaultState(),
+  state: null as unknown as KeyChainState, // Initialized in setCategoryState called from useEffect on mount
   viewMode: 'design',
 };
 
@@ -296,7 +296,7 @@ const useKeychainShapeStore = create(
       shape?.resultBasePath.remove();
       shape?.innerPath?.remove();
       project?.remove();
-      set(initialState);
+      set({ ...initialState, state: getDefaultState() });
     },
 
     setCategoryState: (category: KeyChainCategory) => {
