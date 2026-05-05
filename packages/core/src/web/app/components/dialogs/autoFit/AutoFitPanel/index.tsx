@@ -1,6 +1,7 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
+import { retryWithRemoveBackground } from '@core/app/svgedit/operations/autoFit';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 import Header from '@core/app/widgets/FullWindowPanel/Header';
@@ -21,8 +22,8 @@ interface Props {
   data: AutoFitContour[][];
   element: SVGElement;
   imageUrl: string;
+  isSplicingImg: boolean;
   onClose?: () => void;
-  onRetryWithRemoveBackground?: () => Promise<null | { data: AutoFitContour[][]; imageUrl: string }>;
 }
 
 // TODO: add unit test for AutoFitPanel & its components
@@ -30,8 +31,8 @@ const AutoFitPanel = ({
   data: initialData,
   element,
   imageUrl: initialImageUrl,
+  isSplicingImg,
   onClose,
-  onRetryWithRemoveBackground,
 }: Props): React.JSX.Element => {
   useNewShortcutsScope();
 
@@ -68,8 +69,6 @@ const AutoFitPanel = ({
   }, [element, currentData, focusedIndex, mainContours, mainIndices, onClose]);
 
   const handleToggleRemoveBackground = useCallback(async () => {
-    if (!onRetryWithRemoveBackground) return;
-
     if (isBackgroundRemoved) {
       setCurrentData(initialData);
       setCurrentImageUrl(initialImageUrl);
@@ -83,7 +82,7 @@ const AutoFitPanel = ({
 
     isRetrying.current = true;
     try {
-      const result = await onRetryWithRemoveBackground();
+      const result = await retryWithRemoveBackground(initialImageUrl, isSplicingImg);
 
       if (result) {
         setCurrentData(result.data);
@@ -94,7 +93,7 @@ const AutoFitPanel = ({
     } finally {
       isRetrying.current = false;
     }
-  }, [onRetryWithRemoveBackground, isBackgroundRemoved, initialData, initialImageUrl]);
+  }, [isBackgroundRemoved, initialData, initialImageUrl, isSplicingImg]);
 
   return (
     <FullWindowPanel
@@ -108,7 +107,7 @@ const AutoFitPanel = ({
             <Info
               element={element}
               isBackgroundRemoved={isBackgroundRemoved}
-              onToggleRemoveBackground={onRetryWithRemoveBackground ? handleToggleRemoveBackground : undefined}
+              onToggleRemoveBackground={handleToggleRemoveBackground}
             />
           </Sider>
           <Canvas data={currentData} focusedIndex={focusedIndex} imageUrl={currentImageUrl} />

@@ -33,6 +33,7 @@ class PreviewModeBackgroundDrawer {
   private rotaryPreviewBoundaryText?: SVGTextElement;
   private previewDescText?: SVGTextElement;
   private openBottomDescText?: SVGTextElement;
+  private _isFullWorkareaDrawn = false;
 
   protected canvas: HTMLCanvasElement;
   protected canvasRatio = 1;
@@ -113,6 +114,7 @@ class PreviewModeBackgroundDrawer {
   }
 
   async drawFullWorkarea(imgUrl: string, callBack = () => {}) {
+    this._isFullWorkareaDrawn = true;
     this.backgroundDrawerSubject.next(this.preprocessFullWorkareaImg(imgUrl, callBack));
   }
 
@@ -203,6 +205,7 @@ class PreviewModeBackgroundDrawer {
     });
 
     this.backgroundDrawerSubject.next(promise);
+    this._isFullWorkareaDrawn = false;
 
     await promise;
   };
@@ -346,6 +349,10 @@ class PreviewModeBackgroundDrawer {
     document.getElementById('previewBoundary')?.remove();
   }
 
+  get isFullWorkareaDrawn() {
+    return this._isFullWorkareaDrawn;
+  }
+
   isClean() {
     return this.cameraCanvasUrl === '';
   }
@@ -363,6 +370,7 @@ class PreviewModeBackgroundDrawer {
     URL.revokeObjectURL(this.cameraCanvasUrl);
 
     this.cameraCanvasUrl = '';
+    this._isFullWorkareaDrawn = false;
     setCameraPreviewState({ isClean: true });
   }
 

@@ -16,7 +16,7 @@ import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
 import { isMobile } from '@core/app/stores/screenStore';
 import { BatchCommand } from '@core/app/svgedit/history/history';
 import undoManager from '@core/app/svgedit/history/undoManager';
-import autoFit from '@core/app/svgedit/operations/autoFit';
+import { autoFit } from '@core/app/svgedit/operations/autoFit';
 import disassembleUse from '@core/app/svgedit/operations/disassembleUse';
 import selectionManager from '@core/app/svgedit/selection';
 import textEdit from '@core/app/svgedit/text/textedit';
