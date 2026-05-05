@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Hiasan',
     design_preview: 'Pratonton Reka Bentuk',
     element: 'Elemen',
+    element_size: 'Saiz',
     emboss: 'Timbul',
     exploded_view: 'Paparan Terperinci',
     export_failed: 'Gagal mengimport rantai kunci ke kanvas. Sila cuba lagi.',

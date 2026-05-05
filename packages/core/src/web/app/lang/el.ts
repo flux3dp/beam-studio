@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Διακόσμηση',
     design_preview: 'Προεπισκόπηση σχεδίου',
     element: 'Στοιχείο',
+    element_size: 'Μέγεθος',
     emboss: 'Ανάγλυφο',
     exploded_view: 'Ανεπτυγμένη όψη',
     export_failed: 'Αποτυχία εισαγωγής μπρελόκ στον καμβά. Παρακαλώ δοκιμάστε ξανά.',

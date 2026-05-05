@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Dekoration',
     design_preview: 'Designförhandsvisning',
     element: 'Element',
+    element_size: 'Storlek',
     emboss: 'Prägling',
     exploded_view: 'Expanderad vy',
     export_failed: 'Det gick inte att importera nyckelringen till arbetsytan. Försök igen.',

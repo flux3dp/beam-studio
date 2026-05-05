@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Decoración',
     design_preview: 'Vista previa del diseño',
     element: 'Elemento',
+    element_size: 'Tamaño',
     emboss: 'Relieve',
     exploded_view: 'Vista expandida',
     export_failed: 'No se pudo importar el llavero al lienzo. Por favor, inténtelo de nuevo.',

@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Decoração',
     design_preview: 'Pré-visualização do design',
     element: 'Elemento',
+    element_size: 'Tamanho',
     emboss: 'Relevo',
     exploded_view: 'Vista explodida',
     export_failed: 'Falha ao importar o chaveiro para o canvas. Tente novamente.',

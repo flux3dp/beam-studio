@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: '장식',
     design_preview: '디자인 미리보기',
     element: '요소',
+    element_size: '크기',
     emboss: '엠보싱',
     exploded_view: '분해 보기',
     export_failed: '키체인을 캔버스로 가져오지 못했습니다. 다시 시도해 주세요.',

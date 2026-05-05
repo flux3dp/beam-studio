@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Trang trí',
     design_preview: 'Xem trước thiết kế',
     element: 'Phần tử',
+    element_size: 'Kích thước',
     emboss: 'Dập nổi',
     exploded_view: 'Chế độ xem phân rã',
     export_failed: 'Không thể nhập móc khóa vào canvas. Vui lòng thử lại.',

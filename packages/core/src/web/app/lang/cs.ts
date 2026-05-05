@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Dekorace',
     design_preview: 'Náhled designu',
     element: 'Prvek',
+    element_size: 'Velikost',
     emboss: 'Reliéf',
     exploded_view: 'Rozložený pohled',
     export_failed: 'Nepodařilo se importovat přívěsek na plátno. Zkuste to prosím znovu.',

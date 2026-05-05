@@ -1608,6 +1608,7 @@ export interface ILang {
     decoration: string;
     design_preview: string;
     element: string;
+    element_size: string;
     emboss: string;
     exploded_view: string;
     export_failed: string;

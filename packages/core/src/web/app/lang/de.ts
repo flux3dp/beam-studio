@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Dekoration',
     design_preview: 'Designvorschau',
     element: 'Element',
+    element_size: 'Größe',
     emboss: 'Prägung',
     exploded_view: 'Explosionsansicht',
     export_failed: 'Schlüsselanhänger konnte nicht in die Leinwand importiert werden. Bitte versuchen Sie es erneut.',

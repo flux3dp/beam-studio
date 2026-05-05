@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Koristelu',
     design_preview: 'Suunnitelman esikatselu',
     element: 'Elementti',
+    element_size: 'Koko',
     emboss: 'Kohokuviointi',
     exploded_view: 'Räjäytysnäkymä',
     export_failed: 'Avaimensperän tuonti kankaalle epäonnistui. Yritä uudelleen.',

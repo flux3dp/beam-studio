@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Dekoration',
     design_preview: 'Designforhåndsvisning',
     element: 'Element',
+    element_size: 'Størrelse',
     emboss: 'Prægning',
     exploded_view: 'Eksploderet visning',
     export_failed: 'Kunne ikke importere nøglering til lærredet. Prøv venligst igen.',

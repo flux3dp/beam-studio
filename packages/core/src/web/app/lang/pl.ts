@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Dekoracja',
     design_preview: 'Podgląd projektu',
     element: 'Element',
+    element_size: 'Rozmiar',
     emboss: 'Tłoczenie',
     exploded_view: 'Widok rozstrzelony',
     export_failed: 'Nie udało się zaimportować breloka na płótno. Spróbuj ponownie.',

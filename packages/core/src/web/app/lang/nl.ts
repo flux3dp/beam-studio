@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Decoratie',
     design_preview: 'Ontwerpvoorbeeld',
     element: 'Element',
+    element_size: 'Grootte',
     emboss: 'Reliëf',
     exploded_view: 'Exploded weergave',
     export_failed: 'Kan sleutelhanger niet importeren naar het canvas. Probeer het opnieuw.',

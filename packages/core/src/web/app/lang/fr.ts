@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Décoration',
     design_preview: 'Aperçu du design',
     element: 'Élément',
+    element_size: 'Taille',
     emboss: 'Relief',
     exploded_view: 'Vue éclatée',
     export_failed: "Impossible d'importer le porte-clés sur le canevas. Veuillez réessayer.",

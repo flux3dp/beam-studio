@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Decorazione',
     design_preview: 'Anteprima del design',
     element: 'Elemento',
+    element_size: 'Dimensione',
     emboss: 'Rilievo',
     exploded_view: 'Vista esplosa',
     export_failed: 'Impossibile importare il portachiavi nel canvas. Riprova.',

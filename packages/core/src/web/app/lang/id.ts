@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'Dekorasi',
     design_preview: 'Pratinjau Desain',
     element: 'Elemen',
+    element_size: 'Ukuran',
     emboss: 'Embos',
     exploded_view: 'Tampilan Terurai',
     export_failed: 'Gagal mengimpor gantungan kunci ke kanvas. Silakan coba lagi.',

@@ -45,7 +45,7 @@ export const DEFAULT_DECORATION_PATH: DecorationOptionValues = {
 };
 
 export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
-  element: { enabled: true, positionRef: 'rightCenter', shapeKey: DEFAULT_ELEMENT_OPTIONS[0] },
+  element: { enabled: true, positionRef: 'leftCenter', shapeKey: DEFAULT_ELEMENT_OPTIONS[0], size: 100 },
   fontSize: 80,
   letterSpacing: 0,
   lineSpacing: 1,
@@ -252,13 +252,37 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     options: {
       customShape: {
         defaults: DEFAULT_CUSTOM_SHAPE,
-        elementOptions: DEFAULT_ELEMENT_OPTIONS,
       },
       holes: [
         {
           defaults: DEFAULT_HOLE,
           id: '1',
-          startPositionRef: 'leftCenter',
+          startPositionRef: 'topLeft',
+        },
+      ],
+    },
+    svgContent: '',
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'width', value: 100 },
+    defaultViewBox: { height: 0, width: 0, x: 0, y: 0 },
+    id: 'icon-text-left',
+    isCustomShape: true,
+    nameKey: 'text',
+    options: {
+      customShape: {
+        defaults: DEFAULT_CUSTOM_SHAPE,
+        element: {
+          options: DEFAULT_ELEMENT_OPTIONS,
+          positionConfigurable: false,
+        },
+      },
+      holes: [
+        {
+          defaults: DEFAULT_HOLE,
+          id: '1',
+          startPositionRef: 'topLeft',
         },
       ],
     },

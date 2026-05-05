@@ -66,15 +66,13 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
     [handleChange],
   );
 
-  const toggleElementEnabled = useCallback(
-    (enabled: boolean) => {
-      handleChange({ element: { ...shape.element, enabled } });
-    },
-    [handleChange, shape.element],
-  );
+  const handleClearElement = useCallback(() => {
+    handleChange({ element: { ...shape.element, enabled: false, shapeKey: '' } });
+  }, [handleChange, shape.element]);
+
   const handleElementShapeChange = useCallback(
     (shapeKey: string) => {
-      handleChange({ element: { ...shape.element, shapeKey } });
+      handleChange({ element: { ...shape.element, enabled: true, shapeKey } });
     },
     [handleChange, shape.element],
   );
@@ -82,6 +80,13 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
   const handlePositionRefChange = useCallback(
     (positionRef: ShapeElementPositionRef) => {
       handleChange({ element: { ...shape.element, positionRef } });
+    },
+    [handleChange, shape.element],
+  );
+
+  const handleElementSizeChange = useCallback(
+    (size: number) => {
+      handleChange({ element: { ...shape.element, size } });
     },
     [handleChange, shape.element],
   );
@@ -117,22 +122,39 @@ const CustomShapeGroup = ({ optionDef }: CustomShapeGroupProps): ReactNode => {
           values={textValues}
         />
       </GroupCollapse>
-      <GroupCollapse title={`${t.content} - ${t.element}`}>
-        <ElementPicker
-          onChange={handleElementShapeChange}
-          options={optionDef.elementOptions}
-          selectedKey={shape.element.shapeKey}
-          title={t.element}
-        />
-        {shape.element.shapeKey && (
-          <SelectControl
-            label={t.position_ref}
-            onChange={handlePositionRefChange}
-            options={positionRefOptions}
-            value={shape.element.positionRef}
+      {optionDef.element && (
+        <GroupCollapse title={`${t.content} - ${t.element}`}>
+          <ElementPicker
+            onChange={handleElementShapeChange}
+            onClear={handleClearElement}
+            options={optionDef.element?.options ?? []}
+            selectedKey={shape.element.shapeKey}
+            title={t.element}
           />
-        )}
-      </GroupCollapse>
+          {shape.element.shapeKey && (
+            <>
+              {optionDef.element?.positionConfigurable !== false && (
+                <SelectControl
+                  label={t.position_ref}
+                  onChange={handlePositionRefChange}
+                  options={positionRefOptions}
+                  value={shape.element.positionRef}
+                />
+              )}
+              <NumberControl
+                defaultValue={defaults.element.size}
+                label={t.element_size}
+                max={200}
+                min={0}
+                onChange={handleElementSizeChange}
+                step={1}
+                unit="%"
+                value={shape.element.size}
+              />
+            </>
+          )}
+        </GroupCollapse>
+      )}
       <NumberControl
         defaultValue={defaults.outlineOffset}
         label={t.outline_offset}

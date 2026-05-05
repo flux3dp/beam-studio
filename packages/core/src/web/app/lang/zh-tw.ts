@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: '裝飾',
     design_preview: '設計預覽',
     element: '元素',
+    element_size: '大小',
     emboss: '浮雕',
     exploded_view: '分解檢視',
     export_failed: '無法將鑰匙圈匯入畫布，請再試一次。',

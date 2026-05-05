@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'การตกแต่ง',
     design_preview: 'ตัวอย่างการออกแบบ',
     element: 'องค์ประกอบ',
+    element_size: 'ขนาด',
     emboss: 'นูน',
     exploded_view: 'มุมมองแยกส่วน',
     export_failed: 'ไม่สามารถนำเข้าพวงกุญแจไปยังแคนวาสได้ กรุณาลองอีกครั้ง',

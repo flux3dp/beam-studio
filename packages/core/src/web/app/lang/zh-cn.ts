@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: '装饰',
     design_preview: '设计预览',
     element: '元素',
+    element_size: '大小',
     emboss: '浮雕',
     exploded_view: '分解视图',
     export_failed: '无法将钥匙扣导入画布，请重试。',

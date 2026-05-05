@@ -1609,6 +1609,7 @@ const lang: ILang = {
     decoration: 'デコレーション',
     design_preview: 'デザインプレビュー',
     element: '要素',
+    element_size: 'サイズ',
     emboss: 'エンボス',
     exploded_view: '分解ビュー',
     export_failed: 'キーホルダーをキャンバスにインポートできませんでした。もう一度お試しください。',

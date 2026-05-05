@@ -96,7 +96,7 @@ export interface DecorationPathOptionDef {
 export type ShapeElementPositionRef = 'bottomCenter' | 'leftCenter' | 'rightCenter' | 'topCenter';
 
 export interface CustomShapeOptionValues {
-  element: { enabled: boolean; positionRef: ShapeElementPositionRef; shapeKey: string };
+  element: { enabled: boolean; positionRef: ShapeElementPositionRef; shapeKey: string; size: number };
   font: {
     family: string;
     postscriptName: string;
@@ -112,7 +112,10 @@ export interface CustomShapeOptionValues {
 
 export interface CustomShapeOptionDef {
   defaults: Omit<CustomShapeOptionValues, 'font'>;
-  elementOptions: string[];
+  element?: {
+    options: string[];
+    positionConfigurable?: boolean;
+  };
   label?: string;
 }
 
