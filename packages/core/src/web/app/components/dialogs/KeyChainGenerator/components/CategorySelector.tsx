@@ -35,14 +35,6 @@ const CategorySelector = ({
             })}
             key={category.id}
             onClick={() => onCategoryChange(category.id)}
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                onCategoryChange(category.id);
-              }
-            }}
-            role="button"
-            tabIndex={0}
             title={label}
           >
             {category.thumbnail ? (

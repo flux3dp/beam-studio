@@ -39,7 +39,7 @@ const AccordionGroup = <D extends { id: string }>({
       updateState({ [stateKey]: { ...state[stateKey], [id]: { ...state[stateKey][id], enabled } } });
       applyOptions();
     },
-    [stateKey]
+    [stateKey],
   );
 
   const items = optionDefs.map((def) => {

@@ -32,7 +32,7 @@ const BackButton = (): ReactNode => {
     text = lang[activeSubType!];
   }
 
-  if (onClick || isMobile) {
+  if (onClick) {
     return (
       <Button
         className={classNames(styles['back-button'], { [styles.invisible]: !onClick })}

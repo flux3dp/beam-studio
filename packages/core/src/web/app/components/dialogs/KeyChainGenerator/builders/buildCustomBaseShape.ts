@@ -146,13 +146,21 @@ export const generateCustomBaseShape = async (
     for (const segment of segments) {
       const subPath = new paper.Path(segment);
 
+      const oldBase = basePath;
+
       basePath = basePath.unite(subPath);
+      oldBase.remove();
+
+      const oldInner = innerPath;
 
       if (innerPath.intersects(subPath)) {
         innerPath = innerPath.unite(subPath);
       } else {
         innerPath = innerPath.exclude(subPath);
       }
+
+      oldInner.remove();
+      subPath.remove();
     }
   }
 
@@ -210,6 +218,8 @@ export const generateCustomBaseShape = async (
       }
     }
   }
+
+  basePath.reorient(false, true); // Force clockwise orientation for consistent normal calculations
 
   return { basePath, innerPath, project, sizeRatio };
 };

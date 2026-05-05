@@ -134,18 +134,22 @@ const updateTextFontSize = (textEl: SVGTextElement, fontSize: number, lineSpacin
   });
 };
 
+const attachSvgForMeasurement = (svg: SVGSVGElement): void => {
+  svg.style.visibility = 'hidden';
+  document.body.appendChild(svg);
+};
+
+const detachSvgAfterMeasurement = (svg: SVGSVGElement): void => {
+  document.body.removeChild(svg);
+  svg.style.removeProperty('visibility');
+};
+
 /**
  * Measures the bounding box of a text element by temporarily attaching the
  * parent SVG to the DOM. The SVG is removed after measurement.
  */
 const measureTextBBox = (svg: SVGSVGElement, textEl: SVGTextElement): DOMRect => {
-  svg.style.visibility = 'hidden';
-  document.body.appendChild(svg);
-
   const bbox = textEl.getBBox();
-
-  document.body.removeChild(svg);
-  svg.style.removeProperty('visibility');
 
   return bbox;
 };
@@ -185,6 +189,7 @@ export const applyTexts = async (
     const textEl = await createTextElement(text, font, fontSize, letterSpacing, lineSpacing, bounds);
 
     svg.appendChild(textEl);
+    attachSvgForMeasurement(svg);
 
     // Auto-resize loop: scale down fontSize until text fits within bounds
     const MAX_ITERATIONS = 10;
@@ -197,9 +202,14 @@ export const applyTexts = async (
       const scale = Math.min(bounds.width / finalBBox.width, bounds.height / finalBBox.height, 1);
 
       currentFontSize = Math.floor(currentFontSize * scale);
+
+      if (currentFontSize <= 0) break;
+
       updateTextFontSize(textEl, currentFontSize, lineSpacing, bounds.y);
       finalBBox = measureTextBBox(svg, textEl);
     }
+
+    detachSvgAfterMeasurement(svg);
 
     // Vertical center: shift the first tspan's y so text block is centered in bounds
     const offsetY = bounds.y + bounds.height / 2 - (finalBBox.y + finalBBox.height / 2);

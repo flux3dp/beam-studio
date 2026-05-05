@@ -89,6 +89,8 @@ const generateBaseShape = (category: KeyChainCategory): { basePath: null | paper
     return { basePath: null, project };
   }
 
+  basePath.reorient(false, true); // Force clockwise orientation for consistent normal calculations
+
   return { basePath, project };
 };
 

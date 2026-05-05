@@ -60,8 +60,6 @@ export const applyHoles = (
   const innerCircles: paper.Path[] = [];
   const mmToPx = PX_TO_MM_RATIO / sizeRatio;
 
-  basePath.reorient(false, true); // Ensure consistent orientation for normal calculations
-
   for (const holeDef of holeDefs) {
     const hole = state.holes[holeDef.id];
 

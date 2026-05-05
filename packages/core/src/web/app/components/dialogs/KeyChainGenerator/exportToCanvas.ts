@@ -320,16 +320,16 @@ const exportEmbossLayers = async (shape: KeyChainShape, batchCmd: IBatchCommand,
  * Reads the already-computed shape from the store; rebuilds it on demand if missing.
  */
 export const exportToCanvas = async (): Promise<void> => {
-  let { shape, sizeRatio } = useKeychainShapeStore.getState();
+  let { shape } = useKeychainShapeStore.getState();
 
   if (!shape) {
     const { applyOptions, buildBaseShape, category } = useKeychainShapeStore.getState();
 
     await buildBaseShape(category);
     shape = await applyOptions();
-    sizeRatio = useKeychainShapeStore.getState().sizeRatio;
   }
 
+  const { sizeRatio } = useKeychainShapeStore.getState();
   const batchCmd = new history.BatchCommand('Export Keychain');
 
   await exportBaseLayer(shape, batchCmd, sizeRatio);
