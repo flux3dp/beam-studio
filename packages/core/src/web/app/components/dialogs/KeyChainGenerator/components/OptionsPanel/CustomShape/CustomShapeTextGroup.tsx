@@ -3,11 +3,10 @@ import React, { memo, useCallback, useEffect, useMemo, useState } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
 
-import type { CustomShapeTextOptionDef, CustomShapeTextValues } from '../../types';
-import useKeychainShapeStore from '../../useKeychainShapeStore';
-
-import GroupCollapse from './Controls/GroupCollapse';
-import TextFields from './Text/TextFields';
+import type { CustomShapeTextOptionDef, CustomShapeTextValues } from '../../../types';
+import useKeychainShapeStore from '../../../useKeychainShapeStore';
+import GroupCollapse from '../Controls/GroupCollapse';
+import TextFields from '../Text/TextFields';
 
 interface CustomShapeTextGroupProps {
   textDef: CustomShapeTextOptionDef;

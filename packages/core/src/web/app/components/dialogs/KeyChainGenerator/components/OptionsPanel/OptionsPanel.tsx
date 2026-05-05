@@ -11,7 +11,7 @@ import { GROUP_COLLAPSE_TOKEN } from '../../constants/designTokens';
 import type { KeyChainCategory } from '../../types';
 
 import GroupCollapse from './Controls/GroupCollapse';
-import CustomShapeGroup from './CustomShapeGroup';
+import CustomShapeControls from './CustomShape/CustomShapeControls';
 import DecorationControl from './DecorationControl';
 import ElementControl from './Element/ElementControl';
 import HoleGroup from './Hole/HoleGroup';
@@ -51,7 +51,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
       <div className={classNames(styles.panel, { [styles.mobile]: isMobile })}>
         <div className={styles.header}>{t.types[category.nameKey] ?? category.nameKey}</div>
         <div className={styles.content} ref={contentRef}>
-          {customShapeText && <CustomShapeGroup elementDef={customShapeElement} textDef={customShapeText} />}
+          {customShapeText && <CustomShapeControls elementDef={customShapeElement} textDef={customShapeText} />}
           {elements.map((option) => (
             <ElementControl key={`element-${option.id}`} optionDef={option} />
           ))}

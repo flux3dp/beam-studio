@@ -1,18 +1,18 @@
 import type { ReactNode } from 'react';
 import React, { memo } from 'react';
 
-import type { CustomShapeElementOptionDef, CustomShapeTextOptionDef } from '../../types';
+import type { CustomShapeElementOptionDef, CustomShapeTextOptionDef } from '../../../types';
 
 import CustomShapeElementGroup from './CustomShapeElementGroup';
 import CustomShapeTextGroup from './CustomShapeTextGroup';
 import OutlineOffsetControl from './OutlineOffsetControl';
 
-interface CustomShapeGroupProps {
+interface CustomShapeControlsProps {
   elementDef?: CustomShapeElementOptionDef;
   textDef: CustomShapeTextOptionDef;
 }
 
-const CustomShapeGroup = ({ elementDef, textDef }: CustomShapeGroupProps): ReactNode => (
+const CustomShapeControls = ({ elementDef, textDef }: CustomShapeControlsProps): ReactNode => (
   <>
     {elementDef && <CustomShapeElementGroup elementDef={elementDef} />}
     <CustomShapeTextGroup textDef={textDef} />
@@ -20,6 +20,6 @@ const CustomShapeGroup = ({ elementDef, textDef }: CustomShapeGroupProps): React
   </>
 );
 
-CustomShapeGroup.displayName = 'CustomShapeGroup';
+CustomShapeControls.displayName = 'CustomShapeControls';
 
-export default memo(CustomShapeGroup);
+export default memo(CustomShapeControls);

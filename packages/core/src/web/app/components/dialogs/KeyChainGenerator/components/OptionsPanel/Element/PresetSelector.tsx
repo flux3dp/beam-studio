@@ -6,7 +6,7 @@ import classNames from 'classnames';
 
 import importIcon from '@core/app/components/dialogs/ElementPanel/Element/importIcon';
 
-import { loadShape, svgCache } from '../../../builders/buildElement';
+import { loadShape, NP_SHAPE_PREFIX, svgCache } from '../../../builders/buildElement';
 import type { IconSelectorItem } from '../Controls/IconSelectorGrid';
 import IconSelectorGrid from '../Controls/IconSelectorGrid';
 import iconSelectorStyles from '../Controls/IconSelectorGrid.module.scss';
@@ -80,6 +80,8 @@ const ShapeIcon = memo(({ shapeKey }: { shapeKey: string }): ReactNode => {
       cancelled = true;
     };
   }, [shapeKey]);
+
+  if (!shapeKey.startsWith(NP_SHAPE_PREFIX)) return <PresetIcon shapeKey={shapeKey} />;
 
   if (!svgMarkup) return null;
 

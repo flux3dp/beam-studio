@@ -3,10 +3,9 @@ import React, { memo, useCallback } from 'react';
 
 import useI18n from '@core/helpers/useI18n';
 
-import { DEFAULT_OUTLINE_OFFSET } from '../../categories';
-import useKeychainShapeStore from '../../useKeychainShapeStore';
-
-import NumberControl from './Controls/NumberControl';
+import { DEFAULT_OUTLINE_OFFSET } from '../../../categories';
+import useKeychainShapeStore from '../../../useKeychainShapeStore';
+import NumberControl from '../Controls/NumberControl';
 
 const OutlineOffsetControl = (): ReactNode => {
   const outlineOffset = useKeychainShapeStore((s) => s.state.outlineOffset);
