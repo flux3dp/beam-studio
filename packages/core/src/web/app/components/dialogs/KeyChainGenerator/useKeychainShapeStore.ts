@@ -65,7 +65,7 @@ const createEmptyShape = (project: null | paper.Project): KeyChainShape => {
 
   return {
     bounds: project?.activeLayer.bounds ?? new paper.Rectangle(0, 0, 0, 0),
-    decorations: { emboss: [], engraving: [] },
+    decorations: { emboss: [], engraving: [], refPaths: [] },
     designSvg: emptySvg,
     explodedSvg: emptySvg.cloneNode(true) as SVGSVGElement,
     innerPath: null,
