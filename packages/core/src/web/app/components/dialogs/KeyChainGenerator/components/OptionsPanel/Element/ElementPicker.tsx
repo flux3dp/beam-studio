@@ -23,9 +23,8 @@ const ElementPicker = ({ onChange, onClear, options, selectedKey }: ElementPicke
   const handleElementSelect = useCallback(
     (shapeKey: string) => {
       handleSelect(shapeKey);
-      closeBrowser();
     },
-    [handleSelect, closeBrowser],
+    [handleSelect],
   );
 
   return (

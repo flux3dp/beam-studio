@@ -6,7 +6,6 @@ import useI18n from '@core/helpers/useI18n';
 import { PUNCH_HOLE_OFFSET } from '../../../constants';
 import type { HoleOptionDef, HoleOptionValues, HoleType } from '../../../types';
 import useKeychainShapeStore from '../../../useKeychainShapeStore';
-
 import NumberControl from '../Controls/NumberControl';
 import SelectControl from '../Controls/SelectControl';
 

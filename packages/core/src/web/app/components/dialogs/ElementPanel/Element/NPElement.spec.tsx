@@ -2,11 +2,11 @@ import React from 'react';
 
 import { fireEvent, render, waitFor } from '@testing-library/react';
 
-const mockCloseDrawer = jest.fn();
 const mockAddToHistory = jest.fn();
+const mockOnClose = jest.fn();
 
 jest.mock('@core/app/contexts/ElementPanelContext', () => ({
-  ElementPanelContext: React.createContext({ addToHistory: mockAddToHistory, closeDrawer: mockCloseDrawer }),
+  ElementPanelContext: React.createContext({ addToHistory: mockAddToHistory, onClose: mockOnClose }),
 }));
 
 const mockBatchCommand = { addSubCommand: jest.fn() };
@@ -78,8 +78,8 @@ describe('test NPElement', () => {
 
     expect(container).toMatchSnapshot();
 
-    const icon = container.querySelector('.icon');
-    const img = container.querySelector('img');
+    const icon = container.querySelector('.icon')!;
+    const img = container.querySelector('img')!;
 
     fireEvent.click(icon);
     expect(mockAddToHistory).not.toHaveBeenCalled();
@@ -108,7 +108,7 @@ describe('test NPElement', () => {
       });
       expect(mockPostImportElement).toHaveBeenCalledWith(mockElement, mockBatchCommand);
       expect(mockAddCommandToHistory).toHaveBeenCalledWith(mockBatchCommand);
-      expect(mockCloseDrawer).toHaveBeenCalled();
+      expect(mockOnClose).toHaveBeenCalled();
     });
   });
 
@@ -120,7 +120,7 @@ describe('test NPElement', () => {
 
   it('should render null when img error', async () => {
     const { container } = render(<NPElement icon={{ id: '1234', thumbnail_url: 'img_thumbnail_url' }} />);
-    const img = container.querySelector('img');
+    const img = container.querySelector('img')!;
 
     fireEvent.error(img);
     expect(container).toBeEmptyDOMElement();

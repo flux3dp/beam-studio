@@ -113,11 +113,10 @@ const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string })
 
           if (onElementSelect) {
             onElementSelect(key);
-
-            return;
+          } else {
+            await importElement(IconComponent, builtInElements[fileName]);
           }
 
-          await importElement(IconComponent, builtInElements[fileName]);
           onClose();
         }}
       />

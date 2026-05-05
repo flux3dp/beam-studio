@@ -66,16 +66,13 @@ const NPElement = ({ icon }: { icon: IIcon }) => {
         if (!isLoading) {
           addToHistory({ npIcon: icon, type: 'np' });
 
-          if (onElementSelect) {
-            await webNeedConnectionWrapper(async () => {
+          webNeedConnectionWrapper(async () => {
+            if (onElementSelect) {
               onElementSelect(`np/${icon.id}`);
-            });
+            } else {
+              await importNPSvg(icon.id);
+            }
 
-            return;
-          }
-
-          await webNeedConnectionWrapper(async () => {
-            await importNPSvg(icon.id);
             onClose();
           });
         }

@@ -20,11 +20,14 @@ jest.mock('@core/app/constants/element-panel-constants', () => ({
   MainTypes: ['basic'],
 }));
 
-const mockCloseDrawer = jest.fn();
 const mockAddToHistory = jest.fn();
+const mockOnClose = jest.fn();
 
 jest.mock('@core/app/contexts/ElementPanelContext', () => ({
-  ElementPanelContext: React.createContext({ addToHistory: mockAddToHistory, closeDrawer: mockCloseDrawer }),
+  ElementPanelContext: React.createContext({
+    addToHistory: mockAddToHistory,
+    onClose: mockOnClose,
+  }),
 }));
 
 const mockBatchCommand = { addSubCommand: jest.fn() };
@@ -126,7 +129,7 @@ describe('test BuiltinElement', () => {
     await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
     expect(container).not.toBeEmptyDOMElement();
     expect(container).toMatchSnapshot();
-    expect(mockCloseDrawer).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should render correctly when mainType missing', async () => {
@@ -136,7 +139,7 @@ describe('test BuiltinElement', () => {
     await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
     expect(container).not.toBeEmptyDOMElement();
     expect(container).toMatchSnapshot();
-    expect(mockCloseDrawer).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should render null when icon not found', async () => {
@@ -152,7 +155,7 @@ describe('test BuiltinElement', () => {
       );
     });
     expect(container).toBeEmptyDOMElement();
-    expect(mockCloseDrawer).not.toHaveBeenCalled();
+    expect(mockOnClose).not.toHaveBeenCalled();
   });
 
   it('should import predefined object', async () => {
@@ -160,7 +163,7 @@ describe('test BuiltinElement', () => {
 
     await waitFor(() => expect(mockForceUpdate).toHaveBeenCalled());
     fireEvent.click(container.querySelector('.icon')!);
-    await waitFor(() => expect(mockCloseDrawer).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
     expect(mockAddSvgElementFromJson).toHaveBeenCalledTimes(1);
     expect(mockGetCurrentLayerName).not.toHaveBeenCalled();
     expect(mockGetLayerByName).not.toHaveBeenCalled();
@@ -177,7 +180,7 @@ describe('test BuiltinElement', () => {
     const { container } = render(<BuiltinElement mainType="basic" path="mock-icon" />);
 
     fireEvent.click(container.querySelector('.icon')!);
-    await waitFor(() => expect(mockCloseDrawer).toHaveBeenCalledTimes(1));
+    await waitFor(() => expect(mockOnClose).toHaveBeenCalledTimes(1));
     expect(mockAddSvgElementFromJson).not.toHaveBeenCalled();
     expect(mockGetCurrentLayerName).toHaveBeenCalledTimes(1);
     expect(mockGetLayerByName).toHaveBeenCalledTimes(1);

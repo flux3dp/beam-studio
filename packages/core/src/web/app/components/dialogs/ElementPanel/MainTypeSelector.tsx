@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { memo, use } from 'react';
+import React, { memo, use } from 'react';
 
 import { CapsuleTabs } from 'antd-mobile';
 
