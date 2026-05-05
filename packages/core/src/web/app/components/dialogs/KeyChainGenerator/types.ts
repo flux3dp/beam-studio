@@ -95,8 +95,7 @@ export interface DecorationPathOptionDef {
 
 export type ShapeElementPositionRef = 'bottomCenter' | 'leftCenter' | 'rightCenter' | 'topCenter';
 
-export interface CustomShapeOptionValues {
-  element: { enabled: boolean; positionRef: ShapeElementPositionRef; shapeKey: string; size: number };
+export interface CustomShapeTextValues {
   font: {
     family: string;
     postscriptName: string;
@@ -105,18 +104,25 @@ export interface CustomShapeOptionValues {
   fontSize: number;
   letterSpacing: number;
   lineSpacing: number;
-  /** Outline offset in mm — body is built by offsetting the glyph path outward by this amount. */
-  outlineOffset: number;
   text: string;
 }
 
-export interface CustomShapeOptionDef {
-  defaults: Omit<CustomShapeOptionValues, 'font'>;
-  element?: {
-    options: string[];
-    positionConfigurable?: boolean;
-  };
+export interface CustomShapeElementValues {
+  enabled: boolean;
+  shapeKey: string;
+  size: number;
+}
+
+export interface CustomShapeTextOptionDef {
+  defaults: Omit<CustomShapeTextValues, 'font'>;
   label?: string;
+}
+
+export interface CustomShapeElementOptionDef {
+  defaults: CustomShapeElementValues;
+  label?: string;
+  options: string[];
+  positionRef: ShapeElementPositionRef;
 }
 
 export type SizeDimension = 'height' | 'width';
@@ -128,7 +134,8 @@ export interface KeyChainCategory {
   isCustomShape?: boolean;
   nameKey: KeysWithType<ILang['keychain_generator']['types'], string>;
   options: {
-    customShape?: CustomShapeOptionDef;
+    customShapeElement?: CustomShapeElementOptionDef;
+    customShapeText?: CustomShapeTextOptionDef;
     decorationPaths?: DecorationPathOptionDef[];
     elements?: ElementOptionDef[];
     holes?: HoleOptionDef[];
@@ -140,10 +147,12 @@ export interface KeyChainCategory {
 
 export interface KeyChainState {
   categoryId: string;
-  customShape: CustomShapeOptionValues;
+  customShapeElement: CustomShapeElementValues;
+  customShapeText: CustomShapeTextValues;
   decorationPaths: Record<string, DecorationOptionValues>;
   elements: Record<string, ElementOptionValues>;
   holes: Record<string, HoleOptionValues>;
+  outlineOffset: number;
   size: { dimension: SizeDimension; value: number };
   texts: Record<string, TextOptionValues>;
 }

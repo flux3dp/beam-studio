@@ -203,10 +203,10 @@ const useKeychainShapeStore = create(
       set({ buildVersion });
 
       if (isCustomShape) {
-        const customShapeOption = category.options.customShape;
+        const customShapeTextOption = category.options.customShapeText;
 
-        if (!customShapeOption) {
-          console.error('No custom shape option found in category', category.id);
+        if (!customShapeTextOption) {
+          console.error('No custom shape text option found in category', category.id);
           cachedBasePath?.remove();
           get().innerPath?.remove();
           cachedProject?.remove();
@@ -220,13 +220,20 @@ const useKeychainShapeStore = create(
           return true;
         }
 
-        const customShapeValues = state.customShape;
+        const { customShapeElement, customShapeText, outlineOffset } = state;
+        const customShapeElementOption = category.options.customShapeElement;
 
-        if (customShapeValues.element?.enabled && customShapeValues.element.shapeKey) {
-          await loadShape(customShapeValues.element.shapeKey);
+        if (customShapeElement?.enabled && customShapeElement.shapeKey) {
+          await loadShape(customShapeElement.shapeKey);
         }
 
-        const result = await generateCustomBaseShape(customShapeValues, state.size);
+        const result = await generateCustomBaseShape(
+          customShapeElementOption,
+          customShapeText,
+          customShapeElement,
+          outlineOffset,
+          state.size,
+        );
 
         // Stale: another buildBaseShape call has started since this one — discard our result
         if (get().buildVersion !== buildVersion) {

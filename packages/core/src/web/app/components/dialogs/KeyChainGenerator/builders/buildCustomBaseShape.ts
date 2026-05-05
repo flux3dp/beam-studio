@@ -6,13 +6,19 @@ import fontFuncs, { convertTextToPathByFontkit, getFontObj } from '@core/app/act
 import NS from '@core/app/constants/namespaces';
 
 import { PX_TO_MM_RATIO } from '../constants';
-import type { CustomShapeOptionValues, ShapeElementPositionRef, SizeDimension } from '../types';
+import type {
+  CustomShapeElementOptionDef,
+  CustomShapeElementValues,
+  CustomShapeTextValues,
+  ShapeElementPositionRef,
+  SizeDimension,
+} from '../types';
 
 import { svgCache } from './buildElement';
 import { collectPathItems } from './buildShape';
 import { createTextElement } from './buildText';
 
-export const generateShapeTextPathD = async (values: CustomShapeOptionValues): Promise<null | string> => {
+export const generateShapeTextPathD = async (values: CustomShapeTextValues): Promise<null | string> => {
   const { font, fontSize, letterSpacing, lineSpacing, text } = values;
 
   if (!text.trim()) return null;
@@ -107,7 +113,10 @@ const buildElementPath = (
 };
 
 export const generateCustomBaseShape = async (
-  values: CustomShapeOptionValues,
+  elementOption: CustomShapeElementOptionDef | undefined,
+  textValues: CustomShapeTextValues,
+  elementValues: CustomShapeElementValues,
+  outlineOffsetMm: number,
   size?: { dimension: SizeDimension; value: number },
 ): Promise<{
   basePath: null | paper.PathItem;
@@ -124,8 +133,8 @@ export const generateCustomBaseShape = async (
   innerPath.strokeWidth = basePath.strokeWidth = 1;
   innerPath.strokeScaling = basePath.strokeScaling = false;
 
-  const pathD = await generateShapeTextPathD(values);
-  const hasElement = values.element.enabled && values.element.shapeKey;
+  const pathD = await generateShapeTextPathD(textValues);
+  const hasElement = elementOption && elementValues.enabled && elementValues.shapeKey;
 
   if (!pathD && !hasElement) {
     return { basePath: null, innerPath: null, project, sizeRatio: 1 };
@@ -149,9 +158,15 @@ export const generateCustomBaseShape = async (
 
   // Unite element shape into both basePath and innerPath
   if (hasElement) {
+    const { positionRef } = elementOption;
     const textBounds = basePath.bounds;
-    const center = getElementCenter(textBounds, values.element.positionRef, values.fontSize);
-    const elementPath = buildElementPath(project, values.element.shapeKey, values.fontSize, center);
+    const referenceSide = match(positionRef)
+      .with('topCenter', 'bottomCenter', () => textBounds.width)
+      .with('leftCenter', 'rightCenter', () => textBounds.height)
+      .exhaustive();
+    const elementSize = referenceSide * (elementValues.size / 100);
+    const center = getElementCenter(textBounds, positionRef, elementSize);
+    const elementPath = buildElementPath(project, elementValues.shapeKey, elementSize, center);
 
     if (elementPath) {
       basePath = basePath.unite(elementPath);
@@ -160,7 +175,7 @@ export const generateCustomBaseShape = async (
     }
   }
 
-  const outlineOffset = values.outlineOffset * PX_TO_MM_RATIO;
+  const outlineOffset = outlineOffsetMm * PX_TO_MM_RATIO;
 
   // Compute sizeRatio from the target size vs natural inner-path bounds
   let sizeRatio = 1;
@@ -169,7 +184,7 @@ export const generateCustomBaseShape = async (
     const innerDim = innerPath.bounds[size.dimension];
 
     if (innerDim > 0) {
-      const effectiveTarget = (size.value - 2 * values.outlineOffset) * PX_TO_MM_RATIO;
+      const effectiveTarget = (size.value - 2 * outlineOffsetMm) * PX_TO_MM_RATIO;
 
       sizeRatio = effectiveTarget > 0 ? effectiveTarget / innerDim : 1;
     }

@@ -26,7 +26,14 @@ interface OptionsPanelProps {
 const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
   const { keychain_generator: t } = useI18n();
   const isMobile = useIsMobile();
-  const { customShape, decorationPaths: decorations, elements = [], holes = [], texts = [] } = category.options;
+  const {
+    customShapeElement,
+    customShapeText,
+    decorationPaths: decorations,
+    elements = [],
+    holes = [],
+    texts = [],
+  } = category.options;
   const contentRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -44,7 +51,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
       <div className={classNames(styles.panel, { [styles.mobile]: isMobile })}>
         <div className={styles.header}>{t.types[category.nameKey] ?? category.nameKey}</div>
         <div className={styles.content} ref={contentRef}>
-          {customShape && <CustomShapeGroup optionDef={customShape} />}
+          {customShapeText && <CustomShapeGroup elementDef={customShapeElement} textDef={customShapeText} />}
           {elements.map((option) => (
             <ElementControl key={`element-${option.id}`} optionDef={option} />
           ))}

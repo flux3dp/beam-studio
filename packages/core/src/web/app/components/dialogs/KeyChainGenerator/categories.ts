@@ -5,7 +5,8 @@ import { CAPSULE, OVAL, ROUND_ARCH, SURFING_BOARD, TAG } from './constants/categ
 import { OVAL_TEXT_PATH_BOTTOM, OVAL_TEXT_PATH_TOP } from './constants/decorations';
 import { DEFAULT_ELEMENT_OPTIONS } from './constants/elementOptions';
 import type {
-  CustomShapeOptionValues,
+  CustomShapeElementValues,
+  CustomShapeTextValues,
   DecorationOptionValues,
   ElementOptionValues,
   HoleOptionValues,
@@ -44,14 +45,20 @@ export const DEFAULT_DECORATION_PATH: DecorationOptionValues = {
   selectedKey: '',
 };
 
-export const DEFAULT_CUSTOM_SHAPE: Omit<CustomShapeOptionValues, 'font'> = {
-  element: { enabled: true, positionRef: 'leftCenter', shapeKey: DEFAULT_ELEMENT_OPTIONS[0], size: 100 },
+export const DEFAULT_CUSTOM_SHAPE_TEXT: Omit<CustomShapeTextValues, 'font'> = {
   fontSize: 80,
   letterSpacing: 0,
   lineSpacing: 1,
-  outlineOffset: 3,
   text: 'Awesome!',
 };
+
+export const DEFAULT_CUSTOM_SHAPE_ELEMENT: CustomShapeElementValues = {
+  enabled: true,
+  shapeKey: DEFAULT_ELEMENT_OPTIONS[0],
+  size: 100,
+};
+
+export const DEFAULT_OUTLINE_OFFSET = 3;
 
 export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   {
@@ -250,8 +257,8 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     isCustomShape: true,
     nameKey: 'text',
     options: {
-      customShape: {
-        defaults: DEFAULT_CUSTOM_SHAPE,
+      customShapeText: {
+        defaults: DEFAULT_CUSTOM_SHAPE_TEXT,
       },
       holes: [
         {
@@ -271,12 +278,13 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     isCustomShape: true,
     nameKey: 'text',
     options: {
-      customShape: {
-        defaults: DEFAULT_CUSTOM_SHAPE,
-        element: {
-          options: DEFAULT_ELEMENT_OPTIONS,
-          positionConfigurable: false,
-        },
+      customShapeElement: {
+        defaults: DEFAULT_CUSTOM_SHAPE_ELEMENT,
+        options: DEFAULT_ELEMENT_OPTIONS,
+        positionRef: 'leftCenter',
+      },
+      customShapeText: {
+        defaults: DEFAULT_CUSTOM_SHAPE_TEXT,
       },
       holes: [
         {
@@ -297,21 +305,38 @@ export const getCategoryById = (id: string): KeyChainCategory =>
   KEYCHAIN_CATEGORIES.find((c) => c.id === id) ?? getDefaultCategory();
 
 export const getStateForCategory = (category: KeyChainCategory): KeyChainState => {
-  const result: KeyChainState = {
-    categoryId: category.id,
-    customShape: {} as any,
-    decorationPaths: {},
-    elements: {},
-    holes: {},
-    size: { ...category.defaultSize },
-    texts: {},
-  };
-
   const { font_family, font_postscriptName } = getDefaultFont();
   const fontObj = fontFuncs.getFontOfPostscriptName(font_postscriptName);
   const {
-    options: { customShape, decorationPaths: decorations = [], elements = [], holes = [], texts = [] },
+    options: {
+      customShapeElement,
+      customShapeText,
+      decorationPaths: decorations = [],
+      elements = [],
+      holes = [],
+      texts = [],
+    },
   } = category;
+
+  const result: KeyChainState = {
+    categoryId: category.id,
+    customShapeElement: customShapeElement ? { ...customShapeElement.defaults } : { ...DEFAULT_CUSTOM_SHAPE_ELEMENT },
+    customShapeText: customShapeText
+      ? {
+          ...customShapeText.defaults,
+          font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
+        }
+      : {
+          ...DEFAULT_CUSTOM_SHAPE_TEXT,
+          font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
+        },
+    decorationPaths: {},
+    elements: {},
+    holes: {},
+    outlineOffset: DEFAULT_OUTLINE_OFFSET,
+    size: { ...category.defaultSize },
+    texts: {},
+  };
 
   for (const decorationDef of decorations) {
     result.decorationPaths[decorationDef.id] = { ...decorationDef.defaults };
@@ -330,15 +355,6 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
 
   for (const elementDef of elements) {
     result.elements[elementDef.id] = { ...elementDef.defaults };
-  }
-
-  if (customShape) {
-    const shapeDef = customShape;
-
-    result.customShape = {
-      ...shapeDef.defaults,
-      font: { family: font_family, postscriptName: font_postscriptName, style: fontObj?.style ?? 'Regular' },
-    };
   }
 
   return result;
