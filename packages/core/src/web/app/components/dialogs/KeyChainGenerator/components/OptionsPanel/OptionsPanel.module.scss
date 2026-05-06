@@ -1,12 +1,15 @@
+@use '@core/styles/mixins' as mixins;
+
 .panel {
   flex: 0 0 280px;
   display: flex;
   gap: 12px;
   flex-direction: column;
 
-  &.mobile {
+  @include mixins.is-mobile {
     flex: 1 1 auto;
     max-height: 300px;
+    overflow-y: auto;
   }
 
   @media (max-width: 850px) and (min-width: 601px) {
@@ -29,6 +32,10 @@ $content-gap: 24px;
   gap: $content-gap;
   overflow-y: auto;
   margin: 0 0 $content-gap;
+
+  @include mixins.is-mobile {
+    overflow-y: unset;
+  }
 
   > *:not(:last-child)::after {
     content: '';

@@ -1,7 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 
-import classNames from 'classnames';
-
 import { useIsMobile } from '@core/app/stores/screenStore';
 
 import { PX_TO_MM_RATIO } from '../constants';
@@ -70,7 +68,7 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
   const scaledSize = useMemo(() => {
     if (!svgElement) return { height: 0, width: 0 };
 
-    const padding = 16;
+    const padding = isMobile ? 4 : 16;
     const viewBox = svgElement.viewBox.baseVal;
     const vbWidth = viewBox.width || width || 1;
     const vbHeight = viewBox.height || height || 1;
@@ -79,10 +77,10 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
     const scale = Math.min(availW / vbWidth, availH / vbHeight, 1);
 
     return { height: vbHeight * scale, width: vbWidth * scale };
-  }, [svgElement, size, width, height]);
+  }, [svgElement, size, width, height, isMobile]);
 
   return (
-    <div className={classNames(styles.container, { [styles.mobile]: isMobile })} ref={containerRef}>
+    <div className={styles.container} ref={containerRef}>
       <div className={styles.dimensions}>
         {dimensionsMm.width.toFixed(0)} x {dimensionsMm.height.toFixed(0)} mm
       </div>

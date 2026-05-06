@@ -1,11 +1,9 @@
 import React, { useCallback, useMemo, useState } from 'react';
 
 import { Button } from 'antd';
-import classNames from 'classnames';
 
 import alertCaller from '@core/app/actions/alert-caller';
 import alertConstants from '@core/app/constants/alert-constants';
-import { useIsMobile } from '@core/app/stores/screenStore';
 import DraggableModal from '@core/app/widgets/DraggableModal';
 import useI18n from '@core/helpers/useI18n';
 
@@ -23,8 +21,6 @@ interface KeyChainGeneratorProps {
 
 const KeyChainGenerator = ({ onClose }: KeyChainGeneratorProps): React.JSX.Element => {
   const { generators: tGenerators, global: tGlobal, keychain_generator: t } = useI18n();
-  const isMobile = useIsMobile();
-
   const defaultCategory = getDefaultCategory();
   const [isExporting, setIsExporting] = useState(false);
 
@@ -90,7 +86,7 @@ const KeyChainGenerator = ({ onClose }: KeyChainGeneratorProps): React.JSX.Eleme
       open
       title={tGenerators.keychain_generator}
     >
-      <div className={classNames(styles.container, { [styles.mobile]: isMobile })}>
+      <div className={styles.container}>
         <CategorySelector
           categories={KEYCHAIN_CATEGORIES}
           currentCategoryId={categoryId}

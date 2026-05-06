@@ -2,7 +2,6 @@ import React from 'react';
 
 import classNames from 'classnames';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 
 import type { KeyChainCategory } from '../types';
@@ -21,10 +20,9 @@ const CategorySelector = ({
   onCategoryChange,
 }: CategorySelectorProps): React.JSX.Element => {
   const { keychain_generator: t } = useI18n();
-  const isMobile = useIsMobile();
 
   return (
-    <div className={classNames(styles['category-selector'], { [styles.mobile]: isMobile })}>
+    <div className={styles['category-selector']}>
       {categories.map((category) => {
         const label = t.types[category.nameKey] ?? category.nameKey;
 

@@ -2,9 +2,7 @@ import type { ReactNode } from 'react';
 import React, { useEffect, useRef } from 'react';
 
 import { ConfigProvider } from 'antd';
-import classNames from 'classnames';
 
-import { useIsMobile } from '@core/app/stores/screenStore';
 import useI18n from '@core/helpers/useI18n';
 
 import { GROUP_COLLAPSE_TOKEN } from '../../constants/designTokens';
@@ -25,7 +23,6 @@ interface OptionsPanelProps {
 
 const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
   const { keychain_generator: t } = useI18n();
-  const isMobile = useIsMobile();
   const {
     customShapeElement,
     customShapeText,
@@ -48,7 +45,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
         },
       }}
     >
-      <div className={classNames(styles.panel, { [styles.mobile]: isMobile })}>
+      <div className={styles.panel}>
         <div className={styles.header}>{t.types[category.nameKey] ?? category.nameKey}</div>
         <div className={styles.content} ref={contentRef}>
           {customShapeText && <CustomShapeControls elementDef={customShapeElement} textDef={customShapeText} />}

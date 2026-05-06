@@ -36,9 +36,11 @@ const ElementPicker = ({ onChange, onClear, options, selectedKey }: ElementPicke
         options={options}
         selectedKey={selectedKey}
       />
-      <ElementPanelProvider onClose={closeBrowser} onElementSelect={handleElementSelect} open={browserOpen}>
-        <ElementPanelContent drawerPlacement="right" />
-      </ElementPanelProvider>
+      {browserOpen && (
+        <ElementPanelProvider onClose={closeBrowser} onElementSelect={handleElementSelect} open>
+          <ElementPanelContent drawerPlacement="right" />
+        </ElementPanelProvider>
+      )}
     </>
   );
 };

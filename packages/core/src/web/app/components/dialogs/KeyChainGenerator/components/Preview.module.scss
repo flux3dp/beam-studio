@@ -1,3 +1,5 @@
+@use '@core/styles/mixins' as mixins;
+
 .container {
   flex: 1 1 auto;
   min-width: 300px;
@@ -12,10 +14,14 @@
   position: relative;
   overflow: hidden;
 
-  &.mobile {
+  @include mixins.is-mobile {
+    position: sticky;
+    top: 0;
+    min-width: unset;
     min-height: 250px;
     order: -1; // Show preview first on mobile
     overflow-y: auto;
+    z-index: 1;
   }
 }
 
