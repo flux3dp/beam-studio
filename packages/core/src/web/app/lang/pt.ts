@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Clique em "Aplicar" para aplicar o Auto Fit a este padrão.',
     preview_first: 'Por favor, realize a pré-visualização da câmera primeiro.',
     reset_position: 'Redefinir posição',
+    retake: 'Recapturar no centro do objeto',
     retry_with_remove_bg: 'Tentar novamente com remoção de fundo',
     rotation: 'Girar',
     select_a_pattern: 'Selecionar um padrão',

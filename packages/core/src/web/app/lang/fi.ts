@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Napsauta "Käytä" soveltaaksesi automaattista sovitusta tähän kuvioon.',
     preview_first: 'Suorita ensin kameran esikatselu.',
     reset_position: 'Palauta sijainti',
+    retake: 'Ota uudelleen kohteen keskellä',
     retry_with_remove_bg: 'Yritä uudelleen taustan poistolla',
     rotation: 'Kiertää',
     select_a_pattern: 'Valitse kuvio',

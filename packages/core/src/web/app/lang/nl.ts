@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klik op "Toepassen" om Auto Fit op dit patroon toe te passen.',
     preview_first: 'Voer eerst een cameravoorvertoning uit.',
     reset_position: 'Positie resetten',
+    retake: 'Opnieuw vastleggen bij objectcentrum',
     retry_with_remove_bg: 'Opnieuw proberen met achtergrondverwijdering',
     rotation: 'Draaien',
     select_a_pattern: 'Kies een patroon',

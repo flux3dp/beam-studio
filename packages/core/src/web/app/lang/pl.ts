@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Kliknij „Zastosuj”, aby zastosować automatyczne dopasowanie do tego wzoru.',
     preview_first: 'Najpierw wykonaj podgląd kamery.',
     reset_position: 'Zresetuj pozycję',
+    retake: 'Ponów zdjęcie w centrum obiektu',
     retry_with_remove_bg: 'Spróbuj ponownie z usunięciem tła',
     rotation: 'Obróć',
     select_a_pattern: 'Wybierz wzór',

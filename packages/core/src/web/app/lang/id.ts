@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klik "Terapkan" untuk menerapkan Auto Fit pada pola ini.',
     preview_first: 'Silakan lakukan pratinjau kamera terlebih dahulu.',
     reset_position: 'Atur Ulang Posisi',
+    retake: 'Ambil Ulang di Pusat Objek',
     retry_with_remove_bg: 'Coba lagi dengan hapus latar belakang',
     rotation: 'Putar',
     select_a_pattern: 'Pilih Pola',

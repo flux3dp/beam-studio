@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Nhấn "Áp dụng" để áp dụng Tự động căn chỉnh lên mẫu này.',
     preview_first: 'Vui lòng thực hiện xem trước máy ảnh trước.',
     reset_position: 'Đặt lại vị trí',
+    retake: 'Chụp lại tại tâm đối tượng',
     retry_with_remove_bg: 'Thử lại với xóa nền',
     rotation: 'Xoay',
     select_a_pattern: 'Chọn mẫu',

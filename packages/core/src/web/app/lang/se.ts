@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klicka på "Tillämpa" för att använda Auto Fit på detta mönster.',
     preview_first: 'Utför kameraförhandsgranskningen först.',
     reset_position: 'Återställ position',
+    retake: 'Ta om vid objektets centrum',
     retry_with_remove_bg: 'Försök igen med bakgrundsborttagning',
     rotation: 'Rotera',
     select_a_pattern: 'Välj ett mönster',

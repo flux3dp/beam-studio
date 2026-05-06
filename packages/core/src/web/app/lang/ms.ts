@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klik "Guna" untuk menggunakan Auto Fit pada corak ini.',
     preview_first: 'Sila lakukan pratonton kamera terlebih dahulu.',
     reset_position: 'Tetapkan Semula Kedudukan',
+    retake: 'Ambil Semula di Pusat Objek',
     retry_with_remove_bg: 'Cuba semula dengan alih keluar latar belakang',
     rotation: 'Putar',
     select_a_pattern: 'Pilih Corak',

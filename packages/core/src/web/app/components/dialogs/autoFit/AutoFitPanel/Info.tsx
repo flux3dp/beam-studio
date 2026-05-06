@@ -12,10 +12,11 @@ import styles from './Info.module.scss';
 interface Props {
   element: SVGElement;
   isBackgroundRemoved?: boolean;
+  onRetake?: () => void;
   onToggleRemoveBackground?: () => void;
 }
 
-const Info = ({ element, isBackgroundRemoved, onToggleRemoveBackground }: Props): React.JSX.Element => {
+const Info = ({ element, isBackgroundRemoved, onRetake, onToggleRemoveBackground }: Props): React.JSX.Element => {
   const { auto_fit: t } = useI18n();
   const svgRef = useRef<SVGSVGElement>(null);
 
@@ -51,6 +52,7 @@ const Info = ({ element, isBackgroundRemoved, onToggleRemoveBackground }: Props)
         <button className={styles.link} onClick={() => browser.open(t.how_to_improve_accuracy_url)} type="button">
           {t.how_to_improve_accuracy}
         </button>
+        {onRetake && <Button onClick={onRetake}>{t.retake}</Button>}
         {onToggleRemoveBackground && (
           <Button onClick={onToggleRemoveBackground}>
             {isBackgroundRemoved ? t.use_original_image : t.retry_with_remove_bg}

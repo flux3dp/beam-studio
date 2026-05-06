@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Fai clic su "Applica" per applicare Auto Fit a questo motivo.',
     preview_first: "Eseguire prima l'anteprima della fotocamera.",
     reset_position: 'Ripristina posizione',
+    retake: "Riprendi al centro dell'oggetto",
     retry_with_remove_bg: 'Riprova con rimozione dello sfondo',
     rotation: 'Ruota',
     select_a_pattern: 'Seleziona un modello',

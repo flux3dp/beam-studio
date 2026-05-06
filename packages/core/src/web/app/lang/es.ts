@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Pulse en "Aplicar" para aplicar el ajuste automático a este patrón.',
     preview_first: 'Por favor, realice primero la vista previa de la cámara.',
     reset_position: 'Restablecer posición',
+    retake: 'Recapturar en el centro del objeto',
     retry_with_remove_bg: 'Reintentar con eliminación de fondo',
     rotation: 'Rotar',
     select_a_pattern: 'Seleccionar un patrón',

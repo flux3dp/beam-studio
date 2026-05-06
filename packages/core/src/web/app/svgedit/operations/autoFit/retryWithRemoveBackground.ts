@@ -5,7 +5,7 @@ import i18n from '@core/helpers/i18n';
 import { removeImageBackground } from '@core/helpers/image-edit';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
 
-import { dataCache } from './dataCache';
+import { dataCache, setDataCache } from './dataCache';
 
 const retryWithRemoveBackground = async (
   previewBackgroundUrl: string,
@@ -35,8 +35,7 @@ const retryWithRemoveBackground = async (
 
     const newImageUrl = URL.createObjectURL(cleanedBlob);
 
-    dataCache.removedBgData = newData;
-    dataCache.removedBgImageUrl = newImageUrl;
+    setDataCache({ ...dataCache, removedBgData: newData, removedBgImageUrl: newImageUrl });
 
     return { data: newData, imageUrl: newImageUrl };
   } finally {

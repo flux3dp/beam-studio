@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '"적용"을 클릭하여 이 패턴에 Auto Fit을 적용하세요.',
     preview_first: '먼저 카메라 미리보기를 수행하세요.',
     reset_position: '위치 초기화',
+    retake: '객체 중심에서 다시 촬영',
     retry_with_remove_bg: '배경 제거 후 다시 시도',
     rotation: '회전',
     select_a_pattern: '패턴 선택',

@@ -1,7 +1,12 @@
 import React, { useCallback, useMemo, useRef, useState } from 'react';
 
 import ActionPanelIcons from '@core/app/icons/action-panel/ActionPanelIcons';
-import { retryWithRemoveBackground } from '@core/app/svgedit/operations/autoFit';
+import { useDocumentStore } from '@core/app/stores/documentStore';
+import {
+  retakeContourPreview,
+  retakeSupportedModels,
+  retryWithRemoveBackground,
+} from '@core/app/svgedit/operations/autoFit';
 import BackButton from '@core/app/widgets/FullWindowPanel/BackButton';
 import FullWindowPanel from '@core/app/widgets/FullWindowPanel/FullWindowPanel';
 import Header from '@core/app/widgets/FullWindowPanel/Header';
@@ -36,6 +41,8 @@ const AutoFitPanel = ({
 }: Props): React.JSX.Element => {
   useNewShortcutsScope();
 
+  const workarea = useDocumentStore((s) => s.workarea);
+  const supportsRetake = retakeSupportedModels.has(workarea);
   const [currentData, setCurrentData] = useState(initialData);
   const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl);
   const [isBackgroundRemoved, setIsBackgroundRemoved] = useState(false);
@@ -95,6 +102,23 @@ const AutoFitPanel = ({
     }
   }, [isBackgroundRemoved, initialData, initialImageUrl, isSplicingImg]);
 
+  const handleRetake = useCallback(async () => {
+    if (isRetrying.current) return;
+
+    isRetrying.current = true;
+    try {
+      const result = await retakeContourPreview(currentData[focusedIndex]);
+
+      if (result) {
+        setCurrentData(result.data);
+        setCurrentImageUrl(result.imageUrl);
+        setFocusedIndex(0);
+      }
+    } finally {
+      isRetrying.current = false;
+    }
+  }, [currentData, focusedIndex]);
+
   return (
     <FullWindowPanel
       mobileTitle={tActionPanel.auto_fit}
@@ -107,6 +131,7 @@ const AutoFitPanel = ({
             <Info
               element={element}
               isBackgroundRemoved={isBackgroundRemoved}
+              onRetake={supportsRetake ? handleRetake : undefined}
               onToggleRemoveBackground={handleToggleRemoveBackground}
             />
           </Sider>

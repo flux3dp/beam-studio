@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Fes clic a "Aplicar" per aplicar l\'ajust automàtic a aquest patró.',
     preview_first: 'Si us plau, realitza primer la vista prèvia de la càmera.',
     reset_position: 'Restablir posició',
+    retake: "Tornar a capturar al centre de l'objecte",
     retry_with_remove_bg: 'Reintenta amb eliminació de fons',
     rotation: 'Rotar',
     select_a_pattern: 'Selecciona un patró',

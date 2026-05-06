@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '點擊「套用」以將自動對位套用於此形狀。',
     preview_first: '請先進行相機預覽',
     reset_position: '重置位置',
+    retake: '重新拍攝',
     retry_with_remove_bg: '移除背景後重新偵測',
     rotation: '旋轉',
     select_a_pattern: '選擇形狀',

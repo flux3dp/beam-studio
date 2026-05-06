@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '点击“套用”以将自动适配应用于此图案。',
     preview_first: '请先进行相机预览。',
     reset_position: '重置位置',
+    retake: '重新拍摄',
     retry_with_remove_bg: '移除背景后重新检测',
     rotation: '旋转',
     select_a_pattern: '选择图案',

@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: '「適用する」をクリックして、このパターンにオートフィットを適用します。',
     preview_first: '自動フィットの前にカメラプレビューを行ってください。',
     reset_position: '位置をリセット',
+    retake: '再撮影',
     retry_with_remove_bg: '背景除去してリトライ',
     rotation: '回転',
     select_a_pattern: 'パターンを選択',

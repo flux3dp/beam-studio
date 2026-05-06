@@ -1,4 +1,4 @@
-import type { MutableRefObject } from 'react';
+import type { ReactNode } from 'react';
 import React, { useEffect, useRef, useState } from 'react';
 
 import type Konva from 'konva';
@@ -27,8 +27,8 @@ const getImageUrl = async (
   clonedSvgContent.setAttribute('height', (height + 2).toString());
   clonedSvgContent.setAttribute('viewBox', `${x - 1} ${y - 1} ${width + 2} ${height + 2}`);
 
-  const elementId = element.getAttribute('id');
-  const clonedElement = clonedSvgContent.getElementById(elementId);
+  const elementId = element.getAttribute('id')!;
+  const clonedElement = clonedSvgContent.getElementById(elementId)!;
 
   setRotationAngle(clonedElement as SVGElement, 0);
 
@@ -47,7 +47,7 @@ const getImageUrl = async (
   useElements.forEach((useElement) => {
     symbolMaker.switchImageSymbol(useElement, false);
 
-    const href = useElement.getAttribute('href') || useElement.getAttribute('xlink:href');
+    const href = useElement.getAttribute('href') || useElement.getAttribute('xlink:href')!;
     const symbol = svgDefs.querySelector(href);
 
     if (!symbol) {
@@ -74,6 +74,7 @@ interface Props {
   onChange: (imageDimension: Partial<ImageDimension>) => void;
   onMouseEnter?: () => void;
   onMouseLeave?: () => void;
+  ref: React.RefObject<Konva.Image | null>;
 }
 
 const KonvaImage = ({
@@ -85,9 +86,9 @@ const KonvaImage = ({
   onMouseEnter,
   onMouseLeave,
   ref: imageRef,
-}: Props & { ref: MutableRefObject<Konva.Image> }): React.JSX.Element => {
+}: Props): ReactNode => {
   const [imageUrl, setImageUrl] = useState<null | string>(null);
-  const [image, status] = useImage(imageUrl);
+  const [image, status] = useImage(imageUrl ?? '');
   const transformerInited = useRef(false);
   const transformerRef = useRef<Konva.Transformer>(null);
 
@@ -124,7 +125,7 @@ const KonvaImage = ({
         onMouseEnter={onMouseEnter}
         onMouseLeave={onMouseLeave}
         onTransform={() => {
-          const node = imageRef.current;
+          const node = imageRef.current!;
           const scaleX = node.scaleX();
           const scaleY = node.scaleY();
 
@@ -137,7 +138,7 @@ const KonvaImage = ({
           });
         }}
         onTransformEnd={() => {
-          const node = imageRef.current;
+          const node = imageRef.current!;
           const scaleX = node.scaleX();
           const scaleY = node.scaleY();
 

@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klikk på "Bruk" for å bruke Auto Fit på dette mønsteret.',
     preview_first: 'Utfør kameraforhåndsvisningen først.',
     reset_position: 'Tilbakestill posisjon',
+    retake: 'Ta på nytt ved objektsenter',
     retry_with_remove_bg: 'Prøv igjen med fjerning av bakgrunn',
     rotation: 'Roter',
     select_a_pattern: 'Velg et mønster',

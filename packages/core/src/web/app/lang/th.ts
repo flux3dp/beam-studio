@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'คลิก "นําไปใช้" เพื่อใช้การปรับอัตโนมัติกับลวดลายนี้',
     preview_first: 'โปรดทำตัวอย่างกล้องก่อน',
     reset_position: 'รีเซ็ตตำแหน่ง',
+    retake: 'ถ่ายใหม่ที่จุดศูนย์กลางวัตถุ',
     retry_with_remove_bg: 'ลองใหม่พร้อมลบพื้นหลัง',
     rotation: 'หมุน',
     select_a_pattern: 'เลือกลวดลาย',

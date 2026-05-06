@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: "Cliquez sur « Appliquer » pour appliquer l'ajustement automatique à ce motif.",
     preview_first: "Veuillez d'abord effectuer l'aperçu de la caméra.",
     reset_position: 'Réinitialiser la position',
+    retake: "Reprendre au centre de l'objet",
     retry_with_remove_bg: "Réessayer avec suppression de l'arrière-plan",
     rotation: 'Pivoter',
     select_a_pattern: 'Sélectionner un motif',

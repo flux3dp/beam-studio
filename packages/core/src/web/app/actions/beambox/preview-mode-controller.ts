@@ -380,6 +380,10 @@ class PreviewModeController {
     return this.previewManager?.getCameraOffset?.() || null;
   }
 
+  getPreviewPosition(x: number, y: number, opts?: { clipByWorkArea?: boolean }): null | { x: number; y: number } {
+    return this.previewManager?.getPreviewPosition?.(x, y, opts) ?? null;
+  }
+
   getCameraOffsetStandard(): CameraConfig | null {
     return this.previewManager?.getCameraOffsetStandard?.() || null;
   }
@@ -398,6 +402,10 @@ class PreviewModeController {
     const imgUrl = await this.previewManager!.getPhotoAfterMoveTo?.(movementX, movementY);
 
     return imgUrl;
+  }
+
+  async preprocessImage(imgUrl: string): Promise<HTMLCanvasElement | null> {
+    return this.previewManager?.preprocessImage?.(imgUrl) ?? null;
   }
 
   switchPreviewMode = async (mode: PreviewMode): Promise<void> => {

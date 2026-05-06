@@ -42,6 +42,7 @@ const lang: ILang = {
     position_step2: 'Klikněte na „Použít“ pro použití automatického přizpůsobení na tento vzor.',
     preview_first: 'Nejprve proveďte náhled fotoaparátu.',
     reset_position: 'Obnovit pozici',
+    retake: 'Znovu zachytit ve středu objektu',
     retry_with_remove_bg: 'Zkusit znovu s odstraněním pozadí',
     rotation: 'Otočit',
     select_a_pattern: 'Vyberte vzor',
