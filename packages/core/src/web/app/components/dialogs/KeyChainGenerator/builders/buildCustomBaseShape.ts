@@ -10,7 +10,6 @@ import type {
   CustomShapeElementOptionDef,
   CustomShapeElementValues,
   CustomShapeTextValues,
-  ShapeElementPositionRef,
   SizeDimension,
 } from '../types';
 
@@ -57,32 +56,7 @@ export const generateShapeTextPathD = async (values: CustomShapeTextValues): Pro
   }
 };
 
-const getElementCenter = (
-  textBounds: paper.Rectangle,
-  positionRef: ShapeElementPositionRef,
-  size: number,
-  padding: number,
-): paper.Point => {
-  const centerOffset = 0.5 * size + padding;
-  const { offset, point } = match(positionRef)
-    .with('bottomCenter', () => ({
-      offset: { x: 0, y: centerOffset },
-      point: textBounds.bottomCenter,
-    }))
-    .with('leftCenter', () => ({ offset: { x: -centerOffset, y: 0 }, point: textBounds.leftCenter }))
-    .with('rightCenter', () => ({ offset: { x: centerOffset, y: 0 }, point: textBounds.rightCenter }))
-    .with('topCenter', () => ({ offset: { x: 0, y: -centerOffset }, point: textBounds.topCenter }))
-    .exhaustive();
-
-  return point.add(new paper.Point(offset.x, offset.y));
-};
-
-const buildElementPath = (
-  project: paper.Project,
-  shapeKey: string,
-  size: number,
-  center: paper.Point,
-): null | paper.PathItem => {
+const buildElementPath = (project: paper.Project, shapeKey: string, size: number): null | paper.PathItem => {
   const cachedSvg = svgCache.get(shapeKey);
 
   if (!cachedSvg) return null;
@@ -106,7 +80,7 @@ const buildElementPath = (
     shapePath = united;
   }
 
-  const targetBounds = new paper.Rectangle(center.x - size / 2, center.y - size / 2, size, size);
+  const targetBounds = new paper.Rectangle(0, 0, size, size);
 
   shapePath.fitBounds(targetBounds);
   svgItem.remove();
@@ -175,11 +149,32 @@ export const generateCustomBaseShape = async (
       .with('leftCenter', 'rightCenter', () => textBounds.height)
       .exhaustive();
     const elementSize = referenceSide > 0 ? referenceSide * (elementValues.size / 100) : 100;
-    const fontSize = textValues.fontSize;
-    const center = getElementCenter(textBounds, positionRef, elementSize, 0.15 * fontSize);
-    const elementPath = buildElementPath(project, elementValues.shapeKey, elementSize, center);
+    const elementPath = buildElementPath(project, elementValues.shapeKey, elementSize);
 
     if (elementPath) {
+      const padding = 0.15 * textValues.fontSize;
+
+      match(positionRef)
+        .with('topCenter', () => {
+          elementPath.bounds.bottom = basePath.bounds.top - padding;
+          elementPath.bounds.center.x = textBounds.center.x;
+        })
+        .with('bottomCenter', () => {
+          elementPath.bounds.top = basePath.bounds.bottom + padding;
+          elementPath.bounds.center.x = textBounds.center.x;
+        })
+        .with('leftCenter', () => {
+          elementPath.bounds.right = basePath.bounds.left - padding;
+          elementPath.bounds.center.y = textBounds.center.y;
+        })
+        .with('rightCenter', () => {
+          elementPath.bounds.left = basePath.bounds.right + padding;
+          elementPath.bounds.center.y = textBounds.center.y;
+        })
+        .exhaustive();
+
+      console.log('elementPath position', elementPath.bounds, basePath.bounds);
+
       basePath = basePath.unite(elementPath);
       innerPath = innerPath.unite(elementPath);
       elementPath.remove();
