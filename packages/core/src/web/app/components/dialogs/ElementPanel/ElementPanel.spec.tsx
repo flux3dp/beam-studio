@@ -8,6 +8,12 @@ import { useScreenStore } from '@core/app/stores/screenStore';
 
 window.innerHeight = 667;
 
+const mockGetDrawerContainer = jest.fn();
+
+jest.mock('@core/app/widgets/dockable/utils', () => ({
+  getDrawerContainer: () => mockGetDrawerContainer(),
+}));
+
 jest.mock('@core/app/contexts/ElementPanelContext', () => ({ ElementPanelContext: React.createContext({}) }));
 
 jest.mock('./MainContent', () => 'main-content');
@@ -20,6 +26,7 @@ import { ElementPanelContent } from './ElementPanel';
 describe('test ElementPanel', () => {
   beforeEach(() => {
     jest.clearAllMocks();
+    mockGetDrawerContainer.mockReturnValue(document.createElement('div'));
   });
 
   it('should render MainType correctly', () => {
