@@ -225,7 +225,7 @@ Cypress.Commands.add('applySettings', () => {
 
 Cypress.Commands.add('getMenuItem', (path: string[], target: string) => {
   cy.get('div[data-testid="top-bar-menu"]').click();
-  cy.get('ul[aria-label="Menu"]').should('be.visible').as('menu');
+  cy.get('ul[aria-label="Menu"]').should('have.class', 'szh-menu--state-open').as('menu');
   path.forEach((text) => {
     cy.get('@menu').contains('.szh-menu__item--submenu', text).should('be.visible').click();
   });
@@ -263,7 +263,10 @@ Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
   cy.get('@select').find('.ant-select-selection-item').click();
   cy.get('@select').should('have.class', 'ant-select-open');
   cy.get('.ant-select-item-option-content').contains(workarea).click({ force: true });
-  if (save) cy.get('button.ant-btn').contains('Save').click({ force: true });
+  if (save) {
+    cy.get('button.ant-btn').contains('Save').click({ force: true });
+    cy.get('.ant-modal-content').should('not.exist');
+  }
 });
 
 Cypress.Commands.add('selectPreset', (presetName: string | RegExp) => {
