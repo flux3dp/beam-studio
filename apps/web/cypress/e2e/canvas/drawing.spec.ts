@@ -28,7 +28,7 @@ describe('drawing', () => {
       });
     cy.showPanel('objects');
     cy.get('div#object-panel').should('exist');
-    cy.get('button#infill').click();
+    cy.setInfill(true);
     cy.get('#svg_1').should('have.attr', 'fill').and('not.eq', 'none');
   });
 
@@ -56,7 +56,7 @@ describe('drawing', () => {
 
     cy.showPanel('objects');
     cy.get('div#object-panel').should('exist');
-    cy.get('button#infill').click();
+    cy.setInfill(true);
     cy.get('#svg_1').should('have.attr', 'fill').and('not.eq', 'none');
   });
 
@@ -87,7 +87,7 @@ describe('drawing', () => {
     cy.get('input#polygon-sides').clear().type('8').blur();
     cy.get('#svg_1').should('have.attr', 'sides').and('eq', '8');
 
-    cy.get('button#infill').click();
+    cy.setInfill(true);
     cy.get('#svg_1').should('have.attr', 'fill').and('not.eq', 'none');
   });
 

@@ -315,6 +315,29 @@ Cypress.Commands.add('showPanel', (panelName: 'layers' | 'objects') => {
   cy.get(`#${componentName}-tab`).click();
 });
 
+const INFILL_OPTION_LABELS = {
+  fill: 'Fill Engraving Mode',
+  stroke: 'Stroke Mode',
+} as const;
+
+Cypress.Commands.add('setInfill', (filled: boolean, id = 'infill') => {
+  const targetLabel = filled ? INFILL_OPTION_LABELS.fill : INFILL_OPTION_LABELS.stroke;
+
+  cy.get(`#${id}`).closest('.ant-select-selector').click();
+  cy.get('.ant-select-dropdown:not(.ant-select-dropdown-hidden) .ant-select-item-option')
+    .contains(targetLabel)
+    .click();
+});
+
+Cypress.Commands.add('assertInfilled', (filled: boolean, id = 'infill') => {
+  const expectedTitle = filled ? INFILL_OPTION_LABELS.fill : INFILL_OPTION_LABELS.stroke;
+
+  cy.get(`#${id}`)
+    .closest('.ant-select')
+    .find('.ant-select-selection-item')
+    .should('have.attr', 'title', expectedTitle);
+});
+
 //
 //
 // -- This is a child command --
