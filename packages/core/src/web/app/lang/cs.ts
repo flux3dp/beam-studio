@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Více tvarů',
     outline_offset: 'Odsazení obrysu',
     reset_to_default: 'Obnovit výchozí',
+    shape: 'Tvar',
     size: 'Velikost těla',
     size_height: 'Výška',
     size_tooltip: 'Velikost těla přívěsku. Skutečná velikost přívěsku bude větší než tato hodnota v závislosti na nastavení závěsného otvoru.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Styl kapsle',
       oval: 'Oválný styl',
+      polygonal: 'Mnohoúhelníkový styl',
+      quadrilateral: 'Čtyřúhelníkový styl',
       round_arch: 'Styl kulatého oblouku',
+      rounded: 'Zaoblený styl',
       surfing_board: 'Styl surfového prkna',
       tag: 'Styl štítku',
       text: 'Text',

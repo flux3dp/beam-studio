@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Weitere Formen',
     outline_offset: 'Umrissversatz',
     reset_to_default: 'Auf Standard zurücksetzen',
+    shape: 'Form',
     size: 'Körpergröße',
     size_height: 'Höhe',
     size_tooltip: 'Die Größe des Schlüsselanhänger-Körpers. Die tatsächliche Größe des Schlüsselanhängers ist je nach Aufhängeloch-Einstellungen größer als dieser Wert.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Kapsel-Stil',
       oval: 'Oval-Stil',
+      polygonal: 'Polygonaler Stil',
+      quadrilateral: 'Viereckiger Stil',
       round_arch: 'Rundbogen-Stil',
+      rounded: 'Runder Stil',
       surfing_board: 'Surfbrett-Stil',
       tag: 'Anhänger-Stil',
       text: 'Text',

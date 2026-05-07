@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Thêm hình dạng',
     outline_offset: 'Độ lệch đường viền',
     reset_to_default: 'Đặt lại mặc định',
+    shape: 'Hình dạng',
     size: 'Kích thước thân',
     size_height: 'Chiều cao',
     size_tooltip: 'Kích thước thân móc khóa. Kích thước thực tế của móc khóa sẽ lớn hơn giá trị này tùy thuộc vào cài đặt lỗ treo.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Kiểu viên nang',
       oval: 'Kiểu hình bầu dục',
+      polygonal: 'Kiểu đa giác',
+      quadrilateral: 'Kiểu tứ giác',
       round_arch: 'Kiểu vòm tròn',
+      rounded: 'Kiểu tròn',
       surfing_board: 'Kiểu ván lướt sóng',
       tag: 'Kiểu thẻ treo',
       text: 'Văn bản',

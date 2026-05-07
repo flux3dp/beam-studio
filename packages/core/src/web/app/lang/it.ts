@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Altre forme',
     outline_offset: 'Offset contorno',
     reset_to_default: 'Ripristina predefiniti',
+    shape: 'Forma',
     size: 'Dimensione del corpo',
     size_height: 'Altezza',
     size_tooltip: 'La dimensione del corpo del portachiavi. La dimensione effettiva del portachiavi sarà maggiore di questo valore a seconda delle impostazioni del foro di sospensione.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Stile capsula',
       oval: 'Stile ovale',
+      polygonal: 'Stile poligonale',
+      quadrilateral: 'Stile quadrilatero',
       round_arch: 'Stile arco tondo',
+      rounded: 'Stile arrotondato',
       surfing_board: 'Stile tavola da surf',
       tag: 'Stile etichetta',
       text: 'Testo',

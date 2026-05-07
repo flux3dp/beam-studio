@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Fler former',
     outline_offset: 'Konturförskjutning',
     reset_to_default: 'Återställ till standard',
+    shape: 'Form',
     size: 'Kroppsstorlek',
     size_height: 'Höjd',
     size_tooltip: 'Storleken på nyckelringens kropp. Den faktiska storleken på nyckelringen kommer att vara större än detta värde beroende på inställningarna för upphängningshålet.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Kapselstil',
       oval: 'Oval stil',
+      polygonal: 'Polygonal stil',
+      quadrilateral: 'Fyrhörningsstil',
       round_arch: 'Rund bågstil',
+      rounded: 'Rundad stil',
       surfing_board: 'Surfbrädestil',
       tag: 'Etikettstil',
       text: 'Text',

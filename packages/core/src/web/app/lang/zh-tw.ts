@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: '更多形狀',
     outline_offset: '外框偏移',
     reset_to_default: '重設為預設值',
+    shape: '形狀',
     size: '本體尺寸',
     size_height: '高度',
     size_tooltip: '本體尺寸為鑰匙圈的整體尺寸，不包含掛孔部分，實際尺寸可能會依據掛孔設定而稍微變大。',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: '膠囊形',
       oval: '橢圓形造型',
+      polygonal: '多邊形造型',
+      quadrilateral: '四邊形造型',
       round_arch: '圓拱形',
+      rounded: '圓形造型',
       surfing_board: '衝浪板造型',
       tag: '標籤造型',
       text: '文字',

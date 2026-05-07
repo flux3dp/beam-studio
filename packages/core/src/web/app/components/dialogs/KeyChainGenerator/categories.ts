@@ -4,6 +4,18 @@ import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 import {
   CAPSULE,
   OVAL,
+  POLYGONAL_1,
+  POLYGONAL_2,
+  POLYGONAL_3,
+  POLYGONAL_4,
+  POLYGONAL_5,
+  POLYGONAL_6,
+  POLYGONAL_7,
+  POLYGONAL_8,
+  QUAD_1,
+  QUAD_2,
+  QUAD_3,
+  QUAD_4,
   ROUND_ARCH,
   ROUNDED_1,
   ROUNDED_2,
@@ -33,7 +45,7 @@ export const DEFAULT_HOLE: HoleOptionValues = {
   offset: 0,
   position: 0,
   thickness: 2,
-  type: 'ring',
+  type: 'punch',
 };
 
 export const DEFAULT_ELEMENT: ElementOptionValues = {
@@ -96,7 +108,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -133,7 +145,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -162,7 +174,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     options: {
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, offset: -3, type: 'punch' },
+          defaults: { ...DEFAULT_HOLE, offset: -3 },
           id: '1',
           startPositionRef: 'leftCenter',
         },
@@ -204,7 +216,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -241,7 +253,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -268,11 +280,11 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     id: 'rounded',
     nameKey: 'rounded',
     options: {
-      holes: [{ defaults: { ...DEFAULT_HOLE, type: 'punch' }, id: '1', startPositionRef: 'topCenter' }],
+      holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
       texts: [
         {
           bounds: { height: 140, width: 520, x: 240, y: 430 },
-          defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+          defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
           id: '1',
         },
       ],
@@ -325,6 +337,159 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     thumbnail: '',
   },
   {
+    defaultSize: { dimension: 'width', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'polygonal',
+    nameKey: 'polygonal',
+    options: {
+      holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
+      variants: [
+        {
+          key: 'polygonal_1',
+          options: {
+            texts: [
+              {
+                bounds: { height: 140, width: 520, x: 240, y: 635 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_1,
+        },
+        {
+          key: 'polygonal_2',
+          options: {
+            texts: [
+              {
+                bounds: { height: 140, width: 520, x: 240, y: 460 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_2,
+        },
+        {
+          key: 'polygonal_3',
+          options: {
+            texts: [
+              {
+                bounds: { height: 160, width: 580, x: 210, y: 420 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_3,
+        },
+        {
+          key: 'polygonal_4',
+          options: {
+            texts: [
+              {
+                bounds: { height: 160, width: 580, x: 210, y: 420 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_4,
+        },
+        {
+          key: 'polygonal_5',
+          options: {
+            texts: [
+              {
+                bounds: { height: 80, width: 300, x: 350, y: 485 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_5,
+        },
+        {
+          key: 'polygonal_6',
+          options: {
+            texts: [
+              {
+                bounds: { height: 120, width: 440, x: 280, y: 440 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_6,
+        },
+        {
+          key: 'polygonal_7',
+          options: {
+            texts: [
+              {
+                bounds: { height: 130, width: 500, x: 250, y: 435 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_7,
+        },
+        {
+          key: 'polygonal_8',
+          options: {
+            texts: [
+              {
+                bounds: { height: 130, width: 500, x: 250, y: 435 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_8,
+        },
+      ],
+    },
+    svgContent: POLYGONAL_1,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'width', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'quadrilateral',
+    nameKey: 'quadrilateral',
+    options: {
+      holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
+      texts: [
+        {
+          bounds: { height: 140, width: 520, x: 240, y: 430 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+          id: '1',
+        },
+      ],
+      variants: [
+        {
+          key: 'quad_1',
+          svgContent: QUAD_1,
+        },
+        {
+          key: 'quad_2',
+          svgContent: QUAD_2,
+        },
+        {
+          key: 'quad_3',
+          svgContent: QUAD_3,
+        },
+        {
+          key: 'quad_4',
+          svgContent: QUAD_4,
+        },
+      ],
+    },
+    svgContent: QUAD_1,
+    thumbnail: '',
+  },
+  {
     defaultSize: { dimension: 'width', value: 100 },
     defaultViewBox: { height: 0, width: 0, x: 0, y: 0 },
     id: 'text',
@@ -336,7 +501,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       },
       holes: [
         {
-          defaults: DEFAULT_HOLE,
+          defaults: { ...DEFAULT_HOLE, type: 'ring' },
           id: '1',
           startPositionRef: 'topLeft',
         },
@@ -362,7 +527,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       },
       holes: [
         {
-          defaults: DEFAULT_HOLE,
+          defaults: { ...DEFAULT_HOLE, type: 'ring' },
           id: '1',
           startPositionRef: 'topLeft',
         },

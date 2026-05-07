@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: '更多形状',
     outline_offset: '外框偏移',
     reset_to_default: '重置为默认值',
+    shape: '形状',
     size: '本体尺寸',
     size_height: '高度',
     size_tooltip: '本体尺寸为钥匙扣的整体尺寸，不包含挂孔部分，实际尺寸可能会依据挂孔设置而稍微变大。',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: '胶囊形',
       oval: '椭圆形',
+      polygonal: '多边形造型',
+      quadrilateral: '四边形造型',
       round_arch: '圆拱形',
+      rounded: '圆形造型',
       surfing_board: '冲浪板造型',
       tag: '标签造型',
       text: '文字',

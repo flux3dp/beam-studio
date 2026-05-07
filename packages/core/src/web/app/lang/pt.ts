@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Mais formas',
     outline_offset: 'Deslocamento do contorno',
     reset_to_default: 'Restaurar padrão',
+    shape: 'Forma',
     size: 'Tamanho do corpo',
     size_height: 'Altura',
     size_tooltip: 'O tamanho do corpo do chaveiro. O tamanho real do chaveiro será maior que este valor dependendo das configurações do furo de suspensão.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Estilo cápsula',
       oval: 'Estilo oval',
+      polygonal: 'Estilo poligonal',
+      quadrilateral: 'Estilo quadrilátero',
       round_arch: 'Estilo arco redondo',
+      rounded: 'Estilo arredondado',
       surfing_board: 'Estilo prancha de surf',
       tag: 'Estilo etiqueta',
       text: 'Texto',

@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Lagi Bentuk',
     outline_offset: 'Ofset garis luar',
     reset_to_default: 'Tetapkan semula ke lalai',
+    shape: 'Bentuk',
     size: 'Saiz badan',
     size_height: 'Tinggi',
     size_tooltip: 'Saiz badan rantai kunci. Saiz sebenar rantai kunci akan lebih besar daripada nilai ini bergantung pada tetapan lubang gantung.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Gaya Kapsul',
       oval: 'Gaya Bujur',
+      polygonal: 'Gaya Poligon',
+      quadrilateral: 'Gaya Segi Empat',
       round_arch: 'Gaya Gerbang Bulat',
+      rounded: 'Gaya Bulat',
       surfing_board: 'Gaya Papan Luncur',
       tag: 'Gaya Tanda',
       text: 'Teks',

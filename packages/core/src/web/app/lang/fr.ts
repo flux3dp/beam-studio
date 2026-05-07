@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Plus de formes',
     outline_offset: 'Décalage du contour',
     reset_to_default: 'Réinitialiser par défaut',
+    shape: 'Forme',
     size: 'Taille du corps',
     size_height: 'Hauteur',
     size_tooltip: 'La taille du corps du porte-clés. La taille réelle du porte-clés sera plus grande que cette valeur en fonction des paramètres du trou de suspension.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Style capsule',
       oval: 'Style ovale',
+      polygonal: 'Style polygonal',
+      quadrilateral: 'Style quadrilatère',
       round_arch: 'Style arc arrondi',
+      rounded: 'Style arrondi',
       surfing_board: 'Style planche de surf',
       tag: 'Style étiquette',
       text: 'Texte',

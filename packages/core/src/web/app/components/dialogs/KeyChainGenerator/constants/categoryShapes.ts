@@ -55,41 +55,62 @@ export const ROUNDED_6 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000
 
 // POLYGONAL VARIANTS
 export const POLYGONAL_1 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M500.174 149L97 847.318H903.348L500.174 149Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M500.174 149L97 847.318H903.348L500.174 149Z" stroke="black" stroke-width="2" />
 </svg>
 `;
 
 export const POLYGONAL_2 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M499.657 149.834L132 416.953L272.433 849.159H726.881L867.314 416.953L499.657 149.834Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M499.657 149.834L132 416.953L272.433 849.159H726.881L867.314 416.953L499.657 149.834Z" stroke="black" stroke-width="2" />
 </svg>
 `;
 
 export const POLYGONAL_3 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M706.695 152H303.565L102 501.121L303.565 850.241H706.695L908.26 501.121L706.695 152Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M706.695 152H303.565L102 501.121L303.565 850.241H706.695L908.26 501.121L706.695 152Z" stroke="black" stroke-width="2" />
 </svg>
 `;
 
 export const POLYGONAL_4 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M649.629 152H360.468L156 356.468V645.629L360.468 850.097H649.629L854.097 645.629V356.468L649.629 152Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M649.629 152H360.468L156 356.468V645.629L360.468 850.097H649.629L854.097 645.629V356.468L649.629 152Z" stroke="black" stroke-width="2" />
 </svg>
 `;
 
 export const POLYGONAL_5 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M601.103 398.645L867.011 418.551L663.588 590.953L726.825 849.999L500 709.807L273.175 849.999L336.412 590.953L132.989 418.551L398.897 398.645L500 151.902L601.103 398.645Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M601.103 398.645L867.011 418.551L663.588 590.953L726.825 849.999L500 709.807L273.175 849.999L336.412 590.953L132.989 418.551L398.897 398.645L500 151.902L601.103 398.645Z" stroke="black" stroke-width="2" />
 </svg>
 `;
 
 export const POLYGONAL_6 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M500 284.543L702.073 150L686.591 392.272L904.145 500L686.591 607.728L702.073 850L500 715.457L297.927 850L313.409 607.728L95.855 500L313.409 392.272L297.927 150L500 284.543Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M500 284.543L702.073 150L686.591 392.272L904.145 500L686.591 607.728L702.073 850L500 715.457L297.927 850L313.409 607.728L95.855 500L313.409 392.272L297.927 150L500 284.543Z" stroke="black" stroke-width="2" />
 </svg>
 `;
 
 export const POLYGONAL_7 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M500 231.07L653.958 128.312L690.162 309.838L871.687 346.041L768.929 500L871.687 653.958L690.162 690.161L653.958 871.687L500 768.929L346.042 871.687L309.838 690.161L128.313 653.958L231.071 500L128.313 346.041L309.838 309.838L346.042 128.312L500 231.07Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M500 231.07L653.958 128.312L690.162 309.838L871.687 346.041L768.929 500L871.687 653.958L690.162 690.161L653.958 871.687L500 768.929L346.042 871.687L309.838 690.161L128.313 653.958L231.071 500L128.313 346.041L309.838 309.838L346.042 128.312L500 231.07Z" stroke="black" stroke-width="2" />
 </svg>
 `;
 
 export const POLYGONAL_8 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
-<path d="M523.885 240.306L624.366 125L653.732 275.098L798.404 225.481L748.787 370.153L898.885 399.519L783.579 500L898.885 600.481L748.787 629.847L798.404 774.519L653.732 724.902L624.366 875L523.885 759.694L423.404 875L394.038 724.902L249.366 774.519L298.983 629.847L148.885 600.481L264.191 500L148.885 399.519L298.983 370.153L249.366 225.481L394.038 275.098L423.404 125L523.885 240.306Z" stroke="#E60012" stroke-width="2" stroke-miterlimit="10"/>
+<path d="M523.885 240.306L624.366 125L653.732 275.098L798.404 225.481L748.787 370.153L898.885 399.519L783.579 500L898.885 600.481L748.787 629.847L798.404 774.519L653.732 724.902L624.366 875L523.885 759.694L423.404 875L394.038 724.902L249.366 774.519L298.983 629.847L148.885 600.481L264.191 500L148.885 399.519L298.983 370.153L249.366 225.481L394.038 275.098L423.404 125L523.885 240.306Z" stroke="black" stroke-width="2" />
+</svg>
+`;
+
+// QUADRILATERAL VARIANT
+export const QUAD_1 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M850 150.842H151.682V849.16H850V150.842Z" stroke="black" stroke-width="2" />
+</svg>
+`;
+
+export const QUAD_2 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M850 500L500 150L150 500L500 850L850 500Z" stroke="black" stroke-width="2" />
+</svg>
+`;
+
+export const QUAD_3 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M787.92 849.16H89.6021L213.761 150.842H912.08L787.92 849.16Z" stroke="black" stroke-width="2" />
+</svg>
+`;
+
+export const QUAD_4 = `<svg width="1000" height="1000" viewBox="0 0 1000 1000" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M849.159 848.318H150.841L200 150H800L849.159 848.318Z" stroke="black" stroke-width="2" />
 </svg>
 `;
