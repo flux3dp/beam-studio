@@ -82,7 +82,7 @@ const Preview = ({ category }: PreviewProps): React.JSX.Element => {
   return (
     <div className={styles.container} ref={containerRef}>
       <div className={styles.dimensions}>
-        {dimensionsMm.width.toFixed(0)} x {dimensionsMm.height.toFixed(0)} mm
+        {dimensionsMm.width.toFixed(0)}mm x {dimensionsMm.height.toFixed(0)}mm
       </div>
       <div className={styles.canvas}>
         <div ref={svgContainerRef} style={{ height: scaledSize.height, width: scaledSize.width }} />

@@ -55,20 +55,13 @@ export const buildSvgView = (
 ): SVGSVGElement => {
   const colors = KEYCHAIN_COLORS[mode];
   const viewBox = computeDesignViewBox(bounds, defaultViewBox);
-  const hasInnerContent = innerPath || decorations.emboss.length > 0;
-
-  if (mode === 'exploded' && hasInnerContent) {
-    viewBox.height += bounds.height + EXPLODED_GAP_PX;
-  }
-
   const svg = document.createElementNS(NS.SVG, 'svg');
 
   svg.setAttribute('xmlns', NS.SVG);
-  svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
   svg.setAttribute('width', '100%');
   svg.setAttribute('height', '100%');
 
-  // Layer 1: result base path
+  // Base Path
   svg.appendChild(createPathElement(resultBasePath.pathData, colors.base));
 
   // Invisible reference paths for textPath href resolution — must be in DOM before <text> elements
@@ -76,7 +69,7 @@ export const buildSvgView = (
     svg.appendChild(refPath.cloneNode(true));
   }
 
-  // Layer 1 decorations (text + element shapes) — cloned so the canonical list stays intact
+  // Engraving Decorations - filled
   for (const decoration of decorations.engraving) {
     const clone = decoration.cloneNode(true) as SVGElement;
 
@@ -84,47 +77,40 @@ export const buildSvgView = (
     svg.appendChild(clone);
   }
 
-  // Emboss decorations — rendered with stroke-only in the emboss color
-  for (const decoration of decorations.emboss) {
-    const clone = decoration.cloneNode(true) as SVGElement;
-
-    clone.setAttribute('fill', 'none');
-    clone.setAttribute('stroke', colors.embossAlign);
-    clone.setAttribute('stroke-width', '1');
-    clone.setAttribute('vector-effect', 'non-scaling-stroke');
-    svg.appendChild(clone);
-  }
-
-  // Layer 2: inner path at its original position
-  if (hasInnerContent) {
+  const appendEmbossElements = (parent: SVGElement, color: string) => {
     if (innerPath) {
-      svg.appendChild(createPathElement(innerPath.pathData, colors.embossAlign));
+      parent.appendChild(createPathElement(innerPath.pathData, color));
     }
+
+    for (const decoration of decorations.emboss) {
+      const clone = decoration.cloneNode(true) as SVGElement;
+
+      clone.setAttribute('fill', 'none');
+      clone.setAttribute('stroke', color);
+      clone.setAttribute('stroke-width', '1');
+      clone.setAttribute('vector-effect', 'non-scaling-stroke');
+      parent.appendChild(clone);
+    }
+  };
+
+  // Emboss decorations align — stroke-only, inside base path
+  appendEmbossElements(svg, colors.embossAlign);
+
+  // Emboss decorations — stroke-only, standalone below base path
+  if (mode === 'exploded' && (innerPath || decorations.emboss.length > 0)) {
+    viewBox.height += bounds.height + EXPLODED_GAP_PX;
 
     // Exploded extra: translated copies of inner path + emboss decorations below the base
-    if (mode === 'exploded' && hasInnerContent) {
-      const group = document.createElementNS(NS.SVG, 'g');
-      const dy = bounds.height + EXPLODED_GAP_PX;
+    const group = document.createElementNS(NS.SVG, 'g');
+    const dy = bounds.height + EXPLODED_GAP_PX;
 
-      group.setAttribute('transform', `translate(0, ${dy})`);
+    group.setAttribute('transform', `translate(0, ${dy})`);
 
-      if (innerPath) {
-        group.appendChild(createPathElement(innerPath.pathData, colors.emboss));
-      }
-
-      for (const decoration of decorations.emboss) {
-        const clone = decoration.cloneNode(true) as SVGElement;
-
-        clone.setAttribute('fill', 'none');
-        clone.setAttribute('stroke', colors.emboss);
-        clone.setAttribute('stroke-width', '1');
-        clone.setAttribute('vector-effect', 'non-scaling-stroke');
-        group.appendChild(clone);
-      }
-
-      svg.appendChild(group);
-    }
+    appendEmbossElements(group, colors.emboss);
+    svg.appendChild(group);
   }
+
+  svg.setAttribute('viewBox', `${viewBox.x} ${viewBox.y} ${viewBox.width} ${viewBox.height}`);
 
   return svg;
 };

@@ -62,7 +62,7 @@ const NumberControl = ({
           <UnitInput
             addonAfter={displayUnit}
             className={styles.input}
-            isInch={displayUnit === 'in'}
+            isInch={displayInch}
             max={max}
             min={min}
             onChange={(val) => val !== null && onChange(val)}

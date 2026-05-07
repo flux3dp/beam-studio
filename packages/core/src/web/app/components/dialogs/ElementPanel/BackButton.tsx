@@ -32,7 +32,7 @@ const BackButton = (): ReactNode => {
     text = lang[activeSubType!];
   }
 
-  if (onClick) {
+  if (onClick || isMobile) {
     return (
       <Button
         className={classNames(styles['back-button'], { [styles.invisible]: !onClick })}
@@ -44,8 +44,6 @@ const BackButton = (): ReactNode => {
       </Button>
     );
   }
-
-  if (isMobile) return null;
 
   return <div className={styles.title}>{lang.title}</div>;
 };

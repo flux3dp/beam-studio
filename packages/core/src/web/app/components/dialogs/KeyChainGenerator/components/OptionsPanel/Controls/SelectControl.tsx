@@ -2,6 +2,7 @@ import type { ReactNode } from 'react';
 import React, { memo } from 'react';
 
 import { Select } from 'antd';
+import type { SelectProps } from 'antd/lib';
 
 import styles from './Base.module.scss';
 
@@ -16,6 +17,7 @@ interface SelectControlProps<T extends string> {
   label: string;
   onChange: (value: T) => void;
   options: Array<SelectOption<T>>;
+  placement?: SelectProps['placement'];
   popupMatchSelectWidth?: boolean;
   showSearch?: boolean;
   value: T;
@@ -28,6 +30,7 @@ const SelectControl = <T extends string>({
   label,
   onChange,
   options,
+  placement,
   popupMatchSelectWidth,
   showSearch,
   value,
@@ -41,6 +44,7 @@ const SelectControl = <T extends string>({
         filterOption={filterOption}
         onChange={onChange}
         options={options}
+        placement={placement}
         popupMatchSelectWidth={popupMatchSelectWidth}
         showSearch={showSearch}
         size="middle"

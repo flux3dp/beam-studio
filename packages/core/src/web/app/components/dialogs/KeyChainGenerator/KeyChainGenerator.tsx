@@ -71,6 +71,7 @@ const KeyChainGenerator = ({ onClose }: KeyChainGeneratorProps): React.JSX.Eleme
 
   return (
     <DraggableModal
+      classNames={{ content: styles.modal }}
       footer={
         <div className={styles.footer}>
           <Button disabled={isExporting} onClick={onClose}>

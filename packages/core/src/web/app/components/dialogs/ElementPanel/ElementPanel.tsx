@@ -10,6 +10,7 @@ import layoutConstants from '@core/app/constants/layout-constants';
 import { ElementPanelContext, ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
 import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import { getDrawerContainer as getDockableDrawerContainer } from '@core/app/widgets/dockable/utils';
 import Drawer from '@core/app/widgets/Drawer';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import useI18n from '@core/helpers/useI18n';
@@ -22,9 +23,10 @@ import SearchBar from './SearchBar';
 
 interface ElementPanelContentProps {
   drawerPlacement?: React.ComponentProps<typeof Drawer>['placement'];
+  getDrawerContainer?: () => HTMLElement;
 }
 
-export const ElementPanelContent = ({ drawerPlacement }: ElementPanelContentProps): ReactNode => {
+export const ElementPanelContent = ({ drawerPlacement, getDrawerContainer }: ElementPanelContentProps): ReactNode => {
   const { allTypes, contentType, onClose, open } = use(ElementPanelContext);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();
@@ -58,6 +60,7 @@ export const ElementPanelContent = ({ drawerPlacement }: ElementPanelContentProp
       closeIcon={null}
       destroyOnClose
       enableResizable={false}
+      getContainer={getDrawerContainer}
       isOpen={open}
       onClose={onClose}
       placement={drawerPlacement}
@@ -81,7 +84,7 @@ const ElementPanel = () => {
 
   return (
     <ElementPanelProvider onClose={onClose} open={drawerMode === 'element-panel'}>
-      <ElementPanelContent />
+      <ElementPanelContent getDrawerContainer={getDockableDrawerContainer} />
     </ElementPanelProvider>
   );
 };

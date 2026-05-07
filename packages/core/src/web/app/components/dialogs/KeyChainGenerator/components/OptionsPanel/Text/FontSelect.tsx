@@ -54,6 +54,7 @@ const FontSelect = ({ font, onChange }: FontSelectProps): ReactNode => {
         label={t.font_family}
         onChange={handleFamilyChange}
         options={fontOptions}
+        placement="bottomRight"
         popupMatchSelectWidth={false}
         showSearch
         value={font.family}

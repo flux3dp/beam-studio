@@ -61,15 +61,17 @@ const getElementCenter = (
   textBounds: paper.Rectangle,
   positionRef: ShapeElementPositionRef,
   size: number,
+  padding: number,
 ): paper.Point => {
+  const centerOffset = 0.5 * size + padding;
   const { offset, point } = match(positionRef)
     .with('bottomCenter', () => ({
-      offset: { x: 0, y: 0.65 * size },
+      offset: { x: 0, y: centerOffset },
       point: textBounds.bottomCenter,
     }))
-    .with('leftCenter', () => ({ offset: { x: -0.65 * size, y: 0 }, point: textBounds.leftCenter }))
-    .with('rightCenter', () => ({ offset: { x: 0.65 * size, y: 0 }, point: textBounds.rightCenter }))
-    .with('topCenter', () => ({ offset: { x: 0, y: -0.65 * size }, point: textBounds.topCenter }))
+    .with('leftCenter', () => ({ offset: { x: -centerOffset, y: 0 }, point: textBounds.leftCenter }))
+    .with('rightCenter', () => ({ offset: { x: centerOffset, y: 0 }, point: textBounds.rightCenter }))
+    .with('topCenter', () => ({ offset: { x: 0, y: -centerOffset }, point: textBounds.topCenter }))
     .exhaustive();
 
   return point.add(new paper.Point(offset.x, offset.y));
@@ -172,8 +174,9 @@ export const generateCustomBaseShape = async (
       .with('topCenter', 'bottomCenter', () => textBounds.width)
       .with('leftCenter', 'rightCenter', () => textBounds.height)
       .exhaustive();
-    const elementSize = referenceSide * (elementValues.size / 100);
-    const center = getElementCenter(textBounds, positionRef, elementSize);
+    const elementSize = referenceSide > 0 ? referenceSide * (elementValues.size / 100) : 100;
+    const fontSize = textValues.fontSize;
+    const center = getElementCenter(textBounds, positionRef, elementSize, 0.15 * fontSize);
     const elementPath = buildElementPath(project, elementValues.shapeKey, elementSize, center);
 
     if (elementPath) {

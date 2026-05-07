@@ -1,5 +1,9 @@
 @use '@core/styles/mixins' as mixins;
 
+.modal {
+  overflow: hidden;
+}
+
 .container {
   display: flex;
   flex-direction: row;

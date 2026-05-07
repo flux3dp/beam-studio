@@ -1,4 +1,5 @@
 @use '@core/styles/variables' as variables;
+@use '@core/styles/mixins' as mixins;
 
 .grid {
   display: grid;
@@ -7,6 +8,11 @@
   max-height: 150px;
   overflow-y: auto;
   padding: 8px;
+
+  @include mixins.is-mobile {
+    max-height: unset;
+    overflow-y: unset;
+  }
 
   &::-webkit-scrollbar {
     width: 4px;

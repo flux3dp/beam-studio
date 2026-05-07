@@ -112,30 +112,28 @@ describe('buildDecorations', () => {
     expect(embossElements[0].id).toBe('e2');
   });
 
-  it('should apply decoration paths and split by emboss', async () => {
-    const state = makeState({
+  it('should apply decoration paths correctly', async () => {
+    let state = makeState({
       decorationPaths: {
         dp1: { emboss: false, enabled: true, selectedKey: 'ribbon_band' },
       },
     });
     const decorationDefs: DecorationPathOptionDef[] = [{ defaults: {} as any, id: 'dp1', options: ['ribbon_band'] }];
 
-    const result = await buildDecorations(project, state, [], [], decorationDefs);
+    let result = await buildDecorations(project, state, [], [], decorationDefs);
 
     expect(result.engraving.length).toBe(1);
     expect(result.engraving[0].getAttribute('d')).toBe(DECORATION_PATHS.ribbon_band);
     expect(result.engraving[0].getAttribute('fill')).toBe('#000');
-  });
+    expect(result.emboss.length).toBe(0);
 
-  it('should put emboss decoration paths in emboss array', async () => {
-    const state = makeState({
+    state = makeState({
       decorationPaths: {
         dp1: { emboss: true, enabled: true, selectedKey: 'ribbon_band' },
       },
     });
-    const decorationDefs: DecorationPathOptionDef[] = [{ defaults: {} as any, id: 'dp1', options: ['ribbon_band'] }];
 
-    const result = await buildDecorations(project, state, [], [], decorationDefs);
+    result = await buildDecorations(project, state, [], [], decorationDefs);
 
     expect(result.emboss.length).toBe(1);
     expect(result.engraving.length).toBe(0);

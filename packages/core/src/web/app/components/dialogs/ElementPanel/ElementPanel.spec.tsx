@@ -24,7 +24,7 @@ describe('test ElementPanel', () => {
 
   it('should render MainType correctly', () => {
     const { baseElement } = render(
-      <ElementPanelContext value={{ contentType: ContentType.MainType } as any}>
+      <ElementPanelContext value={{ contentType: ContentType.MainType, open: true } as any}>
         <ElementPanelContent />
       </ElementPanelContext>,
     );
@@ -34,7 +34,7 @@ describe('test ElementPanel', () => {
 
   it('should render Search correctly', () => {
     const { baseElement } = render(
-      <ElementPanelContext value={{ contentType: ContentType.Search } as any}>
+      <ElementPanelContext value={{ contentType: ContentType.Search, open: true } as any}>
         <ElementPanelContent />
       </ElementPanelContext>,
     );
@@ -51,7 +51,7 @@ describe('test ElementPanel in mobile', () => {
 
   it('should render MainType correctly', () => {
     const { baseElement } = render(
-      <ElementPanelContext value={{ contentType: ContentType.MainType } as any}>
+      <ElementPanelContext value={{ contentType: ContentType.MainType, open: true } as any}>
         <ElementPanelContent />
       </ElementPanelContext>,
     );
@@ -61,7 +61,7 @@ describe('test ElementPanel in mobile', () => {
 
   it('should render SubType correctly', () => {
     const { baseElement } = render(
-      <ElementPanelContext value={{ contentType: ContentType.SubType } as any}>
+      <ElementPanelContext value={{ contentType: ContentType.SubType, open: true } as any}>
         <ElementPanelContent />
       </ElementPanelContext>,
     );
@@ -71,7 +71,7 @@ describe('test ElementPanel in mobile', () => {
 
   it('should render Search correctly', () => {
     const { baseElement } = render(
-      <ElementPanelContext value={{ contentType: ContentType.Search } as any}>
+      <ElementPanelContext value={{ contentType: ContentType.Search, open: true } as any}>
         <ElementPanelContent />
       </ElementPanelContext>,
     );

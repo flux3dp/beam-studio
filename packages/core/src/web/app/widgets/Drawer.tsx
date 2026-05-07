@@ -9,10 +9,7 @@ import { Resizable } from 're-resizable';
 
 import styles from './Drawer.module.scss';
 
-export type Props = Pick<
-  Omit<DrawerProps, 'onClose' | 'open'>,
-  'classNames' | 'closeIcon' | 'destroyOnClose' | 'getContainer' | 'placement' | 'rootClassName' | 'title'
-> & {
+export type Props = DrawerProps & {
   children: ReactNode;
   enableResizable?: Enable | false;
   isOpen: boolean;
