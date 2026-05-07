@@ -44,11 +44,16 @@ const mockPoint = (x = 0, y = 0) => ({ add: (p: any) => mockPoint(x + p.x, y + p
 
 class MockPath {
   bounds: any = {
-    bottomCenter: mockPoint(),
+    bottom: 100,
+    bottomCenter: mockPoint(50, 100),
+    center: mockPoint(50, 50),
     height: 100,
-    leftCenter: mockPoint(),
-    rightCenter: mockPoint(),
-    topCenter: mockPoint(),
+    left: 0,
+    leftCenter: mockPoint(0, 50),
+    right: 100,
+    rightCenter: mockPoint(100, 50),
+    top: 0,
+    topCenter: mockPoint(50, 0),
     width: 100,
   };
   clockwise = true;
