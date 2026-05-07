@@ -70,7 +70,7 @@ const importElement = async (IconComponent: ComponentType, jsonMap: any) => {
 
 const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string }): React.JSX.Element => {
   const forceUpdate = useForceUpdate();
-  const { addToHistory, closeDrawer } = use(ElementPanelContext);
+  const { addToHistory, onClose, onElementSelect } = use(ElementPanelContext);
   const [key, folder, fileName] = useMemo(() => {
     if (mainType) {
       return [`${mainType}/${path}`, mainType, path];
@@ -110,8 +110,14 @@ const BuiltinElement = ({ mainType, path }: { mainType?: string; path: string })
         id={key}
         onClick={async () => {
           addToHistory({ path: { fileName, folder }, type: 'builtin' });
-          await importElement(IconComponent, builtInElements[fileName]);
-          closeDrawer();
+
+          if (onElementSelect) {
+            onElementSelect(key);
+          } else {
+            await importElement(IconComponent, builtInElements[fileName]);
+          }
+
+          onClose();
         }}
       />
     )

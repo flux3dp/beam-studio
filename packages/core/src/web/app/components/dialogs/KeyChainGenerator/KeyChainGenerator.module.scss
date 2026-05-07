@@ -1,0 +1,36 @@
+@use '@core/styles/mixins' as mixins;
+
+.modal {
+  overflow: hidden;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  width: calc(90vw - 48px); // 48px: padding of antd modal
+  height: calc(100vh - 180px); // Full viewport minus modal header/footer
+  max-height: 800px; // Cap for very tall screens
+  gap: 16px;
+
+  @include mixins.is-mobile {
+    flex-direction: column;
+    height: auto;
+    max-height: 80svh;
+    overflow-y: hidden;
+  }
+
+  @media (max-width: 850px) and (min-width: 601px) {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    grid-template-rows: auto 1fr;
+    width: calc(95vw - 48px);
+  }
+}
+
+// Footer with import button
+.footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 8px;
+  height: 24px;
+}

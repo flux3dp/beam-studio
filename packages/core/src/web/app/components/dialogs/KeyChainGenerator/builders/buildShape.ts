@@ -1,0 +1,134 @@
+import paper from 'paper';
+import { PaperOffset } from 'paperjs-offset';
+
+import { PUNCH_HOLE_OFFSET, PX_TO_MM_RATIO } from '../constants';
+import type { HoleOptionDef, KeyChainState } from '../types';
+
+/**
+ * Recursively collects all Paper.js Path/CompoundPath items from the imported SVG.
+ */
+export const collectPathItems = (item: paper.Item): paper.PathItem[] => {
+  if (item instanceof paper.Path || item instanceof paper.CompoundPath) {
+    return [item];
+  }
+
+  if (item instanceof paper.Group || item instanceof paper.Layer) {
+    return item.children.flatMap(collectPathItems);
+  }
+
+  return [];
+};
+
+/**
+ * Imports SVG content into a Paper.js project and unites all sub-paths into a single base path.
+ * Returns null if no path items are found.
+ */
+export const importBasePath = (project: paper.Project, svgContent: string): null | paper.PathItem => {
+  const svgItem = project.importSVG(svgContent, { expandShapes: true });
+  const pathItems = collectPathItems(svgItem);
+
+  if (pathItems.length === 0) return null;
+
+  let basePath = pathItems[0];
+
+  for (let i = 1; i < pathItems.length; i += 1) {
+    const newBase = basePath.unite(pathItems[i]);
+
+    basePath.remove();
+    pathItems[i].remove();
+    basePath = newBase;
+  }
+  basePath.strokeScaling = false;
+  basePath.strokeWidth = 1;
+
+  return basePath;
+};
+
+/**
+ * Applies all hole boolean operations to the base path in batch:
+ * 1. Compute all hole positions on the original base path
+ * 2. Unite all outer circles (hole + thickness) with base
+ * 3. Subtract all inner circles (the actual holes)
+ */
+export const applyHoles = (
+  basePath: paper.PathItem,
+  state: KeyChainState,
+  holeDefs: HoleOptionDef[],
+  sizeRatio: number = 1,
+): paper.PathItem => {
+  const outerCircles: paper.Path[] = [];
+  const innerCircles: paper.Path[] = [];
+  const mmToPx = PX_TO_MM_RATIO / sizeRatio;
+
+  for (const holeDef of holeDefs) {
+    const hole = state.holes[holeDef.id];
+
+    if (!hole?.enabled) continue;
+
+    const isPunch = hole.type === 'punch';
+    const mainPath =
+      basePath instanceof paper.CompoundPath ? (basePath.children[0] as paper.Path) : (basePath as paper.Path);
+    const normalizedPosition = (hole.position % 100) / 100;
+
+    const holeOffsetDist = (hole.offset + (isPunch ? PUNCH_HOLE_OFFSET : 0)) * mmToPx;
+    const offsetPath = PaperOffset.offset(mainPath, holeOffsetDist, { insert: false, join: 'round' });
+    let center: paper.Point;
+
+    if (offsetPath instanceof paper.Path) {
+      // Use offset path to find hole center if the path is not separated by offset
+      const refPoint = offsetPath.bounds[holeDef.startPositionRef] as paper.Point;
+      const startPoint = offsetPath.getNearestPoint(refPoint);
+      const startOffset = offsetPath.getOffsetOf(startPoint);
+      const pathOffset = (startOffset + normalizedPosition * offsetPath.length) % offsetPath.length;
+
+      center = offsetPath.getPointAt(pathOffset);
+    } else {
+      // Fallback to main path with normal-based offset if offsetPath is a CompoundPath (i.e. path was separated by offset)
+      const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
+      const startPoint = mainPath.getNearestPoint(refPoint);
+      const startOffset = mainPath.getOffsetOf(startPoint);
+      const pathOffset = (startOffset + normalizedPosition * mainPath.length) % mainPath.length;
+      const point = mainPath.getPointAt(pathOffset);
+      const normal = mainPath.getNormalAt(pathOffset);
+
+      center = point.add(normal.multiply(holeOffsetDist));
+    }
+
+    offsetPath.remove();
+
+    if (!center) continue;
+
+    const innerRadius = (hole.diameter / 2) * mmToPx;
+
+    innerCircles.push(new paper.Path.Circle(center, innerRadius));
+
+    if (!isPunch && hole.thickness > 0) {
+      const outerRadius = (hole.diameter / 2 + hole.thickness) * mmToPx;
+
+      outerCircles.push(new paper.Path.Circle(center, outerRadius));
+    }
+  }
+
+  if (outerCircles.length === 0 && innerCircles.length === 0) return basePath;
+
+  let result: paper.PathItem = basePath;
+
+  for (const circle of outerCircles) {
+    const united = result.unite(circle);
+
+    result.remove();
+    circle.remove();
+    result = united;
+  }
+
+  // Subtract all inner circles
+  for (const circle of innerCircles) {
+    const subtracted = result.subtract(circle);
+
+    result.remove();
+    circle.remove();
+    result = subtracted;
+  }
+
+  return result;
+};

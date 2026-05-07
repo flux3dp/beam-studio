@@ -11,9 +11,8 @@ import { Button, Checkbox, ConfigProvider, Flex, Form, Input, InputNumber, Radio
 import classNames from 'classnames';
 
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
-import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import Select from '@core/app/widgets/AntdSelect';
-import fontHelper from '@core/helpers/fonts/fontHelper';
+import { fontFamilySelectFilterOption, renderTextOptions } from '@core/helpers/fonts/renderTextOptions';
 import useI18n from '@core/helpers/useI18n';
 
 import styles from './BarcodeGenerator.module.scss';
@@ -27,46 +26,18 @@ interface Props {
   text: string;
 }
 
-// copied from src/web/app/views/beambox/Right-Panels/Options-Blocks/TextOptions.tsx
-const renderOption = (option) => {
-  const src = fontHelper.getWebFontPreviewUrl(option.value);
-
-  if (src) {
-    return (
-      <div className={styles['family-option']}>
-        <div className={styles['img-container']}>
-          <img alt={option.label} draggable="false" src={src} />
-        </div>
-        {src.includes('monotype') && <FluxIcons.FluxPlus />}
-      </div>
-    );
-  }
-
-  return <div style={{ fontFamily: `'${option.value}'`, maxHeight: 24 }}>{option.label}</div>;
-};
-// end of copied code
-
 const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props & { ref?: React.Ref<BarcodeRef> }) => {
   const { barcode_generator: t } = useI18n();
   const [options, setOptions] = useState(defaultOptions);
-  const [validFontStyles, setValidFontStyles] = useState([]);
+  const [validFontStyles, setValidFontStyles] = useState<string[]>([]);
   const formatOptions = formats.map((value) => ({ label: value, value }));
   const fontFamilies = fontFuncs.requestAvailableFontFamilies();
   const fontOptions = useMemo(
-    () =>
-      fontFamilies.map((value: string) => {
-        const fontName = fontFuncs.fontNameMap.get(value);
-        const label = renderOption({
-          label: typeof fontName === 'string' ? fontName : value,
-          value,
-        });
-
-        return { label, value };
-      }),
+    () => fontFamilies.map((value: string) => renderTextOptions(value, false)),
     [fontFamilies],
   );
   const [isBold, isItalic] = useMemo(
-    () => [options.fontOptions.includes('bold'), options.fontOptions.includes('italic')],
+    () => [options.fontOptions!.includes('bold'), options.fontOptions!.includes('italic')],
     [options.fontOptions],
   );
 
@@ -152,23 +123,7 @@ const BarcodeGenerator = ({ isInvert, ref, setIsInvert, setText, text }: Props &
               <Form.Item className={styles['flex-child']} label={t.font}>
                 <Select
                   allowClear={false}
-                  filterOption={(input: string, option?: { label: React.JSX.Element; value: string }) => {
-                    if (option?.value) {
-                      const searchKey = input.toLowerCase();
-
-                      if (option.value.toLowerCase().includes(searchKey)) {
-                        return true;
-                      }
-
-                      const fontName = fontFuncs.fontNameMap.get(option.value) || '';
-
-                      if (fontName.toLowerCase().includes(searchKey)) {
-                        return true;
-                      }
-                    }
-
-                    return false;
-                  }}
+                  filterOption={fontFamilySelectFilterOption}
                   onChange={(font) => setOptions({ ...options, font, fontOptions: '' })}
                   onKeyDown={(e) => e.stopPropagation()}
                   options={fontOptions}

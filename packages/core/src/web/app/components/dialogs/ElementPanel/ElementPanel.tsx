@@ -1,148 +1,36 @@
 import type { ReactNode } from 'react';
-import React, { use, useMemo, useRef, useState } from 'react';
+import React, { use, useCallback } from 'react';
 
-import { LeftOutlined, SearchOutlined } from '@ant-design/icons';
-import type { InputRef } from 'antd';
-import { Button, Input, message } from 'antd';
-import { CapsuleTabs } from 'antd-mobile';
 import classNames from 'classnames';
+import { pick } from 'remeda';
+import { useShallow } from 'zustand/shallow';
 
-import type { MainType } from '@core/app/constants/element-panel-constants';
-import { ContentType, MainTypes, NPTypes } from '@core/app/constants/element-panel-constants';
+import { ContentType } from '@core/app/constants/element-panel-constants';
 import layoutConstants from '@core/app/constants/layout-constants';
 import { ElementPanelContext, ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
+import { useCanvasStore } from '@core/app/stores/canvas/canvasStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
-import Select from '@core/app/widgets/AntdSelect';
-import ToolBarDrawer from '@core/app/widgets/dockable/ToolBarDrawer';
+import { getDrawerContainer as getDockableDrawerContainer } from '@core/app/widgets/dockable/utils';
+import Drawer from '@core/app/widgets/Drawer';
 import FloatingPanel from '@core/app/widgets/FloatingPanel';
 import useI18n from '@core/helpers/useI18n';
 
+import BackButton from './BackButton';
 import styles from './ElementPanel.module.scss';
 import MainContent from './MainContent';
+import MainTypeSelector from './MainTypeSelector';
+import SearchBar from './SearchBar';
 
-export const ElementPanelContent = (): ReactNode => {
-  const {
-    activeMainType,
-    activeSubType,
-    closeDrawer,
-    contentType,
-    hasLogin,
-    open,
-    searchKey,
-    setActiveMainType,
-    setActiveSubType,
-    setSearchKey,
-    updateSearchContents,
-  } = use(ElementPanelContext);
-  const [error, setError] = useState(false);
+interface ElementPanelContentProps {
+  drawerPlacement?: React.ComponentProps<typeof Drawer>['placement'];
+  getDrawerContainer?: () => HTMLElement;
+}
+
+export const ElementPanelContent = ({ drawerPlacement, getDrawerContainer }: ElementPanelContentProps): ReactNode => {
+  const { allTypes, contentType, onClose, open } = use(ElementPanelContext);
   const lang = useI18n().beambox.elements_panel;
   const isMobile = useIsMobile();
   const anchors = [0, window.innerHeight - layoutConstants.menubarHeight];
-  const inputRef = useRef<InputRef>(null);
-
-  const allTypes = useMemo(() => (hasLogin ? [...MainTypes, ...NPTypes] : MainTypes), [hasLogin]);
-
-  const backButton = useMemo(() => {
-    let onClick: (() => void) | undefined = undefined;
-    let text: string | undefined = undefined;
-
-    if (contentType === ContentType.Search) {
-      onClick = () => {
-        setSearchKey(undefined);
-        setActiveSubType(activeSubType);
-      };
-    } else if (contentType === ContentType.SubType) {
-      onClick = () => {
-        setActiveSubType(undefined);
-      };
-      text = lang[activeSubType!];
-    }
-
-    if (onClick || isMobile) {
-      return (
-        <Button
-          className={classNames(styles['back-button'], { [styles.invisible]: !onClick })}
-          icon={<LeftOutlined />}
-          onClick={onClick}
-          type="text"
-        >
-          {text}
-        </Button>
-      );
-    }
-
-    return null;
-  }, [contentType, isMobile, setSearchKey, setActiveSubType, activeSubType, lang]);
-
-  const searchBar = useMemo(() => {
-    const handleSearch = (key: string) => {
-      if (/^[A-Za-z0-9, ]*$/.test(key || '')) {
-        inputRef.current?.blur();
-        setError(false);
-        updateSearchContents(key);
-      } else {
-        setError(true);
-        message.error(lang.search_invalid_characters);
-      }
-    };
-
-    return (
-      <div className={styles['search-bar']}>
-        <Input
-          allowClear
-          className={styles['search-input']}
-          maxLength={50}
-          onChange={(e) => {
-            setError(false);
-            setSearchKey(e.target.value);
-          }}
-          onClear={() => handleSearch('')}
-          onPressEnter={() => handleSearch(searchKey || '')}
-          ref={inputRef}
-          size="small"
-          status={error ? 'error' : undefined}
-          type="search"
-          value={searchKey}
-        />
-        <Button
-          className={styles['search-button']}
-          icon={<SearchOutlined />}
-          onClick={() => {
-            if (contentType === ContentType.Search) {
-              handleSearch(searchKey || '');
-            } else {
-              setSearchKey('');
-              inputRef.current?.focus();
-            }
-          }}
-          shape="circle"
-          type={contentType === ContentType.Search ? 'primary' : 'default'}
-        />
-      </div>
-    );
-  }, [error, searchKey, contentType, updateSearchContents, lang.search_invalid_characters, setSearchKey]);
-
-  const mainTypeSelector = useMemo(() => {
-    return isMobile ? (
-      <CapsuleTabs
-        activeKey={activeMainType}
-        className={styles.select}
-        onChange={(val) => setActiveMainType(val as MainType)}
-      >
-        {allTypes.map((key) => (
-          <CapsuleTabs.Tab key={key} title={lang[key]} />
-        ))}
-      </CapsuleTabs>
-    ) : contentType !== ContentType.MainType ? null : (
-      <Select
-        className={styles.select}
-        onChange={setActiveMainType}
-        options={allTypes.map((key) => ({ label: lang[key], value: key }))}
-        popupMatchSelectWidth={false}
-        value={activeMainType}
-      />
-    );
-  }, [isMobile, activeMainType, allTypes, contentType, setActiveMainType, lang]);
 
   return isMobile ? (
     <FloatingPanel
@@ -155,42 +43,48 @@ export const ElementPanelContent = (): ReactNode => {
             [styles['hide-select']]: contentType !== ContentType.MainType,
           })}
         >
-          {backButton || <div className={styles['back-button']} />}
-          {searchBar}
-          {mainTypeSelector}
+          <BackButton />
+          <SearchBar />
+          <MainTypeSelector />
         </div>
       }
       forceClose={!open}
-      onClose={closeDrawer}
+      onClose={onClose}
       title={lang.title}
     >
       <MainContent types={allTypes} />
     </FloatingPanel>
   ) : (
-    <ToolBarDrawer
+    <Drawer
       classNames={{ body: styles['drawer-body'], header: styles['drawer-header'] }}
       closeIcon={null}
       destroyOnClose
       enableResizable={false}
-      mode="element-panel"
+      getContainer={getDrawerContainer}
+      isOpen={open}
+      onClose={onClose}
+      placement={drawerPlacement}
       rootClassName={styles.drawer}
       title={
         <div className={classNames(styles.header, { [styles['hide-search']]: contentType !== ContentType.Search })}>
-          {backButton || <div className={styles.title}>{lang.title}</div>}
-          {mainTypeSelector}
-          {searchBar}
+          <BackButton />
+          <MainTypeSelector />
+          <SearchBar />
         </div>
       }
     >
       <MainContent types={allTypes} />
-    </ToolBarDrawer>
+    </Drawer>
   );
 };
 
 const ElementPanel = () => {
+  const { drawerMode, setDrawerMode } = useCanvasStore(useShallow(pick(['drawerMode', 'setDrawerMode'])));
+  const onClose = useCallback(() => setDrawerMode('none'), [setDrawerMode]);
+
   return (
-    <ElementPanelProvider>
-      <ElementPanelContent />
+    <ElementPanelProvider onClose={onClose} open={drawerMode === 'element-panel'}>
+      <ElementPanelContent getDrawerContainer={getDockableDrawerContainer} />
     </ElementPanelProvider>
   );
 };

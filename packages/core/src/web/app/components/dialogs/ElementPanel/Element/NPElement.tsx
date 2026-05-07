@@ -52,7 +52,7 @@ const importNPSvg = async (id: string) => {
 };
 
 const NPElement = ({ icon }: { icon: IIcon }) => {
-  const { addToHistory, closeDrawer } = use(ElementPanelContext);
+  const { addToHistory, onClose, onElementSelect } = use(ElementPanelContext);
   const [isLoading, setIsLoading] = useState(true);
   const [hasError, setHasError] = useState(icon.hidden);
 
@@ -65,9 +65,15 @@ const NPElement = ({ icon }: { icon: IIcon }) => {
       onClick={async () => {
         if (!isLoading) {
           addToHistory({ npIcon: icon, type: 'np' });
-          await webNeedConnectionWrapper(async () => {
-            await importNPSvg(icon.id);
-            closeDrawer();
+
+          webNeedConnectionWrapper(async () => {
+            if (onElementSelect) {
+              onElementSelect(`np/${icon.id}`);
+            } else {
+              await importNPSvg(icon.id);
+            }
+
+            onClose();
           });
         }
       }}
