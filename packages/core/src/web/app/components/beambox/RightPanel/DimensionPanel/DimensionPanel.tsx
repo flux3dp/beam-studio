@@ -1,6 +1,7 @@
 import React, { use, useCallback, useMemo } from 'react';
 
-import { ConfigProvider } from 'antd';
+import { RedoOutlined, UndoOutlined } from '@ant-design/icons';
+import { Button, ConfigProvider } from 'antd';
 import { match } from 'ts-pattern';
 
 import Constant from '@core/app/actions/beambox/constant';
@@ -294,6 +295,8 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
     contents.push(renderBlock(type));
   });
 
+  const rotateBy = (delta: number) => handleRotationChange((dimensionValues.rotation || 0) + delta, true);
+
   return isMobile ? (
     <div className={styles.container}>
       <ObjectPanelItem.Divider />
@@ -304,11 +307,40 @@ const DimensionPanel = ({ elem }: Props): React.JSX.Element => {
     <div className={styles.panel}>
       <ConfigProvider theme={iconButtonTheme}>
         <div className={styles.row}>
-          <div className={styles.dimensions}>{contents}</div>
-          {renderBlock('lock')}
+          {renderBlock(panels[0])}
+          {renderBlock(panels[1])}
+        </div>
+        <div className={`${styles.row} ${styles['size-group']}`}>
+          {renderBlock(panels[2])}
+          {renderBlock(panels[3])}
+          <div className={styles['size-lock']}>{renderBlock('lock')}</div>
         </div>
         <div className={styles.row}>
           {renderBlock('rot')}
+          <div className={styles['rotate-btns']}>
+            <Button
+              className={styles['rotate-btn']}
+              icon={<UndoOutlined />}
+              id="rotate_ccw_90"
+              onClick={() => rotateBy(-90)}
+              title="Rotate -90°"
+              type="text"
+            >
+              90°
+            </Button>
+            <Button
+              className={styles['rotate-btn']}
+              icon={<RedoOutlined />}
+              id="rotate_cw_90"
+              onClick={() => rotateBy(90)}
+              title="Rotate +90°"
+              type="text"
+            >
+              90°
+            </Button>
+          </div>
+        </div>
+        <div className={styles.row}>
           <FlipButtons />
         </div>
       </ConfigProvider>

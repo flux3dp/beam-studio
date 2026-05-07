@@ -1,12 +1,10 @@
 import React, { useState } from 'react';
 
-import { Button, ConfigProvider, Switch } from 'antd';
-import classNames from 'classnames';
+import { Switch } from 'antd';
 
-import { iconButtonTheme } from '@core/app/constants/antd-config';
-import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
+import Select from '@core/app/widgets/AntdSelect';
 import useDidUpdateEffect from '@core/helpers/hooks/useDidUpdateEffect';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
@@ -64,46 +62,53 @@ const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode =>
     return null;
   }
 
-  const onClick = () => {
-    if (isAnyFilled) {
-      svgCanvas.setElemsUnfill(elems);
-    } else {
+  const setFilled = (filled: boolean) => {
+    if (filled) {
       svgCanvas.setElemsFill(elems);
+    } else {
+      svgCanvas.setElemsUnfill(elems);
     }
 
     setFillInfo((prev) => ({
       ...prev,
-      isAllFilled: !isAnyFilled,
-      isAnyFilled: !isAnyFilled,
+      isAllFilled: filled,
+      isAnyFilled: filled,
     }));
     useLayerStore.getState().checkVector();
   };
 
   const isPartiallyFilled = elems[0].tagName === 'g' && isAnyFilled && !isAllFilled;
 
-  return isMobile ? (
-    <ObjectPanelItem.Item
-      content={<Switch checked={isAnyFilled} />}
-      id={id}
-      label={label || lang.fill}
-      onClick={onClick}
-    />
-  ) : label ? (
-    <div className={styles['option-block']} key="infill">
-      <div className={styles.label}>{label}</div>
-      <Switch checked={isAnyFilled} onClick={onClick} size="small" />
-    </div>
-  ) : (
-    <ConfigProvider theme={iconButtonTheme}>
-      <Button
-        className={classNames({ [styles.filled]: isAllFilled })}
-        icon={isPartiallyFilled ? <OptionPanelIcons.InfillPartial /> : <OptionPanelIcons.Infill />}
+  if (isMobile) {
+    return (
+      <ObjectPanelItem.Item
+        content={<Switch checked={isAnyFilled} />}
         id={id}
-        onClick={onClick}
-        title={lang.fill}
-        type="text"
+        label={label || lang.fill}
+        onClick={() => setFilled(!isAnyFilled)}
       />
-    </ConfigProvider>
+    );
+  }
+
+  const fillOptions = [
+    { label: 'Fill Engraving Mode', value: 'fill' },
+    { label: 'Stroke Mode', value: 'stroke' },
+  ];
+  const value = isPartiallyFilled ? undefined : isAnyFilled ? 'fill' : 'stroke';
+  const handleChange = (next: string) => setFilled(next === 'fill');
+
+  return (
+    <div className={styles['option-block']} key="infill">
+      {label ? <div className={styles.label}>{label}</div> : null}
+      <Select
+        className={styles.select}
+        id={id}
+        onChange={handleChange}
+        options={fillOptions}
+        placeholder={lang.fill}
+        value={value}
+      />
+    </div>
   );
 };
 

@@ -56,6 +56,31 @@
     margin-top: 4px;
   }
 
+  .labeled-row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-top: 4px;
+
+    .prefix-label {
+      flex-shrink: 0;
+      width: 24px;
+      text-align: center;
+      font-size: 14px;
+      color: #494949;
+
+      &.bold {
+        font-weight: 700;
+      }
+    }
+
+    .font-family,
+    .font-style {
+      flex: 1;
+      width: auto;
+    }
+  }
+
   .font-family {
     width: 100%;
     .family-option > svg {

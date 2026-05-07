@@ -160,52 +160,76 @@ exports[`should render correctly in mobile is not fillable 1`] = `<div />`;
 
 exports[`should render correctly is fillable 1`] = `
 <div>
-  <button
-    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-    id="infill"
-    title="Infill"
-    type="button"
+  <div
+    class="option-block"
   >
-    <span
-      class="ant-btn-icon"
+    <select
+      class="select"
+      data-placeholder="Infill"
+      id="infill"
     >
-      <svgr-url />
-    </span>
-  </button>
+      <option
+        value="fill"
+      >
+        Fill Engraving Mode
+      </option>
+      <option
+        value="stroke"
+      >
+        Stroke Mode
+      </option>
+    </select>
+  </div>
 </div>
 `;
 
 exports[`should render correctly is fillable 2`] = `
 <div>
-  <button
-    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only filled"
-    id="infill"
-    title="Infill"
-    type="button"
+  <div
+    class="option-block"
   >
-    <span
-      class="ant-btn-icon"
+    <select
+      class="select"
+      data-placeholder="Infill"
+      id="infill"
     >
-      <svgr-url />
-    </span>
-  </button>
+      <option
+        value="fill"
+      >
+        Fill Engraving Mode
+      </option>
+      <option
+        value="stroke"
+      >
+        Stroke Mode
+      </option>
+    </select>
+  </div>
 </div>
 `;
 
 exports[`should render correctly is fillable 3`] = `
 <div>
-  <button
-    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-    id="infill"
-    title="Infill"
-    type="button"
+  <div
+    class="option-block"
   >
-    <span
-      class="ant-btn-icon"
+    <select
+      class="select"
+      data-placeholder="Infill"
+      id="infill"
     >
-      <svgr-url />
-    </span>
-  </button>
+      <option
+        value="fill"
+      >
+        Fill Engraving Mode
+      </option>
+      <option
+        value="stroke"
+      >
+        Stroke Mode
+      </option>
+    </select>
+  </div>
 </div>
 `;
 
@@ -221,26 +245,22 @@ exports[`should render correctly with label 1`] = `
     >
       Infill
     </div>
-    <button
-      aria-checked="false"
-      class="ant-switch ant-switch-small css-dev-only-do-not-override-hash"
-      role="switch"
-      type="button"
+    <select
+      class="select"
+      data-placeholder="Infill"
+      id="infill"
     >
-      <div
-        class="ant-switch-handle"
-      />
-      <span
-        class="ant-switch-inner"
+      <option
+        value="fill"
       >
-        <span
-          class="ant-switch-inner-checked"
-        />
-        <span
-          class="ant-switch-inner-unchecked"
-        />
-      </span>
-    </button>
+        Fill Engraving Mode
+      </option>
+      <option
+        value="stroke"
+      >
+        Stroke Mode
+      </option>
+    </select>
   </div>
 </div>
 `;
@@ -255,26 +275,22 @@ exports[`should render correctly with label 2`] = `
     >
       Infill
     </div>
-    <button
-      aria-checked="true"
-      class="ant-switch ant-switch-small css-dev-only-do-not-override-hash ant-switch-checked"
-      role="switch"
-      type="button"
+    <select
+      class="select"
+      data-placeholder="Infill"
+      id="infill"
     >
-      <div
-        class="ant-switch-handle"
-      />
-      <span
-        class="ant-switch-inner"
+      <option
+        value="fill"
       >
-        <span
-          class="ant-switch-inner-checked"
-        />
-        <span
-          class="ant-switch-inner-unchecked"
-        />
-      </span>
-    </button>
+        Fill Engraving Mode
+      </option>
+      <option
+        value="stroke"
+      >
+        Stroke Mode
+      </option>
+    </select>
   </div>
 </div>
 `;
@@ -289,44 +305,48 @@ exports[`should render correctly with label 3`] = `
     >
       Infill
     </div>
-    <button
-      aria-checked="false"
-      class="ant-switch ant-switch-small css-dev-only-do-not-override-hash"
-      role="switch"
-      type="button"
+    <select
+      class="select"
+      data-placeholder="Infill"
+      id="infill"
     >
-      <div
-        class="ant-switch-handle"
-      />
-      <span
-        class="ant-switch-inner"
+      <option
+        value="fill"
       >
-        <span
-          class="ant-switch-inner-checked"
-        />
-        <span
-          class="ant-switch-inner-unchecked"
-        />
-      </span>
-    </button>
+        Fill Engraving Mode
+      </option>
+      <option
+        value="stroke"
+      >
+        Stroke Mode
+      </option>
+    </select>
   </div>
 </div>
 `;
 
 exports[`should render correctly with multiple elements (fillable) 1`] = `
 <div>
-  <button
-    class="ant-btn css-dev-only-do-not-override-hash ant-btn-text ant-btn-color-default ant-btn-variant-text ant-btn-icon-only"
-    id="infill"
-    title="Infill"
-    type="button"
+  <div
+    class="option-block"
   >
-    <span
-      class="ant-btn-icon"
+    <select
+      class="select"
+      data-placeholder="Infill"
+      id="infill"
     >
-      <svgr-url />
-    </span>
-  </button>
+      <option
+        value="fill"
+      >
+        Fill Engraving Mode
+      </option>
+      <option
+        value="stroke"
+      >
+        Stroke Mode
+      </option>
+    </select>
+  </div>
 </div>
 `;
 
