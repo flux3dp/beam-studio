@@ -52,12 +52,21 @@ class MockCircle {
   }
 }
 
+class MockLine {
+  remove = jest.fn();
+
+  constructor(
+    public from: any,
+    public to: any,
+  ) {}
+}
+
 jest.mock('paper', () => {
   const mod = {
     CompoundPath: MockCompoundPath,
     Group: MockGroup,
     Layer: MockLayer,
-    Path: Object.assign(MockPath, { Circle: MockCircle }),
+    Path: Object.assign(MockPath, { Circle: MockCircle, Line: MockLine }),
     Project: jest.fn().mockImplementation(() => ({ importSVG: mockImportSVG })),
   };
 
@@ -195,9 +204,11 @@ describe('applyHoles', () => {
   });
 
   it('should create outer and inner circles for ring holes and perform boolean ops', () => {
+    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
     const offsetPath = {
-      bounds: { topCenter: { x: 50, y: 0 } },
-      getNearestPoint: jest.fn().mockReturnValue({ x: 50, y: 0 }),
+      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
+      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
+      getNearestPoint: jest.fn().mockReturnValue(startPoint),
       getOffsetOf: jest.fn().mockReturnValue(0),
       getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
       length: 100,
@@ -232,9 +243,11 @@ describe('applyHoles', () => {
   });
 
   it('should skip outer circle for punch holes', () => {
+    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
     const offsetPath = {
-      bounds: { topCenter: { x: 50, y: 0 } },
-      getNearestPoint: jest.fn().mockReturnValue({ x: 50, y: 0 }),
+      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
+      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
+      getNearestPoint: jest.fn().mockReturnValue(startPoint),
       getOffsetOf: jest.fn().mockReturnValue(0),
       getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
       length: 100,
@@ -265,9 +278,11 @@ describe('applyHoles', () => {
   });
 
   it('should apply PUNCH_HOLE_OFFSET for punch type holes', () => {
+    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
     const offsetPath = {
-      bounds: { topCenter: { x: 50, y: 0 } },
-      getNearestPoint: jest.fn().mockReturnValue({ x: 50, y: 0 }),
+      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
+      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
+      getNearestPoint: jest.fn().mockReturnValue(startPoint),
       getOffsetOf: jest.fn().mockReturnValue(0),
       getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
       length: 100,
@@ -294,9 +309,11 @@ describe('applyHoles', () => {
   });
 
   it('should use sizeRatio to scale hole dimensions', () => {
+    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
     const offsetPath = {
-      bounds: { topCenter: { x: 50, y: 0 } },
-      getNearestPoint: jest.fn().mockReturnValue({ x: 50, y: 0 }),
+      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
+      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
+      getNearestPoint: jest.fn().mockReturnValue(startPoint),
       getOffsetOf: jest.fn().mockReturnValue(0),
       getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
       length: 100,
@@ -329,9 +346,11 @@ describe('applyHoles', () => {
   });
 
   it('should skip hole when center is undefined', () => {
+    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
     const offsetPath = {
-      bounds: { topCenter: { x: 50, y: 0 } },
-      getNearestPoint: jest.fn().mockReturnValue({ x: 50, y: 0 }),
+      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
+      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
+      getNearestPoint: jest.fn().mockReturnValue(startPoint),
       getOffsetOf: jest.fn().mockReturnValue(0),
       getPointAt: jest.fn().mockReturnValue(undefined),
       length: 100,
@@ -362,8 +381,11 @@ describe('applyHoles', () => {
     (offsetPath as any).remove = jest.fn();
     mockOffset.mockReturnValue(offsetPath);
 
+    const mainStartPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
     const mockMainPath = {
-      getNearestPoint: jest.fn().mockReturnValue({ x: 50, y: 0 }),
+      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
+      getIntersections: jest.fn().mockReturnValue([{ point: mainStartPoint }]),
+      getNearestPoint: jest.fn().mockReturnValue(mainStartPoint),
       getNormalAt: jest.fn().mockReturnValue({ multiply: jest.fn().mockReturnValue({ x: 0, y: -5 }) }),
       getOffsetOf: jest.fn().mockReturnValue(0),
       getPointAt: jest.fn().mockReturnValue({ add: jest.fn().mockReturnValue({ x: 50, y: -5 }) }),
@@ -372,7 +394,7 @@ describe('applyHoles', () => {
 
     const basePath = new MockPath() as any;
 
-    basePath.bounds = { topCenter: { x: 50, y: 0 } };
+    basePath.bounds = { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } };
     (basePath as any).children = undefined;
     // For non-CompoundPath basePath, mainPath = basePath
     Object.assign(basePath, mockMainPath);

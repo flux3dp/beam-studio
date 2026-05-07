@@ -93,6 +93,19 @@ export interface DecorationPathOptionDef {
   options: string[];
 }
 
+export interface ShapeVariant {
+  defaultSize?: { dimension: SizeDimension; value: number };
+  defaultViewBox?: { height: number; width: number; x: number; y: number };
+  key: string;
+  options?: {
+    decorationPaths?: DecorationPathOptionDef[];
+    elements?: ElementOptionDef[];
+    holes?: HoleOptionDef[];
+    texts?: TextOptionDef[];
+  };
+  svgContent: string;
+}
+
 export type ShapeElementPositionRef = 'bottomCenter' | 'leftCenter' | 'rightCenter' | 'topCenter';
 
 export interface CustomShapeTextValues {
@@ -140,6 +153,7 @@ export interface KeyChainCategory {
     elements?: ElementOptionDef[];
     holes?: HoleOptionDef[];
     texts?: TextOptionDef[];
+    variants?: ShapeVariant[];
   };
   svgContent: string;
   thumbnail: string;
@@ -155,4 +169,5 @@ export interface KeyChainState {
   outlineOffset: number;
   size: { dimension: SizeDimension; value: number };
   texts: Record<string, TextOptionValues>;
+  variantKey: string;
 }

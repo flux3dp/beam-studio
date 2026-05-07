@@ -6,7 +6,7 @@ import { ConfigProvider } from 'antd';
 import useI18n from '@core/helpers/useI18n';
 
 import { GROUP_COLLAPSE_TOKEN } from '../../constants/designTokens';
-import type { KeyChainCategory } from '../../types';
+import useKeychainShapeStore from '../../useKeychainShapeStore';
 
 import GroupCollapse from './Controls/GroupCollapse';
 import CustomShapeControls from './CustomShape/CustomShapeControls';
@@ -14,15 +14,13 @@ import DecorationControl from './DecorationControl';
 import ElementControl from './Element/ElementControl';
 import HoleGroup from './Hole/HoleGroup';
 import styles from './OptionsPanel.module.scss';
+import ShapeVariantSelector from './ShapeVariantSelector';
 import SizeGroup from './SizeGroup';
 import TextGroup from './Text/TextGroup';
 
-interface OptionsPanelProps {
-  category: KeyChainCategory;
-}
-
-const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
+const OptionsPanel = (): ReactNode => {
   const { keychain_generator: t } = useI18n();
+  const category = useKeychainShapeStore((s) => s.category);
   const {
     customShapeElement,
     customShapeText,
@@ -30,6 +28,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
     elements = [],
     holes = [],
     texts = [],
+    variants,
   } = category.options;
   const contentRef = useRef<HTMLDivElement>(null);
 
@@ -48,6 +47,7 @@ const OptionsPanel = ({ category }: OptionsPanelProps): ReactNode => {
       <div className={styles.panel}>
         <div className={styles.header}>{t.types[category.nameKey] ?? category.nameKey}</div>
         <div className={styles.content} ref={contentRef}>
+          {variants && <ShapeVariantSelector variants={variants} />}
           {customShapeText && <CustomShapeControls elementDef={customShapeElement} textDef={customShapeText} />}
           {elements.map((option) => (
             <ElementControl key={`element-${option.id}`} optionDef={option} />

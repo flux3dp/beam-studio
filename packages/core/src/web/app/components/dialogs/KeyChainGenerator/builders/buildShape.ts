@@ -45,6 +45,38 @@ export const importBasePath = (project: paper.Project, svgContent: string): null
 };
 
 /**
+ * Finds the starting point on a path for hole positioning.
+ * Uses ray intersection (ref point → center) to handle concave shapes
+ * where getNearestPoint would snap to an inner concavity.
+ */
+const getStartPoint = (path: paper.Path, startPositionRef: HoleOptionDef['startPositionRef']): paper.Point => {
+  const refPoint = path.bounds[startPositionRef] as paper.Point;
+  const ray = new paper.Path.Line(refPoint, path.bounds.center);
+  const intersections = path.getIntersections(ray);
+
+  ray.remove();
+
+  if (intersections.length > 0) {
+    let closest = intersections[0];
+    let minDist = closest.point.getDistance(refPoint);
+
+    for (let i = 1; i < intersections.length; i += 1) {
+      const dist = intersections[i].point.getDistance(refPoint);
+
+      if (dist < minDist) {
+        minDist = dist;
+        closest = intersections[i];
+      }
+    }
+
+    return closest.point;
+  }
+
+  // Fallback: ref point is already on the path (convex case)
+  return path.getNearestPoint(refPoint);
+};
+
+/**
  * Applies all hole boolean operations to the base path in batch:
  * 1. Compute all hole positions on the original base path
  * 2. Unite all outer circles (hole + thickness) with base
@@ -76,16 +108,14 @@ export const applyHoles = (
 
     if (offsetPath instanceof paper.Path) {
       // Use offset path to find hole center if the path is not separated by offset
-      const refPoint = offsetPath.bounds[holeDef.startPositionRef] as paper.Point;
-      const startPoint = offsetPath.getNearestPoint(refPoint);
+      const startPoint = getStartPoint(offsetPath, holeDef.startPositionRef);
       const startOffset = offsetPath.getOffsetOf(startPoint);
       const pathOffset = (startOffset + normalizedPosition * offsetPath.length) % offsetPath.length;
 
       center = offsetPath.getPointAt(pathOffset);
     } else {
       // Fallback to main path with normal-based offset if offsetPath is a CompoundPath (i.e. path was separated by offset)
-      const refPoint = basePath.bounds[holeDef.startPositionRef] as paper.Point;
-      const startPoint = mainPath.getNearestPoint(refPoint);
+      const startPoint = getStartPoint(mainPath, holeDef.startPositionRef);
       const startOffset = mainPath.getOffsetOf(startPoint);
       const pathOffset = (startOffset + normalizedPosition * mainPath.length) % mainPath.length;
       const point = mainPath.getPointAt(pathOffset);

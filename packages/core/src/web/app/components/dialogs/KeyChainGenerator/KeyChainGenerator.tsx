@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useState } from 'react';
+import React, { useCallback, useState } from 'react';
 
 import { Button } from 'antd';
 
@@ -27,7 +27,6 @@ const KeyChainGenerator = ({ onClose }: KeyChainGeneratorProps): React.JSX.Eleme
   const categoryId = useKeychainShapeStore((s) => s.state.categoryId);
   const isModified = useKeychainShapeStore((s) => s.isModified);
   const setCategoryState = useKeychainShapeStore((s) => s.setCategoryState);
-  const currentCategory = useMemo(() => getCategoryById(categoryId) ?? defaultCategory, [categoryId, defaultCategory]);
 
   const handleCategoryChange = useCallback(
     (newCategoryId: string) => {
@@ -93,8 +92,8 @@ const KeyChainGenerator = ({ onClose }: KeyChainGeneratorProps): React.JSX.Eleme
           currentCategoryId={categoryId}
           onCategoryChange={handleCategoryChange}
         />
-        <Preview category={currentCategory} />
-        <OptionsPanel category={currentCategory} />
+        <Preview />
+        <OptionsPanel />
       </div>
     </DraggableModal>
   );
