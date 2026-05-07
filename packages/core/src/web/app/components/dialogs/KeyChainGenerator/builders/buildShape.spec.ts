@@ -182,14 +182,41 @@ describe('importBasePath', () => {
 });
 
 describe('applyHoles', () => {
+  const defaultHoleDefs = [{ id: 'h1', startPositionRef: 'topCenter' }] as any[];
+
+  const createHoleState = (overrides: Record<string, unknown> = {}) =>
+    ({
+      holes: {
+        h1: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring', ...overrides },
+      },
+    }) as unknown as KeyChainState;
+
+  const setupMockOffsetPath = (overrides: Record<string, unknown> = {}) => {
+    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
+    const offsetPath = {
+      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
+      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
+      getNearestPoint: jest.fn().mockReturnValue(startPoint),
+      getOffsetOf: jest.fn().mockReturnValue(0),
+      getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
+      length: 100,
+      remove: jest.fn(),
+      ...overrides,
+    };
+
+    mockOffset.mockReturnValue(offsetPath);
+    Object.setPrototypeOf(offsetPath, MockPath.prototype);
+
+    return offsetPath;
+  };
+
   beforeEach(() => jest.clearAllMocks());
 
   it('should return basePath when no holes are enabled', () => {
     const basePath = new MockPath() as any;
     const state = { holes: { h1: { enabled: false } } } as unknown as KeyChainState;
-    const holeDefs = [{ id: 'h1', startPositionRef: 'topCenter' as const }] as any[];
 
-    const result = applyHoles(basePath, state, holeDefs);
+    const result = applyHoles(basePath, state, defaultHoleDefs);
 
     expect(result).toBe(basePath);
   });
@@ -204,38 +231,17 @@ describe('applyHoles', () => {
   });
 
   it('should create outer and inner circles for ring holes and perform boolean ops', () => {
-    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
-    const offsetPath = {
-      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
-      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
-      getNearestPoint: jest.fn().mockReturnValue(startPoint),
-      getOffsetOf: jest.fn().mockReturnValue(0),
-      getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
-      length: 100,
-      remove: jest.fn(),
-    };
-
-    mockOffset.mockReturnValue(offsetPath);
-    Object.setPrototypeOf(offsetPath, MockPath.prototype);
+    setupMockOffsetPath();
 
     const unitedResult = new MockPath();
     const subtractedResult = new MockPath();
 
-    // unite is called on basePath (with outer circle), returns unitedResult
-    // subtract is called on unitedResult (with inner circle), returns subtractedResult
     mockUnite.mockReturnValueOnce(unitedResult);
     unitedResult.subtract = mockSubtract;
     mockSubtract.mockReturnValueOnce(subtractedResult);
 
     const basePath = new MockPath() as any;
-    const state = {
-      holes: {
-        h1: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring' },
-      },
-    } as unknown as KeyChainState;
-    const holeDefs = [{ id: 'h1', startPositionRef: 'topCenter' }] as any[];
-
-    const result = applyHoles(basePath, state, holeDefs);
+    const result = applyHoles(basePath, createHoleState(), defaultHoleDefs);
 
     expect(mockUnite).toHaveBeenCalled();
     expect(mockSubtract).toHaveBeenCalled();
@@ -243,65 +249,27 @@ describe('applyHoles', () => {
   });
 
   it('should skip outer circle for punch holes', () => {
-    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
-    const offsetPath = {
-      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
-      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
-      getNearestPoint: jest.fn().mockReturnValue(startPoint),
-      getOffsetOf: jest.fn().mockReturnValue(0),
-      getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
-      length: 100,
-      remove: jest.fn(),
-    };
-
-    mockOffset.mockReturnValue(offsetPath);
-    Object.setPrototypeOf(offsetPath, MockPath.prototype);
+    setupMockOffsetPath();
 
     const subtractedResult = new MockPath();
 
     mockSubtract.mockReturnValueOnce(subtractedResult);
 
     const basePath = new MockPath() as any;
-    const state = {
-      holes: {
-        h1: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'punch' },
-      },
-    } as unknown as KeyChainState;
-    const holeDefs = [{ id: 'h1', startPositionRef: 'topCenter' }] as any[];
+    const result = applyHoles(basePath, createHoleState({ type: 'punch' }), defaultHoleDefs);
 
-    const result = applyHoles(basePath, state, holeDefs);
-
-    // Punch holes only subtract, no unite for outer ring
     expect(mockUnite).not.toHaveBeenCalled();
     expect(mockSubtract).toHaveBeenCalled();
     expect(result).toBe(subtractedResult);
   });
 
   it('should apply PUNCH_HOLE_OFFSET for punch type holes', () => {
-    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
-    const offsetPath = {
-      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
-      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
-      getNearestPoint: jest.fn().mockReturnValue(startPoint),
-      getOffsetOf: jest.fn().mockReturnValue(0),
-      getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
-      length: 100,
-      remove: jest.fn(),
-    };
-
-    mockOffset.mockReturnValue(offsetPath);
-    Object.setPrototypeOf(offsetPath, MockPath.prototype);
+    setupMockOffsetPath();
     mockSubtract.mockReturnValueOnce(new MockPath());
 
     const basePath = new MockPath() as any;
-    const state = {
-      holes: {
-        h1: { diameter: 3, enabled: true, offset: 2, position: 0, thickness: 2, type: 'punch' },
-      },
-    } as unknown as KeyChainState;
-    const holeDefs = [{ id: 'h1', startPositionRef: 'topCenter' }] as any[];
 
-    applyHoles(basePath, state, holeDefs);
+    applyHoles(basePath, createHoleState({ offset: 2, type: 'punch' }), defaultHoleDefs);
 
     // PUNCH_HOLE_OFFSET = -5, offset = 2, sizeRatio = 1, PX_TO_MM_RATIO = 10
     // holeOffsetDist = (2 + (-5)) * (10 / 1) = -30
@@ -309,28 +277,7 @@ describe('applyHoles', () => {
   });
 
   it('should use sizeRatio to scale hole dimensions', () => {
-    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
-    const offsetPath = {
-      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
-      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
-      getNearestPoint: jest.fn().mockReturnValue(startPoint),
-      getOffsetOf: jest.fn().mockReturnValue(0),
-      getPointAt: jest.fn().mockReturnValue({ x: 50, y: -5 }),
-      length: 100,
-      remove: jest.fn(),
-    };
-
-    mockOffset.mockReturnValue(offsetPath);
-    Object.setPrototypeOf(offsetPath, MockPath.prototype);
-    mockSubtract.mockReturnValue(new MockPath());
-
-    const basePath = new MockPath() as any;
-    const state = {
-      holes: {
-        h1: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring' },
-      },
-    } as unknown as KeyChainState;
-    const holeDefs = [{ id: 'h1', startPositionRef: 'topCenter' }] as any[];
+    setupMockOffsetPath();
 
     const unitedResult = new MockPath();
 
@@ -338,7 +285,9 @@ describe('applyHoles', () => {
     mockUnite.mockReturnValueOnce(unitedResult);
     mockSubtract.mockReturnValueOnce(new MockPath());
 
-    applyHoles(basePath, state, holeDefs, 2);
+    const basePath = new MockPath() as any;
+
+    applyHoles(basePath, createHoleState(), defaultHoleDefs, 2);
 
     // mmToPx = PX_TO_MM_RATIO / sizeRatio = 10 / 2 = 5
     // holeOffsetDist = (0 + 0) * 5 = 0 (ring, no PUNCH_HOLE_OFFSET)
@@ -346,29 +295,10 @@ describe('applyHoles', () => {
   });
 
   it('should skip hole when center is undefined', () => {
-    const startPoint = { getDistance: jest.fn().mockReturnValue(0), x: 50, y: 0 };
-    const offsetPath = {
-      bounds: { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } },
-      getIntersections: jest.fn().mockReturnValue([{ point: startPoint }]),
-      getNearestPoint: jest.fn().mockReturnValue(startPoint),
-      getOffsetOf: jest.fn().mockReturnValue(0),
-      getPointAt: jest.fn().mockReturnValue(undefined),
-      length: 100,
-      remove: jest.fn(),
-    };
-
-    mockOffset.mockReturnValue(offsetPath);
-    Object.setPrototypeOf(offsetPath, MockPath.prototype);
+    setupMockOffsetPath({ getPointAt: jest.fn().mockReturnValue(undefined) });
 
     const basePath = new MockPath() as any;
-    const state = {
-      holes: {
-        h1: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'ring' },
-      },
-    } as unknown as KeyChainState;
-    const holeDefs = [{ id: 'h1', startPositionRef: 'topCenter' }] as any[];
-
-    const result = applyHoles(basePath, state, holeDefs);
+    const result = applyHoles(basePath, createHoleState(), defaultHoleDefs);
 
     expect(mockUnite).not.toHaveBeenCalled();
     expect(mockSubtract).not.toHaveBeenCalled();
@@ -396,18 +326,10 @@ describe('applyHoles', () => {
 
     basePath.bounds = { center: { x: 50, y: 50 }, topCenter: { x: 50, y: 0 } };
     (basePath as any).children = undefined;
-    // For non-CompoundPath basePath, mainPath = basePath
     Object.assign(basePath, mockMainPath);
     mockSubtract.mockReturnValueOnce(new MockPath());
 
-    const state = {
-      holes: {
-        h1: { diameter: 3, enabled: true, offset: 0, position: 0, thickness: 2, type: 'punch' },
-      },
-    } as unknown as KeyChainState;
-    const holeDefs = [{ id: 'h1', startPositionRef: 'topCenter' }] as any[];
-
-    applyHoles(basePath, state, holeDefs);
+    applyHoles(basePath, createHoleState({ type: 'punch' }), defaultHoleDefs);
 
     expect(mockMainPath.getNormalAt).toHaveBeenCalled();
     expect(mockMainPath.getPointAt).toHaveBeenCalled();
