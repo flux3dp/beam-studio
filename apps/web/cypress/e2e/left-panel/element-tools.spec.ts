@@ -25,10 +25,10 @@ describe('import from element panel', () => {
     cy.get('.ant-drawer-header .ant-select-selection-item').should('exist');
     cy.get('.ant-drawer-header .ant-select-selection-item').should('have.text', 'Decor');
     cy.get('.anticon[id="decor/i_circular-1"]').click();
-    cy.get('#svg_9').should('exist');
-    cy.get('#svg_9').should('have.attr', 'fill', '#333333');
-    cy.get('#svg_9')
+    cy.get('#svg_1').should('exist');
+    cy.get('#svg_1').should('have.attr', 'fill', '#333333');
+    cy.get('#svg_1')
       .invoke('attr', 'd')
-      .then((html) => expect(md5(html)).equal('3224b6b40f3f204d1e60083ead786c5a'));
+      .then((html) => expect(md5(html!)).equal('f9465ee56b93b00a2154075d64522dce'));
   });
 });
