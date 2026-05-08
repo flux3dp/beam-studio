@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://jestjs.io/docs/snapshot-testing
 
-exports[`test ElementPanel in mobile should render MainType correctly 1`] = `
+exports[`test ElementPanelContent in mobile should render MainType correctly 1`] = `
 <body
   class="adm-overflow-hidden"
 >
@@ -68,7 +68,7 @@ exports[`test ElementPanel in mobile should render MainType correctly 1`] = `
 </body>
 `;
 
-exports[`test ElementPanel in mobile should render Search correctly 1`] = `
+exports[`test ElementPanelContent in mobile should render Search correctly 1`] = `
 <body
   class="adm-overflow-hidden"
 >
@@ -136,7 +136,7 @@ exports[`test ElementPanel in mobile should render Search correctly 1`] = `
 </body>
 `;
 
-exports[`test ElementPanel in mobile should render SubType correctly 1`] = `
+exports[`test ElementPanelContent in mobile should render SubType correctly 1`] = `
 <body
   class="adm-overflow-hidden"
 >
@@ -204,7 +204,7 @@ exports[`test ElementPanel in mobile should render SubType correctly 1`] = `
 </body>
 `;
 
-exports[`test ElementPanel should render MainType correctly 1`] = `
+exports[`test ElementPanelContent should render MainType correctly 1`] = `
 <body>
   <div
     class="adm-px-tester"
@@ -304,7 +304,7 @@ exports[`test ElementPanel should render MainType correctly 1`] = `
 </body>
 `;
 
-exports[`test ElementPanel should render Search correctly 1`] = `
+exports[`test ElementPanelContent should render Search correctly 1`] = `
 <body>
   <div
     class="adm-px-tester"

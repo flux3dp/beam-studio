@@ -1,7 +1,7 @@
 import type { ReactNode } from 'react';
 import React, { memo, useCallback, useState } from 'react';
 
-import { ElementPanelContent } from '@core/app/components/dialogs/ElementPanel/ElementPanel';
+import ElementPanelContent from '@core/app/components/dialogs/ElementPanel/ElementPanelContent';
 import { ElementPanelProvider } from '@core/app/contexts/ElementPanelContext';
 
 import PresetSelector from './PresetSelector';

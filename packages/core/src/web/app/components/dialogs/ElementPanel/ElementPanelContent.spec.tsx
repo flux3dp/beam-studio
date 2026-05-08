@@ -8,12 +8,6 @@ import { useScreenStore } from '@core/app/stores/screenStore';
 
 window.innerHeight = 667;
 
-const mockGetDrawerContainer = jest.fn();
-
-jest.mock('@core/app/widgets/dockable/utils', () => ({
-  getDrawerContainer: () => mockGetDrawerContainer(),
-}));
-
 jest.mock('@core/app/contexts/ElementPanelContext', () => ({ ElementPanelContext: React.createContext({}) }));
 
 jest.mock('./MainContent', () => 'main-content');
@@ -21,12 +15,11 @@ jest.mock('./BackButton', () => 'back-button');
 jest.mock('./SearchBar', () => 'search-bar');
 jest.mock('./MainTypeSelector', () => 'main-type-selector');
 
-import { ElementPanelContent } from './ElementPanel';
+import ElementPanelContent from './ElementPanelContent';
 
-describe('test ElementPanel', () => {
+describe('test ElementPanelContent', () => {
   beforeEach(() => {
     jest.clearAllMocks();
-    mockGetDrawerContainer.mockReturnValue(document.createElement('div'));
   });
 
   it('should render MainType correctly', () => {
@@ -50,7 +43,7 @@ describe('test ElementPanel', () => {
   });
 });
 
-describe('test ElementPanel in mobile', () => {
+describe('test ElementPanelContent in mobile', () => {
   beforeEach(() => {
     jest.clearAllMocks();
     useScreenStore.setState({ isMobile: true });
