@@ -20,6 +20,7 @@ import styles from './ElementPanel.module.scss';
 import MainContent from './MainContent';
 import MainTypeSelector from './MainTypeSelector';
 import SearchBar from './SearchBar';
+import { importElementToCanvas } from './utils/importElement';
 
 interface ElementPanelContentProps {
   drawerPlacement?: React.ComponentProps<typeof Drawer>['placement'];
@@ -83,7 +84,11 @@ const ElementPanel = () => {
   const onClose = useCallback(() => setDrawerMode('none'), [setDrawerMode]);
 
   return (
-    <ElementPanelProvider onClose={onClose} open={drawerMode === 'element-panel'}>
+    <ElementPanelProvider
+      onClose={onClose}
+      onElementSelect={importElementToCanvas}
+      open={drawerMode === 'element-panel'}
+    >
       <ElementPanelContent getDrawerContainer={getDockableDrawerContainer} />
     </ElementPanelProvider>
   );
