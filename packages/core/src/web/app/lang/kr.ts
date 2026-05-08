@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: '더 많은 모양',
     outline_offset: '윤곽선 오프셋',
     reset_to_default: '기본값으로 재설정',
+    shape: '모양',
     size: '본체 크기',
     size_height: '높이',
     size_tooltip: '키체인 본체의 크기입니다. 걸이 구멍 설정에 따라 키체인의 실제 크기는 이 값보다 커집니다.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: '캡슐 스타일',
       oval: '타원 스타일',
+      polygonal: '다각형 스타일',
+      quadrilateral: '사각형 스타일',
       round_arch: '라운드 아치 스타일',
+      rounded: '원형 스타일',
       surfing_board: '서핑보드 스타일',
       tag: '태그 스타일',
       text: '텍스트',

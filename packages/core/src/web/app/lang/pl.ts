@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Więcej kształtów',
     outline_offset: 'Przesunięcie obrysu',
     reset_to_default: 'Przywróć domyślne',
+    shape: 'Kształt',
     size: 'Rozmiar korpusu',
     size_height: 'Wysokość',
     size_tooltip: 'Rozmiar korpusu breloka. Rzeczywisty rozmiar breloka będzie większy niż ta wartość w zależności od ustawień otworu do zawieszenia.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Styl kapsułki',
       oval: 'Styl owalny',
+      polygonal: 'Styl wielokątny',
+      quadrilateral: 'Styl czworokątny',
       round_arch: 'Styl okrągłego łuku',
+      rounded: 'Styl zaokrąglony',
       surfing_board: 'Styl deski surfingowej',
       tag: 'Styl zawieszki',
       text: 'Tekst',

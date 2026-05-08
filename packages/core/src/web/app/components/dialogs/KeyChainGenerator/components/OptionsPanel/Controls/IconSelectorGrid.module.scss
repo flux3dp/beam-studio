@@ -60,4 +60,15 @@
     height: 100%;
     fill: black;
   }
+
+  &.stroke {
+    svg {
+      fill: none;
+
+      path {
+        stroke-width: 1px;
+        vector-effect: non-scaling-stroke;
+      }
+    }
+  }
 }

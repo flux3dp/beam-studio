@@ -1631,6 +1631,7 @@ export interface ILang {
     more_shapes: string;
     outline_offset: string;
     reset_to_default: string;
+    shape: string;
     size: string;
     size_height: string;
     size_tooltip: string;
@@ -1649,7 +1650,10 @@ export interface ILang {
     types: {
       capsule: string;
       oval: string;
+      polygonal: string;
+      quadrilateral: string;
       round_arch: string;
+      rounded: string;
       surfing_board: string;
       tag: string;
       text: string;

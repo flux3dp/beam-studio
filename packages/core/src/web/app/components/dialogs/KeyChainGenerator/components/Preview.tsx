@@ -4,19 +4,15 @@ import { useIsMobile } from '@core/app/stores/screenStore';
 
 import { PX_TO_MM_RATIO } from '../constants';
 import useContainerSize from '../hooks/useContainerSize';
-import type { KeyChainCategory } from '../types';
 import useKeychainShapeStore from '../useKeychainShapeStore';
 
 import styles from './Preview.module.scss';
 import ViewModeToggle from './ViewModeToggle';
 
-interface PreviewProps {
-  category: KeyChainCategory;
-}
-
-const Preview = ({ category }: PreviewProps): React.JSX.Element => {
+const Preview = (): React.JSX.Element => {
   const isMobile = useIsMobile();
   const { containerRef, size } = useContainerSize();
+  const category = useKeychainShapeStore((s) => s.category);
   const shape = useKeychainShapeStore((s) => s.shape);
   const viewMode = useKeychainShapeStore((s) => s.viewMode);
   const sizeRatio = useKeychainShapeStore((s) => s.sizeRatio);

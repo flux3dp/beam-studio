@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Bentuk Lainnya',
     outline_offset: 'Offset garis luar',
     reset_to_default: 'Atur ulang ke default',
+    shape: 'Bentuk',
     size: 'Ukuran badan',
     size_height: 'Tinggi',
     size_tooltip: 'Ukuran badan gantungan kunci. Ukuran sebenarnya dari gantungan kunci akan lebih besar dari nilai ini tergantung pada pengaturan lubang gantung.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Gaya Kapsul',
       oval: 'Gaya Oval',
+      polygonal: 'Gaya Poligonal',
+      quadrilateral: 'Gaya Segi Empat',
       round_arch: 'Gaya Lengkung Bulat',
+      rounded: 'Gaya Bulat',
       surfing_board: 'Gaya Papan Selancar',
       tag: 'Gaya Label',
       text: 'Teks',

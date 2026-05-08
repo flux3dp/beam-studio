@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Flere former',
     outline_offset: 'Konturforskydning',
     reset_to_default: 'Nulstil til standard',
+    shape: 'Form',
     size: 'Kroppens størrelse',
     size_height: 'Højde',
     size_tooltip: 'Størrelsen på nøgleringens krop. Den faktiske størrelse af nøgleringen vil være større end denne værdi afhængigt af indstillingerne for ophængshullet.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Kapsel stil',
       oval: 'Oval stil',
+      polygonal: 'Polygon stil',
+      quadrilateral: 'Firkantet stil',
       round_arch: 'Rund bue stil',
+      rounded: 'Rund stil',
       surfing_board: 'Surfbræt stil',
       tag: 'Mærkat stil',
       text: 'Tekst',

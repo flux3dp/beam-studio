@@ -3,12 +3,13 @@ import React, { memo } from 'react';
 
 import classNames from 'classnames';
 
+import type { OneOf } from '@core/interfaces/utils';
+
 import styles from './IconSelectorGrid.module.scss';
 
-export interface IconSelectorItem {
-  icon: ReactNode;
+export type IconSelectorItem = OneOf<{ innerHTML: string }, { icon: ReactNode }> & {
   key: string;
-}
+};
 
 interface IconSelectorGridProps {
   className?: string;
@@ -17,6 +18,7 @@ interface IconSelectorGridProps {
   /** Extra slots rendered before the selectable items (e.g. "current shape" slot). */
   prefix?: ReactNode;
   selectedKey: string;
+  strokeIcon?: boolean;
   /** Extra slots rendered after the selectable items (e.g. "more" button). */
   suffix?: ReactNode;
 }
@@ -27,6 +29,7 @@ const IconSelectorGrid = ({
   onSelect,
   prefix,
   selectedKey,
+  strokeIcon,
   suffix,
 }: IconSelectorGridProps): ReactNode => (
   <div className={classNames(styles.grid, className)}>
@@ -38,7 +41,14 @@ const IconSelectorGrid = ({
         onClick={() => onSelect(item.key)}
         type="button"
       >
-        <div className={styles.icon}>{item.icon}</div>
+        {item.innerHTML ? (
+          <div
+            className={classNames(styles.icon, { [styles.stroke]: strokeIcon })}
+            dangerouslySetInnerHTML={{ __html: item.innerHTML }}
+          />
+        ) : (
+          <div className={classNames(styles.icon, { [styles.stroke]: strokeIcon })}>{item.icon}</div>
+        )}
       </button>
     ))}
     {suffix}

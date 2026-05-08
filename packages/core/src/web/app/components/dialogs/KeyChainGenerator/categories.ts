@@ -1,7 +1,31 @@
 import fontFuncs from '@core/app/actions/beambox/font-funcs';
 import getDefaultFont from '@core/helpers/fonts/getDefaultFont';
 
-import { CAPSULE, OVAL, ROUND_ARCH, SURFING_BOARD, TAG } from './constants/categoryShapes';
+import {
+  CAPSULE,
+  OVAL,
+  POLYGONAL_1,
+  POLYGONAL_2,
+  POLYGONAL_3,
+  POLYGONAL_4,
+  POLYGONAL_5,
+  POLYGONAL_6,
+  POLYGONAL_7,
+  POLYGONAL_8,
+  QUAD_1,
+  QUAD_2,
+  QUAD_3,
+  QUAD_4,
+  ROUND_ARCH,
+  ROUNDED_1,
+  ROUNDED_2,
+  ROUNDED_3,
+  ROUNDED_4,
+  ROUNDED_5,
+  ROUNDED_6,
+  SURFING_BOARD,
+  TAG,
+} from './constants/categoryShapes';
 import { OVAL_TEXT_PATH_BOTTOM, OVAL_TEXT_PATH_TOP } from './constants/decorations';
 import { DEFAULT_ELEMENT_OPTIONS } from './constants/elementOptions';
 import type {
@@ -21,7 +45,7 @@ export const DEFAULT_HOLE: HoleOptionValues = {
   offset: 0,
   position: 0,
   thickness: 2,
-  type: 'ring',
+  type: 'punch',
 };
 
 export const DEFAULT_ELEMENT: ElementOptionValues = {
@@ -84,7 +108,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -121,7 +145,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -150,7 +174,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
     options: {
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, offset: -3, type: 'punch' },
+          defaults: { ...DEFAULT_HOLE, offset: -3 },
           id: '1',
           startPositionRef: 'leftCenter',
         },
@@ -192,7 +216,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -229,7 +253,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       ],
       holes: [
         {
-          defaults: { ...DEFAULT_HOLE, type: 'punch' },
+          defaults: DEFAULT_HOLE,
           id: '1',
           startPositionRef: 'topCenter',
         },
@@ -242,12 +266,227 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
         },
         {
           bounds: { height: 20, width: 374, x: 313, y: 787 },
-          defaults: { ...DEFAULT_TEXT, fontSize: 35, text: 'A small object to\nHold Big Memories' },
+          defaults: { ...DEFAULT_TEXT, fontSize: 35, text: 'A small object to hold Big Memories' },
           id: '2',
         },
       ],
     },
     svgContent: TAG,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'width', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'rounded',
+    nameKey: 'rounded',
+    options: {
+      holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
+      texts: [
+        {
+          bounds: { height: 140, width: 520, x: 240, y: 430 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+          id: '1',
+        },
+      ],
+      variants: [
+        {
+          key: 'rounded_1',
+          svgContent: ROUNDED_1,
+        },
+        {
+          key: 'rounded_2',
+          options: {
+            texts: [
+              {
+                bounds: { height: 140, width: 520, x: 240, y: 525 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: ROUNDED_2,
+        },
+        {
+          key: 'rounded_3',
+          svgContent: ROUNDED_3,
+        },
+        {
+          key: 'rounded_4',
+          svgContent: ROUNDED_4,
+        },
+        {
+          key: 'rounded_5',
+          svgContent: ROUNDED_5,
+        },
+        {
+          key: 'rounded_6',
+          options: {
+            texts: [
+              {
+                bounds: { height: 140, width: 520, x: 240, y: 405 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: ROUNDED_6,
+        },
+      ],
+    },
+    svgContent: ROUNDED_1,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'width', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'polygonal',
+    nameKey: 'polygonal',
+    options: {
+      holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
+      variants: [
+        {
+          key: 'polygonal_1',
+          options: {
+            texts: [
+              {
+                bounds: { height: 140, width: 520, x: 240, y: 635 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_1,
+        },
+        {
+          key: 'polygonal_2',
+          options: {
+            texts: [
+              {
+                bounds: { height: 140, width: 520, x: 240, y: 460 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_2,
+        },
+        {
+          key: 'polygonal_3',
+          options: {
+            texts: [
+              {
+                bounds: { height: 160, width: 580, x: 210, y: 420 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_3,
+        },
+        {
+          key: 'polygonal_4',
+          options: {
+            texts: [
+              {
+                bounds: { height: 160, width: 580, x: 210, y: 420 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_4,
+        },
+        {
+          key: 'polygonal_5',
+          options: {
+            texts: [
+              {
+                bounds: { height: 80, width: 300, x: 350, y: 485 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 100, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_5,
+        },
+        {
+          key: 'polygonal_6',
+          options: {
+            texts: [
+              {
+                bounds: { height: 120, width: 440, x: 280, y: 440 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_6,
+        },
+        {
+          key: 'polygonal_7',
+          options: {
+            texts: [
+              {
+                bounds: { height: 130, width: 500, x: 250, y: 435 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_7,
+        },
+        {
+          key: 'polygonal_8',
+          options: {
+            texts: [
+              {
+                bounds: { height: 130, width: 500, x: 250, y: 435 },
+                defaults: { ...DEFAULT_TEXT, fontSize: 110, text: 'Jack' },
+                id: '1',
+              },
+            ],
+          },
+          svgContent: POLYGONAL_8,
+        },
+      ],
+    },
+    svgContent: POLYGONAL_1,
+    thumbnail: '',
+  },
+  {
+    defaultSize: { dimension: 'width', value: 50 },
+    defaultViewBox: { height: 1000, width: 1000, x: 0, y: 0 },
+    id: 'quadrilateral',
+    nameKey: 'quadrilateral',
+    options: {
+      holes: [{ defaults: DEFAULT_HOLE, id: '1', startPositionRef: 'topCenter' }],
+      texts: [
+        {
+          bounds: { height: 140, width: 520, x: 240, y: 430 },
+          defaults: { ...DEFAULT_TEXT, fontSize: 140, text: 'Jack' },
+          id: '1',
+        },
+      ],
+      variants: [
+        {
+          key: 'quad_1',
+          svgContent: QUAD_1,
+        },
+        {
+          key: 'quad_2',
+          svgContent: QUAD_2,
+        },
+        {
+          key: 'quad_3',
+          svgContent: QUAD_3,
+        },
+        {
+          key: 'quad_4',
+          svgContent: QUAD_4,
+        },
+      ],
+    },
+    svgContent: QUAD_1,
     thumbnail: '',
   },
   {
@@ -262,7 +501,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       },
       holes: [
         {
-          defaults: DEFAULT_HOLE,
+          defaults: { ...DEFAULT_HOLE, type: 'ring' },
           id: '1',
           startPositionRef: 'topLeft',
         },
@@ -288,7 +527,7 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
       },
       holes: [
         {
-          defaults: DEFAULT_HOLE,
+          defaults: { ...DEFAULT_HOLE, type: 'ring' },
           id: '1',
           startPositionRef: 'topLeft',
         },
@@ -299,6 +538,25 @@ export const KEYCHAIN_CATEGORIES: KeyChainCategory[] = [
   },
 ];
 
+export const resolveCategory = (category: KeyChainCategory, variantKey?: string): KeyChainCategory => {
+  const { variants } = category.options;
+
+  if (!variants || variants.length === 0) return category;
+
+  const variant = variantKey ? (variants.find((v) => v.key === variantKey) ?? variants[0]) : variants[0];
+
+  return {
+    ...category,
+    defaultSize: variant.defaultSize ?? category.defaultSize,
+    defaultViewBox: variant.defaultViewBox ?? category.defaultViewBox,
+    options: {
+      ...category.options,
+      ...variant.options,
+    },
+    svgContent: variant.svgContent,
+  };
+};
+
 export const getDefaultCategory = (): KeyChainCategory => KEYCHAIN_CATEGORIES[0];
 
 export const getCategoryById = (id: string): KeyChainCategory =>
@@ -307,6 +565,9 @@ export const getCategoryById = (id: string): KeyChainCategory =>
 export const getStateForCategory = (category: KeyChainCategory): KeyChainState => {
   const { font_family, font_postscriptName } = getDefaultFont();
   const fontObj = fontFuncs.getFontOfPostscriptName(font_postscriptName);
+
+  const variantKey = category.options.variants?.[0]?.key ?? '';
+  const resolved = resolveCategory(category, variantKey);
   const {
     options: {
       customShapeElement,
@@ -316,7 +577,7 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
       holes = [],
       texts = [],
     },
-  } = category;
+  } = resolved;
 
   const result: KeyChainState = {
     categoryId: category.id,
@@ -334,8 +595,9 @@ export const getStateForCategory = (category: KeyChainCategory): KeyChainState =
     elements: {},
     holes: {},
     outlineOffset: DEFAULT_OUTLINE_OFFSET,
-    size: { ...category.defaultSize },
+    size: { ...resolved.defaultSize },
     texts: {},
+    variantKey,
   };
 
   for (const decorationDef of decorations) {

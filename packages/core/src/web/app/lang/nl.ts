@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Meer vormen',
     outline_offset: 'Omtrek offset',
     reset_to_default: 'Standaardwaarden herstellen',
+    shape: 'Vorm',
     size: 'Lichaamsgrootte',
     size_height: 'Hoogte',
     size_tooltip: 'De grootte van het lichaam van de sleutelhanger. De werkelijke grootte van de sleutelhanger zal groter zijn dan deze waarde afhankelijk van de instellingen van het ophanggat.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Capsulestijl',
       oval: 'Ovale stijl',
+      polygonal: 'Veelhoekige stijl',
+      quadrilateral: 'Vierhoekige stijl',
       round_arch: 'Ronde boogstijl',
+      rounded: 'Ronde stijl',
       surfing_board: 'Surfplankstijl',
       tag: 'Labelstijl',
       text: 'Tekst',

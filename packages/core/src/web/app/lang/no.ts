@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Flere former',
     outline_offset: 'Omrissforskyvning',
     reset_to_default: 'Tilbakestill til standard',
+    shape: 'Form',
     size: 'Kroppsstørrelse',
     size_height: 'Høyde',
     size_tooltip: 'Størrelsen på nøkkelringens kropp. Den faktiske størrelsen på nøkkelringen vil være større enn denne verdien avhengig av innstillingene for opphengshullet.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Kapselstil',
       oval: 'Oval stil',
+      polygonal: 'Polygonal stil',
+      quadrilateral: 'Firkantede stil',
       round_arch: 'Rund bue-stil',
+      rounded: 'Rund stil',
       surfing_board: 'Surfebrettstil',
       tag: 'Merkelappstil',
       text: 'Tekst',

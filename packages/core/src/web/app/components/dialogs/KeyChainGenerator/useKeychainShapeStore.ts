@@ -12,7 +12,13 @@ import {
   importBasePath,
   loadShape,
 } from './builders';
-import { getDefaultCategory, getDefaultState, getStateForCategory } from './categories';
+import {
+  getCategoryById,
+  getDefaultCategory,
+  getDefaultState,
+  getStateForCategory,
+  resolveCategory,
+} from './categories';
 import type { KeychainViewMode } from './constants';
 import { PX_TO_MM_RATIO } from './constants';
 import type { KeyChainCategory, KeyChainShape, KeyChainState } from './types';
@@ -25,6 +31,7 @@ interface StoreState {
   buildVersion: number;
   // Derived dimensions for display (main = size.value, other = computed from basePath bounds)
   calculatedSize: { height: number; width: number };
+  // Resolved category (with active variant's svgContent/options merged in)
   category: KeyChainCategory;
   // Paper.js cache for inner path, path for other layer decoration elements (e.g. text-body glyphs)
   innerPath: null | paper.PathItem;
@@ -190,8 +197,8 @@ const useKeychainShapeStore = create(
       const { isCustomShape } = category;
       const { size } = state;
 
-      // Cache hit: same non-custom category with valid paper objects → recompute sizeRatio + calculatedSize only
-      if (!isCustomShape && category.id === cachedCategory.id && cachedProject && cachedBasePath) {
+      // Cache hit: same resolved category object with valid paper objects → recompute sizeRatio + calculatedSize only
+      if (!isCustomShape && category === cachedCategory && cachedProject && cachedBasePath) {
         const sizeResult = calculateSize(size, cachedBasePath);
 
         if (sizeResult) set(sizeResult);
@@ -310,12 +317,32 @@ const useKeychainShapeStore = create(
       project?.remove();
       set({
         basePath: null,
-        category,
+        category: resolveCategory(category),
         innerPath: null,
         isModified: false,
         project: null,
         shape: null,
         state: getStateForCategory(category),
+      });
+    },
+
+    setVariant: (key: string) => {
+      const { basePath, innerPath, project, shape, state } = get();
+      const resolved = resolveCategory(getCategoryById(state.categoryId), key);
+
+      // Clear cached paper objects so buildBaseShape rebuilds for the new variant
+      basePath?.remove();
+      innerPath?.remove();
+      shape?.resultBasePath.remove();
+      shape?.innerPath?.remove();
+      project?.remove();
+      set({
+        basePath: null,
+        category: resolved,
+        innerPath: null,
+        project: null,
+        shape: null,
+        state: { ...state, variantKey: key },
       });
     },
 

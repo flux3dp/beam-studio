@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'その他の形状',
     outline_offset: 'アウトラインオフセット',
     reset_to_default: 'デフォルトにリセット',
+    shape: '形状',
     size: '本体サイズ',
     size_height: '高さ',
     size_tooltip: 'キーホルダー本体のサイズです。実際のキーホルダーのサイズは、吊り穴の設定によりこの値より大きくなります。',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'カプセル型',
       oval: 'オーバル型',
+      polygonal: '多角形スタイル',
+      quadrilateral: '四角形スタイル',
       round_arch: 'ラウンドアーチ型',
+      rounded: '円形スタイル',
       surfing_board: 'サーフボード型',
       tag: 'タグ型',
       text: 'テキスト',

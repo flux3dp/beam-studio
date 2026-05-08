@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Lisää muotoja',
     outline_offset: 'Ääriviivan siirtymä',
     reset_to_default: 'Palauta oletusarvot',
+    shape: 'Muoto',
     size: 'Rungon koko',
     size_height: 'Korkeus',
     size_tooltip: 'Avaimenperän rungon koko. Avaimenperän todellinen koko on tätä arvoa suurempi ripustusreiän asetusten mukaan.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Kapselityyli',
       oval: 'Soikea tyyli',
+      polygonal: 'Monikulmio-tyyli',
+      quadrilateral: 'Nelikulmio-tyyli',
       round_arch: 'Pyöreä kaari -tyyli',
+      rounded: 'Pyöreä tyyli',
       surfing_board: 'Surffalauta-tyyli',
       tag: 'Tunniste-tyyli',
       text: 'Teksti',

@@ -1632,6 +1632,7 @@ const lang: ILang = {
     more_shapes: 'Más formas',
     outline_offset: 'Desplazamiento del contorno',
     reset_to_default: 'Restablecer valores predeterminados',
+    shape: 'Forma',
     size: 'Tamaño del cuerpo',
     size_height: 'Altura',
     size_tooltip: 'El tamaño del cuerpo del llavero. El tamaño real del llavero será mayor que este valor dependiendo de la configuración del orificio de colgar.',
@@ -1650,7 +1651,10 @@ const lang: ILang = {
     types: {
       capsule: 'Estilo cápsula',
       oval: 'Estilo ovalado',
+      polygonal: 'Estilo poligonal',
+      quadrilateral: 'Estilo cuadrilátero',
       round_arch: 'Estilo arco redondo',
+      rounded: 'Estilo redondeado',
       surfing_board: 'Estilo tabla de surf',
       tag: 'Estilo etiqueta',
       text: 'Texto',
