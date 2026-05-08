@@ -2,54 +2,10 @@ import React, { use, useState } from 'react';
 
 import classNames from 'classnames';
 
-import progressCaller from '@core/app/actions/progress-caller';
 import { ElementPanelContext } from '@core/app/contexts/ElementPanelContext';
-import HistoryCommandFactory from '@core/app/svgedit/history/HistoryCommandFactory';
-import undoManager from '@core/app/svgedit/history/undoManager';
-import layerManager from '@core/app/svgedit/layer/layerManager';
-import importSvg from '@core/app/svgedit/operations/import/importSvg';
-import postImportElement from '@core/app/svgedit/operations/import/postImportElement';
-import { getNPIconByID } from '@core/helpers/api/flux-id';
-import { getData } from '@core/helpers/layer/layer-config-helper';
-import { getLayerByName } from '@core/helpers/layer/layer-helper';
-import webNeedConnectionWrapper from '@core/helpers/web-need-connection-helper';
 import type { IIcon } from '@core/interfaces/INounProject';
 
 import styles from './Element.module.scss';
-
-const progressId = 'import-noun-project-svg';
-
-const importNPSvg = async (id: string) => {
-  progressCaller.openNonstopProgress({ id: progressId });
-
-  try {
-    const base64 = await getNPIconByID(id);
-
-    if (!base64) return;
-
-    const res = await fetch(base64);
-    const blob = await res.blob();
-
-    const batchCmd = HistoryCommandFactory.createBatchCommand('Import NP SVG');
-    const layerName = layerManager.getCurrentLayerName();
-    const layerModule = layerName ? getData(getLayerByName(layerName)!, 'module') : null;
-    const elems = await importSvg(blob, {
-      importType: 'layer',
-      isFromNounProject: true,
-      parentCmd: batchCmd,
-      targetModule: layerModule,
-    });
-
-    if (!elems) return;
-
-    for (const elem of elems) {
-      await postImportElement(elem, batchCmd);
-    }
-    undoManager.addCommandToHistory(batchCmd);
-  } finally {
-    progressCaller.popById(progressId);
-  }
-};
 
 const NPElement = ({ icon }: { icon: IIcon }) => {
   const { addToHistory, onClose, onElementSelect } = use(ElementPanelContext);
@@ -66,15 +22,8 @@ const NPElement = ({ icon }: { icon: IIcon }) => {
         if (!isLoading) {
           addToHistory({ npIcon: icon, type: 'np' });
 
-          webNeedConnectionWrapper(async () => {
-            if (onElementSelect) {
-              onElementSelect(`np/${icon.id}`);
-            } else {
-              await importNPSvg(icon.id);
-            }
-
-            onClose();
-          });
+          await onElementSelect(`np/${icon.id}`);
+          onClose();
         }
       }}
     >

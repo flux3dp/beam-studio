@@ -83,7 +83,7 @@ interface ElementPanelContextType {
   hasLogin: boolean;
   historyIcons: History[];
   onClose: () => void;
-  onElementSelect?: (shapeKey: string) => void;
+  onElementSelect: (shapeKey: string) => Promise<void> | void;
   open: boolean;
   searchKey: string | undefined;
   setActiveMainType: React.Dispatch<React.SetStateAction<MainType>>;
@@ -104,7 +104,7 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
   hasLogin: false,
   historyIcons: [],
   onClose: () => {},
-  onElementSelect: undefined,
+  onElementSelect: () => {},
   open: false,
   searchKey: undefined,
   setActiveMainType: () => {},
@@ -116,7 +116,7 @@ export const ElementPanelContext = createContext<ElementPanelContextType>({
 interface ElementPanelProviderProps {
   children: React.ReactNode;
   onClose: () => void;
-  onElementSelect?: (shapeKey: string) => void;
+  onElementSelect: (shapeKey: string) => Promise<void> | void;
   open: boolean;
 }
 
