@@ -52,7 +52,7 @@ describe('move element to another layer', () => {
     verifyInputValues({ strength: '50', speed: '100', repeat: '5' });
   });
 
-  it.only('move multiple elements', () => {
+  it('move multiple elements', () => {
     const elements = [
       { category: 'Basic', icon: 'basic/icon-circle' },
       { category: 'Decor', icon: 'decor/i_circular-1' },
