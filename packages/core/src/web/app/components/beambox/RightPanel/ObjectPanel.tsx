@@ -350,19 +350,22 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
       return false;
     })();
     const desktopItems = [
-      { children: renderToolBtns(), key: 'tools', label: 'Tools' },
-      { children: renderDimensionPanel(), key: 'transform', label: 'Transform' },
+      { children: renderToolBtns(), forceRender: true, key: 'tools', label: 'Tools' },
+      { children: renderDimensionPanel(), forceRender: true, key: 'transform', label: 'Transform' },
       ...(showInfillSection
         ? [
             {
               children: <InfillPanel elem={elem as SVGElement} />,
+              forceRender: true,
               key: 'infill',
               label: 'Operation Mode (Infill)',
             },
           ]
         : []),
-      ...(showOptionsSection ? [{ children: renderOptionPanel(), key: 'options', label: optionsLabel }] : []),
-      { children: renderActionPanel(), key: 'actions', label: 'Actions' },
+      ...(showOptionsSection
+        ? [{ children: renderOptionPanel(), forceRender: true, key: 'options', label: optionsLabel }]
+        : []),
+      { children: renderActionPanel(), forceRender: true, key: 'actions', label: 'Actions' },
     ];
 
     return (
