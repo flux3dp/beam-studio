@@ -10,17 +10,12 @@ import Logger from '@core/helpers/logger';
 import outputError from '@core/helpers/output-error';
 import type { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
 
-window.FLUX.websockets = [];
-window.FLUX.websockets.list = () => {
-  window.FLUX.websockets.forEach((conn, i) => {
-    console.log(i, conn.url);
-  });
-};
-
 const WsLogger = Logger('websocket');
 const logLimit = 100;
 let wsErrorCount = 0;
 let wsCreateFailedCount = 0;
+const WS_ERROR_ALERT_THRESHOLD = 50;
+const CREATE_FAILED_ALERT_THRESHOLD = 200;
 
 // options:
 //      hostname      - host name (Default: 127.0.0.1)
@@ -28,7 +23,7 @@ let wsCreateFailedCount = 0;
 //      method        - method be called
 //      autoReconnect - auto reconnect on close
 //      onMessage     - fired on receive message
-//      onError       - fired on a normal error happend
+//      onError       - fired on a normal error happened
 //      onFatal       - fired on a fatal error closed
 //      onClose       - fired on connection closed
 //      onOpen        - fired on connection connecting
@@ -63,7 +58,7 @@ export default (options: Option): WrappedWebSocket => {
 
     return message;
   };
-  const origanizeOptions = (opts: Option) => {
+  const organizeOptions = (opts: Option) => {
     const keys = Object.keys(defaultOptions) as Array<keyof Option>;
     const newOpts = { ...opts };
 
@@ -77,7 +72,7 @@ export default (options: Option): WrappedWebSocket => {
 
     return newOpts;
   };
-  const socketOptions = origanizeOptions(options);
+  const socketOptions = organizeOptions(options);
   const wsLog: { log: string[]; url: string } = {
     log: [],
     url: `/ws/${options.method}`,
@@ -85,7 +80,7 @@ export default (options: Option): WrappedWebSocket => {
   const handleCreateWebSocketFailed = () => {
     wsCreateFailedCount += 1;
 
-    if (wsCreateFailedCount === 100 && !isWeb()) {
+    if (wsCreateFailedCount === CREATE_FAILED_ALERT_THRESHOLD && !isWeb()) {
       const LANG = i18n.lang.beambox.popup;
 
       Alert.popById('backend-error');
@@ -146,8 +141,8 @@ export default (options: Option): WrappedWebSocket => {
     nodeWs.onerror = () => {
       wsErrorCount += 1;
 
-      // If ws error count exceed certian number Alert user there may be problems with backend
-      if (wsErrorCount === 50 && !isWeb()) {
+      // If ws error count exceed certain number Alert user there may be problems with backend
+      if (wsErrorCount === WS_ERROR_ALERT_THRESHOLD && !isWeb()) {
         const LANG = i18n.lang.beambox.popup;
 
         Alert.popById('backend-error');
@@ -263,7 +258,7 @@ export default (options: Option): WrappedWebSocket => {
     nodeWs.onclose = (result: CloseEvent) => {
       socketOptions.onClose?.(result);
 
-      // The connection was closed abnormally without sending or receving data
+      // The connection was closed abnormally without sending or receiving data
       // ref: http://tools.ietf.org/html/rfc6455#section-7.4.1
       if (result?.code === 1006) {
         wsLog.log.push('**abnormal disconnection**');
@@ -359,8 +354,6 @@ export default (options: Option): WrappedWebSocket => {
     },
     url: `/ws/${options.method}`,
   };
-
-  window.FLUX.websockets.push(wsobj);
 
   WsLogger.append(wsLog);
 
