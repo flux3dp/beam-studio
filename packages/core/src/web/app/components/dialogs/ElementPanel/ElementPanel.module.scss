@@ -38,8 +38,9 @@ $icon-button-width: 32px;
 
 // Floating panel (mobile)
 .panel {
-  // Should be larger than mobile canvas tab bar (998)
-  z-index: 1000 !important;
+  // Should be larger than modal close bottom (1010)
+  z-index: 1050 !important;
+  width: 100%;
 
   [class*='FloatingPanel-module__scroll-content'] {
     overflow: hidden;

@@ -2,7 +2,6 @@ import type { ReactNode } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Button, ConfigProvider, Switch } from 'antd';
-import type { DefaultOptionType } from 'antd/es/select';
 import classNames from 'classnames';
 
 import FontFuncs from '@core/app/actions/beambox/font-funcs';
@@ -11,7 +10,6 @@ import textPathEdit from '@core/app/actions/beambox/textPathEdit';
 import dialogCaller from '@core/app/actions/dialog-caller';
 import ObjectPanelItem from '@core/app/components/beambox/RightPanel/ObjectPanelItem';
 import { iconButtonTheme, selectTheme } from '@core/app/constants/antd-config';
-import FluxIcons from '@core/app/icons/flux/FluxIcons';
 import OptionPanelIcons from '@core/app/icons/option-panel/OptionPanelIcons';
 import { useGoogleFontStore } from '@core/app/stores/googleFontStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
@@ -33,6 +31,8 @@ import {
   getWeightAndStyleFromVariant,
 } from '@core/helpers/fonts/fontUtils';
 import { googleFontsApiCache } from '@core/helpers/fonts/googleFontsApiCache';
+import type { FontOption } from '@core/helpers/fonts/renderTextOptions';
+import { fontFamilySelectFilterOption, renderTextOptions } from '@core/helpers/fonts/renderTextOptions';
 import useWorkarea from '@core/helpers/hooks/useWorkarea';
 import { updateConfigs } from '@core/helpers/update-configs';
 import useI18n from '@core/helpers/useI18n';
@@ -123,7 +123,8 @@ const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
   return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };
 };
 
-const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
+
+const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
@@ -216,7 +217,7 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
 
     return fontHistory
       .map((family) => {
-        return getFontFamilyOption(family, allFontFamilies.has(family.toLowerCase()));
+        return renderTextOptions(family, allFontFamilies.has(family.toLowerCase()));
       })
       .filter(Boolean);
   }, [fontHistory, fontFamilies]);
@@ -461,7 +462,7 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
   };
 
   const renderFontFamilyBlock = (): ReactNode => {
-    const options: FontOption[] = fontFamilies.map((family) => getFontFamilyOption(family));
+    const options = fontFamilies.map((family) => renderTextOptions(family));
 
     if (isMobile) {
       return (
@@ -505,26 +506,7 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
             </div>
           </>
         )}
-        filterOption={(input: string, option?: DefaultOptionType) => {
-          if (option?.family) return false;
-
-          if (option?.value) {
-            const family = option.value as string;
-            const searchKey = input.toLowerCase();
-
-            if (family.toLowerCase().includes(searchKey)) {
-              return true;
-            }
-
-            const fontName = FontFuncs.fontNameMap.get(family) || '';
-
-            if (fontName.toLowerCase().includes(searchKey)) {
-              return true;
-            }
-          }
-
-          return false;
-        }}
+        filterOption={fontFamilySelectFilterOption}
         onChange={(value, option) => handleFontFamilyChange(value, option as FontOption)}
         onKeyDown={(e) => e.stopPropagation()}
         options={[
