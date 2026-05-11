@@ -6,7 +6,6 @@
 
 .panel {
   padding: 0 12px;
-  transition: height 0.1s ease-in 0s;
 
   .option-block {
     @include mixins.option-block();

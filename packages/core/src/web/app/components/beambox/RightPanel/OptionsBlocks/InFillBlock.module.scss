@@ -2,10 +2,19 @@
 
 .option-block {
   @include mixins.option-block();
+  margin: 0;
   gap: 8px;
 
+  + .option-block {
+    margin-top: 8px;
+  }
+
+  &.no-label {
+    justify-content: center;
+  }
+
   .select {
-    flex: 1;
+    flex: 0 0 75%;
     min-width: 0;
   }
 }

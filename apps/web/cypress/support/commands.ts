@@ -265,7 +265,7 @@ Cypress.Commands.add('changeWorkarea', (workarea: string, save = true) => {
   cy.get('.ant-select-item-option-content').contains(workarea).click({ force: true });
   if (save) {
     cy.get('button.ant-btn').contains('Save').click({ force: true });
-    cy.get('.ant-modal-content').should('not.exist');
+    cy.get('#workareaSelect').should('not.exist');
   }
 });
 

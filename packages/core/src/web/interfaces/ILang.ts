@@ -888,6 +888,7 @@ export interface ILang {
           current_time: string;
           depth_engraving: string;
           fill: string;
+          fill_engraving_mode: string;
           font_family: string;
           font_size: string;
           font_style: string;
@@ -906,6 +907,7 @@ export interface ILang {
           start_offset: string;
           stroke: string;
           stroke_color: string;
+          stroke_mode: string;
           stroke_width: string;
           text_align_center: string;
           text_align_justify: string;

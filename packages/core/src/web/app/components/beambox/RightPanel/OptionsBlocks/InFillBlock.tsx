@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 
 import { Switch } from 'antd';
+import classNames from 'classnames';
 
 import useLayerStore from '@core/app/stores/layer/layerStore';
 import { useIsMobile } from '@core/app/stores/screenStore';
@@ -91,14 +92,14 @@ const InFillBlock = ({ elems, id = 'infill', label }: Props): React.ReactNode =>
   }
 
   const fillOptions = [
-    { label: 'Fill Engraving Mode', value: 'fill' },
-    { label: 'Stroke Mode', value: 'stroke' },
+    { label: lang.fill_engraving_mode, value: 'fill' },
+    { label: lang.stroke_mode, value: 'stroke' },
   ];
   const value = isPartiallyFilled ? undefined : isAnyFilled ? 'fill' : 'stroke';
   const handleChange = (next: string) => setFilled(next === 'fill');
 
   return (
-    <div className={styles['option-block']} key="infill">
+    <div className={classNames(styles['option-block'], { [styles['no-label']]: !label })} key="infill">
       {label ? <div className={styles.label}>{label}</div> : null}
       <Select
         className={styles.select}

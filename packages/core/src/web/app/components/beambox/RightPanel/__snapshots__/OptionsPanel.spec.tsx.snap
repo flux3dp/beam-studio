@@ -107,7 +107,6 @@ exports[`should render correctly in mobile text 1`] = `
     />
     <dummy-text-options
       elem="[object HTMLUnknownElement]"
-      showcolorpanel="configName"
       textelements="[object HTMLUnknownElement]"
     />
   </div>
@@ -116,17 +115,7 @@ exports[`should render correctly in mobile text 1`] = `
 
 exports[`should render correctly no element 1`] = `<div />`;
 
-exports[`should render correctly others 1`] = `
-<div>
-  <div
-    class="panel"
-  >
-    <dummy-infill-block
-      elems="[object HTMLUnknownElement]"
-    />
-  </div>
-</div>
-`;
+exports[`should render correctly others 1`] = `<div />`;
 
 exports[`should render correctly polygon desktop version 1`] = `
 <div>
@@ -195,7 +184,6 @@ exports[`should render correctly text 1`] = `
   >
     <dummy-text-options
       elem="[object HTMLUnknownElement]"
-      showcolorpanel="configName"
       textelements="[object HTMLUnknownElement]"
     />
     <dummy-color-panel

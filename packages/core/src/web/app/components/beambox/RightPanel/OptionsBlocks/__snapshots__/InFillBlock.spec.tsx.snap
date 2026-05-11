@@ -161,7 +161,7 @@ exports[`should render correctly in mobile is not fillable 1`] = `<div />`;
 exports[`should render correctly is fillable 1`] = `
 <div>
   <div
-    class="option-block"
+    class="option-block no-label"
   >
     <select
       class="select"
@@ -186,7 +186,7 @@ exports[`should render correctly is fillable 1`] = `
 exports[`should render correctly is fillable 2`] = `
 <div>
   <div
-    class="option-block"
+    class="option-block no-label"
   >
     <select
       class="select"
@@ -211,7 +211,7 @@ exports[`should render correctly is fillable 2`] = `
 exports[`should render correctly is fillable 3`] = `
 <div>
   <div
-    class="option-block"
+    class="option-block no-label"
   >
     <select
       class="select"
@@ -328,7 +328,7 @@ exports[`should render correctly with label 3`] = `
 exports[`should render correctly with multiple elements (fillable) 1`] = `
 <div>
   <div
-    class="option-block"
+    class="option-block no-label"
   >
     <select
       class="select"

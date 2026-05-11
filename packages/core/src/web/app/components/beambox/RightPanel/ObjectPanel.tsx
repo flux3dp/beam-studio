@@ -12,6 +12,8 @@ import ObjectPanelIcons from '@core/app/icons/object-panel/ObjectPanelIcons';
 import { useIsMobile } from '@core/app/stores/screenStore';
 import useSelectedElementStore from '@core/app/stores/selectedElementStore';
 import { cloneSelectedElements } from '@core/app/svgedit/operations/clipboard';
+import { getData } from '@core/helpers/layer/layer-config-helper';
+import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import { getSVGAsync } from '@core/helpers/svg-editor-helper';
 import useI18n from '@core/helpers/useI18n';
 import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
@@ -19,6 +21,7 @@ import type ISVGCanvas from '@core/interfaces/ISVGCanvas';
 import ActionsPanel from './ActionsPanel';
 import ConfigPanel from './ConfigPanel/ConfigPanel';
 import DimensionPanel from './DimensionPanel/DimensionPanel';
+import InfillPanel from './InfillPanel';
 import styles from './ObjectPanel.module.scss';
 import ObjectPanelItem from './ObjectPanelItem';
 import OptionsPanel from './OptionsPanel';
@@ -315,9 +318,26 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
   const optionsLabel = elem?.tagName.toLowerCase() === 'text' ? 'Fit Text' : 'Options';
 
   const renderDesktopCollapse = (): React.JSX.Element => {
+    const tagName = elem?.tagName.toLowerCase();
+    const isFullColor = elem ? Boolean(getData(getObjectLayer(elem)?.elem, 'fullcolor')) : false;
+    const showInfillSection =
+      Boolean(elem) &&
+      Boolean(tagName) &&
+      CanvasElements.fillableWithContainers.includes(tagName!) &&
+      tagName !== 'use' &&
+      !isFullColor;
     const desktopItems = [
       { children: renderToolBtns(), key: 'tools', label: 'Tools' },
       { children: renderDimensionPanel(), key: 'transform', label: 'Transform' },
+      ...(showInfillSection
+        ? [
+            {
+              children: <InfillPanel elem={elem as SVGElement} />,
+              key: 'infill',
+              label: 'Operation Mode (Infill)',
+            },
+          ]
+        : []),
       { children: renderOptionPanel(), key: 'options', label: optionsLabel },
       { children: renderActionPanel(), key: 'actions', label: 'Actions' },
     ];

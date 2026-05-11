@@ -149,12 +149,6 @@ exports[`TextOptions Desktop view should handle multiple text elements 1`] = `
         title="Vertical text"
         type="text"
       />
-      <div>
-        mock-infill-block elems:
-        1
-         label:
-         id:
-      </div>
     </div>
   </div>
 </div>
@@ -313,12 +307,6 @@ exports[`TextOptions Desktop view should render correctly for multi-line text 1`
         title="Vertical text"
         type="text"
       />
-      <div>
-        mock-infill-block elems:
-        1
-         label:
-         id:
-      </div>
     </div>
   </div>
 </div>
@@ -423,21 +411,6 @@ exports[`TextOptions Desktop view should render correctly for text path 1`] = `
       <button>
         Top
       </button>
-    </div>
-    <div>
-      mock-infill-block elems:
-      1
-       label:
-      Text Infill
-       id:
-    </div>
-    <div>
-      mock-infill-block elems:
-      0
-       label:
-      Path Infill
-       id:
-      path_infill
     </div>
   </div>
 </div>

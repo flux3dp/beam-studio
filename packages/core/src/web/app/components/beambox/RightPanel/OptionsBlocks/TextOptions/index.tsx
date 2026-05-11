@@ -84,7 +84,6 @@ const isGoogleFontLoaded = (
 interface Props {
   elem: SVGElement;
   isTextPath?: boolean;
-  showColorPanel?: boolean;
   textElements: SVGTextElement[];
 }
 
@@ -124,7 +123,7 @@ const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
   return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };
 };
 
-const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
+const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
@@ -608,7 +607,6 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
       <LetterSpacingBlock onSizeChange={handleSizeChange} textElements={textElements} />
       {!isMobile && <FontSizeBlock onSizeChange={handleSizeChange} textElements={textElements} />}
       {renderVerticalTextSwitch()}
-      {!showColorPanel && !isMobile && <InFillBlock elems={[elem]} />}
     </>
   );
 
@@ -629,8 +627,12 @@ const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) 
           onValueChange={handleVerticalAlignChange}
           value={verticalAlign.value}
         />
-        <InFillBlock elems={textElements} label={langOptionPanel.text_infill} />
-        <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
+        {isMobile && (
+          <>
+            <InFillBlock elems={textElements} label={langOptionPanel.text_infill} />
+            <InFillBlock elems={path} id="path_infill" label={langOptionPanel.path_infill} />
+          </>
+        )}
       </>
     );
   };
