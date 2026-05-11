@@ -96,35 +96,7 @@ const defaultTextConfigs: TextConfig = {
   verticalAlign: { hasMultiValue: false, value: VerticalAlign.MIDDLE },
 };
 
-type FontOption = {
-  family?: string;
-  label: React.ReactNode;
-  value: string;
-};
-
-const getFontFamilyOption = (family: string, isHistory = false): FontOption => {
-  const fontName = FontFuncs.fontNameMap.get(family);
-  const displayName = fontName ?? family;
-  const src = fontHelper.getWebFontPreviewUrl(family);
-
-  const label = src ? (
-    <div className={styles['family-option']}>
-      <div className={styles['img-container']}>
-        <img alt={displayName} draggable="false" src={src} />
-      </div>
-      {src.includes('monotype') && <FluxIcons.FluxPlus />}
-    </div>
-  ) : (
-    <div className={styles['font-family-display']} style={{ fontFamily: `'${family}'` }}>
-      {displayName}
-    </div>
-  );
-
-  return isHistory ? { family, label, value: `history-${family}` } : { label, value: family };
-};
-
-
-const TextOptions = ({ elem, isTextPath, showColorPanel, textElements }: Props) => {
+const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
   const lang = useI18n();
   const langOptionPanel = lang.beambox.right_panel.object_panel.option_panel;
   const isMobile = useIsMobile();
