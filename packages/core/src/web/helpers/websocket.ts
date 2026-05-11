@@ -1,6 +1,6 @@
-import Alert from '@core/app/actions/alert-caller';
+import alertCaller from '@core/app/actions/alert-caller';
 import MessageCaller, { MessageLevel } from '@core/app/actions/message-caller';
-import AlertConstants from '@core/app/constants/alert-constants';
+import alertConstants from '@core/app/constants/alert-constants';
 import blobSegments from '@core/helpers/blob-segments';
 import i18n from '@core/helpers/i18n';
 import InsecureWebsocket, { checkFluxTunnel } from '@core/helpers/InsecureWebsocket';
@@ -66,7 +66,7 @@ export default (options: Option): WrappedWebSocket => {
       const name = keys[i];
 
       if (!['hostname', 'port'].includes(name) && typeof opts[name] === 'undefined') {
-        newOpts[name] = defaultOptions[name];
+        newOpts[name] = defaultOptions[name] as any;
       }
     }
 
@@ -83,15 +83,15 @@ export default (options: Option): WrappedWebSocket => {
     if (wsCreateFailedCount === CREATE_FAILED_ALERT_THRESHOLD && !isWeb()) {
       const LANG = i18n.lang.beambox.popup;
 
-      Alert.popById('backend-error');
-      Alert.popUp({
-        buttonType: AlertConstants.YES_NO,
+      alertCaller.popById('backend-error');
+      alertCaller.popUp({
+        buttonType: alertConstants.YES_NO,
         id: 'backend-error',
         message: LANG.backend_connect_failed_ask_to_upload,
         onYes: () => {
           outputError.uploadBackendErrorLog();
         },
-        type: AlertConstants.SHOW_POPUP_ERROR,
+        type: alertConstants.SHOW_POPUP_ERROR,
       });
       MessageCaller.openMessage({
         content: LANG.backend_error_hint,
@@ -145,15 +145,15 @@ export default (options: Option): WrappedWebSocket => {
       if (wsErrorCount === WS_ERROR_ALERT_THRESHOLD && !isWeb()) {
         const LANG = i18n.lang.beambox.popup;
 
-        Alert.popById('backend-error');
-        Alert.popUp({
-          buttonType: AlertConstants.YES_NO,
+        alertCaller.popById('backend-error');
+        alertCaller.popUp({
+          buttonType: alertConstants.YES_NO,
           id: 'backend-error',
           message: LANG.backend_connect_failed_ask_to_upload,
           onYes: () => {
             outputError.uploadBackendErrorLog();
           },
-          type: AlertConstants.SHOW_POPUP_ERROR,
+          type: alertConstants.SHOW_POPUP_ERROR,
         });
         MessageCaller.openMessage({
           content: LANG.backend_error_hint,
@@ -168,6 +168,7 @@ export default (options: Option): WrappedWebSocket => {
     nodeWs.onopen = (e) => {
       socketOptions.onOpen?.(e);
       wsErrorCount = 0;
+      alertCaller.popById('backend-error');
       MessageCaller.closeMessage('backend-error-hint');
     };
 
