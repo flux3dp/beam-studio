@@ -1,4 +1,4 @@
-import React, { memo } from 'react';
+import React, { memo, useEffect, useState } from 'react';
 
 import { Button, Collapse, ConfigProvider } from 'antd';
 import classNames from 'classnames';
@@ -318,37 +318,52 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
 
   const optionsLabel = elem?.tagName.toLowerCase() === 'text' ? 'Fit Text' : 'Options';
 
+  const tagName = elem?.tagName.toLowerCase();
+  const isFullColor = elem ? Boolean(getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor')) : false;
+  const showInfillSection = (() => {
+    if (!elem || !tagName) return false;
+
+    if (!CanvasElements.fillableWithContainers.includes(tagName)) return false;
+
+    // 'use' shows only when fullcolor (MultiColorOptions); plain laser 'use' has no infill
+    if (tagName === 'use') return isFullColor;
+
+    return true;
+  })();
+  const showOptionsSection = (() => {
+    if (!elem || !tagName) return false;
+
+    if (['polygon', 'rect', 'text'].includes(tagName)) return true;
+
+    if (['image', 'img'].includes(tagName)) return elem.getAttribute('data-fullcolor') !== '1';
+
+    if (tagName === 'g') {
+      // textpath g or text-only g → renders TextOptions
+      if (elem.getAttribute('data-textpath-g') !== null) return true;
+
+      return !elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])');
+    }
+
+    if (tagName === 'use') return isVariableTextSupported() && elem.getAttribute('data-props') !== null;
+
+    return false;
+  })();
+
+  const [activeKeys, setActiveKeys] = useState<string[]>(['tools', 'transform', 'infill', 'options', 'actions']);
+
+  useEffect(() => {
+    setActiveKeys((prev) => {
+      const next = new Set(prev);
+
+      if (showInfillSection) next.add('infill');
+
+      if (showOptionsSection) next.add('options');
+
+      return next.size === prev.length ? prev : Array.from(next);
+    });
+  }, [showInfillSection, showOptionsSection]);
+
   const renderDesktopCollapse = (): React.JSX.Element => {
-    const tagName = elem?.tagName.toLowerCase();
-    const isFullColor = elem ? Boolean(getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor')) : false;
-    const showInfillSection = (() => {
-      if (!elem || !tagName) return false;
-
-      if (!CanvasElements.fillableWithContainers.includes(tagName)) return false;
-
-      // 'use' shows only when fullcolor (MultiColorOptions); plain laser 'use' has no infill
-      if (tagName === 'use') return isFullColor;
-
-      return true;
-    })();
-    const showOptionsSection = (() => {
-      if (!elem || !tagName) return false;
-
-      if (['polygon', 'rect', 'text'].includes(tagName)) return true;
-
-      if (['image', 'img'].includes(tagName)) return elem.getAttribute('data-fullcolor') !== '1';
-
-      if (tagName === 'g') {
-        // textpath g or text-only g → renders TextOptions
-        if (elem.getAttribute('data-textpath-g') !== null) return true;
-
-        return !elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])');
-      }
-
-      if (tagName === 'use') return isVariableTextSupported() && elem.getAttribute('data-props') !== null;
-
-      return false;
-    })();
     const desktopItems = [
       { children: renderToolBtns(), forceRender: true, key: 'tools', label: 'Tools' },
       { children: renderDimensionPanel(), forceRender: true, key: 'transform', label: 'Transform' },
@@ -382,11 +397,12 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
         }}
       >
         <Collapse
+          activeKey={activeKeys}
           bordered={false}
           className={styles.collapse}
-          defaultActiveKey={desktopItems.map((item) => item.key)}
           ghost
           items={desktopItems}
+          onChange={(keys) => setActiveKeys(Array.isArray(keys) ? keys : [keys])}
         />
       </ConfigProvider>
     );
