@@ -47,6 +47,9 @@ const AutoFitPanel = ({
   const [currentImageUrl, setCurrentImageUrl] = useState(initialImageUrl);
   const [isBackgroundRemoved, setIsBackgroundRemoved] = useState(false);
   const isRetrying = useRef(false);
+  // baseline state before background removal, updated by retake
+  const baseData = useRef(initialData);
+  const baseImageUrl = useRef(initialImageUrl);
   const [focusedIndex, setFocusedIndex] = useState(0);
   const { contours: mainContours, indices: mainIndices } = useMemo(() => {
     const indices = currentData.map((group) => {
@@ -69,16 +72,16 @@ const AutoFitPanel = ({
     buttons: tButtons,
   } = useI18n();
   const handleNext = useCallback(() => {
-    showAlignModal(element, mainContours[focusedIndex], (initD, d) => {
+    showAlignModal(element, mainContours[focusedIndex], currentImageUrl, (initD, d) => {
       apply(element, currentData[focusedIndex], mainIndices[focusedIndex], initD, d);
       onClose?.();
     });
-  }, [element, currentData, focusedIndex, mainContours, mainIndices, onClose]);
+  }, [element, currentData, currentImageUrl, focusedIndex, mainContours, mainIndices, onClose]);
 
   const handleToggleRemoveBackground = useCallback(async () => {
     if (isBackgroundRemoved) {
-      setCurrentData(initialData);
-      setCurrentImageUrl(initialImageUrl);
+      setCurrentData(baseData.current);
+      setCurrentImageUrl(baseImageUrl.current);
       setFocusedIndex(0);
       setIsBackgroundRemoved(false);
 
@@ -89,7 +92,7 @@ const AutoFitPanel = ({
 
     isRetrying.current = true;
     try {
-      const result = await retryWithRemoveBackground(initialImageUrl, isSplicingImg);
+      const result = await retryWithRemoveBackground(baseImageUrl.current, isSplicingImg);
 
       if (result) {
         setCurrentData(result.data);
@@ -100,7 +103,7 @@ const AutoFitPanel = ({
     } finally {
       isRetrying.current = false;
     }
-  }, [isBackgroundRemoved, initialData, initialImageUrl, isSplicingImg]);
+  }, [isBackgroundRemoved, isSplicingImg]);
 
   const handleRetake = useCallback(async () => {
     if (isRetrying.current) return;
@@ -110,9 +113,12 @@ const AutoFitPanel = ({
       const result = await retakeContourPreview(currentData[focusedIndex]);
 
       if (result) {
+        baseData.current = result.data;
+        baseImageUrl.current = result.imageUrl;
         setCurrentData(result.data);
         setCurrentImageUrl(result.imageUrl);
         setFocusedIndex(0);
+        setIsBackgroundRemoved(false);
       }
     } finally {
       isRetrying.current = false;

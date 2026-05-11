@@ -1,4 +1,4 @@
-import React, { memo, useEffect, useMemo } from 'react';
+import React, { memo, useCallback, useEffect, useMemo } from 'react';
 
 import EmbeddedCanvas from '@core/app/widgets/FullWindowPanel/EmbeddedCanvas';
 import type { AutoFitContour } from '@core/interfaces/IAutoFit';
@@ -29,10 +29,17 @@ const Canvas = ({ data, focusedIndex, imageUrl }: Props): React.JSX.Element => {
     canvasManager.setFocusedIndex(focusedIndex);
   }, [canvasManager, focusedIndex]);
 
+  const setOpacity = useCallback(
+    (val: number) => {
+      canvasManager.imageOpacity = val;
+    },
+    [canvasManager],
+  );
+
   return (
     <>
       <EmbeddedCanvas canvasManager={canvasManager}>
-        <OpacitySlider canvasManager={canvasManager} />
+        <OpacitySlider setValue={setOpacity} value={canvasManager.imageOpacity} />
       </EmbeddedCanvas>
     </>
   );
