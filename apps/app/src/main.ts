@@ -7,6 +7,7 @@ import router from '@core/app/router';
 import { toggleUnsavedChangedDialog } from '@core/helpers/file/export';
 import { setFileInAnotherTab } from '@core/helpers/fileImportHelper';
 import { getOS } from '@core/helpers/getOS';
+import { setCurrentVersion } from '@core/helpers/websocket';
 import communicator from '@core/implementations/communicator';
 
 import initBackendEvents from './init-backend-events';
@@ -32,7 +33,6 @@ declare global {
       logFile?: any;
       timestamp: number;
       version: string;
-      websockets: any;
     };
     jQuery: any;
     requirejs: (_deps: string[], _callback: (..._modules: any[]) => void) => void;
@@ -80,6 +80,7 @@ const setReferer = () => {
 export default function main(): void {
   window.FLUX.version = app.getVersion();
   console.log(`Beam-Studio: ${window.FLUX.version}`);
+  setCurrentVersion(window.FLUX.version);
 
   setReferer();
   menuBar();

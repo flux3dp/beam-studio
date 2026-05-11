@@ -8,14 +8,23 @@ import isJson from '@core/helpers/is-json';
 import isWeb from '@core/helpers/is-web';
 import Logger from '@core/helpers/logger';
 import outputError from '@core/helpers/output-error';
+import storage from '@core/implementations/storage';
 import type { Option, WrappedWebSocket } from '@core/interfaces/WebSocket';
 
 const WsLogger = Logger('websocket');
 const logLimit = 100;
 let wsErrorCount = 0;
 let wsCreateFailedCount = 0;
-const WS_ERROR_ALERT_THRESHOLD = 50;
-const CREATE_FAILED_ALERT_THRESHOLD = 200;
+let WS_ERROR_ALERT_THRESHOLD = 50;
+let CREATE_FAILED_ALERT_THRESHOLD = 200;
+
+export const setCurrentVersion = (version: string): void => {
+  // Make sure this is called before beambox init write last-installed-version'
+  if (!isWeb() && version !== storage.get('last-installed-version')) {
+    WS_ERROR_ALERT_THRESHOLD *= 2;
+    CREATE_FAILED_ALERT_THRESHOLD *= 2;
+  }
+};
 
 // options:
 //      hostname      - host name (Default: 127.0.0.1)
