@@ -361,7 +361,6 @@ const TextOptions = ({ elem, isTextPath, textElements }: Props) => {
       fontLoadedPromise,
     });
   };
-
   const handleGoogleFontSelect = useCallback(
     async (fontFamily: string) => {
       const localFontMatch = FontFuncs.findFontFamilyCaseInsensitive(fontFamily);

@@ -323,7 +323,9 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     const isFullColor = elem ? Boolean(getData(getObjectLayer(elem as SVGElement)?.elem, 'fullcolor')) : false;
     const showInfillSection = (() => {
       if (!elem || !tagName) return false;
+
       if (!CanvasElements.fillableWithContainers.includes(tagName)) return false;
+
       // 'use' shows only when fullcolor (MultiColorOptions); plain laser 'use' has no infill
       if (tagName === 'use') return isFullColor;
 
@@ -331,14 +333,18 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
     })();
     const showOptionsSection = (() => {
       if (!elem || !tagName) return false;
-      if (['rect', 'polygon', 'text'].includes(tagName)) return true;
+
+      if (['polygon', 'rect', 'text'].includes(tagName)) return true;
+
       if (['image', 'img'].includes(tagName)) return elem.getAttribute('data-fullcolor') !== '1';
+
       if (tagName === 'g') {
         // textpath g or text-only g → renders TextOptions
         if (elem.getAttribute('data-textpath-g') !== null) return true;
 
         return !elem.querySelector(':scope > :not(text):not(g[data-textpath-g="1"])');
       }
+
       if (tagName === 'use') return isVariableTextSupported() && elem.getAttribute('data-props') !== null;
 
       return false;
@@ -355,9 +361,7 @@ function ObjectPanel({ hide }: Props): React.JSX.Element {
             },
           ]
         : []),
-      ...(showOptionsSection
-        ? [{ children: renderOptionPanel(), key: 'options', label: optionsLabel }]
-        : []),
+      ...(showOptionsSection ? [{ children: renderOptionPanel(), key: 'options', label: optionsLabel }] : []),
       { children: renderActionPanel(), key: 'actions', label: 'Actions' },
     ];
 
