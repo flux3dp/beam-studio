@@ -69,9 +69,14 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
 
   private setUpCamera = async (): Promise<boolean> => {
     try {
+      const workarea = getWorkarea(this.device.model, 'fbm2');
+
       if (!this.fisheyeParams) {
         try {
           this.fisheyeParams = (await deviceMaster.fetchFisheyeParams()) as FisheyeCameraParametersV4;
+          // Set total_width and total_height for region preview to use correct region
+          this.fisheyeParams.total_width = workarea.width;
+          this.fisheyeParams.total_height = workarea.height;
         } catch (err) {
           console.log('Fail to fetchFisheyeParams', err);
           throw new Error('Unable to get fisheye parameters, please make sure you have calibrated the camera');
@@ -81,7 +86,6 @@ class Beamo2PreviewManager extends RegionPreviewMixin(BasePreviewManager) implem
       this.fisheyePreviewManager =
         this.fisheyePreviewManager ?? new FisheyePreviewManagerV4(this.device, this.fisheyeParams, this.fullAreaGrid);
 
-      const workarea = getWorkarea(this.device.model, 'fbm2');
       const { cameraCenter } = workarea;
 
       return await this.doorChecker.doorClosedWrapper(() =>
