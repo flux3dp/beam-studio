@@ -47,9 +47,11 @@ function OptionsPanel({ elem }: Props): null | React.JSX.Element {
 
     const tagName = elem.tagName.toLowerCase();
     const colorOrInfill = (key = 'infill') => {
+      if (!isMobile) return null;
+
       if (showColorPanel) return <ColorPanel elem={elem} key="color" />;
 
-      return isMobile ? <InFillBlock elems={[elem]} key={key} /> : null;
+      return <InFillBlock elems={[elem]} key={key} />;
     };
 
     return match(tagName)
@@ -57,10 +59,12 @@ function OptionsPanel({ elem }: Props): null | React.JSX.Element {
       .with('polygon', () => [<PolygonOptions elem={elem} key="polygon" />, colorOrInfill('fill')])
       .with('text', () => [
         <TextOptions elem={elem} key="text" textElements={[elem as SVGTextElement]} />,
-        showColorPanel ? (
-          <ColorPanel elem={elem} key="color" />
-        ) : isMobile ? (
-          <InFillBlock elems={[elem]} key="fill" />
+        isMobile ? (
+          showColorPanel ? (
+            <ColorPanel elem={elem} key="color" />
+          ) : (
+            <InFillBlock elems={[elem]} key="fill" />
+          )
         ) : null,
       ])
       .with(P.union('image', 'img'), () =>
@@ -83,14 +87,16 @@ function OptionsPanel({ elem }: Props): null | React.JSX.Element {
           ];
         }
 
+        if (!isMobile) return [];
+
         if (showColorPanel) return [<MultiColorOptions elem={elem} key="multi-color" />];
 
-        return isMobile ? [<InFillBlock elems={[elem]} key="infill" />] : [];
+        return [<InFillBlock elems={[elem]} key="infill" />];
       })
       .with('use', () => [
-        showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null,
+        isMobile && showColorPanel ? <MultiColorOptions elem={elem} key="multi-color" /> : null,
         showVariableBlock ? (
-          <VariableTextBlock elems={[elem]} id={elem.id} key="variable" withDivider={showColorPanel} />
+          <VariableTextBlock elems={[elem]} id={elem.id} key="variable" withDivider={isMobile && showColorPanel} />
         ) : null,
       ])
       .otherwise(() => [colorOrInfill()]);

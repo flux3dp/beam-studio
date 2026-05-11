@@ -5,8 +5,10 @@ import { getData } from '@core/helpers/layer/layer-config-helper';
 import { getObjectLayer } from '@core/helpers/layer/layer-helper';
 import useI18n from '@core/helpers/useI18n';
 
+import ColorPanel from './ColorPanel';
 import styles from './InfillPanel.module.scss';
 import InFillBlock from './OptionsBlocks/InFillBlock';
+import MultiColorOptions from './OptionsBlocks/MultiColorOptions';
 
 interface Props {
   elem: null | SVGElement;
@@ -15,13 +17,19 @@ interface Props {
 function InfillPanel({ elem }: Props): null | React.JSX.Element {
   const langOptionPanel = useI18n().beambox.right_panel.object_panel.option_panel;
   const tagName = useMemo(() => elem?.tagName.toLowerCase(), [elem]);
-  const isFullColor = elem ? getData(getObjectLayer(elem)?.elem, 'fullcolor') : false;
+  const isFullColor = elem ? Boolean(getData(getObjectLayer(elem)?.elem, 'fullcolor')) : false;
 
-  if (!elem || !tagName || isFullColor) return null;
+  if (!elem || !tagName) return null;
 
   if (!CanvasElements.fillableWithContainers.includes(tagName)) return null;
 
-  if (tagName === 'use') return null;
+  if (tagName === 'use') {
+    return isFullColor ? (
+      <div className={styles.panel}>
+        <MultiColorOptions elem={elem} />
+      </div>
+    ) : null;
+  }
 
   const renderBlocks = (): React.ReactNode => {
     if (tagName === 'g') {
@@ -51,10 +59,15 @@ function InfillPanel({ elem }: Props): null | React.JSX.Element {
             </>
           );
         }
+
+        return <InFillBlock elems={[elem]} />;
       }
+
+      // group with mixed (non-text) children
+      return isFullColor ? <MultiColorOptions elem={elem} /> : <InFillBlock elems={[elem]} />;
     }
 
-    return <InFillBlock elems={[elem]} />;
+    return isFullColor ? <ColorPanel elem={elem} /> : <InFillBlock elems={[elem]} />;
   };
 
   return <div className={styles.panel}>{renderBlocks()}</div>;

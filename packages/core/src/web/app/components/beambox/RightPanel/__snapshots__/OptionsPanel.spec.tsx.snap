@@ -125,9 +125,6 @@ exports[`should render correctly polygon desktop version 1`] = `
     <dummy-polygon-options
       elem="[object HTMLUnknownElement]"
     />
-    <dummy-color-panel
-      elem="[object HTMLUnknownElement]"
-    />
   </div>
 </div>
 `;
@@ -138,9 +135,6 @@ exports[`should render correctly polygon web version 1`] = `
     class="panel"
   >
     <dummy-polygon-options
-      elem="[object HTMLUnknownElement]"
-    />
-    <dummy-color-panel
       elem="[object HTMLUnknownElement]"
     />
   </div>
@@ -155,9 +149,6 @@ exports[`should render correctly rect 1`] = `
     <dummy-rect-options
       elem="[object HTMLUnknownElement]"
     />
-    <dummy-color-panel
-      elem="[object HTMLUnknownElement]"
-    />
   </div>
 </div>
 `;
@@ -168,9 +159,6 @@ exports[`should render correctly rect in full color layer 1`] = `
     class="panel"
   >
     <dummy-rect-options
-      elem="[object HTMLUnknownElement]"
-    />
-    <dummy-color-panel
       elem="[object HTMLUnknownElement]"
     />
   </div>
@@ -186,9 +174,6 @@ exports[`should render correctly text 1`] = `
       elem="[object HTMLUnknownElement]"
       textelements="[object HTMLUnknownElement]"
     />
-    <dummy-color-panel
-      elem="[object HTMLUnknownElement]"
-    />
   </div>
 </div>
 `;
@@ -198,26 +183,12 @@ exports[`should render correctly use with variable data 1`] = `
   <div
     class="panel"
   >
-    <dummy-multi-color-options
-      elem="[object HTMLUnknownElement]"
-    />
     <dummy-variable-text-block
       elems="[object HTMLUnknownElement]"
       id="use"
-      withdivider="configName"
     />
   </div>
 </div>
 `;
 
-exports[`should render correctly use without variable data 1`] = `
-<div>
-  <div
-    class="panel"
-  >
-    <dummy-multi-color-options
-      elem="[object HTMLUnknownElement]"
-    />
-  </div>
-</div>
-`;
+exports[`should render correctly use without variable data 1`] = `<div />`;
