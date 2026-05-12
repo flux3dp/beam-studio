@@ -123,24 +123,24 @@ const Align = ({
         const settings = await getExposureSettings();
 
         setExposureSetting(settings);
+
+        try {
+          const { model, version } = deviceMaster.currentDevice!.info;
+          const vc = versionChecker(version);
+
+          if (
+            supportCameraAutoExposureModels.includes(model) &&
+            !(model === 'fbb2' && !vc.meetRequirement('BB2_AUTO_EXPOSURE'))
+          ) {
+            const res = await deviceMaster.getCameraExposureAuto();
+
+            if (res?.success) setAutoExposure(res.data);
+          }
+        } catch {
+          // no-op
+        }
       } catch {
         // Exposure control not available for this device — leave null
-      }
-
-      try {
-        const { model, version } = deviceMaster.currentDevice!.info;
-        const vc = versionChecker(version);
-
-        if (
-          supportCameraAutoExposureModels.includes(model) &&
-          !(model === 'fbb2' && !vc.meetRequirement('BB2_AUTO_EXPOSURE'))
-        ) {
-          const res = await deviceMaster.getCameraExposureAuto();
-
-          if (res?.success) setAutoExposure(res.data);
-        }
-      } catch (e) {
-        console.error('Failed to get auto exposure', e);
       }
 
       return true;
