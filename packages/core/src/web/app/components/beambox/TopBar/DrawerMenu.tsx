@@ -105,8 +105,7 @@ export default function DrawerMenu({ email }: Props): React.JSX.Element {
     return '';
   };
 
-  const visibleNodes = currentNodes.filter((node) => node.visible !== false);
-  const hasCheckbox = visibleNodes.some((node) => node.type === 'checkbox');
+  const hasCheckbox = currentNodes.some((node) => node.type === 'checkbox');
 
   return (
     <>
@@ -143,7 +142,9 @@ export default function DrawerMenu({ email }: Props): React.JSX.Element {
         width={320}
       >
         <ul className={styles['menu-list']}>
-          {visibleNodes.map((node, index) => {
+          {currentNodes.map((node, index) => {
+            if (node.visible === false) return null;
+
             if (node.type === 'divider') {
               return <hr className={styles.divider} key={`divider-${index}`} />;
             }
